@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/atools">
+        <file>resources/sql/create_lb_schema.sql</file>
+        <file>resources/sql/finish_lb_schema.sql</file>
+        <file>resources/sql/create_ap_schema.sql</file>
+        <file>resources/sql/finish_ap_schema.sql</file>
+    </qresource>
+</RCC>

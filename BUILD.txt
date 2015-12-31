@@ -1,0 +1,26 @@
+Build Instructions
+------------------------------------------------------
+
+Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.4.
+
+- Clone atools GIT repository
+
+Windows
+------------------------------------------------------
+
+Get Qt Creator from http://www.qt.io.
+
+Linux
+------------------------------------------------------
+
+To build release
+- mkdir atools/release
+- cd atools/release
+- qmake ../atools.pro
+- make
+
+To build debug
+- mkdir atools/debug
+- cd atools/debug
+- qmake ../atools.pro CONFIG+=debug
+- make
