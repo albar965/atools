@@ -18,6 +18,7 @@
 #include "fs/lb/logbook.h"
 #include "io/binarystream.h"
 #include "fs/lb/logbookentry.h"
+#include "fs/lb/logbookentryfilter.h"
 #include "fs/lb/types.h"
 #include "sql/sqldatabase.h"
 #include "geo/calculations.h"
@@ -33,18 +34,18 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::io::BinaryStream;
 
-Logbook::Logbook(QFile *is, atools::sql::SqlDatabase *db, bool append)
+Logbook::Logbook(SqlDatabase *sqlDb)
+  : db(sqlDb)
 {
-  read(is, db, append);
 }
 
-void Logbook::read(QFile *file, SqlDatabase *db, bool append)
+void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
 {
   // TODO read also dummy entries to allow write back
   BinaryStream bs(file, QDataStream::LittleEndian);
 
   qint64 size = bs.getFileSize();
-  int logbookId = 0, visitId = 0, entryNumber = 0, numEntriesInDb = 0, inserted = 0;
+  int logbookId = 0, visitId = 0, entryNumber = 0, numEntriesInDb = 0, inserted = 0, filtered = 0;
   bool hasAirports = atools::sql::SqlUtil(db).hasTableAndRows("airport");
 
   SqlQuery entryStmt = LogbookEntry::prepareEntryStatement(db);
@@ -73,6 +74,8 @@ void Logbook::read(QFile *file, SqlDatabase *db, bool append)
 
   qDebug() << "Found" << numEntriesInDb << "entries in database";
 
+  LogbookEntry e(&bs);
+
   while(bs.tellg() < size)
   {
     qint64 startpos = bs.tellg();
@@ -89,81 +92,87 @@ void Logbook::read(QFile *file, SqlDatabase *db, bool append)
 
     if(type == types::RECORD_LOGBOOK_ENTRY)
     {
-      LogbookEntry e(&bs, startpos, length, entryNumber);
+      e.read(startpos, length, entryNumber);
 
       qDebug().nospace() << "Read entry number " << entryNumber << " (" << e << ")";
 
       // Add only new entries in append mode
       if(!append || entryNumber >= numEntriesInDb)
       {
-        // Sets optional fields already to null
-        e.fillEntryStatement(entryStmt, entryNumber);
-
-        entryStmt.bindValue(":logbook_id", logbookId);
-
-        // select and add airport information if airport table is available
-        if(hasAirports)
+        if(filter.canStore(e))
         {
-          double startLon = 0., startLat = 0., destLon = 0., destLat = 0.;
-          bool hasStartCoord = false, hasDestCoord = false;
+          // Sets optional fields already to null
+          e.fillEntryStatement(entryStmt);
 
-          airportStmt.bindValue(":icao", e.getAirportFrom());
-          airportStmt.exec();
-          if(airportStmt.next())
+          entryStmt.bindValue(":logbook_id", logbookId);
+
+          // select and add airport information if airport table is available
+          if(hasAirports)
           {
-            entryStmt.bindValue(":airport_from_name", airportStmt.value("name").toString());
-            entryStmt.bindValue(":airport_from_city", airportStmt.value("city").toString());
-            entryStmt.bindValue(":airport_from_state", airportStmt.value("state").toString());
-            entryStmt.bindValue(":airport_from_country", airportStmt.value("country").toString());
+            double startLon = 0., startLat = 0., destLon = 0., destLat = 0.;
+            bool hasStartCoord = false, hasDestCoord = false;
 
-            if(!airportStmt.isNull("latitude") && !airportStmt.isNull("longitude"))
+            airportStmt.bindValue(":icao", e.getAirportFrom());
+            airportStmt.exec();
+            if(airportStmt.next())
             {
-              startLon = airportStmt.value("longitude").toDouble();
-              startLat = airportStmt.value("latitude").toDouble();
-              hasStartCoord = true;
+              entryStmt.bindValue(":airport_from_name", airportStmt.value("name").toString());
+              entryStmt.bindValue(":airport_from_city", airportStmt.value("city").toString());
+              entryStmt.bindValue(":airport_from_state", airportStmt.value("state").toString());
+              entryStmt.bindValue(":airport_from_country", airportStmt.value("country").toString());
+
+              if(!airportStmt.isNull("latitude") && !airportStmt.isNull("longitude"))
+              {
+                startLon = airportStmt.value("longitude").toDouble();
+                startLat = airportStmt.value("latitude").toDouble();
+                hasStartCoord = true;
+              }
             }
+
+            airportStmt.bindValue(":icao", e.getAirportTo());
+            airportStmt.exec();
+            if(airportStmt.next())
+            {
+              entryStmt.bindValue(":airport_to_name", airportStmt.value("name").toString());
+              entryStmt.bindValue(":airport_to_city", airportStmt.value("city").toString());
+              entryStmt.bindValue(":airport_to_state", airportStmt.value("state").toString());
+              entryStmt.bindValue(":airport_to_country", airportStmt.value("country").toString());
+
+              if(!airportStmt.isNull("latitude") && !airportStmt.isNull("longitude"))
+              {
+                destLon = airportStmt.value("longitude").toDouble();
+                destLat = airportStmt.value("latitude").toDouble();
+                hasDestCoord = true;
+              }
+            }
+
+            // Store distance if there is a start and a destination airport
+            if(hasStartCoord && hasDestCoord)
+              entryStmt.bindValue(":distance", calcDist(startLon, startLat, destLon, destLat));
+            else
+              entryStmt.bindValue(":distance", QVariant(QVariant::Double));
           }
 
-          airportStmt.bindValue(":icao", e.getAirportTo());
-          airportStmt.exec();
-          if(airportStmt.next())
-          {
-            entryStmt.bindValue(":airport_to_name", airportStmt.value("name").toString());
-            entryStmt.bindValue(":airport_to_city", airportStmt.value("city").toString());
-            entryStmt.bindValue(":airport_to_state", airportStmt.value("state").toString());
-            entryStmt.bindValue(":airport_to_country", airportStmt.value("country").toString());
+          entryStmt.exec();
 
-            if(!airportStmt.isNull("latitude") && !airportStmt.isNull("longitude"))
-            {
-              destLon = airportStmt.value("longitude").toDouble();
-              destLat = airportStmt.value("latitude").toDouble();
-              hasDestCoord = true;
-            }
+          // Store all intermediate destinations in a separate table
+          for(int i = 0; i < e.getNumVisits(); i++)
+          {
+            e.fillVisitStatement(visitStmt, i);
+            visitStmt.bindValue(":visit_id", visitId);
+            visitStmt.bindValue(":logbook_id", logbookId);
+            visitStmt.exec();
+            visitId++;
           }
 
-          // Store distance if there is a start and a destination airport
-          if(hasStartCoord && hasDestCoord)
-            entryStmt.bindValue(":distance", calcDist(startLon, startLat, destLon, destLat));
-          else
-            entryStmt.bindValue(":distance", QVariant(QVariant::Double));
-        }
+          inserted++;
+        } // if(filter.canStore
+        else
+          filtered++;
 
-        entryStmt.exec();
-
-        // Store all intermediate destinations in a separate table
-        for(int i = 0; i < e.getNumVisits(); i++)
-        {
-          e.fillVisitStatement(visitStmt, i);
-          visitStmt.bindValue(":visit_id", visitId);
-          visitStmt.bindValue(":logbook_id", logbookId);
-          visitStmt.exec();
-          visitId++;
-        }
-
-        // Increment ids
+        // Increment ids for read entries (all, filterd or not)
         logbookId++;
-        inserted++;
-      }
+      } // if(!append ...
 
       entryNumber++;
     }
@@ -176,7 +185,9 @@ void Logbook::read(QFile *file, SqlDatabase *db, bool append)
     }
   } // while
 
-  qDebug() << "Read" << entryNumber << "entries. Inserted" << inserted << "entries.";
+  qDebug() << "Read" << entryNumber << "entries. Inserted" << inserted << "entries and fitered out"
+           << filtered << "entries.";
+
   db->commit();
   numLoaded = inserted;
 }

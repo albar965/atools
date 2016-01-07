@@ -17,6 +17,7 @@
 
 #include "fs/lb/logbookloader.h"
 #include "fs/lb/logbook.h"
+#include "fs/lb/logbookentryfilter.h"
 #include "exception.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
@@ -36,7 +37,7 @@ LogbookLoader::LogbookLoader(SqlDatabase *sqlDb)
 {
 }
 
-void LogbookLoader::loadLogbook(const QString& filename, bool append)
+void LogbookLoader::loadLogbook(const QString& filename, const LogbookEntryFilter& filter, bool append)
 {
   QFile file(filename);
   if(file.open(QIODevice::ReadOnly))
@@ -51,7 +52,8 @@ void LogbookLoader::loadLogbook(const QString& filename, bool append)
       db->commit();
     }
 
-    Logbook logbook(&file, db, append);
+    Logbook logbook(db);
+    logbook.read(&file, filter, append);
     numLoaded = logbook.getNumLoaded();
     db->commit();
 

@@ -19,6 +19,7 @@
 #define ATOOLS_SETTINGS_SETTINGS_H
 
 #include <QString>
+#include <QVariant>
 
 class QSettings;
 
@@ -67,6 +68,10 @@ public:
    * @return Path to existing file from settings or original filename.
    */
   static QString getOverloadedPath(const QString& filename);
+
+  /* The same as QSettings.value() but ensures that the default is stored in the file
+   * if not already present. Call syncSettings afterwards to write all defaults to the file. */
+  QVariant getAndStoreValue(const QString& key, const QVariant& defaultValue = QVariant()) const;
 
   /* Write settings to file and reload all changes in settings file */
   static void syncSettings();

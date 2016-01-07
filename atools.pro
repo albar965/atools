@@ -44,7 +44,8 @@ HEADERS += src/atools.h \
     src/logging/loggingconfig.h \
     src/io/fileroller.h \
     src/fs/lb/logbookloader.h \
-    src/logging/loggingdefs.h
+    src/logging/loggingdefs.h \
+    src/fs/lb/logbookentryfilter.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -68,7 +69,8 @@ SOURCES += src/atools.cpp \
     src/logging/loggingconfig.cpp \
     src/io/fileroller.cpp \
     src/fs/lb/logbookloader.cpp \
-    src/fs/lb/types.cpp
+    src/fs/lb/types.cpp \
+    src/fs/lb/logbookentryfilter.cpp
 
 unix {
     target.path = /usr/lib

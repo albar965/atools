@@ -29,6 +29,8 @@ class SqlDatabase;
 namespace fs {
 namespace lb {
 
+class LogbookEntryFilter;
+
 /*
  * Reads the FSX Logbook.BIN file into a Sqlite database.
  */
@@ -45,10 +47,11 @@ public:
    * into the database. Throws Exception in case of failure.
    *
    * @param filename the Logbook.BIN file
+   * @param filter Defines which entries should be omitted
    * @param append If true loads only new entries into the database, otherwise
    * creates new schema and loads all.
    */
-  void loadLogbook(const QString& filename, bool append);
+  void loadLogbook(const QString& filename, const LogbookEntryFilter& filter, bool append);
 
   /*
    * @return Number of logbook entries loaded.

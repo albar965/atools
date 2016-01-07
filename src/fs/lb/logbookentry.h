@@ -22,6 +22,7 @@
 #include "sql/sqlquery.h"
 
 #include <QDebug>
+#include <QDateTime>
 
 namespace atools {
 
@@ -50,7 +51,9 @@ public:
    * @param length of the entry
    * @return
    */
-  LogbookEntry(atools::io::BinaryStream *bs, qint64 startpos, qint64 len, int entryNumber);
+  LogbookEntry(atools::io::BinaryStream *bs);
+
+  void read(qint64 startpos, qint64 len, int entryNumber);
 
   /* Prepare a query to insert rows into the logbook table */
   static atools::sql::SqlQuery prepareEntryStatement(atools::sql::SqlDatabase *db);
@@ -59,7 +62,7 @@ public:
   static atools::sql::SqlQuery prepareVisitStatement(atools::sql::SqlDatabase *db);
 
   /* Fill the prepared statement with values */
-  void fillEntryStatement(atools::sql::SqlQuery& stmt, int entryNumber);
+  void fillEntryStatement(atools::sql::SqlQuery& stmt);
 
   /* Fill the prepared statement with values */
   void fillVisitStatement(atools::sql::SqlQuery& stmt, int visitIndex);
@@ -121,6 +124,21 @@ private:
     return aircraftDescription;
   }
 
+  types::AircraftType getAircraftType() const
+  {
+    return aircraftType;
+  }
+
+  QDateTime getDateTime() const
+  {
+    return dateTime;
+  }
+
+  float getTotalTimeMin() const
+  {
+    return totalTime;
+  }
+
 private:
   /* Print the entry to a stream or qdebug */
   template<typename T>
@@ -130,20 +148,23 @@ private:
   template<typename T>
   T checkNull(T value, const QString& msg, int entryNumber) const;
 
-  short year = 0;
-  int month = 0, day = 0, hour = 0, minute = 0, second = 0;
-
+  short year;
+  int month, day, hour, minute, second;
+  QDateTime dateTime;
   QString airportFrom, airportTo, description;
+  types::AircraftType aircraftType;
 
-  float totalTime = 0.f, nightTime = 0.f, instrumentTime = 0.f;
+  // All in decimal hours
+  float totalTime, nightTime, instrumentTime;
 
-  types::AircraftType aircraftType = types::AIRCRAFT_UNKNOWN;
-
-  short flags = 0;
+  short flags;
   QString aircraftRegistration, aircraftDescription;
 
   QList<AirportVisit> airportVisits;
   QVariant visitsToString() const;
+
+  atools::io::BinaryStream *stream;
+  void reset();
 
 };
 
