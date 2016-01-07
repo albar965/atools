@@ -21,6 +21,8 @@
 #include "fs/lb/types.h"
 #include "sql/sqlquery.h"
 
+#include <QDebug>
+
 namespace atools {
 
 namespace sql {

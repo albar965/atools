@@ -8,7 +8,8 @@ QT       += sql xml core widgets
 
 QT       -= gui
 
-QMAKE_CXXFLAGS += -std=c++11
+#QMAKE_CXXFLAGS += -std=c++11
+CONFIG += c++11
 
 INCLUDEPATH += $$PWD/src
 
