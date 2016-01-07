@@ -32,66 +32,89 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::io::BinaryStream;
 
-LogbookEntry::LogbookEntry(BinaryStream *bs, qint64 startpos, qint64 len, int entryNumber)
+LogbookEntry::LogbookEntry(BinaryStream *bs)
+  : stream(bs)
 {
+
+}
+
+void LogbookEntry::read(qint64 startpos, qint64 len, int entryNumber)
+{
+  reset();
+
   // TODO keep dummy values for writing
-  bs->readUShort(); // log entry, always 0
-  bs->readUInt();
+  stream->readUShort(); // log entry, always 0
+  stream->readUInt();
 
   // Read date
-  year = checkNull(bs->readShort(), "year", entryNumber);
-  bs->readUByte();
-  month = checkNull(bs->readUByte(), "month", entryNumber);
-  day = checkNull(bs->readUByte(), "day", entryNumber);
-  hour = bs->readUByte();
-  minute = bs->readUByte();
-  second = bs->readUByte();
+  year = checkNull(stream->readShort(), "year", entryNumber);
+  stream->readUByte();
+  month = checkNull(stream->readUByte(), "month", entryNumber);
+  day = checkNull(stream->readUByte(), "day", entryNumber);
+  hour = stream->readUByte();
+  minute = stream->readUByte();
+  second = stream->readUByte();
+
+  // Set invalid date
+  dateTime = QDateTime();
+
+  QDate date(year, month, day);
+  if(date.isValid())
+  {
+    QTime time(hour, minute, second);
+    if(time.isValid())
+      dateTime = QDateTime(date, time, Qt::UTC);
+    else
+      qWarning() << "time is not valid for entry" << entryNumber;
+  }
+  else
+    qWarning() << "date is not valid for entry" << entryNumber;
 
   // Airports
-  airportFrom = bs->readString(4);
-  airportTo = bs->readString(4);
+  airportFrom = stream->readString(4);
+  airportTo = stream->readString(4);
 
   // Times
-  totalTime = checkNull(bs->readFloat(), "total time", entryNumber);
-  nightTime = bs->readFloat();
-  instrumentTime = bs->readFloat();
+  totalTime = checkNull(stream->readFloat(), "total time", entryNumber);
+  nightTime = stream->readFloat();
+  instrumentTime = stream->readFloat();
 
   // Aircraft information
-  aircraftType = static_cast<types::AircraftType>(bs->readUByte());
-  flags = bs->readShort();
+  aircraftType = static_cast<types::AircraftType>(stream->readUByte());
+  flags = stream->readShort();
   // bool multimotor = (flags & 0x4000) != 0;
-  int planeDescrLen = bs->readUByte();
+  int planeDescrLen = stream->readUByte();
 
-  aircraftRegistration = bs->readString(10);
-  aircraftDescription = bs->readString(planeDescrLen);
+  aircraftRegistration = stream->readString(10);
+  aircraftDescription = stream->readString(planeDescrLen);
 
   // Get subrecords
-  while(bs->tellg() < startpos + len)
+  while(stream->tellg() < startpos + len)
   {
-    types::RecordSubType subtype = static_cast<types::RecordSubType>(bs->readUByte());
+    types::RecordSubType subtype = static_cast<types::RecordSubType>(stream->readUByte());
 
     if(subtype == types::SUBRECORD_PLANE_DESCRIPTION)
     {
       // Never seen this one
 
       qDebug() << "Found subrecord PLANE_DESCRIPTION";
-      /*short subFlags =*/ bs->readUShort();
-      int subPlaneDescLen = bs->readUByte();
-      /*QString subPlaneReg =*/ bs->readString(10);
-      /*QString subPlaneDesc =*/ bs->readString(subPlaneDescLen);
+      /*short subFlags =*/ stream->readUShort();
+      int subPlaneDescLen = stream->readUByte();
+      /*QString subPlaneReg =*/ stream->readString(10);
+      /*QString subPlaneDesc =*/ stream->readString(subPlaneDescLen);
       // bool subMultimotor = (subFlags & 0x4000) != 0;
     }
     else if(subtype == types::SUBRECORD_AIRPORT_LIST)
     {
       // Intermediate destinations
       qDebug() << "Found subrecord AIRPORT_LIST";
-      bs->readUByte(); // airportListLen
-      bs->readUShort(); // airports landing tables, always 0
-      int nap = bs->readUShort();
+      stream->readUByte(); // airportListLen
+      stream->readUShort(); // airports landing tables, always 0
+      int nap = stream->readUShort();
       for(int i = 0; i < nap; i++)
       {
-        QString subAp = bs->readString(4);
-        int landings = bs->readUByte();
+        QString subAp = stream->readString(4);
+        int landings = stream->readUByte();
 
         airportVisits.push_back(AirportVisit(subAp, landings));
       }
@@ -100,11 +123,11 @@ LogbookEntry::LogbookEntry(BinaryStream *bs, qint64 startpos, qint64 len, int en
     {
       // Flight comment
       qDebug() << "Found subrecord DESCRIPTION";
-      int descrLen = bs->readUByte() - 4;
-      bs->readUShort(); // flight description, always 0
+      int descrLen = stream->readUByte() - 4;
+      stream->readUShort(); // flight description, always 0
       int i = 0;
       char b = 0;
-      while((i < descrLen) && ((b = bs->readByte()) != 5))
+      while((i < descrLen) && ((b = stream->readByte()) != 5))
       {
         description.push_back(QChar::fromLatin1(b));
         i++;
@@ -112,15 +135,15 @@ LogbookEntry::LogbookEntry(BinaryStream *bs, qint64 startpos, qint64 len, int en
 
       if(b == 5)
       {
-        qWarning() << "Found unexpected record 5 at" << bs->tellg() << "within record 4";
-        bs->seekg(-1);
+        qWarning() << "Found unexpected record 5 at" << stream->tellg() << "within record 4";
+        stream->seekg(-1);
         break;
       }
     }
     else
     {
-      qWarning() << "Found unknown record" << subtype << "at" << bs->tellg() << "within subrecords";
-      bs->seekg(-1);
+      qWarning() << "Found unknown record" << subtype << "at" << stream->tellg() << "within subrecords";
+      stream->seekg(-1);
       break;
     }
   }
@@ -141,7 +164,7 @@ QVariant LogbookEntry::visitsToString() const
     return QVariant(QVariant::String);
 }
 
-void LogbookEntry::fillEntryStatement(SqlQuery& stmt, int entryNumber)
+void LogbookEntry::fillEntryStatement(SqlQuery& stmt)
 {
   stmt.bindValue(":airport_from_icao", airportFrom);
   stmt.bindValue(":airport_from_name", QVariant(QVariant::String));
@@ -171,24 +194,10 @@ void LogbookEntry::fillEntryStatement(SqlQuery& stmt, int entryNumber)
 
   stmt.bindValue(":startdate", QVariant(QVariant::String));
 
-  QDate date(year, month, day);
-  if(date.isValid())
-  {
-    QTime time(hour, minute, second);
-    if(time.isValid())
-    {
-      QDateTime dateTime(date, time);
-      QDateTime dateTimeFixed = dateTime.addSecs(dateTime.offsetFromUtc());
-      if(dateTime.isValid())
-        stmt.bindValue(":startdate", dateTimeFixed.toTime_t());
-      else
-        stmt.bindValue(":startdate", QVariant(0));
-    }
-    else
-      qWarning() << "time is not valid for entry" << entryNumber;
-  }
+  if(dateTime.isValid())
+    stmt.bindValue(":startdate", dateTime.toTime_t());
   else
-    qWarning() << "date is not valid for entry" << entryNumber;
+    stmt.bindValue(":startdate", QVariant(0));
 }
 
 SqlQuery LogbookEntry::prepareEntryStatement(SqlDatabase *db)
@@ -204,11 +213,39 @@ void LogbookEntry::fillVisitStatement(SqlQuery& stmt, int visitIndex)
   stmt.bindValue(":landings", airportVisits.at(visitIndex).getLandings());
 }
 
+
+
 SqlQuery LogbookEntry::prepareVisitStatement(SqlDatabase *db)
 {
   SqlQuery q(db);
   q.prepare(SqlUtil(db).buildInsertStatement("logbook_visits"));
   return q;
+}
+
+void LogbookEntry::reset()
+{
+  year = 0;
+  month = 0;
+  day = 0;
+  hour = 0;
+  minute = 0;
+  second = 0;
+
+  airportFrom.clear();
+  airportTo.clear();
+  description.clear();
+
+  totalTime = 0.f;
+  nightTime = 0.f;
+  instrumentTime = 0.f;
+
+  aircraftType = types::AIRCRAFT_UNKNOWN;
+
+  flags = 0;
+  aircraftRegistration.clear();
+  aircraftDescription.clear();
+
+  airportVisits.clear();
 }
 
 } // namespace lb

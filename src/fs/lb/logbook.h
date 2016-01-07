@@ -30,6 +30,7 @@ namespace fs {
 namespace lb {
 
 class LogbookEntry;
+class LogbookEntryFilter;
 
 /*
  * Reads a FSX logbook file and writes the entries into the given database.
@@ -38,17 +39,24 @@ class Logbook
 {
 public:
   /*
-   * Creates a Logbook object and reads the whole Logbook.BIN file into the
+   * Creates a Logbook object.
+   *
+   * @param db Destination database
+   * @return
+   */
+  Logbook(atools::sql::SqlDatabase *sqlDb);
+
+  /*
+   * Reads the whole Logbook.BIN file into the
    * database. Throws Exception in case of error.
    * Additional airport information is added to the tables, if the runway.xml
    * filewas loaded before.
    *
-   * @param is Logbook file to read.
-   * @param db
+   * @param file Logbook file to read.
+   * @param filter Defines which entries should be omitted
    * @param append Read only the latest entries.
-   * @return
    */
-  Logbook(QFile *file, atools::sql::SqlDatabase *db, bool append);
+  void read(QFile *file, const LogbookEntryFilter& filter, bool append);
 
   /*
    * @return number of loaded logbook entries
@@ -59,14 +67,11 @@ public:
   }
 
 private:
-  /* read all entries into the db*/
-  void read(QFile *file, atools::sql::SqlDatabase *db, bool append);
-
   /* calculate distance in nautical miles */
   double calcDist(double startLon, double startLat, double destLon, double destLat) const;
 
   int numLoaded = 0;
-
+  atools::sql::SqlDatabase *db;
 };
 
 } /* namespace lb */

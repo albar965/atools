@@ -100,6 +100,19 @@ QString Settings::getOverloadedPath(const QString& filename)
     throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
 }
 
+QVariant Settings::getAndStoreValue(const QString& key, const QVariant& defaultValue) const
+{
+  QSettings *settings = instance().getQSettings();
+
+  if(settings->contains(key))
+    return settings->value(key, defaultValue);
+  else
+  {
+    settings->setValue(key, defaultValue);
+    return defaultValue;
+  }
+}
+
 void Settings::syncSettings()
 {
   QSettings *qs = instance().getQSettings();
