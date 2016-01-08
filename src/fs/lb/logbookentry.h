@@ -19,9 +19,9 @@
 #define ATOOLS_FS_LB_LOGBOOKENTRY_H
 
 #include "fs/lb/types.h"
+#include "logging/loggingdefs.h"
 #include "sql/sqlquery.h"
 
-#include <QDebug>
 #include <QDateTime>
 
 namespace atools {
