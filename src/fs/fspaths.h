@@ -24,10 +24,13 @@ enum SimulatorType
 class FsPaths
 {
 public:
+  /* Get installation path to fsx.exe, etc. */
   static QString getBasePath(SimulatorType type);
 
-  static QString getDocumentsPath(SimulatorType type);
+  /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien", etc. */
+  static QString getFilesPath(SimulatorType type);
 
+  /* Path to scenery.cfg */
   static QString getSceneryLibraryPath(SimulatorType type);
 
 private:
@@ -59,13 +62,13 @@ private:
   static const char *SETTINGS_P3D_V2_PATH;
   static const char *SETTINGS_P3D_V3_PATH;
 
-  QString documentsDirectory(QString simBasePath);
 
   static const char *settingsKey(SimulatorType type);
   static const char *registryPath(SimulatorType type);
   static const char *registryKey(SimulatorType type);
 
-  static QStringList findFsxDocuments();
+  static QString documentsDirectory(QString simBasePath);
+  static QStringList findFsxFiles();
 };
 
 } /* namespace fs */

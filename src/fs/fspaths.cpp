@@ -7,6 +7,10 @@
 #include <QSettings>
 #include <QStandardPaths>
 
+#if defined(Q_OS_WIN32)
+#include <windows.h>
+#endif
+
 namespace atools {
 namespace fs {
 
@@ -31,11 +35,6 @@ const char *FsPaths::SETTINGS_FSX_SE_PATH = "File/FsxSePath";
 const char *FsPaths::SETTINGS_P3D_V2_PATH = "File/P3dV2Path";
 const char *FsPaths::SETTINGS_P3D_V3_PATH = "File/P3dV3Path";
 
-// scenery.cfg
-// FSX C:\Users\user account name\AppData\Roaming\Microsoft\FSX
-// P3D v2 C:\Users\user account name\AppData\Roaming\Lockheed Martin\Prepar3D v2
-// P3D v3 C:\ProgramData\Lockheed Martin\Prepar3D v3
-
 using atools::settings::Settings;
 
 QString FsPaths::getBasePath(atools::fs::SimulatorType type)
@@ -45,6 +44,8 @@ QString FsPaths::getBasePath(atools::fs::SimulatorType type)
   // Try to get the FSX path from the Windows registry
   QSettings settings(registryPath(type), QSettings::NativeFormat);
   fsxPath = settings.value(registryKey(type)).toString();
+  if(fsxPath.endsWith('\\'))
+    fsxPath.chop(1);
 #else
   // No Windows here - get the path for debugging purposes
   // from the configuration file
@@ -57,52 +58,71 @@ QString FsPaths::getBasePath(atools::fs::SimulatorType type)
   return fsxPath;
 }
 
-QString FsPaths::getDocumentsPath(SimulatorType type)
+QString FsPaths::getFilesPath(SimulatorType type)
 {
-  QString simBasePath = getBasePath(type);
-  QString docPath;
+  QString fsFilesDir;
 
 #if defined(Q_OS_WIN32)
-  QByteArray langDll = QString(simBasePath + "\\language.dll").toLocal8Bit();
+  QString languageDll(getBasePath(type) + QDir::separator() + "language.dll");
+  qDebug() << "Language DLL" << languageDll;
 
-  // char dll_path[MAX_PATH];
-  // assuming FS_Path is a string that contains the path to the FS installation...
-  // strcpy_s(dll_path, MAX_PATH - 1, FS_Path);
-  // strcat_s(dll_path, MAX_PATH - 1, "\\language.dll");
+  // Copy to wchar and append null
+  wchar_t languageDllWChar[languageDll.size() + 1];
+  languageDll.toWCharArray(languageDllWChar);
+  languageDllWChar[languageDll.size()] = L'\0';
 
-  char filesPath[1024];
-  HINSTANCE hInstLang = LoadLibrary(langDll.data());
-  if(hInstLang)
+  // Load the FS language DLL
+  HINSTANCE hInstLanguageDll = LoadLibrary(languageDllWChar);
+  if(hInstLanguageDll)
   {
-    LoadStringA(hInstLang, 36864, filesPath, 1024);
-    FreeLibrary(hInstLang);
+    qDebug() << "Got handle from LoadLibrary";
 
-    QFileInfo dir(QString::fromLocal8Bit(filesPath));
-    if(dir.exists() && dir.isDir() && dir.isReadable())
-      docPath = dir.absoluteFilePath();
+    // Get the language dependent files name from the language.dll resources
+    // (parts of code from Peter Dowson in fsdeveloper forum)
+    wchar_t filesPathWChar[MAX_PATH];
+    LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
+    FreeLibrary(hInstLanguageDll);
+
+    // Check all Documents folders for path - there should be only one
+    for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
+    {
+      QFileInfo fsFilesDirInfo(document + QDir::separator() + QString::fromWCharArray(filesPathWChar));
+      if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+      {
+        fsFilesDir = fsFilesDirInfo.absoluteFilePath();
+        qDebug() << "Found" << fsFilesDir;
+        break;
+      }
+      else
+        qDebug() << "Does not exist" << fsFilesDir;
+    }
   }
+  else
+   qDebug() << "No handle from LoadLibrary";
 #else
-  Q_UNUSED(simBasePath);
-#endif
-
-  if(docPath.isEmpty())
+  // Use fallback on non Windows systems
+  if(fsFilesDir.isEmpty())
   {
-    QStringList docDirs = findFsxDocuments();
-    if(!docDirs.isEmpty())
-      docPath = docDirs.at(0);
+    qDebug() << "Using fallback to find flight simulator documents path";
+    QStringList fsFilesDirs = findFsxFiles();
+    if(!fsFilesDirs.isEmpty())
+      fsFilesDir = fsFilesDirs.at(0);
   }
+#endif
+  qDebug() << "Found a flight simulator documents path for type" << type << "at" << fsFilesDir;
 
-  qDebug() << "Found a flight simulator documents path for type" << type << "at" << docPath;
-
-  return docPath;
+  return fsFilesDir;
 }
 
 QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 {
   // TODO implement getSceneryLibraryPath
+  // scenery.cfg
+  // FSX C:\Users\user account name\AppData\Roaming\Microsoft\FSX
+  // P3D v2 C:\Users\user account name\AppData\Roaming\Lockheed Martin\Prepar3D v2
+  // P3D v3 C:\ProgramData\Lockheed Martin\Prepar3D v3
   Q_UNUSED(type);
   return QString();
-
 }
 
 const char *FsPaths::settingsKey(SimulatorType type)
@@ -122,6 +142,7 @@ const char *FsPaths::settingsKey(SimulatorType type)
       return SETTINGS_P3D_V3_PATH;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+  return nullptr;
 }
 
 const char *FsPaths::registryPath(SimulatorType type)
@@ -141,6 +162,7 @@ const char *FsPaths::registryPath(SimulatorType type)
       return P3D_V3_REGISTRY_PATH;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+  return nullptr;
 }
 
 const char *FsPaths::registryKey(SimulatorType type)
@@ -160,9 +182,10 @@ const char *FsPaths::registryKey(SimulatorType type)
       return P3D_V3_REGISTRY_KEY;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+  return nullptr;
 }
 
-QStringList FsPaths::findFsxDocuments()
+QStringList FsPaths::findFsxFiles()
 {
   QStringList documents = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
   QStringList found;
@@ -196,6 +219,10 @@ QStringList FsPaths::findFsxDocuments()
           found.append(localDir.absoluteFilePath());
     }
   }
+
+  qDebug() << "Found document paths using fallback:";
+  for(QString doc : documents)
+    qDebug() << doc;
 
   return found;
 }
