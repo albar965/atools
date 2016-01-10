@@ -81,6 +81,7 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
     qint64 startpos = bs.tellg();
 
     // Read header
+    // TODO better error handling for invalid files
     types::RecordType type = static_cast<types::RecordType>(bs.readUByte());
     qint64 length = bs.readUByte();
 

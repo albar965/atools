@@ -34,7 +34,8 @@ QString Dialog::fileDialog(QFileDialog& dlg,
                            const QString& title,
                            const QString& filter,
                            const QString& settingsPrefix,
-                           const QString& defaultFileSuffix)
+                           const QString& defaultFileSuffix,
+                           const QString& path)
 {
   dlg.setNameFilter(filter);
   dlg.setWindowTitle(QApplication::applicationName() + " - " + title);
@@ -42,26 +43,49 @@ QString Dialog::fileDialog(QFileDialog& dlg,
   if(!defaultFileSuffix.isEmpty())
     dlg.setDefaultSuffix(defaultFileSuffix);
 
-  // Key for dialog state
-  QString settingName = settingsPrefix + "FileDialog";
-  // Key for dialog directory
-  QString settingNameDir = settingName + "Dir";
-
+  QString settingName, settingNameDir;
   Settings& s = Settings::instance();
-  // Read state
-  if(s->contains(settingName))
-    dlg.restoreState(s->value(settingName).toByteArray());
 
-  // Use documents as default if directory was not saved
-  QStringList documents = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-  dlg.setDirectory(s->value(settingNameDir, documents).toString());
+  if(!settingsPrefix.isEmpty())
+  {
+    // Key for dialog state
+    settingName = settingsPrefix + "FileDialog";
+    // Key for dialog directory
+    settingNameDir = settingName + "Dir";
+
+    // Read state
+    if(s->contains(settingName))
+      dlg.restoreState(s->value(settingName).toByteArray());
+  }
+
+  QString defaultDir;
+
+  if(path.isEmpty())
+    // Use documents as default if path not given
+    defaultDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+  else
+    defaultDir = path;
+
+  // Get path from settings use path or documents as default
+  QFileInfo dir = s->value(settingNameDir, defaultDir).toString();
+
+  if(dir.exists())
+  {
+    if(dir.isDir())
+      dlg.setDirectory(dir.absoluteFilePath());
+    else if(dir.isFile())
+      dlg.setDirectory(dir.absolutePath());
+  }
 
   if(dlg.exec() && !dlg.selectedFiles().isEmpty())
   {
-    // if ok/select/save was pressed save state
-    s->setValue(settingName, dlg.saveState());
-    s->setValue(settingNameDir, dlg.directory().absolutePath());
-    s.syncSettings();
+    if(!settingsPrefix.isEmpty())
+    {
+      // if ok/select/save was pressed save state
+      s->setValue(settingName, dlg.saveState());
+      s->setValue(settingNameDir, dlg.directory().absolutePath());
+      s.syncSettings();
+    }
 
     return dlg.selectedFiles().at(0);
   }
@@ -69,23 +93,27 @@ QString Dialog::fileDialog(QFileDialog& dlg,
 
 }
 
-QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix)
+QString Dialog::openFileDialog(const QString& title,
+                               const QString& filter,
+                               const QString& settingsPrefix,
+                               const QString& path)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::ExistingFile);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, filter, settingsPrefix, QString());
+  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path);
 }
 
 QString Dialog::saveFileDialog(const QString& title,
                                const QString& filter,
+                               const QString& defaultFileSuffix,
                                const QString& settingsPrefix,
-                               const QString& defaultFileSuffix)
+                               const QString& path)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::AnyFile);
   dlg.setAcceptMode(QFileDialog::AcceptSave);
-  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix);
+  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path);
 }
 
 void Dialog::showInfoMsgBox(const QString& settingsKey,

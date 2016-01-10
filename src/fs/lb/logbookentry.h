@@ -148,7 +148,7 @@ private:
   template<typename T>
   T checkNull(T value, const QString& msg, int entryNumber) const;
 
-  short year;
+  unsigned short year;
   int month, day, hour, minute, second;
   QDateTime dateTime;
   QString airportFrom, airportTo, description;
@@ -157,7 +157,7 @@ private:
   // All in decimal hours
   float totalTime, nightTime, instrumentTime;
 
-  short flags;
+  unsigned short flags;
   QString aircraftRegistration, aircraftDescription;
 
   QList<AirportVisit> airportVisits;

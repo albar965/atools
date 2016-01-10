@@ -55,7 +55,10 @@ public:
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
    */
-  QString openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix);
+  QString openFileDialog(const QString& title,
+                         const QString& filter,
+                         const QString& settingsPrefix = QString(),
+                         const QString& path = QString());
 
   /*
    * Creates an save file dialog and returns the selected file otherwise an
@@ -75,8 +78,9 @@ public:
    */
   QString saveFileDialog(const QString& title,
                          const QString& filter,
-                         const QString& settingsPrefix,
-                         const QString& defaultFileSuffix);
+                         const QString& defaultFileSuffix,
+                         const QString& settingsPrefix = QString(),
+                         const QString& path = QString());
 
   /*
    * Shows a simple information message box that includes a checkbox which can
@@ -117,7 +121,8 @@ private:
                      const QString& title,
                      const QString& filter,
                      const QString& settingsPrefix,
-                     const QString& defaultFileSuffix);
+                     const QString& defaultFileSuffix,
+                     const QString& path);
 
   QWidget *parent = nullptr;
 };

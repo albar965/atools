@@ -1,3 +1,20 @@
+/*****************************************************************************
+* Copyright 2015-2016 Alexander Barthel albar965@mailbox.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
 #ifndef FSPATHS_H
 #define FSPATHS_H
 
@@ -8,17 +25,18 @@ namespace fs {
 
 enum SimulatorType
 {
+  /* Force numeric values since these are used as indexes */
   /* Platform: FSX, FSX XPack, FSX Gold */
-  FSX,
+  FSX = 0,
 
   /* Platform: FSX Steam Edition */
-  FSX_SE,
+  FSX_SE = 1,
 
   /* Platform: Prepar3d Version 2 */
-  P3D_V2,
+  P3D_V2 = 2,
 
   /* Platform: Prepar3d Version 3 */
-  P3D_V3
+  P3D_V3 = 3
 };
 
 class FsPaths
@@ -62,13 +80,19 @@ private:
   static const char *SETTINGS_P3D_V2_PATH;
   static const char *SETTINGS_P3D_V3_PATH;
 
+  /* Paths for non Windows systems - used for development and debugging purposes */
+  static const char *FSX_NO_WINDOWS_PATH;
+  static const char *FSX_SE_NO_WINDOWS_PATH;
+  static const char *P3D_V2_NO_WINDOWS_PATH;
+  static const char *P3D_V3_NO_WINDOWS_PATH;
 
-  static const char *settingsKey(SimulatorType type);
-  static const char *registryPath(SimulatorType type);
-  static const char *registryKey(SimulatorType type);
+  static QString settingsKey(SimulatorType type);
+  static QString registryPath(SimulatorType type);
+  static QString registryKey(SimulatorType type);
 
   static QString documentsDirectory(QString simBasePath);
-  static QStringList findFsxFiles();
+  static QString nonWindowsPath(SimulatorType type);
+
 };
 
 } /* namespace fs */

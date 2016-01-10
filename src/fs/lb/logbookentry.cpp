@@ -47,7 +47,7 @@ void LogbookEntry::read(qint64 startpos, qint64 len, int entryNumber)
   stream->readUInt();
 
   // Read date
-  year = checkNull(stream->readShort(), "year", entryNumber);
+  year = checkNull(stream->readUShort(), "year", entryNumber);
   stream->readUByte();
   month = checkNull(stream->readUByte(), "month", entryNumber);
   day = checkNull(stream->readUByte(), "day", entryNumber);
@@ -81,7 +81,7 @@ void LogbookEntry::read(qint64 startpos, qint64 len, int entryNumber)
 
   // Aircraft information
   aircraftType = static_cast<types::AircraftType>(stream->readUByte());
-  flags = stream->readShort();
+  flags = stream->readUShort();
   // bool multimotor = (flags & 0x4000) != 0;
   int planeDescrLen = stream->readUByte();
 
@@ -189,7 +189,7 @@ void LogbookEntry::fillEntryStatement(SqlQuery& stmt)
   stmt.bindValue(":aircraft_type", aircraftType);
   stmt.bindValue(":aircraft_flags", flags);
 
-  // Use a string to descripte all intermediate destinations
+  // Use a string to describe all intermediate destinations
   stmt.bindValue(":visits", visitsToString());
 
   stmt.bindValue(":startdate", QVariant(QVariant::String));
@@ -212,8 +212,6 @@ void LogbookEntry::fillVisitStatement(SqlQuery& stmt, int visitIndex)
   stmt.bindValue(":airport", airportVisits.at(visitIndex).getAirport());
   stmt.bindValue(":landings", airportVisits.at(visitIndex).getLandings());
 }
-
-
 
 SqlQuery LogbookEntry::prepareVisitStatement(SqlDatabase *db)
 {

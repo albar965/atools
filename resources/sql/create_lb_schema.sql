@@ -81,9 +81,9 @@ SELECT
   CASE
     WHEN l.aircraft_type =0 THEN 'Unknown'
     WHEN l.aircraft_type =1 THEN 'Glider'
-    WHEN l.aircraft_type =2 THEN 'Fixed wing'
+    WHEN l.aircraft_type =2 THEN 'Fixed Wing'
     WHEN l.aircraft_type =3 THEN 'Amphibious'
-    WHEN l.aircraft_type =4 THEN 'Rotary'
+    WHEN l.aircraft_type =4 THEN 'Rotor'
     ELSE 'unknown'
   END as aircraft_type,
   case
@@ -111,9 +111,9 @@ SELECT
   CASE
     WHEN l.aircraft_type =0 THEN 'Unknown'
     WHEN l.aircraft_type =1 THEN 'Glider'
-    WHEN l.aircraft_type =2 THEN 'Fixed wing'
+    WHEN l.aircraft_type =2 THEN 'Fixed Wing'
     WHEN l.aircraft_type =3 THEN 'Amphibious'
-    WHEN l.aircraft_type =4 THEN 'Rotary'
+    WHEN l.aircraft_type =4 THEN 'Rotor'
   ELSE 'unknown'
   END as aircraft_type,
   case
