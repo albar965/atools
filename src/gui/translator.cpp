@@ -29,10 +29,11 @@ namespace atools {
 namespace gui {
 
 QVector<QTranslator *> Translator::translators;
+bool Translator::loaded = false;
 
 void Translator::load(const QString& language)
 {
-  if(translators.isEmpty())
+  if(!loaded)
   {
     QFileInfo appFilePath(QCoreApplication::applicationFilePath());
     QString appPath = appFilePath.absolutePath();
@@ -53,6 +54,7 @@ void Translator::load(const QString& language)
 
     if(!loadAndInstall("qtbase", appPath, language))
       loadAndInstall("qtbase", translationsPath, language);
+    loaded = true;
   }
   else
     qWarning() << "Translator::load called more than once";
@@ -60,10 +62,11 @@ void Translator::load(const QString& language)
 
 void Translator::unload()
 {
-  if(!translators.isEmpty())
+  if(loaded)
   {
     qDeleteAll(translators);
     translators.clear();
+    loaded = false;
   }
   else
     qWarning() << "Translator::unload called more than once";
