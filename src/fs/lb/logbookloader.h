@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_LB_IMPORTER_H
 #define ATOOLS_FS_LB_IMPORTER_H
 
+#include "fs/fspaths.h"
+
 #include <QString>
 
 namespace atools {
@@ -51,7 +53,10 @@ public:
    * @param append If true loads only new entries into the database, otherwise
    * creates new schema and loads all.
    */
-  void loadLogbook(const QString& filename, const LogbookEntryFilter& filter, bool append);
+  void loadLogbook(const QString& filename,
+                   atools::fs::SimulatorType type,
+                   const LogbookEntryFilter& filter,
+                   bool append);
 
   /*
    * @return Number of logbook entries loaded.

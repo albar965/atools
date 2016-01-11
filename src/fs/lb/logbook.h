@@ -18,6 +18,10 @@
 #ifndef ATOOLS_FS_LB_LOGBOOK_H
 #define ATOOLS_FS_LB_LOGBOOK_H
 
+#include "fs/fspaths.h"
+
+#include <QString>
+
 class QFile;
 
 namespace atools {
@@ -44,7 +48,7 @@ public:
    * @param db Destination database
    * @return
    */
-  Logbook(atools::sql::SqlDatabase *sqlDb);
+  Logbook(atools::sql::SqlDatabase *sqlDb, atools::fs::SimulatorType type);
 
   /*
    * Reads the whole Logbook.BIN file into the
@@ -72,6 +76,7 @@ private:
 
   int numLoaded = 0;
   atools::sql::SqlDatabase *db;
+  atools::fs::SimulatorType sim;
 };
 
 } /* namespace lb */

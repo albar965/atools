@@ -46,10 +46,13 @@ public:
   void printTableStats(OUT& out, bool endline = true);
 
   /* Creates an insert statement including all columns for the given table. */
-  QString buildInsertStatement(const QString& tablename);
+  QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString());
 
   /* Creates a select statement including all columns for the given table. */
   QString buildSelectStatement(const QString& tablename);
+
+  /* @return true if table exists */
+  bool hasTable(const QString& tablename);
 
   /* @return true if table exists and has rows */
   bool hasTableAndRows(const QString& tablename);

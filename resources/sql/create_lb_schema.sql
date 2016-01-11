@@ -25,7 +25,8 @@ drop table if exists logbook;
 -- Some fields are defined for case insensitive searching
 create table logbook
 (
-  logbook_id integer primary key,               -- Generated key based on the ordering in the binary file
+  logbook_id integer not null,                  -- Generated key based on the ordering in the binary files
+  simulator_id integer not null,                -- Simulator 0=FSX, 1=FSXSE, 2=P3DV2 or 3=P3DV3
   startdate integer,                            -- Start date and time of the flight in seconds from epoch
   airport_from_icao text,                       -- Airport three of four letter code of start airport
   airport_from_name text collate nocase,        -- (*) Airport name extracted from airport table
@@ -47,7 +48,8 @@ create table logbook
   aircraft_descr text  collate nocase not null, -- Aircraft description
   aircraft_type integer not null,               -- Type of aircraft - see view definition below
   aircraft_flags integer not null,              -- Misc flags for aircraft - see view definition below
-  visits text                                   -- Number of intermediate visits
+  visits text,                                   -- Number of intermediate visits
+primary key (logbook_id, simulator_id)
 );
 -- (*) only populated if airport table was found and not empty
 
@@ -58,9 +60,10 @@ create table logbook_visits
 (
   visit_id integer PRIMARY KEY,  -- Generated ID
   logbook_id integer not null,   -- Points to logbook.logbook_id
+  simulator_id integer not null, -- Points to logbook.simulator_id
   airport text,                  -- ICAO code
   landings integer,              -- Number of landings at this airport
-foreign key(logbook_id) references logbook_id(logbook)
+foreign key(logbook_id, simulator_id) references logbook(logbook_id, simulator_id)
 );
 
 
@@ -69,6 +72,7 @@ drop view if exists logbook_all;
 -- View to show most of the logbook columns decoded for debugging purposes
 create view logbook_all as
 SELECT
+  l.simulator_id,
   datetime(l.startdate, 'unixepoch') as startdate,
   l.airport_from_icao,
   l.airport_to_icao,
@@ -99,6 +103,7 @@ drop view if exists logbook_all_visits;
 -- View to show most of the logbook and visit columns decoded for debugging purposes
 create view logbook_all_visits as
 SELECT
+  l.simulator_id,
   datetime(l.startdate, 'unixepoch') as startdate,
   l.airport_from_icao,
   l.airport_to_icao,
@@ -122,6 +127,6 @@ SELECT
   END as aircraft_flags,
   v.airport as visited_airport,
   v.landings
-FROM logbook l left outer join logbook_visits v on l.logbook_id = v.logbook_id
+FROM logbook l left outer join logbook_visits v on l.logbook_id = v.logbook_id and l.simulator_id = v.simulator_id
 order by l.logbook_id desc;
 

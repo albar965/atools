@@ -54,9 +54,12 @@ void AirportLoader::loadAirports(const QString& filename)
     using atools::settings::Settings;
     SqlScript script(db);
 
-    // Drop if exists and create tables
-    script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_ap_schema.sql"));
-    db->commit();
+    if(!SqlUtil(db).hasTable("airport"))
+    {
+      // Drop if exists and create tables
+      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_ap_schema.sql"));
+      db->commit();
+    }
 
     reader.setDevice(&xmlFile);
 
@@ -65,7 +68,8 @@ void AirportLoader::loadAirports(const QString& filename)
     if(reader.name() == "data")
     {
       numLoaded = 0;
-      query->prepare(SqlUtil(db).buildInsertStatement("airport"));
+      // Use insert or replace
+      query->prepare(SqlUtil(db).buildInsertStatement("airport", "or replace"));
       readData();
 
       if(reader.error() == QXmlStreamReader::NoError)

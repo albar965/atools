@@ -28,7 +28,7 @@ SqlUtil::SqlUtil(SqlDatabase *sqlDb)
 {
 }
 
-QString SqlUtil::buildInsertStatement(const QString& tablename)
+QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause)
 {
   // TODO use QSqlDriver::sqlStatement()
   QString columnList, valueList;
@@ -47,7 +47,7 @@ QString SqlUtil::buildInsertStatement(const QString& tablename)
       valueList += ", ";
     valueList += ":" + name;
   }
-  return "insert into " + tablename + " (" + columnList + ") values(" + valueList + ")";
+  return "insert " + otherClause + " into " + tablename + " (" + columnList + ") values(" + valueList + ")";
 }
 
 QString SqlUtil::buildSelectStatement(const QString& tablename)
@@ -66,6 +66,12 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
     columnList += name;
   }
   return "select " + columnList + " from " + tablename;
+}
+
+bool SqlUtil::hasTable(const QString& tablename)
+{
+  QSqlRecord rec = db->record(tablename);
+  return !rec.isEmpty();
 }
 
 bool SqlUtil::hasTableAndRows(const QString& tablename)

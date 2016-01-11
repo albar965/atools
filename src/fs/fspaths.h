@@ -25,7 +25,9 @@ namespace fs {
 
 enum SimulatorType
 {
-  /* Force numeric values since these are used as indexes */
+  /* Force numeric values since these are used as indexes.
+   * Do not reorder or extend. */
+
   /* Platform: FSX, FSX XPack, FSX Gold */
   FSX = 0,
 
@@ -39,13 +41,17 @@ enum SimulatorType
   P3D_V3 = 3
 };
 
+/*
+ * Allows to find Flight Simulator related paths and check for installed simulators.
+ */
 class FsPaths
 {
 public:
-  /* Get installation path to fsx.exe, etc. */
+  /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed */
   static QString getBasePath(SimulatorType type);
 
-  /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien", etc. */
+  /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
+   * etc. Returns the documents path if FS files cannot be found. */
   static QString getFilesPath(SimulatorType type);
 
   /* Path to scenery.cfg */

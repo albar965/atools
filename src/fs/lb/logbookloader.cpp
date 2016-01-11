@@ -21,7 +21,10 @@
 #include "exception.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
 #include "settings/settings.h"
+#include "logging/loggingdefs.h"
 
 #include <QFile>
 
@@ -31,13 +34,18 @@ namespace lb {
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
+using atools::sql::SqlQuery;
+using atools::sql::SqlUtil;
 
 LogbookLoader::LogbookLoader(SqlDatabase *sqlDb)
   : db(sqlDb)
 {
 }
 
-void LogbookLoader::loadLogbook(const QString& filename, const LogbookEntryFilter& filter, bool append)
+void LogbookLoader::loadLogbook(const QString& filename,
+                                atools::fs::SimulatorType type,
+                                const LogbookEntryFilter& filter,
+                                bool append)
 {
   QFile file(filename);
   if(file.open(QIODevice::ReadOnly))
@@ -48,11 +56,26 @@ void LogbookLoader::loadLogbook(const QString& filename, const LogbookEntryFilte
 
     if(!append)
     {
-      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_lb_schema.sql"));
+      SqlUtil util(db);
+      if(!(util.hasTable("logbook") && util.hasTable("logbook_visits")))
+        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_lb_schema.sql"));
+      else
+      {
+        SqlQuery deleteStmt(db);
+        deleteStmt.exec("delete from logbook_visits where simulator_id = " +
+                        QString::number(static_cast<int>(type)));
+        qInfo() << "Deleted" << deleteStmt.numRowsAffected() << "from logbook_visits of sim type" << type;
+
+        deleteStmt.exec("delete from logbook where simulator_id = " +
+                        QString::number(static_cast<int>(type)));
+        qInfo() << "Deleted" << deleteStmt.numRowsAffected() << "of sim type" << type;
+
+        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/clean_lb_schema.sql"));
+      }
       db->commit();
     }
 
-    Logbook logbook(db);
+    Logbook logbook(db, type);
     logbook.read(&file, filter, append);
     numLoaded = logbook.getNumLoaded();
     db->commit();

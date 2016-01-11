@@ -34,8 +34,8 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::io::BinaryStream;
 
-Logbook::Logbook(SqlDatabase *sqlDb)
-  : db(sqlDb)
+Logbook::Logbook(SqlDatabase *sqlDb, atools::fs::SimulatorType type)
+  : db(sqlDb), sim(type)
 {
 }
 
@@ -106,6 +106,7 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
           e.fillEntryStatement(entryStmt);
 
           entryStmt.bindValue(":logbook_id", logbookId);
+          entryStmt.bindValue(":simulator_id", sim);
 
           // select and add airport information if airport table is available
           if(hasAirports)
@@ -162,6 +163,7 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
             e.fillVisitStatement(visitStmt, i);
             visitStmt.bindValue(":visit_id", visitId);
             visitStmt.bindValue(":logbook_id", logbookId);
+            visitStmt.bindValue(":simulator_id", sim);
             visitStmt.exec();
             visitId++;
           }
