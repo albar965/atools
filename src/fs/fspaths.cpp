@@ -65,9 +65,9 @@ QString FsPaths::getBasePath(SimulatorType type)
 #if defined(Q_OS_WIN32)
   // Try to get the FSX path from the Windows registry
   QSettings settings(registryPath(type), QSettings::NativeFormat);
-  fsxPath = settings.value(registryKey(type)).toString();
-  if(fsxPath.endsWith('\\'))
-    fsxPath.chop(1);
+  fsPath = settings.value(registryKey(type)).toString();
+  if(fsPath.endsWith('\\'))
+    fsPath.chop(1);
 #else
   // No Windows here - get the path for debugging purposes
   // from the configuration file
