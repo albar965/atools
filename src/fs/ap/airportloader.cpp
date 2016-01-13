@@ -161,6 +161,15 @@ void AirportLoader::readIcao()
   query->exec();
 }
 
+void AirportLoader::dropDatabase()
+{
+  using atools::settings::Settings;
+
+  SqlScript script(db);
+  script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/drop_ap_schema.sql"));
+  db->commit();
+}
+
 } // namespace ap
 } // namespace fs
 } // namespace atools

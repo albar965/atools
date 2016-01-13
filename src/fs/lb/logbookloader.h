@@ -66,6 +66,9 @@ public:
     return numLoaded;
   }
 
+  /* Drops all tables and views */
+  void dropDatabase();
+
 private:
   atools::sql::SqlDatabase *db;
   int numLoaded = 0;

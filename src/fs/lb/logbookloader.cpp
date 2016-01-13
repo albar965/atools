@@ -93,6 +93,15 @@ void LogbookLoader::loadLogbook(const QString& filename,
                     arg(file.fileName()).arg(file.errorString()));
 }
 
+void LogbookLoader::dropDatabase()
+{
+  using atools::settings::Settings;
+
+  SqlScript script(db);
+  script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/drop_lb_schema.sql"));
+  db->commit();
+}
+
 } // namespace lb
 } // namespace fs
 } // namespace atools

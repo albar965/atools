@@ -40,10 +40,13 @@ enum SimulatorType
   P3D_V2 = 2,
 
   /* Platform: Prepar3d Version 3 */
-  P3D_V3 = 3
+  P3D_V3 = 3,
+
+  /* Special value to pass to certain queries */
+  ALL_SIMULATORS = -1
 };
 
-/* Array of all four types */
+/* Array of all four valid types */
 extern const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
 
 /*
