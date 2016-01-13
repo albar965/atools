@@ -58,12 +58,12 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
 
   SqlQuery countStmt(db);
 
-  countStmt.exec("select count(*) from logbook");
+  countStmt.exec("select count(*) from logbook where simulator_id = " + QString().setNum(sim));
   if(countStmt.next())
     numEntriesInDb = countStmt.value(0).toInt();
 
   // Calculate the next available logbook ID
-  countStmt.exec("select max(logbook_id) from logbook");
+  countStmt.exec("select max(logbook_id) from logbook where simulator_id = " + QString().setNum(sim));
   if(countStmt.next())
     logbookId = countStmt.value(0).toInt() + 1;
 

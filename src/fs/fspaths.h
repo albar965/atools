@@ -23,6 +23,8 @@
 namespace atools {
 namespace fs {
 
+#define NUM_SIMULATOR_TYPES 4
+
 enum SimulatorType
 {
   /* Force numeric values since these are used as indexes.
@@ -40,6 +42,9 @@ enum SimulatorType
   /* Platform: Prepar3d Version 3 */
   P3D_V3 = 3
 };
+
+/* Array of all four types */
+extern const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
 
 /*
  * Allows to find Flight Simulator related paths and check for installed simulators.

@@ -31,6 +31,8 @@
 namespace atools {
 namespace fs {
 
+const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] = {FSX, FSX_SE, P3D_V2, P3D_V3};
+
 const char *FsPaths::FSX_REGISTRY_PATH =
   "HKEY_CURRENT_USER\\Software\\Microsoft\\Microsoft Games\\Flight Simulator\\10.0";
 const char *FsPaths::FSX_REGISTRY_KEY = "AppPath";
