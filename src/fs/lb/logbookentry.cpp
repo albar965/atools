@@ -187,7 +187,8 @@ void LogbookEntry::fillEntryStatement(SqlQuery& stmt)
   stmt.bindValue(":aircraft_reg", aircraftRegistration);
   stmt.bindValue(":aircraft_descr", aircraftDescription);
   stmt.bindValue(":aircraft_type", aircraftType);
-  stmt.bindValue(":aircraft_flags", flags);
+  // Store only multi engine since this is the only available flag
+  stmt.bindValue(":aircraft_flags", flags & types::AIRCRAFT_FLAG_MULTIMOTOR);
 
   // Use a string to describe all intermediate destinations
   stmt.bindValue(":visits", visitsToString());
