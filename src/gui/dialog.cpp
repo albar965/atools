@@ -138,6 +138,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey,
                                const QString& message,
                                const QString& checkBoxMessage,
                                QMessageBox::StandardButtons buttons,
+                               QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {
   int retval = defaultButton;
@@ -148,6 +149,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey,
   {
     QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
+    msg.setDefaultButton(dialogDefaultButton);
     retval = msg.exec();
     s->setValue(settingsKey, !msg.checkBox()->isChecked());
     s.syncSettings();

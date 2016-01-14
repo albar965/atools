@@ -114,7 +114,7 @@ public:
                          const QString& message,
                          const QString& checkBoxMessage,
                          QMessageBox::StandardButtons buttons,
-                         QMessageBox::StandardButton defaultButton);
+                         QMessageBox::StandardButton dialogDefaultButton, QMessageBox::StandardButton defaultButton);
 
 private:
   QString fileDialog(QFileDialog& dlg,
