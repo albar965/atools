@@ -72,25 +72,25 @@ void LogbookLoader::loadLogbook(const QString& filename,
 
         script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/clean_lb_schema.sql"));
       }
-      db->commit();
     }
 
     Logbook logbook(db, type);
     logbook.read(&file, filter, append);
     numLoaded = logbook.getNumLoaded();
-    db->commit();
 
     if(!append)
-    {
       script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_lb_schema.sql"));
-      db->commit();
-    }
 
     file.close();
   }
   else
+  {
+    db->rollback();
     throw Exception(QString("Cannot open logbook file \"%1\". Reason: %2.").
                     arg(file.fileName()).arg(file.errorString()));
+  }
+
+  db->commit();
 }
 
 void LogbookLoader::dropDatabase()

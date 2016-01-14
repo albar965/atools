@@ -45,6 +45,13 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
   BinaryStream bs(file, QDataStream::LittleEndian);
 
   qint64 size = bs.getFileSize();
+  if(size == 0 || size > INT32_MAX)
+  {
+    // Lets assume that logbook files are never bigger than 2GB
+    db->rollback();
+    throw Exception(QString("Logbook file has invalid size."));
+  }
+
   int logbookId = 0, visitId = 0, entryNumber = 0, numEntriesInDb = 0, inserted = 0, filtered = 0;
   bool hasAirports = atools::sql::SqlUtil(db).hasTableAndRows("airport");
 
@@ -87,8 +94,8 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
 
     if(length == 0)
     {
-      qWarning() << "Record length = 0 at entry" << entryNumber;
-      break;
+      db->rollback();
+      throw Exception(QString("Invalid logbook file. Record length = 0 at entry %1.").arg(entryNumber));
     }
 
     if(type == types::RECORD_LOGBOOK_ENTRY)
@@ -181,10 +188,8 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
     }
     else
     {
-      qWarning() << "unknown type" << type << "at entry" << entryNumber;
-
-      // Skip this unknown entry
-      bs.seekg(length);
+      db->rollback();
+      throw Exception(QString("Invalid logbook file. Unknown type %1 at entry %2.").arg(type).arg(entryNumber));
     }
   } // while
 

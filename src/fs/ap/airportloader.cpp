@@ -55,11 +55,8 @@ void AirportLoader::loadAirports(const QString& filename)
     SqlScript script(db);
 
     if(!SqlUtil(db).hasTable("airport"))
-    {
       // Drop if exists and create tables
       script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_ap_schema.sql"));
-      db->commit();
-    }
 
     reader.setDevice(&xmlFile);
 
@@ -71,25 +68,27 @@ void AirportLoader::loadAirports(const QString& filename)
       // Use insert or replace
       query->prepare(SqlUtil(db).buildInsertStatement("airport", "or replace"));
       readData();
-
-      if(reader.error() == QXmlStreamReader::NoError)
-        db->commit();
     }
     else
       reader.raiseError(QObject::tr("The file is not an runways.xml file. Element \"data\" not found."));
 
     if(reader.error() == QXmlStreamReader::NoError)
-    {
       script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_ap_schema.sql"));
-      db->commit();
-    }
     else
+    {
+      db->rollback();
       throw Exception(QString(QObject::tr("Error reading runways.xml file \"%1\". Reason: %2.")).
                       arg(xmlFile.fileName()).arg(reader.errorString()));
+    }
   }
   else
+  {
+    db->rollback();
     throw Exception(QString(QObject::tr("Cannot open runways.xml file \"%1\". Reason: %2.")).
                     arg(xmlFile.fileName()).arg(xmlFile.errorString()));
+  }
+
+  db->commit();
 }
 
 void AirportLoader::readData()
