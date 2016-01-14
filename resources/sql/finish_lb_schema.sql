@@ -17,17 +17,17 @@
 
 -- Create indexes for most searchable fields (paritally case insensitive)
 
-create index idx_logbook_startdate on logbook(startdate);
-create index idx_logbook_airport_from_icao on logbook(airport_from_icao);
-create index idx_logbook_airport_to_icao on logbook(airport_to_icao);
-create index idx_logbook_description on logbook(description);
-create index idx_logbook_total_time on logbook(total_time);
-create index idx_logbook_night_time on logbook(night_time);
-create index idx_logbook_instrument_time on logbook(instrument_time);
-create index idx_logbook_aircraft_reg on logbook(aircraft_reg);
-create index idx_logbook_aircraft_descr on logbook(aircraft_descr);
-create index idx_logbook_aircraft_type on logbook(aircraft_type);
-create index idx_logbook_aircraft_flags on logbook(aircraft_flags);
+create index if not exists idx_logbook_startdate on logbook(startdate);
+create index if not exists idx_logbook_airport_from_icao on logbook(airport_from_icao);
+create index if not exists idx_logbook_airport_to_icao on logbook(airport_to_icao);
+create index if not exists idx_logbook_description on logbook(description);
+create index if not exists idx_logbook_total_time on logbook(total_time);
+create index if not exists idx_logbook_night_time on logbook(night_time);
+create index if not exists idx_logbook_instrument_time on logbook(instrument_time);
+create index if not exists idx_logbook_aircraft_reg on logbook(aircraft_reg);
+create index if not exists idx_logbook_aircraft_descr on logbook(aircraft_descr);
+create index if not exists idx_logbook_aircraft_type on logbook(aircraft_type);
+create index if not exists idx_logbook_aircraft_flags on logbook(aircraft_flags);
 
-create index idx_logbook_visits_lbd on logbook_visits(logbook_id);
-create index idx_logbook_visits_ap on logbook_visits(airport);
+create index if not exists idx_logbook_visits_lbd on logbook_visits(logbook_id);
+create index if not exists idx_logbook_visits_ap on logbook_visits(airport);
