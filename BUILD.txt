@@ -8,7 +8,17 @@ Qt development packages of Core, Widgets, XML and SQL are needed with minimum ve
 Windows
 ------------------------------------------------------
 
-Get Qt Creator from http://www.qt.io.
+- Get and install Qt Creator from http://www.qt.io.
+- Import atools into the workspace.
+- Configure the project and enable shadow build for release or debug versions.
+-- For atools use the build directory of e.g.: "C:\Projects\atools\release"
+- Adapt the QT_BIN and GIT_BIN variables in "atools.pro".
+- Run qmake from Qt Creator
+- Build
+
+It is important that the shadow build directories reside within the project directory and are
+named "release" and "debug" depending on desired build. Do not use the default shadow names, this will
+break project dependencies.
 
 Linux
 ------------------------------------------------------

@@ -82,7 +82,9 @@ unix {
 DISTFILES += \
     LICENSE.txt \
     README.txt \
-    uncrustify.cfg
+    uncrustify.cfg \
+    CHANGELOG.txt \
+    BUILD.txt
 
 RESOURCES += \
     atools.qrc

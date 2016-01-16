@@ -1,0 +1,5 @@
+
+
+
+Version 1.0.0
+* Initial release for Little Logbook 1.0.2
