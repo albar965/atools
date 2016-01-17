@@ -27,7 +27,7 @@ namespace atools {
 namespace gui {
 
 /*
- * Provides two method to load and unload system and application translations
+ * Provides two methods to load and unload system and application translations
  * from various places.
  */
 class Translator
@@ -62,6 +62,7 @@ private:
 
   static QVector<QTranslator *> translators;
   static bool loadAndInstall(const QString& name, const QString& dir, const QString& language);
+
   static bool loaded;
 
 };

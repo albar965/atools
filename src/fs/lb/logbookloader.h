@@ -45,8 +45,9 @@ public:
   LogbookLoader(atools::sql::SqlDatabase *sqlDb);
 
   /*
-   * Drops and creates all tables, views and indexes and loads the given file
-   * into the database. Throws Exception in case of failure.
+   * Creates all tables, views and indexes if they do not exist and
+   * loads the given file into the database. Throws Exception in
+   * case of failure.
    *
    * @param filename the Logbook.BIN file
    * @param filter Defines which entries should be omitted

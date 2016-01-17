@@ -116,7 +116,7 @@ QString FsPaths::getFilesPath(SimulatorType type)
     LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
     FreeLibrary(hInstLanguageDll);
 
-    // Check all Documents folders for path - there should be only one
+    // Check all Document folders for path - there should be only one
     for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
     {
       QFileInfo fsFilesDirInfo(document + QDir::separator() + QString::fromWCharArray(filesPathWChar));
@@ -171,6 +171,9 @@ QString FsPaths::settingsKey(SimulatorType type)
 
     case P3D_V3:
       return SETTINGS_P3D_V3_PATH;
+
+    case atools::fs::ALL_SIMULATORS:
+      break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
@@ -191,6 +194,9 @@ QString FsPaths::registryPath(SimulatorType type)
 
     case P3D_V3:
       return P3D_V3_REGISTRY_PATH;
+
+    case atools::fs::ALL_SIMULATORS:
+      break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
@@ -211,6 +217,9 @@ QString FsPaths::registryKey(SimulatorType type)
 
     case P3D_V3:
       return P3D_V3_REGISTRY_KEY;
+
+    case atools::fs::ALL_SIMULATORS:
+      break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
@@ -231,6 +240,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
 
     case P3D_V3:
       return P3D_V3_NO_WINDOWS_PATH;
+
+    case atools::fs::ALL_SIMULATORS:
+      break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;

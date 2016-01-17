@@ -55,10 +55,8 @@ public:
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
    */
-  QString openFileDialog(const QString& title,
-                         const QString& filter,
-                         const QString& settingsPrefix = QString(),
-                         const QString& path = QString());
+  QString openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix = QString(
+                           ), const QString& path = QString());
 
   /*
    * Creates an save file dialog and returns the selected file otherwise an
@@ -105,6 +103,7 @@ public:
    * @param message Dialog message
    * @param checkBoxMessage Text for the checkbox
    * @param buttons Standard buttons for the box
+   * @param dialogdefaultButton Default button that will be active in the dialog.
    * @param defaultButton Default button. This will be returned if the dialog
    * was disabled.
    * @return Selected button number
@@ -114,7 +113,8 @@ public:
                          const QString& message,
                          const QString& checkBoxMessage,
                          QMessageBox::StandardButtons buttons,
-                         QMessageBox::StandardButton dialogDefaultButton, QMessageBox::StandardButton defaultButton);
+                         QMessageBox::StandardButton dialogDefaultButton,
+                         QMessageBox::StandardButton defaultButton);
 
 private:
   QString fileDialog(QFileDialog& dlg,

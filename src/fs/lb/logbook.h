@@ -54,7 +54,7 @@ public:
    * Reads the whole Logbook.BIN file into the
    * database. Throws Exception in case of error.
    * Additional airport information is added to the tables, if the runway.xml
-   * filewas loaded before.
+   * file was loaded before.
    *
    * @param file Logbook file to read.
    * @param filter Defines which entries should be omitted

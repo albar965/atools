@@ -46,8 +46,8 @@ public:
   ~AirportLoader();
 
   /*
-   * Creates all tables and indexes and loads the airport information into the
-   * database.
+   * Creates all tables and indexes if they do not exist
+   * and loads the airport information into the * database.
    * @param filename the runways.xml file
    * Throws Exception in case of error.
    */
