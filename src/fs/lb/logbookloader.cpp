@@ -58,9 +58,15 @@ void LogbookLoader::loadLogbook(const QString& filename,
     {
       SqlUtil util(db);
       if(!(util.hasTable("logbook") && util.hasTable("logbook_visits")))
+      {
         script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_lb_schema.sql"));
+        db->commit();
+      }
       else
       {
+        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/clean_lb_schema.sql"));
+        db->commit();
+
         SqlQuery deleteStmt(db);
         deleteStmt.exec("delete from logbook_visits where simulator_id = " +
                         QString::number(static_cast<int>(type)));
@@ -69,8 +75,6 @@ void LogbookLoader::loadLogbook(const QString& filename,
         deleteStmt.exec("delete from logbook where simulator_id = " +
                         QString::number(static_cast<int>(type)));
         qInfo() << "Deleted" << deleteStmt.numRowsAffected() << "of sim type" << type;
-
-        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/clean_lb_schema.sql"));
       }
     }
 
@@ -79,9 +83,13 @@ void LogbookLoader::loadLogbook(const QString& filename,
     numLoaded = logbook.getNumLoaded();
 
     if(!append)
+    {
+      db->commit();
       script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_lb_schema.sql"));
+    }
 
     file.close();
+    db->commit();
   }
   else
   {
@@ -89,8 +97,6 @@ void LogbookLoader::loadLogbook(const QString& filename,
     throw Exception(QString("Cannot open logbook file \"%1\". Reason: %2.").
                     arg(file.fileName()).arg(file.errorString()));
   }
-
-  db->commit();
 }
 
 void LogbookLoader::dropDatabase()

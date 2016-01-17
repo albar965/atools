@@ -73,7 +73,11 @@ void AirportLoader::loadAirports(const QString& filename)
       reader.raiseError(QObject::tr("The file is not an runways.xml file. Element \"data\" not found."));
 
     if(reader.error() == QXmlStreamReader::NoError)
+    {
+      db->commit();
       script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_ap_schema.sql"));
+      db->commit();
+    }
     else
     {
       db->rollback();
@@ -87,8 +91,6 @@ void AirportLoader::loadAirports(const QString& filename)
     throw Exception(QString(QObject::tr("Cannot open runways.xml file \"%1\". Reason: %2.")).
                     arg(xmlFile.fileName()).arg(xmlFile.errorString()));
   }
-
-  db->commit();
 }
 
 void AirportLoader::readData()

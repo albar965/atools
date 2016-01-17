@@ -17,6 +17,9 @@
 
 -- Drop all indexes to speed up loading
 
+drop index if exists idx_logbook_visits_lbd;
+drop index if exists idx_logbook_visits_ap;
+
 drop index if exists idx_logbook_startdate;
 drop index if exists idx_logbook_airport_from_icao;
 drop index if exists idx_logbook_airport_to_icao;
@@ -29,5 +32,3 @@ drop index if exists idx_logbook_aircraft_descr;
 drop index if exists idx_logbook_aircraft_type;
 drop index if exists idx_logbook_aircraft_flags;
 
-drop index if exists idx_logbook_visits_lbd;
-drop index if exists idx_logbook_visits_ap;
