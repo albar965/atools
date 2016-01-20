@@ -1,5 +1,4 @@
-Version 1.5.0.beta
-* Untested
+Version 1.5.0
 
 * Added FsPaths class - Flight simulator installation directory and files directory are now automatically detected
   for all simulators.
