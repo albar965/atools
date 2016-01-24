@@ -46,7 +46,74 @@ HEADERS += src/atools.h \
     src/fs/lb/logbookloader.h \
     src/logging/loggingdefs.h \
     src/fs/lb/logbookentryfilter.h \
-    src/fs/fspaths.h
+    src/fs/fspaths.h \
+    src/fs/bgl/ap/del/deleteairport.h \
+    src/fs/bgl/ap/del/deletecom.h \
+    src/fs/bgl/ap/del/deleterunway.h \
+    src/fs/bgl/ap/rw/runway.h \
+    src/fs/bgl/ap/rw/runwayapplights.h \
+    src/fs/bgl/ap/rw/runwayend.h \
+    src/fs/bgl/ap/rw/runwayvasi.h \
+    src/fs/bgl/ap/airport.h \
+    src/fs/bgl/ap/approach.h \
+    src/fs/bgl/ap/com.h \
+    src/fs/bgl/ap/parking.h \
+    src/fs/bgl/ap/transition.h \
+    src/fs/bgl/nav/dme.h \
+    src/fs/bgl/nav/glideslope.h \
+    src/fs/bgl/nav/ils.h \
+    src/fs/bgl/nav/ilsvor.h \
+    src/fs/bgl/nav/localizer.h \
+    src/fs/bgl/nav/marker.h \
+    src/fs/bgl/nav/navbase.h \
+    src/fs/bgl/nav/ndb.h \
+    src/fs/bgl/nav/routeentry.h \
+    src/fs/bgl/nav/routewaypoint.h \
+    src/fs/bgl/nav/vor.h \
+    src/fs/bgl/nav/waypoint.h \
+    src/fs/bgl/nl/namelist.h \
+    src/fs/bgl/nl/namelistentry.h \
+    src/fs/bgl/bglbase.h \
+    src/fs/bgl/bglexception.h \
+    src/fs/bgl/bglfile.h \
+    src/fs/bgl/bglposition.h \
+    src/fs/bgl/converter.h \
+    src/fs/bgl/header.h \
+    src/fs/bgl/record.h \
+    src/fs/bgl/recordtypes.h \
+    src/fs/bgl/section.h \
+    src/fs/bgl/sectiontype.h \
+    src/fs/bgl/subsection.h \
+    src/fs/bgl/util.h \
+    src/fs/bglreaderoptions.h \
+    src/fs/scenery/fileresolver.h \
+    src/fs/scenery/sceneryarea.h \
+    src/fs/scenery/scenerycfg.h \
+    src/fs/scenery/inireader.h \
+    src/fs/writer/writerbase.h \
+    src/fs/writer/writerbasebasic.h \
+    src/fs/writer/ap/rw/runwayendwriter.h \
+    src/fs/writer/ap/rw/runwaywriter.h \
+    src/fs/writer/ap/airportwriter.h \
+    src/fs/writer/ap/approachwriter.h \
+    src/fs/writer/ap/comwriter.h \
+    src/fs/writer/ap/deleteairportwriter.h \
+    src/fs/writer/ap/deleteprocessor.h \
+    src/fs/writer/ap/parkingwriter.h \
+    src/fs/writer/ap/transitionwriter.h \
+    src/fs/writer/meta/bglfilewriter.h \
+    src/fs/writer/meta/sceneryareawriter.h \
+    src/fs/writer/nav/ilswriter.h \
+    src/fs/writer/nav/markerwriter.h \
+    src/fs/writer/nav/ndbwriter.h \
+    src/fs/writer/nav/temproutewriter.h \
+    src/fs/writer/nav/vorwriter.h \
+    src/fs/writer/nav/waypointwriter.h \
+    src/fs/writer/airportindex.h \
+    src/fs/writer/datawriter.h \
+    src/fs/writer/routeresolver.h \
+    src/fs/writer/runwayindex.h \
+    src/opt/options.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -72,7 +139,74 @@ SOURCES += src/atools.cpp \
     src/fs/lb/logbookloader.cpp \
     src/fs/lb/types.cpp \
     src/fs/lb/logbookentryfilter.cpp \
-    src/fs/fspaths.cpp
+    src/fs/fspaths.cpp \
+    src/fs/bgl/ap/del/deleteairport.cpp \
+    src/fs/bgl/ap/del/deletecom.cpp \
+    src/fs/bgl/ap/del/deleterunway.cpp \
+    src/fs/bgl/ap/rw/runway.cpp \
+    src/fs/bgl/ap/rw/runwayapplights.cpp \
+    src/fs/bgl/ap/rw/runwayend.cpp \
+    src/fs/bgl/ap/rw/runwayvasi.cpp \
+    src/fs/bgl/ap/airport.cpp \
+    src/fs/bgl/ap/approach.cpp \
+    src/fs/bgl/ap/com.cpp \
+    src/fs/bgl/ap/parking.cpp \
+    src/fs/bgl/ap/transition.cpp \
+    src/fs/bgl/nav/dme.cpp \
+    src/fs/bgl/nav/glideslope.cpp \
+    src/fs/bgl/nav/ils.cpp \
+    src/fs/bgl/nav/ilsvor.cpp \
+    src/fs/bgl/nav/localizer.cpp \
+    src/fs/bgl/nav/marker.cpp \
+    src/fs/bgl/nav/navbase.cpp \
+    src/fs/bgl/nav/ndb.cpp \
+    src/fs/bgl/nav/routeentry.cpp \
+    src/fs/bgl/nav/routewaypoint.cpp \
+    src/fs/bgl/nav/vor.cpp \
+    src/fs/bgl/nav/waypoint.cpp \
+    src/fs/bgl/nl/namelist.cpp \
+    src/fs/bgl/nl/namelistentry.cpp \
+    src/fs/bgl/bglbase.cpp \
+    src/fs/bgl/bglfile.cpp \
+    src/fs/bgl/bglposition.cpp \
+    src/fs/bgl/converter.cpp \
+    src/fs/bgl/header.cpp \
+    src/fs/bgl/record.cpp \
+    src/fs/bgl/recordtypes.cpp \
+    src/fs/bgl/section.cpp \
+    src/fs/bgl/sectiontype.cpp \
+    src/fs/bgl/subsection.cpp \
+    src/fs/bgl/bglexception.cpp \
+    src/fs/bgl/util.cpp \
+    src/fs/bglreaderoptions.cpp \
+    src/fs/scenery/fileresolver.cpp \
+    src/fs/scenery/sceneryarea.cpp \
+    src/fs/scenery/scenerycfg.cpp \
+    src/fs/scenery/inireader.cpp \
+    src/fs/writer/writerbasebasic.cpp \
+    src/fs/bglreader.cpp \
+    src/fs/writer/ap/rw/runwayendwriter.cpp \
+    src/fs/writer/ap/rw/runwaywriter.cpp \
+    src/fs/writer/ap/airportwriter.cpp \
+    src/fs/writer/ap/approachwriter.cpp \
+    src/fs/writer/ap/comwriter.cpp \
+    src/fs/writer/ap/deleteairportwriter.cpp \
+    src/fs/writer/ap/deleteprocessor.cpp \
+    src/fs/writer/ap/parkingwriter.cpp \
+    src/fs/writer/ap/transitionwriter.cpp \
+    src/fs/writer/meta/bglfilewriter.cpp \
+    src/fs/writer/meta/sceneryareawriter.cpp \
+    src/fs/writer/nav/ilswriter.cpp \
+    src/fs/writer/nav/markerwriter.cpp \
+    src/fs/writer/nav/ndbwriter.cpp \
+    src/fs/writer/nav/temproutewriter.cpp \
+    src/fs/writer/nav/vorwriter.cpp \
+    src/fs/writer/nav/waypointwriter.cpp \
+    src/fs/writer/airportindex.cpp \
+    src/fs/writer/datawriter.cpp \
+    src/fs/writer/routeresolver.cpp \
+    src/fs/writer/runwayindex.cpp \
+    src/opt/options.cpp
 
 unix {
     target.path = /usr/lib

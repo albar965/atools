@@ -40,6 +40,7 @@ class SqlQuery
 {
 public:
   explicit SqlQuery(QSqlResult *r);
+  explicit SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb);
   explicit SqlQuery(const QString& queryStr = QString(), const QSqlDatabase& sqlDb = QSqlDatabase());
   explicit SqlQuery(const SqlDatabase& db);
   explicit SqlQuery(const SqlDatabase *db);

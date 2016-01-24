@@ -32,6 +32,13 @@ SqlQuery::SqlQuery(QSqlResult *r)
   this->queryString = QString();
 }
 
+SqlQuery::SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb)
+{
+  this->query = QSqlQuery(queryStr, sqlDb.getQSqlDatabase());
+  this->queryString = queryStr;
+
+}
+
 SqlQuery::SqlQuery(const QString& queryStr, const QSqlDatabase& sqlDb)
 {
   this->query = QSqlQuery(queryStr, sqlDb);
