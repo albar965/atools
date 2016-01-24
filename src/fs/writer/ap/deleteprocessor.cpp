@@ -14,6 +14,7 @@
 #include "../../bgl/ap/del/deleteairport.h"
 #include "../../bgl/util.h"
 #include "../../bgl/ap/airport.h"
+#include "fs/writer/ap/transitionwriter.h"
 
 #include <functional>
 #include <QDebug>
@@ -32,14 +33,14 @@ class IdColFunc :
   public std::binary_function<SqlQuery&, SqlQuery&, bool>
 {
 public:
-  IdColFunc(const QString& col, IDSOURCE& writer)
+  IdColFunc(const QString& col, IDSOURCE *writer)
     : writer(writer), col(col), bindCol(":" + col)
   {
   }
 
   bool operator()(SqlQuery& from, SqlQuery& to)
   {
-    int nextId = writer.getNextId();
+    int nextId = writer->getNextId();
     to.bindValue(bindCol, nextId);
 
     for(QPair<QString, int> iter : fixedColValues)
@@ -53,7 +54,7 @@ public:
   QList<QPair<QString, int> > fixedColValues;
 
 private:
-  IDSOURCE& writer;
+  IDSOURCE *writer;
   QString col;
   QString bindCol;
 };

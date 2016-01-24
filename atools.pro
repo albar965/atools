@@ -113,7 +113,8 @@ HEADERS += src/atools.h \
     src/fs/writer/datawriter.h \
     src/fs/writer/routeresolver.h \
     src/fs/writer/runwayindex.h \
-    src/opt/options.h
+    src/opt/options.h \
+    src/opt/option.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -206,7 +207,8 @@ SOURCES += src/atools.cpp \
     src/fs/writer/datawriter.cpp \
     src/fs/writer/routeresolver.cpp \
     src/fs/writer/runwayindex.cpp \
-    src/opt/options.cpp
+    src/opt/options.cpp \
+    src/opt/option.cpp
 
 unix {
     target.path = /usr/lib

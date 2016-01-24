@@ -7,6 +7,7 @@
 
 #include "bglfilewriter.h"
 #include "../datawriter.h"
+#include "fs/writer/meta/sceneryareawriter.h"
 
 #include <QFileInfo>
 #include <QDateTime>
@@ -26,7 +27,7 @@ void BglFileWriter::writeObject(const BglFile *type)
   QFileInfo fi(type->getFilename());
 
   bind(":bgl_file_id", getNextId());
-  bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter().getCurrentId());
+  bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
   bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
   bind(":file_modification_time", static_cast<int>(fi.lastModified().toTime_t()));
   bind(":filename", type->getFilename());

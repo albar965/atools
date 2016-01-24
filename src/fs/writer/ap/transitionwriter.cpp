@@ -8,6 +8,9 @@
 #include "../datawriter.h"
 #include "../../bgl/util.h"
 #include "transitionwriter.h"
+#include "fs/bglreaderoptions.h"
+#include "fs/writer/ap/approachwriter.h"
+#include "fs/writer/ap/airportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -20,10 +23,10 @@ void TransitionWriter::writeObject(const Transition *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Transition for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":transition_id", getNextId());
-  bind(":approach_id", getDataWriter().getApproachWriter().getCurrentId());
+  bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
   bind(":type", Transition::transitionTypeToStr(type->getType()));
   bind(":num_legs", type->getNumLegs());
   bind(":fix_type", Transition::transitionFixTypeToStr(type->getTransFixType()));

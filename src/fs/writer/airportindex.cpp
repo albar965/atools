@@ -22,7 +22,7 @@ int AirportIndex::getAirportId(const QString& airportIdent, const QString& sourc
 {
   AirportIndexTypeConstIter it = airportIndexMap.find(airportIdent);
   if(it != airportIndexMap.end())
-    return it->second;
+    return it.value();
   else
   {
     qWarning().nospace().noquote() << "Airport ID for ident " << airportIdent << " not found for " <<

@@ -9,6 +9,7 @@
 #include "../meta/bglfilewriter.h"
 #include "../datawriter.h"
 #include "../../bgl/util.h"
+#include "fs/writer/airportindex.h"
 
 namespace atools {
 namespace fs {
@@ -23,7 +24,7 @@ void NdbWriter::writeObject(const Ndb *type)
     qDebug() << "Writing NDB " << type->getIdent() << type->getName();
 
   bind(":ndb_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter().getCurrentId());
+  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":region", type->getRegion());
@@ -40,7 +41,7 @@ void NdbWriter::writeObject(const Ndb *type)
   {
     QString msg("NDB ID " + QString::number(getCurrentId()) +
                 " ident " + type->getIdent() + " name " + type->getName());
-    int id = getAirportIndex().getAirportId(apIdent, msg);
+    int id = getAirportIndex()->getAirportId(apIdent, msg);
     if(id != -1)
       bind(":airport_id", id);
     else

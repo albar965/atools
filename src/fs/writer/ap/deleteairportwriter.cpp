@@ -8,6 +8,8 @@
 #include "deleteairportwriter.h"
 #include "../datawriter.h"
 #include "../../bgl/util.h"
+#include "fs/bglreaderoptions.h"
+#include "fs/writer/ap/airportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -20,13 +22,13 @@ void DeleteAirportWriter::writeObject(const DeleteAirport *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Delete for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using atools::fs::bgl::util::isFlagSet;
   atools::fs::bgl::del::DeleteAllFlags flags = type->getFlags();
 
   bind(":delete_airport_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter().getCurrentId());
+  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":approaches", isFlagSet(flags, bgl::del::APPROACHES));
   bind(":apronlights", isFlagSet(flags, bgl::del::APRONLIGHTS));
   bind(":aprons", isFlagSet(flags, bgl::del::APRONS));

@@ -8,6 +8,10 @@
 #include "runwaywriter.h"
 #include "../../datawriter.h"
 #include "../../../bgl/util.h"
+#include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/ap/rw/runwayendwriter.h"
+#include "fs/writer/runwayindex.h"
+#include "fs/bglreaderoptions.h"
 
 #include <QString>
 
@@ -22,22 +26,22 @@ void RunwayWriter::writeObject(const Runway *type)
 {
   int runwayId = getNextId();
 
-  QString apIdent = getDataWriter().getAirportWriter().getCurrentAirportIdent();
+  QString apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  RunwayEndWriter& rweWriter = getDataWriter().getRunwayEndWriter();
-  rweWriter.writeOne(&(type->getPrimary()));
-  int primaryEndId = rweWriter.getCurrentId();
-  getRunwayIndex().add(apIdent, type->getPrimary().getName(), primaryEndId);
+  RunwayEndWriter *rweWriter = getDataWriter().getRunwayEndWriter();
+  rweWriter->writeOne(&(type->getPrimary()));
+  int primaryEndId = rweWriter->getCurrentId();
+  getRunwayIndex()->add(apIdent, type->getPrimary().getName(), primaryEndId);
 
-  rweWriter.writeOne(&(type->getSecondary()));
-  int secondaryEndId = rweWriter.getCurrentId();
-  getRunwayIndex().add(apIdent, type->getSecondary().getName(), secondaryEndId);
+  rweWriter->writeOne(&(type->getSecondary()));
+  int secondaryEndId = rweWriter->getCurrentId();
+  getRunwayIndex()->add(apIdent, type->getSecondary().getName(), secondaryEndId);
 
   if(getOptions().isVerbose())
     qDebug() << "Writing Runway for airport " << apIdent;
 
   bind(":runway_id", runwayId);
-  bind(":airport_id", getDataWriter().getAirportWriter().getCurrentId());
+  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":primary_end_id", primaryEndId);
   bind(":secondary_end_id", secondaryEndId);
   bind(":surface", Runway::surfaceToStr(type->getSurface()));

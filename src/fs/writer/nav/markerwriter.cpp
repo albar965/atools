@@ -23,7 +23,7 @@ void MarkerWriter::writeObject(const Marker *type)
     qDebug() << "Writing Marker " << type->getIdent();
 
   bind(":marker_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter().getCurrentId());
+  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":type", bgl::Marker::markerTypeToStr(type->getType()));

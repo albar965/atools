@@ -12,6 +12,8 @@
 #include "../../bgl/util.h"
 #include "../datawriter.h"
 #include "sql/sqlquery.h"
+#include "fs/bglreaderoptions.h"
+#include "fs/writer/runwayindex.h"
 
 namespace atools {
 namespace fs {
@@ -68,7 +70,7 @@ void IlsWriter::writeObject(const Ils *type)
                 " ident " + type->getIdent() + " name " + type->getName());
     if(getOptions().doesAirportIcaoMatch(apIdent))
     {
-      int id = getRunwayIndex().getRunwayEndId(apIdent, loc->getRunwayName(), msg);
+      int id = getRunwayIndex()->getRunwayEndId(apIdent, loc->getRunwayName(), msg);
 
       if(id != -1)
       {

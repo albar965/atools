@@ -8,6 +8,8 @@
 #include "runwayendwriter.h"
 #include "../../datawriter.h"
 #include "../../../bgl/util.h"
+#include "fs/bglreaderoptions.h"
+#include "fs/writer/ap/airportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -20,7 +22,7 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Runway end " << type->getName() << " for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());

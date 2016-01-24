@@ -9,6 +9,9 @@
 #include "../meta/bglfilewriter.h"
 #include "../datawriter.h"
 #include "../../bgl/util.h"
+#include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/runwayindex.h"
+#include "fs/writer/ap/transitionwriter.h"
 
 #include <QString>
 
@@ -23,7 +26,7 @@ void ApproachWriter::writeObject(const Approach *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Approach for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":approach_id", getNextId());
   bind(":type", bgl::util::enumToStr(Approach::approachTypeToStr, type->getType()));
@@ -39,13 +42,13 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":missed_altitude", bgl::util::meterToFeet(type->getMissedAltitude(), 1));
 
   bool isComplete = false;
-  const QString& apIdent = getDataWriter().getAirportWriter().getCurrentAirportIdent();
+  const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   if(type->hasRunwayReference() && !apIdent.isEmpty())
   {
     if(getOptions().doesAirportIcaoMatch(apIdent))
     {
       QString msg(" approach ID " + QString::number(getCurrentId()));
-      int id = getRunwayIndex().getRunwayEndId(apIdent, type->getRunwayName(), msg);
+      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
       if(id != -1)
       {
         isComplete = true;
@@ -62,8 +65,8 @@ void ApproachWriter::writeObject(const Approach *type)
   {
     executeStatement();
 
-    TransitionWriter& appWriter = getDataWriter().getApproachTransWriter();
-    appWriter.write(type->getTransitions());
+    TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
+    appWriter->write(type->getTransitions());
   }
   else
     clearStatement();

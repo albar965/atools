@@ -8,6 +8,8 @@
 #include "comwriter.h"
 #include "../datawriter.h"
 #include "../../bgl/util.h"
+#include "fs/writer/ap/airportwriter.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -20,10 +22,10 @@ void ComWriter::writeObject(const Com *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing COM for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":com_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter().getCurrentId());
+  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getType()));
   bind(":frequency", type->getFrequency());
   bind(":name", type->getName());

@@ -8,10 +8,7 @@
 #ifndef WRITER_AIRPORTINDEX_H_
 #define WRITER_AIRPORTINDEX_H_
 
-#include <utility>
-#include <map>
-#include <QString>
-#include <log4cpp/Category.hh>
+#include <QHash>
 
 namespace atools {
 namespace fs {
@@ -37,7 +34,7 @@ public:
 
 private:
   typedef QString AirportIndexKeyType;
-  typedef std::map<AirportIndexKeyType, int> AirportIndexType;
+  typedef QHash<AirportIndexKeyType, int> AirportIndexType;
   typedef AirportIndexType::const_iterator AirportIndexTypeConstIter;
 
   AirportIndexType airportIndexMap;

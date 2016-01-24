@@ -8,27 +8,6 @@
 #ifndef WRITER_DATAWRITER_H_
 #define WRITER_DATAWRITER_H_
 
-#include "nav/waypointwriter.h"
-#include "nav/temproutewriter.h"
-#include "nav/vorwriter.h"
-#include "nav/ndbwriter.h"
-#include "nav/markerwriter.h"
-#include "nav/ilswriter.h"
-#include "meta/bglfilewriter.h"
-#include "ap/airportwriter.h"
-#include "ap/rw/runwaywriter.h"
-#include "ap/rw/runwayendwriter.h"
-#include "runwayindex.h"
-#include "airportindex.h"
-#include "ap/approachwriter.h"
-#include "ap/comwriter.h"
-#include "ap/transitionwriter.h"
-#include "ap/parkingwriter.h"
-#include "ap/deleteairportwriter.h"
-
-#include "../scenery/fileresolver.h"
-#include "meta/sceneryareawriter.h"
-
 namespace atools {
 namespace sql {
 class SqlDatabase;
@@ -41,14 +20,32 @@ class SceneryArea;
 }
 
 namespace writer {
+
+class BglFileWriter;
+class SceneryAreaWriter;
+class AirportWriter;
+class RunwayWriter;
+class RunwayEndWriter;
+class ApproachWriter;
+class TransitionWriter;
+class ParkingWriter;
+class ComWriter;
+class DeleteAirportWriter;
+class WaypointWriter;
+class TempRouteWriter;
+class VorWriter;
+class NdbWriter;
+class MarkerWriter;
+class IlsWriter;
+class RunwayIndex;
+class AirportIndex;
+
 class DataWriter
 {
 public:
   DataWriter(atools::sql::SqlDatabase& sqlDb, const BglReaderOptions& opts);
 
-  virtual ~DataWriter()
-  {
-  }
+  virtual ~DataWriter();
 
   void writeSceneryArea(const scenery::SceneryArea& area);
   void logResults();
@@ -58,72 +55,72 @@ public:
     numObjectsWritten++;
   }
 
-  atools::fs::writer::BglFileWriter& getBglFileWriter()
+  atools::fs::writer::BglFileWriter *getBglFileWriter()
   {
     return bglFileWriter;
   }
 
-  atools::fs::writer::AirportWriter& getAirportWriter()
+  atools::fs::writer::AirportWriter *getAirportWriter()
   {
     return airportWriter;
   }
 
-  atools::fs::writer::WaypointWriter& getWaypointWriter()
+  atools::fs::writer::WaypointWriter *getWaypointWriter()
   {
     return waypointWriter;
   }
 
-  atools::fs::writer::ComWriter& getAirportComWriter()
+  atools::fs::writer::ComWriter *getAirportComWriter()
   {
     return airportComWriter;
   }
 
-  atools::fs::writer::RunwayWriter& getRunwayWriter()
+  atools::fs::writer::RunwayWriter *getRunwayWriter()
   {
     return runwayWriter;
   }
 
-  atools::fs::writer::RunwayEndWriter& getRunwayEndWriter()
+  atools::fs::writer::RunwayEndWriter *getRunwayEndWriter()
   {
     return runwayEndWriter;
   }
 
-  atools::fs::writer::TransitionWriter& getApproachTransWriter()
+  atools::fs::writer::TransitionWriter *getApproachTransWriter()
   {
     return approachTransWriter;
   }
 
-  atools::fs::writer::ApproachWriter& getApproachWriter()
+  atools::fs::writer::ApproachWriter *getApproachWriter()
   {
     return approachWriter;
   }
 
-  atools::fs::writer::ParkingWriter& getParkingWriter()
+  atools::fs::writer::ParkingWriter *getParkingWriter()
   {
     return parkingWriter;
   }
 
-  AirportIndex& getAirportIndex()
+  AirportIndex *getAirportIndex()
   {
     return airportIndex;
   }
 
-  RunwayIndex& getRunwayIndex()
+  RunwayIndex *getRunwayIndex()
   {
     return runwayIndex;
   }
 
-  atools::fs::writer::SceneryAreaWriter& getSceneryAreaWriter()
+  atools::fs::writer::SceneryAreaWriter *getSceneryAreaWriter()
   {
     return sceneryAreaWriter;
   }
 
-  atools::fs::writer::TempRouteWriter& getTempRouteWriter()
+  atools::fs::writer::TempRouteWriter *getTempRouteWriter()
   {
     return tempRouteWriter;
   }
 
-  atools::fs::writer::DeleteAirportWriter& getDeleteAirportWriter()
+  atools::fs::writer::DeleteAirportWriter *getDeleteAirportWriter()
   {
     return deleteAirportWriter;
   }
@@ -134,33 +131,33 @@ public:
   }
 
 private:
-  int numFiles, numAirports, numNamelists, numVors, numIls, numNdbs, numMarker, numWaypoints,
-      numObjectsWritten;
+  int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
+      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
 
-  atools::fs::scenery::FileResolver resolver;
   atools::sql::SqlDatabase& db;
 
-  atools::fs::writer::BglFileWriter bglFileWriter;
-  atools::fs::writer::SceneryAreaWriter sceneryAreaWriter;
+  atools::fs::writer::BglFileWriter *bglFileWriter;
+  atools::fs::writer::SceneryAreaWriter *sceneryAreaWriter;
 
-  atools::fs::writer::AirportWriter airportWriter;
-  atools::fs::writer::RunwayWriter runwayWriter;
-  atools::fs::writer::RunwayEndWriter runwayEndWriter;
-  atools::fs::writer::ApproachWriter approachWriter;
-  atools::fs::writer::TransitionWriter approachTransWriter;
-  atools::fs::writer::ParkingWriter parkingWriter;
-  atools::fs::writer::ComWriter airportComWriter;
-  atools::fs::writer::DeleteAirportWriter deleteAirportWriter;
+  atools::fs::writer::AirportWriter *airportWriter;
+  atools::fs::writer::RunwayWriter *runwayWriter;
+  atools::fs::writer::RunwayEndWriter *runwayEndWriter;
+  atools::fs::writer::ApproachWriter *approachWriter;
+  atools::fs::writer::TransitionWriter *approachTransWriter;
+  atools::fs::writer::ParkingWriter *parkingWriter;
+  atools::fs::writer::ComWriter *airportComWriter;
+  atools::fs::writer::DeleteAirportWriter *deleteAirportWriter;
 
-  atools::fs::writer::WaypointWriter waypointWriter;
-  atools::fs::writer::TempRouteWriter tempRouteWriter;
-  atools::fs::writer::VorWriter vorWriter;
-  atools::fs::writer::NdbWriter ndbWriter;
-  atools::fs::writer::MarkerWriter markerWriter;
-  atools::fs::writer::IlsWriter ilsWriter;
+  atools::fs::writer::WaypointWriter *waypointWriter;
+  atools::fs::writer::TempRouteWriter *tempRouteWriter;
+  atools::fs::writer::VorWriter *vorWriter;
+  atools::fs::writer::NdbWriter *ndbWriter;
+  atools::fs::writer::MarkerWriter *markerWriter;
+  atools::fs::writer::IlsWriter *ilsWriter;
 
-  RunwayIndex runwayIndex;
-  AirportIndex airportIndex;
+  atools::fs::writer::RunwayIndex *runwayIndex;
+  atools::fs::writer::AirportIndex *airportIndex;
+
   const BglReaderOptions& options;
 };
 

@@ -8,6 +8,8 @@
 #include "parkingwriter.h"
 #include "../datawriter.h"
 #include "../../bgl/util.h"
+#include "fs/bglreaderoptions.h"
+#include "fs/writer/ap/airportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -20,10 +22,10 @@ void ParkingWriter::writeObject(const Parking *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Parking for airport "
-             << getDataWriter().getAirportWriter().getCurrentAirportIdent();
+             << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":parking_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter().getCurrentId());
+  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(Parking::parkingTypeToStr, type->getType()));
   bind(":name", bgl::util::enumToStr(Parking::parkingNameToStr, type->getName()));
   bind(":number", type->getNumber());

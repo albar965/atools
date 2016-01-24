@@ -40,9 +40,9 @@ protected:
 
   const BglReaderOptions& getOptions();
 
-  RunwayIndex& getRunwayIndex();
+  RunwayIndex *getRunwayIndex();
 
-  AirportIndex& getAirportIndex();
+  AirportIndex *getAirportIndex();
 
   atools::sql::SqlQuery& getStmt()
   {

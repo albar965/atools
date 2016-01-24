@@ -7,6 +7,9 @@
 
 #include "sceneryareawriter.h"
 #include "../datawriter.h"
+#include "fs/bglreaderoptions.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace fs {

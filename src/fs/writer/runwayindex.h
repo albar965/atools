@@ -9,7 +9,6 @@
 #define WRITER_RUNWAYINDEX_H_
 
 #include <QHash>
-#include <QString>
 
 namespace atools {
 namespace fs {

@@ -16,6 +16,10 @@
 #include "../../bgl/util.h"
 #include "../../bgl/ap/rw/runway.h"
 #include "../../bgl/ap/del/deleteairport.h"
+#include "fs/writer/airportindex.h"
+#include "fs/writer/nav/waypointwriter.h"
+#include "fs/writer/ap/comwriter.h"
+#include "fs/writer/ap/deleteairportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -67,7 +71,7 @@ void AirportWriter::writeObject(const Airport *type)
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
   bind(":airport_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter().getCurrentId());
+  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":name", type->getName());
@@ -90,9 +94,9 @@ void AirportWriter::writeObject(const Airport *type)
   executeStatement();
 
   currentIdent = type->getIdent();
-  getAirportIndex().add(type->getIdent(), getCurrentId());
+  getAirportIndex()->add(type->getIdent(), getCurrentId());
 
-  RunwayWriter& rwWriter = getDataWriter().getRunwayWriter();
+  RunwayWriter *rwWriter = getDataWriter().getRunwayWriter();
 
   const QList<Runway>& runways = type->getRunways();
 
@@ -100,26 +104,26 @@ void AirportWriter::writeObject(const Airport *type)
     if(!(getOptions().filterRunways() &&
          rwy.getLength() <= MIN_RUNWAY_LENGTH &&
          rwy.getSurface() == atools::fs::bgl::rw::GRASS))
-      rwWriter.writeOne(rwy);
+      rwWriter->writeOne(rwy);
 
-  WaypointWriter& waypointWriter = getDataWriter().getWaypointWriter();
-  waypointWriter.write(type->getWaypoints());
+  WaypointWriter *waypointWriter = getDataWriter().getWaypointWriter();
+  waypointWriter->write(type->getWaypoints());
 
-  ComWriter& comWriter = getDataWriter().getAirportComWriter();
-  comWriter.write(type->getComs());
+  ComWriter *comWriter = getDataWriter().getAirportComWriter();
+  comWriter->write(type->getComs());
 
-  ApproachWriter& appWriter = getDataWriter().getApproachWriter();
-  appWriter.write(type->getApproaches());
+  ApproachWriter *appWriter = getDataWriter().getApproachWriter();
+  appWriter->write(type->getApproaches());
 
-  ParkingWriter& parkWriter = getDataWriter().getParkingWriter();
-  parkWriter.write(type->getParkings());
+  ParkingWriter *parkWriter = getDataWriter().getParkingWriter();
+  parkWriter->write(type->getParkings());
 
-  DeleteAirportWriter& deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
+  DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 
   const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
   for(DeleteAirport delAp : deleteAirports)
   {
-    deleteAirportWriter.writeOne(delAp);
+    deleteAirportWriter->writeOne(delAp);
     if(getOptions().execDeletes())
       deleteProcessor.processDelete(delAp, type, getCurrentId());
   }

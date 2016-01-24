@@ -12,6 +12,27 @@
 #include "../bglreaderoptions.h"
 #include "sql/sqldatabase.h"
 
+#include "nav/waypointwriter.h"
+#include "nav/temproutewriter.h"
+#include "nav/vorwriter.h"
+#include "nav/ndbwriter.h"
+#include "nav/markerwriter.h"
+#include "nav/ilswriter.h"
+#include "meta/bglfilewriter.h"
+#include "ap/airportwriter.h"
+#include "ap/rw/runwaywriter.h"
+#include "ap/rw/runwayendwriter.h"
+#include "runwayindex.h"
+#include "airportindex.h"
+#include "ap/approachwriter.h"
+#include "ap/comwriter.h"
+#include "ap/transitionwriter.h"
+#include "ap/parkingwriter.h"
+#include "ap/deleteairportwriter.h"
+
+#include "../scenery/fileresolver.h"
+#include "meta/sceneryareawriter.h"
+
 #include <QString>
 #include "../bgl/bglfile.h"
 #include <QDebug>
@@ -27,70 +48,72 @@ using atools::fs::bgl::section::SectionType;
 static SectionType supportedSectionTypes[] =
 {
   bgl::section::AIRPORT, bgl::section::ILS_VOR, bgl::section::NDB, bgl::section::MARKER,
-  bgl::section::WAYPOINT,
-  bgl::section::NAME_LIST
+  bgl::section::WAYPOINT, bgl::section::NAME_LIST
 };
 
 DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
-  : numFiles(0), numAirports(0), numNamelists(0), numVors(0), numIls(0), numNdbs(0), numMarker(0),
-    numWaypoints(0), numObjectsWritten(0), resolver(opts), db(sqlDb), bglFileWriter(db,
-                                                                                    *
-                                                                                    this),
-    sceneryAreaWriter(db,
-                      *
-                      this),
-    airportWriter(db,
-                  *
-                  this),
-    runwayWriter(db,
-                 *
-                 this),
-    runwayEndWriter(db,
-                    *
-                    this),
-    approachWriter(db,
-                   *
-                   this),
-    approachTransWriter(db,
-                        *
-                        this),
-    parkingWriter(db,
-                  *
-                  this),
-    airportComWriter(db,
-                     *
-                     this),
-    deleteAirportWriter(db,
-                        *
-                        this),
-    waypointWriter(db,
-                   *
-                   this),
-    tempRouteWriter(db,
-                    *
-                    this),
-    vorWriter(db,
-              *
-              this),
-    ndbWriter(db, *this), markerWriter(db, *this), ilsWriter(db, *this), options(opts)
+  : db(sqlDb), options(opts)
 {
   // APX airports
   // ATX waypoints and boundaries
   // NVX navids
   // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
   // resolver("brx")("obx")("cvx");
+
+  bglFileWriter = new BglFileWriter(db, *this);
+  sceneryAreaWriter = new SceneryAreaWriter(db, *this);
+  airportWriter = new AirportWriter(db, *this);
+  runwayWriter = new RunwayWriter(db, *this);
+  runwayEndWriter = new RunwayEndWriter(db, *this);
+  approachWriter = new ApproachWriter(db, *this);
+  approachTransWriter = new TransitionWriter(db, *this);
+  parkingWriter = new ParkingWriter(db, *this);
+  airportComWriter = new ComWriter(db, *this);
+  deleteAirportWriter = new DeleteAirportWriter(db, *this);
+  waypointWriter = new WaypointWriter(db, *this);
+  tempRouteWriter = new TempRouteWriter(db, *this);
+  vorWriter = new VorWriter(db, *this);
+  ndbWriter = new NdbWriter(db, *this);
+  markerWriter = new MarkerWriter(db, *this);
+  ilsWriter = new IlsWriter(db, *this);
+
+  runwayIndex = new RunwayIndex();
+  airportIndex = new AirportIndex();
+}
+
+DataWriter::~DataWriter()
+{
+  delete bglFileWriter;
+  delete sceneryAreaWriter;
+  delete airportWriter;
+  delete runwayWriter;
+  delete runwayEndWriter;
+  delete approachWriter;
+  delete approachTransWriter;
+  delete parkingWriter;
+  delete airportComWriter;
+  delete deleteAirportWriter;
+  delete waypointWriter;
+  delete tempRouteWriter;
+  delete vorWriter;
+  delete ndbWriter;
+  delete markerWriter;
+  delete ilsWriter;
+  delete runwayIndex;
+  delete airportIndex;
 }
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
   QStringList files;
+  atools::fs::scenery::FileResolver resolver(options);
 
   qInfo() << area;
   resolver.getFiles(area, files);
 
   if(!files.empty())
   {
-    sceneryAreaWriter.writeOne(&area);
+    sceneryAreaWriter->writeOne(&area);
 
     BglFile bglFile(options);
 
@@ -105,19 +128,19 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       {
         bglFile.readFile(filename);
 
-        bglFileWriter.writeOne(&bglFile);
+        bglFileWriter->writeOne(&bglFile);
 
-        runwayIndex.clear();
-        airportIndex.clear();
+        runwayIndex->clear();
+        airportIndex->clear();
 
-        airportWriter.setNameLists(bglFile.getNamelists());
-        airportWriter.write(bglFile.getAirports());
+        airportWriter->setNameLists(bglFile.getNamelists());
+        airportWriter->write(bglFile.getAirports());
 
-        waypointWriter.write(bglFile.getWaypoints());
-        vorWriter.write(bglFile.getVors());
-        ndbWriter.write(bglFile.getNdbs());
-        markerWriter.write(bglFile.getMarker());
-        ilsWriter.write(bglFile.getIls());
+        waypointWriter->write(bglFile.getWaypoints());
+        vorWriter->write(bglFile.getVors());
+        ndbWriter->write(bglFile.getNdbs());
+        markerWriter->write(bglFile.getMarker());
+        ilsWriter->write(bglFile.getIls());
 
         numAirports += bglFile.getAirports().size();
         numNamelists += bglFile.getNamelists().size();

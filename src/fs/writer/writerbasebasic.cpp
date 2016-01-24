@@ -39,12 +39,12 @@ const BglReaderOptions& WriterBaseBasic::getOptions()
   return dataWriter.getOptions();
 }
 
-RunwayIndex& WriterBaseBasic::getRunwayIndex()
+RunwayIndex *WriterBaseBasic::getRunwayIndex()
 {
   return dataWriter.getRunwayIndex();
 }
 
-AirportIndex& WriterBaseBasic::getAirportIndex()
+AirportIndex *WriterBaseBasic::getAirportIndex()
 {
   return dataWriter.getAirportIndex();
 }

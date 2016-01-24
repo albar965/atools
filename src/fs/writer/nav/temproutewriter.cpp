@@ -10,6 +10,7 @@
 #include "../datawriter.h"
 #include "../../bgl/nav/routewaypoint.h"
 #include "../../bgl/util.h"
+#include "fs/writer/nav/waypointwriter.h"
 
 namespace atools {
 namespace fs {
@@ -21,7 +22,7 @@ using atools::sql::SqlQuery;
 void TempRouteWriter::writeObject(const RouteEntry *type)
 {
   bind(":temp_route_id", getNextId());
-  bind(":waypoint_id", getDataWriter().getWaypointWriter().getCurrentId());
+  bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());
   bind(":name", type->getName());
   bind(":type", RouteEntry::routeTypeToStr(type->getType()));
 

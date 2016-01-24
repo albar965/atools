@@ -9,6 +9,7 @@
 #include "temproutewriter.h"
 #include "../meta/bglfilewriter.h"
 #include "../datawriter.h"
+#include "fs/writer/airportindex.h"
 
 namespace atools {
 namespace fs {
@@ -23,7 +24,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
     qDebug() << "Writing Waypoint " << type->getIdent();
 
   bind(":waypoint_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter().getCurrentId());
+  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));
@@ -35,7 +36,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   if(!apIdent.isEmpty() && getOptions().doesAirportIcaoMatch(apIdent))
   {
     QString msg("Waypoint ID " + QString::number(getCurrentId()) + " ident " + type->getIdent());
-    int id = getAirportIndex().getAirportId(apIdent, msg);
+    int id = getAirportIndex()->getAirportId(apIdent, msg);
     if(id != -1)
       bind(":airport_id", id);
     else
@@ -44,8 +45,8 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   executeStatement();
 
-  TempRouteWriter& tempRouteWriter = getDataWriter().getTempRouteWriter();
-  tempRouteWriter.write(type->getRoutes());
+  TempRouteWriter *tempRouteWriter = getDataWriter().getTempRouteWriter();
+  tempRouteWriter->write(type->getRoutes());
 }
 
 } // namespace writer
