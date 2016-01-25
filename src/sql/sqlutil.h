@@ -94,18 +94,23 @@ void SqlUtil::printTableStats(OUT& out, bool endline)
   SqlQuery query(db);
 
   int index = 1;
+  int totalCount = 0;
 
   for(QString name : db->tables())
   {
     query.exec("select count(1) as cnt from " + name);
     if(query.next())
     {
-      out << "#" << (index++) << " " << name << ": "
-          << query.value("cnt").toInt() << " rows";
+      int cnt = query.value("cnt").toInt();
+      totalCount += cnt;
+      out << "#" << (index++) << " " << name << ": " << cnt << " rows";
       if(endline)
         out << endl;
     }
   }
+  out << "Total" << ": " << totalCount << " rows";
+  if(endline)
+    out << endl;
 }
 
 } // namespace sql

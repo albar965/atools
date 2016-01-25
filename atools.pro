@@ -183,7 +183,6 @@ SOURCES += src/atools.cpp \
     src/fs/scenery/scenerycfg.cpp \
     src/fs/scenery/inireader.cpp \
     src/fs/writer/writerbasebasic.cpp \
-    src/fs/bglreader.cpp \
     src/fs/writer/ap/rw/runwayendwriter.cpp \
     src/fs/writer/ap/rw/runwaywriter.cpp \
     src/fs/writer/ap/airportwriter.cpp \
