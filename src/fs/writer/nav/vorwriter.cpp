@@ -5,11 +5,11 @@
  *      Author: alex
  */
 
-#include "vorwriter.h"
-#include "../../bgl/nav/dme.h"
-#include "../meta/bglfilewriter.h"
-#include "../datawriter.h"
-#include "../../bgl/util.h"
+#include "fs/writer/nav/vorwriter.h"
+#include "fs/bgl/nav/dme.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
 #include "fs/writer/airportindex.h"
 
 namespace atools {

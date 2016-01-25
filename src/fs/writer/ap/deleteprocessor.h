@@ -34,7 +34,7 @@ class ApproachWriter;
 class DeleteProcessor
 {
 public:
-  DeleteProcessor(atools::sql::SqlDatabase& db, writer::DataWriter& dataWriter);
+  DeleteProcessor(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter);
   virtual ~DeleteProcessor();
 
   void processDelete(const atools::fs::bgl::DeleteAirport& del,

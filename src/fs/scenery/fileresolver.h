@@ -20,15 +20,15 @@ class SceneryArea;
 class FileResolver
 {
 public:
-  FileResolver(const BglReaderOptions& opts);
+  FileResolver(const atools::fs::BglReaderOptions& opts);
   virtual ~FileResolver();
 
-  FileResolver& operator()(const QString& prefix)
+  atools::fs::scenery::FileResolver& operator()(const QString& prefix)
   {
     return addExcludedFilePrefix(prefix);
   }
 
-  FileResolver& addExcludedFilePrefix(const QString& prefix)
+  atools::fs::scenery::FileResolver& addExcludedFilePrefix(const QString& prefix)
   {
     excludedPrefixes.push_back(prefix);
     return *this;
@@ -39,12 +39,12 @@ public:
     excludedPrefixes.clear();
   }
 
-  void getFiles(const SceneryArea& area, QStringList& files) const;
+  void getFiles(const atools::fs::scenery::SceneryArea& area, QStringList& files) const;
 
 private:
   bool matchesExcludedPrefix(const QString& fname) const;
 
-  const BglReaderOptions& options;
+  const atools::fs::BglReaderOptions& options;
   QStringList excludedPrefixes;
 };
 

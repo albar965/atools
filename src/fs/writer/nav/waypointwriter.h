@@ -8,18 +8,18 @@
 #ifndef WRITER_WAYPOINTWRITER_H_
 #define WRITER_WAYPOINTWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/waypoint.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/waypoint.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class WaypointWriter :
-  public WriterBase<atools::fs::bgl::Waypoint>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Waypoint>
 {
 public:
-  WaypointWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  WaypointWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "waypoint")
   {
   }

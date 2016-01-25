@@ -47,7 +47,7 @@ public:
 
     bool operator<(const Leg& l) const
     {
-      return std::make_pair(from, to) < std::make_pair(l.from, l.to);
+      return QPair<int, int>(from, to) < QPair<int, int>(l.from, l.to);
     }
 
     friend QDebug operator<<(QDebug out, const Leg& l);
@@ -59,7 +59,7 @@ public:
   };
 
 private:
-  void writeRoute(const QString& routeName, QSet<Leg>& route);
+  void writeRoute(const QString& routeName, QSet<atools::fs::writer::RouteResolver::Leg>& route);
 
   atools::sql::SqlQuery routeInsertStmt;
 

@@ -68,7 +68,7 @@ public:
 
 private:
   friend class SceneryCfg;
-  friend QDebug operator<<(QDebug out, const SceneryArea& area);
+  friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber;
   QString title;

@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "routeresolver.h"
+#include "fs/writer/routeresolver.h"
 
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -14,7 +14,8 @@
 #include <QString>
 #include <QList>
 #include <algorithm>
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 #include <QQueue>
 
 namespace atools {

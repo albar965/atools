@@ -8,18 +8,18 @@
 #ifndef WRITER_COMWRITER_H_
 #define WRITER_COMWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/ap/com.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/com.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class ComWriter :
-  public WriterBase<atools::fs::bgl::Com>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Com>
 {
 public:
-  ComWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  ComWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "com")
   {
   }

@@ -5,8 +5,8 @@
  *      Author: alex
  */
 
-#include "scenerycfg.h"
-#include "sceneryarea.h"
+#include "fs/scenery/scenerycfg.h"
+#include "fs/scenery/sceneryarea.h"
 
 #include <fstream>
 #include <iostream>
@@ -25,6 +25,11 @@ public:
   }
 
 };
+
+SceneryCfg::SceneryCfg()
+  : IniReader(), cleanOnExit(false)
+{
+}
 
 SceneryCfg::~SceneryCfg()
 {

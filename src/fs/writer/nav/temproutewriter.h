@@ -8,18 +8,18 @@
 #ifndef WRITER_TEMPROUTEWRITER_H_
 #define WRITER_TEMPROUTEWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/routeentry.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/routeentry.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class TempRouteWriter :
-  public WriterBase<atools::fs::bgl::RouteEntry>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::RouteEntry>
 {
 public:
-  TempRouteWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  TempRouteWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "temp_route")
   {
   }

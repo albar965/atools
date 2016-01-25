@@ -21,7 +21,8 @@
 #include "fs/bgl/nav/waypoint.h"
 
 #include <QList>
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 #include <QFile>
 
 namespace atools {

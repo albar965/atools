@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "deleteairportwriter.h"
-#include "../datawriter.h"
-#include "../../bgl/util.h"
+#include "fs/writer/ap/deleteairportwriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/writer/ap/airportwriter.h"
 

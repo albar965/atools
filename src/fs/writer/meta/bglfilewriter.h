@@ -8,18 +8,18 @@
 #ifndef WRITER_BGLFILEWRITER_H_
 #define WRITER_BGLFILEWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/bglfile.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/bglfile.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class BglFileWriter :
-  public WriterBase<bgl::BglFile>
+  public atools::fs::writer::WriterBase<bgl::BglFile>
 {
 public:
-  BglFileWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  BglFileWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "bgl_file"), sceneryAreaId(0)
   {
   }

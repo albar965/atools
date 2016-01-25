@@ -10,6 +10,7 @@
 namespace atools {
 namespace fs {
 namespace bgl {
+namespace section {
 
 QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
 {
@@ -183,6 +184,7 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
   return "";
 }
 
+} // namespace section
 } // namespace bgl
 } // namespace fs
 } // namespace atools

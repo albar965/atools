@@ -8,9 +8,9 @@
 #ifndef WRITER_AIRPORTWRITER_H_
 #define WRITER_AIRPORTWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/ap/airport.h"
-#include "deleteprocessor.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/airport.h"
+#include "fs/writer/ap/deleteprocessor.h"
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/bgl/nl/namelist.h"
 
@@ -25,10 +25,10 @@ class NamelistEntry;
 namespace writer {
 
 class AirportWriter :
-  public WriterBase<atools::fs::bgl::Airport>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Airport>
 {
 public:
-  AirportWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  AirportWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter)
   {
   }

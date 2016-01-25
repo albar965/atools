@@ -5,11 +5,11 @@
  *      Author: alex
  */
 
-#include "temproutewriter.h"
-#include "../meta/bglfilewriter.h"
-#include "../datawriter.h"
-#include "../../bgl/nav/routewaypoint.h"
-#include "../../bgl/util.h"
+#include "fs/writer/nav/temproutewriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/nav/routewaypoint.h"
+#include "fs/bgl/util.h"
 #include "fs/writer/nav/waypointwriter.h"
 
 namespace atools {

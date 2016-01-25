@@ -8,18 +8,18 @@
 #ifndef WRITER_VORWRITER_H_
 #define WRITER_VORWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/vor.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/vor.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class VorWriter :
-  public WriterBase<atools::fs::bgl::Vor>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Vor>
 {
 public:
-  VorWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  VorWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "vor")
   {
   }

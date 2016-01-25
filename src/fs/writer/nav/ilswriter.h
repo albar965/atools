@@ -8,18 +8,18 @@
 #ifndef WRITER_ILSWRITER_H_
 #define WRITER_ILSWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/ils.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/ils.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class IlsWriter :
-  public WriterBase<atools::fs::bgl::Ils>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Ils>
 {
 public:
-  IlsWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  IlsWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "ils")
   {
   }

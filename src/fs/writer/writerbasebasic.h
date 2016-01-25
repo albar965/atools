@@ -26,23 +26,23 @@ class WriterBaseBasic
 {
 public:
   WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
-                  DataWriter& writer,
+                  atools::fs::writer::DataWriter& writer,
                   const QString& tablename,
                   const QString& sqlParam);
 
   virtual ~WriterBaseBasic();
 
 protected:
-  DataWriter& getDataWriter()
+  atools::fs::writer::DataWriter& getDataWriter()
   {
     return dataWriter;
   }
 
-  const BglReaderOptions& getOptions();
+  const atools::fs::BglReaderOptions& getOptions();
 
-  RunwayIndex *getRunwayIndex();
+  atools::fs::writer::RunwayIndex *getRunwayIndex();
 
-  AirportIndex *getAirportIndex();
+  atools::fs::writer::AirportIndex *getAirportIndex();
 
   atools::sql::SqlQuery& getStmt()
   {
@@ -61,7 +61,7 @@ private:
   atools::sql::SqlQuery stmt;
   QString sql, tablename;
   atools::sql::SqlDatabase& db;
-  DataWriter& dataWriter;
+  atools::fs::writer::DataWriter& dataWriter;
 
 };
 

@@ -43,11 +43,11 @@ class AirportIndex;
 class DataWriter
 {
 public:
-  DataWriter(atools::sql::SqlDatabase& sqlDb, const BglReaderOptions& opts);
+  DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::BglReaderOptions& opts);
 
   virtual ~DataWriter();
 
-  void writeSceneryArea(const scenery::SceneryArea& area);
+  void writeSceneryArea(const atools::fs::scenery::SceneryArea& area);
   void logResults();
 
   void increaseNumObjects()
@@ -158,7 +158,7 @@ private:
   atools::fs::writer::RunwayIndex *runwayIndex;
   atools::fs::writer::AirportIndex *airportIndex;
 
-  const BglReaderOptions& options;
+  const atools::fs::BglReaderOptions& options;
 };
 
 } // namespace writer

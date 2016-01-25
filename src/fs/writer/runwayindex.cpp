@@ -5,9 +5,10 @@
  *      Author: alex
  */
 
-#include "runwayindex.h"
+#include "fs/writer/runwayindex.h"
 
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

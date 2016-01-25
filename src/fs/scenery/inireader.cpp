@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "inireader.h"
+#include "fs/scenery/inireader.h"
 #include "exception.h"
 
 #include <QTextStream>

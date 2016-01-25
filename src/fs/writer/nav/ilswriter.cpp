@@ -5,12 +5,12 @@
  *      Author: alex
  */
 
-#include "ilswriter.h"
-#include "../../bgl/nav/dme.h"
-#include "../../bgl/nav/glideslope.h"
-#include "../../bgl/nav/localizer.h"
-#include "../../bgl/util.h"
-#include "../datawriter.h"
+#include "fs/writer/nav/ilswriter.h"
+#include "fs/bgl/nav/dme.h"
+#include "fs/bgl/nav/glideslope.h"
+#include "fs/bgl/nav/localizer.h"
+#include "fs/bgl/util.h"
+#include "fs/writer/datawriter.h"
 #include "sql/sqlquery.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/writer/runwayindex.h"

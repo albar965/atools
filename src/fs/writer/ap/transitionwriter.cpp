@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "../datawriter.h"
-#include "../../bgl/util.h"
-#include "transitionwriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
+#include "fs/writer/ap/transitionwriter.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/writer/ap/approachwriter.h"
 #include "fs/writer/ap/airportwriter.h"

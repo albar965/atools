@@ -8,18 +8,18 @@
 #ifndef WRITER_PARKINGWRITER_H_
 #define WRITER_PARKINGWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/ap/parking.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/parking.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class ParkingWriter :
-  public WriterBase<atools::fs::bgl::Parking>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Parking>
 {
 public:
-  ParkingWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  ParkingWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "parking")
   {
   }

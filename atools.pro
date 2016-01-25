@@ -112,9 +112,7 @@ HEADERS += src/atools.h \
     src/fs/writer/airportindex.h \
     src/fs/writer/datawriter.h \
     src/fs/writer/routeresolver.h \
-    src/fs/writer/runwayindex.h \
-    src/opt/options.h \
-    src/opt/option.h
+    src/fs/writer/runwayindex.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -206,9 +204,7 @@ SOURCES += src/atools.cpp \
     src/fs/writer/airportindex.cpp \
     src/fs/writer/datawriter.cpp \
     src/fs/writer/routeresolver.cpp \
-    src/fs/writer/runwayindex.cpp \
-    src/opt/options.cpp \
-    src/opt/option.cpp
+    src/fs/writer/runwayindex.cpp
 
 unix {
     target.path = /usr/lib

@@ -8,7 +8,8 @@
 #ifndef BGL_BGLBASE_H_
 #define BGL_BGLBASE_H_
 
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 

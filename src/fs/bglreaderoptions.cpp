@@ -5,10 +5,11 @@
  *      Author: alex
  */
 
-#include "bglreaderoptions.h"
+#include "fs/bglreaderoptions.h"
 
 #include <QList>
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

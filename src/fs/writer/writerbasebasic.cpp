@@ -5,8 +5,8 @@
  *      Author: alex
  */
 
-#include "writerbasebasic.h"
-#include "datawriter.h"
+#include "fs/writer/writerbasebasic.h"
+#include "fs/writer/datawriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 

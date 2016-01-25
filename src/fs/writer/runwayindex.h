@@ -34,10 +34,10 @@ public:
 
 private:
   typedef QPair<QString, QString> RunwayIndexKeyType;
-  typedef QHash<RunwayIndexKeyType, int> RunwayIndexType;
-  typedef RunwayIndexType::const_iterator RunwayIndexTypeConstIter;
+  typedef QHash<atools::fs::writer::RunwayIndex::RunwayIndexKeyType, int> RunwayIndexType;
+  typedef atools::fs::writer::RunwayIndex::RunwayIndexType::const_iterator RunwayIndexTypeConstIter;
 
-  RunwayIndexType runwayIndexMap;
+  atools::fs::writer::RunwayIndex::RunwayIndexType runwayIndexMap;
 };
 
 } // namespace writer

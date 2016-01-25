@@ -8,18 +8,18 @@
 #ifndef WRITER_RUNWAYENDWRITER_H_
 #define WRITER_RUNWAYENDWRITER_H_
 
-#include "../../writerbase.h"
-#include "../../../bgl/ap/rw/runwayend.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/rw/runwayend.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class RunwayEndWriter :
-  public WriterBase<atools::fs::bgl::RunwayEnd>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::RunwayEnd>
 {
 public:
-  RunwayEndWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  RunwayEndWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "runway_end")
   {
   }

@@ -5,9 +5,10 @@
  *      Author: alex
  */
 
-#include "airportindex.h"
+#include "fs/writer/airportindex.h"
 
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

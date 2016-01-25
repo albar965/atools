@@ -152,7 +152,7 @@ private:
   int month, day, hour, minute, second;
   QDateTime dateTime;
   QString airportFrom, airportTo, description;
-  types::AircraftType aircraftType;
+  atools::fs::lb::types::AircraftType aircraftType;
 
   // All in decimal hours
   float totalTime, nightTime, instrumentTime;
@@ -160,7 +160,7 @@ private:
   unsigned short flags;
   QString aircraftRegistration, aircraftDescription;
 
-  QList<AirportVisit> airportVisits;
+  QList<atools::fs::lb::LogbookEntry::AirportVisit> airportVisits;
   QVariant visitsToString() const;
 
   atools::io::BinaryStream *stream;

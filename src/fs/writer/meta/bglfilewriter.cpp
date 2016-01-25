@@ -5,8 +5,8 @@
  *      Author: alex
  */
 
-#include "bglfilewriter.h"
-#include "../datawriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
 #include "fs/writer/meta/sceneryareawriter.h"
 
 #include <QFileInfo>

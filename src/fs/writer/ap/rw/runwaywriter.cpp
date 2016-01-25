@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "runwaywriter.h"
-#include "../../datawriter.h"
-#include "../../../bgl/util.h"
+#include "fs/writer/ap/rw/runwaywriter.h"
+#include "fs/writer//datawriter.h"
+#include "fs/bgl/util.h"
 #include "fs/writer/ap/airportwriter.h"
 #include "fs/writer/ap/rw/runwayendwriter.h"
 #include "fs/writer/runwayindex.h"

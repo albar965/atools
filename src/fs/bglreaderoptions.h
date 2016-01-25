@@ -57,7 +57,7 @@ public:
   bool doesAirportIcaoMatch(const QString& icao) const;
 
 private:
-  friend QDebug operator<<(QDebug out, const BglReaderOptions& opts);
+  friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 
   QString sceneryFile, basepath;
   bool verbose, noDeletes, noFilterRunways, noIncomplete, debugAutocommit;

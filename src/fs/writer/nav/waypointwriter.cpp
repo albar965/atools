@@ -5,10 +5,10 @@
  *      Author: alex
  */
 
-#include "waypointwriter.h"
-#include "temproutewriter.h"
-#include "../meta/bglfilewriter.h"
-#include "../datawriter.h"
+#include "fs/writer/nav/waypointwriter.h"
+#include "fs/writer/nav/temproutewriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
 #include "fs/writer/airportindex.h"
 
 namespace atools {

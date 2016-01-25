@@ -5,10 +5,11 @@
  *      Author: alex
  */
 
-#include "sceneryarea.h"
+#include "fs/scenery/sceneryarea.h"
 
 #include <QDir>
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

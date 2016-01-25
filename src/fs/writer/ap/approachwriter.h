@@ -8,18 +8,18 @@
 #ifndef WRITER_APPROACHWRITER_H_
 #define WRITER_APPROACHWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/ap/approach.h"
+#include "fs/writer//writerbase.h"
+#include "fs/bgl/ap/approach.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class ApproachWriter :
-  public WriterBase<atools::fs::bgl::Approach>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Approach>
 {
 public:
-  ApproachWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  ApproachWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "approach")
   {
   }

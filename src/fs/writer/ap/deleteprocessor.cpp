@@ -5,19 +5,20 @@
  *      Author: alex
  */
 
-#include "deleteprocessor.h"
-#include "approachwriter.h"
+#include "fs/writer/ap/deleteprocessor.h"
+#include "fs/writer/ap/approachwriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "../datawriter.h"
-#include "../../bgl/ap/del/deleteairport.h"
-#include "../../bgl/util.h"
-#include "../../bgl/ap/airport.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/ap/del/deleteairport.h"
+#include "fs/bgl/util.h"
+#include "fs/bgl/ap/airport.h"
 #include "fs/writer/ap/transitionwriter.h"
 
 #include <functional>
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

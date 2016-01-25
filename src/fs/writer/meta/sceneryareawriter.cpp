@@ -5,11 +5,12 @@
  *      Author: alex
  */
 
-#include "sceneryareawriter.h"
-#include "../datawriter.h"
+#include "fs/writer/meta/sceneryareawriter.h"
+#include "fs/writer/datawriter.h"
 #include "fs/bglreaderoptions.h"
 
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

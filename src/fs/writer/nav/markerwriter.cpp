@@ -5,10 +5,10 @@
  *      Author: alex
  */
 
-#include "markerwriter.h"
-#include "../meta/bglfilewriter.h"
-#include "../datawriter.h"
-#include "../../bgl/util.h"
+#include "fs/writer/nav/markerwriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
 
 namespace atools {
 namespace fs {

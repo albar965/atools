@@ -5,10 +5,10 @@
  *      Author: alex
  */
 
-#include "approachwriter.h"
-#include "../meta/bglfilewriter.h"
-#include "../datawriter.h"
-#include "../../bgl/util.h"
+#include "fs/writer/ap/approachwriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
 #include "fs/writer/ap/airportwriter.h"
 #include "fs/writer/runwayindex.h"
 #include "fs/writer/ap/transitionwriter.h"

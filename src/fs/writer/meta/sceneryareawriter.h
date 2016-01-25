@@ -8,18 +8,18 @@
 #ifndef WRITER_SCENERYAREAWRITER_H_
 #define WRITER_SCENERYAREAWRITER_H_
 
-#include "../writerbase.h"
-#include "../../scenery/sceneryarea.h"
+#include "fs/writer/writerbase.h"
+#include "fs/scenery/sceneryarea.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class SceneryAreaWriter :
-  public WriterBase<scenery::SceneryArea>
+  public atools::fs::writer::WriterBase<scenery::SceneryArea>
 {
 public:
-  SceneryAreaWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  SceneryAreaWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "scenery_area")
   {
   }

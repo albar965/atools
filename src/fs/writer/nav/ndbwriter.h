@@ -8,18 +8,18 @@
 #ifndef WRITER_NDBWRITER_H_
 #define WRITER_NDBWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/ndb.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/ndb.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class NdbWriter :
-  public WriterBase<atools::fs::bgl::Ndb>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Ndb>
 {
 public:
-  NdbWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  NdbWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "ndb")
   {
   }

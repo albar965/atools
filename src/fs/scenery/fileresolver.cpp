@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "fileresolver.h"
-#include "sceneryarea.h"
-#include "../bglreaderoptions.h"
+#include "fs/scenery/fileresolver.h"
+#include "fs/scenery/sceneryarea.h"
+#include "fs/bglreaderoptions.h"
 
 #include <QtDebug>
 #include <QFile>

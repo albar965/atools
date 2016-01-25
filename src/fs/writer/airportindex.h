@@ -34,10 +34,10 @@ public:
 
 private:
   typedef QString AirportIndexKeyType;
-  typedef QHash<AirportIndexKeyType, int> AirportIndexType;
-  typedef AirportIndexType::const_iterator AirportIndexTypeConstIter;
+  typedef QHash<atools::fs::writer::AirportIndex::AirportIndexKeyType, int> AirportIndexType;
+  typedef atools::fs::writer::AirportIndex::AirportIndexType::const_iterator AirportIndexTypeConstIter;
 
-  AirportIndexType airportIndexMap;
+  atools::fs::writer::AirportIndex::AirportIndexType airportIndexMap;
 };
 
 } // namespace writer

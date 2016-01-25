@@ -8,18 +8,18 @@
 #ifndef WRITER_MARKERWRITER_H_
 #define WRITER_MARKERWRITER_H_
 
-#include "../writerbase.h"
-#include "../../bgl/nav/marker.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/nav/marker.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
 class MarkerWriter :
-  public WriterBase<atools::fs::bgl::Marker>
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Marker>
 {
 public:
-  MarkerWriter(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
+  MarkerWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "marker")
   {
   }

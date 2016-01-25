@@ -1,8 +1,6 @@
 #ifndef LOGBOOKENTRYFILTER_H
 #define LOGBOOKENTRYFILTER_H
 
-#include <QDateTime>
-
 namespace atools {
 namespace fs {
 namespace lb {
@@ -37,7 +35,7 @@ public:
   LogbookEntryFilter& invalidDate(bool flag = true);
 
   /* @return true if the entries passes the filter and can be stored */
-  bool canStore(const LogbookEntry& entry) const;
+  bool canStore(const atools::fs::lb::LogbookEntry& entry) const;
 
 private:
   int minFlightTime = 0;

@@ -7,7 +7,8 @@
 
 #include "fs/bgl/nl/namelistentry.h"
 
-#include <QDebug>
+#include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {

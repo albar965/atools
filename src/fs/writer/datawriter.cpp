@@ -5,37 +5,37 @@
  *      Author: alex
  */
 
-#include "datawriter.h"
+#include "fs/writer/datawriter.h"
 
-#include "../bgl/bglfile.h"
-#include "../scenery/fileresolver.h"
-#include "../bglreaderoptions.h"
+#include "fs/bgl/bglfile.h"
+#include "fs/scenery/fileresolver.h"
+#include "fs/bglreaderoptions.h"
 #include "sql/sqldatabase.h"
 
-#include "nav/waypointwriter.h"
-#include "nav/temproutewriter.h"
-#include "nav/vorwriter.h"
-#include "nav/ndbwriter.h"
-#include "nav/markerwriter.h"
-#include "nav/ilswriter.h"
-#include "meta/bglfilewriter.h"
-#include "ap/airportwriter.h"
-#include "ap/rw/runwaywriter.h"
-#include "ap/rw/runwayendwriter.h"
-#include "runwayindex.h"
-#include "airportindex.h"
-#include "ap/approachwriter.h"
-#include "ap/comwriter.h"
-#include "ap/transitionwriter.h"
-#include "ap/parkingwriter.h"
-#include "ap/deleteairportwriter.h"
+#include "fs/writer/nav/waypointwriter.h"
+#include "fs/writer/nav/temproutewriter.h"
+#include "fs/writer/nav/vorwriter.h"
+#include "fs/writer/nav/ndbwriter.h"
+#include "fs/writer/nav/markerwriter.h"
+#include "fs/writer/nav/ilswriter.h"
+#include "fs/writer/meta/bglfilewriter.h"
+#include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/ap/rw/runwaywriter.h"
+#include "fs/writer/ap/rw/runwayendwriter.h"
+#include "fs/writer/runwayindex.h"
+#include "fs/writer/airportindex.h"
+#include "fs/writer/ap/approachwriter.h"
+#include "fs/writer/ap/comwriter.h"
+#include "fs/writer/ap/transitionwriter.h"
+#include "fs/writer/ap/parkingwriter.h"
+#include "fs/writer/ap/deleteairportwriter.h"
 
-#include "../scenery/fileresolver.h"
-#include "meta/sceneryareawriter.h"
+#include "fs/scenery/fileresolver.h"
+#include "fs/writer/meta/sceneryareawriter.h"
 
-#include <QString>
-#include "../bgl/bglfile.h"
-#include <QDebug>
+#include "fs/bgl/bglfile.h"
+#include "logging/loggingdefs.h"
+
 namespace atools {
 namespace fs {
 namespace writer {

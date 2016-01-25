@@ -8,27 +8,23 @@
 #ifndef SCENERY_SCENERYCFG_H_
 #define SCENERY_SCENERYCFG_H_
 
-#include "sceneryarea.h"
-#include "inireader.h"
+#include "fs/scenery/sceneryarea.h"
+#include "fs/scenery/inireader.h"
 
-#include <QString>
 #include <QList>
 
 namespace atools {
 namespace fs {
 namespace scenery {
 
-typedef QList<SceneryArea> AreaVectorType;
-typedef QList<SceneryArea>::const_iterator AreaVectorIterType;
+typedef QList<atools::fs::scenery::SceneryArea> AreaVectorType;
+typedef QList<atools::fs::scenery::SceneryArea>::const_iterator AreaVectorIterType;
 
 class SceneryCfg :
-  public IniReader
+  public atools::fs::scenery::IniReader
 {
 public:
-  SceneryCfg()
-    : IniReader(), cleanOnExit(false)
-  {
-  }
+  SceneryCfg();
 
   virtual ~SceneryCfg();
 
@@ -47,11 +43,11 @@ public:
   }
 
 private:
-  SceneryArea currentArea;
+  atools::fs::scenery::SceneryArea currentArea;
   QString title, description;
   bool cleanOnExit;
 
-  AreaVectorType areaEntries;
+  atools::fs::scenery::AreaVectorType areaEntries;
   bool toBool(const QString& str);
   int toInt(const QString& str);
 

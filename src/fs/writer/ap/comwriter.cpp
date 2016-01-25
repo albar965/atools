@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "comwriter.h"
-#include "../datawriter.h"
-#include "../../bgl/util.h"
+#include "fs/writer/ap/comwriter.h"
+#include "fs/writer/datawriter.h"
+#include "fs/bgl/util.h"
 #include "fs/writer/ap/airportwriter.h"
 #include "fs/bglreaderoptions.h"
 

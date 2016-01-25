@@ -8,7 +8,7 @@
 #ifndef WRITER_WRITERBASE_H_
 #define WRITER_WRITERBASE_H_
 
-#include "writerbasebasic.h"
+#include "fs/writer/writerbasebasic.h"
 
 #include <QList>
 
@@ -33,7 +33,7 @@ class WriterBase :
 {
 public:
   WriterBase(atools::sql::SqlDatabase& db,
-             DataWriter& dataWriter,
+             atools::fs::writer::DataWriter& dataWriter,
              const QString& tablename,
              const QString& sqlParam = "");
 
@@ -74,7 +74,7 @@ template<typename TYPE>
 int WriterBase<TYPE>::id = 0;
 
 template<typename TYPE> WriterBase<TYPE>::WriterBase(sql::SqlDatabase& db,
-                                                     DataWriter& dataWriter,
+                                                     atools::fs::writer::DataWriter& dataWriter,
                                                      const QString& tablename,
                                                      const QString& sqlParam)
   : WriterBaseBasic(db, dataWriter, tablename, sqlParam)

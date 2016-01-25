@@ -56,7 +56,7 @@ public:
    */
   void loadLogbook(const QString& filename,
                    atools::fs::SimulatorType type,
-                   const LogbookEntryFilter& filter,
+                   const atools::fs::lb::LogbookEntryFilter& filter,
                    bool append);
 
   /*
