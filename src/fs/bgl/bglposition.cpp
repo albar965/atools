@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "bglposition.h"
+#include "fs/bgl/bglposition.h"
 
-#include "converter.h"
+#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 
 namespace atools {

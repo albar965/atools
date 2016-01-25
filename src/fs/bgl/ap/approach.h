@@ -8,9 +8,8 @@
 #ifndef BGL_AP_APPROACH_H_
 #define BGL_AP_APPROACH_H_
 
-#include "../record.h"
-#include "../converter.h"
-#include "transition.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/ap/transition.h"
 
 namespace atools {
 namespace fs {
@@ -46,16 +45,13 @@ enum ApproachFixType
 } // namespace ap
 
 class Approach :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Approach(atools::io::BinaryStream *bs);
   virtual ~Approach();
 
-  QString getRunwayName() const
-  {
-    return converter::runwayToStr(runwayNumber, runwayDesignator);
-  }
+  QString getRunwayName() const;
 
   float getAltitude() const
   {
@@ -117,7 +113,7 @@ public:
     return type;
   }
 
-  const QList<Transition>& getTransitions() const
+  const QList<atools::fs::bgl::Transition>& getTransitions() const
   {
     return transitions;
   }
@@ -131,7 +127,7 @@ public:
   static QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Approach& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Approach& record);
 
   atools::fs::bgl::ap::ApproachType type;
   int runwayNumber, runwayDesignator;
@@ -144,7 +140,7 @@ private:
 
   float altitude, heading, missedAltitude;
 
-  QList<Transition> transitions;
+  QList<atools::fs::bgl::Transition> transitions;
 };
 
 } // namespace bgl

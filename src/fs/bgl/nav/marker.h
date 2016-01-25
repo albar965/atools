@@ -8,8 +8,8 @@
 #ifndef BGL_NAV_MARKER_H_
 #define BGL_NAV_MARKER_H_
 
-#include "../record.h"
-#include "../bglposition.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/bglposition.h"
 
 namespace atools {
 namespace fs {
@@ -28,7 +28,7 @@ enum MarkerType
 } // namespace nav
 
 class Marker :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Marker(atools::io::BinaryStream *bs);
@@ -39,7 +39,7 @@ public:
     return ident;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -57,10 +57,10 @@ public:
   static QString markerTypeToStr(atools::fs::bgl::nav::MarkerType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Marker& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Marker& record);
 
   atools::fs::bgl::nav::MarkerType type;
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
   QString ident, region;
 };
 

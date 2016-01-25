@@ -75,7 +75,7 @@ enum SectionType
   ICAO_RUNWAY = 0x2711
 };
 
-QString sectionTypeStr(SectionType type);
+QString sectionTypeStr(atools::fs::bgl::section::SectionType type);
 
 } // namespace section
 

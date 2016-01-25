@@ -8,8 +8,7 @@
 #ifndef BGL_NAV_NDB_H_
 #define BGL_NAV_NDB_H_
 
-#include "navbase.h"
-#include "../bglposition.h"
+#include "fs/bgl/nav/navbase.h"
 
 namespace atools {
 namespace fs {
@@ -28,7 +27,7 @@ enum NdbType
 } // namespace nav
 
 class Ndb :
-  public NavBase
+  public atools::fs::bgl::NavBase
 {
 public:
   Ndb(atools::io::BinaryStream *bs);
@@ -42,7 +41,7 @@ public:
   static QString ndbTypeToStr(atools::fs::bgl::nav::NdbType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Ndb& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Ndb& record);
 
   atools::fs::bgl::nav::NdbType type;
 };

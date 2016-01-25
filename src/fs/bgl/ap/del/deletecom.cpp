@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "deletecom.h"
+#include "fs/bgl/ap/del/deletecom.h"
 #include "io/binarystream.h"
 
 namespace atools {

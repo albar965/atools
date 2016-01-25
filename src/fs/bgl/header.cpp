@@ -5,10 +5,10 @@
  *      Author: alex
  */
 
-#include "header.h"
-#include "converter.h"
+#include "fs/bgl/header.h"
+#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-#include "bglexception.h"
+#include "fs/bgl/bglexception.h"
 
 #include <QtDebug>
 

@@ -5,10 +5,11 @@
  *      Author: alex
  */
 
-#include "localizer.h"
+#include "fs/bgl/nav/localizer.h"
 
-#include "../bglposition.h"
-#include "../recordtypes.h"
+#include "fs/bgl/recordtypes.h"
+#include "io/binarystream.h"
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {
@@ -27,6 +28,11 @@ Localizer::Localizer(BinaryStream *bs)
 
 Localizer::~Localizer()
 {
+}
+
+QString Localizer::getRunwayName() const
+{
+  return converter::runwayToStr(runwayNumber, runwayDesignator);
 }
 
 QDebug operator<<(QDebug out, const Localizer& record)

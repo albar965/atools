@@ -8,9 +8,8 @@
 #ifndef BGL_AP_RW_RUNWAYEND_H_
 #define BGL_AP_RW_RUNWAYEND_H_
 
-#include "runwayapplights.h"
-#include "runwayvasi.h"
-#include "../../converter.h"
+#include "fs/bgl/ap/rw/runwayapplights.h"
+#include "fs/bgl/ap/rw/runwayvasi.h"
 
 #include <QString>
 
@@ -38,10 +37,7 @@ public:
 
   virtual ~RunwayEnd();
 
-  QString getName() const
-  {
-    return converter::runwayToStr(number, designator);
-  }
+  QString getName() const;
 
   const RunwayAppLights& getApproachLights() const
   {
@@ -102,16 +98,16 @@ public:
 
 private:
   friend class Runway;
-  friend QDebug operator<<(QDebug out, const RunwayEnd& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayEnd& record);
 
   QString designatorStr(int designator) const;
 
   int number, designator;
   int offsetThreshold, blastPad, overrun;
 
-  RunwayVasi leftVasi, rightVasi;
+  atools::fs::bgl::RunwayVasi leftVasi, rightVasi;
 
-  RunwayAppLights approachLights;
+  atools::fs::bgl::RunwayAppLights approachLights;
 
   bool closedMarkings, stolMarkings, takeoff, landing;
   atools::fs::bgl::rw::Pattern pattern;

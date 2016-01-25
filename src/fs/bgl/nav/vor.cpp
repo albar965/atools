@@ -5,14 +5,14 @@
  *      Author: alex
  */
 
-#include "vor.h"
-#include "localizer.h"
-#include "dme.h"
-#include "glideslope.h"
+#include "fs/bgl/nav/vor.h"
+#include "fs/bgl/nav/localizer.h"
+#include "fs/bgl/nav/dme.h"
+#include "fs/bgl/nav/glideslope.h"
+#include "io/binarystream.h"
 
-#include "../bglposition.h"
-#include "../converter.h"
-#include "../recordtypes.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/recordtypes.h"
 
 namespace atools {
 namespace fs {

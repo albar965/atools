@@ -5,10 +5,10 @@
  *      Author: alex
  */
 
-#include "ndb.h"
-#include "../bglposition.h"
-#include "../converter.h"
-#include "../recordtypes.h"
+#include "fs/bgl/nav/ndb.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/recordtypes.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

@@ -5,13 +5,13 @@
  *      Author: alex
  */
 
-#include "sectiontype.h"
+#include "fs/bgl/sectiontype.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
-QString sectionTypeStr(section::SectionType type)
+QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
 {
   switch(type)
   {

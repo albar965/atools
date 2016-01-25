@@ -8,11 +8,9 @@
 #ifndef BGL_AP_DELETEAIRPORT_H_
 #define BGL_AP_DELETEAIRPORT_H_
 
-#include "../../record.h"
-#include "../rw/runway.h"
-#include "../com.h"
-#include "deleterunway.h"
-#include "deletecom.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/ap/del/deleterunway.h"
+#include "fs/bgl/ap/del/deletecom.h"
 
 #include <QList>
 
@@ -42,18 +40,18 @@ enum DeleteAllFlags
 } // namespace del
 
 class DeleteAirport :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   DeleteAirport(atools::io::BinaryStream *bs);
   virtual ~DeleteAirport();
 
-  const QList<DeleteCom>& getDeleteComs() const
+  const QList<atools::fs::bgl::DeleteCom>& getDeleteComs() const
   {
     return deleteComs;
   }
 
-  const QList<DeleteRunway>& getDeleteRunways() const
+  const QList<atools::fs::bgl::DeleteRunway>& getDeleteRunways() const
   {
     return deleteRunways;
   }
@@ -66,13 +64,13 @@ public:
   static QString deleteAllFlagsToStr(atools::fs::bgl::del::DeleteAllFlags flags);
 
 private:
-  friend QDebug operator<<(QDebug out, const DeleteAirport& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteAirport& record);
 
   atools::fs::bgl::del::DeleteAllFlags flags;
   int numRunways, numStarts, numFrequencies;
 
-  QList<DeleteRunway> deleteRunways;
-  QList<DeleteCom> deleteComs;
+  QList<atools::fs::bgl::DeleteRunway> deleteRunways;
+  QList<atools::fs::bgl::DeleteCom> deleteComs;
 };
 
 } // namespace bgl

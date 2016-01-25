@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "ilsvor.h"
+#include "fs/bgl/nav/ilsvor.h"
 
-#include "../bglposition.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

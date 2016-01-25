@@ -8,17 +8,15 @@
 #ifndef BGL_AIRPORT_H_
 #define BGL_AIRPORT_H_
 
-#include "../record.h"
-#include "../nav/waypoint.h"
-#include "approach.h"
-#include "parking.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/nav/waypoint.h"
+#include "fs/bgl/ap/approach.h"
+#include "fs/bgl/ap/parking.h"
 #include "del/deleteairport.h"
-#include "../bglposition.h"
-#include "rw/runway.h"
+#include "fs/bgl//bglposition.h"
+#include "fs/bgl/ap/rw/runway.h"
 
-#include <QString>
 #include <QList>
-#include "com.h"
 
 namespace atools {
 namespace io {
@@ -59,13 +57,13 @@ enum FuelFlags
 } // namespace ap
 
 class Airport :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Airport(atools::io::BinaryStream *bs);
   virtual ~Airport();
 
-  const QList<Approach>& getApproaches() const
+  const QList<atools::fs::bgl::Approach>& getApproaches() const
   {
     return approaches;
   }
@@ -80,12 +78,12 @@ public:
     return boundaryFence;
   }
 
-  const QList<Com>& getComs() const
+  const QList<atools::fs::bgl::Com>& getComs() const
   {
     return coms;
   }
 
-  const QList<DeleteAirport>& getDeleteAirports() const
+  const QList<atools::fs::bgl::DeleteAirport>& getDeleteAirports() const
   {
     return deleteAirports;
   }
@@ -120,7 +118,7 @@ public:
     return numHelipads;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -130,7 +128,7 @@ public:
     return region;
   }
 
-  const QList<Runway>& getRunways() const
+  const QList<atools::fs::bgl::Runway>& getRunways() const
   {
     return runways;
   }
@@ -145,30 +143,30 @@ public:
     return towerObj;
   }
 
-  const BglPosition& getTowerPosition() const
+  const atools::fs::bgl::BglPosition& getTowerPosition() const
   {
     return towerPosition;
   }
 
-  const QList<Waypoint>& getWaypoints() const
+  const QList<atools::fs::bgl::Waypoint>& getWaypoints() const
   {
     return waypoints;
   }
 
-  const QList<Parking>& getParkings() const
+  const QList<atools::fs::bgl::Parking>& getParkings() const
   {
     return parkings;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Airport& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
   void handleParking();
 
   int numRunways, numComs, numStarts, numApproaches, numAprons;
 
   bool deleteRecord;
   int numHelipads;
-  BglPosition position, towerPosition;
+  atools::fs::bgl::BglPosition position, towerPosition;
   float magVar;
   QString ident;
   QString region;
@@ -177,12 +175,12 @@ private:
   QString name;
   bool apron, jetway, boundaryFence, towerObj, taxiway;
 
-  QList<Runway> runways;
-  QList<Parking> parkings;
-  QList<Com> coms;
-  QList<Approach> approaches;
-  QList<Waypoint> waypoints;
-  QList<DeleteAirport> deleteAirports;
+  QList<atools::fs::bgl::Runway> runways;
+  QList<atools::fs::bgl::Parking> parkings;
+  QList<atools::fs::bgl::Com> coms;
+  QList<atools::fs::bgl::Approach> approaches;
+  QList<atools::fs::bgl::Waypoint> waypoints;
+  QList<atools::fs::bgl::DeleteAirport> deleteAirports;
 };
 
 } // namespace bgl

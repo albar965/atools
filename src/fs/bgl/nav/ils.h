@@ -8,8 +8,7 @@
 #ifndef BGL_NAV_ILS_H_
 #define BGL_NAV_ILS_H_
 
-#include "navbase.h"
-#include "../bglposition.h"
+#include "fs/bgl/nav/navbase.h"
 
 namespace atools {
 namespace fs {
@@ -20,18 +19,18 @@ class Glideslope;
 class Dme;
 
 class Ils :
-  public NavBase
+  public atools::fs::bgl::NavBase
 {
 public:
   Ils(atools::io::BinaryStream *bs);
   virtual ~Ils();
 
-  const Dme *getDme() const
+  const atools::fs::bgl::Dme *getDme() const
   {
     return dme;
   }
 
-  const Glideslope *getGlideslope() const
+  const atools::fs::bgl::Glideslope *getGlideslope() const
   {
     return glideslope;
   }
@@ -41,19 +40,19 @@ public:
     return isBackcourse;
   }
 
-  const Localizer *getLocalizer() const
+  const atools::fs::bgl::Localizer *getLocalizer() const
   {
     return localizer;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Ils& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Ils& record);
 
   bool isBackcourse;
 
-  Localizer *localizer;
-  Glideslope *glideslope;
-  Dme *dme;
+  atools::fs::bgl::Localizer *localizer;
+  atools::fs::bgl::Glideslope *glideslope;
+  atools::fs::bgl::Dme *dme;
 };
 
 } // namespace bgl

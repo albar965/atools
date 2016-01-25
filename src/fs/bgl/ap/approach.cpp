@@ -5,13 +5,10 @@
  *      Author: alex
  */
 
-#include "approach.h"
-#include "../converter.h"
-#include "../recordtypes.h"
-
-#include <iterator>
-#include <QList>
-#include <algorithm>
+#include "fs/bgl/ap/approach.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/recordtypes.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {
@@ -161,6 +158,11 @@ QDebug operator<<(QDebug out, const Approach& record)
 
 Approach::~Approach()
 {
+}
+
+QString Approach::getRunwayName() const
+{
+  return converter::runwayToStr(runwayNumber, runwayDesignator);
 }
 
 } // namespace bgl

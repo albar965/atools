@@ -8,8 +8,6 @@
 #ifndef BGL_NAMELISTICAOIDENT_H_
 #define BGL_NAMELISTICAOIDENT_H_
 
-#include "../record.h"
-
 #include <QString>
 
 namespace atools {
@@ -62,7 +60,7 @@ public:
 
 private:
   friend class Namelist;
-  friend QDebug operator<<(QDebug out, const NamelistEntry& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::NamelistEntry& record);
 
   QString regionName, countryName, stateName, cityName, airportName, airportIdent, regionIdent;
 };

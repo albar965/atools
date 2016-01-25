@@ -8,12 +8,15 @@
 #ifndef BGL_BGLEXCEPTION_H_
 #define BGL_BGLEXCEPTION_H_
 
-#include "io/binarystream.h"
 #include "exception.h"
 
 #include <QString>
 
 namespace atools {
+namespace io {
+class BinaryStream;
+}
+
 namespace fs {
 namespace bgl {
 

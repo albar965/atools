@@ -8,8 +8,7 @@
 #ifndef BGL_NAV_ILSVOR_H_
 #define BGL_NAV_ILSVOR_H_
 
-#include "../record.h"
-#include "../bglposition.h"
+#include "fs/bgl/record.h"
 
 namespace atools {
 namespace fs {
@@ -28,7 +27,7 @@ enum IlsVorType
 } // namespace nav
 
 class IlsVor :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   IlsVor(atools::io::BinaryStream *bs);

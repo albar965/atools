@@ -5,8 +5,8 @@
  *      Author: alex
  */
 
-#include "converter.h"
-#include "bglexception.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/bglexception.h"
 
 namespace atools {
 namespace fs {

@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "section.h"
+#include "fs/bgl/section.h"
 
 #include "io/binarystream.h"
 

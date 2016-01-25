@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "runwayvasi.h"
+#include "fs/bgl/ap/rw/runwayvasi.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

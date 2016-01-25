@@ -8,8 +8,8 @@
 #ifndef BGL_NAV_ROUTEENTRY_H_
 #define BGL_NAV_ROUTEENTRY_H_
 
-#include "../bglbase.h"
-#include "routewaypoint.h"
+#include "fs/bgl/bglbase.h"
+#include "fs/bgl/nav/routewaypoint.h"
 
 namespace atools {
 namespace fs {
@@ -27,7 +27,7 @@ enum RouteType
 } // namespace nav
 
 class RouteEntry :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   RouteEntry(atools::io::BinaryStream *bs);
@@ -37,12 +37,12 @@ public:
 
   bool hasPreviousWaypoint() const;
 
-  const RouteWaypoint& getNextWaypoint() const
+  const atools::fs::bgl::RouteWaypoint& getNextWaypoint() const
   {
     return next;
   }
 
-  const RouteWaypoint& getPreviousWaypoint() const
+  const atools::fs::bgl::RouteWaypoint& getPreviousWaypoint() const
   {
     return previous;
   }
@@ -60,13 +60,13 @@ public:
   static QString routeTypeToStr(atools::fs::bgl::nav::RouteType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const RouteEntry& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RouteEntry& record);
 
   atools::fs::bgl::nav::RouteType type;
   QString name;
 
-  RouteWaypoint next;
-  RouteWaypoint previous;
+  atools::fs::bgl::RouteWaypoint next;
+  atools::fs::bgl::RouteWaypoint previous;
 };
 
 } // namespace bgl

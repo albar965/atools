@@ -8,18 +8,22 @@
 #ifndef BGL_BGLFILE_H_
 #define BGL_BGLFILE_H_
 
-#include "sectiontype.h"
-#include "header.h"
-#include "section.h"
-#include "subsection.h"
+#include "fs/bgl/sectiontype.h"
+#include "fs/bgl/header.h"
+#include "fs/bgl/section.h"
+#include "fs/bgl/subsection.h"
 
-#include "../bglreaderoptions.h"
+#include "fs/bglreaderoptions.h"
 
 #include <QString>
 #include <QList>
 #include <QDebug>
 
 namespace atools {
+namespace io {
+class BinaryStream;
+}
+
 namespace fs {
 namespace bgl {
 class Ils;

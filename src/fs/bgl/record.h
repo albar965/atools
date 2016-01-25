@@ -8,17 +8,20 @@
 #ifndef BGL_RECORD_H_
 #define BGL_RECORD_H_
 
-#include "bglbase.h"
-#include "io/binarystream.h"
+#include "fs/bgl/bglbase.h"
 
 namespace atools {
+namespace io {
+class BinaryStream;
+}
+
 namespace fs {
 namespace bgl {
 
 class Subsection;
 
 class Record :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   Record()
@@ -30,10 +33,7 @@ public:
 
   virtual ~Record();
 
-  void seekToEnd() const
-  {
-    bs->seekg(startOffset + size);
-  }
+  void seekToEnd() const;
 
   int getSize() const
   {
@@ -47,7 +47,7 @@ public:
   }
 
 protected:
-  friend QDebug operator<<(QDebug out, const Record& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);
 
   int id, size;
 };

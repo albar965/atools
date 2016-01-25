@@ -8,8 +8,8 @@
 #ifndef BGL_AP_DEL_DELETERUNWAY_H_
 #define BGL_AP_DEL_DELETERUNWAY_H_
 
-#include "../../bglbase.h"
-#include "../rw/runway.h"
+#include "fs/bgl/bglbase.h"
+#include "fs/bgl/ap/rw/runway.h"
 
 namespace atools {
 namespace io {
@@ -22,14 +22,14 @@ namespace fs {
 namespace bgl {
 
 class DeleteRunway :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   DeleteRunway(atools::io::BinaryStream *bs);
   virtual ~DeleteRunway();
 
 private:
-  friend QDebug operator<<(QDebug out, const DeleteRunway& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteRunway& record);
 
   atools::fs::bgl::rw::Surface surface;
   QString primaryName;

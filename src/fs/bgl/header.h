@@ -8,7 +8,7 @@
 #ifndef BGL_HEADER_H_
 #define BGL_HEADER_H_
 
-#include "bglbase.h"
+#include "fs/bgl/bglbase.h"
 
 namespace atools {
 namespace io {
@@ -21,7 +21,7 @@ namespace fs {
 namespace bgl {
 
 class Header :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   Header()
@@ -49,7 +49,7 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Header& header);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);
 
   int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
   time_t creationTimestamp;

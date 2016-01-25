@@ -5,8 +5,8 @@
  *      Author: alex
  */
 
-#include "subsection.h"
-#include "section.h"
+#include "fs/bgl/subsection.h"
+#include "fs/bgl/section.h"
 
 #include "io/binarystream.h"
 

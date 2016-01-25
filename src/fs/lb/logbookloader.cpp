@@ -59,12 +59,12 @@ void LogbookLoader::loadLogbook(const QString& filename,
       SqlUtil util(db);
       if(!(util.hasTable("logbook") && util.hasTable("logbook_visits")))
       {
-        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_lb_schema.sql"));
+        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/lb/create_schema.sql"));
         db->commit();
       }
       else
       {
-        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/clean_lb_schema.sql"));
+        script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/lb/clean_schema.sql"));
         db->commit();
 
         SqlQuery deleteStmt(db);
@@ -85,7 +85,7 @@ void LogbookLoader::loadLogbook(const QString& filename,
     if(!append)
     {
       db->commit();
-      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_lb_schema.sql"));
+      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/lb/finish_schema.sql"));
     }
 
     file.close();

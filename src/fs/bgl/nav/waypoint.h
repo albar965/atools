@@ -8,9 +8,9 @@
 #ifndef BGL_NAV_WAYPOINT_H_
 #define BGL_NAV_WAYPOINT_H_
 
-#include "../record.h"
-#include "../bglposition.h"
-#include "routeentry.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/bglposition.h"
+#include "fs/bgl/nav/routeentry.h"
 
 namespace atools {
 namespace fs {
@@ -32,7 +32,7 @@ enum WaypointType
 } // namespace nav
 
 class Waypoint :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Waypoint(atools::io::BinaryStream *bs);
@@ -53,7 +53,7 @@ public:
     return magVar;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -68,7 +68,7 @@ public:
     return type;
   }
 
-  const QList<RouteEntry>& getRoutes() const
+  const QList<atools::fs::bgl::RouteEntry>& getRoutes() const
   {
     return routes;
   }
@@ -76,14 +76,14 @@ public:
   static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Waypoint& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Waypoint& record);
 
   atools::fs::bgl::nav::WaypointType type;
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
   float magVar;
   QString ident, region, airportIdent;
 
-  QList<RouteEntry> routes;
+  QList<atools::fs::bgl::RouteEntry> routes;
 };
 
 } // namespace bgl

@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "runwayend.h"
+#include "fs/bgl/ap/rw/runwayend.h"
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {
@@ -41,6 +42,11 @@ QDebug operator<<(QDebug out, const RunwayEnd& record)
 
 RunwayEnd::~RunwayEnd()
 {
+}
+
+QString RunwayEnd::getName() const
+{
+  return converter::runwayToStr(number, designator);
 }
 
 } // namespace bgl

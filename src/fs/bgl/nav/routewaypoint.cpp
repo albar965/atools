@@ -5,8 +5,9 @@
  *      Author: alex
  */
 
-#include "routewaypoint.h"
-#include "../converter.h"
+#include "fs/bgl/nav/routewaypoint.h"
+#include "fs/bgl/converter.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

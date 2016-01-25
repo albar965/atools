@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "glideslope.h"
+#include "fs/bgl/nav/glideslope.h"
 
-#include "../bglposition.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

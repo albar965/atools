@@ -8,24 +8,20 @@
 #ifndef BGL_NAV_LOCALIZER_H_
 #define BGL_NAV_LOCALIZER_H_
 
-#include "../record.h"
-#include "../converter.h"
+#include "fs/bgl/record.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
 class Localizer :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Localizer(atools::io::BinaryStream *bs);
   virtual ~Localizer();
 
-  QString getRunwayName() const
-  {
-    return converter::runwayToStr(runwayNumber, runwayDesignator);
-  }
+  QString getRunwayName() const;
 
   float getHeading() const
   {
@@ -38,7 +34,7 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Localizer& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Localizer& record);
 
   int runwayNumber, runwayDesignator;
   float heading, width;

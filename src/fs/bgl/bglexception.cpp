@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "bglexception.h"
+#include "fs/bgl/bglexception.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

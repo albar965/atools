@@ -43,7 +43,7 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const BglPosition& pos);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& pos);
 
   float altitude;
 };

@@ -8,7 +8,7 @@
 #ifndef BGL_AP_TRANSITION_H_
 #define BGL_AP_TRANSITION_H_
 
-#include "../record.h"
+#include "fs/bgl/record.h"
 
 namespace atools {
 namespace io {
@@ -40,7 +40,7 @@ enum TransitionFixType
 } // namespace ap
 
 class Transition :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Transition(atools::io::BinaryStream *bs);
@@ -110,7 +110,7 @@ public:
   static QString transitionFixTypeToStr(atools::fs::bgl::ap::TransitionFixType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Transition& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Transition& record);
 
   atools::fs::bgl::ap::TransitionType type;
   int numLegs;

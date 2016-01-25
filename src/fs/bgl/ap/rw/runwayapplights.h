@@ -8,9 +8,8 @@
 #ifndef BGL_RUNWAYAPPLIGHTS_H_
 #define BGL_RUNWAYAPPLIGHTS_H_
 
-#include "../../record.h"
+#include "fs/bgl/record.h"
 
-#include <QString>
 #include <QList>
 
 namespace atools {
@@ -92,7 +91,7 @@ public:
   static QString appLightSystemToStr(atools::fs::bgl::rw::ApproachLightSystem type);
 
 private:
-  friend QDebug operator<<(QDebug out, const RunwayAppLights& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayAppLights& record);
 
   atools::fs::bgl::rw::ApproachLightSystem system;
   bool endlights;

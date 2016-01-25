@@ -5,7 +5,9 @@
  *      Author: alex
  */
 
-#include "namelistentry.h"
+#include "fs/bgl/nl/namelistentry.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace fs {

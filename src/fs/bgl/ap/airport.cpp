@@ -5,16 +5,10 @@
  *      Author: alex
  */
 
-#include "airport.h"
-
-#include "../recordtypes.h"
-#include "../bglposition.h"
-
+#include "fs/bgl/ap/airport.h"
+#include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
-
-#include <iterator>
-#include <QList>
-#include <algorithm>
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {

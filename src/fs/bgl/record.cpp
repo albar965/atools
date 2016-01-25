@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "record.h"
+#include "fs/bgl/record.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {
@@ -21,6 +22,11 @@ Record::Record(BinaryStream *bs)
 
 Record::~Record()
 {
+}
+
+void Record::seekToEnd() const
+{
+  bs->seekg(startOffset + size);
 }
 
 QDebug operator<<(QDebug out, const Record& record)

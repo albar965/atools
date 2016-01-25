@@ -5,12 +5,9 @@
  *      Author: alex
  */
 
-#include "deleteairport.h"
-#include "../../converter.h"
+#include "fs/bgl/ap/del/deleteairport.h"
+#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-
-#include <iterator>
-#include <ostream>
 
 namespace atools {
 namespace fs {

@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "com.h"
+#include "fs/bgl/ap/com.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

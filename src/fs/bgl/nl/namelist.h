@@ -8,8 +8,8 @@
 #ifndef BGL_NAMELIST_H_
 #define BGL_NAMELIST_H_
 
-#include "namelistentry.h"
-#include "../record.h"
+#include "fs/bgl/nl/namelistentry.h"
+#include "fs/bgl/record.h"
 
 #include <QString>
 #include <QList>
@@ -25,21 +25,21 @@ namespace fs {
 namespace bgl {
 
 class Namelist :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Namelist(atools::io::BinaryStream *bs);
   virtual ~Namelist();
 
-  const QList<NamelistEntry>& getNameList() const
+  const QList<atools::fs::bgl::NamelistEntry>& getNameList() const
   {
     return entries;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Namelist& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Namelist& record);
 
-  QList<NamelistEntry> entries;
+  QList<atools::fs::bgl::NamelistEntry> entries;
 
   void readList(QStringList& names, atools::io::BinaryStream *bs, int numRegionNames, int regionListOffset);
 

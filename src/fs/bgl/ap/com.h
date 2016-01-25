@@ -8,7 +8,7 @@
 #ifndef BGL_AIRPORTCOM_H_
 #define BGL_AIRPORTCOM_H_
 
-#include "../record.h"
+#include "fs/bgl/record.h"
 
 #include <QString>
 
@@ -46,7 +46,7 @@ enum ComType
 } // namespace com
 
 class Com :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Com()
@@ -68,7 +68,7 @@ public:
     return name;
   }
 
-  com::ComType getType() const
+  atools::fs::bgl::com::ComType getType() const
   {
     return type;
   }
@@ -81,7 +81,7 @@ public:
   static QString comTypeToStr(atools::fs::bgl::com::ComType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Com& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Com& record);
 
   atools::fs::bgl::com::ComType type;
   int frequency;

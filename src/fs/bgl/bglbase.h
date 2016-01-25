@@ -8,11 +8,14 @@
 #ifndef BGL_BGLBASE_H_
 #define BGL_BGLBASE_H_
 
-#include "io/binarystream.h"
-
 #include <QDebug>
 
 namespace atools {
+
+namespace io {
+class BinaryStream;
+}
+
 namespace fs {
 namespace bgl {
 
@@ -21,10 +24,7 @@ class BglBase
 public:
   virtual ~BglBase();
 
-  void seekToStart()
-  {
-    bs->seekg(startOffset);
-  }
+  void seekToStart();
 
   qint64 getStartOffset() const
   {
@@ -32,17 +32,11 @@ public:
   }
 
 protected:
-  friend QDebug operator<<(QDebug out, const BglBase& base);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglBase& base);
 
-  BglBase()
-    : startOffset(0), bs(nullptr)
-  {
-  }
+  BglBase();
 
-  BglBase(atools::io::BinaryStream *stream)
-    : startOffset(stream->tellg()), bs(stream)
-  {
-  }
+  BglBase(atools::io::BinaryStream *stream);
 
   qint64 startOffset;
 

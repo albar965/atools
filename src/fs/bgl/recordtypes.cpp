@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "recordtypes.h"
+#include "fs/bgl/recordtypes.h"
 
 namespace atools {
 namespace fs {

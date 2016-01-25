@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "runwayapplights.h"
+#include "fs/bgl/ap/rw/runwayapplights.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

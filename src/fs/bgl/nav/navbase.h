@@ -8,8 +8,8 @@
 #ifndef BGL_NAV_NAVBASE_H_
 #define BGL_NAV_NAVBASE_H_
 
-#include "../bglposition.h"
-#include "../record.h"
+#include "fs/bgl/bglposition.h"
+#include "fs/bgl/record.h"
 #include <QString>
 
 namespace atools {
@@ -23,7 +23,7 @@ namespace fs {
 namespace bgl {
 
 class NavBase :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   NavBase(atools::io::BinaryStream *bs)
@@ -58,7 +58,7 @@ public:
     return name;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -74,9 +74,9 @@ public:
   }
 
 protected:
-  friend QDebug operator<<(QDebug out, const NavBase& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::NavBase& record);
 
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
   int frequency;
   float range, magVar;
   QString ident, region, airportIdent, name;

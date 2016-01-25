@@ -8,11 +8,9 @@
 #ifndef BGL_RUNWAY_H_
 #define BGL_RUNWAY_H_
 
-#include "../../record.h"
-#include "../../bglposition.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/bglposition.h"
 
-#include "runwayapplights.h"
-#include "runwayvasi.h"
 #include "runwayend.h"
 
 namespace atools {
@@ -102,7 +100,7 @@ enum LightFlags
 } // namespace rw
 
 class Runway :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Runway(atools::io::BinaryStream *bs, const QString& airportIdent);
@@ -153,17 +151,17 @@ public:
     return patternFlags;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
 
-  const RunwayEnd& getPrimary() const
+  const atools::fs::bgl::RunwayEnd& getPrimary() const
   {
     return primary;
   }
 
-  const RunwayEnd& getSecondary() const
+  const atools::fs::bgl::RunwayEnd& getSecondary() const
   {
     return secondary;
   }
@@ -183,13 +181,13 @@ public:
   static QString surfaceToStr(atools::fs::bgl::rw::Surface value);
 
 private:
-  friend QDebug operator<<(QDebug out, const Runway& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Runway& record);
 
   int readRunwayExtLength();
 
   atools::fs::bgl::rw::Surface surface;
 
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
 
   float heading, length, width, patternAltitude;
 
@@ -197,7 +195,7 @@ private:
   atools::fs::bgl::rw::Light edgeLight, centerLight;
   bool centerRed;
 
-  RunwayEnd primary, secondary;
+  atools::fs::bgl::RunwayEnd primary, secondary;
 };
 
 } // namespace bgl

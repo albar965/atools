@@ -8,8 +8,8 @@
 #ifndef BGL_NAV_DME_H_
 #define BGL_NAV_DME_H_
 
-#include "../record.h"
-#include "../bglposition.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/bglposition.h"
 
 #include <iosfwd>
 
@@ -18,13 +18,13 @@ namespace fs {
 namespace bgl {
 
 class Dme :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Dme(atools::io::BinaryStream *bs);
   virtual ~Dme();
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -35,9 +35,9 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Dme& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Dme& record);
 
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
   float range;
 };
 

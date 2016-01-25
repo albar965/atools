@@ -5,12 +5,10 @@
  *      Author: alex
  */
 
-#include "waypoint.h"
-#include "../converter.h"
-#include "../bglposition.h"
-#include "routeentry.h"
-
-#include <iterator>
+#include "fs/bgl/nav/waypoint.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/nav/routeentry.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

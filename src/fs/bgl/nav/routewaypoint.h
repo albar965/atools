@@ -8,7 +8,7 @@
 #ifndef BGL_NAV_ROUTEWAYPOINT_H_
 #define BGL_NAV_ROUTEWAYPOINT_H_
 
-#include "../bglbase.h"
+#include "fs/bgl/bglbase.h"
 
 namespace atools {
 namespace fs {
@@ -27,7 +27,7 @@ enum RouteWaypointType
 } // namespace nav
 
 class RouteWaypoint :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   RouteWaypoint(atools::io::BinaryStream *bs);
@@ -67,7 +67,7 @@ public:
   static QString routeWaypointTypeToStr(atools::fs::bgl::nav::RouteWaypointType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const RouteWaypoint& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RouteWaypoint& record);
 
   atools::fs::bgl::nav::RouteWaypointType type;
   QString ident, region, airportIdent;

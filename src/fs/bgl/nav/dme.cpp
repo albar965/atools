@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "dme.h"
+#include "fs/bgl/nav/dme.h"
 
-#include "../bglposition.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

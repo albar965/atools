@@ -8,15 +8,15 @@
 #ifndef BGL_NAV_GLIDESLOPE_H_
 #define BGL_NAV_GLIDESLOPE_H_
 
-#include "../record.h"
-#include "../bglposition.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/bglposition.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
 class Glideslope :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   Glideslope(atools::io::BinaryStream *bs);
@@ -27,7 +27,7 @@ public:
     return pitch;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -38,9 +38,9 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Glideslope& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Glideslope& record);
 
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
   float range, pitch;
 };
 

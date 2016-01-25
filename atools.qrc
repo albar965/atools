@@ -8,5 +8,10 @@
         <file>resources/sql/lb/clean_schema.sql</file>
         <file>resources/sql/ap/drop_schema.sql</file>
         <file>resources/sql/lb/drop_schema.sql</file>
+        <file>resources/sql/writer/create_ap_schema.sql</file>
+        <file>resources/sql/writer/create_meta_schema.sql</file>
+        <file>resources/sql/writer/create_nav_schema.sql</file>
+        <file>resources/sql/writer/create_views.sql</file>
+        <file>resources/sql/writer/finish_schema.sql</file>
     </qresource>
 </RCC>

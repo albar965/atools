@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "deleterunway.h"
+#include "fs/bgl/ap/del/deleterunway.h"
 #include "io/binarystream.h"
-#include "../rw/runway.h"
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {

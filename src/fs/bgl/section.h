@@ -8,8 +8,8 @@
 #ifndef BGL_SECTION_H_
 #define BGL_SECTION_H_
 
-#include "bglbase.h"
-#include "sectiontype.h"
+#include "fs/bgl/bglbase.h"
+#include "fs/bgl/sectiontype.h"
 
 namespace atools {
 namespace io {
@@ -22,7 +22,7 @@ namespace fs {
 namespace bgl {
 
 class Section :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   Section(atools::io::BinaryStream *bs);
@@ -54,7 +54,7 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Section& section);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Section& section);
 
   atools::fs::bgl::section::SectionType type;
   int size, numSubsections, firstSubsectionOffset, totalSubsectionSize;

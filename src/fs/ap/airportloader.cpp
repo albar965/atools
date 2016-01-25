@@ -56,7 +56,7 @@ void AirportLoader::loadAirports(const QString& filename)
 
     if(!SqlUtil(db).hasTable("airport"))
       // Drop if exists and create tables
-      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/create_ap_schema.sql"));
+      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/ap/create_schema.sql"));
 
     reader.setDevice(&xmlFile);
 
@@ -75,7 +75,7 @@ void AirportLoader::loadAirports(const QString& filename)
     if(reader.error() == QXmlStreamReader::NoError)
     {
       db->commit();
-      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/finish_ap_schema.sql"));
+      script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/ap/finish_schema.sql"));
       db->commit();
     }
     else
@@ -167,7 +167,7 @@ void AirportLoader::dropDatabase()
   using atools::settings::Settings;
 
   SqlScript script(db);
-  script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/drop_ap_schema.sql"));
+  script.executeScript(Settings::getOverloadedPath(":/atools/resources/sql/ap/drop_schema.sql"));
   db->commit();
 }
 

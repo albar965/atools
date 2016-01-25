@@ -5,7 +5,8 @@
  *      Author: alex
  */
 
-#include "bglbase.h"
+#include "fs/bgl/bglbase.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {
@@ -21,6 +22,21 @@ QDebug operator<<(QDebug out, const BglBase& base)
 }
 
 BglBase::~BglBase()
+{
+}
+
+void BglBase::seekToStart()
+{
+  bs->seekg(startOffset);
+}
+
+BglBase::BglBase()
+  : startOffset(0), bs(nullptr)
+{
+}
+
+BglBase::BglBase(io::BinaryStream *stream)
+  : startOffset(stream->tellg()), bs(stream)
 {
 }
 

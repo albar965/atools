@@ -5,23 +5,22 @@
  *      Author: alex
  */
 
-#include "bglfile.h"
+#include "fs/bgl/bglfile.h"
 
 #include "io/binarystream.h"
-#include "section.h"
-#include "subsection.h"
-#include "header.h"
-#include "ap/airport.h"
-#include "nl/namelist.h"
-#include "nav/ilsvor.h"
-#include "nav/vor.h"
-#include "nav/ils.h"
-#include "nav/marker.h"
-#include "nav/ndb.h"
-#include "nav/waypoint.h"
+#include "fs/bgl/section.h"
+#include "fs/bgl/subsection.h"
+#include "fs/bgl/header.h"
+#include "fs/bgl/ap/airport.h"
+#include "fs/bgl/nl/namelist.h"
+#include "fs/bgl/nav/ilsvor.h"
+#include "fs/bgl/nav/vor.h"
+#include "fs/bgl/nav/ils.h"
+#include "fs/bgl/nav/marker.h"
+#include "fs/bgl/nav/ndb.h"
+#include "fs/bgl/nav/waypoint.h"
 
 #include <QList>
-#include <algorithm>
 #include <QDebug>
 #include <QFile>
 

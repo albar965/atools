@@ -8,7 +8,7 @@
 #ifndef BGL_AP_DEL_DELETECOM_H_
 #define BGL_AP_DEL_DELETECOM_H_
 
-#include "../com.h"
+#include "fs/bgl/ap/com.h"
 
 namespace atools {
 namespace io {
@@ -21,14 +21,14 @@ namespace fs {
 namespace bgl {
 
 class DeleteCom :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   DeleteCom(atools::io::BinaryStream *bs);
   virtual ~DeleteCom();
 
 private:
-  friend QDebug operator<<(QDebug out, const DeleteCom& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteCom& record);
 
   atools::fs::bgl::com::ComType type;
   int frequency;

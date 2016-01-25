@@ -5,9 +5,9 @@
  *      Author: alex
  */
 
-#include "marker.h"
-#include "../bglposition.h"
-#include "../converter.h"
+#include "fs/bgl/nav/marker.h"
+#include "fs/bgl/converter.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

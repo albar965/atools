@@ -8,9 +8,8 @@
 #ifndef BGL_NAV_VOR_H_
 #define BGL_NAV_VOR_H_
 
-#include "navbase.h"
-#include "../bglposition.h"
-#include "ilsvor.h"
+#include "fs/bgl/nav/navbase.h"
+#include "fs/bgl/nav/ilsvor.h"
 
 namespace atools {
 namespace fs {
@@ -19,13 +18,13 @@ namespace bgl {
 class Dme;
 
 class Vor :
-  public NavBase
+  public atools::fs::bgl::NavBase
 {
 public:
   Vor(atools::io::BinaryStream *bs);
   virtual ~Vor();
 
-  const Dme *getDme() const
+  const atools::fs::bgl::Dme *getDme() const
   {
     return dme;
   }
@@ -41,11 +40,11 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Vor& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Vor& record);
 
   atools::fs::bgl::nav::IlsVorType type;
   bool dmeOnly;
-  Dme *dme;
+  atools::fs::bgl::Dme *dme;
 };
 
 } // namespace bgl

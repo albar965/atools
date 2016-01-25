@@ -7,12 +7,9 @@
 
 #include "runway.h"
 
-#include "../../recordtypes.h"
-#include "../../converter.h"
+#include "fs/bgl/recordtypes.h"
+#include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-
-#include <QString>
-#include <iomanip>
 
 namespace atools {
 namespace fs {

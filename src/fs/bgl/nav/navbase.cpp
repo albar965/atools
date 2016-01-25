@@ -5,7 +5,7 @@
  *      Author: alex
  */
 
-#include "navbase.h"
+#include "fs/bgl/nav/navbase.h"
 
 namespace atools {
 namespace fs {

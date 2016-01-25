@@ -8,9 +8,8 @@
 #ifndef BGL_RUNWAYVASI_H_
 #define BGL_RUNWAYVASI_H_
 
-#include "../../record.h"
+#include "fs/bgl/record.h"
 
-#include <QString>
 #include <QList>
 
 namespace atools {
@@ -46,7 +45,7 @@ enum VasiType
 } // namespace rw
 
 class RunwayVasi :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   RunwayVasi()
@@ -71,7 +70,7 @@ public:
   static QString vasiTypeToStr(atools::fs::bgl::rw::VasiType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const RunwayVasi& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayVasi& record);
 
   atools::fs::bgl::rw::VasiType type;
   float pitch;

@@ -5,9 +5,10 @@
  *      Author: alex
  */
 
-#include "transition.h"
+#include "fs/bgl/ap/transition.h"
 
-#include "../converter.h"
+#include "fs/bgl/converter.h"
+#include "io/binarystream.h"
 
 namespace atools {
 namespace fs {

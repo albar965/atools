@@ -5,13 +5,13 @@
  *      Author: alex
  */
 
-#include "namelist.h"
+#include "fs/bgl/nl/namelist.h"
+#include "io/binarystream.h"
 
-#include "../converter.h"
+#include "fs/bgl/converter.h"
 
-#include <iterator>
 
-#include "namelistentry.h"
+#include "fs/bgl/nl/namelistentry.h"
 
 namespace atools {
 namespace fs {

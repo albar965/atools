@@ -8,7 +8,7 @@
 #ifndef BGL_AP_PARKING_H_
 #define BGL_AP_PARKING_H_
 
-#include "../bglposition.h"
+#include "fs/bgl/bglposition.h"
 
 #include <QString>
 
@@ -111,7 +111,7 @@ public:
     return type;
   }
 
-  const BglPosition& getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
@@ -125,13 +125,13 @@ public:
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
 
 private:
-  friend QDebug operator<<(QDebug out, const Parking& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);
 
   atools::fs::bgl::ap::ParkingType type;
   atools::fs::bgl::ap::ParkingName name;
   int number;
   float radius, heading;
-  BglPosition position;
+  atools::fs::bgl::BglPosition position;
 };
 
 } // namespace bgl

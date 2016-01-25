@@ -8,7 +8,7 @@
 #ifndef BGL_SUBSECTION_H_
 #define BGL_SUBSECTION_H_
 
-#include "bglbase.h"
+#include "fs/bgl/bglbase.h"
 
 namespace atools {
 namespace io {
@@ -23,7 +23,7 @@ namespace bgl {
 class Section;
 
 class Subsection :
-  public BglBase
+  public atools::fs::bgl::BglBase
 {
 public:
   Subsection(atools::io::BinaryStream *bs, const Section& parentSect);
@@ -55,10 +55,10 @@ public:
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const Subsection& section);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Subsection& section);
 
   int id, numDataRecords, firstDataRecordOffset, dataSize;
-  const Section *parent;
+  const atools::fs::bgl::Section *parent;
 };
 
 } // namespace bgl
