@@ -30,6 +30,10 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
 {
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
 
+#ifdef Q_OS_UNIX
+  areaLocalPathStr.replace("\\", "/");
+#endif
+
   if(QFileInfo(areaLocalPathStr).isAbsolute())
     sceneryAreaDirStr = areaLocalPathStr;
   else
@@ -40,13 +44,13 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
   {
     if(sceneryArea.isDir())
     {
-      QFileInfo sceneryAreaDir(sceneryArea.absoluteFilePath() + QDir::separator() + "scenery");
-      if(sceneryAreaDir.exists() && sceneryAreaDir.isDir())
+      QDir sceneryAreaDir(sceneryArea.absoluteFilePath());
+      for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
       {
-        QDir sceneryAreaDirObj(sceneryAreaDir.absoluteFilePath());
+        QDir sceneryAreaDirObj(scenery.absoluteFilePath());
         for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
           if(!matchesExcludedPrefix(bglFile.fileName()))
-            files.push_back(bglFile.absolutePath());
+            files.push_back(bglFile.absoluteFilePath());
       }
     }
     else

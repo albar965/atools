@@ -27,7 +27,8 @@ WriterBaseBasic::WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
     sql = SqlUtil(&db).buildInsertStatement(tablename);
   else
     sql = sqlParam;
-  stmt = SqlQuery(sql, db);
+  stmt = SqlQuery(db);
+  stmt.prepare(sql);
 }
 
 WriterBaseBasic::~WriterBaseBasic()
@@ -55,7 +56,7 @@ void WriterBaseBasic::executeStatement()
   int numUpdated = stmt.numRowsAffected();
   if(numUpdated == 0)
     throw atools::sql::SqlException("Noting inserted", sql);
-  stmt.clear();
+  // stmt.clear();
 
   dataWriter.increaseNumObjects();
 }

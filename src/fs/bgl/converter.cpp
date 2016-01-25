@@ -121,7 +121,7 @@ QString runwayToStr(int runwayNumber, int designator)
 
 }
 
-time_t filetime(int lowDateTime, int highDateTime)
+time_t filetime(unsigned int lowDateTime, unsigned int highDateTime)
 {
   // number of seconds from 1 Jan. 1601 00:00 to 1 Jan 1970 00:00 UTC
   static const unsigned long long FILETIME_EPOCH_DIFF = 11644473600LL;

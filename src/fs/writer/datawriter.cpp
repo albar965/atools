@@ -54,12 +54,6 @@ static SectionType supportedSectionTypes[] =
 DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   : db(sqlDb), options(opts)
 {
-  // APX airports
-  // ATX waypoints and boundaries
-  // NVX navids
-  // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
-  // resolver("brx")("obx")("cvx");
-
   bglFileWriter = new BglFileWriter(db, *this);
   sceneryAreaWriter = new SceneryAreaWriter(db, *this);
   airportWriter = new AirportWriter(db, *this);
@@ -105,10 +99,16 @@ DataWriter::~DataWriter()
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
+  qInfo() << area;
+
   QStringList files;
   atools::fs::scenery::FileResolver resolver(options);
 
-  qInfo() << area;
+  // APX airports
+  // ATX waypoints and boundaries
+  // NVX navids
+  // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
+  // resolver("brx")("obx")("cvx");
   resolver.getFiles(area, files);
 
   if(!files.empty())

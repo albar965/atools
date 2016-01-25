@@ -22,25 +22,25 @@ using atools::io::BinaryStream;
 Header::Header(BinaryStream *bs)
   : BglBase(bs)
 {
-  magicNumber1 = bs->readInt();
+  magicNumber1 = bs->readUInt();
 
   if(magicNumber1 != 0x19920201)
     qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
                                    << ". File \"" << bs->getFilename() << "\" at offset "
                                    << bs->tellg() << ".";
 
-  headerSize = bs->readInt();
-  lowDateTime = bs->readInt();
-  highDateTime = bs->readInt();
+  headerSize = bs->readUInt();
+  lowDateTime = bs->readUInt();
+  highDateTime = bs->readUInt();
   creationTimestamp = converter::filetime(lowDateTime, highDateTime);
 
-  magicNumber2 = bs->readInt();
+  magicNumber2 = bs->readUInt();
   if(magicNumber2 != 0x08051803)
     qWarning().nospace().noquote() << "Invalid magic number 2: 0x" << hex << magicNumber2
                                    << ". File \"" << bs->getFilename() << "\" at offset "
                                    << bs->tellg() << ".";
 
-  numSections = bs->readInt();
+  numSections = bs->readUInt();
 
   // QMIDs
   bs->skip(4 * 8);

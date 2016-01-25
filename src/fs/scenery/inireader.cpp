@@ -102,11 +102,9 @@ void IniReader::read(const QString& iniFilename)
     QTextStream sceneryCfg(&sceneryCfgFile);
     onStartDocument(filename);
 
-    while(sceneryCfg.status() == QTextStream::Ok)
+    currentLine.clear();
+    while(sceneryCfg.readLineInto(&currentLine, 1024))
     {
-      currentLine.clear();
-
-      sceneryCfg.readLineInto(&currentLine, 1024);
       currentLine = currentLine.trimmed();
       currentLineNum++;
 

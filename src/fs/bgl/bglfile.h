@@ -19,7 +19,6 @@
 #include <QList>
 #include "logging/loggingdefs.h"
 
-
 namespace atools {
 namespace io {
 class BinaryStream;

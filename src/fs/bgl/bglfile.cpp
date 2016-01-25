@@ -44,6 +44,7 @@ BglFile::~BglFile()
 void BglFile::readFile(QString file)
 {
   freeObjects();
+  filename = file;
 
   if(options.isVerbose())
     qDebug() << "==============================";
@@ -71,7 +72,7 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
     qDebug() << header;
 
   // Section pointer
-  for(int i = 0; i < header.getNumSections(); i++)
+  for(unsigned int i = 0; i < header.getNumSections(); i++)
   {
     Section s = Section(bs);
     if(std::binary_search(supportedSectionTypes.begin(), supportedSectionTypes.end(), s.getType()))

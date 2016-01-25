@@ -38,12 +38,8 @@ using atools::fs::bgl::DeleteAirport;
 void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 {
   for(const Namelist *iter : namelists)
-  {
-    const QList<NamelistEntry>& nle = iter->getNameList();
-
-    for(NamelistEntry i : nle)
+    for(const NamelistEntry &i : iter->getNameList())
       nameListIndex[i.getAirportIdent()] = &i;
-  }
 }
 
 void AirportWriter::writeObject(const Airport *type)

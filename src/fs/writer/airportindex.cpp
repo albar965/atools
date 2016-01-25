@@ -9,7 +9,6 @@
 
 #include "logging/loggingdefs.h"
 
-
 namespace atools {
 namespace fs {
 namespace writer {

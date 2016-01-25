@@ -56,6 +56,21 @@ public:
   bool doesFilenameMatch(const QString& filename) const;
   bool doesAirportIcaoMatch(const QString& icao) const;
 
+  void setSceneryFile(const QString& value)
+  {
+    sceneryFile = value;
+  }
+
+  void setBasepath(const QString& value)
+  {
+    basepath = value;
+  }
+
+  void setVerbose(bool value)
+  {
+    verbose = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 

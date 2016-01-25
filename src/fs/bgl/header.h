@@ -43,7 +43,7 @@ public:
     return creationTimestamp;
   }
 
-  int getNumSections() const
+  unsigned int getNumSections() const
   {
     return numSections;
   }
@@ -51,7 +51,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);
 
-  int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
+  unsigned int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
   time_t creationTimestamp;
 };
 

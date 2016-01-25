@@ -10,7 +10,6 @@
 
 #include "logging/loggingdefs.h"
 
-
 namespace atools {
 
 namespace io {

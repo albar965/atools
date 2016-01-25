@@ -10,7 +10,6 @@
 
 #include "fs/bgl/converter.h"
 
-
 #include "fs/bgl/nl/namelistentry.h"
 
 namespace atools {

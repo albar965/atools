@@ -10,7 +10,6 @@
 #include <QList>
 #include "logging/loggingdefs.h"
 
-
 namespace atools {
 namespace fs {
 
@@ -44,11 +43,12 @@ bool BglReaderOptions::doesAirportIcaoMatch(const QString& icao) const
 
 QDebug operator<<(QDebug out, const BglReaderOptions& opts)
 {
-  out << "Options[verbose " << opts.verbose
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << "Options[verbose " << opts.verbose
   << ", sceneryFile \"" << opts.sceneryFile
   << "\", basepath \"" << opts.basepath
   << "\", noDeletes " << opts.noDeletes
-  << "\", noIncomplete " << opts.noIncomplete
+  << ", noIncomplete " << opts.noIncomplete
   << ", debugAutocommit " << opts.debugAutocommit;
 
   out << ", File filter [";
