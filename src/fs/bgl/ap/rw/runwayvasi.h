@@ -63,7 +63,7 @@ public:
   {
   }
 
-  RunwayVasi(atools::io::BinaryStream *bs);
+  RunwayVasi(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~RunwayVasi();
 

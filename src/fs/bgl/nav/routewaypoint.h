@@ -40,7 +40,7 @@ class RouteWaypoint :
   public atools::fs::bgl::BglBase
 {
 public:
-  RouteWaypoint(atools::io::BinaryStream *bs);
+  RouteWaypoint(const BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~RouteWaypoint();
 

@@ -86,8 +86,8 @@ enum AppLightFlags
 
 };
 
-RunwayAppLights::RunwayAppLights(BinaryStream *bs)
-  : Record(bs)
+RunwayAppLights::RunwayAppLights(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   int flags = bs->readByte();
   numStrobes = bs->readByte();

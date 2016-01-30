@@ -43,8 +43,8 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
   }
 }
 
-Namelist::Namelist(BinaryStream *bs)
-  : Record(bs)
+Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   int numRegionNames = bs->readShort();
   int numCountryNames = bs->readShort();

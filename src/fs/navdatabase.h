@@ -15,43 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAV_LOCALIZER_H_
-#define BGL_NAV_LOCALIZER_H_
+#ifndef NAVDATABASE_H
+#define NAVDATABASE_H
 
-#include "fs/bgl/record.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
-namespace fs {
-namespace bgl {
+namespace sql {
+class SqlDatabase;
+}
 
-class Localizer :
-  public atools::fs::bgl::Record
+namespace fs {
+
+class Navdatabase
 {
 public:
-  Localizer(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Localizer();
-
-  QString getRunwayName() const;
-
-  float getHeading() const
-  {
-    return heading;
-  }
-
-  float getWidth() const
-  {
-    return width;
-  }
+  Navdatabase(const atools::fs::BglReaderOptions& readerOptions, atools::sql::SqlDatabase *sqlDb);
+  void create();
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Localizer& record);
-
-  int runwayNumber, runwayDesignator;
-  float heading, width;
+  atools::sql::SqlDatabase *db;
+  atools::fs::BglReaderOptions options;
 };
 
-} // namespace bgl
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAV_LOCALIZER_H_ */
+#endif // NAVDATABASE_H

@@ -45,7 +45,7 @@ class Waypoint :
   public atools::fs::bgl::Record
 {
 public:
-  Waypoint(atools::io::BinaryStream *bs);
+  Waypoint(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Waypoint();
 
   const QString& getAirportIdent() const

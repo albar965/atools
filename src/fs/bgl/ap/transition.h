@@ -53,7 +53,7 @@ class Transition :
   public atools::fs::bgl::Record
 {
 public:
-  Transition(atools::io::BinaryStream *bs);
+  Transition(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Transition();
 
   const QString& getFixAirportIdent() const

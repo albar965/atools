@@ -40,10 +40,6 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
 {
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
 
-#ifdef Q_OS_UNIX
-  areaLocalPathStr.replace("\\", "/");
-#endif
-
   if(QFileInfo(areaLocalPathStr).isAbsolute())
     sceneryAreaDirStr = areaLocalPathStr;
   else

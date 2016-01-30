@@ -25,8 +25,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-RouteWaypoint::RouteWaypoint(atools::io::BinaryStream *bs)
-  : BglBase(bs)
+RouteWaypoint::RouteWaypoint(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
+  : BglBase(options, bs)
 {
   unsigned int nextFlags = bs->readUInt();
   unsigned int nextIdFlags = bs->readUInt();

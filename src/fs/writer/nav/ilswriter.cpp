@@ -78,7 +78,7 @@ void IlsWriter::writeObject(const Ils *type)
   {
     QString msg(" ILS ID " + QString::number(getCurrentId()) +
                 " ident " + type->getIdent() + " name " + type->getName());
-    if(getOptions().doesAirportIcaoMatch(apIdent))
+    if(getOptions().includeAirport(apIdent))
     {
       int id = getRunwayIndex()->getRunwayEndId(apIdent, loc->getRunwayName(), msg);
 
@@ -97,7 +97,7 @@ void IlsWriter::writeObject(const Ils *type)
   else
     isComplete = true;
 
-  if(!getOptions().noIncompleteObjects() || isComplete)
+  if(getOptions().isIncomplete() || isComplete)
     executeStatement();
   else
     clearStatement();

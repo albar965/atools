@@ -53,7 +53,7 @@ class DeleteAirport :
   public atools::fs::bgl::Record
 {
 public:
-  DeleteAirport(atools::io::BinaryStream *bs);
+  DeleteAirport(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteAirport();
 
   const QList<atools::fs::bgl::DeleteCom>& getDeleteComs() const

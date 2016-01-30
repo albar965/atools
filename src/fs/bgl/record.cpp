@@ -23,8 +23,8 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Record::Record(BinaryStream *bs)
-  : BglBase(bs)
+Record::Record(const BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs)
 {
   id = bs->readShort();
   size = bs->readInt();

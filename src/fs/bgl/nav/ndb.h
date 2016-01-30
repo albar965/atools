@@ -40,7 +40,7 @@ class Ndb :
   public atools::fs::bgl::NavBase
 {
 public:
-  Ndb(atools::io::BinaryStream *bs);
+  Ndb(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Ndb();
 
   atools::fs::bgl::nav::NdbType getType() const

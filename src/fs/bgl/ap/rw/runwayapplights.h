@@ -64,7 +64,7 @@ public:
   {
   }
 
-  RunwayAppLights(atools::io::BinaryStream *bs);
+  RunwayAppLights(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~RunwayAppLights();
 

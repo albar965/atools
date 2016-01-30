@@ -36,7 +36,7 @@ class Subsection :
   public atools::fs::bgl::BglBase
 {
 public:
-  Subsection(atools::io::BinaryStream *bs, const Section& parentSect);
+  Subsection(const BglReaderOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
   virtual ~Subsection();
 
   int getDataSize() const

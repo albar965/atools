@@ -101,7 +101,13 @@ void SceneryCfg::onKeyValue(const QString& section,
     else if(key == "remote")
       currentArea.remotePath = value;
     else if(key == "local")
+    {
+#ifdef Q_OS_UNIX
+      currentArea.localPath = QString(value).replace("\\", "/");
+#else
       currentArea.localPath = value;
+#endif
+    }
     else if(key == "layer")
       currentArea.layer = toInt(value);
     else if(key == "active")

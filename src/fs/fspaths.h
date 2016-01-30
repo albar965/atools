@@ -25,6 +25,8 @@ namespace fs {
 
 #define NUM_SIMULATOR_TYPES 4
 
+namespace fstype {
+
 enum SimulatorType
 {
   /* Force numeric values since these are used as indexes.
@@ -42,12 +44,16 @@ enum SimulatorType
   /* Platform: Prepar3d Version 3 */
   P3D_V3 = 3,
 
+  MAX_VALUE = 4,
+
   /* Special value to pass to certain queries */
   ALL_SIMULATORS = -1
 };
 
 /* Array of all four valid types */
 extern const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
+extern const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES];
+} // namespace fstype
 
 /*
  * Allows to find Flight Simulator related paths and check for installed simulators.
@@ -56,14 +62,17 @@ class FsPaths
 {
 public:
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed */
-  static QString getBasePath(SimulatorType type);
+  static QString getBasePath(fs::fstype::SimulatorType type);
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
-  static QString getFilesPath(SimulatorType type);
+  static QString getFilesPath(fs::fstype::SimulatorType type);
 
   /* Path to scenery.cfg */
-  static QString getSceneryLibraryPath(SimulatorType type);
+  static QString getSceneryLibraryPath(fs::fstype::SimulatorType type);
+
+  static QString typeToString(fs::fstype::SimulatorType type);
+  static fs::fstype::SimulatorType stringToType(const QString& typeStr);
 
 private:
   FsPaths()
@@ -100,12 +109,12 @@ private:
   static const char *P3D_V2_NO_WINDOWS_PATH;
   static const char *P3D_V3_NO_WINDOWS_PATH;
 
-  static QString settingsKey(SimulatorType type);
-  static QString registryPath(SimulatorType type);
-  static QString registryKey(SimulatorType type);
+  static QString settingsKey(fs::fstype::SimulatorType type);
+  static QString registryPath(fs::fstype::SimulatorType type);
+  static QString registryKey(fs::fstype::SimulatorType type);
 
   static QString documentsDirectory(QString simBasePath);
-  static QString nonWindowsPath(SimulatorType type);
+  static QString nonWindowsPath(fs::fstype::SimulatorType type);
 
 };
 

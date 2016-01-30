@@ -48,8 +48,8 @@ QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
   return "";
 }
 
-IlsVor::IlsVor(BinaryStream *bs)
-  : Record(bs)
+IlsVor::IlsVor(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   type = static_cast<nav::IlsVorType>(bs->readByte());
 }

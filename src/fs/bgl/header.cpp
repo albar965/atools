@@ -29,8 +29,8 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Header::Header(BinaryStream *bs)
-  : BglBase(bs)
+Header::Header(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs)
 {
   magicNumber1 = bs->readUInt();
 

@@ -40,7 +40,7 @@ class IlsVor :
   public atools::fs::bgl::Record
 {
 public:
-  IlsVor(atools::io::BinaryStream *bs);
+  IlsVor(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~IlsVor();
 
   atools::fs::bgl::nav::IlsVorType getType() const

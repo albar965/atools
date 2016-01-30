@@ -25,8 +25,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Dme::Dme(BinaryStream *bs)
-  : Record(bs)
+Dme::Dme(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   bs->skip(2); // Unknown
   position = BglPosition(bs, 1000.f);

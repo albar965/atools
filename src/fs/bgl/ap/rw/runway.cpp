@@ -159,8 +159,8 @@ QString Runway::surfaceToStr(rw::Surface surface)
   return "";
 }
 
-Runway::Runway(BinaryStream *bs, const QString& airportIdent)
-  : Record(bs)
+Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString& airportIdent)
+  : Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readShort());
   primary.number = bs->readByte();
@@ -213,7 +213,7 @@ Runway::Runway(BinaryStream *bs, const QString& airportIdent)
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
 
     switch(t)
@@ -238,27 +238,27 @@ Runway::Runway(BinaryStream *bs, const QString& airportIdent)
         break;
       case rec::VASI_PRIM_LEFT:
         r.seekToStart();
-        primary.leftVasi = RunwayVasi(bs);
+        primary.leftVasi = RunwayVasi(options, bs);
         break;
       case rec::VASI_PRIM_RIGHT:
         r.seekToStart();
-        primary.rightVasi = RunwayVasi(bs);
+        primary.rightVasi = RunwayVasi(options, bs);
         break;
       case rec::VASI_SEC_LEFT:
         r.seekToStart();
-        secondary.leftVasi = RunwayVasi(bs);
+        secondary.leftVasi = RunwayVasi(options, bs);
         break;
       case rec::VASI_SEC_RIGHT:
         r.seekToStart();
-        secondary.rightVasi = RunwayVasi(bs);
+        secondary.rightVasi = RunwayVasi(options, bs);
         break;
       case rec::APP_LIGHTS_PRIM:
         r.seekToStart();
-        primary.approachLights = RunwayAppLights(bs);
+        primary.approachLights = RunwayAppLights(options, bs);
         break;
       case rec::APP_LIGHTS_SEC:
         r.seekToStart();
-        secondary.approachLights = RunwayAppLights(bs);
+        secondary.approachLights = RunwayAppLights(options, bs);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec

@@ -85,6 +85,21 @@ QString Settings::getConfigFilename(const QString& extension)
   return getPath() + QDir::separator() + appNameForFiles() + extension;
 }
 
+QString Settings::getOverloadedLocalPath(const QString& filename)
+{
+  QString configDirFile = QFileInfo(filename).fileName();
+
+  if(QFileInfo::exists(configDirFile))
+    // User placed a copy of the file in the current directory - use the
+    // overloaded one
+    return configDirFile;
+  else if(QFileInfo::exists(filename))
+    // No overloading and file exists return the original path
+    return filename;
+  else
+    throw Exception(QString("Settings::getOverloadedPath: cannot resolve path \"%1\"").arg(filename));
+}
+
 QString Settings::getOverloadedPath(const QString& filename)
 {
   QString configDirFile = getPath() + QDir::separator() + QFileInfo(filename).fileName();

@@ -45,14 +45,14 @@ QString RouteEntry::routeTypeToStr(nav::RouteType type)
   return "";
 }
 
-RouteEntry::RouteEntry(BinaryStream *bs)
-  : BglBase(bs)
+RouteEntry::RouteEntry(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs)
 {
   type = static_cast<nav::RouteType>(bs->readByte());
   name = bs->readString(8);
 
-  next = RouteWaypoint(bs);
-  previous = RouteWaypoint(bs);
+  next = RouteWaypoint(options, bs);
+  previous = RouteWaypoint(options, bs);
 }
 
 RouteEntry::~RouteEntry()

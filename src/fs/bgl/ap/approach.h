@@ -58,7 +58,7 @@ class Approach :
   public atools::fs::bgl::Record
 {
 public:
-  Approach(atools::io::BinaryStream *bs);
+  Approach(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Approach();
 
   QString getRunwayName() const;

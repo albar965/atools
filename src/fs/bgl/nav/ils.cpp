@@ -44,8 +44,8 @@ enum IlsFlags
               // bit 5: NAV true
 };
 
-Ils::Ils(BinaryStream *bs)
-  : NavBase(bs), localizer(nullptr), glideslope(nullptr), dme(nullptr)
+Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
+  : NavBase(options, bs), localizer(nullptr), glideslope(nullptr), dme(nullptr)
 {
   bs->readByte();
   int flags = bs->readByte();
@@ -61,15 +61,15 @@ Ils::Ils(BinaryStream *bs)
   range = bs->readFloat();
   magVar = bs->readFloat();
 
-  ident = converter::intToIcao(bs->readInt());
+  ident = converter::intToIcao(bs->readUInt());
 
-  unsigned int regionFlags = bs->readInt();
+  unsigned int regionFlags = bs->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::IlsVorRecordType t = r.getId<rec::IlsVorRecordType>();
 
     switch(t)
@@ -79,15 +79,15 @@ Ils::Ils(BinaryStream *bs)
         break;
       case rec::LOCALIZER:
         r.seekToStart();
-        localizer = new Localizer(bs);
+        localizer = new Localizer(options, bs);
         break;
       case rec::GLIDESLOPE:
         r.seekToStart();
-        glideslope = new Glideslope(bs);
+        glideslope = new Glideslope(options, bs);
         break;
       case rec::DME:
         r.seekToStart();
-        dme = new Dme(bs);
+        dme = new Dme(options, bs);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in ILS record 0x"

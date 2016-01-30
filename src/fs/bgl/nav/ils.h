@@ -32,7 +32,7 @@ class Ils :
   public atools::fs::bgl::NavBase
 {
 public:
-  Ils(atools::io::BinaryStream *bs);
+  Ils(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Ils();
 
   const atools::fs::bgl::Dme *getDme() const

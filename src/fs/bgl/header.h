@@ -40,7 +40,7 @@ public:
   {
   }
 
-  Header(atools::io::BinaryStream *bs);
+  Header(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Header();
 
   QString getCreationTimestampString() const

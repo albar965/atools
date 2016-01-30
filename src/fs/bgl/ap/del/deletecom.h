@@ -34,7 +34,7 @@ class DeleteCom :
   public atools::fs::bgl::BglBase
 {
 public:
-  DeleteCom(atools::io::BinaryStream *bs);
+  DeleteCom(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteCom();
 
 private:

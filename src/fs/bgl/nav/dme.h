@@ -31,7 +31,7 @@ class Dme :
   public atools::fs::bgl::Record
 {
 public:
-  Dme(atools::io::BinaryStream *bs);
+  Dme(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Dme();
 
   const atools::fs::bgl::BglPosition& getPosition() const

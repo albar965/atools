@@ -54,7 +54,7 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
-  if(!getOptions().doesAirportIcaoMatch(type->getIdent()))
+  if(!getOptions().includeAirport(type->getIdent()))
     return;
 
   if(getOptions().isVerbose())
@@ -107,9 +107,8 @@ void AirportWriter::writeObject(const Airport *type)
   const QList<Runway>& runways = type->getRunways();
 
   for(Runway rwy : runways)
-    if(!(getOptions().filterRunways() &&
-         rwy.getLength() <= MIN_RUNWAY_LENGTH &&
-         rwy.getSurface() == atools::fs::bgl::rw::GRASS))
+    if(!(getOptions().isFilterRunways() &&
+         rwy.getLength() <= MIN_RUNWAY_LENGTH && rwy.getSurface() == atools::fs::bgl::rw::GRASS))
       rwWriter->writeOne(rwy);
 
   WaypointWriter *waypointWriter = getDataWriter().getWaypointWriter();
@@ -130,7 +129,7 @@ void AirportWriter::writeObject(const Airport *type)
   for(DeleteAirport delAp : deleteAirports)
   {
     deleteAirportWriter->writeOne(delAp);
-    if(getOptions().execDeletes())
+    if(getOptions().isDeletes())
       deleteProcessor.processDelete(delAp, type, getCurrentId());
   }
 }

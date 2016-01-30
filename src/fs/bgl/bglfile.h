@@ -48,7 +48,7 @@ class Record;
 class BglFile
 {
 public:
-  BglFile(const BglReaderOptions& opts);
+  BglFile(const BglReaderOptions *opts);
   virtual ~BglFile();
 
   void setSupportedSectionTypes(const QList<atools::fs::bgl::section::SectionType>& sects)
@@ -130,11 +130,13 @@ private:
   const Record *handleIlsVor(atools::io::BinaryStream *bs);
 
   template<typename TYPE>
-  const TYPE *createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list);
+  const TYPE *createRecord(const atools::fs::BglReaderOptions *options,
+                           atools::io::BinaryStream *bs,
+                           QList<const TYPE *> *list);
 
   QString filename;
   qint64 size;
-  const BglReaderOptions& options;
+  const BglReaderOptions *options;
 
   QList<const atools::fs::bgl::Record *> allRecords;
   QList<const atools::fs::bgl::Airport *> airports;
@@ -155,11 +157,13 @@ private:
 // -------------------------------------------------------------------
 
 template<typename TYPE>
-const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list)
+const TYPE *BglFile::createRecord(const BglReaderOptions *options,
+                                  atools::io::BinaryStream *bs,
+                                  QList<const TYPE *> *list)
 {
-  TYPE *rec = new TYPE(bs);
+  TYPE *rec = new TYPE(options, bs);
 
-  if(options.isVerbose())
+  if(options->isVerbose())
   {
     qDebug() << "----";
     qDebug() << *rec;

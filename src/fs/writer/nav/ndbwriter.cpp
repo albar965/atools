@@ -47,7 +47,7 @@ void NdbWriter::writeObject(const Ndb *type)
   bind(":laty", type->getPosition().getLatY());
 
   QString apIdent = type->getAirportIdent();
-  if(!apIdent.isEmpty() && getOptions().doesAirportIcaoMatch(apIdent))
+  if(!apIdent.isEmpty() && getOptions().includeAirport(apIdent))
   {
     QString msg("NDB ID " + QString::number(getCurrentId()) +
                 " ident " + type->getIdent() + " name " + type->getName());

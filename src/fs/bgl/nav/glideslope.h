@@ -29,7 +29,7 @@ class Glideslope :
   public atools::fs::bgl::Record
 {
 public:
-  Glideslope(atools::io::BinaryStream *bs);
+  Glideslope(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Glideslope();
 
   float getPitch() const

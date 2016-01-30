@@ -47,8 +47,8 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
   return retval;
 }
 
-DeleteAirport::DeleteAirport(BinaryStream *bs)
-  : Record(bs)
+DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   flags = static_cast<del::DeleteAllFlags>(bs->readShort());
   numRunways = bs->readByte();
@@ -64,7 +64,7 @@ DeleteAirport::DeleteAirport(BinaryStream *bs)
     qWarning().nospace().noquote() << "Found DeleteAirport with " << numFrequencies << " numFrequencies";
 
   for(int i = 0; i < numRunways; i++)
-    deleteRunways.push_back(DeleteRunway(bs));
+    deleteRunways.push_back(DeleteRunway(options, bs));
 
   bs->skip(4 * numStarts); // runway number
   // runway designator
@@ -72,7 +72,7 @@ DeleteAirport::DeleteAirport(BinaryStream *bs)
   // unused
 
   for(int i = 0; i < numFrequencies; i++)
-    deleteComs.push_back(DeleteCom(bs));
+    deleteComs.push_back(DeleteCom(options, bs));
 }
 
 QDebug operator<<(QDebug out, const DeleteAirport& record)

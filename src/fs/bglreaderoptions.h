@@ -19,9 +19,32 @@
 #define BGLREADEROPTIONS_H_
 
 #include <QRegularExpression>
+#include <QSet>
 
 namespace atools {
 namespace fs {
+
+namespace type {
+enum BglObjectType
+{
+  UNKNOWN,
+  AIRPORT, // ok
+  RUNWAY, // ok
+  APPROACH, // ok
+  COM, // ok
+  PARKING, // ok
+  ILS, // ok
+  VOR, // ok
+  NDB, // ok
+  WAYPOINT, // ok
+  MARKER, // ok
+  ROUTE
+};
+
+QString bglObjectTypeToString(atools::fs::type::BglObjectType type);
+atools::fs::type::BglObjectType stringToBglObjectType(const QString& typeStr);
+
+}
 
 class BglReaderOptions
 {
@@ -33,14 +56,14 @@ public:
     return basepath;
   }
 
-  bool execDeletes() const
+  bool isDeletes() const
   {
-    return !noDeletes;
+    return deletes;
   }
 
-  bool filterRunways() const
+  bool isFilterRunways() const
   {
-    return !noFilterRunways;
+    return filterRunways;
   }
 
   const QString& getSceneryFile() const
@@ -58,13 +81,15 @@ public:
     return debugAutocommit;
   }
 
-  bool noIncompleteObjects() const
+  bool isIncomplete() const
   {
-    return noIncomplete;
+    return incomplete;
   }
 
-  bool doesFilenameMatch(const QString& filename) const;
-  bool doesAirportIcaoMatch(const QString& icao) const;
+  bool includeFilename(const QString& filename) const;
+  bool includePath(const QString& filename) const;
+  bool includeAirport(const QString& icao) const;
+  bool includeBglObject(atools::fs::type::BglObjectType type) const;
 
   void setSceneryFile(const QString& value)
   {
@@ -81,14 +106,52 @@ public:
     verbose = value;
   }
 
+  void setFilenameFilterInc(const QStringList& filter);
+  void setFilenameFilterExcl(const QStringList& filter);
+  void setAirportIcaoFilterInc(const QStringList& filter);
+  void setAirportIcaoFilterExcl(const QStringList& filter);
+  void setPathFilterInc(const QStringList& filter);
+  void setPathFilterExcl(const QStringList& filter);
+  void setBglObjectFilterInc(const QStringList& filters);
+  void setBglObjectFilterExcl(const QStringList& filters);
+
+  void setDeletes(bool value)
+  {
+    deletes = value;
+  }
+
+  void setFilterRunways(bool value)
+  {
+    filterRunways = value;
+  }
+
+  void setIncomplete(bool value)
+  {
+    incomplete = value;
+  }
+
+  void setDebugAutocommit(bool value)
+  {
+    debugAutocommit = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 
-  QString sceneryFile, basepath;
-  bool verbose, noDeletes, noFilterRunways, noIncomplete, debugAutocommit;
+  void setFilter(const QStringList& filters, QList<QRegExp>& filterList);
+  bool includeObject(const QString& icao,
+                     const QList<QRegExp>& filterListInc,
+                     const QList<QRegExp>& filterListExcl) const;
 
-  QStringList fileFilterRegexpStr, airportIcaoFilterRegexpStr;
-  QList<QRegularExpression> fileFilterRegexp, airportIcaoFilterRegexp;
+  void setBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
+
+  QString sceneryFile, basepath;
+  bool verbose, deletes, filterRunways, incomplete, debugAutocommit;
+
+  QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,
+                 fileFiltersExcl, pathFiltersExcl, airportIcaoFiltersExcl;
+  QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
+
 };
 
 } // namespace fs

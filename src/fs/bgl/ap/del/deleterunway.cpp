@@ -25,8 +25,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteRunway::DeleteRunway(BinaryStream *bs)
-  : BglBase(bs), surface(rw::UNKNOWN)
+DeleteRunway::DeleteRunway(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs), surface(rw::UNKNOWN)
 {
   surface = static_cast<rw::Surface>(bs->readByte());
   int numPrim = bs->readByte();

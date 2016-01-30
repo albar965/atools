@@ -24,11 +24,6 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-const QString SceneryArea::getLocalPath() const
-{
-  return QDir::toNativeSeparators(localPath);
-}
-
 QDebug operator<<(QDebug out, const SceneryArea& area)
 {
   QDebugStateSaver saver(out);

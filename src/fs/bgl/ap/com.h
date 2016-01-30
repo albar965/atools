@@ -64,7 +64,7 @@ public:
   {
   }
 
-  Com(atools::io::BinaryStream *bs);
+  Com(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~Com();
 

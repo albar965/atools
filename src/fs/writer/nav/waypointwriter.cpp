@@ -43,7 +43,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bind(":laty", type->getPosition().getLatY());
 
   QString apIdent = type->getAirportIdent();
-  if(!apIdent.isEmpty() && getOptions().doesAirportIcaoMatch(apIdent))
+  if(!apIdent.isEmpty() && getOptions().includeAirport(apIdent))
   {
     QString msg("Waypoint ID " + QString::number(getCurrentId()) + " ident " + type->getIdent());
     int id = getAirportIndex()->getAirportId(apIdent, msg);

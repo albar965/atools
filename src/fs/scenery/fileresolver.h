@@ -33,11 +33,6 @@ public:
   FileResolver(const atools::fs::BglReaderOptions& opts);
   virtual ~FileResolver();
 
-  atools::fs::scenery::FileResolver& operator()(const QString& prefix)
-  {
-    return addExcludedFilePrefix(prefix);
-  }
-
   atools::fs::scenery::FileResolver& addExcludedFilePrefix(const QString& prefix)
   {
     excludedPrefixes.push_back(prefix);

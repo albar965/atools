@@ -63,8 +63,8 @@ QString Transition::transitionFixTypeToStr(ap::TransitionFixType type)
   return "";
 }
 
-Transition::Transition(BinaryStream *bs)
-  : Record(bs)
+Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   type = static_cast<ap::TransitionType>(bs->readByte());
   numLegs = bs->readByte();

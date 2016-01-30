@@ -55,7 +55,7 @@ public:
    * creates new schema and loads all.
    */
   void loadLogbook(const QString& filename,
-                   atools::fs::SimulatorType type,
+                   atools::fs::fstype::SimulatorType type,
                    const atools::fs::lb::LogbookEntryFilter& filter,
                    bool append);
 

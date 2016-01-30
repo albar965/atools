@@ -20,6 +20,7 @@
 #include "settings/settings.h"
 #include "logging/loggingdefs.h"
 
+#include <QHash>
 #include <QDir>
 #include <QSettings>
 #include <QStandardPaths>
@@ -31,7 +32,14 @@
 namespace atools {
 namespace fs {
 
-const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] = {FSX, FSX_SE, P3D_V2, P3D_V3};
+const fstype::SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] =
+{fstype::FSX, fstype::FSX_SE, fstype::P3D_V2, fstype::P3D_V3};
+
+const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] = {"FSX", "FSXSE", "P3DV2", "P3DV3"};
+const QHash<QString, fstype::SimulatorType> ALL_SIMULATOR_TYPE_NAMES_MAP(
+  {
+    {"FSX", fstype::FSX}, {"FSXSE", fstype::FSX}, {"P3DV2", fstype::FSX}, {"P3DV3", fstype::FSX}
+  });
 
 const char *FsPaths::FSX_REGISTRY_PATH =
   "HKEY_CURRENT_USER\\Software\\Microsoft\\Microsoft Games\\Flight Simulator\\10.0";
@@ -61,7 +69,7 @@ const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
 
 using atools::settings::Settings;
 
-QString FsPaths::getBasePath(SimulatorType type)
+QString FsPaths::getBasePath(fstype::SimulatorType type)
 {
   QString fsPath;
 #if defined(Q_OS_WIN32)
@@ -91,7 +99,7 @@ QString FsPaths::getBasePath(SimulatorType type)
   return fsPath;
 }
 
-QString FsPaths::getFilesPath(SimulatorType type)
+QString FsPaths::getFilesPath(fstype::SimulatorType type)
 {
   QString fsFilesDir;
 
@@ -145,103 +153,187 @@ QString FsPaths::getFilesPath(SimulatorType type)
   return fsFilesDir;
 }
 
-QString FsPaths::getSceneryLibraryPath(SimulatorType type)
+QString FsPaths::getSceneryLibraryPath(fstype::SimulatorType type)
 {
-  // TODO implement getSceneryLibraryPath
   // scenery.cfg
   // FSX C:\Users\user account name\AppData\Roaming\Microsoft\FSX
+  // or C:\ProgramData\Microsoft\FSX\Scenery.cfg
+  // FSX SE C:\ProgramData\Microsoft\FSX-SE\Scenery.cfg
   // P3D v2 C:\Users\user account name\AppData\Roaming\Lockheed Martin\Prepar3D v2
   // P3D v3 C:\ProgramData\Lockheed Martin\Prepar3D v3
-  Q_UNUSED(type);
+  QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+  switch(type)
+  {
+    case fstype::FSX:
+#if defined(Q_OS_WIN32)
+      // Windows 7 and above
+      // return "C:\\ProgramData\\Microsoft\\FSX\\Scenery.CFG";
+
+      // Windows XP and above
+      return "c:\\Documents And Settings\\All Users\\Application Data\\Microsoft\\FSX\\Scenery.CFG";
+
+#else
+      return home + QDir::separator() +
+             "Temp" + QDir::separator() +
+             "FSX" + QDir::separator() + "scenery.cfg";
+
+#endif
+
+    case fstype::FSX_SE:
+#if defined(Q_OS_WIN32)
+      return "C:\\ProgramData\\Microsoft\\FSX-SE\\Scenery.CFG";
+
+#else
+      return home + QDir::separator() +
+             "Temp" + QDir::separator() +
+             "FSXSE" + QDir::separator() + "scenery.cfg";
+
+#endif
+
+    case fstype::P3D_V2:
+#if defined(Q_OS_WIN32)
+      return home + QDir::separator() +
+             "AppData" + QDir::separator() +
+             "Roaming" + QDir::separator() +
+             "Lockheed Martin" + QDir::separator() +
+             "Prepar3D v2" + QDir::separator() + "Scenery.CFG";
+
+#else
+      return home + QDir::separator() +
+             "Temp" + QDir::separator() +
+             "P3DV3" + QDir::separator() + "scenery.cfg";
+
+#endif
+
+    case fstype::P3D_V3:
+#if defined(Q_OS_WIN32)
+      return "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\Scenery.CFG";
+
+#else
+      return home + QDir::separator() +
+             "Temp" + QDir::separator() +
+             "P3DV3" + QDir::separator() + "Scenery.CFG";
+
+#endif
+    case fstype::MAX_VALUE:
+    case fstype::ALL_SIMULATORS:
+      break;
+  }
+  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+  return nullptr;
+
   return QString();
 }
 
-QString FsPaths::settingsKey(SimulatorType type)
+QString FsPaths::typeToString(fstype::SimulatorType type)
+{
+  if(type >= fstype::FSX && type < fstype::MAX_VALUE)
+    return ALL_SIMULATOR_TYPE_NAMES[type];
+
+  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+}
+
+fstype::SimulatorType FsPaths::stringToType(const QString& typeStr)
+{
+  QHash<QString, fstype::SimulatorType>::const_iterator it =
+    ALL_SIMULATOR_TYPE_NAMES_MAP.find(typeStr.trimmed().toUpper());
+
+  if(it != ALL_SIMULATOR_TYPE_NAMES_MAP.end())
+    return *it;
+
+  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType name");
+}
+
+QString FsPaths::settingsKey(fstype::SimulatorType type)
 {
   switch(type)
   {
-    case FSX:
+    case fstype::FSX:
       return SETTINGS_FSX_PATH;
 
-    case FSX_SE:
+    case fstype::FSX_SE:
       return SETTINGS_FSX_SE_PATH;
 
-    case P3D_V2:
+    case fstype::P3D_V2:
       return SETTINGS_P3D_V2_PATH;
 
-    case P3D_V3:
+    case fstype::P3D_V3:
       return SETTINGS_P3D_V3_PATH;
 
-    case atools::fs::ALL_SIMULATORS:
+    case fstype::MAX_VALUE:
+    case fstype::ALL_SIMULATORS:
       break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
 }
 
-QString FsPaths::registryPath(SimulatorType type)
+QString FsPaths::registryPath(fstype::SimulatorType type)
 {
   switch(type)
   {
-    case FSX:
+    case fstype::FSX:
       return FSX_REGISTRY_PATH;
 
-    case FSX_SE:
+    case fstype::FSX_SE:
       return FSX_SE_REGISTRY_PATH;
 
-    case P3D_V2:
+    case fstype::P3D_V2:
       return P3D_V2_REGISTRY_PATH;
 
-    case P3D_V3:
+    case fstype::P3D_V3:
       return P3D_V3_REGISTRY_PATH;
 
-    case atools::fs::ALL_SIMULATORS:
+    case fstype::MAX_VALUE:
+    case fstype::ALL_SIMULATORS:
       break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
 }
 
-QString FsPaths::registryKey(SimulatorType type)
+QString FsPaths::registryKey(fstype::SimulatorType type)
 {
   switch(type)
   {
-    case FSX:
+    case fstype::FSX:
       return FSX_REGISTRY_KEY;
 
-    case FSX_SE:
+    case fstype::FSX_SE:
       return FSX_SE_REGISTRY_KEY;
 
-    case P3D_V2:
+    case fstype::P3D_V2:
       return P3D_V2_REGISTRY_KEY;
 
-    case P3D_V3:
+    case fstype::P3D_V3:
       return P3D_V3_REGISTRY_KEY;
 
-    case atools::fs::ALL_SIMULATORS:
+    case fstype::MAX_VALUE:
+    case fstype::ALL_SIMULATORS:
       break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
   return nullptr;
 }
 
-QString FsPaths::nonWindowsPath(SimulatorType type)
+QString FsPaths::nonWindowsPath(fstype::SimulatorType type)
 {
   switch(type)
   {
-    case FSX:
+    case fstype::FSX:
       return FSX_NO_WINDOWS_PATH;
 
-    case FSX_SE:
+    case fstype::FSX_SE:
       return FSX_SE_NO_WINDOWS_PATH;
 
-    case P3D_V2:
+    case fstype::P3D_V2:
       return P3D_V2_NO_WINDOWS_PATH;
 
-    case P3D_V3:
+    case fstype::P3D_V3:
       return P3D_V3_NO_WINDOWS_PATH;
 
-    case atools::fs::ALL_SIMULATORS:
+    case fstype::MAX_VALUE:
+    case fstype::ALL_SIMULATORS:
       break;
   }
   Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");

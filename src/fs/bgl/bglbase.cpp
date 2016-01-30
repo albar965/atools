@@ -45,8 +45,8 @@ BglBase::BglBase()
 {
 }
 
-BglBase::BglBase(io::BinaryStream *stream)
-  : startOffset(stream->tellg()), bs(stream)
+BglBase::BglBase(const atools::fs::BglReaderOptions *options, io::BinaryStream *stream)
+  : startOffset(stream->tellg()), bs(stream), opts(options)
 {
 }
 

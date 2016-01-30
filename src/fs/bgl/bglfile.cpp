@@ -41,7 +41,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-BglFile::BglFile(const BglReaderOptions& opts)
+BglFile::BglFile(const BglReaderOptions *opts)
   : size(0), options(opts)
 {
 }
@@ -56,7 +56,7 @@ void BglFile::readFile(QString file)
   freeObjects();
   filename = file;
 
-  if(options.isVerbose())
+  if(options->isVerbose())
     qDebug() << "==============================";
 
   qDebug() << "Reading file " << filename;
@@ -77,17 +77,17 @@ void BglFile::readFile(QString file)
 
 void BglFile::readHeaderAndSections(BinaryStream *bs)
 {
-  header = Header(bs);
-  if(options.isVerbose())
+  header = Header(options, bs);
+  if(options->isVerbose())
     qDebug() << header;
 
   // Section pointer
   for(unsigned int i = 0; i < header.getNumSections(); i++)
   {
-    Section s = Section(bs);
+    Section s = Section(options, bs);
     if(std::binary_search(supportedSectionTypes.begin(), supportedSectionTypes.end(), s.getType()))
     {
-      if(options.isVerbose())
+      if(options->isVerbose())
         qDebug() << s;
       sections.push_back(s);
     }
@@ -98,8 +98,8 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
     bs->seekg(it.getFirstSubsectionOffset());
     for(int i = 0; i < it.getNumSubsections(); i++)
     {
-      Subsection s(bs, it);
-      if(options.isVerbose())
+      Subsection s(options, bs, it);
+      if(options->isVerbose())
         qDebug() << s;
       subsections.push_back(s);
     }
@@ -108,7 +108,7 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
 
 const Record *BglFile::handleIlsVor(BinaryStream *bs)
 {
-  IlsVor iv(bs);
+  IlsVor iv(options, bs);
   iv.seekToStart();
   switch(iv.getType())
   {
@@ -116,10 +116,13 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
     case nav::LOW:
     case nav::HIGH:
     case nav::VOT:
-      return createRecord<Vor>(bs, &vors);
+      if(options->includeBglObject(type::VOR))
+        return createRecord<Vor>(options, bs, &vors);
 
+      break;
     case nav::ILS:
-      return createRecord<Ils>(bs, &ils);
+      if(options->includeBglObject(type::ILS))
+        return createRecord<Ils>(options, bs, &ils);
   }
   return nullptr;
 }
@@ -130,7 +133,7 @@ void BglFile::readRecords(BinaryStream *bs)
   {
     section::SectionType type = it.getParent().getType();
 
-    if(options.isVerbose())
+    if(options->isVerbose())
     {
       qDebug() << "=======================";
       qDebug().nospace().noquote() << "Records of 0x" << hex << it.getFirstDataRecordOffset() << dec
@@ -151,27 +154,82 @@ void BglFile::readRecords(BinaryStream *bs)
       switch(type)
       {
         case section::AIRPORT:
-          rec = createRecord<Airport>(bs, &airports);
+          if(options->includeBglObject(type::AIRPORT))
+            rec = createRecord<Airport>(options, bs, &airports);
           break;
         case section::NAME_LIST:
-          rec = createRecord<Namelist>(bs, &namelists);
+          rec = createRecord<Namelist>(options, bs, &namelists);
           break;
         case section::ILS_VOR:
           rec = handleIlsVor(bs);
           break;
         case section::NDB:
-          rec = createRecord<Ndb>(bs, &ndbs);
+          if(options->includeBglObject(type::NDB))
+            rec = createRecord<Ndb>(options, bs, &ndbs);
           break;
         case section::MARKER:
-          rec = createRecord<Marker>(bs, &marker);
+          if(options->includeBglObject(type::MARKER))
+            rec = createRecord<Marker>(options, bs, &marker);
           break;
         case section::WAYPOINT:
-          rec = createRecord<Waypoint>(bs, &waypoints);
+          if(options->includeBglObject(type::WAYPOINT))
+            rec = createRecord<Waypoint>(options, bs, &waypoints);
           break;
-        default:
-          rec = createRecord<Record>(bs, nullptr);
+
+        case atools::fs::bgl::section::NONE:
+        case atools::fs::bgl::section::COPYRIGHT:
+        case atools::fs::bgl::section::GUID:
+        case atools::fs::bgl::section::BOUNDARY:
+        case atools::fs::bgl::section::GEOPOL:
+        case atools::fs::bgl::section::SCENERY_OBJECT:
+        case atools::fs::bgl::section::VOR_ILS_ICAO_INDEX:
+        case atools::fs::bgl::section::NDB_ICAO_INDEX:
+        case atools::fs::bgl::section::WAYPOINT_ICAO_INDEX:
+        case atools::fs::bgl::section::MODEL_DATA:
+        case atools::fs::bgl::section::AIRPORT_SUMMARY:
+        case atools::fs::bgl::section::EXCLUSION:
+        case atools::fs::bgl::section::TIMEZONE:
+        case atools::fs::bgl::section::TERRAIN_VECTOR_DB:
+        case atools::fs::bgl::section::TERRAIN_ELEVATION:
+        case atools::fs::bgl::section::TERRAIN_LAND_CLASS:
+        case atools::fs::bgl::section::TERRAIN_WATER_CLASS:
+        case atools::fs::bgl::section::TERRAIN_REGION:
+        case atools::fs::bgl::section::POPULATION_DENSITY:
+        case atools::fs::bgl::section::AUTOGEN_ANNOTATION:
+        case atools::fs::bgl::section::TERRAIN_INDEX:
+        case atools::fs::bgl::section::TERRAIN_TEXTURE_LOOKUP:
+        case atools::fs::bgl::section::TERRAIN_SEASON_JAN:
+        case atools::fs::bgl::section::TERRAIN_SEASON_FEB:
+        case atools::fs::bgl::section::TERRAIN_SEASON_MAR:
+        case atools::fs::bgl::section::TERRAIN_SEASON_APR:
+        case atools::fs::bgl::section::TERRAIN_SEASON_MAY:
+        case atools::fs::bgl::section::TERRAIN_SEASON_JUN:
+        case atools::fs::bgl::section::TERRAIN_SEASON_JUL:
+        case atools::fs::bgl::section::TERRAIN_SEASON_AUG:
+        case atools::fs::bgl::section::TERRAIN_SEASON_SEP:
+        case atools::fs::bgl::section::TERRAIN_SEASON_OCT:
+        case atools::fs::bgl::section::TERRAIN_SEASON_NOV:
+        case atools::fs::bgl::section::TERRAIN_SEASON_DEC:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_JAN:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_FEB:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_MAR:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_APR:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_MAY:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_JUN:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_JUL:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_AUG:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_SEP:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_OCT:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_NOV:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_DEC:
+        case atools::fs::bgl::section::TERRAIN_PHOTO_NIGHT:
+        case atools::fs::bgl::section::FAKE_TYPES:
+        case atools::fs::bgl::section::ICAO_RUNWAY:
           break;
       }
+      if(rec == nullptr)
+        // Create empty record, just to skip it
+        rec = createRecord<Record>(options, bs, nullptr);
       rec->seekToEnd();
     }
   }

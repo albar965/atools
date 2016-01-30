@@ -45,8 +45,8 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
   return "";
 }
 
-Marker::Marker(BinaryStream *bs)
-  : Record(bs)
+Marker::Marker(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   // unsigned int heading = bs->readByte();
   bs->skip(1);

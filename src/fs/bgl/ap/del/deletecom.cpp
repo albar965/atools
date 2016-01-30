@@ -24,8 +24,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteCom::DeleteCom(BinaryStream *bs)
-  : BglBase(bs)
+DeleteCom::DeleteCom(const BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs)
 {
   unsigned int flags = bs->readUInt();
   type = static_cast<com::ComType>((flags >> 28) & 0xf);

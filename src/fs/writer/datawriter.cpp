@@ -55,7 +55,9 @@ using atools::sql::SqlDatabase;
 using scenery::SceneryArea;
 using atools::fs::bgl::section::SectionType;
 
-static SectionType supportedSectionTypes[] =
+extern QList<atools::fs::bgl::section::SectionType> supportedSectionTypes;
+
+QList<atools::fs::bgl::section::SectionType> supportedSectionTypes =
 {
   bgl::section::AIRPORT, bgl::section::ILS_VOR, bgl::section::NDB, bgl::section::MARKER,
   bgl::section::WAYPOINT, bgl::section::NAME_LIST
@@ -109,6 +111,9 @@ DataWriter::~DataWriter()
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
+  if(!options.includePath(area.getLocalPath()))
+    return;
+
   qInfo() << area;
 
   QStringList files;
@@ -125,16 +130,12 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   {
     sceneryAreaWriter->writeOne(&area);
 
-    BglFile bglFile(options);
+    BglFile bglFile(&options);
 
-    QList<SectionType> types;
-    for(bgl::section::SectionType t : supportedSectionTypes)
-      types.append(t);
-
-    bglFile.setSupportedSectionTypes(types);
+    bglFile.setSupportedSectionTypes(supportedSectionTypes);
 
     for(QString filename  : files)
-      if(options.doesFilenameMatch(filename))
+      if(options.includeFilename(filename))
       {
         bglFile.readFile(filename);
 

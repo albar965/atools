@@ -24,8 +24,8 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Section::Section(BinaryStream *bs)
-  : BglBase(bs)
+Section::Section(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+  : BglBase(options, bs)
 {
   type = static_cast<section::SectionType>(bs->readInt());
   size = ((bs->readInt() & 0x10000) | 0x40000) >> 0x0E;

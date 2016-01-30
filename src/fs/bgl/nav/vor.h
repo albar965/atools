@@ -31,7 +31,7 @@ class Vor :
   public atools::fs::bgl::NavBase
 {
 public:
-  Vor(atools::io::BinaryStream *bs);
+  Vor(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Vor();
 
   const atools::fs::bgl::Dme *getDme() const

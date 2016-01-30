@@ -93,8 +93,8 @@ QString Approach::approachFixTypeToStr(ap::ApproachFixType type)
   return "";
 }
 
-Approach::Approach(BinaryStream *bs)
-  : Record(bs)
+Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   bs->skip(1); // suffix
   runwayNumber = bs->readByte();
@@ -123,14 +123,14 @@ Approach::Approach(BinaryStream *bs)
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
 
     switch(t)
     {
       case rec::TRANSITION:
         r.seekToStart();
-        transitions.push_back(Transition(bs));
+        transitions.push_back(Transition(options, bs));
         break;
 
       case rec::LEGS:

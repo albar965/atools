@@ -113,7 +113,9 @@ class Runway :
   public atools::fs::bgl::Record
 {
 public:
-  Runway(atools::io::BinaryStream *bs, const QString& airportIdent);
+  Runway(const atools::fs::BglReaderOptions *options,
+         atools::io::BinaryStream *bs,
+         const QString& airportIdent);
   virtual ~Runway();
 
   atools::fs::bgl::rw::Light getCenterLight() const

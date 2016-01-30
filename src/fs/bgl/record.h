@@ -39,7 +39,7 @@ public:
   {
   }
 
-  Record(atools::io::BinaryStream *bs);
+  Record(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~Record();
 

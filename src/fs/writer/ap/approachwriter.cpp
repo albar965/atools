@@ -55,7 +55,7 @@ void ApproachWriter::writeObject(const Approach *type)
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   if(type->hasRunwayReference() && !apIdent.isEmpty())
   {
-    if(getOptions().doesAirportIcaoMatch(apIdent))
+    if(getOptions().includeAirport(apIdent))
     {
       QString msg(" approach ID " + QString::number(getCurrentId()));
       int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
@@ -71,7 +71,7 @@ void ApproachWriter::writeObject(const Approach *type)
   else
     isComplete = true;
 
-  if(!getOptions().noIncompleteObjects() || isComplete)
+  if(getOptions().isIncomplete() || isComplete)
   {
     executeStatement();
 

@@ -21,6 +21,7 @@
 #include "fs/bgl/bglposition.h"
 #include "fs/bgl/record.h"
 #include <QString>
+#include <io/binarystream.h>
 
 namespace atools {
 namespace io {
@@ -36,10 +37,7 @@ class NavBase :
   public atools::fs::bgl::Record
 {
 public:
-  NavBase(atools::io::BinaryStream *bs)
-    : Record(bs), frequency(0.0f), range(0.0f), magVar(0.0f)
-  {
-  }
+  NavBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~NavBase();
 

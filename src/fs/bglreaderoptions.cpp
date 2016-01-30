@@ -16,9 +16,12 @@
 *****************************************************************************/
 
 #include "fs/bglreaderoptions.h"
-
-#include <QList>
 #include "logging/loggingdefs.h"
+
+#include <QFileInfo>
+#include <QList>
+#include <QRegExp>
+#include <QDir>
 
 namespace atools {
 namespace fs {
@@ -27,28 +30,138 @@ BglReaderOptions::BglReaderOptions()
 {
 }
 
-bool BglReaderOptions::doesFilenameMatch(const QString& filename) const
+bool BglReaderOptions::includePath(const QString& filename) const
 {
-  if(fileFilterRegexp.isEmpty())
-    return true;
+  QString newFilename = filename;
+  if(!filename.endsWith(QDir::separator()))
+    newFilename.append(QDir::separator());
+  if(!filename.startsWith(QDir::separator()))
+    newFilename.prepend(QDir::separator());
 
-  for(const QRegularExpression& iter : fileFilterRegexp)
-    if(iter.match(filename).hasMatch())
-      return true;
-
-  return false;
+  return includeObject(newFilename, pathFiltersInc, pathFiltersExcl);
 }
 
-bool BglReaderOptions::doesAirportIcaoMatch(const QString& icao) const
+bool BglReaderOptions::includeFilename(const QString& filename) const
 {
-  if(airportIcaoFilterRegexp.empty())
+  QString fn = QFileInfo(filename).fileName();
+  return includeObject(fn, fileFiltersInc, fileFiltersExcl);
+}
+
+bool BglReaderOptions::includeAirport(const QString& icao) const
+{
+  return includeObject(icao, airportIcaoFiltersInc, airportIcaoFiltersExcl);
+}
+
+void BglReaderOptions::setFilenameFilterInc(const QStringList& filter)
+{
+  setFilter(filter, fileFiltersInc);
+}
+
+void BglReaderOptions::setAirportIcaoFilterInc(const QStringList& filter)
+{
+  setFilter(filter, airportIcaoFiltersInc);
+}
+
+void BglReaderOptions::setPathFilterInc(const QStringList& filter)
+{
+  setFilter(filter, pathFiltersInc);
+}
+
+void BglReaderOptions::setFilenameFilterExcl(const QStringList& filter)
+{
+  setFilter(filter, fileFiltersExcl);
+}
+
+void BglReaderOptions::setAirportIcaoFilterExcl(const QStringList& filter)
+{
+  setFilter(filter, airportIcaoFiltersExcl);
+}
+
+void BglReaderOptions::setPathFilterExcl(const QStringList& filter)
+{
+  setFilter(filter, pathFiltersExcl);
+}
+
+void BglReaderOptions::setBglObjectFilterInc(const QStringList& filters)
+{
+  setBglObjectFilter(filters, bglObjectTypeFiltersInc);
+}
+
+void BglReaderOptions::setBglObjectFilterExcl(const QStringList& filters)
+{
+  setBglObjectFilter(filters, bglObjectTypeFiltersExcl);
+}
+
+void BglReaderOptions::setBglObjectFilter(const QStringList& filters,
+                                          QSet<atools::fs::type::BglObjectType>& filterList)
+{
+  for(const QString& f : filters)
+    if(!f.isEmpty())
+      filterList.insert(type::stringToBglObjectType(f));
+}
+
+bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
+{
+  if(bglObjectTypeFiltersInc.isEmpty() && bglObjectTypeFiltersExcl.isEmpty())
     return true;
 
-  for(const QRegularExpression& iter : airportIcaoFilterRegexp)
-    if(iter.match(icao).hasMatch())
-      return true;
+  bool exFound = bglObjectTypeFiltersExcl.contains(type);
 
-  return false;
+  if(bglObjectTypeFiltersInc.isEmpty())
+    return !exFound;
+  else
+  {
+    bool incFound = bglObjectTypeFiltersInc.contains(type);
+
+    if(bglObjectTypeFiltersExcl.isEmpty())
+      return incFound;
+    else
+      return incFound && !exFound;
+  }
+}
+
+bool BglReaderOptions::includeObject(const QString& filterStr,
+                                     const QList<QRegExp>& filterListInc,
+                                     const QList<QRegExp>& filterListExcl) const
+{
+  if(filterListInc.isEmpty() && filterListExcl.isEmpty())
+    return true;
+
+  bool exFound = false;
+  for(const QRegExp& iter : filterListExcl)
+    if(iter.exactMatch(filterStr))
+    {
+      exFound = true;
+      break;
+    }
+
+  if(filterListInc.isEmpty())
+    return !exFound;
+  else
+  {
+    bool incFound = false;
+    for(const QRegExp& iter : filterListInc)
+      if(iter.exactMatch(filterStr))
+      {
+        incFound = true;
+        break;
+      }
+
+    if(filterListExcl.isEmpty())
+      return incFound;
+    else
+      return incFound && !exFound;
+  }
+}
+
+void BglReaderOptions::setFilter(const QStringList& filters, QList<QRegExp>& filterList)
+{
+  for(QString f : filters)
+  {
+    QString newFilter = f.trimmed();
+    if(!newFilter.isEmpty())
+      filterList.append(QRegExp(newFilter, Qt::CaseInsensitive, QRegExp::Wildcard));
+  }
 }
 
 QDebug operator<<(QDebug out, const BglReaderOptions& opts)
@@ -57,19 +170,118 @@ QDebug operator<<(QDebug out, const BglReaderOptions& opts)
   out.nospace().noquote() << "Options[verbose " << opts.verbose
   << ", sceneryFile \"" << opts.sceneryFile
   << "\", basepath \"" << opts.basepath
-  << "\", noDeletes " << opts.noDeletes
-  << ", noIncomplete " << opts.noIncomplete
+  << "\", deletes " << opts.deletes
+  << ", incomplete " << opts.incomplete
   << ", debugAutocommit " << opts.debugAutocommit;
 
-  out << ", File filter [";
-  out << opts.fileFilterRegexpStr;
+  out << ", Include file filter [";
+  for(const QRegExp& f : opts.fileFiltersInc)
+    out << "pattern" << f.pattern();
+  out << "]";
+  out << ", Exclude file filter [";
+  for(const QRegExp& f : opts.fileFiltersExcl)
+    out << "pattern" << f.pattern();
   out << "]";
 
-  out << ", Airport filter [";
-  out << opts.airportIcaoFilterRegexpStr;
+  out << ", Include path filter [";
+  for(const QRegExp& f : opts.pathFiltersInc)
+    out << "pattern" << f.pattern();
+  out << "]";
+  out << ", Exclude path filter [";
+  for(const QRegExp& f : opts.pathFiltersExcl)
+    out << "pattern" << f.pattern();
+  out << "]";
+
+  out << ", Include airport filter [";
+  for(const QRegExp& f : opts.airportIcaoFiltersInc)
+    out << "pattern" << f.pattern();
+  out << "]";
+  out << ", Exclude airport filter [";
+  for(const QRegExp& f : opts.airportIcaoFiltersExcl)
+    out << "pattern" << f.pattern();
+  out << "]";
+
+  out << ", Include type filter [";
+  for(type::BglObjectType type : opts.bglObjectTypeFiltersInc)
+    out << "pattern" << type::bglObjectTypeToString(type);
+  out << "]";
+  out << ", Exclude type filter [";
+  for(type::BglObjectType type : opts.bglObjectTypeFiltersExcl)
+    out << "pattern" << type::bglObjectTypeToString(type);
   out << "]";
   out << "]";
   return out;
+}
+
+QString type::bglObjectTypeToString(type::BglObjectType type)
+{
+  switch(type)
+  {
+    case AIRPORT:
+      return "AIRPORT";
+
+    case RUNWAY:
+      return "RUNWAY";
+
+    case APPROACH:
+      return "APPROACH";
+
+    case COM:
+      return "COM";
+
+    case PARKING:
+      return "PARKING";
+
+    case ILS:
+      return "ILS";
+
+    case VOR:
+      return "VOR";
+
+    case NDB:
+      return "NDB";
+
+    case WAYPOINT:
+      return "WAYPOINT";
+
+    case MARKER:
+      return "MARKER";
+
+    case ROUTE:
+      return "ROUTE";
+
+    case UNKNOWN:
+      return "UNKNWON";
+  }
+  return "UNKNWON";
+}
+
+type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
+{
+  if(typeStr == "AIRPORT")
+    return AIRPORT;
+  else if(typeStr == "RUNWAY")
+    return RUNWAY;
+  else if(typeStr == "APPROACH")
+    return APPROACH;
+  else if(typeStr == "COM")
+    return COM;
+  else if(typeStr == "PARKING")
+    return PARKING;
+  else if(typeStr == "ILS")
+    return ILS;
+  else if(typeStr == "VOR")
+    return VOR;
+  else if(typeStr == "NDB")
+    return NDB;
+  else if(typeStr == "WAYPOINT")
+    return WAYPOINT;
+  else if(typeStr == "MARKER")
+    return MARKER;
+  else if(typeStr == "ROUTE")
+    return ROUTE;
+  else
+    return UNKNOWN;
 }
 
 } // namespace fs

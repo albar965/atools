@@ -25,8 +25,10 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Subsection::Subsection(BinaryStream *bs, const Section& parentSect)
-  : BglBase(bs), parent(&parentSect)
+Subsection::Subsection(const atools::fs::BglReaderOptions *options,
+                       BinaryStream *bs,
+                       const Section& parentSect)
+  : BglBase(options, bs), parent(&parentSect)
 {
   id = bs->readInt();
   numDataRecords = bs->readInt();

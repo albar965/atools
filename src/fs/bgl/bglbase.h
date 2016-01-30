@@ -27,6 +27,7 @@ class BinaryStream;
 }
 
 namespace fs {
+class BglReaderOptions;
 namespace bgl {
 
 class BglBase
@@ -46,11 +47,12 @@ protected:
 
   BglBase();
 
-  BglBase(atools::io::BinaryStream *stream);
+  BglBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *stream);
 
   qint64 startOffset;
 
-  atools::io::BinaryStream *bs;
+  atools::io::BinaryStream *bs = nullptr;
+  const atools::fs::BglReaderOptions *opts = nullptr;
 };
 
 } // namespace fs

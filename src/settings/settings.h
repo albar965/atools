@@ -69,6 +69,14 @@ public:
    */
   static QString getOverloadedPath(const QString& filename);
 
+  /* Returns the filename of the given path if the file exists in the current
+   * directory or the given path if the file exists. Otherwise throws Exception.
+   *
+   * @param filename
+   * @return Path to existing file from settings or original filename.
+   */
+  static QString getOverloadedLocalPath(const QString& filename);
+
   /* The same as QSettings.value() but ensures that the default is stored in the file
    * if not already present. Call syncSettings afterwards to write all defaults to the file. */
   QVariant getAndStoreValue(const QString& key, const QVariant& defaultValue = QVariant()) const;

@@ -40,7 +40,7 @@ class RouteEntry :
   public atools::fs::bgl::BglBase
 {
 public:
-  RouteEntry(atools::io::BinaryStream *bs);
+  RouteEntry(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~RouteEntry();
 
   bool hasNextWaypoint() const;

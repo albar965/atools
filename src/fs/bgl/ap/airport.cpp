@@ -19,6 +19,7 @@
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -26,8 +27,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Airport::Airport(BinaryStream *bs)
-  : Record(bs)
+Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   numRunways = bs->readByte();
   numComs = bs->readByte();
@@ -47,7 +48,7 @@ Airport::Airport(BinaryStream *bs)
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::AirportRecordType t = r.getId<rec::AirportRecordType>();
 
     switch(t)
@@ -56,52 +57,74 @@ Airport::Airport(BinaryStream *bs)
         name = bs->readString(r.getSize() - 6);
         break;
       case rec::RUNWAY:
-        r.seekToStart();
-        runways.push_back(Runway(bs, ident));
+        if(options->includeBglObject(type::RUNWAY))
+        {
+          r.seekToStart();
+          runways.push_back(Runway(options, bs, ident));
+        }
         break;
       case rec::COM:
-        r.seekToStart();
-        coms.push_back(Com(bs));
+        if(options->includeBglObject(type::COM))
+        {
+          r.seekToStart();
+          coms.push_back(Com(options, bs));
+        }
         break;
       case rec::TAXI_PARKING:
-        handleParking();
+        if(options->includeBglObject(type::PARKING))
+          handleParking();
         break;
       case rec::APPROACH:
-        r.seekToStart();
-        approaches.push_back(Approach(bs));
+        if(options->includeBglObject(type::APPROACH))
+        {
+          r.seekToStart();
+          approaches.push_back(Approach(options, bs));
+        }
         break;
       case rec::AIRPORT_WAYPOINT:
-        r.seekToStart();
-        waypoints.push_back(Waypoint(bs));
+        if(options->includeBglObject(type::WAYPOINT))
+        {
+          r.seekToStart();
+          waypoints.push_back(Waypoint(options, bs));
+        }
         break;
       case rec::DELETE_AIRPORT:
         r.seekToStart();
-        deleteAirports.push_back(DeleteAirport(bs));
+        deleteAirports.push_back(DeleteAirport(options, bs));
         break;
 
       case rec::APRON_FIRST:
+        // TODO read apron data
         apron = true;
         break;
       case rec::JETWAY:
+        // TODO read jetway data
         jetway = true;
         break;
       case rec::FENCE_BOUNDARY:
+        // TODO read boundary fence data
         boundaryFence = true;
         break;
       case rec::TOWER_OBJ:
+        // TODO read tower object data
         towerObj = true;
         break;
       case rec::TAXI_PATH:
+        // TODO read taxiway data
         taxiway = true;
         break;
 
       case rec::APRON_SECOND:
       case rec::APRON_EDGE_LIGHTS:
+      // TODO read apron lights data
       case rec::HELIPAD:
+      // TODO read helipads data
       case rec::START:
+      // TODO read start point data
       case rec::TAXI_POINT:
       case rec::TAXI_NAME:
       case rec::FENCE_BLAST:
+      // TODO read blast fence data
       case rec::UNKNOWN_REC:
         break;
       default:

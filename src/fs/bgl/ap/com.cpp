@@ -80,8 +80,8 @@ QString Com::comTypeToStr(com::ComType type)
   return "";
 }
 
-Com::Com(BinaryStream *bs)
-  : Record(bs)
+Com::Com(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   type = static_cast<com::ComType>(bs->readShort());
   frequency = bs->readInt() / 1000;

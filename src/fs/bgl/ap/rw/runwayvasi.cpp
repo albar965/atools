@@ -74,8 +74,8 @@ QString RunwayVasi::vasiTypeToStr(rw::VasiType type)
   return "";
 }
 
-RunwayVasi::RunwayVasi(BinaryStream *bs)
-  : Record(bs)
+RunwayVasi::RunwayVasi(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   type = static_cast<rw::VasiType>(bs->readShort());
   bs->skip(12); // BiasX  BiasZ  Spacing

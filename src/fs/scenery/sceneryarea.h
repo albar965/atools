@@ -49,7 +49,10 @@ public:
     return layer;
   }
 
-  const QString getLocalPath() const;
+  const QString getLocalPath() const
+  {
+    return localPath;
+  }
 
   const QString& getRemotePath() const
   {

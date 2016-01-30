@@ -45,8 +45,8 @@ enum VorFlags
   FLAGS_NAV = 1 << 4
 };
 
-Vor::Vor(BinaryStream *bs)
-  : NavBase(bs), dme(nullptr)
+Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
+  : NavBase(options, bs), dme(nullptr)
 {
   type = static_cast<nav::IlsVorType>(bs->readByte());
   int flags = bs->readByte();
@@ -70,7 +70,7 @@ Vor::Vor(BinaryStream *bs)
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::IlsVorRecordType t = r.getId<rec::IlsVorRecordType>();
 
     switch(t)
@@ -80,7 +80,10 @@ Vor::Vor(BinaryStream *bs)
         break;
       case rec::DME:
         r.seekToStart();
-        dme = new Dme(bs);
+        dme = new Dme(options, bs);
+        break;
+      case atools::fs::bgl::rec::LOCALIZER:
+      case atools::fs::bgl::rec::GLIDESLOPE:
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << hex << t << dec <<

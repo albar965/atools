@@ -46,8 +46,8 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
   return "";
 }
 
-Ndb::Ndb(BinaryStream *bs)
-  : NavBase(bs)
+Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
+  : NavBase(options, bs)
 {
   type = static_cast<nav::NdbType>(bs->readShort());
   frequency = bs->readInt() / 10;
@@ -62,7 +62,7 @@ Ndb::Ndb(BinaryStream *bs)
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(bs);
+    Record r(options, bs);
     rec::NdbRecordType t = r.getId<rec::NdbRecordType>();
 
     switch(t)

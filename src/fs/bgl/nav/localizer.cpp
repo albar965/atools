@@ -27,8 +27,8 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Localizer::Localizer(BinaryStream *bs)
-  : Record(bs)
+Localizer::Localizer(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   runwayNumber = bs->readByte();
   runwayDesignator = bs->readByte();

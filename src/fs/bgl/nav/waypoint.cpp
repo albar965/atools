@@ -19,6 +19,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/nav/routeentry.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -55,8 +56,8 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   return "";
 }
 
-Waypoint::Waypoint(BinaryStream *bs)
-  : Record(bs)
+Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
+  : Record(options, bs)
 {
   type = static_cast<nav::WaypointType>(bs->readByte());
   int numRoutes = bs->readByte();
@@ -75,8 +76,9 @@ Waypoint::Waypoint(BinaryStream *bs)
   if(ident.isEmpty() && type != nav::UNNAMED)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  for(int i = 0; i < numRoutes; i++)
-    routes.push_back(RouteEntry(bs));
+  if(options->includeBglObject(type::ROUTE))
+    for(int i = 0; i < numRoutes; i++)
+      routes.push_back(RouteEntry(options, bs));
 }
 
 Waypoint::~Waypoint()

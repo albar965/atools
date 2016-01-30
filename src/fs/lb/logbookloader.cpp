@@ -43,7 +43,7 @@ LogbookLoader::LogbookLoader(SqlDatabase *sqlDb)
 }
 
 void LogbookLoader::loadLogbook(const QString& filename,
-                                atools::fs::SimulatorType type,
+                                fstype::SimulatorType type,
                                 const LogbookEntryFilter& filter,
                                 bool append)
 {

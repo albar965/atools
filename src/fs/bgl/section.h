@@ -35,7 +35,7 @@ class Section :
   public atools::fs::bgl::BglBase
 {
 public:
-  Section(atools::io::BinaryStream *bs);
+  Section(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Section();
 
   int getFirstSubsectionOffset() const
