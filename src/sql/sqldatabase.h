@@ -25,6 +25,8 @@
 #include <QSqlIndex>
 #include <QStringList>
 
+class QSettings;
+
 namespace atools {
 namespace sql {
 
@@ -40,6 +42,18 @@ class SqlDatabase
 public:
   SqlDatabase();
   SqlDatabase(const SqlDatabase& other);
+
+  /* Create a database from settings in the given group.
+   * [groupName]
+   *  Type=QSQLITE
+   *  ConnectionName=
+   *  ConnectionOptions=
+   *  HostName=
+   *  Port=
+   *  UserName=
+   *  Password=
+   */
+  SqlDatabase(const QSettings& settings, const QString& groupName);
   ~SqlDatabase();
 
   SqlDatabase& operator=(const SqlDatabase& other);

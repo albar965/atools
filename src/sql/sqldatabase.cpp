@@ -18,6 +18,8 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlexception.h"
 
+#include <QSettings>
+
 namespace atools {
 
 namespace sql {
@@ -34,6 +36,24 @@ SqlDatabase::SqlDatabase(const QSqlDatabase& other)
 SqlDatabase::SqlDatabase(const SqlDatabase& other)
 {
   db = QSqlDatabase(other.db);
+}
+
+SqlDatabase::SqlDatabase(const QSettings& settings, const QString& groupName)
+{
+  QString type = settings.value(groupName + "/Type").toString();
+  if(type.isEmpty())
+    type = "QSQLITE";
+
+  QString name = settings.value(groupName + "/ConnectionName").toString();
+  if(name.isEmpty())
+    name = QLatin1String(QSqlDatabase::defaultConnection);
+  db = QSqlDatabase::addDatabase(type, name);
+
+  db.setConnectOptions(settings.value(groupName + "/ConnectionOptions").toString());
+  db.setHostName(settings.value(groupName + "/HostName").toString());
+  db.setPort(settings.value(groupName + "/Port").toInt());
+  db.setUserName(settings.value(groupName + "/UserName").toString());
+  db.setPassword(settings.value(groupName + "/Password").toString());
 }
 
 SqlDatabase::~SqlDatabase()
