@@ -49,6 +49,7 @@ void VorWriter::writeObject(const Vor *type)
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
+  bindNullInt(":airport_id");
   QString apIdent = type->getAirportIdent();
   if(!apIdent.isEmpty() && getOptions().includeAirport(apIdent))
   {
@@ -57,8 +58,6 @@ void VorWriter::writeObject(const Vor *type)
     int id = getAirportIndex()->getAirportId(apIdent, msg);
     if(id != -1)
       bind(":airport_id", id);
-    else
-      bind(":airport_id", QVariant(QVariant::Int));
   }
 
   const Dme *dme = type->getDme();
@@ -68,7 +67,12 @@ void VorWriter::writeObject(const Vor *type)
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }
-
+  else
+  {
+    bindNullFloat(":dme_altitude");
+    bindNullFloat(":dme_lonx");
+    bindNullFloat(":dme_laty");
+  }
   executeStatement();
 }
 

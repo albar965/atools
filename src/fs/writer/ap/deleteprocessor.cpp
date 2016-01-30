@@ -25,6 +25,7 @@
 #include "fs/bgl/util.h"
 #include "fs/bgl/ap/airport.h"
 #include "fs/writer/ap/transitionwriter.h"
+#include "fs/bglreaderoptions.h"
 
 #include <functional>
 #include "logging/loggingdefs.h"
@@ -69,8 +70,8 @@ private:
   QString bindCol;
 };
 
-DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& db, DataWriter& dataWriter)
-  : dataWriter(dataWriter), db(db)
+DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& writer)
+  : dataWriter(writer), db(sqlDb)
 {
   deletePrimaryApproachStmt.prepare(
     "delete from approach where runway_end_id in ( "
@@ -221,8 +222,10 @@ DeleteProcessor::~DeleteProcessor()
 void DeleteProcessor::copyApproaches(SqlQuery& fetchApprStmt, int currentId, const QString& ident)
 {
   SqlUtil util(&db);
-  SqlQuery insertApprStmt(util.buildInsertStatement("approach"), db);
-  SqlQuery insertTrStmt(util.buildInsertStatement("transition"), db);
+  SqlQuery insertApprStmt(db);
+  insertApprStmt.prepare(util.buildInsertStatement("approach"));
+  SqlQuery insertTrStmt(db);
+  insertTrStmt.prepare(util.buildInsertStatement("transition"));
 
   IdColFunc<ApproachWriter> appIdColFunc("approach_id", dataWriter.getApproachWriter());
   IdColFunc<TransitionWriter> trIdColFunc("transition_id", dataWriter.getApproachTransWriter());
@@ -232,9 +235,9 @@ void DeleteProcessor::copyApproaches(SqlQuery& fetchApprStmt, int currentId, con
   fetchApprStmt.exec();
 
   int copied = util.copyResultValues(fetchApprStmt, insertApprStmt, appIdColFunc);
-  qDebug() << copied << " approaches copied";
 
-  fetchApprStmt.clear();
+  if(dataWriter.getOptions().isVerbose())
+    qDebug() << copied << " approaches copied";
 
   for(QPair<int, int> iter : appIdColFunc.mappedIds)
   {
@@ -246,8 +249,9 @@ void DeleteProcessor::copyApproaches(SqlQuery& fetchApprStmt, int currentId, con
     fetchTransitionStmt.exec();
 
     int copied = util.copyResultValues(fetchTransitionStmt, insertTrStmt, trIdColFunc);
-    qDebug() << copied << " transitions copied";
-    fetchTransitionStmt.clear();
+
+    if(dataWriter.getOptions().isVerbose())
+      qDebug() << copied << " transitions copied";
   }
 }
 
@@ -324,8 +328,9 @@ void DeleteProcessor::executeStatement(SqlQuery& stmt, const QString& what)
 {
   stmt.exec();
   int retval = stmt.numRowsAffected();
-  qDebug() << retval << " " << what;
-  stmt.clear();
+
+  if(dataWriter.getOptions().isVerbose())
+    qDebug() << retval << " " << what;
 }
 
 void DeleteProcessor::fetchIds(SqlQuery& stmt, QList<int>& ids, const QString& what)
@@ -334,8 +339,8 @@ void DeleteProcessor::fetchIds(SqlQuery& stmt, QList<int>& ids, const QString& w
   while(stmt.next())
     ids.push_back(stmt.value(0).toInt());
 
-  qDebug() << ids.size() << " " << what;
-  stmt.clear();
+  if(dataWriter.getOptions().isVerbose())
+    qDebug() << ids.size() << " " << what;
 }
 
 void DeleteProcessor::deleteApproaches(int currentId, const QString& ident)

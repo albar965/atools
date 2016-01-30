@@ -111,22 +111,21 @@ void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
     Leg last;
     int seqNo = 0;
     ++fragmentNum;
-    for(Leg it : newRoute)
+    for(Leg rt : newRoute)
     {
-      last = it;
+      last = rt;
 
       routeInsertStmt.bindValue(":route_id", ++curRouteId);
       routeInsertStmt.bindValue(":route_name", routeName);
-      routeInsertStmt.bindValue(":route_type", it.type);
+      routeInsertStmt.bindValue(":route_type", rt.type);
       routeInsertStmt.bindValue(":route_fragment_no", fragmentNum);
       routeInsertStmt.bindValue(":sequence_no", ++seqNo);
-      routeInsertStmt.bindValue(":from_waypoint_id", it.from);
-      routeInsertStmt.bindValue(":to_waypoint_id", it.to);
-      routeInsertStmt.bindValue(":minimum_altitude", it.minAlt);
+      routeInsertStmt.bindValue(":from_waypoint_id", rt.from);
+      routeInsertStmt.bindValue(":to_waypoint_id", rt.to);
+      routeInsertStmt.bindValue(":minimum_altitude", rt.minAlt);
 
       routeInsertStmt.exec();
       numRoutes += routeInsertStmt.numRowsAffected();
-      routeInsertStmt.clear();
     }
   }
 }

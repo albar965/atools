@@ -58,12 +58,22 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
     bind(":left_vasi_type", leftVt);
     bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
   }
+  else
+  {
+    bindNullString(":left_vasi_type");
+    bindNullFloat(":left_vasi_pitch");
+  }
 
   QString rightVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getRightVasi().getType());
   if(!rightVt.isEmpty())
   {
     bind(":right_vasi_type", rightVt);
     bind(":right_vasi_pitch", type->getRightVasi().getPitch());
+  }
+  else
+  {
+    bindNullString(":right_vasi_type");
+    bindNullFloat(":right_vasi_pitch");
   }
 
   executeStatement();

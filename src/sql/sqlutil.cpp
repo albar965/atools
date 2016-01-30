@@ -111,7 +111,6 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
                            "(SQL \"" + to.lastQuery() + "\")");
       copied++;
     }
-    to.clear();
   }
   return copied;
 }

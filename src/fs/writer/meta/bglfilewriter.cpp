@@ -21,6 +21,7 @@
 
 #include <QFileInfo>
 #include <QDateTime>
+#include <QDir>
 
 namespace atools {
 namespace fs {
@@ -40,7 +41,7 @@ void BglFileWriter::writeObject(const BglFile *type)
   bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
   bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
   bind(":file_modification_time", static_cast<int>(fi.lastModified().toTime_t()));
-  bind(":filename", type->getFilename());
+  bind(":filename", QDir::toNativeSeparators(type->getFilename()));
   bind(":size", type->getFilesize());
 
   executeStatement();

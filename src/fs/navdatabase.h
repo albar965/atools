@@ -30,12 +30,12 @@ namespace fs {
 class Navdatabase
 {
 public:
-  Navdatabase(const atools::fs::BglReaderOptions& readerOptions, atools::sql::SqlDatabase *sqlDb);
+  Navdatabase(const atools::fs::BglReaderOptions* readerOptions, atools::sql::SqlDatabase *sqlDb);
   void create();
 
 private:
   atools::sql::SqlDatabase *db;
-  atools::fs::BglReaderOptions options;
+  const atools::fs::BglReaderOptions *options;
 };
 
 } // namespace fs

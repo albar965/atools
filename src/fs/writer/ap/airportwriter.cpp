@@ -60,6 +60,10 @@ void AirportWriter::writeObject(const Airport *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing airport " << type->getIdent() << " name " << type->getName();
 
+  bindNullString(":country");
+  bindNullString(":state");
+  bindNullString(":city");
+
   NameListMapConstIterType it = nameListIndex.find(type->getIdent());
   if(it != nameListIndex.end())
   {
@@ -83,13 +87,13 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
   bind(":num_helipads", type->getNumHelipads());
-  bind(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
-  bind(":has_jetfuel", (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
-  bind(":has_boundary_fence", type->hasBoundaryFence());
-  bind(":has_tower_object", type->hasTowerObj());
-  bind(":has_taxiways", type->hasTaxiway());
-  bind(":has_apron", type->hasApron());
-  bind(":has_jetways", type->hasJetway());
+  bind(":has_avgas", ((type->getFuelFlags() & AVGAS) == AVGAS) ? 1 : 0);
+  bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
+  bind(":has_boundary_fence", type->hasBoundaryFence() ? 1 : 0);
+  bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
+  bind(":has_taxiways", type->hasTaxiway() ? 1 : 0);
+  bind(":has_apron", type->hasApron() ? 1 : 0);
+  bind(":has_jetways", type->hasJetway() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());

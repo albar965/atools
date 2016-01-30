@@ -23,10 +23,10 @@
 #include "fs/writer/datawriter.h"
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
+#include "fs/scenery/scenerycfg.h"
+#include "fs/writer/routeresolver.h"
 
 #include <QElapsedTimer>
-
-#include "fs/scenery/scenerycfg.h"
 
 namespace atools {
 namespace fs {
@@ -36,7 +36,7 @@ using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 
-Navdatabase::Navdatabase(const atools::fs::BglReaderOptions& readerOptions, sql::SqlDatabase *sqlDb)
+Navdatabase::Navdatabase(const BglReaderOptions *readerOptions, sql::SqlDatabase *sqlDb)
   : db(sqlDb), options(readerOptions)
 {
 
@@ -48,7 +48,7 @@ void Navdatabase::create()
   timer.start();
 
   atools::fs::scenery::SceneryCfg cfg;
-  cfg.read(options.getSceneryFile());
+  cfg.read(options->getSceneryFile());
 
   SqlScript script(db);
   script.executeScript(":/atools/resources/sql/writer/create_nav_schema.sql");
@@ -60,16 +60,19 @@ void Navdatabase::create()
   SqlQuery(db).exec("PRAGMA foreign_keys = ON");
   db->commit();
 
-  atools::fs::writer::DataWriter dataWriter(*db, options);
+  atools::fs::writer::DataWriter dataWriter(*db, *options);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive())
       dataWriter.writeSceneryArea(area);
   db->commit();
 
-  // atools::fs::writer::RouteResolver resolver(db);
-  // resolver.run();
-  // db.commit();
+  if(options->isResolveRoutes())
+  {
+    atools::fs::writer::RouteResolver resolver(*db);
+    resolver.run();
+    db->commit();
+  }
 
   script.executeScript(":/atools/resources/sql/writer/finish_schema.sql");
   db->commit();

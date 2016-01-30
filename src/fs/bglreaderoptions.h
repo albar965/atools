@@ -88,6 +88,11 @@ public:
     return incomplete;
   }
 
+  bool isResolveRoutes() const
+  {
+    return resolveRoutes;
+  }
+
   bool includeFilename(const QString& filename) const;
   bool includePath(const QString& filename) const;
   bool includeAirport(const QString& icao) const;
@@ -130,6 +135,11 @@ public:
 
   void loadFiltersFromSettings(const QSettings& settings);
 
+  void setResolveRoutes(bool value)
+  {
+    resolveRoutes = value;
+  }
+
 private:
   void setFilenameFilterInc(const QStringList& filter);
   void setFilenameFilterExcl(const QStringList& filter);
@@ -150,7 +160,8 @@ private:
   void setBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
 
   QString sceneryFile, basepath;
-  bool verbose, deletes, filterRunways, incomplete, debugAutocommit;
+  bool verbose = false, deletes = true, filterRunways = true, incomplete = true, debugAutocommit = false,
+       resolveRoutes = true;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, airportIcaoFiltersExcl;

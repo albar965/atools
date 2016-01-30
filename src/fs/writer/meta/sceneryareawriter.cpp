@@ -21,6 +21,8 @@
 
 #include "logging/loggingdefs.h"
 
+#include <QDir>
+
 namespace atools {
 namespace fs {
 namespace writer {
@@ -37,8 +39,8 @@ void SceneryAreaWriter::writeObject(const SceneryArea *type)
   bind(":number", type->getAreaNumber());
   bind(":layer", type->getLayer());
   bind(":title", type->getTitle());
-  bind(":remote_path", type->getRemotePath());
-  bind(":local_path", type->getLocalPath());
+  bind(":remote_path", QDir::toNativeSeparators(type->getRemotePath()));
+  bind(":local_path", QDir::toNativeSeparators(type->getLocalPath()));
   bind(":active", type->isActive());
   bind(":required", type->isRequired());
   bind(":exclude", type->getExclude());

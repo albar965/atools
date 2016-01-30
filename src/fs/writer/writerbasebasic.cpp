@@ -60,6 +60,26 @@ AirportIndex *WriterBaseBasic::getAirportIndex()
   return dataWriter.getAirportIndex();
 }
 
+void WriterBaseBasic::bind(const QString& placeholder, const QVariant& val)
+{
+  return stmt.bindValue(placeholder, val);
+}
+
+void WriterBaseBasic::bindNullInt(const QString& placeholder)
+{
+  return stmt.bindValue(placeholder, QVariant(QVariant::Int));
+}
+
+void WriterBaseBasic::bindNullFloat(const QString& placeholder)
+{
+  return stmt.bindValue(placeholder, QVariant(QVariant::Double));
+}
+
+void WriterBaseBasic::bindNullString(const QString& placeholder)
+{
+  return stmt.bindValue(placeholder, QVariant(QVariant::String));
+}
+
 void WriterBaseBasic::executeStatement()
 {
   stmt.exec();
@@ -69,11 +89,6 @@ void WriterBaseBasic::executeStatement()
   // stmt.clear();
 
   dataWriter.increaseNumObjects();
-}
-
-void WriterBaseBasic::clearStatement()
-{
-  stmt.clear();
 }
 
 } // namespace writer

@@ -59,13 +59,12 @@ protected:
     return stmt;
   }
 
-  void bind(const QString& placeholder, const QVariant& val)
-  {
-    return stmt.bindValue(placeholder, val);
-  }
+  void bind(const QString& placeholder, const QVariant& val);
+  void bindNullInt(const QString& placeholder);
+  void bindNullFloat(const QString& placeholder);
+  void bindNullString(const QString& placeholder);
 
   void executeStatement();
-  void clearStatement();
 
 private:
   atools::sql::SqlQuery stmt;

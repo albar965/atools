@@ -46,6 +46,14 @@ void TempRouteWriter::writeObject(const RouteEntry *type)
     bind(":next_airport_ident", type->getNextWaypoint().getAirportIdent());
     bind(":next_minimum_altitude", bgl::util::meterToFeet(type->getNextWaypoint().getMinimumAltitude(), 1));
   }
+  else
+  {
+    bindNullString(":next_type");
+    bindNullString(":next_ident");
+    bindNullString(":next_region");
+    bindNullString(":next_airport_ident");
+    bindNullFloat(":next_minimum_altitude");
+  }
 
   if(type->hasPreviousWaypoint())
   {
@@ -57,6 +65,14 @@ void TempRouteWriter::writeObject(const RouteEntry *type)
     bind(":previous_airport_ident", type->getPreviousWaypoint().getAirportIdent());
     bind(":previous_minimum_altitude",
          bgl::util::meterToFeet(type->getPreviousWaypoint().getMinimumAltitude(), 1));
+  }
+  else
+  {
+    bindNullString(":previous_type");
+    bindNullString(":previous_ident");
+    bindNullString(":previous_region");
+    bindNullString(":previous_airport_ident");
+    bindNullFloat(":previous_minimum_altitude");
   }
 
   executeStatement();

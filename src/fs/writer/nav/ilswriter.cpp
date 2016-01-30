@@ -74,6 +74,11 @@ void IlsWriter::writeObject(const Ils *type)
   bool isComplete = false;
   const Localizer *loc = type->getLocalizer();
   QString apIdent = type->getAirportIdent();
+
+  bindNullInt(":loc_runway_end_id");
+  bindNullFloat(":loc_heading");
+  bindNullFloat(":loc_width");
+
   if(loc != nullptr && !apIdent.isEmpty())
   {
     QString msg(" ILS ID " + QString::number(getCurrentId()) +
@@ -87,8 +92,6 @@ void IlsWriter::writeObject(const Ils *type)
         isComplete = true;
         bind(":loc_runway_end_id", id);
       }
-      else
-        bind(":loc_runway_end_id", QVariant(QVariant::Int));
     }
 
     bind(":loc_heading", loc->getHeading());
@@ -99,8 +102,6 @@ void IlsWriter::writeObject(const Ils *type)
 
   if(getOptions().isIncomplete() || isComplete)
     executeStatement();
-  else
-    clearStatement();
 }
 
 } // namespace writer

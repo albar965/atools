@@ -53,6 +53,7 @@ void ApproachWriter::writeObject(const Approach *type)
 
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
+  bindNullInt(":runway_end_id");
   if(type->hasRunwayReference() && !apIdent.isEmpty())
   {
     if(getOptions().includeAirport(apIdent))
@@ -64,8 +65,6 @@ void ApproachWriter::writeObject(const Approach *type)
         isComplete = true;
         bind(":runway_end_id", id);
       }
-      else
-        bind(":runway_end_id", QVariant(QVariant::Int));
     }
   }
   else
@@ -78,8 +77,6 @@ void ApproachWriter::writeObject(const Approach *type)
     TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
     appWriter->write(type->getTransitions());
   }
-  else
-    clearStatement();
 }
 
 } // namespace writer
