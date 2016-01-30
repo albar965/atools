@@ -21,6 +21,8 @@
 #include <QRegularExpression>
 #include <QSet>
 
+class QSettings;
+
 namespace atools {
 namespace fs {
 
@@ -106,15 +108,6 @@ public:
     verbose = value;
   }
 
-  void setFilenameFilterInc(const QStringList& filter);
-  void setFilenameFilterExcl(const QStringList& filter);
-  void setAirportIcaoFilterInc(const QStringList& filter);
-  void setAirportIcaoFilterExcl(const QStringList& filter);
-  void setPathFilterInc(const QStringList& filter);
-  void setPathFilterExcl(const QStringList& filter);
-  void setBglObjectFilterInc(const QStringList& filters);
-  void setBglObjectFilterExcl(const QStringList& filters);
-
   void setDeletes(bool value)
   {
     deletes = value;
@@ -135,7 +128,18 @@ public:
     debugAutocommit = value;
   }
 
+  void loadFiltersFromSettings(const QSettings& settings);
+
 private:
+  void setFilenameFilterInc(const QStringList& filter);
+  void setFilenameFilterExcl(const QStringList& filter);
+  void setAirportIcaoFilterInc(const QStringList& filter);
+  void setAirportIcaoFilterExcl(const QStringList& filter);
+  void setPathFilterInc(const QStringList& filter);
+  void setPathFilterExcl(const QStringList& filter);
+  void setBglObjectFilterInc(const QStringList& filters);
+  void setBglObjectFilterExcl(const QStringList& filters);
+
   friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 
   void setFilter(const QStringList& filters, QList<QRegExp>& filterList);

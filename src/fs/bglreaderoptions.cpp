@@ -22,6 +22,7 @@
 #include <QList>
 #include <QRegExp>
 #include <QDir>
+#include <QSettings>
 
 namespace atools {
 namespace fs {
@@ -118,6 +119,22 @@ bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
     else
       return incFound && !exFound;
   }
+}
+
+void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
+{
+  setDeletes(settings.value("Options/ProcessDelete", true).toBool());
+  setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
+  setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());
+
+  setFilenameFilterInc(settings.value("Filter/IncludeFilenames").toStringList());
+  setFilenameFilterExcl(settings.value("Filter/ExcludeFilenames").toStringList());
+  setPathFilterInc(settings.value("Filter/IncludePathFilter").toStringList());
+  setPathFilterExcl(settings.value("Filter/ExcludePathFilter").toStringList());
+  setAirportIcaoFilterInc(settings.value("Filter/IncludeAirportIcaoFilter").toStringList());
+  setAirportIcaoFilterExcl(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
+  setBglObjectFilterInc(settings.value("Filter/IncludeBglObjectFilter").toStringList());
+  setBglObjectFilterExcl(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 }
 
 bool BglReaderOptions::includeObject(const QString& filterStr,
