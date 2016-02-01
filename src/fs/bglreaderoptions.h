@@ -32,6 +32,8 @@ enum BglObjectType
   UNKNOWN,
   AIRPORT, // ok
   RUNWAY, // ok
+  HELIPAD, // ok
+  START, // ok
   APPROACH, // ok
   COM, // ok
   PARKING, // ok

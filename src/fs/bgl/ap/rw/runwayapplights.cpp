@@ -86,6 +86,11 @@ enum AppLightFlags
 
 };
 
+RunwayAppLights::RunwayAppLights()
+  : system(atools::fs::bgl::rw::NO_ALS), endlights(false), reils(false), touchdown(false), numStrobes(0)
+{
+}
+
 RunwayAppLights::RunwayAppLights(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {

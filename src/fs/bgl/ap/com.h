@@ -59,13 +59,8 @@ class Com :
   public atools::fs::bgl::Record
 {
 public:
-  Com()
-    : type(atools::fs::bgl::com::NONE), frequency(0.0f)
-  {
-  }
-
+  Com();
   Com(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-
   virtual ~Com();
 
   int getFrequency() const

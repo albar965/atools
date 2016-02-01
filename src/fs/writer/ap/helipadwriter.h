@@ -15,43 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLPOSITION_H_
-#define BGL_BGLPOSITION_H_
+#ifndef WRITER_HELIPADWRITER_H_
+#define WRITER_HELIPADWRITER_H_
 
-#include "geo/pos.h"
-
-#include "logging/loggingdefs.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/helipad.h"
 
 namespace atools {
-namespace io {
-class BinaryStream;
-}
 namespace fs {
-namespace bgl {
+namespace writer {
 
-class BglPosition :
-  public atools::geo::Pos
+class HelipadWriter :
+  public atools::fs::writer::WriterBase<atools::fs::bgl::Helipad>
 {
 public:
-  BglPosition();
-  BglPosition(float lonX, float latY, float alt = 0.0f);
-  BglPosition(atools::io::BinaryStream *bs, float altitudeFactor = 1.f, bool hasAltitude = true);
-
-  virtual ~BglPosition();
-
-  float getAltitude() const
+  HelipadWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "helipad")
   {
-    return altitude;
   }
 
-private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& pos);
+  virtual ~HelipadWriter()
+  {
+  }
 
-  float altitude;
+protected:
+  virtual void writeObject(const atools::fs::bgl::Helipad *type);
+
 };
 
-} // namespace bgl
+} // namespace writer
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_BGLPOSITION_H_ */
+#endif /* WRITER_HELIPADWRITER_H_ */

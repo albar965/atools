@@ -213,6 +213,11 @@ Parking::Parking(BinaryStream *bs)
     bs->readString(4);
 }
 
+Parking::~Parking()
+{
+
+}
+
 QDebug operator<<(QDebug out, const Parking& record)
 {
   QDebugStateSaver saver(out);

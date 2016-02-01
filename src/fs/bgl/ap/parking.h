@@ -100,6 +100,7 @@ class Parking
 {
 public:
   Parking(atools::io::BinaryStream *bs);
+  virtual ~Parking();
 
   float getHeading() const
   {

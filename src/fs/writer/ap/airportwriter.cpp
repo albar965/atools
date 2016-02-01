@@ -19,6 +19,8 @@
 #include "fs/writer/meta/bglfilewriter.h"
 #include "fs/writer/ap/rw/runwaywriter.h"
 #include "fs/writer/ap/approachwriter.h"
+#include "fs/writer/ap/startwriter.h"
+#include "fs/writer/ap/helipadwriter.h"
 #include "fs/writer/ap/parkingwriter.h"
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nl/namelistentry.h"
@@ -123,6 +125,12 @@ void AirportWriter::writeObject(const Airport *type)
 
   ApproachWriter *appWriter = getDataWriter().getApproachWriter();
   appWriter->write(type->getApproaches());
+
+  HelipadWriter *heliWriter = getDataWriter().getHelipadWriter();
+  heliWriter->write(type->getHelipads());
+
+  StartWriter *startWriter = getDataWriter().getStartWriter();
+  startWriter->write(type->getStarts());
 
   ParkingWriter *parkWriter = getDataWriter().getParkingWriter();
   parkWriter->write(type->getParkings());

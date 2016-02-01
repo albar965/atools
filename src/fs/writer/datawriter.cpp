@@ -38,6 +38,8 @@
 #include "fs/writer/ap/comwriter.h"
 #include "fs/writer/ap/transitionwriter.h"
 #include "fs/writer/ap/parkingwriter.h"
+#include "fs/writer/ap/startwriter.h"
+#include "fs/writer/ap/helipadwriter.h"
 #include "fs/writer/ap/deleteairportwriter.h"
 
 #include "fs/scenery/fileresolver.h"
@@ -74,6 +76,8 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   approachWriter = new ApproachWriter(db, *this);
   approachTransWriter = new TransitionWriter(db, *this);
   parkingWriter = new ParkingWriter(db, *this);
+  airportHelipadWriter = new HelipadWriter(db, *this);
+  airportStartWriter = new StartWriter(db, *this);
   airportComWriter = new ComWriter(db, *this);
   deleteAirportWriter = new DeleteAirportWriter(db, *this);
   waypointWriter = new WaypointWriter(db, *this);
@@ -97,6 +101,8 @@ DataWriter::~DataWriter()
   delete approachWriter;
   delete approachTransWriter;
   delete parkingWriter;
+  delete airportHelipadWriter;
+  delete airportStartWriter;
   delete airportComWriter;
   delete deleteAirportWriter;
   delete waypointWriter;

@@ -25,6 +25,8 @@
 #include "del/deleteairport.h"
 #include "fs/bgl//bglposition.h"
 #include "fs/bgl/ap/rw/runway.h"
+#include "fs/bgl/ap/helipad.h"
+#include "fs/bgl/ap/start.h"
 
 #include <QList>
 
@@ -168,6 +170,16 @@ public:
     return parkings;
   }
 
+  const QList<atools::fs::bgl::Helipad>& getHelipads() const
+  {
+    return helipads;
+  }
+
+  const QList<atools::fs::bgl::Start>& getStarts() const
+  {
+    return starts;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
   void handleParking();
@@ -188,6 +200,8 @@ private:
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;
   QList<atools::fs::bgl::Com> coms;
+  QList<atools::fs::bgl::Helipad> helipads;
+  QList<atools::fs::bgl::Start> starts;
   QList<atools::fs::bgl::Approach> approaches;
   QList<atools::fs::bgl::Waypoint> waypoints;
   QList<atools::fs::bgl::DeleteAirport> deleteAirports;

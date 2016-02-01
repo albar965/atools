@@ -66,6 +66,47 @@ create index if not exists idx_com_airport_id on com(airport_id);
 
 -- **************************************************
 
+drop table if exists helipad;
+
+create table helipad
+(
+  helipad_id integer primary key,
+  airport_id not null,
+  surface text not null,
+  type text not null,
+  length real not null,
+  width real not null,
+  heading real not null,
+  is_transparent integer not null,
+  is_closed integer not null,
+  altitude integer not null,
+  lonx real not null,
+  laty real not null,
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_helipad_airport_id on helipad(helipad_id);
+
+-- **************************************************
+
+drop table if exists start;
+
+create table start
+(
+  start_id integer primary key,
+  runway_end_id integer,
+  type text not null,
+  heading real not null,
+  altitude integer not null,
+  lonx real not null,
+  laty real not null,
+foreign key(runway_end_id) references runway_end(runway_end_id)
+);
+
+create index if not exists idx_start_runway_end_id on start(runway_end_id);
+
+-- **************************************************
+
 drop table if exists runway;
 
 create table runway

@@ -80,6 +80,11 @@ QString Com::comTypeToStr(com::ComType type)
   return "";
 }
 
+Com::Com()
+  : type(atools::fs::bgl::com::NONE), frequency(0.0f)
+{
+}
+
 Com::Com(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {

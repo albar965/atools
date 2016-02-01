@@ -15,43 +15,72 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLPOSITION_H_
-#define BGL_BGLPOSITION_H_
+#ifndef BGL_AIRPORTSTART_H_
+#define BGL_AIRPORTSTART_H_
 
-#include "geo/pos.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/ap/rw/runway.h"
 
-#include "logging/loggingdefs.h"
+#include <QString>
 
 namespace atools {
 namespace io {
 class BinaryStream;
 }
+}
+
+namespace atools {
 namespace fs {
 namespace bgl {
 
-class BglPosition :
-  public atools::geo::Pos
+namespace start {
+enum StartType
+{
+  RUNWAY = 1,
+  WATER = 2,
+  HELIPAD = 3 // TOOD fix in wiki
+};
+
+} // namespace start
+
+class Start :
+  public atools::fs::bgl::Record
 {
 public:
-  BglPosition();
-  BglPosition(float lonX, float latY, float alt = 0.0f);
-  BglPosition(atools::io::BinaryStream *bs, float altitudeFactor = 1.f, bool hasAltitude = true);
+  Start();
+  Start(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~Start();
 
-  virtual ~BglPosition();
+  static QString startTypeToStr(atools::fs::bgl::start::StartType type);
 
-  float getAltitude() const
+  QString getRunwayName() const;
+
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
-    return altitude;
+    return position;
+  }
+
+  float getHeading() const
+  {
+    return heading;
+  }
+
+  atools::fs::bgl::start::StartType getType() const
+  {
+    return type;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& pos);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Start& record);
 
-  float altitude;
+  atools::fs::bgl::start::StartType type;
+  int runwayNumber, runwayDesignator;
+  atools::fs::bgl::BglPosition position;
+  float heading = 0.f;
 };
 
 } // namespace bgl
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_BGLPOSITION_H_ */
+#endif /* BGL_AIRPORTSTART_H_ */

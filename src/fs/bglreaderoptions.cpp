@@ -241,6 +241,12 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case RUNWAY:
       return "RUNWAY";
 
+    case HELIPAD:
+      return "HELIPAD";
+
+    case START:
+      return "START";
+
     case APPROACH:
       return "APPROACH";
 
@@ -280,6 +286,10 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return AIRPORT;
   else if(typeStr == "RUNWAY")
     return RUNWAY;
+  else if(typeStr == "HELIPAD")
+    return HELIPAD;
+  else if(typeStr == "START")
+    return START;
   else if(typeStr == "APPROACH")
     return APPROACH;
   else if(typeStr == "COM")

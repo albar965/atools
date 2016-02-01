@@ -58,13 +58,8 @@ class RunwayVasi :
   public atools::fs::bgl::Record
 {
 public:
-  RunwayVasi()
-    : type(atools::fs::bgl::rw::NONE), pitch(0.0)
-  {
-  }
-
+  RunwayVasi();
   RunwayVasi(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-
   virtual ~RunwayVasi();
 
   float getPitch() const

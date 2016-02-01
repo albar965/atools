@@ -25,6 +25,16 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
+BglPosition::BglPosition()
+  : geo::Pos(), altitude(0)
+{
+}
+
+BglPosition::BglPosition(float lonX, float latY, float alt)
+  : geo::Pos(lonX, latY), altitude(alt)
+{
+}
+
 BglPosition::BglPosition(BinaryStream *bs, float altitudeFactor, bool hasAltitude)
 {
   lonX = converter::intToLonX(bs->readInt());

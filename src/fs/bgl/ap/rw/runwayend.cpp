@@ -50,6 +50,12 @@ QDebug operator<<(QDebug out, const RunwayEnd& record)
   return out;
 }
 
+RunwayEnd::RunwayEnd()
+  : number(0), designator(0), offsetThreshold(0.0), blastPad(0.0), overrun(0.0), closedMarkings(false),
+    stolMarkings(false), takeoff(false), landing(false), pattern(atools::fs::bgl::rw::LEFT)
+{
+}
+
 RunwayEnd::~RunwayEnd()
 {
 }

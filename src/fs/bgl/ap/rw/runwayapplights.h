@@ -59,13 +59,8 @@ class RunwayAppLights :
   public Record
 {
 public:
-  RunwayAppLights()
-    : system(atools::fs::bgl::rw::NO_ALS), endlights(false), reils(false), touchdown(false), numStrobes(0)
-  {
-  }
-
+  RunwayAppLights();
   RunwayAppLights(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-
   virtual ~RunwayAppLights();
 
   bool hasEndlights() const

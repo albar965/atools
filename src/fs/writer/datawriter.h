@@ -47,6 +47,8 @@ class VorWriter;
 class NdbWriter;
 class MarkerWriter;
 class IlsWriter;
+class StartWriter;
+class HelipadWriter;
 class RunwayIndex;
 class AirportIndex;
 
@@ -140,6 +142,16 @@ public:
     return options;
   }
 
+  atools::fs::writer::HelipadWriter *getHelipadWriter() const
+  {
+    return airportHelipadWriter;
+  }
+
+  atools::fs::writer::StartWriter *getStartWriter() const
+  {
+    return airportStartWriter;
+  }
+
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
@@ -156,6 +168,8 @@ private:
   atools::fs::writer::TransitionWriter *approachTransWriter;
   atools::fs::writer::ParkingWriter *parkingWriter;
   atools::fs::writer::ComWriter *airportComWriter;
+  atools::fs::writer::HelipadWriter *airportHelipadWriter;
+  atools::fs::writer::StartWriter *airportStartWriter;
   atools::fs::writer::DeleteAirportWriter *deleteAirportWriter;
 
   atools::fs::writer::WaypointWriter *waypointWriter;

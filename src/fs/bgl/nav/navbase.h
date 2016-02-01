@@ -38,7 +38,6 @@ class NavBase :
 {
 public:
   NavBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-
   virtual ~NavBase();
 
   const QString& getAirportIdent() const

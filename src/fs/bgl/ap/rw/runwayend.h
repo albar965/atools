@@ -39,12 +39,7 @@ enum Pattern
 class RunwayEnd
 {
 public:
-  RunwayEnd()
-    : number(0), designator(0), offsetThreshold(0.0), blastPad(0.0), overrun(0.0), closedMarkings(false),
-      stolMarkings(false), takeoff(false), landing(false), pattern(atools::fs::bgl::rw::LEFT)
-  {
-  }
-
+  RunwayEnd();
   virtual ~RunwayEnd();
 
   QString getName() const;

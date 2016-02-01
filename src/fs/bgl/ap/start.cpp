@@ -15,8 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/ap/rw/runwayvasi.h"
+#include "fs/bgl/ap/start.h"
 #include "io/binarystream.h"
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {
@@ -24,82 +25,59 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QString RunwayVasi::vasiTypeToStr(rw::VasiType type)
+QString Start::startTypeToStr(start::StartType type)
 {
   switch(type)
   {
-    case rw::NONE:
-      return "NONE";
+    case atools::fs::bgl::start::RUNWAY:
+      return "RUNWAY";
 
-    case rw::VASI21:
-      return "VASI21";
+    case atools::fs::bgl::start::WATER:
+      return "WATER";
 
-    case rw::VASI31:
-      return "VASI31";
-
-    case rw::VASI22:
-      return "VASI22";
-
-    case rw::VASI32:
-      return "VASI32";
-
-    case rw::VASI23:
-      return "VASI23";
-
-    case rw::VASI33:
-      return "VASI33";
-
-    case rw::PAPI2:
-      return "PAPI2";
-
-    case rw::PAPI4:
-      return "PAPI4";
-
-    case rw::TRICOLOR:
-      return "TRICOLOR";
-
-    case rw::PVASI:
-      return "PVASI";
-
-    case rw::TVASI:
-      return "TVASI";
-
-    case rw::BALL:
-      return "BALL";
-
-    case rw::APAP_PANELS:
-      return "APAP_PANELS";
+    case atools::fs::bgl::start::HELIPAD:
+      return "HELIPAD";
   }
-  qWarning().nospace().noquote() << "Unknown VASI type " << type;
+  qWarning().nospace().noquote() << "Unknown START type " << type;
   return "";
 }
 
-RunwayVasi::RunwayVasi()
-  : type(atools::fs::bgl::rw::NONE), pitch(0.0)
+Start::Start()
 {
 }
 
-RunwayVasi::RunwayVasi(const BglReaderOptions *options, BinaryStream *bs)
+Start::Start(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  type = static_cast<rw::VasiType>(bs->readShort());
-  bs->skip(12); // BiasX  BiasZ  Spacing
-  pitch = bs->readFloat();
+  runwayNumber = bs->readByte();
+
+  int flags = bs->readByte();
+  runwayDesignator = flags & 0x0f;
+  type = static_cast<start::StartType>((flags >> 4) & 0xf);
+  position = BglPosition(bs, 1000.f, true);
+  heading = bs->readFloat();
 }
 
-QDebug operator<<(QDebug out, const RunwayVasi& record)
+QString Start::getRunwayName() const
+{
+  return converter::runwayToStr(runwayNumber, runwayDesignator);
+}
+
+QDebug operator<<(QDebug out, const Start& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Vasi[type " << RunwayVasi::vasiTypeToStr(record.type)
-  << ", pitch " << record.pitch
+  << " Start[type " << Start::startTypeToStr(record.type)
+  << ", rwy " << record.getRunwayName()
+  << ", heading " << record.heading
+  << ", " << record.position
   << "]";
 
   return out;
 }
 
-RunwayVasi::~RunwayVasi()
+Start::~Start()
 {
 }
 

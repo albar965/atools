@@ -114,13 +114,24 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         taxiway = true;
         break;
 
+      case rec::HELIPAD:
+        if(options->includeBglObject(type::HELIPAD))
+        {
+          r.seekToStart();
+          helipads.push_back(Helipad(options, bs));
+        }
+        break;
+      case rec::START:
+        if(options->includeBglObject(type::START))
+        {
+          r.seekToStart();
+          starts.push_back(Start(options, bs));
+        }
+        break;
+
       case rec::APRON_SECOND:
       case rec::APRON_EDGE_LIGHTS:
       // TODO read apron lights data
-      case rec::HELIPAD:
-      // TODO read helipads data
-      case rec::START:
-      // TODO read start point data
       case rec::TAXI_POINT:
       case rec::TAXI_NAME:
       case rec::FENCE_BLAST:
@@ -157,6 +168,8 @@ QDebug operator<<(QDebug out, const Airport& record)
   out << record.approaches;
   out << record.parkings;
   out << record.deleteAirports;
+  out << record.helipads;
+  out << record.starts;
   out << "]";
 
   return out;
