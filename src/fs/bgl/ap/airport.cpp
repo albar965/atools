@@ -32,11 +32,11 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
 {
   numRunways = bs->readByte();
   numComs = bs->readByte();
-  numStarts = bs->readByte();
+  bs->readByte(); // numStarts
   numApproaches = bs->readByte();
   numAprons = bs->readByte();
   deleteRecord = (numAprons & 0x80) == 0x80;
-  numHelipads = bs->readByte();
+  bs->readByte(); // numHelipads
   position = BglPosition(bs, 1000.f);
   towerPosition = BglPosition(bs, 1000.f);
   magVar = bs->readFloat();

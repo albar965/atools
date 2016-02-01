@@ -39,6 +39,9 @@ void DeleteAirportWriter::writeObject(const DeleteAirport *type)
 
   bind(":delete_airport_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(":num_del_runway", type->getDeleteRunways().size());
+  bind(":num_del_start", type->getDeleteStarts().size());
+  bind(":num_del_com", type->getDeleteComs().size());
   bind(":approaches", isFlagSet(flags, bgl::del::APPROACHES));
   bind(":apronlights", isFlagSet(flags, bgl::del::APRONLIGHTS));
   bind(":aprons", isFlagSet(flags, bgl::del::APRONS));

@@ -141,6 +141,16 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "select a.airport_id from airport a "
     "where a.ident = :apIdent and a.airport_id <> :curApId)");
 
+  deleteHelipadStmt.prepare(
+    "delete from helipad where airport_id in ( "
+    "select a.airport_id from airport a "
+    "where a.ident = :apIdent and a.airport_id <> :curApId)");
+
+  deleteStartStmt.prepare(
+    "delete from start where airport_id in ( "
+    "select a.airport_id from airport a "
+    "where a.ident = :apIdent and a.airport_id <> :curApId)");
+
   deleteParkingStmt.prepare(
     "delete from parking where airport_id in ( "
     "select a.airport_id from airport a "
@@ -172,9 +182,17 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "from airport a "
     "where a.ident = :apIdent and a.airport_id <> :curApId)");
 
-  updateNumHelipadsStmt.prepare(
-    "update airport set num_helipads = 0 "
-    "where ident = :apIdent and airport_id <> :curApId");
+  updateHelipadStmt.prepare(
+    "update helipad set airport_id = :curApId where airport_id in ( "
+    "select a.airport_id "
+    "from airport a "
+    "where a.ident = :apIdent and a.airport_id <> :curApId)");
+
+  updateStartStmt.prepare(
+    "update start set airport_id = :curApId where airport_id in ( "
+    "select a.airport_id "
+    "from airport a "
+    "where a.ident = :apIdent and a.airport_id <> :curApId)");
 
   updateHasTaxiwaysStmt.prepare(
     "update airport set has_taxiways = 0 "
@@ -248,19 +266,15 @@ void DeleteProcessor::copyApproaches(SqlQuery& fetchApprStmt, int currentId, con
     fetchTransitionStmt.bindValue(":approachId", oldId);
     fetchTransitionStmt.exec();
 
-    int copied = util.copyResultValues(fetchTransitionStmt, insertTrStmt, trIdColFunc);
-
+    int copyResults = util.copyResultValues(fetchTransitionStmt, insertTrStmt, trIdColFunc);
     if(dataWriter.getOptions().isVerbose())
-      qDebug() << copied << " transitions copied";
+      qDebug() << copyResults << " transitions copied";
   }
 }
 
 void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *type, int currentId)
 {
   using bgl::util::isFlagSet;
-
-  // db.commit(); // TODO debug remove
-  // db.setAutocommit(true);
 
   QString ident = type->getIdent();
 
@@ -292,8 +306,12 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
     deleteAirport(currentId, ident);
   }
 
+  // TODO implement remaining deletes
   // if(isFlagSet(del.getFlags(), bgl::ap::del::APRONLIGHTS))
   // {
+  // TAXIWAYS = 1 << 7
+  // APRONS = 1 << 2,
+  // APRONLIGHTS = 1 << 1,
   // }
 
   if(isFlagSet(del.getFlags(), bgl::del::APRONS))
@@ -305,14 +323,29 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
 
   if(isFlagSet(del.getFlags(), bgl::del::HELIPADS))
   {
-    updateNumHelipadsStmt.bindValue(":apIdent", ident);
-    updateNumHelipadsStmt.bindValue(":curApId", currentId);
-    executeStatement(updateNumHelipadsStmt, "helipads  deleted");
+    deleteHelipadStmt.bindValue(":apIdent", ident);
+    deleteHelipadStmt.bindValue(":curApId", currentId);
+    executeStatement(deleteHelipadStmt, "helipads deleted");
+  }
+  else
+  {
+    updateHelipadStmt.bindValue(":apIdent", ident);
+    updateHelipadStmt.bindValue(":curApId", currentId);
+    executeStatement(updateHelipadStmt, "helipads updated");
   }
 
-  // if(isFlagSet(del.getFlags(), bgl::ap::del::STARTS))
-  // {
-  // }
+  if(isFlagSet(del.getFlags(), bgl::del::STARTS))
+  {
+    deleteStartStmt.bindValue(":apIdent", ident);
+    deleteStartStmt.bindValue(":curApId", currentId);
+    executeStatement(deleteStartStmt, "starts deleted");
+  }
+  else
+  {
+    updateStartStmt.bindValue(":apIdent", ident);
+    updateStartStmt.bindValue(":curApId", currentId);
+    executeStatement(updateStartStmt, "starts updated");
+  }
 
   if(isFlagSet(del.getFlags(), bgl::del::TAXIWAYS))
   {

@@ -117,7 +117,8 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/helipad.h \
     src/fs/bgl/ap/start.h \
     src/fs/writer/ap/helipadwriter.h \
-    src/fs/writer/ap/startwriter.h
+    src/fs/writer/ap/startwriter.h \
+    src/fs/bgl/ap/del/deletestart.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -213,7 +214,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/helipad.cpp \
     src/fs/bgl/ap/start.cpp \
     src/fs/writer/ap/helipadwriter.cpp \
-    src/fs/writer/ap/startwriter.cpp
+    src/fs/writer/ap/startwriter.cpp \
+    src/fs/bgl/ap/del/deletestart.cpp
 
 unix {
     target.path = /usr/lib

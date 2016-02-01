@@ -21,6 +21,7 @@
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/del/deleterunway.h"
 #include "fs/bgl/ap/del/deletecom.h"
+#include "fs/bgl/ap/del/deletestart.h"
 
 #include <QList>
 
@@ -71,6 +72,11 @@ public:
     return flags;
   }
 
+  const QList<atools::fs::bgl::DeleteStart>& getDeleteStarts() const
+  {
+    return deleteStarts;
+  }
+
   static QString deleteAllFlagsToStr(atools::fs::bgl::del::DeleteAllFlags flags);
 
 private:
@@ -81,6 +87,7 @@ private:
 
   QList<atools::fs::bgl::DeleteRunway> deleteRunways;
   QList<atools::fs::bgl::DeleteCom> deleteComs;
+  QList<atools::fs::bgl::DeleteStart> deleteStarts;
 };
 
 } // namespace bgl

@@ -28,7 +28,6 @@ create table airport
   state text,
   city text not null,
   fuel_flags integer not null,
-  num_helipads integer not null,
   has_avgas integer not null,
   has_jetfuel integer not null,
   has_boundary_fence integer not null,
@@ -94,15 +93,18 @@ drop table if exists start;
 create table start
 (
   start_id integer primary key,
+  airport_id not null,
   runway_end_id integer,
   type text not null,
   heading real not null,
   altitude integer not null,
   lonx real not null,
   laty real not null,
+foreign key(airport_id) references airport(airport_id),
 foreign key(runway_end_id) references runway_end(runway_end_id)
 );
 
+create index if not exists idx_start_airport_id on start(airport_id);
 create index if not exists idx_start_runway_end_id on start(runway_end_id);
 
 -- **************************************************
@@ -244,6 +246,9 @@ create table delete_airport
 (
   delete_airport_id integer primary key,
   airport_id integer not null,
+  num_del_runway integer not null,
+  num_del_start integer not null,
+  num_del_com integer not null,
   approaches integer not null,
   apronlights integer not null,
   aprons  integer not null,

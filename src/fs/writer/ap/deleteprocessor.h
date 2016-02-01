@@ -70,7 +70,9 @@ private:
                         fetchRunwayEndIdStmt, deleteRunwayEndStmt,
                         deleteIlsStmt, deleteWpStmt, deleteVorStmt, deleteNdbStmt,
                         deleteAirportStmt, updateHasApronStmt,
-                        deleteComStmt, updateComStmt, updateNumHelipadsStmt, updateHasTaxiwaysStmt,
+                        deleteHelipadStmt, updateHelipadStmt,
+                        deleteStartStmt, updateStartStmt,
+                        deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,
                         fetchPrimaryAppStmt,
                         fetchSecondaryAppStmt, fetchTransitionStmt;
 };

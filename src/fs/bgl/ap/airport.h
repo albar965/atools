@@ -125,11 +125,6 @@ public:
     return name;
   }
 
-  int getNumHelipads() const
-  {
-    return numHelipads;
-  }
-
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
@@ -184,10 +179,9 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
   void handleParking();
 
-  int numRunways, numComs, numStarts, numApproaches, numAprons;
+  int numRunways, numComs, numApproaches, numAprons;
 
   bool deleteRecord;
-  int numHelipads;
   atools::fs::bgl::BglPosition position, towerPosition;
   float magVar;
   QString ident;

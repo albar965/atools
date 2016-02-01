@@ -66,10 +66,8 @@ DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
   for(int i = 0; i < numRunways; i++)
     deleteRunways.push_back(DeleteRunway(options, bs));
 
-  bs->skip(4 * numStarts); // runway number
-  // runway designator
-  // start type
-  // unused
+  for(int i = 0; i < numStarts; i++)
+    deleteStarts.push_back(DeleteStart(options, bs));
 
   for(int i = 0; i < numFrequencies; i++)
     deleteComs.push_back(DeleteCom(options, bs));
@@ -83,6 +81,7 @@ QDebug operator<<(QDebug out, const DeleteAirport& record)
   << "DeleteAirport[flags "
   << DeleteAirport::deleteAllFlagsToStr(record.flags);
   out << record.deleteRunways;
+  out << record.deleteStarts;
   out << record.deleteComs;
   out << "]";
   return out;

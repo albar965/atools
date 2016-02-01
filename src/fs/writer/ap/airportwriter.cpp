@@ -88,7 +88,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":region", type->getRegion());
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
-  bind(":num_helipads", type->getNumHelipads());
   bind(":has_avgas", ((type->getFuelFlags() & AVGAS) == AVGAS) ? 1 : 0);
   bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
   bind(":has_boundary_fence", type->hasBoundaryFence() ? 1 : 0);
