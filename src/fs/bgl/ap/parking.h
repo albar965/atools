@@ -48,8 +48,8 @@ enum ParkingType
   GATE_MEDIUM = 0x9,
   GATE_HEAVY = 0xa,
   DOCK_GA = 0xb,
-  FUEL = 0xc, // TODO report in wiki
-  VEHICLES = 0xd
+  FUEL = 0xc, // wiki error reported
+  VEHICLES = 0xd // wiki error reported
 };
 
 enum ParkingName

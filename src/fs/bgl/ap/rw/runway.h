@@ -68,8 +68,8 @@ enum Light
 
 enum Surface
 {
-  CONCRETE = 0x0000, // TODO report wiki error
-  GRASS = 0x0001, // TODO report wiki error
+  CONCRETE = 0x0000, // wiki error reported
+  GRASS = 0x0001, // wiki error reported
   WATER = 0x0002,
   ASPHALT = 0x0004,
   CLAY = 0x0007,

@@ -29,7 +29,7 @@ namespace nav {
 enum RouteWaypointType
 {
   ROUTE_WP_NONE = 0,
-  ROUTE_WP_NDB = 1, // TODO error in wiki
+  ROUTE_WP_NDB = 1, // wiki error reported
   ROUTE_WP_VOR = 2,
   ROUTE_WP_OTHER = 5
 };

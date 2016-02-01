@@ -59,7 +59,7 @@ enum FuelFlags
   JETAP = 0x000c0000, // Bits 18-19 :
   JETB = 0x00300000, // Bits 20-21 :
   JET4 = 0x00c00000, // Bits 22-23 :
-  JET5 = 0x03000000, // Bits 24-22 : // TODO error in wiki
+  JET5 = 0x03000000, // Bits 24-22 : // wiki error reported
   AVGAS = 0x40000000, // Bit 30 :
   JET_FUEL = 0x40000000 // Bit 31 :
 };

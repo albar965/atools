@@ -51,10 +51,10 @@ void Navdatabase::create()
   cfg.read(options->getSceneryFile());
 
   SqlScript script(db);
-  script.executeScript(":/atools/resources/sql/writer/create_nav_schema.sql");
-  script.executeScript(":/atools/resources/sql/writer/create_ap_schema.sql");
-  script.executeScript(":/atools/resources/sql/writer/create_meta_schema.sql");
-  script.executeScript(":/atools/resources/sql/writer/create_views.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_views.sql");
   db->commit();
 
   SqlQuery(db).exec("PRAGMA foreign_keys = ON");
@@ -74,7 +74,7 @@ void Navdatabase::create()
     db->commit();
   }
 
-  script.executeScript(":/atools/resources/sql/writer/finish_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
   db->commit();
 
   dataWriter.logResults();

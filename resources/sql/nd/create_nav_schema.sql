@@ -1,3 +1,20 @@
+-- *****************************************************************************
+-- Copyright 2015-2016 Alexander Barthel albar965@mailbox.org
+--
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation, either version 3 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- ****************************************************************************/
+
 drop table if exists waypoint;
 
 create table waypoint
@@ -9,11 +26,16 @@ create table waypoint
   airport_id integer,
   type text not null,
   mag_var real not null,
-  lonx real not null, 
+  lonx real not null,
   laty real not null,
 foreign key(file_id) references bgl_file(bgl_file_id),
 foreign key(airport_id) references airport(airport_id)
 );
+
+create index if not exists idx_waypoint_file_id on waypoint(file_id);
+create index if not exists idx_waypoint_airport_id on waypoint(airport_id);
+
+-- **************************************************
 
 drop table if exists vor;
 
@@ -26,19 +48,24 @@ create table vor
   region text,
   airport_id integer,
   type text not null,
-  frequency integer not null, 
-  range integer not null, 
+  frequency integer not null,
+  range integer not null,
   mag_var real  not null,
   dme_only integer not null,
   dme_altitude integer,
-  dme_lonx real, 
+  dme_lonx real,
   dme_laty real,
   altitude integer not null,
-  lonx real not null, 
+  lonx real not null,
   laty real not null,
 foreign key(file_id) references bgl_file(bgl_file_id),
 foreign key(airport_id) references airport(airport_id)
 );
+
+create index if not exists idx_vor_file_id on vor(file_id);
+create index if not exists idx_vor_airport_id on vor(airport_id);
+
+-- **************************************************
 
 drop table if exists ndb;
 
@@ -51,15 +78,20 @@ create table ndb
   region text,
   airport_id integer,
   type text not null,
-  frequency integer not null, 
-  range integer not null, 
+  frequency integer not null,
+  range integer not null,
   mag_var real  not null,
   altitude integer not null,
-  lonx real not null, 
+  lonx real not null,
   laty real not null,
 foreign key(file_id) references bgl_file(bgl_file_id),
 foreign key(airport_id) references airport(airport_id)
 );
+
+create index if not exists idx_ndb_file_id on ndb(file_id);
+create index if not exists idx_ndb_airport_id on ndb(airport_id);
+
+-- **************************************************
 
 drop table if exists marker;
 
@@ -71,10 +103,14 @@ create table marker
   region text,
   type text not null,
   altitude integer not null,
-  lonx real not null, 
+  lonx real not null,
   laty real not null,
 foreign key(file_id) references bgl_file(bgl_file_id)
 );
+
+create index if not exists idx_marker_file_id on marker(file_id);
+
+-- **************************************************
 
 drop table if exists ils;
 
@@ -84,27 +120,31 @@ create table ils
   ident text not null,
   name text,
   region text,
-  frequency integer not null, 
-  range integer not null, 
+  frequency integer not null,
+  range integer not null,
   mag_var real  not null,
   is_backcourse integer not null,
-  dme_range integer, 
+  dme_range integer,
   dme_altitude integer,
-  dme_lonx real, 
+  dme_lonx real,
   dme_laty real,
-  gs_range integer, 
+  gs_range integer,
   gs_pitch real,
   gs_altitude integer,
-  gs_lonx real, 
+  gs_lonx real,
   gs_laty real,
   loc_runway_end_id integer,
   loc_heading real not null,
   loc_width real not null,
   altitude integer not null,
-  lonx real not null, 
+  lonx real not null,
   laty real not null,
 foreign key(loc_runway_end_id) references runway_end(runway_end_id)
 );
+
+create index if not exists idx_ils_loc_runway_end_id on ils(loc_runway_end_id);
+
+-- **************************************************
 
 drop table if exists temp_route;
 
@@ -127,6 +167,10 @@ create table temp_route
 foreign key(waypoint_id) references waypoint(waypoint_id)
 );
 
+create index if not exists idx_temp_route_loc_waypoint_id on temp_route(waypoint_id);
+
+-- **************************************************
+
 drop table if exists route;
 
 create table route
@@ -142,3 +186,6 @@ create table route
 foreign key(from_waypoint_id) references waypoint(waypoint_id),
 foreign key(to_waypoint_id) references waypoint(waypoint_id)
 );
+
+create index if not exists idx_route_from_waypoint_id on route(from_waypoint_id);
+create index if not exists idx_route_to_waypoint_id on route(to_waypoint_id);
