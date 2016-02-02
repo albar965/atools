@@ -20,6 +20,9 @@
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/bglreaderoptions.h"
+#include "fs/bgl/ap/jetway.h"
+
+#include <QHash>
 
 namespace atools {
 namespace fs {
@@ -45,6 +48,9 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   fuelFlags = bs->readUInt();
 
   bs->skip(4);
+
+  QList<Jetway> jetways;
+  QHash<int, int> parkingNumberIndex;
 
   while(bs->tellg() < startOffset + size)
   {
@@ -72,7 +78,15 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         break;
       case rec::TAXI_PARKING:
         if(options->includeBglObject(type::PARKING))
-          handleParking();
+        {
+          int numParkings = bs->readShort();
+          for(int i = 0; i < numParkings; i++)
+          {
+            Parking p(bs);
+            parkingNumberIndex.insert(p.getNumber(), parkings.size());
+            parkings.push_back(p);
+          }
+        }
         break;
       case rec::APPROACH:
         if(options->includeBglObject(type::APPROACH))
@@ -114,23 +128,6 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           apronLights.push_back(ApronLight(options, bs));
         }
         break;
-      case rec::JETWAY:
-        // TODO read jetway data
-        jetway = true;
-        break;
-      case rec::FENCE_BOUNDARY:
-        // TODO read boundary fence data
-        boundaryFence = true;
-        break;
-      case rec::TOWER_OBJ:
-        // TODO read tower object data
-        towerObj = true;
-        break;
-      case rec::TAXI_PATH:
-        // TODO read taxiway data
-        taxiway = true;
-        break;
-
       case rec::HELIPAD:
         if(options->includeBglObject(type::HELIPAD))
         {
@@ -145,11 +142,24 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           starts.push_back(Start(options, bs));
         }
         break;
-
+      case rec::JETWAY:
+        r.seekToStart();
+        jetways.push_back(Jetway(options, bs));
+        break;
+      case rec::FENCE_BOUNDARY:
+        // TODO read boundary fence data
+        boundaryFence = true;
+        break;
+      case rec::TOWER_OBJ:
+        towerObj = true;
+        break;
+      case rec::TAXI_PATH:
+        // TODO read taxiway data
+        taxiway = true;
+        break;
       case rec::TAXI_POINT:
       case rec::TAXI_NAME:
       case rec::FENCE_BLAST:
-      // TODO read blast fence data
       case rec::UNKNOWN_REC:
         break;
       default:
@@ -158,13 +168,16 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     }
     r.seekToEnd();
   }
-}
 
-void Airport::handleParking()
-{
-  int numParkings = bs->readShort();
-  for(int i = 0; i < numParkings; i++)
-    parkings.push_back(Parking(bs));
+  for(const Jetway& jw : jetways)
+  {
+    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingIndex());
+    if(iter != parkingNumberIndex.end())
+      parkings[iter.value()].setHasJetway(true);
+    else
+      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
+                                     << " for ident " << ident;
+  }
 }
 
 QDebug operator<<(QDebug out, const Airport& record)

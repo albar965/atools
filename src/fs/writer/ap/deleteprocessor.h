@@ -71,6 +71,7 @@ private:
                         deleteIlsStmt, deleteWpStmt, deleteVorStmt, deleteNdbStmt,
                         deleteAirportStmt,
                         deleteApronStmt, updateApronStmt,
+                        deleteApronLightStmt, updateApronLightStmt,
                         deleteHelipadStmt, updateHelipadStmt,
                         deleteStartStmt, updateStartStmt,
                         deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,

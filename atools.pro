@@ -123,7 +123,8 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/apron2.h \
     src/fs/writer/ap/apronwriter.h \
     src/fs/bgl/ap/apronlight.h \
-    src/fs/writer/ap/apronlightwriter.h
+    src/fs/writer/ap/apronlightwriter.h \
+    src/fs/bgl/ap/jetway.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -226,7 +227,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/apron2.cpp \
     src/fs/writer/ap/apronwriter.cpp \
     src/fs/bgl/ap/apronlight.cpp \
-    src/fs/writer/ap/apronlightwriter.cpp
+    src/fs/writer/ap/apronlightwriter.cpp \
+    src/fs/bgl/ap/jetway.cpp
 
 unix {
     target.path = /usr/lib

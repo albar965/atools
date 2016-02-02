@@ -108,11 +108,6 @@ public:
     return ident;
   }
 
-  bool hasJetway() const
-  {
-    return jetway;
-  }
-
   float getMagVar() const
   {
     return magVar;
@@ -190,7 +185,6 @@ public:
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
-  void handleParking();
 
   int numRunways, numComs, numApproaches, numAprons;
 
@@ -202,7 +196,7 @@ private:
 
   unsigned int fuelFlags;
   QString name;
-  bool jetway, boundaryFence, towerObj, taxiway;
+  bool boundaryFence, towerObj, taxiway;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;

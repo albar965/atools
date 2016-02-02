@@ -137,6 +137,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteStartStmt.prepare(delAptFeatureStmt("start"));
   deleteParkingStmt.prepare(delAptFeatureStmt("parking"));
   deleteApronStmt.prepare(delAptFeatureStmt("apron"));
+  deleteApronLightStmt.prepare(delAptFeatureStmt("apron_light"));
   deleteDeleteApStmt.prepare(delAptFeatureStmt("delete_airport"));
   deleteWpStmt.prepare(delAptFeatureStmt("waypoint"));
   deleteVorStmt.prepare(delAptFeatureStmt("vor"));
@@ -146,6 +147,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   updateHelipadStmt.prepare(updateAptFeatureStmt("helipad"));
   updateStartStmt.prepare(updateAptFeatureStmt("start"));
   updateApronStmt.prepare(updateAptFeatureStmt("apron"));
+  updateApronLightStmt.prepare(updateAptFeatureStmt("apron_light"));
 
   updateHasTaxiwaysStmt.prepare(
     "update airport set has_taxiways = 0 "
@@ -297,6 +299,19 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
     updateApronStmt.bindValue(":apIdent", ident);
     updateApronStmt.bindValue(":curApId", currentId);
     executeStatement(updateApronStmt, "aprons updated");
+  }
+
+  if(isFlagSet(del.getFlags(), bgl::del::APRONLIGHTS))
+  {
+    deleteApronLightStmt.bindValue(":apIdent", ident);
+    deleteApronLightStmt.bindValue(":curApId", currentId);
+    executeStatement(deleteApronLightStmt, "apron lights deleted");
+  }
+  else
+  {
+    updateApronLightStmt.bindValue(":apIdent", ident);
+    updateApronLightStmt.bindValue(":curApId", currentId);
+    executeStatement(updateApronLightStmt, "apron lights updated");
   }
 
   if(isFlagSet(del.getFlags(), bgl::del::HELIPADS))

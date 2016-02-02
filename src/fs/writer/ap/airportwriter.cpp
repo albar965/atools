@@ -98,7 +98,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":has_boundary_fence", type->hasBoundaryFence() ? 1 : 0);
   bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
   bind(":has_taxiways", type->hasTaxiway() ? 1 : 0);
-  bind(":has_jetways", type->hasJetway() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
@@ -149,7 +148,6 @@ void AirportWriter::writeObject(const Airport *type)
 
   ApronLightWriter *apronLightWriter = getDataWriter().getApronLightWriter();
   apronLightWriter->write(type->getApronsLights());
-
 
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 

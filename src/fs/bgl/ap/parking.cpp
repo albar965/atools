@@ -196,10 +196,14 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
   return "";
 }
 
+
+
+
+
 Parking::Parking(BinaryStream *bs)
 {
-  unsigned int flags = bs->readUInt();
-  name = static_cast<ap::ParkingName>(flags & 0x3f);
+    unsigned int flags = bs->readUInt();
+    name = static_cast<ap::ParkingName>(flags & 0x3f);
   type = static_cast<ap::ParkingType>((flags >> 8) & 0xf);
   number = (flags >> 12) & 0xfff;
   int numAirlineCodes = (flags >> 24) & 0xff;
@@ -227,6 +231,7 @@ QDebug operator<<(QDebug out, const Parking& record)
   << ", number " << record.number
   << ", radius " << record.radius
   << ", heading " << record.heading
+  << ", jetway " << record.jetway
   << ", " << record.position
   << "]";
   return out;

@@ -33,7 +33,6 @@ create table airport
   has_boundary_fence integer not null,
   has_tower_object integer not null,
   has_taxiways integer not null,
-  has_jetways integer not null,
   mag_var real not null,
   tower_lonx real,
   tower_laty real,
@@ -264,6 +263,7 @@ create table parking
   number integer not null,
   radius real not null,
   heading real not null,
+  has_jetway integer not null,
   lonx real not null,
   laty real not null,
 foreign key(airport_id) references airport(airport_id)

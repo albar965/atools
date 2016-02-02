@@ -135,6 +135,16 @@ public:
   static QString parkingTypeToStr(atools::fs::bgl::ap::ParkingType type);
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
 
+  bool hasJetway() const
+  {
+    return jetway;
+  }
+
+  void setHasJetway(bool value)
+  {
+    jetway = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);
 
@@ -143,6 +153,7 @@ private:
   int number;
   float radius, heading;
   atools::fs::bgl::BglPosition position;
+  bool jetway;
 };
 
 } // namespace bgl
