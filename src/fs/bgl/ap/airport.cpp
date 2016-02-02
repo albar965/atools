@@ -147,19 +147,22 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         jetways.push_back(Jetway(options, bs));
         break;
       case rec::FENCE_BOUNDARY:
-        // TODO read boundary fence data
-        boundaryFence = true;
+      case rec::FENCE_BLAST:
+        if(options->includeBglObject(type::FENCE))
+        {
+          r.seekToStart();
+          fences.push_back(Fence(options, bs));
+        }
         break;
       case rec::TOWER_OBJ:
         towerObj = true;
         break;
       case rec::TAXI_PATH:
+      case rec::TAXI_POINT:
+      case rec::TAXI_NAME:
         // TODO read taxiway data
         taxiway = true;
         break;
-      case rec::TAXI_POINT:
-      case rec::TAXI_NAME:
-      case rec::FENCE_BLAST:
       case rec::UNKNOWN_REC:
         break;
       default:
@@ -197,6 +200,7 @@ QDebug operator<<(QDebug out, const Airport& record)
   out << record.deleteAirports;
   out << record.helipads;
   out << record.starts;
+  out << record.fences;
   out << "]";
 
   return out;
@@ -205,6 +209,8 @@ QDebug operator<<(QDebug out, const Airport& record)
 Airport::~Airport()
 {
 }
+
+
 
 } // namespace bgl
 } // namespace fs

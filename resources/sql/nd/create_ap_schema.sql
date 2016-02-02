@@ -30,7 +30,6 @@ create table airport
   fuel_flags integer not null,
   has_avgas integer not null,
   has_jetfuel integer not null,
-  has_boundary_fence integer not null,
   has_tower_object integer not null,
   has_taxiways integer not null,
   mag_var real not null,
@@ -138,6 +137,21 @@ foreign key(airport_id) references airport(airport_id)
 );
 
 create index if not exists idx_apron_light_airport_id on apron_light(airport_id);
+
+-- **************************************************
+
+drop table if exists fence;
+
+create table fence
+(
+  fence_id integer primary key,
+  airport_id not null,
+  type text not null,
+  vertices text not null,
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_fence_airport_id on fence(airport_id);
 
 -- **************************************************
 

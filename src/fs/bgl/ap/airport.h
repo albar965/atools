@@ -30,6 +30,7 @@
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/helipad.h"
 #include "fs/bgl/ap/start.h"
+#include "fs/bgl/ap/fence.h"
 
 #include <QList>
 
@@ -81,11 +82,6 @@ public:
   const QList<atools::fs::bgl::Approach>& getApproaches() const
   {
     return approaches;
-  }
-
-  bool hasBoundaryFence() const
-  {
-    return boundaryFence;
   }
 
   const QList<atools::fs::bgl::Com>& getComs() const
@@ -183,6 +179,11 @@ public:
     return apronLights;
   }
 
+  const QList<atools::fs::bgl::Fence>& getFences() const
+  {
+    return fences;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
@@ -196,7 +197,7 @@ private:
 
   unsigned int fuelFlags;
   QString name;
-  bool boundaryFence, towerObj, taxiway;
+  bool towerObj, taxiway;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;
@@ -209,6 +210,7 @@ private:
   QList<atools::fs::bgl::Apron> aprons;
   QList<atools::fs::bgl::Apron2> aprons2;
   QList<atools::fs::bgl::ApronLight> apronLights;
+  QList<atools::fs::bgl::Fence> fences;
 };
 
 } // namespace bgl

@@ -43,6 +43,7 @@ enum BglObjectType
   WAYPOINT, // ok
   MARKER, // ok
   APRON, // ok
+  FENCE, // ok
   ROUTE
 };
 

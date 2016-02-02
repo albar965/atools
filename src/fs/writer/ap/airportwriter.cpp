@@ -24,6 +24,7 @@
 #include "fs/writer/ap/parkingwriter.h"
 #include "fs/writer/ap/apronwriter.h"
 #include "fs/writer/ap/apronlightwriter.h"
+#include "fs/writer/ap/fencewriter.h"
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/writer/datawriter.h"
@@ -49,6 +50,7 @@ using atools::fs::bgl::Runway;
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
 using atools::fs::bgl::ApronLight;
+using atools::fs::bgl::Fence;
 using atools::sql::SqlQuery;
 using atools::fs::bgl::DeleteAirport;
 
@@ -95,7 +97,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":fuel_flags", type->getFuelFlags());
   bind(":has_avgas", ((type->getFuelFlags() & AVGAS) == AVGAS) ? 1 : 0);
   bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
-  bind(":has_boundary_fence", type->hasBoundaryFence() ? 1 : 0);
   bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
   bind(":has_taxiways", type->hasTaxiway() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
@@ -148,6 +149,9 @@ void AirportWriter::writeObject(const Airport *type)
 
   ApronLightWriter *apronLightWriter = getDataWriter().getApronLightWriter();
   apronLightWriter->write(type->getApronsLights());
+
+  FenceWriter *fenceWriter = getDataWriter().getFenceWriter();
+  fenceWriter->write(type->getFences());
 
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 
