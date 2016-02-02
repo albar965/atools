@@ -51,6 +51,7 @@ class StartWriter;
 class HelipadWriter;
 class RunwayIndex;
 class AirportIndex;
+class ApronWriter;
 
 class DataWriter
 {
@@ -152,6 +153,11 @@ public:
     return airportStartWriter;
   }
 
+  atools::fs::writer::ApronWriter *getApronWriter() const
+  {
+    return airportApronWriter;
+  }
+
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
@@ -170,6 +176,7 @@ private:
   atools::fs::writer::ComWriter *airportComWriter;
   atools::fs::writer::HelipadWriter *airportHelipadWriter;
   atools::fs::writer::StartWriter *airportStartWriter;
+  atools::fs::writer::ApronWriter *airportApronWriter;
   atools::fs::writer::DeleteAirportWriter *deleteAirportWriter;
 
   atools::fs::writer::WaypointWriter *waypointWriter;

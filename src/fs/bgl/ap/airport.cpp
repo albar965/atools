@@ -94,8 +94,18 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         break;
 
       case rec::APRON_FIRST:
-        // TODO read apron data
-        apron = true;
+        if(options->includeBglObject(type::APRON))
+        {
+          r.seekToStart();
+          aprons.push_back(Apron(options, bs));
+        }
+        break;
+      case rec::APRON_SECOND:
+        if(options->includeBglObject(type::APRON))
+        {
+          r.seekToStart();
+          aprons2.push_back(Apron2(options, bs));
+        }
         break;
       case rec::JETWAY:
         // TODO read jetway data
@@ -129,7 +139,6 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
 
-      case rec::APRON_SECOND:
       case rec::APRON_EDGE_LIGHTS:
       // TODO read apron lights data
       case rec::TAXI_POINT:

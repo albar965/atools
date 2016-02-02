@@ -28,7 +28,7 @@ using atools::io::BinaryStream;
 DeleteRunway::DeleteRunway(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs), surface(rw::UNKNOWN)
 {
-  surface = static_cast<rw::Surface>(bs->readByte());
+  surface = static_cast<rw::Surface>(bs->readUByte());
   int numPrim = bs->readByte();
   int numSec = bs->readByte();
   int desig = bs->readByte();

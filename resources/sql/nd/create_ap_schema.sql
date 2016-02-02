@@ -33,7 +33,6 @@ create table airport
   has_boundary_fence integer not null,
   has_tower_object integer not null,
   has_taxiways integer not null,
-  has_apron integer not null,
   has_jetways integer not null,
   mag_var real not null,
   tower_lonx real,
@@ -106,6 +105,25 @@ foreign key(runway_end_id) references runway_end(runway_end_id)
 
 create index if not exists idx_start_airport_id on start(airport_id);
 create index if not exists idx_start_runway_end_id on start(runway_end_id);
+
+-- **************************************************
+
+drop table if exists apron;
+
+create table apron
+(
+  apron_id integer primary key,
+  airport_id not null,
+  surface text not null,
+  is_draw_surface integer not null,
+  is_detail integer not null,
+  vertices text not null,
+  vertices2 text not null,
+  triangles text not null,
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_apron_airport_id on apron(airport_id);
 
 -- **************************************************
 

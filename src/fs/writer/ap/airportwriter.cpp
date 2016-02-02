@@ -22,6 +22,7 @@
 #include "fs/writer/ap/startwriter.h"
 #include "fs/writer/ap/helipadwriter.h"
 #include "fs/writer/ap/parkingwriter.h"
+#include "fs/writer/ap/apronwriter.h"
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/writer/datawriter.h"
@@ -44,6 +45,8 @@ using atools::fs::bgl::NamelistEntry;
 using atools::fs::bgl::Com;
 using atools::fs::bgl::Airport;
 using atools::fs::bgl::Runway;
+using atools::fs::bgl::Apron;
+using atools::fs::bgl::Apron2;
 using atools::sql::SqlQuery;
 using atools::fs::bgl::DeleteAirport;
 
@@ -93,7 +96,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":has_boundary_fence", type->hasBoundaryFence() ? 1 : 0);
   bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
   bind(":has_taxiways", type->hasTaxiway() ? 1 : 0);
-  bind(":has_apron", type->hasApron() ? 1 : 0);
   bind(":has_jetways", type->hasJetway() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
   bind(":tower_lonx", type->getTowerPosition().getLonX());
@@ -133,6 +135,15 @@ void AirportWriter::writeObject(const Airport *type)
 
   ParkingWriter *parkWriter = getDataWriter().getParkingWriter();
   parkWriter->write(type->getParkings());
+
+  ApronWriter *apronWriter = getDataWriter().getApronWriter();
+  const QList<bgl::Apron>& aprons = type->getAprons();
+  const QList<bgl::Apron2>& aprons2 = type->getAprons2();
+  for(int i = 0; i < aprons.size(); i++)
+  {
+    QPair<const Apron *, const Apron2 *> pair(&aprons.at(i), &aprons2.at(i));
+    apronWriter->writeOne(pair);
+  }
 
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 

@@ -132,67 +132,20 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "delete from airport "
     "where ident = :apIdent and airport_id <> :curApId");
 
-  updateHasApronStmt.prepare(
-    "update airport set has_apron = 0 "
-    "where ident = :apIdent and airport_id <> :curApId");
+  deleteComStmt.prepare(delAptFeatureStmt("com"));
+  deleteHelipadStmt.prepare(delAptFeatureStmt("helipad"));
+  deleteStartStmt.prepare(delAptFeatureStmt("start"));
+  deleteParkingStmt.prepare(delAptFeatureStmt("parking"));
+  deleteApronStmt.prepare(delAptFeatureStmt("apron"));
+  deleteDeleteApStmt.prepare(delAptFeatureStmt("delete_airport"));
+  deleteWpStmt.prepare(delAptFeatureStmt("waypoint"));
+  deleteVorStmt.prepare(delAptFeatureStmt("vor"));
+  deleteNdbStmt.prepare(delAptFeatureStmt("ndb"));
 
-  deleteComStmt.prepare(
-    "delete from com where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteHelipadStmt.prepare(
-    "delete from helipad where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteStartStmt.prepare(
-    "delete from start where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteParkingStmt.prepare(
-    "delete from parking where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteDeleteApStmt.prepare(
-    "delete from delete_airport where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteWpStmt.prepare(
-    "delete from waypoint where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteVorStmt.prepare(
-    "delete from vor where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  deleteNdbStmt.prepare(
-    "delete from ndb where airport_id in ( "
-    "select a.airport_id from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  updateComStmt.prepare(
-    "update com set airport_id = :curApId where airport_id in ( "
-    "select a.airport_id "
-    "from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  updateHelipadStmt.prepare(
-    "update helipad set airport_id = :curApId where airport_id in ( "
-    "select a.airport_id "
-    "from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
-
-  updateStartStmt.prepare(
-    "update start set airport_id = :curApId where airport_id in ( "
-    "select a.airport_id "
-    "from airport a "
-    "where a.ident = :apIdent and a.airport_id <> :curApId)");
+  updateComStmt.prepare(updateAptFeatureStmt("com"));
+  updateHelipadStmt.prepare(updateAptFeatureStmt("helipad"));
+  updateStartStmt.prepare(updateAptFeatureStmt("start"));
+  updateApronStmt.prepare(updateAptFeatureStmt("apron"));
 
   updateHasTaxiwaysStmt.prepare(
     "update airport set has_taxiways = 0 "
@@ -235,6 +188,25 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
 
 DeleteProcessor::~DeleteProcessor()
 {
+}
+
+QString DeleteProcessor::updateAptFeatureStmt(const QString& table)
+{
+  return "update " + table +
+         " set airport_id = :curApId where airport_id in ( "
+         "select a.airport_id "
+         "from airport a "
+         "where a.ident = :apIdent and a.airport_id <> :curApId)";
+
+}
+
+QString DeleteProcessor::delAptFeatureStmt(const QString& table)
+{
+  return "delete from " + table +
+         " where airport_id in ( "
+         "select a.airport_id from airport a "
+         "where a.ident = :apIdent and a.airport_id <> :curApId)";
+
 }
 
 void DeleteProcessor::copyApproaches(SqlQuery& fetchApprStmt, int currentId, const QString& ident)
@@ -316,9 +288,15 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
 
   if(isFlagSet(del.getFlags(), bgl::del::APRONS))
   {
-    updateHasApronStmt.bindValue(":apIdent", ident);
-    updateHasApronStmt.bindValue(":curApId", currentId);
-    executeStatement(updateHasApronStmt, "aprons deleted");
+    deleteApronStmt.bindValue(":apIdent", ident);
+    deleteApronStmt.bindValue(":curApId", currentId);
+    executeStatement(deleteApronStmt, "aprons deleted");
+  }
+  else
+  {
+    updateApronStmt.bindValue(":apIdent", ident);
+    updateApronStmt.bindValue(":curApId", currentId);
+    executeStatement(updateApronStmt, "aprons updated");
   }
 
   if(isFlagSet(del.getFlags(), bgl::del::HELIPADS))

@@ -42,6 +42,7 @@ enum BglObjectType
   NDB, // ok
   WAYPOINT, // ok
   MARKER, // ok
+  APRON, // ok
   ROUTE
 };
 

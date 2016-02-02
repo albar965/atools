@@ -21,6 +21,8 @@
 #include "fs/bgl/record.h"
 #include "fs/bgl/nav/waypoint.h"
 #include "fs/bgl/ap/approach.h"
+#include "fs/bgl/ap/apron.h"
+#include "fs/bgl/ap/apron2.h"
 #include "fs/bgl/ap/parking.h"
 #include "del/deleteairport.h"
 #include "fs/bgl//bglposition.h"
@@ -78,11 +80,6 @@ public:
   const QList<atools::fs::bgl::Approach>& getApproaches() const
   {
     return approaches;
-  }
-
-  bool hasApron() const
-  {
-    return apron;
   }
 
   bool hasBoundaryFence() const
@@ -175,6 +172,16 @@ public:
     return starts;
   }
 
+  const QList<atools::fs::bgl::Apron>& getAprons() const
+  {
+    return aprons;
+  }
+
+  const QList<atools::fs::bgl::Apron2>& getAprons2() const
+  {
+    return aprons2;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
   void handleParking();
@@ -189,7 +196,7 @@ private:
 
   unsigned int fuelFlags;
   QString name;
-  bool apron, jetway, boundaryFence, towerObj, taxiway;
+  bool jetway, boundaryFence, towerObj, taxiway;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;
@@ -199,6 +206,8 @@ private:
   QList<atools::fs::bgl::Approach> approaches;
   QList<atools::fs::bgl::Waypoint> waypoints;
   QList<atools::fs::bgl::DeleteAirport> deleteAirports;
+  QList<atools::fs::bgl::Apron> aprons;
+  QList<atools::fs::bgl::Apron2> aprons2;
 };
 
 } // namespace bgl

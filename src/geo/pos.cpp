@@ -15,51 +15,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GEO_POSITION_H
-#define ATOOLS_GEO_POSITION_H
-
-#include "logging/loggingdefs.h"
+#include "geo/pos.h"
 
 namespace atools {
 namespace geo {
 
-/* Simple geographic position */
-class Pos
+QDebug operator<<(QDebug out, const Pos& record)
 {
-public:
-  Pos()
-    : lonX(0.0), latY(0.0)
-  {
-  }
+  QDebugStateSaver saver(out);
 
-  Pos(double longitudeX, double latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
-  {
-  }
-
-  ~Pos()
-  {
-  }
-
-  double getLatY() const
-  {
-    return latY;
-  }
-
-  double getLonX() const
-  {
-    return lonX;
-  }
-
-protected:
-  friend QDebug operator<<(QDebug out, const Pos& record);
-
-
-  // Länge (x),Breite (y)
-  double lonX, latY;
-};
+  out.nospace().noquote() << "[lonX " << record.lonX << ", latY " << record.latY << "]";
+  return out;
+}
 
 } // namespace geo
 } // namespace atools
-
-#endif /* ATOOLS_GEO_POSITION_H */

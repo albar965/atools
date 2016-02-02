@@ -15,51 +15,43 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GEO_POSITION_H
-#define ATOOLS_GEO_POSITION_H
+#ifndef BGL_AP_APRON_H
+#define BGL_AP_APRON_H
 
-#include "logging/loggingdefs.h"
+#include "fs/bgl/record.h"
+#include "fs/bgl/ap/rw/runway.h"
+#include "fs/bgl/bglposition.h"
 
 namespace atools {
-namespace geo {
+namespace fs {
+namespace bgl {
 
-/* Simple geographic position */
-class Pos
+class Apron :
+  public atools::fs::bgl::Record
 {
 public:
-  Pos()
-    : lonX(0.0), latY(0.0)
+  Apron(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~Apron();
+
+  atools::fs::bgl::rw::Surface getSurface() const
   {
+    return surface;
   }
 
-  Pos(double longitudeX, double latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
+  const QList<atools::fs::bgl::BglPosition>& getVertices() const
   {
+    return vertices;
   }
 
-  ~Pos()
-  {
-  }
+private:
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Apron& record);
 
-  double getLatY() const
-  {
-    return latY;
-  }
-
-  double getLonX() const
-  {
-    return lonX;
-  }
-
-protected:
-  friend QDebug operator<<(QDebug out, const Pos& record);
-
-
-  // Länge (x),Breite (y)
-  double lonX, latY;
+  atools::fs::bgl::rw::Surface surface = atools::fs::bgl::rw::UNKNOWN;
+  QList<atools::fs::bgl::BglPosition> vertices;
 };
 
-} // namespace geo
+} // namespace bgl
+} // namespace fs
 } // namespace atools
 
-#endif /* ATOOLS_GEO_POSITION_H */
+#endif // BGL_AP_APRON_H

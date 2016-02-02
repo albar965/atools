@@ -69,12 +69,16 @@ private:
                         deleteParkingStmt, deleteDeleteApStmt,
                         fetchRunwayEndIdStmt, deleteRunwayEndStmt,
                         deleteIlsStmt, deleteWpStmt, deleteVorStmt, deleteNdbStmt,
-                        deleteAirportStmt, updateHasApronStmt,
+                        deleteAirportStmt,
+                        deleteApronStmt, updateApronStmt,
                         deleteHelipadStmt, updateHelipadStmt,
                         deleteStartStmt, updateStartStmt,
                         deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,
                         fetchPrimaryAppStmt,
                         fetchSecondaryAppStmt, fetchTransitionStmt;
+  QString updateAptFeatureStmt(const QString& table);
+  QString delAptFeatureStmt(const QString& table);
+
 };
 
 } // namespace writer

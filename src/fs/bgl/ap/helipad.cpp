@@ -54,8 +54,10 @@ Helipad::Helipad()
 Helipad::Helipad(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  qint8 flags = bs->readByte();
-  surface = static_cast<rw::Surface>(flags & 0xf);
+  surface = static_cast<rw::Surface>(bs->readUByte());
+
+  int flags = bs->readByte();
+  type = static_cast<helipad::HelipadType>(flags & 0xf);
   transparent = flags & (1 << 4);
   closed = flags & (1 << 5);
 

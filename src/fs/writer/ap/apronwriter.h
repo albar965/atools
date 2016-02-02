@@ -15,51 +15,40 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GEO_POSITION_H
-#define ATOOLS_GEO_POSITION_H
+#ifndef WRITER_APRONWRITER_H_
+#define WRITER_APRONWRITER_H_
 
-#include "logging/loggingdefs.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/apron.h"
+#include "fs/bgl/ap/apron2.h"
 
 namespace atools {
-namespace geo {
+namespace fs {
+namespace writer {
 
-/* Simple geographic position */
-class Pos
+class ApronWriter :
+  public atools::fs::writer::WriterBase<QPair<const atools::fs::bgl::Apron *, const atools::fs::bgl::Apron2 *> >
 {
 public:
-  Pos()
-    : lonX(0.0), latY(0.0)
+  ApronWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "apron")
   {
   }
 
-  Pos(double longitudeX, double latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
+  virtual ~ApronWriter()
   {
-  }
-
-  ~Pos()
-  {
-  }
-
-  double getLatY() const
-  {
-    return latY;
-  }
-
-  double getLonX() const
-  {
-    return lonX;
   }
 
 protected:
-  friend QDebug operator<<(QDebug out, const Pos& record);
+  virtual void writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 *> *type) override;
 
-
-  // Länge (x),Breite (y)
-  double lonX, latY;
+private:
+  QString toString(const QList<int>& triangles);
+  QString toWkt(const QList<atools::fs::bgl::BglPosition>& vertices);
 };
 
-} // namespace geo
+} // namespace writer
+} // namespace fs
 } // namespace atools
 
-#endif /* ATOOLS_GEO_POSITION_H */
+#endif /* WRITER_APRONWRITER_H_ */

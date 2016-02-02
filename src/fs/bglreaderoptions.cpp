@@ -274,6 +274,9 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case ROUTE:
       return "ROUTE";
 
+    case APRON:
+      return "APRON";
+
     case UNKNOWN:
       return "UNKNWON";
   }
@@ -306,6 +309,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return WAYPOINT;
   else if(typeStr == "MARKER")
     return MARKER;
+  else if(typeStr == "APRON")
+    return APRON;
   else if(typeStr == "ROUTE")
     return ROUTE;
   else
