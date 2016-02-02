@@ -138,6 +138,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteParkingStmt.prepare(delAptFeatureStmt("parking"));
   deleteApronStmt.prepare(delAptFeatureStmt("apron"));
   deleteApronLightStmt.prepare(delAptFeatureStmt("apron_light"));
+  deleteFenceStmt.prepare(delAptFeatureStmt("fence"));
   deleteDeleteApStmt.prepare(delAptFeatureStmt("delete_airport"));
   deleteWpStmt.prepare(delAptFeatureStmt("waypoint"));
   deleteVorStmt.prepare(delAptFeatureStmt("vor"));
@@ -149,9 +150,10 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   updateApronStmt.prepare(updateAptFeatureStmt("apron"));
   updateApronLightStmt.prepare(updateAptFeatureStmt("apron_light"));
 
-  updateHasTaxiwaysStmt.prepare(
-    "update airport set has_taxiways = 0 "
-    "where ident = :apIdent and airport_id <> :curApId");
+  // TODO
+  // updateHasTaxiwaysStmt.prepare(
+  // "update airport set has_taxiways = 0 "
+  // "where ident = :apIdent and airport_id <> :curApId");
 
   fetchPrimaryAppStmt.prepare(
     "select "
@@ -284,8 +286,6 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
   // if(isFlagSet(del.getFlags(), bgl::ap::del::APRONLIGHTS))
   // {
   // TAXIWAYS = 1 << 7
-  // APRONS = 1 << 2,
-  // APRONLIGHTS = 1 << 1,
   // }
 
   if(isFlagSet(del.getFlags(), bgl::del::APRONS))
@@ -340,12 +340,13 @@ void DeleteProcessor::processDelete(const DeleteAirport& del, const Airport *typ
     executeStatement(updateStartStmt, "starts updated");
   }
 
-  if(isFlagSet(del.getFlags(), bgl::del::TAXIWAYS))
-  {
-    updateHasTaxiwaysStmt.bindValue(":apIdent", ident);
-    updateHasTaxiwaysStmt.bindValue(":curApId", currentId);
-    executeStatement(updateHasTaxiwaysStmt, "taxiways deleted");
-  }
+  // TODO remove  taxiways
+  // if(isFlagSet(del.getFlags(), bgl::del::TAXIWAYS))
+  // {
+  // updateHasTaxiwaysStmt.bindValue(":apIdent", ident);
+  // updateHasTaxiwaysStmt.bindValue(":curApId", currentId);
+  // executeStatement(updateHasTaxiwaysStmt, "taxiways deleted");
+  // }
 
   // db.setAutocommit(false); // TODO debug remove
 }
@@ -418,6 +419,11 @@ void DeleteProcessor::deleteAirport(int currentId, const QString& ident)
   deleteDeleteApStmt.bindValue(":apIdent", ident);
   deleteDeleteApStmt.bindValue(":curApId", currentId);
   executeStatement(deleteDeleteApStmt, "delete airports deleted");
+
+  deleteFenceStmt.bindValue(":apIdent", ident);
+  deleteFenceStmt.bindValue(":curApId", currentId);
+  executeStatement(deleteFenceStmt, "fences deleted");
+
 
   // TODO check if these are really to be deleted - otherwise adapt ids
   // executeStatement(deleteVorStmt(":apIdent", ident)(":curApId", currentId), "vors deleted");

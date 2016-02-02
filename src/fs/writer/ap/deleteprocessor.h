@@ -72,6 +72,7 @@ private:
                         deleteAirportStmt,
                         deleteApronStmt, updateApronStmt,
                         deleteApronLightStmt, updateApronLightStmt,
+                        deleteFenceStmt, updateFenceStmt,
                         deleteHelipadStmt, updateHelipadStmt,
                         deleteStartStmt, updateStartStmt,
                         deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,
