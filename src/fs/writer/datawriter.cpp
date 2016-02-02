@@ -84,7 +84,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   airportStartWriter = new StartWriter(db, *this);
   airportApronWriter = new ApronWriter(db, *this);
   airportApronLightWriter = new ApronLightWriter(db, *this);
-  airportFenceWriter= new FenceWriter(db, *this);
+  airportFenceWriter = new FenceWriter(db, *this);
   airportComWriter = new ComWriter(db, *this);
   deleteAirportWriter = new DeleteAirportWriter(db, *this);
   waypointWriter = new WaypointWriter(db, *this);

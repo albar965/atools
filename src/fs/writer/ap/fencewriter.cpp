@@ -30,7 +30,7 @@ using atools::fs::bgl::Fence;
 using atools::fs::bgl::Runway;
 using atools::sql::SqlQuery;
 
-void FenceWriter::writeObject(const bgl::Fence* type)
+void FenceWriter::writeObject(const bgl::Fence *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Fence for airport "

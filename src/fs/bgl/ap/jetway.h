@@ -40,7 +40,6 @@ public:
   Jetway(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Jetway();
 
-
   int getParkingIndex() const
   {
     return parkingIndex;

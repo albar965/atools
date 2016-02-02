@@ -38,6 +38,7 @@ public:
   virtual ~DeleteStart();
 
   QString getRunwayName() const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteStart& record);
 

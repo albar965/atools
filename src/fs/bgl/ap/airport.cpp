@@ -210,8 +210,6 @@ Airport::~Airport()
 {
 }
 
-
-
 } // namespace bgl
 } // namespace fs
 } // namespace atools

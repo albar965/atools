@@ -39,13 +39,9 @@ Apron::~Apron()
 
 }
 
-
-
-
-
 QDebug operator<<(QDebug out, const Apron& record)
 {
-    QDebugStateSaver saver(out);
+  QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
   << " Runway[surface " << Runway::surfaceToStr(record.surface) << "/"

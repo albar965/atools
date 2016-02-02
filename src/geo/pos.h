@@ -54,7 +54,6 @@ public:
 protected:
   friend QDebug operator<<(QDebug out, const Pos& record);
 
-
   // Länge (x),Breite (y)
   double lonX, latY;
 };

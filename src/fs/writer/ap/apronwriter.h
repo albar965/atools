@@ -45,6 +45,7 @@ protected:
 private:
   QString toString(const QList<int>& triangles);
   QString toWkt(const QList<atools::fs::bgl::BglPosition>& vertices);
+
 };
 
 } // namespace writer
