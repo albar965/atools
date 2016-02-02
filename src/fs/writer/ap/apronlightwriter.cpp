@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/writer/ap/apronwriter.h"
+#include "fs/writer/ap/apronlightwriter.h"
 #include "fs/writer/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
@@ -26,51 +26,31 @@ namespace atools {
 namespace fs {
 namespace writer {
 
-using atools::fs::bgl::Apron;
-using atools::fs::bgl::Apron2;
+using atools::fs::bgl::ApronLight;
 using atools::fs::bgl::Runway;
 using atools::sql::SqlQuery;
 
-void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 *> *type)
+void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
 {
   if(getOptions().isVerbose())
-    qDebug() << "Writing Apron for airport "
+    qDebug() << "Writing ApronLight for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":apron_id", getNextId());
+  bind(":apron_light_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":surface", Runway::surfaceToStr(type->first->getSurface()));
-  bind(":is_draw_surface", type->second->isDrawSurface() ? 1 : 0);
-  bind(":is_detail", type->second->isDrawDetail() ? 1 : 0);
 
-  // TODO create a WKT polygon from the triangles
+  // TODO create a WKT line from the edges
   QStringList list;
-  for(const bgl::BglPosition& pos : type->first->getVertices())
+  for(const bgl::BglPosition& pos : type->getVertices())
     list.push_back(QString::number(pos.getLonX()) + " " + QString::number(pos.getLatY()));
   bind(":vertices", list.join(", "));
 
   list.clear();
-  for(const bgl::BglPosition& pos : type->second->getVertices())
-    list.push_back(QString::number(pos.getLonX()) + " " + QString::number(pos.getLatY()));
-  bind(":vertices2", list.join(", "));
-
-  bind(":triangles", toString(type->second->getTriangles()));
+  for(int i : type->getEdges())
+    list.push_back(QString::number(i));
+  bind(":edges", list.join(", "));
 
   executeStatement();
-}
-
-QString ApronWriter::toString(const QList<int>& triangles)
-{
-  QString retval;
-  for(int i = 0; i < triangles.size(); i += 3)
-  {
-    if(!retval.isEmpty())
-      retval += ", ";
-    retval.append(QString::number(triangles.at(i))).append(" ");
-    retval.append(QString::number(triangles.at(i + 1))).append(" ");
-    retval.append(QString::number(triangles.at(i + 2)));
-  }
-  return retval;
 }
 
 } // namespace writer

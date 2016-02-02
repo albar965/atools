@@ -127,6 +127,21 @@ create index if not exists idx_apron_airport_id on apron(airport_id);
 
 -- **************************************************
 
+drop table if exists apron_light;
+
+create table apron_light
+(
+  apron_light_id integer primary key,
+  airport_id not null,
+  vertices text not null,
+  edges text not null,
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_apron_light_airport_id on apron_light(airport_id);
+
+-- **************************************************
+
 drop table if exists runway;
 
 create table runway

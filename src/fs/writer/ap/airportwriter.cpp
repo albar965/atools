@@ -23,6 +23,7 @@
 #include "fs/writer/ap/helipadwriter.h"
 #include "fs/writer/ap/parkingwriter.h"
 #include "fs/writer/ap/apronwriter.h"
+#include "fs/writer/ap/apronlightwriter.h"
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/writer/datawriter.h"
@@ -47,6 +48,7 @@ using atools::fs::bgl::Airport;
 using atools::fs::bgl::Runway;
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
+using atools::fs::bgl::ApronLight;
 using atools::sql::SqlQuery;
 using atools::fs::bgl::DeleteAirport;
 
@@ -144,6 +146,10 @@ void AirportWriter::writeObject(const Airport *type)
     QPair<const Apron *, const Apron2 *> pair(&aprons.at(i), &aprons2.at(i));
     apronWriter->writeOne(pair);
   }
+
+  ApronLightWriter *apronLightWriter = getDataWriter().getApronLightWriter();
+  apronLightWriter->write(type->getApronsLights());
+
 
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 

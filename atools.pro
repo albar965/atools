@@ -121,7 +121,9 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/del/deletestart.h \
     src/fs/bgl/ap/apron.h \
     src/fs/bgl/ap/apron2.h \
-    src/fs/writer/ap/apronwriter.h
+    src/fs/writer/ap/apronwriter.h \
+    src/fs/bgl/ap/apronlight.h \
+    src/fs/writer/ap/apronlightwriter.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -222,7 +224,9 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/apron.cpp \
     src/geo/pos.cpp \
     src/fs/bgl/ap/apron2.cpp \
-    src/fs/writer/ap/apronwriter.cpp
+    src/fs/writer/ap/apronwriter.cpp \
+    src/fs/bgl/ap/apronlight.cpp \
+    src/fs/writer/ap/apronlightwriter.cpp
 
 unix {
     target.path = /usr/lib

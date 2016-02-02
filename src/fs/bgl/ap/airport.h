@@ -23,6 +23,7 @@
 #include "fs/bgl/ap/approach.h"
 #include "fs/bgl/ap/apron.h"
 #include "fs/bgl/ap/apron2.h"
+#include "fs/bgl/ap/apronlight.h"
 #include "fs/bgl/ap/parking.h"
 #include "del/deleteairport.h"
 #include "fs/bgl//bglposition.h"
@@ -182,6 +183,11 @@ public:
     return aprons2;
   }
 
+  const QList<atools::fs::bgl::ApronLight>& getApronsLights() const
+  {
+    return apronLights;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
   void handleParking();
@@ -208,6 +214,7 @@ private:
   QList<atools::fs::bgl::DeleteAirport> deleteAirports;
   QList<atools::fs::bgl::Apron> aprons;
   QList<atools::fs::bgl::Apron2> aprons2;
+  QList<atools::fs::bgl::ApronLight> apronLights;
 };
 
 } // namespace bgl
