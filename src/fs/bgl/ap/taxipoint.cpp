@@ -27,62 +27,65 @@ using atools::io::BinaryStream;
 
 TaxiPoint::TaxiPoint(io::BinaryStream *bs)
 {
-  type = static_cast<taxi::PointType>(bs->readUByte());
-  dir = static_cast<taxi::PointDir>(bs->readUByte());
+  type = static_cast<taxipoint::PointType>(bs->readUByte());
+  dir = static_cast<taxipoint::PointDir>(bs->readUByte());
   bs->skip(2);
   pos = BglPosition(bs);
 }
 
 TaxiPoint::TaxiPoint()
 {
-  type = taxi::UNKNOWN;
-  dir = taxi::UNKNOWN_DIR;
+  type = taxipoint::UNKNOWN;
+  dir = taxipoint::UNKNOWN_DIR;
 }
 
 TaxiPoint::TaxiPoint(const Parking& parking)
 {
-  type = taxi::UNKNOWN;
-  dir = taxi::UNKNOWN_DIR;
+  type = taxipoint::PARKING;
+  dir = taxipoint::UNKNOWN_DIR;
   pos = parking.getPosition();
 }
 
-QString TaxiPoint::pointTypeToString(taxi::PointType type)
+QString TaxiPoint::pointTypeToString(taxipoint::PointType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::taxi::UNKNOWN:
+    case atools::fs::bgl::taxipoint::PARKING:
+      return "PARKING";
+
+    case atools::fs::bgl::taxipoint::UNKNOWN:
       return "UNKNOWN";
 
-    case atools::fs::bgl::taxi::NORMAL:
+    case atools::fs::bgl::taxipoint::NORMAL:
       return "NORMAL";
 
-    case atools::fs::bgl::taxi::HOLD_SHORT:
+    case atools::fs::bgl::taxipoint::HOLD_SHORT:
       return "HOLD_SHORT";
 
-    case atools::fs::bgl::taxi::HOLD_SHORT_NO_DRAW:
+    case atools::fs::bgl::taxipoint::HOLD_SHORT_NO_DRAW:
       return "HOLD_SHORT_NO_DRAW";
 
-    case atools::fs::bgl::taxi::ILS_HOLD_SHORT:
+    case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT:
       return "ILS_HOLD_SHORT";
 
-    case atools::fs::bgl::taxi::ILS_HOLD_SHORT_NO_DRAW:
+    case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT_NO_DRAW:
       return "ILS_HOLD_SHORT_NO_DRAW";
   }
   qWarning().nospace().noquote() << "Unknown taxi point type " << type;
   return QString();
 }
 
-QString TaxiPoint::dirToString(taxi::PointDir dir)
+QString TaxiPoint::dirToString(taxipoint::PointDir dir)
 {
   switch(dir)
   {
-    case atools::fs::bgl::taxi::UNKNOWN_DIR:
+    case atools::fs::bgl::taxipoint::UNKNOWN_DIR:
       return "UNKNOWN_DIR";
 
-    case atools::fs::bgl::taxi::FORWARD:
+    case atools::fs::bgl::taxipoint::FORWARD:
       return "FORWARD";
 
-    case atools::fs::bgl::taxi::REVERSE:
+    case atools::fs::bgl::taxipoint::REVERSE:
       return "REVERSE";
   }
   qWarning().nospace().noquote() << "Unknown taxi point dir " << dir;

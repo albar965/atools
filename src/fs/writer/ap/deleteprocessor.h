@@ -75,6 +75,7 @@ private:
                         deleteFenceStmt, updateFenceStmt,
                         deleteHelipadStmt, updateHelipadStmt,
                         deleteStartStmt, updateStartStmt,
+                        deleteTaxiPathStmt, updateTaxiPathStmt,
                         deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,
                         fetchPrimaryAppStmt,
                         fetchSecondaryAppStmt, fetchTransitionStmt;

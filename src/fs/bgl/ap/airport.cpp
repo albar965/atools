@@ -202,18 +202,18 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   {
     switch(t.type)
     {
-      case atools::fs::bgl::taxi::UNKNOWN_PATH_TYPE :
+      case atools::fs::bgl::taxipath::UNKNOWN :
         break;
-      case atools::fs::bgl::taxi::PATH:
-      case atools::fs::bgl::taxi::CLOSED:
-      case atools::fs::bgl::taxi::TAXI:
-      case atools::fs::bgl::taxi::VEHICLE:
+      case atools::fs::bgl::taxipath::PATH:
+      case atools::fs::bgl::taxipath::CLOSED:
+      case atools::fs::bgl::taxipath::TAXI:
+      case atools::fs::bgl::taxipath::VEHICLE:
         t.taxiName = taxinames.at(t.runwayNumTaxiName);
-      case atools::fs::bgl::taxi::RUNWAY:
+      case atools::fs::bgl::taxipath::RUNWAY:
         t.start = taxipoints.at(t.startPoint);
         t.end = taxipoints.at(t.endPoint);
         break;
-      case atools::fs::bgl::taxi::PARKING:
+      case atools::fs::bgl::taxipath::PARKING:
         t.taxiName = taxinames.at(t.runwayNumTaxiName);
         t.start = taxipoints.at(t.startPoint);
         t.end = TaxiPoint(parkings.at(t.endPoint));

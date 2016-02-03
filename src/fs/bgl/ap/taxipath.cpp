@@ -33,7 +33,7 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
   runwayDesignator = (flags >> 12) & 0xf;
 
   flags = bs->readUByte();
-  type = static_cast<taxi::PathType>(flags & 0xf);
+  type = static_cast<taxipath::Type>(flags & 0xf);
   drawSurface = flags & (1 << 5);
   drawDetail = flags & (1 << 6);
 
@@ -42,9 +42,9 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
   flags = bs->readUByte();
   centerline = flags & 1;
   centerlineLight = flags & 2;
-  leftEdge = static_cast<taxi::EdgeType>((flags >> 2) & 0x3);
+  leftEdge = static_cast<taxipath::EdgeType>((flags >> 2) & 0x3);
   leftEdgeLight = flags & (1 << 4);
-  rightEdge = static_cast<taxi::EdgeType>((flags >> 5) & 0x3);
+  rightEdge = static_cast<taxipath::EdgeType>((flags >> 5) & 0x3);
   rightEdgeLight = flags & (1 << 7);
 
   surface = static_cast<rw::Surface>(bs->readUByte());
@@ -55,55 +55,55 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
 
 QString TaxiPath::getName() const
 {
-  if(type == taxi::RUNWAY)
+  if(type == taxipath::RUNWAY)
     return converter::runwayToStr(runwayNumTaxiName, runwayDesignator);
   else
     return taxiName;
 }
 
-QString TaxiPath::pathTypeToString(taxi::PathType type)
+QString TaxiPath::pathTypeToString(taxipath::Type type)
 {
   switch(type)
   {
-    case atools::fs::bgl::taxi::VEHICLE:
+    case atools::fs::bgl::taxipath::VEHICLE:
       return "VEHICLE";
 
-    case atools::fs::bgl::taxi::UNKNOWN_PATH_TYPE:
-      return "UNKNOWN_PATH_TYPE";
+    case atools::fs::bgl::taxipath::UNKNOWN:
+      return "UNKNOWN";
 
-    case atools::fs::bgl::taxi::TAXI:
+    case atools::fs::bgl::taxipath::TAXI:
       return "TAXI";
 
-    case atools::fs::bgl::taxi::RUNWAY:
+    case atools::fs::bgl::taxipath::RUNWAY:
       return "RUNWAY";
 
-    case atools::fs::bgl::taxi::PARKING:
+    case atools::fs::bgl::taxipath::PARKING:
       return "PARKING";
 
-    case atools::fs::bgl::taxi::PATH:
+    case atools::fs::bgl::taxipath::PATH:
       return "PATH";
 
-    case atools::fs::bgl::taxi::CLOSED:
+    case atools::fs::bgl::taxipath::CLOSED:
       return "CLOSED";
   }
   qWarning().nospace().noquote() << "Unknown taxi path type " << type;
   return QString();
 }
 
-QString TaxiPath::edgeTypeToString(taxi::EdgeType type)
+QString TaxiPath::edgeTypeToString(taxipath::EdgeType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::taxi::NONE:
+    case atools::fs::bgl::taxipath::NONE:
       return "NONE";
 
-    case atools::fs::bgl::taxi::SOLID:
+    case atools::fs::bgl::taxipath::SOLID:
       return "SOLID";
 
-    case atools::fs::bgl::taxi::DASHED:
+    case atools::fs::bgl::taxipath::DASHED:
       return "DASHED";
 
-    case atools::fs::bgl::taxi::SOLID_DASHED:
+    case atools::fs::bgl::taxipath::SOLID_DASHED:
       return "SOLID_DASHED";
   }
   qWarning().nospace().noquote() << "Unknown taxi path edge type " << type;

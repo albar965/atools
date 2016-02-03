@@ -34,10 +34,10 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-namespace taxi {
-enum PathType
+namespace taxipath {
+enum Type
 {
-  UNKNOWN_PATH_TYPE = 0,
+  UNKNOWN = 0,
   TAXI = 1,
   RUNWAY = 2,
   PARKING = 3,
@@ -63,8 +63,8 @@ public:
 
   QString getName() const;
 
-  static QString pathTypeToString(taxi::PathType type);
-  static QString edgeTypeToString(taxi::EdgeType type);
+  static QString pathTypeToString(taxipath::Type type);
+  static QString edgeTypeToString(taxipath::EdgeType type);
 
   const atools::fs::bgl::TaxiPoint& getStartPoint() const
   {
@@ -111,7 +111,7 @@ public:
     return surface;
   }
 
-  atools::fs::bgl::taxi::PathType getType() const
+  atools::fs::bgl::taxipath::Type getType() const
   {
     return type;
   }
@@ -130,12 +130,12 @@ private:
   int endPoint;
   int runwayDesignator;
 
-  atools::fs::bgl::taxi::PathType type;
+  atools::fs::bgl::taxipath::Type type;
 
   int runwayNumTaxiName;
 
-  atools::fs::bgl::taxi::EdgeType leftEdge;
-  atools::fs::bgl::taxi::EdgeType rightEdge;
+  atools::fs::bgl::taxipath::EdgeType leftEdge;
+  atools::fs::bgl::taxipath::EdgeType rightEdge;
 
   atools::fs::bgl::rw::Surface surface;
   float width, weightLimit;

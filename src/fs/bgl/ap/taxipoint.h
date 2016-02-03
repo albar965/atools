@@ -34,7 +34,7 @@ namespace bgl {
 
 class Parking;
 
-namespace taxi {
+namespace taxipoint {
 enum PointType
 {
   UNKNOWN = 0,
@@ -42,7 +42,8 @@ enum PointType
   HOLD_SHORT = 2,
   ILS_HOLD_SHORT = 4,
   HOLD_SHORT_NO_DRAW = 5, // TODO wiki add
-  ILS_HOLD_SHORT_NO_DRAW = 6 // TODO wiki add
+  ILS_HOLD_SHORT_NO_DRAW = 6, // TODO wiki add
+  PARKING // not a BGL type
 };
 
 enum PointDir
@@ -63,12 +64,12 @@ public:
 
   TaxiPoint(const atools::fs::bgl::Parking& parking);
 
-  atools::fs::bgl::taxi::PointType getType() const
+  atools::fs::bgl::taxipoint::PointType getType() const
   {
     return type;
   }
 
-  atools::fs::bgl::taxi::PointDir getDir() const
+  atools::fs::bgl::taxipoint::PointDir getDir() const
   {
     return dir;
   }
@@ -78,14 +79,14 @@ public:
     return pos;
   }
 
-  static QString pointTypeToString(atools::fs::bgl::taxi::PointType type);
-  static QString dirToString(atools::fs::bgl::taxi::PointDir dir);
+  static QString pointTypeToString(atools::fs::bgl::taxipoint::PointType type);
+  static QString dirToString(atools::fs::bgl::taxipoint::PointDir dir);
 
 private:
   friend QDebug operator<<(QDebug out, const TaxiPoint& record);
 
-  atools::fs::bgl::taxi::PointType type;
-  atools::fs::bgl::taxi::PointDir dir;
+  atools::fs::bgl::taxipoint::PointType type;
+  atools::fs::bgl::taxipoint::PointDir dir;
   atools::fs::bgl::BglPosition pos;
 };
 
