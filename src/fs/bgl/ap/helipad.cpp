@@ -44,7 +44,7 @@ QString Helipad::helipadTypeToStr(helipad::HelipadType type)
       return "MEDICAL";
   }
   qWarning().nospace().noquote() << "Unknown HELIPAD type " << type;
-  return "";
+  return QString();
 }
 
 Helipad::Helipad()
@@ -56,14 +56,14 @@ Helipad::Helipad(const BglReaderOptions *options, BinaryStream *bs)
 {
   surface = static_cast<rw::Surface>(bs->readUByte());
 
-  int flags = bs->readByte();
+  int flags = bs->readUByte();
   type = static_cast<helipad::HelipadType>(flags & 0xf);
   transparent = flags & (1 << 4);
   closed = flags & (1 << 5);
 
   bs->skip(4); // color
 
-  position = BglPosition(bs, 1000.f, true);
+  position = BglPosition(bs, true, 1000.f);
   length = bs->readFloat();
   width = bs->readFloat();
   heading = bs->readFloat();

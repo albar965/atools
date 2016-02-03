@@ -43,7 +43,7 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
       return "HH";
   }
   qWarning().nospace().noquote() << "Unknown NDB type " << type;
-  return "";
+  return QString();
 }
 
 Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
@@ -51,7 +51,7 @@ Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
 {
   type = static_cast<nav::NdbType>(bs->readShort());
   frequency = bs->readInt() / 10;
-  position = BglPosition(bs, 1000.f);
+  position = BglPosition(bs, true, 1000.f);
   range = bs->readFloat();
   magVar = bs->readFloat();
   ident = converter::intToIcao(bs->readUInt());

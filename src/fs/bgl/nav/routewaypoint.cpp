@@ -59,7 +59,7 @@ QString RouteWaypoint::routeWaypointTypeToStr(nav::RouteWaypointType type)
       return "OTHER";
   }
   qWarning().nospace().noquote() << "Unknown route waypoint type " << type;
-  return "";
+  return QString();
 }
 
 QDebug operator<<(QDebug out, const RouteWaypoint& record)

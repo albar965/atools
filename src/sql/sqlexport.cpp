@@ -115,7 +115,7 @@ QString SqlExport::printEndl() const
   if(endline)
     return "\n";
   else
-    return "";
+    return QString();
 }
 
 } // namespace sql

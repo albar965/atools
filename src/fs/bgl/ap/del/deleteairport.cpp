@@ -51,10 +51,10 @@ DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   flags = static_cast<del::DeleteAllFlags>(bs->readShort());
-  numRunways = bs->readByte();
-  numStarts = bs->readByte();
-  numFrequencies = bs->readByte();
-  bs->readByte(); // unused
+  numRunways = bs->readUByte();
+  numStarts = bs->readUByte();
+  numFrequencies = bs->readUByte();
+  bs->readUByte(); // unused
 
   if(numRunways > 0)
     qWarning().nospace().noquote() << "Found DeleteAirport with " << numRunways << " numRunways";

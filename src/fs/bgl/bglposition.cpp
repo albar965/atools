@@ -35,7 +35,7 @@ BglPosition::BglPosition(float lonX, float latY, float alt)
 {
 }
 
-BglPosition::BglPosition(BinaryStream *bs, float altitudeFactor, bool hasAltitude)
+BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeFactor)
 {
   lonX = converter::intToLonX(bs->readInt());
   latY = converter::intToLatY(bs->readInt());

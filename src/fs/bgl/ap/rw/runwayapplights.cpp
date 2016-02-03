@@ -74,7 +74,7 @@ QString RunwayAppLights::appLightSystemToStr(rw::ApproachLightSystem type)
       return "SALSF";
   }
   qWarning().nospace().noquote() << "Unknown runway ALS type " << type;
-  return "";
+  return QString();
 }
 
 enum AppLightFlags
@@ -94,8 +94,8 @@ RunwayAppLights::RunwayAppLights()
 RunwayAppLights::RunwayAppLights(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  int flags = bs->readByte();
-  numStrobes = bs->readByte();
+  int flags = bs->readUByte();
+  numStrobes = bs->readUByte();
 
   system = static_cast<rw::ApproachLightSystem>(flags & ALS_SYSTEM_MASK);
   endlights = (flags & ENDLIGHTS) == ENDLIGHTS;

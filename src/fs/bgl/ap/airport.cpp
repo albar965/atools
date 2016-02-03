@@ -21,6 +21,8 @@
 #include "fs/bgl/converter.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/bgl/ap/jetway.h"
+#include "fs/bgl/converter.h"
+#include "fs/bgl/ap/taxipoint.h"
 
 #include <QHash>
 
@@ -33,15 +35,19 @@ using atools::io::BinaryStream;
 Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  numRunways = bs->readByte();
-  numComs = bs->readByte();
-  bs->readByte(); // numStarts
-  numApproaches = bs->readByte();
-  numAprons = bs->readByte();
-  deleteRecord = (numAprons & 0x80) == 0x80;
-  bs->readByte(); // numHelipads
-  position = BglPosition(bs, 1000.f);
-  towerPosition = BglPosition(bs, 1000.f);
+  int numRunways = bs->readUByte();
+  Q_UNUSED(numRunways);
+  int numComs = bs->readUByte();
+  Q_UNUSED(numComs);
+  bs->readUByte(); // numStarts
+  int numApproaches = bs->readUByte();
+  Q_UNUSED(numApproaches);
+  int numAprons = bs->readUByte();
+  int numDeleteRecords = (numAprons & 0x80) == 0x80;
+  Q_UNUSED(numDeleteRecords);
+  bs->readUByte(); // numHelipads
+  position = BglPosition(bs, true, 1000.f);
+  towerPosition = BglPosition(bs, true, 1000.f);
   magVar = bs->readFloat();
   ident = converter::intToIcao(bs->readUInt());
   region = converter::intToIcao(bs->readUInt());
@@ -50,7 +56,9 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   bs->skip(4);
 
   QList<Jetway> jetways;
+  QList<TaxiPoint> taxipoints;
   QHash<int, int> parkingNumberIndex;
+  QStringList taxinames;
 
   while(bs->tellg() < startOffset + size)
   {
@@ -79,7 +87,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
       case rec::TAXI_PARKING:
         if(options->includeBglObject(type::PARKING))
         {
-          int numParkings = bs->readShort();
+          int numParkings = bs->readUShort();
           for(int i = 0; i < numParkings; i++)
           {
             Parking p(bs);
@@ -158,10 +166,28 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         towerObj = true;
         break;
       case rec::TAXI_PATH:
+        if(options->includeBglObject(type::TAXIWAY))
+        {
+          int numPaths = bs->readUShort();
+          for(int i = 0; i < numPaths; i++)
+            taxipaths.push_back(TaxiPath(bs));
+        }
+        break;
       case rec::TAXI_POINT:
+        if(options->includeBglObject(type::TAXIWAY))
+        {
+          int numPoints = bs->readUShort();
+          for(int i = 0; i < numPoints; i++)
+            taxipoints.push_back(TaxiPoint(bs));
+        }
+        break;
       case rec::TAXI_NAME:
-        // TODO read taxiway data
-        taxiway = true;
+        if(options->includeBglObject(type::TAXIWAY))
+        {
+          int numNames = bs->readUShort();
+          for(int i = 0; i < numNames; i++)
+            taxinames.push_back(bs->readString(8));  // TODO fix wiki - first is always 0 and length always 8
+        }
         break;
       case rec::UNKNOWN_REC:
         break;
@@ -170,6 +196,29 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
                                        << " for ident " << ident;
     }
     r.seekToEnd();
+  }
+
+  for(TaxiPath& t : taxipaths)
+  {
+    switch(t.type)
+    {
+      case atools::fs::bgl::taxi::UNKNOWN_PATH_TYPE :
+        break;
+      case atools::fs::bgl::taxi::PATH:
+      case atools::fs::bgl::taxi::CLOSED:
+      case atools::fs::bgl::taxi::TAXI:
+      case atools::fs::bgl::taxi::VEHICLE:
+        t.taxiName = taxinames.at(t.runwayNumTaxiName);
+      case atools::fs::bgl::taxi::RUNWAY:
+        t.start = taxipoints.at(t.startPoint);
+        t.end = taxipoints.at(t.endPoint);
+        break;
+      case atools::fs::bgl::taxi::PARKING:
+        t.taxiName = taxinames.at(t.runwayNumTaxiName);
+        t.start = taxipoints.at(t.startPoint);
+        t.end = TaxiPoint(parkings.at(t.endPoint));
+        break;
+    }
   }
 
   for(const Jetway& jw : jetways)
@@ -181,6 +230,12 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;
   }
+
+  // TODO create warnings for this
+  // Q_ASSERT(runways.size() == numRunways);
+  // Q_ASSERT(approaches.size() == numApproaches);
+  // Q_ASSERT(deleteAirports.size() == numDeleteRecords);
+  // Q_ASSERT(coms.size() == numComs);
 }
 
 QDebug operator<<(QDebug out, const Airport& record)
@@ -195,12 +250,16 @@ QDebug operator<<(QDebug out, const Airport& record)
   << ", magvar " << record.magVar << ", " << endl;
   out << record.runways;
   out << record.coms;
+  out << record.aprons;
+  out << record.aprons2;
+  out << record.apronLights;
   out << record.approaches;
   out << record.parkings;
   out << record.deleteAirports;
   out << record.helipads;
   out << record.starts;
   out << record.fences;
+  out << record.taxipaths;
   out << "]";
 
   return out;

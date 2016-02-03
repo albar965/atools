@@ -53,15 +53,15 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
       return "FAF";
   }
   qWarning().nospace().noquote() << "Unknown waypoint type " << type;
-  return "";
+  return QString();
 }
 
 Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  type = static_cast<nav::WaypointType>(bs->readByte());
-  int numRoutes = bs->readByte();
-  position = BglPosition(bs, 1.f, false);
+  type = static_cast<nav::WaypointType>(bs->readUByte());
+  int numRoutes = bs->readUByte();
+  position = BglPosition(bs);
   magVar = bs->readFloat();
   unsigned int identInt = bs->readUInt();
   ident = converter::intToIcao(identInt);

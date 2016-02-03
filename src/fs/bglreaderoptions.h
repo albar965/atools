@@ -44,6 +44,7 @@ enum BglObjectType
   MARKER, // ok
   APRON, // ok
   FENCE, // ok
+  TAXIWAY, // ok
   ROUTE
 };
 

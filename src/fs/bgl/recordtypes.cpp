@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/bgl/recordtypes.h"
+#include "logging/loggingdefs.h"
 
 namespace atools {
 namespace fs {
@@ -64,7 +65,8 @@ QString recordTypeStr(rec::RecordType type)
     case rec::WAYPOINT_ICAO_INDEX:
       return "WAYPOINT_ICAO_INDEX";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown record type " << type;
+  return QString();
 }
 
 QString airportRecordTypeStr(rec::AirportRecordType type)
@@ -131,7 +133,8 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::UNKNOWN_REC:
       return "UNKNOWN_REC";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown airport record type " << type;
+  return QString();
 }
 
 QString runwayRecordTypeStr(rec::RunwayRecordType type)
@@ -174,7 +177,8 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
     case rec::APP_LIGHTS_SEC:
       return "APP_LIGHTS_SEC";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown runway record type " << type;
+  return QString();
 }
 
 QString approachRecordTypeStr(rec::ApprRecordType type)
@@ -193,7 +197,8 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::TRANSITION_LEGS:
       return "TRANS_LEGS";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown approach record type " << type;
+  return QString();
 }
 
 QString ilsvorRecordTypeStr(rec::IlsVorRecordType type)
@@ -212,7 +217,8 @@ QString ilsvorRecordTypeStr(rec::IlsVorRecordType type)
     case rec::ILS_VOR_NAME:
       return "ILS_VOR_NAME";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown ILS/VOR type " << type;
+  return QString();
 }
 
 QString ndbRecordTypeStr(rec::NdbRecordType type)
@@ -222,7 +228,8 @@ QString ndbRecordTypeStr(rec::NdbRecordType type)
     case rec::NDB_NAME:
       return "NDB_NAME";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown NDB type " << type;
+  return QString();
 }
 
 QString sceneryObjRecordTypeStr(rec::SceneryObjRecordType type)
@@ -250,7 +257,9 @@ QString sceneryObjRecordTypeStr(rec::SceneryObjRecordType type)
     case rec::SCENERYOBJECT_TRIGGER:
       return "SCENERYOBJECT_TRIGGER";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown scenery object record type " << type;
+
+  return QString();
 }
 
 QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
@@ -260,7 +269,8 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
     case rec::BOUNDARY_LINES:
       return "BOUNDARY_LINES";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown boundary record type " << type;
+  return QString();
 }
 
 } // namespace bgl

@@ -88,7 +88,7 @@ QString Runway::lightToStr(rw::Light type)
       return "HIGH";
   }
   qWarning().nospace().noquote() << "Unknown runway lights type " << type;
-  return "";
+  return QString();
 }
 
 QString Runway::surfaceToStr(rw::Surface surface)
@@ -156,22 +156,22 @@ QString Runway::surfaceToStr(rw::Surface surface)
       return "UNKNOWN";
   }
   qWarning().nospace().noquote() << "Unknown runway surface type " << surface;
-  return "";
+  return QString();
 }
 
 Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString& airportIdent)
   : Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readShort());
-  primary.number = bs->readByte();
-  primary.designator = bs->readByte();
-  secondary.number = bs->readByte();
-  secondary.designator = bs->readByte();
+  primary.number = bs->readUByte();
+  primary.designator = bs->readUByte();
+  secondary.number = bs->readUByte();
+  secondary.designator = bs->readUByte();
   bs->skip(8);
   // primary.ilsIdent = converter::intToIcao(bs->readInt(), true);
   // secondary.ilsIdent = converter::intToIcao(bs->readInt(), true);
 
-  position = BglPosition(bs, 1000.f);
+  position = BglPosition(bs, true, 1000.f);
 
   length = bs->readFloat();
   width = bs->readFloat();

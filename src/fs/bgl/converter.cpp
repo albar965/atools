@@ -35,7 +35,7 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   // qWarning().nospace().noquote() << "Icao is null after shift. Was " << icao;
 
   if(value == 0)
-    return "";
+    return QString();
 
   unsigned int codedArr[5] = {0, 0, 0, 0, 0};
   unsigned int coded = 0;

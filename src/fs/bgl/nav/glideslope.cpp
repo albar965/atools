@@ -29,7 +29,7 @@ Glideslope::Glideslope(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   bs->skip(2); // Unknown
-  position = BglPosition(bs, 1000.f);
+  position = BglPosition(bs, true, 1000.f);
   range = bs->readFloat();
   pitch = bs->readFloat();
 }

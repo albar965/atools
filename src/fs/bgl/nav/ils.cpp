@@ -47,8 +47,8 @@ enum IlsFlags
 Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   : NavBase(options, bs), localizer(nullptr), glideslope(nullptr), dme(nullptr)
 {
-  bs->readByte();
-  int flags = bs->readByte();
+  bs->readUByte();
+  int flags = bs->readUByte();
 
   // dmeOnlyOrIls = (flags & FLAGS_DME_ONLY) == FLAGS_DME_ONLY;
   isBackcourse = (flags & FLAGS_BC) == FLAGS_BC;
@@ -56,7 +56,7 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
-  position = BglPosition(bs, 1000.f);
+  position = BglPosition(bs, true, 1000.f);
   frequency = bs->readInt() / 1000;
   range = bs->readFloat();
   magVar = bs->readFloat();

@@ -280,6 +280,9 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case FENCE:
       return "FENCE";
 
+    case TAXIWAY:
+      return "TAXIWAY";
+
     case UNKNOWN:
       return "UNKNWON";
   }
@@ -316,6 +319,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return APRON;
   else if(typeStr == "FENCE")
     return FENCE;
+  else if(typeStr == "TAXIWAY")
+    return TAXIWAY;
   else if(typeStr == "ROUTE")
     return ROUTE;
   else

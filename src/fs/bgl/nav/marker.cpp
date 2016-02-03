@@ -42,15 +42,15 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
       return "BACKCOURSE";
   }
   qWarning().nospace().noquote() << "Unknown marker type " << type;
-  return "";
+  return QString();
 }
 
 Marker::Marker(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  // unsigned int heading = bs->readByte();
+  // unsigned int heading = bs->readUByte();
   bs->skip(1);
-  type = static_cast<nav::MarkerType>(bs->readByte());
+  type = static_cast<nav::MarkerType>(bs->readUByte());
 
   position = BglPosition(bs);
   ident = converter::intToIcao(bs->readUInt());

@@ -30,8 +30,8 @@ using atools::io::BinaryStream;
 Localizer::Localizer(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  runwayNumber = bs->readByte();
-  runwayDesignator = bs->readByte();
+  runwayNumber = bs->readUByte();
+  runwayDesignator = bs->readUByte();
   heading = bs->readFloat();
   width = bs->readFloat();
 }

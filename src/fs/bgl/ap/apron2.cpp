@@ -36,7 +36,7 @@ Apron2::Apron2(const atools::fs::BglReaderOptions *options, atools::io::BinarySt
   int numTriangles = bs->readShort();
 
   for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs, 1.f, false));
+    vertices.push_back(BglPosition(bs));
 
   for(int i = 0; i < numTriangles; i++)
   {

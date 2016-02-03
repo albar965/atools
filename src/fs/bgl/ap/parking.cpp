@@ -71,7 +71,7 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
       return "VEHICLES";
   }
   qWarning().nospace().noquote() << "Unknown parking type " << type;
-  return "";
+  return QString();
 }
 
 QString Parking::parkingNameToStr(ap::ParkingName type)
@@ -193,7 +193,7 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
       return "GATE_Z";
   }
   qWarning().nospace().noquote() << "Unknown parking name " << type;
-  return "";
+  return QString();
 }
 
 Parking::Parking(BinaryStream *bs)
@@ -207,7 +207,7 @@ Parking::Parking(BinaryStream *bs)
   radius = bs->readFloat();
   heading = bs->readFloat();
   bs->skip(16); // teeOffset 1-4
-  position = BglPosition(bs, 1.0f, false);
+  position = BglPosition(bs);
 
   for(int i = 0; i < numAirlineCodes; ++i)
     bs->readString(4);

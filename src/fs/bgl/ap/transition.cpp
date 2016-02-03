@@ -37,7 +37,7 @@ QString Transition::transitionTypeToStr(ap::TransitionType type)
       return "DME";
   }
   qWarning().nospace().noquote() << "Unknown transition type " << type;
-  return "";
+  return QString();
 }
 
 QString Transition::transitionFixTypeToStr(ap::TransitionFixType type)
@@ -60,14 +60,14 @@ QString Transition::transitionFixTypeToStr(ap::TransitionFixType type)
       return "TERMINAL_WAYPOINT";
   }
   qWarning().nospace().noquote() << "Unknown transition fix type " << type;
-  return "";
+  return QString();
 }
 
 Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  type = static_cast<ap::TransitionType>(bs->readByte());
-  numLegs = bs->readByte();
+  type = static_cast<ap::TransitionType>(bs->readUByte());
+  numLegs = bs->readUByte();
 
   unsigned int transFixFlags = bs->readUInt();
   transFixType = static_cast<ap::TransitionFixType>(transFixFlags & 0xf);

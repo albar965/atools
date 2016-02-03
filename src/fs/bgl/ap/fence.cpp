@@ -33,7 +33,7 @@ Fence::Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
   bs->skip(32); // instance ID and profile
 
   for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs, 1.f, false));
+    vertices.push_back(BglPosition(bs));
 }
 
 Fence::~Fence()
@@ -64,7 +64,8 @@ QString Fence::fenceTypeToStr(fence::Type type)
     case atools::fs::bgl::fence::BOUNDARY:
       return "BOUNDARY";
   }
-  return "";
+  qWarning().nospace().noquote() << "Unknown fence type " << type;
+  return QString();
 }
 
 QDebug operator<<(QDebug out, const Fence& record)

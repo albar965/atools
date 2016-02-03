@@ -80,8 +80,8 @@ Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
   for(int i = 0; i < numICAO; i++)
   {
     NamelistEntry icaoRec;
-    icaoRec.regionName = regions.at(bs->readByte());
-    icaoRec.countryName = countries.at(bs->readByte());
+    icaoRec.regionName = regions.at(bs->readUByte());
+    icaoRec.countryName = countries.at(bs->readUByte());
     icaoRec.stateName = states.at(bs->readShort() >> 4);
     icaoRec.cityName = cities.at(bs->readShort());
     icaoRec.airportName = airports.at(bs->readShort());

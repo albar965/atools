@@ -39,7 +39,7 @@ QString Start::startTypeToStr(start::StartType type)
       return "HELIPAD";
   }
   qWarning().nospace().noquote() << "Unknown START type " << type;
-  return "";
+  return QString();
 }
 
 Start::Start()
@@ -49,12 +49,12 @@ Start::Start()
 Start::Start(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  runwayNumber = bs->readByte();
+  runwayNumber = bs->readUByte();
 
-  int flags = bs->readByte();
+  int flags = bs->readUByte();
   runwayDesignator = flags & 0x0f;
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
-  position = BglPosition(bs, 1000.f, true);
+  position = BglPosition(bs, true, 1000.f);
   heading = bs->readFloat();
 }
 

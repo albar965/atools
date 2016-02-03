@@ -48,14 +48,14 @@ enum VorFlags
 Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
   : NavBase(options, bs), dme(nullptr)
 {
-  type = static_cast<nav::IlsVorType>(bs->readByte());
-  int flags = bs->readByte();
+  type = static_cast<nav::IlsVorType>(bs->readUByte());
+  int flags = bs->readUByte();
 
   dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
-  position = BglPosition(bs, 1000.f);
+  position = BglPosition(bs, true, 1000.f);
   frequency = bs->readInt() / 1000;
   range = bs->readFloat();
   magVar = bs->readFloat();

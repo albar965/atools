@@ -15,43 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLPOSITION_H_
-#define BGL_BGLPOSITION_H_
+#ifndef WRITER_TAXIPATHWRITER_H_
+#define WRITER_TAXIPATHWRITER_H_
 
-#include "geo/pos.h"
-
-#include "logging/loggingdefs.h"
+#include "fs/writer/writerbase.h"
+#include "fs/bgl/ap/taxipath.h"
 
 namespace atools {
-namespace io {
-class BinaryStream;
-}
 namespace fs {
-namespace bgl {
+namespace writer {
 
-class BglPosition :
-  public atools::geo::Pos
+class TaxiPathWriter :
+  public atools::fs::writer::WriterBase<atools::fs::bgl::TaxiPath>
 {
 public:
-  BglPosition();
-  BglPosition(float lonX, float latY, float alt = 0.0f);
-  BglPosition(atools::io::BinaryStream *bs, bool hasAltitude = false, float altitudeFactor = 1.f);
-
-  virtual ~BglPosition();
-
-  float getAltitude() const
+  TaxiPathWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "taxi_path")
   {
-    return altitude;
   }
 
-private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& pos);
+  virtual ~TaxiPathWriter()
+  {
+  }
 
-  float altitude;
+protected:
+  virtual void writeObject(const atools::fs::bgl::TaxiPath *type);
+
 };
 
-} // namespace bgl
+} // namespace writer
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_BGLPOSITION_H_ */
+#endif /* WRITER_TAXIPATHWRITER_H_ */

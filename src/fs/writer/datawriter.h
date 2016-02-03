@@ -54,6 +54,7 @@ class AirportIndex;
 class ApronWriter;
 class ApronLightWriter;
 class FenceWriter;
+class TaxiPathWriter;
 
 class DataWriter
 {
@@ -170,6 +171,11 @@ public:
     return airportFenceWriter;
   }
 
+  atools::fs::writer::TaxiPathWriter *getTaxiPathWriter() const
+  {
+    return airportTaxiPathWriter;
+  }
+
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
@@ -191,6 +197,7 @@ private:
   atools::fs::writer::ApronWriter *airportApronWriter;
   atools::fs::writer::ApronLightWriter *airportApronLightWriter;
   atools::fs::writer::FenceWriter *airportFenceWriter;
+  atools::fs::writer::TaxiPathWriter *airportTaxiPathWriter;
 
   atools::fs::writer::DeleteAirportWriter *deleteAirportWriter;
 

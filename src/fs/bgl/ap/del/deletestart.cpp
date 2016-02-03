@@ -29,10 +29,10 @@ DeleteStart::DeleteStart(const BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
 
-  runwayNumber = bs->readByte();
+  runwayNumber = bs->readUByte();
 
-  int flags = bs->readByte();
-  runwayDesignator = bs->readByte();
+  int flags = bs->readUByte();
+  runwayDesignator = bs->readUByte();
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
 }
 

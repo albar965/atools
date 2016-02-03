@@ -38,7 +38,7 @@ ApronLight::ApronLight(const atools::fs::BglReaderOptions *options, atools::io::
   bs->skip(12);
 
   for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs, 1.f, false));
+    vertices.push_back(BglPosition(bs));
 
   for(int i = 0; i < numEdges; i++)
   {

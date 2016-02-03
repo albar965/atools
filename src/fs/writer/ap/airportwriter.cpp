@@ -24,6 +24,7 @@
 #include "fs/writer/ap/parkingwriter.h"
 #include "fs/writer/ap/apronwriter.h"
 #include "fs/writer/ap/apronlightwriter.h"
+#include "fs/writer/ap/taxipathwriter.h"
 #include "fs/writer/ap/fencewriter.h"
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nl/namelistentry.h"
@@ -98,7 +99,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":has_avgas", ((type->getFuelFlags() & AVGAS) == AVGAS) ? 1 : 0);
   bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
   bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
-  bind(":has_taxiways", type->hasTaxiway() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
@@ -152,6 +152,9 @@ void AirportWriter::writeObject(const Airport *type)
 
   FenceWriter *fenceWriter = getDataWriter().getFenceWriter();
   fenceWriter->write(type->getFences());
+
+  TaxiPathWriter *taxiWriter = getDataWriter().getTaxiPathWriter();
+  taxiWriter->write(type->getTaxiPaths());
 
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 

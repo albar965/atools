@@ -29,9 +29,9 @@ DeleteRunway::DeleteRunway(const atools::fs::BglReaderOptions *options, BinarySt
   : BglBase(options, bs), surface(rw::UNKNOWN)
 {
   surface = static_cast<rw::Surface>(bs->readUByte());
-  int numPrim = bs->readByte();
-  int numSec = bs->readByte();
-  int desig = bs->readByte();
+  int numPrim = bs->readUByte();
+  int numSec = bs->readUByte();
+  int desig = bs->readUByte();
   primaryName = converter::runwayToStr(numPrim, desig & 0x0f);
   secondaryName = converter::runwayToStr(numSec, (desig >> 4) & 0x0f);
 }

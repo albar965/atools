@@ -64,7 +64,7 @@ QString Approach::approachTypeToStr(ap::ApproachType type)
       return "LOCALIZER_BACKCOURSE";
   }
   qWarning().nospace().noquote() << "Unknown approach type " << type;
-  return "";
+  return QString();
 }
 
 QString Approach::approachFixTypeToStr(ap::ApproachFixType type)
@@ -90,24 +90,23 @@ QString Approach::approachFixTypeToStr(ap::ApproachFixType type)
       return "FIX_RUNWAY";
   }
   qWarning().nospace().noquote() << "Unknown approach fix type " << type;
-  return "";
+  return QString();
 }
 
 Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   bs->skip(1); // suffix
-  runwayNumber = bs->readByte();
+  runwayNumber = bs->readUByte();
 
-  // TODO use enum for flags
-  int typeFlags = bs->readByte();
+  int typeFlags = bs->readUByte();
   type = static_cast<ap::ApproachType>(typeFlags & 0xf);
   runwayDesignator = (typeFlags >> 4) & 0x7;
   gpsOverlay = (typeFlags & 0x80) == 0x80;
 
-  numTransitions = bs->readByte();
-  numLegs = bs->readByte();
-  numMissedLegs = bs->readByte();
+  numTransitions = bs->readUByte();
+  numLegs = bs->readUByte();
+  numMissedLegs = bs->readUByte();
 
   unsigned int fixFlags = bs->readUInt();
   fixType = static_cast<ap::ApproachFixType>(fixFlags & 0xf);
@@ -133,6 +132,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         transitions.push_back(Transition(options, bs));
         break;
 
+        // TODO read approach and transition legs
       case rec::LEGS:
       case rec::MISSED_LEGS:
       case rec::TRANSITION_LEGS:

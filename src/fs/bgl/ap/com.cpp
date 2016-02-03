@@ -77,7 +77,7 @@ QString Com::comTypeToStr(com::ComType type)
       return "REMOTE_CLEARANCE_DELIVERY";
   }
   qWarning().nospace().noquote() << "Unknown COM type " << type;
-  return "";
+  return QString();
 }
 
 Com::Com()

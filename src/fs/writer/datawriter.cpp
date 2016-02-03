@@ -43,6 +43,7 @@
 #include "fs/writer/ap/apronwriter.h"
 #include "fs/writer/ap/apronlightwriter.h"
 #include "fs/writer/ap/fencewriter.h"
+#include "fs/writer/ap/taxipathwriter.h"
 
 #include "fs/writer/ap/deleteairportwriter.h"
 
@@ -86,6 +87,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   airportApronLightWriter = new ApronLightWriter(db, *this);
   airportFenceWriter = new FenceWriter(db, *this);
   airportComWriter = new ComWriter(db, *this);
+  airportTaxiPathWriter = new TaxiPathWriter(db, *this);
   deleteAirportWriter = new DeleteAirportWriter(db, *this);
   waypointWriter = new WaypointWriter(db, *this);
   tempRouteWriter = new TempRouteWriter(db, *this);
@@ -113,6 +115,7 @@ DataWriter::~DataWriter()
   delete airportApronWriter;
   delete airportApronLightWriter;
   delete airportFenceWriter;
+  delete airportTaxiPathWriter;
   delete airportComWriter;
   delete deleteAirportWriter;
   delete waypointWriter;

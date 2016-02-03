@@ -29,8 +29,11 @@ template<typename TYPE>
 QString enumToStr(QString func(TYPE t), TYPE type)
 {
   QString retval = func(type);
-  if(retval == "NONE" || retval == "NO")
-    return "";
+  if(retval.isEmpty())
+    return QString();
+
+  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval.startsWith("UNKNOWN_"))
+    return QString();
   else
     return retval;
 }

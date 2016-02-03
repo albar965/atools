@@ -31,7 +31,6 @@ create table airport
   has_avgas integer not null,
   has_jetfuel integer not null,
   has_tower_object integer not null,
-  has_taxiways integer not null,
   mag_var real not null,
   tower_lonx real,
   tower_laty real,
@@ -114,7 +113,7 @@ create table apron
   airport_id not null,
   surface text not null,
   is_draw_surface integer not null,
-  is_detail integer not null,
+  is_draw_detail integer not null,
   vertices text not null,
   vertices2 text not null,
   triangles text not null,
@@ -152,6 +151,37 @@ foreign key(airport_id) references airport(airport_id)
 );
 
 create index if not exists idx_fence_airport_id on fence(airport_id);
+
+-- **************************************************
+
+drop table if exists taxi_path;
+
+create table taxi_path
+(
+  taxi_path_id integer primary key,
+  airport_id not null,
+  type text,
+  surface text not null,
+  width real not null,
+  name text,
+  is_draw_surface integer not null,
+  is_draw_detail integer not null,
+  has_centerline integer not null,
+  has_centerline_light integer not null,
+  has_left_edge_light integer not null,
+  has_right_edge_light integer not null,
+  start_type text,
+  start_dir text,
+  start_lonx real not null,
+  start_laty real not null,
+  end_type text,
+  end_dir text,
+  end_lonx real not null,
+  end_laty real not null,
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_taxi_path_airport_id on taxi_path(airport_id);
 
 -- **************************************************
 

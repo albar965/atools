@@ -42,13 +42,13 @@ QString RouteEntry::routeTypeToStr(nav::RouteType type)
       return "BOTH";
   }
   qWarning().nospace().noquote() << "Unknown route type " << type;
-  return "";
+  return QString();
 }
 
 RouteEntry::RouteEntry(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
-  type = static_cast<nav::RouteType>(bs->readByte());
+  type = static_cast<nav::RouteType>(bs->readUByte());
   name = bs->readString(8);
 
   next = RouteWaypoint(options, bs);
