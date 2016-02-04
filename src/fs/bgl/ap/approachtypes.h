@@ -15,50 +15,49 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GEO_POSITION_H
-#define ATOOLS_GEO_POSITION_H
+#ifndef APPROACHTYPES_H
+#define APPROACHTYPES_H
 
-#include "logging/loggingdefs.h"
+#include <QString>
 
 namespace atools {
-namespace geo {
+namespace fs {
+namespace bgl {
 
-/* Simple geographic position */
-class Pos
+namespace ap {
+
+enum ApproachType
 {
-public:
-  Pos()
-    : lonX(0.0), latY(0.0)
-  {
-  }
-
-  Pos(float longitudeX, float latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
-  {
-  }
-
-  ~Pos()
-  {
-  }
-
-  float getLatY() const
-  {
-    return latY;
-  }
-
-  float getLonX() const
-  {
-    return lonX;
-  }
-
-protected:
-  friend QDebug operator<<(QDebug out, const Pos& record);
-
-  // Länge (x),Breite (y)
-  float lonX, latY;
+  GPS = 0x01,
+  VOR = 0x02,
+  NDB = 0x03,
+  ILS = 0x04,
+  LOCALIZER = 0x05,
+  SDF = 0x06,
+  LDA = 0x07,
+  VORDME = 0x08,
+  NDBDME = 0x09,
+  RNAV = 0x0a,
+  LOCALIZER_BACKCOURSE = 0x0b
 };
 
-} // namespace geo
+QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
+
+enum ApproachFixType
+{
+  FIX_VOR = 2,
+  FIX_NDB = 3,
+  FIX_TERMINAL_NDB = 4,
+  FIX_WAYPOINT = 5,
+  FIX_TERMINAL_WAYPOINT = 6,
+  FIX_RUNWAY = 9
+};
+
+QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
+
+} // namespace ap
+} // namespace bgl
+} // namespace fs
 } // namespace atools
 
-#endif /* ATOOLS_GEO_POSITION_H */
+#endif // APPROACHTYPES_H

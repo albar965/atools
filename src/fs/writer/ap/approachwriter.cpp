@@ -22,6 +22,7 @@
 #include "fs/writer/ap/airportwriter.h"
 #include "fs/writer/runwayindex.h"
 #include "fs/writer/ap/transitionwriter.h"
+#include "fs/bgl/ap/approachtypes.h"
 
 #include <QString>
 
@@ -39,11 +40,11 @@ void ApproachWriter::writeObject(const Approach *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   bind(":approach_id", getNextId());
-  bind(":type", bgl::util::enumToStr(Approach::approachTypeToStr, type->getType()));
+  bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
   bind(":has_gps_overlay", type->isGpsOverlay());
   bind(":num_legs", type->getNumLegs());
   bind(":num_missed_legs", type->getNumMissedLegs());
-  bind(":fix_type", bgl::util::enumToStr(Approach::approachFixTypeToStr, type->getFixType()));
+  bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());

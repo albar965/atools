@@ -129,7 +129,9 @@ HEADERS += src/atools.h \
     src/fs/writer/ap/fencewriter.h \
     src/fs/bgl/ap/taxipath.h \
     src/fs/bgl/ap/taxipoint.h \
-    src/fs/writer/ap/taxipathwriter.h
+    src/fs/writer/ap/taxipathwriter.h \
+    src/fs/bgl/ap/approachleg.h \
+    src/fs/bgl/ap/approachtypes.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -238,7 +240,9 @@ SOURCES += src/atools.cpp \
     src/fs/writer/ap/fencewriter.cpp \
     src/fs/bgl/ap/taxipath.cpp \
     src/fs/bgl/ap/taxipoint.cpp \
-    src/fs/writer/ap/taxipathwriter.cpp
+    src/fs/writer/ap/taxipathwriter.cpp \
+    src/fs/bgl/ap/approachleg.cpp \
+    src/fs/bgl/ap/approachtypes.cpp
 
 unix {
     target.path = /usr/lib

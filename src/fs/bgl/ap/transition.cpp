@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "fs/bgl/ap/transition.h"
+#include "fs/bgl/ap/approach.h"
+#include "fs/bgl/recordtypes.h"
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
@@ -96,6 +98,32 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
     dmeRadial = 0;
     dmeDist = 0.f;
   }
+
+  while(bs->tellg() < startOffset + size)
+  {
+    Record r(options, bs);
+    rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
+
+    switch(t)
+    {
+      case rec::TRANSITION_LEGS:
+        {
+          int num = bs->readUShort();
+          for(int i = 0; i < num; i++)
+            legs.push_back(ApproachLeg(bs));
+        }
+        break;
+
+      case atools::fs::bgl::rec::LEGS:
+      case atools::fs::bgl::rec::MISSED_LEGS:
+      case atools::fs::bgl::rec::TRANSITION:
+      default:
+        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << t << dec
+                                       << " for airport ident " << fixAirportIdent;
+    }
+    r.seekToEnd();
+  }
+
 }
 
 QDebug operator<<(QDebug out, const Transition& record)
@@ -114,8 +142,9 @@ QDebug operator<<(QDebug out, const Transition& record)
   << ", dmeRegion " << record.dmeRegion
   << ", dmeAirportIdent " << record.dmeAirportIdent
   << ", dmeRadial " << record.dmeRadial
-  << ", dmeDist " << record.dmeDist
-  << "]";
+  << ", dmeDist " << record.dmeDist << endl;
+  out << record.legs;
+  out << "]";
   return out;
 }
 

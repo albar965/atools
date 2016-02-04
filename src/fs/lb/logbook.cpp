@@ -200,7 +200,7 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
   numLoaded = inserted;
 }
 
-double Logbook::calcDist(double startLon, double startLat, double destLon, double destLat) const
+double Logbook::calcDist(float startLon, float startLat, float destLon, float destLat) const
 {
   return atools::geo::distanceInNm(atools::geo::Pos(startLon, startLat), atools::geo::Pos(destLon, destLat));
 }

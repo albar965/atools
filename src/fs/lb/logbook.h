@@ -72,7 +72,7 @@ public:
 
 private:
   /* calculate distance in nautical miles */
-  double calcDist(double startLon, double startLat, double destLon, double destLat) const;
+  double calcDist(float startLon, float startLat, float destLon, float destLat) const;
 
   int numLoaded = 0;
   atools::sql::SqlDatabase *db;

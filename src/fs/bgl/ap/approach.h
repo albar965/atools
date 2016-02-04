@@ -20,39 +20,12 @@
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/transition.h"
+#include "fs/bgl/ap/approachleg.h"
+#include "fs/bgl/ap/approachtypes.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
-
-namespace ap {
-
-enum ApproachType
-{
-  GPS = 0x01,
-  VOR = 0x02,
-  NDB = 0x03,
-  ILS = 0x04,
-  LOCALIZER = 0x05,
-  SDF = 0x06,
-  LDA = 0x07,
-  VORDME = 0x08,
-  NDBDME = 0x09,
-  RNAV = 0x0a,
-  LOCALIZER_BACKCOURSE = 0x0b
-};
-
-enum ApproachFixType
-{
-  FIX_VOR = 2,
-  FIX_NDB = 3,
-  FIX_TERMINAL_NDB = 4,
-  FIX_WAYPOINT = 5,
-  FIX_TERMINAL_WAYPOINT = 6,
-  FIX_RUNWAY = 9
-};
-
-} // namespace ap
 
 class Approach :
   public atools::fs::bgl::Record
@@ -128,13 +101,20 @@ public:
     return transitions;
   }
 
+  const QList<atools::fs::bgl::ApproachLeg>& getLegs() const
+  {
+    return legs;
+  }
+
+  const QList<atools::fs::bgl::ApproachLeg>& getMissedLegs() const
+  {
+    return missedLegs;
+  }
+
   bool hasRunwayReference() const
   {
     return runwayNumber > 0;
   }
-
-  static QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
-  static QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Approach& record);
@@ -151,6 +131,8 @@ private:
   float altitude, heading, missedAltitude;
 
   QList<atools::fs::bgl::Transition> transitions;
+
+  QList<atools::fs::bgl::ApproachLeg> legs, missedLegs;
 };
 
 } // namespace bgl

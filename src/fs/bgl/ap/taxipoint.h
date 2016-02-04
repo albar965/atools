@@ -59,9 +59,7 @@ class TaxiPoint
 {
 public:
   TaxiPoint(atools::io::BinaryStream *bs);
-
   TaxiPoint();
-
   TaxiPoint(const atools::fs::bgl::Parking& parking);
 
   atools::fs::bgl::taxipoint::PointType getType() const

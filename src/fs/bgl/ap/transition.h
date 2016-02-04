@@ -19,6 +19,7 @@
 #define BGL_AP_TRANSITION_H_
 
 #include "fs/bgl/record.h"
+#include "fs/bgl/ap/approachleg.h"
 
 namespace atools {
 namespace io {
@@ -116,6 +117,11 @@ public:
     return type;
   }
 
+  const QList<atools::fs::bgl::ApproachLeg>& getLegs() const
+  {
+    return legs;
+  }
+
   static QString transitionTypeToStr(atools::fs::bgl::ap::TransitionType type);
   static QString transitionFixTypeToStr(atools::fs::bgl::ap::TransitionFixType type);
 
@@ -130,6 +136,7 @@ private:
   QString dmeIdent, dmeRegion, dmeAirportIdent;
   int dmeRadial;
   float dmeDist;
+  QList<atools::fs::bgl::ApproachLeg> legs;
 };
 
 } // namespace bgl

@@ -19,79 +19,13 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
 using atools::io::BinaryStream;
-
-QString Approach::approachTypeToStr(ap::ApproachType type)
-{
-  switch(type)
-  {
-    case ap::GPS:
-      return "GPS";
-
-    case ap::VOR:
-      return "VOR";
-
-    case ap::NDB:
-      return "NDB";
-
-    case ap::ILS:
-      return "ILS";
-
-    case ap::LOCALIZER:
-      return "LOCALIZER";
-
-    case ap::SDF:
-      return "SDF";
-
-    case ap::LDA:
-      return "LDA";
-
-    case ap::VORDME:
-      return "VORDME";
-
-    case ap::NDBDME:
-      return "NDBDME";
-
-    case ap::RNAV:
-      return "RNAV";
-
-    case ap::LOCALIZER_BACKCOURSE:
-      return "LOCALIZER_BACKCOURSE";
-  }
-  qWarning().nospace().noquote() << "Unknown approach type " << type;
-  return QString();
-}
-
-QString Approach::approachFixTypeToStr(ap::ApproachFixType type)
-{
-  switch(type)
-  {
-    case ap::FIX_VOR:
-      return "FIX_VOR";
-
-    case ap::FIX_NDB:
-      return "FIX_NDB";
-
-    case ap::FIX_TERMINAL_NDB:
-      return "FIX_TERMINAL_NDB";
-
-    case ap::FIX_WAYPOINT:
-      return "FIX_WAYPOINT";
-
-    case ap::FIX_TERMINAL_WAYPOINT:
-      return "FIX_TERMINAL_WAYPOINT";
-
-    case ap::FIX_RUNWAY:
-      return "FIX_RUNWAY";
-  }
-  qWarning().nospace().noquote() << "Unknown approach fix type " << type;
-  return QString();
-}
 
 Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
@@ -132,12 +66,23 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         transitions.push_back(Transition(options, bs));
         break;
 
-        // TODO read approach and transition legs
+      // TODO read approach and transition legs
       case rec::LEGS:
+        {
+          int num = bs->readUShort();
+          for(int i = 0; i < num; i++)
+            legs.push_back(ApproachLeg(bs));
+        }
+        break;
       case rec::MISSED_LEGS:
-      case rec::TRANSITION_LEGS:
+        {
+          int num = bs->readUShort();
+          for(int i = 0; i < num; i++)
+            missedLegs.push_back(ApproachLeg(bs));
+        }
         break;
 
+      case atools::fs::bgl::rec::TRANSITION_LEGS:
       default:
         qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
                                        << " for airport ident " << fixAirportIdent;
@@ -152,16 +97,18 @@ QDebug operator<<(QDebug out, const Approach& record)
 
   out.nospace().noquote() << static_cast<const Record&>(record)
   << " Approach[type "
-  << Approach::approachTypeToStr(record.type)
+  << ap::approachTypeToStr(record.type)
   << ", rwy " << record.getRunwayName()
   << ", gps overlay " << record.gpsOverlay
-  << ", fix type " << Approach::approachFixTypeToStr(record.fixType)
+  << ", fix type " << ap::approachFixTypeToStr(record.fixType)
   << ", fix " << record.fixIdent
   << ", fix region " << record.fixRegion
   << ", ap icao " << record.fixAirportIdent
   << ", alt " << record.altitude
   << ", hdg " << record.heading << endl;
   out << record.transitions;
+  out << record.legs;
+  out << record.missedLegs;
   out << "]";
   return out;
 }
