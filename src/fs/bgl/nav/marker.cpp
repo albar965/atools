@@ -48,15 +48,13 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
 Marker::Marker(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  // unsigned int heading = bs->readUByte();
-  bs->skip(1);
+  // TODO wiki clarify structure
+  heading = ((float)bs->readUByte()) / 255.f * 360.f;
   type = static_cast<nav::MarkerType>(bs->readUByte());
 
-  position = BglPosition(bs);
+  position = BglPosition(bs, true, 1000.f);
   ident = converter::intToIcao(bs->readUInt());
-
-  region = converter::intToIcao(bs->readUShort(), true);
-  bs->skip(2);
+  region = converter::intToIcao(bs->readUInt() & 0x7ff);
 }
 
 Marker::~Marker()

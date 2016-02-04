@@ -56,10 +56,16 @@ public:
     return static_cast<ENUM>(id);
   }
 
+  bool isExcluded()
+  {
+    return excluded;
+  }
+
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);
 
   int id, size;
+  bool excluded = false;
 };
 
 } // namespace bgl

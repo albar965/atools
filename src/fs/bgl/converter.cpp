@@ -18,6 +18,8 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/bglexception.h"
 
+#include <QVarLengthArray>
+
 namespace atools {
 namespace fs {
 namespace bgl {
@@ -37,7 +39,7 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   if(value == 0)
     return QString();
 
-  unsigned int codedArr[5] = {0, 0, 0, 0, 0};
+  QVarLengthArray<unsigned int, 5> codedArr({0, 0, 0, 0, 0});
   unsigned int coded = 0;
 
   int idx = 0;
@@ -58,7 +60,7 @@ QString intToIcao(unsigned int icao, bool noBitShift)
 
   for(int i = 0; i < 5; i++)
   {
-    coded = codedArr[i];
+    coded = codedArr.at(i);
     if(coded == 0)
       break;
     if(coded > 1 && coded < 12)

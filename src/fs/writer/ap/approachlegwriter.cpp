@@ -15,43 +15,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/writer/ap/apronlightwriter.h"
+#include "fs/writer/ap/approachlegwriter.h"
 #include "fs/writer/datawriter.h"
+#include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/ap/approachwriter.h"
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
-#include "fs/writer/ap/airportwriter.h"
-#include "fs/bgl/ap/rw/runway.h"
+#include "logging/loggingdefs.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
-using atools::fs::bgl::ApronLight;
-using atools::fs::bgl::Runway;
+using atools::fs::bgl::ApproachLeg;
 using atools::sql::SqlQuery;
 
-void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
+void ApproachLegWriter::writeObject(const ApproachLeg *type)
 {
   if(getOptions().isVerbose())
-    qDebug() << "Writing ApronLight for airport "
+    qDebug() << "Writing approach leg for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  bind(":apron_light_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(":approach_leg_id", getNextId());
+  bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
+  bind(":is_missed", type->isMissed() ? 1 : 0);
 
-  // TODO create a WKT line from the edges
-  QStringList list;
-  for(const bgl::BglPosition& pos : type->getVertices())
-    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                   QString::number(pos.getLatY(), 'g', 8));
-  bind(":vertices", list.join(", "));
-
-  list.clear();
-  for(int i : type->getEdges())
-    list.push_back(QString::number(i));
-  bind(":edges", list.join(", "));
-
-  executeStatement();
+  LegBaseWriter::writeObject(type);
 }
 
 } // namespace writer

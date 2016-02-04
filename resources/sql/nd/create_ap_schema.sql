@@ -255,9 +255,8 @@ create table approach
   runway_end_id integer,
   type text not null,
   has_gps_overlay integer not null,
-  num_legs integer not null,
-  num_missed_legs integer not null,
-  fix_type text not null,
+  fix_nav_id integer,
+  fix_type text,
   fix_ident text,
   fix_region text,
   fix_airport_ident text,
@@ -278,8 +277,8 @@ create table transition
   transition_id integer primary key,
   approach_id integer not null,
   type text not null,
-  num_legs integer not null,
-  fix_type text not null,
+  fix_nav_id integer,
+  fix_type text,
   fix_ident text,
   fix_region text,
   fix_airport_ident text,
@@ -293,6 +292,78 @@ foreign key(approach_id) references approach(approach_id)
 );
 
 create index if not exists idx_transition_approach_id on transition(approach_id);
+
+-- **************************************************
+
+drop table if exists approach_leg;
+
+create table approach_leg
+(
+  approach_leg_id integer primary key,
+  approach_id integer not null,
+  is_missed integer not null,
+
+  type text not null,
+  alt_descriptor text,
+  turn_direction text,
+  fix_nav_id integer,
+  fix_type text,
+  fix_ident text,
+  fix_region text,
+  fix_airport_ident text,
+  recommended_fix_nav_id integer,
+  recommended_fix_type text,
+  recommended_fix_ident text,
+  recommended_fix_region text,
+  is_flyover integer not null,
+  is_true_course integer not null,
+  course real,
+  distance real,
+  time real,
+  theta real,
+  rho real,
+  altitude1 real,
+  altitude2  real,
+foreign key(approach_id) references approach(approach_id)
+);
+
+create index if not exists idx_approach_leg_approach_id on approach_leg(approach_id);
+
+
+-- **************************************************
+
+drop table if exists transition_leg;
+
+create table transition_leg
+(
+  transition_leg_id integer primary key,
+  transition_id integer not null,
+
+  type text not null,
+  alt_descriptor text,
+  turn_direction text,
+  fix_nav_id integer,
+  fix_type text,
+  fix_ident text,
+  fix_region text,
+  fix_airport_ident text,
+  recommended_fix_nav_id integer,
+  recommended_fix_type text,
+  recommended_fix_ident text,
+  recommended_fix_region text,
+  is_flyover integer not null,
+  is_true_course integer not null,
+  course real,
+  distance real,
+  time real,
+  theta real,
+  rho real,
+  altitude1 real,
+  altitude2  real,
+foreign key(transition_id) references transition(transition_id)
+);
+
+create index if not exists idx_transition_leg_transition_id on transition_leg(transition_id);
 
 -- **************************************************
 

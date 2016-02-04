@@ -15,36 +15,36 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/writer/nav/markerwriter.h"
-#include "fs/writer/meta/bglfilewriter.h"
-#include "fs/writer/datawriter.h"
-#include "fs/bgl/util.h"
+#ifndef WRITER_APPROACHLEGWRITER_H_
+#define WRITER_APPROACHLEGWRITER_H_
+
+#include "fs/writer/ap/legbasewriter.h"
+#include "fs/bgl/ap/approachleg.h"
 
 namespace atools {
 namespace fs {
 namespace writer {
 
-using atools::fs::bgl::Marker;
-using atools::sql::SqlQuery;
-
-void MarkerWriter::writeObject(const Marker *type)
+class ApproachLegWriter :
+  public atools::fs::writer::LegBaseWriter
 {
-  if(getOptions().isVerbose())
-    qDebug() << "Writing Marker " << type->getIdent();
+public:
+  ApproachLegWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
+    : LegBaseWriter(db, dataWriter, "approach_leg")
+  {
+  }
 
-  bind(":marker_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
-  bind(":ident", type->getIdent());
-  bind(":region", type->getRegion());
-  bind(":type", bgl::Marker::markerTypeToStr(type->getType()));
-  bind(":heading", type->getHeading());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+  virtual ~ApproachLegWriter()
+  {
+  }
 
-  executeStatement();
-}
+protected:
+  virtual void writeObject(const atools::fs::bgl::ApproachLeg *type);
+
+};
 
 } // namespace writer
 } // namespace fs
 } // namespace atools
+
+#endif /* WRITER_APPROACHLEGWRITER_H_ */

@@ -37,7 +37,9 @@ class AirportWriter;
 class RunwayWriter;
 class RunwayEndWriter;
 class ApproachWriter;
+class ApproachLegWriter;
 class TransitionWriter;
+class TransitionLegWriter;
 class ParkingWriter;
 class ComWriter;
 class DeleteAirportWriter;
@@ -101,9 +103,19 @@ public:
     return runwayEndWriter;
   }
 
+  atools::fs::writer::TransitionLegWriter *getApproachTransLegWriter()
+  {
+    return approachTransLegWriter;
+  }
+
   atools::fs::writer::TransitionWriter *getApproachTransWriter()
   {
     return approachTransWriter;
+  }
+
+  atools::fs::writer::ApproachLegWriter *getApproachLegWriter()
+  {
+    return approachLegWriter;
   }
 
   atools::fs::writer::ApproachWriter *getApproachWriter()
@@ -188,8 +200,13 @@ private:
   atools::fs::writer::AirportWriter *airportWriter;
   atools::fs::writer::RunwayWriter *runwayWriter;
   atools::fs::writer::RunwayEndWriter *runwayEndWriter;
+
   atools::fs::writer::ApproachWriter *approachWriter;
+  atools::fs::writer::ApproachLegWriter *approachLegWriter;
   atools::fs::writer::TransitionWriter *approachTransWriter;
+  atools::fs::writer::TransitionLegWriter *approachTransLegWriter;
+
+
   atools::fs::writer::ParkingWriter *parkingWriter;
   atools::fs::writer::ComWriter *airportComWriter;
   atools::fs::writer::HelipadWriter *airportHelipadWriter;

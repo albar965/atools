@@ -50,6 +50,13 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   towerPosition = BglPosition(bs, true, 1000.f);
   magVar = bs->readFloat();
   ident = converter::intToIcao(bs->readUInt());
+
+  if(!options->includeAirport(ident))
+  {
+    excluded = true;
+    return;
+  }
+
   region = converter::intToIcao(bs->readUInt());
   fuelFlags = bs->readUInt();
 

@@ -108,8 +108,10 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
 
 const Record *BglFile::handleIlsVor(BinaryStream *bs)
 {
+  // Read only type before creating concrete object
   IlsVor iv(options, bs);
   iv.seekToStart();
+
   switch(iv.getType())
   {
     case nav::TERMINAL:
@@ -155,6 +157,7 @@ void BglFile::readRecords(BinaryStream *bs)
       {
         case section::AIRPORT:
           if(options->includeBglObject(type::AIRPORT))
+            // Will return null iF ICAO is excluded
             rec = createRecord<Airport>(options, bs, &airports);
           break;
         case section::NAME_LIST:

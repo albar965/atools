@@ -97,11 +97,6 @@ public:
     return fixRegion;
   }
 
-  int getNumLegs() const
-  {
-    return numLegs;
-  }
-
   const QString& getTransFixIdent() const
   {
     return transFixIdent;
@@ -129,7 +124,6 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Transition& record);
 
   atools::fs::bgl::ap::TransitionType type;
-  int numLegs;
   atools::fs::bgl::ap::TransitionFixType transFixType;
   QString transFixIdent, fixRegion, fixAirportIdent;
   float altitude;

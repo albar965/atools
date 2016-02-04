@@ -73,6 +73,8 @@ void Navdatabase::create()
     resolver.run();
     db->commit();
   }
+  script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
+  db->commit();
 
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
   db->commit();

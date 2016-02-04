@@ -76,16 +76,6 @@ public:
     return missedAltitude;
   }
 
-  int getNumLegs() const
-  {
-    return numLegs;
-  }
-
-  int getNumMissedLegs() const
-  {
-    return numMissedLegs;
-  }
-
   int getNumTransitions() const
   {
     return numTransitions;
@@ -123,7 +113,7 @@ private:
   int runwayNumber, runwayDesignator;
   bool gpsOverlay;
 
-  int numTransitions, numLegs, numMissedLegs;
+  int numTransitions;
 
   atools::fs::bgl::ap::ApproachFixType fixType;
   QString fixIdent, fixRegion, fixAirportIdent;

@@ -43,7 +43,8 @@ void FenceWriter::writeObject(const bgl::Fence *type)
   // TODO create a WKT polygon from the triangles
   QStringList list;
   for(const bgl::BglPosition& pos : type->getVertices())
-    list.push_back(QString::number(pos.getLonX()) + " " + QString::number(pos.getLatY()));
+    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
+                   QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
   executeStatement();

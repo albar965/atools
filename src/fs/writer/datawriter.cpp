@@ -35,6 +35,8 @@
 #include "fs/writer/runwayindex.h"
 #include "fs/writer/airportindex.h"
 #include "fs/writer/ap/approachwriter.h"
+#include "fs/writer/ap/approachlegwriter.h"
+#include "fs/writer/ap/transitionlegwriter.h"
 #include "fs/writer/ap/comwriter.h"
 #include "fs/writer/ap/transitionwriter.h"
 #include "fs/writer/ap/parkingwriter.h"
@@ -52,6 +54,7 @@
 
 #include "fs/bgl/bglfile.h"
 #include "logging/loggingdefs.h"
+
 
 namespace atools {
 namespace fs {
@@ -79,7 +82,9 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   runwayWriter = new RunwayWriter(db, *this);
   runwayEndWriter = new RunwayEndWriter(db, *this);
   approachWriter = new ApproachWriter(db, *this);
+  approachLegWriter = new ApproachLegWriter(db, *this);
   approachTransWriter = new TransitionWriter(db, *this);
+  approachTransLegWriter = new TransitionLegWriter(db, *this);
   parkingWriter = new ParkingWriter(db, *this);
   airportHelipadWriter = new HelipadWriter(db, *this);
   airportStartWriter = new StartWriter(db, *this);
@@ -108,7 +113,9 @@ DataWriter::~DataWriter()
   delete runwayWriter;
   delete runwayEndWriter;
   delete approachWriter;
+  delete approachLegWriter;
   delete approachTransWriter;
+  delete approachTransLegWriter;
   delete parkingWriter;
   delete airportHelipadWriter;
   delete airportStartWriter;

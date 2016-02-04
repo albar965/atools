@@ -60,6 +60,7 @@ enum Type
 
 enum AltDescriptor
 {
+  UNKNOWN=0,
   A = 01,
   PLUS = 02,
   MINUS = 03,
@@ -79,11 +80,111 @@ enum TurnDirection
 class ApproachLeg
 {
 public:
-  ApproachLeg(atools::io::BinaryStream *bs);
+  ApproachLeg(atools::io::BinaryStream *bs, bool ismissed);
 
   static QString legTypeToString(atools::fs::bgl::leg::Type type);
   static QString altDescriptorToString(atools::fs::bgl::leg::AltDescriptor altDescr);
   static QString turnDirToString(atools::fs::bgl::leg::TurnDirection turnDir);
+
+  atools::fs::bgl::leg::Type getType() const
+  {
+    return type;
+  }
+
+  atools::fs::bgl::leg::AltDescriptor getAltDescriptor() const
+  {
+    return altDescriptor;
+  }
+
+  atools::fs::bgl::leg::TurnDirection getTurnDirection() const
+  {
+    return turnDirection;
+  }
+
+  atools::fs::bgl::ap::ApproachFixType getFixType() const
+  {
+    return fixType;
+  }
+
+  atools::fs::bgl::ap::ApproachFixType getRecommendedFixType() const
+  {
+    return recommendedFixType;
+  }
+
+  bool isTrueCourse() const
+  {
+    return trueCourse;
+  }
+
+  bool isTime() const
+  {
+    return time;
+  }
+
+  bool isFlyover() const
+  {
+    return flyover;
+  }
+
+  QString getFixIdent() const
+  {
+    return fixIdent;
+  }
+
+  QString getFixRegion() const
+  {
+    return fixRegion;
+  }
+
+  QString getFixAirportIdent() const
+  {
+    return fixAirportIdent;
+  }
+
+  QString getRecommendedFixIdent() const
+  {
+    return recommendedFixIdent;
+  }
+
+  QString getRecommendedFixRegion() const
+  {
+    return recommendedFixRegion;
+  }
+
+  float getTheta() const
+  {
+    return theta;
+  }
+
+  float getRho() const
+  {
+    return rho;
+  }
+
+  float getCourse() const
+  {
+    return course;
+  }
+
+  float getDistOrTime() const
+  {
+    return distOrTime;
+  }
+
+  float getAltitude1() const
+  {
+    return altitude1;
+  }
+
+  float getAltitude2() const
+  {
+    return altitude2;
+  }
+
+  bool isMissed() const
+  {
+    return missed;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const ApproachLeg& record);
@@ -93,7 +194,7 @@ private:
   atools::fs::bgl::leg::TurnDirection turnDirection;
   atools::fs::bgl::ap::ApproachFixType fixType, recommendedFixType;
 
-  bool trueCourse, time, flyover;
+  bool trueCourse, time, flyover, missed;
   QString fixIdent, fixRegion, fixAirportIdent, recommendedFixIdent, recommendedFixRegion;
 
   float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2;

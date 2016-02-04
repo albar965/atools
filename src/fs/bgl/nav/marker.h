@@ -66,12 +66,18 @@ public:
 
   static QString markerTypeToStr(atools::fs::bgl::nav::MarkerType type);
 
+  float getHeading() const
+  {
+    return heading;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Marker& record);
 
   atools::fs::bgl::nav::MarkerType type;
   atools::fs::bgl::BglPosition position;
   QString ident, region;
+  float heading;
 };
 
 } // namespace bgl

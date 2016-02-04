@@ -46,12 +46,14 @@ void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 
   // TODO create a WKT polygon from the triangles
   QStringList list;
   for(const bgl::BglPosition& pos : type->first->getVertices())
-    list.push_back(QString::number(pos.getLonX()) + " " + QString::number(pos.getLatY()));
+    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
+                   QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
   list.clear();
   for(const bgl::BglPosition& pos : type->second->getVertices())
-    list.push_back(QString::number(pos.getLonX()) + " " + QString::number(pos.getLatY()));
+    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
+                   QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices2", list.join(", "));
 
   bind(":triangles", toString(type->second->getTriangles()));

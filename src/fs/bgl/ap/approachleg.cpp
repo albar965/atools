@@ -27,8 +27,9 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-ApproachLeg::ApproachLeg(io::BinaryStream *bs)
+ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
 {
+  missed = ismissed;
   type = static_cast<leg::Type>(bs->readUByte());
   altDescriptor = static_cast<leg::AltDescriptor>(bs->readUByte());
   int flags = bs->readUShort();
@@ -48,10 +49,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs)
   unsigned int recFixFlags = bs->readUInt();
   recommendedFixType = static_cast<ap::ApproachFixType>(recFixFlags & 0xf);
   recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
-  // bs->readUInt();
-  bs->skip(4);
-  // TODO fix stack smashing
-  // recommendedFixRegion = converter::intToIcao(bs->readUInt(), true);
+  recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true); // TODO wiki mention mask
 
   theta = bs->readFloat(); // heading
   rho = bs->readFloat(); // distance
@@ -143,6 +141,9 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
 {
   switch(altDescr)
   {
+    case atools::fs::bgl::leg::UNKNOWN:
+      return "UNKNOWN";
+
     case atools::fs::bgl::leg::A:
       return "A";
 

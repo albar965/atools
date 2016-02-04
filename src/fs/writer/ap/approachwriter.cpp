@@ -20,6 +20,7 @@
 #include "fs/writer/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/ap/approachlegwriter.h"
 #include "fs/writer/runwayindex.h"
 #include "fs/writer/ap/transitionwriter.h"
 #include "fs/bgl/ap/approachtypes.h"
@@ -42,8 +43,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":approach_id", getNextId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
   bind(":has_gps_overlay", type->isGpsOverlay());
-  bind(":num_legs", type->getNumLegs());
-  bind(":num_missed_legs", type->getNumMissedLegs());
+  bindNullInt(":fix_nav_id");
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
@@ -51,6 +51,9 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":altitude", bgl::util::meterToFeet(type->getAltitude(), 1));
   bind(":heading", type->getHeading());
   bind(":missed_altitude", bgl::util::meterToFeet(type->getMissedAltitude(), 1));
+
+  getDataWriter().getApproachLegWriter()->write(type->getLegs());
+  getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
 
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();

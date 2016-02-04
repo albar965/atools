@@ -21,6 +21,7 @@ create table waypoint
 (
   waypoint_id integer primary key,
   file_id integer not null,
+  nav_id integer,
   ident text,
   region text,
   airport_id integer,
@@ -34,6 +35,7 @@ foreign key(airport_id) references airport(airport_id)
 
 create index if not exists idx_waypoint_file_id on waypoint(file_id);
 create index if not exists idx_waypoint_airport_id on waypoint(airport_id);
+create index if not exists idx_waypoint_nav_id on waypoint(nav_id);
 
 -- **************************************************
 
@@ -102,6 +104,7 @@ create table marker
   ident text,
   region text,
   type text not null,
+  heading real not null,
   altitude integer not null,
   lonx real not null,
   laty real not null,

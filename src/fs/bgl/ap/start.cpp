@@ -55,7 +55,7 @@ Start::Start(const BglReaderOptions *options, BinaryStream *bs)
   runwayDesignator = flags & 0x0f;
   type = static_cast<start::StartType>((flags >> 4) & 0xf);
   position = BglPosition(bs, true, 1000.f);
-  heading = bs->readFloat();
+  heading = bs->readFloat();// TODO wiki heading is float degress
 }
 
 QString Start::getRunwayName() const

@@ -69,7 +69,9 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<ap::TransitionType>(bs->readUByte());
-  numLegs = bs->readUByte();
+
+  int numLegs = bs->readUByte();
+  Q_UNUSED(numLegs);
 
   unsigned int transFixFlags = bs->readUInt();
   transFixType = static_cast<ap::TransitionFixType>(transFixFlags & 0xf);
@@ -110,7 +112,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.push_back(ApproachLeg(bs));
+            legs.push_back(ApproachLeg(bs, false));
         }
         break;
 
@@ -132,7 +134,6 @@ QDebug operator<<(QDebug out, const Transition& record)
 
   out.nospace().noquote() << static_cast<const Record&>(record)
   << " Transition[type " << Transition::transitionTypeToStr(record.type)
-  << ", numLegs " << record.numLegs
   << ", transFixType " << Transition::transitionFixTypeToStr(record.transFixType)
   << ", transFixIdent " << record.transFixIdent
   << ", fixRegion " << record.fixRegion

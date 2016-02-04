@@ -39,8 +39,10 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   gpsOverlay = (typeFlags & 0x80) == 0x80;
 
   numTransitions = bs->readUByte();
-  numLegs = bs->readUByte();
-  numMissedLegs = bs->readUByte();
+  int numLegs = bs->readUByte();
+  Q_UNUSED(numLegs);
+  int numMissedLegs = bs->readUByte();
+  Q_UNUSED(numMissedLegs);
 
   unsigned int fixFlags = bs->readUInt();
   fixType = static_cast<ap::ApproachFixType>(fixFlags & 0xf);
@@ -51,7 +53,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
   altitude = bs->readFloat();
-  heading = bs->readFloat();
+  heading = bs->readFloat();// TODO wiki heading is float degress
   missedAltitude = bs->readFloat();
 
   while(bs->tellg() < startOffset + size)
@@ -66,19 +68,18 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         transitions.push_back(Transition(options, bs));
         break;
 
-      // TODO read approach and transition legs
       case rec::LEGS:
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.push_back(ApproachLeg(bs));
+            legs.push_back(ApproachLeg(bs, false));
         }
         break;
       case rec::MISSED_LEGS:
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            missedLegs.push_back(ApproachLeg(bs));
+            missedLegs.push_back(ApproachLeg(bs, true));
         }
         break;
 

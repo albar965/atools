@@ -45,11 +45,13 @@ QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
 
 enum ApproachFixType
 {
+  FIX_NONE = 0,
   FIX_VOR = 2,
   FIX_NDB = 3,
   FIX_TERMINAL_NDB = 4,
   FIX_WAYPOINT = 5,
   FIX_TERMINAL_WAYPOINT = 6,
+  FIX_UNKNWON_VALUE_8 = 8,
   FIX_RUNWAY = 9
 };
 

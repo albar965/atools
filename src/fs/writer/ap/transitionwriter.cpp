@@ -20,7 +20,9 @@
 #include "fs/writer/ap/transitionwriter.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/writer/ap/approachwriter.h"
+#include "fs/bgl/ap/approachtypes.h"
 #include "fs/writer/ap/airportwriter.h"
+#include "fs/writer/ap/transitionlegwriter.h"
 
 namespace atools {
 namespace fs {
@@ -38,17 +40,30 @@ void TransitionWriter::writeObject(const Transition *type)
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
   bind(":type", Transition::transitionTypeToStr(type->getType()));
-  bind(":num_legs", type->getNumLegs());
+  bindNullInt(":fix_nav_id");
   bind(":fix_type", Transition::transitionFixTypeToStr(type->getTransFixType()));
   bind(":fix_ident", type->getTransFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());
   bind(":altitude", bgl::util::meterToFeet(type->getAltitude(), 1));
-  bind(":dme_ident", type->getDmeIdent());
-  bind(":dme_region", type->getDmeRegion());
-  bind(":dme_airport_ident", type->getDmeAirportIdent());
-  bind(":dme_radial", type->getDmeRadial());
-  bind(":dme_distance", bgl::util::meterToNm(type->getDmeDist()));
+
+  if(type->getType() == bgl::ap::APPR_TRANS_DME)
+  {
+    bind(":dme_ident", type->getDmeIdent());
+    bind(":dme_region", type->getDmeRegion());
+    bind(":dme_airport_ident", type->getDmeAirportIdent());
+    bind(":dme_radial", type->getDmeRadial());
+    bind(":dme_distance", bgl::util::meterToNm(type->getDmeDist()));
+  }
+  else
+  {
+    bindNullString(":dme_ident");
+    bindNullString(":dme_region");
+    bindNullString(":dme_airport_ident");
+    bindNullInt(":dme_radial");
+    bindNullInt(":dme_distance");
+  }
+  getDataWriter().getApproachTransLegWriter()->write(type->getLegs());
 
   executeStatement();
 }

@@ -69,23 +69,29 @@ QString approachFixTypeToStr(ap::ApproachFixType type)
 {
   switch(type)
   {
+    case atools::fs::bgl::ap::FIX_UNKNWON_VALUE_8:
+      return "FIX_UNKNWON_VALUE_8";
+
+    case ap::FIX_NONE:
+      return "NONE";
+
     case ap::FIX_VOR:
-      return "FIX_VOR";
+      return "VOR";
 
     case ap::FIX_NDB:
-      return "FIX_NDB";
+      return "NDB";
 
     case ap::FIX_TERMINAL_NDB:
-      return "FIX_TERMINAL_NDB";
+      return "TERMINAL_NDB";
 
     case ap::FIX_WAYPOINT:
-      return "FIX_WAYPOINT";
+      return "WAYPOINT";
 
     case ap::FIX_TERMINAL_WAYPOINT:
-      return "FIX_TERMINAL_WAYPOINT";
+      return "TERMINAL_WAYPOINT";
 
     case ap::FIX_RUNWAY:
-      return "FIX_RUNWAY";
+      return "RUNWAY";
   }
   qWarning().nospace().noquote() << "Unknown approach fix type " << type;
   return QString();

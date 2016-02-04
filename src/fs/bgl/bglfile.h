@@ -163,6 +163,12 @@ const TYPE *BglFile::createRecord(const BglReaderOptions *options,
 {
   TYPE *rec = new TYPE(options, bs);
 
+  if(rec->isExcluded())
+  {
+    delete rec;
+    return nullptr;
+  }
+
   if(options->isVerbose())
   {
     qDebug() << "----";

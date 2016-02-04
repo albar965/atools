@@ -66,7 +66,7 @@ Helipad::Helipad(const BglReaderOptions *options, BinaryStream *bs)
   position = BglPosition(bs, true, 1000.f);
   length = bs->readFloat();
   width = bs->readFloat();
-  heading = bs->readFloat();
+  heading = bs->readFloat(); // TODO wiki heading is float degress
 }
 
 QDebug operator<<(QDebug out, const Helipad& record)

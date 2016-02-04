@@ -159,7 +159,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
 
   fetchPrimaryAppStmt.prepare(
     "select "
-    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, ap.num_legs, ap.num_missed_legs, "
+    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, "
     "ap.fix_type, ap.fix_ident, ap.fix_region, ap.fix_airport_ident, ap.altitude, ap.heading, ap.missed_altitude "
     "from airport a "
     "join runway r on r.airport_id = a.airport_id "
@@ -175,7 +175,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
 
   fetchSecondaryAppStmt.prepare(
     "select "
-    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, ap.num_legs, ap.num_missed_legs, "
+    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, "
     "ap.fix_type, ap.fix_ident, ap.fix_region, ap.fix_airport_ident, ap.altitude, ap.heading, ap.missed_altitude "
     "from airport a "
     "join runway r on r.airport_id = a.airport_id "

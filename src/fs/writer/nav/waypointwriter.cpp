@@ -35,6 +35,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   bind(":waypoint_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
+  bindNullInt(":nav_id");
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));

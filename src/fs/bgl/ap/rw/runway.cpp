@@ -175,7 +175,7 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
 
   length = bs->readFloat();
   width = bs->readFloat();
-  heading = bs->readFloat();
+  heading = bs->readFloat(); // TODO wiki heading is float degress
   patternAltitude = bs->readFloat();
 
   markingFlags = bs->readUShort();
