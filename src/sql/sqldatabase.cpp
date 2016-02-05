@@ -36,6 +36,7 @@ SqlDatabase::SqlDatabase(const QSqlDatabase& other)
 SqlDatabase::SqlDatabase(const SqlDatabase& other)
 {
   db = QSqlDatabase(other.db);
+  autocommit = other.autocommit;
 }
 
 SqlDatabase::SqlDatabase(const QSettings& settings, const QString& groupName)
@@ -63,22 +64,37 @@ SqlDatabase::~SqlDatabase()
 SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
 {
   db = QSqlDatabase(other.db);
+  autocommit = other.autocommit;
   return *this;
 }
 
-void SqlDatabase::open()
+void SqlDatabase::open(const QStringList& pragmas)
 {
   checkError(!isOpen(), "Opening a database that is alread open");
   checkError(db.open(), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
+
+  for(const QString& pragma : pragmas)
+  {
+    db.exec(pragma);
+    checkError(isValid(), "Database not valid after \"" + pragma + "\"");
+  }
+
   transaction();
 }
 
-void SqlDatabase::open(const QString& user, const QString& password)
+void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)
 {
   checkError(!isOpen(), "Opening a database that is alread open");
   checkError(db.open(user, password), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
+
+  for(const QString& pragma : pragmas)
+  {
+    db.exec(pragma);
+    checkError(isValid(), "Database not valid after \"" + pragma + "\"");
+  }
+
   transaction();
 }
 
@@ -314,9 +330,19 @@ void SqlDatabase::checkError(bool retval, const QString& msg) const
     throw SqlException(db.lastError(), msg);
 }
 
+bool SqlDatabase::isAutocommit() const
+{
+    return autocommit;
+}
+
+void SqlDatabase::setAutocommit(bool value)
+{
+    autocommit = value;
+}
+
 const QSqlDatabase& SqlDatabase::getQSqlDatabase() const
 {
-  return db;
+    return db;
 }
 
 } // namespace sql

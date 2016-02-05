@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "sql/sqlquery.h"
-#include "sql/sqldatabase.h"
 #include "sql/sqlexception.h"
+#include "sql/sqldatabase.h"
 
 #include <QSqlError>
 #include <QSqlRecord>
@@ -30,57 +30,66 @@ SqlQuery::SqlQuery(QSqlResult *r)
 {
   this->query = QSqlQuery(r);
   this->queryString = QString();
+  this->db = new SqlDatabase();
 }
 
 SqlQuery::SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb)
 {
   this->query = QSqlQuery(queryStr, sqlDb.getQSqlDatabase());
   this->queryString = queryStr;
-
+  this->db = new SqlDatabase(sqlDb);
 }
 
 SqlQuery::SqlQuery(const QString& queryStr, const QSqlDatabase& sqlDb)
 {
   this->query = QSqlQuery(queryStr, sqlDb);
   this->queryString = queryStr;
+  this->db = new SqlDatabase();
 
   if(!queryStr.isEmpty())
     checkError(!lastError().isValid(), "SqlQuery caused error after construction");
 }
 
-SqlQuery::SqlQuery(const SqlDatabase *db)
+SqlQuery::SqlQuery(const SqlDatabase *sqlDb)
 {
-  this->query = QSqlQuery(db->getQSqlDatabase());
+  this->query = QSqlQuery(sqlDb->getQSqlDatabase());
   this->queryString = QString();
+  this->db = new SqlDatabase(*sqlDb);
 }
 
-SqlQuery::SqlQuery(const SqlDatabase& db)
+SqlQuery::SqlQuery(const SqlDatabase& sqlDb)
 {
-  this->query = QSqlQuery(db.getQSqlDatabase());
+  this->query = QSqlQuery(sqlDb.getQSqlDatabase());
   this->queryString = QString();
+  this->db = new SqlDatabase(sqlDb);
 }
 
 SqlQuery::SqlQuery(const SqlQuery& other)
 {
   this->query = other.query;
   this->queryString = other.queryString;
+  this->db = new SqlDatabase(*other.db);
+
 }
 
 SqlQuery::SqlQuery(const QSqlQuery& otherQuery, QString queryStr)
 {
   this->query = otherQuery;
   this->queryString = queryStr;
+  this->db = new SqlDatabase();
 }
 
 SqlQuery& SqlQuery::operator=(const SqlQuery& other)
 {
   this->query = other.query;
   this->queryString = other.queryString;
+  this->db = new SqlDatabase(*other.db);
   return *this;
 }
 
 SqlQuery::~SqlQuery()
 {
+  delete db;
 }
 
 bool SqlQuery::isValid() const
@@ -180,6 +189,9 @@ void SqlQuery::exec(const QString& queryStr)
 {
   this->queryString = queryStr;
   checkError(query.exec(queryStr), "SqlQuery::exec(): Error executing query");
+
+  if(db->isAutocommit())
+    db->commit();
 }
 
 QVariant SqlQuery::value(int i) const
@@ -257,11 +269,16 @@ void SqlQuery::clear()
 void SqlQuery::exec()
 {
   checkError(query.exec(), "SqlQuery::exec(): Error executing query");
+  if(db->isAutocommit())
+    db->commit();
 }
 
 void SqlQuery::execBatch(QSqlQuery::BatchExecutionMode mode)
 {
   checkError(query.execBatch(mode), "SqlQuery::execBatch(): Error executing query batch");
+
+  if(db->isAutocommit())
+    db->commit();
 }
 
 void SqlQuery::prepare(const QString& queryStr)

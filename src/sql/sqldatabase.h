@@ -58,8 +58,8 @@ public:
 
   SqlDatabase& operator=(const SqlDatabase& other);
 
-  void open();
-  void open(const QString& user, const QString& password);
+  void open(const QStringList& pragmas = QStringList());
+  void open(const QString& user, const QString& password, const QStringList& pragmas = QStringList());
   void close();
   bool isOpen() const;
   QStringList tables(QSql::TableType type = QSql::Tables) const;
@@ -116,6 +116,9 @@ public:
 
   const QSqlDatabase& getQSqlDatabase() const;
 
+  bool isAutocommit() const;
+  void setAutocommit(bool value);
+
 private:
   SqlDatabase(const QSqlDatabase& other);
 
@@ -126,6 +129,7 @@ private:
   void checkError(bool retval = true, const QString& msg = QString()) const;
 
   QSqlDatabase db;
+  bool autocommit = false;
 };
 
 } // namespace sql

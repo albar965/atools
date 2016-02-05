@@ -43,7 +43,7 @@ public:
   explicit SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb);
   explicit SqlQuery(const QString& queryStr = QString(), const QSqlDatabase& sqlDb = QSqlDatabase());
   explicit SqlQuery(const SqlDatabase& db);
-  explicit SqlQuery(const SqlDatabase *db);
+  explicit SqlQuery(const SqlDatabase *sqlDb);
 
   SqlQuery(const SqlQuery& other);
   SqlQuery& operator=(const SqlQuery& other);
@@ -113,6 +113,7 @@ private:
 
   QSqlQuery query;
   QString queryString;
+  SqlDatabase *db;
 };
 
 } // namespace sql
