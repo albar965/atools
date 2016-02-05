@@ -123,6 +123,7 @@ bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
 
 void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
 {
+  setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveRoutes(settings.value("Options/ResolveRoutes", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());

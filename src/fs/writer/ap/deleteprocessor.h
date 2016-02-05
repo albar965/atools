@@ -55,7 +55,7 @@ private:
   void executeStatement(sql::SqlQuery *stmt, const QString& what);
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
-  void copyApproaches(sql::SqlQuery *fetchApprStmt);
+  void transferApproaches();
   void deleteApproaches();
   void deleteRunways();
   void deleteAirport();
@@ -72,6 +72,7 @@ private:
   *deleteParkingStmt,
   *deleteDeleteApStmt,
   *fetchRunwayEndIdStmt,
+  *fetchPrimaryRunwayEndIdStmt, *fetchSecondaryRunwayEndIdStmt, *updateApprochRwIds,
   *deleteRunwayEndStmt,
   *deleteIlsStmt,
   *nullWpStmt,
@@ -85,13 +86,19 @@ private:
   *deleteStartStmt, *updateStartStmt,
   *deleteTaxiPathStmt, *updateTaxiPathStmt,
   *deleteComStmt, *updateComStmt,
-  *fetchPrimaryAppStmt, *fetchSecondaryAppStmt, *fetchTransitionStmt;
+  *fetchPrimaryAppStmt, *fetchSecondaryAppStmt,
+
+  *deleteTransitionLegStmt,
+  *deleteApproachLegStmt,
+  *deleteTransitionStmt,
+  *deleteApproacheStmt,
+  *fetchOldApproachIdStmt;
 
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
   void deleteOrUpdate(sql::SqlQuery *deleteStmt,
-                              sql::SqlQuery *updateStmt,
-                              atools::fs::bgl::del::DeleteAllFlags flag);
+                      sql::SqlQuery *updateStmt,
+                      atools::fs::bgl::del::DeleteAllFlags flag);
 
   const atools::fs::bgl::DeleteAirport *del;
   const atools::fs::bgl::Airport *type;
@@ -100,6 +107,9 @@ private:
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
 
   QString updateAptFeatureToNullStmt(const QString& table);
+  void deleteApproachesAndTransitions(const QSet<int>& ids);
+  QSet<int> fetchOldApproachIds();
+
 };
 
 } // namespace writer

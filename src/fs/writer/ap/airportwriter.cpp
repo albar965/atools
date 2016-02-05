@@ -67,7 +67,8 @@ void AirportWriter::writeObject(const Airport *type)
   if(!getOptions().includeAirport(type->getIdent()))
     return;
 
-  qDebug() << "Writing airport" << type->getIdent() << "name" << type->getName();
+  if(getOptions().isVerbose())
+    qDebug() << "Writing airport" << type->getIdent() << "name" << type->getName();
 
   bindNullString(":country");
   bindNullString(":state");

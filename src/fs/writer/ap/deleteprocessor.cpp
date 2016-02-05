@@ -19,7 +19,6 @@
 #include "fs/writer/ap/approachwriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
-#include "sql/sqlutil.h"
 #include "fs/writer/datawriter.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/util.h"
@@ -37,43 +36,7 @@ namespace writer {
 using atools::fs::bgl::DeleteAirport;
 using atools::fs::bgl::Airport;
 using atools::sql::SqlQuery;
-using atools::sql::SqlUtil;
 using bgl::util::isFlagSet;
-
-/* Functor class that is used to update the ids in copied tables */
-template<class IDSOURCE>
-class IdColFunc :
-  public std::binary_function<SqlQuery&, SqlQuery&, bool>
-{
-public:
-  IdColFunc(const QString& column, IDSOURCE *dataWriter)
-    : writer(dataWriter), col(column), bindCol(":" + column)
-  {
-  }
-
-  bool operator()(SqlQuery& from, SqlQuery& to)
-  {
-    // Update id in the query
-    int nextId = writer->getNextId();
-    to.bindValue(bindCol, nextId);
-
-    // Set all fixed values
-    for(QPair<QString, int> iter : fixedColValues)
-      to.bindValue(iter.first, iter.second);
-
-    // Remember the mapped ids for other updatess
-    mappedIds.push_back(QPair<int, int>(from.value(col).toInt(), nextId));
-    return true;
-  }
-
-  QList<QPair<int, int> > mappedIds;
-  QList<QPair<QString, int> > fixedColValues;
-
-private:
-  IDSOURCE *writer;
-  QString col;
-  QString bindCol;
-};
 
 DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& writer)
   : dataWriter(writer), db(sqlDb)
@@ -86,12 +49,19 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deletePrimaryTransitionLegStmt = new SqlQuery(sqlDb);
   deleteSecondaryTransitionStmt = new SqlQuery(sqlDb);
   deleteSecondaryTransitionLegStmt = new SqlQuery(sqlDb);
+
   deleteRunwayStmt = new SqlQuery(sqlDb);
   deleteParkingStmt = new SqlQuery(sqlDb);
   deleteDeleteApStmt = new SqlQuery(sqlDb);
+
   fetchRunwayEndIdStmt = new SqlQuery(sqlDb);
   deleteRunwayEndStmt = new SqlQuery(sqlDb);
   deleteIlsStmt = new SqlQuery(sqlDb);
+
+  fetchPrimaryRunwayEndIdStmt = new SqlQuery(sqlDb);
+  fetchSecondaryRunwayEndIdStmt = new SqlQuery(sqlDb);
+  updateApprochRwIds = new SqlQuery(sqlDb);
+
   nullWpStmt = new SqlQuery(sqlDb);
   nullVorStmt = new SqlQuery(sqlDb);
   nullNdbStmt = new SqlQuery(sqlDb);
@@ -112,7 +82,12 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   updateComStmt = new SqlQuery(sqlDb);
   fetchPrimaryAppStmt = new SqlQuery(sqlDb);
   fetchSecondaryAppStmt = new SqlQuery(sqlDb);
-  fetchTransitionStmt = new SqlQuery(sqlDb);
+
+  deleteTransitionLegStmt = new SqlQuery(sqlDb);
+  deleteApproachLegStmt = new SqlQuery(sqlDb);
+  deleteTransitionStmt = new SqlQuery(sqlDb);
+  deleteApproacheStmt = new SqlQuery(sqlDb);
+  fetchOldApproachIdStmt = new SqlQuery(sqlDb);
 
   // Most query act on all airports with the given ident except the current one
   // (where a.ident = :apIdent and a.airport_id <> :curApId)
@@ -160,6 +135,19 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
                          "join transition tr on app.approach_id = tr.approach_id  "
                          "where a.ident = :apIdent and a.airport_id <> :curApId");
 
+  QString fetchOldAndNewRwIds("select "
+                              "e.runway_end_id as old_runway_end_id, "
+                              "eo.runway_end_id as new_runway_end_id "
+                              "from airport a "
+                              "join airport ao on a.ident = ao.ident "
+                              "join runway r on r.airport_id = a.airport_id "
+                              "join runway_end e on r.%1_end_id = e.runway_end_id "
+                              "join runway ro on ro.airport_id = ao.airport_id "
+                              "join runway_end eo on ro.%1_end_id = eo.runway_end_id "
+                              "where a.ident = :apIdent and a.airport_id <> :curApId and "
+                              "ao.ident = :apIdent and ao.airport_id == :curApId and "
+                              "e.name = eo.name");
+
   // Delete all approaches on the primary runway ends of an airport
   deletePrimaryApproachStmt->prepare(
     "delete from approach where runway_end_id in (" + primaryRwEnds + ")");
@@ -201,6 +189,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "from airport a join runway r on a.airport_id = r.airport_id "
     "where a.ident = :apIdent and a.airport_id <> :curApId");
 
+  fetchPrimaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("primary"));
+  fetchSecondaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("secondary"));
+
   deleteRunwayEndStmt->prepare(
     "delete from runway_end where runway_end_id = :endId");
 
@@ -233,39 +224,23 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   updateApronLightStmt->prepare(updateAptFeatureStmt("apron_light"));
   updateTaxiPathStmt->prepare(updateAptFeatureStmt("taxi_path"));
 
-  fetchPrimaryAppStmt->prepare(
-    "select "
-    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, "
-    "ap.fix_type, ap.fix_ident, ap.fix_region, ap.fix_airport_ident, ap.altitude, ap.heading, ap.missed_altitude "
-    "from airport a "
-    "join runway r on r.airport_id = a.airport_id "
-    "join approach ap on ap.runway_end_id = e.runway_end_id "
-    "join runway_end e on r.primary_end_id = e.runway_end_id "
-    "join airport ao  on ao.ident = a.ident "
-    "join runway ro on ro.airport_id = ao.airport_id "
-    "join runway_end eo on ro.primary_end_id = eo.runway_end_id "
-    "where "
-    "a.ident = :apIdent and a.airport_id = :curApId and "
-    "ao.ident = :apIdent and ao.airport_id <> :curApId and "
-    "e.name = eo.name ");
+  updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
 
-  fetchSecondaryAppStmt->prepare(
-    "select "
-    "ap.approach_id, eo.runway_end_id, ap.type, ap.has_gps_overlay, "
-    "ap.fix_type, ap.fix_ident, ap.fix_region, ap.fix_airport_ident, ap.altitude, ap.heading, ap.missed_altitude "
-    "from airport a "
-    "join runway r on r.airport_id = a.airport_id "
-    "join approach ap on ap.runway_end_id = e.runway_end_id "
-    "join runway_end e on r.secondary_end_id = e.runway_end_id "
-    "join airport ao  on ao.ident = a.ident "
-    "join runway ro on ro.airport_id = ao.airport_id "
-    "join runway_end eo on ro.secondary_end_id = eo.runway_end_id "
-    "where "
-    "a.ident = :apIdent and a.airport_id = :curApId and "
-    "ao.ident = :apIdent and ao.airport_id <> :curApId and "
-    "e.name = eo.name ");
+  deleteTransitionLegStmt->prepare("delete from transition_leg "
+                                   "where transition_id in "
+                                   "(select transition_id from transition where approach_id = :id)");
+  deleteApproachLegStmt->prepare("delete from approach_leg where approach_id = :id");
+  deleteTransitionStmt->prepare("delete from transition where approach_id = :id");
+  deleteApproacheStmt->prepare("delete from approach where approach_id = :id");
+  fetchOldApproachIdStmt->prepare(
+    "select app.approach_id as primary_app_id, app2.approach_id as secondary_app_id "
+    "from airport a  "
+    "join airport ao on a.ident = ao.ident "
+    "join runway r on r.airport_id = a.airport_id  "
+    "join approach app on app.runway_end_id = r.primary_end_id  "
+    "join approach app2 on app2.runway_end_id = r.secondary_end_id  "
+    "where a.ident = :apIdent and a.airport_id <> :curApId ");
 
-  fetchTransitionStmt->prepare("select * from transition where approach_id = :approachId");
 }
 
 DeleteProcessor::~DeleteProcessor()
@@ -278,15 +253,22 @@ DeleteProcessor::~DeleteProcessor()
   delete deletePrimaryTransitionLegStmt;
   delete deleteSecondaryTransitionStmt;
   delete deleteSecondaryTransitionLegStmt;
+
   delete deleteRunwayStmt;
   delete deleteParkingStmt;
   delete deleteDeleteApStmt;
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
   delete deleteIlsStmt;
+
+  delete fetchPrimaryRunwayEndIdStmt;
+  delete fetchSecondaryRunwayEndIdStmt;
+  delete updateApprochRwIds;
+
   delete nullWpStmt;
   delete nullVorStmt;
   delete nullNdbStmt;
+
   delete deleteAirportStmt;
   delete deleteApronStmt;
   delete updateApronStmt;
@@ -304,7 +286,12 @@ DeleteProcessor::~DeleteProcessor()
   delete updateComStmt;
   delete fetchPrimaryAppStmt;
   delete fetchSecondaryAppStmt;
-  delete fetchTransitionStmt;
+
+  delete deleteTransitionLegStmt;
+  delete deleteApproachLegStmt;
+  delete deleteTransitionStmt;
+  delete deleteApproacheStmt;
+  delete fetchOldApproachIdStmt;
 }
 
 void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *airport, int currentApId)
@@ -318,12 +305,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *a
   if(isFlagSet(del->getFlags(), bgl::del::APPROACHES))
     deleteApproaches();
   else
-  {
-    // TODO relink approaches
-    copyApproaches(fetchPrimaryAppStmt);
-    copyApproaches(fetchSecondaryAppStmt);
-    deleteApproaches();
-  }
+    transferApproaches();
 
   deleteOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
   deleteOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
@@ -333,21 +315,11 @@ void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *a
   deleteOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
 
   if(isFlagSet(del->getFlags(), bgl::del::RUNWAYS))
+    // TODO no update yet since it does not appear in reality
     deleteRunways();
-  // Remove the whole airport if all runways are deleted
-  // deleteAirport();
-}
 
-void DeleteProcessor::deleteOrUpdate(SqlQuery *deleteStmt,
-                                     SqlQuery *updateStmt,
-                                     bgl::del::DeleteAllFlags flag)
-{
-  QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
-
-  if(isFlagSet(del->getFlags(), flag))
-    bindAndExecute(deleteStmt, delTypeStr + " deleted");
-  else
-    bindAndExecute(updateStmt, delTypeStr + " updated");
+  // TODO this keeps from updating airport features
+  deleteAirport();
 }
 
 void DeleteProcessor::deleteApproaches()
@@ -406,40 +378,57 @@ void DeleteProcessor::deleteAirport()
   bindAndExecute(deleteAirportStmt, "airports deleted");
 }
 
-void DeleteProcessor::copyApproaches(SqlQuery *fetchApprStmt)
+void DeleteProcessor::deleteApproachesAndTransitions(const QSet<int>& ids)
 {
-  SqlUtil util(&db);
-  SqlQuery insertApprStmt(db);
-  insertApprStmt.prepare(util.buildInsertStatement("approach"));
-  SqlQuery insertTrStmt(db);
-  insertTrStmt.prepare(util.buildInsertStatement("transition"));
-
-  IdColFunc<ApproachWriter> appIdColFunc("approach_id", dataWriter.getApproachWriter());
-  IdColFunc<TransitionWriter> trIdColFunc("transition_id", dataWriter.getApproachTransWriter());
-
-  fetchApprStmt->bindValue(":apIdent", ident);
-  fetchApprStmt->bindValue(":curApId", currentId);
-  fetchApprStmt->exec();
-
-  // Copy approaches and get new ids from the writer objects
-  int copied = util.copyResultValues(*fetchApprStmt, insertApprStmt, appIdColFunc);
-
-  if(dataWriter.getOptions().isVerbose())
-    qDebug() << copied << " approaches copied";
-
-  for(QPair<int, int> iter : appIdColFunc.mappedIds)
+  for(int i : ids)
   {
-    int oldId = iter.first, newId = iter.second;
-    trIdColFunc.fixedColValues.clear();
-    trIdColFunc.fixedColValues.push_back(QPair<QString, int>(":approach_id", newId));
+    deleteTransitionLegStmt->bindValue(":id", i);
+    executeStatement(deleteTransitionLegStmt, "transition_leg");
 
-    fetchTransitionStmt->bindValue(":approachId", oldId);
-    fetchTransitionStmt->exec();
+    deleteApproachLegStmt->bindValue(":id", i);
+    executeStatement(deleteApproachLegStmt, "approach_leg");
 
-    int copyResults = util.copyResultValues(*fetchTransitionStmt, insertTrStmt, trIdColFunc);
-    if(dataWriter.getOptions().isVerbose())
-      qDebug() << copyResults << " transitions copied";
+    deleteTransitionStmt->bindValue(":id", i);
+    executeStatement(deleteTransitionStmt, "transition");
+
+    deleteApproacheStmt->bindValue(":id", i);
+    executeStatement(deleteApproacheStmt, "approach");
   }
+}
+
+QSet<int> DeleteProcessor::fetchOldApproachIds()
+{
+  QSet<int> ids;
+  bindAndExecute(fetchOldApproachIdStmt, "old approach ids");
+  while(fetchOldApproachIdStmt->next())
+  {
+    ids.insert(fetchOldApproachIdStmt->value("primary_app_id").toInt());
+    ids.insert(fetchOldApproachIdStmt->value("secondary_app_id").toInt());
+  }
+  return ids;
+}
+
+void DeleteProcessor::transferApproaches()
+{
+  QSet<int> ids = fetchOldApproachIds();
+
+  bindAndExecute(fetchPrimaryRunwayEndIdStmt, "fetched old and new primary runway end ids");
+  while(fetchPrimaryRunwayEndIdStmt->next())
+  {
+    updateApprochRwIds->bindValue(":newRwId", fetchPrimaryRunwayEndIdStmt->value("new_runway_end_id").toInt());
+    updateApprochRwIds->bindValue(":oldRwId", fetchPrimaryRunwayEndIdStmt->value("old_runway_end_id").toInt());
+    executeStatement(updateApprochRwIds, "update approach primary runway end ids");
+  }
+
+  bindAndExecute(fetchSecondaryRunwayEndIdStmt, "fetched old and new secondary runway end ids");
+  while(fetchSecondaryRunwayEndIdStmt->next())
+  {
+    updateApprochRwIds->bindValue(":newRwId", fetchSecondaryRunwayEndIdStmt->value("new_runway_end_id").toInt());
+    updateApprochRwIds->bindValue(":oldRwId", fetchSecondaryRunwayEndIdStmt->value("old_runway_end_id").toInt());
+    executeStatement(updateApprochRwIds, "update approach secondary runway end ids");
+  }
+
+  deleteApproachesAndTransitions(ids);
 }
 
 void DeleteProcessor::executeStatement(SqlQuery *stmt, const QString& what)
@@ -459,6 +448,18 @@ void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& w
 
   if(dataWriter.getOptions().isVerbose())
     qDebug() << ids.size() << " " << what;
+}
+
+void DeleteProcessor::deleteOrUpdate(SqlQuery *deleteStmt,
+                                     SqlQuery *updateStmt,
+                                     bgl::del::DeleteAllFlags flag)
+{
+  QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
+
+  if(isFlagSet(del->getFlags(), flag))
+    bindAndExecute(deleteStmt, delTypeStr + " deleted");
+  else
+    bindAndExecute(updateStmt, delTypeStr + " updated");
 }
 
 QString DeleteProcessor::updateAptFeatureToNullStmt(const QString& table)
