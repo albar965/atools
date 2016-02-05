@@ -63,9 +63,9 @@ void TransitionWriter::writeObject(const Transition *type)
     bindNullInt(":dme_radial");
     bindNullInt(":dme_distance");
   }
-  getDataWriter().getApproachTransLegWriter()->write(type->getLegs());
-
   executeStatement();
+
+  getDataWriter().getApproachTransLegWriter()->write(type->getLegs());
 }
 
 } // namespace writer

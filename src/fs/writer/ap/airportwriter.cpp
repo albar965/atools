@@ -67,8 +67,7 @@ void AirportWriter::writeObject(const Airport *type)
   if(!getOptions().includeAirport(type->getIdent()))
     return;
 
-  if(getOptions().isVerbose())
-    qDebug() << "Writing airport " << type->getIdent() << " name " << type->getName();
+  qDebug() << "Writing airport" << type->getIdent() << "name" << type->getName();
 
   bindNullString(":country");
   bindNullString(":state");
@@ -159,11 +158,11 @@ void AirportWriter::writeObject(const Airport *type)
   DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
 
   const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
-  for(DeleteAirport delAp : deleteAirports)
+  for(const DeleteAirport& delAp : deleteAirports)
   {
     deleteAirportWriter->writeOne(delAp);
     if(getOptions().isDeletes())
-      deleteProcessor.processDelete(delAp, type, getCurrentId());
+      deleteProcessor.processDelete(&delAp, type, getCurrentId());
   }
 }
 

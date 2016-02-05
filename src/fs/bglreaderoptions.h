@@ -30,21 +30,21 @@ namespace type {
 enum BglObjectType
 {
   UNKNOWN,
-  AIRPORT, // ok
-  RUNWAY, // ok
-  HELIPAD, // ok
-  START, // ok
-  APPROACH, // ok
-  COM, // ok
-  PARKING, // ok
-  ILS, // ok
-  VOR, // ok
-  NDB, // ok
-  WAYPOINT, // ok
-  MARKER, // ok
-  APRON, // ok
-  FENCE, // ok
-  TAXIWAY, // ok
+  AIRPORT,
+  RUNWAY,
+  HELIPAD,
+  START,
+  APPROACH,
+  COM,
+  PARKING,
+  ILS,
+  VOR,
+  NDB,
+  WAYPOINT,
+  MARKER,
+  APRON,
+  FENCE,
+  TAXIWAY,
   ROUTE
 };
 
@@ -83,9 +83,9 @@ public:
     return verbose;
   }
 
-  bool isDebugAutocommit() const
+  bool isAutocommit() const
   {
-    return debugAutocommit;
+    return autocommit;
   }
 
   bool isIncomplete() const
@@ -133,9 +133,9 @@ public:
     incomplete = value;
   }
 
-  void setDebugAutocommit(bool value)
+  void setAutocommit(bool value)
   {
-    debugAutocommit = value;
+    autocommit = value;
   }
 
   void loadFiltersFromSettings(const QSettings& settings);
@@ -165,7 +165,7 @@ private:
   void setBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
 
   QString sceneryFile, basepath;
-  bool verbose = false, deletes = true, filterRunways = true, incomplete = true, debugAutocommit = false,
+  bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
        resolveRoutes = true;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,

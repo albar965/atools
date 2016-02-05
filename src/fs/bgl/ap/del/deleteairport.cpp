@@ -44,6 +44,12 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
     retval += "STARTS,";
   if((flags & del::TAXIWAYS) == del::TAXIWAYS)
     retval += "TAXIWAYS,";
+  else if(flags != 0)
+    qWarning().nospace().noquote() << "Found unknown delete all flags 0x" << hex << flags;
+
+  if(retval.endsWith(","))
+    retval.chop(1);
+
   return retval;
 }
 

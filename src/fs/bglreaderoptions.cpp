@@ -127,6 +127,7 @@ void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
   setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());
+  setAutocommit(settings.value("Options/Autocommit", true).toBool());
 
   setFilenameFilterInc(settings.value("Filter/IncludeFilenames").toStringList());
   setFilenameFilterExcl(settings.value("Filter/ExcludeFilenames").toStringList());
@@ -190,7 +191,7 @@ QDebug operator<<(QDebug out, const BglReaderOptions& opts)
   << "\", basepath \"" << opts.basepath
   << "\", deletes " << opts.deletes
   << ", incomplete " << opts.incomplete
-  << ", debugAutocommit " << opts.debugAutocommit;
+  << ", debugAutocommit " << opts.autocommit;
 
   out << ", Include file filter [";
   for(const QRegExp& f : opts.fileFiltersInc)

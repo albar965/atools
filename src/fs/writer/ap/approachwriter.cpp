@@ -52,9 +52,6 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":heading", type->getHeading());
   bind(":missed_altitude", bgl::util::meterToFeet(type->getMissedAltitude(), 1));
 
-  getDataWriter().getApproachLegWriter()->write(type->getLegs());
-  getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
-
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
@@ -77,6 +74,9 @@ void ApproachWriter::writeObject(const Approach *type)
   if(getOptions().isIncomplete() || isComplete)
   {
     executeStatement();
+
+    getDataWriter().getApproachLegWriter()->write(type->getLegs());
+    getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
 
     TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
     appWriter->write(type->getTransitions());

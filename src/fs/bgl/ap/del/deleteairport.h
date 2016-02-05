@@ -38,6 +38,12 @@ namespace bgl {
 namespace del {
 enum DeleteAllFlags
 {
+  // TODO missing not documented flags
+  // deleteAllBlastFences = "TRUE"
+  // deleteAllBoundaryFences = "TRUE"
+  // deleteAllControlTowers = "TRUE"
+  // deleteAllJetways = "TRUE"
+
   APPROACHES = 1 << 0,
   APRONLIGHTS = 1 << 1,
   APRONS = 1 << 2,

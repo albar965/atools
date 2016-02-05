@@ -121,7 +121,7 @@ void WriterBase<TYPE>::write(const TypeVector& types)
   if(!types.empty())
     for(TypeConstIter it = types.begin(); it != types.end(); ++it)
     {
-      TYPE t = *it;
+      const TYPE& t = *it;
       writeOne(&t);
     }
 }

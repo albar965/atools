@@ -47,17 +47,20 @@ void Navdatabase::create()
   QElapsedTimer timer;
   timer.start();
 
+  if(options->isAutocommit())
+    db->setAutocommit(true);
+
   atools::fs::scenery::SceneryCfg cfg;
   cfg.read(options->getSceneryFile());
 
   SqlScript script(db);
+  script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
+  db->commit();
+
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_views.sql");
-  db->commit();
-
-  SqlQuery(db).exec("PRAGMA foreign_keys = ON");
   db->commit();
 
   atools::fs::writer::DataWriter dataWriter(*db, *options);

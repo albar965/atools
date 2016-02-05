@@ -18,13 +18,9 @@
 #ifndef WRITER_AP_DELETEPROCESSOR_H_
 #define WRITER_AP_DELETEPROCESSOR_H_
 
-#include "sql/sqlquery.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/ap/airport.h"
 
-namespace db {
-class Database;
-}
 namespace bgl {
 namespace ap {
 class Airport;
@@ -35,6 +31,10 @@ class DeleteAirport;
 }
 
 namespace atools {
+namespace sql {
+class SqlQuery;
+class SqlDatabase;
+}
 namespace fs {
 namespace writer {
 
@@ -47,41 +47,59 @@ public:
   DeleteProcessor(atools::sql::SqlDatabase& sqlDb, atools::fs::writer::DataWriter& writer);
   virtual ~DeleteProcessor();
 
-  void processDelete(const atools::fs::bgl::DeleteAirport& del,
-                     const atools::fs::bgl::Airport *type,
-                     int currentId);
+  void processDelete(const bgl::DeleteAirport *delAp,
+                     const atools::fs::bgl::Airport *airport,
+                     int currentApId);
 
 private:
-  void executeStatement(atools::sql::SqlQuery& stmt, const QString& what);
-  void fetchIds(atools::sql::SqlQuery& stmt, QList<int>& ids, const QString& what);
+  void executeStatement(sql::SqlQuery *stmt, const QString& what);
+  void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
-  void copyApproaches(atools::sql::SqlQuery& fetchApprStmt, int currentId, const QString& ident);
-  void deleteApproaches(int currentId, const QString& ident);
-  void deleteRunways(int currentId, const QString& ident);
-  void deleteAirport(int currentId, const QString& ident);
+  void copyApproaches(sql::SqlQuery *fetchApprStmt);
+  void deleteApproaches();
+  void deleteRunways();
+  void deleteAirport();
 
   writer::DataWriter& dataWriter;
   atools::sql::SqlDatabase& db;
 
-  atools::sql::SqlQuery deletePrimaryApproachStmt, deletePrimaryTransitionStmt,
-                        deleteSecondaryApproachStmt, deleteSecondaryTransitionStmt,
-                        deleteRunwayStmt,
-                        deleteParkingStmt, deleteDeleteApStmt,
-                        fetchRunwayEndIdStmt, deleteRunwayEndStmt,
-                        deleteIlsStmt, deleteWpStmt, deleteVorStmt, deleteNdbStmt,
-                        deleteAirportStmt,
-                        deleteApronStmt, updateApronStmt,
-                        deleteApronLightStmt, updateApronLightStmt,
-                        deleteFenceStmt, updateFenceStmt,
-                        deleteHelipadStmt, updateHelipadStmt,
-                        deleteStartStmt, updateStartStmt,
-                        deleteTaxiPathStmt, updateTaxiPathStmt,
-                        deleteComStmt, updateComStmt, updateHasTaxiwaysStmt,
-                        fetchPrimaryAppStmt,
-                        fetchSecondaryAppStmt, fetchTransitionStmt;
+  atools::sql::SqlQuery
+  *deletePrimaryApproachStmt, *deletePrimaryApproachLegStmt,
+  *deleteSecondaryApproachStmt, *deleteSecondaryApproachLegStmt,
+  *deletePrimaryTransitionStmt, *deletePrimaryTransitionLegStmt,
+  *deleteSecondaryTransitionStmt, *deleteSecondaryTransitionLegStmt,
+  *deleteRunwayStmt,
+  *deleteParkingStmt,
+  *deleteDeleteApStmt,
+  *fetchRunwayEndIdStmt,
+  *deleteRunwayEndStmt,
+  *deleteIlsStmt,
+  *nullWpStmt,
+  *nullVorStmt,
+  *nullNdbStmt,
+  *deleteAirportStmt,
+  *deleteApronStmt, *updateApronStmt,
+  *deleteApronLightStmt, *updateApronLightStmt,
+  *deleteFenceStmt, *updateFenceStmt,
+  *deleteHelipadStmt, *updateHelipadStmt,
+  *deleteStartStmt, *updateStartStmt,
+  *deleteTaxiPathStmt, *updateTaxiPathStmt,
+  *deleteComStmt, *updateComStmt,
+  *fetchPrimaryAppStmt, *fetchSecondaryAppStmt, *fetchTransitionStmt;
+
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
+  void deleteOrUpdate(sql::SqlQuery *deleteStmt,
+                              sql::SqlQuery *updateStmt,
+                              atools::fs::bgl::del::DeleteAllFlags flag);
 
+  const atools::fs::bgl::DeleteAirport *del;
+  const atools::fs::bgl::Airport *type;
+  int currentId;
+  QString ident;
+  void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
+
+  QString updateAptFeatureToNullStmt(const QString& table);
 };
 
 } // namespace writer

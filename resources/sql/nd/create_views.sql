@@ -28,16 +28,16 @@ drop view if exists v_airport_runway;
 
 create view v_airport_runway as
 select airport_id, ident, name, country, state, city, length, width, surface,
-runway_name, ils_ident, ils_name
+runway_id, primary_end_id, secondary_end_id, runway_name, ils_ident, ils_name
 from (
 select a.airport_id, a.ident, a.name, a.country, a.state, a.city, r.length, r.width, r.surface,
-pe.name as runway_name, pi.ident as ils_ident, pi.name as ils_name
+r.runway_id, r.primary_end_id, r.secondary_end_id, pe.name as runway_name, pi.ident as ils_ident, pi.name as ils_name
 from airport a join runway r on a.airport_id = r.airport_id
 join runway_end pe on r.primary_end_id = pe.runway_end_id
 left outer join ils pi on pe.runway_end_id = pi.loc_runway_end_id
 union all
 select a.airport_id, a.ident, a.name, a.country, a.state, a.city, r.length, r.width, r.surface,
-se.name as runway_name, si.ident as ils_ident, si.name as ils_name
+r.runway_id, r.primary_end_id, r.secondary_end_id, se.name as runway_name, si.ident as ils_ident, si.name as ils_name
 from airport a join runway r on a.airport_id = r.airport_id
 join runway_end se on r.secondary_end_id = se.runway_end_id
 left outer join ils si on se.runway_end_id = si.loc_runway_end_id)
@@ -55,18 +55,18 @@ order by a.airport_id;
 drop view if exists v_airport_approach;
 
 create view v_airport_approach as
-select airport_id, ident, airport_name, country, state, city,
-runway_name, approach_type, transition_type
+select airport_id, ident, airport_name, country, state, city, runway_end_id,
+runway_name, approach_id, approach_type, transition_type
 from (
-select a.airport_id, a.ident, a.name as airport_name, a.country, a.state, a.city,
-pe.name as runway_name, pa.type as approach_type, pt.fix_type as transition_type
+select a.airport_id, a.ident, a.name as airport_name, a.country, a.state, a.city, pe.runway_end_id,
+pe.name as runway_name, pa.approach_id, pa.type as approach_type, pt.fix_type as transition_type
 from airport a join runway r on a.airport_id = r.airport_id
 join runway_end pe on r.primary_end_id = pe.runway_end_id
 join approach pa on pa.runway_end_id = pe.runway_end_id
 left outer join transition pt on pa.approach_id = pt.approach_id
 union all
-select a.airport_id, a.ident, a.name as airport_name, a.country, a.state, a.city,
-se.name as runway_name, sa.type as approach_type, st.fix_type as transition_type
+select a.airport_id, a.ident, a.name as airport_name, a.country, a.state, a.city, se.runway_end_id,
+se.name as runway_name, sa.approach_id, sa.type as approach_type, st.fix_type as transition_type
 from airport a join runway r on a.airport_id = r.airport_id
 join runway_end se on r.secondary_end_id = se.runway_end_id
 join approach sa on sa.runway_end_id = se.runway_end_id

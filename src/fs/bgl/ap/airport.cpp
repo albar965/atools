@@ -53,6 +53,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
 
   if(!options->includeAirport(ident))
   {
+    seekToStart();
     excluded = true;
     return;
   }

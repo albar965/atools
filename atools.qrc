@@ -14,5 +14,6 @@
         <file>resources/sql/nd/create_views.sql</file>
         <file>resources/sql/nd/finish_schema.sql</file>
         <file>resources/sql/nd/update_nav_ids.sql</file>
+        <file>resources/sql/nd/drop_schema.sql</file>
     </qresource>
 </RCC>
