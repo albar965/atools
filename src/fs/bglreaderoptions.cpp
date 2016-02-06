@@ -128,7 +128,7 @@ void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
   setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());
-  setAutocommit(settings.value("Options/Autocommit", true).toBool());
+  setAutocommit(settings.value("Options/Autocommit", false).toBool());
 
   setFilenameFilterInc(settings.value("Filter/IncludeFilenames").toStringList());
   setFilenameFilterExcl(settings.value("Filter/ExcludeFilenames").toStringList());

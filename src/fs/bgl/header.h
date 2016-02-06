@@ -20,6 +20,8 @@
 
 #include "fs/bgl/bglbase.h"
 
+#include <QDateTime>
+
 namespace atools {
 namespace io {
 class BinaryStream;
@@ -45,7 +47,9 @@ public:
 
   QString getCreationTimestampString() const
   {
-    return ctime(&creationTimestamp);
+    QDateTime dt;
+    dt.setTime_t(creationTimestamp);
+    return dt.toString(Qt::ISODate);
   }
 
   time_t getCreationTimestamp() const
