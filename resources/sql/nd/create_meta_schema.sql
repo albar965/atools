@@ -22,12 +22,12 @@ create table scenery_area
   scenery_area_id integer primary key,
   number integer not null,
   layer integer not null,
-  title text,
-  remote_path text,
-  local_path text,
+  title varchar(250),
+  remote_path varchar(250),
+  local_path varchar(250),
   active integer not null,
   required integer not null,
-  exclude text
+  exclude varchar(50)
 );
 
 -- **************************************************
@@ -40,7 +40,7 @@ create table bgl_file
   scenery_area_id integer not null,
   bgl_create_time integer not null,
   file_modification_time integer not null,
-  filename text not null,
+  filename varchar(1000) not null,
   size integer not null,
 foreign key(scenery_area_id) references scenery_area(scenery_area_id)
 );

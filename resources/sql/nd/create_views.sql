@@ -47,7 +47,7 @@ drop view if exists v_airport_com;
 
 create view v_airport_com as
 select a.ident, a.name, a.country, a.state, a.city, c.name as com_name, c.type as com_type,
-  printf("%3.3f", cast(c.frequency as real) / 1000) as com_frequency
+  printf("%3.3f", cast(c.frequency as double) / 1000) as com_frequency
 from airport a join com c on a.airport_id = c.airport_id
 order by a.airport_id;
 
