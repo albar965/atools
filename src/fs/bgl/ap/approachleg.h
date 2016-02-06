@@ -60,7 +60,7 @@ enum Type
 
 enum AltDescriptor
 {
-  UNKNOWN=0,
+  UNKNOWN = 0,
   A = 01,
   PLUS = 02,
   MINUS = 03,

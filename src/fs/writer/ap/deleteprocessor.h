@@ -103,6 +103,7 @@ private:
 
   QString updateAptFeatureToNullStmt(const QString& table);
   void deleteApproachesAndTransitions(const QList<int>& ids);
+
   QList<int> fetchOldApproachIds();
 
 };

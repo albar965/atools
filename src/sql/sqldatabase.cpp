@@ -332,17 +332,17 @@ void SqlDatabase::checkError(bool retval, const QString& msg) const
 
 bool SqlDatabase::isAutocommit() const
 {
-    return autocommit;
+  return autocommit;
 }
 
 void SqlDatabase::setAutocommit(bool value)
 {
-    autocommit = value;
+  autocommit = value;
 }
 
 const QSqlDatabase& SqlDatabase::getQSqlDatabase() const
 {
-    return db;
+  return db;
 }
 
 } // namespace sql

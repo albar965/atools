@@ -53,7 +53,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
   altitude = bs->readFloat();
-  heading = bs->readFloat();// TODO wiki heading is float degress
+  heading = bs->readFloat(); // TODO wiki heading is float degress
   missedAltitude = bs->readFloat();
 
   while(bs->tellg() < startOffset + size)

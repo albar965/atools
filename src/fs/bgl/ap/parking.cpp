@@ -205,7 +205,7 @@ Parking::Parking(BinaryStream *bs)
   int numAirlineCodes = (flags >> 24) & 0xff;
 
   radius = bs->readFloat();
-  heading = bs->readFloat();// TODO wiki heading is float degress
+  heading = bs->readFloat(); // TODO wiki heading is float degress
   bs->skip(16); // teeOffset 1-4
   position = BglPosition(bs);
 

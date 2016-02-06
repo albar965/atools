@@ -206,7 +206,6 @@ private:
   atools::fs::writer::TransitionWriter *approachTransWriter;
   atools::fs::writer::TransitionLegWriter *approachTransLegWriter;
 
-
   atools::fs::writer::ParkingWriter *parkingWriter;
   atools::fs::writer::ComWriter *airportComWriter;
   atools::fs::writer::HelipadWriter *airportHelipadWriter;

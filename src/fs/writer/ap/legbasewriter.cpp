@@ -30,7 +30,8 @@ using atools::sql::SqlQuery;
 void LegBaseWriter::writeObject(const ApproachLeg *type)
 {
   bind(":type", bgl::util::enumToStr(bgl::ApproachLeg::legTypeToString, type->getType()));
-  bind(":alt_descriptor", bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
+  bind(":alt_descriptor",
+       bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
   bind(":turn_direction", bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));
   bindNullInt(":fix_nav_id");
   bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getFixType()));
