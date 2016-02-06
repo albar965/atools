@@ -303,7 +303,7 @@ create table approach_leg
   approach_id integer not null,
   is_missed integer not null,
 
-  type varchar(25) not null,
+  type varchar(2) not null,
   alt_descriptor varchar(10),
   turn_direction varchar(10),
   fix_nav_id integer,
@@ -339,7 +339,7 @@ create table transition_leg
   transition_leg_id integer primary key,
   transition_id integer not null,
 
-  type varchar(25) not null,
+  type varchar(2) not null,
   alt_descriptor varchar(10),
   turn_direction varchar(10),
   fix_nav_id integer,
