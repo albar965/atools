@@ -46,11 +46,10 @@ QDebug operator<<(QDebug out, const RouteResolver::Leg& l)
   return out;
 }
 
-RouteResolver::RouteResolver(SqlDatabase& db)
-  : curRouteId(0), numRoutes(0), db(db)
+RouteResolver::RouteResolver(SqlDatabase& sqlDb)
+  : curRouteId(0), numRoutes(0), routeInsertStmt(sqlDb), db(sqlDb)
 {
-  SqlUtil util(&db);
-  // TODO assign db
+  SqlUtil util(&sqlDb);
   routeInsertStmt.prepare(util.buildInsertStatement("route"));
 }
 

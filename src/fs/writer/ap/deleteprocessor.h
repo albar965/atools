@@ -56,7 +56,6 @@ private:
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
   void transferApproaches();
-  void deleteApproaches();
   void deleteRunways();
   void deleteAirport();
 
@@ -64,10 +63,6 @@ private:
   atools::sql::SqlDatabase& db;
 
   atools::sql::SqlQuery
-  *deletePrimaryApproachStmt, *deletePrimaryApproachLegStmt,
-  *deleteSecondaryApproachStmt, *deleteSecondaryApproachLegStmt,
-  *deletePrimaryTransitionStmt, *deletePrimaryTransitionLegStmt,
-  *deleteSecondaryTransitionStmt, *deleteSecondaryTransitionLegStmt,
   *deleteRunwayStmt,
   *deleteParkingStmt,
   *deleteDeleteApStmt,
@@ -107,8 +102,8 @@ private:
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
 
   QString updateAptFeatureToNullStmt(const QString& table);
-  void deleteApproachesAndTransitions(const QSet<int>& ids);
-  QSet<int> fetchOldApproachIds();
+  void deleteApproachesAndTransitions(const QList<int>& ids);
+  QList<int> fetchOldApproachIds();
 
 };
 

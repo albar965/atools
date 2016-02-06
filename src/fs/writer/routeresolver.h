@@ -32,7 +32,7 @@ namespace writer {
 class RouteResolver
 {
 public:
-  RouteResolver(atools::sql::SqlDatabase& db);
+  RouteResolver(atools::sql::SqlDatabase& sqlDb);
   virtual ~RouteResolver();
 
   void run();
@@ -71,10 +71,8 @@ public:
 private:
   void writeRoute(const QString& routeName, QSet<atools::fs::writer::RouteResolver::Leg>& route);
 
-  atools::sql::SqlQuery routeInsertStmt;
-
   int curRouteId, numRoutes;
-
+  atools::sql::SqlQuery routeInsertStmt;
   atools::sql::SqlDatabase& db;
 };
 
