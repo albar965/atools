@@ -1,3 +1,6 @@
+Version 1.6.0.develop
+* Added BGL reading and writing to a relational database.
+
 Version 1.5.0
 
 * Added FsPaths class - Flight simulator installation directory and files directory are now automatically detected
