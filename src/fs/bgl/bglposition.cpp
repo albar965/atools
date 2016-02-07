@@ -26,7 +26,7 @@ namespace bgl {
 using atools::io::BinaryStream;
 
 BglPosition::BglPosition()
-  : geo::Pos(), altitude(0)
+  : geo::Pos(), altitude(0.f)
 {
 }
 

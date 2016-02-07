@@ -36,6 +36,17 @@ FileResolver::~FileResolver()
 {
 }
 
+FileResolver& FileResolver::addExcludedFilePrefixes(const QStringList& prefixes)
+{
+  excludedPrefixes += prefixes;
+  return *this;
+}
+
+void FileResolver::clearExcludedFilePrefixes()
+{
+  excludedPrefixes.clear();
+}
+
 void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
 {
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
@@ -69,7 +80,7 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
 bool FileResolver::matchesExcludedPrefix(const QString& fname) const
 {
   for(QString i : excludedPrefixes)
-    if(fname.startsWith(i))
+    if(fname.startsWith(i, Qt::CaseInsensitive))
       return true;
 
   return false;

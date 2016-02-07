@@ -47,7 +47,7 @@ void IlsWriter::writeObject(const Ils *type)
   bind(":frequency", type->getFrequency());
   bind(":range", bgl::util::meterToNm(type->getRange()));
   bind(":mag_var", type->getMagVar());
-  bind(":is_backcourse", type->isIsBackcourse());
+  bind(":has_backcourse", type->hasBackcourse());
   bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());

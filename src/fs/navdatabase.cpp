@@ -84,7 +84,9 @@ void Navdatabase::create()
 
   dataWriter.logResults();
   QDebug info(QtInfoMsg);
-  atools::sql::SqlUtil(db).printTableStats(info, true);
+  atools::sql::SqlUtil util(db);
+  util.printTableStats(info.noquote().nospace(), true);
+  util.createColumnReport(info.noquote().nospace(), true);
   qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 

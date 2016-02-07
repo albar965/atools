@@ -45,9 +45,9 @@ public:
     return glideslope;
   }
 
-  bool isIsBackcourse() const
+  bool hasBackcourse() const
   {
-    return isBackcourse;
+    return backcourse;
   }
 
   const atools::fs::bgl::Localizer *getLocalizer() const
@@ -58,7 +58,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Ils& record);
 
-  bool isBackcourse;
+  bool backcourse;
 
   atools::fs::bgl::Localizer *localizer;
   atools::fs::bgl::Glideslope *glideslope;

@@ -27,19 +27,9 @@ namespace geo {
 class Pos
 {
 public:
-  Pos()
-    : lonX(0.0), latY(0.0)
-  {
-  }
-
-  Pos(float longitudeX, float latitudeY)
-    : lonX(longitudeX), latY(latitudeY)
-  {
-  }
-
-  ~Pos()
-  {
-  }
+  Pos();
+  Pos(float longitudeX, float latitudeY);
+  ~Pos();
 
   float getLatY() const
   {

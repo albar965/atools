@@ -43,6 +43,12 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
   bind(":type", TaxiPath::pathTypeToString(type->getType()));
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":width", bgl::util::meterToFeet(type->getWidth()));
+
+  if(type->getWeightLimit() == 0)
+    bindNullInt(":weight_limit");
+  else
+    bind(":weight_limit", type->getWeightLimit());
+
   bind(":name", type->getName());
 
   bind(":is_draw_surface", type->isDrawSurface() ? 1 : 0);

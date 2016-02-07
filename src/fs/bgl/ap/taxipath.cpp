@@ -49,7 +49,7 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
 
   surface = static_cast<rw::Surface>(bs->readUByte());
   width = bs->readFloat();
-  weightLimit = bs->readFloat();
+  weightLimit = qRound(bs->readFloat()); // Float makes no sense here
   bs->skip(4);
 }
 

@@ -121,6 +121,11 @@ public:
     return width;
   }
 
+  int getWeightLimit() const
+  {
+    return weightLimit;
+  }
+
 private:
   friend class Airport;
   friend QDebug operator<<(QDebug out, const TaxiPath& record);
@@ -138,7 +143,8 @@ private:
   atools::fs::bgl::taxipath::EdgeType rightEdge;
 
   atools::fs::bgl::rw::Surface surface;
-  float width, weightLimit;
+  float width;
+  int weightLimit;
 
   atools::fs::bgl::TaxiPoint start, end;
 

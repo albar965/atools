@@ -54,7 +54,7 @@ Marker::Marker(const BglReaderOptions *options, BinaryStream *bs)
 
   position = BglPosition(bs, true, 1000.f);
   ident = converter::intToIcao(bs->readUInt());
-  region = converter::intToIcao(bs->readUInt() & 0x7ff);
+  region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
 }
 
 Marker::~Marker()

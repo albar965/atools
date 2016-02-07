@@ -45,6 +45,9 @@ public:
   template<class OUT>
   void printTableStats(OUT& out, bool endline = true);
 
+  template<class OUT>
+  void createColumnReport(OUT& out, bool endline, const QStringList& tables = QStringList());
+
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString());
 
@@ -93,8 +96,7 @@ void SqlUtil::printTableStats(OUT& out, bool endline)
 
   SqlQuery query(db);
 
-  int index = 1;
-  int totalCount = 0;
+  int index = 1, totalCount = 0;
 
   for(QString name : db->tables())
   {
@@ -111,6 +113,58 @@ void SqlUtil::printTableStats(OUT& out, bool endline)
   out << "Total" << ": " << totalCount << " rows";
   if(endline)
     out << endl;
+}
+
+template<class OUT>
+void SqlUtil::createColumnReport(OUT& out, bool endline, const QStringList& tables)
+{
+  out << "Column value report for database:";
+  if(endline)
+    out << endl;
+
+  QStringList tableList;
+  if(tables.isEmpty())
+    tableList = db->tables();
+  else
+    tableList = tables;
+  SqlQuery q(db);
+  SqlQuery q2(db);
+
+  for(QString name : db->tables())
+  {
+    QSqlRecord record = db->record(name);
+
+    for(int i = 0; i < record.count(); ++i)
+    {
+      QString col = record.fieldName(i);
+      q.exec("select count(distinct " + col + ") as cnt from " + name);
+      if(q.next())
+      {
+        int cnt = q.value("cnt").toInt();
+        if(cnt < 2)
+        {
+          out << name << "." << col;
+          if(cnt == 0)
+          {
+            out << " has no distinct values";
+            if(endline)
+              out << endl;
+          }
+          else if(cnt == 1)
+          {
+            out << " has only 1 distinct value: ";
+            q2.exec("select " + col + " from " + name + " group by " + col);
+            while(q2.next())
+              out << q2.value(0).toString();
+            if(endline)
+              out << endl;
+          }
+          else if(endline)
+            out << endl;
+        }
+      }
+    }
+  }
 }
 
 } // namespace sql

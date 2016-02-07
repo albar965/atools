@@ -33,15 +33,10 @@ using atools::io::BinaryStream;
 enum IlsFlags
 {
   FLAGS_DME_ONLY = 1 << 0,
-  FLAGS_BC = 1 << 1,
-  FLAGS_GS = 1 << 2,
-  FLAGS_DME = 1 << 3,
-  FLAGS_NAV = 1 << 4
-              // bit 0: if 0 then DME only, otherwise 1 for ILS
-              // bit 2: backcourse (0 = false, 1 = true)
-              // bit 3: glideslope present
-              // bit 4: DME present
-              // bit 5: NAV true
+  FLAGS_BC = 1 << 2,
+  FLAGS_GS = 1 << 3,
+  FLAGS_DME = 1 << 4,
+  FLAGS_NAV = 1 << 5
 };
 
 Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
@@ -50,8 +45,9 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   bs->readUByte();
   int flags = bs->readUByte();
 
+  backcourse = (flags & FLAGS_BC) == FLAGS_BC;
+  // TODO  compare values with record presence
   // dmeOnlyOrIls = (flags & FLAGS_DME_ONLY) == FLAGS_DME_ONLY;
-  isBackcourse = (flags & FLAGS_BC) == FLAGS_BC;
   // hasGlideslope = (flags & FLAGS_GS) == FLAGS_GS;
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
@@ -64,7 +60,7 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   ident = converter::intToIcao(bs->readUInt());
 
   unsigned int regionFlags = bs->readUInt();
-  region = converter::intToIcao(regionFlags & 0x7ff, true);
+  region = converter::intToIcao(regionFlags & 0x7ff, true); // TODO wiki region is never set
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
   while(bs->tellg() < startOffset + size)
@@ -110,7 +106,7 @@ QDebug operator<<(QDebug out, const Ils& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const NavBase&>(record)
-  << " Ils[isBackcourse " << record.isBackcourse;
+  << " Ils[backcourse " << record.backcourse;
   if(record.localizer != nullptr)
     out << ", " << *record.localizer;
   if(record.glideslope != nullptr)

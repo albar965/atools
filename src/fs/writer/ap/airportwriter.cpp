@@ -100,6 +100,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
   bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
   bind(":mag_var", type->getMagVar());
+  bind(":tower_altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
   bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));

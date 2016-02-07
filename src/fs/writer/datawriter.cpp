@@ -149,6 +149,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   // NVX navids
   // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
   // resolver("brx")("obx")("cvx");
+  resolver.addExcludedFilePrefixes({"brx", "obx", "cvx"});
   resolver.getFiles(area, files);
 
   if(!files.empty())

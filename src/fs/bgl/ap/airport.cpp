@@ -58,7 +58,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     return;
   }
 
-  region = converter::intToIcao(bs->readUInt());
+  region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
   fuelFlags = bs->readUInt();
 
   bs->skip(4);

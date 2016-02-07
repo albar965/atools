@@ -52,6 +52,14 @@ enum ParkingType
   VEHICLES = 0xd // wiki error reported
 };
 
+enum PushBack
+{
+  NONE = 0,
+  LEFT = 1,
+  RIGHT = 2,
+  BOTH = 3
+};
+
 enum ParkingName
 {
   NO_PARKING = 0x00,
@@ -132,8 +140,14 @@ public:
     return name;
   }
 
+  atools::fs::bgl::ap::PushBack getPushBack() const
+  {
+    return pushBack;
+  }
+
   static QString parkingTypeToStr(atools::fs::bgl::ap::ParkingType type);
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
+  static QString pushBackToStr(atools::fs::bgl::ap::PushBack type);
 
   bool hasJetway() const
   {
@@ -145,15 +159,22 @@ public:
     jetway = value;
   }
 
+  const QStringList& getAirlineCodes() const
+  {
+    return airlineCodes;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);
 
   atools::fs::bgl::ap::ParkingType type;
   atools::fs::bgl::ap::ParkingName name;
+  atools::fs::bgl::ap::PushBack pushBack;
   int number;
   float radius, heading;
   atools::fs::bgl::BglPosition position;
   bool jetway;
+  QStringList airlineCodes;
 };
 
 } // namespace bgl

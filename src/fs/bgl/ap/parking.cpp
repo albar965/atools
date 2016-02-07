@@ -196,10 +196,33 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
   return QString();
 }
 
+QString Parking::pushBackToStr(ap::PushBack type)
+{
+  switch(type)
+  {
+    case atools::fs::bgl::ap::NONE:
+      return "NONE";
+
+    case atools::fs::bgl::ap::LEFT:
+      return "LEFT";
+
+    case atools::fs::bgl::ap::RIGHT:
+      return "RIGHT";
+
+    case atools::fs::bgl::ap::BOTH:
+      return "BOTH";
+  }
+  qWarning().nospace().noquote() << "Unknown parking name " << type;
+  return QString();
+}
+
+
+
 Parking::Parking(BinaryStream *bs)
 {
   unsigned int flags = bs->readUInt();
   name = static_cast<ap::ParkingName>(flags & 0x3f);
+  pushBack = static_cast<ap::PushBack>((flags >> 6) & 0x3);
   type = static_cast<ap::ParkingType>((flags >> 8) & 0xf);
   number = (flags >> 12) & 0xfff;
   int numAirlineCodes = (flags >> 24) & 0xff;
@@ -210,7 +233,7 @@ Parking::Parking(BinaryStream *bs)
   position = BglPosition(bs);
 
   for(int i = 0; i < numAirlineCodes; ++i)
-    bs->readString(4);
+    airlineCodes.push_back(bs->readString(4));
 }
 
 Parking::~Parking()

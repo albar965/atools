@@ -126,7 +126,7 @@ create table ils
   frequency integer not null,
   range integer not null,
   mag_var double  not null,
-  is_backcourse integer not null,
+  has_backcourse integer not null,
   dme_range integer,
   dme_altitude integer,
   dme_lonx double,

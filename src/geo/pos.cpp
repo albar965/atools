@@ -23,9 +23,22 @@ namespace geo {
 QDebug operator<<(QDebug out, const Pos& record)
 {
   QDebugStateSaver saver(out);
-
   out.nospace().noquote() << "[lonX " << record.lonX << ", latY " << record.latY << "]";
   return out;
+}
+
+Pos::Pos()
+  : lonX(0.f), latY(0.f)
+{
+}
+
+Pos::Pos(float longitudeX, float latitudeY)
+  : lonX(longitudeX), latY(latitudeY)
+{
+}
+
+Pos::~Pos()
+{
 }
 
 } // namespace geo
