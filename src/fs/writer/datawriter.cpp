@@ -55,6 +55,8 @@
 #include "fs/bgl/bglfile.h"
 #include "logging/loggingdefs.h"
 
+#include <QFileInfo>
+
 namespace atools {
 namespace fs {
 namespace writer {
@@ -149,7 +151,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   // NVX navids
   // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
   // resolver("brx")("obx")("cvx");
-//  resolver.addExcludedFilePrefixes({"brx", "obx", "cvx"});
+  // resolver.addExcludedFilePrefixes({"brx", "obx", "cvx"});
   resolver.getFiles(area, files);
 
   if(!files.empty())
@@ -171,6 +173,8 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         airportIndex->clear();
 
         airportWriter->setNameLists(bglFile.getNamelists());
+        airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
+        airportWriter->setSceneryLocalPath(area.getLocalPath());
         airportWriter->write(bglFile.getAirports());
 
         waypointWriter->write(bglFile.getWaypoints());

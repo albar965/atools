@@ -22,9 +22,9 @@ create table scenery_area
   scenery_area_id integer primary key,
   number integer not null,
   layer integer not null,
-  title varchar(250),
+  title varchar(250) not null,
   remote_path varchar(250),
-  local_path varchar(250),
+  local_path varchar(250) not null,
   active integer not null,
   required integer not null,
   exclude varchar(50)

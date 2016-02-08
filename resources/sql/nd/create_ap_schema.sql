@@ -63,6 +63,9 @@ create table airport
   largest_parking_gate varchar(20),
   rating integer not null,
 
+  scenery_local_path varchar(250) collate nocase not null,
+  bgl_filename varchar(300) collate nocase not null,
+
   left_lonx double not null,
   top_laty double not null,
   right_lonx double not null,
