@@ -208,6 +208,14 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     r.seekToEnd();
   }
 
+  if(runways.isEmpty() && deleteAirports.isEmpty() && parkings.isEmpty() && taxipaths.isEmpty() &&
+     aprons.isEmpty() && coms.isEmpty() && helipads.isEmpty() && starts.isEmpty())
+  {
+    seekToStart();
+    excluded = true;
+    return;
+  }
+
   updateTaxiPaths(taxipoints, taxinames);
 
   updateParking(jetways, parkingNumberIndex);
@@ -267,7 +275,7 @@ void Airport::updateSummaryFields()
       numRunwayEndClosed++;
   }
 
-  airportClosed = numRunwayEndClosed / 2 == runways.size();
+  airportClosed = !runways.isEmpty() && numRunwayEndClosed / 2 == runways.size();
 
   for(const Com& c : coms)
     if(c.getType() == com::TOWER)

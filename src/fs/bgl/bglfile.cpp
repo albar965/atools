@@ -75,6 +75,16 @@ void BglFile::readFile(QString file)
   }
 }
 
+bool BglFile::hasContent()
+{
+  return !(airports.isEmpty() &&
+           vors.isEmpty() &&
+           ils.isEmpty() &&
+           ndbs.isEmpty() &&
+           marker.isEmpty() &&
+           waypoints.isEmpty());
+}
+
 void BglFile::readHeaderAndSections(BinaryStream *bs)
 {
   header = Header(options, bs);

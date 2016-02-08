@@ -61,13 +61,13 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
   {
     if(sceneryArea.isDir())
     {
-      QDir sceneryAreaDir(sceneryArea.absoluteFilePath());
+      QDir sceneryAreaDir(sceneryArea.filePath());
       for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
       {
-        QDir sceneryAreaDirObj(scenery.absoluteFilePath());
+        QDir sceneryAreaDirObj(scenery.filePath());
         for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
           if(!matchesExcludedPrefix(bglFile.fileName()))
-            files.push_back(bglFile.absoluteFilePath());
+            files.push_back(bglFile.filePath());
       }
     }
     else

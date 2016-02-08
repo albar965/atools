@@ -166,31 +166,33 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       if(options.includeFilename(filename))
       {
         bglFile.readFile(filename);
+        if(bglFile.hasContent())
+        {
+          bglFileWriter->writeOne(&bglFile);
 
-        bglFileWriter->writeOne(&bglFile);
+          runwayIndex->clear();
+          airportIndex->clear();
 
-        runwayIndex->clear();
-        airportIndex->clear();
+          airportWriter->setNameLists(bglFile.getNamelists());
+          airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
+          airportWriter->setSceneryLocalPath(area.getLocalPath());
+          airportWriter->write(bglFile.getAirports());
 
-        airportWriter->setNameLists(bglFile.getNamelists());
-        airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
-        airportWriter->setSceneryLocalPath(area.getLocalPath());
-        airportWriter->write(bglFile.getAirports());
+          waypointWriter->write(bglFile.getWaypoints());
+          vorWriter->write(bglFile.getVors());
+          ndbWriter->write(bglFile.getNdbs());
+          markerWriter->write(bglFile.getMarker());
+          ilsWriter->write(bglFile.getIls());
 
-        waypointWriter->write(bglFile.getWaypoints());
-        vorWriter->write(bglFile.getVors());
-        ndbWriter->write(bglFile.getNdbs());
-        markerWriter->write(bglFile.getMarker());
-        ilsWriter->write(bglFile.getIls());
-
-        numAirports += bglFile.getAirports().size();
-        numNamelists += bglFile.getNamelists().size();
-        numVors += bglFile.getVors().size();
-        numIls += bglFile.getIls().size();
-        numNdbs += bglFile.getNdbs().size();
-        numMarker += bglFile.getMarker().size();
-        numWaypoints += bglFile.getWaypoints().size();
-        numFiles++;
+          numAirports += bglFile.getAirports().size();
+          numNamelists += bglFile.getNamelists().size();
+          numVors += bglFile.getVors().size();
+          numIls += bglFile.getIls().size();
+          numNdbs += bglFile.getNdbs().size();
+          numMarker += bglFile.getMarker().size();
+          numWaypoints += bglFile.getWaypoints().size();
+          numFiles++;
+        }
       }
     db.commit();
   }

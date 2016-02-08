@@ -123,6 +123,8 @@ public:
     return waypoints;
   }
 
+  bool hasContent();
+
 private:
   void freeObjects();
   void readHeaderAndSections(atools::io::BinaryStream *bs);
