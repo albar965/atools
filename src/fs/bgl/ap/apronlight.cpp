@@ -19,6 +19,7 @@
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -37,14 +38,17 @@ ApronLight::ApronLight(const atools::fs::BglReaderOptions *options, atools::io::
   // 0x44480000: Unknown (value 800)
   bs->skip(12);
 
-  for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs));
-
-  for(int i = 0; i < numEdges; i++)
+  if(options->includeBglObject(type::GEOMETRY))
   {
-    bs->skip(4); // FLOAT Unknown (value 60.96)
-    edges.push_back(bs->readShort()); // Start
-    edges.push_back(bs->readShort()); // End
+    for(int i = 0; i < numVertices; i++)
+      vertices.push_back(BglPosition(bs));
+
+    for(int i = 0; i < numEdges; i++)
+    {
+      bs->skip(4); // FLOAT Unknown (value 60.96)
+      edges.push_back(bs->readShort()); // Start
+      edges.push_back(bs->readShort()); // End
+    }
   }
 }
 

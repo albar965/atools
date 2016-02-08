@@ -19,6 +19,7 @@
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -35,14 +36,17 @@ Apron2::Apron2(const atools::fs::BglReaderOptions *options, atools::io::BinarySt
   int numVertices = bs->readShort();
   int numTriangles = bs->readShort();
 
-  for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs));
-
-  for(int i = 0; i < numTriangles; i++)
+  if(options->includeBglObject(type::GEOMETRY))
   {
-    triangles.push_back(bs->readUShort());
-    triangles.push_back(bs->readUShort());
-    triangles.push_back(bs->readUShort());
+    for(int i = 0; i < numVertices; i++)
+      vertices.push_back(BglPosition(bs));
+
+    for(int i = 0; i < numTriangles; i++)
+    {
+      triangles.push_back(bs->readUShort());
+      triangles.push_back(bs->readUShort());
+      triangles.push_back(bs->readUShort());
+    }
   }
 }
 

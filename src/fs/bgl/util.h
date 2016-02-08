@@ -32,7 +32,8 @@ QString enumToStr(QString func(TYPE t), TYPE type)
   if(retval.isEmpty())
     return QString();
 
-  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval.startsWith("UNKNOWN_"))
+  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval.startsWith("UNKNOWN_") ||
+     retval.endsWith("_UNKNOWN"))
     return QString();
   else
     return retval;
@@ -54,14 +55,14 @@ inline int meterToFeet(float meters, int precision = 0)
   }
 }
 
-template<typename TYPE>
-bool isFlagSet(TYPE bitfield, TYPE flag)
+template<typename TYPE, typename TYPE2>
+bool isFlagSet(TYPE bitfield, TYPE2 flag)
 {
-  return (bitfield & flag) == flag;
+  return (bitfield & flag) == static_cast<TYPE>(flag);
 }
 
-template<typename TYPE>
-bool isFlagNotSet(TYPE bitfield, TYPE flag)
+template<typename TYPE, typename TYPE2>
+bool isFlagNotSet(TYPE bitfield, TYPE2 flag)
 {
   return (bitfield & flag) == 0;
 }

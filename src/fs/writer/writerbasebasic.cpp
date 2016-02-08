@@ -60,6 +60,11 @@ AirportIndex *WriterBaseBasic::getAirportIndex()
   return dataWriter.getAirportIndex();
 }
 
+void WriterBaseBasic::bindBool(const QString& placeholder, bool val)
+{
+  return stmt.bindValue(placeholder, val ? 1 : 0);
+}
+
 void WriterBaseBasic::bind(const QString& placeholder, const QVariant& val)
 {
   return stmt.bindValue(placeholder, val);

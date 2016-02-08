@@ -19,6 +19,7 @@
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -30,8 +31,9 @@ Apron::Apron(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
   surface = static_cast<rw::Surface>(bs->readUByte());
   int numVertices = bs->readShort();
 
-  for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs));
+  if(options->includeBglObject(type::GEOMETRY))
+    for(int i = 0; i < numVertices; i++)
+      vertices.push_back(BglPosition(bs));
 }
 
 Apron::~Apron()

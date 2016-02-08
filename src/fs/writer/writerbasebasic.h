@@ -60,6 +60,7 @@ protected:
   }
 
   void bind(const QString& placeholder, const QVariant& val);
+  void bindBool(const QString& placeholder, bool val);
   void bindNullInt(const QString& placeholder);
   void bindNullFloat(const QString& placeholder);
   void bindNullString(const QString& placeholder);

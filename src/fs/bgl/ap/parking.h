@@ -110,6 +110,11 @@ public:
   Parking(atools::io::BinaryStream *bs);
   virtual ~Parking();
 
+  bool isGate() const;
+  bool isGaRamp() const;
+  bool isCargo() const;
+  bool isMil() const;
+
   float getHeading() const
   {
     return heading;

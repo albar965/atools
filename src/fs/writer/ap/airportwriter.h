@@ -64,7 +64,6 @@ private:
   QString currentIdent;
 
   atools::fs::writer::DeleteProcessor deleteProcessor;
-  static const int MIN_RUNWAY_LENGTH = 10;
 };
 
 } // namespace writer

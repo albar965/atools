@@ -23,6 +23,7 @@
 #include "fs/bgl/ap/jetway.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/ap/taxipoint.h"
+#include "fs/bgl/util.h"
 
 #include <QHash>
 
@@ -35,16 +36,13 @@ using atools::io::BinaryStream;
 Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  int numRunways = bs->readUByte();
-  Q_UNUSED(numRunways);
-  int numComs = bs->readUByte();
-  Q_UNUSED(numComs);
+  /*int numRunways =*/
+  bs->readUByte();
+  /*int numComs =*/ bs->readUByte();
   bs->readUByte(); // numStarts
-  int numApproaches = bs->readUByte();
-  Q_UNUSED(numApproaches);
-  int numAprons = bs->readUByte();
-  int numDeleteRecords = (numAprons & 0x80) == 0x80;
-  Q_UNUSED(numDeleteRecords);
+  /*int numApproaches =*/ bs->readUByte();
+  /*int numAprons =*/ bs->readUByte();
+  // int numDeleteRecords = (numAprons & 0x80) == 0x80;
   bs->readUByte(); // numHelipads
   position = BglPosition(bs, true, 1000.f);
   towerPosition = BglPosition(bs, true, 1000.f);
@@ -82,7 +80,11 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         if(options->includeBglObject(type::RUNWAY))
         {
           r.seekToStart();
-          runways.push_back(Runway(options, bs, ident));
+
+          Runway rw = Runway(options, bs, ident);
+          if(!(options->isFilterRunways() &&
+               rw.getLength() <= MIN_RUNWAY_LENGTH && rw.getSurface() == bgl::rw::GRASS))
+            runways.push_back(rw);
         }
         break;
       case rec::COM:
@@ -206,6 +208,157 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     r.seekToEnd();
   }
 
+  updateTaxiPaths(taxipoints, taxinames);
+
+  updateParking(jetways, parkingNumberIndex);
+
+  updateSummaryFields();
+
+  // TODO create warnings for this
+  // Q_ASSERT(runways.size() == numRunways);
+  // Q_ASSERT(approaches.size() == numApproaches);
+  // Q_ASSERT(deleteAirports.size() == numDeleteRecords);
+  // Q_ASSERT(coms.size() == numComs);
+}
+
+Airport::~Airport()
+{
+}
+
+void Airport::updateSummaryFields()
+{
+  for(const Runway& rw : runways)
+  {
+    if(rw.getEdgeLight() != rw::NO_LIGHT)
+      numLightRunway++;
+    if(rw.isHard())
+      numHardRunway++;
+    if(rw.isWater())
+      numWaterRunway++;
+    if(rw.isSoft())
+      numSoftRunway++;
+
+    // TODO
+    boundingRect.extend(rw.getPosition());
+    if(rw.getLength() > longestRunwayLength)
+    {
+      longestRunwayLength = rw.getLength();
+      longestRunwayWidth = rw.getWidth();
+      longestRunwayHeading = rw.getHeading();
+      longestRunwaySurface = rw.getSurface();
+    }
+
+    const RunwayEnd& primary = rw.getPrimary();
+    const RunwayEnd& secondary = rw.getSecondary();
+
+    if(primary.getApproachLights().getSystem() != rw::NO_ALS)
+      numRunwayEndApproachLight++;
+    if(secondary.getApproachLights().getSystem() != rw::NO_ALS)
+      numRunwayEndApproachLight++;
+
+    if(primary.getLeftVasi().getType() != rw::NONE || primary.getRightVasi().getType() != rw::NONE)
+      numRunwayEndVasi++;
+    if(secondary.getLeftVasi().getType() != rw::NONE || secondary.getRightVasi().getType() != rw::NONE)
+      numRunwayEndVasi++;
+
+    if(bgl::util::isFlagSet(rw.getMarkingFlags(), rw::PRIMARY_CLOSED))
+      numRunwayEndClosed++;
+    if(bgl::util::isFlagSet(rw.getMarkingFlags(), rw::SECONDARY_CLOSED))
+      numRunwayEndClosed++;
+  }
+
+  airportClosed = numRunwayEndClosed / 2 == runways.size();
+
+  for(const Com& c : coms)
+    if(c.getType() == com::TOWER)
+    {
+      towerCom = true;
+      break;
+    }
+
+  for(const Parking& p : parkings)
+  {
+    // TODO
+    boundingRect.extend(p.getPosition());
+
+    if(p.hasJetway())
+      numJetway++;
+
+    if(p.isGate())
+    {
+      numParkingGate++;
+
+      if(largestParkingGate == ap::UNKNOWN_PARKING || largestParkingGate < p.getType())
+        largestParkingGate = p.getType();
+    }
+
+    if(p.isGaRamp())
+    {
+      numParkingGaRamp++;
+      if(largestParkingGaRamp == ap::UNKNOWN_PARKING || largestParkingGaRamp < p.getType())
+        largestParkingGaRamp = p.getType();
+    }
+  }
+
+  for(const Fence& f : fences)
+  {
+    for(const BglPosition& p : f.getVertices())
+      boundingRect.extend(p);
+
+    if(f.getType() == fence::BOUNDARY)
+      numBoundaryFence++;
+  }
+
+  for(const Apron& a : aprons)
+    for(const BglPosition &p : a.getVertices())
+      boundingRect.extend(p);
+
+  for(const Apron2& a : aprons2)
+    for(const BglPosition &p : a.getVertices())
+      boundingRect.extend(p);
+
+  for(const Start& s : starts)
+    boundingRect.extend(s.getPosition());
+
+  for(const Helipad& h : helipads)
+    boundingRect.extend(h.getPosition());
+
+  for(const TaxiPath& p : taxipaths)
+  {
+    boundingRect.extend(p.getStartPoint().getPosition());
+    boundingRect.extend(p.getEndPoint().getPosition());
+  }
+
+  rating = !taxipaths.isEmpty() + towerObj + !parkings.isEmpty() + !aprons.isEmpty();
+
+  military = name.contains(" AB") ||
+             name.contains(" AF") ||
+             name.contains(" AS") ||
+             name.contains(" AAF") ||
+             name.contains(" AFB") ||
+             name.contains(" AFLD") ||
+             name.contains(" ANGB") ||
+             name.endsWith(" Mil") ||
+             name.contains(" Mil ") ||
+             name.contains("Air Force") ||
+             name.contains("(Military)");
+}
+
+void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>& parkingNumberIndex)
+{
+  for(const Jetway& jw : jetways)
+  {
+    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingIndex());
+    if(iter != parkingNumberIndex.end())
+      parkings[iter.value()].setHasJetway(true);
+    else
+      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
+                                     << " for ident " << ident;
+  }
+}
+
+void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames)
+{
   for(TaxiPath& t : taxipaths)
   {
     switch(t.type)
@@ -228,22 +381,6 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         break;
     }
   }
-
-  for(const Jetway& jw : jetways)
-  {
-    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingIndex());
-    if(iter != parkingNumberIndex.end())
-      parkings[iter.value()].setHasJetway(true);
-    else
-      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
-                                     << " for ident " << ident;
-  }
-
-  // TODO create warnings for this
-  // Q_ASSERT(runways.size() == numRunways);
-  // Q_ASSERT(approaches.size() == numApproaches);
-  // Q_ASSERT(deleteAirports.size() == numDeleteRecords);
-  // Q_ASSERT(coms.size() == numComs);
 }
 
 QDebug operator<<(QDebug out, const Airport& record)
@@ -271,10 +408,6 @@ QDebug operator<<(QDebug out, const Airport& record)
   out << "]";
 
   return out;
-}
-
-Airport::~Airport()
-{
 }
 
 } // namespace bgl

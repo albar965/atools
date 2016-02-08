@@ -107,6 +107,9 @@ QString Runway::surfaceToStr(rw::Surface surface)
     case rw::ASPHALT:
       return "ASPHALT";
 
+    case rw::CEMENT:
+      return "CEMENT";
+
     case rw::CLAY:
       return "CLAY";
 
@@ -294,6 +297,61 @@ QDebug operator<<(QDebug out, const Runway& record)
 
 Runway::~Runway()
 {
+}
+
+bool Runway::isWater() const
+{
+  return surface == rw::WATER;
+}
+
+bool atools::fs::bgl::Runway::isSoft() const
+{
+  if(surface == rw::GRASS)
+    return true;
+  else if(surface == rw::CLAY)
+    return true;
+  else if(surface == rw::SNOW)
+    return true;
+  else if(surface == rw::ICE)
+    return true;
+  else if(surface == rw::DIRT)
+    return true;
+  else if(surface == rw::CORAL)
+    return true;
+  else if(surface == rw::GRAVEL)
+    return true;
+  else if(surface == rw::OIL_TREATED)
+    return true;
+  else if(surface == rw::STEEL_MATS)
+    return true;
+  else if(surface == rw::BRICK)
+    return true;
+  else if(surface == rw::MACADAM)
+    return true;
+  else if(surface == rw::PLANKS)
+    return true;
+  else if(surface == rw::SAND)
+    return true;
+  else if(surface == rw::SHALE)
+    return true;
+  else if(surface == rw::UNKNOWN)
+    return true;
+
+  return false;
+}
+
+bool Runway::isHard() const
+{
+  if(surface == rw::CONCRETE)
+    return true;
+  else if(surface == rw::ASPHALT)
+    return true;
+  else if(surface == rw::BITUMINOUS)
+    return true;
+  else if(surface == rw::TARMAC)
+    return true;
+
+  return false;
 }
 
 } // namespace bgl

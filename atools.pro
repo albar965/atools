@@ -134,7 +134,8 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/approachtypes.h \
     src/fs/writer/ap/legbasewriter.h \
     src/fs/writer/ap/approachlegwriter.h \
-    src/fs/writer/ap/transitionlegwriter.h
+    src/fs/writer/ap/transitionlegwriter.h \
+    src/geo/rect.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -248,7 +249,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/approachtypes.cpp \
     src/fs/writer/ap/legbasewriter.cpp \
     src/fs/writer/ap/approachlegwriter.cpp \
-    src/fs/writer/ap/transitionlegwriter.cpp
+    src/fs/writer/ap/transitionlegwriter.cpp \
+    src/geo/rect.cpp
 
 unix {
     target.path = /usr/lib

@@ -36,6 +36,7 @@
 #include "fs/writer/nav/waypointwriter.h"
 #include "fs/writer/ap/comwriter.h"
 #include "fs/writer/ap/deleteairportwriter.h"
+#include "fs/bgl/ap/parking.h"
 
 namespace atools {
 namespace fs {
@@ -96,9 +97,51 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":region", type->getRegion());
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
-  bind(":has_avgas", ((type->getFuelFlags() & AVGAS) == AVGAS) ? 1 : 0);
-  bind(":has_jetfuel", ((type->getFuelFlags() & JET_FUEL) == JET_FUEL) ? 1 : 0);
-  bind(":has_tower_object", type->hasTowerObj() ? 1 : 0);
+  bind(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
+  bindBool(":has_jetfuel", (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
+  bindBool(":has_tower_object", type->hasTowerObj());
+
+  bindBool(":has_tower", type->hasTowerCom());
+  bindBool(":is_closed", type->isAirportClosed());
+  bindBool(":is_military", type->isMilitary());
+
+  bind(":num_boundary_fence", type->getNumBoundaryFence());
+  bind(":num_com", type->getComs().size());
+  bind(":num_parking_gate", type->getNumParkingGate());
+  bind(":num_parking_ga_ramp", type->getNumParkingGaRamp());
+  bind(":num_approach", type->getApproaches().size());
+  bind(":num_runway_soft", type->getNumSoftRunway());
+  bind(":num_runway_hard", type->getNumHardRunway());
+  bind(":num_runway_water", type->getNumWaterRunway());
+  bind(":num_runway_light", type->getNumLightRunway());
+  bind(":num_runway_end_closed", type->getNumRunwayEndClosed());
+  bind(":num_runway_end_vasi", type->getNumRunwayEndVasi());
+  bind(":num_runway_end_als", type->getNumRunwayEndApproachLight());
+  bind(":num_apron", type->getAprons().size());
+  bind(":num_taxi_path", type->getTaxiPaths().size());
+  bind(":num_helipad", type->getHelipads().size());
+  bind(":num_jetway", type->getNumJetway());
+  bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script
+
+  bind(":longest_runway_length", bgl::util::meterToFeet(type->getLongestRunwayLength()));
+  bind(":longest_runway_width", bgl::util::meterToFeet(type->getLongestRunwayWidth()));
+  bind(":longest_runway_heading", type->getLongestRunwayHeading());
+  bind(":longest_runway_surface", Runway::surfaceToStr(type->getLongestRunwaySurface()));
+
+  bind(":num_runways", type->getRunways().size());
+
+  bind(":largest_parking_ramp",
+       bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGaRamp()));
+  bind(":largest_parking_gate",
+       bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
+
+  bind(":rating", type->getRating());
+
+  bind(":left_lonx", type->getBoundingRect().getTopLeft().getLonX());
+  bind(":top_laty", type->getBoundingRect().getTopLeft().getLatY());
+  bind(":right_lonx", type->getBoundingRect().getBottomRight().getLonX());
+  bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
+
   bind(":mag_var", type->getMagVar());
   bind(":tower_altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
@@ -113,13 +156,7 @@ void AirportWriter::writeObject(const Airport *type)
   getAirportIndex()->add(type->getIdent(), getCurrentId());
 
   RunwayWriter *rwWriter = getDataWriter().getRunwayWriter();
-
-  const QList<Runway>& runways = type->getRunways();
-
-  for(Runway rwy : runways)
-    if(!(getOptions().isFilterRunways() &&
-         rwy.getLength() <= MIN_RUNWAY_LENGTH && rwy.getSurface() == atools::fs::bgl::rw::GRASS))
-      rwWriter->writeOne(rwy);
+  rwWriter->write(type->getRunways());
 
   WaypointWriter *waypointWriter = getDataWriter().getWaypointWriter();
   waypointWriter->write(type->getWaypoints());

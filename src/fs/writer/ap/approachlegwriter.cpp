@@ -38,7 +38,7 @@ void ApproachLegWriter::writeObject(const ApproachLeg *type)
 
   bind(":approach_leg_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
-  bind(":is_missed", type->isMissed() ? 1 : 0);
+  bindBool(":is_missed", type->isMissed());
 
   LegBaseWriter::writeObject(type);
 }

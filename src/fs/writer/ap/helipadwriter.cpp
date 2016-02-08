@@ -43,8 +43,8 @@ void HelipadWriter::writeObject(const Helipad *type)
   bind(":length", bgl::util::meterToFeet(type->getLength()));
   bind(":width", bgl::util::meterToFeet(type->getWidth()));
   bind(":heading", type->getHeading());
-  bind(":is_transparent", type->isTransparent() ? 1 : 0);
-  bind(":is_closed", type->isClosed() ? 1 : 0);
+  bindBool(":is_transparent", type->isTransparent());
+  bindBool(":is_closed", type->isClosed());
   bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());

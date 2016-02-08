@@ -60,6 +60,13 @@ void IlsWriter::writeObject(const Ils *type)
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }
+  else
+  {
+    bindNullInt(":dme_range");
+    bindNullInt(":dme_altitude");
+    bindNullFloat(":dme_lonx");
+    bindNullFloat(":dme_laty");
+  }
 
   const Glideslope *gs = type->getGlideslope();
   if(gs != nullptr)
@@ -69,6 +76,14 @@ void IlsWriter::writeObject(const Ils *type)
     bind(":gs_altitude", bgl::util::meterToFeet(gs->getPosition().getAltitude()));
     bind(":gs_lonx", gs->getPosition().getLonX());
     bind(":gs_laty", gs->getPosition().getLatY());
+  }
+  else
+  {
+    bindNullInt(":gs_range");
+    bindNullFloat(":gs_pitch");
+    bindNullInt(":gs_altitude");
+    bindNullFloat(":gs_lonx");
+    bindNullFloat(":gs_laty");
   }
 
   bool isComplete = false;

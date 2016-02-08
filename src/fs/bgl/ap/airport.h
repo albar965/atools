@@ -32,6 +32,7 @@
 #include "fs/bgl/ap/start.h"
 #include "fs/bgl/ap/fence.h"
 #include "fs/bgl/ap/taxipath.h"
+#include "geo/rect.h"
 
 #include <QList>
 
@@ -44,6 +45,7 @@ class BinaryStream;
 namespace atools {
 namespace fs {
 namespace bgl {
+class Jetway;
 
 namespace ap {
 
@@ -185,18 +187,146 @@ public:
     return taxipaths;
   }
 
+  bool hasTowerCom() const
+  {
+    return towerCom;
+  }
+
+  bool isAirportClosed() const
+  {
+    return airportClosed;
+  }
+
+  const atools::geo::Rect& getBoundingRect() const
+  {
+    return boundingRect;
+  }
+
+  int getNumRunwayEndApproachLight() const
+  {
+    return numRunwayEndApproachLight;
+  }
+
+  int getNumRunwayEndIls() const
+  {
+    return numRunwayEndIls;
+  }
+
+  int getNumHardRunway() const
+  {
+    return numHardRunway;
+  }
+
+  int getNumRunwayEndClosed() const
+  {
+    return numRunwayEndClosed;
+  }
+
+  int getNumSoftRunway() const
+  {
+    return numSoftRunway;
+  }
+
+  int getNumWaterRunway() const
+  {
+    return numWaterRunway;
+  }
+
+  int getNumLightRunway() const
+  {
+    return numLightRunway;
+  }
+
+  int getNumRunwayEndVasi() const
+  {
+    return numRunwayEndVasi;
+  }
+
+  int getNumJetway() const
+  {
+    return numJetway;
+  }
+
+  int getNumBoundaryFence() const
+  {
+    return numBoundaryFence;
+  }
+
+  int getNumParkingGaRamp() const
+  {
+    return numParkingGaRamp;
+  }
+
+  int getNumParkingGate() const
+  {
+    return numParkingGate;
+  }
+
+  float getLongestRunwayLength() const
+  {
+    return longestRunwayLength;
+  }
+
+  float getLongestRunwayWidth() const
+  {
+    return longestRunwayWidth;
+  }
+
+  float getLongestRunwayHeading() const
+  {
+    return longestRunwayHeading;
+  }
+
+  atools::fs::bgl::rw::Surface getLongestRunwaySurface() const
+  {
+    return longestRunwaySurface;
+  }
+
+  atools::fs::bgl::ap::ParkingType getLargestParkingGaRamp() const
+  {
+    return largestParkingGaRamp;
+  }
+
+  atools::fs::bgl::ap::ParkingType getLargestParkingGate() const
+  {
+    return largestParkingGate;
+  }
+
+  int getRating() const
+  {
+    return rating;
+  }
+
+  bool isMilitary() const
+  {
+    return military;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
   bool deleteRecord;
   atools::fs::bgl::BglPosition position, towerPosition;
+  atools::geo::Rect boundingRect;
   float magVar;
   QString ident;
   QString region;
 
   unsigned int fuelFlags;
   QString name;
-  bool towerObj;
+  bool towerObj = false, towerCom = false, airportClosed = false, military = false;
+
+  int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
+      numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0,
+      numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
+      numParkingGaRamp = 0, numParkingGate = 0;
+
+  float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
+
+  atools::fs::bgl::rw::Surface longestRunwaySurface = atools::fs::bgl::rw::UNKNOWN;
+  atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN_PARKING,
+                                   largestParkingGate = atools::fs::bgl::ap::UNKNOWN_PARKING;
+  int rating = 0;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;
@@ -211,6 +341,12 @@ private:
   QList<atools::fs::bgl::ApronLight> apronLights;
   QList<atools::fs::bgl::Fence> fences;
   QList<atools::fs::bgl::TaxiPath> taxipaths;
+
+  void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
+  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways, const QHash<int, int>& parkingNumberIndex);
+  void updateSummaryFields();
+
+  static const int MIN_RUNWAY_LENGTH = 10;
 };
 
 } // namespace bgl

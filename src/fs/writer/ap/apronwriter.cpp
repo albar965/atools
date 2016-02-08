@@ -40,8 +40,8 @@ void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 
   bind(":apron_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->first->getSurface()));
-  bind(":is_draw_surface", type->second->isDrawSurface() ? 1 : 0);
-  bind(":is_draw_detail", type->second->isDrawDetail() ? 1 : 0);
+  bindBool(":is_draw_surface", type->second->isDrawSurface());
+  bindBool(":is_draw_detail", type->second->isDrawDetail());
 
   // TODO create a WKT polygon from the triangles
   QStringList list;

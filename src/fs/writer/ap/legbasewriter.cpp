@@ -43,8 +43,8 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
        bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getRecommendedFixType()));
   bind(":recommended_fix_ident", type->getRecommendedFixIdent());
   bind(":recommended_fix_region", type->getRecommendedFixRegion());
-  bind(":is_flyover", type->isFlyover() ? 1 : 0);
-  bind(":is_true_course", type->isTrueCourse() ? 1 : 0);
+  bindBool(":is_flyover", type->isFlyover());
+  bindBool(":is_true_course", type->isTrueCourse());
   bind(":course", type->getCourse());
 
   if(type->isTime())

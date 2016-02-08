@@ -216,8 +216,6 @@ QString Parking::pushBackToStr(ap::PushBack type)
   return QString();
 }
 
-
-
 Parking::Parking(BinaryStream *bs)
 {
   unsigned int flags = bs->readUInt();
@@ -239,6 +237,54 @@ Parking::Parking(BinaryStream *bs)
 Parking::~Parking()
 {
 
+}
+
+bool Parking::isGate() const
+{
+  if(type == ap::GATE_SMALL)
+    return true;
+  else if(type == ap::GATE_MEDIUM)
+    return true;
+  else if(type == ap::GATE_HEAVY)
+    return true;
+
+  return false;
+}
+
+bool Parking::isGaRamp() const
+{
+  if(type == ap::RAMP_GA)
+    return true;
+  else if(type == ap::RAMP_GA_SMALL)
+    return true;
+  else if(type == ap::RAMP_GA_MEDIUM)
+    return true;
+  else if(type == ap::RAMP_GA_LARGE)
+    return true;
+
+  return false;
+
+}
+
+bool Parking::isCargo() const
+{
+  if(type == ap::RAMP_CARGO)
+    return true;
+  else if(type == ap::RAMP_MIL_CARGO)
+    return true;
+
+  return false;
+
+}
+
+bool Parking::isMil() const
+{
+  if(type == ap::RAMP_MIL_CARGO)
+    return true;
+  else if(type == ap::RAMP_MIL_COMBAT)
+    return true;
+
+  return false;
 }
 
 QDebug operator<<(QDebug out, const Parking& record)

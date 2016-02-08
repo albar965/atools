@@ -72,7 +72,7 @@ public:
     return dir;
   }
 
-  atools::fs::bgl::BglPosition getPosition() const
+  const atools::fs::bgl::BglPosition& getPosition() const
   {
     return pos;
   }

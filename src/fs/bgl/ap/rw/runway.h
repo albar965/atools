@@ -72,6 +72,7 @@ enum Surface
   GRASS = 0x0001, // wiki error reported
   WATER = 0x0002,
   ASPHALT = 0x0004,
+  CEMENT = 0x0005,// TODO wiki error report
   CLAY = 0x0007,
   SNOW = 0x0008,
   ICE = 0x0009,
@@ -122,6 +123,10 @@ public:
   {
     return centerLight;
   }
+
+  bool isWater() const;
+  bool isSoft() const;
+  bool isHard() const;
 
   bool isCenterRed() const
   {

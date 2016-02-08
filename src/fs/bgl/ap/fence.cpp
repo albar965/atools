@@ -20,6 +20,7 @@
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -32,8 +33,9 @@ Fence::Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
 
   bs->skip(32); // instance ID and profile
 
-  for(int i = 0; i < numVertices; i++)
-    vertices.push_back(BglPosition(bs));
+  if(options->includeBglObject(type::GEOMETRY))
+    for(int i = 0; i < numVertices; i++)
+      vertices.push_back(BglPosition(bs));
 }
 
 Fence::~Fence()

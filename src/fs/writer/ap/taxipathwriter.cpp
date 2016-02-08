@@ -51,13 +51,13 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
 
   bind(":name", type->getName());
 
-  bind(":is_draw_surface", type->isDrawSurface() ? 1 : 0);
-  bind(":is_draw_detail", type->isDrawDetail() ? 1 : 0);
+  bindBool(":is_draw_surface", type->isDrawSurface());
+  bindBool(":is_draw_detail", type->isDrawDetail());
 
-  bind(":has_centerline", type->hasCenterline() ? 1 : 0);
-  bind(":has_centerline_light", type->hasCenterlineLight() ? 1 : 0);
-  bind(":has_left_edge_light", type->hasLeftEdgeLight() ? 1 : 0);
-  bind(":has_right_edge_light", type->hasRightEdgeLight() ? 1 : 0);
+  bindBool(":has_centerline", type->hasCenterline() );
+  bindBool(":has_centerline_light", type->hasCenterlineLight() );
+  bindBool(":has_left_edge_light", type->hasLeftEdgeLight() );
+  bindBool(":has_right_edge_light", type->hasRightEdgeLight() );
 
   bind(":start_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getStartPoint().getType()));
   bind(":start_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getDir()));

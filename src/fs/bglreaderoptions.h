@@ -45,7 +45,8 @@ enum BglObjectType
   APRON,
   FENCE,
   TAXIWAY,
-  ROUTE
+  ROUTE,
+  GEOMETRY
 };
 
 QString bglObjectTypeToString(atools::fs::type::BglObjectType type);

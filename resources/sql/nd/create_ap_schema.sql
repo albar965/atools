@@ -23,14 +23,51 @@ create table airport
   file_id integer not null,
   ident varchar(4) not null,
   region varchar(50),
-  name varchar(50),
-  country varchar(50) not null,
-  state varchar(50),
-  city varchar(50) not null,
+  name varchar(50) collate nocase,
+  country varchar(50) collate nocase not null,
+  state varchar(50) collate nocase,
+  city varchar(50) collate nocase not null,
   fuel_flags integer not null,
   has_avgas integer not null,
   has_jetfuel integer not null,
   has_tower_object integer not null,
+
+  has_tower integer not null,
+  is_closed integer not null,
+  is_military integer not null,
+
+  num_boundary_fence integer not null,
+  num_com integer not null,
+  num_parking_gate integer not null,
+  num_parking_ga_ramp integer not null,
+  num_approach integer not null,
+  num_runway_hard integer not null,
+  num_runway_soft integer not null,
+  num_runway_water integer not null,
+  num_runway_light integer not null,
+  num_runway_end_closed integer not null,
+  num_runway_end_vasi integer not null,
+  num_runway_end_als integer not null,
+  num_runway_end_ils integer,
+  num_apron integer not null,
+  num_taxi_path integer not null,
+  num_helipad integer not null,
+  num_jetway integer not null,
+
+  longest_runway_length double not null,
+  longest_runway_width double not null,
+  longest_runway_heading double not null,
+  longest_runway_surface varchar(15) not null,
+  num_runways integer not null,
+  largest_parking_ramp varchar(20),
+  largest_parking_gate varchar(20),
+  rating integer not null,
+
+  left_lonx double not null,
+  top_laty double not null,
+  right_lonx double not null,
+  bottom_laty double not null,
+
   mag_var double not null,
   tower_altitude integer,
   tower_lonx double,
@@ -115,9 +152,9 @@ create table apron
   surface varchar(15) not null,
   is_draw_surface integer not null,
   is_draw_detail integer not null,
-  vertices text not null,
-  vertices2 text not null,
-  triangles text not null,
+  vertices text,
+  vertices2 text,
+  triangles text,
 foreign key(airport_id) references airport(airport_id)
 );
 
@@ -131,8 +168,8 @@ create table apron_light
 (
   apron_light_id integer primary key,
   airport_id not null,
-  vertices text not null,
-  edges text not null,
+  vertices text,
+  edges text,
 foreign key(airport_id) references airport(airport_id)
 );
 
@@ -147,7 +184,7 @@ create table fence
   fence_id integer primary key,
   airport_id not null,
   type varchar(15) not null,
-  vertices text not null,
+  vertices text,
 foreign key(airport_id) references airport(airport_id)
 );
 
