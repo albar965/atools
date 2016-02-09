@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "sql/sqlutil.h"
+#include "logging/loggingdefs.h"
 
 #include <QString>
 
@@ -31,6 +32,12 @@ SqlUtil::SqlUtil(SqlDatabase *sqlDb)
 QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause)
 {
   // TODO use QSqlDriver::sqlStatement()
+
+  // QSqlDriver::WhereStatement	0	An SQL WHERE statement (e.g., WHERE f = 5).
+  // QSqlDriver::SelectStatement	1	An SQL SELECT statement (e.g., SELECT f FROM t).
+  // QSqlDriver::UpdateStatement	2	An SQL UPDATE statement (e.g., UPDATE TABLE t set f = 1).
+  // QSqlDriver::InsertStatement	3	An SQL INSERT statement (e.g., INSERT INTO t (f) values (1)).
+  // QSqlDriver::DeleteStatement	4	An SQL DELETE statement (e.g., DELETE FROM t).
   QString columnList, valueList;
 
   QSqlRecord record = db->record(tablename);
@@ -113,6 +120,110 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
     }
   }
   return copied;
+}
+
+void SqlUtil::printTableStats(QDebug& out)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace();
+
+  out << "Statistics for database (tables / rows):" << endl;
+
+  SqlQuery query(db);
+
+  int index = 1, totalCount = 0;
+
+  for(QString name : db->tables())
+  {
+    query.exec("select count(1) as cnt from " + name);
+    if(query.next())
+    {
+      int cnt = query.value("cnt").toInt();
+      totalCount += cnt;
+      out << "#" << (index++) << " " << name << ": " << cnt << " rows" << endl;
+    }
+  }
+  out << "Total" << ": " << totalCount << " rows" << endl;
+}
+
+void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace();
+
+  out << "Column value report for database:" << endl;
+
+  QStringList tableList;
+  if(tables.isEmpty())
+    tableList = db->tables();
+  else
+    tableList = tables;
+  SqlQuery q(db);
+  SqlQuery q2(db);
+
+  for(QString name : db->tables())
+  {
+    QSqlRecord record = db->record(name);
+
+    for(int i = 0; i < record.count(); ++i)
+    {
+      QString col = record.fieldName(i);
+      q.exec("select count(distinct " + col + ") as cnt from " + name);
+      if(q.next())
+      {
+        int cnt = q.value("cnt").toInt();
+        if(cnt < 2)
+        {
+          out << name << "." << col;
+          if(cnt == 0)
+            out << " has no distinct values" << endl;
+          else if(cnt == 1)
+          {
+            out << " has only 1 distinct value: ";
+            q2.exec("select " + col + " from " + name + " group by " + col);
+            while(q2.next())
+              out << q2.value(0).toString();
+            out << endl;
+          }
+        }
+      }
+    }
+  }
+}
+
+void SqlUtil::reportDuplicates(QDebug& out,
+                               const QString& table,
+                               const QString& idColumn,
+                               const QStringList& identityColumns)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace();
+
+  out << "Table duplicates for " << table <<
+  "(" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+
+  QStringList where;
+  QStringList colList;
+  for(QString ic : identityColumns)
+  {
+    where.push_back("t1." + ic + " = t2." + ic);
+    colList.push_back("t1." + ic);
+  }
+
+  SqlQuery q(db);
+  q.exec(
+    "select distinct t1." + idColumn + ", " + colList.join(", ") +
+    " from " + table + " t1 " +
+    "join " + table + " t2 on " + where.join(" and ") +
+    " where t1." + idColumn + " <> t2." + idColumn +
+    " order by " + colList.join(", "));
+
+  while(q.next())
+  {
+    for(int i = 0; i < identityColumns.size() + 1; i++)
+      out << q.value(i).toString() << ",";
+    out << endl;
+  }
 }
 
 } // namespace sql

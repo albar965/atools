@@ -42,11 +42,13 @@ public:
    * @param endline Print endline or not. Useful for streams that automatically
    * insert endlines like QDebug.
    */
-  template<class OUT>
-  void printTableStats(OUT& out, bool endline = true);
+  void printTableStats(QDebug& out);
 
-  template<class OUT>
-  void createColumnReport(OUT& out, bool endline, const QStringList& tables = QStringList());
+  void createColumnReport(QDebug& out, const QStringList& tables = QStringList());
+  void reportDuplicates(QDebug& out,
+                        const QString& table,
+                        const QString& idColumn,
+                        const QStringList& identityColumns);
 
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString());
@@ -86,86 +88,6 @@ private:
 };
 
 // -----------------------------------------------
-
-template<class OUT>
-void SqlUtil::printTableStats(OUT& out, bool endline)
-{
-  out << "Statistics for database (tables / rows):";
-  if(endline)
-    out << endl;
-
-  SqlQuery query(db);
-
-  int index = 1, totalCount = 0;
-
-  for(QString name : db->tables())
-  {
-    query.exec("select count(1) as cnt from " + name);
-    if(query.next())
-    {
-      int cnt = query.value("cnt").toInt();
-      totalCount += cnt;
-      out << "#" << (index++) << " " << name << ": " << cnt << " rows";
-      if(endline)
-        out << endl;
-    }
-  }
-  out << "Total" << ": " << totalCount << " rows";
-  if(endline)
-    out << endl;
-}
-
-template<class OUT>
-void SqlUtil::createColumnReport(OUT& out, bool endline, const QStringList& tables)
-{
-  out << "Column value report for database:";
-  if(endline)
-    out << endl;
-
-  QStringList tableList;
-  if(tables.isEmpty())
-    tableList = db->tables();
-  else
-    tableList = tables;
-  SqlQuery q(db);
-  SqlQuery q2(db);
-
-  for(QString name : db->tables())
-  {
-    QSqlRecord record = db->record(name);
-
-    for(int i = 0; i < record.count(); ++i)
-    {
-      QString col = record.fieldName(i);
-      q.exec("select count(distinct " + col + ") as cnt from " + name);
-      if(q.next())
-      {
-        int cnt = q.value("cnt").toInt();
-        if(cnt < 2)
-        {
-          out << name << "." << col;
-          if(cnt == 0)
-          {
-            out << " has no distinct values";
-            if(endline)
-              out << endl;
-          }
-          else if(cnt == 1)
-          {
-            out << " has only 1 distinct value: ";
-            q2.exec("select " + col + " from " + name + " group by " + col);
-            while(q2.next())
-              out << q2.value(0).toString();
-            if(endline)
-              out << endl;
-          }
-          else if(endline)
-            out << endl;
-        }
-      }
-    }
-  }
-}
 
 } // namespace sql
 } // namespace atools
