@@ -350,14 +350,27 @@ bool SqlQuery::nextResult()
   return query.nextResult();
 }
 
+QString SqlQuery::boundValuesAsString() const
+{
+  QMap<QString, QVariant> boundValues = query.boundValues();
+
+  QStringList values;
+  for(QMap<QString, QVariant>::const_iterator i = boundValues.constBegin();
+      i != boundValues.constEnd(); ++i)
+    values.push_back("\"" + i.key() + "\"=\"" + i.value().toString() + "\"");
+  return values.join(",");
+}
+
 void SqlQuery::checkError(bool retval, const QString& msg) const
 {
+
   if(!retval || query.lastError().isValid())
   {
     if(queryString.isEmpty())
       throw SqlException(query.lastError(), msg);
     else
-      throw SqlException(query.lastError(), msg, "Query is \"" + queryString + "\"");
+      throw SqlException(query.lastError(), msg,
+                         "Query is \"" + queryString + "\". Bound values are " + boundValuesAsString());
   }
 }
 
