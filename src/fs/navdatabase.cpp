@@ -82,11 +82,41 @@ void Navdatabase::create()
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
   db->commit();
 
-  dataWriter.logResults();
-  QDebug info(QtInfoMsg);
-  atools::sql::SqlUtil util(db);
-  util.printTableStats(info.noquote().nospace(), true);
-  util.createColumnReport(info.noquote().nospace(), true);
+  if(options->isDatabaseReport())
+  {
+    dataWriter.logResults();
+    QDebug info(QtInfoMsg);
+    atools::sql::SqlUtil util(db);
+    info << endl;
+    util.printTableStats(info);
+    info << endl;
+    util.createColumnReport(info);
+
+    info << endl;
+    util.reportDuplicates(info, "airport", "airport_id", {"ident"});
+    info << endl;
+    util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "region", "lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "region", "lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "marker", "marker_id", {"lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
+    info << endl;
+    util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
+    info << endl;
+  }
+
   qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 

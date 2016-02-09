@@ -94,9 +94,9 @@ public:
     return incomplete;
   }
 
-  bool isShowStatistics() const
+  bool isDatabaseReport() const
   {
-    return showStatistics;
+    return databaseReport;
   }
 
   bool isResolveRoutes() const
@@ -129,9 +129,9 @@ public:
     deletes = value;
   }
 
-  void setShowStatistics(bool value)
+  void setDatabaseReport(bool value)
   {
-    showStatistics = value;
+    databaseReport = value;
   }
 
   void setFilterRunways(bool value)
@@ -177,7 +177,7 @@ private:
 
   QString sceneryFile, basepath;
   bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
-       resolveRoutes = true, showStatistics = false;
+       resolveRoutes = true, databaseReport = false;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, airportIcaoFiltersExcl;

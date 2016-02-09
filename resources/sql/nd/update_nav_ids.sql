@@ -26,7 +26,6 @@ create index if not exists idx_vor_region on vor(region);
 create index if not exists idx_ndb_type on ndb(type);
 create index if not exists idx_ndb_region on ndb(region);
 
-
 create index if not exists idx_approach_fix_type on approach(fix_type);
 create index if not exists idx_approach_fix_ident on approach(fix_ident);
 create index if not exists idx_approach_fix_region on approach(fix_region);
@@ -54,6 +53,27 @@ create index if not exists idx_transition_leg_fix_fix_airport_ident on transitio
 create index if not exists idx_transition_leg_recommended_fix_type on transition_leg(recommended_fix_type);
 create index if not exists idx_transition_leg_recommended_fix_ident on transition_leg(recommended_fix_ident);
 create index if not exists idx_transition_leg_recommended_fix_region on transition_leg(recommended_fix_region);
+
+----------------------------------------------------------------
+-- Remove any duplicates ---------------------------------------
+
+delete from ndb where ndb_id in (
+select n1.ndb_id
+from ndb n1 join ndb n2 on n1.ident = n2.ident and n1.frequency = n2.frequency and
+  n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.ndb_id <> n2.ndb_id and n1.airport_id is null);
+
+delete from waypoint where waypoint_id in (
+select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
+  n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.waypoint_id <> n2.waypoint_id and n1.airport_id is null and
+n1.waypoint_id not in (select waypoint_id from temp_route)) ;
+
+delete from marker where marker_id in (
+select n1.marker_id
+from marker n1 join marker n2 on n1.type = n2.type and n1.heading = n2.heading and
+  n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.marker_id < n2.marker_id );
 
 ----------------------------------------------------------------
 -- Update navigation references for waypoint -------------------
@@ -359,3 +379,4 @@ from temp_ap_num_ils r where r.ap_id = airport.airport_id);
 drop table if exists temp_ap_num_ils;
 
 update airport set num_runway_end_ils = 0 where num_runway_end_ils is null;
+

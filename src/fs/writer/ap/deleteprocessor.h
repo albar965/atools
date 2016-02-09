@@ -73,7 +73,7 @@ private:
   *nullWpStmt,
   *nullVorStmt,
   *nullNdbStmt,
-  *deleteAirportStmt,
+  *deleteAirportStmt, *selectAirportStmt,
   *deleteApronStmt, *updateApronStmt,
   *deleteApronLightStmt, *updateApronLightStmt,
   *deleteFenceStmt, *updateFenceStmt,
@@ -88,6 +88,9 @@ private:
   *deleteTransitionStmt,
   *deleteApproacheStmt,
   *fetchOldApproachIdStmt;
+
+  bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,
+       hasRunways = true;
 
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);

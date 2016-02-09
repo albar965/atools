@@ -125,7 +125,7 @@ void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveRoutes(settings.value("Options/ResolveRoutes", true).toBool());
-  setShowStatistics(settings.value("Options/ShowStatistics", true).toBool());
+  setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
   setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());

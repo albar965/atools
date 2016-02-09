@@ -54,8 +54,8 @@ create table airport
   num_helipad integer not null,
   num_jetway integer not null,
 
-  longest_runway_length double not null,
-  longest_runway_width double not null,
+  longest_runway_length integer not null,
+  longest_runway_width integer not null,
   longest_runway_heading double not null,
   longest_runway_surface varchar(15) not null,
   num_runways integer not null,

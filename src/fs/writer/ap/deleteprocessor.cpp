@@ -57,6 +57,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   nullVorStmt = new SqlQuery(sqlDb);
   nullNdbStmt = new SqlQuery(sqlDb);
   deleteAirportStmt = new SqlQuery(sqlDb);
+  selectAirportStmt = new SqlQuery(sqlDb);
   deleteApronStmt = new SqlQuery(sqlDb);
   updateApronStmt = new SqlQuery(sqlDb);
   deleteApronLightStmt = new SqlQuery(sqlDb);
@@ -127,6 +128,10 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "delete from airport "
     "where ident = :apIdent and airport_id <> :curApId");
 
+  selectAirportStmt->prepare(
+    "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils, num_approach "
+    "from airport where ident = :apIdent and airport_id <> :curApId");
+
   // Delete all facilities of the old airport
   deleteComStmt->prepare(delAptFeatureStmt("com"));
   deleteHelipadStmt->prepare(delAptFeatureStmt("helipad"));
@@ -194,6 +199,7 @@ DeleteProcessor::~DeleteProcessor()
   delete nullNdbStmt;
 
   delete deleteAirportStmt;
+  delete selectAirportStmt;
   delete deleteApronStmt;
   delete updateApronStmt;
   delete deleteApronLightStmt;
@@ -220,27 +226,74 @@ DeleteProcessor::~DeleteProcessor()
 
 void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *airport, int currentApId)
 {
-  this->del = delAp;
-  this->type = airport;
-  this->currentId = currentApId;
-
+  del = delAp;
+  type = airport;
+  currentId = currentApId;
   ident = type->getIdent();
 
-  if(isFlagSet(del->getFlags(), bgl::del::APPROACHES))
-    deleteApproachesAndTransitions(fetchOldApproachIds());
-  else
-    transferApproaches();
+  // airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils
+  bindAndExecute(selectAirportStmt, "select airports");
 
-  deleteOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
-  deleteOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
-  deleteOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
-  deleteOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
+  hasApproach = true;
+  hasApron = true;
+  hasCom = true;
+  hasHelipad = true;
+  hasTaxi = true;
+  hasRunways = true;
+
+  int i = 0;
+  while(selectAirportStmt->next())
+  {
+    if(i > 0)
+    {
+      qWarning() << "Found more than one airport to delete for ident"
+                 << type->getIdent() << "id" << currentId
+                 << "found" << selectAirportStmt->value("airport_id").toInt();
+      hasApproach = true;
+      hasApron = true;
+      hasCom = true;
+      hasHelipad = true;
+      hasTaxi = true;
+      hasRunways = true;
+      break;
+    }
+    hasApproach = selectAirportStmt->value("num_approach").toInt() > 0;
+    hasApron = selectAirportStmt->value("num_apron").toInt() > 0;
+    hasCom = selectAirportStmt->value("num_com").toInt() > 0;
+    hasHelipad = selectAirportStmt->value("num_helipad").toInt() > 0;
+    hasTaxi = selectAirportStmt->value("num_taxi_path").toInt() > 0;
+    hasRunways = selectAirportStmt->value("num_runways").toInt() > 0;
+    i++;
+  }
+
+  if(hasApproach)
+  {
+    if(isFlagSet(del->getFlags(), bgl::del::APPROACHES))
+      deleteApproachesAndTransitions(fetchOldApproachIds());
+    else
+      transferApproaches();
+  }
+
+  if(hasApron)
+  {
+    deleteOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
+    deleteOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
+  }
+  if(hasCom)
+    deleteOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
+
+  if(hasHelipad)
+    deleteOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
+
+  if(hasTaxi)
+    deleteOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
+
   deleteOrUpdate(deleteStartStmt, updateStartStmt, bgl::del::STARTS);
-  deleteOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
 
-  if(isFlagSet(del->getFlags(), bgl::del::RUNWAYS))
-    // TODO no update yet since it does not appear in reality
-    deleteRunways();
+  if(hasRunways)
+    if(isFlagSet(del->getFlags(), bgl::del::RUNWAYS))
+      // TODO no update yet since it does not appear in reality
+      deleteRunways();
 
   // TODO this keeps from updating airport features
   deleteAirport();
