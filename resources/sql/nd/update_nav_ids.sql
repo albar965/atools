@@ -54,20 +54,48 @@ create index if not exists idx_transition_leg_recommended_fix_type on transition
 create index if not exists idx_transition_leg_recommended_fix_ident on transition_leg(recommended_fix_ident);
 create index if not exists idx_transition_leg_recommended_fix_region on transition_leg(recommended_fix_region);
 
+--create table ndb_backup as
+--select distinct ident, frequency, region, lonx, laty from ndb;
+
+
 ----------------------------------------------------------------
 -- Remove any duplicates ---------------------------------------
+
+drop table if exists backup_ndb;
+create table backup_ndb as
+select * from ndb;
+
+drop table if exists backup_waypoint;
+create table backup_waypoint as
+select * from waypoint;
+
+drop table if exists backup_marker;
+create table backup_marker as
+select * from marker;
 
 delete from ndb where ndb_id in (
 select n1.ndb_id
 from ndb n1 join ndb n2 on n1.ident = n2.ident and n1.frequency = n2.frequency and
-  n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.ndb_id <> n2.ndb_id and n1.airport_id is null);
+  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.ndb_id < n2.ndb_id and n1.airport_id is null);
+
+delete from ndb where ndb_id in (
+select n1.ndb_id
+from ndb n1 join ndb n2 on n1.ident = n2.ident and n1.frequency = n2.frequency and
+  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.ndb_id > n2.ndb_id and n1.airport_id is null);
 
 delete from waypoint where waypoint_id in (
 select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
-  n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.waypoint_id <> n2.waypoint_id and n1.airport_id is null and
-n1.waypoint_id not in (select waypoint_id from temp_route)) ;
+  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.waypoint_id < n2.waypoint_id and n1.airport_id is null and
+n1.waypoint_id not in (select waypoint_id from route_point)) ;
+
+delete from waypoint where waypoint_id in (
+select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
+  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
+where n1.waypoint_id > n2.waypoint_id and n1.airport_id is null and
+n1.waypoint_id not in (select waypoint_id from route_point)) ;
 
 delete from marker where marker_id in (
 select n1.marker_id
