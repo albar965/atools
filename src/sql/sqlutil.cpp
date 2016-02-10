@@ -199,9 +199,6 @@ void SqlUtil::reportDuplicates(QDebug& out,
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
-  out << "Table duplicates for " << table <<
-  "(" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
-
   QStringList where;
   QStringList colList;
   for(QString ic : identityColumns)
@@ -218,12 +215,23 @@ void SqlUtil::reportDuplicates(QDebug& out,
     " where t1." + idColumn + " <> t2." + idColumn +
     " order by " + colList.join(", "));
 
+  bool header = false;
   while(q.next())
   {
+    if(!header)
+    {
+      out << "Table duplicates for " << table <<
+      "(" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+      header = true;
+    }
+
     for(int i = 0; i < identityColumns.size() + 1; i++)
       out << q.value(i).toString() << ",";
     out << endl;
   }
+  if(!header)
+    out << "Table duplicates for " << table <<
+    "(" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
 }
 
 } // namespace sql
