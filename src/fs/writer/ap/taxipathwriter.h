@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::TaxiPath *type);
+  virtual void writeObject(const atools::fs::bgl::TaxiPath *type)override;
 
 };
 

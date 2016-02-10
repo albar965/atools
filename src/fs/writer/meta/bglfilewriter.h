@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const bgl::BglFile *type);
+  virtual void writeObject(const bgl::BglFile *type)override;
 
   int sceneryAreaId;
 };

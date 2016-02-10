@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const scenery::SceneryArea *type);
+  virtual void writeObject(const scenery::SceneryArea *type)override;
 
 };
 

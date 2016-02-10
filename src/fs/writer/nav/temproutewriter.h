@@ -30,7 +30,7 @@ class TempRouteWriter :
 {
 public:
   TempRouteWriter(atools::sql::SqlDatabase& db, atools::fs::writer::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "temp_route")
+    : WriterBase(db, dataWriter, "route_point")
   {
   }
 
@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::RouteEntry *type);
+  virtual void writeObject(const atools::fs::bgl::RouteEntry *type)override;
 
 };
 

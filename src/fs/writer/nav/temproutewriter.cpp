@@ -31,7 +31,7 @@ using atools::sql::SqlQuery;
 
 void TempRouteWriter::writeObject(const RouteEntry *type)
 {
-  bind(":temp_route_id", getNextId());
+  bind(":route_point_id", getNextId());
   bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());
   bind(":name", type->getName());
   bind(":type", RouteEntry::routeTypeToStr(type->getType()));

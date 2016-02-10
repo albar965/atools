@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::Ndb *type);
+  virtual void writeObject(const atools::fs::bgl::Ndb *type)override;
 
 };
 

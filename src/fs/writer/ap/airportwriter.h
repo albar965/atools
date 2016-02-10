@@ -65,7 +65,7 @@ public:
   }
 
 private:
-  virtual void writeObject(const atools::fs::bgl::Airport *type);
+  virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
   typedef QHash<QString, const atools::fs::bgl::NamelistEntry *> NameListMapType;
   typedef NameListMapType::const_iterator NameListMapConstIterType;

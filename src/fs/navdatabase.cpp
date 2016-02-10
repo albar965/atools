@@ -97,13 +97,13 @@ void Navdatabase::create()
     info << endl;
     util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
     info << endl;
-    util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "region", "lonx", "laty"});
+    util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
     info << endl;
-    util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "region", "lonx", "laty"});
+    util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
     info << endl;
     util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
     info << endl;
-    util.reportDuplicates(info, "marker", "marker_id", {"lonx", "laty"});
+    util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
     info << endl;
     util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
     info << endl;

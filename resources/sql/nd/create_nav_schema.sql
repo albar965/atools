@@ -149,11 +149,11 @@ create index if not exists idx_ils_loc_runway_end_id on ils(loc_runway_end_id);
 
 -- **************************************************
 
-drop table if exists temp_route;
+drop table if exists route_point;
 
-create table temp_route
+create table route_point
 (
-  temp_route_id integer primary key,
+  route_point_id integer primary key,
   waypoint_id integer not null,
   name varchar(50) not null,
   type varchar(15) not null,
@@ -170,7 +170,7 @@ create table temp_route
 foreign key(waypoint_id) references waypoint(waypoint_id)
 );
 
-create index if not exists idx_temp_route_loc_waypoint_id on temp_route(waypoint_id);
+create index if not exists idx_route_point_loc_waypoint_id on route_point(waypoint_id);
 
 -- **************************************************
 

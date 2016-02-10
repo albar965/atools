@@ -142,7 +142,7 @@ void RouteResolver::run()
     "  r.waypoint_id, "
     "  next.waypoint_id as next_waypoint_id, "
     "  r.next_minimum_altitude "
-    "from temp_route r join waypoint w on r.waypoint_id = w.waypoint_id "
+    "from route_point r join waypoint w on r.waypoint_id = w.waypoint_id "
     "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
     "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
     "order by r.name");

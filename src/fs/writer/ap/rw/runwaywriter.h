@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::Runway *type);
+  virtual void writeObject(const atools::fs::bgl::Runway *type)override;
 
 };
 

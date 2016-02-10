@@ -328,10 +328,10 @@ void DeleteProcessor::deleteAirport()
   bindAndExecute(deleteFenceStmt, "fences deleted");
 
   // Unlink navigation - will be update later update_nav_ids.sql script
-  // TODO this might result in duplicate waypoints
-  bindAndExecute(nullWpStmt, "fences deleted"); // only type that appears in airport records
-  bindAndExecute(nullVorStmt, "fences deleted");
-  bindAndExecute(nullNdbStmt, "fences deleted");
+  // we accecpt duplicates here - these will be deleted later
+  bindAndExecute(nullWpStmt, "waypoints deleted"); // only type that appears in airport records
+  bindAndExecute(nullVorStmt, "vors deleted");
+  bindAndExecute(nullNdbStmt, "ndb deleted");
 
   bindAndExecute(deleteAirportStmt, "airports deleted");
 }
