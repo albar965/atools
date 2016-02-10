@@ -135,7 +135,9 @@ HEADERS += src/atools.h \
     src/fs/writer/ap/legbasewriter.h \
     src/fs/writer/ap/approachlegwriter.h \
     src/fs/writer/ap/transitionlegwriter.h \
-    src/geo/rect.h
+    src/geo/rect.h \
+    src/fs/pln/flightplan.h \
+    src/fs/pln/flightplanentry.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -250,7 +252,9 @@ SOURCES += src/atools.cpp \
     src/fs/writer/ap/legbasewriter.cpp \
     src/fs/writer/ap/approachlegwriter.cpp \
     src/fs/writer/ap/transitionlegwriter.cpp \
-    src/geo/rect.cpp
+    src/geo/rect.cpp \
+    src/fs/pln/flightplan.cpp \
+    src/fs/pln/flightplanentry.cpp
 
 unix {
     target.path = /usr/lib
