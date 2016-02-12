@@ -44,6 +44,7 @@ class Waypoint;
 class Airport;
 class Namelist;
 class Record;
+class Boundary;
 
 class BglFile
 {
@@ -51,7 +52,7 @@ public:
   BglFile(const BglReaderOptions *opts);
   virtual ~BglFile();
 
-  void setSupportedSectionTypes(const QList<atools::fs::bgl::section::SectionType>& sects)
+  void setSupportedSectionTypes(const QSet<atools::fs::bgl::section::SectionType>& sects)
   {
     supportedSectionTypes = sects;
   }
@@ -123,13 +124,21 @@ public:
     return waypoints;
   }
 
+  const QList<const atools::fs::bgl::Boundary *>& getBoundaries() const
+  {
+    return boundaries;
+  }
+
   bool hasContent();
 
 private:
   void freeObjects();
+  void readBoundaries(atools::io::BinaryStream *bs);
   void readHeaderAndSections(atools::io::BinaryStream *bs);
   void readRecords(atools::io::BinaryStream *bs);
+
   const Record *handleIlsVor(atools::io::BinaryStream *bs);
+  void handleBoundaries(atools::io::BinaryStream *bs);
 
   template<typename TYPE>
   const TYPE *createRecord(const atools::fs::BglReaderOptions *options,
@@ -148,12 +157,13 @@ private:
   QList<const atools::fs::bgl::Ndb *> ndbs;
   QList<const atools::fs::bgl::Marker *> marker;
   QList<const atools::fs::bgl::Waypoint *> waypoints;
+  QList<const atools::fs::bgl::Boundary *> boundaries;
 
   QList<atools::fs::bgl::Section> sections;
   QList<atools::fs::bgl::Subsection> subsections;
   atools::fs::bgl::Header header;
 
-  QList<atools::fs::bgl::section::SectionType> supportedSectionTypes;
+  QSet<atools::fs::bgl::section::SectionType> supportedSectionTypes;
 };
 
 // -------------------------------------------------------------------

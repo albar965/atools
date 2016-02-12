@@ -27,11 +27,12 @@ using atools::io::BinaryStream;
 Section::Section(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
-  type = static_cast<section::SectionType>(bs->readInt());
-  size = ((bs->readInt() & 0x10000) | 0x40000) >> 0x0E;
-  numSubsections = bs->readInt();
-  firstSubsectionOffset = bs->readInt();
-  totalSubsectionSize = bs->readInt();
+  type = static_cast<section::SectionType>(bs->readUInt());
+  unsigned int sizeFlag = bs->readUInt();
+  size = ((sizeFlag & 0x10000) | 0x40000) >> 0x0E;
+  numSubsections = bs->readUInt();
+  firstSubsectionOffset = bs->readUInt();
+  totalSubsectionSize = bs->readUInt();
 }
 
 Section::~Section()

@@ -266,6 +266,9 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
 {
   switch(type)
   {
+    case atools::fs::bgl::rec::BOUNDARY_NAME:
+      return "BOUNDARY_NAME";
+
     case rec::BOUNDARY_LINES:
       return "BOUNDARY_LINES";
   }

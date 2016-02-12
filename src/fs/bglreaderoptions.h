@@ -41,6 +41,7 @@ enum BglObjectType
   VOR,
   NDB,
   WAYPOINT,
+  BOUNDARY,
   MARKER,
   APRON,
   FENCE,

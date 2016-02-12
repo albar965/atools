@@ -46,12 +46,14 @@
 #include "fs/writer/ap/apronlightwriter.h"
 #include "fs/writer/ap/fencewriter.h"
 #include "fs/writer/ap/taxipathwriter.h"
+#include "fs/writer/boundarywriter.h"
 
 #include "fs/writer/ap/deleteairportwriter.h"
 
 #include "fs/scenery/fileresolver.h"
 #include "fs/writer/meta/sceneryareawriter.h"
 
+#include "fs/writer/boundarylinewriter.h"
 #include "fs/bgl/bglfile.h"
 #include "logging/loggingdefs.h"
 
@@ -66,12 +68,12 @@ using atools::sql::SqlDatabase;
 using scenery::SceneryArea;
 using atools::fs::bgl::section::SectionType;
 
-extern QList<atools::fs::bgl::section::SectionType> supportedSectionTypes;
+extern const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES;
 
-QList<atools::fs::bgl::section::SectionType> supportedSectionTypes =
+const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
 {
   bgl::section::AIRPORT, bgl::section::ILS_VOR, bgl::section::NDB, bgl::section::MARKER,
-  bgl::section::WAYPOINT, bgl::section::NAME_LIST
+  bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
 };
 
 DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
@@ -101,6 +103,9 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
   ndbWriter = new NdbWriter(db, *this);
   markerWriter = new MarkerWriter(db, *this);
   ilsWriter = new IlsWriter(db, *this);
+
+  boundaryWriter = new BoundaryWriter(db, *this);
+  boundaryLineWriter = new BoundaryLineWriter(db, *this);
 
   runwayIndex = new RunwayIndex();
   airportIndex = new AirportIndex();
@@ -132,6 +137,8 @@ DataWriter::~DataWriter()
   delete ndbWriter;
   delete markerWriter;
   delete ilsWriter;
+  delete boundaryWriter;
+  delete boundaryLineWriter;
   delete runwayIndex;
   delete airportIndex;
 }
@@ -160,7 +167,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
     BglFile bglFile(&options);
 
-    bglFile.setSupportedSectionTypes(supportedSectionTypes);
+    bglFile.setSupportedSectionTypes(SUPPORTED_SECTION_TYPES);
 
     for(QString filename  : files)
       if(options.includeFilename(filename))
@@ -183,6 +190,8 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           ndbWriter->write(bglFile.getNdbs());
           markerWriter->write(bglFile.getMarker());
           ilsWriter->write(bglFile.getIls());
+
+          boundaryWriter->write(bglFile.getBoundaries());
 
           numAirports += bglFile.getAirports().size();
           numNamelists += bglFile.getNamelists().size();

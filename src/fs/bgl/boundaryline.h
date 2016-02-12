@@ -15,11 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_SECTION_H_
-#define BGL_SECTION_H_
+#ifndef BGL_AIRPORTBOUNDARYLINE_H_
+#define BGL_AIRPORTBOUNDARYLINE_H_
 
 #include "fs/bgl/bglbase.h"
-#include "fs/bgl/sectiontype.h"
+#include "fs/bgl/bglposition.h"
+
+#include <QString>
 
 namespace atools {
 namespace io {
@@ -31,47 +33,55 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-class Section :
+namespace boundaryline {
+enum PointType
+{
+  UNKNOWN = 0,
+  START = 1,
+  LINE = 2,
+  ORIGIN = 3,
+  ARC_CW = 4,
+  ARC_CCW = 5,
+  CIRCLE = 6
+};
+
+}
+
+class BoundaryLine :
   public atools::fs::bgl::BglBase
 {
 public:
-  Section(const BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Section();
+  BoundaryLine();
+  BoundaryLine(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~BoundaryLine();
 
-  unsigned int getFirstSubsectionOffset() const
-  {
-    return firstSubsectionOffset;
-  }
-
-  unsigned int getNumSubsections() const
-  {
-    return numSubsections;
-  }
-
-  unsigned int getSize() const
-  {
-    return size;
-  }
-
-  unsigned int getTotalSubsectionSize() const
-  {
-    return totalSubsectionSize;
-  }
-
-  atools::fs::bgl::section::SectionType getType() const
+  atools::fs::bgl::boundaryline::PointType getType() const
   {
     return type;
   }
 
-private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Section& section);
+  const atools::fs::bgl::BglPosition& getPosition() const
+  {
+    return position;
+  }
 
-  atools::fs::bgl::section::SectionType type;
-  unsigned int size, numSubsections, firstSubsectionOffset, totalSubsectionSize;
+  static QString boundarylineTypeToStr(atools::fs::bgl::boundaryline::PointType type);
+
+  float getRadius() const
+  {
+    return radius;
+  }
+
+private:
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BoundaryLine& record);
+
+  atools::fs::bgl::boundaryline::PointType type;
+  atools::fs::bgl::BglPosition position;
+  float radius = 0.f;
 };
 
 } // namespace bgl
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_SECTION_H_ */
+#endif /* BGL_AIRPORTBOUNDARYLINE_H_ */

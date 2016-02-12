@@ -15,6 +15,8 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- Order is important to avoid fk conflicts
+
 drop view if exists v_airport_delete;
 drop view if exists v_airport_approach;
 drop view if exists v_airport_com;
@@ -48,6 +50,9 @@ drop table if exists runway;
 drop table if exists runway_end;
 
 drop table if exists airport;
+
+drop table if exists boundary_line;
+drop table if exists boundary;
 
 drop table if exists bgl_file;
 drop table if exists scenery_area;

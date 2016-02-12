@@ -137,7 +137,11 @@ HEADERS += src/atools.h \
     src/fs/writer/ap/transitionlegwriter.h \
     src/geo/rect.h \
     src/fs/pln/flightplan.h \
-    src/fs/pln/flightplanentry.h
+    src/fs/pln/flightplanentry.h \
+    src/fs/bgl/boundary.h \
+    src/fs/bgl/boundaryline.h \
+    src/fs/writer/boundarywriter.h \
+    src/fs/writer/boundarylinewriter.h
 
 SOURCES += src/atools.cpp \
     src/logging/logginghandler.cpp \
@@ -254,7 +258,11 @@ SOURCES += src/atools.cpp \
     src/fs/writer/ap/transitionlegwriter.cpp \
     src/geo/rect.cpp \
     src/fs/pln/flightplan.cpp \
-    src/fs/pln/flightplanentry.cpp
+    src/fs/pln/flightplanentry.cpp \
+    src/fs/bgl/boundary.cpp \
+    src/fs/bgl/boundaryline.cpp \
+    src/fs/writer/boundarywriter.cpp \
+    src/fs/writer/boundarylinewriter.cpp
 
 unix {
     target.path = /usr/lib

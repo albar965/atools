@@ -29,11 +29,14 @@
 #include "fs/bgl/nav/marker.h"
 #include "fs/bgl/nav/ndb.h"
 #include "fs/bgl/nav/waypoint.h"
+#include "fs/bgl/boundary.h"
+#include "fs/bgl/recordtypes.h"
 
 #include <QList>
 #include "logging/loggingdefs.h"
 
 #include <QFile>
+#include <QFileInfo>
 
 namespace atools {
 namespace fs {
@@ -70,6 +73,7 @@ void BglFile::readFile(QString file)
     this->size = bs.getFileSize();
 
     readHeaderAndSections(&bs);
+    readBoundaries(&bs);
     readRecords(&bs);
     ifs.close();
   }
@@ -78,11 +82,77 @@ void BglFile::readFile(QString file)
 bool BglFile::hasContent()
 {
   return !(airports.isEmpty() &&
+           namelists.isEmpty() &&
            vors.isEmpty() &&
            ils.isEmpty() &&
            ndbs.isEmpty() &&
            marker.isEmpty() &&
-           waypoints.isEmpty());
+           waypoints.isEmpty() &&
+           boundaries.isEmpty());
+}
+
+void BglFile::handleBoundaries(BinaryStream *bs)
+{
+  // Read records until end of the file
+  int numRecs = 0;
+  while(bs->tellg() < bs->getFileSize())
+  {
+    Record rec(options, bs);
+    rec::RecordType type = rec.getId<rec::RecordType>();
+
+    if(type == rec::BOUNDARY)
+    {
+      rec.seekToStart();
+      const Record *r = createRecord<Boundary>(options, bs, &boundaries);
+      if(r != nullptr)
+        numRecs++;
+    }
+    else if(type != rec::GEOPOL)
+      qWarning().nospace() << "while reading boundaries: unexpected record "
+                           << hex << "0x" << type << " at " << hex << "0x" << bs->tellg();
+
+    rec.seekToEnd();
+  }
+  if(options->isVerbose())
+    qDebug() << "Num boundary records" << numRecs;
+}
+
+void BglFile::readBoundaries(BinaryStream *bs)
+{
+  for(Section& it : sections)
+    if(it.getType() == atools::fs::bgl::section::BOUNDARY)
+    {
+      QString fname = QFileInfo(filename).fileName().toLower();
+      if(fname == "bvcf.bgl" || fname == "bnxworld0.bgl")
+      {
+        // jump to the end of the data (probably spatial indexes)
+        bs->seekg(bs->tellg() + it.getTotalSubsectionSize());
+        handleBoundaries(bs);
+      }
+      else
+      {
+        // BNXWorld1.bgl BNXWorld2.bgl BNXWorld3.bgl BNXWorld4.bgl BNXWorld5.bgl
+        bs->seekg(it.getStartOffset() + it.getNumSubsections() * 16);
+
+        // Get the lowest offset from the special subsection
+        unsigned int minOffset = INT32_MAX;
+        while(bs->tellg() < it.getStartOffset() + it.getTotalSubsectionSize())
+        {
+          unsigned int newOffset = bs->readUInt();
+          unsigned int dataSize = bs->readUInt(); // size
+          if(newOffset < minOffset && dataSize > 0)
+            minOffset = newOffset;
+
+          if(dataSize <= 0)
+            qWarning().nospace() << "while reading boundaries: dataSize " << dataSize
+                                 << " at " << hex << "0x" << bs->tellg();
+        }
+
+        // Read from the first offset
+        bs->seekg(minOffset);
+        handleBoundaries(bs);
+      }
+    }
 }
 
 void BglFile::readHeaderAndSections(BinaryStream *bs)
@@ -95,7 +165,7 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
   for(unsigned int i = 0; i < header.getNumSections(); i++)
   {
     Section s = Section(options, bs);
-    if(std::binary_search(supportedSectionTypes.begin(), supportedSectionTypes.end(), s.getType()))
+    if(supportedSectionTypes.contains(s.getType()))
     {
       if(options->isVerbose())
         qDebug() << s;
@@ -104,16 +174,17 @@ void BglFile::readHeaderAndSections(BinaryStream *bs)
   }
 
   for(Section& it : sections)
-  {
-    bs->seekg(it.getFirstSubsectionOffset());
-    for(int i = 0; i < it.getNumSubsections(); i++)
+    if(it.getType() != atools::fs::bgl::section::BOUNDARY && it.getType() != atools::fs::bgl::section::GEOPOL)
     {
-      Subsection s(options, bs, it);
-      if(options->isVerbose())
-        qDebug() << s;
-      subsections.push_back(s);
+      bs->seekg(it.getFirstSubsectionOffset());
+      for(unsigned int i = 0; i < it.getNumSubsections(); i++)
+      {
+        Subsection s(options, bs, it);
+        if(options->isVerbose())
+          qDebug() << s;
+        subsections.push_back(s);
+      }
     }
-  }
 }
 
 const Record *BglFile::handleIlsVor(BinaryStream *bs)
@@ -189,55 +260,55 @@ void BglFile::readRecords(BinaryStream *bs)
             rec = createRecord<Waypoint>(options, bs, &waypoints);
           break;
 
-        case atools::fs::bgl::section::NONE:
-        case atools::fs::bgl::section::COPYRIGHT:
-        case atools::fs::bgl::section::GUID:
-        case atools::fs::bgl::section::BOUNDARY:
-        case atools::fs::bgl::section::GEOPOL:
-        case atools::fs::bgl::section::SCENERY_OBJECT:
-        case atools::fs::bgl::section::VOR_ILS_ICAO_INDEX:
-        case atools::fs::bgl::section::NDB_ICAO_INDEX:
-        case atools::fs::bgl::section::WAYPOINT_ICAO_INDEX:
-        case atools::fs::bgl::section::MODEL_DATA:
-        case atools::fs::bgl::section::AIRPORT_SUMMARY:
-        case atools::fs::bgl::section::EXCLUSION:
-        case atools::fs::bgl::section::TIMEZONE:
-        case atools::fs::bgl::section::TERRAIN_VECTOR_DB:
-        case atools::fs::bgl::section::TERRAIN_ELEVATION:
-        case atools::fs::bgl::section::TERRAIN_LAND_CLASS:
-        case atools::fs::bgl::section::TERRAIN_WATER_CLASS:
-        case atools::fs::bgl::section::TERRAIN_REGION:
-        case atools::fs::bgl::section::POPULATION_DENSITY:
-        case atools::fs::bgl::section::AUTOGEN_ANNOTATION:
-        case atools::fs::bgl::section::TERRAIN_INDEX:
-        case atools::fs::bgl::section::TERRAIN_TEXTURE_LOOKUP:
-        case atools::fs::bgl::section::TERRAIN_SEASON_JAN:
-        case atools::fs::bgl::section::TERRAIN_SEASON_FEB:
-        case atools::fs::bgl::section::TERRAIN_SEASON_MAR:
-        case atools::fs::bgl::section::TERRAIN_SEASON_APR:
-        case atools::fs::bgl::section::TERRAIN_SEASON_MAY:
-        case atools::fs::bgl::section::TERRAIN_SEASON_JUN:
-        case atools::fs::bgl::section::TERRAIN_SEASON_JUL:
-        case atools::fs::bgl::section::TERRAIN_SEASON_AUG:
-        case atools::fs::bgl::section::TERRAIN_SEASON_SEP:
-        case atools::fs::bgl::section::TERRAIN_SEASON_OCT:
-        case atools::fs::bgl::section::TERRAIN_SEASON_NOV:
-        case atools::fs::bgl::section::TERRAIN_SEASON_DEC:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_JAN:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_FEB:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_MAR:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_APR:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_MAY:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_JUN:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_JUL:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_AUG:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_SEP:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_OCT:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_NOV:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_DEC:
-        case atools::fs::bgl::section::TERRAIN_PHOTO_NIGHT:
-        case atools::fs::bgl::section::FAKE_TYPES:
-        case atools::fs::bgl::section::ICAO_RUNWAY:
+        case section::BOUNDARY:
+        case section::GEOPOL:
+        case section::NONE:
+        case section::COPYRIGHT:
+        case section::GUID:
+        case section::SCENERY_OBJECT:
+        case section::VOR_ILS_ICAO_INDEX:
+        case section::NDB_ICAO_INDEX:
+        case section::WAYPOINT_ICAO_INDEX:
+        case section::MODEL_DATA:
+        case section::AIRPORT_SUMMARY:
+        case section::EXCLUSION:
+        case section::TIMEZONE:
+        case section::TERRAIN_VECTOR_DB:
+        case section::TERRAIN_ELEVATION:
+        case section::TERRAIN_LAND_CLASS:
+        case section::TERRAIN_WATER_CLASS:
+        case section::TERRAIN_REGION:
+        case section::POPULATION_DENSITY:
+        case section::AUTOGEN_ANNOTATION:
+        case section::TERRAIN_INDEX:
+        case section::TERRAIN_TEXTURE_LOOKUP:
+        case section::TERRAIN_SEASON_JAN:
+        case section::TERRAIN_SEASON_FEB:
+        case section::TERRAIN_SEASON_MAR:
+        case section::TERRAIN_SEASON_APR:
+        case section::TERRAIN_SEASON_MAY:
+        case section::TERRAIN_SEASON_JUN:
+        case section::TERRAIN_SEASON_JUL:
+        case section::TERRAIN_SEASON_AUG:
+        case section::TERRAIN_SEASON_SEP:
+        case section::TERRAIN_SEASON_OCT:
+        case section::TERRAIN_SEASON_NOV:
+        case section::TERRAIN_SEASON_DEC:
+        case section::TERRAIN_PHOTO_JAN:
+        case section::TERRAIN_PHOTO_FEB:
+        case section::TERRAIN_PHOTO_MAR:
+        case section::TERRAIN_PHOTO_APR:
+        case section::TERRAIN_PHOTO_MAY:
+        case section::TERRAIN_PHOTO_JUN:
+        case section::TERRAIN_PHOTO_JUL:
+        case section::TERRAIN_PHOTO_AUG:
+        case section::TERRAIN_PHOTO_SEP:
+        case section::TERRAIN_PHOTO_OCT:
+        case section::TERRAIN_PHOTO_NOV:
+        case section::TERRAIN_PHOTO_DEC:
+        case section::TERRAIN_PHOTO_NIGHT:
+        case section::FAKE_TYPES:
+        case section::ICAO_RUNWAY:
           break;
       }
       if(rec == nullptr)
@@ -261,6 +332,7 @@ void BglFile::freeObjects()
   ndbs.clear();
   marker.clear();
   waypoints.clear();
+  boundaries.clear();
   sections.clear();
   subsections.clear();
 

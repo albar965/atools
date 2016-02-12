@@ -57,6 +57,7 @@ void Navdatabase::create()
   script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
   db->commit();
 
+  script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");

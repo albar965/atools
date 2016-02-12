@@ -271,6 +271,9 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case WAYPOINT:
       return "WAYPOINT";
 
+    case BOUNDARY:
+      return "BOUNDARY";
+
     case MARKER:
       return "MARKER";
 
@@ -319,6 +322,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return NDB;
   else if(typeStr == "WAYPOINT")
     return WAYPOINT;
+  else if(typeStr == "BOUNDARY")
+    return BOUNDARY;
   else if(typeStr == "MARKER")
     return MARKER;
   else if(typeStr == "APRON")

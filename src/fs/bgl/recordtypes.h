@@ -132,6 +132,8 @@ QString sceneryObjRecordTypeStr(SceneryObjRecordType type);
 
 enum BoundaryRecordType
 {
+  BOUNDARY_COM = 0x0012,
+  BOUNDARY_NAME = 0x0019,
   BOUNDARY_LINES = 0x0021
 };
 

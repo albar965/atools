@@ -57,6 +57,8 @@ class ApronWriter;
 class ApronLightWriter;
 class FenceWriter;
 class TaxiPathWriter;
+class BoundaryWriter;
+class BoundaryLineWriter;
 
 class DataWriter
 {
@@ -188,6 +190,16 @@ public:
     return airportTaxiPathWriter;
   }
 
+  atools::fs::writer::BoundaryWriter *getBoundaryWriter() const
+  {
+    return boundaryWriter;
+  }
+
+  atools::fs::writer::BoundaryLineWriter *getBoundaryLineWriter() const
+  {
+    return boundaryLineWriter;
+  }
+
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
@@ -223,6 +235,9 @@ private:
   atools::fs::writer::NdbWriter *ndbWriter;
   atools::fs::writer::MarkerWriter *markerWriter;
   atools::fs::writer::IlsWriter *ilsWriter;
+
+  atools::fs::writer::BoundaryWriter *boundaryWriter;
+  atools::fs::writer::BoundaryLineWriter *boundaryLineWriter;
 
   atools::fs::writer::RunwayIndex *runwayIndex;
   atools::fs::writer::AirportIndex *airportIndex;
