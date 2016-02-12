@@ -85,6 +85,7 @@ void Navdatabase::create()
 
   if(options->isDatabaseReport())
   {
+    // Do a report of problems rather than failing totally during loading
     dataWriter.logResults();
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
@@ -116,9 +117,22 @@ void Navdatabase::create()
     info << endl;
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
+
+    reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
   }
 
   qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";
+}
+
+void Navdatabase::reportCoordinateViolations(QDebug& out,
+                                             atools::sql::SqlUtil& util,
+                                             const QStringList& tables)
+{
+  for(QString table : tables)
+  {
+    util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
+    util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
+  }
 }
 
 } // namespace fs

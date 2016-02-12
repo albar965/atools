@@ -23,6 +23,7 @@
 namespace atools {
 namespace sql {
 class SqlDatabase;
+class SqlUtil;
 }
 
 namespace fs {
@@ -36,6 +37,7 @@ public:
 private:
   atools::sql::SqlDatabase *db;
   const atools::fs::BglReaderOptions *options;
+  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 };
 
 } // namespace fs

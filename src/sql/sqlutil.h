@@ -42,7 +42,7 @@ public:
    * @param endline Print endline or not. Useful for streams that automatically
    * insert endlines like QDebug.
    */
-  void printTableStats(QDebug& out);
+  void printTableStats(QDebug& out, const QStringList& tables = QStringList());
 
   void createColumnReport(QDebug& out, const QStringList& tables = QStringList());
   void reportDuplicates(QDebug& out,
@@ -82,9 +82,12 @@ public:
    */
   static void copyRowValues(const SqlQuery& from, SqlQuery& to);
 
+  void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols, const QString& column, const QVariant& minValue, const QVariant& maxValue);
 private:
   SqlDatabase *db;
 
+  QStringList buildTableList(const QStringList& tables);
+  QStringList buildResultList(SqlQuery& query);
 };
 
 // -----------------------------------------------

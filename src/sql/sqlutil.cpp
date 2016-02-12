@@ -122,26 +122,38 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
   return copied;
 }
 
-void SqlUtil::printTableStats(QDebug& out)
+void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
   out << "Statistics for database (tables / rows):" << endl;
 
+  QStringList tableList = buildTableList(tables);
+
   SqlQuery query(db);
 
-  int index = 1, totalCount = 0;
+  int totalCount = 0;
 
-  for(QString name : db->tables())
+  for(QString name : tableList)
   {
-    query.exec("select count(1) as cnt from " + name);
-    if(query.next())
+    if(hasTable(name))
     {
-      int cnt = query.value("cnt").toInt();
-      totalCount += cnt;
-      out << "#" << (index++) << " " << name << ": " << cnt << " rows" << endl;
+      if(hasTableAndRows(name))
+      {
+        query.exec("select count(1) as cnt from " + name);
+        if(query.next())
+        {
+          int cnt = query.value("cnt").toInt();
+          totalCount += cnt;
+          out << name << ": " << cnt << " rows" << endl;
+        }
+      }
+      else
+        out << name << " is empty" << endl;
     }
+    else
+      out << name << " does not exist" << endl;
   }
   out << "Total" << ": " << totalCount << " rows" << endl;
 }
@@ -153,42 +165,96 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
 
   out << "Column value report for database:" << endl;
 
-  QStringList tableList;
-  if(tables.isEmpty())
-    tableList = db->tables();
-  else
-    tableList = tables;
+  QStringList tableList = buildTableList(tables);
+
   SqlQuery q(db);
   SqlQuery q2(db);
 
-  for(QString name : db->tables())
+  for(QString name : tableList)
   {
-    QSqlRecord record = db->record(name);
-
-    for(int i = 0; i < record.count(); ++i)
+    if(hasTable(name))
     {
-      QString col = record.fieldName(i);
-      q.exec("select count(distinct " + col + ") as cnt from " + name);
-      if(q.next())
+      if(hasTableAndRows(name))
       {
-        int cnt = q.value("cnt").toInt();
-        if(cnt < 2)
+        QSqlRecord record = db->record(name);
+
+        for(int i = 0; i < record.count(); ++i)
         {
-          out << name << "." << col;
-          if(cnt == 0)
-            out << " has no distinct values" << endl;
-          else if(cnt == 1)
+          QString col = record.fieldName(i);
+          q.exec("select count(distinct " + col + ") as cnt from " + name);
+          if(q.next())
           {
-            out << " has only 1 distinct value: ";
-            q2.exec("select " + col + " from " + name + " group by " + col);
-            while(q2.next())
-              out << q2.value(0).toString();
-            out << endl;
+            int cnt = q.value("cnt").toInt();
+            if(cnt < 2)
+            {
+              out << name << "." << col;
+              if(cnt == 0)
+                out << " has no distinct values" << endl;
+              else if(cnt == 1)
+              {
+                out << " has only 1 distinct value: ";
+                q2.exec("select " + col + " from " + name + " group by " + col);
+                while(q2.next())
+                  out << q2.value(0).toString();
+                out << endl;
+              }
+            }
           }
         }
       }
+      else
+        out << name << " is empty" << endl;
     }
+    else
+      out << name << " does not exist" << endl;
   }
+}
+
+void SqlUtil::reportRangeViolations(QDebug& out,
+                                    const QString& table,
+                                    const QStringList& reportCols,
+                                    const QString& column,
+                                    const QVariant& minValue,
+                                    const QVariant& maxValue)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace();
+
+  if(hasTable(table))
+  {
+    if(hasTableAndRows(table))
+    {
+      SqlQuery q(db);
+      q.prepare("select " + reportCols.join(", ") + ", " + column + " from " + table +
+                " where " + column + " not between :min and :max");
+
+      q.bindValue(":min", minValue);
+      q.bindValue(":max", maxValue);
+      q.exec();
+
+      bool header = false;
+      while(q.next())
+      {
+        if(!header)
+        {
+          out << "Table range violations for " << table << " (" << column
+              << " not between " << minValue.toString() << " and " << maxValue.toString() << "):" << endl;
+          out << reportCols.join(", ") << endl;
+          header = true;
+        }
+        out << buildResultList(q).join(", ") << endl;
+      }
+      if(!header)
+        out << "Table range violations for " << table << " (" << column
+            << " not between " << minValue.toString() << " and " << maxValue.toString()
+            << "): none found" << endl;
+
+    }
+    else
+      out << table << " is empty" << endl;
+  }
+  else
+    out << table << " does not exist" << endl;
 }
 
 void SqlUtil::reportDuplicates(QDebug& out,
@@ -221,17 +287,36 @@ void SqlUtil::reportDuplicates(QDebug& out,
     if(!header)
     {
       out << "Table duplicates for " << table <<
-      "(" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+      " (" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
       header = true;
     }
-
-    for(int i = 0; i < identityColumns.size() + 1; i++)
-      out << q.value(i).toString() << ",";
-    out << endl;
+    out << buildResultList(q).join(", ") << endl;
   }
   if(!header)
     out << "Table duplicates for " << table <<
-    "(" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
+    " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
+}
+
+QStringList SqlUtil::buildTableList(const QStringList& tables)
+{
+  QStringList tableList;
+  if(tables.isEmpty())
+    tableList = db->tables();
+  else
+    tableList = tables;
+
+  qSort(tableList);
+  return tableList;
+}
+
+QStringList SqlUtil::buildResultList(SqlQuery& query)
+{
+  QStringList retval;
+
+  QSqlRecord r = query.record();
+  for(int i = 0; i < r.count(); i++)
+    retval.push_back(r.value(i).toString());
+  return retval;
 }
 
 } // namespace sql
