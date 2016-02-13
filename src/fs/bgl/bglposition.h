@@ -39,15 +39,6 @@ public:
 
   virtual ~BglPosition();
 
-  float getAltitude() const
-  {
-    return altitude;
-  }
-
-private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& pos);
-
-  float altitude;
 };
 
 } // namespace bgl

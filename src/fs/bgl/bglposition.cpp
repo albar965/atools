@@ -26,12 +26,12 @@ namespace bgl {
 using atools::io::BinaryStream;
 
 BglPosition::BglPosition()
-  : geo::Pos(), altitude(0.f)
+  : geo::Pos()
 {
 }
 
 BglPosition::BglPosition(float lonX, float latY, float alt)
-  : geo::Pos(lonX, latY), altitude(alt)
+  : geo::Pos(lonX, latY, alt)
 {
 }
 
@@ -47,15 +47,6 @@ BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeFacto
 
 BglPosition::~BglPosition()
 {
-}
-
-QDebug operator<<(QDebug out, const BglPosition& pos)
-{
-  QDebugStateSaver saver(out);
-
-  out.nospace().noquote() << "Pos[lonX " << pos.lonX << ", latY " << pos.latY <<
-  ", alt " << pos.altitude << "]";
-  return out;
 }
 
 } // namespace bgl

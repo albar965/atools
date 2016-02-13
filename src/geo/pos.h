@@ -28,7 +28,18 @@ class Pos
 {
 public:
   Pos();
-  Pos(float longitudeX, float latitudeY);
+  Pos(int lonXDeg,
+      int lonXMin,
+      float lonXSec,
+      bool west,
+      int latYDeg,
+      int latYMin,
+      float latYSec,
+      bool south,
+      float alt = 0.f);
+  Pos(float longitudeX, float latitudeY, float alt = 0.f);
+  /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
+  Pos(const QString& str);
   ~Pos();
 
   float getLatY() const
@@ -36,16 +47,40 @@ public:
     return latY;
   }
 
+  int getLatYDeg() const;
+  int getLatYMin() const;
+  float getLatYSec() const;
+
   float getLonX() const
   {
     return lonX;
   }
 
+  int getLonXDeg() const;
+  int getLonXMin() const;
+  float getLonXSec() const;
+
+  float getAltitude() const
+  {
+    return altitude;
+  }
+
+  /* @return format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
+  QString toLongString() const;
+
 protected:
   friend QDebug operator<<(QDebug out, const Pos& record);
 
   // Länge (x),Breite (y)
-  float lonX, latY;
+  float lonX, latY, altitude;
+
+private:
+  static const QString LONG_FORMAT;
+  static const QRegularExpression LONG_FORMAT_REGEXP;
+  float sec(float value) const;
+  int min(float value) const;
+  int deg(float value) const;
+
 };
 
 } // namespace geo
