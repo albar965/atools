@@ -53,6 +53,7 @@ enum SimulatorType
 /* Array of all four valid types */
 extern const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
 extern const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES];
+
 } // namespace fstype
 
 /*
