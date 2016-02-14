@@ -42,10 +42,8 @@ LogbookLoader::LogbookLoader(SqlDatabase *sqlDb)
 {
 }
 
-void LogbookLoader::loadLogbook(const QString& filename,
-                                fstype::SimulatorType type,
-                                const LogbookEntryFilter& filter,
-                                bool append)
+void LogbookLoader::loadLogbook(const QString& filename, fstype::SimulatorType type,
+                                const LogbookEntryFilter& filter, bool append)
 {
   QFile file(filename);
   if(file.open(QIODevice::ReadOnly))

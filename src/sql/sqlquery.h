@@ -115,6 +115,7 @@ private:
   QString queryString;
   SqlDatabase *db;
   QString boundValuesAsString() const;
+
 };
 
 } // namespace sql

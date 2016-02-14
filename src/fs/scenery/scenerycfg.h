@@ -42,9 +42,7 @@ public:
   virtual void onEndDocument(const QString& filename) override;
   virtual void onStartSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onEndSection(const QString& section, const QString& sectionSuffix) override;
-  virtual void onKeyValue(const QString& section,
-                          const QString& sectionSuffix,
-                          const QString& key,
+  virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) override;
 
   const AreaVectorType& getAreas() const

@@ -46,7 +46,6 @@ protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglBase& base);
 
   BglBase();
-
   BglBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *stream);
 
   qint64 startOffset;

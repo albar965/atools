@@ -170,8 +170,7 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 
   void setFilter(const QStringList& filters, QList<QRegExp>& filterList);
-  bool includeObject(const QString& icao,
-                     const QList<QRegExp>& filterListInc,
+  bool includeObject(const QString& icao, const QList<QRegExp>& filterListInc,
                      const QList<QRegExp>& filterListExcl) const;
 
   void setBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);

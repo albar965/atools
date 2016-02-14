@@ -30,11 +30,8 @@ namespace gui {
 
 using atools::settings::Settings;
 
-QString Dialog::fileDialog(QFileDialog& dlg,
-                           const QString& title,
-                           const QString& filter,
-                           const QString& settingsPrefix,
-                           const QString& defaultFileSuffix,
+QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
+                           const QString& settingsPrefix, const QString& defaultFileSuffix,
                            const QString& path)
 {
   dlg.setNameFilter(filter);
@@ -93,9 +90,7 @@ QString Dialog::fileDialog(QFileDialog& dlg,
 
 }
 
-QString Dialog::openFileDialog(const QString& title,
-                               const QString& filter,
-                               const QString& settingsPrefix,
+QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix,
                                const QString& path)
 {
   QFileDialog dlg(parent);
@@ -116,8 +111,7 @@ QString Dialog::saveFileDialog(const QString& title,
   return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path);
 }
 
-void Dialog::showInfoMsgBox(const QString& settingsKey,
-                            const QString& message,
+void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
                             const QString& checkBoxMessage)
 {
   Settings& s = Settings::instance();
@@ -134,10 +128,8 @@ void Dialog::showInfoMsgBox(const QString& settingsKey,
   }
 }
 
-int Dialog::showQuestionMsgBox(const QString& settingsKey,
-                               const QString& message,
-                               const QString& checkBoxMessage,
-                               QMessageBox::StandardButtons buttons,
+int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& message,
+                               const QString& checkBoxMessage, QMessageBox::StandardButtons buttons,
                                QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)
 {

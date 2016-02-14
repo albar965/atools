@@ -20,11 +20,11 @@
 #include "logging/loggingdefs.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
-#include "fs/writer/datawriter.h"
+#include "fs/db/datawriter.h"
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
 #include "fs/scenery/scenerycfg.h"
-#include "fs/writer/routeresolver.h"
+#include "fs/db/routeresolver.h"
 
 #include <QElapsedTimer>
 
@@ -64,7 +64,7 @@ void Navdatabase::create()
   script.executeScript(":/atools/resources/sql/nd/create_views.sql");
   db->commit();
 
-  atools::fs::writer::DataWriter dataWriter(*db, *options);
+  atools::fs::db::DataWriter dataWriter(*db, *options);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive())
@@ -73,7 +73,7 @@ void Navdatabase::create()
 
   if(options->isResolveRoutes())
   {
-    atools::fs::writer::RouteResolver resolver(*db);
+    atools::fs::db::RouteResolver resolver(*db);
     resolver.run();
     db->commit();
   }

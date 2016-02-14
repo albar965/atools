@@ -45,9 +45,7 @@ public:
   void printTableStats(QDebug& out, const QStringList& tables = QStringList());
 
   void createColumnReport(QDebug& out, const QStringList& tables = QStringList());
-  void reportDuplicates(QDebug& out,
-                        const QString& table,
-                        const QString& idColumn,
+  void reportDuplicates(QDebug& out, const QString& table, const QString& idColumn,
                         const QStringList& identityColumns);
 
   /* Creates an insert statement including all columns for the given table. */
@@ -70,8 +68,7 @@ public:
    * inserted. Will be called after all variables are bound.
    * @return number of rows copied
    */
-  static int copyResultValues(SqlQuery& from,
-                              SqlQuery& to,
+  static int copyResultValues(SqlQuery& from, SqlQuery& to,
                               std::function<bool(SqlQuery& from, SqlQuery& to)> func);
 
   /*
@@ -82,12 +79,16 @@ public:
    */
   static void copyRowValues(const SqlQuery& from, SqlQuery& to);
 
-  void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols, const QString& column, const QVariant& minValue, const QVariant& maxValue);
+  void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols,
+                             const QString& column, const QVariant& minValue,
+                             const QVariant& maxValue);
+
 private:
   SqlDatabase *db;
 
   QStringList buildTableList(const QStringList& tables);
   QStringList buildResultList(SqlQuery& query);
+
 };
 
 // -----------------------------------------------

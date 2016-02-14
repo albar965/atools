@@ -38,6 +38,7 @@ private:
   atools::sql::SqlDatabase *db;
   const atools::fs::BglReaderOptions *options;
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
+
 };
 
 } // namespace fs

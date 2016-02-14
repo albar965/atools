@@ -75,9 +75,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
     areaEntries.push_back(currentArea);
 }
 
-void SceneryCfg::onKeyValue(const QString& section,
-                            const QString& sectionSuffix,
-                            const QString& key,
+void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                             const QString& value)
 {
   Q_UNUSED(sectionSuffix);

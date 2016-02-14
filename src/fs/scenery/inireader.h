@@ -41,9 +41,7 @@ protected:
   virtual void onEndDocument(const QString& filename) = 0;
   virtual void onStartSection(const QString& name, const QString& nameSuffix) = 0;
   virtual void onEndSection(const QString& section, const QString& sectionSuffix) = 0;
-  virtual void onKeyValue(const QString& section,
-                          const QString& sectionSuffix,
-                          const QString& key,
+  virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) = 0;
 
   [[noreturn]] void throwException(const QString& message);

@@ -27,8 +27,7 @@ namespace atools {
 namespace logging {
 namespace internal {
 
-LoggingConfig::LoggingConfig(const QString& logConfiguration,
-                             const QString& logDirectory,
+LoggingConfig::LoggingConfig(const QString& logConfiguration, const QString& logDirectory,
                              const QString& logFilePrefix)
   : logConfig(logConfiguration), logDir(logDirectory), logPrefix(logFilePrefix)
 {
@@ -155,8 +154,7 @@ void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel,
       streamList.append(channelMap.value(name));
 }
 
-void LoggingConfig::addCatChannels(const QString& category,
-                                   const QStringList& channelsForLevel,
+void LoggingConfig::addCatChannels(const QString& category, const QStringList& channelsForLevel,
                                    const QHash<QString, QTextStream *>& channelMap,
                                    QHash<QString, QVector<QTextStream *> >& streamList)
 {

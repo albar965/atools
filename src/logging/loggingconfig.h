@@ -61,8 +61,7 @@ private:
   void addDefaultChannels(const QStringList& channelsForLevel,
                           const QHash<QString, QTextStream *>& channelMap,
                           QVector<QTextStream *>& streamList);
-  void addCatChannels(const QString& category,
-                      const QStringList& channelsForLevel,
+  void addCatChannels(const QString& category, const QStringList& channelsForLevel,
                       const QHash<QString, QTextStream *>& channelMap,
                       QHash<QString, QVector<QTextStream *> >& streamList);
 

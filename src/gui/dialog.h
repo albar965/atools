@@ -55,8 +55,8 @@ public:
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
    */
-  QString openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix = QString(
-                           ), const QString& path = QString());
+  QString openFileDialog(const QString& title, const QString& filter,
+                         const QString& settingsPrefix = QString(), const QString& path = QString());
 
   /*
    * Creates an save file dialog and returns the selected file otherwise an
@@ -74,11 +74,8 @@ public:
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
    */
-  QString saveFileDialog(const QString& title,
-                         const QString& filter,
-                         const QString& defaultFileSuffix,
-                         const QString& settingsPrefix = QString(),
-                         const QString& path = QString());
+  QString saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix,
+                         const QString& settingsPrefix = QString(), const QString& path = QString());
 
   /*
    * Shows a simple information message box that includes a checkbox which can
@@ -109,19 +106,14 @@ public:
    * @return Selected button number
    * @see atools::settings::Settings
    */
-  int showQuestionMsgBox(const QString& settingsKey,
-                         const QString& message,
-                         const QString& checkBoxMessage,
+  int showQuestionMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage,
                          QMessageBox::StandardButtons buttons,
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
 
 private:
-  QString fileDialog(QFileDialog& dlg,
-                     const QString& title,
-                     const QString& filter,
-                     const QString& settingsPrefix,
-                     const QString& defaultFileSuffix,
+  QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
+                     const QString& settingsPrefix, const QString& defaultFileSuffix,
                      const QString& path);
 
   QWidget *parent = nullptr;

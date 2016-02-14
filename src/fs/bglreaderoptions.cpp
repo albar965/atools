@@ -141,8 +141,7 @@ void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
   setBglObjectFilterExcl(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 }
 
-bool BglReaderOptions::includeObject(const QString& filterStr,
-                                     const QList<QRegExp>& filterListInc,
+bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegExp>& filterListInc,
                                      const QList<QRegExp>& filterListExcl) const
 {
   if(filterListInc.isEmpty() && filterListExcl.isEmpty())

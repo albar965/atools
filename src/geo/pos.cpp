@@ -39,15 +39,8 @@ Pos::Pos(float longitudeX, float latitudeY, float alt)
 {
 }
 
-Pos::Pos(int lonXDeg,
-         int lonXMin,
-         float lonXSec,
-         bool west,
-         int latYDeg,
-         int latYMin,
-         float latYSec,
-         bool south,
-         float alt)
+Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
+         int latYDeg, int latYMin, float latYSec, bool south, float alt)
 {
   latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (south ? -1.f : 1.f);
   lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (west ? -1.f : 1.f);
