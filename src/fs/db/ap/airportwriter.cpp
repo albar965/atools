@@ -17,6 +17,7 @@
 
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/meta/bglfilewriter.h"
+#include "fs/db/meta/sceneryareawriter.h"
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db/ap/approachwriter.h"
 #include "fs/db/ap/startwriter.h"
@@ -91,8 +92,9 @@ void AirportWriter::writeObject(const Airport *type)
   else
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
+  DataWriter& dw = getDataWriter();
   bind(":airport_id", getNextId());
-  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(":file_id", dw.getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":name", type->getName());
@@ -104,6 +106,11 @@ void AirportWriter::writeObject(const Airport *type)
   bindBool(":has_tower", type->hasTowerCom());
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
+  bindBool(":is_addon",
+           !dw.getBglFileWriter()->getCurrentFilename().
+           startsWith("APX", Qt::CaseInsensitive) &&
+           !dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath().
+           startsWith("Scenery/", Qt::CaseInsensitive));
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
@@ -158,28 +165,28 @@ void AirportWriter::writeObject(const Airport *type)
   currentIdent = type->getIdent();
   getAirportIndex()->add(type->getIdent(), getCurrentId());
 
-  RunwayWriter *rwWriter = getDataWriter().getRunwayWriter();
+  RunwayWriter *rwWriter = dw.getRunwayWriter();
   rwWriter->write(type->getRunways());
 
-  WaypointWriter *waypointWriter = getDataWriter().getWaypointWriter();
+  WaypointWriter *waypointWriter = dw.getWaypointWriter();
   waypointWriter->write(type->getWaypoints());
 
-  ComWriter *comWriter = getDataWriter().getAirportComWriter();
+  ComWriter *comWriter = dw.getAirportComWriter();
   comWriter->write(type->getComs());
 
-  ApproachWriter *appWriter = getDataWriter().getApproachWriter();
+  ApproachWriter *appWriter = dw.getApproachWriter();
   appWriter->write(type->getApproaches());
 
-  HelipadWriter *heliWriter = getDataWriter().getHelipadWriter();
+  HelipadWriter *heliWriter = dw.getHelipadWriter();
   heliWriter->write(type->getHelipads());
 
-  StartWriter *startWriter = getDataWriter().getStartWriter();
+  StartWriter *startWriter = dw.getStartWriter();
   startWriter->write(type->getStarts());
 
-  ParkingWriter *parkWriter = getDataWriter().getParkingWriter();
+  ParkingWriter *parkWriter = dw.getParkingWriter();
   parkWriter->write(type->getParkings());
 
-  ApronWriter *apronWriter = getDataWriter().getApronWriter();
+  ApronWriter *apronWriter = dw.getApronWriter();
   const QList<bgl::Apron>& aprons = type->getAprons();
   const QList<bgl::Apron2>& aprons2 = type->getAprons2();
   for(int i = 0; i < aprons.size(); i++)
@@ -188,16 +195,16 @@ void AirportWriter::writeObject(const Airport *type)
     apronWriter->writeOne(pair);
   }
 
-  ApronLightWriter *apronLightWriter = getDataWriter().getApronLightWriter();
+  ApronLightWriter *apronLightWriter = dw.getApronLightWriter();
   apronLightWriter->write(type->getApronsLights());
 
-  FenceWriter *fenceWriter = getDataWriter().getFenceWriter();
+  FenceWriter *fenceWriter = dw.getFenceWriter();
   fenceWriter->write(type->getFences());
 
-  TaxiPathWriter *taxiWriter = getDataWriter().getTaxiPathWriter();
+  TaxiPathWriter *taxiWriter = dw.getTaxiPathWriter();
   taxiWriter->write(type->getTaxiPaths());
 
-  DeleteAirportWriter *deleteAirportWriter = getDataWriter().getDeleteAirportWriter();
+  DeleteAirportWriter *deleteAirportWriter = dw.getDeleteAirportWriter();
 
   const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
   for(const DeleteAirport& delAp : deleteAirports)

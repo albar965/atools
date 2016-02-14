@@ -29,6 +29,7 @@ create index if not exists idx_airport_has_tower on airport(has_tower);
 
 create index if not exists idx_airport_is_closed on airport(is_closed);
 create index if not exists idx_airport_is_military on airport(is_military);
+create index if not exists idx_airport_is_addon on airport(is_addon);
 
 create index if not exists idx_airport_num_boundary_fence on airport(num_boundary_fence);
 create index if not exists idx_airport_num_com on airport(num_com);

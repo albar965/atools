@@ -38,9 +38,15 @@ public:
   {
   }
 
+  QString getCurrentSceneryLocalPath() const
+  {
+    return currentSceneryLocalPath;
+  }
+
 protected:
   virtual void writeObject(const scenery::SceneryArea *type) override;
 
+  QString currentSceneryLocalPath;
 };
 
 } // namespace writer

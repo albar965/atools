@@ -25,7 +25,7 @@ using atools::sql::SqlDatabase;
 
 FlightplanEntry::FlightplanEntry(SqlDatabase *sqlDb)
 {
-
+Q_UNUSED(sqlDb);
 }
 
 FlightplanEntry::~FlightplanEntry()
@@ -35,21 +35,25 @@ FlightplanEntry::~FlightplanEntry()
 
 void FlightplanEntry::loadFromWaypoint(int waypointId)
 {
+  Q_UNUSED(waypointId);
 
 }
 
 void FlightplanEntry::loadFromVor(int vorId)
 {
+  Q_UNUSED(vorId);
 
 }
 
 void FlightplanEntry::loadFromNdb(int ndbId)
 {
+  Q_UNUSED(ndbId);
 
 }
 
 void FlightplanEntry::loadFromCoordinates(const geo::Pos& pos)
 {
+  Q_UNUSED(pos);
 
 }
 

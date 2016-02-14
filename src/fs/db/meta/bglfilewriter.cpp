@@ -32,6 +32,9 @@ using atools::sql::SqlQuery;
 
 void BglFileWriter::writeObject(const BglFile *type)
 {
+  currentFilenamePath = type->getFilename();
+  currentFilename = QFileInfo(type->getFilename()).fileName();
+
   if(getOptions().isVerbose())
     qDebug() << "Writing BGL file " << type->getFilename();
 

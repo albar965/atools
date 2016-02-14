@@ -218,17 +218,17 @@ void Flightplan::readWaypoint(QXmlStreamReader& reader)
 
 int Flightplan::getDepartureAirportId()
 {
-
+  return 0;
 }
 
 int Flightplan::getDepartureParkingId()
 {
-
+  return 0;
 }
 
 int Flightplan::getDestinationAirportId()
 {
-
+  return 0;
 }
 
 QString Flightplan::flightplanTypeToString(FlightplanType type)

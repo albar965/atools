@@ -32,6 +32,8 @@ using atools::sql::SqlQuery;
 
 void SceneryAreaWriter::writeObject(const SceneryArea *type)
 {
+  currentSceneryLocalPath = type->getLocalPath();
+
   if(getOptions().isVerbose())
     qDebug() << "Writing SceneryArea layer " << type->getLayer() << " title " << type->getTitle();
 

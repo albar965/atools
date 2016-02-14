@@ -38,9 +38,20 @@ public:
   {
   }
 
+  QString getCurrentFilename() const
+  {
+    return currentFilename;
+  }
+
+  QString getCurrentFilenamePath() const
+  {
+    return currentFilenamePath;
+  }
+
 protected:
   virtual void writeObject(const bgl::BglFile *type) override;
 
+  QString currentFilename, currentFilenamePath;
   int sceneryAreaId;
 };
 

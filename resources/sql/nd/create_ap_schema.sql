@@ -35,6 +35,7 @@ create table airport
   has_tower integer not null,
   is_closed integer not null,
   is_military integer not null,
+  is_addon integer not null,
 
   num_boundary_fence integer not null,
   num_com integer not null,

@@ -175,6 +175,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         bglFile.readFile(filename);
         if(bglFile.hasContent())
         {
+          // Execution order is important due to dependencies between the writers
           bglFileWriter->writeOne(&bglFile);
 
           runwayIndex->clear();
