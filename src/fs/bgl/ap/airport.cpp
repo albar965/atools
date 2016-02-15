@@ -31,6 +31,11 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+static const QStringList MIL_ENDS_WITH(" Mil");
+static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " AHP", " ANGB", " ARB", " LRRS",
+                                       " MCAF", " MCALF", " MCAS", " NAF", " NALF", " NAS", " Naval", " Navy",
+                                       " NAWS", " NOLF", " NS", " Army", " Mil ", "Military", "Air Force"});
+
 using atools::io::BinaryStream;
 
 Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
@@ -339,17 +344,21 @@ void Airport::updateSummaryFields()
 
   rating = !taxipaths.isEmpty() + towerObj + !parkings.isEmpty() + !aprons.isEmpty();
 
-  military = name.contains(" AB") ||
-             name.contains(" AF") ||
-             name.contains(" AS") ||
-             name.contains(" AAF") ||
-             name.contains(" AFB") ||
-             name.contains(" AFLD") ||
-             name.contains(" ANGB") ||
-             name.endsWith(" Mil") ||
-             name.contains(" Mil ") ||
-             name.contains("Air Force") ||
-             name.contains("(Military)");
+  for(const QString& s : MIL_ENDS_WITH)
+    if(name.endsWith(s))
+    {
+      military = true;
+      break;
+    }
+
+  if(!military)
+    for(const QString& s : MIL_CONTAINS)
+      if(name.contains(s))
+      {
+        military = true;
+        break;
+      }
+
 }
 
 void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>& parkingNumberIndex)

@@ -20,7 +20,6 @@
 #include "geo/pos.h"
 
 #include <QFile>
-#include <QRegularExpression>
 #include <QXmlStreamReader>
 
 namespace atools {

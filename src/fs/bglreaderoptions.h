@@ -18,7 +18,6 @@
 #ifndef BGLREADEROPTIONS_H_
 #define BGLREADEROPTIONS_H_
 
-#include <QRegularExpression>
 #include <QSet>
 
 class QSettings;
