@@ -15,39 +15,46 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
+#ifndef PROGRESSHANDLER_H
+#define PROGRESSHANDLER_H
 
-#include "fs/bglreaderoptions.h"
+#include "fs/bglreaderprogressinfo.h"
+
+#include <functional>
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-class SqlUtil;
-}
-
 namespace fs {
+class BglReaderOptions;
 
 namespace scenery {
-class SceneryCfg;
+class SceneryArea;
 }
+namespace db {
 
-class Navdatabase
+class ProgressHandler
 {
 public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
+  ProgressHandler(const atools::fs::BglReaderOptions *options);
+
+  bool reportProgress(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
+  bool reportProgress(const QString& bglFilepath, int current = -1);
+  bool reportProgressOther(const QString& otherAction, int current = -1);
+
+  void setTotal(int total);
 
 private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
+  bool defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
 
-  int countFiles(const atools::fs::scenery::SceneryCfg& cfg);
+  std::function<bool(const atools::fs::BglReaderProgressInfo&)> handler;
+
+  atools::fs::BglReaderProgressInfo info;
+
+  bool call();
 
 };
 
+} // namespace writer
 } // namespace fs
 } // namespace atools
 
-#endif // NAVDATABASE_H
+#endif // PROGRESSHANDLER_H

@@ -15,39 +15,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
-
-#include "fs/bglreaderoptions.h"
+#include "fs/bglreaderprogressinfo.h"
+#include "fs/scenery/sceneryarea.h"
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-class SqlUtil;
-}
-
 namespace fs {
 
-namespace scenery {
-class SceneryCfg;
+BglReaderProgressInfo::BglReaderProgressInfo()
+{
+
 }
 
-class Navdatabase
+const QString& BglReaderProgressInfo::getSceneryTitle() const
 {
-public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
+  return sceneryArea->getTitle();
+}
 
-private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
+const QString& BglReaderProgressInfo::getSceneryPath() const
+{
+  return sceneryArea->getLocalPath();
+}
 
-  int countFiles(const atools::fs::scenery::SceneryCfg& cfg);
 
-};
 
 } // namespace fs
 } // namespace atools
-
-#endif // NAVDATABASE_H

@@ -27,8 +27,8 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-FileResolver::FileResolver(const BglReaderOptions& opts)
-  : options(opts)
+FileResolver::FileResolver(const BglReaderOptions& opts, bool noWarnings)
+  : options(opts), quiet(noWarnings)
 {
 }
 
@@ -66,14 +66,18 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
       {
         QDir sceneryAreaDirObj(scenery.filePath());
         for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
-          if(!matchesExcludedPrefix(bglFile.fileName()))
-            files.push_back(bglFile.filePath());
+        {
+          QString filename = bglFile.fileName();
+          if(!matchesExcludedPrefix(filename))
+            if(options.includeFilename(filename))
+              files.push_back(bglFile.filePath());
+        }
       }
     }
-    else
+    else if(!quiet)
       qWarning().nospace().noquote() << sceneryAreaDirStr << " is not a directory.";
   }
-  else
+  else if(!quiet)
     qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
 }
 

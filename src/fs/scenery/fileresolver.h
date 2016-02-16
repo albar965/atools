@@ -30,7 +30,7 @@ class SceneryArea;
 class FileResolver
 {
 public:
-  FileResolver(const atools::fs::BglReaderOptions& opts);
+  FileResolver(const atools::fs::BglReaderOptions& opts, bool noWarnings = false);
   virtual ~FileResolver();
 
   atools::fs::scenery::FileResolver& addExcludedFilePrefixes(const QStringList& prefixes);
@@ -42,6 +42,7 @@ private:
   bool matchesExcludedPrefix(const QString& fname) const;
 
   const atools::fs::BglReaderOptions& options;
+  bool quiet = false;
   QStringList excludedPrefixes;
 };
 

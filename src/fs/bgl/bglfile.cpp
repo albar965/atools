@@ -59,11 +59,6 @@ void BglFile::readFile(QString file)
   freeObjects();
   filename = file;
 
-  if(options->isVerbose())
-    qDebug() << "==============================";
-
-  qDebug() << "Reading file " << filename;
-
   QFile ifs(filename);
   if(ifs.open(QIODevice::ReadOnly))
   {

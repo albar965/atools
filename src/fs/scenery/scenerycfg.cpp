@@ -49,6 +49,7 @@ void SceneryCfg::onStartDocument(const QString& filename)
 {
   Q_UNUSED(filename);
   areaEntries.clear();
+  numActiveAreas = 0;
 }
 
 void SceneryCfg::onEndDocument(const QString& filename)
@@ -72,7 +73,11 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
 {
   Q_UNUSED(sectionSuffix);
   if(section == "area")
+  {
+    if(currentArea.isActive())
+      numActiveAreas++;
     areaEntries.push_back(currentArea);
+  }
 }
 
 void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,

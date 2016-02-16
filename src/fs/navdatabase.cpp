@@ -25,6 +25,8 @@
 #include "sql/sqlutil.h"
 #include "fs/scenery/scenerycfg.h"
 #include "fs/db/routeresolver.h"
+#include "fs/db/progresshandler.h"
+#include "fs/scenery/fileresolver.h"
 
 #include <QElapsedTimer>
 
@@ -42,6 +44,24 @@ Navdatabase::Navdatabase(const BglReaderOptions *readerOptions, sql::SqlDatabase
 
 }
 
+int Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg)
+{
+  qInfo() << "Counting files";
+
+  int numFiles = 0;
+  QStringList files;
+  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+    if(area.isActive())
+    {
+      atools::fs::scenery::FileResolver resolver(*options, true);
+      resolver.getFiles(area, files);
+      numFiles += files.size();
+      files.clear();
+    }
+  qInfo() << "Counting files done." << numFiles << "file to process";
+  return numFiles;
+}
+
 void Navdatabase::create()
 {
   QElapsedTimer timer;
@@ -52,6 +72,16 @@ void Navdatabase::create()
 
   atools::fs::scenery::SceneryCfg cfg;
   cfg.read(options->getSceneryFile());
+
+  int numFiles = 0;
+  qInfo() << "Counting files";
+  numFiles = countFiles(cfg);
+  qInfo() << "Counting files done." << numFiles << "file to process";
+
+  db::ProgressHandler progressHandler(options);
+
+  // TODO add scripts to total
+  progressHandler.setTotal(numFiles);
 
   SqlScript script(db);
   script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
@@ -64,11 +94,14 @@ void Navdatabase::create()
   script.executeScript(":/atools/resources/sql/nd/create_views.sql");
   db->commit();
 
-  atools::fs::db::DataWriter dataWriter(*db, *options);
+  atools::fs::db::DataWriter dataWriter(*db, *options, &progressHandler);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive())
+    {
+      progressHandler.reportProgress(&area);
       dataWriter.writeSceneryArea(area);
+    }
   db->commit();
 
   if(options->isResolveRoutes())

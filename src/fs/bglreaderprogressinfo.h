@@ -15,87 +15,73 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SCENERY_SCENERYAREA_H_
-#define SCENERY_SCENERYAREA_H_
+#ifndef BGLREADERPROGRESSINFO_H
+#define BGLREADERPROGRESSINFO_H
 
 #include <QString>
 
 namespace atools {
 namespace fs {
-namespace scenery {
 
-class SceneryArea
+namespace scenery {
+class SceneryArea;
+}
+namespace db {
+class ProgressHandler;
+}
+class BglReaderProgressInfo
 {
 public:
-  SceneryArea()
-    : areaNumber(0), textureId(0), layer(0), active(false), required(false)
+  BglReaderProgressInfo();
+
+  const QString& getSceneryTitle() const;
+  const QString& getSceneryPath() const;
+
+  int getCurrent() const
   {
+    return current;
   }
 
-  virtual ~SceneryArea();
-
-  bool isActive() const
+  const QString& getBglFilepath() const
   {
-    return active;
+    return bglFilepath;
   }
 
-  const QString& getExclude() const
+  const QString& getOtherAction() const
   {
-    return exclude;
+    return otherAction;
   }
 
-  int getLayer() const
+  int getTotal() const
   {
-    return layer;
+    return total;
   }
 
-  const QString& getLocalPath() const
+  bool getNewFile() const
   {
-    return localPath;
+    return newFile;
   }
 
-  const QString& getRemotePath() const
+  bool getNewSceneryArea() const
   {
-    return remotePath;
+    return newSceneryArea;
   }
 
-  bool isRequired() const
+  bool getNewOther() const
   {
-    return required;
-  }
-
-  int getTextureId() const
-  {
-    return textureId;
-  }
-
-  int getAreaNumber() const
-  {
-    return areaNumber;
-  }
-
-  const QString& getTitle() const
-  {
-    return title;
+    return newOther;
   }
 
 private:
-  friend class SceneryCfg;
-  friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
+  friend atools::fs::db::ProgressHandler;
+  int total = 0, current = 0;
+  bool newFile = false, newSceneryArea = false, newOther = false;
+  QString bglFilepath, otherAction;
+  const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;
 
-  int areaNumber;
-  QString title;
-  int textureId;
-  QString remotePath;
-  QString localPath;
-  int layer;
-  bool active;
-  bool required;
-  QString exclude;
 };
 
-} // namespace scenery
 } // namespace fs
 } // namespace atools
 
-#endif /* SCENERY_SCENERYAREA_H_ */
+#endif // BGLREADERPROGRESSINFO_H

@@ -26,7 +26,6 @@
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/bglreaderoptions.h"
 
-#include <functional>
 #include "logging/loggingdefs.h"
 
 namespace atools {

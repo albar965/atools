@@ -47,6 +47,7 @@
 #include "fs/db/ap/fencewriter.h"
 #include "fs/db/ap/taxipathwriter.h"
 #include "fs/db/boundarywriter.h"
+#include "fs/db/progresshandler.h"
 
 #include "fs/db/ap/deleteairportwriter.h"
 
@@ -76,8 +77,8 @@ const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
   bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
 };
 
-DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts)
-  : db(sqlDb), options(opts)
+DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts, ProgressHandler *progress)
+  : db(sqlDb), progressHandler(progress), options(opts)
 {
   bglFileWriter = new BglFileWriter(db, *this);
   sceneryAreaWriter = new SceneryAreaWriter(db, *this);
@@ -148,17 +149,8 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   if(!options.includePath(area.getLocalPath()))
     return;
 
-  qInfo() << area;
-
   QStringList files;
   atools::fs::scenery::FileResolver resolver(options);
-
-  // APX airports
-  // ATX waypoints and boundaries
-  // NVX navids
-  // Read all except: BRX (bridges), OBX (airport objects) and cvx (terrain)
-  // resolver("brx")("obx")("cvx");
-  // resolver.addExcludedFilePrefixes({"brx", "obx", "cvx"});
   resolver.getFiles(area, files);
 
   if(!files.empty())
@@ -170,40 +162,41 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
     bglFile.setSupportedSectionTypes(SUPPORTED_SECTION_TYPES);
 
     for(QString filename  : files)
-      if(options.includeFilename(filename))
+    {
+      progressHandler->reportProgress(filename, currentFileNumber++);
+
+      bglFile.readFile(filename);
+      if(bglFile.hasContent())
       {
-        bglFile.readFile(filename);
-        if(bglFile.hasContent())
-        {
-          // Execution order is important due to dependencies between the writers
-          bglFileWriter->writeOne(&bglFile);
+        // Execution order is important due to dependencies between the writers
+        bglFileWriter->writeOne(&bglFile);
 
-          runwayIndex->clear();
-          airportIndex->clear();
+        runwayIndex->clear();
+        airportIndex->clear();
 
-          airportWriter->setNameLists(bglFile.getNamelists());
-          airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
-          airportWriter->setSceneryLocalPath(area.getLocalPath());
-          airportWriter->write(bglFile.getAirports());
+        airportWriter->setNameLists(bglFile.getNamelists());
+        airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
+        airportWriter->setSceneryLocalPath(area.getLocalPath());
+        airportWriter->write(bglFile.getAirports());
 
-          waypointWriter->write(bglFile.getWaypoints());
-          vorWriter->write(bglFile.getVors());
-          ndbWriter->write(bglFile.getNdbs());
-          markerWriter->write(bglFile.getMarker());
-          ilsWriter->write(bglFile.getIls());
+        waypointWriter->write(bglFile.getWaypoints());
+        vorWriter->write(bglFile.getVors());
+        ndbWriter->write(bglFile.getNdbs());
+        markerWriter->write(bglFile.getMarker());
+        ilsWriter->write(bglFile.getIls());
 
-          boundaryWriter->write(bglFile.getBoundaries());
+        boundaryWriter->write(bglFile.getBoundaries());
 
-          numAirports += bglFile.getAirports().size();
-          numNamelists += bglFile.getNamelists().size();
-          numVors += bglFile.getVors().size();
-          numIls += bglFile.getIls().size();
-          numNdbs += bglFile.getNdbs().size();
-          numMarker += bglFile.getMarker().size();
-          numWaypoints += bglFile.getWaypoints().size();
-          numFiles++;
-        }
+        numAirports += bglFile.getAirports().size();
+        numNamelists += bglFile.getNamelists().size();
+        numVors += bglFile.getVors().size();
+        numIls += bglFile.getIls().size();
+        numNdbs += bglFile.getNdbs().size();
+        numMarker += bglFile.getMarker().size();
+        numWaypoints += bglFile.getWaypoints().size();
+        numFiles++;
       }
+    }
     db.commit();
   }
 }

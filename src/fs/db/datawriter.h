@@ -59,11 +59,13 @@ class FenceWriter;
 class TaxiPathWriter;
 class BoundaryWriter;
 class BoundaryLineWriter;
+class ProgressHandler;
 
 class DataWriter
 {
 public:
-  DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::BglReaderOptions& opts);
+  DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::BglReaderOptions& opts,
+             ProgressHandler *progress);
 
   virtual ~DataWriter();
 
@@ -202,9 +204,10 @@ public:
 
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
-      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
+      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0, currentFileNumber = 0;
 
   atools::sql::SqlDatabase& db;
+  atools::fs::db::ProgressHandler *progressHandler;
 
   atools::fs::db::BglFileWriter *bglFileWriter;
   atools::fs::db::SceneryAreaWriter *sceneryAreaWriter;

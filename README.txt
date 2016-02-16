@@ -1,5 +1,5 @@
 atools is a small static library extending Qt for exception handling,
-a log4j like logging framework, Flight Simulator related utilities like BGL reader 
+a log4j like logging framework, Flight Simulator related utilities like BGL reader
 and more.
 
 -------------------------------------------------------------------------------
@@ -14,13 +14,15 @@ Simple runways.xml reading tool. Needs MakeRunways by Peter Dowson.
 
 ** fs/bgl
 A complete collection of classes that read airport and navigation data information from FS BGL files.
-** fs/writer
-A collection of classes that takes the airport and navigation information read from the BGL files and 
+** fs/db
+A collection of classes that takes the airport and navigation information read from the BGL files and
 writes them into a relational database format (currently MySql, MariaDB or Sqlite).
 ** fs/scenery
 Supports reading of the flight simulator scenery.cfg file.
+** fs/pln
+Support for reading and writing flight simulator plan files.
 
-** lb
+** fs/lb
 Flight simulator logbook reading functionality.
 
 * io
@@ -33,7 +35,7 @@ Simple geomentry module.
 GUI and dialog helper classes.
 
 * logging
-log4j like logging using the QDebug class. Supports log level filtering into multiple files and file rollover 
+log4j like logging using the QDebug class. Supports log level filtering into multiple files and file rollover
 to keep multiple log files.
 
 * settings

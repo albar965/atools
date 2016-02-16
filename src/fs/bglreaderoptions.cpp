@@ -17,6 +17,7 @@
 
 #include "fs/bglreaderoptions.h"
 #include "logging/loggingdefs.h"
+#include "scenery/sceneryarea.h"
 
 #include <QFileInfo>
 #include <QList>
@@ -29,6 +30,16 @@ namespace fs {
 
 BglReaderOptions::BglReaderOptions()
 {
+}
+
+void BglReaderOptions::setProgressCallback(std::function<bool(const BglReaderProgressInfo&)> func)
+{
+  progressCallback = func;
+}
+
+std::function<bool(const atools::fs::BglReaderProgressInfo&)> BglReaderOptions::getProgressCallback() const
+{
+  return progressCallback;
 }
 
 bool BglReaderOptions::includePath(const QString& filename) const

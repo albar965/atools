@@ -50,10 +50,16 @@ public:
     return areaEntries;
   }
 
+  int getNumActiveAreas() const
+  {
+    return numActiveAreas;
+  }
+
 private:
   atools::fs::scenery::SceneryArea currentArea;
   QString title, description;
   bool cleanOnExit;
+  int numActiveAreas = 0;
 
   atools::fs::scenery::AreaVectorType areaEntries;
   bool toBool(const QString& str);
