@@ -42,7 +42,7 @@ public:
   /*
    * @param sqlDb Database to use
    */
-  SqlScript(SqlDatabase *sqlDb);
+  SqlScript(SqlDatabase *sqlDb, bool verboseLogging = true);
 
   /* Run a script provided in the given filename */
   void executeScript(const QString& filename);
@@ -61,6 +61,7 @@ private:
   void parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements);
 
   SqlDatabase *db;
+  bool verbose = true;
 };
 
 } // namespace sql

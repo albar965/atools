@@ -26,8 +26,8 @@ namespace atools {
 
 namespace sql {
 
-SqlScript::SqlScript(SqlDatabase *sqlDb)
-  : db(sqlDb)
+SqlScript::SqlScript(SqlDatabase *sqlDb, bool verboseLogging)
+  : db(sqlDb), verbose(verboseLogging)
 {
 }
 
@@ -38,8 +38,11 @@ void SqlScript::executeScript(const QString& filename)
   {
     QTextStream scriptStream(&scriptFile);
 
-    qInfo() << "-- Running script ------------------------------------------";
-    qInfo() << "--" << scriptFile.fileName() << "--";
+    if(verbose)
+    {
+      qInfo() << "-- Running script ------------------------------------------";
+      qInfo() << "--" << scriptFile.fileName() << "--";
+    }
     executeScript(scriptStream);
   }
   else
@@ -57,12 +60,15 @@ void SqlScript::executeScript(QTextStream& script)
   SqlQuery query(db);
   for(ScriptCmd cmd : statements)
   {
-    qInfo().nospace() << cmd.lineNumber << ": " << cmd.sql;
+    if(verbose)
+      qInfo().nospace() << cmd.lineNumber << ": " << cmd.sql;
     query.exec(cmd.sql);
-    qInfo().nospace() << "[" << query.numRowsAffected() << "]";
+    if(verbose)
+      qInfo().nospace() << "[" << query.numRowsAffected() << "]";
   }
 
-  qInfo() << "-- Done Running script ------------------------------------------";
+  if(verbose)
+    qInfo() << "-- Done Running script ------------------------------------------";
 }
 
 void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements)
