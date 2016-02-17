@@ -22,6 +22,9 @@
 #include "fs/bgl/bglposition.h"
 #include "fs/bgl/nav/routeentry.h"
 
+#include <QString>
+#include <QList>
+
 namespace atools {
 namespace fs {
 namespace bgl {

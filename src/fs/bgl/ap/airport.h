@@ -35,6 +35,7 @@
 #include "geo/rect.h"
 
 #include <QList>
+#include <QHash>
 
 namespace atools {
 namespace io {

@@ -19,6 +19,7 @@
 #define SCENERY_FILERESOLVER_H_
 
 #include <QList>
+#include <QStringList>
 
 namespace atools {
 namespace fs {

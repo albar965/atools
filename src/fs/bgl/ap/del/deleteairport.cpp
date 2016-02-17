@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"

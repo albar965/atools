@@ -15,6 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
+
 #include "fs/bgl/ap/airport.h"
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
@@ -26,6 +28,7 @@
 #include "fs/bgl/util.h"
 
 #include <QHash>
+#include <QStringList>
 
 namespace atools {
 namespace fs {

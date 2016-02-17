@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
 #include "settings/settings.h"
 #include "exception.h"
-#include "logging/loggingdefs.h"
 
 #include <QSettings>
 #include <QApplication>

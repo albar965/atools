@@ -15,6 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
+
 #include "fs/bgl/ap/approach.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"

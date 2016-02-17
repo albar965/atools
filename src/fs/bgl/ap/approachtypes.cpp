@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/ap/approachtypes.h"
 #include "logging/loggingdefs.h"
+#include "fs/bgl/ap/approachtypes.h"
 
 namespace atools {
 namespace fs {

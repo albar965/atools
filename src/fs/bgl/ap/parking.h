@@ -21,6 +21,7 @@
 #include "fs/bgl/bglposition.h"
 
 #include <QString>
+#include <QStringList>
 
 namespace atools {
 namespace io {

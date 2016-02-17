@@ -39,7 +39,8 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   if(value == 0)
     return QString();
 
-  QVarLengthArray<unsigned int, 5> codedArr({0, 0, 0, 0, 0});
+  QVarLengthArray<unsigned int, 5> codedArr(5);
+  codedArr << 0 << 0 << 0 << 0 << 0;
   unsigned int coded = 0;
 
   int idx = 0;

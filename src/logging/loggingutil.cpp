@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
 #include "logging/loggingutil.h"
 #include "logging/logginghandler.h"
-#include "logging/loggingdefs.h"
 
 #include <QStandardPaths>
 #include <QCoreApplication>
@@ -53,6 +53,8 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "product name" << QSysInfo::prettyProductName()
           << "type" << QSysInfo::productType()
           << "version" << QSysInfo::productVersion();
+
+  qInfo() << "Qt Version" << QT_VERSION_STR;
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
   if(QSysInfo::windowsVersion() != QSysInfo::WV_None)

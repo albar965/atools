@@ -20,6 +20,8 @@
 
 #include "logging/loggingdefs.h"
 
+class QRegularExpression;
+
 namespace atools {
 namespace geo {
 

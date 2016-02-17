@@ -15,9 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/navdatabase.h"
-
 #include "logging/loggingdefs.h"
+#include "fs/navdatabase.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
 #include "fs/db/datawriter.h"
@@ -73,10 +72,7 @@ void Navdatabase::create()
   atools::fs::scenery::SceneryCfg cfg;
   cfg.read(options->getSceneryFile());
 
-  int numFiles = 0;
-  qInfo() << "Counting files";
-  numFiles = countFiles(cfg);
-  qInfo() << "Counting files done." << numFiles << "file to process";
+  int numFiles = countFiles(cfg);
 
   db::ProgressHandler progressHandler(options);
 

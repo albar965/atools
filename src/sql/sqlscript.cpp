@@ -15,9 +15,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "logging/loggingdefs.h"
 #include "sql/sqlexception.h"
 #include "sql/sqlscript.h"
-#include "logging/loggingdefs.h"
 
 #include <QFile>
 #include <QTextStream>

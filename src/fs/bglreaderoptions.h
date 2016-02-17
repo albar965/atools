@@ -20,8 +20,10 @@
 
 #include <functional>
 #include <QSet>
+#include <QRegExp>
 
 class QSettings;
+class QStringList;
 
 namespace atools {
 namespace fs {

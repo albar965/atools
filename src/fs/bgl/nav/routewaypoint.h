@@ -20,6 +20,8 @@
 
 #include "fs/bgl/bglbase.h"
 
+#include <QString>
+
 namespace atools {
 namespace fs {
 namespace bgl {
