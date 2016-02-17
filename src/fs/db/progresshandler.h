@@ -42,15 +42,18 @@ public:
 
   void setTotal(int total);
 
-private:
-  bool defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
+  void reset();
 
-  std::function<bool(const atools::fs::BglReaderProgressInfo&)> handler;
+private:
+  void defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
+
+  std::function<bool(const atools::fs::BglReaderProgressInfo&)> handler = nullptr;
 
   atools::fs::BglReaderProgressInfo info;
 
   bool call();
 
+  QString numbersAsString(const atools::fs::BglReaderProgressInfo& inf);
 };
 
 } // namespace writer

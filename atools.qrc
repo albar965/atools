@@ -16,5 +16,7 @@
         <file>resources/sql/nd/update_nav_ids.sql</file>
         <file>resources/sql/nd/drop_schema.sql</file>
         <file>resources/sql/nd/create_boundary_schema.sql</file>
+        <file>resources/sql/nd/create_indexes_post_load.sql</file>
+        <file>resources/sql/nd/delete_duplicates.sql</file>
     </qresource>
 </RCC>

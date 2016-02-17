@@ -28,17 +28,14 @@ ProgressHandler::ProgressHandler(const BglReaderOptions *options)
 {
   if(options->getProgressCallback() != nullptr)
     handler = options->getProgressCallback();
-  else
-    handler = [ = ](const atools::fs::BglReaderProgressInfo & i)->bool
-    {
-      return defaultHandler(i);
-    };
 }
 
 bool ProgressHandler::reportProgressOther(const QString& otherAction, int current)
 {
   if(current != -1)
     info.current = current;
+  else
+    info.current++;
   info.otherAction = otherAction;
 
   info.newFile = false;
@@ -52,6 +49,8 @@ bool ProgressHandler::reportProgress(const QString& bglFilepath, int current)
 {
   if(current != -1)
     info.current = current;
+  else
+    info.current++;
   info.bglFilepath = bglFilepath;
 
   info.newFile = true;
@@ -66,10 +65,22 @@ void ProgressHandler::setTotal(int total)
   info.total = total;
 }
 
+void ProgressHandler::reset()
+{
+  info.current = 0;
+  info.sceneryArea = nullptr;
+  info.bglFilepath.clear();
+  info.newFile = false;
+  info.newSceneryArea = false;
+  info.newOther = false;
+}
+
 bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, int current)
 {
   if(current != -1)
     info.current = current;
+  else
+    info.current++;
   info.sceneryArea = sceneryArea;
 
   info.newFile = false;
@@ -81,27 +92,32 @@ bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, in
 
 bool ProgressHandler::call()
 {
+  defaultHandler(info);
   if(handler != nullptr)
     return handler(info);
-  else
-    return false;
+
+  return false;
 }
 
-bool ProgressHandler::defaultHandler(const atools::fs::BglReaderProgressInfo& inf)
+QString ProgressHandler::numbersAsString(const atools::fs::BglReaderProgressInfo& inf)
+{
+  return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
+}
+
+void ProgressHandler::defaultHandler(const atools::fs::BglReaderProgressInfo& inf)
 {
   if(inf.getNewFile())
-    qInfo() << "====" << inf.current << "of" << inf.total << inf.getBglFilepath();
+    qInfo() << "====" << numbersAsString(inf) << inf.getBglFilepath();
 
   if(inf.getNewSceneryArea())
   {
     qInfo() << "======================================================================";
-    qInfo() << "==========" << inf.current << "of" << inf.total << inf.getSceneryTitle();
+    qInfo() << "==========" << numbersAsString(inf) << inf.getSceneryTitle();
     qInfo() << "==========" << inf.getSceneryPath();
   }
 
   if(inf.getNewOther())
-    qInfo() << "====" << inf.current << "of" << inf.total << inf.getOtherAction();
-  return false;
+    qInfo() << "====" << numbersAsString(inf) << inf.getOtherAction();
 }
 
 } // namespace writer

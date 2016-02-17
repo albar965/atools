@@ -390,6 +390,9 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
       case atools::fs::bgl::taxipath::TAXI:
       case atools::fs::bgl::taxipath::VEHICLE:
         t.taxiName = taxinames.at(t.runwayNumTaxiName);
+        t.start = taxipoints.at(t.startPoint);
+        t.end = taxipoints.at(t.endPoint);
+        break; // avoid fallthrough warning
       case atools::fs::bgl::taxipath::RUNWAY:
         t.start = taxipoints.at(t.startPoint);
         t.end = taxipoints.at(t.endPoint);

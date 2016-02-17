@@ -146,9 +146,6 @@ DataWriter::~DataWriter()
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
-  if(!options.includePath(area.getLocalPath()))
-    return;
-
   QStringList files;
   atools::fs::scenery::FileResolver resolver(options);
   resolver.getFiles(area, files);
@@ -163,7 +160,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
     for(QString filename  : files)
     {
-      progressHandler->reportProgress(filename, currentFileNumber++);
+      progressHandler->reportProgress(filename);
 
       bglFile.readFile(filename);
       if(bglFile.hasContent())

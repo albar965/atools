@@ -43,7 +43,7 @@ private:
   const atools::fs::BglReaderOptions *options;
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
-  int countFiles(const atools::fs::scenery::SceneryCfg& cfg);
+  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int* numFiles, int* numSceneryAreas);
 
 };
 

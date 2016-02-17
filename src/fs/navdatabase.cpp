@@ -43,22 +43,21 @@ Navdatabase::Navdatabase(const BglReaderOptions *readerOptions, sql::SqlDatabase
 
 }
 
-int Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg)
+void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
 {
   qInfo() << "Counting files";
 
-  int numFiles = 0;
   QStringList files;
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    if(area.isActive())
+    if(area.isActive() && options->includePath(area.getLocalPath()))
     {
       atools::fs::scenery::FileResolver resolver(*options, true);
       resolver.getFiles(area, files);
-      numFiles += files.size();
+      (*numSceneryAreas)++;
+      *numFiles += files.size();
       files.clear();
     }
   qInfo() << "Counting files done." << numFiles << "file to process";
-  return numFiles;
 }
 
 void Navdatabase::create()
@@ -72,17 +71,26 @@ void Navdatabase::create()
   atools::fs::scenery::SceneryCfg cfg;
   cfg.read(options->getSceneryFile());
 
-  int numFiles = countFiles(cfg);
+  int numFiles = 0, numSceneryAreas = 0;
+
+  countFiles(cfg, &numFiles, &numSceneryAreas);
 
   db::ProgressHandler progressHandler(options);
 
-  // TODO add scripts to total
-  progressHandler.setTotal(numFiles);
+  int total = numFiles + numSceneryAreas + 6;
+  if(options->isDatabaseReport())
+    total += 4;
+  if(options->isResolveRoutes())
+    total += 1;
 
-  SqlScript script(db);
+  progressHandler.setTotal(total);
+
+  SqlScript script(db, options->isVerbose());
+  progressHandler.reportProgressOther(QObject::tr("Dropping old database schema"));
   script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
   db->commit();
 
+  progressHandler.reportProgressOther(QObject::tr("Creating new database schema"));
   script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
@@ -93,7 +101,7 @@ void Navdatabase::create()
   atools::fs::db::DataWriter dataWriter(*db, *options, &progressHandler);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    if(area.isActive())
+    if(area.isActive() && options->includePath(area.getLocalPath()))
     {
       progressHandler.reportProgress(&area);
       dataWriter.writeSceneryArea(area);
@@ -102,13 +110,25 @@ void Navdatabase::create()
 
   if(options->isResolveRoutes())
   {
+    progressHandler.reportProgressOther(QObject::tr("Creating routes"));
     atools::fs::db::RouteResolver resolver(*db);
     resolver.run();
     db->commit();
   }
+
+  progressHandler.reportProgressOther(QObject::tr("Creating post load indexes"));
+  script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
+  db->commit();
+
+  progressHandler.reportProgressOther(QObject::tr("Removing duplicates"));
+  script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
+  db->commit();
+
+  progressHandler.reportProgressOther(QObject::tr("Updating navigation ids"));
   script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
   db->commit();
 
+  progressHandler.reportProgressOther(QObject::tr("Creating final indexes"));
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
   db->commit();
 
@@ -118,11 +138,16 @@ void Navdatabase::create()
     dataWriter.logResults();
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
+
+    progressHandler.reportProgressOther(QObject::tr("Creating table statistics"));
     info << endl;
     util.printTableStats(info);
+
+    progressHandler.reportProgressOther(QObject::tr("Creating report on values"));
     info << endl;
     util.createColumnReport(info);
 
+    progressHandler.reportProgressOther(QObject::tr("Creating report on duplicates"));
     info << endl;
     util.reportDuplicates(info, "airport", "airport_id", {"ident"});
     info << endl;
@@ -147,14 +172,14 @@ void Navdatabase::create()
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
+    progressHandler.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"));
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
   }
 
   qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 
-void Navdatabase::reportCoordinateViolations(QDebug& out,
-                                             atools::sql::SqlUtil& util,
+void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
                                              const QStringList& tables)
 {
   for(QString table : tables)

@@ -204,7 +204,7 @@ public:
 
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
-      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0, currentFileNumber = 0;
+      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
 
   atools::sql::SqlDatabase& db;
   atools::fs::db::ProgressHandler *progressHandler;
