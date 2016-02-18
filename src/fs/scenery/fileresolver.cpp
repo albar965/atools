@@ -47,8 +47,9 @@ void FileResolver::clearExcludedFilePrefixes()
   excludedPrefixes.clear();
 }
 
-void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
+int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames) const
 {
+  int numFiles = 0;
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
 
   if(QFileInfo(areaLocalPathStr).isAbsolute())
@@ -70,7 +71,13 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
           QString filename = bglFile.fileName();
           if(!matchesExcludedPrefix(filename))
             if(options.includeFilename(filename))
-              files.push_back(bglFile.filePath());
+            {
+              numFiles++;
+              if(filepaths != nullptr)
+                filepaths->push_back(bglFile.filePath());
+              if(filenames != nullptr)
+                filenames->push_back(bglFile.fileName());
+            }
         }
       }
     }
@@ -79,6 +86,7 @@ void FileResolver::getFiles(const SceneryArea& area, QStringList& files) const
   }
   else if(!quiet)
     qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
+  return numFiles;
 }
 
 bool FileResolver::matchesExcludedPrefix(const QString& fname) const

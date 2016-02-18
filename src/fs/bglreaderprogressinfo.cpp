@@ -38,5 +38,7 @@ const QString& BglReaderProgressInfo::getSceneryPath() const
 
 
 
+
+
 } // namespace fs
 } // namespace atools

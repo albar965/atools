@@ -154,7 +154,7 @@ public:
     autocommit = value;
   }
 
-  void loadFiltersFromSettings(const QSettings& settings);
+  void loadFromSettings(const QSettings& settings);
 
   void setResolveRoutes(bool value)
   {

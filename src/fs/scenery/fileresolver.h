@@ -37,7 +37,8 @@ public:
   atools::fs::scenery::FileResolver& addExcludedFilePrefixes(const QStringList& prefixes);
   void clearExcludedFilePrefixes();
 
-  void getFiles(const atools::fs::scenery::SceneryArea& area, QStringList& files) const;
+  int getFiles(const atools::fs::scenery::SceneryArea& area, QStringList *filepaths = nullptr,
+               QStringList *filenames = nullptr) const;
 
 private:
   bool matchesExcludedPrefix(const QString& fname) const;

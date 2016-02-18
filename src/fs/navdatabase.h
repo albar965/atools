@@ -38,13 +38,20 @@ public:
   Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
   void create();
 
+  bool isAborted()
+  {
+    return aborted;
+  }
+
 private:
   atools::sql::SqlDatabase *db;
   const atools::fs::BglReaderOptions *options;
+  bool aborted = false;
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int* numFiles, int* numSceneryAreas);
+  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
 
+  void createInternal();
 };
 
 } // namespace fs

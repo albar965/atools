@@ -73,6 +73,7 @@ void ProgressHandler::reset()
   info.newFile = false;
   info.newSceneryArea = false;
   info.newOther = false;
+  info.firstCall = true;
 }
 
 bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, int current)
@@ -96,6 +97,9 @@ bool ProgressHandler::call()
   if(handler != nullptr)
     return handler(info);
 
+  if(info.firstCall)
+    info.firstCall = false;
+
   return false;
 }
 
@@ -106,17 +110,17 @@ QString ProgressHandler::numbersAsString(const atools::fs::BglReaderProgressInfo
 
 void ProgressHandler::defaultHandler(const atools::fs::BglReaderProgressInfo& inf)
 {
-  if(inf.getNewFile())
+  if(inf.isNewFile())
     qInfo() << "====" << numbersAsString(inf) << inf.getBglFilepath();
 
-  if(inf.getNewSceneryArea())
+  if(inf.isNewSceneryArea())
   {
     qInfo() << "======================================================================";
     qInfo() << "==========" << numbersAsString(inf) << inf.getSceneryTitle();
     qInfo() << "==========" << inf.getSceneryPath();
   }
 
-  if(inf.getNewOther())
+  if(inf.isNewOther())
     qInfo() << "====" << numbersAsString(inf) << inf.getOtherAction();
 }
 

@@ -146,11 +146,11 @@ DataWriter::~DataWriter()
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
-  QStringList files;
+  QStringList filepaths, filenames;
   atools::fs::scenery::FileResolver resolver(options);
-  resolver.getFiles(area, files);
+  resolver.getFiles(area, &filepaths, &filenames);
 
-  if(!files.empty())
+  if(!filepaths.empty())
   {
     sceneryAreaWriter->writeOne(&area);
 
@@ -158,11 +158,13 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
     bglFile.setSupportedSectionTypes(SUPPORTED_SECTION_TYPES);
 
-    for(QString filename  : files)
+    for(int i = 0; i < filepaths.size(); i++)
     {
-      progressHandler->reportProgress(filename);
+      if((aborted = progressHandler->reportProgress(filenames.at(i))) == true)
+        return;
 
-      bglFile.readFile(filename);
+      QString filepath = filepaths.at(i);
+      bglFile.readFile(filepath);
       if(bglFile.hasContent())
       {
         // Execution order is important due to dependencies between the writers

@@ -57,25 +57,30 @@ public:
     return total;
   }
 
-  bool getNewFile() const
+  bool isNewFile() const
   {
     return newFile;
   }
 
-  bool getNewSceneryArea() const
+  bool isNewSceneryArea() const
   {
     return newSceneryArea;
   }
 
-  bool getNewOther() const
+  bool isNewOther() const
   {
     return newOther;
+  }
+
+  bool isFirstCall() const
+  {
+    return firstCall;
   }
 
 private:
   friend atools::fs::db::ProgressHandler;
   int total = 0, current = 0;
-  bool newFile = false, newSceneryArea = false, newOther = false;
+  bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true;
   QString bglFilepath, otherAction;
   const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;
 

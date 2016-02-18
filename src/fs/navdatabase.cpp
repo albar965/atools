@@ -43,24 +43,20 @@ Navdatabase::Navdatabase(const BglReaderOptions *readerOptions, sql::SqlDatabase
 
 }
 
-void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
+void Navdatabase::create()
 {
-  qInfo() << "Counting files";
+  createInternal();
 
-  QStringList files;
-  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    if(area.isActive() && options->includePath(area.getLocalPath()))
-    {
-      atools::fs::scenery::FileResolver resolver(*options, true);
-      resolver.getFiles(area, files);
-      (*numSceneryAreas)++;
-      *numFiles += files.size();
-      files.clear();
-    }
-  qInfo() << "Counting files done." << numFiles << "file to process";
+  if(aborted)
+  {
+    db->rollback();
+    SqlScript script(db, options->isVerbose());
+    script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
+    db->commit();
+  }
 }
 
-void Navdatabase::create()
+void Navdatabase::createInternal()
 {
   QElapsedTimer timer;
   timer.start();
@@ -86,11 +82,15 @@ void Navdatabase::create()
   progressHandler.setTotal(total);
 
   SqlScript script(db, options->isVerbose());
-  progressHandler.reportProgressOther(QObject::tr("Dropping old database schema"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
   db->commit();
 
-  progressHandler.reportProgressOther(QObject::tr("Creating new database schema"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating new database schema"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
@@ -103,32 +103,46 @@ void Navdatabase::create()
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive() && options->includePath(area.getLocalPath()))
     {
-      progressHandler.reportProgress(&area);
+      if((aborted = progressHandler.reportProgress(&area)) == true)
+        return;
+
       dataWriter.writeSceneryArea(area);
+      if((aborted = dataWriter.isAborted()) == true)
+        return;
     }
   db->commit();
 
   if(options->isResolveRoutes())
   {
-    progressHandler.reportProgressOther(QObject::tr("Creating routes"));
+    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating routes"))) == true)
+      return;
+
     atools::fs::db::RouteResolver resolver(*db);
     resolver.run();
     db->commit();
   }
 
-  progressHandler.reportProgressOther(QObject::tr("Creating post load indexes"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating post load indexes"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
   db->commit();
 
-  progressHandler.reportProgressOther(QObject::tr("Removing duplicates"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Removing duplicates"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
   db->commit();
 
-  progressHandler.reportProgressOther(QObject::tr("Updating navigation ids"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Updating navigation ids"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
   db->commit();
 
-  progressHandler.reportProgressOther(QObject::tr("Creating final indexes"));
+  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating final indexes"))) == true)
+    return;
+
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
   db->commit();
 
@@ -139,15 +153,21 @@ void Navdatabase::create()
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
 
-    progressHandler.reportProgressOther(QObject::tr("Creating table statistics"));
+    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating table statistics"))) == true)
+      return;
+
     info << endl;
     util.printTableStats(info);
 
-    progressHandler.reportProgressOther(QObject::tr("Creating report on values"));
+    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating report on values"))) == true)
+      return;
+
     info << endl;
     util.createColumnReport(info);
 
-    progressHandler.reportProgressOther(QObject::tr("Creating report on duplicates"));
+    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating report on duplicates"))) == true)
+      return;
+
     info << endl;
     util.reportDuplicates(info, "airport", "airport_id", {"ident"});
     info << endl;
@@ -172,7 +192,11 @@ void Navdatabase::create()
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
-    progressHandler.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"));
+    if((aborted =
+          progressHandler.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"))) ==
+       true)
+      return;
+
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
   }
 
@@ -187,6 +211,20 @@ void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
   }
+}
+
+void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
+{
+  qInfo() << "Counting files";
+
+  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+    if(area.isActive() && options->includePath(area.getLocalPath()))
+    {
+      atools::fs::scenery::FileResolver resolver(*options, true);
+      *numFiles += resolver.getFiles(area);
+      (*numSceneryAreas)++;
+    }
+  qInfo() << "Counting files done." << numFiles << "files to process";
 }
 
 } // namespace fs

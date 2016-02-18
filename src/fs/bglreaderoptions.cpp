@@ -132,7 +132,7 @@ bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
   }
 }
 
-void BglReaderOptions::loadFiltersFromSettings(const QSettings& settings)
+void BglReaderOptions::loadFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveRoutes(settings.value("Options/ResolveRoutes", true).toBool());
