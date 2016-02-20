@@ -15,47 +15,43 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
+#ifndef ATOOLS_WIDGETSTATESAVER_H
+#define ATOOLS_WIDGETSTATESAVER_H
 
-#include "fs/bglreaderoptions.h"
+#include <QObject>
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-class SqlUtil;
+namespace settings {
+class Settings;
 }
 
-namespace fs {
+namespace gui {
 
-namespace scenery {
-class SceneryCfg;
-}
-
-class Navdatabase
+/* Allows to save the state of many differnet widgets and actions to the global settings instance.
+ * Key names are automatically genreated by object names. */
+class WidgetStateSaver
 {
-public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
-  void createSchema();
 
-  bool isAborted()
-  {
-    return aborted;
-  }
+public:
+  WidgetStateSaver(const QString& settingsKeyPrefix);
+
+  void save(const QList<const QObject *>& widgets);
+  void load(const QList<QWidget *>& widgets);
+
+  void save(const QObject *widget);
+  void load(QObject *widget);
+
+  void syncSettings();
 
 private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  bool aborted = false;
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
+  QString keyPrefix;
 
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
+  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value);
+  QVariant loadWidget(atools::settings::Settings& settings, QObject *w);
 
-  void createInternal();
 };
 
-} // namespace fs
+} // namespace gui
 } // namespace atools
 
-#endif // NAVDATABASE_H
+#endif // ATOOLS_WIDGETSTATESAVER_H

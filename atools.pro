@@ -143,7 +143,9 @@ HEADERS += src/atools.h \
     src/sql/sqlscript.h \
     src/sql/sqlutil.h \ 
     src/fs/db/progresshandler.h \
-    src/fs/bglreaderprogressinfo.h
+    src/fs/bglreaderprogressinfo.h \
+    src/gui/tablezoomhandler.h \
+    src/gui/widgetstatesaver.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -266,7 +268,9 @@ SOURCES += src/atools.cpp \
     src/sql/sqlscript.cpp \
     src/sql/sqlutil.cpp \ 
     src/fs/db/progresshandler.cpp \
-    src/fs/bglreaderprogressinfo.cpp
+    src/fs/bglreaderprogressinfo.cpp \
+    src/gui/tablezoomhandler.cpp \
+    src/gui/widgetstatesaver.cpp
 
 
 unix {

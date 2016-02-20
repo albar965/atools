@@ -50,10 +50,23 @@ void Navdatabase::create()
   if(aborted)
   {
     db->rollback();
-    SqlScript script(db, options->isVerbose());
-    script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
-    db->commit();
+    // Create an empty schema to avoid application crashes
+    createSchema();
   }
+}
+
+void Navdatabase::createSchema()
+{
+  SqlScript script(db, options->isVerbose());
+  script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
+  db->commit();
+
+  script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_views.sql");
+  db->commit();
 }
 
 void Navdatabase::createInternal()
@@ -73,7 +86,7 @@ void Navdatabase::createInternal()
 
   db::ProgressHandler progressHandler(options);
 
-  int total = numFiles + numSceneryAreas + 6;
+  int total = numFiles + numSceneryAreas + 5;
   if(options->isDatabaseReport())
     total += 4;
   if(options->isResolveRoutes())
@@ -85,18 +98,7 @@ void Navdatabase::createInternal()
   if((aborted = progressHandler.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
-  db->commit();
-
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating new database schema"))) == true)
-    return;
-
-  script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_views.sql");
-  db->commit();
+  createSchema();
 
   atools::fs::db::DataWriter dataWriter(*db, *options, &progressHandler);
 
