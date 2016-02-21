@@ -35,6 +35,11 @@ create index if not exists idx_airport_num_boundary_fence on airport(num_boundar
 create index if not exists idx_airport_num_com on airport(num_com);
 create index if not exists idx_airport_num_parking_gate on airport(num_parking_gate);
 create index if not exists idx_airport_num_parking_ga_ramp on airport(num_parking_ga_ramp);
+
+create index if not exists idx_airport_num_parking_cargo   on airport(num_parking_cargo);
+create index if not exists idx_airport_num_parking_mil_cargo on airport(num_parking_mil_cargo);
+create index if not exists idx_airport_num_parking_mil_combat  on airport(num_parking_mil_combat);
+
 create index if not exists idx_airport_num_approach on airport(num_approach);
 
 create index if not exists idx_airport_num_runway_hard on airport(num_runway_hard);

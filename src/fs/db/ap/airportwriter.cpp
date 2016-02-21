@@ -114,8 +114,14 @@ void AirportWriter::writeObject(const Airport *type)
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
+
   bind(":num_parking_gate", type->getNumParkingGate());
   bind(":num_parking_ga_ramp", type->getNumParkingGaRamp());
+
+  bind(":num_parking_cargo", type->getNumParkingCargo());
+  bind(":num_parking_mil_cargo", type->getNumParkingMilitaryCargo());
+  bind(":num_parking_mil_combat", type->getNumParkingMilitaryCombat());
+
   bind(":num_approach", type->getApproaches().size());
   bind(":num_runway_soft", type->getNumSoftRunway());
   bind(":num_runway_hard", type->getNumHardRunway());

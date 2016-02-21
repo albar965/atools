@@ -314,6 +314,15 @@ void Airport::updateSummaryFields()
       if(largestParkingGaRamp == ap::UNKNOWN_PARKING || largestParkingGaRamp < p.getType())
         largestParkingGaRamp = p.getType();
     }
+
+    if(p.getType() == ap::RAMP_CARGO)
+      numParkingCargo++;
+
+    if(p.getType() == ap::RAMP_MIL_CARGO)
+      numParkingMilitaryCargo++;
+
+    if(p.getType() == ap::RAMP_MIL_COMBAT)
+      numParkingMilitaryCombat++;
   }
 
   for(const Fence& f : fences)

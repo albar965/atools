@@ -39,8 +39,13 @@ create table airport
 
   num_boundary_fence integer not null,
   num_com integer not null,
+
   num_parking_gate integer not null,
   num_parking_ga_ramp integer not null,
+  num_parking_cargo  integer not null,
+  num_parking_mil_cargo integer not null,
+  num_parking_mil_combat integer not null,
+
   num_approach integer not null,
   num_runway_hard integer not null,
   num_runway_soft integer not null,
@@ -62,6 +67,7 @@ create table airport
   num_runways integer not null,
   largest_parking_ramp varchar(20),
   largest_parking_gate varchar(20),
+
   rating integer not null,
 
   scenery_local_path varchar(250) collate nocase not null,

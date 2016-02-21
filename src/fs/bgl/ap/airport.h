@@ -303,6 +303,21 @@ public:
     return military;
   }
 
+  int getNumParkingCargo() const
+  {
+    return numParkingCargo;
+  }
+
+  int getNumParkingMilitaryCargo() const
+  {
+    return numParkingMilitaryCargo;
+  }
+
+  int getNumParkingMilitaryCombat() const
+  {
+    return numParkingMilitaryCombat;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
@@ -320,7 +335,8 @@ private:
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0,
       numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
-      numParkingGaRamp = 0, numParkingGate = 0;
+      numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0,
+      numParkingMilitaryCombat = 0;
 
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 
