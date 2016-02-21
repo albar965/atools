@@ -145,7 +145,7 @@ HEADERS += src/atools.h \
     src/fs/db/progresshandler.h \
     src/fs/bglreaderprogressinfo.h \
     src/gui/tablezoomhandler.h \
-    src/gui/widgetstatesaver.h
+    src/gui/widgetstate.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -270,7 +270,7 @@ SOURCES += src/atools.cpp \
     src/fs/db/progresshandler.cpp \
     src/fs/bglreaderprogressinfo.cpp \
     src/gui/tablezoomhandler.cpp \
-    src/gui/widgetstatesaver.cpp
+    src/gui/widgetstate.cpp
 
 
 unix {

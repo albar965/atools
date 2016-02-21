@@ -29,25 +29,29 @@ namespace gui {
 
 /* Allows to save the state of many differnet widgets and actions to the global settings instance.
  * Key names are automatically genreated by object names. */
-class WidgetStateSaver
+class WidgetState
 {
 
 public:
-  WidgetStateSaver(const QString& settingsKeyPrefix);
+  WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true);
 
   void save(const QList<const QObject *>& widgets);
-  void load(const QList<QWidget *>& widgets);
+  void restore(const QList<QObject *>& widgets);
 
   void save(const QObject *widget);
-  void load(QObject *widget);
+  void restore(QObject *widget);
 
   void syncSettings();
 
 private:
   QString keyPrefix;
+  bool visibility = true;
 
   void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value);
   QVariant loadWidget(atools::settings::Settings& settings, QObject *w);
+
+  void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w);
+  void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w);
 
 };
 
