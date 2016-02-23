@@ -239,8 +239,6 @@ void WidgetState::restore(QObject *widget)
 
       if(v.isValid())
         cbx->setCheckState(static_cast<Qt::CheckState>(v.toInt()));
-      else if(cbx->isTristate())
-        cbx->setCheckState(Qt::PartiallyChecked);
 
       loadWidgetVisible(s, cbx);
     }
