@@ -202,7 +202,8 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
 
 double Logbook::calcDist(float startLon, float startLat, float destLon, float destLat) const
 {
-  return atools::geo::distanceInNm(atools::geo::Pos(startLon, startLat), atools::geo::Pos(destLon, destLat));
+  using namespace atools::geo;
+  return meterToNm(Pos(startLon, startLat).distanceMeterTo(Pos(destLon, destLat)));
 }
 
 } // namespace lb

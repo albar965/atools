@@ -21,20 +21,43 @@
 namespace atools {
 namespace geo {
 
-class Pos;
-
-/* Calculate distance in meters (great circle route) between positions */
-double distanceInMeters(const Pos& from, const Pos& to);
-
-/* Calculate distance in nautical miles (great circle route)
- * between positions */
-double distanceInNm(const Pos& from, const Pos& to);
+/* Distance from nautical miles to meters */
+template<typename TYPE>
+TYPE nmToMeter(TYPE nm)
+{
+  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216);
+}
 
 /* Distance from meters to nautical miles */
-double metersToNm(double nm);
+template<typename TYPE>
+TYPE meterToNm(TYPE nm)
+{
+  return static_cast<TYPE>(static_cast<double>(nm) / 1852.216);
+}
 
-/* Distance from nautical miles to meters */
-double nmToMeters(double nm);
+template<typename TYPE>
+TYPE meterToFeet(TYPE value)
+{
+  return static_cast<TYPE>(3.2808399 * static_cast<double>(value));
+}
+
+template<typename TYPE>
+TYPE feetToMeter(TYPE value)
+{
+  return static_cast<TYPE>(0.3048 * static_cast<double>(value));
+}
+
+template<typename TYPE>
+TYPE toRadians(TYPE deg)
+{
+  return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
+}
+
+template<typename TYPE>
+TYPE toDegree(TYPE rad)
+{
+  return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
+}
 
 } /* namespace geo */
 } // namespace atools

@@ -27,9 +27,14 @@ namespace geo {
 class Rect
 {
 public:
+  /* Create an invalid rectangle */
   Rect();
+
   Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
+
+  /* Create rectangle that includes the given circle. Radius in meter. */
+  Rect(const atools::geo::Pos& center, float radius);
 
   const atools::geo::Pos& getTopLeft() const
   {
@@ -41,10 +46,30 @@ public:
     return bottomRight;
   }
 
+  float getWidthDegree() const;
+  float getHeightDegree() const;
+
+  /* Get width and height of the rectangle in meter at the center coordinates.
+   * This is a rought approximation at best. */
+  float getWidthMeter() const;
+  float getHeightMeter() const;
+
+  /* Extend rectangle to include given point */
   void extend(const atools::geo::Pos& pos);
+
+  Pos getCenter();
+
+  /* Returns two rectangles if this crosses the anti meridian otherwise empty. */
+  QList<Rect> crossesAntiMeridian();
+
+  bool isValid()
+  {
+    return valid;
+  }
 
 private:
   atools::geo::Pos topLeft, bottomRight;
+  bool valid = false;
 };
 
 } // namespace geo

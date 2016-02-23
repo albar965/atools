@@ -16,22 +16,18 @@
 *****************************************************************************/
 
 #include "geo/calculations.h"
-#include "geo/pos.h"
-
-#include <math.h>
 
 namespace atools {
 
 namespace geo {
 
 // / @brief The usual PI/180 constant
-static const double DEG_TO_RAD = 0.017453292519943295769236907684886;
+// static const double DEG_TO_RAD =;
 
 // / @brief Earth's quadratic mean radius for WGS-84
-static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
+// static const double EARTH_RADIUS_IN_METERS = 6372797.560856;
 
 // / @brief Based on WGS-84
-static const double METERS_PER_NM = 1852.216;
 
 /** @brief Computes the arc, in radian, between two WGS-84 Poss.
  *
@@ -49,48 +45,17 @@ static const double METERS_PER_NM = 1852.216;
  *
  * @sa http://en.wikipedia.org/wiki/Law_of_haversines
  */
-double arcInRadians(const Pos& from, const Pos& to)
-{
-  double latitudeArc = (from.getLatY() - to.getLatY()) * DEG_TO_RAD;
-  double longitudeArc = (from.getLonX() - to.getLonX()) * DEG_TO_RAD;
-  double latitudeH = sin(latitudeArc * 0.5);
-  latitudeH *= latitudeH;
-  double lontitudeH = sin(longitudeArc * 0.5);
-  lontitudeH *= lontitudeH;
-  double tmp = cos(from.getLatY() * DEG_TO_RAD) * cos(to.getLatY() * DEG_TO_RAD);
-  return 2.0 * asin(sqrt(latitudeH + tmp * lontitudeH));
-}
-
-/** @brief Computes the distance, in meters, between two WGS-84 Poss.
- *
- * The result is equal to
- * <code>EARTH_RADIUS_IN_METERS*ArcInRadians(from,to)</code>
- *
- * @sa ArcInRadians
- */
-double distanceInMeters(const Pos& from, const Pos& to)
-{
-  return EARTH_RADIUS_IN_METERS * arcInRadians(from, to);
-}
-
-/** @brief Computes the distance, in nautical miles, between two WGS-84 Poss.
- *
- * @sa ArcInRadians
- */
-double distanceInNm(const Pos& from, const Pos& to)
-{
-  return EARTH_RADIUS_IN_METERS * arcInRadians(from, to) / METERS_PER_NM;
-}
-
-double nmToMeters(double nm)
-{
-  return nm * METERS_PER_NM;
-}
-
-double metersToNm(double nm)
-{
-  return nm / METERS_PER_NM;
-}
+// double arcInRadians(const Pos& from, const Pos& to)
+// {
+// double latitudeArc = (from.getLatY() - to.getLatY()) * DEG_TO_RAD;
+// double longitudeArc = (from.getLonX() - to.getLonX()) * DEG_TO_RAD;
+// double latitudeH = sin(latitudeArc * 0.5);
+// latitudeH *= latitudeH;
+// double lontitudeH = sin(longitudeArc * 0.5);
+// lontitudeH *= lontitudeH;
+// double tmp = cos(from.getLatY() * DEG_TO_RAD) * cos(to.getLatY() * DEG_TO_RAD);
+// return 2.0 * asin(sqrt(latitudeH + tmp * lontitudeH));
+// }
 
 } /* namespace geo */
 } // namespace atools

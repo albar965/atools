@@ -25,17 +25,23 @@ class QRegularExpression;
 namespace atools {
 namespace geo {
 
-/* Simple geographic position */
+/* Simple geographic position. All calculations based on WGS84 ellipsoid */
 class Pos
 {
 public:
   Pos();
+  Pos(const Pos& other);
+
   Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
       int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
+
   Pos(float longitudeX, float latitudeY, float alt = 0.f);
+
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   Pos(const QString& str);
-  ~Pos();
+  virtual ~Pos();
+
+  Pos& operator=(const Pos& other);
 
   float getLatY() const
   {
@@ -60,8 +66,29 @@ public:
     return altitude;
   }
 
+  Pos& normalize();
+  Pos& toDeg();
+  Pos& toRad();
+
+  /* return endpoint at distance and angle */
+  Pos endpoint(float distanceMeter, float angle) const;
+
+  /* Distance to other point */
+  float distanceMeterTo(const Pos& otherPos) const;
+
+  /* Distance to other point */
+  float angleDegTo(const Pos& otherPos) const;
+
   /* @return format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   QString toLongString() const;
+
+  /* @return format like "49.314,8.543,220" (lonX,latY,alt) */
+  QString toString() const;
+
+  bool isValid() const
+  {
+    return valid;
+  }
 
 protected:
   friend QDebug operator<<(QDebug out, const Pos& record);
@@ -70,12 +97,22 @@ protected:
   float lonX, latY, altitude;
 
 private:
-  static const QString LONG_FORMAT;
+  double calculateAngle(double lonX1, double latY1, double lonX2, double latY2) const;
+  double calculateAngle(const Pos& p1, const Pos& p2) const;
+  double calculateDistance(double lonX1, double latY1, double lonX2, double latY2) const;
+  double calculateDistance(const Pos& p1, const Pos& p2) const;
+  Pos calculateEndpoint(double longitude, double latitude, double dist, double angle) const;
+  Pos calculateEndpoint(const Pos& p, double dist, double angle) const;
+
+  static const QString LONG_FORMAT, SHORT_FORMAT;
   static const QRegularExpression LONG_FORMAT_REGEXP;
   float sec(float value) const;
   int min(float value) const;
   int deg(float value) const;
 
+  const double PI = 3.14159265358979323846;
+  const double EARTH_RADIUS_METER = 6371. * 1000.;
+  bool valid = false;
 };
 
 } // namespace geo
