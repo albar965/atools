@@ -49,6 +49,13 @@ Pos::Pos(float longitudeX, float latitudeY, float alt)
 {
 }
 
+Pos::Pos(double longitudeX, double latitudeY, float alt)
+  : altitude(alt), valid(true)
+{
+  lonX = static_cast<float>(longitudeX);
+  latY = static_cast<float>(latitudeY);
+}
+
 Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
          int latYDeg, int latYMin, float latYSec, bool south, float alt)
 {
@@ -138,9 +145,9 @@ Pos& Pos::normalize()
     lonX = lonX + 360.f;
 
   while(latY > 90.f)
-    lonX = lonX - 180.f;
-  while(lonX < -90.f)
-    lonX = lonX + 180.f;
+    latY = latY - 180.f;
+  while(latY < -90.f)
+    latY = latY + 180.f;
   return *this;
 }
 
