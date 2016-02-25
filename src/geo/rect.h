@@ -57,12 +57,12 @@ public:
   /* Extend rectangle to include given point */
   void extend(const atools::geo::Pos& pos);
 
-  Pos getCenter();
+  Pos getCenter() const;
 
   /* Returns two rectangles if this crosses the anti meridian otherwise empty. */
-  QList<Rect> crossesAntiMeridian();
+  QList<Rect> crossesAntiMeridian() const;
 
-  bool isValid()
+  bool isValid() const
   {
     return valid;
   }

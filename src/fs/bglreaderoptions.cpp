@@ -32,12 +32,12 @@ BglReaderOptions::BglReaderOptions()
 {
 }
 
-void BglReaderOptions::setProgressCallback(std::function<bool(const BglReaderProgressInfo&)> func)
+void BglReaderOptions::setProgressCallback(ProgressCallbackType func)
 {
   progressCallback = func;
 }
 
-std::function<bool(const atools::fs::BglReaderProgressInfo&)> BglReaderOptions::getProgressCallback() const
+BglReaderOptions::ProgressCallbackType BglReaderOptions::getProgressCallback() const
 {
   return progressCallback;
 }

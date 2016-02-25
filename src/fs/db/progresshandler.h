@@ -19,13 +19,10 @@
 #define PROGRESSHANDLER_H
 
 #include "fs/bglreaderprogressinfo.h"
-
-#include <functional>
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
-class BglReaderOptions;
-
 namespace scenery {
 class SceneryArea;
 }
@@ -47,13 +44,14 @@ public:
 private:
   void defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
 
-  std::function<bool(const atools::fs::BglReaderProgressInfo&)> handler = nullptr;
+  atools::fs::BglReaderOptions::ProgressCallbackType handler = nullptr;
 
   atools::fs::BglReaderProgressInfo info;
 
   bool call();
 
   QString numbersAsString(const atools::fs::BglReaderProgressInfo& inf);
+
 };
 
 } // namespace writer

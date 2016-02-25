@@ -98,13 +98,13 @@ void Rect::extend(const Pos& pos)
   bottomRight = Pos(rightLonX, bottomLatY);
 }
 
-Pos Rect::getCenter()
+Pos Rect::getCenter() const
 {
   return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
              (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
 }
 
-QList<Rect> Rect::crossesAntiMeridian()
+QList<Rect> Rect::crossesAntiMeridian() const
 {
   // TODO implement
   return QList<Rect>();

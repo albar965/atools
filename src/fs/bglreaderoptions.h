@@ -161,8 +161,10 @@ public:
     resolveRoutes = value;
   }
 
-  void setProgressCallback(std::function<bool(const atools::fs::BglReaderProgressInfo&)> func);
-  std::function<bool (const atools::fs::BglReaderProgressInfo&)> getProgressCallback() const;
+  typedef std::function<bool (const atools::fs::BglReaderProgressInfo&)> ProgressCallbackType;
+
+  void setProgressCallback(ProgressCallbackType func);
+  ProgressCallbackType getProgressCallback() const;
 
 private:
   void setFilenameFilterInc(const QStringList& filter);
@@ -189,7 +191,7 @@ private:
   QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, airportIcaoFiltersExcl;
   QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
-  std::function<bool(const atools::fs::BglReaderProgressInfo&)> progressCallback = nullptr;
+  ProgressCallbackType progressCallback = nullptr;
 
 };
 
