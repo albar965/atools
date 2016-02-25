@@ -35,7 +35,7 @@ class WidgetState
 public:
   WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true);
 
-  void save(const QList<const QObject *>& widgets);
+  void save(const QList<QObject *>& widgets);
   void restore(const QList<QObject *>& widgets);
 
   void save(const QObject *widget);

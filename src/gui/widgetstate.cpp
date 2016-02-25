@@ -264,7 +264,7 @@ void WidgetState::syncSettings()
   Settings::instance().syncSettings();
 }
 
-void WidgetState::save(const QList<const QObject *>& widgets)
+void WidgetState::save(const QList<QObject *>& widgets)
 {
   for(const QObject *w : widgets)
     save(w);
