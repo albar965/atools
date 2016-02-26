@@ -150,8 +150,8 @@ void AirportWriter::writeObject(const Airport *type)
 
   bind(":rating", type->getRating());
 
-  bind(":scenery_local_path", sceneryLocalPath);
-  bind(":bgl_filename", bglFilename);
+  bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+  bind(":bgl_filename", dw.getBglFileWriter()->getCurrentFilename());
 
   bind(":left_lonx", type->getBoundingRect().getTopLeft().getLonX());
   bind(":top_laty", type->getBoundingRect().getTopLeft().getLatY());

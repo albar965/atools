@@ -56,6 +56,7 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   frequency = bs->readInt() / 1000;
   range = bs->readFloat();
   magVar = bs->readFloat();
+  magVar = magVar > 180.f ? 360.f - magVar : magVar;
 
   ident = converter::intToIcao(bs->readUInt());
 

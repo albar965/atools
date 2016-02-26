@@ -54,6 +54,7 @@ Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
   position = BglPosition(bs, true, 1000.f);
   range = bs->readFloat();
   magVar = bs->readFloat();
+  magVar = magVar > 180.f ? 360.f - magVar : magVar;
   ident = converter::intToIcao(bs->readUInt());
 
   unsigned int regionFlags = bs->readUInt();

@@ -174,8 +174,6 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         airportIndex->clear();
 
         airportWriter->setNameLists(bglFile.getNamelists());
-        airportWriter->setBglFilename(QFileInfo(bglFile.getFilename()).fileName());
-        airportWriter->setSceneryLocalPath(area.getLocalPath());
         airportWriter->write(bglFile.getAirports());
 
         waypointWriter->write(bglFile.getWaypoints());

@@ -54,16 +54,6 @@ public:
     return currentIdent;
   }
 
-  void setSceneryLocalPath(const QString& value)
-  {
-    sceneryLocalPath = value;
-  }
-
-  void setBglFilename(const QString& value)
-  {
-    bglFilename = value;
-  }
-
 private:
   virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
@@ -71,7 +61,7 @@ private:
   typedef NameListMapType::const_iterator NameListMapConstIterType;
   NameListMapType nameListIndex;
 
-  QString currentIdent, sceneryLocalPath, bglFilename;
+  QString currentIdent;
 
   atools::fs::db::DeleteProcessor deleteProcessor;
 };

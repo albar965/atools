@@ -55,6 +55,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   position = BglPosition(bs, true, 1000.f);
   towerPosition = BglPosition(bs, true, 1000.f);
   magVar = bs->readFloat();
+  magVar = magVar > 180.f ? 360.f - magVar : magVar;
   ident = converter::intToIcao(bs->readUInt());
 
   if(!options->includeAirport(ident))
