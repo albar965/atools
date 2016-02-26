@@ -192,3 +192,44 @@ foreign key(to_waypoint_id) references waypoint(waypoint_id)
 
 create index if not exists idx_route_from_waypoint_id on route(from_waypoint_id);
 create index if not exists idx_route_to_waypoint_id on route(to_waypoint_id);
+
+-- **************************************************
+
+drop table if exists nav_search;
+
+create table nav_search
+(
+  nav_search_id integer primary key,
+  waypoint_id integer,
+  waypoint_nav_id integer,
+  vor_id integer,
+  ndb_id integer,
+  file_id integer not null,
+  airport_id integer,
+  airport_ident varchar(4),
+  ident varchar(5),
+  name varchar(50) collate nocase,
+  region varchar(2),
+  range integer,
+  type varchar(15) not null, -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
+  nav_type varchar(15) not null, -- WAYPOINT, VORDME, VOR, DME, NDB
+  frequency integer,
+  scenery_local_path varchar(250) collate nocase not null,
+  bgl_filename varchar(300) collate nocase not null,
+  mag_var double not null,
+  altitude integer,
+  lonx double not null,
+  laty double not null,
+foreign key(waypoint_id) references waypoint(waypoint_id),
+foreign key(vor_id) references vor(vor_id),
+foreign key(ndb_id) references ndb(ndb_id),
+foreign key(file_id) references bgl_file(bgl_file_id),
+foreign key(airport_id) references airport(airport_id)
+);
+
+create index if not exists idx_nav_search_waypoint_id on nav_search(waypoint_id);
+create index if not exists idx_nav_search_vor_id on nav_search(vor_id);
+create index if not exists idx_nav_search_ndb_id on nav_search(ndb_id);
+create index if not exists idx_nav_search_file_id on nav_search(file_id);
+create index if not exists idx_nav_search_airport_id on nav_search(airport_id);
+

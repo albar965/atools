@@ -40,7 +40,8 @@ create table bgl_file
   scenery_area_id integer not null,
   bgl_create_time integer not null,
   file_modification_time integer not null,
-  filename varchar(1000) not null,
+  filepath varchar(1000) not null,
+  filename varchar(250) not null,
   size integer not null,
 foreign key(scenery_area_id) references scenery_area(scenery_area_id)
 );
