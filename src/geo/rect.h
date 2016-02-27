@@ -59,7 +59,7 @@ public:
 
   Pos getCenter() const;
 
-  /* Returns two rectangles if this crosses the anti meridian otherwise empty. */
+  /* Returns two rectangles if this crosses the anti meridian otherwise *this. */
   QList<Rect> crossesAntiMeridian() const;
 
   bool isValid() const

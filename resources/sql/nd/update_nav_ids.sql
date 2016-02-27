@@ -324,6 +324,8 @@ update airport set num_runway_end_ils = 0 where num_runway_end_ils is null;
 ----------------------------------------------------------------
 -- Populate nav_search table -----------------------------------
 
+delete from nav_search;
+
 -- Insert waypoints into nav_search table
 insert into nav_search (waypoint_id, waypoint_nav_id, file_id, ident, region, airport_id, airport_ident,
 type, nav_type, scenery_local_path,bgl_filename, mag_var, lonx, laty)
@@ -355,7 +357,7 @@ case
 else
   'UNKNOWN'
 end as nav_type,
-v.frequency,
+v.frequency * 10 as frequency,
 s.local_path, f.filename, v.mag_var, v.altitude, v.lonx, v.laty
 from vor v
 join bgl_file f on f.bgl_file_id = v.file_id
