@@ -84,7 +84,7 @@ void Navdatabase::createInternal()
 
   countFiles(cfg, &numFiles, &numSceneryAreas);
 
-  db::ProgressHandler progressHandler(options);
+  db::ProgressHandler progress(options);
 
   int total = numFiles + numSceneryAreas + 5;
   if(options->isDatabaseReport())
@@ -92,20 +92,20 @@ void Navdatabase::createInternal()
   if(options->isResolveRoutes())
     total += 1;
 
-  progressHandler.setTotal(total);
+  progress.setTotal(total);
 
   SqlScript script(db, options->isVerbose());
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
     return;
 
   createSchema();
 
-  atools::fs::db::DataWriter dataWriter(*db, *options, &progressHandler);
+  atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive() && options->includePath(area.getLocalPath()))
     {
-      if((aborted = progressHandler.reportProgress(&area)) == true)
+      if((aborted = progress.reportProgress(&area)) == true)
         return;
 
       dataWriter.writeSceneryArea(area);
@@ -116,7 +116,7 @@ void Navdatabase::createInternal()
 
   if(options->isResolveRoutes())
   {
-    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating routes"))) == true)
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating routes"))) == true)
       return;
 
     atools::fs::db::RouteResolver resolver(*db);
@@ -124,25 +124,25 @@ void Navdatabase::createInternal()
     db->commit();
   }
 
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating post load indexes"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Creating post load indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
   db->commit();
 
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Removing duplicates"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Clean up"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
   db->commit();
 
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Updating navigation ids"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Updating navigation ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
   db->commit();
 
-  if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating final indexes"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Creating final indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
@@ -155,19 +155,19 @@ void Navdatabase::createInternal()
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
 
-    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating table statistics"))) == true)
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating table statistics"))) == true)
       return;
 
     info << endl;
     util.printTableStats(info);
 
-    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating report on values"))) == true)
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on values"))) == true)
       return;
 
     info << endl;
     util.createColumnReport(info);
 
-    if((aborted = progressHandler.reportProgressOther(QObject::tr("Creating report on duplicates"))) == true)
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on duplicates"))) == true)
       return;
 
     info << endl;
@@ -194,12 +194,13 @@ void Navdatabase::createInternal()
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
-    if((aborted =
-          progressHandler.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"))) ==
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"))) ==
        true)
       return;
 
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
+
+    progress.reportProgressFinish();
   }
 
   qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";

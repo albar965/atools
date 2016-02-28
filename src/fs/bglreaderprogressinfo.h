@@ -42,9 +42,9 @@ public:
     return current;
   }
 
-  const QString& getBglFilepath() const
+  const QString& getBglFilename() const
   {
-    return bglFilepath;
+    return bglFilename;
   }
 
   const QString& getOtherAction() const
@@ -77,11 +77,70 @@ public:
     return firstCall;
   }
 
+  bool isLastCall() const
+  {
+    return lastCall;
+  }
+
+  int getNumFiles() const
+  {
+    return numFiles;
+  }
+
+  int getNumAirports() const
+  {
+    return numAirports;
+  }
+
+  int getNumNamelists() const
+  {
+    return numNamelists;
+  }
+
+  int getNumVors() const
+  {
+    return numVors;
+  }
+
+  int getNumIls() const
+  {
+    return numIls;
+  }
+
+  int getNumNdbs() const
+  {
+    return numNdbs;
+  }
+
+  int getNumMarker() const
+  {
+    return numMarker;
+  }
+
+  int getNumBoundaries() const
+  {
+    return numBoundaries;
+  }
+
+  int getNumWaypoints() const
+  {
+    return numWaypoints;
+  }
+
+  int getNumObjectsWritten() const
+  {
+    return numObjectsWritten;
+  }
+
 private:
   friend atools::fs::db::ProgressHandler;
+
+  int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0, numNdbs = 0, numMarker = 0,
+      numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0;
+
   int total = 0, current = 0;
-  bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true;
-  QString bglFilepath, otherAction;
+  bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false;
+  QString bglFilename, otherAction;
   const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;
 
 };

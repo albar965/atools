@@ -146,7 +146,8 @@ HEADERS += src/atools.h \
     src/fs/bglreaderprogressinfo.h \
     src/gui/tablezoomhandler.h \
     src/gui/widgetstate.h \
-    src/gui/widgettools.h
+    src/gui/widgettools.h \
+    src/gui/helphandler.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -272,7 +273,8 @@ SOURCES += src/atools.cpp \
     src/fs/bglreaderprogressinfo.cpp \
     src/gui/tablezoomhandler.cpp \
     src/gui/widgetstate.cpp \
-    src/gui/widgettools.cpp
+    src/gui/widgettools.cpp \
+    src/gui/helphandler.cpp
 
 
 unix {

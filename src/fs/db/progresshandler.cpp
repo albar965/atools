@@ -42,7 +42,7 @@ bool ProgressHandler::reportProgressOther(const QString& otherAction, int curren
   info.newSceneryArea = false;
   info.newOther = true;
 
-  return call();
+  return callHandler();
 }
 
 bool ProgressHandler::reportProgress(const QString& bglFilepath, int current)
@@ -51,13 +51,23 @@ bool ProgressHandler::reportProgress(const QString& bglFilepath, int current)
     info.current = current;
   else
     info.current++;
-  info.bglFilepath = bglFilepath;
+  info.bglFilename = bglFilepath;
 
   info.newFile = true;
   info.newSceneryArea = false;
   info.newOther = false;
 
-  return call();
+  return callHandler();
+}
+
+bool ProgressHandler::reportProgressFinish()
+{
+  info.lastCall = true;
+  info.newFile = false;
+  info.newSceneryArea = false;
+  info.newOther = false;
+
+  return callHandler();
 }
 
 void ProgressHandler::setTotal(int total)
@@ -69,11 +79,12 @@ void ProgressHandler::reset()
 {
   info.current = 0;
   info.sceneryArea = nullptr;
-  info.bglFilepath.clear();
+  info.bglFilename.clear();
   info.newFile = false;
   info.newSceneryArea = false;
   info.newOther = false;
   info.firstCall = true;
+  info.lastCall = false;
 }
 
 bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, int current)
@@ -88,19 +99,20 @@ bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, in
   info.newSceneryArea = true;
   info.newOther = false;
 
-  return call();
+  return callHandler();
 }
 
-bool ProgressHandler::call()
+bool ProgressHandler::callHandler()
 {
+  bool retval = false;
   defaultHandler(info);
   if(handler != nullptr)
-    return handler(info);
+    retval = handler(info);
 
   if(info.firstCall)
     info.firstCall = false;
 
-  return false;
+  return retval;
 }
 
 QString ProgressHandler::numbersAsString(const atools::fs::BglReaderProgressInfo& inf)
@@ -111,7 +123,7 @@ QString ProgressHandler::numbersAsString(const atools::fs::BglReaderProgressInfo
 void ProgressHandler::defaultHandler(const atools::fs::BglReaderProgressInfo& inf)
 {
   if(inf.isNewFile())
-    qInfo() << "====" << numbersAsString(inf) << inf.getBglFilepath();
+    qInfo() << "====" << numbersAsString(inf) << inf.getBglFilename();
 
   if(inf.isNewSceneryArea())
   {

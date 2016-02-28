@@ -160,6 +160,16 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
     for(int i = 0; i < filepaths.size(); i++)
     {
+      progressHandler->setNumFiles(numFiles);
+      progressHandler->setNumAirports(numAirports);
+      progressHandler->setNumNamelists(numNamelists);
+      progressHandler->setNumVors(numVors);
+      progressHandler->setNumIls(numIls);
+      progressHandler->setNumNdbs(numNdbs);
+      progressHandler->setNumMarker(numMarker);
+      progressHandler->setNumBoundaries(numBoundaries);
+      progressHandler->setNumWaypoints(numWaypoints);
+      progressHandler->setNumObjectsWritten(numObjectsWritten);
       if((aborted = progressHandler->reportProgress(filenames.at(i))) == true)
         return;
 
@@ -191,6 +201,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         numNdbs += bglFile.getNdbs().size();
         numMarker += bglFile.getMarker().size();
         numWaypoints += bglFile.getWaypoints().size();
+        numBoundaries += bglFile.getBoundaries().size();
         numFiles++;
       }
     }
@@ -208,6 +219,7 @@ void DataWriter::logResults()
                     << numIls << " ILS, "
                     << numNdbs << " NDBs, "
                     << numMarker << " markers and "
+                    << numBoundaries << " boundaries and "
                     << numWaypoints << " waypoints.";
   qInfo().nospace() << "Wrote " << numObjectsWritten << " objects.";
 }

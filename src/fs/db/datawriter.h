@@ -209,7 +209,7 @@ public:
 
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
-      numNdbs = 0, numMarker = 0, numWaypoints = 0, numObjectsWritten = 0;
+      numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;
   bool aborted = false;
 
   atools::sql::SqlDatabase& db;

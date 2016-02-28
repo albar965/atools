@@ -15,26 +15,43 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bglreaderprogressinfo.h"
-#include "fs/scenery/sceneryarea.h"
+#ifndef ATOOLS_HELPMENUHANDLER_H
+#define ATOOLS_HELPMENUHANDLER_H
+
+#include <QObject>
+
+class QWidget;
 
 namespace atools {
-namespace fs {
+namespace gui {
 
-BglReaderProgressInfo::BglReaderProgressInfo()
+/*
+ * Provides slots for the help menu to display about dialogs, etc.
+ */
+class HelpHandler :
+  public QObject
 {
+  Q_OBJECT
 
-}
+public:
+  HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
+  virtual ~HelpHandler();
 
-const QString& BglReaderProgressInfo::getSceneryTitle() const
-{
-  return sceneryArea->getTitle();
-}
+  /* Open the help HTML file in the default browser */
+  void help();
 
-const QString& BglReaderProgressInfo::getSceneryPath() const
-{
-  return sceneryArea->getLocalPath();
-}
+  /* Display about this application dialog */
+  void about();
 
-} // namespace fs
+  /* Display about Qt dialog */
+  void aboutQt();
+
+private:
+  QWidget *parentWidget;
+  QString message, rev;
+};
+
+} // namespace gui
 } // namespace atools
+
+#endif // ATOOLS_HELPMENUHANDLER_H

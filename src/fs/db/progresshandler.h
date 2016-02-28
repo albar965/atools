@@ -35,7 +35,58 @@ public:
 
   bool reportProgress(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
   bool reportProgress(const QString& bglFilepath, int current = -1);
+  bool reportProgressFinish();
   bool reportProgressOther(const QString& otherAction, int current = -1);
+
+  void setNumFiles(int value)
+  {
+    info.numFiles = value;
+  }
+
+  void setNumAirports(int value)
+  {
+    info.numAirports = value;
+  }
+
+  void setNumNamelists(int value)
+  {
+    info.numNamelists = value;
+  }
+
+  void setNumVors(int value)
+  {
+    info.numVors = value;
+  }
+
+  void setNumIls(int value)
+  {
+    info.numIls = value;
+  }
+
+  void setNumNdbs(int value)
+  {
+    info.numNdbs = value;
+  }
+
+  void setNumMarker(int value)
+  {
+    info.numMarker = value;
+  }
+
+  void setNumBoundaries(int value)
+  {
+    info.numBoundaries = value;
+  }
+
+  void setNumWaypoints(int value)
+  {
+    info.numWaypoints = value;
+  }
+
+  void setNumObjectsWritten(int value)
+  {
+    info.numObjectsWritten = value;
+  }
 
   void setTotal(int total);
 
@@ -48,7 +99,7 @@ private:
 
   atools::fs::BglReaderProgressInfo info;
 
-  bool call();
+  bool callHandler();
 
   QString numbersAsString(const atools::fs::BglReaderProgressInfo& inf);
 
