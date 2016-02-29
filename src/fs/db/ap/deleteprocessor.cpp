@@ -52,9 +52,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   fetchSecondaryRunwayEndIdStmt = new SqlQuery(sqlDb);
   updateApprochRwIds = new SqlQuery(sqlDb);
 
-  nullWpStmt = new SqlQuery(sqlDb);
-  nullVorStmt = new SqlQuery(sqlDb);
-  nullNdbStmt = new SqlQuery(sqlDb);
+  delWpStmt = new SqlQuery(sqlDb);
+  delVorStmt = new SqlQuery(sqlDb);
+  delNdbStmt = new SqlQuery(sqlDb);
   deleteAirportStmt = new SqlQuery(sqlDb);
   selectAirportStmt = new SqlQuery(sqlDb);
   deleteApronStmt = new SqlQuery(sqlDb);
@@ -143,9 +143,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
   // TODO better erase waypoints
-  nullWpStmt->prepare(updateAptFeatureToNullStmt("waypoint"));
-  nullVorStmt->prepare(updateAptFeatureToNullStmt("vor"));
-  nullNdbStmt->prepare(updateAptFeatureToNullStmt("ndb"));
+  delWpStmt->prepare(delAptFeatureStmt("waypoint"));
+  delVorStmt->prepare(delAptFeatureStmt("vor"));
+  delNdbStmt->prepare(delAptFeatureStmt("ndb"));
 
   // Update facilities with new airport ids
   updateComStmt->prepare(updateAptFeatureStmt("com"));
@@ -193,9 +193,9 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchSecondaryRunwayEndIdStmt;
   delete updateApprochRwIds;
 
-  delete nullWpStmt;
-  delete nullVorStmt;
-  delete nullNdbStmt;
+  delete delWpStmt;
+  delete delVorStmt;
+  delete delNdbStmt;
 
   delete deleteAirportStmt;
   delete selectAirportStmt;
@@ -328,9 +328,9 @@ void DeleteProcessor::deleteAirport()
 
   // Unlink navigation - will be update later update_nav_ids.sql script
   // we accecpt duplicates here - these will be deleted later
-  bindAndExecute(nullWpStmt, "waypoints deleted"); // only type that appears in airport records
-  bindAndExecute(nullVorStmt, "vors deleted");
-  bindAndExecute(nullNdbStmt, "ndb deleted");
+  bindAndExecute(delWpStmt, "waypoints deleted"); // only type that appears in airport records
+  bindAndExecute(delVorStmt, "vors deleted");
+  bindAndExecute(delNdbStmt, "ndb deleted");
 
   bindAndExecute(deleteAirportStmt, "airports deleted");
 }

@@ -114,16 +114,6 @@ void Navdatabase::createInternal()
     }
   db->commit();
 
-  if(options->isResolveRoutes())
-  {
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating routes"))) == true)
-      return;
-
-    atools::fs::db::RouteResolver resolver(*db);
-    resolver.run();
-    db->commit();
-  }
-
   if((aborted = progress.reportProgressOther(QObject::tr("Creating post load indexes"))) == true)
     return;
 
@@ -135,6 +125,16 @@ void Navdatabase::createInternal()
 
   script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
   db->commit();
+
+  if(options->isResolveRoutes())
+  {
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating routes"))) == true)
+      return;
+
+    atools::fs::db::RouteResolver resolver(*db);
+    resolver.run();
+    db->commit();
+  }
 
   if((aborted = progress.reportProgressOther(QObject::tr("Updating navigation ids"))) == true)
     return;
