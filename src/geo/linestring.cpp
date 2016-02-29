@@ -15,49 +15,44 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
-
-#include "logging/loggingdefs.h"
+#include "linestring.h"
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-class SqlUtil;
-}
+namespace geo {
 
-namespace fs {
-class BglReaderOptions;
-
-namespace scenery {
-class SceneryCfg;
-}
-
-class Navdatabase
+LineString::LineString()
 {
-public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
-  void createSchema();
 
-  bool isAborted()
+}
+
+LineString::LineString(std::initializer_list<Pos> list)
+  : QList(list)
+{
+  if(!isEmpty())
+    valid = true;
+}
+
+Rect LineString::boundingRect()
+{
+  if(valid && !isEmpty())
   {
-    return aborted;
+    Rect bounding(first());
+
+    for(const Pos& p : *this)
+      bounding.extend(p);
+    return bounding;
   }
+  else
+    return Rect();
+}
 
-private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  bool aborted = false;
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
+float LineString::lengthMeter() const
+{
+  float length = 0.f;
+  for(int i = 0; i < size() - 1; i++)
+    length += at(i).distanceMeterTo(at(i + 1));
+  return length;
+}
 
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
-
-  void createInternal();
-
-};
-
-} // namespace fs
+} // namespace geo
 } // namespace atools
-
-#endif // NAVDATABASE_H

@@ -57,7 +57,7 @@ void Navdatabase::create()
 
 void Navdatabase::createSchema()
 {
-  SqlScript script(db, options->isVerbose());
+  SqlScript script(db, true /* options->isVerbose()*/);
   script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
   db->commit();
 
@@ -94,7 +94,7 @@ void Navdatabase::createInternal()
 
   progress.setTotal(total);
 
-  SqlScript script(db, options->isVerbose());
+  SqlScript script(db, true /*options->isVerbose()*/);
   if((aborted = progress.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
     return;
 
@@ -158,12 +158,14 @@ void Navdatabase::createInternal()
     if((aborted = progress.reportProgressOther(QObject::tr("Creating table statistics"))) == true)
       return;
 
+    qDebug() << "printTableStats";
     info << endl;
     util.printTableStats(info);
 
     if((aborted = progress.reportProgressOther(QObject::tr("Creating report on values"))) == true)
       return;
 
+    qDebug() << "createColumnReport";
     info << endl;
     util.createColumnReport(info);
 
@@ -171,26 +173,37 @@ void Navdatabase::createInternal()
       return;
 
     info << endl;
+    qDebug() << "reportDuplicates airport";
     util.reportDuplicates(info, "airport", "airport_id", {"ident"});
     info << endl;
+    qDebug() << "reportDuplicates vor";
     util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates ndb";
     util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates waypoint";
     util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates ils";
     util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates marker";
     util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates helipad";
     util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates parking";
     util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates start";
     util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates runway";
     util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
     info << endl;
+    qDebug() << "reportDuplicates bgl_file";
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
@@ -203,7 +216,7 @@ void Navdatabase::createInternal()
     progress.reportProgressFinish();
   }
 
-  qInfo() << "Time" << timer.elapsed() / 1000 << "seconds";
+  qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 
 void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
@@ -211,6 +224,7 @@ void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
 {
   for(QString table : tables)
   {
+    qDebug() << "reportCoordinateViolations" << table;
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
   }
@@ -218,7 +232,7 @@ void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
 
 void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
 {
-  qInfo() << "Counting files";
+  qDebug() << "Counting files";
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive() && options->includePath(area.getLocalPath()))
@@ -227,7 +241,7 @@ void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *nu
       *numFiles += resolver.getFiles(area);
       (*numSceneryAreas)++;
     }
-  qInfo() << "Counting files done." << numFiles << "files to process";
+  qDebug() << "Counting files done." << numFiles << "files to process";
 }
 
 } // namespace fs

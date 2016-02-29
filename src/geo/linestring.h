@@ -15,49 +15,31 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
+#ifndef LINESTRING_H
+#define LINESTRING_H
 
-#include "logging/loggingdefs.h"
+#include "geo/pos.h"
+#include "geo/rect.h"
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-class SqlUtil;
-}
+namespace geo {
 
-namespace fs {
-class BglReaderOptions;
-
-namespace scenery {
-class SceneryCfg;
-}
-
-class Navdatabase
+class LineString :
+  public QList<atools::geo::Pos>
 {
 public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
-  void createSchema();
+  LineString();
+  LineString(std::initializer_list<atools::geo::Pos> list);
 
-  bool isAborted()
-  {
-    return aborted;
-  }
+  float lengthMeter() const;
+
+  Rect boundingRect();
 
 private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  bool aborted = false;
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
-
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
-
-  void createInternal();
-
+  bool valid = false;
 };
 
-} // namespace fs
+} // namespace geo
 } // namespace atools
 
-#endif // NAVDATABASE_H
+#endif // LINESTRING_H

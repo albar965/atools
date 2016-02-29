@@ -30,6 +30,7 @@ public:
   /* Create an invalid rectangle */
   Rect();
 
+  Rect(const atools::geo::Pos& singlePos);
   Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
 

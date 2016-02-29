@@ -40,8 +40,8 @@ void SqlScript::executeScript(const QString& filename)
 
     if(verbose)
     {
-      qInfo() << "-- Running script ------------------------------------------";
-      qInfo() << "--" << scriptFile.fileName() << "--";
+      qDebug() << "-- Running script ------------------------------------------";
+      qDebug() << "--" << scriptFile.fileName() << "--";
     }
     executeScript(scriptStream);
   }
@@ -61,14 +61,14 @@ void SqlScript::executeScript(QTextStream& script)
   for(ScriptCmd cmd : statements)
   {
     if(verbose)
-      qInfo().nospace() << cmd.lineNumber << ": " << cmd.sql;
+      qDebug().nospace() << cmd.lineNumber << ": " << cmd.sql;
     query.exec(cmd.sql);
     if(verbose)
-      qInfo().nospace() << "[" << query.numRowsAffected() << "]";
+      qDebug().nospace() << "[" << query.numRowsAffected() << "]";
   }
 
   if(verbose)
-    qInfo() << "-- Done Running script ------------------------------------------";
+    qDebug() << "-- Done Running script ------------------------------------------";
 }
 
 void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements)

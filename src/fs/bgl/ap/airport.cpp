@@ -244,6 +244,10 @@ Airport::~Airport()
 
 void Airport::updateSummaryFields()
 {
+  boundingRect = atools::geo::Rect(getPosition());
+  if(towerPosition.getLatY() != 0.f && towerPosition.getLonX() != 0.f)
+    boundingRect.extend(towerPosition);
+
   for(const Runway& rw : runways)
   {
     if(rw.getEdgeLight() != rw::NO_LIGHT)

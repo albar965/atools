@@ -26,6 +26,13 @@ Rect::Rect()
   valid = false;
 }
 
+Rect::Rect(const Pos& singlePos)
+{
+  topLeft = singlePos;
+  bottomRight = singlePos;
+  valid = true;
+}
+
 Rect::Rect(const Pos& topLeftPos, const Pos& bottomRightPos)
 {
   topLeft = topLeftPos;
