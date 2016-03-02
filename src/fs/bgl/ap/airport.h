@@ -293,11 +293,6 @@ public:
     return largestParkingGate;
   }
 
-  int getRating() const
-  {
-    return rating;
-  }
-
   bool isMilitary() const
   {
     return military;
@@ -318,6 +313,16 @@ public:
     return numParkingMilitaryCombat;
   }
 
+  bool hasAtis() const
+  {
+    return atis;
+  }
+
+  bool hasAwosOrAsos() const
+  {
+    return awosOrAsos;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
@@ -330,7 +335,8 @@ private:
 
   unsigned int fuelFlags;
   QString name;
-  bool towerObj = false, towerCom = false, airportClosed = false, military = false;
+  bool towerObj = false, towerCom = false, atis = false, awosOrAsos = false, airportClosed = false,
+       military = false;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0,
@@ -343,7 +349,6 @@ private:
   atools::fs::bgl::rw::Surface longestRunwaySurface = atools::fs::bgl::rw::UNKNOWN;
   atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN_PARKING,
                                    largestParkingGate = atools::fs::bgl::ap::UNKNOWN_PARKING;
-  int rating = 0;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;

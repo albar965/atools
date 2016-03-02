@@ -242,6 +242,10 @@ Airport::~Airport()
 {
 }
 
+
+
+
+
 void Airport::updateSummaryFields()
 {
   boundingRect = atools::geo::Rect(getPosition());
@@ -291,11 +295,16 @@ void Airport::updateSummaryFields()
   airportClosed = !runways.isEmpty() && numRunwayEndClosed / 2 == runways.size();
 
   for(const Com& c : coms)
+  {
     if(c.getType() == com::TOWER)
-    {
       towerCom = true;
-      break;
-    }
+    else if(c.getType() == com::AWOS)
+      awosOrAsos = true;
+    else if(c.getType() == com::ASOS)
+      awosOrAsos = true;
+    else if(c.getType() == com::ATIS)
+      atis = true;
+  }
 
   for(const Parking& p : parkings)
   {
@@ -358,8 +367,6 @@ void Airport::updateSummaryFields()
     boundingRect.extend(p.getStartPoint().getPosition());
     boundingRect.extend(p.getEndPoint().getPosition());
   }
-
-  rating = !taxipaths.isEmpty() + towerObj + !parkings.isEmpty() + !aprons.isEmpty();
 
   for(const QString& s : MIL_ENDS_WITH)
     if(name.endsWith(s))

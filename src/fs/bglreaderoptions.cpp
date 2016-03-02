@@ -42,15 +42,14 @@ BglReaderOptions::ProgressCallbackType BglReaderOptions::getProgressCallback() c
   return progressCallback;
 }
 
-bool BglReaderOptions::includePath(const QString& filename) const
+bool BglReaderOptions::includePath(const QString& filepath) const
 {
-  QString newFilename = filename;
-  if(!filename.endsWith(QDir::separator()))
-    newFilename.append(QDir::separator());
-  if(!filename.startsWith(QDir::separator()))
-    newFilename.prepend(QDir::separator());
+  return includeObject(adaptPath(filepath), pathFiltersInc, pathFiltersExcl);
+}
 
-  return includeObject(newFilename, pathFiltersInc, pathFiltersExcl);
+bool BglReaderOptions::isAddonPath(const QString& filepath) const
+{
+  return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
 bool BglReaderOptions::includeFilename(const QString& filename) const
@@ -79,6 +78,11 @@ void BglReaderOptions::setPathFilterInc(const QStringList& filter)
   setFilter(filter, pathFiltersInc);
 }
 
+void BglReaderOptions::setAddonFilterInc(const QStringList& filter)
+{
+  setFilter(filter, addonFiltersInc);
+}
+
 void BglReaderOptions::setFilenameFilterExcl(const QStringList& filter)
 {
   setFilter(filter, fileFiltersExcl);
@@ -92,6 +96,11 @@ void BglReaderOptions::setAirportIcaoFilterExcl(const QStringList& filter)
 void BglReaderOptions::setPathFilterExcl(const QStringList& filter)
 {
   setFilter(filter, pathFiltersExcl);
+}
+
+void BglReaderOptions::setAddonFilterExcl(const QStringList& filter)
+{
+  setFilter(filter, addonFiltersExcl);
 }
 
 void BglReaderOptions::setBglObjectFilterInc(const QStringList& filters)
@@ -146,6 +155,8 @@ void BglReaderOptions::loadFromSettings(const QSettings& settings)
   setFilenameFilterExcl(settings.value("Filter/ExcludeFilenames").toStringList());
   setPathFilterInc(settings.value("Filter/IncludePathFilter").toStringList());
   setPathFilterExcl(settings.value("Filter/ExcludePathFilter").toStringList());
+  setAddonFilterInc(settings.value("Filter/IncludeAddonPathFilter").toStringList());
+  setAddonFilterExcl(settings.value("Filter/ExcludeAddonPathFilter").toStringList());
   setAirportIcaoFilterInc(settings.value("Filter/IncludeAirportIcaoFilter").toStringList());
   setAirportIcaoFilterExcl(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
   setBglObjectFilterInc(settings.value("Filter/IncludeBglObjectFilter").toStringList());
@@ -195,6 +206,15 @@ void BglReaderOptions::setFilter(const QStringList& filters, QList<QRegExp>& fil
   }
 }
 
+QString BglReaderOptions::adaptPath(const QString& filepath) const
+{
+  QString newFilename = filepath;
+  if(!filepath.endsWith(QDir::separator()))
+    newFilename.append(QDir::separator());
+
+  return newFilename;
+}
+
 QDebug operator<<(QDebug out, const BglReaderOptions& opts)
 {
   QDebugStateSaver saver(out);
@@ -229,6 +249,15 @@ QDebug operator<<(QDebug out, const BglReaderOptions& opts)
   out << "]";
   out << ", Exclude airport filter [";
   for(const QRegExp& f : opts.airportIcaoFiltersExcl)
+    out << "pattern" << f.pattern();
+  out << "]";
+
+  out << ", Include addon filter [";
+  for(const QRegExp& f : opts.addonFiltersInc)
+    out << "pattern" << f.pattern();
+  out << "]";
+  out << ", Exclude addon filter [";
+  for(const QRegExp& f : opts.addonFiltersExcl)
     out << "pattern" << f.pattern();
   out << "]";
 

@@ -74,6 +74,9 @@ public:
   /* return endpoint at distance and angle */
   Pos endpoint(float distanceMeter, float angle) const;
 
+  /* Distance to other point in simple units */
+  float distanceSimpleTo(const Pos& otherPos) const;
+
   /* Distance to other point */
   float distanceMeterTo(const Pos& otherPos) const;
 

@@ -33,6 +33,8 @@ create table airport
   has_tower_object integer not null,
 
   has_tower integer not null,
+  has_atis integer not null,
+  has_awos_or_asos integer not null,
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,

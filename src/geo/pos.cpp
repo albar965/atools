@@ -170,6 +170,11 @@ Pos Pos::endpoint(float distanceMeter, float angle) const
   return calculateEndpoint(*this, distanceMeter, angle);
 }
 
+float Pos::distanceSimpleTo(const Pos& otherPos) const
+{
+  return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
+}
+
 float Pos::distanceMeterTo(const Pos& otherPos) const
 {
   return static_cast<float>(calculateDistance(*this, otherPos));

@@ -104,13 +104,13 @@ void AirportWriter::writeObject(const Airport *type)
   bindBool(":has_tower_object", type->hasTowerObj());
 
   bindBool(":has_tower", type->hasTowerCom());
+  bindBool(":has_atis", type->hasAtis());
+  bindBool(":has_awos_or_asos", type->hasAwosOrAsos());
+
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
-  bindBool(":is_addon",
-           !dw.getBglFileWriter()->getCurrentFilename().
-           startsWith("APX", Qt::CaseInsensitive) &&
-           !dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath().
-           startsWith("Scenery/", Qt::CaseInsensitive));
+  bool isAddon = getOptions().isAddonPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+  bindBool(":is_addon", isAddon);
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
@@ -148,7 +148,8 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":largest_parking_gate",
        bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
-  bind(":rating", type->getRating());
+  bind(":rating", !type->getTaxiPaths().isEmpty() + type->hasTowerObj() + !type->getParkings().isEmpty() +
+       !type->getAprons().isEmpty() + isAddon);
 
   bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
   bind(":bgl_filename", dw.getBglFileWriter()->getCurrentFilename());

@@ -110,9 +110,10 @@ public:
   }
 
   bool includeFilename(const QString& filename) const;
-  bool includePath(const QString& filename) const;
+  bool includePath(const QString& filepath) const;
   bool includeAirport(const QString& icao) const;
   bool includeBglObject(atools::fs::type::BglObjectType type) const;
+  bool isAddonPath(const QString& filepath) const;
 
   void setSceneryFile(const QString& value)
   {
@@ -167,6 +168,8 @@ public:
   ProgressCallbackType getProgressCallback() const;
 
 private:
+  void setAddonFilterInc(const QStringList& filter);
+  void setAddonFilterExcl(const QStringList& filter);
   void setFilenameFilterInc(const QStringList& filter);
   void setFilenameFilterExcl(const QStringList& filter);
   void setAirportIcaoFilterInc(const QStringList& filter);
@@ -188,10 +191,12 @@ private:
   bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
        resolveRoutes = true, databaseReport = false;
 
-  QList<QRegExp> fileFiltersInc, pathFiltersInc, airportIcaoFiltersInc,
-                 fileFiltersExcl, pathFiltersExcl, airportIcaoFiltersExcl;
+  QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
+                 fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl;
   QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
+
+  QString adaptPath(const QString& filepath) const;
 
 };
 
