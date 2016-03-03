@@ -242,10 +242,6 @@ Airport::~Airport()
 {
 }
 
-
-
-
-
 void Airport::updateSummaryFields()
 {
   boundingRect = atools::geo::Rect(getPosition());
@@ -263,8 +259,10 @@ void Airport::updateSummaryFields()
     if(rw.isSoft())
       numSoftRunway++;
 
-    // TODO
     boundingRect.extend(rw.getPosition());
+    boundingRect.extend(rw.getSecondaryPosition());
+    boundingRect.extend(rw.getPrimaryPosition());
+
     if(rw.getLength() > longestRunwayLength)
     {
       longestRunwayLength = rw.getLength();

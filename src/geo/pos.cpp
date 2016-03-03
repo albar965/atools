@@ -139,15 +139,8 @@ float Pos::getLonXSec() const
 
 Pos& Pos::normalize()
 {
-  while(lonX > 180.f)
-    lonX = lonX - 360.f;
-  while(lonX < -180.f)
-    lonX = lonX + 360.f;
-
-  while(latY > 90.f)
-    latY = latY - 180.f;
-  while(latY < -90.f)
-    latY = latY + 180.f;
+  lonX = normalizeLonXDeg(lonX);
+  latY = normalizeLatYDeg(latY);
   return *this;
 }
 
@@ -165,9 +158,9 @@ Pos& Pos::toRad()
   return *this;
 }
 
-Pos Pos::endpoint(float distanceMeter, float angle) const
+Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 {
-  return calculateEndpoint(*this, distanceMeter, angle);
+  return calculateEndpoint(*this, distanceMeter, angleDeg);
 }
 
 float Pos::distanceSimpleTo(const Pos& otherPos) const

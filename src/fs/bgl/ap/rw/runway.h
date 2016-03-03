@@ -196,6 +196,16 @@ public:
   static QString lightToStr(atools::fs::bgl::rw::Light surface);
   static QString surfaceToStr(atools::fs::bgl::rw::Surface value);
 
+  const atools::geo::Pos& getPrimaryPosition() const
+  {
+    return primaryPos;
+  }
+
+  const atools::geo::Pos& getSecondaryPosition() const
+  {
+    return secondaryPos;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Runway& record);
 
@@ -204,6 +214,7 @@ private:
   atools::fs::bgl::rw::Surface surface;
 
   atools::fs::bgl::BglPosition position;
+  atools::geo::Pos primaryPos, secondaryPos;
 
   float heading, length, width, patternAltitude;
 

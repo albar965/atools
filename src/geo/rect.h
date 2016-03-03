@@ -55,13 +55,34 @@ public:
   float getWidthMeter() const;
   float getHeightMeter() const;
 
+  float getNorth() const
+  {
+    return topLeft.getLatY();
+  }
+
+  float getSouth() const
+  {
+    return bottomRight.getLatY();
+  }
+
+  float getEast() const
+  {
+    return bottomRight.getLonX();
+  }
+
+  float getWest() const
+  {
+    return topLeft.getLonX();
+  }
+
   /* Extend rectangle to include given point */
   void extend(const atools::geo::Pos& pos);
 
   Pos getCenter() const;
 
   /* Returns two rectangles if this crosses the anti meridian otherwise *this. */
-  QList<Rect> crossesAntiMeridian() const;
+  QList<Rect> splitAtAntiMeridian() const;
+  bool crossesAntiMeridian() const;
 
   bool isValid() const
   {

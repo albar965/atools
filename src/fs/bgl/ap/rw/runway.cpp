@@ -20,6 +20,7 @@
 #include "fs/bgl/recordtypes.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -179,6 +180,11 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   length = bs->readFloat();
   width = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degress
+
+  using namespace atools::geo;
+  primaryPos = position.endpoint(length / 2.f, heading);
+  secondaryPos = position.endpoint(length / 2.f, opposedCourseDeg(heading));
+
   patternAltitude = bs->readFloat();
 
   markingFlags = bs->readUShort();
@@ -216,59 +222,59 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
 
   while(bs->tellg() < startOffset + size)
   {
-    Record r(options, bs);
-    rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
+  Record r(options, bs);
+  rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
 
-    switch(t)
-    {
-      case rec::OFFSET_THRESHOLD_PRIM:
-        primary.offsetThreshold = readRunwayExtLength();
-        break;
-      case rec::OFFSET_THRESHOLD_SEC:
-        secondary.offsetThreshold = readRunwayExtLength();
-        break;
-      case rec::BLAST_PAD_PRIM:
-        primary.blastPad = readRunwayExtLength();
-        break;
-      case rec::BLAST_PAD_SEC:
-        secondary.blastPad = readRunwayExtLength();
-        break;
-      case rec::OVERRUN_PRIM:
-        primary.overrun = readRunwayExtLength();
-        break;
-      case rec::OVERRUN_SEC:
-        secondary.overrun = readRunwayExtLength();
-        break;
-      case rec::VASI_PRIM_LEFT:
-        r.seekToStart();
-        primary.leftVasi = RunwayVasi(options, bs);
-        break;
-      case rec::VASI_PRIM_RIGHT:
-        r.seekToStart();
-        primary.rightVasi = RunwayVasi(options, bs);
-        break;
-      case rec::VASI_SEC_LEFT:
-        r.seekToStart();
-        secondary.leftVasi = RunwayVasi(options, bs);
-        break;
-      case rec::VASI_SEC_RIGHT:
-        r.seekToStart();
-        secondary.rightVasi = RunwayVasi(options, bs);
-        break;
-      case rec::APP_LIGHTS_PRIM:
-        r.seekToStart();
-        primary.approachLights = RunwayAppLights(options, bs);
-        break;
-      case rec::APP_LIGHTS_SEC:
-        r.seekToStart();
-        secondary.approachLights = RunwayAppLights(options, bs);
-        break;
-      default:
-        qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
-                                       << " for ident " << airportIdent
-                                       << " runway " << primary.getName() << "/" << secondary.getName();
-    }
-    r.seekToEnd();
+  switch(t)
+  {
+    case rec::OFFSET_THRESHOLD_PRIM:
+      primary.offsetThreshold = readRunwayExtLength();
+      break;
+    case rec::OFFSET_THRESHOLD_SEC:
+      secondary.offsetThreshold = readRunwayExtLength();
+      break;
+    case rec::BLAST_PAD_PRIM:
+      primary.blastPad = readRunwayExtLength();
+      break;
+    case rec::BLAST_PAD_SEC:
+      secondary.blastPad = readRunwayExtLength();
+      break;
+    case rec::OVERRUN_PRIM:
+      primary.overrun = readRunwayExtLength();
+      break;
+    case rec::OVERRUN_SEC:
+      secondary.overrun = readRunwayExtLength();
+      break;
+    case rec::VASI_PRIM_LEFT:
+      r.seekToStart();
+      primary.leftVasi = RunwayVasi(options, bs);
+      break;
+    case rec::VASI_PRIM_RIGHT:
+      r.seekToStart();
+      primary.rightVasi = RunwayVasi(options, bs);
+      break;
+    case rec::VASI_SEC_LEFT:
+      r.seekToStart();
+      secondary.leftVasi = RunwayVasi(options, bs);
+      break;
+    case rec::VASI_SEC_RIGHT:
+      r.seekToStart();
+      secondary.rightVasi = RunwayVasi(options, bs);
+      break;
+    case rec::APP_LIGHTS_PRIM:
+      r.seekToStart();
+      primary.approachLights = RunwayAppLights(options, bs);
+      break;
+    case rec::APP_LIGHTS_SEC:
+      r.seekToStart();
+      secondary.approachLights = RunwayAppLights(options, bs);
+      break;
+    default:
+      qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
+                                     << " for ident " << airportIdent
+                                     << " runway " << primary.getName() << "/" << secondary.getName();
+  }
+  r.seekToEnd();
   }
 }
 

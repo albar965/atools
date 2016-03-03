@@ -18,6 +18,8 @@
 #ifndef ATOOLS_GEO_CALCULATIONS_H
 #define ATOOLS_GEO_CALCULATIONS_H
 
+#include <cmath>
+
 namespace atools {
 namespace geo {
 
@@ -48,6 +50,18 @@ TYPE feetToMeter(TYPE value)
 }
 
 template<typename TYPE>
+TYPE feetToNm(TYPE value)
+{
+  return meterToNm(feetToMeter(value));
+}
+
+template<typename TYPE>
+TYPE nmToRad(TYPE value)
+{
+  return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
+}
+
+template<typename TYPE>
 TYPE toRadians(TYPE deg)
 {
   return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
@@ -57,6 +71,40 @@ template<typename TYPE>
 TYPE toDegree(TYPE rad)
 {
   return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
+}
+
+template<typename TYPE>
+TYPE opposedCourseDeg(TYPE rad)
+{
+  double result = static_cast<double>(rad) + 180.;
+  while(result > 360.)
+    result -= 360.;
+  while(result < 360.)
+    result += 360.;
+
+  return static_cast<TYPE>(result);
+}
+
+template<typename TYPE>
+TYPE normalizeLonXDeg(TYPE lonX)
+{
+  double result = static_cast<double>(lonX);
+  while(result > 180.)
+    result = result - 360.;
+  while(result < -180.)
+    result = result + 360.;
+  return static_cast<TYPE>(result);
+}
+
+template<typename TYPE>
+TYPE normalizeLatYDeg(TYPE latY)
+{
+  double result = static_cast<double>(latY);
+  while(result > 90.)
+    result = result - 180.;
+  while(result < -90.)
+    result = result + 180.;
+  return static_cast<TYPE>(result);
 }
 
 } /* namespace geo */

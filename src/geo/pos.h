@@ -72,7 +72,7 @@ public:
   Pos& toRad();
 
   /* return endpoint at distance and angle */
-  Pos endpoint(float distanceMeter, float angle) const;
+  Pos endpoint(float distanceMeter, float angleDeg) const;
 
   /* Distance to other point in simple units */
   float distanceSimpleTo(const Pos& otherPos) const;

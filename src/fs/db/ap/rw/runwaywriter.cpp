@@ -67,6 +67,12 @@ void RunwayWriter::writeObject(const Runway *type)
        bgl::util::enumToStr(Runway::lightToStr, type->getCenterLight()));
   bind(":has_center_red", type->isCenterRed());
   bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+
+  bind(":primary_lonx", type->getPrimaryPosition().getLonX());
+  bind(":primary_laty", type->getPrimaryPosition().getLatY());
+  bind(":secondary_lonx", type->getSecondaryPosition().getLonX());
+  bind(":secondary_laty", type->getSecondaryPosition().getLatY());
+
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

@@ -111,10 +111,18 @@ Pos Rect::getCenter() const
              (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
 }
 
-QList<Rect> Rect::crossesAntiMeridian() const
+bool Rect::crossesAntiMeridian() const
 {
-  // TODO implement
-  return QList<Rect>();
+  return getEast() < getWest() || (getEast() == 180.f && getWest() == -180.f);
+}
+
+QList<Rect> Rect::splitAtAntiMeridian() const
+{
+  if(getEast() < getWest() || (getEast() == 180.f && getWest() == -180.f))
+    return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()),
+                        Rect(-180.f, getNorth(), getEast(), getSouth())});
+
+  return QList<Rect>({*this});
 }
 
 } // namespace geo
