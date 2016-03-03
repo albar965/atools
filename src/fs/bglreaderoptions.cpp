@@ -75,12 +75,12 @@ void BglReaderOptions::setAirportIcaoFilterInc(const QStringList& filter)
 
 void BglReaderOptions::setPathFilterInc(const QStringList& filter)
 {
-  setFilter(filter, pathFiltersInc);
+  setFilter(toNativeSeparators(filter), pathFiltersInc);
 }
 
 void BglReaderOptions::setAddonFilterInc(const QStringList& filter)
 {
-  setFilter(filter, addonFiltersInc);
+  setFilter(toNativeSeparators(filter), addonFiltersInc);
 }
 
 void BglReaderOptions::setFilenameFilterExcl(const QStringList& filter)
@@ -95,12 +95,12 @@ void BglReaderOptions::setAirportIcaoFilterExcl(const QStringList& filter)
 
 void BglReaderOptions::setPathFilterExcl(const QStringList& filter)
 {
-  setFilter(filter, pathFiltersExcl);
+  setFilter(toNativeSeparators(filter), pathFiltersExcl);
 }
 
 void BglReaderOptions::setAddonFilterExcl(const QStringList& filter)
 {
-  setFilter(filter, addonFiltersExcl);
+  setFilter(toNativeSeparators(filter), addonFiltersExcl);
 }
 
 void BglReaderOptions::setBglObjectFilterInc(const QStringList& filters)
@@ -183,11 +183,13 @@ bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegE
   {
     bool incFound = false;
     for(const QRegExp& iter : filterListInc)
+    {
       if(iter.exactMatch(filterStr))
       {
         incFound = true;
         break;
       }
+    }
 
     if(filterListExcl.isEmpty())
       return incFound;
@@ -212,7 +214,20 @@ QString BglReaderOptions::adaptPath(const QString& filepath) const
   if(!filepath.endsWith(QDir::separator()))
     newFilename.append(QDir::separator());
 
-  return newFilename;
+  return toNativeSeparator(newFilename);
+}
+
+QString BglReaderOptions::toNativeSeparator(const QString &path) const
+{
+  return QString(path).replace("\\", "/");
+}
+
+QStringList BglReaderOptions::toNativeSeparators(const QStringList& paths) const
+{
+  QStringList retval;
+  for(const QString& p : paths)
+    retval.append(toNativeSeparator(p));
+  return retval;
 }
 
 QDebug operator<<(QDebug out, const BglReaderOptions& opts)

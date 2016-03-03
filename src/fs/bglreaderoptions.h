@@ -198,6 +198,8 @@ private:
 
   QString adaptPath(const QString& filepath) const;
 
+  QStringList toNativeSeparators(const QStringList &paths) const;
+  QString toNativeSeparator(const QString &path) const;
 };
 
 } // namespace fs
