@@ -78,3 +78,39 @@ create index if not exists idx_airport_bottom_laty on airport(bottom_laty);
 create index if not exists idx_airport_altitude on airport(altitude);
 create index if not exists idx_airport_lonx on airport(lonx);
 create index if not exists idx_airport_laty on airport(laty);
+
+-------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------
+
+delete from airport_large;
+
+insert into airport_large select * from airport
+where longest_runway_length > 8000 and num_runway_hard > 0;
+
+create index if not exists idx_airport_large_left_lonx on airport_large(left_lonx);
+create index if not exists idx_airport_large_top_laty on airport_large(top_laty);
+create index if not exists idx_airport_large_right_lonx on airport_large(right_lonx);
+create index if not exists idx_airport_large_bottom_laty on airport_large(bottom_laty);
+
+create index if not exists idx_airport_large_lonx on airport_large(lonx);
+create index if not exists idx_airport_large_laty on airport_large(laty);
+
+create index if not exists idx_airport_large_longest_runway_length on airport_large(longest_runway_length);
+create index if not exists idx_airport_large_rating on airport_large(rating);
+
+
+delete from airport_medium;
+
+insert into airport_medium select * from airport
+where longest_runway_length > 4000;
+
+create index if not exists idx_airport_medium_left_lonx on airport_medium(left_lonx);
+create index if not exists idx_airport_medium_top_laty on airport_medium(top_laty);
+create index if not exists idx_airport_medium_right_lonx on airport_medium(right_lonx);
+create index if not exists idx_airport_medium_bottom_laty on airport_medium(bottom_laty);
+
+create index if not exists idx_airport_medium_lonx on airport_medium(lonx);
+create index if not exists idx_airport_medium_laty on airport_medium(laty);
+
+create index if not exists idx_airport_medium_longest_runway_length on airport_medium(longest_runway_length);
+create index if not exists idx_airport_medium_rating on airport_medium(rating);

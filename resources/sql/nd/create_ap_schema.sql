@@ -95,6 +95,168 @@ create index if not exists idx_airport_ident on airport(ident);
 
 -- **************************************************
 
+-- Copy of above for the map display overview layer
+drop table if exists airport_large;
+
+create table airport_large
+(
+  airport_id integer primary key,
+  file_id integer not null,
+  ident varchar(4) not null,
+  region varchar(50),
+  name varchar(50) collate nocase,
+  city varchar(50) collate nocase not null,
+  state varchar(50) collate nocase,
+  country varchar(50) collate nocase not null,
+  fuel_flags integer not null,
+  has_avgas integer not null,
+  has_jetfuel integer not null,
+  has_tower_object integer not null,
+
+  has_tower integer not null,
+  has_atis integer not null,
+  has_awos_or_asos integer not null,
+  is_closed integer not null,
+  is_military integer not null,
+  is_addon integer not null,
+
+  num_boundary_fence integer not null,
+  num_com integer not null,
+
+  num_parking_gate integer not null,
+  num_parking_ga_ramp integer not null,
+  num_parking_cargo  integer not null,
+  num_parking_mil_cargo integer not null,
+  num_parking_mil_combat integer not null,
+
+  num_approach integer not null,
+  num_runway_hard integer not null,
+  num_runway_soft integer not null,
+  num_runway_water integer not null,
+  num_runway_light integer not null,
+  num_runway_end_closed integer not null,
+  num_runway_end_vasi integer not null,
+  num_runway_end_als integer not null,
+  num_runway_end_ils integer,
+  num_apron integer not null,
+  num_taxi_path integer not null,
+  num_helipad integer not null,
+  num_jetway integer not null,
+
+  longest_runway_length integer not null,
+  longest_runway_width integer not null,
+  longest_runway_heading double not null,
+  longest_runway_surface varchar(15) not null,
+  num_runways integer not null,
+  largest_parking_ramp varchar(20),
+  largest_parking_gate varchar(20),
+
+  rating integer not null,
+
+  scenery_local_path varchar(250) collate nocase not null,
+  bgl_filename varchar(300) collate nocase not null,
+
+  left_lonx double not null,
+  top_laty double not null,
+  right_lonx double not null,
+  bottom_laty double not null,
+
+  mag_var double not null,
+  tower_altitude integer,
+  tower_lonx double,
+  tower_laty double,
+  altitude integer not null,
+  lonx double not null,
+  laty double not null,
+foreign key(file_id) references bgl_file(bgl_file_id)
+);
+
+create index if not exists idx_airport_large_file_id on airport_large(file_id);
+create index if not exists idx_airport_large_ident on airport_large(ident);
+
+-- **************************************************
+
+-- Copy of above for the map display overview layer
+drop table if exists airport_medium;
+
+create table airport_medium
+(
+  airport_id integer primary key,
+  file_id integer not null,
+  ident varchar(4) not null,
+  region varchar(50),
+  name varchar(50) collate nocase,
+  city varchar(50) collate nocase not null,
+  state varchar(50) collate nocase,
+  country varchar(50) collate nocase not null,
+  fuel_flags integer not null,
+  has_avgas integer not null,
+  has_jetfuel integer not null,
+  has_tower_object integer not null,
+
+  has_tower integer not null,
+  has_atis integer not null,
+  has_awos_or_asos integer not null,
+  is_closed integer not null,
+  is_military integer not null,
+  is_addon integer not null,
+
+  num_boundary_fence integer not null,
+  num_com integer not null,
+
+  num_parking_gate integer not null,
+  num_parking_ga_ramp integer not null,
+  num_parking_cargo  integer not null,
+  num_parking_mil_cargo integer not null,
+  num_parking_mil_combat integer not null,
+
+  num_approach integer not null,
+  num_runway_hard integer not null,
+  num_runway_soft integer not null,
+  num_runway_water integer not null,
+  num_runway_light integer not null,
+  num_runway_end_closed integer not null,
+  num_runway_end_vasi integer not null,
+  num_runway_end_als integer not null,
+  num_runway_end_ils integer,
+  num_apron integer not null,
+  num_taxi_path integer not null,
+  num_helipad integer not null,
+  num_jetway integer not null,
+
+  longest_runway_length integer not null,
+  longest_runway_width integer not null,
+  longest_runway_heading double not null,
+  longest_runway_surface varchar(15) not null,
+  num_runways integer not null,
+  largest_parking_ramp varchar(20),
+  largest_parking_gate varchar(20),
+
+  rating integer not null,
+
+  scenery_local_path varchar(250) collate nocase not null,
+  bgl_filename varchar(300) collate nocase not null,
+
+  left_lonx double not null,
+  top_laty double not null,
+  right_lonx double not null,
+  bottom_laty double not null,
+
+  mag_var double not null,
+  tower_altitude integer,
+  tower_lonx double,
+  tower_laty double,
+  altitude integer not null,
+  lonx double not null,
+  laty double not null,
+foreign key(file_id) references bgl_file(bgl_file_id)
+);
+
+create index if not exists idx_airport_medium_file_id on airport_medium(file_id);
+create index if not exists idx_airport_medium_ident on airport_medium(ident);
+
+-- **************************************************
+
 drop table if exists com;
 
 create table com
