@@ -23,6 +23,19 @@
 namespace atools {
 namespace geo {
 
+/* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
+template<typename TYPE>
+int roundToPrecision(TYPE value, int precision = 0)
+{
+  if(precision == 0)
+    return static_cast<int>(round(value));
+  else
+  {
+    int factor = static_cast<int>(pow(10., precision));
+    return static_cast<int>(round(value / factor)) * factor;
+  }
+}
+
 /* Distance from nautical miles to meters */
 template<typename TYPE>
 TYPE nmToMeter(TYPE nm)

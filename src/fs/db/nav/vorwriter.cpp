@@ -21,6 +21,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/db/airportindex.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -42,10 +43,10 @@ void VorWriter::writeObject(const Vor *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
-  bind(":range", bgl::util::meterToNm(type->getRange()));
+  bind(":range", atools::geo::meterToNm(type->getRange()));
   bind(":mag_var", type->getMagVar());
   bind(":dme_only", type->isDmeOnly());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
@@ -63,7 +64,7 @@ void VorWriter::writeObject(const Vor *type)
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_altitude", bgl::util::meterToFeet(dme->getPosition().getAltitude()));
+    bind(":dme_altitude", atools::geo::meterToFeet(dme->getPosition().getAltitude()));
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }

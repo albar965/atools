@@ -23,6 +23,7 @@
 #include "fs/bgl/ap/approachtypes.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/transitionlegwriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -37,6 +38,8 @@ void TransitionWriter::writeObject(const Transition *type)
     qDebug() << "Writing Transition for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
+
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
   bind(":type", Transition::transitionTypeToStr(type->getType()));
@@ -45,15 +48,15 @@ void TransitionWriter::writeObject(const Transition *type)
   bind(":fix_ident", type->getTransFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());
-  bind(":altitude", bgl::util::meterToFeet(type->getAltitude(), 1));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getAltitude()), 1));
 
   if(type->getType() == bgl::ap::APPR_TRANS_DME)
   {
-    bind(":dme_ident", type->getDmeIdent());
-    bind(":dme_region", type->getDmeRegion());
-    bind(":dme_airport_ident", type->getDmeAirportIdent());
-    bind(":dme_radial", type->getDmeRadial());
-    bind(":dme_distance", bgl::util::meterToNm(type->getDmeDist()));
+  bind(":dme_ident", type->getDmeIdent());
+  bind(":dme_region", type->getDmeRegion());
+  bind(":dme_airport_ident", type->getDmeAirportIdent());
+  bind(":dme_radial", type->getDmeRadial());
+  bind(":dme_distance", atools::geo::meterToNm(type->getDmeDist()));
   }
   else
   {

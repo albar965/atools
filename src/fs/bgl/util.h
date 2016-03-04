@@ -39,22 +39,6 @@ QString enumToStr(QString func(TYPE t), TYPE type)
     return retval;
 }
 
-inline int meterToNm(float meters)
-{
-  return static_cast<int>(round(meters / 1852.0f));
-}
-
-inline int meterToFeet(float meters, int precision = 0)
-{
-  if(precision == 0)
-    return static_cast<int>(round(meters * 3.281f));
-
-  {
-    int factor = static_cast<int>(pow(10., precision));
-    return static_cast<int>(round(meters * 3.281f / factor)) * factor;
-  }
-}
-
 template<typename TYPE, typename TYPE2>
 bool isFlagSet(TYPE bitfield, TYPE2 flag)
 {

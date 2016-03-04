@@ -19,6 +19,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -60,8 +61,8 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
 
   bind(":theta", type->getTheta());
   bind(":rho", type->getRho());
-  bind(":altitude1", bgl::util::meterToFeet(type->getAltitude1()));
-  bind(":altitude2", bgl::util::meterToFeet(type->getAltitude2()));
+  bind(":altitude1", atools::geo::meterToFeet(type->getAltitude1()));
+  bind(":altitude2", atools::geo::meterToFeet(type->getAltitude2()));
 
   executeStatement();
 }

@@ -20,6 +20,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/db/airportindex.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -40,9 +41,9 @@ void NdbWriter::writeObject(const Ndb *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Ndb::ndbTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
-  bind(":range", bgl::util::meterToNm(type->getRange()));
+  bind(":range", atools::geo::meterToNm(type->getRange()));
   bind(":mag_var", type->getMagVar());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

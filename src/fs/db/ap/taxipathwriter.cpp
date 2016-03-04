@@ -22,6 +22,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/taxipoint.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -42,7 +43,7 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", TaxiPath::pathTypeToString(type->getType()));
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
-  bind(":width", bgl::util::meterToFeet(type->getWidth()));
+  bind(":width", atools::geo::meterToFeet(type->getWidth()));
 
   if(type->getWeightLimit() == 0)
     bindNullInt(":weight_limit");

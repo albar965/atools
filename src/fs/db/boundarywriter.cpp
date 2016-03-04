@@ -22,6 +22,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/boundarylinewriter.h"
 #include "fs/db/meta/bglfilewriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -56,11 +57,11 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMinAltType()));
   bind(":max_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMaxAltType()));
 
-  bind(":max_altitude", bgl::util::meterToFeet(type->getMaxPosition().getAltitude()));
+  bind(":max_altitude", atools::geo::meterToFeet(type->getMaxPosition().getAltitude()));
   bind(":max_lonx", type->getMaxPosition().getLonX());
   bind(":max_laty", type->getMaxPosition().getLatY());
 
-  bind(":min_altitude", bgl::util::meterToFeet(type->getMinPosition().getAltitude()));
+  bind(":min_altitude", atools::geo::meterToFeet(type->getMinPosition().getAltitude()));
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
   executeStatement();

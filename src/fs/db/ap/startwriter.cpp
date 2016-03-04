@@ -21,6 +21,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/runwayindex.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -35,11 +36,12 @@ void StartWriter::writeObject(const Start *type)
     qDebug() << "Writing Start for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
   bind(":start_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
@@ -49,16 +51,16 @@ void StartWriter::writeObject(const Start *type)
   // TODO comment in wiki: helipads have no runway
   if(!apIdent.isEmpty() && type->getType() != bgl::start::HELIPAD)
   {
-    if(getOptions().includeAirport(apIdent))
+  if(getOptions().includeAirport(apIdent))
+  {
+    QString msg(" start ID " + QString::number(getCurrentId()));
+    int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
+    if(id != -1)
     {
-      QString msg(" start ID " + QString::number(getCurrentId()));
-      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
-      if(id != -1)
-      {
-        isComplete = true;
-        bind(":runway_end_id", id);
-      }
+      isComplete = true;
+      bind(":runway_end_id", id);
     }
+  }
   }
   else
     isComplete = true;

@@ -24,6 +24,7 @@
 #include "fs/db/runwayindex.h"
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/bgl/ap/approachtypes.h"
+#include "geo/calculations.h"
 
 #include <QString>
 
@@ -40,6 +41,8 @@ void ApproachWriter::writeObject(const Approach *type)
     qDebug() << "Writing Approach for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
+
   bind(":approach_id", getNextId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
   bind(":has_gps_overlay", type->isGpsOverlay());
@@ -48,25 +51,25 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());
-  bind(":altitude", bgl::util::meterToFeet(type->getAltitude(), 1));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getAltitude()), 1));
   bind(":heading", type->getHeading());
-  bind(":missed_altitude", bgl::util::meterToFeet(type->getMissedAltitude(), 1));
+  bind(":missed_altitude", roundToPrecision(meterToFeet(type->getMissedAltitude()), 1));
 
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
   if(type->hasRunwayReference() && !apIdent.isEmpty())
   {
-    if(getOptions().includeAirport(apIdent))
+  if(getOptions().includeAirport(apIdent))
+  {
+    QString msg(" approach ID " + QString::number(getCurrentId()));
+    int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
+    if(id != -1)
     {
-      QString msg(" approach ID " + QString::number(getCurrentId()));
-      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
-      if(id != -1)
-      {
-        isComplete = true;
-        bind(":runway_end_id", id);
-      }
+      isComplete = true;
+      bind(":runway_end_id", id);
     }
+  }
   }
   else
     isComplete = true;

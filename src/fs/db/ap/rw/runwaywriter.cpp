@@ -22,6 +22,7 @@
 #include "fs/db/ap/rw/runwayendwriter.h"
 #include "fs/db/runwayindex.h"
 #include "fs/bglreaderoptions.h"
+#include "geo/calculations.h"
 
 #include <QString>
 
@@ -50,15 +51,17 @@ void RunwayWriter::writeObject(const Runway *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing Runway for airport " << apIdent;
 
+  using namespace atools::geo;
+
   bind(":runway_id", runwayId);
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":primary_end_id", primaryEndId);
   bind(":secondary_end_id", secondaryEndId);
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
-  bind(":length", bgl::util::meterToFeet(type->getLength()));
-  bind(":width", bgl::util::meterToFeet(type->getWidth()));
+  bind(":length", atools::geo::meterToFeet(type->getLength()));
+  bind(":width", atools::geo::meterToFeet(type->getWidth()));
   bind(":heading", type->getHeading());
-  bind(":pattern_altitude", bgl::util::meterToFeet(type->getPatternAltitude(), 1));
+  bind(":pattern_altitude", roundToPrecision(meterToFeet(type->getPatternAltitude()), 1));
   bind(":marking_flags", type->getMarkingFlags());
   bind(":light_flags", type->getLightFlags());
   bind(":pattern_flags", type->getPatternFlags());
@@ -66,7 +69,7 @@ void RunwayWriter::writeObject(const Runway *type)
   bind(":center_light",
        bgl::util::enumToStr(Runway::lightToStr, type->getCenterLight()));
   bind(":has_center_red", type->isCenterRed());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
 
   bind(":primary_lonx", type->getPrimaryPosition().getLonX());
   bind(":primary_laty", type->getPrimaryPosition().getLatY());

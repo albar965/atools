@@ -21,6 +21,7 @@
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bglreaderoptions.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -40,7 +41,7 @@ void BoundaryLineWriter::writeObject(const BoundaryLine *type)
 
   if(type->getType() == bgl::boundaryline::CIRCLE)
   {
-    bind(":radius", bgl::util::meterToNm(type->getRadius()));
+    bind(":radius", atools::geo::meterToNm(type->getRadius()));
     bindNullFloat(":lonx");
     bindNullFloat(":laty");
   }

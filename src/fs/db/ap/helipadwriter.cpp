@@ -21,6 +21,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -40,12 +41,12 @@ void HelipadWriter::writeObject(const Helipad *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
-  bind(":length", bgl::util::meterToFeet(type->getLength()));
-  bind(":width", bgl::util::meterToFeet(type->getWidth()));
+  bind(":length", atools::geo::meterToFeet(type->getLength()));
+  bind(":width", atools::geo::meterToFeet(type->getWidth()));
   bind(":heading", type->getHeading());
   bindBool(":is_transparent", type->isTransparent());
   bindBool(":is_closed", type->isClosed());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

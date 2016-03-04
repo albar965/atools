@@ -19,6 +19,7 @@
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -38,7 +39,7 @@ void MarkerWriter::writeObject(const Marker *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Marker::markerTypeToStr(type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

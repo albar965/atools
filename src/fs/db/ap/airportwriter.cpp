@@ -31,6 +31,7 @@
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
+#include "geo/calculations.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/db/airportindex.h"
@@ -136,8 +137,8 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_jetway", type->getNumJetway());
   bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script
 
-  bind(":longest_runway_length", bgl::util::meterToFeet(type->getLongestRunwayLength()));
-  bind(":longest_runway_width", bgl::util::meterToFeet(type->getLongestRunwayWidth()));
+  bind(":longest_runway_length", atools::geo::meterToFeet(type->getLongestRunwayLength()));
+  bind(":longest_runway_width", atools::geo::meterToFeet(type->getLongestRunwayWidth()));
   bind(":longest_runway_heading", type->getLongestRunwayHeading());
   bind(":longest_runway_surface", Runway::surfaceToStr(type->getLongestRunwaySurface()));
 
@@ -160,10 +161,10 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
   bind(":mag_var", type->getMagVar());
-  bind(":tower_altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":tower_altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

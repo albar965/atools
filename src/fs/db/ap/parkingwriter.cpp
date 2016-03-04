@@ -20,6 +20,7 @@
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -41,7 +42,7 @@ void ParkingWriter::writeObject(const Parking *type)
   bind(":name", bgl::util::enumToStr(Parking::parkingNameToStr, type->getName()));
   bind(":number", type->getNumber());
   bind(":airline_codes", type->getAirlineCodes().join(","));
-  bind(":radius", bgl::util::meterToFeet(type->getRadius()));
+  bind(":radius", atools::geo::meterToFeet(type->getRadius()));
   bind(":heading", type->getHeading());
   bindBool(":has_jetway", type->hasJetway());
   bind(":lonx", type->getPosition().getLonX());

@@ -20,6 +20,7 @@
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -36,9 +37,9 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
 
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());
-  bind(":offsetThreshold", bgl::util::meterToFeet(type->getOffsetThreshold()));
-  bind(":blastPad", bgl::util::meterToFeet(type->getBlastPad()));
-  bind(":overrun", bgl::util::meterToFeet(type->getOverrun()));
+  bind(":offsetThreshold", atools::geo::meterToFeet(type->getOffsetThreshold()));
+  bind(":blastPad", atools::geo::meterToFeet(type->getBlastPad()));
+  bind(":overrun", atools::geo::meterToFeet(type->getOverrun()));
   bind(":has_closed_markings", type->hasClosedMarkings());
   bind(":has_stol_markings", type->hasStolMarkings());
   bind(":is_takeoff", type->isTakeoff());

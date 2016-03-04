@@ -24,6 +24,7 @@
 #include "sql/sqlquery.h"
 #include "fs/bglreaderoptions.h"
 #include "fs/db/runwayindex.h"
+#include "geo/calculations.h"
 
 namespace atools {
 namespace fs {
@@ -45,18 +46,18 @@ void IlsWriter::writeObject(const Ils *type)
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":frequency", type->getFrequency());
-  bind(":range", bgl::util::meterToNm(type->getRange()));
+  bind(":range", atools::geo::meterToNm(type->getRange()));
   bind(":mag_var", type->getMagVar());
   bind(":has_backcourse", type->hasBackcourse());
-  bind(":altitude", bgl::util::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_range", bgl::util::meterToNm(dme->getRange()));
-    bind(":dme_altitude", bgl::util::meterToFeet(dme->getPosition().getAltitude()));
+    bind(":dme_range", atools::geo::meterToNm(dme->getRange()));
+    bind(":dme_altitude", atools::geo::meterToFeet(dme->getPosition().getAltitude()));
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }
@@ -71,9 +72,9 @@ void IlsWriter::writeObject(const Ils *type)
   const Glideslope *gs = type->getGlideslope();
   if(gs != nullptr)
   {
-    bind(":gs_range", bgl::util::meterToNm(gs->getRange()));
+    bind(":gs_range", atools::geo::meterToNm(gs->getRange()));
     bind(":gs_pitch", gs->getPitch());
-    bind(":gs_altitude", bgl::util::meterToFeet(gs->getPosition().getAltitude()));
+    bind(":gs_altitude", atools::geo::meterToFeet(gs->getPosition().getAltitude()));
     bind(":gs_lonx", gs->getPosition().getLonX());
     bind(":gs_laty", gs->getPosition().getLatY());
   }
