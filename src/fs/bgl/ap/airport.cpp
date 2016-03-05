@@ -295,13 +295,15 @@ void Airport::updateSummaryFields()
   for(const Com& c : coms)
   {
     if(c.getType() == com::TOWER)
-      towerCom = true;
+      towerFrequency = c.getFrequency();
+    else if(c.getType() == com::UNICOM)
+      unicomFrequency = c.getFrequency();
     else if(c.getType() == com::AWOS)
-      awosOrAsos = true;
+      awosFrequency = c.getFrequency();
     else if(c.getType() == com::ASOS)
-      awosOrAsos = true;
+      asosFrequency = c.getFrequency();
     else if(c.getType() == com::ATIS)
-      atis = true;
+      atisFrequency = c.getFrequency();
   }
 
   for(const Parking& p : parkings)

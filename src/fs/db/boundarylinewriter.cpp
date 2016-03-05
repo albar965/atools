@@ -32,6 +32,8 @@ using atools::sql::SqlQuery;
 
 void BoundaryLineWriter::writeObject(const BoundaryLine *type)
 {
+  using namespace atools::geo;
+
   if(getOptions().isVerbose())
     qDebug() << "Writing BOUNDARYLINE ";
 
@@ -41,9 +43,9 @@ void BoundaryLineWriter::writeObject(const BoundaryLine *type)
 
   if(type->getType() == bgl::boundaryline::CIRCLE)
   {
-    bind(":radius", atools::geo::meterToNm(type->getRadius()));
-    bindNullFloat(":lonx");
-    bindNullFloat(":laty");
+  bind(":radius", roundToPrecision(meterToNm(type->getRadius())));
+  bindNullFloat(":lonx");
+  bindNullFloat(":laty");
   }
   else
   {

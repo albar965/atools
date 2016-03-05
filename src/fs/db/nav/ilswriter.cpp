@@ -41,25 +41,26 @@ void IlsWriter::writeObject(const Ils *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing ILS " << type->getIdent() << " name " << type->getName();
 
+  using namespace atools::geo;
   bind(":ils_id", getNextId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":frequency", type->getFrequency());
-  bind(":range", atools::geo::meterToNm(type->getRange()));
+  bind(":range", roundToPrecision(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
   bind(":has_backcourse", type->hasBackcourse());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_range", atools::geo::meterToNm(dme->getRange()));
-    bind(":dme_altitude", atools::geo::meterToFeet(dme->getPosition().getAltitude()));
-    bind(":dme_lonx", dme->getPosition().getLonX());
-    bind(":dme_laty", dme->getPosition().getLatY());
+  bind(":dme_range", roundToPrecision(meterToNm(dme->getRange())));
+  bind(":dme_altitude", roundToPrecision(meterToFeet(dme->getPosition().getAltitude())));
+  bind(":dme_lonx", dme->getPosition().getLonX());
+  bind(":dme_laty", dme->getPosition().getLatY());
   }
   else
   {
@@ -72,9 +73,9 @@ void IlsWriter::writeObject(const Ils *type)
   const Glideslope *gs = type->getGlideslope();
   if(gs != nullptr)
   {
-    bind(":gs_range", atools::geo::meterToNm(gs->getRange()));
+    bind(":gs_range", roundToPrecision(meterToNm(gs->getRange())));
     bind(":gs_pitch", gs->getPitch());
-    bind(":gs_altitude", atools::geo::meterToFeet(gs->getPosition().getAltitude()));
+    bind(":gs_altitude", roundToPrecision(meterToFeet(gs->getPosition().getAltitude())));
     bind(":gs_lonx", gs->getPosition().getLonX());
     bind(":gs_laty", gs->getPosition().getLatY());
   }

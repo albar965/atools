@@ -25,9 +25,12 @@ create index if not exists idx_airport_city on airport(city);
 
 create index if not exists idx_airport_has_avgas on airport(has_avgas);
 create index if not exists idx_airport_has_jetfuel on airport(has_jetfuel);
-create index if not exists idx_airport_has_tower on airport(has_tower);
-create index if not exists idx_airport_has_atis on airport(has_atis);
-create index if not exists idx_airport_has_awos_or_asos on airport(has_awos_or_asos);
+
+create index if not exists idx_airport_tower_frequency on airport(tower_frequency);
+create index if not exists idx_airport_atis_frequency on airport(atis_frequency);
+create index if not exists idx_airport_awos_frequency on airport(awos_frequency);
+create index if not exists idx_airport_asos_frequency on airport(asos_frequency);
+create index if not exists idx_airport_unicom_frequency on airport(unicom_frequency);
 
 create index if not exists idx_airport_is_closed on airport(is_closed);
 create index if not exists idx_airport_is_military on airport(is_military);

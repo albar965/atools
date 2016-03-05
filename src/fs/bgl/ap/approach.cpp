@@ -71,6 +71,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         break;
 
       case rec::LEGS:
+        if(options->includeBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
@@ -78,6 +79,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::MISSED_LEGS:
+        if(options->includeBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
@@ -86,6 +88,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         break;
 
       case atools::fs::bgl::rec::TRANSITION_LEGS:
+      // TODO clarify TRANSITION_LEGS
       default:
         qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
                                        << " for airport ident " << fixAirportIdent;

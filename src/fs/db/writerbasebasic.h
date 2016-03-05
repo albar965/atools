@@ -60,10 +60,15 @@ protected:
   }
 
   void bind(const QString& placeholder, const QVariant& val);
+
+  /* Boolean to integer (0 or 1) */
   void bindBool(const QString& placeholder, bool val);
   void bindNullInt(const QString& placeholder);
   void bindNullFloat(const QString& placeholder);
   void bindNullString(const QString& placeholder);
+
+  /* Binds a null if value == 0 */
+  void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
   void executeStatement();
 

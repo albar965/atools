@@ -68,7 +68,10 @@ void BglFile::readFile(QString file)
     this->size = bs.getFileSize();
 
     readHeaderAndSections(&bs);
-    readBoundaries(&bs);
+
+    if(options->includeBglObject(type::BOUNDARY))
+      readBoundaries(&bs);
+
     readRecords(&bs);
     ifs.close();
   }

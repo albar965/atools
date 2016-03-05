@@ -36,6 +36,8 @@ void VorWriter::writeObject(const Vor *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing VOR " << type->getIdent() << type->getName();
 
+  using namespace atools::geo;
+
   bind(":vor_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
@@ -43,10 +45,10 @@ void VorWriter::writeObject(const Vor *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
-  bind(":range", atools::geo::meterToNm(type->getRange()));
+  bind(":range", roundToPrecision(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
   bind(":dme_only", type->isDmeOnly());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
@@ -64,7 +66,7 @@ void VorWriter::writeObject(const Vor *type)
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_altitude", atools::geo::meterToFeet(dme->getPosition().getAltitude()));
+    bind(":dme_altitude", roundToPrecision(meterToFeet(dme->getPosition().getAltitude())));
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }

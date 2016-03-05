@@ -35,6 +35,8 @@ void ParkingWriter::writeObject(const Parking *type)
     qDebug() << "Writing Parking for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
+
   bind(":parking_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(Parking::parkingTypeToStr, type->getType()));
@@ -42,7 +44,7 @@ void ParkingWriter::writeObject(const Parking *type)
   bind(":name", bgl::util::enumToStr(Parking::parkingNameToStr, type->getName()));
   bind(":number", type->getNumber());
   bind(":airline_codes", type->getAirlineCodes().join(","));
-  bind(":radius", atools::geo::meterToFeet(type->getRadius()));
+  bind(":radius", roundToPrecision(meterToFeet(type->getRadius())));
   bind(":heading", type->getHeading());
   bindBool(":has_jetway", type->hasJetway());
   bind(":lonx", type->getPosition().getLonX());

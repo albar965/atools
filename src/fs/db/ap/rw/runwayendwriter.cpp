@@ -35,11 +35,12 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
     qDebug() << "Writing Runway end " << type->getName() << " for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());
-  bind(":offsetThreshold", atools::geo::meterToFeet(type->getOffsetThreshold()));
-  bind(":blastPad", atools::geo::meterToFeet(type->getBlastPad()));
-  bind(":overrun", atools::geo::meterToFeet(type->getOverrun()));
+  bind(":offsetThreshold", roundToPrecision(meterToFeet(type->getOffsetThreshold())));
+  bind(":blastPad", roundToPrecision(meterToFeet(type->getBlastPad())));
+  bind(":overrun", roundToPrecision(meterToFeet(type->getOverrun())));
   bind(":has_closed_markings", type->hasClosedMarkings());
   bind(":has_stol_markings", type->hasStolMarkings());
   bind(":is_takeoff", type->isTakeoff());

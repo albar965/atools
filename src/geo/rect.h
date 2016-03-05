@@ -29,6 +29,7 @@ class Rect
 public:
   /* Create an invalid rectangle */
   Rect();
+  Rect(const Rect& other);
 
   Rect(const atools::geo::Pos& singlePos);
   Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
@@ -36,6 +37,8 @@ public:
 
   /* Create rectangle that includes the given circle. Radius in meter. */
   Rect(const atools::geo::Pos& center, float radius);
+
+  Rect& operator=(const Rect& other);
 
   const atools::geo::Pos& getTopLeft() const
   {

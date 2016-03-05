@@ -67,6 +67,8 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
+  using namespace atools::geo;
+
   if(!getOptions().includeAirport(type->getIdent()))
     return;
 
@@ -80,15 +82,15 @@ void AirportWriter::writeObject(const Airport *type)
   NameListMapConstIterType it = nameListIndex.find(type->getIdent());
   if(it != nameListIndex.end())
   {
-    const NamelistEntry *nl = it.value();
-    if(nl != nullptr)
-    {
-      bind(":country", nl->getCountryName());
-      bind(":state", nl->getStateName());
-      bind(":city", nl->getCityName());
-    }
-    else
-      qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
+  const NamelistEntry *nl = it.value();
+  if(nl != nullptr)
+  {
+    bind(":country", nl->getCountryName());
+    bind(":state", nl->getStateName());
+    bind(":city", nl->getCityName());
+  }
+  else
+    qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
   }
   else
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
@@ -97,16 +99,17 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":airport_id", getNextId());
   bind(":file_id", dw.getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
-  bind(":region", type->getRegion());
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
   bind(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
   bindBool(":has_jetfuel", (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
   bindBool(":has_tower_object", type->hasTowerObj());
 
-  bindBool(":has_tower", type->hasTowerCom());
-  bindBool(":has_atis", type->hasAtis());
-  bindBool(":has_awos_or_asos", type->hasAwosOrAsos());
+  bindIntOrNull(":tower_frequency", type->getTowerFrequency());
+  bindIntOrNull(":atis_frequency", type->getAtisFrequency());
+  bindIntOrNull(":awos_frequency", type->getAwosFrequency());
+  bindIntOrNull(":asos_frequency", type->getAsosFrequency());
+  bindIntOrNull(":unicom_frequency", type->getUnicomFrequency());
 
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
@@ -137,8 +140,8 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_jetway", type->getNumJetway());
   bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script
 
-  bind(":longest_runway_length", atools::geo::meterToFeet(type->getLongestRunwayLength()));
-  bind(":longest_runway_width", atools::geo::meterToFeet(type->getLongestRunwayWidth()));
+  bind(":longest_runway_length", roundToPrecision(meterToFeet(type->getLongestRunwayLength())));
+  bind(":longest_runway_width", roundToPrecision(meterToFeet(type->getLongestRunwayWidth())));
   bind(":longest_runway_heading", type->getLongestRunwayHeading());
   bind(":longest_runway_surface", Runway::surfaceToStr(type->getLongestRunwaySurface()));
 
@@ -161,10 +164,10 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
   bind(":mag_var", type->getMagVar());
-  bind(":tower_altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":tower_altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

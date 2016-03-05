@@ -307,6 +307,9 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case APPROACH:
       return "APPROACH";
 
+    case APPROACHLEG:
+      return "APPROACHLEG";
+
     case COM:
       return "COM";
 
@@ -364,6 +367,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return START;
   else if(typeStr == "APPROACH")
     return APPROACH;
+  else if(typeStr == "APPROACHLEG")
+    return APPROACHLEG;
   else if(typeStr == "COM")
     return COM;
   else if(typeStr == "PARKING")

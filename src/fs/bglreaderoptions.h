@@ -37,6 +37,7 @@ enum BglObjectType
   HELIPAD,
   START,
   APPROACH,
+  APPROACHLEG,
   COM,
   PARKING,
   ILS,

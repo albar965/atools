@@ -57,11 +57,13 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMinAltType()));
   bind(":max_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMaxAltType()));
 
-  bind(":max_altitude", atools::geo::meterToFeet(type->getMaxPosition().getAltitude()));
+  using namespace atools::geo;
+
+  bind(":max_altitude", roundToPrecision(meterToFeet(type->getMaxPosition().getAltitude())));
   bind(":max_lonx", type->getMaxPosition().getLonX());
   bind(":max_laty", type->getMaxPosition().getLatY());
 
-  bind(":min_altitude", atools::geo::meterToFeet(type->getMinPosition().getAltitude()));
+  bind(":min_altitude", roundToPrecision(meterToFeet(type->getMinPosition().getAltitude())));
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
   executeStatement();

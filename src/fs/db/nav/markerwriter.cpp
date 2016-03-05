@@ -33,13 +33,15 @@ void MarkerWriter::writeObject(const Marker *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing Marker " << type->getIdent();
 
+  using namespace atools::geo;
+
   bind(":marker_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":type", bgl::Marker::markerTypeToStr(type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

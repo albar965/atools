@@ -18,9 +18,9 @@
 #include "fs/bgl/ap/transition.h"
 #include "fs/bgl/ap/approach.h"
 #include "fs/bgl/recordtypes.h"
-
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bglreaderoptions.h"
 
 namespace atools {
 namespace fs {
@@ -109,6 +109,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::TRANSITION_LEGS:
+        if(options->includeBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)

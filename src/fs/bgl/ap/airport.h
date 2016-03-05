@@ -188,11 +188,6 @@ public:
     return taxipaths;
   }
 
-  bool hasTowerCom() const
-  {
-    return towerCom;
-  }
-
   bool isAirportClosed() const
   {
     return airportClosed;
@@ -313,14 +308,29 @@ public:
     return numParkingMilitaryCombat;
   }
 
-  bool hasAtis() const
+  int getTowerFrequency() const
   {
-    return atis;
+    return towerFrequency;
   }
 
-  bool hasAwosOrAsos() const
+  int getAtisFrequency() const
   {
-    return awosOrAsos;
+    return atisFrequency;
+  }
+
+  int getAwosFrequency() const
+  {
+    return awosFrequency;
+  }
+
+  int getAsosFrequency() const
+  {
+    return asosFrequency;
+  }
+
+  int getUnicomFrequency() const
+  {
+    return unicomFrequency;
   }
 
 private:
@@ -335,14 +345,15 @@ private:
 
   unsigned int fuelFlags;
   QString name;
-  bool towerObj = false, towerCom = false, atis = false, awosOrAsos = false, airportClosed = false,
-       military = false;
+  bool towerObj = false, airportClosed = false, military = false;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0,
       numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
       numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0,
       numParkingMilitaryCombat = 0;
+
+  int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
 
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 

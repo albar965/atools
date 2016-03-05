@@ -26,6 +26,11 @@ Rect::Rect()
   valid = false;
 }
 
+Rect::Rect(const Rect& other)
+{
+  *this = other;
+}
+
 Rect::Rect(const Pos& singlePos)
 {
   topLeft = singlePos;
@@ -59,6 +64,14 @@ Rect::Rect(const Pos& center, float radius)
   bottomRight = Pos(east.getLonX(), south.getLatY());
 
   valid = true;
+}
+
+Rect& Rect::operator=(const Rect& other)
+{
+  topLeft = other.topLeft;
+  bottomRight = other.bottomRight;
+  valid = other.valid;
+  return *this;
 }
 
 float Rect::getWidthDegree() const

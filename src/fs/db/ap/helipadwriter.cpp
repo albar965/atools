@@ -37,16 +37,17 @@ void HelipadWriter::writeObject(const Helipad *type)
     qDebug() << "Writing Helipad for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
   bind(":helipad_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
-  bind(":length", atools::geo::meterToFeet(type->getLength()));
-  bind(":width", atools::geo::meterToFeet(type->getWidth()));
+  bind(":length", roundToPrecision(meterToFeet(type->getLength())));
+  bind(":width", roundToPrecision(meterToFeet(type->getWidth())));
   bind(":heading", type->getHeading());
   bindBool(":is_transparent", type->isTransparent());
   bindBool(":is_closed", type->isClosed());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

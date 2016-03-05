@@ -39,11 +39,13 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
     qDebug() << "Writing TaxiPath for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  using namespace atools::geo;
+
   bind(":taxi_path_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", TaxiPath::pathTypeToString(type->getType()));
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
-  bind(":width", atools::geo::meterToFeet(type->getWidth()));
+  bind(":width", roundToPrecision(meterToFeet(type->getWidth())));
 
   if(type->getWeightLimit() == 0)
     bindNullInt(":weight_limit");

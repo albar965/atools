@@ -34,6 +34,8 @@ void NdbWriter::writeObject(const Ndb *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing NDB " << type->getIdent() << type->getName();
 
+  using namespace atools::geo;
+
   bind(":ndb_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
@@ -41,9 +43,9 @@ void NdbWriter::writeObject(const Ndb *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Ndb::ndbTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
-  bind(":range", atools::geo::meterToNm(type->getRange()));
+  bind(":range", roundToPrecision(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
-  bind(":altitude", atools::geo::meterToFeet(type->getPosition().getAltitude()));
+  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

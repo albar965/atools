@@ -70,6 +70,14 @@ void WriterBaseBasic::bind(const QString& placeholder, const QVariant& val)
   return stmt.bindValue(placeholder, val);
 }
 
+void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& val)
+{
+  if(val.toInt() == 0)
+    bindNullInt(placeholder);
+  else
+    return stmt.bindValue(placeholder, val);
+}
+
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
   return stmt.bindValue(placeholder, QVariant(QVariant::Int));
