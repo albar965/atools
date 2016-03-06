@@ -142,14 +142,12 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::APRON_SECOND:
-        if(options->includeBglObject(type::APRON))
-        {
-          r.seekToStart();
-          aprons2.push_back(Apron2(options, bs));
-        }
+        // if(options->includeBglObject(type::APRON2)) will omitted when writing
+        r.seekToStart();
+        aprons2.push_back(Apron2(options, bs));
         break;
       case rec::APRON_EDGE_LIGHTS:
-        if(options->includeBglObject(type::APRON))
+        if(options->includeBglObject(type::APRON) && options->includeBglObject(type::APRONLIGHT))
         {
           r.seekToStart();
           apronLights.push_back(ApronLight(options, bs));
@@ -170,8 +168,11 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::JETWAY:
-        r.seekToStart();
-        jetways.push_back(Jetway(options, bs));
+        if(options->includeBglObject(type::PARKING))
+        {
+          r.seekToStart();
+          jetways.push_back(Jetway(options, bs));
+        }
         break;
       case rec::FENCE_BOUNDARY:
       case rec::FENCE_BLAST:

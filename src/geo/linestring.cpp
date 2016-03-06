@@ -28,13 +28,21 @@ LineString::LineString()
 LineString::LineString(std::initializer_list<Pos> list)
   : QList(list)
 {
-  if(!isEmpty())
-    valid = true;
+}
+
+void LineString::append(float longitudeX, float latitudeY, float alt)
+{
+  QList::append(Pos(longitudeX, latitudeY, alt));
+}
+
+void LineString::append(double longitudeX, double latitudeY, float alt)
+{
+  QList::append(Pos(longitudeX, latitudeY, alt));
 }
 
 Rect LineString::boundingRect()
 {
-  if(valid && !isEmpty())
+  if(!isEmpty())
   {
     Rect bounding(first());
 

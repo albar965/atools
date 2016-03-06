@@ -31,12 +31,18 @@ public:
   LineString();
   LineString(std::initializer_list<atools::geo::Pos> list);
 
+  void append(float longitudeX, float latitudeY, float alt = 0.f);
+  void append(double longitudeX, double latitudeY, float alt = 0.f);
+
   float lengthMeter() const;
 
   Rect boundingRect();
 
-private:
-  bool valid = false;
+  bool isValid()
+  {
+    return !isEmpty();
+  }
+
 };
 
 } // namespace geo

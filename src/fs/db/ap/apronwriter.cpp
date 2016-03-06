@@ -40,6 +40,7 @@ void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 
   bind(":apron_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->first->getSurface()));
+
   bindBool(":is_draw_surface", type->second->isDrawSurface());
   bindBool(":is_draw_detail", type->second->isDrawDetail());
 
@@ -50,13 +51,21 @@ void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 
                    QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
-  list.clear();
-  for(const bgl::BglPosition& pos : type->second->getVertices())
-    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                   QString::number(pos.getLatY(), 'g', 8));
-  bind(":vertices2", list.join(", "));
+  if(getOptions().includeBglObject(type::APRON2))
+  {
+    list.clear();
+    for(const bgl::BglPosition& pos : type->second->getVertices())
+      list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
+                     QString::number(pos.getLatY(), 'g', 8));
+    bind(":vertices2", list.join(", "));
 
-  bind(":triangles", toString(type->second->getTriangles()));
+    bind(":triangles", toString(type->second->getTriangles()));
+  }
+  else
+  {
+    bindNullString(":vertices2");
+    bindNullString(":triangles");
+  }
 
   executeStatement();
 }

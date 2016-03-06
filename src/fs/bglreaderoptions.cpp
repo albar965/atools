@@ -183,13 +183,11 @@ bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegE
   {
     bool incFound = false;
     for(const QRegExp& iter : filterListInc)
-    {
       if(iter.exactMatch(filterStr))
       {
         incFound = true;
         break;
       }
-    }
 
     if(filterListExcl.isEmpty())
       return incFound;
@@ -217,7 +215,7 @@ QString BglReaderOptions::adaptPath(const QString& filepath) const
   return toNativeSeparator(newFilename);
 }
 
-QString BglReaderOptions::toNativeSeparator(const QString &path) const
+QString BglReaderOptions::toNativeSeparator(const QString& path) const
 {
   return QString(path).replace("\\", "/");
 }
@@ -340,6 +338,12 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case APRON:
       return "APRON";
 
+    case APRON2:
+      return "APRON2";
+
+    case APRONLIGHT:
+      return "APRONLIGHT";
+
     case FENCE:
       return "FENCE";
 
@@ -387,6 +391,10 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return MARKER;
   else if(typeStr == "APRON")
     return APRON;
+  else if(typeStr == "APRON2")
+    return APRON2;
+  else if(typeStr == "APRONLIGHT")
+    return APRONLIGHT;
   else if(typeStr == "FENCE")
     return FENCE;
   else if(typeStr == "TAXIWAY")

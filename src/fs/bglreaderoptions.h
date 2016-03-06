@@ -29,6 +29,7 @@ namespace atools {
 namespace fs {
 
 namespace type {
+/* Used to enable/disable loading of objects */
 enum BglObjectType
 {
   UNKNOWN,
@@ -47,6 +48,8 @@ enum BglObjectType
   BOUNDARY,
   MARKER,
   APRON,
+  APRON2,
+  APRONLIGHT,
   FENCE,
   TAXIWAY,
   ROUTE,
@@ -199,8 +202,9 @@ private:
 
   QString adaptPath(const QString& filepath) const;
 
-  QStringList toNativeSeparators(const QStringList &paths) const;
-  QString toNativeSeparator(const QString &path) const;
+  QStringList toNativeSeparators(const QStringList& paths) const;
+  QString toNativeSeparator(const QString& path) const;
+
 };
 
 } // namespace fs
