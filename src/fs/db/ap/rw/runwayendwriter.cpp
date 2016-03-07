@@ -38,8 +38,8 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   using namespace atools::geo;
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());
-  bind(":offsetThreshold", roundToPrecision(meterToFeet(type->getOffsetThreshold())));
-  bind(":blastPad", roundToPrecision(meterToFeet(type->getBlastPad())));
+  bind(":offset_threshold", roundToPrecision(meterToFeet(type->getOffsetThreshold())));
+  bind(":blast_pad", roundToPrecision(meterToFeet(type->getBlastPad())));
   bind(":overrun", roundToPrecision(meterToFeet(type->getOverrun())));
   bind(":has_closed_markings", type->hasClosedMarkings());
   bind(":has_stol_markings", type->hasStolMarkings());

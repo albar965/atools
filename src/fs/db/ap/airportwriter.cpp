@@ -152,8 +152,13 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":largest_parking_gate",
        bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
-  bind(":rating", !type->getTaxiPaths().isEmpty() + type->hasTowerObj() + !type->getParkings().isEmpty() +
-       !type->getAprons().isEmpty() + isAddon);
+  int rating = !type->getTaxiPaths().isEmpty() + !type->getParkings().isEmpty() +
+               !type->getAprons().isEmpty() + isAddon;
+
+  if(rating > 0 && type->hasTowerObj())
+    rating++;
+
+  bind(":rating", rating);
 
   bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
   bind(":bgl_filename", dw.getBglFileWriter()->getCurrentFilename());

@@ -268,7 +268,7 @@ drop table if exists com;
 create table com
 (
   com_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   type varchar(30) not null,
   frequency integer not null,
   name varchar(50),
@@ -284,7 +284,7 @@ drop table if exists helipad;
 create table helipad
 (
   helipad_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   surface varchar(15) not null,
   type varchar(10),
   length double not null,
@@ -307,7 +307,7 @@ drop table if exists start;
 create table start
 (
   start_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   runway_end_id integer,
   type varchar(10) not null,
   heading double not null,
@@ -328,7 +328,7 @@ drop table if exists apron;
 create table apron
 (
   apron_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   surface varchar(15) not null,
   is_draw_surface integer not null,
   is_draw_detail integer not null,
@@ -347,7 +347,7 @@ drop table if exists apron_light;
 create table apron_light
 (
   apron_light_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   vertices text,
   edges text,
 foreign key(airport_id) references airport(airport_id)
@@ -362,7 +362,7 @@ drop table if exists fence;
 create table fence
 (
   fence_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   type varchar(15) not null,
   vertices text,
 foreign key(airport_id) references airport(airport_id)
@@ -377,7 +377,7 @@ drop table if exists taxi_path;
 create table taxi_path
 (
   taxi_path_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   type varchar(15),
   surface varchar(15),
   width double not null,
@@ -409,7 +409,7 @@ drop table if exists runway;
 create table runway
 (
   runway_id integer primary key,
-  airport_id not null,
+  airport_id integer not null,
   primary_end_id integer not null,
   secondary_end_id integer  not null,
   surface varchar(15) not null,
@@ -447,8 +447,8 @@ create table runway_end
 (
   runway_end_id integer primary key,
   name varchar(10) not null,
-  offsetThreshold integer not null,
-  blastPad integer not null,
+  offset_threshold integer not null,
+  blast_pad integer not null,
   overrun integer not null,
   left_vasi_type varchar(15),
   left_vasi_pitch double,
