@@ -218,13 +218,14 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     r.seekToEnd();
   }
 
-  if(runways.isEmpty() && deleteAirports.isEmpty() && parkings.isEmpty() && taxipaths.isEmpty() &&
-     aprons.isEmpty() && coms.isEmpty() && helipads.isEmpty() && starts.isEmpty())
-  {
-    seekToStart();
-    excluded = true;
-    return;
-  }
+  // Disabled since dummies for Unlisted_Airstrips are all empty
+  // if(runways.isEmpty() && deleteAirports.isEmpty() && parkings.isEmpty() && taxipaths.isEmpty() &&
+  // aprons.isEmpty() && coms.isEmpty() && helipads.isEmpty() && starts.isEmpty())
+  // {
+  // seekToStart();
+  // excluded = true;
+  // return;
+  // }
 
   updateTaxiPaths(taxipoints, taxinames);
 
