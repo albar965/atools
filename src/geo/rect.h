@@ -34,6 +34,7 @@ public:
   Rect(const atools::geo::Pos& singlePos);
   Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
+  Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
   Rect(const atools::geo::Pos& center, float radius);
@@ -92,7 +93,11 @@ public:
     return valid;
   }
 
+  bool isPoint();
+
 private:
+  friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);
+
   atools::geo::Pos topLeft, bottomRight;
   bool valid = false;
 };

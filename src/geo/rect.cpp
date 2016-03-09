@@ -52,6 +52,13 @@ Rect::Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY)
   valid = true;
 }
 
+Rect::Rect(float lonX, float latY)
+{
+  topLeft = Pos(lonX, latY);
+  bottomRight = Pos(lonX, latY);
+  valid = true;
+}
+
 Rect::Rect(const Pos& center, float radius)
 {
   using namespace atools::geo;
@@ -72,6 +79,12 @@ Rect& Rect::operator=(const Rect& other)
   bottomRight = other.bottomRight;
   valid = other.valid;
   return *this;
+}
+
+bool Rect::isPoint()
+{
+  return topLeft.getLonX() == bottomRight.getLonX() &&
+         topLeft.getLatY() == bottomRight.getLatY();
 }
 
 float Rect::getWidthDegree() const
@@ -136,6 +149,13 @@ QList<Rect> Rect::splitAtAntiMeridian() const
                         Rect(-180.f, getNorth(), getEast(), getSouth())});
 
   return QList<Rect>({*this});
+}
+
+QDebug operator<<(QDebug out, const Rect& record)
+{
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << "Rect[" << record.topLeft.toString() << record.bottomRight.toString() << "]";
+  return out;
 }
 
 } // namespace geo

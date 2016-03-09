@@ -95,12 +95,12 @@ public:
   }
 
 protected:
-  friend QDebug operator<<(QDebug out, const Pos& record);
-
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::geo::Pos& record);
+
   double calculateAngle(double lonX1, double latY1, double lonX2, double latY2) const;
   double calculateAngle(const Pos& p1, const Pos& p2) const;
   double calculateDistance(double lonX1, double latY1, double lonX2, double latY2) const;

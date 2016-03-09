@@ -276,7 +276,7 @@ float Pos::sec(float value) const
 QDebug operator<<(QDebug out, const Pos& record)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "[" << record.toString() << "]";
+  out.nospace().noquote() << "Pos[" << record.toString() << "]";
   return out;
 }
 
