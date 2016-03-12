@@ -35,6 +35,7 @@ using atools::fs::bgl::Glideslope;
 using atools::fs::bgl::Localizer;
 using atools::fs::bgl::Ils;
 using atools::sql::SqlQuery;
+using atools::geo::Pos;
 
 void IlsWriter::writeObject(const Ils *type)
 {
@@ -51,16 +52,40 @@ void IlsWriter::writeObject(const Ils *type)
   bind(":mag_var", type->getMagVar());
   bind(":has_backcourse", type->hasBackcourse());
   bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
-  bind(":lonx", type->getPosition().getLonX());
-  bind(":laty", type->getPosition().getLatY());
+
+  const bgl::BglPosition& pos = type->getPosition();
+  const Localizer *loc = type->getLocalizer();
+
+  if(loc != nullptr)
+  {
+  int length = nmToMeter(8);
+  // Calculate the display of the ILS feather
+  float ilsHeading = atools::geo::opposedCourseDeg(loc->getHeading());
+  Pos p1 = pos.endpoint(length, ilsHeading - loc->getWidth() / 2).normalize();
+  Pos p2 = pos.endpoint(length, ilsHeading + loc->getWidth() / 2).normalize();
+  float featherWidth = p1.distanceMeterTo(p2);
+  Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading).normalize();
+
+  bind(":end1_lonx", p1.getLonX());
+  bind(":end1_laty", p1.getLatY());
+
+  bind(":end_mid_lonx", pmid.getLonX());
+  bind(":end_mid_laty", pmid.getLatY());
+
+  bind(":end2_lonx", p2.getLonX());
+  bind(":end2_laty", p2.getLatY());
+  }
+
+  bind(":lonx", pos.getLonX());
+  bind(":laty", pos.getLatY());
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-  bind(":dme_range", roundToPrecision(meterToNm(dme->getRange())));
-  bind(":dme_altitude", roundToPrecision(meterToFeet(dme->getPosition().getAltitude())));
-  bind(":dme_lonx", dme->getPosition().getLonX());
-  bind(":dme_laty", dme->getPosition().getLatY());
+    bind(":dme_range", roundToPrecision(meterToNm(dme->getRange())));
+    bind(":dme_altitude", roundToPrecision(meterToFeet(dme->getPosition().getAltitude())));
+    bind(":dme_lonx", dme->getPosition().getLonX());
+    bind(":dme_laty", dme->getPosition().getLatY());
   }
   else
   {
@@ -89,7 +114,6 @@ void IlsWriter::writeObject(const Ils *type)
   }
 
   bool isComplete = false;
-  const Localizer *loc = type->getLocalizer();
   QString apIdent = type->getAirportIdent();
 
   bindNullInt(":loc_runway_end_id");
