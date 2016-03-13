@@ -283,10 +283,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w)
     if(!w->objectName().isEmpty())
     {
       if(!w->isVisible())
-      {
-        qDebug() << "saving visibility" << w->objectName();
         settings->setValue(keyPrefix + "_visible_" + w->objectName(), w->isVisible());
-      }
     }
     else
       qWarning() << "Found widget with empty name";
@@ -296,10 +293,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w)
 void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVariant& value)
 {
   if(!w->objectName().isEmpty())
-  {
-    qDebug() << "saving" << w->objectName() << "value" << value;
     settings->setValue(keyPrefix + "_" + w->objectName(), value);
-  }
   else
     qWarning() << "Found widget with empty name";
 }
@@ -312,7 +306,6 @@ QVariant WidgetState::loadWidget(Settings& settings, QObject *w)
     if(settings->contains(name))
     {
       QVariant v = settings->value(name);
-      qDebug() << "loading" << w->objectName() << "value" << v;
       return v;
     }
   }
@@ -332,10 +325,7 @@ void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w)
       {
         bool visible = settings->value(name).toBool();
         if(!visible)
-        {
-          qDebug() << "loading visibility" << w->objectName();
           w->setVisible(visible);
-        }
       }
     }
     else
