@@ -22,6 +22,7 @@
 #include <QIODevice>
 #include <QHash>
 #include <QVector>
+#include <QMutex>
 
 class QTextStream;
 class QFile;
@@ -115,6 +116,7 @@ private:
   atools::logging::internal::LoggingConfig *logConfig;
   QtMessageHandler oldMessageHandler;
 
+  mutable QMutex mutex;
 };
 
 } // namespace logging

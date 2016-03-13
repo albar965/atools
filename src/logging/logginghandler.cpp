@@ -91,6 +91,8 @@ void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *
                                       const QString& message,
                                       const QString& category)
 {
+  QMutexLocker locker(&mutex);
+
   if(category.isEmpty())
     for(QTextStream *stream : streamList2)
       (*stream) << message << endl << flush;
