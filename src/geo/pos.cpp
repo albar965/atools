@@ -160,7 +160,7 @@ Pos& Pos::toRad()
 
 Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 {
-  return calculateEndpoint(*this, distanceMeter, angleDeg);
+  return calculateEndpoint(*this, distanceMeter, angleDeg).normalize();
 }
 
 float Pos::distanceSimpleTo(const Pos& otherPos) const

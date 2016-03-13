@@ -62,10 +62,10 @@ Rect::Rect(float lonX, float latY)
 Rect::Rect(const Pos& center, float radius)
 {
   using namespace atools::geo;
-  Pos north = center.endpoint(radius, 0.).normalize();
-  Pos east = center.endpoint(radius, 90.).normalize();
-  Pos south = center.endpoint(radius, 180.).normalize();
-  Pos west = center.endpoint(radius, 270.).normalize();
+  Pos north = center.endpoint(radius, 0.);
+  Pos east = center.endpoint(radius, 90.);
+  Pos south = center.endpoint(radius, 180.);
+  Pos west = center.endpoint(radius, 270.);
 
   topLeft = Pos(west.getLonX(), north.getLatY());
   bottomRight = Pos(east.getLonX(), south.getLatY());
