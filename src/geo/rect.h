@@ -41,6 +41,13 @@ public:
 
   Rect& operator=(const Rect& other);
 
+  bool operator==(const Rect& other) const;
+
+  bool operator!=(const Rect& other) const
+  {
+    return !(*this == other);
+  }
+
   const atools::geo::Pos& getTopLeft() const
   {
     return topLeft;

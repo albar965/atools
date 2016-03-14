@@ -24,9 +24,12 @@
 namespace atools {
 namespace geo {
 
-const QString Pos::SHORT_FORMAT("%1,%2,%3");
-const QString Pos::LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
-const QRegularExpression Pos::LONG_FORMAT_REGEXP(
+const double PI = 3.14159265358979323846;
+const double EARTH_RADIUS_METER = 6371. * 1000.;
+
+const QString SHORT_FORMAT("%1,%2,%3");
+const QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
+const QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([+-])\\s*([0-9\\.]+)");
@@ -105,6 +108,11 @@ Pos& Pos::operator=(const Pos& other)
   altitude = other.altitude;
   valid = other.valid;
   return *this;
+}
+
+bool Pos::operator==(const Pos& other) const
+{
+  return lonX == other.lonX && latY == other.latY && altitude == other.altitude && valid == other.valid;
 }
 
 int Pos::getLatYDeg() const

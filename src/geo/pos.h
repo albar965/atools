@@ -44,6 +44,13 @@ public:
 
   Pos& operator=(const Pos& other);
 
+  bool operator==(const Pos& other) const;
+
+  bool operator!=(const Pos& other) const
+  {
+    return !(*this == other);
+  }
+
   float getLatY() const
   {
     return latY;
@@ -108,14 +115,10 @@ private:
   Pos calculateEndpoint(double longitude, double latitude, double dist, double angle) const;
   Pos calculateEndpoint(const Pos& p, double dist, double angle) const;
 
-  static const QString LONG_FORMAT, SHORT_FORMAT;
-  static const QRegularExpression LONG_FORMAT_REGEXP;
   float sec(float value) const;
   int min(float value) const;
   int deg(float value) const;
 
-  const double PI = 3.14159265358979323846;
-  const double EARTH_RADIUS_METER = 6371. * 1000.;
   bool valid = false;
 };
 
