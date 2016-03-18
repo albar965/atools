@@ -24,8 +24,8 @@
 namespace atools {
 namespace geo {
 
-const double PI = 3.14159265358979323846;
 const double EARTH_RADIUS_METER = 6371. * 1000.;
+const double TOLERANCE = 1e-15;
 
 const QString SHORT_FORMAT("%1,%2,%3");
 const QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
@@ -186,6 +186,105 @@ float Pos::angleDegTo(const Pos& otherPos) const
   return static_cast<float>(calculateAngle(*this, otherPos));
 }
 
+Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
+{
+  double lon1 = toRadians(getLonX());
+  double lat1 = toRadians(getLatY());
+
+  double distanceRad = nmToRad(meterToNm(distanceMeter));
+  double tc = toRadians(-angleDeg + 360.);
+
+  double lat = lat1 + distanceRad *cos(tc);
+  if(std::abs(lat) > M_PI / 2.)
+    return atools::geo::Pos();   // distance too long - return invalid pos
+
+  double q, dphi;
+  if(std::abs(lat - lat1) < sqrt(TOLERANCE))
+    q = cos(lat1);
+  else
+  {
+    dphi = log(tan(lat / 2. + M_PI / 4.) / tan(lat1 / 2. + M_PI / 4.));
+    q = (lat - lat1) / dphi;
+  }
+  double dlon = -distanceRad *sin(tc) / q;
+  double lon = remainder(lon1 + dlon + M_PI, 2. * M_PI) - M_PI;
+  return atools::geo::Pos(lon, lat).toDeg().normalize();
+}
+
+float Pos::angleDegToRhumb(const Pos& otherPos) const
+{
+  double lon1 = toRadians(getLonX());
+  double lat1 = toRadians(getLatY());
+  double lon2 = toRadians(otherPos.getLonX());
+  double lat2 = toRadians(otherPos.getLatY());
+
+  double dlonWest = remainder(lon2 - lon1, 2. * M_PI);
+  double dlonEast = remainder(lon1 - lon2, 2. * M_PI);
+  double q, tc;
+  double dphi = log(tan(lat2 / 2. + M_PI / 4.) / tan(lat1 / 2. + M_PI / 4.));
+
+  if(std::abs(lat2 - lat1) < sqrt(TOLERANCE))
+    q = cos(lat1);
+  else
+    q = (lat2 - lat1) / dphi;
+
+  if(dlonWest < dlonEast)
+    // To west is shorter
+    tc = remainder(atan2(-dlonWest, dphi), 2. * M_PI);
+  else
+    tc = remainder(atan2(dlonEast, dphi), 2. * M_PI);
+  return static_cast<float>(atools::geo::normalizeCourse(-atools::geo::toDegree(tc) + 360.));
+}
+
+float Pos::distanceMeterToRhumb(const Pos& otherPos) const
+{
+  double lon1 = toRadians(getLonX());
+  double lat1 = toRadians(getLatY());
+  double lon2 = toRadians(otherPos.getLonX());
+  double lat2 = toRadians(otherPos.getLatY());
+
+  double dlonWest = remainder(lon2 - lon1, 2. * M_PI);
+  double dlonEast = remainder(lon1 - lon2, 2. * M_PI);
+  double q, distance;
+  double dphi = log(tan(lat2 / 2. + M_PI / 4.) / tan(lat1 / 2. + M_PI / 4.));
+
+  if(std::abs(lat2 - lat1) < sqrt(TOLERANCE))
+    q = cos(lat1);
+  else
+    q = (lat2 - lat1) / dphi;
+
+  if(dlonWest < dlonEast)
+    // To west is shorter
+    distance = sqrt(q * q * dlonWest * dlonWest + (lat2 - lat1) * (lat2 - lat1));
+  else
+    distance = sqrt(q * q * dlonEast * dlonEast + (lat2 - lat1) * (lat2 - lat1));
+
+  return static_cast<float>(nmToMeter(((180. * 60.) / M_PI) * distance));
+}
+
+Pos Pos::interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
+{
+  return endpointRhumb(distanceMeter * fraction, angleDegToRhumb(otherPos));
+}
+
+Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
+{
+  double lon1 = toRadians(getLonX());
+  double lat1 = toRadians(getLatY());
+  double lon2 = toRadians(otherPos.getLonX());
+  double lat2 = toRadians(otherPos.getLatY());
+  double distanceRad = nmToRad(meterToNm(distanceMeter));
+
+  double A = sin((1. - fraction) * distanceRad) / sin(distanceRad);
+  double B = sin(fraction * distanceRad) / sin(distanceRad);
+  double x = A * cos(lat1) * cos(lon1) + B *cos(lat2) * cos(lon2);
+  double y = A * cos(lat1) * sin(lon1) + B *cos(lat2) * sin(lon2);
+  double z = A * sin(lat1) + B *sin(lat2);
+  double lat = atan2(z, sqrt(x * x + y * y));
+  double lon = atan2(y, x);
+  return atools::geo::Pos(lon, lat).toDeg().normalize();
+}
+
 QString Pos::toLongString() const
 {
   if(!valid)
@@ -204,6 +303,11 @@ QString Pos::toString() const
     return "Invalid Pos";
 
   return SHORT_FORMAT.arg(lonX).arg(latY).arg(altitude);
+}
+
+bool Pos::isPole() const
+{
+  return latY > 89. || latY < -89.;
 }
 
 double Pos::calculateAngle(double lonX1, double latY1, double lonX2, double latY2) const
@@ -291,7 +395,7 @@ QDebug operator<<(QDebug out, const Pos& record)
 Pos atools::geo::Pos::calculateEndpoint(double longitude, double latitude, double dist, double angle) const
 {
   // http://williams.best.vwh.net/avform.htm
-  double distanceRad = PI / (180. * 60.) * meterToNm(dist);
+  double distanceRad = M_PI / (180. * 60.) * meterToNm(dist);
   double angleRad = toRadians(-angle + 360.);
   double latRad = toRadians(latitude);
   double lonRad = toRadians(longitude);
@@ -301,7 +405,7 @@ Pos atools::geo::Pos::calculateEndpoint(double longitude, double latitude, doubl
 
   double dlon = atan2(sin(angleRad) * sin(distanceRad) * cos(latRad),
                       cos(distanceRad) - sin(latRad) * sin(lat));
-  double lon = remainder(lonRad - dlon + PI, 2 * PI) - PI;
+  double lon = remainder(lonRad - dlon + M_PI, 2 * M_PI) - M_PI;
 
   return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat)));
 }

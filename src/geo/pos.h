@@ -84,11 +84,20 @@ public:
   /* Distance to other point in simple units */
   float distanceSimpleTo(const Pos& otherPos) const;
 
-  /* Distance to other point */
+  /* Distance to other point for great circle route */
   float distanceMeterTo(const Pos& otherPos) const;
 
-  /* Distance to other point */
+  /* Distance to other point (initial course) */
   float angleDegTo(const Pos& otherPos) const;
+
+  /* return endpoint at distance and angle for a rhumb line (constant course) */
+  Pos endpointRhumb(float distanceMeter, float angleDeg) const;
+
+  /* Distance to other point for rhumb line */
+  float distanceMeterToRhumb(const Pos& otherPos) const;
+
+  /* Distance to other point using a rhumb line */
+  float angleDegToRhumb(const Pos& otherPos) const;
 
   /* @return format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   QString toLongString() const;
@@ -100,6 +109,15 @@ public:
   {
     return valid;
   }
+
+  /* Return true if close to any pole */
+  bool isPole() const;
+
+  /* Find point between start and end on GC route */
+  Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
+
+  /* Find point between start and end on rhumb line */
+  Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
 
 protected:
   // Länge (x),Breite (y)

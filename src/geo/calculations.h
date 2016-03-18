@@ -87,6 +87,12 @@ TYPE nmToRad(TYPE value)
 }
 
 template<typename TYPE>
+TYPE meterToRad(TYPE value)
+{
+  return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
+}
+
+template<typename TYPE>
 TYPE toRadians(TYPE deg)
 {
   return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
@@ -107,6 +113,17 @@ TYPE opposedCourseDeg(TYPE rad)
   while(result < 360.)
     result += 360.;
 
+  return static_cast<TYPE>(result);
+}
+
+template<typename TYPE>
+TYPE normalizeCourse(TYPE degree)
+{
+  double result = static_cast<double>(degree);
+  while(result > 360.)
+    result = result - 360.;
+  while(result < 0.)
+    result = result + 360.;
   return static_cast<TYPE>(result);
 }
 
