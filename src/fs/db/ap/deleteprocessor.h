@@ -72,6 +72,7 @@ private:
   *delWpStmt,
   *delVorStmt,
   *delNdbStmt,
+  *deleteApprochStmt, *updateApprochStmt,
   *deleteAirportStmt, *selectAirportStmt,
   *deleteApronStmt, *updateApronStmt,
   *deleteApronLightStmt, *updateApronLightStmt,
@@ -85,7 +86,7 @@ private:
   *deleteTransitionLegStmt,
   *deleteApproachLegStmt,
   *deleteTransitionStmt,
-  *deleteApproacheStmt,
+  *deleteApproachStmt,
   *fetchOldApproachIdStmt;
 
   bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,

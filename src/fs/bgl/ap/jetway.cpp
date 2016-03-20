@@ -25,14 +25,15 @@ namespace bgl {
 using atools::io::BinaryStream;
 
 Jetway::Jetway() :
-  parkingIndex(0)
+  parkingNumber(0)
 {
 }
 
 Jetway::Jetway(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  parkingIndex = bs->readShort();
+  parkingNumber = bs->readShort();
+  gateName = bs->readShort();
   // WORD Gate Name
   // DWORD Size of the scenery object data to follow(0x40)
   // 64 LibraryObject record
@@ -43,7 +44,7 @@ QDebug operator<<(QDebug out, const Jetway& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Jetway[ parking index" << record.parkingIndex
+  << " Jetway[ parking index" << record.parkingNumber
   << "]";
 
   return out;

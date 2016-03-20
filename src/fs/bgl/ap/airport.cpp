@@ -110,8 +110,8 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           for(int i = 0; i < numParkings; i++)
           {
             Parking p(bs);
-            parkingNumberIndex.insert(p.getNumber(), parkings.size());
             parkings.push_back(p);
+            parkingNumberIndex.insert(p.getNumber(), parkings.size() - 1);
           }
         }
         break;
@@ -391,9 +391,9 @@ void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>&
 {
   for(const Jetway& jw : jetways)
   {
-    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingIndex());
+    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingNumber());
     if(iter != parkingNumberIndex.end())
-      parkings[iter.value()].setHasJetway(true);
+      parkings[*iter].setHasJetway(true);
     else
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;

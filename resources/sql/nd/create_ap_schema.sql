@@ -475,6 +475,7 @@ drop table if exists approach;
 create table approach
 (
   approach_id integer primary key,
+  airport_id integer not null,
   runway_end_id integer,
   type varchar(25) not null,
   has_gps_overlay integer not null,
@@ -486,9 +487,11 @@ create table approach
   altitude integer,
   heading double,
   missed_altitude integer,
+foreign key(airport_id) references airport(airport_id),
 foreign key(runway_end_id) references runway_end(runway_end_id)
 );
 
+create index if not exists idx_approach_airport_id on approach(airport_id);
 create index if not exists idx_approach_runway_end_id on approach(runway_end_id);
 
 -- **************************************************

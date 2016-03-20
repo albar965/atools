@@ -34,6 +34,7 @@ namespace db {
 
 using atools::fs::bgl::Approach;
 using atools::sql::SqlQuery;
+using namespace atools::geo;
 
 void ApproachWriter::writeObject(const Approach *type)
 {
@@ -41,9 +42,8 @@ void ApproachWriter::writeObject(const Approach *type)
     qDebug() << "Writing Approach for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  using namespace atools::geo;
-
   bind(":approach_id", getNextId());
+  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
   bind(":has_gps_overlay", type->isGpsOverlay());
   bindNullInt(":fix_nav_id");
@@ -55,35 +55,24 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":heading", type->getHeading());
   bind(":missed_altitude", roundToPrecision(meterToFeet(type->getMissedAltitude()), 1));
 
-  bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
   if(type->hasRunwayReference() && !apIdent.isEmpty())
-  {
-  if(getOptions().includeAirport(apIdent))
-  {
-    QString msg(" approach ID " + QString::number(getCurrentId()));
-    int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
-    if(id != -1)
+    if(getOptions().includeAirport(apIdent))
     {
-      isComplete = true;
-      bind(":runway_end_id", id);
+      QString msg(" approach ID " + QString::number(getCurrentId()));
+      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
+      if(id != -1)
+        bind(":runway_end_id", id);
     }
-  }
-  }
-  else
-    isComplete = true;
 
-  if(getOptions().isIncomplete() || isComplete)
-  {
-    executeStatement();
+  executeStatement();
 
-    getDataWriter().getApproachLegWriter()->write(type->getLegs());
-    getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
+  getDataWriter().getApproachLegWriter()->write(type->getLegs());
+  getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
 
-    TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
-    appWriter->write(type->getTransitions());
-  }
+  TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
+  appWriter->write(type->getTransitions());
 }
 
 } // namespace writer

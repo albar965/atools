@@ -179,7 +179,7 @@ private:
   int number;
   float radius, heading;
   atools::fs::bgl::BglPosition position;
-  bool jetway;
+  bool jetway = false;
   QStringList airlineCodes;
 };
 

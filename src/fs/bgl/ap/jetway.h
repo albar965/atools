@@ -40,15 +40,15 @@ public:
   Jetway(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Jetway();
 
-  int getParkingIndex() const
+  int getParkingNumber() const
   {
-    return parkingIndex;
+    return parkingNumber;
   }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Jetway& record);
 
-  int parkingIndex;
+  int parkingNumber, gateName;
 };
 
 } // namespace bgl

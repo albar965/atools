@@ -51,6 +51,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   fetchPrimaryRunwayEndIdStmt = new SqlQuery(sqlDb);
   fetchSecondaryRunwayEndIdStmt = new SqlQuery(sqlDb);
   updateApprochRwIds = new SqlQuery(sqlDb);
+  updateApprochStmt = new SqlQuery(sqlDb);
+  deleteApprochStmt = new SqlQuery(sqlDb);
 
   delWpStmt = new SqlQuery(sqlDb);
   delVorStmt = new SqlQuery(sqlDb);
@@ -77,7 +79,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteTransitionLegStmt = new SqlQuery(sqlDb);
   deleteApproachLegStmt = new SqlQuery(sqlDb);
   deleteTransitionStmt = new SqlQuery(sqlDb);
-  deleteApproacheStmt = new SqlQuery(sqlDb);
+  deleteApproachStmt = new SqlQuery(sqlDb);
   fetchOldApproachIdStmt = new SqlQuery(sqlDb);
 
   // Most query act on all airports with the given ident except the current one
@@ -157,27 +159,21 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
 
   // Relink approach (and everything dependent) to a new airport
   updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
+  updateApprochStmt->prepare(updateAptFeatureStmt("approach"));
+  deleteApprochStmt->prepare(delAptFeatureStmt("approach"));
 
   deleteTransitionLegStmt->prepare("delete from transition_leg "
                                    "where transition_id in "
                                    "(select transition_id from transition where approach_id = :id)");
   deleteApproachLegStmt->prepare("delete from approach_leg where approach_id = :id");
   deleteTransitionStmt->prepare("delete from transition where approach_id = :id");
-  deleteApproacheStmt->prepare("delete from approach where approach_id = :id");
+  deleteApproachStmt->prepare("delete from approach where approach_id = :id");
 
   // Collect all approach_ids of the old airport
-  fetchOldApproachIdStmt->prepare(
-    "select app.approach_id "
-    "from airport a "
-    "join runway r on r.airport_id = a.airport_id "
-    "join approach app on app.runway_end_id = r.primary_end_id "
-    "where a.ident = :apIdent and a.airport_id <> :curApId "
-    "union "
-    "select app2.approach_id "
-    "from airport a "
-    "join runway r on r.airport_id = a.airport_id "
-    "join approach app2 on app2.runway_end_id = r.secondary_end_id "
-    "where a.ident = :apIdent and a.airport_id <> :curApId ");
+  fetchOldApproachIdStmt->prepare("select app.approach_id "
+                                  "from airport a "
+                                  "join approach app on app.airport_id = a.airport_id "
+                                  "where a.ident = :apIdent and a.airport_id <> :curApId ");
 }
 
 DeleteProcessor::~DeleteProcessor()
@@ -192,6 +188,7 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchPrimaryRunwayEndIdStmt;
   delete fetchSecondaryRunwayEndIdStmt;
   delete updateApprochRwIds;
+  delete updateApprochStmt;
 
   delete delWpStmt;
   delete delVorStmt;
@@ -219,7 +216,7 @@ DeleteProcessor::~DeleteProcessor()
   delete deleteTransitionLegStmt;
   delete deleteApproachLegStmt;
   delete deleteTransitionStmt;
-  delete deleteApproacheStmt;
+  delete deleteApproachStmt;
   delete fetchOldApproachIdStmt;
 }
 
@@ -268,8 +265,10 @@ void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *a
   if(hasApproach)
   {
     if(isFlagSet(del->getFlags(), bgl::del::APPROACHES))
+      // Delete the whole tree behind the apporaches
       deleteApproachesAndTransitions(fetchOldApproachIds());
     else
+      // Relink the approach to the new airport
       transferApproaches();
   }
 
@@ -348,8 +347,8 @@ void DeleteProcessor::deleteApproachesAndTransitions(const QList<int>& ids)
     deleteTransitionStmt->bindValue(":id", i);
     executeStatement(deleteTransitionStmt, "transition");
 
-    deleteApproacheStmt->bindValue(":id", i);
-    executeStatement(deleteApproacheStmt, "approach");
+    deleteApproachStmt->bindValue(":id", i);
+    executeStatement(deleteApproachStmt, "approach");
   }
 }
 
@@ -382,6 +381,9 @@ void DeleteProcessor::transferApproaches()
     executeStatement(updateApprochRwIds, "update approach secondary runway end ids");
   }
 
+  bindAndExecute(updateApprochStmt, "approaches updated");
+
+  // Delete all leftovers of the old runways
   deleteApproachesAndTransitions(ids);
 }
 
