@@ -86,7 +86,7 @@ bool Rect::operator==(const Rect& other) const
   return topLeft == other.topLeft && bottomRight == other.bottomRight && valid == other.valid;
 }
 
-bool Rect::isPoint()
+bool Rect::isPoint() const
 {
   return topLeft.getLonX() == bottomRight.getLonX() &&
          topLeft.getLatY() == bottomRight.getLatY();

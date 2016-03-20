@@ -97,10 +97,6 @@ Pos::Pos(const QString& str)
     throw new Exception("Invalid lat/long format \"" + str + "\"");
 }
 
-Pos::~Pos()
-{
-}
-
 Pos& Pos::operator=(const Pos& other)
 {
   lonX = other.lonX;
@@ -220,14 +216,9 @@ float Pos::angleDegToRhumb(const Pos& otherPos) const
 
   double dlonWest = remainder(lon2 - lon1, 2. * M_PI);
   double dlonEast = remainder(lon1 - lon2, 2. * M_PI);
-  double q, tc;
   double dphi = log(tan(lat2 / 2. + M_PI / 4.) / tan(lat1 / 2. + M_PI / 4.));
 
-  if(std::abs(lat2 - lat1) < sqrt(TOLERANCE))
-    q = cos(lat1);
-  else
-    q = (lat2 - lat1) / dphi;
-
+  double tc;
   if(dlonWest < dlonEast)
     // To west is shorter
     tc = remainder(atan2(-dlonWest, dphi), 2. * M_PI);

@@ -26,11 +26,11 @@ namespace atools {
 namespace geo {
 
 /* Simple geographic position. All calculations based on WGS84 ellipsoid */
-class Pos
+class Pos final
 {
 public:
   Pos();
-  Pos(const Pos& other);
+  Pos(const Pos &other);
 
   Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
       int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
@@ -39,8 +39,7 @@ public:
   Pos(double longitudeX, double latitudeY, float alt = 0.f);
 
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
-  Pos(const QString& str);
-  virtual ~Pos();
+  Pos(const QString &str);
 
   Pos& operator=(const Pos& other);
 

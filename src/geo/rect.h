@@ -24,7 +24,7 @@
 namespace atools {
 namespace geo {
 
-class Rect
+class Rect final
 {
 public:
   /* Create an invalid rectangle */
@@ -100,7 +100,7 @@ public:
     return valid;
   }
 
-  bool isPoint();
+  bool isPoint() const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);

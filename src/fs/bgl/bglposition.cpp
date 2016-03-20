@@ -26,27 +26,32 @@ namespace bgl {
 using atools::io::BinaryStream;
 
 BglPosition::BglPosition()
-  : geo::Pos()
 {
 }
 
 BglPosition::BglPosition(float lonX, float latY, float alt)
-  : geo::Pos(lonX, latY, alt)
+  : pos(lonX, latY, alt)
 {
 }
 
 BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeFactor)
 {
-  lonX = converter::intToLonX(bs->readInt());
-  latY = converter::intToLatY(bs->readInt());
+  float lonX = converter::intToLonX(bs->readInt());
+  float latY = converter::intToLatY(bs->readInt());
+
+  float altitude;
   if(hasAltitude)
     altitude = static_cast<float>(bs->readInt()) / altitudeFactor;
   else
     altitude = 0.f;
+
+  pos = atools::geo::Pos(lonX, latY, altitude);
 }
 
-BglPosition::~BglPosition()
+QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record)
 {
+  out << record.pos;
+  return out;
 }
 
 } // namespace bgl

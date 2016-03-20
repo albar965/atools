@@ -29,16 +29,37 @@ class BinaryStream;
 namespace fs {
 namespace bgl {
 
-class BglPosition :
-  public atools::geo::Pos
+class BglPosition final
 {
 public:
   BglPosition();
   BglPosition(float lonX, float latY, float alt = 0.0f);
-  BglPosition(atools::io::BinaryStream *bs, bool hasAltitude = false, float altitudeFactor = 1.f);
+  BglPosition(atools::io::BinaryStream * bs, bool hasAltitude = false, float altitudeFactor = 1.f);
 
-  virtual ~BglPosition();
+  float getLonX() const
+  {
+    return pos.getLonX();
+  }
 
+  float getLatY() const
+  {
+    return pos.getLatY();
+  }
+
+  float getAltitude() const
+  {
+    return pos.getAltitude();
+  }
+
+  const atools::geo::Pos& getPos() const
+  {
+    return pos;
+  }
+
+private:
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record);
+
+  atools::geo::Pos pos;
 };
 
 } // namespace bgl

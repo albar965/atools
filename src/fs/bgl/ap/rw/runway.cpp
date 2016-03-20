@@ -182,8 +182,8 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   heading = bs->readFloat(); // TODO wiki heading is float degress
 
   using namespace atools::geo;
-  primaryPos = position.endpoint(length / 2.f, heading);
-  secondaryPos = position.endpoint(length / 2.f, opposedCourseDeg(heading));
+  primaryPos = position.getPos().endpoint(length / 2.f, heading);
+  secondaryPos = position.getPos().endpoint(length / 2.f, opposedCourseDeg(heading));
 
   patternAltitude = bs->readFloat();
 

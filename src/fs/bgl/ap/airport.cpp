@@ -246,9 +246,9 @@ Airport::~Airport()
 
 void Airport::updateSummaryFields()
 {
-  boundingRect = atools::geo::Rect(getPosition());
+  boundingRect = atools::geo::Rect(getPosition().getPos());
   if(towerPosition.getLatY() != 0.f && towerPosition.getLonX() != 0.f)
-    boundingRect.extend(towerPosition);
+    boundingRect.extend(towerPosition.getPos());
 
   for(const Runway& rw : runways)
   {
@@ -261,7 +261,7 @@ void Airport::updateSummaryFields()
     if(rw.isSoft())
       numSoftRunway++;
 
-    boundingRect.extend(rw.getPosition());
+    boundingRect.extend(rw.getPosition().getPos());
     boundingRect.extend(rw.getSecondaryPosition());
     boundingRect.extend(rw.getPrimaryPosition());
 
@@ -311,7 +311,7 @@ void Airport::updateSummaryFields()
   for(const Parking& p : parkings)
   {
     // TODO
-    boundingRect.extend(p.getPosition());
+    boundingRect.extend(p.getPosition().getPos());
 
     if(p.hasJetway())
       numJetway++;
@@ -344,7 +344,7 @@ void Airport::updateSummaryFields()
   for(const Fence& f : fences)
   {
     for(const BglPosition& p : f.getVertices())
-      boundingRect.extend(p);
+      boundingRect.extend(p.getPos());
 
     if(f.getType() == fence::BOUNDARY)
       numBoundaryFence++;
@@ -352,22 +352,22 @@ void Airport::updateSummaryFields()
 
   for(const Apron& a : aprons)
     for(const BglPosition &p : a.getVertices())
-      boundingRect.extend(p);
+      boundingRect.extend(p.getPos());
 
   for(const Apron2& a : aprons2)
     for(const BglPosition &p : a.getVertices())
-      boundingRect.extend(p);
+      boundingRect.extend(p.getPos());
 
   for(const Start& s : starts)
-    boundingRect.extend(s.getPosition());
+    boundingRect.extend(s.getPosition().getPos());
 
   for(const Helipad& h : helipads)
-    boundingRect.extend(h.getPosition());
+    boundingRect.extend(h.getPosition().getPos());
 
   for(const TaxiPath& p : taxipaths)
   {
-    boundingRect.extend(p.getStartPoint().getPosition());
-    boundingRect.extend(p.getEndPoint().getPosition());
+    boundingRect.extend(p.getStartPoint().getPosition().getPos());
+    boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
 
   for(const QString& s : MIL_ENDS_WITH)
@@ -437,7 +437,7 @@ QDebug operator<<(QDebug out, const Airport& record)
   << " Airport[ICAO " << record.ident
   << ", name " << record.name
   << ", region " << record.region
-  << ", " << record.position
+  << ", " << record.position.getPos()
   << ", magvar " << record.magVar << ", " << endl;
   out << record.runways;
   out << record.coms;
