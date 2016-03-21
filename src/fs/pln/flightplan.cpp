@@ -26,8 +26,7 @@ namespace atools {
 namespace fs {
 namespace pln {
 
-Flightplan::Flightplan(atools::sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+Flightplan::Flightplan()
 {
 
 }
@@ -185,7 +184,7 @@ void Flightplan::readAppVersion(QXmlStreamReader& reader)
 
 void Flightplan::readWaypoint(QXmlStreamReader& reader)
 {
-  FlightplanEntry entry(db);
+  FlightplanEntry entry;
 
   entry.setWaypointId(reader.attributes().value("id").toString());
 

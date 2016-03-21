@@ -34,6 +34,8 @@ const QRegularExpression LONG_FORMAT_REGEXP(
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([+-])\\s*([0-9\\.]+)");
 
+atools::geo::Pos atools::geo::Pos::EMPTY_POS;
+
 Pos::Pos()
   : lonX(0.f), latY(0.f), altitude(0.f), valid(false)
 {

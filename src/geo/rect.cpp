@@ -21,6 +21,8 @@
 namespace atools {
 namespace geo {
 
+atools::geo::Rect atools::geo::Rect::EMPTY_RECT;
+
 Rect::Rect()
 {
   valid = false;

@@ -24,10 +24,6 @@ class QXmlStreamReader;
 
 namespace atools {
 
-namespace sql {
-class SqlDatabase;
-}
-
 namespace fs {
 namespace pln {
 
@@ -50,7 +46,7 @@ enum RouteType
 class Flightplan
 {
 public:
-  Flightplan(atools::sql::SqlDatabase *sqlDb = nullptr);
+  Flightplan();
   ~Flightplan();
 
   void load(const QString& file);
@@ -159,7 +155,6 @@ private:
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
 
-  atools::sql::SqlDatabase *db;
 };
 
 } // namespace pln

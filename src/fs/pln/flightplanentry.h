@@ -23,10 +23,6 @@
 #include "geo/pos.h"
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-}
-
 namespace fs {
 namespace pln {
 
@@ -46,13 +42,8 @@ enum WaypointType
 class FlightplanEntry
 {
 public:
-  FlightplanEntry(atools::sql::SqlDatabase *sqlDb = nullptr);
+  FlightplanEntry();
   ~FlightplanEntry();
-
-  void loadFromWaypoint(int waypointId);
-  void loadFromVor(int vorId);
-  void loadFromNdb(int ndbId);
-  void loadFromCoordinates(const atools::geo::Pos& pos);
 
   QString getWaypointTypeAsString() const;
   atools::fs::pln::entry::WaypointType getWaypointType() const;
@@ -71,7 +62,7 @@ public:
   QString getIcaoIdent() const;
   void setIcaoIdent(const QString& value);
 
-  atools::geo::Pos getPosition() const;
+  const geo::Pos& getPosition() const;
   void setPosition(const atools::geo::Pos& value);
 
 private:

@@ -118,6 +118,8 @@ public:
   /* Find point between start and end on rhumb line */
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
 
+  static atools::geo::Pos EMPTY_POS;
+
 protected:
   // Länge (x),Breite (y)
   float lonX, latY, altitude;

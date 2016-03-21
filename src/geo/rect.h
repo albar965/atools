@@ -29,15 +29,15 @@ class Rect final
 public:
   /* Create an invalid rectangle */
   Rect();
-  Rect(const Rect& other);
+  Rect(const Rect &other);
 
-  Rect(const atools::geo::Pos& singlePos);
-  Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
+  Rect(const atools::geo::Pos & singlePos);
+  Rect(const atools::geo::Pos & topLeftPos, const atools::geo::Pos & bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
   Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
-  Rect(const atools::geo::Pos& center, float radius);
+  Rect(const atools::geo::Pos & center, float radius);
 
   Rect& operator=(const Rect& other);
 
@@ -101,6 +101,8 @@ public:
   }
 
   bool isPoint() const;
+
+  static atools::geo::Rect EMPTY_RECT;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);
