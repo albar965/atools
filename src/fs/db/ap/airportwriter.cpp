@@ -101,8 +101,10 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
-  bind(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
+
+  bindBool(":has_avgas", (type->getFuelFlags() & AVGAS) == AVGAS);
   bindBool(":has_jetfuel", (type->getFuelFlags() & JET_FUEL) == JET_FUEL);
+
   bindBool(":has_tower_object", type->hasTowerObj());
 
   bindIntOrNull(":tower_frequency", type->getTowerFrequency());

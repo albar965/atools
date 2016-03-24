@@ -71,7 +71,7 @@ enum FuelFlags
   JET4 = 0x00c00000, // Bits 22-23 :
   JET5 = 0x03000000, // Bits 24-22 : // wiki error reported
   AVGAS = 0x40000000, // Bit 30 :
-  JET_FUEL = 0x40000000 // Bit 31 :
+  JET_FUEL = 0x80000000 // Bit 31 :
 };
 
 } // namespace ap
