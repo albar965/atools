@@ -20,11 +20,13 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
+#include "geo/pos.h"
+#include "geo/rect.h"
+#include "logging/loggingdefs.h"
 
 #include <QString>
 #include <QList>
 #include <algorithm>
-#include "logging/loggingdefs.h"
 
 #include <QQueue>
 
@@ -34,6 +36,8 @@ namespace db {
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::geo::Pos;
+using atools::geo::Rect;
 
 uint qHash(const RouteResolver::Leg& leg)
 {
@@ -123,6 +127,18 @@ void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
       routeInsertStmt.bindValue(":to_waypoint_id", rt.to);
       routeInsertStmt.bindValue(":minimum_altitude", rt.minAlt);
 
+      Rect bounding(rt.fromPos);
+      bounding.extend(rt.toPos);
+      routeInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
+      routeInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
+      routeInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
+      routeInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+
+      routeInsertStmt.bindValue(":from_lonx", rt.fromPos.getLonX());
+      routeInsertStmt.bindValue(":from_laty", rt.fromPos.getLatY());
+      routeInsertStmt.bindValue(":to_lonx", rt.toPos.getLonX());
+      routeInsertStmt.bindValue(":to_laty", rt.toPos.getLatY());
+
       routeInsertStmt.exec();
       numRoutes += routeInsertStmt.numRowsAffected();
     }
@@ -139,9 +155,15 @@ void RouteResolver::run()
     "select r.name, r.type, "
     "  prev.waypoint_id as prev_waypoint_id, "
     "  r.previous_minimum_altitude, "
+    "  prev.lonx as prev_lonx, "
+    "  prev.laty as prev_laty, "
     "  r.waypoint_id, "
+    "  w.lonx as lonx, "
+    "  w.laty as laty, "
     "  next.waypoint_id as next_waypoint_id, "
-    "  r.next_minimum_altitude "
+    "  r.next_minimum_altitude, "
+    "  next.lonx as next_lonx, "
+    "  next.laty as next_laty "
     "from route_point r join waypoint w on r.waypoint_id = w.waypoint_id "
     "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
     "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
@@ -176,19 +198,26 @@ void RouteResolver::run()
       curRoute = rName;
     }
 
-    int id = stmt.value("waypoint_id").toInt();
+    int curId = stmt.value("waypoint_id").toInt();
+    Pos curPos(stmt.value("lonx").toFloat(), stmt.value("laty").toFloat());
 
     QVariant prevIdColVal = stmt.value("prev_waypoint_id");
-    int prevMinAltColVal = stmt.value("previous_minimum_altitude").toInt();
+    int prevMinAlt = stmt.value("previous_minimum_altitude").toInt();
 
     QVariant nextIdColVal = stmt.value("next_waypoint_id");
-    int nextMinAltColVal = stmt.value("next_minimum_altitude").toInt();
+    int nextMinAlt = stmt.value("next_minimum_altitude").toInt();
 
     if(!prevIdColVal.isNull())
-      route.insert(Leg(prevIdColVal.toInt(), id, prevMinAltColVal, rType));
+    {
+      Pos prevPos(stmt.value("prev_lonx").toFloat(), stmt.value("prev_laty").toFloat());
+      route.insert(Leg(prevIdColVal.toInt(), curId, prevMinAlt, rType, prevPos, curPos));
+    }
 
     if(!nextIdColVal.isNull())
-      route.insert(Leg(id, nextIdColVal.toInt(), nextMinAltColVal, rType));
+    {
+      Pos nextPos(stmt.value("next_lonx").toFloat(), stmt.value("next_laty").toFloat());
+      route.insert(Leg(curId, nextIdColVal.toInt(), nextMinAlt, rType, curPos, nextPos));
+    }
   }
 
   qInfo() << "Added " << numRoutes << " route legs";

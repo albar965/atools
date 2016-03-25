@@ -192,6 +192,14 @@ create table route
   from_waypoint_id integer not null,
   to_waypoint_id integer not null,
   minimum_altitude integer,
+  left_lonx double not null,
+  top_laty double not null,
+  right_lonx double not null,
+  bottom_laty double not null,
+  from_lonx double not null,
+  from_laty double not null,
+  to_lonx double not null,
+  to_laty double not null,
 foreign key(from_waypoint_id) references waypoint(waypoint_id),
 foreign key(to_waypoint_id) references waypoint(waypoint_id)
 );

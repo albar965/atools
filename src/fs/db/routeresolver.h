@@ -19,6 +19,8 @@
 #define WRITER_ROUTERESOLVER_H_
 
 #include "sql/sqlquery.h"
+#include "geo/pos.h"
+
 #include <QSet>
 
 namespace db {
@@ -37,35 +39,34 @@ public:
 
   void run();
 
-  class Leg
+  struct Leg
   {
-public:
     Leg()
-      : from(0), to(0), minAlt(0), type("")
+    {
+
+    }
+
+    Leg(int fromId, int toId, int minAltitude, QString routeType,
+        const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
+      : from(fromId), to(toId), minAlt(minAltitude), type(routeType), fromPos(fromPosition), toPos(toPosition)
     {
     }
 
-    Leg(int from, int to, int minAlt, QString type)
-      : from(from), to(to), minAlt(minAlt), type(type)
+    bool operator==(const Leg& other) const
     {
+      return from == other.from && to == other.to;
     }
 
-    bool operator==(const Leg& l) const
+    bool operator<(const Leg& other) const
     {
-      return from == l.from && to == l.to;
-    }
-
-    bool operator<(const Leg& l) const
-    {
-      return QPair<int, int>(from, to) < QPair<int, int>(l.from, l.to);
+      return QPair<int, int>(from, to) < QPair<int, int>(other.from, other.to);
     }
 
     friend QDebug operator<<(QDebug out, const Leg& l);
 
-    int from;
-    int to;
-    int minAlt;
+    int from = 0, to = 0, minAlt = 0;
     QString type;
+    atools::geo::Pos fromPos, toPos;
   };
 
 private:
