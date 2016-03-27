@@ -45,28 +45,28 @@ public:
   FlightplanEntry();
   ~FlightplanEntry();
 
-  QString getWaypointTypeAsString() const;
+  const QString& getWaypointTypeAsString() const;
   atools::fs::pln::entry::WaypointType getWaypointType() const;
   void setWaypointType(const QString& value);
   void setWaypointType(const atools::fs::pln::entry::WaypointType& value);
 
-  QString getWaypointId() const;
+  const QString& getWaypointId() const;
   void setWaypointId(const QString& value);
 
-  QString getAirway() const;
+  const QString& getAirway() const;
   void setAirway(const QString& value);
 
-  QString getIcaoRegion() const;
+  const QString& getIcaoRegion() const;
   void setIcaoRegion(const QString& value);
 
-  QString getIcaoIdent() const;
+  const QString& getIcaoIdent() const;
   void setIcaoIdent(const QString& value);
 
   const geo::Pos& getPosition() const;
   void setPosition(const atools::geo::Pos& value);
 
 private:
-  static QString waypointTypeToString(atools::fs::pln::entry::WaypointType type);
+  static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
 
   atools::fs::pln::entry::WaypointType waypointType;

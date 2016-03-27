@@ -144,4 +144,6 @@ private:
 } // namespace geo
 } // namespace atools
 
+Q_DECLARE_TYPEINFO(atools::geo::Pos, Q_PRIMITIVE_TYPE);
+
 #endif /* ATOOLS_GEO_POSITION_H */

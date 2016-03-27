@@ -30,7 +30,7 @@ FlightplanEntry::~FlightplanEntry()
 
 }
 
-QString FlightplanEntry::getWaypointTypeAsString() const
+const QString& FlightplanEntry::getWaypointTypeAsString() const
 {
   return waypointTypeToString(waypointType);
 }
@@ -50,12 +50,12 @@ void FlightplanEntry::setWaypointType(const atools::fs::pln::entry::WaypointType
   waypointType = value;
 }
 
-QString FlightplanEntry::getWaypointId() const
+const QString& FlightplanEntry::getWaypointId() const
 {
   return waypointId;
 }
 
-QString FlightplanEntry::getAirway() const
+const QString& FlightplanEntry::getAirway() const
 {
   return airway;
 }
@@ -65,12 +65,12 @@ void FlightplanEntry::setAirway(const QString& value)
   airway = value;
 }
 
-QString FlightplanEntry::getIcaoRegion() const
+const QString& FlightplanEntry::getIcaoRegion() const
 {
   return icaoRegion;
 }
 
-QString FlightplanEntry::getIcaoIdent() const
+const QString& FlightplanEntry::getIcaoIdent() const
 {
   return icaoIdent;
 }
@@ -85,30 +85,33 @@ void FlightplanEntry::setPosition(const atools::geo::Pos& value)
   position = value;
 }
 
-QString FlightplanEntry::waypointTypeToString(entry::WaypointType type)
+const QString& FlightplanEntry::waypointTypeToString(entry::WaypointType type)
 {
+  static const QString airportName("Airport"), unknownName("Unknown"), isecName("Intersection"),
+  vorName("VOR"), ndbName("NDB"), userName("User"), emptyName;
+
   switch(type)
   {
     case atools::fs::pln::entry::AIRPORT:
-      return "Airport";
+      return airportName;
 
     case atools::fs::pln::entry::UNKNOWN:
-      return "Unknown";
+      return unknownName;
 
     case atools::fs::pln::entry::INTERSECTION:
-      return "Intersection";
+      return isecName;
 
     case atools::fs::pln::entry::VOR:
-      return "VOR";
+      return vorName;
 
     case atools::fs::pln::entry::NDB:
-      return "NDB";
+      return ndbName;
 
     case atools::fs::pln::entry::USER:
-      return "User";
+      return userName;
 
   }
-  return QString();
+  return emptyName;
 }
 
 entry::WaypointType FlightplanEntry::stringToWaypointType(const QString& str)

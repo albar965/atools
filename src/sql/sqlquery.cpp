@@ -40,16 +40,6 @@ SqlQuery::SqlQuery(const QString& queryStr, const SqlDatabase& sqlDb)
   this->db = new SqlDatabase(sqlDb);
 }
 
-SqlQuery::SqlQuery(const QString& queryStr, const QSqlDatabase& sqlDb)
-{
-  this->query = QSqlQuery(queryStr, sqlDb);
-  this->queryString = queryStr;
-  this->db = new SqlDatabase();
-
-  if(!queryStr.isEmpty())
-    checkError(!lastError().isValid(), "SqlQuery caused error after construction");
-}
-
 SqlQuery::SqlQuery(const SqlDatabase *sqlDb)
 {
   this->query = QSqlQuery(sqlDb->getQSqlDatabase());
