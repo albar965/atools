@@ -31,7 +31,7 @@ WriterBaseBasic::WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
                                  DataWriter& writer,
                                  const QString& table,
                                  const QString& sqlParam)
-  : tablename(table), db(sqlDb), dataWriter(writer)
+  : stmt(sqlDb), tablename(table), db(sqlDb), dataWriter(writer)
 {
   if(sqlParam.isEmpty())
     sql = SqlUtil(&db).buildInsertStatement(tablename);
