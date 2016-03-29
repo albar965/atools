@@ -26,6 +26,7 @@ create table waypoint
   region varchar(2),
   airport_id integer,
   type varchar(15) not null,
+  num_route integer not null,
   mag_var double not null,
   lonx double not null,
   laty double not null,
@@ -228,6 +229,7 @@ create table nav_search
   type varchar(15) not null, -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
   nav_type varchar(15) not null, -- WAYPOINT, VORDME, VOR, DME, NDB
   frequency integer,
+  waypoint_num_route integer,
   scenery_local_path varchar(250) collate nocase not null,
   bgl_filename varchar(300) collate nocase not null,
   mag_var double not null,

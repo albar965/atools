@@ -39,6 +39,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bind(":ident", type->getIdent());
   bind(":region", type->getRegion());
   bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));
+  bind(":num_route", type->getRoutes().size());
   bind(":mag_var", type->getMagVar());
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
