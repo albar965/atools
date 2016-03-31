@@ -69,6 +69,11 @@ void Navdatabase::createSchema()
   db->commit();
 }
 
+// Number of progress steps besides scenery areas
+const int NUM_STEPS = 8;
+const int NUM_DB_REPORT_STEPS = 4;
+const int NUM_RESOLVE_ROUTE_STEPS = 1;
+
 void Navdatabase::createInternal()
 {
   QElapsedTimer timer;
@@ -86,11 +91,11 @@ void Navdatabase::createInternal()
 
   db::ProgressHandler progress(options);
 
-  int total = numFiles + numSceneryAreas + 5;
+  int total = numFiles + numSceneryAreas + NUM_STEPS;
   if(options->isDatabaseReport())
-    total += 4;
+    total += NUM_DB_REPORT_STEPS;
   if(options->isResolveRoutes())
-    total += 1;
+    total += NUM_RESOLVE_ROUTE_STEPS;
 
   progress.setTotal(total);
 
@@ -136,10 +141,28 @@ void Navdatabase::createInternal()
     db->commit();
   }
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Updating navigation ids"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Updating Waypoint ids"))) == true)
+    return;
+
+  script.executeScript(":/atools/resources/sql/nd/update_wp_ids.sql");
+  db->commit();
+
+  if((aborted = progress.reportProgressOther(QObject::tr("Updating Navigation ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
+  db->commit();
+
+  if((aborted = progress.reportProgressOther(QObject::tr("Updating ILS ids"))) == true)
+    return;
+
+  script.executeScript(":/atools/resources/sql/nd/update_ils_ids.sql");
+  db->commit();
+
+  if((aborted = progress.reportProgressOther(QObject::tr("Creating Nav Search Table"))) == true)
+    return;
+
+  script.executeScript(":/atools/resources/sql/nd/create_nav_search.sql");
   db->commit();
 
   if((aborted = progress.reportProgressOther(QObject::tr("Creating final indexes"))) == true)
@@ -212,9 +235,8 @@ void Navdatabase::createInternal()
       return;
 
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
-
-    progress.reportProgressFinish();
   }
+  progress.reportProgressFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
 }

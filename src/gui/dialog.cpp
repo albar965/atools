@@ -90,6 +90,15 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
 
 }
 
+QString Dialog::openDirectoryDialog(const QString& title, const QString& settingsPrefix,
+                               const QString& path)
+{
+  QFileDialog dlg(parent);
+  dlg.setFileMode(QFileDialog::DirectoryOnly);
+  dlg.setAcceptMode(QFileDialog::AcceptOpen);
+  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path);
+}
+
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix,
                                const QString& path)
 {

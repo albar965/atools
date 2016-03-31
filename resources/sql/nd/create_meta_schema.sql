@@ -15,6 +15,17 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+drop table if exists metadata;
+
+create table metadata
+(
+  db_version_major integer not null,
+  db_version_minor integer not null,
+  last_load_timestamp integer not null
+);
+
+-- **************************************************
+
 drop table if exists scenery_area;
 
 create table scenery_area

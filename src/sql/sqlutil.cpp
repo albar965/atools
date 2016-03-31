@@ -85,13 +85,19 @@ bool SqlUtil::hasTableAndRows(const QString& tablename)
 {
   QSqlRecord rec = db->record(tablename);
   if(!rec.isEmpty())
-  {
-    SqlQuery q(db);
-    q.exec("select count(1) from " + tablename);
-    if(q.next())
-      return q.value(0).toInt() > 0;
-  }
+    return rowCount(tablename) > 0;
+
   return false;
+}
+
+int SqlUtil::rowCount(const QString& tablename)
+{
+  SqlQuery q(db);
+  q.exec("select count(1) from " + tablename);
+  if(q.next())
+    return q.value(0).toInt();
+
+  return 0;
 }
 
 void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)

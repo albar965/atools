@@ -60,6 +60,9 @@ public:
   /* @return true if table exists and has rows */
   bool hasTableAndRows(const QString& tablename);
 
+  /* Get number of rows in table. Throws exception if the table does not exist. */
+  int rowCount(const QString& tablename);
+
   /* Copy all values from one query to another
    * @param from a valid query as data source
    * @param to a valid prepared query having the same number of bind variables

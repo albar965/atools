@@ -111,6 +111,8 @@ public:
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
 
+  QString openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path);
+
 private:
   QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                      const QString& settingsPrefix, const QString& defaultFileSuffix,
