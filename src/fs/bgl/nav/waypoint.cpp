@@ -80,6 +80,19 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   if(options->includeBglObject(type::ROUTE))
     for(int i = 0; i < numRoutes; i++)
       routes.push_back(RouteEntry(options, bs));
+
+  for(const RouteEntry& re : routes)
+  {
+    if(re.getType() == atools::fs::bgl::nav::BOTH)
+    {
+      numVictorRoute++;
+      numJetRoute++;
+    }
+    else if(re.getType() == atools::fs::bgl::nav::VICTOR)
+      numVictorRoute++;
+    else if(re.getType() == atools::fs::bgl::nav::JET)
+      numJetRoute++;
+  }
 }
 
 Waypoint::~Waypoint()

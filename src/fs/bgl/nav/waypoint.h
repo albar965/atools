@@ -88,6 +88,16 @@ public:
 
   static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
+  int getNumVictorRoute() const
+  {
+    return numVictorRoute;
+  }
+
+  int getNumJetRoute() const
+  {
+    return numJetRoute;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Waypoint& record);
 
@@ -95,7 +105,7 @@ private:
   atools::fs::bgl::BglPosition position;
   float magVar;
   QString ident, region, airportIdent;
-
+  int numVictorRoute = 0, numJetRoute = 0;
   QList<atools::fs::bgl::RouteEntry> routes;
 };
 

@@ -114,11 +114,11 @@ public:
 
   /* Find point between start and end on GC route */
   Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
+  Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
 
   /* Find point between start and end on rhumb line */
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
-
-  static atools::geo::Pos EMPTY_POS;
+  Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
 protected:
   // Länge (x),Breite (y)
@@ -140,6 +140,8 @@ private:
 
   bool valid = false;
 };
+
+const atools::geo::Pos EMPTY_POS;
 
 } // namespace geo
 } // namespace atools
