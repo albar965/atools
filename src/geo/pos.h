@@ -25,7 +25,8 @@ class QRegularExpression;
 namespace atools {
 namespace geo {
 
-/* Simple geographic position. All calculations based on WGS84 ellipsoid */
+/* Simple geographic position. Calculations based on
+ *  http://williams.best.vwh.net/avform.htm */
 class Pos final
 {
 public:
@@ -86,6 +87,10 @@ public:
   /* Distance to other point for great circle route */
   float distanceMeterTo(const Pos& otherPos) const;
 
+  /* Distance to line formed by pos1 and pos2. Positive means right of course,
+   * negative means left of course. valid if perpendicular point can be found on route. */
+  float distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const;
+
   /* Distance to other point (initial course) */
   float angleDegTo(const Pos& otherPos) const;
 
@@ -104,10 +109,7 @@ public:
   /* @return format like "49.314,8.543,220" (lonX,latY,alt) */
   QString toString() const;
 
-  bool isValid() const
-  {
-    return valid;
-  }
+  bool isValid() const;
 
   /* Return true if close to any pole */
   bool isPole() const;
@@ -121,24 +123,22 @@ public:
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
 protected:
+  const float INVALID_ORD = std::numeric_limits<float>::max();
+  const float EPSILON = std::numeric_limits<float>::epsilon();
+
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::Pos& record);
 
-  double calculateAngle(double lonX1, double latY1, double lonX2, double latY2) const;
-  double calculateAngle(const Pos& p1, const Pos& p2) const;
-  double calculateDistance(double lonX1, double latY1, double lonX2, double latY2) const;
-  double calculateDistance(const Pos& p1, const Pos& p2) const;
-  Pos calculateEndpoint(double longitude, double latitude, double dist, double angle) const;
-  Pos calculateEndpoint(const Pos& p, double dist, double angle) const;
-
   float sec(float value) const;
   int min(float value) const;
   int deg(float value) const;
 
-  bool valid = false;
+  double distanceRad(double lonX1, double latY1, double lonX2, double latY2) const;
+  double courseRad(double lonX1, double latY1, double lonX2, double latY2) const;
+
 };
 
 const atools::geo::Pos EMPTY_POS;

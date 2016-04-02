@@ -19,9 +19,16 @@
 #define ATOOLS_GEO_CALCULATIONS_H
 
 #include <cmath>
+#include <limits>
 
 namespace atools {
 namespace geo {
+
+template<typename TYPE>
+bool almostEqual(TYPE f1, TYPE f2)
+{
+  return std::abs(f1 - f2) < std::numeric_limits<TYPE>::epsilon();
+}
 
 template<typename TYPE>
 int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
@@ -89,7 +96,7 @@ TYPE nmToRad(TYPE value)
 template<typename TYPE>
 TYPE meterToRad(TYPE value)
 {
-  return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
+  return nmToRad(meterToNm(value));
 }
 
 template<typename TYPE>
