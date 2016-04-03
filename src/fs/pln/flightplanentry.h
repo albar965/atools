@@ -70,7 +70,7 @@ private:
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
 
   atools::fs::pln::entry::WaypointType waypointType;
-  QString waypointId, airway, icaoRegion, icaoIdent;
+  QString waypointId, airway, icaoRegion, icaoIdent, name, parking;
   atools::geo::Pos position;
 };
 

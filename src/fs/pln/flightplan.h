@@ -52,13 +52,6 @@ public:
   void load(const QString& file);
   void save(const QString& file);
 
-  int getDepartureAirportId();
-  int getDepartureParkingId();
-  int getDestinationAirportId();
-
-  void setDeparture(int airportId, int parkingId);
-  void setDestionation(int airportId);
-
   QList<atools::fs::pln::FlightplanEntry>& getEntries()
   {
     return entries;
@@ -94,7 +87,7 @@ public:
     cruisingAlt = value;
   }
 
-  QString getDescription() const
+  const QString& getDescription() const
   {
     return description;
   }
@@ -104,27 +97,27 @@ public:
     description = value;
   }
 
-  QString getDepartureIdent() const
+  const QString& getDepartureIdent() const
   {
     return departureIdent;
   }
 
-  QString getDestinationIdent() const
+  const QString& getDestinationIdent() const
   {
     return destinationIdent;
   }
 
-  QString getDepartureParkingName() const
+  const QString& getDepartureParkingName() const
   {
     return departureParkingName;
   }
 
-  QString getDepartureAiportName() const
+  const QString& getDepartureAiportName() const
   {
     return departureAiportName;
   }
 
-  QString getDestinationAiportName() const
+  const QString& getDestinationAiportName() const
   {
     return destinationAiportName;
   }
@@ -132,6 +125,53 @@ public:
   void setDestinationAiportName(const QString& value)
   {
     destinationAiportName = value;
+  }
+
+  bool isEmpty() const
+  {
+    return entries.isEmpty();
+  }
+
+  void clear();
+
+  void setDepartureIdent(const QString& value)
+  {
+    departureIdent = value;
+  }
+
+  void setDestinationIdent(const QString& value)
+  {
+    destinationIdent = value;
+  }
+
+  void setDepartureParkingName(const QString& value)
+  {
+    departureParkingName = value;
+  }
+
+  void setDepartureAiportName(const QString& value)
+  {
+    departureAiportName = value;
+  }
+
+  const atools::geo::Pos& getDestinationPos() const
+  {
+    return destinationPos;
+  }
+
+  void setDestinationPos(const atools::geo::Pos& value)
+  {
+    destinationPos = value;
+  }
+
+  const atools::geo::Pos& getDeparturePos() const
+  {
+    return departurePos;
+  }
+
+  void setDeparturePos(const atools::geo::Pos& value)
+  {
+    departurePos = value;
   }
 
 private:

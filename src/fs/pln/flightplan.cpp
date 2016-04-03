@@ -214,19 +214,29 @@ void Flightplan::readWaypoint(QXmlStreamReader& reader)
   entries.push_back(entry);
 }
 
-int Flightplan::getDepartureAirportId()
+void Flightplan::clear()
 {
-  return 0;
-}
+  entries.clear();
 
-int Flightplan::getDepartureParkingId()
-{
-  return 0;
-}
+  filename.clear();
+  title.clear();
+  departureIdent.clear();
+  destinationIdent.clear();
+  description.clear();
+  departureParkingName.clear();
+  departureAiportName.clear();
+  destinationAiportName.clear();
 
-int Flightplan::getDestinationAirportId()
-{
-  return 0;
+  departurePos = atools::geo::Pos();
+  destinationPos = atools::geo::Pos();
+
+  flightplanType = VFR;
+  routeType = DIRECT;
+  cruisingAlt = 500;
+
+  // TODO check valid values
+  appVersionBuild = 61472;
+  appVersionMajor = 10;
 }
 
 QString Flightplan::flightplanTypeToString(FlightplanType type)
