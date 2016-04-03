@@ -216,7 +216,7 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos)
   double distAlongFrom1 = acos(cos(distFrom1) / cos(crossTrack));
   double distAlongFrom2 = acos(cos(distFrom2) / cos(-crossTrack));
 
-  if(isnan(distAlongFrom1) || isnan(distAlongFrom2) ||
+  if(std::isnan(distAlongFrom1) || std::isnan(distAlongFrom2) ||
      distAlongFrom1 > dist1To2 || distAlongFrom2 > dist1To2)
     validPos = false;
   else
