@@ -42,6 +42,12 @@ int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
   return static_cast<int>(std::round(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
 }
 
+template<typename TYPE>
+float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+{
+  return static_cast<float>(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
+}
+
 /* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
 template<typename TYPE>
 int roundToPrecision(TYPE value, int precision = 0)

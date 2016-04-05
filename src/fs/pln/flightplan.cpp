@@ -141,12 +141,16 @@ void Flightplan::save(const QString& file)
       if(!e.getAirway().isEmpty())
         writer.writeTextElement("ATCAirway", e.getAirway());
 
-      writer.writeStartElement("ICAO");
+      if(!e.getIcaoRegion().isEmpty() || !e.getIcaoIdent().isEmpty())
+      {
+        writer.writeStartElement("ICAO");
 
-      if(!e.getIcaoRegion().isEmpty())
-        writer.writeTextElement("ICAORegion", e.getIcaoRegion());
-      writer.writeTextElement("ICAOIdent", e.getIcaoIdent());
-      writer.writeEndElement(); // ICAO
+        if(!e.getIcaoRegion().isEmpty())
+          writer.writeTextElement("ICAORegion", e.getIcaoRegion());
+        writer.writeTextElement("ICAOIdent", e.getIcaoIdent());
+
+        writer.writeEndElement(); // ICAO
+      }
 
       writer.writeEndElement(); // ATCWaypoint
     }
