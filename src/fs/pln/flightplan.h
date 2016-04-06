@@ -174,6 +174,16 @@ public:
     departurePos = value;
   }
 
+  const QString& getTitle() const
+  {
+    return title;
+  }
+
+  void setTitle(const QString& value)
+  {
+    title = value;
+  }
+
 private:
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
