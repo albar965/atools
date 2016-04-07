@@ -21,5 +21,6 @@
         <file>resources/sql/nd/create_nav_search.sql</file>
         <file>resources/sql/nd/update_ils_ids.sql</file>
         <file>resources/sql/nd/update_wp_ids.sql</file>
+        <file>resources/sql/nd/create_route_schema.sql</file>
     </qresource>
 </RCC>

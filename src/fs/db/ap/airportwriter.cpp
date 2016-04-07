@@ -209,7 +209,7 @@ void AirportWriter::writeObject(const Airport *type)
   const QList<bgl::Apron2>& aprons2 = type->getAprons2();
   for(int i = 0; i < aprons.size(); i++)
   {
-    QPair<const Apron *, const Apron2 *> pair(&aprons.at(i), &aprons2.at(i));
+    std::pair<const Apron *, const Apron2 *> pair(&aprons.at(i), &aprons2.at(i));
     apronWriter->writeOne(pair);
   }
 

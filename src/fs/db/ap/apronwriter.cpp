@@ -31,7 +31,7 @@ using atools::fs::bgl::Apron2;
 using atools::fs::bgl::Runway;
 using atools::sql::SqlQuery;
 
-void ApronWriter::writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 *> *type)
+void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apron2 *> *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Apron for airport "

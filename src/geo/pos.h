@@ -44,8 +44,10 @@ public:
 
   Pos& operator=(const Pos& other);
 
+  /* Does not compare altitude */
   bool operator==(const Pos& other) const;
 
+  /* Does not compare altitude */
   bool operator!=(const Pos& other) const
   {
     return !(*this == other);

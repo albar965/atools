@@ -27,7 +27,7 @@ namespace fs {
 namespace db {
 
 class ApronWriter :
-  public atools::fs::db::WriterBase<QPair<const atools::fs::bgl::Apron *, const atools::fs::bgl::Apron2 *> >
+  public atools::fs::db::WriterBase<std::pair<const atools::fs::bgl::Apron *, const atools::fs::bgl::Apron2 *> >
 {
 public:
   ApronWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
@@ -40,7 +40,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const QPair<const bgl::Apron *, const bgl::Apron2 *> *type) override;
+  virtual void writeObject(const std::pair<const bgl::Apron*, const bgl::Apron2*>* type) override;
 
 private:
   QString toString(const QList<int>& triangles);

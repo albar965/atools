@@ -127,3 +127,5 @@ create index if not exists idx_airport_medium_laty on airport_medium(laty);
 
 create index if not exists idx_airport_medium_longest_runway_length on airport_medium(longest_runway_length);
 create index if not exists idx_airport_medium_rating on airport_medium(rating);
+
+create index if not exists idx_taxi_path_type on taxi_path(type);

@@ -59,7 +59,7 @@ public:
 
     bool operator<(const Leg& other) const
     {
-      return QPair<int, int>(from, to) < QPair<int, int>(other.from, other.to);
+      return std::pair<int, int>(from, to) < std::pair<int, int>(other.from, other.to);
     }
 
     friend QDebug operator<<(QDebug out, const Leg& l);

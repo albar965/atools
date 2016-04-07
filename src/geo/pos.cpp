@@ -104,8 +104,7 @@ Pos& Pos::operator=(const Pos& other)
 bool Pos::operator==(const Pos& other) const
 {
   return almostEqual(lonX, other.lonX) &&
-         almostEqual(latY, other.latY) &&
-         almostEqual(altitude, other.altitude);
+         almostEqual(latY, other.latY);
 }
 
 int Pos::getLatYDeg() const
