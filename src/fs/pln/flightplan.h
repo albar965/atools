@@ -47,7 +47,10 @@ class Flightplan
 {
 public:
   Flightplan();
+  Flightplan(const atools::fs::pln::Flightplan& other);
   ~Flightplan();
+
+  atools::fs::pln::Flightplan& operator=(const atools::fs::pln::Flightplan& other);
 
   void load(const QString& file);
   void save(const QString& file);

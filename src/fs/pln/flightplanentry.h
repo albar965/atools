@@ -43,7 +43,10 @@ class FlightplanEntry
 {
 public:
   FlightplanEntry();
+  FlightplanEntry(const atools::fs::pln::FlightplanEntry& other);
   ~FlightplanEntry();
+
+  FlightplanEntry& operator=(const atools::fs::pln::FlightplanEntry& other);
 
   const QString& getWaypointTypeAsString() const;
   atools::fs::pln::entry::WaypointType getWaypointType() const;

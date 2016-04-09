@@ -40,9 +40,8 @@ Pos::Pos()
 
 Pos::Pos(const Pos& other)
 {
-  lonX = other.lonX;
-  latY = other.latY;
-  altitude = other.altitude;
+  this->operator=(other);
+
 }
 
 Pos::Pos(float longitudeX, float latitudeY, float alt)
@@ -321,6 +320,7 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
 {
   if(fraction <= 0.f)
     return *this;
+
   if(fraction >= 1.f)
     return otherPos;
 

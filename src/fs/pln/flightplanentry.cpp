@@ -30,6 +30,25 @@ FlightplanEntry::~FlightplanEntry()
 
 }
 
+FlightplanEntry::FlightplanEntry(const FlightplanEntry& other)
+{
+  this->operator=(other);
+
+}
+
+FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
+{
+  waypointType = other.waypointType;
+  waypointId = other.waypointId;
+  airway = other.airway;
+  icaoRegion = other.icaoRegion;
+  icaoIdent = other.icaoIdent;
+  name = other.name;
+  parking = other.parking;
+  position = other.position;
+  return *this;
+}
+
 const QString& FlightplanEntry::getWaypointTypeAsString() const
 {
   return waypointTypeToString(waypointType);

@@ -31,9 +31,36 @@ Flightplan::Flightplan()
 
 }
 
+Flightplan::Flightplan(const Flightplan& other)
+{
+  this->operator=(other);
+
+}
+
 Flightplan::~Flightplan()
 {
 
+}
+
+Flightplan& Flightplan::operator=(const Flightplan& other)
+{
+  flightplanType = other.flightplanType;
+  routeType = other.routeType;
+  cruisingAlt = other.cruisingAlt;
+  appVersionMajor = other.appVersionMajor;
+  appVersionBuild = other.appVersionBuild;
+  filename = other.filename;
+  title = other.title;
+  departureIdent = other.departureIdent;
+  destinationIdent = other.destinationIdent;
+  description = other.description;
+  departureParkingName = other.departureParkingName;
+  departureAiportName = other.departureAiportName;
+  destinationAiportName = other.destinationAiportName;
+  departurePos = other.departurePos;
+  destinationPos = other.destinationPos;
+  entries = other.entries;
+  return *this;
 }
 
 void Flightplan::load(const QString& file)
