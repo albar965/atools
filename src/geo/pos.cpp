@@ -319,6 +319,11 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float fraction) const
 
 Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
 {
+  if(fraction <= 0.f)
+    return *this;
+  if(fraction >= 1.f)
+    return otherPos;
+
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
   double lon2 = toRadians(otherPos.lonX);

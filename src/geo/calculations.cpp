@@ -21,5 +21,38 @@ namespace atools {
 
 namespace geo {
 
-} /* namespace geo */
+float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, LineDist *distType)
+{
+  float vx = x2 - x1, vy = y2 - y1;
+  float wx = x - x1, wy = y - y1;
+  float dist;
+  float c1 = vx * wx + vy * wy; // dot product
+  if(c1 <= 0)
+  {
+    dist = atools::geo::simpleDistanceF(x, y, x1, y1);
+    if(distType != nullptr)
+      *distType = DIST_TO_START;
+  }
+  else
+  {
+    float c2 = vx * vx + vy * vy; // dot product
+    if(c2 <= c1)
+    {
+      dist = atools::geo::simpleDistanceF(x, y, x2, y2);
+      if(distType != nullptr)
+        *distType = DIST_TO_END;
+    }
+    else
+    {
+      // get line in parameter form
+      float a = y1 - y2, b = x2 - x1, c = x1 * y2 - x2 * y1;
+      dist = std::abs(a * x + b * y + c) / std::sqrt(a * a + b * b);
+      if(distType != nullptr)
+        *distType = DIST_TO_LINE;
+    }
+  }
+  return dist;
+}
+
+} // namespace geo
 } // namespace atools

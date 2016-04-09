@@ -24,6 +24,16 @@
 namespace atools {
 namespace geo {
 
+enum LineDist
+{
+  DIST_TO_LINE,
+  DIST_TO_START,
+  DIST_TO_END
+};
+
+float distanceToLine(float x, float y, float x1, float y1, float x2, float y2,
+                     atools::geo::LineDist *distType = nullptr);
+
 template<typename TYPE>
 bool almostEqual(TYPE f1, TYPE f2)
 {
