@@ -31,7 +31,7 @@ enum LineDist
   DIST_TO_END
 };
 
-float distanceToLine(float x, float y, float x1, float y1, float x2, float y2,
+float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, bool lineOnly = false,
                      atools::geo::LineDist *distType = nullptr);
 
 template<typename TYPE>

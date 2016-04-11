@@ -370,6 +370,14 @@ bool Pos::isPole() const
   return latY > 89. || latY < -89.;
 }
 
+void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
+                            QList<Pos>& positions) const
+{
+  float step = 1.f / numPoints;
+  for(int j = 0; j < numPoints; j++)
+    positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)));
+}
+
 int Pos::deg(float value) const
 {
   float min = (value - static_cast<int>(value)) * 60.f;

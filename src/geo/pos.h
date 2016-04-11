@@ -119,6 +119,8 @@ public:
   /* Find point between start and end on GC route */
   Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
   Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
+  void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
+                         QList<Pos>& positions) const;
 
   /* Find point between start and end on rhumb line */
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
