@@ -57,6 +57,9 @@ public:
     return bottomRight;
   }
 
+  atools::geo::Pos getTopRight() const;
+  atools::geo::Pos getBottomLeft() const;
+
   float getWidthDegree() const;
   float getHeightDegree() const;
 
@@ -102,6 +105,9 @@ public:
   bool isPoint() const;
 
   static atools::geo::Rect EMPTY_RECT;
+
+  Pos getBottomCenter() const;
+  Pos getTopCenter() const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);

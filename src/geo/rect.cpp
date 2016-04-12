@@ -88,10 +88,30 @@ bool Rect::operator==(const Rect& other) const
   return topLeft == other.topLeft && bottomRight == other.bottomRight && valid == other.valid;
 }
 
+Pos Rect::getTopRight() const
+{
+  return Pos(bottomRight.getLonX(), topLeft.getLatY());
+}
+
+Pos Rect::getBottomLeft() const
+{
+  return Pos(topLeft.getLonX(), bottomRight.getLatY());
+}
+
+Pos Rect::getBottomCenter() const
+{
+  return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, bottomRight.getLatY());
+}
+
+Pos Rect::getTopCenter() const
+{
+  return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, topLeft.getLatY());
+}
+
 bool Rect::isPoint() const
 {
-  return topLeft.getLonX() == bottomRight.getLonX() &&
-         topLeft.getLatY() == bottomRight.getLatY();
+  return almostEqual(topLeft.getLonX(), bottomRight.getLonX()) &&
+         almostEqual(topLeft.getLatY(), bottomRight.getLatY());
 }
 
 float Rect::getWidthDegree() const
