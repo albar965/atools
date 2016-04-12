@@ -60,11 +60,11 @@ void IlsWriter::writeObject(const Ils *type)
   {
   int length = nmToMeter(8);
   // Calculate the display of the ILS feather
-  float ilsHeading = atools::geo::opposedCourseDeg(loc->getHeading());
-  Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2);
-  Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2);
+  float ilsHeading = normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
+  Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2).normalize();
+  Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2).normalize();
   float featherWidth = p1.distanceMeterTo(p2);
-  Pos pmid = pos.getPos().endpoint(length - featherWidth / 2, ilsHeading);
+  Pos pmid = pos.getPos().endpoint(length - featherWidth / 2, ilsHeading).normalize();
 
   bind(":end1_lonx", p1.getLonX());
   bind(":end1_laty", p1.getLatY());
