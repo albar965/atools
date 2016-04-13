@@ -21,6 +21,8 @@
 #include <cmath>
 #include <limits>
 
+#include <QString>
+
 namespace atools {
 namespace geo {
 
@@ -69,6 +71,18 @@ int roundToPrecision(TYPE value, int precision = 0)
     int factor = static_cast<int>(pow(10., precision));
     return static_cast<int>(round(value / factor)) * factor;
   }
+}
+
+/* To string with changing precision */
+template<typename TYPE>
+QString numberToString(TYPE value)
+{
+  int precision = 0;
+  if(value < 10)
+    precision = 2;
+  else if(value < 100)
+    precision = 1;
+  return QString::number(value, 'f', precision);
 }
 
 /* Distance from nautical miles to meters */
