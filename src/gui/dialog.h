@@ -75,7 +75,8 @@ public:
    * @see atools::settings::Settings
    */
   QString saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix,
-                         const QString& settingsPrefix = QString(), const QString& path = QString());
+                         const QString& settingsPrefix = QString(),
+                         const QString& path = QString(), const QString& filename = QString());
 
   /*
    * Shows a simple information message box that includes a checkbox which can
@@ -116,7 +117,7 @@ public:
 private:
   QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                      const QString& settingsPrefix, const QString& defaultFileSuffix,
-                     const QString& path);
+                     const QString& path, const QString& filename);
 
   QWidget *parent = nullptr;
 };

@@ -39,21 +39,30 @@ void Translator::load(const QString& language)
     QString appPath = appFilePath.absolutePath();
     QString appBaseName = appFilePath.baseName();
 
+    bool loadDefault = true;
     // try resources first
     if(!loadAndInstall(appBaseName, ":/" + appBaseName, language))
       // try resources translations second
       if(!loadAndInstall(appBaseName, ":/" + appBaseName + "/translations", language))
         // Last try in executable directory
-        loadAndInstall(appBaseName, appPath, language);
+        if(!loadAndInstall(appBaseName, appPath, language))
+        {
+          // No translations for this application found - force English to avoid mixed language in dialogs
+          QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
+          loadDefault = false;
+        }
 
-    QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
-    // First application path
-    if(!loadAndInstall("qt", appPath, language))
-      // second official translations path
-      loadAndInstall("qt", translationsPath, language);
+    if(loadDefault)
+    {
+      QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
+      // First application path
+      if(!loadAndInstall("qt", appPath, language))
+        // second official translations path
+        loadAndInstall("qt", translationsPath, language);
 
-    if(!loadAndInstall("qtbase", appPath, language))
-      loadAndInstall("qtbase", translationsPath, language);
+      if(!loadAndInstall("qtbase", appPath, language))
+        loadAndInstall("qtbase", translationsPath, language);
+    }
     loaded = true;
   }
   else

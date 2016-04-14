@@ -32,7 +32,7 @@ using atools::settings::Settings;
 
 QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                            const QString& settingsPrefix, const QString& defaultFileSuffix,
-                           const QString& path)
+                           const QString& path, const QString& filename)
 {
   dlg.setNameFilter(filter);
   dlg.setWindowTitle(QApplication::applicationName() + " - " + title);
@@ -74,6 +74,9 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
       dlg.setDirectory(dir.absolutePath());
   }
 
+  if(!filename.isEmpty())
+    dlg.selectFile(filename);
+
   if(dlg.exec() && !dlg.selectedFiles().isEmpty())
   {
     if(!settingsPrefix.isEmpty())
@@ -91,12 +94,12 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
 }
 
 QString Dialog::openDirectoryDialog(const QString& title, const QString& settingsPrefix,
-                               const QString& path)
+                                    const QString& path)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::DirectoryOnly);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path);
+  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString());
 }
 
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix,
@@ -105,19 +108,20 @@ QString Dialog::openFileDialog(const QString& title, const QString& filter, cons
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::ExistingFile);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path);
+  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString());
 }
 
 QString Dialog::saveFileDialog(const QString& title,
                                const QString& filter,
                                const QString& defaultFileSuffix,
                                const QString& settingsPrefix,
-                               const QString& path)
+                               const QString& path,
+                               const QString& filename)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::AnyFile);
   dlg.setAcceptMode(QFileDialog::AcceptSave);
-  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path);
+  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path, filename);
 }
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
@@ -145,15 +149,20 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   int retval = defaultButton;
   Settings& s = Settings::instance();
 
-  // show only if the key is true
-  if(s->value(settingsKey, true).toBool())
+  // show only if the key is true or empty
+  if(settingsKey.isEmpty() || s->value(settingsKey, true).toBool())
   {
     QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
-    msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
+    if(!checkBoxMessage.isEmpty())
+      msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
     retval = msg.exec();
-    s->setValue(settingsKey, !msg.checkBox()->isChecked());
-    s.syncSettings();
+
+    if(!settingsKey.isEmpty())
+    {
+      s->setValue(settingsKey, !msg.checkBox()->isChecked());
+      s.syncSettings();
+    }
   }
   return retval;
 }
