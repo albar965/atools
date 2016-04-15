@@ -44,8 +44,8 @@ namespace gui {
 
 using atools::settings::Settings;
 
-WidgetState::WidgetState(const QString& settingsKeyPrefix, bool saveVisibility)
-  : keyPrefix(settingsKeyPrefix), visibility(saveVisibility)
+WidgetState::WidgetState(const QString& settingsKeyPrefix, bool saveVisibility, bool blockSignals)
+  : keyPrefix(settingsKeyPrefix), visibility(saveVisibility), block(blockSignals)
 {
 
 }
@@ -132,6 +132,9 @@ void WidgetState::restore(QObject *widget)
 {
   if(widget != nullptr)
   {
+    if(block)
+      widget->blockSignals(true);
+
     Settings& s = Settings::instance();
 
     if(const QLayout * layout = dynamic_cast<const QLayout *>(widget))
@@ -254,6 +257,9 @@ void WidgetState::restore(QObject *widget)
       loadWidgetVisible(s, f);
     else
       qWarning() << "Found unsupported widet type in load" << widget->metaObject()->className();
+
+    if(block)
+      widget->blockSignals(false);
   }
   else
     qWarning() << "Found null widget in load";

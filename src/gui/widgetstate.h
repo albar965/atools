@@ -33,7 +33,7 @@ class WidgetState
 {
 
 public:
-  WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true);
+  WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true, bool blockSignals = false);
 
   void save(const QList<QObject *>& widgets);
   void restore(const QList<QObject *>& widgets);
@@ -45,7 +45,7 @@ public:
 
 private:
   QString keyPrefix;
-  bool visibility = true;
+  bool visibility = true, block = false;
 
   void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value);
   QVariant loadWidget(atools::settings::Settings& settings, QObject *w);
