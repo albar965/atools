@@ -15,28 +15,26 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-----------------------------------------------------------------
--- Populate route_node table with VOR and NDB -----------------------------------
+-- Populate route_node table with waypoints -----------------------------------
 
-delete from route_node;
+insert into route_node (nav_id, type, num_victor_airway, num_jet_airway, lonx, laty)
+select waypoint_id as nav_id, 4 as type, num_victor_airway, num_jet_airway, lonx, laty
+from waypoint
+where num_victor_airway > 0 or num_jet_airway > 0;
 
-insert into route_node (nav_id, type, range, lonx, laty)
-select vor_id as nav_id,
+-- Populate route_edge table with airways -----------------------------------
+
+insert into route_edge (from_node_id,  to_node_id, type, minimum_altitude)
+select n1.node_id as from_node_id, n2.node_id as to_node_id,
 case
-  when dme_only = 1 then 2
-  when dme_altitude is null then 0
-  else 1
+  when a.airway_type = 'VICTOR' then 1
+  when a.airway_type = 'JET' then 2
+  when a.airway_type = 'BOTH' then 2
+  else 0
 end as type,
-range, lonx, laty
-from vor;
+a.minimum_altitude
+from airway a join route_node n1 on a.from_waypoint_id = n1.nav_id
+join route_node n2 on a.to_waypoint_id = n2.nav_id
+where n1.type = 4 and n2.type = 4;
 
-insert into route_node (nav_id, type, range, lonx, laty)
-select ndb_id as nav_id, 3 as type, range, lonx, laty
-from ndb;
-
-create index if not exists idx_route_node_nav_id on route_node(nav_id);
-create index if not exists idx_route_node_type on route_node(type);
-
-create index if not exists idx_route_node_lonx on route_node(lonx);
-create index if not exists idx_route_node_laty on route_node(laty);
 

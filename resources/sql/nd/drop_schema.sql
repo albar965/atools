@@ -61,3 +61,6 @@ drop table if exists boundary;
 drop table if exists bgl_file;
 drop table if exists scenery_area;
 drop table if exists metadata;
+
+drop table if exists route_edge;
+drop table if exists route_node;

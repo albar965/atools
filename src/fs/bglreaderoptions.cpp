@@ -145,6 +145,7 @@ void BglReaderOptions::loadFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveAirways(settings.value("Options/ResolveAirways", true).toBool());
+  setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());

@@ -23,10 +23,6 @@
 
 #include <QSet>
 
-namespace db {
-class Database;
-}
-
 namespace atools {
 namespace fs {
 namespace db {
@@ -34,7 +30,7 @@ namespace db {
 class AirwayResolver
 {
 public:
-  AirwayResolver(atools::sql::SqlDatabase& sqlDb);
+  AirwayResolver(atools::sql::SqlDatabase *sqlDb);
   virtual ~AirwayResolver();
 
   void run();
@@ -75,7 +71,7 @@ private:
 
   int curAirwayId, numAirways;
   atools::sql::SqlQuery airwayInsertStmt;
-  atools::sql::SqlDatabase& db;
+  atools::sql::SqlDatabase *db;
 };
 
 } // namespace writer

@@ -49,7 +49,8 @@ public:
                         const QStringList& identityColumns);
 
   /* Creates an insert statement including all columns for the given table. */
-  QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString());
+  QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString(),
+                               const QStringList& excludeColumns = QStringList());
 
   /* Creates a select statement including all columns for the given table. */
   QString buildSelectStatement(const QString& tablename);

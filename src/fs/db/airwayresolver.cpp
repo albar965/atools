@@ -33,6 +33,7 @@
 namespace atools {
 namespace fs {
 namespace db {
+
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -50,10 +51,10 @@ QDebug operator<<(QDebug out, const AirwayResolver::Leg& l)
   return out;
 }
 
-AirwayResolver::AirwayResolver(SqlDatabase& sqlDb)
+AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb)
   : curAirwayId(0), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
-  SqlUtil util(&sqlDb);
+  SqlUtil util(sqlDb);
   airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
 }
 
@@ -185,7 +186,7 @@ void AirwayResolver::run()
 
     if(curAirway.isEmpty() || rName.at(0) != curAirway.at(0))
     {
-      db.commit();
+      db->commit();
       qInfo() << rName << "...";
     }
     if(rName != curAirway)

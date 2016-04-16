@@ -113,6 +113,11 @@ public:
     return resolveAirways;
   }
 
+  bool isCreateRouteTables() const
+  {
+    return createRouteTables;
+  }
+
   bool includeFilename(const QString& filename) const;
   bool includePath(const QString& filepath) const;
   bool includeAirport(const QString& icao) const;
@@ -166,6 +171,11 @@ public:
     resolveAirways = value;
   }
 
+  void setCreateRouteTables(bool value)
+  {
+    createRouteTables = value;
+  }
+
   typedef std::function<bool (const atools::fs::BglReaderProgressInfo&)> ProgressCallbackType;
 
   void setProgressCallback(ProgressCallbackType func);
@@ -193,7 +203,7 @@ private:
 
   QString sceneryFile, basepath;
   bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
-       resolveAirways = true, databaseReport = false;
+       resolveAirways = true, createRouteTables = true, databaseReport = false;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl;

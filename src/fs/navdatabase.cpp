@@ -23,7 +23,8 @@
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
 #include "fs/scenery/scenerycfg.h"
-#include "fs/db/routeresolver.h"
+#include "fs/db/airwayresolver.h"
+#include "fs/db/routeedgewriter.h"
 #include "fs/db/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 
@@ -71,7 +72,7 @@ void Navdatabase::createSchema()
 }
 
 // Number of progress steps besides scenery areas
-const int NUM_STEPS = 9;
+const int NUM_STEPS = 11;
 const int NUM_DB_REPORT_STEPS = 4;
 const int NUM_RESOLVE_AIRWAY_STEPS = 1;
 
@@ -137,7 +138,7 @@ void Navdatabase::createInternal()
     if((aborted = progress.reportProgressOther(QObject::tr("Creating airways"))) == true)
       return;
 
-    atools::fs::db::AirwayResolver resolver(*db);
+    atools::fs::db::AirwayResolver resolver(db);
     resolver.run();
     db->commit();
   }
@@ -166,10 +167,26 @@ void Navdatabase::createInternal()
   script.executeScript(":/atools/resources/sql/nd/populate_nav_search.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Populating Route Node Table"))) == true)
+  if((aborted =
+        progress.reportProgressOther(QObject::tr("Populating Route Node Table"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/populate_route_node.sql");
+  db->commit();
+
+  if((aborted = progress.reportProgressOther(
+        QObject::tr("Populating Route Edge Table for VOR and NDB"))) == true)
+    return;
+
+  atools::fs::db::RouteEdgeWriter edgeWriter(db);
+  edgeWriter.run();
+  db->commit();
+
+  if((aborted =
+        progress.reportProgressOther(QObject::tr("Populating Route Edge Table for Waypoints"))) == true)
+    return;
+
+  script.executeScript(":/atools/resources/sql/nd/populate_route_edge.sql");
   db->commit();
 
   if((aborted = progress.reportProgressOther(QObject::tr("Creating Search Indexes"))) == true)

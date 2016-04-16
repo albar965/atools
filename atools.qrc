@@ -23,5 +23,6 @@
         <file>resources/sql/nd/create_route_schema.sql</file>
         <file>resources/sql/nd/populate_route_node.sql</file>
         <file>resources/sql/nd/populate_nav_search.sql</file>
+        <file>resources/sql/nd/populate_route_edge.sql</file>
     </qresource>
 </RCC>

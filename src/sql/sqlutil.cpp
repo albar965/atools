@@ -29,7 +29,8 @@ SqlUtil::SqlUtil(SqlDatabase *sqlDb)
 {
 }
 
-QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause)
+QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause,
+                                      const QStringList& excludeColumns)
 {
   // TODO use QSqlDriver::sqlStatement()
 
@@ -45,6 +46,9 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
   for(int i = 0; i < record.count(); ++i)
   {
     QString name = record.fieldName(i);
+
+    if(excludeColumns.contains(name))
+      continue;
 
     if(!columnList.isEmpty())
       columnList += ", ";

@@ -36,7 +36,7 @@ public:
   Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
-  Rect(const atools::geo::Pos & center, float radius);
+  Rect(const atools::geo::Pos & center, float radiusMeter);
 
   Rect& operator=(const Rect& other);
 
