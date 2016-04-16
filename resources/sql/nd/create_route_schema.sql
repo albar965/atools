@@ -15,26 +15,17 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
--- drop table if exists route_node;
---
--- create table route_node
--- (
---   route_node_id integer primary key,
---   nav_id integer,
---   ident varchar(5),
---   region varchar(2),
---   airport_id integer,
---   type varchar(15) not null,
---   num_victor_route integer not null,
---   num_jet_route integer not null,
---   mag_var double not null,
---   lonx double not null,
---   laty double not null,
--- foreign key(file_id) references bgl_file(bgl_file_id),
--- foreign key(airport_id) references airport(airport_id)
--- );
---
--- create index if not exists idx_waypoint_file_id on waypoint(file_id);
--- create index if not exists idx_waypoint_airport_id on waypoint(airport_id);
--- create index if not exists idx_waypoint_nav_id on waypoint(nav_id);
+drop table if exists route_node;
+
+create table route_node
+(
+  node_id integer primary key,
+  nav_id integer not null,
+  type integer not null, -- 0 = VOR, 1 = VORDME, 2 = DME, 3 = NDB, 4 = WAYPOINT
+  range integer,
+  num_victor_route integer,
+  num_jet_route integer,
+  lonx double not null,
+  laty double not null
+);
 

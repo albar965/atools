@@ -64,13 +64,14 @@ void Navdatabase::createSchema()
   script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
+  script.executeScript(":/atools/resources/sql/nd/create_route_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_views.sql");
   db->commit();
 }
 
 // Number of progress steps besides scenery areas
-const int NUM_STEPS = 8;
+const int NUM_STEPS = 9;
 const int NUM_DB_REPORT_STEPS = 4;
 const int NUM_RESOLVE_ROUTE_STEPS = 1;
 
@@ -119,7 +120,7 @@ void Navdatabase::createInternal()
     }
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Creating post load indexes"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Creating Indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
@@ -159,13 +160,19 @@ void Navdatabase::createInternal()
   script.executeScript(":/atools/resources/sql/nd/update_ils_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Creating Nav Search Table"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Populating Nav Search Table"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/create_nav_search.sql");
+  script.executeScript(":/atools/resources/sql/nd/populate_nav_search.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Creating final indexes"))) == true)
+  if((aborted = progress.reportProgressOther(QObject::tr("Populating Route Node Table"))) == true)
+    return;
+
+  script.executeScript(":/atools/resources/sql/nd/populate_route_node.sql");
+  db->commit();
+
+  if((aborted = progress.reportProgressOther(QObject::tr("Creating Search Indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
