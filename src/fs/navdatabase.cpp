@@ -73,7 +73,7 @@ void Navdatabase::createSchema()
 // Number of progress steps besides scenery areas
 const int NUM_STEPS = 9;
 const int NUM_DB_REPORT_STEPS = 4;
-const int NUM_RESOLVE_ROUTE_STEPS = 1;
+const int NUM_RESOLVE_AIRWAY_STEPS = 1;
 
 void Navdatabase::createInternal()
 {
@@ -95,8 +95,8 @@ void Navdatabase::createInternal()
   int total = numFiles + numSceneryAreas + NUM_STEPS;
   if(options->isDatabaseReport())
     total += NUM_DB_REPORT_STEPS;
-  if(options->isResolveRoutes())
-    total += NUM_RESOLVE_ROUTE_STEPS;
+  if(options->isResolveAirways())
+    total += NUM_RESOLVE_AIRWAY_STEPS;
 
   progress.setTotal(total);
 
@@ -132,12 +132,12 @@ void Navdatabase::createInternal()
   script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
   db->commit();
 
-  if(options->isResolveRoutes())
+  if(options->isResolveAirways())
   {
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating routes"))) == true)
+    if((aborted = progress.reportProgressOther(QObject::tr("Creating airways"))) == true)
       return;
 
-    atools::fs::db::RouteResolver resolver(*db);
+    atools::fs::db::AirwayResolver resolver(*db);
     resolver.run();
     db->commit();
   }

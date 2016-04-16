@@ -15,18 +15,18 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAV_ROUTEENTRY_H_
-#define BGL_NAV_ROUTEENTRY_H_
+#ifndef BGL_NAV_AIRWAYENTRY_H_
+#define BGL_NAV_AIRWAYENTRY_H_
 
 #include "fs/bgl/bglbase.h"
-#include "fs/bgl/nav/routewaypoint.h"
+#include "fs/bgl/nav/airwaywaypoint.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
 namespace nav {
-enum RouteType
+enum AirwayType
 {
   NONE = 0,
   VICTOR = 1,
@@ -36,23 +36,23 @@ enum RouteType
 
 } // namespace nav
 
-class RouteEntry :
+class AirwayEntry :
   public atools::fs::bgl::BglBase
 {
 public:
-  RouteEntry(const BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~RouteEntry();
+  AirwayEntry(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~AirwayEntry();
 
   bool hasNextWaypoint() const;
 
   bool hasPreviousWaypoint() const;
 
-  const atools::fs::bgl::RouteWaypoint& getNextWaypoint() const
+  const atools::fs::bgl::AirwayWaypoint& getNextWaypoint() const
   {
     return next;
   }
 
-  const atools::fs::bgl::RouteWaypoint& getPreviousWaypoint() const
+  const atools::fs::bgl::AirwayWaypoint& getPreviousWaypoint() const
   {
     return previous;
   }
@@ -62,25 +62,25 @@ public:
     return name;
   }
 
-  atools::fs::bgl::nav::RouteType getType() const
+  atools::fs::bgl::nav::AirwayType getType() const
   {
     return type;
   }
 
-  static QString routeTypeToStr(atools::fs::bgl::nav::RouteType type);
+  static QString airwayTypeToStr(atools::fs::bgl::nav::AirwayType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RouteEntry& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwayEntry& record);
 
-  atools::fs::bgl::nav::RouteType type;
+  atools::fs::bgl::nav::AirwayType type;
   QString name;
 
-  atools::fs::bgl::RouteWaypoint next;
-  atools::fs::bgl::RouteWaypoint previous;
+  atools::fs::bgl::AirwayWaypoint next;
+  atools::fs::bgl::AirwayWaypoint previous;
 };
 
 } // namespace bgl
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAV_ROUTEENTRY_H_ */
+#endif /* BGL_NAV_AIRWAYENTRY_H_ */

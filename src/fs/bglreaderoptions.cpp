@@ -144,7 +144,7 @@ bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
 void BglReaderOptions::loadFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
-  setResolveRoutes(settings.value("Options/ResolveRoutes", true).toBool());
+  setResolveAirways(settings.value("Options/ResolveAirways", true).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
   setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
@@ -332,8 +332,8 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case MARKER:
       return "MARKER";
 
-    case ROUTE:
-      return "ROUTE";
+    case AIRWAY:
+      return "AIRWAY";
 
     case APRON:
       return "APRON";
@@ -399,8 +399,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return FENCE;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
-  else if(typeStr == "ROUTE")
-    return ROUTE;
+  else if(typeStr == "AIRWAY")
+    return AIRWAY;
   else if(typeStr == "GEOMETRY")
     return GEOMETRY;
   else

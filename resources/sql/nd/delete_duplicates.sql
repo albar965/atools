@@ -36,13 +36,13 @@ delete from waypoint where waypoint_id in (
 select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
   n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
 where n1.waypoint_id < n2.waypoint_id and n1.airport_id is null and
-n1.waypoint_id not in (select waypoint_id from route_point)) ;
+n1.waypoint_id not in (select waypoint_id from airway_point)) ;
 
 delete from waypoint where waypoint_id in (
 select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
   n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
 where n1.waypoint_id > n2.waypoint_id and n1.airport_id is null and
-n1.waypoint_id not in (select waypoint_id from route_point)) ;
+n1.waypoint_id not in (select waypoint_id from airway_point)) ;
 */
 
 delete from marker where marker_id in (

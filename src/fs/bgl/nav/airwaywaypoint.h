@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAV_ROUTEWAYPOINT_H_
-#define BGL_NAV_ROUTEWAYPOINT_H_
+#ifndef BGL_NAV_AIRWAYWAYPOINT_H_
+#define BGL_NAV_AIRWAYWAYPOINT_H_
 
 #include "fs/bgl/bglbase.h"
 
@@ -28,25 +28,25 @@ namespace bgl {
 
 namespace nav {
 
-enum RouteWaypointType
+enum AirwayWaypointType
 {
-  ROUTE_WP_NONE = 0,
-  ROUTE_WP_NDB = 1, // wiki error reported
-  ROUTE_WP_VOR = 2,
-  ROUTE_WP_OTHER = 5
+  AIRWAY_WP_NONE = 0,
+  AIRWAY_WP_NDB = 1, // wiki error reported
+  AIRWAY_WP_VOR = 2,
+  AIRWAY_WP_OTHER = 5
 };
 
 } // namespace nav
 
-class RouteWaypoint :
+class AirwayWaypoint :
   public atools::fs::bgl::BglBase
 {
 public:
-  RouteWaypoint(const BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~RouteWaypoint();
+  AirwayWaypoint(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~AirwayWaypoint();
 
-  RouteWaypoint()
-    : type(atools::fs::bgl::nav::ROUTE_WP_NONE), minimumAltitude(0.f)
+  AirwayWaypoint()
+    : type(atools::fs::bgl::nav::AIRWAY_WP_NONE), minimumAltitude(0.f)
   {
   }
 
@@ -70,17 +70,17 @@ public:
     return region;
   }
 
-  atools::fs::bgl::nav::RouteWaypointType getType() const
+  atools::fs::bgl::nav::AirwayWaypointType getType() const
   {
     return type;
   }
 
-  static QString routeWaypointTypeToStr(atools::fs::bgl::nav::RouteWaypointType type);
+  static QString airwayWaypointTypeToStr(atools::fs::bgl::nav::AirwayWaypointType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RouteWaypoint& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwayWaypoint& record);
 
-  atools::fs::bgl::nav::RouteWaypointType type;
+  atools::fs::bgl::nav::AirwayWaypointType type;
   QString ident, region, airportIdent;
   float minimumAltitude;
 };
@@ -89,4 +89,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAV_ROUTEWAYPOINT_H_ */
+#endif /* BGL_NAV_AIRWAYWAYPOINT_H_ */

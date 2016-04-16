@@ -82,15 +82,15 @@ create index if not exists idx_airport_altitude on airport(altitude);
 create index if not exists idx_airport_lonx on airport(lonx);
 create index if not exists idx_airport_laty on airport(laty);
 
-create index if not exists idx_route_left_lonx on route(left_lonx);
-create index if not exists idx_route_top_laty on route(top_laty);
-create index if not exists idx_route_right_lonx on route(right_lonx);
-create index if not exists idx_route_bottom_laty on route(bottom_laty);
+create index if not exists idx_airway_left_lonx on airway(left_lonx);
+create index if not exists idx_airway_top_laty on airway(top_laty);
+create index if not exists idx_airway_right_lonx on airway(right_lonx);
+create index if not exists idx_airway_bottom_laty on airway(bottom_laty);
 
-create index if not exists idx_route_from_lonx on route(from_lonx);
-create index if not exists idx_route_from_laty on route(from_laty);
-create index if not exists idx_route_to_lonx on route(to_lonx);
-create index if not exists idx_route_to_laty on route(to_laty);
+create index if not exists idx_airway_from_lonx on airway(from_lonx);
+create index if not exists idx_airway_from_laty on airway(from_laty);
+create index if not exists idx_airway_to_lonx on airway(to_lonx);
+create index if not exists idx_airway_to_laty on airway(to_laty);
 
 -------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------

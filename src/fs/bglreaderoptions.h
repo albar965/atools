@@ -52,7 +52,7 @@ enum BglObjectType
   APRONLIGHT,
   FENCE,
   TAXIWAY,
-  ROUTE,
+  AIRWAY,
   GEOMETRY
 };
 
@@ -108,9 +108,9 @@ public:
     return databaseReport;
   }
 
-  bool isResolveRoutes() const
+  bool isResolveAirways() const
   {
-    return resolveRoutes;
+    return resolveAirways;
   }
 
   bool includeFilename(const QString& filename) const;
@@ -161,9 +161,9 @@ public:
 
   void loadFromSettings(const QSettings& settings);
 
-  void setResolveRoutes(bool value)
+  void setResolveAirways(bool value)
   {
-    resolveRoutes = value;
+    resolveAirways = value;
   }
 
   typedef std::function<bool (const atools::fs::BglReaderProgressInfo&)> ProgressCallbackType;
@@ -193,7 +193,7 @@ private:
 
   QString sceneryFile, basepath;
   bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
-       resolveRoutes = true, databaseReport = false;
+       resolveAirways = true, databaseReport = false;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl;

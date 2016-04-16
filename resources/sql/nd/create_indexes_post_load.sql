@@ -18,8 +18,8 @@
 create index if not exists idx_waypoint_type on waypoint(type);
 create index if not exists idx_waypoint_region on waypoint(region);
 create index if not exists idx_waypoint_ident on waypoint(ident);
-create index if not exists idx_waypoint_num_vroute on waypoint(num_victor_route);
-create index if not exists idx_waypoint_num_rroute on waypoint(num_jet_route);
+create index if not exists idx_waypoint_num_vairway on waypoint(num_victor_airway);
+create index if not exists idx_waypoint_num_rairway on waypoint(num_jet_airway);
 
 create index if not exists idx_vor_type on vor(type);
 create index if not exists idx_vor_region on vor(region);

@@ -25,8 +25,8 @@ drop view if exists v_airport_scenery;
 
 drop table if exists nav_search;
 
-drop table if exists route;
-drop table if exists route_point;
+drop table if exists airway;
+drop table if exists airway_point;
 drop table if exists ils;
 drop table if exists marker;
 drop table if exists ndb;

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/nav/routeentry.h"
+#include "fs/bgl/nav/airwayentry.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 
@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QString RouteEntry::routeTypeToStr(nav::RouteType type)
+QString AirwayEntry::airwayTypeToStr(nav::AirwayType type)
 {
   switch(type)
   {
@@ -41,40 +41,40 @@ QString RouteEntry::routeTypeToStr(nav::RouteType type)
     case nav::BOTH:
       return "BOTH";
   }
-  qWarning().nospace().noquote() << "Unknown route type " << type;
+  qWarning().nospace().noquote() << "Unknown airway type " << type;
   return QString();
 }
 
-RouteEntry::RouteEntry(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+AirwayEntry::AirwayEntry(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
-  type = static_cast<nav::RouteType>(bs->readUByte());
+  type = static_cast<nav::AirwayType>(bs->readUByte());
   name = bs->readString(8);
 
-  next = RouteWaypoint(options, bs);
-  previous = RouteWaypoint(options, bs);
+  next = AirwayWaypoint(options, bs);
+  previous = AirwayWaypoint(options, bs);
 }
 
-RouteEntry::~RouteEntry()
+AirwayEntry::~AirwayEntry()
 {
 }
 
-bool RouteEntry::hasNextWaypoint() const
+bool AirwayEntry::hasNextWaypoint() const
 {
-  return next.getType() != nav::ROUTE_WP_NONE;
+  return next.getType() != nav::AIRWAY_WP_NONE;
 }
 
-bool RouteEntry::hasPreviousWaypoint() const
+bool AirwayEntry::hasPreviousWaypoint() const
 {
-  return previous.getType() != nav::ROUTE_WP_NONE;
+  return previous.getType() != nav::AIRWAY_WP_NONE;
 }
 
-QDebug operator<<(QDebug out, const RouteEntry& record)
+QDebug operator<<(QDebug out, const AirwayEntry& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " RouteEntry[type " << RouteEntry::routeTypeToStr(record.type)
+  << " AirwayEntry[type " << AirwayEntry::airwayTypeToStr(record.type)
   << ", name " << record.name;
 
   if(record.hasNextWaypoint())

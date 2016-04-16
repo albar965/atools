@@ -17,7 +17,7 @@
 
 #include "fs/bgl/nav/waypoint.h"
 #include "fs/bgl/converter.h"
-#include "fs/bgl/nav/routeentry.h"
+#include "fs/bgl/nav/airwayentry.h"
 #include "io/binarystream.h"
 #include "fs/bglreaderoptions.h"
 
@@ -43,8 +43,8 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
     case nav::NDB:
       return "NDB";
 
-    case nav::OFF_ROUTE:
-      return "OFF_ROUTE";
+    case nav::OFF_AIRWAY:
+      return "OFF_AIRWAY";
 
     case nav::IAF:
       return "IAF";
@@ -60,7 +60,7 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<nav::WaypointType>(bs->readUByte());
-  int numRoutes = bs->readUByte();
+  int numAirways = bs->readUByte();
   position = BglPosition(bs);
   magVar = bs->readFloat();
   magVar = magVar > 180.f ? magVar - 360.f : magVar;
@@ -77,21 +77,21 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   if(ident.isEmpty() && type != nav::UNNAMED)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  if(options->includeBglObject(type::ROUTE))
-    for(int i = 0; i < numRoutes; i++)
-      routes.push_back(RouteEntry(options, bs));
+  if(options->includeBglObject(type::AIRWAY))
+    for(int i = 0; i < numAirways; i++)
+      airways.push_back(AirwayEntry(options, bs));
 
-  for(const RouteEntry& re : routes)
+  for(const AirwayEntry& re : airways)
   {
     if(re.getType() == atools::fs::bgl::nav::BOTH)
     {
-      numVictorRoute++;
-      numJetRoute++;
+      numVictorAirway++;
+      numJetAirway++;
     }
     else if(re.getType() == atools::fs::bgl::nav::VICTOR)
-      numVictorRoute++;
+      numVictorAirway++;
     else if(re.getType() == atools::fs::bgl::nav::JET)
-      numJetRoute++;
+      numJetAirway++;
   }
 }
 
@@ -110,7 +110,7 @@ QDebug operator<<(QDebug out, const Waypoint& record)
   << ", ident " << record.ident
   << ", region " << record.region
   << ", airport ID " << record.airportIdent << endl;
-  out << record.routes;
+  out << record.airways;
   out << "]";
   return out;
 }

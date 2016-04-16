@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/nav/temproutewriter.h"
+#include "fs/db/nav/tempairwaywriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
-#include "fs/bgl/nav/routewaypoint.h"
+#include "fs/bgl/nav/airwaywaypoint.h"
 #include "fs/bgl/util.h"
 #include "fs/db/nav/waypointwriter.h"
 #include "geo/calculations.h"
@@ -27,22 +27,22 @@ namespace atools {
 namespace fs {
 namespace db {
 
-using atools::fs::bgl::RouteEntry;
+using atools::fs::bgl::AirwayEntry;
 using atools::sql::SqlQuery;
 
-void TempRouteWriter::writeObject(const RouteEntry *type)
+void TempAirwayWriter::writeObject(const AirwayEntry *type)
 {
-  bind(":route_point_id", getNextId());
+  bind(":airway_point_id", getNextId());
   bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());
   bind(":name", type->getName());
-  bind(":type", RouteEntry::routeTypeToStr(type->getType()));
+  bind(":type", AirwayEntry::airwayTypeToStr(type->getType()));
 
   if(type->hasNextWaypoint())
   {
     using namespace atools::geo;
 
     bind(":next_type",
-         bgl::util::enumToStr(bgl::RouteWaypoint::routeWaypointTypeToStr,
+         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr,
                               type->getNextWaypoint().getType()));
     bind(":next_ident", type->getNextWaypoint().getIdent());
     bind(":next_region", type->getNextWaypoint().getRegion());
@@ -64,7 +64,7 @@ void TempRouteWriter::writeObject(const RouteEntry *type)
     using namespace atools::geo;
 
     bind(":previous_type",
-         bgl::util::enumToStr(bgl::RouteWaypoint::routeWaypointTypeToStr,
+         bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr,
                               type->getPreviousWaypoint().getType()));
     bind(":previous_ident", type->getPreviousWaypoint().getIdent());
     bind(":previous_region", type->getPreviousWaypoint().getRegion());

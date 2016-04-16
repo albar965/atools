@@ -26,8 +26,8 @@ create table waypoint
   region varchar(2),
   airport_id integer,
   type varchar(15) not null,
-  num_victor_route integer not null,
-  num_jet_route integer not null,
+  num_victor_airway integer not null,
+  num_jet_airway integer not null,
   mag_var double not null,
   lonx double not null,
   laty double not null,
@@ -157,11 +157,11 @@ create index if not exists idx_ils_loc_runway_end_id on ils(loc_runway_end_id);
 
 -- **************************************************
 
-drop table if exists route_point;
+drop table if exists airway_point;
 
-create table route_point
+create table airway_point
 (
-  route_point_id integer primary key,
+  airway_point_id integer primary key,
   waypoint_id integer not null,
   name varchar(50) not null,
   type varchar(15) not null,
@@ -178,18 +178,18 @@ create table route_point
 foreign key(waypoint_id) references waypoint(waypoint_id)
 );
 
-create index if not exists idx_route_point_loc_waypoint_id on route_point(waypoint_id);
+create index if not exists idx_airway_point_loc_waypoint_id on airway_point(waypoint_id);
 
 -- **************************************************
 
-drop table if exists route;
+drop table if exists airway;
 
-create table route
+create table airway
 (
-  route_id integer primary key,
-  route_name varchar(5) not null,
-  route_type varchar(15) not null,
-  route_fragment_no integer not null,
+  airway_id integer primary key,
+  airway_name varchar(5) not null,
+  airway_type varchar(15) not null,
+  airway_fragment_no integer not null,
   sequence_no integer not null,
   from_waypoint_id integer not null,
   to_waypoint_id integer not null,
@@ -206,8 +206,8 @@ foreign key(from_waypoint_id) references waypoint(waypoint_id),
 foreign key(to_waypoint_id) references waypoint(waypoint_id)
 );
 
-create index if not exists idx_route_from_waypoint_id on route(from_waypoint_id);
-create index if not exists idx_route_to_waypoint_id on route(to_waypoint_id);
+create index if not exists idx_airway_from_waypoint_id on airway(from_waypoint_id);
+create index if not exists idx_airway_to_waypoint_id on airway(to_waypoint_id);
 
 -- **************************************************
 
@@ -230,8 +230,8 @@ create table nav_search
   type varchar(15) not null, -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
   nav_type varchar(15) not null, -- WAYPOINT, VORDME, VOR, DME, NDB
   frequency integer,
-  waypoint_num_victor_route integer,
-  waypoint_num_jet_route integer,
+  waypoint_num_victor_airway integer,
+  waypoint_num_jet_airway integer,
   scenery_local_path varchar(250) collate nocase not null,
   bgl_filename varchar(300) collate nocase not null,
   mag_var double not null,

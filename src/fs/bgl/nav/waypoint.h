@@ -20,7 +20,7 @@
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/bglposition.h"
-#include "fs/bgl/nav/routeentry.h"
+#include "fs/bgl/nav/airwayentry.h"
 
 #include <QString>
 #include <QList>
@@ -37,7 +37,7 @@ enum WaypointType
   UNNAMED = 2,
   VOR = 3,
   NDB = 4,
-  OFF_ROUTE = 5,
+  OFF_AIRWAY = 5,
   IAF = 6,
   FAF = 7
 };
@@ -81,21 +81,21 @@ public:
     return type;
   }
 
-  const QList<atools::fs::bgl::RouteEntry>& getRoutes() const
+  const QList<atools::fs::bgl::AirwayEntry>& getAirways() const
   {
-    return routes;
+    return airways;
   }
 
   static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
-  int getNumVictorRoute() const
+  int getNumVictorAirway() const
   {
-    return numVictorRoute;
+    return numVictorAirway;
   }
 
-  int getNumJetRoute() const
+  int getNumJetAirway() const
   {
-    return numJetRoute;
+    return numJetAirway;
   }
 
 private:
@@ -105,8 +105,8 @@ private:
   atools::fs::bgl::BglPosition position;
   float magVar;
   QString ident, region, airportIdent;
-  int numVictorRoute = 0, numJetRoute = 0;
-  QList<atools::fs::bgl::RouteEntry> routes;
+  int numVictorAirway = 0, numJetAirway = 0;
+  QList<atools::fs::bgl::AirwayEntry> airways;
 };
 
 } // namespace bgl

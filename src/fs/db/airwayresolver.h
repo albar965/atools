@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_ROUTERESOLVER_H_
-#define WRITER_ROUTERESOLVER_H_
+#ifndef WRITER_AIRWAYRESOLVER_H_
+#define WRITER_AIRWAYRESOLVER_H_
 
 #include "sql/sqlquery.h"
 #include "geo/pos.h"
@@ -31,11 +31,11 @@ namespace atools {
 namespace fs {
 namespace db {
 
-class RouteResolver
+class AirwayResolver
 {
 public:
-  RouteResolver(atools::sql::SqlDatabase& sqlDb);
-  virtual ~RouteResolver();
+  AirwayResolver(atools::sql::SqlDatabase& sqlDb);
+  virtual ~AirwayResolver();
 
   void run();
 
@@ -46,9 +46,10 @@ public:
 
     }
 
-    Leg(int fromId, int toId, int minAltitude, QString routeType,
+    Leg(int fromId, int toId, int minAltitude, QString airwayType,
         const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
-      : from(fromId), to(toId), minAlt(minAltitude), type(routeType), fromPos(fromPosition), toPos(toPosition)
+      : from(fromId), to(toId), minAlt(minAltitude), type(airwayType), fromPos(fromPosition),
+        toPos(toPosition)
     {
     }
 
@@ -70,10 +71,10 @@ public:
   };
 
 private:
-  void writeRoute(const QString& routeName, QSet<atools::fs::db::RouteResolver::Leg>& route);
+  void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::Leg>& airway);
 
-  int curRouteId, numRoutes;
-  atools::sql::SqlQuery routeInsertStmt;
+  int curAirwayId, numAirways;
+  atools::sql::SqlQuery airwayInsertStmt;
   atools::sql::SqlDatabase& db;
 };
 
@@ -81,4 +82,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_ROUTERESOLVER_H_ */
+#endif /* WRITER_AIRWAYRESOLVER_H_ */

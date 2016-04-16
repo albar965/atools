@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/nav/waypointwriter.h"
-#include "fs/db/nav/temproutewriter.h"
+#include "fs/db/nav/tempairwaywriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/db/airportindex.h"
@@ -40,8 +40,8 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));
 
-  bind(":num_victor_route", type->getNumVictorRoute());
-  bind(":num_jet_route", type->getNumJetRoute());
+  bind(":num_victor_airway", type->getNumVictorAirway());
+  bind(":num_jet_airway", type->getNumJetAirway());
 
   bind(":mag_var", type->getMagVar());
   bind(":lonx", type->getPosition().getLonX());
@@ -59,8 +59,8 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   executeStatement();
 
-  TempRouteWriter *tempRouteWriter = getDataWriter().getTempRouteWriter();
-  tempRouteWriter->write(type->getRoutes());
+  TempAirwayWriter *tempAirwayWriter = getDataWriter().getTempAirwayWriter();
+  tempAirwayWriter->write(type->getAirways());
 }
 
 } // namespace writer

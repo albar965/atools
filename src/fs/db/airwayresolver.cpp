@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/routeresolver.h"
+#include "fs/db/airwayresolver.h"
 
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -39,32 +39,32 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
-uint qHash(const RouteResolver::Leg& leg)
+uint qHash(const AirwayResolver::Leg& leg)
 {
   return leg.from ^ leg.to ^ leg.minAlt ^ qHash(leg.type);
 }
 
-QDebug operator<<(QDebug out, const RouteResolver::Leg& l)
+QDebug operator<<(QDebug out, const AirwayResolver::Leg& l)
 {
   out << "Leg[from " << l.from << ", to " << l.to << ", alt " << l.minAlt << ", type " << l.type << "]";
   return out;
 }
 
-RouteResolver::RouteResolver(SqlDatabase& sqlDb)
-  : curRouteId(0), numRoutes(0), routeInsertStmt(sqlDb), db(sqlDb)
+AirwayResolver::AirwayResolver(SqlDatabase& sqlDb)
+  : curAirwayId(0), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(&sqlDb);
-  routeInsertStmt.prepare(util.buildInsertStatement("route"));
+  airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
 }
 
-void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
+void AirwayResolver::writeAirway(const QString& airwayName, QSet<Leg>& airway)
 {
-  QQueue<Leg> newRoute;
+  QQueue<Leg> newAirway;
 
   QHash<int, Leg> legByFrom;
   QHash<int, Leg> legByTo;
 
-  for(Leg it : route)
+  for(Leg it : airway)
   {
     legByFrom[it.from] = it;
     legByTo[it.to] = it;
@@ -74,13 +74,13 @@ void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
   QHash<int, Leg>::const_iterator it;
   Leg leg;
 
-  while(!route.empty())
+  while(!airway.empty())
   {
-    newRoute.clear();
+    newAirway.clear();
 
-    leg = *route.begin();
-    route.erase(route.begin());
-    newRoute.push_back(leg);
+    leg = *airway.begin();
+    airway.erase(airway.begin());
+    newAirway.push_back(leg);
 
     bool foundTo, foundFrom;
 
@@ -89,24 +89,24 @@ void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
       foundTo = false;
       foundFrom = false;
 
-      leg = newRoute.front();
+      leg = newAirway.front();
       it = legByTo.find(leg.from);
-      if(it != legByTo.end() && route.find(it.value()) != route.end())
+      if(it != legByTo.end() && airway.find(it.value()) != airway.end())
       {
         leg = it.value();
-        newRoute.push_front(leg);
+        newAirway.push_front(leg);
 
-        route.erase(route.find(leg));
+        airway.erase(airway.find(leg));
         foundTo = true;
       }
-      leg = newRoute.back();
+      leg = newAirway.back();
       it = legByFrom.find(leg.to);
-      if(it != legByFrom.end() && route.find(it.value()) != route.end())
+      if(it != legByFrom.end() && airway.find(it.value()) != airway.end())
       {
         leg = it.value();
-        newRoute.push_back(leg);
+        newAirway.push_back(leg);
 
-        route.erase(route.find(leg));
+        airway.erase(airway.find(leg));
         foundFrom = true;
       }
     } while(foundTo || foundFrom);
@@ -114,42 +114,42 @@ void RouteResolver::writeRoute(const QString& routeName, QSet<Leg>& route)
     Leg last;
     int seqNo = 0;
     ++fragmentNum;
-    for(Leg rt : newRoute)
+    for(Leg rt : newAirway)
     {
       last = rt;
 
-      routeInsertStmt.bindValue(":route_id", ++curRouteId);
-      routeInsertStmt.bindValue(":route_name", routeName);
-      routeInsertStmt.bindValue(":route_type", rt.type);
-      routeInsertStmt.bindValue(":route_fragment_no", fragmentNum);
-      routeInsertStmt.bindValue(":sequence_no", ++seqNo);
-      routeInsertStmt.bindValue(":from_waypoint_id", rt.from);
-      routeInsertStmt.bindValue(":to_waypoint_id", rt.to);
-      routeInsertStmt.bindValue(":minimum_altitude", rt.minAlt);
+      airwayInsertStmt.bindValue(":airway_id", ++curAirwayId);
+      airwayInsertStmt.bindValue(":airway_name", airwayName);
+      airwayInsertStmt.bindValue(":airway_type", rt.type);
+      airwayInsertStmt.bindValue(":airway_fragment_no", fragmentNum);
+      airwayInsertStmt.bindValue(":sequence_no", ++seqNo);
+      airwayInsertStmt.bindValue(":from_waypoint_id", rt.from);
+      airwayInsertStmt.bindValue(":to_waypoint_id", rt.to);
+      airwayInsertStmt.bindValue(":minimum_altitude", rt.minAlt);
 
       Rect bounding(rt.fromPos);
       bounding.extend(rt.toPos);
-      routeInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
-      routeInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
-      routeInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
-      routeInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+      airwayInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
+      airwayInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
+      airwayInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
+      airwayInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
 
-      routeInsertStmt.bindValue(":from_lonx", rt.fromPos.getLonX());
-      routeInsertStmt.bindValue(":from_laty", rt.fromPos.getLatY());
-      routeInsertStmt.bindValue(":to_lonx", rt.toPos.getLonX());
-      routeInsertStmt.bindValue(":to_laty", rt.toPos.getLatY());
+      airwayInsertStmt.bindValue(":from_lonx", rt.fromPos.getLonX());
+      airwayInsertStmt.bindValue(":from_laty", rt.fromPos.getLatY());
+      airwayInsertStmt.bindValue(":to_lonx", rt.toPos.getLonX());
+      airwayInsertStmt.bindValue(":to_laty", rt.toPos.getLatY());
 
-      routeInsertStmt.exec();
-      numRoutes += routeInsertStmt.numRowsAffected();
+      airwayInsertStmt.exec();
+      numAirways += airwayInsertStmt.numRowsAffected();
     }
   }
 }
 
-RouteResolver::~RouteResolver()
+AirwayResolver::~AirwayResolver()
 {
 }
 
-void RouteResolver::run()
+void AirwayResolver::run()
 {
   static QString queryStr(
     "select r.name, r.type, "
@@ -164,18 +164,18 @@ void RouteResolver::run()
     "  r.next_minimum_altitude, "
     "  next.lonx as next_lonx, "
     "  next.laty as next_laty "
-    "from route_point r join waypoint w on r.waypoint_id = w.waypoint_id "
+    "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
     "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
     "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
     "order by r.name");
 
   SqlQuery stmt(db);
-  stmt.exec("delete from route");
+  stmt.exec("delete from airway");
   int deleted = stmt.numRowsAffected();
-  qInfo() << "Removed" << deleted << "from route table";
+  qInfo() << "Removed" << deleted << "from airway table";
 
-  QSet<Leg> route;
-  QString curRoute;
+  QSet<Leg> airway;
+  QString curAirway;
 
   stmt.exec(queryStr);
   while(stmt.next())
@@ -183,19 +183,19 @@ void RouteResolver::run()
     QString rName = stmt.value("name").toString();
     QString rType = stmt.value("type").toString();
 
-    if(curRoute.isEmpty() || rName.at(0) != curRoute.at(0))
+    if(curAirway.isEmpty() || rName.at(0) != curAirway.at(0))
     {
       db.commit();
       qInfo() << rName << "...";
     }
-    if(rName != curRoute)
+    if(rName != curAirway)
     {
-      if(!route.empty())
+      if(!airway.empty())
       {
-        writeRoute(curRoute, route);
-        route.clear();
+        writeAirway(curAirway, airway);
+        airway.clear();
       }
-      curRoute = rName;
+      curAirway = rName;
     }
 
     int curId = stmt.value("waypoint_id").toInt();
@@ -210,17 +210,17 @@ void RouteResolver::run()
     if(!prevIdColVal.isNull())
     {
       Pos prevPos(stmt.value("prev_lonx").toFloat(), stmt.value("prev_laty").toFloat());
-      route.insert(Leg(prevIdColVal.toInt(), curId, prevMinAlt, rType, prevPos, curPos));
+      airway.insert(Leg(prevIdColVal.toInt(), curId, prevMinAlt, rType, prevPos, curPos));
     }
 
     if(!nextIdColVal.isNull())
     {
       Pos nextPos(stmt.value("next_lonx").toFloat(), stmt.value("next_laty").toFloat());
-      route.insert(Leg(curId, nextIdColVal.toInt(), nextMinAlt, rType, curPos, nextPos));
+      airway.insert(Leg(curId, nextIdColVal.toInt(), nextMinAlt, rType, curPos, nextPos));
     }
   }
 
-  qInfo() << "Added " << numRoutes << " route legs";
+  qInfo() << "Added " << numAirways << " airway legs";
 }
 
 } // namespace writer

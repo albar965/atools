@@ -15,31 +15,31 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_TEMPROUTEWRITER_H_
-#define WRITER_TEMPROUTEWRITER_H_
+#ifndef WRITER_TEMPAIRWAYWRITER_H_
+#define WRITER_TEMPAIRWAYWRITER_H_
 
 #include "fs/db/writerbase.h"
-#include "fs/bgl/nav/routeentry.h"
+#include "fs/bgl/nav/airwayentry.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
-class TempRouteWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::RouteEntry>
+class TempAirwayWriter :
+  public atools::fs::db::WriterBase<atools::fs::bgl::AirwayEntry>
 {
 public:
-  TempRouteWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "route_point")
+  TempAirwayWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "airway_point")
   {
   }
 
-  virtual ~TempRouteWriter()
+  virtual ~TempAirwayWriter()
   {
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::RouteEntry *type) override;
+  virtual void writeObject(const atools::fs::bgl::AirwayEntry *type) override;
 
 };
 
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_TEMPROUTEWRITER_H_ */
+#endif /* WRITER_TEMPAIRWAYWRITER_H_ */

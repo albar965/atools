@@ -64,8 +64,6 @@ HEADERS += src/atools.h \
     src/fs/bgl/nav/marker.h \
     src/fs/bgl/nav/navbase.h \
     src/fs/bgl/nav/ndb.h \
-    src/fs/bgl/nav/routeentry.h \
-    src/fs/bgl/nav/routewaypoint.h \
     src/fs/bgl/nav/vor.h \
     src/fs/bgl/nav/waypoint.h \
     src/fs/bgl/nl/namelistentry.h \
@@ -104,10 +102,8 @@ HEADERS += src/atools.h \
     src/fs/db/nav/ilswriter.h \
     src/fs/db/nav/markerwriter.h \
     src/fs/db/nav/ndbwriter.h \
-    src/fs/db/nav/temproutewriter.h \
     src/fs/db/nav/vorwriter.h \
     src/fs/db/nav/waypointwriter.h \
-    src/fs/db/routeresolver.h \
     src/fs/db/runwayindex.h \
     src/fs/db/writerbasebasic.h \
     src/fs/db/writerbase.h \
@@ -150,7 +146,11 @@ HEADERS += src/atools.h \
     src/gui/widgettools.h \
     src/gui/helphandler.h \
     src/geo/linestring.h \
-    src/gui/actiontextsaver.h
+    src/gui/actiontextsaver.h \
+    src/fs/bgl/nav/airwayentry.h \
+    src/fs/bgl/nav/airwaywaypoint.h \
+    src/fs/db/nav/tempairwaywriter.h \
+    src/fs/db/airwayresolver.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -195,8 +195,6 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/nav/marker.cpp \
     src/fs/bgl/nav/navbase.cpp \
     src/fs/bgl/nav/ndb.cpp \
-    src/fs/bgl/nav/routeentry.cpp \
-    src/fs/bgl/nav/routewaypoint.cpp \
     src/fs/bgl/nav/vor.cpp \
     src/fs/bgl/nav/waypoint.cpp \
     src/fs/bgl/nl/namelist.cpp \
@@ -235,10 +233,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/nav/ilswriter.cpp \
     src/fs/db/nav/markerwriter.cpp \
     src/fs/db/nav/ndbwriter.cpp \
-    src/fs/db/nav/temproutewriter.cpp \
     src/fs/db/nav/vorwriter.cpp \
     src/fs/db/nav/waypointwriter.cpp \
-    src/fs/db/routeresolver.cpp \
     src/fs/db/runwayindex.cpp \
     src/fs/db/writerbasebasic.cpp \
     src/fs/fspaths.cpp \
@@ -279,7 +275,11 @@ SOURCES += src/atools.cpp \
     src/gui/widgettools.cpp \
     src/gui/helphandler.cpp \
     src/geo/linestring.cpp \
-    src/gui/actiontextsaver.cpp
+    src/gui/actiontextsaver.cpp \
+    src/fs/bgl/nav/airwayentry.cpp \
+    src/fs/bgl/nav/airwaywaypoint.cpp \
+    src/fs/db/nav/tempairwaywriter.cpp \
+    src/fs/db/airwayresolver.cpp
 
 
 unix {

@@ -56,11 +56,11 @@ void VorWriter::writeObject(const Vor *type)
   QString apIdent = type->getAirportIdent();
   if(!apIdent.isEmpty() && getOptions().includeAirport(apIdent))
   {
-    QString msg("VOR ID " + QString::number(getCurrentId()) +
-                " ident " + type->getIdent() + " name " + type->getName());
-    int id = getAirportIndex()->getAirportId(apIdent, msg);
-    if(id != -1)
-      bind(":airport_id", id);
+  QString msg("VOR ID " + QString::number(getCurrentId()) +
+              " ident " + type->getIdent() + " name " + type->getName());
+  int id = getAirportIndex()->getAirportId(apIdent, msg);
+  if(id != -1)
+    bind(":airport_id", id);
   }
 
   const Dme *dme = type->getDme();

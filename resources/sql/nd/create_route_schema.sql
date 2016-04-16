@@ -23,8 +23,8 @@ create table route_node
   nav_id integer not null,
   type integer not null, -- 0 = VOR, 1 = VORDME, 2 = DME, 3 = NDB, 4 = WAYPOINT
   range integer,
-  num_victor_route integer,
-  num_jet_route integer,
+  num_victor_airway integer,
+  num_jet_airway integer,
   lonx double not null,
   laty double not null
 );

@@ -40,7 +40,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const std::pair<const bgl::Apron*, const bgl::Apron2*>* type) override;
+  virtual void writeObject(const std::pair<const bgl::Apron *, const bgl::Apron2 *> *type) override;
 
 private:
   QString toString(const QList<int>& triangles);

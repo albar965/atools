@@ -57,8 +57,8 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   QString leftVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getLeftVasi().getType());
   if(!leftVt.isEmpty())
   {
-    bind(":left_vasi_type", leftVt);
-    bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
+  bind(":left_vasi_type", leftVt);
+  bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
   }
   else
   {
