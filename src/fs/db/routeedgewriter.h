@@ -18,6 +18,8 @@
 #ifndef ROUTEEDGEWRITER_H
 #define ROUTEEDGEWRITER_H
 
+#include <QVariantList>
+
 class QString;
 
 namespace atools {
@@ -41,8 +43,8 @@ public:
   void run();
 
 private:
-  int nearest(atools::sql::SqlQuery& nearestStmt, const geo::Pos& pos, const geo::Rect& queryRect, int fromNodeId, int range,
-              sql::SqlQuery& insertStmt);
+  void nearest(atools::sql::SqlQuery& nearestStmt, const geo::Pos& pos, const geo::Rect& queryRect,
+               int fromRangeMeter, int rangeScale, QVariantList& toNodeIds);
 
   atools::sql::SqlDatabase *db;
   void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);

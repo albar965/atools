@@ -19,6 +19,7 @@
 #define NAVDATABASE_H
 
 #include "logging/loggingdefs.h"
+#include <QCoreApplication>
 
 namespace atools {
 namespace sql {
@@ -35,6 +36,8 @@ class SceneryCfg;
 
 class Navdatabase
 {
+  Q_DECLARE_TR_FUNCTIONS(Navdatabase)
+
 public:
   Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
   void create();

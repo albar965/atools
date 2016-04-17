@@ -33,10 +33,10 @@ class ProgressHandler
 public:
   ProgressHandler(const atools::fs::BglReaderOptions *options);
 
-  bool reportProgress(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
-  bool reportProgress(const QString& bglFilepath, int current = -1);
-  bool reportProgressFinish();
-  bool reportProgressOther(const QString& otherAction, int current = -1);
+  bool report(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
+  bool report(const QString& bglFilepath, int current = -1);
+  bool reportFinish();
+  bool reportOther(const QString& otherAction, int current = -1);
 
   void setNumFiles(int value)
   {

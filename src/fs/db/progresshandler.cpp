@@ -30,7 +30,7 @@ ProgressHandler::ProgressHandler(const BglReaderOptions *options)
     handler = options->getProgressCallback();
 }
 
-bool ProgressHandler::reportProgressOther(const QString& otherAction, int current)
+bool ProgressHandler::reportOther(const QString& otherAction, int current)
 {
   if(current != -1)
     info.current = current;
@@ -45,7 +45,7 @@ bool ProgressHandler::reportProgressOther(const QString& otherAction, int curren
   return callHandler();
 }
 
-bool ProgressHandler::reportProgress(const QString& bglFilepath, int current)
+bool ProgressHandler::report(const QString& bglFilepath, int current)
 {
   if(current != -1)
     info.current = current;
@@ -60,7 +60,7 @@ bool ProgressHandler::reportProgress(const QString& bglFilepath, int current)
   return callHandler();
 }
 
-bool ProgressHandler::reportProgressFinish()
+bool ProgressHandler::reportFinish()
 {
   info.lastCall = true;
   info.newFile = false;
@@ -87,7 +87,7 @@ void ProgressHandler::reset()
   info.lastCall = false;
 }
 
-bool ProgressHandler::reportProgress(const scenery::SceneryArea *sceneryArea, int current)
+bool ProgressHandler::report(const scenery::SceneryArea *sceneryArea, int current)
 {
   if(current != -1)
     info.current = current;

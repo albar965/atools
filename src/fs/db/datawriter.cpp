@@ -170,7 +170,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       progressHandler->setNumBoundaries(numBoundaries);
       progressHandler->setNumWaypoints(numWaypoints);
       progressHandler->setNumObjectsWritten(numObjectsWritten);
-      if((aborted = progressHandler->reportProgress(filenames.at(i))) == true)
+      if((aborted = progressHandler->report(filenames.at(i))) == true)
         return;
 
       QString filepath = filepaths.at(i);

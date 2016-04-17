@@ -33,6 +33,13 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
+// Added to range of current radio id
+const int MAX_RADIO_RANGE_METER = atools::geo::nmToMeter(100);
+// Mininum nodes to find before extending the rectangle
+const int MIN_NODES = 24;
+// Increase search rectangle by this factor
+const int RECT_SIZE_INCREASE = 2;
+
 RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -44,8 +51,7 @@ void RouteEdgeWriter::run()
   SqlQuery selectStmt("select node_id, range, lonx, laty from route_node", db);
 
   SqlQuery insertStmt(db);
-  insertStmt.prepare("insert into route_edge (from_node_id, to_node_id) "
-                     "values(:fromNodeId, :toNodeId)");
+  insertStmt.prepare("insert into route_edge (from_node_id, to_node_id) values(?, ?)");
 
   SqlQuery nearestStmt(db);
   nearestStmt.prepare(
@@ -53,29 +59,44 @@ void RouteEdgeWriter::run()
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   selectStmt.exec();
-
-  int maxRange = atools::geo::nmToMeter(200);
+  QVariantList toNodeIdVars;
+  QVariantList fromNodeIdVars;
 
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
   while(selectStmt.next())
   {
-    int range = selectStmt.value("range").toInt();
-    Pos pos(selectStmt.value("lonx").toFloat(), selectStmt.value("laty").toFloat());
-    int queryRectRadius = atools::geo::nmToMeter(range) + maxRange;
-    Rect queryRect(pos, queryRectRadius);
+    int fromRangeMeter = atools::geo::nmToMeter(selectStmt.value("range").toInt());
+    int fromNodeId = selectStmt.value("node_id").toInt();
 
-    int num = nearest(nearestStmt, pos, queryRect, selectStmt.value("node_id").toInt(), range, insertStmt);
-    if(num == 0)
+    Pos pos(selectStmt.value("lonx").toFloat(), selectStmt.value("laty").toFloat());
+    int queryRectRadiusMeter = fromRangeMeter + MAX_RADIO_RANGE_METER;
+    Rect queryRect(pos, queryRectRadiusMeter);
+
+    toNodeIdVars.clear();
+    nearest(nearestStmt, pos, queryRect, fromRangeMeter, 1, toNodeIdVars);
+
+    int increase = RECT_SIZE_INCREASE;
+    while(toNodeIdVars.size() < MIN_NODES)
     {
-      queryRect = Rect(pos, queryRectRadius * 4);
-      num = nearest(nearestStmt, pos, queryRect, selectStmt.value("node_id").toInt(), range * 4, insertStmt);
+      toNodeIdVars.clear();
+      queryRect = Rect(pos, queryRectRadiusMeter * increase);
+      nearest(nearestStmt, pos, queryRect, fromRangeMeter, increase, toNodeIdVars);
+      increase += RECT_SIZE_INCREASE;
     }
 
-    total += num;
-    average = (average + num) / 2;
-    maximum = std::max(maximum, num);
+    fromNodeIdVars.clear();
+    for(int i = 0; i < toNodeIdVars.size(); i++)
+      fromNodeIdVars.append(fromNodeId);
 
-    if(num == 0)
+    insertStmt.addBindValue(fromNodeIdVars);
+    insertStmt.addBindValue(toNodeIdVars);
+    insertStmt.execBatch();
+
+    total += toNodeIdVars.size();
+    average = (average + toNodeIdVars.size()) / 2;
+    maximum = std::max(maximum, toNodeIdVars.size());
+
+    if(toNodeIdVars.size() == 0)
       numEmpty++;
   }
 
@@ -83,10 +104,9 @@ void RouteEdgeWriter::run()
            << "max" << maximum << "numEmpty" << numEmpty;
 }
 
-int RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
-                             int fromNodeId, int range, SqlQuery& insertStmt)
+void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
+                              int fromRangeMeter, int rangeScale, QVariantList& toNodeIds)
 {
-  int num = 0;
   for(const Rect& rect : queryRect.splitAtAntiMeridian())
   {
     bindCoordinatePointInRect(rect, &nearestStmt);
@@ -95,22 +115,17 @@ int RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& 
 
     while(nearestStmt.next())
     {
-      int rng = nearestStmt.value("range").toInt();
+      int toRangeMeter = atools::geo::nmToMeter(nearestStmt.value("range").toInt());
 
-      float dist = atools::geo::meterToNm(pos.distanceMeterTo(Pos(nearestStmt.value("lonx").toFloat(),
-                                                                  nearestStmt.value("laty").toFloat())));
+      Pos toPos(nearestStmt.value("lonx").toFloat(), nearestStmt.value("laty").toFloat());
+      int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos));
+      // int courseDeg = static_cast<int>(pos.angleDegTo(toPos));
+      // TODO use only the nearest ids per octant
 
-      if(rng + range < dist)
-      {
-        insertStmt.bindValue(":fromNodeId", fromNodeId);
-        insertStmt.bindValue(":toNodeId", nearestStmt.value("node_id").toInt());
-        insertStmt.exec();
-        num++;
-      }
+      if((toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter)
+        toNodeIds.append(nearestStmt.value("node_id"));
     }
   }
-
-  return num;
 }
 
 void RouteEdgeWriter::bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)

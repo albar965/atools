@@ -102,7 +102,7 @@ void Navdatabase::createInternal()
   progress.setTotal(total);
 
   SqlScript script(db, true /*options->isVerbose()*/);
-  if((aborted = progress.reportProgressOther(QObject::tr("Dropping old database schema"))) == true)
+  if((aborted = progress.reportOther(tr("Dropping old database schema"))) == true)
     return;
 
   createSchema();
@@ -112,7 +112,7 @@ void Navdatabase::createInternal()
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     if(area.isActive() && options->includePath(area.getLocalPath()))
     {
-      if((aborted = progress.reportProgress(&area)) == true)
+      if((aborted = progress.report(&area)) == true)
         return;
 
       dataWriter.writeSceneryArea(area);
@@ -121,13 +121,13 @@ void Navdatabase::createInternal()
     }
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Creating Indexes"))) == true)
+  if((aborted = progress.reportOther(tr("Creating Indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Clean up"))) == true)
+  if((aborted = progress.reportOther(tr("Clean up"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
@@ -135,7 +135,7 @@ void Navdatabase::createInternal()
 
   if(options->isResolveAirways())
   {
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating airways"))) == true)
+    if((aborted = progress.reportOther(tr("Creating airways"))) == true)
       return;
 
     atools::fs::db::AirwayResolver resolver(db);
@@ -143,53 +143,50 @@ void Navdatabase::createInternal()
     db->commit();
   }
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Updating Waypoint ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating Waypoint ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/update_wp_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Updating Navigation ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating Navigation ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Updating ILS ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating ILS ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/update_ils_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Populating Nav Search Table"))) == true)
+  if((aborted = progress.reportOther(tr("Populating Nav Search Table"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/populate_nav_search.sql");
   db->commit();
 
-  if((aborted =
-        progress.reportProgressOther(QObject::tr("Populating Route Node Table"))) == true)
+  if((aborted = progress.reportOther(tr("Populating Route Node Table"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/populate_route_node.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(
-        QObject::tr("Populating Route Edge Table for VOR and NDB"))) == true)
+  if((aborted = progress.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
     return;
 
   atools::fs::db::RouteEdgeWriter edgeWriter(db);
   edgeWriter.run();
   db->commit();
 
-  if((aborted =
-        progress.reportProgressOther(QObject::tr("Populating Route Edge Table for Waypoints"))) == true)
+  if((aborted = progress.reportOther(tr("Populating Route Edge Table for Waypoints"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/populate_route_edge.sql");
   db->commit();
 
-  if((aborted = progress.reportProgressOther(QObject::tr("Creating Search Indexes"))) == true)
+  if((aborted = progress.reportOther(tr("Creating Search Indexes"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
@@ -202,21 +199,21 @@ void Navdatabase::createInternal()
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
 
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating table statistics"))) == true)
+    if((aborted = progress.reportOther(tr("Creating table statistics"))) == true)
       return;
 
     qDebug() << "printTableStats";
     info << endl;
     util.printTableStats(info);
 
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on values"))) == true)
+    if((aborted = progress.reportOther(tr("Creating report on values"))) == true)
       return;
 
     qDebug() << "createColumnReport";
     info << endl;
     util.createColumnReport(info);
 
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on duplicates"))) == true)
+    if((aborted = progress.reportOther(tr("Creating report on duplicates"))) == true)
       return;
 
     info << endl;
@@ -254,13 +251,12 @@ void Navdatabase::createInternal()
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
-    if((aborted = progress.reportProgressOther(QObject::tr("Creating report on coordinate duplicates"))) ==
-       true)
+    if((aborted = progress.reportOther(tr("Creating report on coordinate duplicates"))) == true)
       return;
 
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
   }
-  progress.reportProgressFinish();
+  progress.reportFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
