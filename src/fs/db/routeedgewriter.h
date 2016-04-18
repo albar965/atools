@@ -44,7 +44,7 @@ public:
 
 private:
   void nearest(atools::sql::SqlQuery& nearestStmt, const geo::Pos& pos, const geo::Rect& queryRect,
-               int fromRangeMeter, int rangeScale, QVariantList& toNodeIds);
+               int fromRangeMeter, int rangeScale, QVariantList& toNodeIds, QVariantList& toNodeTypes);
 
   atools::sql::SqlDatabase *db;
   void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);

@@ -24,8 +24,9 @@ where num_victor_airway > 0 or num_jet_airway > 0;
 
 -- Populate route_edge table with airways -----------------------------------
 
-insert into route_edge (from_node_id,  to_node_id, type, minimum_altitude)
-select n1.node_id as from_node_id, n2.node_id as to_node_id,
+insert into route_edge (from_node_id, from_node_type, to_node_id, to_node_type, type, minimum_altitude)
+select n1.node_id as from_node_id, 4 as from_node_type,
+       n2.node_id as to_node_id, 4 as to_node_type,
 case
   when a.airway_type = 'VICTOR' then 1
   when a.airway_type = 'JET' then 2

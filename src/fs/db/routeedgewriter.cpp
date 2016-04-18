@@ -48,48 +48,60 @@ RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
 
 void RouteEdgeWriter::run()
 {
-  SqlQuery selectStmt("select node_id, range, lonx, laty from route_node", db);
+  SqlQuery selectStmt("select node_id, range, type, lonx, laty from route_node", db);
 
   SqlQuery insertStmt(db);
-  insertStmt.prepare("insert into route_edge (from_node_id, to_node_id) values(?, ?)");
+  insertStmt.prepare("insert into route_edge (from_node_id, from_node_type, to_node_id, to_node_type) "
+                     "values(?, ?, ?, ?)");
 
   SqlQuery nearestStmt(db);
   nearestStmt.prepare(
-    "select node_id, range, lonx, laty from route_node "
+    "select node_id, type, range, lonx, laty from route_node "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   selectStmt.exec();
   QVariantList toNodeIdVars;
+  QVariantList toNodeTypeVars;
   QVariantList fromNodeIdVars;
+  QVariantList fromNodeTypeVars;
 
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
   while(selectStmt.next())
   {
     int fromRangeMeter = atools::geo::nmToMeter(selectStmt.value("range").toInt());
     int fromNodeId = selectStmt.value("node_id").toInt();
+    int fromNodeType = selectStmt.value("type").toInt();
 
     Pos pos(selectStmt.value("lonx").toFloat(), selectStmt.value("laty").toFloat());
     int queryRectRadiusMeter = fromRangeMeter + MAX_RADIO_RANGE_METER;
     Rect queryRect(pos, queryRectRadiusMeter);
 
     toNodeIdVars.clear();
-    nearest(nearestStmt, pos, queryRect, fromRangeMeter, 1, toNodeIdVars);
+    toNodeTypeVars.clear();
+    nearest(nearestStmt, pos, queryRect, fromRangeMeter, 1, toNodeIdVars, toNodeTypeVars);
 
     int increase = RECT_SIZE_INCREASE;
     while(toNodeIdVars.size() < MIN_NODES)
     {
       toNodeIdVars.clear();
+      toNodeTypeVars.clear();
       queryRect = Rect(pos, queryRectRadiusMeter * increase);
-      nearest(nearestStmt, pos, queryRect, fromRangeMeter, increase, toNodeIdVars);
+      nearest(nearestStmt, pos, queryRect, fromRangeMeter, increase, toNodeIdVars, toNodeTypeVars);
       increase += RECT_SIZE_INCREASE;
     }
 
     fromNodeIdVars.clear();
+    fromNodeTypeVars.clear();
     for(int i = 0; i < toNodeIdVars.size(); i++)
+    {
       fromNodeIdVars.append(fromNodeId);
+      fromNodeTypeVars.append(fromNodeType);
+    }
 
     insertStmt.addBindValue(fromNodeIdVars);
+    insertStmt.addBindValue(fromNodeTypeVars);
     insertStmt.addBindValue(toNodeIdVars);
+    insertStmt.addBindValue(toNodeTypeVars);
     insertStmt.execBatch();
 
     total += toNodeIdVars.size();
@@ -105,7 +117,8 @@ void RouteEdgeWriter::run()
 }
 
 void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
-                              int fromRangeMeter, int rangeScale, QVariantList& toNodeIds)
+                              int fromRangeMeter, int rangeScale, QVariantList& toNodeIds,
+                              QVariantList& toNodeTypes)
 {
   for(const Rect& rect : queryRect.splitAtAntiMeridian())
   {
@@ -123,7 +136,10 @@ void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
       // TODO use only the nearest ids per octant
 
       if((toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter)
+      {
         toNodeIds.append(nearestStmt.value("node_id"));
+        toNodeTypes.append(nearestStmt.value("type"));
+      }
     }
   }
 }

@@ -37,7 +37,9 @@ create table route_edge
 (
   edge_id integer primary key,
   from_node_id integer not null,
+  from_node_type integer not null,
   to_node_id integer not null,
+  to_node_type integer not null,
   type integer, -- 0 = VOR,etc, 1 = Victor, 2 = Jet, 3 = Both
   minimum_altitude integer,
 foreign key(from_node_id) references route_node(node_id),
