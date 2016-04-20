@@ -270,6 +270,16 @@ void Flightplan::clear()
   appVersionMajor = 10;
 }
 
+void Flightplan::reverse()
+{
+  std::reverse(entries.begin(), entries.end());
+
+  departureAiportName.swap(destinationAiportName);
+  departureIdent.swap(destinationIdent);
+  departurePos.swap(destinationPos);
+  setDepartureParkingName(QString());
+}
+
 QString Flightplan::flightplanTypeToString(FlightplanType type)
 {
   switch(type)

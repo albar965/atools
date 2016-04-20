@@ -15,14 +15,48 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-drop table if exists route_node;
+drop table if exists route_node_radio;
 
-create table route_node
+create table route_node_radio
 (
   node_id integer primary key,
   nav_id integer not null,
-  type integer not null, -- 0 = VOR, 1 = VORDME, 2 = DME, 3 = NDB, 4 = WAYPOINT
+  type integer not null, -- 0 = VOR, 1 = VORDME, 2 = DME, 3 = NDB
   range integer,
+  lonx double not null,
+  laty double not null
+);
+
+-- **************************************************
+
+drop table if exists route_edge_radio;
+
+create table route_edge_radio
+(
+  edge_id integer primary key,
+  from_node_id integer not null,
+  from_node_type integer not null,
+  to_node_id integer not null,
+  to_node_type integer not null,
+foreign key(from_node_id) references route_node_radio(node_id),
+foreign key(to_node_id) references route_node_radio(node_id)
+);
+
+create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio(from_node_id);
+create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);
+
+
+
+
+
+-- **************************************************
+
+drop table if exists route_node_airway;
+
+create table route_node_airway
+(
+  node_id integer primary key,
+  nav_id integer not null,
   num_victor_airway integer,
   num_jet_airway integer,
   lonx double not null,
@@ -31,20 +65,18 @@ create table route_node
 
 -- **************************************************
 
-drop table if exists route_edge;
+drop table if exists route_edge_airway;
 
-create table route_edge
+create table route_edge_airway
 (
   edge_id integer primary key,
   from_node_id integer not null,
-  from_node_type integer not null,
   to_node_id integer not null,
-  to_node_type integer not null,
-  type integer, -- 0 = VOR,etc, 1 = Victor, 2 = Jet, 3 = Both
+  type integer, -- 0 = Victor, 1 = Jet, 2 = Both
   minimum_altitude integer,
-foreign key(from_node_id) references route_node(node_id),
-foreign key(to_node_id) references route_node(node_id)
+foreign key(from_node_id) references route_node_airway(node_id),
+foreign key(to_node_id) references route_node_airway(node_id)
 );
 
-create index if not exists idx_route_edge_from_node_id on route_edge(from_node_id);
-create index if not exists idx_route_edge_to_node_id on route_edge(to_node_id);
+create index if not exists idx_route_edge_airway_from_node_id on route_edge_airway(from_node_id);
+create index if not exists idx_route_edge_airway_to_node_id on route_edge_airway(to_node_id);

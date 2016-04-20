@@ -187,6 +187,8 @@ public:
     title = value;
   }
 
+  void reverse();
+
 private:
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);

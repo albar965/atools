@@ -16,11 +16,11 @@
 -- ****************************************************************************/
 
 ----------------------------------------------------------------
--- Populate route_node table with VOR and NDB -----------------------------------
+-- Populate route_node_radio table with VOR and NDB -----------------------------------
 
-delete from route_node;
+delete from route_node_radio;
 
-insert into route_node (nav_id, type, range, lonx, laty)
+insert into route_node_radio (nav_id, type, range, lonx, laty)
 select vor_id as nav_id,
 case
   when dme_only = 1 then 2
@@ -30,13 +30,16 @@ end as type,
 range, lonx, laty
 from vor;
 
-insert into route_node (nav_id, type, range, lonx, laty)
+insert into route_node_radio (nav_id, type, range, lonx, laty)
 select ndb_id as nav_id, 3 as type, range, lonx, laty
 from ndb;
 
-create index if not exists idx_route_node_nav_id on route_node(nav_id);
-create index if not exists idx_route_node_type on route_node(type);
+create index if not exists idx_route_node_radio_lonx on route_node_radio(lonx);
+create index if not exists idx_route_node_radio_laty on route_node_radio(laty);
 
-create index if not exists idx_route_node_lonx on route_node(lonx);
-create index if not exists idx_route_node_laty on route_node(laty);
+-- Populate route_node_airway table with waypoints -----------------------------------
 
+insert into route_node_airway (nav_id, num_victor_airway, num_jet_airway, lonx, laty)
+select waypoint_id as nav_id, num_victor_airway, num_jet_airway, lonx, laty
+from waypoint
+where num_victor_airway > 0 or num_jet_airway > 0;

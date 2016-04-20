@@ -80,6 +80,8 @@ public:
   Pos& toDeg();
   Pos& toRad();
 
+  void swap(Pos& other);
+
   /* return endpoint at distance and angle */
   Pos endpoint(float distanceMeter, float angleDeg) const;
 

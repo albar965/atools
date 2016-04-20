@@ -157,6 +157,13 @@ Pos& Pos::toRad()
   return *this;
 }
 
+void Pos::swap(Pos& other)
+{
+  std::swap(lonX, other.lonX);
+  std::swap(latY, other.latY);
+  std::swap(altitude, other.altitude);
+}
+
 void endpointRad(double lonX, double latY, double distance, double angle, double& endLonX, double& endLatY)
 {
   endLatY = asin(sin(latY) * cos(distance) + cos(latY) *

@@ -34,7 +34,7 @@ using atools::geo::Pos;
 using atools::geo::Rect;
 
 // Added to range of current radio id
-const int MAX_RADIO_RANGE_METER = atools::geo::nmToMeter(100);
+const int MAX_RADIO_RANGE_METER = atools::geo::nmToMeter(200);
 // Mininum nodes to find before extending the rectangle
 const int MIN_NODES = 24;
 // Increase search rectangle by this factor
@@ -48,15 +48,15 @@ RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
 
 void RouteEdgeWriter::run()
 {
-  SqlQuery selectStmt("select node_id, range, type, lonx, laty from route_node", db);
+  SqlQuery selectStmt("select node_id, range, type, lonx, laty from route_node_radio", db);
 
   SqlQuery insertStmt(db);
-  insertStmt.prepare("insert into route_edge (from_node_id, from_node_type, to_node_id, to_node_type) "
+  insertStmt.prepare("insert into route_edge_radio (from_node_id, from_node_type, to_node_id, to_node_type) "
                      "values(?, ?, ?, ?)");
 
   SqlQuery nearestStmt(db);
   nearestStmt.prepare(
-    "select node_id, type, range, lonx, laty from route_node "
+    "select node_id, type, range, lonx, laty from route_node_radio "
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   selectStmt.exec();
@@ -73,11 +73,10 @@ void RouteEdgeWriter::run()
     int fromNodeType = selectStmt.value("type").toInt();
 
     Pos pos(selectStmt.value("lonx").toFloat(), selectStmt.value("laty").toFloat());
-    int queryRectRadiusMeter = fromRangeMeter + MAX_RADIO_RANGE_METER;
-    Rect queryRect(pos, queryRectRadiusMeter);
 
     toNodeIdVars.clear();
     toNodeTypeVars.clear();
+    Rect queryRect(pos, MAX_RADIO_RANGE_METER);
     nearest(nearestStmt, pos, queryRect, fromRangeMeter, 1, toNodeIdVars, toNodeTypeVars);
 
     int increase = RECT_SIZE_INCREASE;
@@ -85,7 +84,7 @@ void RouteEdgeWriter::run()
     {
       toNodeIdVars.clear();
       toNodeTypeVars.clear();
-      queryRect = Rect(pos, queryRectRadiusMeter * increase);
+      queryRect = Rect(pos, MAX_RADIO_RANGE_METER * increase);
       nearest(nearestStmt, pos, queryRect, fromRangeMeter, increase, toNodeIdVars, toNodeTypeVars);
       increase += RECT_SIZE_INCREASE;
     }
@@ -137,8 +136,11 @@ void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
 
       if((toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter)
       {
-        toNodeIds.append(nearestStmt.value("node_id"));
-        toNodeTypes.append(nearestStmt.value("type"));
+        if(distanceMeter < MAX_RADIO_RANGE_METER * rangeScale)
+        {
+          toNodeIds.append(nearestStmt.value("node_id"));
+          toNodeTypes.append(nearestStmt.value("type"));
+        }
       }
     }
   }

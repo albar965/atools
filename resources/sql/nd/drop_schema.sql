@@ -62,5 +62,7 @@ drop table if exists bgl_file;
 drop table if exists scenery_area;
 drop table if exists metadata;
 
-drop table if exists route_edge;
-drop table if exists route_node;
+drop table if exists route_edge_radio;
+drop table if exists route_edge_airway;
+drop table if exists route_node_radio;
+drop table if exists route_node_airway;

@@ -47,6 +47,9 @@ public:
     return !(*this == other);
   }
 
+  bool contains(const atools::geo::Pos& pos) const;
+  bool overlaps(const Rect& other) const;
+
   const atools::geo::Pos& getTopLeft() const
   {
     return topLeft;
@@ -109,7 +112,11 @@ public:
   Pos getBottomCenter() const;
   Pos getTopCenter() const;
 
+  void swap(Rect& other);
+
 private:
+  bool overlapsInternal(const Rect& other) const;
+
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);
 
   atools::geo::Pos topLeft, bottomRight;

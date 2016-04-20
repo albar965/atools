@@ -88,6 +88,34 @@ bool Rect::operator==(const Rect& other) const
   return topLeft == other.topLeft && bottomRight == other.bottomRight && valid == other.valid;
 }
 
+bool Rect::contains(const Pos& pos) const
+{
+  for(const Rect& r : splitAtAntiMeridian())
+  {
+    if(r.getWest() <= pos.getLonX() && pos.getLonX() <= r.getEast() &&
+       r.getNorth() >= pos.getLatY() && pos.getLatY() >= r.getSouth())
+      return true;
+  }
+  return false;
+}
+
+bool Rect::overlaps(const Rect& other) const
+{
+  for(const Rect& r1 : splitAtAntiMeridian())
+    for(const Rect &r2 : other.splitAtAntiMeridian())
+      if(r1.overlapsInternal(r2))
+        return true;
+
+  return false;
+}
+
+bool Rect::overlapsInternal(const Rect& other) const
+{
+  // "not (right_lonx < :leftx or left_lonx > :rightx or bottom_laty > :topy or top_laty < :bottomy) ");
+  return !(getEast() < other.getWest() || getWest() > other.getEast() ||
+           getSouth() > other.getNorth() || getNorth() < other.getSouth());
+}
+
 Pos Rect::getTopRight() const
 {
   return Pos(bottomRight.getLonX(), topLeft.getLatY());
@@ -166,16 +194,23 @@ Pos Rect::getCenter() const
 
 bool Rect::crossesAntiMeridian() const
 {
-  return getEast() < getWest() || (getEast() == 180.f && getWest() == -180.f);
+  return getEast() < getWest() || (almostEqual(getEast(), 180.f) && almostEqual(getWest(), -180.f));
 }
 
 QList<Rect> Rect::splitAtAntiMeridian() const
 {
-  if(getEast() < getWest() || (getEast() == 180.f && getWest() == -180.f))
+  if(crossesAntiMeridian())
     return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()),
                         Rect(-180.f, getNorth(), getEast(), getSouth())});
 
   return QList<Rect>({*this});
+}
+
+void Rect::swap(Rect& other)
+{
+  topLeft.swap(other.topLeft);
+  bottomRight.swap(other.bottomRight);
+  std::swap(valid, other.valid);
 }
 
 QDebug operator<<(QDebug out, const Rect& record)
