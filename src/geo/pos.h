@@ -128,6 +128,21 @@ public:
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
   Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
+  void setLonX(float value)
+  {
+    lonX = value;
+  }
+
+  void setLatY(float value)
+  {
+    latY = value;
+  }
+
+  void setAltitude(float value)
+  {
+    altitude = value;
+  }
+
 protected:
   const float INVALID_ORD = std::numeric_limits<float>::max();
   const float EPSILON = std::numeric_limits<float>::epsilon();

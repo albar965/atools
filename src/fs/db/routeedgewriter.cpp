@@ -35,10 +35,21 @@ using atools::geo::Rect;
 
 // Added to range of current radio id
 const int MAX_RADIO_RANGE_METER = atools::geo::nmToMeter(200);
-// Mininum nodes to find before extending the rectangle
-const int MIN_NODES = 24;
-// Increase search rectangle by this factor
-const int RECT_SIZE_INCREASE = 2;
+const int NUM_SECTORS = 8;
+
+// Increase rectangle at a maximum of this number
+const int MAX_ITERATIONS = 2;
+
+// Minimum distance that is needed before an edge is generated
+const int MIN_DISTANCE_METER = atools::geo::nmToMeter(30);
+
+const int MAX_EDGES_PER_SECTOR = 4;
+const int MIN_EDGES_PER_SECTOR = 1;
+
+// Index VOR=0, VORDME=1, DME=2, NDB=3
+// const int PRIORITY_BY_TYPE[] = {2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
+
+const float INFLATE_RECT_DEGREES = 4.f;
 
 RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -48,11 +59,13 @@ RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
 
 void RouteEdgeWriter::run()
 {
-  SqlQuery selectStmt("select node_id, range, type, lonx, laty from route_node_radio", db);
+  SqlQuery selectStmt(
+    "select node_id, range, type, lonx, laty from route_node_radio", db);
 
   SqlQuery insertStmt(db);
-  insertStmt.prepare("insert into route_edge_radio (from_node_id, from_node_type, to_node_id, to_node_type) "
-                     "values(?, ?, ?, ?)");
+  insertStmt.prepare(
+    "insert into route_edge_radio (from_node_id, from_node_type, to_node_id, to_node_type, distance) "
+    "values(?, ?, ?, ?, ?)");
 
   SqlQuery nearestStmt(db);
   nearestStmt.prepare(
@@ -60,14 +73,12 @@ void RouteEdgeWriter::run()
     "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   selectStmt.exec();
-  QVariantList toNodeIdVars;
-  QVariantList toNodeTypeVars;
-  QVariantList fromNodeIdVars;
-  QVariantList fromNodeTypeVars;
+  QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;
 
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
   while(selectStmt.next())
   {
+    // Look at each node
     int fromRangeMeter = atools::geo::nmToMeter(selectStmt.value("range").toInt());
     int fromNodeId = selectStmt.value("node_id").toInt();
     int fromNodeType = selectStmt.value("type").toInt();
@@ -76,17 +87,25 @@ void RouteEdgeWriter::run()
 
     toNodeIdVars.clear();
     toNodeTypeVars.clear();
+    toNodeDistanceVars.clear();
     Rect queryRect(pos, MAX_RADIO_RANGE_METER);
-    nearest(nearestStmt, pos, queryRect, fromRangeMeter, 1, toNodeIdVars, toNodeTypeVars);
+    bool nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
+                                    toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
 
-    int increase = RECT_SIZE_INCREASE;
-    while(toNodeIdVars.size() < MIN_NODES)
+    int maxIter = 0;
+    while(!nearestSatisfied)
     {
       toNodeIdVars.clear();
       toNodeTypeVars.clear();
-      queryRect = Rect(pos, MAX_RADIO_RANGE_METER * increase);
-      nearest(nearestStmt, pos, queryRect, fromRangeMeter, increase, toNodeIdVars, toNodeTypeVars);
-      increase += RECT_SIZE_INCREASE;
+      toNodeDistanceVars.clear();
+      queryRect.inflate(INFLATE_RECT_DEGREES);
+      nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
+                                 toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
+      if(maxIter++ > MAX_ITERATIONS)
+      {
+        // qDebug() << "stopping iterations for node id" << fromNodeId;
+        break;
+      }
     }
 
     fromNodeIdVars.clear();
@@ -101,6 +120,7 @@ void RouteEdgeWriter::run()
     insertStmt.addBindValue(fromNodeTypeVars);
     insertStmt.addBindValue(toNodeIdVars);
     insertStmt.addBindValue(toNodeTypeVars);
+    insertStmt.addBindValue(toNodeDistanceVars);
     insertStmt.execBatch();
 
     total += toNodeIdVars.size();
@@ -115,10 +135,26 @@ void RouteEdgeWriter::run()
            << "max" << maximum << "numEmpty" << numEmpty;
 }
 
-void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
-                              int fromRangeMeter, int rangeScale, QVariantList& toNodeIds,
-                              QVariantList& toNodeTypes)
+bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
+                              int fromRangeMeter, QVariantList& toNodeIds,
+                              QVariantList& toNodeTypes, QVariantList& toNodeDistances)
 {
+  struct TempNodeTo
+  {
+    int nodeId;
+    int type; // VOR=0, VORDME=1, DME=2, NDB=3,
+    int range;
+    int distance;
+  };
+
+  QVector<QVector<TempNodeTo> > sectorsOther;
+  for(int i = 0; i < NUM_SECTORS; i++)
+    sectorsOther.append(QVector<TempNodeTo>());
+
+  QVector<QVector<TempNodeTo> > sectorsReachable;
+  for(int i = 0; i < NUM_SECTORS; i++)
+    sectorsReachable.append(QVector<TempNodeTo>());
+
   for(const Rect& rect : queryRect.splitAtAntiMeridian())
   {
     bindCoordinatePointInRect(rect, &nearestStmt);
@@ -130,20 +166,94 @@ void RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
       int toRangeMeter = atools::geo::nmToMeter(nearestStmt.value("range").toInt());
 
       Pos toPos(nearestStmt.value("lonx").toFloat(), nearestStmt.value("laty").toFloat());
-      int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos));
-      // int courseDeg = static_cast<int>(pos.angleDegTo(toPos));
-      // TODO use only the nearest ids per octant
+      int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos) + 0.5f);
 
-      if((toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter)
+      if(distanceMeter < MIN_DISTANCE_METER)
+        continue;
+
+      int courseDeg = static_cast<int>(pos.angleDegTo(toPos) + 0.5f);
+      if(courseDeg >= 360)
+        courseDeg -= 360;
+
+      int sectorNum = courseDeg / (360 / NUM_SECTORS);
+
+      int toNodeId = nearestStmt.value("node_id").toInt();
+      int toNodeType = nearestStmt.value("type").toInt();
+
+      TempNodeTo tmp = {toNodeId, toNodeType, toRangeMeter, distanceMeter};
+
+      // bool reachable = (toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter;
+      bool reachable = fromRangeMeter + fromRangeMeter > distanceMeter;
+
+      QVector<TempNodeTo>::iterator it;
+
+      if(reachable)
       {
-        if(distanceMeter < MAX_RADIO_RANGE_METER * rangeScale)
-        {
-          toNodeIds.append(nearestStmt.value("node_id"));
-          toNodeTypes.append(nearestStmt.value("type"));
-        }
+        QVector<TempNodeTo>& sector = sectorsReachable[sectorNum];
+        // farthest at beginning of list
+        it = std::lower_bound(sector.begin(), sector.end(), tmp,
+                              [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
+                              {
+                                // int p1 = PRIORITY_BY_TYPE[n1.type];
+                                // int p2 = PRIORITY_BY_TYPE[n2.type];
+                                // if(p1 == p2)
+                                return n1.distance > n2.distance;
+                                // else
+                                // return p1 > p2;
+                              });
+        sector.insert(it, tmp);
+      }
+      else
+      {
+        QVector<TempNodeTo>& sector = sectorsOther[sectorNum];
+        // nearest at beginning of list
+        it = std::lower_bound(sector.begin(), sector.end(), tmp,
+                              [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
+                              {
+                                // int p1 = PRIORITY_BY_TYPE[n1.type];
+                                // int p2 = PRIORITY_BY_TYPE[n2.type];
+                                // if(p1 == p2)
+                                return n1.distance < n2.distance;
+                                // else
+                                // return p1 > p2;
+                              });
+        sector.insert(it, tmp);
       }
     }
   }
+
+  bool retval = true;
+
+  for(int sectorNum = 0; sectorNum < NUM_SECTORS; sectorNum++)
+  {
+    const QVector<TempNodeTo>& sectorReachable = sectorsReachable.value(sectorNum);
+    const QVector<TempNodeTo>& sectorOther = sectorsOther.value(sectorNum);
+    int numOtherEntries = std::min(sectorOther.size(), MAX_EDGES_PER_SECTOR);
+    int numReachableEntries = std::min(sectorReachable.size(), MAX_EDGES_PER_SECTOR);
+
+    // We need more nodes for this sector
+    if(numOtherEntries + numReachableEntries < MIN_EDGES_PER_SECTOR)
+      retval = false;
+
+    // Add all reachable first for this sector
+    for(int i = 0; i < numReachableEntries; i++)
+    {
+      const TempNodeTo& tn = sectorReachable.at(i);
+      toNodeIds.append(tn.nodeId);
+      toNodeTypes.append(tn.type);
+      toNodeDistances.append(tn.distance);
+    }
+
+    // Then add the unreachable
+    for(int i = 0; i < numOtherEntries; i++)
+    {
+      const TempNodeTo& tn = sectorOther.at(i);
+      toNodeIds.append(tn.nodeId);
+      toNodeTypes.append(tn.type);
+      toNodeDistances.append(tn.distance);
+    }
+  }
+  return retval;
 }
 
 void RouteEdgeWriter::bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)

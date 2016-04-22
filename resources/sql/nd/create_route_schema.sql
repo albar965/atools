@@ -38,6 +38,7 @@ create table route_edge_radio
   from_node_type integer not null,
   to_node_id integer not null,
   to_node_type integer not null,
+  distance integer not null,
 foreign key(from_node_id) references route_node_radio(node_id),
 foreign key(to_node_id) references route_node_radio(node_id)
 );
