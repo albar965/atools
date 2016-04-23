@@ -109,8 +109,6 @@ public:
 
   bool isPoint() const;
 
-  static atools::geo::Rect EMPTY_RECT;
-
   Pos getBottomCenter() const;
   Pos getTopCenter() const;
 
@@ -124,6 +122,8 @@ private:
   atools::geo::Pos topLeft, bottomRight;
   bool valid = false;
 };
+
+const atools::geo::Rect EMPTY_RECT;
 
 } // namespace geo
 } // namespace atools

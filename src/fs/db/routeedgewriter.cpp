@@ -79,7 +79,7 @@ void RouteEdgeWriter::run()
   while(selectStmt.next())
   {
     // Look at each node
-    int fromRangeMeter = atools::geo::nmToMeter(selectStmt.value("range").toInt());
+    int fromRangeMeter = selectStmt.value("range").toInt();
     int fromNodeId = selectStmt.value("node_id").toInt();
     int fromNodeType = selectStmt.value("type").toInt();
 
@@ -88,10 +88,13 @@ void RouteEdgeWriter::run()
     toNodeIdVars.clear();
     toNodeTypeVars.clear();
     toNodeDistanceVars.clear();
+
+    // Get all navaids in bounding rectangle
     Rect queryRect(pos, MAX_RADIO_RANGE_METER);
     bool nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
                                     toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
 
+    // If not all sectors have an edge increase rectangle and try again
     int maxIter = 0;
     while(!nearestSatisfied)
     {
@@ -102,10 +105,7 @@ void RouteEdgeWriter::run()
       nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
                                  toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
       if(maxIter++ > MAX_ITERATIONS)
-      {
-        // qDebug() << "stopping iterations for node id" << fromNodeId;
         break;
-      }
     }
 
     fromNodeIdVars.clear();
@@ -163,7 +163,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
 
     while(nearestStmt.next())
     {
-      int toRangeMeter = atools::geo::nmToMeter(nearestStmt.value("range").toInt());
+      int toRangeMeter = nearestStmt.value("range").toInt();
 
       Pos toPos(nearestStmt.value("lonx").toFloat(), nearestStmt.value("laty").toFloat());
       int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos) + 0.5f);
@@ -182,7 +182,6 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
 
       TempNodeTo tmp = {toNodeId, toNodeType, toRangeMeter, distanceMeter};
 
-      // bool reachable = (toRangeMeter + fromRangeMeter) * rangeScale > distanceMeter;
       bool reachable = fromRangeMeter + fromRangeMeter > distanceMeter;
 
       QVector<TempNodeTo>::iterator it;

@@ -27,11 +27,11 @@ case
   when dme_altitude is null then 0
   else 1
 end as type,
-range, lonx, laty
+(range * 1852.216) as range, lonx, laty
 from vor;
 
 insert into route_node_radio (nav_id, type, range, lonx, laty)
-select ndb_id as nav_id, 3 as type, range, lonx, laty
+select ndb_id as nav_id, 3 as type, (range  * 1852.216) as range, lonx, laty
 from ndb;
 
 create index if not exists idx_route_node_radio_lonx on route_node_radio(lonx);
