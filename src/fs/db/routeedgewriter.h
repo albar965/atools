@@ -43,7 +43,7 @@ public:
   void run();
 
 private:
-  bool nearest(atools::sql::SqlQuery& nearestStmt, const geo::Pos& pos, const geo::Rect& queryRect,
+  bool nearest(atools::sql::SqlQuery& nearestStmt, int fromNodeId, const geo::Pos& pos, const geo::Rect& queryRect,
                int fromRangeMeter, QVariantList& toNodeIds, QVariantList& toNodeTypes, QVariantList& toNodeDistances);
 
   atools::sql::SqlDatabase *db;

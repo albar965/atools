@@ -50,7 +50,7 @@ public:
   bool contains(const atools::geo::Pos& pos) const;
   bool overlaps(const Rect& other) const;
 
-  void inflate(float degrees);
+  void inflate(float degreesLon, float degreesLat);
 
   const atools::geo::Pos& getTopLeft() const
   {

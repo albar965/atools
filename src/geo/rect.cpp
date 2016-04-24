@@ -107,25 +107,25 @@ bool Rect::overlaps(const Rect& other) const
   return false;
 }
 
-void Rect::inflate(float degrees)
+void Rect::inflate(float degreesLon, float degreesLat)
 {
-  if(getWest() - degrees > -179.f)
-    topLeft.setLonX(getWest() - degrees);
+  if(getWest() - degreesLon > -179.f)
+    topLeft.setLonX(getWest() - degreesLon);
   else
     topLeft.setLonX(-179.f);
 
-  if(getEast() + degrees < 179.f)
-    bottomRight.setLonX(getEast() + degrees);
+  if(getEast() + degreesLon < 179.f)
+    bottomRight.setLonX(getEast() + degreesLon);
   else
     bottomRight.setLonX(179.f);
 
-  if(getNorth() + degrees < 89.f)
-    topLeft.setLatY(getNorth() + degrees);
+  if(getNorth() + degreesLat < 89.f)
+    topLeft.setLatY(getNorth() + degreesLat);
   else
     topLeft.setLatY(89.f);
 
-  if(getSouth() - degrees > -89.f)
-    bottomRight.setLatY(getSouth() - degrees);
+  if(getSouth() - degreesLat > -89.f)
+    bottomRight.setLatY(getSouth() - degreesLat);
   else
     bottomRight.setLatY(-89.f);
 }

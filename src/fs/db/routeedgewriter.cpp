@@ -43,13 +43,14 @@ const int MAX_ITERATIONS = 2;
 // Minimum distance that is needed before an edge is generated
 const int MIN_DISTANCE_METER = atools::geo::nmToMeter(30);
 
-const int MAX_EDGES_PER_SECTOR = 4;
+const int MAX_EDGES_PER_SECTOR = 2;
 const int MIN_EDGES_PER_SECTOR = 1;
 
 // Index VOR=0, VORDME=1, DME=2, NDB=3
-// const int PRIORITY_BY_TYPE[] = {2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
+const int PRIORITY_BY_TYPE[] = {2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
 
-const float INFLATE_RECT_DEGREES = 4.f;
+const float INFLATE_RECT_LON_DEGREES = 6.f;
+const float INFLATE_RECT_LAT_DEGREES = 4.f;
 
 RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -60,7 +61,7 @@ RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
 void RouteEdgeWriter::run()
 {
   SqlQuery selectStmt(
-    "select node_id, range, type, lonx, laty from route_node_radio", db);
+    "select node_id, range, type, lonx, laty from route_node_radio", db); // where node_id = 146
 
   SqlQuery insertStmt(db);
   insertStmt.prepare(
@@ -91,7 +92,7 @@ void RouteEdgeWriter::run()
 
     // Get all navaids in bounding rectangle
     Rect queryRect(pos, MAX_RADIO_RANGE_METER);
-    bool nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
+    bool nearestSatisfied = nearest(nearestStmt, fromNodeId, pos, queryRect, fromRangeMeter,
                                     toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
 
     // If not all sectors have an edge increase rectangle and try again
@@ -101,8 +102,8 @@ void RouteEdgeWriter::run()
       toNodeIdVars.clear();
       toNodeTypeVars.clear();
       toNodeDistanceVars.clear();
-      queryRect.inflate(INFLATE_RECT_DEGREES);
-      nearestSatisfied = nearest(nearestStmt, pos, queryRect, fromRangeMeter,
+      queryRect.inflate(INFLATE_RECT_LON_DEGREES, INFLATE_RECT_LAT_DEGREES);
+      nearestSatisfied = nearest(nearestStmt, fromNodeId, pos, queryRect, fromRangeMeter,
                                  toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
       if(maxIter++ > MAX_ITERATIONS)
         break;
@@ -135,7 +136,7 @@ void RouteEdgeWriter::run()
            << "max" << maximum << "numEmpty" << numEmpty;
 }
 
-bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect& queryRect,
+bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& pos, const Rect& queryRect,
                               int fromRangeMeter, QVariantList& toNodeIds,
                               QVariantList& toNodeTypes, QVariantList& toNodeDistances)
 {
@@ -145,15 +146,16 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
     int type; // VOR=0, VORDME=1, DME=2, NDB=3,
     int range;
     int distance;
+    int priority;
   };
-
-  QVector<QVector<TempNodeTo> > sectorsOther;
-  for(int i = 0; i < NUM_SECTORS; i++)
-    sectorsOther.append(QVector<TempNodeTo>());
 
   QVector<QVector<TempNodeTo> > sectorsReachable;
   for(int i = 0; i < NUM_SECTORS; i++)
     sectorsReachable.append(QVector<TempNodeTo>());
+
+  QVector<QVector<TempNodeTo> > sectorsOther;
+  for(int i = 0; i < NUM_SECTORS; i++)
+    sectorsOther.append(QVector<TempNodeTo>());
 
   for(const Rect& rect : queryRect.splitAtAntiMeridian())
   {
@@ -163,8 +165,11 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
 
     while(nearestStmt.next())
     {
-      int toRangeMeter = nearestStmt.value("range").toInt();
+      int toNodeId = nearestStmt.value("node_id").toInt();
+      if(toNodeId == fromNodeId)
+        continue;
 
+      int toRangeMeter = nearestStmt.value("range").toInt();
       Pos toPos(nearestStmt.value("lonx").toFloat(), nearestStmt.value("laty").toFloat());
       int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos) + 0.5f);
 
@@ -177,12 +182,11 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
 
       int sectorNum = courseDeg / (360 / NUM_SECTORS);
 
-      int toNodeId = nearestStmt.value("node_id").toInt();
       int toNodeType = nearestStmt.value("type").toInt();
 
-      TempNodeTo tmp = {toNodeId, toNodeType, toRangeMeter, distanceMeter};
+      TempNodeTo tmp = {toNodeId, toNodeType, toRangeMeter, distanceMeter, PRIORITY_BY_TYPE[toNodeType]};
 
-      bool reachable = fromRangeMeter + fromRangeMeter > distanceMeter;
+      bool reachable = fromRangeMeter + toRangeMeter > distanceMeter;
 
       QVector<TempNodeTo>::iterator it;
 
@@ -193,12 +197,10 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
                               [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
                               {
-                                // int p1 = PRIORITY_BY_TYPE[n1.type];
-                                // int p2 = PRIORITY_BY_TYPE[n2.type];
-                                // if(p1 == p2)
-                                return n1.distance > n2.distance;
-                                // else
-                                // return p1 > p2;
+                                if(n1.priority == n2.priority)
+                                  return n1.distance > n2.distance;
+                                else
+                                  return n1.priority > n2.priority;
                               });
         sector.insert(it, tmp);
       }
@@ -209,12 +211,10 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, const Pos& pos, const Rect&
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
                               [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
                               {
-                                // int p1 = PRIORITY_BY_TYPE[n1.type];
-                                // int p2 = PRIORITY_BY_TYPE[n2.type];
-                                // if(p1 == p2)
-                                return n1.distance < n2.distance;
-                                // else
-                                // return p1 > p2;
+                                if(n1.priority == n2.priority)
+                                  return n1.distance < n2.distance;
+                                else
+                                  return n1.priority > n2.priority;
                               });
         sector.insert(it, tmp);
       }
