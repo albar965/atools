@@ -16,18 +16,22 @@
 -- ****************************************************************************/
 
 -- Populate route_edge_airway table with waypoints -----------------------------------
+delete from route_edge_airway;
 
-insert into route_edge_airway (from_node_id, to_node_id, type, minimum_altitude)
-select n1.node_id as from_node_id,
-       n2.node_id as to_node_id,
+insert into route_edge_airway (airway_id, from_node_id, from_node_type, to_node_id, to_node_type, type, minimum_altitude)
+select a.airway_id, n1.node_id as from_node_id,
+  n1.type as from_node_type,
+  n2.node_id as to_node_id,
+  n2.type as to_node_type,
 case
-  when a.airway_type = 'VICTOR' then 1
-  when a.airway_type = 'JET' then 2
-  when a.airway_type = 'BOTH' then 2
+  when a.airway_type = 'VICTOR' then 4
+  when a.airway_type = 'JET' then 5
+  when a.airway_type = 'BOTH' then 6
   else 0
 end as type,
 a.minimum_altitude
-from airway a join route_node_airway n1 on a.from_waypoint_id = n1.nav_id
+from airway a
+join route_node_airway n1 on a.from_waypoint_id = n1.nav_id
 join route_node_airway n2 on a.to_waypoint_id = n2.nav_id;
 
 

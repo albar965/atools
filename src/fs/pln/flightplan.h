@@ -65,7 +65,7 @@ public:
     return flightplanType;
   }
 
-  void setFlightplanType(const atools::fs::pln::FlightplanType& value)
+  void setFlightplanType(atools::fs::pln::FlightplanType value)
   {
     flightplanType = value;
   }
@@ -75,7 +75,7 @@ public:
     return routeType;
   }
 
-  void setRouteType(const atools::fs::pln::RouteType& value)
+  void setRouteType(atools::fs::pln::RouteType value)
   {
     routeType = value;
   }

@@ -39,7 +39,14 @@ create index if not exists idx_route_node_radio_laty on route_node_radio(laty);
 
 -- Populate route_node_airway table with waypoints -----------------------------------
 
-insert into route_node_airway (nav_id, num_victor_airway, num_jet_airway, lonx, laty)
-select waypoint_id as nav_id, num_victor_airway, num_jet_airway, lonx, laty
+delete from route_node_airway;
+
+insert into route_node_airway (nav_id, type, lonx, laty)
+select waypoint_id as nav_id,
+case when num_victor_airway > 0 and num_jet_airway > 0 then 6
+when num_victor_airway > 0 and num_jet_airway = 0 then 4
+when num_victor_airway = 0 and num_jet_airway > 0 then 5
+else 0
+end as type, lonx, laty
 from waypoint
 where num_victor_airway > 0 or num_jet_airway > 0;

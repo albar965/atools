@@ -47,9 +47,6 @@ create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio
 create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);
 
 
-
-
-
 -- **************************************************
 
 drop table if exists route_node_airway;
@@ -58,8 +55,7 @@ create table route_node_airway
 (
   node_id integer primary key,
   nav_id integer not null,
-  num_victor_airway integer,
-  num_jet_airway integer,
+  type integer, -- 4 = Victor, 5 = Jet, 6 = Both
   lonx double not null,
   laty double not null
 );
@@ -71,13 +67,18 @@ drop table if exists route_edge_airway;
 create table route_edge_airway
 (
   edge_id integer primary key,
+  airway_id integer not null,
   from_node_id integer not null,
+  from_node_type integer not null,
   to_node_id integer not null,
-  type integer, -- 0 = Victor, 1 = Jet, 2 = Both
+  to_node_type integer not null,
+  type integer, -- 4 = Victor, 5 = Jet, 6 = Both
   minimum_altitude integer,
+foreign key(airway_id) references airway(airway_id),
 foreign key(from_node_id) references route_node_airway(node_id),
 foreign key(to_node_id) references route_node_airway(node_id)
 );
 
+create index if not exists idx_route_edge_airway_id on route_edge_airway(airway_id);
 create index if not exists idx_route_edge_airway_from_node_id on route_edge_airway(from_node_id);
 create index if not exists idx_route_edge_airway_to_node_id on route_edge_airway(to_node_id);
