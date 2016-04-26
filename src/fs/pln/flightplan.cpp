@@ -263,7 +263,7 @@ void Flightplan::clear()
 
   flightplanType = VFR;
   routeType = DIRECT;
-  cruisingAlt = 500;
+  cruisingAlt = 10000;
 
   // TODO check valid values
   appVersionBuild = 61472;
