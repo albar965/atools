@@ -350,7 +350,7 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
 QString Pos::toLongString() const
 {
   if(!isValid())
-    return "Invalid Pos";
+    throw new Exception("Invalid position. Cannot convert to string");
 
   return LONG_FORMAT.arg(latY > 0 ? "N" : "S").
          arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).

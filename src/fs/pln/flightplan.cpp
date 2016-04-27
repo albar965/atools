@@ -124,6 +124,11 @@ void Flightplan::save(const QString& file)
 
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
+    if(!departurePos.isValid())
+      throw new atools::Exception("Invalid departure position in flightplan");
+    if(!destinationPos.isValid())
+      throw new atools::Exception("Invalid destination position in flightplan");
+
     QXmlStreamWriter writer;
     writer.setDevice(&xmlFile);
     writer.setCodec("UTF-8");
@@ -162,7 +167,9 @@ void Flightplan::save(const QString& file)
       writer.writeAttribute("id", e.getWaypointId());
       writer.writeTextElement("ATCWaypointType", e.getWaypointTypeAsString());
 
-      // if(e.getWaypointId() == "GARGU")
+      if(!e.getPosition().isValid())
+        throw new atools::Exception("Invalid position in flightplan for id " + e.getWaypointId());
+
       writer.writeTextElement("WorldPosition", e.getPosition().toLongString());
 
       if(!e.getAirway().isEmpty())
