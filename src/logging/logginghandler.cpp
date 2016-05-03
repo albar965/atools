@@ -28,6 +28,7 @@ namespace logging {
 using internal::LoggingConfig;
 
 LoggingHandler *LoggingHandler::instance = nullptr;
+LoggingHandler::LogFunctionType LoggingHandler::logFunction = nullptr;
 
 LoggingHandler::LoggingHandler(const QString& logConfiguration,
                                const QString& logDirectory,
@@ -86,6 +87,11 @@ QStringList LoggingHandler::getLogFiles()
     return QStringList();
 }
 
+void LoggingHandler::setLogFunction(LoggingHandler::LogFunctionType loggingFunction)
+{
+  logFunction = loggingFunction;
+}
+
 void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *> >& streamListCat,
                                       const QVector<QTextStream *>& streamList2,
                                       const QString& message,
@@ -129,6 +135,9 @@ void LoggingHandler::checkAbortType(QtMsgType type)
 
 void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
+  if(logFunction != nullptr)
+    logFunction(type, context, msg);
+
   QString category = context.category;
 
   if(category == "default")

@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QVector>
 #include <QMutex>
+#include <functional>
 
 class QTextStream;
 class QFile;
@@ -98,6 +99,11 @@ public:
    */
   static QStringList getLogFiles();
 
+  typedef std::function<void (QtMsgType type, const QMessageLogContext& context,
+                              const QString& msg)> LogFunctionType;
+  /* Function will be called on the calling thread context */
+  static void setLogFunction(LogFunctionType loggingFunction);
+
 private:
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
   ~LoggingHandler();
@@ -117,6 +123,8 @@ private:
   QtMessageHandler oldMessageHandler;
 
   mutable QMutex mutex;
+
+  static LogFunctionType logFunction;
 };
 
 } // namespace logging
