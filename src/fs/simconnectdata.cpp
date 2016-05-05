@@ -51,8 +51,13 @@ bool SimConnectData::read(QIODevice *ioDevice)
   readString(in, airplaneType, airplaneTypeSize);
   readString(in, airplaneReg, airplaneRegSize);
 
+  float lonx, laty, altitude;
   in >> lonx >> laty >> altitude >> courseTrue >> courseMag
   >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection;
+
+  position.setAltitude(altitude);
+  position.setLonX(lonx);
+  position.setLatY(laty);
 
   return true;
 }
@@ -70,14 +75,39 @@ void SimConnectData::write(QIODevice *ioDevice) const
   writeString(out, airplaneType);
   writeString(out, airplaneReg);
 
-  out << lonx << laty << altitude << courseTrue << courseMag
+  out << position.getLonX() << position.getLatY() << position.getAltitude() << courseTrue << courseMag
       << groundSpeed << indicatedSpeed << windSpeed << windDirection;
 
+  // Go back and update size
   out.device()->seek(0);
   out << static_cast<quint32>(block.size()) - static_cast<quint32>(sizeof(packetSize));
 
   ioDevice->write(block);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void SimConnectData::writeString(QDataStream& out, const QString& str) const
 {

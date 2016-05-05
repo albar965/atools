@@ -19,6 +19,7 @@
 #define ATOOLS_FS_SIMCONNECTDATA_H
 
 #include <QString>
+#include <geo/pos.h>
 #include "fs/simconnectdata.h"
 
 class QIODevice;
@@ -65,32 +66,109 @@ public:
     airplaneReg = value;
   }
 
-  quint32 getPacketId() const
+  int getPacketId() const
   {
-    return packetId;
+    return static_cast<int>(packetId);
   }
 
-  void setPacketId(quint32 value)
+  void setPacketId(int value)
   {
-    packetId = value;
+    packetId = static_cast<quint32>(value);
   }
 
-  quint32 getPacketTs() const
+  int getPacketTs() const
   {
-    return packetTs;
+    return static_cast<int>(packetTs);
   }
 
-  void setPacketTs(quint32 value)
+  void setPacketTs(unsigned int value)
   {
-    packetTs = value;
+    packetTs = static_cast<quint32>(value);
+  }
+
+  atools::geo::Pos& getPosition()
+  {
+    return position;
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  void setPosition(const atools::geo::Pos& value)
+  {
+    position = value;
+  }
+
+  float getCourseTrue() const
+  {
+    return static_cast<float>(courseTrue);
+  }
+
+  void setCourseTrue(float value)
+  {
+    courseTrue = value;
+  }
+
+  float getCourseMag() const
+  {
+    return static_cast<float>(courseMag);
+  }
+
+  void setCourseMag(float value)
+  {
+    courseMag = value;
+  }
+
+  float getGroundSpeed() const
+  {
+    return static_cast<float>(groundSpeed);
+  }
+
+  void setGroundSpeed(float value)
+  {
+    groundSpeed = value;
+  }
+
+  float getIndicatedSpeed() const
+  {
+    return static_cast<float>(indicatedSpeed);
+  }
+
+  void setIndicatedSpeed(float value)
+  {
+    indicatedSpeed = value;
+  }
+
+  float getWindSpeed() const
+  {
+    return static_cast<float>(windSpeed);
+  }
+
+  void setWindSpeed(float value)
+  {
+    windSpeed = value;
+  }
+
+  float getWindDirection() const
+  {
+    return static_cast<float>(windDirection);
+  }
+
+  void setWindDirection(float value)
+  {
+    windDirection = value;
   }
 
 private:
   quint32 packetSize = 0, packetId = 0, packetTs = 0, version = 1;
   QString airplaneName, airplaneType, airplaneReg;
   quint16 airplaneNameSize = 0, airplaneTypeSize = 0, airplaneRegSize = 0;
-  qreal lonx = 0.f, laty = 0.f, altitude = 0.f, courseTrue = 0.f, courseMag = 0.f,
-        groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f, windDirection = 0.f;
+
+  atools::geo::Pos position;
+  qreal courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
+        windDirection = 0.f;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16& size);
