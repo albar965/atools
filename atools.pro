@@ -151,7 +151,8 @@ HEADERS += src/atools.h \
     src/fs/bgl/nav/airwaywaypoint.h \
     src/fs/db/nav/tempairwaywriter.h \
     src/fs/db/airwayresolver.h \
-    src/fs/db/routeedgewriter.h
+    src/fs/db/routeedgewriter.h \
+    src/fs/simconnectdata.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -281,7 +282,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/nav/airwaywaypoint.cpp \
     src/fs/db/nav/tempairwaywriter.cpp \
     src/fs/db/airwayresolver.cpp \
-    src/fs/db/routeedgewriter.cpp
+    src/fs/db/routeedgewriter.cpp \
+    src/fs/simconnectdata.cpp
 
 
 unix {
