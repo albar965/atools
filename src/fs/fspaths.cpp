@@ -342,5 +342,5 @@ QString FsPaths::nonWindowsPath(fstype::SimulatorType type)
   return nullptr;
 }
 
-} /* namespace fs */
-} /* namespace atools */
+} // namespace fs
+} // namespace atools

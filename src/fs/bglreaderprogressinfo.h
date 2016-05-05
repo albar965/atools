@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGLREADERPROGRESSINFO_H
-#define BGLREADERPROGRESSINFO_H
+#ifndef ATOOLS_FS_BGLREADERPROGRESSINFO_H
+#define ATOOLS_FS_BGLREADERPROGRESSINFO_H
 
 #include <QString>
 
@@ -148,4 +148,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // BGLREADERPROGRESSINFO_H
+#endif // ATOOLS_FS_BGLREADERPROGRESSINFO_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef NAVDATABASE_H
-#define NAVDATABASE_H
+#ifndef ATOOLS_FS_NAVDATABASE_H
+#define ATOOLS_FS_NAVDATABASE_H
 
 #include "logging/loggingdefs.h"
 #include <QCoreApplication>
@@ -63,4 +63,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // NAVDATABASE_H
+#endif // ATOOLS_FS_NAVDATABASE_H

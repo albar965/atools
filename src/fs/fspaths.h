@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef FSPATHS_H
-#define FSPATHS_H
+#ifndef ATOOLS_FS_FSPATHS_H
+#define ATOOLS_FS_FSPATHS_H
 
 #include <QString>
 
@@ -122,4 +122,4 @@ private:
 } /* namespace fs */
 } /* namespace atools */
 
-#endif // FSPATHS_H
+#endif // ATOOLS_FS_FSPATHS_H
