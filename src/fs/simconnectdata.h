@@ -161,17 +161,27 @@ public:
     windDirection = value;
   }
 
+  float getVerticalSpeed() const
+  {
+    return static_cast<float>(verticalSpeed);
+  }
+
+  void setVerticalSpeed(float value)
+  {
+    verticalSpeed = value;
+  }
+
 private:
+  void writeString(QDataStream& out, const QString& str) const;
+  bool readString(QDataStream& in, QString& str, quint16& size);
+
   quint32 packetSize = 0, packetId = 0, packetTs = 0, version = 1;
   QString airplaneName, airplaneType, airplaneReg;
   quint16 airplaneNameSize = 0, airplaneTypeSize = 0, airplaneRegSize = 0;
 
   atools::geo::Pos position;
   qreal courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
-        windDirection = 0.f;
-
-  void writeString(QDataStream& out, const QString& str) const;
-  bool readString(QDataStream& in, QString& str, quint16& size);
+        windDirection = 0.f, verticalSpeed = 0.f;
 
 };
 
