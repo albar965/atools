@@ -35,7 +35,7 @@ public:
 
   virtual ~Exception();
 
-  virtual const char *what() const noexcept override;
+  virtual const char *what() const Q_DECL_NOEXCEPT override;
 
   QString getMessage() const
   {

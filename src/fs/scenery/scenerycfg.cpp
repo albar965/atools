@@ -134,6 +134,7 @@ bool SceneryCfg::toBool(const QString& str)
     return false;
 
   throwException("Boolean value not valid");
+  return false;
 }
 
 int SceneryCfg::toInt(const QString& str)

@@ -31,7 +31,7 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
 {
   bs->seekg(startOffset + listOffset);
 
-  int indexes[numNames];
+  int* indexes = new int[numNames];
   for(int i = 0; i < numNames; i++)
     indexes[i] = bs->readInt();
 
@@ -41,6 +41,7 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
     bs->seekg(offs + indexes[i]);
     names.push_back(bs->readString());
   }
+  delete indexes;
 }
 
 Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)

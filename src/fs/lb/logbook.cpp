@@ -45,7 +45,7 @@ void Logbook::read(QFile *file, const LogbookEntryFilter& filter, bool append)
   BinaryStream bs(file, QDataStream::LittleEndian);
 
   qint64 size = bs.getFileSize();
-  if(size == 0 || size > INT32_MAX)
+  if(size == 0 || size > std::numeric_limits<int>::max())
   {
     // Lets assume that logbook files are never bigger than 2GB
     db->rollback();

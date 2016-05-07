@@ -133,7 +133,7 @@ void BglFile::readBoundaries(BinaryStream *bs)
         bs->seekg(it.getStartOffset() + it.getNumSubsections() * 16);
 
         // Get the lowest offset from the special subsection
-        unsigned int minOffset = INT32_MAX;
+        unsigned int minOffset = std::numeric_limits<int>::max();
         while(bs->tellg() < it.getStartOffset() + it.getTotalSubsectionSize())
         {
           unsigned int newOffset = bs->readUInt();

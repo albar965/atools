@@ -85,30 +85,6 @@ void SimConnectData::write(QIODevice *ioDevice) const
   ioDevice->write(block);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void SimConnectData::writeString(QDataStream& out, const QString& str) const
 {
   QByteArray strBytes;
@@ -121,7 +97,7 @@ bool SimConnectData::readString(QDataStream& in, QString& str, quint16& size)
 {
   if(size == 0)
   {
-    if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(size)))
+    if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint16)))
       return false;
 
     in >> size;

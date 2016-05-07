@@ -44,7 +44,7 @@ protected:
   virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) = 0;
 
-  [[noreturn]] void throwException(const QString& message);
+  void throwException(const QString& message);
 
 private:
   int currentLineNum;

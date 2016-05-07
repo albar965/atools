@@ -47,7 +47,10 @@ enum SimulatorType
   MAX_VALUE = 4,
 
   /* Special value to pass to certain queries */
-  ALL_SIMULATORS = -1
+  ALL_SIMULATORS = -1,
+
+  UNKNOWN = -2
+
 };
 
 /* Array of all four valid types */

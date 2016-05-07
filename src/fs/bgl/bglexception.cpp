@@ -30,7 +30,7 @@ BglException::BglException(const QString& msg, const atools::io::BinaryStream *b
 {
 }
 
-BglException::~BglException() noexcept
+BglException::~BglException() Q_DECL_NOEXCEPT
 {
 }
 

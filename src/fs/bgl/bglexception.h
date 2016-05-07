@@ -41,7 +41,7 @@ public:
 
   BglException(const QString& msg, const atools::io::BinaryStream *bs);
 
-  virtual ~BglException() noexcept;
+  virtual ~BglException() Q_DECL_NOEXCEPT;
 };
 
 } // namespace bgl

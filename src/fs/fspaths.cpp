@@ -37,10 +37,6 @@ namespace fstype {
 const SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] = {FSX, FSX_SE, P3D_V2, P3D_V3};
 
 const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] = {"FSX", "FSXSE", "P3DV2", "P3DV3"};
-const QHash<QString, SimulatorType> ALL_SIMULATOR_TYPE_NAMES_MAP(
-  {
-    {"FSX", FSX}, {"FSXSE", FSX}, {"P3DV2", FSX}, {"P3DV3", FSX}
-  });
 }
 
 const char *FsPaths::FSX_REGISTRY_PATH =
@@ -110,7 +106,7 @@ QString FsPaths::getFilesPath(fstype::SimulatorType type)
   qDebug() << "Language DLL" << languageDll;
 
   // Copy to wchar and append null
-  wchar_t languageDllWChar[languageDll.size() + 1];
+  wchar_t languageDllWChar[1024];
   languageDll.toWCharArray(languageDllWChar);
   languageDllWChar[languageDll.size()] = L'\0';
 
@@ -231,19 +227,22 @@ QString FsPaths::typeToString(fstype::SimulatorType type)
 {
   if(type >= fstype::FSX && type < fstype::MAX_VALUE)
     return fstype::ALL_SIMULATOR_TYPE_NAMES[type];
-
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
+  else
+    return QString();
 }
 
 fstype::SimulatorType FsPaths::stringToType(const QString& typeStr)
 {
-  QHash<QString, fstype::SimulatorType>::const_iterator it =
-    fstype::ALL_SIMULATOR_TYPE_NAMES_MAP.find(typeStr.trimmed().toUpper());
-
-  if(it != fstype::ALL_SIMULATOR_TYPE_NAMES_MAP.end())
-    return *it;
-
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType name");
+  if(typeStr == "FSX")
+    return fstype::FSX;
+  else if(typeStr == "FSXSE")
+    return fstype::FSX_SE;
+  else if(typeStr == "P3DV2")
+    return fstype::P3D_V2;
+  else if(typeStr == "P3DV3")
+    return fstype::P3D_V3;
+  else
+    return fstype::UNKNOWN;
 }
 
 QString FsPaths::settingsKey(fstype::SimulatorType type)

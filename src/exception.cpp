@@ -33,7 +33,7 @@ Exception::~Exception()
 {
 }
 
-const char *Exception::what() const noexcept
+const char *Exception::what() const Q_DECL_NOEXCEPT
 {
   return whatMessage.data();
 }
