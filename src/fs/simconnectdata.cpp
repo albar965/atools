@@ -47,9 +47,12 @@ bool SimConnectData::read(QIODevice *ioDevice)
 
   in >> packetId >> packetTs >> version; // TODO version check
 
-  readString(in, airplaneName, airplaneNameSize);
-  readString(in, airplaneType, airplaneTypeSize);
-  readString(in, airplaneReg, airplaneRegSize);
+  readString(in, airplaneTitle);
+  readString(in, airplaneModel);
+  readString(in, airplaneReg);
+  readString(in, airplaneType);
+  readString(in, airplaneAirline);
+  readString(in, airplaneFlightnumber);
 
   float lonx, laty, altitude;
   in >> lonx >> laty >> altitude >> courseTrue >> courseMag
@@ -71,9 +74,12 @@ void SimConnectData::write(QIODevice *ioDevice) const
   out << static_cast<quint32>(0); // packetSize will be updated later
   out << packetId << packetTs << version;
 
-  writeString(out, airplaneName);
-  writeString(out, airplaneType);
+  writeString(out, airplaneTitle);
+  writeString(out, airplaneModel);
   writeString(out, airplaneReg);
+  writeString(out, airplaneType);
+  writeString(out, airplaneAirline);
+  writeString(out, airplaneFlightnumber);
 
   out << position.getLonX() << position.getLatY() << position.getAltitude() << courseTrue << courseMag
       << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed;
@@ -94,17 +100,20 @@ void SimConnectData::writeString(QDataStream& out, const QString& str) const
   out << str;
 }
 
-bool SimConnectData::readString(QDataStream& in, QString& str, quint16& size)
+bool SimConnectData::readString(QDataStream& in, QString& str, quint16 *size)
 {
-  if(size == 0)
+  quint16 localSize = 0;
+  quint16 *sizePtr = size != nullptr ? size : &localSize;
+
+  if(*sizePtr == 0)
   {
     if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint16)))
       return false;
 
-    in >> size;
+    in >> *sizePtr;
   }
 
-  if(in.device()->bytesAvailable() < size)
+  if(in.device()->bytesAvailable() < *sizePtr)
     return false;
 
   in >> str;

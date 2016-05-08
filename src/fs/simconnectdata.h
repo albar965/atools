@@ -36,24 +36,24 @@ public:
 
   void write(QIODevice *ioDevice) const;
 
-  const QString& getAirplaneName() const
+  const QString& getAirplaneTitle() const
   {
-    return airplaneName;
+    return airplaneTitle;
   }
 
-  void setAirplaneName(const QString& value)
+  void setAirplaneTitle(const QString& value)
   {
-    airplaneName = value;
+    airplaneTitle = value;
   }
 
-  const QString& getAirplaneType() const
+  const QString& getAirplaneModel() const
   {
-    return airplaneType;
+    return airplaneModel;
   }
 
-  void setAirplaneType(const QString& value)
+  void setAirplaneModel(const QString& value)
   {
-    airplaneType = value;
+    airplaneModel = value;
   }
 
   const QString& getAirplaneReg() const
@@ -103,7 +103,7 @@ public:
 
   float getCourseTrue() const
   {
-    return static_cast<float>(courseTrue);
+    return courseTrue;
   }
 
   void setCourseTrue(float value)
@@ -113,7 +113,7 @@ public:
 
   float getCourseMag() const
   {
-    return static_cast<float>(courseMag);
+    return courseMag;
   }
 
   void setCourseMag(float value)
@@ -123,7 +123,7 @@ public:
 
   float getGroundSpeed() const
   {
-    return static_cast<float>(groundSpeed);
+    return groundSpeed;
   }
 
   void setGroundSpeed(float value)
@@ -133,7 +133,7 @@ public:
 
   float getIndicatedSpeed() const
   {
-    return static_cast<float>(indicatedSpeed);
+    return indicatedSpeed;
   }
 
   void setIndicatedSpeed(float value)
@@ -143,7 +143,7 @@ public:
 
   float getWindSpeed() const
   {
-    return static_cast<float>(windSpeed);
+    return windSpeed;
   }
 
   void setWindSpeed(float value)
@@ -153,7 +153,7 @@ public:
 
   float getWindDirection() const
   {
-    return static_cast<float>(windDirection);
+    return windDirection;
   }
 
   void setWindDirection(float value)
@@ -163,7 +163,7 @@ public:
 
   float getVerticalSpeed() const
   {
-    return static_cast<float>(verticalSpeed);
+    return verticalSpeed;
   }
 
   void setVerticalSpeed(float value)
@@ -171,16 +171,46 @@ public:
     verticalSpeed = value;
   }
 
+  const QString& getAirplaneType() const
+  {
+    return airplaneType;
+  }
+
+  void setAirplaneType(const QString& value)
+  {
+    airplaneType = value;
+  }
+
+  const QString& getAirplaneAirline() const
+  {
+    return airplaneAirline;
+  }
+
+  void setAirplaneAirline(const QString& value)
+  {
+    airplaneAirline = value;
+  }
+
+  const QString& getAirplaneFlightnumber() const
+  {
+    return airplaneFlightnumber;
+  }
+
+  void setAirplaneFlightnumber(const QString& value)
+  {
+    airplaneFlightnumber = value;
+  }
+
 private:
   void writeString(QDataStream& out, const QString& str) const;
-  bool readString(QDataStream& in, QString& str, quint16& size);
+  bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
 
   quint32 packetSize = 0, packetId = 0, packetTs = 0, version = 1;
-  QString airplaneName, airplaneType, airplaneReg;
-  quint16 airplaneNameSize = 0, airplaneTypeSize = 0, airplaneRegSize = 0;
+  QString airplaneTitle, airplaneModel, airplaneReg, airplaneType,
+          airplaneAirline, airplaneFlightnumber;
 
   atools::geo::Pos position;
-  qreal courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
+  float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
         windDirection = 0.f, verticalSpeed = 0.f;
 
 };
