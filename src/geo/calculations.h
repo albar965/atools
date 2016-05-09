@@ -43,6 +43,24 @@ bool almostEqual(TYPE f1, TYPE f2)
 }
 
 template<typename TYPE>
+bool almostNotEqual(TYPE f1, TYPE f2)
+{
+  return std::abs(f1 - f2) >= std::numeric_limits<TYPE>::epsilon();
+}
+
+template<typename TYPE>
+bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
+{
+  return std::abs(f1 - f2) < epsilon;
+}
+
+template<typename TYPE>
+bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
+{
+  return std::abs(f1 - f2) >= epsilon;
+}
+
+template<typename TYPE>
 int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
