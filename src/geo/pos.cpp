@@ -49,11 +49,11 @@ Pos::Pos(float longitudeX, float latitudeY, float alt)
 {
 }
 
-Pos::Pos(double longitudeX, double latitudeY, float alt)
-  : altitude(alt)
+Pos::Pos(double longitudeX, double latitudeY, double alt)
 {
   lonX = static_cast<float>(longitudeX);
   latY = static_cast<float>(latitudeY);
+  altitude = static_cast<float>(alt);
 }
 
 Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,

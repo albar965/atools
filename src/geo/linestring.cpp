@@ -35,7 +35,7 @@ void LineString::append(float longitudeX, float latitudeY, float alt)
   QList::append(Pos(longitudeX, latitudeY, alt));
 }
 
-void LineString::append(double longitudeX, double latitudeY, float alt)
+void LineString::append(double longitudeX, double latitudeY, double alt)
 {
   QList::append(Pos(longitudeX, latitudeY, alt));
 }

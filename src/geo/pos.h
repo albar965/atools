@@ -37,7 +37,7 @@ public:
       int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
 
   Pos(float longitudeX, float latitudeY, float alt = 0.f);
-  Pos(double longitudeX, double latitudeY, float alt = 0.f);
+  Pos(double longitudeX, double latitudeY, double alt = 0.);
 
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   Pos(const QString &str);
