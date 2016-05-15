@@ -34,7 +34,7 @@ public:
 
   bool read(QIODevice *ioDevice);
 
-  void write(QIODevice *ioDevice) const;
+  int write(QIODevice *ioDevice) const;
 
   const QString& getAirplaneTitle() const
   {

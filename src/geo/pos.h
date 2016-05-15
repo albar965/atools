@@ -95,7 +95,7 @@ public:
    * negative means left of course. valid if perpendicular point can be found on route. */
   float distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const;
 
-  /* Distance to other point (initial course) */
+  /* Angle to other point (initial course) */
   float angleDegTo(const Pos& otherPos) const;
 
   /* return endpoint at distance and angle for a rhumb line (constant course) */
@@ -104,7 +104,7 @@ public:
   /* Distance to other point for rhumb line */
   float distanceMeterToRhumb(const Pos& otherPos) const;
 
-  /* Distance to other point using a rhumb line */
+  /* Angleto other point using a rhumb line */
   float angleDegToRhumb(const Pos& otherPos) const;
 
   /* @return format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
