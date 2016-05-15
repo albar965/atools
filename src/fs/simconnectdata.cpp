@@ -28,6 +28,18 @@ SimConnectData::SimConnectData()
 
 }
 
+SimConnectData::SimConnectData(const SimConnectData& other)
+{
+  *this = other;
+  // this->operator=(other);
+
+}
+
+SimConnectData::~SimConnectData()
+{
+
+}
+
 bool SimConnectData::read(QIODevice *ioDevice)
 {
   QDataStream in(ioDevice);
@@ -89,7 +101,11 @@ int SimConnectData::write(QIODevice *ioDevice) const
   int size = block.size() - static_cast<int>(sizeof(packetSize));
   out << static_cast<quint32>(size);
 
-  ioDevice->write(block);
+  qint64 written = ioDevice->write(block);
+
+  if(written < block.size())
+    qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
+
   return block.size();
 }
 

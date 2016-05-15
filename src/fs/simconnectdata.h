@@ -31,6 +31,8 @@ class SimConnectData
 {
 public:
   SimConnectData();
+  SimConnectData(const SimConnectData& other);
+  ~SimConnectData();
 
   bool read(QIODevice *ioDevice);
 
@@ -217,5 +219,9 @@ private:
 
 } // namespace fs
 } // namespace atools
+
+Q_DECLARE_METATYPE(atools::fs::SimConnectData);
+
+Q_DECLARE_TYPEINFO(atools::fs::SimConnectData, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_FS_SIMCONNECTDATA_H
