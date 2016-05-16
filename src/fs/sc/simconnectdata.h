@@ -18,14 +18,16 @@
 #ifndef ATOOLS_FS_SIMCONNECTDATA_H
 #define ATOOLS_FS_SIMCONNECTDATA_H
 
+#include "geo/pos.h"
+#include "fs/sc/types.h"
+
 #include <QString>
-#include <geo/pos.h>
-#include "fs/simconnectdata.h"
 
 class QIODevice;
 
 namespace atools {
 namespace fs {
+namespace sc {
 
 class SimConnectData
 {
@@ -36,7 +38,7 @@ public:
 
   bool read(QIODevice *ioDevice);
 
-  int write(QIODevice *ioDevice) const;
+  int write(QIODevice *ioDevice);
 
   const QString& getAirplaneTitle() const
   {
@@ -203,11 +205,23 @@ public:
     airplaneFlightnumber = value;
   }
 
+  atools::fs::sc::SimConnectStatus getStatus() const
+  {
+    return status;
+  }
+
+  const QString& getStatusText() const
+  {
+    return SimConnectStatusText.at(status);
+  }
+
 private:
+  const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
+  const static quint16 DATA_VERSION = 1;
+
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
 
-  quint32 packetSize = 0, packetId = 0, packetTs = 0, version = 1;
   QString airplaneTitle, airplaneModel, airplaneReg, airplaneType,
           airplaneAirline, airplaneFlightnumber;
 
@@ -215,13 +229,18 @@ private:
   float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
         windDirection = 0.f, verticalSpeed = 0.f;
 
+  quint32 packetId = 0, packetTs = 0;
+  atools::fs::sc::SimConnectStatus status = OK;
+  quint16 magicNumber = 0, packetSize = 0, version = 1, padding;
+  quint32 padding2;
 };
 
+} // namespace sc
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_METATYPE(atools::fs::SimConnectData);
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectData);
 
-Q_DECLARE_TYPEINFO(atools::fs::SimConnectData, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectData, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_FS_SIMCONNECTDATA_H

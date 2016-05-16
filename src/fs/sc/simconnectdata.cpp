@@ -15,13 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "simconnectdata.h"
 #include "logging/loggingdefs.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <QDataStream>
 
 namespace atools {
 namespace fs {
+namespace sc {
 
 SimConnectData::SimConnectData()
 {
@@ -31,8 +32,6 @@ SimConnectData::SimConnectData()
 SimConnectData::SimConnectData(const SimConnectData& other)
 {
   *this = other;
-  // this->operator=(other);
-
 }
 
 SimConnectData::~SimConnectData()
@@ -42,8 +41,24 @@ SimConnectData::~SimConnectData()
 
 bool SimConnectData::read(QIODevice *ioDevice)
 {
+  status = OK;
+
   QDataStream in(ioDevice);
   in.setVersion(QDataStream::Qt_5_5);
+
+  if(magicNumber == 0)
+  {
+    if(ioDevice->bytesAvailable() < static_cast<qint64>(sizeof(magicNumber)))
+      return false;
+
+    in >> magicNumber;
+    if(magicNumber != MAGIC_NUMBER_DATA)
+    {
+      qWarning() << "SimConnectData::read: invalid magic number" << magicNumber;
+      status = INVALID_MAGIC_NUMBER;
+      return false;
+    }
+  }
 
   if(packetSize == 0)
   {
@@ -57,7 +72,14 @@ bool SimConnectData::read(QIODevice *ioDevice)
   if(ioDevice->bytesAvailable() < packetSize)
     return false;
 
-  in >> packetId >> packetTs >> version; // TODO version check
+  in >> version; // TODO version check
+  if(version != DATA_VERSION)
+  {
+    qWarning() << "SimConnectData::read: version mismatch" << version << "!=" << DATA_VERSION;
+    status = VERSION_MISMATCH;
+    return false;
+  }
+  in >> packetId >> packetTs;
 
   readString(in, airplaneTitle);
   readString(in, airplaneModel);
@@ -77,14 +99,15 @@ bool SimConnectData::read(QIODevice *ioDevice)
   return true;
 }
 
-int SimConnectData::write(QIODevice *ioDevice) const
+int SimConnectData::write(QIODevice *ioDevice)
 {
+  status = OK;
+
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_5);
 
-  out << static_cast<quint32>(0); // packetSize will be updated later
-  out << packetId << packetTs << version;
+  out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
 
   writeString(out, airplaneTitle);
   writeString(out, airplaneModel);
@@ -97,16 +120,19 @@ int SimConnectData::write(QIODevice *ioDevice) const
       << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed;
 
   // Go back and update size
-  out.device()->seek(0);
-  int size = block.size() - static_cast<int>(sizeof(packetSize));
-  out << static_cast<quint32>(size);
+  out.device()->seek(sizeof(MAGIC_NUMBER_DATA));
+  int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_DATA));
+  out << static_cast<quint16>(size);
 
   qint64 written = ioDevice->write(block);
 
   if(written < block.size())
+  {
     qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
+    status = INSUFFICIENT_WRITE;
+  }
 
-  return block.size();
+  return static_cast<int>(written);
 }
 
 void SimConnectData::writeString(QDataStream& out, const QString& str) const
@@ -137,5 +163,6 @@ bool SimConnectData::readString(QDataStream& in, QString& str, quint16 *size)
   return true;
 }
 
+} // namespace sc
 } // namespace fs
 } // namespace atools

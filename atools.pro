@@ -152,7 +152,9 @@ HEADERS += src/atools.h \
     src/fs/db/nav/tempairwaywriter.h \
     src/fs/db/airwayresolver.h \
     src/fs/db/routeedgewriter.h \
-    src/fs/simconnectdata.h
+    src/fs/sc/simconnectdata.h \
+    src/fs/sc/simconnectreply.h \
+    src/fs/sc/types.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -283,7 +285,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/nav/tempairwaywriter.cpp \
     src/fs/db/airwayresolver.cpp \
     src/fs/db/routeedgewriter.cpp \
-    src/fs/simconnectdata.cpp
+    src/fs/sc/simconnectdata.cpp \
+    src/fs/sc/simconnectreply.cpp
 
 
 unix {
