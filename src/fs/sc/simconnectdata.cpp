@@ -81,6 +81,10 @@ bool SimConnectData::read(QIODevice *ioDevice)
   }
   in >> packetId >> packetTs;
 
+  quint16 intFlags;
+  in >> intFlags;
+  flags = Flags(intFlags);
+
   readString(in, airplaneTitle);
   readString(in, airplaneModel);
   readString(in, airplaneReg);
@@ -90,7 +94,8 @@ bool SimConnectData::read(QIODevice *ioDevice)
 
   float lonx, laty, altitude;
   in >> lonx >> laty >> altitude >> courseTrue >> courseMag
-  >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection >> verticalSpeed;
+  >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection >> verticalSpeed
+  >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -108,6 +113,7 @@ int SimConnectData::write(QIODevice *ioDevice)
   out.setVersion(QDataStream::Qt_5_5);
 
   out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
+  out << static_cast<quint16>(flags);
 
   writeString(out, airplaneTitle);
   writeString(out, airplaneModel);
@@ -117,7 +123,8 @@ int SimConnectData::write(QIODevice *ioDevice)
   writeString(out, airplaneFlightnumber);
 
   out << position.getLonX() << position.getLatY() << position.getAltitude() << courseTrue << courseMag
-      << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed;
+      << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed
+      << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed;
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));

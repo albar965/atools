@@ -29,6 +29,19 @@ namespace atools {
 namespace fs {
 namespace sc {
 
+// quint16
+enum Flag
+{
+  NONE = 0x00,
+  ON_GROUND = 0x01
+//  IN_CLOUD = 0x02,
+//  IN_RAIN = 0x04,
+//  IN_SNOW = 0x08
+};
+
+Q_DECLARE_FLAGS(Flags, Flag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
+
 class SimConnectData
 {
 public:
@@ -215,9 +228,74 @@ public:
     return SimConnectStatusText.at(status);
   }
 
+  float getIndicatedAltitude() const
+  {
+    return indicatedAltitude;
+  }
+
+  void setIndicatedAltitude(float value)
+  {
+    indicatedAltitude = value;
+  }
+
+  float getAltitudeAboveGround() const
+  {
+    return altitudeAboveGround;
+  }
+
+  void setAltitudeAboveGround(float value)
+  {
+    altitudeAboveGround = value;
+  }
+
+  float getGroundAltitude() const
+  {
+    return groundAltitude;
+  }
+
+  void setGroundAltitude(float value)
+  {
+    groundAltitude = value;
+  }
+
+  float getTrueSpeed() const
+  {
+    return trueSpeed;
+  }
+
+  void setTrueSpeed(float value)
+  {
+    trueSpeed = value;
+  }
+
+  float getMachSpeed() const
+  {
+    return machSpeed;
+  }
+
+  void setMachSpeed(float value)
+  {
+    machSpeed = value;
+  }
+
+  Flags getFlags() const
+  {
+    return flags;
+  }
+
+  Flags& getFlags()
+  {
+    return flags;
+  }
+
+  void setFlags(Flags value)
+  {
+    flags = value;
+  }
+
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 1;
+  const static quint16 DATA_VERSION = 2;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
@@ -226,9 +304,11 @@ private:
           airplaneAirline, airplaneFlightnumber;
 
   atools::geo::Pos position;
-  float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedSpeed = 0.f, windSpeed = 0.f,
-        windDirection = 0.f, verticalSpeed = 0.f;
+  float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
+        altitudeAboveGround = 0.f, groundAltitude = 0.f, indicatedSpeed = 0.f, trueSpeed = 0.f,
+        machSpeed = 0.f, windSpeed = 0.f, windDirection = 0.f, verticalSpeed = 0.f;
 
+  Flags flags = atools::fs::sc::NONE;
   quint32 packetId = 0, packetTs = 0;
   atools::fs::sc::SimConnectStatus status = OK;
   quint16 magicNumber = 0, packetSize = 0, version = 1, padding;
