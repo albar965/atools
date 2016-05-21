@@ -53,6 +53,9 @@ public:
     return !(*this == other);
   }
 
+  /* Compare for equal around 10 cm */
+  bool fuzzyEqual(const Pos& other) const;
+
   float getLatY() const
   {
     return latY;
@@ -144,8 +147,8 @@ public:
   }
 
 protected:
-  const float INVALID_ORD = std::numeric_limits<float>::max();
-  const float EPSILON = std::numeric_limits<float>::epsilon();
+  const static float INVALID_ORDINATE;
+  const static float POS_EPSILON; // ca 10 cm for lat and lon nearby equator
 
   // Länge (x),Breite (y)
   float lonX, latY, altitude;

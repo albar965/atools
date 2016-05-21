@@ -24,6 +24,11 @@
 namespace atools {
 namespace geo {
 
+const float Pos::INVALID_ORDINATE = std::numeric_limits<float>::max();
+
+// 1 deg / minutes / nm to meter / to 10 cm
+const float Pos::POS_EPSILON = 1.f / 60.f / 1852.216f / 10.f;
+
 const double EARTH_RADIUS_METER = 6371. * 1000.;
 
 const QString SHORT_FORMAT("%1,%2,%3");
@@ -34,7 +39,7 @@ const QRegularExpression LONG_FORMAT_REGEXP(
   "([+-])\\s*([0-9\\.]+)");
 
 Pos::Pos()
-  : lonX(INVALID_ORD), latY(INVALID_ORD), altitude(0)
+  : lonX(INVALID_ORDINATE), latY(INVALID_ORDINATE), altitude(0)
 {
 }
 
@@ -104,6 +109,12 @@ bool Pos::operator==(const Pos& other) const
 {
   return almostEqual(lonX, other.lonX) &&
          almostEqual(latY, other.latY);
+}
+
+bool Pos::fuzzyEqual(const Pos& other) const
+{
+  return almostEqual(lonX, other.lonX, POS_EPSILON) &&
+         almostEqual(latY, other.latY, POS_EPSILON);
 }
 
 int Pos::getLatYDeg() const
@@ -369,7 +380,7 @@ QString Pos::toString() const
 
 bool Pos::isValid() const
 {
-  return lonX != INVALID_ORD && latY != INVALID_ORD;
+  return lonX != INVALID_ORDINATE && latY != INVALID_ORDINATE;
 }
 
 bool Pos::isPole() const
