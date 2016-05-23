@@ -35,11 +35,11 @@ class WidgetState
 public:
   WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true, bool blockSignals = false);
 
-  void save(const QList<QObject *>& widgets);
-  void restore(const QList<QObject *>& widgets);
+  void save(const QList<QObject *>& widgets) const;
+  void restore(const QList<QObject *>& widgets) const;
 
-  void save(const QObject *widget);
-  void restore(QObject *widget);
+  void save(const QObject *widget) const;
+  void restore(QObject *widget) const;
 
   void syncSettings();
 
@@ -47,11 +47,11 @@ private:
   QString keyPrefix;
   bool visibility = true, block = false;
 
-  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value);
-  QVariant loadWidget(atools::settings::Settings& settings, QObject *w);
+  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value) const;
+  QVariant loadWidget(atools::settings::Settings& settings, QObject *w) const;
 
-  void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w);
-  void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w);
+  void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
+  void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
 
 };
 

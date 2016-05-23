@@ -50,7 +50,7 @@ WidgetState::WidgetState(const QString& settingsKeyPrefix, bool saveVisibility, 
 
 }
 
-void WidgetState::save(const QObject *widget)
+void WidgetState::save(const QObject *widget) const
 {
   if(widget != nullptr)
   {
@@ -63,6 +63,11 @@ void WidgetState::save(const QObject *widget)
     {
       saveWidget(s, le, le->text());
       saveWidgetVisible(s, le);
+    }
+    else if(const QTextEdit * te = dynamic_cast<const QTextEdit *>(widget))
+    {
+      saveWidget(s, te, te->toHtml());
+      saveWidgetVisible(s, te);
     }
     else if(const QSpinBox * sb = dynamic_cast<const QSpinBox *>(widget))
     {
@@ -128,7 +133,7 @@ void WidgetState::save(const QObject *widget)
     qWarning() << "Found null widget in save";
 }
 
-void WidgetState::restore(QObject *widget)
+void WidgetState::restore(QObject *widget) const
 {
   if(widget != nullptr)
   {
@@ -146,6 +151,13 @@ void WidgetState::restore(QObject *widget)
       if(v.isValid())
         le->setText(v.toString());
       loadWidgetVisible(s, le);
+    }
+    else if(QTextEdit * te = dynamic_cast<QTextEdit *>(widget))
+    {
+      QVariant v = loadWidget(s, widget);
+      if(v.isValid())
+        te->setHtml(v.toString());
+      loadWidgetVisible(s, te);
     }
     else if(QSpinBox * sb = dynamic_cast<QSpinBox *>(widget))
     {
@@ -270,19 +282,19 @@ void WidgetState::syncSettings()
   Settings::instance().syncSettings();
 }
 
-void WidgetState::save(const QList<QObject *>& widgets)
+void WidgetState::save(const QList<QObject *>& widgets) const
 {
   for(const QObject *w : widgets)
     save(w);
 }
 
-void WidgetState::restore(const QList<QObject *>& widgets)
+void WidgetState::restore(const QList<QObject *>& widgets) const
 {
   for(QObject *w : widgets)
     restore(w);
 }
 
-void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w)
+void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w) const
 {
   if(visibility)
   {
@@ -296,7 +308,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w)
   }
 }
 
-void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVariant& value)
+void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVariant& value) const
 {
   if(!w->objectName().isEmpty())
     settings->setValue(keyPrefix + "_" + w->objectName(), value);
@@ -304,7 +316,7 @@ void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVarian
     qWarning() << "Found widget with empty name";
 }
 
-QVariant WidgetState::loadWidget(Settings& settings, QObject *w)
+QVariant WidgetState::loadWidget(Settings& settings, QObject *w) const
 {
   if(!w->objectName().isEmpty())
   {
@@ -320,7 +332,7 @@ QVariant WidgetState::loadWidget(Settings& settings, QObject *w)
   return QVariant();
 }
 
-void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w)
+void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w) const
 {
   if(visibility)
   {
