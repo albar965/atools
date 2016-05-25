@@ -66,7 +66,7 @@ public:
   QSqlIndex primaryIndex(const QString& tablename) const;
 
   // TODO create SqlRecord wrapper
-  QSqlRecord record(const QString& tablename) const;
+  SqlRecord record(const QString& tablename) const;
   SqlQuery exec(const QString& query = QString()) const;
   QSqlError lastError() const;
   bool isValid() const;

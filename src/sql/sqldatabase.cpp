@@ -125,11 +125,11 @@ QSqlIndex SqlDatabase::primaryIndex(const QString& tablename) const
   return db.primaryIndex(tablename);
 }
 
-QSqlRecord SqlDatabase::record(const QString& tablename) const
+SqlRecord SqlDatabase::record(const QString& tablename) const
 {
   checkError(isValid(), "SqlDatabase::record() on invalid database");
   checkError(isOpen(), "SqlDatabase::record() on closed database");
-  return db.record(tablename);
+  return SqlRecord(db.record(tablename));
 }
 
 SqlQuery SqlDatabase::exec(const QString& query) const

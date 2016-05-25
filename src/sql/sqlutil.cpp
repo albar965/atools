@@ -41,7 +41,7 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
   // QSqlDriver::DeleteStatement	4	An SQL DELETE statement (e.g., DELETE FROM t).
   QString columnList, valueList;
 
-  QSqlRecord record = db->record(tablename);
+  SqlRecord record = db->record(tablename);
 
   for(int i = 0; i < record.count(); ++i)
   {
@@ -66,7 +66,7 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
   // TODO use QSqlDriver::sqlStatement()
   QString columnList;
 
-  QSqlRecord record = db->record(tablename);
+  SqlRecord record = db->record(tablename);
 
   for(int i = 0; i < record.count(); ++i)
   {
@@ -81,13 +81,13 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
 
 bool SqlUtil::hasTable(const QString& tablename)
 {
-  QSqlRecord rec = db->record(tablename);
+  SqlRecord rec = db->record(tablename);
   return !rec.isEmpty();
 }
 
 bool SqlUtil::hasTableAndRows(const QString& tablename)
 {
-  QSqlRecord rec = db->record(tablename);
+  SqlRecord rec = db->record(tablename);
   if(!rec.isEmpty())
     return rowCount(tablename) > 0;
 
@@ -106,7 +106,7 @@ int SqlUtil::rowCount(const QString& tablename)
 
 void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
 {
-  QSqlRecord fromRec = from.record();
+  SqlRecord fromRec = from.record();
 
   for(int i = 0; i < fromRec.count(); ++i)
     to.bindValue(i, from.value(i));
@@ -186,7 +186,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
     {
       if(hasTableAndRows(name))
       {
-        QSqlRecord record = db->record(name);
+        SqlRecord record = db->record(name);
 
         for(int i = 0; i < record.count(); ++i)
         {
@@ -323,7 +323,7 @@ QStringList SqlUtil::buildResultList(SqlQuery& query)
 {
   QStringList retval;
 
-  QSqlRecord r = query.record();
+  SqlRecord r = query.record();
   for(int i = 0; i < r.count(); i++)
     retval.push_back(r.value(i).toString());
   return retval;

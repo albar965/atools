@@ -19,8 +19,9 @@
 #include "sql/sqlexception.h"
 #include "sql/sqldatabase.h"
 
+#include "sql/sqlrecord.h"
+
 #include <QSqlError>
-#include <QSqlRecord>
 
 namespace atools {
 
@@ -170,11 +171,18 @@ bool SqlQuery::isForwardOnly() const
   return query.isForwardOnly();
 }
 
-QSqlRecord SqlQuery::record() const
+QSqlRecord SqlQuery::sqlRecord() const
 {
   checkError(isValid(), "SqlQuery::record() on invalid query");
   checkError(isActive(), "SqlQuery::record() on inactive query");
   return query.record();
+}
+
+SqlRecord SqlQuery::record() const
+{
+  checkError(isValid(), "SqlQuery::record() on invalid query");
+  checkError(isActive(), "SqlQuery::record() on inactive query");
+  return SqlRecord(query.record(), queryString);
 }
 
 void SqlQuery::setForwardOnly(bool forward)

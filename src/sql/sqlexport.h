@@ -21,7 +21,6 @@
 #include "sql/sqlquery.h"
 
 #include <QString>
-#include <QSqlRecord>
 
 namespace atools {
 namespace sql {
@@ -93,13 +92,13 @@ public:
   }
 
   /* Build a header row from the given SQL record */
-  QString getResultSetHeader(const QSqlRecord& record) const;
+  QString getResultSetHeader(const SqlRecord& record) const;
 
   /* Build a header row from the given string list */
   QString getResultSetHeader(const QStringList& strings) const;
 
   /* Build a data row from the given SQL record */
-  QString getResultSetRow(const QSqlRecord& record) const;
+  QString getResultSetRow(const SqlRecord& record) const;
 
   /* Build a data row from the given QVariant list */
   QString getResultSetRow(const QVariantList& values) const;

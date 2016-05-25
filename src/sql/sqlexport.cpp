@@ -17,13 +17,11 @@
 
 #include "sql/sqlexport.h"
 
-#include <QSqlRecord>
-
 namespace atools {
 
 namespace sql {
 
-QString SqlExport::getResultSetHeader(const QSqlRecord& record) const
+QString SqlExport::getResultSetHeader(const SqlRecord& record) const
 {
   QStringList retval;
   for(int i = 0; i < record.count(); ++i)
@@ -49,7 +47,7 @@ QString SqlExport::getResultSetHeader(const QStringList& strings) const
   return retval;
 }
 
-QString SqlExport::getResultSetRow(const QSqlRecord& record) const
+QString SqlExport::getResultSetRow(const SqlRecord& record) const
 {
   QVariantList values;
   for(int i = 0; i < record.count(); ++i)

@@ -154,7 +154,8 @@ HEADERS += src/atools.h \
     src/fs/db/routeedgewriter.h \
     src/fs/sc/simconnectdata.h \
     src/fs/sc/simconnectreply.h \
-    src/fs/sc/types.h
+    src/fs/sc/types.h \
+    src/sql/sqlrecord.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -286,7 +287,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/airwayresolver.cpp \
     src/fs/db/routeedgewriter.cpp \
     src/fs/sc/simconnectdata.cpp \
-    src/fs/sc/simconnectreply.cpp
+    src/fs/sc/simconnectreply.cpp \
+    src/sql/sqlrecord.cpp
 
 
 unix {

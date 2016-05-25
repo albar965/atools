@@ -18,6 +18,8 @@
 #ifndef ATOOLS_SQL_SQLQUERY_H
 #define ATOOLS_SQL_SQLQUERY_H
 
+#include "sql/sqlrecord.h"
+
 #include <QSqlQuery>
 #include <QSqlResult>
 #include <QString>
@@ -63,7 +65,8 @@ public:
   const QSqlDriver *driver() const;
   const QSqlResult *result() const;
   bool isForwardOnly() const;
-  QSqlRecord record() const;
+  SqlRecord record() const;
+  QSqlRecord sqlRecord() const;
 
   void setForwardOnly(bool forward);
   void exec(const QString& queryString);
