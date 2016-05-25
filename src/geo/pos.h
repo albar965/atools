@@ -110,11 +110,14 @@ public:
   /* Angleto other point using a rhumb line */
   float angleDegToRhumb(const Pos& otherPos) const;
 
-  /* @return format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
+  /* @return Flight Simulator format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   QString toLongString() const;
 
   /* @return format like "49.314,8.543,220" (lonX,latY,alt) */
   QString toString() const;
+
+  /* @return Format like "9° 12' 5.49E", 49° 26' 41.57"N," */
+  QString toHumanReadableString() const;
 
   bool isValid() const;
 

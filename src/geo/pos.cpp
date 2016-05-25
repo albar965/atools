@@ -32,6 +32,7 @@ const float Pos::POS_EPSILON = 1.f / 60.f / 1852.216f / 10.f;
 const double EARTH_RADIUS_METER = 6371. * 1000.;
 
 const QString SHORT_FORMAT("%1,%2,%3");
+const QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
 const QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
 const QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
@@ -368,6 +369,17 @@ QString Pos::toLongString() const
          arg(lonX > 0 ? "E" : "W").
          arg(std::abs(getLonXDeg())).arg(std::abs(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2).
          arg(altitude >= 0 ? "+" : "-").arg(std::abs(altitude), 9, 'f', 2, '0');
+}
+
+QString Pos::toHumanReadableString() const
+{
+  if(!isValid())
+    throw new Exception("Invalid position. Cannot convert to string");
+
+  return HUMAN_FORMAT.arg(latY > 0 ? "N" : "S").
+         arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
+         arg(lonX > 0 ? "E" : "W").
+         arg(std::abs(getLonXDeg())).arg(std::abs(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 
 QString Pos::toString() const
