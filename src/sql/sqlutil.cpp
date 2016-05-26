@@ -325,7 +325,7 @@ QStringList SqlUtil::buildResultList(SqlQuery& query)
 
   SqlRecord r = query.record();
   for(int i = 0; i < r.count(); i++)
-    retval.push_back(r.value(i).toString());
+    retval.push_back(r.valueStr(i));
   return retval;
 }
 

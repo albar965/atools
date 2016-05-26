@@ -20,6 +20,7 @@
 
 #include <QSqlRecord>
 #include <QVariant>
+#include <QVector>
 
 namespace atools {
 namespace sql {
@@ -52,6 +53,46 @@ public:
 
   QVariant value(int i) const;
   QVariant value(const QString& name) const;
+
+  QString valueStr(int i) const
+  {
+    return value(i).toString();
+  }
+
+  QString valueStr(const QString& name) const
+  {
+    return value(name).toString();
+  }
+
+  int valueInt(int i) const
+  {
+    return value(i).toInt();
+  }
+
+  int valueInt(const QString& name) const
+  {
+    return value(name).toInt();
+  }
+
+  float valueFloat(int i) const
+  {
+    return value(i).toFloat();
+  }
+
+  float valueFloat(const QString& name) const
+  {
+    return value(name).toFloat();
+  }
+
+  int valueBool(int i) const
+  {
+    return value(i).toBool();
+  }
+
+  int valueBool(const QString& name) const
+  {
+    return value(name).toBool();
+  }
 
   bool isNull(int i) const;
   bool isNull(const QString& name) const;
@@ -92,6 +133,12 @@ public:
 private:
   QSqlRecord sqlRecord;
   QString queryString;
+
+};
+
+class SqlRecordVector :
+  public QVector<SqlRecord>
+{
 
 };
 
