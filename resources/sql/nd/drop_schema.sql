@@ -23,6 +23,10 @@ drop view if exists v_airport_com;
 drop view if exists v_airport_runway;
 drop view if exists v_airport_scenery;
 
+drop table if exists route_edge_radio;
+drop table if exists route_edge_airway;
+drop table if exists route_node_radio;
+drop table if exists route_node_airway;
 drop table if exists nav_search;
 
 drop table if exists airway;
@@ -62,7 +66,3 @@ drop table if exists bgl_file;
 drop table if exists scenery_area;
 drop table if exists metadata;
 
-drop table if exists route_edge_radio;
-drop table if exists route_edge_airway;
-drop table if exists route_node_radio;
-drop table if exists route_node_airway;
