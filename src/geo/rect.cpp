@@ -17,6 +17,7 @@
 
 #include "geo/rect.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace geo {
@@ -159,8 +160,8 @@ Pos Rect::getTopCenter() const
 
 bool Rect::isPoint() const
 {
-  return almostEqual(topLeft.getLonX(), bottomRight.getLonX()) &&
-         almostEqual(topLeft.getLatY(), bottomRight.getLatY());
+  return atools::almostEqual(topLeft.getLonX(), bottomRight.getLonX()) &&
+         atools::almostEqual(topLeft.getLatY(), bottomRight.getLatY());
 }
 
 float Rect::getWidthDegree() const
@@ -215,7 +216,8 @@ Pos Rect::getCenter() const
 
 bool Rect::crossesAntiMeridian() const
 {
-  return getEast() < getWest() || (almostEqual(getEast(), 180.f) && almostEqual(getWest(), -180.f));
+  return getEast() < getWest() ||
+         (atools::almostEqual(getEast(), 180.f) && atools::almostEqual(getWest(), -180.f));
 }
 
 QList<Rect> Rect::splitAtAntiMeridian() const

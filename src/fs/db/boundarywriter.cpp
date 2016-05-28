@@ -23,6 +23,7 @@
 #include "fs/db/boundarylinewriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -58,6 +59,7 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":max_altitude_type", bgl::util::enumToStr(bgl::Boundary::altTypeToStr, type->getMaxAltType()));
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":max_altitude", roundToPrecision(meterToFeet(type->getMaxPosition().getAltitude())));
   bind(":max_lonx", type->getMaxPosition().getLonX());

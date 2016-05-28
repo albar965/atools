@@ -22,6 +22,7 @@
 #include "fs/bgl/util.h"
 #include "fs/db/airportindex.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -37,6 +38,7 @@ void VorWriter::writeObject(const Vor *type)
     qDebug() << "Writing VOR " << type->getIdent() << type->getName();
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":vor_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());

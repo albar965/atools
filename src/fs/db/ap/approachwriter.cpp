@@ -25,6 +25,7 @@
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/bgl/ap/approachtypes.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 #include <QString>
 
@@ -35,6 +36,7 @@ namespace db {
 using atools::fs::bgl::Approach;
 using atools::sql::SqlQuery;
 using namespace atools::geo;
+using namespace atools;
 
 void ApproachWriter::writeObject(const Approach *type)
 {

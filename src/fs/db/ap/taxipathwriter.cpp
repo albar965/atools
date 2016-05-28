@@ -23,6 +23,7 @@
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/taxipoint.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -40,6 +41,7 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":taxi_path_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());

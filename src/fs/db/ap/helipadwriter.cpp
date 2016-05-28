@@ -22,6 +22,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -38,6 +39,7 @@ void HelipadWriter::writeObject(const Helipad *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
   bind(":helipad_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->getSurface()));

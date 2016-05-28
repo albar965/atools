@@ -29,4 +29,20 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
+QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower)
+{
+  Q_UNUSED(toUpper);
+  Q_UNUSED(toLower);
+  static QRegExp splitPattern("[,\\.\\- \t_]");
+  QString retval;
+
+  QStringList list(str.split(splitPattern));
+  return retval;
+}
+
+QString ratingString(int value, int maxValue)
+{
+  return QString("★").repeated(value) + QString("−").repeated(maxValue - value);
+}
+
 } // namespace atools

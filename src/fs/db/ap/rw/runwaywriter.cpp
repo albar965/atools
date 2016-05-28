@@ -23,6 +23,7 @@
 #include "fs/db/runwayindex.h"
 #include "fs/bglreaderoptions.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 #include <QString>
 
@@ -52,6 +53,7 @@ void RunwayWriter::writeObject(const Runway *type)
     qDebug() << "Writing Runway for airport " << apIdent;
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":runway_id", runwayId);
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());

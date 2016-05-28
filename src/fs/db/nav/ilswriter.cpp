@@ -25,6 +25,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/runwayindex.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -43,6 +44,8 @@ void IlsWriter::writeObject(const Ils *type)
     qDebug() << "Writing ILS " << type->getIdent() << " name " << type->getName();
 
   using namespace atools::geo;
+  using namespace atools;
+
   bind(":ils_id", getNextId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());

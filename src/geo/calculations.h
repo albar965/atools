@@ -37,30 +37,6 @@ float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, b
                      atools::geo::LineDist *distType = nullptr);
 
 template<typename TYPE>
-bool almostEqual(TYPE f1, TYPE f2)
-{
-  return std::abs(f1 - f2) < std::numeric_limits<TYPE>::epsilon();
-}
-
-template<typename TYPE>
-bool almostNotEqual(TYPE f1, TYPE f2)
-{
-  return std::abs(f1 - f2) >= std::numeric_limits<TYPE>::epsilon();
-}
-
-template<typename TYPE>
-bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
-{
-  return std::abs(f1 - f2) < epsilon;
-}
-
-template<typename TYPE>
-bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
-{
-  return std::abs(f1 - f2) >= epsilon;
-}
-
-template<typename TYPE>
 int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
@@ -78,30 +54,6 @@ float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
   return static_cast<float>(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
 }
 
-/* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
-template<typename TYPE>
-int roundToPrecision(TYPE value, int precision = 0)
-{
-  if(precision == 0)
-    return static_cast<int>(round(value));
-  else
-  {
-    int factor = static_cast<int>(pow(10., precision));
-    return static_cast<int>(round(value / factor)) * factor;
-  }
-}
-
-/* To string with changing precision */
-template<typename TYPE>
-QString numberToString(TYPE value)
-{
-  int precision = 0;
-  if(value < 10)
-    precision = 2;
-  else if(value < 100)
-    precision = 1;
-  return QString::number(value, 'f', precision);
-}
 
 /* Distance from nautical miles to meters */
 template<typename TYPE>

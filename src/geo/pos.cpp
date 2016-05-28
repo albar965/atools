@@ -18,6 +18,7 @@
 #include "geo/calculations.h"
 #include "geo/pos.h"
 #include "exception.h"
+#include "atools.h"
 
 #include <QRegularExpression>
 
@@ -108,14 +109,14 @@ Pos& Pos::operator=(const Pos& other)
 
 bool Pos::operator==(const Pos& other) const
 {
-  return almostEqual(lonX, other.lonX) &&
-         almostEqual(latY, other.latY);
+  return atools::almostEqual(lonX, other.lonX) &&
+         atools::almostEqual(latY, other.latY);
 }
 
 bool Pos::fuzzyEqual(const Pos& other) const
 {
-  return almostEqual(lonX, other.lonX, POS_EPSILON) &&
-         almostEqual(latY, other.latY, POS_EPSILON);
+  return atools::almostEqual(lonX, other.lonX, POS_EPSILON) &&
+         atools::almostEqual(latY, other.latY, POS_EPSILON);
 }
 
 int Pos::getLatYDeg() const
@@ -262,7 +263,7 @@ Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
     return atools::geo::Pos();   // distance too long - return invalid pos
 
   double q, dphi;
-  if(almostEqual(lat, lat1))
+  if(atools::almostEqual(lat, lat1))
     q = cos(lat1);
   else
   {
@@ -306,7 +307,7 @@ float Pos::distanceMeterToRhumb(const Pos& otherPos) const
   double q, distance;
   double dphi = log(tan(lat2 / 2. + M_PI / 4.) / tan(lat1 / 2. + M_PI / 4.));
 
-  if(almostEqual(lat2, lat1))
+  if(atools::almostEqual(lat2, lat1))
     q = cos(lat1);
   else
     q = (lat2 - lat1) / dphi;

@@ -22,6 +22,7 @@
 #include "fs/bgl/util.h"
 #include "fs/db/nav/waypointwriter.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -40,6 +41,7 @@ void TempAirwayWriter::writeObject(const AirwayEntry *type)
   if(type->hasNextWaypoint())
   {
     using namespace atools::geo;
+    using namespace atools;
 
     bind(":next_type",
          bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr,

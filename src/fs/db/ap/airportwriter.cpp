@@ -39,6 +39,7 @@
 #include "fs/db/ap/comwriter.h"
 #include "fs/db/ap/deleteairportwriter.h"
 #include "fs/bgl/ap/parking.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -67,6 +68,7 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
+  using namespace atools;
   using namespace atools::geo;
 
   if(!getOptions().includeAirport(type->getIdent()))
@@ -154,6 +156,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":largest_parking_gate",
        bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
+  // Maximum rating is 5
   int rating = !type->getTaxiPaths().isEmpty() + !type->getParkings().isEmpty() +
                !type->getAprons().isEmpty() + isAddon;
 

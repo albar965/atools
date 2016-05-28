@@ -24,6 +24,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/transitionlegwriter.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -39,6 +40,8 @@ void TransitionWriter::writeObject(const Transition *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
+
 
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());

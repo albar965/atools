@@ -21,6 +21,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -36,6 +37,7 @@ void ParkingWriter::writeObject(const Parking *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":parking_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());

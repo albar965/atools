@@ -22,6 +22,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/runwayindex.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -37,6 +38,8 @@ void StartWriter::writeObject(const Start *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
+
   bind(":start_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));

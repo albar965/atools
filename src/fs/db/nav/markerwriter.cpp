@@ -20,6 +20,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -34,6 +35,7 @@ void MarkerWriter::writeObject(const Marker *type)
     qDebug() << "Writing Marker " << type->getIdent();
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":marker_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());

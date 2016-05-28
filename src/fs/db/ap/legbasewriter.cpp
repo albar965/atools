@@ -20,6 +20,7 @@
 #include "fs/bgl/util.h"
 #include "fs/bglreaderoptions.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -60,6 +61,7 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   }
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":theta", type->getTheta());
   bind(":rho", type->getRho());

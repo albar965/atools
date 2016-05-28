@@ -21,6 +21,7 @@
 #include "fs/bgl/util.h"
 #include "fs/db/airportindex.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -35,6 +36,7 @@ void NdbWriter::writeObject(const Ndb *type)
     qDebug() << "Writing NDB " << type->getIdent() << type->getName();
 
   using namespace atools::geo;
+  using namespace atools;
 
   bind(":ndb_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());

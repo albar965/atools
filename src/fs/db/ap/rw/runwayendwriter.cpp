@@ -21,6 +21,7 @@
 #include "fs/bglreaderoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "geo/calculations.h"
+#include  "atools.h"
 
 namespace atools {
 namespace fs {
@@ -36,6 +37,7 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   using namespace atools::geo;
+  using namespace atools;
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());
   bind(":offset_threshold", roundToPrecision(meterToFeet(type->getOffsetThreshold())));

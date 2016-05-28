@@ -22,6 +22,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bglreaderoptions.h"
 #include "geo/calculations.h"
+#include "atools.h"
 
 namespace atools {
 namespace fs {
@@ -33,6 +34,7 @@ using atools::sql::SqlQuery;
 void BoundaryLineWriter::writeObject(const BoundaryLine *type)
 {
   using namespace atools::geo;
+  using namespace atools;
 
   if(getOptions().isVerbose())
     qDebug() << "Writing BOUNDARYLINE ";

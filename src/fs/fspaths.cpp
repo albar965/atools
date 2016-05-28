@@ -213,13 +213,11 @@ QString FsPaths::getSceneryLibraryPath(fstype::SimulatorType type)
              "P3DV3" + QDir::separator() + "Scenery.CFG";
 
 #endif
+    case fstype::UNKNOWN:
     case fstype::MAX_VALUE:
     case fstype::ALL_SIMULATORS:
       break;
   }
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
-  return nullptr;
-
   return QString();
 }
 
@@ -261,12 +259,12 @@ QString FsPaths::settingsKey(fstype::SimulatorType type)
     case fstype::P3D_V3:
       return SETTINGS_P3D_V3_PATH;
 
+    case fstype::UNKNOWN:
     case fstype::MAX_VALUE:
     case fstype::ALL_SIMULATORS:
       break;
   }
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
-  return nullptr;
+  return QString();
 }
 
 QString FsPaths::registryPath(fstype::SimulatorType type)
@@ -285,12 +283,12 @@ QString FsPaths::registryPath(fstype::SimulatorType type)
     case fstype::P3D_V3:
       return P3D_V3_REGISTRY_PATH;
 
+    case fstype::UNKNOWN:
     case fstype::MAX_VALUE:
     case fstype::ALL_SIMULATORS:
       break;
   }
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
-  return nullptr;
+  return QString();
 }
 
 QString FsPaths::registryKey(fstype::SimulatorType type)
@@ -311,10 +309,10 @@ QString FsPaths::registryKey(fstype::SimulatorType type)
 
     case fstype::MAX_VALUE:
     case fstype::ALL_SIMULATORS:
+    case fstype::UNKNOWN:
       break;
   }
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
-  return nullptr;
+  return QString();
 }
 
 QString FsPaths::nonWindowsPath(fstype::SimulatorType type)
@@ -333,12 +331,12 @@ QString FsPaths::nonWindowsPath(fstype::SimulatorType type)
     case fstype::P3D_V3:
       return P3D_V3_NO_WINDOWS_PATH;
 
+    case fstype::UNKNOWN:
     case fstype::MAX_VALUE:
     case fstype::ALL_SIMULATORS:
       break;
   }
-  Q_ASSERT_X(false, "FsPaths", "Unknown SimulatorType");
-  return nullptr;
+  return QString();
 }
 
 } // namespace fs
