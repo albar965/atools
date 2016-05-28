@@ -17,6 +17,9 @@
 
 #include "atools.h"
 
+#include <QLocale>
+#include <QVector>
+
 namespace atools {
 
 QString version()
@@ -29,15 +32,61 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
-QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower)
+void capWord(QString& lastWord, const QChar& last, const QSet<QString>& toUpper,
+             const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
-  Q_UNUSED(toUpper);
-  Q_UNUSED(toLower);
-  static QRegExp splitPattern("[,\\.\\- \t_]");
+  static QLocale locale;
+  if(toUpper.contains(lastWord))
+    lastWord = locale.toUpper(lastWord);
+  else if(toLower.contains(lastWord))
+    lastWord = locale.toLower(lastWord);
+  else if(!ignore.contains(lastWord))
+  {
+    if(last == '\'')
+      lastWord[0] = lastWord.at(0).toLower();
+    else
+    {
+      lastWord = lastWord.toLower();
+      lastWord[0] = lastWord.at(0).toUpper();
+    }
+  }
+}
+
+QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower,
+                  const QSet<QString>& ignore)
+{
+  if(str.isEmpty())
+    return str;
+
   QString retval;
 
-  QStringList list(str.split(splitPattern));
-  return retval;
+  QString lastWord;
+
+  QChar last;
+  for(const QChar& c : str)
+  {
+    if(c.isSpace() || c.isPunct())
+    {
+      if(last.isLetterOrNumber())
+      {
+        capWord(lastWord, last, toUpper, toLower, ignore);
+        retval += lastWord;
+        lastWord.clear();
+      }
+      retval += c;
+    }
+    else
+      lastWord += c;
+
+    last = c;
+  }
+  if(!lastWord.isEmpty())
+  {
+    capWord(lastWord, last, toUpper, toLower, ignore);
+    retval += lastWord;
+  }
+
+  return retval.replace('_', ' ');
 }
 
 QString ratingString(int value, int maxValue)

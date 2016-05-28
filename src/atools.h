@@ -53,7 +53,8 @@ QString numberToString(TYPE value)
 }
 
 /* Capitalize all words in the string with exceptions that are either forced to upper or lower */
-QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<QString>& toLower);
+QString capString(const QString& str, const QSet<QString>& toUpper = {}, const QSet<QString>& toLower = {},
+                  const QSet<QString>& ignore = {});
 
 /* Returns a string containing value number of stars and maxValue - value number of dashes */
 QString ratingString(int value, int maxValue);
