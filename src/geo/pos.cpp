@@ -28,7 +28,9 @@ namespace geo {
 const float Pos::INVALID_ORDINATE = std::numeric_limits<float>::max();
 
 // 1 deg / minutes / nm to meter / to 10 cm
-const float Pos::POS_EPSILON = 1.f / 60.f / 1852.216f / 10.f;
+const float Pos::POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f;
+const float Pos::POS_EPSILON_1M = 1.f / 60.f / 1852.216f;
+const float Pos::POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f;
 
 const double EARTH_RADIUS_METER = 6371. * 1000.;
 
@@ -113,10 +115,10 @@ bool Pos::operator==(const Pos& other) const
          atools::almostEqual(latY, other.latY);
 }
 
-bool Pos::fuzzyEqual(const Pos& other) const
+bool Pos::fuzzyEqual(const Pos& other, float epsilon) const
 {
-  return atools::almostEqual(lonX, other.lonX, POS_EPSILON) &&
-         atools::almostEqual(latY, other.latY, POS_EPSILON);
+  return atools::almostEqual(lonX, other.lonX, epsilon) &&
+         atools::almostEqual(latY, other.latY, epsilon);
 }
 
 int Pos::getLatYDeg() const

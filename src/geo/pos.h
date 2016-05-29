@@ -54,7 +54,7 @@ public:
   }
 
   /* Compare for equal around 10 cm */
-  bool fuzzyEqual(const Pos& other) const;
+  bool fuzzyEqual(const Pos& other, float epsilon) const;
 
   float getLatY() const
   {
@@ -149,9 +149,12 @@ public:
     altitude = value;
   }
 
+  const static float POS_EPSILON_10CM; // ca 10 cm for lat and lon nearby equator
+  const static float POS_EPSILON_1M; // ca 1 m for lat and lon nearby equator
+  const static float POS_EPSILON_10M; // ca 10 m for lat and lon nearby equator
+
 protected:
   const static float INVALID_ORDINATE;
-  const static float POS_EPSILON; // ca 10 cm for lat and lon nearby equator
 
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
