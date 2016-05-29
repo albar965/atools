@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "atools.h"
+#include "logging/loggingdefs.h"
 
 #include <QLocale>
 #include <QVector>
@@ -24,7 +25,7 @@ namespace atools {
 
 QString version()
 {
-  return "1.6.0.develop";
+  return "1.8.0.develop";
 }
 
 QString gitRevision()
@@ -32,7 +33,7 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
-void capWord(QString& lastWord, const QChar& last, const QSet<QString>& toUpper,
+void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
              const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
   static QLocale locale;
@@ -42,7 +43,8 @@ void capWord(QString& lastWord, const QChar& last, const QSet<QString>& toUpper,
     lastWord = locale.toLower(lastWord);
   else if(!ignore.contains(lastWord))
   {
-    if(last == '\'')
+    // Convert all letters after an apostrophe to lower case (St. Mary's)
+    if(last == '\'' && lastWord.size() == 1)
       lastWord[0] = lastWord.at(0).toLower();
     else
     {
@@ -58,22 +60,20 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
   if(str.isEmpty())
     return str;
 
-  QString retval;
-
-  QString lastWord;
-
-  QChar last;
-  for(const QChar& c : str)
+  QString retval, lastWord;
+  QChar last, lastSep;
+  for(QChar c : str)
   {
-    if(c.isSpace() || c.isPunct())
+    if(!c.isLetterOrNumber())
     {
       if(last.isLetterOrNumber())
       {
-        capWord(lastWord, last, toUpper, toLower, ignore);
+        capWord(lastWord, lastSep, toUpper, toLower, ignore);
         retval += lastWord;
         lastWord.clear();
       }
       retval += c;
+      lastSep = c;
     }
     else
       lastWord += c;
@@ -82,7 +82,8 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
   }
   if(!lastWord.isEmpty())
   {
-    capWord(lastWord, last, toUpper, toLower, ignore);
+    QChar lastC = str.at(str.size() >= 2 ? str.size() - 2 : 0);
+    capWord(lastWord, lastC, toUpper, toLower, ignore);
     retval += lastWord;
   }
 
