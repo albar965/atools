@@ -95,7 +95,10 @@ bool SimConnectData::read(QIODevice *ioDevice)
   float lonx, laty, altitude;
   in >> lonx >> laty >> altitude >> courseTrue >> courseMag
   >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection >> verticalSpeed
-  >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed;
+  >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed
+  >> trackMag >> trackTrue >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
+  >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
+  >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -124,7 +127,10 @@ int SimConnectData::write(QIODevice *ioDevice)
 
   out << position.getLonX() << position.getLatY() << position.getAltitude() << courseTrue << courseMag
       << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed
-      << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed;
+      << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed
+      << trackMag << trackTrue << ambientTemperature << totalAirTemperature << seaLevelPressure
+      << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
+      << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH;
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));
@@ -141,6 +147,8 @@ int SimConnectData::write(QIODevice *ioDevice)
 
   return static_cast<int>(written);
 }
+
+
 
 void SimConnectData::writeString(QDataStream& out, const QString& str) const
 {

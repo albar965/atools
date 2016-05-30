@@ -34,9 +34,9 @@ enum Flag
 {
   NONE = 0x00,
   ON_GROUND = 0x01
-//  IN_CLOUD = 0x02,
-//  IN_RAIN = 0x04,
-//  IN_SNOW = 0x08
+              // IN_CLOUD = 0x02,
+              // IN_RAIN = 0x04,
+              // IN_SNOW = 0x08
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -293,9 +293,154 @@ public:
     flags = value;
   }
 
+  float getTrackMag() const
+  {
+    return trackMag;
+  }
+
+  void setTrackMag(float value)
+  {
+    trackMag = value;
+  }
+
+  float getTrackTrue() const
+  {
+    return trackTrue;
+  }
+
+  void setTrackTrue(float value)
+  {
+    trackTrue = value;
+  }
+
+  float getAmbientTemperature() const
+  {
+    return ambientTemperature;
+  }
+
+  void setAmbientTemperature(float value)
+  {
+    ambientTemperature = value;
+  }
+
+  float getTotalAirTemperature() const
+  {
+    return totalAirTemperature;
+  }
+
+  void setTotalAirTemperature(float value)
+  {
+    totalAirTemperature = value;
+  }
+
+  float getSeaLevelPressure() const
+  {
+    return seaLevelPressure;
+  }
+
+  void setSeaLevelPressure(float value)
+  {
+    seaLevelPressure = value;
+  }
+
+  float getPitotIce() const
+  {
+    return pitotIce;
+  }
+
+  void setPitotIce(float value)
+  {
+    pitotIce = value;
+  }
+
+  float getStructuralIce() const
+  {
+    return structuralIce;
+  }
+
+  void setStructuralIce(float value)
+  {
+    structuralIce = value;
+  }
+
+  float getAirplaneTotalWeight() const
+  {
+    return airplaneTotalWeight;
+  }
+
+  void setAirplaneTotalWeight(float value)
+  {
+    airplaneTotalWeight = value;
+  }
+
+  float getAirplaneMaxGrossWeight() const
+  {
+    return airplaneMaxGrossWeight;
+  }
+
+  void setAirplaneMaxGrossWeight(float value)
+  {
+    airplaneMaxGrossWeight = value;
+  }
+
+  float getAirplaneEmptyWeight() const
+  {
+    return airplaneEmptyWeight;
+  }
+
+  void setAirplaneEmptyWeight(float value)
+  {
+    airplaneEmptyWeight = value;
+  }
+
+  float getFuelTotalQuantity() const
+  {
+    return fuelTotalQuantity;
+  }
+
+  void setFuelTotalQuantity(float value)
+  {
+    fuelTotalQuantity = value;
+  }
+
+  float getFuelTotalWeight() const
+  {
+    return fuelTotalWeight;
+  }
+
+  void setFuelTotalWeight(float value)
+  {
+    fuelTotalWeight = value;
+  }
+
+  float getFuelFlowPPH() const
+  {
+    return fuelFlowPPH;
+  }
+
+  void setFuelFlowPPH(float value)
+  {
+    fuelFlowPPH = value;
+  }
+
+  float getFuelFlowGPH() const
+  {
+    return fuelFlowGPH;
+  }
+
+  void setFuelFlowGPH(float value)
+  {
+    fuelFlowGPH = value;
+  }
+
+  static int getDataVersion()
+  {
+    return DATA_VERSION;
+  }
+
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 2;
+  const static quint16 DATA_VERSION = 3;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
@@ -307,6 +452,12 @@ private:
   float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
         altitudeAboveGround = 0.f, groundAltitude = 0.f, indicatedSpeed = 0.f, trueSpeed = 0.f,
         machSpeed = 0.f, windSpeed = 0.f, windDirection = 0.f, verticalSpeed = 0.f;
+
+  // New since version 3
+  float trackMag = 0.f, trackTrue = 0.f, ambientTemperature = 0.f, totalAirTemperature = 0.f,
+        seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
+        airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
+        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f;
 
   Flags flags = atools::fs::sc::NONE;
   quint32 packetId = 0, packetTs = 0;
