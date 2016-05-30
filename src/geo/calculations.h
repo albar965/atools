@@ -54,6 +54,33 @@ float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
   return static_cast<float>(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
 }
 
+/* Temperature from celsius to farenheit */
+template<typename TYPE>
+TYPE degCToDegF(TYPE temp)
+{
+  return static_cast<TYPE>(1.8 * static_cast<double>(temp) + 32);
+}
+
+/* Temperature from farenheit to celsius */
+template<typename TYPE>
+TYPE degFToDegC(TYPE temp)
+{
+  return static_cast<TYPE>((static_cast<double>(temp) - 32) / 1.8);
+}
+
+/* Pressure from millibar to inches Hg */
+template<typename TYPE>
+TYPE mbarToInHg(TYPE press)
+{
+  return static_cast<TYPE>(static_cast<double>(press) * 0.02953);
+}
+
+/* Pressure from inches Hg to millibar */
+template<typename TYPE>
+TYPE inHgToMbar(TYPE press)
+{
+  return static_cast<TYPE>(static_cast<double>(press) * 33.863753);
+}
 
 /* Distance from nautical miles to meters */
 template<typename TYPE>
