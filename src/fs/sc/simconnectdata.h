@@ -438,9 +438,25 @@ public:
     return DATA_VERSION;
   }
 
+  float getMagVar() const
+  {
+    return magVar;
+  }
+
+  void setMagVar(float value)
+  {
+    magVar = value;
+  }
+
+  unsigned int getLocalTime() const;
+  void setLocalTime(int value);
+
+  unsigned int getZuluTime() const;
+  void setZuluTime(int value);
+
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 3;
+  const static quint16 DATA_VERSION = 4;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
@@ -457,7 +473,8 @@ private:
   float trackMag = 0.f, trackTrue = 0.f, ambientTemperature = 0.f, totalAirTemperature = 0.f,
         seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
         airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
-        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f;
+        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f;
+  quint32 localTime = 0, zuluTime = 0;
 
   Flags flags = atools::fs::sc::NONE;
   quint32 packetId = 0, packetTs = 0;
