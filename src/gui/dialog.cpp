@@ -142,6 +142,43 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
 }
 
 int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& message,
+                               const QString& checkBoxMessage, DialogButtonList buttonList,
+                               QMessageBox::StandardButton dialogDefaultButton,
+                               QMessageBox::StandardButton defaultButton)
+{
+  int retval = defaultButton;
+  Settings& s = Settings::instance();
+
+  // show only if the key is true or empty
+  if(settingsKey.isEmpty() || s->value(settingsKey, true).toBool())
+  {
+    // Build button field
+    QMessageBox::StandardButtons buttons = QMessageBox::NoButton;
+    for(const DialogButton& db : buttonList)
+      buttons |= db.button;
+
+    QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
+    if(!checkBoxMessage.isEmpty())
+      msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
+    msg.setDefaultButton(dialogDefaultButton);
+
+    // Set the button texts
+    for(const DialogButton& db : buttonList)
+      if(!db.text.isEmpty())
+        msg.setButtonText(db.button, db.text);
+
+    retval = msg.exec();
+
+    if(!settingsKey.isEmpty())
+    {
+      s->setValue(settingsKey, !msg.checkBox()->isChecked());
+      s.syncSettings();
+    }
+  }
+  return retval;
+}
+
+int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& message,
                                const QString& checkBoxMessage, QMessageBox::StandardButtons buttons,
                                QMessageBox::StandardButton dialogDefaultButton,
                                QMessageBox::StandardButton defaultButton)

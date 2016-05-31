@@ -26,6 +26,15 @@ class QFileDialog;
 namespace atools {
 namespace gui {
 
+/* Allows to set a text for each button */
+struct DialogButton
+{
+  QString text;
+  QMessageBox::StandardButtons button;
+};
+
+typedef QVector<DialogButton> DialogButtonList;
+
 /* Provides multiple methods to show dialogs that save their status in a
  * settings object or file.
  * @see atools::settings::Settings
@@ -112,6 +121,11 @@ public:
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
 
+  int showQuestionMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage,
+                         DialogButtonList buttonList,
+                         QMessageBox::StandardButton dialogDefaultButton,
+                         QMessageBox::StandardButton defaultButton);
+
   QString openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path);
 
 private:
@@ -124,5 +138,7 @@ private:
 
 } // namespace gui
 } // namespace atools
+
+Q_DECLARE_TYPEINFO(atools::gui::DialogButton, Q_MOVABLE_TYPE);
 
 #endif // ATOOLS_GUI_DIALOG_H

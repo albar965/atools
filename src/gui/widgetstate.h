@@ -43,6 +43,26 @@ public:
 
   void syncSettings();
 
+  bool getSaveVisibility() const
+  {
+    return visibility;
+  }
+
+  void setSaveVisibility(bool value)
+  {
+    visibility = value;
+  }
+
+  bool getBlockSignals() const
+  {
+    return block;
+  }
+
+  void setBlockSignals(bool value)
+  {
+    block = value;
+  }
+
 private:
   QString keyPrefix;
   bool visibility = true, block = false;
