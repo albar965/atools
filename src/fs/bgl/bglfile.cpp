@@ -319,10 +319,6 @@ void BglFile::readRecords(BinaryStream *bs)
 
 void BglFile::freeObjects()
 {
-  qDeleteAll(allRecords);
-
-  allRecords.clear();
-
   airports.clear();
   namelists.clear();
   ils.clear();
@@ -333,6 +329,9 @@ void BglFile::freeObjects()
   boundaries.clear();
   sections.clear();
   subsections.clear();
+
+  qDeleteAll(allRecords);
+  allRecords.clear();
 
   filename = "";
   size = 0;

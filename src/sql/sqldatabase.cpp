@@ -106,6 +106,19 @@ void SqlDatabase::close()
   db.close();
 }
 
+void SqlDatabase::executePragmas(const QStringList& pragmas)
+{
+  checkError(db.rollback(), "SqlDatabase::pragma() error");
+
+  for(const QString& pragma : pragmas)
+  {
+    db.exec(pragma);
+    checkError(isValid(), "Database not valid after \"" + pragma + "\"");
+  }
+
+  checkError(db.transaction(), "SqlDatabase::pragma() error");
+}
+
 bool SqlDatabase::isOpen() const
 {
   return db.isOpen();

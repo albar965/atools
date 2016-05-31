@@ -119,6 +119,9 @@ public:
   bool isAutocommit() const;
   void setAutocommit(bool value);
 
+  /* Rolls the current transaction back and executes the list of pragmas. Opens transaction again afteerwards. */
+  void executePragmas(const QStringList& pragmas);
+
 private:
   SqlDatabase(const QSqlDatabase& other);
 

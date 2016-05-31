@@ -175,6 +175,13 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::FENCE_BOUNDARY:
+        if(options->includeBglObject(type::FENCE))
+        {
+          r.seekToStart();
+          fences.push_back(Fence(options, bs));
+        }
+        numBoundaryFence++;
+        break;
       case rec::FENCE_BLAST:
         if(options->includeBglObject(type::FENCE))
         {
@@ -345,9 +352,6 @@ void Airport::updateSummaryFields()
   {
     for(const BglPosition& p : f.getVertices())
       boundingRect.extend(p.getPos());
-
-    if(f.getType() == fence::BOUNDARY)
-      numBoundaryFence++;
   }
 
   for(const Apron& a : aprons)
