@@ -48,7 +48,6 @@ void Translator::load(const QString& language)
         if(!loadAndInstall(appBaseName, appPath, language))
         {
           // No translations for this application found - force English to avoid mixed language in dialogs
-          QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
           loadDefault = false;
         }
 
@@ -64,6 +63,8 @@ void Translator::load(const QString& language)
         loadAndInstall("qtbase", translationsPath, language);
     }
     loaded = true;
+
+    qInfo() << "Locale" << QLocale();
   }
   else
     qWarning() << "Translator::load called more than once";
