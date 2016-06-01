@@ -22,6 +22,7 @@
 #include "fs/sc/types.h"
 
 #include <QString>
+#include <QDateTime>
 
 class QIODevice;
 
@@ -33,10 +34,10 @@ namespace sc {
 enum Flag
 {
   NONE = 0x00,
-  ON_GROUND = 0x01
-              // IN_CLOUD = 0x02,
-              // IN_RAIN = 0x04,
-              // IN_SNOW = 0x08
+  ON_GROUND = 0x01,
+  IN_CLOUD = 0x02,
+  IN_RAIN = 0x04,
+  IN_SNOW = 0x08
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -448,15 +449,15 @@ public:
     magVar = value;
   }
 
-  unsigned int getLocalTime() const;
-  void setLocalTime(int value);
+  const QDateTime& getLocalTime() const;
+  void setLocalTime(const QDateTime& value);
 
-  unsigned int getZuluTime() const;
-  void setZuluTime(int value);
+  const QDateTime& getZuluTime() const;
+  void setZuluTime(const QDateTime& value);
 
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 4;
+  const static quint16 DATA_VERSION = 5;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
@@ -474,7 +475,7 @@ private:
         seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
         airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
         fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f;
-  quint32 localTime = 0, zuluTime = 0;
+  QDateTime localDateTime, zuluDateTime;
 
   Flags flags = atools::fs::sc::NONE;
   quint32 packetId = 0, packetTs = 0;

@@ -99,7 +99,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
   >> trackMag >> trackTrue >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
   >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
   >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVar
-  >> localTime >> zuluTime;
+  >> localDateTime >> zuluDateTime;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -132,7 +132,7 @@ int SimConnectData::write(QIODevice *ioDevice)
       << trackMag << trackTrue << ambientTemperature << totalAirTemperature << seaLevelPressure
       << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
       << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVar
-      << localTime << zuluTime;
+      << localDateTime << zuluDateTime;
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));
@@ -178,24 +178,24 @@ bool SimConnectData::readString(QDataStream& in, QString& str, quint16 *size)
   return true;
 }
 
-unsigned int SimConnectData::getZuluTime() const
+const QDateTime& SimConnectData::getZuluTime() const
 {
-  return static_cast<unsigned int>(zuluTime);
+  return zuluDateTime;
 }
 
-void SimConnectData::setZuluTime(int value)
+void SimConnectData::setZuluTime(const QDateTime& value)
 {
-  zuluTime = static_cast<quint32>(value);
+  zuluDateTime = value;
 }
 
-unsigned int SimConnectData::getLocalTime() const
+const QDateTime& SimConnectData::getLocalTime() const
 {
-  return static_cast<unsigned int>(localTime);
+  return localDateTime;
 }
 
-void SimConnectData::setLocalTime(int value)
+void SimConnectData::setLocalTime(const QDateTime& value)
 {
-  localTime = static_cast<quint32>(value);
+  localDateTime = value;
 }
 
 } // namespace sc
