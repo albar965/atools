@@ -449,6 +449,16 @@ public:
     magVar = value;
   }
 
+  float getAmbientVisibility() const
+  {
+    return ambientVisibility;
+  }
+
+  void setAmbientVisibility(float value)
+  {
+    ambientVisibility = value;
+  }
+
   const QDateTime& getLocalTime() const;
   void setLocalTime(const QDateTime& value);
 
@@ -457,7 +467,7 @@ public:
 
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 5;
+  const static quint16 DATA_VERSION = 6;
 
   void writeString(QDataStream& out, const QString& str) const;
   bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
@@ -474,7 +484,7 @@ private:
   float trackMag = 0.f, trackTrue = 0.f, ambientTemperature = 0.f, totalAirTemperature = 0.f,
         seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
         airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
-        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f;
+        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f, ambientVisibility = 0.f;
   QDateTime localDateTime, zuluDateTime;
 
   Flags flags = atools::fs::sc::NONE;

@@ -98,7 +98,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
   >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed
   >> trackMag >> trackTrue >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
   >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
-  >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVar
+  >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVar >> ambientVisibility
   >> localDateTime >> zuluDateTime;
 
   position.setAltitude(altitude);
@@ -131,7 +131,7 @@ int SimConnectData::write(QIODevice *ioDevice)
       << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed
       << trackMag << trackTrue << ambientTemperature << totalAirTemperature << seaLevelPressure
       << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
-      << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVar
+      << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVar << ambientVisibility
       << localDateTime << zuluDateTime;
 
   // Go back and update size
