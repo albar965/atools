@@ -60,6 +60,11 @@ public:
     return entries;
   }
 
+  const QList<atools::fs::pln::FlightplanEntry>& getEntries() const
+  {
+    return entries;
+  }
+
   atools::fs::pln::FlightplanType getFlightplanType() const
   {
     return flightplanType;
