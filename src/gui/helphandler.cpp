@@ -78,6 +78,20 @@ void HelpHandler::aboutQt()
 
 void HelpHandler::help()
 {
+  QUrl url = getHelpUrl("help", "index.html");
+  if(!url.isEmpty())
+    openHelpUrl(url);
+}
+
+void HelpHandler::openHelpUrl(const QUrl& url)
+{
+  if(!QDesktopServices::openUrl(url))
+    QMessageBox::warning(parentWidget, QApplication::applicationName(), QString(
+                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+}
+
+QUrl HelpHandler::getHelpUrl(const QString& dir, const QString& file)
+{
   QString overrideLang =
     atools::settings::Settings::instance()->value("MainWindow/HelpLanguage", QString()).toString();
   QString lang;
@@ -88,8 +102,8 @@ void HelpHandler::help()
     lang = overrideLang;
 
   QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
-  QString helpPrefix(appPath + QDir::separator() + "help" + QDir::separator());
-  QString helpSuffix(QString(QDir::separator()) + "index.html");
+  QString helpPrefix(appPath + QDir::separator() + dir + QDir::separator());
+  QString helpSuffix(QString(QDir::separator()) + file);
 
   QString helpFile(helpPrefix + lang + helpSuffix),
   defaultHelpFile(helpPrefix + "en" + helpSuffix);
@@ -104,11 +118,7 @@ void HelpHandler::help()
                            tr("Help file <i>%1</i> not found")).arg(QDir::toNativeSeparators(defaultHelpFile)));
 
   qDebug() << "Help file" << url;
-
-  if(!url.isEmpty())
-    if(!QDesktopServices::openUrl(url))
-      QMessageBox::warning(parentWidget, QApplication::applicationName(), QString(
-                             tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+  return url;
 }
 
 } // namespace gui

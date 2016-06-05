@@ -39,6 +39,7 @@ public:
 
   /* Open the help HTML file in the default browser */
   void help();
+  QUrl getHelpUrl(const QString& dir, const QString& file);
 
   /* Display about this application dialog */
   void about();
@@ -46,9 +47,12 @@ public:
   /* Display about Qt dialog */
   void aboutQt();
 
+  void openHelpUrl(const QUrl& url);
+
 private:
   QWidget *parentWidget;
   QString message, rev;
+
 };
 
 } // namespace gui
