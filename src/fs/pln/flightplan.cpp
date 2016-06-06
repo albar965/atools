@@ -94,11 +94,19 @@ void Flightplan::load(const QString& file)
       else if(name == "DepartureID")
         departureIdent = reader.readElementText();
       else if(name == "DepartureLLA")
-        departurePos = geo::Pos(reader.readElementText());
+      {
+        QString txt = reader.readElementText();
+        if(!txt.isEmpty())
+          departurePos = geo::Pos(txt);
+      }
       else if(name == "DestinationID")
         destinationIdent = reader.readElementText();
       else if(name == "DestinationLLA")
-        destinationPos = geo::Pos(reader.readElementText());
+      {
+        QString txt = reader.readElementText();
+        if(!txt.isEmpty())
+          destinationPos = geo::Pos(txt);
+      }
       else if(name == "Descr")
         description = reader.readElementText();
       else if(name == "DeparturePosition")
@@ -124,10 +132,10 @@ void Flightplan::save(const QString& file)
 
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    if(!departurePos.isValid())
-      throw new atools::Exception("Invalid departure position in flightplan");
-    if(!destinationPos.isValid())
-      throw new atools::Exception("Invalid destination position in flightplan");
+    // if(!departurePos.isValid())
+    // throw new atools::Exception("Invalid departure position in flightplan");
+    // if(!destinationPos.isValid())
+    // throw new atools::Exception("Invalid destination position in flightplan");
 
     QXmlStreamWriter writer;
     writer.setDevice(&xmlFile);
@@ -147,9 +155,11 @@ void Flightplan::save(const QString& file)
     writer.writeTextElement("RouteType", routeTypeToString(routeType));
     writer.writeTextElement("CruisingAlt", QString().number(cruisingAlt));
     writer.writeTextElement("DepartureID", departureIdent);
-    writer.writeTextElement("DepartureLLA", departurePos.toLongString());
+    writer.writeTextElement("DepartureLLA",
+                            departurePos.isValid() ? departurePos.toLongString() : QString());
     writer.writeTextElement("DestinationID", destinationIdent);
-    writer.writeTextElement("DestinationLLA", destinationPos.toLongString());
+    writer.writeTextElement("DestinationLLA",
+                            destinationPos.isValid() ? destinationPos.toLongString() : QString());
     writer.writeTextElement("Descr", description);
     writer.writeTextElement("DeparturePosition", departureParkingName);
     writer.writeTextElement("DepartureName", departureAiportName);
@@ -168,7 +178,7 @@ void Flightplan::save(const QString& file)
       writer.writeTextElement("ATCWaypointType", e.getWaypointTypeAsString());
 
       if(!e.getPosition().isValid())
-        throw new atools::Exception("Invalid position in flightplan for id " + e.getWaypointId());
+        throw atools::Exception("Invalid position in flightplan for id " + e.getWaypointId());
 
       writer.writeTextElement("WorldPosition", e.getPosition().toLongString());
 

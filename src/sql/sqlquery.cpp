@@ -374,8 +374,15 @@ void SqlQuery::checkError(bool retval, const QString& msg) const
     if(queryString.isEmpty())
       throw SqlException(query.lastError(), msg);
     else
-      throw SqlException(query.lastError(), msg,
-                         "Query is \"" + queryString + "\". Bound values are " + boundValuesAsString());
+    {
+      QString msg2("Query is \"" + queryString + "\".");
+
+      QString boundValues = boundValuesAsString();
+      if(!boundValues.isEmpty())
+        msg2 += " Bound values are " + boundValues + ".";
+
+      throw SqlException(query.lastError(), msg, msg2);
+    }
   }
 }
 

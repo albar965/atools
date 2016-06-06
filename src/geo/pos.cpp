@@ -98,7 +98,7 @@ Pos::Pos(const QString& str)
     lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "w" ? -1.f : 1.f);
   }
   else
-    throw new Exception("Invalid lat/long format \"" + str + "\"");
+    throw Exception("Invalid lat/long format \"" + str + "\"");
 }
 
 Pos& Pos::operator=(const Pos& other)
@@ -365,7 +365,7 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
 QString Pos::toLongString() const
 {
   if(!isValid())
-    throw new Exception("Invalid position. Cannot convert to string");
+    throw Exception("Invalid position. Cannot convert to string");
 
   return LONG_FORMAT.arg(latY > 0 ? "N" : "S").
          arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
@@ -377,7 +377,7 @@ QString Pos::toLongString() const
 QString Pos::toHumanReadableString() const
 {
   if(!isValid())
-    throw new Exception("Invalid position. Cannot convert to string");
+    throw Exception("Invalid position. Cannot convert to string");
 
   return HUMAN_FORMAT.arg(latY > 0 ? "N" : "S").
          arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
