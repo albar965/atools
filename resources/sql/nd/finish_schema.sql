@@ -94,10 +94,20 @@ create index if not exists idx_airway_to_laty on airway(to_laty);
 
 -------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------
+-- Fill overview airport tables
 
 delete from airport_large;
 
-insert into airport_large select * from airport
+insert into airport_large select
+  airport_id, ident, name,
+  has_avgas, has_jetfuel, tower_frequency,
+  is_closed, is_military, is_addon,
+  num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
+  longest_runway_length, longest_runway_heading, rating,
+  left_lonx, top_laty, right_lonx, bottom_laty,
+  mag_var,
+  lonx, laty
+from airport
 where longest_runway_length > 8000 and num_runway_hard > 0;
 
 create index if not exists idx_airport_large_left_lonx on airport_large(left_lonx);
@@ -111,10 +121,20 @@ create index if not exists idx_airport_large_laty on airport_large(laty);
 create index if not exists idx_airport_large_longest_runway_length on airport_large(longest_runway_length);
 create index if not exists idx_airport_large_rating on airport_large(rating);
 
+--------------------
 
 delete from airport_medium;
 
-insert into airport_medium select * from airport
+insert into airport_medium select
+  airport_id, ident, name,
+  has_avgas, has_jetfuel, tower_frequency,
+  is_closed, is_military, is_addon,
+  num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
+  longest_runway_length, longest_runway_heading, rating,
+  left_lonx, top_laty, right_lonx, bottom_laty,
+  mag_var,
+  lonx, laty
+from airport
 where longest_runway_length > 4000;
 
 create index if not exists idx_airport_medium_left_lonx on airport_medium(left_lonx);
@@ -128,8 +148,9 @@ create index if not exists idx_airport_medium_laty on airport_medium(laty);
 create index if not exists idx_airport_medium_longest_runway_length on airport_medium(longest_runway_length);
 create index if not exists idx_airport_medium_rating on airport_medium(rating);
 
-create index if not exists idx_taxi_path_type on taxi_path(type);
+-------------------------------------------------------------------------------------------
 
+create index if not exists idx_taxi_path_type on taxi_path(type);
 
 create index if not exists idx_route_node_airway_type on route_node_airway(type);
 create index if not exists idx_route_node_airway_nav_id on route_node_airway(nav_id);
