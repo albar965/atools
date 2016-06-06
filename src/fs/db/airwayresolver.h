@@ -22,18 +22,23 @@
 #include "geo/pos.h"
 
 #include <QSet>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {
 namespace db {
 
+class ProgressHandler;
+
 class AirwayResolver
 {
+  Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
+
 public:
-  AirwayResolver(atools::sql::SqlDatabase *sqlDb);
+  AirwayResolver(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress);
   virtual ~AirwayResolver();
 
-  void run();
+  bool run();
 
   struct Leg
   {
@@ -69,6 +74,7 @@ public:
 private:
   void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::Leg>& airway);
 
+  atools::fs::db::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;
   atools::sql::SqlQuery airwayInsertStmt;
   atools::sql::SqlDatabase *db;

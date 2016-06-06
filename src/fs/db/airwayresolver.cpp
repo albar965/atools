@@ -23,6 +23,7 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 #include "logging/loggingdefs.h"
+#include "fs/db/progresshandler.h"
 
 #include <QString>
 #include <QList>
@@ -51,8 +52,8 @@ QDebug operator<<(QDebug out, const AirwayResolver::Leg& l)
   return out;
 }
 
-AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb)
-  : curAirwayId(0), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
+AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress)
+  : progressHandler(progress), curAirwayId(0), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(sqlDb);
   airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
@@ -150,8 +151,9 @@ AirwayResolver::~AirwayResolver()
 {
 }
 
-void AirwayResolver::run()
+bool AirwayResolver::run()
 {
+  bool aborted = false;
   static QString queryStr(
     "select r.name, r.type, "
     "  prev.waypoint_id as prev_waypoint_id, "
@@ -187,7 +189,10 @@ void AirwayResolver::run()
     if(curAirway.isEmpty() || rName.at(0) != curAirway.at(0))
     {
       db->commit();
-      qInfo() << rName << "...";
+      QString msg = QString(tr("Creating airways: %1...")).arg(rName);
+      qInfo() << msg;
+      if((aborted = progressHandler.reportOtherMsg(msg)) == true)
+        break;
     }
     if(rName != curAirway)
     {
@@ -222,6 +227,7 @@ void AirwayResolver::run()
   }
 
   qInfo() << "Added " << numAirways << " airway legs";
+  return aborted;
 }
 
 } // namespace writer

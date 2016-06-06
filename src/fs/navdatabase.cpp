@@ -75,6 +75,7 @@ void Navdatabase::createSchema()
 const int NUM_STEPS = 11;
 const int NUM_DB_REPORT_STEPS = 4;
 const int NUM_RESOLVE_AIRWAY_STEPS = 1;
+const int NUM_ROUTE_STEPS = 500;
 
 void Navdatabase::createInternal()
 {
@@ -94,10 +95,15 @@ void Navdatabase::createInternal()
   db::ProgressHandler progress(options);
 
   int total = numFiles + numSceneryAreas + NUM_STEPS;
+
   if(options->isDatabaseReport())
     total += NUM_DB_REPORT_STEPS;
+
   if(options->isResolveAirways())
     total += NUM_RESOLVE_AIRWAY_STEPS;
+
+  if(options->isCreateRouteTables())
+    total += NUM_ROUTE_STEPS;
 
   progress.setTotal(total);
 
@@ -138,8 +144,11 @@ void Navdatabase::createInternal()
     if((aborted = progress.reportOther(tr("Creating airways"))) == true)
       return;
 
-    atools::fs::db::AirwayResolver resolver(db);
-    resolver.run();
+    atools::fs::db::AirwayResolver resolver(db, progress);
+
+    if((aborted = resolver.run()) == true)
+      return;
+
     db->commit();
   }
 
@@ -173,12 +182,17 @@ void Navdatabase::createInternal()
   script.executeScript(":/atools/resources/sql/nd/populate_route_node.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
-    return;
+  if(options->isCreateRouteTables())
+  {
+    if((aborted = progress.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
+      return;
 
-  atools::fs::db::RouteEdgeWriter edgeWriter(db);
-  edgeWriter.run();
-  db->commit();
+    atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, NUM_ROUTE_STEPS);
+    if((aborted = edgeWriter.run()) == true)
+      return;
+
+    db->commit();
+  }
 
   if((aborted = progress.reportOther(tr("Populating Route Edge Table for Waypoints"))) == true)
     return;

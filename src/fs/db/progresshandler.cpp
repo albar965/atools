@@ -30,6 +30,26 @@ ProgressHandler::ProgressHandler(const BglReaderOptions *options)
     handler = options->getProgressCallback();
 }
 
+void ProgressHandler::increaseCurrent(int increase)
+{
+  info.current += increase;
+}
+
+void ProgressHandler::setCurrent(int value)
+{
+  info.current = value;
+}
+
+bool ProgressHandler::reportOtherMsg(const QString& otherAction)
+{
+  info.otherAction = otherAction;
+  info.newFile = false;
+  info.newSceneryArea = false;
+  info.newOther = true;
+
+  return callHandler();
+}
+
 bool ProgressHandler::reportOther(const QString& otherAction, int current)
 {
   if(current != -1)

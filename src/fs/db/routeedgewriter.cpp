@@ -22,6 +22,7 @@
 #include "geo/rect.h"
 #include "geo/calculations.h"
 #include "sql/sqlutil.h"
+#include "fs/db/progresshandler.h"
 
 namespace atools {
 namespace fs {
@@ -52,16 +53,21 @@ const int PRIORITY_BY_TYPE[] = {2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* N
 const float INFLATE_RECT_LON_DEGREES = 6.f;
 const float INFLATE_RECT_LAT_DEGREES = 4.f;
 
-RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
+                                 int numProgressSteps)
+  : numSteps(numProgressSteps), progressHandler(progress), db(sqlDb)
 {
 
 }
 
-void RouteEdgeWriter::run()
+bool RouteEdgeWriter::run()
 {
+  bool aborted = false;
   SqlQuery selectStmt(
     "select node_id, range, type, lonx, laty from route_node_radio", db); // where node_id = 146
+
+  int numRows = SqlUtil(db).rowCount("route_node_radio");
+  int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(numRows) / static_cast<float>(numSteps)));
 
   SqlQuery insertStmt(db);
   insertStmt.prepare(
@@ -76,9 +82,17 @@ void RouteEdgeWriter::run()
   selectStmt.exec();
   QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;
 
+  int row = 0, steps = 0;
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
   while(selectStmt.next())
   {
+    if((row++ % rowsPerStep) == 0)
+    {
+      steps++;
+      if((aborted = progressHandler.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
+        break;
+    }
+
     // Look at each node
     int fromRangeMeter = selectStmt.value("range").toInt();
     int fromNodeId = selectStmt.value("node_id").toInt();
@@ -134,6 +148,11 @@ void RouteEdgeWriter::run()
 
   qDebug() << "Edge writer: total" << total << "average" << average
            << "max" << maximum << "numEmpty" << numEmpty;
+
+  // Eat up any remaining progress steps
+  progressHandler.increaseCurrent(numSteps - steps);
+
+  return aborted;
 }
 
 bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& pos, const Rect& queryRect,

@@ -19,6 +19,7 @@
 #define ROUTEEDGEWRITER_H
 
 #include <QVariantList>
+#include <QCoreApplication>
 
 class QString;
 
@@ -35,17 +36,26 @@ class SqlQuery;
 namespace fs {
 namespace db {
 
+class ProgressHandler;
+
 class RouteEdgeWriter
 {
-public:
-  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb);
+  Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
 
-  void run();
+public:
+  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
+                  int numProgressSteps);
+
+  bool run();
 
 private:
-  bool nearest(atools::sql::SqlQuery& nearestStmt, int fromNodeId, const geo::Pos& pos, const geo::Rect& queryRect,
-               int fromRangeMeter, QVariantList& toNodeIds, QVariantList& toNodeTypes, QVariantList& toNodeDistances);
+  bool nearest(atools::sql::SqlQuery& nearestStmt, int fromNodeId, const geo::Pos& pos,
+               const geo::Rect& queryRect,
+               int fromRangeMeter, QVariantList& toNodeIds, QVariantList& toNodeTypes,
+               QVariantList& toNodeDistances);
 
+  int numSteps = 10;
+  atools::fs::db::ProgressHandler& progressHandler;
   atools::sql::SqlDatabase *db;
   void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
 

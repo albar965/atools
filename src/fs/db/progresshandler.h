@@ -38,6 +38,9 @@ public:
   bool reportFinish();
   bool reportOther(const QString& otherAction, int current = -1);
 
+  /* Only send message without incrementing progress */
+  bool reportOtherMsg(const QString& otherAction);
+
   void setNumFiles(int value)
   {
     info.numFiles = value;
@@ -91,6 +94,10 @@ public:
   void setTotal(int total);
 
   void reset();
+
+  void increaseCurrent(int increase);
+
+  void setCurrent(int value);
 
 private:
   void defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
