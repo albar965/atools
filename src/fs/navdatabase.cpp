@@ -56,11 +56,57 @@ void Navdatabase::create()
   }
 }
 
-void Navdatabase::createSchema()
+void Navdatabase::createSchema(db::ProgressHandler *progress)
 {
   SqlScript script(db, true /* options->isVerbose()*/);
-  script.executeScript(":/atools/resources/sql/nd/drop_schema.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Views"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_view.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Routing and Search"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_routing_search.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Navigation Aids"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_nav.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Airport Facilites"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_airport_facilities.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Approaches"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_approach.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Airports"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_airport.sql");
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Removing Metadata"))) == true)
+      return;
+
+  script.executeScript(":/atools/resources/sql/nd/drop_meta.sql");
+
   db->commit();
+
+  if(progress != nullptr)
+    if((aborted = progress->reportOther(tr("Creating Schema"))) == true)
+      return;
 
   script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
@@ -72,7 +118,7 @@ void Navdatabase::createSchema()
 }
 
 // Number of progress steps besides scenery areas
-const int NUM_STEPS = 11;
+const int NUM_STEPS = 18;
 const int NUM_DB_REPORT_STEPS = 4;
 const int NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int NUM_ROUTE_STEPS = 500;
@@ -107,11 +153,9 @@ void Navdatabase::createInternal()
 
   progress.setTotal(total);
 
-  SqlScript script(db, true /*options->isVerbose()*/);
-  if((aborted = progress.reportOther(tr("Dropping old database schema"))) == true)
+  createSchema(&progress);
+  if(aborted)
     return;
-
-  createSchema();
 
   atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
 
@@ -130,6 +174,7 @@ void Navdatabase::createInternal()
   if((aborted = progress.reportOther(tr("Creating Indexes"))) == true)
     return;
 
+  SqlScript script(db, true /*options->isVerbose()*/);
   script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
   db->commit();
 

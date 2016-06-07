@@ -34,6 +34,10 @@ namespace scenery {
 class SceneryCfg;
 }
 
+namespace db {
+class ProgressHandler;
+}
+
 class Navdatabase
 {
   Q_DECLARE_TR_FUNCTIONS(Navdatabase)
@@ -41,7 +45,7 @@ class Navdatabase
 public:
   Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
   void create();
-  void createSchema();
+  void createSchema(atools::fs::db::ProgressHandler *progress = nullptr);
 
   bool isAborted()
   {

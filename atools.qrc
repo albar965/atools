@@ -14,7 +14,6 @@
         <file>resources/sql/nd/create_views.sql</file>
         <file>resources/sql/nd/finish_schema.sql</file>
         <file>resources/sql/nd/update_nav_ids.sql</file>
-        <file>resources/sql/nd/drop_schema.sql</file>
         <file>resources/sql/nd/create_boundary_schema.sql</file>
         <file>resources/sql/nd/create_indexes_post_load.sql</file>
         <file>resources/sql/nd/delete_duplicates.sql</file>
@@ -24,5 +23,12 @@
         <file>resources/sql/nd/populate_route_node.sql</file>
         <file>resources/sql/nd/populate_nav_search.sql</file>
         <file>resources/sql/nd/populate_route_edge.sql</file>
+        <file>resources/sql/nd/drop_meta.sql</file>
+        <file>resources/sql/nd/drop_airport.sql</file>
+        <file>resources/sql/nd/drop_approach.sql</file>
+        <file>resources/sql/nd/drop_airport_facilities.sql</file>
+        <file>resources/sql/nd/drop_nav.sql</file>
+        <file>resources/sql/nd/drop_routing_search.sql</file>
+        <file>resources/sql/nd/drop_view.sql</file>
     </qresource>
 </RCC>
