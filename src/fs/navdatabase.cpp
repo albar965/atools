@@ -28,7 +28,9 @@
 #include "fs/db/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 
+#include <QDir>
 #include <QElapsedTimer>
+#include <QFileInfo>
 
 namespace atools {
 namespace fs {
@@ -117,11 +119,75 @@ void Navdatabase::createSchema(db::ProgressHandler *progress)
   db->commit();
 }
 
+bool Navdatabase::isSceneryConfigValid(const QString& filename, QString& error)
+{
+  QFileInfo fi(filename);
+  if(fi.exists())
+  {
+    if(fi.isReadable())
+    {
+      if(fi.isFile())
+      {
+        try
+        {
+          atools::fs::scenery::SceneryCfg cfg;
+          cfg.read(filename);
+          return !cfg.getAreas().isEmpty();
+        }
+        catch(atools::Exception& e)
+        {
+          qWarning() << "Caught exception reading" << filename << ":" << e.what();
+          error = e.what();
+        }
+        catch(...)
+        {
+          qWarning() << "Caught unknown exception reading" << filename;
+          error = "Unknown exception while reading file";
+        }
+      }
+      else
+        error = tr("File is not a regular file");
+    }
+    else
+      error = tr("File is not readable");
+  }
+  else
+    error = tr("File does not exist");
+  return false;
+}
+
+bool Navdatabase::isBasePathValid(const QString& filepath, QString& error)
+{
+  QFileInfo fi(filepath);
+  if(fi.exists())
+  {
+    if(fi.isReadable())
+    {
+      if(fi.isDir())
+      {
+        // If path exists check for scenery directory
+        QDir dir(filepath);
+        QFileInfoList scenery = dir.entryInfoList({"scenery"}, QDir::Dirs);
+        if(!scenery.isEmpty())
+          return true;
+        else
+          error = tr("Does not contain a \"Scenery\" directory");
+      }
+      else
+        error = tr("Is not a directory");
+    }
+    else
+      error = tr("Directory is not readable");
+  }
+  else
+    error = tr("Directory does not exist");
+  return false;
+}
+
 // Number of progress steps besides scenery areas
 const int NUM_STEPS = 18;
 const int NUM_DB_REPORT_STEPS = 4;
 const int NUM_RESOLVE_AIRWAY_STEPS = 1;
-const int NUM_ROUTE_STEPS = 500;
 
 void Navdatabase::createInternal()
 {
@@ -148,8 +214,9 @@ void Navdatabase::createInternal()
   if(options->isResolveAirways())
     total += NUM_RESOLVE_AIRWAY_STEPS;
 
+  int numRouteSteps = total / 4;
   if(options->isCreateRouteTables())
-    total += NUM_ROUTE_STEPS;
+    total += numRouteSteps;
 
   progress.setTotal(total);
 
@@ -232,7 +299,7 @@ void Navdatabase::createInternal()
     if((aborted = progress.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
       return;
 
-    atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, NUM_ROUTE_STEPS);
+    atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, numRouteSteps);
     if((aborted = edgeWriter.run()) == true)
       return;
 

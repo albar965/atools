@@ -21,7 +21,7 @@ create table metadata
 (
   db_version_major integer not null,
   db_version_minor integer not null,
-  last_load_timestamp integer not null
+  last_load_timestamp varchar(100)
 );
 
 -- **************************************************

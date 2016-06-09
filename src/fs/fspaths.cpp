@@ -210,7 +210,7 @@ QString FsPaths::getSceneryLibraryPath(fstype::SimulatorType type)
 #else
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
-             "P3DV3" + QDir::separator() + "Scenery.CFG";
+             "P3DV3" + QDir::separator() + "scenery.cfg";
 
 #endif
     case fstype::UNKNOWN:

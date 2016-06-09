@@ -52,6 +52,12 @@ public:
     return aborted;
   }
 
+  /* Check if scenery.cfg file exists and is valid (contains areas */
+  static bool isSceneryConfigValid(const QString& filename, QString& error);
+
+  /* Check if the base path is valid and contains a scenery directory */
+  static bool isBasePathValid(const QString& filepath, QString& error);
+
 private:
   atools::sql::SqlDatabase *db;
   const atools::fs::BglReaderOptions *options;

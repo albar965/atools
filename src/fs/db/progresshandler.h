@@ -36,7 +36,7 @@ public:
   bool report(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
   bool report(const QString& bglFilepath, int current = -1);
   bool reportFinish();
-  bool reportOther(const QString& otherAction, int current = -1);
+  bool reportOther(const QString& otherAction, int current = -1, bool silent = false);
 
   /* Only send message without incrementing progress */
   bool reportOtherMsg(const QString& otherAction);

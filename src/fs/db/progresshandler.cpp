@@ -50,7 +50,7 @@ bool ProgressHandler::reportOtherMsg(const QString& otherAction)
   return callHandler();
 }
 
-bool ProgressHandler::reportOther(const QString& otherAction, int current)
+bool ProgressHandler::reportOther(const QString& otherAction, int current, bool silent)
 {
   if(current != -1)
     info.current = current;
@@ -62,7 +62,10 @@ bool ProgressHandler::reportOther(const QString& otherAction, int current)
   info.newSceneryArea = false;
   info.newOther = true;
 
-  return callHandler();
+  if(silent)
+    return false;
+  else
+    return callHandler();
 }
 
 bool ProgressHandler::report(const QString& bglFilepath, int current)

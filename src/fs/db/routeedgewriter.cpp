@@ -24,6 +24,8 @@
 #include "sql/sqlutil.h"
 #include "fs/db/progresshandler.h"
 
+#include <QElapsedTimer>
+
 namespace atools {
 namespace fs {
 namespace db {
@@ -82,14 +84,24 @@ bool RouteEdgeWriter::run()
   selectStmt.exec();
   QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;
 
+  QElapsedTimer timer;
+  timer.start();
+  qint64 elapsed = timer.elapsed();
   int row = 0, steps = 0;
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
   while(selectStmt.next())
   {
     if((row++ % rowsPerStep) == 0)
     {
+      qint64 elapsed2 = timer.elapsed();
+
+      // Update only every 500 ms - otherwise update only progress count
+      bool silent = !(elapsed + 500 < elapsed2);
+      if(!silent)
+        elapsed = elapsed2;
+
       steps++;
-      if((aborted = progressHandler.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
+      if((aborted = progressHandler.reportOther(tr("Populating VOR/NDB Routing Table"), -1, silent)) == true)
         break;
     }
 
