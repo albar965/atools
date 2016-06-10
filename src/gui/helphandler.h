@@ -19,6 +19,7 @@
 #define ATOOLS_HELPMENUHANDLER_H
 
 #include <QObject>
+#include <QVector>
 
 class QWidget;
 
@@ -49,9 +50,14 @@ public:
 
   void openHelpUrl(const QUrl& url);
 
+  /* A link to the directory of this file will be appended to the dialog */
+  void addDirFileLink(const QString& text, const QString& file);
+
 private:
   QWidget *parentWidget;
   QString message, rev;
+
+  QVector<std::pair<QString, QString> > fileLinks;
 
 };
 

@@ -44,6 +44,11 @@ HelpHandler::~HelpHandler()
 
 }
 
+void HelpHandler::addDirFileLink(const QString& text, const QString& file)
+{
+  fileLinks.append(std::make_pair(text, file));
+}
+
 void HelpHandler::about()
 {
   QStringList logs = atools::logging::LoggingHandler::getLogFiles();
@@ -56,11 +61,24 @@ void HelpHandler::about()
     logStr += QString("<a href=\"%1\">%2<a><br/>").arg(url.toString()).arg(log);
   }
 
+  QString fileDirStr;
+  if(!fileLinks.isEmpty())
+    fileDirStr = "<p><hr/>Other files:</p><p><i>";
+
+  for(const std::pair<QString, QString>& fileDir : fileLinks)
+  {
+    QFileInfo fi(fileDir.second);
+    QUrl url(QUrl::fromLocalFile(fi.path()));
+    fileDirStr += QString("<a href=\"%1\">%2<a><br/>").arg(url.toString()).arg(fileDir.first);
+  }
+  if(!fileLinks.isEmpty())
+    fileDirStr += "</i></p>";
+
   QMessageBox::about(parentWidget,
                      tr("About %1").arg(QApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
                           "<p>atools Version %5 (revision %6)</p>"
-                            "<p><hr/>%7:</p><p><i>%8</i></p>").
+                            "<p><hr/>%7:</p><p><i>%8</i></p>%9").
                      arg(QApplication::applicationName()).
                      arg(message).
                      arg(QApplication::applicationVersion()).
@@ -68,7 +86,8 @@ void HelpHandler::about()
                      arg(atools::version()).
                      arg(atools::gitRevision()).
                      arg(logs.size() > 1 ? tr("Logfiles") : tr("Logfile")).
-                     arg(logStr));
+                     arg(logStr).
+                     arg(fileDirStr));
 }
 
 void HelpHandler::aboutQt()
