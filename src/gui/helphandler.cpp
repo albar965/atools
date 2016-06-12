@@ -44,9 +44,9 @@ HelpHandler::~HelpHandler()
 
 }
 
-void HelpHandler::addDirFileLink(const QString& text, const QString& file)
+void HelpHandler::addDirLink(const QString& text, const QString& file)
 {
-  fileLinks.append(std::make_pair(text, file));
+  dirLinks.append(std::make_pair(text, file));
 }
 
 void HelpHandler::about()
@@ -62,16 +62,15 @@ void HelpHandler::about()
   }
 
   QString fileDirStr;
-  if(!fileLinks.isEmpty())
+  if(!dirLinks.isEmpty())
     fileDirStr = "<p><hr/>Other files:</p><p><i>";
 
-  for(const std::pair<QString, QString>& fileDir : fileLinks)
+  for(const std::pair<QString, QString>& fileDir : dirLinks)
   {
-    QFileInfo fi(fileDir.second);
-    QUrl url(QUrl::fromLocalFile(fi.path()));
+    QUrl url(QUrl::fromLocalFile(fileDir.second));
     fileDirStr += QString("<a href=\"%1\">%2<a><br/>").arg(url.toString()).arg(fileDir.first);
   }
-  if(!fileLinks.isEmpty())
+  if(!dirLinks.isEmpty())
     fileDirStr += "</i></p>";
 
   QMessageBox::about(parentWidget,

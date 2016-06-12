@@ -51,13 +51,13 @@ public:
   void openHelpUrl(const QUrl& url);
 
   /* A link to the directory of this file will be appended to the dialog */
-  void addDirFileLink(const QString& text, const QString& file);
+  void addDirLink(const QString& text, const QString& file);
 
 private:
   QWidget *parentWidget;
   QString message, rev;
 
-  QVector<std::pair<QString, QString> > fileLinks;
+  QVector<std::pair<QString, QString> > dirLinks;
 
 };
 
