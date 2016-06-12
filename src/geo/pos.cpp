@@ -421,7 +421,7 @@ int Pos::deg(float value) const
   int minutes = static_cast<int>(min);
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.99f)
+  if(seconds >= 59.98f)
     minutes++;
   if(minutes >= 60)
     degrees++;
@@ -436,7 +436,7 @@ int Pos::min(float value) const
   int minutes = static_cast<int>(min);
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.99f)
+  if(seconds >= 59.98f)
     minutes++;
   if(minutes >= 60)
     minutes = 0;
@@ -450,7 +450,7 @@ float Pos::sec(float value) const
   float seconds = (min - static_cast<int>(min)) * 60.f;
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.99f)
+  if(seconds >= 59.98f)
     return 0.f;
   else
     return seconds;
