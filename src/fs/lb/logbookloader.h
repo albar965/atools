@@ -54,7 +54,7 @@ public:
    * @param append If true loads only new entries into the database, otherwise
    * creates new schema and loads all.
    */
-  void loadLogbook(const QString& filename, atools::fs::fstype::SimulatorType type,
+  void loadLogbook(const QString& filename, atools::fs::FsPaths::SimulatorType type,
                    const atools::fs::lb::LogbookEntryFilter& filter, bool append);
 
   /*

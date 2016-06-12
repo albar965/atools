@@ -80,9 +80,17 @@ QString Settings::getFilename()
   return instance()->fileName();
 }
 
-QString Settings::getConfigFilename(const QString& extension)
+QString Settings::getConfigFilename(const QString& extension, const QString& subdir)
 {
-  return getPath() + QDir::separator() + appNameForFiles() + extension;
+  QString path;
+  if(subdir.isEmpty())
+    path = getPath();
+  else
+    path = getPath() + QDir::separator() + subdir;
+
+  QDir(path).mkpath(path);
+
+  return path + QDir::separator() + appNameForFiles() + extension;
 }
 
 QString Settings::getOverloadedLocalPath(const QString& filename)

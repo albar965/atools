@@ -27,11 +27,11 @@ namespace geo {
 
 /* Simple geographic position. Calculations based on
  *  http://williams.best.vwh.net/avform.htm */
-class Pos final
+class Pos
 {
 public:
   Pos();
-  Pos(const Pos &other);
+  Pos(const Pos& other);
 
   Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
       int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
@@ -40,9 +40,14 @@ public:
   Pos(double longitudeX, double latitudeY, double alt = 0.);
 
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
-  Pos(const QString &str);
+  Pos(const QString& str);
 
   Pos& operator=(const Pos& other);
+
+  ~Pos()
+  {
+
+  }
 
   /* Does not compare altitude */
   bool operator==(const Pos& other) const;
@@ -160,6 +165,10 @@ protected:
   float lonX, latY, altitude;
 
 private:
+  friend QDataStream& operator<<(QDataStream& out, const atools::geo::Pos& obj);
+
+  friend QDataStream& operator>>(QDataStream& in, atools::geo::Pos& obj);
+
   friend QDebug operator<<(QDebug out, const atools::geo::Pos& record);
 
   float sec(float value) const;
@@ -177,5 +186,6 @@ const atools::geo::Pos EMPTY_POS;
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::Pos, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(atools::geo::Pos);
 
 #endif /* ATOOLS_GEO_POSITION_H */

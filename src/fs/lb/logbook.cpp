@@ -34,7 +34,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::io::BinaryStream;
 
-Logbook::Logbook(SqlDatabase *sqlDb, fstype::SimulatorType type)
+Logbook::Logbook(SqlDatabase *sqlDb, FsPaths::SimulatorType type)
   : db(sqlDb), sim(type)
 {
 }

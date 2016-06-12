@@ -56,7 +56,7 @@ public:
    *
    * @param extension Extension for the file including the dot.
    */
-  static QString getConfigFilename(const QString& extension);
+  static QString getConfigFilename(const QString& extension, const QString& subdir = QString());
 
   /* Get the organization specific settings directory. */
   static QString getPath();

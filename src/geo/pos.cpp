@@ -20,6 +20,7 @@
 #include "exception.h"
 #include "atools.h"
 
+#include <QDataStream>
 #include <QRegularExpression>
 
 namespace atools {
@@ -479,6 +480,18 @@ QDebug operator<<(QDebug out, const Pos& record)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Pos[" << record.toString() << "]";
   return out;
+}
+
+QDataStream& operator<<(QDataStream& out, const Pos& obj)
+{
+  out << obj.lonX << obj.latY << obj.altitude;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, Pos& obj)
+{
+  in >> obj.lonX >> obj.latY >> obj.altitude;
+  return in;
 }
 
 } // namespace geo
