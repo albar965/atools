@@ -230,7 +230,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
   return QString();
 }
 
-QString FsPaths::typeToString(SimulatorType type)
+QString FsPaths::typeToShortName(SimulatorType type)
 {
   if(type >= FSX && type < MAX_VALUE)
     return ALL_SIMULATOR_TYPE_NAMES[type];

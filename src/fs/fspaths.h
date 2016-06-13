@@ -75,7 +75,7 @@ public:
   static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type);
 
   /* Short abbreviated names */
-  static QString typeToString(atools::fs::FsPaths::SimulatorType type);
+  static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
 
   /* Long names */
   static QString typeToName(atools::fs::FsPaths::SimulatorType type);
