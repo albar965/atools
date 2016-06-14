@@ -51,8 +51,8 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
     settingNameDir = settingName + "Dir";
 
     // Read state
-    if(s->contains(settingName))
-      dlg.restoreState(s->value(settingName).toByteArray());
+    if(s.contains(settingName))
+      dlg.restoreState(s.valueVar(settingName).toByteArray());
   }
 
   QString defaultDir;
@@ -64,7 +64,7 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
     defaultDir = path;
 
   // Get path from settings use path or documents as default
-  QFileInfo dir = s->value(settingNameDir, defaultDir).toString();
+  QFileInfo dir = s.valueStr(settingNameDir, defaultDir);
 
   if(dir.exists())
   {
@@ -82,8 +82,8 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
     if(!settingsPrefix.isEmpty())
     {
       // if ok/select/save was pressed save state
-      s->setValue(settingName, dlg.saveState());
-      s->setValue(settingNameDir, dlg.directory().absolutePath());
+      s.setValueVar(settingName, dlg.saveState());
+      s.setValue(settingNameDir, dlg.directory().absolutePath());
       s.syncSettings();
     }
 
@@ -130,13 +130,13 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
   Settings& s = Settings::instance();
 
   // show only if the key is true
-  if(s->value(settingsKey, true).toBool())
+  if(s.valueBool(settingsKey, true))
   {
     QMessageBox msg(QMessageBox::Information,
                     QApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.exec();
-    s->setValue(settingsKey, !msg.checkBox()->isChecked());
+    s.setValue(settingsKey, !msg.checkBox()->isChecked());
     s.syncSettings();
   }
 }
@@ -150,7 +150,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   Settings& s = Settings::instance();
 
   // show only if the key is true or empty
-  if(settingsKey.isEmpty() || s->value(settingsKey, true).toBool())
+  if(settingsKey.isEmpty() || s.valueBool(settingsKey, true))
   {
     // Build button field
     QMessageBox::StandardButtons buttons = QMessageBox::NoButton;
@@ -171,7 +171,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     if(!settingsKey.isEmpty())
     {
-      s->setValue(settingsKey, !msg.checkBox()->isChecked());
+      s.setValue(settingsKey, !msg.checkBox()->isChecked());
       s.syncSettings();
     }
   }
@@ -187,7 +187,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   Settings& s = Settings::instance();
 
   // show only if the key is true or empty
-  if(settingsKey.isEmpty() || s->value(settingsKey, true).toBool())
+  if(settingsKey.isEmpty() || s.valueBool(settingsKey, true))
   {
     QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
     if(!checkBoxMessage.isEmpty())
@@ -197,7 +197,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     if(!settingsKey.isEmpty())
     {
-      s->setValue(settingsKey, !msg.checkBox()->isChecked());
+      s.setValue(settingsKey, !msg.checkBox()->isChecked());
       s.syncSettings();
     }
   }

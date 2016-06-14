@@ -92,15 +92,23 @@ public:
     return instance().qSettings;
   }
 
-  /*
-   * Gives access to the included QSettings object.
-   *
-   * @return QSettings pointer
-   */
-  QSettings *operator->()
-  {
-    return qSettings;
-  }
+  bool contains(const QString& key);
+
+  QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList());
+  QString valueStr(const QString& key, const QString& defaultValue = QString());
+  bool valueBool(const QString& key, bool defaultValue = false);
+  int valueInt(const QString& key, int defaultValue = 0);
+  float valueFloat(const QString& key, float defaultValue = 0.f);
+  double valueDouble(const QString& key, double defaultValue = 0.);
+  QVariant valueVar(const QString& key, QVariant defaultValue = QVariant());
+
+  void setValue(const QString& key, const QStringList& value);
+  void setValue(const QString& key, const QString& value);
+  void setValue(const QString& key, bool value);
+  void setValue(const QString& key, int value);
+  void setValue(const QString& key, float value);
+  void setValue(const QString& key, double value);
+  void setValueVar(const QString& key, const QVariant& value);
 
 private:
   Settings();

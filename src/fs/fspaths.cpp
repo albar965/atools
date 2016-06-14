@@ -84,7 +84,7 @@ QString FsPaths::getBasePath(SimulatorType type)
   // No Windows here - get the path for debugging purposes
   // from the configuration file
   Settings& s = Settings::instance();
-  fsPath = s->value(settingsKey(type)).toString();
+  fsPath = s.valueStr(settingsKey(type));
   if(fsPath.isEmpty())
   {
     // If it is not present in the settings file use one of the predefined paths

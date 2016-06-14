@@ -77,7 +77,7 @@ void Settings::logSettingsInformation()
 
 QString Settings::getFilename()
 {
-  return instance()->fileName();
+  return instance().getQSettings()->fileName();
 }
 
 QString Settings::getConfigFilename(const QString& extension, const QString& subdir)
@@ -146,9 +146,84 @@ void Settings::syncSettings()
                     arg(qs->fileName()).arg(qs->status()));
 }
 
+bool Settings::contains(const QString& key)
+{
+  return qSettings->contains(key);
+}
+
+QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue)
+{
+  return qSettings->value(key, defaultValue).toStringList();
+}
+
+QString Settings::valueStr(const QString& key, const QString& defaultValue)
+{
+  return qSettings->value(key, defaultValue).toString();
+}
+
+bool Settings::valueBool(const QString& key, bool defaultValue)
+{
+  return qSettings->value(key, defaultValue).toBool();
+}
+
+int Settings::valueInt(const QString& key, int defaultValue)
+{
+  return qSettings->value(key, defaultValue).toInt();
+}
+
+float Settings::valueFloat(const QString& key, float defaultValue)
+{
+  return qSettings->value(key, defaultValue).toFloat();
+}
+
+double Settings::valueDouble(const QString& key, double defaultValue)
+{
+  return qSettings->value(key, defaultValue).toDouble();
+}
+
+QVariant Settings::valueVar(const QString& key, QVariant defaultValue)
+{
+  return qSettings->value(key, defaultValue);
+}
+
+void Settings::setValue(const QString& key, const QStringList& value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValue(const QString& key, const QString& value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValue(const QString& key, bool value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValue(const QString& key, int value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValue(const QString& key, float value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValue(const QString& key, double value)
+{
+  qSettings->setValue(key, value);
+}
+
+void Settings::setValueVar(const QString& key, const QVariant& value)
+{
+  qSettings->setValue(key, value);
+}
+
 QString Settings::getPath()
 {
-  return QFileInfo(instance()->fileName()).path();
+  return QFileInfo(instance().getQSettings()->fileName()).path();
 }
 
 QString Settings::orgNameForDirs()

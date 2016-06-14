@@ -81,8 +81,8 @@ void TableZoomHandler::initTableViewZoom()
 
   int newPointSize = 0;
   if(!settingsKey.isEmpty())
-    newPointSize = Settings::instance()->value(settingsKey,
-                                               defaultTableViewFontPointSize).toInt();
+    newPointSize = Settings::instance().valueInt(settingsKey,
+                                               defaultTableViewFontPointSize);
   else
     newPointSize = defaultTableViewFontPointSize;
   setTableViewFontSize(newPointSize);
@@ -113,7 +113,7 @@ void TableZoomHandler::zoomTableView(int value)
   setTableViewFontSize(newPointSize);
 
   if(!settingsKey.isEmpty())
-    Settings::instance()->setValue(settingsKey, tableView->font().pointSize());
+    Settings::instance().setValue(settingsKey, tableView->font().pointSize());
 
   enableDisableZoomActions();
 }

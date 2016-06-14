@@ -111,7 +111,7 @@ void HelpHandler::openHelpUrl(const QUrl& url)
 QUrl HelpHandler::getHelpUrl(const QString& dir, const QString& file)
 {
   QString overrideLang =
-    atools::settings::Settings::instance()->value("MainWindow/HelpLanguage", QString()).toString();
+    atools::settings::Settings::instance().valueStr("MainWindow/HelpLanguage", QString());
   QString lang;
 
   if(overrideLang.isEmpty())
