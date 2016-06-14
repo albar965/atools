@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLEXCEPTION_H_
-#define BGL_BGLEXCEPTION_H_
+#ifndef ATOOLS_BGL_BGLEXCEPTION_H
+#define ATOOLS_BGL_BGLEXCEPTION_H
 
 #include "exception.h"
 
@@ -48,4 +48,4 @@ public:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_BGLEXCEPTION_H_ */
+#endif // ATOOLS_BGL_BGLEXCEPTION_H

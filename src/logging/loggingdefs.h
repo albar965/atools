@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LOGGINGDEFS_H
-#define LOGGINGDEFS_H
+#ifndef ATOOLS_LOGGINGDEFS_H
+#define ATOOLS_LOGGINGDEFS_H
 
 #include <QDebug>
 #include <QtGlobal>
@@ -32,4 +32,4 @@
 #define QtInfoMsg QtDebugMsg
 #endif
 
-#endif // LOGGINGDEFS_H
+#endif // ATOOLS_LOGGINGDEFS_H

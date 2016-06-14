@@ -78,4 +78,4 @@ private:
 } /* namespace io */
 } // namespace atools
 
-#endif /* ATOOLS_IO_BINARYSTREAM_H */
+#endif // ATOOLS_IO_BINARYSTREAM_H

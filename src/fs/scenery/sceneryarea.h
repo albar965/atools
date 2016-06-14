@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SCENERY_SCENERYAREA_H_
-#define SCENERY_SCENERYAREA_H_
+#ifndef ATOOLS_SCENERY_SCENERYAREA_H
+#define ATOOLS_SCENERY_SCENERYAREA_H
 
 #include <QString>
 
@@ -98,4 +98,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* SCENERY_SCENERYAREA_H_ */
+#endif // ATOOLS_SCENERY_SCENERYAREA_H

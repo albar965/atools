@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AIRPORTTAXIPOINT_H_
-#define BGL_AIRPORTTAXIPOINT_H_
+#ifndef ATOOLS_BGL_AIRPORTTAXIPOINT_H
+#define ATOOLS_BGL_AIRPORTTAXIPOINT_H
 
 #include "fs/bgl/bglposition.h"
 
@@ -94,4 +94,4 @@ QDebug operator<<(QDebug out, const atools::fs::bgl::TaxiPoint& record);
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AIRPORTTAXIPOINT_H_ */
+#endif // ATOOLS_BGL_AIRPORTTAXIPOINT_H

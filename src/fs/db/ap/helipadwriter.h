@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_HELIPADWRITER_H_
-#define WRITER_HELIPADWRITER_H_
+#ifndef ATOOLS_WRITER_HELIPADWRITER_H
+#define ATOOLS_WRITER_HELIPADWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/helipad.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_HELIPADWRITER_H_ */
+#endif // ATOOLS_WRITER_HELIPADWRITER_H

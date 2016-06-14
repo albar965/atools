@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_COMWRITER_H_
-#define WRITER_COMWRITER_H_
+#ifndef ATOOLS_WRITER_COMWRITER_H
+#define ATOOLS_WRITER_COMWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/com.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_COMWRITER_H_ */
+#endif // ATOOLS_WRITER_COMWRITER_H

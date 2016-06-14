@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAV_LOCALIZER_H_
-#define BGL_NAV_LOCALIZER_H_
+#ifndef ATOOLS_BGL_NAV_LOCALIZER_H
+#define ATOOLS_BGL_NAV_LOCALIZER_H
 
 #include "fs/bgl/record.h"
 
@@ -54,4 +54,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAV_LOCALIZER_H_ */
+#endif // ATOOLS_BGL_NAV_LOCALIZER_H

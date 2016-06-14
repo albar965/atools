@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef FLIGHTPLAN_H
-#define FLIGHTPLAN_H
+#ifndef ATOOLS_FLIGHTPLAN_H
+#define ATOOLS_FLIGHTPLAN_H
 
 #include "fs/pln/flightplanentry.h"
 
@@ -221,4 +221,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // FLIGHTPLAN_H
+#endif // ATOOLS_FLIGHTPLAN_H

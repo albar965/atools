@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef PROGRESSHANDLER_H
-#define PROGRESSHANDLER_H
+#ifndef ATOOLS_PROGRESSHANDLER_H
+#define ATOOLS_PROGRESSHANDLER_H
 
 #include "fs/bglreaderprogressinfo.h"
 #include "fs/bglreaderoptions.h"
@@ -116,4 +116,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // PROGRESSHANDLER_H
+#endif // ATOOLS_PROGRESSHANDLER_H

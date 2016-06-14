@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_VORWRITER_H_
-#define WRITER_VORWRITER_H_
+#ifndef ATOOLS_WRITER_VORWRITER_H
+#define ATOOLS_WRITER_VORWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/nav/vor.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_VORWRITER_H_ */
+#endif // ATOOLS_WRITER_VORWRITER_H

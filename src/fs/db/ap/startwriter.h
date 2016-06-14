@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_STARTWRITER_H_
-#define WRITER_STARTWRITER_H_
+#ifndef ATOOLS_WRITER_STARTWRITER_H
+#define ATOOLS_WRITER_STARTWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/start.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_STARTWRITER_H_ */
+#endif // ATOOLS_WRITER_STARTWRITER_H

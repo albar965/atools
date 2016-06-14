@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef INI_INIREADER_H_
-#define INI_INIREADER_H_
+#ifndef ATOOLS_INI_INIREADER_H
+#define ATOOLS_INI_INIREADER_H
 
 #include <QString>
 #include <QApplication>
@@ -63,4 +63,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* INI_INIREADER_H_ */
+#endif // ATOOLS_INI_INIREADER_H

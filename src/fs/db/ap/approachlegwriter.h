@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_APPROACHLEGWRITER_H_
-#define WRITER_APPROACHLEGWRITER_H_
+#ifndef ATOOLS_WRITER_APPROACHLEGWRITER_H
+#define ATOOLS_WRITER_APPROACHLEGWRITER_H
 
 #include "fs/db/ap/legbasewriter.h"
 #include "fs/bgl/ap/approachleg.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_APPROACHLEGWRITER_H_ */
+#endif // ATOOLS_WRITER_APPROACHLEGWRITER_H

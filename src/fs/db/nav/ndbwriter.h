@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_NDBWRITER_H_
-#define WRITER_NDBWRITER_H_
+#ifndef ATOOLS_WRITER_NDBWRITER_H
+#define ATOOLS_WRITER_NDBWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/nav/ndb.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_NDBWRITER_H_ */
+#endif // ATOOLS_WRITER_NDBWRITER_H

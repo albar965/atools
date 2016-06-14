@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAMELIST_H_
-#define BGL_NAMELIST_H_
+#ifndef ATOOLS_BGL_NAMELIST_H
+#define ATOOLS_BGL_NAMELIST_H
 
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/bgl/record.h"
@@ -59,4 +59,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAMELIST_H_ */
+#endif // ATOOLS_BGL_NAMELIST_H

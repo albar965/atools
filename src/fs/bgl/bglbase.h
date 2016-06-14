@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLBASE_H_
-#define BGL_BGLBASE_H_
+#ifndef ATOOLS_BGL_BGLBASE_H
+#define ATOOLS_BGL_BGLBASE_H
 
 #include "logging/loggingdefs.h"
 
@@ -58,4 +58,4 @@ protected:
 } // namespace atools
 } // namespace bgl
 
-#endif /* BGL_BGLBASE_H_ */
+#endif // ATOOLS_BGL_BGLBASE_H

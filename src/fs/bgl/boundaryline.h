@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AIRPORTBOUNDARYLINE_H_
-#define BGL_AIRPORTBOUNDARYLINE_H_
+#ifndef ATOOLS_BGL_AIRPORTBOUNDARYLINE_H
+#define ATOOLS_BGL_AIRPORTBOUNDARYLINE_H
 
 #include "fs/bgl/bglbase.h"
 #include "fs/bgl/bglposition.h"
@@ -84,4 +84,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AIRPORTBOUNDARYLINE_H_ */
+#endif // ATOOLS_BGL_AIRPORTBOUNDARYLINE_H

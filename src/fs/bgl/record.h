@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_RECORD_H_
-#define BGL_RECORD_H_
+#ifndef ATOOLS_BGL_RECORD_H
+#define ATOOLS_BGL_RECORD_H
 
 #include "fs/bgl/bglbase.h"
 
@@ -72,4 +72,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_RECORD_H_ */
+#endif // ATOOLS_BGL_RECORD_H

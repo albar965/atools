@@ -15,10 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_BGLREADEROPTIONS_H_
-#define ATOOLS_FS_BGLREADEROPTIONS_H_
+#ifndef ATOOLS_FS_BGLREADEROPTIONS_H
+#define ATOOLS_FS_BGLREADEROPTIONS_H
 
 #include <functional>
+
 #include <QSet>
 #include <QRegExp>
 
@@ -220,4 +221,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* ATOOLS_FS_BGLREADEROPTIONS_H_ */
+#endif // ATOOLS_FS_BGLREADEROPTIONS_H

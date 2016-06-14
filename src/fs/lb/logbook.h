@@ -83,4 +83,4 @@ private:
 } /* namespace fs */
 } // namespace atools
 
-#endif /* ATOOLS_FS_LB_LOGBOOK_H */
+#endif // ATOOLS_FS_LB_LOGBOOK_H

@@ -195,4 +195,4 @@ T& operator<<(T& out, const LogbookEntry& e)
 } /* namespace fs */
 } /* namespace atools */
 
-#endif /* ATOOLS_FS_LB_LOGBOOKENTRY_H */
+#endif // ATOOLS_FS_LB_LOGBOOKENTRY_H

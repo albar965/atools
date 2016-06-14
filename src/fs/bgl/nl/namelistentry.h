@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAMELISTICAOIDENT_H_
-#define BGL_NAMELISTICAOIDENT_H_
+#ifndef ATOOLS_BGL_NAMELISTICAOIDENT_H
+#define ATOOLS_BGL_NAMELISTICAOIDENT_H
 
 #include <QString>
 
@@ -79,4 +79,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAMELISTICAOIDENT_H_ */
+#endif // ATOOLS_BGL_NAMELISTICAOIDENT_H

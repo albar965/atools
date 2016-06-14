@@ -52,4 +52,4 @@ enum RecordSubType
 } // namespace fs
 } // namespace atools
 
-#endif /* ATOOLS_FS_LB_TYPES_H */
+#endif // ATOOLS_FS_LB_TYPES_H

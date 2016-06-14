@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_BOUNDARYLineWRITER_H_
-#define WRITER_BOUNDARYLineWRITER_H_
+#ifndef ATOOLS_WRITER_BOUNDARYLineWRITER_H
+#define ATOOLS_WRITER_BOUNDARYLineWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/boundaryline.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_BOUNDARYLineWRITER_H_ */
+#endif /* ATOOLS_WRITER_BOUNDARYLineWRITER_H */

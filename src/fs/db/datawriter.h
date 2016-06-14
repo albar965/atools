@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_DATAWRITER_H_
-#define WRITER_DATAWRITER_H_
+#ifndef ATOOLS_WRITER_DATAWRITER_H
+#define ATOOLS_WRITER_DATAWRITER_H
 
 namespace atools {
 namespace sql {
@@ -258,4 +258,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_DATAWRITER_H_ */
+#endif // ATOOLS_WRITER_DATAWRITER_H

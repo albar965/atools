@@ -42,6 +42,8 @@ public:
    * * File system: "APPDIRECTORY/" where APPDIRECTORY is the
    *   directory containing the app executable.
    *
+   * Will not change the application locale if no translation files were found.
+   *
    * Search order for system files is:
    * * "APPDIRECTORY/"
    * * QLibraryInfo::TranslationsPath

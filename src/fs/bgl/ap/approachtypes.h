@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef APPROACHTYPES_H
-#define APPROACHTYPES_H
+#ifndef ATOOLS_APPROACHTYPES_H
+#define ATOOLS_APPROACHTYPES_H
 
 #include <QString>
 
@@ -62,4 +62,4 @@ QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
 } // namespace fs
 } // namespace atools
 
-#endif // APPROACHTYPES_H
+#endif // ATOOLS_APPROACHTYPES_H

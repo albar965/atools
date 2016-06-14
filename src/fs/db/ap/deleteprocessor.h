@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_AP_DELETEPROCESSOR_H_
-#define WRITER_AP_DELETEPROCESSOR_H_
+#ifndef ATOOLS_WRITER_AP_DELETEPROCESSOR_H
+#define ATOOLS_WRITER_AP_DELETEPROCESSOR_H
 
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/ap/airport.h"
@@ -114,4 +114,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_AP_DELETEPROCESSOR_H_ */
+#endif // ATOOLS_WRITER_AP_DELETEPROCESSOR_H

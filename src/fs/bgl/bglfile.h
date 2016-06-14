@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_BGLFILE_H_
-#define BGL_BGLFILE_H_
+#ifndef ATOOLS_BGL_BGLFILE_H
+#define ATOOLS_BGL_BGLFILE_H
 
 #include "fs/bgl/sectiontype.h"
 #include "fs/bgl/header.h"
@@ -197,4 +197,4 @@ const TYPE *BglFile::createRecord(const BglReaderOptions *options,
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_BGLFILE_H_ */
+#endif // ATOOLS_BGL_BGLFILE_H

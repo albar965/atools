@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef FLIGHTPLANENTRY_H
-#define FLIGHTPLANENTRY_H
+#ifndef ATOOLS_FLIGHTPLANENTRY_H
+#define ATOOLS_FLIGHTPLANENTRY_H
 
 #include <QString>
 
@@ -81,4 +81,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // FLIGHTPLANENTRY_H
+#endif // ATOOLS_FLIGHTPLANENTRY_H

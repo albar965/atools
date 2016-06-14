@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_RECORDTYPES_H_
-#define BGL_RECORDTYPES_H_
+#ifndef ATOOLS_BGL_RECORDTYPES_H
+#define ATOOLS_BGL_RECORDTYPES_H
 
 #include <QString>
 
@@ -145,4 +145,4 @@ QString boundaryRecordTypeStr(BoundaryRecordType type);
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_RECORDTYPES_H_ */
+#endif // ATOOLS_BGL_RECORDTYPES_H

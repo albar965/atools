@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ACTIONTEXTSAVER_H
-#define ACTIONTEXTSAVER_H
+#ifndef ATOOLS_ACTIONTEXTSAVER_H
+#define ATOOLS_ACTIONTEXTSAVER_H
 
 #include <QHash>
 
@@ -39,4 +39,4 @@ private:
 } // namespace gui
 } // namespace atools
 
-#endif // ACTIONTEXTSAVER_H
+#endif // ATOOLS_ACTIONTEXTSAVER_H

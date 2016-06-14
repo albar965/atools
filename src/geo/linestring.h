@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LINESTRING_H
-#define LINESTRING_H
+#ifndef ATOOLS_LINESTRING_H
+#define ATOOLS_LINESTRING_H
 
 #include "geo/pos.h"
 #include "geo/rect.h"
@@ -48,4 +48,4 @@ public:
 } // namespace geo
 } // namespace atools
 
-#endif // LINESTRING_H
+#endif // ATOOLS_LINESTRING_H

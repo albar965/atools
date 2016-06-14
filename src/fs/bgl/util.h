@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_UTIL_H_
-#define BGL_UTIL_H_
+#ifndef ATOOLS_BGL_UTIL_H
+#define ATOOLS_BGL_UTIL_H
 
 #include <QString>
 
@@ -56,4 +56,4 @@ bool isFlagNotSet(TYPE bitfield, TYPE2 flag)
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_UTIL_H_ */
+#endif // ATOOLS_BGL_UTIL_H

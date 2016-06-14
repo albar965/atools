@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ROUTEEDGEWRITER_H
-#define ROUTEEDGEWRITER_H
+#ifndef ATOOLS_ROUTEEDGEWRITER_H
+#define ATOOLS_ROUTEEDGEWRITER_H
 
 #include <QVariantList>
 #include <QCoreApplication>
@@ -65,4 +65,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ROUTEEDGEWRITER_H
+#endif // ATOOLS_ROUTEEDGEWRITER_H

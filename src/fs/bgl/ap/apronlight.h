@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AP_APRONlight_H
-#define BGL_AP_APRONlight_H
+#ifndef ATOOLS_BGL_AP_APRONlight_H
+#define ATOOLS_BGL_AP_APRONlight_H
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/rw/runway.h"
@@ -54,4 +54,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // BGL_AP_APRONlight_H
+#endif // ATOOLS_BGL_AP_APRONlight_H

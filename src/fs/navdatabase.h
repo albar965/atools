@@ -19,6 +19,7 @@
 #define ATOOLS_FS_NAVDATABASE_H
 
 #include "logging/loggingdefs.h"
+
 #include <QCoreApplication>
 
 namespace atools {

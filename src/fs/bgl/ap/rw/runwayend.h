@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AP_RW_RUNWAYEND_H_
-#define BGL_AP_RW_RUNWAYEND_H_
+#ifndef ATOOLS_BGL_AP_RW_RUNWAYEND_H
+#define ATOOLS_BGL_AP_RW_RUNWAYEND_H
 
 #include "fs/bgl/ap/rw/runwayapplights.h"
 #include "fs/bgl/ap/rw/runwayvasi.h"
@@ -123,4 +123,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AP_RW_RUNWAYEND_H_ */
+#endif // ATOOLS_BGL_AP_RW_RUNWAYEND_H

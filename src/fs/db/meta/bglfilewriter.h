@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_BGLFILEWRITER_H_
-#define WRITER_BGLFILEWRITER_H_
+#ifndef ATOOLS_WRITER_BGLFILEWRITER_H
+#define ATOOLS_WRITER_BGLFILEWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/bglfile.h"
@@ -59,4 +59,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_BGLFILEWRITER_H_ */
+#endif // ATOOLS_WRITER_BGLFILEWRITER_H

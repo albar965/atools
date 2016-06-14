@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AP_TRANSITION_H_
-#define BGL_AP_TRANSITION_H_
+#ifndef ATOOLS_BGL_AP_TRANSITION_H
+#define ATOOLS_BGL_AP_TRANSITION_H
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/approachleg.h"
@@ -137,4 +137,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AP_TRANSITION_H_ */
+#endif // ATOOLS_BGL_AP_TRANSITION_H

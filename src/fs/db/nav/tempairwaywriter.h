@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_TEMPAIRWAYWRITER_H_
-#define WRITER_TEMPAIRWAYWRITER_H_
+#ifndef ATOOLS_WRITER_TEMPAIRWAYWRITER_H
+#define ATOOLS_WRITER_TEMPAIRWAYWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/nav/airwayentry.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_TEMPAIRWAYWRITER_H_ */
+#endif // ATOOLS_WRITER_TEMPAIRWAYWRITER_H

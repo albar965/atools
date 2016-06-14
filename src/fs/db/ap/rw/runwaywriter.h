@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_RUNWAYWRITER_H_
-#define WRITER_RUNWAYWRITER_H_
+#ifndef ATOOLS_WRITER_RUNWAYWRITER_H
+#define ATOOLS_WRITER_RUNWAYWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/rw/runway.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_RUNWAYWRITER_H_ */
+#endif // ATOOLS_WRITER_RUNWAYWRITER_H

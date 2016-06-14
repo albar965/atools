@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_NAV_ILS_H_
-#define BGL_NAV_ILS_H_
+#ifndef ATOOLS_BGL_NAV_ILS_H
+#define ATOOLS_BGL_NAV_ILS_H
 
 #include "fs/bgl/nav/navbase.h"
 
@@ -69,4 +69,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_NAV_ILS_H_ */
+#endif // ATOOLS_BGL_NAV_ILS_H

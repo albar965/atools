@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AIRPORTJETWAY_H_
-#define BGL_AIRPORTJETWAY_H_
+#ifndef ATOOLS_BGL_AIRPORTJETWAY_H
+#define ATOOLS_BGL_AIRPORTJETWAY_H
 
 #include "fs/bgl/record.h"
 
@@ -55,4 +55,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AIRPORTJETWAY_H_ */
+#endif // ATOOLS_BGL_AIRPORTJETWAY_H

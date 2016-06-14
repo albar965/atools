@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SCENERY_FILERESOLVER_H_
-#define SCENERY_FILERESOLVER_H_
+#ifndef ATOOLS_SCENERY_FILERESOLVER_H
+#define ATOOLS_SCENERY_FILERESOLVER_H
 
 #include <QList>
 #include <QStringList>
@@ -52,4 +52,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* SCENERY_FILERESOLVER_H_ */
+#endif // ATOOLS_SCENERY_FILERESOLVER_H

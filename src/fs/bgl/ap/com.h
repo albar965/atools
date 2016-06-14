@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AIRPORTCOM_H_
-#define BGL_AIRPORTCOM_H_
+#ifndef ATOOLS_BGL_AIRPORTCOM_H
+#define ATOOLS_BGL_AIRPORTCOM_H
 
 #include "fs/bgl/record.h"
 
@@ -97,4 +97,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AIRPORTCOM_H_ */
+#endif // ATOOLS_BGL_AIRPORTCOM_H

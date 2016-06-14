@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_SUBSECTION_H_
-#define BGL_SUBSECTION_H_
+#ifndef ATOOLS_BGL_SUBSECTION_H
+#define ATOOLS_BGL_SUBSECTION_H
 
 #include "fs/bgl/bglbase.h"
 
@@ -75,4 +75,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_SUBSECTION_H_ */
+#endif // ATOOLS_BGL_SUBSECTION_H

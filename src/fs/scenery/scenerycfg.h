@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef SCENERY_SCENERYCFG_H_
-#define SCENERY_SCENERYCFG_H_
+#ifndef ATOOLS_SCENERY_SCENERYCFG_H
+#define ATOOLS_SCENERY_SCENERYCFG_H
 
 #include "fs/scenery/sceneryarea.h"
 #include "fs/scenery/inireader.h"
@@ -74,4 +74,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* SCENERY_SCENERYCFG_H_ */
+#endif // ATOOLS_SCENERY_SCENERYCFG_H

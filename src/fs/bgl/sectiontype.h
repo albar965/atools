@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_SECTIONTYPE_H_
-#define BGL_SECTIONTYPE_H_
+#ifndef ATOOLS_BGL_SECTIONTYPE_H
+#define ATOOLS_BGL_SECTIONTYPE_H
 
 #include <QString>
 
@@ -93,4 +93,4 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type);
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_SECTIONTYPE_H_ */
+#endif // ATOOLS_BGL_SECTIONTYPE_H

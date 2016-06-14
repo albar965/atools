@@ -186,4 +186,4 @@ TYPE normalizeLatYDeg(TYPE latY)
 } /* namespace geo */
 } // namespace atools
 
-#endif /* ATOOLS_GEO_CALCULATIONS_H */
+#endif // ATOOLS_GEO_CALCULATIONS_H

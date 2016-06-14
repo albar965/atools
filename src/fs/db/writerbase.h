@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_WRITERBASE_H_
-#define WRITER_WRITERBASE_H_
+#ifndef ATOOLS_WRITER_WRITERBASE_H
+#define ATOOLS_WRITER_WRITERBASE_H
 
 #include "fs/db/writerbasebasic.h"
 
@@ -130,4 +130,4 @@ void WriterBase<TYPE>::write(const TypeVector& types)
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_WRITERBASE_H_ */
+#endif // ATOOLS_WRITER_WRITERBASE_H

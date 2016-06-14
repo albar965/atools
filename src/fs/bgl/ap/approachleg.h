@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AIRPORTAPPROACHLEG_H_
-#define BGL_AIRPORTAPPROACHLEG_H_
+#ifndef ATOOLS_BGL_AIRPORTAPPROACHLEG_H
+#define ATOOLS_BGL_AIRPORTAPPROACHLEG_H
 
 #include "fs/bgl/ap/approachtypes.h"
 
@@ -204,4 +204,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AIRPORTAPPROACHLEG_H_ */
+#endif // ATOOLS_BGL_AIRPORTAPPROACHLEG_H

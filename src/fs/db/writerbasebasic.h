@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WRITER_WRITERBASEBASIC_H_
-#define WRITER_WRITERBASEBASIC_H_
+#ifndef ATOOLS_WRITER_WRITERBASEBASIC_H
+#define ATOOLS_WRITER_WRITERBASEBASIC_H
 
 #include "sql/sqlquery.h"
 
@@ -84,4 +84,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* WRITER_WRITERBASEBASIC_H_ */
+#endif // ATOOLS_WRITER_WRITERBASEBASIC_H

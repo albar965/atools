@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef WIDGETTOOLS_H
-#define WIDGETTOOLS_H
+#ifndef ATOOLS_WIDGETTOOLS_H
+#define ATOOLS_WIDGETTOOLS_H
 
 #include <QList>
 
@@ -37,4 +37,4 @@ public:
 } // namespace gui
 } // namespace atools
 
-#endif // WIDGETTOOLS_H
+#endif // ATOOLS_WIDGETTOOLS_H

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef BGL_AP_DEL_DELETECOM_H_
-#define BGL_AP_DEL_DELETECOM_H_
+#ifndef ATOOLS_BGL_AP_DEL_DELETECOM_H
+#define ATOOLS_BGL_AP_DEL_DELETECOM_H
 
 #include "fs/bgl/ap/com.h"
 
@@ -48,4 +48,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif /* BGL_AP_DEL_DELETECOM_H_ */
+#endif // ATOOLS_BGL_AP_DEL_DELETECOM_H

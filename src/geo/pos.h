@@ -188,4 +188,4 @@ const atools::geo::Pos EMPTY_POS;
 Q_DECLARE_TYPEINFO(atools::geo::Pos, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(atools::geo::Pos);
 
-#endif /* ATOOLS_GEO_POSITION_H */
+#endif // ATOOLS_GEO_POSITION_H
