@@ -61,7 +61,7 @@ void SqlScript::executeScript(QTextStream& script)
   for(ScriptCmd cmd : statements)
   {
     if(verbose)
-      qDebug().nospace() << cmd.lineNumber << ": " << cmd.sql;
+      qDebug().nospace() << cmd.lineNumber << ": " << QString(cmd.sql).replace('\n', ' ');
     query.exec(cmd.sql);
     if(verbose)
       qDebug().nospace() << "[" << query.numRowsAffected() << "]";
@@ -178,6 +178,9 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
       }
       lastChar = currentChar;
     }
+    if(!currentStatement.isEmpty())
+      // Add line end again for more readable statements in the database
+      currentStatement.append('\n');
     currentLine++;
   }
 }
