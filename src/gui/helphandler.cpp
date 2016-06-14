@@ -28,7 +28,6 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopServices>
-#include <QSettings>
 
 namespace atools {
 namespace gui {

@@ -24,7 +24,6 @@
 #include <QFont>
 #include <QTableView>
 #include <QHeaderView>
-#include <QSettings>
 
 namespace atools {
 namespace gui {

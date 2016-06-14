@@ -19,7 +19,6 @@
 #include "settings/settings.h"
 
 #include <QFileDialog>
-#include <QSettings>
 #include <QApplication>
 #include <QMessageBox>
 #include <QCheckBox>

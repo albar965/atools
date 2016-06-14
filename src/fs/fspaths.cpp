@@ -22,7 +22,6 @@
 
 #include <QHash>
 #include <QDir>
-#include <QSettings>
 #include <QStandardPaths>
 #include <QDataStream>
 

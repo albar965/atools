@@ -32,7 +32,6 @@
 #include <QMenu>
 #include <QPushButton>
 #include <QRadioButton>
-#include <QSettings>
 #include <QSpinBox>
 #include <QSplitter>
 #include <QStatusBar>
