@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QDataStream>
+#include <QSettings>
 
 #if defined(Q_OS_WIN32)
 #include <windows.h>
