@@ -55,6 +55,10 @@ void SceneryCfg::onStartDocument(const QString& filename)
 void SceneryCfg::onEndDocument(const QString& filename)
 {
   Q_UNUSED(filename);
+
+  if(areaEntries.isEmpty())
+    throwException(tr("No valid Areas found"));
+
   std::sort(areaEntries.begin(), areaEntries.end(), SceneryAreaComparator());
 }
 
@@ -65,7 +69,7 @@ void SceneryCfg::onStartSection(const QString& section, const QString& sectionSu
     bool ok = false;
     currentArea.areaNumber = sectionSuffix.toInt(&ok);
     if(!ok)
-      throwException("Area number not valid");
+      throwException(tr("Area number not valid"));
   }
 }
 
@@ -93,7 +97,7 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "clean_on_exit")
       cleanOnExit = toBool(value);
     else
-      throwException("Unexpected key \"" + key + "\"");
+      throwException(tr("Unexpected key \"%1\"").arg(key));
   }
   else if(section == "area")
   {
@@ -120,7 +124,7 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "exclude")
       currentArea.exclude = value;
     else
-      throwException("Unexpected key \"" + key + "\"");
+      throwException(tr("Unexpected key \"%1\"").arg(key));
   }
 }
 
@@ -133,7 +137,7 @@ bool SceneryCfg::toBool(const QString& str)
   else if(tmp == "false" || tmp == "f" || tmp == "n" || tmp == "no")
     return false;
 
-  throwException("Boolean value not valid");
+  throwException(tr("Boolean value not valid"));
   return false;
 }
 
@@ -143,7 +147,7 @@ int SceneryCfg::toInt(const QString& str)
   bool ok = false;
   retval = str.toInt(&ok);
   if(!ok)
-    throwException("Int value not valid");
+    throwException(tr("Int value not valid"));
   return retval;
 }
 

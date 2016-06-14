@@ -22,6 +22,7 @@
 #include "fs/scenery/inireader.h"
 
 #include <QList>
+#include <QApplication>
 
 namespace atools {
 namespace fs {
@@ -33,6 +34,8 @@ typedef QList<atools::fs::scenery::SceneryArea>::const_iterator AreaVectorIterTy
 class SceneryCfg :
   public atools::fs::scenery::IniReader
 {
+  Q_DECLARE_TR_FUNCTIONS(SceneryCfg)
+
 public:
   SceneryCfg();
 

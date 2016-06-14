@@ -19,6 +19,7 @@
 #define INI_INIREADER_H_
 
 #include <QString>
+#include <QApplication>
 
 namespace atools {
 namespace fs {
@@ -26,6 +27,8 @@ namespace scenery {
 
 class IniReader
 {
+  Q_DECLARE_TR_FUNCTIONS(atools::fs::scenery::IniReader)
+
 public:
   IniReader()
     : currentLineNum(0)

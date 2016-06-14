@@ -29,8 +29,8 @@ namespace scenery {
 
 void IniReader::throwException(const QString& message)
 {
-  throw Exception(message + ". File \"" + filename + "\", line " + QString::number(currentLineNum) +
-                  ":\"" + currentLine + "\"");
+  throw Exception(tr("%1. File \"%2\", line %3:\"%4\"").
+                  arg(message).arg(filename).arg(currentLineNum).arg(currentLine));
 }
 
 IniReader::~IniReader()
@@ -57,11 +57,11 @@ void IniReader::handleKeyValue()
   {
     name = currentLine.left(c).toLower();
     if(name.isEmpty())
-      throwException("Missing key name before \"=\"");
+      throwException(tr("Missing key name before \"=\""));
     value = currentLine.mid(c + 1);
   }
   else
-    throwException("Missing \"=\"");
+    throwException(tr("Missing \"=\""));
 
   onKeyValue(currentSection, currentSectionSuffix, name, value);
 }
@@ -73,18 +73,18 @@ void IniReader::handleSection()
   if(currentLine.at(currentLine.size() - 1) == ']')
     tempSection = currentLine.mid(1, currentLine.size() - 2);
   else
-    throwException("Missing closing \"]\"");
+    throwException(tr("Missing closing \"]\""));
 
   int dotPos = tempSection.indexOf('.');
   if(dotPos >= 0)
   {
     QString sectPrefix = tempSection.mid(0, dotPos).toLower();
     if(sectPrefix.isEmpty())
-      throwException("Missing section name before \".\"");
+      throwException(tr("Missing section name before \".\""));
 
     tempSectionSuffix = tempSection.mid(dotPos + 1).toLower();
     if(tempSectionSuffix.isEmpty())
-      throwException("Missing section suffix after \".\"");
+      throwException(tr("Missing section suffix after \".\""));
 
     tempSection = sectPrefix;
   }
@@ -129,6 +129,10 @@ void IniReader::read(const QString& iniFilename)
       else
         handleKeyValue();
     }
+
+    if(!currentSection.isEmpty())
+      onEndSection(currentSection, currentSectionSuffix);
+
     onEndDocument(filename);
     sceneryCfgFile.close();
   }
