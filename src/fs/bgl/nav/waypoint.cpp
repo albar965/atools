@@ -63,7 +63,7 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   int numAirways = bs->readUByte();
   position = BglPosition(bs);
   magVar = bs->readFloat();
-  magVar = magVar > 180.f ? magVar - 360.f : magVar;
+  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
   unsigned int identInt = bs->readUInt();
   ident = converter::intToIcao(identInt);
 
