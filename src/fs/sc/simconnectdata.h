@@ -84,6 +84,7 @@ public:
     airplaneReg = value;
   }
 
+  /* Serial number for data packet. */
   int getPacketId() const
   {
     return static_cast<int>(packetId);
@@ -94,12 +95,13 @@ public:
     packetId = static_cast<quint32>(value);
   }
 
-  int getPacketTs() const
+  /* Packet creating timestamp in seconds since epoch */
+  int getPacketTimestamp() const
   {
     return static_cast<int>(packetTs);
   }
 
-  void setPacketTs(unsigned int value)
+  void setPacketTimestamp(unsigned int value)
   {
     packetTs = static_cast<quint32>(value);
   }
@@ -119,72 +121,72 @@ public:
     position = value;
   }
 
-  float getCourseTrue() const
+  float getHeadingDegTrue() const
   {
-    return courseTrue;
+    return headingTrue;
   }
 
-  void setCourseTrue(float value)
+  void setHeadingDegTrue(float value)
   {
-    courseTrue = value;
+    headingTrue = value;
   }
 
-  float getCourseMag() const
+  float getHeadingDegMag() const
   {
-    return courseMag;
+    return headingMag;
   }
 
-  void setCourseMag(float value)
+  void setHeadingDegMag(float value)
   {
-    courseMag = value;
+    headingMag = value;
   }
 
-  float getGroundSpeed() const
+  float getGroundSpeedKts() const
   {
     return groundSpeed;
   }
 
-  void setGroundSpeed(float value)
+  void setGroundSpeedKts(float value)
   {
     groundSpeed = value;
   }
 
-  float getIndicatedSpeed() const
+  float getIndicatedSpeedKts() const
   {
     return indicatedSpeed;
   }
 
-  void setIndicatedSpeed(float value)
+  void setIndicatedSpeedKts(float value)
   {
     indicatedSpeed = value;
   }
 
-  float getWindSpeed() const
+  float getWindSpeedKts() const
   {
     return windSpeed;
   }
 
-  void setWindSpeed(float value)
+  void setWindSpeedKts(float value)
   {
     windSpeed = value;
   }
 
-  float getWindDirection() const
+  float getWindDirectionDegT() const
   {
     return windDirection;
   }
 
-  void setWindDirection(float value)
+  void setWindDirectionDegT(float value)
   {
     windDirection = value;
   }
 
-  float getVerticalSpeed() const
+  float getVerticalSpeedFeetPerMin() const
   {
     return verticalSpeed;
   }
 
-  void setVerticalSpeed(float value)
+  void setVerticalSpeedFeetPerMin(float value)
   {
     verticalSpeed = value;
   }
@@ -229,42 +231,42 @@ public:
     return SimConnectStatusText.at(status);
   }
 
-  float getIndicatedAltitude() const
+  float getIndicatedAltitudeFt() const
   {
     return indicatedAltitude;
   }
 
-  void setIndicatedAltitude(float value)
+  void setIndicatedAltitudeFt(float value)
   {
     indicatedAltitude = value;
   }
 
-  float getAltitudeAboveGround() const
+  float getAltitudeAboveGroundFt() const
   {
     return altitudeAboveGround;
   }
 
-  void setAltitudeAboveGround(float value)
+  void setAltitudeAboveGroundFt(float value)
   {
     altitudeAboveGround = value;
   }
 
-  float getGroundAltitude() const
+  float getGroundAltitudeFt() const
   {
     return groundAltitude;
   }
 
-  void setGroundAltitude(float value)
+  void setGroundAltitudeFt(float value)
   {
     groundAltitude = value;
   }
 
-  float getTrueSpeed() const
+  float getTrueSpeedKts() const
   {
     return trueSpeed;
   }
 
-  void setTrueSpeed(float value)
+  void setTrueSpeedKts(float value)
   {
     trueSpeed = value;
   }
@@ -294,122 +296,122 @@ public:
     flags = value;
   }
 
-  float getTrackMag() const
+  float getTrackDegMag() const
   {
     return trackMag;
   }
 
-  void setTrackMag(float value)
+  void setTrackDegMag(float value)
   {
     trackMag = value;
   }
 
-  float getTrackTrue() const
+  float getTrackDegTrue() const
   {
     return trackTrue;
   }
 
-  void setTrackTrue(float value)
+  void setTrackDegTrue(float value)
   {
     trackTrue = value;
   }
 
-  float getAmbientTemperature() const
+  float getAmbientTemperatureCelsius() const
   {
     return ambientTemperature;
   }
 
-  void setAmbientTemperature(float value)
+  void setAmbientTemperatureCelsius(float value)
   {
     ambientTemperature = value;
   }
 
-  float getTotalAirTemperature() const
+  float getTotalAirTemperatureCelsius() const
   {
     return totalAirTemperature;
   }
 
-  void setTotalAirTemperature(float value)
+  void setTotalAirTemperatureCelsius(float value)
   {
     totalAirTemperature = value;
   }
 
-  float getSeaLevelPressure() const
+  float getSeaLevelPressureMbar() const
   {
     return seaLevelPressure;
   }
 
-  void setSeaLevelPressure(float value)
+  void setSeaLevelPressureMbar(float value)
   {
     seaLevelPressure = value;
   }
 
-  float getPitotIce() const
+  float getPitotIcePercent() const
   {
     return pitotIce;
   }
 
-  void setPitotIce(float value)
+  void setPitotIcePercent(float value)
   {
     pitotIce = value;
   }
 
-  float getStructuralIce() const
+  float getStructuralIcePercent() const
   {
     return structuralIce;
   }
 
-  void setStructuralIce(float value)
+  void setStructuralIcePercent(float value)
   {
     structuralIce = value;
   }
 
-  float getAirplaneTotalWeight() const
+  float getAirplaneTotalWeightLbs() const
   {
     return airplaneTotalWeight;
   }
 
-  void setAirplaneTotalWeight(float value)
+  void setAirplaneTotalWeightLbs(float value)
   {
     airplaneTotalWeight = value;
   }
 
-  float getAirplaneMaxGrossWeight() const
+  float getAirplaneMaxGrossWeightLbs() const
   {
     return airplaneMaxGrossWeight;
   }
 
-  void setAirplaneMaxGrossWeight(float value)
+  void setAirplaneMaxGrossWeightLbs(float value)
   {
     airplaneMaxGrossWeight = value;
   }
 
-  float getAirplaneEmptyWeight() const
+  float getAirplaneEmptyWeightLbs() const
   {
     return airplaneEmptyWeight;
   }
 
-  void setAirplaneEmptyWeight(float value)
+  void setAirplaneEmptyWeightLbs(float value)
   {
     airplaneEmptyWeight = value;
   }
 
-  float getFuelTotalQuantity() const
+  float getFuelTotalQuantityGallons() const
   {
     return fuelTotalQuantity;
   }
 
-  void setFuelTotalQuantity(float value)
+  void setFuelTotalQuantityGallons(float value)
   {
     fuelTotalQuantity = value;
   }
 
-  float getFuelTotalWeight() const
+  float getFuelTotalWeightLbs() const
   {
     return fuelTotalWeight;
   }
 
-  void setFuelTotalWeight(float value)
+  void setFuelTotalWeightLbs(float value)
   {
     fuelTotalWeight = value;
   }
@@ -439,22 +441,22 @@ public:
     return DATA_VERSION;
   }
 
-  float getMagVar() const
+  float getMagVarDeg() const
   {
     return magVar;
   }
 
-  void setMagVar(float value)
+  void setMagVarDeg(float value)
   {
     magVar = value;
   }
 
-  float getAmbientVisibility() const
+  float getAmbientVisibilityMeter() const
   {
     return ambientVisibility;
   }
 
-  void setAmbientVisibility(float value)
+  void setAmbientVisibilityMeter(float value)
   {
     ambientVisibility = value;
   }
@@ -476,7 +478,7 @@ private:
           airplaneAirline, airplaneFlightnumber;
 
   atools::geo::Pos position;
-  float courseTrue = 0.f, courseMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
+  float headingTrue = 0.f, headingMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
         altitudeAboveGround = 0.f, groundAltitude = 0.f, indicatedSpeed = 0.f, trueSpeed = 0.f,
         machSpeed = 0.f, windSpeed = 0.f, windDirection = 0.f, verticalSpeed = 0.f;
 

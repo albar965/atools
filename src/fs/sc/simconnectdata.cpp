@@ -93,7 +93,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
   readString(in, airplaneFlightnumber);
 
   float lonx, laty, altitude;
-  in >> lonx >> laty >> altitude >> courseTrue >> courseMag
+  in >> lonx >> laty >> altitude >> headingTrue >> headingMag
   >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection >> verticalSpeed
   >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed
   >> trackMag >> trackTrue >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
@@ -126,7 +126,7 @@ int SimConnectData::write(QIODevice *ioDevice)
   writeString(out, airplaneAirline);
   writeString(out, airplaneFlightnumber);
 
-  out << position.getLonX() << position.getLatY() << position.getAltitude() << courseTrue << courseMag
+  out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrue << headingMag
       << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed
       << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed
       << trackMag << trackTrue << ambientTemperature << totalAirTemperature << seaLevelPressure
