@@ -19,6 +19,8 @@
 #include "geo/calculations.h"
 #include "atools.h"
 
+#include <QDataStream>
+
 namespace atools {
 namespace geo {
 
@@ -47,6 +49,13 @@ Rect::Rect(const Pos& topLeftPos, const Pos& bottomRightPos)
 }
 
 Rect::Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY)
+{
+  topLeft = Pos(leftLonX, topLatY);
+  bottomRight = Pos(rightLonX, bottomLatY);
+  valid = true;
+}
+
+Rect::Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY)
 {
   topLeft = Pos(leftLonX, topLatY);
   bottomRight = Pos(rightLonX, bottomLatY);
@@ -241,6 +250,18 @@ QDebug operator<<(QDebug out, const Rect& record)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Rect[" << record.topLeft.toString() << record.bottomRight.toString() << "]";
   return out;
+}
+
+QDataStream& operator<<(QDataStream& out, const Rect& obj)
+{
+  out << obj.topLeft << obj.bottomRight << obj.valid;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, Rect& obj)
+{
+  in >> obj.topLeft >> obj.bottomRight >> obj.valid;
+  return in;
 }
 
 } // namespace geo

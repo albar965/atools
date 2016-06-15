@@ -33,6 +33,7 @@ public:
   Rect(const atools::geo::Pos & singlePos);
   Rect(const atools::geo::Pos & topLeftPos, const atools::geo::Pos & bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
+  Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
@@ -115,12 +116,17 @@ public:
   void swap(Rect& other);
 
 private:
-  bool overlapsInternal(const Rect& other) const;
+  friend QDataStream& operator<<(QDataStream& out, const Rect& obj);
+
+  friend QDataStream& operator>>(QDataStream& in, Rect& obj);
 
   friend QDebug operator<<(QDebug out, const atools::geo::Rect& record);
 
+  bool overlapsInternal(const Rect& other) const;
+
   atools::geo::Pos topLeft, bottomRight;
   bool valid = false;
+
 };
 
 const atools::geo::Rect EMPTY_RECT;
@@ -129,5 +135,6 @@ const atools::geo::Rect EMPTY_RECT;
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::Rect, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(atools::geo::Rect);
 
 #endif // ATOOLS_GEO_RECT_H
