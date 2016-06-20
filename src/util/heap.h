@@ -88,7 +88,8 @@ private:
 
   };
 
-  bool compare(const Heap<TYPE>::HeapNode& n1, const Heap<TYPE>::HeapNode& n2)
+  bool compare(const typename atools::util::Heap<TYPE>::HeapNode& n1,
+               const typename atools::util::Heap<TYPE>::HeapNode& n2)
   {
     // return ​true if the first argument is less than the second.
     return n1.cost > n2.cost;
