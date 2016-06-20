@@ -22,6 +22,8 @@
 
 class QLayout;
 class QWidget;
+class QAction;
+class QObject;
 
 namespace atools {
 namespace gui {
@@ -31,6 +33,13 @@ class WidgetTools
 public:
   static void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
                                      const QList<QWidget *>& otherWidgets);
+
+  static bool anyWidgetChanged(const QList<const QObject *>& widgets);
+
+  static bool allChecked(const QList<const QAction *>& actions);
+  static bool noneChecked(const QList<const QAction *>& actions);
+
+  static void changeStarIndication(QAction *action, bool changed);
 
 };
 
