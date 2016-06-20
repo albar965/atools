@@ -15,36 +15,4 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_FENCEWRITER_H
-#define ATOOLS_FS_DB_FENCEWRITER_H
-
-#include "fs/db/writerbase.h"
-#include "fs/bgl/ap/fence.h"
-
-namespace atools {
-namespace fs {
-namespace db {
-
-class FenceWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Fence>
-{
-public:
-  FenceWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "fence")
-  {
-  }
-
-  virtual ~FenceWriter()
-  {
-  }
-
-protected:
-  virtual void writeObject(const bgl::Fence *type) override;
-
-};
-
-} // namespace writer
-} // namespace fs
-} // namespace atools
-
-#endif // ATOOLS_FS_DB_FENCEWRITER_H
+#include "util/heap.h"

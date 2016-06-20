@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_WRITER_WAYPOINTWRITER_H
-#define ATOOLS_WRITER_WAYPOINTWRITER_H
+#ifndef ATOOLS_FS_DB_WAYPOINTWRITER_H
+#define ATOOLS_FS_DB_WAYPOINTWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/nav/waypoint.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_WRITER_WAYPOINTWRITER_H
+#endif // ATOOLS_FS_DB_WAYPOINTWRITER_H

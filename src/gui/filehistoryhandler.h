@@ -15,36 +15,59 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_FENCEWRITER_H
-#define ATOOLS_FS_DB_FENCEWRITER_H
+#ifndef ATOOLS_GUI_FILEHISTORYHANDLER_H
+#define ATOOLS_GUI_FILEHISTORYHANDLER_H
 
-#include "fs/db/writerbase.h"
-#include "fs/bgl/ap/fence.h"
+#include <QObject>
+
+class QMenu;
+class QAction;
 
 namespace atools {
-namespace fs {
-namespace db {
+namespace gui {
 
-class FenceWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Fence>
+class FileHistoryHandler :
+  public QObject
 {
+  Q_OBJECT
+
 public:
-  FenceWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "fence")
+  FileHistoryHandler(QObject *parent, const QString& settingsNamePrefix, QMenu *recentMenuList,
+                     QAction *clearMenuAction);
+  virtual ~FileHistoryHandler();
+
+  void saveState();
+  void restoreState();
+
+  void addFile(const QString& filename);
+  void removeFile(const QString& filename);
+
+  int getMaxEntries() const
   {
+    return maxEntries;
   }
 
-  virtual ~FenceWriter()
+  void setMaxEntries(int value)
   {
+    maxEntries = value;
   }
 
-protected:
-  virtual void writeObject(const bgl::Fence *type) override;
+signals:
+  void fileSelected(const QString& filename);
 
+private:
+  void clearMenu();
+  void itemTriggered(QAction *action);
+  void updateMenu();
+
+  QMenu *recentMenu;
+  QAction *clearAction;
+  QStringList files;
+  QString settings;
+  int maxEntries = 15;
 };
 
-} // namespace writer
-} // namespace fs
+} // namespace gui
 } // namespace atools
 
-#endif // ATOOLS_FS_DB_FENCEWRITER_H
+#endif // ATOOLS_GUI_FILEHISTORYHANDLER_H

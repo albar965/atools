@@ -15,36 +15,59 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_FENCEWRITER_H
-#define ATOOLS_FS_DB_FENCEWRITER_H
+#ifndef ATOOLS_FS_DB_DATABASEMETA_H
+#define ATOOLS_FS_DB_DATABASEMETA_H
 
-#include "fs/db/writerbase.h"
-#include "fs/bgl/ap/fence.h"
+#include <QDateTime>
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
 namespace fs {
 namespace db {
 
-class FenceWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Fence>
+class DatabaseMeta
 {
 public:
-  FenceWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "fence")
+  DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
+
+  int getMajorVersion() const
   {
+    return majorVersion;
   }
 
-  virtual ~FenceWriter()
+  int getMinorVersion() const
   {
+    return minorVersion;
   }
 
-protected:
-  virtual void writeObject(const bgl::Fence *type) override;
+  QDateTime getLastLoadTime() const
+  {
+    return lastLoadTime;
+  }
 
+  bool isValid() const
+  {
+    return valid;
+  }
+
+  bool hasSchema();
+  bool hasData();
+  bool isDatabaseCompatible(int version);
+
+  void updateVersion(int majorVer, int minorVer);
+  void updateTimestamp();
+
+private:
+  atools::sql::SqlDatabase *db;
+  int majorVersion = 0, minorVersion = 0;
+  QDateTime lastLoadTime;
+  bool valid = false;
 };
 
-} // namespace writer
+} // namespace db
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_DB_FENCEWRITER_H
+#endif // ATOOLS_FS_DB_DATABASEMETA_H

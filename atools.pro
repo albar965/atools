@@ -155,7 +155,13 @@ HEADERS += src/atools.h \
     src/fs/sc/simconnectdata.h \
     src/fs/sc/simconnectreply.h \
     src/fs/sc/types.h \
-    src/sql/sqlrecord.h
+    src/sql/sqlrecord.h \
+    src/util/heap.h \
+    src/util/htmlbuilder.h \
+    src/util/morsecode.h \
+    src/gui/filehistoryhandler.h \
+    src/gui/mapposhistory.h \
+    src/fs/db/databasemeta.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -288,7 +294,13 @@ SOURCES += src/atools.cpp \
     src/fs/db/routeedgewriter.cpp \
     src/fs/sc/simconnectdata.cpp \
     src/fs/sc/simconnectreply.cpp \
-    src/sql/sqlrecord.cpp
+    src/sql/sqlrecord.cpp \
+    src/util/heap.cpp \
+    src/util/htmlbuilder.cpp \
+    src/util/morsecode.cpp \
+    src/gui/filehistoryhandler.cpp \
+    src/gui/mapposhistory.cpp \
+    src/fs/db/databasemeta.cpp
 
 
 unix {

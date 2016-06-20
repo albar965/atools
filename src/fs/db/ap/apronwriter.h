@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_WRITER_APRONWRITER_H
-#define ATOOLS_WRITER_APRONWRITER_H
+#ifndef ATOOLS_FS_DB_APRONWRITER_H
+#define ATOOLS_FS_DB_APRONWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/ap/apron.h"
@@ -52,4 +52,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_WRITER_APRONWRITER_H
+#endif // ATOOLS_FS_DB_APRONWRITER_H

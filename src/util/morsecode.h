@@ -15,36 +15,27 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_FENCEWRITER_H
-#define ATOOLS_FS_DB_FENCEWRITER_H
+#ifndef ATOOLS_UTIL_MORSECODE_H
+#define ATOOLS_UTIL_MORSECODE_H
 
-#include "fs/db/writerbase.h"
-#include "fs/bgl/ap/fence.h"
+#include <QString>
 
 namespace atools {
-namespace fs {
-namespace db {
+namespace util {
 
-class FenceWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Fence>
+class MorseCode
 {
 public:
-  FenceWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "fence")
-  {
-  }
+  MorseCode(const QString& signSeparator = QString(), const QString& charSeparator = "\n");
+  ~MorseCode();
 
-  virtual ~FenceWriter()
-  {
-  }
+  QString getCode(const QString& text);
 
-protected:
-  virtual void writeObject(const bgl::Fence *type) override;
-
+private:
+  QString signSep, charSep;
 };
 
-} // namespace writer
-} // namespace fs
+} // namespace util
 } // namespace atools
 
-#endif // ATOOLS_FS_DB_FENCEWRITER_H
+#endif // ATOOLS_UTIL_MORSECODE_H

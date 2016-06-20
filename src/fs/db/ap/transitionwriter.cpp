@@ -42,7 +42,6 @@ void TransitionWriter::writeObject(const Transition *type)
   using namespace atools::geo;
   using namespace atools;
 
-
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
   bind(":type", Transition::transitionTypeToStr(type->getType()));

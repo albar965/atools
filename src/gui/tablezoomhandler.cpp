@@ -81,7 +81,7 @@ void TableZoomHandler::initTableViewZoom()
   int newPointSize = 0;
   if(!settingsKey.isEmpty())
     newPointSize = Settings::instance().valueInt(settingsKey,
-                                               defaultTableViewFontPointSize);
+                                                 defaultTableViewFontPointSize);
   else
     newPointSize = defaultTableViewFontPointSize;
   setTableViewFontSize(newPointSize);

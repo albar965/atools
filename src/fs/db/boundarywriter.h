@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_WRITER_BOUNDARYWRITER_H
-#define ATOOLS_WRITER_BOUNDARYWRITER_H
+#ifndef ATOOLS_FS_DB_BOUNDARYWRITER_H
+#define ATOOLS_FS_DB_BOUNDARYWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/boundary.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_WRITER_BOUNDARYWRITER_H
+#endif // ATOOLS_FS_DB_BOUNDARYWRITER_H

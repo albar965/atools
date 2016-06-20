@@ -31,7 +31,7 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
 {
   bs->seekg(startOffset + listOffset);
 
-  int* indexes = new int[numNames];
+  int *indexes = new int[numNames];
   for(int i = 0; i < numNames; i++)
     indexes[i] = bs->readInt();
 

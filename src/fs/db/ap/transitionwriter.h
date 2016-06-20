@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_WRITER_TRANSITIONWRITER_H
-#define ATOOLS_WRITER_TRANSITIONWRITER_H
+#ifndef ATOOLS_FS_DB_TRANSITIONWRITER_H
+#define ATOOLS_FS_DB_TRANSITIONWRITER_H
 
 #include "fs/bgl/ap/transition.h"
 #include "fs/db/writerbase.h"
@@ -47,4 +47,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_WRITER_TRANSITIONWRITER_H
+#endif // ATOOLS_FS_DB_TRANSITIONWRITER_H
