@@ -32,7 +32,7 @@ void ErrorHandler::handleException(const std::exception& e, const QString& messa
   qCritical() << "Caught exception:" << e.what();
 
   QMessageBox::critical(parent, QApplication::applicationName(),
-                        message + QString("\nCaught exception\n\"%1\"").arg(e.what()),
+                        tr("%1\nCaught exception\n\"%2\"").arg(message).arg(e.what()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }
 
@@ -41,7 +41,7 @@ void ErrorHandler::handleUnknownException(const QString& message)
   qCritical() << "Caught unknown exception";
 
   QMessageBox::critical(parent, QApplication::applicationName(),
-                        message + QString("\nCaught unknown exception"),
+                        tr("%1\nCaught unknown exception").arg(message),
                         QMessageBox::Close, QMessageBox::NoButton);
 
 }
@@ -51,7 +51,7 @@ void ErrorHandler::handleSqlError(const QSqlError& error, const QString& message
   qCritical() << "Sql error occured:" << error.text();
 
   QMessageBox::critical(parent, QApplication::applicationName(),
-                        message + QString("\nSql error occured\n\"%1\"").arg(error.text()),
+                        tr("%1\nSql error occured\n\"%2\"").arg(message).arg(error.text()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }
 
@@ -61,7 +61,7 @@ void ErrorHandler::handleIOError(const QFileDevice& device, const QString& messa
                         << " file: " << device.fileName();
 
   QMessageBox::critical(parent, QApplication::applicationName(),
-                        message + QString("\nIO error occured\nFile: \"%1\"\n\"%2\" (%3)").
+                        tr("%1\nIO error occured\nFile: \"%2\"\n\"%3\" (%4)").arg(message).
                         arg(device.fileName()).arg(device.errorString()).arg(device.error()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }

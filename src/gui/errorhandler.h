@@ -19,6 +19,7 @@
 #define ATOOLS_GUI_ERRORHANDLER_H
 
 #include <QString>
+#include <QApplication>
 
 namespace std {
 class exception;
@@ -37,6 +38,8 @@ namespace gui {
  */
 class ErrorHandler
 {
+  Q_DECLARE_TR_FUNCTIONS(ErrorHandler)
+
 public:
   /*
    * @param parentWidget widget for all dialogs
