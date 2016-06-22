@@ -60,25 +60,25 @@ QString capString(const QString& str, const QSet<QString>& toUpper = {}, const Q
 QString ratingString(int value, int maxValue);
 
 template<typename TYPE>
-bool almostEqual(TYPE f1, TYPE f2)
+constexpr bool almostEqual(TYPE f1, TYPE f2)
 {
   return std::abs(f1 - f2) < std::numeric_limits<TYPE>::epsilon();
 }
 
 template<typename TYPE>
-bool almostNotEqual(TYPE f1, TYPE f2)
+constexpr bool almostNotEqual(TYPE f1, TYPE f2)
 {
   return std::abs(f1 - f2) >= std::numeric_limits<TYPE>::epsilon();
 }
 
 template<typename TYPE>
-bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
+constexpr bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return std::abs(f1 - f2) < epsilon;
 }
 
 template<typename TYPE>
-bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
+constexpr bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return std::abs(f1 - f2) >= epsilon;
 }

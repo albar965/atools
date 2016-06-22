@@ -37,103 +37,103 @@ float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, b
                      atools::geo::LineDist *distType = nullptr);
 
 template<typename TYPE>
-int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
 template<typename TYPE>
-int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return static_cast<int>(std::round(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
 }
 
 template<typename TYPE>
-float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
+constexpr float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return static_cast<float>(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
 }
 
 /* Temperature from celsius to farenheit */
 template<typename TYPE>
-TYPE degCToDegF(TYPE temp)
+constexpr TYPE degCToDegF(TYPE temp)
 {
   return static_cast<TYPE>(1.8 * static_cast<double>(temp) + 32);
 }
 
 /* Temperature from farenheit to celsius */
 template<typename TYPE>
-TYPE degFToDegC(TYPE temp)
+constexpr TYPE degFToDegC(TYPE temp)
 {
   return static_cast<TYPE>((static_cast<double>(temp) - 32) / 1.8);
 }
 
 /* Pressure from millibar to inches Hg */
 template<typename TYPE>
-TYPE mbarToInHg(TYPE press)
+constexpr TYPE mbarToInHg(TYPE press)
 {
   return static_cast<TYPE>(static_cast<double>(press) * 0.02953);
 }
 
 /* Pressure from inches Hg to millibar */
 template<typename TYPE>
-TYPE inHgToMbar(TYPE press)
+constexpr TYPE inHgToMbar(TYPE press)
 {
   return static_cast<TYPE>(static_cast<double>(press) * 33.863753);
 }
 
 /* Distance from nautical miles to meters */
 template<typename TYPE>
-TYPE nmToMeter(TYPE nm)
+constexpr TYPE nmToMeter(TYPE nm)
 {
   return static_cast<TYPE>(static_cast<double>(nm) * 1852.216);
 }
 
 /* Distance from meters to nautical miles */
 template<typename TYPE>
-TYPE meterToNm(TYPE nm)
+constexpr TYPE meterToNm(TYPE nm)
 {
   return static_cast<TYPE>(static_cast<double>(nm) / 1852.216);
 }
 
 template<typename TYPE>
-TYPE meterToFeet(TYPE value)
+constexpr TYPE meterToFeet(TYPE value)
 {
   return static_cast<TYPE>(3.2808399 * static_cast<double>(value));
 }
 
 template<typename TYPE>
-TYPE feetToMeter(TYPE value)
+constexpr TYPE feetToMeter(TYPE value)
 {
   return static_cast<TYPE>(0.3048 * static_cast<double>(value));
 }
 
 template<typename TYPE>
-TYPE feetToNm(TYPE value)
+constexpr TYPE feetToNm(TYPE value)
 {
   return meterToNm(feetToMeter(value));
 }
 
 template<typename TYPE>
-TYPE nmToRad(TYPE value)
+constexpr TYPE nmToRad(TYPE value)
 {
   return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
 }
 
 template<typename TYPE>
-TYPE meterToRad(TYPE value)
+constexpr TYPE meterToRad(TYPE value)
 {
   return nmToRad(meterToNm(value));
 }
 
 template<typename TYPE>
-TYPE toRadians(TYPE deg)
+constexpr TYPE toRadians(TYPE deg)
 {
   return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
 }
 
 template<typename TYPE>
-TYPE toDegree(TYPE rad)
+constexpr TYPE toDegree(TYPE rad)
 {
   return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
 }
