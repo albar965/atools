@@ -19,7 +19,7 @@
 #define ATOOLS_INI_INIREADER_H
 
 #include <QString>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {

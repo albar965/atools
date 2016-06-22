@@ -22,7 +22,7 @@
 #include "fs/scenery/inireader.h"
 
 #include <QList>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {
