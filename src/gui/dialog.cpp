@@ -168,7 +168,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
 
     retval = msg.exec();
 
-    if(!settingsKey.isEmpty())
+    if(retval != QMessageBox::Cancel && !settingsKey.isEmpty())
     {
       s.setValue(settingsKey, !msg.checkBox()->isChecked());
       s.syncSettings();
@@ -194,7 +194,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     msg.setDefaultButton(dialogDefaultButton);
     retval = msg.exec();
 
-    if(!settingsKey.isEmpty())
+    if(retval != QMessageBox::Cancel && !settingsKey.isEmpty())
     {
       s.setValue(settingsKey, !msg.checkBox()->isChecked());
       s.syncSettings();
