@@ -161,7 +161,9 @@ HEADERS += src/atools.h \
     src/util/morsecode.h \
     src/gui/filehistoryhandler.h \
     src/gui/mapposhistory.h \
-    src/fs/db/databasemeta.h
+    src/fs/db/databasemeta.h \
+    src/zip/zipwriter.h \
+    src/zip/zipreader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -300,7 +302,8 @@ SOURCES += src/atools.cpp \
     src/util/morsecode.cpp \
     src/gui/filehistoryhandler.cpp \
     src/gui/mapposhistory.cpp \
-    src/fs/db/databasemeta.cpp
+    src/fs/db/databasemeta.cpp \
+    src/zip/zip.cpp
 
 
 unix {
