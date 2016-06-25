@@ -519,7 +519,8 @@ void ZipPrivate::fillFileInfo(int index, ZipReader::FileInfo& fileInfo) const
         fileInfo.permissions |= QFile::ExeOwner | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther;
       break;
     default:
-      qWarning("QZip: Zip entry format at %d is not supported.", index);
+      qWarning("Zip: Zip entry format at %d is not supported.", index);
+      // status = ZipReader::FileNotSupported;
       return; // we don't support anything else
   }
 
@@ -616,7 +617,8 @@ void ZipReaderPrivate::scanFiles()
   device->read((char *)tmp, 4);
   if(readUInt(tmp) != 0x04034b50)
   {
-    qWarning() << "QZip: not a zip file!";
+    qWarning() << "Zip: not a zip file!";
+    status = ZipReader::FileIsNotZip;
     return;
   }
 
@@ -630,7 +632,8 @@ void ZipReaderPrivate::scanFiles()
     const int pos = device->size() - int(sizeof(EndOfDirectory)) - i;
     if(pos < 0 || i > 65535)
     {
-      qWarning() << "QZip: EndOfDirectory not found";
+      qWarning() << "Zip: EndOfDirectory not found";
+      status = ZipReader::FileCorrupted;
       return;
     }
 
@@ -647,7 +650,10 @@ void ZipReaderPrivate::scanFiles()
   ZDEBUG("start_of_directory at %d, num_dir_entries=%d", start_of_directory, num_dir_entries);
   int comment_length = readUShort(eod.comment_length);
   if(comment_length != i)
-    qWarning() << "QZip: failed to parse zip file.";
+  {
+    qWarning() << "Zip: failed to parse zip file.";
+    status = ZipReader::FileCorrupted;
+  }
   comment = device->read(qMin(comment_length, i));
 
   device->seek(start_of_directory);
@@ -657,12 +663,14 @@ void ZipReaderPrivate::scanFiles()
     int read = device->read((char *)&header.h, sizeof(CentralFileHeader));
     if(read < (int)sizeof(CentralFileHeader))
     {
-      qWarning() << "QZip: Failed to read complete header, index may be incomplete";
+      qWarning() << "Zip: Failed to read complete header, index may be incomplete";
+      status = ZipReader::FileCorrupted;
       break;
     }
     if(readUInt(header.h.signature) != 0x02014b50)
     {
-      qWarning() << "QZip: invalid header signature, index may be incomplete";
+      qWarning() << "Zip: invalid header signature, index may be incomplete";
+      status = ZipReader::FileCorrupted;
       break;
     }
 
@@ -670,21 +678,24 @@ void ZipReaderPrivate::scanFiles()
     header.file_name = device->read(l);
     if(header.file_name.length() != l)
     {
-      qWarning() << "QZip: Failed to read filename from zip index, index may be incomplete";
+      qWarning() << "Zip: Failed to read filename from zip index, index may be incomplete";
+      status = ZipReader::FileCorrupted;
       break;
     }
     l = readUShort(header.h.extra_field_length);
     header.extra_field = device->read(l);
     if(header.extra_field.length() != l)
     {
-      qWarning() << "QZip: Failed to read extra field in zip file, skipping file, index may be incomplete";
+      qWarning() << "Zip: Failed to read extra field in zip file, skipping file, index may be incomplete";
+      status = ZipReader::FileCorrupted;
       break;
     }
     l = readUShort(header.h.file_comment_length);
     header.file_comment = device->read(l);
     if(header.file_comment.length() != l)
     {
-      qWarning() << "QZip: Failed to read read file comment, index may be incomplete";
+      qWarning() << "Zip: Failed to read read file comment, index may be incomplete";
+      status = ZipReader::FileCorrupted;
       break;
     }
 
@@ -750,7 +761,7 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
           data.resize(len);
           break;
         case Z_MEM_ERROR:
-          qWarning("QZip: Z_MEM_ERROR: Not enough memory to compress file, skipping");
+          qWarning("Zip: Z_MEM_ERROR: Not enough memory to compress file, skipping");
           data.resize(0);
           break;
         case Z_BUF_ERROR:
@@ -773,12 +784,12 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
   header.file_name = inUtf8 ? fileName.toUtf8() : fileName.toLocal8Bit();
   if(header.file_name.size() > 0xffff)
   {
-    qWarning("QZip: Filename is too long, chopping it to 65535 bytes");
+    qWarning("Zip: Filename is too long, chopping it to 65535 bytes");
     header.file_name = header.file_name.left(0xffff); // ### don't break the utf-8 sequence, if any
   }
   if(header.file_comment.size() + header.file_name.size() > 0xffff)
   {
-    qWarning("QZip: File comment is too long, chopping it to 65535 bytes");
+    qWarning("Zip: File comment is too long, chopping it to 65535 bytes");
     header.file_comment.truncate(0xffff - header.file_name.size()); // ### don't break the utf-8 sequence, if any
   }
   writeUShort(header.h.file_name_length, header.file_name.length());
@@ -1018,8 +1029,9 @@ QByteArray ZipReader::fileData(const QString& fileName) const
   ushort version_needed = readUShort(header.h.version_needed);
   if(version_needed > ZIP_VERSION)
   {
-    qWarning("QZip: .ZIP specification version %d implementationis needed to extract the data.",
+    qWarning("Zip: .ZIP specification version %d implementationis needed to extract the data.",
              version_needed);
+    d->status = FileNotSupported;
     return QByteArray();
   }
 
@@ -1040,7 +1052,8 @@ QByteArray ZipReader::fileData(const QString& fileName) const
 
   if((general_purpose_bits & Encrypted) != 0)
   {
-    qWarning("QZip: Unsupported encryption method is needed to extract the data.");
+    qWarning("Zip: Unsupported encryption method is needed to extract the data.");
+    d->status = FileEncryptionMethodNotSupported;
     return QByteArray();
   }
 
@@ -1073,20 +1086,23 @@ QByteArray ZipReader::fileData(const QString& fileName) const
             baunzip.resize(len);
           break;
         case Z_MEM_ERROR:
-          qWarning("QZip: Z_MEM_ERROR: Not enough memory");
+          qWarning("Zip: Z_MEM_ERROR: Not enough memory");
+          d->status = MemoryError;
           break;
         case Z_BUF_ERROR:
           len *= 2;
           break;
         case Z_DATA_ERROR:
-          qWarning("QZip: Z_DATA_ERROR: Input data is corrupted");
+          qWarning("Zip: Z_DATA_ERROR: Input data is corrupted");
+          d->status = FileCorrupted;
           break;
       }
     } while(res == Z_BUF_ERROR);
     return baunzip;
   }
 
-  qWarning("QZip: Unsupported compression method %d is needed to extract the data.", compression_method);
+  qWarning("Zip: Unsupported compression method %d is needed to extract the data.", compression_method);
+  d->status = FileEncryptionMethodNotSupported;
   return QByteArray();
 }
 
@@ -1424,7 +1440,7 @@ void ZipWriter::close()
     return;
   }
 
-  // qDebug("QZip::close writing directory, %d entries", d->fileHeaders.size());
+  // qDebug("Zip::close writing directory, %d entries", d->fileHeaders.size());
   d->device->seek(d->start_of_directory);
   // write new directory
   for(int i = 0; i < d->fileHeaders.size(); ++i)

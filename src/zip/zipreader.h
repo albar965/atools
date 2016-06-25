@@ -91,7 +91,12 @@ public:
     FileReadError,
     FileOpenError,
     FilePermissionsError,
-    FileError
+    FileError,
+    FileNotSupported,
+    FileEncryptionMethodNotSupported,
+    FileCorrupted,
+    MemoryError,
+    FileIsNotZip
   };
 
   Status status() const;

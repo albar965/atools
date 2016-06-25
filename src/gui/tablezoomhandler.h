@@ -41,6 +41,12 @@ public:
                    QAction *actionZoomDefault = nullptr, QString settingsKeyStr = QString());
   virtual ~TableZoomHandler();
 
+  /* Use zoom methods for direct changes instead actions */
+  void zoomTableView(int value);
+  void zoomIn();
+  void zoomOut();
+  void zoomDefault();
+
   /* Section height will be font height plus this value */
   int getSectionToFontSize() const
   {
@@ -76,10 +82,6 @@ public:
 
 private:
   /* Change font size and store in settings */
-  void zoomTableView(int value);
-  void zoomIn();
-  void zoomOut();
-  void zoomDefault();
 
   /* Update action status (enabled/disabled) */
   void enableDisableZoomActions();
