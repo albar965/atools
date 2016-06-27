@@ -24,9 +24,9 @@ select a.airway_id, n1.node_id as from_node_id,
   n2.node_id as to_node_id,
   n2.type as to_node_type,
 case
-  when a.airway_type = 'VICTOR' then 4
-  when a.airway_type = 'JET' then 5
-  when a.airway_type = 'BOTH' then 6
+  when a.airway_type = 'VICTOR' then 5
+  when a.airway_type = 'JET' then 6
+  when a.airway_type = 'BOTH' then 7
   else 0
 end as type,
 a.minimum_altitude

@@ -50,7 +50,7 @@ const int MAX_EDGES_PER_SECTOR = 2;
 const int MIN_EDGES_PER_SECTOR = 1;
 
 // Index VOR=0, VORDME=1, DME=2, NDB=3
-const int PRIORITY_BY_TYPE[] = {2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
+const int PRIORITY_BY_TYPE[] = {0 /* None */, 2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
 
 const float INFLATE_RECT_LON_DEGREES = 6.f;
 const float INFLATE_RECT_LAT_DEGREES = 4.f;
@@ -174,7 +174,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
   struct TempNodeTo
   {
     int nodeId;
-    int type; // VOR=0, VORDME=1, DME=2, NDB=3,
+    int type; // VOR=1, VORDME=2, DME=3, NDB=4,
     int range;
     int distance;
     int priority;

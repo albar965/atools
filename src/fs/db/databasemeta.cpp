@@ -83,10 +83,10 @@ bool DatabaseMeta::hasData()
   return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
 }
 
-bool DatabaseMeta::isDatabaseCompatible(int version)
+bool DatabaseMeta::isDatabaseCompatible(int majorVersion)
 {
   if(isValid())
-    return version == getMajorVersion();
+    return majorVersion == getMajorVersion();
 
   return false;
 }

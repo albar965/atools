@@ -21,7 +21,7 @@ create table route_node_radio
 (
   node_id integer primary key,
   nav_id integer not null,
-  type integer not null, -- 0 = VOR, 1 = VORDME, 2 = DME, 3 = NDB
+  type integer not null, -- 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
   range integer,
   lonx double not null,
   laty double not null
@@ -55,7 +55,7 @@ create table route_node_airway
 (
   node_id integer primary key,
   nav_id integer not null,
-  type integer, -- 4 = Victor, 5 = Jet, 6 = Both
+  type integer not null, -- Upper 4 bits: 5 = Victor, 6 = Jet, 7 = Both - lower 4 bits: 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
   lonx double not null,
   laty double not null
 );
@@ -72,7 +72,7 @@ create table route_edge_airway
   from_node_type integer not null,
   to_node_id integer not null,
   to_node_type integer not null,
-  type integer, -- 4 = Victor, 5 = Jet, 6 = Both
+  type integer, -- 5 = Victor, 6 = Jet, 7 = Both
   minimum_altitude integer,
 foreign key(airway_id) references airway(airway_id),
 foreign key(from_node_id) references route_node_airway(node_id),

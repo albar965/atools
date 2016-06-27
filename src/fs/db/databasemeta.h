@@ -54,7 +54,7 @@ public:
 
   bool hasSchema();
   bool hasData();
-  bool isDatabaseCompatible(int version);
+  bool isDatabaseCompatible(int majorVersion);
 
   void updateVersion(int majorVer, int minorVer);
   void updateTimestamp();
