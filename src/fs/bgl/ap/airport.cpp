@@ -58,7 +58,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
   ident = converter::intToIcao(bs->readUInt());
 
-  if(!options->includeAirport(ident))
+  if(!options->isIncludedAirportIdent(ident))
   {
     seekToStart();
     excluded = true;
@@ -86,7 +86,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         name = bs->readString(r.getSize() - 6);
         break;
       case rec::RUNWAY:
-        if(options->includeBglObject(type::RUNWAY))
+        if(options->isIncludedBglObject(type::RUNWAY))
         {
           r.seekToStart();
 
@@ -97,14 +97,14 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::COM:
-        if(options->includeBglObject(type::COM))
+        if(options->isIncludedBglObject(type::COM))
         {
           r.seekToStart();
           coms.push_back(Com(options, bs));
         }
         break;
       case rec::TAXI_PARKING:
-        if(options->includeBglObject(type::PARKING))
+        if(options->isIncludedBglObject(type::PARKING))
         {
           int numParkings = bs->readUShort();
           for(int i = 0; i < numParkings; i++)
@@ -116,14 +116,14 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::APPROACH:
-        if(options->includeBglObject(type::APPROACH))
+        if(options->isIncludedBglObject(type::APPROACH))
         {
           r.seekToStart();
           approaches.push_back(Approach(options, bs));
         }
         break;
       case rec::AIRPORT_WAYPOINT:
-        if(options->includeBglObject(type::WAYPOINT))
+        if(options->isIncludedBglObject(type::WAYPOINT))
         {
           r.seekToStart();
           waypoints.push_back(Waypoint(options, bs));
@@ -135,7 +135,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         break;
 
       case rec::APRON_FIRST:
-        if(options->includeBglObject(type::APRON))
+        if(options->isIncludedBglObject(type::APRON))
         {
           r.seekToStart();
           aprons.push_back(Apron(options, bs));
@@ -147,35 +147,35 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         aprons2.push_back(Apron2(options, bs));
         break;
       case rec::APRON_EDGE_LIGHTS:
-        if(options->includeBglObject(type::APRON) && options->includeBglObject(type::APRONLIGHT))
+        if(options->isIncludedBglObject(type::APRON) && options->isIncludedBglObject(type::APRONLIGHT))
         {
           r.seekToStart();
           apronLights.push_back(ApronLight(options, bs));
         }
         break;
       case rec::HELIPAD:
-        if(options->includeBglObject(type::HELIPAD))
+        if(options->isIncludedBglObject(type::HELIPAD))
         {
           r.seekToStart();
           helipads.push_back(Helipad(options, bs));
         }
         break;
       case rec::START:
-        if(options->includeBglObject(type::START))
+        if(options->isIncludedBglObject(type::START))
         {
           r.seekToStart();
           starts.push_back(Start(options, bs));
         }
         break;
       case rec::JETWAY:
-        if(options->includeBglObject(type::PARKING))
+        if(options->isIncludedBglObject(type::PARKING))
         {
           r.seekToStart();
           jetways.push_back(Jetway(options, bs));
         }
         break;
       case rec::FENCE_BOUNDARY:
-        if(options->includeBglObject(type::FENCE))
+        if(options->isIncludedBglObject(type::FENCE))
         {
           r.seekToStart();
           fences.push_back(Fence(options, bs));
@@ -183,7 +183,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         numBoundaryFence++;
         break;
       case rec::FENCE_BLAST:
-        if(options->includeBglObject(type::FENCE))
+        if(options->isIncludedBglObject(type::FENCE))
         {
           r.seekToStart();
           fences.push_back(Fence(options, bs));
@@ -193,7 +193,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         towerObj = true;
         break;
       case rec::TAXI_PATH:
-        if(options->includeBglObject(type::TAXIWAY))
+        if(options->isIncludedBglObject(type::TAXIWAY))
         {
           int numPaths = bs->readUShort();
           for(int i = 0; i < numPaths; i++)
@@ -201,7 +201,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::TAXI_POINT:
-        if(options->includeBglObject(type::TAXIWAY))
+        if(options->isIncludedBglObject(type::TAXIWAY))
         {
           int numPoints = bs->readUShort();
           for(int i = 0; i < numPoints; i++)
@@ -209,7 +209,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::TAXI_NAME:
-        if(options->includeBglObject(type::TAXIWAY))
+        if(options->isIncludedBglObject(type::TAXIWAY))
         {
           int numNames = bs->readUShort();
           for(int i = 0; i < numNames; i++)

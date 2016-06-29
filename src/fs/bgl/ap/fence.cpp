@@ -33,7 +33,7 @@ Fence::Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
 
   bs->skip(32); // instance ID and profile
 
-  if(options->includeBglObject(type::GEOMETRY))
+  if(options->isIncludedBglObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
       vertices.push_back(BglPosition(bs));
 }

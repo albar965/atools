@@ -127,7 +127,7 @@ void IlsWriter::writeObject(const Ils *type)
   {
     QString msg(" ILS ID " + QString::number(getCurrentId()) +
                 " ident " + type->getIdent() + " name " + type->getName());
-    if(getOptions().includeAirport(apIdent))
+    if(getOptions().isIncludedAirportIdent(apIdent))
     {
       int id = getRunwayIndex()->getRunwayEndId(apIdent, loc->getRunwayName(), msg);
 

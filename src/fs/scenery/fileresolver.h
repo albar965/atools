@@ -41,11 +41,11 @@ public:
                QStringList *filenames = nullptr) const;
 
 private:
-  bool matchesExcludedPrefix(const QString& fname) const;
+  bool matchesExcludedFilePrefix(const QString& fname) const;
 
   const atools::fs::BglReaderOptions& options;
   bool quiet = false;
-  QStringList excludedPrefixes;
+  QStringList excludedFilePrefixes;
 };
 
 } // namespace scenery

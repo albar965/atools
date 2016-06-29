@@ -109,7 +109,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::TRANSITION_LEGS:
-        if(options->includeBglObject(type::APPROACHLEG))
+        if(options->isIncludedBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)

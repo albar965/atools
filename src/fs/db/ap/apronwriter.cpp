@@ -51,7 +51,7 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
                    QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
-  if(getOptions().includeBglObject(type::APRON2))
+  if(getOptions().isIncludedBglObject(type::APRON2))
   {
     list.clear();
     for(const bgl::BglPosition& pos : type->second->getVertices())

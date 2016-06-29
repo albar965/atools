@@ -71,7 +71,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         break;
 
       case rec::LEGS:
-        if(options->includeBglObject(type::APPROACHLEG))
+        if(options->isIncludedBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
@@ -79,7 +79,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::MISSED_LEGS:
-        if(options->includeBglObject(type::APPROACHLEG))
+        if(options->isIncludedBglObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)

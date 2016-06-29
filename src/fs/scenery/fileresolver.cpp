@@ -38,13 +38,13 @@ FileResolver::~FileResolver()
 
 FileResolver& FileResolver::addExcludedFilePrefixes(const QStringList& prefixes)
 {
-  excludedPrefixes += prefixes;
+  excludedFilePrefixes += prefixes;
   return *this;
 }
 
 void FileResolver::clearExcludedFilePrefixes()
 {
-  excludedPrefixes.clear();
+  excludedFilePrefixes.clear();
 }
 
 int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames) const
@@ -63,21 +63,24 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     if(sceneryArea.isDir())
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
-      for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
+      if(options.isIncludedDirectory(sceneryAreaDir.absolutePath()))
       {
-        QDir sceneryAreaDirObj(scenery.filePath());
-        for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
+        for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
         {
-          QString filename = bglFile.fileName();
-          if(!matchesExcludedPrefix(filename))
-            if(options.includeFilename(filename))
-            {
-              numFiles++;
-              if(filepaths != nullptr)
-                filepaths->push_back(bglFile.filePath());
-              if(filenames != nullptr)
-                filenames->push_back(bglFile.fileName());
-            }
+          QDir sceneryAreaDirObj(scenery.filePath());
+          for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
+          {
+            QString filename = bglFile.fileName();
+            if(!matchesExcludedFilePrefix(filename))
+              if(options.isIncludedFilename(filename))
+              {
+                numFiles++;
+                if(filepaths != nullptr)
+                  filepaths->push_back(bglFile.filePath());
+                if(filenames != nullptr)
+                  filenames->push_back(bglFile.fileName());
+              }
+          }
         }
       }
     }
@@ -89,9 +92,9 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
   return numFiles;
 }
 
-bool FileResolver::matchesExcludedPrefix(const QString& fname) const
+bool FileResolver::matchesExcludedFilePrefix(const QString& fname) const
 {
-  for(QString i : excludedPrefixes)
+  for(QString i : excludedFilePrefixes)
     if(fname.startsWith(i, Qt::CaseInsensitive))
       return true;
 

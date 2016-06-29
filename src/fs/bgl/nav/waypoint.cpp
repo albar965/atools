@@ -77,7 +77,7 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   if(ident.isEmpty() && type != nav::UNNAMED)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  if(options->includeBglObject(type::AIRWAY))
+  if(options->isIncludedBglObject(type::AIRWAY))
     for(int i = 0; i < numAirways; i++)
       airways.push_back(AirwayEntry(options, bs));
 

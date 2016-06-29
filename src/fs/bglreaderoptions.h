@@ -119,11 +119,15 @@ public:
     return createRouteTables;
   }
 
-  bool includeFilename(const QString& filename) const;
-  bool includePath(const QString& filepath) const;
-  bool includeAirport(const QString& icao) const;
-  bool includeBglObject(atools::fs::type::BglObjectType type) const;
-  bool isAddonPath(const QString& filepath) const;
+  bool isIncludedFilename(const QString& filename) const;
+  bool isIncludedLocalPath(const QString& filepath) const;
+  bool isIncludedAirportIdent(const QString& icao) const;
+  bool isIncludedDirectory(const QString& filepath) const;
+
+  bool isAddonLocalPath(const QString& filepath) const;
+  bool isAddonDirectory(const QString& filepath) const;
+
+  bool isIncludedBglObject(atools::fs::type::BglObjectType type) const;
 
   void setSceneryFile(const QString& value)
   {
@@ -182,39 +186,46 @@ public:
   void setProgressCallback(ProgressCallbackType func);
   ProgressCallbackType getProgressCallback() const;
 
-private:
-  void setAddonFilterInc(const QStringList& filter);
-  void setAddonFilterExcl(const QStringList& filter);
-  void setFilenameFilterInc(const QStringList& filter);
-  void setFilenameFilterExcl(const QStringList& filter);
-  void setAirportIcaoFilterInc(const QStringList& filter);
-  void setAirportIcaoFilterExcl(const QStringList& filter);
-  void setPathFilterInc(const QStringList& filter);
-  void setPathFilterExcl(const QStringList& filter);
-  void setBglObjectFilterInc(const QStringList& filters);
-  void setBglObjectFilterExcl(const QStringList& filters);
+  /* Exclude absolute directories */
+  void addToDirectoryExcludes(const QStringList& filter);
 
+  /* Exclude absolute directories from addon recognition */
+  void addToAddonDirectoryExcludes(const QStringList& filter);
+
+private:
   friend QDebug operator<<(QDebug out, const atools::fs::BglReaderOptions& opts);
 
-  void setFilter(const QStringList& filters, QList<QRegExp>& filterList);
-  bool includeObject(const QString& icao, const QList<QRegExp>& filterListInc,
+  void addToAddonFilterInclude(const QStringList& filter);
+  void addToAddonFilterExclude(const QStringList& filter);
+  void addToFilenameFilterInclude(const QStringList& filter);
+  void addToFilenameFilterExclude(const QStringList& filter);
+  void addToAirportIcaoFilterInclude(const QStringList& filter);
+  void addToAirportIcaoFilterExclude(const QStringList& filter);
+  void addToPathFilterInclude(const QStringList& filter);
+  void addToPathFilterExclude(const QStringList& filter);
+  void addToBglObjectFilterInclude(const QStringList& filters);
+  void addToBglObjectFilterExclude(const QStringList& filters);
+
+  void addToFilter(const QStringList& filters, QList<QRegExp>& filterList);
+  bool includeObject(const QString& string, const QList<QRegExp>& filterListInc,
                      const QList<QRegExp>& filterListExcl) const;
 
-  void setBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
+  void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
+  QString adaptPath(const QString& filepath) const;
+  QStringList fromNativeSeparators(const QStringList& paths) const;
+  QString fromNativeSeparator(const QString& path) const;
+  QStringList createFilterList(const QStringList& pathList);
 
   QString sceneryFile, basepath;
   bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
        resolveAirways = true, createRouteTables = true, databaseReport = false;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
-                 fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl;
+                 fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
+                 dirExcludes /* Not loaded from config file */,
+                 addonDirExcludes /* Not loaded from config file */;
   QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
-
-  QString adaptPath(const QString& filepath) const;
-
-  QStringList toNativeSeparators(const QStringList& paths) const;
-  QString toNativeSeparator(const QString& path) const;
 
 };
 

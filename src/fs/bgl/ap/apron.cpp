@@ -31,7 +31,7 @@ Apron::Apron(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
   surface = static_cast<rw::Surface>(bs->readUByte());
   int numVertices = bs->readShort();
 
-  if(options->includeBglObject(type::GEOMETRY))
+  if(options->isIncludedBglObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
       vertices.push_back(BglPosition(bs));
 }

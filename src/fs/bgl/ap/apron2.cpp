@@ -36,7 +36,7 @@ Apron2::Apron2(const atools::fs::BglReaderOptions *options, atools::io::BinarySt
   int numVertices = bs->readShort();
   int numTriangles = bs->readShort();
 
-  if(options->includeBglObject(type::GEOMETRY))
+  if(options->isIncludedBglObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
       vertices.push_back(BglPosition(bs));

@@ -69,7 +69,7 @@ void BglFile::readFile(QString file)
 
     readHeaderAndSections(&bs);
 
-    if(options->includeBglObject(type::BOUNDARY))
+    if(options->isIncludedBglObject(type::BOUNDARY))
       readBoundaries(&bs);
 
     readRecords(&bs);
@@ -197,12 +197,12 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
     case nav::LOW:
     case nav::HIGH:
     case nav::VOT:
-      if(options->includeBglObject(type::VOR))
+      if(options->isIncludedBglObject(type::VOR))
         return createRecord<Vor>(options, bs, &vors);
 
       break;
     case nav::ILS:
-      if(options->includeBglObject(type::ILS))
+      if(options->isIncludedBglObject(type::ILS))
         return createRecord<Ils>(options, bs, &ils);
   }
   return nullptr;
@@ -235,7 +235,7 @@ void BglFile::readRecords(BinaryStream *bs)
       switch(type)
       {
         case section::AIRPORT:
-          if(options->includeBglObject(type::AIRPORT))
+          if(options->isIncludedBglObject(type::AIRPORT))
             // Will return null iF ICAO is excluded
             rec = createRecord<Airport>(options, bs, &airports);
           break;
@@ -246,15 +246,15 @@ void BglFile::readRecords(BinaryStream *bs)
           rec = handleIlsVor(bs);
           break;
         case section::NDB:
-          if(options->includeBglObject(type::NDB))
+          if(options->isIncludedBglObject(type::NDB))
             rec = createRecord<Ndb>(options, bs, &ndbs);
           break;
         case section::MARKER:
-          if(options->includeBglObject(type::MARKER))
+          if(options->isIncludedBglObject(type::MARKER))
             rec = createRecord<Marker>(options, bs, &marker);
           break;
         case section::WAYPOINT:
-          if(options->includeBglObject(type::WAYPOINT))
+          if(options->isIncludedBglObject(type::WAYPOINT))
             rec = createRecord<Waypoint>(options, bs, &waypoints);
           break;
 

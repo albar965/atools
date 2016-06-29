@@ -227,7 +227,8 @@ void Navdatabase::createInternal()
   atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    if(area.isActive() && options->includePath(area.getLocalPath()))
+  {
+    if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
     {
       if((aborted = progress.report(&area)) == true)
         return;
@@ -236,6 +237,7 @@ void Navdatabase::createInternal()
       if((aborted = dataWriter.isAborted()) == true)
         return;
     }
+  }
   db->commit();
 
   if((aborted = progress.reportOther(tr("Creating Indexes"))) == true)
@@ -403,7 +405,7 @@ void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *nu
   qDebug() << "Counting files";
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    if(area.isActive() && options->includePath(area.getLocalPath()))
+    if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
     {
       atools::fs::scenery::FileResolver resolver(*options, true);
       *numFiles += resolver.getFiles(area);

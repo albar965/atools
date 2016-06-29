@@ -54,7 +54,7 @@ void StartWriter::writeObject(const Start *type)
   // TODO comment in wiki: helipads have no runway
   if(!apIdent.isEmpty() && type->getType() != bgl::start::HELIPAD)
   {
-  if(getOptions().includeAirport(apIdent))
+  if(getOptions().isIncludedAirportIdent(apIdent))
   {
     QString msg(" start ID " + QString::number(getCurrentId()));
     int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);

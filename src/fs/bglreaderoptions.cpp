@@ -42,86 +42,106 @@ BglReaderOptions::ProgressCallbackType BglReaderOptions::getProgressCallback() c
   return progressCallback;
 }
 
-bool BglReaderOptions::includePath(const QString& filepath) const
+void BglReaderOptions::addToDirectoryExcludes(const QStringList& filter)
+{
+  addToFilter(createFilterList(filter), dirExcludes);
+}
+
+void BglReaderOptions::addToAddonDirectoryExcludes(const QStringList& filter)
+{
+  addToFilter(createFilterList(filter), addonDirExcludes);
+}
+
+bool BglReaderOptions::isIncludedLocalPath(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), pathFiltersInc, pathFiltersExcl);
 }
 
-bool BglReaderOptions::isAddonPath(const QString& filepath) const
+bool BglReaderOptions::isAddonLocalPath(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
-bool BglReaderOptions::includeFilename(const QString& filename) const
+bool BglReaderOptions::isIncludedDirectory(const QString& filepath) const
+{
+  return includeObject(adaptPath(filepath), QList<QRegExp>(), dirExcludes);
+}
+
+bool BglReaderOptions::isAddonDirectory(const QString& filepath) const
+{
+  return includeObject(adaptPath(filepath), QList<QRegExp>(), addonDirExcludes);
+}
+
+bool BglReaderOptions::isIncludedFilename(const QString& filename) const
 {
   QString fn = QFileInfo(filename).fileName();
   return includeObject(fn, fileFiltersInc, fileFiltersExcl);
 }
 
-bool BglReaderOptions::includeAirport(const QString& icao) const
+bool BglReaderOptions::isIncludedAirportIdent(const QString& icao) const
 {
   return includeObject(icao, airportIcaoFiltersInc, airportIcaoFiltersExcl);
 }
 
-void BglReaderOptions::setFilenameFilterInc(const QStringList& filter)
+void BglReaderOptions::addToFilenameFilterInclude(const QStringList& filter)
 {
-  setFilter(filter, fileFiltersInc);
+  addToFilter(filter, fileFiltersInc);
 }
 
-void BglReaderOptions::setAirportIcaoFilterInc(const QStringList& filter)
+void BglReaderOptions::addToAirportIcaoFilterInclude(const QStringList& filter)
 {
-  setFilter(filter, airportIcaoFiltersInc);
+  addToFilter(filter, airportIcaoFiltersInc);
 }
 
-void BglReaderOptions::setPathFilterInc(const QStringList& filter)
+void BglReaderOptions::addToPathFilterInclude(const QStringList& filter)
 {
-  setFilter(toNativeSeparators(filter), pathFiltersInc);
+  addToFilter(fromNativeSeparators(filter), pathFiltersInc);
 }
 
-void BglReaderOptions::setAddonFilterInc(const QStringList& filter)
+void BglReaderOptions::addToAddonFilterInclude(const QStringList& filter)
 {
-  setFilter(toNativeSeparators(filter), addonFiltersInc);
+  addToFilter(fromNativeSeparators(filter), addonFiltersInc);
 }
 
-void BglReaderOptions::setFilenameFilterExcl(const QStringList& filter)
+void BglReaderOptions::addToFilenameFilterExclude(const QStringList& filter)
 {
-  setFilter(filter, fileFiltersExcl);
+  addToFilter(filter, fileFiltersExcl);
 }
 
-void BglReaderOptions::setAirportIcaoFilterExcl(const QStringList& filter)
+void BglReaderOptions::addToAirportIcaoFilterExclude(const QStringList& filter)
 {
-  setFilter(filter, airportIcaoFiltersExcl);
+  addToFilter(filter, airportIcaoFiltersExcl);
 }
 
-void BglReaderOptions::setPathFilterExcl(const QStringList& filter)
+void BglReaderOptions::addToPathFilterExclude(const QStringList& filter)
 {
-  setFilter(toNativeSeparators(filter), pathFiltersExcl);
+  addToFilter(fromNativeSeparators(filter), pathFiltersExcl);
 }
 
-void BglReaderOptions::setAddonFilterExcl(const QStringList& filter)
+void BglReaderOptions::addToAddonFilterExclude(const QStringList& filter)
 {
-  setFilter(toNativeSeparators(filter), addonFiltersExcl);
+  addToFilter(fromNativeSeparators(filter), addonFiltersExcl);
 }
 
-void BglReaderOptions::setBglObjectFilterInc(const QStringList& filters)
+void BglReaderOptions::addToBglObjectFilterInclude(const QStringList& filters)
 {
-  setBglObjectFilter(filters, bglObjectTypeFiltersInc);
+  addToBglObjectFilter(filters, bglObjectTypeFiltersInc);
 }
 
-void BglReaderOptions::setBglObjectFilterExcl(const QStringList& filters)
+void BglReaderOptions::addToBglObjectFilterExclude(const QStringList& filters)
 {
-  setBglObjectFilter(filters, bglObjectTypeFiltersExcl);
+  addToBglObjectFilter(filters, bglObjectTypeFiltersExcl);
 }
 
-void BglReaderOptions::setBglObjectFilter(const QStringList& filters,
-                                          QSet<atools::fs::type::BglObjectType>& filterList)
+void BglReaderOptions::addToBglObjectFilter(const QStringList& filters,
+                                            QSet<atools::fs::type::BglObjectType>& filterList)
 {
   for(const QString& f : filters)
     if(!f.isEmpty())
       filterList.insert(type::stringToBglObjectType(f));
 }
 
-bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
+bool BglReaderOptions::isIncludedBglObject(type::BglObjectType type) const
 {
   if(bglObjectTypeFiltersInc.isEmpty() && bglObjectTypeFiltersExcl.isEmpty())
     return true;
@@ -141,6 +161,22 @@ bool BglReaderOptions::includeBglObject(type::BglObjectType type) const
   }
 }
 
+QStringList BglReaderOptions::createFilterList(const QStringList& pathList)
+{
+  QStringList retval;
+
+  for(const QString& path : pathList)
+  {
+    QDir dir(path);
+    QString newPath = dir.absolutePath().trimmed().replace("\\", "/");
+    if(!newPath.endsWith("/"))
+      newPath.append("/");
+    newPath.append("*");
+    retval.append(newPath);
+  }
+  return retval;
+}
+
 void BglReaderOptions::loadFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
@@ -152,19 +188,19 @@ void BglReaderOptions::loadFromSettings(const QSettings& settings)
   setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());
   setAutocommit(settings.value("Options/Autocommit", false).toBool());
 
-  setFilenameFilterInc(settings.value("Filter/IncludeFilenames").toStringList());
-  setFilenameFilterExcl(settings.value("Filter/ExcludeFilenames").toStringList());
-  setPathFilterInc(settings.value("Filter/IncludePathFilter").toStringList());
-  setPathFilterExcl(settings.value("Filter/ExcludePathFilter").toStringList());
-  setAddonFilterInc(settings.value("Filter/IncludeAddonPathFilter").toStringList());
-  setAddonFilterExcl(settings.value("Filter/ExcludeAddonPathFilter").toStringList());
-  setAirportIcaoFilterInc(settings.value("Filter/IncludeAirportIcaoFilter").toStringList());
-  setAirportIcaoFilterExcl(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
-  setBglObjectFilterInc(settings.value("Filter/IncludeBglObjectFilter").toStringList());
-  setBglObjectFilterExcl(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
+  addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
+  addToFilenameFilterExclude(settings.value("Filter/ExcludeFilenames").toStringList());
+  addToPathFilterInclude(settings.value("Filter/IncludePathFilter").toStringList());
+  addToPathFilterExclude(settings.value("Filter/ExcludePathFilter").toStringList());
+  addToAddonFilterInclude(settings.value("Filter/IncludeAddonPathFilter").toStringList());
+  addToAddonFilterExclude(settings.value("Filter/ExcludeAddonPathFilter").toStringList());
+  addToAirportIcaoFilterInclude(settings.value("Filter/IncludeAirportIcaoFilter").toStringList());
+  addToAirportIcaoFilterExclude(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
+  addToBglObjectFilterInclude(settings.value("Filter/IncludeBglObjectFilter").toStringList());
+  addToBglObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 }
 
-bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegExp>& filterListInc,
+bool BglReaderOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,
                                      const QList<QRegExp>& filterListExcl) const
 {
   if(filterListInc.isEmpty() && filterListExcl.isEmpty())
@@ -172,11 +208,13 @@ bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegE
 
   bool exFound = false;
   for(const QRegExp& iter : filterListExcl)
-    if(iter.exactMatch(filterStr))
+  {
+    if(iter.exactMatch(string))
     {
       exFound = true;
       break;
     }
+  }
 
   if(filterListInc.isEmpty())
     return !exFound;
@@ -184,11 +222,13 @@ bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegE
   {
     bool incFound = false;
     for(const QRegExp& iter : filterListInc)
-      if(iter.exactMatch(filterStr))
+    {
+      if(iter.exactMatch(string))
       {
         incFound = true;
         break;
       }
+    }
 
     if(filterListExcl.isEmpty())
       return incFound;
@@ -197,7 +237,7 @@ bool BglReaderOptions::includeObject(const QString& filterStr, const QList<QRegE
   }
 }
 
-void BglReaderOptions::setFilter(const QStringList& filters, QList<QRegExp>& filterList)
+void BglReaderOptions::addToFilter(const QStringList& filters, QList<QRegExp>& filterList)
 {
   for(QString f : filters)
   {
@@ -209,23 +249,23 @@ void BglReaderOptions::setFilter(const QStringList& filters, QList<QRegExp>& fil
 
 QString BglReaderOptions::adaptPath(const QString& filepath) const
 {
-  QString newFilename = filepath;
-  if(!filepath.endsWith(QDir::separator()))
-    newFilename.append(QDir::separator());
+  QString newFilename = fromNativeSeparator(filepath);
+  if(!filepath.endsWith("/"))
+    newFilename.append("/");
 
-  return toNativeSeparator(newFilename);
+  return newFilename;
 }
 
-QString BglReaderOptions::toNativeSeparator(const QString& path) const
+QString BglReaderOptions::fromNativeSeparator(const QString& path) const
 {
   return QString(path).replace("\\", "/");
 }
 
-QStringList BglReaderOptions::toNativeSeparators(const QStringList& paths) const
+QStringList BglReaderOptions::fromNativeSeparators(const QStringList& paths) const
 {
   QStringList retval;
   for(const QString& p : paths)
-    retval.append(toNativeSeparator(p));
+    retval.append(fromNativeSeparator(p));
   return retval;
 }
 

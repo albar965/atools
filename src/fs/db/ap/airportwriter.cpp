@@ -71,7 +71,7 @@ void AirportWriter::writeObject(const Airport *type)
   using namespace atools;
   using namespace atools::geo;
 
-  if(!getOptions().includeAirport(type->getIdent()))
+  if(!getOptions().isIncludedAirportIdent(type->getIdent()))
     return;
 
   if(getOptions().isVerbose())
@@ -117,7 +117,9 @@ void AirportWriter::writeObject(const Airport *type)
 
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
-  bool isAddon = getOptions().isAddonPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+  bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
+                 getOptions().isAddonDirectory(dw.getBglFileWriter()->getCurrentFilenamePath());
+
   bindBool(":is_addon", isAddon);
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());

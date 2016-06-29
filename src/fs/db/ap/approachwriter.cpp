@@ -60,13 +60,15 @@ void ApproachWriter::writeObject(const Approach *type)
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
   if(type->hasRunwayReference() && !apIdent.isEmpty())
-    if(getOptions().includeAirport(apIdent))
+  {
+    if(getOptions().isIncludedAirportIdent(apIdent))
     {
       QString msg(" approach ID " + QString::number(getCurrentId()));
       int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
       if(id != -1)
         bind(":runway_end_id", id);
     }
+  }
 
   executeStatement();
 
