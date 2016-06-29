@@ -59,7 +59,7 @@ public:
   }
 
   /* Compare for equal around 10 cm */
-  bool fuzzyEqual(const Pos& other, float epsilon) const;
+  bool almostEqual(const Pos& other, float epsilon) const;
 
   float getLatY() const
   {

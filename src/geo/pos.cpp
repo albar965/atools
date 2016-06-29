@@ -116,7 +116,7 @@ bool Pos::operator==(const Pos& other) const
          atools::almostEqual(latY, other.latY);
 }
 
-bool Pos::fuzzyEqual(const Pos& other, float epsilon) const
+bool Pos::almostEqual(const Pos& other, float epsilon) const
 {
   return atools::almostEqual(lonX, other.lonX, epsilon) &&
          atools::almostEqual(latY, other.latY, epsilon);
