@@ -140,6 +140,7 @@ DataWriter::~DataWriter()
   delete ilsWriter;
   delete boundaryWriter;
   delete boundaryLineWriter;
+
   delete runwayIndex;
   delete airportIndex;
 }

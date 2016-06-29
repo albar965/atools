@@ -213,43 +213,43 @@ private:
   bool aborted = false;
 
   atools::sql::SqlDatabase& db;
-  atools::fs::db::ProgressHandler *progressHandler;
+  atools::fs::db::ProgressHandler *progressHandler = nullptr;
 
-  atools::fs::db::BglFileWriter *bglFileWriter;
-  atools::fs::db::SceneryAreaWriter *sceneryAreaWriter;
+  atools::fs::db::BglFileWriter *bglFileWriter = nullptr;
+  atools::fs::db::SceneryAreaWriter *sceneryAreaWriter = nullptr;
 
-  atools::fs::db::AirportWriter *airportWriter;
-  atools::fs::db::RunwayWriter *runwayWriter;
-  atools::fs::db::RunwayEndWriter *runwayEndWriter;
+  atools::fs::db::AirportWriter *airportWriter = nullptr;
+  atools::fs::db::RunwayWriter *runwayWriter = nullptr;
+  atools::fs::db::RunwayEndWriter *runwayEndWriter = nullptr;
 
-  atools::fs::db::ApproachWriter *approachWriter;
-  atools::fs::db::ApproachLegWriter *approachLegWriter;
-  atools::fs::db::TransitionWriter *approachTransWriter;
-  atools::fs::db::TransitionLegWriter *approachTransLegWriter;
+  atools::fs::db::ApproachWriter *approachWriter = nullptr;
+  atools::fs::db::ApproachLegWriter *approachLegWriter = nullptr;
+  atools::fs::db::TransitionWriter *approachTransWriter = nullptr;
+  atools::fs::db::TransitionLegWriter *approachTransLegWriter = nullptr;
 
-  atools::fs::db::ParkingWriter *parkingWriter;
-  atools::fs::db::ComWriter *airportComWriter;
-  atools::fs::db::HelipadWriter *airportHelipadWriter;
-  atools::fs::db::StartWriter *airportStartWriter;
-  atools::fs::db::ApronWriter *airportApronWriter;
-  atools::fs::db::ApronLightWriter *airportApronLightWriter;
-  atools::fs::db::FenceWriter *airportFenceWriter;
-  atools::fs::db::TaxiPathWriter *airportTaxiPathWriter;
+  atools::fs::db::ParkingWriter *parkingWriter = nullptr;
+  atools::fs::db::ComWriter *airportComWriter = nullptr;
+  atools::fs::db::HelipadWriter *airportHelipadWriter = nullptr;
+  atools::fs::db::StartWriter *airportStartWriter = nullptr;
+  atools::fs::db::ApronWriter *airportApronWriter = nullptr;
+  atools::fs::db::ApronLightWriter *airportApronLightWriter = nullptr;
+  atools::fs::db::FenceWriter *airportFenceWriter = nullptr;
+  atools::fs::db::TaxiPathWriter *airportTaxiPathWriter = nullptr;
 
-  atools::fs::db::DeleteAirportWriter *deleteAirportWriter;
+  atools::fs::db::DeleteAirportWriter *deleteAirportWriter = nullptr;
 
-  atools::fs::db::WaypointWriter *waypointWriter;
-  atools::fs::db::TempAirwayWriter *tempAirwayWriter;
-  atools::fs::db::VorWriter *vorWriter;
-  atools::fs::db::NdbWriter *ndbWriter;
-  atools::fs::db::MarkerWriter *markerWriter;
-  atools::fs::db::IlsWriter *ilsWriter;
+  atools::fs::db::WaypointWriter *waypointWriter = nullptr;
+  atools::fs::db::TempAirwayWriter *tempAirwayWriter = nullptr;
+  atools::fs::db::VorWriter *vorWriter = nullptr;
+  atools::fs::db::NdbWriter *ndbWriter = nullptr;
+  atools::fs::db::MarkerWriter *markerWriter = nullptr;
+  atools::fs::db::IlsWriter *ilsWriter = nullptr;
 
-  atools::fs::db::BoundaryWriter *boundaryWriter;
-  atools::fs::db::BoundaryLineWriter *boundaryLineWriter;
+  atools::fs::db::BoundaryWriter *boundaryWriter = nullptr;
+  atools::fs::db::BoundaryLineWriter *boundaryLineWriter = nullptr;
 
-  atools::fs::db::RunwayIndex *runwayIndex;
-  atools::fs::db::AirportIndex *airportIndex;
+  atools::fs::db::RunwayIndex *runwayIndex = nullptr;
+  atools::fs::db::AirportIndex *airportIndex = nullptr;
 
   const atools::fs::BglReaderOptions& options;
 };

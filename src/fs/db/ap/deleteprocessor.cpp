@@ -184,16 +184,14 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
   delete deleteIlsStmt;
-
   delete fetchPrimaryRunwayEndIdStmt;
   delete fetchSecondaryRunwayEndIdStmt;
   delete updateApprochRwIds;
   delete updateApprochStmt;
-
+  delete deleteApprochStmt;
   delete delWpStmt;
   delete delVorStmt;
   delete delNdbStmt;
-
   delete deleteAirportStmt;
   delete selectAirportStmt;
   delete deleteApronStmt;
@@ -212,7 +210,6 @@ DeleteProcessor::~DeleteProcessor()
   delete updateComStmt;
   delete fetchPrimaryAppStmt;
   delete fetchSecondaryAppStmt;
-
   delete deleteTransitionLegStmt;
   delete deleteApproachLegStmt;
   delete deleteTransitionStmt;

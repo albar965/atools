@@ -116,7 +116,7 @@ private:
 
   QSqlQuery query;
   QString queryString;
-  SqlDatabase *db;
+  SqlDatabase *db = nullptr;
   QString boundValuesAsString() const;
 
 };

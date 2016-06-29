@@ -81,7 +81,10 @@ SqlQuery& SqlQuery::operator=(const SqlQuery& other)
 {
   this->query = other.query;
   this->queryString = other.queryString;
+
+  delete db;
   this->db = new SqlDatabase(*other.db);
+
   return *this;
 }
 
