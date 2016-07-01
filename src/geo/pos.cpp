@@ -32,6 +32,7 @@ const float Pos::INVALID_ORDINATE = std::numeric_limits<float>::max();
 const float Pos::POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f;
 const float Pos::POS_EPSILON_1M = 1.f / 60.f / 1852.216f;
 const float Pos::POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f;
+const float Pos::POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f;
 
 const double EARTH_RADIUS_METER = 6371. * 1000.;
 

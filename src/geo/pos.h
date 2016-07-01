@@ -157,6 +157,7 @@ public:
   const static float POS_EPSILON_10CM; // ca 10 cm for lat and lon nearby equator
   const static float POS_EPSILON_1M; // ca 1 m for lat and lon nearby equator
   const static float POS_EPSILON_10M; // ca 10 m for lat and lon nearby equator
+  const static float POS_EPSILON_100M; // ca 100 m for lat and lon nearby equator
 
 protected:
   const static float INVALID_ORDINATE;

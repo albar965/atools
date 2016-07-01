@@ -47,6 +47,9 @@ public:
   void zoomOut();
   void zoomDefault();
 
+  /* Bypasses all in/out/default methods and increases/decreases the size. */
+  void zoomPercent(int percent);
+
   /* Section height will be font height plus this value */
   int getSectionToFontSize() const
   {
@@ -90,10 +93,10 @@ private:
   void initTableViewZoom();
 
   /* Change font size and adjust row height accordingly */
-  void setTableViewFontSize(int pointSize);
+  void setTableViewFontSize(float pointSize);
 
 private:
-  int defaultTableViewFontPointSize;
+  float defaultTableViewFontPointSize;
 
   int sectionToFontSize = 2;
   int minFontSize = 7;

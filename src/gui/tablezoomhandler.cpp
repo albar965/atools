@@ -15,10 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "gui/tablezoomhandler.h"
+
 #include "logging/loggingdefs.h"
 #include "settings/settings.h"
-
-#include "tablezoomhandler.h"
+#include "atools.h"
 
 #include <QAction>
 #include <QFont>
@@ -57,10 +58,10 @@ TableZoomHandler::~TableZoomHandler()
     disconnect(actionZoomDefault, &QAction::triggered, this, &TableZoomHandler::zoomDefault);
 }
 
-void TableZoomHandler::setTableViewFontSize(int pointSize)
+void TableZoomHandler::setTableViewFontSize(float pointSize)
 {
   QFont newFont(tableView->font());
-  newFont.setPointSize(pointSize);
+  newFont.setPointSizeF(pointSize);
 
   int newFontHeight = QFontMetrics(newFont).height();
 
@@ -76,12 +77,12 @@ void TableZoomHandler::setTableViewFontSize(int pointSize)
 void TableZoomHandler::initTableViewZoom()
 {
   // Adjust cell height to be smaller than default but according to font height
-  defaultTableViewFontPointSize = tableView->font().pointSize();
+  defaultTableViewFontPointSize = static_cast<float>(tableView->font().pointSizeF());
 
-  int newPointSize = 0;
+  float newPointSize = 0.f;
   if(!settingsKey.isEmpty())
-    newPointSize = Settings::instance().valueInt(settingsKey,
-                                                 defaultTableViewFontPointSize);
+    newPointSize = Settings::instance().valueFloat(settingsKey,
+                                                   defaultTableViewFontPointSize);
   else
     newPointSize = defaultTableViewFontPointSize;
   setTableViewFontSize(newPointSize);
@@ -102,25 +103,34 @@ void TableZoomHandler::zoomDefault()
   zoomTableView(0);
 }
 
+void TableZoomHandler::zoomPercent(int percent)
+{
+  float newPointSize = defaultTableViewFontPointSize * percent / 100.f;
+
+  setTableViewFontSize(newPointSize);
+  if(!settingsKey.isEmpty())
+    Settings::instance().setValue(settingsKey, tableView->font().pointSize());
+  enableDisableZoomActions();
+}
+
 void TableZoomHandler::zoomTableView(int value)
 {
-  int newPointSize = defaultTableViewFontPointSize;
+  float newPointSize = defaultTableViewFontPointSize;
 
   if(value != 0)
     newPointSize = tableView->font().pointSize() + value;
 
   setTableViewFontSize(newPointSize);
-
   if(!settingsKey.isEmpty())
     Settings::instance().setValue(settingsKey, tableView->font().pointSize());
-
   enableDisableZoomActions();
 }
 
 void TableZoomHandler::enableDisableZoomActions()
 {
   if(actionZoomDefault != nullptr)
-    actionZoomDefault->setEnabled(tableView->font().pointSize() != defaultTableViewFontPointSize);
+    actionZoomDefault->setEnabled(atools::almostNotEqual(static_cast<float>(tableView->font().pointSizeF()),
+                                                         defaultTableViewFontPointSize));
   if(actionZoomIn != nullptr)
     actionZoomIn->setEnabled(tableView->font().pointSize() < maxFontSize);
   if(actionZoomOut != nullptr)
