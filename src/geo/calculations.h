@@ -89,6 +89,13 @@ Q_DECL_CONSTEXPR TYPE nmToMeter(TYPE nm)
   return static_cast<TYPE>(static_cast<double>(nm) * 1852.216);
 }
 
+/* Distance from nautical miles to kilometers */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE nmToKm(TYPE nm)
+{
+  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216 / 1000.);
+}
+
 /* Distance from meters to nautical miles */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToNm(TYPE nm)
