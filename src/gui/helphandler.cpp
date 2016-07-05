@@ -54,7 +54,7 @@ void HelpHandler::about()
   QString logStr;
 
   for(const QString& log : logs)
-    logStr += tr("<a href=\"%1\">%2<a><br/>").arg(QUrl::fromLocalFile(log).toString()).arg(log);
+    logStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(log).toString()).arg(log);
 
   QString fileDirStr;
   if(!dirLinks.isEmpty())
@@ -63,7 +63,7 @@ void HelpHandler::about()
   for(const std::pair<QString, QString>& fileDir : dirLinks)
   {
     QUrl url(QUrl::fromLocalFile(fileDir.second));
-    fileDirStr += tr("<a href=\"%1\">%2<a><br/>").arg(url.toString()).arg(fileDir.first);
+    fileDirStr += tr("<a href=\"%1\">%2</a><br/>").arg(url.toString()).arg(fileDir.first);
   }
   if(!dirLinks.isEmpty())
     fileDirStr += "</i></p>";

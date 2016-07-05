@@ -92,6 +92,8 @@ public:
     return instance().qSettings;
   }
 
+  static QString getFilename();
+
   bool contains(const QString& key);
 
   QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList());
@@ -115,8 +117,6 @@ private:
   ~Settings();
 
   QSettings *qSettings;
-
-  static QString getFilename();
 
   static Settings *settingsInstance;
   static QString appNameForFiles();
