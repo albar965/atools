@@ -62,9 +62,10 @@ private:
 
   }
 
-  static QVector<QTranslator *> translators;
   static bool loadAndInstall(const QString& name, const QString& dir, const QString& language);
+  static bool loadApp(const QString& appBaseName, const QString& appPath, const QString& language);
 
+  static QVector<QTranslator *> translators;
   static bool loaded;
 
 };

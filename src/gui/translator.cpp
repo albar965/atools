@@ -39,20 +39,15 @@ void Translator::load(const QString& language)
     QString appPath = appFilePath.absolutePath();
     QString appBaseName = appFilePath.baseName();
 
-    bool loadDefault = true;
-    // try resources first
-    if(!loadAndInstall(appBaseName, ":/" + appBaseName, language))
-      // try resources translations second
-      if(!loadAndInstall(appBaseName, ":/" + appBaseName + "/translations", language))
-        // Last try in executable directory
-        if(!loadAndInstall(appBaseName, appPath, language))
-        {
-          // No translations for this application found - force English to avoid mixed language in dialogs
-          loadDefault = false;
-        }
+    // Load application files
+    bool loadDefault = loadApp(appBaseName, appPath, language);
+
+    // Load atools translations
+    loadApp("atools", appPath, language);
 
     if(loadDefault)
     {
+      // Load the Qt translations only if a language was found for the application to avoid mixed language dialogs
       QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
       // First application path
       if(!loadAndInstall("qt", appPath, language))
@@ -68,6 +63,21 @@ void Translator::load(const QString& language)
   }
   else
     qWarning() << "Translator::load called more than once";
+}
+
+bool Translator::loadApp(const QString& appBaseName, const QString& appPath, const QString& language)
+{
+  // try resources first
+  if(!loadAndInstall(appBaseName, ":/" + appBaseName, language))
+    // try resources translations second
+    if(!loadAndInstall(appBaseName, ":/" + appBaseName + "/translations", language))
+      // Last try in executable directory
+      if(!loadAndInstall(appBaseName, appPath, language))
+      {
+        // No translations for this application found - force English to avoid mixed language in dialogs
+        return false;
+      }
+  return true;
 }
 
 void Translator::unload()

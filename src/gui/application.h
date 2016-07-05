@@ -35,12 +35,14 @@ namespace gui {
 class Application :
   public QApplication
 {
+  Q_OBJECT
+
 public:
   Application(int& argc, char **argv, int = ApplicationFlags);
   virtual ~Application();
 
 #if defined(Q_CC_MSVC)
-  // MSVC can't deal with newer C++ features
+  // MSVC cannot deal with newer C++ features
   static void handleException(const char *file, int line, const std::exception& e);
   static void handleException(const char *file, int line);
 
