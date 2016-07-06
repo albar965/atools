@@ -95,6 +95,7 @@ public:
   static QString getFilename();
 
   bool contains(const QString& key);
+  void remove(const QString& key);
 
   QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList());
   QString valueStr(const QString& key, const QString& defaultValue = QString());

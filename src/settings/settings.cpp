@@ -151,6 +151,11 @@ bool Settings::contains(const QString& key)
   return qSettings->contains(key);
 }
 
+void Settings::remove(const QString& key)
+{
+  qSettings->remove(key);
+}
+
 QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue)
 {
   return qSettings->value(key, defaultValue).toStringList();

@@ -164,7 +164,8 @@ HEADERS += src/atools.h \
     src/fs/db/databasemeta.h \
     src/zip/zipwriter.h \
     src/zip/zipreader.h \
-    src/gui/application.h
+    src/gui/application.h \
+    src/util/version.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -305,7 +306,8 @@ SOURCES += src/atools.cpp \
     src/gui/mapposhistory.cpp \
     src/fs/db/databasemeta.cpp \
     src/zip/zip.cpp \
-    src/gui/application.cpp
+    src/gui/application.cpp \
+    src/util/version.cpp
 
 
 unix {

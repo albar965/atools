@@ -50,14 +50,9 @@ public:
 
   void openHelpUrl(const QUrl& url);
 
-  /* A link to the directory of this file will be appended to the dialog */
-  void addDirLink(const QString& text, const QString& file);
-
 private:
   QWidget *parentWidget;
   QString message, rev;
-
-  QVector<std::pair<QString, QString> > dirLinks;
 
 };
 

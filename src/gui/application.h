@@ -48,27 +48,26 @@ public:
 
 #else
   /*
-   * Shows an error dialog with the exception message and after that exists the application with code 1.
+   * Shows an error dialog with the exception message and after that exits the application with code 1.
    */
   [[noreturn]] static void handleException(const char *file, int line, const std::exception& e);
 
   /*
-   * Shows an error dialog and after that exists the application with code 1.
+   * Shows an error dialog and after that exits the application with code 1.
    */
   [[noreturn]] static void handleException(const char *file, int line);
 
 #endif
 
-  /* Add a list of path that will be added as links in any error dialog.
+  /* Add a list of paths that will be added as links in any error dialog.
    * @param header Header for the list of paths
    * @param paths A list of directory or file paths
    */
   static void addReportPath(const QString& header, const QStringList& paths);
+  static QString getReportFiles();
 
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
-
-  static QString getReportFiles();
 
   static QHash<QString, QStringList> reportFiles;
 

@@ -21,6 +21,7 @@
 #include "settings/settings.h"
 #include "atools.h"
 #include "logging/loggingdefs.h"
+#include "gui/application.h"
 
 #include <QMessageBox>
 #include <QApplication>
@@ -43,45 +44,20 @@ HelpHandler::~HelpHandler()
 
 }
 
-void HelpHandler::addDirLink(const QString& text, const QString& file)
-{
-  dirLinks.append(std::make_pair(text, file));
-}
-
 void HelpHandler::about()
 {
-  QStringList logs = atools::logging::LoggingHandler::getLogFiles();
-  QString logStr;
-
-  for(const QString& log : logs)
-    logStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(log).toString()).arg(log);
-
-  QString fileDirStr;
-  if(!dirLinks.isEmpty())
-    fileDirStr = tr("<p><hr/>Other files:</p><p><i>");
-
-  for(const std::pair<QString, QString>& fileDir : dirLinks)
-  {
-    QUrl url(QUrl::fromLocalFile(fileDir.second));
-    fileDirStr += tr("<a href=\"%1\">%2</a><br/>").arg(url.toString()).arg(fileDir.first);
-  }
-  if(!dirLinks.isEmpty())
-    fileDirStr += "</i></p>";
-
   QMessageBox::about(parentWidget,
                      tr("About %1").arg(QApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
                           "<p>atools Version %5 (revision %6)</p>"
-                            "<p><hr/>%7:</p><p><i>%8</i></p>%9").
+                            "<hr/><p>%7</p>").
                      arg(QApplication::applicationName()).
                      arg(message).
                      arg(QApplication::applicationVersion()).
                      arg(rev).
                      arg(atools::version()).
                      arg(atools::gitRevision()).
-                     arg(logs.size() > 1 ? tr("Logfiles") : tr("Logfile")).
-                     arg(logStr).
-                     arg(fileDirStr));
+                     arg(atools::gui::Application::getReportFiles()));
 }
 
 void HelpHandler::aboutQt()
