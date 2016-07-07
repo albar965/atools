@@ -770,7 +770,8 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
       }
     } while(res == Z_BUF_ERROR);
   }
-  // TODO add a check if data.length() > contents.length().  Then try to store the original and revert the compression method to be uncompressed
+  // TODO add a check if data.length() > contents.length().
+  // Then try to store the original and revert the compression method to be uncompressed
   writeUInt(header.h.compressed_size, data.length());
   uint crc_32 = ::crc32(0, 0, 0);
   crc_32 = ::crc32(crc_32, (const uchar *)contents.constData(), contents.length());

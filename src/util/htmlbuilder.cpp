@@ -99,10 +99,6 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
     case QVariant::String:
       valueStr = value.toString();
       break;
-    case QVariant::Map:
-      break;
-    case QVariant::List:
-      break;
     case QVariant::StringList:
       valueStr = value.toStringList().join(", ");
       break;
@@ -115,10 +111,6 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
     case QVariant::DateTime:
       valueStr = locale.toString(value.toDateTime(), dateFormat);
       break;
-    case QVariant::Url:
-    // TODO add href
-    case QVariant::Icon:
-    // TODO add image
     default:
       qWarning() << "Invalid variant type" << value.typeName() << "in HtmlBuilder. Name" << name;
       valueStr = QString("Error: Invalid variant type \"%1\"").arg(value.typeName());

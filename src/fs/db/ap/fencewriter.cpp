@@ -40,7 +40,6 @@ void FenceWriter::writeObject(const bgl::Fence *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::Fence::fenceTypeToStr(type->getType()));
 
-  // TODO create a WKT polygon from the triangles
   QStringList list;
   for(const bgl::BglPosition& pos : type->getVertices())
     list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +

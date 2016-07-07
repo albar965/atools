@@ -194,6 +194,10 @@ public:
 
   void reverse();
 
+  /* Values for FSX */
+  static Q_DECL_CONSTEXPR int APPVERSION_BUILD = 61472;
+  static Q_DECL_CONSTEXPR int APPVERSION_MAJOR = 10;
+
 private:
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);

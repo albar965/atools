@@ -72,7 +72,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
   if(ioDevice->bytesAvailable() < packetSize)
     return false;
 
-  in >> version; // TODO version check
+  in >> version;
   if(version != DATA_VERSION)
   {
     qWarning() << "SimConnectData::read: version mismatch" << version << "!=" << DATA_VERSION;

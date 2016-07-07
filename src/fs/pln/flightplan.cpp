@@ -282,9 +282,8 @@ void Flightplan::clear()
   routeType = DIRECT;
   cruisingAlt = 10000;
 
-  // TODO check valid values
-  appVersionBuild = 61472;
-  appVersionMajor = 10;
+  appVersionBuild = APPVERSION_BUILD;
+  appVersionMajor = APPVERSION_MAJOR;
 }
 
 void Flightplan::reverse()

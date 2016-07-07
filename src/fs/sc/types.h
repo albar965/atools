@@ -19,6 +19,7 @@
 #define ATOOLS_SC_TYPES_H
 
 #include <QVector>
+#include <QObject>
 
 namespace atools {
 namespace fs {
@@ -32,9 +33,11 @@ enum SimConnectStatus
   INSUFFICIENT_WRITE
 };
 
-// TODO translate
-const QVector<QString> SimConnectStatusText =
-{"No Error", "Invalid magic number", "Version mismatch", "Insufficient write"};
+const QVector<QString> SIMCONNECT_STATUS_TEXT =
+{
+  QObject::tr("No Error"), QObject::tr("Invalid magic number"),
+  QObject::tr("Version mismatch"), QObject::tr("Insufficient write")
+};
 
 } // namespace sc
 } // namespace fs

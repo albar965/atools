@@ -44,7 +44,6 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   bindBool(":is_draw_surface", type->second->isDrawSurface());
   bindBool(":is_draw_detail", type->second->isDrawDetail());
 
-  // TODO create a WKT polygon from the triangles
   QStringList list;
   for(const bgl::BglPosition& pos : type->first->getVertices())
     list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +

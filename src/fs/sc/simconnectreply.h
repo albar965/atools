@@ -65,7 +65,7 @@ public:
 
   const QString& getStatusText() const
   {
-    return SimConnectStatusText.at(status);
+    return SIMCONNECT_STATUS_TEXT.at(status);
   }
 
 private:

@@ -317,7 +317,6 @@ void Airport::updateSummaryFields()
 
   for(const Parking& p : parkings)
   {
-    // TODO
     boundingRect.extend(p.getPosition().getPos());
 
     if(p.hasJetway())

@@ -65,7 +65,6 @@ public:
   QStringList tables(QSql::TableType type = QSql::Tables) const;
   QSqlIndex primaryIndex(const QString& tablename) const;
 
-  // TODO create SqlRecord wrapper
   SqlRecord record(const QString& tablename) const;
   SqlQuery exec(const QString& query = QString()) const;
   QSqlError lastError() const;

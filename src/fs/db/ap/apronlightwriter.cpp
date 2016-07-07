@@ -39,7 +39,6 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
   bind(":apron_light_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
 
-  // TODO create a WKT line from the edges
   QStringList list;
   for(const bgl::BglPosition& pos : type->getVertices())
     list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +

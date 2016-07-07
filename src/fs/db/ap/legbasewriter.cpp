@@ -61,7 +61,7 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   }
 
   bind(":theta", type->getTheta());
-  bind(":rho", type->getRho());
+  bind(":rho", atools::geo::meterToNm(type->getRho()));
   bind(":altitude1", roundToPrecision(atools::geo::meterToFeet(type->getAltitude1())));
   bind(":altitude2", roundToPrecision(atools::geo::meterToFeet(type->getAltitude2())));
 

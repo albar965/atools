@@ -179,7 +179,7 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
 
   length = bs->readFloat();
   width = bs->readFloat();
-  heading = bs->readFloat(); // TODO wiki heading is float degress
+  heading = bs->readFloat(); // TODO wiki heading is float degrees
 
   using namespace atools::geo;
   primaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();

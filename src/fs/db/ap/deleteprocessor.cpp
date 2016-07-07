@@ -144,7 +144,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
-  // TODO better erase waypoints
   delWpStmt->prepare(delAptFeatureStmt("waypoint"));
   delVorStmt->prepare(delAptFeatureStmt("vor"));
   delNdbStmt->prepare(delAptFeatureStmt("ndb"));

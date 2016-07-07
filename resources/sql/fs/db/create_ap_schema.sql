@@ -469,8 +469,8 @@ create table approach_leg
   course double,                      -- leg course in degrees true of magnetic depending on is_true_course
   distance double,                    -- Leg distance in NM - if null use time
   time double,                        -- Leg time - if null use distance
-  theta double,                       -- Depends on type
-  rho double,                         -- Depends on type
+  theta double,                       -- Heading in degrees true
+  rho double,                         -- Distance in NM
   altitude1 double,                   -- Altitude value 1 in feet. Meaning depends on alt_descriptor
   altitude2  double,                  -- Altitude value 2 in feet. Meaning depends on alt_descriptor
 foreign key(approach_id) references approach(approach_id)
