@@ -62,6 +62,11 @@ void DatabaseMeta::updateVersion(int majorVer, int minorVer)
   db->commit();
 }
 
+void DatabaseMeta::updateVersion()
+{
+  updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
+}
+
 void DatabaseMeta::updateTimestamp()
 {
   lastLoadTime = QDateTime::currentDateTime();
@@ -73,6 +78,12 @@ void DatabaseMeta::updateTimestamp()
   db->commit();
 }
 
+void DatabaseMeta::updateAll()
+{
+  updateVersion();
+  updateTimestamp();
+}
+
 bool DatabaseMeta::hasSchema()
 {
   return SqlUtil(db).hasTable("airport");
@@ -81,6 +92,11 @@ bool DatabaseMeta::hasSchema()
 bool DatabaseMeta::hasData()
 {
   return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
+}
+
+bool DatabaseMeta::isDatabaseCompatible()
+{
+  return isDatabaseCompatible(DB_VERSION_MAJOR);
 }
 
 bool DatabaseMeta::isDatabaseCompatible(int majorVersion)

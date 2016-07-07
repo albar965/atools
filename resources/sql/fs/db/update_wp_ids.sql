@@ -23,9 +23,7 @@ update waypoint set nav_id =
 (
   select v.vor_id
   from vor v
-  where waypoint.type = 'VOR' and
-  waypoint.ident = v.ident and
-  waypoint.region = v.region
+  where waypoint.type = 'VOR' and waypoint.ident = v.ident and waypoint.region = v.region
 )
 where waypoint.type = 'VOR';
 
@@ -33,9 +31,7 @@ update waypoint set nav_id =
 (
   select n.ndb_id
   from ndb n
-  where waypoint.type = 'NDB' and
-  waypoint.ident = n.ident and
-  waypoint.region = n.region
+  where waypoint.type = 'NDB' and waypoint.ident = n.ident and waypoint.region = n.region
 )
 where waypoint.type = 'NDB';
 

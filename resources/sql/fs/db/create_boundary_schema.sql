@@ -21,23 +21,24 @@
 
 drop table if exists boundary;
 
+-- Airspace boundary
 create table boundary
 (
   boundary_id integer primary key,
   file_id integer not null,
-  type varchar(15),
+  type varchar(15),               -- see enum atools::fs::bgl::boundary::BoundaryType
   name varchar(30),
-  com_type varchar(30),
-  com_frequency integer,
+  com_type varchar(30),           -- If airspace has a COM frequency. see enum atools::fs::bgl::com::ComType
+  com_frequency integer,          -- frequency in MHz * 1000
   com_name varchar(50),
-  min_altitude_type varchar(15),
-  max_altitude_type varchar(15),
-  max_altitude integer not null,
-  max_lonx double not null,
-  max_laty double not null,
-  min_altitude integer not null,
-  min_lonx double not null,
-  min_laty double not null,
+  min_altitude_type varchar(15),  -- see enum atools::fs::bgl::boundary::AltitudeType
+  max_altitude_type varchar(15),  -- "
+  max_altitude integer not null,  -- Upper altitude for this airspace in feet
+  max_lonx double not null,       -- Bounding rectange
+  max_laty double not null,       -- "
+  min_altitude integer not null,  -- Lower altitude for this airspace in feet
+  min_lonx double not null,       -- Bounding rectange
+  min_laty double not null,       -- "
 foreign key(file_id) references bgl_file(bgl_file_id)
 );
 
@@ -48,14 +49,15 @@ create index if not exists idx_boundary_file_id on boundary(file_id);
 
 drop table if exists boundary_line;
 
+-- Segment of a airspace boundary
 create table boundary_line
 (
   boundary_line_id integer primary key,
   boundary_id integer not null,
-  type varchar(15),
-  radius double,
-  lonx double,
-  laty double,
+  type varchar(15),                -- see enum atools::fs::bgl::boundaryline::PointType
+  radius double,                   -- Only available if type is CIRCLE
+  lonx double,                     -- Line coordinates. f type is CIRCLE: center coordinates
+  laty double,                     -- "
 foreign key(boundary_id) references boundary(boundary_id)
 );
 

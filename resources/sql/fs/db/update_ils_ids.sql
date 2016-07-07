@@ -23,13 +23,14 @@ drop table if exists temp_ap_num_ils;
 
 create table temp_ap_num_ils as
 select cast(ap_id as integer) as ap_id, cast(count(1) as integer) as cnt from (
-select r.airport_id as ap_id, primary_end_id as end_id from runway r
-join ils i on r.primary_end_id = i.loc_runway_end_id
-where i.gs_range is not null
-union
-select r2.airport_id as ap_id,secondary_end_id as end_id from runway r2
-join ils i2 on r2.secondary_end_id = i2.loc_runway_end_id
-where i2.gs_range is not null
+  select r.airport_id as ap_id, primary_end_id as end_id
+  from runway r
+  join ils i on r.primary_end_id = i.loc_runway_end_id
+  where i.gs_range is not null
+  union
+  select r2.airport_id as ap_id,secondary_end_id as end_id from runway r2
+  join ils i2 on r2.secondary_end_id = i2.loc_runway_end_id
+  where i2.gs_range is not null
 ) group by ap_id;
 
 create index if not exists idx_temp_ap_num_ils on temp_ap_num_ils(ap_id);

@@ -17,16 +17,20 @@
 
 -- *************************************************************
 -- This script create network tables needed for the route finder
+-- to find routes for flight plans.
+-- These tables are optimized for low IO and therefore do not use
+-- strings for type fields
 -- *************************************************************
 
 drop table if exists route_node_radio;
 
+-- Routing nodes (VOR and NDB) for radionav routing
 create table route_node_radio
 (
   node_id integer primary key,
-  nav_id integer not null,
-  type integer not null, -- 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
-  range integer,
+  nav_id integer not null,   -- vor.vor_id or ndb.ndb_id
+  type integer not null,     -- 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
+  range integer,             -- range in meter
   lonx double not null,
   laty double not null
 );
@@ -35,14 +39,15 @@ create table route_node_radio
 
 drop table if exists route_edge_radio;
 
+-- Edge connecting routing nodes (VOR and NDB) for radionav routing
 create table route_edge_radio
 (
   edge_id integer primary key,
   from_node_id integer not null,
-  from_node_type integer not null,
+  from_node_type integer not null,  -- same as route_node_radio.type
   to_node_id integer not null,
-  to_node_type integer not null,
-  distance integer not null,
+  to_node_type integer not null,    -- same as route_node_radio.type
+  distance integer not null,        -- distance in meter
 foreign key(from_node_id) references route_node_radio(node_id),
 foreign key(to_node_id) references route_node_radio(node_id)
 );
@@ -55,11 +60,13 @@ create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(t
 
 drop table if exists route_node_airway;
 
+-- Routing
 create table route_node_airway
 (
   node_id integer primary key,
-  nav_id integer not null,
-  type integer not null, -- Upper 4 bits: 5 = Victor, 6 = Jet, 7 = Both - lower 4 bits: 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
+  nav_id integer not null,   -- Reference to vor.vor_id, ndb.ndb_id or null depending on type
+  type integer not null,     -- Upper 4 bits: 5 = Victor, 6 = Jet, 7 = Both
+                             -- Lower 4 bits: 1 = VOR, 2 = VORDME, 3 = DME, 4 = NDB
   lonx double not null,
   laty double not null
 );
@@ -71,13 +78,13 @@ drop table if exists route_edge_airway;
 create table route_edge_airway
 (
   edge_id integer primary key,
-  airway_id integer not null,
+  airway_id integer not null,       -- Reference to the airway table needed to extract names
   from_node_id integer not null,
-  from_node_type integer not null,
+  from_node_type integer not null,  -- Same as route_node_airway.type
   to_node_id integer not null,
-  to_node_type integer not null,
-  type integer, -- 5 = Victor, 6 = Jet, 7 = Both
-  minimum_altitude integer,
+  to_node_type integer not null,    -- Same as route_node_airway.type
+  type integer,                     -- 5 = Victor, 6 = Jet, 7 = Both
+  minimum_altitude integer,         -- Feet
 foreign key(airway_id) references airway(airway_id),
 foreign key(from_node_id) references route_node_airway(node_id),
 foreign key(to_node_id) references route_node_airway(node_id)
