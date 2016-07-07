@@ -1,5 +1,26 @@
-General Notes about the FS Scenery Library Database Schema
+Notes about the FS Scenery Library Database Schema
 ----------------------------------------------------------
+
+----------------------------------------------------------
+SQL scripts that create the database schema:
+
+* atools/resources/sql/fs/db/create_ap_schema.sql:
+  Airports, runways, COM, approaches, transitions and other airport related tables.
+
+* atools/resources/sql/fs/db/create_boundary_schema.sql:
+  Airspace boundaries and related frequencies
+
+* atools/resources/sql/fs/db/create_meta_schema.sql:
+  Metadata for BGL files and scenery areas.
+
+* atools/resources/sql/fs/db/create_nav_schema.sql:
+  VOR, NDB, ILS, waypoints and airways.
+
+* atools/resources/sql/fs/db/create_route_schema.sql:
+  Tables needed to route calculation.
+
+----------------------------------------------------------
+General Notes:
 
 * Boolean columns have prefixes like "has_" or "is_" and contain 0 or 1 values but are not nullable
 
