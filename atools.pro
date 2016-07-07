@@ -320,7 +320,8 @@ DISTFILES += \
     README.txt \
     uncrustify.cfg \
     CHANGELOG.txt \
-    BUILD.txt
+    BUILD.txt \
+    resources/sql/fs/db/README.txt
 
 RESOURCES += \
     atools.qrc

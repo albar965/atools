@@ -15,6 +15,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- This script create all indexes after loading the data.
+-- The indexes are needed for post process steps
+-- *************************************************************
+
 create index if not exists idx_waypoint_type on waypoint(type);
 create index if not exists idx_waypoint_region on waypoint(region);
 create index if not exists idx_waypoint_ident on waypoint(ident);

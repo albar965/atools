@@ -15,26 +15,20 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-----------------------------------------------------------------
--- Update navigation references for waypoint -------------------
+-- *************************************************************
+-- Drop all tables used for navigation aids
+-- *************************************************************
 
-update waypoint set nav_id =
-(
-  select v.vor_id
-  from vor v
-  where waypoint.type = 'VOR' and
-  waypoint.ident = v.ident and
-  waypoint.region = v.region
-)
-where waypoint.type = 'VOR';
+-- Order is important to avoid fk conflicts
 
-update waypoint set nav_id =
-(
-  select n.ndb_id
-  from ndb n
-  where waypoint.type = 'NDB' and
-  waypoint.ident = n.ident and
-  waypoint.region = n.region
-)
-where waypoint.type = 'NDB';
+-- drop nav
+drop table if exists airway;
+drop table if exists airway_point;
+drop table if exists ils;
+drop table if exists marker;
+drop table if exists ndb;
+drop table if exists vor;
+drop table if exists waypoint;
+drop table if exists boundary_line;
+drop table if exists boundary;
 

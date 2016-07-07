@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- This script create all tables used for navigation aids
+-- *************************************************************
+
 drop table if exists waypoint;
 
 create table waypoint

@@ -15,9 +15,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-
-----------------------------------------------------------------
--- Remove any duplicates ---------------------------------------
+-- *************************************************************
+-- Remove any duplicates that are resulting from buggy BGL files
+-- *************************************************************
 
 delete from ndb where ndb_id in (
 select n1.ndb_id

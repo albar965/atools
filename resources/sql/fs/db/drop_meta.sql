@@ -15,16 +15,14 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Drop all metadata tables
+-- *************************************************************
+
 -- Order is important to avoid fk conflicts
 
--- drop nav
-drop table if exists airway;
-drop table if exists airway_point;
-drop table if exists ils;
-drop table if exists marker;
-drop table if exists ndb;
-drop table if exists vor;
-drop table if exists waypoint;
-drop table if exists boundary_line;
-drop table if exists boundary;
+-- drop meta
+drop table if exists bgl_file;
+drop table if exists scenery_area;
+drop table if exists metadata;
 

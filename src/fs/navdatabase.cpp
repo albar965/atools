@@ -66,43 +66,43 @@ void Navdatabase::createSchema(db::ProgressHandler *progress)
     if((aborted = progress->reportOther(tr("Removing Views"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_view.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_view.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Routing and Search"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_routing_search.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_routing_search.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Navigation Aids"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_nav.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Airport Facilites"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_airport_facilities.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_airport_facilities.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Approaches"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_approach.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_approach.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Airports"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_airport.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_airport.sql");
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Metadata"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/drop_meta.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
 
   db->commit();
 
@@ -110,12 +110,12 @@ void Navdatabase::createSchema(db::ProgressHandler *progress)
     if((aborted = progress->reportOther(tr("Creating Schema"))) == true)
       return;
 
-  script.executeScript(":/atools/resources/sql/nd/create_boundary_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_nav_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_ap_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_route_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_meta_schema.sql");
-  script.executeScript(":/atools/resources/sql/nd/create_views.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_nav_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_ap_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_route_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_views.sql");
   db->commit();
 }
 
@@ -244,13 +244,13 @@ void Navdatabase::createInternal()
     return;
 
   SqlScript script(db, true /*options->isVerbose()*/);
-  script.executeScript(":/atools/resources/sql/nd/create_indexes_post_load.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_indexes_post_load.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Clean up"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/delete_duplicates.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/delete_duplicates.sql");
   db->commit();
 
   if(options->isResolveAirways())
@@ -269,31 +269,31 @@ void Navdatabase::createInternal()
   if((aborted = progress.reportOther(tr("Updating Waypoint ids"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/update_wp_ids.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Updating Navigation ids"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/update_nav_ids.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/update_nav_ids.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Updating ILS ids"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/update_ils_ids.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Populating Nav Search Table"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/populate_nav_search.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/populate_nav_search.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Populating Route Node Table"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/populate_route_node.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/populate_route_node.sql");
   db->commit();
 
   if(options->isCreateRouteTables())
@@ -311,13 +311,13 @@ void Navdatabase::createInternal()
   if((aborted = progress.reportOther(tr("Populating Route Edge Table for Waypoints"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/populate_route_edge.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/populate_route_edge.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Creating Search Indexes"))) == true)
     return;
 
-  script.executeScript(":/atools/resources/sql/nd/finish_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/finish_schema.sql");
   db->commit();
 
   if(options->isDatabaseReport())

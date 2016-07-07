@@ -15,6 +15,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Create application indexes after all post processes
+-- *************************************************************
 
 -- Create indexes on columns that are potentially used in searches
 

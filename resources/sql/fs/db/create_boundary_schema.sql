@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- This script create all boundary tables
+-- *************************************************************
+
 drop table if exists boundary;
 
 create table boundary

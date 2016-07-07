@@ -15,23 +15,27 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
--- Populate route_edge_airway table with waypoints -----------------------------------
-delete from route_edge_airway;
+-- *************************************************************
+-- Update navigation references for waypoint -------------------
+-- *************************************************************
 
-insert into route_edge_airway (airway_id, from_node_id, from_node_type, to_node_id, to_node_type, type, minimum_altitude)
-select a.airway_id, n1.node_id as from_node_id,
-  n1.type as from_node_type,
-  n2.node_id as to_node_id,
-  n2.type as to_node_type,
-case
-  when a.airway_type = 'VICTOR' then 5
-  when a.airway_type = 'JET' then 6
-  when a.airway_type = 'BOTH' then 7
-  else 0
-end as type,
-a.minimum_altitude
-from airway a
-join route_node_airway n1 on a.from_waypoint_id = n1.nav_id
-join route_node_airway n2 on a.to_waypoint_id = n2.nav_id;
+update waypoint set nav_id =
+(
+  select v.vor_id
+  from vor v
+  where waypoint.type = 'VOR' and
+  waypoint.ident = v.ident and
+  waypoint.region = v.region
+)
+where waypoint.type = 'VOR';
 
+update waypoint set nav_id =
+(
+  select n.ndb_id
+  from ndb n
+  where waypoint.type = 'NDB' and
+  waypoint.ident = n.ident and
+  waypoint.region = n.region
+)
+where waypoint.type = 'NDB';
 

@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- This script create all metadata tables
+-- *************************************************************
+
 drop table if exists metadata;
 
 create table metadata

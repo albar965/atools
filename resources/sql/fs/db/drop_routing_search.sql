@@ -15,16 +15,16 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Drop all tables used for routing
+-- *************************************************************
+
 -- Order is important to avoid fk conflicts
 
--- drop airport facilities
-drop table if exists delete_airport;
-drop table if exists parking;
-drop table if exists taxi_path;
-drop table if exists fence;
-drop table if exists apron_light;
-drop table if exists apron;
-drop table if exists start;
-drop table if exists helipad;
-drop table if exists com;
+-- drop routing and search
+drop table if exists route_edge_radio;
+drop table if exists route_edge_airway;
+drop table if exists route_node_radio;
+drop table if exists route_node_airway;
+drop table if exists nav_search;
 

@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Views for debugging purposes
+-- *************************************************************
+
 drop view if exists v_airport_scenery;
 
 create view v_airport_scenery as

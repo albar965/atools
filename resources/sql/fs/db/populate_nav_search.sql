@@ -15,10 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-
-
-----------------------------------------------------------------
--- Populate nav_search table -----------------------------------
+-- *************************************************************
+-- Fill the nav_search table which is used to search for
+-- all navigation aids mixed
+-- *************************************************************
 
 delete from nav_search;
 
@@ -60,6 +60,7 @@ join bgl_file f on f.bgl_file_id = v.file_id
 join scenery_area s on f.scenery_area_id = s.scenery_area_id
 left outer join airport a on v.airport_id = a.airport_id;
 
+-- Finish with creating indexe
 create index if not exists idx_nav_search_airport_ident on nav_search(airport_ident);
 create index if not exists idx_nav_search_ident on nav_search(ident);
 create index if not exists idx_nav_search_name on nav_search(name);

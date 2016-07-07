@@ -14,11 +14,15 @@ Simple runways.xml reading tool. Needs MakeRunways by Peter Dowson.
 
 ** fs/bgl
 A complete collection of classes that read airport and navigation data information from FS BGL files.
+
 ** fs/db
 A collection of classes that takes the airport and navigation information read from the BGL files and
-writes them into a relational database format (currently MySql, MariaDB or Sqlite).
+writes them into a relational database format (currently Sqlite).
+See atools/resources/sql/fs/db/README.txt for schema for more information about the database schema.
+
 ** fs/scenery
 Supports reading of the flight simulator scenery.cfg file.
+
 ** fs/pln
 Support for reading and writing flight simulator plan files.
 

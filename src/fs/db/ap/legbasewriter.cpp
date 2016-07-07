@@ -56,17 +56,14 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   }
   else
   {
-    bind(":distance", type->getDistOrTime());
+    bind(":distance", roundToPrecision(atools::geo::meterToNm(type->getDistOrTime())));
     bindNullFloat(":time");
   }
 
-  using namespace atools::geo;
-  using namespace atools;
-
   bind(":theta", type->getTheta());
   bind(":rho", type->getRho());
-  bind(":altitude1", roundToPrecision(meterToFeet(type->getAltitude1())));
-  bind(":altitude2", roundToPrecision(meterToFeet(type->getAltitude2())));
+  bind(":altitude1", roundToPrecision(atools::geo::meterToFeet(type->getAltitude1())));
+  bind(":altitude2", roundToPrecision(atools::geo::meterToFeet(type->getAltitude2())));
 
   executeStatement();
 }

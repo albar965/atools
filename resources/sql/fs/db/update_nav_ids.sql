@@ -15,8 +15,9 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
-----------------------------------------------------------------
--- Update navigation references for approach -------------------
+-- *************************************************************
+-- Update navaid references for approach
+-- *************************************************************
 
 update approach set fix_nav_id =
 (

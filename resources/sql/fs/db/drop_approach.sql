@@ -15,11 +15,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Drop all approach tables
+-- *************************************************************
+
 -- Order is important to avoid fk conflicts
 
--- drop airport
-drop table if exists runway;
-drop table if exists runway_end;
-drop table if exists airport;
-drop table if exists airport_medium;
-drop table if exists airport_large;
+-- drop approach
+drop table if exists transition_leg;
+drop table if exists approach_leg;
+drop table if exists transition;
+drop table if exists approach;
+

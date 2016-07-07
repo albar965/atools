@@ -15,10 +15,15 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- Drop all airport related tables
+-- *************************************************************
+
 -- Order is important to avoid fk conflicts
 
--- drop meta
-drop table if exists bgl_file;
-drop table if exists scenery_area;
-drop table if exists metadata;
-
+-- drop airport
+drop table if exists runway;
+drop table if exists runway_end;
+drop table if exists airport;
+drop table if exists airport_medium;
+drop table if exists airport_large;

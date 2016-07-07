@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *************************************************************
+-- This script create network tables needed for the route finder
+-- *************************************************************
+
 drop table if exists route_node_radio;
 
 create table route_node_radio
