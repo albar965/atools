@@ -28,15 +28,15 @@ namespace atools {
 namespace fs {
 namespace db {
 
-using atools::fs::bgl::AirwayEntry;
+using atools::fs::bgl::AirwaySegment;
 using atools::sql::SqlQuery;
 
-void TempAirwayWriter::writeObject(const AirwayEntry *type)
+void TempAirwayWriter::writeObject(const AirwaySegment *type)
 {
   bind(":airway_point_id", getNextId());
   bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());
-  bind(":name", type->getName());
-  bind(":type", AirwayEntry::airwayTypeToStr(type->getType()));
+  bind(":name", type->getAirwayName());
+  bind(":type", AirwaySegment::airwayTypeToStr(type->getAirwayType()));
 
   if(type->hasNextWaypoint())
   {

@@ -24,6 +24,10 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * A name list entry contains the airport name, city, state/province and country name for an airport.
+ * The airport ICAO ident is used to map this record to an airport record.
+ */
 class NamelistEntry
 {
 public:
@@ -33,6 +37,7 @@ public:
 
   virtual ~NamelistEntry();
 
+  /* ICAO airport ident */
   const QString& getAirportIdent() const
   {
     return airportIdent;
@@ -53,16 +58,19 @@ public:
     return countryName;
   }
 
+  /* Always null */
   const QString& getRegionIdent() const
   {
     return regionIdent;
   }
 
+  /* Always null */
   const QString& getRegionName() const
   {
     return regionName;
   }
 
+  /* State or province name if available */
   const QString& getStateName() const
   {
     return stateName;

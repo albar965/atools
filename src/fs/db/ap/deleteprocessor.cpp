@@ -353,7 +353,7 @@ QList<int> DeleteProcessor::fetchOldApproachIds()
   QList<int> ids;
   bindAndExecute(fetchOldApproachIdStmt, "old approach ids");
   while(fetchOldApproachIdStmt->next())
-    ids.push_back(fetchOldApproachIdStmt->value(0).toInt());
+    ids.append(fetchOldApproachIdStmt->value(0).toInt());
   return ids;
 }
 
@@ -396,7 +396,7 @@ void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& w
 {
   stmt->exec();
   while(stmt->next())
-    ids.push_back(stmt->value(0).toInt());
+    ids.append(stmt->value(0).toInt());
 
   if(dataWriter.getOptions().isVerbose())
     qDebug() << ids.size() << " " << what;

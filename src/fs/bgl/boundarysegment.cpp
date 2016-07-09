@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/boundaryline.h"
+#include "fs/bgl/boundarysegment.h"
 #include "io/binarystream.h"
 
 namespace atools {
@@ -24,7 +24,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QString BoundaryLine::boundarylineTypeToStr(boundaryline::PointType type)
+QString BoundarySegment::boundarylineTypeToStr(boundaryline::PointType type)
 {
   switch(type)
   {
@@ -53,19 +53,19 @@ QString BoundaryLine::boundarylineTypeToStr(boundaryline::PointType type)
   return QString();
 }
 
-BoundaryLine::BoundaryLine()
+BoundarySegment::BoundarySegment()
   : type(boundaryline::UNKNOWN)
 {
 }
 
-BoundaryLine::BoundaryLine(const BglReaderOptions *options, BinaryStream *bs)
+BoundarySegment::BoundarySegment(const BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   type = static_cast<boundaryline::PointType>(bs->readUShort() & 0x7);
 
   if(type == boundaryline::CIRCLE)
   {
-    bs->skip(4);
+    bs->skip(4); // Skip unused latitude
     radius = bs->readFloat();
   }
   else
@@ -73,19 +73,19 @@ BoundaryLine::BoundaryLine(const BglReaderOptions *options, BinaryStream *bs)
     position = BglPosition(bs);
 }
 
-QDebug operator<<(QDebug out, const BoundaryLine& record)
+QDebug operator<<(QDebug out, const BoundarySegment& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " Boundaryline[type " << BoundaryLine::boundarylineTypeToStr(record.type)
+  << " Boundaryline[type " << BoundarySegment::boundarylineTypeToStr(record.type)
   << ", pos " << record.position
   << "]";
 
   return out;
 }
 
-BoundaryLine::~BoundaryLine()
+BoundarySegment::~BoundarySegment()
 {
 }
 

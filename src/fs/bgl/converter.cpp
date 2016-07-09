@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "fs/bgl/converter.h"
-#include "fs/bgl/bglexception.h"
+#include "exception.h"
 
 #include <QVarLengthArray>
 
@@ -24,6 +24,8 @@ namespace atools {
 namespace fs {
 namespace bgl {
 namespace converter {
+
+static const char *RUNWAY_DESIGNATORS[] = {"", "L", "R", "C", "W", "A", "B"};
 
 QString intToIcao(unsigned int icao, bool noBitShift)
 {
@@ -33,15 +35,13 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   if(!noBitShift)
     value = value >> 5;
 
-  // if(icao > 0 && value == 0)
-  // qWarning().nospace().noquote() << "Icao is null after shift. Was " << icao;
-
   if(value == 0)
     return QString();
 
   QVarLengthArray<unsigned int, 5> codedArr({0, 0, 0, 0, 0});
   unsigned int coded = 0;
 
+  // First extract the coded/compressed values
   int idx = 0;
   if(value > 37)
     while(value > 37)
@@ -58,6 +58,7 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   else
     codedArr[idx++] = value;
 
+  // Convert the decompressed bytes to characters
   for(int i = 0; i < 5; i++)
   {
     coded = codedArr.at(i);
@@ -73,12 +74,11 @@ QString intToIcao(unsigned int icao, bool noBitShift)
 
 QString designatorStr(int designator)
 {
-  static const char *designators[] = {"", "L", "R", "C", "W", "A", "B"};
 
   if(designator >= 0 && designator <= 6)
-    return designators[designator];
+    return RUNWAY_DESIGNATORS[designator];
   else
-    throw BglException(
+    throw Exception(
             "Value for designator out of range in designatorStr(): " + QString::number(designator));
 }
 
@@ -87,11 +87,13 @@ QString runwayToStr(int runwayNumber, int designator)
   QString retval;
   if(runwayNumber < 10)
   {
+    // Normal one digit runway number with leading zero
     retval += "0";
     retval += static_cast<char>(runwayNumber) + '0';
   }
   else if(runwayNumber > 36)
   {
+    // Special runway number code
     switch(runwayNumber)
     {
       case 37:
@@ -119,15 +121,17 @@ QString runwayToStr(int runwayNumber, int designator)
         return "NW";
 
       default:
-        throw BglException("Runway number out of range in runwayToStr(): " +
-                           QString::number(runwayNumber));
+        throw Exception("Runway number out of range in runwayToStr(): " +
+                        QString::number(runwayNumber));
     }
   }
   else
   {
+    // Normal tow digit runway number without leading zero
     retval += static_cast<char>(runwayNumber / 10) + '0';
     retval += static_cast<char>(runwayNumber % 10) + '0';
   }
+  // Add designator if there is one
   retval += designatorStr(designator);
   return retval;
 

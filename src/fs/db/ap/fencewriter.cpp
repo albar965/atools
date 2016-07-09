@@ -42,8 +42,8 @@ void FenceWriter::writeObject(const bgl::Fence *type)
 
   QStringList list;
   for(const bgl::BglPosition& pos : type->getVertices())
-    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                   QString::number(pos.getLatY(), 'g', 8));
+    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
+                QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
   executeStatement();

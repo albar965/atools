@@ -34,6 +34,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Base class for all radio navaids (ILS, VOR and NDB)
+ */
 class NavBase :
   public atools::fs::bgl::Record
 {
@@ -41,41 +44,65 @@ public:
   NavBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~NavBase();
 
+  /*
+   * @return optional airport ICAO ident
+   */
   const QString& getAirportIdent() const
   {
     return airportIdent;
   }
 
+  /*
+   * @return Frequency in MHz * 1000 for VOR and ILS and kHz * 100 for NDB
+   */
   int getFrequency() const
   {
     return frequency;
   }
 
+  /*
+   * @return ICAO ident of the navaid
+   */
   const QString& getIdent() const
   {
     return ident;
   }
 
+  /*
+   * @return Magnetic variance for the navaid. < 0 for West and > 0 for East
+   */
   float getMagVar() const
   {
     return magVar;
   }
 
+  /*
+   * @return Name of the navaid if available
+   */
   const QString& getName() const
   {
     return name;
   }
 
+  /*
+   * @return Position of the navaid
+   */
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
 
+  /*
+   * @return Range of the navaid in meter
+   */
   float getRange() const
   {
     return range;
   }
 
+  /*
+   * @return Two letter ICAO region ident for the navaid if available
+   */
   const QString& getRegion() const
   {
     return region;

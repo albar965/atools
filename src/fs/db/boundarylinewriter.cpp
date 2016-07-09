@@ -28,10 +28,10 @@ namespace atools {
 namespace fs {
 namespace db {
 
-using atools::fs::bgl::BoundaryLine;
+using atools::fs::bgl::BoundarySegment;
 using atools::sql::SqlQuery;
 
-void BoundaryLineWriter::writeObject(const BoundaryLine *type)
+void BoundaryLineWriter::writeObject(const BoundarySegment *type)
 {
   using namespace atools::geo;
   using namespace atools;
@@ -41,7 +41,7 @@ void BoundaryLineWriter::writeObject(const BoundaryLine *type)
 
   bind(":boundary_line_id", getNextId());
   bind(":boundary_id", getDataWriter().getBoundaryWriter()->getCurrentId());
-  bind(":type", bgl::util::enumToStr(bgl::BoundaryLine::boundarylineTypeToStr, type->getType()));
+  bind(":type", bgl::util::enumToStr(bgl::BoundarySegment::boundarylineTypeToStr, type->getType()));
 
   if(type->getType() == bgl::boundaryline::CIRCLE)
   {

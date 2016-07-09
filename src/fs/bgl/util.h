@@ -25,10 +25,16 @@ namespace fs {
 namespace bgl {
 namespace util {
 
+/*
+ * Convert an enum to a string using some heuristics to find invalid or empty values
+ * @param func Callback function to convert the enum to a string
+ * @param value The enum value
+ */
+
 template<typename TYPE>
-QString enumToStr(QString func(TYPE t), TYPE type)
+QString enumToStr(QString func(TYPE t), TYPE value)
 {
-  QString retval = func(type);
+  QString retval = func(value);
   if(retval.isEmpty())
     return QString();
 

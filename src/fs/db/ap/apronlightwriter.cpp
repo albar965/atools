@@ -41,13 +41,13 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
 
   QStringList list;
   for(const bgl::BglPosition& pos : type->getVertices())
-    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                   QString::number(pos.getLatY(), 'g', 8));
+    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
+                QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
   list.clear();
   for(int i : type->getEdges())
-    list.push_back(QString::number(i));
+    list.append(QString::number(i));
   bind(":edges", list.join(", "));
 
   executeStatement();

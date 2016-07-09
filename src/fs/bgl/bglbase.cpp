@@ -24,11 +24,14 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QDebug operator<<(QDebug out, const BglBase& base)
+BglBase::BglBase()
+  : startOffset(0), bs(nullptr)
 {
-  QDebugStateSaver saver(out);
-  out.nospace().noquote() << hex << " BglBase[start 0x" << base.startOffset << "]";
-  return out;
+}
+
+BglBase::BglBase(const atools::fs::BglReaderOptions *options, io::BinaryStream *stream)
+  : startOffset(stream->tellg()), bs(stream), opts(options)
+{
 }
 
 BglBase::~BglBase()
@@ -40,14 +43,11 @@ void BglBase::seekToStart()
   bs->seekg(startOffset);
 }
 
-BglBase::BglBase()
-  : startOffset(0), bs(nullptr)
+QDebug operator<<(QDebug out, const BglBase& base)
 {
-}
-
-BglBase::BglBase(const atools::fs::BglReaderOptions *options, io::BinaryStream *stream)
-  : startOffset(stream->tellg()), bs(stream), opts(options)
-{
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << hex << " BglBase[start 0x" << base.startOffset << "]";
+  return out;
 }
 
 } // namespace bgl

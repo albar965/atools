@@ -26,6 +26,7 @@ namespace bgl {
 
 namespace section {
 
+/* See SUPPORTED_SECTION_TYPES in datawriter.cpp to see what is actually read/supported */
 enum SectionType
 {
   NONE = 0x0,

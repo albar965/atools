@@ -32,18 +32,30 @@ namespace bgl {
 
 class Section;
 
+/*
+ * Subsection of a section contains the offset to the first data record
+ */
 class Subsection :
   public atools::fs::bgl::BglBase
 {
 public:
+  /*
+   * Read the subsection
+   */
   Subsection(const BglReaderOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
   virtual ~Subsection();
 
+  /*
+   * @return Size in bytes of this subsection's data (all records and subrecords)
+   */
   int getDataSize() const
   {
     return dataSize;
   }
 
+  /*
+   * @return Offset of the first data record in this file
+   */
   int getFirstDataRecordOffset() const
   {
     return firstDataRecordOffset;
@@ -68,7 +80,7 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Subsection& section);
 
   int id, numDataRecords, firstDataRecordOffset, dataSize;
-  const atools::fs::bgl::Section *parent;
+  const atools::fs::bgl::Section *parent = nullptr;
 };
 
 } // namespace bgl

@@ -279,8 +279,8 @@ void SqlUtil::reportDuplicates(QDebug& out,
   QStringList colList;
   for(QString ic : identityColumns)
   {
-    where.push_back("t1." + ic + " = t2." + ic);
-    colList.push_back("t1." + ic);
+    where.append("t1." + ic + " = t2." + ic);
+    colList.append("t1." + ic);
   }
 
   SqlQuery q(db);
@@ -325,7 +325,7 @@ QStringList SqlUtil::buildResultList(SqlQuery& query)
 
   SqlRecord r = query.record();
   for(int i = 0; i < r.count(); i++)
-    retval.push_back(r.valueStr(i));
+    retval.append(r.valueStr(i));
   return retval;
 }
 

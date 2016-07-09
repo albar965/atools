@@ -26,6 +26,7 @@ namespace bgl {
 
 namespace rec {
 
+/* Top level record types */
 enum RecordType
 {
   AIRPORT = 0x003c,
@@ -45,6 +46,7 @@ enum RecordType
 
 QString recordTypeStr(RecordType type);
 
+/* Sub record types for airports */
 enum AirportRecordType
 {
   NAME = 0x0019,
@@ -71,6 +73,7 @@ enum AirportRecordType
 
 QString airportRecordTypeStr(AirportRecordType type);
 
+/* Sub record types for runways */
 enum RunwayRecordType
 {
   OFFSET_THRESHOLD_PRIM = 0x0005,
@@ -89,6 +92,7 @@ enum RunwayRecordType
 
 QString runwayRecordTypeStr(RunwayRecordType type);
 
+/* Sub record types for approaches */
 enum ApprRecordType
 {
   LEGS = 0x002d,
@@ -99,6 +103,7 @@ enum ApprRecordType
 
 QString approachRecordTypeStr(ApprRecordType type);
 
+/* Top level record types for ILS or VOR */
 enum IlsVorRecordType
 {
   LOCALIZER = 0x0014,
@@ -109,6 +114,7 @@ enum IlsVorRecordType
 
 QString ilsvorRecordTypeStr(IlsVorRecordType type);
 
+/* Top level record type for NDB stations */
 enum NdbRecordType
 {
   NDB_NAME = 0x0019
@@ -116,6 +122,7 @@ enum NdbRecordType
 
 QString ndbRecordTypeStr(NdbRecordType type);
 
+/* Scenery object top level records types (not used yet) */
 enum SceneryObjRecordType
 {
   SCENERYOBJECT_LIB_OBJECT = 0x000b,
@@ -130,6 +137,7 @@ enum SceneryObjRecordType
 
 QString sceneryObjRecordTypeStr(SceneryObjRecordType type);
 
+/* Sub record types for airspace boundaries */
 enum BoundaryRecordType
 {
   BOUNDARY_COM = 0x0012,

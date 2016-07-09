@@ -71,7 +71,7 @@ void BoundaryWriter::writeObject(const Boundary *type)
   executeStatement();
 
   BoundaryLineWriter *w = getDataWriter().getBoundaryLineWriter();
-  w->write(type->getLines());
+  w->write(type->getSegments());
 }
 
 } // namespace writer

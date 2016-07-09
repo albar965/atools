@@ -25,6 +25,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Glideslope is an optional subrecord of ILS (which is a localizer if GS is missing)
+ */
 class Glideslope :
   public atools::fs::bgl::Record
 {
@@ -32,16 +35,25 @@ public:
   Glideslope(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Glideslope();
 
+  /*
+   * @return Glideslope pitch in degree
+   */
   float getPitch() const
   {
     return pitch;
   }
 
+  /*
+   * @return Position of the glideslope transmitter
+   */
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
 
+  /*
+   * @return Glideslope range in meter
+   */
   float getRange() const
   {
     return range;

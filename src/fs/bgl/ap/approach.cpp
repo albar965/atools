@@ -67,7 +67,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
     {
       case rec::TRANSITION:
         r.seekToStart();
-        transitions.push_back(Transition(options, bs));
+        transitions.append(Transition(options, bs));
         break;
 
       case rec::LEGS:
@@ -75,7 +75,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.push_back(ApproachLeg(bs, false));
+            legs.append(ApproachLeg(bs, false));
         }
         break;
       case rec::MISSED_LEGS:
@@ -83,7 +83,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            missedLegs.push_back(ApproachLeg(bs, true));
+            missedLegs.append(ApproachLeg(bs, true));
         }
         break;
 

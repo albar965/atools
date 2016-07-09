@@ -19,14 +19,14 @@
 #define ATOOLS_FS_DB_BOUNDARYLineWRITER_H
 
 #include "fs/db/writerbase.h"
-#include "fs/bgl/boundaryline.h"
+#include "fs/bgl/boundarysegment.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
 class BoundaryLineWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::BoundaryLine>
+  public atools::fs::db::WriterBase<atools::fs::bgl::BoundarySegment>
 {
 public:
   BoundaryLineWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::BoundaryLine *type) override;
+  virtual void writeObject(const atools::fs::bgl::BoundarySegment *type) override;
 
 };
 

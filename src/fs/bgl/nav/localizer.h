@@ -24,6 +24,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Localizer is a subrecord of ILS
+ */
 class Localizer :
   public atools::fs::bgl::Record
 {
@@ -31,13 +34,22 @@ public:
   Localizer(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Localizer();
 
+  /*
+   * @return Get full runway name including designator
+   */
   QString getRunwayName() const;
 
+  /*
+   * @return localizer heading degree true
+   */
   float getHeading() const
   {
     return heading;
   }
 
+  /*
+   * @return Width of the localizer beam in degree
+   */
   float getWidth() const
   {
     return width;

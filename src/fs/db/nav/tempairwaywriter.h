@@ -19,14 +19,14 @@
 #define ATOOLS_FS_DB_TEMPAIRWAYWRITER_H
 
 #include "fs/db/writerbase.h"
-#include "fs/bgl/nav/airwayentry.h"
+#include "fs/bgl/nav/airwaysegment.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
 class TempAirwayWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::AirwayEntry>
+  public atools::fs::db::WriterBase<atools::fs::bgl::AirwaySegment>
 {
 public:
   TempAirwayWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::AirwayEntry *type) override;
+  virtual void writeObject(const atools::fs::bgl::AirwaySegment *type) override;
 
 };
 

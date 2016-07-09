@@ -80,7 +80,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
   {
     if(currentArea.isActive())
       numActiveAreas++;
-    areaEntries.push_back(currentArea);
+    areaEntries.append(currentArea);
   }
 }
 

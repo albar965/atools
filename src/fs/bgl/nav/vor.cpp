@@ -52,14 +52,14 @@ Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
   int flags = bs->readUByte();
 
   dmeOnly = (flags & FLAGS_DME_ONLY) == 0;
+  // TODO compare flags with record presence
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
   position = BglPosition(bs, true, 1000.f);
   frequency = bs->readInt() / 1000;
   range = bs->readFloat();
-  magVar = bs->readFloat();
-  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
+  magVar = converter::adjustMagvar(bs->readFloat());
 
   ident = converter::intToIcao(bs->readUInt());
 
@@ -77,7 +77,7 @@ Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - 6);
+        name = bs->readString(r.getSize() - Record::SIZE);
         break;
       case rec::DME:
         r.seekToStart();
@@ -88,8 +88,7 @@ Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << hex << t << dec <<
-        " for ident "
-                                       << ident;
+        " for ident " << ident;
     }
     r.seekToEnd();
   }

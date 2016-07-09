@@ -82,7 +82,7 @@ void AirwayResolver::writeAirway(const QString& airwayName, QSet<Leg>& airway)
 
     leg = *airway.begin();
     airway.erase(airway.begin());
-    newAirway.push_back(leg);
+    newAirway.append(leg);
 
     bool foundTo, foundFrom;
 
@@ -106,7 +106,7 @@ void AirwayResolver::writeAirway(const QString& airwayName, QSet<Leg>& airway)
       if(it != legByFrom.end() && airway.find(it.value()) != airway.end())
       {
         leg = it.value();
-        newAirway.push_back(leg);
+        newAirway.append(leg);
 
         airway.erase(airway.find(leg));
         foundFrom = true;

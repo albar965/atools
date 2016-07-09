@@ -44,19 +44,19 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-BglFile::BglFile(const BglReaderOptions *opts)
-  : size(0), options(opts)
+BglFile::BglFile(const BglReaderOptions *readerOptions)
+  : size(0), options(readerOptions)
 {
 }
 
 BglFile::~BglFile()
 {
-  freeObjects();
+  deleteAllObjects();
 }
 
 void BglFile::readFile(QString file)
 {
-  freeObjects();
+  deleteAllObjects();
   filename = file;
 
   QFile ifs(filename);
@@ -70,7 +70,7 @@ void BglFile::readFile(QString file)
     readHeaderAndSections(&bs);
 
     if(options->isIncludedBglObject(type::BOUNDARY))
-      readBoundaries(&bs);
+      readBoundaryRecords(&bs);
 
     readRecords(&bs);
     ifs.close();
@@ -87,6 +87,49 @@ bool BglFile::hasContent()
            marker.isEmpty() &&
            waypoints.isEmpty() &&
            boundaries.isEmpty());
+}
+
+void BglFile::readBoundaryRecords(BinaryStream *bs)
+{
+  // Scan all sections for boundaries
+  for(Section& section : sections)
+  {
+    if(section.getType() == atools::fs::bgl::section::BOUNDARY)
+    {
+      QString fname = QFileInfo(filename).fileName().toLower();
+
+      if(fname == "bvcf.bgl" || fname == "bnxworld0.bgl")
+      {
+        // These two files have a different structure
+        // jump to the end of all subsections (probably spatial indexes) and try to read boundaries
+        bs->seekg(bs->tellg() + section.getTotalSubsectionSize());
+        handleBoundaries(bs);
+      }
+      else
+      {
+        // Remaining boundary files are BNXWorld1.bgl BNXWorld2.bgl BNXWorld3.bgl BNXWorld4.bgl BNXWorld5.bgl
+        bs->seekg(section.getStartOffset() + section.getNumSubsections() * 16);
+
+        // Get the lowest offset from the special subsection offset list
+        unsigned int minOffset = std::numeric_limits<int>::max();
+        while(bs->tellg() < section.getStartOffset() + section.getTotalSubsectionSize())
+        {
+          unsigned int newOffset = bs->readUInt();
+          unsigned int dataSize = bs->readUInt(); // size
+          if(newOffset < minOffset && dataSize > 0)
+            minOffset = newOffset;
+
+          if(dataSize <= 0)
+            qWarning().nospace() << "while reading boundaries: dataSize " << dataSize
+                                 << " at " << hex << "0x" << bs->tellg();
+        }
+
+        // Read from the first offset
+        bs->seekg(minOffset);
+        handleBoundaries(bs);
+      }
+    }
+  }
 }
 
 void BglFile::handleBoundaries(BinaryStream *bs)
@@ -106,6 +149,7 @@ void BglFile::handleBoundaries(BinaryStream *bs)
         numRecs++;
     }
     else if(type != rec::GEOPOL)
+      // Should only contain boundaries and geopol records
       qWarning().nospace() << "while reading boundaries: unexpected record "
                            << hex << "0x" << type << " at " << hex << "0x" << bs->tellg();
 
@@ -115,74 +159,43 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     qDebug() << "Num boundary records" << numRecs;
 }
 
-void BglFile::readBoundaries(BinaryStream *bs)
-{
-  for(Section& it : sections)
-    if(it.getType() == atools::fs::bgl::section::BOUNDARY)
-    {
-      QString fname = QFileInfo(filename).fileName().toLower();
-      if(fname == "bvcf.bgl" || fname == "bnxworld0.bgl")
-      {
-        // jump to the end of the data (probably spatial indexes)
-        bs->seekg(bs->tellg() + it.getTotalSubsectionSize());
-        handleBoundaries(bs);
-      }
-      else
-      {
-        // BNXWorld1.bgl BNXWorld2.bgl BNXWorld3.bgl BNXWorld4.bgl BNXWorld5.bgl
-        bs->seekg(it.getStartOffset() + it.getNumSubsections() * 16);
-
-        // Get the lowest offset from the special subsection
-        unsigned int minOffset = std::numeric_limits<int>::max();
-        while(bs->tellg() < it.getStartOffset() + it.getTotalSubsectionSize())
-        {
-          unsigned int newOffset = bs->readUInt();
-          unsigned int dataSize = bs->readUInt(); // size
-          if(newOffset < minOffset && dataSize > 0)
-            minOffset = newOffset;
-
-          if(dataSize <= 0)
-            qWarning().nospace() << "while reading boundaries: dataSize " << dataSize
-                                 << " at " << hex << "0x" << bs->tellg();
-        }
-
-        // Read from the first offset
-        bs->seekg(minOffset);
-        handleBoundaries(bs);
-      }
-    }
-}
-
 void BglFile::readHeaderAndSections(BinaryStream *bs)
 {
   header = Header(options, bs);
   if(options->isVerbose())
     qDebug() << header;
 
-  // Section pointer
+  // Read sections after header
   for(unsigned int i = 0; i < header.getNumSections(); i++)
   {
     Section s = Section(options, bs);
+
+    // Add only supported sections to the list
     if(supportedSectionTypes.contains(s.getType()))
     {
       if(options->isVerbose())
         qDebug() << s;
-      sections.push_back(s);
+      sections.append(s);
     }
   }
 
-  for(Section& it : sections)
-    if(it.getType() != atools::fs::bgl::section::BOUNDARY && it.getType() != atools::fs::bgl::section::GEOPOL)
+  // Read subsections for each section
+  for(Section& section : sections)
+  {
+    // Ignore boundary and geopol since these are different
+    if(section.getType() != atools::fs::bgl::section::BOUNDARY &&
+       section.getType() != atools::fs::bgl::section::GEOPOL)
     {
-      bs->seekg(it.getFirstSubsectionOffset());
-      for(unsigned int i = 0; i < it.getNumSubsections(); i++)
+      bs->seekg(section.getFirstSubsectionOffset());
+      for(unsigned int i = 0; i < section.getNumSubsections(); i++)
       {
-        Subsection s(options, bs, it);
+        Subsection s(options, bs, section);
         if(options->isVerbose())
           qDebug() << s;
-        subsections.push_back(s);
+        subsections.append(s);
       }
     }
+  }
 }
 
 const Record *BglFile::handleIlsVor(BinaryStream *bs)
@@ -210,22 +223,23 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
 
 void BglFile::readRecords(BinaryStream *bs)
 {
-  for(Subsection& it : subsections)
+  for(Subsection& subsection : subsections)
   {
-    section::SectionType type = it.getParent().getType();
+    section::SectionType type = subsection.getParent().getType();
 
     if(options->isVerbose())
     {
       qDebug() << "=======================";
-      qDebug().nospace().noquote() << "Records of 0x" << hex << it.getFirstDataRecordOffset() << dec
+      qDebug().nospace().noquote() << "Records of 0x" << hex << subsection.getFirstDataRecordOffset() << dec
                                    << " type " << sectionTypeStr(type);
     }
 
-    bs->seekg(it.getFirstDataRecordOffset());
+    bs->seekg(subsection.getFirstDataRecordOffset());
 
-    int numRec = it.getNumDataRecords();
+    int numRec = subsection.getNumDataRecords();
 
     if(type == section::NAME_LIST)
+      // Name lists have only one record
       numRec = 1;
 
     for(int i = 0; i < numRec; i++)
@@ -236,7 +250,8 @@ void BglFile::readRecords(BinaryStream *bs)
       {
         case section::AIRPORT:
           if(options->isIncludedBglObject(type::AIRPORT))
-            // Will return null iF ICAO is excluded
+            // Will return null if ICAO is excluded in configuration
+            // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
             rec = createRecord<Airport>(options, bs, &airports);
           break;
         case section::NAME_LIST:
@@ -255,9 +270,11 @@ void BglFile::readRecords(BinaryStream *bs)
           break;
         case section::WAYPOINT:
           if(options->isIncludedBglObject(type::WAYPOINT))
+            // Read waypoints and airways
             rec = createRecord<Waypoint>(options, bs, &waypoints);
           break;
 
+        // Other sections that are not of interest here
         case section::BOUNDARY:
         case section::GEOPOL:
         case section::NONE:
@@ -317,7 +334,7 @@ void BglFile::readRecords(BinaryStream *bs)
   }
 }
 
-void BglFile::freeObjects()
+void BglFile::deleteAllObjects()
 {
   airports.clear();
   namelists.clear();
@@ -333,7 +350,7 @@ void BglFile::freeObjects()
   qDeleteAll(allRecords);
   allRecords.clear();
 
-  filename = "";
+  filename = QString();
   size = 0;
 }
 

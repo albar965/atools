@@ -350,6 +350,8 @@ bool Runway::isHard() const
 {
   if(surface == rw::CONCRETE)
     return true;
+  else if(surface == rw::CEMENT)
+    return true;
   else if(surface == rw::ASPHALT)
     return true;
   else if(surface == rw::BITUMINOUS)

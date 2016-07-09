@@ -39,13 +39,13 @@ Apron2::Apron2(const atools::fs::BglReaderOptions *options, atools::io::BinarySt
   if(options->isIncludedBglObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
-      vertices.push_back(BglPosition(bs));
+      vertices.append(BglPosition(bs));
 
     for(int i = 0; i < numTriangles; i++)
     {
-      triangles.push_back(bs->readUShort());
-      triangles.push_back(bs->readUShort());
-      triangles.push_back(bs->readUShort());
+      triangles.append(bs->readUShort());
+      triangles.append(bs->readUShort());
+      triangles.append(bs->readUShort());
     }
   }
 }

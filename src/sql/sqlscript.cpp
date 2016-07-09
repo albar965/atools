@@ -102,7 +102,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
         }
         else if(!isBlockComment)
           // no comment at all - append character to statement
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(currentChar == '/')
       {
@@ -111,7 +111,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
           isBlockComment = false;
         else if(!isBlockComment)
           // no comment at all - append character to statement
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(currentChar == '*')
       {
@@ -123,7 +123,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
         }
         else if(!isBlockComment)
           // no comment at all - append character to statement
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(currentChar == '\'')
       {
@@ -131,10 +131,10 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
         if(!isBlockComment && !isDoubleString)
         {
           isSingleString = !isSingleString;
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
         }
         else if(isDoubleString)
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(currentChar == '"')
       {
@@ -142,10 +142,10 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
         if(!isBlockComment && !isSingleString)
         {
           isDoubleString = !isDoubleString;
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
         }
         else if(isSingleString)
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(currentChar == ';')
       {
@@ -154,7 +154,7 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
           if(!isBlockComment)
           {
             // End of statement - reset all values
-            statements.push_back(ScriptCmd({currentStatement, currentLine}));
+            statements.append(ScriptCmd({currentStatement, currentLine}));
             currentStatement.clear();
             isSingleString = false;
             isDoubleString = false;
@@ -164,17 +164,17 @@ void SqlScript::parseSqlScript(QTextStream& script, QList<ScriptCmd>& statements
         }
         else
           // A ";" in a string literal - append
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
       }
       else if(!isBlockComment)
       {
         if(isSingleString || isDoubleString)
           // Add string literally
-          currentStatement.push_back(currentChar);
+          currentStatement.append(currentChar);
         else if(!(currentChar == ' ' && lastChar == ' '))
           if(!(currentChar == ' ' && currentStatement.size() == 0))
             // Skip double and leading spaces
-            currentStatement.push_back(currentChar);
+            currentStatement.append(currentChar);
       }
       lastChar = currentChar;
     }

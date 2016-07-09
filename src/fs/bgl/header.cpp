@@ -18,7 +18,6 @@
 #include "fs/bgl/header.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-#include "fs/bgl/bglexception.h"
 
 #include <QtDebug>
 
@@ -32,12 +31,14 @@ using atools::io::BinaryStream;
 Header::Header(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
+  valid = true;
   magicNumber1 = bs->readUInt();
-
-  if(magicNumber1 != 0x19920201)
+  if(magicNumber1 != MAGIC_NUMBER1)
     qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
                                    << ". File \"" << bs->getFilename() << "\" at offset "
                                    << bs->tellg() << ".";
+  else
+    valid = false;
 
   headerSize = bs->readUInt();
   lowDateTime = bs->readUInt();
@@ -45,10 +46,12 @@ Header::Header(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   creationTimestamp = converter::filetime(lowDateTime, highDateTime);
 
   magicNumber2 = bs->readUInt();
-  if(magicNumber2 != 0x08051803)
+  if(magicNumber2 != MAGIC_NUMBER2)
     qWarning().nospace().noquote() << "Invalid magic number 2: 0x" << hex << magicNumber2
                                    << ". File \"" << bs->getFilename() << "\" at offset "
                                    << bs->tellg() << ".";
+  else
+    valid = false;
 
   numSections = bs->readUInt();
 
@@ -58,6 +61,13 @@ Header::Header(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
 
 Header::~Header()
 {
+}
+
+QString Header::getCreationTimestampString() const
+{
+  QDateTime dt;
+  dt.setTime_t(static_cast<uint>(creationTimestamp));
+  return dt.toString(Qt::ISODate);
 }
 
 QDebug operator<<(QDebug out, const Header& header)

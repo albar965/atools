@@ -27,6 +27,9 @@ namespace bgl {
 
 class Dme;
 
+/*
+ * VHF omnidirectional range - VOR/DME/VORDME record
+ */
 class Vor :
   public atools::fs::bgl::NavBase
 {
@@ -34,16 +37,25 @@ public:
   Vor(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Vor();
 
+  /*
+   * @return get the DME record for this VOR if available - otherwise null
+   */
   const atools::fs::bgl::Dme *getDme() const
   {
     return dme;
   }
 
+  /*
+   * @return true if only DME
+   */
   bool isDmeOnly() const
   {
     return dmeOnly;
   }
 
+  /*
+   * @return VOR type which also indicates the range
+   */
   atools::fs::bgl::nav::IlsVorType getType() const
   {
     return type;
@@ -54,7 +66,7 @@ private:
 
   atools::fs::bgl::nav::IlsVorType type;
   bool dmeOnly;
-  atools::fs::bgl::Dme *dme;
+  atools::fs::bgl::Dme *dme = nullptr;
 };
 
 } // namespace bgl

@@ -31,7 +31,6 @@ Subsection::Subsection(const atools::fs::BglReaderOptions *options,
   : BglBase(options, bs), parent(&parentSect)
 {
   id = bs->readInt();
-  // int id2 = bs->readInt();
   numDataRecords = bs->readInt();
   firstDataRecordOffset = bs->readInt();
   dataSize = bs->readInt();

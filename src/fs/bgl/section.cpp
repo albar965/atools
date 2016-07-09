@@ -29,7 +29,9 @@ Section::Section(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
 {
   type = static_cast<section::SectionType>(bs->readUInt());
   unsigned int sizeFlag = bs->readUInt();
-  size = ((sizeFlag & 0x10000) | 0x40000) >> 0x0E;
+
+  // Most subsections have a size of 16 bytes. Only subsections for terrain seasons have a size of 20 bytes
+  subsectionSize = ((sizeFlag & 0x10000) | 0x40000) >> 0x0E;
   numSubsections = bs->readUInt();
   firstSubsectionOffset = bs->readUInt();
   totalSubsectionSize = bs->readUInt();
@@ -45,7 +47,7 @@ QDebug operator<<(QDebug out, const Section& section)
 
   out.nospace().noquote() << static_cast<const BglBase&>(section)
   << " Section[type " << sectionTypeStr(section.type)
-  << ", size " << section.size
+  << ", size " << section.subsectionSize
   << ", subsections " << section.numSubsections
   << hex << ", offset 0x" << section.firstSubsectionOffset << dec
   << ", total size " << section.totalSubsectionSize << "]";

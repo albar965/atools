@@ -113,7 +113,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.push_back(ApproachLeg(bs, false));
+            legs.append(ApproachLeg(bs, false));
         }
         break;
 

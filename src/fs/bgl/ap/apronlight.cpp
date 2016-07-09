@@ -41,13 +41,13 @@ ApronLight::ApronLight(const atools::fs::BglReaderOptions *options, atools::io::
   if(options->isIncludedBglObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
-      vertices.push_back(BglPosition(bs));
+      vertices.append(BglPosition(bs));
 
     for(int i = 0; i < numEdges; i++)
     {
       bs->skip(4); // FLOAT Unknown (value 60.96)
-      edges.push_back(bs->readShort()); // Start
-      edges.push_back(bs->readShort()); // End
+      edges.append(bs->readShort()); // Start
+      edges.append(bs->readShort()); // End
     }
   }
 }

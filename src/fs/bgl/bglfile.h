@@ -46,10 +46,16 @@ class Namelist;
 class Record;
 class Boundary;
 
+/*
+ * Class for reading a full BGL file into its containers.
+ */
 class BglFile
 {
 public:
-  BglFile(const BglReaderOptions *opts);
+  /*
+   * @param readerOptions Configuration.
+   */
+  BglFile(const BglReaderOptions *readerOptions);
   virtual ~BglFile();
 
   void setSupportedSectionTypes(const QSet<atools::fs::bgl::section::SectionType>& sects)
@@ -57,6 +63,11 @@ public:
     supportedSectionTypes = sects;
   }
 
+  /*
+   * Reads the full content of the BGL file into the internal lists including header, sections,
+   * airports and so on.
+   * @param file BGL filename
+   */
   void readFile(QString file);
 
   QString getFilename() const
@@ -64,6 +75,9 @@ public:
     return filename;
   }
 
+  /*
+   * @return Size on the filesystem
+   */
   qint64 getFilesize() const
   {
     return size;
@@ -72,11 +86,6 @@ public:
   const QList<const atools::fs::bgl::Airport *>& getAirports() const
   {
     return airports;
-  }
-
-  const QList<const atools::fs::bgl::Record *>& getAllRecords() const
-  {
-    return allRecords;
   }
 
   const atools::fs::bgl::Header& getHeader() const
@@ -104,16 +113,6 @@ public:
     return ndbs;
   }
 
-  const QList<atools::fs::bgl::Section>& getSections() const
-  {
-    return sections;
-  }
-
-  const QList<atools::fs::bgl::Subsection>& getSubsections() const
-  {
-    return subsections;
-  }
-
   const QList<const atools::fs::bgl::Vor *>& getVors() const
   {
     return vors;
@@ -129,15 +128,19 @@ public:
     return boundaries;
   }
 
+  /*
+   * @return true if any relevant content is available. Header and sections do not count.
+   */
   bool hasContent();
 
 private:
-  void freeObjects();
-  void readBoundaries(atools::io::BinaryStream *bs);
+  void deleteAllObjects();
   void readHeaderAndSections(atools::io::BinaryStream *bs);
   void readRecords(atools::io::BinaryStream *bs);
-
   const Record *handleIlsVor(atools::io::BinaryStream *bs);
+
+  /* Boundaries are a special mess since it is not well documented */
+  void readBoundaryRecords(atools::io::BinaryStream *bs);
   void handleBoundaries(atools::io::BinaryStream *bs);
 
   template<typename TYPE>
@@ -149,7 +152,9 @@ private:
   qint64 size;
   const BglReaderOptions *options;
 
+  /* Keep a list of all records to make object deletion easier */
   QList<const atools::fs::bgl::Record *> allRecords;
+
   QList<const atools::fs::bgl::Airport *> airports;
   QList<const atools::fs::bgl::Namelist *> namelists;
   QList<const atools::fs::bgl::Vor *> vors;
@@ -163,6 +168,7 @@ private:
   QList<atools::fs::bgl::Subsection> subsections;
   atools::fs::bgl::Header header;
 
+  /* Only these sections will be scanned for records */
   QSet<atools::fs::bgl::section::SectionType> supportedSectionTypes;
 };
 
@@ -188,8 +194,8 @@ const TYPE *BglFile::createRecord(const BglReaderOptions *options,
   }
 
   if(list != nullptr)
-    list->push_back(rec);
-  allRecords.push_back(rec);
+    list->append(rec);
+  allRecords.append(rec);
   return rec;
 }
 

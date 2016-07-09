@@ -36,6 +36,9 @@ enum IlsVorType
 
 } // namespace nav
 
+/*
+ * Only used to read the type from the binary stream. Concrete objects are Vor and Ils.
+ */
 class IlsVor :
   public atools::fs::bgl::Record
 {

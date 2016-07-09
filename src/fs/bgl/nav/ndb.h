@@ -36,6 +36,9 @@ enum NdbType
 
 } // namespace nav
 
+/*
+ * Nondirectional beacon. Top level record.
+ */
 class Ndb :
   public atools::fs::bgl::NavBase
 {

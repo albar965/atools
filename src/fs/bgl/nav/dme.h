@@ -27,6 +27,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * DME station. This is a subrecord of ILS and VOR.
+ */
 class Dme :
   public atools::fs::bgl::Record
 {
@@ -34,11 +37,17 @@ public:
   Dme(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Dme();
 
+  /*
+   * @return Position of the DME transmitter
+   */
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
 
+  /*
+   * @return Range of this DME station in meter.
+   */
   float getRange() const
   {
     return range;

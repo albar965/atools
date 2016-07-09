@@ -69,9 +69,7 @@ using atools::sql::SqlDatabase;
 using scenery::SceneryArea;
 using atools::fs::bgl::section::SectionType;
 
-extern const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES;
-
-const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
+static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
 {
   bgl::section::AIRPORT, bgl::section::ILS_VOR, bgl::section::NDB, bgl::section::MARKER,
   bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY

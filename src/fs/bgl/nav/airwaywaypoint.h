@@ -38,6 +38,11 @@ enum AirwayWaypointType
 
 } // namespace nav
 
+/*
+ * A waypoint on an airway that is used to reference to the previous and next point along an airway.
+ * Ident and region are used to identify a waypoint since the references cross BGL file
+ * boundaries.
+ */
 class AirwayWaypoint :
   public atools::fs::bgl::BglBase
 {
@@ -50,21 +55,33 @@ public:
   {
   }
 
+  /*
+   * @return airport ICAO ident for the waypoint if applicable
+   */
   const QString& getAirportIdent() const
   {
     return airportIdent;
   }
 
+  /*
+   * @return Waypoint ICAO ident
+   */
   const QString& getIdent() const
   {
     return ident;
   }
 
+  /*
+   * @return Miniumum altitude for the segment in meter
+   */
   float getMinimumAltitude() const
   {
     return minimumAltitude;
   }
 
+  /*
+   * @return ICAO two letter region code for the waypoint
+   */
   const QString& getRegion() const
   {
     return region;

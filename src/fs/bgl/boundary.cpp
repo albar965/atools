@@ -157,18 +157,20 @@ Boundary::Boundary(const BglReaderOptions *options, BinaryStream *bs)
       case atools::fs::bgl::rec::BOUNDARY_COM:
         com = true;
         numFreq++;
+        // Read COM record directly here
         comType = static_cast<com::ComType>(bs->readShort());
         comFrequency = bs->readInt() / 1000;
         comName = bs->readString(r.getSize() - 12);
         break;
       case rec::BOUNDARY_NAME:
-        name = bs->readString(r.getSize() - 6);
+        name = bs->readString(r.getSize() - Record::SIZE);
         break;
       case rec::BOUNDARY_LINES:
         {
+          // Read geometry
           int numPoints = bs->readUShort();
           for(int i = 0; i < numPoints; i++)
-            lines.push_back(BoundaryLine(options, bs));
+            lines.append(BoundarySegment(options, bs));
         }
         break;
       default:
@@ -179,6 +181,10 @@ Boundary::Boundary(const BglReaderOptions *options, BinaryStream *bs)
   if(numFreq > 1)
     qWarning() << "Found more than 1 boundary com frequency";
 
+}
+
+Boundary::~Boundary()
+{
 }
 
 QDebug operator<<(QDebug out, const Boundary& record)
@@ -196,10 +202,6 @@ QDebug operator<<(QDebug out, const Boundary& record)
   out << "]";
 
   return out;
-}
-
-Boundary::~Boundary()
-{
 }
 
 } // namespace bgl

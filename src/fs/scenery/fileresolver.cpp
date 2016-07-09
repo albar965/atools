@@ -76,9 +76,9 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
               {
                 numFiles++;
                 if(filepaths != nullptr)
-                  filepaths->push_back(bglFile.filePath());
+                  filepaths->append(bglFile.filePath());
                 if(filenames != nullptr)
-                  filenames->push_back(bglFile.fileName());
+                  filenames->append(bglFile.fileName());
               }
           }
         }

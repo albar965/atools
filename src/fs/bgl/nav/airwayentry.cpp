@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/nav/airwayentry.h"
+#include "fs/bgl/nav/airwaysegment.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 
@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QString AirwayEntry::airwayTypeToStr(nav::AirwayType type)
+QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
 {
   switch(type)
   {
@@ -45,7 +45,7 @@ QString AirwayEntry::airwayTypeToStr(nav::AirwayType type)
   return QString();
 }
 
-AirwayEntry::AirwayEntry(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+AirwaySegment::AirwaySegment(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   type = static_cast<nav::AirwayType>(bs->readUByte());
@@ -55,26 +55,26 @@ AirwayEntry::AirwayEntry(const atools::fs::BglReaderOptions *options, BinaryStre
   previous = AirwayWaypoint(options, bs);
 }
 
-AirwayEntry::~AirwayEntry()
+AirwaySegment::~AirwaySegment()
 {
 }
 
-bool AirwayEntry::hasNextWaypoint() const
+bool AirwaySegment::hasNextWaypoint() const
 {
   return next.getType() != nav::AIRWAY_WP_NONE;
 }
 
-bool AirwayEntry::hasPreviousWaypoint() const
+bool AirwaySegment::hasPreviousWaypoint() const
 {
   return previous.getType() != nav::AIRWAY_WP_NONE;
 }
 
-QDebug operator<<(QDebug out, const AirwayEntry& record)
+QDebug operator<<(QDebug out, const AirwaySegment& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " AirwayEntry[type " << AirwayEntry::airwayTypeToStr(record.type)
+  << " AirwayEntry[type " << AirwaySegment::airwayTypeToStr(record.type)
   << ", name " << record.name;
 
   if(record.hasNextWaypoint())

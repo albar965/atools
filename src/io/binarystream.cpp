@@ -162,7 +162,7 @@ QString BinaryStream::readString()
   {
     if(iscntrl(c))
       break;
-    retval.push_back(QChar::fromLatin1(c));
+    retval.append(QChar::fromLatin1(c));
   }
 
   checkStream("readString");
@@ -180,7 +180,7 @@ QString BinaryStream::readString(int length)
   {
     if(iscntrl(buf[i]))
       break;
-    retval.push_back(QChar::fromLatin1(buf[i]));
+    retval.append(QChar::fromLatin1(buf[i]));
   }
   delete[] buf;
   return retval;

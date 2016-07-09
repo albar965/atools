@@ -31,28 +31,46 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * BGL Section which contains a type and an offset to its subsections
+ */
 class Section :
   public atools::fs::bgl::BglBase
 {
 public:
+  /*
+   * Read the section (not including the subsections)
+   */
   Section(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Section();
 
+  /*
+   * @return position in the file where the first subsection starts.
+   */
   unsigned int getFirstSubsectionOffset() const
   {
     return firstSubsectionOffset;
   }
 
+  /*
+   * @return Number of subsections in this section
+   */
   unsigned int getNumSubsections() const
   {
     return numSubsections;
   }
 
-  unsigned int getSize() const
+  /*
+   * @return size of this section
+   */
+  unsigned int getSubsectionSize() const
   {
-    return size;
+    return subsectionSize;
   }
 
+  /*
+   * @return Total size of all subsections in this section
+   */
   unsigned int getTotalSubsectionSize() const
   {
     return totalSubsectionSize;
@@ -67,7 +85,7 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Section& section);
 
   atools::fs::bgl::section::SectionType type;
-  unsigned int size, numSubsections, firstSubsectionOffset, totalSubsectionSize;
+  unsigned int subsectionSize, numSubsections, firstSubsectionOffset, totalSubsectionSize;
 };
 
 } // namespace bgl

@@ -32,6 +32,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * BGL file header
+ */
 class Header :
   public atools::fs::bgl::BglBase
 {
@@ -42,31 +45,50 @@ public:
   {
   }
 
+  /*
+   * Reads the BGL file header
+   */
   Header(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Header();
 
-  QString getCreationTimestampString() const
-  {
-    QDateTime dt;
-    dt.setTime_t(creationTimestamp);
-    return dt.toString(Qt::ISODate);
-  }
+  /*
+   * @return Timestamp string in ISO format from the timestamp inside the BGL
+   */
+  QString getCreationTimestampString() const;
 
+  /*
+   * @return Seconds since epoch from the timestamp inside the BGL
+   */
   time_t getCreationTimestamp() const
   {
     return creationTimestamp;
   }
 
+  /*
+   * @return Number of sections in this BGL
+   */
   unsigned int getNumSections() const
   {
     return numSections;
   }
+
+  /*
+   * @return true if the magic numbers match
+   */
+  bool isValid() const
+  {
+    return valid;
+  }
+
+  static Q_DECL_CONSTEXPR unsigned int MAGIC_NUMBER1 = 0x19920201;
+  static Q_DECL_CONSTEXPR unsigned int MAGIC_NUMBER2 = 0x08051803;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);
 
   unsigned int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
   time_t creationTimestamp;
+  bool valid = false;
 };
 
 } // namespace bgl

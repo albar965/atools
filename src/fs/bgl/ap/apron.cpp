@@ -33,7 +33,7 @@ Apron::Apron(const atools::fs::BglReaderOptions *options, atools::io::BinaryStre
 
   if(options->isIncludedBglObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
-      vertices.push_back(BglPosition(bs));
+      vertices.append(BglPosition(bs));
 }
 
 Apron::~Apron()

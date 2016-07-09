@@ -37,6 +37,9 @@ enum MarkerType
 
 } // namespace nav
 
+/*
+ * Marker beacon
+ */
 class Marker :
   public atools::fs::bgl::Record
 {
@@ -54,6 +57,9 @@ public:
     return position;
   }
 
+  /*
+   * @return Two letter ICAO region
+   */
   const QString& getRegion() const
   {
     return region;
@@ -66,6 +72,9 @@ public:
 
   static QString markerTypeToStr(atools::fs::bgl::nav::MarkerType type);
 
+  /*
+   * @return Marker heading in degree true
+   */
   float getHeading() const
   {
     return heading;

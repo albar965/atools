@@ -34,10 +34,15 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Namelist contains all airport names, city, state/province and country names for the
+ * airports in one BGL file
+ */
 class Namelist :
   public atools::fs::bgl::Record
 {
 public:
+  /* read nameslist from BGL */
   Namelist(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Namelist();
 

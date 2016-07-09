@@ -49,11 +49,9 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/taxipoint.h \
     src/fs/bgl/ap/transition.h \
     src/fs/bgl/bglbase.h \
-    src/fs/bgl/bglexception.h \
     src/fs/bgl/bglfile.h \
     src/fs/bgl/bglposition.h \
     src/fs/bgl/boundary.h \
-    src/fs/bgl/boundaryline.h \
     src/fs/bgl/converter.h \
     src/fs/bgl/header.h \
     src/fs/bgl/nav/dme.h \
@@ -147,7 +145,6 @@ HEADERS += src/atools.h \
     src/gui/helphandler.h \
     src/geo/linestring.h \
     src/gui/actiontextsaver.h \
-    src/fs/bgl/nav/airwayentry.h \
     src/fs/bgl/nav/airwaywaypoint.h \
     src/fs/db/nav/tempairwaywriter.h \
     src/fs/db/airwayresolver.h \
@@ -165,7 +162,9 @@ HEADERS += src/atools.h \
     src/zip/zipwriter.h \
     src/zip/zipreader.h \
     src/gui/application.h \
-    src/util/version.h
+    src/util/version.h \
+    src/fs/bgl/boundarysegment.h \
+    src/fs/bgl/nav/airwaysegment.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -195,11 +194,9 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/taxipoint.cpp \
     src/fs/bgl/ap/transition.cpp \
     src/fs/bgl/bglbase.cpp \
-    src/fs/bgl/bglexception.cpp \
     src/fs/bgl/bglfile.cpp \
     src/fs/bgl/bglposition.cpp \
     src/fs/bgl/boundary.cpp \
-    src/fs/bgl/boundaryline.cpp \
     src/fs/bgl/converter.cpp \
     src/fs/bgl/header.cpp \
     src/fs/bgl/nav/dme.cpp \
@@ -292,7 +289,6 @@ SOURCES += src/atools.cpp \
     src/geo/linestring.cpp \
     src/gui/actiontextsaver.cpp \
     src/fs/bgl/nav/airwayentry.cpp \
-    src/fs/bgl/nav/airwaywaypoint.cpp \
     src/fs/db/nav/tempairwaywriter.cpp \
     src/fs/db/airwayresolver.cpp \
     src/fs/db/routeedgewriter.cpp \
@@ -307,7 +303,9 @@ SOURCES += src/atools.cpp \
     src/fs/db/databasemeta.cpp \
     src/zip/zip.cpp \
     src/gui/application.cpp \
-    src/util/version.cpp
+    src/util/version.cpp \
+    src/fs/bgl/boundarysegment.cpp \
+    src/fs/bgl/nav/airwaywaypoint.cpp
 
 
 unix {

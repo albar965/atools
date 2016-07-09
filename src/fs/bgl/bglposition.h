@@ -29,12 +29,25 @@ class BinaryStream;
 namespace fs {
 namespace bgl {
 
-class BglPosition final
+/*
+ * Reads position information from the binary stream.
+ */
+class BglPosition
 {
 public:
   BglPosition();
-  BglPosition(float lonX, float latY, float alt = 0.0f);
-  BglPosition(atools::io::BinaryStream * bs, bool hasAltitude = false, float altitudeFactor = 1.f);
+
+  /* Create position from coordinate parameters */
+  BglPosition(float lonX, float latY, float altitude = 0.0f);
+
+  /*
+   * Reads position from the stream.
+   * @param bs
+   * @param hasAltitude true if there is an altitude saved in the binary data
+   * @param altitudeDivisor Divide altitude by this value after readings
+   */
+  BglPosition(atools::io::BinaryStream *bs, bool hasAltitude = false, float altitudeDivisor = 1.f);
+  ~BglPosition();
 
   float getLonX() const
   {

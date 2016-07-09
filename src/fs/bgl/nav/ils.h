@@ -28,28 +28,47 @@ class Localizer;
 class Glideslope;
 class Dme;
 
+/*
+ * ILS station that is a top level record. It assigned to the airport by using the airport ICAO ident
+ * (from NavBase::getAirportIdent) and the runway name (Localizer::getRunwayName)
+ */
 class Ils :
   public atools::fs::bgl::NavBase
 {
 public:
+  /*
+   * Read ILS and all optional subrecords (DME, GS and Localizer)
+   */
   Ils(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Ils();
 
+  /*
+   * @return DME if available - otherwise null
+   */
   const atools::fs::bgl::Dme *getDme() const
   {
     return dme;
   }
 
+  /*
+   * @return Glideslope if available - otherwise null
+   */
   const atools::fs::bgl::Glideslope *getGlideslope() const
   {
     return glideslope;
   }
 
+  /*
+   * @return true if this ILS also has a backcourse approach
+   */
   bool hasBackcourse() const
   {
     return backcourse;
   }
 
+  /*
+   * @return Localizer if available - otherwise null
+   */
   const atools::fs::bgl::Localizer *getLocalizer() const
   {
     return localizer;
@@ -60,9 +79,9 @@ private:
 
   bool backcourse;
 
-  atools::fs::bgl::Localizer *localizer;
-  atools::fs::bgl::Glideslope *glideslope;
-  atools::fs::bgl::Dme *dme;
+  atools::fs::bgl::Localizer *localizer = nullptr;
+  atools::fs::bgl::Glideslope *glideslope = nullptr;
+  atools::fs::bgl::Dme *dme = nullptr;
 };
 
 } // namespace bgl

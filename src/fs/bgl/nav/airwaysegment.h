@@ -36,33 +36,43 @@ enum AirwayType
 
 } // namespace nav
 
-class AirwayEntry :
+/*
+ * Airway segment that is attached to a waypoint and has next and previous waypoints. Subrecord of waypoint.
+ * previous waypoint -> current waypoint (parent of segment) -> next waypoint
+ */
+class AirwaySegment :
   public atools::fs::bgl::BglBase
 {
 public:
-  AirwayEntry(const BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~AirwayEntry();
+  AirwaySegment(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~AirwaySegment();
 
   bool hasNextWaypoint() const;
 
   bool hasPreviousWaypoint() const;
 
+  /*
+   * @return next waypoint on the airway
+   */
   const atools::fs::bgl::AirwayWaypoint& getNextWaypoint() const
   {
     return next;
   }
 
+  /*
+   * @return previous waypoint on the airway
+   */
   const atools::fs::bgl::AirwayWaypoint& getPreviousWaypoint() const
   {
     return previous;
   }
 
-  const QString& getName() const
+  const QString& getAirwayName() const
   {
     return name;
   }
 
-  atools::fs::bgl::nav::AirwayType getType() const
+  atools::fs::bgl::nav::AirwayType getAirwayType() const
   {
     return type;
   }
@@ -70,7 +80,7 @@ public:
   static QString airwayTypeToStr(atools::fs::bgl::nav::AirwayType type);
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwayEntry& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwaySegment& record);
 
   atools::fs::bgl::nav::AirwayType type;
   QString name;

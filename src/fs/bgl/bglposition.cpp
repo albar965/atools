@@ -29,23 +29,28 @@ BglPosition::BglPosition()
 {
 }
 
-BglPosition::BglPosition(float lonX, float latY, float alt)
-  : pos(lonX, latY, alt)
+BglPosition::BglPosition(float lonX, float latY, float altitude)
+  : pos(lonX, latY, altitude)
 {
 }
 
-BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeFactor)
+BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeDivisor)
 {
   float lonX = converter::intToLonX(bs->readInt());
   float latY = converter::intToLatY(bs->readInt());
 
   float altitude;
   if(hasAltitude)
-    altitude = static_cast<float>(bs->readInt()) / altitudeFactor;
+    altitude = static_cast<float>(bs->readInt()) / altitudeDivisor;
   else
     altitude = 0.f;
 
   pos = atools::geo::Pos(lonX, latY, altitude);
+}
+
+BglPosition::~BglPosition()
+{
+
 }
 
 QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record)

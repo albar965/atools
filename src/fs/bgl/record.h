@@ -30,6 +30,9 @@ namespace bgl {
 
 class Subsection;
 
+/*
+ * Base for all record types.
+ */
 class Record :
   public atools::fs::bgl::BglBase
 {
@@ -39,27 +42,44 @@ public:
   {
   }
 
+  /*
+   * Reads the first part of the record namely the record id and the record size.
+   * The stream is advanced by 6 bytes for this.
+   */
   Record(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~Record();
 
+  /*
+   * Seek past the end of the record to a new record.
+   */
   void seekToEnd() const;
 
+  /*
+   * @return total record size in bytes
+   */
   int getSize() const
   {
     return size;
   }
 
+  /* Get the record id casted into an enum */
   template<typename ENUM>
   ENUM getId() const
   {
     return static_cast<ENUM>(id);
   }
 
+  /*
+   * @return true if this record was found to be excluded after reading
+   */
   bool isExcluded()
   {
     return excluded;
   }
+
+  /* Byte size that will be read by this class */
+  static Q_DECL_CONSTEXPR int SIZE = 6;
 
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);

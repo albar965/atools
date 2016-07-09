@@ -53,14 +53,14 @@ Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
   frequency = bs->readInt() / 10;
   position = BglPosition(bs, true, 1000.f);
   range = bs->readFloat();
-  magVar = bs->readFloat();
-  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
+  magVar = converter::adjustMagvar(bs->readFloat());
   ident = converter::intToIcao(bs->readUInt());
 
   unsigned int regionFlags = bs->readUInt();
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
+  // Read subrecords (name only)
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
@@ -69,7 +69,7 @@ Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::NDB_NAME:
-        name = bs->readString(r.getSize() - 6);
+        name = bs->readString(r.getSize() - Record::SIZE);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in NDB record 0x"

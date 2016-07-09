@@ -30,13 +30,23 @@ namespace fs {
 class BglReaderOptions;
 namespace bgl {
 
+/*
+ * Base class for all objects/records that are read from BGL files. Does not read anything from
+ * the stream but just stores the current stream offset.
+ */
 class BglBase
 {
 public:
   virtual ~BglBase();
 
+  /*
+   * Seek stream back to record start offset.
+   */
   void seekToStart();
 
+  /*
+   * Get start offset of the record.
+   */
   qint64 getStartOffset() const
   {
     return startOffset;

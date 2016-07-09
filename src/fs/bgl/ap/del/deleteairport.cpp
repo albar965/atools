@@ -72,13 +72,13 @@ DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
     qWarning().nospace().noquote() << "Found DeleteAirport with " << numFrequencies << " numFrequencies";
 
   for(int i = 0; i < numRunways; i++)
-    deleteRunways.push_back(DeleteRunway(options, bs));
+    deleteRunways.append(DeleteRunway(options, bs));
 
   for(int i = 0; i < numStarts; i++)
-    deleteStarts.push_back(DeleteStart(options, bs));
+    deleteStarts.append(DeleteStart(options, bs));
 
   for(int i = 0; i < numFrequencies; i++)
-    deleteComs.push_back(DeleteCom(options, bs));
+    deleteComs.append(DeleteCom(options, bs));
 }
 
 QDebug operator<<(QDebug out, const DeleteAirport& record)

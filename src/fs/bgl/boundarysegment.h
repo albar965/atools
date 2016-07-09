@@ -39,21 +39,28 @@ enum PointType
   UNKNOWN = 0,
   START = 1,
   LINE = 2,
-  ORIGIN = 3,
-  ARC_CW = 4,
-  ARC_CCW = 5,
+  ORIGIN = 3, /* Origin of arc or circle */
+  ARC_CW = 4, /* Arc clockwise */
+  ARC_CCW = 5, /* Arc counter clockwise */
   CIRCLE = 6
 };
 
 }
 
-class BoundaryLine :
+/*
+ * Airspace boundary geometry descriptor. Can be a line, arc or circle.
+ */
+class BoundarySegment :
   public atools::fs::bgl::BglBase
 {
 public:
-  BoundaryLine();
-  BoundaryLine(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~BoundaryLine();
+  BoundarySegment();
+
+  /*
+   * Reads the boundary line subrecord
+   */
+  BoundarySegment(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~BoundarySegment();
 
   atools::fs::bgl::boundaryline::PointType getType() const
   {
@@ -67,13 +74,16 @@ public:
 
   static QString boundarylineTypeToStr(atools::fs::bgl::boundaryline::PointType type);
 
+  /*
+   * @return If type == CIRCLE then radius in meter
+   */
   float getRadius() const
   {
     return radius;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BoundaryLine& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::BoundarySegment& record);
 
   atools::fs::bgl::boundaryline::PointType type;
   atools::fs::bgl::BglPosition position;

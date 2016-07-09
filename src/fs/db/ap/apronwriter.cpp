@@ -46,16 +46,16 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
 
   QStringList list;
   for(const bgl::BglPosition& pos : type->first->getVertices())
-    list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                   QString::number(pos.getLatY(), 'g', 8));
+    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
+                QString::number(pos.getLatY(), 'g', 8));
   bind(":vertices", list.join(", "));
 
   if(getOptions().isIncludedBglObject(type::APRON2))
   {
     list.clear();
     for(const bgl::BglPosition& pos : type->second->getVertices())
-      list.push_back(QString::number(pos.getLonX(), 'g', 8) + " " +
-                     QString::number(pos.getLatY(), 'g', 8));
+      list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
+                  QString::number(pos.getLatY(), 'g', 8));
     bind(":vertices2", list.join(", "));
 
     bind(":triangles", toString(type->second->getTriangles()));

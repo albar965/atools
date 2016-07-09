@@ -26,23 +26,51 @@ namespace fs {
 namespace bgl {
 namespace converter {
 
+/*
+ * Converts the BGL specific coordinate format to degrees
+ * @return longitude degrees
+ */
 inline float intToLonX(int lonX)
 {
   return (lonX * (360.0f / (3.f * 0x10000000))) - 180.0f;
 }
 
+/*
+ * Converts the BGL specific coordinate format to degrees
+ * @return latitude degrees
+ */
 inline float intToLatY(int latY)
 {
   return 90.0f - latY * (180.0f / (2.f * 0x10000000));
 }
 
+/* Get the time in seconds since epoch from the BGL header specific format */
 time_t filetime(unsigned int lowDateTime, unsigned int highDateTime);
 
+/*
+ * Convert the BGL ICAO format to string
+ * @param noBitShift if true do not shift 5 bits to the right
+ */
 QString intToIcao(unsigned int icao, bool noBitShift = false);
 
+/*
+ * Convert BGL runway designator to a string like "L", "C", "R" or "W"
+ */
 QString designatorStr(int designator);
 
+/*
+ * Create a full runway name from number and designator.
+ * @return Runway name like "12", "24C" or "NE"
+ */
 QString runwayToStr(int runwayNumber, int designator);
+
+/*
+ * Adjust FS magvar values to positive/negative values where value < 0 for West and value > 0 for East
+ */
+inline float adjustMagvar(float magVar)
+{
+  return -(magVar > 180.f ? magVar - 360.f : magVar);
+}
 
 } // namespace  converter
 } // namespace bgl

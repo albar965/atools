@@ -259,7 +259,7 @@ void Flightplan::readWaypoint(QXmlStreamReader& reader)
     else
       reader.skipCurrentElement();
   }
-  entries.push_back(entry);
+  entries.append(entry);
 }
 
 void Flightplan::clear()

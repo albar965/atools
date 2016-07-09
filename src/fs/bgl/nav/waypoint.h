@@ -20,7 +20,7 @@
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/bglposition.h"
-#include "fs/bgl/nav/airwayentry.h"
+#include "fs/bgl/nav/airwaysegment.h"
 
 #include <QString>
 #include <QList>
@@ -44,6 +44,10 @@ enum WaypointType
 
 } // namespace nav
 
+/*
+ * Waypoint or intersection. Can be a top level record or a subrecord of airport.
+ * Can be a part of an airway and contains a list of all attached airways.
+ */
 class Waypoint :
   public atools::fs::bgl::Record
 {
@@ -51,16 +55,25 @@ public:
   Waypoint(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Waypoint();
 
+  /*
+   * @return airport ICAO ident if available
+   */
   const QString& getAirportIdent() const
   {
     return airportIdent;
   }
 
+  /*
+   * @return waypoint ICAO ident
+   */
   const QString& getIdent() const
   {
     return ident;
   }
 
+  /*
+   * @return Magnetic variance for the waypoint. < 0 for West and > 0 for East
+   */
   float getMagVar() const
   {
     return magVar;
@@ -71,6 +84,9 @@ public:
     return position;
   }
 
+  /*
+   * @return Two letter ICAO region ident for the navaid if available
+   */
   const QString& getRegion() const
   {
     return region;
@@ -81,22 +97,32 @@ public:
     return type;
   }
 
-  const QList<atools::fs::bgl::AirwayEntry>& getAirways() const
+  /*
+   * @return a list of airway segments. One entry for each airway attached to this waypoint where each entry contains
+   * predecessor and successor waypoint.
+   */
+  const QList<atools::fs::bgl::AirwaySegment>& getAirways() const
   {
     return airways;
   }
 
-  static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
-
+  /*
+   * @return Number of victor airways attached to this waypoint
+   */
   int getNumVictorAirway() const
   {
     return numVictorAirway;
   }
 
+  /*
+   * @return Number of jet airways attached to this waypoint
+   */
   int getNumJetAirway() const
   {
     return numJetAirway;
   }
+
+  static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Waypoint& record);
@@ -106,7 +132,7 @@ private:
   float magVar;
   QString ident, region, airportIdent;
   int numVictorAirway = 0, numJetAirway = 0;
-  QList<atools::fs::bgl::AirwayEntry> airways;
+  QList<atools::fs::bgl::AirwaySegment> airways;
 };
 
 } // namespace bgl

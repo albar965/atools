@@ -16,33 +16,14 @@
 *****************************************************************************/
 
 #include "fs/bgl/nl/namelist.h"
+
 #include "io/binarystream.h"
-
 #include "fs/bgl/converter.h"
-
-#include "fs/bgl/nl/namelistentry.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
-
-void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int listOffset)
-{
-  bs->seekg(startOffset + listOffset);
-
-  int *indexes = new int[numNames];
-  for(int i = 0; i < numNames; i++)
-    indexes[i] = bs->readInt();
-
-  int offs = bs->tellg();
-  for(int i = 0; i < numNames; i++)
-  {
-    bs->seekg(offs + indexes[i]);
-    names.push_back(bs->readString());
-  }
-  delete indexes;
-}
 
 Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
@@ -61,6 +42,7 @@ Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
   int airportListOffset = bs->readInt();
   int icaoListOffset = bs->readInt();
 
+  // Read all names from the different offsets
   QStringList regions;
   readList(regions, bs, numRegionNames, regionListOffset);
 
@@ -76,8 +58,10 @@ Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
   QStringList airports;
   readList(airports, bs, numAirportNames, airportListOffset);
 
+  // Goto to the offset that contains the name indexes
   bs->seekg(startOffset + icaoListOffset);
 
+  // Now put the names into NamelistEntrys
   for(int i = 0; i < numICAO; i++)
   {
     NamelistEntry icaoRec;
@@ -89,14 +73,31 @@ Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
     icaoRec.airportIdent = converter::intToIcao(bs->readUInt());
     icaoRec.regionIdent = converter::intToIcao(bs->readUInt());
 
-    bs->skip(4);
+    bs->skip(4); // QMID Level 9 Square.
 
-    entries.push_back(icaoRec);
+    entries.append(icaoRec);
   }
 }
 
 Namelist::~Namelist()
 {
+}
+
+void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int listOffset)
+{
+  bs->seekg(startOffset + listOffset);
+
+  int *indexes = new int[numNames];
+  for(int i = 0; i < numNames; i++)
+    indexes[i] = bs->readInt();
+
+  qint64 offs = bs->tellg();
+  for(int i = 0; i < numNames; i++)
+  {
+    bs->seekg(offs + indexes[i]);
+    names.append(bs->readString());
+  }
+  delete indexes;
 }
 
 QDebug operator<<(QDebug out, const Namelist& record)

@@ -54,8 +54,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   bs->readUByte(); // numHelipads
   position = BglPosition(bs, true, 1000.f);
   towerPosition = BglPosition(bs, true, 1000.f);
-  magVar = bs->readFloat();
-  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
+  magVar = converter::adjustMagvar(bs->readFloat());
   ident = converter::intToIcao(bs->readUInt());
 
   if(!options->isIncludedAirportIdent(ident))
@@ -83,7 +82,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::NAME:
-        name = bs->readString(r.getSize() - 6);
+        name = bs->readString(r.getSize() - Record::SIZE);
         break;
       case rec::RUNWAY:
         if(options->isIncludedBglObject(type::RUNWAY))
@@ -93,14 +92,14 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           Runway rw = Runway(options, bs, ident);
           if(!(options->isFilterRunways() &&
                rw.getLength() <= MIN_RUNWAY_LENGTH && rw.getSurface() == bgl::rw::GRASS))
-            runways.push_back(rw);
+            runways.append(rw);
         }
         break;
       case rec::COM:
         if(options->isIncludedBglObject(type::COM))
         {
           r.seekToStart();
-          coms.push_back(Com(options, bs));
+          coms.append(Com(options, bs));
         }
         break;
       case rec::TAXI_PARKING:
@@ -110,7 +109,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           for(int i = 0; i < numParkings; i++)
           {
             Parking p(bs);
-            parkings.push_back(p);
+            parkings.append(p);
             parkingNumberIndex.insert(p.getNumber(), parkings.size() - 1);
           }
         }
@@ -119,66 +118,66 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         if(options->isIncludedBglObject(type::APPROACH))
         {
           r.seekToStart();
-          approaches.push_back(Approach(options, bs));
+          approaches.append(Approach(options, bs));
         }
         break;
       case rec::AIRPORT_WAYPOINT:
         if(options->isIncludedBglObject(type::WAYPOINT))
         {
           r.seekToStart();
-          waypoints.push_back(Waypoint(options, bs));
+          waypoints.append(Waypoint(options, bs));
         }
         break;
       case rec::DELETE_AIRPORT:
         r.seekToStart();
-        deleteAirports.push_back(DeleteAirport(options, bs));
+        deleteAirports.append(DeleteAirport(options, bs));
         break;
 
       case rec::APRON_FIRST:
         if(options->isIncludedBglObject(type::APRON))
         {
           r.seekToStart();
-          aprons.push_back(Apron(options, bs));
+          aprons.append(Apron(options, bs));
         }
         break;
       case rec::APRON_SECOND:
         // if(options->includeBglObject(type::APRON2)) will omitted when writing
         r.seekToStart();
-        aprons2.push_back(Apron2(options, bs));
+        aprons2.append(Apron2(options, bs));
         break;
       case rec::APRON_EDGE_LIGHTS:
         if(options->isIncludedBglObject(type::APRON) && options->isIncludedBglObject(type::APRONLIGHT))
         {
           r.seekToStart();
-          apronLights.push_back(ApronLight(options, bs));
+          apronLights.append(ApronLight(options, bs));
         }
         break;
       case rec::HELIPAD:
         if(options->isIncludedBglObject(type::HELIPAD))
         {
           r.seekToStart();
-          helipads.push_back(Helipad(options, bs));
+          helipads.append(Helipad(options, bs));
         }
         break;
       case rec::START:
         if(options->isIncludedBglObject(type::START))
         {
           r.seekToStart();
-          starts.push_back(Start(options, bs));
+          starts.append(Start(options, bs));
         }
         break;
       case rec::JETWAY:
         if(options->isIncludedBglObject(type::PARKING))
         {
           r.seekToStart();
-          jetways.push_back(Jetway(options, bs));
+          jetways.append(Jetway(options, bs));
         }
         break;
       case rec::FENCE_BOUNDARY:
         if(options->isIncludedBglObject(type::FENCE))
         {
           r.seekToStart();
-          fences.push_back(Fence(options, bs));
+          fences.append(Fence(options, bs));
         }
         numBoundaryFence++;
         break;
@@ -186,7 +185,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         if(options->isIncludedBglObject(type::FENCE))
         {
           r.seekToStart();
-          fences.push_back(Fence(options, bs));
+          fences.append(Fence(options, bs));
         }
         break;
       case rec::TOWER_OBJ:
@@ -197,7 +196,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         {
           int numPaths = bs->readUShort();
           for(int i = 0; i < numPaths; i++)
-            taxipaths.push_back(TaxiPath(bs));
+            taxipaths.append(TaxiPath(bs));
         }
         break;
       case rec::TAXI_POINT:
@@ -205,7 +204,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         {
           int numPoints = bs->readUShort();
           for(int i = 0; i < numPoints; i++)
-            taxipoints.push_back(TaxiPoint(bs));
+            taxipoints.append(TaxiPoint(bs));
         }
         break;
       case rec::TAXI_NAME:
@@ -213,7 +212,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         {
           int numNames = bs->readUShort();
           for(int i = 0; i < numNames; i++)
-            taxinames.push_back(bs->readString(8));  // TODO fix wiki - first is always 0 and length always 8
+            taxinames.append(bs->readString(8));  // TODO fix wiki - first is always 0 and length always 8
         }
         break;
       case rec::UNKNOWN_REC:

@@ -52,18 +52,22 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
   // hasDme = (flags & FLAGS_DME) == FLAGS_DME;
   // hasNav = (flags & FLAGS_NAV) == FLAGS_NAV;
 
+  // ILS transmitter position
   position = BglPosition(bs, true, 1000.f);
   frequency = bs->readInt() / 1000;
   range = bs->readFloat();
-  magVar = bs->readFloat();
-  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
+  magVar = converter::adjustMagvar(bs->readFloat());
 
+  // ILS ident
   ident = converter::intToIcao(bs->readUInt());
 
   unsigned int regionFlags = bs->readUInt();
+  // Two letter region code
   region = converter::intToIcao(regionFlags & 0x7ff, true); // TODO wiki region is never set
+  // Read airport ICAO ident
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
+  // Read all subrecords of ILS
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
@@ -72,9 +76,10 @@ Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - 6);
+        name = bs->readString(r.getSize() - Record::SIZE);
         break;
       case rec::LOCALIZER:
+        // This is actually not optional for an ILS
         r.seekToStart();
         localizer = new Localizer(options, bs);
         break;

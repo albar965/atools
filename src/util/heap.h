@@ -121,7 +121,7 @@ void Heap<TYPE>::pop(TYPE& data, float& cost)
 template<typename TYPE>
 void Heap<TYPE>::push(const TYPE& node, float cost)
 {
-  heap.push_back({node, cost});
+  heap.append({node, cost});
   std::push_heap(heap.begin(), heap.end(), compareFunc);
 }
 

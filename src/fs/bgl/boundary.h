@@ -20,7 +20,7 @@
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/bglposition.h"
-#include "fs/bgl/boundaryline.h"
+#include "fs/bgl/boundarysegment.h"
 #include "fs/bgl/ap/com.h"
 
 #include <QString>
@@ -74,11 +74,19 @@ enum AltitudeType
 
 } // namespace boundary
 
+/*
+ * Airspace boundary
+ */
 class Boundary :
   public atools::fs::bgl::Record
 {
 public:
   Boundary();
+
+  /*
+   * Reads an airspace boundary and all subrecords of type name, lines (class BoundaryLine) and
+   * optional COM frequency
+   */
   Boundary(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Boundary();
 
@@ -112,13 +120,10 @@ public:
     return maxAltType;
   }
 
-  const QList<BoundaryLine>& getLines() const
+  const QList<BoundarySegment>& getSegments() const
   {
     return lines;
   }
-
-  static QString boundaryTypeToStr(atools::fs::bgl::boundary::BoundaryType type);
-  static QString altTypeToStr(atools::fs::bgl::boundary::AltitudeType type);
 
   bool hasCom() const
   {
@@ -130,6 +135,9 @@ public:
     return comType;
   }
 
+  /*
+   * @return optional COM frequency in MHz * 1000
+   */
   int getComFrequency() const
   {
     return comFrequency;
@@ -140,6 +148,10 @@ public:
     return comName;
   }
 
+  /* enum to string conversion methods */
+  static QString boundaryTypeToStr(atools::fs::bgl::boundary::BoundaryType type);
+  static QString altTypeToStr(atools::fs::bgl::boundary::AltitudeType type);
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Boundary& record);
 
@@ -147,7 +159,7 @@ private:
   atools::fs::bgl::boundary::BoundaryType type;
   atools::fs::bgl::BglPosition minPosition, maxPosition;
   atools::fs::bgl::boundary::AltitudeType minAltType, maxAltType;
-  QList<BoundaryLine> lines;
+  QList<BoundarySegment> lines;
 
   bool com = false;
   atools::fs::bgl::com::ComType comType = atools::fs::bgl::com::NONE;

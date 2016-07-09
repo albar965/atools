@@ -17,7 +17,7 @@
 
 #include "fs/bgl/nav/waypoint.h"
 #include "fs/bgl/converter.h"
-#include "fs/bgl/nav/airwayentry.h"
+#include "fs/bgl/nav/airwaysegment.h"
 #include "io/binarystream.h"
 #include "fs/bglreaderoptions.h"
 
@@ -62,8 +62,7 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
   type = static_cast<nav::WaypointType>(bs->readUByte());
   int numAirways = bs->readUByte();
   position = BglPosition(bs);
-  magVar = bs->readFloat();
-  magVar = -(magVar > 180.f ? magVar - 360.f : magVar);
+  magVar = converter::adjustMagvar(bs->readFloat());
   unsigned int identInt = bs->readUInt();
   ident = converter::intToIcao(identInt);
 
@@ -78,19 +77,22 @@ Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
   if(options->isIncludedBglObject(type::AIRWAY))
-    for(int i = 0; i < numAirways; i++)
-      airways.push_back(AirwayEntry(options, bs));
-
-  for(const AirwayEntry& re : airways)
   {
-    if(re.getType() == atools::fs::bgl::nav::BOTH)
+    // Read airways if desired by configuration
+    for(int i = 0; i < numAirways; i++)
+      airways.append(AirwaySegment(options, bs));
+  }
+
+  for(const AirwaySegment& re : airways)
+  {
+    if(re.getAirwayType() == atools::fs::bgl::nav::BOTH)
     {
       numVictorAirway++;
       numJetAirway++;
     }
-    else if(re.getType() == atools::fs::bgl::nav::VICTOR)
+    else if(re.getAirwayType() == atools::fs::bgl::nav::VICTOR)
       numVictorAirway++;
-    else if(re.getType() == atools::fs::bgl::nav::JET)
+    else if(re.getAirwayType() == atools::fs::bgl::nav::JET)
       numJetAirway++;
   }
 }

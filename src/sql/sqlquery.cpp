@@ -365,7 +365,7 @@ QString SqlQuery::boundValuesAsString() const
   QStringList values;
   for(QMap<QString, QVariant>::const_iterator i = boundValues.constBegin();
       i != boundValues.constEnd(); ++i)
-    values.push_back("\"" + i.key() + "\"=\"" + i.value().toString() + "\"");
+    values.append("\"" + i.key() + "\"=\"" + i.value().toString() + "\"");
   return values.join(",");
 }
 

@@ -116,7 +116,7 @@ void LogbookEntry::read(qint64 startpos, qint64 len, int entryNumber)
         QString subAp = stream->readString(4);
         int landings = stream->readUByte();
 
-        airportVisits.push_back(AirportVisit(subAp, landings));
+        airportVisits.append(AirportVisit(subAp, landings));
       }
     }
     else if(subtype == types::SUBRECORD_DESCRIPTION)
@@ -129,7 +129,7 @@ void LogbookEntry::read(qint64 startpos, qint64 len, int entryNumber)
       char b = 0;
       while((i < descrLen) && ((b = stream->readByte()) != 5))
       {
-        description.push_back(QChar::fromLatin1(b));
+        description.append(QChar::fromLatin1(b));
         i++;
       }
 
