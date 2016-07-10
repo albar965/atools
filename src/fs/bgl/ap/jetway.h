@@ -19,6 +19,7 @@
 #define ATOOLS_BGL_AIRPORTJETWAY_H
 
 #include "fs/bgl/record.h"
+#include "fs/bgl/ap/parking.h"
 
 #include <QString>
 
@@ -32,6 +33,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Jetway for parking. Subrecord for airport used only internally.
+ */
 class Jetway :
   public atools::fs::bgl::Record
 {
@@ -40,15 +44,24 @@ public:
   Jetway(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Jetway();
 
+  /*
+   * @return number of parking spot that this jetway is assigned to
+   */
   int getParkingNumber() const
   {
     return parkingNumber;
   }
 
+  atools::fs::bgl::ap::ParkingName getGateName() const
+  {
+    return gateName;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Jetway& record);
 
-  int parkingNumber, gateName;
+  int parkingNumber;
+  atools::fs::bgl::ap::ParkingName gateName;
 };
 
 } // namespace bgl

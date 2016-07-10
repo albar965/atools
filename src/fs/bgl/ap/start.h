@@ -51,8 +51,6 @@ public:
   Start(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Start();
 
-  static QString startTypeToStr(atools::fs::bgl::start::StartType type);
-
   QString getRunwayName() const;
 
   const atools::fs::bgl::BglPosition& getPosition() const
@@ -69,6 +67,8 @@ public:
   {
     return type;
   }
+
+  static QString startTypeToStr(atools::fs::bgl::start::StartType type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Start& record);

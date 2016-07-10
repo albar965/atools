@@ -27,58 +27,84 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * An approach is a subrecord of airport and also containins transitions and missed approaches as well
+ * as all legs.
+ */
 class Approach :
   public atools::fs::bgl::Record
 {
 public:
+  /*
+   * Read approach and all subrecords
+   */
   Approach(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Approach();
 
+  /*
+   * @return Runway end for the approach. This is optional - some approaches are not assigned to a runway
+   */
   QString getRunwayName() const;
 
+  /*
+   * @return Entry altitude for the approach in meter
+   */
   float getAltitude() const
   {
     return altitude;
   }
 
+  /*
+   * @return final approach fix ICAO ident
+   */
   const QString& getFixIdent() const
   {
     return fixIdent;
   }
 
+  /*
+   * @return final approach fix two letter ICAO region
+   */
   const QString& getFixRegion() const
   {
     return fixRegion;
   }
 
+  /*
+   * @return final approach fix type
+   */
   atools::fs::bgl::ap::fix::ApproachFixType getFixType() const
   {
     return fixType;
   }
 
-  bool isGpsOverlay() const
+  bool hasGpsOverlay() const
   {
     return gpsOverlay;
   }
 
+  /*
+   * @return Final course heading start in degree true
+   */
   float getHeading() const
   {
     return heading;
   }
 
+  /*
+   * @return final approach fix airport ICAO ident
+   */
   const QString& getFixAirportIdent() const
   {
     return fixAirportIdent;
   }
 
+  /*
+   * @return Missed approach altitude in meters
+   */
   float getMissedAltitude() const
   {
     return missedAltitude;
-  }
-
-  int getNumTransitions() const
-  {
-    return numTransitions;
   }
 
   atools::fs::bgl::ap::ApproachType getType() const
@@ -86,6 +112,9 @@ public:
     return type;
   }
 
+  /*
+   * @return list of transitions  to this approach
+   */
   const QList<atools::fs::bgl::Transition>& getTransitions() const
   {
     return transitions;
@@ -101,6 +130,9 @@ public:
     return missedLegs;
   }
 
+  /*
+   * @return true if this approach is assigned to a runway
+   */
   bool hasRunwayReference() const
   {
     return runwayNumber > 0;
@@ -112,7 +144,6 @@ private:
   atools::fs::bgl::ap::ApproachType type;
   int runwayNumber, runwayDesignator;
   bool gpsOverlay;
-
   int numTransitions;
 
   atools::fs::bgl::ap::fix::ApproachFixType fixType;
@@ -121,7 +152,6 @@ private:
   float altitude, heading, missedAltitude;
 
   QList<atools::fs::bgl::Transition> transitions;
-
   QList<atools::fs::bgl::ApproachLeg> legs, missedLegs;
 };
 

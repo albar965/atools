@@ -36,14 +36,19 @@ enum Type
 
 }
 
+/*
+ * Blast or boundary fence subrecord or airport.
+ */
 class Fence :
   public atools::fs::bgl::Record
 {
 public:
   Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-
   virtual ~Fence();
 
+  /*
+   * @return coordinate line string of the fence
+   */
   const QList<atools::fs::bgl::BglPosition>& getVertices() const
   {
     return vertices;

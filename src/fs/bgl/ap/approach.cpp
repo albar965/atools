@@ -40,6 +40,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   runwayDesignator = (typeFlags >> 4) & 0x7;
   gpsOverlay = (typeFlags & 0x80) == 0x80;
 
+  // TODO compare numbers with actual record occurence
   numTransitions = bs->readUByte();
   int numLegs = bs->readUByte();
   Q_UNUSED(numLegs);
@@ -58,6 +59,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   heading = bs->readFloat(); // TODO wiki heading is float degrees
   missedAltitude = bs->readFloat();
 
+  // Read subrecords
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);

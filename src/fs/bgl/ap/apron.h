@@ -26,6 +26,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ *  First of two apron records. Subrecord of airport. This one contains the boundary.
+ */
 class Apron :
   public atools::fs::bgl::Record
 {
@@ -38,6 +41,9 @@ public:
     return surface;
   }
 
+  /*
+   * @return Apron boundary vertices
+   */
   const QList<atools::fs::bgl::BglPosition>& getVertices() const
   {
     return vertices;

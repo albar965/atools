@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_BGL_AP_APRONlight_H
-#define ATOOLS_BGL_AP_APRONlight_H
+#ifndef ATOOLS_BGL_AP_APRONLIGHT_H
+#define ATOOLS_BGL_AP_APRONLIGHT_H
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/rw/runway.h"
@@ -26,25 +26,34 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-class ApronLight :
+/*
+ * Apron edge light geometry. Subrecord of airport.
+ */
+class ApronEdgeLight :
   public atools::fs::bgl::Record
 {
 public:
-  ApronLight(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~ApronLight();
+  ApronEdgeLight(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~ApronEdgeLight();
 
+  /*
+   * @return coordinate list that is used with the edge index list
+   */
   const QList<atools::fs::bgl::BglPosition>& getVertices() const
   {
     return vertices;
   }
 
-  const QList<int>& getEdges() const
+  /*
+   * @return edgeindex list where each two index entries refer into the vertex list for one edge
+   */
+  const QList<int>& getEdgeIndex() const
   {
     return edges;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::ApronLight& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::ApronEdgeLight& record);
 
   QList<atools::fs::bgl::BglPosition> vertices;
   QList<int> edges;
@@ -54,4 +63,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_BGL_AP_APRONlight_H
+#endif // ATOOLS_BGL_AP_APRONLIGHT_H

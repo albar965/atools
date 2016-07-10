@@ -62,9 +62,15 @@ public:
   void updateTimestamp();
   void updateAll();
 
-  /* This defines the database schema version and should be updated for every schema or content change */
+  /* This defines the database schema version and should be updated for every incompatible
+   * schema or content change */
   static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 2;
-  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 1;
+
+  /* History:
+   * 1 Removed unused database fields light_flags and pattern_flags.
+   * 2 Increased ILS feather length to 9 nm
+   */
+  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 2;
 
 private:
   atools::sql::SqlDatabase *db;

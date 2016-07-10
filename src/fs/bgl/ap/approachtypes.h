@@ -53,7 +53,7 @@ enum ApproachFixType
   TERMINAL_NDB = 4,
   WAYPOINT = 5,
   TERMINAL_WAYPOINT = 6,
-  UNKNWON_VALUE_8 = 8,
+  UNKNWON_VALUE_8 = 8, // TODO value appears in BGL but no equivalent in compiler found
   RUNWAY = 9
 };
 

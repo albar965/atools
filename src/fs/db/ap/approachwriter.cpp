@@ -47,7 +47,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":approach_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
-  bind(":has_gps_overlay", type->isGpsOverlay());
+  bind(":has_gps_overlay", type->hasGpsOverlay());
   bindNullInt(":fix_nav_id");
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());

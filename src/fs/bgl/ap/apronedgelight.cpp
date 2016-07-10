@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "apronlight.h"
+#include "apronedgelight.h"
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
@@ -25,7 +25,7 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-ApronLight::ApronLight(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
+ApronEdgeLight::ApronEdgeLight(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
   : bgl::Record(options, bs)
 {
   bs->skip(2); // unknown
@@ -52,12 +52,12 @@ ApronLight::ApronLight(const atools::fs::BglReaderOptions *options, atools::io::
   }
 }
 
-ApronLight::~ApronLight()
+ApronEdgeLight::~ApronEdgeLight()
 {
 
 }
 
-QDebug operator<<(QDebug out, const ApronLight& record)
+QDebug operator<<(QDebug out, const ApronEdgeLight& record)
 {
   QDebugStateSaver saver(out);
 

@@ -54,7 +54,7 @@ enum BglObjectType
   FENCE,
   TAXIWAY,
   AIRWAY,
-  GEOMETRY
+  GEOMETRY /* apron and fence geometry */
 };
 
 QString bglObjectTypeToString(atools::fs::type::BglObjectType type);

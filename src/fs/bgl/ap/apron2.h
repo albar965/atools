@@ -26,6 +26,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Second of two apron records. Subrecord of airport. This one contains a vertex list and triangle index.
+ */
 class Apron2 :
   public atools::fs::bgl::Record
 {
@@ -38,21 +41,33 @@ public:
     return surface;
   }
 
+  /*
+   * @return coordinate list that is used with the triangle index list
+   */
   const QList<atools::fs::bgl::BglPosition>& getVertices() const
   {
     return vertices;
   }
 
-  const QList<int>& getTriangles() const
+  /*
+   * @return Triangle index list where each three index entries refer into the vertex list for one triangle
+   */
+  const QList<int>& getTriangleIndex() const
   {
     return triangles;
   }
 
+  /*
+   * @return if true draw the underlying surface
+   */
   bool isDrawSurface() const
   {
     return drawSurface;
   }
 
+  /*
+   * @return if true draw the detail texture surface
+   */
   bool isDrawDetail() const
   {
     return drawDetail;

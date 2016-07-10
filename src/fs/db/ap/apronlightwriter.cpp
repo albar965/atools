@@ -26,11 +26,11 @@ namespace atools {
 namespace fs {
 namespace db {
 
-using atools::fs::bgl::ApronLight;
+using atools::fs::bgl::ApronEdgeLight;
 using atools::fs::bgl::Runway;
 using atools::sql::SqlQuery;
 
-void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
+void ApronLightWriter::writeObject(const atools::fs::bgl::ApronEdgeLight *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing ApronLight for airport "
@@ -46,7 +46,7 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronLight *type)
   bind(":vertices", list.join(", "));
 
   list.clear();
-  for(int i : type->getEdges())
+  for(int i : type->getEdgeIndex())
     list.append(QString::number(i));
   bind(":edges", list.join(", "));
 

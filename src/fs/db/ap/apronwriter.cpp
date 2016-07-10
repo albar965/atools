@@ -58,7 +58,7 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
                   QString::number(pos.getLatY(), 'g', 8));
     bind(":vertices2", list.join(", "));
 
-    bind(":triangles", toString(type->second->getTriangles()));
+    bind(":triangles", toString(type->second->getTriangleIndex()));
   }
   else
   {

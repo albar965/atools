@@ -33,37 +33,38 @@ namespace bgl {
 namespace leg {
 enum Type
 {
-  AF = 0x01,
-  CA = 0x02,
-  CD = 0x03,
-  CF = 0x04,
-  CI = 0x05,
-  CR = 0x06,
-  DF = 0x07,
-  FA = 0x08,
-  FC = 0x09,
-  FD = 0x0a,
-  FM = 0x0b,
-  HA = 0x0c,
-  HF = 0x0d,
-  HM = 0x0e,
-  IF = 0x0f,
-  PI = 0x10,
-  RF = 0x11,
-  TF = 0x12,
-  VA = 0x13,
-  VD = 0x14,
-  VI = 0x15,
-  VM = 0x16,
-  VR = 0x17
+  AF = 0x01, /* Arc To a Fix */
+  CA = 0x02, /* Course To Altitude */
+  CD = 0x03, /* Course To a DME */
+  CF = 0x04, /* Course To a Fix */
+  CI = 0x05, /* Course To Next Leg Intercept */
+  CR = 0x06, /* Course To a Radial */
+  DF = 0x07, /* Direct To a Fix */
+  FA = 0x08, /* Fix To Altitude */
+  FC = 0x09, /* Fix To a Distance on Course */
+  FD = 0x0a, /* Fix To a DME Termination */
+  FM = 0x0b, /* Fix To a Manual Termination */
+  HA = 0x0c, /* Hold to Altitude */
+  HF = 0x0d, /* Hold to Fix */
+  HM = 0x0e, /* Hold to Manual Termination */
+  IF = 0x0f, /* Initial Fix */
+  PI = 0x10, /* Procedure Turn */
+  RF = 0x11, /* Radius to Fix */
+  TF = 0x12, /* Track To a Fix */
+  VA = 0x13, /* Heading To Altitude */
+  VD = 0x14, /* Heading To DME */
+  VI = 0x15, /* Heading To Next Leg Intercept */
+  VM = 0x16, /* Heading To Manual Termination */
+  VR = 0x17 /* Heading To a Radial */
 };
 
 enum AltDescriptor
 {
+  // TODO not clear - only "A", "+" and "-" appear - BGL compiler documentation is not complete
   UNKNOWN = 0,
   A = 01,
-  PLUS = 02,
-  MINUS = 03,
+  PLUS = 02, /* Fly at or above altitude1 */
+  MINUS = 03, /* Fly at or below altitude1 */
   B = 04
 };
 
@@ -77,14 +78,13 @@ enum TurnDirection
 
 }
 
+/*
+ * Approach leg. Not an actual record since it does not contain a header or size.
+ */
 class ApproachLeg
 {
 public:
   ApproachLeg(atools::io::BinaryStream *bs, bool ismissed);
-
-  static QString legTypeToString(atools::fs::bgl::leg::Type type);
-  static QString altDescriptorToString(atools::fs::bgl::leg::AltDescriptor altDescr);
-  static QString turnDirToString(atools::fs::bgl::leg::TurnDirection turnDir);
 
   atools::fs::bgl::leg::Type getType() const
   {
@@ -111,16 +111,9 @@ public:
     return recommendedFixType;
   }
 
-  bool isTrueCourse() const
-  {
-    return trueCourse;
-  }
-
-  bool isTime() const
-  {
-    return time;
-  }
-
+  /*
+   * @return true if is a fly over waypoint otherwise fly by
+   */
   bool isFlyover() const
   {
     return flyover;
@@ -151,40 +144,81 @@ public:
     return recommendedFixRegion;
   }
 
+  /*
+   * @return heading in degrees true
+   */
   float getTheta() const
   {
     return theta;
   }
 
+  /*
+   * @return distance in ? (TODO not clear if meter or NM)
+   */
   float getRho() const
   {
     return rho;
   }
 
+  /*
+   * @return true if course is degrees true otherwise magnetic
+   */
+  bool isTrueCourse() const
+  {
+    return trueCourse;
+  }
+
+  /*
+   * @return course in degrees true or magnetic depending on isTrueCourse
+   */
   float getCourse() const
   {
     return course;
   }
 
+  /*
+   * @return true if getDistOrTime gives travelling time in minutes otherwise distance in meter
+   */
+  bool isTime() const
+  {
+    return time;
+  }
+
+  /*
+   * @return gives travelling time in minutes or distance in meter depending on value of getDistOrTime
+   */
   float getDistOrTime() const
   {
     return distOrTime;
   }
 
+  /*
+   * @return altitude 1 in meter. Meaning depends on AltDescriptor
+   */
   float getAltitude1() const
   {
     return altitude1;
   }
 
+  /*
+   * @return altitude 2 in meter. Meaning depends on AltDescriptor
+   */
   float getAltitude2() const
   {
     return altitude2;
   }
 
+  /*
+   * @return true if this is a missed approach leg
+   */
   bool isMissed() const
   {
     return missed;
   }
+
+  static QString legTypeToString(atools::fs::bgl::leg::Type type);
+  static QString altDescriptorToString(atools::fs::bgl::leg::AltDescriptor altDescr);
+  static QString turnDirToString(atools::fs::bgl::leg::TurnDirection turnDir);
 
 private:
   friend QDebug operator<<(QDebug out, const ApproachLeg& record);

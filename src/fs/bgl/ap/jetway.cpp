@@ -33,7 +33,7 @@ Jetway::Jetway(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   parkingNumber = bs->readShort();
-  gateName = bs->readShort();
+  gateName = static_cast<atools::fs::bgl::ap::ParkingName>(bs->readShort());
   // WORD Gate Name
   // DWORD Size of the scenery object data to follow(0x40)
   // 64 LibraryObject record

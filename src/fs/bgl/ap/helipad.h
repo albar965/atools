@@ -45,6 +45,9 @@ enum HelipadType
 
 } // namespace helipad
 
+/*
+ * Helicopter landing pad. Subrecord of airport.
+ */
 class Helipad :
   public atools::fs::bgl::Record
 {
@@ -70,16 +73,25 @@ public:
     return position;
   }
 
+  /*
+   * @return length in meter
+   */
   float getLength() const
   {
     return length;
   }
 
+  /*
+   * @return width in meter
+   */
   float getWidth() const
   {
     return width;
   }
 
+  /*
+   * @return heading degrees true
+   */
   float getHeading() const
   {
     return heading;
@@ -90,6 +102,9 @@ public:
     return closed;
   }
 
+  /*
+   * @return true if helipad should be drawn without pavement
+   */
   bool isTransparent() const
   {
     return transparent;

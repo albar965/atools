@@ -54,7 +54,7 @@ using atools::fs::bgl::Airport;
 using atools::fs::bgl::Runway;
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
-using atools::fs::bgl::ApronLight;
+using atools::fs::bgl::ApronEdgeLight;
 using atools::fs::bgl::Fence;
 using atools::sql::SqlQuery;
 using atools::fs::bgl::DeleteAirport;

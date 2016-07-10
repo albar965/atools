@@ -55,6 +55,9 @@ enum ComType
 
 } // namespace com
 
+/*
+ * Communication frequency. Subrecord of airport or boundary.
+ */
 class Com :
   public atools::fs::bgl::Record
 {
@@ -63,6 +66,9 @@ public:
   Com(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Com();
 
+  /*
+   * @return Frequency in MHz * 1000
+   */
   int getFrequency() const
   {
     return frequency;
@@ -76,11 +82,6 @@ public:
   atools::fs::bgl::com::ComType getType() const
   {
     return type;
-  }
-
-  QString getTypeAsString() const
-  {
-    return comTypeToStr(type);
   }
 
   static QString comTypeToStr(atools::fs::bgl::com::ComType type);

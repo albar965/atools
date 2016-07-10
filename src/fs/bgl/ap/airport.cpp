@@ -152,7 +152,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         if(options->isIncludedBglObject(type::APRON) && options->isIncludedBglObject(type::APRONLIGHT))
         {
           r.seekToStart();
-          apronLights.append(ApronLight(options, bs));
+          apronLights.append(ApronEdgeLight(options, bs));
         }
         break;
       case rec::HELIPAD:

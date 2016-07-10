@@ -45,6 +45,7 @@ Fence::~Fence()
 
 fence::Type Fence::getType() const
 {
+  // Use record ID to find type
   if(id == rec::FENCE_BLAST)
     return fence::BLAST;
   else if(id == rec::FENCE_BOUNDARY)

@@ -43,40 +43,37 @@ void IlsWriter::writeObject(const Ils *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing ILS " << type->getIdent() << " name " << type->getName();
 
-  using namespace atools::geo;
-  using namespace atools;
-
   bind(":ils_id", getNextId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":frequency", type->getFrequency());
-  bind(":range", roundToPrecision(meterToNm(type->getRange())));
+  bind(":range", roundToPrecision(atools::geo::meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
   bind(":has_backcourse", type->hasBackcourse());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToPrecision(atools::geo::meterToFeet(type->getPosition().getAltitude())));
 
   const bgl::BglPosition& pos = type->getPosition();
   const Localizer *loc = type->getLocalizer();
 
   if(loc != nullptr)
   {
-  int length = nmToMeter(8);
-  // Calculate the display of the ILS feather
-  float ilsHeading = normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
-  Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2).normalize();
-  Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2).normalize();
-  float featherWidth = p1.distanceMeterTo(p2);
-  Pos pmid = pos.getPos().endpoint(length - featherWidth / 2, ilsHeading).normalize();
+    int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
+    // Calculate the display of the ILS feather
+    float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
+    Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2).normalize();
+    Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2).normalize();
+    float featherWidth = p1.distanceMeterTo(p2);
+    Pos pmid = pos.getPos().endpoint(length - featherWidth / 2, ilsHeading).normalize();
 
-  bind(":end1_lonx", p1.getLonX());
-  bind(":end1_laty", p1.getLatY());
+    bind(":end1_lonx", p1.getLonX());
+    bind(":end1_laty", p1.getLatY());
 
-  bind(":end_mid_lonx", pmid.getLonX());
-  bind(":end_mid_laty", pmid.getLatY());
+    bind(":end_mid_lonx", pmid.getLonX());
+    bind(":end_mid_laty", pmid.getLatY());
 
-  bind(":end2_lonx", p2.getLonX());
-  bind(":end2_laty", p2.getLatY());
+    bind(":end2_lonx", p2.getLonX());
+    bind(":end2_laty", p2.getLatY());
   }
 
   bind(":lonx", pos.getLonX());
@@ -85,8 +82,8 @@ void IlsWriter::writeObject(const Ils *type)
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_range", roundToPrecision(meterToNm(dme->getRange())));
-    bind(":dme_altitude", roundToPrecision(meterToFeet(dme->getPosition().getAltitude())));
+    bind(":dme_range", roundToPrecision(atools::geo::meterToNm(dme->getRange())));
+    bind(":dme_altitude", roundToPrecision(atools::geo::meterToFeet(dme->getPosition().getAltitude())));
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }
@@ -101,9 +98,9 @@ void IlsWriter::writeObject(const Ils *type)
   const Glideslope *gs = type->getGlideslope();
   if(gs != nullptr)
   {
-    bind(":gs_range", roundToPrecision(meterToNm(gs->getRange())));
+    bind(":gs_range", roundToPrecision(atools::geo::meterToNm(gs->getRange())));
     bind(":gs_pitch", gs->getPitch());
-    bind(":gs_altitude", roundToPrecision(meterToFeet(gs->getPosition().getAltitude())));
+    bind(":gs_altitude", roundToPrecision(atools::geo::meterToFeet(gs->getPosition().getAltitude())));
     bind(":gs_lonx", gs->getPosition().getLonX());
     bind(":gs_laty", gs->getPosition().getLatY());
   }

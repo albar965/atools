@@ -249,8 +249,9 @@ create table apron
   is_draw_detail integer not null,  -- Draw FS detail texture
   vertices text,                    -- Space and comma separated coordinate list of the apron
                                     -- boundary (lon1 lat1, lon2 lat2, ...)
-  vertices2 text,                   -- Apron triangle coordinates - only for 3D display
-  triangles text,                   -- Apron triangle coordinate references - only for 3D display
+  vertices2 text,                   -- Apron triangle vertices
+  triangles text,                   -- Apron triangle vertex references - space and comma separated
+                                    -- vertex index for vertices2 (i1 i2 i3, i2 i3 i4, ...)
 foreign key(airport_id) references airport(airport_id)
 );
 

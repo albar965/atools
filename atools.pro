@@ -30,7 +30,6 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/approachtypes.h \
     src/fs/bgl/ap/apron2.h \
     src/fs/bgl/ap/apron.h \
-    src/fs/bgl/ap/apronlight.h \
     src/fs/bgl/ap/com.h \
     src/fs/bgl/ap/del/deleteairport.h \
     src/fs/bgl/ap/del/deletecom.h \
@@ -164,7 +163,8 @@ HEADERS += src/atools.h \
     src/gui/application.h \
     src/util/version.h \
     src/fs/bgl/boundarysegment.h \
-    src/fs/bgl/nav/airwaysegment.h
+    src/fs/bgl/nav/airwaysegment.h \
+    src/fs/bgl/ap/apronedgelight.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -175,7 +175,6 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/approachtypes.cpp \
     src/fs/bgl/ap/apron2.cpp \
     src/fs/bgl/ap/apron.cpp \
-    src/fs/bgl/ap/apronlight.cpp \
     src/fs/bgl/ap/com.cpp \
     src/fs/bgl/ap/del/deleteairport.cpp \
     src/fs/bgl/ap/del/deletecom.cpp \
@@ -305,7 +304,8 @@ SOURCES += src/atools.cpp \
     src/gui/application.cpp \
     src/util/version.cpp \
     src/fs/bgl/boundarysegment.cpp \
-    src/fs/bgl/nav/airwaywaypoint.cpp
+    src/fs/bgl/nav/airwaywaypoint.cpp \
+    src/fs/bgl/ap/apronedgelight.cpp
 
 
 unix {

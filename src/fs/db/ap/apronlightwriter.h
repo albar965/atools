@@ -19,14 +19,14 @@
 #define ATOOLS_FS_DB_APRONLIGHTWRITER_H
 
 #include "fs/db/writerbase.h"
-#include "fs/bgl/ap/apronlight.h"
+#include "fs/bgl/ap/apronedgelight.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
 class ApronLightWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::ApronLight>
+  public atools::fs::db::WriterBase<atools::fs::bgl::ApronEdgeLight>
 {
 public:
   ApronLightWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
@@ -39,7 +39,7 @@ public:
   }
 
 protected:
-  virtual void writeObject(const atools::fs::bgl::ApronLight *type) override;
+  virtual void writeObject(const atools::fs::bgl::ApronEdgeLight *type) override;
 
 };
 

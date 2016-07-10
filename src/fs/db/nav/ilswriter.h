@@ -38,6 +38,8 @@ public:
   {
   }
 
+  static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
+
 protected:
   virtual void writeObject(const atools::fs::bgl::Ils *type) override;
 
