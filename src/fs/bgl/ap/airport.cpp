@@ -44,30 +44,32 @@ using atools::io::BinaryStream;
 Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  /*int numRunways =*/
+  /*int numRunways = TODO compare with number of subrecords */
   bs->readUByte();
-  /*int numComs =*/ bs->readUByte();
+  /*int numComs = TODO compare with number of subrecords*/ bs->readUByte();
   bs->readUByte(); // numStarts
-  /*int numApproaches =*/ bs->readUByte();
-  /*int numAprons =*/ bs->readUByte();
-  // int numDeleteRecords = (numAprons & 0x80) == 0x80;
-  bs->readUByte(); // numHelipads
+  /*int numApproaches = TODO compare with number of subrecords*/ bs->readUByte();
+  /*int numAprons = TODO compare with number of subrecords*/ bs->readUByte();
+  // int numDeleteRecords = (numAprons & 0x80) == 0x80; TODO compare with delete record presence
+  bs->readUByte(); // numHelipads TODO compare with number of subrecords
   position = BglPosition(bs, true, 1000.f);
   towerPosition = BglPosition(bs, true, 1000.f);
   magVar = converter::adjustMagvar(bs->readFloat());
   ident = converter::intToIcao(bs->readUInt());
 
+  // Check if the airport is filtered out in the configuration file
   if(!options->isIncludedAirportIdent(ident))
   {
+    // Stop reading
     seekToStart();
     excluded = true;
     return;
   }
 
   region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
-  fuelFlags = bs->readUInt();
+  fuelFlags = static_cast<ap::FuelFlags>(bs->readUInt());
 
-  bs->skip(4);
+  bs->skip(4); // unknown, traffic scalar, unknown
 
   QList<Jetway> jetways;
   QList<TaxiPoint> taxipoints;
@@ -92,6 +94,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
           Runway rw = Runway(options, bs, ident);
           if(!(options->isFilterRunways() &&
                rw.getLength() <= MIN_RUNWAY_LENGTH && rw.getSurface() == bgl::rw::GRASS))
+            // append if it not a dummy runway
             runways.append(rw);
         }
         break;
@@ -141,7 +144,7 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         }
         break;
       case rec::APRON_SECOND:
-        // if(options->includeBglObject(type::APRON2)) will omitted when writing
+        // if(options->includeBglObject(type::APRON2)) will be omitted when writing to the database
         r.seekToStart();
         aprons2.append(Apron2(options, bs));
         break;
@@ -233,10 +236,13 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
   // return;
   // }
 
+  // Add start, end points and names to taxi paths
   updateTaxiPaths(taxipoints, taxinames);
 
+  // Set the jetway flag on parking
   updateParking(jetways, parkingNumberIndex);
 
+  // Update all the number fields and the bounding rectange
   updateSummaryFields();
 
   // TODO create warnings for this
@@ -258,6 +264,7 @@ void Airport::updateSummaryFields()
 
   for(const Runway& rw : runways)
   {
+    // Count runway types
     if(rw.getEdgeLight() != rw::NO_LIGHT)
       numLightRunway++;
     if(rw.isHard())
@@ -267,10 +274,12 @@ void Airport::updateSummaryFields()
     if(rw.isSoft())
       numSoftRunway++;
 
+    // Extend bounding rectangle for runway dimensions
     boundingRect.extend(rw.getPosition().getPos());
     boundingRect.extend(rw.getSecondaryPosition());
     boundingRect.extend(rw.getPrimaryPosition());
 
+    // Remember the longest runway attributes
     if(rw.getLength() > longestRunwayLength)
     {
       longestRunwayLength = rw.getLength();
@@ -298,6 +307,7 @@ void Airport::updateSummaryFields()
       numRunwayEndClosed++;
   }
 
+  // If all runways are closed the airport is closed
   airportClosed = !runways.isEmpty() && numRunwayEndClosed / 2 == runways.size();
 
   for(const Com& c : coms)
@@ -372,6 +382,7 @@ void Airport::updateSummaryFields()
     boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
 
+  // Check if airport is military
   for(const QString& s : MIL_ENDS_WITH)
     if(name.endsWith(s))
     {

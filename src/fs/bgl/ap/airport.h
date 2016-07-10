@@ -79,6 +79,9 @@ enum FuelFlags
 
 } // namespace ap
 
+/*
+ *  Airport aggreating all subrecords like runway, apron, taxiways and more
+ */
 class Airport :
   public atools::fs::bgl::Record
 {
@@ -91,31 +94,46 @@ public:
     return approaches;
   }
 
+  /*
+   * @return all communication frequencies for this airport
+   */
   const QList<atools::fs::bgl::Com>& getComs() const
   {
     return coms;
   }
 
+  /*
+   * @return Delete airport record used to remove default/stock airports partially or full
+   */
   const QList<atools::fs::bgl::DeleteAirport>& getDeleteAirports() const
   {
     return deleteAirports;
   }
 
-  unsigned int getFuelFlags() const
+  atools::fs::bgl::ap::FuelFlags getFuelFlags() const
   {
     return fuelFlags;
   }
 
+  /*
+   * @return airport ICAO ident
+   */
   const QString& getIdent() const
   {
     return ident;
   }
 
+  /*
+   * @return Magnetic variance for airport. < 0 for West and > 0 for East
+   */
   float getMagVar() const
   {
     return magVar;
   }
 
+  /*
+   * Name of the airport. City, state and country can be taken from the name list record.
+   */
   const QString& getName() const
   {
     return name;
@@ -126,6 +144,9 @@ public:
     return position;
   }
 
+  /*
+   * @return Two letter ICAO region ident for the airport (currently always null)
+   */
   const QString& getRegion() const
   {
     return region;
@@ -141,11 +162,17 @@ public:
     return towerObj;
   }
 
+  /*
+   *  @return tower object position of tower viewpoint position
+   */
   const atools::fs::bgl::BglPosition& getTowerPosition() const
   {
     return towerPosition;
   }
 
+  /*
+   * @return waypoint subrecords that are attached to this airport
+   */
   const QList<atools::fs::bgl::Waypoint>& getWaypoints() const
   {
     return waypoints;
@@ -191,21 +218,33 @@ public:
     return taxipaths;
   }
 
+  /*
+   * @return true if all runway ends have a yellow X for closed runway
+   */
   bool isAirportClosed() const
   {
     return airportClosed;
   }
 
+  /*
+   * @return Bounding rectangle including taxiways, parking, tower position, runway extensions and more
+   */
   const atools::geo::Rect& getBoundingRect() const
   {
     return boundingRect;
   }
 
+  /*
+   * @return number of runway ends that approach light system
+   */
   int getNumRunwayEndApproachLight() const
   {
     return numRunwayEndApproachLight;
   }
 
+  /*
+   * @return number of runway ends that have an ILS
+   */
   int getNumRunwayEndIls() const
   {
     return numRunwayEndIls;
@@ -231,11 +270,17 @@ public:
     return numWaterRunway;
   }
 
+  /*
+   * @return number of runways that have at least edge lights
+   */
   int getNumLightRunway() const
   {
     return numLightRunway;
   }
 
+  /*
+   * @return number of runways that have approach indicators
+   */
   int getNumRunwayEndVasi() const
   {
     return numRunwayEndVasi;
@@ -251,27 +296,41 @@ public:
     return numBoundaryFence;
   }
 
+  /*
+   * @return number of parking that are type GA ramg
+   */
   int getNumParkingGaRamp() const
   {
     return numParkingGaRamp;
   }
 
+  /*
+   * @return number of parking that are of type gate
+   */
   int getNumParkingGate() const
   {
     return numParkingGate;
   }
 
+  /*
+   * @return Length of the longest runway in meter
+   */
   float getLongestRunwayLength() const
   {
     return longestRunwayLength;
   }
 
+  /*
+   * @return width of the longest runway in meter
+   */
   float getLongestRunwayWidth() const
   {
     return longestRunwayWidth;
   }
 
-  float getLongestRunwayHeading() const
+  /*
+   * @return heading of the longest runway in degree true
+   */float getLongestRunwayHeading() const
   {
     return longestRunwayHeading;
   }
@@ -291,6 +350,9 @@ public:
     return largestParkingGate;
   }
 
+  /*
+   * @return true if the airport is military. A military airport is recognized by name pattern
+   */
   bool isMilitary() const
   {
     return military;
@@ -311,26 +373,41 @@ public:
     return numParkingMilitaryCombat;
   }
 
+  /*
+   * @return tower COM frequency in MHz * 1000
+   */
   int getTowerFrequency() const
   {
     return towerFrequency;
   }
 
+  /*
+   * @return ATIS frequency in MHz * 1000
+   */
   int getAtisFrequency() const
   {
     return atisFrequency;
   }
 
+  /*
+   * @return AWOS frequency in MHz * 1000
+   */
   int getAwosFrequency() const
   {
     return awosFrequency;
   }
 
+  /*
+   * @return ASOS frequency in MHz * 1000
+   */
   int getAsosFrequency() const
   {
     return asosFrequency;
   }
 
+  /*
+   * @return UNICOM frequency in MHz * 1000
+   */
   int getUnicomFrequency() const
   {
     return unicomFrequency;
@@ -339,6 +416,13 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
+  void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
+  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways, const QHash<int, int>& parkingNumberIndex);
+  void updateSummaryFields();
+
+  /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
+  static const int MIN_RUNWAY_LENGTH = 10;
+
   bool deleteRecord;
   atools::fs::bgl::BglPosition position, towerPosition;
   atools::geo::Rect boundingRect;
@@ -346,7 +430,7 @@ private:
   QString ident;
   QString region;
 
-  unsigned int fuelFlags;
+  atools::fs::bgl::ap::FuelFlags fuelFlags;
   QString name;
   bool towerObj = false, airportClosed = false, military = false;
 
@@ -378,11 +462,6 @@ private:
   QList<atools::fs::bgl::Fence> fences;
   QList<atools::fs::bgl::TaxiPath> taxipaths;
 
-  void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
-  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways, const QHash<int, int>& parkingNumberIndex);
-  void updateSummaryFields();
-
-  static const int MIN_RUNWAY_LENGTH = 10;
 };
 
 } // namespace bgl
