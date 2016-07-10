@@ -54,6 +54,9 @@ enum VasiType
 
 } // namespace rw
 
+/*
+ * VASI is a subrecord of runway. There is one for each runway end and one for each side.
+ */
 class RunwayVasi :
   public atools::fs::bgl::Record
 {
@@ -62,6 +65,9 @@ public:
   RunwayVasi(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~RunwayVasi();
 
+  /*
+   * @return VASI pitch in degree
+   */
   float getPitch() const
   {
     return pitch;

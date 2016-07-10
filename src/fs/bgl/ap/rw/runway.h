@@ -35,6 +35,7 @@ namespace bgl {
 
 namespace rw {
 
+/* Runway pavement markings */
 enum RunwayMarkings
 {
   EDGES = 1 << 0,
@@ -58,6 +59,7 @@ enum RunwayMarkings
   NO_THRESHOLD_END_ARROWS = 1 << 23
 };
 
+/* Light intensity */
 enum Light
 {
   NO_LIGHT = 0,
@@ -66,10 +68,11 @@ enum Light
   HIGH = 3
 };
 
+/* Surface - also used for aprons and taxiways */
 enum Surface
 {
-  CONCRETE = 0x0000, // wiki error reported
-  GRASS = 0x0001, // wiki error reported
+  CONCRETE = 0x0000,
+  GRASS = 0x0001,
   WATER = 0x0002,
   ASPHALT = 0x0004,
   CEMENT = 0x0005, // TODO wiki error report
@@ -110,6 +113,9 @@ enum LightFlags
 
 } // namespace rw
 
+/*
+ * Runway. Has a primary and secondary end in a separate class and multiple subrecords like VASI, etc.
+ */
 class Runway :
   public atools::fs::bgl::Record
 {
@@ -118,6 +124,9 @@ public:
          const QString& airportIdent);
   virtual ~Runway();
 
+  /*
+   * @return Center light intensity/availability
+   */
   atools::fs::bgl::rw::Light getCenterLight() const
   {
     return centerLight;
@@ -127,56 +136,70 @@ public:
   bool isSoft() const;
   bool isHard() const;
 
+  /*
+   * @return true if it has red center lights at the end
+   */
   bool isCenterRed() const
   {
     return centerRed;
   }
 
+  /*
+   * @return Edge light intensity/availability
+   */
   atools::fs::bgl::rw::Light getEdgeLight() const
   {
     return edgeLight;
   }
 
+  /*
+   * @return Runway heading degrees true
+   */
   float getHeading() const
   {
     return heading;
   }
 
+  /*
+   * @return Runway length in meter
+   */
   float getLength() const
   {
     return length;
   }
 
-  unsigned int getLightFlags() const
-  {
-    return lightFlags;
-  }
-
-  unsigned int getMarkingFlags() const
+  atools::fs::bgl::rw::RunwayMarkings getMarkingFlags() const
   {
     return markingFlags;
   }
 
+  /*
+   * @return Pattern altitude in meter
+   */
   float getPatternAltitude() const
   {
     return patternAltitude;
   }
 
-  unsigned int getPatternFlags() const
-  {
-    return patternFlags;
-  }
-
+  /*
+   * @return Position of the runway center
+   */
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return position;
   }
 
+  /*
+   * @return primary runway end record
+   */
   const atools::fs::bgl::RunwayEnd& getPrimary() const
   {
     return primary;
   }
 
+  /*
+   * @return secondary runway end record
+   */
   const atools::fs::bgl::RunwayEnd& getSecondary() const
   {
     return secondary;
@@ -187,24 +210,33 @@ public:
     return surface;
   }
 
+  /*
+   * @return Runway width in meter
+   */
   float getWidth() const
   {
     return width;
   }
 
-  static QString runwayMarkingsToStr(atools::fs::bgl::rw::RunwayMarkings surface);
-  static QString lightToStr(atools::fs::bgl::rw::Light surface);
-  static QString surfaceToStr(atools::fs::bgl::rw::Surface value);
-
+  /*
+   * @return Position of the primary runway end
+   */
   const atools::geo::Pos& getPrimaryPosition() const
   {
     return primaryPos;
   }
 
+  /*
+   * @return Position of the secondary runway end
+   */
   const atools::geo::Pos& getSecondaryPosition() const
   {
     return secondaryPos;
   }
+
+  static QString runwayMarkingsToStr(atools::fs::bgl::rw::RunwayMarkings surface);
+  static QString lightToStr(atools::fs::bgl::rw::Light surface);
+  static QString surfaceToStr(atools::fs::bgl::rw::Surface value);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Runway& record);
@@ -218,7 +250,9 @@ private:
 
   float heading, length, width, patternAltitude;
 
-  unsigned int markingFlags, lightFlags, patternFlags;
+  atools::fs::bgl::rw::RunwayMarkings markingFlags;
+  atools::fs::bgl::rw::LightFlags lightFlags;
+  atools::fs::bgl::rw::PatternFlags patternFlags;
   atools::fs::bgl::rw::Light edgeLight, centerLight;
   bool centerRed;
 

@@ -55,24 +55,36 @@ enum ApproachLightSystem
 
 } // namespace rw
 
-class RunwayAppLights :
+/*
+ * Runway approach lights.
+ */
+class RunwayApproachLights :
   public Record
 {
 public:
-  RunwayAppLights();
-  RunwayAppLights(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
-  virtual ~RunwayAppLights();
+  RunwayApproachLights();
+  RunwayApproachLights(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  virtual ~RunwayApproachLights();
 
+  /*
+   * @return True if it has runway end lights (green from approach, red from runway)
+   */
   bool hasEndlights() const
   {
     return endlights;
   }
 
+  /*
+   * @return Number of strobes in approach lights
+   */
   int getNumStrobes() const
   {
     return numStrobes;
   }
 
+  /*
+   * @return true if it has runway end identifier lights
+   */
   bool hasReils() const
   {
     return reils;
@@ -83,11 +95,9 @@ public:
     return system;
   }
 
-  QString getSystemAsString() const
-  {
-    return appLightSystemToStr(system);
-  }
-
+  /*
+   * @return true if touchdown zone lighting is available
+   */
   bool hasTouchdown() const
   {
     return touchdown;
@@ -96,7 +106,7 @@ public:
   static QString appLightSystemToStr(atools::fs::bgl::rw::ApproachLightSystem type);
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayAppLights& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayApproachLights& record);
 
   atools::fs::bgl::rw::ApproachLightSystem system;
   bool endlights;

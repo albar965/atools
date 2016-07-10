@@ -64,7 +64,7 @@ public:
 
   /* This defines the database schema version and should be updated for every schema or content change */
   static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 2;
-  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 0;
+  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 1;
 
 private:
   atools::sql::SqlDatabase *db;

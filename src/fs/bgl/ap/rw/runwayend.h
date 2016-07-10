@@ -36,19 +36,29 @@ enum Pattern
 
 } // namespace rw
 
+/*
+ * A primary or secondary runway end. This class is filled in the Runway class
+ * and has no correspoinding BGL record.
+ */
 class RunwayEnd
 {
 public:
   RunwayEnd();
   virtual ~RunwayEnd();
 
+  /*
+   * @return Full runway end name like "12C" or "24"
+   */
   QString getName() const;
 
-  const RunwayAppLights& getApproachLights() const
+  const RunwayApproachLights& getApproachLights() const
   {
     return approachLights;
   }
 
+  /*
+   * @return Length of blast pad in meter. This is not a part of the runway length.
+   */
   int getBlastPad() const
   {
     return blastPad;
@@ -59,11 +69,18 @@ public:
     return leftVasi;
   }
 
+  /*
+   * @return Length of a displaced threshold meter. This is a part of the runway length and
+   * reduces effective landing distance.
+   */
   int getOffsetThreshold() const
   {
     return offsetThreshold;
   }
 
+  /*
+   * @return Length of overrun area in in meter. This is not a part of the runway length.
+   */
   int getOverrun() const
   {
     return overrun;
@@ -74,11 +91,17 @@ public:
     return rightVasi;
   }
 
+  /*
+   * @return true if runway end has a yellow X and is closed for landing and takeoff
+   */
   bool hasClosedMarkings() const
   {
     return closedMarkings;
   }
 
+  /*
+   * @return true if the runway end is used for landing (affects FS ATC and traffic)
+   */
   bool isLanding() const
   {
     return landing;
@@ -89,11 +112,17 @@ public:
     return pattern;
   }
 
+  /*
+   * @return true if the is a STOL marking on the runway end
+   */
   bool hasStolMarkings() const
   {
     return stolMarkings;
   }
 
+  /*
+   * @return true if the runway end is used for takeoff (affects FS ATC and traffic)
+   */
   bool isTakeoff() const
   {
     return takeoff;
@@ -112,7 +141,7 @@ private:
 
   atools::fs::bgl::RunwayVasi leftVasi, rightVasi;
 
-  atools::fs::bgl::RunwayAppLights approachLights;
+  atools::fs::bgl::RunwayApproachLights approachLights;
 
   bool closedMarkings, stolMarkings, takeoff, landing;
   atools::fs::bgl::rw::Pattern pattern;

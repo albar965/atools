@@ -27,6 +27,7 @@ namespace fs {
 namespace bgl {
 
 using atools::io::BinaryStream;
+using atools::geo::Pos;
 
 QString Runway::runwayMarkingsToStr(rw::RunwayMarkings flags)
 {
@@ -171,7 +172,7 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   primary.designator = bs->readUByte();
   secondary.number = bs->readUByte();
   secondary.designator = bs->readUByte();
-  bs->skip(8);
+  bs->skip(8); // Never set
   // primary.ilsIdent = converter::intToIcao(bs->readInt(), true);
   // secondary.ilsIdent = converter::intToIcao(bs->readInt(), true);
 
@@ -181,13 +182,15 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   width = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
-  using namespace atools::geo;
+  // Calculate runway end positions for drawing
   primaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
-  secondaryPos = position.getPos().endpoint(length / 2.f, opposedCourseDeg(heading)).normalize();
+  secondaryPos = position.getPos().endpoint(length / 2.f,
+                                            atools::geo::opposedCourseDeg(heading)).normalize();
 
   patternAltitude = bs->readFloat();
 
-  markingFlags = bs->readUShort();
+  // Read combined flags and set attributes for primary and secondary ends
+  markingFlags = static_cast<rw::RunwayMarkings>(bs->readUShort());
   if((markingFlags & rw::PRIMARY_CLOSED) == rw::PRIMARY_CLOSED)
     primary.closedMarkings = true;
   if((markingFlags & rw::SECONDARY_CLOSED) == rw::SECONDARY_CLOSED)
@@ -197,12 +200,12 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   if((markingFlags & rw::SECONDARY_STOL) == rw::SECONDARY_STOL)
     secondary.stolMarkings = true;
 
-  lightFlags = bs->readUByte();
+  lightFlags = static_cast<rw::LightFlags>(bs->readUByte());
   edgeLight = static_cast<rw::Light>(lightFlags & rw::EDGE_MASK);
   centerLight = static_cast<rw::Light>((lightFlags & rw::CENTER_MASK) >> 2);
   centerRed = (lightFlags & rw::CENTER_RED) == rw::CENTER_RED;
 
-  patternFlags = bs->readUByte();
+  patternFlags = static_cast<rw::PatternFlags>(bs->readUByte());
   if((patternFlags & rw::PRIMARY_TAKEOFF) == 0)
     primary.takeoff = true;
   if((patternFlags & rw::PRIMARY_LANDING) == 0)
@@ -211,6 +214,7 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
     primary.pattern = rw::RIGHT;
   else
     primary.pattern = rw::LEFT;
+
   if((patternFlags & rw::SECONDARY_TAKEOFF) == 0)
     secondary.takeoff = true;
   if((patternFlags & rw::SECONDARY_LANDING) == 0)
@@ -220,70 +224,72 @@ Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString&
   else
     secondary.pattern = rw::LEFT;
 
+  // Read all subrecords
   while(bs->tellg() < startOffset + size)
   {
-  Record r(options, bs);
-  rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
+    Record r(options, bs);
+    rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
 
-  switch(t)
-  {
-    case rec::OFFSET_THRESHOLD_PRIM:
-      primary.offsetThreshold = readRunwayExtLength();
-      break;
-    case rec::OFFSET_THRESHOLD_SEC:
-      secondary.offsetThreshold = readRunwayExtLength();
-      break;
-    case rec::BLAST_PAD_PRIM:
-      primary.blastPad = readRunwayExtLength();
-      break;
-    case rec::BLAST_PAD_SEC:
-      secondary.blastPad = readRunwayExtLength();
-      break;
-    case rec::OVERRUN_PRIM:
-      primary.overrun = readRunwayExtLength();
-      break;
-    case rec::OVERRUN_SEC:
-      secondary.overrun = readRunwayExtLength();
-      break;
-    case rec::VASI_PRIM_LEFT:
-      r.seekToStart();
-      primary.leftVasi = RunwayVasi(options, bs);
-      break;
-    case rec::VASI_PRIM_RIGHT:
-      r.seekToStart();
-      primary.rightVasi = RunwayVasi(options, bs);
-      break;
-    case rec::VASI_SEC_LEFT:
-      r.seekToStart();
-      secondary.leftVasi = RunwayVasi(options, bs);
-      break;
-    case rec::VASI_SEC_RIGHT:
-      r.seekToStart();
-      secondary.rightVasi = RunwayVasi(options, bs);
-      break;
-    case rec::APP_LIGHTS_PRIM:
-      r.seekToStart();
-      primary.approachLights = RunwayAppLights(options, bs);
-      break;
-    case rec::APP_LIGHTS_SEC:
-      r.seekToStart();
-      secondary.approachLights = RunwayAppLights(options, bs);
-      break;
-    default:
-      qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
-                                     << " for ident " << airportIdent
-                                     << " runway " << primary.getName() << "/" << secondary.getName();
-  }
-  r.seekToEnd();
+    switch(t)
+    {
+      case rec::OFFSET_THRESHOLD_PRIM:
+        primary.offsetThreshold = readRunwayExtLength();
+        break;
+      case rec::OFFSET_THRESHOLD_SEC:
+        secondary.offsetThreshold = readRunwayExtLength();
+        break;
+      case rec::BLAST_PAD_PRIM:
+        primary.blastPad = readRunwayExtLength();
+        break;
+      case rec::BLAST_PAD_SEC:
+        secondary.blastPad = readRunwayExtLength();
+        break;
+      case rec::OVERRUN_PRIM:
+        primary.overrun = readRunwayExtLength();
+        break;
+      case rec::OVERRUN_SEC:
+        secondary.overrun = readRunwayExtLength();
+        break;
+      case rec::VASI_PRIM_LEFT:
+        r.seekToStart();
+        primary.leftVasi = RunwayVasi(options, bs);
+        break;
+      case rec::VASI_PRIM_RIGHT:
+        r.seekToStart();
+        primary.rightVasi = RunwayVasi(options, bs);
+        break;
+      case rec::VASI_SEC_LEFT:
+        r.seekToStart();
+        secondary.leftVasi = RunwayVasi(options, bs);
+        break;
+      case rec::VASI_SEC_RIGHT:
+        r.seekToStart();
+        secondary.rightVasi = RunwayVasi(options, bs);
+        break;
+      case rec::APP_LIGHTS_PRIM:
+        r.seekToStart();
+        primary.approachLights = RunwayApproachLights(options, bs);
+        break;
+      case rec::APP_LIGHTS_SEC:
+        r.seekToStart();
+        secondary.approachLights = RunwayApproachLights(options, bs);
+        break;
+      default:
+        qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
+                                       << " for ident " << airportIdent
+                                       << " runway " << primary.getName() << "/" << secondary.getName();
+    }
+    r.seekToEnd();
   }
 }
 
+// Read runway length after record fields id and size
 int Runway::readRunwayExtLength()
 {
-  bs->readShort();
-  int l = static_cast<int>(bs->readFloat());
-  bs->readFloat();
-  return l;
+  bs->readShort(); // surface (same as runway)
+  int length = static_cast<int>(bs->readFloat());
+  bs->readFloat(); // width (same as runway)
+  return length;
 }
 
 QDebug operator<<(QDebug out, const Runway& record)

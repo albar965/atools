@@ -64,6 +64,7 @@ DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
   numFrequencies = bs->readUByte();
   bs->readUByte(); // unused
 
+  // Print warnings for unsupported deletion cases
   if(numRunways > 0)
     qWarning().nospace().noquote() << "Found DeleteAirport with " << numRunways << " numRunways";
   if(numStarts > 0)

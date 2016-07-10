@@ -31,12 +31,30 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Runway to delete. Currently not supported by class DeleteProcessor.
+ */
 class DeleteRunway :
   public atools::fs::bgl::BglBase
 {
 public:
   DeleteRunway(const BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteRunway();
+
+  atools::fs::bgl::rw::Surface getSurface() const
+  {
+    return surface;
+  }
+
+  QString getPrimaryName() const
+  {
+    return primaryName;
+  }
+
+  QString getSecondaryName() const
+  {
+    return secondaryName;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteRunway& record);

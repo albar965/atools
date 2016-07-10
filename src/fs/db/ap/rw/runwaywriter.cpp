@@ -65,8 +65,6 @@ void RunwayWriter::writeObject(const Runway *type)
   bind(":heading", type->getHeading());
   bind(":pattern_altitude", roundToPrecision(meterToFeet(type->getPatternAltitude()), 1));
   bind(":marking_flags", type->getMarkingFlags());
-  bind(":light_flags", type->getLightFlags());
-  bind(":pattern_flags", type->getPatternFlags());
   bind(":edge_light", bgl::util::enumToStr(Runway::lightToStr, type->getEdgeLight()));
   bind(":center_light",
        bgl::util::enumToStr(Runway::lightToStr, type->getCenterLight()));

@@ -24,7 +24,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-QString RunwayAppLights::appLightSystemToStr(rw::ApproachLightSystem type)
+QString RunwayApproachLights::appLightSystemToStr(rw::ApproachLightSystem type)
 {
   switch(type)
   {
@@ -86,12 +86,12 @@ enum AppLightFlags
 
 };
 
-RunwayAppLights::RunwayAppLights()
+RunwayApproachLights::RunwayApproachLights()
   : system(atools::fs::bgl::rw::NO_ALS), endlights(false), reils(false), touchdown(false), numStrobes(0)
 {
 }
 
-RunwayAppLights::RunwayAppLights(const BglReaderOptions *options, BinaryStream *bs)
+RunwayApproachLights::RunwayApproachLights(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   int flags = bs->readUByte();
@@ -103,12 +103,12 @@ RunwayAppLights::RunwayAppLights(const BglReaderOptions *options, BinaryStream *
   touchdown = (flags & TOUCHDOWN) == TOUCHDOWN;
 }
 
-QDebug operator<<(QDebug out, const RunwayAppLights& record)
+QDebug operator<<(QDebug out, const RunwayApproachLights& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " AppLights[system " << RunwayAppLights::appLightSystemToStr(record.system)
+  << " AppLights[system " << RunwayApproachLights::appLightSystemToStr(record.system)
   << ", hasEndlights " << record.endlights
   << ", hasReils " << record.reils
   << ", hasTouchdown " << record.touchdown
@@ -118,7 +118,7 @@ QDebug operator<<(QDebug out, const RunwayAppLights& record)
   return out;
 }
 
-RunwayAppLights::~RunwayAppLights()
+RunwayApproachLights::~RunwayApproachLights()
 {
 }
 

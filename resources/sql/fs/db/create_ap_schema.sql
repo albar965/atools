@@ -339,8 +339,6 @@ create table runway
   heading double not null,              -- Heading in degrees true
   pattern_altitude integer not null,    -- Feet
   marking_flags integer not null,       -- see enum atools::fs::bgl::rw::RunwayMarkings
-  light_flags integer not null,         -- see enum atools::fs::bgl::rw::LightFlags
-  pattern_flags integer not null,       -- see enum atools::fs::bgl::rw::PatterFlags
   edge_light varchar(15),               -- see enum atools::fs::bgl::rw::Light
   center_light varchar(15),             -- see enum atools::fs::bgl::rw::Light
   has_center_red integer not null,      -- Boolean

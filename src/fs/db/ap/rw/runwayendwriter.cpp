@@ -49,7 +49,7 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":is_landing", type->isLanding());
   bind(":is_pattern", bgl::RunwayEnd::patternToStr(type->getPattern()));
   bind(":app_light_system_type",
-       bgl::util::enumToStr(bgl::RunwayAppLights::appLightSystemToStr,
+       bgl::util::enumToStr(bgl::RunwayApproachLights::appLightSystemToStr,
                             type->getApproachLights().getSystem()));
   bind(":has_end_lights", type->getApproachLights().hasEndlights());
   bind(":has_reils", type->getApproachLights().hasReils());

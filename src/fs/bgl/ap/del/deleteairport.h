@@ -56,6 +56,11 @@ enum DeleteAllFlags
 
 } // namespace del
 
+/*
+ * Delete airport record. Used by add-on airports to remove parts or all of default airports.
+ * This class does not do any deletion it just reads the record. Deletion is done by the class
+ * DeleteProcessor which does not support all cases.
+ */
 class DeleteAirport :
   public atools::fs::bgl::Record
 {
@@ -63,21 +68,36 @@ public:
   DeleteAirport(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteAirport();
 
+  /*
+   * Not supported since it is apparently not used
+   * @return List of COM frequenies to delete
+   */
   const QList<atools::fs::bgl::DeleteCom>& getDeleteComs() const
   {
     return deleteComs;
   }
 
+  /*
+   * Not supported since it is apparently not used
+   * @return List of ruwnays to delete
+   */
   const QList<atools::fs::bgl::DeleteRunway>& getDeleteRunways() const
   {
     return deleteRunways;
   }
 
+  /*
+   * @return Flags determine what airport facilities to delete
+   */
   del::DeleteAllFlags getFlags() const
   {
     return flags;
   }
 
+  /*
+   * All delete flags are supported.
+   * @return List of start positions to delete
+   */
   const QList<atools::fs::bgl::DeleteStart>& getDeleteStarts() const
   {
     return deleteStarts;

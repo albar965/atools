@@ -30,6 +30,9 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * Start position to delete. Currently not supported by class DeleteProcessor.
+ */
 class DeleteStart :
   public atools::fs::bgl::BglBase
 {
@@ -38,6 +41,21 @@ public:
   virtual ~DeleteStart();
 
   QString getRunwayName() const;
+
+  atools::fs::bgl::start::StartType getType() const
+  {
+    return type;
+  }
+
+  int getRunwayNumber() const
+  {
+    return runwayNumber;
+  }
+
+  int getRunwayDesignator() const
+  {
+    return runwayDesignator;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteStart& record);

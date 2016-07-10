@@ -30,12 +30,28 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+/*
+ * COM frequency to delete. Currently not supported by class DeleteProcessor.
+ */
 class DeleteCom :
   public atools::fs::bgl::BglBase
 {
 public:
   DeleteCom(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteCom();
+
+  atools::fs::bgl::com::ComType getType() const
+  {
+    return type;
+  }
+
+  /*
+   * @return Frequency in MHz * 1000
+   */
+  int getFrequency() const
+  {
+    return frequency;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteCom& record);

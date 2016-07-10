@@ -83,7 +83,7 @@ RunwayVasi::RunwayVasi(const BglReaderOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<rw::VasiType>(bs->readShort());
-  bs->skip(12); // BiasX  BiasZ  Spacing
+  bs->skip(12); // TODO BiasX  BiasZ  Spacing
   pitch = bs->readFloat();
 }
 
