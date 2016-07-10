@@ -43,19 +43,23 @@ enum ApproachType
 
 QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
 
+namespace fix {
+
 enum ApproachFixType
 {
-  FIX_NONE = 0,
-  FIX_VOR = 2,
-  FIX_NDB = 3,
-  FIX_TERMINAL_NDB = 4,
-  FIX_WAYPOINT = 5,
-  FIX_TERMINAL_WAYPOINT = 6,
-  FIX_UNKNWON_VALUE_8 = 8,
-  FIX_RUNWAY = 9
+  NONE = 0,
+  VOR = 2,
+  NDB = 3,
+  TERMINAL_NDB = 4,
+  WAYPOINT = 5,
+  TERMINAL_WAYPOINT = 6,
+  UNKNWON_VALUE_8 = 8,
+  RUNWAY = 9
 };
 
-QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
+}
+
+QString approachFixTypeToStr(atools::fs::bgl::ap::fix::ApproachFixType type);
 
 } // namespace ap
 } // namespace bgl

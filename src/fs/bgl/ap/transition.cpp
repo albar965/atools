@@ -32,33 +32,33 @@ QString Transition::transitionTypeToStr(ap::TransitionType type)
 {
   switch(type)
   {
-    case ap::APPR_TRANS_FULL:
+    case ap::FULL:
       return "FULL";
 
-    case ap::APPR_TRANS_DME:
+    case ap::DME:
       return "DME";
   }
   qWarning().nospace().noquote() << "Unknown transition type " << type;
   return QString();
 }
 
-QString Transition::transitionFixTypeToStr(ap::TransitionFixType type)
+QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
 {
   switch(type)
   {
-    case ap::APPR_VOR:
+    case ap::tfix::VOR:
       return "VOR";
 
-    case ap::APPR_NDB:
+    case ap::tfix::NDB:
       return "NDB";
 
-    case ap::APPR_TERMINAL_NDB:
+    case ap::tfix::TERMINAL_NDB:
       return "TERMINAL_NDB";
 
-    case ap::APPR_WAYPOINT:
+    case ap::tfix::WAYPOINT:
       return "WAYPOINT";
 
-    case ap::APPR_TERMINAL_WAYPOINT:
+    case ap::tfix::TERMINAL_WAYPOINT:
       return "TERMINAL_WAYPOINT";
   }
   qWarning().nospace().noquote() << "Unknown transition fix type " << type;
@@ -74,7 +74,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
   Q_UNUSED(numLegs);
 
   unsigned int transFixFlags = bs->readUInt();
-  transFixType = static_cast<ap::TransitionFixType>(transFixFlags & 0xf);
+  transFixType = static_cast<ap::tfix::TransitionFixType>(transFixFlags & 0xf);
   transFixIdent = converter::intToIcao((transFixFlags >> 5) & 0xfffffff, true);
 
   unsigned int fixIdentFlags = bs->readUInt();
@@ -83,7 +83,7 @@ Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
 
   altitude = bs->readFloat();
 
-  if(type == ap::APPR_TRANS_DME)
+  if(type == ap::DME)
   {
     dmeIdent = converter::intToIcao(bs->readUInt());
     unsigned int tempFixIdentFlags = bs->readUInt();

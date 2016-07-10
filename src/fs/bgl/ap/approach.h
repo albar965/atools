@@ -51,7 +51,7 @@ public:
     return fixRegion;
   }
 
-  atools::fs::bgl::ap::ApproachFixType getFixType() const
+  atools::fs::bgl::ap::fix::ApproachFixType getFixType() const
   {
     return fixType;
   }
@@ -115,7 +115,7 @@ private:
 
   int numTransitions;
 
-  atools::fs::bgl::ap::ApproachFixType fixType;
+  atools::fs::bgl::ap::fix::ApproachFixType fixType;
   QString fixIdent, fixRegion, fixAirportIdent;
 
   float altitude, heading, missedAltitude;

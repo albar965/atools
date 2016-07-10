@@ -52,7 +52,7 @@ void TransitionWriter::writeObject(const Transition *type)
   bind(":fix_airport_ident", type->getFixAirportIdent());
   bind(":altitude", roundToPrecision(meterToFeet(type->getAltitude()), 1));
 
-  if(type->getType() == bgl::ap::APPR_TRANS_DME)
+  if(type->getType() == bgl::ap::DME)
   {
   bind(":dme_ident", type->getDmeIdent());
   bind(":dme_region", type->getDmeRegion());

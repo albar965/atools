@@ -35,18 +35,21 @@ namespace ap {
 
 enum TransitionType
 {
-  APPR_TRANS_FULL = 1,
-  APPR_TRANS_DME = 2
+  FULL = 1,
+  DME = 2
 };
 
+namespace tfix {
 enum TransitionFixType
 {
-  APPR_VOR = 2,
-  APPR_NDB = 3,
-  APPR_TERMINAL_NDB = 4,
-  APPR_WAYPOINT = 5,
-  APPR_TERMINAL_WAYPOINT = 6
+  VOR = 2,
+  NDB = 3,
+  TERMINAL_NDB = 4,
+  WAYPOINT = 5,
+  TERMINAL_WAYPOINT = 6
 };
+
+}
 
 } // namespace ap
 
@@ -102,7 +105,7 @@ public:
     return transFixIdent;
   }
 
-  atools::fs::bgl::ap::TransitionFixType getTransFixType() const
+  atools::fs::bgl::ap::tfix::TransitionFixType getTransFixType() const
   {
     return transFixType;
   }
@@ -118,13 +121,13 @@ public:
   }
 
   static QString transitionTypeToStr(atools::fs::bgl::ap::TransitionType type);
-  static QString transitionFixTypeToStr(atools::fs::bgl::ap::TransitionFixType type);
+  static QString transitionFixTypeToStr(atools::fs::bgl::ap::tfix::TransitionFixType type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Transition& record);
 
   atools::fs::bgl::ap::TransitionType type;
-  atools::fs::bgl::ap::TransitionFixType transFixType;
+  atools::fs::bgl::ap::tfix::TransitionFixType transFixType;
   QString transFixIdent, fixRegion, fixAirportIdent;
   float altitude;
   QString dmeIdent, dmeRegion, dmeAirportIdent;

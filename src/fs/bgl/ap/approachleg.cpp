@@ -39,7 +39,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
   flyover = flags & (1 << 10);
 
   unsigned int fixFlags = bs->readUInt();
-  fixType = static_cast<ap::ApproachFixType>(fixFlags & 0xf);
+  fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
   fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
 
   unsigned int fixIdentFlags = bs->readUInt();
@@ -47,7 +47,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
   fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
 
   unsigned int recFixFlags = bs->readUInt();
-  recommendedFixType = static_cast<ap::ApproachFixType>(recFixFlags & 0xf);
+  recommendedFixType = static_cast<ap::fix::ApproachFixType>(recFixFlags & 0xf);
   recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
   recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true); // TODO wiki mention mask
 

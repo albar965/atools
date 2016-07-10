@@ -107,6 +107,9 @@ public:
     return landing;
   }
 
+  /*
+   * @return Pattern direction. Affects only traffic
+   */
   atools::fs::bgl::rw::Pattern getPattern() const
   {
     return pattern;

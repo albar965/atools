@@ -101,12 +101,12 @@ public:
     return turnDirection;
   }
 
-  atools::fs::bgl::ap::ApproachFixType getFixType() const
+  atools::fs::bgl::ap::fix::ApproachFixType getFixType() const
   {
     return fixType;
   }
 
-  atools::fs::bgl::ap::ApproachFixType getRecommendedFixType() const
+  atools::fs::bgl::ap::fix::ApproachFixType getRecommendedFixType() const
   {
     return recommendedFixType;
   }
@@ -192,7 +192,7 @@ private:
   atools::fs::bgl::leg::Type type;
   atools::fs::bgl::leg::AltDescriptor altDescriptor;
   atools::fs::bgl::leg::TurnDirection turnDirection;
-  atools::fs::bgl::ap::ApproachFixType fixType, recommendedFixType;
+  atools::fs::bgl::ap::fix::ApproachFixType fixType, recommendedFixType;
 
   bool trueCourse, time, flyover, missed;
   QString fixIdent, fixRegion, fixAirportIdent, recommendedFixIdent, recommendedFixRegion;

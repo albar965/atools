@@ -52,26 +52,29 @@ namespace ap {
 
 enum FuelAvailability
 {
-  NO_FUEL = 0, UNKNOWN_FUEL = 1, PRIOR_REQUEST = 2, YES = 3
+  NO_FUEL = 0,
+  UNKNOWN_FUEL = 1,
+  PRIOR_REQUEST = 2,
+  YES = 3
 };
 
 enum FuelFlags
 {
-  OCTANE_73 = 0x00000003, // 0-1 :
-  OCTANE_87 = 0x0000000c, // Bits 2-3 :
-  OCTANE_100 = 0x00000030, // Bits 4-5 :
-  OCTANE_130 = 0x000000c0, // Bits 6-7 :
-  OCTANE_145 = 0x00000300, // Bits 8-9 :
-  MOGAS = 0x00000c00, // Bits 10-11 :
-  JET = 0x00003000, // Bits 12-13 :
-  JETA = 0x0000c000, // Bits 14-15 :
-  JETA1 = 0x00030000, // Bits 16-17 :
-  JETAP = 0x000c0000, // Bits 18-19 :
-  JETB = 0x00300000, // Bits 20-21 :
-  JET4 = 0x00c00000, // Bits 22-23 :
-  JET5 = 0x03000000, // Bits 24-22 : // wiki error reported
-  AVGAS = 0x40000000, // Bit 30 :
-  JET_FUEL = 0x80000000 // Bit 31 :
+  OCTANE_73 = 0x00000003, // 0-1
+  OCTANE_87 = 0x0000000c, // Bits 2-3
+  OCTANE_100 = 0x00000030, // Bits 4-5
+  OCTANE_130 = 0x000000c0, // Bits 6-7
+  OCTANE_145 = 0x00000300, // Bits 8-9
+  MOGAS = 0x00000c00, // Bits 10-11
+  JET = 0x00003000, // Bits 12-13
+  JETA = 0x0000c000, // Bits 14-15
+  JETA1 = 0x00030000, // Bits 16-17
+  JETAP = 0x000c0000, // Bits 18-19
+  JETB = 0x00300000, // Bits 20-21
+  JET4 = 0x00c00000, // Bits 22-23
+  JET5 = 0x03000000, // Bits 24-22
+  AVGAS = 0x40000000, // Bit 30
+  JET_FUEL = 0x80000000 // Bit 31
 };
 
 } // namespace ap

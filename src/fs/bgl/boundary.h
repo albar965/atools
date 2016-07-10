@@ -100,11 +100,17 @@ public:
     return type;
   }
 
+  /*
+   *  Bounding rect
+   */
   const atools::fs::bgl::BglPosition& getMinPosition() const
   {
     return minPosition;
   }
 
+  /*
+   *  Bounding rect
+   */
   const atools::fs::bgl::BglPosition& getMaxPosition() const
   {
     return maxPosition;

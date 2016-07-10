@@ -47,7 +47,7 @@ Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
   Q_UNUSED(numMissedLegs);
 
   unsigned int fixFlags = bs->readUInt();
-  fixType = static_cast<ap::ApproachFixType>(fixFlags & 0xf);
+  fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
   fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
 
   unsigned int fixIdentFlags = bs->readUInt();
