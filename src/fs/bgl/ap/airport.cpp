@@ -335,14 +335,14 @@ void Airport::updateSummaryFields()
     {
       numParkingGate++;
 
-      if(largestParkingGate == ap::UNKNOWN_PARKING || largestParkingGate < p.getType())
+      if(largestParkingGate == ap::UNKNOWN || largestParkingGate < p.getType())
         largestParkingGate = p.getType();
     }
 
     if(p.isGaRamp())
     {
       numParkingGaRamp++;
-      if(largestParkingGaRamp == ap::UNKNOWN_PARKING || largestParkingGaRamp < p.getType())
+      if(largestParkingGaRamp == ap::UNKNOWN || largestParkingGaRamp < p.getType())
         largestParkingGaRamp = p.getType();
     }
 
@@ -406,7 +406,7 @@ void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>&
   {
     QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingNumber());
     if(iter != parkingNumberIndex.end())
-      parkings[*iter].setHasJetway(true);
+      parkings[*iter].jetway = true;
     else
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;

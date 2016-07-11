@@ -56,15 +56,19 @@ enum EdgeType
 
 }
 
+/*
+ *  Taxiway path is a segment of the taxiway network and a subrecord of airport.
+ *  Includes runway and vehicle paths.
+ */
 class TaxiPath
 {
 public:
   TaxiPath(atools::io::BinaryStream *bs);
 
+  /*
+   * @return Taxiway name or full runway name if Type is RUNWAY
+   */
   QString getName() const;
-
-  static QString pathTypeToString(taxipath::Type type);
-  static QString edgeTypeToString(taxipath::EdgeType type);
 
   const atools::fs::bgl::TaxiPoint& getStartPoint() const
   {
@@ -76,11 +80,17 @@ public:
     return end;
   }
 
+  /*
+   * @return if true draw the underlying surface
+   */
   bool isDrawSurface() const
   {
     return drawSurface;
   }
 
+  /*
+   * @return if true draw the detail texture surface
+   */
   bool isDrawDetail() const
   {
     return drawDetail;
@@ -116,15 +126,16 @@ public:
     return type;
   }
 
+  /*
+   * @return width in meter
+   */
   float getWidth() const
   {
     return width;
   }
 
-  int getWeightLimit() const
-  {
-    return weightLimit;
-  }
+  static QString pathTypeToString(taxipath::Type type);
+  static QString edgeTypeToString(taxipath::EdgeType type);
 
 private:
   friend class Airport;
@@ -144,7 +155,6 @@ private:
 
   atools::fs::bgl::rw::Surface surface;
   float width;
-  int weightLimit;
 
   atools::fs::bgl::TaxiPoint start, end;
 

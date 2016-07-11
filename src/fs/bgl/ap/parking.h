@@ -33,11 +33,13 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+class Airport;
+
 namespace ap {
 
 enum ParkingType
 {
-  UNKNOWN_PARKING = 0x0,
+  UNKNOWN = 0x0,
   RAMP_GA = 0x1,
   RAMP_GA_SMALL = 0x2,
   RAMP_GA_MEDIUM = 0x3,
@@ -49,8 +51,8 @@ enum ParkingType
   GATE_MEDIUM = 0x9,
   GATE_HEAVY = 0xa,
   DOCK_GA = 0xb,
-  FUEL = 0xc, // wiki error reported
-  VEHICLES = 0xd // wiki error reported
+  FUEL = 0xc,
+  VEHICLES = 0xd
 };
 
 enum PushBack
@@ -105,27 +107,55 @@ enum ParkingName
 
 } // namespace ap
 
+/*
+ * Parking spot. Subrecord of airport. Includes fuel and vehicle parking.s
+ */
 class Parking
 {
 public:
+  Parking();
   Parking(atools::io::BinaryStream *bs);
   virtual ~Parking();
 
+  /*
+   * @return true if parking is a gate
+   */
   bool isGate() const;
-  bool isGaRamp() const;
-  bool isCargo() const;
-  bool isMil() const;
 
+  /*
+   * @return true if parking is a general aviation ramp
+   */
+  bool isGaRamp() const;
+
+  /*
+   * @return true if parking is a cargo or military cargo ramp
+   */
+  bool isCargo() const;
+
+  /*
+   * @return true if parking is military cargo or military combat
+   */
+  bool isMilitary() const;
+
+  /*
+   * @return heading in degree true
+   */
   float getHeading() const
   {
     return heading;
   }
 
+  /*
+   * @return parking number unique across the airport
+   */
   int getNumber() const
   {
     return number;
   }
 
+  /*
+   * @return parking radius in meter
+   */
   float getRadius() const
   {
     return radius;
@@ -146,32 +176,38 @@ public:
     return name;
   }
 
+  /*
+   * @return push back direction if available
+   */
   atools::fs::bgl::ap::PushBack getPushBack() const
   {
     return pushBack;
+  }
+
+  /*
+   * @return true if jetway is available
+   */
+  bool hasJetway() const
+  {
+    return jetway;
+  }
+
+  /*
+   * @return list of airline codes for this parking
+   */
+  const QStringList& getAirlineCodes() const
+  {
+    return airlineCodes;
   }
 
   static QString parkingTypeToStr(atools::fs::bgl::ap::ParkingType type);
   static QString parkingNameToStr(atools::fs::bgl::ap::ParkingName type);
   static QString pushBackToStr(atools::fs::bgl::ap::PushBack type);
 
-  bool hasJetway() const
-  {
-    return jetway;
-  }
-
-  void setHasJetway(bool value)
-  {
-    jetway = value;
-  }
-
-  const QStringList& getAirlineCodes() const
-  {
-    return airlineCodes;
-  }
-
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Parking& record);
+
+  friend class atools::fs::bgl::Airport;
 
   atools::fs::bgl::ap::ParkingType type;
   atools::fs::bgl::ap::ParkingName name;

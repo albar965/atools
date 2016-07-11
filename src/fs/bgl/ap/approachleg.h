@@ -79,7 +79,7 @@ enum TurnDirection
 }
 
 /*
- * Approach leg. Not an actual record since it does not contain a header or size.
+ * Approach or transition leg. Not an actual record since it does not contain a header or size.
  */
 class ApproachLeg
 {

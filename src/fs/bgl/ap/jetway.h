@@ -34,7 +34,7 @@ namespace fs {
 namespace bgl {
 
 /*
- * Jetway for parking. Subrecord for airport used only internally.
+ * Jetway for parking. Subrecord for airport that is used only internally.
  */
 class Jetway :
   public atools::fs::bgl::Record

@@ -294,7 +294,8 @@ create index if not exists idx_fence_airport_id on fence(airport_id);
 
 drop table if exists taxi_path;
 
--- A taxiway segment. Note that segments of the same name are not aggregated.
+-- A taxiway segment. Note that segments of the same name are not aggregated. Includes runway
+-- and vehicle paths
 create table taxi_path
 (
   taxi_path_id integer primary key,
@@ -302,7 +303,6 @@ create table taxi_path
   type varchar(15),              -- see enum atools::fs::bgl::taxipath::Type
   surface varchar(15),           -- see enum atools::fs::bgl::rw::Surface
   width double not null,         -- Feet
-  weight_limit integer,          -- Seems to be unused
   name varchar(20),              -- Taxiway name like A, B, EAST, etc.
   is_draw_surface integer not null,    -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,     -- Draw FS detail texture

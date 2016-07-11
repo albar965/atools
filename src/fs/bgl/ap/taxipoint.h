@@ -19,6 +19,7 @@
 #define ATOOLS_BGL_AIRPORTTAXIPOINT_H
 
 #include "fs/bgl/bglposition.h"
+#include "fs/bgl/ap/parking.h"
 
 #include <QString>
 
@@ -32,8 +33,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-class Parking;
-
 namespace taxipoint {
 enum PointType
 {
@@ -43,9 +42,10 @@ enum PointType
   ILS_HOLD_SHORT = 4,
   HOLD_SHORT_NO_DRAW = 5, // TODO wiki add
   ILS_HOLD_SHORT_NO_DRAW = 6, // TODO wiki add
-  PARKING // not a BGL type
+  PARKING /* not a BGL type */
 };
 
+/* Orientation of a hold short point */
 enum PointDir
 {
   UNKNOWN_DIR = 0,
@@ -55,11 +55,14 @@ enum PointDir
 
 }
 
+/*
+ * Start or end point of a taxiway segment.
+ */
 class TaxiPoint
 {
 public:
-  TaxiPoint(atools::io::BinaryStream *bs);
   TaxiPoint();
+  TaxiPoint(atools::io::BinaryStream *bs);
   TaxiPoint(const atools::fs::bgl::Parking& parking);
 
   atools::fs::bgl::taxipoint::PointType getType() const
@@ -67,7 +70,10 @@ public:
     return type;
   }
 
-  atools::fs::bgl::taxipoint::PointDir getDir() const
+  /*
+   * @return get orientation of a hold short point (only valid for hold short point types)
+   */
+  atools::fs::bgl::taxipoint::PointDir getOrientation() const
   {
     return dir;
   }
@@ -75,6 +81,14 @@ public:
   const atools::fs::bgl::BglPosition& getPosition() const
   {
     return pos;
+  }
+
+  /*
+   * @return get parking record class. Only valid if type is PARKING.
+   */
+  const atools::fs::bgl::Parking& getParking() const
+  {
+    return parking;
   }
 
   static QString pointTypeToString(atools::fs::bgl::taxipoint::PointType type);
@@ -86,6 +100,7 @@ private:
   atools::fs::bgl::taxipoint::PointType type;
   atools::fs::bgl::taxipoint::PointDir dir;
   atools::fs::bgl::BglPosition pos;
+  atools::fs::bgl::Parking parking;
 };
 
 QDebug operator<<(QDebug out, const atools::fs::bgl::TaxiPoint& record);

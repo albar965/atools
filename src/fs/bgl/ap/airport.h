@@ -445,8 +445,8 @@ private:
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 
   atools::fs::bgl::rw::Surface longestRunwaySurface = atools::fs::bgl::rw::UNKNOWN;
-  atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN_PARKING,
-                                   largestParkingGate = atools::fs::bgl::ap::UNKNOWN_PARKING;
+  atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN,
+                                   largestParkingGate = atools::fs::bgl::ap::UNKNOWN;
 
   QList<atools::fs::bgl::Runway> runways;
   QList<atools::fs::bgl::Parking> parkings;

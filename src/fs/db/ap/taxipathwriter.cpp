@@ -48,12 +48,6 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
   bind(":type", TaxiPath::pathTypeToString(type->getType()));
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":width", roundToPrecision(meterToFeet(type->getWidth())));
-
-  if(type->getWeightLimit() == 0)
-    bindNullInt(":weight_limit");
-  else
-    bind(":weight_limit", type->getWeightLimit());
-
   bind(":name", type->getName());
 
   bindBool(":is_draw_surface", type->isDrawSurface());
@@ -65,12 +59,12 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
   bindBool(":has_right_edge_light", type->hasRightEdgeLight());
 
   bind(":start_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getStartPoint().getType()));
-  bind(":start_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getDir()));
+  bind(":start_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getStartPoint().getOrientation()));
   bind(":start_lonx", type->getStartPoint().getPosition().getLonX());
   bind(":start_laty", type->getStartPoint().getPosition().getLatY());
 
   bind(":end_type", bgl::util::enumToStr(TaxiPoint::pointTypeToString, type->getEndPoint().getType()));
-  bind(":end_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getEndPoint().getDir()));
+  bind(":end_dir", bgl::util::enumToStr(TaxiPoint::dirToString, type->getEndPoint().getOrientation()));
   bind(":end_lonx", type->getEndPoint().getPosition().getLonX());
   bind(":end_laty", type->getEndPoint().getPosition().getLatY());
 

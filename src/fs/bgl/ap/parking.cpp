@@ -28,7 +28,7 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
 {
   switch(type)
   {
-    case ap::UNKNOWN_PARKING:
+    case ap::UNKNOWN:
       return "UNKNOWN";
 
     case ap::RAMP_GA:
@@ -216,6 +216,11 @@ QString Parking::pushBackToStr(ap::PushBack type)
   return QString();
 }
 
+Parking::Parking()
+{
+
+}
+
 Parking::Parking(BinaryStream *bs)
 {
   unsigned int flags = bs->readUInt();
@@ -263,7 +268,6 @@ bool Parking::isGaRamp() const
     return true;
 
   return false;
-
 }
 
 bool Parking::isCargo() const
@@ -274,10 +278,9 @@ bool Parking::isCargo() const
     return true;
 
   return false;
-
 }
 
-bool Parking::isMil() const
+bool Parking::isMilitary() const
 {
   if(type == ap::RAMP_MIL_CARGO)
     return true;

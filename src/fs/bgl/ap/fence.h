@@ -37,7 +37,7 @@ enum Type
 }
 
 /*
- * Blast or boundary fence subrecord or airport.
+ * Blast or boundary fence subrecord of airport.
  */
 class Fence :
   public atools::fs::bgl::Record

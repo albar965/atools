@@ -39,11 +39,13 @@ TaxiPoint::TaxiPoint()
   dir = taxipoint::UNKNOWN_DIR;
 }
 
-TaxiPoint::TaxiPoint(const Parking& parking)
+TaxiPoint::TaxiPoint(const Parking& parkingSpot)
 {
+  // Create a taxi point from a parking spot. This does not have a BGL equivalent.
   type = taxipoint::PARKING;
   dir = taxipoint::UNKNOWN_DIR;
-  pos = parking.getPosition();
+  pos = parkingSpot.getPosition();
+  parking = parkingSpot;
 }
 
 QString TaxiPoint::pointTypeToString(taxipoint::PointType type)

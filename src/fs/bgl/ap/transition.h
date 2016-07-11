@@ -53,6 +53,9 @@ enum TransitionFixType
 
 } // namespace ap
 
+/*
+ * Transtition to an approach. Subrecord of approach.
+ */
 class Transition :
   public atools::fs::bgl::Record
 {
@@ -60,51 +63,81 @@ public:
   Transition(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Transition();
 
+  /*
+   * @return airport ICAO ident of initial approach fix
+   */
   const QString& getFixAirportIdent() const
   {
     return fixAirportIdent;
   }
 
+  /*
+   * @return Altitude of the first leg of the transition in meters.
+   */
   float getAltitude() const
   {
     return altitude;
   }
 
+  /*
+   * @return DME airport ICAO ident if transition is of type DME
+   */
   const QString& getDmeAirportIdent() const
   {
     return dmeAirportIdent;
   }
 
-  float getDmeDist() const
+  /*
+   * @return DME distance in meter if transition is of type DME
+   */
+  float getDmeDistance() const
   {
     return dmeDist;
   }
 
+  /*
+   * @return DME ICAO ident if transition is of type DME
+   */
   const QString& getDmeIdent() const
   {
     return dmeIdent;
   }
 
+  /*
+   * @return DME radial in degrees if transition is of type DME
+   */
   int getDmeRadial() const
   {
     return dmeRadial;
   }
 
+  /*
+   * @return two letter DME ICAO region code if transition is of type DME
+   */
   const QString& getDmeRegion() const
   {
     return dmeRegion;
   }
 
+  /*
+   * @return initial approach fix two letter ICAO region
+   */
   const QString& getFixRegion() const
   {
     return fixRegion;
   }
 
+  /*
+   * @return initial approach fix ICAO ident
+   */
   const QString& getTransFixIdent() const
   {
     return transFixIdent;
   }
 
+  /*
+   * @return type of the initial approach fix
+   */
   atools::fs::bgl::ap::tfix::TransitionFixType getTransFixType() const
   {
     return transFixType;
@@ -115,6 +148,9 @@ public:
     return type;
   }
 
+  /*
+   * @return Get all transition legs
+   */
   const QList<atools::fs::bgl::ApproachLeg>& getLegs() const
   {
     return legs;

@@ -43,14 +43,19 @@ enum StartType
 
 } // namespace start
 
+/*
+ * Runway start position. Subrecord of airport.
+ */
 class Start :
   public atools::fs::bgl::Record
 {
 public:
-  Start();
   Start(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
   virtual ~Start();
 
+  /*
+   * @return full runway name like "12C" or 06R"
+   */
   QString getRunwayName() const;
 
   const atools::fs::bgl::BglPosition& getPosition() const
@@ -58,6 +63,9 @@ public:
     return position;
   }
 
+  /*
+   * @return heading in degrees true
+   */
   float getHeading() const
   {
     return heading;
