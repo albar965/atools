@@ -22,7 +22,7 @@
 #include "fs/bgl/util.h"
 #include "fs/db/datawriter.h"
 #include "sql/sqlquery.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/db/runwayindex.h"
 #include "geo/calculations.h"
 #include "atools.h"

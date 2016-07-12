@@ -25,7 +25,7 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Subsection::Subsection(const atools::fs::BglReaderOptions *options,
+Subsection::Subsection(const atools::fs::NavDatabaseOptions *options,
                        BinaryStream *bs,
                        const Section& parentSect)
   : BglBase(options, bs), parent(&parentSect)

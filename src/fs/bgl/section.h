@@ -41,7 +41,7 @@ public:
   /*
    * Read the section (not including the subsections)
    */
-  Section(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Section(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Section();
 
   /*

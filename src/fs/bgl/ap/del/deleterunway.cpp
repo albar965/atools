@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteRunway::DeleteRunway(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+DeleteRunway::DeleteRunway(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs), surface(rw::UNKNOWN)
 {
   surface = static_cast<rw::Surface>(bs->readUByte());

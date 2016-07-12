@@ -55,7 +55,7 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
   return retval;
 }
 
-DeleteAirport::DeleteAirport(const BglReaderOptions *options, BinaryStream *bs)
+DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   flags = static_cast<del::DeleteAllFlags>(bs->readShort());

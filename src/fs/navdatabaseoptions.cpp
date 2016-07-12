@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "logging/loggingdefs.h"
 #include "scenery/sceneryarea.h"
 
@@ -28,120 +28,120 @@
 namespace atools {
 namespace fs {
 
-BglReaderOptions::BglReaderOptions()
+NavDatabaseOptions::NavDatabaseOptions()
 {
 }
 
-void BglReaderOptions::setProgressCallback(ProgressCallbackType func)
+void NavDatabaseOptions::setProgressCallback(ProgressCallbackType func)
 {
   progressCallback = func;
 }
 
-BglReaderOptions::ProgressCallbackType BglReaderOptions::getProgressCallback() const
+NavDatabaseOptions::ProgressCallbackType NavDatabaseOptions::getProgressCallback() const
 {
   return progressCallback;
 }
 
-void BglReaderOptions::addToDirectoryExcludes(const QStringList& filter)
+void NavDatabaseOptions::addToDirectoryExcludes(const QStringList& filter)
 {
   addToFilter(createFilterList(filter), dirExcludes);
 }
 
-void BglReaderOptions::addToAddonDirectoryExcludes(const QStringList& filter)
+void NavDatabaseOptions::addToAddonDirectoryExcludes(const QStringList& filter)
 {
   addToFilter(createFilterList(filter), addonDirExcludes);
 }
 
-bool BglReaderOptions::isIncludedLocalPath(const QString& filepath) const
+bool NavDatabaseOptions::isIncludedLocalPath(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), pathFiltersInc, pathFiltersExcl);
 }
 
-bool BglReaderOptions::isAddonLocalPath(const QString& filepath) const
+bool NavDatabaseOptions::isAddonLocalPath(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
-bool BglReaderOptions::isIncludedDirectory(const QString& filepath) const
+bool NavDatabaseOptions::isIncludedDirectory(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), QList<QRegExp>(), dirExcludes);
 }
 
-bool BglReaderOptions::isAddonDirectory(const QString& filepath) const
+bool NavDatabaseOptions::isAddonDirectory(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), QList<QRegExp>(), addonDirExcludes);
 }
 
-bool BglReaderOptions::isIncludedFilename(const QString& filename) const
+bool NavDatabaseOptions::isIncludedFilename(const QString& filename) const
 {
   QString fn = QFileInfo(filename).fileName();
   return includeObject(fn, fileFiltersInc, fileFiltersExcl);
 }
 
-bool BglReaderOptions::isIncludedAirportIdent(const QString& icao) const
+bool NavDatabaseOptions::isIncludedAirportIdent(const QString& icao) const
 {
   return includeObject(icao, airportIcaoFiltersInc, airportIcaoFiltersExcl);
 }
 
-void BglReaderOptions::addToFilenameFilterInclude(const QStringList& filter)
+void NavDatabaseOptions::addToFilenameFilterInclude(const QStringList& filter)
 {
   addToFilter(filter, fileFiltersInc);
 }
 
-void BglReaderOptions::addToAirportIcaoFilterInclude(const QStringList& filter)
+void NavDatabaseOptions::addToAirportIcaoFilterInclude(const QStringList& filter)
 {
   addToFilter(filter, airportIcaoFiltersInc);
 }
 
-void BglReaderOptions::addToPathFilterInclude(const QStringList& filter)
+void NavDatabaseOptions::addToPathFilterInclude(const QStringList& filter)
 {
   addToFilter(fromNativeSeparators(filter), pathFiltersInc);
 }
 
-void BglReaderOptions::addToAddonFilterInclude(const QStringList& filter)
+void NavDatabaseOptions::addToAddonFilterInclude(const QStringList& filter)
 {
   addToFilter(fromNativeSeparators(filter), addonFiltersInc);
 }
 
-void BglReaderOptions::addToFilenameFilterExclude(const QStringList& filter)
+void NavDatabaseOptions::addToFilenameFilterExclude(const QStringList& filter)
 {
   addToFilter(filter, fileFiltersExcl);
 }
 
-void BglReaderOptions::addToAirportIcaoFilterExclude(const QStringList& filter)
+void NavDatabaseOptions::addToAirportIcaoFilterExclude(const QStringList& filter)
 {
   addToFilter(filter, airportIcaoFiltersExcl);
 }
 
-void BglReaderOptions::addToPathFilterExclude(const QStringList& filter)
+void NavDatabaseOptions::addToPathFilterExclude(const QStringList& filter)
 {
   addToFilter(fromNativeSeparators(filter), pathFiltersExcl);
 }
 
-void BglReaderOptions::addToAddonFilterExclude(const QStringList& filter)
+void NavDatabaseOptions::addToAddonFilterExclude(const QStringList& filter)
 {
   addToFilter(fromNativeSeparators(filter), addonFiltersExcl);
 }
 
-void BglReaderOptions::addToBglObjectFilterInclude(const QStringList& filters)
+void NavDatabaseOptions::addToBglObjectFilterInclude(const QStringList& filters)
 {
   addToBglObjectFilter(filters, bglObjectTypeFiltersInc);
 }
 
-void BglReaderOptions::addToBglObjectFilterExclude(const QStringList& filters)
+void NavDatabaseOptions::addToBglObjectFilterExclude(const QStringList& filters)
 {
   addToBglObjectFilter(filters, bglObjectTypeFiltersExcl);
 }
 
-void BglReaderOptions::addToBglObjectFilter(const QStringList& filters,
-                                            QSet<atools::fs::type::BglObjectType>& filterList)
+void NavDatabaseOptions::addToBglObjectFilter(const QStringList& filters,
+                                              QSet<atools::fs::type::BglObjectType>& filterList)
 {
   for(const QString& f : filters)
     if(!f.isEmpty())
       filterList.insert(type::stringToBglObjectType(f));
 }
 
-bool BglReaderOptions::isIncludedBglObject(type::BglObjectType type) const
+bool NavDatabaseOptions::isIncludedBglObject(type::BglObjectType type) const
 {
   if(bglObjectTypeFiltersInc.isEmpty() && bglObjectTypeFiltersExcl.isEmpty())
     return true;
@@ -161,7 +161,7 @@ bool BglReaderOptions::isIncludedBglObject(type::BglObjectType type) const
   }
 }
 
-QStringList BglReaderOptions::createFilterList(const QStringList& pathList)
+QStringList NavDatabaseOptions::createFilterList(const QStringList& pathList)
 {
   QStringList retval;
 
@@ -177,15 +177,15 @@ QStringList BglReaderOptions::createFilterList(const QStringList& pathList)
   return retval;
 }
 
-void BglReaderOptions::loadFromSettings(const QSettings& settings)
+void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
 {
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveAirways(settings.value("Options/ResolveAirways", true).toBool());
   setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
-  setFilterRunways(settings.value("Options/FilterRunways", true).toBool());
-  setIncomplete(settings.value("Options/SaveIncomplete", true).toBool());
+  setFilterOutDummyRunways(settings.value("Options/FilterRunways", true).toBool());
+  setWriteIncompleteObjects(settings.value("Options/SaveIncomplete", true).toBool());
   setAutocommit(settings.value("Options/Autocommit", false).toBool());
 
   addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
@@ -200,44 +200,46 @@ void BglReaderOptions::loadFromSettings(const QSettings& settings)
   addToBglObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 }
 
-bool BglReaderOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,
-                                     const QList<QRegExp>& filterListExcl) const
+bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,
+                                       const QList<QRegExp>& filterListExcl) const
 {
   if(filterListInc.isEmpty() && filterListExcl.isEmpty())
     return true;
 
-  bool exFound = false;
+  bool excludeMatched = false;
   for(const QRegExp& iter : filterListExcl)
   {
     if(iter.exactMatch(string))
     {
-      exFound = true;
+      excludeMatched = true;
       break;
     }
   }
 
   if(filterListInc.isEmpty())
-    return !exFound;
+    // No include filters - let exclude filter decide
+    return !excludeMatched;
   else
   {
-    bool incFound = false;
+    bool includeMatched = false;
     for(const QRegExp& iter : filterListInc)
     {
       if(iter.exactMatch(string))
       {
-        incFound = true;
+        includeMatched = true;
         break;
       }
     }
 
     if(filterListExcl.isEmpty())
-      return incFound;
+      // No exclude filters - let include filter decide
+      return includeMatched;
     else
-      return incFound && !exFound;
+      return includeMatched && !excludeMatched;
   }
 }
 
-void BglReaderOptions::addToFilter(const QStringList& filters, QList<QRegExp>& filterList)
+void NavDatabaseOptions::addToFilter(const QStringList& filters, QList<QRegExp>& filterList)
 {
   for(QString f : filters)
   {
@@ -247,8 +249,9 @@ void BglReaderOptions::addToFilter(const QStringList& filters, QList<QRegExp>& f
   }
 }
 
-QString BglReaderOptions::adaptPath(const QString& filepath) const
+QString NavDatabaseOptions::adaptPath(const QString& filepath) const
 {
+  // make sure that backslashes are replaced and path is suffixed with a slash
   QString newFilename = fromNativeSeparator(filepath);
   if(!filepath.endsWith("/"))
     newFilename.append("/");
@@ -256,12 +259,13 @@ QString BglReaderOptions::adaptPath(const QString& filepath) const
   return newFilename;
 }
 
-QString BglReaderOptions::fromNativeSeparator(const QString& path) const
+QString NavDatabaseOptions::fromNativeSeparator(const QString& path) const
 {
+  // make sure that backslashes are replaced
   return QString(path).replace("\\", "/");
 }
 
-QStringList BglReaderOptions::fromNativeSeparators(const QStringList& paths) const
+QStringList NavDatabaseOptions::fromNativeSeparators(const QStringList& paths) const
 {
   QStringList retval;
   for(const QString& p : paths)
@@ -269,7 +273,7 @@ QStringList BglReaderOptions::fromNativeSeparators(const QStringList& paths) con
   return retval;
 }
 
-QDebug operator<<(QDebug out, const BglReaderOptions& opts)
+QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 {
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Options[verbose " << opts.verbose
@@ -391,6 +395,12 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case TAXIWAY:
       return "TAXIWAY";
 
+    case TAXIWAY_RUNWAY:
+      return "TAXIWAY_RUNWAY";
+
+    case TAXIWAY_VEHICLE:
+      return "TAXIWAY_VEHICLE";
+
     case GEOMETRY:
       return "GEOMETRY";
 
@@ -440,6 +450,10 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return FENCE;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
+  else if(typeStr == "TAXIWAY_VEHICLE")
+    return TAXIWAY_VEHICLE;
+  else if(typeStr == "TAXIWAY_RUNWAY")
+    return TAXIWAY_RUNWAY;
   else if(typeStr == "AIRWAY")
     return AIRWAY;
   else if(typeStr == "GEOMETRY")

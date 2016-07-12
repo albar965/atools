@@ -152,6 +152,7 @@ int SimConnectData::write(QIODevice *ioDevice)
 
 void SimConnectData::writeString(QDataStream& out, const QString& str) const
 {
+  // Write string as an size prefixed character array
   QByteArray strBytes;
   strBytes.append(str);
   out << static_cast<quint16>(strBytes.size());
@@ -176,26 +177,6 @@ bool SimConnectData::readString(QDataStream& in, QString& str, quint16 *size)
 
   in >> str;
   return true;
-}
-
-const QDateTime& SimConnectData::getZuluTime() const
-{
-  return zuluDateTime;
-}
-
-void SimConnectData::setZuluTime(const QDateTime& value)
-{
-  zuluDateTime = value;
-}
-
-const QDateTime& SimConnectData::getLocalTime() const
-{
-  return localDateTime;
-}
-
-void SimConnectData::setLocalTime(const QDateTime& value)
-{
-  localDateTime = value;
 }
 
 } // namespace sc

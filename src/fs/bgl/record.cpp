@@ -23,7 +23,7 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Record::Record(const BglReaderOptions *options, BinaryStream *bs)
+Record::Record(const NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   id = bs->readShort();

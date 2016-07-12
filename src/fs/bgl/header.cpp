@@ -28,7 +28,7 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Header::Header(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   valid = true;

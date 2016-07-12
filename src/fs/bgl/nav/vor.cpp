@@ -45,7 +45,7 @@ enum VorFlags
   FLAGS_NAV = 1 << 4
 };
 
-Vor::Vor(const BglReaderOptions *options, BinaryStream *bs)
+Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
   : NavBase(options, bs), dme(nullptr)
 {
   type = static_cast<nav::IlsVorType>(bs->readUByte());

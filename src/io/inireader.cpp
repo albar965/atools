@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "logging/loggingdefs.h"
-#include "fs/scenery/inireader.h"
+#include "io/inireader.h"
 #include "exception.h"
 
 #include <QTextStream>
@@ -24,13 +24,11 @@
 #include <QFile>
 
 namespace atools {
-namespace fs {
-namespace scenery {
+namespace io {
 
-void IniReader::throwException(const QString& message)
+IniReader::IniReader()
+  : currentLineNum(0)
 {
-  throw Exception(tr("%1. File \"%2\", line %3:\"%4\"").
-                  arg(message).arg(filename).arg(currentLineNum).arg(currentLine));
 }
 
 IniReader::~IniReader()
@@ -136,8 +134,15 @@ void IniReader::read(const QString& iniFilename)
     onEndDocument(filename);
     sceneryCfgFile.close();
   }
+  else
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(iniFilename).arg(sceneryCfgFile.errorString()));
 }
 
-} // namespace scenery
-} // namespace fs
+void IniReader::throwException(const QString& message)
+{
+  throw Exception(tr("%1. File \"%2\", line %3:\"%4\"").
+                  arg(message).arg(filename).arg(currentLineNum).arg(currentLine));
+}
+
+} // namespace io
 } // namespace atools

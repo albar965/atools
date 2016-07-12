@@ -45,7 +45,7 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
   return QString();
 }
 
-AirwaySegment::AirwaySegment(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   type = static_cast<nav::AirwayType>(bs->readUByte());

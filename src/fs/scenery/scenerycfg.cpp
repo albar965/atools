@@ -26,16 +26,6 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-class SceneryAreaComparator
-{
-public:
-  bool operator()(const SceneryArea& a1, const SceneryArea& a2)
-  {
-    return a1.getLayer() < a2.getLayer();
-  }
-
-};
-
 SceneryCfg::SceneryCfg()
   : IniReader(), cleanOnExit(false)
 {
@@ -49,7 +39,6 @@ void SceneryCfg::onStartDocument(const QString& filename)
 {
   Q_UNUSED(filename);
   areaEntries.clear();
-  numActiveAreas = 0;
 }
 
 void SceneryCfg::onEndDocument(const QString& filename)
@@ -59,7 +48,11 @@ void SceneryCfg::onEndDocument(const QString& filename)
   if(areaEntries.isEmpty())
     throwException(tr("No valid Areas found"));
 
-  std::sort(areaEntries.begin(), areaEntries.end(), SceneryAreaComparator());
+  // Sort areas by layer
+  std::sort(areaEntries.begin(), areaEntries.end(), [ = ](const SceneryArea &a1, const SceneryArea &a2)->bool
+            {
+              return a1.getLayer() < a2.getLayer();
+            });
 }
 
 void SceneryCfg::onStartSection(const QString& section, const QString& sectionSuffix)
@@ -77,11 +70,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
 {
   Q_UNUSED(sectionSuffix);
   if(section == "area")
-  {
-    if(currentArea.isActive())
-      numActiveAreas++;
     areaEntries.append(currentArea);
-  }
 }
 
 void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
@@ -138,7 +127,6 @@ bool SceneryCfg::toBool(const QString& str)
     return false;
 
   throwException(tr("Boolean value not valid"));
-  return false;
 }
 
 int SceneryCfg::toInt(const QString& str)

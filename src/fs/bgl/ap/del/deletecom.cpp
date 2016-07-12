@@ -24,7 +24,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteCom::DeleteCom(const BglReaderOptions *options, BinaryStream *bs)
+DeleteCom::DeleteCom(const NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   unsigned int flags = bs->readUInt();

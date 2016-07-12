@@ -19,7 +19,7 @@
 #define ATOOLS_SCENERY_SCENERYCFG_H
 
 #include "fs/scenery/sceneryarea.h"
-#include "fs/scenery/inireader.h"
+#include "io/inireader.h"
 
 #include <QList>
 #include <QCoreApplication>
@@ -28,45 +28,38 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-typedef QList<atools::fs::scenery::SceneryArea> AreaVectorType;
-typedef QList<atools::fs::scenery::SceneryArea>::const_iterator AreaVectorIterType;
-
+/*
+ * Reads flight simulator scenery.cfg entries. Call atools::io::IniReader::read to load a scenery.cfg file.
+ */
 class SceneryCfg :
-  public atools::fs::scenery::IniReader
+  public atools::io::IniReader
 {
   Q_DECLARE_TR_FUNCTIONS(SceneryCfg)
 
 public:
   SceneryCfg();
-
   virtual ~SceneryCfg();
 
+  const QList<atools::fs::scenery::SceneryArea>& getAreas() const
+  {
+    return areaEntries;
+  }
+
+private:
   virtual void onStartDocument(const QString& filename) override;
   virtual void onEndDocument(const QString& filename) override;
   virtual void onStartSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onEndSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) override;
+  bool toBool(const QString& str);
+  int toInt(const QString& str);
 
-  const AreaVectorType& getAreas() const
-  {
-    return areaEntries;
-  }
-
-  int getNumActiveAreas() const
-  {
-    return numActiveAreas;
-  }
-
-private:
   atools::fs::scenery::SceneryArea currentArea;
   QString title, description;
   bool cleanOnExit;
-  int numActiveAreas = 0;
 
-  atools::fs::scenery::AreaVectorType areaEntries;
-  bool toBool(const QString& str);
-  int toInt(const QString& str);
+  QList<atools::fs::scenery::SceneryArea> areaEntries;
 
 };
 

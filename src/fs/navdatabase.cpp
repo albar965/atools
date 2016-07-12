@@ -35,30 +35,42 @@
 namespace atools {
 namespace fs {
 
+// Number of progress steps besides scenery areas
+const int PROGRESS_NUM_STEPS = 18;
+const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
+const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
+
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 
-Navdatabase::Navdatabase(const BglReaderOptions *readerOptions, sql::SqlDatabase *sqlDb)
+NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb)
   : db(sqlDb), options(readerOptions)
 {
 
 }
 
-void Navdatabase::create()
+void NavDatabase::create()
 {
   createInternal();
 
   if(aborted)
   {
+    // Remove all (partial) changes
     db->rollback();
+
     // Create an empty schema to avoid application crashes
     createSchema();
   }
 }
 
-void Navdatabase::createSchema(db::ProgressHandler *progress)
+void NavDatabase::createSchema()
+{
+  createSchemaInternal(nullptr);
+}
+
+void NavDatabase::createSchemaInternal(db::ProgressHandler *progress)
 {
   SqlScript script(db, true /* options->isVerbose()*/);
 
@@ -107,7 +119,7 @@ void Navdatabase::createSchema(db::ProgressHandler *progress)
   db->commit();
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Creating Schema"))) == true)
+    if((aborted = progress->reportOther(tr("Creating Database Schema"))) == true)
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
@@ -119,7 +131,7 @@ void Navdatabase::createSchema(db::ProgressHandler *progress)
   db->commit();
 }
 
-bool Navdatabase::isSceneryConfigValid(const QString& filename, QString& error)
+bool NavDatabase::isSceneryConfigValid(const QString& filename, QString& error)
 {
   QFileInfo fi(filename);
   if(fi.exists())
@@ -130,8 +142,10 @@ bool Navdatabase::isSceneryConfigValid(const QString& filename, QString& error)
       {
         try
         {
+          // Read the scenery file and check if it has at least one scenery area
           atools::fs::scenery::SceneryCfg cfg;
           cfg.read(filename);
+
           return !cfg.getAreas().isEmpty();
         }
         catch(atools::Exception& e)
@@ -156,7 +170,7 @@ bool Navdatabase::isSceneryConfigValid(const QString& filename, QString& error)
   return false;
 }
 
-bool Navdatabase::isBasePathValid(const QString& filepath, QString& error)
+bool NavDatabase::isBasePathValid(const QString& filepath, QString& error)
 {
   QFileInfo fi(filepath);
   if(fi.exists())
@@ -184,12 +198,7 @@ bool Navdatabase::isBasePathValid(const QString& filepath, QString& error)
   return false;
 }
 
-// Number of progress steps besides scenery areas
-const int NUM_STEPS = 18;
-const int NUM_DB_REPORT_STEPS = 4;
-const int NUM_RESOLVE_AIRWAY_STEPS = 1;
-
-void Navdatabase::createInternal()
+void NavDatabase::createInternal()
 {
   QElapsedTimer timer;
   timer.start();
@@ -197,22 +206,24 @@ void Navdatabase::createInternal()
   if(options->isAutocommit())
     db->setAutocommit(true);
 
+  // Read scenery.cfg
   atools::fs::scenery::SceneryCfg cfg;
   cfg.read(options->getSceneryFile());
 
   int numFiles = 0, numSceneryAreas = 0;
 
+  // Count the files for exact progress reporting
   countFiles(cfg, &numFiles, &numSceneryAreas);
 
   db::ProgressHandler progress(options);
 
-  int total = numFiles + numSceneryAreas + NUM_STEPS;
+  int total = numFiles + numSceneryAreas + PROGRESS_NUM_STEPS;
 
   if(options->isDatabaseReport())
-    total += NUM_DB_REPORT_STEPS;
+    total += PROGRESS_NUM_DB_REPORT_STEPS;
 
   if(options->isResolveAirways())
-    total += NUM_RESOLVE_AIRWAY_STEPS;
+    total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS;
 
   int numRouteSteps = total / 4;
   if(options->isCreateRouteTables())
@@ -220,10 +231,11 @@ void Navdatabase::createInternal()
 
   progress.setTotal(total);
 
-  createSchema(&progress);
+  createSchemaInternal(&progress);
   if(aborted)
     return;
 
+  // Create data writer which will fill the database
   atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
@@ -233,14 +245,19 @@ void Navdatabase::createInternal()
       if((aborted = progress.report(&area)) == true)
         return;
 
+      // Read all BGL files in the scenery area into classes of the bgl namespace and
+      // write the contents to the database
       dataWriter.writeSceneryArea(area);
+
       if((aborted = dataWriter.isAborted()) == true)
         return;
     }
   }
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Creating Indexes"))) == true)
+  // Loading is done here - now continue with the post process steps
+
+  if((aborted = progress.reportOther(tr("Creating indexes"))) == true)
     return;
 
   SqlScript script(db, true /*options->isVerbose()*/);
@@ -258,6 +275,7 @@ void Navdatabase::createInternal()
     if((aborted = progress.reportOther(tr("Creating airways"))) == true)
       return;
 
+    // Read airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
     if((aborted = resolver.run()) == true)
@@ -266,13 +284,13 @@ void Navdatabase::createInternal()
     db->commit();
   }
 
-  if((aborted = progress.reportOther(tr("Updating Waypoint ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating waypoint ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Updating Navigation ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating navigation ids"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/update_nav_ids.sql");
@@ -284,13 +302,13 @@ void Navdatabase::createInternal()
   script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Populating Nav Search Table"))) == true)
+  if((aborted = progress.reportOther(tr("Collecting navaids for search"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/populate_nav_search.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Populating Route Node Table"))) == true)
+  if((aborted = progress.reportOther(tr("Populating routing tables"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/populate_route_node.sql");
@@ -298,9 +316,10 @@ void Navdatabase::createInternal()
 
   if(options->isCreateRouteTables())
   {
-    if((aborted = progress.reportOther(tr("Populating Route Edge Table for VOR and NDB"))) == true)
+    if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))) == true)
       return;
 
+    // Create a network of VOR and NDB stations that allow radio navaid routing
     atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, numRouteSteps);
     if((aborted = edgeWriter.run()) == true)
       return;
@@ -308,17 +327,19 @@ void Navdatabase::createInternal()
     db->commit();
   }
 
-  if((aborted = progress.reportOther(tr("Populating Route Edge Table for Waypoints"))) == true)
+  if((aborted = progress.reportOther(tr("Creating route edges waypoints"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/populate_route_edge.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Creating Search Indexes"))) == true)
+  if((aborted = progress.reportOther(tr("Creating indexes for search"))) == true)
     return;
 
   script.executeScript(":/atools/resources/sql/fs/db/finish_schema.sql");
   db->commit();
+
+  // Done here - now only some options statistics and reports are left
 
   if(options->isDatabaseReport())
   {
@@ -384,12 +405,14 @@ void Navdatabase::createInternal()
 
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
   }
+
+  // Send the final progress report
   progress.reportFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 
-void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
+void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
                                              const QStringList& tables)
 {
   for(QString table : tables)
@@ -400,7 +423,7 @@ void Navdatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
   }
 }
 
-void Navdatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
+void NavDatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
 {
   qDebug() << "Counting files";
 

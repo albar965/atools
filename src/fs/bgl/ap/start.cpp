@@ -42,7 +42,7 @@ QString Start::startTypeToStr(start::StartType type)
   return QString();
 }
 
-Start::Start(const BglReaderOptions *options, BinaryStream *bs)
+Start::Start(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   runwayNumber = bs->readUByte();

@@ -44,7 +44,7 @@ class Marker :
   public atools::fs::bgl::Record
 {
 public:
-  Marker(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Marker(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Marker();
 
   const QString& getIdent() const

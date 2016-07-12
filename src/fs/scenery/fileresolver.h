@@ -23,29 +23,37 @@
 
 namespace atools {
 namespace fs {
-class BglReaderOptions;
+class NavDatabaseOptions;
 namespace scenery {
 
 class SceneryArea;
 
+/*
+ * Collects all BGL files for a scenery area considering include and exclude configuration options.
+ */
 class FileResolver
 {
 public:
-  FileResolver(const atools::fs::BglReaderOptions& opts, bool noWarnings = false);
+  /*
+   * @param opts configuration optios
+   * @param noWarnings do not print warning messages if files could not be found
+   */
+  FileResolver(const atools::fs::NavDatabaseOptions& opts, bool noWarnings = false);
   virtual ~FileResolver();
 
-  atools::fs::scenery::FileResolver& addExcludedFilePrefixes(const QStringList& prefixes);
-  void clearExcludedFilePrefixes();
-
+  /*
+   * Resolve and get all files for a scenery area
+   * @param area scenery area to get the BGL files from
+   * @param filepaths If not null will get all filepaths (path and filename)
+   * @param filenames If not null will get all filenames (only filename)
+   * @return number of files found
+   */
   int getFiles(const atools::fs::scenery::SceneryArea& area, QStringList *filepaths = nullptr,
                QStringList *filenames = nullptr) const;
 
 private:
-  bool matchesExcludedFilePrefix(const QString& fname) const;
-
-  const atools::fs::BglReaderOptions& options;
+  const atools::fs::NavDatabaseOptions& options;
   bool quiet = false;
-  QStringList excludedFilePrefixes;
 };
 
 } // namespace scenery

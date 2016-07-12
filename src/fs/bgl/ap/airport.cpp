@@ -21,7 +21,7 @@
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/bgl/ap/jetway.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/ap/taxipoint.h"
@@ -41,7 +41,7 @@ static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " A
 
 using atools::io::BinaryStream;
 
-Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
+Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   /*int numRunways = TODO compare with number of subrecords */
@@ -199,7 +199,16 @@ Airport::Airport(const BglReaderOptions *options, BinaryStream *bs)
         {
           int numPaths = bs->readUShort();
           for(int i = 0; i < numPaths; i++)
-            taxipaths.append(TaxiPath(bs));
+          {
+            TaxiPath path(bs);
+            if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
+                !options->isIncludedBglObject(type::TAXIWAY_RUNWAY)) ||
+               (path.getType() == atools::fs::bgl::taxipath::VEHICLE &&
+                !options->isIncludedBglObject(type::TAXIWAY_VEHICLE)))
+              continue;
+
+            taxipaths.append(path);
+          }
         }
         break;
       case rec::TAXI_POINT:

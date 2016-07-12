@@ -43,7 +43,7 @@ class Fence :
   public atools::fs::bgl::Record
 {
 public:
-  Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Fence(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Fence();
 
   /*

@@ -18,7 +18,7 @@
 #include "fs/db/ap/legbasewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "geo/calculations.h"
 #include "atools.h"
 

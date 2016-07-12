@@ -19,13 +19,13 @@
 
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
-Apron::Apron(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
+Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
   : bgl::Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readUByte());

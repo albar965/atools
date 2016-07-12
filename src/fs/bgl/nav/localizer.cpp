@@ -27,7 +27,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Localizer::Localizer(const BglReaderOptions *options, BinaryStream *bs)
+Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   runwayNumber = bs->readUByte();

@@ -48,7 +48,7 @@ public:
   /*
    * Reads the BGL file header
    */
-  Header(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Header(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Header();
 
   /*

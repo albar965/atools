@@ -45,7 +45,7 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
   return QString();
 }
 
-Marker::Marker(const BglReaderOptions *options, BinaryStream *bs)
+Marker::Marker(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   // TODO wiki clarify structure

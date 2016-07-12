@@ -63,7 +63,7 @@ class RunwayApproachLights :
 {
 public:
   RunwayApproachLights();
-  RunwayApproachLights(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  RunwayApproachLights(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~RunwayApproachLights();
 
   /*

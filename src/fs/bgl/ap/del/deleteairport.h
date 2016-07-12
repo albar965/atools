@@ -65,7 +65,7 @@ class DeleteAirport :
   public atools::fs::bgl::Record
 {
 public:
-  DeleteAirport(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  DeleteAirport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteAirport();
 
   /*

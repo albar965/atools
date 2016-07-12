@@ -65,6 +65,7 @@ public:
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed */
   static QString getBasePath(atools::fs::FsPaths::SimulatorType type);
 
+  /* return true if simulator can be found in the registry */
   static bool hasSim(atools::fs::FsPaths::SimulatorType type);
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",

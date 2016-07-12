@@ -41,7 +41,7 @@ class Jetway :
 {
 public:
   Jetway();
-  Jetway(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Jetway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Jetway();
 
   /*

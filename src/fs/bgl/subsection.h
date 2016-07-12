@@ -42,7 +42,7 @@ public:
   /*
    * Read the subsection
    */
-  Subsection(const BglReaderOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
+  Subsection(const NavDatabaseOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
   virtual ~Subsection();
 
   /*

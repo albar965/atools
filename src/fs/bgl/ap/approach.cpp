@@ -21,7 +21,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -29,7 +29,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Approach::Approach(const BglReaderOptions *options, BinaryStream *bs)
+Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   bs->skip(1); // suffix

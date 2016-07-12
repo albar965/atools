@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_SIMCONNECTREPLY_H
 #define ATOOLS_FS_SIMCONNECTREPLY_H
 
-#include "fs/sc/types.h"
+#include "fs/sc/simconnecttypes.h"
 
 #include <QString>
 
@@ -28,6 +28,10 @@ namespace atools {
 namespace fs {
 namespace sc {
 
+/*
+ * Class that contains replay data from a client for SimConnectData.
+ * A version of the protocol is maintained to check for application compatibility.
+ */
 class SimConnectReply
 {
 public:
@@ -35,9 +39,19 @@ public:
   SimConnectReply(const SimConnectReply& other);
   ~SimConnectReply();
 
+  /*
+   * Read from IO device.
+   * @return true if it was fully read. False if not or an error occured.
+   */
   bool read(QIODevice *ioDevice);
+
+  /*
+   * Write to IO device.
+   * @return number of bytes written
+   */
   int write(QIODevice *ioDevice);
 
+  /* Serial number for data packet that this reply is for. */
   int getPacketId() const
   {
     return static_cast<int>(packetId);
@@ -48,21 +62,28 @@ public:
     packetId = static_cast<quint32>(value);
   }
 
-  int getPacketTs() const
+  /* Packet creating timestamp in seconds since epoch */
+  int getPacketTimestamp() const
   {
     return static_cast<int>(packetTs);
   }
 
-  void setPacketTs(unsigned int value)
+  void setPacketTimestamp(unsigned int value)
   {
     packetTs = static_cast<quint32>(value);
   }
 
+  /*
+   * @return Error status for last reading or writing call
+   */
   atools::fs::sc::SimConnectStatus getStatus() const
   {
     return status;
   }
 
+  /*
+   * @return Error status text for last reading or writing call
+   */
   const QString& getStatusText() const
   {
     return SIMCONNECT_STATUS_TEXT.at(status);

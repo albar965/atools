@@ -20,13 +20,13 @@
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 #include "fs/bgl/recordtypes.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
-Fence::Fence(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
+Fence::Fence(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
   : bgl::Record(options, bs)
 {
   int numVertices = bs->readShort();

@@ -130,7 +130,7 @@ Boundary::Boundary()
 {
 }
 
-Boundary::Boundary(const BglReaderOptions *options, BinaryStream *bs)
+Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   if(id != rec::BOUNDARY)

@@ -63,7 +63,7 @@ class Com :
 {
 public:
   Com();
-  Com(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Com(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Com();
 
   /*

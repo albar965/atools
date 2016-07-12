@@ -41,7 +41,7 @@ class NavBase :
   public atools::fs::bgl::Record
 {
 public:
-  NavBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  NavBase(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~NavBase();
 
   /*

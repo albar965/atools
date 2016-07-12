@@ -32,7 +32,7 @@ class Glideslope :
   public atools::fs::bgl::Record
 {
 public:
-  Glideslope(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Glideslope(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Glideslope();
 
   /*

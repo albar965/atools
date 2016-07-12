@@ -23,7 +23,7 @@
 #include "fs/bgl/section.h"
 #include "fs/bgl/subsection.h"
 
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 #include <QString>
 #include <QList>
@@ -55,7 +55,7 @@ public:
   /*
    * @param readerOptions Configuration.
    */
-  BglFile(const BglReaderOptions *readerOptions);
+  BglFile(const NavDatabaseOptions *readerOptions);
   virtual ~BglFile();
 
   void setSupportedSectionTypes(const QSet<atools::fs::bgl::section::SectionType>& sects)
@@ -144,13 +144,13 @@ private:
   void handleBoundaries(atools::io::BinaryStream *bs);
 
   template<typename TYPE>
-  const TYPE *createRecord(const atools::fs::BglReaderOptions *options,
+  const TYPE *createRecord(const atools::fs::NavDatabaseOptions *options,
                            atools::io::BinaryStream *bs,
                            QList<const TYPE *> *list);
 
   QString filename;
   qint64 size;
-  const BglReaderOptions *options;
+  const NavDatabaseOptions *options;
 
   /* Keep a list of all records to make object deletion easier */
   QList<const atools::fs::bgl::Record *> allRecords;
@@ -175,7 +175,7 @@ private:
 // -------------------------------------------------------------------
 
 template<typename TYPE>
-const TYPE *BglFile::createRecord(const BglReaderOptions *options,
+const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
                                   atools::io::BinaryStream *bs,
                                   QList<const TYPE *> *list)
 {

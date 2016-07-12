@@ -79,7 +79,7 @@ RunwayVasi::RunwayVasi()
 {
 }
 
-RunwayVasi::RunwayVasi(const BglReaderOptions *options, BinaryStream *bs)
+RunwayVasi::RunwayVasi(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<rw::VasiType>(bs->readShort());

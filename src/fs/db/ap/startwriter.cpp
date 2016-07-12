@@ -18,7 +18,7 @@
 #include "fs/db/ap/startwriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/runwayindex.h"
 #include "geo/calculations.h"

@@ -29,7 +29,7 @@ Jetway::Jetway() :
 {
 }
 
-Jetway::Jetway(const BglReaderOptions *options, BinaryStream *bs)
+Jetway::Jetway(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   parkingNumber = bs->readShort();

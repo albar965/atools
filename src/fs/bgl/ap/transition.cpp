@@ -20,7 +20,7 @@
 #include "fs/bgl/recordtypes.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -65,7 +65,7 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
   return QString();
 }
 
-Transition::Transition(const BglReaderOptions *options, BinaryStream *bs)
+Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<ap::TransitionType>(bs->readUByte());

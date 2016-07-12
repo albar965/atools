@@ -46,7 +46,7 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
   return QString();
 }
 
-Ndb::Ndb(const BglReaderOptions *options, BinaryStream *bs)
+Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
   : NavBase(options, bs)
 {
   type = static_cast<nav::NdbType>(bs->readShort());

@@ -19,7 +19,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {

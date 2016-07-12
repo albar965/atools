@@ -65,7 +65,6 @@ HEADERS += src/atools.h \
     src/fs/bgl/nav/waypoint.h \
     src/fs/bgl/nl/namelistentry.h \
     src/fs/bgl/nl/namelist.h \
-    src/fs/bglreaderoptions.h \
     src/fs/bgl/record.h \
     src/fs/bgl/recordtypes.h \
     src/fs/bgl/section.h \
@@ -114,7 +113,6 @@ HEADERS += src/atools.h \
     src/fs/pln/flightplanentry.h \
     src/fs/pln/flightplan.h \
     src/fs/scenery/fileresolver.h \
-    src/fs/scenery/inireader.h \
     src/fs/scenery/sceneryarea.h \
     src/fs/scenery/scenerycfg.h \
     src/geo/calculations.h \
@@ -137,7 +135,6 @@ HEADERS += src/atools.h \
     src/sql/sqlscript.h \
     src/sql/sqlutil.h \
     src/fs/db/progresshandler.h \
-    src/fs/bglreaderprogressinfo.h \
     src/gui/tablezoomhandler.h \
     src/gui/widgetstate.h \
     src/gui/widgettools.h \
@@ -150,7 +147,7 @@ HEADERS += src/atools.h \
     src/fs/db/routeedgewriter.h \
     src/fs/sc/simconnectdata.h \
     src/fs/sc/simconnectreply.h \
-    src/fs/sc/types.h \
+    src/fs/sc/simconnecttypes.h \
     src/sql/sqlrecord.h \
     src/util/heap.h \
     src/util/htmlbuilder.h \
@@ -164,7 +161,10 @@ HEADERS += src/atools.h \
     src/util/version.h \
     src/fs/bgl/boundarysegment.h \
     src/fs/bgl/nav/airwaysegment.h \
-    src/fs/bgl/ap/apronedgelight.h
+    src/fs/bgl/ap/apronedgelight.h \
+    src/fs/navdatabaseprogress.h \
+    src/fs/navdatabaseoptions.h \
+    src/io/inireader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -210,7 +210,6 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/nav/waypoint.cpp \
     src/fs/bgl/nl/namelist.cpp \
     src/fs/bgl/nl/namelistentry.cpp \
-    src/fs/bglreaderoptions.cpp \
     src/fs/bgl/record.cpp \
     src/fs/bgl/recordtypes.cpp \
     src/fs/bgl/section.cpp \
@@ -258,7 +257,6 @@ SOURCES += src/atools.cpp \
     src/fs/pln/flightplan.cpp \
     src/fs/pln/flightplanentry.cpp \
     src/fs/scenery/fileresolver.cpp \
-    src/fs/scenery/inireader.cpp \
     src/fs/scenery/sceneryarea.cpp \
     src/fs/scenery/scenerycfg.cpp \
     src/geo/calculations.cpp \
@@ -280,7 +278,6 @@ SOURCES += src/atools.cpp \
     src/sql/sqlscript.cpp \
     src/sql/sqlutil.cpp \
     src/fs/db/progresshandler.cpp \
-    src/fs/bglreaderprogressinfo.cpp \
     src/gui/tablezoomhandler.cpp \
     src/gui/widgetstate.cpp \
     src/gui/widgettools.cpp \
@@ -305,7 +302,10 @@ SOURCES += src/atools.cpp \
     src/util/version.cpp \
     src/fs/bgl/boundarysegment.cpp \
     src/fs/bgl/nav/airwaywaypoint.cpp \
-    src/fs/bgl/ap/apronedgelight.cpp
+    src/fs/bgl/ap/apronedgelight.cpp \
+    src/fs/navdatabaseprogress.cpp \
+    src/fs/navdatabaseoptions.cpp \
+    src/io/inireader.cpp
 
 
 unix {

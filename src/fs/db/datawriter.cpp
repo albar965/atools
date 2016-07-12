@@ -19,7 +19,7 @@
 
 #include "fs/bgl/bglfile.h"
 #include "fs/scenery/fileresolver.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "sql/sqldatabase.h"
 
 #include "fs/db/nav/waypointwriter.h"
@@ -75,7 +75,7 @@ static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES
   bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
 };
 
-DataWriter::DataWriter(SqlDatabase& sqlDb, const BglReaderOptions& opts, ProgressHandler *progress)
+DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progress)
   : db(sqlDb), progressHandler(progress), options(opts)
 {
   bglFileWriter = new BglFileWriter(db, *this);

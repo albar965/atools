@@ -50,7 +50,7 @@ class Start :
   public atools::fs::bgl::Record
 {
 public:
-  Start(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Start(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Start();
 
   /*

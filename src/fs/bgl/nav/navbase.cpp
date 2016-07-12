@@ -38,7 +38,7 @@ QDebug operator<<(QDebug out, const NavBase& record)
   return out;
 }
 
-NavBase::NavBase(const BglReaderOptions *options, io::BinaryStream *bs)
+NavBase::NavBase(const NavDatabaseOptions *options, io::BinaryStream *bs)
   : Record(options, bs), frequency(0.0f), range(0.0f), magVar(0.0f)
 {
 }

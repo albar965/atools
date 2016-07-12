@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-DeleteStart::DeleteStart(const BglReaderOptions *options, BinaryStream *bs)
+DeleteStart::DeleteStart(const NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
 

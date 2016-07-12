@@ -18,7 +18,7 @@
 #include "fs/db/ap/deleteairportwriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 
 namespace atools {

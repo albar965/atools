@@ -25,7 +25,7 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Namelist::Namelist(const BglReaderOptions *options, BinaryStream *bs)
+Namelist::Namelist(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   int numRegionNames = bs->readShort();

@@ -120,7 +120,7 @@ class Runway :
   public atools::fs::bgl::Record
 {
 public:
-  Runway(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs,
+  Runway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
          const QString& airportIdent);
   virtual ~Runway();
 

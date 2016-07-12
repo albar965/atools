@@ -19,7 +19,7 @@
 #define ATOOLS_FS_SIMCONNECTDATA_H
 
 #include "geo/pos.h"
-#include "fs/sc/types.h"
+#include "fs/sc/simconnecttypes.h"
 
 #include <QString>
 #include <QDateTime>
@@ -43,6 +43,10 @@ enum Flag
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
 
+/*
+ * Class that transfers flight simulator data read using the simconnect interface across the network to
+ * a client like Little Navmap. A version of the protocol is maintained to check for application compatibility.
+ */
 class SimConnectData
 {
 public:
@@ -50,9 +54,66 @@ public:
   SimConnectData(const SimConnectData& other);
   ~SimConnectData();
 
+  /*
+   * Read from IO device.
+   * @return true if it was fully read. False if not or an error occured.
+   */
   bool read(QIODevice *ioDevice);
 
+  /*
+   * Write to IO device.
+   * @return number of bytes written
+   */
   int write(QIODevice *ioDevice);
+
+  /*
+   * @return Error status for last reading or writing call
+   */
+  atools::fs::sc::SimConnectStatus getStatus() const
+  {
+    return status;
+  }
+
+  /*
+   * @return Error status text for last reading or writing call
+   */
+  const QString& getStatusText() const
+  {
+    return SIMCONNECT_STATUS_TEXT.at(status);
+  }
+
+  // metadata ----------------------------------------------------
+  /* Serial number for data packet. */
+  int getPacketId() const
+  {
+    return static_cast<int>(packetId);
+  }
+
+  void setPacketId(int value)
+  {
+    packetId = static_cast<quint32>(value);
+  }
+
+  /* Packet creating timestamp in seconds since epoch */
+  int getPacketTimestamp() const
+  {
+    return static_cast<int>(packetTs);
+  }
+
+  void setPacketTimestamp(unsigned int value)
+  {
+    packetTs = static_cast<quint32>(value);
+  }
+
+  /*
+   * @return data version for this packet format
+   */
+  static int getDataVersion()
+  {
+    return DATA_VERSION;
+  }
+
+  // fs data ----------------------------------------------------
 
   const QString& getAirplaneTitle() const
   {
@@ -74,36 +135,14 @@ public:
     airplaneModel = value;
   }
 
-  const QString& getAirplaneReg() const
+  const QString& getAirplaneRegistration() const
   {
     return airplaneReg;
   }
 
-  void setAirplaneReg(const QString& value)
+  void setAirplaneRegistration(const QString& value)
   {
     airplaneReg = value;
-  }
-
-  /* Serial number for data packet. */
-  int getPacketId() const
-  {
-    return static_cast<int>(packetId);
-  }
-
-  void setPacketId(int value)
-  {
-    packetId = static_cast<quint32>(value);
-  }
-
-  /* Packet creating timestamp in seconds since epoch */
-  int getPacketTimestamp() const
-  {
-    return static_cast<int>(packetTs);
-  }
-
-  void setPacketTimestamp(unsigned int value)
-  {
-    packetTs = static_cast<quint32>(value);
   }
 
   atools::geo::Pos& getPosition()
@@ -219,16 +258,6 @@ public:
   void setAirplaneFlightnumber(const QString& value)
   {
     airplaneFlightnumber = value;
-  }
-
-  atools::fs::sc::SimConnectStatus getStatus() const
-  {
-    return status;
-  }
-
-  const QString& getStatusText() const
-  {
-    return SIMCONNECT_STATUS_TEXT.at(status);
   }
 
   float getIndicatedAltitudeFt() const
@@ -436,11 +465,6 @@ public:
     fuelFlowGPH = value;
   }
 
-  static int getDataVersion()
-  {
-    return DATA_VERSION;
-  }
-
   float getMagVarDeg() const
   {
     return magVar;
@@ -461,11 +485,25 @@ public:
     ambientVisibility = value;
   }
 
-  const QDateTime& getLocalTime() const;
-  void setLocalTime(const QDateTime& value);
+  const QDateTime& getLocalTime() const
+  {
+    return localDateTime;
+  }
 
-  const QDateTime& getZuluTime() const;
-  void setZuluTime(const QDateTime& value);
+  void setLocalTime(const QDateTime& value)
+  {
+    localDateTime = value;
+  }
+
+  const QDateTime& getZuluTime() const
+  {
+    return zuluDateTime;
+  }
+
+  void setZuluTime(const QDateTime& value)
+  {
+    zuluDateTime = value;
+  }
 
 private:
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;

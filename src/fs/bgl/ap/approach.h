@@ -38,7 +38,7 @@ public:
   /*
    * Read approach and all subrecords
    */
-  Approach(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Approach(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Approach();
 
   /*

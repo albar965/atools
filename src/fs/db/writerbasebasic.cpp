@@ -45,7 +45,7 @@ WriterBaseBasic::~WriterBaseBasic()
 {
 }
 
-const BglReaderOptions& WriterBaseBasic::getOptions()
+const NavDatabaseOptions& WriterBaseBasic::getOptions()
 {
   return dataWriter.getOptions();
 }

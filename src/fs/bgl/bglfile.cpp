@@ -44,7 +44,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-BglFile::BglFile(const BglReaderOptions *readerOptions)
+BglFile::BglFile(const NavDatabaseOptions *readerOptions)
   : size(0), options(readerOptions)
 {
 }

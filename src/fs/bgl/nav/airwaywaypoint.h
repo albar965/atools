@@ -47,7 +47,7 @@ class AirwayWaypoint :
   public atools::fs::bgl::BglBase
 {
 public:
-  AirwayWaypoint(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~AirwayWaypoint();
 
   AirwayWaypoint()

@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Glideslope::Glideslope(const BglReaderOptions *options, BinaryStream *bs)
+Glideslope::Glideslope(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   bs->skip(2); // Unknown

@@ -37,7 +37,7 @@ class DeleteStart :
   public atools::fs::bgl::BglBase
 {
 public:
-  DeleteStart(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  DeleteStart(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteStart();
 
   QString getRunwayName() const;

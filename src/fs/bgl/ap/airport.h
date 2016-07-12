@@ -86,7 +86,7 @@ class Airport :
   public atools::fs::bgl::Record
 {
 public:
-  Airport(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Airport();
 
   const QList<atools::fs::bgl::Approach>& getApproaches() const

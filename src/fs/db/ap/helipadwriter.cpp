@@ -18,7 +18,7 @@
 #include "fs/db/ap/helipadwriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "geo/calculations.h"

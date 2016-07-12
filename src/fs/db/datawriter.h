@@ -24,7 +24,7 @@ class SqlDatabase;
 }
 
 namespace fs {
-class BglReaderOptions;
+class NavDatabaseOptions;
 namespace scenery {
 class SceneryArea;
 }
@@ -64,7 +64,7 @@ class ProgressHandler;
 class DataWriter
 {
 public:
-  DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::BglReaderOptions& opts,
+  DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
              ProgressHandler *progress);
 
   virtual ~DataWriter();
@@ -157,7 +157,7 @@ public:
     return deleteAirportWriter;
   }
 
-  const BglReaderOptions& getOptions() const
+  const NavDatabaseOptions& getOptions() const
   {
     return options;
   }
@@ -251,7 +251,7 @@ private:
   atools::fs::db::RunwayIndex *runwayIndex = nullptr;
   atools::fs::db::AirportIndex *airportIndex = nullptr;
 
-  const atools::fs::BglReaderOptions& options;
+  const atools::fs::NavDatabaseOptions& options;
 };
 
 } // namespace writer

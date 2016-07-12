@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Dme::Dme(const BglReaderOptions *options, BinaryStream *bs)
+Dme::Dme(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   bs->skip(2); // Unknown

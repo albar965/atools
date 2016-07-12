@@ -27,48 +27,59 @@ namespace scenery {
 class SceneryArea
 {
 public:
-  SceneryArea()
-    : areaNumber(0), textureId(0), layer(0), active(false), required(false)
-  {
-  }
+  SceneryArea();
 
   virtual ~SceneryArea();
 
+  /*
+   * @return true to indicate that the scenery should be rendered by default.
+   */
   bool isActive() const
   {
     return active;
   }
 
+  /* exclude value */
   const QString& getExclude() const
   {
     return exclude;
   }
 
+  /*
+   * @return The layer  number is typically equal to the [area.nnn] number.
+   * Higher numbered layers have priority over lower numbered layers.
+   */
   int getLayer() const
   {
     return layer;
   }
 
+  /*
+   * @return The local path to the scenery files.
+   */
   const QString& getLocalPath() const
   {
     return localPath;
   }
 
+  /* Remote path is used for slow media */
   const QString& getRemotePath() const
   {
     return remotePath;
   }
 
+  /*
+   * @return true to indicate the folder is required and that the scenery entry
+   * cannot be deleted or turned off in the Scenery Library dialog.
+   */
   bool isRequired() const
   {
     return required;
   }
 
-  int getTextureId() const
-  {
-    return textureId;
-  }
-
+  /*
+   * @return [area.nnn] number.
+   */
   int getAreaNumber() const
   {
     return areaNumber;

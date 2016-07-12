@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-AirwayWaypoint::AirwayWaypoint(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs)
+AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
   : BglBase(options, bs)
 {
   unsigned int nextFlags = bs->readUInt();

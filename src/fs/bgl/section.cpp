@@ -24,7 +24,7 @@ namespace fs {
 namespace bgl {
 using atools::io::BinaryStream;
 
-Section::Section(const atools::fs::BglReaderOptions *options, BinaryStream *bs)
+Section::Section(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   type = static_cast<section::SectionType>(bs->readUInt());

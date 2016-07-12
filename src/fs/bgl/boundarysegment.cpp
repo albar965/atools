@@ -58,7 +58,7 @@ BoundarySegment::BoundarySegment()
 {
 }
 
-BoundarySegment::BoundarySegment(const BglReaderOptions *options, BinaryStream *bs)
+BoundarySegment::BoundarySegment(const NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
   type = static_cast<boundaryline::PointType>(bs->readUShort() & 0x7);

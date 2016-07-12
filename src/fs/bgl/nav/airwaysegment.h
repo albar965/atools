@@ -44,7 +44,7 @@ class AirwaySegment :
   public atools::fs::bgl::BglBase
 {
 public:
-  AirwaySegment(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  AirwaySegment(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~AirwaySegment();
 
   bool hasNextWaypoint() const;

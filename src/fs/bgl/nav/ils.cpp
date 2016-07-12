@@ -39,7 +39,7 @@ enum IlsFlags
   FLAGS_NAV = 1 << 5
 };
 
-Ils::Ils(const BglReaderOptions *options, BinaryStream *bs)
+Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
   : NavBase(options, bs), localizer(nullptr), glideslope(nullptr), dme(nullptr)
 {
   bs->readUByte();

@@ -20,7 +20,7 @@
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/bgl/util.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "logging/loggingdefs.h"
 
 namespace atools {

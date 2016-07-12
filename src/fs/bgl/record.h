@@ -46,7 +46,7 @@ public:
    * Reads the first part of the record namely the record id and the record size.
    * The stream is advanced by 6 bytes for this.
    */
-  Record(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Record(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~Record();
 

@@ -51,7 +51,7 @@ Helipad::Helipad()
 {
 }
 
-Helipad::Helipad(const BglReaderOptions *options, BinaryStream *bs)
+Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readUByte());

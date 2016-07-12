@@ -24,7 +24,7 @@
 #include "fs/bgl/util.h"
 #include "fs/bgl/ap/airport.h"
 #include "fs/db/ap/transitionwriter.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 #include "logging/loggingdefs.h"
 

@@ -17,14 +17,14 @@
 
 #include "logging/loggingdefs.h"
 #include "fs/db/progresshandler.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 #include "fs/scenery/sceneryarea.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
-ProgressHandler::ProgressHandler(const BglReaderOptions *options)
+ProgressHandler::ProgressHandler(const NavDatabaseOptions *options)
 {
   if(options->getProgressCallback() != nullptr)
     handler = options->getProgressCallback();
@@ -138,12 +138,12 @@ bool ProgressHandler::callHandler()
   return retval;
 }
 
-QString ProgressHandler::numbersAsString(const atools::fs::BglReaderProgressInfo& inf)
+QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)
 {
   return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
 }
 
-void ProgressHandler::defaultHandler(const atools::fs::BglReaderProgressInfo& inf)
+void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 {
   if(inf.isNewFile())
     qInfo() << "====" << numbersAsString(inf) << inf.getBglFilename();

@@ -164,7 +164,7 @@ QString Runway::surfaceToStr(rw::Surface surface)
   return QString();
 }
 
-Runway::Runway(const BglReaderOptions *options, BinaryStream *bs, const QString& airportIdent)
+Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent)
   : Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readShort());

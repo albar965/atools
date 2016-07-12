@@ -15,26 +15,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bglreaderprogressinfo.h"
-#include "fs/scenery/sceneryarea.h"
+#ifndef ATOOLS_SC_TYPES_H
+#define ATOOLS_SC_TYPES_H
+
+#include <QVector>
+#include <QObject>
 
 namespace atools {
 namespace fs {
+namespace sc {
 
-BglReaderProgressInfo::BglReaderProgressInfo()
+enum SimConnectStatus
 {
+  OK, /* No error */
+  INVALID_MAGIC_NUMBER, /* Packet data does not start with expected magic number */
+  VERSION_MISMATCH, /* Client and server data version does not match for either data or reply */
+  INSUFFICIENT_WRITE /* No enough data written */
+};
 
-}
-
-const QString& BglReaderProgressInfo::getSceneryTitle() const
+const QVector<QString> SIMCONNECT_STATUS_TEXT =
 {
-  return sceneryArea->getTitle();
-}
+  QObject::tr("No Error"), QObject::tr("Invalid magic number"),
+  QObject::tr("Version mismatch"), QObject::tr("Insufficient write")
+};
 
-const QString& BglReaderProgressInfo::getSceneryPath() const
-{
-  return sceneryArea->getLocalPath();
-}
-
+} // namespace sc
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_SC_TYPES_H

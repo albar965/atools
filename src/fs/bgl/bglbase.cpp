@@ -29,7 +29,7 @@ BglBase::BglBase()
 {
 }
 
-BglBase::BglBase(const atools::fs::BglReaderOptions *options, io::BinaryStream *stream)
+BglBase::BglBase(const atools::fs::NavDatabaseOptions *options, io::BinaryStream *stream)
   : startOffset(stream->tellg()), bs(stream), opts(options)
 {
 }

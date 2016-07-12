@@ -34,7 +34,7 @@ class Dme :
   public atools::fs::bgl::Record
 {
 public:
-  Dme(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Dme(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Dme();
 
   /*

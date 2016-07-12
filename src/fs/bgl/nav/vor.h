@@ -34,7 +34,7 @@ class Vor :
   public atools::fs::bgl::NavBase
 {
 public:
-  Vor(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Vor(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Vor();
 
   /*

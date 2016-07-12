@@ -87,7 +87,7 @@ public:
    * Reads an airspace boundary and all subrecords of type name, lines (class BoundaryLine) and
    * optional COM frequency
    */
-  Boundary(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Boundary(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Boundary();
 
   const QString& getName() const

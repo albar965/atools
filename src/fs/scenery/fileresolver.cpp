@@ -17,7 +17,7 @@
 
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/sceneryarea.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 #include <QtDebug>
 #include <QFile>
@@ -27,7 +27,7 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-FileResolver::FileResolver(const BglReaderOptions& opts, bool noWarnings)
+FileResolver::FileResolver(const NavDatabaseOptions& opts, bool noWarnings)
   : options(opts), quiet(noWarnings)
 {
 }
@@ -36,25 +36,16 @@ FileResolver::~FileResolver()
 {
 }
 
-FileResolver& FileResolver::addExcludedFilePrefixes(const QStringList& prefixes)
-{
-  excludedFilePrefixes += prefixes;
-  return *this;
-}
-
-void FileResolver::clearExcludedFilePrefixes()
-{
-  excludedFilePrefixes.clear();
-}
-
 int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames) const
 {
   int numFiles = 0;
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
 
   if(QFileInfo(areaLocalPathStr).isAbsolute())
+    // Scenery local path is absolute - use it as is
     sceneryAreaDirStr = areaLocalPathStr;
   else
+    // Scenery local path is relative - add base path
     sceneryAreaDirStr = options.getBasepath() + QDir::separator() + areaLocalPathStr;
 
   QFileInfo sceneryArea(sceneryAreaDirStr);
@@ -63,23 +54,28 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     if(sceneryArea.isDir())
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
+
+      // Check if directory is included
       if(options.isIncludedDirectory(sceneryAreaDir.absolutePath()))
       {
+        // get all scenery directories
         for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
         {
           QDir sceneryAreaDirObj(scenery.filePath());
+          // Get all BGL files
           for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
           {
             QString filename = bglFile.fileName();
-            if(!matchesExcludedFilePrefix(filename))
-              if(options.isIncludedFilename(filename))
-              {
-                numFiles++;
-                if(filepaths != nullptr)
-                  filepaths->append(bglFile.filePath());
-                if(filenames != nullptr)
-                  filenames->append(bglFile.fileName());
-              }
+
+            // Check if file is included
+            if(options.isIncludedFilename(filename))
+            {
+              numFiles++;
+              if(filepaths != nullptr)
+                filepaths->append(bglFile.filePath());
+              if(filenames != nullptr)
+                filenames->append(bglFile.fileName());
+            }
           }
         }
       }
@@ -90,15 +86,6 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
   else if(!quiet)
     qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
   return numFiles;
-}
-
-bool FileResolver::matchesExcludedFilePrefix(const QString& fname) const
-{
-  for(QString i : excludedFilePrefixes)
-    if(fname.startsWith(i, Qt::CaseInsensitive))
-      return true;
-
-  return false;
 }
 
 } // namespace scenery

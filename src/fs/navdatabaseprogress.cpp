@@ -15,32 +15,26 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_SC_TYPES_H
-#define ATOOLS_SC_TYPES_H
-
-#include <QVector>
-#include <QObject>
+#include "fs/navdatabaseprogress.h"
+#include "fs/scenery/sceneryarea.h"
 
 namespace atools {
 namespace fs {
-namespace sc {
 
-enum SimConnectStatus
+NavDatabaseProgress::NavDatabaseProgress()
 {
-  OK,
-  INVALID_MAGIC_NUMBER,
-  VERSION_MISMATCH,
-  INSUFFICIENT_WRITE
-};
 
-const QVector<QString> SIMCONNECT_STATUS_TEXT =
+}
+
+const QString& NavDatabaseProgress::getSceneryTitle() const
 {
-  QObject::tr("No Error"), QObject::tr("Invalid magic number"),
-  QObject::tr("Version mismatch"), QObject::tr("Insufficient write")
-};
+  return sceneryArea->getTitle();
+}
 
-} // namespace sc
+const QString& NavDatabaseProgress::getSceneryPath() const
+{
+  return sceneryArea->getLocalPath();
+}
+
 } // namespace fs
 } // namespace atools
-
-#endif // ATOOLS_SC_TYPES_H

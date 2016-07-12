@@ -53,7 +53,7 @@ class Helipad :
 {
 public:
   Helipad();
-  Helipad(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Helipad(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Helipad();
 
   static QString helipadTypeToStr(atools::fs::bgl::helipad::HelipadType type);

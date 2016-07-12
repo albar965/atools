@@ -91,7 +91,7 @@ RunwayApproachLights::RunwayApproachLights()
 {
 }
 
-RunwayApproachLights::RunwayApproachLights(const BglReaderOptions *options, BinaryStream *bs)
+RunwayApproachLights::RunwayApproachLights(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   int flags = bs->readUByte();

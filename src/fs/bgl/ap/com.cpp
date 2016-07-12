@@ -86,7 +86,7 @@ Com::Com()
 {
 }
 
-Com::Com(const BglReaderOptions *options, BinaryStream *bs)
+Com::Com(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<com::ComType>(bs->readShort());

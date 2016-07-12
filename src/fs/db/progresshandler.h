@@ -18,8 +18,8 @@
 #ifndef ATOOLS_PROGRESSHANDLER_H
 #define ATOOLS_PROGRESSHANDLER_H
 
-#include "fs/bglreaderprogressinfo.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseprogress.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -31,7 +31,7 @@ namespace db {
 class ProgressHandler
 {
 public:
-  ProgressHandler(const atools::fs::BglReaderOptions *options);
+  ProgressHandler(const atools::fs::NavDatabaseOptions *options);
 
   bool report(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
   bool report(const QString& bglFilepath, int current = -1);
@@ -100,15 +100,15 @@ public:
   void setCurrent(int value);
 
 private:
-  void defaultHandler(const atools::fs::BglReaderProgressInfo& inf);
+  void defaultHandler(const atools::fs::NavDatabaseProgress& inf);
 
-  atools::fs::BglReaderOptions::ProgressCallbackType handler = nullptr;
+  atools::fs::NavDatabaseOptions::ProgressCallbackType handler = nullptr;
 
-  atools::fs::BglReaderProgressInfo info;
+  atools::fs::NavDatabaseProgress info;
 
   bool callHandler();
 
-  QString numbersAsString(const atools::fs::BglReaderProgressInfo& inf);
+  QString numbersAsString(const atools::fs::NavDatabaseProgress& inf);
 
 };
 

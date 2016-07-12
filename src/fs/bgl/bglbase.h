@@ -27,7 +27,7 @@ class BinaryStream;
 }
 
 namespace fs {
-class BglReaderOptions;
+class NavDatabaseOptions;
 namespace bgl {
 
 /*
@@ -56,12 +56,12 @@ protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglBase& base);
 
   BglBase();
-  BglBase(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *stream);
+  BglBase(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
 
   qint64 startOffset;
 
   atools::io::BinaryStream *bs = nullptr;
-  const atools::fs::BglReaderOptions *opts = nullptr;
+  const atools::fs::NavDatabaseOptions *opts = nullptr;
 };
 
 } // namespace fs

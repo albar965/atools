@@ -60,7 +60,7 @@ class Transition :
   public atools::fs::bgl::Record
 {
 public:
-  Transition(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Transition(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Transition();
 
   /*

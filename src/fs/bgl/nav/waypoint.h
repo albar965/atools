@@ -52,7 +52,7 @@ class Waypoint :
   public atools::fs::bgl::Record
 {
 public:
-  Waypoint(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  Waypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Waypoint();
 
   /*

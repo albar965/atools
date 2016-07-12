@@ -19,7 +19,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/nav/airwaysegment.h"
 #include "io/binarystream.h"
-#include "fs/bglreaderoptions.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -56,7 +56,7 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   return QString();
 }
 
-Waypoint::Waypoint(const BglReaderOptions *options, BinaryStream *bs)
+Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   type = static_cast<nav::WaypointType>(bs->readUByte());

@@ -26,7 +26,7 @@ class SqlDatabase;
 }
 
 namespace fs {
-class BglReaderOptions;
+class NavDatabaseOptions;
 namespace db {
 class RunwayIndex;
 class AirportIndex;
@@ -48,7 +48,7 @@ protected:
     return dataWriter;
   }
 
-  const atools::fs::BglReaderOptions& getOptions();
+  const atools::fs::NavDatabaseOptions& getOptions();
 
   atools::fs::db::RunwayIndex *getRunwayIndex();
 

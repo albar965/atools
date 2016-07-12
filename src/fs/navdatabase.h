@@ -29,7 +29,7 @@ class SqlUtil;
 }
 
 namespace fs {
-class BglReaderOptions;
+class NavDatabaseOptions;
 
 namespace scenery {
 class SceneryCfg;
@@ -39,35 +39,66 @@ namespace db {
 class ProgressHandler;
 }
 
-class Navdatabase
+/*
+ * Class for creating the full navigation database. Reads scenery.cfg, reads BGL files of each found
+ * scenery area and writes all data to the database tables.
+ * Configuration and progress callback is done with class atools::fs::BglReaderOptions.
+ */
+class NavDatabase
 {
   Q_DECLARE_TR_FUNCTIONS(Navdatabase)
 
 public:
-  Navdatabase(const atools::fs::BglReaderOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
-  void create();
-  void createSchema(atools::fs::db::ProgressHandler *progress = nullptr);
+  /*
+   * Creates the object but does not load anything yet.
+   * @param readerOptions Configuration and progress callback options. Optional for schema creation
+   * @param sqlDb Database to fill with data
+   */
+  NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
 
+  /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.  */
+  void create();
+
+  /* Does not load anything and only creates the empty database schema.
+   * Configuration is not used and can be null. atools::Exception is thrown in case of error. */
+  void createSchema();
+
+  /*
+   *
+   * @return true if loading was aborted by the progress callback
+   */
   bool isAborted()
   {
     return aborted;
   }
 
-  /* Check if scenery.cfg file exists and is valid (contains areas */
+  /*
+   * Checks if scenery.cfg file exists and is valid (contains areas).
+   *
+   * @param filename Scenery.cfg filename
+   * @param error An error message will be placed in this string
+   * @return true if file is valid
+   */
   static bool isSceneryConfigValid(const QString& filename, QString& error);
 
-  /* Check if the base path is valid and contains a scenery directory */
+  /*
+   * Checks if the flight simulator base path is valid and contains a "scenery" directory.
+   *
+   * @param filepath path to flight simulator base (the directory containing e.g. fsx.exe)
+   * @param error An error message will be placed in this string
+   * @return true if path is valid
+   */
   static bool isBasePathValid(const QString& filepath, QString& error);
 
 private:
-  atools::sql::SqlDatabase *db;
-  const atools::fs::BglReaderOptions *options;
-  bool aborted = false;
+  void createSchemaInternal(atools::fs::db::ProgressHandler *progress = nullptr);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
-
   void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
-
   void createInternal();
+
+  atools::sql::SqlDatabase *db;
+  const atools::fs::NavDatabaseOptions *options;
+  bool aborted = false;
 
 };
 

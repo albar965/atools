@@ -32,7 +32,7 @@ namespace bgl {
 class BglFile;
 }
 
-class BglReaderOptions;
+class NavDatabaseOptions;
 
 namespace db {
 class DataWriter;

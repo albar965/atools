@@ -38,7 +38,7 @@ class DeleteRunway :
   public atools::fs::bgl::BglBase
 {
 public:
-  DeleteRunway(const BglReaderOptions *options, atools::io::BinaryStream *bs);
+  DeleteRunway(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteRunway();
 
   atools::fs::bgl::rw::Surface getSurface() const

@@ -62,7 +62,7 @@ class RunwayVasi :
 {
 public:
   RunwayVasi();
-  RunwayVasi(const atools::fs::BglReaderOptions *options, atools::io::BinaryStream *bs);
+  RunwayVasi(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~RunwayVasi();
 
   /*
