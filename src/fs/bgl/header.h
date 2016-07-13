@@ -53,6 +53,7 @@ public:
   virtual ~Header();
 
   Header(const atools::fs::bgl::Header& other)
+    : atools::fs::bgl::BglBase(other)
   {
     this->operator=(other);
 

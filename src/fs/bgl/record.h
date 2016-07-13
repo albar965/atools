@@ -42,6 +42,21 @@ public:
   {
   }
 
+  Record(const atools::fs::bgl::Record& other)
+    : atools::fs::bgl::BglBase(other)
+  {
+    this->operator=(other);
+
+  }
+
+  Record& operator=(const atools::fs::bgl::Record& other)
+  {
+    id = other.id;
+    size = other.size;
+    excluded = other.excluded;
+    return *this;
+  }
+
   /*
    * Reads the first part of the record namely the record id and the record size.
    * The stream is advanced by 6 bytes for this.

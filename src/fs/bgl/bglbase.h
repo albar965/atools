@@ -37,7 +37,23 @@ namespace bgl {
 class BglBase
 {
 public:
+  BglBase();
+  BglBase(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
+
   virtual ~BglBase();
+
+  BglBase(const atools::fs::bgl::BglBase& other)
+  {
+    this->operator=(other);
+
+  }
+
+  BglBase& operator=(const atools::fs::bgl::BglBase& other)
+  {
+    bs = other.bs;
+    opts = other.opts;
+    return *this;
+  }
 
   /*
    * Seek stream back to record start offset.
@@ -54,9 +70,6 @@ public:
 
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglBase& base);
-
-  BglBase();
-  BglBase(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *stream);
 
   qint64 startOffset;
 

@@ -95,7 +95,7 @@ public:
 
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change */
-  const int DB_VERSION_MAJOR = 2;
+  static const int DB_VERSION_MAJOR = 2;
 
   /* Minor database version of the application. Minor version differences are compatible.
    * History:
@@ -103,7 +103,7 @@ public:
    * 2 Increased ILS feather length to 9 nm
    * 3 Removed taxi path weight limit
    */
-  const int DB_VERSION_MINOR = 3;
+  static const int DB_VERSION_MINOR = 3;
 
 private:
   atools::sql::SqlDatabase *db;

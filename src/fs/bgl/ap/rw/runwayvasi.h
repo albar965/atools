@@ -64,6 +64,7 @@ public:
   RunwayVasi();
   RunwayVasi(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   RunwayVasi(const atools::fs::bgl::RunwayVasi& other)
+    : atools::fs::bgl::Record(other)
   {
     this->operator=(other);
 

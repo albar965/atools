@@ -59,13 +59,14 @@ enum ApproachLightSystem
  * Runway approach lights.
  */
 class RunwayApproachLights :
-  public Record
+  public atools::fs::bgl::Record
 {
 public:
   RunwayApproachLights();
   RunwayApproachLights(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
 
   RunwayApproachLights(const atools::fs::bgl::RunwayApproachLights& other)
+    : atools::fs::bgl::Record(other)
   {
     this->operator=(other);
 
