@@ -64,14 +64,14 @@ public:
 
   /* This defines the database schema version and should be updated for every incompatible
    * schema or content change */
-  static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 2;
+  const int DB_VERSION_MAJOR = 2;
 
   /* History:
    * 1 Removed unused database fields light_flags and pattern_flags.
    * 2 Increased ILS feather length to 9 nm
    * 3 Removed taxi path weight limit
    */
-  static Q_DECL_CONSTEXPR int DB_VERSION_MINOR = 3;
+  const int DB_VERSION_MINOR = 3;
 
 private:
   atools::sql::SqlDatabase *db;

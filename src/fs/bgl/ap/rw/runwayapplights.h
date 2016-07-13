@@ -64,7 +64,24 @@ class RunwayApproachLights :
 public:
   RunwayApproachLights();
   RunwayApproachLights(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+
+  RunwayApproachLights(const atools::fs::bgl::RunwayApproachLights& other)
+  {
+    this->operator=(other);
+
+  }
+
   virtual ~RunwayApproachLights();
+
+  RunwayApproachLights& operator=(const atools::fs::bgl::RunwayApproachLights& other)
+  {
+    system = other.system;
+    endlights = other.endlights;
+    reils = other.reils;
+    touchdown = other.touchdown;
+    numStrobes = other.numStrobes;
+    return *this;
+  }
 
   /*
    * @return True if it has runway end lights (green from approach, red from runway)
