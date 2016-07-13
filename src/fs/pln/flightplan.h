@@ -20,6 +20,8 @@
 
 #include "fs/pln/flightplanentry.h"
 
+#include <QApplication>
+
 class QXmlStreamReader;
 
 namespace atools {
@@ -37,14 +39,19 @@ enum FlightplanType
 enum RouteType
 {
   UNKNOWN_ROUTE,
-  LOW_ALT,
-  HIGH_ALT,
-  VOR,
-  DIRECT
+  LOW_ALTITUDE,
+  HIGH_ALTITUDE,
+  VOR, /* Used for radio navaid routing (VOR and NDB) */
+  DIRECT /* Direct connection without waypoints */
 };
 
+/*
+ * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
+ */
 class Flightplan
 {
+  Q_DECLARE_TR_FUNCTIONS(Flightplan)
+
 public:
   Flightplan();
   Flightplan(const atools::fs::pln::Flightplan& other);
@@ -52,14 +59,31 @@ public:
 
   atools::fs::pln::Flightplan& operator=(const atools::fs::pln::Flightplan& other);
 
+  /*
+   * Load a flightplan. An exception is thrown if the XML files is not valid
+   * @param file filepath of a valid flight plan file
+   */
   void load(const QString& file);
+
+  /*
+   * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
+   * Although the flight simulator cannot deal with flight plans that have no valid start
+   * or destination (start or destaintion are merely a waypoint) it is allowed to that save one.
+   * @param file filepath of the file to be saved
+   */
   void save(const QString& file);
 
+  /*
+   * @return Get all flight plan entries/waypoints. These include start and destination.
+   */
   QList<atools::fs::pln::FlightplanEntry>& getEntries()
   {
     return entries;
   }
 
+  /*
+   * @return Get all flight plan entries/waypoints. These include start and destination.
+   */
   const QList<atools::fs::pln::FlightplanEntry>& getEntries() const
   {
     return entries;
@@ -85,16 +109,22 @@ public:
     routeType = value;
   }
 
-  int getCruisingAlt() const
+  /*
+   * @return cruise altitude in feet
+   */
+  int getCruisingAltitude() const
   {
     return cruisingAlt;
   }
 
-  void setCruisingAlt(int value)
+  void setCruisingAltitude(int value)
   {
     cruisingAlt = value;
   }
 
+  /*
+   * @return "Descr" element of the file like "LOAG, LSZG"
+   */
   const QString& getDescription() const
   {
     return description;
@@ -105,16 +135,25 @@ public:
     description = value;
   }
 
+  /*
+   * @return departure ICAO code
+   */
   const QString& getDepartureIdent() const
   {
     return departureIdent;
   }
 
+  /*
+   * @return destination ICAO code
+   */
   const QString& getDestinationIdent() const
   {
     return destinationIdent;
   }
 
+  /*
+   * @return departure parking name like "PARKING 2"
+   */
   const QString& getDepartureParkingName() const
   {
     return departureParkingName;
@@ -162,26 +201,35 @@ public:
     departureAiportName = value;
   }
 
-  const atools::geo::Pos& getDestinationPos() const
+  /*
+   * @return destination position/coordinates.
+   */
+  const atools::geo::Pos& getDestinationPosition() const
   {
     return destinationPos;
   }
 
-  void setDestinationPos(const atools::geo::Pos& value)
+  void setDestinationPosition(const atools::geo::Pos& value)
   {
     destinationPos = value;
   }
 
-  const atools::geo::Pos& getDeparturePos() const
+  /*
+   * @return departure position/coordinates.
+   */
+  const atools::geo::Pos& getDeparturePosition() const
   {
     return departurePos;
   }
 
-  void setDeparturePos(const atools::geo::Pos& value)
+  void setDeparturePosition(const atools::geo::Pos& value)
   {
     departurePos = value;
   }
 
+  /*
+   * @return title of the flight plan like "EDMA to LESU"
+   */
   const QString& getTitle() const
   {
     return title;
@@ -192,6 +240,9 @@ public:
     title = value;
   }
 
+  /*
+   * Reverse start and destination and the order of all entries
+   */
   void reverse();
 
   /* Values for FSX */
@@ -203,8 +254,9 @@ private:
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
   static QString routeTypeToString(atools::fs::pln::RouteType type);
   static atools::fs::pln::RouteType stringToRouteType(const QString& str);
-
   void readUntilElement(QXmlStreamReader& reader, const QString& name);
+  void readAppVersion(QXmlStreamReader& reader);
+  void readWaypoint(QXmlStreamReader& reader);
 
   atools::fs::pln::FlightplanType flightplanType;
   atools::fs::pln::RouteType routeType;
@@ -212,12 +264,9 @@ private:
   QList<atools::fs::pln::FlightplanEntry> entries;
 
   int cruisingAlt, appVersionMajor, appVersionBuild;
-  QString filename, title, departureIdent, destinationIdent, description, departureParkingName,
-          departureAiportName, destinationAiportName;
+  QString filename, title, departureIdent, destinationIdent, description,
+          departureParkingName, departureAiportName, destinationAiportName;
   atools::geo::Pos departurePos, destinationPos;
-
-  void readAppVersion(QXmlStreamReader& reader);
-  void readWaypoint(QXmlStreamReader& reader);
 
 };
 

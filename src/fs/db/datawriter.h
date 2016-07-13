@@ -77,6 +77,26 @@ public:
     numObjectsWritten++;
   }
 
+  bool isAborted() const
+  {
+    return aborted;
+  }
+
+  AirportIndex *getAirportIndex()
+  {
+    return airportIndex;
+  }
+
+  RunwayIndex *getRunwayIndex()
+  {
+    return runwayIndex;
+  }
+
+  const NavDatabaseOptions& getOptions() const
+  {
+    return options;
+  }
+
   atools::fs::db::BglFileWriter *getBglFileWriter()
   {
     return bglFileWriter;
@@ -132,16 +152,6 @@ public:
     return parkingWriter;
   }
 
-  AirportIndex *getAirportIndex()
-  {
-    return airportIndex;
-  }
-
-  RunwayIndex *getRunwayIndex()
-  {
-    return runwayIndex;
-  }
-
   atools::fs::db::SceneryAreaWriter *getSceneryAreaWriter()
   {
     return sceneryAreaWriter;
@@ -155,11 +165,6 @@ public:
   atools::fs::db::DeleteAirportWriter *getDeleteAirportWriter()
   {
     return deleteAirportWriter;
-  }
-
-  const NavDatabaseOptions& getOptions() const
-  {
-    return options;
   }
 
   atools::fs::db::HelipadWriter *getHelipadWriter() const
@@ -200,11 +205,6 @@ public:
   atools::fs::db::BoundaryLineWriter *getBoundaryLineWriter() const
   {
     return boundaryLineWriter;
-  }
-
-  bool isAborted() const
-  {
-    return aborted;
   }
 
 private:

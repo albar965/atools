@@ -28,19 +28,47 @@ class SceneryArea;
 }
 namespace db {
 
+/*
+ * Progress handler. Fills the NavDatabaseProgress object with information and calls the progress callback.
+ */
 class ProgressHandler
 {
 public:
   ProgressHandler(const atools::fs::NavDatabaseOptions *options);
 
+  /*
+   * Increment progress by one and send message about new scenery area
+   */
   bool report(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
+
+  /*
+   * Increment progress by one and send message about new BGL file
+   */
   bool report(const QString& bglFilepath, int current = -1);
+
+  /*
+   * Send the last report
+   */
   bool reportFinish();
+
+  /*
+   * Increment progress by one and send message about other processes like script execution
+   */
   bool reportOther(const QString& otherAction, int current = -1, bool silent = false);
 
   /* Only send message without incrementing progress */
   bool reportOtherMsg(const QString& otherAction);
 
+  /* set total amount of progress steps */
+  void setTotal(int total);
+
+  /* Reset all */
+  void reset();
+
+  /* Increase current progress counter without sending a message */
+  void increaseCurrent(int increase);
+
+  /* Set current number of BGL files */
   void setNumFiles(int value)
   {
     info.numFiles = value;
@@ -90,14 +118,6 @@ public:
   {
     info.numObjectsWritten = value;
   }
-
-  void setTotal(int total);
-
-  void reset();
-
-  void increaseCurrent(int increase);
-
-  void setCurrent(int value);
 
 private:
   void defaultHandler(const atools::fs::NavDatabaseProgress& inf);

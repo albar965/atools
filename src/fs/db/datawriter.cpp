@@ -151,7 +151,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
   if(!filepaths.empty())
   {
-    sceneryAreaWriter->writeOne(&area);
+    sceneryAreaWriter->writeOne(area);
 
     BglFile bglFile(&options);
 
@@ -177,7 +177,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       if(bglFile.hasContent())
       {
         // Execution order is important due to dependencies between the writers
-        bglFileWriter->writeOne(&bglFile);
+        bglFileWriter->writeOne(bglFile);
 
         runwayIndex->clear();
         airportIndex->clear();

@@ -74,7 +74,10 @@ void Flightplan::load(const QString& file)
     QXmlStreamReader reader;
     reader.setDevice(&xmlFile);
 
+    // Skip all the useless stuff until we hit the document
     readUntilElement(reader, "SimBase.Document");
+
+    // Skip all until the flightplan is found
     readUntilElement(reader, "FlightPlan.FlightPlan");
 
     while(reader.readNextStartElement())
@@ -123,6 +126,8 @@ void Flightplan::load(const QString& file)
         reader.skipCurrentElement();
     }
   }
+  else
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
 void Flightplan::save(const QString& file)
@@ -203,6 +208,8 @@ void Flightplan::save(const QString& file)
     writer.writeEndElement(); // SimBase.Document
     writer.writeEndDocument();
   }
+  else
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
 void Flightplan::readUntilElement(QXmlStreamReader& reader, const QString& name)
@@ -329,10 +336,10 @@ QString Flightplan::routeTypeToString(RouteType type)
     case atools::fs::pln::UNKNOWN_ROUTE:
       return "Unknown";
 
-    case atools::fs::pln::LOW_ALT:
+    case atools::fs::pln::LOW_ALTITUDE:
       return "LowAlt";
 
-    case atools::fs::pln::HIGH_ALT:
+    case atools::fs::pln::HIGH_ALTITUDE:
       return "HighAlt";
 
     case atools::fs::pln::VOR:
@@ -347,9 +354,9 @@ QString Flightplan::routeTypeToString(RouteType type)
 RouteType Flightplan::stringToRouteType(const QString& str)
 {
   if(str == "LowAlt")
-    return LOW_ALT;
+    return LOW_ALTITUDE;
   else if(str == "HighAlt")
-    return HIGH_ALT;
+    return HIGH_ALTITUDE;
   else if(str == "VOR")
     return VOR;
   else if(str == "Direct")

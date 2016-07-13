@@ -32,11 +32,22 @@ class RunwayIndex;
 class AirportIndex;
 class DataWriter;
 
+/*
+ * Template free base class for all writer classes that store BGL record content into the database.
+ * Keeps the SQL statement and has utilitly methods for binding values to it.
+ */
 class WriterBaseBasic
 {
 public:
+  /*
+   * @param sqlDb an open database
+   * @param dw datawriter as parent that keeps all writers
+   * @param tablename table to insert content. An prepared insert statement including all columns
+   *        will be generated from this
+   * @param sqlParam custom insert statement to insert data. If this is set tablename will be ignored.
+   */
   WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
-                  atools::fs::db::DataWriter& db,
+                  atools::fs::db::DataWriter& dw,
                   const QString& tablename,
                   const QString& sqlParam);
 
@@ -49,20 +60,20 @@ protected:
   }
 
   const atools::fs::NavDatabaseOptions& getOptions();
-
   atools::fs::db::RunwayIndex *getRunwayIndex();
-
   atools::fs::db::AirportIndex *getAirportIndex();
 
-  atools::sql::SqlQuery& getStmt()
-  {
-    return stmt;
-  }
-
+  /*
+   * Bind a value to the insert statement
+   * @param placeholder
+   * @param val
+   */
   void bind(const QString& placeholder, const QVariant& val);
 
   /* Boolean to integer (0 or 1) */
   void bindBool(const QString& placeholder, bool val);
+
+  /* Bind type specific null values */
   void bindNullInt(const QString& placeholder);
   void bindNullFloat(const QString& placeholder);
   void bindNullString(const QString& placeholder);
@@ -70,11 +81,12 @@ protected:
   /* Binds a null if value == 0 */
   void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
+  /* Execute the insert and throw an exception if nothing was inserted */
   void executeStatement();
 
 private:
-  atools::sql::SqlQuery stmt;
-  QString sql, tablename;
+  atools::sql::SqlQuery sqlQuery; // Either custom query or generated insert statement
+  QString sqlStatement, tablename;
   atools::sql::SqlDatabase& db;
   atools::fs::db::DataWriter& dataWriter;
 

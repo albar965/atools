@@ -41,11 +41,11 @@ void RunwayWriter::writeObject(const Runway *type)
   QString apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   RunwayEndWriter *rweWriter = getDataWriter().getRunwayEndWriter();
-  rweWriter->writeOne(&(type->getPrimary()));
+  rweWriter->writeOne(type->getPrimary());
   int primaryEndId = rweWriter->getCurrentId();
   getRunwayIndex()->add(apIdent, type->getPrimary().getName(), primaryEndId);
 
-  rweWriter->writeOne(&(type->getSecondary()));
+  rweWriter->writeOne(type->getSecondary());
   int secondaryEndId = rweWriter->getCurrentId();
   getRunwayIndex()->add(apIdent, type->getSecondary().getName(), secondaryEndId);
 

@@ -39,6 +39,9 @@ enum WaypointType
 
 }
 
+/*
+ * Waypoint or airport as part of the flight plan. Also covers departure and destination airports.
+ */
 class FlightplanEntry
 {
 public:
@@ -48,23 +51,43 @@ public:
 
   FlightplanEntry& operator=(const atools::fs::pln::FlightplanEntry& other);
 
+  /*
+   * @return waypoint type as string like "VOR", "Waypoint" or "User"
+   */
   const QString& getWaypointTypeAsString() const;
+
   atools::fs::pln::entry::WaypointType getWaypointType() const;
+
   void setWaypointType(const QString& value);
   void setWaypointType(const atools::fs::pln::entry::WaypointType& value);
 
+  /*
+   * @return ICAO ident of this waypoint
+   */
   const QString& getWaypointId() const;
   void setWaypointId(const QString& value);
 
+  /*
+   * @return airway name if plan is an low alt or high alt flight plan
+   */
   const QString& getAirway() const;
   void setAirway(const QString& value);
 
+  /*
+   * @return two letter ICAO region code
+   */
   const QString& getIcaoRegion() const;
   void setIcaoRegion(const QString& value);
 
+  /*
+   * @return ICAO ident of this waypoint
+   */
   const QString& getIcaoIdent() const;
   void setIcaoIdent(const QString& value);
 
+  /*
+   * @return coordinates of this waypoint
+   */
   const geo::Pos& getPosition() const;
   void setPosition(const atools::geo::Pos& value);
 

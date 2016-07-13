@@ -31,14 +31,15 @@ WriterBaseBasic::WriterBaseBasic(atools::sql::SqlDatabase& sqlDb,
                                  DataWriter& writer,
                                  const QString& table,
                                  const QString& sqlParam)
-  : stmt(sqlDb), tablename(table), db(sqlDb), dataWriter(writer)
+  : sqlQuery(sqlDb), tablename(table), db(sqlDb), dataWriter(writer)
 {
   if(sqlParam.isEmpty())
-    sql = SqlUtil(&db).buildInsertStatement(tablename);
+    sqlStatement = SqlUtil(&db).buildInsertStatement(tablename);
   else
-    sql = sqlParam;
-  stmt = SqlQuery(db);
-  stmt.prepare(sql);
+    sqlStatement = sqlParam;
+  sqlQuery = SqlQuery(db);
+
+  sqlQuery.prepare(sqlStatement);
 }
 
 WriterBaseBasic::~WriterBaseBasic()
@@ -62,12 +63,12 @@ AirportIndex *WriterBaseBasic::getAirportIndex()
 
 void WriterBaseBasic::bindBool(const QString& placeholder, bool val)
 {
-  return stmt.bindValue(placeholder, val ? 1 : 0);
+  return sqlQuery.bindValue(placeholder, val ? 1 : 0);
 }
 
 void WriterBaseBasic::bind(const QString& placeholder, const QVariant& val)
 {
-  return stmt.bindValue(placeholder, val);
+  return sqlQuery.bindValue(placeholder, val);
 }
 
 void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& val)
@@ -75,31 +76,30 @@ void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& 
   if(val.toInt() == 0)
     bindNullInt(placeholder);
   else
-    return stmt.bindValue(placeholder, val);
+    return sqlQuery.bindValue(placeholder, val);
 }
 
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
-  return stmt.bindValue(placeholder, QVariant(QVariant::Int));
+  return sqlQuery.bindValue(placeholder, QVariant(QVariant::Int));
 }
 
 void WriterBaseBasic::bindNullFloat(const QString& placeholder)
 {
-  return stmt.bindValue(placeholder, QVariant(QVariant::Double));
+  return sqlQuery.bindValue(placeholder, QVariant(QVariant::Double));
 }
 
 void WriterBaseBasic::bindNullString(const QString& placeholder)
 {
-  return stmt.bindValue(placeholder, QVariant(QVariant::String));
+  return sqlQuery.bindValue(placeholder, QVariant(QVariant::String));
 }
 
 void WriterBaseBasic::executeStatement()
 {
-  stmt.exec();
-  int numUpdated = stmt.numRowsAffected();
+  sqlQuery.exec();
+  int numUpdated = sqlQuery.numRowsAffected();
   if(numUpdated == 0)
-    throw atools::sql::SqlException("Noting inserted", sql);
-  // stmt.clear();
+    throw atools::sql::SqlException("Noting inserted", sqlStatement);
 
   dataWriter.increaseNumObjects();
 }

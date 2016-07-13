@@ -164,35 +164,6 @@ void FlightplanEntry::setWaypointId(const QString& value)
   waypointId = value;
 }
 
-/*
- *  <ATCWaypoint id="UTH">
- *     <ATCWaypointType>NDB</ATCWaypointType>
- *     <WorldPosition>N63° 43' 22.04",E9° 34' 40.01",+000000.00</WorldPosition>
- *     <ATCAirway>L996</ATCAirway>
- *     <ICAO>
- *         <ICAORegion>EN</ICAORegion>
- *         <ICAOIdent>UTH</ICAOIdent>
- *     </ICAO>
- *  </ATCWaypoint>
- *  <ATCWaypoint id="AKABI">
- *      <ATCWaypointType>Intersection</ATCWaypointType>
- *      <WorldPosition>N47° 43' 1.01",E9° 14' 0.00",+000000.00</WorldPosition>
- *      <ATCAirway>UZ613</ATCAirway>
- *      <ICAO>
- *          <ICAORegion>LS</ICAORegion>
- *          <ICAOIdent>AKABI</ICAOIdent>
- *      </ICAO>
- *  </ATCWaypoint>
- *  <ATCWaypoint id="KPT">
- *      <ATCWaypointType>VOR</ATCWaypointType>
- *      <WorldPosition>N47° 44' 44.84",E10° 20' 59.38",+000000.00</WorldPosition>
- *      <ICAO>
- *          <ICAORegion>ED</ICAORegion>
- *          <ICAOIdent>KPT</ICAOIdent>
- *      </ICAO>
- *  </ATCWaypoint>
- */
-
 } // namespace pln
 } // namespace fs
 } // namespace atools

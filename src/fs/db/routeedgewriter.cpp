@@ -36,24 +36,33 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
-// Added to range of current radio id
+/* Added to range of current radio id */
 const int MAX_RADIO_RANGE_METER = atools::geo::nmToMeter(200);
-const int NUM_SECTORS = 8;
 
-// Increase rectangle at a maximum of this number
-const int MAX_ITERATIONS = 2;
-
-// Minimum distance that is needed before an edge is generated
+/* Minimum distance that is needed before an edge is generated*/
 const int MIN_DISTANCE_METER = atools::geo::nmToMeter(30);
 
+/* Number of sectors around the navaid. */
+const int NUM_SECTORS = 8;
+
+/* Stop the process for one navaid when all sectors have at least this amount of neighbours */
 const int MAX_EDGES_PER_SECTOR = 2;
+
+/* Increase search radius around a navaid and search again until we find at least this amount of neigbours s  */
 const int MIN_EDGES_PER_SECTOR = 1;
 
-// Index VOR=0, VORDME=1, DME=2, NDB=3
+/* Increase rectangle at a maximum of this number */
+const int MAX_ITERATIONS = 2;
+
+/* Prioritize navaids by type - Index VOR=0, VORDME=1, DME=2, NDB=3 */
 const int PRIORITY_BY_TYPE[] = {0 /* None */, 2 /* VOR */, 3 /* VORDME */, 0 /* DME */, 1 /* NDB */};
 
+/* Inflate seach rectangle for each iteration.  */
 const float INFLATE_RECT_LON_DEGREES = 6.f;
 const float INFLATE_RECT_LAT_DEGREES = 4.f;
+
+/* Report progress twice a second */
+const int MIN_PROGRESS_REPORT_MS = 500;
 
 RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
                                  int numProgressSteps)
@@ -65,23 +74,24 @@ RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db
 bool RouteEdgeWriter::run()
 {
   bool aborted = false;
-  SqlQuery selectStmt(
-    "select node_id, range, type, lonx, laty from route_node_radio", db); // where node_id = 146
+
+  // Iterate over all radio navaids
+  SqlQuery selectNodesQuery("select node_id, range, type, lonx, laty from route_node_radio", db);
+
+  // Get all nodes nearby this navaids
+  SqlQuery nearestNodesQuery(db);
+  nearestNodesQuery.prepare("select node_id, type, range, lonx, laty from route_node_radio "
+                            "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+
+  // Insert edges into databases
+  SqlQuery insertEdgesQuery(db);
+  insertEdgesQuery.prepare("insert into route_edge_radio "
+                           "(from_node_id, from_node_type, to_node_id, to_node_type, distance) "
+                           "values(?, ?, ?, ?, ?)");
 
   int numRows = SqlUtil(db).rowCount("route_node_radio");
   int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(numRows) / static_cast<float>(numSteps)));
 
-  SqlQuery insertStmt(db);
-  insertStmt.prepare(
-    "insert into route_edge_radio (from_node_id, from_node_type, to_node_id, to_node_type, distance) "
-    "values(?, ?, ?, ?, ?)");
-
-  SqlQuery nearestStmt(db);
-  nearestStmt.prepare(
-    "select node_id, type, range, lonx, laty from route_node_radio "
-    "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
-
-  selectStmt.exec();
   QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;
 
   QElapsedTimer timer;
@@ -89,14 +99,16 @@ bool RouteEdgeWriter::run()
   qint64 elapsed = timer.elapsed();
   int row = 0, steps = 0;
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
-  while(selectStmt.next())
+
+  selectNodesQuery.exec();
+  while(selectNodesQuery.next())
   {
     if((row++ % rowsPerStep) == 0)
     {
       qint64 elapsed2 = timer.elapsed();
 
       // Update only every 500 ms - otherwise update only progress count
-      bool silent = !(elapsed + 500 < elapsed2);
+      bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
       if(!silent)
         elapsed = elapsed2;
 
@@ -106,22 +118,23 @@ bool RouteEdgeWriter::run()
     }
 
     // Look at each node
-    int fromRangeMeter = selectStmt.value("range").toInt();
-    int fromNodeId = selectStmt.value("node_id").toInt();
-    int fromNodeType = selectStmt.value("type").toInt();
+    int fromRangeMeter = selectNodesQuery.value("range").toInt();
+    int fromNodeId = selectNodesQuery.value("node_id").toInt();
+    int fromNodeType = selectNodesQuery.value("type").toInt();
 
-    Pos pos(selectStmt.value("lonx").toFloat(), selectStmt.value("laty").toFloat());
+    Pos pos(selectNodesQuery.value("lonx").toFloat(), selectNodesQuery.value("laty").toFloat());
 
+    // Clear result lists
     toNodeIdVars.clear();
     toNodeTypeVars.clear();
     toNodeDistanceVars.clear();
 
-    // Get all navaids in bounding rectangle
+    // Get all navaids in bounding rectangle - first iterations
     Rect queryRect(pos, MAX_RADIO_RANGE_METER);
-    bool nearestSatisfied = nearest(nearestStmt, fromNodeId, pos, queryRect, fromRangeMeter,
+    bool nearestSatisfied = nearest(nearestNodesQuery, fromNodeId, pos, queryRect, fromRangeMeter,
                                     toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
 
-    // If not all sectors have an edge increase rectangle and try again
+    // If not all sectors have an edge increase rectangle and try again for MAX_ITERATIONS
     int maxIter = 0;
     while(!nearestSatisfied)
     {
@@ -129,12 +142,13 @@ bool RouteEdgeWriter::run()
       toNodeTypeVars.clear();
       toNodeDistanceVars.clear();
       queryRect.inflate(INFLATE_RECT_LON_DEGREES, INFLATE_RECT_LAT_DEGREES);
-      nearestSatisfied = nearest(nearestStmt, fromNodeId, pos, queryRect, fromRangeMeter,
+      nearestSatisfied = nearest(nearestNodesQuery, fromNodeId, pos, queryRect, fromRangeMeter,
                                  toNodeIdVars, toNodeTypeVars, toNodeDistanceVars);
       if(maxIter++ > MAX_ITERATIONS)
         break;
     }
 
+    // Update from value arrays with values for bind
     fromNodeIdVars.clear();
     fromNodeTypeVars.clear();
     for(int i = 0; i < toNodeIdVars.size(); i++)
@@ -143,12 +157,13 @@ bool RouteEdgeWriter::run()
       fromNodeTypeVars.append(fromNodeType);
     }
 
-    insertStmt.addBindValue(fromNodeIdVars);
-    insertStmt.addBindValue(fromNodeTypeVars);
-    insertStmt.addBindValue(toNodeIdVars);
-    insertStmt.addBindValue(toNodeTypeVars);
-    insertStmt.addBindValue(toNodeDistanceVars);
-    insertStmt.execBatch();
+    // Use batch update to insert values into edge table
+    insertEdgesQuery.addBindValue(fromNodeIdVars);
+    insertEdgesQuery.addBindValue(fromNodeTypeVars);
+    insertEdgesQuery.addBindValue(toNodeIdVars);
+    insertEdgesQuery.addBindValue(toNodeTypeVars);
+    insertEdgesQuery.addBindValue(toNodeDistanceVars);
+    insertEdgesQuery.execBatch();
 
     total += toNodeIdVars.size();
     average = (average + toNodeIdVars.size()) / 2;
@@ -167,6 +182,18 @@ bool RouteEdgeWriter::run()
   return aborted;
 }
 
+/*
+ * Get nearest neighbours for a navaid
+ * @param nearestStmt
+ * @param fromNodeId node ID for current navaid
+ * @param pos position of current navaid
+ * @param queryRect current query rectangle
+ * @param fromRangeMeter range for current navaid
+ * @param toNodeIds result list
+ * @param toNodeTypes result list
+ * @param toNodeDistances result list
+ * @return
+ */
 bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& pos, const Rect& queryRect,
                               int fromRangeMeter, QVariantList& toNodeIds,
                               QVariantList& toNodeTypes, QVariantList& toNodeDistances)
@@ -180,10 +207,12 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
     int priority;
   };
 
+  // Nodes with reachable navaids - one list of nodes per sector
   QVector<QVector<TempNodeTo> > sectorsReachable;
   for(int i = 0; i < NUM_SECTORS; i++)
     sectorsReachable.append(QVector<TempNodeTo>());
 
+  // Nodes with unreachable navaids - one list of nodes per sector
   QVector<QVector<TempNodeTo> > sectorsOther;
   for(int i = 0; i < NUM_SECTORS; i++)
     sectorsOther.append(QVector<TempNodeTo>());
@@ -205,12 +234,14 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
       int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos) + 0.5f);
 
       if(distanceMeter < MIN_DISTANCE_METER)
+        // Navaid is too close
         continue;
 
       int courseDeg = static_cast<int>(pos.angleDegTo(toPos) + 0.5f);
       if(courseDeg >= 360)
         courseDeg -= 360;
 
+      // Calculate sector number for this node
       int sectorNum = courseDeg / (360 / NUM_SECTORS);
 
       int toNodeType = nearestStmt.value("type").toInt();
@@ -224,6 +255,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
       if(reachable)
       {
         QVector<TempNodeTo>& sector = sectorsReachable[sectorNum];
+
         // farthest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
                               [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
@@ -238,6 +270,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
       else
       {
         QVector<TempNodeTo>& sector = sectorsOther[sectorNum];
+
         // nearest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
                               [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
@@ -254,6 +287,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
   bool retval = true;
 
+  // Now check for each sector if conditions are met
   for(int sectorNum = 0; sectorNum < NUM_SECTORS; sectorNum++)
   {
     const QVector<TempNodeTo>& sectorReachable = sectorsReachable.value(sectorNum);

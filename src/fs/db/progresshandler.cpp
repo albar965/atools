@@ -35,11 +35,6 @@ void ProgressHandler::increaseCurrent(int increase)
   info.current += increase;
 }
 
-void ProgressHandler::setCurrent(int value)
-{
-  info.current = value;
-}
-
 bool ProgressHandler::reportOtherMsg(const QString& otherAction)
 {
   info.otherAction = otherAction;
@@ -128,8 +123,12 @@ bool ProgressHandler::report(const scenery::SceneryArea *sceneryArea, int curren
 bool ProgressHandler::callHandler()
 {
   bool retval = false;
+
+  // Alway call default handler - this one cannot call cancel
   defaultHandler(info);
+
   if(handler != nullptr)
+    // Call user handler
     retval = handler(info);
 
   if(info.firstCall)
@@ -138,11 +137,9 @@ bool ProgressHandler::callHandler()
   return retval;
 }
 
-QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)
-{
-  return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
-}
-
+/*
+ * Default handler prints to console or log only
+ */
 void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 {
   if(inf.isNewFile())
@@ -157,6 +154,11 @@ void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 
   if(inf.isNewOther())
     qInfo() << "====" << numbersAsString(inf) << inf.getOtherAction();
+}
+
+QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)
+{
+  return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
 }
 
 } // namespace writer

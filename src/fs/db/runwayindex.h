@@ -24,6 +24,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Index that maps airport idents and runway names to runway end IDs.
+ */
 class RunwayIndex
 {
 public:
@@ -33,8 +36,21 @@ public:
 
   virtual ~RunwayIndex();
 
+  /*
+   * Adds an entry to the index
+   * @param airportIdent airport ICAO ident
+   * @param runwayName full runway name like "12L" or "01"
+   * @param runwayEndId database runway end ID
+   */
   void add(const QString& airportIdent, const QString& runwayName, int runwayEndId);
 
+  /*
+   * Get the runway end database ID from the index.
+   * @param airportIdent airport ICAO ident
+   * @param runwayName full runway name like "12L" or "01"
+   * @param sourceObject parent of source object - only used for error reporting
+   * @return database runway end ID
+   */
   int getRunwayEndId(const QString& airportIdent, const QString& runwayName, const QString& sourceObject);
 
   void clear()
@@ -43,7 +59,9 @@ public:
   }
 
 private:
+  /* key of airport ident and runway name */
   typedef QPair<QString, QString> RunwayIndexKeyType;
+
   typedef QHash<atools::fs::db::RunwayIndex::RunwayIndexKeyType, int> RunwayIndexType;
   typedef atools::fs::db::RunwayIndex::RunwayIndexType::const_iterator RunwayIndexTypeConstIter;
 

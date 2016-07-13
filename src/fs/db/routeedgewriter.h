@@ -38,6 +38,10 @@ namespace db {
 
 class ProgressHandler;
 
+/*
+ * Creates a routing network from VOR and NDB stations that are reachable from each other.
+ * Fills table route_edge_radio and reads from table route_node_radio.
+ */
 class RouteEdgeWriter
 {
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
@@ -46,9 +50,14 @@ public:
   RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
                   int numProgressSteps);
 
+  /*
+   * Run the process and fill the route_edge_radio table. Reports process every 500 ms.
+   * @return true if the process was aborted
+   */
   bool run();
 
 private:
+  void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
   bool nearest(atools::sql::SqlQuery& nearestStmt, int fromNodeId, const geo::Pos& pos,
                const geo::Rect& queryRect,
                int fromRangeMeter, QVariantList& toNodeIds, QVariantList& toNodeTypes,
@@ -57,7 +66,6 @@ private:
   int numSteps = 10;
   atools::fs::db::ProgressHandler& progressHandler;
   atools::sql::SqlDatabase *db;
-  void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
 
 };
 

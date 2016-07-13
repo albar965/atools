@@ -37,42 +37,61 @@ class NavDatabaseOptions;
 namespace db {
 class DataWriter;
 
+/*
+ * Template base class for all writers classes that store BGL record data into the database.
+ */
 template<class TYPE>
 class WriterBase :
   public atools::fs::db::WriterBaseBasic
 {
 public:
+  /*
+   * @param sqlDb an open database
+   * @param dw datawriter as parent that keeps all writers
+   * @param tablename table to insert content. An prepared insert statement including all columns
+   *        will be generated from this
+   * @param sqlParam custom insert statement to insert data. If this is set tablename will be ignored.
+   */
   WriterBase(atools::sql::SqlDatabase& db,
              atools::fs::db::DataWriter& dataWriter,
              const QString& tablename,
-             const QString& sqlParam = "");
+             const QString& sqlParam = QString());
 
   virtual ~WriterBase();
 
   typedef QList<const TYPE *> TypePtrVector;
-  typedef typename TypePtrVector::const_iterator TypePtrConstIter;
   typedef QList<TYPE> TypeVector;
-  typedef typename TypeVector::const_iterator TypeConstIter;
 
-  void writeOne(const TYPE *t);
+  /* convenience methods for writing references, pointers and lists of TYPE */
   void writeOne(const TYPE& t);
+  void writeOne(const TYPE *t);
   void write(const TypePtrVector& types);
   void write(const TypeVector& types);
 
+  /*
+   * @return current unchanged database id for this writer
+   */
   int getCurrentId() const
   {
     return id;
   }
 
+  /*
+   * Increase database id and return it to caller
+   * @return database id for this writer
+   */
   int getNextId()
   {
     return ++id;
   }
 
 protected:
+  /*
+   * Actual writing of BGL records to the database is done here which has to
+   * be implemented by the concrete classes
+   * @param type record to write
+   */
   virtual void writeObject(const TYPE *type) = 0;
-
-  int getCurrentFileId() const;
 
 private:
   static int id;
@@ -110,20 +129,15 @@ void WriterBase<TYPE>::writeOne(const TYPE& t)
 template<typename TYPE>
 void WriterBase<TYPE>::write(const TypePtrVector& types)
 {
-  if(!types.empty())
-    for(TypePtrConstIter it = types.begin(); it != types.end(); ++it)
-      writeOne(*it);
+  for(const TYPE *type : types)
+    writeOne(type);
 }
 
 template<typename TYPE>
 void WriterBase<TYPE>::write(const TypeVector& types)
 {
-  if(!types.empty())
-    for(TypeConstIter it = types.begin(); it != types.end(); ++it)
-    {
-      const TYPE& t = *it;
-      writeOne(&t);
-    }
+  for(const TYPE& type : types)
+    writeOne(type);
 }
 
 } // namespace writer
