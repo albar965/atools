@@ -79,7 +79,7 @@ public:
   }
 
   /* Byte size that will be read by this class */
-  static Q_DECL_CONSTEXPR int SIZE = 6;
+  const int SIZE = 6;
 
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);

@@ -49,7 +49,28 @@ public:
    * Reads the BGL file header
    */
   Header(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+
   virtual ~Header();
+
+  Header(const atools::fs::bgl::Header& other)
+  {
+    this->operator=(other);
+
+  }
+
+  Header& operator=(const atools::fs::bgl::Header& other)
+  {
+    magicNumber1 = other.magicNumber1;
+    headerSize = other.headerSize;
+    lowDateTime = other.lowDateTime;
+    highDateTime = other.highDateTime;
+    magicNumber2 = other.magicNumber2;
+    numSections = other.numSections;
+    creationTimestamp = other.creationTimestamp;
+    valid = other.valid;
+
+    return *this;
+  }
 
   /*
    * @return Timestamp string in ISO format from the timestamp inside the BGL
@@ -80,8 +101,8 @@ public:
     return valid;
   }
 
-  static Q_DECL_CONSTEXPR unsigned int MAGIC_NUMBER1 = 0x19920201;
-  static Q_DECL_CONSTEXPR unsigned int MAGIC_NUMBER2 = 0x08051803;
+  const unsigned int MAGIC_NUMBER1 = 0x19920201;
+  const unsigned int MAGIC_NUMBER2 = 0x08051803;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);

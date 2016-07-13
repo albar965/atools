@@ -63,7 +63,20 @@ class RunwayVasi :
 public:
   RunwayVasi();
   RunwayVasi(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  RunwayVasi(const atools::fs::bgl::RunwayVasi& other)
+  {
+    this->operator=(other);
+
+  }
+
   virtual ~RunwayVasi();
+
+  RunwayVasi& operator=(const atools::fs::bgl::RunwayVasi& other)
+  {
+    type = other.type;
+    pitch = other.pitch;
+    return *this;
+  }
 
   /*
    * @return VASI pitch in degree
