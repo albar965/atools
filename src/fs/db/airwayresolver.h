@@ -40,36 +40,7 @@ public:
 
   bool run();
 
-  struct Leg
-  {
-    Leg()
-    {
-
-    }
-
-    Leg(int fromId, int toId, int minAltitude, QString airwayType,
-        const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
-      : from(fromId), to(toId), minAlt(minAltitude), type(airwayType), fromPos(fromPosition),
-        toPos(toPosition)
-    {
-    }
-
-    bool operator==(const Leg& other) const
-    {
-      return from == other.from && to == other.to;
-    }
-
-    bool operator<(const Leg& other) const
-    {
-      return std::pair<int, int>(from, to) < std::pair<int, int>(other.from, other.to);
-    }
-
-    friend QDebug operator<<(QDebug out, const Leg& l);
-
-    int from = 0, to = 0, minAlt = 0;
-    QString type;
-    atools::geo::Pos fromPos, toPos;
-  };
+  struct Leg;
 
 private:
   void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::Leg>& airway);

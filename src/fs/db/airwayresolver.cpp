@@ -41,6 +41,37 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
+struct AirwayResolver::Leg
+{
+  Leg()
+  {
+
+  }
+
+  Leg(int fromId, int toId, int minAltitude, QString airwayType,
+      const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
+    : type(airwayType), from(fromId), to(toId), minAlt(minAltitude), fromPos(fromPosition), toPos(toPosition)
+  {
+  }
+
+  bool operator==(const Leg& other) const
+  {
+    return from == other.from && to == other.to;
+
+  }
+
+  bool operator<(const Leg& other) const
+  {
+    return std::pair<int, int>(from, to) < std::pair<int, int>(other.from, other.to);
+  }
+
+  friend QDebug operator<<(QDebug out, const Leg& l);
+
+  QString type;
+  int from = 0, to = 0, minAlt = 0;
+  atools::geo::Pos fromPos, toPos;
+};
+
 uint qHash(const AirwayResolver::Leg& leg)
 {
   return leg.from ^ leg.to ^ leg.minAlt ^ qHash(leg.type);

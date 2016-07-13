@@ -27,46 +27,78 @@ class SqlDatabase;
 namespace fs {
 namespace db {
 
+/*
+ * Maintains versions and load time for a navdatabases
+ */
 class DatabaseMeta
 {
 public:
   DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
 
+  /*
+   * @return Major version that is stored in the database schema
+   */
   int getMajorVersion() const
   {
     return majorVersion;
   }
 
+  /*
+   * @return Minor version that is stored in the database schema
+   */
   int getMinorVersion() const
   {
     return minorVersion;
   }
 
+  /*
+   * @return timestamp of the last database load
+   */
   QDateTime getLastLoadTime() const
   {
     return lastLoadTime;
   }
 
+  /*
+   * @return true if the database metadata table was found
+   */
   bool isValid() const
   {
     return valid;
   }
 
+  /*
+   * @return true if a schema was found (checked by looking for the most important airport table)
+   */
   bool hasSchema();
+
+  /*
+   * @return true if a schema was found and contains data (checked by looking for the most important airport table)
+   */
   bool hasData();
+
+  /*
+   * @return true if application major version and database major version are equal
+   */
   bool isDatabaseCompatible();
   bool isDatabaseCompatible(int majorVersion);
 
+  /* Update the version information in the database */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
+
+  /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
+
+  /* Set database version to application version and timestamp to current time */
   void updateAll();
 
-  /* This defines the database schema version and should be updated for every incompatible
+  /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change */
   static Q_DECL_CONSTEXPR int DB_VERSION_MAJOR = 2;
 
-  /* History:
+  /* Minor database version of the application. Minor version differences are compatible.
+   * History:
    * 1 Removed unused database fields light_flags and pattern_flags.
    * 2 Increased ILS feather length to 9 nm
    * 3 Removed taxi path weight limit

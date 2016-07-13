@@ -46,7 +46,7 @@
 #include "fs/db/ap/apronlightwriter.h"
 #include "fs/db/ap/fencewriter.h"
 #include "fs/db/ap/taxipathwriter.h"
-#include "fs/db/boundarywriter.h"
+#include "fs/db/nav/boundarywriter.h"
 #include "fs/db/progresshandler.h"
 
 #include "fs/db/ap/deleteairportwriter.h"
@@ -54,7 +54,7 @@
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
 
-#include "fs/db/boundarylinewriter.h"
+#include "fs/db/nav/boundarylinewriter.h"
 #include "fs/bgl/bglfile.h"
 #include "logging/loggingdefs.h"
 
@@ -146,11 +146,14 @@ DataWriter::~DataWriter()
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
   QStringList filepaths, filenames;
+
+  // Get all BGL files in this scenery area
   atools::fs::scenery::FileResolver resolver(options);
   resolver.getFiles(area, &filepaths, &filenames);
 
   if(!filepaths.empty())
   {
+    // Write the scenera area metadata
     sceneryAreaWriter->writeOne(area);
 
     BglFile bglFile(&options);
@@ -169,22 +172,34 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       progressHandler->setNumBoundaries(numBoundaries);
       progressHandler->setNumWaypoints(numWaypoints);
       progressHandler->setNumObjectsWritten(numObjectsWritten);
+
       if((aborted = progressHandler->report(filenames.at(i))) == true)
         return;
 
       QString filepath = filepaths.at(i);
+
+      // Read all records into a intenal object tree (atools::fs::bgl namespace
       bglFile.readFile(filepath);
       if(bglFile.hasContent())
       {
-        // Execution order is important due to dependencies between the writers
+        // Write BGL file metadata
         bglFileWriter->writeOne(bglFile);
 
+        // Clear the indexes
         runwayIndex->clear();
         airportIndex->clear();
 
+        // Execution order is important due to dependencies between the writers
+        // (i.e. ILS writer looks for runway end ids)
+        // Writer also need to access the ids of their parent record objects
+        // (i.e. runway needs the current airport ID
+
         airportWriter->setNameLists(bglFile.getNamelists());
+
+        // Write airport and all subrecords like runways, approaches, parking and so on
         airportWriter->write(bglFile.getAirports());
 
+        // Write all navaids to the database
         waypointWriter->write(bglFile.getWaypoints());
         vorWriter->write(bglFile.getVors());
         ndbWriter->write(bglFile.getNdbs());

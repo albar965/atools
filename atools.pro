@@ -90,8 +90,6 @@ HEADERS += src/atools.h \
     src/fs/db/ap/taxipathwriter.h \
     src/fs/db/ap/transitionlegwriter.h \
     src/fs/db/ap/transitionwriter.h \
-    src/fs/db/boundarylinewriter.h \
-    src/fs/db/boundarywriter.h \
     src/fs/db/datawriter.h \
     src/fs/db/meta/bglfilewriter.h \
     src/fs/db/meta/sceneryareawriter.h \
@@ -164,7 +162,9 @@ HEADERS += src/atools.h \
     src/fs/bgl/ap/apronedgelight.h \
     src/fs/navdatabaseprogress.h \
     src/fs/navdatabaseoptions.h \
-    src/io/inireader.h
+    src/io/inireader.h \
+    src/fs/db/nav/boundarylinewriter.h \
+    src/fs/db/nav/boundarywriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -235,8 +235,6 @@ SOURCES += src/atools.cpp \
     src/fs/db/ap/taxipathwriter.cpp \
     src/fs/db/ap/transitionlegwriter.cpp \
     src/fs/db/ap/transitionwriter.cpp \
-    src/fs/db/boundarylinewriter.cpp \
-    src/fs/db/boundarywriter.cpp \
     src/fs/db/datawriter.cpp \
     src/fs/db/meta/bglfilewriter.cpp \
     src/fs/db/meta/sceneryareawriter.cpp \
@@ -305,7 +303,9 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/ap/apronedgelight.cpp \
     src/fs/navdatabaseprogress.cpp \
     src/fs/navdatabaseoptions.cpp \
-    src/io/inireader.cpp
+    src/io/inireader.cpp \
+    src/fs/db/nav/boundarylinewriter.cpp \
+    src/fs/db/nav/boundarywriter.cpp
 
 
 unix {

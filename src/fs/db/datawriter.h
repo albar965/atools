@@ -61,15 +61,24 @@ class BoundaryWriter;
 class BoundaryLineWriter;
 class ProgressHandler;
 
+/*
+ * Keeps all writer objects and calls them in order to write BGL records to the database.
+ */
 class DataWriter
 {
 public:
   DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
              ProgressHandler *progress);
-
   virtual ~DataWriter();
 
+  /*
+   * @param area all BGL file content of this scenery area will be written to the database
+   */
   void writeSceneryArea(const atools::fs::scenery::SceneryArea& area);
+
+  /*
+   * Log written record number, etc. to the log/console.
+   */
   void logResults();
 
   void increaseNumObjects()
@@ -77,21 +86,33 @@ public:
     numObjectsWritten++;
   }
 
+  /*
+   * @return true if the progress callback reported an abort (i.e. Cancel button pressed)
+   */
   bool isAborted() const
   {
     return aborted;
   }
 
+  /*
+   * @return airport index that maps ICAO idents to database airport Ids
+   */
   AirportIndex *getAirportIndex()
   {
     return airportIndex;
   }
 
+  /*
+   * @return runway index that maps runway names to database runway end Ids
+   */
   RunwayIndex *getRunwayIndex()
   {
     return runwayIndex;
   }
 
+  /*
+   * @return configuration options for the scenery library compiler
+   */
   const NavDatabaseOptions& getOptions() const
   {
     return options;

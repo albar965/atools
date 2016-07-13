@@ -25,7 +25,8 @@ namespace fs {
 namespace db {
 
 /*
- * Index that maps airport idents and runway names to runway end IDs.
+ * Index that maps airport idents and runway names to runway end IDs. This used for each BGL file and does not cross
+ * the file boundary.
  */
 class RunwayIndex
 {

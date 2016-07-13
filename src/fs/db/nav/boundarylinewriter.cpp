@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/boundarylinewriter.h"
-#include "fs/db/boundarywriter.h"
+#include "fs/db/nav/boundarylinewriter.h"
+#include "fs/db/nav/boundarywriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
