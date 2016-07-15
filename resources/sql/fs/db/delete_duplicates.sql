@@ -16,38 +16,43 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Remove any duplicates that are resulting from buggy BGL files
+-- Remove any duplicates that are resulting from add-on BGL files.
+-- Some add-on airport BGL files contain additional navaids that are
+-- not (and cannot be) covered by the delete processor. These will
+-- be removed here by keeping only the duplicate with the highest id.
+-- This means stock/default are removed and add-on are kept.
 -- *************************************************************
 
-delete from ndb where ndb_id in (
-select n1.ndb_id
-from ndb n1 join ndb n2 on n1.ident = n2.ident and n1.frequency = n2.frequency and
-  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.ndb_id < n2.ndb_id and n1.airport_id is null);
+-- Delete stock NDB is there is an add-on duplicate
+delete from ndb
+where ndb_id not in (
+  select max(ndb_id)
+  from ndb
+  group by ident, frequency, region, lonx, laty
+);
 
-delete from ndb where ndb_id in (
-select n1.ndb_id
-from ndb n1 join ndb n2 on n1.ident = n2.ident and n1.frequency = n2.frequency and
-  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.ndb_id > n2.ndb_id and n1.airport_id is null);
+-- Delete stock VOR is there is an add-on duplicate
+delete from vor
+where vor_id not in (
+  select max(vor_id)
+  from vor
+  group by ident, frequency, type, region, lonx, laty
+);
 
-/*
-delete from waypoint where waypoint_id in (
-select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
-  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.waypoint_id < n2.waypoint_id and n1.airport_id is null and
-n1.waypoint_id not in (select waypoint_id from airway_point)) ;
+-- Delete stock marker is there is an add-on duplicate
+delete from marker
+where marker_id not in (
+  select max(marker_id)
+  from marker
+  group by type, heading, lonx, laty
+);
 
-delete from waypoint where waypoint_id in (
-select n1.waypoint_id from waypoint n1 join waypoint n2 on n1.ident = n2.ident and
-  n1.type = n2.type and n1.region = n2.region and n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.waypoint_id > n2.waypoint_id and n1.airport_id is null and
-n1.waypoint_id not in (select waypoint_id from airway_point)) ;
-*/
+-- Delete duplicate add-on waypoints since the stock ones keep the airway connections
+delete from waypoint
+where waypoint_id not in (
+  select min(waypoint_id)
+  from waypoint
+  group by ident, type, region, lonx, laty
+) and num_victor_airway = 0 and num_jet_airway = 0;
 
-delete from marker where marker_id in (
-select n1.marker_id
-from marker n1 join marker n2 on n1.type = n2.type and n1.heading = n2.heading and
-  n1.lonx = n2.lonx and n1.laty = n2.laty
-where n1.marker_id < n2.marker_id );
 
