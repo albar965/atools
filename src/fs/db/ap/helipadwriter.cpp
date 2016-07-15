@@ -30,7 +30,16 @@ namespace db {
 
 using atools::fs::bgl::Helipad;
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
+
+HelipadWriter::HelipadWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
+  : WriterBase(db, dataWriter, "helipad")
+{
+}
+
+HelipadWriter::~HelipadWriter()
+{
+}
 
 void HelipadWriter::writeObject(const Helipad *type)
 {
@@ -38,8 +47,6 @@ void HelipadWriter::writeObject(const Helipad *type)
     qDebug() << "Writing Helipad for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  using namespace atools::geo;
-  using namespace atools;
   bind(":helipad_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->getSurface()));

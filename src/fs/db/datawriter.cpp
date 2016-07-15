@@ -23,7 +23,7 @@
 #include "sql/sqldatabase.h"
 
 #include "fs/db/nav/waypointwriter.h"
-#include "fs/db/nav/tempairwaywriter.h"
+#include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/nav/vorwriter.h"
 #include "fs/db/nav/ndbwriter.h"
 #include "fs/db/nav/markerwriter.h"
@@ -97,7 +97,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Progr
   airportTaxiPathWriter = new TaxiPathWriter(db, *this);
   deleteAirportWriter = new DeleteAirportWriter(db, *this);
   waypointWriter = new WaypointWriter(db, *this);
-  tempAirwayWriter = new TempAirwayWriter(db, *this);
+  airwaySegmentWriter = new AirwaySegmentWriter(db, *this);
   vorWriter = new VorWriter(db, *this);
   ndbWriter = new NdbWriter(db, *this);
   markerWriter = new MarkerWriter(db, *this);
@@ -131,7 +131,7 @@ DataWriter::~DataWriter()
   delete airportComWriter;
   delete deleteAirportWriter;
   delete waypointWriter;
-  delete tempAirwayWriter;
+  delete airwaySegmentWriter;
   delete vorWriter;
   delete ndbWriter;
   delete markerWriter;

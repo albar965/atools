@@ -25,6 +25,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Write a transition and all its legs
+ */
 class TransitionWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Transition>
 {

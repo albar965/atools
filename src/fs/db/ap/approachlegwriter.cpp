@@ -28,7 +28,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::ApproachLeg;
-using atools::sql::SqlQuery;
 
 void ApproachLegWriter::writeObject(const ApproachLeg *type)
 {

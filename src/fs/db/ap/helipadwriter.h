@@ -29,14 +29,9 @@ class HelipadWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Helipad>
 {
 public:
-  HelipadWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "helipad")
-  {
-  }
+  HelipadWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter);
 
-  virtual ~HelipadWriter()
-  {
-  }
+  virtual ~HelipadWriter();
 
 protected:
   virtual void writeObject(const atools::fs::bgl::Helipad *type) override;

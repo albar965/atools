@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_TEMPAIRWAYWRITER_H
-#define ATOOLS_FS_DB_TEMPAIRWAYWRITER_H
+#ifndef ATOOLS_FS_DB_AIRWAYSEGMENTWRITER_H
+#define ATOOLS_FS_DB_AIRWAYSEGMENTWRITER_H
 
 #include "fs/db/writerbase.h"
 #include "fs/bgl/nav/airwaysegment.h"
@@ -25,16 +25,16 @@ namespace atools {
 namespace fs {
 namespace db {
 
-class TempAirwayWriter :
+class AirwaySegmentWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::AirwaySegment>
 {
 public:
-  TempAirwayWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
+  AirwaySegmentWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
     : WriterBase(db, dataWriter, "airway_point")
   {
   }
 
-  virtual ~TempAirwayWriter()
+  virtual ~AirwaySegmentWriter()
   {
   }
 

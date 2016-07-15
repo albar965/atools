@@ -28,7 +28,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Ndb;
-using atools::sql::SqlQuery;
 
 void NdbWriter::writeObject(const Ndb *type)
 {

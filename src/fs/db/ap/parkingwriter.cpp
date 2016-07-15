@@ -28,16 +28,13 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Parking;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
 
 void ParkingWriter::writeObject(const Parking *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Parking for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
-
-  using namespace atools::geo;
-  using namespace atools;
 
   bind(":parking_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());

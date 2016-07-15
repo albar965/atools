@@ -79,6 +79,17 @@ void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& 
     return sqlQuery.bindValue(placeholder, val);
 }
 
+void WriterBaseBasic::bindCoordinateList(const QString& placeholder,
+                                         const QList<bgl::BglPosition>& coordinates,
+                                         int precision)
+{
+  QStringList list;
+  for(const bgl::BglPosition& pos : coordinates)
+    list.append(QString::number(pos.getLonX(), 'g', precision) + " " +
+                QString::number(pos.getLatY(), 'g', precision));
+  bind(placeholder, list.join(", "));
+}
+
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
   return sqlQuery.bindValue(placeholder, QVariant(QVariant::Int));

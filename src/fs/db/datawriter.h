@@ -44,7 +44,7 @@ class ParkingWriter;
 class ComWriter;
 class DeleteAirportWriter;
 class WaypointWriter;
-class TempAirwayWriter;
+class AirwaySegmentWriter;
 class VorWriter;
 class NdbWriter;
 class MarkerWriter;
@@ -178,9 +178,9 @@ public:
     return sceneryAreaWriter;
   }
 
-  atools::fs::db::TempAirwayWriter *getTempAirwayWriter()
+  atools::fs::db::AirwaySegmentWriter *getAirwaySegmentWriter()
   {
-    return tempAirwayWriter;
+    return airwaySegmentWriter;
   }
 
   atools::fs::db::DeleteAirportWriter *getDeleteAirportWriter()
@@ -260,7 +260,7 @@ private:
   atools::fs::db::DeleteAirportWriter *deleteAirportWriter = nullptr;
 
   atools::fs::db::WaypointWriter *waypointWriter = nullptr;
-  atools::fs::db::TempAirwayWriter *tempAirwayWriter = nullptr;
+  atools::fs::db::AirwaySegmentWriter *airwaySegmentWriter = nullptr;
   atools::fs::db::VorWriter *vorWriter = nullptr;
   atools::fs::db::NdbWriter *ndbWriter = nullptr;
   atools::fs::db::MarkerWriter *markerWriter = nullptr;

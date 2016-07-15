@@ -28,7 +28,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::BglFile;
-using atools::sql::SqlQuery;
 
 void BglFileWriter::writeObject(const BglFile *type)
 {

@@ -29,7 +29,6 @@ namespace db {
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
 
 void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apron2 *> *type)
 {
@@ -44,20 +43,13 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   bindBool(":is_draw_surface", type->second->isDrawSurface());
   bindBool(":is_draw_detail", type->second->isDrawDetail());
 
-  QStringList list;
-  for(const bgl::BglPosition& pos : type->first->getVertices())
-    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
-                QString::number(pos.getLatY(), 'g', 8));
-  bind(":vertices", list.join(", "));
+  bindCoordinateList(":vertices", type->first->getVertices());
 
   if(getOptions().isIncludedBglObject(type::APRON2))
   {
-    list.clear();
-    for(const bgl::BglPosition& pos : type->second->getVertices())
-      list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
-                  QString::number(pos.getLatY(), 'g', 8));
-    bind(":vertices2", list.join(", "));
+    bindCoordinateList(":vertices2", type->second->getVertices());
 
+    // Triangles are space and comma separated
     bind(":triangles", toString(type->second->getTriangleIndex()));
   }
   else

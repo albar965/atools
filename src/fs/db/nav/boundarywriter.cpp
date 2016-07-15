@@ -30,7 +30,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Boundary;
-using atools::sql::SqlQuery;
 
 void BoundaryWriter::writeObject(const Boundary *type)
 {

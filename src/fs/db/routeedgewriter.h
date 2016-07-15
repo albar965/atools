@@ -52,6 +52,8 @@ public:
 
   /*
    * Run the process and fill the route_edge_radio table. Reports process every 500 ms.
+   * This process has to run after all BGL files are loaded since the airways cross multiple
+   * scenery areas and BGL files.
    * @return true if the process was aborted
    */
   bool run();

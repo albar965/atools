@@ -35,7 +35,6 @@ using atools::fs::bgl::Dme;
 using atools::fs::bgl::Glideslope;
 using atools::fs::bgl::Localizer;
 using atools::fs::bgl::Ils;
-using atools::sql::SqlQuery;
 using atools::geo::Pos;
 
 void IlsWriter::writeObject(const Ils *type)

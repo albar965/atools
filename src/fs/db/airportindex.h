@@ -24,6 +24,10 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Index that maps airport idents airport IDs. This used for each BGL file and does not cross
+ * the file boundary.
+ */
 class AirportIndex
 {
 public:
@@ -33,8 +37,19 @@ public:
 
   virtual ~AirportIndex();
 
+  /*
+   * Adds an entry to the index
+   * @param airportIdent airport ICAO ident
+   * @param airportId database runway end ID
+   */
   void add(const QString& airportIdent, int airportId);
 
+  /*
+   * Get the runway end database ID from the index.
+   * @param airportIdent airport ICAO ident
+   * @param sourceObject parent of source object - only used for error reporting
+   * @return database airport ID
+   */
   int getAirportId(const QString& airportIdent, const QString& sourceObject);
 
   void clear()
@@ -43,8 +58,7 @@ public:
   }
 
 private:
-  typedef QString AirportIndexKeyType;
-  typedef QHash<atools::fs::db::AirportIndex::AirportIndexKeyType, int> AirportIndexType;
+  typedef QHash<QString, int> AirportIndexType;
   typedef atools::fs::db::AirportIndex::AirportIndexType::const_iterator AirportIndexTypeConstIter;
 
   atools::fs::db::AirportIndex::AirportIndexType airportIndexMap;

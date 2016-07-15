@@ -60,7 +60,7 @@ public:
   }
 
 private:
-  /* key of airport ident and runway name */
+  /* key of airport ident and runway name. Use QPair since it has a hash function */
   typedef QPair<QString, QString> RunwayIndexKeyType;
 
   typedef QHash<atools::fs::db::RunwayIndex::RunwayIndexKeyType, int> RunwayIndexType;

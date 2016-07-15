@@ -34,7 +34,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Approach;
-using atools::sql::SqlQuery;
 using namespace atools::geo;
 using namespace atools;
 
@@ -48,7 +47,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
   bind(":has_gps_overlay", type->hasGpsOverlay());
-  bindNullInt(":fix_nav_id");
+  bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
@@ -57,12 +56,14 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":heading", type->getHeading());
   bind(":missed_altitude", roundToPrecision(meterToFeet(type->getMissedAltitude()), 1));
 
-  const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
+  QString apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
   if(type->hasRunwayReference() && !apIdent.isEmpty())
   {
+    // Not all approaches have a runway end id
     if(getOptions().isIncludedAirportIdent(apIdent))
     {
+      // Add only if airport is included
       QString msg(" approach ID " + QString::number(getCurrentId()));
       int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
       if(id != -1)
@@ -70,11 +71,14 @@ void ApproachWriter::writeObject(const Approach *type)
     }
   }
 
+  // Write approach
   executeStatement();
 
+  // Write all legs
   getDataWriter().getApproachLegWriter()->write(type->getLegs());
   getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
 
+  // Write transitions for this approach
   TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
   appWriter->write(type->getTransitions());
 }

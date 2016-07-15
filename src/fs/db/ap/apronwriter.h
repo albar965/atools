@@ -26,6 +26,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Write an apron dataset into the table. Source are two apron records
+ */
 class ApronWriter :
   public atools::fs::db::WriterBase<std::pair<const atools::fs::bgl::Apron *, const atools::fs::bgl::Apron2 *> >
 {

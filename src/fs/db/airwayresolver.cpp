@@ -41,46 +41,63 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
-struct AirwayResolver::Leg
+// Get all airway_point rows and join previous and next waypoints to the result by ident and region
+static const QString WAYPOINT_QUERY(
+  "select r.name, r.type, "
+  "  prev.waypoint_id as prev_waypoint_id, "
+  "  r.previous_minimum_altitude, "
+  "  prev.lonx as prev_lonx, "
+  "  prev.laty as prev_laty, "
+  "  r.waypoint_id, "
+  "  w.lonx as lonx, "
+  "  w.laty as laty, "
+  "  next.waypoint_id as next_waypoint_id, "
+  "  r.next_minimum_altitude, "
+  "  next.lonx as next_lonx, "
+  "  next.laty as next_laty "
+  "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
+  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
+  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
+  "order by r.name");
+
+/* Airway segment with from/to position and IDs */
+struct AirwayResolver::AirwaySegment
 {
-  Leg()
+  AirwaySegment()
   {
 
   }
 
-  Leg(int fromId, int toId, int minAltitude, QString airwayType,
-      const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
-    : type(airwayType), from(fromId), to(toId), minAlt(minAltitude), fromPos(fromPosition), toPos(toPosition)
+  AirwaySegment(int fromId, int toId, int minAltitude, QString airwayType,
+                const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
+    : type(airwayType), fromWaypointId(fromId), toWaypointId(toId), minAlt(minAltitude), fromPos(fromPosition),
+      toPos(toPosition)
   {
   }
 
-  bool operator==(const Leg& other) const
+  bool operator==(const AirwaySegment& other) const
   {
-    return from == other.from && to == other.to;
+    return fromWaypointId == other.fromWaypointId && toWaypointId == other.toWaypointId;
 
   }
 
-  bool operator<(const Leg& other) const
+  bool operator<(const AirwaySegment& other) const
   {
-    return std::pair<int, int>(from, to) < std::pair<int, int>(other.from, other.to);
+    return std::pair<int, int>(fromWaypointId, toWaypointId) <
+           std::pair<int, int>(other.fromWaypointId, other.toWaypointId);
   }
-
-  friend QDebug operator<<(QDebug out, const Leg& l);
 
   QString type;
-  int from = 0, to = 0, minAlt = 0;
+  int fromWaypointId = 0, toWaypointId = 0, minAlt = 0;
   atools::geo::Pos fromPos, toPos;
 };
 
-uint qHash(const AirwayResolver::Leg& leg)
+uint qHash(const AirwayResolver::AirwaySegment& segment)
 {
-  return leg.from ^ leg.to ^ leg.minAlt ^ qHash(leg.type);
-}
-
-QDebug operator<<(QDebug out, const AirwayResolver::Leg& l)
-{
-  out << "Leg[from " << l.from << ", to " << l.to << ", alt " << l.minAlt << ", type " << l.type << "]";
-  return out;
+  return static_cast<unsigned int>(segment.fromWaypointId) ^
+         static_cast<unsigned int>(segment.toWaypointId) ^
+         static_cast<unsigned int>(segment.minAlt) ^
+         qHash(segment.type);
 }
 
 AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress)
@@ -90,94 +107,6 @@ AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::db::Progress
   airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
 }
 
-void AirwayResolver::writeAirway(const QString& airwayName, QSet<Leg>& airway)
-{
-  QQueue<Leg> newAirway;
-
-  QHash<int, Leg> legByFrom;
-  QHash<int, Leg> legByTo;
-
-  for(Leg it : airway)
-  {
-    legByFrom[it.from] = it;
-    legByTo[it.to] = it;
-  }
-
-  int fragmentNum = 0;
-  QHash<int, Leg>::const_iterator it;
-  Leg leg;
-
-  while(!airway.empty())
-  {
-    newAirway.clear();
-
-    leg = *airway.begin();
-    airway.erase(airway.begin());
-    newAirway.append(leg);
-
-    bool foundTo, foundFrom;
-
-    do
-    {
-      foundTo = false;
-      foundFrom = false;
-
-      leg = newAirway.front();
-      it = legByTo.find(leg.from);
-      if(it != legByTo.end() && airway.find(it.value()) != airway.end())
-      {
-        leg = it.value();
-        newAirway.push_front(leg);
-
-        airway.erase(airway.find(leg));
-        foundTo = true;
-      }
-      leg = newAirway.back();
-      it = legByFrom.find(leg.to);
-      if(it != legByFrom.end() && airway.find(it.value()) != airway.end())
-      {
-        leg = it.value();
-        newAirway.append(leg);
-
-        airway.erase(airway.find(leg));
-        foundFrom = true;
-      }
-    } while(foundTo || foundFrom);
-
-    Leg last;
-    int seqNo = 0;
-    ++fragmentNum;
-    for(Leg rt : newAirway)
-    {
-      last = rt;
-
-      airwayInsertStmt.bindValue(":airway_id", ++curAirwayId);
-      airwayInsertStmt.bindValue(":airway_name", airwayName);
-      airwayInsertStmt.bindValue(":airway_type", rt.type);
-      airwayInsertStmt.bindValue(":airway_fragment_no", fragmentNum);
-      airwayInsertStmt.bindValue(":sequence_no", ++seqNo);
-      airwayInsertStmt.bindValue(":from_waypoint_id", rt.from);
-      airwayInsertStmt.bindValue(":to_waypoint_id", rt.to);
-      airwayInsertStmt.bindValue(":minimum_altitude", rt.minAlt);
-
-      Rect bounding(rt.fromPos);
-      bounding.extend(rt.toPos);
-      airwayInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
-      airwayInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
-      airwayInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
-      airwayInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
-
-      airwayInsertStmt.bindValue(":from_lonx", rt.fromPos.getLonX());
-      airwayInsertStmt.bindValue(":from_laty", rt.fromPos.getLatY());
-      airwayInsertStmt.bindValue(":to_lonx", rt.toPos.getLonX());
-      airwayInsertStmt.bindValue(":to_laty", rt.toPos.getLatY());
-
-      airwayInsertStmt.exec();
-      numAirways += airwayInsertStmt.numRowsAffected();
-    }
-  }
-}
-
 AirwayResolver::~AirwayResolver()
 {
 }
@@ -185,80 +114,178 @@ AirwayResolver::~AirwayResolver()
 bool AirwayResolver::run()
 {
   bool aborted = false;
-  static QString queryStr(
-    "select r.name, r.type, "
-    "  prev.waypoint_id as prev_waypoint_id, "
-    "  r.previous_minimum_altitude, "
-    "  prev.lonx as prev_lonx, "
-    "  prev.laty as prev_laty, "
-    "  r.waypoint_id, "
-    "  w.lonx as lonx, "
-    "  w.laty as laty, "
-    "  next.waypoint_id as next_waypoint_id, "
-    "  r.next_minimum_altitude, "
-    "  next.lonx as next_lonx, "
-    "  next.laty as next_laty "
-    "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
-    "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
-    "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
-    "order by r.name");
 
-  SqlQuery stmt(db);
-  stmt.exec("delete from airway");
-  int deleted = stmt.numRowsAffected();
+  // Clean the table
+  SqlQuery query(db);
+  query.exec("delete from airway");
+  int deleted = query.numRowsAffected();
   qInfo() << "Removed" << deleted << "from airway table";
 
-  QSet<Leg> airway;
-  QString curAirway;
+  // Use set to
+  QSet<AirwaySegment> airway;
+  QString currentAirway;
 
-  stmt.exec(queryStr);
-  while(stmt.next())
+  // Get all airway_point rows and join previous and next waypoints to the result by ident and region
+  // Result is ordered by airway name
+  query.exec(WAYPOINT_QUERY);
+  while(query.next())
   {
-    QString rName = stmt.value("name").toString();
-    QString rType = stmt.value("type").toString();
+    QString awName = query.value("name").toString();
+    QString awType = query.value("type").toString();
 
-    if(curAirway.isEmpty() || rName.at(0) != curAirway.at(0))
+    if(currentAirway.isEmpty() || awName.at(0) != currentAirway.at(0))
     {
+      // Send a progress report for each airway name having a new first characters
       db->commit();
-      QString msg = QString(tr("Creating airways: %1...")).arg(rName);
+      QString msg = QString(tr("Creating airways: %1...")).arg(awName);
       qInfo() << msg;
       if((aborted = progressHandler.reportOtherMsg(msg)) == true)
         break;
     }
-    if(rName != curAirway)
+
+    if(awName != currentAirway)
     {
+      // A new airway comes from from the query save the current one to the database
       if(!airway.empty())
       {
-        writeAirway(curAirway, airway);
+        writeAirway(currentAirway, airway);
         airway.clear();
       }
-      curAirway = rName;
+      currentAirway = awName;
     }
 
-    int curId = stmt.value("waypoint_id").toInt();
-    Pos curPos(stmt.value("lonx").toFloat(), stmt.value("laty").toFloat());
+    int currentWpId = query.value("waypoint_id").toInt();
+    Pos currentWpPos(query.value("lonx").toFloat(), query.value("laty").toFloat());
 
-    QVariant prevIdColVal = stmt.value("prev_waypoint_id");
-    int prevMinAlt = stmt.value("previous_minimum_altitude").toInt();
+    QVariant prevWpIdColVal = query.value("prev_waypoint_id");
+    int prevMinAlt = query.value("previous_minimum_altitude").toInt();
 
-    QVariant nextIdColVal = stmt.value("next_waypoint_id");
-    int nextMinAlt = stmt.value("next_minimum_altitude").toInt();
+    QVariant nextWpIdColVal = query.value("next_waypoint_id");
+    int nextMinAlt = query.value("next_minimum_altitude").toInt();
 
-    if(!prevIdColVal.isNull())
+    if(!prevWpIdColVal.isNull())
     {
-      Pos prevPos(stmt.value("prev_lonx").toFloat(), stmt.value("prev_laty").toFloat());
-      airway.insert(Leg(prevIdColVal.toInt(), curId, prevMinAlt, rType, prevPos, curPos));
+      // Previous waypoint found - add segment
+      Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
+      airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType, prevPos,
+                                  currentWpPos));
     }
 
-    if(!nextIdColVal.isNull())
+    if(!nextWpIdColVal.isNull())
     {
-      Pos nextPos(stmt.value("next_lonx").toFloat(), stmt.value("next_laty").toFloat());
-      airway.insert(Leg(curId, nextIdColVal.toInt(), nextMinAlt, rType, curPos, nextPos));
+      // Next waypoint found - add segment
+      Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
+      airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
+                                  nextPos));
     }
   }
 
-  qInfo() << "Added " << numAirways << " airway legs";
+  qInfo() << "Added " << numAirways << " airway segments";
   return aborted;
+}
+
+void AirwayResolver::writeAirway(const QString& airwayName, QSet<AirwaySegment>& airway)
+{
+  // Queue of waypoints that will get waypoints in order prependend and appendend
+  QQueue<AirwaySegment> newAirway;
+
+  // Segments indexed by from waypoint ID
+  QHash<int, AirwaySegment> segsByFromWpId;
+  // Segments indexed by to waypoint ID
+  QHash<int, AirwaySegment> segsByToWpId;
+
+  // Fill the index
+  for(const AirwaySegment& segment : airway)
+  {
+    segsByFromWpId[segment.fromWaypointId] = segment;
+    segsByToWpId[segment.toWaypointId] = segment;
+  }
+
+  int fragmentNum = 0;
+  QHash<int, AirwaySegment>::const_iterator it;
+  AirwaySegment segment;
+
+  // Iterator over all waypoints in the airway which are neither ordered nor connected yet
+  // All waypoints in airway have same airway name
+  while(!airway.empty())
+  {
+    newAirway.clear();
+
+    // Take a random waypoint from the unordered airway and add it to the queue
+    segment = *airway.begin();
+    airway.erase(airway.begin());
+    newAirway.append(segment);
+
+    bool foundTo, foundFrom;
+
+    // Now collect predecessors and successors for all waypoints
+    do
+    {
+      foundTo = false;
+      foundFrom = false;
+
+      // Take a segment from the front of the queue and find predecessors
+      segment = newAirway.front();
+      it = segsByToWpId.find(segment.fromWaypointId);
+      if(it != segsByToWpId.end() && airway.find(it.value()) != airway.end())
+      {
+        // Found a predecessor in the index - add it to the new airway and remove it from the queue
+        segment = it.value();
+        newAirway.prepend(segment);
+
+        airway.erase(airway.find(segment));
+        foundTo = true;
+      }
+
+      // Take a segment from the end of the queue and find successors
+      segment = newAirway.back();
+      it = segsByFromWpId.find(segment.toWaypointId);
+      if(it != segsByFromWpId.end() && airway.find(it.value()) != airway.end())
+      {
+        // Found a successor in the index - add it to the new airway and remove it from the queue
+        segment = it.value();
+        newAirway.append(segment);
+
+        airway.erase(airway.find(segment));
+        foundFrom = true;
+      }
+    } while(foundTo || foundFrom);
+
+    // Write airway fragment - there may be more fragments for the same airway name
+    AirwaySegment last;
+    int seqNo = 0;
+    ++fragmentNum;
+    for(const AirwaySegment& newSegment : newAirway)
+    {
+      last = newSegment;
+
+      airwayInsertStmt.bindValue(":airway_id", ++curAirwayId);
+      airwayInsertStmt.bindValue(":airway_name", airwayName);
+      airwayInsertStmt.bindValue(":airway_type", newSegment.type);
+      airwayInsertStmt.bindValue(":airway_fragment_no", fragmentNum);
+      airwayInsertStmt.bindValue(":sequence_no", ++seqNo);
+      airwayInsertStmt.bindValue(":from_waypoint_id", newSegment.fromWaypointId);
+      airwayInsertStmt.bindValue(":to_waypoint_id", newSegment.toWaypointId);
+      airwayInsertStmt.bindValue(":minimum_altitude", newSegment.minAlt);
+
+      // Create bounding rect for this segment
+      Rect bounding(newSegment.fromPos);
+      bounding.extend(newSegment.toPos);
+      airwayInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
+      airwayInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
+      airwayInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
+      airwayInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+
+      // Write start and end coordinates for this segment
+      airwayInsertStmt.bindValue(":from_lonx", newSegment.fromPos.getLonX());
+      airwayInsertStmt.bindValue(":from_laty", newSegment.fromPos.getLatY());
+      airwayInsertStmt.bindValue(":to_lonx", newSegment.toPos.getLonX());
+      airwayInsertStmt.bindValue(":to_laty", newSegment.toPos.getLatY());
+
+      airwayInsertStmt.exec();
+      numAirways += airwayInsertStmt.numRowsAffected();
+    }
+  }
 }
 
 } // namespace writer

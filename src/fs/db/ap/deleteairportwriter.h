@@ -25,6 +25,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Write the delete airport metadata. The writer does not delete anything.
+ */
 class DeleteAirportWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::DeleteAirport>
 {

@@ -25,6 +25,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Write runway start position
+ */
 class StartWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Start>
 {

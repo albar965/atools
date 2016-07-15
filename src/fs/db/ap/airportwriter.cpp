@@ -56,8 +56,8 @@ using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
 using atools::fs::bgl::ApronEdgeLight;
 using atools::fs::bgl::Fence;
-using atools::sql::SqlQuery;
 using atools::fs::bgl::DeleteAirport;
+using atools::geo::meterToFeet;
 
 void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 {
@@ -68,15 +68,13 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
-  using namespace atools;
-  using namespace atools::geo;
-
   if(!getOptions().isIncludedAirportIdent(type->getIdent()))
     return;
 
   if(getOptions().isVerbose())
     qDebug() << "Writing airport" << type->getIdent() << "name" << type->getName();
 
+  // Get and write country, state and city
   bindNullString(":country");
   bindNullString(":state");
   bindNullString(":city");
@@ -84,22 +82,24 @@ void AirportWriter::writeObject(const Airport *type)
   NameListMapConstIterType it = nameListIndex.find(type->getIdent());
   if(it != nameListIndex.end())
   {
-  const NamelistEntry *nl = it.value();
-  if(nl != nullptr)
-  {
-    bind(":country", nl->getCountryName());
-    bind(":state", nl->getStateName());
-    bind(":city", nl->getCityName());
-  }
-  else
-    qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
+    const NamelistEntry *nl = it.value();
+    if(nl != nullptr)
+    {
+      bind(":country", nl->getCountryName());
+      bind(":state", nl->getStateName());
+      bind(":city", nl->getCityName());
+    }
+    else
+      qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
   }
   else
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
   DataWriter& dw = getDataWriter();
+  BglFileWriter *bglFileWriter = dw.getBglFileWriter();
+
   bind(":airport_id", getNextId());
-  bind(":file_id", dw.getBglFileWriter()->getCurrentId());
+  bind(":file_id", bglFileWriter->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
@@ -117,8 +117,10 @@ void AirportWriter::writeObject(const Airport *type)
 
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
+
+  // Check if this is an addon airport
   bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
-                 getOptions().isAddonDirectory(dw.getBglFileWriter()->getCurrentFilenamePath());
+                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilenamePath());
 
   bindBool(":is_addon", isAddon);
 
@@ -144,7 +146,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_taxi_path", type->getTaxiPaths().size());
   bind(":num_helipad", type->getHelipads().size());
   bind(":num_jetway", type->getNumJetway());
-  bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script
+  bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script "update_ils_ids.sql"
 
   bind(":longest_runway_length", roundToPrecision(meterToFeet(type->getLongestRunwayLength())));
   bind(":longest_runway_width", roundToPrecision(meterToFeet(type->getLongestRunwayWidth())));
@@ -163,12 +165,13 @@ void AirportWriter::writeObject(const Airport *type)
                !type->getAprons().isEmpty() + isAddon;
 
   if(rating > 0 && type->hasTowerObj())
+    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
     rating++;
 
   bind(":rating", rating);
 
   bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
-  bind(":bgl_filename", dw.getBglFileWriter()->getCurrentFilename());
+  bind(":bgl_filename", bglFileWriter->getCurrentFilename());
 
   bind(":left_lonx", type->getBoundingRect().getTopLeft().getLonX());
   bind(":top_laty", type->getBoundingRect().getTopLeft().getLatY());
@@ -183,11 +186,14 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
+  // Write the airport to the database
   executeStatement();
 
+  // Update index
   currentIdent = type->getIdent();
   getAirportIndex()->add(type->getIdent(), getCurrentId());
 
+  // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
   RunwayWriter *rwWriter = dw.getRunwayWriter();
   rwWriter->write(type->getRunways());
 
@@ -209,6 +215,7 @@ void AirportWriter::writeObject(const Airport *type)
   ParkingWriter *parkWriter = dw.getParkingWriter();
   parkWriter->write(type->getParkings());
 
+  // Apron writer needs two records
   ApronWriter *apronWriter = dw.getApronWriter();
   const QList<bgl::Apron>& aprons = type->getAprons();
   const QList<bgl::Apron2>& aprons2 = type->getAprons2();
@@ -232,8 +239,11 @@ void AirportWriter::writeObject(const Airport *type)
   const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
   for(const DeleteAirport& delAp : deleteAirports)
   {
+    // Write metadata for delete record
     deleteAirportWriter->writeOne(delAp);
+
     if(getOptions().isDeletes())
+      // Now delete the stock/default airport
       deleteProcessor.processDelete(&delAp, type, getCurrentId());
   }
 }

@@ -30,7 +30,6 @@ namespace db {
 
 using atools::fs::bgl::Dme;
 using atools::fs::bgl::Vor;
-using atools::sql::SqlQuery;
 
 void VorWriter::writeObject(const Vor *type)
 {

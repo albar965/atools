@@ -31,8 +31,8 @@ namespace fs {
 namespace db {
 
 using atools::sql::SqlDatabase;
-using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
@@ -89,7 +89,14 @@ bool RouteEdgeWriter::run()
                            "(from_node_id, from_node_type, to_node_id, to_node_type, distance) "
                            "values(?, ?, ?, ?, ?)");
 
+  // Clean the result table
+  SqlQuery stmt(db);
+  stmt.exec("delete from route_edge_radio");
+  int deleted = stmt.numRowsAffected();
+  qInfo() << "Removed" << deleted << "from route_edge_radio table";
+
   int numRows = SqlUtil(db).rowCount("route_node_radio");
+  qInfo() << numRows << "nodes to process";
   int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(numRows) / static_cast<float>(numSteps)));
 
   QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;

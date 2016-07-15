@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/nav/waypointwriter.h"
-#include "fs/db/nav/tempairwaywriter.h"
+#include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/db/airportindex.h"
@@ -26,7 +26,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Waypoint;
-using atools::sql::SqlQuery;
 
 void WaypointWriter::writeObject(const Waypoint *type)
 {
@@ -59,7 +58,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   executeStatement();
 
-  TempAirwayWriter *tempAirwayWriter = getDataWriter().getTempAirwayWriter();
+  AirwaySegmentWriter *tempAirwayWriter = getDataWriter().getAirwaySegmentWriter();
   tempAirwayWriter->write(type->getAirways());
 }
 

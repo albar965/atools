@@ -19,6 +19,7 @@
 #define ATOOLS_FS_DB_WRITERBASEBASIC_H
 
 #include "sql/sqlquery.h"
+#include "fs/bgl/bglposition.h"
 
 namespace atools {
 namespace sql {
@@ -81,6 +82,14 @@ protected:
   /* Binds a null if value == 0 */
   void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
+  /* Bin a list of coordinates as a space and comma separated string */
+  void bindCoordinateList(const QString& placeholder, const QList<atools::fs::bgl::BglPosition>& coordinates,
+                          int precision = 8);
+
+  /* Bin a list of numbers in a comma separated string */
+  template<typename TYPE>
+  void bindNumberList(const QString& placeholder, const QList<TYPE>& list);
+
   /* Execute the insert and throw an exception if nothing was inserted */
   void executeStatement();
 
@@ -91,6 +100,15 @@ private:
   atools::fs::db::DataWriter& dataWriter;
 
 };
+
+template<typename TYPE>
+void WriterBaseBasic::bindNumberList(const QString& placeholder, const QList<TYPE>& list)
+{
+  QStringList strings;
+  for(const TYPE& i : list)
+    strings.append(QString::number(i));
+  bind(placeholder, strings.join(", "));
+}
 
 } // namespace writer
 } // namespace fs

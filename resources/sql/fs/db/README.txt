@@ -31,11 +31,12 @@ General Notes:
 
 * Headings are degree true.
 
-* Types are stored as strings and can be looked up as enumerations in the C++ code. Note that some values do not
-  correspond directly to the enums but are converted by string conversion functions.
-  For example QString approachFixTypeToStr(atools::fs::bgl::ap::ApproachFixType type);
+* Types are stored as strings and can be looked up as enumerations in the C++ code.
 
-* Foreign keys are tested but not enabled per default during loading (for performance reasons)
+* Foreign keys are tested and usually valid but not enabled per default during
+  loading in Little Navmap (for performance reasons)
+
+* Tables are partially denormalized for performance reasons
 
 * See the following links for more information about the FS scenery database and BGL files:
   http://www.fsdeveloper.com/wiki/index.php?title=BGL_File_Format

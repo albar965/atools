@@ -32,7 +32,7 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
 
 void RunwayWriter::writeObject(const Runway *type)
 {
@@ -40,21 +40,21 @@ void RunwayWriter::writeObject(const Runway *type)
 
   QString apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  RunwayEndWriter *rweWriter = getDataWriter().getRunwayEndWriter();
-  rweWriter->writeOne(type->getPrimary());
-  int primaryEndId = rweWriter->getCurrentId();
+  // Write runway ends before runway because we need the end ids to keep the foreign keys valid
+  RunwayEndWriter *runwayEndWriter = getDataWriter().getRunwayEndWriter();
+
+  runwayEndWriter->writeOne(type->getPrimary());
+  int primaryEndId = runwayEndWriter->getCurrentId();
   getRunwayIndex()->add(apIdent, type->getPrimary().getName(), primaryEndId);
 
-  rweWriter->writeOne(type->getSecondary());
-  int secondaryEndId = rweWriter->getCurrentId();
+  runwayEndWriter->writeOne(type->getSecondary());
+  int secondaryEndId = runwayEndWriter->getCurrentId();
   getRunwayIndex()->add(apIdent, type->getSecondary().getName(), secondaryEndId);
 
   if(getOptions().isVerbose())
     qDebug() << "Writing Runway for airport " << apIdent;
 
-  using namespace atools::geo;
-  using namespace atools;
-
+  // Write runway
   bind(":runway_id", runwayId);
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":primary_end_id", primaryEndId);

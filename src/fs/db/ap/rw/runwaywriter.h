@@ -25,6 +25,7 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/* Writes to runway and runway_end tables */
 class RunwayWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Runway>
 {

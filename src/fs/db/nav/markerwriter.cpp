@@ -27,7 +27,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Marker;
-using atools::sql::SqlQuery;
 
 void MarkerWriter::writeObject(const Marker *type)
 {

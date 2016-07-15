@@ -28,7 +28,6 @@ namespace db {
 
 using atools::fs::bgl::Fence;
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
 
 void FenceWriter::writeObject(const bgl::Fence *type)
 {
@@ -39,12 +38,7 @@ void FenceWriter::writeObject(const bgl::Fence *type)
   bind(":fence_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::Fence::fenceTypeToStr(type->getType()));
-
-  QStringList list;
-  for(const bgl::BglPosition& pos : type->getVertices())
-    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
-                QString::number(pos.getLatY(), 'g', 8));
-  bind(":vertices", list.join(", "));
+  bindCoordinateList(":vertices", type->getVertices());
 
   executeStatement();
 }

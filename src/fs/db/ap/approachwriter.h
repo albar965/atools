@@ -25,6 +25,9 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Write an approach and all legs and transitions
+ */
 class ApproachWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Approach>
 {

@@ -28,7 +28,6 @@ namespace fs {
 namespace db {
 
 using scenery::SceneryArea;
-using atools::sql::SqlQuery;
 
 void SceneryAreaWriter::writeObject(const SceneryArea *type)
 {

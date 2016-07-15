@@ -27,20 +27,30 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::ApproachLeg;
-using atools::sql::SqlQuery;
+
+LegBaseWriter::LegBaseWriter(sql::SqlDatabase& db, DataWriter& dataWriter, const QString& table)
+  : WriterBase(db, dataWriter, table)
+{
+}
+
+LegBaseWriter::~LegBaseWriter()
+{
+}
 
 void LegBaseWriter::writeObject(const ApproachLeg *type)
 {
+  // id and leg_id have to be bound by the caller
+
   bind(":type", bgl::util::enumToStr(bgl::ApproachLeg::legTypeToString, type->getType()));
   bind(":alt_descriptor",
        bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
   bind(":turn_direction", bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));
-  bindNullInt(":fix_nav_id");
+  bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());
-  bindNullInt(":recommended_fix_nav_id");
+  bindNullInt(":recommended_fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":recommended_fix_type",
        bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getRecommendedFixType()));
   bind(":recommended_fix_ident", type->getRecommendedFixIdent());

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/nav/tempairwaywriter.h"
+#include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/nav/airwaywaypoint.h"
@@ -29,9 +29,8 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::AirwaySegment;
-using atools::sql::SqlQuery;
 
-void TempAirwayWriter::writeObject(const AirwaySegment *type)
+void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
 {
   bind(":airway_point_id", getNextId());
   bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());

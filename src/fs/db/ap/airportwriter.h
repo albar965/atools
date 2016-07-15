@@ -34,6 +34,10 @@ class NamelistEntry;
 }
 namespace db {
 
+/*
+ * Writes to airport and all subrecord tables like runway, runway_end or approach tables.
+ * Also takes care about deletion of default/stock airports when saving an add-on airport.
+ */
 class AirportWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Airport>
 {
@@ -47,6 +51,7 @@ public:
   {
   }
 
+  /* Name list has to be set before so city, county and state can be saved. Called once per BGL file. */
   void setNameLists(const QList<const atools::fs::bgl::Namelist *>& namelists);
 
   const QString& getCurrentAirportIdent() const
@@ -59,6 +64,7 @@ private:
 
   typedef QHash<QString, const atools::fs::bgl::NamelistEntry *> NameListMapType;
   typedef NameListMapType::const_iterator NameListMapConstIterType;
+  /* Maps airport ICAO idents to NamelistEntrys */
   NameListMapType nameListIndex;
 
   QString currentIdent;

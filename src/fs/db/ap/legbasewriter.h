@@ -25,20 +25,18 @@ namespace atools {
 namespace fs {
 namespace db {
 
+/*
+ * Base for writing approach and transition legs (table schema the same - only name differs).
+ */
 class LegBaseWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::ApproachLeg>
 {
 public:
   LegBaseWriter(atools::sql::SqlDatabase& db,
                 atools::fs::db::DataWriter& dataWriter,
-                const QString& table)
-    : WriterBase(db, dataWriter, table)
-  {
-  }
+                const QString& table);
 
-  virtual ~LegBaseWriter()
-  {
-  }
+  virtual ~LegBaseWriter();
 
 protected:
   virtual void writeObject(const atools::fs::bgl::ApproachLeg *type) override;

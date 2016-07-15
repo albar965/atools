@@ -28,7 +28,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::ApproachLeg;
-using atools::sql::SqlQuery;
 
 void TransitionLegWriter::writeObject(const ApproachLeg *type)
 {
@@ -36,9 +35,11 @@ void TransitionLegWriter::writeObject(const ApproachLeg *type)
     qDebug() << "Writing transition leg for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  // Bind only ids here
   bind(":transition_leg_id", getNextId());
   bind(":transition_id", getDataWriter().getApproachTransWriter()->getCurrentId());
 
+  // Let the base class do the writing
   LegBaseWriter::writeObject(type);
 }
 

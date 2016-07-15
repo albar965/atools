@@ -28,7 +28,6 @@ namespace db {
 
 using atools::fs::bgl::ApronEdgeLight;
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
 
 void ApronLightWriter::writeObject(const atools::fs::bgl::ApronEdgeLight *type)
 {
@@ -39,16 +38,9 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronEdgeLight *type)
   bind(":apron_light_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
 
-  QStringList list;
-  for(const bgl::BglPosition& pos : type->getVertices())
-    list.append(QString::number(pos.getLonX(), 'g', 8) + " " +
-                QString::number(pos.getLatY(), 'g', 8));
-  bind(":vertices", list.join(", "));
-
-  list.clear();
-  for(int i : type->getEdgeIndex())
-    list.append(QString::number(i));
-  bind(":edges", list.join(", "));
+  // Write coordinates and edge index as string
+  bindCoordinateList(":vertices", type->getVertices());
+  bindNumberList(":edges", type->getEdgeIndex());
 
   executeStatement();
 }

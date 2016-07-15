@@ -26,7 +26,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::DeleteAirport;
-using atools::sql::SqlQuery;
 
 void DeleteAirportWriter::writeObject(const DeleteAirport *type)
 {

@@ -26,7 +26,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Com;
-using atools::sql::SqlQuery;
 
 void ComWriter::writeObject(const Com *type)
 {

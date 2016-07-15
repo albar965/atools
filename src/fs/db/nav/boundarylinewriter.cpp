@@ -29,7 +29,6 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::BoundarySegment;
-using atools::sql::SqlQuery;
 
 void BoundaryLineWriter::writeObject(const BoundarySegment *type)
 {

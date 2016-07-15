@@ -32,16 +32,13 @@ namespace db {
 using atools::fs::bgl::TaxiPath;
 using atools::fs::bgl::TaxiPoint;
 using atools::fs::bgl::Runway;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
 
 void TaxiPathWriter::writeObject(const TaxiPath *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing TaxiPath for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
-
-  using namespace atools::geo;
-  using namespace atools;
 
   bind(":taxi_path_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());

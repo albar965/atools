@@ -140,7 +140,6 @@ HEADERS += src/atools.h \
     src/geo/linestring.h \
     src/gui/actiontextsaver.h \
     src/fs/bgl/nav/airwaywaypoint.h \
-    src/fs/db/nav/tempairwaywriter.h \
     src/fs/db/airwayresolver.h \
     src/fs/db/routeedgewriter.h \
     src/fs/sc/simconnectdata.h \
@@ -164,7 +163,8 @@ HEADERS += src/atools.h \
     src/fs/navdatabaseoptions.h \
     src/io/inireader.h \
     src/fs/db/nav/boundarylinewriter.h \
-    src/fs/db/nav/boundarywriter.h
+    src/fs/db/nav/boundarywriter.h \
+    src/fs/db/nav/airwaysegmentwriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -283,7 +283,6 @@ SOURCES += src/atools.cpp \
     src/geo/linestring.cpp \
     src/gui/actiontextsaver.cpp \
     src/fs/bgl/nav/airwayentry.cpp \
-    src/fs/db/nav/tempairwaywriter.cpp \
     src/fs/db/airwayresolver.cpp \
     src/fs/db/routeedgewriter.cpp \
     src/fs/sc/simconnectdata.cpp \
@@ -305,7 +304,8 @@ SOURCES += src/atools.cpp \
     src/fs/navdatabaseoptions.cpp \
     src/io/inireader.cpp \
     src/fs/db/nav/boundarylinewriter.cpp \
-    src/fs/db/nav/boundarywriter.cpp
+    src/fs/db/nav/boundarywriter.cpp \
+    src/fs/db/nav/airwaysegmentwriter.cpp
 
 
 unix {

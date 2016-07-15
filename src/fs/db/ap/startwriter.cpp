@@ -29,16 +29,13 @@ namespace fs {
 namespace db {
 
 using atools::fs::bgl::Start;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
 
 void StartWriter::writeObject(const Start *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Start for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
-
-  using namespace atools::geo;
-  using namespace atools;
 
   bind(":start_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
@@ -51,19 +48,21 @@ void StartWriter::writeObject(const Start *type)
   bool isComplete = false;
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
+
   // TODO comment in wiki: helipads have no runway
   if(!apIdent.isEmpty() && type->getType() != bgl::start::HELIPAD)
   {
-  if(getOptions().isIncludedAirportIdent(apIdent))
-  {
-    QString msg(" start ID " + QString::number(getCurrentId()));
-    int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
-    if(id != -1)
+    // Get associated runway for start position
+    if(getOptions().isIncludedAirportIdent(apIdent))
     {
-      isComplete = true;
-      bind(":runway_end_id", id);
+      QString msg(" start ID " + QString::number(getCurrentId()));
+      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
+      if(id != -1)
+      {
+        isComplete = true;
+        bind(":runway_end_id", id);
+      }
     }
-  }
   }
   else
     isComplete = true;

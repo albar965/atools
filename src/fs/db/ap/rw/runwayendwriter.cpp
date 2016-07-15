@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/db/ap/rw/runwayendwriter.h"
+
 #include "fs/db//datawriter.h"
 #include "fs/bgl/util.h"
 #include "fs/navdatabaseoptions.h"
@@ -28,7 +29,7 @@ namespace fs {
 namespace db {
 
 using bgl::RunwayEnd;
-using atools::sql::SqlQuery;
+using atools::geo::meterToFeet;
 
 void RunwayEndWriter::writeObject(const RunwayEnd *type)
 {
@@ -36,8 +37,6 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
     qDebug() << "Writing Runway end " << type->getName() << " for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
-  using namespace atools::geo;
-  using namespace atools;
   bind(":runway_end_id", getNextId());
   bind(":name", type->getName());
   bind(":offset_threshold", roundToPrecision(meterToFeet(type->getOffsetThreshold())));
@@ -56,11 +55,12 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
   bind(":num_strobes", type->getApproachLights().getNumStrobes());
 
+  // Write left VASI if available - otherwise bind values to null
   QString leftVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getLeftVasi().getType());
   if(!leftVt.isEmpty())
   {
-  bind(":left_vasi_type", leftVt);
-  bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
+    bind(":left_vasi_type", leftVt);
+    bind(":left_vasi_pitch", type->getLeftVasi().getPitch());
   }
   else
   {
@@ -68,6 +68,7 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
     bindNullFloat(":left_vasi_pitch");
   }
 
+  // Write right VASI if available - otherwise bind values to null
   QString rightVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getRightVasi().getType());
   if(!rightVt.isEmpty())
   {

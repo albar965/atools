@@ -30,6 +30,10 @@ namespace db {
 
 class ProgressHandler;
 
+/*
+ * Reads from the airway_point table that was filled with waypoint record data and connects the
+ * waypoint lists to airways that are stored in table airway.
+ */
 class AirwayResolver
 {
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
@@ -38,12 +42,18 @@ public:
   AirwayResolver(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress);
   virtual ~AirwayResolver();
 
+  /*
+   * Build airways from airway_point table that uses only idents and region codes to connect waypoints to a chain.
+   * This process has to run after all BGL files are loaded since the airways cross multiple
+   * scenery areas and BGL files.
+   * @return true if the process was aborted
+   */
   bool run();
 
-  struct Leg;
+  struct AirwaySegment;
 
 private:
-  void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::Leg>& airway);
+  void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway);
 
   atools::fs::db::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;

@@ -58,55 +58,55 @@ private:
   void deleteRunways();
   void deleteAirport();
 
-  db::DataWriter& dataWriter;
-  atools::sql::SqlDatabase& db;
-
-  atools::sql::SqlQuery
-  *deleteRunwayStmt,
-  *deleteParkingStmt,
-  *deleteDeleteApStmt,
-  *fetchRunwayEndIdStmt,
-  *fetchPrimaryRunwayEndIdStmt, *fetchSecondaryRunwayEndIdStmt, *updateApprochRwIds,
-  *deleteRunwayEndStmt,
-  *deleteIlsStmt,
-  *delWpStmt,
-  *delVorStmt,
-  *delNdbStmt,
-  *deleteApprochStmt, *updateApprochStmt,
-  *deleteAirportStmt, *selectAirportStmt,
-  *deleteApronStmt, *updateApronStmt,
-  *deleteApronLightStmt, *updateApronLightStmt,
-  *deleteFenceStmt, *updateFenceStmt,
-  *deleteHelipadStmt, *updateHelipadStmt,
-  *deleteStartStmt, *updateStartStmt,
-  *deleteTaxiPathStmt, *updateTaxiPathStmt,
-  *deleteComStmt, *updateComStmt,
-  *fetchPrimaryAppStmt, *fetchSecondaryAppStmt,
-
-  *deleteTransitionLegStmt,
-  *deleteApproachLegStmt,
-  *deleteTransitionStmt,
-  *deleteApproachStmt,
-  *fetchOldApproachIdStmt;
-
-  bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,
-       hasRunways = true;
-
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
   void deleteOrUpdate(sql::SqlQuery *deleteStmt, sql::SqlQuery *updateStmt,
                       atools::fs::bgl::del::DeleteAllFlags flag);
-
-  const atools::fs::bgl::DeleteAirport *del;
-  const atools::fs::bgl::Airport *type;
-  int currentId;
-  QString ident;
-  void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
-
   QString updateAptFeatureToNullStmt(const QString& table);
   void deleteApproachesAndTransitions(const QList<int>& ids);
 
   QList<int> fetchOldApproachIds();
+  void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
+
+  db::DataWriter& dataWriter;
+  atools::sql::SqlDatabase& db;
+
+  atools::sql::SqlQuery
+  *deleteRunwayStmt = nullptr,
+  *deleteParkingStmt = nullptr,
+  *deleteDeleteApStmt = nullptr,
+  *fetchRunwayEndIdStmt = nullptr,
+  *fetchPrimaryRunwayEndIdStmt = nullptr,
+  *fetchSecondaryRunwayEndIdStmt = nullptr,
+  *updateApprochRwIds = nullptr,
+  *deleteRunwayEndStmt = nullptr,
+  *deleteIlsStmt = nullptr,
+  *delWpStmt = nullptr,
+  *delVorStmt = nullptr,
+  *delNdbStmt = nullptr,
+  *deleteApprochStmt = nullptr, *updateApprochStmt = nullptr,
+  *deleteAirportStmt = nullptr, *selectAirportStmt = nullptr,
+  *deleteApronStmt = nullptr, *updateApronStmt = nullptr,
+  *deleteApronLightStmt = nullptr, *updateApronLightStmt = nullptr,
+  *deleteFenceStmt = nullptr, *updateFenceStmt = nullptr,
+  *deleteHelipadStmt = nullptr, *updateHelipadStmt = nullptr,
+  *deleteStartStmt = nullptr, *updateStartStmt = nullptr,
+  *deleteTaxiPathStmt = nullptr, *updateTaxiPathStmt = nullptr,
+  *deleteComStmt = nullptr, *updateComStmt = nullptr,
+  *fetchPrimaryAppStmt = nullptr, *fetchSecondaryAppStmt = nullptr,
+  *deleteTransitionLegStmt = nullptr,
+  *deleteApproachLegStmt = nullptr,
+  *deleteTransitionStmt = nullptr,
+  *deleteApproachStmt = nullptr,
+  *fetchOldApproachIdStmt = nullptr;
+
+  bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,
+       hasRunways = true;
+
+  const atools::fs::bgl::DeleteAirport *del = nullptr;
+  const atools::fs::bgl::Airport *type = nullptr;
+  int currentId = 0;
+  QString ident;
 
 };
 
