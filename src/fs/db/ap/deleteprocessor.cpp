@@ -37,9 +37,10 @@ using atools::fs::bgl::Airport;
 using atools::sql::SqlQuery;
 using bgl::util::isFlagSet;
 
-DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& writer)
-  : dataWriter(writer), db(sqlDb)
+DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts)
+  : options(opts), db(sqlDb)
 {
+  // Create all queries
   deleteRunwayStmt = new SqlQuery(sqlDb);
   deleteParkingStmt = new SqlQuery(sqlDb);
   deleteDeleteApStmt = new SqlQuery(sqlDb);
@@ -55,8 +56,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteApprochStmt = new SqlQuery(sqlDb);
 
   delWpStmt = new SqlQuery(sqlDb);
-  delVorStmt = new SqlQuery(sqlDb);
-  delNdbStmt = new SqlQuery(sqlDb);
+  updateVorStmt = new SqlQuery(sqlDb);
+  updateNdbStmt = new SqlQuery(sqlDb);
   deleteAirportStmt = new SqlQuery(sqlDb);
   selectAirportStmt = new SqlQuery(sqlDb);
   deleteApronStmt = new SqlQuery(sqlDb);
@@ -82,28 +83,15 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteApproachStmt = new SqlQuery(sqlDb);
   fetchOldApproachIdStmt = new SqlQuery(sqlDb);
 
-  // Most query act on all airports with the given ident except the current one
-  // (where a.ident = :apIdent and a.airport_id <> :curApId)
+  // Most queries act on all other airports with the given ident except the current one
+  // where a.ident = :apIdent and a.airport_id <> :curApId
 
   // Define subqueries for features to delete
-  QString fetchOldAndNewRwIds("select "
-                              "e.runway_end_id as old_runway_end_id, "
-                              "eo.runway_end_id as new_runway_end_id "
-                              "from airport a "
-                              "join airport ao on a.ident = ao.ident "
-                              "join runway r on r.airport_id = a.airport_id "
-                              "join runway_end e on r.%1_end_id = e.runway_end_id "
-                              "join runway ro on ro.airport_id = ao.airport_id "
-                              "join runway_end eo on ro.%1_end_id = eo.runway_end_id "
-                              "where a.ident = :apIdent and a.airport_id <> :curApId and "
-                              "ao.ident = :apIdent and ao.airport_id == :curApId and "
-                              "e.name = eo.name");
 
-  // Delete all runways of an airport
+  // Delete all runways of all other airports
   deleteRunwayStmt->prepare(
     "delete from runway where airport_id in ( "
-    "select a.airport_id "
-    "from airport a "
+    "select a.airport_id from airport a "
     "where a.ident = :apIdent and a.airport_id <> :curApId)");
 
   // Get all primary and secondary end ids for the given airports
@@ -116,19 +104,32 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
     "from airport a join runway r on a.airport_id = r.airport_id "
     "where a.ident = :apIdent and a.airport_id <> :curApId");
 
+  // Query to get old and new matching runway end ids - one for primary and secondary ends
+  QString fetchOldAndNewRwIds("select "
+                              "e.runway_end_id as old_runway_end_id, "
+                              "eo.runway_end_id as new_runway_end_id "
+                              "from airport a "
+                              "join airport ao on a.ident = ao.ident "
+                              "join runway r on r.airport_id = a.airport_id "
+                              "join runway_end e on r.%1_end_id = e.runway_end_id "
+                              "join runway ro on ro.airport_id = ao.airport_id "
+                              "join runway_end eo on ro.%1_end_id = eo.runway_end_id "
+                              "where a.ident = :apIdent and a.airport_id <> :curApId and "
+                              "ao.ident = :apIdent and ao.airport_id == :curApId and "
+                              "e.name = eo.name");
   fetchPrimaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("primary"));
   fetchSecondaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("secondary"));
 
-  deleteRunwayEndStmt->prepare(
-    "delete from runway_end where runway_end_id = :endId");
+  // Delete a runway end
+  deleteRunwayEndStmt->prepare("delete from runway_end where runway_end_id = :endId");
 
-  deleteIlsStmt->prepare(
-    "delete from ils where loc_runway_end_id = :endId");
+  // Delete the ILS for a runway end
+  deleteIlsStmt->prepare("delete from ils where loc_runway_end_id = :endId");
 
-  deleteAirportStmt->prepare(
-    "delete from airport "
-    "where ident = :apIdent and airport_id <> :curApId");
+  // Delete all other airports
+  deleteAirportStmt->prepare("delete from airport where ident = :apIdent and airport_id <> :curApId");
 
+  // Get facility counts for all other airports to save some empty queries
   selectAirportStmt->prepare(
     "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils, num_approach "
     "from airport where ident = :apIdent and airport_id <> :curApId");
@@ -145,10 +146,12 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
   delWpStmt->prepare(delAptFeatureStmt("waypoint"));
-  delVorStmt->prepare(delAptFeatureStmt("vor"));
-  delNdbStmt->prepare(delAptFeatureStmt("ndb"));
 
-  // Update facilities with new airport ids
+  // Update NDB and VOR airport ids - resulting duplicates will be deleted later
+  updateVorStmt->prepare(updateAptFeatureStmt("vor"));
+  updateNdbStmt->prepare(updateAptFeatureStmt("ndb"));
+
+  // Update facilities with new airport id
   updateComStmt->prepare(updateAptFeatureStmt("com"));
   updateHelipadStmt->prepare(updateAptFeatureStmt("helipad"));
   updateStartStmt->prepare(updateAptFeatureStmt("start"));
@@ -161,16 +164,14 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, DataWriter& wr
   updateApprochStmt->prepare(updateAptFeatureStmt("approach"));
   deleteApprochStmt->prepare(delAptFeatureStmt("approach"));
 
-  deleteTransitionLegStmt->prepare("delete from transition_leg "
-                                   "where transition_id in "
+  deleteTransitionLegStmt->prepare("delete from transition_leg where transition_id in "
                                    "(select transition_id from transition where approach_id = :id)");
   deleteApproachLegStmt->prepare("delete from approach_leg where approach_id = :id");
   deleteTransitionStmt->prepare("delete from transition where approach_id = :id");
   deleteApproachStmt->prepare("delete from approach where approach_id = :id");
 
-  // Collect all approach_ids of the old airport
-  fetchOldApproachIdStmt->prepare("select app.approach_id "
-                                  "from airport a "
+  // Collect all approach_ids of the other airports
+  fetchOldApproachIdStmt->prepare("select app.approach_id from airport a "
                                   "join approach app on app.airport_id = a.airport_id "
                                   "where a.ident = :apIdent and a.airport_id <> :curApId ");
 }
@@ -189,8 +190,8 @@ DeleteProcessor::~DeleteProcessor()
   delete updateApprochStmt;
   delete deleteApprochStmt;
   delete delWpStmt;
-  delete delVorStmt;
-  delete delNdbStmt;
+  delete updateVorStmt;
+  delete updateNdbStmt;
   delete deleteAirportStmt;
   delete selectAirportStmt;
   delete deleteApronStmt;
@@ -216,13 +217,15 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchOldApproachIdStmt;
 }
 
-void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *airport, int currentApId)
+void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const Airport *airport,
+                                    int currentAirportId)
 {
-  del = delAp;
+  deleteAirport = deleteAirportRec;
   type = airport;
-  currentId = currentApId;
+  currentId = currentAirportId;
   ident = type->getIdent();
 
+  // Get facility counts for current airport
   // airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils
   bindAndExecute(selectAirportStmt, "select airports");
 
@@ -238,6 +241,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *a
   {
     if(i > 0)
     {
+      // If we get more than one entry set everything to true just to be safe
       qWarning() << "Found more than one airport to delete for ident"
                  << type->getIdent() << "id" << currentId
                  << "found" << selectAirportStmt->value("airport_id").toInt();
@@ -260,40 +264,41 @@ void DeleteProcessor::processDelete(const DeleteAirport *delAp, const Airport *a
 
   if(hasApproach)
   {
-    if(isFlagSet(del->getFlags(), bgl::del::APPROACHES))
-      // Delete the whole tree behind the apporaches
-      deleteApproachesAndTransitions(fetchOldApproachIds());
+    if(isFlagSet(deleteAirport->getFlags(), bgl::del::APPROACHES))
+      // Delete the whole tree of apporaches, transitions and legs
+      removeApproachesAndTransitions(fetchOldApproachIds());
     else
       // Relink the approach to the new airport
       transferApproaches();
   }
 
+  // Work on facilities that will be either removed or attached to the new airport depending on flags
   if(hasApron)
   {
-    deleteOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
-    deleteOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
+    removeOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
+    removeOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
   }
   if(hasCom)
-    deleteOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
+    removeOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
 
   if(hasHelipad)
-    deleteOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
+    removeOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
 
   if(hasTaxi)
-    deleteOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
+    removeOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
 
-  deleteOrUpdate(deleteStartStmt, updateStartStmt, bgl::del::STARTS);
+  removeOrUpdate(deleteStartStmt, updateStartStmt, bgl::del::STARTS);
 
   if(hasRunways)
-    if(isFlagSet(del->getFlags(), bgl::del::RUNWAYS))
-      // TODO no update yet since it does not appear in reality
-      deleteRunways();
+    if(isFlagSet(deleteAirport->getFlags(), bgl::del::RUNWAYS))
+      removeRunways();
+  // TODO no update method yet since it does not appear in reality
 
-  // TODO this keeps from updating airport features
-  deleteAirport();
+  // TODO this does not allow updating airport features
+  removeAirport();
 }
 
-void DeleteProcessor::deleteRunways()
+void DeleteProcessor::removeRunways()
 {
   QList<int> runwayEndIds;
   fetchRunwayEndIdStmt->bindValue(":apIdent", ident);
@@ -315,22 +320,23 @@ void DeleteProcessor::deleteRunways()
   }
 }
 
-void DeleteProcessor::deleteAirport()
+void DeleteProcessor::removeAirport()
 {
   bindAndExecute(deleteParkingStmt, "parking spots deleted");
   bindAndExecute(deleteDeleteApStmt, "delete airports deleted");
   bindAndExecute(deleteFenceStmt, "fences deleted");
 
-  // Unlink navigation - will be update later update_nav_ids.sql script
+  // Unlink navigation - will be updated later in "update_nav_ids.sql" script
   // we accecpt duplicates here - these will be deleted later
   bindAndExecute(delWpStmt, "waypoints deleted"); // only type that appears in airport records
-  bindAndExecute(delVorStmt, "vors deleted");
-  bindAndExecute(delNdbStmt, "ndb deleted");
+
+  bindAndExecute(updateVorStmt, "vors updated");
+  bindAndExecute(updateNdbStmt, "ndb updated");
 
   bindAndExecute(deleteAirportStmt, "airports deleted");
 }
 
-void DeleteProcessor::deleteApproachesAndTransitions(const QList<int>& ids)
+void DeleteProcessor::removeApproachesAndTransitions(const QList<int>& ids)
 {
   for(int i : ids)
   {
@@ -348,6 +354,7 @@ void DeleteProcessor::deleteApproachesAndTransitions(const QList<int>& ids)
   }
 }
 
+/* Get a list of all old/other approach ids */
 QList<int> DeleteProcessor::fetchOldApproachIds()
 {
   QList<int> ids;
@@ -380,7 +387,7 @@ void DeleteProcessor::transferApproaches()
   bindAndExecute(updateApprochStmt, "approaches updated");
 
   // Delete all leftovers of the old runways
-  deleteApproachesAndTransitions(ids);
+  removeApproachesAndTransitions(ids);
 }
 
 void DeleteProcessor::executeStatement(SqlQuery *stmt, const QString& what)
@@ -388,7 +395,7 @@ void DeleteProcessor::executeStatement(SqlQuery *stmt, const QString& what)
   stmt->exec();
   int retval = stmt->numRowsAffected();
 
-  if(dataWriter.getOptions().isVerbose())
+  if(options.isVerbose())
     qDebug() << retval << " " << what;
 }
 
@@ -398,22 +405,24 @@ void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& w
   while(stmt->next())
     ids.append(stmt->value(0).toInt());
 
-  if(dataWriter.getOptions().isVerbose())
+  if(options.isVerbose())
     qDebug() << ids.size() << " " << what;
 }
 
-void DeleteProcessor::deleteOrUpdate(SqlQuery *deleteStmt,
-                                     SqlQuery *updateStmt,
+/* use the remove of update query for a feture depending on the delete flag */
+void DeleteProcessor::removeOrUpdate(SqlQuery *deleteStmt, SqlQuery *updateStmt,
                                      bgl::del::DeleteAllFlags flag)
 {
   QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
 
-  if(isFlagSet(del->getFlags(), flag))
+  if(isFlagSet(deleteAirport->getFlags(), flag))
     bindAndExecute(deleteStmt, delTypeStr + " deleted");
   else
     bindAndExecute(updateStmt, delTypeStr + " updated");
 }
 
+/* Create a statement that sets all airport_id columns to null in the given table that have
+ * an airport_id that belongs to the other airports */
 QString DeleteProcessor::updateAptFeatureToNullStmt(const QString& table)
 {
   return "update " + table + " set airport_id = null where airport_id in ( "
@@ -423,22 +432,24 @@ QString DeleteProcessor::updateAptFeatureToNullStmt(const QString& table)
 
 }
 
+/* Create a statement that updates all airport_id columns in the given table that have
+ * an airport_id that belongs to the other airports */
 QString DeleteProcessor::updateAptFeatureStmt(const QString& table)
 {
   return "update " + table + " set airport_id = :curApId where airport_id in ( "
                              "select a.airport_id "
                              "from airport a "
                              "where a.ident = :apIdent and a.airport_id <> :curApId)";
-
 }
 
+/* Create a statement that deletes all rows in the given table that have an airport_id
+ * that belongs to the other airports */
 QString DeleteProcessor::delAptFeatureStmt(const QString& table)
 {
   return "delete from " + table +
          " where airport_id in ( "
          "select a.airport_id from airport a "
          "where a.ident = :apIdent and a.airport_id <> :curApId)";
-
 }
 
 void DeleteProcessor::bindAndExecute(SqlQuery *delQuery, const QString& msg)

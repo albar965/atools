@@ -18,7 +18,6 @@
 #ifndef ATOOLS_FS_DB_AP_DELETEPROCESSOR_H
 #define ATOOLS_FS_DB_AP_DELETEPROCESSOR_H
 
-#include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/ap/airport.h"
 
 namespace bgl {
@@ -41,34 +40,46 @@ namespace db {
 class DataWriter;
 class ApproachWriter;
 
+/*
+ * Deletes stock/default airports for a new airport. Uses the delete records and removes or updates all
+ * old airports and their facilities.
+ */
 class DeleteProcessor
 {
 public:
-  DeleteProcessor(atools::sql::SqlDatabase& sqlDb, atools::fs::db::DataWriter& db);
+  DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts);
   virtual ~DeleteProcessor();
 
-  void processDelete(const bgl::DeleteAirport *delAp, const atools::fs::bgl::Airport *airport,
-                     int currentApId);
+  /*
+   * Start the update or removal process of airports. The current/new airport has to
+   * be stored in the database already.
+   *
+   * @param deleteAirportRec delete airport record containing information what to update and/or what to remove
+   * @param airport airport record that will replace all other airports
+   * @param currentAirportId database ID of the airport that will replace all other airports
+   */
+  void processDelete(const bgl::DeleteAirport *deleteAirportRec, const atools::fs::bgl::Airport *airport,
+                     int currentAirportId);
 
 private:
   void executeStatement(sql::SqlQuery *stmt, const QString& what);
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
   void transferApproaches();
-  void deleteRunways();
-  void deleteAirport();
+  void removeRunways();
+  void removeAirport();
 
   QString updateAptFeatureStmt(const QString& table);
   QString delAptFeatureStmt(const QString& table);
-  void deleteOrUpdate(sql::SqlQuery *deleteStmt, sql::SqlQuery *updateStmt,
+  void removeOrUpdate(sql::SqlQuery *deleteStmt, sql::SqlQuery *updateStmt,
                       atools::fs::bgl::del::DeleteAllFlags flag);
   QString updateAptFeatureToNullStmt(const QString& table);
-  void deleteApproachesAndTransitions(const QList<int>& ids);
+  void removeApproachesAndTransitions(const QList<int>& ids);
 
   QList<int> fetchOldApproachIds();
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
 
-  db::DataWriter& dataWriter;
+  const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
 
   atools::sql::SqlQuery
@@ -82,8 +93,8 @@ private:
   *deleteRunwayEndStmt = nullptr,
   *deleteIlsStmt = nullptr,
   *delWpStmt = nullptr,
-  *delVorStmt = nullptr,
-  *delNdbStmt = nullptr,
+  *updateVorStmt = nullptr,
+  *updateNdbStmt = nullptr,
   *deleteApprochStmt = nullptr, *updateApprochStmt = nullptr,
   *deleteAirportStmt = nullptr, *selectAirportStmt = nullptr,
   *deleteApronStmt = nullptr, *updateApronStmt = nullptr,
@@ -103,7 +114,7 @@ private:
   bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,
        hasRunways = true;
 
-  const atools::fs::bgl::DeleteAirport *del = nullptr;
+  const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
   const atools::fs::bgl::Airport *type = nullptr;
   int currentId = 0;
   QString ident;

@@ -26,6 +26,8 @@
 
 #include <QHash>
 
+#include <fs/db/datawriter.h>
+
 namespace atools {
 namespace fs {
 namespace bgl {
@@ -43,7 +45,7 @@ class AirportWriter :
 {
 public:
   AirportWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter)
+    : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter.getOptions())
   {
   }
 
