@@ -18,7 +18,7 @@
 #include "fs/scenery/sceneryarea.h"
 
 #include <QDir>
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace atools {
 namespace fs {

@@ -18,9 +18,9 @@
 #include "gui/mapposhistory.h"
 
 #include "settings/settings.h"
-#include "logging/loggingdefs.h"
 #include "geo/calculations.h"
 
+#include <QDebug>
 #include <QDateTime>
 #include <QDataStream>
 
@@ -130,6 +130,7 @@ void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
 
   if(curEntry.getTimestamp() > newEntry.getTimestamp() - MAX_MS_FOR_NEW_ENTRY)
   {
+    // Entries are added too close - overwrite the current one
     entries[currentIndex] = newEntry;
   }
   else
@@ -137,6 +138,7 @@ void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
     if(currentIndex != -1)
     {
       int size = entries.size();
+      // Prune forward history
       for(int i = currentIndex + 1; i < size; i++)
         entries.removeLast();
     }
@@ -146,6 +148,7 @@ void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
 
     while(entries.size() > MAX_NUMBER_OF_ENTRIES)
     {
+      // Remove additional entries
       entries.removeFirst();
       currentIndex--;
     }

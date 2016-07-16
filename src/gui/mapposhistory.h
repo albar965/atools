@@ -26,6 +26,9 @@
 namespace atools {
 namespace gui {
 
+/*
+ * A entry for the map position history. Can be saved to a QDataStream.
+ */
 class MapPosHistoryEntry
 {
 public:
@@ -38,11 +41,17 @@ public:
   bool operator==(const MapPosHistoryEntry& other) const;
   bool operator!=(const MapPosHistoryEntry& other) const;
 
+  /*
+   * @return zoom distance
+   */
   double getDistance() const
   {
     return distance;
   }
 
+  /*
+   * @return timestamp when this entry was created - milliseconds since epoch
+   */
   qint64 getTimestamp() const
   {
     return timestamp;
@@ -53,6 +62,7 @@ public:
     return pos;
   }
 
+  /* If false the entry is invalid. This can happen when accessing an empty history stack */
   bool isValid() const
   {
     return pos.isValid();
@@ -72,6 +82,15 @@ private:
 
 const MapPosHistoryEntry EMPTY_MAP_POS;
 
+/*
+ * Maintains a history list of position/zoom distance combinations.
+ *
+ * To use this class register the stream operators:
+ *  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+ *  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
+ *  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
+ *
+ */
 class MapPosHistory :
   public QObject
 {
@@ -81,24 +100,40 @@ public:
   explicit MapPosHistory(QObject *parent = 0);
   virtual ~MapPosHistory();
 
+  /* Get next entry in the history and emit signal historyChanged */
   const MapPosHistoryEntry& next();
+
+  /* Get last entry in the history and emit signal historyChanged */
   const MapPosHistoryEntry& back();
+
+  /* Get current entry in the history */
   const MapPosHistoryEntry& current() const;
 
+  /* add an entry to the history potentially pruning the history for forward actions.
+   * Will also emit signal historyChanged  */
   void addEntry(atools::geo::Pos pos, double distance);
 
+  /* Save history to  settings */
   void saveState(const QString& keyPrefix);
+
+  /* load history from settings */
   void restoreState(const QString& keyPrefix);
 
+signals:
+  /* Emitted when the history changes
+   * @param minIndex Lowest entry index in the history stack
+   * @param curIndex Current entry in the history stack
+   * @param maxIndex Maximum entry index in the history stack
+   */
+  void historyChanged(int minIndex, int curIndex, int maxIndex);
+
 private:
+  // Aggregate all entry that are close than this value
   const int MAX_MS_FOR_NEW_ENTRY = 200;
   const int MAX_NUMBER_OF_ENTRIES = 50;
 
   QList<MapPosHistoryEntry> entries;
   int currentIndex = -1;
-
-signals:
-  void historyChanged(int minIndex, int curIndex, int maxIndex);
 
 };
 

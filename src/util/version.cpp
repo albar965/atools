@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "util/version.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QRegularExpression>
 
 namespace atools {

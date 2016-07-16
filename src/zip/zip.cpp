@@ -33,10 +33,10 @@
 
 #include <QtGlobal>
 
-#include "logging/loggingdefs.h"
 #include "zip/zipreader.h"
 #include "zip/zipwriter.h"
 
+#include <QDebug>
 #include <QDateTime>
 #include <QtEndian>
 #include <QDir>

@@ -15,7 +15,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "logging/loggingdefs.h"
 #include "fs/navdatabase.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
@@ -28,6 +27,7 @@
 #include "fs/db/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>

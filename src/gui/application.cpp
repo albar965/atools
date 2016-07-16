@@ -17,8 +17,7 @@
 
 #include "application.h"
 
-#include "logging/loggingdefs.h"
-
+#include <QDebug>
 #include <QMessageBox>
 #include <QUrl>
 
@@ -70,7 +69,7 @@ void Application::handleException(const char *file, int line, const std::excepti
                         arg(file).arg(line).
                         arg(e.what()).
                         arg(QApplication::applicationName()).
-                        arg(getReportFiles()));
+                        arg(getReportPaths()));
   std::exit(1);
 }
 
@@ -86,7 +85,7 @@ void Application::handleException(const char *file, int line)
                            ).
                         arg(file).arg(line).
                         arg(QApplication::applicationName()).
-                        arg(getReportFiles()));
+                        arg(getReportPaths()));
   std::exit(1);
 }
 
@@ -95,7 +94,7 @@ void Application::addReportPath(const QString& header, const QStringList& paths)
   reportFiles.insert(header, paths);
 }
 
-QString Application::getReportFiles()
+QString Application::getReportPaths()
 {
   QString fileStr;
   for(QString header : reportFiles.keys())

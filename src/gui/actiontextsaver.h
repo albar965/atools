@@ -29,6 +29,9 @@ namespace gui {
 class ActionTextSaver
 {
 public:
+  /*
+   * Saves the text of the given actions and restores it when the destructor is called
+   */
   ActionTextSaver(QList<QAction *> actions);
   ~ActionTextSaver();
 

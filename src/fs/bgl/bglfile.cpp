@@ -33,7 +33,7 @@
 #include "fs/bgl/recordtypes.h"
 
 #include <QList>
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 #include <QFile>
 #include <QFileInfo>

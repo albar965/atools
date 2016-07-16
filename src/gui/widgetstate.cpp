@@ -17,9 +17,9 @@
 
 #include "gui/widgetstate.h"
 
-#include "logging/loggingdefs.h"
 #include "settings/settings.h"
 
+#include <QDebug>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
@@ -56,8 +56,10 @@ void WidgetState::save(const QObject *widget) const
     Settings& s = Settings::instance();
 
     if(const QLayout * layout = dynamic_cast<const QLayout *>(widget))
+    {
       for(int i = 0; i < layout->count(); i++)
         save(layout->itemAt(i)->widget());
+    }
     else if(const QLineEdit * le = dynamic_cast<const QLineEdit *>(widget))
     {
       saveWidget(s, le, le->text());
@@ -144,8 +146,10 @@ void WidgetState::restore(QObject *widget) const
     Settings& s = Settings::instance();
 
     if(const QLayout * layout = dynamic_cast<const QLayout *>(widget))
+    {
       for(int i = 0; i < layout->count(); i++)
         restore(layout->itemAt(i)->widget());
+    }
     else if(QLineEdit * le = dynamic_cast<QLineEdit *>(widget))
     {
       QVariant v = loadWidget(s, widget);

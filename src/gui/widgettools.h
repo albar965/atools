@@ -31,14 +31,34 @@ namespace gui {
 class WidgetTools
 {
 public:
+  /*
+   * Shows or hides all widgets in a list of layouts.
+   * @param layouts all widgets in these layouts will have their visibility changed
+   * @param visible hide or show widgets
+   * @param otherWidgets other widgets not part of the layout that will have their visibility changed
+   */
   static void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
                                      const QList<QWidget *>& otherWidgets);
 
+  /*
+   * Check is a list of widgets has their state at default (i.e. a checkbox is
+   * unchecked or a combo box is at index 0)
+   * @param widgets that will be checked
+   * @return true if any widget in the list does not have its default state
+   */
   static bool anyWidgetChanged(const QList<const QObject *>& widgets);
 
+  /*
+   * @return true if all actions that are checkable are checked
+   */
   static bool allChecked(const QList<const QAction *>& actions);
+
+  /*
+   * @return true if all actions that are checkable are not checked
+   */
   static bool noneChecked(const QList<const QAction *>& actions);
 
+  /* Add a "* " to an action text or remove it */
   static void changeStarIndication(QAction *action, bool changed);
 
 };

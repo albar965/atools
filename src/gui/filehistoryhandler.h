@@ -26,20 +26,38 @@ class QAction;
 namespace atools {
 namespace gui {
 
+/*
+ * General handler for a recent files menu. Takes care of the actions, saving and loading state,
+ * resorting of the list on selection and the clear list action item.
+ */
 class FileHistoryHandler :
   public QObject
 {
   Q_OBJECT
 
 public:
+  /*
+   *
+   * @param parent Parent menu
+   * @param settingsNamePrefix prefix for saving the entries into a settings file
+   * @param recentMenuList Menu that will get the file list appended. Should contain a
+   * separator and a clear menu action initially.
+   * @param clearMenuAction The clear menu action. Will remove all recent entries.
+   */
   FileHistoryHandler(QObject *parent, const QString& settingsNamePrefix, QMenu *recentMenuList,
                      QAction *clearMenuAction);
   virtual ~FileHistoryHandler();
 
+  /* Save state and all entries to settings */
   void saveState();
+
+  /* Restore state and all entries from settings */
   void restoreState();
 
+  /* Add a file that will be prependend to the list of recent files */
   void addFile(const QString& filename);
+
+  /* Remove a file from the list of recent files because it does not exist anymore. */
   void removeFile(const QString& filename);
 
   int getMaxEntries() const
@@ -53,6 +71,7 @@ public:
   }
 
 signals:
+  /* Emitted when the user selects a recent file action */
   void fileSelected(const QString& filename);
 
 private:

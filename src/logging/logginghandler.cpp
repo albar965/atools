@@ -17,8 +17,8 @@
 
 #include "logging/logginghandler.h"
 #include "logging/loggingconfig.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QApplication>
 

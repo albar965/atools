@@ -22,13 +22,12 @@
 #include "sql/sqlutil.h"
 #include "geo/pos.h"
 #include "geo/rect.h"
-#include "logging/loggingdefs.h"
 #include "fs/db/progresshandler.h"
 
+#include <QDebug>
 #include <QString>
 #include <QList>
 #include <algorithm>
-
 #include <QQueue>
 
 namespace atools {

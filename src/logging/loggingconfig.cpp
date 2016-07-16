@@ -18,8 +18,8 @@
 #include "logging/loggingconfig.h"
 #include "settings/settings.h"
 #include "io/fileroller.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QDir>
 #include <QSettings>
 

@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "atools.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QLocale>
 #include <QVector>
 

@@ -23,9 +23,16 @@
 namespace atools {
 namespace util {
 
+/*
+ * Converts strings to a morse code string.
+ */
 class MorseCode
 {
 public:
+  /*
+   * @param signSeparator separator character for each dot/dash
+   * @param charSeparator separator character for each sign
+   */
   MorseCode(const QString& signSeparator = QString(), const QString& charSeparator = "\n");
   ~MorseCode();
 

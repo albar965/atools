@@ -24,8 +24,8 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "settings/settings.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QFile>
 
 namespace atools {

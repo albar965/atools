@@ -19,8 +19,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/navdatabaseoptions.h"
 
-#include "logging/loggingdefs.h"
-
+#include <QDebug>
 #include <QDir>
 
 namespace atools {

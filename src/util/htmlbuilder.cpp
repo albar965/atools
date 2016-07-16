@@ -17,8 +17,7 @@
 
 #include "util/htmlbuilder.h"
 
-#include "logging/loggingdefs.h"
-
+#include <QDebug>
 #include <QApplication>
 #include <QPalette>
 #include <QDateTime>
@@ -501,11 +500,11 @@ const QString& HtmlBuilder::alt(const QStringList& list) const
   return list.at(tableIndex % list.size());
 }
 
-QString HtmlBuilder::getEncodedImageHref(const QIcon& icon, QSize size)
+QString HtmlBuilder::getEncodedImageHref(const QIcon& icon, QSize imageSize)
 {
   QByteArray data;
   QBuffer buffer(&data);
-  icon.pixmap(size).save(&buffer, "PNG", 100);
+  icon.pixmap(imageSize).save(&buffer, "PNG", 100);
 
   return QString("data:image/png;base64, %0").arg(QString(data.toBase64()));
 }

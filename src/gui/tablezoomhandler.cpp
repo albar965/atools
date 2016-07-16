@@ -17,10 +17,10 @@
 
 #include "gui/tablezoomhandler.h"
 
-#include "logging/loggingdefs.h"
 #include "settings/settings.h"
 #include "atools.h"
 
+#include <QDebug>
 #include <QAction>
 #include <QFont>
 #include <QTableView>

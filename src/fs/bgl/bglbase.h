@@ -18,7 +18,7 @@
 #ifndef ATOOLS_BGL_BGLBASE_H
 #define ATOOLS_BGL_BGLBASE_H
 
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace atools {
 

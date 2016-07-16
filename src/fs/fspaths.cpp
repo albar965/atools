@@ -18,8 +18,8 @@
 #include "fspaths.h"
 
 #include "settings/settings.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QHash>
 #include <QDir>
 #include <QStandardPaths>

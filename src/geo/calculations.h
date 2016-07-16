@@ -28,26 +28,38 @@ namespace geo {
 
 enum LineDist
 {
-  DIST_TO_LINE,
-  DIST_TO_START,
-  DIST_TO_END
+  DIST_TO_LINE, /* Distance is to the line */
+  DIST_TO_START, /* Distance to start point */
+  DIST_TO_END /* Distance to end point */
 };
 
+/*
+ * Calculates the distance to a line in euclidian coordinate system
+ *
+ * @param x,y point which distance to the line should be calculated
+ * @param x1,y1,x2,y2 start and end coordinates of the line
+ * @param lineOnly if true will return only the distance to the line and not the distance to any endpoint
+ * @param distType if not null will return the distance type
+ * @return distance to line or to an endpoint depending on parameters
+ */
 float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, bool lineOnly = false,
                      atools::geo::LineDist *distType = nullptr);
 
+/* Square distance */
 template<typename TYPE>
 Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
 
+/* Euclidian distance between points rounded to int */
 template<typename TYPE>
 Q_DECL_CONSTEXPR int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return static_cast<int>(std::round(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
 }
 
+/* Euclidian distance between points */
 template<typename TYPE>
 Q_DECL_CONSTEXPR float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
@@ -121,34 +133,39 @@ Q_DECL_CONSTEXPR TYPE feetToNm(TYPE value)
   return meterToNm(feetToMeter(value));
 }
 
+/* NM to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)
 {
   return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
 }
 
+/* meter to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToRad(TYPE value)
 {
   return nmToRad(meterToNm(value));
 }
 
+/* Degree to rad */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
 {
   return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
 }
 
+/* Rad to degree */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
 {
   return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
 }
 
+/* Get opposed course */
 template<typename TYPE>
-TYPE opposedCourseDeg(TYPE rad)
+TYPE opposedCourseDeg(TYPE courseDegree)
 {
-  double result = static_cast<double>(rad) + 180.;
+  double result = static_cast<double>(courseDegree) + 180.;
   while(result > 360.)
     result -= 360.;
   while(result < 360.)
@@ -157,10 +174,11 @@ TYPE opposedCourseDeg(TYPE rad)
   return static_cast<TYPE>(result);
 }
 
+/* Normalize course to 0 < course < 360 */
 template<typename TYPE>
-TYPE normalizeCourse(TYPE degree)
+TYPE normalizeCourse(TYPE courseDegree)
 {
-  double result = static_cast<double>(degree);
+  double result = static_cast<double>(courseDegree);
   while(result > 360.)
     result = result - 360.;
   while(result < 0.)
@@ -168,6 +186,7 @@ TYPE normalizeCourse(TYPE degree)
   return static_cast<TYPE>(result);
 }
 
+/* Normalize lonx to -180 < lonx < 180 */
 template<typename TYPE>
 TYPE normalizeLonXDeg(TYPE lonX)
 {
@@ -179,6 +198,7 @@ TYPE normalizeLonXDeg(TYPE lonX)
   return static_cast<TYPE>(result);
 }
 
+/* Normalize laty to -90 < laty < 90 */
 template<typename TYPE>
 TYPE normalizeLatYDeg(TYPE latY)
 {

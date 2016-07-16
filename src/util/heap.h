@@ -26,6 +26,9 @@
 namespace atools {
 namespace util {
 
+/*
+ * Heap data structure.
+ */
 template<typename TYPE>
 class Heap
 {
@@ -35,16 +38,16 @@ public:
     heap.reserve(reserve);
   }
 
+  /* Take an element from the top of the heap. This will be the one with the lowest cost assigned */
   float pop(TYPE& data);
   void pop(TYPE& data, float& cost);
 
+  /* Add element to the heap. The heap will be sorted/rearranged accordingly. */
   void push(const TYPE& node, float cost);
 
-  bool contains(const TYPE& data)
-  {
-    return std::find(heap.begin(), heap.end(), HeapNode(data)) != heap.end();
-  }
+  bool contains(const TYPE& data);
 
+  /* Update the costs of an element. The heap will be updated.  */
   void change(const TYPE& data, float cost);
 
   bool isEmpty() const
@@ -91,7 +94,6 @@ private:
   bool compare(const typename atools::util::Heap<TYPE>::HeapNode& n1,
                const typename atools::util::Heap<TYPE>::HeapNode& n2)
   {
-    // return ​true if the first argument is less than the second.
     return n1.cost > n2.cost;
   }
 
@@ -123,6 +125,12 @@ void Heap<TYPE>::push(const TYPE& node, float cost)
 {
   heap.push_back({node, cost});
   std::push_heap(heap.begin(), heap.end(), compareFunc);
+}
+
+template<typename TYPE>
+bool Heap<TYPE>::contains(const TYPE& data)
+{
+  return std::find(heap.begin(), heap.end(), HeapNode(data)) != heap.end();
 }
 
 template<typename TYPE>

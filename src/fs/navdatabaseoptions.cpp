@@ -16,9 +16,9 @@
 *****************************************************************************/
 
 #include "fs/navdatabaseoptions.h"
-#include "logging/loggingdefs.h"
 #include "scenery/sceneryarea.h"
 
+#include <QDebug>
 #include <QFileInfo>
 #include <QList>
 #include <QRegExp>

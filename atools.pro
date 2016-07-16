@@ -122,7 +122,6 @@ HEADERS += src/atools.h \
     src/io/binarystream.h \
     src/io/fileroller.h \
     src/logging/loggingconfig.h \
-    src/logging/loggingdefs.h \
     src/logging/logginghandler.h \
     src/logging/loggingutil.h \
     src/settings/settings.h \

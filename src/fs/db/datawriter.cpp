@@ -21,7 +21,6 @@
 #include "fs/scenery/fileresolver.h"
 #include "fs/navdatabaseoptions.h"
 #include "sql/sqldatabase.h"
-
 #include "fs/db/nav/waypointwriter.h"
 #include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/nav/vorwriter.h"
@@ -48,16 +47,13 @@
 #include "fs/db/ap/taxipathwriter.h"
 #include "fs/db/nav/boundarywriter.h"
 #include "fs/db/progresshandler.h"
-
 #include "fs/db/ap/deleteairportwriter.h"
-
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
-
 #include "fs/db/nav/boundarylinewriter.h"
 #include "fs/bgl/bglfile.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QFileInfo>
 
 namespace atools {

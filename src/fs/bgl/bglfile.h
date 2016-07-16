@@ -27,7 +27,7 @@
 
 #include <QString>
 #include <QList>
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace atools {
 namespace io {

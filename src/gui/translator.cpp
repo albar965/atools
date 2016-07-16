@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "gui/translator.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QFileInfo>
 #include <QCoreApplication>
 #include <QTranslator>

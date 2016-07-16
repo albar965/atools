@@ -27,6 +27,7 @@ namespace atools {
 namespace util {
 
 namespace html {
+/* HTML formatting flags for text */
 enum Flag
 {
   NONE = 0x0000,
@@ -45,47 +46,94 @@ Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(html::Flags);
 }
 
+/*
+ * Text base HTML builder class that does not use any XML frameworks and does no validation.
+ * Useful for generating tootips or QTextEdit HTML text.
+ */
 class HtmlBuilder
 {
   Q_DECLARE_TR_FUNCTIONS(HtmlBuilder)
 
 public:
+  /*
+   * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
+   */
   HtmlBuilder(bool hasBackColor);
   ~HtmlBuilder();
 
+  const QString& getHtml() const
+  {
+    return htmlText;
+  }
+
+  /* Add bold text */
   HtmlBuilder& b(const QString& str);
+
+  /* Add italic text */
   HtmlBuilder& i(const QString& str);
+
+  /* Add underlined text */
   HtmlBuilder& u(const QString& str);
+
+  /* Add subscripted text */
   HtmlBuilder& sub(const QString& str);
+
+  /* Add superscripted text */
   HtmlBuilder& sup(const QString& str);
+
+  /* Add small text */
   HtmlBuilder& small(const QString& str);
+
+  /* Add big text */
   HtmlBuilder& big(const QString& str);
+
+  /* Add horizontal ruler */
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
+
+  /* Add link (anchor/href) */
   HtmlBuilder& a(const QString& text, const QString& href,
                  html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Add image */
   HtmlBuilder& img(const QString& src, const QString& alt = QString(),
                    const QString& style = QString(), QSize size = QSize());
+
+  /* Add inline base64 encoded image */
   HtmlBuilder& img(const QIcon& icon, const QString& alt = QString(),
                    const QString& style = QString(), QSize size = QSize());
 
+  /* List functions */
   HtmlBuilder& ol();
   HtmlBuilder& olEnd();
   HtmlBuilder& ul();
   HtmlBuilder& ulEnd();
   HtmlBuilder& li(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Add text with color and attributes */
   HtmlBuilder& text(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add string enclosed in a paragraph */
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Begin paragraph */
   HtmlBuilder& p();
+
+  /* End paragraph */
   HtmlBuilder& pEnd();
 
+  /* Add preformatted text */
   HtmlBuilder& pre(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Add break */
   HtmlBuilder& br();
+
+  /* Add text and break */
   HtmlBuilder& textBr(const QString& str);
+
+  /* Add break and text */
   HtmlBuilder& brText(const QString& str);
+
+  /* Add non breaking space */
   HtmlBuilder& nbsp();
 
   /* Add HTML header */
@@ -102,8 +150,13 @@ public:
   HtmlBuilder& h5(const QString& str, html::Flags flags = html::NONE,
                   QColor color = QColor(), const QString& id = QString());
 
+  /* Add table and table body */
   HtmlBuilder& table();
   HtmlBuilder& tableEnd();
+
+  /* all row2 methods add two rows to a table.
+   * The first one contains bold text (like a heading) the second one contains text according to attributes.
+   * Text background may alternate depending on configuration */
   HtmlBuilder& row2(const QString& name, const QString& value = QString(),
                     html::Flags flags = html::BOLD, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, float value, int precision = -1,
@@ -115,13 +168,23 @@ public:
   HtmlBuilder& row2Var(const QString& name, const QVariant& value,
                        html::Flags flags = html::BOLD, QColor color = QColor());
 
+  /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor = QColor());
   HtmlBuilder& trEnd();
+
+  /* Add table data */
   HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Document begin and end */
   HtmlBuilder& doc();
   HtmlBuilder& docEnd();
 
+  /*
+   * Check length of text and add a string (i.e. "...") if too long.
+   * @param maxLines maximum lines
+   * @param msg text to add if too long
+   * @return true if text is too long
+   */
   bool checklength(int maxLines, const QString& msg);
 
   bool isEmpty() const
@@ -131,11 +194,7 @@ public:
 
   void clear();
 
-  const QString& getHtml() const
-  {
-    return htmlText;
-  }
-
+  /* Date format for row2Var */
   QLocale::FormatType getDateFormat() const
   {
     return dateFormat;
@@ -146,6 +205,7 @@ public:
     dateFormat = value;
   }
 
+  /* Numeric precision for row2Var */
   int getPrecision() const
   {
     return defaultPrecision;
@@ -156,6 +216,9 @@ public:
     defaultPrecision = value;
   }
 
+  /*
+   * @return estimated number of lines in the document
+   */
   int getNumLines() const
   {
     return numLines;
@@ -171,7 +234,11 @@ public:
     truncated = value;
   }
 
-  static QString getEncodedImageHref(const QIcon& icon, QSize size);
+  /*
+   * Create the href content with an base64 encoded image.
+   * @return "data:image/png;base64, AKLDSAKLJKL"
+   */
+  static QString getEncodedImageHref(const QIcon& icon, QSize imageSize);
 
 private:
   /* Select alternating entries based on the index from the string list */

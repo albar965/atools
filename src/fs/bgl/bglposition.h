@@ -20,7 +20,7 @@
 
 #include "geo/pos.h"
 
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace atools {
 namespace io {

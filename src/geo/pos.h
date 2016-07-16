@@ -18,15 +18,17 @@
 #ifndef ATOOLS_GEO_POSITION_H
 #define ATOOLS_GEO_POSITION_H
 
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 class QRegularExpression;
 
 namespace atools {
 namespace geo {
 
-/* Simple geographic position. Calculations based on
- *  http://williams.best.vwh.net/avform.htm */
+/*
+ * Geographic position class. Calculations based on
+ * http://williams.best.vwh.net/avform.htm
+ */
 class Pos
 {
 public:
@@ -58,7 +60,7 @@ public:
     return !(*this == other);
   }
 
-  /* Compare for equal around 10 cm */
+  /* Compare for equal with accuracy depending on epsilon */
   bool almostEqual(const Pos& other, float epsilon) const;
 
   float getLatY() const
@@ -84,8 +86,13 @@ public:
     return altitude;
   }
 
+  /* Normalize this position to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   Pos& normalize();
+
+  /* Convert this position from rad to degree and return reference */
   Pos& toDeg();
+
+  /* Convert this position from degree to rad and return reference */
   Pos& toRad();
 
   void swap(Pos& other);
@@ -124,6 +131,7 @@ public:
   /* @return Format like "9° 12' 5.49E", 49° 26' 41.57"N," */
   QString toHumanReadableString() const;
 
+  /* false if position is not initialized */
   bool isValid() const;
 
   /* Return true if close to any pole */
@@ -154,18 +162,17 @@ public:
     altitude = value;
   }
 
-  const static float POS_EPSILON_10CM; // ca 10 cm for lat and lon nearby equator
-  const static float POS_EPSILON_1M; // ca 1 m for lat and lon nearby equator
-  const static float POS_EPSILON_10M; // ca 10 m for lat and lon nearby equator
-  const static float POS_EPSILON_100M; // ca 100 m for lat and lon nearby equator
+  const static float POS_EPSILON_10CM; /* ca 10 cm for lat and lon nearby equator */
+  const static float POS_EPSILON_1M; /* ca 1 m for lat and lon nearby equator */
+  const static float POS_EPSILON_10M; /* ca 10 m for lat and lon nearby equator */
+  const static float POS_EPSILON_100M; /* ca 100 m for lat and lon nearby equator */
 
-protected:
+private:
   const static float INVALID_ORDINATE;
 
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 
-private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Pos& obj);
 
   friend QDataStream& operator>>(QDataStream& in, atools::geo::Pos& obj);
@@ -181,6 +188,7 @@ private:
 
 };
 
+/* Invalid postion */
 const atools::geo::Pos EMPTY_POS;
 
 } // namespace geo

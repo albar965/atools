@@ -24,6 +24,9 @@
 namespace atools {
 namespace geo {
 
+/*
+ * List of geographic positions
+ */
 class LineString :
   public QList<atools::geo::Pos>
 {
@@ -34,8 +37,10 @@ public:
   void append(float longitudeX, float latitudeY, float alt = 0.f);
   void append(double longitudeX, double latitudeY, double alt = 0.f);
 
+  /* Length of the line string in meter */
   float lengthMeter() const;
 
+  /* Bounding rectangle of all positions */
   Rect boundingRect();
 
   bool isValid()

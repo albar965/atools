@@ -29,8 +29,8 @@ namespace gui {
 /* Allows to set a text for each button */
 struct DialogButton
 {
-  QString text;
-  QMessageBox::StandardButtons button;
+  QString text; /* Text for button */
+  QMessageBox::StandardButtons button; /* Button type */
 };
 
 typedef QVector<DialogButton> DialogButtonList;
@@ -60,12 +60,27 @@ public:
    * "Document Files (*.doc *.mydoc;;All Files (*))"
    * @param settingsPrefix Settings of this dialog will be saved under
    * section/key settingsPrefix + more
-   *
+   * @param path initial path to use
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
    */
   QString openFileDialog(const QString& title, const QString& filter,
                          const QString& settingsPrefix = QString(), const QString& path = QString());
+
+  /*
+   * Creates an open directory dialog and returns the selected directory otherwise an
+   * empty string. Stores dialog settings and current directory in the settings
+   * object.
+   *
+   * @param title Dialog title that will be preixed by "ApplicationName - "
+   * @param settingsPrefix Settings of this dialog will be saved under
+   * section/key settingsPrefix + more
+   * @param path initial path to use
+   *
+   * @return Selected filename or empty string if cancel was pressed
+   * @see atools::settings::Settings
+   */
+  QString openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path);
 
   /*
    * Creates an save file dialog and returns the selected file otherwise an
@@ -79,6 +94,7 @@ public:
    * section/key settingsPrefix + more
    * @param suffix Default suffix that will be added to a file if no suffix was
    * given
+   * @param path initial path to use
    *
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
@@ -121,12 +137,11 @@ public:
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
 
+  /* Same as above but allows to add a list of buttons and assign texts to all buttons */
   int showQuestionMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage,
                          DialogButtonList buttonList,
                          QMessageBox::StandardButton dialogDefaultButton,
                          QMessageBox::StandardButton defaultButton);
-
-  QString openDirectoryDialog(const QString& title, const QString& settingsPrefix, const QString& path);
 
 private:
   QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,

@@ -18,8 +18,8 @@
 #include "fs/lb/logbookentry.h"
 #include "io/binarystream.h"
 #include "sql/sqlutil.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QString>
 #include <QDateTime>
 

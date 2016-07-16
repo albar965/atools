@@ -15,10 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "logging/loggingdefs.h"
 #include "logging/loggingutil.h"
 #include "logging/logginghandler.h"
 
+#include <QDebug>
 #include <QStandardPaths>
 #include <QCoreApplication>
 #include <QDir>

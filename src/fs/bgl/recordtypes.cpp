@@ -16,7 +16,8 @@
 *****************************************************************************/
 
 #include "fs/bgl/recordtypes.h"
-#include "logging/loggingdefs.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace fs {

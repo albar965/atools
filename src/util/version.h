@@ -24,7 +24,7 @@ namespace atools {
 namespace util {
 
 /*
- * Parses version numbers like "0.9.5.develop" (major.minor.patchlevel.[name]) into their parts.
+ * Parses version numbers like "0.9.5.develop" (major.minor.patchlevel[.name]) into their parts.
  */
 class Version
 {

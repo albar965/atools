@@ -20,9 +20,9 @@
 #include "logging/logginghandler.h"
 #include "settings/settings.h"
 #include "atools.h"
-#include "logging/loggingdefs.h"
 #include "gui/application.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
 #include <QUrl>
@@ -57,7 +57,7 @@ void HelpHandler::about()
                      arg(rev).
                      arg(atools::version()).
                      arg(atools::gitRevision()).
-                     arg(atools::gui::Application::getReportFiles()));
+                     arg(atools::gui::Application::getReportPaths()));
 }
 
 void HelpHandler::aboutQt()

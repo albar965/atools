@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "sql/sqlutil.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QString>
 
 namespace atools {

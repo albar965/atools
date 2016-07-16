@@ -24,7 +24,8 @@
 #include "geo/calculations.h"
 #include "geo/pos.h"
 #include "sql/sqlutil.h"
-#include "logging/loggingdefs.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace fs {

@@ -48,6 +48,7 @@ public:
   /* Display about Qt dialog */
   void aboutQt();
 
+  /* Open an URL in the default browser. If that fails show an error dialog */
   void openHelpUrl(const QUrl& url);
 
 private:

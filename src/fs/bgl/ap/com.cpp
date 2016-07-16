@@ -15,9 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "logging/loggingdefs.h"
 #include "fs/bgl/ap/com.h"
 #include "io/binarystream.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace fs {

@@ -18,26 +18,32 @@
 #ifndef ATOOLS_GEO_RECT_H
 #define ATOOLS_GEO_RECT_H
 
-#include "logging/loggingdefs.h"
 #include "geo/pos.h"
+
+#include <QDebug>
 
 namespace atools {
 namespace geo {
 
-class Rect final
+/*
+ * Geographic rectangle class. Calculations based on
+ *  http://williams.best.vwh.net/avform.htm
+ */
+class Rect
 {
 public:
   /* Create an invalid rectangle */
   Rect();
-  Rect(const Rect &other);
-  Rect(const atools::geo::Pos & singlePos);
-  Rect(const atools::geo::Pos & topLeftPos, const atools::geo::Pos & bottomRightPos);
+  Rect(const Rect& other);
+  /* Create a single point rectangle */
+  Rect(const atools::geo::Pos& singlePos);
+  Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
   Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
   Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
-  Rect(const atools::geo::Pos & center, float radiusMeter);
+  Rect(const atools::geo::Pos& center, float radiusMeter);
 
   Rect& operator=(const Rect& other);
 
@@ -48,9 +54,17 @@ public:
     return !(*this == other);
   }
 
+  /*
+   * @return true if point is inside rectangle
+   */
   bool contains(const atools::geo::Pos& pos) const;
+
+  /*
+   * @return true if rectangle overlaps this rectangle
+   */
   bool overlaps(const Rect& other) const;
 
+  /* add margins to this rectangle */
   void inflate(float degreesLon, float degreesLat);
 
   const atools::geo::Pos& getTopLeft() const
@@ -103,11 +117,16 @@ public:
   QList<Rect> splitAtAntiMeridian() const;
   bool crossesAntiMeridian() const;
 
+  /*
+   * @return true if this rectangle was not default constructed */
   bool isValid() const
   {
     return valid;
   }
 
+  /*
+   * @return true if rectagle is a single point
+   */
   bool isPoint() const;
 
   Pos getBottomCenter() const;

@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "gui/errorhandler.h"
-#include "logging/loggingdefs.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
 #include <QSqlError>

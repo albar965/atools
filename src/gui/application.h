@@ -31,6 +31,8 @@ namespace gui {
 
 /*
  * Adds an exception handler for the event queue and provides methods to handle fatal errors.
+ * Catches any exceptions that was thrown in an event handler and shows an error dialog
+ * also containing application paths etc.
  */
 class Application :
   public QApplication
@@ -64,7 +66,12 @@ public:
    * @param paths A list of directory or file paths
    */
   static void addReportPath(const QString& header, const QStringList& paths);
-  static QString getReportFiles();
+
+  /*
+   * Get the paths that were added using addReportPath in a HTML formatted text
+   * as links
+   */
+  static QString getReportPaths();
 
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;

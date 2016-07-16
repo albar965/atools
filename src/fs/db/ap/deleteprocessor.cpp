@@ -26,7 +26,7 @@
 #include "fs/db/ap/transitionwriter.h"
 #include "fs/navdatabaseoptions.h"
 
-#include "logging/loggingdefs.h"
+#include <QDebug>
 
 namespace atools {
 namespace fs {

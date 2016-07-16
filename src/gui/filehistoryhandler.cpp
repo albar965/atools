@@ -52,13 +52,18 @@ void FileHistoryHandler::addFile(const QString& filename)
 {
   if(!filename.isEmpty())
   {
+    // Remove file from list
     if(files.contains(filename))
       files.removeAll(filename);
+
+    // and prepend
     files.prepend(filename);
 
+    // Remove all above max entries
     while(files.size() > maxEntries)
       files.removeLast();
 
+    // Update menu actions
     updateMenu();
   }
 }
@@ -93,6 +98,7 @@ void FileHistoryHandler::updateMenu()
   for(const QString& filepath : files)
   {
     QString fname = QFileInfo(filepath).fileName();
+    // Add number for selection
     if(i < 10)
       fname = "&" + QString::number(i) + " " + fname;
     else if(i == 10)
