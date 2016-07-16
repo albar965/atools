@@ -105,7 +105,9 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(s, fd, fd->saveState());
     else if(const QMainWindow * mw = dynamic_cast<const QMainWindow *>(widget))
     {
+      s.setValueVar(keyPrefix + "_" + mw->objectName() + "_pos", mw->pos());
       s.setValueVar(keyPrefix + "_" + mw->objectName() + "_size", mw->size());
+      s.setValueVar(keyPrefix + "_" + mw->objectName() + "_maximized", mw->isMaximized());
       saveWidget(s, mw, mw->saveState());
     }
     else if(const QSplitter * sp = dynamic_cast<const QSplitter *>(widget))
@@ -232,7 +234,14 @@ void WidgetState::restore(QObject *widget) const
       if(v.isValid())
       {
         mw->restoreState(v.toByteArray());
-        mw->resize(s.valueVar(keyPrefix + "_" + mw->objectName() + "_size", mw->sizeHint()).toSize());
+        if(positionRestoreMainWindow)
+          mw->move(s.valueVar(keyPrefix + "_" + mw->objectName() + "_pos", mw->pos()).toPoint());
+        if(sizeRestoreMainWindow)
+          mw->resize(s.valueVar(keyPrefix + "_" + mw->objectName() + "_size", mw->sizeHint()).toSize());
+
+        if(stateRestoreMainWindow)
+          if(s.valueVar(keyPrefix + "_" + mw->objectName() + "_maximized", false).toBool())
+            mw->setWindowState(mw->windowState() | Qt::WindowMaximized);
       }
     }
     else if(QSplitter * sp = dynamic_cast<QSplitter *>(widget))
@@ -279,6 +288,13 @@ void WidgetState::restore(QObject *widget) const
 void WidgetState::syncSettings()
 {
   Settings::instance().syncSettings();
+}
+
+void WidgetState::setMainWindowsRestoreOptions(bool position, bool size, bool state)
+{
+  positionRestoreMainWindow = position;
+  sizeRestoreMainWindow = size;
+  stateRestoreMainWindow = state;
 }
 
 void WidgetState::save(const QList<QObject *>& widgets) const

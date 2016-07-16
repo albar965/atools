@@ -63,6 +63,8 @@ public:
     block = value;
   }
 
+  void setMainWindowsRestoreOptions(bool position, bool size, bool state);
+
 private:
   QString keyPrefix;
   bool visibility = true, block = false;
@@ -73,6 +75,7 @@ private:
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
   void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
 
+  bool positionRestoreMainWindow = true, sizeRestoreMainWindow = true, stateRestoreMainWindow = true;
 };
 
 } // namespace gui
