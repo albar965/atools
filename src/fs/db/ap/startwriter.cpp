@@ -49,6 +49,11 @@ void StartWriter::writeObject(const Start *type)
   const QString& apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
 
+  if(type->getType() == bgl::start::HELIPAD)
+    bind(":number", type->getNumber());
+  else
+    bindNullInt(":number");
+
   // TODO comment in wiki: helipads have no runway
   if(!apIdent.isEmpty() && type->getType() != bgl::start::HELIPAD)
   {

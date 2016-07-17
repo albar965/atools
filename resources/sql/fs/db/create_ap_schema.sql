@@ -225,6 +225,7 @@ create table start
   runway_end_id integer,
   type varchar(10) not null,    -- see enum atools::fs::bgl::start::StartType
   heading double not null,      -- Degrees true
+  number integer,               -- Number used for helipads
   altitude integer not null,    -- Feet
   lonx double not null,
   laty double not null,

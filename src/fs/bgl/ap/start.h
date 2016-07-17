@@ -78,6 +78,16 @@ public:
 
   static QString startTypeToStr(atools::fs::bgl::start::StartType type);
 
+  int getNumber() const
+  {
+    return number;
+  }
+
+  void setNumber(int value)
+  {
+    number = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Start& record);
 
@@ -85,6 +95,7 @@ private:
   int runwayNumber, runwayDesignator;
   atools::fs::bgl::BglPosition position;
   float heading = 0.f;
+  int number;
 };
 
 } // namespace bgl

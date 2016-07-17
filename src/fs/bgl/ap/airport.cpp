@@ -74,6 +74,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
   QList<TaxiPoint> taxipoints;
   QHash<int, int> parkingNumberIndex;
   QStringList taxinames;
+  int helipadStart = 1;
 
   while(bs->tellg() < startOffset + size)
   {
@@ -165,7 +166,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
         if(options->isIncludedBglObject(type::START))
         {
           r.seekToStart();
-          starts.append(Start(options, bs));
+          Start start(options, bs);
+          if(start.getType() == atools::fs::bgl::start::HELIPAD)
+            start.setNumber(helipadStart++);
+          else
+            start.setNumber(0);
+          starts.append(start);
         }
         break;
       case rec::JETWAY:
