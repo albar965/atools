@@ -158,7 +158,15 @@ void Settings::remove(const QString& key)
 
 QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue)
 {
-  return qSettings->value(key, defaultValue).toStringList();
+  if(!contains(key))
+    return defaultValue;
+
+  QStringList list = qSettings->value(key, defaultValue).toStringList();
+
+  if(list.isEmpty() || (list.size() == 1 && list.first().isEmpty()))
+    return QStringList();
+  else
+    return list;
 }
 
 QString Settings::valueStr(const QString& key, const QString& defaultValue)
@@ -193,7 +201,10 @@ QVariant Settings::valueVar(const QString& key, QVariant defaultValue)
 
 void Settings::setValue(const QString& key, const QStringList& value)
 {
-  qSettings->setValue(key, value);
+  if(value.isEmpty())
+    qSettings->setValue(key, QString());
+  else
+    qSettings->setValue(key, value);
 }
 
 void Settings::setValue(const QString& key, const QString& value)
@@ -208,17 +219,17 @@ void Settings::setValue(const QString& key, bool value)
 
 void Settings::setValue(const QString& key, int value)
 {
-  qSettings->setValue(key, value);
+  qSettings->setValue(key, QString::number(value));
 }
 
 void Settings::setValue(const QString& key, float value)
 {
-  qSettings->setValue(key, value);
+  qSettings->setValue(key, QString::number(value, 'f', 10));
 }
 
 void Settings::setValue(const QString& key, double value)
 {
-  qSettings->setValue(key, value);
+  qSettings->setValue(key, QString::number(value, 'f', 18));
 }
 
 void Settings::setValueVar(const QString& key, const QVariant& value)
