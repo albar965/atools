@@ -29,12 +29,12 @@ QString version();
 
 QString gitRevision();
 
-Q_DECL_CONSTEXPR int absInt(int value)
+inline Q_DECL_CONSTEXPR int absInt(int value)
 {
   return value > 0 ? value : -value;
 }
 
-Q_DECL_CONSTEXPR long long absLong(long long value)
+inline Q_DECL_CONSTEXPR long long absLong(long long value)
 {
   return value > 0L ? value : -value;
 }
@@ -96,13 +96,13 @@ Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
+inline Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
 {
   return atools::absInt(f1 - f2) >= epsilon;
 }
 
 template<>
-Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
+inline Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return atools::absLong(f1 - f2) >= epsilon;
 }

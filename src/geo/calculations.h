@@ -55,7 +55,7 @@ Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 }
 
 template<>
-Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
+inline Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
 {
   return absInt(x1 - x2) + absInt(y1 - y2);
 }
