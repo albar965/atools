@@ -38,7 +38,7 @@ using atools::sql::SqlQuery;
 using bgl::util::isFlagSet;
 
 DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts)
-  : options(opts), db(sqlDb)
+  : options(opts)
 {
   // Create all queries
   deleteRunwayStmt = new SqlQuery(sqlDb);

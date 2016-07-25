@@ -44,6 +44,9 @@ const QRegularExpression LONG_FORMAT_REGEXP(
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([+-])\\s*([0-9\\.]+)");
 
+
+using atools::absInt;
+
 Pos::Pos()
   : lonX(INVALID_ORDINATE), latY(INVALID_ORDINATE), altitude(0)
 {
@@ -370,9 +373,9 @@ QString Pos::toLongString() const
     throw Exception("Invalid position. Cannot convert to string");
 
   return LONG_FORMAT.arg(latY > 0 ? "N" : "S").
-         arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
+         arg(absInt(getLatYDeg())).arg(absInt(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
          arg(lonX > 0 ? "E" : "W").
-         arg(std::abs(getLonXDeg())).arg(std::abs(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2).
+         arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2).
          arg(altitude >= 0 ? "+" : "-").arg(std::abs(altitude), 9, 'f', 2, '0');
 }
 
@@ -382,9 +385,9 @@ QString Pos::toHumanReadableString() const
     throw Exception("Invalid position. Cannot convert to string");
 
   return HUMAN_FORMAT.arg(latY > 0 ? "N" : "S").
-         arg(std::abs(getLatYDeg())).arg(std::abs(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
+         arg(absInt(getLatYDeg())).arg(absInt(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
          arg(lonX > 0 ? "E" : "W").
-         arg(std::abs(getLonXDeg())).arg(std::abs(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
+         arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 
 QString Pos::toString() const

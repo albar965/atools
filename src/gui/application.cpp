@@ -17,6 +17,7 @@
 
 #include "application.h"
 
+#include <cstdlib>
 #include <QDebug>
 #include <QMessageBox>
 #include <QUrl>

@@ -80,7 +80,6 @@ private:
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
 
   const atools::fs::NavDatabaseOptions& options;
-  atools::sql::SqlDatabase& db;
 
   atools::sql::SqlQuery
   *deleteRunwayStmt = nullptr,

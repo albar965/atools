@@ -18,6 +18,8 @@
 #ifndef ATOOLS_GEO_CALCULATIONS_H
 #define ATOOLS_GEO_CALCULATIONS_H
 
+#include "atools.h"
+
 #include <cmath>
 #include <limits>
 
@@ -50,6 +52,12 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
+}
+
+template<>
+Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
+{
+  return absInt(x1 - x2) + absInt(y1 - y2);
 }
 
 /* Euclidian distance between points rounded to int */

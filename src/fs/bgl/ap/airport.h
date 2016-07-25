@@ -423,7 +423,6 @@ private:
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
   static const int MIN_RUNWAY_LENGTH = 10;
 
-  bool deleteRecord;
   atools::fs::bgl::BglPosition position, towerPosition;
   atools::geo::Rect boundingRect;
   float magVar;

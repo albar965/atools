@@ -18,6 +18,8 @@
 #ifndef ATOOLS_ATOOLS_H
 #define ATOOLS_ATOOLS_H
 
+#include <cmath>
+
 #include <QSet>
 #include <QString>
 
@@ -27,6 +29,16 @@ QString version();
 
 QString gitRevision();
 
+Q_DECL_CONSTEXPR int absInt(int value)
+{
+  return value > 0 ? value : -value;
+}
+
+Q_DECL_CONSTEXPR long long absLong(long long value)
+{
+  return value > 0L ? value : -value;
+}
+
 /* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
 template<typename TYPE>
 int roundToPrecision(TYPE value, int precision = 0)
@@ -35,7 +47,7 @@ int roundToPrecision(TYPE value, int precision = 0)
     return static_cast<int>(round(value));
   else
   {
-    int factor = static_cast<int>(pow(10., precision));
+    int factor = static_cast<int>(std::pow(10., precision));
     return static_cast<int>(round(value / factor)) * factor;
   }
 }
@@ -81,6 +93,18 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return std::abs(f1 - f2) >= epsilon;
+}
+
+template<>
+Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
+{
+  return atools::absInt(f1 - f2) >= epsilon;
+}
+
+template<>
+Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
+{
+  return atools::absLong(f1 - f2) >= epsilon;
 }
 
 } // namespace atools
