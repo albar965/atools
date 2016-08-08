@@ -112,6 +112,9 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
           for(int i = 0; i < numParkings; i++)
           {
             Parking p(bs);
+
+            // Remove vehicle parking later to avoid index mess-up
+
             parkings.append(p);
             parkingNumberIndex.insert(p.getNumber(), parkings.size() - 1);
           }
@@ -209,7 +212,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
             if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
                 !options->isIncludedBglObject(type::TAXIWAY_RUNWAY)) ||
                (path.getType() == atools::fs::bgl::taxipath::VEHICLE &&
-                !options->isIncludedBglObject(type::TAXIWAY_VEHICLE)))
+                !options->isIncludedBglObject(type::VEHICLE)))
               continue;
 
             taxipaths.append(path);
@@ -258,6 +261,9 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
 
   // Update all the number fields and the bounding rectange
   updateSummaryFields();
+
+  if(!options->isIncludedBglObject(type::VEHICLE))
+    removeVehicleParking();
 
   // TODO create warnings for this
   // Q_ASSERT(runways.size() == numRunways);
@@ -425,6 +431,20 @@ void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>&
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;
   }
+}
+
+void Airport::removeVehicleParking()
+{
+  QList<Parking>::iterator it = std::remove_if(parkings.begin(), parkings.end(),
+                                               [ = ](const Parking &p)->bool
+                                               {
+                                                 return p.getType() == atools::fs::bgl::ap::VEHICLES;
+                                               });
+
+  if(it == parkings.end())
+    qWarning() << "No parking deleted for " << ident;
+  else
+    parkings.erase(it, parkings.end());
 }
 
 void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames)

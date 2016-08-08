@@ -54,7 +54,7 @@ enum BglObjectType
   APRONLIGHT,
   FENCE, /* boundary and blast fences */
   TAXIWAY,
-  TAXIWAY_VEHICLE, /* taxiway for airport vehicles */
+  VEHICLE, /* taxiway and parking for airport vehicles */
   TAXIWAY_RUNWAY, /* taxiway across runways */
   AIRWAY, /* all airway route processing */
   GEOMETRY /* apron and fence geometry */

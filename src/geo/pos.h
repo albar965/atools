@@ -137,8 +137,11 @@ public:
   /* Return true if close to any pole */
   bool isPole() const;
 
-  /* Find point between start and end on GC route */
+  /* Find point between start and end on GC route if distance between points is already known.
+   *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
   Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
+
+  /* Find point between start and end on GC route if distance between points is not known */
   Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
                          QList<Pos>& positions) const;

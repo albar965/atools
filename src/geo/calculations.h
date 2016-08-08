@@ -60,6 +60,11 @@ inline Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y
   return absInt(x1 - x2) + absInt(y1 - y2);
 }
 
+inline Q_DECL_CONSTEXPR float manhattanDistanceF(float x1, float y1, float x2, float y2)
+{
+  return std::abs(x1 - x2) + std::abs(y1 - y2);
+}
+
 /* Euclidian distance between points rounded to int */
 template<typename TYPE>
 Q_DECL_CONSTEXPR int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)

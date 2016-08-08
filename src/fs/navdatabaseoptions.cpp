@@ -398,8 +398,8 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
     case TAXIWAY_RUNWAY:
       return "TAXIWAY_RUNWAY";
 
-    case TAXIWAY_VEHICLE:
-      return "TAXIWAY_VEHICLE";
+    case VEHICLE:
+      return "VEHICLE";
 
     case GEOMETRY:
       return "GEOMETRY";
@@ -450,8 +450,8 @@ type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
     return FENCE;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
-  else if(typeStr == "TAXIWAY_VEHICLE")
-    return TAXIWAY_VEHICLE;
+  else if(typeStr == "VEHICLE")
+    return VEHICLE;
   else if(typeStr == "TAXIWAY_RUNWAY")
     return TAXIWAY_RUNWAY;
   else if(typeStr == "AIRWAY")
