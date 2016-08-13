@@ -26,6 +26,8 @@ General Notes:
 
 * Frequencies are scaled up to integer values: MHz * 1000 for COM, VOR, ILS and kHz * 100 for NDB frequencies
 
+* Each table has its own id range. So ids between different tables can overlap. Ids are always > 0.
+
 * Altitude and runway dimensions are in feet and radio navaid ranges are in NM.
   See separate comments for the table columns for used units.
 

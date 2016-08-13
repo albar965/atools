@@ -97,8 +97,12 @@ void Application::addReportPath(const QString& header, const QStringList& paths)
 
 QString Application::getReportPaths()
 {
+  // Sort keys to avoid random order
+  QList<QString> keys = reportFiles.keys();
+  std::sort(keys.begin(), keys.end());
+
   QString fileStr;
-  for(QString header : reportFiles.keys())
+  for(QString header : keys)
   {
     fileStr.append(tr("%1<br/>").arg(header));
     const QStringList& paths = reportFiles.value(header);

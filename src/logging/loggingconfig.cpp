@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QSettings>
+#include <QApplication>
 
 namespace atools {
 namespace logging {
@@ -240,8 +241,21 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, QTextStream
     {
       // Create a stream for the channel
       QString filename = channelName;
-      if(!logPrefix.isEmpty())
+      if(filename.isEmpty())
+      {
+        // No filename
+        if(logPrefix.isEmpty())
+          filename = QApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                     QApplication::applicationName().replace(" ", "_").toLower();
+        else
+          filename = logPrefix;
+      }
+      else if(!logPrefix.isEmpty())
         filename = logPrefix + filename;
+
+      if(!filename.endsWith(".log", Qt::CaseInsensitive))
+        filename += ".log";
+
       if(!logDir.isEmpty())
         filename = logDir + QDir::separator() + filename;
 

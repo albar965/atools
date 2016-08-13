@@ -83,6 +83,7 @@ public:
   /*
    * Loads the logging configuration and prepares all log files to be stored in
    * the system defined temporary directory.
+   * This will prefix all log files with orgranization and application name and append ".log"
    *
    * @param logConfiguration Path of the log configuration file. See above.
    */
