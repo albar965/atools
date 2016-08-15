@@ -62,7 +62,8 @@ public:
    * @param saveVisibility if true save visibility of widgets
    * @param blockSignals if true block all signals while changing widgets
    */
-  WidgetState(const QString& settingsKeyPrefix, bool saveVisibility = true, bool blockSignals = false);
+  WidgetState(const QString& settingsKeyPrefix = QString(),
+              bool saveVisibility = true, bool blockSignals = false);
 
   void save(const QList<QObject *>& widgets) const;
   void restore(const QList<QObject *>& widgets) const;
@@ -100,16 +101,25 @@ public:
    */
   void setMainWindowsRestoreOptions(bool position, bool size, bool state);
 
-private:
-  QString keyPrefix;
-  bool visibility = true, block = false;
+  const QString& getKeyPrefix() const
+  {
+    return keyPrefix;
+  }
 
+  void setKeyPrefix(const QString& value)
+  {
+    keyPrefix = value;
+  }
+
+private:
   void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value) const;
   QVariant loadWidget(atools::settings::Settings& settings, QObject *w) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
   void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
 
+  QString keyPrefix;
+  bool visibility = true, block = false;
   bool positionRestoreMainWindow = true, sizeRestoreMainWindow = true, stateRestoreMainWindow = true;
 };
 
