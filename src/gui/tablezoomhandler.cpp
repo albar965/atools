@@ -79,6 +79,11 @@ void TableZoomHandler::initTableViewZoom()
   // Adjust cell height to be smaller than default but according to font height
   defaultTableViewFontPointSize = static_cast<float>(tableView->font().pointSizeF());
 
+  // Increase default table font size for mac
+#if defined(Q_OS_OSX)
+  defaultTableViewFontPointSize *= 1.4f;
+#endif
+
   float newPointSize = 0.f;
   if(!settingsKey.isEmpty())
     newPointSize = Settings::instance().valueFloat(settingsKey,
