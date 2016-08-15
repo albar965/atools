@@ -97,7 +97,7 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
     bs->seekg(offs + indexes[i]);
     names.append(bs->readString());
   }
-  delete indexes;
+  delete[] indexes;
 }
 
 QDebug operator<<(QDebug out, const Namelist& record)
