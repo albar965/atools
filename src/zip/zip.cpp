@@ -42,10 +42,10 @@
 #include <QDir>
 
 
-#if defined(Q_OS_OSX)
-#include "zlib.h"
-#else
+#if defined(Q_OS_WIN32)
 #include <QtZlib/zlib.h>
+#else
+#include "zlib.h"
 #endif
 
 // Zip standard version for archives handled by this API
