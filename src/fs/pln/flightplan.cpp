@@ -18,7 +18,9 @@
 #include "fs/pln/flightplan.h"
 #include "exception.h"
 #include "geo/pos.h"
+#include "atools.h"
 
+#include <QDateTime>
 #include <QFile>
 #include <QXmlStreamReader>
 
@@ -137,11 +139,6 @@ void Flightplan::save(const QString& file)
 
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    // if(!departurePos.isValid())
-    // throw new atools::Exception("Invalid departure position in flightplan");
-    // if(!destinationPos.isValid())
-    // throw new atools::Exception("Invalid destination position in flightplan");
-
     QXmlStreamWriter writer;
     writer.setDevice(&xmlFile);
     writer.setCodec("UTF-8");
@@ -153,6 +150,14 @@ void Flightplan::save(const QString& file)
     writer.writeAttribute("Type", "AceXML");
     writer.writeAttribute("version", "1,0");
     writer.writeTextElement("Descr", "AceXML Document");
+
+    writer.writeComment(tr(" Created by %1 Version %2 (revision %3) on %4 ").
+                        arg(QApplication::applicationName()).
+                        arg(QApplication::applicationVersion()).
+                        arg(atools::gitRevision()).
+                        arg(QLocale().toString(QDateTime::currentDateTime())).
+                        replace("-", " "));
+
     writer.writeStartElement("FlightPlan.FlightPlan");
 
     writer.writeTextElement("Title", title);
