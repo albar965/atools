@@ -1,4 +1,4 @@
-atools is a small static library extending Qt for exception handling,
+atools is a static library extending Qt for exception handling,
 a log4j like logging framework, Flight Simulator related utilities like BGL reader
 and more.
 
@@ -24,16 +24,17 @@ See atools/resources/sql/fs/db/README.txt for schema for more information about 
 Supports reading of the flight simulator scenery.cfg file.
 
 ** fs/pln
-Support for reading and writing flight simulator plan files.
+Support for reading and writing flight simulator flight plan (PLN/XML) files.
 
 ** fs/lb
 Flight simulator logbook reading functionality.
 
 * io
-Simple binary file reading functionality also using exceptions to ease error handling.
+Simple binary file reading functionality also using exceptions to ease error handling. Also a
+file/log rolling class and a reader for ini files.
 
 * geo
-Simple geomentry module.
+Simple geometry module containing point and rectangle classes as well as various complex calculations.
 
 * gui
 GUI and dialog helper classes.
@@ -46,7 +47,14 @@ to keep multiple log files.
 Wrapper around the QSettings class to provide the settings system wide as a singleton.
 
 * sql
-Wrapper around Qt SQL classes but with added exception handling to avoid boilerplate coding.
+Wrapper around Qt SQL classes but with added exception handling to avoid excessive boilerplate
+coding for error checks.
+
+* util
+Miscellaneous utilities.
+
+* zip
+A copy of the unsupported and Qt zip class. Improved for better error handling.
 
 -------------------------------------------------------------------------------
 This software is licensed under GPL3 or any later version.

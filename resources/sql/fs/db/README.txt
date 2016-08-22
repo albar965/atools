@@ -35,7 +35,7 @@ General Notes:
 
 * Types are stored as strings and can be looked up as enumerations in the C++ code.
 
-* Foreign keys are tested and usually valid but not enabled per default during
+* Foreign keys are tested and are usually valid but not enabled per default during
   loading in Little Navmap (for performance reasons)
 
 * Tables are partially denormalized for performance reasons
