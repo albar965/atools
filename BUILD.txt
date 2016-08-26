@@ -1,9 +1,10 @@
 Build Instructions
 ------------------------------------------------------
 
-Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.4.
+Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.5.
+GIT command line tools are required.
 
-- Clone atools GIT repository
+- Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
 
 Windows
 ------------------------------------------------------
@@ -11,26 +12,30 @@ Windows
 - Get and install Qt Creator from http://www.qt.io.
 - Import atools into the workspace.
 - Configure the project and enable shadow build for release or debug versions.
--- For atools use the build directory of e.g.: "C:\Projects\atools\release"
+-- Clone atools from GIT to e.g.: "C:\Projects\atools"
+-- Use "../build-%{CurrentProject:Name}-%{CurrentBuild:Name}" for "Default build directory"
+     in the Qt Creator options dialog.
+-- For atools use the build directory of e.g.: "C:\Projects\build-atools-release"
 - Adapt the QT_BIN and GIT_BIN variables in "atools.pro".
 - Run qmake from Qt Creator
 - Build
 
-It is important that the shadow build directories reside within the project directory and are
-named "release" and "debug" depending on desired build. Do not use the default shadow names, this will
-break project dependencies.
+Do not use the default shadow build directory names, this will break project dependencies.
 
-Linux
+Linux / Mac OS X
 ------------------------------------------------------
+Install Qt development packages. Version at least 5.5.
 
-To build release
-- mkdir atools/release
-- cd atools/release
-- qmake ../atools.pro
+Create the build directories on the same level as the source directory "atools".
+
+To build the release version:
+- mkdir build-atools-release
+- cd build-atools-release
+- qmake ../atools/atools.pro CONFIG+=release
 - make
 
-To build debug
-- mkdir atools/debug
-- cd atools/debug
-- qmake ../atools.pro CONFIG+=debug
+To build the debug version:
+- mkdir build-atools-debug
+- cd build-atools-debug
+- qmake ../atools/atools.pro CONFIG+=debug
 - make
