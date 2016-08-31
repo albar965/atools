@@ -1,5 +1,12 @@
-Version 1.9.8.develop
+Version 1.9.9.develop
 
+* BGL Reading and writing finalized
+* Much more functionality added to classes in atools::geo namespace
+* Added flight simulator PLN reader and writer in atools::fs::pln namespace
+* Added simcommect data classes
+* atools::gui namespace: Added WidgetState, WidgetTools, Application with error handler and much more
+* Added atools::util namespace: Heap, HtmlBuilder and more.
+* Added a copy of unsupported ZIP class from Qt.
 
 Version 1.6.0.develop
 
