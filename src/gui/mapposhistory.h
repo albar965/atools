@@ -113,11 +113,11 @@ public:
    * Will also emit signal historyChanged  */
   void addEntry(atools::geo::Pos pos, double distance);
 
-  /* Save history to  settings */
-  void saveState(const QString& keyPrefix);
+  /* Save history to file */
+  void saveState(const QString& filename);
 
-  /* load history from settings */
-  void restoreState(const QString& keyPrefix);
+  /* load history from file */
+  void restoreState(const QString& filename);
 
 signals:
   /* Emitted when the history changes
@@ -132,8 +132,11 @@ private:
   const int MAX_MS_FOR_NEW_ENTRY = 200;
   const int MAX_NUMBER_OF_ENTRIES = 50;
 
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x4C8D1F09;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
+
   QList<MapPosHistoryEntry> entries;
-  int currentIndex = -1;
+  qint32 currentIndex = -1;
 
 };
 

@@ -17,12 +17,12 @@
 
 #include "gui/mapposhistory.h"
 
-#include "settings/settings.h"
 #include "geo/calculations.h"
 
 #include <QDebug>
 #include <QDateTime>
 #include <QDataStream>
+#include <QFile>
 
 namespace atools {
 namespace gui {
@@ -157,19 +157,56 @@ void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
   }
 }
 
-void MapPosHistory::saveState(const QString& keyPrefix)
+void MapPosHistory::saveState(const QString& filename)
 {
-  using atools::settings::Settings;
-  QVariant var = QVariant::fromValue<QList<MapPosHistoryEntry> >(entries);
-  Settings::instance().setValueVar(keyPrefix + "Entries", var);
-  Settings::instance().setValue(keyPrefix + "CurrentIndex", currentIndex);
+  QFile historyFile(filename);
+
+  if(historyFile.open(QIODevice::WriteOnly))
+  {
+    QDataStream out(&historyFile);
+    out.setVersion(QDataStream::Qt_5_5);
+
+    out << FILE_MAGIC_NUMBER << FILE_VERSION << currentIndex << entries;
+    historyFile.close();
+  }
+  else
+    qWarning() << "Cannot write history" << historyFile.fileName() << ":" << historyFile.errorString();
 }
 
-void MapPosHistory::restoreState(const QString& keyPrefix)
+void MapPosHistory::restoreState(const QString& filename)
 {
-  using atools::settings::Settings;
-  entries = Settings::instance().valueVar(keyPrefix + "Entries").value<QList<MapPosHistoryEntry> >();
-  currentIndex = Settings::instance().valueInt(keyPrefix + "CurrentIndex", -1);
+  entries.clear();
+  currentIndex = -1;
+
+  QFile historyFile(filename);
+
+  if(historyFile.exists())
+  {
+    if(historyFile.open(QIODevice::ReadOnly))
+    {
+      quint32 magic;
+      quint16 version;
+      QDataStream in(&historyFile);
+      in.setVersion(QDataStream::Qt_5_5);
+      in >> magic;
+
+      if(magic == FILE_MAGIC_NUMBER)
+      {
+        in >> version;
+        if(version == FILE_VERSION)
+          in >> currentIndex >> entries;
+        else
+          qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid version number:" <<
+          version;
+      }
+      else
+        qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid magic number:" << magic;
+
+      historyFile.close();
+    }
+    else
+      qWarning() << "Cannot read history" << historyFile.fileName() << ":" << historyFile.errorString();
+  }
 
   if(entries.isEmpty())
     emit historyChanged(0, 0, 0);
