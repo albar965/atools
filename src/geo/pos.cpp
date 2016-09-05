@@ -34,16 +34,18 @@ const float Pos::POS_EPSILON_1M = 1.f / 60.f / 1852.216f;
 const float Pos::POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f;
 const float Pos::POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f;
 
-const double EARTH_RADIUS_METER = 6371. * 1000.;
+const static QString OVERFLOW_60_TEST("%1");
+const static QString OVERFLOW_60_TEST_TEXT("60");
+const static float MAX_SECONDS = 59.98f;
+const static double EARTH_RADIUS_METER = 6371. * 1000.;
 
-const QString SHORT_FORMAT("%1,%2,%3");
-const QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
-const QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
-const QRegularExpression LONG_FORMAT_REGEXP(
+const static QString SHORT_FORMAT("%1,%2,%3");
+const static QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
+const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
+const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([+-])\\s*([0-9\\.]+)");
-
 
 using atools::absInt;
 
@@ -124,36 +126,6 @@ bool Pos::almostEqual(const Pos& other, float epsilon) const
 {
   return atools::almostEqual(lonX, other.lonX, epsilon) &&
          atools::almostEqual(latY, other.latY, epsilon);
-}
-
-int Pos::getLatYDeg() const
-{
-  return deg(latY);
-}
-
-int Pos::getLatYMin() const
-{
-  return min(latY);
-}
-
-float Pos::getLatYSec() const
-{
-  return sec(latY);
-}
-
-int Pos::getLonXDeg() const
-{
-  return deg(lonX);
-}
-
-int Pos::getLonXMin() const
-{
-  return min(lonX);
-}
-
-float Pos::getLonXSec() const
-{
-  return sec(lonX);
 }
 
 Pos& Pos::normalize()
@@ -398,22 +370,21 @@ QString Pos::toString() const
   return SHORT_FORMAT.arg(lonX).arg(latY).arg(altitude);
 }
 
-bool Pos::isValid() const
-{
-  return lonX != INVALID_ORDINATE && latY != INVALID_ORDINATE;
-}
-
-bool Pos::isPole() const
-{
-  return latY > 89. || latY < -89.;
-}
-
 void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
                             QList<Pos>& positions) const
 {
   float step = 1.f / numPoints;
   for(int j = 0; j < numPoints; j++)
     positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)));
+}
+
+/* Check if seconds or minutes value is rounded up to 60.00 when convertin to string */
+inline bool Pos::doesOverflow60(float value) const
+{
+  // No locale specifics used here
+  // String conversion is only option to catch system dependend rounding variances
+  return std::abs(value) >= MAX_SECONDS ||
+         OVERFLOW_60_TEST.arg(std::abs(value), 0, 'f', 2).startsWith(OVERFLOW_60_TEST_TEXT);
 }
 
 int Pos::deg(float value) const
@@ -425,7 +396,7 @@ int Pos::deg(float value) const
   int minutes = static_cast<int>(min);
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.98f)
+  if(doesOverflow60(seconds))
     minutes++;
   if(minutes >= 60)
     degrees++;
@@ -440,7 +411,7 @@ int Pos::min(float value) const
   int minutes = static_cast<int>(min);
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.98f)
+  if(doesOverflow60(seconds))
     minutes++;
   if(minutes >= 60)
     minutes = 0;
@@ -454,7 +425,7 @@ float Pos::sec(float value) const
   float seconds = (min - static_cast<int>(min)) * 60.f;
 
   // Avoid 60 seconds due to rounding up when converting to text
-  if(seconds >= 59.98f)
+  if(doesOverflow60(seconds))
     return 0.f;
   else
     return seconds;
@@ -462,8 +433,6 @@ float Pos::sec(float value) const
 
 double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2) const
 {
-  // tc1=mod(atan2(sin(lon1-lon2)*cos(lat2),
-  // cos(lat1)*sin(lat2)-sin(lat1)*cos(lat2)*cos(lon1-lon2)), 2*pi)
   return remainder(atan2(sin((lonX1 - lonX2)) * cos((latY2)),
                          cos((latY1)) * sin((latY2)) -
                          sin((latY1)) * cos((latY2)) *
@@ -472,8 +441,6 @@ double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2) co
 
 double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2) const
 {
-  // d=2*asin(sqrt((sin((lat1-lat2)/2))^2 +
-  // cos(lat1)*cos(lat2)*(sin((lon1-lon2)/2))^2))
   double l1 = (sin(((latY1 - latY2)) / 2.));
   double l2 = (sin(((lonX1 - lonX2)) / 2.));
   return 2. * asin(sqrt(l1 * l1 + cos((latY1)) * cos((latY2)) * l2 * l2));

@@ -68,18 +68,40 @@ public:
     return latY;
   }
 
-  int getLatYDeg() const;
-  int getLatYMin() const;
-  float getLatYSec() const;
+  int getLatYDeg() const
+  {
+    return deg(latY);
+  }
+
+  int getLatYMin() const
+  {
+    return min(latY);
+  }
+
+  float getLatYSec() const
+  {
+    return sec(latY);
+  }
 
   float getLonX() const
   {
     return lonX;
   }
 
-  int getLonXDeg() const;
-  int getLonXMin() const;
-  float getLonXSec() const;
+  int getLonXDeg() const
+  {
+    return deg(lonX);
+  }
+
+  int getLonXMin() const
+  {
+    return min(lonX);
+  }
+
+  float getLonXSec() const
+  {
+    return sec(lonX);
+  }
 
   float getAltitude() const
   {
@@ -132,10 +154,16 @@ public:
   QString toHumanReadableString() const;
 
   /* false if position is not initialized */
-  bool isValid() const;
+  bool isValid() const
+  {
+    return lonX != INVALID_ORDINATE && latY != INVALID_ORDINATE;
+  }
 
   /* Return true if close to any pole */
-  bool isPole() const;
+  bool isPole() const
+  {
+    return latY > 89.f || latY < -89.f;
+  }
 
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
@@ -185,6 +213,7 @@ private:
   float sec(float value) const;
   int min(float value) const;
   int deg(float value) const;
+  inline bool doesOverflow60(float value) const;
 
   double distanceRad(double lonX1, double latY1, double lonX2, double latY2) const;
   double courseRad(double lonX1, double latY1, double lonX2, double latY2) const;
