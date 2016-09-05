@@ -397,9 +397,9 @@ int Pos::deg(float value) const
 
   // Avoid 60 seconds due to rounding up when converting to text
   if(doesOverflow60(seconds))
-    minutes++;
-  if(minutes >= 60)
-    degrees++;
+    minutes += (minutes > 0 ? 1 : -1);
+  if(absInt(minutes) >= 60)
+    degrees += (degrees > 0 ? 1 : -1);
 
   return degrees;
 }
@@ -412,8 +412,8 @@ int Pos::min(float value) const
 
   // Avoid 60 seconds due to rounding up when converting to text
   if(doesOverflow60(seconds))
-    minutes++;
-  if(minutes >= 60)
+    minutes += (minutes > 0 ? 1 : -1);
+  if(absInt(minutes) >= 60)
     minutes = 0;
 
   return minutes;
