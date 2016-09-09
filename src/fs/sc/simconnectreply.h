@@ -89,6 +89,14 @@ public:
     return SIMCONNECT_STATUS_TEXT.at(status);
   }
 
+  /*
+   * @return data version for this packet format
+   */
+  static int getReplyVersion()
+  {
+    return REPLY_VERSION;
+  }
+
 private:
   const static quint16 MAGIC_NUMBER_REPLY = 0x55AA;
   const static quint16 REPLY_VERSION = 1;
