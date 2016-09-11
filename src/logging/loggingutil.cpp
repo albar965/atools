@@ -56,13 +56,11 @@ void LoggingUtil::logSystemInformation()
 
   qInfo() << "Qt Version" << QT_VERSION_STR;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
   if(QSysInfo::windowsVersion() != QSysInfo::WV_None)
     qInfo() << "" << QSysInfo::windowsVersion();
 
   if(QSysInfo::macVersion() != QSysInfo::MV_None)
     qInfo() << "" << QSysInfo::macVersion();
-#endif
 }
 
 void LoggingUtil::logStandardPaths()
@@ -86,9 +84,7 @@ void LoggingUtil::logStandardPaths()
   qInfo() << "GenericConfigLocation" << QStandardPaths::standardLocations(
     QStandardPaths::GenericConfigLocation);
   qInfo() << "AppDataLocation" << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
   qInfo() << "AppConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
-#endif
 }
 
 } // namespace logging

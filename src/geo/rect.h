@@ -129,6 +129,12 @@ public:
    */
   bool isPoint() const;
 
+  /* Convert this position from rad to degree and return reference */
+  Rect& toDeg();
+
+  /* Convert this position from degree to rad and return reference */
+  Rect& toRad();
+
   Pos getBottomCenter() const;
   Pos getTopCenter() const;
 

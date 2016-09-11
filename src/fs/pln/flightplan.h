@@ -89,6 +89,16 @@ public:
     return entries;
   }
 
+  const atools::fs::pln::FlightplanEntry& at(int index) const
+  {
+    return entries.at(index);
+  }
+
+  atools::fs::pln::FlightplanEntry& operator[](int index)
+  {
+    return entries[index];
+  }
+
   atools::fs::pln::FlightplanType getFlightplanType() const
   {
     return flightplanType;

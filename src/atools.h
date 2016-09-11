@@ -72,6 +72,17 @@ QString capString(const QString& str, const QSet<QString>& toUpper = {}, const Q
 QString ratingString(int value, int maxValue);
 
 template<typename TYPE>
+int sign(TYPE t)
+{
+  if(static_cast<double>(t) > 0.)
+    return 1;
+  else if(static_cast<double>(t) < 0.)
+    return -1;
+  else
+    return 0;
+}
+
+template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2)
 {
   return std::abs(f1 - f2) < std::numeric_limits<TYPE>::epsilon();

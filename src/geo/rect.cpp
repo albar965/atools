@@ -173,6 +173,20 @@ bool Rect::isPoint() const
          atools::almostEqual(topLeft.getLatY(), bottomRight.getLatY());
 }
 
+Rect& Rect::toDeg()
+{
+  topLeft.toDeg();
+  bottomRight.toDeg();
+  return *this;
+}
+
+Rect& Rect::toRad()
+{
+  topLeft.toRad();
+  bottomRight.toRad();
+  return *this;
+}
+
 float Rect::getWidthDegree() const
 {
   return bottomRight.getLonX() - topLeft.getLonX();

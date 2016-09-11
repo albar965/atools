@@ -103,11 +103,8 @@ QVector<QTextStream *> LoggingConfig::getStream(QtMsgType type)
     case QtDebugMsg:
       return debugStreams;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
     case QtInfoMsg:
       return infoStreams;
-
-#endif
 
     case QtWarningMsg:
       return warningStreams;
@@ -128,11 +125,8 @@ QHash<QString, QVector<QTextStream *> > LoggingConfig::getCatStream(QtMsgType ty
     case QtDebugMsg:
       return debugStreamsCat;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 5, 0)
     case QtInfoMsg:
       return infoStreamsCat;
-
-#endif
 
     case QtWarningMsg:
       return warningStreamsCat;
