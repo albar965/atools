@@ -19,6 +19,7 @@
 #include "exception.h"
 
 #include <QVarLengthArray>
+#include <QDebug>
 
 namespace atools {
 namespace fs {
@@ -78,8 +79,10 @@ QString designatorStr(int designator)
   if(designator >= 0 && designator <= 6)
     return RUNWAY_DESIGNATORS[designator];
   else
-    throw Exception(
-            "Value for designator out of range in designatorStr(): " + QString::number(designator));
+  {
+    qWarning() << "Value for designator out of range in designatorStr()" << designator;
+    return QString();
+  }
 }
 
 QString runwayToStr(int runwayNumber, int designator)
@@ -121,8 +124,7 @@ QString runwayToStr(int runwayNumber, int designator)
         return "NW";
 
       default:
-        throw Exception("Runway number out of range in runwayToStr(): " +
-                        QString::number(runwayNumber));
+        qWarning() << "Runway number out of range in runwayToStr()" << runwayNumber;
     }
   }
   else
