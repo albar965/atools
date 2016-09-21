@@ -100,8 +100,9 @@ public:
   /* Minor database version of the application. Minor version differences are compatible.
    * History:
    * 1 Omitting vehicle parking
+   * 2 Use lowest value for default airport frequencies
    */
-  static const int DB_VERSION_MINOR = 1;
+  static const int DB_VERSION_MINOR = 2;
 
 private:
   atools::sql::SqlDatabase *db;

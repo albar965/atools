@@ -332,15 +332,16 @@ void Airport::updateSummaryFields()
 
   for(const Com& c : coms)
   {
-    if(c.getType() == com::TOWER)
+    // Use lowest frequency for default to have it deterministic
+    if(c.getType() == com::TOWER && (towerFrequency == 0 || c.getFrequency() < towerFrequency))
       towerFrequency = c.getFrequency();
-    else if(c.getType() == com::UNICOM)
+    else if(c.getType() == com::UNICOM && (unicomFrequency == 0 || c.getFrequency() < unicomFrequency))
       unicomFrequency = c.getFrequency();
-    else if(c.getType() == com::AWOS)
+    else if(c.getType() == com::AWOS && (awosFrequency == 0 || c.getFrequency() < awosFrequency))
       awosFrequency = c.getFrequency();
-    else if(c.getType() == com::ASOS)
+    else if(c.getType() == com::ASOS && (asosFrequency == 0 || c.getFrequency() < asosFrequency))
       asosFrequency = c.getFrequency();
-    else if(c.getType() == com::ATIS)
+    else if(c.getType() == com::ATIS && (atisFrequency == 0 || c.getFrequency() < atisFrequency))
       atisFrequency = c.getFrequency();
   }
 
