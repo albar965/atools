@@ -54,13 +54,13 @@ void LoggingUtil::logSystemInformation()
           << "type" << QSysInfo::productType()
           << "version" << QSysInfo::productVersion();
 
-  qInfo() << "Qt Version" << QT_VERSION_STR;
+  qInfo() << "Qt version" << QT_VERSION_STR;
 
   if(QSysInfo::windowsVersion() != QSysInfo::WV_None)
-    qInfo() << "" << QSysInfo::windowsVersion();
+    qInfo() << "Windows version" << QSysInfo::windowsVersion();
 
   if(QSysInfo::macVersion() != QSysInfo::MV_None)
-    qInfo() << "" << QSysInfo::macVersion();
+    qInfo() << "Mac version" << QSysInfo::macVersion();
 }
 
 void LoggingUtil::logStandardPaths()
