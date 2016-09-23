@@ -1,3 +1,7 @@
+Version 2.0.0.beta
+
+First beta for 2.0 (Little Navmap/connect 1.0)
+
 Version 1.9.9.develop
 
 * BGL Reading and writing finalized
