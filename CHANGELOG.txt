@@ -1,3 +1,7 @@
+Version 2.0.1.beta
+* Made scenery loading more robust for invalid values in BGL files.
+* Bumped database version up to 3.3
+
 Version 2.0.0.beta
 
 First beta for 2.0 (Little Navmap/connect 1.0)
