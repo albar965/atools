@@ -62,8 +62,8 @@ QString approachTypeToStr(ap::ApproachType type)
     case ap::LOCALIZER_BACKCOURSE:
       return "LOCALIZER_BACKCOURSE";
   }
-  qWarning().nospace().noquote() << "Unknown approach type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach type " << type;
+  return "INVALID";
 }
 
 QString approachFixTypeToStr(ap::fix::ApproachFixType type)
@@ -94,8 +94,8 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
     case ap::fix::RUNWAY:
       return "RUNWAY";
   }
-  qWarning().nospace().noquote() << "Unknown approach fix type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach fix type " << type;
+  return "INVALID";
 }
 
 } // namespace ap

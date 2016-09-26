@@ -78,8 +78,8 @@ QString Com::comTypeToStr(com::ComType type)
     case com::REMOTE_CLEARANCE_DELIVERY:
       return "REMOTE_CLEARANCE_DELIVERY";
   }
-  qWarning().nospace().noquote() << "Unknown COM type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid COM type " << type;
+  return "INVALID";
 }
 
 Com::Com()

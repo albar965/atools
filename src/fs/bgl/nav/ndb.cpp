@@ -42,8 +42,8 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
     case nav::HH:
       return "HH";
   }
-  qWarning().nospace().noquote() << "Unknown NDB type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid NDB type " << type;
+  return "INVALID";
 }
 
 Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)

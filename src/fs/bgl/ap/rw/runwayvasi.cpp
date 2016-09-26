@@ -70,8 +70,8 @@ QString RunwayVasi::vasiTypeToStr(rw::VasiType type)
     case rw::APAP_PANELS:
       return "APAP_PANELS";
   }
-  qWarning().nospace().noquote() << "Unknown VASI type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid VASI type " << type;
+  return "INVALID";
 }
 
 RunwayVasi::RunwayVasi()

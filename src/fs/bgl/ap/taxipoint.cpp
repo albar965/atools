@@ -73,8 +73,8 @@ QString TaxiPoint::pointTypeToString(taxipoint::PointType type)
     case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT_NO_DRAW:
       return "ILS_HOLD_SHORT_NO_DRAW";
   }
-  qWarning().nospace().noquote() << "Unknown taxi point type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid taxi point type " << type;
+  return "INVALID";
 }
 
 QString TaxiPoint::dirToString(taxipoint::PointDir dir)
@@ -90,8 +90,8 @@ QString TaxiPoint::dirToString(taxipoint::PointDir dir)
     case atools::fs::bgl::taxipoint::REVERSE:
       return "REVERSE";
   }
-  qWarning().nospace().noquote() << "Unknown taxi point dir " << dir;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid taxi point dir " << dir;
+  return "INVALID";
 }
 
 QDebug operator<<(QDebug out, const TaxiPoint& record)

@@ -52,8 +52,8 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
     case nav::FAF:
       return "FAF";
   }
-  qWarning().nospace().noquote() << "Unknown waypoint type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid waypoint type " << type;
+  return "INVALID";
 }
 
 Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)

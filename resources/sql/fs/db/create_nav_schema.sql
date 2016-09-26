@@ -174,7 +174,7 @@ create table airway_point
   airway_point_id integer primary key,
   waypoint_id integer not null,
   name varchar(50) not null,        -- Airway name
-  type varchar(15) not null,        -- see enum atools::fs::bgl::nav::AirwayType
+  type varchar(15),                 -- see enum atools::fs::bgl::nav::AirwayType
   next_type varchar(15),            -- See enum atools::fs::bgl::nav::AirwayWaypointType
   next_ident varchar(5),            -- ICAO ident of waypoint
   next_region varchar(2),           -- ICAO two letter region code for waypoint

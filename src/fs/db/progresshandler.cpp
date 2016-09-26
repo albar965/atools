@@ -70,7 +70,7 @@ bool ProgressHandler::report(const QString& bglFilepath, int current)
     info.current = current;
   else
     info.current++;
-  info.bglFilename = bglFilepath;
+  info.bglFilepath = bglFilepath;
 
   info.newFile = true;
   info.newSceneryArea = false;
@@ -98,7 +98,7 @@ void ProgressHandler::reset()
 {
   info.current = 0;
   info.sceneryArea = nullptr;
-  info.bglFilename.clear();
+  info.bglFilepath.clear();
   info.newFile = false;
   info.newSceneryArea = false;
   info.newOther = false;
@@ -144,7 +144,7 @@ bool ProgressHandler::callHandler()
 void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 {
   if(inf.isNewFile())
-    qInfo() << "====" << numbersAsString(inf) << inf.getBglFilename();
+    qInfo() << "====" << numbersAsString(inf) << inf.getBglFileName();
 
   if(inf.isNewSceneryArea())
   {

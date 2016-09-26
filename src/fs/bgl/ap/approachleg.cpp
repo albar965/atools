@@ -134,8 +134,8 @@ QString ApproachLeg::legTypeToString(leg::Type type)
       return "VR";
 
   }
-  qWarning().nospace().noquote() << "Unknown approach leg type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach leg type " << type;
+  return "INVALID";
 }
 
 QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
@@ -158,8 +158,8 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
       return "B";
 
   }
-  qWarning().nospace().noquote() << "Unknown approach altitude descriptor " << altDescr;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach altitude descriptor " << altDescr;
+  return "INVALID";
 }
 
 QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
@@ -179,8 +179,8 @@ QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
       return "BOTH";
 
   }
-  qWarning().nospace().noquote() << "Unknown approach turn direction " << turnDir;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach turn direction " << turnDir;
+  return "INVALID";
 }
 
 QDebug operator<<(QDebug out, const ApproachLeg& record)

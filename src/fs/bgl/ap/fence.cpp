@@ -67,8 +67,8 @@ QString Fence::fenceTypeToStr(fence::Type type)
     case atools::fs::bgl::fence::BOUNDARY:
       return "BOUNDARY";
   }
-  qWarning().nospace().noquote() << "Unknown fence type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid fence type " << type;
+  return "INVALID";
 }
 
 QDebug operator<<(QDebug out, const Fence& record)

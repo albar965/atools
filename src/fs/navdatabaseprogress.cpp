@@ -18,6 +18,8 @@
 #include "fs/navdatabaseprogress.h"
 #include "fs/scenery/sceneryarea.h"
 
+#include <QFileInfo>
+
 namespace atools {
 namespace fs {
 
@@ -34,6 +36,11 @@ const QString& NavDatabaseProgress::getSceneryTitle() const
 const QString& NavDatabaseProgress::getSceneryPath() const
 {
   return sceneryArea->getLocalPath();
+}
+
+QString NavDatabaseProgress::getBglFileName() const
+{
+  return QFileInfo(bglFilepath).fileName();
 }
 
 } // namespace fs

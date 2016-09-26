@@ -70,8 +70,8 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
     case ap::VEHICLES:
       return "VEHICLES";
   }
-  qWarning().nospace().noquote() << "Unknown parking type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid parking type " << type;
+  return "INVALID";
 }
 
 QString Parking::parkingNameToStr(ap::ParkingName type)
@@ -192,8 +192,8 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
     case ap::GATE_Z:
       return "GATE_Z";
   }
-  qWarning().nospace().noquote() << "Unknown parking name " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid parking name " << type;
+  return "INVALID";
 }
 
 QString Parking::pushBackToStr(ap::PushBack type)
@@ -212,8 +212,8 @@ QString Parking::pushBackToStr(ap::PushBack type)
     case atools::fs::bgl::ap::BOTH:
       return "BOTH";
   }
-  qWarning().nospace().noquote() << "Unknown parking name " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid parking name " << type;
+  return "INVALID";
 }
 
 Parking::Parking()

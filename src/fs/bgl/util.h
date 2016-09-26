@@ -38,8 +38,8 @@ QString enumToStr(QString func(TYPE t), TYPE value)
   if(retval.isEmpty())
     return QString();
 
-  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval.startsWith("UNKNOWN_")
-     || retval.endsWith("_UNKNOWN"))
+  if(retval == "NONE" || retval == "NO" || retval == "UNKNOWN" || retval == "INVALID" ||
+     retval.startsWith("UNKNOWN_") || retval.endsWith("_UNKNOWN"))
     return QString();
   else
     return retval;

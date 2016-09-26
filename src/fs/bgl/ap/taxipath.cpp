@@ -86,8 +86,8 @@ QString TaxiPath::pathTypeToString(taxipath::Type type)
     case atools::fs::bgl::taxipath::CLOSED:
       return "CLOSED";
   }
-  qWarning().nospace().noquote() << "Unknown taxi path type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid taxi path type " << type;
+  return "INVALID";
 }
 
 QString TaxiPath::edgeTypeToString(taxipath::EdgeType type)
@@ -106,8 +106,8 @@ QString TaxiPath::edgeTypeToString(taxipath::EdgeType type)
     case atools::fs::bgl::taxipath::SOLID_DASHED:
       return "SOLID_DASHED";
   }
-  qWarning().nospace().noquote() << "Unknown taxi path edge type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid taxi path edge type " << type;
+  return "INVALID";
 }
 
 QDebug operator<<(QDebug out, const TaxiPath& record)

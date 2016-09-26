@@ -58,8 +58,8 @@ QString AirwayWaypoint::airwayWaypointTypeToStr(nav::AirwayWaypointType type)
     case nav::AIRWAY_WP_OTHER:
       return "OTHER";
   }
-  qWarning().nospace().noquote() << "Unknown airway waypoint type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid airway waypoint type " << type;
+  return "INVALID";
 }
 
 QDebug operator<<(QDebug out, const AirwayWaypoint& record)

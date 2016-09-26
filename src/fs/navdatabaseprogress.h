@@ -59,9 +59,14 @@ public:
   /*
    * @return Currently processed BGL filename
    */
-  const QString& getBglFilename() const
+  QString getBglFileName() const;
+
+  /*
+   * @return Currently processed BGL filepath
+   */
+  const QString& getBglFilePath() const
   {
-    return bglFilename;
+    return bglFilepath;
   }
 
   /*
@@ -208,7 +213,7 @@ private:
 
   int total = 0, current = 0;
   bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false;
-  QString bglFilename, otherAction;
+  QString bglFilepath, otherAction;
   const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;
 
 };

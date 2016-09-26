@@ -89,8 +89,8 @@ QString Runway::lightToStr(rw::Light type)
     case rw::HIGH:
       return "HIGH";
   }
-  qWarning().nospace().noquote() << "Unknown runway lights type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid runway lights type " << type;
+  return "INVALID";
 }
 
 QString Runway::surfaceToStr(rw::Surface surface)
@@ -160,8 +160,8 @@ QString Runway::surfaceToStr(rw::Surface surface)
     case rw::UNKNOWN:
       return "UNKNOWN";
   }
-  qWarning().nospace().noquote() << "Unknown runway surface type " << surface;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid runway surface type " << surface;
+  return "INVALID";
 }
 
 Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent)
@@ -318,38 +318,7 @@ bool Runway::isWater() const
 
 bool atools::fs::bgl::Runway::isSoft() const
 {
-  if(surface == rw::GRASS)
-    return true;
-  else if(surface == rw::CLAY)
-    return true;
-  else if(surface == rw::SNOW)
-    return true;
-  else if(surface == rw::ICE)
-    return true;
-  else if(surface == rw::DIRT)
-    return true;
-  else if(surface == rw::CORAL)
-    return true;
-  else if(surface == rw::GRAVEL)
-    return true;
-  else if(surface == rw::OIL_TREATED)
-    return true;
-  else if(surface == rw::STEEL_MATS)
-    return true;
-  else if(surface == rw::BRICK)
-    return true;
-  else if(surface == rw::MACADAM)
-    return true;
-  else if(surface == rw::PLANKS)
-    return true;
-  else if(surface == rw::SAND)
-    return true;
-  else if(surface == rw::SHALE)
-    return true;
-  else if(surface == rw::UNKNOWN)
-    return true;
-
-  return false;
+  return !isWater() && !isHard();
 }
 
 bool Runway::isHard() const

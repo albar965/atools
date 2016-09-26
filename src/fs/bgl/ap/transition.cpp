@@ -38,8 +38,8 @@ QString Transition::transitionTypeToStr(ap::TransitionType type)
     case ap::DME:
       return "DME";
   }
-  qWarning().nospace().noquote() << "Unknown transition type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid transition type " << type;
+  return "INVALID";
 }
 
 QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
@@ -61,8 +61,8 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
     case ap::tfix::TERMINAL_WAYPOINT:
       return "TERMINAL_WAYPOINT";
   }
-  qWarning().nospace().noquote() << "Unknown transition fix type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid transition fix type " << type;
+  return "INVALID";
 }
 
 Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)

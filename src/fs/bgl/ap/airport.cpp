@@ -442,9 +442,7 @@ void Airport::removeVehicleParking()
                                                  return p.getType() == atools::fs::bgl::ap::VEHICLES;
                                                });
 
-  if(it == parkings.end())
-    qWarning() << "No parking deleted for " << ident;
-  else
+  if(it != parkings.end())
     parkings.erase(it, parkings.end());
 }
 

@@ -43,8 +43,8 @@ QString Helipad::helipadTypeToStr(helipad::HelipadType type)
     case atools::fs::bgl::helipad::MEDICAL:
       return "MEDICAL";
   }
-  qWarning().nospace().noquote() << "Unknown HELIPAD type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid helipad type " << type;
+  return "INVALID";
 }
 
 Helipad::Helipad()

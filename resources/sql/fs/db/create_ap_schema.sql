@@ -66,6 +66,7 @@ create table airport
   num_runway_end_vasi integer not null,      -- Number of runway ends that have a visual approach indicator (PAPI, etc.)
   num_runway_end_als integer not null,       -- Number of runway ends that have an approach lighting system
   num_runway_end_ils integer,                -- Number of runway ends that have an instrument landing system
+                                             -- Nullable here since it will be updated later
   num_apron integer not null,
   num_taxi_path integer not null,
   num_helipad integer not null,
@@ -74,7 +75,7 @@ create table airport
   longest_runway_length integer not null,    -- Feet
   longest_runway_width integer not null,     -- Feet
   longest_runway_heading double not null,    -- Heading of primary end in degrees true
-  longest_runway_surface varchar(15) not null, -- see enum atools::fs::bgl::rw::Surface
+  longest_runway_surface varchar(15), -- see enum atools::fs::bgl::rw::Surface
   num_runways integer not null,
   largest_parking_ramp varchar(20),            -- see enum atools::fs::bgl::ap::ParkingType
   largest_parking_gate varchar(20),            -- see enum atools::fs::bgl::ap::ParkingType
@@ -181,7 +182,7 @@ create table com
 (
   com_id integer primary key,
   airport_id integer not null,   -- Airport
-  type varchar(30) not null,     -- see enum atools::fs::bgl::ComType
+  type varchar(30),              -- see enum atools::fs::bgl::ComType
   frequency integer not null,    -- frequency MHz * 1000
   name varchar(50),
 foreign key(airport_id) references airport(airport_id)
@@ -198,7 +199,7 @@ create table helipad
 (
   helipad_id integer primary key,
   airport_id integer not null,
-  surface varchar(15) not null,        -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),                 -- see enum atools::fs::bgl::rw::Surface
   type varchar(10),                    -- see enum atools::fs::bgl::helipad::HelipadType
   length double not null,              -- Feet
   width double not null,               -- Feet
@@ -223,7 +224,7 @@ create table start
   start_id integer primary key,
   airport_id integer not null,
   runway_end_id integer,
-  type varchar(10) not null,    -- see enum atools::fs::bgl::start::StartType
+  type varchar(10),             -- see enum atools::fs::bgl::start::StartType
   heading double not null,      -- Degrees true
   number integer,               -- Number used for helipads
   altitude integer not null,    -- Feet
@@ -245,7 +246,7 @@ create table apron
 (
   apron_id integer primary key,
   airport_id integer not null,
-  surface varchar(15) not null,     -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),              -- see enum atools::fs::bgl::rw::Surface
   is_draw_surface integer not null, -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,  -- Draw FS detail texture
   vertices text,                    -- Space and comma separated coordinate list of the apron
@@ -301,10 +302,10 @@ create table taxi_path
 (
   taxi_path_id integer primary key,
   airport_id integer not null,
-  type varchar(15),              -- see enum atools::fs::bgl::taxipath::Type
-  surface varchar(15),           -- see enum atools::fs::bgl::rw::Surface
-  width double not null,         -- Feet
-  name varchar(20),              -- Taxiway name like A, B, EAST, etc.
+  type varchar(15),                    -- see enum atools::fs::bgl::taxipath::Type
+  surface varchar(15),                 -- see enum atools::fs::bgl::rw::Surface
+  width double not null,               -- Feet
+  name varchar(20),                    -- Taxiway name like A, B, EAST, etc.
   is_draw_surface integer not null,    -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,     -- Draw FS detail texture
   has_centerline integer not null,          -- Boolean
@@ -335,7 +336,7 @@ create table runway
   airport_id integer not null,
   primary_end_id integer not null,      -- Reference to the secondary end
   secondary_end_id integer  not null,   -- Reference to the secondary end
-  surface varchar(15) not null,         -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),                  -- see enum atools::fs::bgl::rw::Surface
   length integer not null,              -- Feet
   width integer not null,               -- Feet
   heading double not null,              -- Heading in degrees true
@@ -452,7 +453,7 @@ create table approach_leg
   approach_leg_id integer primary key,
   approach_id integer not null,
   is_missed integer not null,         -- 1 if this leg is part of a missed approach
-  type varchar(2) not null,           -- see enum atools::fs::bgl::leg::Type
+  type varchar(10),                   -- see enum atools::fs::bgl::leg::Type
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
   turn_direction varchar(10),         -- see enum atools::fs::bgl::leg::TurnDirection
   fix_nav_id integer,                 -- Id of the leg fix - rest is the same as in approach
@@ -487,7 +488,7 @@ create table transition_leg
 (
   transition_leg_id integer primary key,
   transition_id integer not null,
-  type varchar(2) not null,
+  type varchar(10) not null,
   alt_descriptor varchar(10),
   turn_direction varchar(10),
   fix_nav_id integer,
@@ -522,7 +523,7 @@ create table parking
 (
   parking_id integer primary key,
   airport_id integer not null,
-  type varchar(20) not null,       -- see enum atools::fs::bgl::ap::ParkingType
+  type varchar(20),                -- see enum atools::fs::bgl::ap::ParkingType
   pushback varchar(5),             -- see enum atools::fs::bgl::ap::PushBack
   name varchar(15),                -- see enum atools::fs::bgl::ap::ParkingName
   number integer not null,         -- parking number

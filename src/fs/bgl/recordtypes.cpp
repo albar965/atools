@@ -66,8 +66,8 @@ QString recordTypeStr(rec::RecordType type)
     case rec::WAYPOINT_ICAO_INDEX:
       return "WAYPOINT_ICAO_INDEX";
   }
-  qWarning().nospace().noquote() << "Unknown record type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid record type " << type;
+  return "INVALID";
 }
 
 QString airportRecordTypeStr(rec::AirportRecordType type)
@@ -134,8 +134,8 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::UNKNOWN_REC:
       return "UNKNOWN_REC";
   }
-  qWarning().nospace().noquote() << "Unknown airport record type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid airport record type " << type;
+  return "INVALID";
 }
 
 QString runwayRecordTypeStr(rec::RunwayRecordType type)
@@ -178,8 +178,8 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
     case rec::APP_LIGHTS_SEC:
       return "APP_LIGHTS_SEC";
   }
-  qWarning().nospace().noquote() << "Unknown runway record type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid runway record type " << type;
+  return "INVALID";
 }
 
 QString approachRecordTypeStr(rec::ApprRecordType type)
@@ -198,8 +198,8 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::TRANSITION_LEGS:
       return "TRANS_LEGS";
   }
-  qWarning().nospace().noquote() << "Unknown approach record type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid approach record type " << type;
+  return "INVALID";
 }
 
 QString ilsvorRecordTypeStr(rec::IlsVorRecordType type)
@@ -218,8 +218,8 @@ QString ilsvorRecordTypeStr(rec::IlsVorRecordType type)
     case rec::ILS_VOR_NAME:
       return "ILS_VOR_NAME";
   }
-  qWarning().nospace().noquote() << "Unknown ILS/VOR type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
+  return "INVALID";
 }
 
 QString ndbRecordTypeStr(rec::NdbRecordType type)
@@ -229,8 +229,8 @@ QString ndbRecordTypeStr(rec::NdbRecordType type)
     case rec::NDB_NAME:
       return "NDB_NAME";
   }
-  qWarning().nospace().noquote() << "Unknown NDB type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid NDB type " << type;
+  return "INVALID";
 }
 
 QString sceneryObjRecordTypeStr(rec::SceneryObjRecordType type)
@@ -258,9 +258,9 @@ QString sceneryObjRecordTypeStr(rec::SceneryObjRecordType type)
     case rec::SCENERYOBJECT_TRIGGER:
       return "SCENERYOBJECT_TRIGGER";
   }
-  qWarning().nospace().noquote() << "Unknown scenery object record type " << type;
+  qWarning().nospace().noquote() << "Invalid scenery object record type " << type;
 
-  return QString();
+  return "INVALID";
 }
 
 QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
@@ -276,8 +276,8 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
     case rec::BOUNDARY_LINES:
       return "BOUNDARY_LINES";
   }
-  qWarning().nospace().noquote() << "Unknown boundary record type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid boundary record type " << type;
+  return "INVALID";
 }
 
 } // namespace bgl

@@ -73,8 +73,8 @@ QString RunwayApproachLights::appLightSystemToStr(rw::ApproachLightSystem type)
     case rw::SALSF:
       return "SALSF";
   }
-  qWarning().nospace().noquote() << "Unknown runway ALS type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid runway ALS type " << type;
+  return "INVALID";
 }
 
 enum AppLightFlags

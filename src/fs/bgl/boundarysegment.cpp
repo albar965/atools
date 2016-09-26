@@ -49,8 +49,8 @@ QString BoundarySegment::boundarylineTypeToStr(boundaryline::PointType type)
     case atools::fs::bgl::boundaryline::CIRCLE:
       return "CIRCLE";
   }
-  qWarning().nospace().noquote() << "Unknown BOUNDARYLINE type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid BOUNDARYLINE type " << type;
+  return "INVALID";
 }
 
 BoundarySegment::BoundarySegment()

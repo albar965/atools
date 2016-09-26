@@ -34,8 +34,8 @@ QString RunwayEnd::patternToStr(rw::Pattern pattern)
     case rw::RIGHT:
       return "RIGHT";
   }
-  qWarning().nospace().noquote() << "Unknown runway pattern type " << pattern;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid runway pattern type " << pattern;
+  return "UNKNOWN";
 }
 
 QDebug operator<<(QDebug out, const RunwayEnd& record)

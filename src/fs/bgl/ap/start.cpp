@@ -38,8 +38,8 @@ QString Start::startTypeToStr(start::StartType type)
     case atools::fs::bgl::start::HELIPAD:
       return "HELIPAD";
   }
-  qWarning().nospace().noquote() << "Unknown START type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid START type " << type;
+  return "INVALID";
 }
 
 Start::Start(const NavDatabaseOptions *options, BinaryStream *bs)

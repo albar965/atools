@@ -101,8 +101,9 @@ public:
    * History:
    * 1 Omitting vehicle parking
    * 2 Use lowest value for default airport frequencies
+   * 3 Removed many not null constraints to avoid loading problems for invalid BGL files
    */
-  static const int DB_VERSION_MINOR = 2;
+  static const int DB_VERSION_MINOR = 3;
 
 private:
   atools::sql::SqlDatabase *db;

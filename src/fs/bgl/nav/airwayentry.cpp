@@ -41,8 +41,8 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
     case nav::BOTH:
       return "BOTH";
   }
-  qWarning().nospace().noquote() << "Unknown airway type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid airway type " << type;
+  return "INVALID";
 }
 
 AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)

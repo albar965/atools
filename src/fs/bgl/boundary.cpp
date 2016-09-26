@@ -101,8 +101,8 @@ QString Boundary::boundaryTypeToStr(boundary::BoundaryType type)
     case atools::fs::bgl::boundary::TRAINING:
       return "TRAINING";
   }
-  qWarning().nospace().noquote() << "Unknown BOUNDARY " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid BOUNDARY " << type;
+  return "INVALID";
 }
 
 QString Boundary::altTypeToStr(boundary::AltitudeType type)
@@ -121,8 +121,8 @@ QString Boundary::altTypeToStr(boundary::AltitudeType type)
     case atools::fs::bgl::boundary::UNLIMITED:
       return "UNLIMITED";
   }
-  qWarning().nospace().noquote() << "Unknown ALTITUDETYPE " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid ALTITUDETYPE " << type;
+  return "INVALID";
 }
 
 Boundary::Boundary()

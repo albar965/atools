@@ -169,13 +169,13 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       progressHandler->setNumWaypoints(numWaypoints);
       progressHandler->setNumObjectsWritten(numObjectsWritten);
 
-      if((aborted = progressHandler->report(filenames.at(i))) == true)
+      if((aborted = progressHandler->report(filepaths.at(i))) == true)
         return;
 
-      QString filepath = filepaths.at(i);
+      QString currentBglFilePath = filepaths.at(i);
 
-      // Read all records into a intenal object tree (atools::fs::bgl namespace
-      bglFile.readFile(filepath);
+      // Read all records into a intenal object tree (atools::fs::bgl namespace)
+      bglFile.readFile(currentBglFilePath);
       if(bglFile.hasContent())
       {
         // Write BGL file metadata

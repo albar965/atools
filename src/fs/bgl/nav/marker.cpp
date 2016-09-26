@@ -41,8 +41,8 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
     case nav::BACKCOURSE:
       return "BACKCOURSE";
   }
-  qWarning().nospace().noquote() << "Unknown marker type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid marker type " << type;
+  return "INVALID";
 }
 
 Marker::Marker(const NavDatabaseOptions *options, BinaryStream *bs)

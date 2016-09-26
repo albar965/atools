@@ -44,8 +44,8 @@ QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
     case nav::VOT:
       return "VOT";
   }
-  qWarning().nospace().noquote() << "Unknown ILS/VOR type " << type;
-  return QString();
+  qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
+  return "INVALID";
 }
 
 IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *bs)
