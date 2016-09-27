@@ -229,12 +229,12 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   // airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils
   bindAndExecute(selectAirportStmt, "select airports");
 
-  hasApproach = true;
-  hasApron = true;
-  hasCom = true;
-  hasHelipad = true;
-  hasTaxi = true;
-  hasRunways = true;
+  hasApproach = false;
+  hasApron = false;
+  hasCom = false;
+  hasHelipad = false;
+  hasTaxi = false;
+  hasRunways = false;
 
   int i = 0;
   while(selectAirportStmt->next())
@@ -245,20 +245,13 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
       qWarning() << "Found more than one airport to delete for ident"
                  << type->getIdent() << "id" << currentId
                  << "found" << selectAirportStmt->value("airport_id").toInt();
-      hasApproach = true;
-      hasApron = true;
-      hasCom = true;
-      hasHelipad = true;
-      hasTaxi = true;
-      hasRunways = true;
-      break;
     }
-    hasApproach = selectAirportStmt->value("num_approach").toInt() > 0;
-    hasApron = selectAirportStmt->value("num_apron").toInt() > 0;
-    hasCom = selectAirportStmt->value("num_com").toInt() > 0;
-    hasHelipad = selectAirportStmt->value("num_helipad").toInt() > 0;
-    hasTaxi = selectAirportStmt->value("num_taxi_path").toInt() > 0;
-    hasRunways = selectAirportStmt->value("num_runways").toInt() > 0;
+    hasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
+    hasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
+    hasCom |= selectAirportStmt->value("num_com").toInt() > 0;
+    hasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
+    hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
+    hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
     i++;
   }
 
@@ -341,16 +334,16 @@ void DeleteProcessor::removeApproachesAndTransitions(const QList<int>& ids)
   for(int i : ids)
   {
     deleteTransitionLegStmt->bindValue(":id", i);
-    executeStatement(deleteTransitionLegStmt, "transition_leg");
+    executeStatement(deleteTransitionLegStmt, "transition_leg deleted");
 
     deleteApproachLegStmt->bindValue(":id", i);
-    executeStatement(deleteApproachLegStmt, "approach_leg");
+    executeStatement(deleteApproachLegStmt, "approach_leg deleted");
 
     deleteTransitionStmt->bindValue(":id", i);
-    executeStatement(deleteTransitionStmt, "transition");
+    executeStatement(deleteTransitionStmt, "transition deleted");
 
     deleteApproachStmt->bindValue(":id", i);
-    executeStatement(deleteApproachStmt, "approach");
+    executeStatement(deleteApproachStmt, "approach deleted");
   }
 }
 
@@ -395,8 +388,9 @@ void DeleteProcessor::executeStatement(SqlQuery *stmt, const QString& what)
   stmt->exec();
   int retval = stmt->numRowsAffected();
 
-  if(options.isVerbose())
-    qDebug() << retval << " " << what;
+  // if(options.isVerbose())
+  if(retval > 0)
+    qDebug() << retval << " " << what /* << "bound" << stmt->boundValues()*/;
 }
 
 void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& what)
@@ -406,7 +400,7 @@ void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& w
     ids.append(stmt->value(0).toInt());
 
   if(options.isVerbose())
-    qDebug() << ids.size() << " " << what;
+    qDebug() << ids.size() << " " << what /*<< "bound" << stmt->boundValues()*/;
 }
 
 /* use the remove of update query for a feture depending on the delete flag */

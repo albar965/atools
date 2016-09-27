@@ -214,6 +214,25 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         numBoundaries += bglFile.getBoundaries().size();
         numFiles++;
       }
+
+      // Print a one line short report on airports that were found in the BGL
+      if(!bglFile.getAirports().isEmpty())
+      {
+        QStringList apIcaos;
+        for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
+        {
+          // Truncate at 10
+          if(apIcaos.size() < 10)
+            apIcaos.append(ap->getIdent());
+          else
+            break;
+        }
+        if(bglFile.getAirports().size() > 10)
+          apIcaos.append("...");
+        qDebug() << "Found" << bglFile.getAirports().size() << "airports. idents:" << apIcaos.join(",");
+      }
+      else
+        qDebug() << "No airports found";
     }
     db.commit();
   }

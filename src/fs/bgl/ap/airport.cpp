@@ -93,7 +93,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
 
           Runway rw = Runway(options, bs, ident);
           if(!(options->isFilterRunways() &&
-               rw.getLength() <= MIN_RUNWAY_LENGTH && rw.getSurface() == bgl::rw::GRASS))
+               rw.getLength() <= MIN_RUNWAY_LENGTH_METER && rw.getSurface() == bgl::rw::GRASS))
             // append if it not a dummy runway
             runways.append(rw);
         }
@@ -274,6 +274,25 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
 
 Airport::~Airport()
 {
+}
+
+bool Airport::isEmpty() const
+{
+  return !towerObj &&
+         name.isEmpty() &&
+         runways.isEmpty() &&
+         parkings.isEmpty() &&
+         coms.isEmpty() &&
+         helipads.isEmpty() &&
+         starts.isEmpty() &&
+         approaches.isEmpty() &&
+         waypoints.isEmpty() &&
+         deleteAirports.isEmpty() &&
+         aprons.isEmpty() &&
+         aprons2.isEmpty() &&
+         apronLights.isEmpty() &&
+         fences.isEmpty() &&
+         taxipaths.isEmpty();
 }
 
 void Airport::updateSummaryFields()

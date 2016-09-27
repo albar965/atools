@@ -71,8 +71,21 @@ void AirportWriter::writeObject(const Airport *type)
   if(!getOptions().isIncludedAirportIdent(type->getIdent()))
     return;
 
-  if(getOptions().isVerbose())
-    qDebug() << "Writing airport" << type->getIdent() << "name" << type->getName();
+  if(type->isEmpty())
+  {
+    qWarning() << "Skipping empty airport" << type->getIdent();
+    return;
+  }
+
+  DataWriter& dw = getDataWriter();
+  BglFileWriter *bglFileWriter = dw.getBglFileWriter();
+
+  // Check if this is an addon airport
+  bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
+                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilenamePath());
+
+  if(isAddon && type->getDeleteAirports().isEmpty())
+    qInfo() << "Addon airport without delete record" << type->getIdent();
 
   // Get and write country, state and city
   bindNullString(":country");
@@ -95,9 +108,6 @@ void AirportWriter::writeObject(const Airport *type)
   else
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
-  DataWriter& dw = getDataWriter();
-  BglFileWriter *bglFileWriter = dw.getBglFileWriter();
-
   bind(":airport_id", getNextId());
   bind(":file_id", bglFileWriter->getCurrentId());
   bind(":ident", type->getIdent());
@@ -117,10 +127,6 @@ void AirportWriter::writeObject(const Airport *type)
 
   bindBool(":is_closed", type->isAirportClosed());
   bindBool(":is_military", type->isMilitary());
-
-  // Check if this is an addon airport
-  bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
-                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilenamePath());
 
   bindBool(":is_addon", isAddon);
 

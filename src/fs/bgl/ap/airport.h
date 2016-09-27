@@ -413,6 +413,12 @@ public:
     return unicomFrequency;
   }
 
+  /*
+   *  Check if this is a dummy airport that comes with some elevation adjustments
+   * @return true if there are not runways, no parking, etc.
+   */
+  bool isEmpty() const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
@@ -422,16 +428,14 @@ private:
   void removeVehicleParking();
 
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
-  static const int MIN_RUNWAY_LENGTH = 10;
+  static const int MIN_RUNWAY_LENGTH_METER = 10;
 
   atools::fs::bgl::BglPosition position, towerPosition;
   atools::geo::Rect boundingRect;
   float magVar;
-  QString ident;
-  QString region;
+  QString ident, name, region;
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
-  QString name;
   bool towerObj = false, airportClosed = false, military = false;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
