@@ -1,3 +1,12 @@
+Version 2.0.2.beta
+* All BGL files are now read (invalid magic number of BGL files is now ignored).
+* Added support for older add-on sceneries (needs reading of FS9 record structures for airport and parking).
+* Airport reading will now stop if the first record is invalid.
+* Fixed crash with "database locked" exception during ILS update.
+* Corrected facility deletion for multiple airports.
+* Airports without name and facilities are now omitted.
+* Added more details to logging during scenery loading.
+
 Version 2.0.1.beta
 * Made scenery loading more robust for invalid values in BGL files.
 * Bumped database version up to 3.3
