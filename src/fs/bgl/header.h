@@ -68,7 +68,7 @@ public:
     magicNumber2 = other.magicNumber2;
     numSections = other.numSections;
     creationTimestamp = other.creationTimestamp;
-    valid = other.valid;
+    validMagicNumber = other.validMagicNumber;
 
     return *this;
   }
@@ -97,9 +97,9 @@ public:
   /*
    * @return true if the magic numbers match
    */
-  bool isValid() const
+  bool hasValidMagicNumber() const
   {
-    return valid;
+    return validMagicNumber;
   }
 
   const unsigned int MAGIC_NUMBER1 = 0x19920201;
@@ -110,7 +110,7 @@ private:
 
   unsigned int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
   time_t creationTimestamp;
-  bool valid = false;
+  bool validMagicNumber = false;
 };
 
 } // namespace bgl

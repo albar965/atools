@@ -221,7 +221,7 @@ Parking::Parking()
 
 }
 
-Parking::Parking(BinaryStream *bs)
+Parking::Parking(BinaryStream *bs, rec::AirportRecordType rectype)
 {
   unsigned int flags = bs->readUInt();
   name = static_cast<ap::ParkingName>(flags & 0x3f);
@@ -232,7 +232,10 @@ Parking::Parking(BinaryStream *bs)
 
   radius = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
-  bs->skip(16); // teeOffset 1-4
+
+  if(rectype == rec::TAXI_PARKING) // TODO wiki mention FS9 format
+    bs->skip(16);  // teeOffset 1-4
+
   position = BglPosition(bs);
 
   for(int i = 0; i < numAirlineCodes; ++i)

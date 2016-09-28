@@ -245,6 +245,7 @@ void BglFile::readRecords(BinaryStream *bs)
     for(int i = 0; i < numRec; i++)
     {
       const Record *rec = nullptr;
+      bool fsx = header.hasValidMagicNumber();
 
       switch(type)
       {
@@ -252,7 +253,12 @@ void BglFile::readRecords(BinaryStream *bs)
           if(options->isIncludedBglObject(type::AIRPORT))
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
-            rec = createRecord<Airport>(options, bs, &airports);
+            rec = createRecord<Airport>(options, bs, &airports, bgl::flags::NONE);
+          break;
+        case section::AIRPORT_ALT:
+          qWarning() << "Found alternate airport ID";
+          if(options->isIncludedBglObject(type::AIRPORT))
+            rec = createRecord<Airport>(options, bs, &airports, bgl::flags::NONE);
           break;
         case section::NAME_LIST:
           rec = createRecord<Namelist>(options, bs, &namelists);

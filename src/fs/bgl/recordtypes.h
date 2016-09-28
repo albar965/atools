@@ -62,6 +62,7 @@ enum AirportRecordType
   APRON_EDGE_LIGHTS = 0x0031,
   TAXI_POINT = 0x001a,
   TAXI_PARKING = 0x003d,
+  TAXI_PARKING_FS9 = 0x001b,
   TAXI_PATH = 0x001c,
   TAXI_NAME = 0x001d,
   JETWAY = 0x003a,
@@ -72,6 +73,7 @@ enum AirportRecordType
 };
 
 QString airportRecordTypeStr(AirportRecordType type);
+bool airportRecordTypeValid(AirportRecordType type);
 
 /* Sub record types for runways */
 enum RunwayRecordType

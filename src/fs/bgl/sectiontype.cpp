@@ -38,6 +38,9 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
     case section::AIRPORT:
       return "AIRPORT";
 
+    case section::AIRPORT_ALT:
+      return "AIRPORT_ALT";
+
     case section::ILS_VOR:
       return "ILS_VOR";
 

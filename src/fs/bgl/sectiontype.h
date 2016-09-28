@@ -30,9 +30,10 @@ namespace section {
 enum SectionType
 {
   NONE = 0x0,
-  COPYRIGHT = 0x1,
-  GUID = 0x2,
-  AIRPORT = 0x3,
+  COPYRIGHT = 0x01,
+  GUID = 0x02,
+  AIRPORT = 0x03,
+  AIRPORT_ALT = 0x3C, // Alternative record ID mentioned in some manuals
   ILS_VOR = 0x13,
   NDB = 0x17,
   MARKER = 0x18,

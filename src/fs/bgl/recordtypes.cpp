@@ -22,6 +22,7 @@
 namespace atools {
 namespace fs {
 namespace bgl {
+namespace rec {
 
 QString recordTypeStr(rec::RecordType type)
 {
@@ -113,6 +114,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::TAXI_PARKING:
       return "TAXI_PARKING";
 
+    case rec::TAXI_PARKING_FS9:
+      return "TAXI_PARKING_FS9";
+
     case rec::TAXI_PATH:
       return "TAXI_PATH";
 
@@ -136,6 +140,36 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
   }
   qWarning().nospace().noquote() << "Invalid airport record type " << type;
   return "INVALID";
+}
+
+bool airportRecordTypeValid(rec::AirportRecordType type)
+{
+  switch(type)
+  {
+    case rec::NAME:
+    case rec::TOWER_OBJ:
+    case rec::RUNWAY:
+    case rec::AIRPORT_WAYPOINT:
+    case rec::HELIPAD:
+    case rec::START:
+    case rec::COM:
+    case rec::DELETE_AIRPORT:
+    case rec::APRON_FIRST:
+    case rec::APRON_SECOND:
+    case rec::APRON_EDGE_LIGHTS:
+    case rec::TAXI_POINT:
+    case rec::TAXI_PARKING:
+    case rec::TAXI_PARKING_FS9:
+    case rec::TAXI_PATH:
+    case rec::TAXI_NAME:
+    case rec::JETWAY:
+    case rec::APPROACH:
+    case rec::FENCE_BLAST:
+    case rec::FENCE_BOUNDARY:
+    case rec::UNKNOWN_REC:
+      return true;
+  }
+  return false;
 }
 
 QString runwayRecordTypeStr(rec::RunwayRecordType type)
@@ -280,6 +314,7 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
   return "INVALID";
 }
 
+} // namespace rec
 } // namespace bgl
 } // namespace fs
 } // namespace atools

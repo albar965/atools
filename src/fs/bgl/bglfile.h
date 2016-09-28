@@ -46,6 +46,15 @@ class Namelist;
 class Record;
 class Boundary;
 
+namespace flags {
+enum CreateFlags
+{
+  NONE = 0,
+  AIRPORT_FS9_FORMAT = 0x1,
+  AIRPORT_FSX_FORMAT = 0x2
+};
+
+}
 /*
  * Class for reading a full BGL file into its containers.
  */
@@ -148,6 +157,12 @@ private:
                            atools::io::BinaryStream *bs,
                            QList<const TYPE *> *list);
 
+  template<typename TYPE>
+  const TYPE *createRecord(const atools::fs::NavDatabaseOptions *options,
+                           atools::io::BinaryStream *bs,
+                           QList<const TYPE *> *list,
+                           atools::fs::bgl::flags::CreateFlags flags);
+
   QString filename;
   qint64 size;
   const NavDatabaseOptions *options;
@@ -180,6 +195,32 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
                                   QList<const TYPE *> *list)
 {
   TYPE *rec = new TYPE(options, bs);
+
+  if(rec->isExcluded())
+  {
+    delete rec;
+    return nullptr;
+  }
+
+  if(options->isVerbose())
+  {
+    qDebug() << "----";
+    qDebug() << *rec;
+  }
+
+  if(list != nullptr)
+    list->append(rec);
+  allRecords.append(rec);
+  return rec;
+}
+
+template<typename TYPE>
+const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
+                                  atools::io::BinaryStream *bs,
+                                  QList<const TYPE *> *list,
+                                  atools::fs::bgl::flags::CreateFlags flags)
+{
+  TYPE *rec = new TYPE(options, bs, flags);
 
   if(rec->isExcluded())
   {

@@ -67,8 +67,8 @@ using atools::fs::bgl::section::SectionType;
 
 static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
 {
-  bgl::section::AIRPORT, bgl::section::ILS_VOR, bgl::section::NDB, bgl::section::MARKER,
-  bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
+  bgl::section::AIRPORT, bgl::section::AIRPORT_ALT, bgl::section::ILS_VOR, bgl::section::NDB,
+  bgl::section::MARKER, bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
 };
 
 DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progress)
@@ -231,8 +231,6 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           apIcaos.append("...");
         qDebug() << "Found" << bglFile.getAirports().size() << "airports. idents:" << apIcaos.join(",");
       }
-      else
-        qDebug() << "No airports found";
     }
     db.commit();
   }

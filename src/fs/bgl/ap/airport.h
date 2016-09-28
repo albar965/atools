@@ -33,6 +33,7 @@
 #include "fs/bgl/ap/fence.h"
 #include "fs/bgl/ap/taxipath.h"
 #include "geo/rect.h"
+#include "fs/bgl/bglfile.h"
 
 #include <QList>
 #include <QHash>
@@ -86,7 +87,8 @@ class Airport :
   public atools::fs::bgl::Record
 {
 public:
-  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  Airport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+          atools::fs::bgl::flags::CreateFlags flags);
   virtual ~Airport();
 
   const QList<atools::fs::bgl::Approach>& getApproaches() const

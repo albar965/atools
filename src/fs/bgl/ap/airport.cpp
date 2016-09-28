@@ -40,9 +40,12 @@ static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " A
 
 using atools::io::BinaryStream;
 
-Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
+Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
+                 atools::fs::bgl::flags::CreateFlags flags)
   : Record(options, bs)
 {
+  Q_UNUSED(flags);
+
   /*int numRunways = TODO compare with number of subrecords */
   bs->readUByte();
   /*int numComs = TODO compare with number of subrecords*/ bs->readUByte();
@@ -66,9 +69,24 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
   }
 
   region = converter::intToIcao(bs->readUInt()); // TODO wiki is always null
+
   fuelFlags = static_cast<ap::FuelFlags>(bs->readUInt());
 
-  bs->skip(4); // unknown, traffic scalar, unknown
+  bs->skip(4); // unknown, traffic scalar, unknown (FSX only)
+
+  // FSX/FS9 structure recognition workaround
+  // Check if the next record type is valid, if yes: FSX, otherwise it is a FS9 record where we have
+  // to rewind 4 bytes
+  Record tempRec(options, bs);
+  rec::AirportRecordType tempType = tempRec.getId<rec::AirportRecordType>();
+  if(!bgl::rec::airportRecordTypeValid(tempType))
+  {
+    qInfo() << "Found fs9 airport structure for" << ident;
+    tempRec.seekToStart();
+    bs->skip(-4);
+  }
+  else
+    tempRec.seekToStart();
 
   QList<Jetway> jetways;
   QList<TaxiPoint> taxipoints;
@@ -76,6 +94,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
   QStringList taxinames;
   int helipadStart = 1;
 
+  int subrecordIndex = 0;
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
@@ -105,13 +124,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
           coms.append(Com(options, bs));
         }
         break;
+      case rec::TAXI_PARKING_FS9: // FS9 parking has slightly different structure
       case rec::TAXI_PARKING:
         if(options->isIncludedBglObject(type::PARKING))
         {
           int numParkings = bs->readUShort();
           for(int i = 0; i < numParkings; i++)
           {
-            Parking p(bs);
+            Parking p(bs, t);
 
             // Remove vehicle parking later to avoid index mess-up
 
@@ -239,9 +259,17 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << t << dec
-                                       << " for ident " << ident;
+                                       << " for ident " << ident << "subrecord index" << subrecordIndex;
+        if(subrecordIndex == 0)
+        {
+          // Stop reading when the first subrecord is already invalid
+          seekToStart();
+          excluded = true;
+          return;
+        }
     }
     r.seekToEnd();
+    subrecordIndex++;
   }
 
   // Disabled since dummies for Unlisted_Airstrips are all empty

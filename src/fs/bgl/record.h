@@ -86,7 +86,7 @@ public:
   }
 
   /*
-   * @return true if this record was found to be excluded after reading
+   * @return true if this record was found to be excluded after reading due to configuration or reading errors
    */
   bool isExcluded()
   {
