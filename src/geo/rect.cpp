@@ -167,10 +167,10 @@ Pos Rect::getTopCenter() const
   return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, topLeft.getLatY());
 }
 
-bool Rect::isPoint() const
+bool Rect::isPoint(float epsilonDegree) const
 {
-  return atools::almostEqual(topLeft.getLonX(), bottomRight.getLonX()) &&
-         atools::almostEqual(topLeft.getLatY(), bottomRight.getLatY());
+  return atools::almostEqual(topLeft.getLonX(), bottomRight.getLonX(), epsilonDegree) &&
+         atools::almostEqual(topLeft.getLatY(), bottomRight.getLatY(), epsilonDegree);
 }
 
 Rect& Rect::toDeg()
