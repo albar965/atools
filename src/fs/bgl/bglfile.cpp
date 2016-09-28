@@ -245,7 +245,6 @@ void BglFile::readRecords(BinaryStream *bs)
     for(int i = 0; i < numRec; i++)
     {
       const Record *rec = nullptr;
-      bool fsx = header.hasValidMagicNumber();
 
       switch(type)
       {
