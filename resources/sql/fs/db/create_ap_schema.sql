@@ -285,7 +285,7 @@ create table fence
 (
   fence_id integer primary key,
   airport_id integer not null,
-  type varchar(15) not null,       -- see enum atools::fs::bgl::fence::Type
+  type varchar(15),                -- see enum atools::fs::bgl::fence::Type
   vertices text,                   -- Space and comma separated coordinate list (lon1 lat1, lon2 lat2, ...)
 foreign key(airport_id) references airport(airport_id)
 );

@@ -30,7 +30,7 @@ create table waypoint
   ident varchar(5),                   -- ICAO ident
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
-  type varchar(15) not null,          -- see enum atools::fs::bgl::nav::WaypointType
+  type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
   num_victor_airway integer not null, -- Number of victor (low altitude) airways crossing this waypoint
   num_jet_airway integer not null,    -- Number of jet (high altitude) airways crossing this waypoint
   mag_var double not null,            -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -53,11 +53,11 @@ create table vor
 (
   vor_id integer primary key,
   file_id integer not null,
-  ident varchar(3) not null,    -- ICAO ident
-  name varchar(50) not null,
+  ident varchar(3),             -- ICAO ident
+  name varchar(50),
   region varchar(2),            -- ICAO two letter region identifier
   airport_id integer,           -- Reference to airport if applicable
-  type varchar(15) not null,    -- See enum atools::fs::bgl::nav::IlsVorType
+  type varchar(15),             -- See enum atools::fs::bgl::nav::IlsVorType
   frequency integer not null,   -- Frequency - MHz * 1000
   range integer not null,       -- Navaid radio range in NM
   mag_var double  not null,     -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -85,10 +85,10 @@ create table ndb
   ndb_id integer primary key,
   file_id integer not null,
   ident varchar(3),           -- ICAO ident
-  name varchar(50) not null,
+  name varchar(50),
   region varchar(2),          -- ICAO two letter region identifier
   airport_id integer,         -- Reference to airport if applicable
-  type varchar(15) not null,  -- See enum atools::fs::bgl::nav::NdbType
+  type varchar(15),           -- See enum atools::fs::bgl::nav::NdbType
   frequency integer not null, -- Frequency - kHz * 100
   range integer not null,     -- Navaid radio range in NM
   mag_var double  not null,   -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -113,7 +113,7 @@ create table marker
   file_id integer not null,
   ident varchar(3),              -- ICAO ident
   region varchar(2),             -- ICAO two letter region identifier (always null)
-  type varchar(15) not null,     -- See enum atools::fs::bgl::nav::MarkerType
+  type varchar(15),              -- See enum atools::fs::bgl::nav::MarkerType
   heading double not null,       -- Heading in degree true
   altitude integer not null,     -- Feet
   lonx double not null,
@@ -131,7 +131,7 @@ drop table if exists ils;
 create table ils
 (
   ils_id integer primary key,
-  ident varchar(4) not null,       -- ICAO ident
+  ident varchar(4),                -- ICAO ident
   name varchar(50),
   region varchar(2),               -- ICAO two letter region identifier (always null)
   frequency integer not null,      -- MHz * 1000
@@ -240,9 +240,9 @@ create table nav_search
   name varchar(50) collate nocase,  -- Name for case insensitive searching
   region varchar(2),                -- Two letter ICAO region code
   range integer,                    -- Range in NM if nav_type is VORDME, VOR, DME or NDB
-  type varchar(15) not null,        -- Subtype dependent on nav_type
+  type varchar(15),                 -- Subtype dependent on nav_type
                                     -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
-  nav_type varchar(15) not null,    -- WAYPOINT, VORDME, VOR, DME, NDB
+  nav_type varchar(15),             -- WAYPOINT, VORDME, VOR, DME, NDB
   frequency integer,                -- VOR: MHz * 10000, NDB kHz * 100 to allow differentiation between NDB and VOR
   waypoint_num_victor_airway integer, -- Number of victor airways attached to this waypoint
   waypoint_num_jet_airway integer,    -- Number of jet airways attached to this waypoint
