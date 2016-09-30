@@ -39,6 +39,7 @@ void StartWriter::writeObject(const Start *type)
 
   bind(":start_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(":runway_name", type->getRunwayName());
   bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
   bind(":heading", type->getHeading());
   bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));

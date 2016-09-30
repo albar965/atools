@@ -224,6 +224,7 @@ create table start
   start_id integer primary key,
   airport_id integer not null,
   runway_end_id integer,
+  runway_name varchar(10),      -- Runway name like "1L" or "NE". Needed if no runway is present.
   type varchar(10),             -- see enum atools::fs::bgl::start::StartType
   heading double not null,      -- Degrees true
   number integer,               -- Number used for helipads
