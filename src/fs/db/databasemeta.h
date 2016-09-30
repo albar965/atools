@@ -94,7 +94,9 @@ public:
   void updateAll();
 
   /* This defines the database schema version of the application and should be updated for every incompatible
-   * schema or content change */
+   * schema or content change
+   * 4 Added runway_name to start table
+   */
   static const int DB_VERSION_MAJOR = 4;
 
   /* Minor database version of the application. Minor version differences are compatible.
@@ -102,8 +104,9 @@ public:
    * 1 Omitting vehicle parking
    * 2 Use lowest value for default airport frequencies
    * 3 Removed many not null constraints to avoid loading problems for invalid BGL files
+   * 4 Increased width of ident columns for add-on sceneries
    */
-  static const int DB_VERSION_MINOR = 3;
+  static const int DB_VERSION_MINOR = 4;
 
 private:
   atools::sql::SqlDatabase *db;

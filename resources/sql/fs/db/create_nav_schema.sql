@@ -53,7 +53,7 @@ create table vor
 (
   vor_id integer primary key,
   file_id integer not null,
-  ident varchar(3),             -- ICAO ident
+  ident varchar(5),             -- ICAO ident
   name varchar(50),
   region varchar(2),            -- ICAO two letter region identifier
   airport_id integer,           -- Reference to airport if applicable
@@ -84,7 +84,7 @@ create table ndb
 (
   ndb_id integer primary key,
   file_id integer not null,
-  ident varchar(3),           -- ICAO ident
+  ident varchar(5),           -- ICAO ident
   name varchar(50),
   region varchar(2),          -- ICAO two letter region identifier
   airport_id integer,         -- Reference to airport if applicable
@@ -111,7 +111,7 @@ create table marker
 (
   marker_id integer primary key,
   file_id integer not null,
-  ident varchar(3),              -- ICAO ident
+  ident varchar(5),              -- ICAO ident
   region varchar(2),             -- ICAO two letter region identifier (always null)
   type varchar(15),              -- See enum atools::fs::bgl::nav::MarkerType
   heading double not null,       -- Heading in degree true
@@ -131,7 +131,7 @@ drop table if exists ils;
 create table ils
 (
   ils_id integer primary key,
-  ident varchar(4),                -- ICAO ident
+  ident varchar(5),                -- ICAO ident
   name varchar(50),
   region varchar(2),               -- ICAO two letter region identifier (always null)
   frequency integer not null,      -- MHz * 1000
