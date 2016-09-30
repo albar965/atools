@@ -46,6 +46,11 @@ void FileHistoryHandler::saveState()
 void FileHistoryHandler::restoreState()
 {
   filePaths = atools::settings::Settings::instance().valueStrList(settings);
+
+  // Convert all loaded paths to native
+  for(int i = 0; i < filePaths.size(); i++)
+    filePaths[i] = QDir::toNativeSeparators(filePaths.at(i));
+
   updateMenu();
 }
 
