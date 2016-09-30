@@ -21,6 +21,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QFileInfo>
+#include <QDir>
 
 namespace atools {
 namespace gui {
@@ -39,12 +40,12 @@ FileHistoryHandler::~FileHistoryHandler()
 
 void FileHistoryHandler::saveState()
 {
-  atools::settings::Settings::instance().setValue(settings, files);
+  atools::settings::Settings::instance().setValue(settings, filePaths);
 }
 
 void FileHistoryHandler::restoreState()
 {
-  files = atools::settings::Settings::instance().valueStrList(settings);
+  filePaths = atools::settings::Settings::instance().valueStrList(settings);
   updateMenu();
 }
 
@@ -52,16 +53,17 @@ void FileHistoryHandler::addFile(const QString& filename)
 {
   if(!filename.isEmpty())
   {
+    QString nativeFilename = QDir::toNativeSeparators(filename);
+
     // Remove file from list
-    if(files.contains(filename))
-      files.removeAll(filename);
+    filePaths.removeAll(nativeFilename);
 
     // and prepend
-    files.prepend(filename);
+    filePaths.prepend(nativeFilename);
 
     // Remove all above max entries
-    while(files.size() > maxEntries)
-      files.removeLast();
+    while(filePaths.size() > maxEntries)
+      filePaths.removeLast();
 
     // Update menu actions
     updateMenu();
@@ -70,7 +72,7 @@ void FileHistoryHandler::addFile(const QString& filename)
 
 void FileHistoryHandler::removeFile(const QString& filename)
 {
-  files.removeAll(filename);
+  filePaths.removeAll(QDir::toNativeSeparators(filename));
   updateMenu();
 }
 
@@ -82,8 +84,8 @@ void FileHistoryHandler::itemTriggered(QAction *action)
   {
     // Move file up in the list
     QString fname = action->data().toString();
-    files.removeAll(fname);
-    files.prepend(fname);
+    filePaths.removeAll(fname);
+    filePaths.prepend(fname);
     updateMenu();
 
     emit fileSelected(fname);
@@ -95,7 +97,7 @@ void FileHistoryHandler::updateMenu()
   recentMenu->clear();
 
   int i = 1;
-  for(const QString& filepath : files)
+  for(const QString& filepath : filePaths)
   {
     QString fname = QFileInfo(filepath).fileName();
     // Add number for selection
@@ -112,13 +114,13 @@ void FileHistoryHandler::updateMenu()
   }
 
   recentMenu->addSeparator();
-  clearAction->setEnabled(!files.isEmpty());
+  clearAction->setEnabled(!filePaths.isEmpty());
   recentMenu->addAction(clearAction);
 }
 
 void FileHistoryHandler::clearMenu()
 {
-  files.clear();
+  filePaths.clear();
   updateMenu();
 }
 

@@ -81,9 +81,14 @@ private:
 
   QMenu *recentMenu;
   QAction *clearAction;
-  QStringList files;
+
+  /* Native full filepaths */
+  QStringList filePaths;
+
+  /* Name prefix for settings file */
   QString settings;
-  int maxEntries = 15;
+
+  int maxEntries = 20;
 };
 
 } // namespace gui
