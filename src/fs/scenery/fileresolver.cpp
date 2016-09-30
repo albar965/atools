@@ -55,13 +55,13 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
 
-      // Check if directory is included
-      if(options.isIncludedDirectory(sceneryAreaDir.absolutePath()))
+      // get all scenery directories
+      for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
       {
-        // get all scenery directories
-        for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
+        QDir sceneryAreaDirObj(scenery.filePath());
+        // Check if directory is included
+        if(options.isIncludedDirectory(sceneryAreaDirObj.absolutePath()))
         {
-          QDir sceneryAreaDirObj(scenery.filePath());
           // Get all BGL files
           for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
           {
@@ -78,6 +78,8 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
             }
           }
         }
+        else
+          qInfo().nospace().noquote() << scenery.filePath() << " is excluded.";
       }
     }
     else if(!quiet)
