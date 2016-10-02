@@ -1,3 +1,13 @@
+Version 2.0.3.beta
+* Removed not null constaints on type, ident and name columns since some add-ons leave fields empty.
+* Updated schema to keep runway names in start position even if no assignment to runway was found.
+* Schema version updated to major 4 - needs a reload.
+* Increased width of ident columns for add-on sceneries.
+* Database minor updated to 4.
+* Fixed non working scenery exclusion when scenery folder is selected.
+* Using native paths in file history handler now.
+* Increased default file history size to 20 files.
+
 Version 2.0.2.beta
 * All BGL files are now read (invalid magic number of BGL files is now ignored).
 * Added support for older add-on sceneries (needs reading of FS9 record structures for airport and parking).
