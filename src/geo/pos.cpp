@@ -42,10 +42,12 @@ const static double EARTH_RADIUS_METER = 6371. * 1000.;
 const static QString SHORT_FORMAT("%1,%2,%3");
 const static QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
 const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
+
+// This is the format that is used in FSX flight plans
 const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
-  "([+-])\\s*([0-9\\.]+)");
+  "([+-]?)\\s*([0-9\\.]+)");
 
 using atools::absInt;
 
