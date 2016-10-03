@@ -22,6 +22,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include <QDebug>
+
 namespace atools {
 namespace fs {
 namespace scenery {
@@ -70,7 +72,15 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
 {
   Q_UNUSED(sectionSuffix);
   if(section == "area")
-    areaEntries.append(currentArea);
+  {
+    if(!currentArea.title.isEmpty()
+       && (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
+      areaEntries.append(currentArea);
+    else
+      qWarning() << "Found empty area: number" << currentArea.areaNumber;
+
+    currentArea = SceneryArea();
+  }
 }
 
 void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
@@ -86,7 +96,7 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "clean_on_exit")
       cleanOnExit = toBool(value);
     else
-      throwException(tr("Unexpected key \"%1\"").arg(key));
+      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filename;
   }
   else if(section == "area")
   {
@@ -113,8 +123,10 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "exclude")
       currentArea.exclude = value;
     else
-      throwException(tr("Unexpected key \"%1\"").arg(key));
+      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filename;
   }
+  else
+    qWarning() << "Unexpected section" << section << "file" << filename;
 }
 
 bool SceneryCfg::toBool(const QString& str)

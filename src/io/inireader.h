@@ -85,9 +85,12 @@ protected:
 
 #endif
 
+protected:
+  QString filename;
+
 private:
   int currentLineNum;
-  QString currentLine, currentSection, currentSectionSuffix, filename;
+  QString currentLine, currentSection, currentSectionSuffix;
 
   void handleComment();
   void handleKeyValue();

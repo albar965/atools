@@ -42,15 +42,6 @@ QDebug operator<<(QDebug out, const SceneryArea& area)
   return out;
 }
 
-SceneryArea::SceneryArea()
-  : areaNumber(0), textureId(0), layer(0), active(false), required(false)
-{
-}
-
-SceneryArea::~SceneryArea()
-{
-}
-
 } // namespace scenery
 } // namespace fs
 } // namespace atools

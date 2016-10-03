@@ -443,12 +443,14 @@ void NavDatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *nu
   qDebug() << "Counting files";
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+  {
     if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
     {
       atools::fs::scenery::FileResolver resolver(*options, true);
       *numFiles += resolver.getFiles(area);
       (*numSceneryAreas)++;
     }
+  }
   qDebug() << "Counting files done." << *numFiles << "files to process";
 }
 

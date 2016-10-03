@@ -27,10 +27,6 @@ namespace scenery {
 class SceneryArea
 {
 public:
-  SceneryArea();
-
-  virtual ~SceneryArea();
-
   /*
    * @return true to indicate that the scenery should be rendered by default.
    */
@@ -94,15 +90,9 @@ private:
   friend class SceneryCfg;
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
-  int areaNumber;
-  QString title;
-  int textureId;
-  QString remotePath;
-  QString localPath;
-  int layer;
-  bool active;
-  bool required;
-  QString exclude;
+  int areaNumber = 0, textureId = 0, layer = 0;
+  bool active = false, required = false;
+  QString title, remotePath, localPath, exclude;
 };
 
 } // namespace scenery
