@@ -30,6 +30,7 @@ namespace scenery {
 
 /*
  * Reads flight simulator scenery.cfg entries. Call atools::io::IniReader::read to load a scenery.cfg file.
+ * All section and key names are passed in lower case.
  */
 class SceneryCfg :
   public atools::io::IniReader

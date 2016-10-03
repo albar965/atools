@@ -90,8 +90,8 @@ void IniReader::handleSection()
   if(!currentSection.isEmpty())
     onEndSection(currentSection, currentSectionSuffix);
 
-  currentSection = tempSection;
-  currentSectionSuffix = tempSectionSuffix;
+  currentSection = tempSection.toLower();
+  currentSectionSuffix = tempSectionSuffix.toLower();
   onStartSection(currentSection, currentSectionSuffix);
 }
 
