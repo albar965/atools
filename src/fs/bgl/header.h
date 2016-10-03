@@ -69,6 +69,7 @@ public:
     numSections = other.numSections;
     creationTimestamp = other.creationTimestamp;
     validMagicNumber = other.validMagicNumber;
+    validSize = other.validSize;
 
     return *this;
   }
@@ -102,6 +103,14 @@ public:
     return validMagicNumber;
   }
 
+  /*
+   * @return true if the header size is valid (0x38)
+   */
+  bool hasValidSize() const
+  {
+    return validSize;
+  }
+
   const unsigned int MAGIC_NUMBER1 = 0x19920201;
   const unsigned int MAGIC_NUMBER2 = 0x08051803;
 
@@ -110,7 +119,7 @@ private:
 
   unsigned int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
   time_t creationTimestamp;
-  bool validMagicNumber = false;
+  bool validMagicNumber = true, validSize = true;
 };
 
 } // namespace bgl

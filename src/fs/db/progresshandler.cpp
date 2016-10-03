@@ -64,12 +64,14 @@ bool ProgressHandler::reportOther(const QString& otherAction, int current, bool 
     return callHandler();
 }
 
-bool ProgressHandler::report(const QString& bglFilepath, int current)
+void ProgressHandler::reportBglError()
 {
-  if(current != -1)
-    info.current = current;
-  else
-    info.current++;
+  info.numErrors++;
+}
+
+bool ProgressHandler::reportBglFile(const QString& bglFilepath)
+{
+  info.current++;
   info.bglFilepath = bglFilepath;
 
   info.newFile = true;
@@ -96,6 +98,7 @@ void ProgressHandler::setTotal(int total)
 
 void ProgressHandler::reset()
 {
+  info.numErrors = 0;
   info.current = 0;
   info.sceneryArea = nullptr;
   info.bglFilepath.clear();
@@ -106,7 +109,7 @@ void ProgressHandler::reset()
   info.lastCall = false;
 }
 
-bool ProgressHandler::report(const scenery::SceneryArea *sceneryArea, int current)
+bool ProgressHandler::reportSceneryArea(const scenery::SceneryArea *sceneryArea, int current)
 {
   if(current != -1)
     info.current = current;

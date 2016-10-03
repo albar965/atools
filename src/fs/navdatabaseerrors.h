@@ -15,35 +15,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/navdatabaseprogress.h"
+#ifndef ATOOLS_FS_NAVDATABASEERRORS_H
+#define ATOOLS_FS_NAVDATABASEERRORS_H
+
 #include "fs/scenery/sceneryarea.h"
 
-#include <QFileInfo>
+#include <QList>
 
 namespace atools {
 namespace fs {
 
-NavDatabaseProgress::NavDatabaseProgress()
+/*
+ * This class collects exception messages for each BGL file and scenery database entry.
+ */
+class NavDatabaseErrors
 {
+public:
+  NavDatabaseErrors();
 
-}
+  int getTotalErrors() const;
 
-const QString& NavDatabaseProgress::getSceneryTitle() const
-{
-  return sceneryArea->getTitle();
-}
+  struct BglFileError
+  {
+    QString bglFilepath, errorMessage;
+  };
 
-const QString& NavDatabaseProgress::getSceneryPath() const
-{
-  return sceneryArea->getLocalPath();
-}
+  struct SceneryErrors
+  {
+    atools::fs::scenery::SceneryArea scenery;
+    QList<atools::fs::NavDatabaseErrors::BglFileError> bglFileErrors;
+  };
 
-QString NavDatabaseProgress::getBglFileName() const
-{
-  return QFileInfo(bglFilepath).fileName();
-}
-
-
+  QList<atools::fs::NavDatabaseErrors::SceneryErrors> sceneryErrors;
+};
 
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_FS_NAVDATABASEERRORS_H

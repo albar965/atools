@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_BGLREADEROPTIONS_H
-#define ATOOLS_FS_BGLREADEROPTIONS_H
+#ifndef ATOOLS_FS_NAVDATABASEOPTIONS_H
+#define ATOOLS_FS_NAVDATABASEOPTIONS_H
 
 #include <functional>
 
@@ -281,4 +281,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_BGLREADEROPTIONS_H
+#endif // ATOOLS_FS_NAVDATABASEOPTIONS_H

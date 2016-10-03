@@ -135,7 +135,7 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
 {
   if(id != rec::BOUNDARY)
   {
-    qWarning() << "Not a boundary record" << hex << "0x" << id;
+    qWarning() << "Not a boundary record" << hex << "0x" << id << dec;
     excluded = true;
     return;
   }
@@ -174,7 +174,7 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
         }
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in Boundary record 0x" << hex << t;
+        qWarning().nospace().noquote() << "Unexpected record type in Boundary record 0x" << hex << t << dec;
     }
     r.seekToEnd();
   }

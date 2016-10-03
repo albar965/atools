@@ -39,12 +39,17 @@ public:
   /*
    * Increment progress by one and send message about new scenery area
    */
-  bool report(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
+  bool reportSceneryArea(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
 
   /*
    * Increment progress by one and send message about new BGL file
    */
-  bool report(const QString& bglFilepath, int current = -1);
+  bool reportBglFile(const QString& bglFilepath);
+
+  /*
+   * Increase number of errors for BGL reading exceptions.
+   */
+  void reportBglError();
 
   /*
    * Send the last report

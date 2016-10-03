@@ -169,67 +169,85 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       progressHandler->setNumWaypoints(numWaypoints);
       progressHandler->setNumObjectsWritten(numObjectsWritten);
 
-      if((aborted = progressHandler->report(filepaths.at(i))) == true)
+      if((aborted = progressHandler->reportBglFile(filepaths.at(i))) == true)
         return;
 
       QString currentBglFilePath = filepaths.at(i);
 
-      // Read all records into a intenal object tree (atools::fs::bgl namespace)
-      bglFile.readFile(currentBglFilePath);
-      if(bglFile.hasContent())
+      try
       {
-        // Write BGL file metadata
-        bglFileWriter->writeOne(bglFile);
+        // Read all records into a intenal object tree (atools::fs::bgl namespace)
+        bglFile.readFile(currentBglFilePath);
 
-        // Clear the indexes
-        runwayIndex->clear();
-        airportIndex->clear();
-
-        // Execution order is important due to dependencies between the writers
-        // (i.e. ILS writer looks for runway end ids)
-        // Writer also need to access the ids of their parent record objects
-        // (i.e. runway needs the current airport ID
-
-        airportWriter->setNameLists(bglFile.getNamelists());
-
-        // Write airport and all subrecords like runways, approaches, parking and so on
-        airportWriter->write(bglFile.getAirports());
-
-        // Write all navaids to the database
-        waypointWriter->write(bglFile.getWaypoints());
-        vorWriter->write(bglFile.getVors());
-        ndbWriter->write(bglFile.getNdbs());
-        markerWriter->write(bglFile.getMarker());
-        ilsWriter->write(bglFile.getIls());
-
-        boundaryWriter->write(bglFile.getBoundaries());
-
-        numAirports += bglFile.getAirports().size();
-        numNamelists += bglFile.getNamelists().size();
-        numVors += bglFile.getVors().size();
-        numIls += bglFile.getIls().size();
-        numNdbs += bglFile.getNdbs().size();
-        numMarker += bglFile.getMarker().size();
-        numWaypoints += bglFile.getWaypoints().size();
-        numBoundaries += bglFile.getBoundaries().size();
-        numFiles++;
-      }
-
-      // Print a one line short report on airports that were found in the BGL
-      if(!bglFile.getAirports().isEmpty())
-      {
-        QStringList apIcaos;
-        for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
+        if(bglFile.hasContent() && bglFile.isValid())
         {
-          // Truncate at 10
-          if(apIcaos.size() < 10)
-            apIcaos.append(ap->getIdent());
-          else
-            break;
+          // Write BGL file metadata
+          bglFileWriter->writeOne(bglFile);
+
+          // Clear the indexes
+          runwayIndex->clear();
+          airportIndex->clear();
+
+          // Execution order is important due to dependencies between the writers
+          // (i.e. ILS writer looks for runway end ids)
+          // Writer also need to access the ids of their parent record objects
+          // (i.e. runway needs the current airport ID
+
+          airportWriter->setNameLists(bglFile.getNamelists());
+
+          // Write airport and all subrecords like runways, approaches, parking and so on
+          airportWriter->write(bglFile.getAirports());
+
+          // Write all navaids to the database
+          waypointWriter->write(bglFile.getWaypoints());
+          vorWriter->write(bglFile.getVors());
+          ndbWriter->write(bglFile.getNdbs());
+          markerWriter->write(bglFile.getMarker());
+          ilsWriter->write(bglFile.getIls());
+
+          boundaryWriter->write(bglFile.getBoundaries());
+
+          numAirports += bglFile.getAirports().size();
+          numNamelists += bglFile.getNamelists().size();
+          numVors += bglFile.getVors().size();
+          numIls += bglFile.getIls().size();
+          numNdbs += bglFile.getNdbs().size();
+          numMarker += bglFile.getMarker().size();
+          numWaypoints += bglFile.getWaypoints().size();
+          numBoundaries += bglFile.getBoundaries().size();
+          numFiles++;
         }
-        if(bglFile.getAirports().size() > 10)
-          apIcaos.append("...");
-        qDebug() << "Found" << bglFile.getAirports().size() << "airports. idents:" << apIcaos.join(",");
+
+        // Print a one line short report on airports that were found in the BGL
+        if(!bglFile.getAirports().isEmpty())
+        {
+          QStringList apIcaos;
+          for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
+          {
+            // Truncate at 10
+            if(apIcaos.size() < 10)
+              apIcaos.append(ap->getIdent());
+            else
+              break;
+          }
+          if(bglFile.getAirports().size() > 10)
+            apIcaos.append("...");
+          qDebug() << "Found" << bglFile.getAirports().size() << "airports. idents:" << apIcaos.join(",");
+        }
+      }
+      catch(atools::Exception& e)
+      {
+        qCritical() << "Caught exception reading" << currentBglFilePath << ":" << e.what();
+        progressHandler->reportBglError();
+        if(sceneryErrors != nullptr)
+          sceneryErrors->bglFileErrors.append({currentBglFilePath, QString(e.what())});
+      }
+      catch(...)
+      {
+        qCritical() << "Caught unknown exception reading" << currentBglFilePath;
+        progressHandler->reportBglError();
+        if(sceneryErrors != nullptr)
+          sceneryErrors->bglFileErrors.append({currentBglFilePath, QString()});
       }
     }
     db.commit();

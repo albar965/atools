@@ -205,11 +205,19 @@ public:
     return numObjectsWritten;
   }
 
+  /*
+   * @return total number of errors/exceptions during BGL loading
+   */
+  int getNumErrors() const
+  {
+    return numErrors;
+  }
+
 private:
   friend atools::fs::db::ProgressHandler;
 
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0, numNdbs = 0, numMarker = 0,
-      numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0;
+      numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0, numErrors = 0;
 
   int total = 0, current = 0;
   bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false;

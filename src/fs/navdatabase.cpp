@@ -45,8 +45,9 @@ using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 
-NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb)
-  : db(sqlDb), options(readerOptions)
+NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
+                         NavDatabaseErrors *databaseErrors)
+  : db(sqlDb), errors(databaseErrors), options(readerOptions)
 {
 
 }
@@ -242,12 +243,25 @@ void NavDatabase::createInternal()
   {
     if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
     {
-      if((aborted = progress.report(&area)) == true)
+      if((aborted = progress.reportSceneryArea(&area)) == true)
         return;
+
+      NavDatabaseErrors::SceneryErrors err;
+      if(errors != nullptr)
+        // Prepare structure for error collection
+        dataWriter.setSceneryErrors(&err);
+      else
+        dataWriter.setSceneryErrors(nullptr);
 
       // Read all BGL files in the scenery area into classes of the bgl namespace and
       // write the contents to the database
       dataWriter.writeSceneryArea(area);
+
+      if(!err.bglFileErrors.isEmpty() && errors != nullptr)
+      {
+        err.scenery = area;
+        errors->sceneryErrors.append(err);
+      }
 
       if((aborted = dataWriter.isAborted()) == true)
         return;
@@ -435,7 +449,7 @@ void NavDatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *nu
       *numFiles += resolver.getFiles(area);
       (*numSceneryAreas)++;
     }
-  qDebug() << "Counting files done." << numFiles << "files to process";
+  qDebug() << "Counting files done." << *numFiles << "files to process";
 }
 
 } // namespace fs

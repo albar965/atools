@@ -15,35 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/navdatabaseprogress.h"
-#include "fs/scenery/sceneryarea.h"
-
-#include <QFileInfo>
+#include "fs/navdatabaseerrors.h"
 
 namespace atools {
 namespace fs {
 
-NavDatabaseProgress::NavDatabaseProgress()
+NavDatabaseErrors::NavDatabaseErrors()
 {
 
 }
 
-const QString& NavDatabaseProgress::getSceneryTitle() const
+int NavDatabaseErrors::getTotalErrors() const
 {
-  return sceneryArea->getTitle();
+  int total = 0;
+  for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
+    total += scErr.bglFileErrors.size();
+  return total;
 }
-
-const QString& NavDatabaseProgress::getSceneryPath() const
-{
-  return sceneryArea->getLocalPath();
-}
-
-QString NavDatabaseProgress::getBglFileName() const
-{
-  return QFileInfo(bglFilepath).fileName();
-}
-
-
 
 } // namespace fs
 } // namespace atools

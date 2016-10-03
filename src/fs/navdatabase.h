@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_NAVDATABASE_H
 #define ATOOLS_FS_NAVDATABASE_H
 
+#include "fs/navdatabaseerrors.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 
@@ -53,7 +55,8 @@ public:
    * @param readerOptions Configuration and progress callback options. Optional for schema creation
    * @param sqlDb Database to fill with data
    */
-  NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb);
+  NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
+              atools::fs::NavDatabaseErrors *databaseErrors);
 
   /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.  */
   void create();
@@ -96,6 +99,7 @@ private:
   void createInternal();
 
   atools::sql::SqlDatabase *db;
+  atools::fs::NavDatabaseErrors *errors = nullptr;
   const atools::fs::NavDatabaseOptions *options;
   bool aborted = false;
 

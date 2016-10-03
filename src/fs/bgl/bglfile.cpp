@@ -67,14 +67,28 @@ void BglFile::readFile(QString file)
     this->filename = file;
     this->size = bs.getFileSize();
 
-    readHeaderAndSections(&bs);
+    readHeader(&bs);
+    if(!header.hasValidSize())
+      // Skip any obscure BGL files that do not contain a section structure
+      return;
 
-    if(options->isIncludedBglObject(type::BOUNDARY))
-      readBoundaryRecords(&bs);
+    readSections(&bs);
 
-    readRecords(&bs);
+    // Skip any obscure BGL files that do not contain a section structure
+    if(header.hasValidSize())
+    {
+      if(options->isIncludedBglObject(type::BOUNDARY))
+        readBoundaryRecords(&bs);
+
+      readRecords(&bs);
+    }
     ifs.close();
   }
+}
+
+bool BglFile::isValid()
+{
+  return header.hasValidSize();
 }
 
 bool BglFile::hasContent()
@@ -159,12 +173,15 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     qDebug() << "Num boundary records" << numRecs;
 }
 
-void BglFile::readHeaderAndSections(BinaryStream *bs)
+void BglFile::readHeader(BinaryStream *bs)
 {
   header = Header(options, bs);
   if(options->isVerbose())
     qDebug() << header;
+}
 
+void BglFile::readSections(BinaryStream *bs)
+{
   // Read sections after header
   for(unsigned int i = 0; i < header.getNumSections(); i++)
   {

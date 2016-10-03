@@ -18,6 +18,11 @@
 #ifndef ATOOLS_FS_DB_DATAWRITER_H
 #define ATOOLS_FS_DB_DATAWRITER_H
 
+#include <QList>
+#include <QString>
+
+#include "fs/navdatabaseerrors.h"
+
 namespace atools {
 namespace sql {
 class SqlDatabase;
@@ -25,6 +30,7 @@ class SqlDatabase;
 
 namespace fs {
 class NavDatabaseOptions;
+class NavDatabaseErrors;
 namespace scenery {
 class SceneryArea;
 }
@@ -68,7 +74,7 @@ class DataWriter
 {
 public:
   DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-             ProgressHandler *progress);
+             atools::fs::db::ProgressHandler *progress);
   virtual ~DataWriter();
 
   /*
@@ -228,6 +234,14 @@ public:
     return boundaryLineWriter;
   }
 
+  /*
+   * Set the error list that will be filled whenever exceptions occur
+   */
+  void setSceneryErrors(atools::fs::NavDatabaseErrors::SceneryErrors *errors)
+  {
+    sceneryErrors = errors;
+  }
+
 private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;
@@ -235,6 +249,7 @@ private:
 
   atools::sql::SqlDatabase& db;
   atools::fs::db::ProgressHandler *progressHandler = nullptr;
+  atools::fs::NavDatabaseErrors::SceneryErrors *sceneryErrors = nullptr;
 
   atools::fs::db::BglFileWriter *bglFileWriter = nullptr;
   atools::fs::db::SceneryAreaWriter *sceneryAreaWriter = nullptr;

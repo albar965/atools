@@ -142,9 +142,15 @@ public:
    */
   bool hasContent();
 
+  /*
+   * @return true if header and section structure is valid
+   */
+  bool isValid();
+
 private:
   void deleteAllObjects();
-  void readHeaderAndSections(atools::io::BinaryStream *bs);
+  void readHeader(atools::io::BinaryStream *bs);
+  void readSections(atools::io::BinaryStream *bs);
   void readRecords(atools::io::BinaryStream *bs);
   const Record *handleIlsVor(atools::io::BinaryStream *bs);
 

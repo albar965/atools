@@ -31,13 +31,14 @@ using atools::io::BinaryStream;
 Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs)
 {
-  validMagicNumber = true;
-
   magicNumber1 = bs->readUInt();
   if(magicNumber1 != MAGIC_NUMBER1)
     validMagicNumber = false;
 
   headerSize = bs->readUInt();
+  if(headerSize != 0x38)
+    validSize = false;
+
   lowDateTime = bs->readUInt();
   highDateTime = bs->readUInt();
   creationTimestamp = converter::filetime(lowDateTime, highDateTime);
@@ -47,8 +48,11 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     validMagicNumber = false;
 
   if(!validMagicNumber)
-    qWarning().nospace().noquote() << "Invalid magic number 1: 0x" << hex << magicNumber1
-                                   << ", 2: " << magicNumber2;
+    qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
+                                   << ", " << magicNumber2 << dec;
+
+  if(!validSize)
+    qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
 
   numSections = bs->readUInt();
 
