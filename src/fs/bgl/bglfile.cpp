@@ -68,7 +68,7 @@ void BglFile::readFile(QString file)
     this->size = bs.getFileSize();
 
     readHeader(&bs);
-    if(!header.hasValidSize())
+    if(!header.hasValidSize() || !header.hasValidMagicNumber())
       // Skip any obscure BGL files that do not contain a section structure
       return;
 
