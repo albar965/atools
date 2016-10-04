@@ -25,6 +25,7 @@
 #include <QStandardPaths>
 #include <QDataStream>
 #include <QSettings>
+#include <QtGlobal>
 
 #if defined(Q_OS_WIN32)
 #include <windows.h>
@@ -71,6 +72,26 @@ const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
 
 using atools::settings::Settings;
 
+void FsPaths::logAllPaths()
+{
+  qInfo() << "Looking for flight simulator installations:";
+  qInfo() << "PROGRAMDATA" << QString(qgetenv("PROGRAMDATA"));
+  qInfo() << "APPDATA" << QString(qgetenv("APPDATA"));
+  qInfo() << "ALLUSERSPROFILE" << QString(qgetenv("ALLUSERSPROFILE"));
+
+  for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
+  {
+    qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_NAMES[type];
+    QString basePath = getBasePath(type);
+    QString filesPath = getBasePath(type);
+    QString sceneryFilepath = getSceneryLibraryPath(type);
+
+    qInfo() << "  Base" << basePath << "exists" << QFileInfo::exists(basePath);
+    qInfo() << "  Files" << filesPath << "exists" << QFileInfo::exists(filesPath);
+    qInfo() << "  Scenery.cfg" << sceneryFilepath << "exists" << QFileInfo::exists(sceneryFilepath);
+  }
+}
+
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;
@@ -96,7 +117,7 @@ QString FsPaths::getBasePath(SimulatorType type)
   }
 #endif
 
-  qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
+  // qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
 
   return fsPath;
 }
@@ -151,33 +172,42 @@ QString FsPaths::getFilesPath(SimulatorType type)
   // Use fallback on non Windows systems
   if(fsFilesDir.isEmpty())
   {
-    qDebug() << "Using fallback to find flight simulator documents path";
+    qDebug() << "Using fallback to find flight simulator documents path for type" << type;
     fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
   }
 #endif
-  qDebug() << "Found a flight simulator documents path for type" << type << "at" << fsFilesDir;
+  // qDebug() << "Found a flight simulator documents path for type" << type << "at" << fsFilesDir;
 
   return fsFilesDir;
 }
 
 QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 {
-  // scenery.cfg
-  // FSX C:\Users\user account name\AppData\Roaming\Microsoft\FSX
-  // or C:\ProgramData\Microsoft\FSX\Scenery.cfg
-  // FSX SE C:\ProgramData\Microsoft\FSX-SE\Scenery.cfg
-  // P3D v2 C:\Users\user account name\AppData\Roaming\Lockheed Martin\Prepar3D v2
-  // P3D v3 C:\ProgramData\Lockheed Martin\Prepar3D v3
+#if defined(Q_OS_WIN32)
+  // Win 7+ C:\ProgramData
+  QString programData(qgetenv("PROGRAMDATA"));
+
+  // Win 7+ C:\Users\{username}\AppData\Roaming
+  // Win XP C:\Documents and Settings\{username}\Application Data
+  QString appData(qgetenv("APPDATA"));
+
+  QString allUsersProfile(qgetenv("ALLUSERSPROFILE"));
+
+  if(programData.isEmpty())
+    // Win XP - ALLUSERSPROFILE = C:\Documents and Settings\All Users
+    programData = allUsersProfile + QDir::separator() + QDir(appData).dirName();
+#else
+  // If not windows use emulation for testing
   QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+#endif
+
   switch(type)
   {
     case FSX:
+      // FSX C:\Users\user account name\AppData\Roaming\Microsoft\FSX\scenery.cfg
+      // or C:\ProgramData\Microsoft\FSX\Scenery.cfg
 #if defined(Q_OS_WIN32)
-      // Windows 7 and above
-      // return "C:\\ProgramData\\Microsoft\\FSX\\Scenery.CFG";
-
-      // Windows XP and above
-      return "c:\\Documents And Settings\\All Users\\Application Data\\Microsoft\\FSX\\Scenery.CFG";
+      return programData + QDir::separator() + "Microsoft\\FSX\\Scenery.CFG";
 
 #else
       return home + QDir::separator() +
@@ -187,8 +217,9 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #endif
 
     case FSX_SE:
+      // FSX SE C:\ProgramData\Microsoft\FSX-SE\Scenery.cfg
 #if defined(Q_OS_WIN32)
-      return "C:\\ProgramData\\Microsoft\\FSX-SE\\Scenery.CFG";
+      return programData + QDir::separator() + "Microsoft\\FSX-SE\\Scenery.CFG";
 
 #else
       return home + QDir::separator() +
@@ -198,23 +229,21 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #endif
 
     case P3D_V2:
+      // P3D v2 C:\Users\user account name\AppData\Roaming\Lockheed Martin\Prepar3D v2
 #if defined(Q_OS_WIN32)
-      return home + QDir::separator() +
-             "AppData" + QDir::separator() +
-             "Roaming" + QDir::separator() +
-             "Lockheed Martin" + QDir::separator() +
-             "Prepar3D v2" + QDir::separator() + "Scenery.CFG";
+      return appData + QDir::separator() + "Lockheed Martin\\Prepar3D v2\\Scenery.CFG";
 
 #else
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
-             "P3DV3" + QDir::separator() + "scenery.cfg";
+             "P3DV2" + QDir::separator() + "scenery.cfg";
 
 #endif
 
     case P3D_V3:
+      // P3D v3 C:\ProgramData\Lockheed Martin\Prepar3D v3
 #if defined(Q_OS_WIN32)
-      return "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\Scenery.CFG";
+      return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v3\\Scenery.CFG";
 
 #else
       return home + QDir::separator() +
@@ -222,6 +251,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
              "P3DV3" + QDir::separator() + "scenery.cfg";
 
 #endif
+    // Disable compiler warnings
     case UNKNOWN:
     case MAX_VALUE:
     case ALL_SIMULATORS:

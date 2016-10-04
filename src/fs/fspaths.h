@@ -85,6 +85,9 @@ public:
   /* Array of all four valid types */
   static const atools::fs::FsPaths::SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
 
+  /* Print paths for all simulators to the info log channel */
+  static void logAllPaths();
+
 private:
   FsPaths()
   {
