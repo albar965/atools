@@ -181,6 +181,9 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
         if(bglFile.hasContent() && bglFile.isValid())
         {
+          // if(!bglFile.getHeader().hasValidMagicNumber())
+          // qWarning() << "Content in file with invalid magic number";
+
           // Write BGL file metadata
           bglFileWriter->writeOne(bglFile);
 

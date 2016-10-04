@@ -160,7 +160,7 @@ QString Runway::surfaceToStr(rw::Surface surface)
     case rw::UNKNOWN:
       return "UNKNOWN";
   }
-  qWarning().nospace().noquote() << "Invalid runway surface type " << surface;
+  qWarning() << "Invalid surface type" << surface;
   return "INVALID";
 }
 

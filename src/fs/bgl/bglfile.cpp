@@ -88,7 +88,7 @@ void BglFile::readFile(QString file)
 
 bool BglFile::isValid()
 {
-  return header.hasValidSize();
+  return header.hasValidSize() && header.hasValidMagicNumber();
 }
 
 bool BglFile::hasContent()

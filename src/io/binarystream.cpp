@@ -18,6 +18,7 @@
 #include "io/binarystream.h"
 
 #include <QFile>
+#include <QDebug>
 
 namespace atools {
 namespace io {
@@ -191,6 +192,7 @@ void BinaryStream::checkStream(const QString& what) const
   if(is->status() != QDataStream::Ok)
     throw Exception(QString("%1 for file \"%2\" failed. Reason %3").
                     arg(what).arg(getFilename()).arg(is->status()));
+  // qDebug() << hex << "0x" << is->device()->pos() << dec;
 }
 
 } /* namespace io */

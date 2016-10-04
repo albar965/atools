@@ -74,8 +74,9 @@ enum Surface
   CONCRETE = 0x0000,
   GRASS = 0x0001,
   WATER = 0x0002,
+  CEMENT = 0x0003, // TODO wiki error report
   ASPHALT = 0x0004,
-  CEMENT = 0x0005, // TODO wiki error report
+  // GRASS = 0x0005, invalid ADE interprets it as grass
   CLAY = 0x0007,
   SNOW = 0x0008,
   ICE = 0x0009,
