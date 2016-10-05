@@ -40,8 +40,6 @@ class Header :
 {
 public:
   Header()
-    : magicNumber1(0), headerSize(0), lowDateTime(0), highDateTime(0), magicNumber2(0), numSections(0),
-      creationTimestamp(0)
   {
   }
 
@@ -111,14 +109,20 @@ public:
     return validSize;
   }
 
+  bool isValid() const
+  {
+    return hasValidMagicNumber() && hasValidSize();
+  }
+
+private:
   const unsigned int MAGIC_NUMBER1 = 0x19920201;
   const unsigned int MAGIC_NUMBER2 = 0x08051803;
 
-private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Header& header);
 
-  unsigned int magicNumber1, headerSize, lowDateTime, highDateTime, magicNumber2, numSections;
-  time_t creationTimestamp;
+  unsigned int magicNumber1 = 0, headerSize = 0, lowDateTime = 0, highDateTime = 0, magicNumber2 = 0,
+               numSections = 0;
+  time_t creationTimestamp = 0;
   bool validMagicNumber = true, validSize = true;
 };
 

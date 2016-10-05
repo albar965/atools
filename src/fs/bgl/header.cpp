@@ -41,7 +41,6 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
 
   lowDateTime = bs->readUInt();
   highDateTime = bs->readUInt();
-  creationTimestamp = converter::filetime(lowDateTime, highDateTime);
 
   magicNumber2 = bs->readUInt();
   if(magicNumber2 != MAGIC_NUMBER2)
@@ -49,11 +48,16 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
 
   if(!validMagicNumber)
     qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
-                                   << ", " << magicNumber2 << dec;
+                                   << ", 0x" << magicNumber2 << dec;
 
   if(!validSize)
     qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
 
+  if(!isValid())
+    // Stop reading here if anything is wrong
+    return;
+
+  creationTimestamp = converter::filetime(lowDateTime, highDateTime);
   numSections = bs->readUInt();
 
   // QMIDs

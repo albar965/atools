@@ -68,27 +68,24 @@ void BglFile::readFile(QString file)
     this->size = bs.getFileSize();
 
     readHeader(&bs);
-    if(!header.hasValidSize() || !header.hasValidMagicNumber())
+    if(!header.isValid())
       // Skip any obscure BGL files that do not contain a section structure
       return;
 
     readSections(&bs);
 
-    // Skip any obscure BGL files that do not contain a section structure
-    if(header.hasValidSize())
-    {
-      if(options->isIncludedBglObject(type::BOUNDARY))
-        readBoundaryRecords(&bs);
+    if(options->isIncludedBglObject(type::BOUNDARY))
+      readBoundaryRecords(&bs);
 
-      readRecords(&bs);
-    }
+    readRecords(&bs);
+
     ifs.close();
   }
 }
 
 bool BglFile::isValid()
 {
-  return header.hasValidSize() && header.hasValidMagicNumber();
+  return header.isValid();
 }
 
 bool BglFile::hasContent()
