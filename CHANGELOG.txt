@@ -1,3 +1,16 @@
+Version 2.0.4.beta
+
+* Fixed multiple BGL reading errors:
+** Now stopping BGL reading early if magic number or header size do not match.
+** Skipping all BGL files with wrong magic number and wrong header size now.
+* Fixed problem with wrongly assigned surface id 3 (CEMENT) in BGL files.
+* Scenery reading now collects errors/exceptions instead of stopping at the first error.
+* Added number of collected errors/exceptions to progress report when reading scenery.
+* Made scenery.cfg reading more error tolerant to avoid problems with Scenery Config Editor.
+* Fixed scenery.cfg path detection to use Windows environment variables. Now more reliable and also working on Windows XP.
+* Fixed problem that could cause scenery areas to be omitted when section name is upper or mixed case.
+* Fixed error when loading PFPX flight plans PLN files with missing + or - prefix in altitude.
+
 Version 2.0.3.beta
 * Removed not null constaints on type, ident and name columns since some add-ons leave fields empty.
 * Updated schema to keep runway names in start position even if no assignment to runway was found.
