@@ -30,9 +30,9 @@ create table airport
   file_id integer not null,                   -- BGL file id
   ident varchar(4) not null,                  -- ICAO ident
   name varchar(50) collate nocase,
-  city varchar(50) collate nocase not null,
+  city varchar(50) collate nocase,
   state varchar(50) collate nocase,
-  country varchar(50) collate nocase not null,
+  country varchar(50) collate nocase,
   fuel_flags integer not null,                -- see enum atools::fs::bgl::ap::FuelFlags
   has_avgas integer not null,                 -- boolean
   has_jetfuel integer not null,               -- "
