@@ -26,6 +26,7 @@ namespace atools {
 namespace gui {
 
 QHash<QString, QStringList> Application::reportFiles;
+QStringList Application::emailAddresses;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -63,14 +64,17 @@ void Application::handleException(const char *file, int line, const std::excepti
                            "<b>If the problem persists or occurs during startup "
                              "delete all settings and database files of %4 and try again.</b><br/><br/>"
                              "<b>If you wish to report this error attach the log and configuration files "
-                               "to your report and add all other available information.</b><br/><br/>"
-                               "%5"
-                               "<h3>Exiting now.</h3>"
+                               "to your report, add all other available information and send it to one "
+                               "of the contact addresses below.</b><br/>"
+                               "<hr/>%5"
+                                 "<hr/>%6<br/>"
+                                   "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
                         arg(e.what()).
                         arg(QApplication::applicationName()).
-                        arg(getReportPaths()));
+                        arg(getEmailHtml()).
+                        arg(getReportPathHtml()));
   std::exit(1);
 }
 
@@ -81,12 +85,17 @@ void Application::handleException(const char *file, int line)
                         tr("Caught unknown exception in file %1 line %2.<br/><br/>"
                            "<b>If the problem persists or occurs during startup "
                              "delete all settings and database files of %3 and try again.</b><br/><br/>"
-                             "%4"
-                             "<h3>Exiting now.</h3>"
+                             "<b>If you wish to report this error attach the log and configuration files "
+                               "to your report, add all other available information and send it to one "
+                               "of the contact addresses below.</b><br/>"
+                               "<hr/>%4"
+                                 "<hr/>%5<br/>"
+                                   "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
                         arg(QApplication::applicationName()).
-                        arg(getReportPaths()));
+                        arg(getEmailHtml()).
+                        arg(getReportPathHtml()));
   std::exit(1);
 }
 
@@ -95,7 +104,18 @@ void Application::addReportPath(const QString& header, const QStringList& paths)
   reportFiles.insert(header, paths);
 }
 
-QString Application::getReportPaths()
+QString Application::getEmailHtml()
+{
+  QString mailStr(tr("<b>Contact:</b><br/>"));
+
+  QStringList emails;
+  for(QString mail : emailAddresses)
+    emails.append(QString("<a href=\"mailto:%1\">%1</a>").arg(mail));
+  mailStr.append(emails.join("<br/>"));
+  return mailStr;
+}
+
+QString Application::getReportPathHtml()
 {
   // Sort keys to avoid random order
   QList<QString> keys = reportFiles.keys();
@@ -104,12 +124,14 @@ QString Application::getReportPaths()
   QString fileStr;
   for(QString header : keys)
   {
-    fileStr.append(tr("%1<br/>").arg(header));
+    fileStr.append(tr("<b>%1</b><br/>").arg(header));
     const QStringList& paths = reportFiles.value(header);
 
     for(const QString& path : paths)
       fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(path);
-    fileStr.append(tr("<br/>"));
+
+    if(header != keys.last())
+      fileStr.append(tr("<br/>"));
   }
 
   return fileStr;

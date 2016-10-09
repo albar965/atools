@@ -71,12 +71,26 @@ public:
    * Get the paths that were added using addReportPath in a HTML formatted text
    * as links
    */
-  static QString getReportPaths();
+  static QString getReportPathHtml();
+
+  static QString getEmailHtml();
+
+  static QStringList getEmailAddresses()
+  {
+    return emailAddresses;
+  }
+
+  static void setEmailAddresses(const QStringList& value)
+  {
+    emailAddresses = value;
+  }
 
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 
   static QHash<QString, QStringList> reportFiles;
+
+  static QStringList emailAddresses;
 
 };
 

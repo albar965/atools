@@ -50,14 +50,16 @@ void HelpHandler::about()
                      tr("About %1").arg(QApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
                           "<p>atools Version %5 (revision %6)</p>"
-                            "<hr/><p>%7</p>").
+                            "<hr/>%7"
+                              "<hr/>%8<br/>").
                      arg(QApplication::applicationName()).
                      arg(message).
                      arg(QApplication::applicationVersion()).
                      arg(rev).
                      arg(atools::version()).
                      arg(atools::gitRevision()).
-                     arg(atools::gui::Application::getReportPaths()));
+                     arg(atools::gui::Application::getEmailHtml()).
+                     arg(atools::gui::Application::getReportPathHtml()));
 }
 
 void HelpHandler::aboutQt()
