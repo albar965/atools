@@ -111,7 +111,7 @@ QString Application::getEmailHtml()
   QStringList emails;
   for(QString mail : emailAddresses)
     emails.append(QString("<a href=\"mailto:%1\">%1</a>").arg(mail));
-  mailStr.append(emails.join("<br/>"));
+  mailStr.append(emails.join(" or "));
   return mailStr;
 }
 
