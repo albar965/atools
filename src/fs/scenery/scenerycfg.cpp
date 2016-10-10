@@ -48,7 +48,7 @@ void SceneryCfg::onEndDocument(const QString& filename)
   Q_UNUSED(filename);
 
   if(areaEntries.isEmpty())
-    throwException(tr("No valid Areas found"));
+    throwException(tr("No valid scenery areas found"));
 
   // Sort areas by layer
   std::sort(areaEntries.begin(), areaEntries.end(), [ = ](const SceneryArea &a1, const SceneryArea &a2)->bool
@@ -64,7 +64,10 @@ void SceneryCfg::onStartSection(const QString& section, const QString& sectionSu
     bool ok = false;
     currentArea.areaNumber = sectionSuffix.toInt(&ok);
     if(!ok)
-      throwException(tr("Area number not valid"));
+    {
+      qWarning() << "Area number" << sectionSuffix << "not valid in section" << section;
+      currentArea.areaNumber = -1;
+    }
   }
 }
 
@@ -73,11 +76,11 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
   Q_UNUSED(sectionSuffix);
   if(section == "area")
   {
-    if(!currentArea.title.isEmpty()
-       && (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
+    if(!currentArea.title.isEmpty() && currentArea.areaNumber != -1 &&
+       (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
       areaEntries.append(currentArea);
     else
-      qWarning() << "Found empty area: number" << currentArea.areaNumber;
+      qWarning() << "Found empty area: number" << currentArea.areaNumber << "in section" << section;
 
     currentArea = SceneryArea();
   }
@@ -131,14 +134,15 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
 
 bool SceneryCfg::toBool(const QString& str)
 {
-  QString tmp = str.toLower();
+  QString tmp = str.toLower().trimmed();
 
-  if(tmp == "true" || tmp == "t" || tmp == "y" || tmp == "yes")
+  if(tmp == "true" || tmp == "t" || tmp == "y" || tmp == "yes" || tmp == "1")
     return true;
-  else if(tmp == "false" || tmp == "f" || tmp == "n" || tmp == "no")
+  else if(tmp == "false" || tmp == "f" || tmp == "n" || tmp == "no" || tmp == "0")
     return false;
 
-  throwException(tr("Boolean value not valid"));
+  qWarning() << "Boolean value not valid in scenery area" << currentArea.title;
+  return false;
 }
 
 int SceneryCfg::toInt(const QString& str)
@@ -147,7 +151,7 @@ int SceneryCfg::toInt(const QString& str)
   bool ok = false;
   retval = str.toInt(&ok);
   if(!ok)
-    throwException(tr("Int value not valid"));
+    qWarning() << "Int value not valid in scenery area" << currentArea.title;
   return retval;
 }
 

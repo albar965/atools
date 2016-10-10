@@ -55,13 +55,15 @@ void IniReader::handleKeyValue()
   {
     name = currentLine.left(c).toLower();
     if(name.isEmpty())
-      throwException(tr("Missing key name before \"=\""));
-    value = currentLine.mid(c + 1);
+      qWarning() << "Missing key name before \"=\":" << currentLine;
+    else
+    {
+      value = currentLine.mid(c + 1);
+      onKeyValue(currentSection, currentSectionSuffix, name, value);
+    }
   }
   else
-    throwException(tr("Missing \"=\""));
-
-  onKeyValue(currentSection, currentSectionSuffix, name, value);
+    qWarning() << "Missing \"=\":" << currentLine;
 }
 
 void IniReader::handleSection()
@@ -71,18 +73,21 @@ void IniReader::handleSection()
   if(currentLine.at(currentLine.size() - 1) == ']')
     tempSection = currentLine.mid(1, currentLine.size() - 2);
   else
-    throwException(tr("Missing closing \"]\""));
+  {
+    tempSection = currentLine.mid(1, currentLine.size() - 1);
+    qWarning() << "Missing closing \"]\":" << currentLine;
+  }
 
   int dotPos = tempSection.indexOf('.');
   if(dotPos >= 0)
   {
     QString sectPrefix = tempSection.mid(0, dotPos).toLower();
     if(sectPrefix.isEmpty())
-      throwException(tr("Missing section name before \".\""));
+      qWarning() << "Missing section name before \".\":" << currentLine;
 
     tempSectionSuffix = tempSection.mid(dotPos + 1).toLower();
     if(tempSectionSuffix.isEmpty())
-      throwException(tr("Missing section suffix after \".\""));
+      qWarning() << "Missing section suffix after \".\":" << currentLine;
 
     tempSection = sectPrefix;
   }
