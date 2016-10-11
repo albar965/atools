@@ -43,15 +43,15 @@ public:
     return currentFilename;
   }
 
-  QString getCurrentFilenamePath() const
+  QString getCurrentFilepath() const
   {
-    return currentFilenamePath;
+    return currentFilepath;
   }
 
 protected:
   virtual void writeObject(const bgl::BglFile *type) override;
 
-  QString currentFilename, currentFilenamePath;
+  QString currentFilename, currentFilepath;
   int sceneryAreaId;
 };
 

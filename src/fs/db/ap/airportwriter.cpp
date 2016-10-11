@@ -82,7 +82,7 @@ void AirportWriter::writeObject(const Airport *type)
 
   // Check if this is an addon airport
   bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
-                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilenamePath());
+                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath());
 
   if(isAddon && type->getDeleteAirports().isEmpty())
     qInfo() << "Addon airport without delete record" << type->getIdent();

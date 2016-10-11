@@ -31,19 +31,19 @@ using atools::fs::bgl::BglFile;
 
 void BglFileWriter::writeObject(const BglFile *type)
 {
-  currentFilenamePath = type->getFilename();
-  currentFilename = QFileInfo(type->getFilename()).fileName();
+  currentFilepath = type->getFilepath();
+  currentFilename = QFileInfo(type->getFilepath()).fileName();
 
   if(getOptions().isVerbose())
-    qDebug() << "Writing BGL file " << type->getFilename();
+    qDebug() << "Writing BGL file " << type->getFilepath();
 
-  QFileInfo fi(type->getFilename());
+  QFileInfo fi(type->getFilepath());
 
   bind(":bgl_file_id", getNextId());
   bind(":scenery_area_id", getDataWriter().getSceneryAreaWriter()->getCurrentId());
   bind(":bgl_create_time", static_cast<int>(type->getHeader().getCreationTimestamp()));
   bind(":file_modification_time", static_cast<int>(fi.lastModified().toTime_t()));
-  bind(":filepath", QDir::toNativeSeparators(currentFilenamePath));
+  bind(":filepath", QDir::toNativeSeparators(currentFilepath));
   bind(":filename", QDir::toNativeSeparators(currentFilename));
   bind(":size", type->getFilesize());
 

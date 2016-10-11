@@ -79,7 +79,7 @@ public:
    */
   void readFile(QString file);
 
-  QString getFilename() const
+  QString getFilepath() const
   {
     return filename;
   }

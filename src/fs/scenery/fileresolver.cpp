@@ -48,6 +48,11 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     // Scenery local path is relative - add base path
     sceneryAreaDirStr = options.getBasepath() + QDir::separator() + areaLocalPathStr;
 
+  // Remove any .. in the path
+  sceneryAreaDirStr = QFileInfo(sceneryAreaDirStr).canonicalFilePath();
+
+  qInfo() << "Scenery canonical path" << sceneryAreaDirStr;
+
   QFileInfo sceneryArea(sceneryAreaDirStr);
   if(sceneryArea.exists())
   {
