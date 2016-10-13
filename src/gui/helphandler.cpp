@@ -76,15 +76,26 @@ void HelpHandler::help()
 
 void HelpHandler::openHelpUrl(const QUrl& url)
 {
+  openHelpUrl(parentWidget, url);
+}
+
+void HelpHandler::openHelpUrl(QWidget *parent, const QUrl& url)
+{
   if(!QDesktopServices::openUrl(url))
-    QMessageBox::warning(parentWidget, QApplication::applicationName(), QString(
+    QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
-QUrl HelpHandler::getHelpUrl(const QString& dir, const QString& file)
+QUrl HelpHandler::getHelpUrl(const QString& dir, const QString& file, const QString& anchor)
+{
+  return getHelpUrl(parentWidget, dir, file, anchor);
+}
+
+QUrl HelpHandler::getHelpUrl(QWidget *parent, const QString& dir, const QString& file, const QString& anchor)
 {
   QString overrideLang =
     atools::settings::Settings::instance().valueStr("MainWindow/HelpLanguage", QString());
+
   QString lang;
 
   if(overrideLang.isEmpty())
@@ -105,8 +116,10 @@ QUrl HelpHandler::getHelpUrl(const QString& dir, const QString& file)
   else if(QFileInfo::exists(defaultHelpFile))
     url = QUrl::fromLocalFile(defaultHelpFile);
   else
-    QMessageBox::warning(parentWidget, QApplication::applicationName(), QString(
+    QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Help file <i>%1</i> not found")).arg(QDir::toNativeSeparators(defaultHelpFile)));
+
+  url.setFragment(anchor);
 
   qDebug() << "Help file" << url;
   return url;

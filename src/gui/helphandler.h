@@ -40,7 +40,9 @@ public:
 
   /* Open the help HTML file in the default browser */
   void help();
-  QUrl getHelpUrl(const QString& dir, const QString& file);
+  QUrl getHelpUrl(const QString& dir, const QString& file, const QString& anchor = QString());
+  static QUrl getHelpUrl(QWidget *parent, const QString& dir, const QString& file,
+                         const QString& anchor = QString());
 
   /* Display about this application dialog */
   void about();
@@ -50,6 +52,7 @@ public:
 
   /* Open an URL in the default browser. If that fails show an error dialog */
   void openHelpUrl(const QUrl& url);
+  static void openHelpUrl(QWidget *parent, const QUrl& url);
 
 private:
   QWidget *parentWidget;
