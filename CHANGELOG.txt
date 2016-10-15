@@ -1,3 +1,11 @@
+Version 2.0.5 - Stable Release
+
+* Fixed scenery loading error for airports without city names.
+* Improvement to error handling dialogs to allow instant access to contact and log file.
+* Scenery.cfg reading is now more error tolerant, only prints warnings and ignores invalid entries.
+* Fixed exclude and include directives for scenery not working for relative paths containing "..".
+* Added static methods and support for fragments to help handler to allow direct linking to anchors.
+
 Version 2.0.4.beta
 
 * Fixed multiple BGL reading errors:
