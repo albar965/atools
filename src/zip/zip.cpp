@@ -41,12 +41,7 @@
 #include <QtEndian>
 #include <QDir>
 
-
-#if defined(Q_OS_WIN32)
-#include <QtZlib/zlib.h>
-#else
 #include "zlib.h"
-#endif
 
 // Zip standard version for archives handled by this API
 // (actually, the only basic support of this version is implemented but it is enough for now)
