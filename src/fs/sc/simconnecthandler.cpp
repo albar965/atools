@@ -17,10 +17,7 @@
 
 #include "simconnecthandler.h"
 #include "fs/sc/simconnectdata.h"
-
-#if !defined(Q_OS_WIN32)
 #include "geo/calculations.h"
-#endif
 
 #include <QDate>
 #include <QTime>
@@ -51,7 +48,7 @@ SimConnectHandler::SimConnectHandler(bool verboseLogging)
 
 SimConnectHandler::~SimConnectHandler()
 {
-#if defined(Q_OS_WIN32) || defined(SIMCONNECT_DUMMY)
+#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
   if(hSimConnect != NULL)
   {
     HRESULT hr = SimConnect_Close(hSimConnect);
@@ -63,7 +60,7 @@ SimConnectHandler::~SimConnectHandler()
 
 bool SimConnectHandler::connect()
 {
-#if defined(Q_OS_WIN32) || defined(SIMCONNECT_DUMMY)
+#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
   HRESULT hr;
 
   if(verbose)
@@ -183,7 +180,7 @@ bool SimConnectHandler::connect()
 
 bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
 {
-#if defined(Q_OS_WIN32) || defined(SIMCONNECT_DUMMY)
+#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
   if(verbose)
     qDebug() << "fetchData entered ================================================================";
 
@@ -304,6 +301,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
   }
   return true;
+
 #else
   Q_UNUSED(radiusKm);
 
@@ -433,7 +431,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 #endif
 }
 
-#if defined(Q_OS_WIN32) || defined(SIMCONNECT_DUMMY)
+#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
 
 void SimConnectHandler::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {

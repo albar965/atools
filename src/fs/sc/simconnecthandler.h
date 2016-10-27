@@ -22,19 +22,24 @@
 #include <QVector>
 
 #if defined(SIMCONNECT_DUMMY)
+
+// Manually defined
 #include "fs/sc/simconnectdummy.h"
+
 #else
 
 #if defined(Q_CC_MSVC)
+
+// Use real SimConnect if using MSCV compilation
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
 #include <strsafe.h>
 #include "SimConnect.h"
-#else
-#define SIMCONNECT_DUMMY
-#include "fs/sc/simconnectdummy.h"
+
 #endif
+
+// Otherwise use simulation
 
 #endif
 
@@ -174,7 +179,7 @@ private:
     DATA_DEFINITION_AI
   };
 
-#if defined(Q_OS_WIN32) || defined(SIMCONNECT_DUMMY)
+#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
   /* Callback receiving the data. */
   void dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData);
 

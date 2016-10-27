@@ -77,7 +77,7 @@ typedef DWORD SIMCONNECT_OBJECT_ID;
 static const DWORD SIMCONNECT_UNUSED = DWORD_MAX; // special value to indicate unused event, ID
 static const DWORD SIMCONNECT_OBJECT_ID_USER = 0; // proxy value for User vehicle ObjectID
 
-static const float SIMCONNECT_CAMERA_IGNORE_FIELD = FLT_MAX; // Used to tell the Camera API to NOT modify the value in this part of the argument.
+static const float SIMCONNECT_CAMERA_IGNORE_FIELD = 0; // FLT_MAX Used to tell the Camera API to NOT modify the value in this part of the argument.
 
 static const DWORD SIMCONNECT_CLIENTDATA_MAX_SIZE = 8192; // maximum value for SimConnect_CreateClientData dwSize parameter
 

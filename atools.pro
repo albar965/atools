@@ -13,7 +13,10 @@ CONFIG += c++11
 
 INCLUDEPATH += $$PWD/src
 
-unix:DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
+unix {
+  DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
+}
+
 win32 {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system('C:\\Git\\bin\\git' rev-parse --short HEAD)\\"'
   DEFINES += _USE_MATH_DEFINES
