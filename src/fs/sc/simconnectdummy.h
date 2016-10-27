@@ -22,6 +22,8 @@
 
 #include <QtGlobal>
 
+#if !defined(Q_OS_WIN32)
+
 #define MAX_PATH 256
 #define FALSE 0
 #define TRUE 1
@@ -52,15 +54,21 @@ typedef LPCSTR LPCTSTR;
 #endif
 
 #define CALLBACK
-// #define CALLBACK __stdcall
-#define SIMCONNECTAPI HRESULT
 
-#define DWORD_MAX 0xFFFFFFFF
 
-#include <float.h>
 
 HRESULT StringCbLengthA(LPCTSTR psz, size_t cbMax, size_t *pcb);
 
+#else
+#include <float.h>
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#include <strsafe.h>
+#endif
+
+#define DWORD_MAX 0xFFFFFFFF
+#define SIMCONNECTAPI HRESULT
 typedef DWORD SIMCONNECT_OBJECT_ID;
 
 // ----------------------------------------------------------------------------

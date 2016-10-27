@@ -19,12 +19,7 @@
 
 #if defined(SIMCONNECT_DUMMY)
 
-static SIMCONNECT_RECV recv;
-static SIMCONNECT_RECV_OPEN recvOpen;
-static SIMCONNECT_RECV_EVENT recvEvent;
-static SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE recvData;
-// static atools::fs::sc::SimData simData;
-// static atools::fs::sc::SimDataAircraft simDataAircraft;
+#include <QDebug>
 
 HRESULT StringCbLengthA(LPCTSTR psz, size_t cbMax, size_t *pcb)
 {
@@ -328,6 +323,7 @@ SIMCONNECTAPI SimConnect_CompleteCustomMissionAction(HANDLE hSimConnect, const G
 
 SIMCONNECTAPI SimConnect_Close(HANDLE hSimConnect)
 {
+  qDebug() << "Dummy: SimConnect_Close";
   return S_OK;
 }
 
@@ -347,6 +343,7 @@ SIMCONNECTAPI SimConnect_Open(HANDLE *phSimConnect, LPCSTR szName, HWND hWnd, DW
                               HANDLE hEventHandle,
                               DWORD ConfigIndex)
 {
+  qDebug() << "Dummy: SimConnect_Open";
   return 1;
 }
 

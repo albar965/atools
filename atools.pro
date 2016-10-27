@@ -14,8 +14,18 @@ CONFIG += c++11
 INCLUDEPATH += $$PWD/src
 
 unix:DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
-win32:DEFINES += GIT_REVISION_ATOOLS='\\"$$system('C:\\Git\\bin\\git' rev-parse --short HEAD)\\"'
-win32:DEFINES += _USE_MATH_DEFINES
+win32 {
+  DEFINES += GIT_REVISION_ATOOLS='\\"$$system('C:\\Git\\bin\\git' rev-parse --short HEAD)\\"'
+  DEFINES += _USE_MATH_DEFINES
+  DEFINES += NOMINMAX
+
+# Enable this to compile without SimConnect
+#DEFINES += SIMCONNECT_DUMMY
+
+  SIMCONNECT="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK"
+  INCLUDEPATH += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\inc"
+  LIBS += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\lib\SimConnect.lib"
+}
 
 TARGET = atools
 TEMPLATE = lib

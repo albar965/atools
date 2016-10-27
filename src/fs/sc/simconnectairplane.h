@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_SIMCONNECTAIRPLANE_H
-#define ATOOLS_FS_SIMCONNECTAIRPLANE_H
+#ifndef ATOOLS_FS_SC_SIMCONNECTAIRPLANE_H
+#define ATOOLS_FS_SC_SIMCONNECTAIRPLANE_H
 
 #include "geo/pos.h"
 #include "fs/sc/simconnectdatabase.h"

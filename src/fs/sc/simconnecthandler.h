@@ -21,16 +21,21 @@
 #include <QtGlobal>
 #include <QVector>
 
-#if defined(Q_OS_WIN32)
+#if defined(SIMCONNECT_DUMMY)
+#include "fs/sc/simconnectdummy.h"
+#else
+
+#if defined(Q_CC_MSVC)
 #include <windows.h>
 #include <tchar.h>
 #include <stdio.h>
 #include <strsafe.h>
 #include "SimConnect.h"
+#else
+#define SIMCONNECT_DUMMY
+#include "fs/sc/simconnectdummy.h"
 #endif
 
-#if defined(SIMCONNECT_DUMMY)
-#include "fs/sc/simconnectdummy.h"
 #endif
 
 namespace atools {

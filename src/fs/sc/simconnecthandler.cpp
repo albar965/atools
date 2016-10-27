@@ -303,6 +303,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
                << "dataFetched" << dataFetched;
     return false;
   }
+  return true;
 #else
   Q_UNUSED(radiusKm);
 
