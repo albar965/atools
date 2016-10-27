@@ -23,6 +23,8 @@ Windows
 Do not use the default shadow build directory names, this will break project dependencies.
 
 The atools can be built using the mingw environment or MSVC >= 2013.
+If SimConnect is not installed add DEFINES+=SIMCONNECT_DUMMY to the qmake run
+SimConnect will and can only be used when compiling with MSVC.
 
 Linux / macOS
 ------------------------------------------------------

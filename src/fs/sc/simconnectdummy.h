@@ -22,7 +22,7 @@
 
 #include <QtGlobal>
 
-#if !defined(Q_OS_WIN32)
+#if !defined(Q_CC_MSVC)
 
 #define MAX_PATH 256
 #define FALSE 0
