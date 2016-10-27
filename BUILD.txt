@@ -22,6 +22,8 @@ Windows
 
 Do not use the default shadow build directory names, this will break project dependencies.
 
+The atools can be built using the mingw environment or MSVC >= 2013.
+
 Linux / macOS
 ------------------------------------------------------
 Install Qt development packages. Version at least 5.5.

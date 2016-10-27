@@ -164,7 +164,12 @@ HEADERS += src/atools.h \
     src/fs/db/nav/boundarylinewriter.h \
     src/fs/db/nav/boundarywriter.h \
     src/fs/db/nav/airwaysegmentwriter.h \
-    src/fs/navdatabaseerrors.h
+    src/fs/navdatabaseerrors.h \
+    src/fs/sc/simconnecthandler.h \
+    src/fs/sc/simconnectairplane.h \
+    src/fs/sc/simconnectdatabase.h \
+    src/fs/sc/simconnectuserairplane.h \
+    src/fs/sc/simconnectdummy.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -306,7 +311,12 @@ SOURCES += src/atools.cpp \
     src/fs/db/nav/boundarylinewriter.cpp \
     src/fs/db/nav/boundarywriter.cpp \
     src/fs/db/nav/airwaysegmentwriter.cpp \
-    src/fs/navdatabaseerrors.cpp
+    src/fs/navdatabaseerrors.cpp \
+    src/fs/sc/simconnecthandler.cpp \
+    src/fs/sc/simconnectairplane.cpp \
+    src/fs/sc/simconnectdatabase.cpp \
+    src/fs/sc/simconnectuserairplane.cpp \
+    src/fs/sc/simconnectdummy.cpp
 
 
 unix {

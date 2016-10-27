@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "fs/sc/simconnectreply.h"
+#include "fs/sc/simconnectdatabase.h"
 
 #include <QDebug>
 #include <QDataStream>
@@ -99,15 +100,7 @@ int SimConnectReply::write(QIODevice *ioDevice)
   int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_REPLY));
   out << static_cast<quint16>(size);
 
-  qint64 written = ioDevice->write(block);
-
-  if(written < block.size())
-  {
-    qWarning() << "SimConnectReply::write: wrote only" << written << "of" << block.size();
-    status = INSUFFICIENT_WRITE;
-  }
-
-  return static_cast<int>(written);
+  return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }
 
 } // namespace sc

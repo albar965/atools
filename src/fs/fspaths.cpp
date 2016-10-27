@@ -83,7 +83,7 @@ void FsPaths::logAllPaths()
   {
     qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_NAMES[type];
     QString basePath = getBasePath(type);
-    QString filesPath = getBasePath(type);
+    QString filesPath = getFilesPath(type);
     QString sceneryFilepath = getSceneryLibraryPath(type);
 
     qInfo() << "  Base" << basePath << "exists" << QFileInfo::exists(basePath);

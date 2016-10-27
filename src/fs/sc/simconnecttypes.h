@@ -30,13 +30,15 @@ enum SimConnectStatus
   OK, /* No error */
   INVALID_MAGIC_NUMBER, /* Packet data does not start with expected magic number */
   VERSION_MISMATCH, /* Client and server data version does not match for either data or reply */
-  INSUFFICIENT_WRITE /* No enough data written */
+  WRITE_ERROR /* Error from IO device */
 };
 
 const QVector<QString> SIMCONNECT_STATUS_TEXT =
 {
-  QObject::tr("No Error"), QObject::tr("Invalid magic number"),
-  QObject::tr("Version mismatch"), QObject::tr("Insufficient write")
+  QObject::tr("No Error"),
+  QObject::tr("Invalid magic number"),
+  QObject::tr("Version mismatch"),
+  QObject::tr("Write error")
 };
 
 } // namespace sc

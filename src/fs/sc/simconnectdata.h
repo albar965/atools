@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 #include "fs/sc/simconnecttypes.h"
+#include "fs/sc/simconnectuserairplane.h"
 
 #include <QString>
 #include <QDateTime>
@@ -30,29 +31,19 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-// quint16
-enum Flag
-{
-  NONE = 0x00,
-  ON_GROUND = 0x01,
-  IN_CLOUD = 0x02,
-  IN_RAIN = 0x04,
-  IN_SNOW = 0x08
-};
-
-Q_DECLARE_FLAGS(Flags, Flag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
+class SimConnectHandler;
 
 /*
  * Class that transfers flight simulator data read using the simconnect interface across the network to
  * a client like Little Navmap. A version of the protocol is maintained to check for application compatibility.
  */
-class SimConnectData
+class SimConnectData :
+  public SimConnectDataBase
 {
 public:
   SimConnectData();
   SimConnectData(const SimConnectData& other);
-  ~SimConnectData();
+  virtual ~SimConnectData();
 
   /*
    * Read from IO device.
@@ -65,22 +56,6 @@ public:
    * @return number of bytes written
    */
   int write(QIODevice *ioDevice);
-
-  /*
-   * @return Error status for last reading or writing call
-   */
-  atools::fs::sc::SimConnectStatus getStatus() const
-  {
-    return status;
-  }
-
-  /*
-   * @return Error status text for last reading or writing call
-   */
-  const QString& getStatusText() const
-  {
-    return SIMCONNECT_STATUS_TEXT.at(status);
-  }
 
   // metadata ----------------------------------------------------
   /* Serial number for data packet. */
@@ -115,423 +90,27 @@ public:
 
   // fs data ----------------------------------------------------
 
-  const QString& getAirplaneTitle() const
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
   {
-    return airplaneTitle;
+    return userAircraft;
   }
 
-  void setAirplaneTitle(const QString& value)
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const
   {
-    airplaneTitle = value;
-  }
-
-  const QString& getAirplaneModel() const
-  {
-    return airplaneModel;
-  }
-
-  void setAirplaneModel(const QString& value)
-  {
-    airplaneModel = value;
-  }
-
-  const QString& getAirplaneRegistration() const
-  {
-    return airplaneReg;
-  }
-
-  void setAirplaneRegistration(const QString& value)
-  {
-    airplaneReg = value;
-  }
-
-  atools::geo::Pos& getPosition()
-  {
-    return position;
-  }
-
-  const atools::geo::Pos& getPosition() const
-  {
-    return position;
-  }
-
-  void setPosition(const atools::geo::Pos& value)
-  {
-    position = value;
-  }
-
-  float getHeadingDegTrue() const
-  {
-    return headingTrue;
-  }
-
-  void setHeadingDegTrue(float value)
-  {
-    headingTrue = value;
-  }
-
-  float getHeadingDegMag() const
-  {
-    return headingMag;
-  }
-
-  void setHeadingDegMag(float value)
-  {
-    headingMag = value;
-  }
-
-  float getGroundSpeedKts() const
-  {
-    return groundSpeed;
-  }
-
-  void setGroundSpeedKts(float value)
-  {
-    groundSpeed = value;
-  }
-
-  float getIndicatedSpeedKts() const
-  {
-    return indicatedSpeed;
-  }
-
-  void setIndicatedSpeedKts(float value)
-  {
-    indicatedSpeed = value;
-  }
-
-  float getWindSpeedKts() const
-  {
-    return windSpeed;
-  }
-
-  void setWindSpeedKts(float value)
-  {
-    windSpeed = value;
-  }
-
-  float getWindDirectionDegT() const
-  {
-    return windDirection;
-  }
-
-  void setWindDirectionDegT(float value)
-  {
-    windDirection = value;
-  }
-
-  float getVerticalSpeedFeetPerMin() const
-  {
-    return verticalSpeed;
-  }
-
-  void setVerticalSpeedFeetPerMin(float value)
-  {
-    verticalSpeed = value;
-  }
-
-  const QString& getAirplaneType() const
-  {
-    return airplaneType;
-  }
-
-  void setAirplaneType(const QString& value)
-  {
-    airplaneType = value;
-  }
-
-  const QString& getAirplaneAirline() const
-  {
-    return airplaneAirline;
-  }
-
-  void setAirplaneAirline(const QString& value)
-  {
-    airplaneAirline = value;
-  }
-
-  const QString& getAirplaneFlightnumber() const
-  {
-    return airplaneFlightnumber;
-  }
-
-  void setAirplaneFlightnumber(const QString& value)
-  {
-    airplaneFlightnumber = value;
-  }
-
-  float getIndicatedAltitudeFt() const
-  {
-    return indicatedAltitude;
-  }
-
-  void setIndicatedAltitudeFt(float value)
-  {
-    indicatedAltitude = value;
-  }
-
-  float getAltitudeAboveGroundFt() const
-  {
-    return altitudeAboveGround;
-  }
-
-  void setAltitudeAboveGroundFt(float value)
-  {
-    altitudeAboveGround = value;
-  }
-
-  float getGroundAltitudeFt() const
-  {
-    return groundAltitude;
-  }
-
-  void setGroundAltitudeFt(float value)
-  {
-    groundAltitude = value;
-  }
-
-  float getTrueSpeedKts() const
-  {
-    return trueSpeed;
-  }
-
-  void setTrueSpeedKts(float value)
-  {
-    trueSpeed = value;
-  }
-
-  float getMachSpeed() const
-  {
-    return machSpeed;
-  }
-
-  void setMachSpeed(float value)
-  {
-    machSpeed = value;
-  }
-
-  Flags getFlags() const
-  {
-    return flags;
-  }
-
-  Flags& getFlags()
-  {
-    return flags;
-  }
-
-  void setFlags(Flags value)
-  {
-    flags = value;
-  }
-
-  float getTrackDegMag() const
-  {
-    return trackMag;
-  }
-
-  void setTrackDegMag(float value)
-  {
-    trackMag = value;
-  }
-
-  float getTrackDegTrue() const
-  {
-    return trackTrue;
-  }
-
-  void setTrackDegTrue(float value)
-  {
-    trackTrue = value;
-  }
-
-  float getAmbientTemperatureCelsius() const
-  {
-    return ambientTemperature;
-  }
-
-  void setAmbientTemperatureCelsius(float value)
-  {
-    ambientTemperature = value;
-  }
-
-  float getTotalAirTemperatureCelsius() const
-  {
-    return totalAirTemperature;
-  }
-
-  void setTotalAirTemperatureCelsius(float value)
-  {
-    totalAirTemperature = value;
-  }
-
-  float getSeaLevelPressureMbar() const
-  {
-    return seaLevelPressure;
-  }
-
-  void setSeaLevelPressureMbar(float value)
-  {
-    seaLevelPressure = value;
-  }
-
-  float getPitotIcePercent() const
-  {
-    return pitotIce;
-  }
-
-  void setPitotIcePercent(float value)
-  {
-    pitotIce = value;
-  }
-
-  float getStructuralIcePercent() const
-  {
-    return structuralIce;
-  }
-
-  void setStructuralIcePercent(float value)
-  {
-    structuralIce = value;
-  }
-
-  float getAirplaneTotalWeightLbs() const
-  {
-    return airplaneTotalWeight;
-  }
-
-  void setAirplaneTotalWeightLbs(float value)
-  {
-    airplaneTotalWeight = value;
-  }
-
-  float getAirplaneMaxGrossWeightLbs() const
-  {
-    return airplaneMaxGrossWeight;
-  }
-
-  void setAirplaneMaxGrossWeightLbs(float value)
-  {
-    airplaneMaxGrossWeight = value;
-  }
-
-  float getAirplaneEmptyWeightLbs() const
-  {
-    return airplaneEmptyWeight;
-  }
-
-  void setAirplaneEmptyWeightLbs(float value)
-  {
-    airplaneEmptyWeight = value;
-  }
-
-  float getFuelTotalQuantityGallons() const
-  {
-    return fuelTotalQuantity;
-  }
-
-  void setFuelTotalQuantityGallons(float value)
-  {
-    fuelTotalQuantity = value;
-  }
-
-  float getFuelTotalWeightLbs() const
-  {
-    return fuelTotalWeight;
-  }
-
-  void setFuelTotalWeightLbs(float value)
-  {
-    fuelTotalWeight = value;
-  }
-
-  float getFuelFlowPPH() const
-  {
-    return fuelFlowPPH;
-  }
-
-  void setFuelFlowPPH(float value)
-  {
-    fuelFlowPPH = value;
-  }
-
-  float getFuelFlowGPH() const
-  {
-    return fuelFlowGPH;
-  }
-
-  void setFuelFlowGPH(float value)
-  {
-    fuelFlowGPH = value;
-  }
-
-  float getMagVarDeg() const
-  {
-    return magVar;
-  }
-
-  void setMagVarDeg(float value)
-  {
-    magVar = value;
-  }
-
-  float getAmbientVisibilityMeter() const
-  {
-    return ambientVisibility;
-  }
-
-  void setAmbientVisibilityMeter(float value)
-  {
-    ambientVisibility = value;
-  }
-
-  const QDateTime& getLocalTime() const
-  {
-    return localDateTime;
-  }
-
-  void setLocalTime(const QDateTime& value)
-  {
-    localDateTime = value;
-  }
-
-  const QDateTime& getZuluTime() const
-  {
-    return zuluDateTime;
-  }
-
-  void setZuluTime(const QDateTime& value)
-  {
-    zuluDateTime = value;
+    return aiAircraft;
   }
 
 private:
+  friend class atools::fs::sc::SimConnectHandler;
+
   const static quint16 MAGIC_NUMBER_DATA = 0x5A5A;
-  const static quint16 DATA_VERSION = 6;
+  const static quint16 DATA_VERSION = 7;
 
-  void writeString(QDataStream& out, const QString& str) const;
-  bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
-
-  QString airplaneTitle, airplaneModel, airplaneReg, airplaneType,
-          airplaneAirline, airplaneFlightnumber;
-
-  atools::geo::Pos position;
-  float headingTrue = 0.f, headingMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
-        altitudeAboveGround = 0.f, groundAltitude = 0.f, indicatedSpeed = 0.f, trueSpeed = 0.f,
-        machSpeed = 0.f, windSpeed = 0.f, windDirection = 0.f, verticalSpeed = 0.f;
-
-  // New since version 3
-  float trackMag = 0.f, trackTrue = 0.f, ambientTemperature = 0.f, totalAirTemperature = 0.f,
-        seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
-        airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
-        fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f, ambientVisibility = 0.f;
-  QDateTime localDateTime, zuluDateTime;
-
-  Flags flags = atools::fs::sc::NONE;
   quint32 packetId = 0, packetTs = 0;
-  atools::fs::sc::SimConnectStatus status = OK;
-  quint16 magicNumber = 0, packetSize = 0, version = 1, padding;
-  quint32 padding2;
+  quint16 magicNumber = 0, packetSize = 0, version = 1;
+
+  atools::fs::sc::SimConnectUserAircraft userAircraft;
+  QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
 };
 
 } // namespace sc
@@ -540,6 +119,6 @@ private:
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectData);
 
-Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectData, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectData, Q_MOVABLE_TYPE);
 
 #endif // ATOOLS_FS_SIMCONNECTDATA_H

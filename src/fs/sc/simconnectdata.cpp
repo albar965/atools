@@ -81,29 +81,15 @@ bool SimConnectData::read(QIODevice *ioDevice)
   }
   in >> packetId >> packetTs;
 
-  quint16 intFlags;
-  in >> intFlags;
-  flags = Flags(intFlags);
-
-  readString(in, airplaneTitle);
-  readString(in, airplaneModel);
-  readString(in, airplaneReg);
-  readString(in, airplaneType);
-  readString(in, airplaneAirline);
-  readString(in, airplaneFlightnumber);
-
-  float lonx, laty, altitude;
-  in >> lonx >> laty >> altitude >> headingTrue >> headingMag
-  >> groundSpeed >> indicatedSpeed >> windSpeed >> windDirection >> verticalSpeed
-  >> indicatedAltitude >> altitudeAboveGround >> groundAltitude >> trueSpeed >> machSpeed
-  >> trackMag >> trackTrue >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
-  >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
-  >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVar >> ambientVisibility
-  >> localDateTime >> zuluDateTime;
-
-  position.setAltitude(altitude);
-  position.setLonX(lonx);
-  position.setLatY(laty);
+  userAircraft.read(in);
+  quint16 numAi = 0;
+  in >> numAi;
+  for(int i = 0; i < numAi; i++)
+  {
+    SimConnectAircraft ap;
+    ap.read(in);
+    aiAircraft.append(ap);
+  }
 
   return true;
 }
@@ -117,66 +103,18 @@ int SimConnectData::write(QIODevice *ioDevice)
   out.setVersion(QDataStream::Qt_5_5);
 
   out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
-  out << static_cast<quint16>(flags);
 
-  writeString(out, airplaneTitle);
-  writeString(out, airplaneModel);
-  writeString(out, airplaneReg);
-  writeString(out, airplaneType);
-  writeString(out, airplaneAirline);
-  writeString(out, airplaneFlightnumber);
-
-  out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrue << headingMag
-      << groundSpeed << indicatedSpeed << windSpeed << windDirection << verticalSpeed
-      << indicatedAltitude << altitudeAboveGround << groundAltitude << trueSpeed << machSpeed
-      << trackMag << trackTrue << ambientTemperature << totalAirTemperature << seaLevelPressure
-      << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
-      << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVar << ambientVisibility
-      << localDateTime << zuluDateTime;
+  userAircraft.write(out);
+  out << static_cast<quint16>(aiAircraft.size());
+  for(const SimConnectAircraft& ap : aiAircraft)
+    ap.write(out);
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));
   int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_DATA));
   out << static_cast<quint16>(size);
 
-  qint64 written = ioDevice->write(block);
-
-  if(written < block.size())
-  {
-    qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
-    status = INSUFFICIENT_WRITE;
-  }
-
-  return static_cast<int>(written);
-}
-
-void SimConnectData::writeString(QDataStream& out, const QString& str) const
-{
-  // Write string as an size prefixed character array
-  QByteArray strBytes;
-  strBytes.append(str);
-  out << static_cast<quint16>(strBytes.size());
-  out << str;
-}
-
-bool SimConnectData::readString(QDataStream& in, QString& str, quint16 *size)
-{
-  quint16 localSize = 0;
-  quint16 *sizePtr = size != nullptr ? size : &localSize;
-
-  if(*sizePtr == 0)
-  {
-    if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint16)))
-      return false;
-
-    in >> *sizePtr;
-  }
-
-  if(in.device()->bytesAvailable() < *sizePtr)
-    return false;
-
-  in >> str;
-  return true;
+  return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }
 
 } // namespace sc
