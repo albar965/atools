@@ -41,7 +41,7 @@ SimConnectAircraft::~SimConnectAircraft()
 
 void SimConnectAircraft::read(QDataStream& in)
 {
-  quint16 intFlags;
+  quint32 intFlags;
   in >> intFlags;
   flags = Flags(intFlags);
 
@@ -53,19 +53,24 @@ void SimConnectAircraft::read(QDataStream& in)
   readString(in, airplaneFlightnumber);
 
   float lonx, laty, altitude;
+  quint8 categoryByte, engineTypeByte;
+
   in >> lonx >> laty >> altitude >> headingTrue >> headingMag
   >> groundSpeed >> indicatedSpeed >> verticalSpeed
   >> indicatedAltitude >> trueSpeed >> machSpeed
-  >> trackMag >> trackTrue >> magVar;
+  >> trackMag >> trackTrue >> magVar >> numberOfEngines >> categoryByte >> engineTypeByte;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
   position.setLatY(laty);
+
+  category = static_cast<Category>(categoryByte);
+  engineType = static_cast<EngineType>(engineTypeByte);
 }
 
 void SimConnectAircraft::write(QDataStream& out) const
 {
-  out << static_cast<quint16>(flags);
+  out << static_cast<quint32>(flags);
 
   writeString(out, airplaneTitle);
   writeString(out, airplaneModel);
@@ -77,7 +82,9 @@ void SimConnectAircraft::write(QDataStream& out) const
   out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrue << headingMag
       << groundSpeed << indicatedSpeed << verticalSpeed
       << indicatedAltitude << trueSpeed << machSpeed
-      << trackMag << trackTrue << magVar;
+      << trackMag << trackTrue << magVar << numberOfEngines
+      << static_cast<quint8>(category) << static_cast<quint8>(engineType);
+
 }
 
 } // namespace sc

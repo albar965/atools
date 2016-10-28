@@ -98,7 +98,7 @@ int SimConnectReply::write(QIODevice *ioDevice)
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_REPLY));
   int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_REPLY));
-  out << static_cast<quint16>(size);
+  out << static_cast<quint32>(size);
 
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }

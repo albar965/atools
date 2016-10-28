@@ -82,9 +82,9 @@ bool SimConnectData::read(QIODevice *ioDevice)
   in >> packetId >> packetTs;
 
   userAircraft.read(in);
-  quint16 numAi = 0;
+  quint32 numAi = 0;
   in >> numAi;
-  for(int i = 0; i < numAi; i++)
+  for(quint32 i = 0; i < numAi; i++)
   {
     SimConnectAircraft ap;
     ap.read(in);
@@ -105,14 +105,16 @@ int SimConnectData::write(QIODevice *ioDevice)
   out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
 
   userAircraft.write(out);
-  out << static_cast<quint16>(aiAircraft.size());
-  for(const SimConnectAircraft& ap : aiAircraft)
-    ap.write(out);
+  int numAi = std::min(65535, aiAircraft.size());
+  out << static_cast<quint32>(numAi);
+
+  for(int i = 0; i < numAi; i++)
+    aiAircraft.at(i).write(out);
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));
   int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_DATA));
-  out << static_cast<quint16>(size);
+  out << static_cast<quint32>(size);
 
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }

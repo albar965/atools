@@ -98,12 +98,12 @@ public:
   }
 
 private:
-  const static quint16 MAGIC_NUMBER_REPLY = 0x55AA;
-  const static quint16 REPLY_VERSION = 2;
+  const static quint32 MAGIC_NUMBER_REPLY = 0x33ED8272;
+  const static quint32 REPLY_VERSION = 2;
 
   quint32 packetId = 0, packetTs = 0;
   atools::fs::sc::SimConnectStatus status = OK;
-  quint16 magicNumber = 0, packetSize = 0, version = 1, padding;
+  quint32 magicNumber = 0, packetSize = 0, version = 1, padding;
 
 };
 

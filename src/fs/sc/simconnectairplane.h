@@ -31,6 +31,7 @@ namespace fs {
 namespace sc {
 
 class SimConnectHandler;
+class SimConnectHandlerPrivate;
 
 // quint16
 enum Flag
@@ -57,6 +58,18 @@ enum CategoryEnum
 };
 
 Q_DECLARE_FLAGS(Category, CategoryEnum);
+
+enum EngineTypeEnum
+{
+  PISTON = 0,
+  JET = 1,
+  NO_ENGINE = 2,
+  HELO_TURBINE = 3,
+  UNSUPPORTED = 4,
+  TURBOPROP = 5
+};
+
+Q_DECLARE_FLAGS(EngineType, EngineTypeEnum);
 
 /*
  * Base aircraft that is used to transfer across network links. For user and AI aircraft.
@@ -179,8 +192,24 @@ public:
     return magVar;
   }
 
+  Category getCategory() const
+  {
+    return category;
+  }
+
+  EngineType getEngineType() const
+  {
+    return engineType;
+  }
+
+  int getNumberOfEngines() const
+  {
+    return numberOfEngines;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
+  friend class atools::fs::sc::SimConnectHandlerPrivate;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
           airplaneAirline, airplaneFlightnumber;
@@ -192,8 +221,11 @@ private:
 
   float trackMag = 0.f, trackTrue = 0.f, magVar = 0.f;
 
-  Category category;
   Flags flags = atools::fs::sc::NONE;
+
+  Category category;
+  EngineType engineType;
+  quint8 numberOfEngines;
 };
 
 } // namespace sc

@@ -15,6 +15,8 @@ INCLUDEPATH += $$PWD/src
 
 unix {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
+  # Enable this to compile without simulation and use a dummy implementation
+  #DEFINES+=SIMCONNECT_DUMMY
 }
 
 win32 {
@@ -27,6 +29,7 @@ win32 {
 
   # Disable this to compile without simconnect
   DEFINES+=SIMCONNECT_REAL
+  # Otherwise a test simulation will run
 
   SIMCONNECT="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK"
   INCLUDEPATH += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\inc"
