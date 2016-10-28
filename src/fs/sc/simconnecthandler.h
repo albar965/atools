@@ -28,14 +28,15 @@
 
 #else
 
-#if defined(Q_CC_MSVC)
+#if defined(SIMCONNECT_REAL)
 
 // Use real SimConnect if using MSCV compilation
+
+extern "C" {
 #include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
 #include <strsafe.h>
 #include "SimConnect.h"
+}
 
 #endif
 
@@ -179,7 +180,7 @@ private:
     DATA_DEFINITION_AI
   };
 
-#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
+#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   /* Callback receiving the data. */
   void dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData);
 

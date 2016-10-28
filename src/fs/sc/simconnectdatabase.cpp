@@ -66,21 +66,30 @@ bool SimConnectDataBase::readString(QDataStream& in, QString& str, quint16 *size
 
 int SimConnectDataBase::writeBlock(QIODevice *ioDevice, const QByteArray& block, SimConnectStatus& status)
 {
-  qint64 written = 0;
+  qint64 written = ioDevice->write(block);
 
-  while(written < block.size())
+  if(written < block.size())
   {
-    qint64 wrote = ioDevice->write(block);
-
-    if(wrote == -1)
-    {
-      qWarning() << "SimConnectAirplane::write: error" << ioDevice->errorString();
-      status = WRITE_ERROR;
-      return static_cast<int>(written);
-    }
-
-    written += wrote;
+    qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
+    status = INSUFFICIENT_WRITE;
   }
+
+  // qint64 written = 0;
+  // const char *data = block.data();
+
+  // while(written < block.size())
+  // {
+  // qint64 wrote = ioDevice->write(data + written, block.size() - written);
+
+  // if(wrote == -1)
+  // {
+  // qWarning() << "SimConnectAirplane::write: error" << ioDevice->errorString();
+  // status = WRITE_ERROR;
+  // return static_cast<int>(written);
+  // }
+
+  // written += wrote;
+  // }
   return static_cast<int>(written);
 }
 

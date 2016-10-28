@@ -22,8 +22,11 @@ win32 {
   DEFINES += _USE_MATH_DEFINES
   DEFINES += NOMINMAX
 
-# Enable this to compile without SimConnect
-#DEFINES += SIMCONNECT_DUMMY
+  # Enable this to compile without SimConnect and use a dummy implementation
+  #DEFINES+=SIMCONNECT_DUMMY
+
+  # Disable this to compile without simconnect
+  DEFINES+=SIMCONNECT_REAL
 
   SIMCONNECT="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK"
   INCLUDEPATH += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\inc"

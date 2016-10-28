@@ -48,7 +48,7 @@ SimConnectHandler::SimConnectHandler(bool verboseLogging)
 
 SimConnectHandler::~SimConnectHandler()
 {
-#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
+#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   if(hSimConnect != NULL)
   {
     HRESULT hr = SimConnect_Close(hSimConnect);
@@ -60,7 +60,7 @@ SimConnectHandler::~SimConnectHandler()
 
 bool SimConnectHandler::connect()
 {
-#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
+#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   HRESULT hr;
 
   if(verbose)
@@ -180,7 +180,7 @@ bool SimConnectHandler::connect()
 
 bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
 {
-#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
+#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   if(verbose)
     qDebug() << "fetchData entered ================================================================";
 
@@ -431,7 +431,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 #endif
 }
 
-#if defined(Q_CC_MSVC) || defined(SIMCONNECT_DUMMY)
+#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
 
 void SimConnectHandler::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {
