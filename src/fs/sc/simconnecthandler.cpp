@@ -166,7 +166,11 @@ public:
 #endif
 
   SimData simData;
+  unsigned long simDataObjectId;
+
   QVector<SimDataAircraft> simDataAircraft;
+  QVector<unsigned long> simDataAircraftObjectIds;
+
   bool simRunning = true, simPaused = false, verbose = false, dataFetched = false, userDataFetched = false;
   sc::State state = sc::STATEOK;
 
@@ -244,7 +248,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
           SimData *simDataPtr = reinterpret_cast<SimData *>(&pObjData->dwData);
 
           if(verbose)
-            qDebug() << "ObjectID" << objectID << "Title" << simDataPtr->aircraft.aircraftTitle
+            qDebug() << "ObjectID" << objectID
+                     << "Title" << simDataPtr->aircraft.aircraftTitle
                      << "atcType" << simDataPtr->aircraft.aircraftAtcType
                      << "atcModel" << simDataPtr->aircraft.aircraftAtcModel
                      << "atcId" << simDataPtr->aircraft.aircraftAtcId
@@ -274,6 +279,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "zulu day" << simDataPtr->zuluDay
             ;
           simData = *simDataPtr;
+          simDataObjectId = objectID;
           dataFetched = true;
           userDataFetched = true;
         }
@@ -288,7 +294,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                                        NULL))) // security check
           {
             if(verbose)
-              qDebug() << "ObjectID" << objectID << "Title" << simDataAircraftPtr->aircraftTitle
+              qDebug() << "ObjectID" << objectID
+                       << "Title" << simDataAircraftPtr->aircraftTitle
                        << "atcType" << simDataAircraftPtr->aircraftAtcType
                        << "atcModel" << simDataAircraftPtr->aircraftAtcModel
                        << "atcId" << simDataAircraftPtr->aircraftAtcId
@@ -309,6 +316,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
               ;
 
             simDataAircraft.append(*simDataAircraftPtr);
+            simDataAircraftObjectIds.append(objectID);
             dataFetched = true;
           }
         }
@@ -653,6 +661,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   p->userDataFetched = false;
   p->dataFetched = true;
   p->simDataAircraft.clear();
+  p->simDataAircraftObjectIds.clear();
   int dispatchCycles = 0;
   while(p->dataFetched)
   {
@@ -678,16 +687,20 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     qDebug() << "numDataFetchedAi" << p->simDataAircraft.size();
   }
 
-  for(const SimDataAircraft& simDataAi : p->simDataAircraft)
+  for(int i = 0; i < p->simDataAircraft.size(); i++)
   {
     atools::fs::sc::SimConnectAircraft ap;
-    p->copyToSimData(simDataAi, ap);
+    p->copyToSimData(p->simDataAircraft.at(i), ap);
+    ap.objectId = p->simDataAircraftObjectIds.at(i);
     data.aiAircraft.append(ap);
+
   }
 
   if(p->userDataFetched)
   {
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
+    data.userAircraft.objectId = p->simDataObjectId;
+
     data.userAircraft.groundAltitude = p->simData.groundAltitudeFt;
     data.userAircraft.altitudeAboveGround = p->simData.planeAboveGroundFt;
 
@@ -760,7 +773,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   static float courseChange = 0.f;
   static float fuelFlow = 100.f;
   static float visibility = 0.1f;
-
+  static unsigned int objectId = 0;
   static float alt = 0.f, altChange = 0.f;
 
   updatesMs += updateRate;
@@ -817,6 +830,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     curPos.endpoint(atools::geo::nmToMeter(updateRate / 1000.f * nmPerSec), course).normalize();
 
   QString dataIdStr = QString::number(dataId);
+  data.userAircraft.objectId = objectId++;
   data.userAircraft.airplaneTitle = "Airplane Title " + dataIdStr;
   data.userAircraft.airplaneModel = "Duke";
   data.userAircraft.airplaneReg = "D-REGI";
@@ -877,6 +891,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     ap.airplaneTitle = "AI" + QString::number(i) + " " + ap.airplaneTitle;
     ap.position.setLonX(ap.position.getLonX() + x[i]);
     ap.position.setLatY(ap.position.getLatY() + y[i]);
+    ap.objectId = objectId++;
 
     data.aiAircraft.append(ap);
   }

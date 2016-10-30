@@ -41,6 +41,8 @@ SimConnectAircraft::~SimConnectAircraft()
 
 void SimConnectAircraft::read(QDataStream& in)
 {
+  in >> objectId;
+
   quint32 intFlags;
   in >> intFlags;
   flags = Flags(intFlags);
@@ -70,7 +72,7 @@ void SimConnectAircraft::read(QDataStream& in)
 
 void SimConnectAircraft::write(QDataStream& out) const
 {
-  out << static_cast<quint32>(flags);
+  out << objectId << static_cast<quint32>(flags);
 
   writeString(out, airplaneTitle);
   writeString(out, airplaneModel);

@@ -207,6 +207,11 @@ public:
     return numberOfEngines;
   }
 
+  unsigned int getObjectId() const
+  {
+    return objectId;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
@@ -220,6 +225,7 @@ private:
         machSpeed = 0.f, verticalSpeed = 0.f;
 
   float trackMag = 0.f, trackTrue = 0.f, magVar = 0.f;
+  quint32 objectId = 0L;
 
   Flags flags = atools::fs::sc::NONE;
 
