@@ -185,10 +185,11 @@ HEADERS += src/atools.h \
     src/fs/db/nav/airwaysegmentwriter.h \
     src/fs/navdatabaseerrors.h \
     src/fs/sc/simconnecthandler.h \
-    src/fs/sc/simconnectairplane.h \
     src/fs/sc/simconnectdatabase.h \
-    src/fs/sc/simconnectuserairplane.h \
-    src/fs/sc/simconnectdummy.h
+    src/fs/sc/simconnectdummy.h \
+    src/fs/sc/simconnectaircraft.h \
+    src/fs/sc/simconnectuseraircraft.h \
+    src/fs/sc/datareaderthread.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -332,10 +333,11 @@ SOURCES += src/atools.cpp \
     src/fs/db/nav/airwaysegmentwriter.cpp \
     src/fs/navdatabaseerrors.cpp \
     src/fs/sc/simconnecthandler.cpp \
-    src/fs/sc/simconnectairplane.cpp \
     src/fs/sc/simconnectdatabase.cpp \
-    src/fs/sc/simconnectuserairplane.cpp \
-    src/fs/sc/simconnectdummy.cpp
+    src/fs/sc/simconnectdummy.cpp \
+    src/fs/sc/simconnectaircraft.cpp \
+    src/fs/sc/simconnectuseraircraft.cpp \
+    src/fs/sc/datareaderthread.cpp
 
 
 unix {

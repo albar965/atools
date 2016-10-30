@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/sc/simconnectairplane.h"
+#include "fs/sc/simconnectaircraft.h"
 
 #include <QDebug>
 #include <QDataStream>

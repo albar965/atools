@@ -82,9 +82,9 @@ bool SimConnectData::read(QIODevice *ioDevice)
   in >> packetId >> packetTs;
 
   userAircraft.read(in);
-  quint32 numAi = 0;
+  quint16 numAi = 0;
   in >> numAi;
-  for(quint32 i = 0; i < numAi; i++)
+  for(quint16 i = 0; i < numAi; i++)
   {
     SimConnectAircraft ap;
     ap.read(in);
@@ -106,7 +106,7 @@ int SimConnectData::write(QIODevice *ioDevice)
 
   userAircraft.write(out);
   int numAi = std::min(65535, aiAircraft.size());
-  out << static_cast<quint32>(numAi);
+  out << static_cast<quint16>(numAi);
 
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);

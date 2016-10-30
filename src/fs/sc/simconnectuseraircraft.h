@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_SC_SIMCONNECTUSERAIRPLANE_H
 #define ATOOLS_FS_SC_SIMCONNECTUSERAIRPLANE_H
 
-#include "fs/sc/simconnectairplane.h"
+#include "fs/sc/simconnectaircraft.h"
 
 #include <QString>
 #include <QDateTime>
