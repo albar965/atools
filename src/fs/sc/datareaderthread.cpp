@@ -22,6 +22,8 @@
 
 #include <QDebug>
 #include <QDateTime>
+#include <QFile>
+#include <QDataStream>
 
 namespace atools {
 namespace fs {
@@ -68,6 +70,8 @@ void DataReaderThread::run()
 {
   qDebug() << "Datareader run";
 
+  setupReplay();
+
   atools::fs::sc::SimConnectHandler handler(verbose);
 
   // Connect to the simulator
@@ -79,11 +83,23 @@ void DataReaderThread::run()
   {
     atools::fs::sc::SimConnectData data;
 
-    if(handler.fetchData(data, 200))
+    if(loadReplayFile != nullptr)
+    {
+      data.read(loadReplayFile);
+      if(loadReplayFile->atEnd())
+        loadReplayFile->seek(sizeof(quint32));
+
+      emit postSimConnectData(data);
+    }
+    else if(handler.fetchData(data, 200))
     {
       data.setPacketId(i);
       data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
       emit postSimConnectData(data);
+
+      if(saveReplayFile != nullptr && saveReplayFile->isOpen())
+        data.write(saveReplayFile);
+
       i++;
     }
     else
@@ -100,8 +116,15 @@ void DataReaderThread::run()
           connectToSimulator(&handler);
       }
     }
-    QThread::msleep(updateRate);
+
+    if(loadReplayFile != nullptr)
+      QThread::msleep(static_cast<float>(updateRate) / static_cast<float>(replaySpeed));
+    else
+      QThread::msleep(updateRate);
   }
+
+  closeReplay();
+
   terminate = false; // Allow restart
   connected = false;
   emit disconnectedFromSimulator();
@@ -111,6 +134,64 @@ void DataReaderThread::run()
 void DataReaderThread::setReconnectRateSec(int reconnectSec)
 {
   reconnectRateSec = reconnectSec;
+}
+
+void DataReaderThread::setupReplay()
+{
+  if(!loadReplayFilepath.isEmpty())
+  {
+    loadReplayFile = new QFile(loadReplayFilepath);
+    if(!loadReplayFile->open(QIODevice::ReadOnly))
+    {
+      emit postLogMessage(tr("Cannot open \"%1\".").arg(loadReplayFilepath), true);
+      delete loadReplayFile;
+      loadReplayFile = nullptr;
+    }
+    else
+    {
+      emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
+
+      QDataStream in(loadReplayFile);
+      in.setVersion(QDataStream::Qt_5_5);
+      in >> replayUpdateRateMs;
+      updateRate = replayUpdateRateMs;
+    }
+  }
+  else if(!saveReplayFilepath.isEmpty())
+  {
+    saveReplayFile = new QFile(saveReplayFilepath);
+    if(!saveReplayFile->open(QIODevice::WriteOnly))
+    {
+      emit postLogMessage(tr("Cannot open \"%1\".").arg(saveReplayFilepath), true);
+      delete saveReplayFile;
+      saveReplayFile = nullptr;
+    }
+    else
+    {
+      emit postLogMessage(tr("Saving replay to \"%1\".").arg(saveReplayFilepath), false);
+
+      quint32 updateRateMs = updateRate;
+
+      QDataStream out(saveReplayFile);
+      out.setVersion(QDataStream::Qt_5_5);
+      out << updateRateMs;
+    }
+  }
+}
+
+void DataReaderThread::closeReplay()
+{
+  if(saveReplayFile != nullptr)
+  {
+    saveReplayFile->close();
+    delete saveReplayFile;
+  }
+
+  if(loadReplayFile != nullptr)
+  {
+    loadReplayFile->close();
+    delete loadReplayFile;
+  }
 }
 
 } // namespace sc

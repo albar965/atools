@@ -870,7 +870,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   dataId++;
 
-  static const int num = 10000;
+  static const int num = 20;
   static bool init = false;
   static float x[num];
   static float y[num];

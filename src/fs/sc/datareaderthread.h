@@ -22,6 +22,8 @@
 
 #include <QThread>
 
+class QFile;
+
 namespace atools {
 namespace fs {
 namespace sc {
@@ -59,6 +61,25 @@ public:
     return connected;
   }
 
+  /* If set all data will be saved into that file too */
+  void setSaveReplayFilepath(const QString& value)
+  {
+    saveReplayFilepath = value;
+  }
+
+  /* If set all data will be read from that file and all simulator connections will be ignored */
+  void setLoadReplayFilepath(const QString& value)
+  {
+    loadReplayFilepath = value;
+  }
+
+  void setReplaySpeed(int value)
+  {
+    replaySpeed = std::max(1, value);
+  }
+
+  void closeReplay();
+
 signals:
   /* Send on each received data package from the simconnect interface */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
@@ -74,6 +95,12 @@ signals:
 private:
   void connectToSimulator(atools::fs::sc::SimConnectHandler *handler);
   virtual void run() override;
+  void setupReplay();
+
+  QString saveReplayFilepath, loadReplayFilepath;
+  int replaySpeed = 1;
+  QFile *saveReplayFile = nullptr, *loadReplayFile = nullptr;
+  quint32 replayUpdateRateMs = 500;
 
   bool terminate = false, verbose = false;
   unsigned int updateRate = 500;
