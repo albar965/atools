@@ -417,6 +417,9 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   else if(cat == "viewer")
     airplane.category = VIEWER;
 
+  airplane.wingSpan = static_cast<quint16>(simDataUserAircraft.wingSpan);
+  airplane.modelRadius= static_cast<quint16>(simDataUserAircraft.modelRadius);
+
   airplane.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
   airplane.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
 
