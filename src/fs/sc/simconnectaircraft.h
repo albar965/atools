@@ -225,6 +225,31 @@ public:
     return toIdent;
   }
 
+  bool isOnGround() const
+  {
+    return flags & ON_GROUND;
+  }
+
+  bool isUser() const
+  {
+    return flags & IS_USER;
+  }
+
+  bool inCloud() const
+  {
+    return flags & IN_CLOUD;
+  }
+
+  bool inRain() const
+  {
+    return flags & IN_RAIN;
+  }
+
+  bool inSnow() const
+  {
+    return flags & IN_SNOW;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
