@@ -146,6 +146,15 @@ public:
     return zuluDateTime;
   }
 
+  float getTrackDegMag() const
+  {
+    return trackMag;
+  }
+
+  float getTrackDegTrue() const
+  {
+    return trackTrue;
+  }
 private:
   friend class atools::fs::sc::SimConnectHandler;
 
@@ -155,6 +164,7 @@ private:
     seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
     airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
     fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f, ambientVisibility = 0.f;
+  float trackMag = 0.f, trackTrue = 0.f;
   QDateTime localDateTime, zuluDateTime;
 };
 

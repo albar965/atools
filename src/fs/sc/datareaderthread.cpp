@@ -141,20 +141,48 @@ void DataReaderThread::setupReplay()
   if(!loadReplayFilepath.isEmpty())
   {
     loadReplayFile = new QFile(loadReplayFilepath);
-    if(!loadReplayFile->open(QIODevice::ReadOnly))
+
+    if(loadReplayFile->size() > sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
+       sizeof(quint32))
     {
-      emit postLogMessage(tr("Cannot open \"%1\".").arg(loadReplayFilepath), true);
-      delete loadReplayFile;
-      loadReplayFile = nullptr;
+      if(!loadReplayFile->open(QIODevice::ReadOnly))
+      {
+        emit postLogMessage(tr("Cannot open \"%1\".").arg(loadReplayFilepath), true);
+        delete loadReplayFile;
+        loadReplayFile = nullptr;
+      }
+      else
+      {
+        emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
+
+        QDataStream in(loadReplayFile);
+        in.setVersion(QDataStream::Qt_5_5);
+
+        quint32 magicNumber, version;
+
+        in >> magicNumber >> version >> replayUpdateRateMs;
+        if(magicNumber != REPLAY_FILE_MAGIC_NUMBER)
+        {
+          emit postLogMessage(tr("Cannot open \"%1\". Is not a replay file - wrong magic number.").
+                              arg(loadReplayFilepath), true);
+          closeReplay();
+          return;
+        }
+        if(version != REPLAY_FILE_VERSION)
+        {
+          emit postLogMessage(tr("Cannot open \"%1\". Wrong version.").arg(loadReplayFilepath), true);
+          closeReplay();
+          return;
+        }
+
+        updateRate = replayUpdateRateMs;
+      }
     }
     else
     {
-      emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
-
-      QDataStream in(loadReplayFile);
-      in.setVersion(QDataStream::Qt_5_5);
-      in >> replayUpdateRateMs;
-      updateRate = replayUpdateRateMs;
+      emit postLogMessage(tr("Cannot open \"%1\". File is too small.").arg(loadReplayFilepath), true);
+      closeReplay();
+      return;
     }
   }
   else if(!saveReplayFilepath.isEmpty())
@@ -170,11 +198,9 @@ void DataReaderThread::setupReplay()
     {
       emit postLogMessage(tr("Saving replay to \"%1\".").arg(saveReplayFilepath), false);
 
-      quint32 updateRateMs = updateRate;
-
+      // Save file header
       QDataStream out(saveReplayFile);
-      out.setVersion(QDataStream::Qt_5_5);
-      out << updateRateMs;
+      out << REPLAY_FILE_MAGIC_NUMBER << REPLAY_FILE_VERSION << static_cast<quint32>(updateRate);
     }
   }
 }
@@ -185,12 +211,14 @@ void DataReaderThread::closeReplay()
   {
     saveReplayFile->close();
     delete saveReplayFile;
+    saveReplayFile = nullptr;
   }
 
   if(loadReplayFile != nullptr)
   {
     loadReplayFile->close();
     delete loadReplayFile;
+    loadReplayFile = nullptr;
   }
 }
 

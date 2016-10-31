@@ -51,8 +51,16 @@ enum EventIds
 
 enum DataRequestId
 {
-  DATA_REQUEST_ID_USER,
-  DATA_REQUEST_ID_AI
+  DATA_REQUEST_ID_USER_AIRCRAFT = 1,
+  DATA_REQUEST_ID_AI_AIRCRAFT = 2,
+  DATA_REQUEST_ID_AI_HELICOPTER = 3
+};
+
+enum DataDefinitionId
+{
+  DATA_DEFINITION_USER_AIRCRAFT = 10,
+  DATA_DEFINITION_AI_AIRCRAFT = 20,
+  DATA_DEFINITION_AI_HELICOPTER = 30
 };
 
 /* Struct that will be filled with raw data from the simconnect interface. */
@@ -66,6 +74,12 @@ struct SimDataAircraft
   char aircraftAtcFlightNumber[32];
 
   char category[32]; // "Airplane", "Helicopter", "Boat", "GroundVehicle", "ControlTower", "SimpleObject", "Viewer"
+  qint32 userSim;
+  qint32 modelRadius;
+  qint32 wingSpan;
+
+  char aiFrom[32];
+  char aiTo[32];
 
   float altitudeFt;
   float latitudeDeg;
@@ -76,8 +90,6 @@ struct SimDataAircraft
 
   float planeHeadingMagneticDeg;
   float planeHeadingTrueDeg;
-  float planeTrackMagneticDeg;
-  float planeTrackTrueDeg;
   qint32 isSimOnGround;
 
   float airspeedTrueKts;
@@ -94,6 +106,9 @@ struct SimDataAircraft
 struct SimData
 {
   SimDataAircraft aircraft;
+
+  float planeTrackMagneticDeg;
+  float planeTrackTrueDeg;
 
   float planeAboveGroundFt;
   float groundAltitudeFt;
@@ -134,12 +149,6 @@ struct SimData
   qint32 zuluMonth;
   qint32 zuluDay;
   qint32 timeZoneOffsetSeconds;
-};
-
-enum DataDefinitionId
-{
-  DATA_DEFINITION_USER,
-  DATA_DEFINITION_AI
 };
 
 class SimConnectHandlerPrivate
@@ -240,8 +249,17 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       {
         SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *)pData;
 
-        if(pObjData->dwRequestID == DATA_REQUEST_ID_USER)
+        if(pObjData->dwRequestID == DATA_REQUEST_ID_USER_AIRCRAFT)
         {
+          if(verbose)
+            qDebug() << "pObjData->dwDefineCount" << pObjData->dwDefineCount
+                     << "pObjData->dwDefineID" << pObjData->dwDefineID
+                     << "pObjData->dwID" << pObjData->dwID
+                     << "pObjData->dwObjectID" << pObjData->dwObjectID
+                     << "pObjData->dwRequestID" << pObjData->dwRequestID
+                     << "pObjData->dwentrynumber" << pObjData->dwentrynumber
+                     << "pObjData->dwoutof" << pObjData->dwoutof;
+
           if(verbose)
             qDebug() << "DATA_REQUEST_ID";
           DWORD objectID = pObjData->dwObjectID;
@@ -256,6 +274,11 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "atcAirline" << simDataPtr->aircraft.aircraftAtcAirline
                      << "atcFlightNumber" << simDataPtr->aircraft.aircraftAtcFlightNumber
                      << "category" << simDataPtr->aircraft.category
+                     << "userSim" << simDataPtr->aircraft.userSim
+                     << "modelRadius" << simDataPtr->aircraft.modelRadius
+                     << "wingSpan" << simDataPtr->aircraft.wingSpan
+                     << "aiFrom" << simDataPtr->aircraft.aiFrom
+                     << "aiTo" << simDataPtr->aircraft.aiTo
                      << "numEngines" << simDataPtr->aircraft.numEngines
                      << "engineType" << simDataPtr->aircraft.engineType
                      << "Lat" << simDataPtr->aircraft.latitudeDeg
@@ -266,6 +289,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "vs" << simDataPtr->aircraft.verticalSpeedFps
                      << "course " << simDataPtr->aircraft.planeHeadingMagneticDeg
                      << "M" << simDataPtr->aircraft.planeHeadingTrueDeg << "T"
+                     << "track " << simDataPtr->planeTrackMagneticDeg
+                     << "M" << simDataPtr->planeTrackTrueDeg << "T"
                      << "wind" << simDataPtr->ambientWindDirectionDegT
                      << "/" << simDataPtr->ambientWindVelocityKts
                      << "magvar" << simDataPtr->aircraft.magVarDeg
@@ -283,41 +308,59 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
           dataFetched = true;
           userDataFetched = true;
         }
-        else if(pObjData->dwRequestID == DATA_REQUEST_ID_AI)
+        else if(pObjData->dwRequestID == DATA_REQUEST_ID_AI_AIRCRAFT ||
+                pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER)
         {
           if(verbose)
-            qDebug() << "DATA_REQUEST_AC_ID";
-          DWORD objectID = pObjData->dwObjectID;
-          SimDataAircraft *simDataAircraftPtr = reinterpret_cast<SimDataAircraft *>(&pObjData->dwData);
-          if(SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0],
-                                       sizeof(simDataAircraftPtr->aircraftTitle),
-                                       NULL))) // security check
+            qDebug() << "pObjData->dwDefineCount" << pObjData->dwDefineCount
+                     << "pObjData->dwDefineID" << pObjData->dwDefineID
+                     << "pObjData->dw ID" << pObjData->dwID
+                     << "pObjData->dwObjectID" << pObjData->dwObjectID
+                     << "pObjData->dwRequestID" << pObjData->dwRequestID
+                     << "pObjData->dwentrynumber" << pObjData->dwentrynumber
+                     << "pObjData->dwoutof" << pObjData->dwoutof;
+
+          if(pObjData->dwObjectID > 0)
           {
             if(verbose)
-              qDebug() << "ObjectID" << objectID
-                       << "Title" << simDataAircraftPtr->aircraftTitle
-                       << "atcType" << simDataAircraftPtr->aircraftAtcType
-                       << "atcModel" << simDataAircraftPtr->aircraftAtcModel
-                       << "atcId" << simDataAircraftPtr->aircraftAtcId
-                       << "atcAirline" << simDataAircraftPtr->aircraftAtcAirline
-                       << "atcFlightNumber" << simDataAircraftPtr->aircraftAtcFlightNumber
-                       << "category" << simDataAircraftPtr->category
-                       << "numEngines" << simDataAircraftPtr->numEngines
-                       << "engineType" << simDataAircraftPtr->engineType
-                       << "Lat" << simDataAircraftPtr->latitudeDeg
-                       << "Lon" << simDataAircraftPtr->longitudeDeg
-                       << "Alt" << simDataAircraftPtr->altitudeFt
-                       << "ias" << simDataAircraftPtr->airspeedIndicatedKts
-                       << "gs" << simDataAircraftPtr->groundVelocityKts
-                       << "vs" << simDataAircraftPtr->verticalSpeedFps
-                       << "course " << simDataAircraftPtr->planeHeadingMagneticDeg
-                       << "M" << simDataAircraftPtr->planeHeadingTrueDeg << "T"
-                       << "magvar" << simDataAircraftPtr->magVarDeg
-              ;
+              qDebug() << "DATA_REQUEST_ID_AI";
+            DWORD objectID = pObjData->dwObjectID;
+            SimDataAircraft *simDataAircraftPtr = reinterpret_cast<SimDataAircraft *>(&pObjData->dwData);
+            if(SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0],
+                                         sizeof(simDataAircraftPtr->aircraftTitle),
+                                         NULL))) // security check
+            {
+              if(verbose)
+                qDebug() << "ObjectID" << objectID
+                         << "Title" << simDataAircraftPtr->aircraftTitle
+                         << "atcType" << simDataAircraftPtr->aircraftAtcType
+                         << "atcModel" << simDataAircraftPtr->aircraftAtcModel
+                         << "atcId" << simDataAircraftPtr->aircraftAtcId
+                         << "atcAirline" << simDataAircraftPtr->aircraftAtcAirline
+                         << "atcFlightNumber" << simDataAircraftPtr->aircraftAtcFlightNumber
+                         << "category" << simDataAircraftPtr->category
+                         << "userSim" << simDataAircraftPtr->userSim
+                         << "modelRadius" << simDataAircraftPtr->modelRadius
+                         << "wingSpan" << simDataAircraftPtr->wingSpan
+                         << "aiFrom" << simDataAircraftPtr->aiFrom
+                         << "aiTo" << simDataAircraftPtr->aiTo
+                         << "numEngines" << simDataAircraftPtr->numEngines
+                         << "engineType" << simDataAircraftPtr->engineType
+                         << "Lat" << simDataAircraftPtr->latitudeDeg
+                         << "Lon" << simDataAircraftPtr->longitudeDeg
+                         << "Alt" << simDataAircraftPtr->altitudeFt
+                         << "ias" << simDataAircraftPtr->airspeedIndicatedKts
+                         << "gs" << simDataAircraftPtr->groundVelocityKts
+                         << "vs" << simDataAircraftPtr->verticalSpeedFps
+                         << "course " << simDataAircraftPtr->planeHeadingMagneticDeg
+                         << "M" << simDataAircraftPtr->planeHeadingTrueDeg << "T"
+                         << "magvar" << simDataAircraftPtr->magVarDeg
+                ;
 
-            simDataAircraft.append(*simDataAircraftPtr);
-            simDataAircraftObjectIds.append(objectID);
-            dataFetched = true;
+              simDataAircraft.append(*simDataAircraftPtr);
+              simDataAircraftObjectIds.append(objectID);
+              dataFetched = true;
+            }
           }
         }
 
@@ -355,21 +398,23 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   airplane.airplaneType = simDataUserAircraft.aircraftAtcType;
   airplane.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
   airplane.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
+  airplane.fromIdent = simDataUserAircraft.aiFrom;
+  airplane.toIdent = simDataUserAircraft.aiTo;
 
   QString cat = QString(simDataUserAircraft.category).toLower().trimmed();
-  if(cat.compare("airplane"))
+  if(cat == "airplane")
     airplane.category = AIRPLANE;
-  else if(cat.compare("helicopter"))
+  else if(cat == "helicopter")
     airplane.category = HELICOPTER;
-  else if(cat.compare("boat"))
+  else if(cat == "boat")
     airplane.category = BOAT;
-  else if(cat.compare("groundvehicle"))
+  else if(cat == "groundvehicle")
     airplane.category = GROUNDVEHICLE;
-  else if(cat.compare("controltower"))
+  else if(cat == "controltower")
     airplane.category = CONTROLTOWER;
-  else if(cat.compare("simpleobject"))
+  else if(cat == "simpleobject")
     airplane.category = SIMPLEOBJECT;
-  else if(cat.compare("viewer"))
+  else if(cat == "viewer")
     airplane.category = VIEWER;
 
   airplane.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
@@ -383,8 +428,6 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   airplane.indicatedAltitude = simDataUserAircraft.indicatedAltitudeFt;
   airplane.headingMag = simDataUserAircraft.planeHeadingMagneticDeg;
   airplane.headingTrue = simDataUserAircraft.planeHeadingTrueDeg;
-  airplane.trackMag = simDataUserAircraft.planeTrackMagneticDeg;
-  airplane.trackTrue = simDataUserAircraft.planeTrackTrueDeg;
 
   airplane.trueSpeed = simDataUserAircraft.airspeedTrueKts;
   airplane.indicatedSpeed = simDataUserAircraft.airspeedIndicatedKts;
@@ -393,6 +436,8 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
 
   if(simDataUserAircraft.isSimOnGround > 0)
     airplane.flags |= atools::fs::sc::ON_GROUND;
+  if(simDataUserAircraft.userSim > 0)
+    airplane.flags |= atools::fs::sc::IS_USER;
 
   airplane.magVar = simDataUserAircraft.magVarDeg;
 }
@@ -421,6 +466,20 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Category", NULL,
                                  SIMCONNECT_DATATYPE_STRING32);
 
+  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Is User Sim", "bool",
+                                 SIMCONNECT_DATATYPE_INT32);
+
+  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Visual Model Radius", "feet",
+                                 SIMCONNECT_DATATYPE_INT32);
+
+  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Wing Span", "feet",
+                                 SIMCONNECT_DATATYPE_INT32);
+
+  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "AI Traffic Fromairport", NULL,
+                                 SIMCONNECT_DATATYPE_STRING32);
+  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "AI Traffic Toairport", NULL,
+                                 SIMCONNECT_DATATYPE_STRING32);
+
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Plane Altitude", "feet",
                                  SIMCONNECT_DATATYPE_FLOAT32);
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Plane Latitude", "degrees",
@@ -437,10 +496,6 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
                                  "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Plane Heading Degrees True", "degrees",
-                                 SIMCONNECT_DATATYPE_FLOAT32);
-  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "GPS Ground Magnetic Track",
-                                 "degrees", SIMCONNECT_DATATYPE_FLOAT32);
-  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "GPS Ground True Track", "degrees",
                                  SIMCONNECT_DATATYPE_FLOAT32);
 
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Sim On Ground", "bool",
@@ -519,92 +574,111 @@ bool SimConnectHandler::connect()
     if(p->verbose)
       qDebug() << "Connected to Flight Simulator";
 
-    p->fillDataDefinitionAicraft(DATA_DEFINITION_AI);
+    p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_AIRCRAFT);
+    p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_HELICOPTER);
+    p->fillDataDefinitionAicraft(DATA_DEFINITION_USER_AIRCRAFT);
 
-    p->fillDataDefinitionAicraft(DATA_DEFINITION_USER);
-
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Plane Alt Above Ground", "feet",
-                                   SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ground Altitude", "feet",
-                                   SIMCONNECT_DATATYPE_FLOAT32);
-
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient Temperature", "celsius",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground Magnetic Track",
+                                   "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground True Track",
+                                   "degrees",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Total Air Temperature", "celsius",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Plane Alt Above Ground",
+                                   "feet",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ground Altitude", "feet",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient Wind Velocity", "knots",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient Temperature",
+                                   "celsius",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient Wind Direction", "degrees",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Total Air Temperature",
+                                   "celsius",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient Precip State", "mask",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Velocity",
+                                   "knots",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Direction",
+                                   "degrees",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient Precip State",
+                                   "mask",
                                    SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient In Cloud", "bool",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient In Cloud", "bool",
                                    SIMCONNECT_DATATYPE_INT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Ambient Visibility", "meters",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Ambient Visibility",
+                                   "meters",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Sea Level Pressure", "millibars",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Sea Level Pressure",
+                                   "millibars",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Pitot Ice Pct", "percent",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Pitot Ice Pct", "percent",
                                    SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Structural Ice Pct", "percent",
-                                   SIMCONNECT_DATATYPE_FLOAT32);
-
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Total Weight", "pounds",
-                                   SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Max Gross Weight", "pounds",
-                                   SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Empty Weight", "pounds",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Structural Ice Pct",
+                                   "percent",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Fuel Total Quantity", "gallons",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Total Weight", "pounds",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Max Gross Weight",
+                                   "pounds",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Empty Weight", "pounds",
                                    SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Fuel Total Quantity Weight",
-                                   "pounds", SIMCONNECT_DATATYPE_FLOAT32);
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Fuel Total Quantity",
+                                   "gallons",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow PPH:1",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT,
+                                   "Fuel Total Quantity Weight",
+                                   "pounds",
+                                   SIMCONNECT_DATATYPE_FLOAT32);
+
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:1",
                                    "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow PPH:2",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:2",
                                    "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow PPH:3",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:3",
                                    "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow PPH:4",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:4",
                                    "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow GPH:1",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:1",
                                    "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow GPH:2",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:2",
                                    "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow GPH:3",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:3",
                                    "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Eng Fuel Flow GPH:4",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:4",
                                    "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Local Time",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Local Time",
                                    "seconds", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Local Year",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Local Year",
                                    "number", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Local Month of Year",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year",
                                    "number", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Local Day of Month",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month",
                                    "number", SIMCONNECT_DATATYPE_INT32);
 
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Zulu Time",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time",
                                    "seconds", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Zulu Year",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year",
                                    "number", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Zulu Month of Year",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year",
                                    "number", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Zulu Day of Month",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month",
                                    "number", SIMCONNECT_DATATYPE_INT32);
-    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER, "Time Zone Offset",
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Time Zone Offset",
                                    "seconds", SIMCONNECT_DATATYPE_INT32);
 
     // Request an event when the simulation starts or pauses
@@ -637,9 +711,11 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(p->verbose)
     qDebug() << "fetchData AI aircraft details";
 
-  HRESULT hr = SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_AI, DATA_DEFINITION_AI,
-                                                     static_cast<DWORD>(radiusKm) * 1000,
-                                                     SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
+  HRESULT hr =
+    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_AI_AIRCRAFT,
+                                          DATA_DEFINITION_AI_AIRCRAFT,
+                                          static_cast<DWORD>(radiusKm) * 1000,
+                                          SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
 
   if(hr != S_OK)
   {
@@ -648,8 +724,27 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
   }
 
-  hr = SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_USER, DATA_DEFINITION_USER, 0,
-                                             SIMCONNECT_SIMOBJECT_TYPE_USER);
+  if(p->verbose)
+    qDebug() << "fetchData AI helicopter details";
+
+  hr =
+    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_AI_HELICOPTER,
+                                          DATA_DEFINITION_AI_HELICOPTER,
+                                          static_cast<DWORD>(radiusKm) * 1000,
+                                          SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
+
+  if(hr != S_OK)
+  {
+    qWarning() << "SimConnect_RequestDataOnSimObjectType SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER: Error";
+    p->state = sc::FETCH_ERROR;
+    return false;
+  }
+
+  hr =
+    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_USER_AIRCRAFT,
+                                          DATA_DEFINITION_USER_AIRCRAFT,
+                                          0,
+                                          SIMCONNECT_SIMOBJECT_TYPE_USER);
 
   if(hr != S_OK)
   {
@@ -698,6 +793,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   if(p->userDataFetched)
   {
+    data.userAircraft.flags = atools::fs::sc::NONE;
+
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
     data.userAircraft.objectId = p->simDataObjectId;
 
@@ -724,6 +821,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.airplaneEmptyWeight = p->simData.airplaneEmptyWeightLbs;
     data.userAircraft.fuelTotalQuantity = p->simData.fuelTotalQuantityGallons;
     data.userAircraft.fuelTotalWeight = p->simData.fuelTotalWeightLbs;
+
+    data.userAircraft.trackMag = p->simData.planeTrackMagneticDeg;
+    data.userAircraft.trackTrue = p->simData.planeTrackTrueDeg;
 
     // Summarize fuel flow for all engines
     data.userAircraft.fuelFlowPPH =

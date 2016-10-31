@@ -47,7 +47,7 @@ void SimConnectUserAircraft::read(QDataStream& in)
   >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
   >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
   >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVar >> ambientVisibility
-  >> localDateTime >> zuluDateTime;
+  >> trackMag >> trackTrue>> localDateTime >> zuluDateTime;
 }
 
 void SimConnectUserAircraft::write(QDataStream& out) const
@@ -57,7 +57,7 @@ void SimConnectUserAircraft::write(QDataStream& out) const
       << ambientTemperature << totalAirTemperature << seaLevelPressure
       << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
       << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVar << ambientVisibility
-      << localDateTime << zuluDateTime;
+      << trackMag << trackTrue << localDateTime << zuluDateTime;
 }
 
 } // namespace sc

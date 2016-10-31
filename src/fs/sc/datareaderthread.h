@@ -97,6 +97,9 @@ private:
   virtual void run() override;
   void setupReplay();
 
+  const quint32 REPLAY_FILE_MAGIC_NUMBER = 0XCACF4F27;
+  const quint32 REPLAY_FILE_VERSION = 1;
+
   QString saveReplayFilepath, loadReplayFilepath;
   int replaySpeed = 1;
   QFile *saveReplayFile = nullptr, *loadReplayFile = nullptr;

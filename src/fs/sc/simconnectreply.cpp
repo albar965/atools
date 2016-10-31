@@ -80,7 +80,9 @@ bool SimConnectReply::read(QIODevice *ioDevice)
     status = VERSION_MISMATCH;
     return false;
   }
-  in >> packetId >> packetTs;
+  quint16 commandWord;
+  in >> packetId >> packetTs >> commandWord;
+  command = Command(commandWord);
 
   return true;
 }
@@ -93,7 +95,8 @@ int SimConnectReply::write(QIODevice *ioDevice)
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_5);
 
-  out << MAGIC_NUMBER_REPLY << packetSize << REPLY_VERSION << packetId << packetTs;
+  out << MAGIC_NUMBER_REPLY << packetSize << REPLY_VERSION << packetId << packetTs
+      << static_cast<quint16>(command);
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_REPLY));

@@ -37,59 +37,49 @@ SimConnectDataBase::~SimConnectDataBase()
 
 void SimConnectDataBase::writeString(QDataStream& out, const QString& str) const
 {
-  // Write string as an size prefixed character array
+  // Write string as an size prefixed character array max length 256 UTF-8
   QByteArray strBytes;
   strBytes.append(str);
-  out << static_cast<quint16>(strBytes.size());
-  out << str;
+  if(strBytes.size() > 255)
+    strBytes = strBytes.left(255);
+
+  // Size does not include the trailing 0
+  out << static_cast<quint8>(strBytes.size());
+  out.writeRawData(strBytes.constData(), strBytes.size());
 }
 
-bool SimConnectDataBase::readString(QDataStream& in, QString& str, quint16 *size)
+bool SimConnectDataBase::readString(QDataStream& in, QString& str)
 {
-  quint16 localSize = 0;
-  quint16 *sizePtr = size != nullptr ? size : &localSize;
+  quint8 size = 0;
 
-  if(*sizePtr == 0)
-  {
-    if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint16)))
-      return false;
-
-    in >> *sizePtr;
-  }
-
-  if(in.device()->bytesAvailable() < *sizePtr)
+  if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint8)))
     return false;
 
-  in >> str;
+  in >> size;
+
+  if(in.device()->bytesAvailable() < size)
+    return false;
+
+  char *buffer = new char[size + 1];
+  in.readRawData(buffer, size);
+  buffer[size] = '\0';
+
+  str = QString(buffer);
+
   return true;
 }
 
 int SimConnectDataBase::writeBlock(QIODevice *ioDevice, const QByteArray& block, SimConnectStatus& status)
 {
-  // qint64 written = ioDevice->write(block);
+  qint64 written = ioDevice->write(block);
 
-  // if(written < block.size())
-  // {
-  // qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
-  // status = INSUFFICIENT_WRITE;
-  // }
-
-  qint64 written = 0;
-  const char *data = block.data();
-
-  while(written < block.size())
+  // We can write the whole block since ioDevice is buffered
+  if(written < block.size())
   {
-    qint64 wrote = ioDevice->write(data + written, block.size() - written);
-
-    if(wrote == -1)
-    {
-      qWarning() << "SimConnectAirplane::write: error" << ioDevice->errorString();
-      status = WRITE_ERROR;
-      return static_cast<int>(written);
-    }
-
-    written += wrote;
+    qWarning() << "SimConnectData::write: wrote only" << written << "of" << block.size();
+    status = INSUFFICIENT_WRITE;
   }
+
   return static_cast<int>(written);
 }
 

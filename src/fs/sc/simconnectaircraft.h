@@ -36,16 +36,18 @@ class SimConnectHandlerPrivate;
 // quint16
 enum Flag
 {
-  NONE = 0x00,
-  ON_GROUND = 0x01,
-  IN_CLOUD = 0x02,
-  IN_RAIN = 0x04,
-  IN_SNOW = 0x08
+  NONE = 0x0000,
+  ON_GROUND = 0x0001,
+  IN_CLOUD = 0x0002,
+  IN_RAIN = 0x0004,
+  IN_SNOW = 0x0008,
+  IS_USER = 0x0010
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
 
+// quint8
 enum CategoryEnum
 {
   AIRPLANE,
@@ -59,6 +61,7 @@ enum CategoryEnum
 
 Q_DECLARE_FLAGS(Category, CategoryEnum);
 
+// quint8
 enum EngineTypeEnum
 {
   PISTON = 0,
@@ -177,16 +180,6 @@ public:
     return flags;
   }
 
-  float getTrackDegMag() const
-  {
-    return trackMag;
-  }
-
-  float getTrackDegTrue() const
-  {
-    return trackTrue;
-  }
-
   float getMagVarDeg() const
   {
     return magVar;
@@ -212,19 +205,40 @@ public:
     return objectId;
   }
 
+  int getModelRadius() const
+  {
+    return modelRadius;
+  }
+
+  int getWingSpan() const
+  {
+    return wingSpan;
+  }
+
+  const QString& getFromIdent() const
+  {
+    return fromIdent;
+  }
+
+  const QString& getToIdent() const
+  {
+    return toIdent;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
-          airplaneAirline, airplaneFlightnumber;
+          airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
   atools::geo::Pos position;
   float headingTrue = 0.f, headingMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
         indicatedSpeed = 0.f, trueSpeed = 0.f,
         machSpeed = 0.f, verticalSpeed = 0.f;
+  quint16 modelRadius = 0, wingSpan = 0;
 
-  float trackMag = 0.f, trackTrue = 0.f, magVar = 0.f;
+  float magVar = 0.f;
   quint32 objectId = 0L;
 
   Flags flags = atools::fs::sc::NONE;

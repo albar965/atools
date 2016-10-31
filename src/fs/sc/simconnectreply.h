@@ -28,6 +28,15 @@ namespace atools {
 namespace fs {
 namespace sc {
 
+// quint16
+enum CommandEnum
+{
+  CMD_NONE
+  // For future extensions
+};
+
+Q_DECLARE_FLAGS(Command, CommandEnum);
+
 /*
  * Class that contains replay data from a client for SimConnectData.
  * A version of the protocol is maintained to check for application compatibility.
@@ -97,13 +106,19 @@ public:
     return REPLY_VERSION;
   }
 
+  Command getCommand() const
+  {
+    return command;
+  }
+
 private:
   const static quint32 MAGIC_NUMBER_REPLY = 0x33ED8272;
-  const static quint32 REPLY_VERSION = 2;
+  const static quint32 REPLY_VERSION = 3;
 
   quint32 packetId = 0, packetTs = 0;
   atools::fs::sc::SimConnectStatus status = OK;
-  quint32 magicNumber = 0, packetSize = 0, version = 1, padding;
+  quint32 magicNumber = 0, packetSize = 0, version = 2;
+  Command command;
 
 };
 

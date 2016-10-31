@@ -55,7 +55,7 @@ public:
 
 protected:
   void writeString(QDataStream& out, const QString& str) const;
-  bool readString(QDataStream& in, QString& str, quint16 *size = nullptr);
+  bool readString(QDataStream& in, QString& str);
 
   atools::fs::sc::SimConnectStatus status = OK;
 };
