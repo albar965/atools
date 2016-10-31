@@ -128,7 +128,7 @@ public:
 
   float getMagVarDeg() const
   {
-    return magVar;
+    return magVarDeg;
   }
 
   float getAmbientVisibilityMeter() const
@@ -155,6 +155,7 @@ public:
   {
     return trackTrue;
   }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
 
@@ -163,7 +164,7 @@ private:
     ambientTemperature = 0.f, totalAirTemperature = 0.f,
     seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
     airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
-    fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVar = 0.f, ambientVisibility = 0.f;
+    fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVarDeg = 0.f, ambientVisibility = 0.f;
   float trackMag = 0.f, trackTrue = 0.f;
   QDateTime localDateTime, zuluDateTime;
 };

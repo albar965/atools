@@ -86,10 +86,20 @@ void DataReaderThread::run()
     if(loadReplayFile != nullptr)
     {
       data.read(loadReplayFile);
-      if(loadReplayFile->atEnd())
-        loadReplayFile->seek(sizeof(quint32));
 
-      emit postSimConnectData(data);
+      if(data.getStatus() == OK)
+      {
+        if(loadReplayFile->atEnd())
+          loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
+
+        emit postSimConnectData(data);
+      }
+      else
+      {
+        emit postLogMessage(tr("Error reading \"%1\": %2.").
+                            arg(loadReplayFilepath).arg(data.getStatusText()), true);
+        closeReplay();
+      }
     }
     else if(handler.fetchData(data, 200))
     {
@@ -142,8 +152,7 @@ void DataReaderThread::setupReplay()
   {
     loadReplayFile = new QFile(loadReplayFilepath);
 
-    if(loadReplayFile->size() > sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
-       sizeof(quint32))
+    if(loadReplayFile->size() > static_cast<qint64>(REPLAY_FILE_DATA_START_OFFSET))
     {
       if(!loadReplayFile->open(QIODevice::ReadOnly))
       {
@@ -153,8 +162,6 @@ void DataReaderThread::setupReplay()
       }
       else
       {
-        emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
-
         QDataStream in(loadReplayFile);
         in.setVersion(QDataStream::Qt_5_5);
 
@@ -176,6 +183,7 @@ void DataReaderThread::setupReplay()
         }
 
         updateRate = replayUpdateRateMs;
+        emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
       }
     }
     else

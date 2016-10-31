@@ -97,7 +97,6 @@ struct SimDataAircraft
   float airspeedMach;
   float verticalSpeedFps;
 
-  float magVarDeg;
   qint32 numEngines;
   qint32 engineType; // 0 = Piston 1 = Jet 2 = None 3 = Helo(Bell) turbine 4 = Unsupported 5 = Turboprop
 };
@@ -107,6 +106,7 @@ struct SimData
 {
   SimDataAircraft aircraft;
 
+  float magVarDeg;
   float planeTrackMagneticDeg;
   float planeTrackTrueDeg;
 
@@ -293,7 +293,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "M" << simDataPtr->planeTrackTrueDeg << "T"
                      << "wind" << simDataPtr->ambientWindDirectionDegT
                      << "/" << simDataPtr->ambientWindVelocityKts
-                     << "magvar" << simDataPtr->aircraft.magVarDeg
+                     << "magvar" << simDataPtr->magVarDeg
                      << "local time" << simDataPtr->localTime
                      << "local year" << simDataPtr->localYear
                      << "local month" << simDataPtr->localMonth
@@ -352,9 +352,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                          << "ias" << simDataAircraftPtr->airspeedIndicatedKts
                          << "gs" << simDataAircraftPtr->groundVelocityKts
                          << "vs" << simDataAircraftPtr->verticalSpeedFps
-                         << "course " << simDataAircraftPtr->planeHeadingMagneticDeg
-                         << "M" << simDataAircraftPtr->planeHeadingTrueDeg << "T"
-                         << "magvar" << simDataAircraftPtr->magVarDeg
+                         << "course " << simDataAircraftPtr->planeHeadingMagneticDeg << "M"
+                         << simDataAircraftPtr->planeHeadingTrueDeg << "T"
                 ;
 
               simDataAircraft.append(*simDataAircraftPtr);
@@ -418,7 +417,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
     airplane.category = VIEWER;
 
   airplane.wingSpan = static_cast<quint16>(simDataUserAircraft.wingSpan);
-  airplane.modelRadius= static_cast<quint16>(simDataUserAircraft.modelRadius);
+  airplane.modelRadius = static_cast<quint16>(simDataUserAircraft.modelRadius);
 
   airplane.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
   airplane.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
@@ -441,8 +440,6 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
     airplane.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
     airplane.flags |= atools::fs::sc::IS_USER;
-
-  airplane.magVar = simDataUserAircraft.magVarDeg;
 }
 
 void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId definitionId)
@@ -513,9 +510,6 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Vertical Speed", "feet per second",
                                  SIMCONNECT_DATATYPE_FLOAT32);
 
-  SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Magvar",
-                                 "degrees", SIMCONNECT_DATATYPE_FLOAT32);
-
   SimConnect_AddToDataDefinition(hSimConnect, definitionId, "Number of Engines", "number",
                                  SIMCONNECT_DATATYPE_INT32);
 
@@ -580,6 +574,9 @@ bool SimConnectHandler::connect()
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_AIRCRAFT);
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_HELICOPTER);
     p->fillDataDefinitionAicraft(DATA_DEFINITION_USER_AIRCRAFT);
+
+    SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Magvar",
+                                   "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
     SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground Magnetic Track",
                                    "degrees", SIMCONNECT_DATATYPE_FLOAT32);
@@ -789,7 +786,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   {
     atools::fs::sc::SimConnectAircraft ap;
     p->copyToSimData(p->simDataAircraft.at(i), ap);
-    ap.objectId = p->simDataAircraftObjectIds.at(i);
+    ap.objectId = static_cast<unsigned int>(p->simDataAircraftObjectIds.at(i));
     data.aiAircraft.append(ap);
 
   }
@@ -799,7 +796,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.flags = atools::fs::sc::NONE;
 
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
-    data.userAircraft.objectId = p->simDataObjectId;
+    data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
     data.userAircraft.groundAltitude = p->simData.groundAltitudeFt;
     data.userAircraft.altitudeAboveGround = p->simData.planeAboveGroundFt;
@@ -824,6 +821,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.airplaneEmptyWeight = p->simData.airplaneEmptyWeightLbs;
     data.userAircraft.fuelTotalQuantity = p->simData.fuelTotalQuantityGallons;
     data.userAircraft.fuelTotalWeight = p->simData.fuelTotalWeightLbs;
+    data.userAircraft.magVarDeg = p->simData.magVarDeg;
 
     data.userAircraft.trackMag = p->simData.planeTrackMagneticDeg;
     data.userAircraft.trackTrue = p->simData.planeTrackTrueDeg;

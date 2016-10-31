@@ -99,6 +99,8 @@ private:
 
   const quint32 REPLAY_FILE_MAGIC_NUMBER = 0XCACF4F27;
   const quint32 REPLAY_FILE_VERSION = 1;
+  const int REPLAY_FILE_DATA_START_OFFSET = sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
+                                            sizeof(quint32);
 
   QString saveReplayFilepath, loadReplayFilepath;
   int replaySpeed = 1;

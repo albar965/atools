@@ -62,7 +62,7 @@ void SimConnectAircraft::read(QDataStream& in)
   in >> lonx >> laty >> altitude >> headingTrue >> headingMag
   >> groundSpeed >> indicatedSpeed >> verticalSpeed
   >> indicatedAltitude >> trueSpeed >> machSpeed
-  >> magVar >> numberOfEngines >> wingSpan >> modelRadius >> categoryByte >> engineTypeByte;
+  >> numberOfEngines >> wingSpan >> modelRadius >> categoryByte >> engineTypeByte;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -88,7 +88,7 @@ void SimConnectAircraft::write(QDataStream& out) const
   out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrue << headingMag
       << groundSpeed << indicatedSpeed << verticalSpeed
       << indicatedAltitude << trueSpeed << machSpeed
-      << magVar << numberOfEngines << wingSpan << modelRadius
+      << numberOfEngines << wingSpan << modelRadius
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
 }
 
