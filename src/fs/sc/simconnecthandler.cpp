@@ -23,6 +23,7 @@
 #include <QTime>
 #include <QDateTime>
 #include <QThread>
+#include <QSet>
 
 #if defined(SIMCONNECT_DUMMY)
 // Manually defined
@@ -782,13 +783,19 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     qDebug() << "numDataFetchedAi" << p->simDataAircraft.size();
   }
 
+  QSet<unsigned long> objectIds;
   for(int i = 0; i < p->simDataAircraft.size(); i++)
   {
-    atools::fs::sc::SimConnectAircraft ap;
-    p->copyToSimData(p->simDataAircraft.at(i), ap);
-    ap.objectId = static_cast<unsigned int>(p->simDataAircraftObjectIds.at(i));
-    data.aiAircraft.append(ap);
-
+    unsigned long oid = p->simDataAircraftObjectIds.at(i);
+    // Avoid duplicates
+    if(!objectIds.contains(oid))
+    {
+      atools::fs::sc::SimConnectAircraft ap;
+      p->copyToSimData(p->simDataAircraft.at(i), ap);
+      ap.objectId = static_cast<unsigned int>(oid);
+      data.aiAircraft.append(ap);
+      objectIds.insert(ap.objectId);
+    }
   }
 
   if(p->userDataFetched)
