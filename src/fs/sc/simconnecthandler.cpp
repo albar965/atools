@@ -252,7 +252,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         if(pObjData->dwRequestID == DATA_REQUEST_ID_USER_AIRCRAFT)
         {
           if(verbose)
-            qDebug() << "pObjData->dwDefineCount" << pObjData->dwDefineCount
+            qDebug() << "DATA_REQUEST_ID_USER_AIRCRAFT"
+                     << "pObjData->dwDefineCount" << pObjData->dwDefineCount
                      << "pObjData->dwDefineID" << pObjData->dwDefineID
                      << "pObjData->dwID" << pObjData->dwID
                      << "pObjData->dwObjectID" << pObjData->dwObjectID
@@ -260,8 +261,6 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "pObjData->dwentrynumber" << pObjData->dwentrynumber
                      << "pObjData->dwoutof" << pObjData->dwoutof;
 
-          if(verbose)
-            qDebug() << "DATA_REQUEST_ID";
           DWORD objectID = pObjData->dwObjectID;
           SimData *simDataPtr = reinterpret_cast<SimData *>(&pObjData->dwData);
 
@@ -312,7 +311,8 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                 pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER)
         {
           if(verbose)
-            qDebug() << "pObjData->dwDefineCount" << pObjData->dwDefineCount
+            qDebug() << "DATA_REQUEST_ID_AI_AIRCRAFT DATA_REQUEST_ID_AI_HELICOPTER"
+                     << "pObjData->dwDefineCount" << pObjData->dwDefineCount
                      << "pObjData->dwDefineID" << pObjData->dwDefineID
                      << "pObjData->dw ID" << pObjData->dwID
                      << "pObjData->dwObjectID" << pObjData->dwObjectID
@@ -322,11 +322,11 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
           if(pObjData->dwObjectID > 0)
           {
-            if(verbose)
-              qDebug() << "DATA_REQUEST_ID_AI";
             DWORD objectID = pObjData->dwObjectID;
             SimDataAircraft *simDataAircraftPtr = reinterpret_cast<SimDataAircraft *>(&pObjData->dwData);
-            if(SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0],
+
+            if(simDataAircraftPtr->userSim == 0 && // Do not add user aircraft to list
+               SUCCEEDED(StringCbLengthA(&simDataAircraftPtr->aircraftTitle[0],
                                          sizeof(simDataAircraftPtr->aircraftTitle),
                                          NULL))) // security check
             {

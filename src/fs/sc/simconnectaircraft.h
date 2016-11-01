@@ -200,6 +200,11 @@ public:
     return objectId;
   }
 
+  int getId()
+  {
+    return static_cast<int>(objectId);
+  }
+
   int getModelRadius() const
   {
     return modelRadius;
