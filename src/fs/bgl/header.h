@@ -111,8 +111,15 @@ public:
 
   bool isValid() const
   {
-    return hasValidMagicNumber() && hasValidSize();
+    return hasValidMagicNumber() && hasValidSize() && wasRead();
   }
+
+  bool wasRead() const
+  {
+    return read;
+  }
+
+  static const unsigned int HEADER_SIZE = 0x38;
 
 private:
   const unsigned int MAGIC_NUMBER1 = 0x19920201;
@@ -123,7 +130,7 @@ private:
   unsigned int magicNumber1 = 0, headerSize = 0, lowDateTime = 0, highDateTime = 0, magicNumber2 = 0,
                numSections = 0;
   time_t creationTimestamp = 0;
-  bool validMagicNumber = true, validSize = true;
+  bool validMagicNumber = true, validSize = true, read = false;
 };
 
 } // namespace bgl

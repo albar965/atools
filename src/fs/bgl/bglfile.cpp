@@ -60,6 +60,13 @@ void BglFile::readFile(QString file)
   filename = file;
 
   QFile ifs(filename);
+
+  if(ifs.size() < Header::HEADER_SIZE)
+  {
+    qWarning() << "File is too small:" << ifs.size();
+    return;
+  }
+
   if(ifs.open(QIODevice::ReadOnly))
   {
     BinaryStream bs(&ifs);
@@ -69,7 +76,7 @@ void BglFile::readFile(QString file)
 
     readHeader(&bs);
     if(!header.isValid())
-      // Skip any obscure BGL files that do not contain a section structure
+      // Skip any obscure BGL files that do not contain a section structure or are too small
       return;
 
     readSections(&bs);

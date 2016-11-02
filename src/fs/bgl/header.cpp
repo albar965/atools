@@ -36,7 +36,7 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     validMagicNumber = false;
 
   headerSize = bs->readUInt();
-  if(headerSize != 0x38)
+  if(headerSize != HEADER_SIZE)
     validSize = false;
 
   lowDateTime = bs->readUInt();
@@ -62,6 +62,8 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
 
   // QMIDs
   bs->skip(4 * 8);
+
+  read = true;
 }
 
 Header::~Header()
@@ -74,6 +76,8 @@ QString Header::getCreationTimestampString() const
   dt.setTime_t(static_cast<uint>(creationTimestamp));
   return dt.toString(Qt::ISODate);
 }
+
+
 
 QDebug operator<<(QDebug out, const Header& header)
 {
