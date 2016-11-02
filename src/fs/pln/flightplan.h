@@ -31,14 +31,12 @@ namespace pln {
 
 enum FlightplanType
 {
-  UNKNOWN_TYPE,
   IFR,
   VFR
 };
 
 enum RouteType
 {
-  UNKNOWN_ROUTE,
   LOW_ALTITUDE,
   HIGH_ALTITUDE,
   VOR, /* Used for radio navaid routing (VOR and NDB) */
@@ -268,8 +266,8 @@ private:
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
 
-  atools::fs::pln::FlightplanType flightplanType;
-  atools::fs::pln::RouteType routeType;
+  atools::fs::pln::FlightplanType flightplanType = VFR;
+  atools::fs::pln::RouteType routeType = DIRECT;
 
   QList<atools::fs::pln::FlightplanEntry> entries;
 

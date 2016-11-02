@@ -162,7 +162,10 @@ void Flightplan::save(const QString& file)
 
     writer.writeTextElement("Title", title);
     writer.writeTextElement("FPType", flightplanTypeToString(flightplanType));
-    writer.writeTextElement("RouteType", routeTypeToString(routeType));
+
+    if(routeType != DIRECT)
+      writer.writeTextElement("RouteType", routeTypeToString(routeType));
+
     writer.writeTextElement("CruisingAlt", QString().number(cruisingAlt));
     writer.writeTextElement("DepartureID", departureIdent);
     writer.writeTextElement("DepartureLLA",
@@ -312,9 +315,6 @@ QString Flightplan::flightplanTypeToString(FlightplanType type)
 {
   switch(type)
   {
-    case atools::fs::pln::UNKNOWN_TYPE:
-      return "Unknown";
-
     case atools::fs::pln::IFR:
       return "IFR";
 
@@ -328,19 +328,14 @@ FlightplanType Flightplan::stringFlightplanType(const QString& str)
 {
   if(str == "IFR")
     return IFR;
-  else if(str == "VFR")
-    return VFR;
-  else
-    return UNKNOWN_TYPE;
+
+  return VFR;
 }
 
 QString Flightplan::routeTypeToString(RouteType type)
 {
   switch(type)
   {
-    case atools::fs::pln::UNKNOWN_ROUTE:
-      return "Unknown";
-
     case atools::fs::pln::LOW_ALTITUDE:
       return "LowAlt";
 
@@ -364,10 +359,8 @@ RouteType Flightplan::stringToRouteType(const QString& str)
     return HIGH_ALTITUDE;
   else if(str == "VOR")
     return VOR;
-  else if(str == "Direct")
-    return DIRECT;
-  else
-    return UNKNOWN_ROUTE;
+
+  return DIRECT;
 }
 
 } // namespace pln
