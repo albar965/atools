@@ -22,6 +22,7 @@
 #include "sql/sqlutil.h"
 #include "geo/pos.h"
 #include "geo/rect.h"
+#include "geo/calculations.h"
 #include "fs/db/progresshandler.h"
 
 #include <QDebug>
@@ -166,16 +167,20 @@ bool AirwayResolver::run()
     {
       // Previous waypoint found - add segment
       Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
-      airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType, prevPos,
-                                  currentWpPos));
+
+      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType,
+                                    prevPos, currentWpPos));
     }
 
     if(!nextWpIdColVal.isNull())
     {
       // Next waypoint found - add segment
       Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
-      airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
-                                  nextPos));
+
+      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
+                                    nextPos));
     }
   }
 
