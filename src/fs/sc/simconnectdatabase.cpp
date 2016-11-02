@@ -65,6 +65,7 @@ bool SimConnectDataBase::readString(QDataStream& in, QString& str)
   buffer[size] = '\0';
 
   str = QString(buffer);
+  delete[] buffer;
 
   return true;
 }
