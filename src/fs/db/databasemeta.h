@@ -105,8 +105,9 @@ public:
    * 2 Use lowest value for default airport frequencies
    * 3 Removed many not null constraints to avoid loading problems for invalid BGL files
    * 4 Increased width of ident columns for add-on sceneries
+   * 5 Omitting long airway segments
    */
-  static const int DB_VERSION_MINOR = 4;
+  static const int DB_VERSION_MINOR = 5;
 
 private:
   atools::sql::SqlDatabase *db;
