@@ -68,6 +68,7 @@ public:
     creationTimestamp = other.creationTimestamp;
     validMagicNumber = other.validMagicNumber;
     validSize = other.validSize;
+    read = other.read;
 
     return *this;
   }

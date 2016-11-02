@@ -53,7 +53,7 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   if(!validSize)
     qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
 
-  if(!isValid())
+  if(!validMagicNumber || !validSize)
     // Stop reading here if anything is wrong
     return;
 
@@ -76,8 +76,6 @@ QString Header::getCreationTimestampString() const
   dt.setTime_t(static_cast<uint>(creationTimestamp));
   return dt.toString(Qt::ISODate);
 }
-
-
 
 QDebug operator<<(QDebug out, const Header& header)
 {
