@@ -74,8 +74,9 @@ void DataReaderThread::run()
 
   atools::fs::sc::SimConnectHandler handler(verbose);
 
-  // Connect to the simulator
-  connectToSimulator(&handler);
+  if(loadReplayFile == nullptr)
+    // Connect to the simulator
+    connectToSimulator(&handler);
 
   int i = 0;
 
@@ -184,6 +185,7 @@ void DataReaderThread::setupReplay()
 
         updateRate = replayUpdateRateMs;
         emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
+        emit connectedToSimulator();
       }
     }
     else
