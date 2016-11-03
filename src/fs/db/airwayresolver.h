@@ -53,7 +53,7 @@ public:
   struct AirwaySegment;
 
 private:
-  static const int MAX_AIRWAY_SEGMENT_LENGTH_NM = 200;
+  static const int MAX_AIRWAY_SEGMENT_LENGTH_NM = 1000;
 
   void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway);
 
