@@ -47,6 +47,7 @@ void DataReaderThread::connectToSimulator(atools::fs::sc::SimConnectHandler *han
 
   emit postLogMessage(tr("Not connected to the simulator. Waiting ..."), false);
 
+  reconnecting = true;
   while(!terminate)
   {
     if((counter % reconnectRateSec) == 0)
@@ -64,6 +65,7 @@ void DataReaderThread::connectToSimulator(atools::fs::sc::SimConnectHandler *han
     counter++;
     QThread::sleep(1);
   }
+  reconnecting = false;
 }
 
 void DataReaderThread::run()
@@ -77,6 +79,9 @@ void DataReaderThread::run()
   if(loadReplayFile == nullptr)
     // Connect to the simulator
     connectToSimulator(&handler);
+  else
+    // Using replay is always connected
+    connected = true;
 
   int i = 0;
 
@@ -129,7 +134,7 @@ void DataReaderThread::run()
     }
 
     if(loadReplayFile != nullptr)
-      QThread::msleep(static_cast<float>(updateRate) / static_cast<float>(replaySpeed));
+      QThread::msleep(static_cast<float>(replayUpdateRateMs) / static_cast<float>(replaySpeed));
     else
       QThread::msleep(updateRate);
   }
@@ -138,6 +143,7 @@ void DataReaderThread::run()
 
   terminate = false; // Allow restart
   connected = false;
+  reconnecting = false;
   emit disconnectedFromSimulator();
   qDebug() << "Datareader exiting run";
 }
@@ -183,7 +189,6 @@ void DataReaderThread::setupReplay()
           return;
         }
 
-        updateRate = replayUpdateRateMs;
         emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
         emit connectedToSimulator();
       }

@@ -61,6 +61,11 @@ public:
     return connected;
   }
 
+  bool isReconnecting() const
+  {
+    return reconnecting;
+  }
+
   /* If set all data will be saved into that file too */
   void setSaveReplayFilepath(const QString& value)
   {
@@ -110,7 +115,7 @@ private:
   bool terminate = false, verbose = false;
   unsigned int updateRate = 500;
   int reconnectRateSec = 10;
-  bool connected = false;
+  bool connected = false, reconnecting = false;
 };
 
 } // namespace sc
