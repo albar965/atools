@@ -39,6 +39,7 @@ enum Flag
   SUPERSCRIPT = 0x0020,
   SMALL = 0x0040,
   BIG = 0x0080,
+  NOBR = 0x0100,
   ALIGN_RIGHT = 0x1000 // Only for table data
 };
 
@@ -66,6 +67,18 @@ public:
     return htmlText;
   }
 
+  /* Appends raw data without conversion */
+  void append(const atools::util::HtmlBuilder& other)
+  {
+    htmlText += other.getHtml();
+  }
+
+  /* Appends raw data without conversion */
+  void append(const QString& other)
+  {
+    htmlText += other;
+  }
+
   /* Add bold text */
   HtmlBuilder& b(const QString& str);
 
@@ -86,6 +99,9 @@ public:
 
   /* Add big text */
   HtmlBuilder& big(const QString& str);
+
+  /* Add text with no break attribute */
+  HtmlBuilder& nobr(const QString& str);
 
   /* Add horizontal ruler */
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
@@ -152,6 +168,7 @@ public:
 
   /* Add table and table body */
   HtmlBuilder& table();
+  HtmlBuilder& tableWithAtts(const QHash<QString, QString>& attributes);
   HtmlBuilder& tableEnd();
 
   /* all row2 methods add two rows to a table.
@@ -173,10 +190,13 @@ public:
   HtmlBuilder& trEnd();
 
   /* Add table data */
+  HtmlBuilder& td();
+  HtmlBuilder& tdEnd();
   HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Document begin and end */
-  HtmlBuilder& doc();
+  HtmlBuilder& doc(const QString& title = QString(), const QString& css = QString());
   HtmlBuilder& docEnd();
 
   /*
@@ -239,6 +259,8 @@ public:
    * @return "data:image/png;base64, AKLDSAKLJKL"
    */
   static QString getEncodedImageHref(const QIcon& icon, QSize imageSize);
+
+  static QString toEntities(const QString& src);
 
 private:
   /* Select alternating entries based on the index from the string list */
