@@ -68,16 +68,10 @@ public:
   }
 
   /* Appends raw data without conversion */
-  void append(const atools::util::HtmlBuilder& other)
-  {
-    htmlText += other.getHtml();
-  }
+  atools::util::HtmlBuilder& append(const atools::util::HtmlBuilder& other);
 
   /* Appends raw data without conversion */
-  void append(const QString& other)
-  {
-    htmlText += other;
-  }
+  atools::util::HtmlBuilder& append(const QString& other);
 
   /* Add bold text */
   HtmlBuilder& b(const QString& str);
@@ -191,6 +185,7 @@ public:
 
   /* Add table data */
   HtmlBuilder& td();
+  HtmlBuilder& td(int widthPercent);
   HtmlBuilder& tdEnd();
   HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
@@ -212,7 +207,7 @@ public:
     return htmlText.isEmpty();
   }
 
-  void clear();
+  HtmlBuilder& clear();
 
   /* Date format for row2Var */
   QLocale::FormatType getDateFormat() const

@@ -69,6 +69,18 @@ HtmlBuilder::~HtmlBuilder()
 
 }
 
+HtmlBuilder& HtmlBuilder::append(const HtmlBuilder& other)
+{
+  htmlText += other.getHtml();
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::append(const QString& other)
+{
+  htmlText += other;
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, html::Flags flags,
                                   QColor color)
 {
@@ -176,6 +188,12 @@ HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color
 HtmlBuilder& HtmlBuilder::td()
 {
   htmlText += QString("<td>");
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::td(int widthPercent)
+{
+  htmlText += QString("<td width=\"%1%\">").arg(widthPercent);
   return *this;
 }
 
@@ -545,10 +563,11 @@ HtmlBuilder& HtmlBuilder::docEnd()
   return *this;
 }
 
-void HtmlBuilder::clear()
+HtmlBuilder& HtmlBuilder::clear()
 {
   htmlText.clear();
   numLines = 0;
+  return *this;
 }
 
 const QString& HtmlBuilder::alt(const QStringList& list) const
