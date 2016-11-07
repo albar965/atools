@@ -988,8 +988,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     init = true;
     for(int i = 0; i < num; i++)
     {
-      x[i] = static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
-      y[i] = static_cast<float>(std::rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
+      x[i] = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
+      y[i] = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
     }
   }
 
