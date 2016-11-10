@@ -139,8 +139,9 @@ void Flightplan::save(const QString& file)
 
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QXmlStreamWriter writer;
-    writer.setDevice(&xmlFile);
+    QString xmlString;
+
+    QXmlStreamWriter writer(&xmlString);
     writer.setCodec("UTF-8");
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(4);
@@ -215,6 +216,14 @@ void Flightplan::save(const QString& file)
     writer.writeEndElement(); // FlightPlan.FlightPlan
     writer.writeEndElement(); // SimBase.Document
     writer.writeEndDocument();
+
+#ifndef Q_OS_WIN32
+    // Convert EOL always to Windows (0x0a -> 0x0d0a)
+    xmlString.replace("\n", "\r\n");
+#endif
+
+    QByteArray utf8 = xmlString.toUtf8();
+    xmlFile.write(utf8.data(), utf8.size());
   }
   else
     throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
