@@ -87,6 +87,8 @@ public:
     return entries;
   }
 
+  float getDistanceNm() const;
+
   const atools::fs::pln::FlightplanEntry& at(int index) const
   {
     return entries.at(index);

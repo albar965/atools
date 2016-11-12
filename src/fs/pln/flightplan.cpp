@@ -18,6 +18,7 @@
 #include "fs/pln/flightplan.h"
 #include "exception.h"
 #include "geo/pos.h"
+#include "geo/calculations.h"
 #include "atools.h"
 
 #include <QDateTime>
@@ -227,6 +228,17 @@ void Flightplan::save(const QString& file)
   }
   else
     throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+float Flightplan::getDistanceNm() const
+{
+  float distanceMeter = 0.f;
+  if(entries.size() > 1)
+  {
+    for(int i = 0; i < entries.size() - 1; i++)
+      distanceMeter += entries.at(i).getPosition().distanceMeterTo(entries.at(i + 1).getPosition());
+  }
+  return atools::geo::meterToNm(distanceMeter);
 }
 
 void Flightplan::readUntilElement(QXmlStreamReader& reader, const QString& name)
