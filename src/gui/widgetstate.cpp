@@ -112,6 +112,11 @@ void WidgetState::save(const QObject *widget) const
       s.setValueVar(keyPrefix + "_" + mw->objectName() + "_maximized", mw->isMaximized());
       saveWidget(s, mw, mw->saveState());
     }
+    else if(const QDialog * dlg = dynamic_cast<const QDialog *>(widget))
+    {
+      // s.setValueVar(keyPrefix + "_" + dlg->objectName() + "_pos", dlg->pos());
+      s.setValueVar(keyPrefix + "_" + dlg->objectName() + "_size", dlg->size());
+    }
     else if(const QSplitter * sp = dynamic_cast<const QSplitter *>(widget))
       saveWidget(s, sp, sp->saveState());
     else if(const QStatusBar * stb = dynamic_cast<const QStatusBar *>(widget))
@@ -247,6 +252,11 @@ void WidgetState::restore(QObject *widget) const
           if(s.valueVar(keyPrefix + "_" + mw->objectName() + "_maximized", false).toBool())
             mw->setWindowState(mw->windowState() | Qt::WindowMaximized);
       }
+    }
+    else if(QDialog * dlg = dynamic_cast<QDialog *>(widget))
+    {
+      // dlg->move(s.valueVar(keyPrefix + "_" + dlg->objectName() + "_pos", dlg->pos()).toPoint());
+      dlg->resize(s.valueVar(keyPrefix + "_" + dlg->objectName() + "_size", dlg->sizeHint()).toSize());
     }
     else if(QSplitter * sp = dynamic_cast<QSplitter *>(widget))
     {
