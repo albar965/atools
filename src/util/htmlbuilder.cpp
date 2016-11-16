@@ -27,9 +27,10 @@
 namespace atools {
 namespace util {
 
-HtmlBuilder::HtmlBuilder(bool hasBackColor)
+HtmlBuilder::HtmlBuilder(bool hasBackgroundColor)
+  : hasBackColor(hasBackgroundColor)
 {
-  if(hasBackColor)
+  if(hasBackgroundColor)
   {
     // Create darker colors dynamically from default palette
     rowBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base).
@@ -216,7 +217,12 @@ HtmlBuilder& HtmlBuilder::tr(QColor backgroundColor)
   if(backgroundColor.isValid())
     htmlText += "<tr bgcolor=\"" + backgroundColor.name(QColor::HexRgb) + "\">\n";
   else
-    htmlText += alt(tableRowBegin);
+  {
+    if(hasBackColor)
+      htmlText += alt(tableRowBegin);
+    else
+      htmlText += "<tr>\n";
+  }
   tableIndex++;
   numLines++;
   return *this;

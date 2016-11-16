@@ -59,7 +59,7 @@ public:
   /*
    * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
    */
-  HtmlBuilder(bool hasBackColor);
+  HtmlBuilder(bool hasBackgroundColor);
   ~HtmlBuilder();
 
   const QString& getHtml() const
@@ -271,6 +271,7 @@ private:
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
   bool truncated = false;
+  bool hasBackColor = false;
 };
 
 } // namespace util
