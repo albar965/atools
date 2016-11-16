@@ -57,7 +57,7 @@ typedef LPCSTR LPCTSTR;
 
 
 
-HRESULT StringCbLengthA(LPCTSTR psz, size_t cbMax, size_t *pcb);
+HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb);
 
 #else
 #include <float.h>

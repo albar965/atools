@@ -21,9 +21,9 @@
 
 #include <QDebug>
 
-HRESULT StringCbLengthA(LPCTSTR psz, size_t cbMax, size_t *pcb)
+HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb)
 {
-  return TRUE;
+  return NULL;
 }
 
 SIMCONNECTAPI SimConnect_MapClientEventToSimEvent(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,

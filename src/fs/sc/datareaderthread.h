@@ -85,6 +85,15 @@ public:
 
   void closeReplay();
 
+  bool isSimconnectAvailable() const
+  {
+#ifdef SIMCONNECT_DUMMY
+    return false;
+#else
+    return true;
+#endif
+  }
+
 signals:
   /* Send on each received data package from the simconnect interface */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
