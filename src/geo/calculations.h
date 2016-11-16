@@ -121,6 +121,20 @@ Q_DECL_CONSTEXPR TYPE nmToKm(TYPE nm)
   return static_cast<TYPE>(static_cast<double>(nm) * 1852.216 / 1000.);
 }
 
+/* Distance from nautical miles to statue miles */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE nmToMi(TYPE nm)
+{
+  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216 / 1609.3426);
+}
+
+/* Distance from meter to statue miles */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE meterToMi(TYPE nm)
+{
+  return static_cast<TYPE>(static_cast<double>(nm) / 1609.3426);
+}
+
 /* Distance from meters to nautical miles */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToNm(TYPE nm)
@@ -144,6 +158,12 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE feetToNm(TYPE value)
 {
   return meterToNm(feetToMeter(value));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE nmToFeet(TYPE value)
+{
+  return meterToFeet(nmToMeter(value));
 }
 
 /* NM to rad (longitude or latitude) */
