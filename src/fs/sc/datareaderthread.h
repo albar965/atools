@@ -85,12 +85,14 @@ public:
 
   void closeReplay();
 
-  bool isSimconnectAvailable() const
+  static bool isSimconnectAvailable()
   {
 #ifdef SIMCONNECT_DUMMY
     return false;
+
 #else
     return true;
+
 #endif
   }
 
