@@ -154,8 +154,8 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_jetway", type->getNumJetway());
   bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script "update_ils_ids.sql"
 
-  bind(":longest_runway_length", roundToPrecision(meterToFeet(type->getLongestRunwayLength())));
-  bind(":longest_runway_width", roundToPrecision(meterToFeet(type->getLongestRunwayWidth())));
+  bind(":longest_runway_length", roundToInt(meterToFeet(type->getLongestRunwayLength())));
+  bind(":longest_runway_width", roundToInt(meterToFeet(type->getLongestRunwayWidth())));
   bind(":longest_runway_heading", type->getLongestRunwayHeading());
   bind(":longest_runway_surface", Runway::surfaceToStr(type->getLongestRunwaySurface()));
 
@@ -185,10 +185,10 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
   bind(":mag_var", type->getMagVar());
-  bind(":tower_altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":tower_altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

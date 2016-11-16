@@ -44,7 +44,7 @@ void TaxiPathWriter::writeObject(const TaxiPath *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", TaxiPath::pathTypeToString(type->getType()));
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
-  bind(":width", roundToPrecision(meterToFeet(type->getWidth())));
+  bind(":width", roundToInt(meterToFeet(type->getWidth())));
   bind(":name", type->getName());
 
   bindBool(":is_draw_surface", type->isDrawSurface());

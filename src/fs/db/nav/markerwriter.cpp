@@ -42,7 +42,7 @@ void MarkerWriter::writeObject(const Marker *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Marker::markerTypeToStr(type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

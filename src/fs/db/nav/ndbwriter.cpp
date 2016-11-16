@@ -44,9 +44,9 @@ void NdbWriter::writeObject(const Ndb *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Ndb::ndbTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
-  bind(":range", roundToPrecision(meterToNm(type->getRange())));
+  bind(":range", roundToInt(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

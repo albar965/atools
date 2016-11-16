@@ -57,7 +57,7 @@ void TransitionWriter::writeObject(const Transition *type)
     bind(":dme_region", type->getDmeRegion());
     bind(":dme_airport_ident", type->getDmeAirportIdent());
     bind(":dme_radial", type->getDmeRadial());
-    bind(":dme_distance", roundToPrecision(meterToNm(type->getDmeDistance())));
+    bind(":dme_distance", roundToInt(meterToNm(type->getDmeDistance())));
   }
   else
   {

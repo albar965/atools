@@ -44,7 +44,7 @@ void BoundaryLineWriter::writeObject(const BoundarySegment *type)
 
   if(type->getType() == bgl::boundaryline::CIRCLE)
   {
-  bind(":radius", roundToPrecision(meterToNm(type->getRadius())));
+  bind(":radius", roundToInt(meterToNm(type->getRadius())));
   bindNullFloat(":lonx");
   bindNullFloat(":laty");
   }

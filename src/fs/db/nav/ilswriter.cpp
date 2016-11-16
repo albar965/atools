@@ -47,10 +47,10 @@ void IlsWriter::writeObject(const Ils *type)
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":frequency", type->getFrequency());
-  bind(":range", roundToPrecision(atools::geo::meterToNm(type->getRange())));
+  bind(":range", roundToInt(atools::geo::meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
   bind(":has_backcourse", type->hasBackcourse());
-  bind(":altitude", roundToPrecision(atools::geo::meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(atools::geo::meterToFeet(type->getPosition().getAltitude())));
 
   const bgl::BglPosition& pos = type->getPosition();
   const Localizer *loc = type->getLocalizer();
@@ -81,8 +81,8 @@ void IlsWriter::writeObject(const Ils *type)
   const Dme *dme = type->getDme();
   if(dme != nullptr)
   {
-    bind(":dme_range", roundToPrecision(atools::geo::meterToNm(dme->getRange())));
-    bind(":dme_altitude", roundToPrecision(atools::geo::meterToFeet(dme->getPosition().getAltitude())));
+    bind(":dme_range", roundToInt(atools::geo::meterToNm(dme->getRange())));
+    bind(":dme_altitude", roundToInt(atools::geo::meterToFeet(dme->getPosition().getAltitude())));
     bind(":dme_lonx", dme->getPosition().getLonX());
     bind(":dme_laty", dme->getPosition().getLatY());
   }
@@ -97,9 +97,9 @@ void IlsWriter::writeObject(const Ils *type)
   const Glideslope *gs = type->getGlideslope();
   if(gs != nullptr)
   {
-    bind(":gs_range", roundToPrecision(atools::geo::meterToNm(gs->getRange())));
+    bind(":gs_range", roundToInt(atools::geo::meterToNm(gs->getRange())));
     bind(":gs_pitch", gs->getPitch());
-    bind(":gs_altitude", roundToPrecision(atools::geo::meterToFeet(gs->getPosition().getAltitude())));
+    bind(":gs_altitude", roundToInt(atools::geo::meterToFeet(gs->getPosition().getAltitude())));
     bind(":gs_lonx", gs->getPosition().getLonX());
     bind(":gs_laty", gs->getPosition().getLatY());
   }

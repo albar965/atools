@@ -51,12 +51,12 @@ void HelipadWriter::writeObject(const Helipad *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
-  bind(":length", roundToPrecision(meterToFeet(type->getLength())));
-  bind(":width", roundToPrecision(meterToFeet(type->getWidth())));
+  bind(":length", roundToInt(meterToFeet(type->getLength())));
+  bind(":width", roundToInt(meterToFeet(type->getWidth())));
   bind(":heading", type->getHeading());
   bindBool(":is_transparent", type->isTransparent());
   bindBool(":is_closed", type->isClosed());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

@@ -39,6 +39,13 @@ inline Q_DECL_CONSTEXPR long long absLong(long long value)
   return value > 0L ? value : -value;
 }
 
+/* Round to integer value */
+template<typename TYPE>
+inline Q_DECL_CONSTEXPR int roundToInt(TYPE value)
+{
+  return static_cast<int>(round(value));
+}
+
 /* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
 template<typename TYPE>
 int roundToPrecision(TYPE value, int precision = 0)

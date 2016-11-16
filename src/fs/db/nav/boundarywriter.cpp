@@ -60,11 +60,11 @@ void BoundaryWriter::writeObject(const Boundary *type)
   using namespace atools::geo;
   using namespace atools;
 
-  bind(":max_altitude", roundToPrecision(meterToFeet(type->getMaxPosition().getAltitude())));
+  bind(":max_altitude", roundToInt(meterToFeet(type->getMaxPosition().getAltitude())));
   bind(":max_lonx", type->getMaxPosition().getLonX());
   bind(":max_laty", type->getMaxPosition().getLatY());
 
-  bind(":min_altitude", roundToPrecision(meterToFeet(type->getMinPosition().getAltitude())));
+  bind(":min_altitude", roundToInt(meterToFeet(type->getMinPosition().getAltitude())));
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
   executeStatement();

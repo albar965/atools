@@ -42,7 +42,7 @@ void StartWriter::writeObject(const Start *type)
   bind(":runway_name", type->getRunwayName());
   bind(":type", bgl::util::enumToStr(Start::startTypeToStr, type->getType()));
   bind(":heading", type->getHeading());
-  bind(":altitude", roundToPrecision(meterToFeet(type->getPosition().getAltitude())));
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 
