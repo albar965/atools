@@ -23,7 +23,8 @@
 -- Populate route_edge_airway table with waypoints -----------------------------------
 delete from route_edge_airway;
 
-insert into route_edge_airway (airway_id, from_node_id, from_node_type, to_node_id, to_node_type, type, minimum_altitude)
+insert into route_edge_airway (airway_id, from_node_id, from_node_type, to_node_id, to_node_type, type,
+                               minimum_altitude, airway_name)
 select a.airway_id, n1.node_id as from_node_id,
   n1.type as from_node_type,
   n2.node_id as to_node_id,
@@ -34,7 +35,8 @@ case
   when a.airway_type = 'BOTH' then 7
   else 0
 end as type,
-a.minimum_altitude
+a.minimum_altitude,
+a.airway_name as airway_name
 from airway a
 join route_node_airway n1 on a.from_waypoint_id = n1.nav_id
 join route_node_airway n2 on a.to_waypoint_id = n2.nav_id;

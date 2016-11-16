@@ -110,6 +110,16 @@ public:
     return transparent;
   }
 
+  int getStartIndex() const
+  {
+    return startIndex;
+  }
+
+  void setStartIndex(int value)
+  {
+    startIndex = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Helipad& record);
 
@@ -117,6 +127,7 @@ private:
   atools::fs::bgl::helipad::HelipadType type = atools::fs::bgl::helipad::NONE;
   atools::fs::bgl::BglPosition position;
   float length = 0.f, width = 0.f, heading = 0.f;
+  int startIndex = 0;
   bool transparent = false, closed = false;
 };
 

@@ -85,6 +85,7 @@ create table route_edge_airway
   to_node_type integer not null,    -- Same as route_node_airway.type
   type integer,                     -- 5 = Victor, 6 = Jet, 7 = Both
   minimum_altitude integer,         -- Feet
+  airway_name varchar(5) not null,  -- Airway name
 foreign key(airway_id) references airway(airway_id),
 foreign key(from_node_id) references route_node_airway(node_id),
 foreign key(to_node_id) references route_node_airway(node_id)

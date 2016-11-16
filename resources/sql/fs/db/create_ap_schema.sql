@@ -199,6 +199,7 @@ create table helipad
 (
   helipad_id integer primary key,
   airport_id integer not null,
+  start_id integer,
   surface varchar(15),                 -- see enum atools::fs::bgl::rw::Surface
   type varchar(10),                    -- see enum atools::fs::bgl::helipad::HelipadType
   length double not null,              -- Feet
@@ -209,7 +210,8 @@ create table helipad
   altitude integer not null,           -- Feet
   lonx double not null,
   laty double not null,
-foreign key(airport_id) references airport(airport_id)
+foreign key(airport_id) references airport(airport_id),
+foreign key(start_id) references start(start_id)
 );
 
 create index if not exists idx_helipad_airport_id on helipad(helipad_id);

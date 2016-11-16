@@ -212,9 +212,11 @@ void AirportWriter::writeObject(const Airport *type)
   ApproachWriter *appWriter = dw.getApproachWriter();
   appWriter->write(type->getApproaches());
 
+  // Helipads will take the start index + the current start id as reference to starts
   HelipadWriter *heliWriter = dw.getHelipadWriter();
   heliWriter->write(type->getHelipads());
 
+  // Starts have to be written after helipads
   StartWriter *startWriter = dw.getStartWriter();
   startWriter->write(type->getStarts());
 

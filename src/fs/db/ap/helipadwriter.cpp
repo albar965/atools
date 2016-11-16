@@ -20,6 +20,7 @@
 #include "fs/bgl/util.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
+#include "fs/db/ap/startwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "geo/calculations.h"
 #include "atools.h"
@@ -49,6 +50,13 @@ void HelipadWriter::writeObject(const Helipad *type)
 
   bind(":helipad_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+
+  // Starts are written after helipads so it is safe to use the current start id + index
+  if(type->getStartIndex() > 0)
+    bind(":start_id", getDataWriter().getStartWriter()->getCurrentId() + type->getStartIndex());
+  else
+    bindNullInt(":start_id");
+
   bind(":surface", Runway::surfaceToStr(type->getSurface()));
   bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
   bind(":length", roundToInt(meterToFeet(type->getLength())));

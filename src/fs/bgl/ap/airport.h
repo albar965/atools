@@ -428,6 +428,7 @@ private:
   void updateParking(const QList<atools::fs::bgl::Jetway>& jetways, const QHash<int, int>& parkingNumberIndex);
   void updateSummaryFields();
   void removeVehicleParking();
+  void updateHelipads();
 
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
   static const int MIN_RUNWAY_LENGTH_METER = 10;

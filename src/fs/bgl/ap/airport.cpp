@@ -450,21 +450,29 @@ void Airport::updateSummaryFields()
     boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
 
+  updateHelipads();
+
   // Check if airport is military
   for(const QString& s : MIL_ENDS_WITH)
+  {
     if(name.endsWith(s))
     {
       military = true;
       break;
     }
+  }
 
   if(!military)
+  {
     for(const QString& s : MIL_CONTAINS)
+    {
       if(name.contains(s))
       {
         military = true;
         break;
       }
+    }
+  }
 
 }
 
@@ -478,6 +486,24 @@ void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>&
     else
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;
+  }
+}
+
+void Airport::updateHelipads()
+{
+if(ident == "21WI")
+qDebug()<<"alal";
+
+  for(Helipad& helipad : helipads)
+  {
+    int startIdx = 1;
+    for(const Start& start : starts)
+    {
+      if(start.getPosition().getPos().almostEqual(helipad.getPosition().getPos(),
+                                                  atools::geo::Pos::POS_EPSILON_5M))
+        helipad.setStartIndex(startIdx);
+      startIdx++;
+    }
   }
 }
 

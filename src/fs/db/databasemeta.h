@@ -97,7 +97,7 @@ public:
    * schema or content change
    * 4 Added runway_name to start table
    */
-  static const int DB_VERSION_MAJOR = 4;
+  static const int DB_VERSION_MAJOR = 5;
 
   /* Minor database version of the application. Minor version differences are compatible.
    * History:
