@@ -146,7 +146,7 @@ void Settings::syncSettings()
                     arg(qs->fileName()).arg(qs->status()));
 }
 
-bool Settings::contains(const QString& key)
+bool Settings::contains(const QString& key) const
 {
   return qSettings->contains(key);
 }
@@ -156,7 +156,7 @@ void Settings::remove(const QString& key)
   qSettings->remove(key);
 }
 
-QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue)
+QStringList Settings::valueStrList(const QString& key, const QStringList& defaultValue) const
 {
   if(!contains(key))
     return defaultValue;
@@ -169,32 +169,32 @@ QStringList Settings::valueStrList(const QString& key, const QStringList& defaul
     return list;
 }
 
-QString Settings::valueStr(const QString& key, const QString& defaultValue)
+QString Settings::valueStr(const QString& key, const QString& defaultValue) const
 {
   return qSettings->value(key, defaultValue).toString();
 }
 
-bool Settings::valueBool(const QString& key, bool defaultValue)
+bool Settings::valueBool(const QString& key, bool defaultValue) const
 {
   return qSettings->value(key, defaultValue).toBool();
 }
 
-int Settings::valueInt(const QString& key, int defaultValue)
+int Settings::valueInt(const QString& key, int defaultValue) const
 {
   return qSettings->value(key, defaultValue).toInt();
 }
 
-float Settings::valueFloat(const QString& key, float defaultValue)
+float Settings::valueFloat(const QString& key, float defaultValue) const
 {
   return qSettings->value(key, defaultValue).toFloat();
 }
 
-double Settings::valueDouble(const QString& key, double defaultValue)
+double Settings::valueDouble(const QString& key, double defaultValue) const
 {
   return qSettings->value(key, defaultValue).toDouble();
 }
 
-QVariant Settings::valueVar(const QString& key, QVariant defaultValue)
+QVariant Settings::valueVar(const QString& key, QVariant defaultValue) const
 {
   return qSettings->value(key, defaultValue);
 }

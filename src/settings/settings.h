@@ -94,16 +94,16 @@ public:
 
   static QString getFilename();
 
-  bool contains(const QString& key);
+  bool contains(const QString& key) const;
   void remove(const QString& key);
 
-  QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList());
-  QString valueStr(const QString& key, const QString& defaultValue = QString());
-  bool valueBool(const QString& key, bool defaultValue = false);
-  int valueInt(const QString& key, int defaultValue = 0);
-  float valueFloat(const QString& key, float defaultValue = 0.f);
-  double valueDouble(const QString& key, double defaultValue = 0.);
-  QVariant valueVar(const QString& key, QVariant defaultValue = QVariant());
+  QStringList valueStrList(const QString& key, const QStringList& defaultValue = QStringList()) const;
+  QString valueStr(const QString& key, const QString& defaultValue = QString()) const;
+  bool valueBool(const QString& key, bool defaultValue = false) const;
+  int valueInt(const QString& key, int defaultValue = 0) const;
+  float valueFloat(const QString& key, float defaultValue = 0.f) const;
+  double valueDouble(const QString& key, double defaultValue = 0.) const;
+  QVariant valueVar(const QString& key, QVariant defaultValue = QVariant()) const;
 
   void setValue(const QString& key, const QStringList& value);
   void setValue(const QString& key, const QString& value);
