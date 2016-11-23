@@ -132,7 +132,9 @@ int SimConnectData::write(QIODevice *ioDevice)
   out << static_cast<quint16>(numMetar);
 
   for(int i = 0; i < numMetar; i++)
+  {
     writeLongString(out, metars.at(i));
+  }
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));

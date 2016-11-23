@@ -39,7 +39,7 @@ enum State
   FETCH_ERROR,
   OPEN_ERROR,
   DISCONNECTED,
-  SIMCONNECT_EXCEPTION
+  EXCEPTION
 };
 
 /* Reads data synchronously from Fs simconnect interfaces.

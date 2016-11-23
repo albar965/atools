@@ -121,6 +121,9 @@ private:
 
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
+
+  QVector<atools::geo::Pos> metarPos;
+  QStringList metarIdent;
   QStringList metars;
 };
 

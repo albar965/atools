@@ -185,7 +185,10 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
   }
 
   if(weatherRequested && data.getMetars().isEmpty())
+  {
     qWarning() << "Weather requested but not found";
+    handler->setWeatherRequest(WeatherRequest());
+  }
 
   return retval;
 }
