@@ -53,10 +53,12 @@ public:
   static int writeBlock(QIODevice *ioDevice, const QByteArray& block,
                         atools::fs::sc::SimConnectStatus& status);
 
-protected:
-  void writeString(QDataStream& out, const QString& str) const;
-  bool readString(QDataStream& in, QString& str);
+  static void writeString(QDataStream& out, const QString& str);
+  static bool readString(QDataStream& in, QString& str);
+  static void writeLongString(QDataStream& out, const QString& str);
+  static bool readLongString(QDataStream& in, QString& str);
 
+protected:
   atools::fs::sc::SimConnectStatus status = OK;
 };
 

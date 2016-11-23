@@ -34,14 +34,16 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
 {
   qDebug() << "Datareader started";
   setObjectName("DataReaderThread");
+  handler = new SimConnectHandler(verbose);
 }
 
 DataReaderThread::~DataReaderThread()
 {
+  delete handler;
   qDebug() << "Datareader deleted";
 }
 
-void DataReaderThread::connectToSimulator(atools::fs::sc::SimConnectHandler *handler)
+void DataReaderThread::connectToSimulator()
 {
   int counter = 0;
 
@@ -74,20 +76,23 @@ void DataReaderThread::run()
 
   setupReplay();
 
-  atools::fs::sc::SimConnectHandler handler(verbose);
-
   if(loadReplayFile == nullptr)
     // Connect to the simulator
-    connectToSimulator(&handler);
+    connectToSimulator();
   else
     // Using replay is always connected
     connected = true;
 
   int i = 0;
 
+  qDebug() << "Datareader connected";
+
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
+    // handler->fetchStationMetars({"KSEA", "CYVR"});
+    // handler->fetchNearesMetars({atools::geo::Pos(-124.1786, 49.4758)});
+    // handler->fetchInterpolatedMetars({atools::geo::Pos(-123.1618, 48.3800)});
 
     if(loadReplayFile != nullptr)
     {
@@ -98,7 +103,15 @@ void DataReaderThread::run()
         if(loadReplayFile->atEnd())
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
+        QStringList metars;
+        for(const QString& station : handler->getWeatherRequest().getWeatherRequestStation())
+          metars.append(station + " DUMMY METAR " + QDateTime::currentDateTime().toString());
+
+        data.setMetars(metars);
+
         emit postSimConnectData(data);
+
+        handler->setWeatherRequest(WeatherRequest());
       }
       else
       {
@@ -107,10 +120,16 @@ void DataReaderThread::run()
         closeReplay();
       }
     }
-    else if(handler.fetchData(data, 200))
+    else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM))
     {
       data.setPacketId(i);
       data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
+
+      // qInfo() << "METARs" << data.getMetars();
+
+      if(!data.getMetars().isEmpty())
+        qDebug() << "DataReaderThread::run()" << data.getMetars();
+
       emit postSimConnectData(data);
 
       if(saveReplayFile != nullptr && saveReplayFile->isOpen())
@@ -120,17 +139,19 @@ void DataReaderThread::run()
     }
     else
     {
-      if(handler.getState() != atools::fs::sc::STATEOK)
+      if(handler->getState() != atools::fs::sc::STATEOK)
       {
         connected = false;
         emit disconnectedFromSimulator();
 
         qWarning() << "Error fetching data from simulator.";
 
-        if(!handler.isSimRunning())
+        if(!handler->isSimRunning())
           // Try to reconnect if we lost connection to simulator
-          connectToSimulator(&handler);
+          connectToSimulator();
       }
+      // else
+      // qWarning() << "No data fetched";
     }
 
     if(loadReplayFile != nullptr)
@@ -146,6 +167,27 @@ void DataReaderThread::run()
   reconnecting = false;
   emit disconnectedFromSimulator();
   qDebug() << "Datareader exiting run";
+}
+
+bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
+{
+  QMutexLocker locker(&handlerMutex);
+
+  bool weatherRequested = handler->getWeatherRequest().isValid();
+
+  bool retval = handler->fetchData(data, radiusKm);
+
+  if(weatherRequested && !data.getMetars().isEmpty())
+  {
+    qDebug() << "Weather requested and found";
+    // Weather requested and found
+    handler->setWeatherRequest(WeatherRequest());
+  }
+
+  if(weatherRequested && data.getMetars().isEmpty())
+    qWarning() << "Weather requested but not found";
+
+  return retval;
 }
 
 void DataReaderThread::setReconnectRateSec(int reconnectSec)
@@ -235,6 +277,25 @@ void DataReaderThread::closeReplay()
     delete loadReplayFile;
     loadReplayFile = nullptr;
   }
+}
+
+bool DataReaderThread::isSimconnectAvailable()
+{
+#ifdef SIMCONNECT_DUMMY
+  return false;
+
+#else
+  return true;
+
+#endif
+}
+
+void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
+{
+  qDebug() << "DataReaderThread::postWeatherRequest";
+
+  QMutexLocker locker(&handlerMutex);
+  handler->setWeatherRequest(request);
 }
 
 } // namespace sc

@@ -5,18 +5,16 @@
 #-------------------------------------------------
 
 QT       += sql xml core widgets
-
 QT       -= gui
 
-#QMAKE_CXXFLAGS += -std=c++11
 CONFIG += c++11
 
 INCLUDEPATH += $$PWD/src
 
 unix {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
-  # Enable this to compile without simulation and use a dummy implementation
-  #DEFINES+=SIMCONNECT_DUMMY
+  # Enable this to compile with dummy implementation of simconnect
+  DEFINES+=SIMCONNECT_DUMMY
 }
 
 win32 {
@@ -27,9 +25,8 @@ win32 {
   # Enable this to compile without SimConnect and use a dummy implementation
   #DEFINES+=SIMCONNECT_DUMMY
 
-  # Disable this to compile without simconnect
+  # Enable this to compile with simconnect
   DEFINES+=SIMCONNECT_REAL
-  # Otherwise a test simulation will run
 
   SIMCONNECT="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK"
   INCLUDEPATH += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\inc"
@@ -189,7 +186,8 @@ HEADERS += src/atools.h \
     src/fs/sc/simconnectdummy.h \
     src/fs/sc/simconnectaircraft.h \
     src/fs/sc/simconnectuseraircraft.h \
-    src/fs/sc/datareaderthread.h
+    src/fs/sc/datareaderthread.h \
+    src/fs/sc/weatherrequest.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -337,7 +335,8 @@ SOURCES += src/atools.cpp \
     src/fs/sc/simconnectdummy.cpp \
     src/fs/sc/simconnectaircraft.cpp \
     src/fs/sc/simconnectuseraircraft.cpp \
-    src/fs/sc/datareaderthread.cpp
+    src/fs/sc/datareaderthread.cpp \
+    src/fs/sc/weatherrequest.cpp
 
 
 unix {

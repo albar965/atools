@@ -81,7 +81,11 @@ bool SimConnectData::read(QIODevice *ioDevice)
   }
   in >> packetId >> packetTs;
 
-  userAircraft.read(in);
+  quint8 hasUser = 0;
+  in >> hasUser;
+  if(hasUser == 1)
+    userAircraft.read(in);
+
   quint16 numAi = 0;
   in >> numAi;
   for(quint16 i = 0; i < numAi; i++)
@@ -89,6 +93,15 @@ bool SimConnectData::read(QIODevice *ioDevice)
     SimConnectAircraft ap;
     ap.read(in);
     aiAircraft.append(ap);
+  }
+
+  quint16 numMetar = 0;
+  in >> numMetar;
+  for(quint16 i = 0; i < numMetar; i++)
+  {
+    QString metar;
+    readLongString(in, metar);
+    metars.append(metar);
   }
 
   return true;
@@ -104,12 +117,22 @@ int SimConnectData::write(QIODevice *ioDevice)
 
   out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
 
-  userAircraft.write(out);
+  bool userValid = userAircraft.getPosition().isValid();
+  out << static_cast<quint8>(userValid);
+  if(userValid)
+    userAircraft.write(out);
+
   int numAi = std::min(65535, aiAircraft.size());
   out << static_cast<quint16>(numAi);
 
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);
+
+  int numMetar = std::min(65535, metars.size());
+  out << static_cast<quint16>(numMetar);
+
+  for(int i = 0; i < numMetar; i++)
+    writeLongString(out, metars.at(i));
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_DATA));

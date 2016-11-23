@@ -80,9 +80,11 @@ bool SimConnectReply::read(QIODevice *ioDevice)
     status = VERSION_MISMATCH;
     return false;
   }
-  quint16 commandWord;
-  in >> packetId >> packetTs >> commandWord;
-  command = Command(commandWord);
+  quint16 cmd;
+  in >> packetId >> packetTs >> cmd;
+  command = Command(cmd);
+
+  weatherRequest.read(in);
 
   return true;
 }
@@ -97,6 +99,8 @@ int SimConnectReply::write(QIODevice *ioDevice)
 
   out << MAGIC_NUMBER_REPLY << packetSize << REPLY_VERSION << packetId << packetTs
       << static_cast<quint16>(command);
+
+  weatherRequest.write(out);
 
   // Go back and update size
   out.device()->seek(sizeof(MAGIC_NUMBER_REPLY));

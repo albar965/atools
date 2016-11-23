@@ -35,7 +35,7 @@ SimConnectDataBase::~SimConnectDataBase()
 
 }
 
-void SimConnectDataBase::writeString(QDataStream& out, const QString& str) const
+void SimConnectDataBase::writeString(QDataStream& out, const QString& str)
 {
   // Write string as an size prefixed character array max length 256 UTF-8
   QByteArray strBytes;
@@ -53,6 +53,41 @@ bool SimConnectDataBase::readString(QDataStream& in, QString& str)
   quint8 size = 0;
 
   if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint8)))
+    return false;
+
+  in >> size;
+
+  if(in.device()->bytesAvailable() < size)
+    return false;
+
+  char *buffer = new char[size + 1];
+  in.readRawData(buffer, size);
+  buffer[size] = '\0';
+
+  str = QString(buffer);
+  delete[] buffer;
+
+  return true;
+}
+
+void SimConnectDataBase::writeLongString(QDataStream& out, const QString& str)
+{
+  // Write string as an size prefixed character array max length 65535 UTF-8
+  QByteArray strBytes;
+  strBytes.append(str);
+  if(strBytes.size() > 65535)
+    strBytes = strBytes.left(65535);
+
+  // Size does not include the trailing 0
+  out << static_cast<quint16>(strBytes.size());
+  out.writeRawData(strBytes.constData(), strBytes.size());
+}
+
+bool SimConnectDataBase::readLongString(QDataStream& in, QString& str)
+{
+  quint16 size = 0;
+
+  if(in.device()->bytesAvailable() < static_cast<qint64>(sizeof(quint16)))
     return false;
 
   in >> size;

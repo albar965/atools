@@ -21,6 +21,8 @@
 #include <QtGlobal>
 #include <QVector>
 
+#include "geo/pos.h"
+
 namespace atools {
 namespace fs {
 namespace sc {
@@ -28,6 +30,7 @@ namespace sc {
 class SimConnectData;
 class SimConnectAircraft;
 class SimConnectHandlerPrivate;
+class WeatherRequest;
 
 /* Status of the last operation when fetching data. */
 enum State
@@ -53,6 +56,9 @@ public:
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
   bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
 
+  void setWeatherRequest(const atools::fs::sc::WeatherRequest& request);
+  const atools::fs::sc::WeatherRequest&  getWeatherRequest()const;
+
   /* true if simulator is running and not stuck in open dialogs. */
   bool isSimRunning() const;
 
@@ -62,6 +68,7 @@ public:
   sc::State getState() const;
 
 private:
+  // Used to all the windows and SimConnect stuff out of the header files
   SimConnectHandlerPrivate *p = nullptr;
 
 };

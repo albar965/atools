@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "simconnecthandler.h"
+#include "fs/sc/weatherrequest.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
 
@@ -24,6 +25,7 @@
 #include <QDateTime>
 #include <QThread>
 #include <QSet>
+#include <QCache>
 
 #if defined(SIMCONNECT_DUMMY)
 // Manually defined
@@ -37,7 +39,6 @@ extern "C" {
 #include "SimConnect.h"
 }
 #endif
-// Otherwise use simulation
 #endif
 
 namespace atools {
@@ -54,7 +55,10 @@ enum DataRequestId
 {
   DATA_REQUEST_ID_USER_AIRCRAFT = 1,
   DATA_REQUEST_ID_AI_AIRCRAFT = 2,
-  DATA_REQUEST_ID_AI_HELICOPTER = 3
+  DATA_REQUEST_ID_AI_HELICOPTER = 3,
+  DATA_REQUEST_ID_WEATHER_INTERPOLATED = 4,
+  DATA_REQUEST_ID_WEATHER_NEAREST_STATION = 5,
+  DATA_REQUEST_ID_WEATHER_STATION = 6
 };
 
 enum DataDefinitionId
@@ -161,7 +165,6 @@ public:
 
   }
 
-#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   /* Callback receiving the data. */
   void dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData);
 
@@ -173,7 +176,6 @@ public:
                      atools::fs::sc::SimConnectAircraft& airplane);
 
   HANDLE hSimConnect = NULL;
-#endif
 
   SimData simData;
   unsigned long simDataObjectId;
@@ -181,12 +183,14 @@ public:
   QVector<SimDataAircraft> simDataAircraft;
   QVector<unsigned long> simDataAircraftObjectIds;
 
-  bool simRunning = true, simPaused = false, verbose = false, dataFetched = false, userDataFetched = false;
+  bool simRunning = true, simPaused = false, verbose = false, dataFetched = false, userDataFetched = false,
+       weatherDataFetched = false;
   sc::State state = sc::STATEOK;
 
-};
+  atools::fs::sc::WeatherRequest weatherRequest;
+  QVector<QString> fetchedMetars;
 
-#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
+};
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {
@@ -366,6 +370,25 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
         break;
       }
+    case SIMCONNECT_RECV_ID_WEATHER_OBSERVATION:
+      {
+        SIMCONNECT_RECV_WEATHER_OBSERVATION *pObjData = (SIMCONNECT_RECV_WEATHER_OBSERVATION *)pData;
+
+        const char *pszMETAR = pObjData->szMetar;
+
+        if(pObjData->dwRequestID == DATA_REQUEST_ID_WEATHER_INTERPOLATED ||
+           pObjData->dwRequestID == DATA_REQUEST_ID_WEATHER_NEAREST_STATION ||
+           pObjData->dwRequestID == DATA_REQUEST_ID_WEATHER_STATION)
+        {
+          if(verbose)
+            qDebug() << "METAR" << pszMETAR;
+
+          fetchedMetars.append(QString(pszMETAR));
+          dataFetched = true;
+          weatherDataFetched = true;
+        }
+        break;
+      }
 
     case SIMCONNECT_RECV_ID_QUIT:
       if(verbose)
@@ -518,8 +541,6 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
                                  SIMCONNECT_DATATYPE_INT32);
 }
 
-#endif
-
 // ===============================================================================================
 // SimConnectHandler
 // ===============================================================================================
@@ -532,14 +553,12 @@ SimConnectHandler::SimConnectHandler(bool verboseLogging)
 
 SimConnectHandler::~SimConnectHandler()
 {
-#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   if(p->hSimConnect != NULL)
   {
     HRESULT hr = SimConnect_Close(p->hSimConnect);
     if(hr != S_OK)
       qWarning() << "Error closing SimConnect";
   }
-#endif
   delete p;
 }
 
@@ -560,7 +579,6 @@ State atools::fs::sc::SimConnectHandler::getState() const
 
 bool SimConnectHandler::connect()
 {
-#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   HRESULT hr;
 
   if(p->verbose)
@@ -697,14 +715,12 @@ bool SimConnectHandler::connect()
     p->hSimConnect = NULL;
     return false;
   }
-#endif
 
   return true;
 }
 
 bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
 {
-#if defined(SIMCONNECT_REAL) || defined(SIMCONNECT_DUMMY)
   if(p->verbose)
     qDebug() << "fetchData entered ================================================================";
 
@@ -754,6 +770,53 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
   }
 
+  for(const atools::geo::Pos& weatherPos : p->weatherRequest.getWeatherRequestNearest())
+  {
+    hr =
+      SimConnect_WeatherRequestObservationAtNearestStation(p->hSimConnect,
+                                                           DATA_REQUEST_ID_WEATHER_NEAREST_STATION,
+                                                           weatherPos.getLatY(), weatherPos.getLonX());
+    if(hr != S_OK)
+    {
+      qWarning() <<
+      "SimConnect_WeatherRequestObservationAtNearestStation DATA_REQUEST_ID_WEATHER_NEAREST_STATION: Error";
+      p->state = sc::FETCH_ERROR;
+      return false;
+    }
+  }
+
+  for(const atools::geo::Pos& weatherPos : p->weatherRequest.getWeatherRequestInterpolated())
+  {
+    hr =
+      SimConnect_WeatherRequestInterpolatedObservation(p->hSimConnect,
+                                                       DATA_REQUEST_ID_WEATHER_INTERPOLATED,
+                                                       weatherPos.getLatY(), weatherPos.getLonX(),
+                                                       weatherPos.getAltitude());
+    if(hr != S_OK)
+    {
+      qWarning() <<
+      "SimConnect_WeatherRequestInterpolatedObservation DATA_REQUEST_ID_WEATHER_INTERPOLATED: Error";
+      p->state = sc::FETCH_ERROR;
+      return false;
+    }
+  }
+
+  for(const QString& weatherPos : p->weatherRequest.getWeatherRequestStation())
+  {
+    hr =
+      SimConnect_WeatherRequestObservationAtStation(p->hSimConnect,
+                                                    DATA_REQUEST_ID_WEATHER_STATION,
+                                                    weatherPos.toUtf8().data());
+    if(hr != S_OK)
+    {
+      qWarning() <<
+      "SimConnect_WeatherRequestObservationAtStation DATA_REQUEST_ID_WEATHER_STATION: Error";
+      p->state = sc::FETCH_ERROR;
+      return false;
+    }
+  }
+
+  p->weatherDataFetched = false;
   p->userDataFetched = false;
   p->dataFetched = true;
   p->simDataAircraft.clear();
@@ -797,6 +860,10 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       objectIds.insert(ap.objectId);
     }
   }
+
+  for(const QString& key : p->fetchedMetars)
+    data.metars.append(key);
+  p->fetchedMetars.clear();
 
   if(p->userDataFetched)
   {
@@ -854,6 +921,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
     data.userAircraft.zuluDateTime = zuluDateTime;
   }
+  else
+    data.userAircraft.position = atools::geo::Pos();
 
   if(!p->simRunning || p->simPaused || !p->userDataFetched)
   {
@@ -863,151 +932,16 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
   }
   return true;
+}
 
-#else
-  Q_UNUSED(radiusKm);
+void SimConnectHandler::setWeatherRequest(const atools::fs::sc::WeatherRequest& request)
+{
+  p->weatherRequest = request;
+}
 
-  // Simple aircraft simulation ------------------------------------------------
-  static qint64 lastUpdate = QDateTime::currentMSecsSinceEpoch();
-  int updateRate = static_cast<int>(QDateTime::currentMSecsSinceEpoch() - lastUpdate);
-  lastUpdate = QDateTime::currentMSecsSinceEpoch();
-  static int dataId = 0;
-  static int updatesMs = 0;
-  static atools::geo::Pos curPos(8.34239197, 54.9116364);
-  // 200 kts: 0.0555 nm per second / 0.0277777 nm per cycle - only for 500 ms updates
-  float speed = 200.f;
-  float nmPerSec = speed / 3600.f;
-  static float course = 45.f;
-  static float courseChange = 0.f;
-  static float fuelFlow = 100.f;
-  static float visibility = 0.1f;
-  static unsigned int objectId = 0;
-  static float alt = 0.f, altChange = 0.f;
-
-  updatesMs += updateRate;
-
-  if((updatesMs % 40000) == 0)
-    courseChange = 0.f;
-  else if((updatesMs % 30000) == 0)
-  {
-    courseChange = updateRate / 1000.f * 2.f; // 2 deg per second
-    if(course > 180.f)
-      courseChange = -courseChange;
-  }
-  course += courseChange;
-  course = atools::geo::normalizeCourse(course);
-
-  // Simulate takeoff run
-  if(updatesMs <= 10000)
-  {
-    data.userAircraft.flags |= atools::fs::sc::ON_GROUND;
-    fuelFlow = 200.f;
-  }
-
-  // Simulate takeoff
-  if(updatesMs == 10000)
-  {
-    altChange = updateRate / 1000.f * 16.6f; // 1000 ft per min
-    data.userAircraft.flags &= ~atools::fs::sc::ON_GROUND;
-    fuelFlow = 150.f;
-  }
-
-  if((updatesMs % 120000) == 0)
-  {
-    altChange = 0.f;
-    fuelFlow = 100.f;
-  }
-  else if((updatesMs % 60000) == 0)
-  {
-    altChange = updateRate / 1000.f * 16.6f; // 1000 ft per min
-    fuelFlow = 150.f;
-    if(alt > 8000.f)
-    {
-      altChange = -altChange / 2.f;
-      fuelFlow = 50.f;
-    }
-  }
-  alt += altChange;
-
-  if(updatesMs == 20000)
-    data.userAircraft.flags |= atools::fs::sc::IN_SNOW | atools::fs::sc::IN_CLOUD | atools::fs::sc::IN_RAIN;
-  else if(updatesMs == 10000)
-    data.userAircraft.flags &= ~(atools::fs::sc::IN_SNOW | atools::fs::sc::IN_CLOUD | atools::fs::sc::IN_RAIN);
-
-  atools::geo::Pos next =
-    curPos.endpoint(atools::geo::nmToMeter(updateRate / 1000.f * nmPerSec), course).normalize();
-
-  QString dataIdStr = QString::number(dataId);
-  data.userAircraft.objectId = objectId++;
-  data.userAircraft.airplaneTitle = "Airplane Title " + dataIdStr;
-  data.userAircraft.airplaneModel = "Duke";
-  data.userAircraft.airplaneReg = "D-REGI";
-  data.userAircraft.airplaneType = "Beech";
-  data.userAircraft.airplaneAirline = "Airline";
-  data.userAircraft.airplaneFlightnumber = "965";
-  data.userAircraft.fuelFlowPPH = fuelFlow;
-  data.userAircraft.fuelFlowGPH = fuelFlow / 6.f;
-  data.userAircraft.ambientVisibility = visibility;
-  visibility += 1.f;
-
-  data.userAircraft.position = next;
-  data.userAircraft.getPosition().setAltitude(alt);
-  data.userAircraft.verticalSpeed = altChange * 60.f;
-
-  data.userAircraft.headingMag = course;
-  data.userAircraft.headingTrue = course + 1.f;
-
-  data.userAircraft.groundSpeed = 200.f;
-  data.userAircraft.indicatedSpeed = 150.f;
-  data.userAircraft.trueSpeed = 170.f;
-  data.userAircraft.windDirection = 180.f;
-  data.userAircraft.windSpeed = 25.f;
-  data.userAircraft.seaLevelPressure = 1013.f;
-
-  data.userAircraft.ambientTemperature = 10.f;
-  data.userAircraft.totalAirTemperature = 20.f;
-  data.userAircraft.fuelTotalQuantity = 1000.f / 6.f;
-  data.userAircraft.fuelTotalWeight = 1000.f;
-
-  data.userAircraft.localDateTime = QDateTime::currentDateTime();
-
-  QDate zuluDate(QDate::currentDate().year(), QDate::currentDate().month(), QDate::currentDate().day());
-  QTime zuluTime = QTime::fromMSecsSinceStartOfDay(QTime::currentTime().msecsSinceStartOfDay());
-  QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
-  data.userAircraft.zuluDateTime = zuluDateTime;
-
-  dataId++;
-
-  static const int num = 20;
-  static bool init = false;
-  static float x[num];
-  static float y[num];
-
-  if(!init)
-  {
-    init = true;
-    for(int i = 0; i < num; i++)
-    {
-      x[i] = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
-      y[i] = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX) / 10.f) - 5.f;
-    }
-  }
-
-  for(int i = 0; i < num; i++)
-  {
-    SimConnectAircraft ap(data.userAircraft);
-    ap.airplaneTitle = "AI" + QString::number(i) + " " + ap.airplaneTitle;
-    ap.position.setLonX(ap.position.getLonX() + x[i]);
-    ap.position.setLatY(ap.position.getLatY() + y[i]);
-    ap.objectId = objectId++;
-
-    data.aiAircraft.append(ap);
-  }
-
-  curPos = next;
-  return true;
-
-#endif
+const WeatherRequest& SimConnectHandler::getWeatherRequest() const
+{
+  return p->weatherRequest;
 }
 
 } // namespace sc

@@ -100,17 +100,28 @@ public:
     return aiAircraft;
   }
 
+  const QStringList& getMetars() const
+  {
+    return metars;
+  }
+
+  void setMetars(const QStringList& value)
+  {
+    metars = value;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
 
   const static quint32 MAGIC_NUMBER_DATA = 0xF75E0AF3;
-  const static quint32 DATA_VERSION = 7;
+  const static quint32 DATA_VERSION = 8;
 
   quint32 packetId = 0, packetTs = 0;
   quint32 magicNumber = 0, packetSize = 0, version = 1;
 
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
+  QStringList metars;
 };
 
 } // namespace sc

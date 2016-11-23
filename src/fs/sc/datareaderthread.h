@@ -19,7 +19,9 @@
 #define LITTLENAVCONNECT_DATAREADERTHREAD_H
 
 #include "fs/sc/simconnectdata.h"
+#include "fs/sc/simconnectreply.h"
 
+#include <QMutex>
 #include <QThread>
 
 class QFile;
@@ -85,16 +87,10 @@ public:
 
   void closeReplay();
 
-  static bool isSimconnectAvailable()
-  {
-#ifdef SIMCONNECT_DUMMY
-    return false;
+  static bool isSimconnectAvailable();
 
-#else
-    return true;
-
-#endif
-  }
+  /* Sets a one shot request */
+  void setWeatherRequest(atools::fs::sc::WeatherRequest request);
 
 signals:
   /* Send on each received data package from the simconnect interface */
@@ -109,14 +105,19 @@ signals:
   void disconnectedFromSimulator();
 
 private:
-  void connectToSimulator(atools::fs::sc::SimConnectHandler *handler);
+  void connectToSimulator();
   virtual void run() override;
   void setupReplay();
+  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
+
+  atools::fs::sc::SimConnectHandler *handler = nullptr;
 
   const quint32 REPLAY_FILE_MAGIC_NUMBER = 0XCACF4F27;
   const quint32 REPLAY_FILE_VERSION = 1;
   const int REPLAY_FILE_DATA_START_OFFSET = sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
                                             sizeof(quint32);
+
+  const int SIMCONNECT_AI_RADIUS_KM = 200;
 
   QString saveReplayFilepath, loadReplayFilepath;
   int replaySpeed = 1;
@@ -127,6 +128,10 @@ private:
   unsigned int updateRate = 500;
   int reconnectRateSec = 10;
   bool connected = false, reconnecting = false;
+
+  // Needed to lock for any modifications of the workers set
+  mutable QMutex handlerMutex;
+
 };
 
 } // namespace sc

@@ -19,6 +19,9 @@
 #define ATOOLS_FS_SIMCONNECTREPLY_H
 
 #include "fs/sc/simconnecttypes.h"
+#include "geo/pos.h"
+#include "fs/sc/simconnectdatabase.h"
+#include "fs/sc/weatherrequest.h"
 
 #include <QString>
 
@@ -31,8 +34,8 @@ namespace sc {
 // quint16
 enum CommandEnum
 {
-  CMD_NONE
-  // For future extensions
+  CMD_NONE,
+  CMD_WEATHER_REQUEST
 };
 
 Q_DECLARE_FLAGS(Command, CommandEnum);
@@ -42,6 +45,7 @@ Q_DECLARE_FLAGS(Command, CommandEnum);
  * A version of the protocol is maintained to check for application compatibility.
  */
 class SimConnectReply
+  : public SimConnectDataBase
 {
 public:
   SimConnectReply();
@@ -111,14 +115,30 @@ public:
     return command;
   }
 
+  void setCommand(const Command& value)
+  {
+    command = value;
+  }
+
+  const atools::fs::sc::WeatherRequest& getWeatherRequest()
+  {
+    return weatherRequest;
+  }
+
+  void setWeatherRequest(const atools::fs::sc::WeatherRequest& value)
+  {
+    weatherRequest = value;
+  }
+
 private:
   const static quint32 MAGIC_NUMBER_REPLY = 0x33ED8272;
-  const static quint32 REPLY_VERSION = 3;
+  const static quint32 REPLY_VERSION = 4;
 
   quint32 packetId = 0, packetTs = 0;
   atools::fs::sc::SimConnectStatus status = OK;
   quint32 magicNumber = 0, packetSize = 0, version = 2;
   Command command;
+  atools::fs::sc::WeatherRequest weatherRequest;
 
 };
 
