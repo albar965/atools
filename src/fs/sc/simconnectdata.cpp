@@ -99,9 +99,19 @@ bool SimConnectData::read(QIODevice *ioDevice)
   in >> numMetar;
   for(quint16 i = 0; i < numMetar; i++)
   {
-    QString metar;
-    readLongString(in, metar);
-    metars.append(metar);
+
+    MetarResult result;
+    readString(in, result.metarIdent);
+
+    float lonx, laty, altitude;
+    in >> lonx >> laty >> altitude;
+    result.metarPos.setAltitude(altitude);
+    result.metarPos.setLonX(lonx);
+    result.metarPos.setLatY(laty);
+
+    readLongString(in, result.metar);
+
+    metarResults.append(result);
   }
 
   return true;
@@ -128,12 +138,15 @@ int SimConnectData::write(QIODevice *ioDevice)
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);
 
-  int numMetar = std::min(65535, metars.size());
+  int numMetar = std::min(65535, metarResults.size());
   out << static_cast<quint16>(numMetar);
 
   for(int i = 0; i < numMetar; i++)
   {
-    writeLongString(out, metars.at(i));
+    const MetarResult& result = metarResults.at(i);
+    writeString(out, result.metarIdent);
+    out << result.metarPos.getLonX() << result.metarPos.getLatY() << result.metarPos.getAltitude();
+    writeLongString(out, result.metar);
   }
 
   // Go back and update size

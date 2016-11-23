@@ -805,12 +805,12 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   if(p->weatherRequest.isValid())
   {
-    for(const QString& weatherPos : p->weatherRequest.getWeatherRequestStation())
+    for(const QString& weatherStation : p->weatherRequest.getWeatherRequestStation())
     {
       hr =
         SimConnect_WeatherRequestObservationAtStation(p->hSimConnect,
                                                       DATA_REQUEST_ID_WEATHER_STATION,
-                                                      weatherPos.toUtf8().data());
+                                                      weatherStation.toUtf8().data());
       if(hr != S_OK)
       {
         qWarning() <<
@@ -897,6 +897,22 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     // p->state = sc::FETCH_ERROR;
     // return false;
     // }
+
+    if(p->fetchedMetars.size() > 1)
+      qWarning() << "Found more than one metar" << p->fetchedMetars.size();
+
+    if(p->fetchedMetars.isEmpty())
+      qWarning() << "Found more no metar at all";
+
+    for(const QString& metar : p->fetchedMetars)
+    {
+      MetarResult result;
+      result.metarIdent = p->weatherRequest.getWeatherRequestStation().first();
+      result.metarPos = p->weatherRequest.getWeatherRequestNearest().first();
+      result.metar = metar;
+      data.metarResults.append(result);
+    }
+    p->fetchedMetars.clear();
   }
 
   p->state = sc::STATEOK;
@@ -915,10 +931,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       objectIds.insert(ap.objectId);
     }
   }
-
-  for(const QString& key : p->fetchedMetars)
-    data.metars.append(key);
-  p->fetchedMetars.clear();
 
   if(p->userDataFetched)
   {

@@ -100,14 +100,14 @@ public:
     return aiAircraft;
   }
 
-  const QStringList& getMetars() const
+  const QVector<atools::fs::sc::MetarResult>& getMetars() const
   {
-    return metars;
+    return metarResults;
   }
 
-  void setMetars(const QStringList& value)
+  void setMetars(const QVector<atools::fs::sc::MetarResult>& value)
   {
-    metars = value;
+    metarResults = value;
   }
 
 private:
@@ -122,9 +122,7 @@ private:
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
 
-  QVector<atools::geo::Pos> metarPos;
-  QStringList metarIdent;
-  QStringList metars;
+  QVector<atools::fs::sc::MetarResult> metarResults;
 };
 
 } // namespace sc

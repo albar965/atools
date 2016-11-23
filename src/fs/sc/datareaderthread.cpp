@@ -103,11 +103,11 @@ void DataReaderThread::run()
         if(loadReplayFile->atEnd())
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
-        QStringList metars;
-        for(const QString& station : handler->getWeatherRequest().getWeatherRequestStation())
-          metars.append(station + " DUMMY METAR " + QDateTime::currentDateTime().toString());
+        // QStringList metars;
+        // for(const QString& station : handler->getWeatherRequest().getWeatherRequestStation())
+        // metars.append(station + " DUMMY METAR " + QDateTime::currentDateTime().toString());
 
-        data.setMetars(metars);
+        // data.setMetars(metars);
 
         emit postSimConnectData(data);
 
@@ -128,7 +128,7 @@ void DataReaderThread::run()
       // qInfo() << "METARs" << data.getMetars();
 
       if(!data.getMetars().isEmpty())
-        qDebug() << "DataReaderThread::run()" << data.getMetars();
+        qDebug() << "DataReaderThread::run() num metars" << data.getMetars().size();
 
       emit postSimConnectData(data);
 

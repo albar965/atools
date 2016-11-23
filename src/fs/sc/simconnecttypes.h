@@ -18,6 +18,8 @@
 #ifndef ATOOLS_SC_TYPES_H
 #define ATOOLS_SC_TYPES_H
 
+#include "geo/pos.h"
+
 #include <QVector>
 #include <QObject>
 
@@ -41,6 +43,12 @@ const QVector<QString> SIMCONNECT_STATUS_TEXT =
   QObject::tr("Version mismatch"),
   QObject::tr("Incomplete write"),
   QObject::tr("Write error")
+};
+
+struct MetarResult
+{
+  QString metarIdent, metar;
+  atools::geo::Pos metarPos;
 };
 
 } // namespace sc
