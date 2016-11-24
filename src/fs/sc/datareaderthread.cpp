@@ -87,6 +87,8 @@ void DataReaderThread::run()
 
   qDebug() << "Datareader connected";
 
+  waitMutex.lock();
+
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
@@ -154,14 +156,23 @@ void DataReaderThread::run()
       // qWarning() << "No data fetched";
     }
 
+    unsigned long sleepMs = 500;
     if(loadReplayFile != nullptr)
-      QThread::msleep(static_cast<float>(replayUpdateRateMs) / static_cast<float>(replaySpeed));
+      sleepMs = static_cast<unsigned long>(static_cast<float>(replayUpdateRateMs) /
+                                           static_cast<float>(replaySpeed));
     else
-      QThread::msleep(updateRate);
+      sleepMs = updateRate;
+
+    bool wakeUpSignalled = waitCondition.wait(&waitMutex, sleepMs);
+    waitMutex.unlock();
+    waitMutex.lock();
+    if(wakeUpSignalled)
+      qDebug() << "DataReaderThread::run wakeUpSignalled";
   }
 
   closeReplay();
 
+  waitMutex.unlock();
   terminate = false; // Allow restart
   connected = false;
   reconnecting = false;
@@ -297,8 +308,12 @@ void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
 {
   qDebug() << "DataReaderThread::postWeatherRequest";
 
-  QMutexLocker locker(&handlerMutex);
-  handler->setWeatherRequest(request);
+  {
+    QMutexLocker locker(&handlerMutex);
+    handler->setWeatherRequest(request);
+  }
+
+  waitCondition.wakeAll();
 }
 
 } // namespace sc

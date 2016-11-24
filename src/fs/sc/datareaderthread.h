@@ -23,6 +23,7 @@
 
 #include <QMutex>
 #include <QThread>
+#include <QWaitCondition>
 
 class QFile;
 
@@ -132,6 +133,8 @@ private:
   // Needed to lock for any modifications of the workers set
   mutable QMutex handlerMutex;
 
+  mutable QMutex waitMutex;
+  mutable QWaitCondition waitCondition;
 };
 
 } // namespace sc
