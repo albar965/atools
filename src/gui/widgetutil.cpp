@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "widgettools.h"
+#include "widgetutil.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -25,12 +25,54 @@
 #include <QWidget>
 #include <QDoubleSpinBox>
 #include <QAction>
+#include <QTextEdit>
+#include <QScrollBar>
 
 namespace atools {
 namespace gui {
+namespace util {
 
-void WidgetTools::showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
-                                         const QList<QWidget *>& otherWidgets)
+bool canTextEditUpdate(const QTextEdit *textEdit)
+{
+  // Do not update if scrollbar is clicked
+  return !textEdit->verticalScrollBar()->isSliderDown() &&
+         !textEdit->horizontalScrollBar()->isSliderDown();
+}
+
+void updateTextEdit(QTextEdit *textEdit, const QString& text)
+{
+  // Remember cursor position
+  QTextCursor cursor = textEdit->textCursor();
+  int pos = cursor.position();
+  int anchor = cursor.anchor();
+
+  // Remember scrollbar position
+  int vScrollPos = textEdit->verticalScrollBar()->value();
+  int hScrollPos = textEdit->horizontalScrollBar()->value();
+  textEdit->setText(text);
+
+  if(anchor != pos)
+  {
+    // There is a selection - Reset cursor
+    int maxPos = textEdit->document()->characterCount() - 1;
+
+    // Probably the document changed its size
+    anchor = std::min(maxPos, anchor);
+    pos = std::min(maxPos, pos);
+
+    // Create selection again
+    cursor.setPosition(anchor, QTextCursor::MoveAnchor);
+    cursor.setPosition(pos, QTextCursor::KeepAnchor);
+    textEdit->setTextCursor(cursor);
+  }
+
+  // Reset scroll bars
+  textEdit->verticalScrollBar()->setValue(vScrollPos);
+  textEdit->horizontalScrollBar()->setValue(hScrollPos);
+}
+
+void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
+                            const QList<QWidget *>& otherWidgets)
 {
   for(QWidget *w : otherWidgets)
     w->setVisible(visible);
@@ -40,7 +82,7 @@ void WidgetTools::showHideLayoutElements(const QList<QLayout *> layouts, bool vi
       layout->itemAt(i)->widget()->setVisible(visible);
 }
 
-bool WidgetTools::anyWidgetChanged(const QList<const QObject *>& widgets)
+bool anyWidgetChanged(const QList<const QObject *>& widgets)
 {
   bool changed = false;
   for(const QObject *widget : widgets)
@@ -70,7 +112,7 @@ bool WidgetTools::anyWidgetChanged(const QList<const QObject *>& widgets)
   return changed;
 }
 
-bool WidgetTools::allChecked(const QList<const QAction *>& actions)
+bool allChecked(const QList<const QAction *>& actions)
 {
   bool notChecked = false;
   for(const QAction *action : actions)
@@ -78,7 +120,7 @@ bool WidgetTools::allChecked(const QList<const QAction *>& actions)
   return !notChecked;
 }
 
-bool WidgetTools::noneChecked(const QList<const QAction *>& actions)
+bool noneChecked(const QList<const QAction *>& actions)
 {
   bool checked = false;
   for(const QAction *action : actions)
@@ -86,7 +128,7 @@ bool WidgetTools::noneChecked(const QList<const QAction *>& actions)
   return !checked;
 }
 
-void WidgetTools::changeStarIndication(QAction *action, bool changed)
+void changeStarIndication(QAction *action, bool changed)
 {
   if(changed)
   {
@@ -100,5 +142,6 @@ void WidgetTools::changeStarIndication(QAction *action, bool changed)
   }
 }
 
+} // namespace util
 } // namespace gui
 } // namespace atools

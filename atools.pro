@@ -150,7 +150,6 @@ HEADERS += src/atools.h \
     src/fs/db/progresshandler.h \
     src/gui/tablezoomhandler.h \
     src/gui/widgetstate.h \
-    src/gui/widgettools.h \
     src/gui/helphandler.h \
     src/geo/linestring.h \
     src/gui/actiontextsaver.h \
@@ -187,7 +186,11 @@ HEADERS += src/atools.h \
     src/fs/sc/simconnectaircraft.h \
     src/fs/sc/simconnectuseraircraft.h \
     src/fs/sc/datareaderthread.h \
-    src/fs/sc/weatherrequest.h
+    src/fs/sc/weatherrequest.h \
+    src/gui/widgetutil.h \
+    src/fs/weather/metar.h \
+    src/util/timedcache.h \
+    src/fs/weather/metarparser.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -301,7 +304,6 @@ SOURCES += src/atools.cpp \
     src/fs/db/progresshandler.cpp \
     src/gui/tablezoomhandler.cpp \
     src/gui/widgetstate.cpp \
-    src/gui/widgettools.cpp \
     src/gui/helphandler.cpp \
     src/geo/linestring.cpp \
     src/gui/actiontextsaver.cpp \
@@ -336,7 +338,11 @@ SOURCES += src/atools.cpp \
     src/fs/sc/simconnectaircraft.cpp \
     src/fs/sc/simconnectuseraircraft.cpp \
     src/fs/sc/datareaderthread.cpp \
-    src/fs/sc/weatherrequest.cpp
+    src/fs/sc/weatherrequest.cpp \
+    src/gui/widgetutil.cpp \
+    src/fs/weather/metar.cpp \
+    src/util/timedcache.cpp \
+    src/fs/weather/metarparser.cpp
 
 
 unix {
