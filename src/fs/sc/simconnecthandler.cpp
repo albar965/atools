@@ -228,11 +228,13 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       {
         // enter code to handle errors received in a SIMCONNECT_RECV_EXCEPTION structure.
         SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION *)pData;
+        simconnectException = static_cast<SIMCONNECT_EXCEPTION>(except->dwException);
+
         if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION || verbose)
           qWarning() << "SimConnect exception" << except->dwException
                      << "send ID" << except->dwSendID << "index" << except->dwIndex;
+
         state = sc::EXCEPTION;
-        simconnectException = static_cast<SIMCONNECT_EXCEPTION>(except->dwException);
         break;
       }
 
@@ -821,6 +823,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
       if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent))
         return false;
 
+      p->fetchedMetars.clear();
       p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent);
 
       if(p->fetchedMetars.size() > 1)
@@ -844,6 +847,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
         if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString()))
           return false;
 
+        p->fetchedMetars.clear();
         p->callDispatch(p->weatherDataFetched,
                         "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
 
@@ -864,6 +868,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
         if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_INTERPOLATED"))
           return false;
 
+        p->fetchedMetars.clear();
         p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_INTERPOLATED");
 
         if(p->fetchedMetars.size() > 1)

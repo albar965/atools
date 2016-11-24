@@ -109,6 +109,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
     result.requestPos.setLonX(lonx);
     result.requestPos.setLatY(laty);
 
+    readLongString(in, result.metarForStation);
     readLongString(in, result.metarForNearest);
     readLongString(in, result.metarForInterpolated);
 
@@ -147,6 +148,7 @@ int SimConnectData::write(QIODevice *ioDevice)
     const MetarResult& result = metarResults.at(i);
     writeString(out, result.requestIdent);
     out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude();
+    writeLongString(out, result.metarForStation);
     writeLongString(out, result.metarForNearest);
     writeLongString(out, result.metarForInterpolated);
   }
