@@ -47,8 +47,8 @@ const QVector<QString> SIMCONNECT_STATUS_TEXT =
 
 struct MetarResult
 {
-  QString metarIdent, metar;
-  atools::geo::Pos metarPos;
+  QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
+  atools::geo::Pos requestPos;
 };
 
 } // namespace sc

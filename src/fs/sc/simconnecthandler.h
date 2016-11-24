@@ -57,7 +57,7 @@ public:
   bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
 
   void setWeatherRequest(const atools::fs::sc::WeatherRequest& request);
-  const atools::fs::sc::WeatherRequest&  getWeatherRequest()const;
+  const atools::fs::sc::WeatherRequest& getWeatherRequest() const;
 
   /* true if simulator is running and not stuck in open dialogs. */
   bool isSimRunning() const;

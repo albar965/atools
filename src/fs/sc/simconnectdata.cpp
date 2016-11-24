@@ -101,15 +101,16 @@ bool SimConnectData::read(QIODevice *ioDevice)
   {
 
     MetarResult result;
-    readString(in, result.metarIdent);
+    readString(in, result.requestIdent);
 
     float lonx, laty, altitude;
     in >> lonx >> laty >> altitude;
-    result.metarPos.setAltitude(altitude);
-    result.metarPos.setLonX(lonx);
-    result.metarPos.setLatY(laty);
+    result.requestPos.setAltitude(altitude);
+    result.requestPos.setLonX(lonx);
+    result.requestPos.setLatY(laty);
 
-    readLongString(in, result.metar);
+    readLongString(in, result.metarForNearest);
+    readLongString(in, result.metarForInterpolated);
 
     metarResults.append(result);
   }
@@ -144,9 +145,10 @@ int SimConnectData::write(QIODevice *ioDevice)
   for(int i = 0; i < numMetar; i++)
   {
     const MetarResult& result = metarResults.at(i);
-    writeString(out, result.metarIdent);
-    out << result.metarPos.getLonX() << result.metarPos.getLatY() << result.metarPos.getAltitude();
-    writeLongString(out, result.metar);
+    writeString(out, result.requestIdent);
+    out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude();
+    writeLongString(out, result.metarForNearest);
+    writeLongString(out, result.metarForInterpolated);
   }
 
   // Go back and update size

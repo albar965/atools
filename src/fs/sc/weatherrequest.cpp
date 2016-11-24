@@ -40,85 +40,43 @@ WeatherRequest::~WeatherRequest()
 
 }
 
-const QVector<atools::geo::Pos>& WeatherRequest::getWeatherRequestInterpolated() const
-{
-  return weatherRequestInterpolated;
-}
-
-void WeatherRequest::setWeatherRequestInterpolated(const QVector<atools::geo::Pos>& value)
-{
-  weatherRequestInterpolated = value;
-}
-
-const QStringList& WeatherRequest::getWeatherRequestStation() const
-{
-  return weatherRequestStation;
-}
-
-void WeatherRequest::setWeatherRequestStation(const QStringList& value)
-{
-  weatherRequestStation = value;
-}
-
 bool WeatherRequest::isValid() const
 {
-  return !weatherRequestNearest.isEmpty() || !weatherRequestInterpolated.isEmpty() ||
-         !weatherRequestStation.isEmpty();
-}
-
-const QVector<atools::geo::Pos>& WeatherRequest::getWeatherRequestNearest() const
-{
-  return weatherRequestNearest;
-}
-
-void WeatherRequest::setWeatherRequestNearest(const QVector<atools::geo::Pos>& value)
-{
-  weatherRequestNearest = value;
+  return !station.isEmpty() || position.isValid();
 }
 
 void WeatherRequest::read(QDataStream& in)
 {
-  quint8 numWeather;
-  float lonx, laty, altitude;
-  in >> numWeather;
-  for(int i = 0; i < numWeather; i++)
-  {
-    in >> lonx >> laty >> altitude;
-    weatherRequestNearest.append(atools::geo::Pos(lonx, laty, altitude));
-  }
+  quint8 hasWeather;
+  in >> hasWeather;
 
-  in >> numWeather;
-  for(int i = 0; i < numWeather; i++)
-  {
-    in >> lonx >> laty >> altitude;
-    weatherRequestInterpolated.append(atools::geo::Pos(lonx, laty, altitude));
-  }
-
-  in >> numWeather;
-  QString station;
-  for(int i = 0; i < numWeather; i++)
+  if(hasWeather)
   {
     SimConnectDataBase::readString(in, station);
-    weatherRequestStation.append(station);
+
+    float lonx, laty, altitude;
+    in >> lonx >> laty >> altitude;
+    position.setAltitude(altitude);
+    position.setLonX(lonx);
+    position.setLatY(laty);
+  }
+  else
+  {
+    station.clear();
+    position = atools::geo::EMPTY_POS;
   }
 }
 
 void WeatherRequest::write(QDataStream& out)
 {
-  quint8 numWeather = static_cast<quint8>(weatherRequestNearest.size());
-  out << numWeather;
-  for(const atools::geo::Pos& pos : weatherRequestNearest)
-    out << pos.getLonX() << pos.getLatY() << pos.getAltitude();
+  quint8 hasWeather = isValid();
 
-  numWeather = static_cast<quint8>(weatherRequestInterpolated.size());
-  out << numWeather;
-  for(const atools::geo::Pos& pos : weatherRequestInterpolated)
-    out << pos.getLonX() << pos.getLatY() << pos.getAltitude();
-
-  numWeather = static_cast<quint8>(weatherRequestStation.size());
-  out << numWeather;
-  for(const QString& station : weatherRequestStation)
+  out << hasWeather;
+  if(hasWeather)
+  {
     SimConnectDataBase::writeString(out, station);
+    out << position.getLonX() << position.getLatY() << position.getAltitude();
+  }
 }
 
 } // namespace sc

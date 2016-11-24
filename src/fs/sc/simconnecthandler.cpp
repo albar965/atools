@@ -175,6 +175,9 @@ public:
   void copyToSimData(const SimDataAircraft& simDataUserAircraft,
                      atools::fs::sc::SimConnectAircraft& airplane);
 
+  bool checkCall(HRESULT hr, const QString& message);
+  bool callDispatch(bool& dataFetched, const QString& message);
+
   HANDLE hSimConnect = NULL;
 
   SimData simData;
@@ -225,8 +228,9 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       {
         // enter code to handle errors received in a SIMCONNECT_RECV_EXCEPTION structure.
         SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION *)pData;
-        qWarning() << "SimConnect exception" << except->dwException
-                   << "send ID" << except->dwSendID << "index" << except->dwIndex;
+        if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION || verbose)
+          qWarning() << "SimConnect exception" << except->dwException
+                     << "send ID" << except->dwSendID << "index" << except->dwIndex;
         state = sc::EXCEPTION;
         simconnectException = static_cast<SIMCONNECT_EXCEPTION>(except->dwException);
         break;
@@ -465,6 +469,54 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
     airplane.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
     airplane.flags |= atools::fs::sc::IS_USER;
+}
+
+bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)
+{
+  if(verbose)
+    qDebug() << "check call" << message;
+  if(hr != S_OK)
+  {
+    qWarning() << "Error during" << message;
+    state = sc::FETCH_ERROR;
+    return false;
+  }
+  return true;
+}
+
+bool SimConnectHandlerPrivate::callDispatch(bool& dataFetched, const QString& message)
+{
+  if(verbose)
+    qDebug() << "call dispatch enter" << message;
+
+  simconnectException = SIMCONNECT_EXCEPTION_NONE;
+
+  int dispatchCycles = 0;
+  dataFetched = false;
+  do
+  {
+    HRESULT hr = SimConnect_CallDispatch(hSimConnect, dispatchCallback, this);
+    if(hr != S_OK)
+    {
+      // Ignore the station exception
+      if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION)
+      {
+        qWarning() << "SimConnect_CallDispatch during " << message << ": Exception" << simconnectException;
+        state = sc::FETCH_ERROR;
+        return false;
+      }
+      else if(verbose)
+        qDebug() << "SimConnect_CallDispatch during " << message << ": Exception" << simconnectException;
+    }
+
+    QThread::msleep(5);
+    dispatchCycles++;
+  } while(!dataFetched && dispatchCycles < 50 && simconnectException == SIMCONNECT_EXCEPTION_NONE);
+
+  if(verbose)
+    qDebug() << "call dispatch leave" << message << "cycles" << dispatchCycles;
+
+  return true;
 }
 
 void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId definitionId)
@@ -725,194 +777,104 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(p->verbose)
     qDebug() << "fetchData entered ================================================================";
 
-  // ==========================================================
-  if(p->verbose)
-    qDebug() << "fetchData AI aircraft details";
-
-  HRESULT hr =
-    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_AI_AIRCRAFT,
-                                          DATA_DEFINITION_AI_AIRCRAFT,
-                                          static_cast<DWORD>(radiusKm) * 1000,
-                                          SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
-
-  if(hr != S_OK)
-  {
-    qWarning() << "SimConnect_RequestDataOnSimObjectType SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT: Error";
-    p->state = sc::FETCH_ERROR;
-    return false;
-  }
-
-  if(p->verbose)
-    qDebug() << "fetchData AI helicopter details";
-
-  hr =
-    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_AI_HELICOPTER,
-                                          DATA_DEFINITION_AI_HELICOPTER,
-                                          static_cast<DWORD>(radiusKm) * 1000,
-                                          SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
-
-  if(hr != S_OK)
-  {
-    qWarning() << "SimConnect_RequestDataOnSimObjectType SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER: Error";
-    p->state = sc::FETCH_ERROR;
-    return false;
-  }
-
-  hr =
-    SimConnect_RequestDataOnSimObjectType(p->hSimConnect, DATA_REQUEST_ID_USER_AIRCRAFT,
-                                          DATA_DEFINITION_USER_AIRCRAFT,
-                                          0,
-                                          SIMCONNECT_SIMOBJECT_TYPE_USER);
-
-  if(hr != S_OK)
-  {
-    qWarning() << "SimConnect_RequestDataOnSimObjectType SIMCONNECT_SIMOBJECT_TYPE_USER: Error";
-    p->state = sc::FETCH_ERROR;
-    return false;
-  }
-
-  p->weatherDataFetched = false;
-  p->userDataFetched = false;
-  p->aiDataFetched = false;
-
+  // === Get AI aircraft =======================================================
   p->simDataAircraft.clear();
   p->simDataAircraftObjectIds.clear();
   p->fetchedMetars.clear();
+  p->simDataObjectId = 0;
 
-  int dispatchCycles = 0;
-  p->simconnectException = SIMCONNECT_EXCEPTION_NONE;
-  do
-  {
-    hr = SimConnect_CallDispatch(p->hSimConnect, p->dispatchCallback, p);
-    if(hr != S_OK)
-    {
-      qWarning() << "SimConnect_CallDispatch: Error";
-      p->state = sc::FETCH_ERROR;
-      return false;
-    }
+  HRESULT hr = SimConnect_RequestDataOnSimObjectType(
+    p->hSimConnect, DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
+    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
+  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_AIRCRAFT"))
+    return false;
 
-    QThread::msleep(5);
-    dispatchCycles++;
-  } while(!p->userDataFetched && dispatchCycles < 50 &&
-          p->simconnectException == SIMCONNECT_EXCEPTION_NONE);
+  hr = SimConnect_RequestDataOnSimObjectType(
+    p->hSimConnect, DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
+    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
+  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
+    return false;
 
-  if(p->verbose)
-  {
-    if(dispatchCycles > 1)
-      qDebug() << "dispatchCycles > 1" << dispatchCycles;
-    qDebug() << "numDataFetchedAi" << p->simDataAircraft.size();
-  }
+  p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER and DATA_REQUEST_ID_AI_AIRCRAFT");
 
+  // === Get user aircraft =======================================================
+  hr = SimConnect_RequestDataOnSimObjectType(
+    p->hSimConnect, DATA_REQUEST_ID_USER_AIRCRAFT, DATA_DEFINITION_USER_AIRCRAFT, 0,
+    SIMCONNECT_SIMOBJECT_TYPE_USER);
+  if(!p->checkCall(hr, "DATA_REQUEST_ID_USER_AIRCRAFT"))
+    return false;
+
+  p->callDispatch(p->userDataFetched, "DATA_REQUEST_ID_USER_AIRCRAFT");
+
+  // === Get weather =========================================
   if(p->weatherRequest.isValid())
   {
-    for(const QString& weatherStation : p->weatherRequest.getWeatherRequestStation())
+    MetarResult result;
+    result.requestIdent = p->weatherRequest.getStation();
+    result.requestPos = p->weatherRequest.getPosition();
+
+    if(!result.requestIdent.isEmpty())
     {
-      hr =
-        SimConnect_WeatherRequestObservationAtStation(p->hSimConnect,
-                                                      DATA_REQUEST_ID_WEATHER_STATION,
-                                                      weatherStation.toUtf8().data());
-      if(hr != S_OK)
-      {
-        qWarning() <<
-        "SimConnect_WeatherRequestObservationAtStation DATA_REQUEST_ID_WEATHER_STATION: Error";
-        p->state = sc::FETCH_ERROR;
+      // == weather for station ========================================================
+      hr = SimConnect_WeatherRequestObservationAtStation(
+        p->hSimConnect, DATA_REQUEST_ID_WEATHER_STATION, result.requestIdent.toUtf8().data());
+      if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent))
         return false;
-      }
-    }
 
-    p->simconnectException = SIMCONNECT_EXCEPTION_NONE;
-    dispatchCycles = 0;
-    do
-    {
-      hr = SimConnect_CallDispatch(p->hSimConnect, p->dispatchCallback, p);
-      if(hr != S_OK)
-      {
-        qWarning() << "SimConnect_CallDispatch for weather stations: Error";
-        p->state = sc::FETCH_ERROR;
-        return false;
-      }
+      p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent);
 
-      QThread::msleep(5);
-      dispatchCycles++;
-    } while(!p->weatherDataFetched && dispatchCycles < 50 &&
-            p->simconnectException == SIMCONNECT_EXCEPTION_NONE);
+      if(p->fetchedMetars.size() > 1)
+        qWarning() << "Got more than one metar for station"
+                   << result.requestIdent << ":" << p->fetchedMetars.size();
 
-    if(p->verbose)
-    {
-      if(dispatchCycles > 1)
-        qDebug() << "dispatchCycles for weather station > 1" << dispatchCycles;
+      if(!p->fetchedMetars.isEmpty())
+        result.metarForStation = p->fetchedMetars.first();
     }
 
     if(p->fetchedMetars.isEmpty())
     {
-      for(const atools::geo::Pos& weatherPos : p->weatherRequest.getWeatherRequestNearest())
+      // Nothing found for station or no station given
+
+      // == weather for nearest station ========================================================
+      if(result.requestPos.isValid())
       {
-        hr =
-          SimConnect_WeatherRequestObservationAtNearestStation(p->hSimConnect,
-                                                               DATA_REQUEST_ID_WEATHER_NEAREST_STATION,
-                                                               weatherPos.getLatY(), weatherPos.getLonX());
-        if(hr != S_OK)
-        {
-          qWarning() <<
-          "SimConnect_WeatherRequestObservationAtNearestStation DATA_REQUEST_ID_WEATHER_NEAREST_STATION: Error";
-          p->state = sc::FETCH_ERROR;
+        hr = SimConnect_WeatherRequestObservationAtNearestStation(
+          p->hSimConnect, DATA_REQUEST_ID_WEATHER_NEAREST_STATION,
+          result.requestPos.getLatY(), result.requestPos.getLonX());
+        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString()))
           return false;
-        }
+
+        p->callDispatch(p->weatherDataFetched,
+                        "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
+
+        if(p->fetchedMetars.size() > 1)
+          qWarning() << "Got more than one nearest metar for position"
+                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
+
+        if(!p->fetchedMetars.isEmpty())
+          result.metarForNearest = p->fetchedMetars.first();
       }
 
-      p->simconnectException = SIMCONNECT_EXCEPTION_NONE;
-      dispatchCycles = 0;
-      do
+      // == interpolated weather ========================================================
+      if(result.requestPos.isValid())
       {
-        hr = SimConnect_CallDispatch(p->hSimConnect, p->dispatchCallback, p);
-        if(hr != S_OK)
-        {
-          qWarning() << "SimConnect_CallDispatch for weather stations: Error";
-          p->state = sc::FETCH_ERROR;
+        hr = SimConnect_WeatherRequestInterpolatedObservation(
+          p->hSimConnect, DATA_REQUEST_ID_WEATHER_INTERPOLATED,
+          result.requestPos.getLatY(), result.requestPos.getLonX(), result.requestPos.getAltitude());
+        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_INTERPOLATED"))
           return false;
-        }
 
-        QThread::msleep(5);
-        dispatchCycles++;
-      } while(!p->weatherDataFetched && dispatchCycles < 50 &&
-              p->simconnectException == SIMCONNECT_EXCEPTION_NONE);
+        p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_INTERPOLATED");
 
-      if(p->verbose)
-      {
-        if(dispatchCycles > 1)
-          qDebug() << "dispatchCycles for weather station > 1" << dispatchCycles;
+        if(p->fetchedMetars.size() > 1)
+          qWarning() << "Got more than one interpolated metar for position"
+                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
+
+        if(!p->fetchedMetars.isEmpty())
+          result.metarForInterpolated = p->fetchedMetars.first();
       }
     }
-    // for(const atools::geo::Pos& weatherPos : p->weatherRequest.getWeatherRequestInterpolated())
-    // {
-    // hr =
-    // SimConnect_WeatherRequestInterpolatedObservation(p->hSimConnect,
-    // DATA_REQUEST_ID_WEATHER_INTERPOLATED,
-    // weatherPos.getLatY(), weatherPos.getLonX(),
-    // weatherPos.getAltitude());
-    // if(hr != S_OK)
-    // {
-    // qWarning() <<
-    // "SimConnect_WeatherRequestInterpolatedObservation DATA_REQUEST_ID_WEATHER_INTERPOLATED: Error";
-    // p->state = sc::FETCH_ERROR;
-    // return false;
-    // }
-
-    if(p->fetchedMetars.size() > 1)
-      qWarning() << "Found more than one metar" << p->fetchedMetars.size();
-
-    if(p->fetchedMetars.isEmpty())
-      qWarning() << "Found more no metar at all";
-
-    for(const QString& metar : p->fetchedMetars)
-    {
-      MetarResult result;
-      result.metarIdent = p->weatherRequest.getWeatherRequestStation().first();
-      result.metarPos = p->weatherRequest.getWeatherRequestNearest().first();
-      result.metar = metar;
-      data.metarResults.append(result);
-    }
-    p->fetchedMetars.clear();
+    data.metarResults.append(result);
   }
 
   p->state = sc::STATEOK;

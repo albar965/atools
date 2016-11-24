@@ -36,21 +36,31 @@ public:
   void read(QDataStream& in);
   void write(QDataStream& out);
 
-  const QVector<atools::geo::Pos>& getWeatherRequestNearest() const;
-  void setWeatherRequestNearest(const QVector<atools::geo::Pos>& value);
-
-  const QVector<atools::geo::Pos>& getWeatherRequestInterpolated() const;
-  void setWeatherRequestInterpolated(const QVector<atools::geo::Pos>& value);
-
-  const QStringList& getWeatherRequestStation() const;
-  void setWeatherRequestStation(const QStringList& value);
-
   bool isValid() const;
 
+  const atools::geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  void setPosition(const atools::geo::Pos& value)
+  {
+    position = value;
+  }
+
+  const QString& getStation() const
+  {
+    return station;
+  }
+
+  void setStation(const QString& value)
+  {
+    station = value;
+  }
+
 private:
-  QVector<atools::geo::Pos> weatherRequestNearest;
-  QVector<atools::geo::Pos> weatherRequestInterpolated;
-  QStringList weatherRequestStation;
+  QString station;
+  atools::geo::Pos position;
 
 };
 
