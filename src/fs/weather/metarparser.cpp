@@ -138,6 +138,9 @@ MetarParser::MetarParser(const QString& metar) :
   _wind_dir(-1), _wind_speed(NaN), _gust_speed(NaN), _wind_range_from(-1), _wind_range_to(-1), _temp(NaN),
   _dewp(NaN), _pressure(NaN), _rain(false), _hail(false), _snow(false), _cavok(false)
 {
+  if(metar.isEmpty())
+    return;
+
   _data = new char[metar.length() + 2]; // make room for " \0"
   strcpy(_data, metar.toUtf8().data());
   _url = _data;
@@ -166,26 +169,34 @@ MetarParser::MetarParser(const QString& metar) :
   scanVariability();
   while(scanVisibility())
     ;
+
   while(scanRwyVisRange())
     ;
+
   while(scanWeather())
     ;
+
   while(scanSkyCondition())
     ;
+
   scanTemperature();
   scanPressure();
   while(scanSkyCondition())
     ;
+
   while(scanRunwayReport())
     ;
+
   scanWindShear();
 
   // appendix
   while(scanColorState())
     ;
+
   scanTrendForecast();
   while(scanRunwayReport())
     ;
+
   scanRemainder();
   scanRemark();
 

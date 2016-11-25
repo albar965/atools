@@ -432,11 +432,16 @@ public:
 
   }
 
+  bool isValid() const
+  {
+    return _data != nullptr;
+  }
+
 protected:
   std::string _url;
   int _grpcount;
   bool _x_proxy;
-  char *_data;
+  char *_data = nullptr;
   char *_m;
   char _icao[5];
   int _year;

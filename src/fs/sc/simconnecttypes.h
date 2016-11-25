@@ -22,6 +22,7 @@
 
 #include <QVector>
 #include <QObject>
+#include <QDateTime>
 
 namespace atools {
 namespace fs {
@@ -49,6 +50,7 @@ struct MetarResult
 {
   QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
   atools::geo::Pos requestPos;
+  QDateTime timestamp;
 };
 
 } // namespace sc

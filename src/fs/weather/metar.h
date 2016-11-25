@@ -18,6 +18,7 @@
 #ifndef  ATOOLS_FS_WEATHER_METAR_H
 #define  ATOOLS_FS_WEATHER_METAR_H
 
+#include <QDateTime>
 #include <QString>
 
 namespace atools {
@@ -26,19 +27,26 @@ namespace weather {
 
 class MetarParser;
 
+/* Metar parsing utility */
 class Metar
 {
 public:
-  Metar(const QString& metarString, bool isSimFormat = false);
+  Metar(const QString& metarString, const QString& metarStation = QString(),
+        const QDateTime& metarTimestamp = QDateTime(), bool isSimFormat = false);
   virtual ~Metar();
 
+  /* Fixes multiple flaws in FSX metar strings */
   QString getCleanMetar() const;
 
+  /* Returns a modified version of the Flightgear metar parser */
   atools::fs::weather::MetarParser getParsedMetar() const;
 
+  static void test();
+
 private:
-  QString metar;
+  QString metar, station;
   bool simFormat;
+  const QDateTime timestamp;
 };
 
 } // namespace weather

@@ -905,6 +905,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
     MetarResult result;
     result.requestIdent = p->weatherRequest.getStation();
     result.requestPos = p->weatherRequest.getPosition();
+    result.timestamp = QDateTime::currentDateTime().toUTC();
 
     if(!result.requestIdent.isEmpty())
     {

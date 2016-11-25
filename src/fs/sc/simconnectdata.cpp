@@ -104,10 +104,12 @@ bool SimConnectData::read(QIODevice *ioDevice)
     readString(in, result.requestIdent);
 
     float lonx, laty, altitude;
-    in >> lonx >> laty >> altitude;
+    quint32 minSinceEpoch;
+    in >> lonx >> laty >> altitude >> minSinceEpoch;
     result.requestPos.setAltitude(altitude);
     result.requestPos.setLonX(lonx);
     result.requestPos.setLatY(laty);
+    result.timestamp = QDateTime::fromMSecsSinceEpoch(minSinceEpoch * 1000);
 
     readLongString(in, result.metarForStation);
     readLongString(in, result.metarForNearest);
@@ -147,7 +149,8 @@ int SimConnectData::write(QIODevice *ioDevice)
   {
     const MetarResult& result = metarResults.at(i);
     writeString(out, result.requestIdent);
-    out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude();
+    out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude()
+        << static_cast<quint32>(result.timestamp.currentMSecsSinceEpoch() / 1000);
     writeLongString(out, result.metarForStation);
     writeLongString(out, result.metarForNearest);
     writeLongString(out, result.metarForInterpolated);
