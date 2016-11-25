@@ -90,7 +90,7 @@ public:
 
   static bool isSimconnectAvailable();
 
-  /* Sets a one shot request */
+  /* Sets a one shot request to fetch on next iteration */
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);
 
 signals:
@@ -130,9 +130,13 @@ private:
   int reconnectRateSec = 10;
   bool connected = false, reconnecting = false;
 
-  // Needed to lock for any modifications of the workers set
-  mutable QMutex handlerMutex;
+  /* Source for packet ids */
   int nextPacketId = 1;
+
+  /* Needed to lock for any modifications of the handler's data (weather) */
+  mutable QMutex handlerMutex;
+
+  /* Threads waits on this for each iteration - used to wake up early for weather requests */
   mutable QMutex waitMutex;
   mutable QWaitCondition waitCondition;
 };

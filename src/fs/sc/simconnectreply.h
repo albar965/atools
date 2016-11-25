@@ -64,7 +64,7 @@ public:
    */
   int write(QIODevice *ioDevice);
 
-  /* Serial number for data packet that this reply is for. */
+  /* Sequence number used to match request and reply. For weather always 0 */
   int getPacketId() const
   {
     return static_cast<int>(packetId);

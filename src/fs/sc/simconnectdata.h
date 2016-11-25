@@ -64,6 +64,7 @@ public:
     return static_cast<int>(packetId);
   }
 
+  /* Sequence number used to match request and reply. For weather always 0 */
   void setPacketId(int value)
   {
     packetId = static_cast<quint32>(value);

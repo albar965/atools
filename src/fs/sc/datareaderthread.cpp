@@ -76,6 +76,8 @@ void DataReaderThread::run()
 
   setupReplay();
 
+  // Try to connect first ============================================
+
   if(loadReplayFile == nullptr)
     // Connect to the simulator
     connectToSimulator();
@@ -87,12 +89,14 @@ void DataReaderThread::run()
 
   waitMutex.lock();
 
+  // Main loop  ============================================
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
 
     if(loadReplayFile != nullptr)
     {
+      // Do replay ============================================
       data.read(loadReplayFile);
 
       if(data.getStatus() == OK)
@@ -111,6 +115,7 @@ void DataReaderThread::run()
     }
     else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM))
     {
+      // Data fetched from simconnect - send to client ============================================
       if(verbose && !data.getMetars().isEmpty())
         qDebug() << "DataReaderThread::run() num metars" << data.getMetars().size();
 
@@ -123,6 +128,7 @@ void DataReaderThread::run()
     {
       if(handler->getState() != atools::fs::sc::STATEOK)
       {
+        // Error fetching data from simconnect ============================================
         connected = false;
         emit disconnectedFromSimulator();
 
@@ -154,6 +160,7 @@ void DataReaderThread::run()
   connected = false;
   reconnecting = false;
 
+  qDebug() << "Unlocking wait";
   waitMutex.unlock();
 
   emit disconnectedFromSimulator();
@@ -176,9 +183,11 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
       qDebug() << "DataReaderThread::fetchData weather";
 
     handler->fetchWeatherData(data);
+
+    // Weather requests and reply always have packet it 0
     data.setPacketId(0);
 
-    // Force an empty reply to the client
+    // Force an empty reply to the client - even no weather was fetched
     retval = true;
   }
   else
