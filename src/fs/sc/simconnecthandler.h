@@ -55,8 +55,9 @@ public:
 
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
   bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
+  bool fetchWeatherData(atools::fs::sc::SimConnectData& data);
 
-  void setWeatherRequest(const atools::fs::sc::WeatherRequest& request);
+  void addWeatherRequest(const atools::fs::sc::WeatherRequest& request);
   const atools::fs::sc::WeatherRequest& getWeatherRequest() const;
 
   /* true if simulator is running and not stuck in open dialogs. */

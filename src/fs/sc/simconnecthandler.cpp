@@ -782,7 +782,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   // === Get AI aircraft =======================================================
   p->simDataAircraft.clear();
   p->simDataAircraftObjectIds.clear();
-  p->fetchedMetars.clear();
   p->simDataObjectId = 0;
 
   HRESULT hr = SimConnect_RequestDataOnSimObjectType(
@@ -807,80 +806,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     return false;
 
   p->callDispatch(p->userDataFetched, "DATA_REQUEST_ID_USER_AIRCRAFT");
-
-  // === Get weather =========================================
-  if(p->weatherRequest.isValid())
-  {
-    MetarResult result;
-    result.requestIdent = p->weatherRequest.getStation();
-    result.requestPos = p->weatherRequest.getPosition();
-
-    if(!result.requestIdent.isEmpty())
-    {
-      // == weather for station ========================================================
-      hr = SimConnect_WeatherRequestObservationAtStation(
-        p->hSimConnect, DATA_REQUEST_ID_WEATHER_STATION, result.requestIdent.toUtf8().data());
-      if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent))
-        return false;
-
-      p->fetchedMetars.clear();
-      p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent);
-
-      if(p->fetchedMetars.size() > 1)
-        qWarning() << "Got more than one metar for station"
-                   << result.requestIdent << ":" << p->fetchedMetars.size();
-
-      if(!p->fetchedMetars.isEmpty())
-        result.metarForStation = p->fetchedMetars.first();
-    }
-
-    if(p->fetchedMetars.isEmpty())
-    {
-      // Nothing found for station or no station given
-
-      // == weather for nearest station ========================================================
-      if(result.requestPos.isValid())
-      {
-        hr = SimConnect_WeatherRequestObservationAtNearestStation(
-          p->hSimConnect, DATA_REQUEST_ID_WEATHER_NEAREST_STATION,
-          result.requestPos.getLatY(), result.requestPos.getLonX());
-        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString()))
-          return false;
-
-        p->fetchedMetars.clear();
-        p->callDispatch(p->weatherDataFetched,
-                        "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
-
-        if(p->fetchedMetars.size() > 1)
-          qWarning() << "Got more than one nearest metar for position"
-                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
-
-        if(!p->fetchedMetars.isEmpty())
-          result.metarForNearest = p->fetchedMetars.first();
-      }
-
-      // == interpolated weather ========================================================
-      if(result.requestPos.isValid())
-      {
-        hr = SimConnect_WeatherRequestInterpolatedObservation(
-          p->hSimConnect, DATA_REQUEST_ID_WEATHER_INTERPOLATED,
-          result.requestPos.getLatY(), result.requestPos.getLonX(), result.requestPos.getAltitude());
-        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_INTERPOLATED"))
-          return false;
-
-        p->fetchedMetars.clear();
-        p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_INTERPOLATED");
-
-        if(p->fetchedMetars.size() > 1)
-          qWarning() << "Got more than one interpolated metar for position"
-                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
-
-        if(!p->fetchedMetars.isEmpty())
-          result.metarForInterpolated = p->fetchedMetars.first();
-      }
-    }
-    data.metarResults.append(result);
-  }
 
   p->state = sc::STATEOK;
 
@@ -970,7 +895,98 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   return true;
 }
 
-void SimConnectHandler::setWeatherRequest(const atools::fs::sc::WeatherRequest& request)
+bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
+{
+  if(p->weatherRequest.isValid())
+  {
+    p->fetchedMetars.clear();
+
+    HRESULT hr;
+    MetarResult result;
+    result.requestIdent = p->weatherRequest.getStation();
+    result.requestPos = p->weatherRequest.getPosition();
+
+    if(!result.requestIdent.isEmpty())
+    {
+      // == weather for station ========================================================
+      hr = SimConnect_WeatherRequestObservationAtStation(
+        p->hSimConnect, DATA_REQUEST_ID_WEATHER_STATION, result.requestIdent.toUtf8().data());
+      if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent))
+        return false;
+
+      p->fetchedMetars.clear();
+      p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent);
+
+      if(p->fetchedMetars.size() > 1)
+        qWarning() << "Got more than one metar for station"
+                   << result.requestIdent << ":" << p->fetchedMetars.size();
+
+      if(!p->fetchedMetars.isEmpty())
+        result.metarForStation = p->fetchedMetars.first();
+    }
+
+    if(p->fetchedMetars.isEmpty())
+    {
+      // Nothing found for station or no station given
+
+      // == weather for nearest station ========================================================
+      if(result.requestPos.isValid())
+      {
+        hr = SimConnect_WeatherRequestObservationAtNearestStation(
+          p->hSimConnect, DATA_REQUEST_ID_WEATHER_NEAREST_STATION,
+          result.requestPos.getLatY(), result.requestPos.getLonX());
+        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString()))
+          return false;
+
+        p->fetchedMetars.clear();
+        p->callDispatch(p->weatherDataFetched,
+                        "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
+
+        if(p->fetchedMetars.size() > 1)
+          qWarning() << "Got more than one nearest metar for position"
+                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
+
+        if(!p->fetchedMetars.isEmpty())
+          result.metarForNearest = p->fetchedMetars.first();
+      }
+
+      // == interpolated weather ========================================================
+      if(result.requestPos.isValid())
+      {
+        hr = SimConnect_WeatherRequestInterpolatedObservation(
+          p->hSimConnect, DATA_REQUEST_ID_WEATHER_INTERPOLATED,
+          result.requestPos.getLatY(), result.requestPos.getLonX(), result.requestPos.getAltitude());
+        if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_INTERPOLATED"))
+          return false;
+
+        p->fetchedMetars.clear();
+        p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_INTERPOLATED");
+
+        if(p->fetchedMetars.size() > 1)
+          qWarning() << "Got more than one interpolated metar for position"
+                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
+
+        if(!p->fetchedMetars.isEmpty())
+          result.metarForInterpolated = p->fetchedMetars.first();
+      }
+    }
+    data.metarResults.append(result);
+  }
+
+  if(!p->simRunning || p->simPaused || !p->weatherDataFetched)
+  {
+    if(p->verbose)
+      qDebug() << "Running" << p->simRunning << "paused" << p->simPaused
+               << "userDataFetched" << p->userDataFetched
+               << "aiDataFetched" << p->aiDataFetched
+               << "weatherDataFetched" << p->weatherDataFetched;
+    return false;
+  }
+  return true;
+
+}
+
+void SimConnectHandler::addWeatherRequest(const atools::fs::sc::WeatherRequest& request)
 {
   p->weatherRequest = request;
 }

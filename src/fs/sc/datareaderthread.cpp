@@ -72,7 +72,7 @@ void DataReaderThread::connectToSimulator()
 
 void DataReaderThread::run()
 {
-  qDebug() << "Datareader run";
+  qDebug() << "Datareader run update rate" << updateRate;
 
   setupReplay();
 
@@ -92,9 +92,6 @@ void DataReaderThread::run()
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
-    // handler->fetchStationMetars({"KSEA", "CYVR"});
-    // handler->fetchNearesMetars({atools::geo::Pos(-124.1786, 49.4758)});
-    // handler->fetchInterpolatedMetars({atools::geo::Pos(-123.1618, 48.3800)});
 
     if(loadReplayFile != nullptr)
     {
@@ -105,15 +102,7 @@ void DataReaderThread::run()
         if(loadReplayFile->atEnd())
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
-        // QStringList metars;
-        // for(const QString& station : handler->getWeatherRequest().getWeatherRequestStation())
-        // metars.append(station + " DUMMY METAR " + QDateTime::currentDateTime().toString());
-
-        // data.setMetars(metars);
-
         emit postSimConnectData(data);
-
-        handler->setWeatherRequest(WeatherRequest());
       }
       else
       {
@@ -127,9 +116,7 @@ void DataReaderThread::run()
       data.setPacketId(i);
       data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
 
-      // qInfo() << "METARs" << data.getMetars();
-
-      if(!data.getMetars().isEmpty())
+      if(verbose && !data.getMetars().isEmpty())
         qDebug() << "DataReaderThread::run() num metars" << data.getMetars().size();
 
       emit postSimConnectData(data);
@@ -164,9 +151,7 @@ void DataReaderThread::run()
       sleepMs = updateRate;
 
     bool wakeUpSignalled = waitCondition.wait(&waitMutex, sleepMs);
-    waitMutex.unlock();
-    waitMutex.lock();
-    if(wakeUpSignalled)
+    if(wakeUpSignalled && verbose)
       qDebug() << "DataReaderThread::run wakeUpSignalled";
   }
 
@@ -186,20 +171,21 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
 
   bool weatherRequested = handler->getWeatherRequest().isValid();
 
-  bool retval = handler->fetchData(data, radiusKm);
+  bool retval = false;
 
-  if(weatherRequested && !data.getMetars().isEmpty())
-  {
-    qDebug() << "Weather requested and found";
-    // Weather requested and found
-    handler->setWeatherRequest(WeatherRequest());
-  }
+  if(weatherRequested)
+    retval = handler->fetchWeatherData(data);
+  else
+    retval = handler->fetchData(data, radiusKm);
+
+  if(verbose)
+    if(weatherRequested && !data.getMetars().isEmpty())
+      qDebug() << "Weather requested and found";
 
   if(weatherRequested && data.getMetars().isEmpty())
-  {
-    qWarning() << "Weather requested but not found";
-    handler->setWeatherRequest(WeatherRequest());
-  }
+    qWarning() << "Weather requested but noting found";
+
+  handler->addWeatherRequest(WeatherRequest());
 
   return retval;
 }
@@ -306,11 +292,12 @@ bool DataReaderThread::isSimconnectAvailable()
 
 void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
 {
-  qDebug() << "DataReaderThread::postWeatherRequest";
+  if(verbose)
+    qDebug() << "DataReaderThread::postWeatherRequest";
 
   {
     QMutexLocker locker(&handlerMutex);
-    handler->setWeatherRequest(request);
+    handler->addWeatherRequest(request);
   }
 
   waitCondition.wakeAll();
