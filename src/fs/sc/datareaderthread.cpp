@@ -34,7 +34,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
 {
   qDebug() << "Datareader started";
   setObjectName("DataReaderThread");
-  handler = new SimConnectHandler(verbose);
+  handler = new SimConnectHandler(verboseLog);
 }
 
 DataReaderThread::~DataReaderThread()
@@ -83,8 +83,6 @@ void DataReaderThread::run()
     // Using replay is always connected
     connected = true;
 
-  int i = 0;
-
   qDebug() << "Datareader connected";
 
   waitMutex.lock();
@@ -113,9 +111,6 @@ void DataReaderThread::run()
     }
     else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM))
     {
-      data.setPacketId(i);
-      data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
-
       if(verbose && !data.getMetars().isEmpty())
         qDebug() << "DataReaderThread::run() num metars" << data.getMetars().size();
 
@@ -123,8 +118,6 @@ void DataReaderThread::run()
 
       if(saveReplayFile != nullptr && saveReplayFile->isOpen())
         data.write(saveReplayFile);
-
-      i++;
     }
     else
     {
@@ -157,16 +150,20 @@ void DataReaderThread::run()
 
   closeReplay();
 
-  waitMutex.unlock();
   terminate = false; // Allow restart
   connected = false;
   reconnecting = false;
+
+  waitMutex.unlock();
+
   emit disconnectedFromSimulator();
   qDebug() << "Datareader exiting run";
 }
 
 bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
 {
+  if(verbose)
+    qDebug() << "DataReaderThread::fetchData enter";
   QMutexLocker locker(&handlerMutex);
 
   bool weatherRequested = handler->getWeatherRequest().isValid();
@@ -174,9 +171,26 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
   bool retval = false;
 
   if(weatherRequested)
-    retval = handler->fetchWeatherData(data);
+  {
+    if(verbose)
+      qDebug() << "DataReaderThread::fetchData weather";
+
+    handler->fetchWeatherData(data);
+    data.setPacketId(0);
+
+    // Force an empty reply to the client
+    retval = true;
+  }
   else
+  {
+    if(verbose)
+      qDebug() << "DataReaderThread::fetchData nextPacketId" << nextPacketId;
+
     retval = handler->fetchData(data, radiusKm);
+    data.setPacketId(nextPacketId++);
+  }
+
+  data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
 
   if(verbose)
     if(weatherRequested && !data.getMetars().isEmpty())
@@ -186,6 +200,9 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
     qWarning() << "Weather requested but noting found";
 
   handler->addWeatherRequest(WeatherRequest());
+
+  if(verbose)
+    qDebug() << "DataReaderThread::fetchData leave" << retval;
 
   return retval;
 }

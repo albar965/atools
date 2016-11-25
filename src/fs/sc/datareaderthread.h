@@ -132,7 +132,7 @@ private:
 
   // Needed to lock for any modifications of the workers set
   mutable QMutex handlerMutex;
-
+  int nextPacketId = 1;
   mutable QMutex waitMutex;
   mutable QWaitCondition waitCondition;
 };
