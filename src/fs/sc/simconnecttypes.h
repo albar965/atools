@@ -51,6 +51,12 @@ struct MetarResult
   QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
   atools::geo::Pos requestPos;
   QDateTime timestamp;
+
+  bool isValid() const
+  {
+    return !requestIdent.isEmpty() || requestPos.isValid();
+  }
+
 };
 
 } // namespace sc
