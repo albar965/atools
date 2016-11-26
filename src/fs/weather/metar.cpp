@@ -36,6 +36,36 @@ const static QRegularExpression TEMPERATURE("^([-M]?)(\\d{1,2})/([-M]?)(\\d{1,2}
 const static QRegularExpression CLOUD("^([0-8])(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)([0-9]{3})$");
 const static QRegularExpression NOAA_DATE("^\\d{1,4}/\\d{1,2}/\\d{1,2}$"); // 2007/10/01 03:47
 const static QRegularExpression NOAA_TIME("^\\d{1,2}:\\d{1,2}$"); // 2007/10/01 03:47
+
+// CI Cirrus
+// CS Cirro-stratus (maps to CI)
+// CC Cirro-cumulus (maps to CI)
+// AS Alto-stratus (maps to ST)
+// AC Alto-cumulus (maps to CU)
+// SC Strato-cumulus (maps to CU)
+// NS Nimbo-stratus (maps to ST)
+// ST Stratus
+// CU Cumulus
+// CB Cumulo-nimbus
+// Note that not all of these cloud types are supported, so a number are
+// mapped to those which are. This does mean that a write followed by a read of
+// Metar data might not give identical strings.
+// ESP extension:
+// &TT000FTPQBBBI
+// where:
+// TT - Cloud type, one of: the list above (for example, CI or CB).
+// If this entry is different from the NNN entry above, this entry will take priority.
+// 000 - Unused.
+// F - Top of cloud, one of: F (flat), R (round), A (anvil)
+// T - Turbulence, one of: N - None (default), O - Light, L - Light, M - Moderate, H - Heavy, S - Severe
+// P - Precipitation, one of: V (very light), L (light), M (moderate), H (heavy) D (dense)
+// Q - Type of precipitation, one of: N (none), R (rain), F (freezing rain), H (hail), S (snow)
+// BBB - Coded base height, the precipitation ends at this height, set to 0 for it to land on the ground
+// I - icing rate, one of: N (none), T (trace), L (light), M (moderate), S (severe)
+
+const static QRegularExpression CLOUD_EXTENSION(
+  "(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)...[FRA][NOLMHS]([VLMHD])([NRFHS])(\\d\\d\\d)[NTLMS]");
+
 const static QVector<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT",
                                                "SCT", "BKN", "BKN", "BKN", "OVC"});
 
@@ -69,9 +99,47 @@ void Metar::buildCleanMetar()
   int numWind = 0, numVar = 0, numTmp = 0;
   if(simFormat)
   {
+    // FSX gives the precipidation indication only in the cloud extension
     QStringList met = metar.section("@@@", 0, 0).simplified().split(" ");
-    QStringList retval;
+    QString precipitation;
+    for(const QString& str : met)
+    {
+      QString extension = str.section("&", 1, 1).simplified();
 
+      QRegularExpressionMatch extensionCloudMatch = CLOUD_EXTENSION.match(extension);
+      if(extensionCloudMatch.hasMatch())
+      {
+        // V (very light), L (light), M (moderate), H (heavy) D (dense)
+        QString intensity = extensionCloudMatch.captured(2);
+        // Type of precipitation, one of: N (none), R (rain), F (freezing rain), H (hail), S (snow)
+        QString type = extensionCloudMatch.captured(3);
+        int altitude = extensionCloudMatch.captured(4).toInt();
+        if(altitude == 0)
+        {
+          // If altitude is 0 precipitation extends to the ground
+          if(intensity == "V" || intensity == "L")
+            precipitation += "-";
+          // else if(intensity == "M")
+          else if(intensity == "H" || intensity == "D")
+            precipitation += "+";
+
+          if(type == "N")
+            precipitation.clear();
+          else if(type == "R")
+            precipitation += "RA";
+          else if(type == "F")
+            precipitation += "RAFZ";
+          else if(type == "H")
+            precipitation += "FR";
+          else if(type == "S")
+            precipitation += "SN";
+          break;
+        }
+      }
+    }
+
+    bool precipitationAdded = false;
+    QStringList retval;
     for(const QString& str : met)
     {
       QString cleanStr = str.section("&", 0, 0).simplified();
@@ -81,7 +149,7 @@ void Metar::buildCleanMetar()
         cleanStr = timestamp.toString("ddHHmm") + "Z";
       else if(cleanStr == "????")
         // Replace pattern from interpolated with real station name
-        retval.append("XXXX");
+        cleanStr = "XXXX";
       else
       {
         bool isWind = WIND.match(cleanStr).hasMatch();
@@ -131,15 +199,21 @@ void Metar::buildCleanMetar()
         QRegularExpressionMatch cldMatch = CLOUD.match(cleanStr);
         if(cldMatch.hasMatch())
         {
+          if(!precipitationAdded)
+          {
+            // Add the precipitation as extracted from the cloud extension
+            retval.append(precipitation);
+            precipitationAdded = true;
+          }
+
           // Cloud density from oktas to text
           cleanStr = CLOUD_DENSITIES.at(cldMatch.captured(1).toInt());
 
           // Skip cloud type and add altitude
           cleanStr += cldMatch.captured(3);
         }
-
-        retval.append(cleanStr);
       }
+      retval.append(cleanStr);
     }
 
     cleanMetar = retval.join(" ").simplified().toUpper();

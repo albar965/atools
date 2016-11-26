@@ -368,6 +368,15 @@ HtmlBuilder& HtmlBuilder::pEnd()
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::pre(const QString& str, html::Flags flags, QColor color)
+{
+
+  htmlText += "<pre>";
+  text(str, flags, color);
+  htmlText += "</pre>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::brText(const QString& str)
 {
   br();

@@ -159,6 +159,7 @@ MetarParser::MetarParser(const QString& metar) :
   if(!scanId() || !scanDate())
   {
     delete[] _data;
+    _data = nullptr;
     throw std::runtime_error("metar data bogus");
   }
   scanModifier();
@@ -202,6 +203,7 @@ MetarParser::MetarParser(const QString& metar) :
   if(_grpcount < 4)
   {
     delete[] _data;
+    _data = nullptr;
     throw std::runtime_error("metar data incomplete ");
   }
 
@@ -234,7 +236,7 @@ QString MetarParser::getReportTypeString() const
       return QObject::tr("Corrected");
 
     case atools::fs::weather::MetarParser::RTD:
-      return QObject::tr("Routine Delayed (late) observation");
+      return QObject::tr("Routine delayed observation");
 
   }
   return QString();
@@ -692,7 +694,7 @@ bool MetarParser::scanRwyVisRange()
 
 static const struct Token special[] = {
   {
-    "NSW", "no significant weather"
+    "NSW", "No significant weather"
   },
   /*	{ "VCSH", "showers in the vicinity" },
    *  { "VCTS", "thunderstorm in the vicinity" }, */
@@ -703,28 +705,28 @@ static const struct Token special[] = {
 
 static const struct Token description[] = {
   {
-    "SH", "showers of"
+    "SH", "Showers of"
   },
   {
-    "TS", "thunderstorm with"
+    "TS", "Thunderstorm with"
   },
   {
-    "BC", "patches of"
+    "BC", "Patches of"
   },
   {
-    "BL", "blowing"
+    "BL", "Blowing"
   },
   {
-    "DR", "low drifting"
+    "DR", "Low drifting"
   },
   {
-    "FZ", "freezing"
+    "FZ", "Freezing"
   },
   {
-    "MI", "shallow"
+    "MI", "Shallow"
   },
   {
-    "PR", "partial"
+    "PR", "Partial"
   },
   {
     0, 0
@@ -733,76 +735,76 @@ static const struct Token description[] = {
 
 static const struct Token phenomenon[] = {
   {
-    "DZ", "drizzle"
+    "DZ", "Drizzle"
   },
   {
-    "GR", "hail"
+    "GR", "Hail"
   },
   {
-    "GS", "small hail and/or snow pellets"
+    "GS", "Small hail and/or snow pellets"
   },
   {
-    "IC", "ice crystals"
+    "IC", "Ice crystals"
   },
   {
-    "PE", "ice pellets"
+    "PE", "Ice pellets"
   },
   {
-    "RA", "rain"
+    "RA", "Rain"
   },
   {
-    "SG", "snow grains"
+    "SG", "Snow grains"
   },
   {
-    "SN", "snow"
+    "SN", "Snow"
   },
   {
-    "UP", "unknown precipitation"
+    "UP", "Unknown precipitation"
   },
   {
-    "BR", "mist"
+    "BR", "Mist"
   },
   {
-    "DU", "widespread dust"
+    "DU", "Widespread dust"
   },
   {
-    "FG", "fog"
+    "FG", "Fog"
   },
   {
-    "FGBR", "fog bank"
+    "FGBR", "Fog bank"
   },
   {
-    "FU", "smoke"
+    "FU", "Smoke"
   },
   {
-    "HZ", "haze"
+    "HZ", "Haze"
   },
   {
-    "PY", "spray"
+    "PY", "Spray"
   },
   {
-    "SA", "sand"
+    "SA", "Sand"
   },
   {
-    "VA", "volcanic ash"
+    "VA", "Volcanic ash"
   },
   {
-    "DS", "duststorm"
+    "DS", "Duststorm"
   },
   {
-    "FC", "funnel cloud/tornado waterspout"
+    "FC", "Funnel cloud/tornado waterspout"
   },
   {
-    "PO", "well-developed dust/sand whirls"
+    "PO", "Well-developed dust/sand whirls"
   },
   {
-    "SQ", "squalls"
+    "SQ", "Squalls"
   },
   {
-    "SS", "sandstorm"
+    "SS", "Sandstorm"
   },
   {
-    "UP", "unknown"
+    "UP", "Unknown"
   }, // ... due to failed automatic acquisition
   {
     0, 0
@@ -1567,10 +1569,10 @@ QString MetarVisibility::getModifierString() const
   switch(mod)
   {
     case atools::fs::weather::MetarVisibility::NOGO:
-      return QObject::tr("No go");
+      return QObject::tr("Vertical visibility");
 
     case atools::fs::weather::MetarVisibility::EQUALS:
-      return QObject::tr("Equals");
+      return QString();
 
     case atools::fs::weather::MetarVisibility::LESS_THAN:
       return QObject::tr("Less than");
