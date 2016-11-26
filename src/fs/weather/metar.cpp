@@ -28,31 +28,44 @@ namespace atools {
 namespace fs {
 namespace weather {
 
+const static QRegularExpression WIND("^(\\d{3}|VRB)\\d{1,3}(G\\d{2,3})?(KT|KMH|MPS)$");
+const static QRegularExpression VARIABLE_WIND("^\\d{3}V\\d{3}$");
+const static QRegularExpression LONG_VISIBILITY("^(\\d{3})(SM|KM)$");
+const static QRegularExpression VISIBILITY_KM("^(\\d{1,2})KM$");
+const static QRegularExpression TEMPERATURE("^([-M]?)(\\d{1,2})/([-M]?)(\\d{1,2})$");
+const static QRegularExpression CLOUD("^([0-8])(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)([0-9]{3})$");
+const static QRegularExpression NOAA_DATE("^\\d{1,4}/\\d{1,2}/\\d{1,2}$"); // 2007/10/01 03:47
+const static QRegularExpression NOAA_TIME("^\\d{1,2}:\\d{1,2}$"); // 2007/10/01 03:47
+const static QVector<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT",
+                                               "SCT", "BKN", "BKN", "BKN", "OVC"});
+
 Metar::Metar(const QString& metarString, const QString& metarStation, const QDateTime& metarTimestamp,
              bool isSimFormat)
   : metar(metarString), station(metarStation), simFormat(isSimFormat), timestamp(metarTimestamp)
 {
+  buildCleanMetar();
 
+  try
+  {
+    parsed = new MetarParser(cleanMetar);
+  }
+  catch(const std::exception& e)
+  {
+    qWarning() << "Exception while parsing metar" << cleanMetar << ":" << e.what();
+    delete parsed;
+    parsed = new MetarParser(QString());
+  }
 }
 
 Metar::~Metar()
 {
-
+  delete parsed;
 }
 
 // K53S&A1 000000Z 24705G06KT&D975NG 13520KT&A1528NG 129V141 9999 2ST025&ST001FNVN002N
 // 1CI312&CI001FNVN002N 13/12 07/05&A1528 Q1009 @@@ 50 7 135 20 |
-QString Metar::getCleanMetar() const
+void Metar::buildCleanMetar()
 {
-  const static QRegularExpression WIND("(\\d{3}|VRB)\\d{1,3}(G\\d{2,3})?(KT|KMH|MPS)");
-  const static QRegularExpression VARIABLE_WIND("\\d{3}V\\d{3}");
-  const static QRegularExpression LONG_VISIBILITY("(\\d{3})(SM|KM)");
-  const static QRegularExpression VISIBILITY_KM("(\\d{1,2})KM");
-  const static QRegularExpression TEMPERATURE("([-M]?)(\\d{1,2})/([-M]?)(\\d{1,2})");
-  const static QRegularExpression CLOUD("([0-8])(CI|CS|CC|AS|AC|SC|NS|ST|CU|CB)([0-9]{3})");
-  const static QVector<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT",
-                                                 "SCT", "BKN", "BKN", "BKN", "OVC"});
-
   int numWind = 0, numVar = 0, numTmp = 0;
   if(simFormat)
   {
@@ -129,30 +142,20 @@ QString Metar::getCleanMetar() const
       }
     }
 
-    return retval.join(" ").simplified().toUpper();
+    cleanMetar = retval.join(" ").simplified().toUpper();
   }
   else
-    return metar;
-}
-
-MetarParser Metar::getParsedMetar() const
-{
-  QString cleanMetar = getCleanMetar();
-  try
-  {
-    return MetarParser(cleanMetar);
-  }
-  catch(const std::exception& e)
-  {
-    qWarning() << "Exception while parsing metar" << cleanMetar << ":" << e.what();
-  }
-  return MetarParser(QString());
+    cleanMetar = metar;
 }
 
 void Metar::test()
 {
   static QStringList metars(
     {
+      "2007/10/01 03:47 KTDO 010347Z 14005KT 7SM OVC12 10/06 A2984 RMK SLP105 LAST",
+      "2016/08/08 03:00 MGTK 080300Z 00000KT CAVOK 23/23 Q1014 A2994 SCT090",
+      "CYXE 261800Z CCA 25013KT 15SM SCT030 BKN090 05/03 A2988 RMK SC4AC2 SLP144",
+
       "CWSP&A21 000000Z 24705G06KT&D975NG 13520KT&A1508NG 129V141 48KM&B58&D3500 6ST024&ST001FNLR001N 2CU041&CU001FNVR001N 3CI311&CI001FNVN001N 13/12 07/05&A1508 Q1009 @@@ 50 7 135 20 |",
       "CWEB&A6 000000Z 33514G23KT&D980MM 330V340 80KM&B-378&D3048 CLR 20/15 Q0989",
       "CWEL&A4 000000Z 24705G06KT&D975NG 13520KT&A1524NG 129V141 16KM&B74&D3500 8ST025&ST001FNMR002N 4CU041&CU001FNVR002N 5CI312&CI001FNVN002N 13/12 07/05&A1524 Q1009 @@@ 50 7 135 20 |",
@@ -311,7 +314,7 @@ void Metar::test()
   for(QString m : metars)
   {
     Metar debugmetar(m, "XXXX", QDateTime::currentDateTime().toUTC(), true);
-    atools::fs::weather::MetarParser parsedMetar = debugmetar.getParsedMetar();
+    const atools::fs::weather::MetarParser& parsedMetar = debugmetar.getParsedMetar();
 
     if(parsedMetar.isValid() && parsedMetar.getUnusedData().isEmpty())
     {
@@ -335,7 +338,8 @@ void Metar::test()
       qDebug() << "CLEAN " << debugmetar.getCleanMetar();
 
       Metar m2(m, "XXXX", QDateTime::currentDateTime().toUTC(), true);
-      atools::fs::weather::MetarParser pm2 = m2.getParsedMetar();
+      const atools::fs::weather::MetarParser& pm2 = m2.getParsedMetar();
+      Q_UNUSED(pm2);
     }
   }
 }

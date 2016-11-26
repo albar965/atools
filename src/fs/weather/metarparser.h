@@ -26,6 +26,7 @@
 #include "atools.h"
 #include "geo/calculations.h"
 
+#include <QObject>
 #include <vector>
 #include <map>
 #include <string>
@@ -42,7 +43,7 @@ struct Token
   const char *text;
 };
 
-const double SGMetarNaN = -1E20;
+const float MetarNaN = -1E20f;
 
 class MetarParser;
 
@@ -54,7 +55,7 @@ class MetarVisibility
 
 public:
   MetarVisibility() :
-    _distance(SGMetarNaN), _direction(-1), _modifier(EQUALS), _tendency(NONE)
+    _distance(MetarNaN), _direction(-1), _modifier(EQUALS), _tendency(NONE)
   {
   }
 
@@ -74,9 +75,9 @@ public:
     DECREASING
   };
 
-  void set(double dist, int dir = -1, int mod = -1, int tend = -1);
+  void set(float dist, int dir = -1, int mod = -1, int tend = -1);
 
-  inline double getVisibilityMeter() const
+  inline float getVisibilityMeter() const
   {
     return _distance;
   }
@@ -91,13 +92,15 @@ public:
     return _modifier;
   }
 
+  QString getModifierString() const;
+
   inline int getTendency() const
   {
     return _tendency;
   }
 
 protected:
-  double _distance;
+  float _distance;
   int _direction;
   int _modifier;
   int _tendency;
@@ -112,8 +115,8 @@ class MetarRunway
 
 public:
   MetarRunway() :
-    _deposit(-1), _deposit_string(0), _extent(-1), _extent_string(0), _depth(SGMetarNaN),
-    _friction(SGMetarNaN), _friction_string(0), _comment(0), _wind_shear(false)
+    _deposit(-1), _deposit_string(0), _extent(-1), _extent_string(0), _depth(MetarNaN), _friction(MetarNaN),
+    _friction_string(0), _comment(0), _wind_shear(false)
   {
   }
 
@@ -127,7 +130,7 @@ public:
     return _deposit_string;
   }
 
-  inline double getExtent() const
+  inline float getExtent() const
   {
     return _extent;
   }
@@ -137,12 +140,12 @@ public:
     return _extent_string;
   }
 
-  inline double getDepth() const
+  inline float getDepth() const
   {
     return _depth;
   }
 
-  inline double getFriction() const
+  inline float getFriction() const
   {
     return _friction;
   }
@@ -179,8 +182,8 @@ protected:
   const char *_deposit_string;
   int _extent;
   const char *_extent_string;
-  double _depth;
-  double _friction;
+  float _depth;
+  float _friction;
   const char *_friction_string;
   const char *_comment;
   bool _wind_shear;
@@ -212,20 +215,22 @@ public:
   static const char *COVERAGE_OVERCAST_STRING;
 
   MetarCloud() :
-    _coverage(COVERAGE_NIL), _altitude(SGMetarNaN), _type(0), _type_long(0)
+    _coverage(COVERAGE_NIL), _altitude(MetarNaN), _type(0), _type_long(0)
   {
   }
 
-  void set(double alt, Coverage cov = COVERAGE_NIL);
+  void set(float alt, Coverage cov = COVERAGE_NIL);
 
   inline Coverage getCoverage() const
   {
     return _coverage;
   }
 
+  QString getCoverageString() const;
+
   static Coverage getCoverage(const QString& coverage);
 
-  inline double getAltitudeMeter() const
+  inline float getAltitudeMeter() const
   {
     return _altitude;
   }
@@ -242,7 +247,7 @@ public:
 
 protected:
   Coverage _coverage; // quarters: 0 -> clear ... 4 -> overcast
-  double _altitude; // 1000 m
+  float _altitude; // 1000 m
   const char *_type; // CU
   const char *_type_long; // cumulus
 };
@@ -281,8 +286,8 @@ public:
 
     Intensity intensity;
     bool vincinity;
-    std::vector<std::string> descriptions;
-    std::vector<std::string> phenomena;
+    QStringList descriptions;
+    QStringList phenomena;
   };
 
   inline QString getData() const
@@ -335,17 +340,19 @@ public:
     return _report_type;
   }
 
+  QString getReportTypeString() const;
+
   inline int getWindDir() const
   {
     return _wind_dir;
   }
 
-  inline double getWindSpeedMeterPerSec() const
+  inline float getWindSpeedMeterPerSec() const
   {
     return _wind_speed;
   }
 
-  inline double getGustSpeedMeterPerSec() const
+  inline float getGustSpeedMeterPerSec() const
   {
     return _gust_speed;
   }
@@ -380,19 +387,19 @@ public:
     return _dir_visibility;
   }
 
-  inline double getTemperatureC() const
+  inline float getTemperatureC() const
   {
     return _temp;
   }
 
-  inline double getDewpointDegC() const
+  inline float getDewpointDegC() const
   {
     return _dewp;
   }
 
-  inline double getPressureMbar() const
+  inline float getPressureMbar() const
   {
-    return _pressure == SGMetarNaN ? SGMetarNaN : _pressure / 100;
+    return _pressure == MetarNaN ? MetarNaN : _pressure / 100;
   }
 
   inline int getRain() const
@@ -410,6 +417,8 @@ public:
     return _snow;
   }
 
+  QString getIntensityString(int intensity) const;
+
   inline bool getCavok() const
   {
     return _cavok;
@@ -422,11 +431,11 @@ public:
     return QVector<MetarCloud>::fromStdVector(_clouds);
   }
 
-  inline const QHash<QString, MetarRunway> getRunways() const;
+  inline QHash<QString, MetarRunway> getRunways() const;
 
-  const QStringList getWeather() const;
+  QStringList getWeather() const;
 
-  inline const QVector<struct Weather> getWeather2() const
+  inline QVector<struct Weather> getWeather2() const
   {
     return QVector<struct Weather>::fromStdVector(_weather2);
 
@@ -442,7 +451,7 @@ protected:
   int _grpcount;
   bool _x_proxy;
   char *_data = nullptr;
-  char *_m;
+  char *_m = nullptr;
   char _icao[5];
   int _year;
   int _month;
@@ -451,13 +460,13 @@ protected:
   int _minute;
   int _report_type;
   int _wind_dir;
-  double _wind_speed;
-  double _gust_speed;
+  float _wind_speed;
+  float _gust_speed;
   int _wind_range_from;
   int _wind_range_to;
-  double _temp;
-  double _dewp;
-  double _pressure;
+  float _temp;
+  float _dewp;
+  float _pressure;
   int _rain;
   int _hail;
   int _snow;

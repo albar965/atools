@@ -36,17 +36,43 @@ public:
   virtual ~Metar();
 
   /* Fixes multiple flaws in FSX metar strings */
-  QString getCleanMetar() const;
 
-  /* Returns a modified version of the Flightgear metar parser */
-  atools::fs::weather::MetarParser getParsedMetar() const;
+  /* Returns a modified version of the Flightgear metar parser. Will never return null. */
+  const atools::fs::weather::MetarParser& getParsedMetar() const
+  {
+    return *parsed;
+  }
 
   static void test();
 
+  const QString& getMetar() const
+  {
+    return metar;
+  }
+
+  const QString& getStation() const
+  {
+    return station;
+  }
+
+  QDateTime getTimestamp() const
+  {
+    return timestamp;
+  }
+
+  const QString& getCleanMetar() const
+  {
+    return cleanMetar;
+  }
+
 private:
-  QString metar, station;
+  void buildCleanMetar();
+
+  QString cleanMetar, metar, station;
   bool simFormat;
   const QDateTime timestamp;
+  atools::fs::weather::MetarParser *parsed = nullptr;
+
 };
 
 } // namespace weather

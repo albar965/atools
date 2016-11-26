@@ -106,8 +106,6 @@
 /** slug/ft3 to kg/m3 */
 #define SG_SLUGFT3_TO_KGPM3 515.379
 
-#define NaN SGMetarNaN
-
 using std::string;
 using std::map;
 using std::vector;
@@ -135,8 +133,9 @@ namespace weather {
  */
 MetarParser::MetarParser(const QString& metar) :
   _grpcount(0), _x_proxy(false), _year(-1), _month(-1), _day(-1), _hour(-1), _minute(-1), _report_type(-1),
-  _wind_dir(-1), _wind_speed(NaN), _gust_speed(NaN), _wind_range_from(-1), _wind_range_to(-1), _temp(NaN),
-  _dewp(NaN), _pressure(NaN), _rain(false), _hail(false), _snow(false), _cavok(false)
+  _wind_dir(-1), _wind_speed(MetarNaN), _gust_speed(MetarNaN), _wind_range_from(-1), _wind_range_to(-1),
+  _temp(MetarNaN), _dewp(MetarNaN), _pressure(MetarNaN), _rain(false), _hail(false), _snow(false),
+  _cavok(false)
 {
   if(metar.isEmpty())
     return;
@@ -218,6 +217,47 @@ MetarParser::~MetarParser()
   _runways.clear();
   _weather.clear();
   delete[] _data;
+}
+
+QString MetarParser::getReportTypeString() const
+{
+  ReportType t = static_cast<ReportType>(_report_type);
+  switch(t)
+  {
+    case atools::fs::weather::MetarParser::NONE:
+      return QString();
+
+    case atools::fs::weather::MetarParser::AUTO:
+      return QObject::tr("Auto");
+
+    case atools::fs::weather::MetarParser::COR:
+      return QObject::tr("Corrected");
+
+    case atools::fs::weather::MetarParser::RTD:
+      return QObject::tr("Routine Delayed (late) observation");
+
+  }
+  return QString();
+}
+
+QString MetarParser::getIntensityString(int intensity) const
+{
+  Intensity i = static_cast<Intensity>(intensity);
+  switch(i)
+  {
+    case atools::fs::weather::MetarParser::NIL:
+      return QString();
+
+    case atools::fs::weather::MetarParser::LIGHT:
+      return QObject::tr("Light");
+
+    case atools::fs::weather::MetarParser::MODERATE:
+      return QObject::tr("Moderate");
+
+    case atools::fs::weather::MetarParser::HEAVY:
+      return QObject::tr("Heavy");
+  }
+  return QString();
 }
 
 void MetarParser::useCurrentDate()
@@ -404,7 +444,7 @@ bool MetarParser::scanWind()
 
   double speed = i;
 
-  double gust = NaN;
+  double gust = MetarNaN;
   if(*m == 'G')
   {
     m++;
@@ -431,7 +471,7 @@ bool MetarParser::scanWind()
   _m = m;
   _wind_dir = dir;
   _wind_speed = speed * factor;
-  if(gust != NaN)
+  if(gust != MetarNaN)
     _gust_speed = gust * factor;
   _grpcount++;
   return true;
@@ -564,7 +604,7 @@ bool MetarParser::scanVisibility()
   MetarVisibility *v;
   if(dir != -1)
     v = &_dir_visibility[dir / 45];
-  else if(_min_visibility._distance == NaN)
+  else if(_min_visibility._distance == MetarNaN)
     v = &_min_visibility;
   else
     v = &_max_visibility;
@@ -972,7 +1012,7 @@ bool MetarParser::scanSkyCondition()
     _m = m;
     return true; // ignore single OVC/BKN/...
   }
-  else if(!scanNumber(&m, &i, 3))
+  else if(!scanNumber(&m, &i, 2, 3))
     i = -1;
 
   if(cl._coverage == MetarCloud::COVERAGE_NIL)
@@ -1061,15 +1101,15 @@ bool MetarParser::scanTemperature()
 
 double MetarParser::getRelHumidity() const
 {
-  if(_temp == NaN || _dewp == NaN)
-    return NaN;
+  if(_temp == MetarNaN || _dewp == MetarNaN)
+    return MetarNaN;
 
   double dewp = pow(10.0, 7.5 * _dewp / (237.7 + _dewp));
   double temp = pow(10.0, 7.5 * _temp / (237.7 + _temp));
   return dewp * 100 / temp;
 }
 
-const QHash<QString, MetarRunway> MetarParser::getRunways() const
+QHash<QString, MetarRunway> MetarParser::getRunways() const
 {
   QHash<QString, MetarRunway> retval;
 
@@ -1079,7 +1119,7 @@ const QHash<QString, MetarRunway> MetarParser::getRunways() const
   return retval;
 }
 
-const QStringList MetarParser::getWeather() const
+QStringList MetarParser::getWeather() const
 {
   QStringList retval;
 
@@ -1451,11 +1491,36 @@ const struct Token *MetarParser::scanToken(char **str, const struct Token *list)
   return longest;
 }
 
-void MetarCloud::set(double alt, Coverage cov)
+void MetarCloud::set(float alt, Coverage cov)
 {
   _altitude = alt;
   if(cov != -1)
     _coverage = cov;
+}
+
+QString MetarCloud::getCoverageString() const
+{
+  switch(_coverage)
+  {
+    case atools::fs::weather::MetarCloud::COVERAGE_NIL:
+      return QString();
+
+    case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
+      return QObject::tr("Clear");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_FEW:
+      return QObject::tr("Few");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
+      return QObject::tr("Scattered");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
+      return QObject::tr("Broken");
+
+    case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
+      return QObject::tr("Overcast");
+  }
+  return QString();
 }
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
@@ -1485,7 +1550,7 @@ const char *MetarCloud::COVERAGE_SCATTERED_STRING = "scattered";
 const char *MetarCloud::COVERAGE_BROKEN_STRING = "broken";
 const char *MetarCloud::COVERAGE_OVERCAST_STRING = "overcast";
 
-void MetarVisibility::set(double dist, int dir, int mod, int tend)
+void MetarVisibility::set(float dist, int dir, int mod, int tend)
 {
   _distance = dist;
   if(dir != -1)
@@ -1496,7 +1561,25 @@ void MetarVisibility::set(double dist, int dir, int mod, int tend)
     _tendency = tend;
 }
 
-#undef NaN
+QString MetarVisibility::getModifierString() const
+{
+  Modifier mod = static_cast<Modifier>(_modifier);
+  switch(mod)
+  {
+    case atools::fs::weather::MetarVisibility::NOGO:
+      return QObject::tr("No go");
+
+    case atools::fs::weather::MetarVisibility::EQUALS:
+      return QObject::tr("Equals");
+
+    case atools::fs::weather::MetarVisibility::LESS_THAN:
+      return QObject::tr("Less than");
+
+    case atools::fs::weather::MetarVisibility::GREATER_THAN:
+      return QObject::tr("Greater than");
+  }
+  return QString();
+}
 
 } // namespace weather
 } // namespace fs
