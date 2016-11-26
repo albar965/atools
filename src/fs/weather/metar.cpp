@@ -149,7 +149,7 @@ void Metar::buildCleanMetar()
         cleanStr = timestamp.toString("ddHHmm") + "Z";
       else if(cleanStr == "????")
         // Replace pattern from interpolated with real station name
-        cleanStr = "XXXX";
+        cleanStr = station;
       else
       {
         bool isWind = WIND.match(cleanStr).hasMatch();

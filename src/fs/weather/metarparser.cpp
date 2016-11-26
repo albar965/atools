@@ -361,8 +361,12 @@ bool MetarParser::scanId()
 {
   char *m = _m;
   for(int i = 0; i < 4; m++, i++)
+  {
+    if(isspace(*m))
+      break;
     if(!(isalpha(*m) || isdigit(*m)))
       return false;
+  }
 
   if(!scanBoundary(&m))
     return false;
