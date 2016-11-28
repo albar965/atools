@@ -118,7 +118,7 @@ private:
   const static quint32 DATA_VERSION = 8;
 
   quint32 packetId = 0, packetTs = 0;
-  quint32 magicNumber = 0, packetSize = 0, version = 1;
+  quint32 magicNumber = 0, packetSize = 0, version = 0;
 
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;

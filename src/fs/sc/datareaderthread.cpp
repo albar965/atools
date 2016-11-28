@@ -32,7 +32,7 @@ namespace sc {
 DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   : QThread(parent), verbose(verboseLog)
 {
-  qDebug() << "Datareader started";
+  qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
   handler = new SimConnectHandler(verboseLog);
 }
@@ -40,7 +40,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
 DataReaderThread::~DataReaderThread()
 {
   delete handler;
-  qDebug() << "Datareader deleted";
+  qDebug() << Q_FUNC_INFO;
 }
 
 void DataReaderThread::connectToSimulator()
@@ -72,7 +72,7 @@ void DataReaderThread::connectToSimulator()
 
 void DataReaderThread::run()
 {
-  qDebug() << "Datareader run update rate" << updateRate;
+  qDebug() << Q_FUNC_INFO << "update rate" << updateRate;
 
   setupReplay();
 
@@ -121,7 +121,8 @@ void DataReaderThread::run()
 
       emit postSimConnectData(data);
 
-      if(saveReplayFile != nullptr && saveReplayFile->isOpen())
+      if(saveReplayFile != nullptr && saveReplayFile->isOpen() && data.getPacketId() > 0)
+        // Save only simulator packets, not weather replys
         data.write(saveReplayFile);
     }
     else
@@ -164,13 +165,14 @@ void DataReaderThread::run()
   waitMutex.unlock();
 
   emit disconnectedFromSimulator();
-  qDebug() << "Datareader exiting run";
+  qDebug() << Q_FUNC_INFO << "leave";
 }
 
 bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
 {
   if(verbose)
-    qDebug() << "DataReaderThread::fetchData enter";
+    qDebug() << Q_FUNC_INFO << "enter";
+
   QMutexLocker locker(&handlerMutex);
 
   bool weatherRequested = handler->getWeatherRequest().isValid();
@@ -211,7 +213,7 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
   handler->addWeatherRequest(WeatherRequest());
 
   if(verbose)
-    qDebug() << "DataReaderThread::fetchData leave" << retval;
+    qDebug() << Q_FUNC_INFO << "leave";
 
   return retval;
 }
@@ -319,7 +321,14 @@ bool DataReaderThread::isSimconnectAvailable()
 void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
 {
   if(verbose)
-    qDebug() << "DataReaderThread::postWeatherRequest";
+    qDebug() << Q_FUNC_INFO;
+
+  if(saveReplayFile != nullptr)
+  {
+    // Post a dummy weather reply if replaying, do not pass to handler
+    emit postSimConnectData(atools::fs::sc::SimConnectData());
+    return;
+  }
 
   {
     QMutexLocker locker(&handlerMutex);
