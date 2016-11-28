@@ -765,7 +765,8 @@ bool SimConnectHandler::connect()
   }
   else
   {
-    qWarning() << "SimConnect_Open: Error";
+    if(p->verbose)
+      qWarning() << "SimConnect_Open: Error";
     p->state = sc::OPEN_ERROR;
     p->hSimConnect = NULL;
     return false;
