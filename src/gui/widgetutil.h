@@ -25,10 +25,14 @@ class QWidget;
 class QAction;
 class QObject;
 class QTextEdit;
+class QColor;
 
 namespace atools {
 namespace gui {
 namespace util {
+
+/* Changes the background color of the widget using stylesheets and adapts text color for readability */
+void changeWidgetColor(QWidget *widget, const QColor& color);
 
 /* @return true if no scrollbar is pressed in the text edit */
 bool canTextEditUpdate(const QTextEdit *textEdit);
