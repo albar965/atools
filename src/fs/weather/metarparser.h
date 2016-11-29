@@ -446,6 +446,11 @@ public:
     return _data != nullptr;
   }
 
+  QString getRemark() const
+  {
+    return QString::fromStdString(_remark);
+  }
+
 protected:
   std::string _url;
   int _grpcount;
@@ -480,6 +485,7 @@ protected:
   std::vector<MetarCloud> _clouds;
   std::map<std::string, MetarRunway> _runways;
   std::vector<std::string> _weather;
+  std::string _remark;
 
   bool scanPreambleDate();
   bool scanPreambleTime();

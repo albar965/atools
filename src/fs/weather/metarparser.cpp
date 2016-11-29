@@ -1421,6 +1421,8 @@ bool MetarParser::scanRemark()
   if(!scanBoundary(&_m))
     return false;
 
+  _remark = _m;
+
   while(*_m)
   {
     if(!scanRunwayReport())
