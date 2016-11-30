@@ -113,8 +113,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
           Runway rw = Runway(options, bs, ident);
           if(!(options->isFilterRunways() &&
                rw.getLength() <= MIN_RUNWAY_LENGTH_METER && rw.getSurface() == bgl::rw::GRASS))
+          {
             // append if it not a dummy runway
-            runways.append(rw);
+
+            if(!options->isFilterRunways() ||
+               rw.getPosition().getPos().distanceMeterTo(getPosition().getPos()) < MAX_RUNWAY_DISTANCE_METER)
+              // Omit all dummies that are far away from the airport center position
+              runways.append(rw);
+          }
         }
         break;
       case rec::COM:
@@ -491,9 +497,6 @@ void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>&
 
 void Airport::updateHelipads()
 {
-if(ident == "21WI")
-qDebug()<<"alal";
-
   for(Helipad& helipad : helipads)
   {
     int startIdx = 1;
