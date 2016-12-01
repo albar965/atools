@@ -177,7 +177,7 @@ void Metar::buildCleanMetar()
           // Convert visibility from km to nm
           cleanStr =
             QString::number(atools::roundToInt(
-                              atools::geo::meterToNm(visMatchSm.captured(1).toInt() * 1000))) + "SM";
+                              atools::geo::meterToMi(visMatchSm.captured(1).toFloat() * 1000.f))) + "SM";
 
         QRegularExpressionMatch tmpMatch = TEMPERATURE.match(cleanStr);
         if(tmpMatch.hasMatch())

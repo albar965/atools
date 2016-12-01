@@ -57,6 +57,26 @@ struct MetarResult
     return !requestIdent.isEmpty() || requestPos.isValid();
   }
 
+  bool isEmpty() const
+  {
+    return !isValid() ||
+           (metarForStation.isEmpty() && metarForNearest.isEmpty() && metarForInterpolated.isEmpty());
+  }
+
+  bool operator==(const atools::fs::sc::MetarResult& other)
+  {
+    return requestIdent == other.requestIdent &&
+           metarForStation == other.metarForStation &&
+           metarForNearest == other.metarForNearest &&
+           metarForInterpolated == other.metarForInterpolated &&
+           requestPos == other.requestPos;
+  }
+
+  bool operator!=(const atools::fs::sc::MetarResult& other)
+  {
+    return !operator==(other);
+  }
+
 };
 
 } // namespace sc
