@@ -54,7 +54,7 @@ struct MetarResult
 
   bool isValid() const
   {
-    return !requestIdent.isEmpty() || requestPos.isValid();
+    return !requestIdent.isEmpty() && requestPos.isValid();
   }
 
   bool isEmpty() const
