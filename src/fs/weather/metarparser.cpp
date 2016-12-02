@@ -441,14 +441,18 @@ bool MetarParser::scanWind()
   int dir;
   if(!strncmp(m, "VRB", 3))
     m += 3, dir = -1;
+  else if(!strncmp(_m, "///", 3))
+    m += 3, dir = -1;
   else if(!scanNumber(&m, &dir, 3))
     return false;
 
   int i;
-  if(!scanNumber(&m, &i, 2, 3))
+  if(!strncmp(_m, "//", 2))
+    m += 2, i = -1;
+  else if(!scanNumber(&m, &i, 2, 3))
     return false;
 
-  double speed = i;
+  double speed = i == -1 ? MetarNaN : i;
 
   double gust = MetarNaN;
   if(*m == 'G')
@@ -476,7 +480,8 @@ bool MetarParser::scanWind()
 
   _m = m;
   _wind_dir = dir;
-  _wind_speed = speed * factor;
+  if(speed != MetarNaN)
+    _wind_speed = speed * factor;
   if(gust != MetarNaN)
     _gust_speed = gust * factor;
   _grpcount++;
@@ -845,13 +850,13 @@ bool MetarParser::scanWeather()
   struct Weather w;
 
   if(*m == '-')
-    m++, pre = "light ", w.intensity = LIGHT;
+    m++, pre = "Light ", w.intensity = LIGHT;
   else if(*m == '+')
-    m++, pre = "heavy ", w.intensity = HEAVY;
+    m++, pre = "Heavy ", w.intensity = HEAVY;
   else if(!strncmp(m, "VC", 2))
     m += 2, post = "in the vicinity ", w.vincinity = true;
   else
-    pre = "moderate ", w.intensity = MODERATE;
+    pre = "Moderate ", w.intensity = MODERATE;
 
   int i;
   for(i = 0; i < 3; i++)
@@ -882,6 +887,7 @@ bool MetarParser::scanWeather()
     return false;
 
   _m = m;
+
   weather = pre + weather + post;
   weather.erase(weather.length() - 1);
   _weather.push_back(weather);
