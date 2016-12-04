@@ -85,6 +85,9 @@ public:
     emailAddresses = value;
   }
 
+  /* Process twice and wait 10 ms inbetween */
+  static void processEventsExtended();
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 

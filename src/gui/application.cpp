@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QUrl>
+#include <QThread>
 
 namespace atools {
 namespace gui {
@@ -68,7 +69,7 @@ void Application::handleException(const char *file, int line, const std::excepti
                                "of the contact addresses below.</b><br/>"
                                "<hr/>%5"
                                  "<hr/>%6<br/>"
-                                   "<h3>Press OK to exit application.</h3>"
+                                 "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
                         arg(e.what()).
@@ -90,7 +91,7 @@ void Application::handleException(const char *file, int line)
                                "of the contact addresses below.</b><br/>"
                                "<hr/>%4"
                                  "<hr/>%5<br/>"
-                                   "<h3>Press OK to exit application.</h3>"
+                                 "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
                         arg(QApplication::applicationName()).
@@ -113,6 +114,13 @@ QString Application::getEmailHtml()
     emails.append(QString("<a href=\"mailto:%1\">%1</a>").arg(mail));
   mailStr.append(emails.join(" or "));
   return mailStr;
+}
+
+void Application::processEventsExtended()
+{
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+  QThread::msleep(10);
+  QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 QString Application::getReportPathHtml()
