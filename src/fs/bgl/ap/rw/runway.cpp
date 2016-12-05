@@ -167,7 +167,7 @@ QString Runway::surfaceToStr(rw::Surface surface)
 Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent)
   : Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readShort());
+  surface = static_cast<rw::Surface>(bs->readShort() & rw::SURFACE_MASK);
   primary.number = bs->readUByte();
   primary.designator = bs->readUByte();
   secondary.number = bs->readUByte();

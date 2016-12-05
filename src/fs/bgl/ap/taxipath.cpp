@@ -47,7 +47,7 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
   rightEdge = static_cast<taxipath::EdgeType>((flags >> 5) & 0x3);
   rightEdgeLight = flags & (1 << 7);
 
-  surface = static_cast<rw::Surface>(bs->readUByte());
+  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
   width = bs->readFloat();
   bs->readFloat(); // weight limit
   bs->skip(4);

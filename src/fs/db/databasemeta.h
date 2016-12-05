@@ -107,8 +107,9 @@ public:
    * 4 Increased width of ident columns for add-on sceneries
    * 5 Omitting long airway segments
    * 6 Omitting far away runways
+   * 7 Workaround for surface with left most bit set
    */
-  static const int DB_VERSION_MINOR = 6;
+  static const int DB_VERSION_MINOR = 7;
 
 private:
   atools::sql::SqlDatabase *db;

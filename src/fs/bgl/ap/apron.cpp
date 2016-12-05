@@ -28,7 +28,7 @@ namespace bgl {
 Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
   : bgl::Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte());
+  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
   int numVertices = bs->readShort();
 
   if(options->isIncludedBglObject(type::GEOMETRY))

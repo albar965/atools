@@ -28,7 +28,7 @@ using atools::io::BinaryStream;
 DeleteRunway::DeleteRunway(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   : BglBase(options, bs), surface(rw::UNKNOWN)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte());
+  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
   int numPrim = bs->readUByte();
   int numSec = bs->readUByte();
   int desig = bs->readUByte();

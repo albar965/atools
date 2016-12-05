@@ -54,7 +54,7 @@ Helipad::Helipad()
 Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte());
+  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
 
   int flags = bs->readUByte();
   type = static_cast<helipad::HelipadType>(flags & 0xf);

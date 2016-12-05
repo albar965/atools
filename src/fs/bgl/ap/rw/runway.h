@@ -68,6 +68,9 @@ enum Light
   HIGH = 3
 };
 
+/* Remove upper bit from surface */
+const int SURFACE_MASK = 0x7F;
+
 /* Surface - also used for aprons and taxiways */
 enum Surface
 {
