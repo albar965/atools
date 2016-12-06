@@ -64,6 +64,10 @@ public:
   void openUrl(const QUrl& url);
   static void openUrl(QWidget *parent, const QUrl& url);
 
+  /* fileTemplate is a regexp like "little-navmap-user-manual-([a-z]{2})\.pdf".
+   * Capture 1 is the language. */
+  static QStringList getInstalledLanguages(const QString& directory, const QString& fileTemplate);
+
 private:
   static QString getLanguage();
 

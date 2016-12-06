@@ -29,6 +29,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QDesktopServices>
+#include <QRegularExpression>
 
 namespace atools {
 namespace gui {
@@ -84,6 +85,28 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+}
+
+QStringList HelpHandler::getInstalledLanguages(const QString& directory, const QString& fileTemplate)
+{
+  QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
+
+  QStringList retval;
+  QDir dir(appPath + QDir::separator() + directory);
+  QRegularExpression regexp(fileTemplate);
+
+  for(QFileInfo file : dir.entryInfoList(QDir::Files))
+  {
+    QRegularExpressionMatch match = regexp.match(file.fileName());
+    if(match.hasMatch() && !match.captured(1).isEmpty())
+      retval.append(match.captured(1));
+  }
+
+  if(retval.isEmpty())
+    // English is always supported
+    retval.append("en");
+
+  return retval;
 }
 
 QUrl HelpHandler::getHelpUrlForFile(const QString& dir, const QString& file, const QString& anchor)
