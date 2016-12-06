@@ -22,12 +22,17 @@
 
 #include <QSet>
 #include <QString>
+#include <QVariant>
 
 namespace atools {
 
 QString version();
 
 QString gitRevision();
+
+/* replace variables in a string like "${LANG}" */
+QString replaceVar(QString str, const QString name, const QVariant& value);
+QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
 inline Q_DECL_CONSTEXPR int absInt(int value)
 {

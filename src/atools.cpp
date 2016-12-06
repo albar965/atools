@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QLocale>
+#include <QRegularExpression>
 #include <QVector>
 
 namespace atools {
@@ -93,6 +94,24 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
 QString ratingString(int value, int maxValue)
 {
   return QString("★").repeated(value) + QString("−").repeated(maxValue - value);
+}
+
+QString replaceVar(QString str, const QString name, const QVariant& value)
+{
+  QHash<QString, QVariant> variableValues;
+  variableValues.insert(name, value);
+  return replaceVar(str, variableValues);
+}
+
+QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
+{
+  QString retval(str);
+
+  for(const QString& variable : variableValues.keys())
+    retval.replace(QRegularExpression("\\$\\{" + variable + "\\}"),
+                   variableValues.value(variable).toString());
+
+  return retval;
 }
 
 } // namespace atools

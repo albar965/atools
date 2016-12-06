@@ -40,9 +40,19 @@ public:
 
   /* Open the help HTML file in the default browser */
   void help();
-  QUrl getHelpUrl(const QString& dir, const QString& file, const QString& anchor = QString());
-  static QUrl getHelpUrl(QWidget *parent, const QString& dir, const QString& file,
+  QUrl getHelpUrlForFile(const QString& dir, const QString& file, const QString& anchor = QString());
+  static QUrl getHelpUrlForFile(QWidget *parent, const QString& dir, const QString& file,
+                                const QString& anchor = QString());
+
+  /* Returns a valid help URL and also replaces the variable ${LANG} with one of the currently
+   * supported langages */
+  static QUrl getHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
                          const QString& anchor = QString());
+  QUrl getHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor = QString());
+
+  static void openHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
+                          const QString& anchor = QString());
+  void openHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor = QString());
 
   /* Display about this application dialog */
   void about();
@@ -51,10 +61,12 @@ public:
   void aboutQt();
 
   /* Open an URL in the default browser. If that fails show an error dialog */
-  void openHelpUrl(const QUrl& url);
-  static void openHelpUrl(QWidget *parent, const QUrl& url);
+  void openUrl(const QUrl& url);
+  static void openUrl(QWidget *parent, const QUrl& url);
 
 private:
+  static QString getLanguage();
+
   QWidget *parentWidget;
   QString message, rev;
 

@@ -41,6 +41,7 @@ void Translator::load(const QString& language)
 
     // Load application files
     bool loadDefault = loadApp(appBaseName, appPath, language);
+    qDebug() << "Translations for" << appPath << language << "found";
 
     // Load atools translations
     loadApp("atools", appPath, language);

@@ -68,6 +68,7 @@ private:
   static QVector<QTranslator *> translators;
   static bool loaded;
 
+
 };
 
 } // namespace gui
