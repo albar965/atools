@@ -34,6 +34,9 @@ QString gitRevision();
 QString replaceVar(QString str, const QString name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
+/* Remove all special characters from the filename that can disturb any filesystem */
+QString cleanFilename(const QString& filename);
+
 inline Q_DECL_CONSTEXPR int absInt(int value)
 {
   return value > 0 ? value : -value;

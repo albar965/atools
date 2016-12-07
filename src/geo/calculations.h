@@ -243,6 +243,23 @@ TYPE normalizeLatYDeg(TYPE latY)
   return static_cast<TYPE>(result);
 }
 
+/* ISA temperature in °C at altitude (https://en.wikipedia.org/wiki/International_Standard_Atmosphere) */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE isaTemperature(TYPE altFeet)
+{
+  return static_cast<TYPE>(static_cast<double>(altFeet) < 36000. ?
+                           (15. - (1.98 * static_cast<double>(altFeet) / 1000.)) :
+                           -56.5);
+}
+
+/* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE machToTas(TYPE altFeet, TYPE machNumber)
+{
+  return static_cast<TYPE>(39. * static_cast<double>(machNumber) *
+                           std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15));
+}
+
 } /* namespace geo */
 } // namespace atools
 

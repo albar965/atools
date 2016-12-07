@@ -114,4 +114,11 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   return retval;
 }
 
+QString cleanFilename(const QString& filename)
+{
+  return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
+         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').
+         replace("  ", " ");
+}
+
 } // namespace atools

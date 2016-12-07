@@ -93,7 +93,7 @@ QStringList HelpHandler::getInstalledLanguages(const QString& directory, const Q
 
   QStringList retval;
   QDir dir(appPath + QDir::separator() + directory);
-  QRegularExpression regexp(fileTemplate);
+  QRegularExpression regexp(fileTemplate, QRegularExpression::CaseInsensitiveOption);
 
   for(QFileInfo file : dir.entryInfoList(QDir::Files))
   {
