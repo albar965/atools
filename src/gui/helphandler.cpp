@@ -150,8 +150,14 @@ QUrl HelpHandler::getHelpUrl(QWidget *parent, const QString& urlString, const QS
     // Fallback to English
     lang = "en";
 
+  QUrl url;
   // Replace variable and create URL
-  QUrl url(atools::replaceVar(urlString, "LANG", lang));
+  QString urlStr(atools::replaceVar(urlString, "LANG", lang));
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
+    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr);
+  else
+    url = QUrl(urlStr);
+
   if(!anchor.isEmpty())
     url.setFragment(atools::replaceVar(anchor, "LANG", lang));
 
