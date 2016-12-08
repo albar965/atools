@@ -44,7 +44,7 @@ public:
   static QUrl getHelpUrlForFile(QWidget *parent, const QString& dir, const QString& file,
                                 const QString& anchor = QString());
 
-  /* Returns a valid help URL and also replaces the variable ${LANG} with one of the currently
+  /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
    * supported langages */
   static QUrl getHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
                          const QString& anchor = QString());

@@ -82,6 +82,8 @@ void HelpHandler::openUrl(const QUrl& url)
 
 void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
 {
+  qDebug() << Q_FUNC_INFO << "About to open URL" << url;
+
   if(!QDesktopServices::openUrl(url))
     QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
@@ -117,27 +119,37 @@ QUrl HelpHandler::getHelpUrlForFile(const QString& dir, const QString& file, con
 QUrl HelpHandler::getHelpUrlForFile(QWidget *parent, const QString& dir, const QString& file,
                                     const QString& anchor)
 {
-  QString lang = getLanguage();
+  qDebug() << Q_FUNC_INFO;
 
   QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
   QString helpPrefix(appPath + QDir::separator() + dir + QDir::separator());
   QString helpSuffix(QString(QDir::separator()) + file);
 
-  QString helpFile(helpPrefix + lang + helpSuffix),
+  QString helpFile(helpPrefix + getLanguage() + helpSuffix),
   defaultHelpFile(helpPrefix + "en" + helpSuffix);
+
+  qDebug() << "appPath" << appPath << "helpPrefix" << helpPrefix << "helpSuffix" << helpSuffix;
+  qDebug() << "helpFile" << helpFile;
+  qDebug() << "defaultHelpFile" << defaultHelpFile;
 
   QUrl url;
   if(QFileInfo::exists(helpFile))
+  {
+    qDebug() << "helpFile" << helpFile << "exists";
     url = QUrl::fromLocalFile(helpFile);
+  }
   else if(QFileInfo::exists(defaultHelpFile))
+  {
+    qDebug() << "defaultHelpFile" << defaultHelpFile << "exists";
     url = QUrl::fromLocalFile(defaultHelpFile);
+  }
   else
     QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Help file <i>%1</i> not found")).arg(QDir::toNativeSeparators(defaultHelpFile)));
 
   url.setFragment(anchor);
 
-  qDebug() << "Help file" << url;
+  qDebug() << "Help file URL" << url;
   return url;
 }
 
@@ -181,6 +193,9 @@ void HelpHandler::openHelpUrl(const QString& urlString, const QStringList& langu
 void HelpHandler::openHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
                               const QString& anchor)
 {
+  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString
+           << "languages" << languages << "anchor" << anchor;
+
   QUrl url = getHelpUrl(parent, urlString, languages, anchor);
   if(!url.isEmpty())
     openUrl(parent, url);
