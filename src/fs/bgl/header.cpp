@@ -37,7 +37,11 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
 
   headerSize = bs->readUInt();
   if(headerSize != HEADER_SIZE)
-    validSize = false;
+  {
+    qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
+    // Disabled for www.fsaerodata.com
+    // validSize = false;
+  }
 
   lowDateTime = bs->readUInt();
   highDateTime = bs->readUInt();
@@ -50,8 +54,8 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
                                    << ", 0x" << magicNumber2 << dec;
 
-  if(!validSize)
-    qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
+  // if(!validSize)
+  // qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
 
   if(!validMagicNumber || !validSize)
     // Stop reading here if anything is wrong
