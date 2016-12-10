@@ -19,6 +19,7 @@
 #include "fs/db/ap/approachwriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/ap/del/deleteairport.h"
 #include "fs/bgl/util.h"
@@ -35,14 +36,17 @@ namespace db {
 using atools::fs::bgl::DeleteAirport;
 using atools::fs::bgl::Airport;
 using atools::sql::SqlQuery;
+using atools::sql::SqlUtil;
 using bgl::util::isFlagSet;
 
 DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts)
-  : options(opts)
+  : options(opts), db(&sqlDb)
 {
   // Create all queries
   deleteRunwayStmt = new SqlQuery(sqlDb);
+  updateRunwayStmt = new SqlQuery(sqlDb);
   deleteParkingStmt = new SqlQuery(sqlDb);
+  updateParkingStmt = new SqlQuery(sqlDb);
   deleteDeleteApStmt = new SqlQuery(sqlDb);
 
   fetchRunwayEndIdStmt = new SqlQuery(sqlDb);
@@ -94,6 +98,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
     "select a.airport_id from airport a "
     "where a.ident = :apIdent and a.airport_id <> :curApId)");
 
+  // Delete all runways of all other airports
+  updateRunwayStmt->prepare(updateAptFeatureStmt("runway"));
+
   // Get all primary and secondary end ids for the given airports
   fetchRunwayEndIdStmt->prepare(
     "select r.primary_end_id as runway_end_id "
@@ -131,7 +138,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
 
   // Get facility counts for all other airports to save some empty queries
   selectAirportStmt->prepare(
-    "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils, num_approach "
+    "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, "
+    "num_runway_end_ils, num_approach, is_addon, rating "
     "from airport where ident = :apIdent and airport_id <> :curApId");
 
   // Delete all facilities of the old airport
@@ -139,9 +147,11 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   deleteHelipadStmt->prepare(delAptFeatureStmt("helipad"));
   deleteStartStmt->prepare(delAptFeatureStmt("start"));
   deleteParkingStmt->prepare(delAptFeatureStmt("parking"));
+  updateParkingStmt->prepare(updateAptFeatureStmt("parking"));
   deleteApronStmt->prepare(delAptFeatureStmt("apron"));
   deleteApronLightStmt->prepare(delAptFeatureStmt("apron_light"));
   deleteFenceStmt->prepare(delAptFeatureStmt("fence"));
+  updateFenceStmt->prepare(updateAptFeatureStmt("fence"));
   deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
@@ -179,7 +189,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
 DeleteProcessor::~DeleteProcessor()
 {
   delete deleteRunwayStmt;
+  delete updateRunwayStmt;
   delete deleteParkingStmt;
+  delete updateParkingStmt;
   delete deleteDeleteApStmt;
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
@@ -220,22 +232,21 @@ DeleteProcessor::~DeleteProcessor()
 void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const Airport *airport,
                                     int currentAirportId)
 {
+  qInfo() << "processDelete" << airport->getIdent() << "current id" << currentAirportId;
+
   deleteAirport = deleteAirportRec;
   type = airport;
   currentId = currentAirportId;
   ident = type->getIdent();
 
   // Get facility counts for current airport
-  // airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_runway_end_ils
   bindAndExecute(selectAirportStmt, "select airports");
 
-  hasApproach = false;
-  hasApron = false;
-  hasCom = false;
-  hasHelipad = false;
-  hasTaxi = false;
-  hasRunways = false;
+  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false, hasTaxi = false,
+       hasRunways = false, isAddon = false;
+  int rating = 0;
 
+  bool hasPrevious = false;
   int i = 0;
   while(selectAirportStmt->next())
   {
@@ -252,7 +263,10 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
     hasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
     hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
     hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
+    isAddon |= selectAirportStmt->value("is_addon").toBool();
+    rating = std::max(rating, selectAirportStmt->value("rating").toInt());
     i++;
+    hasPrevious = true;
   }
 
   if(hasApproach)
@@ -260,9 +274,12 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
     if(isFlagSet(deleteAirport->getFlags(), bgl::del::APPROACHES))
       // Delete the whole tree of apporaches, transitions and legs
       removeApproachesAndTransitions(fetchOldApproachIds());
-    else
-      // Relink the approach to the new airport
+    else if(hasPrevious)
+    {
+      // Relink the approach to the new airport and update the cound on the airport
       transferApproaches();
+      bindAndExecute(copyFeatureStmt("airport", "num_approach"), "copied airport num_approach");
+    }
   }
 
   // Work on facilities that will be either removed or attached to the new airport depending on flags
@@ -270,25 +287,141 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   {
     removeOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
     removeOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
+
+    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::APRONS) && hasPrevious)
+      // Update apron count in new airport
+      bindAndExecute(copyFeatureStmt("airport", "num_apron"), "copied airport num_apron");
   }
+
   if(hasCom)
+  {
     removeOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
 
+    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::COMS) && hasPrevious)
+    {
+      // Copy all frequencies to the new airport
+      QStringList cols;
+      cols << "tower_frequency" << "atis_frequency" << "awos_frequency" << "asos_frequency"
+           << "unicom_frequency" << "num_com";
+
+      for(const QString& col : cols)
+        bindAndExecute(copyFeatureStmt("airport", col), "copied airport " + col);
+    }
+  }
+
   if(hasHelipad)
+  {
     removeOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
 
+    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::HELIPADS) && hasPrevious)
+      // Update helipad count in new airport
+      bindAndExecute(copyFeatureStmt("airport", "num_helipad"), "copied airport num_helipad");
+  }
+
   if(hasTaxi)
+  {
     removeOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
+
+    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::TAXIWAYS) && hasPrevious)
+      // Update taxi count in new airport
+      bindAndExecute(copyFeatureStmt("airport", "num_taxi_path"), "copied airport num_taxi_path");
+  }
 
   removeOrUpdate(deleteStartStmt, updateStartStmt, bgl::del::STARTS);
 
   if(hasRunways)
+  {
     if(isFlagSet(deleteAirport->getFlags(), bgl::del::RUNWAYS))
       removeRunways();
-  // TODO no update method yet since it does not appear in reality
+    else if(hasPrevious)
+      // Relink runways
+      updateRunways();
+  }
 
-  // TODO this does not allow updating airport features
+  if(!airport->getParkings().isEmpty())
+    // New airport has parking - delete the previous ones
+    bindAndExecute(deleteParkingStmt, "parking spots deleted");
+  else if(hasPrevious)
+  {
+    // New airport has no parking - transfer previous ones and update counts
+    bindAndExecute(updateParkingStmt, "parking spots updated");
+
+    QStringList cols;
+    cols << "num_parking_gate" << "num_parking_ga_ramp" << "num_parking_cargo" << "num_parking_mil_cargo"
+         << "num_parking_mil_combat" << "num_jetway" << "largest_parking_ramp" << "largest_parking_gate";
+
+    for(const QString& col : cols)
+      bindAndExecute(copyFeatureStmt("airport", col), "copied airport " + col);
+  }
+
+  if(!airport->getFences().isEmpty())
+    // New airport has fences - delete the previous ones
+    bindAndExecute(deleteFenceStmt, "fences deleted");
+  else if(hasPrevious)
+  {
+    // New airport has no fences - transfer previous ones and update counts
+    bindAndExecute(updateFenceStmt, "fences updated");
+    bindAndExecute(copyFeatureStmt("airport", "num_boundary_fence"), "copied airport num_boundary_fence");
+  }
+
+  if(hasPrevious)
+  {
+    if(airport->getFuelFlags() == atools::fs::bgl::ap::NO_FUEL_FLAGS)
+    {
+      // Copy fuel flags from previous airport if this one doesn't have any
+      QStringList cols;
+      cols << "fuel_flags" << "has_avgas" << "has_jetfuel";
+
+      for(const QString& col : cols)
+        bindAndExecute(copyFeatureStmt("airport", col), "copied airport " + col);
+    }
+
+    // Update tower TODO not accurate
+    if(!airport->hasTowerObj())
+      bindAndExecute(copyFeatureStmt("airport", "has_tower_object"), "copied airport has_tower_object");
+
+    if(airport->getTowerPosition().getAltitude() == 0.f)
+      bindAndExecute(copyFeatureStmt("airport", "tower_altitude"), "copied airport tower_altitude");
+
+    if(airport->getTowerPosition().getPos().isNull() || !airport->getTowerPosition().getPos().isValid())
+    {
+      bindAndExecute(copyFeatureStmt("airport", "tower_lonx"), "copied airport tower_lonx");
+      bindAndExecute(copyFeatureStmt("airport", "tower_laty"), "copied airport tower_laty");
+    }
+
+    // TODO FSAD does not update magvar in their airports yet
+    bindAndExecute(copyFeatureStmt("airport", "mag_var"), "copied airport mag_var");
+
+    int previousRating = airport->calculateRating(isAddon);
+    if(previousRating > rating)
+      // Copy rating only if this is worse
+      bindAndExecute(copyFeatureStmt("airport", "rating"), "copied airport rating");
+
+    if(isAddon)
+    {
+      // Previous was an addon - keep this state here, even if this airport is excluded
+      bindAndExecute(copyFeatureStmt("airport", "is_addon"), "copied airport is_addon");
+    }
+  }
+
+  bindAndExecute(deleteDeleteApStmt, "delete airports deleted");
+
   removeAirport();
+}
+
+void DeleteProcessor::updateRunways()
+{
+  bindAndExecute(updateRunwayStmt, "runways updated");
+
+  QStringList cols;
+  cols << "is_closed" << "num_runway_hard" << "num_runway_soft" << "num_runway_water" <<
+  "num_runway_light" << "num_runway_end_closed" << "num_runway_end_vasi" << "num_runway_end_als" <<
+  "num_runway_end_ils" << "longest_runway_length" << "longest_runway_width" <<
+  "longest_runway_heading" << "longest_runway_surface" << "num_runways" << "left_lonx" << "top_laty" <<
+  "right_lonx" << "bottom_laty";
+
+  for(const QString& col : cols)
+    bindAndExecute(copyFeatureStmt("airport", col), "copied airport " + col);
 }
 
 void DeleteProcessor::removeRunways()
@@ -315,10 +448,6 @@ void DeleteProcessor::removeRunways()
 
 void DeleteProcessor::removeAirport()
 {
-  bindAndExecute(deleteParkingStmt, "parking spots deleted");
-  bindAndExecute(deleteDeleteApStmt, "delete airports deleted");
-  bindAndExecute(deleteFenceStmt, "fences deleted");
-
   // Unlink navigation - will be updated later in "update_nav_ids.sql" script
   // we accecpt duplicates here - these will be deleted later
   bindAndExecute(delWpStmt, "waypoints deleted"); // only type that appears in airport records
@@ -446,11 +575,31 @@ QString DeleteProcessor::delAptFeatureStmt(const QString& table)
          "where a.ident = :apIdent and a.airport_id <> :curApId)";
 }
 
+/* Create a statement that copies features from the old table */
+QString DeleteProcessor::copyFeatureStmt(const QString& table, const QString& column)
+{
+  return "update " + table +
+         " set  " + column + " = " +
+         " ( select a." + column +
+         "   from " + table + " a " +
+         "   where airport_id = a.airport_id and a.ident = :apIdent and a.airport_id <> :curApId) " +
+         " where airport_id = :curApId";
+}
+
 void DeleteProcessor::bindAndExecute(SqlQuery *delQuery, const QString& msg)
 {
   delQuery->bindValue(":apIdent", ident);
   delQuery->bindValue(":curApId", currentId);
   executeStatement(delQuery, msg);
+}
+
+void DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
+{
+  SqlQuery query(db);
+  query.prepare(sql);
+  query.bindValue(":apIdent", ident);
+  query.bindValue(":curApId", currentId);
+  executeStatement(&query, msg);
 }
 
 } // namespace writer

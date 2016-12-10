@@ -61,6 +61,7 @@ enum FuelAvailability
 
 enum FuelFlags
 {
+  NO_FUEL_FLAGS = 0,
   OCTANE_73 = 0x00000003, // 0-1
   OCTANE_87 = 0x0000000c, // Bits 2-3
   OCTANE_100 = 0x00000030, // Bits 4-5
@@ -420,6 +421,10 @@ public:
    * @return true if there are not runways, no parking, etc.
    */
   bool isEmpty() const;
+
+  static bool isNameMilitary(const QString& airportName);
+
+  int calculateRating(bool isAddon) const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);

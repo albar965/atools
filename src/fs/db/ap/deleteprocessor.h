@@ -67,6 +67,7 @@ private:
 
   void transferApproaches();
   void removeRunways();
+  void updateRunways();
   void removeAirport();
 
   QString updateAptFeatureStmt(const QString& table);
@@ -78,12 +79,16 @@ private:
 
   QList<int> fetchOldApproachIds();
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
+  void bindAndExecute(const QString& sql, const QString& msg);
+  QString copyFeatureStmt(const QString& table, const QString& column);
 
   const atools::fs::NavDatabaseOptions& options;
 
   atools::sql::SqlQuery
   *deleteRunwayStmt = nullptr,
+  *updateRunwayStmt = nullptr,
   *deleteParkingStmt = nullptr,
+  *updateParkingStmt = nullptr,
   *deleteDeleteApStmt = nullptr,
   *fetchRunwayEndIdStmt = nullptr,
   *fetchPrimaryRunwayEndIdStmt = nullptr,
@@ -110,13 +115,11 @@ private:
   *deleteApproachStmt = nullptr,
   *fetchOldApproachIdStmt = nullptr;
 
-  bool hasApproach = true, hasApron = true, hasCom = true, hasHelipad = true, hasTaxi = true,
-       hasRunways = true;
-
   const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
   const atools::fs::bgl::Airport *type = nullptr;
   int currentId = 0;
   QString ident;
+  atools::sql::SqlDatabase *db = nullptr;
 
 };
 

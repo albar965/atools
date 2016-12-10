@@ -166,15 +166,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":largest_parking_gate",
        bgl::util::enumToStr(bgl::Parking::parkingTypeToStr, type->getLargestParkingGate()));
 
-  // Maximum rating is 5
-  int rating = !type->getTaxiPaths().isEmpty() + !type->getParkings().isEmpty() +
-               !type->getAprons().isEmpty() + isAddon;
-
-  if(rating > 0 && type->hasTowerObj())
-    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
-    rating++;
-
-  bind(":rating", rating);
+  bind(":rating", type->calculateRating(isAddon));
 
   bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
   bind(":bgl_filename", bglFileWriter->getCurrentFilename());

@@ -50,7 +50,7 @@ where marker_id not in (
 -- Delete duplicate add-on waypoints since the stock ones keep the airway connections
 delete from waypoint
 where waypoint_id not in (
-  select min(waypoint_id)
+  select max(waypoint_id)
   from waypoint
   group by ident, type, region, lonx, laty
 ) and num_victor_airway = 0 and num_jet_airway = 0;

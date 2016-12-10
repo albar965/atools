@@ -94,10 +94,10 @@ bool SqlUtil::hasTableAndRows(const QString& tablename)
   return false;
 }
 
-int SqlUtil::rowCount(const QString& tablename)
+int SqlUtil::rowCount(const QString& tablename, const QString& criteria)
 {
   SqlQuery q(db);
-  q.exec("select count(1) from " + tablename);
+  q.exec("select count(1) from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria));
   if(q.next())
     return q.value(0).toInt();
 

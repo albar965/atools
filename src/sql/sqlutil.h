@@ -62,7 +62,7 @@ public:
   bool hasTableAndRows(const QString& tablename);
 
   /* Get number of rows in table. Throws exception if the table does not exist. */
-  int rowCount(const QString& tablename);
+  int rowCount(const QString& tablename, const QString& criteria = QString());
 
   /* Copy all values from one query to another
    * @param from a valid query as data source

@@ -159,6 +159,12 @@ public:
     return lonX != INVALID_ORDINATE && latY != INVALID_ORDINATE;
   }
 
+  /* false if position is null */
+  bool isNull() const
+  {
+    return lonX == 0.f && latY == 0.f;
+  }
+
   /* Return true if close to any pole */
   bool isPole() const
   {

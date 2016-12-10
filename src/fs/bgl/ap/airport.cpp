@@ -329,10 +329,40 @@ bool Airport::isEmpty() const
          taxipaths.isEmpty();
 }
 
+bool Airport::isNameMilitary(const QString& airportName)
+{
+  // Check if airport is military
+  for(const QString& s : MIL_ENDS_WITH)
+  {
+    if(airportName.endsWith(s))
+      return true;
+  }
+
+  for(const QString& s : MIL_CONTAINS)
+  {
+    if(airportName.contains(s))
+      return true;
+  }
+  return false;
+}
+
+int Airport::calculateRating(bool isAddon) const
+{
+  // Maximum rating is 5
+  int rating = !getTaxiPaths().isEmpty() + !getParkings().isEmpty() +
+               !getAprons().isEmpty() + isAddon;
+
+  if(rating > 0 && hasTowerObj())
+    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
+    rating++;
+
+  return rating;
+}
+
 void Airport::updateSummaryFields()
 {
   boundingRect = atools::geo::Rect(getPosition().getPos());
-  if(towerPosition.getLatY() != 0.f && towerPosition.getLonX() != 0.f)
+  if(!towerPosition.getPos().isNull())
     boundingRect.extend(towerPosition.getPos());
 
   for(const Runway& rw : runways)
@@ -458,28 +488,7 @@ void Airport::updateSummaryFields()
 
   updateHelipads();
 
-  // Check if airport is military
-  for(const QString& s : MIL_ENDS_WITH)
-  {
-    if(name.endsWith(s))
-    {
-      military = true;
-      break;
-    }
-  }
-
-  if(!military)
-  {
-    for(const QString& s : MIL_CONTAINS)
-    {
-      if(name.contains(s))
-      {
-        military = true;
-        break;
-      }
-    }
-  }
-
+  military = isNameMilitary(name);
 }
 
 void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>& parkingNumberIndex)
