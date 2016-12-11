@@ -389,8 +389,9 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
       bindAndExecute(copyFeatureStmt("airport", "tower_laty"), "copied airport tower_laty");
     }
 
-    // TODO FSAD does not update magvar in their airports yet
-    bindAndExecute(copyFeatureStmt("airport", "mag_var"), "copied airport mag_var");
+    if(airport->getMagVar() == 0.f)
+      // TODO FSAD does not update magvar in their airports yet
+      bindAndExecute(copyFeatureStmt("airport", "mag_var"), "copied airport mag_var");
 
     int previousRating = airport->calculateRating(isAddon);
     if(previousRating > rating)
