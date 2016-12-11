@@ -61,12 +61,12 @@ AirwaySegment::~AirwaySegment()
 
 bool AirwaySegment::hasNextWaypoint() const
 {
-  return next.getType() != nav::AIRWAY_WP_NONE;
+  return !next.getIdent().isEmpty();
 }
 
 bool AirwaySegment::hasPreviousWaypoint() const
 {
-  return previous.getType() != nav::AIRWAY_WP_NONE;
+  return !previous.getIdent().isEmpty();
 }
 
 QDebug operator<<(QDebug out, const AirwaySegment& record)

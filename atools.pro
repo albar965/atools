@@ -307,7 +307,6 @@ SOURCES += src/atools.cpp \
     src/gui/helphandler.cpp \
     src/geo/linestring.cpp \
     src/gui/actiontextsaver.cpp \
-    src/fs/bgl/nav/airwayentry.cpp \
     src/fs/db/airwayresolver.cpp \
     src/fs/db/routeedgewriter.cpp \
     src/fs/sc/simconnectdata.cpp \
@@ -342,7 +341,8 @@ SOURCES += src/atools.cpp \
     src/gui/widgetutil.cpp \
     src/fs/weather/metar.cpp \
     src/util/timedcache.cpp \
-    src/fs/weather/metarparser.cpp
+    src/fs/weather/metarparser.cpp \
+    src/fs/bgl/nav/airwaysegment.cpp
 
 
 unix {
