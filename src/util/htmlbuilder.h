@@ -40,6 +40,7 @@ enum Flag
   SMALL = 0x0040,
   BIG = 0x0080,
   NOBR = 0x0100,
+  LINK_NO_UL = 0x0200, // Do not underline links
   ALIGN_RIGHT = 0x1000 // Only for table data
 };
 

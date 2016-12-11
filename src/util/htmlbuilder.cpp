@@ -400,7 +400,11 @@ HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 
 HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
 {
-  htmlText += "<a" + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
+  QString style;
+  if(flags & html::LINK_NO_UL)
+    style = "style=\"text-decoration:none;\"";
+
+  htmlText += "<a " + style + " " + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
               asText(text, flags, color) + "</a>";
   return *this;
 }
