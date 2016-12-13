@@ -116,6 +116,7 @@ private:
   *fetchOldApproachIdStmt = nullptr;
 
   const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
+  atools::fs::bgl::del::DeleteAllFlags deleteFlags = atools::fs::bgl::del::NONE;
   const atools::fs::bgl::Airport *type = nullptr;
   int currentId = 0;
   QString ident;

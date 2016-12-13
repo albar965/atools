@@ -81,10 +81,10 @@ void AirportWriter::writeObject(const Airport *type)
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
 
   // Check if this is an addon airport
-  bool isAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath()) &&
-                 getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath());
+  bool isRealAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+  bool isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
 
-  if(isAddon && type->getDeleteAirports().isEmpty())
+  if(isRealAddon && type->getDeleteAirports().isEmpty())
     qInfo() << "Addon airport without delete record" << type->getIdent();
 
   // Get and write country, state and city
@@ -236,16 +236,21 @@ void AirportWriter::writeObject(const Airport *type)
 
   DeleteAirportWriter *deleteAirportWriter = dw.getDeleteAirportWriter();
 
-  const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
-  for(const DeleteAirport& delAp : deleteAirports)
+  if(!type->getDeleteAirports().isEmpty())
   {
-    // Write metadata for delete record
-    deleteAirportWriter->writeOne(delAp);
+    const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
+    for(const DeleteAirport& delAp : deleteAirports)
+    {
+      // Write metadata for delete record
+      deleteAirportWriter->writeOne(delAp);
 
-    if(getOptions().isDeletes())
-      // Now delete the stock/default airport
-      deleteProcessor.processDelete(&delAp, type, getCurrentId());
+      if(getOptions().isDeletes())
+        // Now delete the stock/default airport
+        deleteProcessor.processDelete(&delAp, type, getCurrentId());
+    }
   }
+  else if(isRealAddon)
+    deleteProcessor.processDelete(nullptr, type, getCurrentId());
 }
 
 } // namespace writer

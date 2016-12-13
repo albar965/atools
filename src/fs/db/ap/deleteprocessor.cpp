@@ -235,6 +235,35 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   qInfo() << "processDelete" << airport->getIdent() << "current id" << currentAirportId;
 
   deleteAirport = deleteAirportRec;
+  if(deleteAirportRec != nullptr)
+  {
+    deleteFlags = deleteAirportRec->getFlags();
+    qDebug() << "processDelete Flags from delete record" << deleteFlags;
+  }
+  else
+  {
+    // The airport is an addon but there is no delete record
+    // Check what is included an overwrite the old one
+    if(!airport->getApproaches().isEmpty())
+      deleteFlags |= bgl::del::APPROACHES;
+
+    if(!airport->getAprons().isEmpty())
+      deleteFlags |= bgl::del::APRONS;
+
+    if(!airport->getComs().isEmpty())
+      deleteFlags |= bgl::del::COMS;
+
+    if(!airport->getHelipads().isEmpty())
+      deleteFlags |= bgl::del::HELIPADS;
+
+    if(!airport->getTaxiPaths().isEmpty())
+      deleteFlags |= bgl::del::TAXIWAYS;
+
+    if(!airport->getRunways().isEmpty())
+      deleteFlags |= bgl::del::RUNWAYS;
+    qDebug() << "processDelete Made up flags" << deleteFlags;
+  }
+
   type = airport;
   currentId = currentAirportId;
   ident = type->getIdent();
@@ -244,13 +273,12 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
 
   bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false, hasTaxi = false,
        hasRunways = false, isAddon = false;
-  int rating = 0;
+  int previousRating = 0;
 
   bool hasPrevious = false;
-  int i = 0;
   while(selectAirportStmt->next())
   {
-    if(i > 0)
+    if(hasPrevious)
     {
       // If we get more than one entry set everything to true just to be safe
       qWarning() << "Found more than one airport to delete for ident"
@@ -264,19 +292,18 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
     hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
     hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
     isAddon |= selectAirportStmt->value("is_addon").toBool();
-    rating = std::max(rating, selectAirportStmt->value("rating").toInt());
-    i++;
+    previousRating = std::max(previousRating, selectAirportStmt->value("rating").toInt());
     hasPrevious = true;
   }
 
   if(hasApproach)
   {
-    if(isFlagSet(deleteAirport->getFlags(), bgl::del::APPROACHES))
-      // Delete the whole tree of apporaches, transitions and legs
+    if(isFlagSet(deleteFlags, bgl::del::APPROACHES))
+      // Delete the whole tree of approaches, transitions and legs on the old airport
       removeApproachesAndTransitions(fetchOldApproachIds());
     else if(hasPrevious)
     {
-      // Relink the approach to the new airport and update the cound on the airport
+      // Relink the approach to the new airport and update the count on the airport
       transferApproaches();
       bindAndExecute(copyFeatureStmt("airport", "num_approach"), "copied airport num_approach");
     }
@@ -288,7 +315,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
     removeOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
     removeOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
 
-    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::APRONS) && hasPrevious)
+    if(!isFlagSet(deleteFlags, bgl::del::APRONS) && hasPrevious)
       // Update apron count in new airport
       bindAndExecute(copyFeatureStmt("airport", "num_apron"), "copied airport num_apron");
   }
@@ -297,7 +324,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   {
     removeOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
 
-    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::COMS) && hasPrevious)
+    if(!isFlagSet(deleteFlags, bgl::del::COMS) && hasPrevious)
     {
       // Copy all frequencies to the new airport
       QStringList cols;
@@ -313,7 +340,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   {
     removeOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
 
-    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::HELIPADS) && hasPrevious)
+    if(!isFlagSet(deleteFlags, bgl::del::HELIPADS) && hasPrevious)
       // Update helipad count in new airport
       bindAndExecute(copyFeatureStmt("airport", "num_helipad"), "copied airport num_helipad");
   }
@@ -322,7 +349,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
   {
     removeOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
 
-    if(!isFlagSet(deleteAirport->getFlags(), bgl::del::TAXIWAYS) && hasPrevious)
+    if(!isFlagSet(deleteFlags, bgl::del::TAXIWAYS) && hasPrevious)
       // Update taxi count in new airport
       bindAndExecute(copyFeatureStmt("airport", "num_taxi_path"), "copied airport num_taxi_path");
   }
@@ -331,7 +358,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
 
   if(hasRunways)
   {
-    if(isFlagSet(deleteAirport->getFlags(), bgl::del::RUNWAYS))
+    if(isFlagSet(deleteFlags, bgl::del::RUNWAYS))
       removeRunways();
     else if(hasPrevious)
       // Relink runways
@@ -393,10 +420,13 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
       // TODO FSAD does not update magvar in their airports yet
       bindAndExecute(copyFeatureStmt("airport", "mag_var"), "copied airport mag_var");
 
-    int previousRating = airport->calculateRating(isAddon);
-    if(previousRating > rating)
-      // Copy rating only if this is worse
-      bindAndExecute(copyFeatureStmt("airport", "rating"), "copied airport rating");
+    // Get the best rating
+    int currentRating = std::max(airport->calculateRating(isAddon), previousRating);
+    SqlQuery update(db);
+    update.prepare("update airport set rating = :rating where airport_id = :apid");
+    update.bindValue(":rating", currentRating);
+    update.bindValue(":apid", currentAirportId);
+    update.exec();
 
     if(isAddon)
     {
@@ -539,7 +569,7 @@ void DeleteProcessor::removeOrUpdate(SqlQuery *deleteStmt, SqlQuery *updateStmt,
 {
   QString delTypeStr = bgl::DeleteAirport::deleteAllFlagsToStr(flag).toLower();
 
-  if(isFlagSet(deleteAirport->getFlags(), flag))
+  if(isFlagSet(deleteFlags, flag))
     bindAndExecute(deleteStmt, delTypeStr + " deleted");
   else
     bindAndExecute(updateStmt, delTypeStr + " updated");

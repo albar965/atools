@@ -36,14 +36,14 @@ namespace fs {
 namespace bgl {
 
 namespace del {
-enum DeleteAllFlags
+enum DeleteAllFlag
 {
   // TODO missing not documented flags
   // deleteAllBlastFences = "TRUE"
   // deleteAllBoundaryFences = "TRUE"
   // deleteAllControlTowers = "TRUE"
   // deleteAllJetways = "TRUE"
-
+  NONE = 0,
   APPROACHES = 1 << 0,
   APRONLIGHTS = 1 << 1,
   APRONS = 1 << 2,
@@ -53,6 +53,9 @@ enum DeleteAllFlags
   STARTS = 1 << 6,
   TAXIWAYS = 1 << 7
 };
+
+Q_DECLARE_FLAGS(DeleteAllFlags, DeleteAllFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::del::DeleteAllFlags);
 
 } // namespace del
 
