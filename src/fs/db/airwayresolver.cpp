@@ -44,17 +44,22 @@ using atools::geo::Rect;
 // Get all airway_point rows and join previous and next waypoints to the result by ident and region
 static const QString WAYPOINT_QUERY(
   "select r.name, r.type, "
-  "max(prev.waypoint_id) as prev_waypoint_id, "
-  "max(r.previous_minimum_altitude) as previous_minimum_altitude, "
-  "max(r.waypoint_id) as waypoint_id, "
-  "max(next.waypoint_id) as next_waypoint_id, "
-  "max(r.next_minimum_altitude) as next_minimum_altitude "
+  "  prev.waypoint_id as prev_waypoint_id, "
+  "  r.previous_minimum_altitude, "
+  "  prev.lonx as prev_lonx, "
+  "  prev.laty as prev_laty, "
+  "  r.waypoint_id, "
+  "  w.lonx as lonx, "
+  "  w.laty as laty, "
+  "  next.waypoint_id as next_waypoint_id, "
+  "  r.next_minimum_altitude, "
+  "  next.lonx as next_lonx, "
+  "  next.laty as next_laty "
   "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
   "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
   "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
-  "group by r.previous_ident, r.previous_region, r.next_ident, r.next_region "
-  "order by r.name"
-  );
+  "order by r.name");
+
 /* Airway segment with from/to position and IDs */
 struct AirwayResolver::AirwaySegment
 {
@@ -116,9 +121,6 @@ bool AirwayResolver::run()
   int deleted = query.numRowsAffected();
   qInfo() << "Removed" << deleted << "from airway table";
 
-  SqlQuery queryWpPos(db);
-  queryWpPos.prepare("select lonx, laty from waypoint where waypoint_id = :id");
-
   // Use set to
   QSet<AirwaySegment> airway;
   QString currentAirway;
@@ -153,48 +155,32 @@ bool AirwayResolver::run()
     }
 
     int currentWpId = query.value("waypoint_id").toInt();
+    Pos currentWpPos(query.value("lonx").toFloat(), query.value("laty").toFloat());
 
-    Pos currentWpPos;
-    queryWpPos.bindValue(":id", currentWpId);
-    queryWpPos.exec();
-    if(queryWpPos.next())
-      currentWpPos = Pos(queryWpPos.value("lonx").toFloat(), queryWpPos.value("laty").toFloat());
+    QVariant prevWpIdColVal = query.value("prev_waypoint_id");
+    int prevMinAlt = query.value("previous_minimum_altitude").toInt();
 
-    if(currentWpPos.isValid())
+    QVariant nextWpIdColVal = query.value("next_waypoint_id");
+    int nextMinAlt = query.value("next_minimum_altitude").toInt();
+
+    if(!prevWpIdColVal.isNull())
     {
-      QVariant prevWpIdColVal = query.value("prev_waypoint_id");
-      int prevMinAlt = query.value("previous_minimum_altitude").toInt();
+      // Previous waypoint found - add segment
+      Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
 
-      QVariant nextWpIdColVal = query.value("next_waypoint_id");
-      int nextMinAlt = query.value("next_minimum_altitude").toInt();
+      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType,
+                                    prevPos, currentWpPos));
+    }
 
-      if(!prevWpIdColVal.isNull())
-      {
-        // Previous waypoint found - add segment
-        Pos prevPos;
-        queryWpPos.bindValue(":id", prevWpIdColVal.toInt());
-        queryWpPos.exec();
-        if(queryWpPos.next())
-          prevPos = Pos(queryWpPos.value("lonx").toFloat(), queryWpPos.value("laty").toFloat());
+    if(!nextWpIdColVal.isNull())
+    {
+      // Next waypoint found - add segment
+      Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
 
-        if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
-          airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType,
-                                      prevPos, currentWpPos));
-      }
-
-      if(!nextWpIdColVal.isNull())
-      {
-        // Next waypoint found - add segment
-        Pos nextPos;
-        queryWpPos.bindValue(":id", nextWpIdColVal.toInt());
-        queryWpPos.exec();
-        if(queryWpPos.next())
-          nextPos = Pos(queryWpPos.value("lonx").toFloat(), queryWpPos.value("laty").toFloat());
-
-        if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
-          airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
-                                      nextPos));
-      }
+      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
+                                    nextPos));
     }
   }
 
