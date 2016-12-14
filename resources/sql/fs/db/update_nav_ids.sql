@@ -16,6 +16,26 @@
 -- ****************************************************************************/
 
 -- *************************************************************
+-- Update runway references for approaches
+-- *************************************************************
+
+update approach set runway_end_id = (
+  select runway_end_id
+  from airport a
+  join runway r on r.airport_id = a.airport_id
+  join runway_end e on r.primary_end_id = e.runway_end_id
+  where e.name = approach.runway_name and a.ident = approach.airport_ident
+);
+
+update approach set runway_end_id = (
+  select runway_end_id
+  from airport a
+  join runway r on r.airport_id = a.airport_id
+  join runway_end e on r.secondary_end_id = e.runway_end_id
+  where e.name = approach.runway_name and a.ident = approach.airport_ident
+) where approach.runway_end_id is null;
+
+-- *************************************************************
 -- Update navaid references for approach
 -- *************************************************************
 

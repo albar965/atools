@@ -148,6 +148,8 @@ create table ils
   gs_lonx double,
   gs_laty double,
   loc_runway_end_id integer,       -- Reference to runway end.
+  loc_airport_ident varchar(4),
+  loc_runway_name varchar(10),
   loc_heading double not null,     -- Localizer heading in degree true
   loc_width double not null,       -- Width of localizer in degree
   end1_lonx double not null,       -- Pre-calculated first endpoint for a 8 NM feather
@@ -163,6 +165,8 @@ foreign key(loc_runway_end_id) references runway_end(runway_end_id)
 );
 
 create index if not exists idx_ils_loc_runway_end_id on ils(loc_runway_end_id);
+create index if not exists idx_ils_loc_airport_ident on ils(loc_airport_ident);
+create index if not exists idx_ils_loc_runway_name on ils(loc_runway_name);
 
 -- **************************************************
 

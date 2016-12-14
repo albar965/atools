@@ -121,18 +121,8 @@ void IlsWriter::writeObject(const Ils *type)
 
   if(loc != nullptr && !apIdent.isEmpty())
   {
-    QString msg(" ILS ID " + QString::number(getCurrentId()) +
-                " ident " + type->getIdent() + " name " + type->getName());
-    if(getOptions().isIncludedAirportIdent(apIdent))
-    {
-      int id = getRunwayIndex()->getRunwayEndId(apIdent, loc->getRunwayName(), msg);
-
-      if(id != -1)
-      {
-        isComplete = true;
-        bind(":loc_runway_end_id", id);
-      }
-    }
+    bind(":loc_airport_ident", apIdent);
+    bind(":loc_runway_name", loc->getRunwayName());
 
     bind(":loc_heading", loc->getHeading());
     bind(":loc_width", loc->getWidth());

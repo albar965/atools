@@ -53,8 +53,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   deleteRunwayEndStmt = new SqlQuery(sqlDb);
   deleteIlsStmt = new SqlQuery(sqlDb);
 
-  fetchPrimaryRunwayEndIdStmt = new SqlQuery(sqlDb);
-  fetchSecondaryRunwayEndIdStmt = new SqlQuery(sqlDb);
   updateApprochRwIds = new SqlQuery(sqlDb);
   updateApprochStmt = new SqlQuery(sqlDb);
   deleteApprochStmt = new SqlQuery(sqlDb);
@@ -80,12 +78,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateComStmt = new SqlQuery(sqlDb);
   fetchPrimaryAppStmt = new SqlQuery(sqlDb);
   fetchSecondaryAppStmt = new SqlQuery(sqlDb);
-
-  deleteTransitionLegStmt = new SqlQuery(sqlDb);
-  deleteApproachLegStmt = new SqlQuery(sqlDb);
-  deleteTransitionStmt = new SqlQuery(sqlDb);
-  deleteApproachStmt = new SqlQuery(sqlDb);
-  fetchOldApproachIdStmt = new SqlQuery(sqlDb);
 
   // Most queries act on all other airports with the given ident except the current one
   // where a.ident = :apIdent and a.airport_id <> :curApId
@@ -124,14 +116,12 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
                               "where a.ident = :apIdent and a.airport_id <> :curApId and "
                               "ao.ident = :apIdent and ao.airport_id == :curApId and "
                               "e.name = eo.name");
-  fetchPrimaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("primary"));
-  fetchSecondaryRunwayEndIdStmt->prepare(fetchOldAndNewRwIds.arg("secondary"));
 
   // Delete a runway end
   deleteRunwayEndStmt->prepare("delete from runway_end where runway_end_id = :endId");
 
   // Delete the ILS for a runway end
-  deleteIlsStmt->prepare("delete from ils where loc_runway_end_id = :endId");
+  deleteIlsStmt->prepare("delete from ils where loc_airport_ident = :ident");
 
   // Delete all other airports
   deleteAirportStmt->prepare("delete from airport where ident = :apIdent and airport_id <> :curApId");
@@ -173,17 +163,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
   updateApprochStmt->prepare(updateAptFeatureStmt("approach"));
   deleteApprochStmt->prepare(delAptFeatureStmt("approach"));
-
-  deleteTransitionLegStmt->prepare("delete from transition_leg where transition_id in "
-                                   "(select transition_id from transition where approach_id = :id)");
-  deleteApproachLegStmt->prepare("delete from approach_leg where approach_id = :id");
-  deleteTransitionStmt->prepare("delete from transition where approach_id = :id");
-  deleteApproachStmt->prepare("delete from approach where approach_id = :id");
-
-  // Collect all approach_ids of the other airports
-  fetchOldApproachIdStmt->prepare("select app.approach_id from airport a "
-                                  "join approach app on app.airport_id = a.airport_id "
-                                  "where a.ident = :apIdent and a.airport_id <> :curApId ");
 }
 
 DeleteProcessor::~DeleteProcessor()
@@ -196,8 +175,6 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
   delete deleteIlsStmt;
-  delete fetchPrimaryRunwayEndIdStmt;
-  delete fetchSecondaryRunwayEndIdStmt;
   delete updateApprochRwIds;
   delete updateApprochStmt;
   delete deleteApprochStmt;
@@ -222,89 +199,49 @@ DeleteProcessor::~DeleteProcessor()
   delete updateComStmt;
   delete fetchPrimaryAppStmt;
   delete fetchSecondaryAppStmt;
-  delete deleteTransitionLegStmt;
-  delete deleteApproachLegStmt;
-  delete deleteTransitionStmt;
-  delete deleteApproachStmt;
-  delete fetchOldApproachIdStmt;
 }
 
-void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const Airport *airport,
-                                    int currentAirportId)
+void DeleteProcessor::preProcessDelete(const DeleteAirport *deleteAirportRec, const Airport *airport,
+                                       int airportId)
 {
-  qInfo() << "processDelete" << airport->getIdent() << "current id" << currentAirportId;
+  qInfo() << "preProcessDelete" << airport->getIdent() << "current id" << currentAirportId;
 
+  newAirport = airport;
+  currentAirportId = airportId;
+  ident = newAirport->getIdent();
   deleteAirport = deleteAirportRec;
-  if(deleteAirportRec != nullptr)
-  {
-    deleteFlags = deleteAirportRec->getFlags();
-    qDebug() << "processDelete Flags from delete record" << deleteFlags;
-  }
-  else
-  {
-    // The airport is an addon but there is no delete record
-    // Check what is included an overwrite the old one
-    if(!airport->getApproaches().isEmpty())
-      deleteFlags |= bgl::del::APPROACHES;
 
-    if(!airport->getAprons().isEmpty())
-      deleteFlags |= bgl::del::APRONS;
-
-    if(!airport->getComs().isEmpty())
-      deleteFlags |= bgl::del::COMS;
-
-    if(!airport->getHelipads().isEmpty())
-      deleteFlags |= bgl::del::HELIPADS;
-
-    if(!airport->getTaxiPaths().isEmpty())
-      deleteFlags |= bgl::del::TAXIWAYS;
-
-    if(!airport->getRunways().isEmpty())
-      deleteFlags |= bgl::del::RUNWAYS;
-    qDebug() << "processDelete Made up flags" << deleteFlags;
-  }
-
-  type = airport;
-  currentId = currentAirportId;
-  ident = type->getIdent();
+  // Calculate delete flags either from delete record or current airport
+  extractDeleteFlags();
 
   // Get facility counts for current airport
-  bindAndExecute(selectAirportStmt, "select airports");
+  extractPreviousAirportFeatures();
 
-  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false, hasTaxi = false,
-       hasRunways = false, isAddon = false;
-  int previousRating = 0;
-
-  bool hasPrevious = false;
-  while(selectAirportStmt->next())
+  if(hasApproach && isFlagSet(deleteFlags, bgl::del::APPROACHES))
   {
-    if(hasPrevious)
-    {
-      // If we get more than one entry set everything to true just to be safe
-      qWarning() << "Found more than one airport to delete for ident"
-                 << type->getIdent() << "id" << currentId
-                 << "found" << selectAirportStmt->value("airport_id").toInt();
-    }
-    hasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
-    hasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
-    hasCom |= selectAirportStmt->value("num_com").toInt() > 0;
-    hasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
-    hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
-    hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
-    isAddon |= selectAirportStmt->value("is_addon").toBool();
-    previousRating = std::max(previousRating, selectAirportStmt->value("rating").toInt());
-    hasPrevious = true;
+    // Delete the whole tree of approaches, transitions and legs on the old airport
+    SqlUtil sql(db);
+    sql.bindAndExec("delete from transition where transition.approach_id in "
+                    "(select a.approach_id from approach a where a.airport_ident = :ident)",
+                    {std::make_pair(":ident", ident)});
+    sql.bindAndExec("delete from approach where airport_ident = :ident", ":ident", ident);
   }
 
+  if(hasRunways && isFlagSet(deleteFlags, bgl::del::RUNWAYS))
+  {
+    deleteIlsStmt->bindValue(":ident", ident);
+    executeStatement(deleteIlsStmt, "delete ils");
+  }
+}
+
+void DeleteProcessor::postProcessDelete()
+{
   if(hasApproach)
   {
-    if(isFlagSet(deleteFlags, bgl::del::APPROACHES))
-      // Delete the whole tree of approaches, transitions and legs on the old airport
-      removeApproachesAndTransitions(fetchOldApproachIds());
-    else if(hasPrevious)
+    if(hasPrevious && !isFlagSet(deleteFlags, bgl::del::APPROACHES))
     {
-      // Relink the approach to the new airport and update the count on the airport
-      transferApproaches();
+      // Relink the approaches to the new airport and update the count on the airport
+      // transferApproaches(); not needed this is covered by sql update script
       bindAndExecute(copyFeatureStmt("airport", "num_approach"), "copied airport num_approach");
     }
   }
@@ -365,7 +302,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
       updateRunways();
   }
 
-  if(!airport->getParkings().isEmpty())
+  if(!newAirport->getParkings().isEmpty())
     // New airport has parking - delete the previous ones
     bindAndExecute(deleteParkingStmt, "parking spots deleted");
   else if(hasPrevious)
@@ -381,7 +318,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
       bindAndExecute(copyFeatureStmt("airport", col), "copied airport " + col);
   }
 
-  if(!airport->getFences().isEmpty())
+  if(!newAirport->getFences().isEmpty())
     // New airport has fences - delete the previous ones
     bindAndExecute(deleteFenceStmt, "fences deleted");
   else if(hasPrevious)
@@ -393,7 +330,7 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
 
   if(hasPrevious)
   {
-    if(airport->getFuelFlags() == atools::fs::bgl::ap::NO_FUEL_FLAGS)
+    if(newAirport->getFuelFlags() == atools::fs::bgl::ap::NO_FUEL_FLAGS)
     {
       // Copy fuel flags from previous airport if this one doesn't have any
       QStringList cols;
@@ -404,24 +341,24 @@ void DeleteProcessor::processDelete(const DeleteAirport *deleteAirportRec, const
     }
 
     // Update tower TODO not accurate
-    if(!airport->hasTowerObj())
+    if(!newAirport->hasTowerObj())
       bindAndExecute(copyFeatureStmt("airport", "has_tower_object"), "copied airport has_tower_object");
 
-    if(airport->getTowerPosition().getAltitude() == 0.f)
+    if(newAirport->getTowerPosition().getAltitude() == 0.f)
       bindAndExecute(copyFeatureStmt("airport", "tower_altitude"), "copied airport tower_altitude");
 
-    if(airport->getTowerPosition().getPos().isNull() || !airport->getTowerPosition().getPos().isValid())
+    if(newAirport->getTowerPosition().getPos().isNull() || !newAirport->getTowerPosition().getPos().isValid())
     {
       bindAndExecute(copyFeatureStmt("airport", "tower_lonx"), "copied airport tower_lonx");
       bindAndExecute(copyFeatureStmt("airport", "tower_laty"), "copied airport tower_laty");
     }
 
-    if(airport->getMagVar() == 0.f)
+    if(newAirport->getMagVar() == 0.f)
       // TODO FSAD does not update magvar in their airports yet
       bindAndExecute(copyFeatureStmt("airport", "mag_var"), "copied airport mag_var");
 
     // Get the best rating
-    int currentRating = std::max(airport->calculateRating(isAddon), previousRating);
+    int currentRating = std::max(newAirport->calculateRating(isAddon), previousRating);
     SqlQuery update(db);
     update.prepare("update airport set rating = :rating where airport_id = :apid");
     update.bindValue(":rating", currentRating);
@@ -459,7 +396,7 @@ void DeleteProcessor::removeRunways()
 {
   QList<int> runwayEndIds;
   fetchRunwayEndIdStmt->bindValue(":apIdent", ident);
-  fetchRunwayEndIdStmt->bindValue(":curApId", currentId);
+  fetchRunwayEndIdStmt->bindValue(":curApId", currentAirportId);
   fetchIds(fetchRunwayEndIdStmt, runwayEndIds, " runway ends to delete");
 
   // Delete runway first due to foreign key from rw -> rw end
@@ -467,10 +404,6 @@ void DeleteProcessor::removeRunways()
 
   for(int it : runwayEndIds)
   {
-    // Delete the ILS too
-    deleteIlsStmt->bindValue(":endId", it);
-    executeStatement(deleteIlsStmt, "ils deleted");
-
     // Remove runway
     deleteRunwayEndStmt->bindValue(":endId", it);
     executeStatement(deleteRunwayEndStmt, "runway ends deleted");
@@ -489,68 +422,14 @@ void DeleteProcessor::removeAirport()
   bindAndExecute(deleteAirportStmt, "airports deleted");
 }
 
-void DeleteProcessor::removeApproachesAndTransitions(const QList<int>& ids)
-{
-  for(int i : ids)
-  {
-    deleteTransitionLegStmt->bindValue(":id", i);
-    executeStatement(deleteTransitionLegStmt, "transition_leg deleted");
-
-    deleteApproachLegStmt->bindValue(":id", i);
-    executeStatement(deleteApproachLegStmt, "approach_leg deleted");
-
-    deleteTransitionStmt->bindValue(":id", i);
-    executeStatement(deleteTransitionStmt, "transition deleted");
-
-    deleteApproachStmt->bindValue(":id", i);
-    executeStatement(deleteApproachStmt, "approach deleted");
-  }
-}
-
-/* Get a list of all old/other approach ids */
-QList<int> DeleteProcessor::fetchOldApproachIds()
-{
-  QList<int> ids;
-  bindAndExecute(fetchOldApproachIdStmt, "old approach ids");
-  while(fetchOldApproachIdStmt->next())
-    ids.append(fetchOldApproachIdStmt->value(0).toInt());
-  return ids;
-}
-
-void DeleteProcessor::transferApproaches()
-{
-  QList<int> ids = fetchOldApproachIds();
-
-  bindAndExecute(fetchPrimaryRunwayEndIdStmt, "fetched old and new primary runway end ids");
-  while(fetchPrimaryRunwayEndIdStmt->next())
-  {
-    updateApprochRwIds->bindValue(":newRwId", fetchPrimaryRunwayEndIdStmt->value("new_runway_end_id").toInt());
-    updateApprochRwIds->bindValue(":oldRwId", fetchPrimaryRunwayEndIdStmt->value("old_runway_end_id").toInt());
-    executeStatement(updateApprochRwIds, "update approach primary runway end ids");
-  }
-
-  bindAndExecute(fetchSecondaryRunwayEndIdStmt, "fetched old and new secondary runway end ids");
-  while(fetchSecondaryRunwayEndIdStmt->next())
-  {
-    updateApprochRwIds->bindValue(":newRwId", fetchSecondaryRunwayEndIdStmt->value("new_runway_end_id").toInt());
-    updateApprochRwIds->bindValue(":oldRwId", fetchSecondaryRunwayEndIdStmt->value("old_runway_end_id").toInt());
-    executeStatement(updateApprochRwIds, "update approach secondary runway end ids");
-  }
-
-  bindAndExecute(updateApprochStmt, "approaches updated");
-
-  // Delete all leftovers of the old runways
-  removeApproachesAndTransitions(ids);
-}
-
 void DeleteProcessor::executeStatement(SqlQuery *stmt, const QString& what)
 {
   stmt->exec();
   int retval = stmt->numRowsAffected();
 
-  // if(options.isVerbose())
-  if(retval > 0)
-    qDebug() << retval << " " << what /* << "bound" << stmt->boundValues()*/;
+  if(options.isVerbose())
+    if(retval > 0)
+      qDebug() << retval << " " << what /* << "bound" << stmt->boundValues()*/;
 }
 
 void DeleteProcessor::fetchIds(SqlQuery *stmt, QList<int>& ids, const QString& what)
@@ -620,7 +499,7 @@ QString DeleteProcessor::copyFeatureStmt(const QString& table, const QString& co
 void DeleteProcessor::bindAndExecute(SqlQuery *delQuery, const QString& msg)
 {
   delQuery->bindValue(":apIdent", ident);
-  delQuery->bindValue(":curApId", currentId);
+  delQuery->bindValue(":curApId", currentAirportId);
   executeStatement(delQuery, msg);
 }
 
@@ -629,8 +508,75 @@ void DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
   SqlQuery query(db);
   query.prepare(sql);
   query.bindValue(":apIdent", ident);
-  query.bindValue(":curApId", currentId);
+  query.bindValue(":curApId", currentAirportId);
   executeStatement(&query, msg);
+}
+
+void DeleteProcessor::extractDeleteFlags()
+{
+  if(deleteAirport != nullptr)
+  {
+    deleteFlags = deleteAirport->getFlags();
+    // qDebug() << "processDelete Flags from delete record" << deleteFlags;
+  }
+  else
+  {
+    // The airport is an addon but there is no delete record
+    // Check what is included an overwrite the old one
+    if(!newAirport->getApproaches().isEmpty())
+      deleteFlags |= bgl::del::APPROACHES;
+
+    if(!newAirport->getAprons().isEmpty())
+      deleteFlags |= bgl::del::APRONS;
+
+    if(!newAirport->getComs().isEmpty())
+      deleteFlags |= bgl::del::COMS;
+
+    if(!newAirport->getHelipads().isEmpty())
+      deleteFlags |= bgl::del::HELIPADS;
+
+    if(!newAirport->getTaxiPaths().isEmpty())
+      deleteFlags |= bgl::del::TAXIWAYS;
+
+    if(!newAirport->getRunways().isEmpty())
+      deleteFlags |= bgl::del::RUNWAYS;
+    // qDebug() << "processDelete Made up flags" << deleteFlags;
+  }
+}
+
+void DeleteProcessor::extractPreviousAirportFeatures()
+{
+  bindAndExecute(selectAirportStmt, "select airports");
+
+  hasApproach = false;
+  hasApron = false;
+  hasCom = false;
+  hasHelipad = false;
+  hasTaxi = false;
+  hasRunways = false;
+  isAddon = false;
+  previousRating = 0;
+  hasPrevious = false;
+
+  while(selectAirportStmt->next())
+  {
+    if(hasPrevious)
+    {
+      // If we get more than one entry set everything to true just to be safe
+      qWarning() << "Found more than one airport to delete for ident"
+                 << newAirport->getIdent() << "id" << currentAirportId
+                 << "found" << selectAirportStmt->value("airport_id").toInt();
+    }
+    hasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
+    hasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
+    hasCom |= selectAirportStmt->value("num_com").toInt() > 0;
+    hasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
+    hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
+    hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
+    isAddon |= selectAirportStmt->value("is_addon").toBool();
+    previousRating = std::max(previousRating, selectAirportStmt->value("rating").toInt());
+    hasPrevious = true;
+  }
 }
 
 } // namespace writer

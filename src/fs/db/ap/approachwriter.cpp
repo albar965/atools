@@ -56,20 +56,9 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":heading", type->getHeading());
   bind(":missed_altitude", roundToPrecision(meterToFeet(type->getMissedAltitude()), 1));
 
-  QString apIdent = getDataWriter().getAirportWriter()->getCurrentAirportIdent();
   bindNullInt(":runway_end_id");
-  if(type->hasRunwayReference() && !apIdent.isEmpty())
-  {
-    // Not all approaches have a runway end id
-    if(getOptions().isIncludedAirportIdent(apIdent))
-    {
-      // Add only if airport is included
-      QString msg(" approach ID " + QString::number(getCurrentId()));
-      int id = getRunwayIndex()->getRunwayEndId(apIdent, type->getRunwayName(), msg);
-      if(id != -1)
-        bind(":runway_end_id", id);
-    }
-  }
+  bind(":airport_ident", getDataWriter().getAirportWriter()->getCurrentAirportIdent());
+  bind(":runway_name", type->getRunwayName());
 
   // Write approach
   executeStatement();

@@ -58,14 +58,14 @@ public:
    * @param airport airport record that will replace all other airports
    * @param currentAirportId database ID of the airport that will replace all other airports
    */
-  void processDelete(const bgl::DeleteAirport *deleteAirportRec, const atools::fs::bgl::Airport *airport,
-                     int currentAirportId);
+  void preProcessDelete(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
+                        const atools::fs::bgl::Airport *airport, int airportId);
+  void postProcessDelete();
 
 private:
   void executeStatement(sql::SqlQuery *stmt, const QString& what);
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
-  void transferApproaches();
   void removeRunways();
   void updateRunways();
   void removeAirport();
@@ -76,8 +76,8 @@ private:
                       atools::fs::bgl::del::DeleteAllFlags flag);
   QString updateAptFeatureToNullStmt(const QString& table);
   void removeApproachesAndTransitions(const QList<int>& ids);
+  void extractDeleteFlags();
 
-  QList<int> fetchOldApproachIds();
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
   void bindAndExecute(const QString& sql, const QString& msg);
   QString copyFeatureStmt(const QString& table, const QString& column);
@@ -91,8 +91,6 @@ private:
   *updateParkingStmt = nullptr,
   *deleteDeleteApStmt = nullptr,
   *fetchRunwayEndIdStmt = nullptr,
-  *fetchPrimaryRunwayEndIdStmt = nullptr,
-  *fetchSecondaryRunwayEndIdStmt = nullptr,
   *updateApprochRwIds = nullptr,
   *deleteRunwayEndStmt = nullptr,
   *deleteIlsStmt = nullptr,
@@ -108,19 +106,21 @@ private:
   *deleteStartStmt = nullptr, *updateStartStmt = nullptr,
   *deleteTaxiPathStmt = nullptr, *updateTaxiPathStmt = nullptr,
   *deleteComStmt = nullptr, *updateComStmt = nullptr,
-  *fetchPrimaryAppStmt = nullptr, *fetchSecondaryAppStmt = nullptr,
-  *deleteTransitionLegStmt = nullptr,
-  *deleteApproachLegStmt = nullptr,
-  *deleteTransitionStmt = nullptr,
-  *deleteApproachStmt = nullptr,
-  *fetchOldApproachIdStmt = nullptr;
+  *fetchPrimaryAppStmt = nullptr, *fetchSecondaryAppStmt = nullptr;
 
   const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
   atools::fs::bgl::del::DeleteAllFlags deleteFlags = atools::fs::bgl::del::NONE;
-  const atools::fs::bgl::Airport *type = nullptr;
-  int currentId = 0;
+  const atools::fs::bgl::Airport *newAirport = nullptr;
+  int currentAirportId = 0;
   QString ident;
   atools::sql::SqlDatabase *db = nullptr;
+
+  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false, hasTaxi = false,
+       hasRunways = false, isAddon = false;
+  int previousRating = 0;
+  bool hasPrevious = false;
+
+  void extractPreviousAirportFeatures();
 
 };
 

@@ -87,6 +87,20 @@ void AirportWriter::writeObject(const Airport *type)
   if(isRealAddon && type->getDeleteAirports().isEmpty())
     qInfo() << "Addon airport without delete record" << type->getIdent();
 
+  int nextAirportId = getNextId();
+
+  if(getOptions().isDeletes())
+  {
+    if(!type->getDeleteAirports().isEmpty())
+    {
+      for(const DeleteAirport& delAp : type->getDeleteAirports())
+        // Now delete the stock/default airport
+        deleteProcessor.preProcessDelete(&delAp, type, getCurrentId());
+    }
+    else if(isRealAddon)
+      deleteProcessor.preProcessDelete(nullptr, type, getCurrentId());
+  }
+
   // Get and write country, state and city
   bindNullString(":country");
   bindNullString(":state");
@@ -108,7 +122,7 @@ void AirportWriter::writeObject(const Airport *type)
   else
     qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
-  bind(":airport_id", getNextId());
+  bind(":airport_id", nextAirportId);
   bind(":file_id", bglFileWriter->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
@@ -238,19 +252,18 @@ void AirportWriter::writeObject(const Airport *type)
 
   if(!type->getDeleteAirports().isEmpty())
   {
-    const QList<DeleteAirport>& deleteAirports = type->getDeleteAirports();
-    for(const DeleteAirport& delAp : deleteAirports)
+    for(const DeleteAirport& delAp : type->getDeleteAirports())
     {
       // Write metadata for delete record
       deleteAirportWriter->writeOne(delAp);
 
       if(getOptions().isDeletes())
         // Now delete the stock/default airport
-        deleteProcessor.processDelete(&delAp, type, getCurrentId());
+        deleteProcessor.postProcessDelete();
     }
   }
   else if(isRealAddon)
-    deleteProcessor.processDelete(nullptr, type, getCurrentId());
+    deleteProcessor.postProcessDelete();
 }
 
 } // namespace writer

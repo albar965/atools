@@ -48,6 +48,9 @@ public:
   void reportDuplicates(QDebug& out, const QString& table, const QString& idColumn,
                         const QStringList& identityColumns);
 
+  int bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant> > params);
+  int bindAndExec(const QString& sql, const QString& bind, const QVariant& value);
+
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString(),
                                const QStringList& excludeColumns = QStringList());

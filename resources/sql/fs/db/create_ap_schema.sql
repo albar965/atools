@@ -404,6 +404,8 @@ create table approach
   approach_id integer primary key,
   airport_id integer not null,
   runway_end_id integer,            -- Runway end id - can be null if the approach allows circling
+  airport_ident varchar(4),
+  runway_name varchar(10),
   type varchar(25) not null,        -- see enum atools::fs::bgl::ap::ApproachType
   has_gps_overlay integer not null, -- Boolean - 1 if the approach has a GPS overlay
   fix_nav_id integer,               -- Reference to vor.vor_id, waypoint.waypoint_id or ndb.ndb_id depending on fix_type
@@ -420,6 +422,8 @@ foreign key(runway_end_id) references runway_end(runway_end_id)
 
 create index if not exists idx_approach_airport_id on approach(airport_id);
 create index if not exists idx_approach_runway_end_id on approach(runway_end_id);
+create index if not exists idx_approach_airport_ident on approach(airport_ident);
+create index if not exists idx_approach_runway_name on approach(runway_name);
 
 -- **************************************************
 

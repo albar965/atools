@@ -307,6 +307,22 @@ void SqlUtil::reportDuplicates(QDebug& out,
     " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
 }
 
+int SqlUtil::bindAndExec(const QString& sql, const QString& bind, const QVariant& value)
+{
+  return bindAndExec(sql, {std::make_pair(bind, value)});
+}
+
+int SqlUtil::bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant> > params)
+{
+  SqlQuery query(db);
+  query.prepare(sql);
+
+  for(const std::pair<QString, QVariant>& bind : params)
+    query.bindValue(bind.first, bind.second);
+  query.exec();
+  return query.numRowsAffected();
+}
+
 QStringList SqlUtil::buildTableList(const QStringList& tables)
 {
   QStringList tableList;
