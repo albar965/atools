@@ -204,7 +204,8 @@ DeleteProcessor::~DeleteProcessor()
 void DeleteProcessor::preProcessDelete(const DeleteAirport *deleteAirportRec, const Airport *airport,
                                        int airportId)
 {
-  qInfo() << "preProcessDelete" << airport->getIdent() << "current id" << currentAirportId;
+  if(options.isVerbose())
+    qInfo() << "preProcessDelete" << airport->getIdent() << "current id" << currentAirportId;
 
   newAirport = airport;
   currentAirportId = airportId;
@@ -236,6 +237,9 @@ void DeleteProcessor::preProcessDelete(const DeleteAirport *deleteAirportRec, co
 
 void DeleteProcessor::postProcessDelete()
 {
+  if(options.isVerbose())
+    qDebug() << Q_FUNC_INFO;
+
   if(hasApproach)
   {
     if(hasPrevious && !isFlagSet(deleteFlags, bgl::del::APPROACHES))

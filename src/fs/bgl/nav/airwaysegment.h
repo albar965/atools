@@ -24,8 +24,9 @@
 namespace atools {
 namespace fs {
 namespace bgl {
-
+class Waypoint;
 namespace nav {
+
 enum AirwayType
 {
   NONE = 0,
@@ -44,8 +45,12 @@ class AirwaySegment :
   public atools::fs::bgl::BglBase
 {
 public:
-  AirwaySegment(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  AirwaySegment(const NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+                const atools::fs::bgl::Waypoint& waypoint);
   virtual ~AirwaySegment();
+
+  AirwaySegment(const atools::fs::bgl::AirwaySegment& other);
+  AirwaySegment& operator=(const atools::fs::bgl::AirwaySegment& other);
 
   bool hasNextWaypoint() const;
 
@@ -79,12 +84,18 @@ public:
 
   static QString airwayTypeToStr(atools::fs::bgl::nav::AirwayType type);
 
+  const atools::fs::bgl::Waypoint *getMidWaypoint() const
+  {
+    return mid;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwaySegment& record);
 
   atools::fs::bgl::nav::AirwayType type;
   QString name;
 
+  atools::fs::bgl::Waypoint *mid = nullptr;
   atools::fs::bgl::AirwayWaypoint next;
   atools::fs::bgl::AirwayWaypoint previous;
 };

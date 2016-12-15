@@ -25,12 +25,20 @@ create index if not exists idx_waypoint_region on waypoint(region);
 create index if not exists idx_waypoint_ident on waypoint(ident);
 create index if not exists idx_waypoint_num_vairway on waypoint(num_victor_airway);
 create index if not exists idx_waypoint_num_rairway on waypoint(num_jet_airway);
+create index if not exists idx_waypoint_lonx on waypoint(lonx);
+create index if not exists idx_waypoint_laty on waypoint(laty);
 
+create index if not exists idx_vor_ident on vor(ident);
 create index if not exists idx_vor_type on vor(type);
 create index if not exists idx_vor_region on vor(region);
+create index if not exists idx_vor_lonx on vor(lonx);
+create index if not exists idx_vor_laty on vor(laty);
 
+create index if not exists idx_ndb_ident on ndb(ident);
 create index if not exists idx_ndb_type on ndb(type);
 create index if not exists idx_ndb_region on ndb(region);
+create index if not exists idx_ndb_lonx on ndb(lonx);
+create index if not exists idx_ndb_laty on ndb(laty);
 
 create index if not exists idx_approach_fix_type on approach(fix_type);
 create index if not exists idx_approach_fix_ident on approach(fix_ident);

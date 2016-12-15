@@ -236,7 +236,8 @@ void NavDatabase::createInternal()
   if(aborted)
     return;
 
-  // Create data writer which will fill the database
+  // -----------------------------------------------------------------------
+  // Create data writer which will read all BGL files and fill the database
   atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
@@ -302,18 +303,21 @@ void NavDatabase::createInternal()
   if((aborted = progress.reportOther(tr("Updating waypoint ids"))) == true)
     return;
 
+  // Set the nav_ids (VOR, NDB) in the waypoint table
   script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Updating navigation ids"))) == true)
     return;
 
+  // Set the nav_ids (VOR, NDB) in the approach and transition table
   script.executeScript(":/atools/resources/sql/fs/db/update_nav_ids.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Updating ILS ids"))) == true)
     return;
 
+  // Set runway end ids into the ILS and update the ILS count in the airport table
   script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
   db->commit();
 

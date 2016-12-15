@@ -107,6 +107,9 @@ public:
     return queryString;
   }
 
+  void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
+  void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
+
 private:
   friend class SqlDatabase;
 

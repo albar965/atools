@@ -101,7 +101,7 @@ uint qHash(const AirwayResolver::AirwaySegment& segment)
 }
 
 AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress)
-  : progressHandler(progress), curAirwayId(0), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
+  : progressHandler(progress), curAirwayId(1), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(sqlDb);
   airwayInsertStmt.prepare(util.buildInsertStatement("airway"));
@@ -148,7 +148,22 @@ bool AirwayResolver::run()
       // A new airway comes from from the query save the current one to the database
       if(!airway.empty())
       {
-        writeAirway(currentAirway, airway);
+        // Build airway fragments
+        QVector<Fragment> fragments;
+        buildAirway(currentAirway, airway, fragments);
+
+        // Remove all fragments that are contained by others
+        cleanFragments(fragments);
+
+        for(const Fragment& fragment : fragments)
+        {
+          for(const TypeRowValueVector& bindRow : fragment.boundValues)
+          {
+            airwayInsertStmt.bindValues(bindRow);
+            airwayInsertStmt.exec();
+            numAirways += airwayInsertStmt.numRowsAffected();
+          }
+        }
         airway.clear();
       }
       currentAirway = awName;
@@ -188,7 +203,8 @@ bool AirwayResolver::run()
   return aborted;
 }
 
-void AirwayResolver::writeAirway(const QString& airwayName, QSet<AirwaySegment>& airway)
+void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>& airway,
+                                 QVector<Fragment>& fragments)
 {
   // Queue of waypoints that will get waypoints in order prependend and appendend
   QQueue<AirwaySegment> newAirway;
@@ -205,7 +221,7 @@ void AirwayResolver::writeAirway(const QString& airwayName, QSet<AirwaySegment>&
     segsByToWpId[segment.toWaypointId] = segment;
   }
 
-  int fragmentNum = 0;
+  int fragmentNum = 1;
   QHash<int, AirwaySegment>::const_iterator it;
   AirwaySegment segment;
 
@@ -257,39 +273,87 @@ void AirwayResolver::writeAirway(const QString& airwayName, QSet<AirwaySegment>&
 
     // Write airway fragment - there may be more fragments for the same airway name
     AirwaySegment last;
-    int seqNo = 0;
-    ++fragmentNum;
+    int seqNo = 1;
+    Fragment fragment;
+
     for(const AirwaySegment& newSegment : newAirway)
     {
       last = newSegment;
 
-      airwayInsertStmt.bindValue(":airway_id", ++curAirwayId);
-      airwayInsertStmt.bindValue(":airway_name", airwayName);
-      airwayInsertStmt.bindValue(":airway_type", newSegment.type);
-      airwayInsertStmt.bindValue(":airway_fragment_no", fragmentNum);
-      airwayInsertStmt.bindValue(":sequence_no", ++seqNo);
-      airwayInsertStmt.bindValue(":from_waypoint_id", newSegment.fromWaypointId);
-      airwayInsertStmt.bindValue(":to_waypoint_id", newSegment.toWaypointId);
-      airwayInsertStmt.bindValue(":minimum_altitude", newSegment.minAlt);
+      fragment.waypoints.insert(newSegment.fromWaypointId);
+      fragment.waypoints.insert(newSegment.toWaypointId);
 
       // Create bounding rect for this segment
       Rect bounding(newSegment.fromPos);
       bounding.extend(newSegment.toPos);
-      airwayInsertStmt.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
-      airwayInsertStmt.bindValue(":top_laty", bounding.getTopLeft().getLatY());
-      airwayInsertStmt.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
-      airwayInsertStmt.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+
+      TypeRowValueVector row;
+
+      row.append(std::make_pair(":airway_id", curAirwayId));
+      row.append(std::make_pair(":airway_name", airwayName));
+      row.append(std::make_pair(":airway_type", newSegment.type));
+      row.append(std::make_pair(":airway_fragment_no", fragmentNum));
+      row.append(std::make_pair(":sequence_no", seqNo));
+
+      row.append(std::make_pair(":from_waypoint_id", newSegment.fromWaypointId));
+      row.append(std::make_pair(":to_waypoint_id", newSegment.toWaypointId));
+
+      row.append(std::make_pair(":minimum_altitude", newSegment.minAlt));
+      row.append(std::make_pair(":left_lonx", bounding.getTopLeft().getLonX()));
+      row.append(std::make_pair(":top_laty", bounding.getTopLeft().getLatY()));
+      row.append(std::make_pair(":right_lonx", bounding.getBottomRight().getLonX()));
+      row.append(std::make_pair(":bottom_laty", bounding.getBottomRight().getLatY()));
 
       // Write start and end coordinates for this segment
-      airwayInsertStmt.bindValue(":from_lonx", newSegment.fromPos.getLonX());
-      airwayInsertStmt.bindValue(":from_laty", newSegment.fromPos.getLatY());
-      airwayInsertStmt.bindValue(":to_lonx", newSegment.toPos.getLonX());
-      airwayInsertStmt.bindValue(":to_laty", newSegment.toPos.getLatY());
+      row.append(std::make_pair(":from_lonx", newSegment.fromPos.getLonX()));
+      row.append(std::make_pair(":from_laty", newSegment.fromPos.getLatY()));
+      row.append(std::make_pair(":to_lonx", newSegment.toPos.getLonX()));
+      row.append(std::make_pair(":to_laty", newSegment.toPos.getLatY()));
 
-      airwayInsertStmt.exec();
-      numAirways += airwayInsertStmt.numRowsAffected();
+      fragment.boundValues.append(row);
+
+      seqNo++;
+      curAirwayId++;
+    }
+    fragments.append(fragment);
+
+    fragmentNum++;
+  }
+}
+
+void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
+{
+  // Erase empty segments
+  auto it = std::remove_if(fragments.begin(), fragments.end(), [ = ](const Fragment &f)->bool
+                           {
+                             return f.waypoints.size() < 2;
+                           });
+  if(it != fragments.end())
+    fragments.erase(it, fragments.end());
+
+  // Erase all segments that are contained by another
+  for(int i = 0; i < fragments.size(); i++)
+  {
+    Fragment& f1 = fragments[i];
+    for(int j = 0; j < fragments.size(); j++)
+    {
+      if(j == i)
+        continue;
+
+      Fragment& f2 = fragments[j];
+
+      if(!f2.waypoints.isEmpty() && f1.waypoints.contains(f2.waypoints))
+        f2.waypoints.clear();
     }
   }
+
+  // Remove the marked segments
+  auto it2 = std::remove_if(fragments.begin(), fragments.end(), [ = ](const Fragment &f)->bool
+                            {
+                              return f.waypoints.isEmpty();
+                            });
+  if(it2 != fragments.end())
+    fragments.erase(it2, fragments.end());
 }
 
 } // namespace writer

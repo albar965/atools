@@ -308,6 +308,18 @@ void SqlQuery::bindValue(int pos, const QVariant& val, QSql::ParamType type)
   boundValue(pos);
 }
 
+void SqlQuery::bindValues(const QVector<std::pair<QString, QVariant> >& bindValues)
+{
+  for(const std::pair<QString, QVariant>& bind : bindValues)
+    bindValue(bind.first, bind.second);
+}
+
+void SqlQuery::bindValues(const QVector<std::pair<int, QVariant> >& bindValues)
+{
+  for(const std::pair<int, QVariant>& bind : bindValues)
+    bindValue(bind.first, bind.second);
+}
+
 void SqlQuery::addBindValue(const QVariant& val, QSql::ParamType type)
 {
   query.addBindValue(val, type);

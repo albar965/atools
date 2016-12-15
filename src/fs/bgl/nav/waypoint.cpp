@@ -80,7 +80,7 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   {
     // Read airways if desired by configuration
     for(int i = 0; i < numAirways; i++)
-      airways.append(AirwaySegment(options, bs));
+      airways.append(AirwaySegment(options, bs, *this));
   }
 
   for(const AirwaySegment& re : airways)

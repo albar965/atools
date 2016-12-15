@@ -18,6 +18,7 @@
 #include "fs/bgl/nav/airwaysegment.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bgl/nav/waypoint.h"
 
 namespace atools {
 namespace fs {
@@ -45,9 +46,12 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
   return "INVALID";
 }
 
-AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
+AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs,
+                             const atools::fs::bgl::Waypoint& waypoint)
   : BglBase(options, bs)
 {
+  mid = new Waypoint(waypoint);
+
   type = static_cast<nav::AirwayType>(bs->readUByte());
   name = bs->readString(8);
 
@@ -57,6 +61,25 @@ AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, Bina
 
 AirwaySegment::~AirwaySegment()
 {
+  delete mid;
+}
+
+AirwaySegment::AirwaySegment(const atools::fs::bgl::AirwaySegment& other)
+  : BglBase(other.opts, other.bs)
+{
+  this->operator=(other);
+
+}
+
+AirwaySegment& AirwaySegment::operator=(const AirwaySegment& other)
+{
+  type = other.type;
+  name = other.name;
+
+  mid = new Waypoint(*other.mid);
+  next = other.next;
+  previous = other.previous;
+  return *this;
 }
 
 bool AirwaySegment::hasNextWaypoint() const

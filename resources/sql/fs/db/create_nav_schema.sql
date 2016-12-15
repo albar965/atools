@@ -176,9 +176,12 @@ drop table if exists airway_point;
 create table airway_point
 (
   airway_point_id integer primary key,
-  waypoint_id integer not null,
+  waypoint_id integer,
   name varchar(50) not null,        -- Airway name
   type varchar(15),                 -- see enum atools::fs::bgl::nav::AirwayType
+  mid_type varchar(15),            -- See enum atools::fs::bgl::nav::AirwayWaypointType
+  mid_ident varchar(5),            -- ICAO ident of waypoint
+  mid_region varchar(2),           -- ICAO two letter region code for waypoint
   next_type varchar(15),            -- See enum atools::fs::bgl::nav::AirwayWaypointType
   next_ident varchar(5),            -- ICAO ident of waypoint
   next_region varchar(2),           -- ICAO two letter region code for waypoint

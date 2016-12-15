@@ -55,7 +55,18 @@ public:
 private:
   static const int MAX_AIRWAY_SEGMENT_LENGTH_NM = 1000;
 
-  void writeAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway);
+  typedef std::pair<QString, QVariant> TypeRowValue;
+  typedef QVector<TypeRowValue> TypeRowValueVector;
+
+  struct Fragment
+  {
+    QSet<int> waypoints;
+    QVector<TypeRowValueVector> boundValues;
+  };
+
+  void buildAirway(const QString& airwayName, QSet<atools::fs::db::AirwayResolver::AirwaySegment>& airway,
+                   QVector<Fragment>& fragments);
+  void cleanFragments(QVector<Fragment>& fragments);
 
   atools::fs::db::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;

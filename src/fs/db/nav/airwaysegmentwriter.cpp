@@ -33,9 +33,14 @@ using atools::fs::bgl::AirwaySegment;
 void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
 {
   bind(":airway_point_id", getNextId());
-  bind(":waypoint_id", getDataWriter().getWaypointWriter()->getCurrentId());
+  bindNullInt(":waypoint_id");
   bind(":name", type->getAirwayName());
   bind(":type", AirwaySegment::airwayTypeToStr(type->getAirwayType()));
+
+  bind(":mid_ident", type->getMidWaypoint()->getIdent());
+  bind(":mid_region", type->getMidWaypoint()->getRegion());
+  bind(":mid_type", bgl::util::enumToStr(bgl::Waypoint::waypointTypeToStr,
+                                         type->getMidWaypoint()->getType()));
 
   if(type->hasNextWaypoint())
   {
