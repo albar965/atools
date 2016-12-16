@@ -418,13 +418,16 @@ public:
 
   /*
    *  Check if this is a dummy airport that comes with some elevation adjustments
-   * @return true if there are not runways, no parking, etc.
+   * @return true if there are no runways, no parking, etc.
    */
   bool isEmpty() const;
 
   static bool isNameMilitary(const QString& airportName);
 
   int calculateRating(bool isAddon) const;
+
+  virtual bool isValid() const override;
+  virtual QString getObjectName() const override;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);

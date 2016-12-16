@@ -208,6 +208,14 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
     return nullptr;
   }
 
+  if(!rec->isValid())
+  {
+    qWarning() << "Found invalid record: " << rec->getObjectName();
+    rec->seekToStart();
+    delete rec;
+    return nullptr;
+  }
+
   if(options->isVerbose())
   {
     qDebug() << "----";
@@ -230,6 +238,14 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
 
   if(rec->isExcluded())
   {
+    delete rec;
+    return nullptr;
+  }
+
+  if(!rec->isValid())
+  {
+    qWarning() << "Found invalid record: " << rec->getObjectName();
+    rec->seekToStart();
     delete rec;
     return nullptr;
   }

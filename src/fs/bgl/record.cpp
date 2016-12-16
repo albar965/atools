@@ -39,6 +39,12 @@ void Record::seekToEnd() const
   bs->seekg(startOffset + size);
 }
 
+QString Record::getObjectName() const
+{
+  return QString(" Record[offset 0x%1, id 0x%2, size %3] ").
+         arg(getStartOffset(), 0, 16).arg(id, 0, 16).arg(size);
+}
+
 QDebug operator<<(QDebug out, const Record& record)
 {
   QDebugStateSaver saver(out);

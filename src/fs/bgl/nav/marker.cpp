@@ -45,6 +45,17 @@ QString Marker::markerTypeToStr(nav::MarkerType type)
   return "INVALID";
 }
 
+bool Marker::isValid() const
+{
+  return position.getPos().isValid() && !position.getPos().isPole() && !position.getPos().isNull();
+}
+
+QString Marker::getObjectName() const
+{
+  return Record::getObjectName() + QString("marker ident %1 region %2 position %3").
+         arg(ident).arg(region).arg(position.getPos().toString());
+}
+
 Marker::Marker(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {

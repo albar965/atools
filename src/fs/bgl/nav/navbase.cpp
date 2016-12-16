@@ -47,6 +47,17 @@ NavBase::~NavBase()
 {
 }
 
+bool NavBase::isValid() const
+{
+  return position.getPos().isValid() && !position.getPos().isPole() && !position.getPos().isNull();
+}
+
+QString NavBase::getObjectName() const
+{
+  return Record::getObjectName() + QString("navaid ident %1 region %2 name %3 position %4").
+         arg(ident).arg(region).arg(name).arg(position.getPos().toString());
+}
+
 } // namespace bgl
 } // namespace fs
 } // namespace atools

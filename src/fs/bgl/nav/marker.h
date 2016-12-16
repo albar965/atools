@@ -80,6 +80,9 @@ public:
     return heading;
   }
 
+  virtual bool isValid() const override;
+  virtual QString getObjectName() const override;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Marker& record);
 

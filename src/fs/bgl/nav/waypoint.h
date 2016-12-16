@@ -124,6 +124,9 @@ public:
 
   static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
+  virtual bool isValid() const override;
+  virtual QString getObjectName() const override;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Waypoint& record);
 

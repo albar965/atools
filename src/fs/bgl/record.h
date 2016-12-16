@@ -96,6 +96,13 @@ public:
   /* Byte size that will be read by this class */
   const int SIZE = 6;
 
+  virtual bool isValid() const
+  {
+    return true;
+  }
+
+  virtual QString getObjectName() const;
+
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);
 

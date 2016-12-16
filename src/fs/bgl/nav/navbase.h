@@ -108,6 +108,9 @@ public:
     return region;
   }
 
+  virtual bool isValid() const override;
+  virtual QString getObjectName() const override;
+
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::NavBase& record);
 

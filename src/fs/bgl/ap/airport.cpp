@@ -157,7 +157,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         if(options->isIncludedBglObject(type::WAYPOINT))
         {
           r.seekToStart();
-          waypoints.append(Waypoint(options, bs));
+          Waypoint wp(options, bs);
+
+          if(wp.isValid())
+            waypoints.append(wp);
+          else
+            qWarning() << "Found invalid record: " << wp.getObjectName();
         }
         break;
       case rec::DELETE_AIRPORT:
@@ -359,9 +364,21 @@ int Airport::calculateRating(bool isAddon) const
   return rating;
 }
 
+bool Airport::isValid() const
+{
+  return !isEmpty() && position.getPos().isValid() && !position.getPos().isNull();
+}
+
+QString Airport::getObjectName() const
+{
+  return Record::getObjectName() + QString("airport ident %1 region %2 name %3 position %4").
+         arg(ident).arg(region).arg(name).arg(position.getPos().toString());
+}
+
 void Airport::updateSummaryFields()
 {
   boundingRect = atools::geo::Rect(getPosition().getPos());
+
   if(!towerPosition.getPos().isNull())
     boundingRect.extend(towerPosition.getPos());
 

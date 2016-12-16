@@ -56,6 +56,17 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   return "INVALID";
 }
 
+bool Waypoint::isValid() const
+{
+  return position.getPos().isValid() && !position.getPos().isNull();
+}
+
+QString Waypoint::getObjectName() const
+{
+  return Record::getObjectName() + QString("waypoint ident %1 region %2 position %3").
+         arg(ident).arg(region).arg(position.getPos().toString());
+}
+
 Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
