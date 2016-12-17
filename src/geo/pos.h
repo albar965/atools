@@ -204,6 +204,7 @@ public:
   const static float POS_EPSILON_5M; /* ca 5 m for lat and lon nearby equator */
   const static float POS_EPSILON_10M; /* ca 10 m for lat and lon nearby equator */
   const static float POS_EPSILON_100M; /* ca 100 m for lat and lon nearby equator */
+  const static float POS_EPSILON_1000M; /* ca 1 km for lat and lon nearby equator */
 
 private:
   const static float INVALID_ORDINATE;

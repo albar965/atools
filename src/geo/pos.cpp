@@ -34,6 +34,7 @@ const float Pos::POS_EPSILON_1M = 1.f / 60.f / 1852.216f;
 const float Pos::POS_EPSILON_5M = 1.f / 60.f / 1852.216f * 5.f;
 const float Pos::POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f;
 const float Pos::POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f;
+const float Pos::POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f;
 
 const static QString OVERFLOW_60_TEST("%1");
 const static QString OVERFLOW_60_TEST_TEXT("60");
