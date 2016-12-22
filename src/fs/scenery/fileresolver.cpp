@@ -60,7 +60,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
 
-      // get all scenery directories
+      // get all scenery directories - normally only one
       for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
       {
         QDir sceneryAreaDirObj(scenery.filePath());
@@ -68,7 +68,8 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         if(options.isIncludedDirectory(sceneryAreaDirObj.absolutePath()))
         {
           // Get all BGL files
-          for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList({"*.bgl"}, QDir::Files))
+          for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList(
+                {"*.bgl"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
           {
             QString filename = bglFile.fileName();
 

@@ -546,6 +546,25 @@ void DeleteProcessor::extractDeleteFlags()
       deleteFlags |= bgl::del::RUNWAYS;
     // qDebug() << "processDelete Made up flags" << deleteFlags;
   }
+
+  // Do not delete anything if the new airport has no corresponding features
+  if(newAirport->getApproaches().isEmpty())
+    deleteFlags &= ~bgl::del::APPROACHES;
+
+  if(newAirport->getAprons().isEmpty())
+    deleteFlags &= ~bgl::del::APRONS;
+
+  if(newAirport->getComs().isEmpty())
+    deleteFlags &= ~bgl::del::COMS;
+
+  if(newAirport->getHelipads().isEmpty())
+    deleteFlags &= ~bgl::del::HELIPADS;
+
+  if(newAirport->getTaxiPaths().isEmpty())
+    deleteFlags &= ~bgl::del::TAXIWAYS;
+
+  if(newAirport->getRunways().isEmpty())
+    deleteFlags &= ~bgl::del::RUNWAYS;
 }
 
 void DeleteProcessor::extractPreviousAirportFeatures()
