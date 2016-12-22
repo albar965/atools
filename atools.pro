@@ -190,7 +190,8 @@ HEADERS += src/atools.h \
     src/gui/widgetutil.h \
     src/fs/weather/metar.h \
     src/util/timedcache.h \
-    src/fs/weather/metarparser.h
+    src/fs/weather/metarparser.h \
+    src/util/paintercontextsaver.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -342,7 +343,8 @@ SOURCES += src/atools.cpp \
     src/fs/weather/metar.cpp \
     src/util/timedcache.cpp \
     src/fs/weather/metarparser.cpp \
-    src/fs/bgl/nav/airwaysegment.cpp
+    src/fs/bgl/nav/airwaysegment.cpp \
+    src/util/paintercontextsaver.cpp
 
 
 unix {
