@@ -37,12 +37,8 @@ IniReader::~IniReader()
 
 void IniReader::handleComment()
 {
-  int c = currentLine.indexOf('#');
-  if(c == 0)
-    currentLine.truncate(c);
-
-  c = currentLine.indexOf(';');
-  if(c == 0)
+  int c = currentLine.indexOf(';');
+  if(c >= 0)
     currentLine.truncate(c);
 }
 
