@@ -1,3 +1,27 @@
+Version 2.2.1.beta
+
+* Fixed problem of wrong elevation adjustments overwriting add-on airport.
+* BGL files are now read ordered by name to get more determinstic behavior.
+* Only line comments are allowed now in ini files and scenery.cfg to avoid problems with
+  filenames containing "#". Behavior is now equal to flight simulator.
+
+Version 2.2.0.beta
+
+* Navaids with invalid coordinates are now filtered out by BGL reader.
+* Queries for deleting duplicates now work properly also considering distance.
+* Added more indexes.
+* Duplicate airways are now removed before writing them to the database.
+* Reduced logging.
+* Fixes to approach and ils handling in delete record.
+* Fixed old error that caused fragmented airways.
+* Fixed loading problems for FSAD data.
+* Added support for online help in HelpHandler.
+* Added METAR parser.
+* Support for AI and weather requests added in SimConnect data.
+* Major cleanup and fixes in SimConnect code.
+* SimConnect can now be compiled as a dummy.
+* Fixed error on too small BGL files. (#51)
+
 Version 2.0.5 - Stable Release
 
 * Fixed scenery loading error for airports without city names.
