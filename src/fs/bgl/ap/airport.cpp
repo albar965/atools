@@ -270,7 +270,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << t << dec
-                                       << " for ident " << ident << "subrecord index" << subrecordIndex;
+                                       << " for ident " << ident << " subrecord index " << subrecordIndex;
         if(subrecordIndex == 0)
         {
           // Stop reading when the first subrecord is already invalid

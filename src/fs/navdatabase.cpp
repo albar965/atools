@@ -282,7 +282,7 @@ void NavDatabase::createInternal()
   if((aborted = progress.reportOther(tr("Clean up"))) == true)
     return;
 
-  // Delete duplicates before any foreign keys are added
+  // Delete duplicates before any foreign keys ids are assigned
   script.executeScript(":/atools/resources/sql/fs/db/delete_duplicates.sql");
   db->commit();
 

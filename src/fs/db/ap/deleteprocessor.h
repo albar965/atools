@@ -67,7 +67,6 @@ private:
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
   void removeRunways();
-  void updateRunways();
   void removeAirport();
 
   QString updateAptFeatureStmt(const QString& table);
@@ -81,6 +80,8 @@ private:
   void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
   void bindAndExecute(const QString& sql, const QString& msg);
   QString copyFeatureStmt(const QString& table, const QString& column);
+  void extractPreviousAirportFeatures();
+  void copyAirportValues(const QStringList& copyAirportColumns);
 
   const atools::fs::NavDatabaseOptions& options;
 
@@ -93,7 +94,6 @@ private:
   *fetchRunwayEndIdStmt = nullptr,
   *updateApprochRwIds = nullptr,
   *deleteRunwayEndStmt = nullptr,
-  *deleteIlsStmt = nullptr,
   *delWpStmt = nullptr,
   *updateVorStmt = nullptr,
   *updateNdbStmt = nullptr,
@@ -119,8 +119,6 @@ private:
        hasRunways = false, isAddon = false;
   int previousRating = 0;
   bool hasPrevious = false;
-
-  void extractPreviousAirportFeatures();
 
 };
 

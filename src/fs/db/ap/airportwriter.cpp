@@ -250,20 +250,23 @@ void AirportWriter::writeObject(const Airport *type)
 
   DeleteAirportWriter *deleteAirportWriter = dw.getDeleteAirportWriter();
 
-  if(!type->getDeleteAirports().isEmpty())
+  if(getOptions().isDeletes())
   {
-    for(const DeleteAirport& delAp : type->getDeleteAirports())
+    if(!type->getDeleteAirports().isEmpty())
     {
-      // Write metadata for delete record
-      deleteAirportWriter->writeOne(delAp);
+      for(const DeleteAirport& delAp : type->getDeleteAirports())
+      {
+        // Write metadata for delete record
+        deleteAirportWriter->writeOne(delAp);
 
-      if(getOptions().isDeletes())
-        // Now delete the stock/default airport
-        deleteProcessor.postProcessDelete();
+        if(getOptions().isDeletes())
+          // Now delete the stock/default airport
+          deleteProcessor.postProcessDelete();
+      }
     }
+    else if(isRealAddon)
+      deleteProcessor.postProcessDelete();
   }
-  else if(isRealAddon)
-    deleteProcessor.postProcessDelete();
 }
 
 } // namespace writer
