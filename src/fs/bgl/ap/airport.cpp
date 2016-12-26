@@ -98,9 +98,9 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
-    rec::AirportRecordType t = r.getId<rec::AirportRecordType>();
+    rec::AirportRecordType type = r.getId<rec::AirportRecordType>();
 
-    switch(t)
+    switch(type)
     {
       case rec::NAME:
         name = bs->readString(r.getSize() - Record::SIZE);
@@ -137,7 +137,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
           int numParkings = bs->readUShort();
           for(int i = 0; i < numParkings; i++)
           {
-            Parking p(bs, t);
+            Parking p(bs, type);
 
             // Remove vehicle parking later to avoid index mess-up
 
@@ -269,8 +269,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::UNKNOWN_REC:
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << t << dec
-                                       << " for ident " << ident << " subrecord index " << subrecordIndex;
+        qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << type << dec
+                                       << getObjectName();
         if(subrecordIndex == 0)
         {
           // Stop reading when the first subrecord is already invalid
@@ -303,6 +303,9 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
   if(!options->isIncludedBglObject(type::VEHICLE))
     removeVehicleParking();
+
+  if(deleteAirports.size() > 1)
+    qWarning() << "Found more than one delete record in" << getObjectName();
 
   // TODO create warnings for this
   // Q_ASSERT(runways.size() == numRunways);

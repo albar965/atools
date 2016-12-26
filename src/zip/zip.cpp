@@ -661,7 +661,7 @@ void ZipReaderPrivate::scanFiles()
   comment = device->read(qMin(comment_length, i));
 
   device->seek(start_of_directory);
-  for(i = 0; i < num_dir_entries; ++i)
+  for(i = 0; i < num_dir_entries; i++)
   {
     FileHeader header;
     int read = device->read((char *)&header.h, sizeof(CentralFileHeader));
@@ -979,7 +979,7 @@ QList<ZipReader::FileInfo> ZipReader::fileInfoList() const
 {
   d->scanFiles();
   QList<ZipReader::FileInfo> files;
-  for(int i = 0; i < d->fileHeaders.size(); ++i)
+  for(int i = 0; i < d->fileHeaders.size(); i++)
   {
     ZipReader::FileInfo fi;
     d->fillFileInfo(i, fi);
@@ -1021,7 +1021,7 @@ QByteArray ZipReader::fileData(const QString& fileName) const
 {
   d->scanFiles();
   int i;
-  for(i = 0; i < d->fileHeaders.size(); ++i)
+  for(i = 0; i < d->fileHeaders.size(); i++)
   {
     if(QString::fromLocal8Bit(d->fileHeaders.at(i).file_name) == fileName)
       break;
@@ -1448,7 +1448,7 @@ void ZipWriter::close()
   // qDebug("Zip::close writing directory, %d entries", d->fileHeaders.size());
   d->device->seek(d->start_of_directory);
   // write new directory
-  for(int i = 0; i < d->fileHeaders.size(); ++i)
+  for(int i = 0; i < d->fileHeaders.size(); i++)
   {
     const FileHeader& header = d->fileHeaders.at(i);
     d->device->write((const char *)&header.h, sizeof(CentralFileHeader));

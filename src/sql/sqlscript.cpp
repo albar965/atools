@@ -64,7 +64,44 @@ void SqlScript::executeScript(QTextStream& script)
       qDebug().nospace() << cmd.lineNumber << ": " << QString(cmd.sql).replace('\n', ' ');
     query.exec(cmd.sql);
     if(verbose)
+    {
       qDebug().nospace() << "[" << query.numRowsAffected() << "]";
+
+      if(query.isSelect())
+      {
+        int row = 0;
+        while(query.next())
+        {
+          QStringList rowValues, rowHeader;
+          SqlRecord rec = query.record();
+
+          if(row == 0)
+          {
+            for(int i = 0; i < rec.count(); i++)
+              rowHeader += rec.fieldName(i);
+            qDebug().noquote().nospace() << rowHeader.join(";");
+          }
+
+          for(int i = 0; i < rec.count(); i++)
+          {
+            QVariant val = rec.value(i);
+            if(val.type() == QVariant::String)
+              rowValues += "\"" + val.toString() + "\"";
+            else
+              rowValues += val.toString();
+          }
+
+          qDebug().noquote().nospace() << rowValues.join(";");
+          row++;
+
+          if(row > 500)
+          {
+            qDebug() << "more ...";
+            break;
+          }
+        }
+      }
+    }
   }
 
   if(verbose)

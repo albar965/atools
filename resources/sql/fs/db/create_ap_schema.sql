@@ -71,18 +71,19 @@ create table airport
   num_taxi_path integer not null,
   num_helipad integer not null,
   num_jetway integer not null,               -- Number of parking spots that have jetways attached
+  num_starts integer not null,               -- Number of start positions
 
   longest_runway_length integer not null,    -- Feet
   longest_runway_width integer not null,     -- Feet
   longest_runway_heading double not null,    -- Heading of primary end in degrees true
-  longest_runway_surface varchar(15), -- see enum atools::fs::bgl::rw::Surface
+  longest_runway_surface varchar(15),        -- see enum atools::fs::bgl::rw::Surface
   num_runways integer not null,
-  largest_parking_ramp varchar(20),            -- see enum atools::fs::bgl::ap::ParkingType
-  largest_parking_gate varchar(20),            -- see enum atools::fs::bgl::ap::ParkingType
+  largest_parking_ramp varchar(20),          -- see enum atools::fs::bgl::ap::ParkingType
+  largest_parking_gate varchar(20),          -- see enum atools::fs::bgl::ap::ParkingType
 
-  rating integer not null,                     -- 0-5. An airport gets a point for having
-                                               -- taxi paths, parking, aprons, tower object.
-                                               -- An additional point is give for add-on airports
+  rating integer not null,                   -- 0-5. An airport gets a point for having
+                                             -- taxi paths, parking, aprons, tower object.
+                                             -- An additional point is give for add-on airports
 
   scenery_local_path varchar(250) collate nocase not null, -- Path of the BGL relative to the FS base directory
   bgl_filename varchar(300) collate nocase not null,       -- BGL filename
@@ -103,6 +104,21 @@ foreign key(file_id) references bgl_file(bgl_file_id)
 );
 
 create index if not exists idx_airport_file_id on airport(file_id);
+create index if not exists idx_airport_ident on airport(ident);
+
+-- **************************************************
+
+drop table if exists airport_file;
+
+-- Connects airport idents to filenames - this will remain intact event if airports are
+-- removed by delete records
+create table airport_file
+(
+  airport_file_id integer primary key,
+  file_id integer not null,                   -- BGL file id
+  ident varchar(4) not null,                  -- ICAO ident
+foreign key(file_id) references bgl_file(bgl_file_id)
+);
 create index if not exists idx_airport_ident on airport(ident);
 
 -- **************************************************

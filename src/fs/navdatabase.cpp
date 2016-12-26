@@ -39,6 +39,7 @@ namespace fs {
 const int PROGRESS_NUM_STEPS = 18;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
+const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -226,6 +227,9 @@ void NavDatabase::createInternal()
   if(options->isResolveAirways())
     total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS;
 
+  if(options->isDeduplicate())
+    total += PROGRESS_NUM_DEDUPLICATE_STEPS;
+
   int numRouteSteps = total / 4;
   if(options->isCreateRouteTables())
     total += numRouteSteps;
@@ -279,12 +283,15 @@ void NavDatabase::createInternal()
   script.executeScript(":/atools/resources/sql/fs/db/create_indexes_post_load.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Clean up"))) == true)
-    return;
+  if(options->isDeduplicate())
+  {
+    if((aborted = progress.reportOther(tr("Clean up"))) == true)
+      return;
 
-  // Delete duplicates before any foreign keys ids are assigned
-  script.executeScript(":/atools/resources/sql/fs/db/delete_duplicates.sql");
-  db->commit();
+    // Delete duplicates before any foreign keys ids are assigned
+    script.executeScript(":/atools/resources/sql/fs/db/delete_duplicates.sql");
+    db->commit();
+  }
 
   if(options->isResolveAirways())
   {

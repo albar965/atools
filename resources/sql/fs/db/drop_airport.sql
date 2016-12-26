@@ -25,5 +25,6 @@
 drop table if exists runway;
 drop table if exists runway_end;
 drop table if exists airport;
+drop table if exists airport_file;
 drop table if exists airport_medium;
 drop table if exists airport_large;

@@ -15,46 +15,37 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/record.h"
-#include "io/binarystream.h"
+#ifndef ATOOLS_FS_DB_AIRPORTFILEWRITER_H
+#define ATOOLS_FS_DB_AIRPORTFILEWRITER_H
+
+#include "fs/db/writerbase.h"
+#include "fs/bgl/ap/airport.h"
+#include "fs/db/datawriter.h"
 
 namespace atools {
 namespace fs {
-namespace bgl {
-using atools::io::BinaryStream;
+namespace db {
 
-Record::Record(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+class AirportFileWriter :
+  public atools::fs::db::WriterBase<atools::fs::bgl::Airport>
 {
-  id = bs->readUShort();
-  size = bs->readUInt();
-}
+public:
+  AirportFileWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "airport_file")
+  {
+  }
 
-Record::~Record()
-{
-}
+  virtual ~AirportFileWriter()
+  {
+  }
 
-void Record::seekToEnd() const
-{
-  bs->seekg(startOffset + size);
-}
+private:
+  virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
-QString Record::getObjectName() const
-{
-  return QString(" Record[offset 0x%1, id 0x%2, size %3] ").
-         arg(getStartOffset(), 0, 16).arg(id, 0, 16).arg(size);
-}
+};
 
-QDebug operator<<(QDebug out, const Record& record)
-{
-  QDebugStateSaver saver(out);
-
-  out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << hex << " Record[id 0x" << record.id << dec
-  << ", size " << record.size << "]";
-  return out;
-}
-
-} // namespace bgl
+} // namespace db
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_FS_DB_AIRPORTFILEWRITER_H

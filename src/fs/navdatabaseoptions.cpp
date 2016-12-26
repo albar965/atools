@@ -184,6 +184,7 @@ void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
   setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
+  setDeduplicate(settings.value("Options/Deduplicate", true).toBool());
   setFilterOutDummyRunways(settings.value("Options/FilterRunways", true).toBool());
   setWriteIncompleteObjects(settings.value("Options/SaveIncomplete", true).toBool());
   setAutocommit(settings.value("Options/Autocommit", false).toBool());
@@ -280,6 +281,7 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   << ", sceneryFile \"" << opts.sceneryFile
   << "\", basepath \"" << opts.basepath
   << "\", deletes " << opts.deletes
+  << "\", deduplicate " << opts.deduplicate
   << ", incomplete " << opts.incomplete
   << ", debugAutocommit " << opts.autocommit;
 

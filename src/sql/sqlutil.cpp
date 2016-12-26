@@ -43,7 +43,7 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
 
   SqlRecord record = db->record(tablename);
 
-  for(int i = 0; i < record.count(); ++i)
+  for(int i = 0; i < record.count(); i++)
   {
     QString name = record.fieldName(i);
 
@@ -68,7 +68,7 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
 
   SqlRecord record = db->record(tablename);
 
-  for(int i = 0; i < record.count(); ++i)
+  for(int i = 0; i < record.count(); i++)
   {
     QString name = record.fieldName(i);
 
@@ -108,7 +108,7 @@ void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
 {
   SqlRecord fromRec = from.record();
 
-  for(int i = 0; i < fromRec.count(); ++i)
+  for(int i = 0; i < fromRec.count(); i++)
     to.bindValue(i, from.value(i));
 }
 
@@ -188,7 +188,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
       {
         SqlRecord record = db->record(name);
 
-        for(int i = 0; i < record.count(); ++i)
+        for(int i = 0; i < record.count(); i++)
         {
           QString col = record.fieldName(i);
           q.exec("select count(distinct " + col + ") as cnt from " + name);

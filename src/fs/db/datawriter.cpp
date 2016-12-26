@@ -29,6 +29,7 @@
 #include "fs/db/nav/ilswriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/ap/airportwriter.h"
+#include "fs/db/ap/airportfilewriter.h"
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db/ap/rw/runwayendwriter.h"
 #include "fs/db/runwayindex.h"
@@ -77,6 +78,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Progr
   bglFileWriter = new BglFileWriter(db, *this);
   sceneryAreaWriter = new SceneryAreaWriter(db, *this);
   airportWriter = new AirportWriter(db, *this);
+  airportFileWriter = new AirportFileWriter(db, *this);
   runwayWriter = new RunwayWriter(db, *this);
   runwayEndWriter = new RunwayEndWriter(db, *this);
   approachWriter = new ApproachWriter(db, *this);
@@ -111,6 +113,7 @@ DataWriter::~DataWriter()
   delete bglFileWriter;
   delete sceneryAreaWriter;
   delete airportWriter;
+  delete airportFileWriter;
   delete runwayWriter;
   delete runwayEndWriter;
   delete approachWriter;
@@ -200,6 +203,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           // Write airport and all subrecords like runways, approaches, parking and so on
           airportWriter->write(bglFile.getAirports());
+          airportFileWriter->write(bglFile.getAirports());
 
           // Write all navaids to the database
           waypointWriter->write(bglFile.getWaypoints());

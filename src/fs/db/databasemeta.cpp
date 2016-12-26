@@ -43,6 +43,7 @@ DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
       lastLoadTime = query.value("last_load_timestamp").toDateTime();
       valid = true;
     }
+    query.finish();
   }
 }
 

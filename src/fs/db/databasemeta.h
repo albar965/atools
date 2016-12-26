@@ -96,7 +96,7 @@ public:
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change
    */
-  static const int DB_VERSION_MAJOR = 7;
+  static const int DB_VERSION_MAJOR = 8;
 
   /* Minor database version of the application. Minor version differences are compatible.
    */

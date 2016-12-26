@@ -23,10 +23,10 @@
 #include "fs/db/ap/deleteprocessor.h"
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/bgl/nl/namelist.h"
+#include "fs/db/datawriter.h"
 
 #include <QHash>
 
-#include <fs/db/datawriter.h>
 
 namespace atools {
 namespace fs {

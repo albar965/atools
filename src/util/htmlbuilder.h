@@ -41,6 +41,7 @@ enum Flag
   BIG = 0x0080,
   NOBR = 0x0100,
   LINK_NO_UL = 0x0200, // Do not underline links
+  NO_ENTITIES = 0x0400, // Do not convert entities
   ALIGN_RIGHT = 0x1000 // Only for table data
 };
 
@@ -170,15 +171,15 @@ public:
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
    * Text background may alternate depending on configuration */
   HtmlBuilder& row2(const QString& name, const QString& value = QString(),
-                    html::Flags flags = html::BOLD, QColor color = QColor());
+                    html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, float value, int precision = -1,
-                    html::Flags flags = html::BOLD, QColor color = QColor());
+                    html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, double value, int precision = -1,
-                    html::Flags flags = html::BOLD, QColor color = QColor());
+                    html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, int value,
-                    html::Flags flags = html::BOLD, QColor color = QColor());
+                    html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2Var(const QString& name, const QVariant& value,
-                       html::Flags flags = html::BOLD, QColor color = QColor());
+                       html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor = QColor());

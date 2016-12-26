@@ -118,6 +118,14 @@ public:
   }
 
   /*
+   * Set to true to delete duplicates. Default is true.
+   */
+  void setDeduplicate(bool value)
+  {
+    deduplicate = value;
+  }
+
+  /*
    * True: create a final report on database content. Default is false.
    */
   void setDatabaseReport(bool value)
@@ -187,6 +195,11 @@ public:
   bool isDeletes() const
   {
     return deletes;
+  }
+
+  bool isDeduplicate() const
+  {
+    return deduplicate;
   }
 
   bool isFilterRunways() const
@@ -266,8 +279,8 @@ private:
   QStringList createFilterList(const QStringList& pathList);
 
   QString sceneryFile, basepath;
-  bool verbose = false, deletes = true, filterRunways = true, incomplete = true, autocommit = false,
-       resolveAirways = true, createRouteTables = true, databaseReport = false;
+  bool verbose = false, deletes = true, deduplicate = true, filterRunways = true, incomplete = true,
+       autocommit = false, resolveAirways = true, createRouteTables = true, databaseReport = false;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,

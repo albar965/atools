@@ -15,46 +15,25 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/record.h"
-#include "io/binarystream.h"
+#include "fs/db/ap/airportfilewriter.h"
+#include "fs/db/meta/bglfilewriter.h"
 
 namespace atools {
 namespace fs {
-namespace bgl {
-using atools::io::BinaryStream;
+namespace db {
 
-Record::Record(const NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs)
+void atools::fs::db::AirportFileWriter::writeObject(const atools::fs::bgl::Airport *type)
 {
-  id = bs->readUShort();
-  size = bs->readUInt();
+  if(getOptions().isVerbose())
+    qDebug() << "Writing airport file " << type->getIdent();
+
+  bind(":airport_file_id", getNextId());
+  bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
+  bind(":ident", type->getIdent());
+
+  executeStatement();
 }
 
-Record::~Record()
-{
-}
-
-void Record::seekToEnd() const
-{
-  bs->seekg(startOffset + size);
-}
-
-QString Record::getObjectName() const
-{
-  return QString(" Record[offset 0x%1, id 0x%2, size %3] ").
-         arg(getStartOffset(), 0, 16).arg(id, 0, 16).arg(size);
-}
-
-QDebug operator<<(QDebug out, const Record& record)
-{
-  QDebugStateSaver saver(out);
-
-  out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << hex << " Record[id 0x" << record.id << dec
-  << ", size " << record.size << "]";
-  return out;
-}
-
-} // namespace bgl
+} // namespace db
 } // namespace fs
 } // namespace atools

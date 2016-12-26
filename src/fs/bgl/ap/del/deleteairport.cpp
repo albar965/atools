@@ -59,7 +59,7 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
 DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  flags = static_cast<del::DeleteAllFlags>(bs->readShort());
+  flags = static_cast<del::DeleteAllFlags>(bs->readUShort());
   numRunways = bs->readUByte();
   numStarts = bs->readUByte();
   numFrequencies = bs->readUByte();

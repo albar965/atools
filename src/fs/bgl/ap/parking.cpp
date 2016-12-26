@@ -238,7 +238,7 @@ Parking::Parking(BinaryStream *bs, rec::AirportRecordType rectype)
 
   position = BglPosition(bs);
 
-  for(int i = 0; i < numAirlineCodes; ++i)
+  for(int i = 0; i < numAirlineCodes; i++)
     airlineCodes.append(bs->readString(4));
 }
 

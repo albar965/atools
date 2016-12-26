@@ -394,7 +394,7 @@ void SqlQuery::checkError(bool retval, const QString& msg) const
 
       QString boundValues = boundValuesAsString();
       if(!boundValues.isEmpty())
-        msg2 += " Bound values are " + boundValues + ".";
+        msg2 += " Bound values are [" + boundValues + "]";
 
       throw SqlException(query.lastError(), msg, msg2);
     }

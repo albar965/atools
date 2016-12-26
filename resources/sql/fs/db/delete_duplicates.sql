@@ -24,6 +24,13 @@
 -- The manhattan distance using deg is sufficient for a crude distance estimation
 -- *************************************************************
 
+-- Delete duplicate airports with the lowest id
+select airport_id, ident, name, scenery_local_path, bgl_filename from airport
+where airport_id not in (select max(airport_id) from airport group by ident);
+
+delete from airport
+where airport_id not in (select max(airport_id) from airport group by ident);
+
 -- Delete duplicate NDBs
 delete from ndb where ndb_id in (
 select distinct w1.ndb_id
@@ -31,7 +38,7 @@ from ndb w1
 join ndb w2 on w1.ident = w2.ident and  w1.frequency = w2.frequency and  w1.region = w2.region
 where
 w1.ndb_id < w2.ndb_id and
-(abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.01);
+(abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.1);
 
 -- Delete duplicate VORs
 delete from vor where vor_id in (
@@ -42,7 +49,7 @@ join vor w2 on w1.ident = w2.ident and  w1.frequency = w2.frequency and
  (w1.dme_altitude is null) = (w2.dme_altitude is null)
 where
 w1.vor_id < w2.vor_id and
-(abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.01);
+(abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.1);
 
 -- Delete duplicate markers
 delete from marker where marker_id in (

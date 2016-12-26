@@ -58,12 +58,24 @@ public:
    * @param airport airport record that will replace all other airports
    * @param currentAirportId database ID of the airport that will replace all other airports
    */
-  void preProcessDelete(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
-                        const atools::fs::bgl::Airport *airport, int airportId);
+  void preProcessDelete();
   void postProcessDelete();
 
+  void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
+            const atools::fs::bgl::Airport *airport, int airportId);
+
+  const QString& getBglFilename() const
+  {
+    return bglFilename;
+  }
+
+  const QString& getSceneryLocalPath() const
+  {
+    return sceneryLocalPath;
+  }
+
 private:
-  void executeStatement(sql::SqlQuery *stmt, const QString& what);
+  int executeStatement(sql::SqlQuery *stmt, const QString& what);
   void fetchIds(sql::SqlQuery *stmt, QList<int>& ids, const QString& what);
 
   void removeRunways();
@@ -77,9 +89,8 @@ private:
   void removeApproachesAndTransitions(const QList<int>& ids);
   void extractDeleteFlags();
 
-  void bindAndExecute(sql::SqlQuery *delQuery, const QString& msg);
-  void bindAndExecute(const QString& sql, const QString& msg);
-  QString copyFeatureStmt(const QString& table, const QString& column);
+  int bindAndExecute(sql::SqlQuery *query, const QString& msg);
+  int bindAndExecute(const QString& sql, const QString& msg);
   void extractPreviousAirportFeatures();
   void copyAirportValues(const QStringList& copyAirportColumns);
 
@@ -112,13 +123,14 @@ private:
   atools::fs::bgl::del::DeleteAllFlags deleteFlags = atools::fs::bgl::del::NONE;
   const atools::fs::bgl::Airport *newAirport = nullptr;
   int currentAirportId = 0;
-  QString ident;
+  QString ident, bglFilename, sceneryLocalPath;
   atools::sql::SqlDatabase *db = nullptr;
 
-  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false, hasTaxi = false,
-       hasRunways = false, isAddon = false;
+  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false,
+       hasTaxi = false, hasStart = false, hasRunways = false, isAddon = false;
   int previousRating = 0;
   bool hasPrevious = false;
+  int prevAirportId = 0;
 
 };
 

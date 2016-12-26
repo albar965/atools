@@ -24,7 +24,7 @@ namespace sql {
 QString SqlExport::getResultSetHeader(const SqlRecord& record) const
 {
   QStringList retval;
-  for(int i = 0; i < record.count(); ++i)
+  for(int i = 0; i < record.count(); i++)
     retval.append(record.fieldName(i));
   return getResultSetHeader(retval);
 }
@@ -32,7 +32,7 @@ QString SqlExport::getResultSetHeader(const SqlRecord& record) const
 QString SqlExport::getResultSetHeader(const QStringList& strings) const
 {
   QString retval;
-  for(int i = 0; i < strings.count(); ++i)
+  for(int i = 0; i < strings.count(); i++)
   {
     QString type = strings.at(i);
     if(i > 0)
@@ -50,7 +50,7 @@ QString SqlExport::getResultSetHeader(const QStringList& strings) const
 QString SqlExport::getResultSetRow(const SqlRecord& record) const
 {
   QVariantList values;
-  for(int i = 0; i < record.count(); ++i)
+  for(int i = 0; i < record.count(); i++)
     values.append(record.value(i));
   return getResultSetRow(values);
 }
@@ -59,7 +59,7 @@ QString SqlExport::getResultSetRow(const QVariantList& values) const
 {
   QString retval;
 
-  for(int i = 0; i < values.size(); ++i)
+  for(int i = 0; i < values.size(); i++)
   {
     if(i > 0)
       retval += separator;

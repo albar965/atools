@@ -89,17 +89,27 @@ void AirportWriter::writeObject(const Airport *type)
 
   int nextAirportId = getNextId();
 
+  const DeleteAirport *delAp = nullptr;
+  if(!type->getDeleteAirports().isEmpty())
+    delAp = &type->getDeleteAirports().first();
+
+  deleteProcessor.init(delAp, type, getCurrentId());
+
   if(getOptions().isDeletes())
   {
-    if(!type->getDeleteAirports().isEmpty())
-    {
-      for(const DeleteAirport& delAp : type->getDeleteAirports())
-        // Now delete the stock/default airport
-        deleteProcessor.preProcessDelete(&delAp, type, getCurrentId());
-    }
-    else if(isRealAddon)
-      deleteProcessor.preProcessDelete(nullptr, type, getCurrentId());
+    if(delAp != nullptr || isRealAddon)
+      // Now delete the stock/default airport
+      deleteProcessor.preProcessDelete();
   }
+
+  QStringList sceneryLocalPaths, bglFilenames;
+  if(!deleteProcessor.getSceneryLocalPath().isEmpty())
+    sceneryLocalPaths.append(deleteProcessor.getSceneryLocalPath());
+  if(!deleteProcessor.getBglFilename().isEmpty())
+    bglFilenames.append(deleteProcessor.getBglFilename());
+
+  sceneryLocalPaths.append(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+  bglFilenames.append(bglFileWriter->getCurrentFilename());
 
   // Get and write country, state and city
   bindNullString(":country");
@@ -166,6 +176,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_taxi_path", type->getTaxiPaths().size());
   bind(":num_helipad", type->getHelipads().size());
   bind(":num_jetway", type->getNumJetway());
+  bind(":num_starts", type->getStarts().size());
   bindNullInt(":num_runway_end_ils"); // Will be set later by SQL script "update_ils_ids.sql"
 
   bind(":longest_runway_length", roundToInt(meterToFeet(type->getLongestRunwayLength())));
@@ -182,8 +193,8 @@ void AirportWriter::writeObject(const Airport *type)
 
   bind(":rating", type->calculateRating(isAddon));
 
-  bind(":scenery_local_path", dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
-  bind(":bgl_filename", bglFileWriter->getCurrentFilename());
+  bind(":scenery_local_path", sceneryLocalPaths.join(", "));
+  bind(":bgl_filename", bglFilenames.join(", "));
 
   bind(":left_lonx", type->getBoundingRect().getTopLeft().getLonX());
   bind(":top_laty", type->getBoundingRect().getTopLeft().getLatY());
@@ -248,21 +259,16 @@ void AirportWriter::writeObject(const Airport *type)
   TaxiPathWriter *taxiWriter = dw.getTaxiPathWriter();
   taxiWriter->write(type->getTaxiPaths());
 
-  DeleteAirportWriter *deleteAirportWriter = dw.getDeleteAirportWriter();
-
   if(getOptions().isDeletes())
   {
-    if(!type->getDeleteAirports().isEmpty())
+    if(delAp != nullptr)
     {
-      for(const DeleteAirport& delAp : type->getDeleteAirports())
-      {
-        // Write metadata for delete record
-        deleteAirportWriter->writeOne(delAp);
+      // Write metadata for delete record
+      dw.getDeleteAirportWriter()->writeOne(delAp);
 
-        if(getOptions().isDeletes())
-          // Now delete the stock/default airport
-          deleteProcessor.postProcessDelete();
-      }
+      if(getOptions().isDeletes())
+        // Now delete the stock/default airport
+        deleteProcessor.postProcessDelete();
     }
     else if(isRealAddon)
       deleteProcessor.postProcessDelete();

@@ -75,7 +75,7 @@ public:
    */
   int getSize() const
   {
-    return size;
+    return static_cast<int>(size);
   }
 
   /* Get the record id casted into an enum */
@@ -106,7 +106,7 @@ public:
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);
 
-  int id, size;
+  unsigned int id, size;
   bool excluded = false;
 };
 

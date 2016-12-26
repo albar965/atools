@@ -141,7 +141,8 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-              arg(asText(name, flags, color), value);
+              arg(asText(name, flags | atools::util::html::BOLD, color)).
+              arg(asText(value, flags, color));
   tableIndex++;
   numLines++;
   return *this;
@@ -150,32 +151,20 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
 HtmlBuilder& HtmlBuilder::row2(const QString& name, float value, int precision, html::Flags flags,
                                QColor color)
 {
-  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-              arg(asText(name, flags, color),
-                  locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
-  tableIndex++;
-  numLines++;
-  return *this;
+  return row2(name, locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision),
+              flags, color);
 }
 
 HtmlBuilder& HtmlBuilder::row2(const QString& name, double value, int precision, html::Flags flags,
                                QColor color)
 {
-  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-              arg(asText(name, flags, color),
-                  locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision));
-  tableIndex++;
-  numLines++;
-  return *this;
+  return row2(name, locale.toString(value, 'f', precision != -1 ? precision : defaultPrecision),
+              flags, color);
 }
 
 HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags, QColor color)
 {
-  htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-              arg(asText(name, flags, color), locale.toString(value));
-  tableIndex++;
-  numLines++;
-  return *this;
+  return row2(name, locale.toString(value), flags, color);
 }
 
 HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
@@ -524,7 +513,10 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
     suffix.prepend("</span>");
   }
 
-  return prefix + toEntities(str.toHtmlEscaped()) + suffix;
+  if(flags & html::NO_ENTITIES)
+    return prefix + str + suffix;
+  else
+    return prefix + toEntities(str.toHtmlEscaped()) + suffix;
 }
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)

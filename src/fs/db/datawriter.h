@@ -40,6 +40,7 @@ namespace db {
 class BglFileWriter;
 class SceneryAreaWriter;
 class AirportWriter;
+class AirportFileWriter;
 class RunwayWriter;
 class RunwayEndWriter;
 class ApproachWriter;
@@ -255,6 +256,7 @@ private:
   atools::fs::db::SceneryAreaWriter *sceneryAreaWriter = nullptr;
 
   atools::fs::db::AirportWriter *airportWriter = nullptr;
+  atools::fs::db::AirportFileWriter *airportFileWriter = nullptr;
   atools::fs::db::RunwayWriter *runwayWriter = nullptr;
   atools::fs::db::RunwayEndWriter *runwayEndWriter = nullptr;
 
