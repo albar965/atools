@@ -45,6 +45,7 @@ bool SimConnectData::read(QIODevice *ioDevice)
 
   QDataStream in(ioDevice);
   in.setVersion(QDataStream::Qt_5_5);
+  in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   if(magicNumber == 0)
   {
@@ -128,6 +129,7 @@ int SimConnectData::write(QIODevice *ioDevice)
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_5);
+  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
 

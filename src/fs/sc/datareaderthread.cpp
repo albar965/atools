@@ -241,6 +241,7 @@ void DataReaderThread::setupReplay()
       {
         QDataStream in(loadReplayFile);
         in.setVersion(QDataStream::Qt_5_5);
+        in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
         quint32 magicNumber, version;
 

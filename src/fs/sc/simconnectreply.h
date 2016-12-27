@@ -132,7 +132,7 @@ public:
 
 private:
   const static quint32 MAGIC_NUMBER_REPLY = 0x33ED8272;
-  const static quint32 REPLY_VERSION = 4;
+  const static quint32 REPLY_VERSION = 5;
 
   quint32 packetId = 0, packetTs = 0;
   atools::fs::sc::SimConnectStatus status = OK;
