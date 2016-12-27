@@ -20,6 +20,8 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 
+#include <QDataStream>
+
 namespace atools {
 namespace fs {
 namespace db {
@@ -80,14 +82,17 @@ void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& 
 }
 
 void WriterBaseBasic::bindCoordinateList(const QString& placeholder,
-                                         const QList<bgl::BglPosition>& coordinates,
-                                         int precision)
+                                         const QList<bgl::BglPosition>& coordinates)
 {
-  QStringList list;
+  QByteArray blob;
+  QDataStream out(&blob, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_5);
+  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+  out << static_cast<quint32>(coordinates.size());
   for(const bgl::BglPosition& pos : coordinates)
-    list.append(QString::number(pos.getLonX(), 'g', precision) + " " +
-                QString::number(pos.getLatY(), 'g', precision));
-  bind(placeholder, list.join(", "));
+    out << pos.getLonX() << pos.getLatY();
+  bind(placeholder, blob);
 }
 
 void WriterBaseBasic::bindNullInt(const QString& placeholder)

@@ -268,10 +268,10 @@ create table apron
   surface varchar(15),              -- see enum atools::fs::bgl::rw::Surface
   is_draw_surface integer not null, -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,  -- Draw FS detail texture
-  vertices text,                    -- Space and comma separated coordinate list of the apron
+  vertices blob,                    -- Space and comma separated coordinate list of the apron
                                     -- boundary (lon1 lat1, lon2 lat2, ...)
-  vertices2 text,                   -- Apron triangle vertices
-  triangles text,                   -- Apron triangle vertex references - space and comma separated
+  vertices2 blob,                   -- Apron triangle vertices
+  triangles blob,                   -- Apron triangle vertex references - space and comma separated
                                     -- vertex index for vertices2 (i1 i2 i3, i2 i3 i4, ...)
 foreign key(airport_id) references airport(airport_id)
 );
@@ -287,9 +287,9 @@ create table apron_light
 (
   apron_light_id integer primary key,
   airport_id integer not null,
-  vertices text,                   -- Space and comma separated coordinate list of
+  vertices blob,                   -- Space and comma separated coordinate list of
                                    -- lighted edges (lon1 lat1, lon2 lat2, ...)
-  edges text,                      -- Coordinate indexes for lighted edges
+  edges blob,                      -- Coordinate indexes for lighted edges
 foreign key(airport_id) references airport(airport_id)
 );
 

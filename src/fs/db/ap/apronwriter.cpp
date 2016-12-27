@@ -61,18 +61,17 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   executeStatement();
 }
 
-QString ApronWriter::toString(const QList<int>& triangles)
+QByteArray ApronWriter::toString(const QList<int>& triangles)
 {
-  QString retval;
+  QByteArray blob;
+  QDataStream out(&blob, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_5);
+  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+  out << static_cast<quint32>(triangles.size());
   for(int i = 0; i < triangles.size(); i += 3)
-  {
-    if(!retval.isEmpty())
-      retval += ", ";
-    retval.append(QString::number(triangles.at(i))).append(" ");
-    retval.append(QString::number(triangles.at(i + 1))).append(" ");
-    retval.append(QString::number(triangles.at(i + 2)));
-  }
-  return retval;
+    out << triangles.at(i) << triangles.at(i + 1) << triangles.at(i + 2);
+  return blob;
 }
 
 } // namespace writer

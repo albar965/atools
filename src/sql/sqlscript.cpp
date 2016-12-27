@@ -103,6 +103,7 @@ void SqlScript::executeScript(QTextStream& script)
       }
     }
   }
+  query.finish();
 
   if(verbose)
     qDebug() << "-- Done Running script ------------------------------------------";

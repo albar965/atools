@@ -21,6 +21,8 @@
 #include "sql/sqlquery.h"
 #include "fs/bgl/bglposition.h"
 
+#include <QDataStream>
+
 namespace atools {
 namespace sql {
 class SqlDatabase;
@@ -82,11 +84,10 @@ protected:
   /* Binds a null if value == 0 */
   void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
-  /* Bin a list of coordinates as a space and comma separated string */
-  void bindCoordinateList(const QString& placeholder, const QList<atools::fs::bgl::BglPosition>& coordinates,
-                          int precision = 8);
+  /* Bin a list of coordinates as a byte array of float into blobs */
+  void bindCoordinateList(const QString& placeholder, const QList<atools::fs::bgl::BglPosition>& coordinates);
 
-  /* Bin a list of numbers in a comma separated string */
+  /* Bin a list of numbers in a byte array */
   template<typename TYPE>
   void bindNumberList(const QString& placeholder, const QList<TYPE>& list);
 
@@ -104,10 +105,16 @@ private:
 template<typename TYPE>
 void WriterBaseBasic::bindNumberList(const QString& placeholder, const QList<TYPE>& list)
 {
-  QStringList strings;
+  QByteArray blob;
+  QDataStream out(&blob, QIODevice::WriteOnly);
+  out.setVersion(QDataStream::Qt_5_5);
+  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
+
+  out << static_cast<quint32>(list.size());
   for(const TYPE& i : list)
-    strings.append(QString::number(i));
-  bind(placeholder, strings.join(", "));
+    out << i;
+
+  bind(placeholder, blob);
 }
 
 } // namespace writer
