@@ -20,6 +20,9 @@
 -- The indexes are needed for post process steps
 -- *************************************************************
 
+create index if not exists idx_airport_file_ident on airport_file(ident);
+create index if not exists idx_airport_file_file_id on airport_file(file_id);
+
 create index if not exists idx_waypoint_type on waypoint(type);
 create index if not exists idx_waypoint_region on waypoint(region);
 create index if not exists idx_waypoint_ident on waypoint(ident);

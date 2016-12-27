@@ -52,10 +52,6 @@ foreign key(from_node_id) references route_node_radio(node_id),
 foreign key(to_node_id) references route_node_radio(node_id)
 );
 
-create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio(from_node_id);
-create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);
-
-
 -- **************************************************
 
 drop table if exists route_node_airway;

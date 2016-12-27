@@ -30,19 +30,10 @@ create index if not exists idx_airport_has_avgas on airport(has_avgas);
 create index if not exists idx_airport_has_jetfuel on airport(has_jetfuel);
 
 create index if not exists idx_airport_tower_frequency on airport(tower_frequency);
-create index if not exists idx_airport_atis_frequency on airport(atis_frequency);
-create index if not exists idx_airport_awos_frequency on airport(awos_frequency);
-create index if not exists idx_airport_asos_frequency on airport(asos_frequency);
-create index if not exists idx_airport_unicom_frequency on airport(unicom_frequency);
 
 create index if not exists idx_airport_is_closed on airport(is_closed);
 create index if not exists idx_airport_is_military on airport(is_military);
 create index if not exists idx_airport_is_addon on airport(is_addon);
-
-create index if not exists idx_airport_num_boundary_fence on airport(num_boundary_fence);
-create index if not exists idx_airport_num_com on airport(num_com);
-create index if not exists idx_airport_num_parking_gate on airport(num_parking_gate);
-create index if not exists idx_airport_num_parking_ga_ramp on airport(num_parking_ga_ramp);
 
 create index if not exists idx_airport_num_parking_cargo   on airport(num_parking_cargo);
 create index if not exists idx_airport_num_parking_mil_cargo on airport(num_parking_mil_cargo);
@@ -55,20 +46,8 @@ create index if not exists idx_airport_num_runway_soft on airport(num_runway_sof
 create index if not exists idx_airport_num_runway_water on airport(num_runway_water);
 create index if not exists idx_airport_num_runway_light on airport(num_runway_light);
 
-create index if not exists idx_airport_num_runway_end_closed on airport(num_runway_end_closed);
-create index if not exists idx_airport_num_runway_end_vasi on airport(num_runway_end_vasi);
-create index if not exists idx_airport_num_runway_end_als on airport(num_runway_end_als);
-create index if not exists idx_airport_num_runway_end_ils on airport(num_runway_end_ils);
-
-create index if not exists idx_airport_num_apron on airport(num_apron);
-create index if not exists idx_airport_num_taxi_path on airport(num_taxi_path);
 create index if not exists idx_airport_num_helipad on airport(num_helipad);
-create index if not exists idx_airport_num_jetway on airport(num_jetway);
 create index if not exists idx_airport_longest_runway_length on airport(longest_runway_length);
-create index if not exists idx_airport_longest_runway_width on airport(longest_runway_width);
-create index if not exists idx_airport_longest_runway_heading on airport(longest_runway_heading);
-create index if not exists idx_airport_longest_runway_surface on airport(longest_runway_surface);
-create index if not exists idx_airport_num_runways on airport(num_runways);
 create index if not exists idx_airport_largest_parking_ramp on airport(largest_parking_ramp);
 create index if not exists idx_airport_largest_parking_gate on airport(largest_parking_gate);
 create index if not exists idx_airport_rating on airport(rating);
@@ -113,6 +92,8 @@ insert into airport_large select
 from airport
 where longest_runway_length > 8000 and num_runway_hard > 0;
 
+create index if not exists idx_airport_large_ident on airport_large(ident);
+
 create index if not exists idx_airport_large_left_lonx on airport_large(left_lonx);
 create index if not exists idx_airport_large_top_laty on airport_large(top_laty);
 create index if not exists idx_airport_large_right_lonx on airport_large(right_lonx);
@@ -139,6 +120,8 @@ insert into airport_medium select
   lonx, laty
 from airport
 where longest_runway_length > 4000;
+
+create index if not exists idx_airport_medium_ident on airport_medium(ident);
 
 create index if not exists idx_airport_medium_left_lonx on airport_medium(left_lonx);
 create index if not exists idx_airport_medium_top_laty on airport_medium(top_laty);
@@ -173,3 +156,6 @@ create index if not exists idx_route_node_radio_type on route_node_radio(type);
 create index if not exists idx_route_node_radio_range on route_node_radio(range);
 create index if not exists idx_route_edge_radio_from_node_type on route_edge_radio(from_node_type);
 create index if not exists idx_route_edge_radio_to_node_type on route_edge_radio(to_node_type);
+
+create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio(from_node_id);
+create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);

@@ -119,7 +119,6 @@ create table airport_file
   ident varchar(4) not null,                  -- ICAO ident
 foreign key(file_id) references bgl_file(bgl_file_id)
 );
-create index if not exists idx_airport_ident on airport(ident);
 
 -- **************************************************
 
@@ -153,8 +152,6 @@ create table airport_medium
   laty double not null
 );
 
-create index if not exists idx_airport_medium_ident on airport_medium(ident);
-
 -- **************************************************
 
 drop table if exists airport_large;
@@ -186,8 +183,6 @@ create table airport_large
   lonx double not null,
   laty double not null
 );
-
-create index if not exists idx_airport_large_ident on airport_large(ident);
 
 -- **************************************************
 
