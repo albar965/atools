@@ -1,4 +1,18 @@
-Version 2.2.1.beta
+Version 2.2.2.beta
+
+* Added airport deduplication and optimizations to airport delete processor.
+* Increased distance for VOR and NDB deduplication.
+* Printing duplicated airports into log before deleting.
+* Now appending scenery path and bgl filenames in airport table.
+* Added result set printing to sql script.
+* Added number of starts to airport for proper delete handling.
+* Added table airport_file to collect all sceneries containing an airport.
+* Added compiler option for deduplication.
+* ILS of add-on airports are not deleted anymore. Optmized copying of add-on airport values.
+* Added deletion of duplicate ILS.
+* Optimizations for database: removed unused indexes.
+
+Version 2.2.1.beta (not public)
 
 * Fixed problem of wrong elevation adjustments overwriting add-on airport.
 * BGL files are now read ordered by name to get more determinstic behavior.
