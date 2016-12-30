@@ -56,7 +56,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateApprochStmt = new SqlQuery(sqlDb);
   deleteApprochStmt = new SqlQuery(sqlDb);
 
-  delWpStmt = new SqlQuery(sqlDb);
+  updateWpStmt = new SqlQuery(sqlDb);
   updateVorStmt = new SqlQuery(sqlDb);
   updateNdbStmt = new SqlQuery(sqlDb);
   deleteAirportStmt = new SqlQuery(sqlDb);
@@ -125,9 +125,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
-  delWpStmt->prepare(delAptFeatureStmt("waypoint"));
-
   // Update NDB and VOR airport ids - resulting duplicates will be deleted later
+  updateWpStmt->prepare(updateAptFeatureStmt("waypoint"));
   updateVorStmt->prepare(updateAptFeatureStmt("vor"));
   updateNdbStmt->prepare(updateAptFeatureStmt("ndb"));
 
@@ -157,7 +156,7 @@ DeleteProcessor::~DeleteProcessor()
   delete updateApprochRwIds;
   delete updateApprochStmt;
   delete deleteApprochStmt;
-  delete delWpStmt;
+  delete updateWpStmt;
   delete updateVorStmt;
   delete updateNdbStmt;
   delete deleteAirportStmt;
@@ -392,8 +391,7 @@ void DeleteProcessor::removeAirport()
 {
   // Unlink navigation - will be updated later in "update_nav_ids.sql" script
   // we accecpt duplicates here - these will be deleted later
-  bindAndExecute(delWpStmt, "waypoints deleted"); // only type that appears in airport records
-
+  bindAndExecute(updateWpStmt, "waypoints updated");
   bindAndExecute(updateVorStmt, "vors updated");
   bindAndExecute(updateNdbStmt, "ndb updated");
 
