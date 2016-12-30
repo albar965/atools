@@ -62,7 +62,7 @@ bool Waypoint::isValid() const
     // Only waypoint allowed on the poles
     return position.getPos().isValid() && !position.getPos().isNull();
   else
-    return Record::isValid();
+    return position.getPos().isValid() && !position.getPos().isPole() && !position.getPos().isNull();
 }
 
 QString Waypoint::getObjectName() const
