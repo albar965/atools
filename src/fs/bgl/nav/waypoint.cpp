@@ -58,7 +58,11 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
 
 bool Waypoint::isValid() const
 {
-  return position.getPos().isValid() && !position.getPos().isNull();
+  if(ident == "NPOLE")
+    // Only waypoint allowed on the poles
+    return position.getPos().isValid() && !position.getPos().isNull();
+  else
+    return Record::isValid();
 }
 
 QString Waypoint::getObjectName() const
