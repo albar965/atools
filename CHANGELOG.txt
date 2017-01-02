@@ -1,3 +1,8 @@
+Version 2.2.3
+
+* Terminal waypoints are not deleted anymore for add-on airports.
+* Removing disabled invalid waypoints from north pole.
+
 Version 2.2.2.beta
 
 * Added airport deduplication and optimizations to airport delete processor.
