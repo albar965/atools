@@ -1,7 +1,7 @@
 Build Instructions
 ------------------------------------------------------
 
-Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.5.
+Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.6.
 GIT command line tools are required.
 
 - Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
@@ -28,7 +28,7 @@ SimConnect will and can only be used when compiling with MSVC.
 
 Linux / macOS
 ------------------------------------------------------
-Install Qt development packages. Version at least 5.5.
+Install Qt development packages. Version at least 5.6.
 
 Create the build directories on the same level as the source directory "atools".
 
