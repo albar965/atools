@@ -44,8 +44,8 @@ QDebug operator<<(QDebug out, const Jetway& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Jetway[ parking index" << record.parkingNumber
-  << "]";
+  << " Jetway[ parking index " << record.parkingNumber
+  << ", name " << Parking::parkingNameToStr(record.gateName) << "]";
 
   return out;
 }

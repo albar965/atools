@@ -100,7 +100,7 @@ public:
 
   /* Minor database version of the application. Minor version differences are compatible.
    */
-  static const int DB_VERSION_MINOR = 0;
+  static const int DB_VERSION_MINOR = 1;
 
 private:
   atools::sql::SqlDatabase *db;

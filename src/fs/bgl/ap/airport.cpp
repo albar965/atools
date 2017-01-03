@@ -33,6 +33,27 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+struct ParkingKey
+{
+  int number;
+  atools::fs::bgl::ap::ParkingName name;
+};
+
+bool operator==(const ParkingKey& k1, const ParkingKey& k2)
+{
+  return k1.name == k2.name && k1.number == k2.number;
+}
+
+bool operator!=(const ParkingKey& k1, const ParkingKey& k2)
+{
+  return !operator==(k1, k2);
+}
+
+inline uint qHash(const ParkingKey& pair)
+{
+  return static_cast<unsigned int>(pair.number) ^ static_cast<unsigned int>(pair.name);
+}
+
 static const QStringList MIL_ENDS_WITH(" Mil");
 static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " AHP", " ANGB", " ARB", " LRRS",
                                        " MCAF", " MCALF", " MCAS", " NAF", " NALF", " NAS", " Naval", " Navy",
@@ -90,7 +111,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
   QList<Jetway> jetways;
   QList<TaxiPoint> taxipoints;
-  QHash<int, int> parkingNumberIndex;
+  // Maps the number to index in array
+  QHash<ParkingKey, int> parkingNumberIndex;
   QStringList taxinames;
   int helipadStart = 1;
 
@@ -142,7 +164,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
             // Remove vehicle parking later to avoid index mess-up
 
             parkings.append(p);
-            parkingNumberIndex.insert(p.getNumber(), parkings.size() - 1);
+            parkingNumberIndex.insert({p.getNumber(), p.getName()}, parkings.size() - 1);
           }
         }
         break;
@@ -511,13 +533,22 @@ void Airport::updateSummaryFields()
   military = isNameMilitary(name);
 }
 
-void Airport::updateParking(const QList<Jetway>& jetways, const QHash<int, int>& parkingNumberIndex)
+void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
+                            const QHash<ParkingKey, int>& parkingNumberIndex)
 {
   for(const Jetway& jw : jetways)
   {
-    QHash<int, int>::const_iterator iter = parkingNumberIndex.find(jw.getParkingNumber());
-    if(iter != parkingNumberIndex.end())
-      parkings[*iter].jetway = true;
+    int index = parkingNumberIndex.value({jw.getParkingNumber(), jw.getGateName()}, -1);
+
+    if(index != -1 && index < parkings.size())
+    {
+      if(parkings.at(index).jetway)
+        qWarning().nospace().noquote() << "Parking for jetway " << jw << " already set" << dec
+                                       << " for parking " << parkings.at(index)
+                                       << " for ident " << ident;
+      else
+        parkings[index].jetway = true;
+    }
     else
       qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
                                      << " for ident " << ident;

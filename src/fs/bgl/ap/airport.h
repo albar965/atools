@@ -81,6 +81,8 @@ enum FuelFlags
 
 } // namespace ap
 
+struct ParkingKey;
+
 /*
  *  Airport aggreating all subrecords like runway, apron, taxiways and more
  */
@@ -433,7 +435,8 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
 
   void updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames);
-  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways, const QHash<int, int>& parkingNumberIndex);
+  void updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
+                     const QHash<atools::fs::bgl::ParkingKey, int>& parkingNumberIndex);
   void updateSummaryFields();
   void removeVehicleParking();
   void updateHelipads();
