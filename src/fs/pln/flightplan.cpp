@@ -189,13 +189,20 @@ void Flightplan::save(const QString& file)
     {
       writer.writeStartElement("ATCWaypoint");
 
-      writer.writeAttribute("id", e.getWaypointId());
+      // Trim to max allowed length for FSX/P3D
+      writer.writeAttribute("id", e.getWaypointId().left(10));
       writer.writeTextElement("ATCWaypointType", e.getWaypointTypeAsString());
 
       if(!e.getPosition().isValid())
         throw atools::Exception("Invalid position in flightplan for id " + e.getWaypointId());
 
-      writer.writeTextElement("WorldPosition", e.getPosition().toLongString());
+      atools::geo::Pos pos = e.getPosition();
+
+      // Use null altitude for all except airports
+      if(e.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+        pos.setAltitude(0.f);
+
+      writer.writeTextElement("WorldPosition", pos.toLongString());
 
       if(!e.getAirway().isEmpty())
         writer.writeTextElement("ATCAirway", e.getAirway());
@@ -222,6 +229,9 @@ void Flightplan::save(const QString& file)
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
     xmlString.replace("\n", "\r\n");
 #endif
+
+    // Breaks XML standard but gives better compatibility for third party applications
+    xmlString.replace("&quot;", "\"");
 
     QByteArray utf8 = xmlString.toUtf8();
     xmlFile.write(utf8.data(), utf8.size());
