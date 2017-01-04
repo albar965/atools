@@ -92,22 +92,28 @@ MapPosHistory::~MapPosHistory()
 
 const MapPosHistoryEntry& MapPosHistory::next()
 {
-  if(currentIndex < entries.size() - 1)
+  if(active)
   {
-    currentIndex++;
-    emit historyChanged(0, currentIndex, entries.size() - 1);
-    return entries.at(currentIndex);
+    if(currentIndex < entries.size() - 1)
+    {
+      currentIndex++;
+      emit historyChanged(0, currentIndex, entries.size() - 1);
+      return entries.at(currentIndex);
+    }
   }
   return EMPTY_MAP_POS;
 }
 
 const MapPosHistoryEntry& MapPosHistory::back()
 {
-  if(currentIndex > 0)
+  if(active)
   {
-    currentIndex--;
-    emit historyChanged(0, currentIndex, entries.size() - 1);
-    return entries.at(currentIndex);
+    if(currentIndex > 0)
+    {
+      currentIndex--;
+      emit historyChanged(0, currentIndex, entries.size() - 1);
+      return entries.at(currentIndex);
+    }
   }
   return EMPTY_MAP_POS;
 }
@@ -122,6 +128,9 @@ const MapPosHistoryEntry& MapPosHistory::current() const
 
 void MapPosHistory::addEntry(atools::geo::Pos pos, double distance)
 {
+  if(!active)
+    return;
+
   MapPosHistoryEntry newEntry(pos, distance, QDateTime::currentMSecsSinceEpoch());
   const MapPosHistoryEntry& curEntry = current();
 
@@ -212,6 +221,11 @@ void MapPosHistory::restoreState(const QString& filename)
     emit historyChanged(0, 0, 0);
   else
     emit historyChanged(0, currentIndex, entries.size() - 1);
+}
+
+void MapPosHistory::activate()
+{
+  active = true;
 }
 
 } // namespace gui

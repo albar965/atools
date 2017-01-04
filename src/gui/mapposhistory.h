@@ -119,6 +119,8 @@ public:
   /* load history from file */
   void restoreState(const QString& filename);
 
+  void activate();
+
 signals:
   /* Emitted when the history changes
    * @param minIndex Lowest entry index in the history stack
@@ -137,7 +139,7 @@ private:
 
   QList<MapPosHistoryEntry> entries;
   qint32 currentIndex = -1;
-
+  bool active = false;
 };
 
 } // namespace gui
