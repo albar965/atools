@@ -101,7 +101,7 @@ QString FsPaths::getBasePath(SimulatorType type)
   fsPath = settings.value(registryKey(type)).toString();
   if(fsPath.endsWith('\\'))
     fsPath.chop(1);
-#else
+#elif defined(DEBUG_FS_PATHS)
   // No Windows here - get the path for debugging purposes
   // from the configuration file
   Settings& s = Settings::instance();
@@ -209,7 +209,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #if defined(Q_OS_WIN32)
       return programData + QDir::separator() + "Microsoft\\FSX\\Scenery.CFG";
 
-#else
+#elif defined(DEBUG_FS_PATHS)
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
              "FSX" + QDir::separator() + "scenery.cfg";
@@ -221,7 +221,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #if defined(Q_OS_WIN32)
       return programData + QDir::separator() + "Microsoft\\FSX-SE\\Scenery.CFG";
 
-#else
+#elif defined(DEBUG_FS_PATHS)
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
              "FSXSE" + QDir::separator() + "scenery.cfg";
@@ -233,7 +233,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #if defined(Q_OS_WIN32)
       return appData + QDir::separator() + "Lockheed Martin\\Prepar3D v2\\Scenery.CFG";
 
-#else
+#elif defined(DEBUG_FS_PATHS)
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
              "P3DV2" + QDir::separator() + "scenery.cfg";
@@ -245,7 +245,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #if defined(Q_OS_WIN32)
       return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v3\\Scenery.CFG";
 
-#else
+#elif defined(DEBUG_FS_PATHS)
       return home + QDir::separator() +
              "Temp" + QDir::separator() +
              "P3DV3" + QDir::separator() + "scenery.cfg";

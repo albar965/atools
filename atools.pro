@@ -15,6 +15,9 @@ unix {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
   # Enable this to compile with dummy implementation of simconnect
   DEFINES+=SIMCONNECT_DUMMY
+
+  # Enable to allow scenery database loading on Linux or macOS
+  #DEFINES+=DEBUG_FS_PATHS
 }
 
 win32 {
