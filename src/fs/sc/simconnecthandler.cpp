@@ -752,6 +752,8 @@ bool SimConnectHandler::connect()
                                    "number", SIMCONNECT_DATATYPE_INT32);
     SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month",
                                    "number", SIMCONNECT_DATATYPE_INT32);
+
+    // Measured in seconds, positive west of GMT.
     SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Time Zone Offset",
                                    "seconds", SIMCONNECT_DATATYPE_INT32);
 
@@ -873,7 +875,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     // Build local time and use timezone offset from simulator
     QDate localDate(p->simData.localYear, p->simData.localMonth, p->simData.localDay);
     QTime localTime = QTime::fromMSecsSinceStartOfDay(p->simData.localTime * 1000);
-    QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, p->simData.timeZoneOffsetSeconds);
+
+    // Offset from FS: Measured in seconds, positive west of GMT.
+    QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, -p->simData.timeZoneOffsetSeconds);
     data.userAircraft.localDateTime = localDateTime;
 
     QDate zuluDate(p->simData.zuluYear, p->simData.zuluMonth, p->simData.zuluDay);
