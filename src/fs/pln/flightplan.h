@@ -70,6 +70,7 @@ public:
    * @param file filepath of the file to be saved
    */
   void save(const QString& file);
+  void saveRte(const QString& file);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
@@ -267,6 +268,7 @@ private:
   void readUntilElement(QXmlStreamReader& reader, const QString& name);
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
+  void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
 
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;

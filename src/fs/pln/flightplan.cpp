@@ -21,6 +21,7 @@
 #include "geo/calculations.h"
 #include "atools.h"
 
+#include <QDataStream>
 #include <QDateTime>
 #include <QFile>
 #include <QXmlStreamReader>
@@ -237,7 +238,108 @@ void Flightplan::save(const QString& file)
     xmlFile.write(utf8.data(), utf8.size());
   }
   else
-    throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+void Flightplan::saveRte(const QString& file)
+{
+  namespace ple = atools::fs::pln::entry;
+  int userWaypointNum = 1;
+
+  const int NO_DATA_NUM = -1000000;
+  const QString NO_DATA_STR("-");
+  enum
+  {
+    AIRPORT = 1, OTHER = 2, WAYPOINT = 5
+  };
+
+  enum
+  {
+    NONE = 0, CLIMB = 1, CRUISE = 2, DESCENT = 3
+  };
+
+  filename = file;
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QString xmlString;
+    QTextStream stream(&xmlString);
+
+    stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
+    arg(QApplication::applicationName()).
+    arg(QApplication::applicationVersion()).
+    arg(atools::gitRevision()).
+    arg(QLocale().toString(QDateTime::currentDateTime())).
+    replace("-", " ") << endl << endl;
+
+    stream << entries.size() << endl << endl;
+
+    stream << departureIdent << endl << AIRPORT << endl << "DIRECT" << endl;
+    posToRte(stream, departurePos, true);
+    stream << endl << NO_DATA_STR << endl
+           << 1 /* Departure*/ << endl << 0 /* Runway position */ << endl << endl;
+
+    stream << CLIMB << endl; // Restriction phase climb
+    stream << atools::roundToInt(departurePos.getAltitude()); // Restriction altitude, if restricted
+
+    // Restriction type, altitude and speed
+    stream << endl << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl << endl;
+
+    for(int i = 1; i < entries.size() - 1; i++)
+    {
+      const FlightplanEntry& entry = entries.at(i);
+
+      if(entry.getWaypointType() == ple::USER)
+      {
+        stream << "WPT" << userWaypointNum++ << endl;
+        stream << OTHER << endl;
+      }
+      else
+      {
+        stream << (entry.getIcaoIdent().isEmpty() ? NO_DATA_STR : entry.getIcaoIdent()) << endl;
+        stream << (entry.getWaypointType() == ple::AIRPORT ? AIRPORT : WAYPOINT) << endl;
+      }
+
+      stream << (entry.getAirway().isEmpty() ? "DIRECT" : entry.getAirway()) << endl;
+      posToRte(stream, entry.getPosition(), false);
+      stream << endl << 0 << endl << 0 << endl << 0 << endl << endl; // Restriction fields
+    }
+
+    stream << destinationIdent << endl << AIRPORT << endl << NO_DATA_STR << endl;
+    posToRte(stream, destinationPos, true);
+    stream << endl << NO_DATA_STR << endl
+           << 0 /* no departure*/ << endl << 0 /* Runway position */ << endl << endl;
+
+    stream << CLIMB << endl; // Restriction phase
+    stream << atools::roundToInt(destinationPos.getAltitude()) << endl; // Restriction altitude, if restricted
+    // Restriction type, altitude and speed
+    stream << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl;
+
+#ifndef Q_OS_WIN32
+    // Convert EOL always to Windows (0x0a -> 0x0d0a)
+    xmlString.replace("\n", "\r\n");
+#endif
+
+    QByteArray utf8 = xmlString.toUtf8();
+    xmlFile.write(utf8.data(), utf8.size());
+  }
+  else
+    throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+void Flightplan::posToRte(QTextStream& stream, const geo::Pos& pos, bool alt)
+{
+  stream.setRealNumberNotation(QTextStream::FixedNotation);
+  stream.setRealNumberPrecision(4);
+
+  stream << 1 << (pos.getLatY() > 0.f ? " N " : " S ")
+         << std::abs(pos.getLatY())
+         << (pos.getLonX() > 0.f ? " E " : " W ")
+         << std::abs(pos.getLonX());
+
+  stream.setRealNumberPrecision(0);
+  stream << " " << (alt ? pos.getAltitude() : 0.f);
 }
 
 float Flightplan::getDistanceNm() const
