@@ -301,7 +301,9 @@ void Flightplan::saveRte(const QString& file)
         stream << (entry.getWaypointType() == ple::AIRPORT ? AIRPORT : WAYPOINT) << endl;
       }
 
-      stream << (entry.getAirway().isEmpty() ? "DIRECT" : entry.getAirway()) << endl;
+      QString nextAirway = entries.at(i + 1).getAirway();
+      stream << (nextAirway.isEmpty() ? "DIRECT" : nextAirway) << endl;
+
       posToRte(stream, entry.getPosition(), false);
       stream << endl << 0 << endl << 0 << endl << 0 << endl << endl; // Restriction fields
     }
