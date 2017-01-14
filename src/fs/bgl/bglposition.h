@@ -69,6 +69,11 @@ public:
     return pos;
   }
 
+  bool isValid() const
+  {
+    return pos.isValid();
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record);
 

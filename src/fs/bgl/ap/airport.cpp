@@ -24,6 +24,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/ap/taxipoint.h"
 #include "fs/bgl/util.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QHash>
@@ -320,11 +321,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   // Set the jetway flag on parking
   updateParking(jetways, parkingNumberIndex);
 
-  // Update all the number fields and the bounding rectange
-  updateSummaryFields();
-
   if(!options->isIncludedBglObject(type::VEHICLE))
     removeVehicleParking();
+
+  // Update all the number fields and the bounding rectangle
+  updateSummaryFields();
 
   if(deleteAirports.size() > 1)
     qWarning() << "Found more than one delete record in" << getObjectName();
@@ -584,9 +585,11 @@ void Airport::removeVehicleParking()
 
 void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringList& taxinames)
 {
-  for(TaxiPath& t : taxipaths)
+  using atools::inRange;
+
+  for(TaxiPath& taxiPath : taxipaths)
   {
-    switch(t.type)
+    switch(taxiPath.type)
     {
       case atools::fs::bgl::taxipath::UNKNOWN :
         break;
@@ -594,21 +597,52 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
       case atools::fs::bgl::taxipath::CLOSED:
       case atools::fs::bgl::taxipath::TAXI:
       case atools::fs::bgl::taxipath::VEHICLE:
-        t.taxiName = taxinames.at(t.runwayNumTaxiName);
-        t.start = taxipoints.at(t.startPoint);
-        t.end = taxipoints.at(t.endPoint);
+        if(inRange(taxinames, taxiPath.runwayNumTaxiName) && inRange(taxipoints, taxiPath.startPoint) &&
+           inRange(taxipoints, taxiPath.endPoint))
+        {
+          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
+          taxiPath.start = taxipoints.at(taxiPath.startPoint);
+          taxiPath.end = taxipoints.at(taxiPath.endPoint);
+        }
+        else
+          qWarning() << "One or more taxiway indexes out of bounds in" << ident
+                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break; // avoid fallthrough warning
       case atools::fs::bgl::taxipath::RUNWAY:
-        t.start = taxipoints.at(t.startPoint);
-        t.end = taxipoints.at(t.endPoint);
+        if(inRange(taxipoints, taxiPath.startPoint) && inRange(taxipoints, taxiPath.endPoint))
+        {
+          taxiPath.start = taxipoints.at(taxiPath.startPoint);
+          taxiPath.end = taxipoints.at(taxiPath.endPoint);
+        }
+        else
+          qWarning() << "One or more taxiway indexes out of bounds in" << ident
+                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;
       case atools::fs::bgl::taxipath::PARKING:
-        t.taxiName = taxinames.at(t.runwayNumTaxiName);
-        t.start = taxipoints.at(t.startPoint);
-        t.end = TaxiPoint(parkings.at(t.endPoint));
+        if(inRange(taxinames, taxiPath.runwayNumTaxiName) && inRange(taxipoints, taxiPath.startPoint) &&
+           inRange(parkings, taxiPath.endPoint))
+        {
+          taxiPath.taxiName = taxinames.at(taxiPath.runwayNumTaxiName);
+          taxiPath.start = taxipoints.at(taxiPath.startPoint);
+          taxiPath.end = TaxiPoint(parkings.at(taxiPath.endPoint));
+        }
+        else
+          qWarning() << "One or more taxiway indexes out of bounds in" << ident
+                     << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;
     }
   }
+
+  // Remove all paths that remain invalid because of wrong indexes
+  QList<TaxiPath>::iterator it = std::remove_if(taxipaths.begin(), taxipaths.end(),
+                                                [ = ](const TaxiPath &p)->bool
+                                                {
+                                                  return !p.getStartPoint().getPosition().isValid() ||
+                                                  !p.getEndPoint().getPosition().isValid();
+                                                });
+
+  if(it != taxipaths.end())
+    taxipaths.erase(it, taxipaths.end());
 }
 
 QDebug operator<<(QDebug out, const Airport& record)

@@ -210,11 +210,11 @@ private:
 
   friend class atools::fs::bgl::Airport;
 
-  atools::fs::bgl::ap::ParkingType type;
-  atools::fs::bgl::ap::ParkingName name;
-  atools::fs::bgl::ap::PushBack pushBack;
-  int number;
-  float radius, heading;
+  atools::fs::bgl::ap::ParkingType type = atools::fs::bgl::ap::UNKNOWN;
+  atools::fs::bgl::ap::ParkingName name = atools::fs::bgl::ap::NO_PARKING;
+  atools::fs::bgl::ap::PushBack pushBack = atools::fs::bgl::ap::NONE;
+  int number = 0;
+  float radius = 0.f, heading = 0.f;
   atools::fs::bgl::BglPosition position;
   bool jetway = false;
   QStringList airlineCodes;

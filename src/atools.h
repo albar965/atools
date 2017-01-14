@@ -23,6 +23,7 @@
 #include <QSet>
 #include <QString>
 #include <QVariant>
+#include <QDebug>
 
 namespace atools {
 
@@ -33,6 +34,58 @@ QString gitRevision();
 /* replace variables in a string like "${LANG}" */
 QString replaceVar(QString str, const QString name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
+
+template<typename TYPE>
+bool inRange(const QList<TYPE>& list, int index)
+{
+  return index >= 0 && index < list.size();
+}
+
+template<typename TYPE>
+bool inRange(const QVector<TYPE>& list, int index)
+{
+  return index >= 0 && index < list.size();
+}
+
+template<typename TYPE>
+const TYPE& at(const QList<TYPE>& list, int index, const TYPE& defaultType = TYPE())
+{
+  if(inRange(list, index))
+    return list.at(index);
+  else
+    qWarning() << "index out of bounds:" << index << "list size" << list.size();
+  return defaultType;
+}
+
+template<typename TYPE>
+const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = TYPE())
+{
+  if(inRange(list, index))
+    return list.at(index);
+  else
+    qWarning() << "index out of bounds:" << index << "list size" << list.size();
+  return defaultType;
+}
+
+template<typename TYPE>
+const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
+{
+  if(inRange(list, index))
+    return list.at(index);
+  else
+    qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
+  return defaultType;
+}
+
+template<typename TYPE>
+const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
+{
+  if(inRange(list, index))
+    return list.at(index);
+  else
+    qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
+  return defaultType;
+}
 
 /* Remove all special characters from the filename that can disturb any filesystem */
 QString cleanFilename(const QString& filename);

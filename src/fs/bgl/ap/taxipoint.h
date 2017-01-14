@@ -97,8 +97,8 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const TaxiPoint& record);
 
-  atools::fs::bgl::taxipoint::PointType type;
-  atools::fs::bgl::taxipoint::PointDir dir;
+  atools::fs::bgl::taxipoint::PointType type = atools::fs::bgl::taxipoint::UNKNOWN;
+  atools::fs::bgl::taxipoint::PointDir dir = atools::fs::bgl::taxipoint::UNKNOWN_DIR;
   atools::fs::bgl::BglPosition pos;
   atools::fs::bgl::Parking parking;
 };
