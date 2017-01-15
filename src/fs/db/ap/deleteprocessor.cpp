@@ -16,7 +16,6 @@
 *****************************************************************************/
 
 #include "fs/db/ap/deleteprocessor.h"
-#include "fs/db/ap/approachwriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
@@ -78,6 +77,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   fetchPrimaryAppStmt = new SqlQuery(sqlDb);
   fetchSecondaryAppStmt = new SqlQuery(sqlDb);
 
+  updateBoundingStmt = new SqlQuery(sqlDb);
+  fetchBoundingStmt = new SqlQuery(sqlDb);
+
   // Most queries act on all other airports with the given ident except the current one
   // where a.ident = :apIdent and a.airport_id <> :curApId
 
@@ -109,7 +111,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   selectAirportStmt->prepare(
     "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, "
     "num_approach, num_starts, is_addon, rating, "
-    "bgl_filename, scenery_local_path "
+    "bgl_filename, scenery_local_path, lonx, laty "
     "from airport where ident = :apIdent and airport_id <> :curApId order by airport_id desc limit 1");
 
   // Delete all facilities of the old airport
@@ -142,6 +144,27 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
   updateApprochStmt->prepare(updateAptFeatureStmt("approach"));
   deleteApprochStmt->prepare(delAptFeatureStmt("approach"));
+
+  updateBoundingStmt->prepare("update airport set left_lonx = :leftlonx, top_laty = :toplaty, "
+                              "right_lonx = :rightlonx, bottom_laty = :bottomlaty "
+                              "where airport_id = :apid");
+
+  fetchBoundingStmt->prepare(
+    "select min(lonx) as left_lonx, max(laty) as top_laty, max(lonx) as right_lonx, min(laty) as bottom_laty "
+    "from ( "
+    "  select primary_lonx as lonx, primary_laty as laty from runway where airport_id = :apid "
+    "  union "
+    "  select secondary_lonx as lonx, secondary_laty as laty from runway where airport_id = :apid "
+    "  union "
+    "  select lonx, laty from parking where airport_id = :apid "
+    "  union "
+    "  select lonx, laty from helipad where airport_id = :apid "
+    "  union "
+    "  select start_lonx as lonx, start_laty as laty from taxi_path where airport_id = :apid "
+    "  union "
+    "  select end_lonx as lonx, end_laty as laty from taxi_path where airport_id = :apid "
+    ")");
+
 }
 
 DeleteProcessor::~DeleteProcessor()
@@ -177,6 +200,9 @@ DeleteProcessor::~DeleteProcessor()
   delete updateComStmt;
   delete fetchPrimaryAppStmt;
   delete fetchSecondaryAppStmt;
+
+  delete updateBoundingStmt;
+  delete fetchBoundingStmt;
 }
 
 void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport *airport,
@@ -202,7 +228,7 @@ void DeleteProcessor::preProcessDelete()
   // Get facility counts for current airport
   extractPreviousAirportFeatures();
 
-  if(hasApproach && isFlagSet(deleteFlags, bgl::del::APPROACHES))
+  if(prevHasApproach && isFlagSet(deleteFlags, bgl::del::APPROACHES))
   {
     // Delete the whole tree of approaches, transitions and legs on the old airport
     SqlUtil sql(db);
@@ -221,7 +247,7 @@ void DeleteProcessor::postProcessDelete()
     qDebug() << Q_FUNC_INFO;
   QStringList copyAirportColumns;
 
-  if(hasApproach)
+  if(prevHasApproach)
   {
     if(hasPrevious && !isFlagSet(deleteFlags, bgl::del::APPROACHES))
     {
@@ -232,7 +258,7 @@ void DeleteProcessor::postProcessDelete()
   }
 
   // Work on facilities that will be either removed or attached to the new airport depending on flags
-  if(hasApron)
+  if(prevHasApron)
   {
     removeOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
     removeOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
@@ -242,7 +268,7 @@ void DeleteProcessor::postProcessDelete()
       copyAirportColumns.append("num_apron");
   }
 
-  if(hasCom)
+  if(prevHasCom)
   {
     removeOrUpdate(deleteComStmt, updateComStmt, bgl::del::COMS);
 
@@ -254,7 +280,7 @@ void DeleteProcessor::postProcessDelete()
     }
   }
 
-  if(hasHelipad)
+  if(prevHasHelipad)
   {
     removeOrUpdate(deleteHelipadStmt, updateHelipadStmt, bgl::del::HELIPADS);
 
@@ -263,7 +289,7 @@ void DeleteProcessor::postProcessDelete()
       copyAirportColumns.append("num_helipad");
   }
 
-  if(hasTaxi)
+  if(prevHasTaxi)
   {
     removeOrUpdate(deleteTaxiPathStmt, updateTaxiPathStmt, bgl::del::TAXIWAYS);
 
@@ -272,7 +298,7 @@ void DeleteProcessor::postProcessDelete()
       copyAirportColumns.append("num_taxi_path");
   }
 
-  if(hasStart)
+  if(prevHasStart)
   {
     removeOrUpdate(deleteStartStmt, updateStartStmt, bgl::del::STARTS);
 
@@ -281,7 +307,7 @@ void DeleteProcessor::postProcessDelete()
       copyAirportColumns.append("num_starts");
   }
 
-  if(hasRunways)
+  if(prevHasRunways)
   {
     if(isFlagSet(deleteFlags, bgl::del::RUNWAYS))
       removeRunways();
@@ -363,11 +389,39 @@ void DeleteProcessor::postProcessDelete()
   }
 
   copyAirportValues(copyAirportColumns);
+  updateBoundingRect();
 
   // Delete old airport after copying values over
   bindAndExecute(deleteDeleteApStmt, "delete airports deleted");
 
   removeAirport();
+}
+
+void DeleteProcessor::updateBoundingRect()
+{
+  if(hasPrevious && newAirport->getPosition().getPos().distanceMeterTo(prevPos) > 500)
+  {
+    // Airport has moved more than 500 meter - update bounding rectangle
+
+    fetchBoundingStmt->bindValue(":apid", currentAirportId);
+    executeStatement(fetchBoundingStmt, "Fetch bounding");
+    if(fetchBoundingStmt->next())
+    {
+      if(!fetchBoundingStmt->isNull("left_lonx") &&
+         !fetchBoundingStmt->isNull("top_laty") &&
+         !fetchBoundingStmt->isNull("right_lonx") &&
+         !fetchBoundingStmt->isNull("bottom_laty"))
+      {
+        updateBoundingStmt->bindValue(":apid", currentAirportId);
+        updateBoundingStmt->bindValue(":leftlonx", fetchBoundingStmt->value("left_lonx").toFloat());
+        updateBoundingStmt->bindValue(":toplaty", fetchBoundingStmt->value("top_laty").toFloat());
+        updateBoundingStmt->bindValue(":rightlonx", fetchBoundingStmt->value("right_lonx").toFloat());
+        updateBoundingStmt->bindValue(":bottomlaty", fetchBoundingStmt->value("bottom_laty").toFloat());
+        executeStatement(updateBoundingStmt, "Update bounding");
+      }
+    }
+    fetchBoundingStmt->finish();
+  }
 }
 
 void DeleteProcessor::removeRunways()
@@ -532,34 +586,38 @@ void DeleteProcessor::extractPreviousAirportFeatures()
 {
   bindAndExecute(selectAirportStmt, "select airports");
 
-  hasApproach = false;
-  hasApron = false;
-  hasCom = false;
-  hasHelipad = false;
-  hasTaxi = false;
-  hasRunways = false;
-  hasStart = false;
+  prevHasApproach = false;
+  prevHasApron = false;
+  prevHasCom = false;
+  prevHasHelipad = false;
+  prevHasTaxi = false;
+  prevHasRunways = false;
+  prevHasStart = false;
   isAddon = false;
   previousRating = 0;
   hasPrevious = false;
   prevAirportId = 0;
   sceneryLocalPath.clear();
   bglFilename.clear();
+  prevPos = atools::geo::Pos();
 
   if(selectAirportStmt->next())
   {
-    hasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
-    hasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
-    hasCom |= selectAirportStmt->value("num_com").toInt() > 0;
-    hasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
-    hasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
-    hasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
-    hasStart |= selectAirportStmt->value("num_starts").toInt() > 0;
+    prevHasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
+    prevHasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
+    prevHasCom |= selectAirportStmt->value("num_com").toInt() > 0;
+    prevHasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
+    prevHasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
+    prevHasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
+    prevHasStart |= selectAirportStmt->value("num_starts").toInt() > 0;
     isAddon |= selectAirportStmt->value("is_addon").toBool();
     previousRating = std::max(previousRating, selectAirportStmt->value("rating").toInt());
 
     sceneryLocalPath = selectAirportStmt->value("scenery_local_path").toString();
     bglFilename = selectAirportStmt->value("bgl_filename").toString();
+
+    prevPos = atools::geo::Pos(selectAirportStmt->value("lonx").toFloat(),
+                               selectAirportStmt->value("laty").toFloat());
 
     prevAirportId = selectAirportStmt->value("airport_id").toInt();
 

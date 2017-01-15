@@ -51,18 +51,21 @@ public:
   virtual ~DeleteProcessor();
 
   /*
-   * Start the update or removal process of airports. The current/new airport has to
-   * be stored in the database already.
-   *
-   * @param deleteAirportRec delete airport record containing information what to update and/or what to remove
-   * @param airport airport record that will replace all other airports
-   * @param currentAirportId database ID of the airport that will replace all other airports
+   * Initialize the process for one airport before it is stored in the database.
    */
-  void preProcessDelete();
-  void postProcessDelete();
-
   void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
             const atools::fs::bgl::Airport *airport, int airportId);
+
+  /*
+   * Start the update or removal process of airports before the new airport is stored in the databas.
+   */
+  void preProcessDelete();
+
+  /*
+   * Start the update or removal process of airports. The current/new airport has to
+   * be stored in the database already.
+   */
+  void postProcessDelete();
 
   const QString& getBglFilename() const
   {
@@ -93,6 +96,7 @@ private:
   int bindAndExecute(const QString& sql, const QString& msg);
   void extractPreviousAirportFeatures();
   void copyAirportValues(const QStringList& copyAirportColumns);
+  void updateBoundingRect();
 
   const atools::fs::NavDatabaseOptions& options;
 
@@ -117,7 +121,8 @@ private:
   *deleteStartStmt = nullptr, *updateStartStmt = nullptr,
   *deleteTaxiPathStmt = nullptr, *updateTaxiPathStmt = nullptr,
   *deleteComStmt = nullptr, *updateComStmt = nullptr,
-  *fetchPrimaryAppStmt = nullptr, *fetchSecondaryAppStmt = nullptr;
+  *fetchPrimaryAppStmt = nullptr, *fetchSecondaryAppStmt = nullptr,
+  *updateBoundingStmt = nullptr, *fetchBoundingStmt = nullptr;
 
   const atools::fs::bgl::DeleteAirport *deleteAirport = nullptr;
   atools::fs::bgl::del::DeleteAllFlags deleteFlags = atools::fs::bgl::del::NONE;
@@ -126,11 +131,12 @@ private:
   QString ident, bglFilename, sceneryLocalPath;
   atools::sql::SqlDatabase *db = nullptr;
 
-  bool hasApproach = false, hasApron = false, hasCom = false, hasHelipad = false,
-       hasTaxi = false, hasStart = false, hasRunways = false, isAddon = false;
+  bool prevHasApproach = false, prevHasApron = false, prevHasCom = false, prevHasHelipad = false,
+       prevHasTaxi = false, prevHasStart = false, prevHasRunways = false, isAddon = false;
   int previousRating = 0;
   bool hasPrevious = false;
   int prevAirportId = 0;
+  atools::geo::Pos prevPos;
 
 };
 
