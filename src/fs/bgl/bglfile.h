@@ -29,6 +29,8 @@
 #include <QList>
 #include <QDebug>
 
+#include <io/binarystream.h>
+
 namespace atools {
 namespace io {
 class BinaryStream;
@@ -159,14 +161,10 @@ private:
   void handleBoundaries(atools::io::BinaryStream *bs);
 
   template<typename TYPE>
-  const TYPE *createRecord(const atools::fs::NavDatabaseOptions *options,
-                           atools::io::BinaryStream *bs,
-                           QList<const TYPE *> *list);
+  const TYPE *createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list);
 
   template<typename TYPE>
-  const TYPE *createRecord(const atools::fs::NavDatabaseOptions *options,
-                           atools::io::BinaryStream *bs,
-                           QList<const TYPE *> *list,
+  const TYPE *createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list,
                            atools::fs::bgl::flags::CreateFlags flags);
 
   QString filename;
@@ -196,9 +194,7 @@ private:
 // -------------------------------------------------------------------
 
 template<typename TYPE>
-const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
-                                  atools::io::BinaryStream *bs,
-                                  QList<const TYPE *> *list)
+const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list)
 {
   TYPE *rec = new TYPE(options, bs);
 
@@ -210,7 +206,9 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
 
   if(!rec->isValid())
   {
-    qWarning() << "Found invalid record: " << rec->getObjectName();
+    // Print warning only for navaids that are not disabled
+    if(!rec->isDisabled())
+      qWarning() << "Found invalid record: " << rec->getObjectName();
     rec->seekToStart();
     delete rec;
     return nullptr;
@@ -229,9 +227,7 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
 }
 
 template<typename TYPE>
-const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
-                                  atools::io::BinaryStream *bs,
-                                  QList<const TYPE *> *list,
+const TYPE *BglFile::createRecord(atools::io::BinaryStream *bs, QList<const TYPE *> *list,
                                   atools::fs::bgl::flags::CreateFlags flags)
 {
   TYPE *rec = new TYPE(options, bs, flags);
@@ -244,7 +240,9 @@ const TYPE *BglFile::createRecord(const NavDatabaseOptions *options,
 
   if(!rec->isValid())
   {
-    qWarning() << "Found invalid record: " << rec->getObjectName();
+    // Print warning only for navaids that are not disabled
+    if(!rec->isDisabled())
+      qWarning() << "Found invalid record: " << rec->getObjectName();
     rec->seekToStart();
     delete rec;
     return nullptr;

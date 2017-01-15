@@ -125,6 +125,7 @@ public:
   static QString waypointTypeToStr(atools::fs::bgl::nav::WaypointType type);
 
   virtual bool isValid() const override;
+  virtual bool isDisabled() const override;
   virtual QString getObjectName() const override;
 
 private:
@@ -136,6 +137,7 @@ private:
   QString ident, region, airportIdent;
   int numVictorAirway = 0, numJetAirway = 0;
   QList<atools::fs::bgl::AirwaySegment> airways;
+
 };
 
 } // namespace bgl

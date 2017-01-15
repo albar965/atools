@@ -65,6 +65,11 @@ bool Waypoint::isValid() const
     return position.getPos().isValid() && !position.getPos().isPole() && !position.getPos().isNull();
 }
 
+bool atools::fs::bgl::Waypoint::isDisabled() const
+{
+  return position.getPos().isPole();
+}
+
 QString Waypoint::getObjectName() const
 {
   return Record::getObjectName() + QString("waypoint ident %1 region %2 position %3").

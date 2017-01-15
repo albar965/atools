@@ -109,6 +109,7 @@ public:
   }
 
   virtual bool isValid() const override;
+  virtual bool isDisabled() const override;
   virtual QString getObjectName() const override;
 
 protected:
@@ -118,6 +119,7 @@ protected:
   int frequency;
   float range, magVar;
   QString ident, region, airportIdent, name;
+
 };
 
 } // namespace bgl

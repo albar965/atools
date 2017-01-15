@@ -61,3 +61,8 @@ QString NavBase::getObjectName() const
 } // namespace bgl
 } // namespace fs
 } // namespace atools
+
+bool atools::fs::bgl::NavBase::isDisabled() const
+{
+  return position.getPos().isPole();
+}

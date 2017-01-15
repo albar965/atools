@@ -88,9 +88,17 @@ public:
   /*
    * @return true if this record was found to be excluded after reading due to configuration or reading errors
    */
-  bool isExcluded()
+  virtual bool isExcluded() const
   {
     return excluded;
+  }
+
+  /*
+   * @return true if navaid was disabled by moving to pole
+   */
+  virtual bool isDisabled() const
+  {
+    return false;
   }
 
   /* Byte size that will be read by this class */

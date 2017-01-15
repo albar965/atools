@@ -162,7 +162,7 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     if(type == rec::BOUNDARY)
     {
       rec.seekToStart();
-      const Record *r = createRecord<Boundary>(options, bs, &boundaries);
+      const Record *r = createRecord<Boundary>(bs, &boundaries);
       if(r != nullptr)
         numRecs++;
     }
@@ -232,12 +232,12 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
     case nav::HIGH:
     case nav::VOT:
       if(options->isIncludedBglObject(type::VOR))
-        return createRecord<Vor>(options, bs, &vors);
+        return createRecord<Vor>(bs, &vors);
 
       break;
     case nav::ILS:
       if(options->isIncludedBglObject(type::ILS))
-        return createRecord<Ils>(options, bs, &ils);
+        return createRecord<Ils>(bs, &ils);
   }
   return nullptr;
 }
@@ -273,31 +273,31 @@ void BglFile::readRecords(BinaryStream *bs)
           if(options->isIncludedBglObject(type::AIRPORT))
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
-            rec = createRecord<Airport>(options, bs, &airports, bgl::flags::NONE);
+            rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
           break;
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";
           if(options->isIncludedBglObject(type::AIRPORT))
-            rec = createRecord<Airport>(options, bs, &airports, bgl::flags::NONE);
+            rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
           break;
         case section::NAME_LIST:
-          rec = createRecord<Namelist>(options, bs, &namelists);
+          rec = createRecord<Namelist>(bs, &namelists);
           break;
         case section::ILS_VOR:
           rec = handleIlsVor(bs);
           break;
         case section::NDB:
           if(options->isIncludedBglObject(type::NDB))
-            rec = createRecord<Ndb>(options, bs, &ndbs);
+            rec = createRecord<Ndb>(bs, &ndbs);
           break;
         case section::MARKER:
           if(options->isIncludedBglObject(type::MARKER))
-            rec = createRecord<Marker>(options, bs, &marker);
+            rec = createRecord<Marker>(bs, &marker);
           break;
         case section::WAYPOINT:
           if(options->isIncludedBglObject(type::WAYPOINT))
             // Read waypoints and airways
-            rec = createRecord<Waypoint>(options, bs, &waypoints);
+            rec = createRecord<Waypoint>(bs, &waypoints);
           break;
 
         // Other sections that are not of interest here
@@ -354,7 +354,7 @@ void BglFile::readRecords(BinaryStream *bs)
       }
       if(rec == nullptr)
         // Create empty record, just to skip it
-        rec = createRecord<Record>(options, bs, nullptr);
+        rec = createRecord<Record>(bs, nullptr);
       rec->seekToEnd();
     }
   }
