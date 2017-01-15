@@ -162,7 +162,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
     for(int i = 0; i < filepaths.size(); i++)
     {
       progressHandler->setNumFiles(numFiles);
-      progressHandler->setNumAirports(numAirports);
+      progressHandler->setNumAirports(airportIdents.size());
       progressHandler->setNumNamelists(numNamelists);
       progressHandler->setNumVors(numVors);
       progressHandler->setNumIls(numIls);
@@ -214,7 +214,9 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           boundaryWriter->write(bglFile.getBoundaries());
 
-          numAirports += bglFile.getAirports().size();
+          for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
+            airportIdents.insert(ap->getIdent());
+
           numNamelists += bglFile.getNamelists().size();
           numVors += bglFile.getVors().size();
           numIls += bglFile.getIls().size();
@@ -265,7 +267,7 @@ void DataWriter::logResults()
 {
   qInfo().nospace() << "Done. Read "
                     << numFiles << " files, "
-                    << numAirports << " airports, "
+                    << airportIdents.size() << " airports, "
                     << numNamelists << " namelists, "
                     << numVors << " VORs, "
                     << numIls << " ILS, "

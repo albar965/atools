@@ -19,6 +19,7 @@
 #define ATOOLS_FS_DB_DATAWRITER_H
 
 #include <QList>
+#include <QSet>
 #include <QString>
 
 #include "fs/navdatabaseerrors.h"
@@ -244,9 +245,11 @@ public:
   }
 
 private:
-  int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0,
+  int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;
   bool aborted = false;
+
+  QSet<QString> airportIdents;
 
   atools::sql::SqlDatabase& db;
   atools::fs::db::ProgressHandler *progressHandler = nullptr;
