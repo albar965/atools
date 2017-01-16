@@ -43,30 +43,3 @@ create index if not exists idx_ndb_region on ndb(region);
 create index if not exists idx_ndb_lonx on ndb(lonx);
 create index if not exists idx_ndb_laty on ndb(laty);
 
-create index if not exists idx_approach_fix_type on approach(fix_type);
-create index if not exists idx_approach_fix_ident on approach(fix_ident);
-create index if not exists idx_approach_fix_region on approach(fix_region);
-create index if not exists idx_approach_fix_fix_airport_ident on approach(fix_airport_ident);
-
-create index if not exists idx_approach_leg_fix_type on approach_leg(fix_type);
-create index if not exists idx_approach_leg_fix_ident on approach_leg(fix_ident);
-create index if not exists idx_approach_leg_fix_region on approach_leg(fix_region);
-create index if not exists idx_approach_leg_fix_fix_airport_ident on approach_leg(fix_airport_ident);
-
-create index if not exists idx_approach_leg_recommended_fix_type on approach_leg(recommended_fix_type);
-create index if not exists idx_approach_leg_recommended_fix_ident on approach_leg(recommended_fix_ident);
-create index if not exists idx_approach_leg_recommended_fix_region on approach_leg(recommended_fix_region);
-
-create index if not exists idx_transition_fix_type on transition(fix_type);
-create index if not exists idx_transition_fix_ident on transition(fix_ident);
-create index if not exists idx_transition_fix_region on transition(fix_region);
-create index if not exists idx_transition_fix_fix_airport_ident on transition(fix_airport_ident);
-
-create index if not exists idx_transition_leg_fix_type on transition_leg(fix_type);
-create index if not exists idx_transition_leg_fix_ident on transition_leg(fix_ident);
-create index if not exists idx_transition_leg_fix_region on transition_leg(fix_region);
-create index if not exists idx_transition_leg_fix_fix_airport_ident on transition_leg(fix_airport_ident);
-
-create index if not exists idx_transition_leg_recommended_fix_type on transition_leg(recommended_fix_type);
-create index if not exists idx_transition_leg_recommended_fix_ident on transition_leg(recommended_fix_ident);
-create index if not exists idx_transition_leg_recommended_fix_region on transition_leg(recommended_fix_region);

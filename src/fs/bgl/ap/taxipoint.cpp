@@ -53,25 +53,25 @@ QString TaxiPoint::pointTypeToString(taxipoint::PointType type)
   switch(type)
   {
     case atools::fs::bgl::taxipoint::PARKING:
-      return "PARKING";
+      return "P";
 
     case atools::fs::bgl::taxipoint::UNKNOWN:
       return "UNKNOWN";
 
     case atools::fs::bgl::taxipoint::NORMAL:
-      return "NORMAL";
+      return "N";
 
     case atools::fs::bgl::taxipoint::HOLD_SHORT:
-      return "HOLD_SHORT";
+      return "HS";
 
     case atools::fs::bgl::taxipoint::HOLD_SHORT_NO_DRAW:
-      return "HOLD_SHORT_NO_DRAW";
+      return "HSND";
 
     case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT:
-      return "ILS_HOLD_SHORT";
+      return "IHS";
 
     case atools::fs::bgl::taxipoint::ILS_HOLD_SHORT_NO_DRAW:
-      return "ILS_HOLD_SHORT_NO_DRAW";
+      return "IHSND";
   }
   qWarning().nospace().noquote() << "Invalid taxi point type " << type;
   return "INVALID";
@@ -85,10 +85,10 @@ QString TaxiPoint::dirToString(taxipoint::PointDir dir)
       return "UNKNOWN_DIR";
 
     case atools::fs::bgl::taxipoint::FORWARD:
-      return "FORWARD";
+      return "F";
 
     case atools::fs::bgl::taxipoint::REVERSE:
-      return "REVERSE";
+      return "R";
   }
   qWarning().nospace().noquote() << "Invalid taxi point dir " << dir;
   return "INVALID";

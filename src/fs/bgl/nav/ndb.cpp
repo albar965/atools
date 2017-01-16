@@ -31,7 +31,7 @@ QString Ndb::ndbTypeToStr(nav::NdbType type)
   switch(type)
   {
     case nav::COMPASS_POINT:
-      return "COMPASS_POINT";
+      return "CP";
 
     case nav::MH:
       return "MH";

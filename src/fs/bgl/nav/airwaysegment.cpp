@@ -34,13 +34,13 @@ QString AirwaySegment::airwayTypeToStr(nav::AirwayType type)
       return "NONE";
 
     case nav::VICTOR:
-      return "VICTOR";
+      return "V";
 
     case nav::JET:
-      return "JET";
+      return "J";
 
     case nav::BOTH:
-      return "BOTH";
+      return "B";
   }
   qWarning().nospace().noquote() << "Invalid airway type " << type;
   return "INVALID";

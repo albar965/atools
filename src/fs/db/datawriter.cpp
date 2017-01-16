@@ -110,36 +110,69 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Progr
 
 DataWriter::~DataWriter()
 {
-  delete bglFileWriter;
-  delete sceneryAreaWriter;
-  delete airportWriter;
-  delete airportFileWriter;
-  delete runwayWriter;
-  delete runwayEndWriter;
-  delete approachWriter;
-  delete approachLegWriter;
-  delete approachTransWriter;
-  delete approachTransLegWriter;
-  delete parkingWriter;
-  delete airportHelipadWriter;
-  delete airportStartWriter;
-  delete airportApronWriter;
-  delete airportApronLightWriter;
-  delete airportFenceWriter;
-  delete airportTaxiPathWriter;
-  delete airportComWriter;
-  delete deleteAirportWriter;
-  delete waypointWriter;
-  delete airwaySegmentWriter;
-  delete vorWriter;
-  delete ndbWriter;
-  delete markerWriter;
-  delete ilsWriter;
-  delete boundaryWriter;
-  delete boundaryLineWriter;
+  close();
+}
 
+void DataWriter::close()
+{
+  delete bglFileWriter;
+  bglFileWriter = nullptr;
+  delete sceneryAreaWriter;
+  sceneryAreaWriter = nullptr;
+  delete airportWriter;
+  airportWriter = nullptr;
+  delete airportFileWriter;
+  airportFileWriter = nullptr;
+  delete runwayWriter;
+  runwayWriter = nullptr;
+  delete runwayEndWriter;
+  runwayEndWriter = nullptr;
+  delete approachWriter;
+  approachWriter = nullptr;
+  delete approachLegWriter;
+  approachLegWriter = nullptr;
+  delete approachTransWriter;
+  approachTransWriter = nullptr;
+  delete approachTransLegWriter;
+  approachTransLegWriter = nullptr;
+  delete parkingWriter;
+  parkingWriter = nullptr;
+  delete airportHelipadWriter;
+  airportHelipadWriter = nullptr;
+  delete airportStartWriter;
+  airportStartWriter = nullptr;
+  delete airportApronWriter;
+  airportApronWriter = nullptr;
+  delete airportApronLightWriter;
+  airportApronLightWriter = nullptr;
+  delete airportFenceWriter;
+  airportFenceWriter = nullptr;
+  delete airportTaxiPathWriter;
+  airportTaxiPathWriter = nullptr;
+  delete airportComWriter;
+  airportComWriter = nullptr;
+  delete deleteAirportWriter;
+  deleteAirportWriter = nullptr;
+  delete waypointWriter;
+  waypointWriter = nullptr;
+  delete airwaySegmentWriter;
+  airwaySegmentWriter = nullptr;
+  delete vorWriter;
+  vorWriter = nullptr;
+  delete ndbWriter;
+  ndbWriter = nullptr;
+  delete markerWriter;
+  markerWriter = nullptr;
+  delete ilsWriter;
+  ilsWriter = nullptr;
+  delete boundaryWriter;
+  boundaryWriter = nullptr;
+  delete boundaryLineWriter;
+  boundaryLineWriter = nullptr;
   delete runwayIndex;
+  runwayIndex = nullptr;
   delete airportIndex;
+  airportIndex = nullptr;
 }
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)

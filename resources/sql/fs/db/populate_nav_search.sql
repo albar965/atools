@@ -26,7 +26,7 @@ delete from nav_search;
 insert into nav_search (waypoint_id, waypoint_nav_id, file_id, ident, region, airport_id, airport_ident,
   type, nav_type, waypoint_num_victor_airway, waypoint_num_jet_airway, scenery_local_path, bgl_filename, mag_var, lonx, laty)
 select w.waypoint_id, w.nav_id, w.file_id, w.ident, w.region, w.airport_id, a.ident as airport_ident,
-  w.type, 'WAYPOINT', w.num_victor_airway, w.num_jet_airway, s.local_path, f.filename, w.mag_var, w.lonx, w.laty
+  w.type, 'W', w.num_victor_airway, w.num_jet_airway, s.local_path, f.filename, w.mag_var, w.lonx, w.laty
 from waypoint w
 join bgl_file f on f.bgl_file_id = w.file_id
 join scenery_area s on f.scenery_area_id = s.scenery_area_id
@@ -35,7 +35,7 @@ left outer join airport a on w.airport_id = a.airport_id;
 -- Insert NDBs into nav_search table
 insert into nav_search (ndb_id, file_id, airport_id, airport_ident, ident, name, region, range, type, nav_type, frequency,
   scenery_local_path, bgl_filename, mag_var, altitude, lonx, laty)
-select n.ndb_id, n.file_id, n.airport_id, a.ident as airport_ident, n.ident, n.name, n.region, n.range, n.type, 'NDB', n.frequency,
+select n.ndb_id, n.file_id, n.airport_id, a.ident as airport_ident, n.ident, n.name, n.region, n.range, 'N' || n.type, 'N', n.frequency,
   s.local_path, f.filename, n.mag_var, n.altitude, n.lonx, n.laty
 from ndb n
 join bgl_file f on f.bgl_file_id = n.file_id
@@ -45,13 +45,13 @@ left outer join airport a on n.airport_id = a.airport_id;
 -- Insert VORs into nav_search table
 insert into nav_search (vor_id, file_id, airport_id, airport_ident, ident, name, region, range, type, nav_type, frequency,
   scenery_local_path, bgl_filename, mag_var, altitude, lonx, laty)
-select v.vor_id, v.file_id, v.airport_id, a.ident as airport_ident, v.ident, v.name, v.region, v.range, v.type,
+select v.vor_id, v.file_id, v.airport_id, a.ident as airport_ident, v.ident, v.name, v.region, v.range, 'V' || v.type,
   case
-    when dme_only = 1 then 'DME'
-    when dme_only = 0 and dme_altitude is not null then 'VORDME'
-    when dme_only = 0 and dme_altitude is null then 'VOR'
+    when dme_only = 1 then 'D'
+    when dme_only = 0 and dme_altitude is not null then 'VD'
+    when dme_only = 0 and dme_altitude is null then 'V'
   else
-    'UNKNOWN'
+    'U'
   end as nav_type,
   v.frequency * 10 as frequency,
   s.local_path, f.filename, v.mag_var, v.altitude, v.lonx, v.laty

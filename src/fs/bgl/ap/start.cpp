@@ -30,13 +30,13 @@ QString Start::startTypeToStr(start::StartType type)
   switch(type)
   {
     case atools::fs::bgl::start::RUNWAY:
-      return "RUNWAY";
+      return "R";
 
     case atools::fs::bgl::start::WATER:
-      return "WATER";
+      return "W";
 
     case atools::fs::bgl::start::HELIPAD:
-      return "HELIPAD";
+      return "H";
   }
   qWarning().nospace().noquote() << "Invalid START type " << type;
   return "INVALID";

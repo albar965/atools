@@ -81,13 +81,13 @@ QString Runway::lightToStr(rw::Light type)
       return "NONE";
 
     case rw::LOW:
-      return "LOW";
+      return "L";
 
     case rw::MEDIUM:
-      return "MEDIUM";
+      return "M";
 
     case rw::HIGH:
-      return "HIGH";
+      return "H";
   }
   qWarning().nospace().noquote() << "Invalid runway lights type " << type;
   return "INVALID";

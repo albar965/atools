@@ -30,19 +30,19 @@ QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
   switch(type)
   {
     case nav::TERMINAL:
-      return "TERMINAL";
+      return "T";
 
     case nav::LOW:
-      return "LOW";
+      return "L";
 
     case nav::HIGH:
-      return "HIGH";
+      return "H";
 
     case nav::ILS:
-      return "ILS";
+      return "I";
 
     case nav::VOT:
-      return "VOT";
+      return "V";
   }
   qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
   return "INVALID";

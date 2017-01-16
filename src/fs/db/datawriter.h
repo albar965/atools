@@ -244,6 +244,9 @@ public:
     sceneryErrors = errors;
   }
 
+  /* Close all writers and queries */
+  void close();
+
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;

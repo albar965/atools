@@ -32,19 +32,19 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
   switch(type)
   {
     case nav::NAMED:
-      return "NAMED";
+      return "WN";
 
     case nav::UNNAMED:
-      return "UNNAMED";
+      return "WU";
 
     case nav::VOR:
-      return "VOR";
+      return "V";
 
     case nav::NDB:
-      return "NDB";
+      return "N";
 
     case nav::OFF_AIRWAY:
-      return "OFF_AIRWAY";
+      return "OA";
 
     case nav::IAF:
       return "IAF";

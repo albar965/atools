@@ -32,43 +32,43 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
       return "UNKNOWN";
 
     case ap::RAMP_GA:
-      return "RAMP_GA";
+      return "RGA";
 
     case ap::RAMP_GA_SMALL:
-      return "RAMP_GA_SMALL";
+      return "RGAS";
 
     case ap::RAMP_GA_MEDIUM:
-      return "RAMP_GA_MEDIUM";
+      return "RGAM";
 
     case ap::RAMP_GA_LARGE:
-      return "RAMP_GA_LARGE";
+      return "RGAL";
 
     case ap::RAMP_CARGO:
-      return "RAMP_CARGO";
+      return "RC";
 
     case ap::RAMP_MIL_CARGO:
-      return "RAMP_MIL_CARGO";
+      return "RMC";
 
     case ap::RAMP_MIL_COMBAT:
-      return "RAMP_MIL_COMBAT";
+      return "RMCB";
 
     case ap::GATE_SMALL:
-      return "GATE_SMALL";
+      return "GS";
 
     case ap::GATE_MEDIUM:
-      return "GATE_MEDIUM";
+      return "GM";
 
     case ap::GATE_HEAVY:
-      return "GATE_HEAVY";
+      return "GH";
 
     case ap::DOCK_GA:
-      return "DOCK_GA";
+      return "DGA";
 
     case ap::FUEL:
       return "FUEL";
 
     case ap::VEHICLES:
-      return "VEHICLES";
+      return "V";
   }
   qWarning().nospace().noquote() << "Invalid parking type " << type;
   return "INVALID";
@@ -82,115 +82,115 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
       return "NONE";
 
     case ap::PARKING:
-      return "PARKING";
+      return "P";
 
     case ap::N_PARKING:
-      return "N_PARKING";
+      return "NP";
 
     case ap::NE_PARKING:
-      return "NE_PARKING";
+      return "NEP";
 
     case ap::E_PARKING:
-      return "E_PARKING";
+      return "EP";
 
     case ap::SE_PARKING:
-      return "SE_PARKING";
+      return "SEP";
 
     case ap::S_PARKING:
-      return "S_PARKING";
+      return "SP";
 
     case ap::SW_PARKING:
-      return "SW_PARKING";
+      return "SWP";
 
     case ap::W_PARKING:
-      return "W_PARKING";
+      return "WP";
 
     case ap::NW_PARKING:
-      return "NW_PARKING";
+      return "NWP";
 
     case ap::GATE:
-      return "GATE";
+      return "G";
 
     case ap::DOCK:
-      return "DOCK";
+      return "D";
 
     case ap::GATE_A:
-      return "GATE_A";
+      return "GA";
 
     case ap::GATE_B:
-      return "GATE_B";
+      return "GB";
 
     case ap::GATE_C:
-      return "GATE_C";
+      return "GC";
 
     case ap::GATE_D:
-      return "GATE_D";
+      return "GD";
 
     case ap::GATE_E:
-      return "GATE_E";
+      return "GE";
 
     case ap::GATE_F:
-      return "GATE_F";
+      return "GF";
 
     case ap::GATE_G:
-      return "GATE_G";
+      return "GG";
 
     case ap::GATE_H:
-      return "GATE_H";
+      return "GH";
 
     case ap::GATE_I:
-      return "GATE_I";
+      return "GI";
 
     case ap::GATE_J:
-      return "GATE_J";
+      return "GJ";
 
     case ap::GATE_K:
-      return "GATE_K";
+      return "GK";
 
     case ap::GATE_L:
-      return "GATE_L";
+      return "GL";
 
     case ap::GATE_M:
-      return "GATE_M";
+      return "GM";
 
     case ap::GATE_N:
-      return "GATE_N";
+      return "GN";
 
     case ap::GATE_O:
-      return "GATE_O";
+      return "GO";
 
     case ap::GATE_P:
-      return "GATE_P";
+      return "GP";
 
     case ap::GATE_Q:
-      return "GATE_Q";
+      return "GQ";
 
     case ap::GATE_R:
-      return "GATE_R";
+      return "GR";
 
     case ap::GATE_S:
-      return "GATE_S";
+      return "GS";
 
     case ap::GATE_T:
-      return "GATE_T";
+      return "GT";
 
     case ap::GATE_U:
-      return "GATE_U";
+      return "GU";
 
     case ap::GATE_V:
-      return "GATE_V";
+      return "GV";
 
     case ap::GATE_W:
-      return "GATE_W";
+      return "GW";
 
     case ap::GATE_X:
-      return "GATE_X";
+      return "GX";
 
     case ap::GATE_Y:
-      return "GATE_Y";
+      return "GY";
 
     case ap::GATE_Z:
-      return "GATE_Z";
+      return "GZ";
   }
   qWarning().nospace().noquote() << "Invalid parking name " << type;
   return "INVALID";
@@ -204,13 +204,13 @@ QString Parking::pushBackToStr(ap::PushBack type)
       return "NONE";
 
     case atools::fs::bgl::ap::LEFT:
-      return "LEFT";
+      return "L";
 
     case atools::fs::bgl::ap::RIGHT:
-      return "RIGHT";
+      return "R";
 
     case atools::fs::bgl::ap::BOTH:
-      return "BOTH";
+      return "B";
   }
   qWarning().nospace().noquote() << "Invalid parking name " << type;
   return "INVALID";

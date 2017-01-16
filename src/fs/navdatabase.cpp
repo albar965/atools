@@ -36,7 +36,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 18;
+const int PROGRESS_NUM_STEPS = 19;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -273,6 +273,7 @@ void NavDatabase::createInternal()
     }
   }
   db->commit();
+  dataWriter.close();
 
   // Loading is done here - now continue with the post process steps
 
@@ -305,23 +306,32 @@ void NavDatabase::createInternal()
       return;
 
     db->commit();
+
+    SqlQuery(db).exec("drop table if exists airway_point");
   }
 
-  if((aborted = progress.reportOther(tr("Updating waypoint ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating waypoints"))) == true)
     return;
 
   // Set the nav_ids (VOR, NDB) in the waypoint table
   script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Updating navigation ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating approaches"))) == true)
     return;
 
-  // Set the nav_ids (VOR, NDB) in the approach and transition table
-  script.executeScript(":/atools/resources/sql/fs/db/update_nav_ids.sql");
+  // Set the nav_ids (VOR, NDB) in the approach table
+  script.executeScript(":/atools/resources/sql/fs/db/update_approaches.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Updating ILS ids"))) == true)
+  if((aborted = progress.reportOther(tr("Updating transitions"))) == true)
+    return;
+
+  // Set the nav_ids (VOR, NDB) in the transition table
+  script.executeScript(":/atools/resources/sql/fs/db/update_transitions.sql");
+  db->commit();
+
+  if((aborted = progress.reportOther(tr("Updating ILS"))) == true)
     return;
 
   // Set runway end ids into the ILS and update the ILS count in the airport table

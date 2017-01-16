@@ -37,31 +37,31 @@ QString Com::comTypeToStr(com::ComType type)
       return "ATIS";
 
     case com::MULTICOM:
-      return "MULTICOM";
+      return "MC";
 
     case com::UNICOM:
-      return "UNICOM";
+      return "UC";
 
     case com::CTAF:
       return "CTAF";
 
     case com::GROUND:
-      return "GROUND";
+      return "G";
 
     case com::TOWER:
-      return "TOWER";
+      return "T";
 
     case com::CLEARANCE:
-      return "CLEARANCE";
+      return "C";
 
     case com::APPROACH:
-      return "APPROACH";
+      return "A";
 
     case com::DEPARTURE:
-      return "DEPARTURE";
+      return "D";
 
     case com::CENTER:
-      return "CENTER";
+      return "CTR";
 
     case com::FSS:
       return "FSS";
@@ -73,10 +73,10 @@ QString Com::comTypeToStr(com::ComType type)
       return "ASOS";
 
     case com::CLEARANCE_PRE_TAXI:
-      return "CLEARANCE_PRE_TAXI";
+      return "CPT";
 
     case com::REMOTE_CLEARANCE_DELIVERY:
-      return "REMOTE_CLEARANCE_DELIVERY";
+      return "RCD";
   }
   qWarning().nospace().noquote() << "Invalid COM type " << type;
   return "INVALID";

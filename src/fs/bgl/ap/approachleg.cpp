@@ -149,10 +149,10 @@ QString ApproachLeg::altDescriptorToString(leg::AltDescriptor altDescr)
       return "A";
 
     case atools::fs::bgl::leg::PLUS:
-      return "PLUS";
+      return "P";
 
     case atools::fs::bgl::leg::MINUS:
-      return "MINUS";
+      return "M";
 
     case atools::fs::bgl::leg::B:
       return "B";

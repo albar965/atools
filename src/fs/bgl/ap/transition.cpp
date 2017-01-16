@@ -33,10 +33,10 @@ QString Transition::transitionTypeToStr(ap::TransitionType type)
   switch(type)
   {
     case ap::FULL:
-      return "FULL";
+      return "F";
 
     case ap::DME:
-      return "DME";
+      return "D";
   }
   qWarning().nospace().noquote() << "Invalid transition type " << type;
   return "INVALID";
@@ -47,19 +47,19 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
   switch(type)
   {
     case ap::tfix::VOR:
-      return "VOR";
+      return "V";
 
     case ap::tfix::NDB:
-      return "NDB";
+      return "N";
 
     case ap::tfix::TERMINAL_NDB:
-      return "TERMINAL_NDB";
+      return "TN";
 
     case ap::tfix::WAYPOINT:
-      return "WAYPOINT";
+      return "W";
 
     case ap::tfix::TERMINAL_WAYPOINT:
-      return "TERMINAL_WAYPOINT";
+      return "TW";
   }
   qWarning().nospace().noquote() << "Invalid transition fix type " << type;
   return "INVALID";

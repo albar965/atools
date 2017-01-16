@@ -66,25 +66,25 @@ QString TaxiPath::pathTypeToString(taxipath::Type type)
   switch(type)
   {
     case atools::fs::bgl::taxipath::VEHICLE:
-      return "VEHICLE";
+      return "V";
 
     case atools::fs::bgl::taxipath::UNKNOWN:
       return "UNKNOWN";
 
     case atools::fs::bgl::taxipath::TAXI:
-      return "TAXI";
+      return "T";
 
     case atools::fs::bgl::taxipath::RUNWAY:
-      return "RUNWAY";
+      return "R";
 
     case atools::fs::bgl::taxipath::PARKING:
-      return "PARKING";
+      return "P";
 
     case atools::fs::bgl::taxipath::PATH:
-      return "PATH";
+      return "PT";
 
     case atools::fs::bgl::taxipath::CLOSED:
-      return "CLOSED";
+      return "C";
   }
   qWarning().nospace().noquote() << "Invalid taxi path type " << type;
   return "INVALID";

@@ -29,10 +29,10 @@ QString RunwayEnd::patternToStr(rw::Pattern pattern)
   switch(pattern)
   {
     case rw::LEFT:
-      return "LEFT";
+      return "L";
 
     case rw::RIGHT:
-      return "RIGHT";
+      return "R";
   }
   qWarning().nospace().noquote() << "Invalid runway pattern type " << pattern;
   return "UNKNOWN";

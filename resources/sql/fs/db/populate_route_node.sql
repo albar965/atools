@@ -50,8 +50,8 @@ insert into route_node_airway (nav_id, type, lonx, laty)
 select w.waypoint_id as nav_id,
   case when w.num_victor_airway > 0 and w.num_jet_airway = 0 then
   -- Waypoint victor
-  case when w.type = 'NDB' then 5 * 16 + 4         -- victor + NDB
-    when w.type = 'VOR' then
+  case when w.type = 'N' then 5 * 16 + 4         -- victor + NDB
+    when w.type = 'V' then
     case when v.dme_only = 1 then 5 * 16 + 3     -- victor + DME
     when v.dme_altitude is null then 5 * 16 + 1  -- victor + VOR
     else 5 * 16 + 2                              -- victor + VORDME
@@ -60,8 +60,8 @@ select w.waypoint_id as nav_id,
   end
   when w.num_victor_airway = 0 and w.num_jet_airway > 0 then
   -- Waypoint jet
-  case when w.type = 'NDB' then 6 * 16 + 4         -- jet + NDB
-  when w.type = 'VOR' then
+  case when w.type = 'N' then 6 * 16 + 4         -- jet + NDB
+  when w.type = 'V' then
     case when v.dme_only = 1 then 6 * 16 + 3     -- jet + DME
     when v.dme_altitude is null then 6 * 16 + 1  -- jet + VOR
     else 6 * 16 + 2                              -- jet + VORDME
@@ -70,8 +70,8 @@ select w.waypoint_id as nav_id,
     end
   when w.num_victor_airway > 0 and w.num_jet_airway > 0 then
   -- Waypoint both
-  case when w.type = 'NDB' then 7 * 16 + 4         -- both + NDB
-  when w.type = 'VOR' then
+  case when w.type = 'N' then 7 * 16 + 4         -- both + NDB
+  when w.type = 'V' then
     case when v.dme_only = 1 then 7 * 16 + 3     -- both + DME
     when v.dme_altitude is null then 7 * 16 + 1  -- both + VOR
     else 7 * 16 + 2                              -- both + VORDME

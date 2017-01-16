@@ -102,8 +102,8 @@ select w.waypoint_id from waypoint w where mid_type = w.type and mid_ident = w.i
 
 update waypoint set num_victor_airway = (
 select count(1) from airway_point ap
-where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('VICTOR', 'BOTH'));
+where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('V', 'B'));
 
 update waypoint set num_jet_airway = (
 select count(1) from airway_point ap
-where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('JET', 'BOTH'));
+where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('J', 'B'));

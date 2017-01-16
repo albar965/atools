@@ -42,7 +42,7 @@ QString approachTypeToStr(ap::ApproachType type)
       return "ILS";
 
     case ap::LOCALIZER:
-      return "LOCALIZER";
+      return "LOC";
 
     case ap::SDF:
       return "SDF";
@@ -60,7 +60,7 @@ QString approachTypeToStr(ap::ApproachType type)
       return "RNAV";
 
     case ap::LOCALIZER_BACKCOURSE:
-      return "LOCALIZER_BACKCOURSE";
+      return "LOCB";
   }
   qWarning().nospace().noquote() << "Invalid approach type " << type;
   return "INVALID";
@@ -70,29 +70,29 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::ap::fix::UNKNWON_VALUE_8:
-      return "FIX_UNKNWON_VALUE_8";
+    case ap::fix::LOCALIZER:
+      return "L";
 
     case ap::fix::NONE:
       return "NONE";
 
     case ap::fix::VOR:
-      return "VOR";
+      return "V";
 
     case ap::fix::NDB:
-      return "NDB";
+      return "N";
 
     case ap::fix::TERMINAL_NDB:
-      return "TERMINAL_NDB";
+      return "TN";
 
     case ap::fix::WAYPOINT:
-      return "WAYPOINT";
+      return "W";
 
     case ap::fix::TERMINAL_WAYPOINT:
-      return "TERMINAL_WAYPOINT";
+      return "TW";
 
     case ap::fix::RUNWAY:
-      return "RUNWAY";
+      return "R";
   }
   qWarning().nospace().noquote() << "Invalid approach fix type " << type;
   return "INVALID";

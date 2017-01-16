@@ -452,6 +452,7 @@ create table transition
   fix_region varchar(2),        -- "
   fix_airport_ident varchar(4), -- "
   altitude integer,             -- Overfly altitude in feet for the transition fix
+  dme_nav_id integer,           -- same as in approach
   dme_ident varchar(5),         -- Contains the DME ICAO ident if transition type is DME
   dme_region varchar(2),        -- ICAO two letter region code for DME if transition type is DME
   dme_airport_ident,
