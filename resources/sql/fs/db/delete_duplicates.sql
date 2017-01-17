@@ -31,6 +31,12 @@ where airport_id not in (select max(airport_id) from airport group by ident);
 delete from airport
 where airport_id not in (select max(airport_id) from airport group by ident);
 
+delete from approach where airport_id not in (select airport_id from airport);
+delete from approach_leg where approach_id not in (select approach_id from approach);
+delete from transition where approach_id not in (select approach_id from approach);
+delete from transition_leg where transition_id not in (select transition_id from transition);
+
+
 -- Delete duplicate NDBs
 delete from ndb where ndb_id in (
 select distinct w1.ndb_id

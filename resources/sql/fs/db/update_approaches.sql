@@ -58,21 +58,21 @@ update approach set fix_nav_id =
   select v.vor_id
   from vor v
   where approach.fix_type = 'V' and approach.fix_ident = v.ident and approach.fix_region = v.region
-) where approach.fix_type = 'V';
+) where approach.fix_type = 'V' and approach.fix_nav_id is null;
 
 update approach set fix_nav_id =
 (
   select n.ndb_id
   from ndb n
   where approach.fix_type = 'N' and approach.fix_ident = n.ident and approach.fix_region = n.region
-) where approach.fix_type = 'N';
+) where approach.fix_type = 'N' and approach.fix_nav_id is null;
 
 update approach set fix_nav_id =
 (
   select w.waypoint_id
   from waypoint w
   where approach.fix_type = 'W' and approach.fix_ident = w.ident and approach.fix_region = w.region
-) where approach.fix_type = 'W';
+) where approach.fix_type = 'W' and approach.fix_nav_id is null;
 
 -- Terminals -----------------------------------
 update approach set fix_nav_id =
@@ -81,7 +81,7 @@ update approach set fix_nav_id =
   from ndb n join airport a on n.airport_id = a.airport_id
   where approach.fix_type = 'TN' and approach.fix_ident = n.ident and
   approach.fix_region = n.region and a.ident = approach.fix_airport_ident
-) where approach.fix_type = 'TN';
+) where approach.fix_type = 'TN' and approach.fix_nav_id is null;
 
 update approach set fix_nav_id =
 (
@@ -89,7 +89,7 @@ update approach set fix_nav_id =
   from waypoint w join airport a on w.airport_id = a.airport_id
   where approach.fix_type = 'TW' and approach.fix_ident = w.ident and
   approach.fix_region = w.region and a.ident = approach.fix_airport_ident
-) where approach.fix_type = 'TW';
+) where approach.fix_type = 'TW' and approach.fix_nav_id is null;
 
 ----------------------------------------------------------------
 -- Update navigation references for approach legs --------------
@@ -99,21 +99,21 @@ update approach_leg set fix_nav_id =
   select v.vor_id
   from vor v
   where approach_leg.fix_type = 'V' and approach_leg.fix_ident = v.ident and approach_leg.fix_region = v.region
-) where approach_leg.fix_type = 'V';
+) where approach_leg.fix_type = 'V' and approach_leg.fix_nav_id is null;
 
 update approach_leg set fix_nav_id =
 (
   select n.ndb_id
   from ndb n
   where approach_leg.fix_type = 'N' and approach_leg.fix_ident = n.ident and approach_leg.fix_region = n.region
-) where approach_leg.fix_type = 'N';
+) where approach_leg.fix_type = 'N' and approach_leg.fix_nav_id is null;
 
 update approach_leg set fix_nav_id =
 (
   select w.waypoint_id
   from waypoint w
   where approach_leg.fix_type = 'W' and approach_leg.fix_ident = w.ident and approach_leg.fix_region = w.region
-) where approach_leg.fix_type = 'W';
+) where approach_leg.fix_type = 'W' and approach_leg.fix_nav_id is null;
 
 -- Terminals -----------------------------------
 update approach_leg set fix_nav_id =
@@ -122,7 +122,7 @@ update approach_leg set fix_nav_id =
   from ndb n join airport a on n.airport_id = a.airport_id
   where approach_leg.fix_type = 'TN' and approach_leg.fix_ident = n.ident and
   approach_leg.fix_region = n.region and a.ident = approach_leg.fix_airport_ident
-) where approach_leg.fix_type = 'TN';
+) where approach_leg.fix_type = 'TN' and approach_leg.fix_nav_id is null;
 
 update approach_leg set fix_nav_id =
 (
@@ -130,7 +130,7 @@ update approach_leg set fix_nav_id =
   from waypoint w join airport a on w.airport_id = a.airport_id
   where approach_leg.fix_type = 'TW' and approach_leg.fix_ident = w.ident and
   approach_leg.fix_region = w.region and a.ident = approach_leg.fix_airport_ident
-) where approach_leg.fix_type = 'TW';
+) where approach_leg.fix_type = 'TW' and approach_leg.fix_nav_id is null;
 
 ---------------------------------------------------------------
 -- Update navigation references for approach legs --------------
@@ -141,7 +141,7 @@ update approach_leg set recommended_fix_nav_id =
   from vor v
   where approach_leg.recommended_fix_type = 'V' and approach_leg.recommended_fix_ident = v.ident and
   approach_leg.recommended_fix_region = v.region
-) where approach_leg.recommended_fix_type = 'V';
+) where approach_leg.recommended_fix_type = 'V' and approach_leg.recommended_fix_nav_id is null;
 
 update approach_leg set recommended_fix_nav_id =
 (
@@ -149,7 +149,7 @@ update approach_leg set recommended_fix_nav_id =
   from ndb n
   where approach_leg.recommended_fix_type = 'N' and approach_leg.recommended_fix_ident = n.ident and
   approach_leg.recommended_fix_region = n.region
-) where approach_leg.recommended_fix_type = 'N';
+) where approach_leg.recommended_fix_type = 'N' and approach_leg.recommended_fix_nav_id is null;
 
 update approach_leg set recommended_fix_nav_id =
 (
@@ -157,7 +157,7 @@ update approach_leg set recommended_fix_nav_id =
   from waypoint w
   where approach_leg.recommended_fix_type = 'W' and approach_leg.recommended_fix_ident = w.ident and
   approach_leg.recommended_fix_region = w.region
-) where approach_leg.recommended_fix_type = 'W';
+) where approach_leg.recommended_fix_type = 'W' and approach_leg.recommended_fix_nav_id is null;
 
 -- Terminals -----------------------------------
 update approach_leg set recommended_fix_nav_id =
@@ -166,7 +166,7 @@ update approach_leg set recommended_fix_nav_id =
   from ndb n join airport a on n.airport_id = a.airport_id
   where approach_leg.recommended_fix_type = 'TN' and approach_leg.recommended_fix_ident = n.ident and
   approach_leg.recommended_fix_region = n.region and a.ident = approach_leg.fix_airport_ident
-) where approach_leg.recommended_fix_type = 'TN';
+) where approach_leg.recommended_fix_type = 'TN' and approach_leg.recommended_fix_nav_id is null;
 
 update approach_leg set recommended_fix_nav_id =
 (
@@ -174,7 +174,7 @@ update approach_leg set recommended_fix_nav_id =
   from waypoint w join airport a on w.airport_id = a.airport_id
   where approach_leg.recommended_fix_type = 'TW' and approach_leg.recommended_fix_ident = w.ident and
   approach_leg.recommended_fix_region = w.region and a.ident = approach_leg.fix_airport_ident
-) where approach_leg.recommended_fix_type = 'TW';
+) where approach_leg.recommended_fix_type = 'TW' and approach_leg.recommended_fix_nav_id is null;
 
 update approach_leg set recommended_fix_nav_id =
 (
@@ -182,8 +182,7 @@ update approach_leg set recommended_fix_nav_id =
   from ils i, approach a
   where approach_leg.recommended_fix_type = 'L' and approach_leg.recommended_fix_ident = i.ident and
   i.loc_airport_ident = a.airport_ident and approach_leg.approach_id = a.approach_id
-) where approach_leg.recommended_fix_type = 'L';
-
+) where approach_leg.recommended_fix_type = 'L' and approach_leg.recommended_fix_nav_id is null;
 
 
 drop index if exists idx_approach_fix_type;
