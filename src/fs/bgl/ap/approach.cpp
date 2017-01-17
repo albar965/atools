@@ -32,7 +32,7 @@ using atools::io::BinaryStream;
 Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  bs->skip(1); // suffix
+  suffix = bs->readByte();
   runwayNumber = bs->readUByte();
 
   int typeFlags = bs->readUByte();
@@ -129,6 +129,8 @@ QString Approach::getRunwayName() const
 {
   return converter::runwayToStr(runwayNumber, runwayDesignator);
 }
+
+
 
 } // namespace bgl
 } // namespace fs

@@ -138,11 +138,17 @@ public:
     return runwayNumber > 0;
   }
 
+  char getSuffix() const
+  {
+    return suffix;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Approach& record);
 
   atools::fs::bgl::ap::ApproachType type;
   int runwayNumber, runwayDesignator;
+  char suffix = 0;
   bool gpsOverlay;
   int numTransitions;
 

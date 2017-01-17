@@ -46,6 +46,11 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":approach_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
+  if(type->getSuffix() == '0' || type->getSuffix() == 0)
+    bindNullString(":suffix");
+  else
+    bind(":suffix", QChar(type->getSuffix()));
+
   bind(":has_gps_overlay", type->hasGpsOverlay());
   bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));

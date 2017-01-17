@@ -418,6 +418,9 @@ create table approach
   airport_ident varchar(4),
   runway_name varchar(10),
   type varchar(25) not null,        -- see enum atools::fs::bgl::ap::ApproachType
+  suffix varchar(1),                -- Approach suffix - indicates SID/STAR for P3D
+                                    -- Both SIDS and STARS use the type = "GPS" for the Approach elements.
+                                    -- STARS use the suffix="A" while SIDS use the suffix="D".
   has_gps_overlay integer not null, -- Boolean - 1 if the approach has a GPS overlay
   fix_nav_id integer,               -- Reference to vor.vor_id, waypoint.waypoint_id or ndb.ndb_id depending on fix_type
   fix_type varchar(25),             -- see enum atools::fs::bgl::ap::ApproachFixType and corresponding string conversion
