@@ -98,64 +98,45 @@ QString Runway::surfaceToStr(rw::Surface surface)
   switch(surface)
   {
     case rw::CONCRETE:
-      return "CONCRETE";
-
+      return "C";
     case rw::GRASS:
-      return "GRASS";
-
+      return "G";
     case rw::WATER:
-      return "WATER";
-
+      return "W";
     case rw::ASPHALT:
-      return "ASPHALT";
-
+      return "A";
     case rw::CEMENT:
-      return "CEMENT";
-
+      return "CE";
     case rw::CLAY:
-      return "CLAY";
-
+      return "CL";
     case rw::SNOW:
-      return "SNOW";
-
+      return "SN";
     case rw::ICE:
-      return "ICE";
-
+      return "I";
     case rw::DIRT:
-      return "DIRT";
-
+      return "D";
     case rw::CORAL:
-      return "CORAL";
-
+      return "CR";
     case rw::GRAVEL:
-      return "GRAVEL";
-
+      return "GR";
     case rw::OIL_TREATED:
-      return "OIL_TREATED";
-
+      return "OT";
     case rw::STEEL_MATS:
-      return "STEEL_MATS";
-
+      return "SM";
     case rw::BITUMINOUS:
-      return "BITUMINOUS";
-
+      return "B";
     case rw::BRICK:
-      return "BRICK";
-
+      return "BR";
     case rw::MACADAM:
-      return "MACADAM";
-
+      return "M";
     case rw::PLANKS:
-      return "PLANKS";
-
+      return "PL";
     case rw::SAND:
-      return "SAND";
-
+      return "S";
     case rw::SHALE:
-      return "SHALE";
-
+      return "SH";
     case rw::TARMAC:
-      return "TARMAC";
+      return "T";
 
     case rw::UNKNOWN:
       return "UNKNOWN";
