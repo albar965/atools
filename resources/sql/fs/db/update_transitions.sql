@@ -24,15 +24,6 @@ create index if not exists idx_transition_dme_ident on transition(dme_ident);
 create index if not exists idx_transition_dme_region on transition(dme_region);
 create index if not exists idx_transition_dme_airport_ident on transition(dme_airport_ident);
 
-create index if not exists idx_transition_leg_fix_type on transition_leg(fix_type);
-create index if not exists idx_transition_leg_fix_ident on transition_leg(fix_ident);
-create index if not exists idx_transition_leg_fix_region on transition_leg(fix_region);
-create index if not exists idx_transition_leg_fix_fix_airport_ident on transition_leg(fix_airport_ident);
-
-create index if not exists idx_transition_leg_recommended_fix_type on transition_leg(recommended_fix_type);
-create index if not exists idx_transition_leg_recommended_fix_ident on transition_leg(recommended_fix_ident);
-create index if not exists idx_transition_leg_recommended_fix_region on transition_leg(recommended_fix_region);
-
 ----------------------------------------------------------------
 -- Update navigation references for transition -------------------
 
@@ -98,93 +89,6 @@ update transition set dme_nav_id =
   where transition.dme_ident = v.ident and transition.dme_region = v.region
 ) where transition.dme_ident is not null and transition.dme_nav_id is null;
 
-----------------------------------------------------------------
--- Update navigation references for transition legs ------------
-
-update transition_leg set fix_nav_id =
-(
-  select v.vor_id
-  from vor v
-  where transition_leg.fix_type = 'V' and transition_leg.fix_ident = v.ident and transition_leg.fix_region = v.region
-) where transition_leg.fix_type = 'V' and transition_leg.fix_nav_id is null;
-
-update transition_leg set fix_nav_id =
-(
-  select n.ndb_id
-  from ndb n
-  where transition_leg.fix_type = 'N' and transition_leg.fix_ident = n.ident and transition_leg.fix_region = n.region
-) where transition_leg.fix_type = 'N' and transition_leg.fix_nav_id is null;
-
-update transition_leg set fix_nav_id =
-(
-  select w.waypoint_id
-  from waypoint w
-  where transition_leg.fix_type = 'W' and transition_leg.fix_ident = w.ident and transition_leg.fix_region = w.region
-) where transition_leg.fix_type = 'W' and transition_leg.fix_nav_id is null;
-
--- Terminals -----------------------------------
-
-update transition_leg set fix_nav_id =
-(
-  select n.ndb_id
-  from ndb n join airport a on n.airport_id = a.airport_id
-  where transition_leg.fix_type = 'TN' and transition_leg.fix_ident = n.ident and
-  transition_leg.fix_region = n.region and a.ident = transition_leg.fix_airport_ident
-) where transition_leg.fix_type = 'TN' and transition_leg.fix_nav_id is null;
-
-update transition_leg set fix_nav_id =
-(
-  select w.waypoint_id
-  from waypoint w join airport a on w.airport_id = a.airport_id
-  where transition_leg.fix_type = 'TW' and transition_leg.fix_ident = w.ident and
-  transition_leg.fix_region = w.region and a.ident = transition_leg.fix_airport_ident
-) where transition_leg.fix_type = 'TW' and transition_leg.fix_nav_id is null;
-
-----------------------------------------------------------------
--- Update navigation references for transition legs ------------
-
-update transition_leg set recommended_fix_nav_id =
-(
-  select v.vor_id
-  from vor v
-  where transition_leg.recommended_fix_type = 'V' and transition_leg.recommended_fix_ident = v.ident and
-  transition_leg.recommended_fix_region = v.region
-) where transition_leg.recommended_fix_type = 'V' and transition_leg.recommended_fix_nav_id is null;
-
-update transition_leg set recommended_fix_nav_id =
-(
-  select n.ndb_id
-  from ndb n
-  where transition_leg.recommended_fix_type = 'N' and transition_leg.recommended_fix_ident = n.ident and
-  transition_leg.recommended_fix_region = n.region
-) where transition_leg.recommended_fix_type = 'N' and transition_leg.recommended_fix_nav_id is null;
-
-update transition_leg set recommended_fix_nav_id =
-(
-  select w.waypoint_id
-  from waypoint w
-  where transition_leg.recommended_fix_type = 'W' and transition_leg.recommended_fix_ident = w.ident and
-  transition_leg.recommended_fix_region = w.region
-) where transition_leg.recommended_fix_type = 'W' and transition_leg.recommended_fix_nav_id is null;
-
--- Terminals -----------------------------------
-
-update transition_leg set recommended_fix_nav_id =
-(
-  select n.ndb_id
-  from ndb n join airport a on n.airport_id = a.airport_id
-  where transition_leg.recommended_fix_type = 'TN' and transition_leg.recommended_fix_ident = n.ident and
-  transition_leg.recommended_fix_region = n.region and a.ident = transition_leg.fix_airport_ident
-) where transition_leg.recommended_fix_type = 'TN' and transition_leg.recommended_fix_nav_id is null;
-
-update transition_leg set recommended_fix_nav_id =
-(
-  select w.waypoint_id
-  from waypoint w join airport a on w.airport_id = a.airport_id
-  where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_ident = w.ident and
-  transition_leg.recommended_fix_region = w.region and a.ident = transition_leg.fix_airport_ident
-) where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_nav_id is null;
-
 
 drop index if exists idx_transition_fix_type;
 drop index if exists idx_transition_fix_ident;
@@ -193,10 +97,3 @@ drop index if exists idx_transition_fix_fix_airport_ident;
 drop index if exists idx_transition_dme_ident;
 drop index if exists idx_transition_dme_region;
 drop index if exists idx_transition_dme_airport_ident;
-drop index if exists idx_transition_leg_fix_type;
-drop index if exists idx_transition_leg_fix_ident;
-drop index if exists idx_transition_leg_fix_region;
-drop index if exists idx_transition_leg_fix_fix_airport_ident;
-drop index if exists idx_transition_leg_recommended_fix_type;
-drop index if exists idx_transition_leg_recommended_fix_ident;
-drop index if exists idx_transition_leg_recommended_fix_region;
