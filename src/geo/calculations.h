@@ -254,10 +254,24 @@ Q_DECL_CONSTEXPR TYPE isaTemperature(TYPE altFeet)
 
 /* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE machToTas(TYPE altFeet, TYPE machNumber)
+Q_DECL_CONSTEXPR TYPE machToTasFromAlt(TYPE altFeet, TYPE machNumber)
 {
   return static_cast<TYPE>(39. * static_cast<double>(machNumber) *
                            std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15));
+}
+
+/* Mach number to TAS in knots https://en.wikipedia.org/wiki/True_airspeed */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE machToTasFromSat(TYPE sat, TYPE machNumber)
+{
+  return static_cast<TYPE>(39. * static_cast<double>(machNumber) * std::sqrt(sat) + 273.15);
+}
+
+/* TAS to mach number https://en.wikipedia.org/wiki/True_airspeed */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE tasToMach(TYPE sat, TYPE tas)
+{
+  return static_cast<TYPE>(static_cast<double>(tas) / (std::sqrt(static_cast<double>(sat) + 273.15) * 39.));
 }
 
 } /* namespace geo */
