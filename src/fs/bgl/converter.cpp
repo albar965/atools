@@ -129,7 +129,7 @@ QString runwayToStr(int runwayNumber, int designator)
   }
   else
   {
-    // Normal tow digit runway number without leading zero
+    // Normal two digit runway number without leading zero
     retval += static_cast<char>(runwayNumber / 10) + '0';
     retval += static_cast<char>(runwayNumber % 10) + '0';
   }

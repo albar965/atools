@@ -64,10 +64,26 @@ update transition_leg set fix_nav_id =
 
 update transition_leg set fix_nav_id =
 (
+select n.ndb_id
+from ndb n
+where transition_leg.fix_type = 'TN' and transition_leg.fix_ident = n.ident and
+transition_leg.fix_region = n.region
+) where transition_leg.fix_type = 'TN' and transition_leg.fix_nav_id is null;
+
+update transition_leg set fix_nav_id =
+(
   select w.waypoint_id
   from waypoint w join airport a on w.airport_id = a.airport_id
   where transition_leg.fix_type = 'TW' and transition_leg.fix_ident = w.ident and
   transition_leg.fix_region = w.region and a.ident = transition_leg.fix_airport_ident
+) where transition_leg.fix_type = 'TW' and transition_leg.fix_nav_id is null;
+
+update transition_leg set fix_nav_id =
+(
+select w.waypoint_id
+from waypoint w
+where transition_leg.fix_type = 'TW' and transition_leg.fix_ident = w.ident and
+transition_leg.fix_region = w.region
 ) where transition_leg.fix_type = 'TW' and transition_leg.fix_nav_id is null;
 
 ----------------------------------------------------------------
@@ -109,10 +125,26 @@ update transition_leg set recommended_fix_nav_id =
 
 update transition_leg set recommended_fix_nav_id =
 (
+select n.ndb_id
+from ndb n
+where transition_leg.recommended_fix_type = 'TN' and transition_leg.recommended_fix_ident = n.ident and
+transition_leg.recommended_fix_region = n.region
+) where transition_leg.recommended_fix_type = 'TN' and transition_leg.recommended_fix_nav_id is null;
+
+update transition_leg set recommended_fix_nav_id =
+(
   select w.waypoint_id
   from waypoint w join airport a on w.airport_id = a.airport_id
   where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_ident = w.ident and
   transition_leg.recommended_fix_region = w.region and a.ident = transition_leg.fix_airport_ident
+) where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_nav_id is null;
+
+update transition_leg set recommended_fix_nav_id =
+(
+select w.waypoint_id
+from waypoint w
+where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_ident = w.ident and
+transition_leg.recommended_fix_region = w.region
 ) where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_nav_id is null;
 
 

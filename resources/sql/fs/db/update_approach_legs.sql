@@ -65,10 +65,26 @@ update approach_leg set fix_nav_id =
 
 update approach_leg set fix_nav_id =
 (
+select n.ndb_id
+from ndb n
+where approach_leg.fix_type = 'TN' and approach_leg.fix_ident = n.ident and
+approach_leg.fix_region = n.region
+) where approach_leg.fix_type = 'TN' and approach_leg.fix_nav_id is null;
+
+update approach_leg set fix_nav_id =
+(
   select w.waypoint_id
   from waypoint w join airport a on w.airport_id = a.airport_id
   where approach_leg.fix_type = 'TW' and approach_leg.fix_ident = w.ident and
   approach_leg.fix_region = w.region and a.ident = approach_leg.fix_airport_ident
+) where approach_leg.fix_type = 'TW' and approach_leg.fix_nav_id is null;
+
+update approach_leg set fix_nav_id =
+(
+  select w.waypoint_id
+  from waypoint w
+  where approach_leg.fix_type = 'TW' and approach_leg.fix_ident = w.ident and
+  approach_leg.fix_region = w.region
 ) where approach_leg.fix_type = 'TW' and approach_leg.fix_nav_id is null;
 
 ---------------------------------------------------------------
@@ -109,10 +125,24 @@ update approach_leg set recommended_fix_nav_id =
 
 update approach_leg set recommended_fix_nav_id =
 (
+  select n.ndb_id from ndb n
+  where approach_leg.recommended_fix_type = 'TN' and approach_leg.recommended_fix_ident = n.ident and
+  approach_leg.recommended_fix_region = n.region
+) where approach_leg.recommended_fix_type = 'TN' and approach_leg.recommended_fix_nav_id is null;
+
+update approach_leg set recommended_fix_nav_id =
+(
   select w.waypoint_id
   from waypoint w join airport a on w.airport_id = a.airport_id
   where approach_leg.recommended_fix_type = 'TW' and approach_leg.recommended_fix_ident = w.ident and
   approach_leg.recommended_fix_region = w.region and a.ident = approach_leg.fix_airport_ident
+) where approach_leg.recommended_fix_type = 'TW' and approach_leg.recommended_fix_nav_id is null;
+
+update approach_leg set recommended_fix_nav_id =
+(
+  select w.waypoint_id from waypoint w
+  where approach_leg.recommended_fix_type = 'TW' and
+  approach_leg.recommended_fix_region = w.region
 ) where approach_leg.recommended_fix_type = 'TW' and approach_leg.recommended_fix_nav_id is null;
 
 update approach_leg set recommended_fix_nav_id =

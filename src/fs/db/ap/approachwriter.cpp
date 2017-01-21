@@ -63,7 +63,11 @@ void ApproachWriter::writeObject(const Approach *type)
 
   bindNullInt(":runway_end_id");
   bind(":airport_ident", getDataWriter().getAirportWriter()->getCurrentAirportIdent());
-  bind(":runway_name", type->getRunwayName());
+
+  if(type->getRunwayName() == "00")
+    bindNullString(":runway_name");
+  else
+    bind(":runway_name", type->getRunwayName());
 
   // Write approach
   executeStatement();
