@@ -36,7 +36,10 @@
 #include <QSplitter>
 #include <QStatusBar>
 #include <QTableView>
+#include <QTreeView>
 #include <QTextEdit>
+#include <QTableWidget>
+#include <QTreeWidget>
 
 namespace atools {
 namespace gui {
@@ -103,6 +106,12 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(s, hv, hv->saveState());
     else if(const QTableView * tv = dynamic_cast<const QTableView *>(widget))
       saveWidget(s, tv, tv->horizontalHeader()->saveState());
+    else if(const QTableWidget * tw = dynamic_cast<const QTableWidget *>(widget))
+      saveWidget(s, tw, tw->horizontalHeader()->saveState());
+    else if(const QTreeView * trv = dynamic_cast<const QTreeView *>(widget))
+      saveWidget(s, trv, trv->header()->saveState());
+    else if(const QTreeWidget * trw = dynamic_cast<const QTreeWidget *>(widget))
+      saveWidget(s, trw, trw->header()->saveState());
     else if(const QFileDialog * fd = dynamic_cast<const QFileDialog *>(widget))
       saveWidget(s, fd, fd->saveState());
     else if(const QMainWindow * mw = dynamic_cast<const QMainWindow *>(widget))
@@ -229,6 +238,24 @@ void WidgetState::restore(QObject *widget) const
       QVariant v = loadWidget(s, widget);
       if(v.isValid())
         tv->horizontalHeader()->restoreState(v.toByteArray());
+    }
+    else if(QTableWidget * taw = dynamic_cast<QTableWidget*>(widget))
+    {
+      QVariant v = loadWidget(s, widget);
+      if(v.isValid())
+        taw->horizontalHeader()->restoreState(v.toByteArray());
+    }
+    else if(QTreeView * trv = dynamic_cast<QTreeView *>(widget))
+    {
+      QVariant v = loadWidget(s, widget);
+      if(v.isValid())
+        trv->header()->restoreState(v.toByteArray());
+    }
+    else if(QTreeWidget * trw = dynamic_cast<QTreeWidget*>(widget))
+    {
+      QVariant v = loadWidget(s, widget);
+      if(v.isValid())
+        trw->header()->restoreState(v.toByteArray());
     }
     else if(QFileDialog * fd = dynamic_cast<QFileDialog *>(widget))
     {
