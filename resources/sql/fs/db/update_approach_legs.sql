@@ -54,6 +54,13 @@ update approach_leg set fix_nav_id =
   where approach_leg.fix_type = 'W' and approach_leg.fix_ident = w.ident and approach_leg.fix_region = w.region
 ) where approach_leg.fix_type = 'W' and approach_leg.fix_nav_id is null;
 
+update approach_leg set fix_nav_id =
+(
+  select a.runway_end_id
+  from approach a
+  where approach_leg.fix_type = 'R' and approach_leg.approach_id = a.approach_id
+) where approach_leg.fix_type = 'R' and approach_leg.fix_nav_id is null;
+
 -- Terminals -----------------------------------
 update approach_leg set fix_nav_id =
 (
