@@ -99,42 +99,61 @@ QString Runway::surfaceToStr(rw::Surface surface)
   {
     case rw::CONCRETE:
       return "C";
+
     case rw::GRASS:
       return "G";
+
     case rw::WATER:
       return "W";
+
     case rw::ASPHALT:
       return "A";
+
     case rw::CEMENT:
       return "CE";
+
     case rw::CLAY:
       return "CL";
+
     case rw::SNOW:
       return "SN";
+
     case rw::ICE:
       return "I";
+
     case rw::DIRT:
       return "D";
+
     case rw::CORAL:
       return "CR";
+
     case rw::GRAVEL:
       return "GR";
+
     case rw::OIL_TREATED:
       return "OT";
+
     case rw::STEEL_MATS:
       return "SM";
+
     case rw::BITUMINOUS:
       return "B";
+
     case rw::BRICK:
       return "BR";
+
     case rw::MACADAM:
       return "M";
+
     case rw::PLANKS:
       return "PL";
+
     case rw::SAND:
       return "S";
+
     case rw::SHALE:
       return "SH";
+
     case rw::TARMAC:
       return "T";
 
@@ -164,9 +183,9 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
   // Calculate runway end positions for drawing
-  primaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
-  secondaryPos = position.getPos().endpoint(length / 2.f,
-                                            atools::geo::opposedCourseDeg(heading)).normalize();
+  primaryPos = position.getPos().endpoint(length / 2.f,
+                                          atools::geo::opposedCourseDeg(heading)).normalize();
+  secondaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
 
   patternAltitude = bs->readFloat();
 
