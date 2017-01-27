@@ -147,6 +147,14 @@ where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_
 transition_leg.recommended_fix_region = w.region
 ) where transition_leg.recommended_fix_type = 'TW' and transition_leg.recommended_fix_nav_id is null;
 
+update transition_leg set recommended_fix_nav_id =
+(
+  select i.ils_id
+  from ils i, transition t, approach a
+  where transition_leg.recommended_fix_type = 'L' and transition_leg.recommended_fix_ident = i.ident and
+  t.approach_id = a.approach_id and
+  i.loc_airport_ident = a.airport_ident and transition_leg.transition_id = t.transition_id
+) where transition_leg.recommended_fix_type = 'L' and transition_leg.recommended_fix_nav_id is null;
 
 drop index if exists idx_transition_leg_fix_type;
 drop index if exists idx_transition_leg_fix_ident;

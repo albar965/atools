@@ -53,8 +53,8 @@ enum ApproachFixType
   TERMINAL_NDB = 4,
   WAYPOINT = 5,
   TERMINAL_WAYPOINT = 6,
-  LOCALIZER = 8, // Only recommended type
-  RUNWAY = 9 // Only recommended type
+  LOCALIZER = 8,
+  RUNWAY = 9
 };
 
 }

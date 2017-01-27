@@ -324,7 +324,7 @@ void NavDatabase::createInternal()
   script.executeScript(":/atools/resources/sql/fs/db/update_approaches.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Updating approache legs"))) == true)
+  if((aborted = progress.reportOther(tr("Updating approach legs"))) == true)
     return;
 
   // Set the nav_ids (VOR, NDB) in the approach_leg table

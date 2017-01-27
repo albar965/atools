@@ -194,19 +194,6 @@ Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
   return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
 }
 
-/* Get opposed course */
-template<typename TYPE>
-TYPE opposedCourseDeg(TYPE courseDegree)
-{
-  double result = static_cast<double>(courseDegree) + 180.;
-  while(result > 360.)
-    result -= 360.;
-  while(result < 360.)
-    result += 360.;
-
-  return static_cast<TYPE>(result);
-}
-
 /* Normalize course to 0 < course < 360 */
 template<typename TYPE>
 TYPE normalizeCourse(TYPE courseDegree)
@@ -217,6 +204,13 @@ TYPE normalizeCourse(TYPE courseDegree)
   while(result < 0.)
     result = result + 360.;
   return static_cast<TYPE>(result);
+}
+
+/* Get opposed course */
+template<typename TYPE>
+TYPE opposedCourseDeg(TYPE courseDegree)
+{
+  return static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
 }
 
 /* Normalize lonx to -180 < lonx < 180 */
