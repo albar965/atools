@@ -53,6 +53,12 @@ const static QRegularExpression LONG_FORMAT_REGEXP(
 
 using atools::absInt;
 
+uint qHash(const atools::geo::Pos& pos)
+{
+  return static_cast<unsigned int>(pos.getLonX()) ^
+         static_cast<unsigned int>(pos.getLatY());
+}
+
 Pos::Pos()
   : lonX(INVALID_ORDINATE), latY(INVALID_ORDINATE), altitude(0)
 {
@@ -162,11 +168,9 @@ void Pos::swap(Pos& other)
 
 void endpointRad(double lonX, double latY, double distance, double angle, double& endLonX, double& endLatY)
 {
-  endLatY = asin(sin(latY) * cos(distance) + cos(latY) *
-                 sin(distance) * cos(angle));
+  endLatY = asin(sin(latY) * cos(distance) + cos(latY) * sin(distance) * cos(angle));
 
-  double dlon = atan2(sin(angle) * sin(distance) * cos(latY),
-                      cos(distance) - sin(latY) * sin(endLatY));
+  double dlon = atan2(sin(angle) * sin(distance) * cos(latY), cos(distance) - sin(latY) * sin(endLatY));
   endLonX = remainder(lonX - dlon + M_PI, 2 * M_PI) - M_PI;
 }
 
@@ -448,6 +452,49 @@ double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2) 
   double l1 = (sin(((latY1 - latY2)) / 2.));
   double l2 = (sin(((lonX1 - lonX2)) / 2.));
   return 2. * asin(sqrt(l1 * l1 + cos((latY1)) * cos((latY2)) * l2 * l2));
+}
+
+atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng1,
+                                          const atools::geo::Pos& p2, float brng2)
+{
+  // double p1 = LatLon(51.8853, 0.2545), brng1 = 108.547;
+  // double p2 = LatLon(49.0034, 2.5735), brng2 =  32.435;
+  // double pInt = LatLon.intersection(p1, brng1, p2, brng2); // 50.9078°N, 004.5084°E
+  double lat1 = atools::geo::toRadians(p1.getLatY()), lon1 = atools::geo::toRadians(p1.getLonX());
+  double lat2 = atools::geo::toRadians(p2.getLatY()), lon2 = atools::geo::toRadians(p2.getLonX());
+  double brg13 = atools::geo::toRadians(brng1), brg23 = atools::geo::toRadians(brng2);
+  double dlat = lat2 - lat1, dlon = lon2 - lon1;
+
+  double dst12 = 2 * asin(sqrt(sin(dlat / 2) * sin(dlat / 2) +
+                               cos(lat1) * cos(lat2) * sin(dlon / 2) * sin(dlon / 2)));
+  if(dst12 == 0.)
+    return EMPTY_POS;
+
+  // initial/final bearings between points
+  double initbrg = acos((sin(lat2) - sin(lat1) * cos(dst12)) / (sin(dst12) * cos(lat1)));
+  if(std::isnan(initbrg))
+    initbrg = 0;                     // protect against rounding
+  double finalbrg = acos((sin(lat1) - sin(lat2) * cos(dst12)) / (sin(dst12) * cos(lat2)));
+
+  double crs12 = sin(lon2 - lon1) > 0. ? initbrg : 2. * M_PI - initbrg;
+  double crs21 = sin(lon2 - lon1) > 0. ? 2. * M_PI - finalbrg : finalbrg;
+
+  double a1 = remainder(brg13 - crs12 + M_PI, 2. * M_PI) - M_PI; // angle 2-1-3
+  double a2 = remainder(crs21 - brg23 + M_PI, 2. * M_PI) - M_PI; // angle 1-2-3
+
+  if(sin(a1) == 0. && sin(a2) == 0.)
+    return EMPTY_POS;                               // infinite intersections
+
+  if(sin(a1) * sin(a2) < 0.)
+    return EMPTY_POS;                               // ambiguous intersection
+
+  double a3 = acos(-cos(a1) * cos(a2) + sin(a1) * sin(a2) * cos(dst12));
+  double dist13 = atan2(sin(dst12) * sin(a1) * sin(a2), cos(a2) + cos(a1) * cos(a3));
+  double lat3 = asin(sin(lat1) * cos(dist13) + cos(lat1) * sin(dist13) * cos(brg13));
+  double dlon13 = atan2(sin(brg13) * sin(dist13) * cos(lat1), cos(dist13) - sin(lat1) * sin(lat3));
+  double lon3 = lon1 + dlon13;
+
+  return Pos(lon3, lat3).toDeg();
 }
 
 QDebug operator<<(QDebug out, const Pos& record)

@@ -60,9 +60,9 @@ enum Type
 
 enum AltDescriptor
 {
-  // Definition/Description: The “Altitude Description” field
-  // will designate whether a waypoint should be crossed “at,”
-  // “at or above,” “at or below” or “at or above to at or
+  // Definition/Description: The "Altitude Description” field
+  // will designate whether a waypoint should be crossed "at,”
+  // "at or above,” "at or below” or "at or above to at or
   // below” specified altitudes. The field is also used to
   // designate recommended altitudes and cases where two
   // distinct altitudes are provided at a single fix.
@@ -72,59 +72,59 @@ enum AltDescriptor
   // Field
   // Content Waypoint Crossing Description
   // + (plus)
-  // “At or above” altitude specified in first “Altitude”
+  // "At or above” altitude specified in first "Altitude”
   // field. Also used with Localizer Only Altitude
   // field.
   // - (minus)
-  // “At or below” altitude specified in first “Altitude”
+  // "At or below” altitude specified in first "Altitude”
   // field. Also used with Localizer Only Altitude
   // field.
-  // A (same as @ or blank) “At” altitude specified in first “Altitude” field.
+  // A (same as @ or blank) "At” altitude specified in first "Altitude” field.
   // Also used with Localizer Only Altitude field.
-  // B “At or above to at or below” altitudes specified in
-  // the first and second “Altitude” fields.
-  // C “At or above” altitude specified in second
-  // “Altitude” field. Condition is which ever is
+  // B "At or above to at or below” altitudes specified in
+  // the first and second "Altitude” fields.
+  // C "At or above” altitude specified in second
+  // "Altitude” field. Condition is which ever is
   // earlier.
-  // D “At or above” altitude specified in second
-  // “Altitude” field. Condition is “which ever is
+  // D "At or above” altitude specified in second
+  // "Altitude” field. Condition is "which ever is
   // later”, which is operationally equivalent to
-  // the condition of “not before”.
+  // the condition of "not before”.
   // G
   // Glide Slope altitude (MSL) specified in the
-  // second “Altitude” field and “at” altitude specified
-  // in the first “Altitude” field on the FAF Waypoint
+  // second "Altitude” field and "at” altitude specified
+  // in the first "Altitude” field on the FAF Waypoint
   // in Precision Approach Coding with electronic
   // Glide Slope.
   // H
   // Glide Slope Altitude (MSL) specified in second
-  // “Altitude” field and “at or above” altitude
-  // specified in first “Altitude” field on the FAF
+  // "Altitude” field and "at or above” altitude
+  // specified in first "Altitude” field on the FAF
   // Waypoint in Precision Approach Coding with
   // electronic Glide Slope
   // I
   // Glide Slope Intercept Altitude specified in second
-  // “Altitude” field and “at” altitude specified in first
-  // “Altitude” field on the FACF Waypoint in
+  // "Altitude” field and "at” altitude specified in first
+  // "Altitude” field on the FACF Waypoint in
   // Precision Approach Coding with electronic Glide
   // Slope
   // J
   // Glide Slope Intercept Altitude specified in second
-  // “Altitude” field and “at or above” altitude
-  // specified in first “Altitude” field on the FACF
+  // "Altitude” field and "at or above” altitude
+  // specified in first "Altitude” field on the FACF
   // Waypoint in Precision Approach Coding with
   // electronic Glide Slope
   // V
-  // “At” altitude on the coded vertical angle in the
-  // second “Altitude” field and “at or above” altitude
-  // specified in first “Altitude” field on step-down fix
+  // "At” altitude on the coded vertical angle in the
+  // second "Altitude” field and "at or above” altitude
+  // specified in first "Altitude” field on step-down fix
   // waypoints.
 
   UNKNOWN = 0,
   A = 01, /* At altitude specified in first altitude field. */
   PLUS = 02, /* Fly at or above altitude1 */
   MINUS = 03, /* Fly at or below altitude1 */
-  B = 04 /* At or above to at or below altitudes specified in the first and second “Altitude” fields. */
+  B = 04 /* At or above to at or below altitudes specified in the first and second "Altitude” fields. */
 };
 
 enum TurnDirection
@@ -290,6 +290,17 @@ private:
   bool trueCourse, time, flyover, missed;
   QString fixIdent, fixRegion, fixAirportIdent, recommendedFixIdent, recommendedFixRegion;
 
+  // "THETA” is defined as the
+  // magnetic bearing to the waypoint
+  // identified in the record’s "FIX
+  // Ident” field from the NAVAID in the
+  // "Recommended NAVAID” field
+  // "RHO” is defined as the geodesic
+  // distance in nautical miles to the
+  // waypoint identified in the record’s
+  // "Fix Ident” field from the NAVAID
+  // in the "Recommended NAVAID”
+  // field
   float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2;
 };
 

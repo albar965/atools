@@ -195,7 +195,8 @@ HEADERS += src/atools.h \
     src/util/timedcache.h \
     src/fs/weather/metarparser.h \
     src/util/paintercontextsaver.h \
-    src/fs/db/ap/airportfilewriter.h
+    src/fs/db/ap/airportfilewriter.h \
+    src/geo/line.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -349,7 +350,8 @@ SOURCES += src/atools.cpp \
     src/fs/weather/metarparser.cpp \
     src/fs/bgl/nav/airwaysegment.cpp \
     src/util/paintercontextsaver.cpp \
-    src/fs/db/ap/airportfilewriter.cpp
+    src/fs/db/ap/airportfilewriter.cpp \
+    src/geo/line.cpp
 
 
 unix {

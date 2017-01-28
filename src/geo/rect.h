@@ -108,8 +108,9 @@ public:
     return topLeft.getLonX();
   }
 
-  /* Extend rectangle to include given point */
+  /* Extend rectangle to include given point or rectangle */
   void extend(const atools::geo::Pos& pos);
+  void extend(const atools::geo::Rect& rect);
 
   Pos getCenter() const;
 

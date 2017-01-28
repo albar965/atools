@@ -44,7 +44,7 @@ public:
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   Pos(const QString& str);
 
-  Pos& operator=(const Pos& other);
+  atools::geo::Pos& operator=(const atools::geo::Pos& other);
 
   ~Pos()
   {
@@ -52,16 +52,16 @@ public:
   }
 
   /* Does not compare altitude */
-  bool operator==(const Pos& other) const;
+  bool operator==(const atools::geo::Pos& other) const;
 
   /* Does not compare altitude */
-  bool operator!=(const Pos& other) const
+  bool operator!=(const atools::geo::Pos& other) const
   {
     return !(*this == other);
   }
 
   /* Compare for equal with accuracy depending on epsilon */
-  bool almostEqual(const Pos& other, float epsilon) const;
+  bool almostEqual(const atools::geo::Pos& other, float epsilon) const;
 
   float getLatY() const
   {
@@ -109,40 +109,40 @@ public:
   }
 
   /* Normalize this position to -180 < lonx < 180 and -90 < laty < 90 and return reference */
-  Pos& normalize();
+  atools::geo::Pos& normalize();
 
   /* Convert this position from rad to degree and return reference */
-  Pos& toDeg();
+  atools::geo::Pos& toDeg();
 
   /* Convert this position from degree to rad and return reference */
-  Pos& toRad();
+  atools::geo::Pos& toRad();
 
-  void swap(Pos& other);
+  void swap(atools::geo::Pos& other);
 
   /* return endpoint at distance and angle */
-  Pos endpoint(float distanceMeter, float angleDeg) const;
+  atools::geo::Pos endpoint(float distanceMeter, float angleDeg) const;
 
   /* Distance to other point in simple units */
-  float distanceSimpleTo(const Pos& otherPos) const;
+  float distanceSimpleTo(const atools::geo::Pos& otherPos) const;
 
   /* Distance to other point for great circle route */
-  float distanceMeterTo(const Pos& otherPos) const;
+  float distanceMeterTo(const atools::geo::Pos& otherPos) const;
 
   /* Distance to line formed by pos1 and pos2. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
-  float distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const;
+  float distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool& validPos) const;
 
   /* Angle to other point (initial course) */
-  float angleDegTo(const Pos& otherPos) const;
+  float angleDegTo(const atools::geo::Pos& otherPos) const;
 
   /* return endpoint at distance and angle for a rhumb line (constant course) */
-  Pos endpointRhumb(float distanceMeter, float angleDeg) const;
+  atools::geo::Pos endpointRhumb(float distanceMeter, float angleDeg) const;
 
   /* Distance to other point for rhumb line */
-  float distanceMeterToRhumb(const Pos& otherPos) const;
+  float distanceMeterToRhumb(const atools::geo::Pos& otherPos) const;
 
   /* Angleto other point using a rhumb line */
-  float angleDegToRhumb(const Pos& otherPos) const;
+  float angleDegToRhumb(const atools::geo::Pos& otherPos) const;
 
   /* @return Flight Simulator format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
   QString toLongString() const;
@@ -173,16 +173,21 @@ public:
 
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
-  Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
+  atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
 
   /* Find point between start and end on GC route if distance between points is not known */
-  Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
+  atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
-                         QList<Pos>& positions) const;
+                         QList<atools::geo::Pos>& positions) const;
 
   /* Find point between start and end on rhumb line */
-  Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
-  Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
+  atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter,
+                                    float fraction) const;
+  atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
+
+  /*  * Returns the point of intersection of two paths defined by point and bearing */
+  atools::geo::Pos intersectingRadials(const atools::geo::Pos& p1, float brng1,
+                                       const atools::geo::Pos& p2, float brng2);
 
   void setLonX(float value)
   {
@@ -230,6 +235,8 @@ private:
 
 /* Invalid postion */
 const atools::geo::Pos EMPTY_POS;
+
+uint qHash(const atools::geo::Pos& pos);
 
 } // namespace geo
 } // namespace atools

@@ -231,6 +231,14 @@ void Rect::extend(const Pos& pos)
   bottomRight = Pos(rightLonX, bottomLatY);
 }
 
+void Rect::extend(const Rect& rect)
+{
+  extend(rect.getTopLeft());
+  extend(rect.getTopRight());
+  extend(rect.getBottomRight());
+  extend(rect.getBottomLeft());
+}
+
 Pos Rect::getCenter() const
 {
   return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,

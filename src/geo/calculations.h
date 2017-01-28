@@ -55,12 +55,12 @@ Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 }
 
 template<>
-inline Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
+Q_DECL_CONSTEXPR int manhattanDistance<int>(int x1, int y1, int x2, int y2)
 {
   return absInt(x1 - x2) + absInt(y1 - y2);
 }
 
-inline float manhattanDistanceF(float x1, float y1, float x2, float y2)
+Q_DECL_CONSTEXPR float manhattanDistanceF(float x1, float y1, float x2, float y2)
 {
   return std::abs(x1 - x2) + std::abs(y1 - y2);
 }
@@ -235,6 +235,20 @@ TYPE normalizeLatYDeg(TYPE latY)
   while(result < -90.)
     result = result + 180.;
   return static_cast<TYPE>(result);
+}
+
+/* Convert angle in degrees (0 = north, counting CW) to Qt for QLineF::setAngle */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE angleToQt(TYPE angle)
+{
+  return -(angle - 90.);
+}
+
+/* Convert angle to degrees (0 = north, counting CW) from QLineF::angle */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE angleFromQt(TYPE angle)
+{
+  return atools::geo::normalizeCourse(360.f - angle + 90.f);
 }
 
 /* ISA temperature in °C at altitude (https://en.wikipedia.org/wiki/International_Standard_Atmosphere) */
