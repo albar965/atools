@@ -38,35 +38,35 @@ Rect::Rect(const Pos& singlePos)
 {
   topLeft = singlePos;
   bottomRight = singlePos;
-  valid = true;
+  valid = singlePos.isValid();
 }
 
 Rect::Rect(const Pos& topLeftPos, const Pos& bottomRightPos)
 {
   topLeft = topLeftPos;
   bottomRight = bottomRightPos;
-  valid = true;
+  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY)
 {
   topLeft = Pos(leftLonX, topLatY);
   bottomRight = Pos(rightLonX, bottomLatY);
-  valid = true;
+  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY)
 {
   topLeft = Pos(leftLonX, topLatY);
   bottomRight = Pos(rightLonX, bottomLatY);
-  valid = true;
+  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(float lonX, float latY)
 {
   topLeft = Pos(lonX, latY);
   bottomRight = Pos(lonX, latY);
-  valid = true;
+  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(const Pos& center, float radiusMeter)
@@ -80,7 +80,7 @@ Rect::Rect(const Pos& center, float radiusMeter)
   topLeft = Pos(west.getLonX(), north.getLatY());
   bottomRight = Pos(east.getLonX(), south.getLatY());
 
-  valid = true;
+  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect& Rect::operator=(const Rect& other)
@@ -211,6 +211,9 @@ float Rect::getHeightMeter() const
 
 void Rect::extend(const Pos& pos)
 {
+  if(!pos.isValid())
+    return;
+
   float x = pos.getLonX(), y = pos.getLatY(),
         leftLonX = topLeft.getLonX(), topLatY = topLeft.getLatY(),
         rightLonX = bottomRight.getLonX(), bottomLatY = bottomRight.getLatY();
@@ -233,6 +236,9 @@ void Rect::extend(const Pos& pos)
 
 void Rect::extend(const Rect& rect)
 {
+  if(!rect.isValid())
+    return;
+
   extend(rect.getTopLeft());
   extend(rect.getTopRight());
   extend(rect.getBottomRight());
