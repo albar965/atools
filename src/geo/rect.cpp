@@ -214,24 +214,29 @@ void Rect::extend(const Pos& pos)
   if(!pos.isValid())
     return;
 
-  float x = pos.getLonX(), y = pos.getLatY(),
-        leftLonX = topLeft.getLonX(), topLatY = topLeft.getLatY(),
-        rightLonX = bottomRight.getLonX(), bottomLatY = bottomRight.getLatY();
+  if(!isValid())
+    *this = Rect(pos);
+  else
+  {
+    float x = pos.getLonX(), y = pos.getLatY(),
+          leftLonX = topLeft.getLonX(), topLatY = topLeft.getLatY(),
+          rightLonX = bottomRight.getLonX(), bottomLatY = bottomRight.getLatY();
 
-  if(x < leftLonX || leftLonX == 0.f)
-    leftLonX = x;
+    if(x < leftLonX || leftLonX == 0.f)
+      leftLonX = x;
 
-  if(x > rightLonX || rightLonX == 0.f)
-    rightLonX = x;
+    if(x > rightLonX || rightLonX == 0.f)
+      rightLonX = x;
 
-  if(y > topLatY || topLatY == 0.f)
-    topLatY = y;
+    if(y > topLatY || topLatY == 0.f)
+      topLatY = y;
 
-  if(y < bottomLatY || bottomLatY == 0.f)
-    bottomLatY = y;
+    if(y < bottomLatY || bottomLatY == 0.f)
+      bottomLatY = y;
 
-  topLeft = Pos(leftLonX, topLatY);
-  bottomRight = Pos(rightLonX, bottomLatY);
+    topLeft = Pos(leftLonX, topLatY);
+    bottomRight = Pos(rightLonX, bottomLatY);
+  }
 }
 
 void Rect::extend(const Rect& rect)

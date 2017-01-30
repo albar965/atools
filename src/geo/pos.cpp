@@ -140,22 +140,31 @@ bool Pos::almostEqual(const Pos& other, float epsilon) const
 
 Pos& Pos::normalize()
 {
-  lonX = normalizeLonXDeg(lonX);
-  latY = normalizeLatYDeg(latY);
+  if(isValid())
+  {
+    lonX = normalizeLonXDeg(lonX);
+    latY = normalizeLatYDeg(latY);
+  }
   return *this;
 }
 
 Pos& Pos::toDeg()
 {
-  lonX = static_cast<float>(toDegree(lonX));
-  latY = static_cast<float>(toDegree(latY));
+  if(isValid())
+  {
+    lonX = static_cast<float>(toDegree(lonX));
+    latY = static_cast<float>(toDegree(latY));
+  }
   return *this;
 }
 
 Pos& Pos::toRad()
 {
-  lonX = static_cast<float>(toRadians(lonX));
-  latY = static_cast<float>(toRadians(latY));
+  if(isValid())
+  {
+    lonX = static_cast<float>(toRadians(lonX));
+    latY = static_cast<float>(toRadians(latY));
+  }
   return *this;
 }
 
@@ -176,6 +185,9 @@ void endpointRad(double lonX, double latY, double distance, double angle, double
 
 Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 {
+  if(!isValid())
+    return EMPTY_POS;
+
   double lon, lat;
 
   endpointRad(toRadians(lonX), toRadians(latY),
@@ -186,19 +198,28 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 
 float Pos::distanceSimpleTo(const Pos& otherPos) const
 {
-  return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
+  if(!isValid() || !otherPos.isValid())
+    return std::numeric_limits<float>::max();
+  else
+    return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
 }
 
 float Pos::distanceMeterTo(const Pos& otherPos) const
 {
-  return static_cast<float>(distanceRad(toRadians(lonX),
-                                        toRadians(latY),
-                                        toRadians(otherPos.lonX),
-                                        toRadians(otherPos.latY)) * EARTH_RADIUS_METER);
+  if(!isValid() || !otherPos.isValid())
+    return std::numeric_limits<float>::max();
+  else
+    return static_cast<float>(distanceRad(toRadians(lonX),
+                                          toRadians(latY),
+                                          toRadians(otherPos.lonX),
+                                          toRadians(otherPos.latY)) * EARTH_RADIUS_METER);
 }
 
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
 {
+  if(!isValid() || !pos1.isValid() || !pos2.isValid())
+    return std::numeric_limits<float>::max();
+
   Pos p = *this;
   p.toRad();
   Pos p1 = pos1;
@@ -232,6 +253,9 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos)
 
 float Pos::angleDegTo(const Pos& otherPos) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return std::numeric_limits<float>::max();
+
   double angleDeg = toDegree(courseRad(toRadians(lonX), toRadians(latY),
                                        toRadians(otherPos.lonX), toRadians(otherPos.latY)));
   return static_cast<float>(normalizeCourse(-angleDeg + 360.));
@@ -239,6 +263,9 @@ float Pos::angleDegTo(const Pos& otherPos) const
 
 Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
 {
+  if(!isValid())
+    return EMPTY_POS;
+
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
 
@@ -264,6 +291,9 @@ Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
 
 float Pos::angleDegToRhumb(const Pos& otherPos) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return std::numeric_limits<float>::max();
+
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
   double lon2 = toRadians(otherPos.lonX);
@@ -284,6 +314,9 @@ float Pos::angleDegToRhumb(const Pos& otherPos) const
 
 float Pos::distanceMeterToRhumb(const Pos& otherPos) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return std::numeric_limits<float>::max();
+
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
   double lon2 = toRadians(otherPos.lonX);
@@ -310,21 +343,33 @@ float Pos::distanceMeterToRhumb(const Pos& otherPos) const
 
 Pos Pos::interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return EMPTY_POS;
+
   return endpointRhumb(distanceMeter * fraction, angleDegToRhumb(otherPos));
 }
 
 Pos Pos::interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return EMPTY_POS;
+
   return interpolateRhumb(otherPos, distanceMeterToRhumb(otherPos), fraction);
 }
 
 Pos Pos::interpolate(const atools::geo::Pos& otherPos, float fraction) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return EMPTY_POS;
+
   return interpolate(otherPos, distanceMeterTo(otherPos), fraction);
 }
 
 Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return EMPTY_POS;
+
   if(fraction <= 0.f)
     return *this;
 
@@ -457,6 +502,9 @@ double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2) 
 atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng1,
                                           const atools::geo::Pos& p2, float brng2)
 {
+  if(!p1.isValid() || !p2.isValid())
+    return EMPTY_POS;
+
   // double p1 = LatLon(51.8853, 0.2545), brng1 = 108.547;
   // double p2 = LatLon(49.0034, 2.5735), brng2 =  32.435;
   // double pInt = LatLon.intersection(p1, brng1, p2, brng2); // 50.9078°N, 004.5084°E

@@ -108,7 +108,9 @@ public:
     return topLeft.getLonX();
   }
 
-  /* Extend rectangle to include given point or rectangle */
+  /* Extend rectangle to include given point or rectangle.
+   * Creates a singular rectangle for first call on invalid rect.
+   *  Ignores invalid positions. */
   void extend(const atools::geo::Pos& pos);
   void extend(const atools::geo::Rect& rect);
 
