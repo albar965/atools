@@ -26,7 +26,6 @@ namespace geo {
 
 Rect::Rect()
 {
-  valid = false;
 }
 
 Rect::Rect(const Rect& other)
@@ -38,35 +37,30 @@ Rect::Rect(const Pos& singlePos)
 {
   topLeft = singlePos;
   bottomRight = singlePos;
-  valid = singlePos.isValid();
 }
 
 Rect::Rect(const Pos& topLeftPos, const Pos& bottomRightPos)
 {
   topLeft = topLeftPos;
   bottomRight = bottomRightPos;
-  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY)
 {
   topLeft = Pos(leftLonX, topLatY);
   bottomRight = Pos(rightLonX, bottomLatY);
-  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY)
 {
   topLeft = Pos(leftLonX, topLatY);
   bottomRight = Pos(rightLonX, bottomLatY);
-  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(float lonX, float latY)
 {
   topLeft = Pos(lonX, latY);
   bottomRight = Pos(lonX, latY);
-  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect::Rect(const Pos& center, float radiusMeter)
@@ -79,46 +73,51 @@ Rect::Rect(const Pos& center, float radiusMeter)
 
   topLeft = Pos(west.getLonX(), north.getLatY());
   bottomRight = Pos(east.getLonX(), south.getLatY());
-
-  valid = topLeft.isValid() && bottomRight.isValid();
 }
 
 Rect& Rect::operator=(const Rect& other)
 {
   topLeft = other.topLeft;
   bottomRight = other.bottomRight;
-  valid = other.valid;
   return *this;
 }
 
 bool Rect::operator==(const Rect& other) const
 {
-  return topLeft == other.topLeft && bottomRight == other.bottomRight && valid == other.valid;
+  return topLeft == other.topLeft && bottomRight == other.bottomRight;
 }
 
 bool Rect::contains(const Pos& pos) const
 {
-  for(const Rect& r : splitAtAntiMeridian())
+  if(isValid() || pos.isValid())
   {
-    if(r.getWest() <= pos.getLonX() && pos.getLonX() <= r.getEast() &&
-       r.getNorth() >= pos.getLatY() && pos.getLatY() >= r.getSouth())
-      return true;
+    for(const Rect& r : splitAtAntiMeridian())
+    {
+      if(r.getWest() <= pos.getLonX() && pos.getLonX() <= r.getEast() &&
+         r.getNorth() >= pos.getLatY() && pos.getLatY() >= r.getSouth())
+        return true;
+    }
   }
   return false;
 }
 
 bool Rect::overlaps(const Rect& other) const
 {
-  for(const Rect& r1 : splitAtAntiMeridian())
-    for(const Rect &r2 : other.splitAtAntiMeridian())
-      if(r1.overlapsInternal(r2))
-        return true;
-
+  if(isValid() || other.isValid())
+  {
+    for(const Rect& r1 : splitAtAntiMeridian())
+      for(const Rect &r2 : other.splitAtAntiMeridian())
+        if(r1.overlapsInternal(r2))
+          return true;
+  }
   return false;
 }
 
 void Rect::inflate(float degreesLon, float degreesLat)
 {
+  if(!isValid())
+    return;
+
   if(getWest() - degreesLon > -180.f)
     topLeft.setLonX(getWest() - degreesLon);
   else
@@ -169,7 +168,8 @@ Pos Rect::getTopCenter() const
 
 bool Rect::isPoint(float epsilonDegree) const
 {
-  return atools::almostEqual(topLeft.getLonX(), bottomRight.getLonX(), epsilonDegree) &&
+  return isValid() &&
+         atools::almostEqual(topLeft.getLonX(), bottomRight.getLonX(), epsilonDegree) &&
          atools::almostEqual(topLeft.getLatY(), bottomRight.getLatY(), epsilonDegree);
 }
 
@@ -252,8 +252,11 @@ void Rect::extend(const Rect& rect)
 
 Pos Rect::getCenter() const
 {
-  return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
-             (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  if(isValid())
+    return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
+               (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  else
+    return EMPTY_POS;
 }
 
 bool Rect::crossesAntiMeridian() const
@@ -264,18 +267,22 @@ bool Rect::crossesAntiMeridian() const
 
 QList<Rect> Rect::splitAtAntiMeridian() const
 {
-  if(crossesAntiMeridian())
-    return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()),
-                        Rect(-180.f, getNorth(), getEast(), getSouth())});
-
-  return QList<Rect>({*this});
+  if(isValid())
+  {
+    if(crossesAntiMeridian())
+      return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()),
+                          Rect(-180.f, getNorth(), getEast(), getSouth())});
+    else
+      return QList<Rect>({*this});
+  }
+  else
+    return QList<Rect>();
 }
 
 void Rect::swap(Rect& other)
 {
   topLeft.swap(other.topLeft);
   bottomRight.swap(other.bottomRight);
-  std::swap(valid, other.valid);
 }
 
 QDebug operator<<(QDebug out, const Rect& record)
@@ -287,13 +294,15 @@ QDebug operator<<(QDebug out, const Rect& record)
 
 QDataStream& operator<<(QDataStream& out, const Rect& obj)
 {
-  out << obj.topLeft << obj.bottomRight << obj.valid;
+  bool validDummy = obj.isValid();
+  out << obj.topLeft << obj.bottomRight << validDummy;
   return out;
 }
 
 QDataStream& operator>>(QDataStream& in, Rect& obj)
 {
-  in >> obj.topLeft >> obj.bottomRight >> obj.valid;
+  bool validDummy;
+  in >> obj.topLeft >> obj.bottomRight >> validDummy;
   return in;
 }
 

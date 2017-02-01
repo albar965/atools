@@ -124,7 +124,7 @@ public:
    * @return true if this rectangle was not default constructed */
   bool isValid() const
   {
-    return valid;
+    return topLeft.isValid() && bottomRight.isValid();
   }
 
   /*
@@ -153,7 +153,6 @@ private:
   bool overlapsInternal(const Rect& other) const;
 
   atools::geo::Pos topLeft, bottomRight;
-  bool valid = false;
 
 };
 

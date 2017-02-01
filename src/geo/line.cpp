@@ -226,6 +226,11 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
   return result;
 }
 
+bool Line::isPoint(float epsilonDegree) const
+{
+  return isValid() && pos1.almostEqual(pos2, epsilonDegree);
+}
+
 QDebug operator<<(QDebug out, const Line& record)
 {
   QDebugStateSaver saver(out);

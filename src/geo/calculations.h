@@ -109,95 +109,108 @@ Q_DECL_CONSTEXPR TYPE inHgToMbar(TYPE press)
 
 /* Distance from nautical miles to meters */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToMeter(TYPE nm)
+Q_DECL_CONSTEXPR TYPE nmToMeter(TYPE value)
 {
-  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) * 1852.216);
 }
 
 /* Distance from nautical miles to kilometers */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToKm(TYPE nm)
+Q_DECL_CONSTEXPR TYPE nmToKm(TYPE value)
 {
-  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216 / 1000.);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1000.);
 }
 
 /* Distance from nautical miles to statue miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE nmToMi(TYPE nm)
+Q_DECL_CONSTEXPR TYPE nmToMi(TYPE value)
 {
-  return static_cast<TYPE>(static_cast<double>(nm) * 1852.216 / 1609.3426);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1609.3426);
 }
 
 /* Distance from meter to statue miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToMi(TYPE nm)
+Q_DECL_CONSTEXPR TYPE meterToMi(TYPE value)
 {
-  return static_cast<TYPE>(static_cast<double>(nm) / 1609.3426);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) / 1609.3426);
 }
 
 /* Distance from meters to nautical miles */
 template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE meterToNm(TYPE nm)
+Q_DECL_CONSTEXPR TYPE meterToNm(TYPE value)
 {
-  return static_cast<TYPE>(static_cast<double>(nm) / 1852.216);
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) / 1852.216);
 }
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToFeet(TYPE value)
 {
-  return static_cast<TYPE>(3.2808399 * static_cast<double>(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(3.2808399 * static_cast<double>(value));
 }
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE feetToMeter(TYPE value)
 {
-  return static_cast<TYPE>(0.3048 * static_cast<double>(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(0.3048 * static_cast<double>(value));
 }
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE feetToNm(TYPE value)
 {
-  return meterToNm(feetToMeter(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToNm(feetToMeter(value));
 }
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToFeet(TYPE value)
 {
-  return meterToFeet(nmToMeter(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToFeet(nmToMeter(value));
 }
 
 /* NM to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)
 {
-  return static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(M_PI / (180. * 60.) * static_cast<double>(value));
 }
 
 /* meter to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToRad(TYPE value)
 {
-  return nmToRad(meterToNm(value));
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value : nmToRad(meterToNm(value));
 }
 
 /* Degree to rad */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
 {
-  return static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
+  return (deg > std::numeric_limits<TYPE>::max() / 2) ? deg :
+         static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
 }
 
 /* Rad to degree */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
 {
-  return static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
+  return (rad > std::numeric_limits<TYPE>::max() / 2) ? rad :
+         static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
 }
 
 /* Normalize course to 0 < course < 360 */
 template<typename TYPE>
 TYPE normalizeCourse(TYPE courseDegree)
 {
+  if(courseDegree > std::numeric_limits<TYPE>::max() / 2)
+    return courseDegree;
+
   double result = static_cast<double>(courseDegree);
   while(result > 360.)
     result = result - 360.;
@@ -208,15 +221,19 @@ TYPE normalizeCourse(TYPE courseDegree)
 
 /* Get opposed course */
 template<typename TYPE>
-TYPE opposedCourseDeg(TYPE courseDegree)
+Q_DECL_CONSTEXPR TYPE opposedCourseDeg(TYPE courseDegree)
 {
-  return static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
+  return (courseDegree > std::numeric_limits<TYPE>::max() / 2) ? courseDegree :
+         static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
 }
 
 /* Normalize lonx to -180 < lonx < 180 */
 template<typename TYPE>
 TYPE normalizeLonXDeg(TYPE lonX)
 {
+  if(lonX > std::numeric_limits<TYPE>::max() / 2)
+    return lonX;
+
   double result = static_cast<double>(lonX);
   while(result > 180.)
     result = result - 360.;
@@ -229,6 +246,9 @@ TYPE normalizeLonXDeg(TYPE lonX)
 template<typename TYPE>
 TYPE normalizeLatYDeg(TYPE latY)
 {
+  if(latY > std::numeric_limits<TYPE>::max() / 2)
+    return latY;
+
   double result = static_cast<double>(latY);
   while(result > 90.)
     result = result - 180.;
@@ -241,14 +261,15 @@ TYPE normalizeLatYDeg(TYPE latY)
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE angleToQt(TYPE angle)
 {
-  return -(angle - 90.);
+  return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle : -(angle - 90.);
 }
 
 /* Convert angle to degrees (0 = north, counting CW) from QLineF::angle */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE angleFromQt(TYPE angle)
 {
-  return atools::geo::normalizeCourse(360.f - angle + 90.f);
+  return (angle > std::numeric_limits<TYPE>::max() / 2) ? angle :
+         atools::geo::normalizeCourse(360.f - angle + 90.f);
 }
 
 /* ISA temperature in °C at altitude (https://en.wikipedia.org/wiki/International_Standard_Atmosphere) */

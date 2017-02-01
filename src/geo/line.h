@@ -110,6 +110,11 @@ public:
     pos1 = value;
   }
 
+  /*
+   * @return true if line is a single point
+   */
+  bool isPoint(float epsilonDegree = 0.f) const;
+
   atools::geo::Pos getPos2() const
   {
     return pos2;

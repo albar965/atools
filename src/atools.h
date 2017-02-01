@@ -35,14 +35,21 @@ QString gitRevision();
 QString replaceVar(QString str, const QString name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
+/* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>
-bool inRange(const QList<TYPE>& list, int index)
+Q_DECL_CONSTEXPR TYPE mod(TYPE x, TYPE y)
+{
+  return x - y *std::floor(x / y);
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR bool inRange(const QList<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
 
 template<typename TYPE>
-bool inRange(const QVector<TYPE>& list, int index)
+Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
 {
   return index >= 0 && index < list.size();
 }
@@ -90,19 +97,19 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
 /* Remove all special characters from the filename that can disturb any filesystem */
 QString cleanFilename(const QString& filename);
 
-inline Q_DECL_CONSTEXPR int absInt(int value)
+Q_DECL_CONSTEXPR int absInt(int value)
 {
   return value > 0 ? value : -value;
 }
 
-inline Q_DECL_CONSTEXPR long long absLong(long long value)
+Q_DECL_CONSTEXPR long long absLong(long long value)
 {
   return value > 0L ? value : -value;
 }
 
 /* Round to integer value */
 template<typename TYPE>
-inline Q_DECL_CONSTEXPR int roundToInt(TYPE value)
+Q_DECL_CONSTEXPR int roundToInt(TYPE value)
 {
   return static_cast<int>(round(value));
 }
@@ -175,13 +182,13 @@ Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 }
 
 template<>
-inline Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
+Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
 {
   return atools::absInt(f1 - f2) >= epsilon;
 }
 
 template<>
-inline Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
+Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
   return atools::absLong(f1 - f2) >= epsilon;
 }

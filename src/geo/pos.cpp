@@ -26,16 +26,6 @@
 namespace atools {
 namespace geo {
 
-const float Pos::INVALID_ORDINATE = std::numeric_limits<float>::max();
-
-// 1 deg / minutes / nm to meter / to 10 cm
-const float Pos::POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f;
-const float Pos::POS_EPSILON_1M = 1.f / 60.f / 1852.216f;
-const float Pos::POS_EPSILON_5M = 1.f / 60.f / 1852.216f * 5.f;
-const float Pos::POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f;
-const float Pos::POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f;
-const float Pos::POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f;
-
 const static QString OVERFLOW_60_TEST("%1");
 const static QString OVERFLOW_60_TEST_TEXT("60");
 const static float MAX_SECONDS = 59.98f;
@@ -55,12 +45,11 @@ using atools::absInt;
 
 uint qHash(const atools::geo::Pos& pos)
 {
-  return static_cast<unsigned int>(pos.getLonX()) ^
-         static_cast<unsigned int>(pos.getLatY());
+  return static_cast<unsigned int>(pos.getLonX()) ^ static_cast<unsigned int>(pos.getLatY());
 }
 
 Pos::Pos()
-  : lonX(INVALID_ORDINATE), latY(INVALID_ORDINATE), altitude(0)
+  : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0)
 {
 }
 
@@ -199,7 +188,7 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 float Pos::distanceSimpleTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
   else
     return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
 }
@@ -207,7 +196,7 @@ float Pos::distanceSimpleTo(const Pos& otherPos) const
 float Pos::distanceMeterTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
   else
     return static_cast<float>(distanceRad(toRadians(lonX),
                                           toRadians(latY),
@@ -218,7 +207,7 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
 {
   if(!isValid() || !pos1.isValid() || !pos2.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
 
   Pos p = *this;
   p.toRad();
@@ -254,7 +243,7 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos)
 float Pos::angleDegTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
 
   double angleDeg = toDegree(courseRad(toRadians(lonX), toRadians(latY),
                                        toRadians(otherPos.lonX), toRadians(otherPos.latY)));
@@ -292,7 +281,7 @@ Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
 float Pos::angleDegToRhumb(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
 
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
@@ -315,7 +304,7 @@ float Pos::angleDegToRhumb(const Pos& otherPos) const
 float Pos::distanceMeterToRhumb(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
-    return std::numeric_limits<float>::max();
+    return INVALID_VALUE;
 
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);

@@ -156,7 +156,8 @@ public:
   /* false if position is not initialized */
   bool isValid() const
   {
-    return lonX != INVALID_ORDINATE && latY != INVALID_ORDINATE;
+    // Use half value to get around calculations
+    return lonX < INVALID_VALUE / 2 && latY < INVALID_VALUE / 2;
   }
 
   /* false if position is null */
@@ -168,7 +169,7 @@ public:
   /* Return true if close to any pole */
   bool isPole() const
   {
-    return latY > 89.f || latY < -89.f;
+    return isValid() && (latY > 89.f || latY < -89.f);
   }
 
   /* Find point between start and end on GC route if distance between points is already known.
@@ -204,16 +205,17 @@ public:
     altitude = value;
   }
 
-  const static float POS_EPSILON_10CM; /* ca 10 cm for lat and lon nearby equator */
-  const static float POS_EPSILON_1M; /* ca 1 m for lat and lon nearby equator */
-  const static float POS_EPSILON_5M; /* ca 5 m for lat and lon nearby equator */
-  const static float POS_EPSILON_10M; /* ca 10 m for lat and lon nearby equator */
-  const static float POS_EPSILON_100M; /* ca 100 m for lat and lon nearby equator */
-  const static float POS_EPSILON_1000M; /* ca 1 km for lat and lon nearby equator */
+  // 1 deg / minutes / nm to meter / to 10 cm
+  Q_DECL_CONSTEXPR static float POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f; /* ca 10 cm for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_1M = 1.f / 60.f / 1852.216f; /* ca 1 m for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_5M = 1.f / 60.f / 1852.216f * 5.f; /* ca 5 m for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f; /* ca 10 m for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f; /* ca 100 m for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f; /* ca 1 km for lat and lon nearby equator */
+
+  Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();
 
 private:
-  const static float INVALID_ORDINATE;
-
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 
