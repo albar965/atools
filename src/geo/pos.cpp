@@ -206,6 +206,15 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
 
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
 {
+  CrossTrackStatus status;
+  float dist = distanceMeterToLine(pos1, pos2, status);
+
+  validPos = status == ALONG_TRACK;
+  return validPos ? dist : INVALID_VALUE;
+}
+
+float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatus& status) const
+{
   if(!isValid() || !pos1.isValid() || !pos2.isValid())
     return INVALID_VALUE;
 
@@ -231,13 +240,27 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos)
   double distAlongFrom1 = acos(cos(distFrom1) / cos(crossTrack));
   double distAlongFrom2 = acos(cos(distFrom2) / cos(-crossTrack));
 
-  if(std::isnan(distAlongFrom1) || std::isnan(distAlongFrom2) ||
-     distAlongFrom1 > dist1To2 || distAlongFrom2 > dist1To2)
-    validPos = false;
+  if(!std::isnan(distAlongFrom1) && distAlongFrom1 > dist1To2)
+  {
+    status = AFTER_END;
+    return static_cast<float>(distFrom2 * EARTH_RADIUS_METER);
+  }
+  else if(!std::isnan(distAlongFrom2) && distAlongFrom2 > dist1To2)
+  {
+    status = BEFORE_START;
+    return static_cast<float>(distFrom1 * EARTH_RADIUS_METER);
+  }
+  else if(!std::isnan(distAlongFrom1) && distAlongFrom1 <= dist1To2 &&
+          !std::isnan(distAlongFrom2) && distAlongFrom2 <= dist1To2)
+  {
+    status = ALONG_TRACK;
+    return static_cast<float>(crossTrack * EARTH_RADIUS_METER);
+  }
   else
-    validPos = true;
-
-  return static_cast<float>(crossTrack * EARTH_RADIUS_METER);
+  {
+    status = INVALID;
+    return INVALID_VALUE;
+  }
 }
 
 float Pos::angleDegTo(const Pos& otherPos) const
@@ -298,7 +321,7 @@ float Pos::angleDegToRhumb(const Pos& otherPos) const
     tc = remainder(atan2(-dlonWest, dphi), 2. * M_PI);
   else
     tc = remainder(atan2(dlonEast, dphi), 2. * M_PI);
-  return static_cast<float>(atools::geo::normalizeCourse(-atools::geo::toDegree(tc) + 360.));
+  return static_cast<float>(normalizeCourse(-toDegree(tc) + 360.));
 }
 
 float Pos::distanceMeterToRhumb(const Pos& otherPos) const

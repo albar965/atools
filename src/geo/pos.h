@@ -25,6 +25,14 @@ class QRegularExpression;
 namespace atools {
 namespace geo {
 
+enum CrossTrackStatus
+{
+  INVALID, /* No distance found */
+  ALONG_TRACK, /* Point is along track */
+  BEFORE_START, /* Point is before start - distance is point to start */
+  AFTER_END /* Point is after end - distance is point to end */
+};
+
 /*
  * Geographic position class. Calculations based on
  * http://williams.best.vwh.net/avform.htm
@@ -131,6 +139,8 @@ public:
   /* Distance to line formed by pos1 and pos2. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
   float distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool& validPos) const;
+  float distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
+                            atools::geo::CrossTrackStatus& status) const;
 
   /* Angle to other point (initial course) */
   float angleDegTo(const atools::geo::Pos& otherPos) const;

@@ -32,8 +32,11 @@ QString version();
 QString gitRevision();
 
 /* replace variables in a string like "${LANG}" */
-QString replaceVar(QString str, const QString name, const QVariant& value);
+QString replaceVar(QString str, const QString& name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
+
+bool contains(const QString& name, const std::initializer_list<QString>& list);
+bool contains(const QString& name, const std::initializer_list<const char *>& list);
 
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>

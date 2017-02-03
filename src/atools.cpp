@@ -96,7 +96,7 @@ QString ratingString(int value, int maxValue)
   return QString("★").repeated(value) + QString("−").repeated(maxValue - value);
 }
 
-QString replaceVar(QString str, const QString name, const QVariant& value)
+QString replaceVar(QString str, const QString& name, const QVariant& value)
 {
   QHash<QString, QVariant> variableValues;
   variableValues.insert(name, value);
@@ -119,6 +119,24 @@ QString cleanFilename(const QString& filename)
   return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
          replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').
          replace("  ", " ");
+}
+
+bool contains(const QString& name, const std::initializer_list<QString>& list)
+{
+  for(const QString& val : list)
+    if(val == name)
+      return true;
+
+  return false;
+}
+
+bool contains(const QString& name, const std::initializer_list<const char *>& list)
+{
+  for(const char *val : list)
+    if(val == name)
+      return true;
+
+  return false;
 }
 
 } // namespace atools

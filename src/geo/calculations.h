@@ -47,6 +47,17 @@ enum LineDist
 float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, bool lineOnly = false,
                      atools::geo::LineDist *distType = nullptr);
 
+template<typename TYPE>
+bool angleInRange(TYPE angle, TYPE min, TYPE max)
+{
+  if(max - min < 180.)
+    // min 100 max 260
+    return angle > min && angle < max;
+  else
+    // min 260 max 100
+    return (angle > max && angle <= 360.) || (angle < min && angle >= 0.);
+}
+
 /* Square distance */
 template<typename TYPE>
 Q_DECL_CONSTEXPR int manhattanDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
