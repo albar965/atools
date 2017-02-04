@@ -176,7 +176,7 @@ QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
       return "R";
 
     case atools::fs::bgl::leg::BOTH:
-      return "BOTH";
+      return "B";
 
   }
   qWarning().nospace().noquote() << "Invalid approach turn direction " << turnDir;
