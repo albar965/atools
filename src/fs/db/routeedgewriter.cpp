@@ -64,6 +64,20 @@ const float INFLATE_RECT_LAT_DEGREES = 4.f;
 /* Report progress twice a second */
 const int MIN_PROGRESS_REPORT_MS = 500;
 
+// Query result column indexes
+enum ColumnIndex
+{
+  NODE_ID, RANGE, TYPE, LONX, LATY
+};
+
+enum BindColumnIndex
+{
+  LEFTX,
+  RIGHTX,
+  BOTTOMY,
+  TOPY
+};
+
 RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
                                  int numProgressSteps)
   : numSteps(numProgressSteps), progressHandler(progress), db(sqlDb)
@@ -80,8 +94,8 @@ bool RouteEdgeWriter::run()
 
   // Get all nodes nearby this navaids
   SqlQuery nearestNodesQuery(db);
-  nearestNodesQuery.prepare("select node_id, type, range, lonx, laty from route_node_radio "
-                            "where lonx between :leftx and :rightx and laty between :bottomy and :topy");
+  nearestNodesQuery.prepare("select node_id, range, type, lonx, laty from route_node_radio "
+                            "where lonx between ? and ? and laty between ? and ?");
 
   // Insert edges into databases
   SqlQuery insertEdgesQuery(db);
@@ -125,11 +139,11 @@ bool RouteEdgeWriter::run()
     }
 
     // Look at each node
-    int fromRangeMeter = selectNodesQuery.value("range").toInt();
-    int fromNodeId = selectNodesQuery.value("node_id").toInt();
-    int fromNodeType = selectNodesQuery.value("type").toInt();
+    int fromRangeMeter = selectNodesQuery.value(RANGE).toInt();
+    int fromNodeId = selectNodesQuery.value(NODE_ID).toInt();
+    int fromNodeType = selectNodesQuery.value(TYPE).toInt();
 
-    Pos pos(selectNodesQuery.value("lonx").toFloat(), selectNodesQuery.value("laty").toFloat());
+    Pos pos(selectNodesQuery.value(LONX).toFloat(), selectNodesQuery.value(LATY).toFloat());
 
     // Clear result lists
     toNodeIdVars.clear();
@@ -232,12 +246,12 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
     while(nearestStmt.next())
     {
-      int toNodeId = nearestStmt.value("node_id").toInt();
+      int toNodeId = nearestStmt.value(NODE_ID).toInt();
       if(toNodeId == fromNodeId)
         continue;
 
-      int toRangeMeter = nearestStmt.value("range").toInt();
-      Pos toPos(nearestStmt.value("lonx").toFloat(), nearestStmt.value("laty").toFloat());
+      int toRangeMeter = nearestStmt.value(RANGE).toInt();
+      Pos toPos(nearestStmt.value(LONX).toFloat(), nearestStmt.value(LATY).toFloat());
       int distanceMeter = static_cast<int>(pos.distanceMeterTo(toPos) + 0.5f);
 
       if(distanceMeter < MIN_DISTANCE_METER)
@@ -251,7 +265,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
       // Calculate sector number for this node
       int sectorNum = courseDeg / (360 / NUM_SECTORS);
 
-      int toNodeType = nearestStmt.value("type").toInt();
+      int toNodeType = nearestStmt.value(TYPE).toInt();
 
       TempNodeTo tmp = {toNodeId, toNodeType, toRangeMeter, distanceMeter, PRIORITY_BY_TYPE[toNodeType]};
 
@@ -329,10 +343,10 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
 void RouteEdgeWriter::bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)
 {
-  query->bindValue(":leftx", rect.getWest());
-  query->bindValue(":rightx", rect.getEast());
-  query->bindValue(":bottomy", rect.getSouth());
-  query->bindValue(":topy", rect.getNorth());
+  query->bindValue(LEFTX, rect.getWest());
+  query->bindValue(RIGHTX, rect.getEast());
+  query->bindValue(BOTTOMY, rect.getSouth());
+  query->bindValue(TOPY, rect.getNorth());
 }
 
 } // namespace writer
