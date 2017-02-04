@@ -129,7 +129,7 @@ Pos Line::interpolateRhumb(float fraction) const
 Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float accuracyMeter) const
 {
   float dist = distanceMeter();
-  float minFraction = std::min(accuracyMeter / dist, 0.00001f);
+  float minFraction = std::max(accuracyMeter / dist, 0.00001f);
 
   float d1 = pos1.distanceMeterTo(center);
   float d2 = pos2.distanceMeterTo(center);
@@ -201,7 +201,11 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
           tested.insert(fraction);
         }
       }
-      step /= 2.f;
+
+      if(step > minFraction)
+        step /= 2.f;
+      else
+        break;
     }
 
     if(found)
