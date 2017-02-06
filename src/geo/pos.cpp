@@ -189,6 +189,8 @@ float Pos::distanceSimpleTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
+  else if(*this == otherPos)
+    return 0.f;
   else
     return std::abs(lonX - otherPos.lonX) + std::abs(latY - otherPos.latY);
 }
@@ -197,6 +199,8 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
+  else if(*this == otherPos)
+    return 0.f;
   else
     return static_cast<float>(distanceRad(toRadians(lonX),
                                           toRadians(latY),
@@ -206,11 +210,29 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
 
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
 {
-  CrossTrackStatus status;
-  float dist = distanceMeterToLine(pos1, pos2, status);
+  if(!isValid() || !pos1.isValid() || !pos2.isValid())
+  {
+    validPos = false;
+    return INVALID_VALUE;
+  }
+  else if(pos1 == pos2)
+  {
+    validPos = false;
+    return distanceMeterTo(pos1);
+  }
+  else if(*this == pos1 || *this == pos2)
+  {
+    validPos = true;
+    return 0.f;
+  }
+  else
+  {
+    CrossTrackStatus status;
+    float dist = distanceMeterToLine(pos1, pos2, status);
 
-  validPos = status == ALONG_TRACK;
-  return validPos ? dist : INVALID_VALUE;
+    validPos = status == ALONG_TRACK;
+    return validPos ? dist : INVALID_VALUE;
+  }
 }
 
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatus& status) const
@@ -267,6 +289,8 @@ float Pos::angleDegTo(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
+  else if(*this == otherPos)
+    return INVALID_VALUE;
 
   double angleDeg = toDegree(courseRad(toRadians(lonX), toRadians(latY),
                                        toRadians(otherPos.lonX), toRadians(otherPos.latY)));
@@ -305,6 +329,8 @@ float Pos::angleDegToRhumb(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
+  else if(*this == otherPos)
+    return 0.f;
 
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
@@ -328,6 +354,8 @@ float Pos::distanceMeterToRhumb(const Pos& otherPos) const
 {
   if(!isValid() || !otherPos.isValid())
     return INVALID_VALUE;
+  else if(*this == otherPos)
+    return 0.f;
 
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
@@ -381,6 +409,8 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
 {
   if(!isValid() || !otherPos.isValid())
     return EMPTY_POS;
+  else if(*this == otherPos)
+    return *this;
 
   if(fraction <= 0.f)
     return *this;
@@ -438,6 +468,11 @@ QString Pos::toString() const
 void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
                             QList<Pos>& positions) const
 {
+  if(!isValid() || !otherPos.isValid())
+    return;
+  else if(*this == otherPos)
+    return;
+
   float step = 1.f / numPoints;
   for(int j = 0; j < numPoints; j++)
     positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)));
@@ -516,6 +551,8 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
 {
   if(!p1.isValid() || !p2.isValid())
     return EMPTY_POS;
+  else if(p1 == p2)
+    return p1;
 
   // double p1 = LatLon(51.8853, 0.2545), brng1 = 108.547;
   // double p2 = LatLon(49.0034, 2.5735), brng2 =  32.435;
