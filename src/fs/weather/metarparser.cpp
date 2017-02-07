@@ -420,6 +420,8 @@ bool MetarParser::scanModifier()
     m += 4, type = AUTO;
   else if(!strncmp(m, "COR", 3)) // manually corrected
     m += 3, type = COR;
+  else if(!strncmp(m, "CCA", 3)) // manually corrected for Canada
+    m += 3, type = COR;
   else if(!strncmp(m, "RTD", 3)) // routine delayed
     m += 3, type = RTD;
   else
