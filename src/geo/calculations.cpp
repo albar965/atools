@@ -17,6 +17,10 @@
 
 #include "geo/calculations.h"
 
+#include <QLineF>
+#include <QPointF>
+#include <QRect>
+
 namespace atools {
 
 namespace geo {
@@ -55,6 +59,47 @@ float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, b
     }
   }
   return dist;
+}
+
+void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF *rect, float *startAngle,
+                   float *spanAngle)
+{
+  // center of the circle is (x0, y0) and that the arc contains your two points (x1, y1) and (x2, y2).
+  // Then the radius is: r=sqrt((x1-x0)(x1-x0) + (y1-y0)(y1-y0)).
+  double radius = QLineF(center, line.p1()).length();
+
+  if(rect != nullptr)
+    *rect = QRectF(center.x() - radius, center.y() - radius, 2.f * radius, 2.f * radius);
+
+  if(startAngle != nullptr || spanAngle != nullptr)
+  {
+    double start = normalizeCourse(toDegree(std::atan2(line.y1() - center.y(), line.x1() - center.x())));
+    double end = normalizeCourse(toDegree(std::atan2(line.y2() - center.y(), line.x2() - center.x())));
+
+    double span = 0.;
+    if(left)
+    {
+      if(start > end)
+        span = start - end;
+      else
+        span = 360. - end + start;
+    }
+    else
+    {
+      // negative values mean clockwise
+      if(end > start)
+        span = end - start;
+      else
+        span = 360. - start + end;
+      span = -span;
+    }
+
+    if(spanAngle != nullptr)
+      *startAngle = static_cast<float>(start);
+
+    if(spanAngle != nullptr)
+      *spanAngle = static_cast<float>(span);
+  }
 }
 
 } // namespace geo

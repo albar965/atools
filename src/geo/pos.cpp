@@ -179,8 +179,9 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
 
   double lon, lat;
 
-  endpointRad(toRadians(lonX), toRadians(latY),
-              meterToRad(distanceMeter), toRadians(-angleDeg + 360.f), lon, lat);
+  endpointRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
+              meterToRad(static_cast<double>(distanceMeter)), toRadians(
+                -static_cast<double>(angleDeg) + 360.), lon, lat);
 
   return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat)));
 }
@@ -202,10 +203,10 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
   else if(*this == otherPos)
     return 0.f;
   else
-    return static_cast<float>(distanceRad(toRadians(lonX),
-                                          toRadians(latY),
-                                          toRadians(otherPos.lonX),
-                                          toRadians(otherPos.latY)) * EARTH_RADIUS_METER);
+    return static_cast<float>(distanceRad(toRadians(static_cast<double>(lonX)),
+                                          toRadians(static_cast<double>(latY)),
+                                          toRadians(static_cast<double>(otherPos.lonX)),
+                                          toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER);
 }
 
 float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
@@ -239,6 +240,16 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatu
 {
   if(!isValid() || !pos1.isValid() || !pos2.isValid())
     return INVALID_VALUE;
+  else if(pos1 == pos2)
+  {
+    status = ALONG_TRACK;
+    return distanceMeterTo(pos1);
+  }
+  else if(*this == pos1 || *this == pos2)
+  {
+    status = ALONG_TRACK;
+    return 0.f;
+  }
 
   Pos p = *this;
   p.toRad();
@@ -292,8 +303,10 @@ float Pos::angleDegTo(const Pos& otherPos) const
   else if(*this == otherPos)
     return INVALID_VALUE;
 
-  double angleDeg = toDegree(courseRad(toRadians(lonX), toRadians(latY),
-                                       toRadians(otherPos.lonX), toRadians(otherPos.latY)));
+  double angleDeg =
+    toDegree(courseRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
+                       toRadians(static_cast<double>(otherPos.lonX)),
+                       toRadians(static_cast<double>(otherPos.latY))));
   return static_cast<float>(normalizeCourse(-angleDeg + 360.));
 }
 

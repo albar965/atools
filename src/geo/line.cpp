@@ -230,6 +230,14 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
   return result;
 }
 
+Rect Line::boundingRect() const
+{
+  Rect retval;
+  retval.extend(pos1);
+  retval.extend(pos2);
+  return retval;
+}
+
 bool Line::isPoint(float epsilonDegree) const
 {
   return isValid() && pos1.almostEqual(pos2, epsilonDegree);

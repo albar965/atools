@@ -19,6 +19,7 @@
 #define ATOOLS_GEO_LINE_H
 
 #include "geo/pos.h"
+#include "geo/rect.h"
 
 #include <QDebug>
 
@@ -87,6 +88,9 @@ public:
    * Will find the nearest intersection point. */
   atools::geo::Pos intersectionWithCircle(const atools::geo::Pos& center, float radiusMeter,
                                           float accuracyMeter) const;
+
+  /* Calculate and return bounding rectangle for this line */
+  atools::geo::Rect boundingRect() const;
 
   /* false if position is not initialized */
   bool isValid() const

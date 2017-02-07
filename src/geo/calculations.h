@@ -47,6 +47,11 @@ enum LineDist
 float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, bool lineOnly = false,
                      atools::geo::LineDist *distType = nullptr);
 
+/* Calculate angles and bouding rectangle (if not nullptr) for an arc going through line.p1 and line.p2 with
+ * given center. */
+void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF *rect, float *startAngle,
+                   float *spanAngle);
+
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)
 {
