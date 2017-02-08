@@ -196,7 +196,7 @@ public:
                                     float fraction) const;
   atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
-  /*  * Returns the point of intersection of two paths defined by point and bearing */
+  /* Returns the point of intersection of two paths defined by point and bearing */
   static atools::geo::Pos intersectingRadials(const atools::geo::Pos& p1, float brng1,
                                               const atools::geo::Pos& p2, float brng2);
 

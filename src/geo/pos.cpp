@@ -177,6 +177,9 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
   if(!isValid())
     return EMPTY_POS;
 
+  if(distanceMeter == 0.f)
+    return *this;
+
   double lon, lat;
 
   endpointRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
@@ -314,6 +317,9 @@ Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
 {
   if(!isValid())
     return EMPTY_POS;
+
+  if(distanceMeter == 0.f)
+    return *this;
 
   double lon1 = toRadians(lonX);
   double lat1 = toRadians(latY);
@@ -575,15 +581,15 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double brg13 = atools::geo::toRadians(brng1), brg23 = atools::geo::toRadians(brng2);
   double dlat = lat2 - lat1, dlon = lon2 - lon1;
 
-  double dst12 = 2 * asin(sqrt(sin(dlat / 2) * sin(dlat / 2) +
-                               cos(lat1) * cos(lat2) * sin(dlon / 2) * sin(dlon / 2)));
+  double dst12 = 2. * asin(sqrt(sin(dlat / 2.) * sin(dlat / 2.) +
+                                cos(lat1) * cos(lat2) * sin(dlon / 2.) * sin(dlon / 2.)));
   if(dst12 == 0.)
     return EMPTY_POS;
 
   // initial/final bearings between points
   double initbrg = acos((sin(lat2) - sin(lat1) * cos(dst12)) / (sin(dst12) * cos(lat1)));
   if(std::isnan(initbrg))
-    initbrg = 0;                     // protect against rounding
+    initbrg = 0.;                     // protect against rounding
   double finalbrg = acos((sin(lat1) - sin(lat2) * cos(dst12)) / (sin(dst12) * cos(lat2)));
 
   double crs12 = sin(lon2 - lon1) > 0. ? initbrg : 2. * M_PI - initbrg;

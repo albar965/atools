@@ -17,6 +17,8 @@
 
 #include "geo/calculations.h"
 
+#include "geo/line.h"
+
 #include <QLineF>
 #include <QPointF>
 #include <QRect>
@@ -100,6 +102,57 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
     if(spanAngle != nullptr)
       *spanAngle = static_cast<float>(span);
   }
+}
+
+float calcArcDistance(const atools::geo::Line& line, const atools::geo::Pos& center, bool left)
+{
+  float dist = center.distanceMeterTo(line.getPos1());
+  float start = center.angleDegTo(line.getPos1());
+  float end = center.angleDegTo(line.getPos2());
+  float spanningAngle;
+
+  if(left)
+  {
+    if(start < end)
+      // left = CCW 10 - 340
+      spanningAngle = start + (360.f - end);
+    else
+      // left = CCW 260 - 100
+      spanningAngle = start - end;
+  }
+  else
+  {
+    if(start < end)
+      // right = CW 90 - 270
+      spanningAngle = (end - start);
+    else
+      // right = CW 340 - 10
+      spanningAngle = ((360.f - start) + end);
+  }
+
+  // Calculate number of steps for 20 degrees
+  int numSteps = std::max(static_cast<int>(spanningAngle / 20.f), 1);
+
+  float step = spanningAngle / static_cast<float>(numSteps);
+
+  float totalDist = 0.f;
+  Pos last = line.getPos1();
+  for(int i = 0; i <= numSteps; i++)
+  {
+    float angle;
+
+    if(left)
+      angle = start - static_cast<float>(i) * step;
+    else
+      angle = start + static_cast<float>(i) * step;
+
+    angle = normalizeCourse(angle);
+    Pos cur = center.endpoint(dist, angle);
+    totalDist += last.distanceMeterTo(cur);
+    last = cur;
+  }
+
+  return totalDist;
 }
 
 } // namespace geo

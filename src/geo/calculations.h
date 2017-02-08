@@ -28,6 +28,9 @@
 namespace atools {
 namespace geo {
 
+class Line;
+class Pos;
+
 enum LineDist
 {
   DIST_TO_LINE, /* Distance is to the line */
@@ -51,6 +54,10 @@ float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, b
  * given center. */
 void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF *rect, float *startAngle,
                    float *spanAngle);
+
+/* Numerical method to calculate the distance in meter along the arc that has center and goes through the two points
+ * of the line. left = counter clockwise */
+float calcArcDistance(const atools::geo::Line& line, const atools::geo::Pos& center, bool left);
 
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)
