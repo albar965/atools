@@ -55,10 +55,15 @@ inline uint qHash(const ParkingKey& pair)
   return static_cast<unsigned int>(pair.number) ^ static_cast<unsigned int>(pair.name);
 }
 
-static const QStringList MIL_ENDS_WITH(" Mil");
+static const QStringList MIL_ENDS_WITH({" Mil", " Aaf", " Ab", " Af", " Afb", " Afs", " Ahp", " Angb", " Arb",
+                                        " Lrrs", " Mcaf", " Mcalf", " Mcas", " Naf", " Nalf", " Nas",
+                                        " Naval", " Naws", " Nolf", " Ns"});
 static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " AHP", " ANGB", " ARB", " LRRS",
                                        " MCAF", " MCALF", " MCAS", " NAF", " NALF", " NAS", " Naval", " Navy",
-                                       " NAWS", " NOLF", " NS", " Army", " Mil ", "Military", "Air Force"});
+                                       " NAWS", " NOLF", " NS", " Army", " Mil ", "Military", "Air Force",
+                                       " Aaf ", " Ab ", " Af ", " Afb ", " Afs ", " Ahp ", " Angb ", " Arb ",
+                                       " Lrrs ", " Mcaf ", " Mcalf ", " Mcas ", " Naf ", " Nalf ", " Nas ",
+                                       " Naval ", " Naws ", " Nolf ", " Ns "});
 
 using atools::io::BinaryStream;
 
