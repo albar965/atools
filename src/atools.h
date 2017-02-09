@@ -174,7 +174,7 @@ int sign(TYPE t)
 template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2)
 {
-  return std::abs(f1 - f2) < std::numeric_limits<TYPE>::epsilon();
+  return std::abs(f1 - f2) <= std::numeric_limits<TYPE>::epsilon();
 }
 
 template<typename TYPE>
@@ -186,7 +186,7 @@ Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2)
 template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
-  return std::abs(f1 - f2) < epsilon;
+  return std::abs(f1 - f2) <= epsilon;
 }
 
 template<typename TYPE>
