@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "gui/tablezoomhandler.h"
+#include "gui/itemviewzoomhandler.h"
 
 #include "settings/settings.h"
 #include "atools.h"
@@ -31,9 +31,10 @@ namespace gui {
 
 using atools::settings::Settings;
 
-TableZoomHandler::TableZoomHandler(QTableView *view, QAction *zoomInAction, QAction *zoomOutAction,
-                                   QAction *zoomDefaultAction, QString settingsKeyStr)
-  : tableView(view), actionZoomIn(zoomInAction), actionZoomOut(zoomOutAction),
+ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction,
+                                         QAction *zoomOutAction, QAction *zoomDefaultAction,
+                                         QString settingsKeyStr)
+  : itemView(view), actionZoomIn(zoomInAction), actionZoomOut(zoomOutAction),
     actionZoomDefault(zoomDefaultAction), settingsKey(settingsKeyStr)
 {
   Q_ASSERT(view != nullptr);
@@ -41,43 +42,47 @@ TableZoomHandler::TableZoomHandler(QTableView *view, QAction *zoomInAction, QAct
   initTableViewZoom();
 
   if(actionZoomIn != nullptr)
-    connect(actionZoomIn, &QAction::triggered, this, &TableZoomHandler::zoomIn);
+    connect(actionZoomIn, &QAction::triggered, this, &ItemViewZoomHandler::zoomIn);
   if(actionZoomOut != nullptr)
-    connect(actionZoomOut, &QAction::triggered, this, &TableZoomHandler::zoomOut);
+    connect(actionZoomOut, &QAction::triggered, this, &ItemViewZoomHandler::zoomOut);
   if(actionZoomDefault != nullptr)
-    connect(actionZoomDefault, &QAction::triggered, this, &TableZoomHandler::zoomDefault);
+    connect(actionZoomDefault, &QAction::triggered, this, &ItemViewZoomHandler::zoomDefault);
 }
 
-TableZoomHandler::~TableZoomHandler()
+ItemViewZoomHandler::~ItemViewZoomHandler()
 {
   if(actionZoomIn != nullptr)
-    disconnect(actionZoomIn, &QAction::triggered, this, &TableZoomHandler::zoomIn);
+    disconnect(actionZoomIn, &QAction::triggered, this, &ItemViewZoomHandler::zoomIn);
   if(actionZoomOut != nullptr)
-    disconnect(actionZoomOut, &QAction::triggered, this, &TableZoomHandler::zoomOut);
+    disconnect(actionZoomOut, &QAction::triggered, this, &ItemViewZoomHandler::zoomOut);
   if(actionZoomDefault != nullptr)
-    disconnect(actionZoomDefault, &QAction::triggered, this, &TableZoomHandler::zoomDefault);
+    disconnect(actionZoomDefault, &QAction::triggered, this, &ItemViewZoomHandler::zoomDefault);
 }
 
-void TableZoomHandler::setTableViewFontSize(float pointSize)
+void ItemViewZoomHandler::setTableViewFontSize(float pointSize)
 {
-  QFont newFont(tableView->font());
+  QFont newFont(itemView->font());
   newFont.setPointSizeF(pointSize);
 
   int newFontHeight = QFontMetrics(newFont).height();
 
   qDebug() << "new font height" << newFontHeight << "point size" << newFont.pointSize();
 
-  tableView->setFont(newFont);
+  itemView->setFont(newFont);
 
-  // Adjust the cell height - default is too big
-  tableView->verticalHeader()->setDefaultSectionSize(newFontHeight + sectionToFontSize);
-  tableView->verticalHeader()->setMinimumSectionSize(newFontHeight + sectionToFontSize);
+  QTableView *tableView = dynamic_cast<QTableView *>(itemView);
+  if(tableView != nullptr)
+  {
+    // Adjust the cell height - default is too big
+    tableView->verticalHeader()->setDefaultSectionSize(newFontHeight + sectionToFontSize);
+    tableView->verticalHeader()->setMinimumSectionSize(newFontHeight + sectionToFontSize);
+  }
 }
 
-void TableZoomHandler::initTableViewZoom()
+void ItemViewZoomHandler::initTableViewZoom()
 {
   // Adjust cell height to be smaller than default but according to font height
-  defaultTableViewFontPointSize = static_cast<float>(tableView->font().pointSizeF());
+  defaultTableViewFontPointSize = static_cast<float>(itemView->font().pointSizeF());
 
   // Increase default table font size for mac
 #if defined(Q_OS_OSX)
@@ -93,53 +98,53 @@ void TableZoomHandler::initTableViewZoom()
   setTableViewFontSize(newPointSize);
 }
 
-void TableZoomHandler::zoomIn()
+void ItemViewZoomHandler::zoomIn()
 {
   zoomTableView(1);
 }
 
-void TableZoomHandler::zoomOut()
+void ItemViewZoomHandler::zoomOut()
 {
   zoomTableView(-1);
 }
 
-void TableZoomHandler::zoomDefault()
+void ItemViewZoomHandler::zoomDefault()
 {
   zoomTableView(0);
 }
 
-void TableZoomHandler::zoomPercent(int percent)
+void ItemViewZoomHandler::zoomPercent(int percent)
 {
   float newPointSize = defaultTableViewFontPointSize * percent / 100.f;
 
   setTableViewFontSize(newPointSize);
   if(!settingsKey.isEmpty())
-    Settings::instance().setValue(settingsKey, tableView->font().pointSize());
+    Settings::instance().setValue(settingsKey, itemView->font().pointSize());
   enableDisableZoomActions();
 }
 
-void TableZoomHandler::zoomTableView(int value)
+void ItemViewZoomHandler::zoomTableView(int value)
 {
   float newPointSize = defaultTableViewFontPointSize;
 
   if(value != 0)
-    newPointSize = tableView->font().pointSize() + value;
+    newPointSize = itemView->font().pointSize() + value;
 
   setTableViewFontSize(newPointSize);
   if(!settingsKey.isEmpty())
-    Settings::instance().setValue(settingsKey, tableView->font().pointSize());
+    Settings::instance().setValue(settingsKey, itemView->font().pointSize());
   enableDisableZoomActions();
 }
 
-void TableZoomHandler::enableDisableZoomActions()
+void ItemViewZoomHandler::enableDisableZoomActions()
 {
   if(actionZoomDefault != nullptr)
-    actionZoomDefault->setEnabled(atools::almostNotEqual(static_cast<float>(tableView->font().pointSizeF()),
+    actionZoomDefault->setEnabled(atools::almostNotEqual(static_cast<float>(itemView->font().pointSizeF()),
                                                          defaultTableViewFontPointSize));
   if(actionZoomIn != nullptr)
-    actionZoomIn->setEnabled(tableView->font().pointSize() < maxFontSize);
+    actionZoomIn->setEnabled(itemView->font().pointSize() < maxFontSize);
   if(actionZoomOut != nullptr)
-    actionZoomOut->setEnabled(tableView->font().pointSize() > minFontSize);
+    actionZoomOut->setEnabled(itemView->font().pointSize() > minFontSize);
 }
 
 } // namespace gui

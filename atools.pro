@@ -151,7 +151,6 @@ HEADERS += src/atools.h \
     src/sql/sqlscript.h \
     src/sql/sqlutil.h \
     src/fs/db/progresshandler.h \
-    src/gui/tablezoomhandler.h \
     src/gui/widgetstate.h \
     src/gui/helphandler.h \
     src/geo/linestring.h \
@@ -196,7 +195,8 @@ HEADERS += src/atools.h \
     src/fs/weather/metarparser.h \
     src/util/paintercontextsaver.h \
     src/fs/db/ap/airportfilewriter.h \
-    src/geo/line.h
+    src/geo/line.h \
+    src/gui/itemviewzoomhandler.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -308,7 +308,6 @@ SOURCES += src/atools.cpp \
     src/sql/sqlscript.cpp \
     src/sql/sqlutil.cpp \
     src/fs/db/progresshandler.cpp \
-    src/gui/tablezoomhandler.cpp \
     src/gui/widgetstate.cpp \
     src/gui/helphandler.cpp \
     src/geo/linestring.cpp \
@@ -351,7 +350,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/nav/airwaysegment.cpp \
     src/util/paintercontextsaver.cpp \
     src/fs/db/ap/airportfilewriter.cpp \
-    src/geo/line.cpp
+    src/geo/line.cpp \
+    src/gui/itemviewzoomhandler.cpp
 
 
 unix {

@@ -21,14 +21,14 @@
 #include <QObject>
 
 class QAction;
-class QTableView;
+class QAbstractItemView;
 class QWidget;
 
 namespace atools {
 namespace gui {
 
-/* Maintains font size/zoom functionality for table widgets. Supports save and restore */
-class TableZoomHandler :
+/* Maintains font size/zoom functionality for table or tree widgets. Supports save and restore */
+class ItemViewZoomHandler :
   public QObject
 {
   Q_OBJECT
@@ -37,9 +37,9 @@ public:
   /* Will not support any zooming but set the initial cell and font size
    * if constructed with tableview parameter only. Otherwise font size can be changed using the given
    * actions*/
-  TableZoomHandler(QTableView *tableView, QAction *actionZoomIn = nullptr, QAction *actionZoomOut = nullptr,
-                   QAction *actionZoomDefault = nullptr, QString settingsKeyStr = QString());
-  virtual ~TableZoomHandler();
+  ItemViewZoomHandler(QAbstractItemView *itemView, QAction *actionZoomIn = nullptr, QAction *actionZoomOut =
+                        nullptr, QAction *actionZoomDefault = nullptr, QString settingsKeyStr = QString());
+  virtual ~ItemViewZoomHandler();
 
   /* Use zoom methods for direct changes instead actions */
   void zoomTableView(int value);
@@ -102,7 +102,7 @@ private:
   int minFontSize = 7;
   int maxFontSize = 16;
 
-  QTableView *tableView;
+  QAbstractItemView *itemView;
   QAction *actionZoomIn, *actionZoomOut, *actionZoomDefault;
   QString settingsKey;
 };
