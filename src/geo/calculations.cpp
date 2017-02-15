@@ -16,8 +16,8 @@
 *****************************************************************************/
 
 #include "geo/calculations.h"
-
 #include "geo/line.h"
+#include "geo/linestring.h"
 
 #include <QLineF>
 #include <QPointF>
@@ -71,7 +71,7 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
   double radius = QLineF(center, line.p1()).length();
 
   if(rect != nullptr)
-    *rect = QRectF(center.x() - radius, center.y() - radius, 2.f * radius, 2.f * radius);
+    *rect = QRectF(center.x() - radius, center.y() - radius, 2. * radius, 2. * radius);
 
   if(startAngle != nullptr || spanAngle != nullptr)
   {
@@ -104,12 +104,16 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
   }
 }
 
-float calcArcDistance(const atools::geo::Line& line, const atools::geo::Pos& center, bool left)
+void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center, bool left,
+                   float *distance, atools::geo::LineString *lines)
 {
   float dist = center.distanceMeterTo(line.getPos1());
   float start = center.angleDegTo(line.getPos1());
   float end = center.angleDegTo(line.getPos2());
   float spanningAngle;
+
+  if(distance != nullptr)
+    *distance = 0.f;
 
   if(left)
   {
@@ -131,11 +135,10 @@ float calcArcDistance(const atools::geo::Line& line, const atools::geo::Pos& cen
   }
 
   // Calculate number of steps for 20 degrees
-  int numSteps = std::max(static_cast<int>(spanningAngle / 20.f), 1);
+  int numSteps = std::max(static_cast<int>(spanningAngle / 10.f), 1);
 
   float step = spanningAngle / static_cast<float>(numSteps);
 
-  float totalDist = 0.f;
   Pos last = line.getPos1();
   for(int i = 0; i <= numSteps; i++)
   {
@@ -148,11 +151,13 @@ float calcArcDistance(const atools::geo::Line& line, const atools::geo::Pos& cen
 
     angle = normalizeCourse(angle);
     Pos cur = center.endpoint(dist, angle);
-    totalDist += last.distanceMeterTo(cur);
+    if(lines != nullptr)
+      lines->append(cur);
+
+    if(distance != nullptr)
+      *distance += last.distanceMeterTo(cur);
     last = cur;
   }
-
-  return totalDist;
 }
 
 } // namespace geo

@@ -71,12 +71,12 @@ bool Line::operator==(const Line& other) const
   return pos1 == other.pos1 && pos2 == other.pos2;
 }
 
-float Line::distanceSimple() const
+float Line::lengthSimple() const
 {
   return pos1.distanceSimpleTo(pos2);
 }
 
-float Line::distanceMeter() const
+float Line::lengthMeter() const
 {
   return pos1.distanceMeterTo(pos2);
 }
@@ -84,6 +84,11 @@ float Line::distanceMeter() const
 float Line::distanceMeterToLine(const Pos& pos, bool& validPos) const
 {
   return pos.distanceMeterToLine(pos1, pos2, validPos);
+}
+
+float Line::distanceMeterToLine(const Pos& pos, CrossTrackStatus& status) const
+{
+  return pos.distanceMeterToLine(pos1, pos2, status);
 }
 
 float Line::angleDeg() const
@@ -128,7 +133,7 @@ Pos Line::interpolateRhumb(float fraction) const
 
 Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float accuracyMeter) const
 {
-  float dist = distanceMeter();
+  float dist = lengthMeter();
   float minFraction = std::max(accuracyMeter / dist, 0.00001f);
 
   float d1 = pos1.distanceMeterTo(center);

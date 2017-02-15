@@ -54,14 +54,15 @@ public:
   }
 
   /* Distance to other point in simple units */
-  float distanceSimple() const;
+  float lengthSimple() const;
 
   /* Distance to other point for great circle route */
-  float distanceMeter() const;
+  float lengthMeter() const;
 
   /* Distance to this line. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
   float distanceMeterToLine(const atools::geo::Pos& pos, bool& validPos) const;
+  float distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::CrossTrackStatus& status) const;
 
   /* Angle of line (initial course) */
   float angleDeg() const;
@@ -74,14 +75,14 @@ public:
 
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
-  atools::geo::Pos interpolate(float distanceMeter, float fraction) const;
+  atools::geo::Pos interpolate(float lengthMeter, float fraction) const;
 
   /* Find point between start and end on GC route if distance between points is not known */
   atools::geo::Pos interpolate(float fraction) const;
-  void interpolatePoints(float distanceMeter, int numPoints, QList<atools::geo::Pos>& positions) const;
+  void interpolatePoints(float lengthMeter, int numPoints, QList<atools::geo::Pos>& positions) const;
 
   /* Find point between start and end on rhumb line */
-  atools::geo::Pos interpolateRhumb(float distanceMeter, float fraction) const;
+  atools::geo::Pos interpolateRhumb(float lengthMeter, float fraction) const;
   atools::geo::Pos interpolateRhumb(float fraction) const;
 
   /* Find the intersection of the GC line with the circle - numerical method.

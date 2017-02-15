@@ -28,14 +28,17 @@ namespace geo {
  * List of geographic positions
  */
 class LineString :
-  public QList<atools::geo::Pos>
+  public QVector<atools::geo::Pos>
 {
 public:
   LineString();
   LineString(std::initializer_list<atools::geo::Pos> list);
 
+  void append(const atools::geo::Pos& pos);
   void append(float longitudeX, float latitudeY, float alt = 0.f);
   void append(double longitudeX, double latitudeY, double alt = 0.f);
+
+  float distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::CrossTrackStatus& status) const;
 
   /* Length of the line string in meter */
   float lengthMeter() const;

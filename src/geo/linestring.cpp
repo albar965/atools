@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "linestring.h"
+#include "geo/linestring.h"
 
 namespace atools {
 namespace geo {
@@ -26,18 +26,35 @@ LineString::LineString()
 }
 
 LineString::LineString(std::initializer_list<Pos> list)
-  : QList(list)
+  : QVector(list)
 {
+}
+
+void LineString::append(const Pos& pos)
+{
+  QVector::append(pos);
 }
 
 void LineString::append(float longitudeX, float latitudeY, float alt)
 {
-  QList::append(Pos(longitudeX, latitudeY, alt));
+  QVector::append(Pos(longitudeX, latitudeY, alt));
 }
 
 void LineString::append(double longitudeX, double latitudeY, double alt)
 {
-  QList::append(Pos(longitudeX, latitudeY, alt));
+  QVector::append(Pos(longitudeX, latitudeY, alt));
+}
+
+float LineString::distanceMeterToLineString(const Pos& pos, CrossTrackStatus& status) const
+{
+  float minDist = std::numeric_limits<float>::max();
+
+
+  CrossTrackStatus localStatus;
+  for(int i = 0; i < size() - 1; i++)
+  {
+    float dist = pos.distanceMeterToLine(at(i), at(i + 1), localStatus);
+  }
 }
 
 Rect LineString::boundingRect()
