@@ -29,6 +29,7 @@ namespace atools {
 namespace fs {
 namespace sc {
 class SimConnectHandler;
+class SimConnectData;
 
 /*
  * User aircraft that is used to transfer across network links.
@@ -158,6 +159,7 @@ public:
 
 private:
   friend class atools::fs::sc::SimConnectHandler;
+  friend class atools::fs::sc::SimConnectData;
 
   float
     altitudeAboveGround = 0.f, groundAltitude = 0.f, windSpeed = 0.f, windDirection = 0.f,

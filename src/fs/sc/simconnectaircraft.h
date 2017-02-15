@@ -32,6 +32,7 @@ namespace sc {
 
 class SimConnectHandler;
 class SimConnectHandlerPrivate;
+class SimConnectData;
 
 // quint16
 enum Flag
@@ -250,9 +251,16 @@ public:
     return flags & IN_SNOW;
   }
 
+  /* Create artificially by mouse movements */
+  bool isDebug() const
+  {
+    return debug;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
+  friend class atools::fs::sc::SimConnectData;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
@@ -270,6 +278,7 @@ private:
   Category category;
   EngineType engineType;
   quint8 numberOfEngines;
+  bool debug = false;
 };
 
 } // namespace sc

@@ -64,46 +64,6 @@ void FlightplanEntry::setWaypointType(const QString& value)
   waypointType = stringToWaypointType(value);
 }
 
-void FlightplanEntry::setWaypointType(const atools::fs::pln::entry::WaypointType& value)
-{
-  waypointType = value;
-}
-
-const QString& FlightplanEntry::getWaypointId() const
-{
-  return waypointId;
-}
-
-const QString& FlightplanEntry::getAirway() const
-{
-  return airway;
-}
-
-void FlightplanEntry::setAirway(const QString& value)
-{
-  airway = value;
-}
-
-const QString& FlightplanEntry::getIcaoRegion() const
-{
-  return icaoRegion;
-}
-
-const QString& FlightplanEntry::getIcaoIdent() const
-{
-  return icaoIdent;
-}
-
-const atools::geo::Pos& FlightplanEntry::getPosition() const
-{
-  return position;
-}
-
-void FlightplanEntry::setPosition(const atools::geo::Pos& value)
-{
-  position = value;
-}
-
 const QString& FlightplanEntry::waypointTypeToString(entry::WaypointType type)
 {
   static const QString airportName("Airport"), unknownName("Unknown"), isecName("Intersection"),
@@ -147,21 +107,6 @@ entry::WaypointType FlightplanEntry::stringToWaypointType(const QString& str)
     return entry::USER;
 
   return entry::UNKNOWN;
-}
-
-void FlightplanEntry::setIcaoRegion(const QString& value)
-{
-  icaoRegion = value;
-}
-
-void FlightplanEntry::setIcaoIdent(const QString& value)
-{
-  icaoIdent = value;
-}
-
-void FlightplanEntry::setWaypointId(const QString& value)
-{
-  waypointId = value;
 }
 
 } // namespace pln

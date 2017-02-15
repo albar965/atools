@@ -59,37 +59,76 @@ public:
   atools::fs::pln::entry::WaypointType getWaypointType() const;
 
   void setWaypointType(const QString& value);
-  void setWaypointType(const atools::fs::pln::entry::WaypointType& value);
+
+  void setWaypointType(const atools::fs::pln::entry::WaypointType& value)
+  {
+    waypointType = value;
+  }
 
   /*
    * @return ICAO ident of this waypoint
    */
-  const QString& getWaypointId() const;
-  void setWaypointId(const QString& value);
+  const QString& getWaypointId() const
+  {
+    return waypointId;
+  }
+
+  void setWaypointId(const QString& value)
+  {
+    waypointId = value;
+  }
 
   /*
    * @return airway name if plan is an low alt or high alt flight plan
    */
-  const QString& getAirway() const;
-  void setAirway(const QString& value);
+  const QString& getAirway() const
+  {
+    return airway;
+  }
+
+  void setAirway(const QString& value)
+  {
+    airway = value;
+  }
 
   /*
    * @return two letter ICAO region code
    */
-  const QString& getIcaoRegion() const;
-  void setIcaoRegion(const QString& value);
+  const QString& getIcaoRegion() const
+  {
+    return icaoRegion;
+  }
+
+  void setIcaoRegion(const QString& value)
+  {
+    icaoRegion = value;
+  }
 
   /*
    * @return ICAO ident of this waypoint
    */
-  const QString& getIcaoIdent() const;
-  void setIcaoIdent(const QString& value);
+  const QString& getIcaoIdent() const
+  {
+    return icaoIdent;
+  }
+
+  void setIcaoIdent(const QString& value)
+  {
+    icaoIdent = value;
+  }
 
   /*
    * @return coordinates of this waypoint
    */
-  const geo::Pos& getPosition() const;
-  void setPosition(const atools::geo::Pos& value);
+  const geo::Pos& getPosition() const
+  {
+    return position;
+  }
+
+  void setPosition(const atools::geo::Pos& value)
+  {
+    position = value;
+  }
 
 private:
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);

@@ -166,6 +166,54 @@ int SimConnectData::write(QIODevice *ioDevice)
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }
 
+SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos)
+{
+  static float lastHdg = 0.f;
+
+  SimConnectData data;
+  data.userAircraft.position = pos;
+  data.userAircraft.position.setAltitude(1000.f);
+
+  float hdg = 0.f;
+  if(lastPos.isValid())
+  {
+    hdg =
+      !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10CM) ? lastPos.angleDegTo(pos) : lastHdg;
+
+    data.userAircraft.headingMag =
+      data.userAircraft.headingTrue =
+        data.userAircraft.trackMag =
+          data.userAircraft.trackTrue =
+            hdg;
+  }
+  else
+  {
+    data.userAircraft.headingMag =
+      data.userAircraft.headingTrue =
+        data.userAircraft.trackMag =
+          data.userAircraft.trackTrue =
+            0.f;
+  }
+
+  data.userAircraft.category = AIRPLANE;
+  data.userAircraft.engineType = PISTON;
+
+  data.userAircraft.airplaneTitle = "Title";
+  data.userAircraft.airplaneType = "Type";
+  data.userAircraft.airplaneModel = "Model";
+  data.userAircraft.airplaneReg = "Ref";
+  data.userAircraft.airplaneAirline = "Airline";
+  data.userAircraft.airplaneFlightnumber = "965";
+  data.userAircraft.fromIdent = "EDDF";
+  data.userAircraft.toIdent = "LIRF";
+  data.userAircraft.debug = true;
+
+  if(hdg > 0.f)
+    lastHdg = (hdg + lastHdg) / 2;
+
+  return data;
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools

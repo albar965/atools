@@ -111,6 +111,8 @@ public:
     metarResults = value;
   }
 
+  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos);
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
 

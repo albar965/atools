@@ -92,6 +92,8 @@ void SimConnectAircraft::write(QDataStream& out) const
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
 }
 
+
+
 } // namespace sc
 } // namespace fs
 } // namespace atools
