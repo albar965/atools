@@ -196,7 +196,8 @@ HEADERS += src/atools.h \
     src/util/paintercontextsaver.h \
     src/fs/db/ap/airportfilewriter.h \
     src/geo/line.h \
-    src/gui/itemviewzoomhandler.h
+    src/gui/itemviewzoomhandler.h \
+    src/gui/griddelegate.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -351,7 +352,8 @@ SOURCES += src/atools.cpp \
     src/util/paintercontextsaver.cpp \
     src/fs/db/ap/airportfilewriter.cpp \
     src/geo/line.cpp \
-    src/gui/itemviewzoomhandler.cpp
+    src/gui/itemviewzoomhandler.cpp \
+    src/gui/griddelegate.cpp
 
 
 unix {

@@ -15,31 +15,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GUI_ACTIONTEXTSAVER_H
-#define ATOOLS_GUI_ACTIONTEXTSAVER_H
+#include "gui/griddelegate.h"
 
-#include <QHash>
-
-class QAction;
+#include <QApplication>
+#include <QPainter>
 
 namespace atools {
 namespace gui {
 
-/* Use this for context menus that have %1, etc. placeholders to save and restore the action texts.*/
-class ActionTextSaver
+GridDelegate::GridDelegate(QObject *parent) :
+  QStyledItemDelegate(parent),
+  gridPen(QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), 1.5))
 {
-public:
-  /*
-   * Saves the text of the given actions and restores it when the destructor is called
-   */
-  ActionTextSaver(QList<QAction *> actions);
-  ~ActionTextSaver();
+}
 
-private:
-  QHash<QAction *, QString> texts;
-};
+GridDelegate::~GridDelegate()
+{
+}
+
+void GridDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
+                         const QModelIndex& index) const
+{
+  QStyledItemDelegate::paint(painter, option, index);
+
+  painter->save();
+  painter->setPen(gridPen);
+  painter->drawRect(option.rect);
+  painter->restore();
+}
 
 } // namespace gui
 } // namespace atools
-
-#endif // ATOOLS_GUI_ACTIONTEXTSAVER_H
