@@ -105,7 +105,7 @@ public:
     return pos1.isNull() && pos2.isNull();
   }
 
-  atools::geo::Pos getPos1() const
+  const atools::geo::Pos& getPos1() const
   {
     return pos1;
   }
@@ -120,7 +120,7 @@ public:
    */
   bool isPoint(float epsilonDegree = 0.f) const;
 
-  atools::geo::Pos getPos2() const
+  const atools::geo::Pos& getPos2() const
   {
     return pos2;
   }
