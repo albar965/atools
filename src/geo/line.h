@@ -37,8 +37,11 @@ public:
   Line(const atools::geo::Line& other);
   Line(const atools::geo::Pos& p1, const atools::geo::Pos& p2);
 
-  Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2);
-  Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2);
+  /* Create a line with length 0 */
+  explicit Line(const atools::geo::Pos& p);
+
+  explicit Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2);
+  explicit Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2);
 
   ~Line();
 
@@ -61,8 +64,7 @@ public:
 
   /* Distance to this line. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
-  float distanceMeterToLine(const atools::geo::Pos& pos, bool& validPos) const;
-  float distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::CrossTrackStatus& status) const;
+  void distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::LineDistance& result) const;
 
   /* Angle of line (initial course) */
   float angleDeg() const;

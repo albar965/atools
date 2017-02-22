@@ -42,6 +42,11 @@ Line::Line(const Pos& p1, const Pos& p2)
   pos2 = p2;
 }
 
+Line::Line(const Pos& p)
+{
+  pos1 = pos2 = p;
+}
+
 Line::Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2)
   : pos1(longitudeX1, latitudeY1), pos2(longitudeX2, latitudeY2)
 {
@@ -81,14 +86,9 @@ float Line::lengthMeter() const
   return pos1.distanceMeterTo(pos2);
 }
 
-float Line::distanceMeterToLine(const Pos& pos, bool& validPos) const
+void Line::distanceMeterToLine(const Pos& pos, LineDistance& result) const
 {
-  return pos.distanceMeterToLine(pos1, pos2, validPos);
-}
-
-float Line::distanceMeterToLine(const Pos& pos, CrossTrackStatus& status) const
-{
-  return pos.distanceMeterToLine(pos1, pos2, status);
+  pos.distanceMeterToLine(pos1, pos2, result);
 }
 
 float Line::angleDeg() const
@@ -183,7 +183,7 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
   {
     // All outside
 
-    float step = 0.2;
+    float step = 0.2f;
 
     Pos firstInside;
     bool found = false;

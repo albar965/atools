@@ -33,6 +33,13 @@ enum CrossTrackStatus
   AFTER_END /* Point is after end - distance is point to end */
 };
 
+struct LineDistance
+{
+  CrossTrackStatus status;
+  /* All distances in meter */
+  float distance, distanceFrom1, distanceFrom2;
+};
+
 /*
  * Geographic position class. Calculations based on
  * http://williams.best.vwh.net/avform.htm
@@ -43,14 +50,14 @@ public:
   Pos();
   Pos(const Pos& other);
 
-  Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
-      int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
+  explicit Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
+               int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
 
-  Pos(float longitudeX, float latitudeY, float alt = 0.f);
-  Pos(double longitudeX, double latitudeY, double alt = 0.);
+  explicit Pos(float longitudeX, float latitudeY, float alt = 0.f);
+  explicit Pos(double longitudeX, double latitudeY, double alt = 0.);
 
   /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
-  Pos(const QString& str);
+  explicit Pos(const QString& str);
 
   atools::geo::Pos& operator=(const atools::geo::Pos& other);
 
@@ -138,9 +145,8 @@ public:
 
   /* Distance to line formed by pos1 and pos2. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
-  float distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, bool& validPos) const;
-  float distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                            atools::geo::CrossTrackStatus& status) const;
+  void distanceMeterToLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
+                           atools::geo::LineDistance& result) const;
 
   /* Angle to other point (initial course) */
   float angleDegTo(const atools::geo::Pos& otherPos) const;

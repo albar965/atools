@@ -212,46 +212,20 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
                                           toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER);
 }
 
-float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, bool& validPos) const
+void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& result) const
 {
-  if(!isValid() || !pos1.isValid() || !pos2.isValid())
-  {
-    validPos = false;
-    return INVALID_VALUE;
-  }
-  else if(pos1 == pos2)
-  {
-    validPos = false;
-    return distanceMeterTo(pos1);
-  }
-  else if(*this == pos1 || *this == pos2)
-  {
-    validPos = true;
-    return 0.f;
-  }
-  else
-  {
-    CrossTrackStatus status;
-    float dist = distanceMeterToLine(pos1, pos2, status);
+  result.distance = result.distanceFrom1 = result.distanceFrom2 = INVALID_VALUE;
+  result.status = INVALID;
 
-    validPos = status == ALONG_TRACK;
-    return validPos ? dist : INVALID_VALUE;
-  }
-}
-
-float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatus& status) const
-{
   if(!isValid() || !pos1.isValid() || !pos2.isValid())
-    return INVALID_VALUE;
-  else if(pos1 == pos2)
+    return;
+
+  if(pos1 == pos2)
   {
-    status = ALONG_TRACK;
-    return distanceMeterTo(pos1);
-  }
-  else if(*this == pos1 || *this == pos2)
-  {
-    status = ALONG_TRACK;
-    return 0.f;
+    result.status = ALONG_TRACK;
+    result.distance = distanceMeterTo(pos1);
+    result.distanceFrom1 = result.distanceFrom2 = 0.f;
+    return;
   }
 
   Pos p = *this;
@@ -261,12 +235,31 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatu
   Pos p2 = pos2;
   p2.toRad();
 
+  double dist1To2 = distanceRad(p1.lonX, p1.latY, p2.lonX, p2.latY);
+
+  if(*this == pos1)
+  {
+    result.status = ALONG_TRACK;
+    result.distance = 0.f;
+    result.distanceFrom1 = 0.f;
+    result.distanceFrom2 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER);
+    return;
+  }
+
+  if(*this == pos2)
+  {
+    result.status = ALONG_TRACK;
+    result.distance = 0.f;
+    result.distanceFrom1 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = 0.f;
+    return;
+  }
+
   double courseFrom1 = courseRad(p1.lonX, p1.latY, p.lonX, p.latY);
   double course1To2 = courseRad(p1.lonX, p1.latY, p2.lonX, p2.latY);
 
   double distFrom1 = distanceRad(p1.lonX, p1.latY, p.lonX, p.latY);
   double distFrom2 = distanceRad(p2.lonX, p2.latY, p.lonX, p.latY);
-  double dist1To2 = distanceRad(p1.lonX, p1.latY, p2.lonX, p2.latY);
 
   // (positive XTD means right of course, negative means left)
   // XTD =asin(sin(dist_AD)*sin(crs_AD-crs_AB))
@@ -278,25 +271,27 @@ float Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, CrossTrackStatu
 
   if(!std::isnan(distAlongFrom1) && distAlongFrom1 > dist1To2)
   {
-    status = AFTER_END;
-    return static_cast<float>(distFrom2 * EARTH_RADIUS_METER);
+    result.status = AFTER_END;
+    result.distance = static_cast<float>(distFrom2 * EARTH_RADIUS_METER);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
   }
   else if(!std::isnan(distAlongFrom2) && distAlongFrom2 > dist1To2)
   {
-    status = BEFORE_START;
-    return static_cast<float>(distFrom1 * EARTH_RADIUS_METER);
+    result.status = BEFORE_START;
+    result.distance = static_cast<float>(distFrom1 * EARTH_RADIUS_METER);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
   }
   else if(!std::isnan(distAlongFrom1) && distAlongFrom1 <= dist1To2 &&
           !std::isnan(distAlongFrom2) && distAlongFrom2 <= dist1To2)
   {
-    status = ALONG_TRACK;
-    return static_cast<float>(crossTrack * EARTH_RADIUS_METER);
+    result.status = ALONG_TRACK;
+    result.distance = static_cast<float>(crossTrack * EARTH_RADIUS_METER);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
   }
-  else
-  {
-    status = INVALID;
-    return INVALID_VALUE;
-  }
+  // else invalid
 }
 
 float Pos::angleDegTo(const Pos& otherPos) const

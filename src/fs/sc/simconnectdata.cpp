@@ -168,23 +168,22 @@ int SimConnectData::write(QIODevice *ioDevice)
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos)
 {
-  static float lastHdg = 0.f;
+  static QVector<float> lastHdgs;
+  lastHdgs.fill(0.f, 10);
 
   SimConnectData data;
   data.userAircraft.position = pos;
   data.userAircraft.position.setAltitude(1000.f);
 
-  float hdg = 0.f;
   if(lastPos.isValid())
   {
-    hdg =
-      !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10CM) ? lastPos.angleDegTo(pos) : lastHdg;
 
+    float h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
     data.userAircraft.headingMag =
       data.userAircraft.headingTrue =
         data.userAircraft.trackMag =
           data.userAircraft.trackTrue =
-            hdg;
+            h;
   }
   else
   {
@@ -207,9 +206,6 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.fromIdent = "EDDF";
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.debug = true;
-
-  if(hdg > 0.f)
-    lastHdg = (hdg + lastHdg) / 2;
 
   return data;
 }

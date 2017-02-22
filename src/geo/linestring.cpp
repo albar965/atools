@@ -45,16 +45,16 @@ void LineString::append(double longitudeX, double latitudeY, double alt)
   QVector::append(Pos(longitudeX, latitudeY, alt));
 }
 
-float LineString::distanceMeterToLineString(const Pos& pos, CrossTrackStatus& status) const
+float LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result) const
 {
-  float minDist = std::numeric_limits<float>::max();
+  // float minDist = std::numeric_limits<float>::max();
 
-
-  CrossTrackStatus localStatus;
-  for(int i = 0; i < size() - 1; i++)
-  {
-    float dist = pos.distanceMeterToLine(at(i), at(i + 1), localStatus);
-  }
+  // CrossTrackStatus localStatus;
+  // for(int i = 0; i < size() - 1; i++)
+  // {
+  // pos.distanceMeterToLine(at(i), at(i + 1), result);
+  // }
+  return 0.f;
 }
 
 Rect LineString::boundingRect()

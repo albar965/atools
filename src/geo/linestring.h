@@ -38,7 +38,7 @@ public:
   void append(float longitudeX, float latitudeY, float alt = 0.f);
   void append(double longitudeX, double latitudeY, double alt = 0.f);
 
-  float distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::CrossTrackStatus& status) const;
+  float distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result) const;
 
   /* Length of the line string in meter */
   float lengthMeter() const;
