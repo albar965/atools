@@ -279,7 +279,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
         // farthest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
-                              [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
+                              [] (const TempNodeTo &n1, const TempNodeTo &n2)->bool
                               {
                                 if(n1.priority == n2.priority)
                                   return n1.distance > n2.distance;
@@ -294,7 +294,7 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
         // nearest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
-                              [ = ](const TempNodeTo &n1, const TempNodeTo &n2)->bool
+                              [] (const TempNodeTo &n1, const TempNodeTo &n2)->bool
                               {
                                 if(n1.priority == n2.priority)
                                   return n1.distance < n2.distance;

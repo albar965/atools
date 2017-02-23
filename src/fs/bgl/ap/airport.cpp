@@ -579,7 +579,7 @@ void Airport::updateHelipads()
 void Airport::removeVehicleParking()
 {
   QList<Parking>::iterator it = std::remove_if(parkings.begin(), parkings.end(),
-                                               [ = ](const Parking &p)->bool
+                                               [] (const Parking &p)->bool
                                                {
                                                  return p.getType() == atools::fs::bgl::ap::VEHICLES;
                                                });
@@ -640,7 +640,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
 
   // Remove all paths that remain invalid because of wrong indexes
   QList<TaxiPath>::iterator it = std::remove_if(taxipaths.begin(), taxipaths.end(),
-                                                [ = ](const TaxiPath &p)->bool
+                                                [] (const TaxiPath &p)->bool
                                                 {
                                                   return !p.getStartPoint().getPosition().isValid() ||
                                                   !p.getEndPoint().getPosition().isValid();

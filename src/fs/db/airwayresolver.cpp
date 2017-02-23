@@ -324,7 +324,7 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
 void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
 {
   // Erase empty segments
-  auto it = std::remove_if(fragments.begin(), fragments.end(), [ = ](const Fragment &f)->bool
+  auto it = std::remove_if(fragments.begin(), fragments.end(), [] (const Fragment &f)->bool
                            {
                              return f.waypoints.size() < 2;
                            });
@@ -348,7 +348,7 @@ void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
   }
 
   // Remove the marked segments
-  auto it2 = std::remove_if(fragments.begin(), fragments.end(), [ = ](const Fragment &f)->bool
+  auto it2 = std::remove_if(fragments.begin(), fragments.end(), [] (const Fragment &f)->bool
                             {
                               return f.waypoints.isEmpty();
                             });

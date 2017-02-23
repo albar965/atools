@@ -51,7 +51,7 @@ void SceneryCfg::onEndDocument(const QString& filename)
     throwException(tr("No valid scenery areas found"));
 
   // Sort areas by layer
-  std::sort(areaEntries.begin(), areaEntries.end(), [ = ](const SceneryArea &a1, const SceneryArea &a2)->bool
+  std::sort(areaEntries.begin(), areaEntries.end(), [] (const SceneryArea &a1, const SceneryArea &a2)->bool
             {
               return a1.getLayer() < a2.getLayer();
             });
