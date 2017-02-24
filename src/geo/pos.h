@@ -66,17 +66,17 @@ public:
 
   }
 
-  /* Does not compare altitude */
+  /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const;
 
-  /* Does not compare altitude */
+  /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator!=(const atools::geo::Pos& other) const
   {
     return !(*this == other);
   }
 
-  /* Compare for equal with accuracy depending on epsilon */
-  bool almostEqual(const atools::geo::Pos& other, float epsilon) const;
+  /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
+  bool almostEqual(const atools::geo::Pos& other, float epsilon = POS_EPSILON_MIN) const;
 
   float getLatY() const
   {
@@ -222,6 +222,7 @@ public:
   }
 
   // 1 deg / minutes / nm to meter / to 10 cm
+  Q_DECL_CONSTEXPR static float POS_EPSILON_MIN = std::numeric_limits<float>::epsilon();
   Q_DECL_CONSTEXPR static float POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f; /* ca 10 cm for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_1M = 1.f / 60.f / 1852.216f; /* ca 1 m for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_5M = 1.f / 60.f / 1852.216f * 5.f; /* ca 5 m for lat and lon nearby equator */

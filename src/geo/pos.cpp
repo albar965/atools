@@ -141,8 +141,8 @@ Pos& Pos::toDeg()
 {
   if(isValid())
   {
-    lonX = static_cast<float>(toDegree(lonX));
-    latY = static_cast<float>(toDegree(latY));
+    lonX = toDegree(lonX);
+    latY = toDegree(latY);
   }
   return *this;
 }
@@ -151,8 +151,8 @@ Pos& Pos::toRad()
 {
   if(isValid())
   {
-    lonX = static_cast<float>(toRadians(lonX));
-    latY = static_cast<float>(toRadians(latY));
+    lonX = toRadians(lonX);
+    latY = toRadians(latY);
   }
   return *this;
 }
