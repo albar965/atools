@@ -62,8 +62,7 @@ public:
   /* Distance to other point for great circle route */
   float lengthMeter() const;
 
-  /* Distance to this line. Positive means right of course,
-   * negative means left of course. valid if perpendicular point can be found on route. */
+  /* Calculate status, cross track distance and more to this line. */
   void distanceMeterToLine(const atools::geo::Pos& pos, atools::geo::LineDistance& result) const;
 
   /* Angle of line (initial course) */
@@ -79,7 +78,7 @@ public:
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
   atools::geo::Pos interpolate(float lengthMeter, float fraction) const;
 
-  /* Find point between start and end on GC route if distance between points is not known */
+  /* Find point between start and end on GC route if distance between points is not known. 0 < fraction <= 1 */
   atools::geo::Pos interpolate(float fraction) const;
   void interpolatePoints(float lengthMeter, int numPoints, QList<atools::geo::Pos>& positions) const;
 

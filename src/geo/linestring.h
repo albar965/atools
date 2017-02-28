@@ -18,7 +18,6 @@
 #ifndef ATOOLS_GEO_LINESTRING_H
 #define ATOOLS_GEO_LINESTRING_H
 
-#include "geo/pos.h"
 #include "geo/rect.h"
 
 namespace atools {
@@ -32,23 +31,52 @@ class LineString :
 {
 public:
   LineString();
-  LineString(std::initializer_list<atools::geo::Pos> list);
+  explicit LineString(const std::initializer_list<atools::geo::Pos>& list);
+  explicit LineString(const atools::geo::Pos& pos);
+  explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
+
+  LineString(const LineString& other);
+  LineString& operator=(const LineString& other);
 
   void append(const atools::geo::Pos& pos);
   void append(float longitudeX, float latitudeY, float alt = 0.f);
   void append(double longitudeX, double latitudeY, double alt = 0.f);
 
-  float distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result) const;
+  void reverse();
 
-  /* Length of the line string in meter */
+  /* Calculate status, cross track distance and more to this line. */
+  void distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result,
+                                 int *index = nullptr) const;
+
+  /* Find point between start and end on GC route if distance between points is already known.
+   *  fraction is 0 <= fraction <= 1 where 0 equals first and 1 equal last pos */
+  atools::geo::Pos interpolate(float fraction) const;
+  atools::geo::Pos interpolate(float totalDistanceMeter, float fraction) const;
+
+  const atools::geo::Pos& getPos1() const
+  {
+    return isEmpty() ? EMPTY_POS : first();
+  }
+
+  const atools::geo::Pos& getPos2() const
+  {
+    return isEmpty() ? EMPTY_POS : last();
+  }
+
+  /* Calculate Length of the line string in meter */
   float lengthMeter() const;
 
-  /* Bounding rectangle of all positions */
-  Rect boundingRect();
+  /* Calculate bounding rectangle of all positions */
+  Rect boundingRect() const;
 
-  bool isValid()
+  bool isValid() const
   {
     return !isEmpty();
+  }
+
+  bool isPoint() const
+  {
+    return size() == 1 || (size() == 2 && first() == last());
   }
 
 };

@@ -33,11 +33,15 @@ enum CrossTrackStatus
   AFTER_END /* Point is after end - distance is point to end */
 };
 
+/* Result for point to line distance measurments. All distances in meter. */
 struct LineDistance
 {
   CrossTrackStatus status;
   /* All distances in meter */
-  float distance, distanceFrom1, distanceFrom2;
+  float distance, /* Positive means right of course,  negative means left of course.
+                   *  Can also contain distance to nearest point depending on status */
+        distanceFrom1, /* Distance from point to start of line or linestring */
+        distanceFrom2; /* Distance from point to end of line or linestring */
 };
 
 /*
