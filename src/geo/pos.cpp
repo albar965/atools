@@ -627,5 +627,30 @@ QDataStream& operator>>(QDataStream& in, Pos& obj)
   return in;
 }
 
+QDebug operator<<(QDebug out, const LineDistance& lineDist)
+{
+  out << "LineDistance[distance" << lineDist.distance
+  << ", distanceFrom1" << lineDist.distanceFrom1
+  << ", distanceFrom2" << lineDist.distanceFrom2;
+
+  switch(lineDist.status)
+  {
+    case atools::geo::INVALID:
+      out << " invalid";
+      break;
+    case atools::geo::ALONG_TRACK:
+      out << " along";
+      break;
+    case atools::geo::BEFORE_START:
+      out << " before start";
+      break;
+    case atools::geo::AFTER_END:
+      out << " after end";
+      break;
+  }
+  out << "]";
+  return out;
+}
+
 } // namespace geo
 } // namespace atools

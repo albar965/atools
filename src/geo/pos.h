@@ -44,6 +44,8 @@ struct LineDistance
         distanceFrom2; /* Distance from point to end of line or linestring */
 };
 
+QDebug operator<<(QDebug out, const LineDistance& lineDist);
+
 /*
  * Geographic position class. Calculations based on
  * http://williams.best.vwh.net/avform.htm
