@@ -1,3 +1,14 @@
+Version 2.3.1.devel
+* Enhancement in geo namespace. Added line string class.
+* Improvements to gui classes and added
+* Better recognition of military airports for not capitalized designators.
+* Fixed problem with METAR code CCA.
+* Optimizations to route edge writer.
+* Fixed old problem with reversed runway end coordinates.
+* Added save and restore for QTableWidget, QTreeView and QTreeView.
+* Work for approaches, transitions, SID and STARs.
+* Added RTE export to flight plan.
+
 Version 2.2.4
 
 * Waypoint id length is now limited to 10 for flightplans.
