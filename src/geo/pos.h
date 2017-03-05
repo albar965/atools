@@ -36,7 +36,7 @@ enum CrossTrackStatus
 /* Result for point to line distance measurments. All distances in meter. */
 struct LineDistance
 {
-  CrossTrackStatus status;
+  CrossTrackStatus status = INVALID;
   /* All distances in meter */
   float distance, /* Positive means right of course,  negative means left of course.
                    *  Can also contain distance to nearest point depending on status */
