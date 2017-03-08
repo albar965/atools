@@ -86,7 +86,10 @@ void ItemViewZoomHandler::initTableViewZoom()
 
   // Increase default table font size for mac
 #if defined(Q_OS_OSX)
-  defaultTableViewFontPointSize *= 1.4f;
+
+  QTableView *tableView = dynamic_cast<QTableView *>(itemView);
+  if(tableView != nullptr)
+      defaultTableViewFontPointSize *= 1.4f;
 #endif
 
   float newPointSize = 0.f;
