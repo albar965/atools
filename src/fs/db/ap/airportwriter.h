@@ -27,7 +27,6 @@
 
 #include <QHash>
 
-
 namespace atools {
 namespace fs {
 namespace bgl {
@@ -61,6 +60,11 @@ public:
     return currentIdent;
   }
 
+  const atools::geo::Pos& getCurrentPos() const
+  {
+    return currentPos;
+  }
+
 private:
   virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
@@ -70,7 +74,7 @@ private:
   NameListMapType nameListIndex;
 
   QString currentIdent;
-
+  atools::geo::Pos currentPos;
   atools::fs::db::DeleteProcessor deleteProcessor;
 };
 

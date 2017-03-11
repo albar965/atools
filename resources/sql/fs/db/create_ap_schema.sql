@@ -384,6 +384,7 @@ create table runway_end
 (
   runway_end_id integer primary key,
   name varchar(10) not null,             -- Full name like "12", "24C" or "N"
+  end_type varchar(1) not null,          -- Primary or secondary
   offset_threshold integer not null,     -- Feet - this is part of the runway length and will reduce landing distance
   blast_pad integer not null,            -- Feet - not part of the runway length
   overrun integer not null,              -- Feet - not part of the runway length
@@ -400,7 +401,10 @@ create table runway_end
   has_end_lights integer not null,       -- Boolean
   has_reils integer not null,            -- Boolean has runway end identifier lights or not
   has_touchdown_lights integer not null, -- Boolean lighting for the touchdown zone
-  num_strobes integer not null           -- Number of strobe lights
+  num_strobes integer not null,           -- Number of strobe lights
+  heading double not null,        -- Duplicated from runway
+  lonx double not null,           -- "
+  laty double not null            -- "
 );
 
 create index if not exists idx_runway_end_name on runway_end(name);
@@ -422,7 +426,6 @@ create table approach
                                     -- Both SIDS and STARS use the type = "GPS" for the Approach elements.
                                     -- STARS use the suffix="A" while SIDS use the suffix="D".
   has_gps_overlay integer not null, -- Boolean - 1 if the approach has a GPS overlay
-  fix_nav_id integer,               -- Reference to vor.vor_id, waypoint.waypoint_id or ndb.ndb_id depending on fix_type
   fix_type varchar(25),             -- see enum atools::fs::bgl::ap::ApproachFixType and corresponding string conversion
   fix_ident varchar(5),             -- ICAO ident of the fix
   fix_region varchar(2),            -- ICAO two letter region code for fix
@@ -449,13 +452,11 @@ create table transition
   transition_id integer primary key,
   approach_id integer not null,
   type varchar(25) not null,    -- see enum atools::fs::bgl::ap::TransitionType
-  fix_nav_id integer,           -- same as in approach
   fix_type varchar(25),         -- "
   fix_ident varchar(5),         -- "
   fix_region varchar(2),        -- "
   fix_airport_ident varchar(4), -- "
   altitude integer,             -- Overfly altitude in feet for the transition fix
-  dme_nav_id integer,           -- same as in approach
   dme_ident varchar(5),         -- Contains the DME ICAO ident if transition type is DME
   dme_region varchar(2),        -- ICAO two letter region code for DME if transition type is DME
   dme_airport_ident,
@@ -478,12 +479,10 @@ create table approach_leg
   type varchar(10),                   -- see enum atools::fs::bgl::leg::Type
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
   turn_direction varchar(10),         -- see enum atools::fs::bgl::leg::TurnDirection
-  fix_nav_id integer,                 -- Id of the leg fix - rest is the same as in approach
   fix_type varchar(25),               -- same as in approach
   fix_ident varchar(5),               -- "
   fix_region varchar(2),              -- "
   fix_airport_ident varchar(4),       -- "
-  recommended_fix_nav_id integer,     -- "
   recommended_fix_type varchar(25),   -- "
   recommended_fix_ident varchar(5),   -- "
   recommended_fix_region varchar(2),  -- "
@@ -513,12 +512,10 @@ create table transition_leg
   type varchar(10) not null,
   alt_descriptor varchar(10),
   turn_direction varchar(10),
-  fix_nav_id integer,
   fix_type varchar(25),
   fix_ident varchar(5),
   fix_region varchar(2),
   fix_airport_ident varchar(4),
-  recommended_fix_nav_id integer,
   recommended_fix_type varchar(25),
   recommended_fix_ident varchar(5),
   recommended_fix_region varchar(2),

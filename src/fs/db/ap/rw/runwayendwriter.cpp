@@ -55,6 +55,12 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
   bind(":num_strobes", type->getApproachLights().getNumStrobes());
 
+  bind(":end_type", type->isPrimaryEnd() ? QLatin1String("P") : QLatin1String("S"));
+
+  bind(":lonx", type->getPosition().getLonX());
+  bind(":laty", type->getPosition().getLatY());
+  bind(":heading", type->getHeading());
+
   // Write left VASI if available - otherwise bind values to null
   QString leftVt = bgl::util::enumToStr(bgl::RunwayVasi::vasiTypeToStr, type->getLeftVasi().getType());
   if(!leftVt.isEmpty())

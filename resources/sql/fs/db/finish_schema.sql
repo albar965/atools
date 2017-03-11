@@ -21,6 +21,8 @@
 
 -- Create indexes on columns that are potentially used in searches
 
+create index if not exists idx_ils_ident on ils(ident);
+
 create index if not exists idx_airport_name on airport(name);
 create index if not exists idx_airport_country on airport(country);
 create index if not exists idx_airport_state on airport(state);

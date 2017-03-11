@@ -52,7 +52,6 @@ void ApproachWriter::writeObject(const Approach *type)
     bind(":suffix", QChar(type->getSuffix()));
 
   bind(":has_gps_overlay", type->hasGpsOverlay());
-  bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
@@ -64,7 +63,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bindNullInt(":runway_end_id");
   bind(":airport_ident", getDataWriter().getAirportWriter()->getCurrentAirportIdent());
 
-  if(/*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
+  if( /*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
   {
     // No valid runway given - try to find one in the approach legs
     QString runway;

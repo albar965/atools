@@ -214,6 +214,7 @@ void AirportWriter::writeObject(const Airport *type)
 
   // Update index
   currentIdent = type->getIdent();
+  currentPos = type->getPosition().getPos();
   getAirportIndex()->add(type->getIdent(), getCurrentId());
 
   // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid

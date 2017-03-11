@@ -21,6 +21,7 @@
 #include "fs/navdatabaseoptions.h"
 #include "geo/calculations.h"
 #include "atools.h"
+#include "fs/db/ap/airportwriter.h"
 
 namespace atools {
 namespace fs {
@@ -45,12 +46,10 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   bind(":alt_descriptor",
        bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
   bind(":turn_direction", bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));
-  bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
   bind(":fix_region", type->getFixRegion());
   bind(":fix_airport_ident", type->getFixAirportIdent());
-  bindNullInt(":recommended_fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":recommended_fix_type",
        bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, type->getRecommendedFixType()));
   bind(":recommended_fix_ident", type->getRecommendedFixIdent());

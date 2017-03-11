@@ -182,12 +182,18 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   width = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
+  primary.heading = heading;
+  secondary.heading = atools::geo::opposedCourseDeg(heading);
+
   // Calculate runway end positions for drawing
-  primaryPos = position.getPos().endpoint(length / 2.f,
-                                          atools::geo::opposedCourseDeg(heading)).normalize();
-  secondaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
+  primary.pos = primaryPos = position.getPos().endpoint(length / 2.f,
+                                                        atools::geo::opposedCourseDeg(heading)).normalize();
+  secondary.pos = secondaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
 
   patternAltitude = bs->readFloat();
+
+  primary.primaryEnd = true;
+  secondary.primaryEnd = false;
 
   // Read combined flags and set attributes for primary and secondary ends
   markingFlags = static_cast<rw::RunwayMarkings>(bs->readUShort());

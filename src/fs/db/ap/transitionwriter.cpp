@@ -43,7 +43,6 @@ void TransitionWriter::writeObject(const Transition *type)
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
   bind(":type", Transition::transitionTypeToStr(type->getType()));
-  bindNullInt(":fix_nav_id"); // Will be updated by script "update_nav_ids.sql"
   bind(":fix_type", Transition::transitionFixTypeToStr(type->getTransFixType()));
   bind(":fix_ident", type->getTransFixIdent());
   bind(":fix_region", type->getFixRegion());

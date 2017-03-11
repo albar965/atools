@@ -20,6 +20,7 @@
 
 #include "fs/bgl/ap/rw/runwayapplights.h"
 #include "fs/bgl/ap/rw/runwayvasi.h"
+#include "geo/pos.h"
 
 #include <QString>
 
@@ -133,6 +134,21 @@ public:
 
   static QString patternToStr(atools::fs::bgl::rw::Pattern pattern);
 
+  bool isPrimaryEnd() const
+  {
+    return primaryEnd;
+  }
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return pos;
+  }
+
+  float getHeading() const
+  {
+    return heading;
+  }
+
 private:
   friend class Runway;
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayEnd& record);
@@ -146,9 +162,11 @@ private:
 
   atools::fs::bgl::RunwayApproachLights approachLights;
 
+  float heading;
+  bool primaryEnd = true;
   bool closedMarkings, stolMarkings, takeoff, landing;
   atools::fs::bgl::rw::Pattern pattern;
-
+  atools::geo::Pos pos;
 };
 
 } // namespace bgl
