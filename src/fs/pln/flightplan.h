@@ -80,6 +80,9 @@ public:
     return entries;
   }
 
+  /* Clear out all entries with no save = true */
+  void removeNoSaveEntries();
+
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
    */
@@ -260,6 +263,21 @@ public:
   const int APPVERSION_BUILD = 61472;
   const int APPVERSION_MAJOR = 10;
 
+  const QHash<QString, QString>& getProperties() const
+  {
+    return properties;
+  }
+
+  QHash<QString, QString>& getProperties()
+  {
+    return properties;
+  }
+
+  void setCustomData(const QHash<QString, QString>& value)
+  {
+    properties = value;
+  }
+
 private:
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
@@ -280,6 +298,7 @@ private:
           departureParkingName, departureAiportName, destinationAiportName;
   atools::geo::Pos departurePos, destinationPos;
 
+  QHash<QString, QString> properties;
 };
 
 } // namespace pln

@@ -46,6 +46,7 @@ FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
   name = other.name;
   parking = other.parking;
   position = other.position;
+  noSave = other.noSave;
   return *this;
 }
 

@@ -130,6 +130,17 @@ public:
     position = value;
   }
 
+  /* Do not save entry into the file */
+  bool isNoSave() const
+  {
+    return noSave;
+  }
+
+  void setNoSave(bool value)
+  {
+    noSave = value;
+  }
+
 private:
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
@@ -137,6 +148,7 @@ private:
   atools::fs::pln::entry::WaypointType waypointType;
   QString waypointId, airway, icaoRegion, icaoIdent, name, parking;
   atools::geo::Pos position;
+  bool noSave = false;
 };
 
 } // namespace pln

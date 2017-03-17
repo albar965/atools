@@ -156,7 +156,7 @@ create table airport_medium
 
 drop table if exists airport_large;
 
--- Copy of airport table above for the map display overview layer with runways > 4000 ft
+-- Copy of airport table above for the map display overview layer with runways > 8000 ft
 create table airport_large
 (
   airport_id integer primary key,

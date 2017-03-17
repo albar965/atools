@@ -64,6 +64,7 @@ Flightplan& Flightplan::operator=(const Flightplan& other)
   departurePos = other.departurePos;
   destinationPos = other.destinationPos;
   entries = other.entries;
+  properties = other.properties;
   return *this;
 }
 
@@ -80,7 +81,24 @@ void Flightplan::load(const QString& file)
 
     // Skip all the useless stuff until we hit the document
     readUntilElement(reader, "SimBase.Document");
-
+    readUntilElement(reader, "Descr");
+    while(!reader.atEnd())
+    {
+      reader.readNext();
+      if(reader.isComment())
+      {
+        QString comment = reader.text().toString().trimmed();
+        if(comment.startsWith("LNMDATA"))
+        {
+          comment.remove(0, 7);
+          QStringList data = comment.split("|");
+          for(const QString& prop : data)
+            properties.insert(prop.section("=", 0, 0).trimmed(), prop.section("=", 1, 1).trimmed());
+        }
+      }
+      if(reader.isStartElement())
+        break;
+    }
     // Skip all until the flightplan is found
     readUntilElement(reader, "FlightPlan.FlightPlan");
 
@@ -154,12 +172,22 @@ void Flightplan::save(const QString& file)
     writer.writeAttribute("version", "1,0");
     writer.writeTextElement("Descr", "AceXML Document");
 
-    writer.writeComment(tr(" Created by %1 Version %2 (revision %3) on %4 ").
-                        arg(QApplication::applicationName()).
-                        arg(QApplication::applicationVersion()).
-                        arg(atools::gitRevision()).
-                        arg(QLocale().toString(QDateTime::currentDateTime())).
-                        replace("-", " "));
+    properties.insert("_lnm", tr("Created by %1 Version %2 (revision %3) on %4").
+                      arg(QApplication::applicationName()).
+                      arg(QApplication::applicationVersion()).
+                      arg(atools::gitRevision()).
+                      arg(QLocale().toString(QDateTime::currentDateTime())).
+                      replace("-", " "));
+
+    QStringList comment;
+    for(const QString& key : properties.keys())
+    {
+      if(!key.isEmpty())
+        comment.append("\n         " + key + "=" + properties.value(key));
+    }
+
+    std::sort(comment.begin(), comment.end());
+    writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
 
     writer.writeStartElement("FlightPlan.FlightPlan");
 
@@ -188,6 +216,10 @@ void Flightplan::save(const QString& file)
 
     for(const FlightplanEntry& e : entries)
     {
+      if(e.isNoSave())
+        // Do not save stuff like procedure points
+        continue;
+
       writer.writeStartElement("ATCWaypoint");
 
       // Trim to max allowed length for FSX/P3D
@@ -328,6 +360,18 @@ void Flightplan::saveRte(const QString& file)
   }
   else
     throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+void Flightplan::removeNoSaveEntries()
+{
+  auto it = std::remove_if(entries.begin(), entries.end(),
+                           [] (const FlightplanEntry &type)->bool
+                           {
+                             return type.isNoSave();
+                           });
+
+  if(it != entries.end())
+    entries.erase(it, entries.end());
 }
 
 void Flightplan::posToRte(QTextStream& stream, const geo::Pos& pos, bool alt)
