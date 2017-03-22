@@ -173,7 +173,6 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   SimConnectData data;
   data.userAircraft.position = pos;
-  data.userAircraft.position.setAltitude(1000.f);
 
   if(lastPos.isValid())
   {

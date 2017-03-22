@@ -829,6 +829,13 @@ bool MetarParser::scanWeather()
   string weather;
   const struct Token *a;
 
+  if(!strncmp(m, "NOSIG ", 6))
+  {
+    _m += 6;
+    _grpcount++;
+    return false;
+  }
+
   // @see WMO-49 Section 4.4.2.9
   // Denotes a temporary failure of the sensor
   if(!strncmp(m, "// ", 3))
@@ -970,6 +977,13 @@ bool MetarParser::scanSkyCondition()
   char *m = _m;
   int i;
   MetarCloud cl;
+
+  if(!strncmp(m, "NOSIG ", 6))
+  {
+    _m += 6;
+    _m = m;
+    return false;
+  }
 
   if(!strncmp(m, "//////", 6))
   {
