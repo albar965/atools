@@ -52,8 +52,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   deleteRunwayEndStmt = new SqlQuery(sqlDb);
 
   updateApprochRwIds = new SqlQuery(sqlDb);
-  updateApprochStmt = new SqlQuery(sqlDb);
-  deleteApprochStmt = new SqlQuery(sqlDb);
+  updateApproachStmt = new SqlQuery(sqlDb);
+  deleteApproachStmt = new SqlQuery(sqlDb);
 
   updateWpStmt = new SqlQuery(sqlDb);
   updateVorStmt = new SqlQuery(sqlDb);
@@ -142,8 +142,8 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
 
   // Relink approach (and everything dependent) to a new airport
   updateApprochRwIds->prepare("update approach set runway_end_id = :newRwId where runway_end_id = :oldRwId");
-  updateApprochStmt->prepare(updateAptFeatureStmt("approach"));
-  deleteApprochStmt->prepare(delAptFeatureStmt("approach"));
+  updateApproachStmt->prepare(updateAptFeatureStmt("approach"));
+  deleteApproachStmt->prepare(delAptFeatureStmt("approach"));
 
   updateBoundingStmt->prepare("update airport set left_lonx = :leftlonx, top_laty = :toplaty, "
                               "right_lonx = :rightlonx, bottom_laty = :bottomlaty "
@@ -177,8 +177,8 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
   delete updateApprochRwIds;
-  delete updateApprochStmt;
-  delete deleteApprochStmt;
+  delete updateApproachStmt;
+  delete deleteApproachStmt;
   delete updateWpStmt;
   delete updateVorStmt;
   delete updateNdbStmt;
@@ -215,6 +215,7 @@ void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport 
   currentAirportId = airportId;
   ident = newAirport->getIdent();
   deleteAirport = deleteAirportRec;
+  deleteFlags = bgl::del::NONE;
 }
 
 void DeleteProcessor::preProcessDelete()
@@ -247,11 +248,13 @@ void DeleteProcessor::preProcessDelete()
 void DeleteProcessor::postProcessDelete()
 {
   if(options.isVerbose())
-    qDebug() << Q_FUNC_INFO;
+    qInfo() << Q_FUNC_INFO << newAirport->getIdent() << "current id" << currentAirportId;
   QStringList copyAirportColumns;
 
   if(prevHasApproach)
   {
+    removeOrUpdate(deleteApproachStmt, updateApproachStmt, bgl::del::APPROACHES);
+
     if(hasPrevious && !isFlagSet(deleteFlags, bgl::del::APPROACHES))
     {
       // Relink the approaches to the new airport and update the count on the airport
@@ -543,25 +546,22 @@ void DeleteProcessor::extractDeleteFlags()
   }
   else
   {
+    // Transfer all from the old airport if not delete record is given
+
     // The airport is an addon but there is no delete record
     // Check what is included an overwrite the old one
-    if(!newAirport->getApproaches().isEmpty())
-      deleteFlags |= bgl::del::APPROACHES;
-
-    if(!newAirport->getAprons().isEmpty())
-      deleteFlags |= bgl::del::APRONS;
-
-    if(!newAirport->getComs().isEmpty())
-      deleteFlags |= bgl::del::COMS;
-
-    if(!newAirport->getHelipads().isEmpty())
-      deleteFlags |= bgl::del::HELIPADS;
-
-    if(!newAirport->getTaxiPaths().isEmpty())
-      deleteFlags |= bgl::del::TAXIWAYS;
-
-    if(!newAirport->getRunways().isEmpty())
-      deleteFlags |= bgl::del::RUNWAYS;
+    // if(!newAirport->getApproaches().isEmpty())
+    // deleteFlags |= bgl::del::APPROACHES;
+    // if(!newAirport->getAprons().isEmpty())
+    // deleteFlags |= bgl::del::APRONS;
+    // if(!newAirport->getComs().isEmpty())
+    // deleteFlags |= bgl::del::COMS;
+    // if(!newAirport->getHelipads().isEmpty())
+    // deleteFlags |= bgl::del::HELIPADS;
+    // if(!newAirport->getTaxiPaths().isEmpty())
+    // deleteFlags |= bgl::del::TAXIWAYS;
+    // if(!newAirport->getRunways().isEmpty())
+    // deleteFlags |= bgl::del::RUNWAYS;
     // qDebug() << "processDelete Made up flags" << deleteFlags;
   }
 

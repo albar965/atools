@@ -605,7 +605,7 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double dlon13 = atan2(sin(brg13) * sin(dist13) * cos(lat1), cos(dist13) - sin(lat1) * sin(lat3));
   double lon3 = lon1 + dlon13;
 
-  return Pos(lon3, lat3).toDeg();
+  return Pos(lon3, lat3).toDeg().normalize();
 }
 
 QDebug operator<<(QDebug out, const Pos& record)

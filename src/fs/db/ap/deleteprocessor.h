@@ -112,7 +112,7 @@ private:
   *updateWpStmt = nullptr,
   *updateVorStmt = nullptr,
   *updateNdbStmt = nullptr,
-  *deleteApprochStmt = nullptr, *updateApprochStmt = nullptr,
+  *deleteApproachStmt = nullptr, *updateApproachStmt = nullptr,
   *deleteAirportStmt = nullptr, *selectAirportStmt = nullptr,
   *deleteApronStmt = nullptr, *updateApronStmt = nullptr,
   *deleteApronLightStmt = nullptr, *updateApronLightStmt = nullptr,

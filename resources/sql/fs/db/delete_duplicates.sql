@@ -24,10 +24,11 @@
 -- The manhattan distance using deg is sufficient for a crude distance estimation
 -- *************************************************************
 
--- Delete duplicate airports with the lowest id
+-- Print duplicate airports to the log
 select airport_id, ident, name, scenery_local_path, bgl_filename from airport
 where airport_id not in (select max(airport_id) from airport group by ident);
 
+-- Delete duplicate airports with the lowest id (stock)
 delete from airport
 where airport_id not in (select max(airport_id) from airport group by ident);
 
