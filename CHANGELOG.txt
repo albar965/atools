@@ -1,4 +1,5 @@
 Version 2.3.2.devel
+* Added Aerosoft Airbus FLP flight plan export
 * Solved problem where airports without delete record lost approaches.
 * Fixed METAR parser errors with NOSIG token for weather or sky condition.
 * Cleanup in database around transitions and approaches:
