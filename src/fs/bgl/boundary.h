@@ -158,6 +158,11 @@ public:
   static QString boundaryTypeToStr(atools::fs::bgl::boundary::BoundaryType type);
   static QString altTypeToStr(atools::fs::bgl::boundary::AltitudeType type);
 
+  virtual bool isValid() const override
+  {
+    return valid;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Boundary& record);
 
@@ -171,7 +176,7 @@ private:
   atools::fs::bgl::com::ComType comType = atools::fs::bgl::com::NONE;
   int comFrequency = 0;
   QString comName;
-
+  bool valid = true;
 };
 
 } // namespace bgl

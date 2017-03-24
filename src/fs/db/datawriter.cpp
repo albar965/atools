@@ -212,7 +212,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
       try
       {
-        // Read all records into a intenal object tree (atools::fs::bgl namespace)
+        // Read all records into a internal object tree (atools::fs::bgl namespace)
         bglFile.readFile(currentBglFilePath);
 
         if(bglFile.hasContent() && bglFile.isValid())

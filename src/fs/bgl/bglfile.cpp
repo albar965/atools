@@ -114,38 +114,33 @@ void BglFile::readBoundaryRecords(BinaryStream *bs)
   {
     if(section.getType() == atools::fs::bgl::section::BOUNDARY)
     {
-      QString fname = QFileInfo(filename).fileName().toLower();
+      // CTR, TMA and CTA: BNXWorld0.bgl
+      // Prohibited, Dangerous, Restricted and MOA: BNXWorld1.bgl
+      // Coastlines: BNXWorld2.bgl BNXWorld3. bgl BNXWorld4.bgl BNXWorld5.bgl
+      // Remaining boundary files are BNXWorld1.bgl BNXWorld2.bgl BNXWorld3.bgl BNXWorld4.bgl BNXWorld5.bgl
+      bs->seekg(section.getFirstSubsectionOffset());
 
-      if(fname == "bvcf.bgl" || fname == "bnxworld0.bgl")
+      // Get the lowest offset from the special subsection offset list
+      unsigned int minOffset = std::numeric_limits<unsigned int>::max();
+      while(bs->tellg() < section.getStartOffset() + section.getTotalSubsectionSize())
       {
-        // These two files have a different structure
-        // jump to the end of all subsections (probably spatial indexes) and try to read boundaries
-        bs->seekg(bs->tellg() + section.getTotalSubsectionSize());
-        handleBoundaries(bs);
-      }
-      else
-      {
-        // Remaining boundary files are BNXWorld1.bgl BNXWorld2.bgl BNXWorld3.bgl BNXWorld4.bgl BNXWorld5.bgl
-        bs->seekg(section.getStartOffset() + section.getNumSubsections() * 16);
+        unsigned int offset1 = bs->readUInt();
+        bs->readUInt();
+        unsigned int offset2 = bs->readUInt();
+        unsigned int treeFlag = bs->readUInt();
 
-        // Get the lowest offset from the special subsection offset list
-        unsigned int minOffset = std::numeric_limits<int>::max();
-        while(bs->tellg() < section.getStartOffset() + section.getTotalSubsectionSize())
+        if(treeFlag > 0)
         {
-          unsigned int newOffset = bs->readUInt();
-          unsigned int dataSize = bs->readUInt(); // size
-          if(newOffset < minOffset && dataSize > 0)
-            minOffset = newOffset;
-
-          if(dataSize <= 0)
-            qWarning().nospace() << "while reading boundaries: dataSize " << dataSize
-                                 << " at " << hex << "0x" << bs->tellg();
+          if(offset1 < minOffset)
+            minOffset = offset1;
+          if(offset2 < minOffset)
+            minOffset = offset2;
         }
-
-        // Read from the first offset
-        bs->seekg(minOffset);
-        handleBoundaries(bs);
       }
+
+      // Read from the first offset to the end of the file
+      bs->seekg(minOffset);
+      handleBoundaries(bs);
     }
   }
 }

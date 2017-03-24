@@ -38,6 +38,14 @@ BglBase::~BglBase()
 {
 }
 
+BglBase& BglBase::operator=(const BglBase& other)
+{
+  bs = other.bs;
+  opts = other.opts;
+  startOffset = other.startOffset;
+  return *this;
+}
+
 void BglBase::seekToStart()
 {
   bs->seekg(startOffset);

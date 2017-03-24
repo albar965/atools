@@ -48,12 +48,7 @@ public:
 
   }
 
-  BglBase& operator=(const atools::fs::bgl::BglBase& other)
-  {
-    bs = other.bs;
-    opts = other.opts;
-    return *this;
-  }
+  BglBase& operator=(const atools::fs::bgl::BglBase& other);
 
   /*
    * Seek stream back to record start offset.

@@ -33,73 +33,73 @@ QString Boundary::boundaryTypeToStr(boundary::BoundaryType type)
       return "NONE";
 
     case atools::fs::bgl::boundary::CENTER:
-      return "CENTER";
+      return "C";
 
     case atools::fs::bgl::boundary::CLASS_A:
-      return "CLASS_A";
+      return "CA";
 
     case atools::fs::bgl::boundary::CLASS_B:
-      return "CLASS_B";
+      return "CB";
 
     case atools::fs::bgl::boundary::CLASS_C:
-      return "CLASS_C";
+      return "CC";
 
     case atools::fs::bgl::boundary::CLASS_D:
-      return "CLASS_D";
+      return "CD";
 
     case atools::fs::bgl::boundary::CLASS_E:
-      return "CLASS_E";
+      return "CE";
 
     case atools::fs::bgl::boundary::CLASS_F:
-      return "CLASS_F";
+      return "CF";
 
     case atools::fs::bgl::boundary::CLASS_G:
-      return "CLASS_G";
+      return "CG";
 
     case atools::fs::bgl::boundary::TOWER:
-      return "TOWER";
+      return "T";
 
     case atools::fs::bgl::boundary::CLEARANCE:
-      return "CLEARANCE";
+      return "CL";
 
     case atools::fs::bgl::boundary::GROUND:
-      return "GROUND";
+      return "G";
 
     case atools::fs::bgl::boundary::DEPARTURE:
-      return "DEPARTURE";
+      return "D";
 
     case atools::fs::bgl::boundary::APPROACH:
-      return "APPROACH";
+      return "A";
 
     case atools::fs::bgl::boundary::MOA:
-      return "MOA";
+      return "M";
 
     case atools::fs::bgl::boundary::RESTRICTED:
-      return "RESTRICTED";
+      return "R";
 
     case atools::fs::bgl::boundary::PROHIBITED:
-      return "PROHIBITED";
+      return "P";
 
     case atools::fs::bgl::boundary::WARNING:
-      return "WARNING";
+      return "W";
 
     case atools::fs::bgl::boundary::ALERT:
-      return "ALERT";
+      return "AL";
 
     case atools::fs::bgl::boundary::DANGER:
-      return "DANGER";
+      return "DA";
 
     case atools::fs::bgl::boundary::NATIONAL_PARK:
-      return "NATIONAL_PARK";
+      return "NP";
 
     case atools::fs::bgl::boundary::MODEC:
-      return "MODEC";
+      return "MD";
 
     case atools::fs::bgl::boundary::RADAR:
-      return "RADAR";
+      return "RD";
 
     case atools::fs::bgl::boundary::TRAINING:
-      return "TRAINING";
+      return "TR";
   }
   qWarning().nospace().noquote() << "Invalid BOUNDARY " << type;
   return "INVALID";
@@ -113,13 +113,13 @@ QString Boundary::altTypeToStr(boundary::AltitudeType type)
       return "UNKNOWN";
 
     case atools::fs::bgl::boundary::MEAN_SEA_LEVEL:
-      return "MEAN_SEA_LEVEL";
+      return "MSL";
 
     case atools::fs::bgl::boundary::ABOVE_GROUND_LEVEL:
-      return "ABOVE_GROUND_LEVEL";
+      return "AGL";
 
     case atools::fs::bgl::boundary::UNLIMITED:
-      return "UNLIMITED";
+      return "UL";
   }
   qWarning().nospace().noquote() << "Invalid ALTITUDETYPE " << type;
   return "INVALID";
@@ -140,9 +140,27 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
     return;
   }
   type = static_cast<boundary::BoundaryType>(bs->readUByte());
+  if(type < boundary::NONE || type > boundary::TRAINING)
+  {
+    valid = false;
+    return;
+  }
+
   int flags = bs->readUByte();
   maxAltType = static_cast<boundary::AltitudeType>(flags & 0xf);
   minAltType = static_cast<boundary::AltitudeType>((flags >> 4) & 0xf);
+
+  if(maxAltType < boundary::UNKNOWN || maxAltType > boundary::UNLIMITED)
+  {
+    valid = false;
+    return;
+  }
+
+  if(minAltType < boundary::UNKNOWN || maxAltType > boundary::UNLIMITED)
+  {
+    valid = false;
+    return;
+  }
 
   minPosition = BglPosition(bs, true, 1000.f);
   maxPosition = BglPosition(bs, true, 1000.f);
@@ -173,8 +191,9 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
             lines.append(BoundarySegment(options, bs));
         }
         break;
-      default:
-        qWarning().nospace().noquote() << "Unexpected record type in Boundary record 0x" << hex << t << dec;
+        // default:
+        // valid = false;
+        // return;
     }
     r.seekToEnd();
   }

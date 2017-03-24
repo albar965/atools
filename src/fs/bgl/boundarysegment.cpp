@@ -32,22 +32,22 @@ QString BoundarySegment::boundarylineTypeToStr(boundaryline::PointType type)
       return "UNKNOWN";
 
     case atools::fs::bgl::boundaryline::START:
-      return "START";
+      return "S";
 
     case atools::fs::bgl::boundaryline::LINE:
-      return "LINE";
+      return "L";
 
     case atools::fs::bgl::boundaryline::ORIGIN:
-      return "ORIGIN";
+      return "O";
 
     case atools::fs::bgl::boundaryline::ARC_CW:
-      return "ARC_CW";
+      return "CW";
 
     case atools::fs::bgl::boundaryline::ARC_CCW:
-      return "ARC_CCW";
+      return "CCW";
 
     case atools::fs::bgl::boundaryline::CIRCLE:
-      return "CIRCLE";
+      return "C";
   }
   qWarning().nospace().noquote() << "Invalid BOUNDARYLINE type " << type;
   return "INVALID";
