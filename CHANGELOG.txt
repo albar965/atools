@@ -1,3 +1,12 @@
+Version 2.3.2.devel
+* Solved problem where airports without delete record lost approaches.
+* Fixed METAR parser errors with NOSIG token for weather or sky condition.
+* Cleanup in database around transitions and approaches:
+** Navaid ids have to be resolved during runtime now and not during compilation time.
+** Fix for multiple navaids with the same name and same region in the database.
+** Added more redundant information to runway end table to speed up program during runtime.
+* Now nearest VOR and NDBs are assigned to waypoint if duplicates exist.
+
 Version 2.3.1.devel
 * Enhancement in geo namespace. Added line string class.
 * Improvements to gui classes and added
