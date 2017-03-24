@@ -70,7 +70,12 @@ public:
    * @param file filepath of the file to be saved
    */
   void save(const QString& file);
+
+  /* PMDG RTE format */
   void saveRte(const QString& file);
+
+  /* Aerosoft Airbus FLP format */
+  void saveFlp(const QString& file);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.

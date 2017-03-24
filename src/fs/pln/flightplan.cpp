@@ -273,6 +273,87 @@ void Flightplan::save(const QString& file)
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
+void Flightplan::saveFlp(const QString& file)
+{
+  filename = file;
+  QFile flpFile(filename);
+
+  if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QString flpString;
+    QTextStream stream(&flpString);
+
+    stream << "[CoRte]" << endl;
+    stream << "ArptDep=" << departureIdent << endl;
+    stream << "ArptArr=" << destinationIdent << endl;
+    stream << "RwyDep=" << endl;
+    stream << "RwyArr=" << endl;
+    stream << "RwyArrFinal=" << endl;
+    stream << "SID=" << endl;
+    stream << "STAR=" << endl;
+    stream << "APPR_Trans=" << endl;
+
+    // Check if all legs have an airway assignment
+    bool hasMissingAirways = false;
+    for(int i = 2; i < entries.size() - 1; i++)
+    {
+      if(entries.at(i).isNoSave())
+        // Do not save stuff like procedure points
+        continue;
+      hasMissingAirways |= entries.at(i).getAirway().isEmpty();
+    }
+
+    if(hasMissingAirways)
+    {
+      // Save with direct waypoints and coordinates
+      int index = 1;
+      for(int i = 1; i < entries.size() - 1; i++)
+      {
+        const FlightplanEntry& entry = entries.at(i);
+        if(entry.isNoSave())
+          // Do not save stuff like procedure points
+          continue;
+
+        stream << "DctWpt" << index << "=" << entry.getIcaoIdent() << endl;
+
+        QString coords = QString("%1,%2").
+                         arg(entry.getPosition().getLatY(), 0, 'f', 6).
+                         arg(entry.getPosition().getLonX(), 0, 'f', 6);
+
+        stream << "DctWpt" << index << "Coordinates=" << coords << endl;
+        index++;
+      }
+    }
+    else
+    {
+      // Save with airways
+      int index = 1;
+      for(int i = 1; i < entries.size() - 2; i++)
+      {
+        const FlightplanEntry& entry = entries.at(i);
+        if(entry.isNoSave())
+          // Do not save stuff like procedure points
+          continue;
+
+        stream << "Airway" << index << "=" << entries.at(i + 1).getAirway() << endl;
+        stream << "Airway" << index << "FROM=" << entry.getIcaoIdent() << endl;
+        stream << "Airway" << index << "TO=" << entries.at(i + 1).getIcaoIdent() << endl;
+        index++;
+      }
+    }
+
+#ifndef Q_OS_WIN32
+    // Convert EOL always to Windows (0x0a -> 0x0d0a)
+    flpString.replace("\n", "\r\n");
+#endif
+
+    QByteArray utf8 = flpString.toUtf8();
+    flpFile.write(utf8.data(), utf8.size());
+  }
+  else
+    throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
+}
+
 void Flightplan::saveRte(const QString& file)
 {
   namespace ple = atools::fs::pln::entry;
@@ -291,12 +372,12 @@ void Flightplan::saveRte(const QString& file)
   };
 
   filename = file;
-  QFile xmlFile(filename);
+  QFile rteFile(filename);
 
-  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  if(rteFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QString xmlString;
-    QTextStream stream(&xmlString);
+    QString rteString;
+    QTextStream stream(&rteString);
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
     arg(QApplication::applicationName()).
@@ -321,6 +402,10 @@ void Flightplan::saveRte(const QString& file)
     for(int i = 1; i < entries.size() - 1; i++)
     {
       const FlightplanEntry& entry = entries.at(i);
+
+      if(entry.isNoSave())
+        // Do not save stuff like procedure points
+        continue;
 
       if(entry.getWaypointType() == ple::USER)
       {
@@ -352,14 +437,14 @@ void Flightplan::saveRte(const QString& file)
 
 #ifndef Q_OS_WIN32
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
-    xmlString.replace("\n", "\r\n");
+    rteString.replace("\n", "\r\n");
 #endif
 
-    QByteArray utf8 = xmlString.toUtf8();
-    xmlFile.write(utf8.data(), utf8.size());
+    QByteArray utf8 = rteString.toUtf8();
+    rteFile.write(utf8.data(), utf8.size());
   }
   else
-    throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(rteFile.errorString()));
 }
 
 void Flightplan::removeNoSaveEntries()
