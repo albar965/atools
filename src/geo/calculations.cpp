@@ -150,7 +150,7 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
       angle = start + static_cast<float>(i) * step;
 
     angle = normalizeCourse(angle);
-    Pos cur = center.endpoint(dist, angle);
+    Pos cur = center.endpoint(dist, angle).normalize();
     if(lines != nullptr)
       lines->append(cur);
 
