@@ -44,21 +44,18 @@ const QString ALL_SIMULATOR_NAMES[NUM_SIMULATOR_TYPES] =
   "Microsoft Flight Simulator X", "Flight Simulator - Steam Edition", "Prepar3D v2", "Prepar3D v3"
 };
 
-const char *FsPaths::FSX_REGISTRY_PATH =
-  "HKEY_CURRENT_USER\\Software\\Microsoft\\Microsoft Games\\Flight Simulator\\10.0";
-const char *FsPaths::FSX_REGISTRY_KEY = "AppPath";
+const char *FsPaths::FSX_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
+const QStringList FsPaths::FSX_REGISTRY_KEY = {"Microsoft Games", "Flight Simulator", "10.0", "AppPath"};
 
-const char *FsPaths::FSX_SE_REGISTRY_PATH =
-  "HKEY_CURRENT_USER\\Software\\Microsoft\\Microsoft Games\\Flight Simulator - Steam Edition\\10.0";
-const char *FsPaths::FSX_SE_REGISTRY_KEY = "AppPath";
+const char *FsPaths::FSX_SE_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
+const QStringList FsPaths::FSX_SE_REGISTRY_KEY =
+{"Microsoft Games", "Flight Simulator - Steam Edition", "10.0", "AppPath"};
 
-const char *FsPaths::P3D_V2_REGISTRY_PATH =
-  "HKEY_CURRENT_USER\\Software\\Lockheed Martin\\Prepar3D v2";
-const char *FsPaths::P3D_V2_REGISTRY_KEY = "AppPath";
+const char *FsPaths::P3D_V2_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
+const QStringList FsPaths::P3D_V2_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v2", "AppPath"};
 
-const char *FsPaths::P3D_V3_REGISTRY_PATH =
-  "HKEY_CURRENT_USER\\Software\\Lockheed Martin\\Prepar3D v3";
-const char *FsPaths::P3D_V3_REGISTRY_KEY = "AppPath";
+const char *FsPaths::P3D_V3_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
+const QStringList FsPaths::P3D_V3_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v3", "AppPath"};
 
 const char *FsPaths::SETTINGS_FSX_PATH = "FsPaths/FsxPath";
 const char *FsPaths::SETTINGS_FSX_SE_PATH = "FsPaths/FsxSePath";
@@ -98,9 +95,30 @@ QString FsPaths::getBasePath(SimulatorType type)
 #if defined(Q_OS_WIN32)
   // Try to get the FSX path from the Windows registry
   QSettings settings(registryPath(type), QSettings::NativeFormat);
-  fsPath = settings.value(registryKey(type)).toString();
-  if(fsPath.endsWith('\\'))
-    fsPath.chop(1);
+
+  QStringList keys(registryKey(type));
+  bool found = true;
+
+  // Last entry is the value
+  // Avoid using value on the whole tree since it creates empty entries
+  for(int i = 0; i < keys.size() - 1; i++)
+  {
+    if(settings.childGroups().contains(keys.at(i)))
+      settings.beginGroup(keys.at(i));
+    else
+    {
+      found = false;
+      break;
+    }
+  }
+
+  if(found && settings.contains(keys.last()))
+  {
+    fsPath = settings.value(keys.last()).toString();
+
+    if(fsPath.endsWith('\\'))
+      fsPath.chop(1);
+  }
 #elif defined(DEBUG_FS_PATHS)
   // No Windows here - get the path for debugging purposes
   // from the configuration file
@@ -338,7 +356,7 @@ QString FsPaths::registryPath(SimulatorType type)
   return QString();
 }
 
-QString FsPaths::registryKey(SimulatorType type)
+QStringList FsPaths::registryKey(SimulatorType type)
 {
   switch(type)
   {
@@ -359,7 +377,7 @@ QString FsPaths::registryKey(SimulatorType type)
     case UNKNOWN:
       break;
   }
-  return QString();
+  return QStringList();
 }
 
 QString FsPaths::nonWindowsPath(SimulatorType type)

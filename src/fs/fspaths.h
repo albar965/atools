@@ -97,19 +97,19 @@ private:
   /* registry path and key if running on Windows */
   /* Platform: FSX, FSX XPack, FSX Gold */
   static const char *FSX_REGISTRY_PATH;
-  static const char *FSX_REGISTRY_KEY;
+  static const QStringList FSX_REGISTRY_KEY;
 
   /* Platform: FSX Steam Edition */
   static const char *FSX_SE_REGISTRY_PATH;
-  static const char *FSX_SE_REGISTRY_KEY;
+  static const  QStringList FSX_SE_REGISTRY_KEY;
 
   /* Platform: Prepar3d Version 2 */
   static const char *P3D_V2_REGISTRY_PATH;
-  static const char *P3D_V2_REGISTRY_KEY;
+  static const QStringList  P3D_V2_REGISTRY_KEY;
 
   /* Platform: Prepar3d Version 3 */
   static const char *P3D_V3_REGISTRY_PATH;
-  static const char *P3D_V3_REGISTRY_KEY;
+  static const QStringList P3D_V3_REGISTRY_KEY;
 
   /* Use this as fallback from the settings if not running on Windows */
   static const char *SETTINGS_FSX_PATH;
@@ -125,7 +125,7 @@ private:
 
   static QString settingsKey(atools::fs::FsPaths::SimulatorType type);
   static QString registryPath(atools::fs::FsPaths::SimulatorType type);
-  static QString registryKey(atools::fs::FsPaths::SimulatorType type);
+  static QStringList registryKey(atools::fs::FsPaths::SimulatorType type);
 
   static QString documentsDirectory(QString simBasePath);
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
