@@ -183,6 +183,8 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
         data.userAircraft.trackMag =
           data.userAircraft.trackTrue =
             h;
+
+    data.userAircraft.groundSpeed = data.userAircraft.indicatedSpeed = data.userAircraft.trueSpeed = 200.f;
   }
   else
   {

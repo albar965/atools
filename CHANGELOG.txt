@@ -1,4 +1,11 @@
+Version 2.3.3.devel
+
+* Fixed old problem with empty registry entries when detecting simulator
+* Fixed reading of airspace boundaries and removed hack.
+* Reduced size of airspace enums in database.
+
 Version 2.3.2.devel
+
 * Added Aerosoft Airbus FLP flight plan export
 * Solved problem where airports without delete record lost approaches.
 * Fixed METAR parser errors with NOSIG token for weather or sky condition.
@@ -9,6 +16,7 @@ Version 2.3.2.devel
 * Now nearest VOR and NDBs are assigned to waypoint if duplicates exist.
 
 Version 2.3.1.devel
+
 * Enhancement in geo namespace. Added line string class.
 * Improvements to gui classes and added
 * Better recognition of military airports for not capitalized designators.
