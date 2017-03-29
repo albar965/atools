@@ -64,9 +64,14 @@ bool ProgressHandler::reportOther(const QString& otherAction, int current, bool 
     return callHandler();
 }
 
-void ProgressHandler::reportBglError()
+void ProgressHandler::reportError()
 {
   info.numErrors++;
+}
+
+void ProgressHandler::reportErrors(int num)
+{
+  info.numErrors += num;
 }
 
 bool ProgressHandler::reportBglFile(const QString& bglFilepath)

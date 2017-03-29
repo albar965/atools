@@ -262,7 +262,7 @@ void NavDatabase::createInternal()
       // write the contents to the database
       dataWriter.writeSceneryArea(area);
 
-      if(!err.bglFileErrors.isEmpty() && errors != nullptr)
+      if((!err.bglFileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
       {
         err.scenery = area;
         errors->sceneryErrors.append(err);

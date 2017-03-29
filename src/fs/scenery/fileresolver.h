@@ -20,6 +20,7 @@
 
 #include <QList>
 #include <QStringList>
+#include <QApplication>
 
 namespace atools {
 namespace fs {
@@ -33,6 +34,8 @@ class SceneryArea;
  */
 class FileResolver
 {
+  Q_DECLARE_TR_FUNCTIONS(FileResolver)
+
 public:
   /*
    * @param opts configuration optios
@@ -49,9 +52,15 @@ public:
    * @return number of files found
    */
   int getFiles(const atools::fs::scenery::SceneryArea& area, QStringList *filepaths = nullptr,
-               QStringList *filenames = nullptr) const;
+               QStringList *filenames = nullptr);
+
+  const QStringList& getErrorMessages() const
+  {
+    return errorMessages;
+  }
 
 private:
+  QStringList errorMessages;
   const atools::fs::NavDatabaseOptions& options;
   bool quiet = false;
 };

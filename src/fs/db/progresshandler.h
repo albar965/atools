@@ -47,9 +47,10 @@ public:
   bool reportBglFile(const QString& bglFilepath);
 
   /*
-   * Increase number of errors for BGL reading exceptions.
+   * Increase number of errors for BGL reading exceptions or scenery errors (directory not found or others).
    */
-  void reportBglError();
+  void reportError();
+  void reportErrors(int num);
 
   /*
    * Send the last report

@@ -183,6 +183,9 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   atools::fs::scenery::FileResolver resolver(options);
   resolver.getFiles(area, &filepaths, &filenames);
 
+  sceneryErrors->sceneryErrorsMessages.append(resolver.getErrorMessages());
+  progressHandler->reportErrors(resolver.getErrorMessages().size());
+
   if(!filepaths.empty())
   {
     // Write the scenera area metadata
@@ -280,14 +283,14 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       catch(atools::Exception& e)
       {
         qCritical() << "Caught exception reading" << currentBglFilePath << ":" << e.what();
-        progressHandler->reportBglError();
+        progressHandler->reportError();
         if(sceneryErrors != nullptr)
           sceneryErrors->bglFileErrors.append({currentBglFilePath, QString(e.what())});
       }
       catch(...)
       {
         qCritical() << "Caught unknown exception reading" << currentBglFilePath;
-        progressHandler->reportBglError();
+        progressHandler->reportError();
         if(sceneryErrors != nullptr)
           sceneryErrors->bglFileErrors.append({currentBglFilePath, QString()});
       }

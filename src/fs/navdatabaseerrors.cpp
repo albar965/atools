@@ -29,7 +29,7 @@ int NavDatabaseErrors::getTotalErrors() const
 {
   int total = 0;
   for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr :  sceneryErrors)
-    total += scErr.bglFileErrors.size();
+    total += scErr.bglFileErrors.size() + scErr.sceneryErrorsMessages.size();
   return total;
 }
 

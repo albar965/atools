@@ -43,6 +43,7 @@ public:
   struct SceneryErrors
   {
     atools::fs::scenery::SceneryArea scenery;
+    QStringList sceneryErrorsMessages;
     QList<atools::fs::NavDatabaseErrors::BglFileError> bglFileErrors;
   };
 

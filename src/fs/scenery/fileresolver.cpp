@@ -36,9 +36,11 @@ FileResolver::~FileResolver()
 {
 }
 
-int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames) const
+int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames)
 {
   int numFiles = 0;
+  errorMessages.clear();
+
   QString sceneryAreaDirStr, areaLocalPathStr = area.getLocalPath();
 
   if(QFileInfo(areaLocalPathStr).isAbsolute())
@@ -49,11 +51,12 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     sceneryAreaDirStr = options.getBasepath() + QDir::separator() + areaLocalPathStr;
 
   // Remove any .. in the path
-  sceneryAreaDirStr = QFileInfo(sceneryAreaDirStr).canonicalFilePath();
+  QString sceneryAreaDirStrCanonical = QFileInfo(sceneryAreaDirStr).canonicalFilePath();
 
-  qInfo() << "Scenery canonical path" << sceneryAreaDirStr;
+  qInfo() << "Scenery path" << sceneryAreaDirStr;
+  // qInfo() << "Scenery canonical path" << sceneryAreaDirStrCanonical;
 
-  QFileInfo sceneryArea(sceneryAreaDirStr);
+  QFileInfo sceneryArea(sceneryAreaDirStrCanonical);
   if(sceneryArea.exists())
   {
     if(sceneryArea.isDir())
@@ -88,11 +91,19 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
           qInfo().nospace().noquote() << scenery.filePath() << " is excluded.";
       }
     }
-    else if(!quiet)
-      qWarning().nospace().noquote() << sceneryAreaDirStr << " is not a directory.";
+    else
+    {
+      if(!quiet)
+        qWarning().nospace().noquote() << sceneryAreaDirStr << " is not a directory.";
+      errorMessages.append(tr("<i>%2</i> is not a directory.").arg(sceneryAreaDirStr));
+    }
   }
-  else if(!quiet)
-    qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
+  else
+  {
+    if(!quiet)
+      qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
+    errorMessages.append(tr("<i>%2</i> does not exist.").arg(sceneryAreaDirStr));
+  }
   return numFiles;
 }
 
