@@ -147,8 +147,9 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
   }
 
   int flags = bs->readUByte();
-  maxAltType = static_cast<boundary::AltitudeType>(flags & 0xf);
-  minAltType = static_cast<boundary::AltitudeType>((flags >> 4) & 0xf);
+  // TODO fix in wiki
+  minAltType = static_cast<boundary::AltitudeType>(flags & 0xf);
+  maxAltType = static_cast<boundary::AltitudeType>((flags >> 4) & 0xf);
 
   if(maxAltType < boundary::UNKNOWN || maxAltType > boundary::UNLIMITED)
   {

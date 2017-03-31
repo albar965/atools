@@ -39,7 +39,11 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":boundary_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(bgl::Boundary::boundaryTypeToStr, type->getType()));
-  bind(":name", type->getName());
+
+  if(type->getName().isEmpty() || type->getName() == "NULL")
+    bindNullString(":name");
+  else
+    bind(":name", type->getName());
 
   if(type->hasCom())
   {

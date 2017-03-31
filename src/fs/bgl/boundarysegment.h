@@ -67,7 +67,7 @@ public:
     return type;
   }
 
-  const atools::fs::bgl::BglPosition& getPosition() const
+  const atools::geo::Pos& getPosition() const
   {
     return position;
   }
@@ -86,7 +86,7 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::BoundarySegment& record);
 
   atools::fs::bgl::boundaryline::PointType type;
-  atools::fs::bgl::BglPosition position;
+  atools::geo::Pos position;
   float radius = 0.f;
 };
 

@@ -17,6 +17,7 @@
 
 #include "fs/bgl/boundarysegment.h"
 #include "io/binarystream.h"
+#include "fs/bgl/converter.h"
 
 namespace atools {
 namespace fs {
@@ -69,8 +70,13 @@ BoundarySegment::BoundarySegment(const NavDatabaseOptions *options, BinaryStream
     radius = bs->readFloat();
   }
   else
-    // TODO laty exceeds range for some records
-    position = BglPosition(bs);
+  {
+    float latY = converter::intToLatY(bs->readInt());
+    float lonX = converter::intToLonX(bs->readInt());
+    position.setLatY(latY);
+    position.setLonX(lonX);
+    position.setAltitude(0.f);
+  }
 }
 
 QDebug operator<<(QDebug out, const BoundarySegment& record)
