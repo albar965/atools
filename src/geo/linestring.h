@@ -35,10 +35,18 @@ public:
   explicit LineString(const atools::geo::Pos& pos);
   explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
 
+  /* Build a circle */
+  explicit LineString(const atools::geo::Pos& origin, float radiusMeter, int numSegments);
+
+  /* Build an arc - numSegments is related to full circle */
+  explicit LineString(const atools::geo::Pos& origin, const atools::geo::Pos& start,
+                      const atools::geo::Pos& end, bool clockwise, int numSegments);
+
   LineString(const LineString& other);
   LineString& operator=(const LineString& other);
 
   void append(const atools::geo::Pos& pos);
+  void append(const atools::geo::LineString& linestring);
   void append(float longitudeX, float latitudeY, float alt = 0.f);
   void append(double longitudeX, double latitudeY, double alt = 0.f);
 

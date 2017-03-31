@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "geo/linestring.h"
+#include "geo/calculations.h"
 
 #include <cmath>
 
@@ -44,6 +45,68 @@ LineString::LineString(const Pos& pos1, const Pos& pos2)
 
 }
 
+LineString::LineString(const Pos& origin, float radiusMeter, int numSegments)
+{
+  int increment = 360 / numSegments;
+  for(int j = 0; j < 360; j += increment)
+    append(origin.endpoint(radiusMeter, j).normalize());
+}
+
+LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool clockwise, int numSegments)
+{
+  float distance = origin.distanceMeterTo(start);
+
+  float startAngle = atools::geo::normalizeCourse(origin.angleDegTo(start));
+  float endAngle = atools::geo::normalizeCourse(origin.angleDegTo(end));
+
+  if(atools::almostNotEqual(startAngle, endAngle))
+  {
+    float step = 360.f / static_cast<float>(numSegments);
+    QVector<float> angles;
+    if(clockwise)
+    {
+      // Clockwise - turn right
+      if(startAngle < endAngle)
+      {
+        for(float angle = startAngle; angle < endAngle; angle += step)
+          angles.append(angle);
+      }
+      else
+      {
+        for(float angle = startAngle; angle < 360.f; angle += step)
+          angles.append(angle);
+        for(float angle = 0.f; angle < endAngle; angle += step)
+          angles.append(angle);
+      }
+
+      // Make sure to catch the end
+      angles.append(endAngle);
+    }
+    else
+    {
+      // Counter clockwise - turn left
+      if(startAngle > endAngle)
+      {
+        for(float angle = startAngle; angle > endAngle; angle -= step)
+          angles.append(angle);
+      }
+      else
+      {
+        for(float angle = startAngle; angle > 0.f; angle -= step)
+          angles.append(angle);
+        for(float angle = 360.f; angle > endAngle; angle -= step)
+          angles.append(angle);
+      }
+
+      // Make sure to catch the end
+      angles.append(endAngle);
+    }
+
+    for(float angle : angles)
+      append(origin.endpoint(distance, angle).normalize());
+  }
+}
+
 LineString::LineString(const LineString& other)
   : QVector(other)
 {
@@ -59,6 +122,11 @@ LineString& LineString::operator=(const LineString& other)
 void LineString::append(const Pos& pos)
 {
   QVector::append(pos);
+}
+
+void LineString::append(const LineString& linestring)
+{
+  QVector::append(linestring);
 }
 
 void LineString::append(float longitudeX, float latitudeY, float alt)
