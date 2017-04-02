@@ -1,3 +1,9 @@
+Version 2.3.4.devel
+
+* Several fixes when reading airspace boundaries.
+* Added missing indexes to boundary table.
+* Now collecting errors for missing scenery directories when loading scenery library database.
+
 Version 2.3.3.devel
 
 * Fixed old problem with empty registry entries when detecting simulator
