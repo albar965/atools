@@ -35,13 +35,15 @@ namespace atools {
 namespace fs {
 
 const atools::fs::FsPaths::SimulatorType FsPaths::ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] =
-{FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3};
+{FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::EXTERNAL, FsPaths::EXTERNAL2};
 
-const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] = {"FSX", "FSXSE", "P3DV2", "P3DV3"};
+const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] =
+{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2"};
 
 const QString ALL_SIMULATOR_NAMES[NUM_SIMULATOR_TYPES] =
 {
-  "Microsoft Flight Simulator X", "Flight Simulator - Steam Edition", "Prepar3D v2", "Prepar3D v3"
+  "Microsoft Flight Simulator X", "Flight Simulator - Steam Edition", "Prepar3D v2", "Prepar3D v3",
+  "External", "External 2"
 };
 
 const char *FsPaths::FSX_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
@@ -129,9 +131,14 @@ QString FsPaths::getBasePath(SimulatorType type)
     // If it is not present in the settings file use one of the predefined paths
     // Useful with symlinks for debugging
     QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-    QFileInfo fi(home + QDir::separator() + nonWindowsPath(type));
-    if(fi.exists() && fi.isDir() && fi.isReadable())
-      fsPath = fi.absoluteFilePath();
+    QString nonWinPath = nonWindowsPath(type);
+
+    if(!nonWinPath.isEmpty())
+    {
+      QFileInfo fi(home + QDir::separator() + nonWinPath);
+      if(fi.exists() && fi.isDir() && fi.isReadable())
+        fsPath = fi.absoluteFilePath();
+    }
   }
 #endif
 
@@ -270,6 +277,8 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 
 #endif
     // Disable compiler warnings
+    case EXTERNAL:
+    case EXTERNAL2:
     case UNKNOWN:
     case MAX_VALUE:
     case ALL_SIMULATORS:
@@ -296,14 +305,19 @@ QString FsPaths::typeToName(SimulatorType type)
 
 FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
 {
-  if(typeStr == "FSX")
+  QString type = typeStr.toUpper();
+  if(type == "FSX")
     return FSX;
-  else if(typeStr == "FSXSE")
+  else if(type == "FSXSE")
     return FSX_SE;
-  else if(typeStr == "P3DV2")
+  else if(type == "P3DV2")
     return P3D_V2;
-  else if(typeStr == "P3DV3")
+  else if(type == "P3DV3")
     return P3D_V3;
+  else if(type == "EXTERNAL")
+    return EXTERNAL;
+  else if(type == "EXTERNAL2")
+    return EXTERNAL2;
   else
     return UNKNOWN;
 }
@@ -324,6 +338,8 @@ QString FsPaths::settingsKey(SimulatorType type)
     case P3D_V3:
       return SETTINGS_P3D_V3_PATH;
 
+    case EXTERNAL:
+    case EXTERNAL2:
     case UNKNOWN:
     case MAX_VALUE:
     case ALL_SIMULATORS:
@@ -348,6 +364,8 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V3:
       return P3D_V3_REGISTRY_PATH;
 
+    case EXTERNAL:
+    case EXTERNAL2:
     case UNKNOWN:
     case MAX_VALUE:
     case ALL_SIMULATORS:
@@ -372,6 +390,8 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V3:
       return P3D_V3_REGISTRY_KEY;
 
+    case EXTERNAL:
+    case EXTERNAL2:
     case MAX_VALUE:
     case ALL_SIMULATORS:
     case UNKNOWN:
@@ -396,6 +416,8 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
     case P3D_V3:
       return P3D_V3_NO_WINDOWS_PATH;
 
+    case EXTERNAL:
+    case EXTERNAL2:
     case UNKNOWN:
     case MAX_VALUE:
     case ALL_SIMULATORS:

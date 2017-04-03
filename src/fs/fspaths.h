@@ -24,7 +24,7 @@
 namespace atools {
 namespace fs {
 
-#define NUM_SIMULATOR_TYPES 4
+#define NUM_SIMULATOR_TYPES 6
 
 /*
  * Allows to find Flight Simulator related paths and check for installed simulators.
@@ -51,7 +51,12 @@ public:
     /* Platform: Prepar3d Version 3 */
     P3D_V3 = 3,
 
-    MAX_VALUE = 4,
+    /* External data like Airac cycles */
+    EXTERNAL = 4,
+
+    EXTERNAL2 = 5,
+
+    MAX_VALUE = 6,
 
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
@@ -101,11 +106,11 @@ private:
 
   /* Platform: FSX Steam Edition */
   static const char *FSX_SE_REGISTRY_PATH;
-  static const  QStringList FSX_SE_REGISTRY_KEY;
+  static const QStringList FSX_SE_REGISTRY_KEY;
 
   /* Platform: Prepar3d Version 2 */
   static const char *P3D_V2_REGISTRY_PATH;
-  static const QStringList  P3D_V2_REGISTRY_KEY;
+  static const QStringList P3D_V2_REGISTRY_KEY;
 
   /* Platform: Prepar3d Version 3 */
   static const char *P3D_V3_REGISTRY_PATH;
