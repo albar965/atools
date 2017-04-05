@@ -77,6 +77,8 @@ create table airport
   longest_runway_width integer not null,     -- Feet
   longest_runway_heading double not null,    -- Heading of primary end in degrees true
   longest_runway_surface varchar(15),        -- see enum atools::fs::bgl::rw::Surface
+                                             -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
+                                             -- which are used for data not originating from flight simulator
   num_runways integer not null,
   largest_parking_ramp varchar(20),          -- see enum atools::fs::bgl::ap::ParkingType
   largest_parking_gate varchar(20),          -- see enum atools::fs::bgl::ap::ParkingType
@@ -351,6 +353,8 @@ create table runway
   primary_end_id integer not null,      -- Reference to the secondary end
   secondary_end_id integer  not null,   -- Reference to the secondary end
   surface varchar(15),                  -- see enum atools::fs::bgl::rw::Surface
+                                        -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
+                                        -- which are used for data not originating from flight simulator
   length integer not null,              -- Feet
   width integer not null,               -- Feet
   heading double not null,              -- Heading in degrees true
@@ -402,6 +406,7 @@ create table runway_end
   has_reils integer not null,            -- Boolean has runway end identifier lights or not
   has_touchdown_lights integer not null, -- Boolean lighting for the touchdown zone
   num_strobes integer not null,           -- Number of strobe lights
+  ils_ident varchar(10),           -- Ident of the ILS or null if none
   heading double not null,        -- Duplicated from runway
   lonx double not null,           -- "
   laty double not null            -- "
@@ -457,6 +462,8 @@ create table transition
   fix_region varchar(2),        -- "
   fix_airport_ident varchar(4), -- "
   altitude integer,             -- Overfly altitude in feet for the transition fix
+  speed_limit_type varchar(2),  -- null: mandatory speed if limit is given, "+": minimum speed, "-": maximum speed
+  speed_limit integer,          -- null or speed limit in knots
   dme_ident varchar(5),         -- Contains the DME ICAO ident if transition type is DME
   dme_region varchar(2),        -- ICAO two letter region code for DME if transition type is DME
   dme_airport_ident,

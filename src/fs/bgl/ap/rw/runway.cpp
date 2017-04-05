@@ -172,9 +172,9 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   primary.designator = bs->readUByte();
   secondary.number = bs->readUByte();
   secondary.designator = bs->readUByte();
-  bs->skip(8); // Never set
-  // primary.ilsIdent = converter::intToIcao(bs->readInt(), true);
-  // secondary.ilsIdent = converter::intToIcao(bs->readInt(), true);
+
+  primary.ilsIdent = converter::intToIcao(bs->readUInt(), true);
+  secondary.ilsIdent = converter::intToIcao(bs->readUInt(), true);
 
   position = BglPosition(bs, true, 1000.f);
 

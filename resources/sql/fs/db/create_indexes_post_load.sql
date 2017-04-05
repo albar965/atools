@@ -31,6 +31,8 @@ create index if not exists idx_waypoint_num_rairway on waypoint(num_jet_airway);
 create index if not exists idx_waypoint_lonx on waypoint(lonx);
 create index if not exists idx_waypoint_laty on waypoint(laty);
 
+create index if not exists idx_runway_end_ils_ident on runway_end(ils_ident);
+
 create index if not exists idx_vor_ident on vor(ident);
 create index if not exists idx_vor_type on vor(type);
 create index if not exists idx_vor_region on vor(region);

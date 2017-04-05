@@ -149,6 +149,11 @@ public:
     return heading;
   }
 
+  const QString& getIlsIdent() const
+  {
+    return ilsIdent;
+  }
+
 private:
   friend class Runway;
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::RunwayEnd& record);
@@ -157,6 +162,7 @@ private:
 
   int number, designator;
   int offsetThreshold, blastPad, overrun;
+  QString ilsIdent;
 
   atools::fs::bgl::RunwayVasi leftVasi, rightVasi;
 

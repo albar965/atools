@@ -19,22 +19,26 @@
 -- Update ILS runway ids
 -- *************************************************************
 
+-- Set runway end reference
 update ils set loc_runway_end_id = (
   select runway_end_id
-  from airport a
-  join runway r on r.airport_id = a.airport_id
-  join runway_end e on r.primary_end_id = e.runway_end_id
-  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
+  from runway_end e
+  where e.ils_ident = ils.ident and
+  (abs(e.lonx - ils.lonx) + abs(e.laty - ils.laty)) < 0.5
 );
 
-update ils set loc_runway_end_id = (
-  select runway_end_id
-  from airport a
-  join runway r on r.airport_id = a.airport_id
-  join runway_end e on r.secondary_end_id = e.runway_end_id
-  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
-) where ils.loc_runway_end_id is null;
+-- Update airport ident according to runway end
+update ils set loc_airport_ident = (
+  select a.ident from airport a join runway r on a.airport_id = r.airport_id
+  where r.primary_end_id = ils.loc_runway_end_id
+  union
+  select a.ident from airport a join runway r on a.airport_id = r.airport_id
+  where r.secondary_end_id = ils.loc_runway_end_id
+) where loc_airport_ident is null;
 
+update ils set loc_runway_name = (
+select e.name from runway_end e where ils.loc_runway_end_id = e.runway_end_id
+);
 
 -- *************************************************************
 -- Update number of ILS runway ends in aiport ------------------

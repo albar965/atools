@@ -55,6 +55,11 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
   bind(":num_strobes", type->getApproachLights().getNumStrobes());
 
+  if(type->getIlsIdent().isEmpty())
+    bindNullString(":ils_ident");
+  else
+    bind(":ils_ident", type->getIlsIdent());
+
   bind(":end_type", type->isPrimaryEnd() ? QLatin1String("P") : QLatin1String("S"));
 
   bind(":lonx", type->getPosition().getLonX());

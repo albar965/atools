@@ -56,7 +56,7 @@ create table boundary_line
   boundary_id integer not null,
   type varchar(15),                -- see enum atools::fs::bgl::boundaryline::PointType
   radius double,                   -- Only available if type is CIRCLE
-  lonx double,                     -- Line coordinates. f type is CIRCLE: center coordinates
+  lonx double,                     -- Line coordinates. If type is CIRCLE: center coordinates
   laty double,                     -- "
 foreign key(boundary_id) references boundary(boundary_id)
 );
