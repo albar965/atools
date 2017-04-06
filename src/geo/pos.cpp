@@ -49,7 +49,7 @@ uint qHash(const atools::geo::Pos& pos)
 }
 
 Pos::Pos()
-  : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0)
+  : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
 {
 }
 
@@ -135,6 +135,13 @@ Pos& Pos::normalize()
     latY = normalizeLatYDeg(latY);
   }
   return *this;
+}
+
+Pos Pos::alt(float alt) const
+{
+  Pos retval(*this);
+  retval.setAltitude(alt);
+  return retval;
 }
 
 Pos& Pos::toDeg()
@@ -476,7 +483,7 @@ QString Pos::toString() const
   if(!isValid())
     return "Invalid Pos";
 
-  return SHORT_FORMAT.arg(lonX).arg(latY).arg(altitude);
+  return SHORT_FORMAT.arg(lonX, 0, 'f', 6).arg(latY, 0, 'f', 6).arg(altitude, 0, 'f', 6);
 }
 
 void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,

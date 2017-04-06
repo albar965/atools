@@ -197,7 +197,8 @@ HEADERS += src/atools.h \
     src/fs/db/ap/airportfilewriter.h \
     src/geo/line.h \
     src/gui/itemviewzoomhandler.h \
-    src/gui/griddelegate.h
+    src/gui/griddelegate.h \
+    src/dtm/globereader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -353,7 +354,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/ap/airportfilewriter.cpp \
     src/geo/line.cpp \
     src/gui/itemviewzoomhandler.cpp \
-    src/gui/griddelegate.cpp
+    src/gui/griddelegate.cpp \
+    src/dtm/globereader.cpp
 
 
 unix {

@@ -132,6 +132,9 @@ public:
   /* Normalize this position to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   atools::geo::Pos& normalize();
 
+  /* Set altitude and return a copy */
+  atools::geo::Pos alt(float alt) const;
+
   /* Convert this position from rad to degree and return reference */
   atools::geo::Pos& toDeg();
 
