@@ -27,6 +27,8 @@ update ils set loc_runway_end_id = (
   (abs(e.lonx - ils.lonx) + abs(e.laty - ils.laty)) < 0.5
 );
 
+update ils set loc_airport_ident = null;
+
 -- Update airport ident according to runway end
 update ils set loc_airport_ident = (
   select a.ident from airport a join runway r on a.airport_id = r.airport_id
