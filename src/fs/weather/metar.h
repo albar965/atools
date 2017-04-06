@@ -43,8 +43,6 @@ public:
     return *parsed;
   }
 
-  static void test();
-
   const QString& getMetar() const
   {
     return metar;
