@@ -151,6 +151,9 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 {
   QList<Pos> positions;
 
+  if(linestring.size() < 2)
+    return;
+
   for(int i = 0; i < linestring.size() - 1; i++)
   {
     Line line = Line(linestring.at(i), linestring.at(i + 1));
@@ -170,11 +173,14 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
         elevations.append(p.alt(elevation));
       }
     }
-    else
+    else if(!elevations.isEmpty())
       elevations.append(line.getPos1().alt(getElevation(elevations.last())));
+    else
+      elevations.append(line.getPos1().alt(0.f));
   }
   elevations.append(linestring.last());
-  elevations.last().setAltitude(getElevation(elevations.last()));
+  if(!elevations.isEmpty())
+    elevations.last().setAltitude(getElevation(elevations.last()));
 }
 
 qint64 GlobeReader::calcFileOffset(const atools::geo::Pos& pos, int& fileIndex)

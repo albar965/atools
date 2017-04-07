@@ -152,7 +152,7 @@ void Flightplan::load(const QString& file)
     throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
-void Flightplan::save(const QString& file)
+void Flightplan::save(const QString& file, bool clean)
 {
   filename = file;
   QFile xmlFile(filename);
@@ -179,15 +179,18 @@ void Flightplan::save(const QString& file)
                       arg(QLocale().toString(QDateTime::currentDateTime())).
                       replace("-", " "));
 
-    QStringList comment;
-    for(const QString& key : properties.keys())
+    if(!clean)
     {
-      if(!key.isEmpty())
-        comment.append("\n         " + key + "=" + properties.value(key));
-    }
+      QStringList comment;
+      for(const QString& key : properties.keys())
+      {
+        if(!key.isEmpty())
+          comment.append("\n         " + key + "=" + properties.value(key));
+      }
 
-    std::sort(comment.begin(), comment.end());
-    writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
+      std::sort(comment.begin(), comment.end());
+      writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
+    }
 
     writer.writeStartElement("FlightPlan.FlightPlan");
 

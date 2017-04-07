@@ -68,8 +68,9 @@ public:
    * Although the flight simulator cannot deal with flight plans that have no valid start
    * or destination (start or destaintion are merely a waypoint) it is allowed to that save one.
    * @param file filepath of the file to be saved
+   * @param clean if true save all properties in a XML comment
    */
-  void save(const QString& file);
+  void save(const QString& file, bool clean = false);
 
   /* PMDG RTE format */
   void saveRte(const QString& file);
