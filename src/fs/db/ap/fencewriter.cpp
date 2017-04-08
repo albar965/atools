@@ -38,7 +38,7 @@ void FenceWriter::writeObject(const bgl::Fence *type)
   bind(":fence_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::Fence::fenceTypeToStr(type->getType()));
-  bindCoordinateList(":vertices", type->getVertices());
+  bindBglCoordinateList(":vertices", type->getVertices());
 
   executeStatement();
 }

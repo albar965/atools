@@ -96,12 +96,12 @@ public:
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change
    */
-  static const int DB_VERSION_MAJOR = 10;
+  static const int DB_VERSION_MAJOR = 11;
 
   /* Minor database version of the application. Minor version differences are compatible.
    * Since version 10: Fixes in boundary coordinates and indexes added.
    */
-  static const int DB_VERSION_MINOR = 1;
+  static const int DB_VERSION_MINOR = 0;
 
 private:
   atools::sql::SqlDatabase *db;

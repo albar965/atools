@@ -29,6 +29,5 @@ drop table if exists marker;
 drop table if exists ndb;
 drop table if exists vor;
 drop table if exists waypoint;
-drop table if exists boundary_line;
 drop table if exists boundary;
 

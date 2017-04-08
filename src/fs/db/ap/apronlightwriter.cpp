@@ -39,7 +39,7 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronEdgeLight *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
 
   // Write coordinates and edge index as string
-  bindCoordinateList(":vertices", type->getVertices());
+  bindBglCoordinateList(":vertices", type->getVertices());
   bindNumberList(":edges", type->getEdgeIndex());
 
   executeStatement();

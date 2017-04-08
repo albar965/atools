@@ -178,7 +178,6 @@ HEADERS += src/atools.h \
     src/fs/navdatabaseprogress.h \
     src/fs/navdatabaseoptions.h \
     src/io/inireader.h \
-    src/fs/db/nav/boundarylinewriter.h \
     src/fs/db/nav/boundarywriter.h \
     src/fs/db/nav/airwaysegmentwriter.h \
     src/fs/navdatabaseerrors.h \
@@ -334,7 +333,6 @@ SOURCES += src/atools.cpp \
     src/fs/navdatabaseprogress.cpp \
     src/fs/navdatabaseoptions.cpp \
     src/io/inireader.cpp \
-    src/fs/db/nav/boundarylinewriter.cpp \
     src/fs/db/nav/boundarywriter.cpp \
     src/fs/db/nav/airwaysegmentwriter.cpp \
     src/fs/navdatabaseerrors.cpp \

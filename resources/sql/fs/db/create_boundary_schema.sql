@@ -39,27 +39,8 @@ create table boundary
   min_altitude integer not null,  -- Lower altitude for this airspace in feet
   min_lonx double not null,       -- Bounding rectange
   min_laty double not null,       -- "
+  geometry blob,                  -- Pre calculated geometry
 foreign key(file_id) references bgl_file(bgl_file_id)
 );
 
 create index if not exists idx_boundary_file_id on boundary(file_id);
-
-
--- **************************************************
-
-drop table if exists boundary_line;
-
--- Segment of a airspace boundary
-create table boundary_line
-(
-  boundary_line_id integer primary key,
-  boundary_id integer not null,
-  type varchar(15),                -- see enum atools::fs::bgl::boundaryline::PointType
-  radius double,                   -- Only available if type is CIRCLE
-  lonx double,                     -- Line coordinates. If type is CIRCLE: center coordinates
-  laty double,                     -- "
-foreign key(boundary_id) references boundary(boundary_id)
-);
-
-create index if not exists idx_boundary_line_boundary_id on boundary_line(boundary_id);
-

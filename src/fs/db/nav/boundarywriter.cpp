@@ -20,16 +20,19 @@
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/navdatabaseoptions.h"
-#include "fs/db/nav/boundarylinewriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
+
+#include "geo/linestring.h"
 
 namespace atools {
 namespace fs {
 namespace db {
 
 using atools::fs::bgl::Boundary;
+using atools::geo::LineString;
+namespace  bl = bgl::boundaryline;
 
 void BoundaryWriter::writeObject(const Boundary *type)
 {
@@ -71,10 +74,36 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_altitude", roundToInt(meterToFeet(type->getMinPosition().getAltitude())));
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
-  executeStatement();
 
-  BoundaryLineWriter *w = getDataWriter().getBoundaryLineWriter();
-  w->write(type->getSegments());
+  bindCoordinateList(":geometry", fetchAirspaceLines(type));
+  executeStatement();
+}
+
+const QList<atools::geo::Pos> BoundaryWriter::fetchAirspaceLines(const Boundary *type)
+{
+  const QList<bgl::BoundarySegment>& segments = type->getSegments();
+  LineString processedLines;
+
+  for(int i = 0; i < segments.size(); i++)
+  {
+    const bgl::BoundarySegment& segment = segments.at(i);
+
+    if(segment.getType() == bl::ORIGIN)
+      // Origin needed later
+      continue;
+    else if(segment.getType() == bl::CIRCLE)
+      // Append line string build from circle parameters - one point every 20 degrees
+      processedLines.append(LineString(segments.at(i - 1).getPosition(), segment.getRadius(), 24));
+    else if(segment.getType() == bl::ARC_CCW || segment.getType() == bl::ARC_CW)
+      // Build an arc
+      processedLines.append(LineString(segments.at(i - 1).getPosition(),
+                                       segments.at(i - 2).getPosition(),
+                                       segments.at(i).getPosition(),
+                                       segment.getType() == bl::ARC_CW, 24));
+    else
+      processedLines.append(segment.getPosition());
+  }
+  return processedLines.toList();
 }
 
 } // namespace writer

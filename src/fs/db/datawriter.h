@@ -66,7 +66,6 @@ class ApronLightWriter;
 class FenceWriter;
 class TaxiPathWriter;
 class BoundaryWriter;
-class BoundaryLineWriter;
 class ProgressHandler;
 
 /*
@@ -231,11 +230,6 @@ public:
     return boundaryWriter;
   }
 
-  atools::fs::db::BoundaryLineWriter *getBoundaryLineWriter() const
-  {
-    return boundaryLineWriter;
-  }
-
   /*
    * Set the error list that will be filled whenever exceptions occur
    */
@@ -290,7 +284,6 @@ private:
   atools::fs::db::IlsWriter *ilsWriter = nullptr;
 
   atools::fs::db::BoundaryWriter *boundaryWriter = nullptr;
-  atools::fs::db::BoundaryLineWriter *boundaryLineWriter = nullptr;
 
   atools::fs::db::RunwayIndex *runwayIndex = nullptr;
   atools::fs::db::AirportIndex *airportIndex = nullptr;

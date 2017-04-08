@@ -51,7 +51,6 @@
 #include "fs/db/ap/deleteairportwriter.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
-#include "fs/db/nav/boundarylinewriter.h"
 #include "fs/bgl/bglfile.h"
 
 #include <QDebug>
@@ -102,7 +101,6 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Progr
   ilsWriter = new IlsWriter(db, *this);
 
   boundaryWriter = new BoundaryWriter(db, *this);
-  boundaryLineWriter = new BoundaryLineWriter(db, *this);
 
   runwayIndex = new RunwayIndex();
   airportIndex = new AirportIndex();
@@ -167,8 +165,6 @@ void DataWriter::close()
   ilsWriter = nullptr;
   delete boundaryWriter;
   boundaryWriter = nullptr;
-  delete boundaryLineWriter;
-  boundaryLineWriter = nullptr;
   delete runwayIndex;
   runwayIndex = nullptr;
   delete airportIndex;

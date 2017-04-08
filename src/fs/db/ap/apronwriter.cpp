@@ -43,14 +43,14 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   bindBool(":is_draw_surface", type->second->isDrawSurface());
   bindBool(":is_draw_detail", type->second->isDrawDetail());
 
-  bindCoordinateList(":vertices", type->first->getVertices());
+  bindBglCoordinateList(":vertices", type->first->getVertices());
 
   if(getOptions().isIncludedBglObject(type::APRON2))
   {
-    bindCoordinateList(":vertices2", type->second->getVertices());
+    bindBglCoordinateList(":vertices2", type->second->getVertices());
 
     // Triangles are space and comma separated
-    bind(":triangles", toString(type->second->getTriangleIndex()));
+    bind(":triangles", toBytes(type->second->getTriangleIndex()));
   }
   else
   {
@@ -61,7 +61,7 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   executeStatement();
 }
 
-QByteArray ApronWriter::toString(const QList<int>& triangles)
+QByteArray ApronWriter::toBytes(const QList<int>& triangles)
 {
   QByteArray blob;
   QDataStream out(&blob, QIODevice::WriteOnly);

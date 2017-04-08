@@ -41,6 +41,9 @@ public:
 protected:
   virtual void writeObject(const atools::fs::bgl::Boundary *type) override;
 
+private:
+  const QList<geo::Pos> fetchAirspaceLines(const atools::fs::bgl::Boundary *type);
+
 };
 
 } // namespace writer
