@@ -46,8 +46,6 @@ create index if not exists idx_ndb_lonx on ndb(lonx);
 create index if not exists idx_ndb_laty on ndb(laty);
 
 create index if not exists idx_boundary_type on boundary(type);
-create index if not exists idx_boundary_min_altitude_type on boundary(min_altitude_type);
-create index if not exists idx_boundary_max_altitude_type on boundary(max_altitude_type);
 create index if not exists idx_boundary_max_altitude on boundary(max_altitude);
 create index if not exists idx_boundary_max_lonx on boundary(max_lonx);
 create index if not exists idx_boundary_max_laty on boundary(max_laty);
