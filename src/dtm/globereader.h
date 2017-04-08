@@ -48,7 +48,7 @@ public:
   static bool isDirValid(const QString& path);
 
   /* Open all files (up to 16) */
-  void openFiles();
+  bool openFiles();
   void closeFiles();
 
   /* Elevation in meter */

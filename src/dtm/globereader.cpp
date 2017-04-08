@@ -64,7 +64,7 @@ bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
          (fileEntry.size() == FILE_SIZE_LARGE || fileEntry.size() == FILE_SIZE_SMALL);
 }
 
-void GlobeReader::openFiles()
+bool GlobeReader::openFiles()
 {
   closeFiles();
 
@@ -84,6 +84,7 @@ void GlobeReader::openFiles()
       qWarning() << "Found invalid file" << fileEntry.filePath();
   }
 
+  bool foundFile = false;
   for(int i = 0; i < list.size(); i++)
   {
     const QString& filename = list.at(i);
@@ -95,6 +96,7 @@ void GlobeReader::openFiles()
       {
         dataStreams[i] = new QDataStream(dataFiles[i]);
         dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
+        foundFile = true;
       }
       else
       {
@@ -103,6 +105,7 @@ void GlobeReader::openFiles()
       }
     }
   }
+  return foundFile;
 }
 
 void GlobeReader::closeFile(int i)
