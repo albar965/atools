@@ -164,13 +164,29 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
     {
       line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
 
-      for(const Pos& p : positions)
+      Pos lastDropped;
+      for(const Pos& pos : positions)
       {
-        float elevation = getElevation(p);
-        if(!elevations.isEmpty() && atools::almostEqual(elevations.last().getAltitude(), elevation))
-          continue;
+        float elevation = getElevation(pos);
 
-        elevations.append(p.alt(elevation));
+        if(!elevations.isEmpty())
+        {
+          if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
+          {
+            // Drop points with similar altitude
+            lastDropped = pos;
+            lastDropped.setAltitude(elevation);
+            continue;
+          }
+          else if(lastDropped.isValid())
+          {
+            // Add last point of a stretch with similar altitude
+            elevations.append(lastDropped);
+            lastDropped = Pos();
+          }
+        }
+
+        elevations.append(pos.alt(elevation));
       }
     }
     else if(!elevations.isEmpty())

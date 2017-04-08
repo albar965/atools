@@ -61,6 +61,7 @@ public:
 private:
   friend class::DtmTest;
 
+  /* Source data parameters */
   static Q_DECL_CONSTEXPR int NUM_DATAFILES = 16;
   static Q_DECL_CONSTEXPR qint64 FILE_SIZE_SMALL = 103680000;
   static Q_DECL_CONSTEXPR qint64 FILE_SIZE_LARGE = 129600000;
@@ -70,21 +71,23 @@ private:
   static Q_DECL_CONSTEXPR int GRID_COLUMNS = 4 * TILE_COLUMNS;
   static Q_DECL_CONSTEXPR int GRID_ROWS = 2 * 6000 + 2 * 4800;
 
+  /* Cut segments into points if it is shorter than this value in meter */
   static Q_DECL_CONSTEXPR float MIN_LENGTH_FOR_INTERPOLATION = 1000.f;
-  static Q_DECL_CONSTEXPR float INTERPOLATION_SEGMENT_LENGTH = 500.f;
-
-  QString dataDir;
-  QVector<QFile *> dataFiles;
-  QVector<QDataStream *> dataStreams;
-
-  void closeFile(int i);
+  /* Distance between sampling points meter */
+  static Q_DECL_CONSTEXPR float INTERPOLATION_SEGMENT_LENGTH = 250.f;
+  /* Points are considered equal if they are equal within this range in meter */
+  static Q_DECL_CONSTEXPR float SAME_ELEVATION_EPSILON = 1.f;
 
   /* Calculate file index and byte offset within file */
   qint64 calcFileOffset(int gridCol, int gridRow, int& fileIndex);
   qint64 calcFileOffset(const atools::geo::Pos& pos, int& fileIndex);
   qint64 calcFileOffset(double lonx, double laty, int& fileIndex);
   static bool fileEntryValid(const QFileInfo& fileEntry);
+  void closeFile(int i);
 
+  QString dataDir;
+  QVector<QFile *> dataFiles;
+  QVector<QDataStream *> dataStreams;
 };
 
 } // namespace dtm
