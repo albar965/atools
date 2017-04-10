@@ -48,7 +48,7 @@ create index if not exists idx_waypoint_nav_id on waypoint(nav_id);
 
 drop table if exists vor;
 
--- VHF omnidirectional range - VOR, VORDME or DME
+-- VHF omnidirectional range - VOR, VORDME, DME or TACAN
 create table vor
 (
   vor_id integer primary key,
@@ -58,7 +58,8 @@ create table vor
   region varchar(2),            -- ICAO two letter region identifier
   airport_id integer,           -- Reference to airport if applicable
   type varchar(15),             -- See enum atools::fs::bgl::nav::IlsVorType
-  frequency integer not null,   -- Frequency - MHz * 1000
+  frequency integer,            -- Frequency - MHz * 1000
+  channel varchar(5),           -- TACAN channel
   range integer not null,       -- Navaid radio range in NM
   mag_var double  not null,     -- Magnetic variance in degree < 0 for West and > 0 for East
   dme_only integer not null,    -- 1 if this is only a DME
@@ -250,7 +251,8 @@ create table nav_search
   type varchar(15),                 -- Subtype dependent on nav_type
                                     -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
   nav_type varchar(15),             -- WAYPOINT, VORDME, VOR, DME, NDB
-  frequency integer,                -- VOR: MHz * 10000, NDB kHz * 100 to allow differentiation between NDB and VOR
+  frequency integer,                  -- VOR: MHz * 10000, NDB kHz * 100 to allow differentiation between NDB and VOR
+  channel varchar(10),                 --  TACAN channel of TACAN or VORTAC
   waypoint_num_victor_airway integer, -- Number of victor airways attached to this waypoint
   waypoint_num_jet_airway integer,    -- Number of jet airways attached to this waypoint
   scenery_local_path varchar(250) collate nocase not null,  -- Path relative to FS base directory

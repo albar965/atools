@@ -15,6 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
+#include "fs/db/nav/tacanwriter.h"
+
 #include "fs/db/nav/vorwriter.h"
 #include "fs/bgl/nav/dme.h"
 #include "fs/db/meta/bglfilewriter.h"
@@ -33,30 +35,32 @@ using atools::fs::bgl::Vor;
 using namespace atools::geo;
 using namespace atools;
 
-void VorWriter::writeObject(const Vor *type)
+void TacanWriter::writeObject(const bgl::Tacan *type)
 {
   if(getOptions().isVerbose())
-    qDebug() << "Writing VOR " << type->getIdent() << type->getName();
+    qDebug() << "Writing TACAN " << type->getIdent() << type->getName();
 
-  bind(":vor_id", getNextId());
+  // Use VOR id
+  bind(":vor_id", getDataWriter().getVorWriter()->getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":region", type->getRegion());
-  bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
-  bind(":frequency", type->getFrequency());
+  bind(":type", "TC");
+  bindNullInt(":frequency");
+  bind(":channel", type->getChannel());
   bind(":range", roundToInt(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
-  bind(":dme_only", type->isDmeOnly());
   bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
+  bind(":dme_only", type->isDmeOnly());
 
   bindNullInt(":airport_id");
   QString apIdent = type->getAirportIdent();
   if(!apIdent.isEmpty() && getOptions().isIncludedAirportIdent(apIdent))
   {
-    QString msg("VOR ID " + QString::number(getCurrentId()) +
+    QString msg("TACAN ID " + QString::number(getCurrentId()) +
                 " ident " + type->getIdent() + " name " + type->getName());
     int id = getAirportIndex()->getAirportId(apIdent, msg);
     if(id != -1)
@@ -76,6 +80,7 @@ void VorWriter::writeObject(const Vor *type)
     bindNullFloat(":dme_lonx");
     bindNullFloat(":dme_laty");
   }
+
   executeStatement();
 }
 

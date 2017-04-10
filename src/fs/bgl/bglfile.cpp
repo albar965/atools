@@ -25,6 +25,7 @@
 #include "fs/bgl/nl/namelist.h"
 #include "fs/bgl/nav/ilsvor.h"
 #include "fs/bgl/nav/vor.h"
+#include "fs/bgl/nav/tacan.h"
 #include "fs/bgl/nav/ils.h"
 #include "fs/bgl/nav/marker.h"
 #include "fs/bgl/nav/ndb.h"
@@ -100,6 +101,7 @@ bool BglFile::hasContent()
   return !(airports.isEmpty() &&
            namelists.isEmpty() &&
            vors.isEmpty() &&
+           tacans.isEmpty() &&
            ils.isEmpty() &&
            ndbs.isEmpty() &&
            marker.isEmpty() &&
@@ -233,6 +235,10 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
     case nav::ILS:
       if(options->isIncludedBglObject(type::ILS))
         return createRecord<Ils>(bs, &ils);
+
+      break;
+    default:
+      qWarning() << "Unknown ILS/VOR type" << iv.getType();
   }
   return nullptr;
 }
@@ -277,6 +283,9 @@ void BglFile::readRecords(BinaryStream *bs)
           break;
         case section::NAME_LIST:
           rec = createRecord<Namelist>(bs, &namelists);
+          break;
+        case section::TACAN:
+          rec = createRecord<Tacan>(bs, &tacans);
           break;
         case section::ILS_VOR:
           rec = handleIlsVor(bs);
@@ -346,6 +355,9 @@ void BglFile::readRecords(BinaryStream *bs)
         case section::FAKE_TYPES:
         case section::ICAO_RUNWAY:
           break;
+        default:
+          qWarning() << "Unknown section type" << type;
+
       }
       if(rec == nullptr)
         // Create empty record, just to skip it
@@ -360,6 +372,7 @@ void BglFile::deleteAllObjects()
   airports.clear();
   namelists.clear();
   ils.clear();
+  tacans.clear();
   vors.clear();
   ndbs.clear();
   marker.clear();

@@ -30,5 +30,6 @@
         <file>resources/sql/fs/db/update_ils_ids.sql</file>
         <file>resources/sql/fs/db/update_approaches.sql</file>
         <file>resources/sql/fs/db/update_wp_ids.sql</file>
+        <file>resources/sql/fs/db/update_vor.sql</file>
     </qresource>
 </RCC>

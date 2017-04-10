@@ -188,6 +188,9 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
     case section::TERRAIN_PHOTO_NIGHT:
       return "TERRAIN_PHOTO_NIGHT";
 
+    case section::TACAN:
+      return "TACAN";
+
     case section::FAKE_TYPES:
       return "FAKE_TYPES";
 

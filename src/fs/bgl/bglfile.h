@@ -22,14 +22,12 @@
 #include "fs/bgl/header.h"
 #include "fs/bgl/section.h"
 #include "fs/bgl/subsection.h"
-
 #include "fs/navdatabaseoptions.h"
+#include "io/binarystream.h"
 
 #include <QString>
 #include <QList>
 #include <QDebug>
-
-#include <io/binarystream.h>
 
 namespace atools {
 namespace io {
@@ -40,6 +38,7 @@ namespace fs {
 namespace bgl {
 class Ils;
 class Vor;
+class Tacan;
 class Ndb;
 class Marker;
 class Waypoint;
@@ -129,6 +128,11 @@ public:
     return vors;
   }
 
+  const QList<const atools::fs::bgl::Tacan *>& getTacans() const
+  {
+    return tacans;
+  }
+
   const QList<const atools::fs::bgl::Waypoint *>& getWaypoints() const
   {
     return waypoints;
@@ -177,6 +181,7 @@ private:
   QList<const atools::fs::bgl::Airport *> airports;
   QList<const atools::fs::bgl::Namelist *> namelists;
   QList<const atools::fs::bgl::Vor *> vors;
+  QList<const atools::fs::bgl::Tacan *> tacans;
   QList<const atools::fs::bgl::Ils *> ils;
   QList<const atools::fs::bgl::Ndb *> ndbs;
   QList<const atools::fs::bgl::Marker *> marker;

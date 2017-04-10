@@ -24,6 +24,7 @@
 #include "fs/db/nav/waypointwriter.h"
 #include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/nav/vorwriter.h"
+#include "fs/db/nav/tacanwriter.h"
 #include "fs/db/nav/ndbwriter.h"
 #include "fs/db/nav/markerwriter.h"
 #include "fs/db/nav/ilswriter.h"
@@ -68,7 +69,8 @@ using atools::fs::bgl::section::SectionType;
 static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES =
 {
   bgl::section::AIRPORT, bgl::section::AIRPORT_ALT, bgl::section::ILS_VOR, bgl::section::NDB,
-  bgl::section::MARKER, bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY
+  bgl::section::MARKER, bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY,
+  bgl::section::TACAN
 };
 
 DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progress)
@@ -96,6 +98,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Progr
   waypointWriter = new WaypointWriter(db, *this);
   airwaySegmentWriter = new AirwaySegmentWriter(db, *this);
   vorWriter = new VorWriter(db, *this);
+  tacanWriter = new TacanWriter(db, *this);
   ndbWriter = new NdbWriter(db, *this);
   markerWriter = new MarkerWriter(db, *this);
   ilsWriter = new IlsWriter(db, *this);
@@ -157,6 +160,8 @@ void DataWriter::close()
   airwaySegmentWriter = nullptr;
   delete vorWriter;
   vorWriter = nullptr;
+  delete tacanWriter;
+  tacanWriter = nullptr;
   delete ndbWriter;
   ndbWriter = nullptr;
   delete markerWriter;
@@ -240,6 +245,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
           // Write all navaids to the database
           waypointWriter->write(bglFile.getWaypoints());
           vorWriter->write(bglFile.getVors());
+          tacanWriter->write(bglFile.getTacans());
           ndbWriter->write(bglFile.getNdbs());
           markerWriter->write(bglFile.getMarker());
           ilsWriter->write(bglFile.getIls());
@@ -250,7 +256,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
             airportIdents.insert(ap->getIdent());
 
           numNamelists += bglFile.getNamelists().size();
-          numVors += bglFile.getVors().size();
+          numVors += bglFile.getVors().size() + bglFile.getTacans().size();
           numIls += bglFile.getIls().size();
           numNdbs += bglFile.getNdbs().size();
           numMarker += bglFile.getMarker().size();

@@ -54,6 +54,7 @@ class DeleteAirportWriter;
 class WaypointWriter;
 class AirwaySegmentWriter;
 class VorWriter;
+class TacanWriter;
 class NdbWriter;
 class MarkerWriter;
 class IlsWriter;
@@ -230,6 +231,11 @@ public:
     return boundaryWriter;
   }
 
+  atools::fs::db::VorWriter *getVorWriter() const
+  {
+    return vorWriter;
+  }
+
   /*
    * Set the error list that will be filled whenever exceptions occur
    */
@@ -279,6 +285,7 @@ private:
   atools::fs::db::WaypointWriter *waypointWriter = nullptr;
   atools::fs::db::AirwaySegmentWriter *airwaySegmentWriter = nullptr;
   atools::fs::db::VorWriter *vorWriter = nullptr;
+  atools::fs::db::TacanWriter *tacanWriter = nullptr;
   atools::fs::db::NdbWriter *ndbWriter = nullptr;
   atools::fs::db::MarkerWriter *markerWriter = nullptr;
   atools::fs::db::IlsWriter *ilsWriter = nullptr;

@@ -15,61 +15,37 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/nav/ilsvor.h"
+#ifndef ATOOLS_FS_DB_TACANWRITER_H
+#define ATOOLS_FS_DB_TACANWRITER_H
 
-#include "io/binarystream.h"
+#include "fs/db/writerbase.h"
+#include "fs/bgl/nav/tacan.h"
 
 namespace atools {
 namespace fs {
-namespace bgl {
+namespace db {
 
-using atools::io::BinaryStream;
-
-QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
+/* Write tacans to the VOR table */
+class TacanWriter :
+  public atools::fs::db::WriterBase<atools::fs::bgl::Tacan>
 {
-  switch(type)
+public:
+  TacanWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
+    : WriterBase(db, dataWriter, "vor")
   {
-    case nav::TERMINAL:
-      return "T";
-
-    case nav::LOW:
-      return "L";
-
-    case nav::HIGH:
-      return "H";
-
-    case nav::ILS:
-      return "I";
-
-    case nav::VOT:
-      return "V";
-
   }
-  qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
-  return "INVALID";
-}
 
-IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
-{
-  type = static_cast<nav::IlsVorType>(bs->readUByte());
-}
+  virtual ~TacanWriter()
+  {
+  }
 
-IlsVor::~IlsVor()
-{
-}
+protected:
+  virtual void writeObject(const atools::fs::bgl::Tacan *type) override;
 
-QDebug operator<<(QDebug out, const IlsVor& record)
-{
-  QDebugStateSaver saver(out);
+};
 
-  out.nospace().noquote() << static_cast<const Record&>(record)
-  << " IlsVor["
-  << "type " << IlsVor::ilsVorTypeToStr(record.getType())
-  << "]";
-  return out;
-}
-
-} // namespace bgl
+} // namespace writer
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_FS_DB_TACANWRITER_H

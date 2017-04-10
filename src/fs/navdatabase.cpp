@@ -36,7 +36,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 18;
+const int PROGRESS_NUM_STEPS = 19;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -311,6 +311,13 @@ void NavDatabase::createInternal()
   }
 
   if((aborted = progress.reportOther(tr("Updating waypoints"))) == true)
+    return;
+
+  // Create VORTACs
+  script.executeScript(":/atools/resources/sql/fs/db/update_vor.sql");
+  db->commit();
+
+  if((aborted = progress.reportOther(tr("Merging VOR and TACAN to VORTAC"))) == true)
     return;
 
   // Set the nav_ids (VOR, NDB) in the waypoint table

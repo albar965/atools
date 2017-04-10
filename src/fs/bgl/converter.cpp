@@ -45,17 +45,25 @@ QString intToIcao(unsigned int icao, bool noBitShift)
   // First extract the coded/compressed values
   int idx = 0;
   if(value > 37)
+  {
     while(value > 37)
     {
+      if(idx >= codedArr.size())
+        return QString();
+
       coded = value % 38;
       codedArr[idx++] = coded;
       value = (value - coded) / 38;
       if(value < 38)
       {
+        if(idx >= codedArr.size())
+          return QString();
+
         coded = value;
         codedArr[idx++] = coded;
       }
     }
+  }
   else
     codedArr[idx++] = value;
 

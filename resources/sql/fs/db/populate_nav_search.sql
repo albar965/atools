@@ -43,17 +43,29 @@ join scenery_area s on f.scenery_area_id = s.scenery_area_id
 left outer join airport a on n.airport_id = a.airport_id;
 
 -- Insert VORs into nav_search table
-insert into nav_search (vor_id, file_id, airport_id, airport_ident, ident, name, region, range, type, nav_type, frequency,
+insert into nav_search (vor_id, file_id, airport_id, airport_ident, ident, name, region, range, type, nav_type, frequency, channel,
   scenery_local_path, bgl_filename, mag_var, altitude, lonx, laty)
-select v.vor_id, v.file_id, v.airport_id, a.ident as airport_ident, v.ident, v.name, v.region, v.range, 'V' || v.type,
+select v.vor_id, v.file_id, v.airport_id, a.ident as airport_ident, v.ident, v.name, v.region, v.range,
   case
-    when dme_only = 1 then 'D'
-    when dme_only = 0 and dme_altitude is not null then 'VD'
-    when dme_only = 0 and dme_altitude is null then 'V'
+    when v.type = 'VTH' or v.type = 'H' then 'VH'              -- VORTAC
+    when v.type = 'VTL' or v.type = 'L' then 'VL'              -- VORTAC
+    when v.type = 'VTT' or v.type = 'T' then 'VT'              -- VORTAC
+  else
+    v.type
+  end as type,
+  case
+    when v.type = 'TC' and dme_only = 0 then 'TC'              -- TACAN
+    when v.type = 'TC' and dme_only = 1 then 'TCD'             -- TACAN DME only
+    when v.type like 'VT%' and dme_only = 0 then 'VT'          -- VORTAC
+    when v.type like 'VT%' and dme_only = 1 then 'VTD'         -- VORTAC DME only
+    when dme_only = 1 then 'D'                                 -- DME
+    when dme_only = 0 and dme_altitude is not null then 'VD'   -- VORDME
+    when dme_only = 0 and dme_altitude is null then 'V'        -- VOR
   else
     'U'
   end as nav_type,
   v.frequency * 10 as frequency,
+  v.channel,
   s.local_path, f.filename, v.mag_var, v.altitude, v.lonx, v.laty
 from vor v
 join bgl_file f on f.bgl_file_id = v.file_id

@@ -15,61 +15,60 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/bgl/nav/ilsvor.h"
+#ifndef ATOOLS_BGL_NAV_TACAN_H
+#define ATOOLS_BGL_NAV_TACAN_H
 
-#include "io/binarystream.h"
+#include "fs/bgl/nav/navbase.h"
+#include "fs/bgl/nav/ilsvor.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
-using atools::io::BinaryStream;
+class Dme;
 
-QString IlsVor::ilsVorTypeToStr(nav::IlsVorType type)
+/*
+ * TACAN
+ */
+class Tacan :
+  public atools::fs::bgl::NavBase
 {
-  switch(type)
+public:
+  Tacan(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  virtual ~Tacan();
+
+  QString getChannel() const
   {
-    case nav::TERMINAL:
-      return "T";
-
-    case nav::LOW:
-      return "L";
-
-    case nav::HIGH:
-      return "H";
-
-    case nav::ILS:
-      return "I";
-
-    case nav::VOT:
-      return "V";
-
+    return QString::number(channel) + QChar(channelId);
   }
-  qWarning().nospace().noquote() << "Invalid ILS/VOR type " << type;
-  return "INVALID";
-}
 
-IlsVor::IlsVor(const NavDatabaseOptions *options, BinaryStream *bs)
-  : Record(options, bs)
-{
-  type = static_cast<nav::IlsVorType>(bs->readUByte());
-}
+  /*
+   * @return get the DME record for this VOR if available - otherwise null
+   */
+  const atools::fs::bgl::Dme *getDme() const
+  {
+    return dme;
+  }
 
-IlsVor::~IlsVor()
-{
-}
+  /*
+   * @return true if only DME
+   */
+  bool isDmeOnly() const
+  {
+    return dmeOnly;
+  }
 
-QDebug operator<<(QDebug out, const IlsVor& record)
-{
-  QDebugStateSaver saver(out);
+private:
+  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Tacan& record);
 
-  out.nospace().noquote() << static_cast<const Record&>(record)
-  << " IlsVor["
-  << "type " << IlsVor::ilsVorTypeToStr(record.getType())
-  << "]";
-  return out;
-}
+  char channelId;
+  int channel;
+  bool dmeOnly;
+  atools::fs::bgl::Dme *dme = nullptr;
+};
 
 } // namespace bgl
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_BGL_NAV_TACAN_H

@@ -197,7 +197,9 @@ HEADERS += src/atools.h \
     src/geo/line.h \
     src/gui/itemviewzoomhandler.h \
     src/gui/griddelegate.h \
-    src/dtm/globereader.h
+    src/dtm/globereader.h \
+    src/fs/bgl/nav/tacan.h \
+    src/fs/db/nav/tacanwriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -353,7 +355,9 @@ SOURCES += src/atools.cpp \
     src/geo/line.cpp \
     src/gui/itemviewzoomhandler.cpp \
     src/gui/griddelegate.cpp \
-    src/dtm/globereader.cpp
+    src/dtm/globereader.cpp \
+    src/fs/bgl/nav/tacan.cpp \
+    src/fs/db/nav/tacanwriter.cpp
 
 
 unix {

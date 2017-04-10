@@ -83,8 +83,11 @@ enum SectionType
   TERRAIN_PHOTO_NOV = 0x96,
   TERRAIN_PHOTO_DEC = 0x97,
   TERRAIN_PHOTO_NIGHT = 0x98,
+  TACAN = 0xa0, /* P3D only */
+
   FAKE_TYPES = 0x2710,
   ICAO_RUNWAY = 0x2711
+
 };
 
 QString sectionTypeStr(atools::fs::bgl::section::SectionType type);

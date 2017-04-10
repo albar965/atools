@@ -119,11 +119,14 @@ void IlsWriter::writeObject(const Ils *type)
   bindNullFloat(":loc_heading");
   bindNullFloat(":loc_width");
 
-  if(loc != nullptr && !apIdent.isEmpty())
-  {
+  if(!apIdent.isEmpty())
     bind(":loc_airport_ident", apIdent);
-    bind(":loc_runway_name", loc->getRunwayName());
+  else
+    bindNullString(":loc_airport_ident");
 
+  if(loc != nullptr)
+  {
+    bind(":loc_runway_name", loc->getRunwayName());
     bind(":loc_heading", loc->getHeading());
     bind(":loc_width", loc->getWidth());
   }
