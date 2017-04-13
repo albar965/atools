@@ -39,6 +39,7 @@ GlobeReader::GlobeReader(const QString& dataDirParam)
 {
   dataFiles.fill(nullptr, NUM_DATAFILES);
   dataStreams.fill(nullptr, NUM_DATAFILES);
+  dataFilenames.fill(QString(), NUM_DATAFILES);
 }
 
 GlobeReader::~GlobeReader()
@@ -60,6 +61,7 @@ bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
 {
   return fileEntry.exists() &&
          fileEntry.isReadable() &&
+         fileEntry.isFile() &&
          QDir::match("[a-p][1-9][0-9][gb]", fileEntry.fileName()) &&
          (fileEntry.size() == FILE_SIZE_LARGE || fileEntry.size() == FILE_SIZE_SMALL);
 }
@@ -67,45 +69,46 @@ bool GlobeReader::fileEntryValid(const QFileInfo& fileEntry)
 bool GlobeReader::openFiles()
 {
   closeFiles();
+  if(!isDirValid(dataDir))
+    return false;
 
   QDir dir(dataDir);
-  QVector<QString> list;
-  list.fill(QString(), NUM_DATAFILES);
 
+  // Read only filenames here
   for(const QFileInfo& fileEntry : dir.entryInfoList({"????"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
   {
     if(fileEntryValid(fileEntry))
     {
       // Revised files will be overwritten
       int index = static_cast<int>(fileEntry.fileName().at(0).toLatin1() - 'a');
-      list[index] = fileEntry.filePath();
+      dataFilenames[index] = fileEntry.filePath();
     }
     else
       qWarning() << "Found invalid file" << fileEntry.filePath();
   }
+  return true;
+}
 
-  bool foundFile = false;
-  for(int i = 0; i < list.size(); i++)
+void GlobeReader::openFile(int i)
+{
+  const QString& name = dataFilenames.at(i);
+  if(!name.isEmpty() && dataFiles[i] == nullptr)
   {
-    const QString& filename = list.at(i);
-
-    if(!filename.isEmpty())
+    qDebug() << Q_FUNC_INFO << name;
+    dataFiles[i] = new QFile(name);
+    if(dataFiles[i]->open(QIODevice::ReadOnly))
     {
-      dataFiles[i] = new QFile(filename);
-      if(dataFiles[i]->open(QIODevice::ReadOnly))
-      {
-        dataStreams[i] = new QDataStream(dataFiles[i]);
-        dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
-        foundFile = true;
-      }
-      else
-      {
-        closeFile(i);
-        qWarning() << "Cannot open file" << filename;
-      }
+      dataStreams[i] = new QDataStream(dataFiles[i]);
+      dataStreams[i]->setByteOrder(QDataStream::LittleEndian);
+    }
+    else
+    {
+      closeFile(i);
+      // Clear filename to avoid reopening
+      dataFilenames[i].clear();
+      qWarning() << "Cannot open file" << name;
     }
   }
-  return foundFile;
 }
 
 void GlobeReader::closeFile(int i)
@@ -135,6 +138,7 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos)
   int fileIndex;
   qint64 fileOffset = calcFileOffset(pos.getLonX(), pos.getLatY(), fileIndex);
 
+  openFile(fileIndex);
   QFile *dataFile = dataFiles[fileIndex];
 
   if(dataFile != nullptr)

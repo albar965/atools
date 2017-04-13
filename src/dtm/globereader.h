@@ -47,7 +47,7 @@ public:
   /* Valid if at least one file with matching name and size was found. */
   static bool isDirValid(const QString& path);
 
-  /* Open all files (up to 16) */
+  /* Collect file names (up to 16). Files are opened on demand */
   bool openFiles();
   void closeFiles();
 
@@ -84,8 +84,10 @@ private:
   qint64 calcFileOffset(double lonx, double laty, int& fileIndex);
   static bool fileEntryValid(const QFileInfo& fileEntry);
   void closeFile(int i);
+  void openFile(int i);
 
   QString dataDir;
+  QVector<QString> dataFilenames;
   QVector<QFile *> dataFiles;
   QVector<QDataStream *> dataStreams;
 };

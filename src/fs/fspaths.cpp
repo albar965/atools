@@ -125,19 +125,24 @@ QString FsPaths::getBasePath(SimulatorType type)
   // No Windows here - get the path for debugging purposes
   // from the configuration file
   Settings& s = Settings::instance();
-  fsPath = s.valueStr(settingsKey(type));
-  if(fsPath.isEmpty())
-  {
-    // If it is not present in the settings file use one of the predefined paths
-    // Useful with symlinks for debugging
-    QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-    QString nonWinPath = nonWindowsPath(type);
+  QString key = settingsKey(type);
 
-    if(!nonWinPath.isEmpty())
+  if(!key.isEmpty())
+  {
+    fsPath = s.valueStr(key);
+    if(fsPath.isEmpty())
     {
-      QFileInfo fi(home + QDir::separator() + nonWinPath);
-      if(fi.exists() && fi.isDir() && fi.isReadable())
-        fsPath = fi.absoluteFilePath();
+      // If it is not present in the settings file use one of the predefined paths
+      // Useful with symlinks for debugging
+      QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+      QString nonWinPath = nonWindowsPath(type);
+
+      if(!nonWinPath.isEmpty())
+      {
+        QFileInfo fi(home + QDir::separator() + nonWinPath);
+        if(fi.exists() && fi.isDir() && fi.isReadable())
+          fsPath = fi.absoluteFilePath();
+      }
     }
   }
 #endif
