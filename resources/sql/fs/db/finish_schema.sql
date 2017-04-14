@@ -75,6 +75,7 @@ create index if not exists idx_airway_from_lonx on airway(from_lonx);
 create index if not exists idx_airway_from_laty on airway(from_laty);
 create index if not exists idx_airway_to_lonx on airway(to_lonx);
 create index if not exists idx_airway_to_laty on airway(to_laty);
+create index if not exists idx_airway_name on airway(airway_name);
 
 -------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------
