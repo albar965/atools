@@ -94,6 +94,9 @@ void FsPaths::logAllPaths()
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;
+  if(type == EXTERNAL || type == EXTERNAL2)
+    return QString();
+
 #if defined(Q_OS_WIN32)
   // Try to get the FSX path from the Windows registry
   QSettings settings(registryPath(type), QSettings::NativeFormat);
