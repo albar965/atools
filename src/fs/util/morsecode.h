@@ -15,12 +15,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_UTIL_MORSECODE_H
-#define ATOOLS_UTIL_MORSECODE_H
+#ifndef ATOOLS_FS_UTIL_MORSECODE_H
+#define ATOOLS_FS_UTIL_MORSECODE_H
 
 #include <QString>
 
 namespace atools {
+namespace fs {
 namespace util {
 
 /*
@@ -43,6 +44,7 @@ private:
 };
 
 } // namespace util
+} // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_UTIL_MORSECODE_H
+#endif // ATOOLS_FS_UTIL_MORSECODE_H

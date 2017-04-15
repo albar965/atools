@@ -79,28 +79,59 @@ void DatabaseMeta::updateTimestamp()
   db->commit();
 }
 
+void DatabaseMeta::updateFlags()
+{
+  lastLoadTime = QDateTime::currentDateTime();
+
+  bool hasSidStar = false;
+  SqlQuery select(db);
+  select.exec("select approach_id from approach "
+              "where type = 'GPS' and suffix in ('A', 'D') and has_gps_overlay = 1 limit 1");
+  if(select.next())
+    hasSidStar = true;
+  select.finish();
+
+  SqlQuery query(db);
+  query.prepare("update metadata set has_sid_star = :sidstar");
+  query.bindValue(":sidstar", hasSidStar);
+  query.exec();
+  db->commit();
+}
+
 void DatabaseMeta::updateAll()
 {
   updateVersion();
   updateTimestamp();
+  updateFlags();
 }
 
-bool DatabaseMeta::hasSchema()
+bool DatabaseMeta::hasSchema() const
 {
   return SqlUtil(db).hasTable("airport");
 }
 
-bool DatabaseMeta::hasData()
+bool DatabaseMeta::hasData() const
 {
   return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
 }
 
-bool DatabaseMeta::isDatabaseCompatible()
+bool DatabaseMeta::hasSidStar() const
+{
+  bool sidStar = false;
+  SqlQuery select(db);
+  select.exec("select has_sid_star from metadata");
+  if(select.next())
+    sidStar = select.value("has_sid_star").toBool();
+  select.finish();
+  return sidStar;
+}
+
+bool DatabaseMeta::isDatabaseCompatible() const
 {
   return isDatabaseCompatible(DB_VERSION_MAJOR);
 }
 
-bool DatabaseMeta::isDatabaseCompatible(int majorVersion)
+bool DatabaseMeta::isDatabaseCompatible(int majorVersion) const
 {
   if(isValid())
     return majorVersion == getMajorVersion();

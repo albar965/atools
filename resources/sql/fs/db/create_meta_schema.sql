@@ -27,7 +27,8 @@ create table metadata
   db_version_major integer not null,  -- Major version. The schema is considered incompatible if this differs
                                       -- from application supported version (i.e. can cause SQL errors, crashes, etc.)
   db_version_minor integer not null,  -- Minor version. Only for updates that do not break compatibility.
-  last_load_timestamp varchar(100)    -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
+  last_load_timestamp varchar(100),   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
+  has_sid_star integer                -- 1 if any SID or STAR procedures are in the database
 );
 
 -- **************************************************

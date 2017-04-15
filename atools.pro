@@ -164,7 +164,6 @@ HEADERS += src/atools.h \
     src/sql/sqlrecord.h \
     src/util/heap.h \
     src/util/htmlbuilder.h \
-    src/util/morsecode.h \
     src/gui/filehistoryhandler.h \
     src/gui/mapposhistory.h \
     src/fs/db/databasemeta.h \
@@ -199,7 +198,9 @@ HEADERS += src/atools.h \
     src/gui/griddelegate.h \
     src/dtm/globereader.h \
     src/fs/bgl/nav/tacan.h \
-    src/fs/db/nav/tacanwriter.h
+    src/fs/db/nav/tacanwriter.h \
+    src/fs/util/tacanfrequencies.h \
+    src/fs/util/morsecode.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -322,7 +323,6 @@ SOURCES += src/atools.cpp \
     src/sql/sqlrecord.cpp \
     src/util/heap.cpp \
     src/util/htmlbuilder.cpp \
-    src/util/morsecode.cpp \
     src/gui/filehistoryhandler.cpp \
     src/gui/mapposhistory.cpp \
     src/fs/db/databasemeta.cpp \
@@ -357,7 +357,9 @@ SOURCES += src/atools.cpp \
     src/gui/griddelegate.cpp \
     src/dtm/globereader.cpp \
     src/fs/bgl/nav/tacan.cpp \
-    src/fs/db/nav/tacanwriter.cpp
+    src/fs/db/nav/tacanwriter.cpp \
+    src/fs/util/tacanfrequencies.cpp \
+    src/fs/util/morsecode.cpp
 
 
 unix {

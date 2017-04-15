@@ -15,11 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "util/morsecode.h"
+#include "fs/util/morsecode.h"
 
 #include <QHash>
 
 namespace atools {
+namespace fs {
 namespace util {
 
 /* *INDENT-OFF* */
@@ -95,4 +96,5 @@ QString MorseCode::getCode(const QString& text)
 }
 
 } // namespace util
+} // namespace fs
 } // namespace atools

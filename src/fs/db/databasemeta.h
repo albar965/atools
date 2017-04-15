@@ -70,25 +70,25 @@ public:
   /*
    * @return true if a schema was found (checked by looking for the most important airport table)
    */
-  bool hasSchema();
+  bool hasSchema() const;
 
   /*
    * @return true if a schema was found and contains data (checked by looking for the most important airport table)
    */
-  bool hasData();
+  bool hasData() const;
+
+  /* True if any SID or STARs were found (P3D only) */
+  bool hasSidStar() const;
 
   /*
    * @return true if application major version and database major version are equal
    */
-  bool isDatabaseCompatible();
-  bool isDatabaseCompatible(int majorVersion);
+  bool isDatabaseCompatible() const;
+  bool isDatabaseCompatible(int majorVersion) const;
 
   /* Update the version information in the database */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
-
-  /* Update the last loaded timestamp in the database and set it to now */
-  void updateTimestamp();
 
   /* Set database version to application version and timestamp to current time */
   void updateAll();
@@ -96,16 +96,20 @@ public:
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change
    */
-  static const int DB_VERSION_MAJOR = 11;
+  static const int DB_VERSION_MAJOR = 12;
 
   /* Minor database version of the application. Minor version differences are compatible.
    * Since version 10: Fixes in boundary coordinates and indexes added.
-   * Version 1: Added airway name index
    */
-  static const int DB_VERSION_MINOR = 1;
+  static const int DB_VERSION_MINOR = 0;
 
 private:
+  /* Update the last loaded timestamp in the database and set it to now */
+  void updateTimestamp();
+  void updateFlags();
+
   atools::sql::SqlDatabase *db;
+
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
   bool valid = false;
