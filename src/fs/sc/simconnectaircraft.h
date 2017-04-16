@@ -49,7 +49,7 @@ Q_DECLARE_FLAGS(Flags, Flag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
 
 // quint8
-enum CategoryEnum
+enum Category
 {
   AIRPLANE,
   HELICOPTER,
@@ -60,10 +60,8 @@ enum CategoryEnum
   VIEWER
 };
 
-Q_DECLARE_FLAGS(Category, CategoryEnum);
-
 // quint8
-enum EngineTypeEnum
+enum EngineType
 {
   PISTON = 0,
   JET = 1,
@@ -72,8 +70,6 @@ enum EngineTypeEnum
   UNSUPPORTED = 4,
   TURBOPROP = 5
 };
-
-Q_DECLARE_FLAGS(EngineType, EngineTypeEnum);
 
 /*
  * Base aircraft that is used to transfer across network links. For user and AI aircraft.

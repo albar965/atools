@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "simconnecthandler.h"
+#include "fs/sc/simconnecthandler.h"
 #include "fs/sc/weatherrequest.h"
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
@@ -56,16 +56,18 @@ enum DataRequestId
   DATA_REQUEST_ID_USER_AIRCRAFT = 1,
   DATA_REQUEST_ID_AI_AIRCRAFT = 2,
   DATA_REQUEST_ID_AI_HELICOPTER = 3,
-  DATA_REQUEST_ID_WEATHER_INTERPOLATED = 4,
-  DATA_REQUEST_ID_WEATHER_NEAREST_STATION = 5,
-  DATA_REQUEST_ID_WEATHER_STATION = 6
+  DATA_REQUEST_ID_AI_BOAT = 4,
+  DATA_REQUEST_ID_WEATHER_INTERPOLATED = 5,
+  DATA_REQUEST_ID_WEATHER_NEAREST_STATION = 6,
+  DATA_REQUEST_ID_WEATHER_STATION = 7
 };
 
 enum DataDefinitionId
 {
   DATA_DEFINITION_USER_AIRCRAFT = 10,
   DATA_DEFINITION_AI_AIRCRAFT = 20,
-  DATA_DEFINITION_AI_HELICOPTER = 30
+  DATA_DEFINITION_AI_HELICOPTER = 30,
+  DATA_DEFINITION_AI_BOAT = 40
 };
 
 /* Struct that will be filled with raw data from the simconnect interface. */
@@ -209,7 +211,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
     case SIMCONNECT_RECV_ID_OPEN:
       {
         // enter code to handle SimConnect version information received in a SIMCONNECT_RECV_OPEN structure.
-        SIMCONNECT_RECV_OPEN *openData = (SIMCONNECT_RECV_OPEN *)pData;
+        SIMCONNECT_RECV_OPEN *openData = static_cast<SIMCONNECT_RECV_OPEN *>(pData);
 
         // Print some useful simconnect interface data to log
         qInfo() << "ApplicationName" << openData->szApplicationName;
@@ -227,7 +229,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
     case SIMCONNECT_RECV_ID_EXCEPTION:
       {
         // enter code to handle errors received in a SIMCONNECT_RECV_EXCEPTION structure.
-        SIMCONNECT_RECV_EXCEPTION *except = (SIMCONNECT_RECV_EXCEPTION *)pData;
+        SIMCONNECT_RECV_EXCEPTION *except = static_cast<SIMCONNECT_RECV_EXCEPTION *>(pData);
         simconnectException = static_cast<SIMCONNECT_EXCEPTION>(except->dwException);
 
         if(simconnectException != SIMCONNECT_EXCEPTION_WEATHER_UNABLE_TO_GET_OBSERVATION || verbose)
@@ -240,7 +242,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
     case SIMCONNECT_RECV_ID_EVENT:
       {
-        SIMCONNECT_RECV_EVENT *evt = (SIMCONNECT_RECV_EVENT *)pData;
+        SIMCONNECT_RECV_EVENT *evt = static_cast<SIMCONNECT_RECV_EVENT *>(pData);
 
         switch(evt->uEventID)
         {
@@ -261,7 +263,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
 
     case SIMCONNECT_RECV_ID_SIMOBJECT_DATA_BYTYPE:
       {
-        SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *pObjData = (SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *)pData;
+        SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *pObjData = static_cast<SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE *>(pData);
 
         if(pObjData->dwRequestID == DATA_REQUEST_ID_USER_AIRCRAFT)
         {
@@ -321,10 +323,11 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
           userDataFetched = true;
         }
         else if(pObjData->dwRequestID == DATA_REQUEST_ID_AI_AIRCRAFT ||
-                pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER)
+                pObjData->dwRequestID == DATA_REQUEST_ID_AI_HELICOPTER ||
+                pObjData->dwRequestID == DATA_REQUEST_ID_AI_BOAT)
         {
           if(verbose)
-            qDebug() << "DATA_REQUEST_ID_AI_AIRCRAFT DATA_REQUEST_ID_AI_HELICOPTER"
+            qDebug() << "DATA_REQUEST_ID_AI_AIRCRAFT/HELICOPTER/BOAT"
                      << "pObjData->dwDefineCount" << pObjData->dwDefineCount
                      << "pObjData->dwDefineID" << pObjData->dwDefineID
                      << "pObjData->dw ID" << pObjData->dwID
@@ -380,7 +383,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
       }
     case SIMCONNECT_RECV_ID_WEATHER_OBSERVATION:
       {
-        SIMCONNECT_RECV_WEATHER_OBSERVATION *pObjData = (SIMCONNECT_RECV_WEATHER_OBSERVATION *)pData;
+        SIMCONNECT_RECV_WEATHER_OBSERVATION *pObjData = static_cast<SIMCONNECT_RECV_WEATHER_OBSERVATION *>(pData);
 
         const char *pszMETAR = pObjData->szMetar;
 
@@ -647,6 +650,7 @@ bool SimConnectHandler::connect()
 
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_AIRCRAFT);
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_HELICOPTER);
+    p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_BOAT);
     p->fillDataDefinitionAicraft(DATA_DEFINITION_USER_AIRCRAFT);
 
     SimConnect_AddToDataDefinition(p->hSimConnect, DATA_DEFINITION_USER_AIRCRAFT, "Magvar",
@@ -773,8 +777,6 @@ bool SimConnectHandler::connect()
     p->hSimConnect = NULL;
     return false;
   }
-
-  return true;
 }
 
 bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
@@ -799,7 +801,14 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
     return false;
 
-  p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER and DATA_REQUEST_ID_AI_AIRCRAFT");
+  hr = SimConnect_RequestDataOnSimObjectType(
+    p->hSimConnect, DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
+    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
+  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_BOAT"))
+    return false;
+
+  p->callDispatch(p->aiDataFetched,
+                  "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");
 
   // === Get user aircraft =======================================================
   hr = SimConnect_RequestDataOnSimObjectType(
