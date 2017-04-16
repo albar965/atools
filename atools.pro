@@ -200,7 +200,8 @@ HEADERS += src/atools.h \
     src/fs/bgl/nav/tacan.h \
     src/fs/db/nav/tacanwriter.h \
     src/fs/util/tacanfrequencies.h \
-    src/fs/util/morsecode.h
+    src/fs/util/morsecode.h \
+    src/gui/palettesettings.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -359,7 +360,8 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/nav/tacan.cpp \
     src/fs/db/nav/tacanwriter.cpp \
     src/fs/util/tacanfrequencies.cpp \
-    src/fs/util/morsecode.cpp
+    src/fs/util/morsecode.cpp \
+    src/gui/palettesettings.cpp
 
 
 unix {
