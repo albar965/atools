@@ -34,13 +34,14 @@ DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
   {
     SqlQuery query(db);
 
-    query.exec("select db_version_major, db_version_minor, last_load_timestamp from metadata");
+    query.exec("select db_version_major, db_version_minor, last_load_timestamp, has_sid_star from metadata limit 1");
 
     if(query.next())
     {
       majorVersion = query.value("db_version_major").toInt();
       minorVersion = query.value("db_version_minor").toInt();
       lastLoadTime = query.value("last_load_timestamp").toDateTime();
+      sidStar = query.value("has_sid_star").toBool();
       valid = true;
     }
     query.finish();
@@ -113,17 +114,6 @@ bool DatabaseMeta::hasSchema() const
 bool DatabaseMeta::hasData() const
 {
   return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
-}
-
-bool DatabaseMeta::hasSidStar() const
-{
-  bool sidStar = false;
-  SqlQuery select(db);
-  select.exec("select has_sid_star from metadata");
-  if(select.next())
-    sidStar = select.value("has_sid_star").toBool();
-  select.finish();
-  return sidStar;
 }
 
 bool DatabaseMeta::isDatabaseCompatible() const

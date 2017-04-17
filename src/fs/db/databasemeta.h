@@ -78,7 +78,10 @@ public:
   bool hasData() const;
 
   /* True if any SID or STARs were found (P3D only) */
-  bool hasSidStar() const;
+  bool hasSidStar() const
+  {
+    return sidStar;
+  }
 
   /*
    * @return true if application major version and database major version are equal
@@ -112,7 +115,7 @@ private:
 
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
-  bool valid = false;
+  bool valid = false, sidStar = false;
 };
 
 } // namespace db
