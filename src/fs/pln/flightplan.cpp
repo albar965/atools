@@ -20,6 +20,7 @@
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "atools.h"
+#include "geo/linestring.h"
 
 #include <QDataStream>
 #include <QDateTime>
@@ -172,12 +173,7 @@ void Flightplan::save(const QString& file, bool clean)
     writer.writeAttribute("version", "1,0");
     writer.writeTextElement("Descr", "AceXML Document");
 
-    properties.insert("_lnm", tr("Created by %1 Version %2 (revision %3) on %4").
-                      arg(QApplication::applicationName()).
-                      arg(QApplication::applicationVersion()).
-                      arg(atools::gitRevision()).
-                      arg(QLocale().toString(QDateTime::currentDateTime())).
-                      replace("-", " "));
+    properties.insert("_lnm", programInfo());
 
     if(!clean)
     {
@@ -317,7 +313,7 @@ void Flightplan::saveFlp(const QString& file)
           // Do not save stuff like procedure points
           continue;
 
-        stream << "DctWpt" << index << "=" << entry.getIcaoIdent() << endl;
+        stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
 
         QString coords = QString("%1,%2").
                          arg(entry.getPosition().getLatY(), 0, 'f', 6).
@@ -339,8 +335,8 @@ void Flightplan::saveFlp(const QString& file)
           continue;
 
         stream << "Airway" << index << "=" << entries.at(i + 1).getAirway() << endl;
-        stream << "Airway" << index << "FROM=" << entry.getIcaoIdent() << endl;
-        stream << "Airway" << index << "TO=" << entries.at(i + 1).getIcaoIdent() << endl;
+        stream << "Airway" << index << "FROM=" << entry.getWaypointId() << endl;
+        stream << "Airway" << index << "TO=" << entries.at(i + 1).getWaypointId() << endl;
         index++;
       }
     }
@@ -355,6 +351,190 @@ void Flightplan::saveFlp(const QString& file)
   }
   else
     throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
+}
+
+void Flightplan::saveGpx(const QString& file, const geo::LineString& track)
+{
+  filename = file;
+
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QXmlStreamWriter writer(&xmlFile);
+    writer.setCodec("UTF-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+    writer.writeStartDocument("1.0");
+
+    // <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
+    // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+    writer.writeStartElement("gpx");
+    // writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
+    // writer.writeAttribute("version", "1.1");
+    writer.writeAttribute("creator", "Little Navmap");
+    // writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+    // writer.writeAttribute("xsi:schemaLocation",
+    // "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+
+    // writer.writeComment(programInfo());
+
+    // <metadata>
+    // <link href="http://www.garmin.com">
+    // <text>Garmin International</text>
+    // </link>
+    // <time>2009-10-17T22:58:43Z</time>
+    // </metadata>
+    writer.writeStartElement("metadata");
+    writer.writeStartElement("link");
+    writer.writeAttribute("href", "https://albar965.github.io/littlenavmap.html");
+    writer.writeTextElement("text", programInfo());
+    writer.writeEndElement(); // link
+    writer.writeEndElement(); // metadata
+
+    writer.writeStartElement("rte");
+
+    QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6, %7").
+                    arg(departureAiportName).arg(departureIdent).
+                    arg(destinationAiportName).arg(destinationIdent).
+                    arg(getCruisingAltitude()).
+                    arg(flightplanTypeToString(flightplanType)).
+                    arg(routeTypeToString(routeType));
+
+    writer.writeTextElement("name", title + tr(" Flight Plan"));
+    writer.writeTextElement("desc", descr);
+
+    // Write route ========================================================
+    for(const FlightplanEntry& entry : entries)
+    {
+      // <rtept lat="52.0" lon="13.5">
+      // <ele>33.0</ele>
+      // <time>2011-12-13T23:59:59Z</time>
+      // <name>rtept 1</name>
+      // </rtept>
+      writer.writeStartElement("rtept");
+      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY()));
+      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX()));
+
+      writer.writeTextElement("name", entry.getWaypointId());
+      writer.writeTextElement("desc", entry.getWaypointTypeAsString());
+
+      writer.writeEndElement(); // rtept
+    }
+
+    writer.writeEndElement(); // rte
+
+    // Write track ========================================================
+    if(!track.isEmpty())
+    {
+      writer.writeStartElement("trk");
+      writer.writeTextElement("name", title + tr(" Track"));
+      writer.writeTextElement("desc", descr);
+
+      writer.writeStartElement("trkseg");
+      for(const atools::geo::Pos& pos : track)
+      {
+        writer.writeStartElement("trkpt");
+
+        writer.writeAttribute("lat", QString::number(pos.getLatY()));
+        writer.writeAttribute("lon", QString::number(pos.getLonX()));
+
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
+
+        writer.writeEndElement(); // trkpt
+      }
+      writer.writeEndElement(); // trkseg
+      writer.writeEndElement(); // trk
+    }
+
+    writer.writeEndElement(); // gpx
+    writer.writeEndDocument();
+
+  }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+void Flightplan::saveFms(const QString& file)
+{
+  filename = file;
+  QFile fmsFile(filename);
+
+  if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fmsFile);
+
+    // OS
+     #if defined(Q_OS_MACOS)
+    stream << "A" << endl;
+     #else
+    stream << "I" << endl;
+     #endif
+
+    // File version
+    stream << "3 version" << endl;
+    stream << "1" << endl;
+
+    // Number of waypoints
+    stream << (entries.size() - 1) << endl;
+
+    int i = 0;
+    for(const FlightplanEntry& entry : entries)
+    {
+      if(entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+        continue;
+
+      // 1 - Airport ICAO
+      // 2 - NDB
+      // 3 - VOR
+      // 11 - Fix
+      // 28 - Lat/Lon Position
+
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+      {
+        float laty = std::abs(entry.getPosition().getLatY());
+        float lonx = std::abs(entry.getPosition().getLonX());
+
+        stream << "28 ";
+        // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
+        // -28.478_-056.370 Correct for a waypoint at -28.478°/-56.370°.
+        stream << (laty < 0.f ? "-" : "+")
+               << QString("%1").arg(laty, 2, 'f', 3, QChar('0')).rightJustified(6, QChar('0'), false)
+               << "_"
+               << (lonx < 0.f ? "-" : "+")
+               << QString("%1").arg(lonx, 3, 'f', 3, QChar('0')).rightJustified(7, QChar('0'), false)
+               << " ";
+      }
+      else
+      {
+        if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+          stream << "1 ";
+        else if(entry.getWaypointType() == atools::fs::pln::entry::INTERSECTION)
+          stream << "11 ";
+        else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
+          stream << "3 ";
+        else if(entry.getWaypointType() == atools::fs::pln::entry::NDB)
+          stream << "2 ";
+
+        stream << entry.getWaypointId() << " ";
+      }
+
+      float alt = getCruisingAltitude();
+      if(i == 0 || i >= entries.size() - 1)
+        alt = 0.f;
+
+      stream << QString::number(alt, 'f', 6) << " "
+             << QString::number(entry.getPosition().getLatY(), 'f', 6)
+             << " "
+             << QString::number(entry.getPosition().getLonX(), 'f', 6)
+             << endl;
+
+      i++;
+    }
+  }
+  else
+    throw Exception(tr("Cannot open FMS file %1. Reason: %2").arg(file).arg(fmsFile.errorString()));
 }
 
 void Flightplan::saveRte(const QString& file)
@@ -628,6 +808,16 @@ RouteType Flightplan::stringToRouteType(const QString& str)
     return VOR;
 
   return DIRECT;
+}
+
+QString Flightplan::programInfo()
+{
+  return tr("Created by %1 Version %2 (revision %3) on %4").
+         arg(QApplication::applicationName()).
+         arg(QApplication::applicationVersion()).
+         arg(atools::gitRevision()).
+         arg(QLocale().toString(QDateTime::currentDateTime())).
+         replace("-", " ");
 }
 
 } // namespace pln

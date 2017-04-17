@@ -25,7 +25,9 @@
 class QXmlStreamReader;
 
 namespace atools {
-
+namespace geo {
+class LineString;
+}
 namespace fs {
 namespace pln {
 
@@ -77,6 +79,12 @@ public:
 
   /* Aerosoft Airbus FLP format */
   void saveFlp(const QString& file);
+
+  /* X-Plane FMS format */
+  void saveFms(const QString& file);
+
+  /* GPX format including track */
+  void saveGpx(const QString& file, const geo::LineString& track);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
@@ -293,6 +301,7 @@ private:
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
+  QString programInfo();
 
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
