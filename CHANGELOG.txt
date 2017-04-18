@@ -1,3 +1,12 @@
+Version 2.3.6.develop
+
+* GLOBE data reader now opens files on demand.
+* Added SID/STAR indicator to database metadata.
+* Added ship traffic to simconnect interface.
+* Added GPX and X-Plane FMS export formats to flight plan.
+* Added options to disable transfer of AI vehicles.
+* Fix for too many reconnects flooding log on simulator crash.
+
 Version 2.3.5.develop
 
 * Removed boundary_line table and pre-calculate boundary geometry now which ist stored as binary data.
