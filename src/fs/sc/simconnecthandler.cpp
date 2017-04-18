@@ -779,7 +779,7 @@ bool SimConnectHandler::connect()
   }
 }
 
-bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
+bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options)
 {
   if(p->verbose)
     qDebug() << "fetchData entered ================================================================";
@@ -789,23 +789,31 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
   p->simDataAircraftObjectIds.clear();
   p->simDataObjectId = 0;
 
-  HRESULT hr = SimConnect_RequestDataOnSimObjectType(
-    p->hSimConnect, DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
-    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
-  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_AIRCRAFT"))
-    return false;
+  HRESULT hr = 0;
 
-  hr = SimConnect_RequestDataOnSimObjectType(
-    p->hSimConnect, DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
-    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
-  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
-    return false;
+  if(options & FETCH_AI_AIRCRAFT)
+  {
+    hr = SimConnect_RequestDataOnSimObjectType(
+      p->hSimConnect, DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
+      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
+    if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_AIRCRAFT"))
+      return false;
 
-  hr = SimConnect_RequestDataOnSimObjectType(
-    p->hSimConnect, DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
-    static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
-  if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_BOAT"))
-    return false;
+    hr = SimConnect_RequestDataOnSimObjectType(
+      p->hSimConnect, DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
+      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
+    if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
+      return false;
+  }
+
+  if(options & FETCH_AI_BOAT)
+  {
+    hr = SimConnect_RequestDataOnSimObjectType(
+      p->hSimConnect, DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
+      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
+    if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_BOAT"))
+      return false;
+  }
 
   p->callDispatch(p->aiDataFetched,
                   "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");

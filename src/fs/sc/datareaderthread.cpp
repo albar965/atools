@@ -35,6 +35,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
   handler = new SimConnectHandler(verboseLog);
+  simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
 
 DataReaderThread::~DataReaderThread()
@@ -93,6 +94,7 @@ void DataReaderThread::run()
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
+    atools::fs::sc::Options opts = simconnectOptions;
 
     if(loadReplayFile != nullptr)
     {
@@ -104,6 +106,30 @@ void DataReaderThread::run()
         if(loadReplayFile->atEnd())
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
+        // Remove boat and ship traffic depending on settings for testing purposes
+        QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraftNonConst();
+        if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
+        {
+          QVector<SimConnectAircraft>::iterator it =
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
+                           {
+                             return !aircraft.isUser() && aircraft.getCategory() != atools::fs::sc::BOAT;
+                           });
+          if(it != aiAircraft.end())
+            aiAircraft.erase(it, aiAircraft.end());
+        }
+
+        if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
+        {
+          QVector<SimConnectAircraft>::iterator it =
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
+                           {
+                             return !aircraft.isUser() && aircraft.getCategory() == atools::fs::sc::BOAT;
+                           });
+          if(it != aiAircraft.end())
+            aiAircraft.erase(it, aiAircraft.end());
+        }
+
         emit postSimConnectData(data);
       }
       else
@@ -113,7 +139,7 @@ void DataReaderThread::run()
         closeReplay();
       }
     }
-    else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM))
+    else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM, opts))
     {
       // Data fetched from simconnect - send to client ============================================
       if(verbose && !data.getMetars().isEmpty())
@@ -134,6 +160,13 @@ void DataReaderThread::run()
         emit disconnectedFromSimulator();
 
         qWarning() << "Error fetching data from simulator.";
+
+        if(numErrors++ > MAX_NUMBER_OF_ERRORS)
+        {
+          numErrors = 0;
+          emit postLogMessage(tr("Too many errors reading from simulator. Restart program."), true);
+          break;
+        }
 
         if(!handler->isSimRunning())
           // Try to reconnect if we lost connection to simulator
@@ -168,7 +201,7 @@ void DataReaderThread::run()
   qDebug() << Q_FUNC_INFO << "leave";
 }
 
-bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm)
+bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, Options options)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << "enter";
@@ -197,7 +230,7 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
     if(verbose)
       qDebug() << "DataReaderThread::fetchData nextPacketId" << nextPacketId;
 
-    retval = handler->fetchData(data, radiusKm);
+    retval = handler->fetchData(data, radiusKm, options);
     data.setPacketId(nextPacketId++);
   }
 
@@ -216,6 +249,11 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
     qDebug() << Q_FUNC_INFO << "leave";
 
   return retval;
+}
+
+void DataReaderThread::setSimconnectOptions(Options value)
+{
+  simconnectOptions = value;
 }
 
 void DataReaderThread::setReconnectRateSec(int reconnectSec)

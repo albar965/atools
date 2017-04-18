@@ -93,6 +93,8 @@ public:
   /* Sets a one shot request to fetch on next iteration */
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);
 
+  void setSimconnectOptions(atools::fs::sc::Options value);
+
 signals:
   /* Send on each received data package from the simconnect interface */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
@@ -109,9 +111,15 @@ private:
   void connectToSimulator();
   virtual void run() override;
   void setupReplay();
-  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
+  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options);
 
   atools::fs::sc::SimConnectHandler *handler = nullptr;
+
+  /* Have to protect options since they will be modified from outside the thread */
+  std::atomic<atools::fs::sc::Options> simconnectOptions;
+
+  int numErrors = 0;
+  const int MAX_NUMBER_OF_ERRORS = 50;
 
   const quint32 REPLAY_FILE_MAGIC_NUMBER = 0XCACF4F27;
   const quint32 REPLAY_FILE_VERSION = 1;

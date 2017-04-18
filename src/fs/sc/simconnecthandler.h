@@ -22,6 +22,7 @@
 #include <QVector>
 
 #include "geo/pos.h"
+#include "fs/sc/simconnecttypes.h"
 
 namespace atools {
 namespace fs {
@@ -54,7 +55,7 @@ public:
   bool connect();
 
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
-  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm);
+  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options);
   bool fetchWeatherData(atools::fs::sc::SimConnectData& data);
 
   void addWeatherRequest(const atools::fs::sc::WeatherRequest& request);

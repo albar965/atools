@@ -101,6 +101,12 @@ public:
     return aiAircraft;
   }
 
+  /* Only needed to modify replay */
+  QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraftNonConst()
+  {
+    return aiAircraft;
+  }
+
   const QVector<atools::fs::sc::MetarResult>& getMetars() const
   {
     return metarResults;

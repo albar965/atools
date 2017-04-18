@@ -37,6 +37,16 @@ enum SimConnectStatus
   WRITE_ERROR /* Error from IO device */
 };
 
+enum Option
+{
+  NO_OPTION = 0,
+  FETCH_AI_AIRCRAFT = 1 << 0,
+  FETCH_AI_BOAT = 1 << 1
+};
+
+Q_DECLARE_FLAGS(Options, Option);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options);
+
 const QVector<QString> SIMCONNECT_STATUS_TEXT =
 {
   QObject::tr("No Error"),
