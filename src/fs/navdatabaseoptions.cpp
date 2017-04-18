@@ -179,6 +179,7 @@ QStringList NavDatabaseOptions::createFilterList(const QStringList& pathList)
 
 void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
 {
+  setReadInactive(settings.value("Options/IgnoreInactive", false).toBool());
   setVerbose(settings.value("Options/Verbose", false).toBool());
   setResolveAirways(settings.value("Options/ResolveAirways", true).toBool());
   setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());

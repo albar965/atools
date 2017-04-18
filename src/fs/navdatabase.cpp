@@ -246,7 +246,8 @@ void NavDatabase::createInternal()
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
   {
-    if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
+    if((area.isActive() || options->isReadInactive()) &&
+       options->isIncludedLocalPath(area.getLocalPath()))
     {
       if((aborted = progress.reportSceneryArea(&area)) == true)
         return;

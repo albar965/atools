@@ -6,6 +6,7 @@ Version 2.3.6.develop
 * Added GPX and X-Plane FMS export formats to flight plan.
 * Added options to disable transfer of AI vehicles.
 * Fix for too many reconnects flooding log on simulator crash.
+* Added option to read also inactive scenery entries.
 
 Version 2.3.5.develop
 
