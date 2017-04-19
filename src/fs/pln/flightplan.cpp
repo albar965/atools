@@ -213,39 +213,39 @@ void Flightplan::save(const QString& file, bool clean)
     writer.writeTextElement("AppVersionBuild", QString().number(appVersionBuild));
     writer.writeEndElement(); // AppVersion
 
-    for(const FlightplanEntry& e : entries)
+    for(const FlightplanEntry& entry : entries)
     {
-      if(e.isNoSave())
+      if(entry.isNoSave())
         // Do not save stuff like procedure points
         continue;
 
       writer.writeStartElement("ATCWaypoint");
 
       // Trim to max allowed length for FSX/P3D
-      writer.writeAttribute("id", e.getWaypointId().left(10));
-      writer.writeTextElement("ATCWaypointType", e.getWaypointTypeAsString());
+      writer.writeAttribute("id", entry.getWaypointId().left(10));
+      writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsString());
 
-      if(!e.getPosition().isValid())
-        throw atools::Exception("Invalid position in flightplan for id " + e.getWaypointId());
+      if(!entry.getPosition().isValid())
+        throw atools::Exception("Invalid position in flightplan for id " + entry.getWaypointId());
 
-      atools::geo::Pos pos = e.getPosition();
+      atools::geo::Pos pos = entry.getPosition();
 
       // Use null altitude for all except airports
-      if(e.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+      if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
         pos.setAltitude(0.f);
 
       writer.writeTextElement("WorldPosition", pos.toLongString());
 
-      if(!e.getAirway().isEmpty())
-        writer.writeTextElement("ATCAirway", e.getAirway());
+      if(!entry.getAirway().isEmpty())
+        writer.writeTextElement("ATCAirway", entry.getAirway());
 
-      if(!e.getIcaoRegion().isEmpty() || !e.getIcaoIdent().isEmpty())
+      if(!entry.getIcaoRegion().isEmpty() || !entry.getIcaoIdent().isEmpty())
       {
         writer.writeStartElement("ICAO");
 
-        if(!e.getIcaoRegion().isEmpty())
-          writer.writeTextElement("ICAORegion", e.getIcaoRegion());
-        writer.writeTextElement("ICAOIdent", e.getIcaoIdent());
+        if(!entry.getIcaoRegion().isEmpty())
+          writer.writeTextElement("ICAORegion", entry.getIcaoRegion());
+        writer.writeTextElement("ICAOIdent", entry.getIcaoIdent());
 
         writer.writeEndElement(); // ICAO
       }
@@ -297,7 +297,7 @@ void Flightplan::saveFlp(const QString& file)
     for(int i = 2; i < entries.size() - 1; i++)
     {
       if(entries.at(i).isNoSave())
-        // Do not save stuff like procedure points
+        // Do not save procedure points
         continue;
       hasMissingAirways |= entries.at(i).getAirway().isEmpty();
     }
@@ -408,6 +408,10 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track)
     // Write route ========================================================
     for(const FlightplanEntry& entry : entries)
     {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
       // <rtept lat="52.0" lon="13.5">
       // <ele>33.0</ele>
       // <time>2011-12-13T23:59:59Z</time>
@@ -482,7 +486,7 @@ void Flightplan::saveFms(const QString& file)
     int i = 0;
     for(const FlightplanEntry& entry : entries)
     {
-      if(entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      if(entry.isNoSave() || entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
         continue;
 
       // 1 - Airport ICAO
