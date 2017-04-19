@@ -96,7 +96,7 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
       span = -span;
     }
 
-    if(spanAngle != nullptr)
+    if(startAngle != nullptr)
       *startAngle = static_cast<float>(start);
 
     if(spanAngle != nullptr)
