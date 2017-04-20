@@ -264,7 +264,6 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
 
   double courseFrom1 = courseRad(p1.lonX, p1.latY, p.lonX, p.latY);
   double course1To2 = courseRad(p1.lonX, p1.latY, p2.lonX, p2.latY);
-
   double distFrom1 = distanceRad(p1.lonX, p1.latY, p.lonX, p.latY);
   double distFrom2 = distanceRad(p2.lonX, p2.latY, p.lonX, p.latY);
 
@@ -273,30 +272,25 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
   double crossTrack = asin(sin(distFrom1) * sin(courseFrom1 - course1To2));
 
   // ATD=acos(cos(dist_AD)/cos(XTD))
+  // The "along track distance", ATD, the distance from A along the course towards B to the point abeam D is given by:
   double distAlongFrom1 = acos(cos(distFrom1) / cos(crossTrack));
   double distAlongFrom2 = acos(cos(distFrom2) / cos(-crossTrack));
 
-  if(!std::isnan(distAlongFrom1) && distAlongFrom1 > dist1To2)
-  {
-    result.status = AFTER_END;
-    result.distance = static_cast<float>(distFrom2 * EARTH_RADIUS_METER);
-    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
-    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
-  }
-  else if(!std::isnan(distAlongFrom2) && distAlongFrom2 > dist1To2)
-  {
-    result.status = BEFORE_START;
-    result.distance = static_cast<float>(distFrom1 * EARTH_RADIUS_METER);
-    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
-    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
-  }
-  else if(!std::isnan(distAlongFrom1) && distAlongFrom1 <= dist1To2 &&
-          !std::isnan(distAlongFrom2) && distAlongFrom2 <= dist1To2)
+  if(!std::isnan(distAlongFrom1) && distAlongFrom1 <= dist1To2 &&
+     !std::isnan(distAlongFrom2) && distAlongFrom2 <= dist1To2)
   {
     result.status = ALONG_TRACK;
     result.distance = static_cast<float>(crossTrack * EARTH_RADIUS_METER);
     result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
     result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
+  }
+  else if(!std::isnan(distAlongFrom1) && !std::isnan(distAlongFrom2))
+  {
+    result.status = distFrom1 < distFrom2 ? BEFORE_START : AFTER_END;
+    result.distance = static_cast<float>((distFrom1 < distFrom2 ? distFrom1 : distFrom2) * EARTH_RADIUS_METER);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
+
   }
   // else invalid
 }
@@ -312,7 +306,7 @@ float Pos::angleDegTo(const Pos& otherPos) const
     toDegree(courseRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
                        toRadians(static_cast<double>(otherPos.lonX)),
                        toRadians(static_cast<double>(otherPos.latY))));
-  return static_cast<float>(normalizeCourse(-angleDeg + 360.));
+  return static_cast<float>(normalizeCourse(angleDeg));
 }
 
 Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
@@ -554,10 +548,12 @@ float Pos::sec(float value) const
 
 double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2) const
 {
-  return remainder(atan2(sin((lonX1 - lonX2)) * cos((latY2)),
-                         cos((latY1)) * sin((latY2)) -
-                         sin((latY1)) * cos((latY2)) *
-                         cos((lonX1 - lonX2))), 2. * M_PI);
+  double val = atan2(sin((lonX2 - lonX1)) * cos((latY2)),
+                     cos((latY1)) * sin((latY2)) -
+                     sin((latY1)) * cos((latY2)) *
+                     cos((lonX2 - lonX1)));
+
+  return std::fmod(val + M_PI * 2., M_PI * 2.);
 }
 
 double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2) const

@@ -252,6 +252,20 @@ Q_DECL_CONSTEXPR TYPE opposedCourseDeg(TYPE courseDegree)
          static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
 }
 
+template<typename TYPE>
+TYPE normalizeRad(TYPE rad)
+{
+  if(rad > std::numeric_limits<TYPE>::max() / 2)
+    return rad;
+
+  double result = static_cast<double>(rad);
+  while(result > M_PI * 2.)
+    result = result - M_PI * 2.;
+  while(result < 0.)
+    result = result + M_PI * 2.;
+  return static_cast<TYPE>(result);
+}
+
 /* Normalize lonx to -180 < lonx < 180 */
 template<typename TYPE>
 TYPE normalizeLonXDeg(TYPE lonX)
