@@ -197,6 +197,8 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   data.userAircraft.category = AIRPLANE;
   data.userAircraft.engineType = PISTON;
+  data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
+  data.userAircraft.localDateTime = QDateTime::currentDateTime();
 
   data.userAircraft.airplaneTitle = "Title";
   data.userAircraft.airplaneType = "Type";

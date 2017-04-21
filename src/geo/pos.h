@@ -237,6 +237,7 @@ public:
   Q_DECL_CONSTEXPR static float POS_EPSILON_5M = 1.f / 60.f / 1852.216f * 5.f; /* ca 5 m for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_10M = 1.f / 60.f / 1852.216f * 10.f; /* ca 10 m for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_100M = 1.f / 60.f / 1852.216f * 100.f; /* ca 100 m for lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_500M = 1.f / 60.f / 1852.216f * 500.f; /* ca 500 m for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f; /* ca 1 km for lat and lon nearby equator */
 
   Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();

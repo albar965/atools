@@ -353,7 +353,7 @@ void Flightplan::saveFlp(const QString& file)
     throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
 }
 
-void Flightplan::saveGpx(const QString& file, const geo::LineString& track)
+void Flightplan::saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps)
 {
   filename = file;
 
@@ -437,14 +437,24 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track)
       writer.writeTextElement("desc", descr);
 
       writer.writeStartElement("trkseg");
-      for(const atools::geo::Pos& pos : track)
+
+      for(int i = 0; i < track.size(); ++i)
       {
+        const atools::geo::Pos& pos = track.at(i);
         writer.writeStartElement("trkpt");
 
         writer.writeAttribute("lat", QString::number(pos.getLatY()));
         writer.writeAttribute("lon", QString::number(pos.getLonX()));
 
         writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
+
+        if(!timestamps.isEmpty())
+        {
+          // (UTC/Zulu) in ISO 8601 format: yyyy-mm-ddThh:mm:ssZ
+          // <time>2011-01-16T23:59:01Z</time>
+          writer.writeTextElement("time", QDateTime::fromTime_t(timestamps.at(i), Qt::UTC).
+                                  toString("yyyy-MM-ddTHH:mm:ssZ"));
+        }
 
         writer.writeEndElement(); // trkpt
       }

@@ -83,8 +83,8 @@ public:
   /* X-Plane FMS format */
   void saveFms(const QString& file);
 
-  /* GPX format including track */
-  void saveGpx(const QString& file, const geo::LineString& track);
+  /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
+  void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
