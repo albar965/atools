@@ -418,8 +418,8 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
       // <name>rtept 1</name>
       // </rtept>
       writer.writeStartElement("rtept");
-      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY()));
-      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX()));
+      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
+      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
 
       writer.writeTextElement("name", entry.getWaypointId());
       writer.writeTextElement("desc", entry.getWaypointTypeAsString());
@@ -443,8 +443,8 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
         const atools::geo::Pos& pos = track.at(i);
         writer.writeStartElement("trkpt");
 
-        writer.writeAttribute("lat", QString::number(pos.getLatY()));
-        writer.writeAttribute("lon", QString::number(pos.getLonX()));
+        writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
+        writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
 
         writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
