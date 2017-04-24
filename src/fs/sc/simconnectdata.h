@@ -140,6 +140,4 @@ private:
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectData);
 
-Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectData, Q_MOVABLE_TYPE);
-
 #endif // ATOOLS_FS_SIMCONNECTDATA_H

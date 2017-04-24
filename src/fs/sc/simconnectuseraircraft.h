@@ -177,6 +177,4 @@ private:
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectUserAircraft);
 
-Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectUserAircraft, Q_MOVABLE_TYPE);
-
 #endif // ATOOLS_FS_SC_SIMCONNECTUSERAIRPLANE_H

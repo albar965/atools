@@ -50,7 +50,7 @@ class SimConnectReply
 public:
   SimConnectReply();
   SimConnectReply(const SimConnectReply& other);
-  ~SimConnectReply();
+  virtual ~SimConnectReply();
 
   /*
    * Read from IO device.
@@ -147,7 +147,5 @@ private:
 } // namespace atools
 
 Q_DECLARE_METATYPE(atools::fs::sc::SimConnectReply);
-
-Q_DECLARE_TYPEINFO(atools::fs::sc::SimConnectReply, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_FS_SIMCONNECTREPLY_H

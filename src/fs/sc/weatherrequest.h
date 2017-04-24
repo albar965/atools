@@ -70,6 +70,4 @@ private:
 
 Q_DECLARE_METATYPE(atools::fs::sc::WeatherRequest);
 
-Q_DECLARE_TYPEINFO(atools::fs::sc::WeatherRequest, Q_MOVABLE_TYPE);
-
 #endif // ATOOLS_FS_SC_WEATHERREQUEST_H
