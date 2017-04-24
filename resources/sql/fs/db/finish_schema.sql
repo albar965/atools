@@ -162,3 +162,6 @@ create index if not exists idx_route_edge_radio_to_node_type on route_edge_radio
 
 create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio(from_node_id);
 create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);
+
+-- Collect table and index statistics
+analyze;
