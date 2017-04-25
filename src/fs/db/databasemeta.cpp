@@ -34,14 +34,18 @@ DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
   {
     SqlQuery query(db);
 
-    query.exec("select db_version_major, db_version_minor, last_load_timestamp, has_sid_star from metadata limit 1");
+    // Use star instead of column names to allow adding new ones
+    query.exec("select * from metadata limit 1");
 
     if(query.next())
     {
-      majorVersion = query.value("db_version_major").toInt();
-      minorVersion = query.value("db_version_minor").toInt();
-      lastLoadTime = query.value("last_load_timestamp").toDateTime();
-      sidStar = query.value("has_sid_star").toBool();
+      sql::SqlRecord rec = query.record();
+      majorVersion = rec.valueInt("db_version_major");
+      minorVersion = rec.valueInt("db_version_minor");
+      lastLoadTime = rec.value("last_load_timestamp").toDateTime();
+
+      if(rec.contains("has_sid_star"))
+        sidStar = rec.valueBool("has_sid_star");
       valid = true;
     }
     query.finish();
