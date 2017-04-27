@@ -133,9 +133,9 @@ namespace weather {
  */
 MetarParser::MetarParser(const QString& metar) :
   _grpcount(0), _x_proxy(false), _year(-1), _month(-1), _day(-1), _hour(-1), _minute(-1), _report_type(-1),
-  _wind_dir(-1), _wind_speed(MetarNaN), _gust_speed(MetarNaN), _wind_range_from(-1), _wind_range_to(-1),
-  _temp(MetarNaN), _dewp(MetarNaN), _pressure(MetarNaN), _rain(false), _hail(false), _snow(false),
-  _cavok(false)
+  _wind_dir(-1), _wind_speed(INVALID_METAR_VALUE), _gust_speed(INVALID_METAR_VALUE), _wind_range_from(-1),
+  _wind_range_to(-1), _temp(INVALID_METAR_VALUE), _dewp(INVALID_METAR_VALUE), _pressure(INVALID_METAR_VALUE),
+  _rain(false), _hail(false), _snow(false), _cavok(false)
 {
   if(metar.isEmpty())
     return;
@@ -454,9 +454,9 @@ bool MetarParser::scanWind()
   else if(!scanNumber(&m, &i, 2, 3))
     return false;
 
-  double speed = i == -1 ? MetarNaN : i;
+  double speed = i == -1 ? INVALID_METAR_VALUE : i;
 
-  double gust = MetarNaN;
+  double gust = INVALID_METAR_VALUE;
   if(*m == 'G')
   {
     m++;
@@ -482,9 +482,9 @@ bool MetarParser::scanWind()
 
   _m = m;
   _wind_dir = dir;
-  if(speed != MetarNaN)
+  if(speed < INVALID_METAR_VALUE)
     _wind_speed = speed * factor;
-  if(gust != MetarNaN)
+  if(gust < INVALID_METAR_VALUE)
     _gust_speed = gust * factor;
   _grpcount++;
   return true;
@@ -617,7 +617,7 @@ bool MetarParser::scanVisibility()
   MetarVisibility *v;
   if(dir != -1)
     v = &_dir_visibility[dir / 45];
-  else if(_min_visibility._distance == MetarNaN)
+  else if(!(_min_visibility._distance < INVALID_METAR_VALUE))
     v = &_min_visibility;
   else
     v = &_max_visibility;
@@ -1129,8 +1129,8 @@ bool MetarParser::scanTemperature()
 
 double MetarParser::getRelHumidity() const
 {
-  if(_temp == MetarNaN || _dewp == MetarNaN)
-    return MetarNaN;
+  if(!(_temp < INVALID_METAR_VALUE) || !(_dewp < INVALID_METAR_VALUE))
+    return INVALID_METAR_VALUE;
 
   double dewp = pow(10.0, 7.5 * _dewp / (237.7 + _dewp));
   double temp = pow(10.0, 7.5 * _temp / (237.7 + _temp));

@@ -144,6 +144,18 @@ void LineString::reverse()
   std::reverse(begin(), end());
 }
 
+void LineString::removeInvalid()
+{
+  auto it = std::remove_if(begin(), end(),
+                           [] (const Pos &pos)->bool
+                           {
+                             return !pos.isValid();
+                           });
+
+  if(it != end())
+    erase(it, end());
+}
+
 void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result, int *index) const
 {
   LineDistance lineResult, closestLineResult;

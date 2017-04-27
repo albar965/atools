@@ -43,7 +43,7 @@ struct Token
   const char *text;
 };
 
-const float MetarNaN = -1E20f;
+const Q_DECL_CONSTEXPR float INVALID_METAR_VALUE = std::numeric_limits<float>::max();
 
 class MetarParser;
 
@@ -55,7 +55,7 @@ class MetarVisibility
 
 public:
   MetarVisibility() :
-    _distance(MetarNaN), _direction(-1), _modifier(EQUALS), _tendency(NONE)
+    _distance(INVALID_METAR_VALUE), _direction(-1), _modifier(EQUALS), _tendency(NONE)
   {
   }
 
@@ -115,8 +115,8 @@ class MetarRunway
 
 public:
   MetarRunway() :
-    _deposit(-1), _deposit_string(0), _extent(-1), _extent_string(0), _depth(MetarNaN), _friction(MetarNaN),
-    _friction_string(0), _comment(0), _wind_shear(false)
+    _deposit(-1), _deposit_string(0), _extent(-1), _extent_string(0), _depth(INVALID_METAR_VALUE),
+    _friction(INVALID_METAR_VALUE), _friction_string(0), _comment(0), _wind_shear(false)
   {
   }
 
@@ -215,7 +215,7 @@ public:
   static const char *COVERAGE_OVERCAST_STRING;
 
   MetarCloud() :
-    _coverage(COVERAGE_NIL), _altitude(MetarNaN), _type(0), _type_long(0)
+    _coverage(COVERAGE_NIL), _altitude(INVALID_METAR_VALUE), _type(0), _type_long(0)
   {
   }
 
@@ -399,7 +399,7 @@ public:
 
   inline float getPressureMbar() const
   {
-    return _pressure == MetarNaN ? MetarNaN : _pressure / 100;
+    return _pressure < INVALID_METAR_VALUE ? _pressure / 100 : INVALID_METAR_VALUE;
   }
 
   inline int getRain() const

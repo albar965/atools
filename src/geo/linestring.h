@@ -52,6 +52,9 @@ public:
 
   void reverse();
 
+  /* Remove all invalid points */
+  void removeInvalid();
+
   /* Calculate status, cross track distance and more to this line. */
   void distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result,
                                  int *index = nullptr) const;
