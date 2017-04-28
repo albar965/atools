@@ -1,3 +1,6 @@
+Version 2.3.7.develop
+* Fixed crash on database version detection after adding has_sid_star column.
+
 Version 2.3.6.develop
 
 * GLOBE data reader now opens files on demand.
