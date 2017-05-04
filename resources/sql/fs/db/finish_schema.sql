@@ -164,4 +164,5 @@ create index if not exists idx_route_edge_radio_from_node_id on route_edge_radio
 create index if not exists idx_route_edge_radio_to_node_id on route_edge_radio(to_node_id);
 
 -- Collect table and index statistics
-analyze;
+-- Disabled for now since it can cause queries to freeze
+-- analyze;
