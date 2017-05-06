@@ -1,3 +1,6 @@
+Version 2.4.0.beta
+* Removed analyze in database scripts since it can degrade performance.
+
 Version 2.3.7.develop
 * Fixed crash on database version detection after adding has_sid_star column.
 
