@@ -1,3 +1,9 @@
+Version 2.4.1.beta
+
+* Removed VOR and TACAN from radionav flight plan calculation tables to fix inclusion if TACAN in VOR/NDB navigation.
+* Database minor version set to 1.
+
+
 Version 2.4.0.beta
 * Removed analyze in database scripts since it can degrade performance.
 

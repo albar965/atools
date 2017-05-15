@@ -27,12 +27,12 @@ delete from route_node_radio;
 insert into route_node_radio (nav_id, type, range, lonx, laty)
 select vor_id as nav_id,
   case
-    when dme_only = 1 then 3         -- DME
+--    when dme_only = 1 then 3         -- DME
     when dme_altitude is null then 1 -- VOR
     else 2                           -- VORDME
   end as type,
   (range * 1852.216) as range, lonx, laty
-from vor;
+from vor where dme_only = 0 and type != 'TC';
 
 insert into route_node_radio (nav_id, type, range, lonx, laty)
 select ndb_id as nav_id, 4 as type, (range  * 1852.216) as range, lonx, laty

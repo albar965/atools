@@ -141,6 +141,13 @@ public:
     noSave = value;
   }
 
+  bool operator==(const atools::fs::pln::FlightplanEntry& other);
+
+  bool operator!=(const atools::fs::pln::FlightplanEntry& other)
+  {
+    return !operator==(other);
+  }
+
 private:
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
