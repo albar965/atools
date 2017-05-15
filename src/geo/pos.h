@@ -173,7 +173,7 @@ public:
   QString toLongString() const;
 
   /* @return format like "49.314,8.543,220" (lonX,latY,alt) */
-  QString toString() const;
+  QString toString(int precision = 6, bool alt = true) const;
 
   /* @return Format like "9° 12' 5.49E", 49° 26' 41.57"N," */
   QString toHumanReadableString() const;

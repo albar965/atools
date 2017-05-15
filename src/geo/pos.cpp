@@ -31,7 +31,8 @@ const static QString OVERFLOW_60_TEST_TEXT("60");
 const static float MAX_SECONDS = 59.98f;
 const static double EARTH_RADIUS_METER = 6371. * 1000.;
 
-const static QString SHORT_FORMAT("%1,%2,%3");
+const static QString SHORT_FORMAT("%1,%2");
+const static QString SHORT_FORMAT_ALT("%1,%2,%3");
 const static QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
 const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
 
@@ -472,12 +473,15 @@ QString Pos::toHumanReadableString() const
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 
-QString Pos::toString() const
+QString Pos::toString(int precision, bool alt) const
 {
   if(!isValid())
     return "Invalid Pos";
 
-  return SHORT_FORMAT.arg(lonX, 0, 'f', 6).arg(latY, 0, 'f', 6).arg(altitude, 0, 'f', 6);
+  if(alt)
+    return SHORT_FORMAT_ALT.arg(lonX, 0, 'f', precision).arg(latY, 0, 'f', precision).arg(altitude, 0, 'f', precision);
+  else
+    return SHORT_FORMAT.arg(lonX, 0, 'f', precision).arg(latY, 0, 'f', precision);
 }
 
 void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
