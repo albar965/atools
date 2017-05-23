@@ -35,15 +35,18 @@ namespace atools {
 namespace fs {
 
 const atools::fs::FsPaths::SimulatorType FsPaths::ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] =
-{FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::EXTERNAL, FsPaths::EXTERNAL2};
+{
+  FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3,
+  FsPaths::EXTERNAL, FsPaths::EXTERNAL2, FsPaths::P3D_V4
+};
 
 const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] =
-{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2"};
+{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2", "P3DV4"};
 
 const QString ALL_SIMULATOR_NAMES[NUM_SIMULATOR_TYPES] =
 {
   "Microsoft Flight Simulator X", "Flight Simulator - Steam Edition", "Prepar3D v2", "Prepar3D v3",
-  "External", "External 2"
+  "External", "External 2", "Prepar3D v4"
 };
 
 const char *FsPaths::FSX_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
@@ -59,15 +62,20 @@ const QStringList FsPaths::P3D_V2_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v
 const char *FsPaths::P3D_V3_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
 const QStringList FsPaths::P3D_V3_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v3", "AppPath"};
 
+const char *FsPaths::P3D_V4_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
+const QStringList FsPaths::P3D_V4_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v4", "AppPath"};
+
 const char *FsPaths::SETTINGS_FSX_PATH = "FsPaths/FsxPath";
 const char *FsPaths::SETTINGS_FSX_SE_PATH = "FsPaths/FsxSePath";
 const char *FsPaths::SETTINGS_P3D_V2_PATH = "FsPaths/P3dV2Path";
 const char *FsPaths::SETTINGS_P3D_V3_PATH = "FsPaths/P3dV3Path";
+const char *FsPaths::SETTINGS_P3D_V4_PATH = "FsPaths/P3dV4Path";
 
 const char *FsPaths::FSX_NO_WINDOWS_PATH = "Microsoft Flight Simulator X";
 const char *FsPaths::FSX_SE_NO_WINDOWS_PATH = "Flight Simulator - Steam Edition";
 const char *FsPaths::P3D_V2_NO_WINDOWS_PATH = "Prepar3D v2";
 const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
+const char *FsPaths::P3D_V4_NO_WINDOWS_PATH = "Prepar3D v4";
 
 using atools::settings::Settings;
 
@@ -284,6 +292,19 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
              "P3DV3" + QDir::separator() + "scenery.cfg";
 
 #endif
+
+    case P3D_V4:
+      // P3D v4 C:\ProgramData\Lockheed Martin\Prepar3D v4
+#if defined(Q_OS_WIN32)
+      return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v4\\Scenery.CFG";
+
+#elif defined(DEBUG_FS_PATHS)
+      return home + QDir::separator() +
+             "Temp" + QDir::separator() +
+             "P3DV4" + QDir::separator() + "scenery.cfg";
+
+#endif
+
     // Disable compiler warnings
     case EXTERNAL:
     case EXTERNAL2:
@@ -322,6 +343,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V2;
   else if(type == "P3DV3")
     return P3D_V3;
+  else if(type == "P3DV4")
+    return P3D_V4;
   else if(type == "EXTERNAL")
     return EXTERNAL;
   else if(type == "EXTERNAL2")
@@ -345,6 +368,9 @@ QString FsPaths::settingsKey(SimulatorType type)
 
     case P3D_V3:
       return SETTINGS_P3D_V3_PATH;
+
+    case P3D_V4:
+      return SETTINGS_P3D_V4_PATH;
 
     case EXTERNAL:
     case EXTERNAL2:
@@ -372,6 +398,9 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V3:
       return P3D_V3_REGISTRY_PATH;
 
+    case P3D_V4:
+      return P3D_V4_REGISTRY_PATH;
+
     case EXTERNAL:
     case EXTERNAL2:
     case UNKNOWN:
@@ -398,6 +427,9 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V3:
       return P3D_V3_REGISTRY_KEY;
 
+    case P3D_V4:
+      return P3D_V4_REGISTRY_KEY;
+
     case EXTERNAL:
     case EXTERNAL2:
     case MAX_VALUE:
@@ -423,6 +455,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
 
     case P3D_V3:
       return P3D_V3_NO_WINDOWS_PATH;
+
+    case P3D_V4:
+      return P3D_V4_NO_WINDOWS_PATH;
 
     case EXTERNAL:
     case EXTERNAL2:
