@@ -201,7 +201,8 @@ HEADERS += src/atools.h \
     src/fs/db/nav/tacanwriter.h \
     src/fs/util/tacanfrequencies.h \
     src/fs/util/morsecode.h \
-    src/gui/palettesettings.h
+    src/gui/palettesettings.h \
+    src/gui/actionstatesaver.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -361,7 +362,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/nav/tacanwriter.cpp \
     src/fs/util/tacanfrequencies.cpp \
     src/fs/util/morsecode.cpp \
-    src/gui/palettesettings.cpp
+    src/gui/palettesettings.cpp \
+    src/gui/actionstatesaver.cpp
 
 
 unix {
