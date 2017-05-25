@@ -1105,7 +1105,9 @@ bool MetarParser::scanTemperature()
 
   if(!scanBoundary(&m))
   {
-    if(!strncmp(m, "XX", 2)) // not spec compliant!
+    if(!strncmp(m, "//", 2)) // Iceland no humidity
+      m += 2, sign = 0, dew = temp;
+    else if(!strncmp(m, "XX", 2)) // not spec compliant!
       m += 2, sign = 0, dew = temp;
     else
     {
@@ -1237,7 +1239,7 @@ bool MetarParser::scanRunwayReport()
   if(i == 88)
     strcpy(id, "ALL");
   else if(i == 99)
-    strcpy(id, "REP");    // repetition of previous report
+    strcpy(id, "REP"); // repetition of previous report
   else if(i >= 50)
   {
     i -= 50;
@@ -1279,9 +1281,9 @@ bool MetarParser::scanRunwayReport()
       return false;
 
     if(i == 0)
-      r._depth = 0.0005;        // < 1 mm deep (let's say 0.5 :-)
+      r._depth = 0.0005; // < 1 mm deep (let's say 0.5 :-)
     else if(i > 0 && i <= 90)
-      r._depth = i / 1000.0;        // i mm deep
+      r._depth = i / 1000.0; // i mm deep
     else if(i >= 92 && i <= 98)
       r._depth = (i - 90) / 20.0;
     else if(i == 99)
@@ -1464,7 +1466,7 @@ bool MetarParser::scanRemainder()
   {
     m += 5;
     if(scanBoundary(&m))
-      _m = m;  // _comment.push_back("No significant tendency");
+      _m = m; // _comment.push_back("No significant tendency");
   }
 
   if(!scanBoundary(&m))
