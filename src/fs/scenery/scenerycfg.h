@@ -38,7 +38,7 @@ class SceneryCfg :
   Q_DECLARE_TR_FUNCTIONS(SceneryCfg)
 
 public:
-  SceneryCfg();
+  SceneryCfg(const QString& textCodec);
   virtual ~SceneryCfg();
 
   const QList<atools::fs::scenery::SceneryArea>& getAreas() const

@@ -58,8 +58,9 @@ public:
   NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
               atools::fs::NavDatabaseErrors *databaseErrors);
 
-  /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.  */
-  void create();
+  /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.
+   * @param codec Scenery.cfg codec */
+  void create(const QString& codec);
 
   /* Does not load anything and only creates the empty database schema.
    * Configuration is not used and can be null. atools::Exception is thrown in case of error. */
@@ -78,10 +79,11 @@ public:
    * Checks if scenery.cfg file exists and is valid (contains areas).
    *
    * @param filename Scenery.cfg filename
+   * @param codec Scenery.cfg codec
    * @param error An error message will be placed in this string
    * @return true if file is valid
    */
-  static bool isSceneryConfigValid(const QString& filename, QString& error);
+  static bool isSceneryConfigValid(const QString& filename, const QString& codec, QString& error);
 
   /*
    * Checks if the flight simulator base path is valid and contains a "scenery" directory.
@@ -96,7 +98,7 @@ private:
   void createSchemaInternal(atools::fs::db::ProgressHandler *progress = nullptr);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
   void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
-  void createInternal();
+  void createInternal(const QString& codec);
 
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;

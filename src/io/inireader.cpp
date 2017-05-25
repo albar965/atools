@@ -26,8 +26,8 @@
 namespace atools {
 namespace io {
 
-IniReader::IniReader()
-  : currentLineNum(0)
+IniReader::IniReader(const QString& textCodec)
+  : currentLineNum(0), codec(textCodec)
 {
 }
 
@@ -110,6 +110,10 @@ void IniReader::read(const QString& iniFilename)
   if(sceneryCfgFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream sceneryCfg(&sceneryCfgFile);
+
+    if(!codec.isEmpty())
+      sceneryCfg.setCodec(codec.toLatin1());
+
     onStartDocument(filename);
 
     currentLine.clear();

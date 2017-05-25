@@ -53,9 +53,9 @@ NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDataba
 
 }
 
-void NavDatabase::create()
+void NavDatabase::create(const QString& codec)
 {
-  createInternal();
+  createInternal(codec);
 
   if(aborted)
   {
@@ -133,7 +133,7 @@ void NavDatabase::createSchemaInternal(db::ProgressHandler *progress)
   db->commit();
 }
 
-bool NavDatabase::isSceneryConfigValid(const QString& filename, QString& error)
+bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QString& error)
 {
   QFileInfo fi(filename);
   if(fi.exists())
@@ -145,7 +145,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, QString& error)
         try
         {
           // Read the scenery file and check if it has at least one scenery area
-          atools::fs::scenery::SceneryCfg cfg;
+          atools::fs::scenery::SceneryCfg cfg(codec);
           cfg.read(filename);
 
           return !cfg.getAreas().isEmpty();
@@ -200,7 +200,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error)
   return false;
 }
 
-void NavDatabase::createInternal()
+void NavDatabase::createInternal(const QString& codec)
 {
   QElapsedTimer timer;
   timer.start();
@@ -209,7 +209,7 @@ void NavDatabase::createInternal()
     db->setAutocommit(true);
 
   // Read scenery.cfg
-  atools::fs::scenery::SceneryCfg cfg;
+  atools::fs::scenery::SceneryCfg cfg(codec);
   cfg.read(options->getSceneryFile());
 
   int numFiles = 0, numSceneryAreas = 0;

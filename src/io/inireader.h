@@ -33,7 +33,7 @@ class IniReader
   Q_DECLARE_TR_FUNCTIONS(atools::fs::scenery::IniReader)
 
 public:
-  IniReader();
+  IniReader(const QString& textCodec = QString());
   virtual ~IniReader();
 
   /* Read the file and trigger the on* methods */
@@ -96,6 +96,7 @@ private:
   void handleKeyValue();
   void handleSection();
 
+  QString codec;
 };
 
 } // namespace io

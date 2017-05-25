@@ -28,8 +28,8 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
-SceneryCfg::SceneryCfg()
-  : IniReader(), cleanOnExit(false)
+SceneryCfg::SceneryCfg(const QString& textCodec)
+  : IniReader(textCodec), cleanOnExit(false)
 {
 }
 
@@ -51,10 +51,10 @@ void SceneryCfg::onEndDocument(const QString& filename)
     throwException(tr("No valid scenery areas found"));
 
   // Sort areas by layer
-  std::sort(areaEntries.begin(), areaEntries.end(), [] (const SceneryArea &a1, const SceneryArea &a2)->bool
-            {
-              return a1.getLayer() < a2.getLayer();
-            });
+  std::sort(areaEntries.begin(), areaEntries.end(), [](const SceneryArea& a1, const SceneryArea& a2) -> bool
+        {
+          return a1.getLayer() < a2.getLayer();
+        });
 }
 
 void SceneryCfg::onStartSection(const QString& section, const QString& sectionSuffix)
