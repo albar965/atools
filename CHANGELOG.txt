@@ -1,3 +1,8 @@
+Version 2.4.2.beta
+
+* Added support for P3D version 4.
+* Fixed METAR parsing for reports with missing humidity.
+
 Version 2.4.1.beta
 
 * Removed VOR and TACAN from radionav flight plan calculation tables to fix inclusion if TACAN in VOR/NDB navigation.
