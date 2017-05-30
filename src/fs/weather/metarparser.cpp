@@ -985,6 +985,16 @@ bool MetarParser::scanSkyCondition()
     return false;
   }
 
+  if(!strncmp(m, "/////////", 9))
+  {
+    m += 9;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
   if(!strncmp(m, "//////", 6))
   {
     m += 6;
@@ -994,6 +1004,7 @@ bool MetarParser::scanSkyCondition()
     _m = m;
     return true;
   }
+
 
   if(!strncmp(m, "CLR", i = 3) // clear
      || !strncmp(m, "SKC", i = 3) // sky clear
