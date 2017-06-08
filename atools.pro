@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += sql xml core widgets
+QT       += sql xml core widgets network
 QT       -= gui
 
 CONFIG += c++11

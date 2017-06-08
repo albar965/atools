@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QTextCodec>
+#include <QSslSocket>
 
 namespace atools {
 namespace logging {
@@ -61,6 +62,10 @@ void LoggingUtil::logSystemInformation()
 
   if(QSysInfo::macVersion() != QSysInfo::MV_None)
     qInfo() << "Mac version" << QSysInfo::macVersion();
+
+  qInfo() << "SSL supported" << QSslSocket::supportsSsl();
+  qInfo() << "SSL build library" << QSslSocket::sslLibraryBuildVersionString();
+  qInfo() << "SSL library" << QSslSocket::sslLibraryVersionString();
 }
 
 void LoggingUtil::logStandardPaths()
