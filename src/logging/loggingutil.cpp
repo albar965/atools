@@ -24,6 +24,7 @@
 #include <QDir>
 #include <QTextCodec>
 #include <QSslSocket>
+#include <QStyleFactory>
 
 namespace atools {
 namespace logging {
@@ -44,15 +45,11 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();
 
   qInfo() << "ABI" << QSysInfo::buildAbi();
-  qInfo() << "build CPU arch" << QSysInfo::buildCpuArchitecture()
-          << "current" <<
-  QSysInfo::currentCpuArchitecture();
+  qInfo() << "build CPU arch" << QSysInfo::buildCpuArchitecture() << "current" << QSysInfo::currentCpuArchitecture();
 
-  qInfo() << "kernel" << QSysInfo::kernelType()
-          << "version" << QSysInfo::kernelVersion();
+  qInfo() << "kernel" << QSysInfo::kernelType() << "version" << QSysInfo::kernelVersion();
 
-  qInfo() << "product name" << QSysInfo::prettyProductName()
-          << "type" << QSysInfo::productType()
+  qInfo() << "product name" << QSysInfo::prettyProductName() << "type" << QSysInfo::productType()
           << "version" << QSysInfo::productVersion();
 
   qInfo() << "Qt version" << QT_VERSION_STR;
@@ -63,9 +60,11 @@ void LoggingUtil::logSystemInformation()
   if(QSysInfo::macVersion() != QSysInfo::MV_None)
     qInfo() << "Mac version" << QSysInfo::macVersion();
 
-  qInfo() << "SSL supported" << QSslSocket::supportsSsl();
-  qInfo() << "SSL build library" << QSslSocket::sslLibraryBuildVersionString();
-  qInfo() << "SSL library" << QSslSocket::sslLibraryVersionString();
+  qInfo() << "SSL supported" << QSslSocket::supportsSsl()
+          << "build library" << QSslSocket::sslLibraryBuildVersionString()
+          << "library" << QSslSocket::sslLibraryVersionString();
+
+  qInfo() << "Available styles" << QStyleFactory::keys();
 }
 
 void LoggingUtil::logStandardPaths()
@@ -86,8 +85,7 @@ void LoggingUtil::logStandardPaths()
   qInfo() << "ConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
   qInfo() << "DownloadLocation" << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
   qInfo() << "GenericCacheLocation" << QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation);
-  qInfo() << "GenericConfigLocation" << QStandardPaths::standardLocations(
-    QStandardPaths::GenericConfigLocation);
+  qInfo() << "GenericConfigLocation" << QStandardPaths::standardLocations( QStandardPaths::GenericConfigLocation);
   qInfo() << "AppDataLocation" << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
   qInfo() << "AppConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
 }
