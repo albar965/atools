@@ -36,7 +36,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
   handler = new SimConnectHandler(verboseLog);
-  handler->loadSimConnect(QApplication::applicationFilePath() + ".manifest");
+  handler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
 
   qInfo() << "SimConnect available:" << handler->isSimConnectLoaded();
 
