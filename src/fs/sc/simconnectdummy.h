@@ -35,6 +35,7 @@ typedef unsigned char BYTE;
 typedef BYTE BOOLEAN;
 typedef char CHAR;
 typedef int BOOL;
+typedef int WINBOOL;
 typedef long LONG;
 typedef long long GUID;
 typedef void *PVOID;
@@ -65,6 +66,9 @@ HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb);
 #include <strsafe.h>
 #endif
 
+#define _stdcall
+
+#define FARPROC (void*)
 #define DWORD_MAX 0xFFFFFFFF
 #define SIMCONNECTAPI HRESULT
 typedef DWORD SIMCONNECT_OBJECT_ID;

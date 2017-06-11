@@ -47,6 +47,7 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
 
   bool error = false;
 
+#if defined(Q_OS_WIN32)
   BINDSC(Open);
   BINDSC(Close);
 
@@ -120,6 +121,9 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
   BINDSC(SubscribeToFacilities);
   BINDSC(UnsubscribeToFacilities);
   BINDSC(RequestFacilitiesList);
+#else
+  Q_UNUSED(context);
+#endif
 
   qDebug() << Q_FUNC_INFO << "done";
 

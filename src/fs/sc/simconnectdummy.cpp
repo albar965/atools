@@ -21,9 +21,13 @@
 
 #include <QDebug>
 
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb)
 {
-  return NULL;
+  static HRESULT hr = S_OK;
+  return hr;
 }
 
 SIMCONNECTAPI SimConnect_MapClientEventToSimEvent(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,

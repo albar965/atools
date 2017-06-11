@@ -64,11 +64,13 @@ ActivationContext::ActivationContext()
 
 ActivationContext::~ActivationContext()
 {
+#if defined(Q_OS_WIN32)
   for(const QString& key : p->loadedLibraries.keys())
     freeLibrary(key);
 
   deactivate();
   release();
+#endif
 
   delete p;
 }
