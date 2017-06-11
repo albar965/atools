@@ -13,8 +13,6 @@ INCLUDEPATH += $$PWD/src
 
 unix {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system(git rev-parse --short HEAD)\\"'
-  # Enable this to compile with dummy implementation of simconnect
-  DEFINES+=SIMCONNECT_DUMMY
 
   # Enable to allow scenery database loading on Linux or macOS
   #DEFINES+=DEBUG_FS_PATHS
@@ -24,12 +22,6 @@ win32 {
   DEFINES += GIT_REVISION_ATOOLS='\\"$$system('C:\\Git\\bin\\git' rev-parse --short HEAD)\\"'
   DEFINES += _USE_MATH_DEFINES
   DEFINES += NOMINMAX
-
-  # Enable this to compile without SimConnect and use a dummy implementation
-  #DEFINES+=SIMCONNECT_DUMMY
-
-  # Enable this to compile with simconnect
-  DEFINES+=SIMCONNECT_REAL
 
   SIMCONNECT="C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK"
   INCLUDEPATH += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\inc"
@@ -202,7 +194,9 @@ HEADERS += src/atools.h \
     src/fs/util/tacanfrequencies.h \
     src/fs/util/morsecode.h \
     src/gui/palettesettings.h \
-    src/gui/actionstatesaver.h
+    src/gui/actionstatesaver.h \
+    src/win/activationcontext.h \
+    src/fs/sc/simconnectapi.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -363,7 +357,9 @@ SOURCES += src/atools.cpp \
     src/fs/util/tacanfrequencies.cpp \
     src/fs/util/morsecode.cpp \
     src/gui/palettesettings.cpp \
-    src/gui/actionstatesaver.cpp
+    src/gui/actionstatesaver.cpp \
+    src/win/activationcontext.cpp \
+    src/fs/sc/simconnectapi.cpp
 
 
 unix {

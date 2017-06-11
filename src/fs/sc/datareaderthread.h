@@ -88,7 +88,7 @@ public:
 
   void closeReplay();
 
-  static bool isSimconnectAvailable();
+  bool isSimconnectAvailable();
 
   /* Sets a one shot request to fetch on next iteration */
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);

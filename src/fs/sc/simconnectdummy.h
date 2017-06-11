@@ -18,9 +18,9 @@
 #ifndef ATOOLS_FS_SIMCONNECTDUMMY_H
 #define ATOOLS_FS_SIMCONNECTDUMMY_H
 
-#if defined(SIMCONNECT_DUMMY)
-
 #include <QtGlobal>
+
+#if !defined(Q_OS_WIN32)
 
 #if !defined(Q_CC_MSVC)
 
@@ -54,8 +54,6 @@ typedef LPCSTR LPCTSTR;
 #endif
 
 #define CALLBACK
-
-
 
 HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb);
 
@@ -904,13 +902,14 @@ SIMCONNECTAPI SimConnect_AddToClientDataDefinition(HANDLE hSimConnect,
                                                    DWORD DatumID = SIMCONNECT_UNUSED);
 SIMCONNECTAPI SimConnect_ClearClientDataDefinition(HANDLE hSimConnect,
                                                    SIMCONNECT_CLIENT_DATA_DEFINITION_ID DefineID);
-SIMCONNECTAPI SimConnect_RequestClientData(
-  HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID, SIMCONNECT_DATA_REQUEST_ID RequestID,
-  SIMCONNECT_CLIENT_DATA_DEFINITION_ID DefineID,
-  SIMCONNECT_CLIENT_DATA_PERIOD Period =
-    SIMCONNECT_CLIENT_DATA_PERIOD_ONCE,
-  SIMCONNECT_CLIENT_DATA_REQUEST_FLAG Flags = 0, DWORD origin = 0,
-  DWORD interval = 0, DWORD limit = 0);
+SIMCONNECTAPI SimConnect_RequestClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID,
+                                           SIMCONNECT_DATA_REQUEST_ID RequestID,
+                                           SIMCONNECT_CLIENT_DATA_DEFINITION_ID DefineID,
+                                           SIMCONNECT_CLIENT_DATA_PERIOD Period =
+                                             SIMCONNECT_CLIENT_DATA_PERIOD_ONCE,
+                                           SIMCONNECT_CLIENT_DATA_REQUEST_FLAG Flags = 0, DWORD origin = 0,
+                                           DWORD interval = 0,
+                                           DWORD limit = 0);
 SIMCONNECTAPI SimConnect_SetClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID,
                                        SIMCONNECT_CLIENT_DATA_DEFINITION_ID DefineID,
                                        SIMCONNECT_CLIENT_DATA_SET_FLAG Flags, DWORD dwReserved,

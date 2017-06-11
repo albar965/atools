@@ -17,7 +17,7 @@
 
 #include "fs/sc/simconnectdummy.h"
 
-#if defined(SIMCONNECT_DUMMY)
+#if !defined(Q_OS_WIN32)
 
 #include <QDebug>
 

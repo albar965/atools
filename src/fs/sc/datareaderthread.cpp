@@ -24,6 +24,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDataStream>
+#include <QApplication>
 
 namespace atools {
 namespace fs {
@@ -35,6 +36,10 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
   handler = new SimConnectHandler(verboseLog);
+  handler->loadSimConnect(QApplication::applicationFilePath() + ".manifest");
+
+  qInfo()<<"SimConnect available:"<<handler->isSimConnectLoaded();
+
   simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
 
@@ -348,13 +353,7 @@ void DataReaderThread::closeReplay()
 
 bool DataReaderThread::isSimconnectAvailable()
 {
-#ifdef SIMCONNECT_DUMMY
-  return false;
-
-#else
-  return true;
-
-#endif
+  return handler->isSimConnectLoaded();
 }
 
 void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)

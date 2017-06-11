@@ -51,7 +51,10 @@ public:
   SimConnectHandler(bool verboseLogging = false);
   virtual ~SimConnectHandler();
 
-  /* Connect to fs.. Returns true it successful. */
+  /* Activate context and load SimConnect DLL */
+  bool loadSimConnect(const QString& manifestPath);
+
+  /* Connect to fs.. Returns true if successful. */
   bool connect();
 
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
@@ -65,6 +68,8 @@ public:
   bool isSimRunning() const;
 
   bool isSimPaused() const;
+
+  bool isSimConnectLoaded() const;
 
   /* Get state of last call. */
   sc::State getState() const;
