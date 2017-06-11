@@ -7,7 +7,7 @@
 * (at your option) any later version.
 *
 * This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY{return S_OK;} without even the implied warranty of
+* but WITHOUT ANY WARRANTY{return E_FAIL;} without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU General Public License for more details.
 *
@@ -26,14 +26,14 @@
 
 HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb)
 {
-  static HRESULT hr = S_OK;
+  static HRESULT hr = E_FAIL;
   return hr;
 }
 
 SIMCONNECTAPI SimConnect_MapClientEventToSimEvent(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,
                                                   const char *EventName)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_TransmitClientEvent(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID,
@@ -41,13 +41,13 @@ SIMCONNECTAPI SimConnect_TransmitClientEvent(HANDLE hSimConnect, SIMCONNECT_OBJE
                                              SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                              SIMCONNECT_EVENT_FLAG Flags)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetSystemEventState(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,
                                              SIMCONNECT_STATE dwState)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AddClientEventToNotificationGroup(HANDLE hSimConnect,
@@ -55,25 +55,25 @@ SIMCONNECTAPI SimConnect_AddClientEventToNotificationGroup(HANDLE hSimConnect,
                                                            SIMCONNECT_CLIENT_EVENT_ID EventID,
                                                            BOOL bMaskable)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RemoveClientEvent(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                            SIMCONNECT_CLIENT_EVENT_ID EventID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetNotificationGroupPriority(HANDLE hSimConnect,
                                                       SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                                       DWORD uPriority)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_ClearNotificationGroup(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestNotificationGroup(HANDLE hSimConnect,
@@ -81,7 +81,7 @@ SIMCONNECTAPI SimConnect_RequestNotificationGroup(HANDLE hSimConnect,
                                                   DWORD dwReserved,
                                                   DWORD Flags)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AddToDataDefinition(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID,
@@ -90,12 +90,12 @@ SIMCONNECTAPI SimConnect_AddToDataDefinition(HANDLE hSimConnect, SIMCONNECT_DATA
                                              float fEpsilon,
                                              DWORD DatumID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_ClearDataDefinition(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestDataOnSimObject(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
@@ -105,7 +105,7 @@ SIMCONNECTAPI SimConnect_RequestDataOnSimObject(HANDLE hSimConnect, SIMCONNECT_D
                                                 DWORD interval,
                                                 DWORD limit)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestDataOnSimObjectType(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
@@ -113,7 +113,7 @@ SIMCONNECTAPI SimConnect_RequestDataOnSimObjectType(HANDLE hSimConnect, SIMCONNE
                                                     DWORD dwRadiusMeters,
                                                     SIMCONNECT_SIMOBJECT_TYPE type)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetDataOnSimObject(HANDLE hSimConnect, SIMCONNECT_DATA_DEFINITION_ID DefineID,
@@ -121,7 +121,7 @@ SIMCONNECTAPI SimConnect_SetDataOnSimObject(HANDLE hSimConnect, SIMCONNECT_DATA_
                                             DWORD ArrayCount, DWORD cbUnitSize,
                                             void *pDataSet)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MapInputEventToClientEvent(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
@@ -131,48 +131,48 @@ SIMCONNECTAPI SimConnect_MapInputEventToClientEvent(HANDLE hSimConnect, SIMCONNE
                                                     DWORD UpValue,
                                                     BOOL bMaskable)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetInputGroupPriority(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
                                                DWORD uPriority)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RemoveInputEvent(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
                                           const char *szInputDefinition)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_ClearInputGroup(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetInputGroupState(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
                                             DWORD dwState)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestReservedKey(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,
                                             const char *szKeyChoice1, const char *szKeyChoice2,
                                             const char *szKeyChoice3)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SubscribeToSystemEvent(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID,
                                                 const char *SystemEventName)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_UnsubscribeFromSystemEvent(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID EventID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRequestInterpolatedObservation(HANDLE hSimConnect,
@@ -180,14 +180,14 @@ SIMCONNECTAPI SimConnect_WeatherRequestInterpolatedObservation(HANDLE hSimConnec
                                                                float lat, float lon,
                                                                float alt)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRequestObservationAtStation(HANDLE hSimConnect,
                                                             SIMCONNECT_DATA_REQUEST_ID RequestID,
                                                             const char *szICAO)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRequestObservationAtNearestStation(HANDLE hSimConnect,
@@ -195,50 +195,50 @@ SIMCONNECTAPI SimConnect_WeatherRequestObservationAtNearestStation(HANDLE hSimCo
                                                                    float lat,
                                                                    float lon)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherCreateStation(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
                                               const char *szICAO, const char *szName, float lat, float lon,
                                               float alt)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRemoveStation(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
                                               const char *szICAO)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetObservation(HANDLE hSimConnect, DWORD Seconds, const char *szMETAR)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetModeServer(HANDLE hSimConnect, DWORD dwPort, DWORD dwSeconds)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetModeTheme(HANDLE hSimConnect, const char *szThemeName)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetModeGlobal(HANDLE hSimConnect)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetModeCustom(HANDLE hSimConnect)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherSetDynamicUpdateRate(HANDLE hSimConnect, DWORD dwRate)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRequestCloudState(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
@@ -246,7 +246,7 @@ SIMCONNECTAPI SimConnect_WeatherRequestCloudState(HANDLE hSimConnect, SIMCONNECT
                                                   float maxLon, float maxAlt,
                                                   DWORD dwFlags)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherCreateThermal(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
@@ -257,19 +257,19 @@ SIMCONNECTAPI SimConnect_WeatherCreateThermal(HANDLE hSimConnect, SIMCONNECT_DAT
                                               float sinkLayerSize,
                                               float sinkTransitionSize)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_WeatherRemoveThermal(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AICreateParkedATCAircraft(HANDLE hSimConnect, const char *szContainerTitle,
                                                    const char *szTailNumber, const char *szAirportID,
                                                    SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AICreateEnrouteATCAircraft(HANDLE hSimConnect, const char *szContainerTitle,
@@ -278,7 +278,7 @@ SIMCONNECTAPI SimConnect_AICreateEnrouteATCAircraft(HANDLE hSimConnect, const ch
                                                     BOOL bTouchAndGo,
                                                     SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AICreateNonATCAircraft(HANDLE hSimConnect, const char *szContainerTitle,
@@ -286,61 +286,61 @@ SIMCONNECTAPI SimConnect_AICreateNonATCAircraft(HANDLE hSimConnect, const char *
                                                 SIMCONNECT_DATA_INITPOSITION InitPos,
                                                 SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AICreateSimulatedObject(HANDLE hSimConnect, const char *szContainerTitle,
                                                  SIMCONNECT_DATA_INITPOSITION InitPos,
                                                  SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AIReleaseControl(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID,
                                           SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AIRemoveObject(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID,
                                         SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AISetAircraftFlightPlan(HANDLE hSimConnect, SIMCONNECT_OBJECT_ID ObjectID,
                                                  const char *szFlightPlanPath,
                                                  SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_ExecuteMissionAction(HANDLE hSimConnect, const GUID guidInstanceId)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_CompleteCustomMissionAction(HANDLE hSimConnect, const GUID guidInstanceId)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_Close(HANDLE hSimConnect)
 {
   qDebug() << "Dummy: SimConnect_Close";
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RetrieveString(SIMCONNECT_RECV *pData, DWORD cbData, void *pStringV,
                                         char **pszString,
                                         DWORD *pcbString)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_GetLastSentPacketID(HANDLE hSimConnect, DWORD *pdwError)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_Open(HANDLE *phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32,
@@ -353,81 +353,81 @@ SIMCONNECTAPI SimConnect_Open(HANDLE *phSimConnect, LPCSTR szName, HWND hWnd, DW
 
 SIMCONNECTAPI SimConnect_CallDispatch(HANDLE hSimConnect, DispatchProc pfcnDispatch, void *pContext)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_GetNextDispatch(HANDLE hSimConnect, SIMCONNECT_RECV **ppData, DWORD *pcbData)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestResponseTimes(HANDLE hSimConnect, DWORD nCount, float *fElapsedSeconds)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_InsertString(char *pDest, DWORD cbDest, void **ppEnd, DWORD *pcbStringV,
                                       const char *pSource)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_CameraSetRelative6DOF(HANDLE hSimConnect, float fDeltaX, float fDeltaY,
                                                float fDeltaZ, float fPitchDeg, float fBankDeg,
                                                float fHeadingDeg)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MenuAddItem(HANDLE hSimConnect, const char *szMenuItem,
                                      SIMCONNECT_CLIENT_EVENT_ID MenuEventID,
                                      DWORD dwData)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MenuDeleteItem(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID MenuEventID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MenuAddSubItem(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID MenuEventID,
                                         const char *szMenuItem, SIMCONNECT_CLIENT_EVENT_ID SubMenuEventID,
                                         DWORD dwData)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MenuDeleteSubItem(HANDLE hSimConnect, SIMCONNECT_CLIENT_EVENT_ID MenuEventID,
                                            const SIMCONNECT_CLIENT_EVENT_ID SubMenuEventID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestSystemState(HANDLE hSimConnect, SIMCONNECT_DATA_REQUEST_ID RequestID,
                                             const char *szState)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetSystemState(HANDLE hSimConnect, const char *szState, DWORD dwInteger,
                                         float fFloat,
                                         const char *szString)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_MapClientDataNameToID(HANDLE hSimConnect, const char *szClientDataName,
                                                SIMCONNECT_CLIENT_DATA_ID ClientDataID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_CreateClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID,
                                           DWORD dwSize,
                                           SIMCONNECT_CREATE_CLIENT_DATA_FLAG Flags)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_AddToClientDataDefinition(HANDLE hSimConnect,
@@ -435,13 +435,13 @@ SIMCONNECTAPI SimConnect_AddToClientDataDefinition(HANDLE hSimConnect,
                                                    DWORD dwOffset, DWORD dwSizeOrType, float fEpsilon,
                                                    DWORD DatumID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_ClearClientDataDefinition(HANDLE hSimConnect,
                                                    SIMCONNECT_CLIENT_DATA_DEFINITION_ID DefineID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID,
@@ -452,7 +452,7 @@ SIMCONNECTAPI SimConnect_RequestClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT
                                            DWORD interval,
                                            DWORD limit)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SetClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DATA_ID ClientDataID,
@@ -461,48 +461,48 @@ SIMCONNECTAPI SimConnect_SetClientData(HANDLE hSimConnect, SIMCONNECT_CLIENT_DAT
                                        DWORD cbUnitSize,
                                        void *pDataSet)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_FlightLoad(HANDLE hSimConnect, const char *szFileName)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_FlightSave(HANDLE hSimConnect, const char *szFileName, const char *szTitle,
                                     const char *szDescription,
                                     DWORD Flags)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_FlightPlanLoad(HANDLE hSimConnect, const char *szFileName)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_Text(HANDLE hSimConnect, SIMCONNECT_TEXT_TYPE type, float fTimeSeconds,
                               SIMCONNECT_CLIENT_EVENT_ID EventID, DWORD cbUnitSize,
                               void *pDataSet)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_SubscribeToFacilities(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type,
                                                SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_UnsubscribeToFacilities(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 SIMCONNECTAPI SimConnect_RequestFacilitiesList(HANDLE hSimConnect, SIMCONNECT_FACILITY_LIST_TYPE type,
                                                SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
-  return S_OK;
+  return E_FAIL;
 }
 
 #endif

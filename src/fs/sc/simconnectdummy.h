@@ -29,6 +29,7 @@
 #define TRUE 1
 #define CONST const
 #define S_OK 0x00000000
+#define E_FAIL 0x80004005
 #define SUCCEEDED(hr) (((HRESULT)(hr)) >= 0)
 
 typedef unsigned char BYTE;
@@ -68,7 +69,7 @@ HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb);
 
 #define _stdcall
 
-#define FARPROC (void*)
+#define FARPROC (void *)
 #define DWORD_MAX 0xFFFFFFFF
 #define SIMCONNECTAPI HRESULT
 typedef DWORD SIMCONNECT_OBJECT_ID;
@@ -788,12 +789,12 @@ SIMCONNECTAPI SimConnect_SetDataOnSimObject(HANDLE hSimConnect, SIMCONNECT_DATA_
                                             SIMCONNECT_OBJECT_ID ObjectID, SIMCONNECT_DATA_SET_FLAG Flags,
                                             DWORD ArrayCount, DWORD cbUnitSize,
                                             void *pDataSet);
-SIMCONNECTAPI SimConnect_MapInputEventToClientEvent(
-  HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID, const char *szInputDefinition,
-  SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue =
-    0, SIMCONNECT_CLIENT_EVENT_ID UpEventID =
-    (SIMCONNECT_CLIENT_EVENT_ID)SIMCONNECT_UNUSED,
-  DWORD UpValue = 0, BOOL bMaskable = FALSE);
+SIMCONNECTAPI SimConnect_MapInputEventToClientEvent(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
+                                                    const char *szInputDefinition,
+                                                    SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue =
+                                                      0, SIMCONNECT_CLIENT_EVENT_ID UpEventID =
+                                                      (SIMCONNECT_CLIENT_EVENT_ID) SIMCONNECT_UNUSED,
+                                                    DWORD UpValue = 0, BOOL bMaskable = FALSE);
 SIMCONNECTAPI SimConnect_SetInputGroupPriority(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
                                                DWORD uPriority);
 SIMCONNECTAPI SimConnect_RemoveInputEvent(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,

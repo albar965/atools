@@ -38,7 +38,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   handler = new SimConnectHandler(verboseLog);
   handler->loadSimConnect(QApplication::applicationFilePath() + ".manifest");
 
-  qInfo()<<"SimConnect available:"<<handler->isSimConnectLoaded();
+  qInfo() << "SimConnect available:" << handler->isSimConnectLoaded();
 
   simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
@@ -53,25 +53,30 @@ void DataReaderThread::connectToSimulator()
 {
   int counter = 0;
 
-  emit postLogMessage(tr("Not connected to the simulator. Waiting ..."), false);
-
-  reconnecting = true;
-  while(!terminate)
+  if(!handler->isSimConnectLoaded())
+    emit postLogMessage(tr("No flight simulator installation found. SimConnect not loaded."), true);
+  else
   {
-    if((counter % reconnectRateSec) == 0)
-    {
-      if(handler->connect())
-      {
-        connected = true;
-        emit connectedToSimulator();
-        emit postLogMessage(tr("Connected to simulator."), false);
-        break;
-      }
+    emit postLogMessage(tr("Not connected to the simulator. Waiting ..."), false);
 
-      counter = 0;
+    reconnecting = true;
+    while(!terminate)
+    {
+      if((counter % reconnectRateSec) == 0)
+      {
+        if(handler->connect())
+        {
+          connected = true;
+          emit connectedToSimulator();
+          emit postLogMessage(tr("Connected to simulator."), false);
+          break;
+        }
+
+        counter = 0;
+      }
+      counter++;
+      QThread::sleep(1);
     }
-    counter++;
-    QThread::sleep(1);
   }
   reconnecting = false;
 }
@@ -116,10 +121,10 @@ void DataReaderThread::run()
         if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
         {
           QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
-                           {
-                             return !aircraft.isUser() && aircraft.getCategory() != atools::fs::sc::BOAT;
-                           });
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
+                {
+                  return !aircraft.isUser() && aircraft.getCategory() != atools::fs::sc::BOAT;
+                });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
         }
@@ -127,10 +132,10 @@ void DataReaderThread::run()
         if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
         {
           QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [] (const SimConnectAircraft &aircraft)->bool
-                           {
-                             return !aircraft.isUser() && aircraft.getCategory() == atools::fs::sc::BOAT;
-                           });
+            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
+                {
+                  return !aircraft.isUser() && aircraft.getCategory() == atools::fs::sc::BOAT;
+                });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
         }
@@ -210,6 +215,9 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << "enter";
+
+  if(!handler->isSimConnectLoaded())
+    return true;
 
   QMutexLocker locker(&handlerMutex);
 
