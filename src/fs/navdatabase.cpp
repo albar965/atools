@@ -26,11 +26,14 @@
 #include "fs/db/routeedgewriter.h"
 #include "fs/db/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
+#include "fs/scenery/addonpackage.h"
+#include "fs/scenery/addoncomponent.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QElapsedTimer>
 #include <QFileInfo>
+#include <QStandardPaths>
 
 namespace atools {
 namespace fs {
@@ -45,6 +48,10 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::fs::scenery::SceneryCfg;
+using atools::fs::scenery::SceneryArea;
+using atools::fs::scenery::AddOnComponent;
+using atools::fs::scenery::AddOnPackage;
 
 NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
                          NavDatabaseErrors *databaseErrors)
@@ -145,7 +152,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
         try
         {
           // Read the scenery file and check if it has at least one scenery area
-          atools::fs::scenery::SceneryCfg cfg(codec);
+          SceneryCfg cfg(codec);
           cfg.read(filename);
 
           return !cfg.getAreas().isEmpty();
@@ -209,8 +216,9 @@ void NavDatabase::createInternal(const QString& codec)
     db->setAutocommit(true);
 
   // Read scenery.cfg
-  atools::fs::scenery::SceneryCfg cfg(codec);
-  cfg.read(options->getSceneryFile());
+  SceneryCfg cfg(codec);
+
+  readSceneryConfig(cfg);
 
   int numFiles = 0, numSceneryAreas = 0;
 
@@ -449,6 +457,95 @@ void NavDatabase::createInternal(const QString& codec)
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
 }
 
+void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
+{
+  // Get entries from scenery.cfg file
+  cfg.read(options->getSceneryFile());
+
+  FsPaths::SimulatorType sim = options->getSimulatorType();
+
+  if(sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4)
+  {
+    // Read the Prepar3D add on packages and add them to the scenery list
+    QString documents(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first());
+
+    int simNum = sim == atools::fs::FsPaths::P3D_V3 ? 3 : 4;
+
+    QStringList addonPaths;
+    // Add both alternatives since documentation is not clear
+    addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Add-ons").arg(simNum));
+
+    addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Files").arg(simNum) +
+                      QDir::separator() + QLatin1Literal("add-ons"));
+
+    int layer = std::numeric_limits<int>::min();
+    int areaNum = std::numeric_limits<int>::min();
+
+    // Calculate maximum layer and area number
+    // Layer is only used if add-on does not provide a layer
+    for(const SceneryArea& area : cfg.getAreas())
+    {
+      areaNum = std::max(layer, area.getAreaNumber());
+      layer = std::max(layer, area.getLayer());
+    }
+
+    for(const QString& addonPath : addonPaths)
+    {
+      QDir addonDir(addonPath);
+      if(addonDir.exists())
+      {
+        // Read addon directories as they appear in the file system
+        for(QFileInfo addonEntry : addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+        {
+          QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+          if(addonFile.exists() && addonFile.isFile())
+          {
+            qInfo() << "Found addon file" << addonFile.filePath();
+
+            AddOnPackage package(addonFile.filePath());
+            qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
+
+            for(const AddOnComponent& component : package.getComponents())
+            {
+              qInfo() << "Component" << component.getLayer()
+                      << "Name" << component.getName()
+                      << "Description" << component.getPath();
+
+              QDir compPath(component.getPath());
+
+              if(compPath.isRelative())
+                // Convert relative path to absolute based on add-on file directory
+                compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
+
+              if(compPath.dirName().toLower() == "scenery")
+                // Remove if it points to scenery directory
+                compPath.cdUp();
+
+              compPath.makeAbsolute();
+
+              areaNum++;
+
+              if(!compPath.exists())
+                qWarning() << "Path does not exist" << compPath;
+
+              SceneryArea area(areaNum,
+                               component.getLayer() == -1 ? layer++ : component.getLayer(),
+                               component.getName(), compPath.path());
+              cfg.appendArea(area);
+            }
+          }
+          else
+            qWarning() << Q_FUNC_INFO << addonFile.filePath() << "does not exist or is not a directory";
+        }
+      }
+      else
+        qWarning() << Q_FUNC_INFO << addonDir << "does not exist";
+
+      cfg.sortAreas();
+    }
+  }
+}
+
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,
                                              const QStringList& tables)
 {
@@ -469,6 +566,7 @@ void NavDatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *nu
     if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
     {
       atools::fs::scenery::FileResolver resolver(*options, true);
+
       *numFiles += resolver.getFiles(area);
       (*numSceneryAreas)++;
     }

@@ -196,7 +196,9 @@ HEADERS += src/atools.h \
     src/gui/palettesettings.h \
     src/gui/actionstatesaver.h \
     src/win/activationcontext.h \
-    src/fs/sc/simconnectapi.h
+    src/fs/sc/simconnectapi.h \
+    src/fs/scenery/addonpackage.h \
+    src/fs/scenery/addoncomponent.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -359,7 +361,9 @@ SOURCES += src/atools.cpp \
     src/gui/palettesettings.cpp \
     src/gui/actionstatesaver.cpp \
     src/win/activationcontext.cpp \
-    src/fs/sc/simconnectapi.cpp
+    src/fs/sc/simconnectapi.cpp \
+    src/fs/scenery/addonpackage.cpp \
+    src/fs/scenery/addoncomponent.cpp
 
 
 unix {

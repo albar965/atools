@@ -24,21 +24,32 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
+SceneryArea::SceneryArea()
+{
+
+}
+
+SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath)
+  : areaNumber(areaNum), layer(layerNum), title(sceneryTitle), localPath(sceneryLocalPath), active(true)
+{
+
+}
+
 QDebug operator<<(QDebug out, const SceneryArea& area)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << "SceneryCfg["
-  << "areaNumber " << area.areaNumber
-  << ", title " << area.title
-  << ", layer " << area.layer
-  << ", active " << area.active
-  << ", required " << area.required
-  << ", localPath " << area.localPath
-  << ", textureId " << area.textureId
-  << ", remotePath" << area.remotePath
-  << ", exclude " << area.exclude
-  << "]";
+                          << "areaNumber " << area.areaNumber
+                          << ", title " << area.title
+                          << ", layer " << area.layer
+                          << ", active " << area.active
+                          << ", required " << area.required
+                          << ", localPath " << area.localPath
+                          << ", textureId " << area.textureId
+                          << ", remotePath" << area.remotePath
+                          << ", exclude " << area.exclude
+                          << "]";
   return out;
 }
 

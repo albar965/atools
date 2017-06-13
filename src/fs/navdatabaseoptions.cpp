@@ -279,12 +279,12 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 {
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Options[verbose " << opts.verbose
-  << ", sceneryFile \"" << opts.sceneryFile
-  << "\", basepath \"" << opts.basepath
-  << "\", deletes " << opts.deletes
-  << "\", deduplicate " << opts.deduplicate
-  << ", incomplete " << opts.incomplete
-  << ", debugAutocommit " << opts.autocommit;
+                          << ", sceneryFile \"" << opts.sceneryFile
+                          << "\", basepath \"" << opts.basepath
+                          << "\", deletes " << opts.deletes
+                          << "\", deduplicate " << opts.deduplicate
+                          << ", incomplete " << opts.incomplete
+                          << ", debugAutocommit " << opts.autocommit;
 
   out << ", Include file filter [";
   for(const QRegExp& f : opts.fileFiltersInc)

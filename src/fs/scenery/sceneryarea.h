@@ -27,6 +27,11 @@ namespace scenery {
 class SceneryArea
 {
 public:
+  SceneryArea();
+
+  /* Constructed from P3D add-on packages */
+  SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath);
+
   /*
    * @return true to indicate that the scenery should be rendered by default.
    */

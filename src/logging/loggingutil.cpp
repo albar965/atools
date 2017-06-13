@@ -59,12 +59,6 @@ void LoggingUtil::logSystemInformation()
 
   if(QSysInfo::macVersion() != QSysInfo::MV_None)
     qInfo() << "Mac version" << QSysInfo::macVersion();
-
-  qInfo() << "SSL supported" << QSslSocket::supportsSsl()
-          << "build library" << QSslSocket::sslLibraryBuildVersionString()
-          << "library" << QSslSocket::sslLibraryVersionString();
-
-  qInfo() << "Available styles" << QStyleFactory::keys();
 }
 
 void LoggingUtil::logStandardPaths()

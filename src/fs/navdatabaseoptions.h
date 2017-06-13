@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_NAVDATABASEOPTIONS_H
 #define ATOOLS_FS_NAVDATABASEOPTIONS_H
 
+#include "fs/fspaths.h"
+
 #include <functional>
 
 #include <QSet>
@@ -191,6 +193,11 @@ public:
   /* Exclude absolute directories from add-on recognition */
   void addToAddonDirectoryExcludes(const QStringList& filter);
 
+  void setSimulatorType(const atools::fs::FsPaths::SimulatorType& value)
+  {
+    simulatorType = value;
+  }
+
   // -------------------------------- getters below
 
   const QString& getBasepath() const
@@ -265,6 +272,11 @@ public:
 
   ProgressCallbackType getProgressCallback() const;
 
+  atools::fs::FsPaths::SimulatorType getSimulatorType() const
+  {
+    return simulatorType;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -301,6 +313,7 @@ private:
   QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
 
+  atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::FSX;
 };
 
 } // namespace fs

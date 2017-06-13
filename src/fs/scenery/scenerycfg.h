@@ -46,6 +46,14 @@ public:
     return areaEntries;
   }
 
+  void appendArea(const atools::fs::scenery::SceneryArea& area)
+  {
+    areaEntries.append(area);
+  }
+
+  /* Sort areas by layer */
+  void sortAreas();
+
 private:
   virtual void onStartDocument(const QString& filename) override;
   virtual void onEndDocument(const QString& filename) override;
