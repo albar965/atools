@@ -37,16 +37,16 @@ namespace fs {
 const atools::fs::FsPaths::SimulatorType FsPaths::ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES] =
 {
   FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3,
-  FsPaths::EXTERNAL, FsPaths::EXTERNAL2, FsPaths::P3D_V4
+  FsPaths::EXTERNAL, FsPaths::EXTERNAL2, FsPaths::P3D_V4, FsPaths::XPLANE11
 };
 
 const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] =
-{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2", "P3DV4"};
+{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2", "P3DV4", "XP11"};
 
 const QString ALL_SIMULATOR_NAMES[NUM_SIMULATOR_TYPES] =
 {
   "Microsoft Flight Simulator X", "Flight Simulator - Steam Edition", "Prepar3D v2", "Prepar3D v3",
-  "External", "External 2", "Prepar3D v4"
+  "External", "External 2", "Prepar3D v4", "X-Plane 11"
 };
 
 const char *FsPaths::FSX_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
@@ -70,6 +70,7 @@ const char *FsPaths::SETTINGS_FSX_SE_PATH = "FsPaths/FsxSePath";
 const char *FsPaths::SETTINGS_P3D_V2_PATH = "FsPaths/P3dV2Path";
 const char *FsPaths::SETTINGS_P3D_V3_PATH = "FsPaths/P3dV3Path";
 const char *FsPaths::SETTINGS_P3D_V4_PATH = "FsPaths/P3dV4Path";
+const char *FsPaths::SETTINGS_XPLANE11_PATH = "FsPaths/XPlane11Path";
 
 const char *FsPaths::FSX_NO_WINDOWS_PATH = "Microsoft Flight Simulator X";
 const char *FsPaths::FSX_SE_NO_WINDOWS_PATH = "Flight Simulator - Steam Edition";
@@ -102,7 +103,7 @@ void FsPaths::logAllPaths()
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;
-  if(type == EXTERNAL || type == EXTERNAL2)
+  if(type == EXTERNAL || type == EXTERNAL2 || type == XPLANE11)
     return QString();
 
 #if defined(Q_OS_WIN32)
@@ -165,7 +166,7 @@ QString FsPaths::getBasePath(SimulatorType type)
 
 bool FsPaths::hasSim(FsPaths::SimulatorType type)
 {
-  return !getBasePath(type).isEmpty();
+  return type == XPLANE11 ? true : !getBasePath(type).isEmpty();
 }
 
 QString FsPaths::getFilesPath(SimulatorType type)
@@ -306,6 +307,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 #endif
 
     // Disable compiler warnings
+    case XPLANE11:
     case EXTERNAL:
     case EXTERNAL2:
     case UNKNOWN:
@@ -345,6 +347,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V3;
   else if(type == "P3DV4")
     return P3D_V4;
+  else if(type == "XP11")
+    return XPLANE11;
   else if(type == "EXTERNAL")
     return EXTERNAL;
   else if(type == "EXTERNAL2")
@@ -371,6 +375,9 @@ QString FsPaths::settingsKey(SimulatorType type)
 
     case P3D_V4:
       return SETTINGS_P3D_V4_PATH;
+
+    case XPLANE11:
+      return SETTINGS_XPLANE11_PATH;
 
     case EXTERNAL:
     case EXTERNAL2:
@@ -401,6 +408,7 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V4:
       return P3D_V4_REGISTRY_PATH;
 
+    case XPLANE11:
     case EXTERNAL:
     case EXTERNAL2:
     case UNKNOWN:
@@ -430,6 +438,7 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V4:
       return P3D_V4_REGISTRY_KEY;
 
+    case XPLANE11:
     case EXTERNAL:
     case EXTERNAL2:
     case MAX_VALUE:
@@ -459,6 +468,7 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
     case P3D_V4:
       return P3D_V4_NO_WINDOWS_PATH;
 
+    case XPLANE11:
     case EXTERNAL:
     case EXTERNAL2:
     case UNKNOWN:

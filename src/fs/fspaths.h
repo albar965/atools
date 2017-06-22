@@ -24,7 +24,7 @@
 namespace atools {
 namespace fs {
 
-#define NUM_SIMULATOR_TYPES 7
+#define NUM_SIMULATOR_TYPES 8
 
 /*
  * Allows to find Flight Simulator related paths and check for installed simulators.
@@ -59,7 +59,10 @@ public:
     /* Platform: Prepar3d Version 4 */
     P3D_V4 = 6,
 
-    MAX_VALUE = 7,
+    /* X-Plane 11 */
+    XPLANE11 = 7,
+
+    MAX_VALUE = 8,
 
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
@@ -129,6 +132,7 @@ private:
   static const char *SETTINGS_P3D_V2_PATH;
   static const char *SETTINGS_P3D_V3_PATH;
   static const char *SETTINGS_P3D_V4_PATH;
+  static const char *SETTINGS_XPLANE11_PATH;
 
   /* Paths for non Windows systems - used for development and debugging purposes */
   static const char *FSX_NO_WINDOWS_PATH;
@@ -136,6 +140,7 @@ private:
   static const char *P3D_V2_NO_WINDOWS_PATH;
   static const char *P3D_V3_NO_WINDOWS_PATH;
   static const char *P3D_V4_NO_WINDOWS_PATH;
+  static const char *P3D_XPLANE11_NO_WINDOWS_PATH;
 
   static QString settingsKey(atools::fs::FsPaths::SimulatorType type);
   static QString registryPath(atools::fs::FsPaths::SimulatorType type);
