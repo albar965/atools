@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-TaxiPath::TaxiPath(io::BinaryStream *bs)
+TaxiPath::TaxiPath(io::BinaryStream *bs, bool p3dV4Structure)
 {
   startPoint = bs->readShort();
   int flags = bs->readShort();
@@ -51,6 +51,10 @@ TaxiPath::TaxiPath(io::BinaryStream *bs)
   width = bs->readFloat();
   bs->readFloat(); // weight limit
   bs->skip(4);
+
+  if(p3dV4Structure)
+    // Skip P3D material set GUID for seasons
+    bs->skip(16);
 }
 
 QString TaxiPath::getName() const
@@ -115,14 +119,14 @@ QDebug operator<<(QDebug out, const TaxiPath& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " TaxiPath["
-  << "type " << TaxiPath::pathTypeToString(record.type)
-  << ", surface " << Runway::surfaceToStr(record.surface)
-  << ", name " << record.getName()
-  << ", left edge " << TaxiPath::edgeTypeToString(record.leftEdge)
-  << ", right edge " << TaxiPath::edgeTypeToString(record.rightEdge)
-  << ", start pos " << record.start
-  << ", end pos " << record.end
-  << "]";
+                          << "type " << TaxiPath::pathTypeToString(record.type)
+                          << ", surface " << Runway::surfaceToStr(record.surface)
+                          << ", name " << record.getName()
+                          << ", left edge " << TaxiPath::edgeTypeToString(record.leftEdge)
+                          << ", right edge " << TaxiPath::edgeTypeToString(record.rightEdge)
+                          << ", start pos " << record.start
+                          << ", end pos " << record.end
+                          << "]";
 
   return out;
 }

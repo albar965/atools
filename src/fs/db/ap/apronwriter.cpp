@@ -40,12 +40,13 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":surface", Runway::surfaceToStr(type->first->getSurface()));
 
-  bindBool(":is_draw_surface", type->second->isDrawSurface());
-  bindBool(":is_draw_detail", type->second->isDrawDetail());
+  // New in P3D v4 - apron2 might be missing
+  bindBool(":is_draw_surface", type->second != nullptr ? type->second->isDrawSurface() : true);
+  bindBool(":is_draw_detail", type->second != nullptr ? type->second->isDrawDetail() : true);
 
   bindBglCoordinateList(":vertices", type->first->getVertices());
 
-  if(getOptions().isIncludedBglObject(type::APRON2))
+  if(getOptions().isIncludedBglObject(type::APRON2) && type->second != nullptr)
   {
     bindBglCoordinateList(":vertices2", type->second->getVertices());
 
