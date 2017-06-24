@@ -63,7 +63,7 @@ enum EdgeType
 class TaxiPath
 {
 public:
-  TaxiPath(atools::io::BinaryStream *bs);
+  TaxiPath(atools::io::BinaryStream *bs, bool p3dV4Structure);
 
   /*
    * @return Taxiway name or full runway name if Type is RUNWAY

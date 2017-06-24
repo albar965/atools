@@ -25,13 +25,17 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
+Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, bool p3dV4Structure)
   : bgl::Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
   int flags = bs->readUByte();
   drawSurface = (flags & 1) == 1;
   drawDetail = (flags & 2) == 2;
+
+  if(p3dV4Structure)
+    // Skip P3D material set GUID for seasons
+    bs->skip(16);
 
   int numVertices = bs->readShort();
   int numTriangles = bs->readShort();
@@ -60,10 +64,10 @@ QDebug operator<<(QDebug out, const Apron2& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Apron2[surface " << Runway::surfaceToStr(record.surface) << "/"
-  << Runway::surfaceToStr(record.surface)
-  << ", drawSurface " << record.drawSurface
-  << ", drawDetail " << record.drawDetail << endl;
+                          << " Apron2[surface " << Runway::surfaceToStr(record.surface) << "/"
+                          << Runway::surfaceToStr(record.surface)
+                          << ", drawSurface " << record.drawSurface
+                          << ", drawDetail " << record.drawDetail << endl;
   out << record.vertices;
   out << record.triangles;
   out << "]";

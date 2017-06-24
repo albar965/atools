@@ -133,12 +133,13 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::NAME:
         name = bs->readString(r.getSize() - Record::SIZE);
         break;
+      case rec::RUNWAY_P3D_V4:
       case rec::RUNWAY:
         if(options->isIncludedBglObject(type::RUNWAY))
         {
           r.seekToStart();
 
-          Runway rw = Runway(options, bs, ident);
+          Runway rw = Runway(options, bs, ident, type == rec::RUNWAY_P3D_V4);
           if(!(options->isFilterRunways() &&
                rw.getLength() <= MIN_RUNWAY_LENGTH_METER && rw.getSurface() == bgl::rw::GRASS))
           {
@@ -205,10 +206,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
           aprons.append(Apron(options, bs));
         }
         break;
+      case rec::APRON_SECOND_P3D_V4:
       case rec::APRON_SECOND:
         // if(options->includeBglObject(type::APRON2)) will be omitted when writing to the database
         r.seekToStart();
-        aprons2.append(Apron2(options, bs));
+        aprons2.append(Apron2(options, bs, type == rec::APRON_SECOND_P3D_V4));
         break;
       case rec::APRON_EDGE_LIGHTS:
         if(options->isIncludedBglObject(type::APRON) && options->isIncludedBglObject(type::APRONLIGHT))
@@ -261,13 +263,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::TOWER_OBJ:
         towerObj = true;
         break;
+      case rec::TAXI_PATH_P3D_V4:
       case rec::TAXI_PATH:
         if(options->isIncludedBglObject(type::TAXIWAY))
         {
           int numPaths = bs->readUShort();
           for(int i = 0; i < numPaths; i++)
           {
-            TaxiPath path(bs);
+            TaxiPath path(bs, type == rec::TAXI_PATH_P3D_V4);
             if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
                 !options->isIncludedBglObject(type::TAXIWAY_RUNWAY)) ||
                (path.getType() == atools::fs::bgl::taxipath::VEHICLE &&
@@ -291,7 +294,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         {
           int numNames = bs->readUShort();
           for(int i = 0; i < numNames; i++)
-            taxinames.append(bs->readString(8));  // TODO fix wiki - first is always 0 and length always 8
+            taxinames.append(bs->readString(8)); // TODO fix wiki - first is always 0 and length always 8
         }
         break;
       case rec::UNKNOWN_REC:
@@ -299,13 +302,15 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       default:
         qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << type << dec
                                        << getObjectName();
-        if(subrecordIndex == 0)
-        {
-          // Stop reading when the first subrecord is already invalid
-          seekToStart();
-          excluded = true;
-          return;
-        }
+
+        // v4: 0x3e probably runway and 0x41 is probably apron surface
+        // if(subrecordIndex == 0)
+        // {
+        //// Stop reading when the first subrecord is already invalid
+        // seekToStart();
+        // excluded = true;
+        // return;
+        // }
     }
     r.seekToEnd();
     subrecordIndex++;
@@ -579,10 +584,10 @@ void Airport::updateHelipads()
 void Airport::removeVehicleParking()
 {
   QList<Parking>::iterator it = std::remove_if(parkings.begin(), parkings.end(),
-                                               [] (const Parking &p)->bool
-                                               {
-                                                 return p.getType() == atools::fs::bgl::ap::VEHICLES;
-                                               });
+                                               [](const Parking& p) -> bool
+        {
+          return p.getType() == atools::fs::bgl::ap::VEHICLES;
+        });
 
   if(it != parkings.end())
     parkings.erase(it, parkings.end());
@@ -596,7 +601,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
   {
     switch(taxiPath.type)
     {
-      case atools::fs::bgl::taxipath::UNKNOWN :
+      case atools::fs::bgl::taxipath::UNKNOWN:
         break;
       case atools::fs::bgl::taxipath::PATH:
       case atools::fs::bgl::taxipath::CLOSED:
@@ -640,11 +645,11 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
 
   // Remove all paths that remain invalid because of wrong indexes
   QList<TaxiPath>::iterator it = std::remove_if(taxipaths.begin(), taxipaths.end(),
-                                                [] (const TaxiPath &p)->bool
-                                                {
-                                                  return !p.getStartPoint().getPosition().isValid() ||
-                                                  !p.getEndPoint().getPosition().isValid();
-                                                });
+                                                [](const TaxiPath& p) -> bool
+        {
+          return !p.getStartPoint().getPosition().isValid() ||
+          !p.getEndPoint().getPosition().isValid();
+        });
 
   if(it != taxipaths.end())
     taxipaths.erase(it, taxipaths.end());
@@ -655,11 +660,11 @@ QDebug operator<<(QDebug out, const Airport& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Airport[ICAO " << record.ident
-  << ", name " << record.name
-  << ", region " << record.region
-  << ", " << record.position.getPos()
-  << ", magvar " << record.magVar << ", " << endl;
+                          << " Airport[ICAO " << record.ident
+                          << ", name " << record.name
+                          << ", region " << record.region
+                          << ", " << record.position.getPos()
+                          << ", magvar " << record.magVar << ", " << endl;
   out << record.runways;
   out << record.coms;
   out << record.aprons;

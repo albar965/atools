@@ -246,10 +246,7 @@ void AirportWriter::writeObject(const Airport *type)
   const QList<bgl::Apron>& aprons = type->getAprons();
   const QList<bgl::Apron2>& aprons2 = type->getAprons2();
   for(int i = 0; i < aprons.size(); i++)
-  {
-    std::pair<const Apron *, const Apron2 *> pair(&aprons.at(i), &aprons2.at(i));
-    apronWriter->writeOne(pair);
-  }
+    apronWriter->writeOne(std::make_pair(&aprons.at(i), aprons2.isEmpty() ? nullptr : &aprons2.at(i)));
 
   ApronLightWriter *apronLightWriter = dw.getApronLightWriter();
   apronLightWriter->write(type->getApronsLights());
