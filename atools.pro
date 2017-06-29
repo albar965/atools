@@ -142,7 +142,6 @@ HEADERS += src/atools.h \
     src/sql/sqlquery.h \
     src/sql/sqlscript.h \
     src/sql/sqlutil.h \
-    src/fs/db/progresshandler.h \
     src/gui/widgetstate.h \
     src/gui/helphandler.h \
     src/geo/linestring.h \
@@ -198,7 +197,14 @@ HEADERS += src/atools.h \
     src/win/activationcontext.h \
     src/fs/sc/simconnectapi.h \
     src/fs/scenery/addonpackage.h \
-    src/fs/scenery/addoncomponent.h
+    src/fs/scenery/addoncomponent.h \
+    src/fs/progresshandler.h \
+    src/fs/xp/xplanedatareader.h \
+    src/fs/xp/navwriter.h \
+    src/fs/xp/fixwriter.h \
+    src/fs/xp/writer.h \
+    src/fs/xp/xplaneconstants.h \
+    src/fs/xp/airwaywriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -309,7 +315,6 @@ SOURCES += src/atools.cpp \
     src/sql/sqlquery.cpp \
     src/sql/sqlscript.cpp \
     src/sql/sqlutil.cpp \
-    src/fs/db/progresshandler.cpp \
     src/gui/widgetstate.cpp \
     src/gui/helphandler.cpp \
     src/geo/linestring.cpp \
@@ -363,7 +368,14 @@ SOURCES += src/atools.cpp \
     src/win/activationcontext.cpp \
     src/fs/sc/simconnectapi.cpp \
     src/fs/scenery/addonpackage.cpp \
-    src/fs/scenery/addoncomponent.cpp
+    src/fs/scenery/addoncomponent.cpp \
+    src/fs/progresshandler.cpp \
+    src/fs/xp/xplanedatareader.cpp \
+    src/fs/xp/navwriter.cpp \
+    src/fs/xp/fixwriter.cpp \
+    src/fs/xp/writer.cpp \
+    src/fs/xp/xplaneconstants.cpp \
+    src/fs/xp/airwaywriter.cpp
 
 
 unix {

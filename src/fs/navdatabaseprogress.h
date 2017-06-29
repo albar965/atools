@@ -26,9 +26,7 @@ namespace fs {
 namespace scenery {
 class SceneryArea;
 }
-namespace db {
 class ProgressHandler;
-}
 
 /*
  * Progress information that is passed to the progress callback.
@@ -214,7 +212,7 @@ public:
   }
 
 private:
-  friend atools::fs::db::ProgressHandler;
+  friend atools::fs::ProgressHandler;
 
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0, numNdbs = 0, numMarker = 0,
       numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0, numErrors = 0;

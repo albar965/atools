@@ -35,6 +35,7 @@ class NavDatabaseErrors;
 namespace scenery {
 class SceneryArea;
 }
+class ProgressHandler;
 
 namespace db {
 
@@ -67,7 +68,6 @@ class ApronLightWriter;
 class FenceWriter;
 class TaxiPathWriter;
 class BoundaryWriter;
-class ProgressHandler;
 
 /*
  * Keeps all writer objects and calls them in order to write BGL records to the database.
@@ -76,7 +76,7 @@ class DataWriter
 {
 public:
   DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-             atools::fs::db::ProgressHandler *progress);
+             atools::fs::ProgressHandler *progress);
   virtual ~DataWriter();
 
   /*
@@ -255,7 +255,7 @@ private:
   QSet<QString> airportIdents;
 
   atools::sql::SqlDatabase& db;
-  atools::fs::db::ProgressHandler *progressHandler = nullptr;
+  atools::fs::ProgressHandler *progressHandler = nullptr;
   atools::fs::NavDatabaseErrors::SceneryErrors *sceneryErrors = nullptr;
 
   atools::fs::db::BglFileWriter *bglFileWriter = nullptr;

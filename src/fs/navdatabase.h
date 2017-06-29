@@ -20,6 +20,8 @@
 
 #include "fs/navdatabaseerrors.h"
 
+#include "fs/fspaths.h"
+
 #include <QDebug>
 #include <QCoreApplication>
 
@@ -36,9 +38,7 @@ namespace scenery {
 class SceneryCfg;
 }
 
-namespace db {
 class ProgressHandler;
-}
 
 /*
  * Class for creating the full navigation database. Reads scenery.cfg, reads BGL files of each found
@@ -92,10 +92,10 @@ public:
    * @param error An error message will be placed in this string
    * @return true if path is valid
    */
-  static bool isBasePathValid(const QString& filepath, QString& error);
+  static bool isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type);
 
 private:
-  void createSchemaInternal(atools::fs::db::ProgressHandler *progress = nullptr);
+  void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
   void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
   void createInternal(const QString& codec);

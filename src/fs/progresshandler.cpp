@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/progresshandler.h"
+#include "fs/progresshandler.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/scenery/sceneryarea.h"
 
@@ -23,7 +23,6 @@
 
 namespace atools {
 namespace fs {
-namespace db {
 
 ProgressHandler::ProgressHandler(const NavDatabaseOptions *options)
 {
@@ -170,6 +169,5 @@ QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& 
   return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
 }
 
-} // namespace writer
 } // namespace fs
 } // namespace atools

@@ -26,9 +26,10 @@
 
 namespace atools {
 namespace fs {
-namespace db {
 
 class ProgressHandler;
+
+namespace db {
 
 /*
  * Reads from the airway_point table that was filled with waypoint record data and connects the
@@ -39,7 +40,7 @@ class AirwayResolver
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
 
 public:
-  AirwayResolver(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress);
+  AirwayResolver(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress);
   virtual ~AirwayResolver();
 
   /*
@@ -68,7 +69,7 @@ private:
                    QVector<Fragment>& fragments);
   void cleanFragments(QVector<Fragment>& fragments);
 
-  atools::fs::db::ProgressHandler& progressHandler;
+  atools::fs::ProgressHandler& progressHandler;
   int curAirwayId, numAirways;
   atools::sql::SqlQuery airwayInsertStmt;
   atools::sql::SqlDatabase *db;

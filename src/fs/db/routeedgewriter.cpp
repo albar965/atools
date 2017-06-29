@@ -22,7 +22,7 @@
 #include "geo/rect.h"
 #include "geo/calculations.h"
 #include "sql/sqlutil.h"
-#include "fs/db/progresshandler.h"
+#include "fs/progresshandler.h"
 
 #include <QElapsedTimer>
 
@@ -78,7 +78,7 @@ enum BindColumnIndex
   TOPY
 };
 
-RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
+RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress,
                                  int numProgressSteps)
   : numSteps(numProgressSteps), progressHandler(progress), db(sqlDb)
 {

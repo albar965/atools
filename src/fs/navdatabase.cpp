@@ -24,10 +24,11 @@
 #include "fs/scenery/scenerycfg.h"
 #include "fs/db/airwayresolver.h"
 #include "fs/db/routeedgewriter.h"
-#include "fs/db/progresshandler.h"
+#include "fs/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/addoncomponent.h"
+#include "fs/xp/xplanedatareader.h"
 
 #include <QDebug>
 #include <QDir>
@@ -79,7 +80,7 @@ void NavDatabase::createSchema()
   createSchemaInternal(nullptr);
 }
 
-void NavDatabase::createSchemaInternal(db::ProgressHandler *progress)
+void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 {
   SqlScript script(db, true /* options->isVerbose()*/);
 
@@ -179,7 +180,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
   return false;
 }
 
-bool NavDatabase::isBasePathValid(const QString& filepath, QString& error)
+bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type)
 {
   QFileInfo fi(filepath);
   if(fi.exists())
@@ -188,13 +189,25 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error)
     {
       if(fi.isDir())
       {
-        // If path exists check for scenery directory
-        QDir dir(filepath);
-        QFileInfoList scenery = dir.entryInfoList({"scenery"}, QDir::Dirs);
-        if(!scenery.isEmpty())
-          return true;
+        if(type == atools::fs::FsPaths::XPLANE11)
+        {
+          QFileInfo dataDir(filepath + QDir::separator() + "Resources" + QDir::separator() + "default data");
+
+          if(dataDir.exists() && dataDir.isDir() && dataDir.isReadable())
+            return true;
+          else
+            error = tr("\"%1\" not found").arg(QString("Resources") + QDir::separator() + "default data");
+        }
         else
-          error = tr("Does not contain a \"Scenery\" directory");
+        {
+          // If path exists check for scenery directory
+          QDir dir(filepath);
+          QFileInfoList scenery = dir.entryInfoList({"scenery"}, QDir::Dirs);
+          if(!scenery.isEmpty())
+            return true;
+          else
+            error = tr("Does not contain a \"Scenery\" directory");
+        }
       }
       else
         error = tr("Is not a directory");
@@ -209,24 +222,30 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error)
 
 void NavDatabase::createInternal(const QString& codec)
 {
+  int numFiles = 0, numSceneryAreas = 0;
+  SceneryCfg cfg(codec);
+
   QElapsedTimer timer;
   timer.start();
 
   if(options->isAutocommit())
     db->setAutocommit(true);
 
-  // Read scenery.cfg
-  SceneryCfg cfg(codec);
+  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
+  {
+    numFiles = atools::fs::xp::XplaneDataCompiler::calculateFileCount(*options);
+    numSceneryAreas = 3; // default, airports and user
+  }
+  else
+  {
+    // Read scenery.cfg
+    readSceneryConfig(cfg);
 
-  readSceneryConfig(cfg);
+    // Count the files for exact progress reporting
+    countFiles(cfg, &numFiles, &numSceneryAreas);
+  }
 
-  int numFiles = 0, numSceneryAreas = 0;
-
-  // Count the files for exact progress reporting
-  countFiles(cfg, &numFiles, &numSceneryAreas);
-
-  db::ProgressHandler progress(options);
-
+  ProgressHandler progress(options);
   int total = numFiles + numSceneryAreas + PROGRESS_NUM_STEPS;
 
   if(options->isDatabaseReport())
@@ -250,39 +269,117 @@ void NavDatabase::createInternal(const QString& codec)
 
   // -----------------------------------------------------------------------
   // Create data writer which will read all BGL files and fill the database
-  atools::fs::db::DataWriter dataWriter(*db, *options, &progress);
+  QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
+  QScopedPointer<atools::fs::xp::XplaneDataCompiler> xpDataCompiler;
 
-  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
-    if((area.isActive() || options->isReadInactive()) &&
-       options->isIncludedLocalPath(area.getLocalPath()))
-    {
-      if((aborted = progress.reportSceneryArea(&area)) == true)
-        return;
+    xpDataCompiler.reset(new atools::fs::xp::XplaneDataCompiler(*db, *options, &progress));
 
-      NavDatabaseErrors::SceneryErrors err;
-      if(errors != nullptr)
-        // Prepare structure for error collection
-        dataWriter.setSceneryErrors(&err);
-      else
-        dataWriter.setSceneryErrors(nullptr);
+    atools::fs::scenery::SceneryArea area(1, 1, tr("Base Data"), xpDataCompiler->getBasePath());
 
-      // Read all BGL files in the scenery area into classes of the bgl namespace and
-      // write the contents to the database
-      dataWriter.writeSceneryArea(area);
+    if((aborted = progress.reportSceneryArea(&area)) == true)
+      return;
 
-      if((!err.bglFileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
-      {
-        err.scenery = area;
-        errors->sceneryErrors.append(err);
-      }
+    if((aborted = xpDataCompiler->compileMeta()) == true)
+      return;
 
-      if((aborted = dataWriter.isAborted()) == true)
-        return;
-    }
+    db->commit();
+
+    if((aborted = progress.reportBglFile(tr("earth_fix.dat"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->compileEarthFix()) == true)
+      return;
+
+    db->commit();
+
+    if((aborted = progress.reportBglFile(tr("earth_nav.dat"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->compileEarthNav()) == true)
+      return;
+
+    db->commit();
+
+    if((aborted = progress.reportBglFile(tr("earth_awy.dat"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->compileEarthAirway()) == true)
+      return;
+
+    db->commit();
+
+    atools::fs::scenery::SceneryArea aptarea(1, 1, tr("Airport Data"), xpDataCompiler->getBasePath());
+    if((aborted = progress.reportSceneryArea(&aptarea)) == true)
+      return;
+
+    if((aborted = progress.reportBglFile(tr("CIFP"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->writeCifp()) == true)
+      return;
+
+    db->commit();
+
+    atools::fs::scenery::SceneryArea userarea(1, 1, tr("User Data"), xpDataCompiler->getBasePath());
+    if((aborted = progress.reportSceneryArea(&userarea)) == true)
+      return;
+
+    if((aborted = progress.reportBglFile(tr("user_nav.dat"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->writeUserNav()) == true)
+      return;
+
+    db->commit();
+
+    if((aborted = progress.reportBglFile(tr("user_fix.dat"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->writeUserFix()) == true)
+      return;
+
+    db->commit();
+
+    xpDataCompiler->close();
   }
-  db->commit();
-  dataWriter.close();
+  else
+  {
+    fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
+
+    for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+    {
+      if((area.isActive() || options->isReadInactive()) &&
+         options->isIncludedLocalPath(area.getLocalPath()))
+      {
+        if((aborted = progress.reportSceneryArea(&area)) == true)
+          return;
+
+        NavDatabaseErrors::SceneryErrors err;
+        if(errors != nullptr)
+          // Prepare structure for error collection
+          fsDataWriter->setSceneryErrors(&err);
+        else
+          fsDataWriter->setSceneryErrors(nullptr);
+
+        // Read all BGL files in the scenery area into classes of the bgl namespace and
+        // write the contents to the database
+        fsDataWriter->writeSceneryArea(area);
+
+        if((!err.bglFileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+        {
+          err.scenery = area;
+          errors->sceneryErrors.append(err);
+        }
+
+        if((aborted = fsDataWriter->isAborted()) == true)
+          return;
+      }
+    }
+    db->commit();
+    fsDataWriter->close();
+  }
 
   // Loading is done here - now continue with the post process steps
 
@@ -389,7 +486,9 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isDatabaseReport())
   {
     // Do a report of problems rather than failing totally during loading
-    dataWriter.logResults();
+    if(fsDataWriter != nullptr)
+      fsDataWriter->logResults();
+
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
 

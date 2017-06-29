@@ -48,7 +48,7 @@
 #include "fs/db/ap/fencewriter.h"
 #include "fs/db/ap/taxipathwriter.h"
 #include "fs/db/nav/boundarywriter.h"
-#include "fs/db/progresshandler.h"
+#include "fs/progresshandler.h"
 #include "fs/db/ap/deleteairportwriter.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
@@ -73,7 +73,7 @@ static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES
   bgl::section::TACAN
 };
 
-DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progress)
+DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atools::fs::ProgressHandler *progress)
   : db(sqlDb), progressHandler(progress), options(opts)
 {
   bglFileWriter = new BglFileWriter(db, *this);
@@ -184,7 +184,8 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   atools::fs::scenery::FileResolver resolver(options);
   resolver.getFiles(area, &filepaths, &filenames);
 
-  sceneryErrors->sceneryErrorsMessages.append(resolver.getErrorMessages());
+  if(sceneryErrors != nullptr)
+    sceneryErrors->sceneryErrorsMessages.append(resolver.getErrorMessages());
   progressHandler->reportErrors(resolver.getErrorMessages().size());
 
   if(!filepaths.empty())

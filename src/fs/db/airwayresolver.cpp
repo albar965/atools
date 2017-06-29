@@ -23,7 +23,7 @@
 #include "geo/pos.h"
 #include "geo/rect.h"
 #include "geo/calculations.h"
-#include "fs/db/progresshandler.h"
+#include "fs/progresshandler.h"
 
 #include <QDebug>
 #include <QString>
@@ -100,7 +100,7 @@ uint qHash(const AirwayResolver::AirwaySegment& segment)
          qHash(segment.type);
 }
 
-AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress)
+AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress)
   : progressHandler(progress), curAirwayId(1), numAirways(0), airwayInsertStmt(sqlDb), db(sqlDb)
 {
   SqlUtil util(sqlDb);

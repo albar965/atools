@@ -34,9 +34,8 @@ class SqlQuery;
 }
 
 namespace fs {
-namespace db {
-
 class ProgressHandler;
+namespace db {
 
 /*
  * Creates a routing network from VOR and NDB stations that are reachable from each other.
@@ -47,7 +46,7 @@ class RouteEdgeWriter
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
 
 public:
-  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::db::ProgressHandler& progress,
+  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress,
                   int numProgressSteps);
 
   /*
@@ -66,7 +65,7 @@ private:
                QVariantList& toNodeDistances);
 
   int numSteps = 10;
-  atools::fs::db::ProgressHandler& progressHandler;
+  atools::fs::ProgressHandler& progressHandler;
   atools::sql::SqlDatabase *db;
 
 };

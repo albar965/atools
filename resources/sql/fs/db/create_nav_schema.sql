@@ -173,7 +173,8 @@ create index if not exists idx_ils_loc_runway_name on ils(loc_runway_name);
 
 drop table if exists airway_point;
 
--- Airway segment as read from the BGL record
+-- Airway segment as read from the FSX/P3D BGL record - this is a temp table and will be dropped later
+-- This table is filled from temp_airway in case of X-Plane
 create table airway_point
 (
   airway_point_id integer primary key,
@@ -197,6 +198,27 @@ foreign key(waypoint_id) references waypoint(waypoint_id)
 );
 
 create index if not exists idx_airway_point_loc_waypoint_id on airway_point(waypoint_id);
+
+-- **************************************************
+
+drop table if exists airway_temp;
+
+-- Airway segment as read from the X-Plane earth_awy.dat file- this is a temp table and will be dropped later
+create table airway_temp
+(
+  airway_temp_id integer primary key,
+  name varchar(50) not null,
+  type integer,
+  direction varchar(1),
+  minimum_altitude integer,
+  maximum_altitude integer,
+  previous_type integer,
+  previous_ident varchar(5),
+  previous_region varchar(2),
+  next_type integer,
+  next_ident varchar(5),
+  next_region varchar(2)
+);
 
 -- **************************************************
 

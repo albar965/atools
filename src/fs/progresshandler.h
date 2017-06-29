@@ -26,7 +26,6 @@ namespace fs {
 namespace scenery {
 class SceneryArea;
 }
-namespace db {
 
 /*
  * Progress handler. Fills the NavDatabaseProgress object with information and calls the progress callback.
@@ -138,7 +137,6 @@ private:
 
 };
 
-} // namespace writer
 } // namespace fs
 } // namespace atools
 
