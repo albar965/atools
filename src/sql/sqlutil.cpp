@@ -29,6 +29,12 @@ SqlUtil::SqlUtil(SqlDatabase *sqlDb)
 {
 }
 
+SqlUtil::SqlUtil(SqlDatabase& sqlDb)
+  : db(&sqlDb)
+{
+
+}
+
 QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause,
                                       const QStringList& excludeColumns)
 {
@@ -297,14 +303,14 @@ void SqlUtil::reportDuplicates(QDebug& out,
     if(!header)
     {
       out << "Table duplicates for " << table <<
-      " (" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+        " (" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
       header = true;
     }
     out << buildResultList(q).join(", ") << endl;
   }
   if(!header)
     out << "Table duplicates for " << table <<
-    " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
+      " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
 }
 
 int SqlUtil::bindAndExec(const QString& sql, const QString& bind, const QVariant& value)

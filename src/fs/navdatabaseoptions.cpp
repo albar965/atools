@@ -288,47 +288,52 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 
   out << ", Include file filter [";
   for(const QRegExp& f : opts.fileFiltersInc)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
+
   out << ", Exclude file filter [";
   for(const QRegExp& f : opts.fileFiltersExcl)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
 
   out << ", Include path filter [";
   for(const QRegExp& f : opts.pathFiltersInc)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
+
   out << ", Exclude path filter [";
   for(const QRegExp& f : opts.pathFiltersExcl)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
 
   out << ", Include airport filter [";
   for(const QRegExp& f : opts.airportIcaoFiltersInc)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
+
   out << ", Exclude airport filter [";
   for(const QRegExp& f : opts.airportIcaoFiltersExcl)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
 
   out << ", Include addon filter [";
   for(const QRegExp& f : opts.addonFiltersInc)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
+
   out << ", Exclude addon filter [";
   for(const QRegExp& f : opts.addonFiltersExcl)
-    out << "pattern" << f.pattern();
+    out << f.pattern() << ", ";
   out << "]";
 
   out << ", Include type filter [";
   for(type::BglObjectType type : opts.bglObjectTypeFiltersInc)
-    out << "pattern" << type::bglObjectTypeToString(type);
+    out << type::bglObjectTypeToString(type) << ", ";
   out << "]";
   out << ", Exclude type filter [";
   for(type::BglObjectType type : opts.bglObjectTypeFiltersExcl)
-    out << "pattern" << type::bglObjectTypeToString(type);
+    out << type::bglObjectTypeToString(type) << ", ";
+
   out << "]";
   out << "]";
   return out;
