@@ -33,7 +33,8 @@ public:
   /*
    * Create a util using the given database.
    */
-  SqlUtil(SqlDatabase *sqlDb);
+  explicit SqlUtil(SqlDatabase *sqlDb);
+  explicit SqlUtil(SqlDatabase &sqlDb);
 
   /*
    * Prints row counts for all tables in the database.

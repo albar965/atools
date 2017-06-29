@@ -30,7 +30,7 @@ SceneryArea::SceneryArea()
 }
 
 SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath)
-  : areaNumber(areaNum), layer(layerNum), title(sceneryTitle), localPath(sceneryLocalPath), active(true)
+  : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath)
 {
 
 }

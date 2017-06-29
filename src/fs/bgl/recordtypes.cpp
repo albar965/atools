@@ -84,6 +84,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::RUNWAY:
       return "RUNWAY";
 
+    case rec::RUNWAY_P3D_V4:
+      return "RUNWAY_P3D_V4";
+
     case rec::AIRPORT_WAYPOINT:
       return "AIRPORT_WAYPOINT";
 
@@ -105,6 +108,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::APRON_SECOND:
       return "APRON_SECOND";
 
+    case rec::APRON_SECOND_P3D_V4:
+      return "APRON_SECOND_P3D_V4";
+
     case rec::APRON_EDGE_LIGHTS:
       return "APRON_EDGE_LIGHTS";
 
@@ -119,6 +125,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::TAXI_PATH:
       return "TAXI_PATH";
+
+    case rec::TAXI_PATH_P3D_V4:
+      return "TAXI_PATH_P3D_V4";
 
     case rec::TAXI_NAME:
       return "TAXI_NAME";
@@ -146,6 +155,9 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 {
   switch(type)
   {
+    case RUNWAY_P3D_V4:
+    case APRON_SECOND_P3D_V4:
+    case TAXI_PATH_P3D_V4:
     case rec::NAME:
     case rec::TOWER_OBJ:
     case rec::RUNWAY:

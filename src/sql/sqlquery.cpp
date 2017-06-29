@@ -299,7 +299,6 @@ void SqlQuery::bindValue(const QString& placeholder, const QVariant& val, QSql::
 {
   query.bindValue(placeholder, val, type);
   boundValue(placeholder);
-
 }
 
 void SqlQuery::bindValue(int pos, const QVariant& val, QSql::ParamType type)
