@@ -464,30 +464,29 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
   FsPaths::SimulatorType sim = options->getSimulatorType();
 
-  if(sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4)
+  if(options->isReadAddOnXml() && (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4))
   {
-    // Read the Prepar3D add on packages and add them to the scenery list
+    // Read the Prepar3D add on packages and add them to the scenery list ===============================
     QString documents(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first());
 
     int simNum = sim == atools::fs::FsPaths::P3D_V3 ? 3 : 4;
 
+    // Add both path alternatives since documentation is not clear
     QStringList addonPaths;
-    // Add both alternatives since documentation is not clear
+    // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Add-ons").arg(simNum));
 
+    // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
     addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Files").arg(simNum) +
                       QDir::separator() + QLatin1Literal("add-ons"));
 
-    int layer = std::numeric_limits<int>::min();
+    // Calculate maximum area number
     int areaNum = std::numeric_limits<int>::min();
-
-    // Calculate maximum layer and area number
-    // Layer is only used if add-on does not provide a layer
     for(const SceneryArea& area : cfg.getAreas())
-    {
-      areaNum = std::max(layer, area.getAreaNumber());
-      layer = std::max(layer, area.getLayer());
-    }
+      areaNum = std::max(areaNum, area.getAreaNumber());
+
+    QVector<AddOnComponent> noLayerComponents;
+    QStringList noLayerPaths;
 
     for(const QString& addonPath : addonPaths)
     {
@@ -528,10 +527,15 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
               if(!compPath.exists())
                 qWarning() << "Path does not exist" << compPath;
 
-              SceneryArea area(areaNum,
-                               component.getLayer() == -1 ? layer++ : component.getLayer(),
-                               component.getName(), compPath.path());
-              cfg.appendArea(area);
+              if(component.getLayer() == -1)
+              {
+                // Add entries without layers later at the end of the list
+                // Layer is only used if add-on does not provide a layer
+                noLayerComponents.append(component);
+                noLayerPaths.append(compPath.path());
+              }
+              else
+                cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
             }
           }
           else
@@ -540,9 +544,22 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       }
       else
         qWarning() << Q_FUNC_INFO << addonDir << "does not exist";
-
-      cfg.sortAreas();
     }
+
+    // Bring added add-on.xml in order with the rest sort by layer
+    cfg.sortAreas();
+
+    // Calculate maximum layer and area number
+    int lastLayer = std::numeric_limits<int>::min();
+    int lastArea = std::numeric_limits<int>::min();
+    for(const SceneryArea& area : cfg.getAreas())
+    {
+      lastArea = std::max(lastArea, area.getAreaNumber());
+      lastLayer = std::max(lastLayer, area.getLayer());
+    }
+
+    for(int i = 0; i < noLayerComponents.size(); i++)
+      cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i)));
   }
 }
 

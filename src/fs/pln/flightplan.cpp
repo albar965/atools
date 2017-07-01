@@ -74,11 +74,10 @@ void Flightplan::load(const QString& file)
   filename = file;
   QFile xmlFile(filename);
 
-  if(xmlFile.open(QIODevice::ReadOnly | QIODevice::Text))
+  if(xmlFile.open(QIODevice::ReadOnly))
   {
     entries.clear();
-    QXmlStreamReader reader;
-    reader.setDevice(&xmlFile);
+    QXmlStreamReader reader(&xmlFile);
 
     // Skip all the useless stuff until we hit the document
     readUntilElement(reader, "SimBase.Document");
@@ -577,11 +576,11 @@ void Flightplan::saveRte(const QString& file)
     QTextStream stream(&rteString);
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
-    arg(QApplication::applicationName()).
-    arg(QApplication::applicationVersion()).
-    arg(atools::gitRevision()).
-    arg(QLocale().toString(QDateTime::currentDateTime())).
-    replace("-", " ") << endl << endl;
+      arg(QApplication::applicationName()).
+      arg(QApplication::applicationVersion()).
+      arg(atools::gitRevision()).
+      arg(QLocale().toString(QDateTime::currentDateTime())).
+      replace("-", " ") << endl << endl;
 
     stream << entries.size() << endl << endl;
 
@@ -647,10 +646,10 @@ void Flightplan::saveRte(const QString& file)
 void Flightplan::removeNoSaveEntries()
 {
   auto it = std::remove_if(entries.begin(), entries.end(),
-                           [] (const FlightplanEntry &type)->bool
-                           {
-                             return type.isNoSave();
-                           });
+                           [](const FlightplanEntry& type) -> bool
+        {
+          return type.isNoSave();
+        });
 
   if(it != entries.end())
     entries.erase(it, entries.end());

@@ -35,14 +35,13 @@ AddOnPackage::AddOnPackage(const QString& file)
 
   QFile xmlFile(filename);
 
-  if(xmlFile.open(QIODevice::ReadOnly | QIODevice::Text))
+  if(xmlFile.open(QIODevice::ReadOnly))
   {
-    QXmlStreamReader xml;
-    xml.setDevice(&xmlFile);
+    QXmlStreamReader xml(&xmlFile);
 
     if(xml.readNextStartElement())
     {
-      if(xml.name() == "SimBase.Document" && xml.attributes().value("Type") == "AddOnXml")
+      if(xml.name() == "SimBase.Document")
       {
         while(xml.readNextStartElement())
         {
@@ -64,6 +63,8 @@ AddOnPackage::AddOnPackage(const QString& file)
         }
       }
     }
+    if(xml.hasError())
+      throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xml.errorString()));
   }
   else
     throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));

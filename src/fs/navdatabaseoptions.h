@@ -182,6 +182,12 @@ public:
     readInactive = value;
   }
 
+  /* Reads all inactive scenery regions if set to true */
+  void setReadAddOnXml(bool value)
+  {
+    readAddOnXml = value;
+  }
+
   typedef std::function<bool (const atools::fs::NavDatabaseProgress&)> ProgressCallbackType;
 
   /* Set progress callback function/method */
@@ -260,6 +266,11 @@ public:
     return readInactive;
   }
 
+  bool isReadAddOnXml() const
+  {
+    return readAddOnXml;
+  }
+
   bool isIncludedFilename(const QString& filename) const;
   bool isIncludedLocalPath(const QString& filepath) const;
   bool isIncludedAirportIdent(const QString& icao) const;
@@ -304,7 +315,7 @@ private:
   QString sceneryFile, basepath;
   bool verbose = false, deletes = true, deduplicate = true, filterRunways = true, incomplete = true,
        autocommit = false, resolveAirways = true, createRouteTables = true, databaseReport = false,
-       readInactive = false;
+       readInactive = false, readAddOnXml = true;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
