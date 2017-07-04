@@ -1,3 +1,10 @@
+Version 2.4.4
+
+* v4 runways, aprons and taxiways are now read correctly. This affects all BGL files that are created using the v4 SDK compiler.
+* Fixed crash with P3D v4 BGL files.
+* Added support for P3D v4 add-on.xml packages. #111
+* SimConnect is now loaded dynamically. #110
+
 Version 2.4.3
 
 * No changes.
