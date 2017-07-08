@@ -26,6 +26,7 @@
 #include "sql/sqlutil.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
+#include "fs/xp/airwaypostprocess.h"
 #include "exception.h"
 
 #include <QFileInfo>
@@ -51,6 +52,7 @@ XplaneDataCompiler::XplaneDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabas
   fixWriter = new FixWriter(db);
   navWriter = new NavWriter(db);
   airwayWriter = new AirwayWriter(db);
+  airwayPostProcess = new AirwayPostProcess(db, options, progressHandler);
 
   initQueries();
 }
@@ -74,6 +76,11 @@ bool XplaneDataCompiler::compileEarthFix()
 bool XplaneDataCompiler::compileEarthAirway()
 {
   return readDatFile(basePath + QDir::separator() + "earth_awy.dat", 11, airwayWriter);
+}
+
+bool XplaneDataCompiler::postProcessEarthAirway()
+{
+  return airwayPostProcess->postProcessEarthAirway();
 }
 
 bool XplaneDataCompiler::compileEarthNav()
@@ -156,8 +163,15 @@ void XplaneDataCompiler::close()
 {
   delete fixWriter;
   fixWriter = nullptr;
+
   delete navWriter;
   navWriter = nullptr;
+
+  delete airwayWriter;
+  airwayWriter = nullptr;
+
+  delete airwayPostProcess;
+  airwayPostProcess = nullptr;
 
   deInitQueries();
 }

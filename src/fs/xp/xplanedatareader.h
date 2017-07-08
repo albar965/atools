@@ -41,7 +41,11 @@ class FixWriter;
 class NavWriter;
 class AirwayWriter;
 class Writer;
+class AirwayPostProcess;
 
+/*
+ * Provides methods to read X-Plane data from text files into the database.
+ */
 class XplaneDataCompiler
 {
 public:
@@ -52,6 +56,7 @@ public:
   bool compileMeta();
   bool compileEarthFix();
   bool compileEarthAirway();
+  bool postProcessEarthAirway();
   bool compileEarthNav();
   bool compileApt();
   bool writeCifp();
@@ -91,6 +96,7 @@ private:
   atools::fs::xp::FixWriter *fixWriter = nullptr;
   atools::fs::xp::AirwayWriter *airwayWriter = nullptr;
   atools::fs::xp::NavWriter *navWriter = nullptr;
+  atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
 
   // Base layer
   // $X-Plane/Resources/default data/

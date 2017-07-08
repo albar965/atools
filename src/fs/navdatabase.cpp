@@ -222,7 +222,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
 
 void NavDatabase::createInternal(const QString& codec)
 {
-  int numFiles = 0, numSceneryAreas = 0;
+  int numFiles = 0, numSceneryAreas = 0, xplaneExtraSteps = 0;
   SceneryCfg cfg(codec);
 
   QElapsedTimer timer;
@@ -235,6 +235,8 @@ void NavDatabase::createInternal(const QString& codec)
   {
     numFiles = atools::fs::xp::XplaneDataCompiler::calculateFileCount(*options);
     numSceneryAreas = 3; // default, airports and user
+    xplaneExtraSteps++; // prepare post process airways
+    xplaneExtraSteps++; // post process airways
   }
   else
   {
@@ -246,7 +248,7 @@ void NavDatabase::createInternal(const QString& codec)
   }
 
   ProgressHandler progress(options);
-  int total = numFiles + numSceneryAreas + PROGRESS_NUM_STEPS;
+  int total = numFiles + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
 
   if(options->isDatabaseReport())
     total += PROGRESS_NUM_DB_REPORT_STEPS;
@@ -271,6 +273,7 @@ void NavDatabase::createInternal(const QString& codec)
   // Create data writer which will read all BGL files and fill the database
   QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
   QScopedPointer<atools::fs::xp::XplaneDataCompiler> xpDataCompiler;
+  SqlScript script(db, true /*options->isVerbose()*/);
 
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
@@ -306,6 +309,17 @@ void NavDatabase::createInternal(const QString& codec)
       return;
 
     if((aborted = xpDataCompiler->compileEarthAirway()) == true)
+      return;
+
+    if((aborted = progress.reportOther(tr("Preparing Airways"))) == true)
+      return;
+
+    script.executeScript(":/atools/resources/sql/fs/db/xplane/prepare_airway.sql");
+
+    if((aborted = progress.reportOther(tr("Post procecssing Airways"))) == true)
+      return;
+
+    if((aborted = xpDataCompiler->postProcessEarthAirway()) == true)
       return;
 
     db->commit();
@@ -386,7 +400,6 @@ void NavDatabase::createInternal(const QString& codec)
   if((aborted = progress.reportOther(tr("Creating indexes"))) == true)
     return;
 
-  SqlScript script(db, true /*options->isVerbose()*/);
   script.executeScript(":/atools/resources/sql/fs/db/create_indexes_post_load.sql");
   db->commit();
 
@@ -413,7 +426,7 @@ void NavDatabase::createInternal(const QString& codec)
 
     db->commit();
 
-    SqlQuery(db).exec("drop table if exists airway_point");
+    // TODO revert   SqlQuery(db).exec("drop table if exists airway_point");
   }
 
   if((aborted = progress.reportOther(tr("Updating waypoints"))) == true)

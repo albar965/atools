@@ -204,7 +204,8 @@ HEADERS += src/atools.h \
     src/fs/xp/fixwriter.h \
     src/fs/xp/writer.h \
     src/fs/xp/xplaneconstants.h \
-    src/fs/xp/airwaywriter.h
+    src/fs/xp/airwaywriter.h \
+    src/fs/xp/airwaypostprocess.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -375,7 +376,8 @@ SOURCES += src/atools.cpp \
     src/fs/xp/fixwriter.cpp \
     src/fs/xp/writer.cpp \
     src/fs/xp/xplaneconstants.cpp \
-    src/fs/xp/airwaywriter.cpp
+    src/fs/xp/airwaywriter.cpp \
+    src/fs/xp/airwaypostprocess.cpp
 
 
 unix {
@@ -389,7 +391,8 @@ DISTFILES += \
     uncrustify.cfg \
     CHANGELOG.txt \
     BUILD.txt \
-    resources/sql/fs/db/README.txt
+    resources/sql/fs/db/README.txt \
+    resources/sql/fs/db/xplane/populate_airway_point.sql
 
 RESOURCES += \
     atools.qrc
