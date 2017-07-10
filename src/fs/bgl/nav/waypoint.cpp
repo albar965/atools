@@ -90,10 +90,10 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
-  if(region.isEmpty())
+  if(region.isEmpty() && !isDisabled())
     qWarning().nospace().noquote() << "Waypoint at " << position << " ident " << ident << " has no region";
 
-  if(ident.isEmpty() && type != nav::UNNAMED)
+  if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled())
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
   if(options->isIncludedBglObject(type::AIRWAY))
@@ -126,12 +126,12 @@ QDebug operator<<(QDebug out, const Waypoint& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Waypoint[type " << Waypoint::waypointTypeToStr(record.type)
-  << ", " << record.position
-  << ", magVar " << record.magVar
-  << ", ident " << record.ident
-  << ", region " << record.region
-  << ", airport ID " << record.airportIdent << endl;
+                          << " Waypoint[type " << Waypoint::waypointTypeToStr(record.type)
+                          << ", " << record.position
+                          << ", magVar " << record.magVar
+                          << ", ident " << record.ident
+                          << ", region " << record.region
+                          << ", airport ID " << record.airportIdent << endl;
   out << record.airways;
   out << "]";
   return out;
