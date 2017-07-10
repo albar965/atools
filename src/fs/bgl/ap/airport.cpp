@@ -300,11 +300,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::UNKNOWN_REC:
         break;
       default:
-        // qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << type << dec
-        // << getObjectName();
 
         if(subrecordIndex == 0)
         {
+          qWarning().nospace().noquote() << "Ignoring airport. Unexpected intial record type in Airport record 0x"
+                                         << hex << type << dec << getObjectName();
+
           // Stop reading when the first subrecord is already invalid
           seekToStart();
           excluded = true;
