@@ -199,13 +199,15 @@ HEADERS += src/atools.h \
     src/fs/scenery/addonpackage.h \
     src/fs/scenery/addoncomponent.h \
     src/fs/progresshandler.h \
-    src/fs/xp/xplanedatareader.h \
-    src/fs/xp/navwriter.h \
-    src/fs/xp/fixwriter.h \
-    src/fs/xp/writer.h \
-    src/fs/xp/xplaneconstants.h \
-    src/fs/xp/airwaywriter.h \
-    src/fs/xp/airwaypostprocess.h
+    src/fs/xp/airwaypostprocess.h \
+    src/fs/xp/xpconstants.h \
+    src/fs/xp/xpdatareader.h \
+    src/fs/xp/xpwriter.h \
+    src/fs/xp/xpnavwriter.h \
+    src/fs/xp/xpfixwriter.h \
+    src/fs/xp/xpairwaywriter.h \
+    src/fs/xp/xpairportwriter.h \
+    src/fs/util/fsutil.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -371,13 +373,15 @@ SOURCES += src/atools.cpp \
     src/fs/scenery/addonpackage.cpp \
     src/fs/scenery/addoncomponent.cpp \
     src/fs/progresshandler.cpp \
-    src/fs/xp/xplanedatareader.cpp \
-    src/fs/xp/navwriter.cpp \
-    src/fs/xp/fixwriter.cpp \
-    src/fs/xp/writer.cpp \
-    src/fs/xp/xplaneconstants.cpp \
-    src/fs/xp/airwaywriter.cpp \
-    src/fs/xp/airwaypostprocess.cpp
+    src/fs/xp/airwaypostprocess.cpp \
+    src/fs/xp/xpconstants.cpp \
+    src/fs/xp/xpdatareader.cpp \
+    src/fs/xp/xpwriter.cpp \
+    src/fs/xp/xpnavwriter.cpp \
+    src/fs/xp/xpfixwriter.cpp \
+    src/fs/xp/xpairwaywriter.cpp \
+    src/fs/xp/xpairportwriter.cpp \
+    src/fs/util/fsutil.cpp
 
 
 unix {

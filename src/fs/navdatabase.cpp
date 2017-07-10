@@ -28,7 +28,7 @@
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/addoncomponent.h"
-#include "fs/xp/xplanedatareader.h"
+#include "fs/xp/xpdatareader.h"
 
 #include <QDebug>
 #include <QDir>
@@ -233,7 +233,7 @@ void NavDatabase::createInternal(const QString& codec)
 
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
-    numFiles = atools::fs::xp::XplaneDataCompiler::calculateFileCount(*options);
+    numFiles = atools::fs::xp::XpDataCompiler::calculateFileCount(*options);
     numSceneryAreas = 3; // default, airports and user
     xplaneExtraSteps++; // prepare post process airways
     xplaneExtraSteps++; // post process airways
@@ -272,41 +272,47 @@ void NavDatabase::createInternal(const QString& codec)
   // -----------------------------------------------------------------------
   // Create data writer which will read all BGL files and fill the database
   QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
-  QScopedPointer<atools::fs::xp::XplaneDataCompiler> xpDataCompiler;
+  QScopedPointer<atools::fs::xp::XpDataCompiler> xpDataCompiler;
   SqlScript script(db, true /*options->isVerbose()*/);
 
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
-    xpDataCompiler.reset(new atools::fs::xp::XplaneDataCompiler(*db, *options, &progress));
+    xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress));
 
-    atools::fs::scenery::SceneryArea area(1, 1, tr("Base Data"), xpDataCompiler->getBasePath());
+    atools::fs::scenery::SceneryArea area(1, 1, tr("X-plane"), QString());
 
     if((aborted = progress.reportSceneryArea(&area)) == true)
       return;
 
-    if((aborted = xpDataCompiler->compileMeta()) == true)
+    if((aborted = xpDataCompiler->writeBasepathScenery()) == true)
       return;
 
     db->commit();
 
-    if((aborted = progress.reportBglFile(tr("earth_fix.dat"))) == true)
+    if((aborted = xpDataCompiler->compileCustomApt()) == true)
       return;
+
+    db->commit();
+
+    if((aborted = xpDataCompiler->compileCustomGlobalApt()) == true)
+      return;
+
+    db->commit();
+
+    if((aborted = xpDataCompiler->compileDefaultApt()) == true)
+      return;
+
+    db->commit();
 
     if((aborted = xpDataCompiler->compileEarthFix()) == true)
       return;
 
     db->commit();
 
-    if((aborted = progress.reportBglFile(tr("earth_nav.dat"))) == true)
-      return;
-
     if((aborted = xpDataCompiler->compileEarthNav()) == true)
       return;
 
     db->commit();
-
-    if((aborted = progress.reportBglFile(tr("earth_awy.dat"))) == true)
-      return;
 
     if((aborted = xpDataCompiler->compileEarthAirway()) == true)
       return;
@@ -328,9 +334,6 @@ void NavDatabase::createInternal(const QString& codec)
     if((aborted = progress.reportSceneryArea(&aptarea)) == true)
       return;
 
-    if((aborted = progress.reportBglFile(tr("CIFP"))) == true)
-      return;
-
     if((aborted = xpDataCompiler->writeCifp()) == true)
       return;
 
@@ -340,16 +343,10 @@ void NavDatabase::createInternal(const QString& codec)
     if((aborted = progress.reportSceneryArea(&userarea)) == true)
       return;
 
-    if((aborted = progress.reportBglFile(tr("user_nav.dat"))) == true)
-      return;
-
     if((aborted = xpDataCompiler->writeUserNav()) == true)
       return;
 
     db->commit();
-
-    if((aborted = progress.reportBglFile(tr("user_fix.dat"))) == true)
-      return;
 
     if((aborted = xpDataCompiler->writeUserFix()) == true)
       return;

@@ -51,6 +51,9 @@ public:
   void reportError();
   void reportErrors(int num);
 
+  /* Report without text update to allow GUI updates */
+  bool reportUpdate();
+
   /*
    * Send the last report
    */

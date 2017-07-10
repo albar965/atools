@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/airwaywriter.h"
+#include "fs/xp/xpairwaywriter.h"
 
 #include "sql/sqlutil.h"
 
@@ -44,18 +44,18 @@ enum FieldIndex
   NAME = 10
 };
 
-AirwayWriter::AirwayWriter(atools::sql::SqlDatabase& sqlDb)
-  : Writer(sqlDb)
+XpAirwayWriter::XpAirwayWriter(atools::sql::SqlDatabase& sqlDb)
+  : XpWriter(sqlDb)
 {
   initQueries();
 }
 
-atools::fs::xp::AirwayWriter::~AirwayWriter()
+atools::fs::xp::XpAirwayWriter::~XpAirwayWriter()
 {
   deInitQueries();
 }
 
-void AirwayWriter::write(const QStringList& line, int curFileId)
+void XpAirwayWriter::write(const QStringList& line, int curFileId)
 {
   Q_UNUSED(curFileId);
 
@@ -82,7 +82,12 @@ void AirwayWriter::write(const QStringList& line, int curFileId)
   }
 }
 
-void AirwayWriter::initQueries()
+void XpAirwayWriter::finish()
+{
+
+}
+
+void XpAirwayWriter::initQueries()
 {
   deInitQueries();
 
@@ -92,7 +97,7 @@ void AirwayWriter::initQueries()
   insertAirwayQuery->prepare(util.buildInsertStatement("airway_temp"));
 }
 
-void AirwayWriter::deInitQueries()
+void XpAirwayWriter::deInitQueries()
 {
   delete insertAirwayQuery;
   insertAirwayQuery = nullptr;

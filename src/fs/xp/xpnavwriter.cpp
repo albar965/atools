@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/navwriter.h"
+#include "fs/xp/xpnavwriter.h"
 
 #include "geo/pos.h"
 #include "geo/calculations.h"
@@ -48,18 +48,18 @@ enum FieldIndex
   NAME = 11
 };
 
-NavWriter::NavWriter(atools::sql::SqlDatabase& sqlDb)
-  : Writer(sqlDb)
+XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb)
+  : XpWriter(sqlDb)
 {
   initQueries();
 }
 
-atools::fs::xp::NavWriter::~NavWriter()
+atools::fs::xp::XpNavWriter::~XpNavWriter()
 {
   deInitQueries();
 }
 
-void NavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
+void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
   int range = line.at(RANGE).toInt();
   QString type;
@@ -112,7 +112,7 @@ void NavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->exec();
 }
 
-void NavWriter::writeNdb(const QStringList& line, int curFileId)
+void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
 {
   int range = line.at(RANGE).toInt();
 
@@ -143,7 +143,7 @@ void NavWriter::writeNdb(const QStringList& line, int curFileId)
   insertNdbQuery->exec();
 }
 
-void NavWriter::writeMarker(const QStringList& line, int curFileId, RowCode rowCode)
+void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode rowCode)
 {
   QString type;
   if(rowCode == OM)
@@ -165,7 +165,7 @@ void NavWriter::writeMarker(const QStringList& line, int curFileId, RowCode rowC
   insertMarkerQuery->exec();
 }
 
-void NavWriter::finshIls()
+void XpNavWriter::finishIls()
 {
   if(writingIls)
   {
@@ -174,7 +174,7 @@ void NavWriter::finshIls()
   }
 }
 
-void NavWriter::writeIls(const QStringList& line, int curFileId, RowCode rowCode)
+void XpNavWriter::writeIls(const QStringList& line, int curFileId, NavRowCode rowCode)
 {
   Q_UNUSED(curFileId);
 
@@ -216,6 +216,7 @@ void NavWriter::writeIls(const QStringList& line, int curFileId, RowCode rowCode
     insertIlsQuery->bindValue(":end_mid_laty", pmid.getLatY());
     insertIlsQuery->bindValue(":end2_lonx", p2.getLonX());
     insertIlsQuery->bindValue(":end2_laty", p2.getLatY());
+    writingIls = true;
   }
   else if(rowCode == GS)
   {
@@ -232,16 +233,14 @@ void NavWriter::writeIls(const QStringList& line, int curFileId, RowCode rowCode
     insertIlsQuery->bindValue(":dme_lonx", line.at(LONX).toFloat());
     insertIlsQuery->bindValue(":dme_laty", line.at(LATY).toFloat());
   }
-
-  writingIls = true;
 }
 
-void NavWriter::write(const QStringList& line, int curFileId)
+void XpNavWriter::write(const QStringList& line, int curFileId)
 {
   // lat lon
   // ("28.000708333", "-83.423330556", "KNOST", "ENRT", "K7")
 
-  RowCode rowCode = static_cast<RowCode>(line.at(ROWCODE).toInt());
+  NavRowCode rowCode = static_cast<NavRowCode>(line.at(ROWCODE).toInt());
 
   // Glideslope records must come later in the file than their associated localizer
   // LTP/FTP records must come later in the file than their associated FPAP
@@ -250,25 +249,25 @@ void NavWriter::write(const QStringList& line, int curFileId)
   {
     // 2 NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM)
     case NDB:
-      finshIls();
+      finishIls();
       writeNdb(line, curFileId);
       break;
 
     // 3 VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs
     case VOR:
-      finshIls();
+      finishIls();
       writeVor(line, curFileId, false);
       break;
 
     // 4 Localizer component of an ILS (Instrument Landing System)
     case LOC:
-      finshIls();
+      finishIls();
       writeIls(line, curFileId, rowCode);
       break;
 
     // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
     case LOC_ONLY:
-      finshIls();
+      finishIls();
       writeIls(line, curFileId, rowCode);
       break;
 
@@ -283,7 +282,7 @@ void NavWriter::write(const QStringList& line, int curFileId)
     case MM:
     // 9 Inner markers (IM) for an ILS
     case IM:
-      finshIls();
+      finishIls();
       writeMarker(line, curFileId, rowCode);
       break;
 
@@ -299,7 +298,7 @@ void NavWriter::write(const QStringList& line, int curFileId)
         writeIls(line, curFileId, rowCode);
       else
       {
-        finshIls();
+        finishIls();
         writeVor(line, true, curFileId);
       }
       break;
@@ -307,7 +306,7 @@ void NavWriter::write(const QStringList& line, int curFileId)
     case atools::fs::xp::SBAS_GBAS_FINAL:
     case atools::fs::xp::GBAS:
     case atools::fs::xp::SBAS_GBAS_TRESHOLD:
-      finshIls();
+      finishIls();
 
       // 14 Final approach path alignment point of an SBAS or GBAS approach path Will not appear in X-Plane’s charts
       // 15 GBAS differential ground station of a GLS Will not appear in X-Plane’s charts
@@ -315,7 +314,12 @@ void NavWriter::write(const QStringList& line, int curFileId)
   }
 }
 
-void NavWriter::initQueries()
+void XpNavWriter::finish()
+{
+  finishIls();
+}
+
+void XpNavWriter::initQueries()
 {
   deInitQueries();
 
@@ -334,7 +338,7 @@ void NavWriter::initQueries()
   insertIlsQuery->prepare(util.buildInsertStatement("ils", QString(), {"loc_runway_end_id"}));
 }
 
-void NavWriter::deInitQueries()
+void XpNavWriter::deInitQueries()
 {
   delete insertVorQuery;
   insertVorQuery = nullptr;

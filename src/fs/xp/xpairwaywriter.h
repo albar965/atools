@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_XP_AWYWRITER_H
 #define ATOOLS_FS_XP_AWYWRITER_H
 
-#include "fs/xp/writer.h"
+#include "fs/xp/xpwriter.h"
 
 namespace atools {
 
@@ -30,14 +30,15 @@ class SqlQuery;
 namespace fs {
 namespace xp {
 
-class AirwayWriter :
-  public atools::fs::xp::Writer
+class XpAirwayWriter :
+  public atools::fs::xp::XpWriter
 {
 public:
-  AirwayWriter(atools::sql::SqlDatabase& sqlDb);
-  virtual ~AirwayWriter();
+  XpAirwayWriter(atools::sql::SqlDatabase& sqlDb);
+  virtual ~XpAirwayWriter();
 
-  virtual void write(const QStringList& line, int curFileId);
+  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void finish() override;
 
 private:
   void initQueries();

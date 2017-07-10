@@ -274,6 +274,18 @@ void SqlQuery::clear()
   query.clear();
 }
 
+void SqlQuery::clearBoundValues()
+{
+  QMap<QString, QVariant> values = boundValues();
+
+  for(const QString& key : values.keys())
+  {
+    const QVariant& value = values.value(key);
+    if(value.isValid() && !value.isNull())
+      bindValue(key, QVariant(value.type()));
+  }
+}
+
 void SqlQuery::exec()
 {
   checkError(query.exec(), "SqlQuery::exec(): Error executing query");

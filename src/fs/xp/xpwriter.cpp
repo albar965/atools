@@ -15,5 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xplaneconstants.h"
+#include "fs/xp/xpwriter.h"
 
+namespace atools {
+namespace fs {
+namespace xp {
+
+XpWriter::XpWriter(sql::SqlDatabase& sqlDb)
+  : db(sqlDb)
+{
+
+}
+
+XpWriter::~XpWriter()
+{
+
+}
+
+} // namespace xp
+} // namespace fs
+} // namespace atools

@@ -21,6 +21,7 @@
 #include <QLocale>
 #include <QRegularExpression>
 #include <QVector>
+#include <QDir>
 
 namespace atools {
 
@@ -137,6 +138,59 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
       return true;
 
   return false;
+}
+
+QString buildPathNoCase(const std::list<QString>& paths)
+{
+  QDir dir;
+  QString file;
+
+  int i = 0;
+  for(const QString& path : paths)
+  {
+    if(i == 0)
+      dir = path;
+    else
+    {
+      QStringList entries = dir.entryList({path});
+      if(!entries.isEmpty())
+      {
+        if(QFileInfo(dir.path() + QDir::separator() + entries.first()).isDir())
+        {
+          if(!dir.cd(entries.first()))
+            break;
+        }
+        else
+        {
+          file = entries.first();
+          break;
+        }
+      }
+      else
+        return QString();
+    }
+    i++;
+  }
+
+  if(file.isEmpty())
+    return dir.path();
+  else
+    return dir.path() + QDir::separator() + file;
+}
+
+QString buildPath(const std::list<QString>& paths)
+{
+  QString retval;
+
+  int i = 0;
+  for(const QString& path : paths)
+  {
+    if(i > 0)
+      retval += QDir::separator();
+    retval += path;
+    i++;
+  }
+  return retval;
 }
 
 } // namespace atools

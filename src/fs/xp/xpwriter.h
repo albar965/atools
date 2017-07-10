@@ -15,23 +15,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/writer.h"
+#ifndef ATOOLS_FS_XP_WRITER_H
+#define ATOOLS_FS_XP_WRITER_H
+
+class QStringList;
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+
 namespace fs {
 namespace xp {
 
-Writer::Writer(sql::SqlDatabase& sqlDb)
-  : db(sqlDb)
+class XpWriter
 {
+public:
+  XpWriter(atools::sql::SqlDatabase& sqlDb);
+  virtual ~XpWriter();
 
-}
+  virtual void write(const QStringList& line, int curFileId) = 0;
+  virtual void finish() = 0;
 
-Writer::~Writer()
-{
+protected:
+  atools::sql::SqlDatabase& db;
 
-}
+};
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
+
+#endif // ATOOLS_FS_XP_WRITER_H

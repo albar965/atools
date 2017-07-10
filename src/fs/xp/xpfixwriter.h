@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_XP_WAYPOINTWRITER_H
 #define ATOOLS_FS_XP_WAYPOINTWRITER_H
 
-#include "fs/xp/writer.h"
+#include "fs/xp/xpwriter.h"
 
 namespace atools {
 
@@ -30,14 +30,15 @@ class SqlQuery;
 namespace fs {
 namespace xp {
 
-class FixWriter :
-  public atools::fs::xp::Writer
+class XpFixWriter :
+  public atools::fs::xp::XpWriter
 {
 public:
-  FixWriter(atools::sql::SqlDatabase& sqlDb);
-  virtual ~FixWriter();
+  XpFixWriter(atools::sql::SqlDatabase& sqlDb);
+  virtual ~XpFixWriter();
 
-  virtual void write(const QStringList& line, int curFileId);
+  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void finish() override;
 
 private:
   void initQueries();

@@ -18,8 +18,8 @@
 #ifndef ATOOLS_FS_XP_NAVWRITER_H
 #define ATOOLS_FS_XP_NAVWRITER_H
 
-#include "fs/xp/xplaneconstants.h"
-#include "fs/xp/writer.h"
+#include "fs/xp/xpconstants.h"
+#include "fs/xp/xpwriter.h"
 
 namespace atools {
 
@@ -30,23 +30,24 @@ class SqlQuery;
 namespace fs {
 namespace xp {
 
-class NavWriter :
-  public atools::fs::xp::Writer
+class XpNavWriter :
+  public atools::fs::xp::XpWriter
 {
 public:
-  NavWriter(atools::sql::SqlDatabase& sqlDb);
-  virtual ~NavWriter();
+  XpNavWriter(atools::sql::SqlDatabase& sqlDb);
+  virtual ~XpNavWriter();
 
-  virtual void write(const QStringList& line, int curFileId);
+  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void finish() override;
 
 private:
   void initQueries();
   void deInitQueries();
   void writeVor(const QStringList& line, int curFileId, bool dmeOnly);
   void writeNdb(const QStringList& line, int curFileId);
-  void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::RowCode rowCode);
-  void writeIls(const QStringList& line, int curFileId, atools::fs::xp::RowCode rowCode);
-  void finshIls();
+  void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
+  void writeIls(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
+  void finishIls();
 
   bool writingIls = false;
   const int FEATHER_LEN_NM = 9;

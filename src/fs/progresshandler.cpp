@@ -35,6 +35,11 @@ void ProgressHandler::increaseCurrent(int increase)
   info.current += increase;
 }
 
+bool ProgressHandler::reportUpdate()
+{
+  return callHandler();
+}
+
 bool ProgressHandler::reportOtherMsg(const QString& otherAction)
 {
   info.otherAction = otherAction;

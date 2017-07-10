@@ -1,0 +1,162 @@
+/*****************************************************************************
+* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#ifndef ATOOLS_FS_XP_XPCONSTANTS_H
+#define ATOOLS_FS_XP_XPCONSTANTS_H
+
+#include <QString>
+
+namespace atools {
+namespace fs {
+namespace xp {
+
+enum NavRowCode
+{
+  NDB = 2, /*  NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM) */
+  VOR = 3, /*  VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs */
+  LOC = 4, /*  Localizer component of an ILS (Instrument Landing System) */
+  LOC_ONLY = 5, /*  Localizer component of a localizer-only approach Includes for LDAs and SDFs */
+  GS = 6, /*  Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel */
+  OM = 7, /*  Outer markers (OM) for an ILS Includes outer maker component of LOMs */
+  MM = 8, /*  Middle markers (MM) for an ILS */
+  IM = 9, /*  Inner markers (IM) for an ILS */
+  DME = 12, /*  DME, including the DME component of an ILS, VORTAC or VOR-DME Paired frequency display suppressed on X-Plane’s charts */
+  DME_ONLY = 13, /*  Stand-alone DME, orthe DME component of an NDB-DME Paired frequency will be displayed on X-Plane’s charts */
+
+  /*  Unused below */
+  SBAS_GBAS_FINAL = 14, /*  14 Final approach path alignment point of an SBAS or GBAS approach path Will not appear in X-Plane’s charts */
+  GBAS = 15, /*  15 GBAS differential ground station of a GLS Will not appear in X-Plane’s charts */
+  SBAS_GBAS_TRESHOLD = 16 /*  16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach Will */
+};
+
+enum AirportRowCode
+{
+  NO_ROWCODE = 0,
+  LAND_AIRPORT_HEADER = 1,
+  SEAPLANE_BASE_HEADER = 16,
+  HELIPORT_HEADER = 17,
+  LAND_RUNWAY = 100,
+  WATER_RUNWAY = 101,
+  HELIPAD = 102,
+  PAVEMENT_HEADER = 110, // Must form a closed loop.(TAXIWAY_OR_RAMP)
+  LINEAR_FEATURE_HEADER = 120, // Can form closed loop or simple string (PAINTED_LINE_OR_LIGHT_STRING)
+  AIRPORT_BOUNDARY_HEADER = 130, // Must form a closed loop
+  NODE = 111, // All nodes can also include a “style” (line or lights)
+  NODE_WITH_BEZIER_CONTROL_POINT = 112, // Bezier control points define smooth curves
+  NODE_WITH_IMPLICIT_CLOSE_OF_LOOP = 113, // Implied join to first node in chain
+  NODE_WITH_BEZIER_CONTROL_POINT_CLOSE = 114, // Implied join to first node in chain WITH_IMPLICIT_CLOSE_OF_LOOP
+  NODE_TERMINATING_A_STRING = 115, // No “styles” used(NO_CLOSE_LOOP)
+  NODE_WITH_BEZIER_CONTROL_POINT_NO_CLOSE = 116, // No “styles” used, TERMINATING_A STRING (NO_CLOSE_LOOP)
+  AIRPORT_VIEWPOINT = 14, // One or none for each airport
+  AEROPLANE_STARTUP_LOCATION = 15, // *** Convert these to new row code 1300 ***
+  AIRPORT_LIGHT_BEACON = 18, // One or none for each airport
+  WINDSOCK = 19, // Zero, one or many for each airport
+  TAXIWAY_SIGN = 20, // Zero, one or many for each airport (INC.RUNWAY_DISTANCE - REMAINING_SIGNS)
+  LIGHTING_OBJECT = 21, // Zero, one or many for each airport (VASI, PAPI, WIG - WAG, ETC.)
+  AIRPORT_TRAFFIC_FLOW = 1000, // Zero, one or many for an airport. Used if following rules met (rules of same type use ‘or’ logic, rules of a different type use ‘and’ logic). First flow to pass all rules is used.
+  TRAFFIC_FLOW_WIND_RULE = 1001, // Zero, one or many for a flow. Multiple rules use ‘or’ logic.
+  TRAFFIC_FLOW_MINIMUM_CEILING_RULE = 1002, // Zero or one rule for each flow
+  TRAFFIC_FLOW_MINIMUM_VISIBILITY_RULE = 1003, // Zero or one rule for each flow
+  TRAFFIC_FLOW_TIME_RULE = 1004, // Zero, one or many for a flow. Multiple rules use ‘or’ logic.
+  RUNWAY_IN_USE = 1100, // First constraint met is used. Sequence matters! ARRIVAL / DEPARTURE_CONSTRAINTS
+  VFR_TRAFFIC_PATTERN = 1101, // Zero or one pattern for each traffic flow
+  HEADER_INDICATING_THAT_TAXI_ROUTE_NETWORK_DATA_FOLLOWS = 1200,
+  TAXI_ROUTE_NETWORK_NODE = 1201, // Sequencing must be 0 based, ascending by ID. Must be part of one or more edges.
+  TAXI_ROUTE_NETWORK_EDGE = 1202, // Must connect two nodes. Also takes one of 6 sizes (A-F).
+  TAXI_ROUTE_EDGE_ACTIVE_ZONE = 1204, // Can refer to up to 4 runway ends
+  AIRPORT_LOCATION = 1300, // Not explicitly connected to taxi route network
+  RAMP_START_METADATA = 1301, // Includes width, operations type, equipment type, & airlines.
+  METADATA_RECORDS = 1302, // Zero or many for each airport.
+  TRUCK_PARKING_LOCATION = 1400, // Not explicitly connected to taxi route network.
+  TRUCK_DESTINATION_LOCATION = 1401, // Not explicitly connected to taxi route network.
+  COM_WEATHER = 50, // AWOS, ASOS or ATIS
+  COM_UNICOM = 51, // UNICOM
+  COM_CLEARANCE = 52, // Clearance delivery
+  COM_GROUND = 53, // Ground
+  COM_TOWER = 54, // Tower
+  COM_APPROACH = 55, // Approach
+  COM_DEPARTURE = 56 // Departure
+};
+
+enum Surface
+{
+  UNKNOWN = 0,
+  ASPHALT = 1,
+  CONCRETE = 2,
+  TURF_OR_GRASS = 3,
+  DIRT = 4,
+  GRAVEL = 5,
+  DRY_LAKEBED = 12, // (eg.At KEDW) Example: KEDW(Edwards AFB)
+  WATER = 13, // runways Nothing displayed
+  SNOW_OR_ICE = 14, // Poor friction.Runway markings cannot be added.
+  TRANSPARENT = 15 // Hard surface, but no texture / markings(use in custom scenery)
+};
+
+QString surfaceToDb(atools::fs::xp::Surface value);
+bool isSurfaceHard(atools::fs::xp::Surface value);
+bool isSurfaceSoft(atools::fs::xp::Surface value);
+bool isSurfaceWater(atools::fs::xp::Surface value);
+
+enum Marking
+{
+  NO_MARKING = 0, // No runway markings Disused runways appear like taxiways
+  VISUAL = 1, // Visual markings
+  NON_PAP = 2, // Non - precision approach markings
+  PAP = 3, // Precision approach markings
+  UK_NON_PAP = 4, // UK - style non - precision approach markings UK uses distinctive touch - down zone markings
+  UK_PAP = 5 // UK - style precision approach markings UK uses distinctive touch - down zone markings
+};
+
+int markingToDb(atools::fs::xp::Marking value);
+
+enum ApproachLight
+{
+  NO_ALS = 0, // No approach lighting
+  ALSF_I = 1, // High intensity Approach Light System with sequenced flashing lights
+  ALSF_II = 2, // High intensity Approach Light System with sequenced Flashing lights. Red side bar lights(barettes) the last 1000’, that align with TDZ lighting.
+  CALVERT = 3, // British - High intensity
+  CALVERT_ILS = 4, // British - High intensity with red side bar lights(barettes) the last 1000ft. Barettes align with TDZ lighting
+  SSALR = 5, // High intensity, Simplified Short Approach Light System. With Runway Alignment Indicator Lights(RAIL)
+  SSALF = 6, // High intensity, Simplified Short Approach Light System. With sequenced flashing lights
+  SALS = 7, // High intensity, Short Approach Light System
+  MALSR = 8, // Medium - intensity Approach Light System. With Runway Alignment Indicator Lights(RAIL)
+  MALSF = 9, // Medium - intensity Approach Light System with sequenced flashing lights
+  MALS = 10, // Medium - intensity Approach Light System
+  ODALS = 11, // Omni - directional approach light system. Flashing lights, not strobes, not sequenced
+  RAIL = 12 // Runway Alignment Indicator Lights. Sequenced strobes and green threshold lights, with no other approach lights
+};
+
+QString alsToDb(atools::fs::xp::ApproachLight value);
+
+enum ApproachIndicator
+{
+  NO_APPR_INDICATOR = 0,
+  VASI = 1, // Location is centre point between the two VASI units
+  PAPI_4L = 2, // 4L (four - light) on left of runway Left - handed: red indication appears first on right 2 lights
+  PAPI_4R = 3, // 4R (four light)on right of runway Right - handed: red indication appears first on left 2 lights
+  SPACE_SHUTTLE_PAPI = 4, // 20 degree glidepath Deprecated.Use normal PAPI with an appropriate angle.
+  TRI_COLOR_VASI = 5,
+  RUNWAY_GUARD = 6 // (“wig - wag”) lights Pulsating double amber lights alongside runway entrances
+};
+
+QString alsToDb(atools::fs::xp::ApproachIndicator value);
+
+} // namespace xp
+} // namespace fs
+} // namespace atools
+
+#endif // ATOOLS_FS_XP_XPCONSTANTS_H

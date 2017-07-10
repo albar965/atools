@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/fixwriter.h"
+#include "fs/xp/xpfixwriter.h"
 
 #include "sql/sqlutil.h"
 
@@ -37,18 +37,18 @@ enum FieldIndex
   REGION = 4
 };
 
-FixWriter::FixWriter(atools::sql::SqlDatabase& sqlDb)
-  : Writer(sqlDb)
+XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb)
+  : XpWriter(sqlDb)
 {
   initQueries();
 }
 
-atools::fs::xp::FixWriter::~FixWriter()
+XpFixWriter::~XpFixWriter()
 {
   deInitQueries();
 }
 
-void FixWriter::write(const QStringList& line, int curFileId)
+void XpFixWriter::write(const QStringList& line, int curFileId)
 {
   insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
   insertWaypointQuery->bindValue(":file_id", curFileId);
@@ -64,7 +64,12 @@ void FixWriter::write(const QStringList& line, int curFileId)
   insertWaypointQuery->exec();
 }
 
-void FixWriter::initQueries()
+void XpFixWriter::finish()
+{
+
+}
+
+void XpFixWriter::initQueries()
 {
   deInitQueries();
 
@@ -74,7 +79,7 @@ void FixWriter::initQueries()
   insertWaypointQuery->prepare(util.buildInsertStatement("waypoint", QString(), {"airport_id", "nav_id"}));
 }
 
-void FixWriter::deInitQueries()
+void XpFixWriter::deInitQueries()
 {
   delete insertWaypointQuery;
   insertWaypointQuery = nullptr;

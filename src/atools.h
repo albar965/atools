@@ -49,11 +49,17 @@ bool contains(const QString& name, const std::initializer_list<QString>& list);
 
 bool contains(const QString& name, const std::initializer_list<const char *>& list);
 
+/* Concatenates all paths parts with the QDir::separator() and fetches the correct cases */
+QString buildPathNoCase(const std::list<QString>& paths);
+
+/* Simply concatenates all paths parts with the QDir::separator() */
+QString buildPath(const std::list<QString>& paths);
+
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE mod(TYPE x, TYPE y)
 {
-  return x - y *std::floor(x / y);
+  return x - y * std::floor(x / y);
 }
 
 template<typename TYPE>

@@ -18,7 +18,7 @@
 #ifndef ATOOLS_XP_DATAWRITER_H
 #define ATOOLS_XP_DATAWRITER_H
 
-#include <QString>
+#include <QApplication>
 
 class QTextStream;
 class QFile;
@@ -37,28 +37,30 @@ class ProgressHandler;
 
 namespace xp {
 
-class FixWriter;
-class NavWriter;
-class AirwayWriter;
-class Writer;
+class XpFixWriter;
+class XpNavWriter;
+class XpAirwayWriter;
+class XpAirportWriter;
+class XpWriter;
 class AirwayPostProcess;
 
 /*
  * Provides methods to read X-Plane data from text files into the database.
  */
-class XplaneDataCompiler
+class XpDataCompiler
 {
-public:
-  XplaneDataCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                     atools::fs::ProgressHandler *progress);
-  virtual ~XplaneDataCompiler();
+  Q_DECLARE_TR_FUNCTIONS(XpDataCompiler)
 
-  bool compileMeta();
+public:
+  XpDataCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
+                 atools::fs::ProgressHandler *progress);
+  virtual ~XpDataCompiler();
+
+  bool writeBasepathScenery();
   bool compileEarthFix();
   bool compileEarthAirway();
   bool postProcessEarthAirway();
   bool compileEarthNav();
-  bool compileApt();
   bool writeCifp();
 
   bool writeLocalizers();
@@ -76,13 +78,22 @@ public:
 
   static int calculateFileCount(const atools::fs::NavDatabaseOptions& opts);
 
+  void setMinVersion(int value)
+  {
+    minVersion = value;
+  }
+
+  bool compileDefaultApt();
+  bool compileCustomGlobalApt();
+  bool compileCustomApt();
+
 private:
   void initQueries();
   void deInitQueries();
-  void readFile(const QString& filepath);
+  void writeFile(const QString& filepath);
   void writeSceneryArea(const QString& filepath);
   bool openFile(QTextStream& stream, QFile& file, const QString& filename);
-  bool readDatFile(const QString& filename, int minColumns, atools::fs::xp::Writer *writer);
+  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer);
   static QString buildBasePath(const NavDatabaseOptions& opts);
 
   int curFileId = 0, curSceneryId = 0;
@@ -93,11 +104,13 @@ private:
 
   atools::sql::SqlQuery *insertFileQuery = nullptr, *insertSceneryQuery = nullptr;
 
-  atools::fs::xp::FixWriter *fixWriter = nullptr;
-  atools::fs::xp::AirwayWriter *airwayWriter = nullptr;
-  atools::fs::xp::NavWriter *navWriter = nullptr;
+  atools::fs::xp::XpFixWriter *fixWriter = nullptr;
+  atools::fs::xp::XpAirwayWriter *airwayWriter = nullptr;
+  atools::fs::xp::XpNavWriter *navWriter = nullptr;
+  atools::fs::xp::XpAirportWriter *airportWriter = nullptr;
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
 
+  int minVersion = 1100;
   // Base layer
   // $X-Plane/Resources/default data/
   // earth_fix.dat
@@ -128,6 +141,9 @@ private:
   // $X-Plane/Custom Data/
   // user_nav.dat
   // user_fix.dat
+
+  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
+  static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
 
 };
 

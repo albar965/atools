@@ -15,34 +15,21 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_WRITER_H
-#define ATOOLS_FS_XP_WRITER_H
+#ifndef ATOOLS_FS_FSUTIL_H
+#define ATOOLS_FS_FSUTIL_H
 
-class QStringList;
+#include <QString>
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-}
-
 namespace fs {
-namespace xp {
+namespace util {
 
-class Writer
-{
-public:
-  Writer(atools::sql::SqlDatabase& sqlDb);
-  virtual ~Writer();
+bool isNameMilitary(const QString& airportName);
 
-  virtual void write(const QStringList& line, int curFileId) = 0;
+QString capNavString(const QString& str);
 
-protected:
-  atools::sql::SqlDatabase& db;
-
-};
-
-} // namespace xp
+} // namespace util
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_WRITER_H
+#endif // ATOOLS_FS_FSUTIL_H

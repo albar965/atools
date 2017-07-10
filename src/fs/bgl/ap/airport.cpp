@@ -17,6 +17,7 @@
 
 #include "fs/bgl/ap/airport.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/util/fsutil.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/navdatabaseoptions.h"
@@ -54,16 +55,6 @@ inline uint qHash(const ParkingKey& pair)
 {
   return static_cast<unsigned int>(pair.number) ^ static_cast<unsigned int>(pair.name);
 }
-
-static const QStringList MIL_ENDS_WITH({" Mil", " Aaf", " Ab", " Af", " Afb", " Afs", " Ahp", " Angb", " Arb",
-                                        " Lrrs", " Mcaf", " Mcalf", " Mcas", " Naf", " Nalf", " Nas",
-                                        " Naval", " Naws", " Nolf", " Ns"});
-static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " AHP", " ANGB", " ARB", " LRRS",
-                                       " MCAF", " MCALF", " MCAS", " NAF", " NALF", " NAS", " Naval", " Navy",
-                                       " NAWS", " NOLF", " NS", " Army", " Mil ", "Military", "Air Force",
-                                       " Aaf ", " Ab ", " Af ", " Afb ", " Afs ", " Ahp ", " Angb ", " Arb ",
-                                       " Lrrs ", " Mcaf ", " Mcalf ", " Mcas ", " Naf ", " Nalf ", " Nas ",
-                                       " Naval ", " Naws ", " Nolf ", " Ns "});
 
 using atools::io::BinaryStream;
 
@@ -372,19 +363,7 @@ bool Airport::isEmpty() const
 
 bool Airport::isNameMilitary(const QString& airportName)
 {
-  // Check if airport is military
-  for(const QString& s : MIL_ENDS_WITH)
-  {
-    if(airportName.endsWith(s))
-      return true;
-  }
-
-  for(const QString& s : MIL_CONTAINS)
-  {
-    if(airportName.contains(s))
-      return true;
-  }
-  return false;
+  return atools::fs::util::isNameMilitary(airportName);
 }
 
 int Airport::calculateRating(bool isAddon) const

@@ -38,6 +38,7 @@ namespace rw {
 /* Runway pavement markings */
 enum RunwayMarkings
 {
+  NO_FLAGS = 0,
   EDGES = 1 << 0,
   THRESHOLD = 1 << 1,
   FIXED_DISTANCE = 1 << 2,
@@ -58,6 +59,9 @@ enum RunwayMarkings
   LEADING_ZERO_IDENT = 1 << 22,
   NO_THRESHOLD_END_ARROWS = 1 << 23
 };
+
+Q_DECLARE_FLAGS(RunwayMarkingFlags, atools::fs::bgl::rw::RunwayMarkings);
+Q_DECLARE_OPERATORS_FOR_FLAGS(RunwayMarkingFlags);
 
 /* Light intensity */
 enum Light

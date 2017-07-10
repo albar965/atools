@@ -84,6 +84,9 @@ public:
 
   void clear();
 
+  /* Nullifies all bound values */
+  void clearBoundValues();
+
   void exec();
 
   void execBatch(QSqlQuery::BatchExecutionMode mode = QSqlQuery::ValuesAsRows);
