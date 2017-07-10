@@ -300,17 +300,16 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::UNKNOWN_REC:
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << type << dec
-                                       << getObjectName();
+        // qWarning().nospace().noquote() << "Unexpected record type in Airport record 0x" << hex << type << dec
+        // << getObjectName();
 
-        // v4: 0x3e probably runway and 0x41 is probably apron surface
-        // if(subrecordIndex == 0)
-        // {
-        //// Stop reading when the first subrecord is already invalid
-        // seekToStart();
-        // excluded = true;
-        // return;
-        // }
+        if(subrecordIndex == 0)
+        {
+          // Stop reading when the first subrecord is already invalid
+          seekToStart();
+          excluded = true;
+          return;
+        }
     }
     r.seekToEnd();
     subrecordIndex++;
