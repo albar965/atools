@@ -32,7 +32,8 @@ SceneryArea::SceneryArea()
 SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath)
   : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath)
 {
-
+  if(title.isEmpty())
+    title = QString("Unnamed scenery number %1 layer %2").arg(areaNumber).arg(layer);
 }
 
 QDebug operator<<(QDebug out, const SceneryArea& area)
