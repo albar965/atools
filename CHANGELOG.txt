@@ -2,6 +2,7 @@ Version 1.5.1.develop
 
 * Fixed excessive logging of warnings in invalid airport records and waypoints.
 * Now skipping airports where the first record is already invalid.
+* Fixed problem with unnamed scenery areas from add-on.xml files.
 
 Version 2.4.4
 
