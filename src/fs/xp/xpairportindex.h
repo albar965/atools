@@ -15,21 +15,44 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_UTIL_TACANFREQUENCIES_H
-#define ATOOLS_FS_UTIL_TACANFREQUENCIES_H
+#ifndef ATOOLS_XPAIRPORTINDEX_H
+#define ATOOLS_XPAIRPORTINDEX_H
 
-#include <QString>
+#include <QHash>
+#include <QVariant>
 
 namespace atools {
 namespace fs {
-namespace util {
+namespace xp {
 
-/* VOR frequency for TACAN DME multiplied by 100 and vice versa */
-int frequencyForTacanChannel(const QString& channel);
-QString tacanChannelForFrequency(int frequency);
+class XpAirportIndex
+{
+public:
+  XpAirportIndex();
 
-} // namespace util
+  /* Get id packed in a variant or a null integer variant if not found */
+  QVariant getAirportId(const QString& icao);
+  QVariant getRunwayEndId(const QString& airportIcao, const QString& runwayName);
+
+  /* Add airport id to index. Returns true if it is not already indexed and was not added. */
+  bool addAirport(const QString& airportIcao, int airportId);
+  void addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId);
+
+  void clear()
+  {
+    icaoToIdMap.clear();
+    icaoRunwayNameToEndId.clear();
+  }
+
+private:
+  // Map ICAO id to database airport_id
+  QHash<QString, int> icaoToIdMap;
+  QHash<std::pair<QString, QString>, int> icaoRunwayNameToEndId;
+
+};
+
+} // namespace xp
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_UTIL_TACANFREQUENCIES_H
+#endif // ATOOLS_XPAIRPORTINDEX_H

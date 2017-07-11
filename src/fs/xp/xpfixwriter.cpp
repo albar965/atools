@@ -17,6 +17,9 @@
 
 #include "fs/xp/xpfixwriter.h"
 
+#include "fs/xp/xpairportindex.h"
+#include "fs/progresshandler.h"
+
 #include "sql/sqlutil.h"
 
 using atools::sql::SqlQuery;
@@ -37,8 +40,9 @@ enum FieldIndex
   REGION = 4
 };
 
-XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb)
-  : XpWriter(sqlDb)
+XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
+  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex)
 {
   initQueries();
 }
@@ -48,12 +52,12 @@ XpFixWriter::~XpFixWriter()
   deInitQueries();
 }
 
-void XpFixWriter::write(const QStringList& line, int curFileId)
+void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
 {
   insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
-  insertWaypointQuery->bindValue(":file_id", curFileId);
+  insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", line.at(IDENT));
-  // TODO insertFixQuery->bindValue(":airport_ident", fields.at(3)); or ENRT for enroute
+  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
   insertWaypointQuery->bindValue(":region", line.at(REGION)); // ZZ for no region
   insertWaypointQuery->bindValue(":type", "WN");
   insertWaypointQuery->bindValue(":num_victor_airway", 0);
@@ -62,6 +66,8 @@ void XpFixWriter::write(const QStringList& line, int curFileId)
   insertWaypointQuery->bindValue(":lonx", line.at(LONX).toFloat());
   insertWaypointQuery->bindValue(":laty", line.at(LATY).toFloat());
   insertWaypointQuery->exec();
+
+  progress->incNumWaypoints();
 }
 
 void XpFixWriter::finish()
@@ -76,7 +82,7 @@ void XpFixWriter::initQueries()
   SqlUtil util(&db);
 
   insertWaypointQuery = new SqlQuery(db);
-  insertWaypointQuery->prepare(util.buildInsertStatement("waypoint", QString(), {"airport_id", "nav_id"}));
+  insertWaypointQuery->prepare(util.buildInsertStatement("waypoint", QString(), {"nav_id"}));
 }
 
 void XpFixWriter::deInitQueries()

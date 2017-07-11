@@ -174,25 +174,44 @@ QString alsToDb(ApproachLight value)
   return QString();
 }
 
-QString alsToDb(ApproachIndicator value)
+QString approachIndicatorToDb(ApproachIndicator value)
 {
+  // return "VASI21";
+  // return "VASI22";
+  // return "VASI31";
+  // return "VASI32";
+  // return "VASI23";
+  // return "VASI33";
+  // return "PAPI2";
+  // return "PAPI4";
+  // return "PVASI";
+  // return "TVASI";
+  // return "TRICOLOR";
+  // return "BALL";
+  // return "APAP_PANELS";
+
   switch(value)
   {
+    case atools::fs::xp::VASI:
+      return "VASI22";
+
+    case atools::fs::xp::PAPI_4L:
+      return "PAPI4";
+
+    case atools::fs::xp::PAPI_4R:
+      return "PAPI4";
+
+    case atools::fs::xp::SPACE_SHUTTLE_PAPI:
+      return "PAPI4";
+
+    case atools::fs::xp::TRI_COLOR_VASI:
+      return "TRICOLOR";
+
+    case atools::fs::xp::RUNWAY_GUARD:
+      return "GUARD";
+
     case atools::fs::xp::NO_APPR_INDICATOR:
       break;
-    case atools::fs::xp::VASI:
-      break;
-    case atools::fs::xp::PAPI_4L:
-      break;
-    case atools::fs::xp::PAPI_4R:
-      break;
-    case atools::fs::xp::SPACE_SHUTTLE_PAPI:
-      break;
-    case atools::fs::xp::TRI_COLOR_VASI:
-      break;
-    case atools::fs::xp::RUNWAY_GUARD:
-      break;
-
   }
   return QString();
 }

@@ -17,6 +17,10 @@
 
 #include "fs/xp/xpnavwriter.h"
 
+#include "fs/xp/xpairportindex.h"
+#include "fs/util/tacanfrequencies.h"
+#include "fs/progresshandler.h"
+
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "sql/sqlutil.h"
@@ -48,8 +52,9 @@ enum FieldIndex
   NAME = 11
 };
 
-XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb)
-  : XpWriter(sqlDb)
+XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
+  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex)
 {
   initQueries();
 }
@@ -80,6 +85,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
     type = "TC";
 
   bool hasDme = suffix == "DME" || suffix == "VORTAC" || suffix == "VOR-DME" || suffix == "VOR/DME";
+  int frequency = line.at(FREQ).toInt();
 
   insertVorQuery->bindValue(":vor_id", ++curVorId);
   insertVorQuery->bindValue(":file_id", curFileId);
@@ -87,10 +93,16 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":name", line.mid(RW, line.size() - 11).join(" "));
   insertVorQuery->bindValue(":region", line.at(REGION));
   insertVorQuery->bindValue(":type", type);
-  insertVorQuery->bindValue(":frequency", line.at(FREQ).toInt() * 10);
+  insertVorQuery->bindValue(":frequency", frequency * 10);
   insertVorQuery->bindValue(":range", range);
   insertVorQuery->bindValue(":mag_var", line.at(MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
+  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
+
+  if(suffix == "TACAN")
+    insertVorQuery->bindValue(":channel", atools::fs::util::tacanChannelForFrequency(frequency));
+  else
+    insertVorQuery->bindValue(":channel", QVariant(QVariant::String));
 
   if(hasDme)
   {
@@ -110,6 +122,8 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":laty", line.at(LATY).toFloat());
 
   insertVorQuery->exec();
+
+  progress->incNumVors();
 }
 
 void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
@@ -135,12 +149,14 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
   insertNdbQuery->bindValue(":frequency", line.at(FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
   insertNdbQuery->bindValue(":mag_var", 0);
-  // TODO airport code insertNdbQuery->bindValue(":ident", line.at(7));
+  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
   insertNdbQuery->bindValue(":altitude", line.at(ALT).toInt());
   insertNdbQuery->bindValue(":lonx", line.at(LONX).toFloat());
   insertNdbQuery->bindValue(":laty", line.at(LATY).toFloat());
 
   insertNdbQuery->exec();
+
+  progress->incNumNdbs();
 }
 
 void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode rowCode)
@@ -157,12 +173,15 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
   insertMarkerQuery->bindValue(":file_id", curFileId);
   insertMarkerQuery->bindValue(":region", line.at(REGION));
   insertMarkerQuery->bindValue(":type", type);
+  insertMarkerQuery->bindValue(":ident", line.at(IDENT).toFloat());
   insertMarkerQuery->bindValue(":heading", line.at(HDG).toFloat());
   insertMarkerQuery->bindValue(":altitude", line.at(ALT).toInt());
   insertMarkerQuery->bindValue(":lonx", line.at(LONX).toFloat());
   insertMarkerQuery->bindValue(":laty", line.at(LATY).toFloat());
 
   insertMarkerQuery->exec();
+
+  progress->incNumMarker();
 }
 
 void XpNavWriter::finishIls()
@@ -170,72 +189,75 @@ void XpNavWriter::finishIls()
   if(writingIls)
   {
     insertIlsQuery->exec();
+    insertIlsQuery->clearBoundValues();
     writingIls = false;
+    progress->incNumIls();
   }
 }
 
-void XpNavWriter::writeIls(const QStringList& line, int curFileId, NavRowCode rowCode)
+void XpNavWriter::bindIls(const QStringList& line, int curFileId)
 {
   Q_UNUSED(curFileId);
 
-  if(rowCode == LOC_ONLY || rowCode == LOC)
-  {
-    if(writingIls)
-      throw atools::Exception("Recursive ILS write");
+  if(writingIls)
+    throw atools::Exception("Recursive ILS write");
+  QString airportIdent = line.at(AIRPORT);
+  QString runwayName = line.at(RW);
 
-    insertIlsQuery->bindValue(":ils_id", ++curIlsId);
-    insertIlsQuery->bindValue(":frequency", line.at(FREQ).toInt() * 10);
-    insertIlsQuery->bindValue(":range", line.at(RANGE).toInt());
-    insertIlsQuery->bindValue(":loc_heading", line.at(HDG).toFloat());
-    insertIlsQuery->bindValue(":ident", line.at(IDENT));
-    insertIlsQuery->bindValue(":loc_airport_ident", line.at(AIRPORT));
-    insertIlsQuery->bindValue(":region", line.at(REGION));
-    insertIlsQuery->bindValue(":loc_runway_name", line.at(RW));
-    insertIlsQuery->bindValue(":name", line.mid(NAME).join(" ").toUpper());
+  insertIlsQuery->bindValue(":ils_id", ++curIlsId);
+  insertIlsQuery->bindValue(":frequency", line.at(FREQ).toInt() * 10);
+  insertIlsQuery->bindValue(":range", line.at(RANGE).toInt());
+  insertIlsQuery->bindValue(":loc_heading", line.at(HDG).toFloat());
+  insertIlsQuery->bindValue(":ident", line.at(IDENT));
+  insertIlsQuery->bindValue(":loc_airport_ident", airportIdent);
+  insertIlsQuery->bindValue(":region", line.at(REGION));
+  insertIlsQuery->bindValue(":loc_runway_name", runwayName);
+  insertIlsQuery->bindValue(":name", line.mid(NAME).join(" ").toUpper());
+  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndId(airportIdent, runwayName));
+  insertIlsQuery->bindValue(":altitude", line.at(ALT).toInt());
+  insertIlsQuery->bindValue(":lonx", line.at(LONX).toFloat());
+  insertIlsQuery->bindValue(":laty", line.at(LATY).toFloat());
 
-    insertIlsQuery->bindValue(":altitude", line.at(ALT).toInt());
-    insertIlsQuery->bindValue(":lonx", line.at(LONX).toFloat());
-    insertIlsQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertIlsQuery->bindValue(":mag_var", 0);
+  insertIlsQuery->bindValue(":loc_width", FEATHER_WIDTH);
+  insertIlsQuery->bindValue(":has_backcourse", 0);
 
-    insertIlsQuery->bindValue(":mag_var", 0);
-    insertIlsQuery->bindValue(":loc_width", FEATHER_WIDTH);
-    insertIlsQuery->bindValue(":has_backcourse", 0);
+  int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
+  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+  // Calculate the display of the ILS feather
+  float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(line.at(HDG).toFloat()));
+  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f).normalize();
+  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f).normalize();
+  float featherWidth = p1.distanceMeterTo(p2);
+  atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading).normalize();
 
-    int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
-    atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
-    // Calculate the display of the ILS feather
-    float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(line.at(HDG).toFloat()));
-    atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f).normalize();
-    atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f).normalize();
-    float featherWidth = p1.distanceMeterTo(p2);
-    atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading).normalize();
-
-    insertIlsQuery->bindValue(":end1_lonx", p1.getLonX());
-    insertIlsQuery->bindValue(":end1_laty", p1.getLatY());
-    insertIlsQuery->bindValue(":end_mid_lonx", pmid.getLonX());
-    insertIlsQuery->bindValue(":end_mid_laty", pmid.getLatY());
-    insertIlsQuery->bindValue(":end2_lonx", p2.getLonX());
-    insertIlsQuery->bindValue(":end2_laty", p2.getLatY());
-    writingIls = true;
-  }
-  else if(rowCode == GS)
-  {
-    insertIlsQuery->bindValue(":gs_range", line.at(RANGE).toInt());
-    insertIlsQuery->bindValue(":gs_pitch", std::floor((line.at(HDG).toFloat() / 1000.f) / 100.f));
-    insertIlsQuery->bindValue(":gs_altitude", line.at(ALT).toInt());
-    insertIlsQuery->bindValue(":gs_lonx", line.at(LONX).toFloat());
-    insertIlsQuery->bindValue(":gs_laty", line.at(LATY).toFloat());
-  }
-  else if(rowCode == DME)
-  {
-    insertIlsQuery->bindValue(":dme_range", line.at(RANGE).toInt());
-    insertIlsQuery->bindValue(":dme_altitude", line.at(ALT).toInt());
-    insertIlsQuery->bindValue(":dme_lonx", line.at(LONX).toFloat());
-    insertIlsQuery->bindValue(":dme_laty", line.at(LATY).toFloat());
-  }
+  insertIlsQuery->bindValue(":end1_lonx", p1.getLonX());
+  insertIlsQuery->bindValue(":end1_laty", p1.getLatY());
+  insertIlsQuery->bindValue(":end_mid_lonx", pmid.getLonX());
+  insertIlsQuery->bindValue(":end_mid_laty", pmid.getLatY());
+  insertIlsQuery->bindValue(":end2_lonx", p2.getLonX());
+  insertIlsQuery->bindValue(":end2_laty", p2.getLatY());
+  writingIls = true;
 }
 
-void XpNavWriter::write(const QStringList& line, int curFileId)
+void XpNavWriter::bindIlsGlideslope(const QStringList& line)
+{
+  insertIlsQuery->bindValue(":gs_range", line.at(RANGE).toInt());
+  insertIlsQuery->bindValue(":gs_pitch", std::floor((line.at(HDG).toFloat() / 1000.f) / 100.f));
+  insertIlsQuery->bindValue(":gs_altitude", line.at(ALT).toInt());
+  insertIlsQuery->bindValue(":gs_lonx", line.at(LONX).toFloat());
+  insertIlsQuery->bindValue(":gs_laty", line.at(LATY).toFloat());
+}
+
+void XpNavWriter::bindIlsDme(const QStringList& line)
+{
+  insertIlsQuery->bindValue(":dme_range", line.at(RANGE).toInt());
+  insertIlsQuery->bindValue(":dme_altitude", line.at(ALT).toInt());
+  insertIlsQuery->bindValue(":dme_lonx", line.at(LONX).toFloat());
+  insertIlsQuery->bindValue(":dme_laty", line.at(LATY).toFloat());
+}
+
+void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 {
   // lat lon
   // ("28.000708333", "-83.423330556", "KNOST", "ENRT", "K7")
@@ -250,30 +272,24 @@ void XpNavWriter::write(const QStringList& line, int curFileId)
     // 2 NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM)
     case NDB:
       finishIls();
-      writeNdb(line, curFileId);
+      writeNdb(line, context.curFileId);
       break;
 
     // 3 VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs
     case VOR:
       finishIls();
-      writeVor(line, curFileId, false);
+      writeVor(line, context.curFileId, false);
       break;
 
-    // 4 Localizer component of an ILS (Instrument Landing System)
-    case LOC:
+    case LOC: // 4 Localizer component of an ILS (Instrument Landing System)
+    case LOC_ONLY: // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
       finishIls();
-      writeIls(line, curFileId, rowCode);
-      break;
-
-    // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
-    case LOC_ONLY:
-      finishIls();
-      writeIls(line, curFileId, rowCode);
+      bindIls(line, context.curFileId);
       break;
 
     // 6 Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel
     case GS:
-      writeIls(line, curFileId, rowCode);
+      bindIlsGlideslope(line);
       break;
 
     // 7 Outer markers (OM) for an ILS Includes outer maker component of LOMs
@@ -283,23 +299,23 @@ void XpNavWriter::write(const QStringList& line, int curFileId)
     // 9 Inner markers (IM) for an ILS
     case IM:
       finishIls();
-      writeMarker(line, curFileId, rowCode);
+      writeMarker(line, context.curFileId, rowCode);
       break;
 
     // 12 DME, including the DME component of an ILS, VORTAC or VOR-DME Paired frequency display suppressed on X-Plane’s charts
     case DME:
       if(line.last() == "DME-ILS")
-        writeIls(line, curFileId, rowCode);
+        bindIlsDme(line);
       break;
 
     // 13 Stand-alone DME, or the DME component of an NDB-DME Paired frequency will be displayed on X-Plane’s charts
     case DME_ONLY:
       if(line.last() == "DME-ILS")
-        writeIls(line, curFileId, rowCode);
+        bindIlsDme(line);
       else
       {
         finishIls();
-        writeVor(line, true, curFileId);
+        writeVor(line, true, context.curFileId);
       }
       break;
 
@@ -326,16 +342,16 @@ void XpNavWriter::initQueries()
   atools::sql::SqlUtil util(&db);
 
   insertVorQuery = new SqlQuery(db);
-  insertVorQuery->prepare(util.buildInsertStatement("vor", QString(), {"airport_id", "channel"}));
+  insertVorQuery->prepare(util.buildInsertStatement("vor"));
 
   insertNdbQuery = new SqlQuery(db);
-  insertNdbQuery->prepare(util.buildInsertStatement("ndb", QString(), {"airport_id"}));
+  insertNdbQuery->prepare(util.buildInsertStatement("ndb"));
 
   insertMarkerQuery = new SqlQuery(db);
-  insertMarkerQuery->prepare(util.buildInsertStatement("marker", QString(), {"ident"}));
+  insertMarkerQuery->prepare(util.buildInsertStatement("marker"));
 
   insertIlsQuery = new SqlQuery(db);
-  insertIlsQuery->prepare(util.buildInsertStatement("ils", QString(), {"loc_runway_end_id"}));
+  insertIlsQuery->prepare(util.buildInsertStatement("ils"));
 }
 
 void XpNavWriter::deInitQueries()

@@ -15,47 +15,53 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_AWYWRITER_H
-#define ATOOLS_FS_XP_AWYWRITER_H
-
-#include "fs/xp/xpwriter.h"
+#include "fs/xp/xpairportindex.h"
 
 namespace atools {
-
-namespace sql {
-class SqlDatabase;
-class SqlQuery;
-}
-
 namespace fs {
-
-class NavDatabaseOptions;
-class ProgressHandler;
-
 namespace xp {
 
-class XpAirwayWriter :
-  public atools::fs::xp::XpWriter
+XpAirportIndex::XpAirportIndex()
 {
-public:
-  XpAirwayWriter(atools::sql::SqlDatabase& sqlDb,
-                 const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
-  virtual ~XpAirwayWriter();
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish() override;
+}
 
-private:
-  void initQueries();
-  void deInitQueries();
+QVariant XpAirportIndex::getAirportId(const QString& icao)
+{
+  if(icao != "ENRT")
+  {
+    int id = icaoToIdMap.value(icao, -1);
+    if(id != -1)
+      return id;
+  }
+  return QVariant(QVariant::Int);
+}
 
-  int curAirwayId = 0;
-  atools::sql::SqlQuery *insertAirwayQuery = nullptr;
+QVariant XpAirportIndex::getRunwayEndId(const QString& airportIcao, const QString& runwayName)
+{
+  int id = icaoRunwayNameToEndId.value(std::make_pair(airportIcao, runwayName), -1);
+  if(id == -1)
+    return QVariant(QVariant::Int);
+  else
+    return id;
+}
 
-};
+bool atools::fs::xp::XpAirportIndex::addAirport(const QString& airportIcao, int airportId)
+{
+  if(icaoToIdMap.contains(airportIcao))
+    return false;
+  else
+  {
+    icaoToIdMap.insert(airportIcao, airportId);
+    return true;
+  }
+}
+
+void XpAirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId)
+{
+  icaoRunwayNameToEndId.insert(std::make_pair(airportIcao, runwayName), runwayEndId);
+}
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
-
-#endif // ATOOLS_FS_XP_AWYWRITER_H

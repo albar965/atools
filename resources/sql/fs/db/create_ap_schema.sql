@@ -363,10 +363,10 @@ create table runway
   edge_light varchar(15),               -- see enum atools::fs::bgl::rw::Light
   center_light varchar(15),             -- see enum atools::fs::bgl::rw::Light
   has_center_red integer not null,      -- Boolean
-  primary_lonx integer not null,        -- Coordinates of the primary end
-  primary_laty integer not null,        -- Coordinates of the primary end
-  secondary_lonx integer not null,      -- Coordinates of the secondary end
-  secondary_laty integer not null,      -- Coordinates of the secondary end
+  primary_lonx double not null,        -- Coordinates of the primary end
+  primary_laty double not null,        -- Coordinates of the primary end
+  secondary_lonx double not null,      -- Coordinates of the secondary end
+  secondary_laty double not null,      -- Coordinates of the secondary end
   altitude integer not null,            -- Feet
   lonx double not null,
   laty double not null,

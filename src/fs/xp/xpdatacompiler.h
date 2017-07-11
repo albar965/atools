@@ -43,6 +43,7 @@ class XpAirwayWriter;
 class XpAirportWriter;
 class XpWriter;
 class AirwayPostProcess;
+class XpAirportIndex;
 
 /*
  * Provides methods to read X-Plane data from text files into the database.
@@ -53,7 +54,7 @@ class XpDataCompiler
 
 public:
   XpDataCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                 atools::fs::ProgressHandler *progress);
+                 atools::fs::ProgressHandler *progressHandler);
   virtual ~XpDataCompiler();
 
   bool writeBasepathScenery();
@@ -93,14 +94,16 @@ private:
   void writeFile(const QString& filepath);
   void writeSceneryArea(const QString& filepath);
   bool openFile(QTextStream& stream, QFile& file, const QString& filename);
-  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer);
+  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer, bool addAon);
   static QString buildBasePath(const NavDatabaseOptions& opts);
+  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
+  static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath;
   const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
-  atools::fs::ProgressHandler *progressHandler = nullptr;
+  atools::fs::ProgressHandler *progress = nullptr;
 
   atools::sql::SqlQuery *insertFileQuery = nullptr, *insertSceneryQuery = nullptr;
 
@@ -111,6 +114,9 @@ private:
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
 
   int minVersion = 1100;
+
+  atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
+
   // Base layer
   // $X-Plane/Resources/default data/
   // earth_fix.dat
@@ -141,9 +147,6 @@ private:
   // $X-Plane/Custom Data/
   // user_nav.dat
   // user_fix.dat
-
-  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
-  static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
 
 };
 

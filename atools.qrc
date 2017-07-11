@@ -32,5 +32,6 @@
         <file>resources/sql/fs/db/update_wp_ids.sql</file>
         <file>resources/sql/fs/db/update_vor.sql</file>
         <file>resources/sql/fs/db/xplane/prepare_airway.sql</file>
+        <file>resources/sql/fs/db/update_num_ils.sql</file>
     </qresource>
 </RCC>

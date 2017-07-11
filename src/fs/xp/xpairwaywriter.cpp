@@ -44,8 +44,9 @@ enum FieldIndex
   NAME = 10
 };
 
-XpAirwayWriter::XpAirwayWriter(atools::sql::SqlDatabase& sqlDb)
-  : XpWriter(sqlDb)
+XpAirwayWriter::XpAirwayWriter(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
+                               ProgressHandler *progressHandler)
+  : XpWriter(sqlDb, opts, progressHandler)
 {
   initQueries();
 }
@@ -55,9 +56,9 @@ atools::fs::xp::XpAirwayWriter::~XpAirwayWriter()
   deInitQueries();
 }
 
-void XpAirwayWriter::write(const QStringList& line, int curFileId)
+void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& context)
 {
-  Q_UNUSED(curFileId);
+  Q_UNUSED(context);
 
   QString names = line.at(NAME);
 

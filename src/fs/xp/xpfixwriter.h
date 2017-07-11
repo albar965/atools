@@ -28,16 +28,26 @@ class SqlQuery;
 }
 
 namespace fs {
+
+class NavDatabaseOptions;
+class ProgressHandler;
+
 namespace xp {
+
+/*
+ * Reads earth_fix.dat and writes to waypoint table.
+ */
+class XpAirportIndex;
 
 class XpFixWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpFixWriter(atools::sql::SqlDatabase& sqlDb);
+  XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
   virtual ~XpFixWriter();
 
-  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish() override;
 
 private:
@@ -46,6 +56,7 @@ private:
 
   int curFixId = 0;
   atools::sql::SqlQuery *insertWaypointQuery = nullptr;
+  atools::fs::xp::XpAirportIndex *airportIndex;
 
 };
 

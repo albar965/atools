@@ -127,6 +127,56 @@ public:
     info.numObjectsWritten = value;
   }
 
+  void incNumFiles(int value = 1)
+  {
+    info.numFiles += value;
+  }
+
+  void incNumAirports(int value = 1)
+  {
+    info.numAirports += value;
+  }
+
+  void incNumNamelists(int value = 1)
+  {
+    info.numNamelists += value;
+  }
+
+  void incNumVors(int value = 1)
+  {
+    info.numVors += value;
+  }
+
+  void incNumIls(int value = 1)
+  {
+    info.numIls += value;
+  }
+
+  void incNumNdbs(int value = 1)
+  {
+    info.numNdbs += value;
+  }
+
+  void incNumMarker(int value = 1)
+  {
+    info.numMarker += value;
+  }
+
+  void incNumBoundaries(int value = 1)
+  {
+    info.numBoundaries += value;
+  }
+
+  void incNumWaypoints(int value = 1)
+  {
+    info.numWaypoints += value;
+  }
+
+  void incNumObjectsWritten(int value = 1)
+  {
+    info.numObjectsWritten += value;
+  }
+
 private:
   void defaultHandler(const atools::fs::NavDatabaseProgress& inf);
 

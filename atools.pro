@@ -201,13 +201,14 @@ HEADERS += src/atools.h \
     src/fs/progresshandler.h \
     src/fs/xp/airwaypostprocess.h \
     src/fs/xp/xpconstants.h \
-    src/fs/xp/xpdatareader.h \
     src/fs/xp/xpwriter.h \
     src/fs/xp/xpnavwriter.h \
     src/fs/xp/xpfixwriter.h \
     src/fs/xp/xpairwaywriter.h \
     src/fs/xp/xpairportwriter.h \
-    src/fs/util/fsutil.h
+    src/fs/util/fsutil.h \
+    src/fs/xp/xpairportindex.h \
+    src/fs/xp/xpdatacompiler.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -375,13 +376,14 @@ SOURCES += src/atools.cpp \
     src/fs/progresshandler.cpp \
     src/fs/xp/airwaypostprocess.cpp \
     src/fs/xp/xpconstants.cpp \
-    src/fs/xp/xpdatareader.cpp \
     src/fs/xp/xpwriter.cpp \
     src/fs/xp/xpnavwriter.cpp \
     src/fs/xp/xpfixwriter.cpp \
     src/fs/xp/xpairwaywriter.cpp \
     src/fs/xp/xpairportwriter.cpp \
-    src/fs/util/fsutil.cpp
+    src/fs/util/fsutil.cpp \
+    src/fs/xp/xpairportindex.cpp \
+    src/fs/xp/xpdatacompiler.cpp
 
 
 unix {

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpdatareader.h"
+#include "fs/xp/xpdatacompiler.h"
 
 #include "fs/navdatabaseoptions.h"
 #include "fs/xp/xpfixwriter.h"
@@ -31,6 +31,7 @@
 #include "fs/progresshandler.h"
 #include "exception.h"
 #include "atools.h"
+#include "fs/xp/xpairportindex.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -45,18 +46,20 @@ namespace fs {
 namespace xp {
 
 XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
-                               ProgressHandler *progress)
-  : options(opts), db(sqlDb), progressHandler(progress)
+                               ProgressHandler *progressHandler)
+  : options(opts), db(sqlDb), progress(progressHandler)
 {
   basePath = buildBasePath(options);
 
   qInfo() << "Using X-Plane data path" << basePath;
 
-  fixWriter = new XpFixWriter(db);
-  navWriter = new XpNavWriter(db);
-  airwayWriter = new XpAirwayWriter(db);
-  airportWriter = new XpAirportWriter(db);
-  airwayPostProcess = new AirwayPostProcess(db, options, progressHandler);
+  airportIndex = new XpAirportIndex();
+
+  airportWriter = new XpAirportWriter(db, airportIndex, options, progress);
+  fixWriter = new XpFixWriter(db, airportIndex, options, progress);
+  navWriter = new XpNavWriter(db, airportIndex, options, progress);
+  airwayWriter = new XpAirwayWriter(db, options, progress);
+  airwayPostProcess = new AirwayPostProcess(db, options, progress);
 
   initQueries();
 }
@@ -68,7 +71,7 @@ XpDataCompiler::~XpDataCompiler()
 
 bool XpDataCompiler::writeBasepathScenery()
 {
-  writeSceneryArea(basePath);
+  writeSceneryArea(options.getBasepath());
   return false;
 }
 
@@ -76,19 +79,19 @@ bool XpDataCompiler::compileEarthFix()
 {
   QString path = atools::buildPathNoCase({basePath, "earth_fix.dat"});
 
-  if(progressHandler->reportOther(tr("Reading: %1").arg(path)) == true)
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 5, fixWriter);
+  return readDataFile(path, 5, fixWriter, false);
 }
 
 bool XpDataCompiler::compileEarthAirway()
 {
   QString path = atools::buildPathNoCase({basePath, "earth_awy.dat"});
-  if(progressHandler->reportOther(tr("Reading: %1").arg(path)) == true)
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 11, airwayWriter);
+  return readDataFile(path, 11, airwayWriter, false);
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
@@ -99,10 +102,10 @@ bool XpDataCompiler::postProcessEarthAirway()
 bool XpDataCompiler::compileEarthNav()
 {
   QString path = atools::buildPathNoCase({basePath, "earth_nav.dat"});
-  if(progressHandler->reportOther(tr("Reading: %1").arg(path)) == true)
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 11, navWriter);
+  return readDataFile(path, 11, navWriter, false);
 }
 
 bool XpDataCompiler::compileCustomApt()
@@ -113,10 +116,10 @@ bool XpDataCompiler::compileCustomApt()
   QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
-    if((aborted = progressHandler->reportOther(tr("Reading: %1").arg(aptdat))) == true)
+    if((aborted = progress->reportOther(tr("Reading: %1").arg(aptdat))) == true)
       return aborted;
 
-    if((aborted = readDataFile(aptdat, 1, airportWriter)) == true)
+    if((aborted = readDataFile(aptdat, 1, airportWriter, true)) == true)
       return aborted;
   }
 
@@ -131,10 +134,10 @@ bool XpDataCompiler::compileCustomGlobalApt()
 
   if(QFileInfo::exists(customAptDat))
   {
-    if(progressHandler->reportOther(tr("Reading: %1").arg(customAptDat)) == true)
+    if(progress->reportOther(tr("Reading: %1").arg(customAptDat)) == true)
       return true;
 
-    return readDataFile(customAptDat, 1, airportWriter);
+    return readDataFile(customAptDat, 1, airportWriter, false);
   }
 
   return false;
@@ -149,21 +152,28 @@ bool XpDataCompiler::compileDefaultApt()
 
   if(QFileInfo::exists(defaultAptDat))
   {
-    if(progressHandler->reportOther(tr("Reading: %1").arg(defaultAptDat)) == true)
+    if(progress->reportOther(tr("Reading: %1").arg(defaultAptDat)) == true)
       return true;
 
-    return readDataFile(defaultAptDat, 1, airportWriter);
+    return readDataFile(defaultAptDat, 1, airportWriter, false);
   }
   return false;
 }
 
-bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer)
+bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer, bool addAon)
 {
   QFile file;
   QTextStream stream;
 
   if(openFile(stream, file, filename))
   {
+    QFileInfo fi(filename);
+    XpWriterContext context;
+    context.curFileId = curFileId;
+    context.fileName = fi.fileName();
+    context.localPath = QDir(options.getBasepath()).relativeFilePath(fi.path());
+    context.addOn = addAon;
+
     QString line;
 
     int lineNum = 0;
@@ -171,14 +181,14 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     {
       line = stream.readLine().trimmed();
 
-      if((lineNum % 500) == 0)
-        progressHandler->reportUpdate();
+      if((lineNum % 100000) == 0)
+        progress->reportUpdate();
 
       if(!line.startsWith("#") && !line.isEmpty())
       {
         QStringList fields = line.simplified().split(" ");
         if(fields.size() >= minColumns)
-          writer->write(fields, curFileId);
+          writer->write(fields, context);
       }
       lineNum++;
     }
@@ -227,7 +237,7 @@ bool XpDataCompiler::writeCifp()
 
   for(const QString& file : cifpFiles)
   {
-    if(progressHandler->reportOther(tr("Reading: %1").arg(file)) == true)
+    if(progress->reportOther(tr("Reading: %1").arg(file)) == true)
       return true;
   }
 
@@ -236,7 +246,7 @@ bool XpDataCompiler::writeCifp()
 
 bool XpDataCompiler::writeLocalizers()
 {
-  if(progressHandler->reportOther("Localizers TODO") == true)
+  if(progress->reportOther("Localizers TODO") == true)
     return true;
 
   return false;
@@ -244,7 +254,7 @@ bool XpDataCompiler::writeLocalizers()
 
 bool XpDataCompiler::writeUserNav()
 {
-  if(progressHandler->reportOther("User Nav TODO") == true)
+  if(progress->reportOther("User Nav TODO") == true)
     return true;
 
   return false;
@@ -252,7 +262,7 @@ bool XpDataCompiler::writeUserNav()
 
 bool XpDataCompiler::writeUserFix()
 {
-  if(progressHandler->reportOther("User Fix TODO") == true)
+  if(progress->reportOther("User Fix TODO") == true)
     return true;
 
   return false;
@@ -260,6 +270,7 @@ bool XpDataCompiler::writeUserFix()
 
 void XpDataCompiler::close()
 {
+
   delete fixWriter;
   fixWriter = nullptr;
 
@@ -275,6 +286,9 @@ void XpDataCompiler::close()
   delete airwayPostProcess;
   airwayPostProcess = nullptr;
 
+  delete airportIndex;
+  airportIndex = nullptr;
+
   deInitQueries();
 }
 
@@ -287,7 +301,7 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
 
   QDir customApt(atools::buildPathNoCase({opts.getBasepath(), "Custom Scenery"}));
 
-  QStringList dirs = customApt.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::NoSort);
+  QStringList dirs = customApt.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
 
   for(const QString& dir : dirs)
   {
@@ -350,6 +364,8 @@ void XpDataCompiler::writeFile(const QString& filepath)
   insertFileQuery->bindValue(":filename", fileinfo.fileName());
   insertFileQuery->bindValue(":size", fileinfo.size());
   insertFileQuery->exec();
+
+  progress->incNumFiles();
 }
 
 void XpDataCompiler::writeSceneryArea(const QString& filepath)
@@ -359,7 +375,7 @@ void XpDataCompiler::writeSceneryArea(const QString& filepath)
   insertSceneryQuery->bindValue(":scenery_area_id", ++curSceneryId);
   insertSceneryQuery->bindValue(":number", curSceneryId);
   insertSceneryQuery->bindValue(":layer", curSceneryId);
-  insertSceneryQuery->bindValue(":title", fileinfo.fileName());
+  insertSceneryQuery->bindValue(":title", "X-Plane");
   insertSceneryQuery->bindValue(":local_path", fileinfo.filePath());
   insertSceneryQuery->bindValue(":active", true);
   insertSceneryQuery->bindValue(":required", true);

@@ -153,7 +153,7 @@ enum ApproachIndicator
   RUNWAY_GUARD = 6 // (“wig - wag”) lights Pulsating double amber lights alongside runway entrances
 };
 
-QString alsToDb(atools::fs::xp::ApproachIndicator value);
+QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value);
 
 } // namespace xp
 } // namespace fs

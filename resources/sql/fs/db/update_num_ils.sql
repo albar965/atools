@@ -16,29 +16,29 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Update ILS runway ids
+-- Update number of ILS runway ends in aiport ------------------
 -- *************************************************************
+drop table if exists temp_ap_num_ils;
 
--- Set runway end reference
-update ils set loc_runway_end_id = (
-  select runway_end_id
-  from runway_end e
-  where e.ils_ident = ils.ident and
-  (abs(e.lonx - ils.lonx) + abs(e.laty - ils.laty)) < 0.5
-);
-
-update ils set loc_airport_ident = null;
-
--- Update airport ident according to runway end
-update ils set loc_airport_ident = (
-  select a.ident from airport a join runway r on a.airport_id = r.airport_id
-  where r.primary_end_id = ils.loc_runway_end_id
+create table temp_ap_num_ils as
+select cast(ap_id as integer) as ap_id, cast(count(1) as integer) as cnt from (
+  select r.airport_id as ap_id, primary_end_id as end_id
+  from runway r
+  join ils i on r.primary_end_id = i.loc_runway_end_id
+  where i.gs_range is not null
   union
-  select a.ident from airport a join runway r on a.airport_id = r.airport_id
-  where r.secondary_end_id = ils.loc_runway_end_id
-) where loc_airport_ident is null;
+  select r2.airport_id as ap_id,secondary_end_id as end_id from runway r2
+  join ils i2 on r2.secondary_end_id = i2.loc_runway_end_id
+  where i2.gs_range is not null
+) group by ap_id;
 
-update ils set loc_runway_name = (
-select e.name from runway_end e where ils.loc_runway_end_id = e.runway_end_id
-);
+create index if not exists idx_temp_ap_num_ils on temp_ap_num_ils(ap_id);
+
+update airport set num_runway_end_ils = (
+select r.cnt
+from temp_ap_num_ils r where r.ap_id = airport.airport_id);
+
+drop table if exists temp_ap_num_ils;
+
+update airport set num_runway_end_ils = 0 where num_runway_end_ils is null;
 

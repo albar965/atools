@@ -21,8 +21,8 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-XpWriter::XpWriter(sql::SqlDatabase& sqlDb)
-  : db(sqlDb)
+XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
+  : db(sqlDb), options(opts), progress(progressHandler)
 {
 
 }

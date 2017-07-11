@@ -28,16 +28,26 @@ class SqlQuery;
 }
 
 namespace fs {
+
+class NavDatabaseOptions;
+class ProgressHandler;
+
 namespace xp {
+
+/*
+ * Reads earth_nav.dat and writes to tables, vor, ndb, marker and ils.
+ */
+class XpAirportIndex;
 
 class XpNavWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpNavWriter(atools::sql::SqlDatabase& sqlDb);
+  XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
   virtual ~XpNavWriter();
 
-  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish() override;
 
 private:
@@ -46,7 +56,10 @@ private:
   void writeVor(const QStringList& line, int curFileId, bool dmeOnly);
   void writeNdb(const QStringList& line, int curFileId);
   void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
-  void writeIls(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
+
+  void bindIls(const QStringList& line, int curFileId);
+  void bindIlsGlideslope(const QStringList& line);
+  void bindIlsDme(const QStringList& line);
   void finishIls();
 
   bool writingIls = false;
@@ -57,6 +70,7 @@ private:
 
   atools::sql::SqlQuery *insertVorQuery = nullptr, *insertNdbQuery = nullptr,
                         *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr;
+  atools::fs::xp::XpAirportIndex *airportIndex;
 
 };
 

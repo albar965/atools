@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_XP_WRITER_H
 #define ATOOLS_FS_XP_WRITER_H
 
+#include <QString>
+
 class QStringList;
 
 namespace atools {
@@ -26,20 +28,33 @@ class SqlDatabase;
 }
 
 namespace fs {
+
+class NavDatabaseOptions;
+class ProgressHandler;
+
 namespace xp {
+
+struct XpWriterContext
+{
+  int curFileId = -1;
+  QString localPath, fileName;
+  bool addOn = false;
+};
 
 class XpWriter
 {
 public:
-  XpWriter(atools::sql::SqlDatabase& sqlDb);
+  XpWriter(atools::sql::SqlDatabase& sqlDb,
+           const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
   virtual ~XpWriter();
 
-  virtual void write(const QStringList& line, int curFileId) = 0;
+  virtual void write(const QStringList& line, const XpWriterContext& context) = 0;
   virtual void finish() = 0;
 
 protected:
   atools::sql::SqlDatabase& db;
-
+  const atools::fs::NavDatabaseOptions& options;
+  atools::fs::ProgressHandler *progress;
 };
 
 } // namespace xp

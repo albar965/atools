@@ -28,7 +28,7 @@
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/addoncomponent.h"
-#include "fs/xp/xpdatareader.h"
+#include "fs/xp/xpdatacompiler.h"
 
 #include <QDebug>
 #include <QDir>
@@ -40,7 +40,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 19;
+const int PROGRESS_NUM_STEPS = 20;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -237,6 +237,8 @@ void NavDatabase::createInternal(const QString& codec)
     numSceneryAreas = 3; // default, airports and user
     xplaneExtraSteps++; // prepare post process airways
     xplaneExtraSteps++; // post process airways
+
+    xplaneExtraSteps--; // ILS id not executed
   }
   else
   {
@@ -447,11 +449,22 @@ void NavDatabase::createInternal(const QString& codec)
   script.executeScript(":/atools/resources/sql/fs/db/update_approaches.sql");
   db->commit();
 
-  if((aborted = progress.reportOther(tr("Updating ILS"))) == true)
+  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
+  {
+    // The ids are already updated when reading the X-Plane data
+    if((aborted = progress.reportOther(tr("Updating ILS"))) == true)
+      return;
+
+    // Set runway end ids into the ILS
+    script.executeScript(":/atools/resources/sql/fs/db/update_ils.sql");
+    db->commit();
+  }
+
+  if((aborted = progress.reportOther(tr("Updating ILS Count"))) == true)
     return;
 
-  // Set runway end ids into the ILS and update the ILS count in the airport table
-  script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
+  // update the ILS count in the airport table
+  script.executeScript(":/atools/resources/sql/fs/db/update_num_ils.sql");
   db->commit();
 
   if((aborted = progress.reportOther(tr("Collecting navaids for search"))) == true)

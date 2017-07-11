@@ -22,6 +22,7 @@
 
 #include "geo/rect.h"
 #include "fs/xp/xpconstants.h"
+#include "sql/sqlrecord.h"
 
 #include <QApplication>
 
@@ -33,7 +34,13 @@ class SqlQuery;
 }
 
 namespace fs {
+
+class NavDatabaseOptions;
+class ProgressHandler;
+
 namespace xp {
+
+class XpAirportIndex;
 
 class XpAirportWriter :
   public atools::fs::xp::XpWriter
@@ -41,38 +48,45 @@ class XpAirportWriter :
   Q_DECLARE_TR_FUNCTIONS(XpAirportWriter)
 
 public:
-  XpAirportWriter(atools::sql::SqlDatabase& sqlDb);
+  XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+                  const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
   virtual ~XpAirportWriter();
 
-  virtual void write(const QStringList& line, int curFileId) override;
+  virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish() override;
 
 private:
   void initQueries();
   void deInitQueries();
 
-  void bindAirport(const QStringList& line, atools::fs::xp::AirportRowCode airportRowCode, int curFileId);
-  void finishAirport();
-  void bindRunway(const QStringList& line, AirportRowCode airportRowCode);
+  void bindAirport(const QStringList& line, atools::fs::xp::AirportRowCode airportRowCode,
+                   const XpWriterContext& context);
   void bindMetadata(const QStringList& line);
-  bool hasAirport(const QString& ident);
-  void bindHelipad(const QStringList& line);
-  void bindCom(const QStringList& line, AirportRowCode rowCode);
   void bindViewpoint(const QStringList& line);
-  void bindStart(const QStringList& line);
-  void bindStartupLocation(const QStringList& line);
-  void bindPattern(const QStringList& line);
+  void bindFuel(const QStringList& line);
+  void finishAirport();
+
+  void writeRunway(const QStringList& line, AirportRowCode airportRowCode);
+  void writeHelipad(const QStringList& line);
+  void writeCom(const QStringList& line, AirportRowCode rowCode);
+  void writeStart(const QStringList& line);
+  void writeStartupLocation(const QStringList& line);
+  void writeAirportFile(const QString& icao, int curFileId);
 
   bool writingAirport = false, ignoringAirport = false;
 
-  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0;
+  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
+      curAirportFileId = 10000000;
 
   int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
-      numCom = 0, numStart = 0,
+      numCom = 0, numStart = 0, numVasi = 0,
       numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
       numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0,
       numParkingMilitaryCombat = 0;
+
+  atools::sql::SqlRecordVector runwayEndRecords;
+  atools::sql::SqlRecord runwayEndRecord;
 
   float airportAltitude = 0.f;
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
@@ -84,12 +98,19 @@ private:
 
   AirportRowCode airportRowCode = NO_ROWCODE;
 
-  atools::sql::SqlQuery *insertAirportQuery = nullptr, *selectAirportQuery = nullptr,
+  atools::sql::SqlQuery *insertAirportQuery = nullptr,
                         *insertRunwayQuery = nullptr, *insertRunwayEndQuery = nullptr, *insertHelipadQuery = nullptr,
-                        *insertComQuery = nullptr, *insertStartQuery = nullptr;
+                        *insertComQuery = nullptr, *insertStartQuery = nullptr, *insertAirportFileQuery = nullptr;
 
-  atools::geo::Rect bounding;
+  QString airportIcao;
+  atools::geo::Rect airportRect;
   atools::geo::Pos airportPos;
+  atools::fs::xp::XpAirportIndex *airportIndex;
+
+  void bindVasi(const QStringList& line);
+
+  void initRunwayEndRecord();
+
 };
 
 } // namespace xp

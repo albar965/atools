@@ -336,6 +336,12 @@ void SqlQuery::addBindValue(const QVariant& val, QSql::ParamType type)
   query.addBindValue(val, type);
 }
 
+void SqlQuery::bindRecord(const SqlRecord& record)
+{
+  for(int i = 0; i < record.count(); i++)
+    bindValue(record.fieldName(i), record.value(i));
+}
+
 QVariant SqlQuery::boundValue(const QString& placeholder) const
 {
   QVariant v = query.boundValue(placeholder);
