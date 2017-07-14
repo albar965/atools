@@ -157,6 +157,10 @@ QString Runway::surfaceToStr(rw::Surface surface)
     case rw::TARMAC:
       return "T";
 
+    // X-Plane
+    // case rw::TRANSPARENT:
+    // return "TR";
+
     case rw::UNKNOWN:
       return "UNKNOWN";
   }

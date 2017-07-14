@@ -17,14 +17,13 @@
 
 #include "fs/db/nav/boundarywriter.h"
 #include "fs/db/datawriter.h"
+#include "fs/common/binarygeometry.h"
 #include "fs/bgl/util.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
-
-#include "geo/linestring.h"
 
 namespace atools {
 namespace fs {
@@ -75,11 +74,12 @@ void BoundaryWriter::writeObject(const Boundary *type)
   bind(":min_lonx", type->getMinPosition().getLonX());
   bind(":min_laty", type->getMinPosition().getLatY());
 
-  bindCoordinateList(":geometry", fetchAirspaceLines(type));
+  atools::fs::common::BinaryGeometry geo(fetchAirspaceLines(type));
+  bind(":geometry", geo.writeToByteArray());
   executeStatement();
 }
 
-const QList<atools::geo::Pos> BoundaryWriter::fetchAirspaceLines(const Boundary *type)
+atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
 {
   const QList<bgl::BoundarySegment>& segments = type->getSegments();
   LineString processedLines;
@@ -103,7 +103,7 @@ const QList<atools::geo::Pos> BoundaryWriter::fetchAirspaceLines(const Boundary 
     else
       processedLines.append(segment.getPosition());
   }
-  return processedLines.toList();
+  return processedLines;
 }
 
 } // namespace writer

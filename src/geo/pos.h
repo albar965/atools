@@ -67,11 +67,6 @@ public:
 
   atools::geo::Pos& operator=(const atools::geo::Pos& other);
 
-  ~Pos()
-  {
-
-  }
-
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const;
 

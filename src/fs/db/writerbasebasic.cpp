@@ -81,27 +81,6 @@ void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& 
     return sqlQuery.bindValue(placeholder, val);
 }
 
-void WriterBaseBasic::bindBglCoordinateList(const QString& placeholder, const QList<bgl::BglPosition>& coordinates)
-{
-  QList<atools::geo::Pos> positions;
-  for(const bgl::BglPosition& pos : coordinates)
-    positions.append(pos.getPos());
-  bindCoordinateList(placeholder, positions);
-}
-
-void WriterBaseBasic::bindCoordinateList(const QString& placeholder, const QList<atools::geo::Pos>& coordinates)
-{
-  QByteArray blob;
-  QDataStream out(&blob, QIODevice::WriteOnly);
-  out.setVersion(QDataStream::Qt_5_5);
-  out.setFloatingPointPrecision(QDataStream::SinglePrecision);
-
-  out << static_cast<quint32>(coordinates.size());
-  for(const atools::geo::Pos& pos : coordinates)
-    out << pos.getLonX() << pos.getLatY();
-  bind(placeholder, blob);
-}
-
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
   return sqlQuery.bindValue(placeholder, QVariant(QVariant::Int));

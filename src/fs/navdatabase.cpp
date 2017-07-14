@@ -456,7 +456,7 @@ void NavDatabase::createInternal(const QString& codec)
       return;
 
     // Set runway end ids into the ILS
-    script.executeScript(":/atools/resources/sql/fs/db/update_ils.sql");
+    script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
     db->commit();
   }
 

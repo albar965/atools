@@ -21,6 +21,8 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
+#include "geo/linestring.h"
+#include "fs/common/binarygeometry.h"
 
 namespace atools {
 namespace fs {
@@ -44,11 +46,22 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   bindBool(":is_draw_surface", type->second != nullptr ? type->second->isDrawSurface() : true);
   bindBool(":is_draw_detail", type->second != nullptr ? type->second->isDrawDetail() : true);
 
-  bindBglCoordinateList(":vertices", type->first->getVertices());
+  atools::geo::LineString positions;
+  for(const bgl::BglPosition& pos : type->first->getVertices())
+    positions.append(pos.getPos());
+
+  atools::fs::common::BinaryGeometry geo(positions);
+  bind(":vertices", geo.writeToByteArray());
 
   if(getOptions().isIncludedBglObject(type::APRON2) && type->second != nullptr)
   {
-    bindBglCoordinateList(":vertices2", type->second->getVertices());
+    positions.clear();
+    for(const bgl::BglPosition& pos : type->first->getVertices())
+      positions.append(pos.getPos());
+
+    geo.setGeometry(positions);
+
+    bind(":vertices2", geo.writeToByteArray());
 
     // Triangles are space and comma separated
     bind(":triangles", toBytes(type->second->getTriangleIndex()));

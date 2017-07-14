@@ -21,6 +21,8 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
+#include "geo/linestring.h"
+#include "fs/common/binarygeometry.h"
 
 namespace atools {
 namespace fs {
@@ -38,7 +40,13 @@ void FenceWriter::writeObject(const bgl::Fence *type)
   bind(":fence_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::Fence::fenceTypeToStr(type->getType()));
-  bindBglCoordinateList(":vertices", type->getVertices());
+
+  atools::geo::LineString positions;
+  for(const bgl::BglPosition& pos :type->getVertices())
+    positions.append(pos.getPos());
+
+  atools::fs::common::BinaryGeometry geo(positions);
+  bind(":vertices", geo.writeToByteArray());
 
   executeStatement();
 }

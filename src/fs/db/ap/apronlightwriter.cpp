@@ -21,6 +21,8 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
+#include "geo/linestring.h"
+#include "fs/common/binarygeometry.h"
 
 namespace atools {
 namespace fs {
@@ -39,7 +41,13 @@ void ApronLightWriter::writeObject(const atools::fs::bgl::ApronEdgeLight *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
 
   // Write coordinates and edge index as string
-  bindBglCoordinateList(":vertices", type->getVertices());
+  atools::geo::LineString positions;
+  for(const bgl::BglPosition& pos :type->getVertices())
+    positions.append(pos.getPos());
+
+  atools::fs::common::BinaryGeometry geo(positions);
+  bind(":vertices", geo.writeToByteArray());
+
   bindNumberList(":edges", type->getEdgeIndex());
 
   executeStatement();

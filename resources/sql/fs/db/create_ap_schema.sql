@@ -258,6 +258,7 @@ create index if not exists idx_start_runway_end_id on start(runway_end_id);
 drop table if exists apron;
 
 -- Airport apron
+-- Contains pavement in case of X-Plane which includes taxiways
 create table apron
 (
   apron_id integer primary key,
@@ -265,11 +266,12 @@ create table apron
   surface varchar(15),              -- see enum atools::fs::bgl::rw::Surface
   is_draw_surface integer not null, -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,  -- Draw FS detail texture
-  vertices blob,                    -- Space and comma separated coordinate list of the apron
-                                    -- boundary (lon1 lat1, lon2 lat2, ...)
-  vertices2 blob,                   -- Apron triangle vertices
-  triangles blob,                   -- Apron triangle vertex references - space and comma separated
+  vertices blob,                    -- Coordinate list of the apron. Single precision float binary format.
+                                    -- boundary (lon1 lat1, lon2 lat2, ...).
+  vertices2 blob,                   -- Apron triangle vertices - not used
+  triangles blob,                   -- Apron triangle vertex references - space and comma separated - not used
                                     -- vertex index for vertices2 (i1 i2 i3, i2 i3 i4, ...)
+  geometry blob,                    -- Optional field: X-Plane apron and taxiway geometry
 foreign key(airport_id) references airport(airport_id)
 );
 
@@ -355,6 +357,7 @@ create table runway
   surface varchar(15),                  -- see enum atools::fs::bgl::rw::Surface
                                         -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
                                         -- which are used for data not originating from flight simulator
+  shoulder varchar(15),                 -- Optional column for X-Plane - shoulder surface or null if none
   length integer not null,              -- Feet
   width integer not null,               -- Feet
   heading double not null,              -- Heading in degrees true

@@ -28,8 +28,10 @@ QString surfaceToDb(Surface value)
   switch(value)
   {
     case atools::fs::xp::UNKNOWN:
-    case atools::fs::xp::TRANSPARENT:
       return "UNKNOWN";
+
+    case atools::fs::xp::TRANSPARENT:
+      return "TR";
 
     case atools::fs::xp::ASPHALT:
       return "A";

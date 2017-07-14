@@ -72,6 +72,7 @@ public:
   void exec(const QString& queryString);
   QVariant value(int i) const;
   QVariant value(const QString& name) const;
+  bool hasField(const QString& name) const;
 
   void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precisionPolicy);
   QSql::NumericalPrecisionPolicy numericalPrecisionPolicy() const;

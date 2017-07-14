@@ -15,41 +15,54 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_BOUNDARYWRITER_H
-#define ATOOLS_FS_DB_BOUNDARYWRITER_H
+#ifndef ATOOLS_BINARYGEOMETRY_H
+#define ATOOLS_BINARYGEOMETRY_H
 
-#include "fs/db/writerbase.h"
-
-#include "fs/bgl/boundary.h"
 #include "geo/linestring.h"
+
+class QByteArray;
 
 namespace atools {
 namespace fs {
-namespace db {
+namespace common {
 
-class BoundaryWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Boundary>
+/*
+ * FSX/P3D geometry for common use in database and client code.
+ *
+ * Writes a simple lat/long (not altitude) list in single floating point precision into a byte array which can be used
+ * to write and read it into and from a database BLOB.
+ */
+class BinaryGeometry
 {
 public:
-  BoundaryWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "boundary")
+  BinaryGeometry(const atools::geo::LineString& value);
+  BinaryGeometry(const QByteArray& bytes);
+  BinaryGeometry();
+
+  void readFromByteArray(const QByteArray& bytes);
+  QByteArray writeToByteArray();
+
+  const atools::geo::LineString& getGeometry() const
   {
+    return geometry;
   }
 
-  virtual ~BoundaryWriter()
+  void swapGeometry(atools::geo::LineString& other)
   {
+    geometry.swap(other);
   }
 
-protected:
-  virtual void writeObject(const atools::fs::bgl::Boundary *type) override;
+  void setGeometry(const atools::geo::LineString& value)
+  {
+    geometry = value;
+  }
 
 private:
-  atools::geo::LineString fetchAirspaceLines(const atools::fs::bgl::Boundary *type);
-
+  atools::geo::LineString geometry;
 };
 
-} // namespace writer
+} // namespace common
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_DB_BOUNDARYWRITER_H
+#endif // ATOOLS_BINARYGEOMETRY_H

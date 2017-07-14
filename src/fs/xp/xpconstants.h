@@ -52,15 +52,21 @@ enum AirportRowCode
   LAND_RUNWAY = 100,
   WATER_RUNWAY = 101,
   HELIPAD = 102,
+
   PAVEMENT_HEADER = 110, // Must form a closed loop.(TAXIWAY_OR_RAMP)
   LINEAR_FEATURE_HEADER = 120, // Can form closed loop or simple string (PAINTED_LINE_OR_LIGHT_STRING)
   AIRPORT_BOUNDARY_HEADER = 130, // Must form a closed loop
+
+  // Pavement and polygons
   NODE = 111, // All nodes can also include a “style” (line or lights)
-  NODE_WITH_BEZIER_CONTROL_POINT = 112, // Bezier control points define smooth curves
-  NODE_WITH_IMPLICIT_CLOSE_OF_LOOP = 113, // Implied join to first node in chain
-  NODE_WITH_BEZIER_CONTROL_POINT_CLOSE = 114, // Implied join to first node in chain WITH_IMPLICIT_CLOSE_OF_LOOP
+  NODE_AND_CONTROL_POINT = 112, // Bezier control points define smooth curves
+  NODE_CLOSE = 113, // Implied join to first node in chain
+  NODE_AND_CONTROL_POINT_CLOSE = 114, // Implied join to first node in chain WITH_IMPLICIT_CLOSE_OF_LOOP
+
+  // Linear features
   NODE_TERMINATING_A_STRING = 115, // No “styles” used(NO_CLOSE_LOOP)
   NODE_WITH_BEZIER_CONTROL_POINT_NO_CLOSE = 116, // No “styles” used, TERMINATING_A STRING (NO_CLOSE_LOOP)
+
   AIRPORT_VIEWPOINT = 14, // One or none for each airport
   AEROPLANE_STARTUP_LOCATION = 15, // *** Convert these to new row code 1300 ***
   AIRPORT_LIGHT_BEACON = 18, // One or none for each airport

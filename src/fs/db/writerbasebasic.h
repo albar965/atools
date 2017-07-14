@@ -84,10 +84,6 @@ protected:
   /* Binds a null if value == 0 */
   void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
-  /* Bin a list of coordinates as a byte array of float into blobs */
-  void bindBglCoordinateList(const QString& placeholder, const QList<atools::fs::bgl::BglPosition>& coordinates);
-  void bindCoordinateList(const QString& placeholder, const QList<atools::geo::Pos>& coordinates);
-
   /* Bin a list of numbers in a byte array */
   template<typename TYPE>
   void bindNumberList(const QString& placeholder, const QList<TYPE>& list);

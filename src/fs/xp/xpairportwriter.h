@@ -22,6 +22,7 @@
 
 #include "geo/rect.h"
 #include "fs/xp/xpconstants.h"
+#include "fs/common/xpgeometry.h"
 #include "sql/sqlrecord.h"
 
 #include <QApplication>
@@ -72,13 +73,18 @@ private:
   void writeStart(const QStringList& line);
   void writeStartupLocation(const QStringList& line);
   void writeAirportFile(const QString& icao, int curFileId);
+  void bindVasi(const QStringList& line);
+  void initRunwayEndRecord();
+
+  void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode);
+  void finishPavement();
 
   bool writingAirport = false, ignoringAirport = false;
 
   int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
-      curAirportFileId = 10000000;
+      curApronId = 0, curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
 
-  int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0,
+  int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
       numCom = 0, numStart = 0, numVasi = 0,
       numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
@@ -100,16 +106,17 @@ private:
 
   atools::sql::SqlQuery *insertAirportQuery = nullptr,
                         *insertRunwayQuery = nullptr, *insertRunwayEndQuery = nullptr, *insertHelipadQuery = nullptr,
-                        *insertComQuery = nullptr, *insertStartQuery = nullptr, *insertAirportFileQuery = nullptr;
+                        *insertComQuery = nullptr, *insertApronQuery = nullptr,
+                        *insertStartQuery = nullptr, *insertAirportFileQuery = nullptr;
 
   QString airportIcao;
   atools::geo::Rect airportRect;
   atools::geo::Pos airportPos;
   atools::fs::xp::XpAirportIndex *airportIndex;
+  atools::fs::common::XpGeometry currentPavement;
+  bool writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false;
 
-  void bindVasi(const QStringList& line);
-
-  void initRunwayEndRecord();
+  void bindPavement(const QStringList& line);
 
 };
 

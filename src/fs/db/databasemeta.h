@@ -103,8 +103,9 @@ public:
 
   /* Minor database version of the application. Minor version differences are compatible.
    * Since version 10: Fixes in boundary coordinates and indexes added.
+   * Version 2: X-Plane optional columns
    */
-  static const int DB_VERSION_MINOR = 1;
+  static const int DB_VERSION_MINOR = 2;
 
 private:
   /* Update the last loaded timestamp in the database and set it to now */

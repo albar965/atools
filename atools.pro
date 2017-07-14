@@ -208,7 +208,9 @@ HEADERS += src/atools.h \
     src/fs/xp/xpairportwriter.h \
     src/fs/util/fsutil.h \
     src/fs/xp/xpairportindex.h \
-    src/fs/xp/xpdatacompiler.h
+    src/fs/xp/xpdatacompiler.h \
+    src/fs/common/xpgeometry.h \
+    src/fs/common/binarygeometry.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -383,7 +385,9 @@ SOURCES += src/atools.cpp \
     src/fs/xp/xpairportwriter.cpp \
     src/fs/util/fsutil.cpp \
     src/fs/xp/xpairportindex.cpp \
-    src/fs/xp/xpdatacompiler.cpp
+    src/fs/xp/xpdatacompiler.cpp \
+    src/fs/common/xpgeometry.cpp \
+    src/fs/common/binarygeometry.cpp
 
 
 unix {
