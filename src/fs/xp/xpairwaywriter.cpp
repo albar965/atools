@@ -83,9 +83,9 @@ void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& conte
   }
 }
 
-void XpAirwayWriter::finish()
+void XpAirwayWriter::finish(const XpWriterContext& context)
 {
-
+  Q_UNUSED(context);
 }
 
 void XpAirwayWriter::initQueries()

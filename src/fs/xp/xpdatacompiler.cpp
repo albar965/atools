@@ -193,7 +193,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
       }
       lineNum++;
     }
-    writer->finish();
+    writer->finish(context);
 
     file.close();
     return false;

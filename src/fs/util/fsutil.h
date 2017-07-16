@@ -24,6 +24,9 @@ namespace atools {
 namespace fs {
 namespace util {
 
+/* Maximum rating is 5 */
+int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
+
 bool isNameMilitary(const QString& airportName);
 
 QString capNavString(const QString& str);

@@ -84,8 +84,10 @@ enum AirportRowCode
   TAXI_ROUTE_NETWORK_NODE = 1201, // Sequencing must be 0 based, ascending by ID. Must be part of one or more edges.
   TAXI_ROUTE_NETWORK_EDGE = 1202, // Must connect two nodes. Also takes one of 6 sizes (A-F).
   TAXI_ROUTE_EDGE_ACTIVE_ZONE = 1204, // Can refer to up to 4 runway ends
+
   AIRPORT_LOCATION = 1300, // Not explicitly connected to taxi route network
   RAMP_START_METADATA = 1301, // Includes width, operations type, equipment type, & airlines.
+
   METADATA_RECORDS = 1302, // Zero or many for each airport.
   TRUCK_PARKING_LOCATION = 1400, // Not explicitly connected to taxi route network.
   TRUCK_DESTINATION_LOCATION = 1401, // Not explicitly connected to taxi route network.

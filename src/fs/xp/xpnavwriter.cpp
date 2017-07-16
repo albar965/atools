@@ -330,8 +330,10 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
   }
 }
 
-void XpNavWriter::finish()
+void XpNavWriter::finish(const XpWriterContext& context)
 {
+  Q_UNUSED(context);
+
   finishIls();
 }
 

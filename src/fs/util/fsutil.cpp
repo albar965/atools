@@ -35,6 +35,18 @@ static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " A
                                        " Lrrs ", " Mcaf ", " Mcalf ", " Mcas ", " Naf ", " Nalf ", " Nas ",
                                        " Naval ", " Naws ", " Nolf ", " Ns "});
 
+int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons)
+{
+  // Maximum rating is 5
+  int rating = (numTaxiPaths > 0) + (numParkings > 0) + (numAprons > 0) + isAddon;
+
+  if(rating > 0 && hasTower)
+    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
+    rating++;
+
+  return rating;
+}
+
 bool isNameMilitary(const QString& airportName)
 {
   // Check if airport is military

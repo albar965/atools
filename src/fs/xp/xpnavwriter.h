@@ -48,7 +48,7 @@ public:
   virtual ~XpNavWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish() override;
+  virtual void finish(const XpWriterContext& context) override;
 
 private:
   void initQueries();

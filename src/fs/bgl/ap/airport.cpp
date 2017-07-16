@@ -25,6 +25,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/ap/taxipoint.h"
 #include "fs/bgl/util.h"
+#include "fs/util/fsutil.h"
 #include "atools.h"
 
 #include <QDebug>
@@ -369,14 +370,9 @@ bool Airport::isNameMilitary(const QString& airportName)
 int Airport::calculateRating(bool isAddon) const
 {
   // Maximum rating is 5
-  int rating = !getTaxiPaths().isEmpty() + !getParkings().isEmpty() +
-               !getAprons().isEmpty() + isAddon;
-
-  if(rating > 0 && hasTowerObj())
-    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
-    rating++;
-
-  return rating;
+  return atools::fs::util::calculateAirportRating(isAddon,
+                                                  hasTowerObj(), getTaxiPaths().size(), getParkings().size(),
+                                                  getAprons().size());
 }
 
 bool Airport::isValid() const

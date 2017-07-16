@@ -49,7 +49,7 @@ public:
   virtual ~XpWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) = 0;
-  virtual void finish() = 0;
+  virtual void finish(const XpWriterContext& context) = 0;
 
 protected:
   atools::sql::SqlDatabase& db;

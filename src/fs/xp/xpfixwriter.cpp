@@ -70,9 +70,9 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   progress->incNumWaypoints();
 }
 
-void XpFixWriter::finish()
+void XpFixWriter::finish(const XpWriterContext& context)
 {
-
+  Q_UNUSED(context);
 }
 
 void XpFixWriter::initQueries()

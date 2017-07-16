@@ -54,7 +54,7 @@ public:
   virtual ~XpAirportWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish() override;
+  virtual void finish(const XpWriterContext& context) override;
 
 private:
   void initQueries();
@@ -65,31 +65,44 @@ private:
   void bindMetadata(const QStringList& line);
   void bindViewpoint(const QStringList& line);
   void bindFuel(const QStringList& line);
-  void finishAirport();
+  void finishAirport(const XpWriterContext& context);
 
   void writeRunway(const QStringList& line, AirportRowCode airportRowCode);
   void writeHelipad(const QStringList& line);
   void writeCom(const QStringList& line, AirportRowCode rowCode);
-  void writeStart(const QStringList& line);
-  void writeStartupLocation(const QStringList& line);
   void writeAirportFile(const QString& icao, int curFileId);
   void bindVasi(const QStringList& line);
   void initRunwayEndRecord();
 
+  void bindPavement(const QStringList& line);
   void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode);
   void finishPavement();
 
-  bool writingAirport = false, ignoringAirport = false;
+  void writeStart(const QStringList& line);
+
+  void writeStartupLocation(const QStringList& line);
+  void writeStartupLocationMetadata(const QStringList& line);
+  void finishStartupLocation();
+
+  void bindTaxiNode(const QStringList& line);
+  void bindTaxiEdge(const QStringList& line);
+
+  bool writingAirport = false, ignoringAirport = false,
+       writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false,
+       writingStartLocation = false;
 
   int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
-      curApronId = 0, curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
+      curParkingId = 0, curApronId = 0, curTaxiPathId = 0,
+      curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
+
+  bool hasTower = false;
 
   int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
-      numCom = 0, numStart = 0, numVasi = 0,
+      numCom = 0, numStart = 0, numParking = 0, numTaxiPath = 0,
       numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
-      numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0,
-      numParkingMilitaryCombat = 0;
+      numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0,
+      numParkingMilitaryCombat = 0, numParkingMilCargo = 0, numParkingMilCombat = 0;
 
   atools::sql::SqlRecordVector runwayEndRecords;
   atools::sql::SqlRecord runwayEndRecord;
@@ -106,18 +119,17 @@ private:
 
   atools::sql::SqlQuery *insertAirportQuery = nullptr,
                         *insertRunwayQuery = nullptr, *insertRunwayEndQuery = nullptr, *insertHelipadQuery = nullptr,
-                        *insertComQuery = nullptr, *insertApronQuery = nullptr,
-                        *insertStartQuery = nullptr, *insertAirportFileQuery = nullptr;
+                        *insertComQuery = nullptr, *insertApronQuery = nullptr, *insertTaxiQuery = nullptr,
+                        *insertStartQuery = nullptr, *insertParkingQuery = nullptr, *insertAirportFileQuery = nullptr;
 
+  QString largestParkingRamp, largestParkingGate;
   QString airportIcao;
+
   atools::geo::Rect airportRect;
   atools::geo::Pos airportPos;
   atools::fs::xp::XpAirportIndex *airportIndex;
   atools::fs::common::XpGeometry currentPavement;
-  bool writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false;
-
-  void bindPavement(const QStringList& line);
-
+  QHash<int, atools::geo::Pos> taxiNodes;
 };
 
 } // namespace xp
