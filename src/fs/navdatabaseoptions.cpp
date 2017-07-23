@@ -125,36 +125,36 @@ void NavDatabaseOptions::addToAddonFilterExclude(const QStringList& filter)
 
 void NavDatabaseOptions::addToBglObjectFilterInclude(const QStringList& filters)
 {
-  addToBglObjectFilter(filters, bglObjectTypeFiltersInc);
+  addToBglObjectFilter(filters, navDbObjectTypeFiltersInc);
 }
 
 void NavDatabaseOptions::addToBglObjectFilterExclude(const QStringList& filters)
 {
-  addToBglObjectFilter(filters, bglObjectTypeFiltersExcl);
+  addToBglObjectFilter(filters, navDbObjectTypeFiltersExcl);
 }
 
 void NavDatabaseOptions::addToBglObjectFilter(const QStringList& filters,
-                                              QSet<atools::fs::type::BglObjectType>& filterList)
+                                              QSet<atools::fs::type::NavDbObjectType>& filterList)
 {
   for(const QString& f : filters)
     if(!f.isEmpty())
-      filterList.insert(type::stringToBglObjectType(f));
+      filterList.insert(type::stringToNavDbObjectType(f));
 }
 
-bool NavDatabaseOptions::isIncludedBglObject(type::BglObjectType type) const
+bool NavDatabaseOptions::isIncludedNavDbObject(type::NavDbObjectType type) const
 {
-  if(bglObjectTypeFiltersInc.isEmpty() && bglObjectTypeFiltersExcl.isEmpty())
+  if(navDbObjectTypeFiltersInc.isEmpty() && navDbObjectTypeFiltersExcl.isEmpty())
     return true;
 
-  bool exFound = bglObjectTypeFiltersExcl.contains(type);
+  bool exFound = navDbObjectTypeFiltersExcl.contains(type);
 
-  if(bglObjectTypeFiltersInc.isEmpty())
+  if(navDbObjectTypeFiltersInc.isEmpty())
     return !exFound;
   else
   {
-    bool incFound = bglObjectTypeFiltersInc.contains(type);
+    bool incFound = navDbObjectTypeFiltersInc.contains(type);
 
-    if(bglObjectTypeFiltersExcl.isEmpty())
+    if(navDbObjectTypeFiltersExcl.isEmpty())
       return incFound;
     else
       return incFound && !exFound;
@@ -327,19 +327,19 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   out << "]";
 
   out << ", Include type filter [";
-  for(type::BglObjectType type : opts.bglObjectTypeFiltersInc)
-    out << type::bglObjectTypeToString(type) << ", ";
+  for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersInc)
+    out << type::navDbObjectTypeToString(type) << ", ";
   out << "]";
   out << ", Exclude type filter [";
-  for(type::BglObjectType type : opts.bglObjectTypeFiltersExcl)
-    out << type::bglObjectTypeToString(type) << ", ";
+  for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersExcl)
+    out << type::navDbObjectTypeToString(type) << ", ";
 
   out << "]";
   out << "]";
   return out;
 }
 
-QString type::bglObjectTypeToString(type::BglObjectType type)
+QString type::navDbObjectTypeToString(type::NavDbObjectType type)
 {
   switch(type)
   {
@@ -418,7 +418,7 @@ QString type::bglObjectTypeToString(type::BglObjectType type)
   return "UNKNWON";
 }
 
-type::BglObjectType type::stringToBglObjectType(const QString& typeStr)
+type::NavDbObjectType type::stringToNavDbObjectType(const QString& typeStr)
 {
   if(typeStr == "AIRPORT")
     return AIRPORT;

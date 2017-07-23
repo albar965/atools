@@ -36,9 +36,20 @@ namespace xp {
 
 struct XpWriterContext
 {
-  int curFileId = -1;
-  QString localPath, fileName;
+  int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
+  QString localPath, fileName, cifpAirportIdent;
   bool addOn = false;
+  bool includeIls = true, includeVor = true, includeNdb = true, includeAirport = true, includeApproach = true,
+       includeApproachLeg = true, includeMarker = true;
+
+  QString messagePrefix() const
+  {
+    if(fileVersion > 0)
+      return QString("File %1, version %2, line %3").arg(fileName).arg(fileVersion).arg(lineNumber);
+    else
+      return QString("File %1, line %3").arg(fileName).arg(lineNumber);
+  }
+
 };
 
 class XpWriter

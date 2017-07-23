@@ -96,7 +96,7 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled())
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  if(options->isIncludedBglObject(type::AIRWAY))
+  if(options->isIncludedNavDbObject(type::AIRWAY))
   {
     // Read airways if desired by configuration
     for(int i = 0; i < numAirways; i++)

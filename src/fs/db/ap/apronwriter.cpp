@@ -53,7 +53,7 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
   atools::fs::common::BinaryGeometry geo(positions);
   bind(":vertices", geo.writeToByteArray());
 
-  if(getOptions().isIncludedBglObject(type::APRON2) && type->second != nullptr)
+  if(getOptions().isIncludedNavDbObject(type::APRON2) && type->second != nullptr)
   {
     positions.clear();
     for(const bgl::BglPosition& pos : type->first->getVertices())

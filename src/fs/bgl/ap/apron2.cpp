@@ -40,7 +40,7 @@ Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::Binary
   int numVertices = bs->readShort();
   int numTriangles = bs->readShort();
 
-  if(options->isIncludedBglObject(type::GEOMETRY))
+  if(options->isIncludedNavDbObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
       vertices.append(BglPosition(bs));

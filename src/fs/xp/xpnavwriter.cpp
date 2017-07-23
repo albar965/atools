@@ -20,6 +20,7 @@
 #include "fs/xp/xpairportindex.h"
 #include "fs/util/tacanfrequencies.h"
 #include "fs/progresshandler.h"
+#include "fs/navdatabaseoptions.h"
 
 #include "geo/pos.h"
 #include "geo/calculations.h"
@@ -272,19 +273,22 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     // 2 NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM)
     case NDB:
       finishIls();
-      writeNdb(line, context.curFileId);
+      if(options.isIncludedNavDbObject(atools::fs::type::NDB))
+        writeNdb(line, context.curFileId);
       break;
 
     // 3 VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs
     case VOR:
       finishIls();
-      writeVor(line, context.curFileId, false);
+      if(options.isIncludedNavDbObject(atools::fs::type::VOR))
+        writeVor(line, context.curFileId, false);
       break;
 
     case LOC: // 4 Localizer component of an ILS (Instrument Landing System)
     case LOC_ONLY: // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
       finishIls();
-      bindIls(line, context.curFileId);
+      if(options.isIncludedNavDbObject(atools::fs::type::ILS))
+        bindIls(line, context.curFileId);
       break;
 
     // 6 Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel
@@ -299,23 +303,30 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     // 9 Inner markers (IM) for an ILS
     case IM:
       finishIls();
-      writeMarker(line, context.curFileId, rowCode);
+      if(options.isIncludedNavDbObject(atools::fs::type::MARKER))
+        writeMarker(line, context.curFileId, rowCode);
       break;
 
     // 12 DME, including the DME component of an ILS, VORTAC or VOR-DME Paired frequency display suppressed on X-Plane’s charts
     case DME:
-      if(line.last() == "DME-ILS")
-        bindIlsDme(line);
+      if(options.isIncludedNavDbObject(atools::fs::type::ILS))
+      {
+        if(line.last() == "DME-ILS")
+          bindIlsDme(line);
+      }
       break;
 
     // 13 Stand-alone DME, or the DME component of an NDB-DME Paired frequency will be displayed on X-Plane’s charts
     case DME_ONLY:
-      if(line.last() == "DME-ILS")
-        bindIlsDme(line);
-      else
+      if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
-        finishIls();
-        writeVor(line, true, context.curFileId);
+        if(line.last() == "DME-ILS")
+          bindIlsDme(line);
+        else
+        {
+          finishIls();
+          writeVor(line, true, context.curFileId);
+        }
       }
       break;
 

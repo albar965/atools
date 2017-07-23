@@ -38,7 +38,7 @@ ApronEdgeLight::ApronEdgeLight(const atools::fs::NavDatabaseOptions *options, at
   // 0x44480000: Unknown (value 800)
   bs->skip(12);
 
-  if(options->isIncludedBglObject(type::GEOMETRY))
+  if(options->isIncludedNavDbObject(type::GEOMETRY))
   {
     for(int i = 0; i < numVertices; i++)
       vertices.append(BglPosition(bs));

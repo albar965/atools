@@ -33,8 +33,8 @@ namespace fs {
 
 namespace type {
 
-/* Used to enable/disable loading of BGL objects/records */
-enum BglObjectType
+/* Used to enable/disable loading of BGL objects/records and files for X-Plane. */
+enum NavDbObjectType
 {
   UNKNOWN,
   AIRPORT, /* airport and all subrecords */
@@ -62,8 +62,8 @@ enum BglObjectType
   GEOMETRY /* apron and fence geometry */
 };
 
-QString bglObjectTypeToString(atools::fs::type::BglObjectType type);
-atools::fs::type::BglObjectType stringToBglObjectType(const QString& typeStr);
+QString navDbObjectTypeToString(atools::fs::type::NavDbObjectType type);
+atools::fs::type::NavDbObjectType stringToNavDbObjectType(const QString& typeStr);
 
 }
 
@@ -279,7 +279,7 @@ public:
   bool isAddonLocalPath(const QString& filepath) const;
   bool isAddonDirectory(const QString& filepath) const;
 
-  bool isIncludedBglObject(atools::fs::type::BglObjectType type) const;
+  bool isIncludedNavDbObject(atools::fs::type::NavDbObjectType type) const;
 
   ProgressCallbackType getProgressCallback() const;
 
@@ -306,7 +306,7 @@ private:
   bool includeObject(const QString& string, const QList<QRegExp>& filterListInc,
                      const QList<QRegExp>& filterListExcl) const;
 
-  void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::BglObjectType>& filterList);
+  void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::NavDbObjectType>& filterList);
   QString adaptPath(const QString& filepath) const;
   QStringList fromNativeSeparators(const QStringList& paths) const;
   QString fromNativeSeparator(const QString& path) const;
@@ -321,7 +321,7 @@ private:
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
                  dirExcludes /* Not loaded from config file */,
                  addonDirExcludes /* Not loaded from config file */;
-  QSet<atools::fs::type::BglObjectType> bglObjectTypeFiltersInc, bglObjectTypeFiltersExcl;
+  QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
 
   atools::fs::FsPaths::SimulatorType simulatorType = atools::fs::FsPaths::FSX;

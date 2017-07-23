@@ -82,7 +82,7 @@ void BglFile::readFile(QString file)
 
     readSections(&bs);
 
-    if(options->isIncludedBglObject(type::BOUNDARY))
+    if(options->isIncludedNavDbObject(type::BOUNDARY))
       readBoundaryRecords(&bs);
 
     readRecords(&bs);
@@ -228,12 +228,12 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
     case nav::LOW:
     case nav::HIGH:
     case nav::VOT:
-      if(options->isIncludedBglObject(type::VOR))
+      if(options->isIncludedNavDbObject(type::VOR))
         return createRecord<Vor>(bs, &vors);
 
       break;
     case nav::ILS:
-      if(options->isIncludedBglObject(type::ILS))
+      if(options->isIncludedNavDbObject(type::ILS))
         return createRecord<Ils>(bs, &ils);
 
       break;
@@ -271,14 +271,14 @@ void BglFile::readRecords(BinaryStream *bs)
       switch(type)
       {
         case section::AIRPORT:
-          if(options->isIncludedBglObject(type::AIRPORT))
+          if(options->isIncludedNavDbObject(type::AIRPORT))
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
             rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
           break;
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";
-          if(options->isIncludedBglObject(type::AIRPORT))
+          if(options->isIncludedNavDbObject(type::AIRPORT))
             rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
           break;
         case section::NAME_LIST:
@@ -291,15 +291,15 @@ void BglFile::readRecords(BinaryStream *bs)
           rec = handleIlsVor(bs);
           break;
         case section::NDB:
-          if(options->isIncludedBglObject(type::NDB))
+          if(options->isIncludedNavDbObject(type::NDB))
             rec = createRecord<Ndb>(bs, &ndbs);
           break;
         case section::MARKER:
-          if(options->isIncludedBglObject(type::MARKER))
+          if(options->isIncludedNavDbObject(type::MARKER))
             rec = createRecord<Marker>(bs, &marker);
           break;
         case section::WAYPOINT:
-          if(options->isIncludedBglObject(type::WAYPOINT))
+          if(options->isIncludedNavDbObject(type::WAYPOINT))
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);
           break;

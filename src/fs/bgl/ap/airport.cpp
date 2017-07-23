@@ -127,7 +127,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
       case rec::RUNWAY_P3D_V4:
       case rec::RUNWAY:
-        if(options->isIncludedBglObject(type::RUNWAY))
+        if(options->isIncludedNavDbObject(type::RUNWAY))
         {
           r.seekToStart();
 
@@ -145,7 +145,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
       case rec::COM:
-        if(options->isIncludedBglObject(type::COM))
+        if(options->isIncludedNavDbObject(type::COM))
         {
           r.seekToStart();
           coms.append(Com(options, bs));
@@ -153,7 +153,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
       case rec::TAXI_PARKING_FS9: // FS9 parking has slightly different structure
       case rec::TAXI_PARKING:
-        if(options->isIncludedBglObject(type::PARKING))
+        if(options->isIncludedNavDbObject(type::PARKING))
         {
           int numParkings = bs->readUShort();
           for(int i = 0; i < numParkings; i++)
@@ -168,14 +168,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
       case rec::APPROACH:
-        if(options->isIncludedBglObject(type::APPROACH))
+        if(options->isIncludedNavDbObject(type::APPROACH))
         {
           r.seekToStart();
           approaches.append(Approach(options, bs));
         }
         break;
       case rec::AIRPORT_WAYPOINT:
-        if(options->isIncludedBglObject(type::WAYPOINT))
+        if(options->isIncludedNavDbObject(type::WAYPOINT))
         {
           r.seekToStart();
           Waypoint wp(options, bs);
@@ -192,7 +192,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
 
       case rec::APRON_FIRST:
-        if(options->isIncludedBglObject(type::APRON))
+        if(options->isIncludedNavDbObject(type::APRON))
         {
           r.seekToStart();
           aprons.append(Apron(options, bs));
@@ -205,21 +205,21 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         aprons2.append(Apron2(options, bs, type == rec::APRON_SECOND_P3D_V4));
         break;
       case rec::APRON_EDGE_LIGHTS:
-        if(options->isIncludedBglObject(type::APRON) && options->isIncludedBglObject(type::APRONLIGHT))
+        if(options->isIncludedNavDbObject(type::APRON) && options->isIncludedNavDbObject(type::APRONLIGHT))
         {
           r.seekToStart();
           apronLights.append(ApronEdgeLight(options, bs));
         }
         break;
       case rec::HELIPAD:
-        if(options->isIncludedBglObject(type::HELIPAD))
+        if(options->isIncludedNavDbObject(type::HELIPAD))
         {
           r.seekToStart();
           helipads.append(Helipad(options, bs));
         }
         break;
       case rec::START:
-        if(options->isIncludedBglObject(type::START))
+        if(options->isIncludedNavDbObject(type::START))
         {
           r.seekToStart();
           Start start(options, bs);
@@ -231,14 +231,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
       case rec::JETWAY:
-        if(options->isIncludedBglObject(type::PARKING))
+        if(options->isIncludedNavDbObject(type::PARKING))
         {
           r.seekToStart();
           jetways.append(Jetway(options, bs));
         }
         break;
       case rec::FENCE_BOUNDARY:
-        if(options->isIncludedBglObject(type::FENCE))
+        if(options->isIncludedNavDbObject(type::FENCE))
         {
           r.seekToStart();
           fences.append(Fence(options, bs));
@@ -246,7 +246,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         numBoundaryFence++;
         break;
       case rec::FENCE_BLAST:
-        if(options->isIncludedBglObject(type::FENCE))
+        if(options->isIncludedNavDbObject(type::FENCE))
         {
           r.seekToStart();
           fences.append(Fence(options, bs));
@@ -257,16 +257,16 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
       case rec::TAXI_PATH_P3D_V4:
       case rec::TAXI_PATH:
-        if(options->isIncludedBglObject(type::TAXIWAY))
+        if(options->isIncludedNavDbObject(type::TAXIWAY))
         {
           int numPaths = bs->readUShort();
           for(int i = 0; i < numPaths; i++)
           {
             TaxiPath path(bs, type == rec::TAXI_PATH_P3D_V4);
             if((path.getType() == atools::fs::bgl::taxipath::RUNWAY &&
-                !options->isIncludedBglObject(type::TAXIWAY_RUNWAY)) ||
+                !options->isIncludedNavDbObject(type::TAXIWAY_RUNWAY)) ||
                (path.getType() == atools::fs::bgl::taxipath::VEHICLE &&
-                !options->isIncludedBglObject(type::VEHICLE)))
+                !options->isIncludedNavDbObject(type::VEHICLE)))
               continue;
 
             taxipaths.append(path);
@@ -274,7 +274,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
       case rec::TAXI_POINT:
-        if(options->isIncludedBglObject(type::TAXIWAY))
+        if(options->isIncludedNavDbObject(type::TAXIWAY))
         {
           int numPoints = bs->readUShort();
           for(int i = 0; i < numPoints; i++)
@@ -282,7 +282,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
       case rec::TAXI_NAME:
-        if(options->isIncludedBglObject(type::TAXIWAY))
+        if(options->isIncludedNavDbObject(type::TAXIWAY))
         {
           int numNames = bs->readUShort();
           for(int i = 0; i < numNames; i++)
@@ -323,7 +323,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   // Set the jetway flag on parking
   updateParking(jetways, parkingNumberIndex);
 
-  if(!options->isIncludedBglObject(type::VEHICLE))
+  if(!options->isIncludedNavDbObject(type::VEHICLE))
     removeVehicleParking();
 
   // Update all the number fields and the bounding rectangle

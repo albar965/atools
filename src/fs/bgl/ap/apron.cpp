@@ -31,7 +31,7 @@ Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinarySt
   surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
   int numVertices = bs->readShort();
 
-  if(options->isIncludedBglObject(type::GEOMETRY))
+  if(options->isIncludedNavDbObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
       vertices.append(BglPosition(bs));
 }

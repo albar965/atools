@@ -109,7 +109,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::TRANSITION_LEGS:
-        if(options->isIncludedBglObject(type::APPROACHLEG))
+        if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)

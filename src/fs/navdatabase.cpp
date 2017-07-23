@@ -281,7 +281,7 @@ void NavDatabase::createInternal(const QString& codec)
   {
     xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress));
 
-    atools::fs::scenery::SceneryArea area(1, 1, tr("X-plane"), QString());
+    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
 
     if((aborted = progress.reportSceneryArea(&area)) == true)
       return;
@@ -291,69 +291,88 @@ void NavDatabase::createInternal(const QString& codec)
 
     db->commit();
 
-    if((aborted = xpDataCompiler->compileCustomApt()) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
+    {
+      if((aborted = xpDataCompiler->compileCustomApt()) == true)
+        return;
 
-    db->commit();
+      db->commit();
 
-    if((aborted = xpDataCompiler->compileCustomGlobalApt()) == true)
-      return;
+      if((aborted = xpDataCompiler->compileCustomGlobalApt()) == true)
+        return;
 
-    db->commit();
+      db->commit();
 
-    if((aborted = xpDataCompiler->compileDefaultApt()) == true)
-      return;
+      if((aborted = xpDataCompiler->compileDefaultApt()) == true)
+        return;
 
-    db->commit();
+      db->commit();
+    }
 
-    if((aborted = xpDataCompiler->compileEarthFix()) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
+    {
+      if((aborted = xpDataCompiler->compileEarthFix()) == true)
+        return;
 
-    db->commit();
+      db->commit();
+    }
 
-    if((aborted = xpDataCompiler->compileEarthNav()) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
+       options->isIncludedNavDbObject(atools::fs::type::NDB) ||
+       options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
+       options->isIncludedNavDbObject(atools::fs::type::ILS))
+    {
+      if((aborted = xpDataCompiler->compileEarthNav()) == true)
+        return;
 
-    db->commit();
+      db->commit();
+    }
 
-    if((aborted = xpDataCompiler->compileEarthAirway()) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
+    {
+      if((aborted = xpDataCompiler->compileEarthAirway()) == true)
+        return;
 
-    if((aborted = progress.reportOther(tr("Preparing Airways"))) == true)
-      return;
+      if((aborted = progress.reportOther(tr("Preparing Airways"))) == true)
+        return;
 
-    script.executeScript(":/atools/resources/sql/fs/db/xplane/prepare_airway.sql");
+      script.executeScript(":/atools/resources/sql/fs/db/xplane/prepare_airway.sql");
 
-    if((aborted = progress.reportOther(tr("Post procecssing Airways"))) == true)
-      return;
+      if((aborted = progress.reportOther(tr("Post procecssing Airways"))) == true)
+        return;
 
-    if((aborted = xpDataCompiler->postProcessEarthAirway()) == true)
-      return;
+      if((aborted = xpDataCompiler->postProcessEarthAirway()) == true)
+        return;
 
-    db->commit();
+      db->commit();
+    }
 
-    atools::fs::scenery::SceneryArea aptarea(1, 1, tr("Airport Data"), xpDataCompiler->getBasePath());
-    if((aborted = progress.reportSceneryArea(&aptarea)) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
+    {
+      if((aborted = xpDataCompiler->writeCifp()) == true)
+        return;
 
-    if((aborted = xpDataCompiler->writeCifp()) == true)
-      return;
+      db->commit();
+    }
 
-    db->commit();
+    if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
+       options->isIncludedNavDbObject(atools::fs::type::NDB) ||
+       options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
+       options->isIncludedNavDbObject(atools::fs::type::ILS))
+    {
+      if((aborted = xpDataCompiler->writeUserNav()) == true)
+        return;
 
-    atools::fs::scenery::SceneryArea userarea(1, 1, tr("User Data"), xpDataCompiler->getBasePath());
-    if((aborted = progress.reportSceneryArea(&userarea)) == true)
-      return;
+      db->commit();
+    }
 
-    if((aborted = xpDataCompiler->writeUserNav()) == true)
-      return;
+    if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
+    {
+      if((aborted = xpDataCompiler->writeUserFix()) == true)
+        return;
 
-    db->commit();
-
-    if((aborted = xpDataCompiler->writeUserFix()) == true)
-      return;
-
-    db->commit();
+      db->commit();
+    }
 
     xpDataCompiler->close();
   }

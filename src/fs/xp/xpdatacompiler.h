@@ -41,6 +41,7 @@ class XpFixWriter;
 class XpNavWriter;
 class XpAirwayWriter;
 class XpAirportWriter;
+class XpCifpWriter;
 class XpWriter;
 class AirwayPostProcess;
 class XpAirportIndex;
@@ -48,6 +49,7 @@ class XpAirportIndex;
 /*
  * Provides methods to read X-Plane data from text files into the database.
  */
+// TODO collect errors
 class XpDataCompiler
 {
   Q_DECLARE_TR_FUNCTIONS(XpDataCompiler)
@@ -93,8 +95,9 @@ private:
   void deInitQueries();
   void writeFile(const QString& filepath);
   void writeSceneryArea(const QString& filepath);
-  bool openFile(QTextStream& stream, QFile& file, const QString& filename);
-  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer, bool addAon);
+  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, int& lineNum, int& fileVersion);
+  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer, bool cifpFormat,
+                    bool addAon);
   static QString buildBasePath(const NavDatabaseOptions& opts);
   static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
@@ -111,9 +114,10 @@ private:
   atools::fs::xp::XpAirwayWriter *airwayWriter = nullptr;
   atools::fs::xp::XpNavWriter *navWriter = nullptr;
   atools::fs::xp::XpAirportWriter *airportWriter = nullptr;
+  atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
 
-  int minVersion = 1100;
+  int minVersion = 1000;
 
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
 

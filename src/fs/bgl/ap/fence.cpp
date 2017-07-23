@@ -33,7 +33,7 @@ Fence::Fence(const atools::fs::NavDatabaseOptions *options, atools::io::BinarySt
 
   bs->skip(32); // instance ID and profile
 
-  if(options->isIncludedBglObject(type::GEOMETRY))
+  if(options->isIncludedNavDbObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
       vertices.append(BglPosition(bs));
 }
