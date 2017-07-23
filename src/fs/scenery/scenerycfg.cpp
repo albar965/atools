@@ -80,6 +80,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
   Q_UNUSED(sectionSuffix);
   if(section == "area")
   {
+    currentArea.fixTitle();
     if(!currentArea.title.isEmpty() && currentArea.areaNumber != -1 &&
        (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
       areaEntries.append(currentArea);

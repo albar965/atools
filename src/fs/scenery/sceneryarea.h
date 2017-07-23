@@ -91,6 +91,8 @@ public:
     return title;
   }
 
+  void fixTitle();
+
 private:
   friend class SceneryCfg;
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
