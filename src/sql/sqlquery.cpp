@@ -181,9 +181,10 @@ QSqlRecord SqlQuery::sqlRecord() const
   return query.record();
 }
 
-SqlRecord SqlQuery::record() const
+SqlRecord SqlQuery::record(bool allowInvalidQuery) const
 {
-  checkError(isValid(), "SqlQuery::record() on invalid query");
+  if(!allowInvalidQuery)
+    checkError(isValid(), "SqlQuery::record() on invalid query");
   checkError(isActive(), "SqlQuery::record() on inactive query");
   return SqlRecord(query.record(), queryString);
 }
@@ -347,6 +348,16 @@ void SqlQuery::bindRecord(const SqlRecord& record)
 {
   for(int i = 0; i < record.count(); i++)
     bindValue(record.fieldName(i), record.value(i));
+}
+
+void SqlQuery::bindAndExecRecords(const SqlRecordVector& records)
+{
+  for(const SqlRecord& record:records)
+  {
+    bindRecord(record);
+    exec();
+    clearBoundValues();
+  }
 }
 
 QVariant SqlQuery::boundValue(const QString& placeholder) const

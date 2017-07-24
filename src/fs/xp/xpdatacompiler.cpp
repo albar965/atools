@@ -272,7 +272,6 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
 
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    qInfo() << "Opened" << filename;
     writeFile(filename);
 
     stream.setDevice(&file);

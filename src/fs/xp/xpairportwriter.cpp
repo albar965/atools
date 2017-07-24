@@ -1162,13 +1162,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     progress->incNumAirports();
 
-    for(const SqlRecord& rec : runwayEndRecords)
-    {
-      insertRunwayEndQuery->bindRecord(rec);
-      insertRunwayEndQuery->exec();
-    }
-    insertRunwayEndQuery->clearBoundValues();
-
+    insertRunwayEndQuery->bindAndExecRecords(runwayEndRecords);
   }
   airportRect = Rect();
   airportPos = Pos();

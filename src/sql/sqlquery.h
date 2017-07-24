@@ -65,7 +65,7 @@ public:
   const QSqlDriver *driver() const;
   const QSqlResult *result() const;
   bool isForwardOnly() const;
-  SqlRecord record() const;
+  SqlRecord record(bool allowInvalidQuery = false) const;
   QSqlRecord sqlRecord() const;
 
   void setForwardOnly(bool forward);
@@ -95,7 +95,10 @@ public:
   void bindValue(const QString& placeholder, const QVariant& val, QSql::ParamType type = QSql::In);
   void bindValue(int pos, const QVariant& val, QSql::ParamType type = QSql::In);
   void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
+
   void bindRecord(const atools::sql::SqlRecord& record);
+  void bindAndExecRecords(const atools::sql::SqlRecordVector& records);
+
   QVariant boundValue(const QString& placeholder) const;
   QVariant boundValue(int pos) const;
 

@@ -138,11 +138,21 @@ QSqlIndex SqlDatabase::primaryIndex(const QString& tablename) const
   return db.primaryIndex(tablename);
 }
 
-SqlRecord SqlDatabase::record(const QString& tablename) const
+SqlRecord SqlDatabase::record(const QString& tablename, const QString& prefix) const
 {
   checkError(isValid(), "SqlDatabase::record() on invalid database");
   checkError(isOpen(), "SqlDatabase::record() on closed database");
-  return SqlRecord(db.record(tablename));
+  SqlRecord rec(db.record(tablename));
+
+  if(prefix.isEmpty())
+    return rec;
+  else
+  {
+    SqlRecord prefixedRec;
+    for(int i = 0; i < rec.count(); i++)
+      prefixedRec.appendField(prefix + rec.fieldName(i), rec.fieldType(i));
+    return prefixedRec;
+  }
 }
 
 SqlQuery SqlDatabase::exec(const QString& query) const

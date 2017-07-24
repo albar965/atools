@@ -65,7 +65,7 @@ public:
   QStringList tables(QSql::TableType type = QSql::Tables) const;
   QSqlIndex primaryIndex(const QString& tablename) const;
 
-  SqlRecord record(const QString& tablename) const;
+  SqlRecord record(const QString& tablename, const QString& prefix = QString()) const;
   SqlQuery exec(const QString& query = QString()) const;
   QSqlError lastError() const;
   bool isValid() const;

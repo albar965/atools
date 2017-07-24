@@ -20,6 +20,8 @@
 
 #include "fs/xp/xpwriter.h"
 
+#include "sql/sqlrecord.h"
+
 namespace atools {
 
 namespace sql {
@@ -68,36 +70,53 @@ private:
   void deInitQueries();
 
   void writeProcedure(const QStringList& line, const XpWriterContext& context);
+  void writeProcedureLeg(const QStringList& line, const XpWriterContext& context);
+  void bindLeg(const QStringList& line, sql::SqlRecord& rec, const XpWriterContext& context);
 
-  void bindApproach(const QStringList& line, const XpWriterContext& context);
+  void writeApproach(const QStringList& line, const XpWriterContext& context);
   void writeApproachLeg(const QStringList& line, const XpWriterContext& context);
 
-  void bindTransition(const QStringList& line, const XpWriterContext& context);
+  void writeTransition(const QStringList& line, const XpWriterContext& context);
   void writeTransitionLeg(const QStringList& line, const XpWriterContext& context);
   void finishProcedure();
 
+  void writeStarApproach(const QStringList& line, const XpWriterContext& context);
+  void writeStarApproachLeg(const QStringList& line, const XpWriterContext& context);
+
+  void writeStarTransition(const QStringList& line, const XpWriterContext& context);
+  void writeStarTransitionLeg(const QStringList& line, const XpWriterContext& context);
+
+  void bindSidApproach(const QStringList& line, const XpWriterContext& context);
+  void writeSidApproachLeg(const QStringList& line, const XpWriterContext& context);
+
+  void bindSidTransition(const QStringList& line, const XpWriterContext& context);
+  void writeSidTransitionLeg(const QStringList& line, const XpWriterContext& context);
+
+  atools::fs::xp::rc::RowCode toRowCode(const QString& code, const XpWriterContext& context);
+  QString navaidType(const QString& sectionCode, const QString& subSectionCode, const XpWriterContext& context);
+  QString procedureType(char routeType, const XpWriterContext& context);
+
   int curApproachId = 1, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
 
+  int numProcedures = 0;
+
   atools::sql::SqlQuery *insertApproachQuery = nullptr, *insertTransitionQuery = nullptr,
-                        *insertApproachLegQuery = nullptr, *insertTransitionLegQuery = nullptr;
+                        *insertApproachLegQuery = nullptr, *insertTransitionLegQuery = nullptr,
+                        *updateAirportQuery = nullptr;
+
+  atools::fs::xp::XpAirportIndex *airportIndex;
+  const atools::sql::SqlRecord approachRecord, approachLegRecord, transitionRecord, transitionLegRecord;
+
+  atools::sql::SqlRecordVector approachRecords, transitionRecords;
+  QList<atools::sql::SqlRecordVector> approachLegRecords, transitionLegRecords;
 
   rc::RowCode curRowCode;
   int curSeqNo = std::numeric_limits<int>::max();
   char curRouteType = ' ';
-  QString curRouteIdent;
-  atools::fs::xp::XpAirportIndex *airportIndex;
+  QString curRouteIdent, curTransIdent;
 
-  atools::fs::xp::rc::RowCode toRowCode(const QString& code, const XpWriterContext& context);
+  bool writingApproach = false, writingMissedApproach = false, writingSid = false, writingStar = false;
 
-  QString navaidType(const QString& sectionCode, const QString& subSectionCode, const XpWriterContext& context);
-
-  bool writingApproach = false, writingMissedApproach = false, writingTransition = false;
-
-  QString procedureType(char routeType, const XpWriterContext& context);
-
-  void writeProcedureLeg(const QStringList& line, const XpWriterContext& context);
-
-  void bindLeg(const QStringList& line, sql::SqlQuery* query, const XpWriterContext& context);
 };
 
 } // namespace xp
