@@ -66,6 +66,23 @@ public:
   virtual void finish(const XpWriterContext& context) override;
 
 private:
+  struct Procedure
+  {
+    Procedure()
+    {
+    }
+
+    Procedure(rc::RowCode rc, const atools::sql::SqlRecord& rec)
+      : rowCode(rc), record(rec)
+    {
+    }
+
+    QStringList runways;
+    rc::RowCode rowCode = rc::NONE;
+    atools::sql::SqlRecord record;
+    atools::sql::SqlRecordVector legRecords;
+  };
+
   void initQueries();
   void deInitQueries();
 
@@ -99,23 +116,6 @@ private:
 
   atools::fs::xp::XpAirportIndex *airportIndex;
   const atools::sql::SqlRecord approachRecord, approachLegRecord, transitionRecord, transitionLegRecord;
-
-  struct Procedure
-  {
-    Procedure()
-    {
-    }
-
-    Procedure(rc::RowCode rc, const atools::sql::SqlRecord& rec)
-      : rowCode(rc), record(rec)
-    {
-    }
-
-    QStringList runways;
-    rc::RowCode rowCode = rc::NONE;
-    atools::sql::SqlRecord record;
-    atools::sql::SqlRecordVector legRecords;
-  };
 
   QVector<Procedure> approaches;
   QVector<Procedure> transitions;
