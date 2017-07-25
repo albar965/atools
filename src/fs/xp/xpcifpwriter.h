@@ -78,25 +78,18 @@ private:
 
   void writeTransition(const QStringList& line, const XpWriterContext& context);
   void writeTransitionLeg(const QStringList& line, const XpWriterContext& context);
-  void finishProcedure();
-
-  void writeStarApproach(const QStringList& line, const XpWriterContext& context);
-  void writeStarApproachLeg(const QStringList& line, const XpWriterContext& context);
-
-  void writeStarTransition(const QStringList& line, const XpWriterContext& context);
-  void writeStarTransitionLeg(const QStringList& line, const XpWriterContext& context);
-
-  void bindSidApproach(const QStringList& line, const XpWriterContext& context);
-  void writeSidApproachLeg(const QStringList& line, const XpWriterContext& context);
-
-  void bindSidTransition(const QStringList& line, const XpWriterContext& context);
-  void writeSidTransitionLeg(const QStringList& line, const XpWriterContext& context);
+  void finishProcedure(const XpWriterContext& context);
 
   atools::fs::xp::rc::RowCode toRowCode(const QString& code, const XpWriterContext& context);
   QString navaidType(const QString& sectionCode, const QString& subSectionCode, const XpWriterContext& context);
   QString procedureType(char routeType, const XpWriterContext& context);
 
-  int curApproachId = 1, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
+  void assignApproachIds(XpCifpWriter::Procedure& proc);
+  void assignTransitionIds(XpCifpWriter::Procedure& proc);
+  void apprRunwayNameAndSuffix(const QString& ident, QString& runway, QString& suffix);
+  QString sidStarRunwayNameAndSuffix(const QString& ident);
+
+  int curApproachId = 0, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
 
   int numProcedures = 0;
 
@@ -107,16 +100,32 @@ private:
   atools::fs::xp::XpAirportIndex *airportIndex;
   const atools::sql::SqlRecord approachRecord, approachLegRecord, transitionRecord, transitionLegRecord;
 
-  atools::sql::SqlRecordVector approachRecords, transitionRecords;
-  QList<atools::sql::SqlRecordVector> approachLegRecords, transitionLegRecords;
+  struct Procedure
+  {
+    Procedure()
+    {
+    }
+
+    Procedure(rc::RowCode rc, const atools::sql::SqlRecord& rec)
+      : rowCode(rc), record(rec)
+    {
+    }
+
+    QStringList runways;
+    rc::RowCode rowCode = rc::NONE;
+    atools::sql::SqlRecord record;
+    atools::sql::SqlRecordVector legRecords;
+  };
+
+  QVector<Procedure> approaches;
+  QVector<Procedure> transitions;
 
   rc::RowCode curRowCode;
   int curSeqNo = std::numeric_limits<int>::max();
   char curRouteType = ' ';
   QString curRouteIdent, curTransIdent;
 
-  bool writingApproach = false, writingMissedApproach = false, writingSid = false, writingStar = false;
-
+  bool writingMissedApproach = false;
 };
 
 } // namespace xp

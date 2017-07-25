@@ -97,7 +97,9 @@ public:
   void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
 
   void bindRecord(const atools::sql::SqlRecord& record);
+
   void bindAndExecRecords(const atools::sql::SqlRecordVector& records);
+  void bindAndExecRecord(const SqlRecord& record);
 
   QVariant boundValue(const QString& placeholder) const;
   QVariant boundValue(int pos) const;

@@ -360,6 +360,13 @@ void SqlQuery::bindAndExecRecords(const SqlRecordVector& records)
   }
 }
 
+void SqlQuery::bindAndExecRecord(const SqlRecord& record)
+{
+  bindRecord(record);
+  exec();
+  clearBoundValues();
+}
+
 QVariant SqlQuery::boundValue(const QString& placeholder) const
 {
   QVariant v = query.boundValue(placeholder);
