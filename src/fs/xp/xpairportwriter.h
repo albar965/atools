@@ -72,13 +72,12 @@ private:
   void writeCom(const QStringList& line, AirportRowCode rowCode);
   void writeAirportFile(const QString& icao, int curFileId);
   void bindVasi(const QStringList& line);
-  void initRunwayEndRecord();
 
   void bindPavement(const QStringList& line);
   void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode);
   void finishPavement();
 
-  void writeStart(const QStringList& line);
+  void writeParking(const QStringList& line);
 
   void writeStartupLocation(const QStringList& line);
   void writeStartupLocationMetadata(const QStringList& line);
@@ -92,7 +91,7 @@ private:
        writingStartLocation = false;
 
   int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
-      curParkingId = 0, curApronId = 0, curTaxiPathId = 0,
+      curParkingId = 0, curApronId = 0, curTaxiPathId = 0, curHelipadStartNumber = 0,
       curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
 
   bool hasTower = false;
@@ -105,7 +104,7 @@ private:
       numParkingMilitaryCombat = 0, numParkingMilCargo = 0, numParkingMilCombat = 0;
 
   atools::sql::SqlRecordVector runwayEndRecords;
-  atools::sql::SqlRecord runwayEndRecord;
+  const atools::sql::SqlRecord runwayEndRecord;
 
   float airportAltitude = 0.f;
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;

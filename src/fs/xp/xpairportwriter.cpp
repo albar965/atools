@@ -241,9 +241,9 @@ enum RunwayFieldIndex
 
 XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
-  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex)
+  : XpWriter(sqlDb, opts, progressHandler),
+  runwayEndRecord(sqlDb.record("runway_end", ":")), airportIndex(xpAirportIndex)
 {
-  initRunwayEndRecord();
   initQueries();
 }
 
@@ -298,7 +298,7 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
       break;
 
     case x::AEROPLANE_STARTUP_LOCATION:
-      writeStart(line);
+      writeParking(line);
       break;
 
     case x::LIGHTING_OBJECT:
@@ -670,7 +670,7 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line)
 }
 
 // Obsolete type 15
-void XpAirportWriter::writeStart(const QStringList& line)
+void XpAirportWriter::writeParking(const QStringList& line)
 {
   if(ignoringAirport)
     return;
@@ -694,23 +694,6 @@ void XpAirportWriter::writeStart(const QStringList& line)
   insertParkingQuery->bindValue(":type", "");
 
   finishStartupLocation();
-
-  // numStart++;
-  // insertStartQuery->bindValue(":start_id", ++curStartId);
-  // insertStartQuery->bindValue(":airport_id", curAirportId);
-
-  // Pos pos(line.at(s::LONX).toFloat(), line.at(s::LATY).toFloat());
-  // airportRect.extend(pos);
-  // insertStartQuery->bindValue(":laty", pos.getLatY());
-  // insertStartQuery->bindValue(":lonx", pos.getLonX());
-  // insertStartQuery->bindValue(":altitude", airportAltitude);
-  // insertStartQuery->bindValue(":heading", line.at(s::HEADING).toFloat());
-  // insertAirportQuery->bindValue(":name", line.at(s::NAME));
-
-  // runway_end_id
-  // runway_name // helipad and runway
-  // type // R, W, H
-  // number // only helipad
 }
 
 void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode)
@@ -820,10 +803,27 @@ void XpAirportWriter::writeHelipad(const QStringList& line)
   if(ignoringAirport)
     return;
 
+  Pos pos(line.at(hp::LONX).toFloat(), line.at(hp::LATY).toFloat());
+
+  // Write start position for helipad
+  numStart++;
+  insertStartQuery->bindValue(":start_id", ++curStartId);
+  insertStartQuery->bindValue(":airport_id", curAirportId);
+  insertStartQuery->bindValue(":runway_end_id", QVariant(QVariant::Int));
+  insertStartQuery->bindValue(":number", ++curHelipadStartNumber);
+  insertStartQuery->bindValue(":runway_name", QString("%1").arg(curHelipadStartNumber, 2, 10, QChar('0')));
+  insertStartQuery->bindValue(":laty", pos.getLatY());
+  insertStartQuery->bindValue(":lonx", pos.getLonX());
+  insertStartQuery->bindValue(":type", "H");
+  insertStartQuery->bindValue(":altitude", airportAltitude);
+  insertStartQuery->bindValue(":heading", line.at(hp::ORIENTATION).toFloat());
+  insertStartQuery->exec();
+
+  // Write the helipad
   numHelipad++;
   insertHelipadQuery->bindValue(":helipad_id", ++curHelipadId);
   insertHelipadQuery->bindValue(":airport_id", curAirportId);
-  // start_id
+  insertHelipadQuery->bindValue(":start_id", curStartId);
   insertHelipadQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(line.at(rw::SURFACE).toInt())));
 
   insertHelipadQuery->bindValue(":length", meterToFeet(line.at(hp::LENGTH).toFloat()));
@@ -836,7 +836,6 @@ void XpAirportWriter::writeHelipad(const QStringList& line)
 
   insertHelipadQuery->bindValue(":altitude", airportAltitude);
 
-  Pos pos(line.at(hp::LONX).toFloat(), line.at(hp::LATY).toFloat());
   airportRect.extend(pos);
   insertHelipadQuery->bindValue(":laty", pos.getLatY());
   insertHelipadQuery->bindValue(":lonx", pos.getLonX());
@@ -880,7 +879,8 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
   float lengthFeet = meterToFeet(lengthMeter);
   float widthFeet = meterToFeet(line.at(rw::WIDTH).toFloat());
-  float heading = primaryPos.angleDegTo(secondaryPos);
+  float primaryHeading = primaryPos.angleDegTo(secondaryPos);
+  float secondaryHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(primaryHeading));
   Pos center = primaryPos.interpolate(secondaryPos, lengthMeter, 0.5f);
   airportRect.extend(primaryPos);
   airportRect.extend(secondaryPos);
@@ -898,7 +898,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   {
     longestRunwayLength = lengthFeet;
     longestRunwayWidth = widthFeet;
-    longestRunwayHeading = heading;
+    longestRunwayHeading = primaryHeading;
     longestRunwaySurface = surfaceStr;
   }
 
@@ -918,7 +918,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
 
   insertRunwayQuery->bindValue(":length", lengthFeet);
   insertRunwayQuery->bindValue(":width", widthFeet);
-  insertRunwayQuery->bindValue(":heading", heading);
+  insertRunwayQuery->bindValue(":heading", primaryHeading);
 
   if(rowCode == LAND_RUNWAY)
   {
@@ -1001,7 +1001,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   rec.setValue(":is_landing", 1); // not available
   rec.setValue(":is_pattern", "N"); // not available
 
-  rec.setValue(":heading", heading);
+  rec.setValue(":heading", primaryHeading);
   rec.setValue(":lonx", center.getLonX());
   rec.setValue(":laty", center.getLatY());
 
@@ -1046,7 +1046,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   rec.setValue(":is_landing", 1);
   rec.setValue(":is_pattern", "N"); // NONE
 
-  rec.setValue(":heading", atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(heading)));
+  rec.setValue(":heading", secondaryHeading);
   rec.setValue(":lonx", center.getLonX());
   rec.setValue(":laty", center.getLatY());
 
@@ -1054,6 +1054,34 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
 
   insertRunwayQuery->exec();
   insertRunwayQuery->clearBoundValues();
+
+  // Write start position for primary runway end
+  numStart++;
+  insertStartQuery->bindValue(":start_id", ++curStartId);
+  insertStartQuery->bindValue(":airport_id", curAirportId);
+  insertStartQuery->bindValue(":runway_end_id", primRwEndId);
+  insertStartQuery->bindValue(":number", QVariant(QVariant::Int));
+  insertStartQuery->bindValue(":runway_name", primaryName);
+  insertStartQuery->bindValue(":laty", primaryPos.getLatY());
+  insertStartQuery->bindValue(":lonx", primaryPos.getLonX());
+  insertStartQuery->bindValue(":type", "R");
+  insertStartQuery->bindValue(":altitude", airportAltitude);
+  insertStartQuery->bindValue(":heading", primaryHeading);
+  insertStartQuery->exec();
+
+  // Write start position for secondary runway end
+  numStart++;
+  insertStartQuery->bindValue(":start_id", ++curStartId);
+  insertStartQuery->bindValue(":airport_id", curAirportId);
+  insertStartQuery->bindValue(":runway_end_id", secRwEndId);
+  insertStartQuery->bindValue(":number", QVariant(QVariant::Int));
+  insertStartQuery->bindValue(":runway_name", secondaryName);
+  insertStartQuery->bindValue(":laty", secondaryPos.getLatY());
+  insertStartQuery->bindValue(":lonx", secondaryPos.getLonX());
+  insertStartQuery->bindValue(":type", "R");
+  insertStartQuery->bindValue(":altitude", airportAltitude);
+  insertStartQuery->bindValue(":heading", secondaryHeading);
+  insertStartQuery->exec();
 }
 
 void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context)
@@ -1095,7 +1123,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":is_addon", context.addOn);
     insertAirportQuery->bindValue(":num_boundary_fence", 0);
 
-    insertAirportQuery->bindValue(":num_approach", 0); // TODO num_approach fill later
+    insertAirportQuery->bindValue(":num_approach", 0); // num_approach filled later when reading CIFP
     insertAirportQuery->bindValue(":num_runway_end_closed", 0); // not available
     // insertAirportQuery->bindValue(":num_runway_end_ils", 0); filled later - nothing to do here
     insertAirportQuery->bindValue(":num_jetway", 0); // not available
@@ -1173,6 +1201,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
   numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
   numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
   airportAltitude = 0.f;
+  curHelipadStartNumber = 0;
   airportRowCode = NO_ROWCODE;
   airportIcao.clear();
   runwayEndRecords.clear();
@@ -1189,35 +1218,6 @@ void XpAirportWriter::writeAirportFile(const QString& icao, int curFileId)
   insertAirportFileQuery->bindValue(":file_id", curFileId);
   insertAirportFileQuery->bindValue(":ident", icao);
   insertAirportFileQuery->exec();
-}
-
-void XpAirportWriter::initRunwayEndRecord()
-{
-  runwayEndRecord.clear();
-  runwayEndRecord.appendField(":runway_end_id", QVariant::Int);
-  runwayEndRecord.appendField(":name", QVariant::String);
-  runwayEndRecord.appendField(":end_type", QVariant::String);
-  runwayEndRecord.appendField(":offset_threshold", QVariant::Int);
-  runwayEndRecord.appendField(":blast_pad", QVariant::Int);
-  runwayEndRecord.appendField(":overrun", QVariant::Int);
-  runwayEndRecord.appendField(":left_vasi_type", QVariant::String);
-  runwayEndRecord.appendField(":left_vasi_pitch", QVariant::Double);
-  runwayEndRecord.appendField(":right_vasi_type", QVariant::String);
-  runwayEndRecord.appendField(":right_vasi_pitch", QVariant::Double);
-  runwayEndRecord.appendField(":has_closed_markings", QVariant::Int);
-  runwayEndRecord.appendField(":has_stol_markings", QVariant::Int);
-  runwayEndRecord.appendField(":is_takeoff", QVariant::Int);
-  runwayEndRecord.appendField(":is_landing", QVariant::Int);
-  runwayEndRecord.appendField(":is_pattern", QVariant::Int);
-  runwayEndRecord.appendField(":app_light_system_type", QVariant::String);
-  runwayEndRecord.appendField(":has_end_lights", QVariant::Int);
-  runwayEndRecord.appendField(":has_reils", QVariant::Int);
-  runwayEndRecord.appendField(":has_touchdown_lights", QVariant::Int);
-  runwayEndRecord.appendField(":num_strobes", QVariant::Int);
-  runwayEndRecord.appendField(":ils_ident", QVariant::String);
-  runwayEndRecord.appendField(":heading", QVariant::Double);
-  runwayEndRecord.appendField(":lonx", QVariant::Double);
-  runwayEndRecord.appendField(":laty", QVariant::Double);
 }
 
 void XpAirportWriter::initQueries()

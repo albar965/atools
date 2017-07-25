@@ -188,7 +188,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   QFile file;
   QTextStream stream;
 
-  if(!options.isIncludedLocalPath(filename))
+  if(!options.isIncludedLocalPath(QFileInfo(filename).path()))
     return false;
 
   int lineNum = 1, fileVersion = 0;
