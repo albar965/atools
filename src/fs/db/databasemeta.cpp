@@ -30,6 +30,17 @@ using atools::sql::SqlQuery;
 DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
+  init();
+}
+
+DatabaseMeta::DatabaseMeta(sql::SqlDatabase& sqlDb)
+  : db(&sqlDb)
+{
+  init();
+}
+
+void DatabaseMeta::init()
+{
   if(SqlUtil(db).hasTable("metadata"))
   {
     SqlQuery query(db);

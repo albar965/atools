@@ -42,6 +42,7 @@ class SqlDatabase
 public:
   SqlDatabase();
   SqlDatabase(const SqlDatabase& other);
+  explicit SqlDatabase(const QString& connectionName);
 
   /* Create a database from settings in the given group.
    * [groupName]
@@ -53,7 +54,7 @@ public:
    *  UserName=
    *  Password=
    */
-  SqlDatabase(const QSettings& settings, const QString& groupName);
+  explicit SqlDatabase(const QSettings& settings, const QString& groupName);
   ~SqlDatabase();
 
   SqlDatabase& operator=(const SqlDatabase& other);
@@ -115,11 +116,28 @@ public:
 
   const QSqlDatabase& getQSqlDatabase() const;
 
-  bool isAutocommit() const;
-  void setAutocommit(bool value);
-
   /* Rolls the current transaction back and executes the list of pragmas. Opens transaction again afteerwards. */
   void executePragmas(const QStringList& pragmas);
+
+  bool isAutocommit() const
+  {
+    return autocommit;
+  }
+
+  void setAutocommit(bool value)
+  {
+    autocommit = value;
+  }
+
+  bool isReadonly() const
+  {
+    return readonly;
+  }
+
+  void setReadonly(bool value = true)
+  {
+    readonly = value;
+  }
 
 private:
   SqlDatabase(const QSqlDatabase& other);
@@ -131,7 +149,7 @@ private:
   void checkError(bool retval = true, const QString& msg = QString()) const;
 
   QSqlDatabase db;
-  bool autocommit = false;
+  bool autocommit = false, readonly = false;
 };
 
 } // namespace sql

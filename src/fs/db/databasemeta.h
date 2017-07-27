@@ -34,6 +34,7 @@ class DatabaseMeta
 {
 public:
   DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
+  DatabaseMeta(atools::sql::SqlDatabase& sqlDb);
 
   /*
    * @return Major version that is stored in the database schema
@@ -106,6 +107,8 @@ public:
    * Version 2: X-Plane optional columns
    */
   static const int DB_VERSION_MINOR = 2;
+
+  void init();
 
 private:
   /* Update the last loaded timestamp in the database and set it to now */

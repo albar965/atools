@@ -904,11 +904,8 @@ QString XpCifpWriter::sidStarRunwayNameAndSuffix(const QString& ident, const ato
     // Get designator if there is one
     QString desig = ident.size() > 4 ? ident.at(4) : QString();
 
-    bool designatorValid = false;
     if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
       qWarning() << context.messagePrefix() << "Invalid designator" << desig;
-    else
-      designatorValid = true;
 
     if(desig != "B") // B = multiple runways with same number but different designator
     {
@@ -916,7 +913,7 @@ QString XpCifpWriter::sidStarRunwayNameAndSuffix(const QString& ident, const ato
         desig.clear();
 
       // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
-      if( /*designatorValid &&*/ ident.at(2).isDigit() && ident.at(3).isDigit())
+      if(ident.at(2).isDigit() && ident.at(3).isDigit())
         return ident.mid(2, 2) + desig;
     }
   }
@@ -935,11 +932,8 @@ QString XpCifpWriter::apprRunwayNameAndSuffix(const QString& ident, QString& suf
   // Get designator if there is one
   QString desig = ident.size() > 3 ? ident.at(3) : QString();
 
-  bool designatorValid = false;
   if(ident.at(1).isDigit() && ident.at(2).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
     qWarning() << context.messagePrefix() << "Invalid designator" << desig;
-  else
-    designatorValid = true;
 
   // TODO consider true course
 
@@ -950,7 +944,7 @@ QString XpCifpWriter::apprRunwayNameAndSuffix(const QString& ident, QString& suf
       desig.clear();
 
     // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
-    if( /*designatorValid &&*/ ident.at(1).isDigit() && ident.at(2).isDigit())
+    if(ident.at(1).isDigit() && ident.at(2).isDigit())
       runway = ident.mid(1, 2) + desig;
     else if(ident.size() > 3) // CVORY etc.
       suffix = ident.mid(3, 1);

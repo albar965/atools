@@ -37,6 +37,12 @@ SqlDatabase::SqlDatabase(const SqlDatabase& other)
 {
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
+  readonly = other.readonly;
+}
+
+SqlDatabase::SqlDatabase(const QString& connectionName)
+{
+  db = QSqlDatabase::database(connectionName, false);
 }
 
 SqlDatabase::SqlDatabase(const QSettings& settings, const QString& groupName)
@@ -65,6 +71,7 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
 {
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
+  readonly = other.readonly;
   return *this;
 }
 
@@ -80,7 +87,8 @@ void SqlDatabase::open(const QStringList& pragmas)
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  transaction();
+  if(!readonly)
+    transaction();
 }
 
 void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)
@@ -95,14 +103,16 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  transaction();
+  if(!readonly)
+    transaction();
 }
 
 void SqlDatabase::close()
 {
   checkError(isValid(), "Trying to close invalid database");
   checkError(isOpen(), "Closing already closed database");
-  rollback();
+  if(!readonly)
+    rollback();
   db.close();
 }
 
@@ -185,6 +195,7 @@ void SqlDatabase::transaction()
 
 void SqlDatabase::commit()
 {
+  checkError(!readonly, "SqlDatabase::commit() on read only database");
   checkError(isValid(), "SqlDatabase::commit() on invalid database");
   checkError(isOpen(), "SqlDatabase::commit() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
@@ -195,6 +206,7 @@ void SqlDatabase::commit()
 
 void SqlDatabase::rollback()
 {
+  checkError(!readonly, "SqlDatabase::commit() on read only database");
   checkError(isValid(), "SqlDatabase::rollback() on invalid database");
   checkError(isOpen(), "SqlDatabase::rollback() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
@@ -351,16 +363,6 @@ void SqlDatabase::checkError(bool retval, const QString& msg) const
 {
   if(!retval || db.lastError().isValid())
     throw SqlException(db.lastError(), msg);
-}
-
-bool SqlDatabase::isAutocommit() const
-{
-  return autocommit;
-}
-
-void SqlDatabase::setAutocommit(bool value)
-{
-  autocommit = value;
 }
 
 const QSqlDatabase& SqlDatabase::getQSqlDatabase() const
