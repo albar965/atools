@@ -23,7 +23,7 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-QString surfaceToDb(Surface value)
+QString surfaceToDb(Surface value, const XpWriterContext *context)
 {
   switch(value)
   {
@@ -54,7 +54,9 @@ QString surfaceToDb(Surface value)
 
     case atools::fs::xp::SNOW_OR_ICE:
       return "SN";
+
   }
+  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown surface value" << value;
   return QString();
 }
 
@@ -73,8 +75,10 @@ bool isSurfaceWater(Surface value)
   return value == WATER;
 }
 
-int markingToDb(Marking value)
+int markingToDb(Marking value, const XpWriterContext *context)
 {
+  // TODO find mapping to more detailed FSX markings
+
   // EDGES = 1 << 0,
   // THRESHOLD = 1 << 1,
   // FIXED_DISTANCE = 1 << 2,
@@ -97,39 +101,34 @@ int markingToDb(Marking value)
 
   using namespace atools::fs::bgl::rw;
 
-  RunwayMarkingFlags flags(NO_FLAGS);
-
   switch(value)
   {
     case atools::fs::xp::NO_MARKING:
-      break;
+      return NO_FLAGS;
 
     case atools::fs::xp::VISUAL:
-      flags = EDGES | DASHES | IDENT;
-      break;
+      return EDGES | DASHES | IDENT;
 
     case atools::fs::xp::NON_PAP:
-      flags = EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | EDGE_PAVEMENT;
-      break;
+      return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | EDGE_PAVEMENT;
 
     case atools::fs::xp::PAP:
-      flags = EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | PRECISION | EDGE_PAVEMENT;
-      break;
+      return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | PRECISION | EDGE_PAVEMENT;
 
     case atools::fs::xp::UK_NON_PAP:
-      flags = EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
-              EDGE_PAVEMENT;
-      break;
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
+             EDGE_PAVEMENT;
+
     case atools::fs::xp::UK_PAP:
-      flags = EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
-              ALTERNATE_PRECISION | EDGE_PAVEMENT;
-      break;
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
+             ALTERNATE_PRECISION | EDGE_PAVEMENT;
 
   }
-  return static_cast<int>(flags);
+  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown markings value" << value;
+  return NO_MARKING;
 }
 
-QString alsToDb(ApproachLight value)
+QString alsToDb(ApproachLight value, const XpWriterContext *context)
 {
   switch(value)
   {
@@ -173,10 +172,11 @@ QString alsToDb(ApproachLight value)
       return "RAIL";
 
   }
+  qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown ALS value" << value;
   return QString();
 }
 
-QString approachIndicatorToDb(ApproachIndicator value)
+QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *context)
 {
   // return "VASI21";
   // return "VASI22";
@@ -215,7 +215,17 @@ QString approachIndicatorToDb(ApproachIndicator value)
     case atools::fs::xp::NO_APPR_INDICATOR:
       break;
   }
+  qWarning() << (context != nullptr ? context->messagePrefix() : QString())
+             << "Unknown ApproachIndicator value" << value;
   return QString();
+}
+
+QString XpWriterContext::messagePrefix() const
+{
+  if(fileVersion > 0)
+    return QString("File %1, version %2, line %3").arg(fileName).arg(fileVersion).arg(lineNumber);
+  else
+    return QString("File %1, line %3").arg(fileName).arg(lineNumber);
 }
 
 } // namespace xp

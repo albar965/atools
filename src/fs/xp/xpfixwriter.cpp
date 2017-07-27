@@ -18,6 +18,7 @@
 #include "fs/xp/xpfixwriter.h"
 
 #include "fs/xp/xpairportindex.h"
+#include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
 
 #include "sql/sqlutil.h"

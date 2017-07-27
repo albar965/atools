@@ -18,6 +18,8 @@
 #ifndef ATOOLS_XP_DATAWRITER_H
 #define ATOOLS_XP_DATAWRITER_H
 
+#include "fs/xp/xpconstants.h"
+
 #include <QApplication>
 
 class QTextStream;
@@ -48,6 +50,38 @@ class XpAirportIndex;
 
 /*
  * Provides methods to read X-Plane data from text files into the database.
+ * Reads either from $X-Plane/Resources/default data/ or $X-Plane/Custom Data/
+ *
+ * Base layer
+ * $X-Plane/Resources/default data/
+ * earth_fix.dat
+ * earth_awy.dat
+ * earth_nav.dat
+ * CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)
+ *
+ * Updated base
+ * If these files are present, the X-Plane base layer is ignored.
+ * $X-Plane/Custom Data/
+ * earth_fix.dat
+ * earth_awy.dat
+ * earth_nav.dat
+ * CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)
+ *
+ * In X-Plane 11, this file is used to replace P* records with the latest from the FAA.
+ * $X-Plane/Custom Data/
+ * FAACIFP18
+ * Note that no enroute waypoints, VHF enroute navaids, or enroute airways are loaded from this file.
+ * These cannot be replaced safely as it would affect the referential integrity of the airway network.
+ * Therefore, once FAACIFP is in effect, Custom Data/CIFP/$ICAO.dat is overridden for
+ * each $ICAO with PD/PE/PF records in FAACIFP.
+ *
+ * Hand-placed localizers
+ * $X-Plane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat
+ *
+ * User defined layer
+ * $X-Plane/Custom Data/
+ * user_nav.dat
+ * user_fix.dat
  */
 // TODO collect errors
 class XpDataCompiler
@@ -59,48 +93,116 @@ public:
                  atools::fs::ProgressHandler *progressHandler);
   virtual ~XpDataCompiler();
 
+  /*
+   * Write a scenery entry dummy named X-Plane
+   * @return true if the  process was aborted
+   */
   bool writeBasepathScenery();
+
+  /*
+   * Read earth_fix.dat from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
   bool compileEarthFix();
+
+  /*
+   * Read earth_awy.dat from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
   bool compileEarthAirway();
+
+  /*
+   * Reads all from/to and to/from segments of all airways and creates from/via/to segments.
+   */
   bool postProcessEarthAirway();
+
+  /*
+   * Read earth_awy.dat from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
   bool compileEarthNav();
-  bool writeCifp();
 
-  bool writeLocalizers();
+  /*
+   * Read all CIFP/ICAO.dat airport procedure files from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
+  bool compileCifp();
 
-  bool writeUserNav();
-  bool writeUserFix();
+  /*
+   * Read $X-Plane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat hand placed localizers.
+   * @return true if the  process was aborted
+   */
+  bool compileLocalizers();
+
+  /*
+   * Read $X-Plane/Custom Data/user_nav.dat
+   * @return true if the  process was aborted
+   */
+  bool compileUserNav();
+
+  /*
+   * Read $X-Plane/Custom Data/user_fix.dat
+   * @return true if the  process was aborted
+   */
+  bool compileUserFix();
+
+  /*
+   * Read airports from X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+   */
+  bool compileDefaultApt();
+
+  /*
+   * Read airports from X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+   */
+  bool compileCustomGlobalApt();
+
+  /*
+   * Read custom airports like X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+   */
+  bool compileCustomApt();
 
   /* Close all writers and queries */
   void close();
 
+  /* X-Plane basebath */
   const QString& getBasePath() const
   {
     return basePath;
   }
 
+  /* Calculate number of files to be read */
   static int calculateFileCount(const atools::fs::NavDatabaseOptions& opts);
 
+  /* minmum accepted file version */
   void setMinVersion(int value)
   {
     minVersion = value;
   }
 
-  bool compileDefaultApt();
-  bool compileCustomGlobalApt();
-  bool compileCustomApt();
-
 private:
   void initQueries();
   void deInitQueries();
+
+  /* write to metadata file table */
   void writeFile(const QString& filepath);
   void writeSceneryArea(const QString& filepath);
-  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, int& lineNum, int& fileVersion);
-  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer, bool cifpFormat,
-                    bool addAon);
+
+  /* Open file and read header */
+  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat,
+                int& lineNum, int& fileVersion);
+
+  /* Read file line by line and call writer for each one */
+  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer,
+                    atools::fs::xp::ContextFlags flags);
   static QString buildBasePath(const NavDatabaseOptions& opts);
+
+  /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */
   static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
+
+  /* Find CIFP files like X-Plane 11/Resources/default data/CIFP/KSEA.dat */
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
+
+  atools::fs::xp::ContextFlags flagsFromOptions();
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath;
@@ -116,41 +218,9 @@ private:
   atools::fs::xp::XpAirportWriter *airportWriter = nullptr;
   atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
-
-  int minVersion = 1000;
-
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
 
-  // Base layer
-  // $X-Plane/Resources/default data/
-  // earth_fix.dat
-  // earth_awy.dat
-  // earth_nav.dat
-  // CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)
-
-  // Updated base
-  // If these files are present, the X-Plane base layer is ignored.
-  // $X-Plane/Custom Data/
-  // earth_fix.dat
-  // earth_awy.dat
-  // earth_nav.dat
-  // CIFP/$ICAO.dat (where $ICAO is each airport with instrument procedures)
-
-  // In X-Plane 11, this file is used to replace P* records with the latest from the FAA.
-  // $X-Plane/Custom Data/
-  // FAACIFP18
-  // Note that no enroute waypoints, VHF enroute navaids, or enroute airways are loaded from this file.
-  // These cannot be replaced safely as it would affect the referential integrity of the airway network.
-  // Therefore, once FAACIFP is in effect, Custom Data/CIFP/$ICAO.dat is overridden for
-  // each $ICAO with PD/PE/PF records in FAACIFP.
-
-  // Hand-placed localizers
-  // $X-Plane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat
-
-  // User defined layer
-  // $X-Plane/Custom Data/
-  // user_nav.dat
-  // user_fix.dat
+  int minVersion = 1000;
 
 };
 

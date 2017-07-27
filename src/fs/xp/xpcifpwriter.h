@@ -54,6 +54,9 @@ enum RowCode
 
 }
 
+/*
+ * Reads a CIFP file and writes all approaches,transitons, SIDs and STARs into the database.
+ */
 class XpCifpWriter :
   public atools::fs::xp::XpWriter
 {
@@ -66,6 +69,7 @@ public:
   virtual void finish(const XpWriterContext& context) override;
 
 private:
+  /* Used to store a procedure before writing to the database */
   struct Procedure
   {
     Procedure()
@@ -86,25 +90,43 @@ private:
   void initQueries();
   void deInitQueries();
 
+  /* Write an approach, SID, STAR or transition */
   void writeProcedure(const QStringList& line, const XpWriterContext& context);
+
+  /* Write an approach, SID, STAR or transition leg */
   void writeProcedureLeg(const QStringList& line, const XpWriterContext& context);
+
+  /* Fill a leg for the transition_leg or approach_leg table */
   void bindLeg(const QStringList& line, sql::SqlRecord& rec, const XpWriterContext& context);
 
+  /* Write an approach, SID, STAR */
   void writeApproach(const QStringList& line, const XpWriterContext& context);
   void writeApproachLeg(const QStringList& line, const XpWriterContext& context);
 
+  /* Write a transition */
   void writeTransition(const QStringList& line, const XpWriterContext& context);
   void writeTransitionLeg(const QStringList& line, const XpWriterContext& context);
+
+  /* Reorder and duplicate procedures and legs, then write into the database */
   void finishProcedure(const XpWriterContext& context);
 
   atools::fs::xp::rc::RowCode toRowCode(const QString& code, const XpWriterContext& context);
+
+  /* Calculate a navaid type based on section and subsection code */
   QString navaidType(const QString& sectionCode, const QString& subSectionCode, const XpWriterContext& context);
+
+  /* Calculate a database procedure type based on route type */
   QString procedureType(char routeType, const XpWriterContext& context);
 
+  /* Assigns new ids to the currently stored approaches */
   void assignApproachIds(XpCifpWriter::Procedure& proc);
+
+  /* Assigns new ids to the currently stored transitions */
   void assignTransitionIds(XpCifpWriter::Procedure& proc);
-  void apprRunwayNameAndSuffix(const QString& ident, QString& runway, QString& suffix);
-  QString sidStarRunwayNameAndSuffix(const QString& ident);
+
+  /* Extract runway names */
+  QString apprRunwayNameAndSuffix(const QString& ident, QString& suffix, const XpWriterContext& context);
+  QString sidStarRunwayNameAndSuffix(const QString& ident, const XpWriterContext& context);
 
   int curApproachId = 0, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
 

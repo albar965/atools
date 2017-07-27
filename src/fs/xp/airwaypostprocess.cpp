@@ -111,7 +111,6 @@ AirwayPostProcess::~AirwayPostProcess()
 {
 }
 
-/* Reads all from/to and to/from segments of all airways and creates from/via/to segments. */
 bool AirwayPostProcess::postProcessEarthAirway()
 {
   // A29
@@ -134,6 +133,7 @@ bool AirwayPostProcess::postProcessEarthAirway()
   AirwayType currentAirwayType = NONE;
   QList<AirwaySegment> segments;
 
+  // Read duplets from temp table
   while(query.next())
   {
     QString airway = query.value("name").toString();
@@ -148,7 +148,7 @@ bool AirwayPostProcess::postProcessEarthAirway()
 
     if(currentAirway != airway && !segments.isEmpty())
     {
-      // Airway has  changed order and write all its segments
+      // Airway has changed - order and write all its segments
       writeSegments(segments, insert, currentAirway, currentAirwayType);
 
       segments.clear();
@@ -176,8 +176,6 @@ bool AirwayPostProcess::postProcessEarthAirway()
   return false;
 }
 
-/* Sort and write out all segments of an airway. This also includes multiple fragments of the same airway name.
- * The list segments is emptied during this process. */
 void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& insert, const QString& name,
                                       AirwayType type)
 {
@@ -199,6 +197,7 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
   // qDebug() << "BYPREV" << s.prev.ident << s.prev.region << s.prev.type
   // << s.next.ident << s.next.region << s.next.type;
 
+  // Iterate over all segments of this airway
   while(!segments.isEmpty())
   {
     // Create an airway fragment
@@ -255,18 +254,16 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
         foundPrev = false;
     }
 
-    //// SAVE
     // qDebug() << "-------";
     // for(const Segment& s: sortedSegments)
     // qDebug() << "SORTED" << s.prev.ident << s.prev.region << s.prev.type
     // << s.next.ident << s.next.region << s.next.type;
     // qDebug() << "-------";
-    //// return;
 
     // Write the from/via/to triplets now
     for(int i = 0; i < sortedSegments.size(); i++)
     {
-      // use value to get default constructed objects if index is invalid
+      // use value method to get default constructed objects if index is invalid
       const AirwaySegment& prev = sortedSegments.value(i - 1);
       const AirwaySegment& mid = sortedSegments.value(i);
       const AirwaySegment& next = sortedSegments.value(i + 1);
@@ -277,11 +274,12 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
   }
 }
 
-/* Write a from/via/to (prev/mid/next) triplet into the database */
 void AirwayPostProcess::writeSegment(const AirwayPoint& prev, const AirwayPoint& mid, const AirwayPoint& next,
                                      SqlQuery& insert, const QString& name, AirwayType type,
                                      int prevMinAlt, int nextMinAlt)
 {
+  insert.clearBoundValues();
+
   insert.bindValue(":name", name);
   insert.bindValue(":type", convertAirwayType(type));
   insert.bindValue(":mid_type", convertType(mid.type));
@@ -295,13 +293,7 @@ void AirwayPostProcess::writeSegment(const AirwayPoint& prev, const AirwayPoint&
     insert.bindValue(":previous_region", prev.region);
     insert.bindValue(":previous_minimum_altitude", prevMinAlt * 100);
   }
-  else
-  {
-    insert.bindValue(":previous_type", QVariant(QVariant::Int));
-    insert.bindValue(":previous_ident", QVariant(QVariant::String));
-    insert.bindValue(":previous_region", QVariant(QVariant::String));
-    insert.bindValue(":previous_minimum_altitude", QVariant(QVariant::Int));
-  }
+
   if(!next.ident.isEmpty())
   {
     insert.bindValue(":next_type", next.type);
@@ -309,17 +301,10 @@ void AirwayPostProcess::writeSegment(const AirwayPoint& prev, const AirwayPoint&
     insert.bindValue(":next_region", next.region);
     insert.bindValue(":next_minimum_altitude", nextMinAlt * 100);
   }
-  else
-  {
-    insert.bindValue(":next_type", QVariant(QVariant::Int));
-    insert.bindValue(":next_ident", QVariant(QVariant::String));
-    insert.bindValue(":next_region", QVariant(QVariant::String));
-    insert.bindValue(":next_minimum_altitude", QVariant(QVariant::Int));
-  }
+
   insert.exec();
 }
 
-/* Used for sorting and binary search in the ordered segment lists. Sorts by next/to */
 bool AirwayPostProcess::nextOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2)
 {
   if(s1.next.ident == s2.next.ident)
@@ -333,7 +318,6 @@ bool AirwayPostProcess::nextOrderFunc(const AirwaySegment& s1, const AirwaySegme
     return s1.next.ident < s2.next.ident;
 }
 
-/* Used for sorting and binary search in the ordered segment lists. Sorts by previous/from */
 bool AirwayPostProcess::prevOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2)
 {
   if(s1.prev.ident == s2.prev.ident)
@@ -347,7 +331,6 @@ bool AirwayPostProcess::prevOrderFunc(const AirwaySegment& s1, const AirwaySegme
     return s1.prev.ident < s2.prev.ident;
 }
 
-/* Finds an airway segment starting or ending with airwayPoint in the list segments which can sorted by next or prev ids.*/
 bool AirwayPostProcess::findSegment(QVector<AirwaySegment>& found, QSet<AirwaySegment>& done,
                                     const QVector<AirwaySegment>& segments,
                                     AirwayPoint airwayPoint, AirwayPoint excludePoint, bool searchPrevious)

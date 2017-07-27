@@ -34,6 +34,9 @@ class ProgressHandler;
 
 namespace xp {
 
+/*
+ * Reads earth_awy.dat and writes it to table airway_temp
+ */
 class XpAirwayWriter :
   public atools::fs::xp::XpWriter
 {

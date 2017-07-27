@@ -86,19 +86,27 @@ public:
                     atools::fs::ProgressHandler *progress);
   virtual ~AirwayPostProcess();
 
+  /* Reads all from/to and to/from segments of all airways and creates from/via/to segments. */
   bool postProcessEarthAirway();
 
 private:
+  /* Sort and write out all segments of an airway. This also includes multiple fragments of the same airway name.
+   * The list segments is emptied during this process. */
   void writeSegments(QList<AirwaySegment>& segments, sql::SqlQuery& insert, const QString& name, AirwayType type);
 
+  /* Finds an airway segment starting or ending with airwayPoint in the list segments which can sorted by next or prev ids.*/
   bool findSegment(QVector<AirwaySegment>& found, QSet<AirwaySegment>& done, const QVector<AirwaySegment>& segments,
                    AirwayPoint airwayPoint, AirwayPoint excludePoint, bool searchPrevious);
 
+  /* Write a from/via/to (prev/mid/next) triplet into the database */
   void writeSegment(const AirwayPoint& prev, const AirwayPoint& mid, const AirwayPoint& next,
                     atools::sql::SqlQuery& insert, const QString& name, AirwayType type,
                     int prevMinAlt, int nextMinAlt);
 
+  /* Used for sorting and binary search in the ordered segment lists. Sorts by next/to */
   static bool nextOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2);
+
+  /* Used for sorting and binary search in the ordered segment lists. Sorts by previous/from */
   static bool prevOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2);
 
   const atools::fs::NavDatabaseOptions& options;

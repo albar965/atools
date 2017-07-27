@@ -43,6 +43,9 @@ namespace xp {
 
 class XpAirportIndex;
 
+/*
+ * Reads one or more airports from an apt.dat file and writes them into a database
+ */
 class XpAirportWriter :
   public atools::fs::xp::XpWriter
 {
@@ -60,42 +63,69 @@ private:
   void initQueries();
   void deInitQueries();
 
+  /* Fill airport data from the header into the query */
   void bindAirport(const QStringList& line, atools::fs::xp::AirportRowCode airportRowCode,
                    const XpWriterContext& context);
-  void bindMetadata(const QStringList& line);
-  void bindViewpoint(const QStringList& line);
-  void bindFuel(const QStringList& line);
+
+  /* Add metadata from key/value pairs */
+  void bindMetadata(const QStringList& line, const XpWriterContext& context);
+
+  /* Add viewpoint as tower position */
+  void bindViewpoint(const QStringList& line, const XpWriterContext& context);
+
+  /* Add fuel flags from truck parking positions */
+  void bindFuel(const QStringList& line, const XpWriterContext& context);
+
+  /* Finalize and write airport */
   void finishAirport(const XpWriterContext& context);
 
-  void writeRunway(const QStringList& line, AirportRowCode airportRowCode);
-  void writeHelipad(const QStringList& line);
-  void writeCom(const QStringList& line, AirportRowCode rowCode);
+  /* Collect runway data and write start positions */
+  void bindRunway(const QStringList& line, AirportRowCode airportRowCode, const XpWriterContext& context);
+
+  /* Write helipad and start positions */
+  void writeHelipad(const QStringList& line, const XpWriterContext& context);
+
+  /* TWR, ASOS, ATIS, etc. */
+  void writeCom(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context);
+
+  /* Add vasi to runway end */
+  void bindVasi(const QStringList& line, const XpWriterContext& context);
+
+  /* File metadata for lookup in GUI*/
   void writeAirportFile(const QString& icao, int curFileId);
-  void bindVasi(const QStringList& line);
 
-  void bindPavement(const QStringList& line);
-  void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode);
-  void finishPavement();
+  /* Start pavement (taxi and apron) by header */
+  void bindPavement(const QStringList& line, const atools::fs::xp::XpWriterContext& context);
+  void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode, const XpWriterContext& context);
+  void finishPavement(const XpWriterContext& context);
 
-  void writeParking(const QStringList& line);
+  /* Obsolete type 15 */
+  void writeStartup(const QStringList& line, const XpWriterContext& context);
 
-  void writeStartupLocation(const QStringList& line);
+  /* Write parking */
+  void writeStartupLocation(const QStringList& line, const XpWriterContext& context);
   void writeStartupLocationMetadata(const QStringList& line);
   void finishStartupLocation();
 
-  void bindTaxiNode(const QStringList& line);
-  void bindTaxiEdge(const QStringList& line);
+  /* Collect taxi nodes (not written) */
+  void bindTaxiNode(const QStringList& line, const XpWriterContext& context);
 
+  /* Write taxi edges */
+  void bindTaxiEdge(const QStringList& line, const XpWriterContext& context);
+
+  /* State information */
   bool writingAirport = false, ignoringAirport = false,
        writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false,
        writingStartLocation = false;
 
+  /* Current feature ids */
   int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
       curParkingId = 0, curApronId = 0, curTaxiPathId = 0, curHelipadStartNumber = 0,
       curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
 
   bool hasTower = false;
 
+  /* Counters for redundant airport data */
   int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
       numCom = 0, numStart = 0, numParking = 0, numTaxiPath = 0,
@@ -104,15 +134,13 @@ private:
       numParkingMilitaryCombat = 0, numParkingMilCargo = 0, numParkingMilCombat = 0;
 
   atools::sql::SqlRecordVector runwayEndRecords;
+  /* pre-filled record */
   const atools::sql::SqlRecord runwayEndRecord;
 
   float airportAltitude = 0.f;
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 
   QString longestRunwaySurface = "UNKNOWN";
-  // atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN,
-  // largestParkingGate = atools::fs::bgl::ap::UNKNOWN;
-  // bool towerObj = false, airportClosed = false, military = false;
 
   AirportRowCode airportRowCode = NO_ROWCODE;
 

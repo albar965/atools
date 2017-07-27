@@ -85,7 +85,7 @@ bool XpDataCompiler::compileEarthFix()
   if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 5, fixWriter, false /* CIFP format */, false /* add-on */);
+  return readDataFile(path, 5, fixWriter, NO_FLAG);
 }
 
 bool XpDataCompiler::compileEarthAirway()
@@ -94,7 +94,7 @@ bool XpDataCompiler::compileEarthAirway()
   if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 11, airwayWriter, false /* CIFP format */, false /* add-on */);
+  return readDataFile(path, 11, airwayWriter, NO_FLAG);
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
@@ -108,7 +108,7 @@ bool XpDataCompiler::compileEarthNav()
   if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
     return true;
 
-  return readDataFile(path, 11, navWriter, false /* CIFP format */, false /* add-on */);
+  return readDataFile(path, 11, navWriter, NO_FLAG);
 }
 
 bool XpDataCompiler::compileCustomApt()
@@ -122,7 +122,7 @@ bool XpDataCompiler::compileCustomApt()
     if((aborted = progress->reportOther(tr("Reading: %1").arg(aptdat))) == true)
       return aborted;
 
-    if((aborted = readDataFile(aptdat, 1, airportWriter, false /* CIFP format */, true /* add-on */)) == true)
+    if((aborted = readDataFile(aptdat, 1, airportWriter, IS_ADDON)) == true)
       return aborted;
   }
 
@@ -140,7 +140,7 @@ bool XpDataCompiler::compileCustomGlobalApt()
     if(progress->reportOther(tr("Reading: %1").arg(customAptDat)) == true)
       return true;
 
-    return readDataFile(customAptDat, 1, airportWriter, false /* CIFP format */, false /* add-on */);
+    return readDataFile(customAptDat, 1, airportWriter, NO_FLAG);
   }
 
   return false;
@@ -158,12 +158,12 @@ bool XpDataCompiler::compileDefaultApt()
     if(progress->reportOther(tr("Reading: %1").arg(defaultAptDat)) == true)
       return true;
 
-    return readDataFile(defaultAptDat, 1, airportWriter, false /* CIFP format */, false /* add-on */);
+    return readDataFile(defaultAptDat, 1, airportWriter, NO_FLAG);
   }
   return false;
 }
 
-bool XpDataCompiler::writeCifp()
+bool XpDataCompiler::compileCifp()
 {
   QStringList cifpFiles = findCifpFiles(options);
 
@@ -174,7 +174,7 @@ bool XpDataCompiler::writeCifp()
       if(progress->reportOther(tr("Reading: %1").arg(file)) == true)
         return true;
 
-      if(readDataFile(file, 1, cifpWriter, true /* CIFP format */, false /* add-on */))
+      if(readDataFile(file, 1, cifpWriter, READ_CIFP))
         return true;
     }
   }
@@ -182,8 +182,37 @@ bool XpDataCompiler::writeCifp()
   return false;
 }
 
-bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer, bool cifpFormat,
-                                  bool addAon)
+bool XpDataCompiler::compileLocalizers()
+{
+  QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "Global Airports",
+                                  "Earth nav data", "earth_nav.dat"});
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
+    return true;
+
+  return readDataFile(path, 11, navWriter, READ_LOCALIZERS);
+}
+
+bool XpDataCompiler::compileUserNav()
+{
+  QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_nav.dat"});
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
+    return true;
+
+  return readDataFile(path, 11, navWriter, READ_USER);
+}
+
+bool XpDataCompiler::compileUserFix()
+{
+  QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_fix.dat"});
+
+  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
+    return true;
+
+  return readDataFile(path, 5, fixWriter, READ_USER);
+}
+
+bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer,
+                                  atools::fs::xp::ContextFlags flags)
 {
   QFile file;
   QTextStream stream;
@@ -192,25 +221,21 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     return false;
 
   int lineNum = 1, fileVersion = 0;
-  if(openFile(stream, file, filename, cifpFormat, lineNum, fileVersion))
+
+  // Open file and read header
+  if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, fileVersion))
   {
     QFileInfo fi(filename);
     XpWriterContext context;
     context.curFileId = curFileId;
     context.fileName = fi.fileName();
     context.localPath = QDir(options.getBasepath()).relativeFilePath(fi.path());
-    context.addOn = addAon;
-    context.includeIls = options.isIncludedNavDbObject(atools::fs::type::ILS);
-    context.includeVor = options.isIncludedNavDbObject(atools::fs::type::VOR);
-    context.includeNdb = options.isIncludedNavDbObject(atools::fs::type::NDB);
-    context.includeMarker = options.isIncludedNavDbObject(atools::fs::type::MARKER);
-    context.includeAirport = options.isIncludedNavDbObject(atools::fs::type::AIRPORT);
-    context.includeApproach = options.isIncludedNavDbObject(atools::fs::type::APPROACH);
-    context.includeApproachLeg = options.isIncludedNavDbObject(atools::fs::type::APPROACHLEG);
+    context.flags = flags | flagsFromOptions();
     context.fileVersion = fileVersion;
 
-    if(cifpFormat)
+    if(flags & READ_CIFP)
     {
+      // Add additional information for procedure files
       context.cifpAirportIdent = QFileInfo(filename).baseName().toUpper();
       context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
     }
@@ -218,6 +243,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     QString line;
     QStringList fields;
 
+    // Read lines
     while(!stream.atEnd() && line != "99")
     {
       line = stream.readLine().trimmed();
@@ -233,14 +259,14 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
 
       if(!line.startsWith("#") && !line.isEmpty())
       {
-        if(cifpFormat)
+        if(flags & READ_CIFP)
           fields = line.split(",");
         else
           fields = line.simplified().split(" ");
 
         if(fields.size() >= minColumns)
         {
-          if(cifpFormat)
+          if(flags & READ_CIFP)
           {
             QString first = fields.takeFirst();
             QStringList rowCode = first.split(":");
@@ -251,6 +277,8 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
             }
           }
           context.lineNumber = lineNum;
+
+          // Call writer
           writer->write(fields, context);
         }
       }
@@ -303,30 +331,6 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
   else
     throw atools::Exception("Cannot open file " + filename + ". Reason: " + file.errorString());
   return true;
-}
-
-bool XpDataCompiler::writeLocalizers()
-{
-  if(progress->reportOther("Localizers TODO") == true)
-    return true;
-
-  return false;
-}
-
-bool XpDataCompiler::writeUserNav()
-{
-  if(progress->reportOther("User Nav TODO") == true)
-    return true;
-
-  return false;
-}
-
-bool XpDataCompiler::writeUserFix()
-{
-  if(progress->reportOther("User Fix TODO") == true)
-    return true;
-
-  return false;
 }
 
 void XpDataCompiler::close()
@@ -382,14 +386,24 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
 
 QStringList XpDataCompiler::findCifpFiles(const atools::fs::NavDatabaseOptions& opts)
 {
-  QString basePath = buildBasePath(opts);
-
   // CIFP/$ICAO.dat
-  QDir cifp(buildPathNoCase({basePath, "CIFP"}));
-  QFileInfoList entryInfoList = cifp.entryInfoList({"*.dat"}, QDir::Files, QDir::NoSort);
+  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", "CIFP"}));
+  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", "CIFP"}));
+
+  QMap<QString, QFileInfo> entryMap;
+
+  // Read all default entries
+  QFileInfoList defaultEntries = defaultDir.entryInfoList({"*.dat"}, QDir::Files, QDir::NoSort);
+  for(const QFileInfo& fileInfo : defaultEntries)
+    entryMap.insert(fileInfo.fileName(), fileInfo);
+
+  // Read custom entries and overwrite default
+  QFileInfoList customEntries = customDir.entryInfoList({"*.dat"}, QDir::Files, QDir::NoSort);
+  for(const QFileInfo& fileInfo : customEntries)
+    entryMap.insert(fileInfo.fileName(), fileInfo);
 
   QStringList retval;
-  for(const QFileInfo& fileInfo : entryInfoList)
+  for(const QFileInfo& fileInfo : entryMap.values())
     retval.append(fileInfo.filePath());
   return retval;
 }
@@ -490,6 +504,19 @@ QString XpDataCompiler::buildBasePath(const atools::fs::NavDatabaseOptions& opts
   else
     throw atools::Exception("Cannot find valid files for X-Plane navdata");
   return basePath;
+}
+
+atools::fs::xp::ContextFlags XpDataCompiler::flagsFromOptions()
+{
+  ContextFlags flags = NO_FLAG;
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::ILS) ? INCLUDE_ILS : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::VOR) ? INCLUDE_VOR : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::NDB) ? INCLUDE_NDB : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::MARKER) ? INCLUDE_MARKER : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::AIRPORT) ? INCLUDE_AIRPORT : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::APPROACH) ? INCLUDE_APPROACH : NO_FLAG);
+  flags |= (options.isIncludedNavDbObject(atools::fs::type::APPROACHLEG) ? INCLUDE_APPROACHLEG : NO_FLAG);
+  return flags;
 }
 
 } // namespace xp

@@ -64,6 +64,7 @@ void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& conte
 
   for(const QString& name : names.split("-"))
   {
+    // Split dash separated airway list
     insertAirwayQuery->bindValue(":airway_temp_id", ++curAirwayId);
     insertAirwayQuery->bindValue(":name", name);
     insertAirwayQuery->bindValue(":type", line.at(TYPE).toInt());

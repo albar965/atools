@@ -189,6 +189,9 @@ void XpNavWriter::finishIls()
 {
   if(writingIls)
   {
+    // if(context.flags & READ_LOCALIZERS)
+    // Duplicates are delete later in SQL script
+
     insertIlsQuery->exec();
     insertIlsQuery->clearBoundValues();
     writingIls = false;

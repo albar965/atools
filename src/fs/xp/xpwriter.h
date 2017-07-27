@@ -34,24 +34,11 @@ class ProgressHandler;
 
 namespace xp {
 
-struct XpWriterContext
-{
-  int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
-  QString localPath, fileName, cifpAirportIdent;
-  bool addOn = false;
-  bool includeIls = true, includeVor = true, includeNdb = true, includeAirport = true, includeApproach = true,
-       includeApproachLeg = true, includeMarker = true;
+struct XpWriterContext;
 
-  QString messagePrefix() const
-  {
-    if(fileVersion > 0)
-      return QString("File %1, version %2, line %3").arg(fileName).arg(fileVersion).arg(lineNumber);
-    else
-      return QString("File %1, line %3").arg(fileName).arg(lineNumber);
-  }
-
-};
-
+/*
+ * Base class for all X-Plane reading classes to read dat files.
+ */
 class XpWriter
 {
 public:
@@ -59,8 +46,11 @@ public:
            const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
   virtual ~XpWriter();
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) = 0;
-  virtual void finish(const XpWriterContext& context) = 0;
+  /* Called for each line read from a dat file */
+  virtual void write(const QStringList& line, const atools::fs::xp::XpWriterContext& context) = 0;
+
+  /* Called when finished with reading a dat file */
+  virtual void finish(const atools::fs::xp::XpWriterContext& context) = 0;
 
 protected:
   atools::sql::SqlDatabase& db;

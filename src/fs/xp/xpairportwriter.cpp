@@ -217,6 +217,8 @@ enum RunwayFieldIndex
   CENTER_LIGHTS = 5,
   EDGE_LIGHTS = 6,
   DISTANCE_REMAINING_SIGNS = 7,
+
+  // Indexes for normal runways
   PRIMARY_NUMBER = 8,
   PRIMARY_LATY = 9,
   PRIMARY_LONX = 10,
@@ -258,13 +260,14 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
 
   if(!contains(rowCode, {x::PAVEMENT_HEADER, x::NODE, x::NODE_AND_CONTROL_POINT,
                          x::NODE_CLOSE, x::NODE_AND_CONTROL_POINT_CLOSE}))
-    finishPavement();
+    finishPavement(context);
 
   if(rowCode != x::RAMP_START_METADATA)
     finishStartupLocation();
 
   switch(rowCode)
   {
+    // Airport header
     case x::LAND_AIRPORT_HEADER:
     case x::SEAPLANE_BASE_HEADER:
     case x::HELIPORT_HEADER:
@@ -274,40 +277,40 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
 
     case x::LAND_RUNWAY:
     case x::WATER_RUNWAY:
-      writeRunway(line, rowCode);
+      bindRunway(line, rowCode, context);
       break;
 
     case x::HELIPAD:
-      writeHelipad(line);
+      writeHelipad(line, context);
       break;
 
     case x::PAVEMENT_HEADER:
-      finishPavement();
-      bindPavement(line);
+      finishPavement(context);
+      bindPavement(line, context);
       break;
 
     case x::NODE:
     case x::NODE_AND_CONTROL_POINT:
     case x::NODE_CLOSE:
     case x::NODE_AND_CONTROL_POINT_CLOSE:
-      bindPavementNode(line, rowCode);
+      bindPavementNode(line, rowCode, context);
       break;
 
     case x::AIRPORT_VIEWPOINT:
-      bindViewpoint(line);
+      bindViewpoint(line, context);
       break;
 
     case x::AEROPLANE_STARTUP_LOCATION:
-      writeParking(line);
+      writeStartup(line, context);
       break;
 
     case x::LIGHTING_OBJECT:
-      bindVasi(line);
+      bindVasi(line, context);
       break;
 
     case x::AIRPORT_LOCATION:
       finishStartupLocation();
-      writeStartupLocation(line);
+      writeStartupLocation(line, context);
       break;
 
     case x::RAMP_START_METADATA:
@@ -315,19 +318,19 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
       break;
 
     case x::TAXI_ROUTE_NETWORK_NODE:
-      bindTaxiNode(line);
+      bindTaxiNode(line, context);
       break;
     case x::TAXI_ROUTE_NETWORK_EDGE:
-      bindTaxiEdge(line);
+      bindTaxiEdge(line, context);
       break;
 
     case x::METADATA_RECORDS:
-      bindMetadata(line);
+      bindMetadata(line, context);
       break;
 
     case x::TRUCK_PARKING_LOCATION:
     case x::TRUCK_DESTINATION_LOCATION:
-      bindFuel(line);
+      bindFuel(line, context);
       break;
 
     case x::COM_WEATHER:
@@ -337,9 +340,10 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
     case x::COM_TOWER:
     case x::COM_APPROACH:
     case x::COM_DEPARTURE:
-      writeCom(line, rowCode);
+      writeCom(line, rowCode, context);
       break;
 
+    // Unused rowcodes
     case x::LINEAR_FEATURE_HEADER:
     case x::AIRPORT_BOUNDARY_HEADER:
     case x::NODE_TERMINATING_A_STRING:
@@ -363,17 +367,31 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
 
 void XpAirportWriter::finish(const XpWriterContext& context)
 {
-  finishPavement();
+  finishPavement(context);
+  finishStartupLocation();
   finishAirport(context);
 }
 
-void XpAirportWriter::bindTaxiNode(const QStringList& line)
+void XpAirportWriter::bindTaxiNode(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindTaxiNode";
+
   taxiNodes.insert(line.at(tn::ID).toInt(), Pos(line.at(tn::LONX).toFloat(), line.at(tn::LATY).toFloat()));
 }
 
-void XpAirportWriter::bindTaxiEdge(const QStringList& line)
+void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindTaxiEdge";
+
+  // Ignore runway lines
   if(line.at(te::TYPE) == "runway")
     return;
 
@@ -410,28 +428,43 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line)
   insertTaxiQuery->exec();
 }
 
-void XpAirportWriter::bindPavement(const QStringList& line)
+void XpAirportWriter::bindPavement(const QStringList& line, const XpWriterContext& context)
 {
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindPavement";
+
   currentPavement.clear();
   writingPavementBoundary = true;
   writingPavementHoles = false;
   writingPavementNewHole = false;
 
+  // Start an apron record
   numApron++;
   insertApronQuery->bindValue(":apron_id", ++curApronId);
   insertApronQuery->bindValue(":airport_id", curAirportId);
   insertApronQuery->bindValue(":is_draw_surface", 1);
   insertApronQuery->bindValue(":is_draw_detail", 1);
-  insertApronQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(line.at(p::SURFACE).toInt())));
+  insertApronQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(line.at(p::SURFACE).toInt()), &context));
 }
 
-void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode)
+void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode,
+                                       const atools::fs::xp::XpWriterContext& context)
 {
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindPavementNode";
+
   Pos node(line.at(n::LONX).toFloat(), line.at(n::LATY).toFloat());
   Pos control;
   airportRect.extend(node);
 
   if(rowCode == x::NODE_AND_CONTROL_POINT || rowCode == x::NODE_AND_CONTROL_POINT_CLOSE)
+    // Bezier cubic or quad control point
     control = Pos(line.at(n::CTRL_LONX).toFloat(), line.at(n::CTRL_LATY).toFloat());
 
   if(writingPavementBoundary)
@@ -443,6 +476,7 @@ void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::
 
   if(rowCode == x::NODE_CLOSE || rowCode == x::NODE_AND_CONTROL_POINT_CLOSE)
   {
+    // Last node closing
     if(writingPavementBoundary)
     {
       writingPavementBoundary = false;
@@ -454,13 +488,16 @@ void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::
   }
 }
 
-void XpAirportWriter::finishPavement()
+void XpAirportWriter::finishPavement(const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
 
   if(writingPavementBoundary || writingPavementHoles)
   {
+    if(!writingAirport)
+      qWarning() << context.messagePrefix() << "Invalid writing airport state in finishPavement";
+
     insertApronQuery->bindValue(":geometry", currentPavement.writeToByteArray());
     insertApronQuery->exec();
     writingPavementBoundary = false;
@@ -469,15 +506,19 @@ void XpAirportWriter::finishPavement()
   }
 }
 
-void XpAirportWriter::bindVasi(const QStringList& line)
+void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindVasi";
 
   ApproachIndicator type = static_cast<ApproachIndicator>(line.at(v::TYPE).toInt());
   if(type == NO_APPR_INDICATOR)
     return;
 
+  // Find runway by name
   QString rwName = line.at(v::RUNWAY);
   SqlRecord *rwEnd = nullptr;
   for(SqlRecord& rec:runwayEndRecords)
@@ -492,17 +533,20 @@ void XpAirportWriter::bindVasi(const QStringList& line)
   if(rwEnd != nullptr)
   {
     numRunwayEndVasi++;
-    rwEnd->setValue(":left_vasi_type", approachIndicatorToDb(type));
+    rwEnd->setValue(":left_vasi_type", approachIndicatorToDb(type, &context));
     rwEnd->setValue(":left_vasi_pitch", line.at(v::ANGLE).toFloat());
     rwEnd->setValue(":right_vasi_type", "UNKN");
     rwEnd->setValue(":right_vasi_pitch", 0.f);
   }
 }
 
-void XpAirportWriter::bindViewpoint(const QStringList& line)
+void XpAirportWriter::bindViewpoint(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindViewpoint";
 
   Pos pos(line.at(vp::LONX).toFloat(), line.at(vp::LATY).toFloat());
   airportRect.extend(pos);
@@ -515,17 +559,17 @@ void XpAirportWriter::bindViewpoint(const QStringList& line)
 
 void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line)
 {
-
   // Operation type none, general_aviation, airline, cargo, military
   // Airline permitted to use this ramp 3-letter airline codes (AAL, SWA, etc)
 
+  // Build type from operations type
   QString ops = line.at(sm::OPTYPE);
   if(ops == "general_aviation")
-    insertParkingQuery->bindValue(":type", "RGA");
+    insertParkingQuery->bindValue(":type", "RGA"); // Ramp GA
   else if(ops == "cargo")
-    insertParkingQuery->bindValue(":type", "RC");
+    insertParkingQuery->bindValue(":type", "RC"); // Ramp cargo
   else if(ops == "military")
-    insertParkingQuery->bindValue(":type", "RM");
+    insertParkingQuery->bindValue(":type", "RM"); // Ramp military
   // else if(ops == "airline")
   // else if(ops == "none")
 
@@ -630,10 +674,13 @@ void XpAirportWriter::finishStartupLocation()
   }
 }
 
-void XpAirportWriter::writeStartupLocation(const QStringList& line)
+void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeStartupLocation";
 
   writingStartLocation = true;
   numParking++;
@@ -648,6 +695,7 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line)
   insertParkingQuery->bindValue(":heading", line.at(sl::HEADING).toFloat());
   insertParkingQuery->bindValue(":number", -1);
   insertParkingQuery->bindValue(":radius", 50.f);
+  // Fill airline codes later from metadata
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
   insertParkingQuery->bindValue(":name", line.mid(sl::NAME).join(" "));
   insertParkingQuery->bindValue(":has_jetway", 0);
@@ -669,11 +717,13 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line)
   // turboprops, props and helos (or just all for all types)
 }
 
-// Obsolete type 15
-void XpAirportWriter::writeParking(const QStringList& line)
+void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeStartup";
 
   writingStartLocation = true;
   numParking++;
@@ -696,10 +746,14 @@ void XpAirportWriter::writeParking(const QStringList& line)
   finishStartupLocation();
 }
 
-void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode)
+void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
+                               const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeCom";
 
   numCom++;
   insertComQuery->bindValue(":com_id", ++curComId);
@@ -713,6 +767,7 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode)
 
   if(rowCode == x::COM_WEATHER)
   {
+    // Check name for general weather frequency
     if(name.contains("atis", Qt::CaseInsensitive))
     {
       insertAirportQuery->bindValue(":atis_frequency", frequency);
@@ -756,10 +811,13 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode)
   insertComQuery->exec();
 }
 
-void XpAirportWriter::bindFuel(const QStringList& line)
+void XpAirportWriter::bindFuel(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindFuel";
 
   QString type = line.at(4);
   // Pipe separated list (“|”). Include 1 or more of the following:
@@ -772,10 +830,13 @@ void XpAirportWriter::bindFuel(const QStringList& line)
     insertAirportQuery->bindValue(":has_jetfuel", 1);
 }
 
-void XpAirportWriter::bindMetadata(const QStringList& line)
+void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindMetadata";
 
   QString key = line.at(m::KEY).toLower();
   QString value = line.mid(m::VALUE).join(" ");
@@ -798,10 +859,13 @@ void XpAirportWriter::bindMetadata(const QStringList& line)
   // 1302 icao_code KSEA
 }
 
-void XpAirportWriter::writeHelipad(const QStringList& line)
+void XpAirportWriter::writeHelipad(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeHelipad";
 
   Pos pos(line.at(hp::LONX).toFloat(), line.at(hp::LATY).toFloat());
 
@@ -824,7 +888,7 @@ void XpAirportWriter::writeHelipad(const QStringList& line)
   insertHelipadQuery->bindValue(":helipad_id", ++curHelipadId);
   insertHelipadQuery->bindValue(":airport_id", curAirportId);
   insertHelipadQuery->bindValue(":start_id", curStartId);
-  insertHelipadQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(line.at(rw::SURFACE).toInt())));
+  insertHelipadQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(line.at(rw::SURFACE).toInt()), &context));
 
   insertHelipadQuery->bindValue(":length", meterToFeet(line.at(hp::LENGTH).toFloat()));
   insertHelipadQuery->bindValue(":width", meterToFeet(line.at(hp::WIDTH).toFloat()));
@@ -843,14 +907,20 @@ void XpAirportWriter::writeHelipad(const QStringList& line)
   insertHelipadQuery->exec();
 }
 
-void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCode)
+void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode,
+                                 const atools::fs::xp::XpWriterContext& context)
 {
   if(ignoringAirport)
     return;
 
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindRunway";
+
   Pos primaryPos, secondaryPos;
   QString primaryName, secondaryName;
   Surface surface(UNKNOWN);
+
+  // Get runway data for land or water which have different indexes
   if(rowCode == LAND_RUNWAY)
   {
     primaryPos = Pos(line.at(rw::PRIMARY_LONX).toFloat(), line.at(rw::PRIMARY_LATY).toFloat());
@@ -868,14 +938,17 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
     surface = WATER;
   }
   else
-    throw Exception(tr("Invalid runway code"));
+    qWarning() << context.messagePrefix() << "Invalid runway code" << rowCode;
 
+  // Calculate end ids
   int primRwEndId = ++curRunwayEndId;
   int secRwEndId = ++curRunwayEndId;
 
+  // Add to index
   airportIndex->addRunwayEnd(airportIcao, primaryName, primRwEndId);
   airportIndex->addRunwayEnd(airportIcao, secondaryName, secRwEndId);
 
+  // Calculate heading and positions
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
   float lengthFeet = meterToFeet(lengthMeter);
   float widthFeet = meterToFeet(line.at(rw::WIDTH).toFloat());
@@ -885,15 +958,18 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   airportRect.extend(primaryPos);
   airportRect.extend(secondaryPos);
 
+  // Update airport counts
   if(isSurfaceHard(surface))
     numHardRunway++;
 
-  numSoftRunway++;
   if(isSurfaceSoft(surface))
-    if(isSurfaceWater(surface))
-      numWaterRunway++;
+    numSoftRunway++;
 
-  QString surfaceStr = surfaceToDb(surface);
+  if(isSurfaceWater(surface))
+    numWaterRunway++;
+
+  // Remember data of longest runway
+  QString surfaceStr = surfaceToDb(surface, &context);
   if(lengthFeet > longestRunwayLength)
   {
     longestRunwayLength = lengthFeet;
@@ -908,11 +984,12 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   insertRunwayQuery->bindValue(":secondary_end_id", secRwEndId);
   insertRunwayQuery->bindValue(":surface", surfaceStr);
 
+  // Add shoulder surface (X-Plane only)
   int shoulder = line.at(rw::SHOULDER_SURFACE).toInt();
   if(shoulder == 1)
-    insertRunwayQuery->bindValue(":shoulder", surfaceToDb(ASPHALT));
+    insertRunwayQuery->bindValue(":shoulder", surfaceToDb(ASPHALT, &context));
   else if(shoulder == 2)
-    insertRunwayQuery->bindValue(":shoulder", surfaceToDb(CONCRETE));
+    insertRunwayQuery->bindValue(":shoulder", surfaceToDb(CONCRETE, &context));
   else
     insertRunwayQuery->bindValue(":shoulder", QVariant(QVariant::String));
 
@@ -922,12 +999,13 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
 
   if(rowCode == LAND_RUNWAY)
   {
+    // Surface markings
     insertRunwayQuery->bindValue(":marking_flags",
-                                 markingToDb(static_cast<Marking>(line.at(rw::PRIMARY_MARKINGS).toInt())) |
-                                 markingToDb(static_cast<Marking>(line.at(rw::SECONDARY_MARKINGS).toInt())));
+                                 markingToDb(static_cast<Marking>(line.at(rw::PRIMARY_MARKINGS).toInt()), &context) |
+                                 markingToDb(static_cast<Marking>(line.at(rw::SECONDARY_MARKINGS).toInt()), &context));
 
+    // Lights
     int edgeLights = line.at(rw::EDGE_LIGHTS).toInt();
-
     if(edgeLights == 0)
       insertRunwayQuery->bindValue(":edge_light", QVariant(QVariant::String));
     else if(edgeLights == 1)
@@ -936,6 +1014,8 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
       insertRunwayQuery->bindValue(":edge_light", "M");
     else if(edgeLights == 3)
       insertRunwayQuery->bindValue(":edge_light", "H");
+    else
+      qWarning() << context.messagePrefix() << "Invalid edge light value" << edgeLights;
 
     int centerLights = line.at(rw::CENTER_LIGHTS).toInt();
     if(centerLights == 1)
@@ -971,7 +1051,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
     rec.setValue(":offset_threshold", meterToFeet(line.at(rw::PRIMARY_DISPLACED_THRESHOLD).toFloat()));
     rec.setValue(":blast_pad", meterToFeet(line.at(rw::PRIMARY_OVERRUN_BLASTPAD).toFloat()));
 
-    QString als = alsToDb(static_cast<ApproachLight>(line.at(rw::PRIMARY_ALS).toInt()));
+    QString als = alsToDb(static_cast<ApproachLight>(line.at(rw::PRIMARY_ALS).toInt()), &context);
     if(!als.isEmpty())
       rec.setValue(":app_light_system_type", als);
     else
@@ -985,6 +1065,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   }
   else
   {
+    // No lights and markings on water
     rec.setValue(":offset_threshold", 0);
     rec.setValue(":blast_pad", 0);
     rec.setValue(":app_light_system_type", QVariant(QVariant::String));
@@ -1002,8 +1083,8 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   rec.setValue(":is_pattern", "N"); // not available
 
   rec.setValue(":heading", primaryHeading);
-  rec.setValue(":lonx", center.getLonX());
-  rec.setValue(":laty", center.getLatY());
+  rec.setValue(":lonx", primaryPos.getLonX());
+  rec.setValue(":laty", primaryPos.getLatY());
 
   runwayEndRecords.append(rec);
 
@@ -1019,7 +1100,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
     rec.setValue(":offset_threshold", meterToFeet(line.at(rw::SECONDARY_DISPLACED_THRESHOLD).toFloat()));
     rec.setValue(":blast_pad", meterToFeet(line.at(rw::SECONDARY_OVERRUN_BLASTPAD).toFloat()));
 
-    QString als = alsToDb(static_cast<ApproachLight>(line.at(rw::SECONDARY_ALS).toInt()));
+    QString als = alsToDb(static_cast<ApproachLight>(line.at(rw::SECONDARY_ALS).toInt()), &context);
     if(!als.isEmpty())
       rec.setValue(":app_light_system_type", als);
     else
@@ -1030,6 +1111,7 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   }
   else
   {
+    // No lights and markings on water
     rec.setValue(":offset_threshold", 0);
     rec.setValue(":blast_pad", 0);
     rec.setValue(":app_light_system_type", QVariant(QVariant::String));
@@ -1047,8 +1129,8 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
   rec.setValue(":is_pattern", "N"); // NONE
 
   rec.setValue(":heading", secondaryHeading);
-  rec.setValue(":lonx", center.getLonX());
-  rec.setValue(":laty", center.getLatY());
+  rec.setValue(":lonx", secondaryPos.getLonX());
+  rec.setValue(":laty", secondaryPos.getLatY());
 
   runwayEndRecords.append(rec);
 
@@ -1086,6 +1168,11 @@ void XpAirportWriter::writeRunway(const QStringList& line, AirportRowCode rowCod
 
 void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context)
 {
+  if(writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in bindAirport";
+  if(ignoringAirport)
+    qWarning() << context.messagePrefix() << "Invalid ignoring airport state in bindAirport";
+
   static QRegularExpression nameRegexp("^\\[.\\] .+");
 
   int airportId = ++curAirportId;
@@ -1094,6 +1181,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
   writeAirportFile(airportIcao, context.curFileId);
 
   if(!airportIndex->addAirport(airportIcao, airportId))
+    // Airport was already read before - ignore it completely
     ignoringAirport = true;
   else
   {
@@ -1111,6 +1199,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     if(nameRegexp.match(name).hasMatch())
       name = name.mid(4);
 
+    // Check military before converting to caps
     bool isMil = atools::fs::util::isNameMilitary(name);
     name = atools::fs::util::capNavString(name);
 
@@ -1120,7 +1209,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":has_tower_object", 0);
     insertAirportQuery->bindValue(":is_closed", 0); // not available
     insertAirportQuery->bindValue(":is_military", isMil);
-    insertAirportQuery->bindValue(":is_addon", context.addOn);
+    insertAirportQuery->bindValue(":is_addon", context.flags.testFlag(IS_ADDON));
     insertAirportQuery->bindValue(":num_boundary_fence", 0);
 
     insertAirportQuery->bindValue(":num_approach", 0); // num_approach filled later when reading CIFP
@@ -1139,9 +1228,9 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
 void XpAirportWriter::finishAirport(const XpWriterContext& context)
 {
-  // TODO add starts from runway and helipads
   if(writingAirport && !ignoringAirport)
   {
+    // Update counts
     insertAirportQuery->bindValue(":longest_runway_length", longestRunwayLength);
     insertAirportQuery->bindValue(":longest_runway_width", longestRunwayWidth);
     insertAirportQuery->bindValue(":longest_runway_heading", longestRunwayHeading);
@@ -1161,7 +1250,9 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     insertAirportQuery->bindValue(":has_tower_object", hasTower);
 
-    int rating = atools::fs::util::calculateAirportRating(context.addOn, hasTower, numTaxiPath, numParking, numApron);
+    // Rating
+    int rating = atools::fs::util::calculateAirportRating(context.flags & IS_ADDON, hasTower, numTaxiPath, numParking,
+                                                          numApron);
     insertAirportQuery->bindValue(":rating", rating);
 
     insertAirportQuery->bindValue(":num_parking_gate", numParkingGate);
@@ -1170,6 +1261,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":num_parking_mil_cargo", numParkingMilCargo);
     insertAirportQuery->bindValue(":num_parking_mil_combat", numParkingMilCombat);
 
+    // Find the bounding rect
     if(!airportRect.isValid())
       airportRect = Rect(airportPos);
 
@@ -1181,6 +1273,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":right_lonx", airportRect.getBottomRight().getLonX());
     insertAirportQuery->bindValue(":bottom_laty", airportRect.getBottomRight().getLatY());
 
+    // Center position
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
     insertAirportQuery->bindValue(":lonx", center.getLonX());
     insertAirportQuery->bindValue(":laty", center.getLatY());

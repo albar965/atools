@@ -21,16 +21,18 @@ namespace atools {
 namespace fs {
 namespace xp {
 
+static QLatin1String EN_ROUTE("ENRT");
+
 XpAirportIndex::XpAirportIndex()
 {
 
 }
 
-QVariant XpAirportIndex::getAirportId(const QString& icao)
+QVariant XpAirportIndex::getAirportId(const QString& airportIcao)
 {
-  if(icao != "ENRT")
+  if(airportIcao != EN_ROUTE)
   {
-    int id = icaoToIdMap.value(icao, -1);
+    int id = icaoToIdMap.value(airportIcao, -1);
     if(id != -1)
       return id;
   }
@@ -39,11 +41,13 @@ QVariant XpAirportIndex::getAirportId(const QString& icao)
 
 QVariant XpAirportIndex::getRunwayEndId(const QString& airportIcao, const QString& runwayName)
 {
-  int id = icaoRunwayNameToEndId.value(std::make_pair(airportIcao, runwayName), -1);
-  if(id == -1)
-    return QVariant(QVariant::Int);
-  else
-    return id;
+  if(airportIcao != EN_ROUTE) // en route
+  {
+    int id = icaoRunwayNameToEndId.value(std::make_pair(airportIcao, runwayName), -1);
+    if(id != -1)
+      return id;
+  }
+  return QVariant(QVariant::Int);
 }
 
 bool atools::fs::xp::XpAirportIndex::addAirport(const QString& airportIcao, int airportId)

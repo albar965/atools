@@ -25,13 +25,17 @@ namespace atools {
 namespace fs {
 namespace xp {
 
+/*
+ * Filled when reading airports in the beginning of the compilation process.
+ * Provides an index from airport ICAO to airport_id and runwayname/airport ICAO to runway_end_id.
+ */
 class XpAirportIndex
 {
 public:
   XpAirportIndex();
 
   /* Get id packed in a variant or a null integer variant if not found */
-  QVariant getAirportId(const QString& icao);
+  QVariant getAirportId(const QString& airportIcao);
   QVariant getRunwayEndId(const QString& airportIcao, const QString& runwayName);
 
   /* Add airport id to index. Returns true if it is not already indexed and was not added. */

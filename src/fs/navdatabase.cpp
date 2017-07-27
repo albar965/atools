@@ -314,6 +314,9 @@ void NavDatabase::createInternal(const QString& codec)
       if((aborted = xpDataCompiler->compileEarthFix()) == true)
         return;
 
+      if((aborted = xpDataCompiler->compileUserFix()) == true)
+        return;
+
       db->commit();
     }
 
@@ -323,6 +326,9 @@ void NavDatabase::createInternal(const QString& codec)
        options->isIncludedNavDbObject(atools::fs::type::ILS))
     {
       if((aborted = xpDataCompiler->compileEarthNav()) == true)
+        return;
+
+      if((aborted = xpDataCompiler->compileUserNav()) == true)
         return;
 
       db->commit();
@@ -349,26 +355,7 @@ void NavDatabase::createInternal(const QString& codec)
 
     if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
     {
-      if((aborted = xpDataCompiler->writeCifp()) == true)
-        return;
-
-      db->commit();
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
-       options->isIncludedNavDbObject(atools::fs::type::NDB) ||
-       options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
-       options->isIncludedNavDbObject(atools::fs::type::ILS))
-    {
-      if((aborted = xpDataCompiler->writeUserNav()) == true)
-        return;
-
-      db->commit();
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
-    {
-      if((aborted = xpDataCompiler->writeUserFix()) == true)
+      if((aborted = xpDataCompiler->compileCifp()) == true)
         return;
 
       db->commit();

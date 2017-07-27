@@ -24,6 +24,38 @@ namespace atools {
 namespace fs {
 namespace xp {
 
+enum ContextFlag
+{
+  NO_FLAG = 0x0000,
+  IS_ADDON = 0x0001,
+  INCLUDE_ILS = 0x0002,
+  INCLUDE_VOR = 0x0004,
+  INCLUDE_NDB = 0x0008,
+  INCLUDE_MARKER = 0x0010,
+  INCLUDE_AIRPORT = 0x0020,
+  INCLUDE_APPROACH = 0x0040,
+  INCLUDE_APPROACHLEG = 0x0080,
+  READ_LOCALIZERS = 0x0100, // Hand made localizers
+  READ_USER = 0x0200, // user.dat
+  READ_CIFP = 0x0400 // CIFP file
+};
+
+Q_DECLARE_FLAGS(ContextFlags, ContextFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::xp::ContextFlags);
+
+/* Context passed to each line reading call */
+struct XpWriterContext
+{
+  int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
+  QString localPath, fileName, cifpAirportIdent;
+  atools::fs::xp::ContextFlags flags = NO_FLAG;
+
+  /* Prepare a header for warning messages or exceptions*/
+  QString messagePrefix() const;
+
+};
+
+/* Row codes for earth_nav.dat */
 enum NavRowCode
 {
   NDB = 2, /*  NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM) */
@@ -43,6 +75,7 @@ enum NavRowCode
   SBAS_GBAS_TRESHOLD = 16 /*  16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach Will */
 };
 
+/* Row codes for apt.dat */
 enum AirportRowCode
 {
   NO_ROWCODE = 0,
@@ -100,6 +133,7 @@ enum AirportRowCode
   COM_DEPARTURE = 56 // Departure
 };
 
+/* X-Plane specific surface codes */
 enum Surface
 {
   UNKNOWN = 0,
@@ -114,11 +148,12 @@ enum Surface
   TRANSPARENT = 15 // Hard surface, but no texture / markings(use in custom scenery)
 };
 
-QString surfaceToDb(atools::fs::xp::Surface value);
+QString surfaceToDb(atools::fs::xp::Surface value, const XpWriterContext *context);
 bool isSurfaceHard(atools::fs::xp::Surface value);
 bool isSurfaceSoft(atools::fs::xp::Surface value);
 bool isSurfaceWater(atools::fs::xp::Surface value);
 
+/* Runway markings */
 enum Marking
 {
   NO_MARKING = 0, // No runway markings Disused runways appear like taxiways
@@ -129,7 +164,7 @@ enum Marking
   UK_PAP = 5 // UK - style precision approach markings UK uses distinctive touch - down zone markings
 };
 
-int markingToDb(atools::fs::xp::Marking value);
+int markingToDb(atools::fs::xp::Marking value, const XpWriterContext *context);
 
 enum ApproachLight
 {
@@ -148,7 +183,7 @@ enum ApproachLight
   RAIL = 12 // Runway Alignment Indicator Lights. Sequenced strobes and green threshold lights, with no other approach lights
 };
 
-QString alsToDb(atools::fs::xp::ApproachLight value);
+QString alsToDb(atools::fs::xp::ApproachLight value, const XpWriterContext *context);
 
 enum ApproachIndicator
 {
@@ -161,7 +196,7 @@ enum ApproachIndicator
   RUNWAY_GUARD = 6 // (“wig - wag”) lights Pulsating double amber lights alongside runway entrances
 };
 
-QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value);
+QString approachIndicatorToDb(atools::fs::xp::ApproachIndicator value, const XpWriterContext *context);
 
 } // namespace xp
 } // namespace fs

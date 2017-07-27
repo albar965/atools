@@ -18,6 +18,7 @@
 #include "fs/xp/xpcifpwriter.h"
 
 #include "fs/xp/xpairportindex.h"
+#include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
 #include "atools.h"
 #include "sql/sqlrecord.h"
@@ -37,46 +38,46 @@ namespace xp {
 
 /* *INDENT-OFF* */
 enum ProcedureFieldIndex
-{
+{                               // Index in ARINC file / chapter in documentation
   PROC_ROW_CODE           =  0, // All: 4.1.9.1. Page 55 (70)
-  SEQ_NR                  =  1, //  1 27-29   5.12
-  RT_TYPE                 =  2, //  2 20      5.7
-  SID_STAR_APP_IDENT      =  3, //  3 14-19   5.9&5.10 Examples: DEPU2, SCK4, TRP7, 41M3, MONTH6
-  TRANS_IDENT             =  4, //  4 21-25   5.11
-  FIX_IDENT               =  5, //  5 30-34   5.13
-  ICAO_CODE               =  6, //  6 35-36   5.14
-  SEC_CODE                =  7, //  7 37      5.4
-  SUB_CODE                =  8, //  8 38      5.5
-  DESC_CODE               =  9, //  9 40-43   5.17
-  TURN_DIR                = 10, // 10 44      5.20
-  RNP                     = 11, // 11 45-47   5.211
-  PATH_TERM               = 12, // 12 48-49   5.21
-  TDV                     = 13, // 13 50      5.22
-  RECD_NAVAID             = 14, // 14 51-54   5.23
-  RECD_ICAO_CODE          = 15, // 15 55-56   5.14
-  RECD_SEC_CODE           = 16, // 16 79      5.4
-  RECD_SUB_CODE           = 17, // 17 80      5.5
-  ARC_RADIUS              = 18, // 18 57-62   5.204
-  THETA                   = 19, // 19 63-66   5.24
-  RHO                     = 20, // 20 67-70   5.25
-  MAG_CRS                 = 21, // 21 71-74   5.26
-  RTE_DIST_HOLD_DIST_TIME = 22, // 22 75-78   5.27
-  ALT_DESCR               = 23, // 23 83      5.29
-  ALTITUDE                = 24, // 24 85-89   5.30
-  ALTITUDE2               = 25, // 25 90-94   530
-  TRANS_ALT               = 26, // 26 95-99   5.53
-  SPD_LIMIT_DESCR         = 27, // 27 118     5.261
-  SPEED_LIMIT             = 28, // 28 100-102 5.72
-  VERT_ANGLE              = 29, // 29 103-106 5.70
-  UNKNOWN                 = 30, // 30 121-123 5.293 not in
-  CENTER_FIX_OR_TAA_PT    = 31, // 31 107-111 5.144/5.271
-  CENTER_ICAO_CODE        = 32, // 32 113-114 5.14
-  CENTER_SEC_CODE         = 33, // 33 115     5.4
-  CENTER_SUB_CODE         = 34, // 34 116     5.5
-  MULTI_CD                = 35, // 35 112     5.130/5.272
-  GNSS_FMS_IND            = 36, // 36 117     5.222
-  RTE_QUAL1               = 37, // 37 119     5.7
-  RTE_QUAL2               = 38  // 38 120     5.7
+  SEQ_NR                  =  1, // 27-29   5.12
+  RT_TYPE                 =  2, // 20      5.7
+  SID_STAR_APP_IDENT      =  3, // 14-19   5.9&5.10 Examples: DEPU2, SCK4, TRP7, 41M3, MONTH6
+  TRANS_IDENT             =  4, // 21-25   5.11
+  FIX_IDENT               =  5, // 30-34   5.13
+  ICAO_CODE               =  6, // 35-36   5.14
+  SEC_CODE                =  7, // 37      5.4
+  SUB_CODE                =  8, // 38      5.5
+  DESC_CODE               =  9, // 40-43   5.17
+  TURN_DIR                = 10, // 44      5.20
+  RNP                     = 11, // 45-47   5.211
+  PATH_TERM               = 12, // 48-49   5.21
+  TDV                     = 13, // 50      5.22
+  RECD_NAVAID             = 14, // 51-54   5.23
+  RECD_ICAO_CODE          = 15, // 55-56   5.14
+  RECD_SEC_CODE           = 16, // 79      5.4
+  RECD_SUB_CODE           = 17, // 80      5.5
+  ARC_RADIUS              = 18, // 57-62   5.204
+  THETA                   = 19, // 63-66   5.24
+  RHO                     = 20, // 67-70   5.25
+  MAG_CRS                 = 21, // 71-74   5.26
+  RTE_DIST_HOLD_DIST_TIME = 22, // 75-78   5.27
+  ALT_DESCR               = 23, // 83      5.29
+  ALTITUDE                = 24, // 85-89   5.30
+  ALTITUDE2               = 25, // 90-94   5.30
+  TRANS_ALT               = 26, // 95-99   5.53
+  SPD_LIMIT_DESCR         = 27, // 118     5.261
+  SPEED_LIMIT             = 28, // 100-102 5.72
+  VERT_ANGLE              = 29, // 103-106 5.70
+  UNKNOWN_INDEX           = 30, // 121-123 5.293 not in
+  CENTER_FIX_OR_TAA_PT    = 31, // 107-111 5.144/5.271
+  CENTER_ICAO_CODE        = 32, // 113-114 5.14
+  CENTER_SEC_CODE         = 33, // 115     5.4
+  CENTER_SUB_CODE         = 34, // 116     5.5
+  MULTI_CD                = 35, // 112     5.130/5.272
+  GNSS_FMS_IND            = 36, // 117     5.222
+  RTE_QUAL1               = 37, // 119     5.7
+  RTE_QUAL2               = 38  // 120     5.7
 };
 /* *INDENT-ON* */
 
@@ -95,6 +96,7 @@ enum RunwayFieldIndex
 };
 
 namespace rt {
+
 // SID Route Type Description Field Content
 enum SidRouteType
 {
@@ -172,17 +174,20 @@ enum ApproachRouteType
   PROCEDURE_WITH_STRAIGHT_IN_MINIMUMS = 'S'
 };
 
+// All route types that are approach transitions
 static const std::initializer_list<rt::ApproachRouteType> APPR_TRANS =
 {
   rt::APPROACH_TRANSITION
 };
 
+// All route types that are SID transitions
 static const std::initializer_list<rt::SidRouteType> SID_TRANS =
 {
   rt::SID_ENROUTE_TRANSITION, rt::RNAV_SID_ENROUTE_TRANSITION, rt::FMS_SID_ENROUTE_TRANSITION,
   rt::VECTOR_SID_ENROUTE_TRANSITION
 };
 
+// All route types that are STAR transitions
 static const std::initializer_list<rt::StarRouteType> STAR_TRANS =
 {
   rt::STAR_ENROUTE_TRANSITION, rt::RNAV_STAR_ENROUTE_TRANSITION, rt::PROFILE_DESCENT_ENROUTE_TRANSITION
@@ -269,11 +274,13 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
     QString routeIdent = line.at(SID_STAR_APP_IDENT);
     QString transIdent = line.at(TRANS_IDENT);
 
+    // Finish and write a procedure if code has changed - includes transitions and probably multiple approaches
     if(rowCode != curRowCode)
       finishProcedure(context);
     else if(routeIdent != curRouteIdent)
       finishProcedure(context);
 
+    // Start a new procedure row in approach or transition table if these changes
     bool writeNewProcedure = routeType != curRouteType || routeIdent != curRouteIdent || transIdent != curTransIdent;
 
     curRowCode = rowCode;
@@ -287,8 +294,6 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
     else
       writeProcedureLeg(line, context);
   }
-  else
-    curRowCode = rowCode;
   // ignore RWY and PRDAT
 }
 
@@ -373,14 +378,17 @@ void XpCifpWriter::finishProcedure(const XpWriterContext& context)
 {
   if(curRowCode == rc::APPROACH)
   {
+    numProcedures += approaches.size() + transitions.size();
     if(approaches.size() > 1)
       qWarning() << context.messagePrefix() << "Found more than one approach" << approaches.size();
 
+    // Write approach
     Procedure& appr = approaches.first();
     assignApproachIds(appr);
     insertApproachQuery->bindAndExecRecord(appr.record);
     insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
 
+    // Write transitions for one approach
     for(Procedure& trans : transitions)
     {
       assignTransitionIds(trans);
@@ -395,12 +403,17 @@ void XpCifpWriter::finishProcedure(const XpWriterContext& context)
 
     // SID: First in file are approaches then multiple transitions
     // duplicate all approachs for each  transition before writing
+
+    numProcedures += approaches.size() + transitions.size();
+
+    // Write all procedures
     for(Procedure& appr : approaches)
     {
       assignApproachIds(appr);
       insertApproachQuery->bindAndExecRecord(appr.record);
       insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
 
+      // Assign a new set of ids and write a duplicate of all transitions for the current approach
       for(Procedure& trans : transitions)
       {
         assignTransitionIds(trans);
@@ -419,13 +432,11 @@ void XpCifpWriter::finishProcedure(const XpWriterContext& context)
   curRouteType = ' ';
   curRouteIdent.clear();
   curTransIdent.clear();
-
-  // curApproachId++;
-  numProcedures++;
 }
 
 void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext& context)
 {
+  // Ids are assigned later
   SqlRecord rec(approachRecord);
 
   // rec.setValue(":approach_id", curApproachId);
@@ -435,11 +446,13 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   QString suffix, rwy;
   QString apprIdent = line.at(SID_STAR_APP_IDENT).trimmed();
 
+  // Extract runway name "B" suffixes, "ALL" and CTL are ignored
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
-    rwy = sidStarRunwayNameAndSuffix(line.at(TRANS_IDENT).trimmed());
+    rwy = sidStarRunwayNameAndSuffix(line.at(TRANS_IDENT).trimmed(), context);
   else
-    apprRunwayNameAndSuffix(apprIdent, rwy, suffix);
+    rwy = apprRunwayNameAndSuffix(apprIdent, suffix, context);
 
+  // Create the SID/STAR workaround as it is used by FSX/P3D
   QString type = procedureType(curRouteType, context);
   if(curRowCode == rc::STAR)
   {
@@ -455,6 +468,7 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   }
   else
   {
+    // GPS overlay flag
     QString gpsIndicator = line.at(GNSS_FMS_IND).trimmed();
     rec.setValue(":has_gps_overlay", type != "GPS" && gpsIndicator != "0" && gpsIndicator != "U");
     rec.setValue(":suffix", suffix);
@@ -463,14 +477,17 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
 
   rwy = rwy.trimmed();
   if(rwy.isEmpty())
+  {
     rec.setValue(":runway_name", QVariant(QVariant::String));
+    rec.setValue(":runway_end_id", QVariant(QVariant::Int));
+  }
   else
   {
     rec.setValue(":runway_name", rwy);
     rec.setValue(":runway_end_id", airportIndex->getRunwayEndId(context.cifpAirportIdent, rwy));
   }
 
-  // Reset later when writing the FAP leg
+  // Might be reset later when writing the FAP leg
   rec.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
 
   if(curRouteType == rc::APPROACH)
@@ -492,13 +509,11 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
 
 void XpCifpWriter::writeApproachLeg(const QStringList& line, const XpWriterContext& context)
 {
-  if(!context.includeApproachLeg)
+  if(!(context.flags & INCLUDE_APPROACHLEG))
     return;
 
+  // Ids are assigned later
   SqlRecord rec(approachLegRecord);
-
-  // rec.setValue(":approach_leg_id", ++curApproachLegId);
-  // rec.setValue(":approach_id", curApproachId);
 
   QString waypointDescr = line.at(DESC_CODE);
 
@@ -511,7 +526,7 @@ void XpCifpWriter::writeApproachLeg(const QStringList& line, const XpWriterConte
   }
 
   if(!writingMissedApproach)
-    // First missed approach leg
+    // First missed approach leg - remember state
     writingMissedApproach = waypointDescr.at(2) == 'M';
   rec.setValue(":is_missed", writingMissedApproach);
 
@@ -522,12 +537,10 @@ void XpCifpWriter::writeApproachLeg(const QStringList& line, const XpWriterConte
 
 void XpCifpWriter::writeTransition(const QStringList& line, const XpWriterContext& context)
 {
+  // Ids are assigned later
   SqlRecord rec(transitionRecord);
 
-  // rec.setValue(":transition_id", ++curTransitionId);
-  // rec.setValue(":approach_id", curApproachId);
-  rec.setValue(":type", "F"); // set to D if DME arc leg terminator
-
+  rec.setValue(":type", "F"); // set later to D if DME arc leg terminator
   rec.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
   rec.setValue(":fix_ident", line.at(TRANS_IDENT).trimmed());
   rec.setValue(":fix_region", line.at(ICAO_CODE).trimmed());
@@ -542,17 +555,17 @@ void XpCifpWriter::writeTransition(const QStringList& line, const XpWriterContex
 
 void XpCifpWriter::writeTransitionLeg(const QStringList& line, const XpWriterContext& context)
 {
-  if(!context.includeApproachLeg)
+  if(!(context.flags & INCLUDE_APPROACHLEG))
     return;
 
+  // Ids are assigned later
   SqlRecord rec(transitionLegRecord);
-
-  // rec.setValue(":transition_leg_id", ++curTransitionLegId);
-  // rec.setValue(":transition_id", curTransitionId);
 
   if(line.at(PATH_TERM) == "AF")
   {
-    // Arc to fix - set transition to DME arc
+    // Set transition type to DME arc if an AF leg is found
+
+    // Arc to fix
     transitions.last().record.setValue(":type", "D");
 
     // not used: dme_airport_ident
@@ -565,7 +578,7 @@ void XpCifpWriter::writeTransitionLeg(const QStringList& line, const XpWriterCon
       transitions.last().record.setValue(":dme_region", line.at(RECD_ICAO_CODE).trimmed());
     }
     else
-      qWarning() << context.messagePrefix() << "No recommended navaid fro AF leg";
+      qWarning() << context.messagePrefix() << "No recommended navaid for AF leg";
   }
 
   bindLeg(line, rec, context);
@@ -582,12 +595,17 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
 
   rec.setValue(":type", line.at(PATH_TERM));
 
+  // Altitude
   QString altDescr = line.at(ALT_DESCR);
   if(altDescr == "+" || altDescr == "-" || altDescr == "B")
     rec.setValue(":alt_descriptor", altDescr);
   else if(altDescr == " " || altDescr == "@")
     rec.setValue(":alt_descriptor", "A");
   // else null
+
+  bool altDescrValid = atools::contains(altDescr, {"+", "-", "A", "B", " ", "@"});
+  if(!atools::contains(altDescr, {QString(), "+", "-", "A", "B", " ", "@", "J", "H", "I", "G"})) // Ignore others
+    qWarning() << context.messagePrefix() << "Unexpected alt descriptor" << altDescr;
 
   QString turnDir = line.at(TURN_DIR).trimmed();
   if(turnDir == "E")
@@ -615,11 +633,19 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
   }
   else if(!line.at(RECD_NAVAID).trimmed().isEmpty())
   {
-    rec.setValue(":recommended_fix_type", navaidType(line.at(RECD_SEC_CODE), line.at(RECD_SUB_CODE), context));
-    rec.setValue(":recommended_fix_ident", line.at(RECD_NAVAID).trimmed());
-    rec.setValue(":recommended_fix_region", line.at(RECD_ICAO_CODE).trimmed());
+    QString recommendedType = navaidType(line.at(RECD_SEC_CODE), line.at(RECD_SUB_CODE), context);
+
+    if(!recommendedType.isEmpty())
+    {
+      rec.setValue(":recommended_fix_type", recommendedType);
+      rec.setValue(":recommended_fix_ident", line.at(RECD_NAVAID).trimmed());
+      rec.setValue(":recommended_fix_region", line.at(RECD_ICAO_CODE).trimmed());
+    }
   }
   // else null
+
+  if(line.at(PATH_TERM) == "AF" && line.at(RECD_NAVAID).trimmed().isEmpty())
+    qWarning() << context.messagePrefix() << "No recommended fix for AF leg";
 
   rec.setValue(":is_flyover", overfly);
   rec.setValue(":is_true_course", 0); // Not used
@@ -627,17 +653,22 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
 
   QString distTime = line.at(RTE_DIST_HOLD_DIST_TIME);
   if(distTime.startsWith("T"))
-    // time
+    // time minutes/10
     rec.setValue(":time", distTime.mid(1).toFloat() / 10.f);
   else
-    // distance
+    // distance nm/10
     rec.setValue(":distance", distTime.toFloat() / 10.f);
 
   rec.setValue(":theta", line.at(THETA).toFloat() / 10.f);
   rec.setValue(":rho", line.at(RHO).toFloat() / 10.f);
-  rec.setValue(":altitude1", line.at(ALTITUDE).toFloat());
-  rec.setValue(":altitude2", line.at(ALTITUDE2).toFloat());
 
+  if(altDescrValid)
+  {
+    rec.setValue(":altitude1", line.at(ALTITUDE).toFloat());
+    rec.setValue(":altitude2", line.at(ALTITUDE2).toFloat());
+  }
+
+  // Speed limit
   int spdLimit = line.at(SPEED_LIMIT).toInt();
   if(spdLimit > 0)
   {
@@ -646,9 +677,10 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
     QString spdDescr = line.at(SPD_LIMIT_DESCR);
     if(spdDescr == "+" || spdDescr == "-")
       rec.setValue(":speed_limit_type", spdDescr);
-    // else if(spdDescr == " " || spdDescr == "@")
-    // query->bindValue(":speed_limit_type", "A");
-    // else null
+    // else null means speed at
+
+    if(!atools::contains(spdDescr, {QString(), " ", "+", "-"}))
+      qWarning() << context.messagePrefix() << "Invalid speed limit" << spdDescr;
   }
   // else null
 }
@@ -802,18 +834,21 @@ QString XpCifpWriter::navaidType(const QString& sectionCode, const QString& subS
         return "TN";
 
       case atools::fs::xp::sc::REFERENCE_POINTS:
-        return "A"; // Airport reference point
+        return "A"; // Airport reference point - new with X-Plane
 
+      case atools::fs::xp::sc::GLS_STATION:
+        // ignore these
+        return QString();
+
+      case atools::fs::xp::sc::PATH_POINT:
       case atools::fs::xp::sc::GATES:
       case atools::fs::xp::sc::SIDS:
       case atools::fs::xp::sc::STARS:
       case atools::fs::xp::sc::APPROACH_PROCEDURES:
       case atools::fs::xp::sc::TAA:
       case atools::fs::xp::sc::MLS:
-      case atools::fs::xp::sc::PATH_POINT:
       case atools::fs::xp::sc::FLT_PLANNING_ARR_DEP:
       case atools::fs::xp::sc::MSA:
-      case atools::fs::xp::sc::GLS_STATION:
       case atools::fs::xp::sc::AP_COMMUNICATIONS:
         break;
 
@@ -862,44 +897,65 @@ QString XpCifpWriter::navaidType(const QString& sectionCode, const QString& subS
   return QString();
 }
 
-QString XpCifpWriter::sidStarRunwayNameAndSuffix(const QString& ident)
+QString XpCifpWriter::sidStarRunwayNameAndSuffix(const QString& ident, const atools::fs::xp::XpWriterContext& context)
 {
   if(ident.startsWith("RW"))
   {
+    // Get designator if there is one
     QString desig = ident.size() > 4 ? ident.at(4) : QString();
 
-    if(desig != "B")
+    bool designatorValid = false;
+    if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
+      qWarning() << context.messagePrefix() << "Invalid designator" << desig;
+    else
+      designatorValid = true;
+
+    if(desig != "B") // B = multiple runways with same number but different designator
     {
       if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C")
         desig.clear();
 
-      if(ident.at(2).isDigit() && ident.at(3).isDigit())
+      // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
+      if( /*designatorValid &&*/ ident.at(2).isDigit() && ident.at(3).isDigit())
         return ident.mid(2, 2) + desig;
     }
   }
   return QString();
 }
 
-void XpCifpWriter::apprRunwayNameAndSuffix(const QString& ident, QString& runway, QString& suffix)
+QString XpCifpWriter::apprRunwayNameAndSuffix(const QString& ident, QString& suffix,
+                                              const atools::fs::xp::XpWriterContext& context)
 {
-  runway.clear();
+  QString runway;
   suffix.clear();
 
   if(ident.size() > 4)
     suffix = ident.mid(4, 1);
 
+  // Get designator if there is one
   QString desig = ident.size() > 3 ? ident.at(3) : QString();
 
-  if(desig != "B")
+  bool designatorValid = false;
+  if(ident.at(1).isDigit() && ident.at(2).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
+    qWarning() << context.messagePrefix() << "Invalid designator" << desig;
+  else
+    designatorValid = true;
+
+  // TODO consider true course
+
+  if(desig != "B") // B = multiple runways with same number but different designator
   {
+
     if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C")
       desig.clear();
 
-    if(ident.at(1).isDigit() && ident.at(2).isDigit())
+    // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
+    if( /*designatorValid &&*/ ident.at(1).isDigit() && ident.at(2).isDigit())
       runway = ident.mid(1, 2) + desig;
-    else if(ident.size() > 3)
+    else if(ident.size() > 3) // CVORY etc.
       suffix = ident.mid(3, 1);
   }
+  return runway;
 }
 
 void XpCifpWriter::initQueries()
