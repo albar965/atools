@@ -25,6 +25,29 @@ namespace atools {
 namespace fs {
 namespace xp {
 
+// Helper structs to avoid QString and speed up the hash maps
+struct IndexName
+{
+  explicit IndexName(const QString& str);
+  IndexName();
+
+  char name[4];
+};
+
+bool operator==(const IndexName& name1, const IndexName& name2);
+bool operator!=(const IndexName& name1, const IndexName& name2);
+
+struct IndexName2
+{
+  explicit IndexName2(const QString& str1, const QString& str2);
+  IndexName2();
+
+  char name[8];
+};
+
+bool operator==(const IndexName2& name1, const IndexName2& name2);
+bool operator!=(const IndexName2& name1, const IndexName2& name2);
+
 /*
  * Filled when reading airports in the beginning of the compilation process.
  * Provides an index from airport ICAO to airport_id and runwayname/airport ICAO to runway_end_id.
@@ -50,13 +73,15 @@ public:
 
 private:
   // Map ICAO id to database airport_id
-  QHash<QString, int> icaoToIdMap;
-  QHash<std::pair<QString, QString>, int> icaoRunwayNameToEndId;
+  QHash<IndexName, int> icaoToIdMap;
+  QHash<IndexName2, int> icaoRunwayNameToEndId;
 
 };
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
+
+Q_DECLARE_TYPEINFO(atools::fs::xp::IndexName, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_XPAIRPORTINDEX_H

@@ -157,6 +157,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
 
+  bind(":num_parking", type->getParkings().size());
   bind(":num_parking_gate", type->getNumParkingGate());
   bind(":num_parking_ga_ramp", type->getNumParkingGaRamp());
 

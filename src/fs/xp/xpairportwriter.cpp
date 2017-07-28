@@ -314,7 +314,7 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
       break;
 
     case x::RAMP_START_METADATA:
-      writeStartupLocationMetadata(line);
+      writeStartupLocationMetadata(line, context);
       break;
 
     case x::TAXI_ROUTE_NETWORK_NODE:
@@ -557,21 +557,103 @@ void XpAirportWriter::bindViewpoint(const QStringList& line, const atools::fs::x
   hasTower = true;
 }
 
-void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line)
+void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
 {
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeStartupLocation";
+
+  writingStartLocation = true;
+  numParking++;
+  insertParkingQuery->bindValue(":parking_id", ++curParkingId);
+  insertParkingQuery->bindValue(":airport_id", curAirportId);
+
+  Pos pos(line.at(sl::LONX).toFloat(), line.at(sl::LATY).toFloat());
+  airportRect.extend(pos);
+  insertParkingQuery->bindValue(":laty", pos.getLatY());
+  insertParkingQuery->bindValue(":lonx", pos.getLonX());
+
+  insertParkingQuery->bindValue(":heading", line.at(sl::HEADING).toFloat());
+  insertParkingQuery->bindValue(":number", -1);
+  insertParkingQuery->bindValue(":radius", 50.f);
+  // Fill airline codes later from metadata
+  insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
+
+  QString name = line.mid(sl::NAME).join(" ");
+
+  bool hasFuel = false;
+  if(name.toLower().contains("avgas") || name.toLower().contains("mogas") || name.toLower().contains("gas-station"))
+  {
+    hasFuel = true;
+    insertAirportQuery->bindValue(":has_avgas", 1);
+  }
+
+  if(name.toLower().contains("jetfuel"))
+  {
+    hasFuel = true;
+    insertAirportQuery->bindValue(":has_jetfuel", 1);
+  }
+
+  if(name.toLower().contains("fuel"))
+  {
+    hasFuel = true;
+    insertAirportQuery->bindValue(":has_jetfuel", 1);
+    insertAirportQuery->bindValue(":has_avgas", 1);
+  }
+
+  insertParkingQuery->bindValue(":name", name);
+  insertParkingQuery->bindValue(":has_jetway", 0);
+
+  if(hasFuel)
+    insertParkingQuery->bindValue(":type", "FUEL");
+  else
+  {
+    QString type = line.at(sl::TYPE);
+    if(type == "gate")
+      insertParkingQuery->bindValue(":type", "G");
+    else if(type == "hangar")
+      insertParkingQuery->bindValue(":type", "H");
+    else if(type == "tie-down")
+      insertParkingQuery->bindValue(":type", "T");
+    else if(type == "misc")
+      insertParkingQuery->bindValue(":type", "");
+  }
+
+  // has_jetway integer not null,     -- 1 if the parking has a jetway attached
+
+  // Airplane types that can use this location
+  // Pipe-separated list (|). Can include heavy, jets,
+  // turboprops, props and helos (or just all for all types)
+}
+
+void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
+                                                   const atools::fs::xp::XpWriterContext& context)
+{
+  if(ignoringAirport)
+    return;
+
+  if(!writingAirport)
+    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeStartupLocation";
+
   // Operation type none, general_aviation, airline, cargo, military
   // Airline permitted to use this ramp 3-letter airline codes (AAL, SWA, etc)
 
-  // Build type from operations type
-  QString ops = line.at(sm::OPTYPE);
-  if(ops == "general_aviation")
-    insertParkingQuery->bindValue(":type", "RGA"); // Ramp GA
-  else if(ops == "cargo")
-    insertParkingQuery->bindValue(":type", "RC"); // Ramp cargo
-  else if(ops == "military")
-    insertParkingQuery->bindValue(":type", "RM"); // Ramp military
-  // else if(ops == "airline")
-  // else if(ops == "none")
+  bool isFuel = insertParkingQuery->boundValues().value(":type").toString() == "FUEL";
+  if(!isFuel)
+  {
+    // Build type from operations type
+    QString ops = line.at(sm::OPTYPE);
+    if(ops == "general_aviation")
+      insertParkingQuery->bindValue(":type", "RGA"); // Ramp GA
+    else if(ops == "cargo")
+      insertParkingQuery->bindValue(":type", "RC"); // Ramp cargo
+    else if(ops == "military")
+      insertParkingQuery->bindValue(":type", "RM"); // Ramp military
+    // else if(ops == "airline")
+    // else if(ops == "none")
+  }
 
   if(line.size() > sm::AIRLINE)
     insertParkingQuery->bindValue(":airline_codes", line.at(sm::AIRLINE).toUpper());
@@ -579,6 +661,7 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line)
   QString sizeType;
 
   // ICAO width code A 15 m, B 25 m, C 35 m, D 50 m, E 65 m, F 80 m
+  // TODO size type is not clear
   QString widthCode = line.at(sm::WIDTH);
   if(widthCode == "A")
   {
@@ -611,9 +694,12 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line)
     sizeType = "H";
   }
 
-  QString type = insertParkingQuery->boundValue(":type").toString();
-  if(type == "G" || type == "RGA")
-    insertParkingQuery->bindValue(":type", type + sizeType);
+  if(!isFuel)
+  {
+    QString type = insertParkingQuery->boundValue(":type").toString();
+    if(type == "G" || type == "RGA")
+      insertParkingQuery->bindValue(":type", type + sizeType);
+  }
 
   // TYPES
   // {"INVALID", QObject::tr("Invalid")},
@@ -646,14 +732,14 @@ void XpAirportWriter::finishStartupLocation()
     {
       numParkingGate++;
 
-      if(largestParkingGate > type || largestParkingGate.isEmpty())
+      if(largestParkingGate.isEmpty() || compareGate(largestParkingGate, type) > 0)
         largestParkingGate = type;
     }
 
     if(type.startsWith("RGA"))
     {
       numParkingGaRamp++;
-      if(largestParkingRamp > type || largestParkingRamp.isEmpty())
+      if(largestParkingRamp.isEmpty() || compareRamp(largestParkingRamp, type) > 0)
         largestParkingRamp = type;
     }
 
@@ -670,51 +756,9 @@ void XpAirportWriter::finishStartupLocation()
     insertAirportQuery->bindValue(":largest_parking_gate", largestParkingGate);
 
     insertParkingQuery->exec();
+    insertParkingQuery->clearBoundValues();
     writingStartLocation = false;
   }
-}
-
-void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
-{
-  if(ignoringAirport)
-    return;
-
-  if(!writingAirport)
-    qWarning() << context.messagePrefix() << "Invalid writing airport state in writeStartupLocation";
-
-  writingStartLocation = true;
-  numParking++;
-  insertParkingQuery->bindValue(":parking_id", ++curParkingId);
-  insertParkingQuery->bindValue(":airport_id", curAirportId);
-
-  Pos pos(line.at(sl::LONX).toFloat(), line.at(sl::LATY).toFloat());
-  airportRect.extend(pos);
-  insertParkingQuery->bindValue(":laty", pos.getLatY());
-  insertParkingQuery->bindValue(":lonx", pos.getLonX());
-
-  insertParkingQuery->bindValue(":heading", line.at(sl::HEADING).toFloat());
-  insertParkingQuery->bindValue(":number", -1);
-  insertParkingQuery->bindValue(":radius", 50.f);
-  // Fill airline codes later from metadata
-  insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
-  insertParkingQuery->bindValue(":name", line.mid(sl::NAME).join(" "));
-  insertParkingQuery->bindValue(":has_jetway", 0);
-
-  QString type = line.at(sl::TYPE);
-  if(type == "gate")
-    insertParkingQuery->bindValue(":type", "G");
-  else if(type == "hangar")
-    insertParkingQuery->bindValue(":type", "H");
-  else if(type == "tie-down")
-    insertParkingQuery->bindValue(":type", "T");
-  else if(type == "misc")
-    insertParkingQuery->bindValue(":type", "");
-
-  // has_jetway integer not null,     -- 1 if the parking has a jetway attached
-
-  // Airplane types that can use this location
-  // Pipe-separated list (|). Can include heavy, jets,
-  // turboprops, props and helos (or just all for all types)
 }
 
 void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
@@ -1180,7 +1224,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
   writeAirportFile(airportIcao, context.curFileId);
 
-  if(!airportIndex->addAirport(airportIcao, airportId))
+  if(!airportIndex->addAirport(airportIcao, airportId) || !options.isIncludedAirportIdent(airportIcao))
     // Airport was already read before - ignore it completely
     ignoringAirport = true;
   else
@@ -1299,6 +1343,8 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
   airportIcao.clear();
   runwayEndRecords.clear();
   taxiNodes.clear();
+  largestParkingGate.clear();
+  largestParkingRamp.clear();
   hasTower = false;
 
   writingAirport = ignoringAirport = false;
@@ -1311,6 +1357,46 @@ void XpAirportWriter::writeAirportFile(const QString& icao, int curFileId)
   insertAirportFileQuery->bindValue(":file_id", curFileId);
   insertAirportFileQuery->bindValue(":ident", icao);
   insertAirportFileQuery->exec();
+}
+
+// Compares s1 with s2 and returns an integer less than, equal to, or greater than zero
+// if s1 is less than, equal to, or greater than s2.
+int XpAirportWriter::compareGate(const QString& gate1, const QString& gate2)
+{
+  if(gate1 != gate2)
+  {
+    if(gate1 == "GH")
+      return 1;
+
+    if(gate2 == "GH")
+      return -1;
+
+    if(gate1 == "GS")
+      return -1;
+
+    if(gate2 == "GS")
+      return 1;
+  }
+  return 0;
+}
+
+int XpAirportWriter::compareRamp(const QString& ramp1, const QString& ramp2)
+{
+  if(ramp1 != ramp2)
+  {
+    if(ramp1 == "RGAL")
+      return 1;
+
+    if(ramp2 == "RGAL")
+      return -1;
+
+    if(ramp1 == "RGAS")
+      return -1;
+
+    if(ramp2 == "RGAS")
+      return 1;
+  }
+  return 0;
 }
 
 void XpAirportWriter::initQueries()

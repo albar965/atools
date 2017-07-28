@@ -96,7 +96,8 @@ private:
 
   /* Start pavement (taxi and apron) by header */
   void bindPavement(const QStringList& line, const atools::fs::xp::XpWriterContext& context);
-  void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode, const XpWriterContext& context);
+  void bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode,
+                        const XpWriterContext& context);
   void finishPavement(const XpWriterContext& context);
 
   /* Obsolete type 15 */
@@ -104,7 +105,7 @@ private:
 
   /* Write parking */
   void writeStartupLocation(const QStringList& line, const XpWriterContext& context);
-  void writeStartupLocationMetadata(const QStringList& line);
+  void writeStartupLocationMetadata(const QStringList& line, const XpWriterContext& context);
   void finishStartupLocation();
 
   /* Collect taxi nodes (not written) */
@@ -112,6 +113,9 @@ private:
 
   /* Write taxi edges */
   void bindTaxiEdge(const QStringList& line, const XpWriterContext& context);
+
+  int compareGate(const QString& gate1, const QString& gate2);
+  int compareRamp(const QString& ramp1, const QString& ramp2);
 
   /* State information */
   bool writingAirport = false, ignoringAirport = false,
@@ -157,6 +161,7 @@ private:
   atools::fs::xp::XpAirportIndex *airportIndex;
   atools::fs::common::XpGeometry currentPavement;
   QHash<int, atools::geo::Pos> taxiNodes;
+
 };
 
 } // namespace xp
