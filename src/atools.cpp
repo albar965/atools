@@ -142,6 +142,11 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 
 QString buildPathNoCase(const std::list<QString>& paths)
 {
+
+#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
+  return buildPath(paths);
+
+#else
   QDir dir;
   QString file;
 
@@ -176,6 +181,8 @@ QString buildPathNoCase(const std::list<QString>& paths)
     return dir.path();
   else
     return dir.path() + QDir::separator() + file;
+
+#endif
 }
 
 QString buildPath(const std::list<QString>& paths)
