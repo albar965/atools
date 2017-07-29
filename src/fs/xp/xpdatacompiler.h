@@ -171,7 +171,7 @@ public:
   }
 
   /* Calculate number of files to be read */
-  static int calculateFileCount(const atools::fs::NavDatabaseOptions& opts);
+  static int calculateReportCount(const atools::fs::NavDatabaseOptions& opts);
 
   /* minmum accepted file version */
   void setMinVersion(int value)
@@ -189,11 +189,11 @@ private:
 
   /* Open file and read header */
   bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat,
-                int& lineNum, int& fileVersion);
+                int& lineNum, int& totalNumLines, int& fileVersion);
 
   /* Read file line by line and call writer for each one */
   bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer,
-                    atools::fs::xp::ContextFlags flags);
+                    atools::fs::xp::ContextFlags flags = atools::fs::xp::NO_FLAG);
   static QString buildBasePath(const NavDatabaseOptions& opts);
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */

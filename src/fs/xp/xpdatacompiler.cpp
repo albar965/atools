@@ -38,6 +38,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QDateTime>
+#include <QElapsedTimer>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -46,6 +47,12 @@ using atools::buildPathNoCase;
 namespace atools {
 namespace fs {
 namespace xp {
+
+// Reports per large file
+const int NUM_REPORT_STEPS = 10000;
+
+/* Report progress twice a second */
+const int MIN_PROGRESS_REPORT_MS = 500;
 
 XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                                ProgressHandler *progressHandler)
@@ -81,20 +88,13 @@ bool XpDataCompiler::writeBasepathScenery()
 bool XpDataCompiler::compileEarthFix()
 {
   QString path = buildPathNoCase({basePath, "earth_fix.dat"});
-
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
-
-  return readDataFile(path, 5, fixWriter, NO_FLAG);
+  return readDataFile(path, 5, fixWriter);
 }
 
 bool XpDataCompiler::compileEarthAirway()
 {
   QString path = buildPathNoCase({basePath, "earth_awy.dat"});
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
-
-  return readDataFile(path, 11, airwayWriter, NO_FLAG);
+  return readDataFile(path, 11, airwayWriter);
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
@@ -105,10 +105,7 @@ bool XpDataCompiler::postProcessEarthAirway()
 bool XpDataCompiler::compileEarthNav()
 {
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
-
-  return readDataFile(path, 11, navWriter, NO_FLAG);
+  return readDataFile(path, 11, navWriter);
 }
 
 bool XpDataCompiler::compileCustomApt()
@@ -119,10 +116,7 @@ bool XpDataCompiler::compileCustomApt()
   QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
-    if((aborted = progress->reportOther(tr("Reading: %1").arg(aptdat))) == true)
-      return aborted;
-
-    if((aborted = readDataFile(aptdat, 1, airportWriter, IS_ADDON)) == true)
+    if((aborted = readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT)) == true)
       return aborted;
   }
 
@@ -132,16 +126,14 @@ bool XpDataCompiler::compileCustomApt()
 bool XpDataCompiler::compileCustomGlobalApt()
 {
   // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-  QString customAptDat = buildPathNoCase({options.getBasepath(),
-                                          "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"});
+  QString path = buildPathNoCase({options.getBasepath(),
+                                  "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"});
 
-  if(QFileInfo::exists(customAptDat))
-  {
-    if(progress->reportOther(tr("Reading: %1").arg(customAptDat)) == true)
-      return true;
-
-    return readDataFile(customAptDat, 1, airportWriter, NO_FLAG);
-  }
+  if(QFileInfo::exists(path))
+    return readDataFile(path, 1, airportWriter);
+  else
+    // TODO report missing file
+    qWarning() << path << "not found";
 
   return false;
 }
@@ -154,13 +146,9 @@ bool XpDataCompiler::compileDefaultApt()
                                            "Earth nav data", "apt.dat"});
 
   if(QFileInfo::exists(defaultAptDat))
-  {
-    if(progress->reportOther(tr("Reading: %1").arg(defaultAptDat)) == true)
-      return true;
-
-    return readDataFile(defaultAptDat, 1, airportWriter, NO_FLAG);
-  }
-  return false;
+    return readDataFile(defaultAptDat, 1, airportWriter);
+  else
+    return false;
 }
 
 bool XpDataCompiler::compileCifp()
@@ -170,13 +158,8 @@ bool XpDataCompiler::compileCifp()
   for(const QString& file : cifpFiles)
   {
     if(options.isIncludedFilename(file))
-    {
-      if(progress->reportOther(tr("Reading: %1").arg(file)) == true)
+      if(readDataFile(file, 1, cifpWriter, READ_CIFP | READ_SHORT_REPORT))
         return true;
-
-      if(readDataFile(file, 1, cifpWriter, READ_CIFP))
-        return true;
-    }
   }
 
   return false;
@@ -184,31 +167,37 @@ bool XpDataCompiler::compileCifp()
 
 bool XpDataCompiler::compileLocalizers()
 {
+
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "Global Airports",
                                   "Earth nav data", "earth_nav.dat"});
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
 
-  return readDataFile(path, 11, navWriter, READ_LOCALIZERS);
+  if(QFileInfo::exists(path))
+    return readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT);
+  else
+    // TODO report missing file
+    qWarning() << path << "not found";
+
+  return false;
 }
 
 bool XpDataCompiler::compileUserNav()
 {
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_nav.dat"});
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
 
-  return readDataFile(path, 11, navWriter, READ_USER);
+  if(QFileInfo::exists(path))
+    return readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT);
+  else
+    return false;
 }
 
 bool XpDataCompiler::compileUserFix()
 {
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_fix.dat"});
 
-  if(progress->reportOther(tr("Reading: %1").arg(path)) == true)
-    return true;
-
-  return readDataFile(path, 5, fixWriter, READ_USER);
+  if(QFileInfo::exists(path))
+    return readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT);
+  else
+    return false;
 }
 
 bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer,
@@ -217,13 +206,15 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   QFile file;
   QTextStream stream;
 
+  QString progressMsg = tr("Reading: %1").arg(filename);
+
   if(!options.isIncludedLocalPath(QFileInfo(filename).path()))
     return false;
 
-  int lineNum = 1, fileVersion = 0;
+  int lineNum = 1, totalNumLines, fileVersion = 0;
 
   // Open file and read header
-  if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, fileVersion))
+  if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, totalNumLines, fileVersion))
   {
     QFileInfo fi(filename);
     XpWriterContext context;
@@ -232,6 +223,10 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     context.localPath = QDir(options.getBasepath()).relativeFilePath(fi.path());
     context.flags = flags | flagsFromOptions();
     context.fileVersion = fileVersion;
+
+    if(flags & READ_SHORT_REPORT)
+      if(progress->reportOther(progressMsg))
+        return true;
 
     if(flags & READ_CIFP)
     {
@@ -243,17 +238,34 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     QString line;
     QStringList fields;
 
+    QElapsedTimer timer;
+    timer.start();
+    qint64 elapsed = timer.elapsed();
+
+    int rowsPerStep =
+      static_cast<int>(std::ceil(static_cast<float>(totalNumLines) / static_cast<float>(NUM_REPORT_STEPS)));
+    int row = 0, steps = 0;
+    bool aborted = false;
+
     // Read lines
     while(!stream.atEnd() && line != "99")
     {
       line = stream.readLine().trimmed();
 
-      if((lineNum % 50000) == 0)
+      if(!(flags & READ_SHORT_REPORT))
       {
-        if(progress->reportUpdate())
+        if((row++ % rowsPerStep) == 0)
         {
-          file.close();
-          return true;
+          qint64 elapsed2 = timer.elapsed();
+
+          // Update only every 500 ms - otherwise update only progress count
+          bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
+          if(!silent)
+            elapsed = elapsed2;
+
+          steps++;
+          if((aborted = progress->reportOther(progressMsg, -1, silent)) == true)
+            break;
         }
       }
 
@@ -284,16 +296,22 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
       }
       lineNum++;
     }
-    writer->finish(context);
+    if(!aborted)
+      writer->finish(context);
 
     file.close();
+
+    if(!(flags & READ_SHORT_REPORT))
+      // Eat up any remaining progress steps
+      progress->increaseCurrent(NUM_REPORT_STEPS - steps);
+
     return false;
   }
   return true;
 }
 
 bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, int& lineNum,
-                              int& fileVersion)
+                              int& totalNumLines, int& fileVersion)
 {
   file.setFileName(filename);
   lineNum = 1;
@@ -325,8 +343,19 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
         qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" << minVersion;
         return false;
       }
-    }
 
+      qDebug() << "Counting lines for" << filename;
+      qint64 pos = stream.pos();
+      int lines = 0;
+      while(!stream.atEnd())
+      {
+        stream.readLine();
+        lines++;
+      }
+      totalNumLines = lines;
+      stream.seek(pos);
+      qDebug() << lines;
+    }
   }
   else
     throw atools::Exception("Cannot open file " + filename + ". Reason: " + file.errorString());
@@ -408,31 +437,38 @@ QStringList XpDataCompiler::findCifpFiles(const atools::fs::NavDatabaseOptions& 
   return retval;
 }
 
-int XpDataCompiler::calculateFileCount(const atools::fs::NavDatabaseOptions& opts)
+int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& opts)
 {
-  int fileCount = 0;
+  int reportCount = 0;
   // Default or custom scenery files
   // earth_fix.dat earth_awy.dat earth_nav.dat
-  fileCount += 3;
+  reportCount += 3 * NUM_REPORT_STEPS;
 
-  // apt.dat
-  fileCount += 1;
+  // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+  reportCount += NUM_REPORT_STEPS;
 
-  fileCount += findCifpFiles(opts).count();
-  fileCount += findCustomAptDatFiles(opts).count();
+  // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+  reportCount += NUM_REPORT_STEPS;
+
+  // Default or custom CIFP/$ICAO.dat
+  reportCount += findCifpFiles(opts).count();
+
+  // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+  // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
+  reportCount += findCustomAptDatFiles(opts).count();
 
   // earth_nav.dat localizers $X-Plane/Custom Scenery/Global Airports/Earth nav data/
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(),
                                         "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
-    fileCount++;
+    reportCount++;
 
   // user_nav.dat user_fix.dat $X-Plane/Custom Data/
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "user_nav.dat"})))
-    fileCount++;
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "user_fix.dat"})))
-    fileCount++;
+  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_nav.dat"})))
+    reportCount++;
+  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_fix.dat"})))
+    reportCount++;
 
-  return fileCount;
+  return reportCount;
 }
 
 void XpDataCompiler::writeFile(const QString& filepath)

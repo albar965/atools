@@ -37,7 +37,8 @@ enum ContextFlag
   INCLUDE_APPROACHLEG = 0x0080,
   READ_LOCALIZERS = 0x0100, // Hand made localizers
   READ_USER = 0x0200, // user.dat
-  READ_CIFP = 0x0400 // CIFP file
+  READ_CIFP = 0x0400, // CIFP file
+  READ_SHORT_REPORT = 0x0800 // Do not create 10 reports per file
 };
 
 Q_DECLARE_FLAGS(ContextFlags, ContextFlag);

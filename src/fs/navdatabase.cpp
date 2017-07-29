@@ -222,7 +222,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
 
 void NavDatabase::createInternal(const QString& codec)
 {
-  int numFiles = 0, numSceneryAreas = 0, xplaneExtraSteps = 0;
+  int numProgressReports = 0, numSceneryAreas = 0, xplaneExtraSteps = 0;
   SceneryCfg cfg(codec);
 
   QElapsedTimer timer;
@@ -231,14 +231,18 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isAutocommit())
     db->setAutocommit(true);
 
+  int total = 0, routePartFraction = 0;
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
-    numFiles = atools::fs::xp::XpDataCompiler::calculateFileCount(*options);
-    numSceneryAreas = 3; // default, airports and user
+    numProgressReports = atools::fs::xp::XpDataCompiler::calculateReportCount(*options);
+    numSceneryAreas = 1; // X-Plane
     xplaneExtraSteps++; // prepare post process airways
     xplaneExtraSteps++; // post process airways
 
     xplaneExtraSteps--; // ILS id not executed
+    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
+    // Around 9000 navaids - total / routePartFraction has to be lower than this
+    routePartFraction = 20;
   }
   else
   {
@@ -246,11 +250,10 @@ void NavDatabase::createInternal(const QString& codec)
     readSceneryConfig(cfg);
 
     // Count the files for exact progress reporting
-    countFiles(cfg, &numFiles, &numSceneryAreas);
+    countFiles(cfg, &numProgressReports, &numSceneryAreas);
+    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
+    routePartFraction = 4;
   }
-
-  ProgressHandler progress(options);
-  int total = numFiles + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
 
   if(options->isDatabaseReport())
     total += PROGRESS_NUM_DB_REPORT_STEPS;
@@ -261,10 +264,12 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isDeduplicate())
     total += PROGRESS_NUM_DEDUPLICATE_STEPS;
 
-  int numRouteSteps = total / 4;
+  // Assume this one takes a quarter of the total number of steps
+  int numRouteSteps = total / routePartFraction;
   if(options->isCreateRouteTables())
     total += numRouteSteps;
 
+  ProgressHandler progress(options);
   progress.setTotal(total);
 
   createSchemaInternal(&progress);
@@ -293,7 +298,7 @@ void NavDatabase::createInternal(const QString& codec)
 
     if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
     {
-      if((aborted = xpDataCompiler->compileCustomApt()) == true)
+      if((aborted = xpDataCompiler->compileCustomApt()) == true) // Add-on
         return;
 
       db->commit();
