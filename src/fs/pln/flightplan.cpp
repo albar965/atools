@@ -256,6 +256,9 @@ void Flightplan::save(const QString& file, bool clean)
     writer.writeEndElement(); // SimBase.Document
     writer.writeEndDocument();
 
+    // Fixed Qt's retarded change where they think encoding is not needed in a string
+    xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+
 #ifndef Q_OS_WIN32
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
     xmlString.replace("\n", "\r\n");
