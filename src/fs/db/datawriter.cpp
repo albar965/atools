@@ -319,9 +319,22 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
 void DataWriter::readMagDeclBgl()
 {
-  QString file = atools::buildPathNoCase({options.getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"});
+  QString fileScenery = atools::buildPathNoCase({options.getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"});
+  QString fileSettings = atools::buildPath({atools::settings::Settings::instance().getPath(), "magdec.bgl"});
+  QString fileApp = atools::buildPath({QApplication::applicationDirPath(), "magdec.bgl"});
 
-  file = atools::settings::Settings::instance().getOverloadedPath(file);
+  QString file;
+  if(QFileInfo::exists(fileScenery) && QFileInfo(fileScenery).isFile())
+    // Check if there is a file in the simulator scenery directory
+    file = fileScenery;
+  else if(QFileInfo::exists(fileSettings) && QFileInfo(fileSettings).isFile())
+    // Check if there is a file in the settings directory
+    file = fileSettings;
+  else if(QFileInfo::exists(fileApp) && QFileInfo(fileApp).isFile())
+    // Check if there is a file in the application directory
+    file = fileApp;
+
+  qInfo() << "Reading" << file;
 
   magDecReader->readFromBgl(file);
 

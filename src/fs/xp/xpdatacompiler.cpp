@@ -210,6 +210,8 @@ bool XpDataCompiler::compileMagDeclBgl()
   // Look first in config dir and then in local dir
   QString file = Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec.bgl"}));
 
+  qInfo() << "Reading" << file;
+
   magDecReader->readFromBgl(file);
   magDecReader->writeToTable(db);
   return false;
