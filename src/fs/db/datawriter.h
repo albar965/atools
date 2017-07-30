@@ -28,10 +28,15 @@ namespace atools {
 namespace sql {
 class SqlDatabase;
 }
-
+namespace geo {
+class Pos;
+}
 namespace fs {
 class NavDatabaseOptions;
 class NavDatabaseErrors;
+namespace common {
+class MagDecReader;
+}
 namespace scenery {
 class SceneryArea;
 }
@@ -83,6 +88,8 @@ public:
    * @param area all BGL file content of this scenery area will be written to the database
    */
   void writeSceneryArea(const atools::fs::scenery::SceneryArea& area);
+
+  void readMagDeclBgl();
 
   /*
    * Log written record number, etc. to the log/console.
@@ -247,6 +254,8 @@ public:
   /* Close all writers and queries */
   void close();
 
+  float getMagVar(const atools::geo::Pos & pos, float defaultValue) const;
+
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,
       numNdbs = 0, numMarker = 0, numWaypoints = 0, numBoundaries = 0, numObjectsWritten = 0;
@@ -294,6 +303,7 @@ private:
 
   atools::fs::db::RunwayIndex *runwayIndex = nullptr;
   atools::fs::db::AirportIndex *airportIndex = nullptr;
+  atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   const atools::fs::NavDatabaseOptions& options;
 };

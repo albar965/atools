@@ -20,6 +20,8 @@
 #include "fs/xp/xpairportindex.h"
 #include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
+#include "fs/common/magdecreader.h"
+#include "geo/pos.h"
 
 #include "sql/sqlutil.h"
 
@@ -55,6 +57,8 @@ XpFixWriter::~XpFixWriter()
 
 void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
 {
+  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+
   insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", line.at(IDENT));
@@ -63,9 +67,9 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":type", "WN");
   insertWaypointQuery->bindValue(":num_victor_airway", 0);
   insertWaypointQuery->bindValue(":num_jet_airway", 0);
-  insertWaypointQuery->bindValue(":mag_var", 0);
-  insertWaypointQuery->bindValue(":lonx", line.at(LONX).toFloat());
-  insertWaypointQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertWaypointQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
+  insertWaypointQuery->bindValue(":lonx", pos.getLonX());
+  insertWaypointQuery->bindValue(":laty", pos.getLatY());
   insertWaypointQuery->exec();
 
   progress->incNumWaypoints();

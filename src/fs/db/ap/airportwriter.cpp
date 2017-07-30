@@ -157,7 +157,6 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
 
-  bind(":num_parking", type->getParkings().size());
   bind(":num_parking_gate", type->getNumParkingGate());
   bind(":num_parking_ga_ramp", type->getNumParkingGaRamp());
 
@@ -202,7 +201,7 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":right_lonx", type->getBoundingRect().getBottomRight().getLonX());
   bind(":bottom_laty", type->getBoundingRect().getBottomRight().getLatY());
 
-  bind(":mag_var", type->getMagVar());
+  bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   bind(":tower_altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":tower_lonx", type->getTowerPosition().getLonX());
   bind(":tower_laty", type->getTowerPosition().getLatY());

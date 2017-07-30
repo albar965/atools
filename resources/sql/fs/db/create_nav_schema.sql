@@ -296,3 +296,16 @@ create index if not exists idx_nav_search_ndb_id on nav_search(ndb_id);
 create index if not exists idx_nav_search_file_id on nav_search(file_id);
 create index if not exists idx_nav_search_airport_id on nav_search(airport_id);
 
+
+-- **************************************************
+
+drop table if exists magdecl;
+
+-- Stores magnetic declination in binary format (see magdecreader.h)
+-- Has only one row and is optional.
+create table magdecl
+(
+  magdecl_id integer primary key,
+  reference_time integer not null,  -- Reference time. Seconds since Epoch.
+  mag_var blob                      -- A list of single precision float values prefixed by size
+);

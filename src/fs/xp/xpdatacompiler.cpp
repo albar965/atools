@@ -23,9 +23,11 @@
 #include "fs/xp/xpairwaywriter.h"
 #include "fs/xp/xpairportwriter.h"
 #include "fs/xp/xpcifpwriter.h"
+#include "fs/common/magdecreader.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
+#include "settings/settings.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "fs/xp/airwaypostprocess.h"
@@ -43,6 +45,8 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::buildPathNoCase;
+using atools::settings::Settings;
+using atools::fs::common::MagDecReader;
 
 namespace atools {
 namespace fs {
@@ -70,6 +74,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   cifpWriter = new XpCifpWriter(db, airportIndex, options, progress);
   airwayWriter = new XpAirwayWriter(db, options, progress);
   airwayPostProcess = new AirwayPostProcess(db, options, progress);
+  magDecReader = new MagDecReader();
 
   initQueries();
 }
@@ -200,6 +205,16 @@ bool XpDataCompiler::compileUserFix()
     return false;
 }
 
+bool XpDataCompiler::compileMagDeclBgl()
+{
+  // Look first in config dir and then in local dir
+  QString file = Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec.bgl"}));
+
+  magDecReader->readFromBgl(file);
+  magDecReader->writeToTable(db);
+  return false;
+}
+
 bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer,
                                   atools::fs::xp::ContextFlags flags)
 {
@@ -223,6 +238,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     context.localPath = QDir(options.getBasepath()).relativeFilePath(fi.path());
     context.flags = flags | flagsFromOptions();
     context.fileVersion = fileVersion;
+    context.magDecReader = magDecReader;
 
     if(flags & READ_SHORT_REPORT)
       if(progress->reportOther(progressMsg))
@@ -385,6 +401,9 @@ void XpDataCompiler::close()
 
   delete airportIndex;
   airportIndex = nullptr;
+
+  delete magDecReader;
+  magDecReader = nullptr;
 
   deInitQueries();
 }

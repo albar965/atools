@@ -296,6 +296,11 @@ void NavDatabase::createInternal(const QString& codec)
 
     db->commit();
 
+    if((aborted = xpDataCompiler->compileMagDeclBgl()) == true)
+      return;
+
+    db->commit();
+
     if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
     {
       if((aborted = xpDataCompiler->compileCustomApt()) == true) // Add-on
@@ -371,6 +376,8 @@ void NavDatabase::createInternal(const QString& codec)
   else
   {
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
+
+    fsDataWriter->readMagDeclBgl();
 
     for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
     {

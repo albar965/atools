@@ -21,6 +21,7 @@
 #include "fs/util/tacanfrequencies.h"
 #include "fs/progresshandler.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/common/magdecreader.h"
 
 #include "geo/pos.h"
 #include "geo/calculations.h"
@@ -127,7 +128,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   progress->incNumVors();
 }
 
-void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
+void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context)
 {
   int range = line.at(RANGE).toInt();
 
@@ -141,6 +142,8 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
   else
     type = "HF";
 
+  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+
   insertNdbQuery->bindValue(":ndb_id", ++curNdbId);
   insertNdbQuery->bindValue(":file_id", curFileId);
   insertNdbQuery->bindValue(":ident", line.at(IDENT));
@@ -149,11 +152,11 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId)
   insertNdbQuery->bindValue(":type", type);
   insertNdbQuery->bindValue(":frequency", line.at(FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
-  insertNdbQuery->bindValue(":mag_var", 0);
   insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
   insertNdbQuery->bindValue(":altitude", line.at(ALT).toInt());
-  insertNdbQuery->bindValue(":lonx", line.at(LONX).toFloat());
-  insertNdbQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertNdbQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
+  insertNdbQuery->bindValue(":lonx", pos.getLonX());
+  insertNdbQuery->bindValue(":laty", pos.getLatY());
 
   insertNdbQuery->exec();
 
@@ -199,7 +202,7 @@ void XpNavWriter::finishIls()
   }
 }
 
-void XpNavWriter::bindIls(const QStringList& line, int curFileId)
+void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriterContext& context)
 {
   Q_UNUSED(curFileId);
 
@@ -207,6 +210,8 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId)
     throw atools::Exception("Recursive ILS write");
   QString airportIdent = line.at(AIRPORT);
   QString runwayName = line.at(RW);
+
+  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
 
   insertIlsQuery->bindValue(":ils_id", ++curIlsId);
   insertIlsQuery->bindValue(":frequency", line.at(FREQ).toInt() * 10);
@@ -219,15 +224,14 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId)
   insertIlsQuery->bindValue(":name", line.mid(NAME).join(" ").toUpper());
   insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndId(airportIdent, runwayName));
   insertIlsQuery->bindValue(":altitude", line.at(ALT).toInt());
-  insertIlsQuery->bindValue(":lonx", line.at(LONX).toFloat());
-  insertIlsQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertIlsQuery->bindValue(":lonx", pos.getLonX());
+  insertIlsQuery->bindValue(":laty", pos.getLatY());
 
-  insertIlsQuery->bindValue(":mag_var", 0);
+  insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
   insertIlsQuery->bindValue(":loc_width", FEATHER_WIDTH);
   insertIlsQuery->bindValue(":has_backcourse", 0);
 
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
-  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
   // Calculate the display of the ILS feather
   float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(line.at(HDG).toFloat()));
   atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f).normalize();
@@ -277,7 +281,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case NDB:
       finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::NDB))
-        writeNdb(line, context.curFileId);
+        writeNdb(line, context.curFileId, context);
       break;
 
     // 3 VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs
@@ -291,7 +295,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case LOC_ONLY: // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
       finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
-        bindIls(line, context.curFileId);
+        bindIls(line, context.curFileId, context);
       break;
 
     // 6 Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel

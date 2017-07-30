@@ -50,7 +50,7 @@ void TacanWriter::writeObject(const bgl::Tacan *type)
   bindNullInt(":frequency");
   bind(":channel", type->getChannel());
   bind(":range", roundToInt(meterToNm(type->getRange())));
-  bind(":mag_var", type->getMagVar());
+  bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());

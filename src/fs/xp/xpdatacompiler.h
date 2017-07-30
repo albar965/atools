@@ -37,6 +37,10 @@ class NavDatabaseOptions;
 class NavDatabaseErrors;
 class ProgressHandler;
 
+namespace common {
+class MagDecReader;
+}
+
 namespace xp {
 
 class XpFixWriter;
@@ -179,6 +183,9 @@ public:
     minVersion = value;
   }
 
+  /* Read Magdec.bgl file from application directory or settings directory */
+  bool compileMagDeclBgl();
+
 private:
   void initQueries();
   void deInitQueries();
@@ -219,6 +226,7 @@ private:
   atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
+  atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   int minVersion = 1000;
 

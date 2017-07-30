@@ -46,7 +46,12 @@ void VorWriter::writeObject(const Vor *type)
   bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
   bind(":frequency", type->getFrequency());
   bind(":range", roundToInt(meterToNm(type->getRange())));
-  bind(":mag_var", type->getMagVar());
+
+  if(type->isDmeOnly())
+    bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
+  else
+    bind(":mag_var", type->getMagVar());
+
   bind(":dme_only", type->isDmeOnly());
   bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());

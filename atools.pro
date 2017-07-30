@@ -187,7 +187,6 @@ HEADERS += src/atools.h \
     src/geo/line.h \
     src/gui/itemviewzoomhandler.h \
     src/gui/griddelegate.h \
-    src/dtm/globereader.h \
     src/fs/bgl/nav/tacan.h \
     src/fs/db/nav/tacanwriter.h \
     src/fs/util/tacanfrequencies.h \
@@ -211,7 +210,9 @@ HEADERS += src/atools.h \
     src/fs/xp/xpdatacompiler.h \
     src/fs/common/xpgeometry.h \
     src/fs/common/binarygeometry.h \
-    src/fs/xp/xpcifpwriter.h
+    src/fs/xp/xpcifpwriter.h \
+    src/fs/common/globereader.h \
+    src/fs/common/magdecreader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -365,7 +366,6 @@ SOURCES += src/atools.cpp \
     src/geo/line.cpp \
     src/gui/itemviewzoomhandler.cpp \
     src/gui/griddelegate.cpp \
-    src/dtm/globereader.cpp \
     src/fs/bgl/nav/tacan.cpp \
     src/fs/db/nav/tacanwriter.cpp \
     src/fs/util/tacanfrequencies.cpp \
@@ -389,7 +389,9 @@ SOURCES += src/atools.cpp \
     src/fs/xp/xpdatacompiler.cpp \
     src/fs/common/xpgeometry.cpp \
     src/fs/common/binarygeometry.cpp \
-    src/fs/xp/xpcifpwriter.cpp
+    src/fs/xp/xpcifpwriter.cpp \
+    src/fs/common/globereader.cpp \
+    src/fs/common/magdecreader.cpp
 
 
 unix {

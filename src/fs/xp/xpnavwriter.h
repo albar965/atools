@@ -54,10 +54,10 @@ private:
   void initQueries();
   void deInitQueries();
   void writeVor(const QStringList& line, int curFileId, bool dmeOnly);
-  void writeNdb(const QStringList& line, int curFileId);
+  void writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context);
   void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
 
-  void bindIls(const QStringList& line, int curFileId);
+  void bindIls(const QStringList& line, int curFileId, const XpWriterContext& context);
   void bindIlsGlideslope(const QStringList& line);
   void bindIlsDme(const QStringList& line);
   void finishIls();

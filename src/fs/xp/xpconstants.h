@@ -22,6 +22,10 @@
 
 namespace atools {
 namespace fs {
+namespace common {
+class MagDecReader;
+}
+
 namespace xp {
 
 enum ContextFlag
@@ -50,6 +54,7 @@ struct XpWriterContext
   int curFileId = 0, cifpAirportId = 0, fileVersion = 0, lineNumber = 0;
   QString localPath, fileName, cifpAirportIdent;
   atools::fs::xp::ContextFlags flags = NO_FLAG;
+  atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   /* Prepare a header for warning messages or exceptions*/
   QString messagePrefix() const;

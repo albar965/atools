@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "globereader.h"
+#include "fs/common/globereader.h"
 #include "exception.h"
 #include "atools.h"
 
@@ -32,7 +32,8 @@ using atools::geo::Line;
 using atools::geo::LineString;
 
 namespace atools {
-namespace dtm {
+namespace fs {
+namespace common {
 
 GlobeReader::GlobeReader(const QString& dataDirParam)
   : dataDir(dataDirParam)
@@ -272,5 +273,6 @@ qint64 GlobeReader::calcFileOffset(int gridCol, int gridRow, int& fileIndex)
   return offset * 2;
 }
 
-} // namespace dtm
+} // namespace common
+} // namespace fs
 } // namespace atools

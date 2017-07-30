@@ -22,6 +22,7 @@
 #include "fs/util/fsutil.h"
 #include "fs/progresshandler.h"
 #include "fs/xp/xpairportindex.h"
+#include "fs/common/magdecreader.h"
 
 #include <QDebug>
 #include <QRegularExpression>
@@ -1262,7 +1263,6 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":num_jetway", 0); // not available
     insertAirportQuery->bindValue(":scenery_local_path", context.localPath);
     insertAirportQuery->bindValue(":bgl_filename", context.fileName);
-    insertAirportQuery->bindValue(":mag_var", 0); // TODO magvar
     insertAirportQuery->bindValue(":altitude", airportAltitude);
 
     insertAirportQuery->bindValue(":has_jetfuel", 0); // filled later
@@ -1321,6 +1321,8 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
     insertAirportQuery->bindValue(":lonx", center.getLonX());
     insertAirportQuery->bindValue(":laty", center.getLatY());
+
+    insertAirportQuery->bindValue(":mag_var", context.magDecReader->getMagVar(center));
 
     insertAirportQuery->exec();
     insertAirportQuery->clearBoundValues();

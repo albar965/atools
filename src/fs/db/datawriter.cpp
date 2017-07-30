@@ -52,7 +52,9 @@
 #include "fs/db/ap/deleteairportwriter.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
-#include "fs/bgl/bglfile.h"
+#include "atools.h"
+#include "fs/common/magdecreader.h"
+#include "settings/settings.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -62,6 +64,7 @@ namespace fs {
 namespace db {
 
 using bgl::BglFile;
+using atools::fs::common::MagDecReader;
 using atools::sql::SqlDatabase;
 using scenery::SceneryArea;
 using atools::fs::bgl::section::SectionType;
@@ -107,6 +110,8 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
 
   runwayIndex = new RunwayIndex();
   airportIndex = new AirportIndex();
+
+  magDecReader = new MagDecReader();
 }
 
 DataWriter::~DataWriter()
@@ -174,6 +179,16 @@ void DataWriter::close()
   runwayIndex = nullptr;
   delete airportIndex;
   airportIndex = nullptr;
+  delete magDecReader;
+  magDecReader = nullptr;
+}
+
+float DataWriter::getMagVar(const geo::Pos& pos, float defaultValue) const
+{
+  if(magDecReader->isValid())
+    return magDecReader->getMagVar(pos);
+  else
+    return defaultValue;
 }
 
 void DataWriter::writeSceneryArea(const SceneryArea& area)
@@ -300,6 +315,20 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
     }
     db.commit();
   }
+}
+
+void DataWriter::readMagDeclBgl()
+{
+  QString file = atools::buildPathNoCase({options.getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"});
+
+  file = atools::settings::Settings::instance().getOverloadedPath(file);
+
+  magDecReader->readFromBgl(file);
+
+  if(magDecReader->isValid())
+    magDecReader->writeToTable(db);
+  else
+    qWarning() << "Error reading" << file;
 }
 
 void DataWriter::logResults()

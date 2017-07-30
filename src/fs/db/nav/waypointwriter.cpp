@@ -42,7 +42,7 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bind(":num_victor_airway", type->getNumVictorAirway());
   bind(":num_jet_airway", type->getNumJetAirway());
 
-  bind(":mag_var", type->getMagVar());
+  bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
 

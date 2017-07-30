@@ -30,7 +30,8 @@ class Pos;
 class LineString;
 }
 
-namespace dtm {
+namespace fs {
+namespace common {
 
 static Q_DECL_CONSTEXPR float INVALID = std::numeric_limits<float>::max();
 static Q_DECL_CONSTEXPR float OCEAN = -500.f;
@@ -92,7 +93,8 @@ private:
   QVector<QDataStream *> dataStreams;
 };
 
-} // namespace dtm
+} // namespace common
+} // namespace fs
 } // namespace atools
 
 #endif // ATOOLS_DTM_GLOBEREADER_H
