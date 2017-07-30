@@ -25,28 +25,56 @@ namespace atools {
 namespace fs {
 namespace xp {
 
-// Helper structs to avoid QString and speed up the hash maps
-struct IndexName
+// Helper classes to avoid QString and speed up the hash maps
+class IndexName
 {
+public:
   explicit IndexName(const QString& str);
   IndexName();
 
-  char name[4];
+private:
+  friend bool operator==(const IndexName& name1, const IndexName& name2);
+
+  friend uint qHash(const IndexName& name);
+
+  static constexpr int SIZE = 6;
+  char name[SIZE];
 };
 
-bool operator==(const IndexName& name1, const IndexName& name2);
-bool operator!=(const IndexName& name1, const IndexName& name2);
-
-struct IndexName2
+inline bool operator==(const IndexName& name1, const IndexName& name2)
 {
+  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
+}
+
+inline bool operator!=(const IndexName& name1, const IndexName& name2)
+{
+  return !operator==(name1, name2);
+}
+
+class IndexName2
+{
+public:
   explicit IndexName2(const QString& str1, const QString& str2);
   IndexName2();
 
-  char name[8];
+private:
+  friend bool operator==(const IndexName2& name1, const IndexName2& name2);
+
+  friend uint qHash(const IndexName2& name);
+
+  static constexpr int SIZE = 12;
+  char name[SIZE];
 };
 
-bool operator==(const IndexName2& name1, const IndexName2& name2);
-bool operator!=(const IndexName2& name1, const IndexName2& name2);
+inline bool operator==(const IndexName2& name1, const IndexName2& name2)
+{
+  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
+}
+
+inline bool operator!=(const IndexName2& name1, const IndexName2& name2)
+{
+  return !operator==(name1, name2);
+}
 
 /*
  * Filled when reading airports in the beginning of the compilation process.

@@ -25,76 +25,59 @@ static QLatin1String EN_ROUTE("ENRT");
 
 IndexName::IndexName(const QString& str)
 {
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < SIZE; i++)
   {
     if(i < str.size())
       name[i] = str.at(i).toLatin1();
     else
-      name[i] = '\0';
+      name[i] = ' ';
   }
 }
 
 IndexName::IndexName()
 {
-  for(int i = 0; i < 4; i++)
-    name[i] = '\0';
+  memset(name, ' ', SIZE);
 }
 
 uint qHash(const IndexName& name)
 {
-  return static_cast<uint>((name.name[3] << 3) ^ (name.name[2] << 2) ^ (name.name[1] << 1) ^ (name.name[0] << 0));
-}
+  int retval = 0;
+  for(int i = 0; i < IndexName::SIZE; i++)
+    retval ^= name.name[i] << ((i % 4) * 8);
 
-bool operator==(const IndexName& name1, const IndexName& name2)
-{
-  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
-}
-
-bool operator!=(const IndexName& name1, const IndexName& name2)
-{
-  return !operator==(name1, name2);
+  return static_cast<uint>(retval);
 }
 
 IndexName2::IndexName2(const QString& str1, const QString& str2)
 {
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < SIZE / 2; i++)
   {
     if(i < str1.size())
       name[i] = str1.at(i).toLatin1();
     else
-      name[i] = '\0';
+      name[i] = ' ';
   }
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < SIZE / 2; i++)
   {
     if(i < str2.size())
-      name[i + 4] = str2.at(i).toLatin1();
+      name[i + SIZE / 2] = str2.at(i).toLatin1();
     else
-      name[i + 4] = '\0';
+      name[i + SIZE / 2] = ' ';
   }
 }
 
 IndexName2::IndexName2()
 {
-  for(int i = 0; i < 8; i++)
-    name[i] = '\0';
+  memset(name, ' ', SIZE);
 }
 
 uint qHash(const IndexName2& name)
 {
-  return static_cast<uint>(
-    (name.name[3] << 3) ^ (name.name[2] << 2) ^ (name.name[1] << 1) ^ (name.name[0] << 0) ^
-    (name.name[7] << 3) ^ (name.name[6] << 2) ^ (name.name[5] << 1) ^ (name.name[4] << 0)
-    );
-}
+  int retval = 0;
+  for(int i = 0; i < IndexName2::SIZE; i++)
+    retval ^= name.name[i] << ((i % 4) * 8);
 
-bool operator==(const IndexName2& name1, const IndexName2& name2)
-{
-  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
-}
-
-bool operator!=(const IndexName2& name1, const IndexName2& name2)
-{
-  return !operator==(name1, name2);
+  return static_cast<uint>(retval);
 }
 
 // ==========================================================================
