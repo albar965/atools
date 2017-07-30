@@ -1,3 +1,8 @@
+Version 1.5.2.develop
+
+* Fixed missing encoding in PLN XML files since changing to Qt 5.9.
+* Now generating scenery names if missing from add-on.xml files.
+
 Version 1.5.1.develop
 
 * Fixed excessive logging of warnings in invalid airport records and waypoints.
