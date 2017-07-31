@@ -212,7 +212,8 @@ HEADERS += src/atools.h \
     src/fs/common/binarygeometry.h \
     src/fs/xp/xpcifpwriter.h \
     src/fs/common/globereader.h \
-    src/fs/common/magdecreader.h
+    src/fs/common/magdecreader.h \
+    src/fs/common/xpweatherreader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -391,7 +392,8 @@ SOURCES += src/atools.cpp \
     src/fs/common/binarygeometry.cpp \
     src/fs/xp/xpcifpwriter.cpp \
     src/fs/common/globereader.cpp \
-    src/fs/common/magdecreader.cpp
+    src/fs/common/magdecreader.cpp \
+    src/fs/common/xpweatherreader.cpp
 
 
 unix {

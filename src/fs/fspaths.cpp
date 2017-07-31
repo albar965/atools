@@ -41,7 +41,7 @@ const atools::fs::FsPaths::SimulatorType FsPaths::ALL_SIMULATOR_TYPES[NUM_SIMULA
 };
 
 const QString ALL_SIMULATOR_TYPE_NAMES[NUM_SIMULATOR_TYPES] =
-{"FSX", "FSXSE", "P3DV2", "P3DV3", "External", "External2", "P3DV4", "XP11"};
+{"FSX", "FSXSE", "P3DV2", "P3DV3", "EXT", "EXT2", "P3DV4", "XP11"};
 
 const QString ALL_SIMULATOR_NAMES[NUM_SIMULATOR_TYPES] =
 {
