@@ -127,6 +127,9 @@ public:
   /* Normalize this position to -180 < lonx < 180 and -90 < laty < 90 and return reference */
   atools::geo::Pos& normalize();
 
+  /* Return a normalized copy of this */
+  atools::geo::Pos normalized() const;
+
   /* Set altitude and return a copy */
   atools::geo::Pos alt(float alt) const;
 

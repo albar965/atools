@@ -321,7 +321,7 @@ void DataWriter::readMagDeclBgl()
 {
   QString fileScenery = atools::buildPathNoCase({options.getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"});
   QString fileSettings = atools::buildPath({atools::settings::Settings::instance().getPath(), "magdec.bgl"});
-  QString fileApp = atools::buildPath({QApplication::applicationDirPath(), "magdec.bgl"});
+  QString fileApp = atools::buildPath({QApplication::applicationDirPath(), "magdec", "magdec.bgl"});
 
   QString file;
   if(QFileInfo::exists(fileScenery) && QFileInfo(fileScenery).isFile())

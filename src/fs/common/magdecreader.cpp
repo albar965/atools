@@ -195,8 +195,9 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
   if(!isValid())
     throw new Exception("MagDecReader is invalid");
 
-  float lonX = pos.getLonX();
-  float latY = pos.getLatY();
+  Pos posNorm(pos.normalized());
+  float lonX = posNorm.getLonX();
+  float latY = posNorm.getLatY();
 
   int minLonX1 = static_cast<int>(std::floor(lonX)), maxLonX2 = static_cast<int>(std::ceil(lonX)),
       minLatY1 = static_cast<int>(std::floor(latY)), maxLatY2 = static_cast<int>(std::ceil(latY));
@@ -232,6 +233,10 @@ float MagDecReader::magvar(int offset) const
 
 int MagDecReader::offset(int lonX, int latY) const
 {
+  if(lonX == -180)
+    // Wrap around - other values should not appear on normalized coordinates
+    lonX = 180;
+
   if(lonX >= 0 && lonX <= 180)
     // For positive (East) longitudes (from 0 to 180):
     // East: Offset = (Long*362)+(Lat*2)+180

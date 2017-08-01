@@ -138,6 +138,12 @@ Pos& Pos::normalize()
   return *this;
 }
 
+Pos Pos::normalized() const
+{
+  Pos retval(*this);
+  return retval.normalize();
+}
+
 Pos Pos::alt(float alt) const
 {
   Pos retval(*this);
@@ -324,9 +330,9 @@ Pos Pos::endpointRhumb(float distanceMeter, float angleDeg) const
   double distanceRad = nmToRad(meterToNm(distanceMeter));
   double tc = toRadians(-angleDeg + 360.);
 
-  double lat = lat1 + distanceRad *cos(tc);
+  double lat = lat1 + distanceRad * cos(tc);
   if(std::abs(lat) > M_PI / 2.)
-    return atools::geo::Pos();   // distance too long - return invalid pos
+    return atools::geo::Pos(); // distance too long - return invalid pos
 
   double q, dphi;
   if(atools::almostEqual(lat, lat1))
@@ -442,9 +448,9 @@ Pos Pos::interpolate(const atools::geo::Pos& otherPos, float distanceMeter, floa
 
   double A = sin((1. - fraction) * distanceRad) / sin(distanceRad);
   double B = sin(fraction * distanceRad) / sin(distanceRad);
-  double x = A * cos(lat1) * cos(lon1) + B *cos(lat2) * cos(lon2);
-  double y = A * cos(lat1) * sin(lon1) + B *cos(lat2) * sin(lon2);
-  double z = A * sin(lat1) + B *sin(lat2);
+  double x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2);
+  double y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2);
+  double z = A * sin(lat1) + B * sin(lat2);
   double lat = atan2(z, sqrt(x * x + y * y));
   double lon = atan2(y, x);
   return atools::geo::Pos(lon, lat).toDeg().normalize();
@@ -591,7 +597,7 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   // initial/final bearings between points
   double initbrg = acos((sin(lat2) - sin(lat1) * cos(dst12)) / (sin(dst12) * cos(lat1)));
   if(std::isnan(initbrg))
-    initbrg = 0.;                     // protect against rounding
+    initbrg = 0.; // protect against rounding
   double finalbrg = acos((sin(lat1) - sin(lat2) * cos(dst12)) / (sin(dst12) * cos(lat2)));
 
   double crs12 = sin(lon2 - lon1) > 0. ? initbrg : 2. * M_PI - initbrg;
@@ -601,10 +607,10 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double a2 = remainder(crs21 - brg23 + M_PI, 2. * M_PI) - M_PI; // angle 1-2-3
 
   if(sin(a1) == 0. && sin(a2) == 0.)
-    return EMPTY_POS;                               // infinite intersections
+    return EMPTY_POS; // infinite intersections
 
   if(sin(a1) * sin(a2) < 0.)
-    return EMPTY_POS;                               // ambiguous intersection
+    return EMPTY_POS; // ambiguous intersection
 
   double a3 = acos(-cos(a1) * cos(a2) + sin(a1) * sin(a2) * cos(dst12));
   double dist13 = atan2(sin(dst12) * sin(a1) * sin(a2), cos(a2) + cos(a1) * cos(a3));
@@ -637,8 +643,8 @@ QDataStream& operator>>(QDataStream& in, Pos& obj)
 QDebug operator<<(QDebug out, const LineDistance& lineDist)
 {
   out << "LineDistance[distance" << lineDist.distance
-  << ", distanceFrom1" << lineDist.distanceFrom1
-  << ", distanceFrom2" << lineDist.distanceFrom2;
+      << ", distanceFrom1" << lineDist.distanceFrom1
+      << ", distanceFrom2" << lineDist.distanceFrom2;
 
   switch(lineDist.status)
   {

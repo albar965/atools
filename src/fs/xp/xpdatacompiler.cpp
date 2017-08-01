@@ -208,7 +208,7 @@ bool XpDataCompiler::compileUserFix()
 bool XpDataCompiler::compileMagDeclBgl()
 {
   // Look first in config dir and then in local dir
-  QString file = Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec.bgl"}));
+  QString file = Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec", "magdec.bgl"}));
 
   qInfo() << "Reading" << file;
 
