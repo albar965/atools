@@ -49,11 +49,11 @@ bool contains(const QString& name, const std::initializer_list<QString>& list);
 
 bool contains(const QString& name, const std::initializer_list<const char *>& list);
 
-/* Concatenates all paths parts with the QDir::separator() and fetches the correct cases */
-QString buildPathNoCase(const std::list<QString>& paths);
+/* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
+QString buildPathNoCase(const QStringList& paths);
 
 /* Simply concatenates all paths parts with the QDir::separator() */
-QString buildPath(const std::list<QString>& paths);
+QString buildPath(const QStringList& paths);
 
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>

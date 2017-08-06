@@ -62,7 +62,9 @@ public:
   explicit Pos(float longitudeX, float latitudeY, float alt = 0.f);
   explicit Pos(double longitudeX, double latitudeY, double alt = 0.);
 
-  /* @param str format like "N49° 26' 41.57",E9° 12' 5.49",+005500.00" */
+  /* @param str format like
+   * N49° 26' 41.57",E9° 12' 5.49",+005500.00 or
+   * N54* 16.82', W008* 35.95', +000011.00 */
   explicit Pos(const QString& str);
 
   atools::geo::Pos& operator=(const atools::geo::Pos& other);

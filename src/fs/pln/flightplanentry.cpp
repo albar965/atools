@@ -105,15 +105,15 @@ const QString& FlightplanEntry::waypointTypeToString(entry::WaypointType type)
 
 entry::WaypointType FlightplanEntry::stringToWaypointType(const QString& str)
 {
-  if(str == "Airport")
+  if(str.startsWith("A"))
     return entry::AIRPORT;
-  else if(str == "Intersection")
+  else if(str.startsWith("I"))
     return entry::INTERSECTION;
-  else if(str == "VOR")
+  else if(str.startsWith("V"))
     return entry::VOR;
-  else if(str == "NDB")
+  else if(str.startsWith("N"))
     return entry::NDB;
-  else if(str == "User")
+  else if(str.startsWith("U"))
     return entry::USER;
 
   return entry::UNKNOWN;

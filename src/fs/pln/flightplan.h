@@ -31,6 +31,15 @@ class LineString;
 namespace fs {
 namespace pln {
 
+enum SourceFile
+{
+  NONE,
+  FSX_P3D, // FSX or P3D XML PLN flight plan
+  FS9, // FS9 ini style PLN flight plan
+  FMS, // X-Plane FMS file
+  FLP // Aerosoft airbus or FlightFactor Boeing
+};
+
 enum FlightplanType
 {
   IFR,
@@ -42,8 +51,47 @@ enum RouteType
   LOW_ALTITUDE,
   HIGH_ALTITUDE,
   VOR, /* Used for radio navaid routing (VOR and NDB) */
-  DIRECT /* Direct connection without waypoints */
+  DIRECT, /* Direct connection without waypoints */
+  UNKNOWN /* Has to be changed later when resolving the ident to database objects */
 };
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+
+/* Common key that are used int flight plan properties that are not supported in PLN.
+ * Will be save inside a XML comment in pln files. */
+/* Keys that describe procedures*/
+const QLatin1Literal SIDAPPR("sidappr");
+const QLatin1Literal SIDAPPRRW("sidapprrw");
+const QLatin1Literal SIDAPPRDISTANCE("sidapprdistance");
+const QLatin1Literal SIDAPPRSIZE("sidapprsize");
+const QLatin1Literal SIDTRANS("sidtrans");
+const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
+const QLatin1Literal SIDTRANSSIZE("sidtranssize");
+const QLatin1Literal STAR("star");
+const QLatin1Literal STARDISTANCE("stardistance");
+const QLatin1Literal STARSIZE("starsize");
+const QLatin1Literal STARTRANS("startrans");
+const QLatin1Literal STARTRANSDISTANCE("startransdistance");
+const QLatin1Literal STARTRANSSIZE("startranssize");
+const QLatin1Literal TRANSITION("transition");
+const QLatin1Literal TRANSITIONTYPE("transitiontype");
+const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
+const QLatin1Literal TRANSITIONSIZE("transitionsize");
+const QLatin1Literal APPROACH("approach");
+const QLatin1Literal APPROACHTYPE("approachtype");
+const QLatin1Literal APPROACHRW("approachrw");
+const QLatin1Literal APPROACHSUFFIX("approachsuffix");
+const QLatin1Literal APPROACHDISTANCE("approachdistance");
+const QLatin1Literal APPROACHSIZE("approachsize");
+
+/* Speed as is not supported by PLN format */
+const QLatin1Literal SPEED("speed");
+
+/* Free parking spot name as not supported by PLN */
+const QLatin1Literal PARKING("parking");
+
+#pragma GCC diagnostic pop
 
 /*
  * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
@@ -60,7 +108,9 @@ public:
   atools::fs::pln::Flightplan& operator=(const atools::fs::pln::Flightplan& other);
 
   /*
-   * Load a flightplan. An exception is thrown if the XML files is not valid
+   * Load a flightplan. An exception is thrown if the file is not valid. The type will be detected automatically
+   * by the content of the first few lines and supports FSX/P3D XML, FS9 ini-style, FLP and FMS files.
+   *
    * @param file filepath of a valid flight plan file
    */
   void load(const QString& file);
@@ -78,7 +128,7 @@ public:
   void saveRte(const QString& file);
 
   /* Aerosoft Airbus FLP format */
-  void saveFlp(const QString& file);
+  void saveFlp(const QString& file, bool saveProcedures);
 
   /* X-Plane FMS format */
   void saveFms(const QString& file);
@@ -273,10 +323,6 @@ public:
    */
   void reverse();
 
-  /* Values for FSX */
-  const int APPVERSION_BUILD = 61472;
-  const int APPVERSION_MAJOR = 10;
-
   const QHash<QString, QString>& getProperties() const
   {
     return properties;
@@ -292,28 +338,57 @@ public:
     properties = value;
   }
 
+  atools::fs::pln::SourceFile getSource() const
+  {
+    return source;
+  }
+
+  void setSource(const atools::fs::pln::SourceFile& value)
+  {
+    source = value;
+  }
+
 private:
+  void loadFsx(const QString& file);
+  void loadFs9(const QString& file);
+  void loadFlp(const QString& file);
+  void loadFms(const QString& file);
+
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
   static QString routeTypeToString(atools::fs::pln::RouteType type);
   static atools::fs::pln::RouteType stringToRouteType(const QString& str);
+  RouteType stringToRouteTypeFs9(const QString& str);
+
   void readUntilElement(QXmlStreamReader& reader, const QString& name);
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
   QString programInfo();
 
+  /* Get the first four lines of a file to check type */
+  QStringList probeFile(const QString& file);
+
+  /* Copy departure and destination from first and last entry */
+  void adjustDepartureAndDestination();
+
+  /* Values for FSX */
+  const QString APPVERSION_BUILD = QString("61472");
+  const QString APPVERSION_MAJOR = QString("10");
+
+  atools::fs::pln::SourceFile source = NONE;
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
 
   QList<atools::fs::pln::FlightplanEntry> entries;
 
-  int cruisingAlt, appVersionMajor, appVersionBuild;
+  int cruisingAlt;
   QString filename, title, departureIdent, destinationIdent, description,
-          departureParkingName, departureAiportName, destinationAiportName;
+          departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   atools::geo::Pos departurePos, destinationPos;
 
   QHash<QString, QString> properties;
+
 };
 
 } // namespace pln

@@ -140,7 +140,7 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
   return false;
 }
 
-QString buildPathNoCase(const std::list<QString>& paths)
+QString buildPathNoCase(const QStringList& paths)
 {
 
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
@@ -154,25 +154,54 @@ QString buildPathNoCase(const std::list<QString>& paths)
   for(const QString& path : paths)
   {
     if(i == 0)
+      // First path element
       dir = path;
     else
     {
+      // Get entries that match exacly the next path element
       QStringList entries = dir.entryList({path});
+
+      if(entries.isEmpty())
+      {
+        // Nothing found - do an expensive manual compare
+        bool found = false;
+        entries = dir.entryList();
+
+        for(const QString& str: entries)
+        {
+          if(str.compare(path, Qt::CaseInsensitive) == 0)
+          {
+            // Found something - use it as the single entry
+            entries.clear();
+            entries.append(str);
+            found = true;
+            break;
+          }
+        }
+
+        if(!found)
+          // Nothing found when searching case insensitive
+          entries.clear();
+      }
+
       if(!entries.isEmpty())
       {
         if(QFileInfo(dir.path() + QDir::separator() + entries.first()).isDir())
         {
+          // Directory exists - change into it
           if(!dir.cd(entries.first()))
             break;
         }
         else
         {
+          // Is a file - add by name simply
           file = entries.first();
           break;
         }
       }
       else
-        return QString();
+        // Nothing found - add potentially wrong case name
+        dir = dir.path() + QDir::separator() + path;
     }
     i++;
   }
@@ -185,7 +214,7 @@ QString buildPathNoCase(const std::list<QString>& paths)
 #endif
 }
 
-QString buildPath(const std::list<QString>& paths)
+QString buildPath(const QStringList& paths)
 {
   QString retval;
 

@@ -21,15 +21,21 @@
 #include "geo/calculations.h"
 #include "atools.h"
 #include "geo/linestring.h"
+#include "fs/util/coordinates.h"
 
 #include <QDataStream>
 #include <QDateTime>
 #include <QFile>
+#include <QFileInfo>
+#include <QRegularExpression>
 #include <QXmlStreamReader>
 
 namespace atools {
 namespace fs {
 namespace pln {
+
+static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
+static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);
 
 Flightplan::Flightplan()
 {
@@ -66,12 +72,397 @@ Flightplan& Flightplan::operator=(const Flightplan& other)
   destinationPos = other.destinationPos;
   entries = other.entries;
   properties = other.properties;
+  source = other.source;
   return *this;
 }
 
 void Flightplan::load(const QString& file)
 {
+  QStringList lines = probeFile(file);
+
+  if(lines.isEmpty())
+    throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
+
+  if(!lines.isEmpty() && lines.first().startsWith("[corte]"))
+    // FLP: [CoRte]
+    loadFlp(file);
+  else if(lines.size() >= 2 && lines.at(0).startsWith("<?xml version") &&
+          lines.at(1).startsWith("<simbase.document"))
+    // FSX PLN <?xml version
+    loadFsx(file);
+  else if(lines.size() >= 2 && lines.at(0).startsWith("[flightplan]") &&
+          lines.at(1).startsWith("appversion"))
+    loadFs9(file);
+  else if(lines.size() >= 4 &&
+          (lines.at(0) == "i" || lines.at(0) == "a") &&
+          lines.at(1).startsWith("3 version") &&
+          lines.at(2).at(0).isDigit() && lines.at(3).at(0).isDigit())
+    loadFms(file);
+  else
+    throw Exception(tr("Cannot open flight plan file \"%1\". Not a supported flight plan format. "
+                       "Only PLN (FSX XML and FS9 INI), FMS and FLP allowed.").arg(file));
+
+}
+
+void Flightplan::loadFlp(const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // [CoRte]
+  // ArptDep=EDDF
+  // ArptArr=LOWW
+  // RwyDep=EDDF07C
+  // RwyArr=LOWW16
+  // RwyArrFinal=FI16
+  // SID=SULU7E
+  // STAR=VENE2W
+  // APPR_Trans=NER6L
+  // DctWpt1=BOMBI
+  // DctWpt1Coordinates=50.056667,8.800278
+  // DctWpt2=ESATI
+  // DctWpt14Coordinates=48.802502,13.651111
+  // DctWpt15=DEGAB
+  // DctWpt15Coordinates=48.705685,13.931495
+
   filename = file;
+
+  QFile flpFile(filename);
+
+  if(flpFile.open(QIODevice::ReadOnly))
+  {
+    FlightplanEntry entry, departure, destination;
+    int wptNum = -1;
+
+    QTextStream stream(&flpFile);
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().simplified();
+      if(!line.isEmpty())
+      {
+        QString key = line.section('=', 0, 0).toLower().trimmed();
+        QString value = line.section('=', 1, 1).trimmed();
+
+        if(key == "arptdep")
+        {
+          departureIdent = value;
+          departure.setIcaoIdent(value);
+          departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
+        }
+        else if(key == "arptarr")
+        {
+          destinationIdent = value;
+          destination.setIcaoIdent(value);
+          destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
+        }
+        else if(key.startsWith("dctwpt"))
+        {
+          QRegularExpressionMatch localMatch = FLP_DCT_WPT.match(key);
+          int num = localMatch.captured(1).toInt();
+          QString coords = localMatch.captured(2);
+
+          if(num > wptNum)
+          {
+            // Number has changed - add new one
+            if(wptNum != -1)
+            {
+              // not the first iteration
+              entries.append(entry);
+              entry = FlightplanEntry();
+            }
+            wptNum = num;
+          }
+
+          if(coords.isEmpty())
+          {
+            entry.setIcaoIdent(value);
+            entry.setWaypointId(value);
+          }
+          else if(coords.toLower() == "coordinates")
+            entry.setPosition(atools::geo::Pos(value.section(',', 1, 1).toFloat(),
+                                               value.section(',', 0, 0).toFloat()));
+        }
+        else if(key.startsWith("airway"))
+        {
+          QRegularExpressionMatch match = FLP_DCT_AWY.match(key);
+          int num = match.captured(1).toInt();
+          QString fromTo = match.captured(2);
+
+          if(num > wptNum)
+          {
+            if(wptNum != -1)
+            {
+              entries.append(entry);
+              entry = FlightplanEntry();
+            }
+            wptNum = num;
+          }
+
+          if(fromTo.isEmpty())
+            entry.setAirway(value);
+          else if(fromTo.toLower() == "from")
+          {
+            if(entries.isEmpty() || entries.last().getIcaoIdent() != value)
+            {
+              FlightplanEntry from;
+              from.setIcaoIdent(value);
+              from.setWaypointId(value);
+              entries.append(from);
+            }
+          }
+          else if(fromTo.toLower() == "to")
+          {
+            entry.setIcaoIdent(value);
+            entry.setWaypointId(value);
+          }
+        }
+        else if(!value.isEmpty())
+        {
+          if(key == "rwydep")
+            properties.insert(SIDAPPRRW, value.mid(departureIdent.size()));
+          else if(key == "sid")
+            properties.insert(SIDAPPR, value);
+          else if(key == "sid_trans")
+            properties.insert(SIDTRANS, value);
+          else if(key == STAR)
+            properties.insert(STAR, value);
+          else if(key == "star_trans")
+            properties.insert(STARTRANS, value);
+          else if(key == "rwyarr")
+            properties.insert(APPROACHRW, value.mid(destinationIdent.size()));
+          else if(key == "rwyarrfinal")
+            properties.insert(APPROACH, value);
+          else if(key == "appr_trans")
+            properties.insert(TRANSITION, value);
+        }
+      }
+    }
+    entries.append(entry);
+    entries.prepend(departure);
+    entries.append(destination);
+
+    flpFile.close();
+    flightplanType = IFR;
+    routeType = UNKNOWN; // Determine type when resolving navaids from the database
+    cruisingAlt = 0.f; // Use either GUI value or calculate from airways
+
+    source = FLP;
+    adjustDepartureAndDestination();
+  }
+}
+
+void Flightplan::loadFms(const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // I
+  // 3 version
+  // 1
+  // 4
+  // 1 EDDM 0.000000 48.364822 11.794361
+  // 2 GL 1000 57.083820 9.680093
+  // 3 KFK 2000 38.803889 30.546944
+  // 11 DETKO 0.600000 28.097222 49.525000
+  // 28 +13.691_+100.760 0.000000 13.691230 100.760811
+
+  filename = file;
+
+  QFile fmsFile(filename);
+
+  if(fmsFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&fmsFile);
+
+    stream.readLine(); // I
+    stream.readLine(); // 3 version
+
+    float maxAlt = std::numeric_limits<float>::min();
+
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().simplified();
+      if(line.size() > 10)
+      {
+        if(line.startsWith("0 ----"))
+          break;
+
+        QStringList list = line.split(" ");
+
+        if(list.size() >= 5)
+        {
+          float altitude = list.at(2).toFloat();
+          atools::geo::Pos position(list.at(4).toFloat(), list.at(3).toFloat(), altitude);
+          if(!position.isValid() || position.isNull())
+            break;
+
+          FlightplanEntry entry;
+          const QString& ident = list.at(1);
+
+          maxAlt = std::max(maxAlt, altitude);
+
+          entry.setPosition(position);
+
+          switch(list.at(0).toInt())
+          {
+            case 1: // - Airport ICAO
+              entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
+              entry.setIcaoIdent(ident);
+              entry.setWaypointId(ident);
+              break;
+
+            case 2: // - NDB
+              entry.setWaypointType(atools::fs::pln::entry::NDB);
+              entry.setIcaoIdent(ident);
+              entry.setWaypointId(ident);
+              break;
+
+            case 3: // - VOR
+              entry.setWaypointType(atools::fs::pln::entry::VOR);
+              entry.setIcaoIdent(ident);
+              entry.setWaypointId(ident);
+              break;
+
+            case 11: // - Fix
+              entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
+              entry.setIcaoIdent(ident);
+              entry.setWaypointId(ident);
+              break;
+
+            case 13: // - Lat/Lon Position
+            case 28: // - Lat/Lon Position
+              entry.setWaypointType(atools::fs::pln::entry::USER);
+              atools::geo::Pos pos(ident.section('_', 1, 1).toFloat(),
+                                   ident.section('_', 0, 0).toFloat(), altitude);
+              entry.setPosition(pos);
+              QString userIdent = util::toDegMinFormat(pos);
+              userIdent.truncate(10); // Keep short for FSX limitations
+              entry.setIcaoIdent(userIdent);
+              entry.setWaypointId(userIdent);
+              break;
+          }
+
+          entries.append(entry);
+        }
+        else
+          throw Exception(tr("Invalid FMS file. Number of sections is not 5: %1").arg(fmsFile.fileName()));
+      }
+    }
+    fmsFile.close();
+
+    flightplanType = IFR;
+    routeType = DIRECT;
+    cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
+    adjustDepartureAndDestination();
+    source = FMS;
+  }
+}
+
+void Flightplan::loadFs9(const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+  // [flightplan]
+  // AppVersion=9.1.40901
+  // title=EGPB to EISG
+  // description=EGPB, EISG
+  // type=IFR
+  // routetype=1
+  // cruising_altitude=22000
+  // departure_id=EGPB, N59* 52.88', W001* 17.63', +000020.00
+  // departure_position=1
+  // destination_id=EISG, N54* 16.82', W008* 35.95', +000011.00
+  // departure_name=SUMBURGH
+  // destination_name=SLIGO
+  // alternate_name=
+  // waypoint.0=, EGPB, , EGPB, A, N59* 52.88', W001* 17.63', +000020.00,
+  // waypoint.1=KK, WIK, , WIK, V, N58* 27.53', W003* 06.02', +000000.00,J555
+  // waypoint.2=KK, ADN, , ADN, V, N57* 18.63', W002* 16.03', +000000.00,J555
+  // ...
+  // waypoint.11=KK, RUBEX, , RUBEX, I, N55* 19.20', W006* 56.12', +000000.00,AXXX
+  // waypoint.12=, EISG, , EISG, A, N54* 16.82', W008* 35.95', +000011.00,
+
+  filename = file;
+
+  QFile plnFile(filename);
+
+  if(plnFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&plnFile);
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().simplified();
+      if(!line.isEmpty() && !line.startsWith("[flightplan]"))
+      {
+        QString key = line.section('=', 0, 0).toLower().trimmed();
+        QString value = line.section('=', 1, 1).trimmed();
+
+        if(key == "appversion")
+        {
+          appVersionMajor = value.section('.', 0, 1).trimmed();
+          appVersionBuild = value.section('.', 2, 2).trimmed();
+        }
+        else if(key == "title")
+          title = value;
+        else if(key == "description")
+          description = value;
+        else if(key == "type")
+          // type=IFR
+          flightplanType = stringFlightplanType(value);
+        else if(key == "routetype")
+          // routetype=1
+          routeType = stringToRouteTypeFs9(value);
+        else if(key == "cruising_altitude")
+          cruisingAlt = value.toInt();
+        else if(key == "departure_id")
+        {
+          // departure_id=EGPB, N59* 52.88', W001* 17.63', +000020.00
+          departureIdent = value.section(',', 0, 0).trimmed();
+          departurePos = atools::geo::Pos(value.section(',', 1, 3).trimmed());
+        }
+        else if(key == "departure_position")
+          // departure_position=1
+          departureParkingName = value;
+        else if(key == "departure_name")
+          // departure_name=SUMBURGH
+          departureAiportName = value;
+        else if(key == "destination_id")
+        {
+          // destination_id=EISG, N54* 16.82', W008* 35.95', +000011.00
+          destinationIdent = value.section(',', 0, 0).trimmed();
+          destinationPos = atools::geo::Pos(value.section(',', 1, 3).trimmed());
+        }
+        else if(key == "destination_name")
+          // destination_name=SLIGO
+          destinationAiportName = value;
+        else if(key.startsWith("waypoint."))
+        {
+          // waypoint.0=, EGPB, , EGPB, A, N59* 52.88', W001* 17.63', +000020.00,
+          // waypoint.1=KK, WIK, , WIK, V, N58* 27.53', W003* 06.02', +000000.00,
+          // K1, HERBS, , HERBS, I, N44° 25.12', W121° 16.86', +000000.00, V25
+          FlightplanEntry entry;
+
+          entry.setIcaoRegion(value.section(',', 0, 0).trimmed());
+          entry.setIcaoIdent(value.section(',', 1, 1).trimmed());
+          // ignore airport name at 2
+          entry.setWaypointId(value.section(',', 3, 3).trimmed());
+          entry.setWaypointType(value.section(',', 4, 4).trimmed());
+          entry.setPosition(atools::geo::Pos(value.section(',', 5, 7).trimmed()));
+          entry.setAirway(value.section(',', 8, 8).trimmed());
+
+          entries.append(entry);
+        }
+        // else if(key == "alternate_name") ignore
+      }
+    }
+    plnFile.close();
+    source = FS9;
+  }
+}
+
+void Flightplan::loadFsx(const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  filename = file;
+
   QFile xmlFile(filename);
 
   if(xmlFile.open(QIODevice::ReadOnly))
@@ -147,9 +538,12 @@ void Flightplan::load(const QString& file)
       else
         reader.skipCurrentElement();
     }
+
+    xmlFile.close();
+    source = FSX_P3D;
   }
   else
-    throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
 void Flightplan::save(const QString& file, bool clean)
@@ -208,8 +602,8 @@ void Flightplan::save(const QString& file, bool clean)
     writer.writeTextElement("DestinationName", destinationAiportName);
 
     writer.writeStartElement("AppVersion");
-    writer.writeTextElement("AppVersionMajor", QString().number(appVersionMajor));
-    writer.writeTextElement("AppVersionBuild", QString().number(appVersionBuild));
+    writer.writeTextElement("AppVersionMajor", APPVERSION_MAJOR); // Always use fsx values
+    writer.writeTextElement("AppVersionBuild", APPVERSION_BUILD);
     writer.writeEndElement(); // AppVersion
 
     for(const FlightplanEntry& entry : entries)
@@ -269,87 +663,114 @@ void Flightplan::save(const QString& file, bool clean)
 
     QByteArray utf8 = xmlString.toUtf8();
     xmlFile.write(utf8.data(), utf8.size());
+    xmlFile.close();
   }
   else
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
-void Flightplan::saveFlp(const QString& file)
+void Flightplan::saveFlp(const QString& file, bool saveProcedures)
 {
   filename = file;
   QFile flpFile(filename);
 
   if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QString flpString;
-    QTextStream stream(&flpString);
+    QTextStream stream(&flpFile);
 
     stream << "[CoRte]" << endl;
     stream << "ArptDep=" << departureIdent << endl;
     stream << "ArptArr=" << destinationIdent << endl;
-    stream << "RwyDep=" << endl;
-    stream << "RwyArr=" << endl;
-    stream << "RwyArrFinal=" << endl;
-    stream << "SID=" << endl;
-    stream << "STAR=" << endl;
-    stream << "APPR_Trans=" << endl;
 
-    // Check if all legs have an airway assignment
-    bool hasMissingAirways = false;
-    for(int i = 2; i < entries.size() - 1; i++)
+    if(saveProcedures)
     {
-      if(entries.at(i).isNoSave())
-        // Do not save procedure points
-        continue;
-      hasMissingAirways |= entries.at(i).getAirway().isEmpty();
-    }
+      // Departure - SID
+      if(!properties.value(SIDAPPRRW).isEmpty())
+        stream << "RwyDep=" << departureIdent << properties.value(SIDAPPRRW) << endl;
+      else
+        stream << "RwyDep=" << endl;
 
-    if(hasMissingAirways)
-    {
-      // Save with direct waypoints and coordinates
-      int index = 1;
-      for(int i = 1; i < entries.size() - 1; i++)
-      {
-        const FlightplanEntry& entry = entries.at(i);
-        if(entry.isNoSave())
-          // Do not save stuff like procedure points
-          continue;
+      if(!properties.value(SIDAPPR).isEmpty())
+        stream << "SID=" << properties.value(SIDAPPR) << endl;
+      else
+        stream << "SID=" << endl;
 
-        stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
+      if(!properties.value(SIDTRANS).isEmpty())
+        stream << "SID_Trans=" << properties.value(SIDTRANS) << endl;
+      else
+        stream << "SID_Trans=" << endl;
 
-        QString coords = QString("%1,%2").
-                         arg(entry.getPosition().getLatY(), 0, 'f', 6).
-                         arg(entry.getPosition().getLonX(), 0, 'f', 6);
+      // Arrival STAR
+      if(!properties.value(STAR).isEmpty())
+        stream << "STAR=" << properties.value(STAR) << endl;
+      else
+        stream << "STAR=" << endl;
 
-        stream << "DctWpt" << index << "Coordinates=" << coords << endl;
-        index++;
-      }
+      if(!properties.value(STARTRANS).isEmpty())
+        stream << "STAR_Trans=" << properties.value(STARTRANS) << endl;
+      else
+        stream << "STAR_Trans=" << endl;
+
+      // Arrival approach and transition
+      if(!properties.value(APPROACHRW).isEmpty())
+        stream << "RwyArr=" << destinationIdent << properties.value(APPROACHRW) << endl;
+      else
+        stream << "RwyArr=" << endl;
+
+      if(!properties.value(APPROACH).isEmpty())
+        stream << "RwyArrFinal=" << properties.value(APPROACH) << endl;
+      else
+        stream << "RwyArrFinal=" << endl;
+
+      if(!properties.value(TRANSITION).isEmpty())
+        stream << "APPR_Trans=" << properties.value(TRANSITION) << endl;
+      else
+        stream << "APPR_Trans=" << endl;
     }
     else
     {
-      // Save with airways
-      int index = 1;
-      for(int i = 1; i < entries.size() - 2; i++)
-      {
-        const FlightplanEntry& entry = entries.at(i);
-        if(entry.isNoSave())
-          // Do not save stuff like procedure points
-          continue;
-
-        stream << "Airway" << index << "=" << entries.at(i + 1).getAirway() << endl;
-        stream << "Airway" << index << "FROM=" << entry.getWaypointId() << endl;
-        stream << "Airway" << index << "TO=" << entries.at(i + 1).getWaypointId() << endl;
-        index++;
-      }
+      stream << "RwyDep=" << endl;
+      stream << "RwyArr=" << endl;
+      stream << "RwyArrFinal=" << endl;
+      stream << "SID=" << endl;
+      stream << "STAR=" << endl;
+      stream << "APPR_Trans=" << endl;
     }
 
-#ifndef Q_OS_WIN32
-    // Convert EOL always to Windows (0x0a -> 0x0d0a)
-    flpString.replace("\n", "\r\n");
-#endif
+    QString lastAirwayTo;
+    int index = 1;
+    for(int i = 1; i < entries.size() - 1; i++)
+    {
+      const FlightplanEntry& entry = entries.at(i);
+      const FlightplanEntry& last = entries.at(i - 1);
+      const FlightplanEntry& next = entries.at(i + 1);
+      if(entry.isNoSave())
+        // Do not save stuff like procedure points
+        continue;
 
-    QByteArray utf8 = flpString.toUtf8();
-    flpFile.write(utf8.data(), utf8.size());
+      QString coords = QString("%1,%2").
+                       arg(entry.getPosition().getLatY(), 0, 'f', 6).
+                       arg(entry.getPosition().getLonX(), 0, 'f', 6);
+
+      if(!next.getAirway().isEmpty())
+      {
+        stream << "Airway" << index << "=" << next.getAirway() << endl;
+        stream << "Airway" << index << "FROM=" << entry.getWaypointId() << endl;
+        stream << "Airway" << index << "TO=" << next.getWaypointId() << endl;
+        lastAirwayTo = next.getWaypointId();
+        index++;
+      }
+      else if(entry.getWaypointId() != lastAirwayTo)
+      {
+        stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
+        stream << "DctWpt" << index << "Coordinates=" << coords << endl;
+        lastAirwayTo.clear();
+        index++;
+      }
+
+    }
+
+    flpFile.close();
   }
   else
     throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
@@ -359,11 +780,11 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
 {
   filename = file;
 
-  QFile xmlFile(filename);
+  QFile gpxFile(filename);
 
-  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QXmlStreamWriter writer(&xmlFile);
+    QXmlStreamWriter writer(&gpxFile);
     writer.setCodec("UTF-8");
     writer.setAutoFormatting(true);
     writer.setAutoFormattingIndent(2);
@@ -467,9 +888,10 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
     writer.writeEndElement(); // gpx
     writer.writeEndDocument();
 
+    gpxFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(gpxFile.errorString()));
 }
 
 void Flightplan::saveFms(const QString& file)
@@ -548,6 +970,8 @@ void Flightplan::saveFms(const QString& file)
 
       i++;
     }
+
+    fmsFile.close();
   }
   else
     throw Exception(tr("Cannot open FMS file %1. Reason: %2").arg(file).arg(fmsFile.errorString()));
@@ -641,6 +1065,7 @@ void Flightplan::saveRte(const QString& file)
 
     QByteArray utf8 = rteString.toUtf8();
     rteFile.write(utf8.data(), utf8.size());
+    rteFile.close();
   }
   else
     throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(rteFile.errorString()));
@@ -808,6 +1233,7 @@ QString Flightplan::routeTypeToString(RouteType type)
     case atools::fs::pln::VOR:
       return "VOR";
 
+    case atools::fs::pln::UNKNOWN:
     case atools::fs::pln::DIRECT:
       return "Direct"; // Not an actual value in the XML
   }
@@ -826,6 +1252,26 @@ RouteType Flightplan::stringToRouteType(const QString& str)
   return DIRECT;
 }
 
+RouteType Flightplan::stringToRouteTypeFs9(const QString& str)
+{
+  int routetype = str.toInt();
+  switch(routetype)
+  {
+    case 0:
+      return DIRECT;
+
+    case 1:
+      return VOR;
+
+    case 2:
+      return LOW_ALTITUDE;
+
+    case 3:
+      return HIGH_ALTITUDE;
+  }
+  return DIRECT;
+}
+
 QString Flightplan::programInfo()
 {
   return tr("Created by %1 Version %2 (revision %3) on %4").
@@ -834,6 +1280,57 @@ QString Flightplan::programInfo()
          arg(atools::gitRevision()).
          arg(QLocale().toString(QDateTime::currentDateTime())).
          replace("-", " ");
+}
+
+QStringList Flightplan::probeFile(const QString& file)
+{
+  QFile testFile(file);
+
+  QStringList lines;
+  if(testFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&testFile);
+    int numLines = 0;
+    while(!stream.atEnd() && numLines < 4)
+    {
+      QString line = stream.readLine().trimmed();
+      if(!line.isEmpty())
+      {
+        lines.append(line.toLower().simplified());
+        numLines++;
+      }
+    }
+    testFile.close();
+  }
+  else
+    throw Exception("Error reading \"" + filename + "\": " + testFile.errorString());
+
+  return lines;
+}
+
+void Flightplan::adjustDepartureAndDestination()
+{
+  if(!entries.isEmpty())
+  {
+    if(departureIdent.isEmpty())
+      departureIdent = entries.first().getIcaoIdent();
+    if(!departurePos.isValid())
+      departurePos = entries.first().getPosition();
+
+    if(destinationIdent.isEmpty())
+      destinationIdent = entries.last().getIcaoIdent();
+
+    if(!destinationPos.isValid())
+      destinationPos = entries.last().getPosition();
+
+    if(title.isEmpty())
+      title = QString("%1 to %2").arg(departureIdent).arg(destinationIdent);
+
+    if(description.isEmpty())
+      description = QString("%1, %2").arg(departureIdent).arg(destinationIdent);
+    // These remain empty
+    // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
+  }
 }
 
 } // namespace pln

@@ -58,6 +58,7 @@ public:
 
   atools::fs::pln::entry::WaypointType getWaypointType() const;
 
+  /* Can use FSX or FS9 types */
   void setWaypointType(const QString& value);
 
   void setWaypointType(const atools::fs::pln::entry::WaypointType& value)
@@ -152,7 +153,7 @@ private:
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
 
-  atools::fs::pln::entry::WaypointType waypointType;
+  atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
   QString waypointId, airway, icaoRegion, icaoIdent, name, parking;
   atools::geo::Pos position;
   bool noSave = false;

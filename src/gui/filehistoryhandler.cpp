@@ -111,6 +111,11 @@ void FileHistoryHandler::updateMenu()
     else if(i == 10)
       fname = "&0 " + fname;
 
+#ifdef Q_OS_UNIX
+    // Single underscores are removed by the menu action
+    fname.replace("_", " ");
+#endif
+
     QAction *fileAction = recentMenu->addAction(fname);
     fileAction->setToolTip(filepath);
     fileAction->setStatusTip(filepath);

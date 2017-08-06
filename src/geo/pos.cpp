@@ -37,9 +37,17 @@ const static QString HUMAN_FORMAT("%6° %7' %8\"%5, %2° %3' %4\"%1");
 const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
 
 // This is the format that is used in FSX flight plans
+// N49° 26' 41.57",E9° 12' 5.49",+005500.00
 const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
+  "([+-]?)\\s*([0-9\\.]+)");
+
+// Format as used in FS9 flight plans
+// N54* 16.82', W008* 35.95', +000011.00
+const static QRegularExpression LONG_FORMAT_OLD_REGEXP(
+  "([ns])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'\\s*,\\s*"
+  "([ew])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'\\s*,\\s*"
   "([+-]?)\\s*([0-9\\.]+)");
 
 using atools::absInt;
@@ -105,7 +113,29 @@ Pos::Pos(const QString& str)
     lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "w" ? -1.f : 1.f);
   }
   else
-    throw Exception("Invalid lat/long format \"" + str + "\"");
+  {
+    QRegularExpressionMatch matchOld = LONG_FORMAT_OLD_REGEXP.match(str.trimmed().toLower());
+    if(matchOld.hasMatch())
+    {
+      QString ns = matchOld.captured(1);
+      int latYDeg = matchOld.captured(2).toInt();
+      float latYMin = matchOld.captured(3).toFloat();
+
+      QString ew = matchOld.captured(4);
+      int lonXDeg = matchOld.captured(5).toInt();
+      float lonXMin = matchOld.captured(6).toFloat();
+
+      QString altSign = matchOld.captured(7);
+      QString altNum = matchOld.captured(8);
+
+      altitude = QString(altSign + altNum).toFloat();
+
+      latY = (latYDeg + latYMin / 60.f) * (ns == "s" ? -1.f : 1.f);
+      lonX = (lonXDeg + lonXMin / 60.f) * (ew == "w" ? -1.f : 1.f);
+    }
+    else
+      throw Exception("Invalid lat/long format \"" + str + "\"");
+  }
 }
 
 Pos& Pos::operator=(const Pos& other)
