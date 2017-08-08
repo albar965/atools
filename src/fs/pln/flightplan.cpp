@@ -72,7 +72,7 @@ Flightplan& Flightplan::operator=(const Flightplan& other)
   destinationPos = other.destinationPos;
   entries = other.entries;
   properties = other.properties;
-  source = other.source;
+  fileFormat = other.fileFormat;
   return *this;
 }
 
@@ -245,7 +245,7 @@ void Flightplan::loadFlp(const QString& file)
     routeType = UNKNOWN; // Determine type when resolving navaids from the database
     cruisingAlt = 0.f; // Use either GUI value or calculate from airways
 
-    source = FLP;
+    fileFormat = FLP;
     adjustDepartureAndDestination();
   }
 }
@@ -352,7 +352,7 @@ void Flightplan::loadFms(const QString& file)
     routeType = DIRECT;
     cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
     adjustDepartureAndDestination();
-    source = FMS;
+    fileFormat = FMS;
   }
 }
 
@@ -453,7 +453,7 @@ void Flightplan::loadFs9(const QString& file)
       }
     }
     plnFile.close();
-    source = FS9;
+    fileFormat = FS9;
   }
 }
 
@@ -540,13 +540,33 @@ void Flightplan::loadFsx(const QString& file)
     }
 
     xmlFile.close();
-    source = FSX_P3D;
+    fileFormat = FSX_P3D;
   }
   else
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
 void Flightplan::save(const QString& file, bool clean)
+{
+  switch(fileFormat)
+  {
+    case atools::fs::pln::NONE:
+    case atools::fs::pln::FSX_P3D:
+    case atools::fs::pln::FS9:
+      saveFsx(file, clean);
+      break;
+
+    case atools::fs::pln::FMS:
+      saveFms(file);
+      break;
+
+    case atools::fs::pln::FLP:
+      saveFlp(file, true /* procedures */);
+      break;
+  }
+}
+
+void Flightplan::saveFsx(const QString& file, bool clean)
 {
   filename = file;
   QFile xmlFile(filename);
@@ -742,7 +762,6 @@ void Flightplan::saveFlp(const QString& file, bool saveProcedures)
     for(int i = 1; i < entries.size() - 1; i++)
     {
       const FlightplanEntry& entry = entries.at(i);
-      const FlightplanEntry& last = entries.at(i - 1);
       const FlightplanEntry& next = entries.at(i + 1);
       if(entry.isNoSave())
         // Do not save stuff like procedure points
@@ -1177,11 +1196,13 @@ void Flightplan::clear()
   departureParkingName.clear();
   departureAiportName.clear();
   destinationAiportName.clear();
+  properties.clear();
 
   departurePos = atools::geo::Pos();
   destinationPos = atools::geo::Pos();
 
   flightplanType = VFR;
+  fileFormat = FSX_P3D;
   routeType = DIRECT;
   cruisingAlt = 10000;
 
@@ -1197,6 +1218,25 @@ void Flightplan::reverse()
   departureIdent.swap(destinationIdent);
   departurePos.swap(destinationPos);
   setDepartureParkingName(QString());
+}
+
+FileFormat Flightplan::getFileFormatBySuffix(const QString& file) const
+{
+  if(file.endsWith(".fms", Qt::CaseInsensitive))
+    return FMS;
+  else if(file.endsWith(".flp", Qt::CaseInsensitive))
+    return FLP;
+  else
+    return FSX_P3D;
+}
+
+void Flightplan::setFileFormatBySuffix(const QString& file)
+{
+  if(file.endsWith(".fms", Qt::CaseInsensitive))
+    fileFormat = FMS;
+  else if(file.endsWith(".flp", Qt::CaseInsensitive))
+    fileFormat = FLP;
+  // else leave as is
 }
 
 QString Flightplan::flightplanTypeToString(FlightplanType type)

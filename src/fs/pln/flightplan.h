@@ -19,6 +19,7 @@
 #define ATOOLS_FLIGHTPLAN_H
 
 #include "fs/pln/flightplanentry.h"
+#include "fs/pln/flightplanconstants.h"
 
 #include <QApplication>
 
@@ -30,68 +31,6 @@ class LineString;
 }
 namespace fs {
 namespace pln {
-
-enum SourceFile
-{
-  NONE,
-  FSX_P3D, // FSX or P3D XML PLN flight plan
-  FS9, // FS9 ini style PLN flight plan
-  FMS, // X-Plane FMS file
-  FLP // Aerosoft airbus or FlightFactor Boeing
-};
-
-enum FlightplanType
-{
-  IFR,
-  VFR
-};
-
-enum RouteType
-{
-  LOW_ALTITUDE,
-  HIGH_ALTITUDE,
-  VOR, /* Used for radio navaid routing (VOR and NDB) */
-  DIRECT, /* Direct connection without waypoints */
-  UNKNOWN /* Has to be changed later when resolving the ident to database objects */
-};
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
-
-/* Common key that are used int flight plan properties that are not supported in PLN.
- * Will be save inside a XML comment in pln files. */
-/* Keys that describe procedures*/
-const QLatin1Literal SIDAPPR("sidappr");
-const QLatin1Literal SIDAPPRRW("sidapprrw");
-const QLatin1Literal SIDAPPRDISTANCE("sidapprdistance");
-const QLatin1Literal SIDAPPRSIZE("sidapprsize");
-const QLatin1Literal SIDTRANS("sidtrans");
-const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
-const QLatin1Literal SIDTRANSSIZE("sidtranssize");
-const QLatin1Literal STAR("star");
-const QLatin1Literal STARDISTANCE("stardistance");
-const QLatin1Literal STARSIZE("starsize");
-const QLatin1Literal STARTRANS("startrans");
-const QLatin1Literal STARTRANSDISTANCE("startransdistance");
-const QLatin1Literal STARTRANSSIZE("startranssize");
-const QLatin1Literal TRANSITION("transition");
-const QLatin1Literal TRANSITIONTYPE("transitiontype");
-const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
-const QLatin1Literal TRANSITIONSIZE("transitionsize");
-const QLatin1Literal APPROACH("approach");
-const QLatin1Literal APPROACHTYPE("approachtype");
-const QLatin1Literal APPROACHRW("approachrw");
-const QLatin1Literal APPROACHSUFFIX("approachsuffix");
-const QLatin1Literal APPROACHDISTANCE("approachdistance");
-const QLatin1Literal APPROACHSIZE("approachsize");
-
-/* Speed as is not supported by PLN format */
-const QLatin1Literal SPEED("speed");
-
-/* Free parking spot name as not supported by PLN */
-const QLatin1Literal PARKING("parking");
-
-#pragma GCC diagnostic pop
 
 /*
  * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
@@ -119,10 +58,16 @@ public:
    * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
    * Although the flight simulator cannot deal with flight plans that have no valid start
    * or destination (start or destaintion are merely a waypoint) it is allowed to that save one.
+   *
+   * The plan is saved in the same format as loaded, FSX/P3D, FLP or FMS.
+   *
    * @param file filepath of the file to be saved
    * @param clean if true save all properties in a XML comment
    */
   void save(const QString& file, bool clean = false);
+
+  /* FSX/P3D XML format */
+  void saveFsx(const QString& file, bool clean);
 
   /* PMDG RTE format */
   void saveRte(const QString& file);
@@ -338,14 +283,18 @@ public:
     properties = value;
   }
 
-  atools::fs::pln::SourceFile getSource() const
+  atools::fs::pln::FileFormat getFileFormat() const
   {
-    return source;
+    return fileFormat;
   }
 
-  void setSource(const atools::fs::pln::SourceFile& value)
+  atools::fs::pln::FileFormat getFileFormatBySuffix(const QString& file) const;
+
+  void setFileFormatBySuffix(const QString& file);
+
+  void setFileFormat(const atools::fs::pln::FileFormat& value)
   {
-    source = value;
+    fileFormat = value;
   }
 
 private:
@@ -376,7 +325,7 @@ private:
   const QString APPVERSION_BUILD = QString("61472");
   const QString APPVERSION_MAJOR = QString("10");
 
-  atools::fs::pln::SourceFile source = NONE;
+  atools::fs::pln::FileFormat fileFormat = FSX_P3D;
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
 

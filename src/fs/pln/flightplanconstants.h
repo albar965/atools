@@ -1,0 +1,95 @@
+/*****************************************************************************
+* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#ifndef ATOOLS_FLIGHTPLANCONSTANTS_H
+#define ATOOLS_FLIGHTPLANCONSTANTS_H
+
+#include <QLatin1Literal>
+
+namespace atools {
+namespace fs {
+namespace pln {
+
+enum FileFormat
+{
+  NONE,
+  FSX_P3D, // FSX or P3D XML PLN flight plan - can load and save
+  FS9, // FS9 ini style PLN flight plan - can load only
+  FMS, // X-Plane FMS file - can load and save
+  FLP // Aerosoft airbus or FlightFactor Boeing - can load and save
+};
+
+enum FlightplanType
+{
+  IFR,
+  VFR
+};
+
+enum RouteType
+{
+  LOW_ALTITUDE,
+  HIGH_ALTITUDE,
+  VOR, /* Used for radio navaid routing (VOR and NDB) */
+  DIRECT, /* Direct connection without waypoints */
+  UNKNOWN /* Has to be changed later when resolving the ident to database objects */
+};
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-const-variable"
+
+/* Common key that are used int flight plan properties that are not supported in PLN.
+ * Will be save inside a XML comment in pln files. */
+/* Keys that describe procedures*/
+const QLatin1Literal SIDAPPR("sidappr");
+const QLatin1Literal SIDAPPRRW("sidapprrw");
+const QLatin1Literal SIDAPPRDISTANCE("sidapprdistance");
+const QLatin1Literal SIDAPPRSIZE("sidapprsize");
+const QLatin1Literal SIDTRANS("sidtrans");
+const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
+const QLatin1Literal SIDTRANSSIZE("sidtranssize");
+const QLatin1Literal STAR("star");
+const QLatin1Literal STARDISTANCE("stardistance");
+const QLatin1Literal STARSIZE("starsize");
+const QLatin1Literal STARTRANS("startrans");
+const QLatin1Literal STARTRANSDISTANCE("startransdistance");
+const QLatin1Literal STARTRANSSIZE("startranssize");
+const QLatin1Literal TRANSITION("transition");
+const QLatin1Literal TRANSITIONTYPE("transitiontype");
+const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
+const QLatin1Literal TRANSITIONSIZE("transitionsize");
+const QLatin1Literal APPROACH("approach");
+const QLatin1Literal APPROACHTYPE("approachtype");
+const QLatin1Literal APPROACHRW("approachrw");
+const QLatin1Literal APPROACHSUFFIX("approachsuffix");
+const QLatin1Literal APPROACHDISTANCE("approachdistance");
+const QLatin1Literal APPROACHSIZE("approachsize");
+
+/* Speed as is not supported by PLN format */
+const QLatin1Literal SPEED("speed");
+
+/* Free parking spot name as not supported by PLN */
+const QLatin1Literal PARKING("parking");
+/* Position of parking as fallback */
+const QLatin1Literal PARKINGPOS("parkingposition");
+
+#pragma GCC diagnostic pop
+
+} // namespace pln
+} // namespace fs
+} // namespace atools
+
+#endif // ATOOLS_FLIGHTPLANCONSTANTS_H

@@ -23,6 +23,8 @@ namespace atools {
 namespace fs {
 namespace db {
 
+static QLatin1Literal NO_RWY("00");
+
 using std::make_pair;
 
 void RunwayIndex::add(const QString& airportIdent, const QString& runwayName, int runwayEndId)
@@ -34,6 +36,9 @@ int RunwayIndex::getRunwayEndId(const QString& airportIdent,
                                 const QString& runwayName,
                                 const QString& sourceObject)
 {
+  if(runwayName == NO_RWY)
+    return -1;
+
   RunwayIndexKeyType key(airportIdent, runwayName);
 
   RunwayIndexTypeConstIter it = runwayIndexMap.find(key);
@@ -42,7 +47,7 @@ int RunwayIndex::getRunwayEndId(const QString& airportIdent,
   else
   {
     qWarning().nospace().noquote() << "Runway end ID for airport " << airportIdent << " and runway " <<
-    runwayName
+      runwayName
                                    << " not found for " << sourceObject;
     return -1;
   }

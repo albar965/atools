@@ -214,7 +214,8 @@ HEADERS += src/atools.h \
     src/fs/common/globereader.h \
     src/fs/common/magdecreader.h \
     src/fs/common/xpweatherreader.h \
-    src/fs/util/coordinates.h
+    src/fs/util/coordinates.h \
+    src/fs/pln/flightplanconstants.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -395,7 +396,8 @@ SOURCES += src/atools.cpp \
     src/fs/common/globereader.cpp \
     src/fs/common/magdecreader.cpp \
     src/fs/common/xpweatherreader.cpp \
-    src/fs/util/coordinates.cpp
+    src/fs/util/coordinates.cpp \
+    src/fs/pln/flightplanconstants.cpp
 
 
 unix {
