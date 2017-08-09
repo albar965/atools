@@ -325,7 +325,7 @@ private:
   const QString APPVERSION_BUILD = QString("61472");
   const QString APPVERSION_MAJOR = QString("10");
 
-  atools::fs::pln::FileFormat fileFormat = FSX_P3D;
+  atools::fs::pln::FileFormat fileFormat = PLN_FSX;
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
 

@@ -453,7 +453,7 @@ void Flightplan::loadFs9(const QString& file)
       }
     }
     plnFile.close();
-    fileFormat = FS9;
+    fileFormat = PLN_FS9;
   }
 }
 
@@ -540,7 +540,7 @@ void Flightplan::loadFsx(const QString& file)
     }
 
     xmlFile.close();
-    fileFormat = FSX_P3D;
+    fileFormat = PLN_FSX;
   }
   else
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
@@ -551,8 +551,8 @@ void Flightplan::save(const QString& file, bool clean)
   switch(fileFormat)
   {
     case atools::fs::pln::NONE:
-    case atools::fs::pln::FSX_P3D:
-    case atools::fs::pln::FS9:
+    case atools::fs::pln::PLN_FSX:
+    case atools::fs::pln::PLN_FS9:
       saveFsx(file, clean);
       break;
 
@@ -1196,13 +1196,12 @@ void Flightplan::clear()
   departureParkingName.clear();
   departureAiportName.clear();
   destinationAiportName.clear();
-  properties.clear();
 
   departurePos = atools::geo::Pos();
   destinationPos = atools::geo::Pos();
 
   flightplanType = VFR;
-  fileFormat = FSX_P3D;
+  fileFormat = PLN_FSX;
   routeType = DIRECT;
   cruisingAlt = 10000;
 
@@ -1227,7 +1226,7 @@ FileFormat Flightplan::getFileFormatBySuffix(const QString& file) const
   else if(file.endsWith(".flp", Qt::CaseInsensitive))
     return FLP;
   else
-    return FSX_P3D;
+    return PLN_FSX;
 }
 
 void Flightplan::setFileFormatBySuffix(const QString& file)

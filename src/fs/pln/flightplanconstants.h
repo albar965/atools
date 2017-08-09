@@ -27,8 +27,8 @@ namespace pln {
 enum FileFormat
 {
   NONE,
-  FSX_P3D, // FSX or P3D XML PLN flight plan - can load and save
-  FS9, // FS9 ini style PLN flight plan - can load only
+  PLN_FSX, // FSX or P3D XML PLN flight plan - can load and save
+  PLN_FS9, // FS9 ini style PLN flight plan - can load only
   FMS, // X-Plane FMS file - can load and save
   FLP // Aerosoft airbus or FlightFactor Boeing - can load and save
 };
