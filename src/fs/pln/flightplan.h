@@ -334,7 +334,7 @@ private:
   int cruisingAlt;
   QString filename, title, departureIdent, destinationIdent, description,
           departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
-  atools::geo::Pos departurePos, destinationPos;
+  atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
 
   QHash<QString, QString> properties;
 

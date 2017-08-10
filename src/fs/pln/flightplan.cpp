@@ -956,10 +956,10 @@ void Flightplan::saveFms(const QString& file)
         stream << "28 ";
         // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
         // -28.478_-056.370 Correct for a waypoint at -28.478°/-56.370°.
-        stream << (laty < 0.f ? "-" : "+")
+        stream << (entry.getPosition().getLatY() < 0.f ? "-" : "+")
                << QString("%1").arg(laty, 2, 'f', 3, QChar('0')).rightJustified(6, QChar('0'), false)
                << "_"
-               << (lonx < 0.f ? "-" : "+")
+               << (entry.getPosition().getLonX() < 0.f ? "-" : "+")
                << QString("%1").arg(lonx, 3, 'f', 3, QChar('0')).rightJustified(7, QChar('0'), false)
                << " ";
       }
@@ -1031,12 +1031,12 @@ void Flightplan::saveRte(const QString& file)
     stream << entries.size() << endl << endl;
 
     stream << departureIdent << endl << AIRPORT << endl << "DIRECT" << endl;
-    posToRte(stream, departurePos, true);
+    posToRte(stream, entries.first().getPosition(), true);
     stream << endl << NO_DATA_STR << endl
            << 1 /* Departure*/ << endl << 0 /* Runway position */ << endl << endl;
 
     stream << CLIMB << endl; // Restriction phase climb
-    stream << atools::roundToInt(departurePos.getAltitude()); // Restriction altitude, if restricted
+    stream << atools::roundToInt(entries.first().getPosition().getAltitude()); // Restriction altitude, if restricted
 
     // Restriction type, altitude and speed
     stream << endl << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl << endl;
@@ -1215,7 +1215,9 @@ void Flightplan::reverse()
 
   departureAiportName.swap(destinationAiportName);
   departureIdent.swap(destinationIdent);
-  departurePos.swap(destinationPos);
+
+  // Overwrite parking position with airport position
+  departurePos = entries.first().getPosition();
   setDepartureParkingName(QString());
 }
 
