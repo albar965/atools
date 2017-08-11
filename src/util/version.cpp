@@ -54,6 +54,7 @@ Version::~Version()
 
 void Version::initFromString(const QString& str)
 {
+  versionString = str;
   if(!str.isEmpty())
   {
     QRegularExpressionMatch match = VERSION_REGEXP.match(str);
