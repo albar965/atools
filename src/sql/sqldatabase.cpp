@@ -77,7 +77,7 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
 
 void SqlDatabase::open(const QStringList& pragmas)
 {
-  checkError(!isOpen(), "Opening a database that is alread open");
+  checkError(!isOpen(), "Opening a database that is already open");
   checkError(db.open(), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
 
@@ -93,7 +93,7 @@ void SqlDatabase::open(const QStringList& pragmas)
 
 void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)
 {
-  checkError(!isOpen(), "Opening a database that is alread open");
+  checkError(!isOpen(), "Opening a database that is already open");
   checkError(db.open(user, password), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
 

@@ -31,6 +31,7 @@ class Version
 public:
   Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName = QString());
   Version(const QString& str);
+  Version();
   ~Version();
 
   int getMajor() const
@@ -57,6 +58,10 @@ public:
   {
     return versionString;
   }
+
+  bool isStable() const;
+  bool isBeta() const;
+  bool isDevelop() const;
 
   /* Compare major, minor and patchlevel */
   bool operator<(const Version& other) const;
@@ -90,6 +95,7 @@ public:
 
 private:
   friend QDebug operator<<(QDebug out, const atools::util::Version& version);
+  void initFromString(const QString& str);
 
   int majorVersion = -1, minorVersion = -1, patchlevelVersion = -1;
   QString name, versionString;

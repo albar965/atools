@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QRegularExpression>
+#include <QApplication>
 
 namespace atools {
 namespace util {
@@ -32,15 +33,29 @@ Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& v
                   arg(majorVersion).
                   arg(minorVersion).
                   arg(patchlevelVersion).
-                  arg(versionString.isEmpty() ? QString() : "." + versionString);
+                  arg(name.isEmpty() ? QString() : "." + name);
 }
 
 Version::Version(const QString& str)
   : versionString(str.trimmed().toLower())
 {
+  initFromString(str);
+}
+
+Version::Version()
+{
+  initFromString(QApplication::applicationVersion());
+}
+
+Version::~Version()
+{
+
+}
+
+void Version::initFromString(const QString& str)
+{
   if(!str.isEmpty())
   {
-
     QRegularExpressionMatch match = VERSION_REGEXP.match(str);
     bool ok;
 
@@ -75,9 +90,19 @@ Version::Version(const QString& str)
   }
 }
 
-Version::~Version()
+bool Version::isStable() const
 {
+  return name.isEmpty();
+}
 
+bool Version::isBeta() const
+{
+  return name.toLower() == "beta";
+}
+
+bool Version::isDevelop() const
+{
+  return name.toLower().startsWith("dev") || name.toLower() == "alpha";
 }
 
 bool Version::operator<(const Version& other) const
