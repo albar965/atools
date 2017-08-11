@@ -134,6 +134,8 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
     QMessageBox msg(QMessageBox::Information,
                     QApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
+    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
     msg.exec();
     s.setValue(settingsKey, !msg.checkBox()->isChecked());
     s.syncSettings();
@@ -160,6 +162,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if(!checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
+    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     // Set the button texts
     for(const DialogButton& db : buttonList)
@@ -192,6 +195,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if(!checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
+    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
     retval = msg.exec();
 
     if(retval != QMessageBox::Cancel && !settingsKey.isEmpty())
