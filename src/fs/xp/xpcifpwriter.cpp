@@ -382,18 +382,23 @@ void XpCifpWriter::finishProcedure(const XpWriterContext& context)
     if(approaches.size() > 1)
       qWarning() << context.messagePrefix() << "Found more than one approach" << approaches.size();
 
-    // Write approach
-    Procedure& appr = approaches.first();
-    assignApproachIds(appr);
-    insertApproachQuery->bindAndExecRecord(appr.record);
-    insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
-
-    // Write transitions for one approach
-    for(Procedure& trans : transitions)
+    if(approaches.isEmpty())
+      qWarning() << context.messagePrefix() << "No approaches found. Invalid state.";
+    else
     {
-      assignTransitionIds(trans);
-      insertTransitionQuery->bindAndExecRecord(trans.record);
-      insertTransitionLegQuery->bindAndExecRecords(trans.legRecords);
+      // Write approach
+      Procedure& appr = approaches.first();
+      assignApproachIds(appr);
+      insertApproachQuery->bindAndExecRecord(appr.record);
+      insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
+
+      // Write transitions for one approach
+      for(Procedure& trans : transitions)
+      {
+        assignTransitionIds(trans);
+        insertTransitionQuery->bindAndExecRecord(trans.record);
+        insertTransitionLegQuery->bindAndExecRecords(trans.legRecords);
+      }
     }
   }
   else if(curRowCode == rc::STAR || curRowCode == rc::SID)

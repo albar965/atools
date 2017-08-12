@@ -354,7 +354,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
       qInfo() << line;
 
       QStringList fields = line.simplified().split(" ");
-      fileVersion = fields.first().toInt();
+      if(!fields.isEmpty())
+        fileVersion = fields.first().toInt();
 
       if(!fields.isEmpty() && fileVersion < minVersion)
       {
