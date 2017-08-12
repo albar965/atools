@@ -1,9 +1,34 @@
-Version 1.5.2.develop
+Version 2.5.3.develop
+
+* Added support for full X-Plane scenery database except airspaces and ARINC files.
+* Multiple X-Plane related schema extensions. Speed limit, apron.geometry and runway.shoulder and more. New columns are optional.
+* Fixed wrongly placed speed limit columns in procedure tables.
+
+* Added reading of X-Plane metar files.
+
+* Can now load FMS, FLP and FS9 ini-style pln flight plan formats.
+* Added automatic format detection while loading flight plans in P3D/FSX/FS9 PLN, X-Plane FMS and FLP.
+* Added saving and loading of procedures to FLP format.
+
+* magdec.bgl file is read from simulator scenery or included file.
+* Magnetic declination for airports, waypoints and user defined points is now read from magdec.bgl.
+
+* Made database loading more robust for mixed case paths on case sensitive operating systems.
+* Databases can now be opened read-only.
+
+* Added fix for unnamed scenery entries in add-on.xml files.
+* Fixed reading of add-on.xml in UTF-16 encoding.
+* Now sorting of add-on packages by layer.
+* Added option to disable/enable reading and writing of add-on packages for P3D v3 and v4.
+
+* Updated to Qt 5.9.1
+
+Version 2.5.2.develop
 
 * Fixed missing encoding in PLN XML files since changing to Qt 5.9.
 * Now generating scenery names if missing from add-on.xml files.
 
-Version 1.5.1.develop
+Version 2.5.1.develop
 
 * Fixed excessive logging of warnings in invalid airport records and waypoints.
 * Now skipping airports where the first record is already invalid.
