@@ -15,27 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_FSUTIL_H
-#define ATOOLS_FS_FSUTIL_H
-
-#include <QString>
+#include "navservercommon.h"
 
 namespace atools {
 namespace fs {
-namespace util {
+namespace ns {
 
-/* Get the aircraft type name for the ICAO code */
-QString aircraftTypeForCode(const QString& code);
+Q_LOGGING_CATEGORY(gui, "gui")
 
-/* Maximum rating is 5 */
-int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
-
-bool isNameMilitary(const QString& airportName);
-
-QString capNavString(const QString& str);
-
-} // namespace util
+} // namespace ns
 } // namespace fs
 } // namespace atools
-
-#endif // ATOOLS_FS_FSUTIL_H

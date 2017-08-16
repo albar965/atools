@@ -198,6 +198,20 @@ Q_DECL_CONSTEXPR TYPE nmToFeet(TYPE value)
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToFeet(nmToMeter(value));
 }
 
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE kgToLbs(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) * 2.204623);
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE lbsToKg(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) / 2.204623);
+}
+
 /* NM to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)

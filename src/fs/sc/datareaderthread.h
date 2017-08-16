@@ -31,7 +31,7 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-class SimConnectHandler;
+class ConnectHandler;
 
 /* Actively reads flight simulator data using the simconnect interface in background and sends a
  * signal for each data package. */
@@ -41,11 +41,14 @@ class DataReaderThread :
   Q_OBJECT
 
 public:
-  DataReaderThread(QObject *parent, bool verboseLog);
+  DataReaderThread(QObject *parent, atools::fs::sc::ConnectHandler *connectHandler, bool verboseLog);
   virtual ~DataReaderThread();
 
+  /* Terminate, wait for termination and reset flag afterwards */
+  void terminateThread();
+
   /* Thread will terminate after the next iteration. */
-  void setTerminate(bool terminateFlag = true)
+  void setTerminate(bool terminateFlag)
   {
     terminate = terminateFlag;
   }
@@ -113,7 +116,7 @@ private:
   void setupReplay();
   bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options);
 
-  atools::fs::sc::SimConnectHandler *handler = nullptr;
+  atools::fs::sc::ConnectHandler *handler = nullptr;
 
   /* Have to protect options since they will be modified from outside the thread */
   std::atomic<atools::fs::sc::Options> simconnectOptions;

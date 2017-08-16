@@ -413,8 +413,7 @@ void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData,
   handlerClass->dispatchProcedure(pData, cbData);
 }
 
-void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserAircraft,
-                                             SimConnectAircraft& airplane)
+void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserAircraft, SimConnectAircraft& airplane)
 {
   airplane.airplaneTitle = simDataUserAircraft.aircraftTitle;
   airplane.airplaneModel = simDataUserAircraft.aircraftAtcModel;
@@ -441,8 +440,8 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   else if(cat == "viewer")
     airplane.category = VIEWER;
 
-  airplane.wingSpan = static_cast<quint16>(simDataUserAircraft.wingSpan);
-  airplane.modelRadius = static_cast<quint16>(simDataUserAircraft.modelRadius);
+  airplane.wingSpanFt = static_cast<quint16>(simDataUserAircraft.wingSpan);
+  airplane.modelRadiusFt = static_cast<quint16>(simDataUserAircraft.modelRadius);
 
   airplane.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
   airplane.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
@@ -451,15 +450,15 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   airplane.position.setLatY(simDataUserAircraft.latitudeDeg);
   airplane.position.setAltitude(simDataUserAircraft.altitudeFt);
 
-  airplane.groundSpeed = simDataUserAircraft.groundVelocityKts;
-  airplane.indicatedAltitude = simDataUserAircraft.indicatedAltitudeFt;
-  airplane.headingMag = simDataUserAircraft.planeHeadingMagneticDeg;
-  airplane.headingTrue = simDataUserAircraft.planeHeadingTrueDeg;
+  airplane.groundSpeedKts = simDataUserAircraft.groundVelocityKts;
+  airplane.indicatedAltitudeFt = simDataUserAircraft.indicatedAltitudeFt;
+  airplane.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
+  airplane.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
 
-  airplane.trueSpeed = simDataUserAircraft.airspeedTrueKts;
-  airplane.indicatedSpeed = simDataUserAircraft.airspeedIndicatedKts;
+  airplane.trueSpeedKts = simDataUserAircraft.airspeedTrueKts;
+  airplane.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
   airplane.machSpeed = simDataUserAircraft.airspeedMach;
-  airplane.verticalSpeed = simDataUserAircraft.verticalSpeedFps * 60.f;
+  airplane.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
 
   if(simDataUserAircraft.isSimOnGround > 0)
     airplane.flags |= atools::fs::sc::ON_GROUND;
@@ -621,7 +620,7 @@ bool SimConnectHandler::isSimPaused() const
   return p->simPaused;
 }
 
-bool SimConnectHandler::isSimConnectLoaded() const
+bool SimConnectHandler::isLoaded() const
 {
   return p->simConnectLoaded;
 }
@@ -846,8 +845,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
     data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
-    data.userAircraft.groundAltitude = p->simData.groundAltitudeFt;
-    data.userAircraft.altitudeAboveGround = p->simData.planeAboveGroundFt;
+    data.userAircraft.groundAltitudeFt = p->simData.groundAltitudeFt;
+    data.userAircraft.altitudeAboveGroundFt = p->simData.planeAboveGroundFt;
 
     if(p->simData.ambientPrecipStateFlags & 4)
       data.userAircraft.flags |= atools::fs::sc::IN_RAIN;
@@ -857,22 +856,22 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     if(p->simData.ambientIsInCloud > 0)
       data.userAircraft.flags |= atools::fs::sc::IN_CLOUD;
 
-    data.userAircraft.ambientTemperature = p->simData.ambientTemperatureC;
-    data.userAircraft.totalAirTemperature = p->simData.totalAirTemperatureC;
-    data.userAircraft.ambientVisibility = p->simData.ambientVisibilityMeter;
+    data.userAircraft.ambientTemperatureCelsius = p->simData.ambientTemperatureC;
+    data.userAircraft.totalAirTemperatureCelsius = p->simData.totalAirTemperatureC;
+    data.userAircraft.ambientVisibilityMeter = p->simData.ambientVisibilityMeter;
 
-    data.userAircraft.seaLevelPressure = p->simData.seaLevelPressureMbar;
-    data.userAircraft.pitotIce = p->simData.pitotIcePercent;
-    data.userAircraft.structuralIce = p->simData.structuralIcePercent;
-    data.userAircraft.airplaneTotalWeight = p->simData.airplaneTotalWeightLbs;
-    data.userAircraft.airplaneMaxGrossWeight = p->simData.airplaneMaxGrossWeightLbs;
-    data.userAircraft.airplaneEmptyWeight = p->simData.airplaneEmptyWeightLbs;
-    data.userAircraft.fuelTotalQuantity = p->simData.fuelTotalQuantityGallons;
-    data.userAircraft.fuelTotalWeight = p->simData.fuelTotalWeightLbs;
+    data.userAircraft.seaLevelPressureMbar = p->simData.seaLevelPressureMbar;
+    data.userAircraft.pitotIcePercent = p->simData.pitotIcePercent;
+    data.userAircraft.structuralIcePercent = p->simData.structuralIcePercent;
+    data.userAircraft.airplaneTotalWeightLbs = p->simData.airplaneTotalWeightLbs;
+    data.userAircraft.airplaneMaxGrossWeightLbs = p->simData.airplaneMaxGrossWeightLbs;
+    data.userAircraft.airplaneEmptyWeightLbs = p->simData.airplaneEmptyWeightLbs;
+    data.userAircraft.fuelTotalQuantityGallons = p->simData.fuelTotalQuantityGallons;
+    data.userAircraft.fuelTotalWeightLbs = p->simData.fuelTotalWeightLbs;
     data.userAircraft.magVarDeg = p->simData.magVarDeg;
 
-    data.userAircraft.trackMag = p->simData.planeTrackMagneticDeg;
-    data.userAircraft.trackTrue = p->simData.planeTrackTrueDeg;
+    data.userAircraft.trackMagDeg = p->simData.planeTrackMagneticDeg;
+    data.userAircraft.trackTrueDeg = p->simData.planeTrackTrueDeg;
 
     // Summarize fuel flow for all engines
     data.userAircraft.fuelFlowPPH =
@@ -881,8 +880,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.fuelFlowGPH =
       p->simData.fuelFlowGph1 + p->simData.fuelFlowGph2 + p->simData.fuelFlowGph3 + p->simData.fuelFlowGph4;
 
-    data.userAircraft.windDirection = p->simData.ambientWindDirectionDegT;
-    data.userAircraft.windSpeed = p->simData.ambientWindVelocityKts;
+    data.userAircraft.windDirectionDegT = p->simData.ambientWindDirectionDegT;
+    data.userAircraft.windSpeedKts = p->simData.ambientWindVelocityKts;
 
     // Build local time and use timezone offset from simulator
     QDate localDate(p->simData.localYear, p->simData.localMonth, p->simData.localDay);

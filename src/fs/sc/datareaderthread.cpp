@@ -30,22 +30,19 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
-  : QThread(parent), verbose(verboseLog)
+DataReaderThread::DataReaderThread(QObject *parent, ConnectHandler *connectHandler, bool verboseLog)
+  : QThread(parent), handler(connectHandler), verbose(verboseLog)
 {
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
-  handler = new SimConnectHandler(verboseLog);
-  handler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
 
-  qInfo() << "SimConnect available:" << handler->isSimConnectLoaded();
+  qInfo() << "SimConnect available:" << handler->isLoaded();
 
   simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
 
 DataReaderThread::~DataReaderThread()
 {
-  delete handler;
   qDebug() << Q_FUNC_INFO;
 }
 
@@ -53,7 +50,7 @@ void DataReaderThread::connectToSimulator()
 {
   int counter = 0;
 
-  if(!handler->isSimConnectLoaded())
+  if(!handler->isLoaded())
     emit postLogMessage(tr("No flight simulator installation found. SimConnect not loaded."), true);
   else
   {
@@ -216,7 +213,7 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
   if(verbose)
     qDebug() << Q_FUNC_INFO << "enter";
 
-  if(!handler->isSimConnectLoaded())
+  if(!handler->isLoaded())
     return true;
 
   QMutexLocker locker(&handlerMutex);
@@ -361,7 +358,7 @@ void DataReaderThread::closeReplay()
 
 bool DataReaderThread::isSimconnectAvailable()
 {
-  return handler->isSimConnectLoaded();
+  return handler->isLoaded();
 }
 
 void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
@@ -382,6 +379,13 @@ void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
   }
 
   waitCondition.wakeAll();
+}
+
+void DataReaderThread::terminateThread()
+{
+  setTerminate(true);
+  wait();
+  setTerminate(false);
 }
 
 } // namespace sc

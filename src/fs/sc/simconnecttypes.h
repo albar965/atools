@@ -28,6 +28,9 @@ namespace atools {
 namespace fs {
 namespace sc {
 
+const float SC_INVALID_FLOAT = std::numeric_limits<float>::max();
+const int SC_INVALID_INT = std::numeric_limits<int>::max();
+
 enum SimConnectStatus
 {
   OK, /* No error */

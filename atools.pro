@@ -216,7 +216,13 @@ HEADERS += src/atools.h \
     src/fs/common/xpweatherreader.h \
     src/fs/util/coordinates.h \
     src/fs/pln/flightplanconstants.h \
-    src/util/updatecheck.h
+    src/util/updatecheck.h \
+    src/fs/sc/connecthandler.h \
+    src/fs/ns/navservercommon.h \
+    src/fs/ns/navserver.h \
+    src/fs/ns/navserverworker.h \
+    src/fs/sc/xpconnecthandler.h \
+    src/gui/consoleapplication.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -399,7 +405,13 @@ SOURCES += src/atools.cpp \
     src/fs/common/xpweatherreader.cpp \
     src/fs/util/coordinates.cpp \
     src/fs/pln/flightplanconstants.cpp \
-    src/util/updatecheck.cpp
+    src/util/updatecheck.cpp \
+    src/fs/sc/connecthandler.cpp \
+    src/fs/ns/navserver.cpp \
+    src/fs/ns/navservercommon.cpp \
+    src/fs/ns/navserverworker.cpp \
+    src/fs/sc/xpconnecthandler.cpp \
+    src/gui/consoleapplication.cpp
 
 
 unix {

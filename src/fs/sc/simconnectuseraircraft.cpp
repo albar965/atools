@@ -43,21 +43,21 @@ SimConnectUserAircraft::~SimConnectUserAircraft()
 void SimConnectUserAircraft::read(QDataStream& in)
 {
   SimConnectAircraft::read(in);
-  in >> windSpeed >> windDirection >> altitudeAboveGround >> groundAltitude
-  >> ambientTemperature >> totalAirTemperature >> seaLevelPressure
-  >> pitotIce >> structuralIce >> airplaneTotalWeight >> airplaneMaxGrossWeight >> airplaneEmptyWeight
-  >> fuelTotalQuantity >> fuelTotalWeight >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibility
-  >> trackMag >> trackTrue>> localDateTime >> zuluDateTime;
+  in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt
+  >> ambientTemperatureCelsius >> totalAirTemperatureCelsius >> seaLevelPressureMbar
+  >> pitotIcePercent >> structuralIcePercent >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >> airplaneEmptyWeightLbs
+  >> fuelTotalQuantityGallons >> fuelTotalWeightLbs >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibilityMeter
+  >> trackMagDeg >> trackTrueDeg>> localDateTime >> zuluDateTime;
 }
 
 void SimConnectUserAircraft::write(QDataStream& out) const
 {
   SimConnectAircraft::write(out);
-  out << windSpeed << windDirection << altitudeAboveGround << groundAltitude
-      << ambientTemperature << totalAirTemperature << seaLevelPressure
-      << pitotIce << structuralIce << airplaneTotalWeight << airplaneMaxGrossWeight << airplaneEmptyWeight
-      << fuelTotalQuantity << fuelTotalWeight << fuelFlowPPH << fuelFlowGPH << magVarDeg << ambientVisibility
-      << trackMag << trackTrue << localDateTime << zuluDateTime;
+  out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt
+      << ambientTemperatureCelsius << totalAirTemperatureCelsius << seaLevelPressureMbar
+      << pitotIcePercent << structuralIcePercent << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs << airplaneEmptyWeightLbs
+      << fuelTotalQuantityGallons << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg << ambientVisibilityMeter
+      << trackMagDeg << trackTrueDeg << localDateTime << zuluDateTime;
 }
 
 } // namespace sc

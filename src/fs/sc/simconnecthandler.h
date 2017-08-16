@@ -21,31 +21,20 @@
 #include <QtGlobal>
 #include <QVector>
 
-#include "geo/pos.h"
 #include "fs/sc/simconnecttypes.h"
+#include "fs/sc/connecthandler.h"
 
 namespace atools {
 namespace fs {
 namespace sc {
 
-class SimConnectData;
 class SimConnectAircraft;
 class SimConnectHandlerPrivate;
-class WeatherRequest;
-
-/* Status of the last operation when fetching data. */
-enum State
-{
-  STATEOK,
-  FETCH_ERROR,
-  OPEN_ERROR,
-  DISCONNECTED,
-  EXCEPTION
-};
 
 /* Reads data synchronously from Fs simconnect interfaces.
  *  For non windows platforms contains also a simple aircraft simulation. */
-class SimConnectHandler
+class SimConnectHandler :
+  public atools::fs::sc::ConnectHandler
 {
 public:
   SimConnectHandler(bool verboseLogging = false);
@@ -53,26 +42,25 @@ public:
 
   /* Activate context and load SimConnect DLL */
   bool loadSimConnect(const QString& manifestPath);
+  virtual bool isLoaded() const override;
 
   /* Connect to fs.. Returns true if successful. */
-  bool connect();
+  virtual bool connect() override;
 
   /* Fetch data from simulator. Returns false if no data was retrieved due to paused or not running fs. */
-  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options);
-  bool fetchWeatherData(atools::fs::sc::SimConnectData& data);
+  virtual bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options) override;
+  virtual bool fetchWeatherData(atools::fs::sc::SimConnectData& data) override;
 
-  void addWeatherRequest(const atools::fs::sc::WeatherRequest& request);
-  const atools::fs::sc::WeatherRequest& getWeatherRequest() const;
+  virtual void addWeatherRequest(const atools::fs::sc::WeatherRequest& request) override;
+  virtual const atools::fs::sc::WeatherRequest& getWeatherRequest() const override;
 
   /* true if simulator is running and not stuck in open dialogs. */
-  bool isSimRunning() const;
+  virtual bool isSimRunning() const override;
 
-  bool isSimPaused() const;
-
-  bool isSimConnectLoaded() const;
+  virtual bool isSimPaused() const override;
 
   /* Get state of last call. */
-  sc::State getState() const;
+  virtual sc::State getState() const override;
 
 private:
   // Used to all the windows and SimConnect stuff out of the header files

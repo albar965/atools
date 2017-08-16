@@ -59,10 +59,10 @@ void SimConnectAircraft::read(QDataStream& in)
   float lonx, laty, altitude;
   quint8 categoryByte, engineTypeByte;
 
-  in >> lonx >> laty >> altitude >> headingTrue >> headingMag
-  >> groundSpeed >> indicatedSpeed >> verticalSpeed
-  >> indicatedAltitude >> trueSpeed >> machSpeed
-  >> numberOfEngines >> wingSpan >> modelRadius >> categoryByte >> engineTypeByte;
+  in >> lonx >> laty >> altitude >> headingTrueDeg >> headingMagDeg
+  >> groundSpeedKts >> indicatedSpeedKts >> verticalSpeedFeetPerMin
+  >> indicatedAltitudeFt >> trueSpeedKts >> machSpeed
+  >> numberOfEngines >> wingSpanFt >> modelRadiusFt >> categoryByte >> engineTypeByte;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -70,6 +70,30 @@ void SimConnectAircraft::read(QDataStream& in)
 
   category = static_cast<Category>(categoryByte);
   engineType = static_cast<EngineType>(engineTypeByte);
+}
+
+int SimConnectAircraft::getModelRadiusCorrected() const
+{
+  if(modelRadiusFt > 0)
+    return modelRadiusFt;
+  else
+  {
+    switch(engineType)
+    {
+      case atools::fs::sc::PISTON:
+      case atools::fs::sc::NO_ENGINE:
+      case atools::fs::sc::HELO_TURBINE:
+      case atools::fs::sc::UNSUPPORTED:
+        return 20;
+
+      case atools::fs::sc::JET:
+        return 90;
+
+      case atools::fs::sc::TURBOPROP:
+        return 40;
+    }
+    return 20;
+  }
 }
 
 void SimConnectAircraft::write(QDataStream& out) const
@@ -85,14 +109,12 @@ void SimConnectAircraft::write(QDataStream& out) const
   writeString(out, fromIdent);
   writeString(out, toIdent);
 
-  out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrue << headingMag
-      << groundSpeed << indicatedSpeed << verticalSpeed
-      << indicatedAltitude << trueSpeed << machSpeed
-      << numberOfEngines << wingSpan << modelRadius
+  out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrueDeg << headingMagDeg
+      << groundSpeedKts << indicatedSpeedKts << verticalSpeedFeetPerMin
+      << indicatedAltitudeFt << trueSpeedKts << machSpeed
+      << numberOfEngines << wingSpanFt << modelRadiusFt
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
 }
-
-
 
 } // namespace sc
 } // namespace fs

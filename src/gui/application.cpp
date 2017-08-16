@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "application.h"
+#include "gui/application.h"
 
 #include <cstdlib>
 #include <QDebug>
@@ -28,6 +28,7 @@ namespace gui {
 
 QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
+bool Application::exitOnException = true;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -76,7 +77,9 @@ void Application::handleException(const char *file, int line, const std::excepti
                         arg(QApplication::applicationName()).
                         arg(getEmailHtml()).
                         arg(getReportPathHtml()));
-  std::exit(1);
+
+  if(exitOnException)
+    std::exit(1);
 }
 
 void Application::handleException(const char *file, int line)
@@ -97,7 +100,9 @@ void Application::handleException(const char *file, int line)
                         arg(QApplication::applicationName()).
                         arg(getEmailHtml()).
                         arg(getReportPathHtml()));
-  std::exit(1);
+
+  if(exitOnException)
+    std::exit(1);
 }
 
 void Application::addReportPath(const QString& header, const QStringList& paths)

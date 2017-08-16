@@ -178,20 +178,20 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   {
 
     float h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
-    data.userAircraft.headingMag =
-      data.userAircraft.headingTrue =
-        data.userAircraft.trackMag =
-          data.userAircraft.trackTrue =
+    data.userAircraft.headingMagDeg =
+      data.userAircraft.headingTrueDeg =
+        data.userAircraft.trackMagDeg =
+          data.userAircraft.trackTrueDeg =
             h;
 
-    data.userAircraft.groundSpeed = data.userAircraft.indicatedSpeed = data.userAircraft.trueSpeed = 200.f;
+    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueSpeedKts = 200.f;
   }
   else
   {
-    data.userAircraft.headingMag =
-      data.userAircraft.headingTrue =
-        data.userAircraft.trackMag =
-          data.userAircraft.trackTrue =
+    data.userAircraft.headingMagDeg =
+      data.userAircraft.headingTrueDeg =
+        data.userAircraft.trackMagDeg =
+          data.userAircraft.trackTrueDeg =
             0.f;
   }
 

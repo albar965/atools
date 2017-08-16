@@ -25,6 +25,10 @@
 
 class QIODevice;
 
+namespace xpc {
+class XpConnect;
+
+}
 namespace atools {
 namespace fs {
 namespace sc {
@@ -49,72 +53,72 @@ public:
 
   float getWindSpeedKts() const
   {
-    return windSpeed;
+    return windSpeedKts;
   }
 
   float getWindDirectionDegT() const
   {
-    return windDirection;
+    return windDirectionDegT;
   }
 
   float getAltitudeAboveGroundFt() const
   {
-    return altitudeAboveGround;
+    return altitudeAboveGroundFt;
   }
 
   float getGroundAltitudeFt() const
   {
-    return groundAltitude;
+    return groundAltitudeFt;
   }
 
   float getAmbientTemperatureCelsius() const
   {
-    return ambientTemperature;
+    return ambientTemperatureCelsius;
   }
 
   float getTotalAirTemperatureCelsius() const
   {
-    return totalAirTemperature;
+    return totalAirTemperatureCelsius;
   }
 
   float getSeaLevelPressureMbar() const
   {
-    return seaLevelPressure;
+    return seaLevelPressureMbar;
   }
 
   float getPitotIcePercent() const
   {
-    return pitotIce;
+    return pitotIcePercent;
   }
 
   float getStructuralIcePercent() const
   {
-    return structuralIce;
+    return structuralIcePercent;
   }
 
   float getAirplaneTotalWeightLbs() const
   {
-    return airplaneTotalWeight;
+    return airplaneTotalWeightLbs;
   }
 
   float getAirplaneMaxGrossWeightLbs() const
   {
-    return airplaneMaxGrossWeight;
+    return airplaneMaxGrossWeightLbs;
   }
 
   float getAirplaneEmptyWeightLbs() const
   {
-    return airplaneEmptyWeight;
+    return airplaneEmptyWeightLbs;
   }
 
   float getFuelTotalQuantityGallons() const
   {
-    return fuelTotalQuantity;
+    return fuelTotalQuantityGallons;
   }
 
   float getFuelTotalWeightLbs() const
   {
-    return fuelTotalWeight;
+    return fuelTotalWeightLbs;
   }
 
   float getFuelFlowPPH() const
@@ -134,7 +138,7 @@ public:
 
   float getAmbientVisibilityMeter() const
   {
-    return ambientVisibility;
+    return ambientVisibilityMeter;
   }
 
   const QDateTime& getLocalTime() const
@@ -149,25 +153,26 @@ public:
 
   float getTrackDegMag() const
   {
-    return trackMag;
+    return trackMagDeg;
   }
 
   float getTrackDegTrue() const
   {
-    return trackTrue;
+    return trackTrueDeg;
   }
 
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectData;
+  friend class xpc::XpConnect;
 
   float
-    altitudeAboveGround = 0.f, groundAltitude = 0.f, windSpeed = 0.f, windDirection = 0.f,
-    ambientTemperature = 0.f, totalAirTemperature = 0.f,
-    seaLevelPressure = 0.f, pitotIce = 0.f, structuralIce = 0.f, airplaneTotalWeight = 0.f,
-    airplaneMaxGrossWeight = 0.f, airplaneEmptyWeight = 0.f, fuelTotalQuantity = 0.f,
-    fuelTotalWeight = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVarDeg = 0.f, ambientVisibility = 0.f;
-  float trackMag = 0.f, trackTrue = 0.f;
+    altitudeAboveGroundFt = 0.f, groundAltitudeFt = 0.f, windSpeedKts = 0.f, windDirectionDegT = 0.f,
+    ambientTemperatureCelsius = 0.f, totalAirTemperatureCelsius = 0.f,
+    seaLevelPressureMbar = 0.f, pitotIcePercent = 0.f, structuralIcePercent = 0.f, airplaneTotalWeightLbs = 0.f,
+    airplaneMaxGrossWeightLbs = 0.f, airplaneEmptyWeightLbs = 0.f, fuelTotalQuantityGallons = 0.f,
+    fuelTotalWeightLbs = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVarDeg = 0.f, ambientVisibilityMeter = 0.f;
+  float trackMagDeg = 0.f, trackTrueDeg = 0.f;
   QDateTime localDateTime, zuluDateTime;
 };
 

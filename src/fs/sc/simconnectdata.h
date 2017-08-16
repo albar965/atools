@@ -27,6 +27,10 @@
 
 class QIODevice;
 
+namespace xpc {
+class XpConnect;
+}
+
 namespace atools {
 namespace fs {
 namespace sc {
@@ -119,8 +123,14 @@ public:
 
   static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos);
 
+  bool isUserAircraftValid() const
+  {
+    return userAircraft.position.isValid();
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
+  friend class xpc::XpConnect;
 
   const static quint32 MAGIC_NUMBER_DATA = 0xF75E0AF3;
   const static quint32 DATA_VERSION = 9;
@@ -133,6 +143,8 @@ private:
 
   QVector<atools::fs::sc::MetarResult> metarResults;
 };
+
+const atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
 
 } // namespace sc
 } // namespace fs

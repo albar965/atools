@@ -26,6 +26,10 @@
 
 class QIODevice;
 
+namespace xpc {
+class XpConnect;
+}
+
 namespace atools {
 namespace fs {
 namespace sc {
@@ -57,7 +61,8 @@ enum Category
   GROUNDVEHICLE,
   CONTROLTOWER,
   SIMPLEOBJECT,
-  VIEWER
+  VIEWER,
+  UNKNOWN
 };
 
 // quint8
@@ -87,16 +92,35 @@ public:
 
   // fs data ----------------------------------------------------
 
+  /* Mooney, Boeing, */
+  const QString& getAirplaneType() const
+  {
+    return airplaneType;
+  }
+
+  const QString& getAirplaneAirline() const
+  {
+    return airplaneAirline;
+  }
+
+  const QString& getAirplaneFlightnumber() const
+  {
+    return airplaneFlightnumber;
+  }
+
+  /* Beech Baron 58 Paint 1 */
   const QString& getAirplaneTitle() const
   {
     return airplaneTitle;
   }
 
+  /* Short ICAO code MD80, BE58, etc. */
   const QString& getAirplaneModel() const
   {
     return airplaneModel;
   }
 
+  /* N71FS */
   const QString& getAirplaneRegistration() const
   {
     return airplaneReg;
@@ -114,52 +138,37 @@ public:
 
   float getHeadingDegTrue() const
   {
-    return headingTrue;
+    return headingTrueDeg;
   }
 
   float getHeadingDegMag() const
   {
-    return headingMag;
+    return headingMagDeg;
   }
 
   float getGroundSpeedKts() const
   {
-    return groundSpeed;
+    return groundSpeedKts;
   }
 
   float getIndicatedSpeedKts() const
   {
-    return indicatedSpeed;
+    return indicatedSpeedKts;
   }
 
   float getVerticalSpeedFeetPerMin() const
   {
-    return verticalSpeed;
-  }
-
-  const QString& getAirplaneType() const
-  {
-    return airplaneType;
-  }
-
-  const QString& getAirplaneAirline() const
-  {
-    return airplaneAirline;
-  }
-
-  const QString& getAirplaneFlightnumber() const
-  {
-    return airplaneFlightnumber;
+    return verticalSpeedFeetPerMin;
   }
 
   float getIndicatedAltitudeFt() const
   {
-    return indicatedAltitude;
+    return indicatedAltitudeFt;
   }
 
   float getTrueSpeedKts() const
   {
-    return trueSpeed;
+    return trueSpeedKts;
   }
 
   float getMachSpeed() const
@@ -204,12 +213,15 @@ public:
 
   int getModelRadius() const
   {
-    return modelRadius;
+    return modelRadiusFt;
   }
+
+  /* Use an estimate based on engine type - used for map display and not for HTML info */
+  int getModelRadiusCorrected() const;
 
   int getWingSpan() const
   {
-    return wingSpan;
+    return wingSpanFt;
   }
 
   const QString& getFromIdent() const
@@ -257,15 +269,16 @@ private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
   friend class atools::fs::sc::SimConnectData;
+  friend class xpc::XpConnect;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
   atools::geo::Pos position;
-  float headingTrue = 0.f, headingMag = 0.f, groundSpeed = 0.f, indicatedAltitude = 0.f,
-        indicatedSpeed = 0.f, trueSpeed = 0.f,
-        machSpeed = 0.f, verticalSpeed = 0.f;
-  quint16 modelRadius = 0, wingSpan = 0;
+  float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
+        indicatedSpeedKts = 0.f, trueSpeedKts = 0.f,
+        machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
+  quint16 modelRadiusFt = 0, wingSpanFt = 0;
 
   quint32 objectId = 0L;
 

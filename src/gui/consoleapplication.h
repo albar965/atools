@@ -15,33 +15,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GUI_APPLICATION_H
-#define ATOOLS_GUI_APPLICATION_H
+#ifndef ATOOLS_GUI_CONSOLEAPPLICATION_H
+#define ATOOLS_GUI_CONSOLEAPPLICATION_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 /* Use this macro to report an fatal error after an exception including location information */
-#define ATOOLS_HANDLE_EXCEPTION(e) (atools::gui::Application::handleException(__FILE__, __LINE__, e))
+#define ATOOLS_HANDLE_CONSOLE_EXCEPTION(e) (atools::gui::ConsoleApplication::handleException(__FILE__, __LINE__, e))
 
 /* Use this macro to report an fatal error after an unknownexception including location information */
-#define ATOOLS_HANDLE_UNKNOWN_EXCEPTION (atools::gui::Application::handleException(__FILE__, __LINE__))
+#define ATOOLS_HANDLE_UNKNOWN_CONSOLE_EXCEPTION (atools::gui::ConsoleApplication::handleException(__FILE__, __LINE__))
 
 namespace atools {
 namespace gui {
 
 /*
  * Adds an exception handler for the event queue and provides methods to handle fatal errors.
- * Catches any exceptions that was thrown in an event handler and shows an error dialog
- * also containing application paths etc.
+ * Catches any exceptions that was thrown in an event handler and shows an error message on the console.
  */
-class Application :
-  public QApplication
+class ConsoleApplication :
+  public QCoreApplication
 {
   Q_OBJECT
 
 public:
-  Application(int& argc, char **argv, int = ApplicationFlags);
-  virtual ~Application();
+  ConsoleApplication(int& argc, char **argv, int = ApplicationFlags);
+  virtual ~ConsoleApplication();
 
 #if defined(Q_CC_MSVC)
   // MSVC cannot deal with newer C++ features
@@ -61,33 +60,6 @@ public:
 
 #endif
 
-  /* Add a list of paths that will be added as links in any error dialog.
-   * @param header Header for the list of paths
-   * @param paths A list of directory or file paths
-   */
-  static void addReportPath(const QString& header, const QStringList& paths);
-
-  /*
-   * Get the paths that were added using addReportPath in a HTML formatted text
-   * as links
-   */
-  static QString getReportPathHtml();
-
-  static QString getEmailHtml();
-
-  static QStringList getEmailAddresses()
-  {
-    return emailAddresses;
-  }
-
-  static void setEmailAddresses(const QStringList& value)
-  {
-    emailAddresses = value;
-  }
-
-  /* Process twice and wait 10 ms inbetween */
-  static void processEventsExtended();
-
   static bool getExitOnException()
   {
     return exitOnException;
@@ -101,10 +73,6 @@ public:
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 
-  static QHash<QString, QStringList> reportFiles;
-
-  static QStringList emailAddresses;
-
   static bool exitOnException;
 
 };
@@ -112,4 +80,4 @@ private:
 } // namespace gui
 } // namespace atools
 
-#endif // ATOOLS_GUI_APPLICATION_H
+#endif // ATOOLS_GUI_CONSOLEAPPLICATION_H
