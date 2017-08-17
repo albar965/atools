@@ -1025,7 +1025,7 @@ void Flightplan::saveRte(const QString& file)
       arg(QApplication::applicationName()).
       arg(QApplication::applicationVersion()).
       arg(atools::gitRevision()).
-      arg(QLocale().toString(QDateTime::currentDateTime())).
+      arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
       replace("-", " ") << endl << endl;
 
     stream << entries.size() << endl << endl;
@@ -1319,7 +1319,7 @@ QString Flightplan::programInfo()
          arg(QApplication::applicationName()).
          arg(QApplication::applicationVersion()).
          arg(atools::gitRevision()).
-         arg(QLocale().toString(QDateTime::currentDateTime())).
+         arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
          replace("-", " ");
 }
 

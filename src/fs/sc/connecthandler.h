@@ -39,7 +39,7 @@ enum State
 
 /*
  * Abstract interface for simulator connection interfaces
- * Reads data synchronously from Fs simconnect interfaces on inside a X-Plane plugin.
+ * Reads data synchronously from Fs simconnect interfaces or inside a X-Plane plugin.
  * For non windows platforms contains also a simple aircraft simulation.
  */
 class ConnectHandler

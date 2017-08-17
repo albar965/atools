@@ -71,7 +71,7 @@ bool XpConnectHandler::isSimRunning() const
 
 bool XpConnectHandler::isSimPaused() const
 {
-  return false;
+  return simPaused;
 }
 
 atools::fs::sc::State XpConnectHandler::getState() const

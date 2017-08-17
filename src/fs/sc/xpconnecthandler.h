@@ -28,26 +28,50 @@ namespace sc {
 
 typedef std::function<bool (fs::sc::SimConnectData& data, int radiusKm, fs::sc::Options options)> DataCopyFunctionType;
 
+/*
+ * Reads data from a callback function into SimConnectData.
+ */
 class XpConnectHandler :
   public atools::fs::sc::ConnectHandler
 {
 public:
-  XpConnectHandler(DataCopyFunctionType, bool logVerbose);
+  /*
+   *
+   * @param dataCopyFunction callback function which will get the data
+   */
+  XpConnectHandler(DataCopyFunctionType dataCopyFunction, bool logVerbose);
   virtual ~XpConnectHandler();
 
+  /* Not used */
   virtual bool connect() override;
+
+  /* Always loaded since running inside a plugin */
   virtual bool isLoaded() const override;
+
+  /* Fetch data from the callback method into SimConnectData. Always returns true since running in plugin. */
   virtual bool fetchData(SimConnectData& data, int radiusKm, Options options) override;
+
+  /* Not supported in X-Plane */
   virtual bool fetchWeatherData(SimConnectData& data) override;
+
+  /* Not supported in X-Plane */
   virtual void addWeatherRequest(const WeatherRequest& request) override;
+
+  /* Not supported in X-Plane */
   virtual const WeatherRequest& getWeatherRequest() const override;
+
+  /* Always running when plugin is loaded */
   virtual bool isSimRunning() const override;
+
+  /* Not used */
   virtual bool isSimPaused() const override;
+
+  /* Always running when plugin is loaded */
   virtual State getState() const override;
 
 private:
   atools::fs::sc::DataCopyFunctionType dataCopyFunc = nullptr;
-  bool verbose = false;
+  bool verbose = false, simPaused = false;
 };
 
 } // namespace sc

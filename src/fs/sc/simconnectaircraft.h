@@ -126,11 +126,13 @@ public:
     return airplaneReg;
   }
 
+  /* Includes actual altitude in feet */
   atools::geo::Pos& getPosition()
   {
     return position;
   }
 
+  /* Includes actual altitude in feet */
   const atools::geo::Pos& getPosition() const
   {
     return position;
