@@ -23,12 +23,12 @@ namespace sc {
 
 ConnectHandler::ConnectHandler()
 {
-
+  qDebug() << Q_FUNC_INFO;
 }
 
 ConnectHandler::~ConnectHandler()
 {
-
+  qDebug() << Q_FUNC_INFO;
 }
 
 } // namespace sc

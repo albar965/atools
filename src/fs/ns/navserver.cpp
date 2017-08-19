@@ -47,7 +47,8 @@ void NavServer::stopServer()
   qDebug() << "Navserver stopping";
 
   // Close tcp server to avoid accepting connections
-  close();
+  if(isListening())
+    close();
 
   // Stop all worker threads
   QSet<NavServerWorker *> workersCopy(workers);

@@ -30,11 +30,12 @@ namespace sc {
 XpConnectHandler::XpConnectHandler(DataCopyFunctionType dataCopyFunction, bool logVerbose)
   : dataCopyFunc(dataCopyFunction), verbose(logVerbose)
 {
-
+  qDebug() << Q_FUNC_INFO;
 }
 
 XpConnectHandler::~XpConnectHandler()
 {
+  qDebug() << Q_FUNC_INFO;
 }
 
 bool XpConnectHandler::connect()
