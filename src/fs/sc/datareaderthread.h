@@ -41,8 +41,10 @@ class DataReaderThread :
   Q_OBJECT
 
 public:
-  DataReaderThread(QObject *parent, atools::fs::sc::ConnectHandler *connectHandler, bool verboseLog);
+  DataReaderThread(QObject *parent, bool verboseLog);
   virtual ~DataReaderThread();
+
+  void setHandler(atools::fs::sc::ConnectHandler *connectHandler);
 
   /* Terminate, wait for termination and reset flag afterwards */
   void terminateThread();
@@ -97,6 +99,10 @@ public:
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);
 
   void setSimconnectOptions(atools::fs::sc::Options value);
+
+  /* What type of handler is set now */
+  bool isFsxHandler();
+  bool isXplaneHandler();
 
 signals:
   /* Send on each received data package from the simconnect interface */

@@ -68,6 +68,9 @@ public:
   /* Get state of last call. */
   virtual sc::State getState() const = 0;
 
+  /* Name which can be used when saving options */
+  virtual QString getName() const = 0;
+
 };
 
 } // namespace sc

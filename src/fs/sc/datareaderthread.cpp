@@ -18,6 +18,7 @@
 #include "fs/sc/datareaderthread.h"
 
 #include "fs/sc/simconnecthandler.h"
+#include "fs/sc/xpconnecthandler.h"
 #include "settings/settings.h"
 
 #include <QDebug>
@@ -30,13 +31,13 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-DataReaderThread::DataReaderThread(QObject *parent, ConnectHandler *connectHandler, bool verboseLog)
-  : QThread(parent), handler(connectHandler), verbose(verboseLog)
+DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
+  : QThread(parent), verbose(verboseLog)
 {
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
 
-  qInfo() << "SimConnect available:" << handler->isLoaded();
+  qInfo() << "SimConnect available:" << (handler != nullptr ? handler->isLoaded() : false);
 
   simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
@@ -44,6 +45,13 @@ DataReaderThread::DataReaderThread(QObject *parent, ConnectHandler *connectHandl
 DataReaderThread::~DataReaderThread()
 {
   qDebug() << Q_FUNC_INFO;
+}
+
+void DataReaderThread::setHandler(ConnectHandler *connectHandler)
+{
+  qDebug() << Q_FUNC_INFO << connectHandler->getName();
+
+  handler = connectHandler;
 }
 
 void DataReaderThread::connectToSimulator()
@@ -359,6 +367,16 @@ void DataReaderThread::closeReplay()
 bool DataReaderThread::isSimconnectAvailable()
 {
   return handler->isLoaded();
+}
+
+bool DataReaderThread::isFsxHandler()
+{
+  return dynamic_cast<atools::fs::sc::SimConnectHandler *>(handler) != nullptr;
+}
+
+bool DataReaderThread::isXplaneHandler()
+{
+  return dynamic_cast<atools::fs::sc::XpConnectHandler *>(handler) != nullptr;
 }
 
 void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)

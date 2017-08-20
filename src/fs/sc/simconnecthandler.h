@@ -62,6 +62,8 @@ public:
   /* Get state of last call. */
   virtual sc::State getState() const override;
 
+  virtual QString getName() const override;
+
 private:
   // Used to all the windows and SimConnect stuff out of the header files
   SimConnectHandlerPrivate *p = nullptr;

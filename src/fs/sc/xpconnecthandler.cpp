@@ -19,16 +19,16 @@
 
 #include "fs/sc/weatherrequest.h"
 
+#include "fs/sc/simconnectdata.h"
+
+#include <QBuffer>
+#include <QDataStream>
+
 namespace atools {
 namespace fs {
 namespace sc {
 
-// ===============================================================================================
-// XpConnectHandler
-// ===============================================================================================
-
-XpConnectHandler::XpConnectHandler(DataCopyFunctionType dataCopyFunction, bool logVerbose)
-  : dataCopyFunc(dataCopyFunction), verbose(logVerbose)
+XpConnectHandler::XpConnectHandler()
 {
   qDebug() << Q_FUNC_INFO;
 }
@@ -36,16 +36,80 @@ XpConnectHandler::XpConnectHandler(DataCopyFunctionType dataCopyFunction, bool l
 XpConnectHandler::~XpConnectHandler()
 {
   qDebug() << Q_FUNC_INFO;
+  disconnect();
 }
 
 bool XpConnectHandler::connect()
 {
-  return true;
+  if(sharedMemory.isAttached())
+  {
+    qDebug() << Q_FUNC_INFO << "Already attached";
+    state = STATEOK;
+    return true;
+  }
+
+  sharedMemory.setKey("LittleXpConnect");
+  if(!sharedMemory.attach(QSharedMemory::ReadOnly))
+  {
+    qWarning() << Q_FUNC_INFO << "Cannot attach" << sharedMemory.errorString();
+    state = OPEN_ERROR;
+    return false;
+  }
+  else
+  {
+    qInfo() << Q_FUNC_INFO << "Attached to" << sharedMemory.key() << "native" << sharedMemory.nativeKey();
+    state = STATEOK;
+    return true;
+  }
 }
 
 bool XpConnectHandler::fetchData(fs::sc::SimConnectData& data, int radiusKm, fs::sc::Options options)
 {
-  return dataCopyFunc(data, radiusKm, options);
+  Q_UNUSED(radiusKm);
+  Q_UNUSED(options);
+
+  if(!sharedMemory.isAttached())
+  {
+    state = DISCONNECTED;
+    return false;
+  }
+
+  if(sharedMemory.lock())
+  {
+    quint32 size;
+    quint32 terminate;
+    int prefixSize = sizeof(size) + sizeof(terminate);
+    QDataStream stream(QByteArray(static_cast<const char *>(sharedMemory.data()), prefixSize));
+    stream >> size;
+
+    if(size > static_cast<quint32>(prefixSize))
+    {
+      stream >> terminate;
+
+      QBuffer buffer;
+      buffer.setData(static_cast<const char *>(sharedMemory.data()), static_cast<int>(size));
+      buffer.open(QIODevice::ReadOnly);
+
+      buffer.seek(sizeof(size) + sizeof(terminate));
+      data.read(&buffer);
+      sharedMemory.unlock();
+
+      if(terminate)
+      {
+        disconnect();
+        return false;
+      }
+
+      if(data.isUserAircraftValid() && data.getStatus() == OK)
+        return true;
+    }
+    else
+      sharedMemory.unlock();
+  }
+  else
+    qInfo() << Q_FUNC_INFO << "Cannot lock" << sharedMemory.key() << "native" << sharedMemory.nativeKey();
+
+  return false;
 }
 
 bool XpConnectHandler::fetchWeatherData(fs::sc::SimConnectData& data)
@@ -67,17 +131,29 @@ const atools::fs::sc::WeatherRequest& XpConnectHandler::getWeatherRequest() cons
 
 bool XpConnectHandler::isSimRunning() const
 {
-  return true;
+  return state == STATEOK;
 }
 
 bool XpConnectHandler::isSimPaused() const
 {
-  return simPaused;
+  return false;
 }
 
 atools::fs::sc::State XpConnectHandler::getState() const
 {
-  return STATEOK;
+  return state;
+}
+
+QString XpConnectHandler::getName() const
+{
+  return QLatin1Literal("XpConnect");
+}
+
+void XpConnectHandler::disconnect()
+{
+  bool result = sharedMemory.detach();
+  qDebug() << Q_FUNC_INFO << "result" << result;
+  state = DISCONNECTED;
 }
 
 bool XpConnectHandler::isLoaded() const

@@ -29,6 +29,7 @@
 #include <QThread>
 #include <QSet>
 #include <QCache>
+#include <QLatin1Literal>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
@@ -1011,6 +1012,11 @@ void SimConnectHandler::addWeatherRequest(const atools::fs::sc::WeatherRequest& 
 const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 {
   return p->weatherRequest;
+}
+
+QString atools::fs::sc::SimConnectHandler::getName() const
+{
+  return QLatin1Literal("SimConnect");
 }
 
 } // namespace sc

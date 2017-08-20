@@ -287,8 +287,8 @@ private:
   Flags flags = atools::fs::sc::NONE;
 
   Category category;
-  EngineType engineType;
-  quint8 numberOfEngines;
+  EngineType engineType = atools::fs::sc::UNSUPPORTED;
+  quint8 numberOfEngines = 0;
   bool debug = false;
 };
 

@@ -20,6 +20,7 @@
 
 #include "fs/sc/connecthandler.h"
 
+#include <QSharedMemory>
 #include <functional>
 
 namespace atools {
@@ -39,16 +40,16 @@ public:
    *
    * @param dataCopyFunction callback function which will get the data
    */
-  XpConnectHandler(DataCopyFunctionType dataCopyFunction, bool logVerbose);
+  XpConnectHandler();
   virtual ~XpConnectHandler();
 
-  /* Not used */
+  /* Attach to shared memory if available */
   virtual bool connect() override;
 
-  /* Always loaded since running inside a plugin */
+  /* Always loaded since X-Plane is always available */
   virtual bool isLoaded() const override;
 
-  /* Fetch data from the callback method into SimConnectData. Always returns true since running in plugin. */
+  /* Fetch data from the shared memory. */
   virtual bool fetchData(SimConnectData& data, int radiusKm, Options options) override;
 
   /* Not supported in X-Plane */
@@ -60,18 +61,23 @@ public:
   /* Not supported in X-Plane */
   virtual const WeatherRequest& getWeatherRequest() const override;
 
-  /* Always running when plugin is loaded */
+  /* If state is ok and attached to shared memory */
   virtual bool isSimRunning() const override;
 
   /* Not used */
   virtual bool isSimPaused() const override;
 
-  /* Always running when plugin is loaded */
-  virtual State getState() const override;
+  /* State shows if we are attached or not */
+  virtual atools::fs::sc::State getState() const override;
+
+  /* Symbolic name for logging */
+  QString getName() const override;
 
 private:
-  atools::fs::sc::DataCopyFunctionType dataCopyFunc = nullptr;
-  bool verbose = false, simPaused = false;
+  void disconnect();
+
+  QSharedMemory sharedMemory;
+  atools::fs::sc::State state = DISCONNECTED;
 };
 
 } // namespace sc
