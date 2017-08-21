@@ -39,7 +39,7 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
 
   qInfo() << "SimConnect available:" << (handler != nullptr ? handler->isLoaded() : false);
 
-  simconnectOptions = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
+  options = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
 
 DataReaderThread::~DataReaderThread()
@@ -109,7 +109,7 @@ void DataReaderThread::run()
   while(!terminate)
   {
     atools::fs::sc::SimConnectData data;
-    atools::fs::sc::Options opts = simconnectOptions;
+    atools::fs::sc::Options opts = options;
 
     if(loadReplayFile != nullptr)
     {
@@ -271,7 +271,7 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
 
 void DataReaderThread::setSimconnectOptions(Options value)
 {
-  simconnectOptions = value;
+  options = value;
 }
 
 void DataReaderThread::setReconnectRateSec(int reconnectSec)

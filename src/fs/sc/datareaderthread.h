@@ -104,6 +104,11 @@ public:
   bool isFsxHandler();
   bool isXplaneHandler();
 
+  atools::fs::sc::ConnectHandler *getHandler() const
+  {
+    return handler;
+  }
+
 signals:
   /* Send on each received data package from the simconnect interface */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
@@ -125,7 +130,7 @@ private:
   atools::fs::sc::ConnectHandler *handler = nullptr;
 
   /* Have to protect options since they will be modified from outside the thread */
-  std::atomic<atools::fs::sc::Options> simconnectOptions;
+  std::atomic<atools::fs::sc::Options> options;
 
   int numErrors = 0;
   const int MAX_NUMBER_OF_ERRORS = 50;
