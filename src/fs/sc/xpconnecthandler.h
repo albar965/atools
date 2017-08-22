@@ -27,7 +27,9 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-typedef std::function<bool (fs::sc::SimConnectData& data, int radiusKm, fs::sc::Options options)> DataCopyFunctionType;
+/* Defaul size of the shared memory segment */
+static const int SHARED_MEMORY_SIZE = 8196;
+static const QLatin1Literal SHARED_MEMORY_KEY("LittleXpconnect");
 
 /*
  * Reads data from a callback function into SimConnectData.

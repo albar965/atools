@@ -48,7 +48,7 @@ bool XpConnectHandler::connect()
     return true;
   }
 
-  sharedMemory.setKey("LittleXpConnect");
+  sharedMemory.setKey(atools::fs::sc::SHARED_MEMORY_KEY);
   if(!sharedMemory.attach(QSharedMemory::ReadOnly))
   {
     qWarning() << Q_FUNC_INFO << "Cannot attach" << sharedMemory.errorString();
