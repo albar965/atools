@@ -64,15 +64,9 @@ NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDataba
 void NavDatabase::create(const QString& codec)
 {
   createInternal(codec);
-
   if(aborted)
-  {
     // Remove all (partial) changes
     db->rollback();
-
-    // Create an empty schema to avoid application crashes
-    createSchema();
-  }
 }
 
 void NavDatabase::createSchema()
@@ -240,6 +234,7 @@ void NavDatabase::createInternal(const QString& codec)
     xplaneExtraSteps++; // post process airways
 
     xplaneExtraSteps--; // ILS id not executed
+    xplaneExtraSteps--; // VORTAC merge not executed
     total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
     // Around 9000 navaids - total / routePartFraction has to be lower than this
     routePartFraction = 20;
@@ -442,21 +437,22 @@ void NavDatabase::createInternal(const QString& codec)
       return;
 
     db->commit();
-
-    // TODO revert   SqlQuery(db).exec("drop table if exists airway_point");
   }
 
+  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
+  {
+    // Create VORTACs
+    if((aborted = progress.reportOther(tr("Merging VOR and TACAN to VORTAC"))) == true)
+      return;
+
+    script.executeScript(":/atools/resources/sql/fs/db/update_vor.sql");
+    db->commit();
+  }
+
+  // Set the nav_ids (VOR, NDB) in the waypoint table
   if((aborted = progress.reportOther(tr("Updating waypoints"))) == true)
     return;
 
-  // Create VORTACs
-  script.executeScript(":/atools/resources/sql/fs/db/update_vor.sql");
-  db->commit();
-
-  if((aborted = progress.reportOther(tr("Merging VOR and TACAN to VORTAC"))) == true)
-    return;
-
-  // Set the nav_ids (VOR, NDB) in the waypoint table
   script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
   db->commit();
 

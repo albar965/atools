@@ -115,14 +115,13 @@ bool XpDataCompiler::compileEarthNav()
 
 bool XpDataCompiler::compileCustomApt()
 {
-  bool aborted = false;
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
   QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
-    if((aborted = readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT)) == true)
-      return aborted;
+    if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT))
+      return true;
   }
 
   return false;
@@ -222,6 +221,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
 {
   QFile file;
   QTextStream stream;
+  bool aborted = false;
 
   QString progressMsg = tr("Reading: %1").arg(filename);
 
@@ -263,7 +263,6 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     int rowsPerStep =
       static_cast<int>(std::ceil(static_cast<float>(totalNumLines) / static_cast<float>(NUM_REPORT_STEPS)));
     int row = 0, steps = 0;
-    bool aborted = false;
 
     // Read lines
     while(!stream.atEnd() && line != "99")
@@ -322,10 +321,8 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     if(!(flags & READ_SHORT_REPORT))
       // Eat up any remaining progress steps
       progress->increaseCurrent(NUM_REPORT_STEPS - steps);
-
-    return false;
   }
-  return true;
+  return aborted;
 }
 
 bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, int& lineNum,
