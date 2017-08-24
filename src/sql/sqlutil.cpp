@@ -36,7 +36,7 @@ SqlUtil::SqlUtil(SqlDatabase& sqlDb)
 }
 
 QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause,
-                                      const QStringList& excludeColumns)
+                                      const QStringList& excludeColumns, bool namedBindings)
 {
   // TODO use QSqlDriver::sqlStatement()
 
@@ -62,7 +62,11 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
 
     if(!valueList.isEmpty())
       valueList += ", ";
-    valueList += ":" + name;
+
+    if(namedBindings)
+      valueList += ":" + name;
+    else
+      valueList += "?";
   }
   return "insert " + otherClause + " into " + tablename + " (" + columnList + ") values(" + valueList + ")";
 }
@@ -134,6 +138,22 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
                            "(SQL \"" + to.lastQuery() + "\")");
       copied++;
     }
+  }
+  return copied;
+}
+
+int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
+{
+  int copied = 0;
+  while(from.next())
+  {
+    copyRowValues(from, to);
+    to.exec();
+    if(to.numRowsAffected() != 1)
+      throw SqlException("Error executing statement in Utility::copyResultValues(). "
+                         "Number of inserted rows not 1. "
+                         "(SQL \"" + to.lastQuery() + "\")");
+    copied++;
   }
   return copied;
 }

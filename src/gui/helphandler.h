@@ -63,6 +63,8 @@ public:
   /* Open an URL in the default browser. If that fails show an error dialog */
   void openUrl(const QUrl& url);
   static void openUrl(QWidget *parent, const QUrl& url);
+  void openUrl(const QString& url);
+  static void openUrl(QWidget *parent, const QString& url);
 
   /* fileTemplate is a regexp like "little-navmap-user-manual-([a-z]{2})\.pdf".
    * Capture 1 is the language. */

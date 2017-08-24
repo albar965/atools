@@ -34,7 +34,7 @@ public:
    * Create a util using the given database.
    */
   explicit SqlUtil(SqlDatabase *sqlDb);
-  explicit SqlUtil(SqlDatabase &sqlDb);
+  explicit SqlUtil(SqlDatabase& sqlDb);
 
   /*
    * Prints row counts for all tables in the database.
@@ -54,7 +54,7 @@ public:
 
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString(),
-                               const QStringList& excludeColumns = QStringList());
+                               const QStringList& excludeColumns = QStringList(), bool namedBindings = true);
 
   /* Creates a select statement including all columns for the given table. */
   QString buildSelectStatement(const QString& tablename);
@@ -78,6 +78,7 @@ public:
    */
   static int copyResultValues(SqlQuery& from, SqlQuery& to,
                               std::function<bool(SqlQuery& from, SqlQuery& to)> func);
+  static int copyResultValues(SqlQuery& from, SqlQuery& to);
 
   /*
    * Copies the values of one row from one statement to another.

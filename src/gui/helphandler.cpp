@@ -89,6 +89,16 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
                            tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
 }
 
+void HelpHandler::openUrl(const QString& url)
+{
+  openUrl(QUrl(url));
+}
+
+void HelpHandler::openUrl(QWidget *parent, const QString& url)
+{
+  openUrl(parent, QUrl(url));
+}
+
 QStringList HelpHandler::getInstalledLanguages(const QString& directory, const QString& fileTemplate)
 {
   QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
