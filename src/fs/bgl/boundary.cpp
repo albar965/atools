@@ -171,6 +171,9 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
   {
     Record r(options, bs);
     rec::BoundaryRecordType t = r.getId<rec::BoundaryRecordType>();
+    if(checkSubRecord(r))
+      return;
+
     switch(t)
     {
       case atools::fs::bgl::rec::BOUNDARY_COM:
@@ -212,12 +215,12 @@ QDebug operator<<(QDebug out, const Boundary& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Boundary[type " << Boundary::boundaryTypeToStr(record.type)
-  << ", name " << record.name
-  << ", minAltType " << Boundary::altTypeToStr(record.minAltType)
-  << ", maxAltType " << Boundary::altTypeToStr(record.maxAltType)
-  << ", minPosition " << record.minPosition
-  << ", maxPosition " << record.maxPosition << endl;
+                          << " Boundary[type " << Boundary::boundaryTypeToStr(record.type)
+                          << ", name " << record.name
+                          << ", minAltType " << Boundary::altTypeToStr(record.minAltType)
+                          << ", maxAltType " << Boundary::altTypeToStr(record.maxAltType)
+                          << ", minPosition " << record.minPosition
+                          << ", maxPosition " << record.maxPosition << endl;
   out << record.lines;
   out << "]";
 

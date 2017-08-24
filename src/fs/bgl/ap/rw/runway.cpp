@@ -243,6 +243,8 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   {
     Record r(options, bs);
     rec::RunwayRecordType t = r.getId<rec::RunwayRecordType>();
+    if(checkSubRecord(r))
+      return;
 
     switch(t)
     {

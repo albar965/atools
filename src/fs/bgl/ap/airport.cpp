@@ -119,6 +119,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   {
     Record r(options, bs);
     rec::AirportRecordType type = r.getId<rec::AirportRecordType>();
+    if(checkSubRecord(r))
+      return;
 
     switch(type)
     {

@@ -65,6 +65,8 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
   {
     Record r(options, bs);
     rec::NdbRecordType t = r.getId<rec::NdbRecordType>();
+    if(checkSubRecord(r))
+      return;
 
     switch(t)
     {

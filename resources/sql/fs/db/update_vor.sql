@@ -16,13 +16,14 @@
 -- ****************************************************************************/
 
 -- *************************************************************
--- Merge VOR and TACAN to VORTAC -------------------
+-- Merge VOR and TACAN to VORTAC that have the same name and are nearby -------------------
 -- *************************************************************
 
 -- Copy channel from TACAN
 update vor set channel = (
 select v2.channel from vor v1
-left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and v1.lonx = v2.lonx and v1.laty = v2.laty
+left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and
+(abs(v1.lonx - v2.lonx) + abs(v1.laty - v2.laty)) < 0.001
 where
 v1.type != 'TC' and v2.type = 'TC' and v1.vor_id = vor.vor_id)
 where vor.channel is null and vor.type != 'TC';
@@ -30,21 +31,24 @@ where vor.channel is null and vor.type != 'TC';
 -- Set new type to VORTAC
 update vor set type = 'VTH' where vor_id in (
 select v1.vor_id from vor v1
-left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and v1.lonx = v2.lonx and v1.laty = v2.laty
+left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and
+(abs(v1.lonx - v2.lonx) + abs(v1.laty - v2.laty)) < 0.001
 where
 v1.type = 'H' and v2.type = 'TC' and v1.vor_id = vor.vor_id);
 
 -- Set new type to VORTAC
 update vor set type = 'VTL' where vor_id in (
 select v1.vor_id from vor v1
-left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and v1.lonx = v2.lonx and v1.laty = v2.laty
+left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and
+(abs(v1.lonx - v2.lonx) + abs(v1.laty - v2.laty)) < 0.001
 where
 v1.type = 'L' and v2.type = 'TC' and v1.vor_id = vor.vor_id);
 
 -- Set new type to VORTAC
 update vor set type = 'VTT' where vor_id in (
 select v1.vor_id from vor v1
-left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and v1.lonx = v2.lonx and v1.laty = v2.laty
+left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and
+(abs(v1.lonx - v2.lonx) + abs(v1.laty - v2.laty)) < 0.001
 where
 v1.type = 'T' and v2.type = 'TC' and v1.vor_id = vor.vor_id);
 
@@ -52,5 +56,6 @@ v1.type = 'T' and v2.type = 'TC' and v1.vor_id = vor.vor_id);
 -- delete the now useless TACANS
 delete from vor where vor_id in (
 select v2.vor_id from vor v1
-left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and v1.lonx = v2.lonx and v1.laty = v2.laty
+left outer join vor v2 on v1.ident = v2.ident and v1.region = v2.region and
+(abs(v1.lonx - v2.lonx) + abs(v1.laty - v2.laty)) < 0.001
 where v1.type != 'TC' and v2.type = 'TC');

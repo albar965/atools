@@ -51,6 +51,8 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *bs)
   {
     Record r(options, bs);
     rec::IlsVorRecordType t = r.getId<rec::IlsVorRecordType>();
+    if(checkSubRecord(r))
+      return;
 
     switch(t)
     {

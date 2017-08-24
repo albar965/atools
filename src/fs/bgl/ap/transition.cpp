@@ -105,6 +105,8 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
   {
     Record r(options, bs);
     rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
+    if(checkSubRecord(r))
+      return;
 
     switch(t)
     {

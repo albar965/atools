@@ -111,6 +111,10 @@ public:
 
   virtual QString getObjectName() const;
 
+  /* Validate the size in the subrecord to avoid an endless loop when it is zero.
+   * If zero rewind current record, print a warning, set to excluded and return true */
+  bool checkSubRecord(const Record& r);
+
 protected:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Record& record);
 

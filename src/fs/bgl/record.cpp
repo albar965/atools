@@ -45,13 +45,28 @@ QString Record::getObjectName() const
          arg(getStartOffset(), 0, 16).arg(id, 0, 16).arg(size);
 }
 
+bool Record::checkSubRecord(const Record& r)
+{
+  if(r.getSize() == 0)
+  {
+    qWarning().nospace().noquote() << "Ignoring airport. Size of record is zero. 0x"
+                                   << hex << r.getId<int>() << dec << getObjectName();
+
+    // Stop reading when the first subrecord is already invalid
+    seekToStart();
+    excluded = true;
+    return true;
+  }
+  return false;
+}
+
 QDebug operator<<(QDebug out, const Record& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << hex << " Record[id 0x" << record.id << dec
-  << ", size " << record.size << "]";
+                          << hex << " Record[id 0x" << record.id << dec
+                          << ", size " << record.size << "]";
   return out;
 }
 
