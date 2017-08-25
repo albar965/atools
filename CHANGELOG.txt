@@ -1,3 +1,14 @@
+Version 2.5.4.develop
+
+* Made all dialogs now application modal to avoid hiding behind main window.
+* Removed unneede schema generation in case of aborted compilation.
+* Fixed compilation not detecting abort/cancel condition for X-Plane.
+* Added tolerant distance match when merging TACAN and VOR to VORTAC.
+* BGL record length now checked to avoid endless loops and program freezing.
+* Added console application to avoid widget dependencies.
+* Added aircraft type codes.
+* Fixed crash when reading CIFP files.
+
 Version 2.5.3.develop
 
 * Added support for full X-Plane scenery database except airspaces and ARINC files.
