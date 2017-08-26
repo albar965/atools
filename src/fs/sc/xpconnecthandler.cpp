@@ -51,7 +51,8 @@ bool XpConnectHandler::connect()
   sharedMemory.setKey(atools::fs::sc::SHARED_MEMORY_KEY);
   if(!sharedMemory.attach(QSharedMemory::ReadOnly))
   {
-    qWarning() << Q_FUNC_INFO << "Cannot attach" << sharedMemory.errorString();
+    if(sharedMemory.error() != QSharedMemory::NotFound)
+      qWarning() << Q_FUNC_INFO << "Cannot attach" << sharedMemory.errorString() << sharedMemory.error();
     state = OPEN_ERROR;
     return false;
   }
