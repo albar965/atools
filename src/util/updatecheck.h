@@ -80,8 +80,13 @@ class UpdateCheck :
   Q_OBJECT
 
 public:
-  UpdateCheck();
-  UpdateCheck(const QString& programVersion);
+  explicit UpdateCheck(bool forceDebug);
+
+  /*
+   * @param programVersion Current program version
+   * @param forceDebug always report update for testing purposes
+   */
+  explicit UpdateCheck(const QString& programVersion, bool forceDebug);
   virtual ~UpdateCheck();
 
   /*
@@ -131,7 +136,7 @@ private:
   QUrl url;
 
   /* Also send message if nothing was found */
-  bool notifyEmptyUpdates = false;
+  bool notifyEmptyUpdates = false, debug = false;
 
 };
 

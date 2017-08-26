@@ -34,14 +34,14 @@ static const QLatin1Literal DOWNLOAD_KEY("downloadmac");
 static const QLatin1Literal DOWNLOAD_KEY("downloadlinux");
 #endif
 
-UpdateCheck::UpdateCheck()
-  : curProgramVersion(QApplication::applicationVersion())
+UpdateCheck::UpdateCheck(bool forceDebug)
+  : curProgramVersion(QApplication::applicationVersion()), debug(forceDebug)
 {
 
 }
 
-UpdateCheck::UpdateCheck(const QString& programVersion)
-  : curProgramVersion(programVersion)
+UpdateCheck::UpdateCheck(const QString& programVersion, bool forceDebug)
+  : curProgramVersion(programVersion), debug(forceDebug)
 {
 
 }
@@ -125,12 +125,19 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
 
   QHash<UpdateChannels, Update> map;
   UpdateChannels currentChannel = NONE;
+  // Changelog will continue until a new keyword, a section or an empty line is found
+  bool changelogContinuation = false;
   while(!versioninfo.atEnd())
   {
-    QString line = versioninfo.readLine().trimmed();
+    QString rawLine = versioninfo.readLine();
+    QString line = rawLine.trimmed();
+
     // Skip comments and empty lines
-    if(line.isEmpty() || line.startsWith("#") || line.startsWith(";"))
+    if(line.isEmpty() || line.startsWith("#"))
+    {
+      changelogContinuation = false;
       continue;
+    }
 
     if(line.startsWith("["))
     {
@@ -142,35 +149,51 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
         currentChannel = BETA;
       else if(section == "[develop]")
         currentChannel = DEVELOP;
+
+      changelogContinuation = false;
     }
     else
     {
       if(channels & currentChannel)
       {
         QString key = line.section('=', 0, 0).trimmed().toLower();
-        QString value = line.section('=', 1).trimmed();
+        QString rawValue = line.section('=', 1).trimmed();
+        QString value = rawValue.trimmed();
 
         if(key == "version")
         {
-          if(!alreadyChecked.contains(value))
+          if(!alreadyChecked.contains(value) || debug)
           {
             // Check if there is a newer version
             Version version(value);
-            if(version > programVersion)
+            if(version > programVersion || debug)
             {
               map[currentChannel].version = value;
               map[currentChannel].channel = currentChannel;
             }
             // else Leave version empty if it is to be skipped
           }
+          changelogContinuation = false;
         }
         else if(key == "url")
+        {
           map[currentChannel].url = value;
+          changelogContinuation = false;
+        }
+        else if(key.startsWith("download"))
+        {
+          if(key == DOWNLOAD_KEY || key == "download")
+            // OS specific or general download
+            map[currentChannel].download = value;
+          changelogContinuation = false;
+        }
         else if(key == "changelog")
-          map[currentChannel].changelog = value;
-        else if(key == DOWNLOAD_KEY || key == "download")
-          // OS specific download
-          map[currentChannel].download = value;
+        {
+          map[currentChannel].changelog = rawValue;
+          changelogContinuation = true;
+        }
+        else if(changelogContinuation)
+          map[currentChannel].changelog += line;
       }
     }
   }
