@@ -39,10 +39,10 @@ void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
              const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
   static QLocale locale;
-  if(toUpper.contains(lastWord))
+  if(toUpper.contains(lastWord.toUpper()))
     lastWord = locale.toUpper(lastWord);
   else if(toLower.contains(lastWord))
-    lastWord = locale.toLower(lastWord);
+    lastWord = locale.toLower(lastWord.toLower());
   else if(!ignore.contains(lastWord))
   {
     // Convert all letters after an apostrophe to lower case (St. Mary's)

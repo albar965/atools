@@ -242,6 +242,9 @@ enum RunwayFieldIndex
 
 }
 
+// Remove square brackets from name
+const static QRegularExpression NAME_INDICATOR("\\[(h|s|g|x|mil)\\]", QRegularExpression::CaseInsensitiveOption);
+
 XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
   : XpWriter(sqlDb, opts, progressHandler),
@@ -941,7 +944,7 @@ void XpAirportWriter::writeHelipad(const QStringList& line, const atools::fs::xp
 
   insertHelipadQuery->bindValue(":type", "H"); // not available
   insertHelipadQuery->bindValue(":is_transparent", 0); // not available
-  insertHelipadQuery->bindValue(":is_closed", 0); // not available
+  insertHelipadQuery->bindValue(":is_closed", airportClosed); // From airport name
 
   insertHelipadQuery->bindValue(":altitude", airportAltitude);
 
@@ -1121,7 +1124,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":has_end_lights", 0); // not available
   rec.setValue(":num_strobes", 0); // not available
   rec.setValue(":overrun", 0); // not available
-  rec.setValue(":has_closed_markings", 0); // not available
+  rec.setValue(":has_closed_markings", airportClosed); // From name
   rec.setValue(":has_stol_markings", 0); // not available
   rec.setValue(":is_takeoff", 1); // not available
   rec.setValue(":is_landing", 1); // not available
@@ -1167,7 +1170,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":has_end_lights", 0);
   rec.setValue(":num_strobes", 0);
   rec.setValue(":overrun", 0);
-  rec.setValue(":has_closed_markings", 0);
+  rec.setValue(":has_closed_markings", airportClosed); // From name
   rec.setValue(":has_stol_markings", 0);
   rec.setValue(":is_takeoff", 1);
   rec.setValue(":is_landing", 1);
@@ -1218,8 +1221,6 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
   if(ignoringAirport)
     qWarning() << context.messagePrefix() << "Invalid ignoring airport state in bindAirport";
 
-  static QRegularExpression nameRegexp("^\\[.\\] .+");
-
   int airportId = ++curAirportId;
   airportIcao = line.value(ap::ICAO);
 
@@ -1240,19 +1241,21 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     airportAltitude = line.value(ap::ELEVATION).toFloat();
 
     QString name = line.mid(ap::NAME).join(" ");
+    airportClosed = atools::fs::util::isNameClosed(name);
 
-    if(nameRegexp.match(name).hasMatch())
-      name = name.mid(4);
+    if(NAME_INDICATOR.match(name).hasMatch())
+      // Remove [H], [S], [g] and [mil] indicators
+      name = name.replace(NAME_INDICATOR, "").trimmed();
 
     // Check military before converting to caps
     bool isMil = atools::fs::util::isNameMilitary(name);
-    name = atools::fs::util::capNavString(name);
+    name = atools::fs::util::capAirportName(name);
 
     insertAirportQuery->bindValue(":ident", airportIcao);
     insertAirportQuery->bindValue(":name", name);
     insertAirportQuery->bindValue(":fuel_flags", 0); // not available
     insertAirportQuery->bindValue(":has_tower_object", 0);
-    insertAirportQuery->bindValue(":is_closed", 0); // not available
+    insertAirportQuery->bindValue(":is_closed", airportClosed); // extracted from name
     insertAirportQuery->bindValue(":is_military", isMil);
     insertAirportQuery->bindValue(":is_addon", context.flags.testFlag(IS_ADDON));
     insertAirportQuery->bindValue(":num_boundary_fence", 0);
@@ -1339,6 +1342,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
   numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
   numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
   numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
+  airportClosed = false;
   airportAltitude = 0.f;
   curHelipadStartNumber = 0;
   airportRowCode = NO_ROWCODE;

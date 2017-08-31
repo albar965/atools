@@ -120,7 +120,7 @@ private:
   /* State information */
   bool writingAirport = false, ignoringAirport = false,
        writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false,
-       writingStartLocation = false;
+       writingStartLocation = false, airportClosed = false;
 
   /* Current feature ids */
   int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,

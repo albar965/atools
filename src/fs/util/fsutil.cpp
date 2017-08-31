@@ -25,15 +25,44 @@ namespace atools {
 namespace fs {
 namespace util {
 
-static const QStringList MIL_ENDS_WITH({" Mil", " Aaf", " Ab", " Af", " Afb", " Afs", " Ahp", " Angb", " Arb",
-                                        " Lrrs", " Mcaf", " Mcalf", " Mcas", " Naf", " Nalf", " Nas",
-                                        " Naval", " Naws", " Nolf", " Ns"});
-static const QStringList MIL_CONTAINS({" AAF", " AB", " AF", " AFB", " AFS", " AHP", " ANGB", " ARB", " LRRS",
-                                       " MCAF", " MCALF", " MCAS", " NAF", " NALF", " NAS", " Naval", " Navy",
-                                       " NAWS", " NOLF", " NS", " Army", " Mil ", "Military", "Air Force",
-                                       " Aaf ", " Ab ", " Af ", " Afb ", " Afs ", " Ahp ", " Angb ", " Arb ",
-                                       " Lrrs ", " Mcaf ", " Mcalf ", " Mcas ", " Naf ", " Nalf ", " Nas ",
-                                       " Naval ", " Naws ", " Nolf ", " Ns "});
+// Closed airport by name
+static const QRegularExpression REGEXP_CLOSED(QLatin1Literal("(\\bclsd\\|\\bclosed\\b)"));
+const static QRegularExpression REGEXP_DIGIT("\\d");
+const static QRegularExpression REGEXP_WHITESPACE("\\s");
+
+static const QVector<QRegularExpression> REGEXP_MIL({
+        QRegularExpression(QLatin1Literal("\\bAAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bAB\\b")),
+        QRegularExpression(QLatin1Literal("\\bAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bAFB\\b")),
+        QRegularExpression(QLatin1Literal("\\bAFS\\b")),
+        QRegularExpression(QLatin1Literal("\\bAHP\\b")),
+        QRegularExpression(QLatin1Literal("\\bAIR BASE\\b")),
+        QRegularExpression(QLatin1Literal("\\bAIRBASE\\b")),
+        QRegularExpression(QLatin1Literal("\\bAIR FORCE\\b")),
+        QRegularExpression(QLatin1Literal("\\bANGB\\b")),
+        QRegularExpression(QLatin1Literal("\\bARB\\b")),
+        QRegularExpression(QLatin1Literal("\\bARMY\\b")),
+        QRegularExpression(QLatin1Literal("\\bGTS\\b")),
+        QRegularExpression(QLatin1Literal("\\bLRRS\\b")),
+        QRegularExpression(QLatin1Literal("\\bMCAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bMCALF\\b")),
+        QRegularExpression(QLatin1Literal("\\bMCAS\\b")),
+        QRegularExpression(QLatin1Literal("\\bMIL\\b")),
+        QRegularExpression(QLatin1Literal("\\bMILITARY\\b")),
+        QRegularExpression(QLatin1Literal("\\bNAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNALF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNAS\\b")),
+        QRegularExpression(QLatin1Literal("\\bNAVAL\\b")),
+        QRegularExpression(QLatin1Literal("\\bNAVY\\b")),
+        QRegularExpression(QLatin1Literal("\\bNAWS\\b")),
+        QRegularExpression(QLatin1Literal("\\bNOLF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNS\\b")),
+        QRegularExpression(QLatin1Literal("\\bRAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bRNAS\\b")),
+        QRegularExpression(QLatin1Literal("\\bROYAL MARINES\\b")),
+        QRegularExpression(QLatin1Literal("\\bAFLD\\b"))
+      });
 
 static const QHash<QString, QString> NAME_CODE_MAP(
       {
@@ -327,18 +356,17 @@ int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int nu
   return rating;
 }
 
+bool isNameClosed(const QString& airportName)
+{
+  return airportName.contains("[x]", Qt::CaseInsensitive) || REGEXP_CLOSED.match(airportName.toUpper()).hasMatch();
+}
+
 bool isNameMilitary(const QString& airportName)
 {
   // Check if airport is military
-  for(const QString& s : MIL_ENDS_WITH)
+  for(const QRegularExpression& s : REGEXP_MIL)
   {
-    if(airportName.endsWith(s))
-      return true;
-  }
-
-  for(const QString& s : MIL_CONTAINS)
-  {
-    if(airportName.contains(s))
+    if(s.match(airportName.toUpper()).hasMatch())
       return true;
   }
   return false;
@@ -346,12 +374,13 @@ bool isNameMilitary(const QString& airportName)
 
 QString capNavString(const QString& str)
 {
-  if(str.contains(QRegularExpression("\\d")) && !str.contains(QRegularExpression("\\s")))
+  if(str.contains(REGEXP_DIGIT) && !str.contains(REGEXP_WHITESPACE))
     // Do not capitalize words that contains numbers but not spaces (airspace names)
     return str;
 
   // Ignore aviation acronyms in capitalization
-  static const QSet<QString> ignore({ // Navaids
+  const static QSet<QString> ignore({
+          // Navaids
           "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
           "ILS", "NDBDME",
           // Frequencies
@@ -359,11 +388,21 @@ QString capNavString(const QString& str)
           // Navaid and precision approach types
           "H", "HH", "MH", "VASI", "PAPI",
           // Airspace abbreviations
-          "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ", "TRSA",
-          // Military designators
-          "AAF", "AFB"
+          "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ", "TRSA"
         });
+
   return atools::capString(str, {}, {}, ignore);
+}
+
+QString capAirportName(const QString& str)
+{
+  const static QSet<QString> upper({
+          // Military designators to upper
+          "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "MCAF", "MCALF", "MCAS", "NAF", "NALF",
+          "NAS", "NAWS", "NOLF", "NS", "RAF", "RNAS", "AFLD"
+        });
+
+  return atools::capString(str, upper);
 }
 
 } // namespace util

@@ -30,9 +30,17 @@ QString aircraftTypeForCode(const QString& code);
 /* Maximum rating is 5 */
 int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
 
+/* Check the airport name if it contains military designators */
 bool isNameMilitary(const QString& airportName);
 
+/* Check if the name contains a closed identifier */
+bool isNameClosed(const QString& airportName);
+
+/* Capitalize any string ignoring aviation acronyms */
 QString capNavString(const QString& str);
+
+/* Capitalize airport name making special designators (AFB, ...) upper case */
+QString capAirportName(const QString& str);
 
 } // namespace util
 } // namespace fs

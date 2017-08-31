@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QObject>
+#include <QSet>
 
 class QFileSystemWatcher;
 
@@ -42,6 +43,12 @@ public:
 
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
   QString getMetar(const QString& ident);
+
+  /* Get all ICAO codes that have a weather station */
+  QSet<QString> getMetarAirportIdents() const
+  {
+    return metars.keys().toSet();
+  }
 
   /* Read METAR.rwx and watch the file if needed */
   void readWeatherFile(const QString& file);

@@ -146,7 +146,7 @@ public:
   /* return endpoint at distance and angle */
   atools::geo::Pos endpoint(float distanceMeter, float angleDeg) const;
 
-  /* Distance to other point in simple units */
+  /* Distance to other point in simple units. Uses manhattan distance in degrees. */
   float distanceSimpleTo(const atools::geo::Pos& otherPos) const;
 
   /* Distance to other point for great circle route */
