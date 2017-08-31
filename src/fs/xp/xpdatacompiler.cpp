@@ -336,6 +336,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
     writeFile(filename);
 
     stream.setDevice(&file);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
     QString line;
 
     if(!cifpFormat)
