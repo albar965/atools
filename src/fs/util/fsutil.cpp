@@ -26,10 +26,11 @@ namespace fs {
 namespace util {
 
 // Closed airport by name
-static const QRegularExpression REGEXP_CLOSED(QLatin1Literal("(\\bclsd\\|\\bclosed\\b)"));
+static const QRegularExpression REGEXP_CLOSED(QLatin1Literal("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
 const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
 
+// Look for military designator words
 static const QVector<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QLatin1Literal("\\bAAF\\b")),
         QRegularExpression(QLatin1Literal("\\bAB\\b")),
@@ -358,7 +359,7 @@ int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int nu
 
 bool isNameClosed(const QString& airportName)
 {
-  return airportName.contains("[x]", Qt::CaseInsensitive) || REGEXP_CLOSED.match(airportName.toUpper()).hasMatch();
+  return REGEXP_CLOSED.match(airportName.toUpper()).hasMatch();
 }
 
 bool isNameMilitary(const QString& airportName)
