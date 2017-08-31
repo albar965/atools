@@ -297,6 +297,16 @@ public:
     fileFormat = value;
   }
 
+  /* Feature support depending on current format type */
+  bool canSaveAltitude() const;
+  bool canSaveFlightplanType() const;
+  bool canSaveRouteType() const;
+  bool canSaveSpeed() const;
+  bool canSaveAirways() const;
+  bool canSaveProcedures() const;
+  bool canSaveDepartureParking() const;
+  bool canSaveUserWaypointName() const;
+
 private:
   void loadFsx(const QString& file);
   void loadFs9(const QString& file);

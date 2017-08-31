@@ -1240,6 +1240,46 @@ void Flightplan::setFileFormatBySuffix(const QString& file)
   // else leave as is
 }
 
+bool Flightplan::canSaveAltitude() const
+{
+  // FS9 format can be used here since it is always overwritten with FSX
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FMS;
+}
+
+bool Flightplan::canSaveFlightplanType() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+}
+
+bool Flightplan::canSaveRouteType() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+}
+
+bool Flightplan::canSaveSpeed() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+}
+bool Flightplan::canSaveDepartureParking() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+}
+
+bool Flightplan::canSaveUserWaypointName() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+}
+
+bool Flightplan::canSaveAirways() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP;
+}
+
+bool Flightplan::canSaveProcedures() const
+{
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP;
+}
+
 QString Flightplan::flightplanTypeToString(FlightplanType type)
 {
   switch(type)
