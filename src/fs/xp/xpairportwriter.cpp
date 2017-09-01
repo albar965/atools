@@ -664,41 +664,44 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
   if(line.size() > sm::AIRLINE)
     insertParkingQuery->bindValue(":airline_codes", line.at(sm::AIRLINE).toUpper());
 
-  QString sizeType;
+  QString sizeType("S");
+  float radius = 10.f;
 
   // ICAO width code A 15 m, B 25 m, C 35 m, D 50 m, E 65 m, F 80 m
   // TODO size type is not clear
   QString widthCode = line.at(sm::WIDTH);
   if(widthCode == "A")
   {
-    insertParkingQuery->bindValue(":radius", 25.f);
+    radius = 25.f;
     sizeType = "S";
   }
   else if(widthCode == "B")
   {
-    insertParkingQuery->bindValue(":radius", 40.f);
+    radius = 40.f;
     sizeType = "S";
   }
   else if(widthCode == "C")
   {
-    insertParkingQuery->bindValue(":radius", 60.f);
+    radius = 60.f;
     sizeType = "M";
   }
   else if(widthCode == "D")
   {
-    insertParkingQuery->bindValue(":radius", 80.f);
+    radius = 80.f;
     sizeType = "M";
   }
   else if(widthCode == "E")
   {
-    insertParkingQuery->bindValue(":radius", 100.f);
+    radius = 100.f;
     sizeType = "H";
   }
   else if(widthCode == "F")
   {
-    insertParkingQuery->bindValue(":radius", 130.f);
+    radius = 130.f;
     sizeType = "H";
   }
+
+  insertParkingQuery->bindValue(":radius", radius);
 
   if(!isFuel)
   {
