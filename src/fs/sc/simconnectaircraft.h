@@ -218,7 +218,7 @@ public:
     return modelRadiusFt;
   }
 
-  /* Use an estimate based on engine type - used for map display and not for HTML info */
+  /* Use an estimate based on engine type in ft - used for map display and not for HTML info */
   int getModelRadiusCorrected() const;
 
   int getWingSpan() const

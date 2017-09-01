@@ -87,7 +87,7 @@ int SimConnectAircraft::getModelRadiusCorrected() const
         return 20;
 
       case atools::fs::sc::JET:
-        return 90;
+        return 60;
 
       case atools::fs::sc::TURBOPROP:
         return 40;

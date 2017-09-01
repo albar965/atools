@@ -621,8 +621,10 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
       insertParkingQuery->bindValue(":type", "H");
     else if(type == "tie-down")
       insertParkingQuery->bindValue(":type", "T");
-    else if(type == "misc")
-      insertParkingQuery->bindValue(":type", "");
+    // else if(type == "misc")
+
+    // Need at least an empty string bound
+    insertParkingQuery->bindValue(":type", "");
   }
 
   // has_jetway integer not null,     -- 1 if the parking has a jetway attached
@@ -644,7 +646,7 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
   // Operation type none, general_aviation, airline, cargo, military
   // Airline permitted to use this ramp 3-letter airline codes (AAL, SWA, etc)
 
-  bool isFuel = insertParkingQuery->boundValues().value(":type").toString() == "FUEL";
+  bool isFuel = insertParkingQuery->boundValue(":type", true /* ignore invalid */).toString() == "FUEL";
   if(!isFuel)
   {
     // Build type from operations type
@@ -700,7 +702,7 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
 
   if(!isFuel)
   {
-    QString type = insertParkingQuery->boundValue(":type").toString();
+    QString type = insertParkingQuery->boundValue(":type", true /* ignore invalid */).toString();
     if(type == "G" || type == "RGA")
       insertParkingQuery->bindValue(":type", type + sizeType);
   }
@@ -730,7 +732,7 @@ void XpAirportWriter::finishStartupLocation()
 {
   if(writingStartLocation)
   {
-    QString type = insertParkingQuery->boundValue(":type").toString();
+    QString type = insertParkingQuery->boundValue(":type", true /* ignore invalid */).toString();
 
     if(type.startsWith("G"))
     {

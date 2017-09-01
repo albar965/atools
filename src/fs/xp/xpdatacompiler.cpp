@@ -242,85 +242,94 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     context.fileVersion = fileVersion;
     context.magDecReader = magDecReader;
 
-    if(flags & READ_SHORT_REPORT)
-      if(progress->reportOther(progressMsg))
-        return true;
-
-    if(flags & READ_CIFP)
+    try
     {
-      // Add additional information for procedure files
-      context.cifpAirportIdent = QFileInfo(filename).baseName().toUpper();
-      context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
-    }
 
-    QString line;
-    QStringList fields;
+      if(flags & READ_SHORT_REPORT)
+        if(progress->reportOther(progressMsg))
+          return true;
 
-    QElapsedTimer timer;
-    timer.start();
-    qint64 elapsed = timer.elapsed();
-
-    int rowsPerStep =
-      static_cast<int>(std::ceil(static_cast<float>(totalNumLines) / static_cast<float>(NUM_REPORT_STEPS)));
-    int row = 0, steps = 0;
-
-    // Read lines
-    while(!stream.atEnd() && line != "99")
-    {
-      line = stream.readLine().trimmed();
-
-      if(!(flags & READ_SHORT_REPORT))
+      if(flags & READ_CIFP)
       {
-        if((row++ % rowsPerStep) == 0)
-        {
-          qint64 elapsed2 = timer.elapsed();
-
-          // Update only every 500 ms - otherwise update only progress count
-          bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
-          if(!silent)
-            elapsed = elapsed2;
-
-          steps++;
-          if((aborted = progress->reportOther(progressMsg, -1, silent)) == true)
-            break;
-        }
+        // Add additional information for procedure files
+        context.cifpAirportIdent = QFileInfo(filename).baseName().toUpper();
+        context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
       }
 
-      if(!line.startsWith("#") && !line.isEmpty())
-      {
-        if(flags & READ_CIFP)
-          fields = line.split(",");
-        else
-          fields = line.simplified().split(" ");
+      QString line;
+      QStringList fields;
 
-        if(fields.size() >= minColumns)
+      QElapsedTimer timer;
+      timer.start();
+      qint64 elapsed = timer.elapsed();
+
+      int rowsPerStep =
+        static_cast<int>(std::ceil(static_cast<float>(totalNumLines) / static_cast<float>(NUM_REPORT_STEPS)));
+      int row = 0, steps = 0;
+
+      // Read lines
+      while(!stream.atEnd() && line != "99")
+      {
+        line = stream.readLine().trimmed();
+
+        if(!(flags & READ_SHORT_REPORT))
+        {
+          if((row++ % rowsPerStep) == 0)
+          {
+            qint64 elapsed2 = timer.elapsed();
+
+            // Update only every 500 ms - otherwise update only progress count
+            bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
+            if(!silent)
+              elapsed = elapsed2;
+            steps++;
+            if((aborted = progress->reportOther(progressMsg, -1, silent)) == true)
+              break;
+          }
+        }
+
+        if(!line.startsWith("#") && !line.isEmpty())
         {
           if(flags & READ_CIFP)
+            fields = line.split(",");
+          else
+            fields = line.simplified().split(" ");
+
+          if(fields.size() >= minColumns)
           {
-            QString first = fields.takeFirst();
-            QStringList rowCode = first.split(":");
-            if(rowCode.size() == 2)
+            if(flags & READ_CIFP)
             {
-              fields.prepend(rowCode.at(1));
-              fields.prepend(rowCode.at(0));
+              QString first = fields.takeFirst();
+              QStringList rowCode = first.split(":");
+              if(rowCode.size() == 2)
+              {
+                fields.prepend(rowCode.at(1));
+                fields.prepend(rowCode.at(0));
+              }
             }
+            context.lineNumber = lineNum;
+
+            // Call writer
+            writer->write(fields, context);
           }
-          context.lineNumber = lineNum;
-
-          // Call writer
-          writer->write(fields, context);
         }
+        lineNum++;
       }
-      lineNum++;
+      if(!aborted)
+        writer->finish(context);
+
+      file.close();
+
+      if(!(flags & READ_SHORT_REPORT))
+        // Eat up any remaining progress steps
+        progress->increaseCurrent(NUM_REPORT_STEPS - steps);
     }
-    if(!aborted)
-      writer->finish(context);
-
-    file.close();
-
-    if(!(flags & READ_SHORT_REPORT))
-      // Eat up any remaining progress steps
-      progress->increaseCurrent(NUM_REPORT_STEPS - steps);
+    catch(std::exception& e)
+    {
+      // Enrich error message and rethrow a new one
+      throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
+                              arg(fi.filePath()).arg(lineNum).arg(e.what()));
+    }
   }
   return aborted;
 }

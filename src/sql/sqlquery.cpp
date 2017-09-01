@@ -367,10 +367,11 @@ void SqlQuery::bindAndExecRecord(const SqlRecord& record)
   clearBoundValues();
 }
 
-QVariant SqlQuery::boundValue(const QString& placeholder) const
+QVariant SqlQuery::boundValue(const QString& placeholder, bool ignoreInvalid) const
 {
   QVariant v = query.boundValue(placeholder);
-  if(!v.isValid())
+
+  if(!ignoreInvalid && !v.isValid())
     throw SqlException(
             "SqlQuery::boundValue(): Bind name \"" + placeholder + "\" does not exist in query \"" +
             queryString +
@@ -378,10 +379,10 @@ QVariant SqlQuery::boundValue(const QString& placeholder) const
   return v;
 }
 
-QVariant SqlQuery::boundValue(int pos) const
+QVariant SqlQuery::boundValue(int pos, bool ignoreInvalid) const
 {
   QVariant v = query.boundValue(pos);
-  if(!v.isValid())
+  if(!ignoreInvalid && !v.isValid())
     throw SqlException("SqlQuery::boundValue(): Bind index " + QString::number(
                          pos) + " does not exist in query \"" + queryString + "\"");
   return v;

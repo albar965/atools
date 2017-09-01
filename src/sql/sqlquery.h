@@ -101,8 +101,8 @@ public:
   void bindAndExecRecords(const atools::sql::SqlRecordVector& records);
   void bindAndExecRecord(const SqlRecord& record);
 
-  QVariant boundValue(const QString& placeholder) const;
-  QVariant boundValue(int pos) const;
+  QVariant boundValue(const QString& placeholder, bool ignoreInvalid = false) const;
+  QVariant boundValue(int pos, bool ignoreInvalid = false) const;
 
   QMap<QString, QVariant> boundValues() const;
   QString executedQuery() const;
