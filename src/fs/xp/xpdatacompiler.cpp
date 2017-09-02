@@ -224,20 +224,29 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   bool aborted = false;
 
   QString progressMsg = tr("Reading: %1").arg(filename);
+  QFileInfo fileinfo(filename);
 
-  if(!options.isIncludedLocalPath(QFileInfo(filename).path()))
+  if(!options.isIncludedLocalPath(fileinfo.path()))
+    // Excluded in configuration file
     return false;
+
+  if(!options.isIncludedDirectory(fileinfo.absolutePath()))
+    // Excluded in the GUI
+    return false;
+
+  if(!options.isAddonDirectory(fileinfo.absolutePath()))
+    // Clear add-on flag if directory is excluded
+    flags &= ~atools::fs::xp::IS_ADDON;
 
   int lineNum = 1, totalNumLines, fileVersion = 0;
 
   // Open file and read header
   if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, totalNumLines, fileVersion))
   {
-    QFileInfo fi(filename);
     XpWriterContext context;
     context.curFileId = curFileId;
-    context.fileName = fi.fileName();
-    context.localPath = QDir(options.getBasepath()).relativeFilePath(fi.path());
+    context.fileName = fileinfo.fileName();
+    context.localPath = QDir(options.getBasepath()).relativeFilePath(fileinfo.path());
     context.flags = flags | flagsFromOptions();
     context.fileVersion = fileVersion;
     context.magDecReader = magDecReader;
@@ -328,7 +337,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     {
       // Enrich error message and rethrow a new one
       throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
-                              arg(fi.filePath()).arg(lineNum).arg(e.what()));
+                              arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
     }
   }
   return aborted;
