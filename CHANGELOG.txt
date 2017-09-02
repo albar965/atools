@@ -1,3 +1,12 @@
+Version 2.6.0.beta
+
+* Enabled database file exclusions and add-on override options to X-Plane loader.
+* Fixed crash when reading X-Plane add-on airports (KLAS).
+* Better error reporting when reading X-Plane scenery including file and line number.
+* X-Plane file codec is now set to UTF-8 to avoid problems with special characters.
+* Added detection of closed airports by name for X-Plane.
+* Improved detection of military airports in general and name capitalization for X-Plane.
+
 Version 2.5.4.develop
 
 * Made all dialogs now application modal to avoid hiding behind main window.

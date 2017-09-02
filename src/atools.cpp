@@ -27,7 +27,7 @@ namespace atools {
 
 QString version()
 {
-  return "2.5.4.develop";
+  return "2.6.0.beta";
 }
 
 QString gitRevision()
