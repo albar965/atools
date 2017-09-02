@@ -51,7 +51,7 @@ UpdateCheck::~UpdateCheck()
   endRequest();
 }
 
-void UpdateCheck::checkForUpdates(const QStringList& versionsAlreadChecked, bool notifyForEmptyUpdates,
+void UpdateCheck::checkForUpdates(const QString& versionsAlreadChecked, bool notifyForEmptyUpdates,
                                   atools::util::UpdateChannels updateChannels)
 {
   qDebug() << Q_FUNC_INFO << url << curProgramVersion;
@@ -121,6 +121,7 @@ void UpdateCheck::httpError(QNetworkReply::NetworkError code)
 void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
 {
   Version programVersion(curProgramVersion);
+  Version alreadyCheckedVersion(alreadyChecked);
   QTextStream versioninfo(&update, QIODevice::ReadOnly);
 
   QHash<UpdateChannels, Update> map;
@@ -162,10 +163,10 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
 
         if(key == "version")
         {
-          if(!alreadyChecked.contains(value) || debug)
+          Version version(value);
+          if(!alreadyCheckedVersion.isValid() || version > alreadyCheckedVersion || debug)
           {
             // Check if there is a newer version
-            Version version(value);
             if(version > programVersion || debug)
             {
               map[currentChannel].version = value;

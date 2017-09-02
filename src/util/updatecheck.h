@@ -96,7 +96,7 @@ public:
    * @param notifyForEmptyUpdates Also send a signal if nothing was found
    * @param updateChannels Channels to check
    */
-  void checkForUpdates(const QStringList& versionsAlreadChecked, bool notifyForEmptyUpdates,
+  void checkForUpdates(const QString& versionsAlreadChecked, bool notifyForEmptyUpdates,
                        atools::util::UpdateChannels updateChannels);
 
   /* Get the URL of the text file that contains the update information */
@@ -128,8 +128,8 @@ private:
   /* Version of calling program */
   QString curProgramVersion;
 
-  /* List of versions to skip */
-  QStringList alreadyChecked;
+  /* Skip all version earlier or equal this one */
+  QString alreadyChecked;
 
   QNetworkAccessManager networkManager;
   QNetworkReply *reply = nullptr;
