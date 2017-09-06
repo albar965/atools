@@ -541,6 +541,23 @@ void Flightplan::loadFsx(const QString& file)
 
     xmlFile.close();
     fileFormat = PLN_FSX;
+
+    if(!isEmpty())
+    {
+      // Clear airway of departure airport to avoid problems from third party tools
+      // like PFPX that abuse the airway name to add approach procedures
+      entries.first().setAirway(QString());
+
+      if(entries.size() > 1)
+      {
+        // Clear airway to first waypoint
+        entries[1].setAirway(QString());
+
+        if(entries.last().getWaypointType() == entry::AIRPORT)
+          // Clear airway to destination
+          entries.last().setAirway(QString());
+      }
+    }
   }
   else
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
@@ -1260,6 +1277,7 @@ bool Flightplan::canSaveSpeed() const
 {
   return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
 }
+
 bool Flightplan::canSaveDepartureParking() const
 {
   return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
