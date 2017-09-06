@@ -30,7 +30,6 @@ namespace common {
 XpWeatherReader::XpWeatherReader(QObject *parent)
   : QObject(parent)
 {
-
 }
 
 XpWeatherReader::~XpWeatherReader()
@@ -55,6 +54,38 @@ void XpWeatherReader::clear()
   deleteFsWatcher();
   metars.clear();
   weatherFile.clear();
+}
+
+atools::fs::sc::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+{
+  atools::fs::sc::MetarResult result;
+  result.requestIdent = station;
+  result.requestPos = pos;
+
+  result.metarForStation = getMetar(station);
+
+  if(result.metarForStation.isEmpty())
+  {
+    const XpCoordIdxEntryType *nearest = nullptr;
+    float nearestDistance = std::numeric_limits<float>::max();
+
+    for(const XpCoordIdxEntryType& entry : xpAirportCoordinates)
+    {
+      float dist = entry.first.distanceSimpleTo(pos);
+      if(dist < nearestDistance)
+      {
+        nearestDistance = dist;
+        nearest = &entry;
+      }
+    }
+
+    if(nearest != nullptr)
+      result.metarForNearest = getMetar(nearest->second);
+  }
+
+  result.timestamp = QDateTime::currentDateTime();
+  return result;
+
 }
 
 QString XpWeatherReader::getMetar(const QString& ident)
@@ -109,6 +140,7 @@ void XpWeatherReader::read()
     }
     file.close();
 
+    buildXplaneAirportIndex();
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
@@ -173,6 +205,33 @@ void XpWeatherReader::createFsWatcher()
   QFileInfo fileinfo(weatherFile);
   if(!fsWatcher->addPath(fileinfo.path()))
     qWarning() << "cannot watch" << fileinfo.path();
+}
+
+void XpWeatherReader::buildXplaneAirportIndex()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  xpAirportCoordinates.clear();
+
+  if(!fetchAirportCoords)
+    return;
+
+  int num = 0;
+  for(const QString& ident: getMetarAirportIdents())
+  {
+    atools::geo::Pos pos = fetchAirportCoords(ident);
+    if(pos.isValid())
+    {
+      xpAirportCoordinates.append(std::make_pair(pos, ident));
+      num++;
+    }
+  }
+  qDebug() << Q_FUNC_INFO << "updated" << num << "airports";
+}
+
+void XpWeatherReader::setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+{
+  fetchAirportCoords = value;
 }
 
 } // namespace common
