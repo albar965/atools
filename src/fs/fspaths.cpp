@@ -210,15 +210,14 @@ QString FsPaths::getFilesPath(SimulatorType type)
   }
   else
     qDebug() << "No handle from LoadLibrary";
-#else
-  // Use fallback on non Windows systems
+#endif
+
+  // Use fallback on non Windows systems or if not found
   if(fsFilesDir.isEmpty())
   {
     qDebug() << "Using fallback to find flight simulator documents path for type" << type;
-    fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
+    fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
   }
-#endif
-  // qDebug() << "Found a flight simulator documents path for type" << type << "at" << fsFilesDir;
 
   return fsFilesDir;
 }
