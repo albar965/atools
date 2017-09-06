@@ -45,7 +45,7 @@ void SimConnectAircraft::read(QDataStream& in)
 
   quint16 intFlags;
   in >> intFlags;
-  flags = Flags(intFlags);
+  flags = AircraftFlags(intFlags);
 
   readString(in, airplaneTitle);
   readString(in, airplaneModel);

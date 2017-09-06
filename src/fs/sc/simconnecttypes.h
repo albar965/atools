@@ -50,6 +50,24 @@ enum Option
 Q_DECLARE_FLAGS(Options, Option);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options);
 
+// quint16
+enum AircraftFlag
+{
+  NONE = 0x0000,
+  ON_GROUND = 0x0001,
+  IN_CLOUD = 0x0002,
+  IN_RAIN = 0x0004,
+  IN_SNOW = 0x0008,
+  IS_USER = 0x0010,
+
+  /* Indicated source simulator for all aircraft */
+  SIM_FSX_P3D = 0x0020,
+  SIM_XPLANE = 0x0040
+};
+
+Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
+
 const QVector<QString> SIMCONNECT_STATUS_TEXT =
 {
   QObject::tr("No Error"),

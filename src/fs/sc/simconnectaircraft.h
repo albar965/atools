@@ -38,20 +38,6 @@ class SimConnectHandler;
 class SimConnectHandlerPrivate;
 class SimConnectData;
 
-// quint16
-enum Flag
-{
-  NONE = 0x0000,
-  ON_GROUND = 0x0001,
-  IN_CLOUD = 0x0002,
-  IN_RAIN = 0x0004,
-  IN_SNOW = 0x0008,
-  IS_USER = 0x0010
-};
-
-Q_DECLARE_FLAGS(Flags, Flag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Flags);
-
 // quint8
 enum Category
 {
@@ -178,12 +164,12 @@ public:
     return machSpeed;
   }
 
-  Flags getFlags() const
+  AircraftFlags getFlags() const
   {
     return flags;
   }
 
-  Flags& getFlags()
+  AircraftFlags& getFlags()
   {
     return flags;
   }
@@ -284,7 +270,7 @@ private:
 
   quint32 objectId = 0L;
 
-  Flags flags = atools::fs::sc::NONE;
+  AircraftFlags flags = atools::fs::sc::NONE;
 
   Category category;
   EngineType engineType = atools::fs::sc::UNSUPPORTED;

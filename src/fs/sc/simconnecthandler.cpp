@@ -170,7 +170,7 @@ public:
 
   void fillDataDefinitionAicraft(DataDefinitionId definitionId);
   void copyToSimData(const SimDataAircraft& simDataUserAircraft,
-                     atools::fs::sc::SimConnectAircraft& airplane);
+                     atools::fs::sc::SimConnectAircraft& aircraft);
 
   bool checkCall(HRESULT hr, const QString& message);
   bool callDispatch(bool& dataFetched, const QString& message);
@@ -414,57 +414,58 @@ void CALLBACK SimConnectHandlerPrivate::dispatchCallback(SIMCONNECT_RECV *pData,
   handlerClass->dispatchProcedure(pData, cbData);
 }
 
-void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserAircraft, SimConnectAircraft& airplane)
+void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserAircraft, SimConnectAircraft& aircraft)
 {
-  airplane.airplaneTitle = simDataUserAircraft.aircraftTitle;
-  airplane.airplaneModel = simDataUserAircraft.aircraftAtcModel;
-  airplane.airplaneReg = simDataUserAircraft.aircraftAtcId;
-  airplane.airplaneType = simDataUserAircraft.aircraftAtcType;
-  airplane.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
-  airplane.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
-  airplane.fromIdent = simDataUserAircraft.aiFrom;
-  airplane.toIdent = simDataUserAircraft.aiTo;
+  aircraft.flags = atools::fs::sc::SIM_FSX_P3D;
+  aircraft.airplaneTitle = simDataUserAircraft.aircraftTitle;
+  aircraft.airplaneModel = simDataUserAircraft.aircraftAtcModel;
+  aircraft.airplaneReg = simDataUserAircraft.aircraftAtcId;
+  aircraft.airplaneType = simDataUserAircraft.aircraftAtcType;
+  aircraft.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
+  aircraft.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
+  aircraft.fromIdent = simDataUserAircraft.aiFrom;
+  aircraft.toIdent = simDataUserAircraft.aiTo;
 
   QString cat = QString(simDataUserAircraft.category).toLower().trimmed();
   if(cat == "airplane")
-    airplane.category = AIRPLANE;
+    aircraft.category = AIRPLANE;
   else if(cat == "helicopter")
-    airplane.category = HELICOPTER;
+    aircraft.category = HELICOPTER;
   else if(cat == "boat")
-    airplane.category = BOAT;
+    aircraft.category = BOAT;
   else if(cat == "groundvehicle")
-    airplane.category = GROUNDVEHICLE;
+    aircraft.category = GROUNDVEHICLE;
   else if(cat == "controltower")
-    airplane.category = CONTROLTOWER;
+    aircraft.category = CONTROLTOWER;
   else if(cat == "simpleobject")
-    airplane.category = SIMPLEOBJECT;
+    aircraft.category = SIMPLEOBJECT;
   else if(cat == "viewer")
-    airplane.category = VIEWER;
+    aircraft.category = VIEWER;
 
-  airplane.wingSpanFt = static_cast<quint16>(simDataUserAircraft.wingSpan);
-  airplane.modelRadiusFt = static_cast<quint16>(simDataUserAircraft.modelRadius);
+  aircraft.wingSpanFt = static_cast<quint16>(simDataUserAircraft.wingSpan);
+  aircraft.modelRadiusFt = static_cast<quint16>(simDataUserAircraft.modelRadius);
 
-  airplane.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
-  airplane.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
+  aircraft.numberOfEngines = static_cast<quint8>(simDataUserAircraft.numEngines);
+  aircraft.engineType = static_cast<EngineType>(simDataUserAircraft.engineType);
 
-  airplane.position.setLonX(simDataUserAircraft.longitudeDeg);
-  airplane.position.setLatY(simDataUserAircraft.latitudeDeg);
-  airplane.position.setAltitude(simDataUserAircraft.altitudeFt);
+  aircraft.position.setLonX(simDataUserAircraft.longitudeDeg);
+  aircraft.position.setLatY(simDataUserAircraft.latitudeDeg);
+  aircraft.position.setAltitude(simDataUserAircraft.altitudeFt);
 
-  airplane.groundSpeedKts = simDataUserAircraft.groundVelocityKts;
-  airplane.indicatedAltitudeFt = simDataUserAircraft.indicatedAltitudeFt;
-  airplane.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
-  airplane.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
+  aircraft.groundSpeedKts = simDataUserAircraft.groundVelocityKts;
+  aircraft.indicatedAltitudeFt = simDataUserAircraft.indicatedAltitudeFt;
+  aircraft.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
+  aircraft.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
 
-  airplane.trueSpeedKts = simDataUserAircraft.airspeedTrueKts;
-  airplane.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
-  airplane.machSpeed = simDataUserAircraft.airspeedMach;
-  airplane.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
+  aircraft.trueSpeedKts = simDataUserAircraft.airspeedTrueKts;
+  aircraft.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
+  aircraft.machSpeed = simDataUserAircraft.airspeedMach;
+  aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
 
   if(simDataUserAircraft.isSimOnGround > 0)
-    airplane.flags |= atools::fs::sc::ON_GROUND;
+    aircraft.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
-    airplane.flags |= atools::fs::sc::IS_USER;
+    aircraft.flags |= atools::fs::sc::IS_USER;
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)
@@ -824,6 +825,7 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   p->state = sc::STATEOK;
 
+  // Get user aircraft =======================================================================
   QSet<unsigned long> objectIds;
   for(int i = 0; i < p->simDataAircraft.size(); i++)
   {
@@ -831,18 +833,17 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     // Avoid duplicates
     if(!objectIds.contains(oid))
     {
-      atools::fs::sc::SimConnectAircraft ap;
-      p->copyToSimData(p->simDataAircraft.at(i), ap);
-      ap.objectId = static_cast<unsigned int>(oid);
-      data.aiAircraft.append(ap);
-      objectIds.insert(ap.objectId);
+      atools::fs::sc::SimConnectAircraft aircraft;
+      p->copyToSimData(p->simDataAircraft.at(i), aircraft);
+      aircraft.objectId = static_cast<unsigned int>(oid);
+      data.aiAircraft.append(aircraft);
+      objectIds.insert(aircraft.objectId);
     }
   }
 
+  // Get user aircraft =======================================================================
   if(p->userDataFetched)
   {
-    data.userAircraft.flags = atools::fs::sc::NONE;
-
     p->copyToSimData(p->simData.aircraft, data.userAircraft);
     data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
