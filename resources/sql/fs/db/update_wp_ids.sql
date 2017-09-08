@@ -37,3 +37,13 @@ update waypoint set nav_id =
 )
 where waypoint.type = 'N';
 
+-- Update airway counts ------------------------------------------------------------
+update waypoint set num_victor_airway = (
+select count(1) from airway ap
+where (ap.from_waypoint_id = waypoint.waypoint_id or ap.to_waypoint_id = waypoint.waypoint_id) and
+       ap.airway_type in ('V', 'B'));
+
+update waypoint set num_jet_airway = (
+select count(1) from airway ap
+where (ap.from_waypoint_id = waypoint.waypoint_id or ap.to_waypoint_id = waypoint.waypoint_id) and
+       ap.airway_type in ('J', 'B'));

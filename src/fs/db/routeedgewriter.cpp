@@ -200,6 +200,9 @@ bool RouteEdgeWriter::run()
   // Eat up any remaining progress steps
   progressHandler.increaseCurrent(numSteps - steps);
 
+  if(!aborted)
+    db->commit();
+
   return aborted;
 }
 
@@ -279,13 +282,13 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
         // farthest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
-                              [] (const TempNodeTo &n1, const TempNodeTo &n2)->bool
-                              {
-                                if(n1.priority == n2.priority)
-                                  return n1.distance > n2.distance;
-                                else
-                                  return n1.priority > n2.priority;
-                              });
+                              [](const TempNodeTo& n1, const TempNodeTo& n2) -> bool
+              {
+                if(n1.priority == n2.priority)
+                  return n1.distance > n2.distance;
+                else
+                  return n1.priority > n2.priority;
+              });
         sector.insert(it, tmp);
       }
       else
@@ -294,13 +297,13 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
 
         // nearest at beginning of list
         it = std::lower_bound(sector.begin(), sector.end(), tmp,
-                              [] (const TempNodeTo &n1, const TempNodeTo &n2)->bool
-                              {
-                                if(n1.priority == n2.priority)
-                                  return n1.distance < n2.distance;
-                                else
-                                  return n1.priority > n2.priority;
-                              });
+                              [](const TempNodeTo& n1, const TempNodeTo& n2) -> bool
+              {
+                if(n1.priority == n2.priority)
+                  return n1.distance < n2.distance;
+                else
+                  return n1.priority > n2.priority;
+              });
         sector.insert(it, tmp);
       }
     }

@@ -339,7 +339,10 @@ void DataWriter::readMagDeclBgl()
   magDecReader->readFromBgl(file);
 
   if(magDecReader->isValid())
+  {
     magDecReader->writeToTable(db);
+    db.commit();
+  }
   else
     qWarning() << "Error reading" << file;
 }

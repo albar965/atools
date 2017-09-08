@@ -21,6 +21,9 @@
 
 -- Create indexes on columns that are potentially used in searches
 
+drop table if exists airway_temp;
+drop table if exists airway_point;
+
 create index if not exists idx_ils_ident on ils(ident);
 
 create index if not exists idx_airport_name on airport(name);
@@ -147,7 +150,9 @@ create index if not exists idx_route_node_airway_lonx on route_node_airway(lonx)
 create index if not exists idx_route_node_airway_laty on route_node_airway(laty);
 
 create index if not exists idx_route_edge_airway_type on route_edge_airway(type);
+create index if not exists idx_route_edge_airway_dir on route_edge_airway(direction);
 create index if not exists idx_route_edge_airway_min_alt on route_edge_airway(minimum_altitude);
+create index if not exists idx_route_edge_airway_max_alt on route_edge_airway(maximum_altitude);
 create index if not exists idx_route_edge_airway_from_node_type on route_edge_airway(from_node_type);
 create index if not exists idx_route_edge_airway_to_node_type on route_edge_airway(to_node_type);
 

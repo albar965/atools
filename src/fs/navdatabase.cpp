@@ -79,43 +79,43 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   SqlScript script(db, true /* options->isVerbose()*/);
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Views"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Views"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_view.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Routing and Search"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Routing and Search"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_routing_search.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Navigation Aids"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Navigation Aids"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Airport Facilites"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Airport Facilites"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_airport_facilities.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Approaches"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Approaches"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_approach.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Airports"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Airports"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_airport.sql");
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Removing Metadata"))) == true)
+    if((aborted = progress->reportOther(tr("Removing Metadata"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
@@ -123,7 +123,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   db->commit();
 
   if(progress != nullptr)
-    if((aborted = progress->reportOther(tr("Creating Database Schema"))) == true)
+    if((aborted = progress->reportOther(tr("Creating Database Schema"))))
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
@@ -283,46 +283,34 @@ void NavDatabase::createInternal(const QString& codec)
 
     atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
 
-    if((aborted = progress.reportSceneryArea(&area)) == true)
+    if((aborted = progress.reportSceneryArea(&area)))
       return;
 
-    if((aborted = xpDataCompiler->writeBasepathScenery()) == true)
+    if((aborted = xpDataCompiler->writeBasepathScenery()))
       return;
 
-    db->commit();
-
-    if((aborted = xpDataCompiler->compileMagDeclBgl()) == true)
+    if((aborted = xpDataCompiler->compileMagDeclBgl()))
       return;
-
-    db->commit();
 
     if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
     {
-      if((aborted = xpDataCompiler->compileCustomApt()) == true) // Add-on
+      if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
         return;
 
-      db->commit();
-
-      if((aborted = xpDataCompiler->compileCustomGlobalApt()) == true)
+      if((aborted = xpDataCompiler->compileCustomGlobalApt()))
         return;
 
-      db->commit();
-
-      if((aborted = xpDataCompiler->compileDefaultApt()) == true)
+      if((aborted = xpDataCompiler->compileDefaultApt()))
         return;
-
-      db->commit();
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
     {
-      if((aborted = xpDataCompiler->compileEarthFix()) == true)
+      if((aborted = xpDataCompiler->compileEarthFix()))
         return;
 
-      if((aborted = xpDataCompiler->compileUserFix()) == true)
+      if((aborted = xpDataCompiler->compileUserFix()))
         return;
-
-      db->commit();
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
@@ -330,40 +318,29 @@ void NavDatabase::createInternal(const QString& codec)
        options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
        options->isIncludedNavDbObject(atools::fs::type::ILS))
     {
-      if((aborted = xpDataCompiler->compileEarthNav()) == true)
+      if((aborted = xpDataCompiler->compileEarthNav()))
         return;
 
-      if((aborted = xpDataCompiler->compileUserNav()) == true)
+      if((aborted = xpDataCompiler->compileUserNav()))
         return;
-
-      db->commit();
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
     {
-      if((aborted = xpDataCompiler->compileEarthAirway()) == true)
+      if((aborted = xpDataCompiler->compileEarthAirway()))
         return;
 
-      if((aborted = progress.reportOther(tr("Preparing Airways"))) == true)
+      if((aborted = runScript(&progress, "fs/db/xplane/prepare_airway.sql", tr("Preparing Airways"))))
         return;
 
-      script.executeScript(":/atools/resources/sql/fs/db/xplane/prepare_airway.sql");
-
-      if((aborted = progress.reportOther(tr("Post procecssing Airways"))) == true)
+      if((aborted = xpDataCompiler->postProcessEarthAirway()))
         return;
-
-      if((aborted = xpDataCompiler->postProcessEarthAirway()) == true)
-        return;
-
-      db->commit();
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
     {
-      if((aborted = xpDataCompiler->compileCifp()) == true)
+      if((aborted = xpDataCompiler->compileCifp()))
         return;
-
-      db->commit();
     }
 
     xpDataCompiler->close();
@@ -379,7 +356,7 @@ void NavDatabase::createInternal(const QString& codec)
       if((area.isActive() || options->isReadInactive()) &&
          options->isIncludedLocalPath(area.getLocalPath()))
       {
-        if((aborted = progress.reportSceneryArea(&area)) == true)
+        if((aborted = progress.reportSceneryArea(&area)))
           return;
 
         NavDatabaseErrors::SceneryErrors err;
@@ -399,7 +376,7 @@ void NavDatabase::createInternal(const QString& codec)
           errors->sceneryErrors.append(err);
         }
 
-        if((aborted = fsDataWriter->isAborted()) == true)
+        if((aborted = fsDataWriter->isAborted()))
           return;
       }
     }
@@ -409,114 +386,79 @@ void NavDatabase::createInternal(const QString& codec)
 
   // Loading is done here - now continue with the post process steps
 
-  if((aborted = progress.reportOther(tr("Creating indexes"))) == true)
+  if((aborted = runScript(&progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return;
-
-  script.executeScript(":/atools/resources/sql/fs/db/create_indexes_post_load.sql");
-  db->commit();
 
   if(options->isDeduplicate())
   {
-    if((aborted = progress.reportOther(tr("Clean up"))) == true)
-      return;
-
     // Delete duplicates before any foreign keys ids are assigned
-    script.executeScript(":/atools/resources/sql/fs/db/delete_duplicates.sql");
-    db->commit();
+    if((aborted = runScript(&progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+      return;
   }
 
   if(options->isResolveAirways())
   {
-    if((aborted = progress.reportOther(tr("Creating airways"))) == true)
+    if((aborted = progress.reportOther(tr("Creating airways"))))
       return;
 
     // Read airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
-    if((aborted = resolver.run()) == true)
+    if((aborted = resolver.run()))
       return;
-
-    db->commit();
   }
 
   if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
   {
     // Create VORTACs
-    if((aborted = progress.reportOther(tr("Merging VOR and TACAN to VORTAC"))) == true)
+    if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
       return;
-
-    script.executeScript(":/atools/resources/sql/fs/db/update_vor.sql");
-    db->commit();
   }
 
-  // Set the nav_ids (VOR, NDB) in the waypoint table
-  if((aborted = progress.reportOther(tr("Updating waypoints"))) == true)
-    return;
-
-  script.executeScript(":/atools/resources/sql/fs/db/update_wp_ids.sql");
-  db->commit();
-
-  if((aborted = progress.reportOther(tr("Updating approaches"))) == true)
+  // Set the nav_ids (VOR, NDB) in the waypoint table and update the airway counts
+  if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return;
 
   // Set the nav_ids (VOR, NDB) in the approach table
-  script.executeScript(":/atools/resources/sql/fs/db/update_approaches.sql");
-  db->commit();
+  if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
+    return;
 
   if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
   {
     // The ids are already updated when reading the X-Plane data
-    if((aborted = progress.reportOther(tr("Updating ILS"))) == true)
-      return;
-
     // Set runway end ids into the ILS
-    script.executeScript(":/atools/resources/sql/fs/db/update_ils_ids.sql");
-    db->commit();
+    if((aborted = runScript(&progress, "fs/db/update_ils_ids.sql", tr("Updating ILS"))))
+      return;
   }
 
-  if((aborted = progress.reportOther(tr("Updating ILS Count"))) == true)
-    return;
-
   // update the ILS count in the airport table
-  script.executeScript(":/atools/resources/sql/fs/db/update_num_ils.sql");
-  db->commit();
-
-  if((aborted = progress.reportOther(tr("Collecting navaids for search"))) == true)
+  if((aborted = runScript(&progress, "fs/db/update_num_ils.sql", tr("Updating ILS Count"))))
     return;
 
-  script.executeScript(":/atools/resources/sql/fs/db/populate_nav_search.sql");
-  db->commit();
-
-  if((aborted = progress.reportOther(tr("Populating routing tables"))) == true)
+  // Prepare the search table
+  if((aborted = runScript(&progress, "fs/db/populate_nav_search.sql", tr("Collecting navaids for search"))))
     return;
 
-  script.executeScript(":/atools/resources/sql/fs/db/populate_route_node.sql");
-  db->commit();
+  // Fill tables for automatic flight plan calculation
+  if((aborted = runScript(&progress, "fs/db/populate_route_node.sql", tr("Populating routing tables"))))
+    return;
 
   if(options->isCreateRouteTables())
   {
-    if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))) == true)
+    if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))))
       return;
 
     // Create a network of VOR and NDB stations that allow radio navaid routing
     atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, numRouteSteps);
-    if((aborted = edgeWriter.run()) == true)
+    if((aborted = edgeWriter.run()))
       return;
-
-    db->commit();
   }
 
-  if((aborted = progress.reportOther(tr("Creating route edges waypoints"))) == true)
+  if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
     return;
 
-  script.executeScript(":/atools/resources/sql/fs/db/populate_route_edge.sql");
-  db->commit();
-
-  if((aborted = progress.reportOther(tr("Creating indexes for search"))) == true)
+  if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
-
-  script.executeScript(":/atools/resources/sql/fs/db/finish_schema.sql");
-  db->commit();
 
   // Done here - now only some options statistics and reports are left
 
@@ -529,21 +471,21 @@ void NavDatabase::createInternal(const QString& codec)
     QDebug info(QtInfoMsg);
     atools::sql::SqlUtil util(db);
 
-    if((aborted = progress.reportOther(tr("Creating table statistics"))) == true)
+    if((aborted = progress.reportOther(tr("Creating table statistics"))))
       return;
 
     qDebug() << "printTableStats";
     info << endl;
     util.printTableStats(info);
 
-    if((aborted = progress.reportOther(tr("Creating report on values"))) == true)
+    if((aborted = progress.reportOther(tr("Creating report on values"))))
       return;
 
     qDebug() << "createColumnReport";
     info << endl;
     util.createColumnReport(info);
 
-    if((aborted = progress.reportOther(tr("Creating report on duplicates"))) == true)
+    if((aborted = progress.reportOther(tr("Creating report on duplicates"))))
       return;
 
     info << endl;
@@ -581,7 +523,7 @@ void NavDatabase::createInternal(const QString& codec)
     util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
     info << endl;
 
-    if((aborted = progress.reportOther(tr("Creating report on coordinate duplicates"))) == true)
+    if((aborted = progress.reportOther(tr("Creating report on coordinate duplicates"))))
       return;
 
     reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
@@ -591,6 +533,18 @@ void NavDatabase::createInternal(const QString& codec)
   progress.reportFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
+}
+
+bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile, const QString& message)
+{
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  if((aborted = progress->reportOther(message)))
+    return true;
+
+  script.executeScript(":/atools/resources/sql/" + scriptFile);
+  db->commit();
+  return false;
 }
 
 void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)

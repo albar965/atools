@@ -100,6 +100,7 @@ private:
   void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
   void createInternal(const QString& codec);
   void readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg);
+  bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
 
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;

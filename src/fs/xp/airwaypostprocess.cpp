@@ -22,6 +22,7 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "exception.h"
+#include "atools.h"
 
 #include <QDebug>
 
@@ -67,6 +68,9 @@ QString convertType(AirwayPointType xptype)
 {
   switch(xptype)
   {
+    case atools::fs::xp::AW_NONE:
+      return QString();
+
     case atools::fs::xp::AW_FIX:
       return "WN";
 
@@ -120,7 +124,7 @@ bool AirwayPostProcess::postProcessEarthAirway()
   // A125 -8
   // V16 -216
   // where name in ('V16')
-  SqlQuery query("select name, type, minimum_altitude, "
+  SqlQuery query("select name, type, direction, minimum_altitude, maximum_altitude, "
                  "previous_type, previous_ident, previous_region, "
                  "next_type, next_ident, next_region from airway_temp order by name", db);
 
@@ -159,12 +163,14 @@ bool AirwayPostProcess::postProcessEarthAirway()
     // Add a segment from the database
     AirwaySegment segment;
     segment.minAlt = query.value("minimum_altitude").toInt();
+    segment.maxAlt = query.value("maximum_altitude").toInt();
     segment.next.ident = query.value("next_ident").toString();
     segment.next.region = query.value("next_region").toString();
     segment.next.type = static_cast<AirwayPointType>(query.value("next_type").toInt());
     segment.prev.ident = query.value("previous_ident").toString();
     segment.prev.region = query.value("previous_region").toString();
     segment.prev.type = static_cast<AirwayPointType>(query.value("previous_type").toInt());
+    segment.dir = atools::strToChar(query.value("direction").toString());
 
     segments.insert(segments.size(), segment);
   }
@@ -179,6 +185,9 @@ bool AirwayPostProcess::postProcessEarthAirway()
 void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& insert, const QString& name,
                                       AirwayType type)
 {
+  // if(name != "UJ20" && name != "UJ3")
+  // return;
+
   // Create a list ordered by next waypoint id
   QVector<AirwaySegment> segsByNext(segments.toVector());
   std::sort(segsByNext.begin(), segsByNext.end(), nextOrderFunc);
@@ -209,7 +218,7 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
 
     // Start segment is finished here - add from/to and to/from to simplify search
     done.insert(segments.first());
-    done.insert(segments.first().reverse());
+    done.insert(segments.first().reversed());
     segments.removeFirst();
 
     bool foundPrev = true, foundNext = true;
@@ -228,7 +237,7 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
       {
         // Found segment is in reversed order
         segments.removeOne(found.first());
-        sortedSegments.append(found.first().reverse());
+        sortedSegments.append(found.first().reversed());
         foundNext = true;
       }
       else
@@ -247,7 +256,7 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
       {
         // Found segment is in reversed order
         segments.removeOne(found.first());
-        sortedSegments.prepend(found.first().reverse());
+        sortedSegments.prepend(found.first().reversed());
         foundPrev = true;
       }
       else
@@ -264,42 +273,59 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
     for(int i = 0; i < sortedSegments.size(); i++)
     {
       // use value method to get default constructed objects if index is invalid
-      const AirwaySegment& prev = sortedSegments.value(i - 1);
-      const AirwaySegment& mid = sortedSegments.value(i);
-      const AirwaySegment& next = sortedSegments.value(i + 1);
+      // 1 -> 2
+      AirwaySegment prev12 = sortedSegments.value(i - 1);
+      // 2 -> 3
+      AirwaySegment mid23 = sortedSegments.value(i);
+      // 3 -> 4
+      AirwaySegment next34 = sortedSegments.value(i + 1);
 
-      writeSegment(prev.prev, mid.prev, mid.next, insert, name, type, prev.minAlt, mid.minAlt);
-      writeSegment(mid.prev, mid.next, next.next, insert, name, type, mid.minAlt, next.minAlt);
+      // Write in order 1 -> 2 -> 3
+      // qDebug() << "1 -> 2 -> 3 ###################################################";
+      // qDebug() << name << prev12.prev.ident << ">" << QChar(prev12.dir) << ">" << prev12.next.ident
+      // << mid23.prev.ident << ">" << QChar(mid23.dir) << ">" << mid23.next.ident;
+
+      if(i == 0) // Avoid overlapping/duplicates
+        writeSegment(insert, name, type, prev12, mid23);
+
+      // Write in order 2 -> 3 -> 4
+      // qDebug() << "2 -> 3 -> 4 ######";
+      // qDebug() << name << mid23.prev.ident << ">" << QChar(mid23.dir) << ">" << mid23.next.ident
+      // << next34.prev.ident << ">" << QChar(next34.dir) << ">" << next34.next.ident;
+      writeSegment(insert, name, type, mid23, next34);
     }
   }
 }
 
-void AirwayPostProcess::writeSegment(const AirwayPoint& prev, const AirwayPoint& mid, const AirwayPoint& next,
-                                     SqlQuery& insert, const QString& name, AirwayType type,
-                                     int prevMinAlt, int nextMinAlt)
+void AirwayPostProcess::writeSegment(SqlQuery& insert, const QString& name, AirwayType type,
+                                     const AirwaySegment& prevSeg, const AirwaySegment& nextSeg)
 {
   insert.clearBoundValues();
 
   insert.bindValue(":name", name);
   insert.bindValue(":type", convertAirwayType(type));
-  insert.bindValue(":mid_type", convertType(mid.type));
-  insert.bindValue(":mid_ident", mid.ident);
-  insert.bindValue(":mid_region", mid.region);
+  insert.bindValue(":mid_type", convertType(prevSeg.next.type));
+  insert.bindValue(":mid_ident", prevSeg.next.ident);
+  insert.bindValue(":mid_region", prevSeg.next.region);
 
-  if(!prev.ident.isEmpty())
+  if(!prevSeg.prev.ident.isEmpty())
   {
-    insert.bindValue(":previous_type", prev.type);
-    insert.bindValue(":previous_ident", prev.ident);
-    insert.bindValue(":previous_region", prev.region);
-    insert.bindValue(":previous_minimum_altitude", prevMinAlt * 100);
+    insert.bindValue(":previous_type", convertType(prevSeg.prev.type));
+    insert.bindValue(":previous_ident", prevSeg.prev.ident);
+    insert.bindValue(":previous_region", prevSeg.prev.region);
+    insert.bindValue(":previous_minimum_altitude", prevSeg.minAlt * 100);
+    insert.bindValue(":previous_maximum_altitude", prevSeg.maxAlt * 100);
+    insert.bindValue(":previous_direction", atools::charToStr(prevSeg.dir));
   }
 
-  if(!next.ident.isEmpty())
+  if(!nextSeg.next.ident.isEmpty())
   {
-    insert.bindValue(":next_type", next.type);
-    insert.bindValue(":next_ident", next.ident);
-    insert.bindValue(":next_region", next.region);
-    insert.bindValue(":next_minimum_altitude", nextMinAlt * 100);
+    insert.bindValue(":next_type", convertType(nextSeg.next.type));
+    insert.bindValue(":next_ident", nextSeg.next.ident);
+    insert.bindValue(":next_region", nextSeg.next.region);
+    insert.bindValue(":next_minimum_altitude", nextSeg.minAlt * 100);
+    insert.bindValue(":next_maximum_altitude", nextSeg.maxAlt * 100);
+    insert.bindValue(":next_direction", atools::charToStr(nextSeg.dir));
   }
 
   insert.exec();
@@ -361,7 +387,7 @@ bool AirwayPostProcess::findSegment(QVector<AirwaySegment>& found, QSet<AirwaySe
       {
         found.append(*it);
         done.insert(*it);
-        done.insert((*it).reverse());
+        done.insert((*it).reversed());
       }
     }
     else
@@ -370,7 +396,7 @@ bool AirwayPostProcess::findSegment(QVector<AirwaySegment>& found, QSet<AirwaySe
       {
         found.append(*it);
         done.insert(*it);
-        done.insert((*it).reverse());
+        done.insert((*it).reversed());
       }
     }
   }

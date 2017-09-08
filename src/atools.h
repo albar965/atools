@@ -139,6 +139,18 @@ Q_DECL_CONSTEXPR int roundToInt(TYPE value)
   return static_cast<int>(round(value));
 }
 
+/* Extract the first latin1 character from string. Return null if string is empty */
+inline char strToChar(const QString& str)
+{
+  return str.isEmpty() ? '\0' : str.at(0).toLatin1();
+}
+
+/* Return string build from char  */
+inline QString charToStr(char c)
+{
+  return QString(QChar(c));
+}
+
 /* Round to precision (e.g. roundToPrecision(1111, 2) -> 1100) */
 template<typename TYPE>
 int roundToPrecision(TYPE value, int precision = 0)

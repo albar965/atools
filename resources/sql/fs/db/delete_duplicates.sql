@@ -103,14 +103,10 @@ where airway_point_id not in (
       next_type, next_ident, next_region, previous_type, previous_ident, previous_region
 );
 
+-- ==========================================================
+-- Update counts after deleting duplicates
+
 update airway_point set waypoint_id = (
 select w.waypoint_id from waypoint w where mid_type = w.type and mid_ident = w.ident and mid_region = w.region
 );
 
-update waypoint set num_victor_airway = (
-select count(1) from airway_point ap
-where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('V', 'B'));
-
-update waypoint set num_jet_airway = (
-select count(1) from airway_point ap
-where ap.waypoint_id = waypoint.waypoint_id and ap.type in ('J', 'B'));

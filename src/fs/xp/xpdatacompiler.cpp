@@ -87,30 +87,48 @@ XpDataCompiler::~XpDataCompiler()
 bool XpDataCompiler::writeBasepathScenery()
 {
   writeSceneryArea(options.getBasepath());
+  db.commit();
   return false;
 }
 
 bool XpDataCompiler::compileEarthFix()
 {
   QString path = buildPathNoCase({basePath, "earth_fix.dat"});
-  return readDataFile(path, 5, fixWriter);
+  bool aborted = readDataFile(path, 5, fixWriter);
+
+  if(!aborted)
+    db.commit();
+  return aborted;
 }
 
 bool XpDataCompiler::compileEarthAirway()
 {
   QString path = buildPathNoCase({basePath, "earth_awy.dat"});
-  return readDataFile(path, 11, airwayWriter);
+  bool aborted = readDataFile(path, 11, airwayWriter);
+  if(!aborted)
+    db.commit();
+  return aborted;
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
 {
-  return airwayPostProcess->postProcessEarthAirway();
+  bool aborted = false;
+  if((aborted = progress->reportOther(tr("Post procecssing Airways"))))
+    return true;
+
+  aborted = airwayPostProcess->postProcessEarthAirway();
+  if(!aborted)
+    db.commit();
+  return aborted;
 }
 
 bool XpDataCompiler::compileEarthNav()
 {
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
-  return readDataFile(path, 11, navWriter);
+  bool aborted = readDataFile(path, 11, navWriter);
+  if(!aborted)
+    db.commit();
+  return aborted;
 }
 
 bool XpDataCompiler::compileCustomApt()
@@ -123,7 +141,7 @@ bool XpDataCompiler::compileCustomApt()
     if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT))
       return true;
   }
-
+  db.commit();
   return false;
 }
 
@@ -134,7 +152,12 @@ bool XpDataCompiler::compileCustomGlobalApt()
                                   "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"});
 
   if(QFileInfo::exists(path))
-    return readDataFile(path, 1, airportWriter);
+  {
+    bool aborted = readDataFile(path, 1, airportWriter);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
   else
     // TODO report missing file
     qWarning() << path << "not found";
@@ -150,7 +173,12 @@ bool XpDataCompiler::compileDefaultApt()
                                            "Earth nav data", "apt.dat"});
 
   if(QFileInfo::exists(defaultAptDat))
-    return readDataFile(defaultAptDat, 1, airportWriter);
+  {
+    bool aborted = readDataFile(defaultAptDat, 1, airportWriter);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
   else
     return false;
 }
@@ -165,6 +193,7 @@ bool XpDataCompiler::compileCifp()
       if(readDataFile(file, 1, cifpWriter, READ_CIFP | READ_SHORT_REPORT))
         return true;
   }
+  db.commit();
 
   return false;
 }
@@ -176,7 +205,12 @@ bool XpDataCompiler::compileLocalizers()
                                   "Earth nav data", "earth_nav.dat"});
 
   if(QFileInfo::exists(path))
-    return readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT);
+  {
+    bool aborted = readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
   else
     // TODO report missing file
     qWarning() << path << "not found";
@@ -189,7 +223,12 @@ bool XpDataCompiler::compileUserNav()
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_nav.dat"});
 
   if(QFileInfo::exists(path))
-    return readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT);
+  {
+    bool aborted = readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
   else
     return false;
 }
@@ -199,7 +238,12 @@ bool XpDataCompiler::compileUserFix()
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_fix.dat"});
 
   if(QFileInfo::exists(path))
-    return readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT);
+  {
+    bool aborted = readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
   else
     return false;
 }
@@ -213,6 +257,7 @@ bool XpDataCompiler::compileMagDeclBgl()
 
   magDecReader->readFromBgl(file);
   magDecReader->writeToTable(db);
+  db.commit();
   return false;
 }
 

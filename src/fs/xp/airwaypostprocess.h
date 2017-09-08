@@ -36,6 +36,7 @@ namespace xp {
 /* X-Plane types */
 enum AirwayPointType
 {
+  AW_NONE = 0,
   AW_FIX = 11,
   AW_NDB = 2,
   AW_VOR = 3
@@ -54,22 +55,27 @@ enum AirwayType
 struct AirwayPoint
 {
   QString ident, region;
-  AirwayPointType type;
+  AirwayPointType type = AW_NONE;
 };
 
 /* from/to airway segment */
 struct AirwaySegment
 {
   AirwayPoint prev, next;
-  int minAlt;
+  int minAlt = 0, maxAlt = 0;
+  char dir = '\0'; /* N = none, B = backward, F = forward */
 
-  /* reverse from/to */
-  AirwaySegment reverse() const
+  /* reverse prev/next, direction and return a copy */
+  AirwaySegment reversed() const
   {
     AirwaySegment retval(*this);
     retval.prev.ident.swap(retval.next.ident);
     retval.prev.region.swap(retval.next.region);
     std::swap(retval.prev.type, retval.next.type);
+    if(retval.dir == 'B')
+      retval.dir = 'F';
+    else if(dir == 'F')
+      retval.dir = 'B';
     return retval;
   }
 
@@ -99,9 +105,8 @@ private:
                    AirwayPoint airwayPoint, AirwayPoint excludePoint, bool searchPrevious);
 
   /* Write a from/via/to (prev/mid/next) triplet into the database */
-  void writeSegment(const AirwayPoint& prev, const AirwayPoint& mid, const AirwayPoint& next,
-                    atools::sql::SqlQuery& insert, const QString& name, AirwayType type,
-                    int prevMinAlt, int nextMinAlt);
+  void writeSegment(atools::sql::SqlQuery& insert, const QString& name, AirwayType type,
+                    const AirwaySegment& prevSeg, const AirwaySegment& nextSeg);
 
   /* Used for sorting and binary search in the ordered segment lists. Sorts by next/to */
   static bool nextOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2);

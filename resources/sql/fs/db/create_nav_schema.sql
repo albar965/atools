@@ -181,19 +181,23 @@ create table airway_point
   waypoint_id integer,
   name varchar(50) not null,        -- Airway name
   type varchar(15),                 -- see enum atools::fs::bgl::nav::AirwayType
-  mid_type varchar(15),            -- See enum atools::fs::bgl::nav::AirwayWaypointType
-  mid_ident varchar(5),            -- ICAO ident of waypoint
-  mid_region varchar(2),           -- ICAO two letter region code for waypoint
+  mid_type varchar(15),             -- See enum atools::fs::bgl::nav::AirwayWaypointType
+  mid_ident varchar(5),             -- ICAO ident of waypoint
+  mid_region varchar(2),            -- ICAO two letter region code for waypoint
+  next_direction varchar(1),        -- N = none, B = backward, F = forward
   next_type varchar(15),            -- See enum atools::fs::bgl::nav::AirwayWaypointType
   next_ident varchar(5),            -- ICAO ident of waypoint
   next_region varchar(2),           -- ICAO two letter region code for waypoint
   next_airport_ident,               -- Airport ICAO ident for airport if applicable
   next_minimum_altitude integer,    -- Minimum altitude for next segment in feet
-  previous_type varchar(15),        -- Same as next
+  next_maximum_altitude integer,    -- Maximum altitude for next segment in feet
+  previous_direction varchar(1),    -- Same as next
+  previous_type varchar(15),        -- "
   previous_ident varchar(5),        -- "
   previous_region varchar(2),       -- "
   previous_airport_ident,           -- "
   previous_minimum_altitude integer,-- "
+  previous_maximum_altitude integer,-- "
 foreign key(waypoint_id) references waypoint(waypoint_id)
 );
 
@@ -234,7 +238,9 @@ create table airway
   sequence_no integer not null,        -- Segment number
   from_waypoint_id integer not null,
   to_waypoint_id integer not null,
+  direction varchar(1),                -- N = none, B = backward, F = forward
   minimum_altitude integer,
+  maximum_altitude integer,
   left_lonx double not null,           -- Bounding rectangle of the segment
   top_laty double not null,            -- "
   right_lonx double not null,          -- "

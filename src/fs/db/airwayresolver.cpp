@@ -46,6 +46,8 @@ static const QString WAYPOINT_QUERY(
   "select r.name, r.type, "
   "  prev.waypoint_id as prev_waypoint_id, "
   "  r.previous_minimum_altitude, "
+  "  r.previous_maximum_altitude, "
+  "  r.previous_direction, "
   "  prev.lonx as prev_lonx, "
   "  prev.laty as prev_laty, "
   "  r.waypoint_id, "
@@ -53,6 +55,8 @@ static const QString WAYPOINT_QUERY(
   "  w.laty as laty, "
   "  next.waypoint_id as next_waypoint_id, "
   "  r.next_minimum_altitude, "
+  "  r.next_maximum_altitude, "
+  "  r.next_direction, "
   "  next.lonx as next_lonx, "
   "  next.laty as next_laty "
   "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
@@ -68,10 +72,11 @@ struct AirwayResolver::AirwaySegment
 
   }
 
-  AirwaySegment(int fromId, int toId, int minAltitude, QString airwayType,
+  AirwaySegment(int fromId, int toId, char direction, int minAltitude, int maxAltitude, QString airwayType,
                 const atools::geo::Pos& fromPosition, const atools::geo::Pos& toPosition)
-    : type(airwayType), fromWaypointId(fromId), toWaypointId(toId), minAlt(minAltitude), fromPos(fromPosition),
-      toPos(toPosition)
+    : type(airwayType), dir(direction), fromWaypointId(fromId), toWaypointId(toId),
+    minAlt(minAltitude), maxAlt(maxAltitude),
+    fromPos(fromPosition), toPos(toPosition)
   {
   }
 
@@ -88,7 +93,8 @@ struct AirwayResolver::AirwaySegment
   }
 
   QString type;
-  int fromWaypointId = 0, toWaypointId = 0, minAlt = 0;
+  char dir = '\0';
+  int fromWaypointId = 0, toWaypointId = 0, minAlt = 0, maxAlt;
   atools::geo::Pos fromPos, toPos;
 };
 
@@ -97,6 +103,7 @@ uint qHash(const AirwayResolver::AirwaySegment& segment)
   return static_cast<unsigned int>(segment.fromWaypointId) ^
          static_cast<unsigned int>(segment.toWaypointId) ^
          static_cast<unsigned int>(segment.minAlt) ^
+         static_cast<unsigned int>(segment.maxAlt) ^
          qHash(segment.type);
 }
 
@@ -174,9 +181,13 @@ bool AirwayResolver::run()
 
     QVariant prevWpIdColVal = query.value("prev_waypoint_id");
     int prevMinAlt = query.value("previous_minimum_altitude").toInt();
+    int prevMaxAlt = query.value("previous_maximum_altitude").toInt();
+    char prevDir = atools::strToChar(query.value("previous_direction").toString());
 
     QVariant nextWpIdColVal = query.value("next_waypoint_id");
     int nextMinAlt = query.value("next_minimum_altitude").toInt();
+    int nextMaxAlt = query.value("next_maximum_altitude").toInt();
+    char nextDir = atools::strToChar(query.value("next_direction").toString());
 
     if(!prevWpIdColVal.isNull())
     {
@@ -184,7 +195,7 @@ bool AirwayResolver::run()
       Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
 
       if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
-        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevMinAlt, awType,
+        airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevDir, prevMinAlt, prevMaxAlt, awType,
                                     prevPos, currentWpPos));
     }
 
@@ -194,12 +205,16 @@ bool AirwayResolver::run()
       Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
 
       if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
-        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextMinAlt, awType, currentWpPos,
-                                    nextPos));
+        airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType,
+                                    currentWpPos, nextPos));
     }
   }
 
   qInfo() << "Added " << numAirways << " airway segments";
+
+  if(!aborted)
+    db->commit();
+
   return aborted;
 }
 
@@ -298,7 +313,9 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
       row.append(std::make_pair(":from_waypoint_id", newSegment.fromWaypointId));
       row.append(std::make_pair(":to_waypoint_id", newSegment.toWaypointId));
 
+      row.append(std::make_pair(":direction", atools::charToStr(newSegment.dir)));
       row.append(std::make_pair(":minimum_altitude", newSegment.minAlt));
+      row.append(std::make_pair(":maximum_altitude", newSegment.maxAlt));
       row.append(std::make_pair(":left_lonx", bounding.getTopLeft().getLonX()));
       row.append(std::make_pair(":top_laty", bounding.getTopLeft().getLatY()));
       row.append(std::make_pair(":right_lonx", bounding.getBottomRight().getLonX()));
@@ -324,10 +341,10 @@ void AirwayResolver::buildAirway(const QString& airwayName, QSet<AirwaySegment>&
 void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
 {
   // Erase empty segments
-  auto it = std::remove_if(fragments.begin(), fragments.end(), [] (const Fragment &f)->bool
-                           {
-                             return f.waypoints.size() < 2;
-                           });
+  auto it = std::remove_if(fragments.begin(), fragments.end(), [](const Fragment& f) -> bool
+        {
+          return f.waypoints.size() < 2;
+        });
   if(it != fragments.end())
     fragments.erase(it, fragments.end());
 
@@ -348,10 +365,10 @@ void AirwayResolver::cleanFragments(QVector<Fragment>& fragments)
   }
 
   // Remove the marked segments
-  auto it2 = std::remove_if(fragments.begin(), fragments.end(), [] (const Fragment &f)->bool
-                            {
-                              return f.waypoints.isEmpty();
-                            });
+  auto it2 = std::remove_if(fragments.begin(), fragments.end(), [](const Fragment& f) -> bool
+        {
+          return f.waypoints.isEmpty();
+        });
   if(it2 != fragments.end())
     fragments.erase(it2, fragments.end());
 }
