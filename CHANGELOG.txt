@@ -1,3 +1,12 @@
+Version 2.6.1.beta
+
+* Changed FS database schema for one-way airways and maximum altitude.
+* Adapted airway compilation for direction and maximum altitude.
+* Fixed error where number of attached airways was not assigned to waypoints.
+* Increased database version - needs a reload.
+* Now erasing wrong airway entries at departure and destination in flight plan.
+* Fixed error where Documents path was not selected as default if missing simulator.
+
 Version 2.6.0.beta
 
 * Enabled database file exclusions and add-on override options to X-Plane loader.
