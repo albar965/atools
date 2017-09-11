@@ -77,8 +77,6 @@ bool isSurfaceWater(Surface value)
 
 int markingToDb(Marking value, const XpWriterContext *context)
 {
-  // TODO find mapping to more detailed FSX markings
-
   // EDGES = 1 << 0,
   // THRESHOLD = 1 << 1,
   // FIXED_DISTANCE = 1 << 2,
@@ -110,18 +108,17 @@ int markingToDb(Marking value, const XpWriterContext *context)
       return EDGES | DASHES | IDENT;
 
     case atools::fs::xp::NON_PAP:
-      return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | EDGE_PAVEMENT;
+      return EDGES | THRESHOLD | TOUCHDOWN | DASHES | IDENT;
 
     case atools::fs::xp::PAP:
-      return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | PRECISION | EDGE_PAVEMENT;
+      return EDGES | THRESHOLD | FIXED_DISTANCE | TOUCHDOWN | DASHES | IDENT | PRECISION;
 
     case atools::fs::xp::UK_NON_PAP:
-      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
-             EDGE_PAVEMENT;
+      return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_TOUCHDOWN | DASHES | IDENT;
 
     case atools::fs::xp::UK_PAP:
       return EDGES | ALTERNATE_THRESHOLD | ALTERNATE_FIXEDDISTANCE | ALTERNATE_TOUCHDOWN | DASHES | IDENT |
-             ALTERNATE_PRECISION | EDGE_PAVEMENT;
+             ALTERNATE_PRECISION;
 
   }
   qWarning() << (context != nullptr ? context->messagePrefix() : QString()) << "Unknown markings value" << value;

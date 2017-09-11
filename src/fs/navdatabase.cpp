@@ -279,6 +279,7 @@ void NavDatabase::createInternal(const QString& codec)
 
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
+    // Load X-Plane scenery database ======================================================
     xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress));
 
     atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
@@ -294,21 +295,27 @@ void NavDatabase::createInternal(const QString& codec)
 
     if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
     {
+      // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
       if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
         return;
 
+      // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
       if((aborted = xpDataCompiler->compileCustomGlobalApt()))
         return;
 
+      // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+      // Mandatory
       if((aborted = xpDataCompiler->compileDefaultApt()))
         return;
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
     {
+      // In resources or Custom Data - mandatory
       if((aborted = xpDataCompiler->compileEarthFix()))
         return;
 
+      // Optional user data
       if((aborted = xpDataCompiler->compileUserFix()))
         return;
     }
@@ -318,15 +325,18 @@ void NavDatabase::createInternal(const QString& codec)
        options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
        options->isIncludedNavDbObject(atools::fs::type::ILS))
     {
+      // In resources or Custom Data - mandatory
       if((aborted = xpDataCompiler->compileEarthNav()))
         return;
 
+      // Optional user data
       if((aborted = xpDataCompiler->compileUserNav()))
         return;
     }
 
     if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
     {
+      // In resources or Custom Data - mandatory
       if((aborted = xpDataCompiler->compileEarthAirway()))
         return;
 
@@ -347,6 +357,7 @@ void NavDatabase::createInternal(const QString& codec)
   }
   else
   {
+    // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
 
     fsDataWriter->readMagDeclBgl();
@@ -384,6 +395,7 @@ void NavDatabase::createInternal(const QString& codec)
     fsDataWriter->close();
   }
 
+  // ===========================================================================
   // Loading is done here - now continue with the post process steps
 
   if((aborted = runScript(&progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))

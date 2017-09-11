@@ -94,20 +94,34 @@ bool XpDataCompiler::writeBasepathScenery()
 bool XpDataCompiler::compileEarthFix()
 {
   QString path = buildPathNoCase({basePath, "earth_fix.dat"});
-  bool aborted = readDataFile(path, 5, fixWriter);
 
-  if(!aborted)
-    db.commit();
-  return aborted;
+  if(QFileInfo::exists(path))
+  {
+    bool aborted = readDataFile(path, 5, fixWriter);
+
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
+  else
+    throw Exception(tr("Default file \"%1\" not found").arg(path));
 }
 
 bool XpDataCompiler::compileEarthAirway()
 {
+
   QString path = buildPathNoCase({basePath, "earth_awy.dat"});
-  bool aborted = readDataFile(path, 11, airwayWriter);
-  if(!aborted)
-    db.commit();
-  return aborted;
+
+  if(QFileInfo::exists(path))
+  {
+
+    bool aborted = readDataFile(path, 11, airwayWriter);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
+  else
+    throw Exception(tr("Default file \"%1\" not found").arg(path));
 }
 
 bool XpDataCompiler::postProcessEarthAirway()
@@ -125,10 +139,15 @@ bool XpDataCompiler::postProcessEarthAirway()
 bool XpDataCompiler::compileEarthNav()
 {
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
-  bool aborted = readDataFile(path, 11, navWriter);
-  if(!aborted)
-    db.commit();
-  return aborted;
+  if(QFileInfo::exists(path))
+  {
+    bool aborted = readDataFile(path, 11, navWriter);
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
+  else
+    throw Exception(tr("Default file \"%1\" not found").arg(path));
 }
 
 bool XpDataCompiler::compileCustomApt()
@@ -159,7 +178,6 @@ bool XpDataCompiler::compileCustomGlobalApt()
     return aborted;
   }
   else
-    // TODO report missing file
     qWarning() << path << "not found";
 
   return false;
@@ -180,7 +198,7 @@ bool XpDataCompiler::compileDefaultApt()
     return aborted;
   }
   else
-    return false;
+    throw Exception(tr("Default file \"%1\" not found").arg(defaultAptDat));
 }
 
 bool XpDataCompiler::compileCifp()
@@ -622,7 +640,10 @@ QString XpDataCompiler::buildBasePath(const atools::fs::NavDatabaseOptions& opts
           QFileInfo::exists(buildPathNoCase({defaultPath, "earth_nav.dat"})))
     basePath = defaultPath;
   else
-    throw atools::Exception("Cannot find valid files for X-Plane navdata");
+    throw atools::Exception(tr("Cannot find valid files for X-Plane navdata in either\n\"%1\" or\n\"%2\"\n\n"
+                               "Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat "
+                               "can be found in on of these paths.").
+                            arg(customPath).arg(defaultPath));
   return basePath;
 }
 
