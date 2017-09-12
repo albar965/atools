@@ -28,6 +28,11 @@ win32 {
   LIBS += "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK\lib\SimConnect.lib"
 }
 
+macx {
+  # Compatibility down to OS X Mountain Lion 10.8
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.8
+}
+
 TARGET = atools
 TEMPLATE = lib
 CONFIG += staticlib

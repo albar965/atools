@@ -81,8 +81,12 @@ const QLatin1Literal APPROACHSIZE("approachsize");
 /* Speed as is not supported by PLN format */
 const QLatin1Literal SPEED("speed");
 
+/* Source database simulator */
+const QLatin1Literal NAVDATA("navdata");
+
 /* Free parking spot name as not supported by PLN */
 const QLatin1Literal PARKING("parking");
+
 /* Position of parking as fallback */
 const QLatin1Literal PARKINGPOS("parkingposition");
 
