@@ -1,3 +1,10 @@
+Version 2.6.2
+
+* Added compatibility flag for Mac OS X 10.8.
+* New flight plan metadata for used simulator database.
+* Better error handling in X-Plane compiler. Now checking for required files.
+* Corrected mapping for runway markings in X-Plane compilation.
+
 Version 2.6.1.beta
 
 * Changed FS database schema for one-way airways and maximum altitude.
