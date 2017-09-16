@@ -216,10 +216,24 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
           fQ11 = magvar(bottomRightOffsetQ11), fQ21 = magvar(bottomLeftOffsetQ21);
 
     // Do a bilinear interpolation between the four points
-    float fR1 = (maxLonX2 - lonX) / (maxLonX2 - minLonX1) * fQ11 + (lonX - minLonX1) / (maxLonX2 - minLonX1) * fQ21;
-    float fR2 = (maxLonX2 - lonX) / (maxLonX2 - minLonX1) * fQ12 + (lonX - minLonX1) / (maxLonX2 - minLonX1) * fQ22;
-    float fP = (maxLatY2 - latY) / (maxLatY2 - minLatY1) * fR1 + (latY - minLatY1) / (maxLatY2 - minLatY1) * fR2;
-    return fP;
+    float fR1, fR2;
+    float diffX = maxLonX2 - minLonX1;
+    if(std::abs(diffX) > 0.f)
+    {
+      fR1 = (maxLonX2 - lonX) / diffX * fQ11 + (lonX - minLonX1) / diffX * fQ21;
+      fR2 = (maxLonX2 - lonX) / diffX * fQ12 + (lonX - minLonX1) / diffX * fQ22;
+    }
+    else
+    {
+      fR1 = (fQ11 + fQ21) / 2.f;
+      fR2 = (fQ12 + fQ22) / 2.f;
+    }
+
+    float diffY = maxLatY2 - minLatY1;
+    if(std::abs(diffY) > 0.f)
+      return (maxLatY2 - latY) / diffY * fR1 + (latY - minLatY1) / diffY * fR2;
+    else
+      return (fR1 + fR2) / 2.f;
   }
 }
 

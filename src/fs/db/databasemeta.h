@@ -104,8 +104,10 @@ public:
 
   /* Minor database version of the application. Minor version differences are compatible.
    * Since version 10: Fixes in boundary coordinates and indexes added.
+   *
+   * 1 magnetic variation fix
    */
-  static const int DB_VERSION_MINOR = 0;
+  static const int DB_VERSION_MINOR = 1;
 
   void init();
 

@@ -1,4 +1,8 @@
-Version 2.6.2
+Version 2.6.3
+* Fixed error that caused a few hundred waypoints having invalid declination for X-Plane and FSX/P3D.
+* Updated database minor version to 1 to indicate above change.
+
+Version 2.6.2 (not public)
 
 * Added compatibility flag for Mac OS X 10.8.
 * New flight plan metadata for used simulator database.
