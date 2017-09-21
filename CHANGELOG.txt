@@ -1,3 +1,11 @@
+Version 2.6.4
+* Fixed crashes when reading X-Plane CIFP files with unknown approach type.
+* Fixed crash with older apt.dat files where runway name for VASI is missing.
+* Added support for all altitude restriction types.
+* Warnings now print full filename including path.
+* Fixed error where altitude restrictions were not recognized when given as flight levels.
+* Enabled support for older apt.dat files with version down to 850.
+
 Version 2.6.3
 * Fixed error that caused a few hundred waypoints having invalid declination for X-Plane and FSX/P3D.
 * Updated database minor version to 1 to indicate above change.
