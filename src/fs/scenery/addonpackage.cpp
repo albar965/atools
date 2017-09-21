@@ -37,7 +37,13 @@ AddOnPackage::AddOnPackage(const QString& file)
 
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    QXmlStreamReader xml(&xmlFile);
+    // Load the file into a text file to avoid BOM / xml encoding mismatches
+    // Let the text stream detect the encoding
+    QTextStream stream(&xmlFile);
+    QString str = stream.readAll();
+
+    // The reader ignores the XML encoding header now
+    QXmlStreamReader xml(str);
 
     if(xml.readNextStartElement())
     {
