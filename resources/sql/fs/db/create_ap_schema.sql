@@ -486,6 +486,7 @@ create table approach_leg
   is_missed integer not null,         -- 1 if this leg is part of a missed approach
   type varchar(10),                   -- see enum atools::fs::bgl::leg::Type
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
+                                      -- "A": at, "+": at or above, "-": at or below, "B": between altitude2 and altitude1
   turn_direction varchar(10),         -- see enum atools::fs::bgl::leg::TurnDirection
   fix_type varchar(25),               -- same as in approach
   fix_ident varchar(5),               -- "

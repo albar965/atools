@@ -220,9 +220,9 @@ QString approachIndicatorToDb(ApproachIndicator value, const XpWriterContext *co
 QString XpWriterContext::messagePrefix() const
 {
   if(fileVersion > 0)
-    return QString("File %1, version %2, line %3").arg(fileName).arg(fileVersion).arg(lineNumber);
+    return QString("File %1, version %2, line %3").arg(filePath).arg(fileVersion).arg(lineNumber);
   else
-    return QString("File %1, line %3").arg(fileName).arg(lineNumber);
+    return QString("File %1, line %3").arg(filePath).arg(lineNumber);
 }
 
 } // namespace xp

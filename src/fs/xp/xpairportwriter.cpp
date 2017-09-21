@@ -519,29 +519,56 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     qWarning() << context.messagePrefix() << "Invalid writing airport state in bindVasi";
 
   ApproachIndicator type = static_cast<ApproachIndicator>(line.at(v::TYPE).toInt());
-  if(type == NO_APPR_INDICATOR)
+  if(type == NO_APPR_INDICATOR || type == RUNWAY_GUARD)
     return;
 
-  // Find runway by name
-  QString rwName = line.at(v::RUNWAY);
-  SqlRecord *rwEnd = nullptr;
-  for(SqlRecord& rec:runwayEndRecords)
+  // Find runway by name - does not exist in some 850 airport files
+  SqlRecord *bestRunwayEnd = nullptr;
+  QString rwName = line.value(v::RUNWAY);
+  float orientation = line.at(v::ORIENT).toFloat();
+
+  if(!rwName.isEmpty())
   {
-    if(rec.valueStr(":name") == rwName)
+    // Try to find a runway record by name
+    for(SqlRecord& rec : runwayEndRecords)
     {
-      rwEnd = &rec;
-      break;
+      if(rec.valueStr(":name") == rwName)
+      {
+        bestRunwayEnd = &rec;
+        break;
+      }
     }
   }
 
-  if(rwEnd != nullptr)
+  if(bestRunwayEnd == nullptr)
+  {
+    // Try to find by angle
+    float bestAngle = std::numeric_limits<float>::max() / 4.f;
+
+    for(SqlRecord& rec : runwayEndRecords)
+    {
+      // Do simple comparison - this will not catch any differences like 355 to 5 degrees
+      float diff = std::abs(rec.valueFloat(":heading") - orientation);
+      if(diff < 10.f && diff < std::abs(bestAngle - orientation))
+      {
+        // Smaller angle difference
+        bestRunwayEnd = &rec;
+        bestAngle = rec.valueFloat(":heading");
+      }
+    }
+  }
+
+  if(bestRunwayEnd != nullptr)
   {
     numRunwayEndVasi++;
-    rwEnd->setValue(":left_vasi_type", approachIndicatorToDb(type, &context));
-    rwEnd->setValue(":left_vasi_pitch", line.at(v::ANGLE).toFloat());
-    rwEnd->setValue(":right_vasi_type", "UNKN");
-    rwEnd->setValue(":right_vasi_pitch", 0.f);
+    bestRunwayEnd->setValue(":left_vasi_type", approachIndicatorToDb(type, &context));
+    bestRunwayEnd->setValue(":left_vasi_pitch", line.at(v::ANGLE).toFloat());
+    bestRunwayEnd->setValue(":right_vasi_type", "UNKN");
+    bestRunwayEnd->setValue(":right_vasi_pitch", 0.f);
   }
+  else
+    qWarning() << context.messagePrefix() << "No runway end" << rwName
+               << "for VASI with orientation" << orientation << "found";
 }
 
 void XpAirportWriter::bindViewpoint(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
@@ -649,8 +676,8 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
   bool isFuel = insertParkingQuery->boundValue(":type", true /* ignore invalid */).toString() == "FUEL";
   if(!isFuel)
   {
-    // Build type from operations type
-    QString ops = line.at(sm::OPTYPE);
+    // Build type from operations type - not in 850
+    QString ops = line.value(sm::OPTYPE);
     if(ops == "general_aviation")
       insertParkingQuery->bindValue(":type", "RGA"); // Ramp GA
     else if(ops == "cargo")
@@ -662,14 +689,15 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
   }
 
   if(line.size() > sm::AIRLINE)
-    insertParkingQuery->bindValue(":airline_codes", line.at(sm::AIRLINE).toUpper());
+    // Not in 850
+    insertParkingQuery->bindValue(":airline_codes", line.value(sm::AIRLINE).toUpper());
 
   QString sizeType("S");
   float radius = 10.f;
 
   // ICAO width code A 15 m, B 25 m, C 35 m, D 50 m, E 65 m, F 80 m
-  // TODO size type is not clear
-  QString widthCode = line.at(sm::WIDTH);
+  // TODO size type is not clear - not in 850
+  QString widthCode = line.value(sm::WIDTH);
   if(widthCode == "A")
   {
     radius = 25.f;

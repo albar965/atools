@@ -309,6 +309,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     XpWriterContext context;
     context.curFileId = curFileId;
     context.fileName = fileinfo.fileName();
+    context.filePath = fileinfo.filePath();
     context.localPath = QDir(options.getBasepath()).relativeFilePath(fileinfo.path());
     context.flags = flags | flagsFromOptions();
     context.fileVersion = fileVersion;

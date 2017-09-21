@@ -228,7 +228,7 @@ private:
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
-  int minVersion = 1000;
+  int minVersion = 850;
 
 };
 

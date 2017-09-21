@@ -116,7 +116,7 @@ private:
   QString navaidType(const QString& sectionCode, const QString& subSectionCode, const XpWriterContext& context);
 
   /* Calculate a database procedure type based on route type */
-  QString procedureType(char routeType, const XpWriterContext& context);
+  QString procedureType(const XpWriterContext& context);
 
   /* Assigns new ids to the currently stored approaches */
   void assignApproachIds(XpCifpWriter::Procedure& proc);
@@ -127,6 +127,9 @@ private:
   /* Extract runway names */
   QString apprRunwayNameAndSuffix(const QString& ident, QString& suffix, const XpWriterContext& context);
   QString sidStarRunwayNameAndSuffix(const QString& ident, const XpWriterContext& context);
+
+  /* Extract altitude probably containing a FL prefix*/
+  float altitudeFromStr(const QString& altStr);
 
   int curApproachId = 0, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
 

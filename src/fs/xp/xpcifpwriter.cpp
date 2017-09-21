@@ -458,7 +458,7 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
     rwy = apprRunwayNameAndSuffix(apprIdent, suffix, context);
 
   // Create the SID/STAR workaround as it is used by FSX/P3D
-  QString type = procedureType(curRouteType, context);
+  QString type = procedureType(context);
   if(curRowCode == rc::STAR)
   {
     rec.setValue(":suffix", "A");
@@ -602,15 +602,41 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
 
   // Altitude
   QString altDescr = line.at(ALT_DESCR);
-  if(altDescr == "+" || altDescr == "-" || altDescr == "B")
-    rec.setValue(":alt_descriptor", altDescr);
-  else if(altDescr == " " || altDescr == "@")
-    rec.setValue(":alt_descriptor", "A");
-  // else null
+  bool swapAlt = false;
+  bool altDescrValid = true;
 
-  bool altDescrValid = atools::contains(altDescr, {"+", "-", "A", "B", " ", "@"});
-  if(!atools::contains(altDescr, {QString(), "+", "-", "A", "B", " ", "@", "J", "H", "I", "G"})) // Ignore others
+  if(altDescr == "+" || altDescr == "-" || altDescr == "B")
+    // Use same values - no mapping needed
+    rec.setValue(":alt_descriptor", altDescr);
+  else if(altDescr == "C")
+  {
+    // At or above in second field - swap values and turn into at or above
+    swapAlt = true;
+    rec.setValue(":alt_descriptor", "+");
+  }
+  else if(altDescr == " " || altDescr == "@")
+    // At altitude
+    rec.setValue(":alt_descriptor", "A");
+  else if(altDescr == "G" || altDescr == "I")
+    // Ignore Glide Slope altitude and turn into simple at restriction
+    rec.setValue(":alt_descriptor", "A");
+  else if(altDescr == "H" || altDescr == "J")
+    // Ignore Glide Slope altitude and turn into simple at or above restriction
+    rec.setValue(":alt_descriptor", "+");
+  else if(altDescr == "V")
+    // Ignore second altitude in step down fix waypoints and convert to at or above
+    rec.setValue(":alt_descriptor", "+");
+  else if(altDescr == "X")
+    // Ignore second altitude in step down fix waypoints and convert to at
+    rec.setValue(":alt_descriptor", "A");
+  else if(altDescr == "Y")
+    // Ignore second altitude in step down fix waypoints and convert to at or below
+    rec.setValue(":alt_descriptor", "-");
+  else
+  {
+    altDescrValid = false;
     qWarning() << context.messagePrefix() << "Unexpected alt descriptor" << altDescr;
+  }
 
   QString turnDir = line.at(TURN_DIR).trimmed();
   if(turnDir == "E")
@@ -669,8 +695,8 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
 
   if(altDescrValid)
   {
-    rec.setValue(":altitude1", line.at(ALTITUDE).toFloat());
-    rec.setValue(":altitude2", line.at(ALTITUDE2).toFloat());
+    rec.setValue(":altitude1", altitudeFromStr(line.at(swapAlt ? ALTITUDE2 : ALTITUDE)));
+    rec.setValue(":altitude2", altitudeFromStr(line.at(swapAlt ? ALTITUDE : ALTITUDE2)));
   }
 
   // Speed limit
@@ -688,6 +714,15 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
       qWarning() << context.messagePrefix() << "Invalid speed limit" << spdDescr;
   }
   // else null
+}
+
+float XpCifpWriter::altitudeFromStr(const QString& altStr)
+{
+  if(altStr.startsWith("FL"))
+    // Simplify - turn flight levelt to feet
+    return altStr.mid(2).toFloat() * 100.f;
+  else
+    return altStr.toFloat();
 }
 
 void XpCifpWriter::finish(const XpWriterContext& context)
@@ -720,12 +755,12 @@ atools::fs::xp::rc::RowCode XpCifpWriter::toRowCode(const QString& code, const X
   }
 }
 
-QString XpCifpWriter::procedureType(char routeType, const XpWriterContext& context)
+QString XpCifpWriter::procedureType(const XpWriterContext& context)
 {
   QString type;
   if(curRowCode == rc::APPROACH)
   {
-    rt::ApproachRouteType apprRouteType = static_cast<rt::ApproachRouteType>(routeType);
+    rt::ApproachRouteType apprRouteType = static_cast<rt::ApproachRouteType>(curRouteType);
 
     switch(apprRouteType)
     {
@@ -787,11 +822,18 @@ QString XpCifpWriter::procedureType(char routeType, const XpWriterContext& conte
         type = "SDF";
         break;
 
-      case rt::MISSED_APPROACH:
-      case rt::PRIMARY_MISSED_APPROACH:
-      case rt::ENGINE_OUT_MISSED_APPROACH:
+      // case rt::MISSED_APPROACH:
+      // case rt::PRIMARY_MISSED_APPROACH:
+      // case rt::ENGINE_OUT_MISSED_APPROACH:
       default:
         qWarning() << context.messagePrefix() << "Unexpected approach route type" << curRouteType;
+
+        if(curRouteType == ' ' || curRouteType == '\0')
+          // No way to get a type
+          type = "UNKNOWN";
+        else
+          // Fall back to single character
+          type = atools::charToStr(curRouteType);
         break;
     }
   }
