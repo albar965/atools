@@ -31,6 +31,7 @@ namespace fs {
 
 class NavDatabaseOptions;
 class ProgressHandler;
+class NavDatabaseErrors;
 
 namespace xp {
 
@@ -42,7 +43,8 @@ class XpAirwayWriter :
 {
 public:
   XpAirwayWriter(atools::sql::SqlDatabase& sqlDb,
-                 const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
+                 const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+                 atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpAirwayWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;

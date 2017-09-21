@@ -30,7 +30,7 @@ class SqlQuery;
 }
 
 namespace fs {
-
+class NavDatabaseErrors;
 class NavDatabaseOptions;
 class ProgressHandler;
 
@@ -62,7 +62,8 @@ class XpCifpWriter :
 {
 public:
   XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
-               const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
+               const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+               atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpCifpWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;

@@ -18,7 +18,10 @@
 #ifndef ATOOLS_FS_XP_WRITER_H
 #define ATOOLS_FS_XP_WRITER_H
 
-#include <QString>
+#include "exception.h"
+#include "fs/xp/xpconstants.h"
+
+#include <QStringList>
 
 class QStringList;
 
@@ -31,6 +34,7 @@ namespace fs {
 
 class NavDatabaseOptions;
 class ProgressHandler;
+class NavDatabaseErrors;
 
 namespace xp {
 
@@ -43,7 +47,8 @@ class XpWriter
 {
 public:
   XpWriter(atools::sql::SqlDatabase& sqlDb,
-           const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler);
+           const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+           atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpWriter();
 
   /* Called for each line read from a dat file */
@@ -53,9 +58,22 @@ public:
   virtual void finish(const atools::fs::xp::XpWriterContext& context) = 0;
 
 protected:
+  /* Called very often - make inline */
+  const QString& at(const QStringList& line, int index)
+  {
+    if(index < line.size())
+      return line.at(index);
+    else
+      // Have to stop reading the file since the rest can be corrupted
+      throw atools::Exception(ctx->messagePrefix() +
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+  }
+
+  const atools::fs::xp::XpWriterContext *ctx = nullptr;
   atools::sql::SqlDatabase& db;
   const atools::fs::NavDatabaseOptions& options;
   atools::fs::ProgressHandler *progress;
+  atools::fs::NavDatabaseErrors *errors = nullptr;
 };
 
 } // namespace xp

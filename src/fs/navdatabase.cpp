@@ -279,10 +279,19 @@ void NavDatabase::createInternal(const QString& codec)
 
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
-    // Load X-Plane scenery database ======================================================
-    xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress));
-
+    // Create a single X-Plane scenery area
     atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
+
+    // Prepare error collection
+    if(errors != nullptr)
+    {
+      NavDatabaseErrors::SceneryErrors err;
+      err.scenery = area;
+      errors->sceneryErrors.append(err);
+    }
+
+    // Load X-Plane scenery database ======================================================
+    xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress, errors));
 
     if((aborted = progress.reportSceneryArea(&area)))
       return;
@@ -381,7 +390,7 @@ void NavDatabase::createInternal(const QString& codec)
         // write the contents to the database
         fsDataWriter->writeSceneryArea(area);
 
-        if((!err.bglFileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+        if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
         {
           err.scenery = area;
           errors->sceneryErrors.append(err);

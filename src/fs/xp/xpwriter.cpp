@@ -16,13 +16,15 @@
 *****************************************************************************/
 
 #include "fs/xp/xpwriter.h"
+#include "fs/navdatabaseerrors.h"
 
 namespace atools {
 namespace fs {
 namespace xp {
 
-XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
-  : db(sqlDb), options(opts), progress(progressHandler)
+XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
+                   atools::fs::NavDatabaseErrors *navdatabaseErrors)
+  : db(sqlDb), options(opts), progress(progressHandler), errors(navdatabaseErrors)
 {
 
 }

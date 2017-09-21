@@ -250,8 +250,9 @@ enum AirportSubSectionCode
 }
 
 XpCifpWriter::XpCifpWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
-                           const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
-  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex),
+                           const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
+                           atools::fs::NavDatabaseErrors *navdatabaseErrors)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex),
   approachRecord(sqlDb.record("approach", ":")), approachLegRecord(sqlDb.record("approach_leg", ":")),
   transitionRecord(sqlDb.record("transition", ":")), transitionLegRecord(sqlDb.record("transition_leg", ":"))
 {
@@ -265,14 +266,16 @@ XpCifpWriter::~XpCifpWriter()
 
 void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context)
 {
-  rc::RowCode rowCode = toRowCode(line.at(PROC_ROW_CODE), context);
+  ctx = &context;
+
+  rc::RowCode rowCode = toRowCode(at(line, PROC_ROW_CODE), context);
 
   if(rowCode == rc::APPROACH || rowCode == rc::SID || rowCode == rc::STAR)
   {
-    int seqNo = line.at(SEQ_NR).toInt();
-    char routeType = line.at(RT_TYPE).at(0).toLatin1();
-    QString routeIdent = line.at(SID_STAR_APP_IDENT);
-    QString transIdent = line.at(TRANS_IDENT);
+    int seqNo = at(line, SEQ_NR).toInt();
+    char routeType = atools::strToChar(at(line, RT_TYPE));
+    QString routeIdent = at(line, SID_STAR_APP_IDENT);
+    QString transIdent = at(line, TRANS_IDENT);
 
     // Finish and write a procedure if code has changed - includes transitions and probably multiple approaches
     if(rowCode != curRowCode)
@@ -449,11 +452,11 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   rec.setValue(":airport_ident", context.cifpAirportIdent);
 
   QString suffix, rwy;
-  QString apprIdent = line.at(SID_STAR_APP_IDENT).trimmed();
+  QString apprIdent = at(line, SID_STAR_APP_IDENT).trimmed();
 
   // Extract runway name "B" suffixes, "ALL" and CTL are ignored
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
-    rwy = sidStarRunwayNameAndSuffix(line.at(TRANS_IDENT).trimmed(), context);
+    rwy = sidStarRunwayNameAndSuffix(at(line, TRANS_IDENT).trimmed(), context);
   else
     rwy = apprRunwayNameAndSuffix(apprIdent, suffix, context);
 
@@ -474,7 +477,7 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   else
   {
     // GPS overlay flag
-    QString gpsIndicator = line.at(GNSS_FMS_IND).trimmed();
+    QString gpsIndicator = at(line, GNSS_FMS_IND).trimmed();
     rec.setValue(":has_gps_overlay", type != "GPS" && gpsIndicator != "0" && gpsIndicator != "U");
     rec.setValue(":suffix", suffix);
     rec.setValue(":type", type);
@@ -493,14 +496,14 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   }
 
   // Might be reset later when writing the FAP leg
-  rec.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
+  rec.setValue(":fix_type", navaidType(at(line, SEC_CODE), at(line, SUB_CODE), context));
 
   if(curRouteType == rc::APPROACH)
-    rec.setValue(":fix_ident", line.at(FIX_IDENT).trimmed());
+    rec.setValue(":fix_ident", at(line, FIX_IDENT).trimmed());
   else // SID and STAR
-    rec.setValue(":fix_ident", line.at(SID_STAR_APP_IDENT).trimmed());
+    rec.setValue(":fix_ident", at(line, SID_STAR_APP_IDENT).trimmed());
 
-  rec.setValue(":fix_region", line.at(ICAO_CODE).trimmed());
+  rec.setValue(":fix_region", at(line, ICAO_CODE).trimmed());
 
   approaches.append(Procedure(curRowCode, rec));
 
@@ -520,14 +523,14 @@ void XpCifpWriter::writeApproachLeg(const QStringList& line, const XpWriterConte
   // Ids are assigned later
   SqlRecord rec(approachLegRecord);
 
-  QString waypointDescr = line.at(DESC_CODE);
+  QString waypointDescr = at(line, DESC_CODE);
 
   if(waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
   {
     // FAF - use this one to set the approach name
-    approaches.last().record.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
-    approaches.last().record.setValue(":fix_ident", line.at(FIX_IDENT).trimmed());
-    approaches.last().record.setValue(":fix_region", line.at(ICAO_CODE).trimmed());
+    approaches.last().record.setValue(":fix_type", navaidType(at(line, SEC_CODE), at(line, SUB_CODE), context));
+    approaches.last().record.setValue(":fix_ident", at(line, FIX_IDENT).trimmed());
+    approaches.last().record.setValue(":fix_region", at(line, ICAO_CODE).trimmed());
   }
 
   if(!writingMissedApproach)
@@ -546,9 +549,9 @@ void XpCifpWriter::writeTransition(const QStringList& line, const XpWriterContex
   SqlRecord rec(transitionRecord);
 
   rec.setValue(":type", "F"); // set later to D if DME arc leg terminator
-  rec.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
-  rec.setValue(":fix_ident", line.at(TRANS_IDENT).trimmed());
-  rec.setValue(":fix_region", line.at(ICAO_CODE).trimmed());
+  rec.setValue(":fix_type", navaidType(at(line, SEC_CODE), at(line, SUB_CODE), context));
+  rec.setValue(":fix_ident", at(line, TRANS_IDENT).trimmed());
+  rec.setValue(":fix_region", at(line, ICAO_CODE).trimmed());
 
   transitions.append(Procedure(curRowCode, rec));
 
@@ -566,7 +569,7 @@ void XpCifpWriter::writeTransitionLeg(const QStringList& line, const XpWriterCon
   // Ids are assigned later
   SqlRecord rec(transitionLegRecord);
 
-  if(line.at(PATH_TERM) == "AF")
+  if(at(line, PATH_TERM) == "AF")
   {
     // Set transition type to DME arc if an AF leg is found
 
@@ -574,13 +577,13 @@ void XpCifpWriter::writeTransitionLeg(const QStringList& line, const XpWriterCon
     transitions.last().record.setValue(":type", "D");
 
     // not used: dme_airport_ident
-    transitions.last().record.setValue(":dme_radial", line.at(THETA).toFloat() / 10.f);
-    transitions.last().record.setValue(":dme_distance", line.at(RHO).toFloat() / 10.f);
+    transitions.last().record.setValue(":dme_radial", at(line, THETA).toFloat() / 10.f);
+    transitions.last().record.setValue(":dme_distance", at(line, RHO).toFloat() / 10.f);
 
-    if(!line.at(RECD_NAVAID).trimmed().isEmpty())
+    if(!at(line, RECD_NAVAID).trimmed().isEmpty())
     {
-      transitions.last().record.setValue(":dme_ident", line.at(RECD_NAVAID).trimmed());
-      transitions.last().record.setValue(":dme_region", line.at(RECD_ICAO_CODE).trimmed());
+      transitions.last().record.setValue(":dme_ident", at(line, RECD_NAVAID).trimmed());
+      transitions.last().record.setValue(":dme_region", at(line, RECD_ICAO_CODE).trimmed());
     }
     else
       qWarning() << context.messagePrefix() << "No recommended navaid for AF leg";
@@ -593,15 +596,15 @@ void XpCifpWriter::writeTransitionLeg(const QStringList& line, const XpWriterCon
 
 void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec, const XpWriterContext& context)
 {
-  QString waypointDescr = line.at(DESC_CODE);
+  QString waypointDescr = at(line, DESC_CODE);
 
   // Overfly but not for runways
   bool overfly = (waypointDescr.at(1) == 'Y' || waypointDescr.at(1) == 'B') && waypointDescr.at(0) != 'G';
 
-  rec.setValue(":type", line.at(PATH_TERM));
+  rec.setValue(":type", at(line, PATH_TERM));
 
   // Altitude
-  QString altDescr = line.at(ALT_DESCR);
+  QString altDescr = at(line, ALT_DESCR);
   bool swapAlt = false;
   bool altDescrValid = true;
 
@@ -638,51 +641,51 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
     qWarning() << context.messagePrefix() << "Unexpected alt descriptor" << altDescr;
   }
 
-  QString turnDir = line.at(TURN_DIR).trimmed();
+  QString turnDir = at(line, TURN_DIR).trimmed();
   if(turnDir == "E")
     rec.setValue(":turn_direction", "B");
   else if(turnDir.size() == 1)
     rec.setValue(":turn_direction", turnDir);
   // else null
 
-  rec.setValue(":fix_type", navaidType(line.at(SEC_CODE), line.at(SUB_CODE), context));
-  rec.setValue(":fix_ident", line.at(FIX_IDENT).trimmed());
-  rec.setValue(":fix_region", line.at(ICAO_CODE).trimmed());
+  rec.setValue(":fix_type", navaidType(at(line, SEC_CODE), at(line, SUB_CODE), context));
+  rec.setValue(":fix_ident", at(line, FIX_IDENT).trimmed());
+  rec.setValue(":fix_region", at(line, ICAO_CODE).trimmed());
   // not used: fix_airport_ident
 
-  if(line.at(PATH_TERM) == "RF")
+  if(at(line, PATH_TERM) == "RF")
   {
-    if(!line.at(CENTER_FIX_OR_TAA_PT).trimmed().isEmpty())
+    if(!at(line, CENTER_FIX_OR_TAA_PT).trimmed().isEmpty())
     {
       // Constant radius arc
-      rec.setValue(":recommended_fix_type", navaidType(line.at(CENTER_SEC_CODE), line.at(CENTER_SUB_CODE), context));
-      rec.setValue(":recommended_fix_ident", line.at(CENTER_FIX_OR_TAA_PT).trimmed());
-      rec.setValue(":recommended_fix_region", line.at(CENTER_ICAO_CODE).trimmed());
+      rec.setValue(":recommended_fix_type", navaidType(at(line, CENTER_SEC_CODE), at(line, CENTER_SUB_CODE), context));
+      rec.setValue(":recommended_fix_ident", at(line, CENTER_FIX_OR_TAA_PT).trimmed());
+      rec.setValue(":recommended_fix_region", at(line, CENTER_ICAO_CODE).trimmed());
     }
     else
       qWarning() << context.messagePrefix() << "No center fix for RF leg";
   }
-  else if(!line.at(RECD_NAVAID).trimmed().isEmpty())
+  else if(!at(line, RECD_NAVAID).trimmed().isEmpty())
   {
-    QString recommendedType = navaidType(line.at(RECD_SEC_CODE), line.at(RECD_SUB_CODE), context);
+    QString recommendedType = navaidType(at(line, RECD_SEC_CODE), at(line, RECD_SUB_CODE), context);
 
     if(!recommendedType.isEmpty())
     {
       rec.setValue(":recommended_fix_type", recommendedType);
-      rec.setValue(":recommended_fix_ident", line.at(RECD_NAVAID).trimmed());
-      rec.setValue(":recommended_fix_region", line.at(RECD_ICAO_CODE).trimmed());
+      rec.setValue(":recommended_fix_ident", at(line, RECD_NAVAID).trimmed());
+      rec.setValue(":recommended_fix_region", at(line, RECD_ICAO_CODE).trimmed());
     }
   }
   // else null
 
-  if(line.at(PATH_TERM) == "AF" && line.at(RECD_NAVAID).trimmed().isEmpty())
+  if(at(line, PATH_TERM) == "AF" && at(line, RECD_NAVAID).trimmed().isEmpty())
     qWarning() << context.messagePrefix() << "No recommended fix for AF leg";
 
   rec.setValue(":is_flyover", overfly);
   rec.setValue(":is_true_course", 0); // Not used
-  rec.setValue(":course", line.at(MAG_CRS).toFloat() / 10.f);
+  rec.setValue(":course", at(line, MAG_CRS).toFloat() / 10.f);
 
-  QString distTime = line.at(RTE_DIST_HOLD_DIST_TIME);
+  QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME);
   if(distTime.startsWith("T"))
     // time minutes/10
     rec.setValue(":time", distTime.mid(1).toFloat() / 10.f);
@@ -690,22 +693,22 @@ void XpCifpWriter::bindLeg(const QStringList& line, atools::sql::SqlRecord& rec,
     // distance nm/10
     rec.setValue(":distance", distTime.toFloat() / 10.f);
 
-  rec.setValue(":theta", line.at(THETA).toFloat() / 10.f);
-  rec.setValue(":rho", line.at(RHO).toFloat() / 10.f);
+  rec.setValue(":theta", at(line, THETA).toFloat() / 10.f);
+  rec.setValue(":rho", at(line, RHO).toFloat() / 10.f);
 
   if(altDescrValid)
   {
-    rec.setValue(":altitude1", altitudeFromStr(line.at(swapAlt ? ALTITUDE2 : ALTITUDE)));
-    rec.setValue(":altitude2", altitudeFromStr(line.at(swapAlt ? ALTITUDE : ALTITUDE2)));
+    rec.setValue(":altitude1", altitudeFromStr(at(line, swapAlt ? ALTITUDE2 : ALTITUDE)));
+    rec.setValue(":altitude2", altitudeFromStr(at(line, swapAlt ? ALTITUDE : ALTITUDE2)));
   }
 
   // Speed limit
-  int spdLimit = line.at(SPEED_LIMIT).toInt();
+  int spdLimit = at(line, SPEED_LIMIT).toInt();
   if(spdLimit > 0)
   {
     rec.setValue(":speed_limit", spdLimit);
 
-    QString spdDescr = line.at(SPD_LIMIT_DESCR);
+    QString spdDescr = at(line, SPD_LIMIT_DESCR);
     if(spdDescr == "+" || spdDescr == "-")
       rec.setValue(":speed_limit_type", spdDescr);
     // else null means speed at

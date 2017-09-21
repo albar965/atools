@@ -94,7 +94,7 @@ class XpDataCompiler
 
 public:
   XpDataCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                 atools::fs::ProgressHandler *progressHandler);
+                 atools::fs::ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpDataCompiler();
 
   /*
@@ -229,6 +229,7 @@ private:
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   int minVersion = 850;
+  atools::fs::NavDatabaseErrors *errors = nullptr;
 
 };
 

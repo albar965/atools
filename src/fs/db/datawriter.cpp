@@ -303,14 +303,14 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
         qCritical() << "Caught exception reading" << currentBglFilePath << ":" << e.what();
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->bglFileErrors.append({currentBglFilePath, QString(e.what())});
+          sceneryErrors->fileErrors.append({currentBglFilePath, QString(e.what()), 0});
       }
       catch(...)
       {
         qCritical() << "Caught unknown exception reading" << currentBglFilePath;
         progressHandler->reportError();
         if(sceneryErrors != nullptr)
-          sceneryErrors->bglFileErrors.append({currentBglFilePath, QString()});
+          sceneryErrors->fileErrors.append({currentBglFilePath, QString(), 0});
       }
     }
     db.commit();

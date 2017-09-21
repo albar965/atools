@@ -45,8 +45,8 @@ enum FieldIndex
 };
 
 XpAirwayWriter::XpAirwayWriter(atools::sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
-                               ProgressHandler *progressHandler)
-  : XpWriter(sqlDb, opts, progressHandler)
+                               ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors)
 {
   initQueries();
 }
@@ -58,27 +58,27 @@ atools::fs::xp::XpAirwayWriter::~XpAirwayWriter()
 
 void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& context)
 {
-  Q_UNUSED(context);
+  ctx = &context;
 
-  QString names = line.at(NAME);
+  QString names = at(line, NAME);
 
   for(const QString& name : names.split("-"))
   {
     // Split dash separated airway list
     insertAirwayQuery->bindValue(":airway_temp_id", ++curAirwayId);
     insertAirwayQuery->bindValue(":name", name);
-    insertAirwayQuery->bindValue(":type", line.at(TYPE).toInt());
-    insertAirwayQuery->bindValue(":direction", line.at(DIRECTION));
-    insertAirwayQuery->bindValue(":minimum_altitude", line.at(MIN_ALT).toInt());
-    insertAirwayQuery->bindValue(":maximum_altitude", line.at(MAX_ALT).toInt());
+    insertAirwayQuery->bindValue(":type", at(line, TYPE).toInt());
+    insertAirwayQuery->bindValue(":direction", at(line, DIRECTION));
+    insertAirwayQuery->bindValue(":minimum_altitude", at(line, MIN_ALT).toInt());
+    insertAirwayQuery->bindValue(":maximum_altitude", at(line, MAX_ALT).toInt());
 
-    insertAirwayQuery->bindValue(":previous_ident", line.at(FROM_IDENT));
-    insertAirwayQuery->bindValue(":previous_region", line.at(FROM_REGION));
-    insertAirwayQuery->bindValue(":previous_type", line.at(FROM_TYPE).toInt());
+    insertAirwayQuery->bindValue(":previous_ident", at(line, FROM_IDENT));
+    insertAirwayQuery->bindValue(":previous_region", at(line, FROM_REGION));
+    insertAirwayQuery->bindValue(":previous_type", at(line, FROM_TYPE).toInt());
 
-    insertAirwayQuery->bindValue(":next_ident", line.at(TO_IDENT));
-    insertAirwayQuery->bindValue(":next_region", line.at(TO_REGION));
-    insertAirwayQuery->bindValue(":next_type", line.at(TO_TYPE).toInt());
+    insertAirwayQuery->bindValue(":next_ident", at(line, TO_IDENT));
+    insertAirwayQuery->bindValue(":next_region", at(line, TO_REGION));
+    insertAirwayQuery->bindValue(":next_type", at(line, TO_TYPE).toInt());
 
     insertAirwayQuery->exec();
   }

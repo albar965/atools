@@ -44,8 +44,9 @@ enum FieldIndex
 };
 
 XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
-                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
-  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex)
+                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
+                         atools::fs::NavDatabaseErrors *navdatabaseErrors)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex)
 {
   initQueries();
 }
@@ -57,13 +58,15 @@ XpFixWriter::~XpFixWriter()
 
 void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
 {
-  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+  ctx = &context;
+
+  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertWaypointQuery->bindValue(":waypoint_id", ++curFixId);
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
-  insertWaypointQuery->bindValue(":ident", line.at(IDENT));
-  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
-  insertWaypointQuery->bindValue(":region", line.at(REGION)); // ZZ for no region
+  insertWaypointQuery->bindValue(":ident", at(line, IDENT));
+  insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
+  insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
   insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints
   insertWaypointQuery->bindValue(":num_victor_airway", 0); // filled  by sql/fs/db/xplane/prepare_airway.sql
   insertWaypointQuery->bindValue(":num_jet_airway", 0); // as above

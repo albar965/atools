@@ -55,8 +55,9 @@ enum FieldIndex
 };
 
 XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
-                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler)
-  : XpWriter(sqlDb, opts, progressHandler), airportIndex(xpAirportIndex)
+                         const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
+                         atools::fs::NavDatabaseErrors *navdatabaseErrors)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex)
 {
   initQueries();
 }
@@ -68,7 +69,7 @@ atools::fs::xp::XpNavWriter::~XpNavWriter()
 
 void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
-  int range = line.at(RANGE).toInt();
+  int range = at(line, RANGE).toInt();
   QString type;
   QString rangeType;
   if(range < 30)
@@ -87,19 +88,19 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
     type = "TC";
 
   bool hasDme = suffix == "DME" || suffix == "VORTAC" || suffix == "VOR-DME" || suffix == "VOR/DME";
-  int frequency = line.at(FREQ).toInt();
+  int frequency = at(line, FREQ).toInt();
 
   insertVorQuery->bindValue(":vor_id", ++curVorId);
   insertVorQuery->bindValue(":file_id", curFileId);
-  insertVorQuery->bindValue(":ident", line.at(IDENT));
+  insertVorQuery->bindValue(":ident", at(line, IDENT));
   insertVorQuery->bindValue(":name", line.mid(RW, line.size() - 11).join(" "));
-  insertVorQuery->bindValue(":region", line.at(REGION));
+  insertVorQuery->bindValue(":region", at(line, REGION));
   insertVorQuery->bindValue(":type", type);
   insertVorQuery->bindValue(":frequency", frequency * 10);
   insertVorQuery->bindValue(":range", range);
-  insertVorQuery->bindValue(":mag_var", line.at(MAGVAR).toFloat());
+  insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
-  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
+  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
 
   if(suffix == "TACAN")
     insertVorQuery->bindValue(":channel", atools::fs::util::tacanChannelForFrequency(frequency));
@@ -108,9 +109,9 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 
   if(hasDme)
   {
-    insertVorQuery->bindValue(":dme_altitude", line.at(ALT).toInt());
-    insertVorQuery->bindValue(":dme_lonx", line.at(LONX).toFloat());
-    insertVorQuery->bindValue(":dme_laty", line.at(LATY).toFloat());
+    insertVorQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
+    insertVorQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
+    insertVorQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
   }
   else
   {
@@ -119,9 +120,9 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
     insertVorQuery->bindValue(":dme_laty", QVariant(QVariant::Double));
   }
 
-  insertVorQuery->bindValue(":altitude", line.at(ALT).toInt());
-  insertVorQuery->bindValue(":lonx", line.at(LONX).toFloat());
-  insertVorQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
+  insertVorQuery->bindValue(":lonx", at(line, LONX).toFloat());
+  insertVorQuery->bindValue(":laty", at(line, LATY).toFloat());
 
   insertVorQuery->exec();
 
@@ -130,7 +131,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 
 void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context)
 {
-  int range = line.at(RANGE).toInt();
+  int range = at(line, RANGE).toInt();
 
   QString type;
   if(range < 24)
@@ -142,18 +143,18 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   else
     type = "HF";
 
-  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertNdbQuery->bindValue(":ndb_id", ++curNdbId);
   insertNdbQuery->bindValue(":file_id", curFileId);
-  insertNdbQuery->bindValue(":ident", line.at(IDENT));
+  insertNdbQuery->bindValue(":ident", at(line, IDENT));
   insertNdbQuery->bindValue(":name", line.mid(RW, line.size() - 11).join(" "));
-  insertNdbQuery->bindValue(":region", line.at(REGION));
+  insertNdbQuery->bindValue(":region", at(line, REGION));
   insertNdbQuery->bindValue(":type", type);
-  insertNdbQuery->bindValue(":frequency", line.at(FREQ).toInt() * 100);
+  insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
-  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(line.at(AIRPORT)));
-  insertNdbQuery->bindValue(":altitude", line.at(ALT).toInt());
+  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
+  insertNdbQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertNdbQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
   insertNdbQuery->bindValue(":lonx", pos.getLonX());
   insertNdbQuery->bindValue(":laty", pos.getLatY());
@@ -175,13 +176,13 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
 
   insertMarkerQuery->bindValue(":marker_id", ++curMarkerId);
   insertMarkerQuery->bindValue(":file_id", curFileId);
-  insertMarkerQuery->bindValue(":region", line.at(REGION));
+  insertMarkerQuery->bindValue(":region", at(line, REGION));
   insertMarkerQuery->bindValue(":type", type);
-  insertMarkerQuery->bindValue(":ident", line.at(IDENT).toFloat());
-  insertMarkerQuery->bindValue(":heading", line.at(HDG).toFloat());
-  insertMarkerQuery->bindValue(":altitude", line.at(ALT).toInt());
-  insertMarkerQuery->bindValue(":lonx", line.at(LONX).toFloat());
-  insertMarkerQuery->bindValue(":laty", line.at(LATY).toFloat());
+  insertMarkerQuery->bindValue(":ident", at(line, IDENT).toFloat());
+  insertMarkerQuery->bindValue(":heading", at(line, HDG).toFloat());
+  insertMarkerQuery->bindValue(":altitude", at(line, ALT).toInt());
+  insertMarkerQuery->bindValue(":lonx", at(line, LONX).toFloat());
+  insertMarkerQuery->bindValue(":laty", at(line, LATY).toFloat());
 
   insertMarkerQuery->exec();
 
@@ -208,22 +209,22 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
 
   if(writingIls)
     throw atools::Exception("Recursive ILS write");
-  QString airportIdent = line.at(AIRPORT);
-  QString runwayName = line.at(RW);
+  QString airportIdent = at(line, AIRPORT);
+  QString runwayName = at(line, RW);
 
-  atools::geo::Pos pos(line.at(LONX).toFloat(), line.at(LATY).toFloat());
+  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertIlsQuery->bindValue(":ils_id", ++curIlsId);
-  insertIlsQuery->bindValue(":frequency", line.at(FREQ).toInt() * 10);
-  insertIlsQuery->bindValue(":range", line.at(RANGE).toInt());
-  insertIlsQuery->bindValue(":loc_heading", line.at(HDG).toFloat());
-  insertIlsQuery->bindValue(":ident", line.at(IDENT));
+  insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt() * 10);
+  insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
+  insertIlsQuery->bindValue(":loc_heading", at(line, HDG).toFloat());
+  insertIlsQuery->bindValue(":ident", at(line, IDENT));
   insertIlsQuery->bindValue(":loc_airport_ident", airportIdent);
-  insertIlsQuery->bindValue(":region", line.at(REGION));
+  insertIlsQuery->bindValue(":region", at(line, REGION));
   insertIlsQuery->bindValue(":loc_runway_name", runwayName);
   insertIlsQuery->bindValue(":name", line.mid(NAME).join(" ").toUpper());
   insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndId(airportIdent, runwayName));
-  insertIlsQuery->bindValue(":altitude", line.at(ALT).toInt());
+  insertIlsQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertIlsQuery->bindValue(":lonx", pos.getLonX());
   insertIlsQuery->bindValue(":laty", pos.getLatY());
 
@@ -233,7 +234,7 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
 
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
   // Calculate the display of the ILS feather
-  float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(line.at(HDG).toFloat()));
+  float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(at(line, HDG).toFloat()));
   atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f).normalize();
   atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f).normalize();
   float featherWidth = p1.distanceMeterTo(p2);
@@ -250,27 +251,29 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
 
 void XpNavWriter::bindIlsGlideslope(const QStringList& line)
 {
-  insertIlsQuery->bindValue(":gs_range", line.at(RANGE).toInt());
-  insertIlsQuery->bindValue(":gs_pitch", std::floor((line.at(HDG).toFloat() / 1000.f) / 100.f));
-  insertIlsQuery->bindValue(":gs_altitude", line.at(ALT).toInt());
-  insertIlsQuery->bindValue(":gs_lonx", line.at(LONX).toFloat());
-  insertIlsQuery->bindValue(":gs_laty", line.at(LATY).toFloat());
+  insertIlsQuery->bindValue(":gs_range", at(line, RANGE).toInt());
+  insertIlsQuery->bindValue(":gs_pitch", std::floor((at(line, HDG).toFloat() / 1000.f) / 100.f));
+  insertIlsQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
+  insertIlsQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
+  insertIlsQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
 }
 
 void XpNavWriter::bindIlsDme(const QStringList& line)
 {
-  insertIlsQuery->bindValue(":dme_range", line.at(RANGE).toInt());
-  insertIlsQuery->bindValue(":dme_altitude", line.at(ALT).toInt());
-  insertIlsQuery->bindValue(":dme_lonx", line.at(LONX).toFloat());
-  insertIlsQuery->bindValue(":dme_laty", line.at(LATY).toFloat());
+  insertIlsQuery->bindValue(":dme_range", at(line, RANGE).toInt());
+  insertIlsQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
+  insertIlsQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
+  insertIlsQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
 }
 
 void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 {
+  ctx = &context;
+
   // lat lon
   // ("28.000708333", "-83.423330556", "KNOST", "ENRT", "K7")
 
-  NavRowCode rowCode = static_cast<NavRowCode>(line.at(ROWCODE).toInt());
+  NavRowCode rowCode = static_cast<NavRowCode>(at(line, ROWCODE).toInt());
 
   // Glideslope records must come later in the file than their associated localizer
   // LTP/FTP records must come later in the file than their associated FPAP

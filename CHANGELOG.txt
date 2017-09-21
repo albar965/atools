@@ -1,3 +1,9 @@
+Version 2.6.5
+
+* Added workaround for P3D v4 add-on.xml files with inconsistent encoding (BOM / XML PI mismatch)
+* Added error reporting and boundary check when reading X-Plane dat files to avoid crash to desktop.
+* Added error collection for X-Plane compiler. Now only stops reading the current file on error.
+
 Version 2.6.4
 * Fixed crashes when reading X-Plane CIFP files with unknown approach type.
 * Fixed crash with older apt.dat files where runway name for VASI is missing.

@@ -35,16 +35,17 @@ public:
 
   int getTotalErrors() const;
 
-  struct BglFileError
+  struct SceneryFileError
   {
-    QString bglFilepath, errorMessage;
+    QString filepath, errorMessage;
+    int lineNum;
   };
 
   struct SceneryErrors
   {
     atools::fs::scenery::SceneryArea scenery;
     QStringList sceneryErrorsMessages;
-    QList<atools::fs::NavDatabaseErrors::BglFileError> bglFileErrors;
+    QList<atools::fs::NavDatabaseErrors::SceneryFileError> fileErrors;
   };
 
   QList<atools::fs::NavDatabaseErrors::SceneryErrors> sceneryErrors;

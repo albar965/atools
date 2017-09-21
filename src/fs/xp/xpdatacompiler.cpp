@@ -35,6 +35,7 @@
 #include "exception.h"
 #include "atools.h"
 #include "fs/xp/xpairportindex.h"
+#include "fs/navdatabaseerrors.h"
 
 #include <QFileInfo>
 #include <QDir>
@@ -59,8 +60,8 @@ const int NUM_REPORT_STEPS = 10000;
 const int MIN_PROGRESS_REPORT_MS = 500;
 
 XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
-                               ProgressHandler *progressHandler)
-  : options(opts), db(sqlDb), progress(progressHandler)
+                               ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
+  : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
 {
   basePath = buildBasePath(options);
 
@@ -68,11 +69,11 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
 
   airportIndex = new XpAirportIndex();
 
-  airportWriter = new XpAirportWriter(db, airportIndex, options, progress);
-  fixWriter = new XpFixWriter(db, airportIndex, options, progress);
-  navWriter = new XpNavWriter(db, airportIndex, options, progress);
-  cifpWriter = new XpCifpWriter(db, airportIndex, options, progress);
-  airwayWriter = new XpAirwayWriter(db, options, progress);
+  airportWriter = new XpAirportWriter(db, airportIndex, options, progress, errors);
+  fixWriter = new XpFixWriter(db, airportIndex, options, progress, errors);
+  navWriter = new XpNavWriter(db, airportIndex, options, progress, errors);
+  cifpWriter = new XpCifpWriter(db, airportIndex, options, progress, errors);
+  airwayWriter = new XpAirwayWriter(db, options, progress, errors);
   airwayPostProcess = new AirwayPostProcess(db, options, progress);
   magDecReader = new MagDecReader();
 
@@ -399,9 +400,17 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
     }
     catch(std::exception& e)
     {
-      // Enrich error message and rethrow a new one
-      throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
-                              arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
+      if(errors != nullptr)
+      {
+        progress->reportError();
+        errors->sceneryErrors.first().fileErrors.append({fileinfo.filePath(), e.what(), lineNum});
+        qWarning() << Q_FUNC_INFO << "Error in file" << fileinfo.filePath() << "line" << lineNum << ":" << e.what();
+      }
+      else
+        // Enrich error message and rethrow a new one
+        throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
+                                arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
+
     }
   }
   return aborted;
