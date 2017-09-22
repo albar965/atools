@@ -23,6 +23,7 @@
 #include <QXmlStreamReader>
 #include <QDebug>
 #include <QFileInfo>
+#include <QTextCodec>
 
 namespace atools {
 namespace fs {
@@ -37,40 +38,64 @@ AddOnPackage::AddOnPackage(const QString& file)
 
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    // Load the file into a text file to avoid BOM / xml encoding mismatches
-    // Let the text stream detect the encoding
-    QTextStream stream(&xmlFile);
-    QString str = stream.readAll();
+    QTextCodec *codec = nullptr;
 
-    // The reader ignores the XML encoding header now
-    QXmlStreamReader xml(str);
+    // Load a part of the file and detect the BOM/codec
+    const qint64 PROBE_SIZE = 128;
+    char *buffer = new char[PROBE_SIZE];
+    qint64 bytesRead = xmlFile.read(buffer, PROBE_SIZE);
+    if(bytesRead > 0)
+      codec = QTextCodec::codecForUtfText(QByteArray(buffer, static_cast<int>(bytesRead)), nullptr);
+    delete[] buffer;
 
-    if(xml.readNextStartElement())
+    xmlFile.seek(0);
+
+    QScopedPointer<QXmlStreamReader> xml;
+
+    if(codec != nullptr)
     {
-      if(xml.name() == "SimBase.Document")
-      {
-        while(xml.readNextStartElement())
-        {
-          if(xml.error() != QXmlStreamReader::NoError)
-            throw Exception("Error reading \"" + filename + "\": " + xml.errorString());
+      // Load the file into a text file to avoid BOM / xml encoding mismatches
+      qDebug() << "Encoding" << codec->name();
+      QTextStream stream(&xmlFile);
+      stream.setCodec(codec);
+      QString str = stream.readAll();
 
-          if(xml.name() == "AddOn.Name")
-            name = xml.readElementText();
-          else if(xml.name() == "AddOn.Description")
-            description = xml.readElementText();
-          else if(xml.name() == "AddOn.Component")
+      // The reader ignores the XML encoding header when reading from a string
+      xml.reset(new QXmlStreamReader(str));
+    }
+    else
+    {
+      // Let the stream reader detect the encoding in the PI
+      qDebug() << "No UTF Encoding found";
+      xml.reset(new QXmlStreamReader(&xmlFile));
+    }
+
+    if(xml->readNextStartElement())
+    {
+      if(xml->name() == "SimBase.Document")
+      {
+        while(xml->readNextStartElement())
+        {
+          if(xml->error() != QXmlStreamReader::NoError)
+            throw Exception("Error reading \"" + filename + "\": " + xml->errorString());
+
+          if(xml->name() == "AddOn.Name")
+            name = xml->readElementText();
+          else if(xml->name() == "AddOn.Description")
+            description = xml->readElementText();
+          else if(xml->name() == "AddOn.Component")
           {
-            AddOnComponent component(xml);
+            AddOnComponent component(*xml);
             if(component.getCategory() == "Scenery")
               components.append(component);
           }
           else
-            xml.skipCurrentElement();
+            xml->skipCurrentElement();
         }
       }
     }
-    if(xml.hasError())
-      throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xml.errorString()));
+    if(xml->hasError())
+      throw Exception(tr("Cannot read file %1. Reason: %2").arg(file).arg(xml->errorString()));
   }
   else
     throw Exception(tr("Cannot open file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
