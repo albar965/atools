@@ -17,10 +17,14 @@
 
 #include "logging/logginghandler.h"
 #include "logging/loggingconfig.h"
+#include "gui/application.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QApplication>
+#include <QMessageBox>
+#include <QMainWindow>
+#include <QThread>
 
 namespace atools {
 namespace logging {
@@ -28,7 +32,9 @@ namespace logging {
 using internal::LoggingConfig;
 
 LoggingHandler *LoggingHandler::instance = nullptr;
-LoggingHandler::LogFunctionType LoggingHandler::logFunction = nullptr;
+LoggingHandler::LogFunctionType LoggingHandler::logFunc = nullptr;
+LoggingHandler::AbortFunctionType LoggingHandler::abortFunc = nullptr;
+QWidget *LoggingHandler::parentWidget = nullptr;
 
 LoggingHandler::LoggingHandler(const QString& logConfiguration,
                                const QString& logDirectory,
@@ -89,7 +95,77 @@ QStringList LoggingHandler::getLogFiles()
 
 void LoggingHandler::setLogFunction(LoggingHandler::LogFunctionType loggingFunction)
 {
-  logFunction = loggingFunction;
+  logFunc = loggingFunction;
+}
+
+void LoggingHandler::setAbortFunction(LoggingHandler::AbortFunctionType abortFunction)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  abortFunc = abortFunction;
+}
+
+void LoggingHandler::guiAbortFunc(const QString& msg)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Called by signal on main thread context
+  QMessageBox::warning(parentWidget, QApplication::applicationName(),
+                       QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
+                                   "<i>%1</i><br/><br/>"
+                                   "%2"
+                                   "<hr/>%3"
+                                     "<hr/>%4<br/>"
+                                     "<h3>Press OK to exit application.</h3>"
+                                   ).
+                       arg(msg).
+                       arg(atools::gui::Application::generalErrorMessage()).
+                       arg(atools::gui::Application::getEmailHtml()).
+                       arg(atools::gui::Application::getReportPathHtml())
+                       );
+
+#ifdef Q_OS_WIN32
+  // Will not call any crash handler on windows - is not helpful anyway
+  std::exit(1);
+#else
+  // Allow OS crash handler to pop up i.e. generate a core file under linux or show crash dialog on macOS
+  abort();
+#endif
+}
+
+void LoggingHandler::setGuiAbortFunction(QWidget *parent)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  parentWidget = parent;
+  // Connect to slot with queued connection to allow passing the message to the main thread
+  instance->connect(instance, &LoggingHandler::guiAbortSignal, instance, &LoggingHandler::guiAbortFunc,
+                    Qt::QueuedConnection);
+
+  atools::logging::LoggingHandler::setAbortFunction([parent](QtMsgType type, const QMessageLogContext& context,
+                                                             const QString& msg) -> void
+      {
+        Q_UNUSED(type);
+        Q_UNUSED(context);
+
+        // Call guiAbortFunc on main thread context
+        emit instance->guiAbortSignal(msg);
+
+        // Allow delivery
+        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+        // Stop this thread forever
+        // This will never be called if this is the main thread
+        QThread::msleep(std::numeric_limits<unsigned long>::max());
+      });
+}
+
+void LoggingHandler::resetAbortFunction()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  abortFunc = nullptr;
+  parentWidget = nullptr;
 }
 
 void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *> >& streamListCat,
@@ -108,33 +184,42 @@ void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *
 
 }
 
-void LoggingHandler::checkAbortType(QtMsgType type)
+void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
   QtMsgType abortType = logConfig->getAbortType();
+  bool doAbort = false;
   switch(type)
   {
     case QtDebugMsg:
     case QtInfoMsg:
       break;
+
     case QtWarningMsg:
-      if(abortType == QtWarningMsg)
-        abort();
+      doAbort = abortType == QtWarningMsg;
       break;
+
     case QtCriticalMsg:
-      if(abortType == QtWarningMsg || abortType == QtCriticalMsg)
-        abort();
+      doAbort = abortType == QtWarningMsg || abortType == QtCriticalMsg;
       break;
+
     case QtFatalMsg:
-      if(abortType == QtWarningMsg || abortType == QtCriticalMsg || abortType == QtFatalMsg)
-        abort();
+      doAbort = abortType == QtWarningMsg || abortType == QtCriticalMsg || abortType == QtFatalMsg;
       break;
+  }
+
+  if(doAbort)
+  {
+    if(abortFunc)
+      abortFunc(type, context, msg);
+    else
+      abort();
   }
 }
 
 void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
-  if(logFunction != nullptr)
-    logFunction(type, context, msg);
+  if(logFunc != nullptr)
+    logFunc(type, context, msg);
 
   QString category = context.category;
 
@@ -146,7 +231,7 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
                              qFormatLogMessage(type, context, msg),
                              category);
 
-  instance->checkAbortType(type);
+  instance->checkAbortType(type, context, msg);
 }
 
 } // namespace logging

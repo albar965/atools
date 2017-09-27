@@ -180,7 +180,7 @@ public:
   /* minmum accepted file version */
   void setMinVersion(int value)
   {
-    minVersion = value;
+    minFileVersion = value;
   }
 
   /* Read Magdec.bgl file from application directory or settings directory */
@@ -228,7 +228,7 @@ private:
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
-  int minVersion = 850;
+  int minFileVersion = 850;
   atools::fs::NavDatabaseErrors *errors = nullptr;
 
 };

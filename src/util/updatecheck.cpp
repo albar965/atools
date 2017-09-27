@@ -190,20 +190,26 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
         }
         else if(key == "changelog")
         {
+          // Start of changelog
           map[currentChannel].changelog = rawValue;
           changelogContinuation = true;
         }
         else if(changelogContinuation)
-          map[currentChannel].changelog += line;
+          // More changelog lines
+          map[currentChannel].changelog += " " + line;
       }
     }
   }
 
   // Copy only valid updates that have a version
-  for(const Update& upd : map.values())
+  for(Update& upd : map.values())
   {
     if(!upd.version.isEmpty())
+    {
+      // Remove line breaks and multiple spaces
+      upd.changelog = upd.changelog.simplified();
       updates.append(upd);
+    }
   }
 
   // Put the newest versions on top

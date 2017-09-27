@@ -42,6 +42,7 @@
 #include <QDebug>
 #include <QDateTime>
 #include <QElapsedTimer>
+#include <QRegularExpression>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -54,10 +55,12 @@ namespace fs {
 namespace xp {
 
 // Reports per large file
-const int NUM_REPORT_STEPS = 10000;
+const static int NUM_REPORT_STEPS = 10000;
 
 /* Report progress twice a second */
-const int MIN_PROGRESS_REPORT_MS = 500;
+const static int MIN_PROGRESS_REPORT_MS = 500;
+
+const static QRegularExpression CIFP_MATCH("^[A-Z0-9]{3,8}$");
 
 XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                                ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
@@ -304,20 +307,19 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
 
   int lineNum = 1, totalNumLines, fileVersion = 0;
 
-  // Open file and read header
-  if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, totalNumLines, fileVersion))
+  try
   {
-    XpWriterContext context;
-    context.curFileId = curFileId;
-    context.fileName = fileinfo.fileName();
-    context.filePath = fileinfo.filePath();
-    context.localPath = QDir(options.getBasepath()).relativeFilePath(fileinfo.path());
-    context.flags = flags | flagsFromOptions();
-    context.fileVersion = fileVersion;
-    context.magDecReader = magDecReader;
-
-    try
+    // Open file and read header
+    if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, totalNumLines, fileVersion))
     {
+      XpWriterContext context;
+      context.curFileId = curFileId;
+      context.fileName = fileinfo.fileName();
+      context.filePath = fileinfo.filePath();
+      context.localPath = QDir(options.getBasepath()).relativeFilePath(fileinfo.path());
+      context.flags = flags | flagsFromOptions();
+      context.fileVersion = fileVersion;
+      context.magDecReader = magDecReader;
 
       if(flags & READ_SHORT_REPORT)
         if(progress->reportOther(progressMsg))
@@ -325,6 +327,10 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
 
       if(flags & READ_CIFP)
       {
+        QString ident = QFileInfo(filename).baseName().toUpper();
+        if(!CIFP_MATCH.match(ident).hasMatch())
+          throw atools::Exception("CIFP file has no valid name which should match airport ident.");
+
         // Add additional information for procedure files
         context.cifpAirportIdent = QFileInfo(filename).baseName().toUpper();
         context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
@@ -398,20 +404,19 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
         // Eat up any remaining progress steps
         progress->increaseCurrent(NUM_REPORT_STEPS - steps);
     }
-    catch(std::exception& e)
+  }
+  catch(std::exception& e)
+  {
+    if(errors != nullptr)
     {
-      if(errors != nullptr)
-      {
-        progress->reportError();
-        errors->sceneryErrors.first().fileErrors.append({fileinfo.filePath(), e.what(), lineNum});
-        qWarning() << Q_FUNC_INFO << "Error in file" << fileinfo.filePath() << "line" << lineNum << ":" << e.what();
-      }
-      else
-        // Enrich error message and rethrow a new one
-        throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
-                                arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
-
+      progress->reportError();
+      errors->sceneryErrors.first().fileErrors.append({fileinfo.filePath(), e.what(), lineNum});
+      qWarning() << Q_FUNC_INFO << "Error in file" << fileinfo.filePath() << "line" << lineNum << ":" << e.what();
     }
+    else
+      // Enrich error message and rethrow a new one
+      throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
+                              arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
   }
   return aborted;
 }
@@ -447,10 +452,11 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
       if(!fields.isEmpty())
         fileVersion = fields.first().toInt();
 
-      if(!fields.isEmpty() && fileVersion < minVersion)
+      if(!fields.isEmpty() && fileVersion < minFileVersion)
       {
-        qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" << minVersion;
-        return false;
+        qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" << minFileVersion;
+        throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").
+                                arg(fields.first()).arg(minFileVersion));
       }
 
       qDebug() << "Counting lines for" << filename;
@@ -467,7 +473,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
     }
   }
   else
-    throw atools::Exception("Cannot open file " + filename + ". Reason: " + file.errorString());
+    throw atools::Exception("Cannot open file. Reason: " + file.errorString() + ".");
   return true;
 }
 

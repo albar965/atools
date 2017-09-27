@@ -66,8 +66,11 @@ class LoggingConfig;
  * fatal.default    = console-err,log
  *
  */
-class LoggingHandler
+class LoggingHandler :
+  public QObject
 {
+  Q_OBJECT
+
 public:
   /*
    * Loads the logging configuration and prepares all log files to be stored in
@@ -100,10 +103,20 @@ public:
    */
   static QStringList getLogFiles();
 
-  typedef std::function<void (QtMsgType type, const QMessageLogContext& context,
-                              const QString& msg)> LogFunctionType;
+  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
   /* Function will be called on the calling thread context */
   static void setLogFunction(LogFunctionType loggingFunction);
+
+  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> AbortFunctionType;
+
+  /* All functions will be called on the calling thread context - do not use GUI elements there */
+  static void setAbortFunction(AbortFunctionType abortFunction);
+  static void setGuiAbortFunction(QWidget *parent);
+  static void resetAbortFunction();
+
+signals:
+  /* Sent to main thread to allow GUI handling */
+  void guiAbortSignal(const QString& msg);
 
 private:
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
@@ -114,9 +127,12 @@ private:
                         const QString& message,
                         const QString& category = QString());
 
-  void checkAbortType(QtMsgType type);
+  void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
   static void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
+
+  /* Connected to signal guiAbortSignal to allow GUI handling */
+  void guiAbortFunc(const QString& msg);
 
   static LoggingHandler *instance;
 
@@ -125,7 +141,9 @@ private:
 
   mutable QMutex mutex;
 
-  static LogFunctionType logFunction;
+  static LogFunctionType logFunc;
+  static AbortFunctionType abortFunc;
+  static QWidget *parentWidget;
 };
 
 } // namespace logging

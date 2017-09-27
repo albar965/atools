@@ -363,6 +363,15 @@ void NavDatabase::createInternal(const QString& codec)
     }
 
     xpDataCompiler->close();
+
+    // Remove scenery from error list if nothing happened
+    if(errors != nullptr && !errors->sceneryErrors.isEmpty())
+    {
+      const NavDatabaseErrors::SceneryErrors& err = errors->sceneryErrors.first();
+
+      if(err.fileErrors.isEmpty() && err.sceneryErrorsMessages.isEmpty())
+        errors->sceneryErrors.clear();
+    }
   }
   else
   {

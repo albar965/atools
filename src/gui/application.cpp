@@ -28,7 +28,6 @@ namespace gui {
 
 QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
-bool Application::exitOnException = true;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -57,52 +56,51 @@ bool Application::notify(QObject *receiver, QEvent *event)
   }
 }
 
+QString Application::generalErrorMessage()
+{
+  return tr("<b>If the problem persists or occurs during startup "
+              "delete all settings and database files of %4 and try again.</b><br/><br/>"
+              "<b>If you wish to report this error attach the log and configuration files "
+                "to your report, add all other available information and send it to one "
+                "of the contact addresses below.</b><br/>").arg(QApplication::applicationName());
+}
+
 void Application::handleException(const char *file, int line, const std::exception& e)
 {
   qCritical() << "Caught exception in file" << file << "line" << line << "what" << e.what();
   QMessageBox::critical(nullptr, QApplication::applicationName(),
-                        tr("Caught exception in file %1 line %2.<br/><br/>"
+                        tr("<b>Caught exception in file %1 line %2.</b><br/><br/>"
                            "<i>%3</i><br/><br/>"
-                           "<b>If the problem persists or occurs during startup "
-                             "delete all settings and database files of %4 and try again.</b><br/><br/>"
-                             "<b>If you wish to report this error attach the log and configuration files "
-                               "to your report, add all other available information and send it to one "
-                               "of the contact addresses below.</b><br/>"
-                               "<hr/>%5"
-                                 "<hr/>%6<br/>"
-                                 "<h3>Press OK to exit application.</h3>"
+                           "%4"
+                           "<hr/>%5"
+                             "<hr/>%6<br/>"
+                             "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
                         arg(e.what()).
-                        arg(QApplication::applicationName()).
+                        arg(generalErrorMessage()).
                         arg(getEmailHtml()).
                         arg(getReportPathHtml()));
 
-  if(exitOnException)
-    std::exit(1);
+  std::exit(1);
 }
 
 void Application::handleException(const char *file, int line)
 {
   qCritical() << "Caught unknown exception in file" << file << "line" << line;
   QMessageBox::critical(nullptr, QApplication::applicationName(),
-                        tr("Caught unknown exception in file %1 line %2.<br/><br/>"
-                           "<b>If the problem persists or occurs during startup "
-                             "delete all settings and database files of %3 and try again.</b><br/><br/>"
-                             "<b>If you wish to report this error attach the log and configuration files "
-                               "to your report, add all other available information and send it to one "
-                               "of the contact addresses below.</b><br/>"
-                               "<hr/>%4"
-                                 "<hr/>%5<br/>"
-                                 "<h3>Press OK to exit application.</h3>"
+                        tr("<b>Caught unknown exception in file %1 line %2.</b><br/><br/>"
+                           "%2"
+                           "<hr/>%4"
+                             "<hr/>%5<br/>"
+                             "<h3>Press OK to exit application.</h3>"
                            ).
                         arg(file).arg(line).
-                        arg(QApplication::applicationName()).
+                        arg(generalErrorMessage()).
                         arg(getEmailHtml()).
                         arg(getReportPathHtml()));
 
-  if(exitOnException)
-    std::exit(1);
+  std::exit(1);
 }
 
 void Application::addReportPath(const QString& header, const QStringList& paths)

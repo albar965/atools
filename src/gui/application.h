@@ -43,23 +43,19 @@ public:
   Application(int& argc, char **argv, int = ApplicationFlags);
   virtual ~Application();
 
-#if defined(Q_CC_MSVC)
-  // MSVC cannot deal with newer C++ features
-  static void handleException(const char *file, int line, const std::exception& e);
-  static void handleException(const char *file, int line);
-
-#else
   /*
    * Shows an error dialog with the exception message and after that exits the application with code 1.
+   *
+   * Call this only on the main thread.
    */
-  [[noreturn]] static void handleException(const char *file, int line, const std::exception& e);
+  Q_NORETURN static void handleException(const char *file, int line, const std::exception& e);
 
   /*
    * Shows an error dialog and after that exits the application with code 1.
+   *
+   * Call this only on the main thread.
    */
-  [[noreturn]] static void handleException(const char *file, int line);
-
-#endif
+  Q_NORETURN static void handleException(const char *file, int line);
 
   /* Add a list of paths that will be added as links in any error dialog.
    * @param header Header for the list of paths
@@ -88,15 +84,7 @@ public:
   /* Process twice and wait 10 ms inbetween */
   static void processEventsExtended();
 
-  static bool getExitOnException()
-  {
-    return exitOnException;
-  }
-
-  static void setExitOnException(bool value)
-  {
-    exitOnException = value;
-  }
+  static QString generalErrorMessage();
 
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
@@ -104,8 +92,6 @@ private:
   static QHash<QString, QStringList> reportFiles;
 
   static QStringList emailAddresses;
-
-  static bool exitOnException;
 
 };
 
