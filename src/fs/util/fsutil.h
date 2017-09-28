@@ -28,7 +28,13 @@ namespace util {
 QString aircraftTypeForCode(const QString& code);
 
 /* Maximum rating is 5 */
+const int MAX_RATING = 5;
+
+/* Calculate for FSX/P3D based on airport facilities */
 int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
+
+/* Calculate for X-Plane based on airport facilities */
+int calculateAirportRatingXp(bool isAddon, bool is3D, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
 
 /* Check the airport name if it contains military designators */
 bool isNameMilitary(const QString& airportName);

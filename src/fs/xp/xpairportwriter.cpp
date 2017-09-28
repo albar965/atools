@@ -1333,8 +1333,8 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":has_tower_object", hasTower);
 
     // Rating
-    int rating = atools::fs::util::calculateAirportRating(context.flags & IS_ADDON, hasTower, numTaxiPath, numParking,
-                                                          numApron);
+    int rating = atools::fs::util::calculateAirportRatingXp(context.flags & IS_ADDON, context.flags & IS_3D,
+                                                            hasTower, numTaxiPath, numParking, numApron);
     insertAirportQuery->bindValue(":rating", rating);
 
     insertAirportQuery->bindValue(":num_parking_gate", numParkingGate);

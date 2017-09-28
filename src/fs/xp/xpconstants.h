@@ -32,17 +32,18 @@ enum ContextFlag
 {
   NO_FLAG = 0x0000,
   IS_ADDON = 0x0001,
-  INCLUDE_ILS = 0x0002,
-  INCLUDE_VOR = 0x0004,
-  INCLUDE_NDB = 0x0008,
-  INCLUDE_MARKER = 0x0010,
-  INCLUDE_AIRPORT = 0x0020,
-  INCLUDE_APPROACH = 0x0040,
-  INCLUDE_APPROACHLEG = 0x0080,
-  READ_LOCALIZERS = 0x0100, // Hand made localizers
-  READ_USER = 0x0200, // user.dat
-  READ_CIFP = 0x0400, // CIFP file
-  READ_SHORT_REPORT = 0x0800 // Do not create 10 reports per file
+  IS_3D = 0x0002,
+  INCLUDE_ILS = 0x0004,
+  INCLUDE_VOR = 0x0008,
+  INCLUDE_NDB = 0x0010,
+  INCLUDE_MARKER = 0x0020,
+  INCLUDE_AIRPORT = 0x0040,
+  INCLUDE_APPROACH = 0x0080,
+  INCLUDE_APPROACHLEG = 0x0100,
+  READ_LOCALIZERS = 0x0200, // Hand made localizers
+  READ_USER = 0x0400, // user.dat
+  READ_CIFP = 0x0800, // CIFP file
+  READ_SHORT_REPORT = 0x1000 // Do not create 10 reports per file
 };
 
 Q_DECLARE_FLAGS(ContextFlags, ContextFlag);

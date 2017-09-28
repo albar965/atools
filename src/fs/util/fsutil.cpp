@@ -358,6 +358,18 @@ int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int nu
   return rating;
 }
 
+int calculateAirportRatingXp(bool isAddon, bool is3D, bool hasTower, int numTaxiPaths, int numParkings, int numAprons)
+{
+  // Maximum rating is 5
+  int rating = (numTaxiPaths > 0) + (numParkings > 0) + (numAprons > 0) + (isAddon | is3D);
+
+  if(rating > 0 && hasTower)
+    // Add tower only if there is already a rating - otherwise we'll get too many airports with a too good rating
+    rating++;
+
+  return rating;
+}
+
 bool isNameClosed(const QString& airportName)
 {
   return REGEXP_CLOSED.match(airportName.toUpper()).hasMatch();
