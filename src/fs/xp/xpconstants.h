@@ -43,7 +43,8 @@ enum ContextFlag
   READ_LOCALIZERS = 0x0200, // Hand made localizers
   READ_USER = 0x0400, // user.dat
   READ_CIFP = 0x0800, // CIFP file
-  READ_SHORT_REPORT = 0x1000 // Do not create 10 reports per file
+  READ_SHORT_REPORT = 0x1000, // Do not create 10 reports per file
+  UPDATE_CYCLE = 0x2000                     // Fetch airac cycle from header
 };
 
 Q_DECLARE_FLAGS(ContextFlags, ContextFlag);

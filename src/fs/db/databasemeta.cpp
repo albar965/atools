@@ -57,6 +57,9 @@ void DatabaseMeta::init()
 
       if(rec.contains("has_sid_star"))
         sidStar = rec.valueBool("has_sid_star");
+
+      if(rec.contains("airac_cycle"))
+        airacCycle = rec.valueStr("airac_cycle");
       valid = true;
     }
     query.finish();
@@ -84,6 +87,21 @@ void DatabaseMeta::updateVersion()
   updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
 }
 
+void DatabaseMeta::updateAiracCycle(const QString& cycle)
+{
+  airacCycle = cycle;
+  SqlQuery query(db);
+  query.prepare("update metadata set airac_cycle = :cycle");
+  query.bindValue(":cycle", cycle);
+  query.exec();
+  db->commit();
+}
+
+void DatabaseMeta::updateAiracCycle()
+{
+  updateAiracCycle(airacCycle);
+}
+
 void DatabaseMeta::updateTimestamp()
 {
   lastLoadTime = QDateTime::currentDateTime();
@@ -97,8 +115,6 @@ void DatabaseMeta::updateTimestamp()
 
 void DatabaseMeta::updateFlags()
 {
-  lastLoadTime = QDateTime::currentDateTime();
-
   bool hasSidStar = false;
   SqlQuery select(db);
   select.exec("select approach_id from approach "
@@ -119,6 +135,7 @@ void DatabaseMeta::updateAll()
   updateVersion();
   updateTimestamp();
   updateFlags();
+  updateAiracCycle();
 }
 
 bool DatabaseMeta::hasSchema() const

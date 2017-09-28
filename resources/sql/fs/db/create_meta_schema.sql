@@ -28,7 +28,8 @@ create table metadata
                                       -- from application supported version (i.e. can cause SQL errors, crashes, etc.)
   db_version_minor integer not null,  -- Minor version. Only for updates that do not break compatibility.
   last_load_timestamp varchar(100),   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
-  has_sid_star integer                -- 1 if any SID or STAR procedures are in the database
+  has_sid_star integer,               -- 1 if any SID or STAR procedures are in the database
+  airac_cycle varchar(10)             -- AIRAC cycle (not FSX/P3D)
 );
 
 -- **************************************************
@@ -65,6 +66,7 @@ create table bgl_file
   filepath varchar(1000) not null,         -- Absolute filename including full path
   filename varchar(250) not null,          -- Filename only - redundant and used for search functionality
   size integer not null,                   -- File size in bytes
+  comment varchar(1000),                   -- Currently used for the header in the X-Plane files
 foreign key(scenery_area_id) references scenery_area(scenery_area_id)
 );
 

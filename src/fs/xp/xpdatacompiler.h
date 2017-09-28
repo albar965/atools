@@ -186,16 +186,22 @@ public:
   /* Read Magdec.bgl file from application directory or settings directory */
   bool compileMagDeclBgl();
 
+  /* Get cycle year and month as found in database files */
+  const QString& getAiracCycle() const
+  {
+    return airacCycle;
+  }
+
 private:
   void initQueries();
   void deInitQueries();
 
   /* write to metadata file table */
-  void writeFile(const QString& filepath);
+  void writeFile(const QString& filepath, const QString& comment);
   void writeSceneryArea(const QString& filepath);
 
   /* Open file and read header */
-  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat,
+  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, bool updateCycle,
                 int& lineNum, int& totalNumLines, int& fileVersion);
 
   /* Read file line by line and call writer for each one */
@@ -210,6 +216,8 @@ private:
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
 
   atools::fs::xp::ContextFlags flagsFromOptions();
+
+  void updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath;
@@ -230,6 +238,7 @@ private:
 
   int minFileVersion = 850;
   atools::fs::NavDatabaseErrors *errors = nullptr;
+  QString airacCycle;
 
 };
 

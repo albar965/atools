@@ -29,6 +29,7 @@
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/addoncomponent.h"
 #include "fs/xp/xpdatacompiler.h"
+#include "fs/db/databasemeta.h"
 
 #include <QDebug>
 #include <QDir>
@@ -271,6 +272,9 @@ void NavDatabase::createInternal(const QString& codec)
   if(aborted)
     return;
 
+  atools::fs::db::DatabaseMeta databaseMetadata(db);
+  databaseMetadata.updateAll();
+
   // -----------------------------------------------------------------------
   // Create data writer which will read all BGL files and fill the database
   QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
@@ -489,6 +493,9 @@ void NavDatabase::createInternal(const QString& codec)
 
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
+
+  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
+    databaseMetadata.updateAiracCycle(xpDataCompiler->getAiracCycle());
 
   // Done here - now only some options statistics and reports are left
 

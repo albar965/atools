@@ -60,7 +60,11 @@ const static int NUM_REPORT_STEPS = 10000;
 /* Report progress twice a second */
 const static int MIN_PROGRESS_REPORT_MS = 500;
 
+// Check for correct CIFP file basenames
 const static QRegularExpression CIFP_MATCH("^[A-Z0-9]{3,8}$");
+
+// 1100 Version - data cycle 1709, build 20170910, metadata AwyXP1101. Copyright (c) 2017 Navdata Provider
+static QRegularExpression CYCLE_MATCH("data\\s+cycle\\s+([0-9]+)");
 
 XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                                ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
@@ -101,7 +105,7 @@ bool XpDataCompiler::compileEarthFix()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 5, fixWriter);
+    bool aborted = readDataFile(path, 5, fixWriter, UPDATE_CYCLE);
 
     if(!aborted)
       db.commit();
@@ -119,7 +123,7 @@ bool XpDataCompiler::compileEarthAirway()
   if(QFileInfo::exists(path))
   {
 
-    bool aborted = readDataFile(path, 11, airwayWriter);
+    bool aborted = readDataFile(path, 11, airwayWriter, UPDATE_CYCLE);
     if(!aborted)
       db.commit();
     return aborted;
@@ -145,7 +149,7 @@ bool XpDataCompiler::compileEarthNav()
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 11, navWriter);
+    bool aborted = readDataFile(path, 11, navWriter, UPDATE_CYCLE);
     if(!aborted)
       db.commit();
     return aborted;
@@ -310,7 +314,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   try
   {
     // Open file and read header
-    if(openFile(stream, file, filename, flags & READ_CIFP, lineNum, totalNumLines, fileVersion))
+    if(openFile(stream, file, filename, flags & READ_CIFP, flags & UPDATE_CYCLE, lineNum, totalNumLines, fileVersion))
     {
       XpWriterContext context;
       context.curFileId = curFileId;
@@ -421,16 +425,14 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   return aborted;
 }
 
-bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, int& lineNum,
-                              int& totalNumLines, int& fileVersion)
+bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, bool updateCycle,
+                              int& lineNum, int& totalNumLines, int& fileVersion)
 {
   file.setFileName(filename);
   lineNum = 1;
 
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    writeFile(filename);
-
     stream.setDevice(&file);
     stream.setCodec("UTF-8");
     stream.setAutoDetectUnicode(true);
@@ -459,6 +461,11 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
                                 arg(fields.first()).arg(minFileVersion));
       }
 
+      writeFile(filename, line);
+
+      if(updateCycle)
+        updateAiracCycleFromHeader(line, filename, lineNum);
+
       qDebug() << "Counting lines for" << filename;
       qint64 pos = stream.pos();
       int lines = 0;
@@ -471,6 +478,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
       stream.seek(pos);
       qDebug() << lines;
     }
+    else
+      writeFile(filename, QString());
   }
   else
     throw atools::Exception("Cannot open file. Reason: " + file.errorString() + ".");
@@ -589,7 +598,7 @@ int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& o
   return reportCount;
 }
 
-void XpDataCompiler::writeFile(const QString& filepath)
+void XpDataCompiler::writeFile(const QString& filepath, const QString& comment)
 {
   QFileInfo fileinfo(filepath);
 
@@ -600,6 +609,7 @@ void XpDataCompiler::writeFile(const QString& filepath)
   insertFileQuery->bindValue(":filepath", fileinfo.filePath());
   insertFileQuery->bindValue(":filename", fileinfo.fileName());
   insertFileQuery->bindValue(":size", fileinfo.size());
+  insertFileQuery->bindValue(":comment", comment);
   insertFileQuery->exec();
 
   progress->incNumFiles();
@@ -617,6 +627,39 @@ void XpDataCompiler::writeSceneryArea(const QString& filepath)
   insertSceneryQuery->bindValue(":active", true);
   insertSceneryQuery->bindValue(":required", true);
   insertSceneryQuery->exec();
+}
+
+void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum)
+{
+  // 1100 Version - data cycle 1709, build 20170910, metadata AwyXP1101. Copyright (c) 2017 Navdata Provider
+  QRegularExpressionMatch match = CYCLE_MATCH.match(header);
+  if(match.hasMatch())
+  {
+    QString c = match.captured(1);
+    if(c.isEmpty())
+    {
+      progress->reportError();
+      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": AIRAC cycle in file is empty.";
+      errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle in file is empty."), lineNum});
+    }
+    else if(airacCycle.isEmpty())
+      airacCycle = c;
+    else if(airacCycle != c)
+    {
+      progress->reportError();
+
+      QString msg = tr("Found different AIRAC cycles across navdata files. "
+                       "%1 and %2").arg(airacCycle).arg(c);
+      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": " << msg;
+      errors->sceneryErrors.first().fileErrors.append({filepath, msg, lineNum});
+    }
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": AIRAC cycle not found in file.";
+    progress->reportError();
+    errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle not found in file."), lineNum});
+  }
 }
 
 void XpDataCompiler::initQueries()

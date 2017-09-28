@@ -93,6 +93,8 @@ public:
   /* Update the version information in the database */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
+  void updateAiracCycle(const QString& cycle);
+  void updateAiracCycle();
 
   /* Set database version to application version and timestamp to current time */
   void updateAll();
@@ -106,10 +108,22 @@ public:
    * Since version 10: Fixes in boundary coordinates and indexes added.
    *
    * 1 magnetic variation fix
+   * 2 cycle metadata
    */
-  static const int DB_VERSION_MINOR = 1;
+  static const int DB_VERSION_MINOR = 2;
 
   void init();
+
+  /* Navdata cycle year and month - Not for FSX/P3D only */
+  const QString& getAiracCycle() const
+  {
+    return airacCycle;
+  }
+
+  void setAiracCycle(const QString& value)
+  {
+    airacCycle = value;
+  }
 
 private:
   /* Update the last loaded timestamp in the database and set it to now */
@@ -121,6 +135,7 @@ private:
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false;
+  QString airacCycle;
 };
 
 } // namespace db
