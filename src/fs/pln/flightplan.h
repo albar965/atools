@@ -64,7 +64,7 @@ public:
    * @param file filepath of the file to be saved
    * @param clean if true save all properties in a XML comment
    */
-  void save(const QString& file, bool clean = false);
+  void save(const QString& file, const QString& airacCycle, bool clean = false);
 
   /* FSX/P3D XML format */
   void saveFsx(const QString& file, bool clean);
@@ -75,8 +75,9 @@ public:
   /* Aerosoft Airbus FLP format */
   void saveFlp(const QString& file, bool saveProcedures);
 
-  /* X-Plane FMS format */
-  void saveFms(const QString& file);
+  /* X-Plane FMS format.
+   * @param version11Format Version 11 otherwise 3 */
+  void saveFms(const QString& file, const QString& airacCycle, bool version11Format);
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps);
@@ -325,7 +326,10 @@ private:
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
   QString programInfo();
 
-  /* Get the first four lines of a file to check type */
+  /* Number of entries including start and destination but excluding procedure points */
+  int numEntriesSave();
+
+  /* Get the first four lines of a file converted to lowercase to check type */
   QStringList probeFile(const QString& file);
 
   /* Copy departure and destination from first and last entry */

@@ -83,20 +83,38 @@ void Flightplan::load(const QString& file)
   if(lines.isEmpty())
     throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
 
-  if(!lines.isEmpty() && lines.first().startsWith("[corte]"))
+  if(!lines.isEmpty() &&
+     lines.first().startsWith("[corte]"))
     // FLP: [CoRte]
     loadFlp(file);
-  else if(lines.size() >= 2 && lines.at(0).startsWith("<?xml version") &&
+  else if(lines.size() >= 2 &&
+          lines.at(0).startsWith("<?xml version") &&
           lines.at(1).startsWith("<simbase.document"))
     // FSX PLN <?xml version
     loadFsx(file);
-  else if(lines.size() >= 2 && lines.at(0).startsWith("[flightplan]") &&
+  else if(lines.size() >= 2 &&
+          lines.at(0).startsWith("[flightplan]") &&
           lines.at(1).startsWith("appversion"))
     loadFs9(file);
   else if(lines.size() >= 4 &&
+          // Old format
+          // I
+          // 3 version
+          // 1
+          // 4
           (lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("3 version") &&
-          lines.at(2).at(0).isDigit() && lines.at(3).at(0).isDigit())
+          lines.at(2).at(0).isDigit() &&
+          lines.at(3).at(0).isDigit())
+    loadFms(file);
+  else if(lines.size() >= 3 &&
+          // New v11 format
+          // I
+          // 1100 Version
+          // CYCLE 1710
+          (lines.at(0) == "i" || lines.at(0) == "a") &&
+          lines.at(1).startsWith("1100 version") &&
+          lines.at(2).startsWith("cycle "))
     loadFms(file);
   else
     throw Exception(tr("Cannot open flight plan file \"%1\". Not a supported flight plan format. "
@@ -254,6 +272,7 @@ void Flightplan::loadFms(const QString& file)
 {
   qDebug() << Q_FUNC_INFO;
 
+  // Old format
   // I
   // 3 version
   // 1
@@ -264,33 +283,136 @@ void Flightplan::loadFms(const QString& file)
   // 11 DETKO 0.600000 28.097222 49.525000
   // 28 +13.691_+100.760 0.000000 13.691230 100.760811
 
+  // New v11 format
+  // I
+  // 1100 Version
+  // CYCLE 1710
+  // ADEP KCUB
+  // DEPRWY RW13
+  // ADES KRDU
+  // DESRWY RW05L
+  // APP I05L
+  // NUMENR 9
+  // 1 KCUB ADEP 0.000000 33.970470 -80.995247
+  // 3 CTF DRCT 0.000000 34.650497 -80.274918
+  // 11 NOMOE V155 0.000000 34.880920 -79.996437
+  // 11 LILLS V155 0.000000 34.935440 -79.930206
+  // 3 SDZ V155 0.000000 35.215481 -79.587936
+  // 11 OCHOC V155 0.000000 35.402336 -79.361153
+  // 11 MOATS V155 0.000000 35.621601 -79.092964
+  // 3 RDU V155 0.000000 35.872520 -78.783340
+  // 1 KRDU ADES 435.000000 35.877640 -78.787476
+
   filename = file;
 
   QFile fmsFile(filename);
+  int version = 0;
+  bool v11Format = false;
+  int minListSize = 5;
+  int fieldOffset = 0;
 
   if(fmsFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&fmsFile);
 
     stream.readLine(); // I
-    stream.readLine(); // 3 version
+    bool ok = false;
+    version = stream.readLine().section(" ", 0, 0).toInt(&ok); // 3 version
+    if(!ok)
+      throw Exception(tr("Invalid FMS file. Cannot read version number: %1").arg(fmsFile.fileName()));
+
+    if(version == 3)
+    {
+      v11Format = false;
+      minListSize = 5;
+      fieldOffset = 0;
+    }
+    else if(version == 1100)
+    {
+      v11Format = true;
+      minListSize = 6;
+      fieldOffset = 1;
+    }
+    else
+      throw Exception(tr("Invalid FMS file. Invalid version %2: %1").arg(fmsFile.fileName()).arg(version));
 
     float maxAlt = std::numeric_limits<float>::min();
 
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
-      if(line.size() > 10)
+      if(line.size() > 4)
       {
-        if(line.startsWith("0 ----"))
+        if(line.startsWith("0 ----")) // End of file indicator
           break;
 
-        QStringList list = line.split(" ");
+        QList<QString> list = line.split(" ");
 
-        if(list.size() >= 5)
+        QString airway;
+        if(v11Format)
         {
-          float altitude = list.at(2).toFloat();
-          atools::geo::Pos position(list.at(4).toFloat(), list.at(3).toFloat(), altitude);
+          // Read keywords from version 11
+          QString key = list.value(0);
+          QString value = list.value(1);
+          if(key == "CYCLE")
+          {
+            qInfo() << "Flight plan cycle" << value;
+            continue;
+          }
+          else if(key == "DEPRWY")
+          {
+            properties.insert(SIDAPPRRW, value.mid(2));
+            continue;
+          }
+          else if(key == "SID")
+          {
+            properties.insert(SIDAPPR, value);
+            continue;
+          }
+          else if(key == "SIDTRANS")
+          {
+            properties.insert(SIDTRANS, value);
+            continue;
+          }
+          else if(key == "STAR")
+          {
+            properties.insert(STAR, value);
+            continue;
+          }
+          else if(key == "STARTRANS")
+          {
+            properties.insert(STARTRANS, value);
+            continue;
+          }
+          else if(key == "APP")
+          {
+            properties.insert(APPROACH_ARINC, value);
+            continue;
+          }
+          else if(key == "APPTRANS")
+          {
+            properties.insert(TRANSITION, value);
+            continue;
+          }
+          else if(key == "DESRWY")
+          {
+            properties.insert(APPROACHRW, value.mid(2));
+            continue;
+          }
+          else if(key == "ADES" || key == "DES" || key == "ADEP" || key == "DEP" || key == "NUMENR")
+            // Ignored keywords
+            continue;
+
+          // Airway column
+          QString col2 = list.value(2);
+          if(!col2.isEmpty() && col2 != "DRCT" && col2 != "ADEP" && col2 != "DEP" && col2 != "ADES" && col2 != "DES")
+            airway = col2;
+        }
+
+        if(list.size() >= minListSize)
+        {
+          float altitude = list.at(2 + fieldOffset).toFloat();
+          atools::geo::Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
           if(!position.isValid() || position.isNull())
             break;
 
@@ -313,18 +435,21 @@ void Flightplan::loadFms(const QString& file)
               entry.setWaypointType(atools::fs::pln::entry::NDB);
               entry.setIcaoIdent(ident);
               entry.setWaypointId(ident);
+              entry.setAirway(airway);
               break;
 
             case 3: // - VOR
               entry.setWaypointType(atools::fs::pln::entry::VOR);
               entry.setIcaoIdent(ident);
               entry.setWaypointId(ident);
+              entry.setAirway(airway);
               break;
 
             case 11: // - Fix
               entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
               entry.setIcaoIdent(ident);
               entry.setWaypointId(ident);
+              entry.setAirway(airway);
               break;
 
             case 13: // - Lat/Lon Position
@@ -343,7 +468,8 @@ void Flightplan::loadFms(const QString& file)
           entries.append(entry);
         }
         else
-          throw Exception(tr("Invalid FMS file. Number of sections is not 5: %1").arg(fmsFile.fileName()));
+          throw Exception(tr("Invalid FMS file. Number of sections is not %2: %1").
+                          arg(fmsFile.fileName()).arg(minListSize));
       }
     }
     fmsFile.close();
@@ -352,7 +478,8 @@ void Flightplan::loadFms(const QString& file)
     routeType = DIRECT;
     cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
     adjustDepartureAndDestination();
-    fileFormat = FMS;
+
+    fileFormat = v11Format ? FMS11 : FMS3;
   }
 }
 
@@ -563,7 +690,7 @@ void Flightplan::loadFsx(const QString& file)
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
-void Flightplan::save(const QString& file, bool clean)
+void Flightplan::save(const QString& file, const QString& airacCycle, bool clean)
 {
   switch(fileFormat)
   {
@@ -573,8 +700,12 @@ void Flightplan::save(const QString& file, bool clean)
       saveFsx(file, clean);
       break;
 
-    case atools::fs::pln::FMS:
-      saveFms(file);
+    case atools::fs::pln::FMS3:
+      saveFms(file, airacCycle, false);
+      break;
+
+    case atools::fs::pln::FMS11:
+      saveFms(file, airacCycle, true);
       break;
 
     case atools::fs::pln::FLP:
@@ -779,11 +910,11 @@ void Flightplan::saveFlp(const QString& file, bool saveProcedures)
     for(int i = 1; i < entries.size() - 1; i++)
     {
       const FlightplanEntry& entry = entries.at(i);
-      const FlightplanEntry& next = entries.at(i + 1);
       if(entry.isNoSave())
         // Do not save stuff like procedure points
         continue;
 
+      const FlightplanEntry& next = entries.at(i + 1);
       QString coords = QString("%1,%2").
                        arg(entry.getPosition().getLatY(), 0, 'f', 6).
                        arg(entry.getPosition().getLonX(), 0, 'f', 6);
@@ -930,10 +1061,29 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(gpxFile.errorString()));
 }
 
-void Flightplan::saveFms(const QString& file)
+// I
+// 1100 Version
+// CYCLE 1710
+// ADEP KCUB
+// DEPRWY RW13
+// ADES KRDU
+// DESRWY RW05L
+// APP I05L
+// NUMENR 9
+// 1 KCUB ADEP 0.000000 33.970470 -80.995247
+// 3 CTF DRCT 0.000000 34.650497 -80.274918
+// 11 NOMOE V155 0.000000 34.880920 -79.996437
+// 11 LILLS V155 0.000000 34.935440 -79.930206
+// 3 SDZ V155 0.000000 35.215481 -79.587936
+// 11 OCHOC V155 0.000000 35.402336 -79.361153
+// 11 MOATS V155 0.000000 35.621601 -79.092964
+// 3 RDU V155 0.000000 35.872520 -78.783340
+// 1 KRDU ADES 435.000000 35.877640 -78.787476
+void Flightplan::saveFms(const QString& file, const QString& airacCycle, bool version11Format)
 {
   filename = file;
   QFile fmsFile(filename);
+  int numEntries = numEntriesSave();
 
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
@@ -947,16 +1097,66 @@ void Flightplan::saveFms(const QString& file)
      #endif
 
     // File version
-    stream << "3 version" << endl;
-    stream << "1" << endl;
+    if(version11Format)
+    {
+      // New X-Plane 11 format
+      stream << "1100 Version" << endl;
+      stream << "CYCLE " << airacCycle << endl;
 
-    // Number of waypoints
-    stream << (entries.size() - 1) << endl;
+      // Departure
+      if(entries.first().getWaypointType() == entry::AIRPORT)
+        stream << "ADEP " << getDepartureIdent() << endl;
+      else
+        stream << "DEP " << getDepartureIdent() << endl;
 
-    int i = 0;
+      // Departure - SID
+      if(!properties.value(SIDAPPRRW).isEmpty())
+        stream << "DEPRWY RW" << properties.value(SIDAPPRRW) << endl;
+
+      if(!properties.value(SIDAPPR).isEmpty())
+        stream << "SID " << properties.value(SIDAPPR) << endl;
+
+      if(!properties.value(SIDTRANS).isEmpty())
+        stream << "SIDTRANS " << properties.value(SIDTRANS) << endl;
+
+      // Destination
+      if(entries.last().getWaypointType() == entry::AIRPORT)
+        stream << "ADES " << getDestinationIdent() << endl;
+      else
+        stream << "DES " << getDestinationIdent() << endl;
+
+      // Arrival approach and transition
+      if(!properties.value(APPROACHRW).isEmpty())
+        stream << "DESRWY RW" << properties.value(APPROACHRW) << endl;
+
+      // Arrival STAR
+      if(!properties.value(STAR).isEmpty())
+        stream << "STAR " << properties.value(STAR) << endl;
+
+      if(!properties.value(STARTRANS).isEmpty())
+        stream << "STARTRANS " << properties.value(STARTRANS) << endl;
+
+      // Approach
+      if(!properties.value(APPROACH_ARINC).isEmpty())
+        stream << "APP " << properties.value(APPROACH_ARINC) << endl;
+
+      if(!properties.value(TRANSITION).isEmpty())
+        stream << "APPTRANS " << properties.value(TRANSITION) << endl;
+
+      // Number of waypoints
+      stream << "NUMENR " << numEntries << endl;
+    }
+    else
+    {
+      stream << "3 version" << endl;
+      stream << "1" << endl;
+      stream << (numEntries - 1) << endl; // Number of waypoints
+    }
+
+    int index = 0;
     for(const FlightplanEntry& entry : entries)
     {
-      if(entry.isNoSave() || entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      if(entry.isNoSave())
         continue;
 
       // 1 - Airport ICAO
@@ -965,7 +1165,8 @@ void Flightplan::saveFms(const QString& file)
       // 11 - Fix
       // 28 - Lat/Lon Position
 
-      if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
+         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
         float laty = std::abs(entry.getPosition().getLatY());
         float lonx = std::abs(entry.getPosition().getLonX());
@@ -994,8 +1195,18 @@ void Flightplan::saveFms(const QString& file)
         stream << entry.getWaypointId() << " ";
       }
 
+      if(version11Format)
+      {
+        if(index == 0)
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
+        else if(index == numEntries - 1)
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
+        else
+          stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
+      }
+
       float alt = getCruisingAltitude();
-      if(i == 0 || i >= entries.size() - 1)
+      if(index == 0 || index >= numEntries - 1)
         alt = 0.f;
 
       stream << QString::number(alt, 'f', 6) << " "
@@ -1004,7 +1215,7 @@ void Flightplan::saveFms(const QString& file)
              << QString::number(entry.getPosition().getLonX(), 'f', 6)
              << endl;
 
-      i++;
+      index++;
     }
 
     fmsFile.close();
@@ -1045,7 +1256,7 @@ void Flightplan::saveRte(const QString& file)
       arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
       replace("-", " ") << endl << endl;
 
-    stream << entries.size() << endl << endl;
+    stream << numEntriesSave() << endl << endl;
 
     stream << departureIdent << endl << AIRPORT << endl << "DIRECT" << endl;
     posToRte(stream, entries.first().getPosition(), true);
@@ -1241,7 +1452,7 @@ void Flightplan::reverse()
 FileFormat Flightplan::getFileFormatBySuffix(const QString& file) const
 {
   if(file.endsWith(".fms", Qt::CaseInsensitive))
-    return FMS;
+    return FMS11;
   else if(file.endsWith(".flp", Qt::CaseInsensitive))
     return FLP;
   else
@@ -1251,7 +1462,7 @@ FileFormat Flightplan::getFileFormatBySuffix(const QString& file) const
 void Flightplan::setFileFormatBySuffix(const QString& file)
 {
   if(file.endsWith(".fms", Qt::CaseInsensitive))
-    fileFormat = FMS;
+    fileFormat = FMS11;
   else if(file.endsWith(".flp", Qt::CaseInsensitive))
     fileFormat = FLP;
   // else leave as is
@@ -1260,7 +1471,7 @@ void Flightplan::setFileFormatBySuffix(const QString& file)
 bool Flightplan::canSaveAltitude() const
 {
   // FS9 format can be used here since it is always overwritten with FSX
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FMS;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FMS11 || fileFormat == FMS3;
 }
 
 bool Flightplan::canSaveFlightplanType() const
@@ -1290,12 +1501,12 @@ bool Flightplan::canSaveUserWaypointName() const
 
 bool Flightplan::canSaveAirways() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP || fileFormat == FMS11;
 }
 
 bool Flightplan::canSaveProcedures() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP || fileFormat == FMS11;
 }
 
 QString Flightplan::flightplanTypeToString(FlightplanType type)
@@ -1430,6 +1641,18 @@ void Flightplan::adjustDepartureAndDestination()
     // These remain empty
     // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   }
+}
+
+int Flightplan::numEntriesSave()
+{
+  int num = 0;
+  for(const FlightplanEntry& entry : entries)
+  {
+    if(!entry.isNoSave())
+      // Do not save stuff like procedure points
+      num++;
+  }
+  return num;
 }
 
 } // namespace pln

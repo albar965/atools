@@ -29,7 +29,8 @@ enum FileFormat
   NONE,
   PLN_FSX, // FSX or P3D XML PLN flight plan - can load and save
   PLN_FS9, // FS9 ini style PLN flight plan - can load only
-  FMS, // X-Plane FMS file - can load and save
+  FMS3, // X-Plane version 3 FMS file - can load and save
+  FMS11, // X-Plane version 11 FMS file - can load and save
   FLP // Aerosoft airbus or FlightFactor Boeing - can load and save
 };
 
@@ -72,6 +73,7 @@ const QLatin1Literal TRANSITIONTYPE("transitiontype");
 const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
 const QLatin1Literal TRANSITIONSIZE("transitionsize");
 const QLatin1Literal APPROACH("approach");
+const QLatin1Literal APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
 const QLatin1Literal APPROACHTYPE("approachtype");
 const QLatin1Literal APPROACHRW("approachrw");
 const QLatin1Literal APPROACHSUFFIX("approachsuffix");
@@ -83,6 +85,9 @@ const QLatin1Literal SPEED("speed");
 
 /* Source database simulator */
 const QLatin1Literal NAVDATA("navdata");
+
+/* AIRAC cycle (not FSX/P3D) */
+const QLatin1Literal AIRAC_CYCLE("cycle");
 
 /* Free parking spot name as not supported by PLN */
 const QLatin1Literal PARKING("parking");
