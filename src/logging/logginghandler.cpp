@@ -17,13 +17,10 @@
 
 #include "logging/logginghandler.h"
 #include "logging/loggingconfig.h"
-#include "gui/application.h"
 
 #include <QDebug>
 #include <QDir>
 #include <QApplication>
-#include <QMessageBox>
-#include <QMainWindow>
 #include <QThread>
 
 namespace atools {
@@ -103,61 +100,6 @@ void LoggingHandler::setAbortFunction(LoggingHandler::AbortFunctionType abortFun
   qDebug() << Q_FUNC_INFO;
 
   abortFunc = abortFunction;
-}
-
-void LoggingHandler::guiAbortFunc(const QString& msg)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  // Called by signal on main thread context
-  QMessageBox::warning(parentWidget, QApplication::applicationName(),
-                       QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
-                                   "<i>%1</i><br/><br/>"
-                                   "%2"
-                                   "<hr/>%3"
-                                     "<hr/>%4<br/>"
-                                     "<h3>Press OK to exit application.</h3>"
-                                   ).
-                       arg(msg).
-                       arg(atools::gui::Application::generalErrorMessage()).
-                       arg(atools::gui::Application::getEmailHtml()).
-                       arg(atools::gui::Application::getReportPathHtml())
-                       );
-
-#ifdef Q_OS_WIN32
-  // Will not call any crash handler on windows - is not helpful anyway
-  std::exit(1);
-#else
-  // Allow OS crash handler to pop up i.e. generate a core file under linux or show crash dialog on macOS
-  abort();
-#endif
-}
-
-void LoggingHandler::setGuiAbortFunction(QWidget *parent)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  parentWidget = parent;
-  // Connect to slot with queued connection to allow passing the message to the main thread
-  instance->connect(instance, &LoggingHandler::guiAbortSignal, instance, &LoggingHandler::guiAbortFunc,
-                    Qt::QueuedConnection);
-
-  atools::logging::LoggingHandler::setAbortFunction([parent](QtMsgType type, const QMessageLogContext& context,
-                                                             const QString& msg) -> void
-      {
-        Q_UNUSED(type);
-        Q_UNUSED(context);
-
-        // Call guiAbortFunc on main thread context
-        emit instance->guiAbortSignal(msg);
-
-        // Allow delivery
-        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-        // Stop this thread forever
-        // This will never be called if this is the main thread
-        QThread::msleep(std::numeric_limits<unsigned long>::max());
-      });
 }
 
 void LoggingHandler::resetAbortFunction()

@@ -36,6 +36,8 @@ namespace internal {
 class LoggingConfig;
 }
 
+class LoggingGuiAbortHandler;
+
 /*
  * Reads a log4j like configuration file and directs the
  * qDebug, qInfo, etc. streams to stdout, stderr or file
@@ -111,7 +113,6 @@ public:
 
   /* All functions will be called on the calling thread context - do not use GUI elements there */
   static void setAbortFunction(AbortFunctionType abortFunction);
-  static void setGuiAbortFunction(QWidget *parent);
   static void resetAbortFunction();
 
 signals:
@@ -119,6 +120,9 @@ signals:
   void guiAbortSignal(const QString& msg);
 
 private:
+  /* Moved GUI elements out to avoid linking to qwidgets */
+  friend class LoggingGuiAbortHandler;
+
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
   ~LoggingHandler();
 
@@ -130,9 +134,6 @@ private:
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
   static void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
-
-  /* Connected to signal guiAbortSignal to allow GUI handling */
-  void guiAbortFunc(const QString& msg);
 
   static LoggingHandler *instance;
 
