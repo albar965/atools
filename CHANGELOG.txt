@@ -1,3 +1,17 @@
+Version 2.6.6
+
+* Added support for X-Plane 11 FMS files.
+* Added optional arinc_name to approach procedure table.
+* Added AIRAC cycle to metadata and comment to file table.
+* Updated database minor version to 2.
+* X-Plane 3D airport state now considered when calculating rating.
+* Fixed confusing 0 error dialog appearing after loading X-Plane database successfully.
+* Now checking CIFP filenames before loading.
+* Better error handling and reporting of too old files with version < 850.
+* Added handler for assertions/crashes showing dialog to avoid crash to desktop.
+* Small fixes to changelog formatting in update dialog.
+* Made loading of add-on.xml more robust for files with wrong encoding.
+
 Version 2.6.5
 
 * Added workaround for P3D v4 add-on.xml files with inconsistent encoding (BOM / XML PI mismatch)
