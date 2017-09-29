@@ -427,6 +427,7 @@ create table approach
   approach_id integer primary key,
   airport_id integer not null,
   runway_end_id integer,            -- Runway end id - can be null if the approach allows circling
+  arinc_name varchar(6),            -- ARINC 424.18+, section 5.10. Examples: I26L, B08R, R29
   airport_ident varchar(4),
   runway_name varchar(10),
   type varchar(25) not null,        -- see enum atools::fs::bgl::ap::ApproachType

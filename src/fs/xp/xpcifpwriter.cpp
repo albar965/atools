@@ -454,6 +454,9 @@ void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext&
   QString suffix, rwy;
   QString apprIdent = at(line, SID_STAR_APP_IDENT).trimmed();
 
+  if(curRowCode == rc::APPROACH)
+    rec.setValue(":arinc_name", apprIdent);
+
   // Extract runway name "B" suffixes, "ALL" and CTL are ignored
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
     rwy = sidStarRunwayNameAndSuffix(at(line, TRANS_IDENT).trimmed(), context);
