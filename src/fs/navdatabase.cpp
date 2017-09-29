@@ -494,8 +494,8 @@ void NavDatabase::createInternal(const QString& codec)
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
 
-  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
-    databaseMetadata.updateAiracCycle(xpDataCompiler->getAiracCycle());
+  databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
+  databaseMetadata.updateAll();
 
   // Done here - now only some options statistics and reports are left
 
