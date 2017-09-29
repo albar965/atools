@@ -78,8 +78,17 @@ void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,
     w->setVisible(visible);
 
   for(QLayout *layout : layouts)
+  {
     for(int i = 0; i < layout->count(); i++)
-      layout->itemAt(i)->widget()->setVisible(visible);
+    {
+      QLayoutItem *item = layout->itemAt(i);
+      if(item->widget() != nullptr)
+        item->widget()->setVisible(visible);
+
+      if(item->layout() != nullptr)
+        showHideLayoutElements({item->layout()}, visible, otherWidgets);
+    }
+  }
 }
 
 bool anyWidgetChanged(const QList<const QObject *>& widgets)
@@ -87,27 +96,30 @@ bool anyWidgetChanged(const QList<const QObject *>& widgets)
   bool changed = false;
   for(const QObject *widget : widgets)
   {
-    if(const QLayout * layout = dynamic_cast<const QLayout *>(widget))
-      for(int i = 0; i < layout->count(); i++)
-        changed |= anyWidgetChanged({layout->itemAt(i)->widget()});
-    else if(const QCheckBox * cbx = dynamic_cast<const QCheckBox *>(widget))
-      changed |= cbx->isTristate() ?
-                 cbx->checkState() != Qt::PartiallyChecked :
-                 cbx->checkState() == Qt::Checked;
-    else if(const QAction * a = dynamic_cast<const QAction *>(widget))
-      changed |= a->isCheckable() && !a->isChecked();
-    else if(const QAbstractButton * b = dynamic_cast<const QAbstractButton *>(widget))
-      changed |= b->isCheckable() && !b->isChecked();
-    else if(const QLineEdit * le = dynamic_cast<const QLineEdit *>(widget))
-      changed |= !le->text().isEmpty();
-    else if(const QTextEdit * te = dynamic_cast<const QTextEdit *>(widget))
-      changed |= !te->document()->isEmpty();
-    else if(const QSpinBox * sb = dynamic_cast<const QSpinBox *>(widget))
-      changed |= sb->value() != sb->maximum() && sb->value() != sb->minimum();
-    else if(const QDoubleSpinBox * dsb = dynamic_cast<const QDoubleSpinBox *>(widget))
-      changed |= dsb->value() != dsb->maximum() && dsb->value() != dsb->minimum();
-    else if(const QComboBox * cb = dynamic_cast<const QComboBox *>(widget))
-      changed |= cb->currentIndex() != 0;
+    if(widget != nullptr)
+    {
+      if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
+        for(int i = 0; i < layout->count(); i++)
+          changed |= anyWidgetChanged({layout->itemAt(i)->widget()});
+      else if(const QCheckBox *cbx = dynamic_cast<const QCheckBox *>(widget))
+        changed |= cbx->isTristate() ?
+                   cbx->checkState() != Qt::PartiallyChecked :
+                   cbx->checkState() == Qt::Checked;
+      else if(const QAction *a = dynamic_cast<const QAction *>(widget))
+        changed |= a->isCheckable() && !a->isChecked();
+      else if(const QAbstractButton *b = dynamic_cast<const QAbstractButton *>(widget))
+        changed |= b->isCheckable() && !b->isChecked();
+      else if(const QLineEdit *le = dynamic_cast<const QLineEdit *>(widget))
+        changed |= !le->text().isEmpty();
+      else if(const QTextEdit *te = dynamic_cast<const QTextEdit *>(widget))
+        changed |= !te->document()->isEmpty();
+      else if(const QSpinBox *sb = dynamic_cast<const QSpinBox *>(widget))
+        changed |= sb->value() != sb->maximum() && sb->value() != sb->minimum();
+      else if(const QDoubleSpinBox *dsb = dynamic_cast<const QDoubleSpinBox *>(widget))
+        changed |= dsb->value() != dsb->maximum() && dsb->value() != dsb->minimum();
+      else if(const QComboBox *cb = dynamic_cast<const QComboBox *>(widget))
+        changed |= cb->currentIndex() != 0;
+    }
   }
   return changed;
 }
