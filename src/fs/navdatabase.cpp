@@ -494,7 +494,8 @@ void NavDatabase::createInternal(const QString& codec)
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
 
-  databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
+  if(!xpDataCompiler.isNull())
+    databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
   databaseMetadata.updateAll();
 
   // Done here - now only some options statistics and reports are left
@@ -502,7 +503,7 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isDatabaseReport())
   {
     // Do a report of problems rather than failing totally during loading
-    if(fsDataWriter != nullptr)
+    if(!fsDataWriter.isNull())
       fsDataWriter->logResults();
 
     QDebug info(QtInfoMsg);
