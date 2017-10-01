@@ -88,9 +88,15 @@ Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
   altitude = alt;
 }
 
-Pos::Pos(const QString& str)
+Pos::Pos(const QString& str, bool errorOnInvalid)
+  : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
 {
-  QRegularExpressionMatch match = LONG_FORMAT_REGEXP.match(str.trimmed().toLower());
+  QString coordStr(str.trimmed().toLower());
+
+  if(coordStr.trimmed().isEmpty() && errorOnInvalid)
+    throw Exception("Coordinate string is empty");
+
+  QRegularExpressionMatch match = LONG_FORMAT_REGEXP.match(coordStr);
 
   if(match.hasMatch())
   {
@@ -114,7 +120,7 @@ Pos::Pos(const QString& str)
   }
   else
   {
-    QRegularExpressionMatch matchOld = LONG_FORMAT_OLD_REGEXP.match(str.trimmed().toLower());
+    QRegularExpressionMatch matchOld = LONG_FORMAT_OLD_REGEXP.match(coordStr);
     if(matchOld.hasMatch())
     {
       QString ns = matchOld.captured(1);
@@ -133,7 +139,7 @@ Pos::Pos(const QString& str)
       latY = (latYDeg + latYMin / 60.f) * (ns == "s" ? -1.f : 1.f);
       lonX = (lonXDeg + lonXMin / 60.f) * (ew == "w" ? -1.f : 1.f);
     }
-    else
+    else if(errorOnInvalid)
       throw Exception("Invalid lat/long format \"" + str + "\"");
   }
 }

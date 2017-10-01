@@ -65,7 +65,7 @@ public:
   /* @param str format like
    * N49° 26' 41.57",E9° 12' 5.49",+005500.00 or
    * N54* 16.82', W008* 35.95', +000011.00 */
-  explicit Pos(const QString& str);
+  explicit Pos(const QString& str, bool errorOnInvalid = true);
 
   atools::geo::Pos& operator=(const atools::geo::Pos& other);
 

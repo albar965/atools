@@ -37,6 +37,8 @@ namespace pln {
 static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
 static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);
 
+static const QRegularExpression FS9_MATCH("(^appversion\\s*=|^title\\s*=|^description\\s*=|^type\\s*=|"
+                                          "^routetype\\s*=|^cruising_altitude\\s*=|^departure_id\\s*=|^destination_id\\s*=)");
 Flightplan::Flightplan()
 {
 
@@ -94,7 +96,7 @@ void Flightplan::load(const QString& file)
     loadFsx(file);
   else if(lines.size() >= 2 &&
           lines.at(0).startsWith("[flightplan]") &&
-          lines.at(1).startsWith("appversion"))
+          FS9_MATCH.match(lines.at(1)).hasMatch())
     loadFs9(file);
   else if(lines.size() >= 4 &&
           // Old format
@@ -117,8 +119,8 @@ void Flightplan::load(const QString& file)
           lines.at(2).startsWith("cycle "))
     loadFms(file);
   else
-    throw Exception(tr("Cannot open flight plan file \"%1\". Not a supported flight plan format. "
-                       "Only PLN (FSX XML and FS9 INI), FMS and FLP allowed.").arg(file));
+    throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
+                       "Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.").arg(file));
 
 }
 
@@ -506,6 +508,21 @@ void Flightplan::loadFs9(const QString& file)
   // waypoint.11=KK, RUBEX, , RUBEX, I, N55* 19.20', W006* 56.12', +000000.00,AXXX
   // waypoint.12=, EISG, , EISG, A, N54* 16.82', W008* 35.95', +000011.00,
 
+  // [flightplan]
+  // title=EGPD to EGHI
+  // description=EGPD, EGHI
+  // type=IFR
+  // routetype=1
+  // cruising_altitude=24000
+  // departure_id=EGPD, N57* 12.25', W2* 12.02', +000216.54
+  // departure_position=GATE 5
+  // destination_id=EGHI, N50* 57.01', W1* 21.41', +000042.65
+  // departure_name=Dyce
+  // destination_name=Southampton Intl
+  // waypoint.0=EGPD, A, N57* 12.25', W2* 12.02', +000216.54,
+  // waypoint.1=D205T, I, N56* 59.87', W2* 28.54', +000000.00,
+  // waypoint.2=LUK, V, N56* 22.37', W2* 51.82', +000000.00,
+
   filename = file;
 
   QFile plnFile(filename);
@@ -561,18 +578,41 @@ void Flightplan::loadFs9(const QString& file)
           destinationAiportName = value;
         else if(key.startsWith("waypoint."))
         {
-          // waypoint.0=, EGPB, , EGPB, A, N59* 52.88', W001* 17.63', +000020.00,
-          // waypoint.1=KK, WIK, , WIK, V, N58* 27.53', W003* 06.02', +000000.00,
-          // K1, HERBS, , HERBS, I, N44° 25.12', W121° 16.86', +000000.00, V25
           FlightplanEntry entry;
 
-          entry.setIcaoRegion(value.section(',', 0, 0).trimmed());
-          entry.setIcaoIdent(value.section(',', 1, 1).trimmed());
-          // ignore airport name at 2
-          entry.setWaypointId(value.section(',', 3, 3).trimmed());
-          entry.setWaypointType(value.section(',', 4, 4).trimmed());
-          entry.setPosition(atools::geo::Pos(value.section(',', 5, 7).trimmed()));
-          entry.setAirway(value.section(',', 8, 8).trimmed());
+          atools::geo::Pos pos(value.section(',', 5, 7).trimmed(), false);
+          if(pos.isValid())
+          {
+            // waypoint.0=   , EGPB, , EGPB, A, N59* 52.88', W001* 17.63', +000020.00,
+            // waypoint.1= KK, WIK , , WIK , V, N58* 27.53', W003* 06.02', +000000.00,
+            // ----------- 0   1    2  3     4  5            6             7          8
+            entry.setIcaoRegion(value.section(',', 0, 0).trimmed());
+            entry.setIcaoIdent(value.section(',', 1, 1).trimmed());
+            // ignore airport name at 2
+            entry.setWaypointId(value.section(',', 3, 3).trimmed());
+            entry.setWaypointType(value.section(',', 4, 4).trimmed());
+            entry.setPosition(pos);
+            entry.setAirway(value.section(',', 8, 8).trimmed());
+          }
+          else
+          {
+            // waypoint.1= D205T, I, N56* 59.87', W2* 28.54', +000000.00,
+            // ----------- 0      1  2            3           4           5
+            pos = atools::geo::Pos(value.section(',', 2, 4).trimmed(), false);
+
+            if(pos.isValid())
+            {
+              // No region
+              entry.setIcaoIdent(value.section(',', 0, 0).trimmed());
+              // ignore airport name at 2
+              entry.setWaypointId(value.section(',', 0, 0).trimmed());
+              entry.setWaypointType(value.section(',', 1, 1).trimmed());
+              entry.setPosition(pos);
+              entry.setAirway(value.section(',', 5, 5).trimmed());
+            }
+            else
+              throw Exception(tr("Invalid flight plan file \"%1\".").arg(file));
+          }
 
           entries.append(entry);
         }
