@@ -614,7 +614,7 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
   // Fill airline codes later from metadata
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
 
-  QString name = line.mid(sl::NAME).join(" ");
+  QString name = mid(line, sl::NAME);
 
   bool hasFuel = false;
   if(name.toLower().contains("avgas") || name.toLower().contains("mogas") || name.toLower().contains("gas-station"))
@@ -822,7 +822,7 @@ void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp
   insertParkingQuery->bindValue(":number", -1);
   insertParkingQuery->bindValue(":radius", 50.f);
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
-  insertParkingQuery->bindValue(":name", line.mid(s::NAME).join(" "));
+  insertParkingQuery->bindValue(":name", mid(line, s::NAME));
   insertParkingQuery->bindValue(":has_jetway", 0);
   insertParkingQuery->bindValue(":type", "");
 
@@ -843,7 +843,7 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
   insertComQuery->bindValue(":airport_id", curAirportId);
 
   int frequency = at(line, com::FREQUENCY).toInt() * 10;
-  QString name = line.mid(com::NAME).join(" ");
+  QString name = mid(line, com::NAME);
   insertComQuery->bindValue(":name", name);
   insertComQuery->bindValue(":frequency", frequency);
   insertComQuery->bindValue(":type", "NONE");
@@ -922,7 +922,7 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     qWarning() << context.messagePrefix() << "Invalid writing airport state in bindMetadata";
 
   QString key = at(line, m::KEY).toLower();
-  QString value = line.mid(m::VALUE).join(" ");
+  QString value = mid(line, m::VALUE);
 
   if(key == "city")
     insertAirportQuery->bindValue(":city", value);
@@ -1275,7 +1275,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     airportAltitude = line.value(ap::ELEVATION).toFloat();
 
-    QString name = line.mid(ap::NAME).join(" ");
+    QString name = mid(line, ap::NAME);
     airportClosed = atools::fs::util::isNameClosed(name);
 
     if(NAME_INDICATOR.match(name).hasMatch())
@@ -1306,6 +1306,31 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":has_jetfuel", 0); // filled later
     insertAirportQuery->bindValue(":has_avgas", 0); // filled later
   }
+}
+
+void XpAirportWriter::reset()
+{
+  airportRect = Rect();
+  airportPos = Pos();
+
+  longestRunwayLength = longestRunwayWidth = longestRunwayHeading = 0;
+  longestRunwaySurface = "UNKNOWN";
+  numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
+  numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
+  numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
+  airportClosed = false;
+  airportAltitude = 0.f;
+  curHelipadStartNumber = 0;
+  airportRowCode = NO_ROWCODE;
+  airportIcao.clear();
+  runwayEndRecords.clear();
+  taxiNodes.clear();
+  largestParkingGate.clear();
+  largestParkingRamp.clear();
+  hasTower = false;
+
+  writingAirport = ignoringAirport = false;
+  writingPavementBoundary = writingPavementHoles = writingPavementNewHole = writingStartLocation = false;
 }
 
 void XpAirportWriter::finishAirport(const XpWriterContext& context)
@@ -1369,27 +1394,8 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     insertRunwayEndQuery->bindAndExecRecords(runwayEndRecords);
   }
-  airportRect = Rect();
-  airportPos = Pos();
 
-  longestRunwayLength = longestRunwayWidth = longestRunwayHeading = 0;
-  longestRunwaySurface = "UNKNOWN";
-  numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
-  numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
-  numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
-  airportClosed = false;
-  airportAltitude = 0.f;
-  curHelipadStartNumber = 0;
-  airportRowCode = NO_ROWCODE;
-  airportIcao.clear();
-  runwayEndRecords.clear();
-  taxiNodes.clear();
-  largestParkingGate.clear();
-  largestParkingRamp.clear();
-  hasTower = false;
-
-  writingAirport = ignoringAirport = false;
-  writingPavementBoundary = writingPavementHoles = writingPavementNewHole = writingStartLocation = false;
+  reset();
 }
 
 void XpAirportWriter::writeAirportFile(const QString& icao, int curFileId)

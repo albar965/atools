@@ -228,7 +228,8 @@ HEADERS += src/atools.h \
     src/fs/ns/navserverworker.h \
     src/fs/sc/xpconnecthandler.h \
     src/gui/consoleapplication.h \
-    src/logging/loggingguiabort.h
+    src/logging/loggingguiabort.h \
+    src/fs/xp/xpairspacewriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -418,7 +419,8 @@ SOURCES += src/atools.cpp \
     src/fs/ns/navserverworker.cpp \
     src/fs/sc/xpconnecthandler.cpp \
     src/gui/consoleapplication.cpp \
-    src/logging/loggingguiabort.cpp
+    src/logging/loggingguiabort.cpp \
+    src/fs/xp/xpairspacewriter.cpp
 
 
 unix {

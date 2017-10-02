@@ -27,16 +27,16 @@ create table boundary
   boundary_id integer primary key,
   file_id integer not null,
   type varchar(15),               -- see enum atools::fs::bgl::boundary::BoundaryType
-  name varchar(30),
+  name varchar(250),
   com_type varchar(30),           -- If airspace has a COM frequency. see enum atools::fs::bgl::com::ComType
   com_frequency integer,          -- frequency in MHz * 1000
   com_name varchar(50),
-  min_altitude_type varchar(15),  -- see enum atools::fs::bgl::boundary::AltitudeType
+  min_altitude_type varchar(15),  -- see enum atools::fs::bgl::boundary::AltitudeType - null if unknown
   max_altitude_type varchar(15),  -- "
-  max_altitude integer not null,  -- Upper altitude for this airspace in feet
+  min_altitude integer,           -- Lower altitude for this airspace in feet
+  max_altitude integer,           -- Upper altitude for this airspace in feet
   max_lonx double not null,       -- Bounding rectange
   max_laty double not null,       -- "
-  min_altitude integer not null,  -- Lower altitude for this airspace in feet
   min_lonx double not null,       -- Bounding rectange
   min_laty double not null,       -- "
   geometry blob,                  -- Pre calculated geometry

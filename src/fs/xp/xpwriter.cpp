@@ -18,6 +18,8 @@
 #include "fs/xp/xpwriter.h"
 #include "fs/navdatabaseerrors.h"
 
+#include <QDebug>
+
 namespace atools {
 namespace fs {
 namespace xp {
@@ -32,6 +34,40 @@ XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Prog
 XpWriter::~XpWriter()
 {
 
+}
+
+void XpWriter::err(const QString& msg)
+{
+  if(ctx != nullptr)
+    qWarning() << ctx->messagePrefix() << msg;
+  else
+    qWarning() << msg;
+
+  if(errors != nullptr)
+  {
+    if(!errors->sceneryErrors.isEmpty())
+    {
+      atools::fs::NavDatabaseErrors::SceneryFileError err;
+      if(ctx != nullptr)
+      {
+        err.errorMessage = ctx->messagePrefix() + " " + msg;
+        err.filepath = ctx->filePath;
+      }
+      else
+        err.errorMessage = msg;
+      err.lineNum = 0;
+
+      errors->sceneryErrors.first().fileErrors.append(err);
+    }
+  }
+}
+
+void XpWriter::errWarn(const QString& msg)
+{
+  if(ctx != nullptr)
+    qWarning() << ctx->messagePrefix() << msg;
+  else
+    qWarning() << msg;
 }
 
 } // namespace xp

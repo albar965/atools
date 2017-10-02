@@ -402,7 +402,7 @@ QString capNavString(const QString& str)
           // Navaid and precision approach types
           "H", "HH", "MH", "VASI", "PAPI",
           // Airspace abbreviations
-          "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "MATZ", "CTR", "RMZ", "TRSA"
+          "ALS", "CTA", "CAE", "TMA", "TRA", "MOA", "ATZ", "FIZ", "TIZ", "MATZ", "CTR", "RMZ", "TMZ", "TRSA"
         });
 
   return atools::capString(str, {}, {}, ignore);

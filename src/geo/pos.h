@@ -185,6 +185,12 @@ public:
     return lonX < INVALID_VALUE / 2 && latY < INVALID_VALUE / 2;
   }
 
+  /* false if ordinates exceed range -180 < +180 and -90 < +90 */
+  bool isValidRange() const
+  {
+    return lonX >= -180.f && lonX <= 180.f && latY >= -90.f && latY <= 90.f;
+  }
+
   /* false if position is null */
   bool isNull() const
   {

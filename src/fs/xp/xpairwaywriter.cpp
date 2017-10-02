@@ -89,6 +89,11 @@ void XpAirwayWriter::finish(const XpWriterContext& context)
   Q_UNUSED(context);
 }
 
+void XpAirwayWriter::reset()
+{
+
+}
+
 void XpAirwayWriter::initQueries()
 {
   deInitQueries();

@@ -83,6 +83,11 @@ void XpFixWriter::finish(const XpWriterContext& context)
   Q_UNUSED(context);
 }
 
+void XpFixWriter::reset()
+{
+
+}
+
 void XpFixWriter::initQueries()
 {
   deInitQueries();

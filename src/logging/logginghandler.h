@@ -82,8 +82,10 @@ public:
    * @param logDirectory Where the log files should be stored.
    * @param logFilePrefix Prefix all log file names with this string
    */
-  static void initialize(const QString& logConfiguration,
-                         const QString& logDirectory = QString(), const QString& logFilePrefix = QString());
+  static void initialize(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
+
+  /* Uses current directory for log and application name as prefix */
+  static void initialize(const QString& logConfiguration);
 
   /*
    * Loads the logging configuration and prepares all log files to be stored in

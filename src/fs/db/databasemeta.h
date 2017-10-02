@@ -109,6 +109,7 @@ public:
    *
    * 1 magnetic variation fix
    * 2 cycle metadata
+   * 3 nullable altitude types in boundary
    */
   static const int DB_VERSION_MINOR = 2;
 

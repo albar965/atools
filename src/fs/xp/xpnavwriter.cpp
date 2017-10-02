@@ -358,6 +358,11 @@ void XpNavWriter::finish(const XpWriterContext& context)
   finishIls();
 }
 
+void XpNavWriter::reset()
+{
+
+}
+
 void XpNavWriter::initQueries()
 {
   deInitQueries();

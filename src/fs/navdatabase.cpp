@@ -347,6 +347,13 @@ void NavDatabase::createInternal(const QString& codec)
         return;
     }
 
+    if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
+    {
+      // Airspaces
+      if((aborted = xpDataCompiler->compileAirspaces()))
+        return;
+    }
+
     if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
     {
       // In resources or Custom Data - mandatory

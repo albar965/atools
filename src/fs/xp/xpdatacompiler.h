@@ -48,6 +48,7 @@ class XpNavWriter;
 class XpAirwayWriter;
 class XpAirportWriter;
 class XpCifpWriter;
+class XpAirspaceWriter;
 class XpWriter;
 class AirwayPostProcess;
 class XpAirportIndex;
@@ -86,6 +87,12 @@ class XpAirportIndex;
  * $X-Plane/Custom Data/
  * user_nav.dat
  * user_fix.dat
+ *
+ * Airspaces
+ * $X-Plane/Resources/default data/airspaces/usa.txt
+ * $X-Plane/Custom Data/airspaces
+ * $HOME/Documents/Little Navmap/X-Plane Airspaces
+ *
  */
 // TODO collect errors
 class XpDataCompiler
@@ -131,6 +138,12 @@ public:
    * @return true if the  process was aborted
    */
   bool compileCifp();
+
+  /*
+   * Read all OpenAir format airspace files from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
+  bool compileAirspaces();
 
   /*
    * Read $X-Plane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat hand placed localizers.
@@ -201,7 +214,7 @@ private:
   void writeSceneryArea(const QString& filepath);
 
   /* Open file and read header */
-  bool openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, bool updateCycle,
+  bool openFile(QTextStream& stream, QFile& file, const QString& filename, ContextFlags flags,
                 int& lineNum, int& totalNumLines, int& fileVersion);
 
   /* Read file line by line and call writer for each one */
@@ -215,8 +228,15 @@ private:
   /* Find CIFP files like X-Plane 11/Resources/default data/CIFP/KSEA.dat */
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
 
+  /* Find airspaces in default data and custom data */
+  static QStringList findAirspaceFiles(const atools::fs::NavDatabaseOptions& opts);
+
+  static QStringList findFiles(const atools::fs::NavDatabaseOptions& opts, const QString& subdir,
+                               const QStringList& pattern, const QString& additionalDir, bool makeUnique);
+
   atools::fs::xp::ContextFlags flagsFromOptions();
 
+  /* Extract airac cycle from the navdata and airport header files */
   void updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum);
 
   int curFileId = 0, curSceneryId = 0;
@@ -232,6 +252,7 @@ private:
   atools::fs::xp::XpNavWriter *navWriter = nullptr;
   atools::fs::xp::XpAirportWriter *airportWriter = nullptr;
   atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
+  atools::fs::xp::XpAirspaceWriter *airspaceWriter = nullptr; // boundaries
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
   atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;

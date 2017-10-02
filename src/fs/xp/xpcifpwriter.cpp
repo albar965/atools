@@ -430,16 +430,7 @@ void XpCifpWriter::finishProcedure(const XpWriterContext& context)
       }
     }
   }
-
-  approaches.clear();
-  transitions.clear();
-  curRowCode = rc::NONE;
-  writingMissedApproach = false;
-
-  curSeqNo = 0;
-  curRouteType = ' ';
-  curRouteIdent.clear();
-  curTransIdent.clear();
+  reset();
 }
 
 void XpCifpWriter::writeApproach(const QStringList& line, const XpWriterContext& context)
@@ -740,6 +731,19 @@ void XpCifpWriter::finish(const XpWriterContext& context)
   updateAirportQuery->bindValue(":id", context.cifpAirportId);
   updateAirportQuery->exec();
   numProcedures = 0;
+}
+
+void XpCifpWriter::reset()
+{
+  approaches.clear();
+  transitions.clear();
+  curRowCode = rc::NONE;
+  writingMissedApproach = false;
+
+  curSeqNo = 0;
+  curRouteType = ' ';
+  curRouteIdent.clear();
+  curTransIdent.clear();
 }
 
 atools::fs::xp::rc::RowCode XpCifpWriter::toRowCode(const QString& code, const XpWriterContext& context)

@@ -57,8 +57,11 @@ public:
   /* Called when finished with reading a dat file */
   virtual void finish(const atools::fs::xp::XpWriterContext& context) = 0;
 
+  /* Reset all internal states/caches etc. */
+  virtual void reset() = 0;
+
 protected:
-  /* Called very often - make inline */
+  /* Called very often - make inline. Throws exception if index is out of bounds */
   const QString& at(const QStringList& line, int index)
   {
     if(index < line.size())
@@ -68,6 +71,22 @@ protected:
       throw atools::Exception(ctx->messagePrefix() +
                               QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
+
+  QString mid(const QStringList& line, int index)
+  {
+    if(index < line.size())
+      return line.mid(index).join(" ");
+    else
+      // Have to stop reading the file since the rest can be corrupted
+      throw atools::Exception(ctx->messagePrefix() +
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+  }
+
+  /* Report error in log without throwing an exception */
+  void err(const QString& msg);
+
+  /* Report error to log file without throwing an exception */
+  void errWarn(const QString& msg);
 
   const atools::fs::xp::XpWriterContext *ctx = nullptr;
   atools::sql::SqlDatabase& db;

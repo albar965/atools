@@ -61,6 +61,16 @@ void LoggingHandler::initialize(const QString& logConfiguration,
     qWarning() << "LoggingHandler::initialize called more than once";
 }
 
+void LoggingHandler::initialize(const QString& logConfiguration)
+{
+  if(instance == nullptr)
+    instance = new LoggingHandler(logConfiguration, QDir::currentPath(),
+                                  QApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                                  QApplication::applicationName().replace(" ", "_").toLower());
+  else
+    qWarning() << "LoggingHandler::initialize called more than once";
+}
+
 void LoggingHandler::initializeForTemp(const QString& logConfiguration)
 {
   if(instance == nullptr)

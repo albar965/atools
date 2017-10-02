@@ -23,6 +23,7 @@
 #include "fs/xp/xpairwaywriter.h"
 #include "fs/xp/xpairportwriter.h"
 #include "fs/xp/xpcifpwriter.h"
+#include "fs/xp/xpairspacewriter.h"
 #include "fs/common/magdecreader.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -43,6 +44,7 @@
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QRegularExpression>
+#include <QStandardPaths>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -80,6 +82,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   fixWriter = new XpFixWriter(db, airportIndex, options, progress, errors);
   navWriter = new XpNavWriter(db, airportIndex, options, progress, errors);
   cifpWriter = new XpCifpWriter(db, airportIndex, options, progress, errors);
+  airspaceWriter = new XpAirspaceWriter(db, options, progress, errors);
   airwayWriter = new XpAirwayWriter(db, options, progress, errors);
   airwayPostProcess = new AirwayPostProcess(db, options, progress);
   magDecReader = new MagDecReader();
@@ -224,6 +227,21 @@ bool XpDataCompiler::compileCifp()
   return false;
 }
 
+bool XpDataCompiler::compileAirspaces()
+{
+  QStringList airspaceFiles = findAirspaceFiles(options);
+
+  for(const QString& file : airspaceFiles)
+  {
+    if(options.isIncludedFilename(file))
+      if(readDataFile(file, 1, airspaceWriter, READ_AIRSPACE | READ_SHORT_REPORT))
+        return true;
+  }
+  db.commit();
+
+  return false;
+}
+
 bool XpDataCompiler::compileLocalizers()
 {
 
@@ -314,7 +332,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   try
   {
     // Open file and read header
-    if(openFile(stream, file, filename, flags & READ_CIFP, flags & UPDATE_CYCLE, lineNum, totalNumLines, fileVersion))
+    if(openFile(stream, file, filename, flags, lineNum, totalNumLines, fileVersion))
     {
       XpWriterContext context;
       context.curFileId = curFileId;
@@ -383,6 +401,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
           {
             if(flags & READ_CIFP)
             {
+              // Extract colon separated row code
               QString first = fields.takeFirst();
               QStringList rowCode = first.split(":");
               if(rowCode.size() == 2)
@@ -418,14 +437,18 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
       qWarning() << Q_FUNC_INFO << "Error in file" << fileinfo.filePath() << "line" << lineNum << ":" << e.what();
     }
     else
+    {
+      writer->reset();
       // Enrich error message and rethrow a new one
       throw atools::Exception(QString("Caught exception in file \"%1\" in line %2. Message: %3").
                               arg(fileinfo.filePath()).arg(lineNum).arg(e.what()));
+    }
   }
+  writer->reset();
   return aborted;
 }
 
-bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, bool cifpFormat, bool updateCycle,
+bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, atools::fs::xp::ContextFlags flags,
                               int& lineNum, int& totalNumLines, int& fileVersion)
 {
   file.setFileName(filename);
@@ -438,14 +461,15 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
     stream.setAutoDetectUnicode(true);
     QString line;
 
-    if(!cifpFormat)
+    if(!(flags & READ_CIFP) && !(flags & READ_AIRSPACE))
     {
+      // Read file header =============================
       // Byte order identifier
       line = stream.readLine();
       lineNum++;
       qInfo() << line;
 
-      // Metadata
+      // Metadata and copyright
       line = stream.readLine();
       lineNum++;
       qInfo() << line;
@@ -463,7 +487,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
 
       writeFile(filename, line);
 
-      if(updateCycle)
+      if(flags & UPDATE_CYCLE)
         updateAiracCycleFromHeader(line, filename, lineNum);
 
       qDebug() << "Counting lines for" << filename;
@@ -497,6 +521,9 @@ void XpDataCompiler::close()
 
   delete cifpWriter;
   cifpWriter = nullptr;
+
+  delete airspaceWriter;
+  airspaceWriter = nullptr;
 
   delete airwayWriter;
   airwayWriter = nullptr;
@@ -540,23 +567,47 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
   return retval;
 }
 
+QStringList XpDataCompiler::findAirspaceFiles(const atools::fs::NavDatabaseOptions& opts)
+{
+  QString additionalDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
+                          QDir::separator() + "Little Navmap" + QDir::separator() + "X-Plane Airspaces";
+  if(!QFile::exists(additionalDir))
+    additionalDir.clear();
+
+  return findFiles(opts, "airspaces", {"*.txt", "*.sua"}, additionalDir, false);
+}
+
 QStringList XpDataCompiler::findCifpFiles(const atools::fs::NavDatabaseOptions& opts)
 {
-  // CIFP/$ICAO.dat
-  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", "CIFP"}));
-  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", "CIFP"}));
+  return findFiles(opts, "CIFP", {"*.dat"}, QString(), true);
+}
+
+QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts, const QString& subdir,
+                                      const QStringList& pattern, const QString& additionalDir, bool makeUnique)
+{
+  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
+  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
 
   QMap<QString, QFileInfo> entryMap;
 
   // Read all default entries
-  QFileInfoList defaultEntries = defaultDir.entryInfoList({"*.dat"}, QDir::Files, QDir::NoSort);
+  QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : defaultEntries)
-    entryMap.insert(fileInfo.fileName(), fileInfo);
+    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
 
   // Read custom entries and overwrite default
-  QFileInfoList customEntries = customDir.entryInfoList({"*.dat"}, QDir::Files, QDir::NoSort);
+  QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : customEntries)
-    entryMap.insert(fileInfo.fileName(), fileInfo);
+    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+
+  if(!additionalDir.isEmpty())
+  {
+    // Read the additional directory
+    QDir ad(additionalDir);
+    QFileInfoList additonalEntries = ad.entryInfoList(pattern, QDir::Files, QDir::NoSort);
+    for(const QFileInfo& fileInfo : additonalEntries)
+      entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+  }
 
   QStringList retval;
   for(const QFileInfo& fileInfo : entryMap.values())
@@ -579,6 +630,8 @@ int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& o
 
   // Default or custom CIFP/$ICAO.dat
   reportCount += findCifpFiles(opts).count();
+
+  reportCount += findAirspaceFiles(opts).count();
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat

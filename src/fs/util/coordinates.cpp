@@ -46,6 +46,17 @@ const static QString COORDS_FLIGHTPLAN_FORMAT_DEG_MIN_SEC("%1%2%3%4%5%6%7%8");
 const static QRegularExpression LONG_FORMAT_REGEXP_DEG_MIN_SEC("^([0-9]{2})([0-9]{2})([0-9]{2})([NS])"
                                                                "([0-9]{3})([0-9]{2})([0-9]{2})([EW])$");
 
+// Pattern allows trailing garbage
+// 50:40:42 N 003:13:30 E
+// 31:30:00 N 086:44:59 W
+static QRegularExpression MATCH_COORD_OPENAIR_MIN_SEC("^([\\d]+):([\\d]+):([\\d\\.]+)\\s*([NS])\\s*"
+                                                      "([\\d]+):([\\d]+):([\\d\\.]+)\\s*([EW])");
+
+// Pattern allows trailing garbage
+// 39:06.2 N 121:35.5 W
+static QRegularExpression MATCH_COORD_OPENAIR_MIN("^([\\d]+):([\\d\\.]+)\\s*([NS])\\s*"
+                                                  "([\\d]+):([\\d\\.]+)\\s*([EW])");
+
 // 5020N
 const static QRegularExpression LONG_FORMAT_REGEXP_NAT("^([0-9]{2})"
                                                        "([0-9]{2})N$");
@@ -58,6 +69,9 @@ const static QRegularExpression LONG_FORMAT_REGEXP_PAIR2("^([0-9]{2})([0-9]{2})(
                                                          "([0-9]{3})([0-9]{2})([EW])$");
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LAT("^([NS])([0-9]{2})([0-9]{2})$");
 const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LON("^([EW])([0-9]{3})([0-9]{2})$");
+
+atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured);
+atools::geo::Pos degMinFormatFromCapture(const QStringList& captured);
 
 // N48194W123096
 // Examples:
@@ -180,6 +194,7 @@ atools::geo::Pos fromDegMinFormat(const QString& str)
                                 latYDeg, latYMin, 0.f, ns == "S");
     }
   }
+
   return atools::geo::EMPTY_POS;
 }
 
@@ -189,29 +204,8 @@ atools::geo::Pos fromDegMinSecFormat(const QString& str)
   QRegularExpressionMatch match = LONG_FORMAT_REGEXP_DEG_MIN_SEC.match(str.simplified().toUpper());
 
   if(match.hasMatch())
-  {
-    QStringList captured = match.capturedTexts();
+    return degMinSecFormatFromCapture(match.capturedTexts());
 
-    if(captured.size() == 9)
-    {
-      bool latOk, lonOk, latMinOk, lonMinOk, latSecOk, lonSecOk;
-      int latYDeg = captured.at(1).toInt(&latOk);
-      int latYMin = captured.at(2).toInt(&latMinOk);
-      int latYSec = captured.at(3).toInt(&latSecOk);
-      QString ns = captured.at(4);
-
-      int lonXDeg = captured.at(5).toInt(&lonOk);
-      int lonXMin = captured.at(6).toInt(&lonMinOk);
-      int lonXSec = captured.at(7).toInt(&lonSecOk);
-      QString ew = captured.at(8);
-
-      if(latOk && lonOk && latMinOk && lonMinOk && latSecOk && lonSecOk &&
-         -90 <= latYDeg && latYDeg <= 90 &&
-         -180 <= lonXDeg && lonXDeg <= 180)
-        return atools::geo::Pos(lonXDeg, lonXMin, lonXSec, ew == "W",
-                                latYDeg, latYMin, latYSec, ns == "S");
-    }
-  }
   return atools::geo::EMPTY_POS;
 }
 
@@ -311,6 +305,67 @@ atools::geo::Pos fromAnyWaypointFormat(const QString& str)
     // NAT type 5020N
     return fromNatFormat(str);
 
+  return atools::geo::EMPTY_POS;
+}
+
+geo::Pos fromOpenAirFormat(const QString& coordStr)
+{
+  QRegularExpressionMatch match = MATCH_COORD_OPENAIR_MIN_SEC.match(coordStr.toUpper());
+  if(match.hasMatch())
+    return degMinSecFormatFromCapture(match.capturedTexts());
+  else
+  {
+    match = MATCH_COORD_OPENAIR_MIN.match(coordStr);
+    if(match.hasMatch())
+      return degMinFormatFromCapture(match.capturedTexts());
+  }
+
+  return atools::geo::EMPTY_POS;
+}
+
+atools::geo::Pos degMinFormatFromCapture(const QStringList& captured)
+{
+  if(captured.size() == 7)
+  {
+    bool latOk, lonOk, latMinOk, lonMinOk;
+    int latYDeg = captured.at(1).toInt(&latOk);
+    float latYMin = captured.at(2).toFloat(&latMinOk);
+    QString ns = captured.at(3);
+
+    int lonXDeg = captured.at(4).toInt(&lonOk);
+    float lonXMin = captured.at(5).toFloat(&lonMinOk);
+    QString ew = captured.at(6);
+
+    if(latOk && lonOk && latMinOk && lonMinOk &&
+       -90 <= latYDeg && latYDeg <= 90 &&
+       -180 <= lonXDeg && lonXDeg <= 180)
+      return atools::geo::Pos((lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f),
+                              (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f));
+  }
+  return atools::geo::EMPTY_POS;
+}
+
+atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured)
+{
+  if(captured.size() == 9)
+  {
+    bool latOk, lonOk, latMinOk, lonMinOk, latSecOk, lonSecOk;
+    int latYDeg = captured.at(1).toInt(&latOk);
+    int latYMin = captured.at(2).toInt(&latMinOk);
+    float latYSec = captured.at(3).toFloat(&latSecOk);
+    QString ns = captured.at(4);
+
+    int lonXDeg = captured.at(5).toInt(&lonOk);
+    int lonXMin = captured.at(6).toInt(&lonMinOk);
+    float lonXSec = captured.at(7).toFloat(&lonSecOk);
+    QString ew = captured.at(8);
+
+    if(latOk && lonOk && latMinOk && lonMinOk && latSecOk && lonSecOk &&
+       -90 <= latYDeg && latYDeg <= 90 &&
+       -180 <= lonXDeg && lonXDeg <= 180)
+      return atools::geo::Pos(lonXDeg, lonXMin, lonXSec, ew == "W",
+                              latYDeg, latYMin, latYSec, ns == "S");
+  }
   return atools::geo::EMPTY_POS;
 }
 

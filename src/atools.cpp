@@ -229,4 +229,12 @@ QString buildPath(const QStringList& paths)
   return retval;
 }
 
+QString elideTextShort(const QString& str, int maxLength)
+{
+  if(str.size() > maxLength)
+    return str.left(maxLength - 1) + "…";
+
+  return str;
+}
+
 } // namespace atools

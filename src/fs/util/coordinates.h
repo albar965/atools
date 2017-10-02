@@ -50,6 +50,11 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str);
 /* NAT type 5020N */
 atools::geo::Pos fromNatFormat(const QString& str);
 
+/* OpenAir airspace format
+ *  50:40:42 N 003:13:30 E
+ *  39:06.2 N 121:35.5 E */
+atools::geo::Pos fromOpenAirFormat(const QString& coordStr);
+
 } // namespace util
 } // namespace fs
 } // namespace atools

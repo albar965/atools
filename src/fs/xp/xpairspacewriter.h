@@ -15,15 +15,17 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_NAVWRITER_H
-#define ATOOLS_FS_XP_NAVWRITER_H
+#ifndef ATOOLS_FS_XP_AIRSPACEWRITER_H
+#define ATOOLS_FS_XP_AIRSPACEWRITER_H
 
-#include "fs/xp/xpconstants.h"
 #include "fs/xp/xpwriter.h"
+
+#include "geo/linestring.h"
 
 namespace atools {
 
 namespace sql {
+class SqlDatabase;
 class SqlQuery;
 }
 
@@ -36,18 +38,18 @@ class NavDatabaseErrors;
 namespace xp {
 
 /*
- * Reads earth_nav.dat and writes to tables, vor, ndb, marker and ils.
+ * Reads OpenAir files containing airspaces and writes them to the boundary table.
  */
 class XpAirportIndex;
 
-class XpNavWriter :
+class XpAirspaceWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
-              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
-              atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpNavWriter();
+  XpAirspaceWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
+                   atools::fs::ProgressHandler *progressHandler,
+                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  virtual ~XpAirspaceWriter();
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
@@ -56,29 +58,24 @@ public:
 private:
   void initQueries();
   void deInitQueries();
-  void writeVor(const QStringList& line, int curFileId, bool dmeOnly);
-  void writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context);
-  void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
 
-  void bindIls(const QStringList& line, int curFileId, const XpWriterContext& context);
-  void bindIlsGlideslope(const QStringList& line);
-  void bindIlsDme(const QStringList& line);
-  void finishIls();
+  void writeBoundary();
+  void bindAltitude(const QStringList& line, bool isMax);
+  void bindClass(const QString& cls);
+  void bindName(const QString& name);
+  void bindCoordinate(const QStringList& line);
 
-  bool writingIls = false;
-  const int FEATHER_LEN_NM = 9;
-  const float FEATHER_WIDTH = 4.f;
+  bool writingCoordinates = false;
+  atools::geo::LineString curLine;
+  atools::geo::Pos center;
+  bool clockwise = true;
 
-  int curVorId = 0, curNdbId = 0, curMarkerId = 0, curIlsId = 0;
-
-  atools::sql::SqlQuery *insertVorQuery = nullptr, *insertNdbQuery = nullptr,
-                        *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr;
-  atools::fs::xp::XpAirportIndex *airportIndex;
-
+  atools::sql::SqlQuery *insertAirspaceQuery = nullptr;
+  int curAirspaceId = 0;
 };
 
 } // namespace xp
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_NAVWRITER_H
+#endif // ATOOLS_FS_XP_AIRSPACEWRITER_H
