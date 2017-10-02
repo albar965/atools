@@ -72,14 +72,15 @@ protected:
                               QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
-  QString mid(const QStringList& line, int index)
+  QString mid(const QStringList& line, int index, bool ignoreError = false)
   {
     if(index < line.size())
       return line.mid(index).join(" ");
-    else
+    else if(!ignoreError)
       // Have to stop reading the file since the rest can be corrupted
       throw atools::Exception(ctx->messagePrefix() +
                               QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+    return QString();
   }
 
   /* Report error in log without throwing an exception */

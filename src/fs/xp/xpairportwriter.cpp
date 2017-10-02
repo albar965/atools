@@ -614,7 +614,7 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
   // Fill airline codes later from metadata
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
 
-  QString name = mid(line, sl::NAME);
+  QString name = mid(line, sl::NAME, true /* ignore error */);
 
   bool hasFuel = false;
   if(name.toLower().contains("avgas") || name.toLower().contains("mogas") || name.toLower().contains("gas-station"))
@@ -822,7 +822,7 @@ void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp
   insertParkingQuery->bindValue(":number", -1);
   insertParkingQuery->bindValue(":radius", 50.f);
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
-  insertParkingQuery->bindValue(":name", mid(line, s::NAME));
+  insertParkingQuery->bindValue(":name", mid(line, s::NAME, true /* ignore error */));
   insertParkingQuery->bindValue(":has_jetway", 0);
   insertParkingQuery->bindValue(":type", "");
 
@@ -843,7 +843,7 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
   insertComQuery->bindValue(":airport_id", curAirportId);
 
   int frequency = at(line, com::FREQUENCY).toInt() * 10;
-  QString name = mid(line, com::NAME);
+  QString name = mid(line, com::NAME, true /* ignore error */);
   insertComQuery->bindValue(":name", name);
   insertComQuery->bindValue(":frequency", frequency);
   insertComQuery->bindValue(":type", "NONE");
@@ -922,7 +922,7 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     qWarning() << context.messagePrefix() << "Invalid writing airport state in bindMetadata";
 
   QString key = at(line, m::KEY).toLower();
-  QString value = mid(line, m::VALUE);
+  QString value = mid(line, m::VALUE, true /* ignore error */);
 
   if(key == "city")
     insertAirportQuery->bindValue(":city", value);
@@ -1275,7 +1275,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     airportAltitude = line.value(ap::ELEVATION).toFloat();
 
-    QString name = mid(line, ap::NAME);
+    QString name = mid(line, ap::NAME, true /* ignore error */);
     airportClosed = atools::fs::util::isNameClosed(name);
 
     if(NAME_INDICATOR.match(name).hasMatch())
