@@ -1,4 +1,4 @@
-Version 2.6.6
+Version 2.6.6.beta
 
 * Added OpenAir airspace format compilation for X-PLane - also reading
   from $HOME/Documents/Little Navmap/X-Plane Airspaces
