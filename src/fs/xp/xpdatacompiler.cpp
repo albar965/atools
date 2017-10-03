@@ -574,7 +574,7 @@ QStringList XpDataCompiler::findAirspaceFiles(const atools::fs::NavDatabaseOptio
   if(!QFile::exists(additionalDir))
     additionalDir.clear();
 
-  return findFiles(opts, "airspaces", {"*.txt", "*.sua"}, additionalDir, false);
+  return findFiles(opts, "airspaces", {"*.txt"}, additionalDir, false);
 }
 
 QStringList XpDataCompiler::findCifpFiles(const atools::fs::NavDatabaseOptions& opts)
