@@ -4,6 +4,8 @@ Version 2.6.6.beta
   from $HOME/Documents/Little Navmap/X-Plane Airspaces
 * Increased database minor version to 3.
 * Added support for X-Plane 11 FMS files.
+* Enabled user defined waypoint names for X-Plane FMS format.
+* Fixed user waypoint format for FLP so that it can be reloaded.
 * Fixed problem loading FS9 flight plans.
 * Added optional arinc_name to approach procedure table.
 * Added AIRAC cycle to metadata and comment to file table.

@@ -154,6 +154,8 @@ void Flightplan::loadFlp(const QString& file)
     int wptNum = -1;
 
     QTextStream stream(&flpFile);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
     while(!stream.atEnd())
     {
       QString line = stream.readLine().simplified();
@@ -316,6 +318,8 @@ void Flightplan::loadFms(const QString& file)
   if(fmsFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&fmsFile);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
 
     stream.readLine(); // I
     bool ok = false;
@@ -425,47 +429,34 @@ void Flightplan::loadFms(const QString& file)
 
           entry.setPosition(position);
 
-          switch(list.at(0).toInt())
+          int type = list.at(0).toInt();
+          switch(type)
           {
             case 1: // - Airport ICAO
               entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
-              entry.setIcaoIdent(ident);
-              entry.setWaypointId(ident);
               break;
 
             case 2: // - NDB
               entry.setWaypointType(atools::fs::pln::entry::NDB);
-              entry.setIcaoIdent(ident);
-              entry.setWaypointId(ident);
-              entry.setAirway(airway);
               break;
 
             case 3: // - VOR
               entry.setWaypointType(atools::fs::pln::entry::VOR);
-              entry.setIcaoIdent(ident);
-              entry.setWaypointId(ident);
-              entry.setAirway(airway);
               break;
 
             case 11: // - Fix
               entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
-              entry.setIcaoIdent(ident);
-              entry.setWaypointId(ident);
-              entry.setAirway(airway);
               break;
 
-            case 13: // - Lat/Lon Position
             case 28: // - Lat/Lon Position
+            case 13: // - Lat/Lon Position
               entry.setWaypointType(atools::fs::pln::entry::USER);
-              atools::geo::Pos pos(ident.section('_', 1, 1).toFloat(),
-                                   ident.section('_', 0, 0).toFloat(), altitude);
-              entry.setPosition(pos);
-              QString userIdent = util::toDegMinFormat(pos);
-              userIdent.truncate(10); // Keep short for FSX limitations
-              entry.setIcaoIdent(userIdent);
-              entry.setWaypointId(userIdent);
               break;
           }
+
+          entry.setIcaoIdent(ident);
+          entry.setWaypointId(ident);
+          entry.setAirway(airway);
 
           entries.append(entry);
         }
@@ -822,8 +813,13 @@ void Flightplan::saveFsx(const QString& file, bool clean)
 
       writer.writeStartElement("ATCWaypoint");
 
-      // Trim to max allowed length for FSX/P3D
-      writer.writeAttribute("id", entry.getWaypointId().left(10));
+      // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
+      QString name = entry.getWaypointId();
+      name.replace(QRegularExpression("[^A-Za-z0-9_ ]"), "");
+      name = name.left(10);
+      if(name.isEmpty())
+        name = "User_WP";
+      writer.writeAttribute("id", name);
       writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsString());
 
       if(!entry.getPosition().isValid())
@@ -885,6 +881,7 @@ void Flightplan::saveFlp(const QString& file, bool saveProcedures)
   if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&flpFile);
+    stream.setCodec("UTF-8");
 
     stream << "[CoRte]" << endl;
     stream << "ArptDep=" << departureIdent << endl;
@@ -969,12 +966,16 @@ void Flightplan::saveFlp(const QString& file, bool saveProcedures)
       }
       else if(entry.getWaypointId() != lastAirwayTo)
       {
-        stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
+        if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+          // Use parseable coordinate format instead of waypoint name
+          stream << "DctWpt" << index << "=" << atools::fs::util::toDegMinFormat(entry.getPosition()) << endl;
+        else
+          stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
+
         stream << "DctWpt" << index << "Coordinates=" << coords << endl;
         lastAirwayTo.clear();
         index++;
       }
-
     }
 
     flpFile.close();
@@ -1128,6 +1129,7 @@ void Flightplan::saveFms(const QString& file, const QString& airacCycle, bool ve
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&fmsFile);
+    stream.setCodec("UTF-8");
 
     // OS
      #if defined(Q_OS_MACOS)
@@ -1208,18 +1210,17 @@ void Flightplan::saveFms(const QString& file, const QString& airacCycle, bool ve
       if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
          entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
-        float laty = std::abs(entry.getPosition().getLatY());
-        float lonx = std::abs(entry.getPosition().getLonX());
-
         stream << "28 ";
+
+        // Replace spaces
+        QString name = entry.getWaypointId();
+        name.replace(QRegularExpression("[\\s]"), "_");
+
+        stream << name << " ";
+
+        // Disabled user waypoints as coordinates
         // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
         // -28.478_-056.370 Correct for a waypoint at -28.478°/-56.370°.
-        stream << (entry.getPosition().getLatY() < 0.f ? "-" : "+")
-               << QString("%1").arg(laty, 2, 'f', 3, QChar('0')).rightJustified(6, QChar('0'), false)
-               << "_"
-               << (entry.getPosition().getLonX() < 0.f ? "-" : "+")
-               << QString("%1").arg(lonx, 3, 'f', 3, QChar('0')).rightJustified(7, QChar('0'), false)
-               << " ";
       }
       else
       {
@@ -1288,6 +1289,7 @@ void Flightplan::saveRte(const QString& file)
   {
     QString rteString;
     QTextStream stream(&rteString);
+    stream.setCodec("UTF-8");
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
       arg(QApplication::applicationName()).
@@ -1640,6 +1642,8 @@ QStringList Flightplan::probeFile(const QString& file)
   if(testFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&testFile);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
     int numLines = 0;
     while(!stream.atEnd() && numLines < 4)
     {
