@@ -145,7 +145,12 @@ bool DatabaseMeta::hasSchema() const
 
 bool DatabaseMeta::hasData() const
 {
-  return hasSchema() && SqlUtil(db).rowCount("airport") > 0;
+  return SqlUtil(db).hasTableAndRows("airport");
+}
+
+bool DatabaseMeta::hasAirspaces() const
+{
+  return SqlUtil(db).hasTableAndRows("boundary");
 }
 
 bool DatabaseMeta::isDatabaseCompatible() const

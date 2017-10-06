@@ -1,3 +1,10 @@
+Version 2.6.7
+
+* Added codec recognition for X-Plane airspace files if BOM is available. Otherwise falls back to ANSI (Windows-1252).
+* SqlUtil row copy is now more error tolerant and can deal with different row ordering.
+* Added boundary query to database metadata.
+
+
 Version 2.6.6.beta
 
 * Added OpenAir airspace format compilation for X-PLane - also reading

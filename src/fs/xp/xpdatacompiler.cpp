@@ -45,6 +45,7 @@
 #include <QElapsedTimer>
 #include <QRegularExpression>
 #include <QStandardPaths>
+#include <QTextCodec>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -456,9 +457,19 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
 
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
-    stream.setDevice(&file);
-    stream.setCodec("UTF-8");
+    if(flags & READ_AIRSPACE)
+    {
+      // Try to detect code using the BOM for airspaces only - use ANSI as fallback
+      stream.setDevice(&file);
+      stream.setCodec(atools::codecForFile(file, QTextCodec::codecForName("Windows-1252")));
+    }
+    else
+    {
+      stream.setDevice(&file);
+      stream.setCodec("UTF-8");
+    }
     stream.setAutoDetectUnicode(true);
+
     QString line;
 
     if(!(flags & READ_CIFP) && !(flags & READ_AIRSPACE))

@@ -18,6 +18,7 @@
 #include "fs/scenery/addonpackage.h"
 
 #include "exception.h"
+#include "atools.h"
 
 #include <QFile>
 #include <QXmlStreamReader>
@@ -38,17 +39,7 @@ AddOnPackage::AddOnPackage(const QString& file)
 
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    QTextCodec *codec = nullptr;
-
-    // Load a part of the file and detect the BOM/codec
-    const qint64 PROBE_SIZE = 128;
-    char *buffer = new char[PROBE_SIZE];
-    qint64 bytesRead = xmlFile.read(buffer, PROBE_SIZE);
-    if(bytesRead > 0)
-      codec = QTextCodec::codecForUtfText(QByteArray(buffer, static_cast<int>(bytesRead)), nullptr);
-    delete[] buffer;
-
-    xmlFile.seek(0);
+    QTextCodec *codec = atools::codecForFile(xmlFile);
 
     QScopedPointer<QXmlStreamReader> xml;
 

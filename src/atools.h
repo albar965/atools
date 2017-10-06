@@ -20,10 +20,9 @@
 
 #include <cmath>
 
-#include <QSet>
-#include <QString>
-#include <QVariant>
 #include <QDebug>
+
+class QFile;
 
 namespace atools {
 
@@ -57,6 +56,10 @@ QString buildPathNoCase(const QStringList& paths);
 
 /* Simply concatenates all paths parts with the QDir::separator() */
 QString buildPath(const QStringList& paths);
+
+/* Read a part of the file and find out the text codec if it has a BOM.
+ * File has to be open for reading */
+QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
 
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>

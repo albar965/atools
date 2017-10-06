@@ -68,6 +68,9 @@ public:
   /* Get number of rows in table. Throws exception if the table does not exist. */
   int rowCount(const QString& tablename, const QString& criteria = QString());
 
+  /* Faster than rowCount */
+  bool hasRows(const QString& tablename, const QString& criteria = QString());
+
   /* Copy all values from one query to another
    * @param from a valid query as data source
    * @param to a valid prepared query having the same number of bind variables
@@ -97,6 +100,9 @@ private:
 
   QStringList buildTableList(const QStringList& tables);
   QStringList buildResultList(SqlQuery& query);
+
+  static void copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
+                                    const SqlRecord& fromRec, const QMap<QString, QVariant>& bound);
 
 };
 

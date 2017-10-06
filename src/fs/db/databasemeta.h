@@ -78,6 +78,8 @@ public:
    */
   bool hasData() const;
 
+  bool hasAirspaces() const;
+
   /* True if any SID or STARs were found (P3D only) */
   bool hasSidStar() const
   {

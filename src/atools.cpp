@@ -22,17 +22,35 @@
 #include <QRegularExpression>
 #include <QVector>
 #include <QDir>
+#include <QTextCodec>
 
 namespace atools {
 
 QString version()
 {
-  return "2.6.6.beta";
+  return "2.6.7";
 }
 
 QString gitRevision()
 {
   return GIT_REVISION_ATOOLS;
+}
+
+QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec)
+{
+  QTextCodec *codec = nullptr;
+  file.seek(0);
+
+  // Load a part of the file and detect the BOM/codec
+  const qint64 PROBE_SIZE = 128;
+  char *buffer = new char[PROBE_SIZE];
+  qint64 bytesRead = file.read(buffer, PROBE_SIZE);
+  if(bytesRead > 0)
+    codec = QTextCodec::codecForUtfText(QByteArray(buffer, static_cast<int>(bytesRead)), defaultCodec);
+  delete[] buffer;
+
+  file.seek(0);
+  return codec;
 }
 
 void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,

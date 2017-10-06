@@ -91,15 +91,13 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
 
 bool SqlUtil::hasTable(const QString& tablename)
 {
-  SqlRecord rec = db->record(tablename);
-  return !rec.isEmpty();
+  return !db->record(tablename).isEmpty();
 }
 
 bool SqlUtil::hasTableAndRows(const QString& tablename)
 {
-  SqlRecord rec = db->record(tablename);
-  if(!rec.isEmpty())
-    return rowCount(tablename) > 0;
+  if(!db->record(tablename).isEmpty())
+    return hasRows(tablename);
 
   return false;
 }
@@ -114,20 +112,41 @@ int SqlUtil::rowCount(const QString& tablename, const QString& criteria)
   return 0;
 }
 
+bool SqlUtil::hasRows(const QString& tablename, const QString& criteria)
+{
+  SqlQuery q(db);
+  q.exec("select 1 from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria) + " limit 1");
+  return q.next();
+}
+
 void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
 {
-  SqlRecord fromRec = from.record();
+  copyRowValuesInternal(from, to, from.record(), to.boundValues());
+}
 
+void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
+                                    const SqlRecord& fromRec, const QMap<QString, QVariant>& bound)
+{
   for(int i = 0; i < fromRec.count(); i++)
-    to.bindValue(i, from.value(i));
+  {
+    QString bind = ":" + fromRec.fieldName(i);
+    if(bound.contains(bind))
+      to.bindValue(bind, from.value(i));
+  }
 }
 
 int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery&)> func)
 {
   int copied = 0;
+  SqlRecord fromRec;
+  QMap<QString, QVariant> bound = to.boundValues();
+
   while(from.next())
   {
-    copyRowValues(from, to);
+    if(fromRec.isEmpty())
+      fromRec = from.record();
+
+    copyRowValuesInternal(from, to, fromRec, bound);
 
     if(func(from, to))
     {
@@ -145,9 +164,14 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
 int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
 {
   int copied = 0;
+  SqlRecord fromRec;
+  QMap<QString, QVariant> bound = to.boundValues();
   while(from.next())
   {
-    copyRowValues(from, to);
+    if(fromRec.isEmpty())
+      fromRec = from.record();
+
+    copyRowValuesInternal(from, to, fromRec, bound);
     to.exec();
     if(to.numRowsAffected() != 1)
       throw SqlException("Error executing statement in Utility::copyResultValues(). "
