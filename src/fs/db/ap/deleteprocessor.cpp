@@ -322,10 +322,10 @@ void DeleteProcessor::postProcessDelete()
       // Relink runways
       bindAndExecute(updateRunwayStmt, "runways updated");
       copyAirportColumns << "is_closed" << "num_runway_hard" << "num_runway_soft" << "num_runway_water" <<
-      "num_runway_light" << "num_runway_end_closed" << "num_runway_end_vasi" << "num_runway_end_als" <<
-      "longest_runway_length" << "longest_runway_width" <<
-      "longest_runway_heading" << "longest_runway_surface" << "num_runways" << "left_lonx" << "top_laty" <<
-      "right_lonx" << "bottom_laty";
+        "num_runway_light" << "num_runway_end_closed" << "num_runway_end_vasi" << "num_runway_end_als" <<
+        "longest_runway_length" << "longest_runway_width" <<
+        "longest_runway_heading" << "longest_runway_surface" << "num_runways" << "left_lonx" << "top_laty" <<
+        "right_lonx" << "bottom_laty";
     }
   }
 
@@ -638,11 +638,14 @@ void DeleteProcessor::copyAirportValues(const QStringList& copyAirportColumns)
     query.bindValue(":prevApId", prevAirportId);
     query.exec();
 
+    QStringList bindCols(copyAirportColumns);
+    for(QString& bindCol : bindCols)
+      bindCol = bindCol + " = :" + bindCol;
+
     if(query.next())
     {
-      insert.prepare("update airport set " + copyAirportColumns.join("=?,") + "=? " +
-                     "where airport_id = ?");
-      insert.bindValue(copyAirportColumns.size(), currentAirportId);
+      insert.prepare("update airport set " + bindCols.join(", ") + " where airport_id = :aptid");
+      insert.bindValue(":aptid", currentAirportId);
       SqlUtil(db).copyRowValues(query, insert);
       insert.exec();
       if(insert.numRowsAffected() <= 0)
