@@ -229,7 +229,7 @@ bool SqlQuery::hasField(const QString& name) const
 {
   checkError(isValid(), "SqlQuery::hasField() on invalid query");
   checkError(isActive(), "SqlQuery::hasField() on inactive query");
-  return query.value(name).isValid();
+  return query.record().contains(name);
 }
 
 void SqlQuery::setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precisionPolicy)
