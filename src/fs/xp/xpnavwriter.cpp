@@ -79,7 +79,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   else
     rangeType = "H";
 
-  QString suffix = line.last();
+  QString suffix = line.last().toUpper();
   if(suffix == "VOR" || suffix == "DME" || suffix == "VOR-DME" || suffix == "VOR/DME")
     type = rangeType;
   else if(suffix == "VORTAC")
@@ -102,7 +102,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":dme_only", dmeOnly);
   insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
 
-  if(suffix == "TACAN")
+  if(suffix == "TACAN" || suffix == "VORTAC")
     insertVorQuery->bindValue(":channel", atools::fs::util::tacanChannelForFrequency(frequency));
   else
     insertVorQuery->bindValue(":channel", QVariant(QVariant::String));
