@@ -51,9 +51,11 @@ public:
     return !operator==(other);
   }
 
+  /* General getters. Throw exception if value does not exist as field. */
   QVariant value(int i) const;
   QVariant value(const QString& name) const;
 
+  /* Typed getters. Throw exception if value does not exist as field. */
   QString valueStr(int i) const
   {
     return value(i).toString();
@@ -92,6 +94,32 @@ public:
   int valueBool(const QString& name) const
   {
     return value(name).toBool();
+  }
+
+  /* Getters which return a default value if field does not exit in record instead of throwing an exception. */
+  QVariant value(const QString& name, const QVariant& defaulValue) const
+  {
+    return contains(name) ? value(name) : defaulValue;
+  }
+
+  QString valueStr(const QString& name, const QString& defaultValue) const
+  {
+    return contains(name) ? valueStr(name) : defaultValue;
+  }
+
+  int valueInt(const QString& name, int defaultValue) const
+  {
+    return contains(name) ? valueInt(name) : defaultValue;
+  }
+
+  float valueFloat(const QString& name, float defaultValue) const
+  {
+    return contains(name) ? valueFloat(name) : defaultValue;
+  }
+
+  int valueBool(const QString& name, bool defaultValue) const
+  {
+    return contains(name) ? valueBool(name) : defaultValue;
   }
 
   bool isNull(int i) const;
@@ -141,6 +169,8 @@ class SqlRecordVector :
 {
 
 };
+
+QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record);
 
 } // namespace sql
 } // namespace atools

@@ -74,6 +74,73 @@ public:
   QVariant value(const QString& name) const;
   bool hasField(const QString& name) const;
 
+  /* Typed getters. Throw exception if value does not exist as field. */
+  QString valueStr(int i) const
+  {
+    return value(i).toString();
+  }
+
+  QString valueStr(const QString& name) const
+  {
+    return value(name).toString();
+  }
+
+  int valueInt(int i) const
+  {
+    return value(i).toInt();
+  }
+
+  int valueInt(const QString& name) const
+  {
+    return value(name).toInt();
+  }
+
+  float valueFloat(int i) const
+  {
+    return value(i).toFloat();
+  }
+
+  float valueFloat(const QString& name) const
+  {
+    return value(name).toFloat();
+  }
+
+  int valueBool(int i) const
+  {
+    return value(i).toBool();
+  }
+
+  int valueBool(const QString& name) const
+  {
+    return value(name).toBool();
+  }
+
+  /* Getters which return a default value if field does not exit in record instead of throwing an exception. */
+  QVariant value(const QString& name, const QVariant& defaulValue) const
+  {
+    return hasField(name) ? value(name) : defaulValue;
+  }
+
+  QString valueStr(const QString& name, const QString& defaultValue) const
+  {
+    return hasField(name) ? valueStr(name) : defaultValue;
+  }
+
+  int valueInt(const QString& name, int defaultValue) const
+  {
+    return hasField(name) ? valueInt(name) : defaultValue;
+  }
+
+  float valueFloat(const QString& name, float defaultValue) const
+  {
+    return hasField(name) ? valueFloat(name) : defaultValue;
+  }
+
+  int valueBool(const QString& name, bool defaultValue) const
+  {
+    return hasField(name) ? valueBool(name) : defaultValue;
+  }
+
   void setNumericalPrecisionPolicy(QSql::NumericalPrecisionPolicy precisionPolicy);
   QSql::NumericalPrecisionPolicy numericalPrecisionPolicy() const;
 

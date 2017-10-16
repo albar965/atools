@@ -18,6 +18,7 @@
 #include "sql/sqlexception.h"
 #include "sql/sqlrecord.h"
 
+#include <QDebug>
 #include <QSqlField>
 #include <QVariant>
 
@@ -209,6 +210,18 @@ void SqlRecord::clear()
 void SqlRecord::clearValues()
 {
   sqlRecord.clearValues();
+}
+
+QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record)
+{
+  QDebugStateSaver saver(out);
+
+  out << "SqlRecord[";
+  for(int i = 0; i < record.count(); ++i)
+    out << record.fieldName(i) << record.value(i) << endl;
+  out << "]";
+
+  return out;
 }
 
 } // namespace sql

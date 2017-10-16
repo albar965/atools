@@ -89,6 +89,12 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
   return "select " + columnList + " from " + tablename;
 }
 
+QString SqlUtil::buildSelectStatement(const QString& tablename, const QStringList& columns)
+{
+  // TODO use QSqlDriver::sqlStatement()
+  return "select " + columns.join(",") + " from " + tablename;
+}
+
 bool SqlUtil::hasTable(const QString& tablename)
 {
   return !db->record(tablename).isEmpty();
@@ -180,6 +186,35 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
     copied++;
   }
   return copied;
+}
+
+void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
+                                  const QStringList& insertcolumns, UpdateColFuncType func)
+{
+  SqlUtil util(db);
+
+  QStringList queryCols(queryColumns);
+  queryCols.append(idColum);
+  SqlQuery select(util.buildSelectStatement(table, queryCols), db);
+
+  QStringList insertSet;
+  for(const QString& ic : insertcolumns)
+    insertSet.append(ic + " = :" + ic);
+
+  SqlQuery insert(db);
+  insert.prepare("update " + table + " set " + insertSet.join(", ") + " where " + idColum + " = :" + idColum);
+
+  select.exec();
+
+  while(select.next())
+  {
+    if(func(select, insert))
+    {
+      insert.bindValue(":" + idColum, select.value(idColum));
+      insert.exec();
+    }
+  }
+
 }
 
 void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)

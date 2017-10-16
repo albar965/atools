@@ -31,6 +31,12 @@ SqlScript::SqlScript(SqlDatabase *sqlDb, bool verboseLogging)
 {
 }
 
+SqlScript::SqlScript(SqlDatabase& sqlDb, bool verboseLogging)
+  : db(&sqlDb), verbose(verboseLogging)
+{
+
+}
+
 void SqlScript::executeScript(const QString& filename)
 {
   QFile scriptFile(filename);

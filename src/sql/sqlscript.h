@@ -43,6 +43,7 @@ public:
    * @param sqlDb Database to use
    */
   SqlScript(SqlDatabase *sqlDb, bool verboseLogging = true);
+  SqlScript(SqlDatabase& sqlDb, bool verboseLogging = true);
 
   /* Run a script provided in the given filename */
   void executeScript(const QString& filename);

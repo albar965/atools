@@ -116,7 +116,8 @@ public:
 
   const QSqlDatabase& getQSqlDatabase() const;
 
-  /* Rolls the current transaction back and executes the list of pragmas. Opens transaction again afteerwards. */
+  /* Sqlite only.
+   * Rolls the current transaction back and executes the list of pragmas. Opens transaction again afterwards. */
   void executePragmas(const QStringList& pragmas);
 
   bool isAutocommit() const
@@ -138,6 +139,11 @@ public:
   {
     readonly = value;
   }
+
+  /* Sqlite only.
+   * Rolls the current transaction back and attaches or detaches a database. Opens transaction again afterwards. */
+  void attachDatabase(const QString& file, const QString& name);
+  void detachDatabase(const QString& name);
 
 private:
   SqlDatabase(const QSqlDatabase& other);

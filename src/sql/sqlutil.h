@@ -58,6 +58,7 @@ public:
 
   /* Creates a select statement including all columns for the given table. */
   QString buildSelectStatement(const QString& tablename);
+  QString buildSelectStatement(const QString& tablename, const QStringList& columns);
 
   /* @return true if table exists */
   bool hasTable(const QString& tablename);
@@ -94,6 +95,17 @@ public:
   void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols,
                              const QString& column, const QVariant& minValue,
                              const QVariant& maxValue);
+
+  typedef  std::function<bool (const atools::sql::SqlQuery&, atools::sql::SqlQuery&)> UpdateColFuncType;
+  /* Calls func for earch row to allow complex calculations for each row in the table which could not
+   * be done in the database
+   * @param table Table to be modified
+   * @param idColum Column to identify a row
+   * @param queryColumns Columns needed in the source table
+   * @param insertcolumns Columns in the target statement to be modified.
+   */
+  void updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
+                           const QStringList& insertcolumns, atools::sql::SqlUtil::UpdateColFuncType func);
 
 private:
   SqlDatabase *db;

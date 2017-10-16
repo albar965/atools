@@ -129,6 +129,31 @@ void SqlDatabase::executePragmas(const QStringList& pragmas)
   checkError(db.transaction(), "SqlDatabase::pragma() error");
 }
 
+void SqlDatabase::attachDatabase(const QString& file, const QString& name)
+{
+  checkError(db.rollback(), "SqlDatabase::attachDatabase() error");
+
+  SqlQuery query(db);
+  query.prepare("attach database :db as :name");
+  query.bindValue(":db", file);
+  query.bindValue(":name", name);
+  query.exec();
+
+  checkError(db.transaction(), "SqlDatabase::attachDatabase() error");
+}
+
+void SqlDatabase::detachDatabase(const QString& name)
+{
+  checkError(db.rollback(), "SqlDatabase::detachDatabase() error");
+
+  SqlQuery query(db);
+  query.prepare("detach database :name");
+  query.bindValue(":name", name);
+  query.exec();
+
+  checkError(db.transaction(), "SqlDatabase::detachDatabase() error");
+}
+
 bool SqlDatabase::isOpen() const
 {
   return db.isOpen();
