@@ -87,7 +87,6 @@ HEADERS += src/atools.h \
     src/fs/bgl/sectiontype.h \
     src/fs/bgl/subsection.h \
     src/fs/bgl/util.h \
-    src/fs/db/airportindex.h \
     src/fs/db/ap/airportwriter.h \
     src/fs/db/ap/approachlegwriter.h \
     src/fs/db/ap/approachwriter.h \
@@ -211,7 +210,6 @@ HEADERS += src/atools.h \
     src/fs/xp/xpairwaywriter.h \
     src/fs/xp/xpairportwriter.h \
     src/fs/util/fsutil.h \
-    src/fs/xp/xpairportindex.h \
     src/fs/xp/xpdatacompiler.h \
     src/fs/common/xpgeometry.h \
     src/fs/common/binarygeometry.h \
@@ -229,7 +227,11 @@ HEADERS += src/atools.h \
     src/fs/sc/xpconnecthandler.h \
     src/gui/consoleapplication.h \
     src/logging/loggingguiabort.h \
-    src/fs/xp/xpairspacewriter.h
+    src/fs/xp/xpairspacewriter.h \
+    src/fs/common/metadatawriter.h \
+    src/fs/common/airportindex.h \
+    src/fs/db/dbairportindex.h \
+    src/fs/dfd/dfdcompiler.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -281,7 +283,6 @@ SOURCES += src/atools.cpp \
     src/fs/bgl/sectiontype.cpp \
     src/fs/bgl/subsection.cpp \
     src/fs/bgl/util.cpp \
-    src/fs/db/airportindex.cpp \
     src/fs/db/ap/airportwriter.cpp \
     src/fs/db/ap/approachlegwriter.cpp \
     src/fs/db/ap/approachwriter.cpp \
@@ -402,7 +403,6 @@ SOURCES += src/atools.cpp \
     src/fs/xp/xpairwaywriter.cpp \
     src/fs/xp/xpairportwriter.cpp \
     src/fs/util/fsutil.cpp \
-    src/fs/xp/xpairportindex.cpp \
     src/fs/xp/xpdatacompiler.cpp \
     src/fs/common/xpgeometry.cpp \
     src/fs/common/binarygeometry.cpp \
@@ -420,7 +420,11 @@ SOURCES += src/atools.cpp \
     src/fs/sc/xpconnecthandler.cpp \
     src/gui/consoleapplication.cpp \
     src/logging/loggingguiabort.cpp \
-    src/fs/xp/xpairspacewriter.cpp
+    src/fs/xp/xpairspacewriter.cpp \
+    src/fs/common/metadatawriter.cpp \
+    src/fs/common/airportindex.cpp \
+    src/fs/db/dbairportindex.cpp \
+    src/fs/dfd/dfdcompiler.cpp
 
 
 unix {

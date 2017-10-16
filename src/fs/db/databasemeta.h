@@ -112,8 +112,9 @@ public:
    * 1 magnetic variation fix
    * 2 cycle metadata
    * 3 nullable altitude types in boundary
+   * 4 nullable path in scenery
    */
-  static const int DB_VERSION_MINOR = 2;
+  static const int DB_VERSION_MINOR = 4;
 
   void init();
 

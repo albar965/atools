@@ -29,6 +29,7 @@
 #include "fs/scenery/addonpackage.h"
 #include "fs/scenery/addoncomponent.h"
 #include "fs/xp/xpdatacompiler.h"
+#include "fs/dfd/dfdcompiler.h"
 #include "fs/db/databasemeta.h"
 
 #include <QDebug>
@@ -45,6 +46,7 @@ const int PROGRESS_NUM_STEPS = 20;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
+const int PROGRESS_DFD_EXTRA_STEPS = 7;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -226,7 +228,9 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isAutocommit())
     db->setAutocommit(true);
 
-  int total = 0, routePartFraction = 0;
+  // ==============================================================================
+  // Calculate the total number of progress steps
+  int total = 0, routePartFraction = 1;
   if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
     numProgressReports = atools::fs::xp::XpDataCompiler::calculateReportCount(*options);
@@ -239,6 +243,11 @@ void NavDatabase::createInternal(const QString& codec)
     total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
     // Around 9000 navaids - total / routePartFraction has to be lower than this
     routePartFraction = 20;
+  }
+  else if(options->getSimulatorType() == atools::fs::FsPaths::NAVIGRAPH)
+  {
+    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS;
+    routePartFraction = 4;
   }
   else
   {
@@ -276,156 +285,57 @@ void NavDatabase::createInternal(const QString& codec)
   databaseMetadata.updateAll();
 
   // -----------------------------------------------------------------------
-  // Create data writer which will read all BGL files and fill the database
+  // Create empty data writer pointers which will read all files and fill the database
+  // Pointers will be initialized on demand/compilation type
   QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
   QScopedPointer<atools::fs::xp::XpDataCompiler> xpDataCompiler;
-  SqlScript script(db, true /*options->isVerbose()*/);
+  QScopedPointer<atools::fs::ng::DfdCompiler> dfdCompiler;
 
-  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
+  // ================================================================================================
+  // Start compilation
+  if(options->getSimulatorType() == atools::fs::FsPaths::NAVIGRAPH)
+  {
+    // Create a single Navigraph scenery area
+    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString());
+
+    // Prepare error collection for single area
+    if(errors != nullptr)
+      errors->init(area);
+
+    // Load Navigraph from source database ======================================================
+    dfdCompiler.reset(new atools::fs::ng::DfdCompiler(*db, *options, &progress, errors));
+    loadDfd(&progress, dfdCompiler.data(), area);
+    dfdCompiler->close();
+  }
+  else if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
   {
     // Create a single X-Plane scenery area
     atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
 
-    // Prepare error collection
+    // Prepare error collection for single area
     if(errors != nullptr)
-    {
-      NavDatabaseErrors::SceneryErrors err;
-      err.scenery = area;
-      errors->sceneryErrors.append(err);
-    }
+      errors->init(area);
 
     // Load X-Plane scenery database ======================================================
     xpDataCompiler.reset(new atools::fs::xp::XpDataCompiler(*db, *options, &progress, errors));
-
-    if((aborted = progress.reportSceneryArea(&area)))
-      return;
-
-    if((aborted = xpDataCompiler->writeBasepathScenery()))
-      return;
-
-    if((aborted = xpDataCompiler->compileMagDeclBgl()))
-      return;
-
-    if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
-    {
-      // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
-      if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
-        return;
-
-      // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-      if((aborted = xpDataCompiler->compileCustomGlobalApt()))
-        return;
-
-      // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
-      // Mandatory
-      if((aborted = xpDataCompiler->compileDefaultApt()))
-        return;
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
-    {
-      // In resources or Custom Data - mandatory
-      if((aborted = xpDataCompiler->compileEarthFix()))
-        return;
-
-      // Optional user data
-      if((aborted = xpDataCompiler->compileUserFix()))
-        return;
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
-       options->isIncludedNavDbObject(atools::fs::type::NDB) ||
-       options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
-       options->isIncludedNavDbObject(atools::fs::type::ILS))
-    {
-      // In resources or Custom Data - mandatory
-      if((aborted = xpDataCompiler->compileEarthNav()))
-        return;
-
-      // Optional user data
-      if((aborted = xpDataCompiler->compileUserNav()))
-        return;
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
-    {
-      // Airspaces
-      if((aborted = xpDataCompiler->compileAirspaces()))
-        return;
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
-    {
-      // In resources or Custom Data - mandatory
-      if((aborted = xpDataCompiler->compileEarthAirway()))
-        return;
-
-      if((aborted = runScript(&progress, "fs/db/xplane/prepare_airway.sql", tr("Preparing Airways"))))
-        return;
-
-      if((aborted = xpDataCompiler->postProcessEarthAirway()))
-        return;
-    }
-
-    if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
-    {
-      if((aborted = xpDataCompiler->compileCifp()))
-        return;
-    }
-
+    loadXplane(&progress, xpDataCompiler.data(), area);
     xpDataCompiler->close();
-
-    // Remove scenery from error list if nothing happened
-    if(errors != nullptr && !errors->sceneryErrors.isEmpty())
-    {
-      const NavDatabaseErrors::SceneryErrors& err = errors->sceneryErrors.first();
-
-      if(err.fileErrors.isEmpty() && err.sceneryErrorsMessages.isEmpty())
-        errors->sceneryErrors.clear();
-    }
   }
   else
   {
     // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
-
-    fsDataWriter->readMagDeclBgl();
-
-    for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
-    {
-      if((area.isActive() || options->isReadInactive()) &&
-         options->isIncludedLocalPath(area.getLocalPath()))
-      {
-        if((aborted = progress.reportSceneryArea(&area)))
-          return;
-
-        NavDatabaseErrors::SceneryErrors err;
-        if(errors != nullptr)
-          // Prepare structure for error collection
-          fsDataWriter->setSceneryErrors(&err);
-        else
-          fsDataWriter->setSceneryErrors(nullptr);
-
-        // Read all BGL files in the scenery area into classes of the bgl namespace and
-        // write the contents to the database
-        fsDataWriter->writeSceneryArea(area);
-
-        if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
-        {
-          err.scenery = area;
-          errors->sceneryErrors.append(err);
-        }
-
-        if((aborted = fsDataWriter->isAborted()))
-          return;
-      }
-    }
-    db->commit();
+    loadFsxP3d(&progress, fsDataWriter.data(), cfg);
     fsDataWriter->close();
   }
 
+  if(aborted)
+    return;
+
   // ===========================================================================
   // Loading is done here - now continue with the post process steps
+
+  SqlScript script(db, true /*options->isVerbose()*/);
 
   if((aborted = runScript(&progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return;
@@ -437,7 +347,7 @@ void NavDatabase::createInternal(const QString& codec)
       return;
   }
 
-  if(options->isResolveAirways())
+  if(options->isResolveAirways() && options->getSimulatorType() != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = progress.reportOther(tr("Creating airways"))))
       return;
@@ -503,81 +413,247 @@ void NavDatabase::createInternal(const QString& codec)
 
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
+  if(!dfdCompiler.isNull())
+    databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle());
+
   databaseMetadata.updateAll();
 
+  // ================================================================================================
   // Done here - now only some options statistics and reports are left
+
+  if(options->getFlags() & type::BASIC_VALIDATION)
+    basicValidation(&progress);
 
   if(options->isDatabaseReport())
   {
     // Do a report of problems rather than failing totally during loading
     if(!fsDataWriter.isNull())
       fsDataWriter->logResults();
-
-    QDebug info(QtInfoMsg);
-    atools::sql::SqlUtil util(db);
-
-    if((aborted = progress.reportOther(tr("Creating table statistics"))))
-      return;
-
-    qDebug() << "printTableStats";
-    info << endl;
-    util.printTableStats(info);
-
-    if((aborted = progress.reportOther(tr("Creating report on values"))))
-      return;
-
-    qDebug() << "createColumnReport";
-    info << endl;
-    util.createColumnReport(info);
-
-    if((aborted = progress.reportOther(tr("Creating report on duplicates"))))
-      return;
-
-    info << endl;
-    qDebug() << "reportDuplicates airport";
-    util.reportDuplicates(info, "airport", "airport_id", {"ident"});
-    info << endl;
-    qDebug() << "reportDuplicates vor";
-    util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates ndb";
-    util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates waypoint";
-    util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates ils";
-    util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates marker";
-    util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates helipad";
-    util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates parking";
-    util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates start";
-    util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates runway";
-    util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
-    info << endl;
-    qDebug() << "reportDuplicates bgl_file";
-    util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
-    info << endl;
-
-    if((aborted = progress.reportOther(tr("Creating report on coordinate duplicates"))))
-      return;
-
-    reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
+    createDatabaseReport(&progress);
   }
 
   // Send the final progress report
   progress.reportFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
+}
+
+bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompiler, const scenery::SceneryArea& area)
+{
+  progress->reportSceneryArea(&area);
+
+  dfdCompiler->writeFileAndSceneryMetadata();
+
+  dfdCompiler->attachDatabase();
+
+  dfdCompiler->initQueries();
+  dfdCompiler->compileMagDeclBgl();
+  dfdCompiler->readHeader();
+  dfdCompiler->writeAirports();
+  dfdCompiler->writeRunways();
+  dfdCompiler->writeNavaids();
+  dfdCompiler->writeAirways();
+  dfdCompiler->updateMagvar();
+  dfdCompiler->updateTacanChannel();
+  dfdCompiler->updateIlsGeometry();
+
+  db->commit();
+
+  // ngDataCompiler->detachDatabase();
+
+  return false;
+}
+
+bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCompiler *xpDataCompiler,
+                             const atools::fs::scenery::SceneryArea& area)
+{
+  if((aborted = progress->reportSceneryArea(&area)))
+    return true;
+
+  if((aborted = xpDataCompiler->writeBasepathScenery()))
+    return true;
+
+  if((aborted = xpDataCompiler->compileMagDeclBgl()))
+    return true;
+
+  if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
+  {
+    // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+    if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
+      return true;
+
+    // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+    if((aborted = xpDataCompiler->compileCustomGlobalApt()))
+      return true;
+
+    // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+    // Mandatory
+    if((aborted = xpDataCompiler->compileDefaultApt()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
+  {
+    // In resources or Custom Data - mandatory
+    if((aborted = xpDataCompiler->compileEarthFix()))
+      return true;
+
+    // Optional user data
+    if((aborted = xpDataCompiler->compileUserFix()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::VOR) ||
+     options->isIncludedNavDbObject(atools::fs::type::NDB) ||
+     options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
+     options->isIncludedNavDbObject(atools::fs::type::ILS))
+  {
+    // In resources or Custom Data - mandatory
+    if((aborted = xpDataCompiler->compileEarthNav()))
+      return true;
+
+    // Optional user data
+    if((aborted = xpDataCompiler->compileUserNav()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
+  {
+    // Airspaces
+    if((aborted = xpDataCompiler->compileAirspaces()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
+  {
+    // In resources or Custom Data - mandatory
+    if((aborted = xpDataCompiler->compileEarthAirway()))
+      return true;
+
+    if((aborted = runScript(progress, "fs/db/xplane/prepare_airway.sql", tr("Preparing Airways"))))
+      return true;
+
+    if((aborted = xpDataCompiler->postProcessEarthAirway()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
+  {
+    if((aborted = xpDataCompiler->compileCifp()))
+      return true;
+  }
+  db->commit();
+  return false;
+}
+
+bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
+{
+  fsDataWriter->readMagDeclBgl();
+
+  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+  {
+    if((area.isActive() || options->isReadInactive()) &&
+       options->isIncludedLocalPath(area.getLocalPath()))
+    {
+      if((aborted = progress->reportSceneryArea(&area)))
+        return true;
+
+      NavDatabaseErrors::SceneryErrors err;
+      if(errors != nullptr)
+        // Prepare structure for error collection
+        fsDataWriter->setSceneryErrors(&err);
+      else
+        fsDataWriter->setSceneryErrors(nullptr);
+
+      // Read all BGL files in the scenery area into classes of the bgl namespace and
+      // write the contents to the database
+      fsDataWriter->writeSceneryArea(area);
+
+      if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+      {
+        err.scenery = area;
+        errors->sceneryErrors.append(err);
+      }
+
+      if((aborted = fsDataWriter->isAborted()))
+        return true;
+    }
+  }
+  db->commit();
+  return false;
+}
+
+bool NavDatabase::basicValidation(ProgressHandler *progress)
+{
+  if((aborted = progress->reportOther(tr("Basic Validation"))))
+    return true;
+
+  return false;
+}
+
+bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
+{
+  QDebug info(QtInfoMsg);
+  atools::sql::SqlUtil util(db);
+
+  if((aborted = progress->reportOther(tr("Creating table statistics"))))
+    return true;
+
+  qDebug() << "printTableStats";
+  info << endl;
+  util.printTableStats(info);
+
+  if((aborted = progress->reportOther(tr("Creating report on values"))))
+    return true;
+
+  qDebug() << "createColumnReport";
+  info << endl;
+  util.createColumnReport(info);
+
+  if((aborted = progress->reportOther(tr("Creating report on duplicates"))))
+    return true;
+
+  info << endl;
+  qDebug() << "reportDuplicates airport";
+  util.reportDuplicates(info, "airport", "airport_id", {"ident"});
+  info << endl;
+  qDebug() << "reportDuplicates vor";
+  util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates ndb";
+  util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates waypoint";
+  util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates ils";
+  util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates marker";
+  util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates helipad";
+  util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates parking";
+  util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates start";
+  util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates runway";
+  util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
+  info << endl;
+  qDebug() << "reportDuplicates bgl_file";
+  util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
+  info << endl;
+
+  if((aborted = progress->reportOther(tr("Creating report on coordinate duplicates"))))
+    return true;
+
+  reportCoordinateViolations(info, util, {"airport", "vor", "ndb", "marker", "waypoint"});
+
+  return false;
 }
 
 bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile, const QString& message)

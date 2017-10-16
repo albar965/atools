@@ -1,0 +1,715 @@
+/*****************************************************************************
+* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#include "fs/dfd/dfdcompiler.h"
+
+#include "fs/common/metadatawriter.h"
+#include "fs/common/magdecreader.h"
+#include "settings/settings.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlutil.h"
+#include "fs/progresshandler.h"
+#include "fs/util/fsutil.h"
+#include "fs/util/tacanfrequencies.h"
+#include "sql/sqlscript.h"
+#include "fs/navdatabaseoptions.h"
+#include "geo/calculations.h"
+#include "atools.h"
+#include "fs/common/airportindex.h"
+
+#include <QApplication>
+#include <QDebug>
+#include <QFileInfo>
+
+using atools::fs::common::MagDecReader;
+using atools::fs::common::MetadataWriter;
+using atools::sql::SqlQuery;
+using atools::sql::SqlUtil;
+using atools::sql::SqlScript;
+using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecord;
+using atools::geo::Pos;
+using atools::geo::Rect;
+namespace utl = atools::fs::util;
+
+namespace atools {
+namespace fs {
+namespace ng {
+
+DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
+                         ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
+  : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
+{
+  metadataWriter = new atools::fs::common::MetadataWriter(db);
+  magDecReader = new atools::fs::common::MagDecReader();
+  airportIndex = new atools::fs::common::AirportIndex();
+}
+
+DfdCompiler::~DfdCompiler()
+{
+  close();
+}
+
+void DfdCompiler::writeAirports()
+{
+  progress->reportOther("Writing airports");
+
+  airportRectMap.clear();
+  longestRunwaySurfaceMap.clear();
+
+  // Fill default values
+  airportWriteQuery->bindValue(":fuel_flags", 0); // Not available
+  airportWriteQuery->bindValue(":has_avgas", 0); // Not available
+  airportWriteQuery->bindValue(":has_jetfuel", 0); // Not available
+  airportWriteQuery->bindValue(":has_tower_object", 0); // Not available
+  airportWriteQuery->bindValue(":is_closed", 0); // Not available
+  airportWriteQuery->bindValue(":is_addon", 0); // Not available
+  airportWriteQuery->bindValue(":num_boundary_fence", 0); // Not available
+  airportWriteQuery->bindValue(":num_com", 0); // TODO fill later
+  airportWriteQuery->bindValue(":num_parking_gate", 0); // Not available
+  airportWriteQuery->bindValue(":num_parking_ga_ramp", 0); // Not available
+  airportWriteQuery->bindValue(":num_parking_cargo", 0); // Not available
+  airportWriteQuery->bindValue(":num_parking_mil_cargo", 0); // Not available
+  airportWriteQuery->bindValue(":num_parking_mil_combat", 0); // Not available
+  airportWriteQuery->bindValue(":num_approach", 0); // TODO fill later
+  airportWriteQuery->bindValue(":num_runway_light", 0); // Not available
+  airportWriteQuery->bindValue(":num_runway_end_closed", 0); // Not available
+  airportWriteQuery->bindValue(":num_runway_end_vasi", 0); // Not available
+  airportWriteQuery->bindValue(":num_runway_end_als", 0); // Not available
+  airportWriteQuery->bindValue(":num_apron", 0); // Not available
+  airportWriteQuery->bindValue(":num_taxi_path", 0); // Not available
+  airportWriteQuery->bindValue(":num_helipad", 0); // Not available
+  airportWriteQuery->bindValue(":num_jetway", 0); // Not available
+  airportWriteQuery->bindValue(":num_starts", 0); // Not available
+  airportWriteQuery->bindValue(":rating", 1);
+
+  airportWriteQuery->bindValue(":num_runway_hard", 0); // Filled later
+  airportWriteQuery->bindValue(":num_runway_soft", 0); // Filled later
+  airportWriteQuery->bindValue(":num_runway_water", 0); // Filled later
+  airportWriteQuery->bindValue(":longest_runway_length", 0); // Filled later
+  airportWriteQuery->bindValue(":longest_runway_width", 0); // Filled later
+  airportWriteQuery->bindValue(":longest_runway_heading", 0); // Filled later
+  airportWriteQuery->bindValue(":num_runway_end_ils", 0); // Filled later
+  airportWriteQuery->bindValue(":num_runways", 0); // Filled later
+
+  airportQuery->exec();
+  while(airportQuery->next())
+  {
+    Pos pos(airportQuery->value("airport_ref_longitude").toFloat(),
+            airportQuery->value("airport_ref_latitude").toFloat(),
+            airportQuery->value("elevation").toFloat());
+
+    QString ident = airportQuery->value("airport_identifier").toString();
+
+    Rect airportRect(pos);
+    airportRect.inflate(Pos::POS_EPSILON_100M, Pos::POS_EPSILON_100M);
+    airportRectMap.insert(ident, airportRect);
+
+    longestRunwaySurfaceMap.insert(ident, airportQuery->value("longest_runway_surface_code").toString());
+
+    airportWriteQuery->bindValue(":airport_id", ++curAirportId);
+    airportIndex->addAirport(ident, curAirportId);
+
+    airportWriteQuery->bindValue(":file_id", FILE_ID);
+    airportWriteQuery->bindValue(":ident", ident);
+    airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->value("airport_name").toString()));
+    airportWriteQuery->bindValue(":is_military", utl::isNameMilitary(airportQuery->value("airport_name").toString()));
+
+    airportWriteQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());
+    airportWriteQuery->bindValue(":top_laty", airportRect.getTopLeft().getLatY());
+    airportWriteQuery->bindValue(":right_lonx", airportRect.getBottomRight().getLonX());
+    airportWriteQuery->bindValue(":bottom_laty", airportRect.getBottomRight().getLatY());
+
+    airportWriteQuery->bindValue(":mag_var", magDecReader->getMagVar(pos));
+    airportWriteQuery->bindValue(":altitude", pos.getAltitude());
+    airportWriteQuery->bindValue(":lonx", pos.getLonX());
+    airportWriteQuery->bindValue(":laty", pos.getLatY());
+    airportWriteQuery->exec();
+  }
+  db.commit();
+}
+
+void DfdCompiler::writeRunways()
+{
+  progress->reportOther("Writing runways");
+
+  runwayQuery->exec();
+
+  SqlRecordVector runways;
+  QString lastApt;
+  while(runwayQuery->next())
+  {
+    QString apt = runwayQuery->value("airport_identifier").toString();
+
+    if(!lastApt.isEmpty() && lastApt != apt)
+      // Airport ID has changed write collected runways
+      writeRunwaysForAirport(runways, lastApt);
+
+    runways.append(runwayQuery->record());
+    lastApt = apt;
+  }
+  writeRunwaysForAirport(runways, lastApt);
+  db.commit();
+}
+
+void DfdCompiler::updateMagvar()
+{
+  progress->reportOther("Updating magnetic declination");
+
+  atools::fs::common::MagDecReader *magdec = magDecReader;
+  SqlUtil::UpdateColFuncType func =
+    [magdec](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      to.bindValue(":mag_var", magdec->getMagVar(Pos(from.value("lonx").toFloat(),
+                                                     from.value("laty").toFloat())));
+      return true;
+    };
+
+  SqlUtil util(db);
+  util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
+  util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
+  db.commit();
+}
+
+void DfdCompiler::updateTacanChannel()
+{
+  progress->reportOther("Updating VORTAC and TACAN channels");
+
+  SqlUtil::UpdateColFuncType func =
+    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      QString type = from.value("type").toString();
+      if(type == "TC" || type.startsWith("VT"))
+      {
+        to.bindValue(":channel", atools::fs::util::tacanChannelForFrequency(from.value("frequency").toInt() / 10));
+        return true;
+      }
+      else
+        return false;
+    };
+  SqlUtil(db).updateColumnInTable("vor", "vor_id", {"frequency", "type"}, {"channel"}, func);
+  db.commit();
+}
+
+void DfdCompiler::updateIlsGeometry()
+{
+  progress->reportOther("Updating ILS geometry");
+
+  SqlUtil::UpdateColFuncType func =
+    [ = ](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      // Position of the pointy end
+      Pos pos(from.value("lonx").toFloat(), from.value("laty").toFloat());
+
+      float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
+      float width = from.value("loc_width").toFloat();
+      float heading = atools::geo::opposedCourseDeg(from.value("loc_heading").toFloat());
+
+      // Corner endpoints
+      Pos p1 = pos.endpoint(length, heading - width / 2.f).normalize();
+      Pos p2 = pos.endpoint(length, heading + width / 2.f).normalize();
+
+      // Calculated the center point between corners - move it a bit towareds the pointy end
+      float featherWidth = p1.distanceMeterTo(p2);
+      Pos pmid = pos.endpoint(length - featherWidth / 2, heading).normalize();
+
+      to.bindValue(":end1_lonx", p1.getLonX());
+      to.bindValue(":end1_laty", p1.getLatY());
+      to.bindValue(":end_mid_lonx", pmid.getLonX());
+      to.bindValue(":end_mid_laty", pmid.getLatY());
+      to.bindValue(":end2_lonx", p2.getLonX());
+      to.bindValue(":end2_laty", p2.getLatY());
+      return true;
+    };
+  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "loc_width"},
+                                  {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
+                                  func);
+  db.commit();
+}
+
+void DfdCompiler::writeNavaids()
+{
+  progress->reportOther("Writing navaids");
+
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  // Write VOR and NDB
+  script.executeScript(":/atools/resources/sql/fs/db/airac/populate_navaids.sql");
+  db.commit();
+}
+
+void DfdCompiler::writeAirways()
+{
+  progress->reportOther("Writing airways");
+
+  QString query(
+    "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
+    "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
+    "  w.lonx, w.laty "
+    "from src.tbl_airways_pr a "
+    "join waypoint w on "
+    "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
+    "  a.waypoint_latitude = w.laty "
+    "order by route_identifier, seqno");
+  SqlQuery airways(query, db);
+
+  SqlQuery insert(db);
+  insert.prepare(SqlUtil(db).buildInsertStatement("airway", QString(), {"airway_id"}));
+
+  SqlRecord lastRec;
+  QString lastName;
+  bool lastEndOfRoute = true;
+  airways.exec();
+  int sequenceNumber = 1, fragmentNumber = 1;
+  while(airways.next())
+  {
+    QString name = airways.valueStr("route_identifier");
+    QString code = airways.valueStr("waypoint_description_code");
+    bool nameChange = !lastName.isEmpty() && name != lastName;
+
+    if(!lastName.isEmpty())
+    {
+      if(!nameChange && lastEndOfRoute)
+      {
+        fragmentNumber++;
+        sequenceNumber = 1;
+      }
+
+      if(!lastEndOfRoute && !nameChange)
+      {
+        Pos fromPos(lastRec.valueFloat("lonx"), lastRec.valueFloat("laty"));
+        Pos toPos(airways.valueFloat("lonx"), airways.valueFloat("laty"));
+        Rect rect(fromPos);
+        rect.extend(toPos);
+
+        insert.bindValue(":airway_name", lastRec.valueStr("route_identifier"));
+
+        // -- V = victor, J = jet, B = both
+        // B = All Altitudes, H = High Level Airways, L = Low Level Airways
+        QString awType = lastRec.valueStr("flightlevel");
+        if(awType == "H")
+          insert.bindValue(":airway_type", "J");
+        else if(awType == "L")
+          insert.bindValue(":airway_type", "V");
+        else
+          insert.bindValue(":airway_type", "B");
+
+        insert.bindValue(":airway_fragment_no", fragmentNumber);
+        insert.bindValue(":sequence_no", sequenceNumber++);
+        insert.bindValue(":from_waypoint_id", lastRec.valueInt("waypoint_id"));
+        insert.bindValue(":to_waypoint_id", airways.valueInt("waypoint_id"));
+
+        // -- N = none, B = backward, F = forward
+        // F =  One way in direction route is coded (Forward),
+        // B = One way in opposite direction route is coded (backwards)
+        // blank = // no restrictions on direction
+        QString dir = lastRec.valueStr("direction_restriction");
+        if(dir.isEmpty() || dir == " ")
+          dir = "N";
+
+        insert.bindValue(":direction", dir);
+
+        insert.bindValue(":minimum_altitude", lastRec.valueInt("minimum_altitude1"));
+        insert.bindValue(":maximum_altitude", lastRec.valueInt("maximum_altitude"));
+
+        insert.bindValue(":left_lonx", rect.getTopLeft().getLonX());
+        insert.bindValue(":top_laty", rect.getTopLeft().getLatY());
+        insert.bindValue(":right_lonx", rect.getBottomRight().getLonX());
+        insert.bindValue(":bottom_laty", rect.getBottomRight().getLatY());
+
+        insert.bindValue(":from_lonx", fromPos.getLonX());
+        insert.bindValue(":from_laty", fromPos.getLatY());
+        insert.bindValue(":to_lonx", toPos.getLonX());
+        insert.bindValue(":to_laty", toPos.getLatY());
+        insert.exec();
+      }
+    }
+
+    lastRec = airways.record();
+    lastName = name;
+    lastEndOfRoute = code.size() > 1 && code.at(1) == "E";
+
+    if(nameChange)
+    {
+      fragmentNumber = 1;
+      sequenceNumber = 1;
+    }
+  }
+  db.commit();
+}
+
+void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString& apt)
+{
+  QVector<std::pair<SqlRecord, SqlRecord> > runwaypairs;
+
+  // area_code
+  // icao_code
+  // airport_identifier
+  // runway_identifier
+  // runway_latitude
+  // runway_longitude
+  // runway_gradient
+  // runway_magnetic_bearing
+  // runway_true_bearing
+  // landing_threshold_elevation
+  // displaced_threshold_distance
+  // threshold_crossing_height
+  // runway_length
+  // runway_width
+  // llz_identifier
+  // llz_mls_gls_category
+
+  pairRunways(runwaypairs, runways);
+  int numRunways = 0, numRunwayIls = 0, longestRunwayLength = 0, longestRunwayWidth = 0;
+  float longestRunwayHeading = 0.f;
+  Rect airportRect = airportRectMap.value(apt);
+
+  for(const std::pair<SqlRecord, SqlRecord>& runwaypair : runwaypairs)
+  {
+    SqlRecord p = runwaypair.first;
+    SqlRecord s = runwaypair.second;
+
+    float heading = p.valueFloat("runway_true_bearing");
+    float opposedHeading = s.valueFloat("runway_true_bearing");
+    int length = p.valueInt("runway_length");
+    int width = p.valueInt("runway_width");
+    int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
+    int alt = (p.valueInt("landing_threshold_elevation") + s.valueInt("landing_threshold_elevation")) / 2;
+    float lonX = (p.valueFloat("runway_longitude") + s.valueFloat("runway_longitude")) / 2.f;
+    float latY = (p.valueFloat("runway_latitude") + s.valueFloat("runway_latitude")) / 2.f;
+    Pos pos(lonX, latY);
+
+    // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
+    // << secondaryEndId << s.valueStr("runway_identifier");
+
+    if(p.valueStr("llz_identifier").isEmpty())
+      numRunwayIls++;
+
+    if(length > longestRunwayLength)
+    {
+      longestRunwayLength = length;
+      longestRunwayWidth = width;
+      longestRunwayHeading = heading;
+    }
+    numRunways++;
+
+    float lengthMeter = atools::geo::feetToMeter(static_cast<float>(length));
+    Pos pPos = pos.endpoint(lengthMeter / 2.f, opposedHeading).normalize();
+    Pos sPos = pos.endpoint(lengthMeter / 2.f, heading).normalize();
+    airportRect.extend(pPos);
+    airportRect.extend(sPos);
+
+    bool pClosed = p.valueBool("is_closed", false);
+    bool sClosed = s.valueBool("is_closed", false);
+
+    runwayWriteQuery->bindValue(":runway_id", ++curRunwayId);
+    runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportId(apt));
+    runwayWriteQuery->bindValue(":primary_end_id", primaryEndId);
+    runwayWriteQuery->bindValue(":secondary_end_id", secondaryEndId);
+    runwayWriteQuery->bindValue(":length", length);
+    runwayWriteQuery->bindValue(":width", width);
+    runwayWriteQuery->bindValue(":heading", heading);
+    runwayWriteQuery->bindValue(":pattern_altitude", 0);
+    runwayWriteQuery->bindValue(":marking_flags", 0);
+    runwayWriteQuery->bindValue(":has_center_red", 0);
+    runwayWriteQuery->bindValue(":primary_lonx", pPos.getLonX());
+    runwayWriteQuery->bindValue(":primary_laty", pPos.getLatY());
+    runwayWriteQuery->bindValue(":secondary_lonx", sPos.getLonX());
+    runwayWriteQuery->bindValue(":secondary_laty", sPos.getLatY());
+    runwayWriteQuery->bindValue(":altitude", alt);
+    runwayWriteQuery->bindValue(":lonx", lonX);
+    runwayWriteQuery->bindValue(":laty", latY);
+
+    runwayEndWriteQuery->bindValue(":runway_end_id", primaryEndId);
+    runwayEndWriteQuery->bindValue(":name", p.valueStr("runway_identifier").mid(2));
+    runwayEndWriteQuery->bindValue(":end_type", "P");
+    runwayEndWriteQuery->bindValue(":offset_threshold", p.valueInt("displaced_threshold_distance"));
+    runwayEndWriteQuery->bindValue(":blast_pad", 0);
+    runwayEndWriteQuery->bindValue(":overrun", 0);
+    runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
+    runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
+    runwayEndWriteQuery->bindValue(":is_takeoff", !pClosed);
+    runwayEndWriteQuery->bindValue(":is_landing", !pClosed);
+    runwayEndWriteQuery->bindValue(":is_pattern", 0);
+    runwayEndWriteQuery->bindValue(":has_end_lights", 0);
+    runwayEndWriteQuery->bindValue(":has_reils", 0);
+    runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
+    runwayEndWriteQuery->bindValue(":num_strobes", 0);
+    runwayEndWriteQuery->bindValue(":ils_ident", p.valueStr("llz_identifier"));
+    runwayEndWriteQuery->bindValue(":heading", heading);
+    runwayEndWriteQuery->bindValue(":lonx", pPos.getLonX());
+    runwayEndWriteQuery->bindValue(":laty", pPos.getLatY());
+    runwayEndWriteQuery->exec();
+
+    runwayEndWriteQuery->bindValue(":runway_end_id", secondaryEndId);
+    runwayEndWriteQuery->bindValue(":name", s.valueStr("runway_identifier").mid(2));
+    runwayEndWriteQuery->bindValue(":end_type", "S");
+    runwayEndWriteQuery->bindValue(":offset_threshold", s.valueInt("displaced_threshold_distance"));
+    runwayEndWriteQuery->bindValue(":blast_pad", 0);
+    runwayEndWriteQuery->bindValue(":overrun", 0);
+    runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
+    runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
+    runwayEndWriteQuery->bindValue(":is_takeoff", !sClosed);
+    runwayEndWriteQuery->bindValue(":is_landing", !sClosed);
+    runwayEndWriteQuery->bindValue(":is_pattern", 0);
+    runwayEndWriteQuery->bindValue(":has_end_lights", 0);
+    runwayEndWriteQuery->bindValue(":has_reils", 0);
+    runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
+    runwayEndWriteQuery->bindValue(":num_strobes", 0);
+    runwayEndWriteQuery->bindValue(":ils_ident", s.valueStr("llz_identifier"));
+    runwayEndWriteQuery->bindValue(":heading", opposedHeading);
+    runwayEndWriteQuery->bindValue(":lonx", sPos.getLonX());
+    runwayEndWriteQuery->bindValue(":laty", sPos.getLatY());
+    runwayEndWriteQuery->exec();
+
+    runwayWriteQuery->exec();
+  }
+
+  runways.clear();
+
+  const QString& surface = longestRunwaySurfaceMap.value(apt);
+  int numRunwayHard = 0, numRunwaySoft = 0, numRunwayWater = 0;
+  if(surface == "H")
+  {
+    numRunwayHard = numRunways;
+  }
+  else if(surface == "S")
+  {
+    numRunwayHard = numRunways - 1;
+    numRunwaySoft = 1;
+  }
+  else if(surface == "W")
+  {
+    numRunwayHard = numRunways - 1;
+    numRunwayWater = 1;
+  }
+
+  airportUpdateQuery->bindValue(":aptid", airportIndex->getAirportId(apt));
+  airportUpdateQuery->bindValue(":num_runway_hard", numRunwayHard);
+  airportUpdateQuery->bindValue(":num_runway_soft", numRunwaySoft);
+  airportUpdateQuery->bindValue(":num_runway_water", numRunwayWater);
+  airportUpdateQuery->bindValue(":longest_runway_length", longestRunwayLength);
+  airportUpdateQuery->bindValue(":longest_runway_width", longestRunwayWidth);
+  airportUpdateQuery->bindValue(":longest_runway_heading", longestRunwayHeading);
+  airportUpdateQuery->bindValue(":num_runway_end_ils", numRunwayIls);
+  airportUpdateQuery->bindValue(":num_runways", numRunways);
+  airportUpdateQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());
+  airportUpdateQuery->bindValue(":top_laty", airportRect.getTopLeft().getLatY());
+  airportUpdateQuery->bindValue(":right_lonx", airportRect.getBottomRight().getLonX());
+  airportUpdateQuery->bindValue(":bottom_laty", airportRect.getBottomRight().getLatY());
+  airportUpdateQuery->exec();
+}
+
+void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs,
+                              SqlRecordVector& runways)
+{
+  QSet<QString> found;
+  for(const SqlRecord& rw : runways)
+  {
+    float heading = rw.valueFloat("runway_true_bearing");
+    float opposedHeading = atools::geo::opposedCourseDeg(heading);
+    QString rwident = rw.valueStr("runway_identifier");
+    if(found.contains(rwident))
+      continue;
+
+    // RW11R -> 11R
+    QString rname = rwident.mid(2);
+
+    // 11
+    int rnum = rname.mid(0, 2).toInt();
+
+    // R
+    QString desig = rname.size() > 2 ? rname.at(2) : QString();
+
+    QString opposedDesig = desig;
+    if(opposedDesig == "R")
+      opposedDesig = "L";
+    else if(opposedDesig == "L")
+      opposedDesig = "R";
+
+    int opposedRnum = rnum + 18;
+    if(opposedRnum > 36)
+      opposedRnum -= 36;
+
+    // RW29L
+    QString opposedRname = "RW" + (opposedRnum < 10 ? "0" : QString()) + QString::number(opposedRnum) + opposedDesig;
+
+    bool foundEnd = false;
+    for(const SqlRecord& orw : runways)
+    {
+      if(orw.valueStr("runway_identifier") == opposedRname)
+      {
+        found.insert(opposedRname);
+        found.insert(rwident);
+
+        runwaypairs.append(std::make_pair(rw, orw));
+        foundEnd = true;
+        break;
+      }
+    }
+
+    if(!foundEnd)
+    {
+      SqlRecord orec(rw);
+      orec.setValue("runway_identifier", opposedRname);
+      orec.setValue("displaced_threshold_distance", 0);
+      orec.setValue("llz_identifier", QVariant(QVariant::String));
+      orec.setValue("runway_true_bearing", opposedHeading);
+
+      orec.appendField("is_closed", QVariant::Bool);
+      orec.setValue("is_closed", true);
+
+      runwaypairs.append(std::make_pair(rw, orec));
+    }
+  }
+}
+
+void DfdCompiler::close()
+{
+  delete magDecReader;
+  magDecReader = nullptr;
+
+  delete metadataWriter;
+  metadataWriter = nullptr;
+
+  deInitQueries();
+
+  delete airportIndex;
+  airportIndex = nullptr;
+}
+
+void DfdCompiler::readHeader()
+{
+  metadataQuery->exec();
+  if(metadataQuery->next())
+    airacCycle = metadataQuery->value("current_airac").toString();
+}
+
+void DfdCompiler::compileMagDeclBgl()
+{
+  // Look first in config dir and then in local dir
+  QString file =
+    atools::settings::Settings::instance().getOverloadedPath(atools::buildPath({QApplication::applicationDirPath(),
+                                                                                "magdec", "magdec.bgl"}));
+
+  qInfo() << "Reading" << file;
+
+  magDecReader->readFromBgl(file);
+  magDecReader->writeToTable(db);
+  db.commit();
+}
+
+void DfdCompiler::writeFileAndSceneryMetadata()
+{
+  metadataWriter->writeSceneryArea(QString(), "Navigraph", SCENERY_ID);
+  metadataWriter->writeFile(QString(), QString(), SCENERY_ID, FILE_ID);
+  db.commit();
+}
+
+void DfdCompiler::initQueries()
+{
+  deInitQueries();
+
+  if(metadataWriter != nullptr)
+    metadataWriter->initQueries();
+
+  airportQuery = new SqlQuery(db);
+  airportQuery->prepare("select * from src.tbl_airports_pr order by airport_identifier");
+
+  airportWriteQuery = new SqlQuery(db);
+  airportWriteQuery->prepare(
+    SqlUtil(db).buildInsertStatement("airport", QString(), {
+          "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency",
+          "city", "state", "country",
+          "largest_parking_ramp", "largest_parking_gate",
+          "scenery_local_path", "bgl_filename",
+          "longest_runway_surface",
+          "tower_altitude", "tower_lonx", "tower_laty"
+        }, true /* named bindings */));
+
+  runwayQuery = new SqlQuery(db);
+  runwayQuery->prepare("select * from src.tbl_runways_pr order by icao_code, airport_identifier, runway_identifier");
+
+  runwayWriteQuery = new SqlQuery(db);
+  runwayWriteQuery->prepare(
+    SqlUtil(db).buildInsertStatement("runway", QString(),
+                                     {"surface", "shoulder", "edge_light", "center_light"}));
+
+  runwayEndWriteQuery = new SqlQuery(db);
+  runwayEndWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway_end", QString(), {
+          "left_vasi_type", "left_vasi_pitch", "right_vasi_type", "right_vasi_pitch", "app_light_system_type"
+        }));
+
+  airportUpdateQuery = new SqlQuery(db);
+  airportUpdateQuery->prepare("update airport set "
+                              "num_runway_hard = :num_runway_hard, "
+                              "num_runway_soft = :num_runway_soft, "
+                              "num_runway_water = :num_runway_water, "
+                              "longest_runway_length = :longest_runway_length, "
+                              "longest_runway_width = :longest_runway_width, "
+                              "longest_runway_heading = :longest_runway_heading, "
+                              "num_runway_end_ils = :num_runway_end_ils, "
+                              "num_runways = :num_runways, "
+                              "left_lonx = :left_lonx, "
+                              "top_laty = :top_laty, "
+                              "right_lonx = :right_lonx, "
+                              "bottom_laty = :bottom_laty where airport_id = :aptid");
+
+  metadataQuery = new SqlQuery(db);
+  metadataQuery->prepare(SqlUtil(db).buildSelectStatement("src.tbl_header"));
+}
+
+void DfdCompiler::deInitQueries()
+{
+  if(metadataWriter != nullptr)
+    metadataWriter->deInitQueries();
+
+  delete airportQuery;
+  airportQuery = nullptr;
+
+  delete runwayQuery;
+  runwayQuery = nullptr;
+
+  delete runwayWriteQuery;
+  runwayWriteQuery = nullptr;
+
+  delete runwayEndWriteQuery;
+  runwayEndWriteQuery = nullptr;
+
+  delete airportWriteQuery;
+  airportWriteQuery = nullptr;
+
+  delete airportUpdateQuery;
+  airportUpdateQuery = nullptr;
+
+  delete metadataQuery;
+  metadataQuery = nullptr;
+}
+
+void DfdCompiler::attachDatabase()
+{
+  db.attachDatabase(options.getSourceDatabase(), "src");
+}
+
+void DfdCompiler::detachDatabase()
+{
+  db.detachDatabase("src");
+}
+
+} // namespace ng
+} // namespace fs
+} // namespace atools

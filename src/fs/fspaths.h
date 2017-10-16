@@ -24,8 +24,6 @@
 namespace atools {
 namespace fs {
 
-#define NUM_SIMULATOR_TYPES 8
-
 /*
  * Allows to find Flight Simulator related paths and check for installed simulators.
  */
@@ -51,10 +49,9 @@ public:
     /* Platform: Prepar3d Version 3 */
     P3D_V3 = 3,
 
-    /* External data like Airac cycles */
-    EXTERNAL = 4,
-
-    EXTERNAL2 = 5,
+    /* External data - disabled - keep numbering for compatibility */
+    // EXTERNAL = 4,
+    // EXTERNAL2 = 5,
 
     /* Platform: Prepar3d Version 4 */
     P3D_V4 = 6,
@@ -62,7 +59,8 @@ public:
     /* X-Plane 11 */
     XPLANE11 = 7,
 
-    MAX_VALUE = 8,
+    /* Not a simulator but a database */
+    NAVIGRAPH = 8,
 
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
@@ -94,7 +92,7 @@ public:
   static atools::fs::FsPaths::SimulatorType stringToType(const QString& typeStr);
 
   /* Array of all four valid types */
-  static const atools::fs::FsPaths::SimulatorType ALL_SIMULATOR_TYPES[NUM_SIMULATOR_TYPES];
+  static const QVector<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
 
   /* Print paths for all simulators to the info log channel */
   static void logAllPaths();

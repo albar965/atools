@@ -87,8 +87,8 @@ create table airport
                                              -- taxi paths, parking, aprons, tower object.
                                              -- An additional point is give for add-on airports
 
-  scenery_local_path varchar(250) collate nocase not null, -- Path of the BGL relative to the FS base directory
-  bgl_filename varchar(300) collate nocase not null,       -- BGL filename
+  scenery_local_path varchar(250) collate nocase, -- Path of the BGL relative to the FS base directory
+  bgl_filename varchar(300) collate nocase,       -- BGL filename
 
   left_lonx double not null,                    -- Bounding rectangle of the airport
   top_laty double not null,                     -- "

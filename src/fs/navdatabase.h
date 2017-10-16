@@ -38,6 +38,18 @@ namespace scenery {
 class SceneryCfg;
 }
 
+namespace db {
+class DataWriter;
+}
+
+namespace xp {
+class XpDataCompiler;
+}
+
+namespace ng {
+class DfdCompiler;
+}
+
 class ProgressHandler;
 
 /*
@@ -100,6 +112,17 @@ private:
   void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
   void createInternal(const QString& codec);
   void readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg);
+
+  bool loadFsxP3d(atools::fs::ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter,
+                  const scenery::SceneryCfg& cfg);
+  bool loadXplane(atools::fs::ProgressHandler *progress, atools::fs::xp::XpDataCompiler *xpDataCompiler,
+                  const atools::fs::scenery::SceneryArea& area);
+  bool loadDfd(atools::fs::ProgressHandler *progress, atools::fs::ng::DfdCompiler *dfdCompiler,
+                     const atools::fs::scenery::SceneryArea& area);
+
+  bool createDatabaseReport(ProgressHandler *progress);
+  bool basicValidation(ProgressHandler *progress);
+
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
 
   atools::sql::SqlDatabase *db;

@@ -54,12 +54,8 @@ void DatabaseMeta::init()
       majorVersion = rec.valueInt("db_version_major");
       minorVersion = rec.valueInt("db_version_minor");
       lastLoadTime = rec.value("last_load_timestamp").toDateTime();
-
-      if(rec.contains("has_sid_star"))
-        sidStar = rec.valueBool("has_sid_star");
-
-      if(rec.contains("airac_cycle"))
-        airacCycle = rec.valueStr("airac_cycle");
+      sidStar = rec.valueBool("has_sid_star", false);
+      airacCycle = rec.valueStr("airac_cycle", QString());
       valid = true;
     }
     query.finish();

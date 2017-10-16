@@ -31,6 +31,7 @@ create table waypoint
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
+                                      -- N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
   num_victor_airway integer not null, -- Number of victor (low altitude) airways crossing this waypoint
   num_jet_airway integer not null,    -- Number of jet (high altitude) airways crossing this waypoint
   mag_var double not null,            -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -58,6 +59,8 @@ create table vor
   region varchar(2),            -- ICAO two letter region identifier
   airport_id integer,           -- Reference to airport if applicable
   type varchar(15),             -- See enum atools::fs::bgl::nav::IlsVorType
+                                --  H = high VOR, L = low VOR, T = terminal VOR,
+                                -- TC = TACAN, VTH = high VORTAC, VTL = low VORTAC, VTT = terminal VORTAC
   frequency integer,            -- Frequency - MHz * 1000
   channel varchar(5),           -- TACAN channel
   range integer not null,       -- Navaid radio range in NM
@@ -91,9 +94,9 @@ create table ndb
   airport_id integer,         -- Reference to airport if applicable
   type varchar(15),           -- See enum atools::fs::bgl::nav::NdbType
   frequency integer not null, -- Frequency - kHz * 100
-  range integer not null,     -- Navaid radio range in NM
+  range integer,              -- Navaid radio range in NM
   mag_var double  not null,   -- Magnetic variance in degree < 0 for West and > 0 for East
-  altitude integer not null,  -- Feet
+  altitude integer,           -- Feet
   lonx double not null,
   laty double not null,
 foreign key(file_id) references bgl_file(bgl_file_id),
@@ -233,7 +236,7 @@ create table airway
 (
   airway_id integer primary key,
   airway_name varchar(5) not null,     -- Airway name
-  airway_type varchar(15) not null,    -- see enum atools::fs::bgl::nav::AirwayType
+  airway_type varchar(15) not null,    -- V = victor, J = jet, B = both
   airway_fragment_no integer not null, -- Designates a not connected fragment with the same name
   sequence_no integer not null,        -- Segment number
   from_waypoint_id integer not null,
@@ -283,8 +286,8 @@ create table nav_search
   channel varchar(10),                 --  TACAN channel of TACAN or VORTAC
   waypoint_num_victor_airway integer, -- Number of victor airways attached to this waypoint
   waypoint_num_jet_airway integer,    -- Number of jet airways attached to this waypoint
-  scenery_local_path varchar(250) collate nocase not null,  -- Path relative to FS base directory
-  bgl_filename varchar(300) collate nocase not null,        -- Filename
+  scenery_local_path varchar(250) collate nocase,  -- Path relative to FS base directory
+  bgl_filename varchar(300) collate nocase,        -- Filename
   mag_var double not null,            -- Magnetic variance in degree < 0 for West and > 0 for East
   altitude integer,                   -- Feet
   lonx double not null,

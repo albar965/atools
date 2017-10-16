@@ -45,7 +45,7 @@ create table scenery_area
   layer integer not null,              -- Layer number
   title varchar(250) not null,         -- Area title as shown in the library in FS
   remote_path varchar(250),            -- Unused
-  local_path varchar(250) not null,    -- Scenery path relative to FS base directory or an absolute path
+  local_path varchar(250),    -- Scenery path relative to FS base directory or an absolute path
   active integer not null,             -- Boolean - 1 if active
   required integer not null,           -- Boolean - 1 if this entry cannot be deleted
   exclude varchar(50)
@@ -63,8 +63,8 @@ create table bgl_file
   scenery_area_id integer not null,
   bgl_create_time integer not null,        -- Creation time that was stored in the BGL. Seconds since Epoch.
   file_modification_time integer not null, -- Modification time of the file. Seconds since Epoch.
-  filepath varchar(1000) not null,         -- Absolute filename including full path
-  filename varchar(250) not null,          -- Filename only - redundant and used for search functionality
+  filepath varchar(1000),         -- Absolute filename including full path
+  filename varchar(250),          -- Filename only - redundant and used for search functionality
   size integer not null,                   -- File size in bytes
   comment varchar(1000),                   -- Currently used for the header in the X-Plane files
 foreign key(scenery_area_id) references scenery_area(scenery_area_id)
