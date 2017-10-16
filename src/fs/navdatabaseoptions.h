@@ -23,6 +23,7 @@
 #include <functional>
 
 #include <QSet>
+#include <QFlags>
 #include <QRegExp>
 
 class QSettings;
@@ -30,6 +31,8 @@ class QStringList;
 
 namespace atools {
 namespace fs {
+
+class NavDatabaseProgress;
 
 namespace type {
 
@@ -65,9 +68,70 @@ enum NavDbObjectType
 QString navDbObjectTypeToString(atools::fs::type::NavDbObjectType type);
 atools::fs::type::NavDbObjectType stringToNavDbObjectType(const QString& typeStr);
 
-}
+enum OptionFlag
+{
+  NO_OPTION_FLAG = 0,
+  /*
+   * Set verbose logging. This is only useful with small datasets. Default is false.
+   */
+  VERBOSE = 1 << 0,
 
-class NavDatabaseProgress;
+  /*
+   * Set to true to execute airport deletion for add-on airports. Default is true.
+   * Setting to false will result in duplicate airports in the database.
+   */
+  DELETES = 1 << 1,
+
+  /*
+   * Set to true to delete duplicates. Default is true.
+   */
+  DEDUPLICATE = 1 << 2,
+
+  /*
+   * true: Filter out dummy runways that were created for ATC and traffic. Default is true.
+   */
+  FILTER_RUNWAYS = 1 << 3,
+
+  /*
+   * Set to true to write incomplete objects like an ILS without runway. Default is true.
+   */
+  INCOMPLETE = 1 << 4,
+
+  /*
+   * True: Commit after each database action. Default is false.
+   * This slows down loading considerably. Only for debugging.
+   */
+  AUTOCOMMIT = 1 << 5,
+
+  /*
+   * Fill the airway table and connect all waypoints of a route. Default is true.
+   */
+  RESOLVE_AIRWAYS = 1 << 6,
+
+  /*
+   * If true create all route_edge_* and route_node_* tables that are needed for flight plan creation
+   */
+  CREATE_ROUTE_TABLES = 1 << 7,
+
+  /*
+   * True: create a final report on database content. Default is false.
+   */
+  DATABASE_REPORT = 1 << 8,
+
+  /* Reads all inactive scenery regions if set to true */
+  READ_INACTIVE = 1 << 9,
+
+  /* Reads all inactive scenery regions if set to true */
+  READ_ADDON_XML = 1 << 10,
+
+  /* Does a very basic validation and checks if most important tables are filled */
+  BASIC_VALIDATION = 1 << 11
+};
+
+Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags);
+
+}
 
 /*
  * Configuration options for NavDatabase reader class. Can be loaded from a settings file (.ini format)
@@ -103,11 +167,19 @@ public:
   }
 
   /*
+   * Set source database to copy from.
+   */
+  void setSourceDatabase(const QString& value)
+  {
+    sourceDatabase = value;
+  }
+
+  /*
    * Set verbose logging. This is only useful with small datasets. Default is false.
    */
   void setVerbose(bool value)
   {
-    verbose = value;
+    flags.setFlag(type::VERBOSE, value);
   }
 
   /*
@@ -116,7 +188,7 @@ public:
    */
   void setDeletes(bool value)
   {
-    deletes = value;
+    flags.setFlag(type::DELETES, value);
   }
 
   /*
@@ -124,7 +196,7 @@ public:
    */
   void setDeduplicate(bool value)
   {
-    deduplicate = value;
+    flags.setFlag(type::DEDUPLICATE, value);
   }
 
   /*
@@ -132,7 +204,7 @@ public:
    */
   void setDatabaseReport(bool value)
   {
-    databaseReport = value;
+    flags.setFlag(type::DATABASE_REPORT, value);
   }
 
   /*
@@ -140,7 +212,7 @@ public:
    */
   void setFilterOutDummyRunways(bool value)
   {
-    filterRunways = value;
+    flags.setFlag(type::FILTER_RUNWAYS, value);
   }
 
   /*
@@ -148,7 +220,7 @@ public:
    */
   void setWriteIncompleteObjects(bool value)
   {
-    incomplete = value;
+    flags.setFlag(type::INCOMPLETE, value);
   }
 
   /*
@@ -157,7 +229,7 @@ public:
    */
   void setAutocommit(bool value)
   {
-    autocommit = value;
+    flags.setFlag(type::AUTOCOMMIT, value);
   }
 
   /*
@@ -165,7 +237,7 @@ public:
    */
   void setResolveAirways(bool value)
   {
-    resolveAirways = value;
+    flags.setFlag(type::RESOLVE_AIRWAYS, value);
   }
 
   /*
@@ -173,19 +245,19 @@ public:
    */
   void setCreateRouteTables(bool value)
   {
-    createRouteTables = value;
+    flags.setFlag(type::CREATE_ROUTE_TABLES, value);
   }
 
   /* Reads all inactive scenery regions if set to true */
   void setReadInactive(bool value)
   {
-    readInactive = value;
+    flags.setFlag(type::READ_INACTIVE, value);
   }
 
   /* Reads all inactive scenery regions if set to true */
   void setReadAddOnXml(bool value)
   {
-    readAddOnXml = value;
+    flags.setFlag(type::READ_ADDON_XML, value);
   }
 
   typedef std::function<bool (const atools::fs::NavDatabaseProgress&)> ProgressCallbackType;
@@ -211,19 +283,24 @@ public:
     return basepath;
   }
 
+  const QString& getSourceDatabase() const
+  {
+    return sourceDatabase;
+  }
+
   bool isDeletes() const
   {
-    return deletes;
+    return flags & type::DELETES;
   }
 
   bool isDeduplicate() const
   {
-    return deduplicate;
+    return flags & type::DEDUPLICATE;
   }
 
   bool isFilterRunways() const
   {
-    return filterRunways;
+    return flags & type::FILTER_RUNWAYS;
   }
 
   const QString& getSceneryFile() const
@@ -233,42 +310,42 @@ public:
 
   bool isVerbose() const
   {
-    return verbose;
+    return flags & type::VERBOSE;
   }
 
   bool isAutocommit() const
   {
-    return autocommit;
+    return flags & type::AUTOCOMMIT;
   }
 
   bool isIncomplete() const
   {
-    return incomplete;
+    return flags & type::INCOMPLETE;
   }
 
   bool isDatabaseReport() const
   {
-    return databaseReport;
+    return flags & type::DATABASE_REPORT;
   }
 
   bool isResolveAirways() const
   {
-    return resolveAirways;
+    return flags & type::RESOLVE_AIRWAYS;
   }
 
   bool isCreateRouteTables() const
   {
-    return createRouteTables;
+    return flags & type::CREATE_ROUTE_TABLES;
   }
 
   bool isReadInactive() const
   {
-    return readInactive;
+    return flags & type::READ_INACTIVE;
   }
 
   bool isReadAddOnXml() const
   {
-    return readAddOnXml;
+    return flags & type::READ_ADDON_XML;
   }
 
   bool isIncludedFilename(const QString& filename) const;
@@ -286,6 +363,19 @@ public:
   atools::fs::FsPaths::SimulatorType getSimulatorType() const
   {
     return simulatorType;
+  }
+
+  const atools::fs::type::OptionFlags& getFlags() const
+  {
+    return flags;
+  }
+
+  void setFlag(const atools::fs::type::OptionFlags& value, bool on = true)
+  {
+    if(on)
+      flags |= value;
+    else
+      flags &= ~value;
   }
 
 private:
@@ -312,10 +402,9 @@ private:
   QString fromNativeSeparator(const QString& path) const;
   QStringList createFilterList(const QStringList& pathList);
 
-  QString sceneryFile, basepath;
-  bool verbose = false, deletes = true, deduplicate = true, filterRunways = true, incomplete = true,
-       autocommit = false, resolveAirways = true, createRouteTables = true, databaseReport = false,
-       readInactive = false, readAddOnXml = true;
+  QString sceneryFile, basepath, sourceDatabase;
+
+  atools::fs::type::OptionFlags flags;
 
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,

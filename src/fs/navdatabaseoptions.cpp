@@ -189,6 +189,7 @@ void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
   setFilterOutDummyRunways(settings.value("Options/FilterRunways", true).toBool());
   setWriteIncompleteObjects(settings.value("Options/SaveIncomplete", true).toBool());
   setAutocommit(settings.value("Options/Autocommit", false).toBool());
+  setFlag(type::BASIC_VALIDATION, settings.value("Options/BasicValidation", false).toBool());
 
   addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
   addToFilenameFilterExclude(settings.value("Filter/ExcludeFilenames").toStringList());
@@ -278,13 +279,7 @@ QStringList NavDatabaseOptions::fromNativeSeparators(const QStringList& paths) c
 QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Options[verbose " << opts.verbose
-                          << ", sceneryFile \"" << opts.sceneryFile
-                          << "\", basepath \"" << opts.basepath
-                          << "\", deletes " << opts.deletes
-                          << "\", deduplicate " << opts.deduplicate
-                          << ", incomplete " << opts.incomplete
-                          << ", debugAutocommit " << opts.autocommit;
+  out.nospace().noquote() << "Options[flags " << opts.flags;
 
   out << ", Include file filter [";
   for(const QRegExp& f : opts.fileFiltersInc)

@@ -33,7 +33,11 @@ class NavDatabaseErrors
 public:
   NavDatabaseErrors();
 
+  /* Get total number of errors across all scenery areas */
   int getTotalErrors() const;
+
+  /* Initialize with a single area */
+  void init(const scenery::SceneryArea& area);
 
   struct SceneryFileError
   {

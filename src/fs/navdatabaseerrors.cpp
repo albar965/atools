@@ -33,5 +33,12 @@ int NavDatabaseErrors::getTotalErrors() const
   return total;
 }
 
+void NavDatabaseErrors::init(const atools::fs::scenery::SceneryArea& area)
+{
+  NavDatabaseErrors::SceneryErrors err;
+  err.scenery = area;
+  sceneryErrors.append(err);
+}
+
 } // namespace fs
 } // namespace atools
