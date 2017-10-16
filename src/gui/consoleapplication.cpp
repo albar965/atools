@@ -26,8 +26,6 @@
 namespace atools {
 namespace gui {
 
-bool ConsoleApplication::exitOnException = true;
-
 ConsoleApplication::ConsoleApplication(int& argc, char **argv, int)
   : QCoreApplication(argc, argv)
 {
@@ -59,16 +57,14 @@ void ConsoleApplication::handleException(const char *file, int line, const std::
 {
   qCritical() << "Caught exception in file" << file << "line" << line << "what" << e.what();
 
-  if(exitOnException)
-    std::exit(1);
+  std::exit(1);
 }
 
 void ConsoleApplication::handleException(const char *file, int line)
 {
   qCritical() << "Caught unknown exception in file" << file << "line" << line;
 
-  if(exitOnException)
-    std::exit(1);
+  std::exit(1);
 }
 
 } // namespace gui

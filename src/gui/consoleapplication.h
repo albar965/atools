@@ -60,20 +60,8 @@ public:
 
 #endif
 
-  static bool getExitOnException()
-  {
-    return exitOnException;
-  }
-
-  static void setExitOnException(bool value)
-  {
-    exitOnException = value;
-  }
-
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
-
-  static bool exitOnException;
 
 };
 
