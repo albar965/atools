@@ -17,7 +17,7 @@
 
 #include "fs/xp/xpfixwriter.h"
 
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 #include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
 #include "fs/common/magdecreader.h"
@@ -43,10 +43,10 @@ enum FieldIndex
   REGION = 4
 };
 
-XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+XpFixWriter::XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                          const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                          atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }

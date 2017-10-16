@@ -28,14 +28,14 @@ namespace db {
  * Index that maps airport idents airport IDs. This used for each BGL file and does not cross
  * the file boundary.
  */
-class AirportIndex
+class DbAirportIndex
 {
 public:
-  AirportIndex()
+  DbAirportIndex()
   {
   }
 
-  virtual ~AirportIndex();
+  virtual ~DbAirportIndex();
 
   /*
    * Adds an entry to the index
@@ -59,9 +59,9 @@ public:
 
 private:
   typedef QHash<QString, int> AirportIndexType;
-  typedef atools::fs::db::AirportIndex::AirportIndexType::const_iterator AirportIndexTypeConstIter;
+  typedef atools::fs::db::DbAirportIndex::AirportIndexType::const_iterator AirportIndexTypeConstIter;
 
-  atools::fs::db::AirportIndex::AirportIndexType airportIndexMap;
+  atools::fs::db::DbAirportIndex::AirportIndexType airportIndexMap;
 };
 
 } // namespace writer

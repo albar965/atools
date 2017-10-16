@@ -23,7 +23,7 @@
 
 namespace atools {
 namespace fs {
-namespace xp {
+namespace common {
 
 // Helper classes to avoid QString and speed up the hash maps
 class IndexName
@@ -80,12 +80,13 @@ inline bool operator!=(const IndexName2& name1, const IndexName2& name2)
  * Filled when reading airports in the beginning of the compilation process.
  * Provides an index from airport ICAO to airport_id and runwayname/airport ICAO to runway_end_id.
  */
-class XpAirportIndex
+class AirportIndex
 {
 public:
-  XpAirportIndex();
+  AirportIndex();
 
-  /* Get id packed in a variant or a null integer variant if not found */
+  /* Get id packed in a variant or a null integer variant if not found.
+   *  Returns null if airport id is ENRT */
   QVariant getAirportId(const QString& airportIcao);
   QVariant getRunwayEndId(const QString& airportIcao, const QString& runwayName);
 
@@ -106,10 +107,10 @@ private:
 
 };
 
-} // namespace xp
+} // namespace common
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::fs::xp::IndexName, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::common::IndexName, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_XPAIRPORTINDEX_H

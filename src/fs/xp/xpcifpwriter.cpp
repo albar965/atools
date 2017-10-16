@@ -17,7 +17,7 @@
 
 #include "fs/xp/xpcifpwriter.h"
 
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 #include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
 #include "atools.h"
@@ -249,10 +249,10 @@ enum AirportSubSectionCode
 
 }
 
-XpCifpWriter::XpCifpWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+XpCifpWriter::XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                            const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                            atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex),
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam),
   approachRecord(sqlDb.record("approach", ":")), approachLegRecord(sqlDb.record("approach_leg", ":")),
   transitionRecord(sqlDb.record("transition", ":")), transitionLegRecord(sqlDb.record("transition_leg", ":"))
 {

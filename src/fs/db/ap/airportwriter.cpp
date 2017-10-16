@@ -34,7 +34,7 @@
 #include "geo/calculations.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/del/deleteairport.h"
-#include "fs/db/airportindex.h"
+#include "fs/db/dbairportindex.h"
 #include "fs/db/nav/waypointwriter.h"
 #include "fs/db/ap/comwriter.h"
 #include "fs/db/ap/deleteairportwriter.h"

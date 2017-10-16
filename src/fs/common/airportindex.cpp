@@ -15,11 +15,11 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 
 namespace atools {
 namespace fs {
-namespace xp {
+namespace common {
 
 static QLatin1String EN_ROUTE("ENRT");
 
@@ -81,12 +81,12 @@ uint qHash(const IndexName2& name)
 }
 
 // ==========================================================================
-XpAirportIndex::XpAirportIndex()
+AirportIndex::AirportIndex()
 {
 
 }
 
-QVariant XpAirportIndex::getAirportId(const QString& airportIcao)
+QVariant AirportIndex::getAirportId(const QString& airportIcao)
 {
   if(airportIcao != EN_ROUTE)
   {
@@ -97,7 +97,7 @@ QVariant XpAirportIndex::getAirportId(const QString& airportIcao)
   return QVariant(QVariant::Int);
 }
 
-QVariant XpAirportIndex::getRunwayEndId(const QString& airportIcao, const QString& runwayName)
+QVariant AirportIndex::getRunwayEndId(const QString& airportIcao, const QString& runwayName)
 {
   if(airportIcao != EN_ROUTE) // en route
   {
@@ -108,7 +108,7 @@ QVariant XpAirportIndex::getRunwayEndId(const QString& airportIcao, const QStrin
   return QVariant(QVariant::Int);
 }
 
-bool atools::fs::xp::XpAirportIndex::addAirport(const QString& airportIcao, int airportId)
+bool AirportIndex::addAirport(const QString& airportIcao, int airportId)
 {
   if(icaoToIdMap.contains(IndexName(airportIcao)))
     return false;
@@ -119,11 +119,11 @@ bool atools::fs::xp::XpAirportIndex::addAirport(const QString& airportIcao, int 
   }
 }
 
-void XpAirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId)
+void AirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId)
 {
   icaoRunwayNameToEndId.insert(IndexName2(airportIcao, runwayName), runwayEndId);
 }
 
-} // namespace xp
+} // namespace common
 } // namespace fs
 } // namespace atools

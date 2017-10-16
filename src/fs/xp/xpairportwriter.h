@@ -36,13 +36,15 @@ class SqlQuery;
 
 namespace fs {
 
+namespace common {
+class AirportIndex;
+}
+
 class NavDatabaseOptions;
 class ProgressHandler;
 class NavDatabaseErrors;
 
 namespace xp {
-
-class XpAirportIndex;
 
 /*
  * Reads one or more airports from an apt.dat file and writes them into a database
@@ -53,7 +55,7 @@ class XpAirportWriter :
   Q_DECLARE_TR_FUNCTIONS(XpAirportWriter)
 
 public:
-  XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+  XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                   const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpAirportWriter();
@@ -162,7 +164,7 @@ private:
 
   atools::geo::Rect airportRect;
   atools::geo::Pos airportPos;
-  atools::fs::xp::XpAirportIndex *airportIndex;
+  atools::fs::common::AirportIndex *airportIndex;
   atools::fs::common::XpGeometry currentPavement;
   QHash<int, atools::geo::Pos> taxiNodes;
 

@@ -39,6 +39,8 @@ class ProgressHandler;
 
 namespace common {
 class MagDecReader;
+class MetadataWriter;
+class AirportIndex;
 }
 
 namespace xp {
@@ -51,7 +53,6 @@ class XpCifpWriter;
 class XpAirspaceWriter;
 class XpWriter;
 class AirwayPostProcess;
-class XpAirportIndex;
 
 /*
  * Provides methods to read X-Plane data from text files into the database.
@@ -209,16 +210,12 @@ private:
   void initQueries();
   void deInitQueries();
 
-  /* write to metadata file table */
-  void writeFile(const QString& filepath, const QString& comment);
-  void writeSceneryArea(const QString& filepath);
-
   /* Open file and read header */
-  bool openFile(QTextStream& stream, QFile& file, const QString& filename, ContextFlags flags,
+  bool openFile(QTextStream& stream, QFile& filepath, const QString& filename, ContextFlags flags,
                 int& lineNum, int& totalNumLines, int& fileVersion);
 
   /* Read file line by line and call writer for each one */
-  bool readDataFile(const QString& filename, int minColumns, atools::fs::xp::XpWriter *writer,
+  bool readDataFile(const QString& filepath, int minColumns, atools::fs::xp::XpWriter *writer,
                     atools::fs::xp::ContextFlags flags = atools::fs::xp::NO_FLAG);
   static QString buildBasePath(const NavDatabaseOptions& opts);
 
@@ -245,8 +242,6 @@ private:
   atools::sql::SqlDatabase& db;
   atools::fs::ProgressHandler *progress = nullptr;
 
-  atools::sql::SqlQuery *insertFileQuery = nullptr, *insertSceneryQuery = nullptr;
-
   atools::fs::xp::XpFixWriter *fixWriter = nullptr;
   atools::fs::xp::XpAirwayWriter *airwayWriter = nullptr;
   atools::fs::xp::XpNavWriter *navWriter = nullptr;
@@ -254,8 +249,9 @@ private:
   atools::fs::xp::XpCifpWriter *cifpWriter = nullptr; // Procedures
   atools::fs::xp::XpAirspaceWriter *airspaceWriter = nullptr; // boundaries
   atools::fs::xp::AirwayPostProcess *airwayPostProcess = nullptr;
-  atools::fs::xp::XpAirportIndex *airportIndex = nullptr;
+  atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
+  atools::fs::common::MetadataWriter *metadataWriter = nullptr;
 
   int minFileVersion = 850;
   atools::fs::NavDatabaseErrors *errors = nullptr;

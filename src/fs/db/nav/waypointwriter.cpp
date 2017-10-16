@@ -19,7 +19,7 @@
 #include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
-#include "fs/db/airportindex.h"
+#include "fs/db/dbairportindex.h"
 
 namespace atools {
 namespace fs {

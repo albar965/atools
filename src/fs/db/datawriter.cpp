@@ -34,7 +34,7 @@
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db/ap/rw/runwayendwriter.h"
 #include "fs/db/runwayindex.h"
-#include "fs/db/airportindex.h"
+#include "fs/db/dbairportindex.h"
 #include "fs/db/ap/approachwriter.h"
 #include "fs/db/ap/approachlegwriter.h"
 #include "fs/db/ap/transitionlegwriter.h"
@@ -109,7 +109,7 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   boundaryWriter = new BoundaryWriter(db, *this);
 
   runwayIndex = new RunwayIndex();
-  airportIndex = new AirportIndex();
+  airportIndex = new DbAirportIndex();
 
   magDecReader = new MagDecReader();
 }

@@ -21,7 +21,7 @@
 #include "geo/calculations.h"
 #include "fs/util/fsutil.h"
 #include "fs/progresshandler.h"
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 #include "fs/common/magdecreader.h"
 
 #include <QDebug>
@@ -245,11 +245,11 @@ enum RunwayFieldIndex
 // Remove square brackets from name
 const static QRegularExpression NAME_INDICATOR("\\[(h|s|g|x|mil)\\]", QRegularExpression::CaseInsensitiveOption);
 
-XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  NavDatabaseErrors *navdatabaseErrors)
   : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors),
-  runwayEndRecord(sqlDb.record("runway_end", ":")), airportIndex(xpAirportIndex)
+  runwayEndRecord(sqlDb.record("runway_end", ":")), airportIndex(airportIndexParam)
 {
   initQueries();
 }

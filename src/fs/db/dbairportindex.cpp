@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/db/airportindex.h"
+#include "fs/db/dbairportindex.h"
 
 #include <QDebug>
 
@@ -23,12 +23,12 @@ namespace atools {
 namespace fs {
 namespace db {
 
-void AirportIndex::add(const QString& airportIdent, int airportId)
+void DbAirportIndex::add(const QString& airportIdent, int airportId)
 {
   airportIndexMap[airportIdent] = airportId;
 }
 
-int AirportIndex::getAirportId(const QString& airportIdent, const QString& sourceObject)
+int DbAirportIndex::getAirportId(const QString& airportIdent, const QString& sourceObject)
 {
   AirportIndexTypeConstIter it = airportIndexMap.find(airportIdent);
   if(it != airportIndexMap.end())
@@ -41,7 +41,7 @@ int AirportIndex::getAirportId(const QString& airportIdent, const QString& sourc
   }
 }
 
-AirportIndex::~AirportIndex()
+DbAirportIndex::~DbAirportIndex()
 {
 }
 

@@ -34,12 +34,15 @@ class NavDatabaseErrors;
 class NavDatabaseOptions;
 class ProgressHandler;
 
+namespace common {
+class AirportIndex;
+}
+
 namespace xp {
 
 /*
  * Reads earth_fix.dat and writes to waypoint table.
  */
-class XpAirportIndex;
 
 namespace rc {
 enum RowCode
@@ -61,7 +64,7 @@ class XpCifpWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+  XpCifpWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
                atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpCifpWriter();
@@ -141,7 +144,7 @@ private:
                         *insertApproachLegQuery = nullptr, *insertTransitionLegQuery = nullptr,
                         *updateAirportQuery = nullptr;
 
-  atools::fs::xp::XpAirportIndex *airportIndex;
+  atools::fs::common::AirportIndex *airportIndex;
   const atools::sql::SqlRecord approachRecord, approachLegRecord, transitionRecord, transitionLegRecord;
 
   QVector<Procedure> approaches;

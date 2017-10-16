@@ -15,58 +15,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_WAYPOINTWRITER_H
-#define ATOOLS_FS_XP_WAYPOINTWRITER_H
+#ifndef ATOOLS_METADATAWRITER_H
+#define ATOOLS_METADATAWRITER_H
 
-#include "fs/xp/xpwriter.h"
+#include <QString>
 
 namespace atools {
-
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
 }
 
 namespace fs {
-
-class NavDatabaseOptions;
-class ProgressHandler;
-class NavDatabaseErrors;
-
 namespace common {
-class AirportIndex;
-}
 
-namespace xp {
-
-/*
- * Reads earth_fix.dat and writes to waypoint table.
- */
-class XpFixWriter :
-  public atools::fs::xp::XpWriter
+class MetadataWriter
 {
 public:
-  XpFixWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
-              const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
-              atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpFixWriter();
+  MetadataWriter(atools::sql::SqlDatabase& sqlDb);
+  virtual ~MetadataWriter();
 
-  virtual void write(const QStringList& line, const XpWriterContext& context) override;
-  virtual void finish(const XpWriterContext& context) override;
-  virtual void reset() override;
+  /* write to metadata file table */
+  void writeFile(const QString& filepath, const QString& comment, int curSceneryId, int curFileId);
+  void writeSceneryArea(const QString& filepath, const QString& sceneryName, int curSceneryId);
+
+  void deInitQueries();
+  void initQueries();
 
 private:
-  void initQueries();
-  void deInitQueries();
-
-  int curFixId = 0;
-  atools::sql::SqlQuery *insertWaypointQuery = nullptr;
-  atools::fs::common::AirportIndex *airportIndex;
+  atools::sql::SqlDatabase& db;
+  atools::sql::SqlQuery *insertFileQuery = nullptr, *insertSceneryQuery = nullptr;
 
 };
 
-} // namespace xp
+} // namespace common
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_WAYPOINTWRITER_H
+#endif // ATOOLS_METADATAWRITER_H

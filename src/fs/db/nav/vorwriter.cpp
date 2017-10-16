@@ -20,7 +20,7 @@
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/db/airportindex.h"
+#include "fs/db/dbairportindex.h"
 #include "geo/calculations.h"
 #include "atools.h"
 

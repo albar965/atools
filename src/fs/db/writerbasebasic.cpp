@@ -58,7 +58,7 @@ RunwayIndex *WriterBaseBasic::getRunwayIndex()
   return dataWriter.getRunwayIndex();
 }
 
-AirportIndex *WriterBaseBasic::getAirportIndex()
+DbAirportIndex *WriterBaseBasic::getAirportIndex()
 {
   return dataWriter.getAirportIndex();
 }

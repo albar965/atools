@@ -17,7 +17,7 @@
 
 #include "fs/xp/xpairspacewriter.h"
 
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 #include "fs/xp/xpconstants.h"
 #include "fs/progresshandler.h"
 #include "fs/common/magdecreader.h"

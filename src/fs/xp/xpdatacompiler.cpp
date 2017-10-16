@@ -35,7 +35,8 @@
 #include "fs/progresshandler.h"
 #include "exception.h"
 #include "atools.h"
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
+#include "fs/common/metadatawriter.h"
 #include "fs/navdatabaseerrors.h"
 
 #include <QFileInfo>
@@ -52,6 +53,8 @@ using atools::sql::SqlUtil;
 using atools::buildPathNoCase;
 using atools::settings::Settings;
 using atools::fs::common::MagDecReader;
+using atools::fs::common::MetadataWriter;
+using atools::fs::common::AirportIndex;
 
 namespace atools {
 namespace fs {
@@ -77,7 +80,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
 
   qInfo() << "Using X-Plane data path" << basePath;
 
-  airportIndex = new XpAirportIndex();
+  airportIndex = new AirportIndex();
 
   airportWriter = new XpAirportWriter(db, airportIndex, options, progress, errors);
   fixWriter = new XpFixWriter(db, airportIndex, options, progress, errors);
@@ -86,6 +89,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   airspaceWriter = new XpAirspaceWriter(db, options, progress, errors);
   airwayWriter = new XpAirwayWriter(db, options, progress, errors);
   airwayPostProcess = new AirwayPostProcess(db, options, progress);
+  metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
 
   initQueries();
@@ -98,7 +102,7 @@ XpDataCompiler::~XpDataCompiler()
 
 bool XpDataCompiler::writeBasepathScenery()
 {
-  writeSceneryArea(options.getBasepath());
+  metadataWriter->writeSceneryArea(options.getBasepath(), "X-Plane", ++curSceneryId);
   db.commit();
   return false;
 }
@@ -306,15 +310,15 @@ bool XpDataCompiler::compileMagDeclBgl()
   return false;
 }
 
-bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWriter *writer,
+bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWriter *writer,
                                   atools::fs::xp::ContextFlags flags)
 {
   QFile file;
   QTextStream stream;
   bool aborted = false;
 
-  QString progressMsg = tr("Reading: %1").arg(filename);
-  QFileInfo fileinfo(filename);
+  QString progressMsg = tr("Reading: %1").arg(filepath);
+  QFileInfo fileinfo(filepath);
 
   if(!options.isIncludedLocalPath(fileinfo.path()))
     // Excluded in configuration file
@@ -333,7 +337,7 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   try
   {
     // Open file and read header
-    if(openFile(stream, file, filename, flags, lineNum, totalNumLines, fileVersion))
+    if(openFile(stream, file, filepath, flags, lineNum, totalNumLines, fileVersion))
     {
       XpWriterContext context;
       context.curFileId = curFileId;
@@ -350,12 +354,12 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
 
       if(flags & READ_CIFP)
       {
-        QString ident = QFileInfo(filename).baseName().toUpper();
+        QString ident = QFileInfo(filepath).baseName().toUpper();
         if(!CIFP_MATCH.match(ident).hasMatch())
           throw atools::Exception("CIFP file has no valid name which should match airport ident.");
 
         // Add additional information for procedure files
-        context.cifpAirportIdent = QFileInfo(filename).baseName().toUpper();
+        context.cifpAirportIdent = QFileInfo(filepath).baseName().toUpper();
         context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
       }
 
@@ -449,23 +453,23 @@ bool XpDataCompiler::readDataFile(const QString& filename, int minColumns, XpWri
   return aborted;
 }
 
-bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& filename, atools::fs::xp::ContextFlags flags,
+bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QString& filename, atools::fs::xp::ContextFlags flags,
                               int& lineNum, int& totalNumLines, int& fileVersion)
 {
-  file.setFileName(filename);
+  filepath.setFileName(filename);
   lineNum = 1;
 
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  if(filepath.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     if(flags & READ_AIRSPACE)
     {
       // Try to detect code using the BOM for airspaces only - use ANSI as fallback
-      stream.setDevice(&file);
-      stream.setCodec(atools::codecForFile(file, QTextCodec::codecForName("Windows-1252")));
+      stream.setDevice(&filepath);
+      stream.setCodec(atools::codecForFile(filepath, QTextCodec::codecForName("Windows-1252")));
     }
     else
     {
-      stream.setDevice(&file);
+      stream.setDevice(&filepath);
       stream.setCodec("UTF-8");
     }
     stream.setAutoDetectUnicode(true);
@@ -496,7 +500,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
                                 arg(fields.first()).arg(minFileVersion));
       }
 
-      writeFile(filename, line);
+      metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
+      progress->incNumFiles();
 
       if(flags & UPDATE_CYCLE)
         updateAiracCycleFromHeader(line, filename, lineNum);
@@ -514,10 +519,13 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& file, const QString& f
       qDebug() << lines;
     }
     else
-      writeFile(filename, QString());
+    {
+      metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
+      progress->incNumFiles();
+    }
   }
   else
-    throw atools::Exception("Cannot open file. Reason: " + file.errorString() + ".");
+    throw atools::Exception("Cannot open file. Reason: " + filepath.errorString() + ".");
   return true;
 }
 
@@ -550,6 +558,9 @@ void XpDataCompiler::close()
 
   delete magDecReader;
   magDecReader = nullptr;
+
+  delete metadataWriter;
+  metadataWriter = nullptr;
 
   deInitQueries();
 }
@@ -662,37 +673,6 @@ int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& o
   return reportCount;
 }
 
-void XpDataCompiler::writeFile(const QString& filepath, const QString& comment)
-{
-  QFileInfo fileinfo(filepath);
-
-  insertFileQuery->bindValue(":bgl_file_id", ++curFileId);
-  insertFileQuery->bindValue(":file_modification_time", fileinfo.lastModified().toTime_t());
-  insertFileQuery->bindValue(":scenery_area_id", curSceneryId);
-  insertFileQuery->bindValue(":bgl_create_time", fileinfo.lastModified().toTime_t());
-  insertFileQuery->bindValue(":filepath", fileinfo.filePath());
-  insertFileQuery->bindValue(":filename", fileinfo.fileName());
-  insertFileQuery->bindValue(":size", fileinfo.size());
-  insertFileQuery->bindValue(":comment", comment);
-  insertFileQuery->exec();
-
-  progress->incNumFiles();
-}
-
-void XpDataCompiler::writeSceneryArea(const QString& filepath)
-{
-  QFileInfo fileinfo(filepath);
-
-  insertSceneryQuery->bindValue(":scenery_area_id", ++curSceneryId);
-  insertSceneryQuery->bindValue(":number", curSceneryId);
-  insertSceneryQuery->bindValue(":layer", curSceneryId);
-  insertSceneryQuery->bindValue(":title", "X-Plane");
-  insertSceneryQuery->bindValue(":local_path", fileinfo.filePath());
-  insertSceneryQuery->bindValue(":active", true);
-  insertSceneryQuery->bindValue(":required", true);
-  insertSceneryQuery->exec();
-}
-
 void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum)
 {
   // 1100 Version - data cycle 1709, build 20170910, metadata AwyXP1101. Copyright (c) 2017 Navdata Provider
@@ -729,23 +709,14 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
 void XpDataCompiler::initQueries()
 {
   deInitQueries();
-
-  SqlUtil util(&db);
-
-  insertSceneryQuery = new SqlQuery(db);
-  insertSceneryQuery->prepare(util.buildInsertStatement("scenery_area", QString(), {"remote_path", "exclude"}));
-
-  insertFileQuery = new SqlQuery(db);
-  insertFileQuery->prepare(util.buildInsertStatement("bgl_file"));
+  if(metadataWriter != nullptr)
+    metadataWriter->initQueries();
 }
 
 void XpDataCompiler::deInitQueries()
 {
-  delete insertSceneryQuery;
-  insertSceneryQuery = nullptr;
-
-  delete insertFileQuery;
-  insertFileQuery = nullptr;
+  if(metadataWriter != nullptr)
+    metadataWriter->deInitQueries();
 }
 
 QString XpDataCompiler::buildBasePath(const atools::fs::NavDatabaseOptions& opts)

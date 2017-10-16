@@ -67,7 +67,7 @@ class IlsWriter;
 class StartWriter;
 class HelipadWriter;
 class RunwayIndex;
-class AirportIndex;
+class DbAirportIndex;
 class ApronWriter;
 class ApronLightWriter;
 class FenceWriter;
@@ -112,7 +112,7 @@ public:
   /*
    * @return airport index that maps ICAO idents to database airport Ids
    */
-  AirportIndex *getAirportIndex()
+  DbAirportIndex *getAirportIndex()
   {
     return airportIndex;
   }
@@ -302,7 +302,7 @@ private:
   atools::fs::db::BoundaryWriter *boundaryWriter = nullptr;
 
   atools::fs::db::RunwayIndex *runwayIndex = nullptr;
-  atools::fs::db::AirportIndex *airportIndex = nullptr;
+  atools::fs::db::DbAirportIndex *airportIndex = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   const atools::fs::NavDatabaseOptions& options;

@@ -33,18 +33,21 @@ class NavDatabaseOptions;
 class ProgressHandler;
 class NavDatabaseErrors;
 
+namespace common {
+class AirportIndex;
+}
+
 namespace xp {
 
 /*
  * Reads earth_nav.dat and writes to tables, vor, ndb, marker and ils.
  */
-class XpAirportIndex;
 
 class XpNavWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::xp::XpAirportIndex *xpAirportIndex,
+  XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
               const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
               atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpNavWriter();
@@ -73,7 +76,7 @@ private:
 
   atools::sql::SqlQuery *insertVorQuery = nullptr, *insertNdbQuery = nullptr,
                         *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr;
-  atools::fs::xp::XpAirportIndex *airportIndex;
+  atools::fs::common::AirportIndex *airportIndex;
 
 };
 

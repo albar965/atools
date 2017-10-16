@@ -17,7 +17,7 @@
 
 #include "fs/xp/xpnavwriter.h"
 
-#include "fs/xp/xpairportindex.h"
+#include "fs/common/airportindex.h"
 #include "fs/util/tacanfrequencies.h"
 #include "fs/progresshandler.h"
 #include "fs/navdatabaseoptions.h"
@@ -54,10 +54,10 @@ enum FieldIndex
   NAME = 11
 };
 
-XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb, XpAirportIndex *xpAirportIndex,
+XpNavWriter::XpNavWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                          const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                          atools::fs::NavDatabaseErrors *navdatabaseErrors)
-  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(xpAirportIndex)
+  : XpWriter(sqlDb, opts, progressHandler, navdatabaseErrors), airportIndex(airportIndexParam)
 {
   initQueries();
 }
