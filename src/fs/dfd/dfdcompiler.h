@@ -35,6 +35,8 @@ namespace common {
 class MagDecReader;
 class MetadataWriter;
 class AirportIndex;
+class ProcedureWriter;
+struct ProcedureInput;
 }
 
 class NavDatabaseOptions;
@@ -47,7 +49,7 @@ class DfdCompiler
 {
 public:
   DfdCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                        atools::fs::ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors);
+              atools::fs::ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~DfdCompiler();
 
   void close();
@@ -73,6 +75,7 @@ public:
   void updateTacanChannel();
   void updateIlsGeometry();
   void writeAirways();
+  void writeProcedures();
 
   void initQueries();
   void deInitQueries();
@@ -83,6 +86,8 @@ private:
   void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
   void pairRunways(QVector<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
                    sql::SqlRecordVector& runways);
+  void fillProcedureInput(atools::fs::common::ProcedureInput& procInput, const atools::sql::SqlQuery& query);
+  void writeProcedure(const QString& table, const QString& rowCode);
 
   const int ID_OFFSET = 100000000;
 
@@ -92,6 +97,7 @@ private:
   atools::fs::NavDatabaseErrors *errors = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
   atools::fs::common::AirportIndex *airportIndex = nullptr;
+  atools::fs::common::ProcedureWriter *procWriter = nullptr;
   atools::fs::common::MetadataWriter *metadataWriter = nullptr;
   int curAirportId = ID_OFFSET, curRunwayId = ID_OFFSET, curRunwayEndId = ID_OFFSET;
   const int FILE_ID = 1, SCENERY_ID = 1;

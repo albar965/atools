@@ -27,6 +27,7 @@
 #include "fs/util/tacanfrequencies.h"
 #include "sql/sqlscript.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/common/procedurewriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
 #include "fs/common/airportindex.h"
@@ -43,6 +44,7 @@ using atools::sql::SqlScript;
 using atools::sql::SqlRecordVector;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
+using atools::geo::DPos;
 using atools::geo::Rect;
 namespace utl = atools::fs::util;
 
@@ -57,6 +59,7 @@ DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts
   metadataWriter = new atools::fs::common::MetadataWriter(db);
   magDecReader = new atools::fs::common::MagDecReader();
   airportIndex = new atools::fs::common::AirportIndex();
+  procWriter = new atools::fs::common::ProcedureWriter(db, airportIndex);
 }
 
 DfdCompiler::~DfdCompiler()
@@ -109,25 +112,26 @@ void DfdCompiler::writeAirports()
   airportQuery->exec();
   while(airportQuery->next())
   {
-    Pos pos(airportQuery->value("airport_ref_longitude").toFloat(),
-            airportQuery->value("airport_ref_latitude").toFloat(),
-            airportQuery->value("elevation").toFloat());
+    Pos pos(airportQuery->valueFloat("airport_ref_longitude"),
+            airportQuery->valueFloat("airport_ref_latitude"),
+            airportQuery->valueFloat("elevation"));
 
-    QString ident = airportQuery->value("airport_identifier").toString();
+    QString ident = airportQuery->valueStr("airport_identifier");
 
     Rect airportRect(pos);
     airportRect.inflate(Pos::POS_EPSILON_100M, Pos::POS_EPSILON_100M);
     airportRectMap.insert(ident, airportRect);
 
-    longestRunwaySurfaceMap.insert(ident, airportQuery->value("longest_runway_surface_code").toString());
+    longestRunwaySurfaceMap.insert(ident, airportQuery->valueStr("longest_runway_surface_code"));
 
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
     airportIndex->addAirport(ident, curAirportId);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
-    airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->value("airport_name").toString()));
-    airportWriteQuery->bindValue(":is_military", utl::isNameMilitary(airportQuery->value("airport_name").toString()));
+    airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->valueStr("airport_name")));
+    airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));
+    airportWriteQuery->bindValue(":is_military", utl::isNameMilitary(airportQuery->valueStr("airport_name")));
 
     airportWriteQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());
     airportWriteQuery->bindValue(":top_laty", airportRect.getTopLeft().getLatY());
@@ -153,7 +157,7 @@ void DfdCompiler::writeRunways()
   QString lastApt;
   while(runwayQuery->next())
   {
-    QString apt = runwayQuery->value("airport_identifier").toString();
+    QString apt = runwayQuery->valueStr("airport_identifier");
 
     if(!lastApt.isEmpty() && lastApt != apt)
       // Airport ID has changed write collected runways
@@ -163,192 +167,6 @@ void DfdCompiler::writeRunways()
     lastApt = apt;
   }
   writeRunwaysForAirport(runways, lastApt);
-  db.commit();
-}
-
-void DfdCompiler::updateMagvar()
-{
-  progress->reportOther("Updating magnetic declination");
-
-  atools::fs::common::MagDecReader *magdec = magDecReader;
-  SqlUtil::UpdateColFuncType func =
-    [magdec](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
-    {
-      to.bindValue(":mag_var", magdec->getMagVar(Pos(from.value("lonx").toFloat(),
-                                                     from.value("laty").toFloat())));
-      return true;
-    };
-
-  SqlUtil util(db);
-  util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
-  util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
-  db.commit();
-}
-
-void DfdCompiler::updateTacanChannel()
-{
-  progress->reportOther("Updating VORTAC and TACAN channels");
-
-  SqlUtil::UpdateColFuncType func =
-    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
-    {
-      QString type = from.value("type").toString();
-      if(type == "TC" || type.startsWith("VT"))
-      {
-        to.bindValue(":channel", atools::fs::util::tacanChannelForFrequency(from.value("frequency").toInt() / 10));
-        return true;
-      }
-      else
-        return false;
-    };
-  SqlUtil(db).updateColumnInTable("vor", "vor_id", {"frequency", "type"}, {"channel"}, func);
-  db.commit();
-}
-
-void DfdCompiler::updateIlsGeometry()
-{
-  progress->reportOther("Updating ILS geometry");
-
-  SqlUtil::UpdateColFuncType func =
-    [ = ](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
-    {
-      // Position of the pointy end
-      Pos pos(from.value("lonx").toFloat(), from.value("laty").toFloat());
-
-      float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
-      float width = from.value("loc_width").toFloat();
-      float heading = atools::geo::opposedCourseDeg(from.value("loc_heading").toFloat());
-
-      // Corner endpoints
-      Pos p1 = pos.endpoint(length, heading - width / 2.f).normalize();
-      Pos p2 = pos.endpoint(length, heading + width / 2.f).normalize();
-
-      // Calculated the center point between corners - move it a bit towareds the pointy end
-      float featherWidth = p1.distanceMeterTo(p2);
-      Pos pmid = pos.endpoint(length - featherWidth / 2, heading).normalize();
-
-      to.bindValue(":end1_lonx", p1.getLonX());
-      to.bindValue(":end1_laty", p1.getLatY());
-      to.bindValue(":end_mid_lonx", pmid.getLonX());
-      to.bindValue(":end_mid_laty", pmid.getLatY());
-      to.bindValue(":end2_lonx", p2.getLonX());
-      to.bindValue(":end2_laty", p2.getLatY());
-      return true;
-    };
-  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "loc_width"},
-                                  {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
-                                  func);
-  db.commit();
-}
-
-void DfdCompiler::writeNavaids()
-{
-  progress->reportOther("Writing navaids");
-
-  SqlScript script(db, true /*options->isVerbose()*/);
-
-  // Write VOR and NDB
-  script.executeScript(":/atools/resources/sql/fs/db/airac/populate_navaids.sql");
-  db.commit();
-}
-
-void DfdCompiler::writeAirways()
-{
-  progress->reportOther("Writing airways");
-
-  QString query(
-    "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
-    "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
-    "  w.lonx, w.laty "
-    "from src.tbl_airways_pr a "
-    "join waypoint w on "
-    "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
-    "  a.waypoint_latitude = w.laty "
-    "order by route_identifier, seqno");
-  SqlQuery airways(query, db);
-
-  SqlQuery insert(db);
-  insert.prepare(SqlUtil(db).buildInsertStatement("airway", QString(), {"airway_id"}));
-
-  SqlRecord lastRec;
-  QString lastName;
-  bool lastEndOfRoute = true;
-  airways.exec();
-  int sequenceNumber = 1, fragmentNumber = 1;
-  while(airways.next())
-  {
-    QString name = airways.valueStr("route_identifier");
-    QString code = airways.valueStr("waypoint_description_code");
-    bool nameChange = !lastName.isEmpty() && name != lastName;
-
-    if(!lastName.isEmpty())
-    {
-      if(!nameChange && lastEndOfRoute)
-      {
-        fragmentNumber++;
-        sequenceNumber = 1;
-      }
-
-      if(!lastEndOfRoute && !nameChange)
-      {
-        Pos fromPos(lastRec.valueFloat("lonx"), lastRec.valueFloat("laty"));
-        Pos toPos(airways.valueFloat("lonx"), airways.valueFloat("laty"));
-        Rect rect(fromPos);
-        rect.extend(toPos);
-
-        insert.bindValue(":airway_name", lastRec.valueStr("route_identifier"));
-
-        // -- V = victor, J = jet, B = both
-        // B = All Altitudes, H = High Level Airways, L = Low Level Airways
-        QString awType = lastRec.valueStr("flightlevel");
-        if(awType == "H")
-          insert.bindValue(":airway_type", "J");
-        else if(awType == "L")
-          insert.bindValue(":airway_type", "V");
-        else
-          insert.bindValue(":airway_type", "B");
-
-        insert.bindValue(":airway_fragment_no", fragmentNumber);
-        insert.bindValue(":sequence_no", sequenceNumber++);
-        insert.bindValue(":from_waypoint_id", lastRec.valueInt("waypoint_id"));
-        insert.bindValue(":to_waypoint_id", airways.valueInt("waypoint_id"));
-
-        // -- N = none, B = backward, F = forward
-        // F =  One way in direction route is coded (Forward),
-        // B = One way in opposite direction route is coded (backwards)
-        // blank = // no restrictions on direction
-        QString dir = lastRec.valueStr("direction_restriction");
-        if(dir.isEmpty() || dir == " ")
-          dir = "N";
-
-        insert.bindValue(":direction", dir);
-
-        insert.bindValue(":minimum_altitude", lastRec.valueInt("minimum_altitude1"));
-        insert.bindValue(":maximum_altitude", lastRec.valueInt("maximum_altitude"));
-
-        insert.bindValue(":left_lonx", rect.getTopLeft().getLonX());
-        insert.bindValue(":top_laty", rect.getTopLeft().getLatY());
-        insert.bindValue(":right_lonx", rect.getBottomRight().getLonX());
-        insert.bindValue(":bottom_laty", rect.getBottomRight().getLatY());
-
-        insert.bindValue(":from_lonx", fromPos.getLonX());
-        insert.bindValue(":from_laty", fromPos.getLatY());
-        insert.bindValue(":to_lonx", toPos.getLonX());
-        insert.bindValue(":to_laty", toPos.getLatY());
-        insert.exec();
-      }
-    }
-
-    lastRec = airways.record();
-    lastName = name;
-    lastEndOfRoute = code.size() > 1 && code.at(1) == "E";
-
-    if(nameChange)
-    {
-      fragmentNumber = 1;
-      sequenceNumber = 1;
-    }
-  }
   db.commit();
 }
 
@@ -578,6 +396,223 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
   }
 }
 
+void DfdCompiler::writeNavaids()
+{
+  progress->reportOther("Writing navaids");
+
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  // Write VOR and NDB
+  script.executeScript(":/atools/resources/sql/fs/db/airac/populate_navaids.sql");
+  db.commit();
+}
+
+void DfdCompiler::writeAirways()
+{
+  progress->reportOther("Writing airways");
+
+  QString query(
+    "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
+    "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
+    "  w.lonx, w.laty "
+    "from src.tbl_airways_pr a "
+    "join waypoint w on "
+    "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
+    "  a.waypoint_latitude = w.laty "
+    "order by route_identifier, seqno");
+  SqlQuery airways(query, db);
+
+  SqlQuery insert(db);
+  insert.prepare(SqlUtil(db).buildInsertStatement("airway", QString(), {"airway_id"}));
+
+  SqlRecord lastRec;
+  QString lastName;
+  bool lastEndOfRoute = true;
+  airways.exec();
+  int sequenceNumber = 1, fragmentNumber = 1;
+  while(airways.next())
+  {
+    QString name = airways.valueStr("route_identifier");
+    QString code = airways.valueStr("waypoint_description_code");
+    bool nameChange = !lastName.isEmpty() && name != lastName;
+
+    if(!lastName.isEmpty())
+    {
+      if(!nameChange && lastEndOfRoute)
+      {
+        fragmentNumber++;
+        sequenceNumber = 1;
+      }
+
+      if(!lastEndOfRoute && !nameChange)
+      {
+        Pos fromPos(lastRec.valueFloat("lonx"), lastRec.valueFloat("laty"));
+        Pos toPos(airways.valueFloat("lonx"), airways.valueFloat("laty"));
+        Rect rect(fromPos);
+        rect.extend(toPos);
+
+        insert.bindValue(":airway_name", lastRec.valueStr("route_identifier"));
+
+        // -- V = victor, J = jet, B = both
+        // B = All Altitudes, H = High Level Airways, L = Low Level Airways
+        QString awType = lastRec.valueStr("flightlevel");
+        if(awType == "H")
+          insert.bindValue(":airway_type", "J");
+        else if(awType == "L")
+          insert.bindValue(":airway_type", "V");
+        else
+          insert.bindValue(":airway_type", "B");
+
+        insert.bindValue(":airway_fragment_no", fragmentNumber);
+        insert.bindValue(":sequence_no", sequenceNumber++);
+        insert.bindValue(":from_waypoint_id", lastRec.valueInt("waypoint_id"));
+        insert.bindValue(":to_waypoint_id", airways.valueInt("waypoint_id"));
+
+        // -- N = none, B = backward, F = forward
+        // F =  One way in direction route is coded (Forward),
+        // B = One way in opposite direction route is coded (backwards)
+        // blank = // no restrictions on direction
+        QString dir = lastRec.valueStr("direction_restriction");
+        if(dir.isEmpty() || dir == " ")
+          dir = "N";
+
+        insert.bindValue(":direction", dir);
+
+        insert.bindValue(":minimum_altitude", lastRec.valueInt("minimum_altitude1"));
+        insert.bindValue(":maximum_altitude", lastRec.valueInt("maximum_altitude"));
+
+        insert.bindValue(":left_lonx", rect.getTopLeft().getLonX());
+        insert.bindValue(":top_laty", rect.getTopLeft().getLatY());
+        insert.bindValue(":right_lonx", rect.getBottomRight().getLonX());
+        insert.bindValue(":bottom_laty", rect.getBottomRight().getLatY());
+
+        insert.bindValue(":from_lonx", fromPos.getLonX());
+        insert.bindValue(":from_laty", fromPos.getLatY());
+        insert.bindValue(":to_lonx", toPos.getLonX());
+        insert.bindValue(":to_laty", toPos.getLatY());
+        insert.exec();
+      }
+    }
+
+    lastRec = airways.record();
+    lastName = name;
+    lastEndOfRoute = code.size() > 1 && code.at(1) == "E";
+
+    if(nameChange)
+    {
+      fragmentNumber = 1;
+      sequenceNumber = 1;
+    }
+  }
+  db.commit();
+}
+
+void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInput,
+                                     const atools::sql::SqlQuery& query)
+{
+  procInput.seqNr = query.valueInt("seqno");
+  procInput.routeType = atools::strToChar(query.valueStr("route_type"));
+  procInput.sidStarAppIdent = query.valueStr("procedure_identifier");
+  procInput.transIdent = query.valueStr("transition_identifier");
+  procInput.fixIdent = query.valueStr("waypoint_identifier");
+  procInput.icaoCode = query.valueStr("waypoint_icao_code");
+  // procInput.secCode = query.valueStr("");
+  // procInput.subCode = query.valueStr("");
+  procInput.descCode = query.valueStr("waypoint_description_code");
+  procInput.waypointPos = DPos(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
+
+  procInput.turnDir = query.valueStr("turn_direction");
+  procInput.pathTerm = query.valueStr("path_termination");
+  procInput.recdNavaid = query.valueStr("recommanded_navaid");
+  // procInput.recdIcaoCode = query.valueStr("");
+  // procInput.recdSecCode = query.valueStr("");
+  // procInput.recdSubCode = query.valueStr("");
+  procInput.recdWaypointPos = DPos(query.valueDouble("recommanded_navaid_longitude"),
+                                   query.valueDouble("recommanded_navaid_latitude"));
+
+  procInput.theta = query.valueFloat("theta");
+  procInput.rho = query.valueFloat("rho");
+  procInput.magCourse = query.valueFloat("magnetic_course");
+
+  procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
+  if(procInput.pathTerm.startsWith("H"))
+    procInput.rteHoldTime = query.valueFloat("route_distance_holding_distance_time");
+  else
+    procInput.rteHoldDist = query.valueFloat("route_distance_holding_distance_time");
+
+  procInput.altDescr = query.valueStr("altitude_description");
+  procInput.altitude = query.valueStr("altitude1");
+  procInput.altitude2 = query.valueStr("altitude2");
+  procInput.transAlt = query.valueStr("transition_altitude");
+  procInput.speedLimitDescr = query.valueStr("speed_limit_description");
+  procInput.speedLimit = query.valueInt("speed_limit");
+
+  procInput.centerFixOrTaaPt = query.valueStr("center_waypoint");
+  // procInput.centerIcaoCode = query.valueStr("");
+  // procInput.centerSecCode = query.valueStr("");
+  // procInput.centerSubCode = query.valueStr("");
+  procInput.centerPos = DPos(query.valueDouble("center_waypoint_longitude"),
+                             query.valueDouble("center_waypoint_latitude"));
+
+  // procInput.gnssFmsIndicator = query.valueStr("");
+}
+
+void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
+{
+  SqlQuery query(SqlUtil(db).buildSelectStatement(table)
+                 // + " where airport_identifier in ('CYBK') "
+                 // "and procedure_identifier = 'R34'"
+                 , db);
+  query.exec();
+  atools::fs::common::ProcedureInput procInput;
+
+  QString curAirport;
+  procInput.rowCode = rowCode;
+  int num = 0;
+  while(query.next())
+  {
+    QString airportIdent = query.valueStr("airport_identifier");
+
+    if((++num % 5000) == 0)
+      qDebug() << num << airportIdent << "...";
+
+    if(!curAirport.isEmpty() && airportIdent != curAirport)
+    {
+      procWriter->finish(procInput);
+      procWriter->reset();
+    }
+
+    // qDebug() << query.record();
+    procInput.context = QString("File %1, airport %2, procedure %3, transition %4").
+                        arg(db.databaseName()).
+                        arg(query.valueStr("airport_identifier")).
+                        arg(query.valueStr("procedure_identifier")).
+                        arg(query.valueStr("transition_identifier"));
+
+    procInput.airportIdent = airportIdent;
+    procInput.airportId = airportIndex->getAirportId(airportIdent).toInt();
+
+    fillProcedureInput(procInput, query);
+    procWriter->write(procInput);
+
+    curAirport = procInput.airportIdent;
+  }
+  procWriter->finish(procInput);
+  procWriter->reset();
+}
+
+void DfdCompiler::writeProcedures()
+{
+  progress->reportOther("Writing approaches and transitions");
+  writeProcedure("src.tbl_iaps_pr", "APPCH");
+
+  progress->reportOther("Writing SIDs");
+  writeProcedure("src.tbl_sids_pr", "SID");
+
+  progress->reportOther("Writing STARs");
+  writeProcedure("src.tbl_stars_pr", "STAR");
+}
+
 void DfdCompiler::close()
 {
   delete magDecReader;
@@ -588,6 +623,9 @@ void DfdCompiler::close()
 
   deInitQueries();
 
+  delete procWriter;
+  procWriter = nullptr;
+
   delete airportIndex;
   airportIndex = nullptr;
 }
@@ -596,7 +634,7 @@ void DfdCompiler::readHeader()
 {
   metadataQuery->exec();
   if(metadataQuery->next())
-    airacCycle = metadataQuery->value("current_airac").toString();
+    airacCycle = metadataQuery->valueStr("current_airac");
 }
 
 void DfdCompiler::compileMagDeclBgl()
@@ -620,6 +658,81 @@ void DfdCompiler::writeFileAndSceneryMetadata()
   db.commit();
 }
 
+void DfdCompiler::updateMagvar()
+{
+  progress->reportOther("Updating magnetic declination");
+
+  atools::fs::common::MagDecReader *magdec = magDecReader;
+  SqlUtil::UpdateColFuncType func =
+    [magdec](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      to.bindValue(":mag_var", magdec->getMagVar(Pos(from.valueFloat("lonx"),
+                                                     from.valueFloat("laty"))));
+      return true;
+    };
+
+  SqlUtil util(db);
+  util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
+  util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
+  db.commit();
+}
+
+void DfdCompiler::updateTacanChannel()
+{
+  progress->reportOther("Updating VORTAC and TACAN channels");
+
+  SqlUtil::UpdateColFuncType func =
+    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      QString type = from.valueStr("type");
+      if(type == "TC" || type.startsWith("VT"))
+      {
+        to.bindValue(":channel", atools::fs::util::tacanChannelForFrequency(from.valueInt("frequency") / 10));
+        return true;
+      }
+      else
+        return false;
+    };
+  SqlUtil(db).updateColumnInTable("vor", "vor_id", {"frequency", "type"}, {"channel"}, func);
+  db.commit();
+}
+
+void DfdCompiler::updateIlsGeometry()
+{
+  progress->reportOther("Updating ILS geometry");
+
+  SqlUtil::UpdateColFuncType func =
+    [ = ](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    {
+      // Position of the pointy end
+      Pos pos(from.valueFloat("lonx"), from.valueFloat("laty"));
+
+      float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
+      float width = from.valueFloat("loc_width");
+      float heading = atools::geo::opposedCourseDeg(from.valueFloat("loc_heading"));
+
+      // Corner endpoints
+      Pos p1 = pos.endpoint(length, heading - width / 2.f).normalize();
+      Pos p2 = pos.endpoint(length, heading + width / 2.f).normalize();
+
+      // Calculated the center point between corners - move it a bit towareds the pointy end
+      float featherWidth = p1.distanceMeterTo(p2);
+      Pos pmid = pos.endpoint(length - featherWidth / 2, heading).normalize();
+
+      to.bindValue(":end1_lonx", p1.getLonX());
+      to.bindValue(":end1_laty", p1.getLatY());
+      to.bindValue(":end_mid_lonx", pmid.getLonX());
+      to.bindValue(":end_mid_laty", pmid.getLatY());
+      to.bindValue(":end2_lonx", p2.getLonX());
+      to.bindValue(":end2_laty", p2.getLatY());
+      return true;
+    };
+  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "loc_width"},
+                                  {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
+                                  func);
+  db.commit();
+}
+
 void DfdCompiler::initQueries()
 {
   deInitQueries();
@@ -634,7 +747,7 @@ void DfdCompiler::initQueries()
   airportWriteQuery->prepare(
     SqlUtil(db).buildInsertStatement("airport", QString(), {
           "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency",
-          "city", "state", "country",
+          "city", "state",
           "largest_parking_ramp", "largest_parking_gate",
           "scenery_local_path", "bgl_filename",
           "longest_runway_surface",

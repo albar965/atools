@@ -182,7 +182,7 @@ public:
   bool isValid() const
   {
     // Use half value to get around calculations
-    return lonX < INVALID_VALUE / 2 && latY < INVALID_VALUE / 2;
+    return lonX < INVALID_VALUE / 2.f && latY < INVALID_VALUE / 2.f;
   }
 
   /* false if ordinates exceed range -180 < +180 and -90 < +90 */
@@ -273,10 +273,73 @@ const atools::geo::Pos EMPTY_POS;
 
 uint qHash(const atools::geo::Pos& pos);
 
+/* Primitive class to transport more accurate values */
+class DPos
+{
+public:
+  DPos(const atools::geo::DPos& other)
+  {
+    this->operator=(other);
+
+  }
+
+  DPos()
+    : lonX(INVALID_VALUE), latY(INVALID_VALUE)
+  {
+
+  }
+
+  DPos(double longitudeX, double latitudeY)
+    : lonX(longitudeX), latY(latitudeY)
+  {
+
+  }
+
+  atools::geo::DPos& operator=(const atools::geo::DPos& other)
+  {
+    lonX = other.lonX;
+    latY = other.latY;
+    return *this;
+  }
+
+  double getLonX() const
+  {
+    return lonX;
+  }
+
+  double getLatY() const
+  {
+    return latY;
+  }
+
+  /* false if position is not initialized */
+  bool isValid() const
+  {
+    // Use half value to get around calculations
+    return lonX < INVALID_VALUE / 2. && latY < INVALID_VALUE / 2.;
+  }
+
+  /* false if position is null */
+  bool isNull() const
+  {
+    return lonX == 0. && latY == 0.;
+  }
+
+private:
+  friend QDebug operator<<(QDebug out, const atools::geo::DPos& record);
+
+  Q_DECL_CONSTEXPR static double INVALID_VALUE = std::numeric_limits<double>::max();
+
+  double lonX = INVALID_VALUE, latY = INVALID_VALUE;
+};
+
 } // namespace geo
 } // namespace atools
 
 Q_DECLARE_TYPEINFO(atools::geo::Pos, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(atools::geo::Pos);
+
+Q_DECLARE_TYPEINFO(atools::geo::DPos, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(atools::geo::DPos);
 
 #endif // ATOOLS_GEO_POSITION_H

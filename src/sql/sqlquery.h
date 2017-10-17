@@ -100,9 +100,19 @@ public:
     return value(i).toFloat();
   }
 
+  double valueDouble(int i) const
+  {
+    return value(i).toDouble();
+  }
+
   float valueFloat(const QString& name) const
   {
     return value(name).toFloat();
+  }
+
+  double valueDouble(const QString& name) const
+  {
+    return value(name).toDouble();
   }
 
   int valueBool(int i) const
@@ -134,6 +144,11 @@ public:
   float valueFloat(const QString& name, float defaultValue) const
   {
     return hasField(name) ? valueFloat(name) : defaultValue;
+  }
+
+  double valueDouble(const QString& name, double defaultValue) const
+  {
+    return hasField(name) ? valueDouble(name) : defaultValue;
   }
 
   int valueBool(const QString& name, bool defaultValue) const

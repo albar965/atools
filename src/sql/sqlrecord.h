@@ -86,6 +86,16 @@ public:
     return value(name).toFloat();
   }
 
+  double valueDouble(int i) const
+  {
+    return value(i).toDouble();
+  }
+
+  double valueDouble(const QString& name) const
+  {
+    return value(name).toDouble();
+  }
+
   int valueBool(int i) const
   {
     return value(i).toBool();
@@ -115,6 +125,11 @@ public:
   float valueFloat(const QString& name, float defaultValue) const
   {
     return contains(name) ? valueFloat(name) : defaultValue;
+  }
+
+  double valueDouble(const QString& name, double defaultValue) const
+  {
+    return contains(name) ? valueDouble(name) : defaultValue;
   }
 
   int valueBool(const QString& name, bool defaultValue) const

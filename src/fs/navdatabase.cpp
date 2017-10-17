@@ -46,7 +46,7 @@ const int PROGRESS_NUM_STEPS = 20;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
-const int PROGRESS_DFD_EXTRA_STEPS = 7;
+const int PROGRESS_DFD_EXTRA_STEPS = 10;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -337,9 +337,6 @@ void NavDatabase::createInternal(const QString& codec)
 
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  if((aborted = runScript(&progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
-    return;
-
   if(options->isDeduplicate())
   {
     // Delete duplicates before any foreign keys ids are assigned
@@ -452,10 +449,15 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   dfdCompiler->writeAirports();
   dfdCompiler->writeRunways();
   dfdCompiler->writeNavaids();
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
+
   dfdCompiler->writeAirways();
   dfdCompiler->updateMagvar();
   dfdCompiler->updateTacanChannel();
   dfdCompiler->updateIlsGeometry();
+  dfdCompiler->writeProcedures();
 
   db->commit();
 
@@ -516,6 +518,9 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     if((aborted = xpDataCompiler->compileUserNav()))
       return true;
   }
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
 
   if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
   {
@@ -580,6 +585,10 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
     }
   }
   db->commit();
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
+
   return false;
 }
 
