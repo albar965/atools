@@ -37,7 +37,7 @@ private:
 
   friend uint qHash(const IndexName& name);
 
-  static constexpr int SIZE = 6;
+  static constexpr int SIZE = 10;
   char name[SIZE];
 };
 
@@ -62,7 +62,7 @@ private:
 
   friend uint qHash(const IndexName2& name);
 
-  static constexpr int SIZE = 12;
+  static constexpr int SIZE = 20;
   char name[SIZE];
 };
 

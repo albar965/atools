@@ -231,7 +231,8 @@ HEADERS += src/atools.h \
     src/fs/common/metadatawriter.h \
     src/fs/common/airportindex.h \
     src/fs/db/dbairportindex.h \
-    src/fs/dfd/dfdcompiler.h
+    src/fs/dfd/dfdcompiler.h \
+    src/fs/common/procedurewriter.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -424,7 +425,8 @@ SOURCES += src/atools.cpp \
     src/fs/common/metadatawriter.cpp \
     src/fs/common/airportindex.cpp \
     src/fs/db/dbairportindex.cpp \
-    src/fs/dfd/dfdcompiler.cpp
+    src/fs/dfd/dfdcompiler.cpp \
+    src/fs/common/procedurewriter.cpp
 
 
 unix {

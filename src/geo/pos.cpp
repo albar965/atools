@@ -664,6 +664,13 @@ QDebug operator<<(QDebug out, const Pos& record)
   return out;
 }
 
+QDebug operator<<(QDebug out, const DPos& record)
+{
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << "DPos[lonX " << record.lonX << ", latY " << record.latY << "]";
+  return out;
+}
+
 QDataStream& operator<<(QDataStream& out, const Pos& obj)
 {
   out << obj.lonX << obj.latY << obj.altitude;
