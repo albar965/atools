@@ -559,9 +559,10 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
 
 void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 {
-  SqlQuery query(SqlUtil(db).buildSelectStatement(table)
-                 // + " where airport_identifier in ('CYBK') "
+  SqlQuery query(SqlUtil(db).buildSelectStatement(table) +
+                 // " where airport_identifier in ('CYBK') "
                  // "and procedure_identifier = 'R34'"
+                 " order by airport_identifier, procedure_identifier, route_type, transition_identifier, seqno "
                  , db);
   query.exec();
   atools::fs::common::ProcedureInput procInput;

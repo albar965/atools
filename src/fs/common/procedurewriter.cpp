@@ -934,7 +934,7 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
           return type;
       }
     }
-    else
+    else if(!pos.isNull())
       qWarning() << context << "Cannot find navaid type for" << name << "/" << region << pos;
 
     return QString();

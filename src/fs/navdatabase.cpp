@@ -337,13 +337,6 @@ void NavDatabase::createInternal(const QString& codec)
 
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  if(options->isDeduplicate())
-  {
-    // Delete duplicates before any foreign keys ids are assigned
-    if((aborted = runScript(&progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
-      return;
-  }
-
   if(options->isResolveAirways() && options->getSimulatorType() != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = progress.reportOther(tr("Creating airways"))))
@@ -453,6 +446,13 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
 
+  if(options->isDeduplicate())
+  {
+    // Delete duplicates before any foreign keys ids are assigned
+    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+      return true;
+  }
+
   dfdCompiler->writeAirways();
   dfdCompiler->updateMagvar();
   dfdCompiler->updateTacanChannel();
@@ -529,6 +529,13 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
       return true;
   }
 
+  if(options->isDeduplicate())
+  {
+    // Delete duplicates before any foreign keys ids are assigned
+    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+      return true;
+  }
+
   if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
   {
     // In resources or Custom Data - mandatory
@@ -588,6 +595,13 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
+
+  if(options->isDeduplicate())
+  {
+    // Delete duplicates before any foreign keys ids are assigned
+    if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
+      return true;
+  }
 
   return false;
 }
