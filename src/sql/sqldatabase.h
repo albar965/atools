@@ -145,6 +145,12 @@ public:
   void attachDatabase(const QString& file, const QString& name);
   void detachDatabase(const QString& name);
 
+  /* Sqlite only. Compresses the database */
+  void vacuum();
+
+  /* Sqlite only. Gather schema statistics for query optimization. */
+  void analyze();
+
 private:
   SqlDatabase(const QSqlDatabase& other);
 

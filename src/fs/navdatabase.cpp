@@ -46,6 +46,8 @@ const int PROGRESS_NUM_STEPS = 20;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
+const int PROGRESS_NUM_ANALYZE_STEPS = 1;
+const int PROGRESS_NUM_VACCUM_STEPS = 1;
 const int PROGRESS_DFD_EXTRA_STEPS = 10;
 
 using atools::sql::SqlDatabase;
@@ -269,6 +271,12 @@ void NavDatabase::createInternal(const QString& codec)
   if(options->isDeduplicate())
     total += PROGRESS_NUM_DEDUPLICATE_STEPS;
 
+  if(options->isAnalyzeDatabase())
+    total += PROGRESS_NUM_ANALYZE_STEPS;
+
+  if(options->isVacuumDatabase())
+    total += PROGRESS_NUM_VACCUM_STEPS;
+
   // Assume this one takes a quarter of the total number of steps
   int numRouteSteps = total / routePartFraction;
   if(options->isCreateRouteTables())
@@ -280,9 +288,6 @@ void NavDatabase::createInternal(const QString& codec)
   createSchemaInternal(&progress);
   if(aborted)
     return;
-
-  atools::fs::db::DatabaseMeta databaseMetadata(db);
-  databaseMetadata.updateAll();
 
   // -----------------------------------------------------------------------
   // Create empty data writer pointers which will read all files and fill the database
@@ -401,17 +406,25 @@ void NavDatabase::createInternal(const QString& codec)
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
 
+  atools::fs::db::DatabaseMeta databaseMetadata(db);
+  databaseMetadata.updateAll();
+
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
   if(!dfdCompiler.isNull())
     databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle());
 
   databaseMetadata.updateAll();
+  db->commit();
+
+  if(!dfdCompiler.isNull())
+    // database is kept locked by queries - need to close this late to avoid statistics generation for attached
+    dfdCompiler->detachDatabase();
 
   // ================================================================================================
   // Done here - now only some options statistics and reports are left
 
-  if(options->getFlags() & type::BASIC_VALIDATION)
+  if(options->isBasicValidation())
     basicValidation(&progress);
 
   if(options->isDatabaseReport())
@@ -420,6 +433,22 @@ void NavDatabase::createInternal(const QString& codec)
     if(!fsDataWriter.isNull())
       fsDataWriter->logResults();
     createDatabaseReport(&progress);
+  }
+
+  if(options->isVacuumDatabase())
+  {
+    if((aborted = progress.reportOther(tr("Vacuum Database"))))
+      return;
+
+    db->vacuum();
+  }
+
+  if(options->isAnalyzeDatabase())
+  {
+    if((aborted = progress.reportOther(tr("Analyze Database"))))
+      return;
+
+    db->analyze();
   }
 
   // Send the final progress report
@@ -461,7 +490,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
 
   db->commit();
 
-  // ngDataCompiler->detachDatabase();
+  dfdCompiler->deInitQueries();
 
   return false;
 }
@@ -611,25 +640,75 @@ bool NavDatabase::basicValidation(ProgressHandler *progress)
   if((aborted = progress->reportOther(tr("Basic Validation"))))
     return true;
 
+  // Numbers are currently hardcoded to DFD database and will fail if running against a FSX/P3D database
+  basicValidateTable("airport", 13000);
+  basicValidateTable("airport_file", 0);
+  basicValidateTable("airport_large", 2000);
+  basicValidateTable("airport_medium", 7000);
+  basicValidateTable("airway", 8000);
+  basicValidateTable("approach", 90000);
+  basicValidateTable("approach_leg", 430000);
+  basicValidateTable("apron", 0);
+  basicValidateTable("apron_light", 0);
+  basicValidateTable("bgl_file", 1);
+  basicValidateTable("boundary", 0);
+  basicValidateTable("com", 0);
+  basicValidateTable("delete_airport", 0);
+  basicValidateTable("fence", 0);
+  basicValidateTable("helipad", 0);
+  basicValidateTable("ils", 4000);
+  basicValidateTable("magdecl", 1);
+  basicValidateTable("marker", 1500);
+  basicValidateTable("metadata", 1);
+  basicValidateTable("nav_search", 200000);
+  basicValidateTable("ndb", 5502);
+  basicValidateTable("parking", 0);
+  basicValidateTable("route_edge_airway", 82000);
+  basicValidateTable("route_edge_radio", 200000);
+  basicValidateTable("route_node_airway", 41000);
+  basicValidateTable("route_node_radio", 9000);
+  basicValidateTable("runway", 17000);
+  basicValidateTable("runway_end", 30000);
+  basicValidateTable("scenery_area", 1);
+  basicValidateTable("start", 0);
+  basicValidateTable("taxi_path", 0);
+  basicValidateTable("transition", 96000);
+  basicValidateTable("transition_leg", 300000);
+  basicValidateTable("vor", 4000);
+  basicValidateTable("waypoint", 200000);
+
   return false;
+}
+
+void NavDatabase::basicValidateTable(const QString& table, int minCount)
+{
+  SqlUtil util(db);
+  if(!util.hasTable(table))
+    throw Exception("Table \"" + table + "\" not found.");
+
+  int count = 0;
+  if((count = util.rowCount(table)) < minCount)
+    throw Exception(QString("Table \"%1\" has only %2 rows. Minimum required is %3").arg(table).arg(count).arg(minCount));
+
+
+  qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
+
 }
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
 {
-  QDebug info(QtInfoMsg);
+  QDebug info(qInfo());
   atools::sql::SqlUtil util(db);
 
   if((aborted = progress->reportOther(tr("Creating table statistics"))))
     return true;
 
-  qDebug() << "printTableStats";
   info << endl;
   util.printTableStats(info);
 
   if((aborted = progress->reportOther(tr("Creating report on values"))))
     return true;
 
-  qDebug() << "createColumnReport";
   info << endl;
   util.createColumnReport(info);
 
@@ -637,37 +716,37 @@ bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
     return true;
 
   info << endl;
-  qDebug() << "reportDuplicates airport";
+
   util.reportDuplicates(info, "airport", "airport_id", {"ident"});
   info << endl;
-  qDebug() << "reportDuplicates vor";
+
   util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates ndb";
+
   util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates waypoint";
+
   util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates ils";
+
   util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates marker";
+
   util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates helipad";
+
   util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates parking";
+
   util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates start";
+
   util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates runway";
+
   util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
   info << endl;
-  qDebug() << "reportDuplicates bgl_file";
+
   util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
   info << endl;
 
@@ -802,7 +881,7 @@ void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
 {
   for(QString table : tables)
   {
-    qDebug() << "reportCoordinateViolations" << table;
+    out << "==================================================================" << endl;
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
   }

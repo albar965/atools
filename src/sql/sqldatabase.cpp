@@ -154,6 +154,21 @@ void SqlDatabase::detachDatabase(const QString& name)
   checkError(db.transaction(), "SqlDatabase::detachDatabase() error");
 }
 
+void SqlDatabase::vacuum()
+{
+  checkError(db.rollback(), "SqlDatabase::detachDatabase() error");
+  exec("vacuum");
+  checkError(db.transaction(), "SqlDatabase::detachDatabase() error");
+}
+
+void SqlDatabase::analyze()
+{
+  exec("analyze");
+
+  /* Force reload of statistics */
+  exec("analyze sqlite_master");
+}
+
 bool SqlDatabase::isOpen() const
 {
   return db.isOpen();

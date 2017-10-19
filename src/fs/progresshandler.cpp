@@ -156,17 +156,24 @@ bool ProgressHandler::callHandler()
 void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 {
   if(inf.isNewFile())
+  {
+    qInfo() << "======================================================================";
     qInfo() << "====" << numbersAsString(inf) << inf.getBglFileName();
+  }
 
   if(inf.isNewSceneryArea())
   {
     qInfo() << "======================================================================";
     qInfo() << "==========" << numbersAsString(inf) << inf.getSceneryTitle();
     qInfo() << "==========" << inf.getSceneryPath();
+    qInfo() << "======================================================================";
   }
 
   if(inf.isNewOther())
+  {
+    qInfo() << "======================================================================";
     qInfo() << "====" << numbersAsString(inf) << inf.getOtherAction();
+  }
 }
 
 QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)

@@ -124,8 +124,15 @@ enum OptionFlag
   /* Reads all inactive scenery regions if set to true */
   READ_ADDON_XML = 1 << 10,
 
-  /* Does a very basic validation and checks if most important tables are filled */
-  BASIC_VALIDATION = 1 << 11
+  /* Does a very basic validation and checks if most important tables are filled
+   * True: Check for most important tables populated and throw exception if not.*/
+  BASIC_VALIDATION = 1 << 11,
+
+  /* Vaccuum database at end */
+  VACUUM_DATABASE = 1 << 12,
+
+  /* Run SQLite analyze command */
+  ANALYZE_DATABASE = 1 << 13
 };
 
 Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
@@ -326,6 +333,21 @@ public:
   bool isDatabaseReport() const
   {
     return flags & type::DATABASE_REPORT;
+  }
+
+  bool isVacuumDatabase() const
+  {
+    return flags & type::VACUUM_DATABASE;
+  }
+
+  bool isAnalyzeDatabase() const
+  {
+    return flags & type::ANALYZE_DATABASE;
+  }
+
+  bool isBasicValidation() const
+  {
+    return flags & type::BASIC_VALIDATION;
   }
 
   bool isResolveAirways() const

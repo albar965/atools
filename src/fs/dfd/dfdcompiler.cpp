@@ -198,23 +198,32 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
 
   for(const std::pair<SqlRecord, SqlRecord>& runwaypair : runwaypairs)
   {
-    SqlRecord p = runwaypair.first;
-    SqlRecord s = runwaypair.second;
+    SqlRecord primaryRec = runwaypair.first;
+    SqlRecord secondaryRec = runwaypair.second;
 
-    float heading = p.valueFloat("runway_true_bearing");
-    float opposedHeading = s.valueFloat("runway_true_bearing");
-    int length = p.valueInt("runway_length");
-    int width = p.valueInt("runway_width");
     int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
-    int alt = (p.valueInt("landing_threshold_elevation") + s.valueInt("landing_threshold_elevation")) / 2;
-    float lonX = (p.valueFloat("runway_longitude") + s.valueFloat("runway_longitude")) / 2.f;
-    float latY = (p.valueFloat("runway_latitude") + s.valueFloat("runway_latitude")) / 2.f;
+
+    int length = primaryRec.valueInt("runway_length");
+    int width = primaryRec.valueInt("runway_width");
+
+    // Use average threshold altitude
+    int alt = (primaryRec.valueInt("landing_threshold_elevation") +
+               secondaryRec.valueInt("landing_threshold_elevation")) / 2;
+
+    // Calculate center point
+    float lonX = (primaryRec.valueFloat("runway_longitude") + secondaryRec.valueFloat("runway_longitude")) / 2.f;
+    float latY = (primaryRec.valueFloat("runway_latitude") + secondaryRec.valueFloat("runway_latitude")) / 2.f;
     Pos pos(lonX, latY);
+
+    // Calcuate true heading from magnetic
+    float magvar = magDecReader->getMagVar(pos);
+    float heading = atools::geo::normalizeCourse(primaryRec.valueFloat("runway_magnetic_bearing") + magvar);
+    float opposedHeading = atools::geo::normalizeCourse(secondaryRec.valueFloat("runway_magnetic_bearing") + magvar);
 
     // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
     // << secondaryEndId << s.valueStr("runway_identifier");
 
-    if(p.valueStr("llz_identifier").isEmpty())
+    if(primaryRec.valueStr("llz_identifier").isEmpty())
       numRunwayIls++;
 
     if(length > longestRunwayLength)
@@ -231,8 +240,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     airportRect.extend(pPos);
     airportRect.extend(sPos);
 
-    bool pClosed = p.valueBool("is_closed", false);
-    bool sClosed = s.valueBool("is_closed", false);
+    bool pClosed = primaryRec.valueBool("is_closed", false);
+    bool sClosed = secondaryRec.valueBool("is_closed", false);
 
     runwayWriteQuery->bindValue(":runway_id", ++curRunwayId);
     runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportId(apt));
@@ -253,9 +262,9 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayWriteQuery->bindValue(":laty", latY);
 
     runwayEndWriteQuery->bindValue(":runway_end_id", primaryEndId);
-    runwayEndWriteQuery->bindValue(":name", p.valueStr("runway_identifier").mid(2));
+    runwayEndWriteQuery->bindValue(":name", primaryRec.valueStr("runway_identifier").mid(2));
     runwayEndWriteQuery->bindValue(":end_type", "P");
-    runwayEndWriteQuery->bindValue(":offset_threshold", p.valueInt("displaced_threshold_distance"));
+    runwayEndWriteQuery->bindValue(":offset_threshold", primaryRec.valueInt("displaced_threshold_distance"));
     runwayEndWriteQuery->bindValue(":blast_pad", 0);
     runwayEndWriteQuery->bindValue(":overrun", 0);
     runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
@@ -267,16 +276,16 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
-    runwayEndWriteQuery->bindValue(":ils_ident", p.valueStr("llz_identifier"));
+    runwayEndWriteQuery->bindValue(":ils_ident", primaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", heading);
     runwayEndWriteQuery->bindValue(":lonx", pPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", pPos.getLatY());
     runwayEndWriteQuery->exec();
 
     runwayEndWriteQuery->bindValue(":runway_end_id", secondaryEndId);
-    runwayEndWriteQuery->bindValue(":name", s.valueStr("runway_identifier").mid(2));
+    runwayEndWriteQuery->bindValue(":name", secondaryRec.valueStr("runway_identifier").mid(2));
     runwayEndWriteQuery->bindValue(":end_type", "S");
-    runwayEndWriteQuery->bindValue(":offset_threshold", s.valueInt("displaced_threshold_distance"));
+    runwayEndWriteQuery->bindValue(":offset_threshold", secondaryRec.valueInt("displaced_threshold_distance"));
     runwayEndWriteQuery->bindValue(":blast_pad", 0);
     runwayEndWriteQuery->bindValue(":overrun", 0);
     runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
@@ -288,7 +297,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":has_reils", 0);
     runwayEndWriteQuery->bindValue(":has_touchdown_lights", 0);
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
-    runwayEndWriteQuery->bindValue(":ils_ident", s.valueStr("llz_identifier"));
+    runwayEndWriteQuery->bindValue(":ils_ident", secondaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", opposedHeading);
     runwayEndWriteQuery->bindValue(":lonx", sPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", sPos.getLatY());

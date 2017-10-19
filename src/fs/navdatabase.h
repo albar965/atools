@@ -118,7 +118,8 @@ private:
   bool loadXplane(atools::fs::ProgressHandler *progress, atools::fs::xp::XpDataCompiler *xpDataCompiler,
                   const atools::fs::scenery::SceneryArea& area);
   bool loadDfd(atools::fs::ProgressHandler *progress, atools::fs::ng::DfdCompiler *dfdCompiler,
-                     const atools::fs::scenery::SceneryArea& area);
+               const atools::fs::scenery::SceneryArea& area);
+  void basicValidateTable(const QString& table, int minCount);
 
   bool createDatabaseReport(ProgressHandler *progress);
   bool basicValidation(ProgressHandler *progress);
