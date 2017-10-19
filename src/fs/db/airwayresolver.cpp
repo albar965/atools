@@ -118,6 +118,17 @@ AirwayResolver::~AirwayResolver()
 {
 }
 
+void AirwayResolver::assignWaypointIds()
+{
+  // Set the waypoint IDs
+  SqlQuery query(db);
+  query.exec(
+    "update airway_point set waypoint_id = ( "
+    "select w.waypoint_id from waypoint w where mid_type = w.type and mid_ident = w.ident and mid_region = w.region )");
+  int updated = query.numRowsAffected();
+  qInfo() << "Updated" << updated << "waypoint_id in airway table";
+}
+
 bool AirwayResolver::run()
 {
   bool aborted = false;

@@ -45,6 +45,10 @@ class ProgressHandler;
 
 namespace ng {
 
+/*
+ * Creates a Little Navmap scenery database from a DFD database.
+ * Only for command line based compilation.
+ */
 class DfdCompiler
 {
 public:
@@ -59,37 +63,59 @@ public:
     return airacCycle;
   }
 
+  /* Read magnetic declination. */
   void compileMagDeclBgl();
+
+  /* Reads AIRAC number from header file */
   void readHeader();
 
+  /* Write a single dummy scenery area and file */
   void writeFileAndSceneryMetadata();
 
+  /* Attach source database with alias "src" */
   void attachDatabase();
   void detachDatabase();
 
+  /* Read source airport and write to airport */
   void writeAirports();
+
+  /* Read runway table and write to runway and runway_end */
   void writeRunways();
 
+  /* Fills waypoint, vor, ndb, ils and marker.
+   * Also creates NDB and VOR waypoints from airway and procedure references */
   void writeNavaids();
+
+  /* Update declination for waypoint and NDB */
   void updateMagvar();
+
+  /* Update TACAN and VORTAC channels */
   void updateTacanChannel();
+
+  /* Calculate the ILS endpoints for map displayy */
   void updateIlsGeometry();
+
+  /* FIll table airway */
   void writeAirways();
+
+  /* Read approaches, transitions, SIDs and STARs */
   void writeProcedures();
 
   void initQueries();
   void deInitQueries();
 
 private:
+  /* Length of the ILS feather */
   const int ILS_FEATHER_LEN_NM = 9;
 
+  /* Write all collected runways for an airport */
   void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
+
+  /* Match opposing runway ends */
   void pairRunways(QVector<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
                    sql::SqlRecordVector& runways);
   void fillProcedureInput(atools::fs::common::ProcedureInput& procInput, const atools::sql::SqlQuery& query);
   void writeProcedure(const QString& table, const QString& rowCode);
-
-  const int ID_OFFSET = 100000000;
 
   const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
@@ -99,10 +125,14 @@ private:
   atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::ProcedureWriter *procWriter = nullptr;
   atools::fs::common::MetadataWriter *metadataWriter = nullptr;
-  int curAirportId = ID_OFFSET, curRunwayId = ID_OFFSET, curRunwayEndId = ID_OFFSET;
+
+  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0;
+
+  /* Hardcoded dummy ids */
   const int FILE_ID = 1, SCENERY_ID = 1;
   QString airacCycle;
 
+  /* Remember surface of longest runway for an airport*/
   QHash<QString, QString> longestRunwaySurfaceMap;
   QHash<QString, atools::geo::Rect> airportRectMap;
 

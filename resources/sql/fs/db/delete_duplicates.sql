@@ -103,10 +103,4 @@ where airway_point_id not in (
       next_type, next_ident, next_region, previous_type, previous_ident, previous_region
 );
 
--- ==========================================================
--- Update counts after deleting duplicates
-
-update airway_point set waypoint_id = (
-select w.waypoint_id from waypoint w where mid_type = w.type and mid_ident = w.ident and mid_region = w.region
-);
 

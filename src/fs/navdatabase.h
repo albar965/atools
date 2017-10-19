@@ -107,23 +107,29 @@ public:
   static bool isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type);
 
 private:
+  /* Creates database schema only */
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
-  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
-  void createInternal(const QString& codec);
+  void createInternal(const QString& sceneryConfigCodec);
   void readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg);
 
+  /* Source dependent compilation methods */
   bool loadFsxP3d(atools::fs::ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter,
                   const scenery::SceneryCfg& cfg);
   bool loadXplane(atools::fs::ProgressHandler *progress, atools::fs::xp::XpDataCompiler *xpDataCompiler,
                   const atools::fs::scenery::SceneryArea& area);
   bool loadDfd(atools::fs::ProgressHandler *progress, atools::fs::ng::DfdCompiler *dfdCompiler,
                const atools::fs::scenery::SceneryArea& area);
-  void basicValidateTable(const QString& table, int minCount);
 
+  /* Reporting to log file and/or console */
   bool createDatabaseReport(ProgressHandler *progress);
   bool basicValidation(ProgressHandler *progress);
+  void basicValidateTable(const QString& table, int minCount);
+  void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
+  /* Count files in FSX/P3D scenery configuration */
+  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
+
+  /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
 
   atools::sql::SqlDatabase *db;

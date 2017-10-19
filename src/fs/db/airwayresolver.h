@@ -53,6 +53,11 @@ public:
 
   struct AirwaySegment;
 
+  /*
+   * Assigns the waypoint_id in table airway_point. Not needed for all compilations.
+   */
+  void assignWaypointIds();
+
 private:
   static const int MAX_AIRWAY_SEGMENT_LENGTH_NM = 1000;
 

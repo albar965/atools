@@ -219,10 +219,10 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
   return false;
 }
 
-void NavDatabase::createInternal(const QString& codec)
+void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
   int numProgressReports = 0, numSceneryAreas = 0, xplaneExtraSteps = 0;
-  SceneryCfg cfg(codec);
+  SceneryCfg cfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
   timer.start();
@@ -350,11 +350,14 @@ void NavDatabase::createInternal(const QString& codec)
     // Read airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
+    resolver.assignWaypointIds();
+
     if((aborted = resolver.run()))
       return;
   }
 
-  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
+  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11 &&
+     options->getSimulatorType() != atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
