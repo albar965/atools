@@ -61,8 +61,8 @@ select
     case when substr(navaid_class, 2,1) = (' ') then null else dme_elevation end as dme_altitude,
     case when substr(navaid_class, 2,1) = (' ') then null else dme_longitude end as dme_lonx,
     case when substr(navaid_class, 2,1) = (' ') then null else dme_latitude end as dme_laty,
-    -- Use DME elevation as elevation
-    dme_elevation as altitude,
+    -- Use DME elevation as elevation - VOR without DME have no elevation
+    case when substr(navaid_class, 1,2) ='V ' and dme_elevation = 0  then null else dme_elevation end as altitude,
     vor_longitude as lonx,
     vor_latitude as laty
 from src.tbl_vhfnavaids
@@ -76,18 +76,22 @@ where substr(navaid_class, 2,1) not in ('I', 'N', 'P');
 
 delete from ndb;
 
-insert into ndb (file_id,ident,name,region,type,frequency,mag_var,lonx,laty)
+insert into ndb (file_id,ident,name,region,type,frequency,mag_var,altitude,lonx,laty)
 select
   1 as file_id,
   ndb_identifier as ident,
   ndb_name as name,
   icao_code as region,
-  case when substr(navaid_class, 3,1) in ('M', 'H', 'L')
-    then substr(navaid_class, 3,1)
+   --  CP MH H HH
+  case
+    when substr(navaid_class, 3,1) = 'L' then 'CP'
+    when substr(navaid_class, 3,1) = 'M' then 'MH'
+    when substr(navaid_class, 3,1) = 'H' then 'H'
     else null
-  end  as type,
+  end as type,
   ndb_frequency * 100 as frequency,
   0 as  mag_var, -- Calculated later in C++ code
+  null as altitude, -- Not available
   ndb_longitude as lonx,
   ndb_latitude as laty
 from (
@@ -127,7 +131,7 @@ select
   l.airport_identifier as loc_airport_ident,
   substr(l.runway_identifier, 3) as loc_runway_name, -- Strip off "RW" prefix
   l.llz_bearing + l.station_declination as loc_heading, -- Magnetic to true
-  4 as loc_width,
+  null as loc_width, -- Not available
   0 as end1_lonx,  -- All geometry is calculated later
   0 as end1_laty,
   0 as end_mid_lonx,
@@ -137,7 +141,7 @@ select
   0 as altitude,
   l.llz_longitude as lonx,
   l.llz_latitude as laty
-from src.tbl_localizers l left outer join src.tbl_vhfnavaids d on
+from src.tbl_localizers_glideslopes l left outer join src.tbl_vhfnavaids d on
   l.llz_identifier = d.vor_identifier and l.icao_code = d.icao_code;
 
 
@@ -163,7 +167,7 @@ select
   coalesce(r.landing_threshold_elevation, 0) as altitude,
   m.marker_longitude as lonx,
   m.marker_latitude as laty
-from src.tbl_marker m
+from src.tbl_localizer_marker m
 -- Get heading and altitude from runway if possible
 left outer join src.tbl_runways r on
   m.airport_identifier = r.airport_identifier and
@@ -216,7 +220,7 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_airways
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
 ) a join src.tbl_vhfnavaids v on
   a.waypoint_identifier = v.vor_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.vor_latitude and a.waypoint_longitude = v.vor_longitude;
@@ -256,7 +260,7 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_airways
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
 ) a join src.tbl_terminal_ndbnavaids v on
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
@@ -297,7 +301,7 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_airways
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
 ) a join src.tbl_enroute_ndbnavaids v on
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;

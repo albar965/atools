@@ -112,15 +112,21 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
     insertVorQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
     insertVorQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
     insertVorQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
+    insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
   }
   else
   {
     insertVorQuery->bindValue(":dme_altitude", QVariant(QVariant::Int));
     insertVorQuery->bindValue(":dme_lonx", QVariant(QVariant::Double));
     insertVorQuery->bindValue(":dme_laty", QVariant(QVariant::Double));
+
+    // VOR only - unlikely to have an elevation
+    if(at(line, ALT).toInt() != 0)
+      insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
+    else
+      insertVorQuery->bindValue(":altitude", QVariant(QVariant::Int));
   }
 
-  insertVorQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertVorQuery->bindValue(":lonx", at(line, LONX).toFloat());
   insertVorQuery->bindValue(":laty", at(line, LATY).toFloat());
 
@@ -141,7 +147,7 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   else if(range < 70)
     type = "H";
   else
-    type = "HF";
+    type = "HH";
 
   atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
@@ -154,7 +160,11 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
   insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
-  insertNdbQuery->bindValue(":altitude", at(line, ALT).toInt());
+  // NDBs never have an altitude
+  if(at(line, ALT).toInt() != 0)
+    insertNdbQuery->bindValue(":altitude", at(line, ALT).toInt());
+  else
+    insertNdbQuery->bindValue(":altitude", QVariant(QVariant::Int));
   insertNdbQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
   insertNdbQuery->bindValue(":lonx", pos.getLonX());
   insertNdbQuery->bindValue(":laty", pos.getLatY());
@@ -178,7 +188,7 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
   insertMarkerQuery->bindValue(":file_id", curFileId);
   insertMarkerQuery->bindValue(":region", at(line, REGION));
   insertMarkerQuery->bindValue(":type", type);
-  insertMarkerQuery->bindValue(":ident", at(line, IDENT).toFloat());
+  insertMarkerQuery->bindValue(":ident", at(line, IDENT));
   insertMarkerQuery->bindValue(":heading", at(line, HDG).toFloat());
   insertMarkerQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertMarkerQuery->bindValue(":lonx", at(line, LONX).toFloat());
@@ -229,7 +239,7 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
   insertIlsQuery->bindValue(":laty", pos.getLatY());
 
   insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertIlsQuery->bindValue(":loc_width", FEATHER_WIDTH);
+  insertIlsQuery->bindValue(":loc_width", QVariant(QVariant::Int)); // Not available
   insertIlsQuery->bindValue(":has_backcourse", 0);
 
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);

@@ -105,9 +105,6 @@ public:
   void deInitQueries();
 
 private:
-  /* Length of the ILS feather */
-  const int ILS_FEATHER_LEN_NM = 9;
-
   /* Write all collected runways for an airport */
   void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
 

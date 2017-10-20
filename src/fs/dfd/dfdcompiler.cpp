@@ -52,6 +52,10 @@ namespace atools {
 namespace fs {
 namespace ng {
 
+/* Length of the ILS feather */
+static const float ILS_FEATHER_LEN_NM = 9;
+static const float ILS_FEATHER_WIDTH = 4.f;
+
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                          ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
   : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
@@ -445,7 +449,7 @@ void DfdCompiler::writeAirways()
     "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
     "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
     "  w.lonx, w.laty "
-    "from src.tbl_airways a "
+    "from src.tbl_enroute_airways a "
     "join waypoint w on "
     "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
     "  a.waypoint_latitude = w.laty "
@@ -743,20 +747,18 @@ void DfdCompiler::updateIlsGeometry()
 {
   progress->reportOther("Updating ILS geometry");
 
-  int featherLen = ILS_FEATHER_LEN_NM;
   SqlUtil::UpdateColFuncType func =
-    [featherLen](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
+    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
     {
       // Position of the pointy end
       Pos pos(from.valueFloat("lonx"), from.valueFloat("laty"));
 
-      float length = atools::geo::nmToMeter(featherLen);
-      float width = from.valueFloat("loc_width");
+      float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
       float heading = atools::geo::opposedCourseDeg(from.valueFloat("loc_heading"));
 
       // Corner endpoints
-      Pos p1 = pos.endpoint(length, heading - width / 2.f).normalize();
-      Pos p2 = pos.endpoint(length, heading + width / 2.f).normalize();
+      Pos p1 = pos.endpoint(length, heading - ILS_FEATHER_WIDTH / 2.f).normalize();
+      Pos p2 = pos.endpoint(length, heading + ILS_FEATHER_WIDTH / 2.f).normalize();
 
       // Calculated the center point between corners - move it a bit towareds the pointy end
       float featherWidth = p1.distanceMeterTo(p2);
@@ -771,7 +773,7 @@ void DfdCompiler::updateIlsGeometry()
       return true;
     };
 
-  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "loc_width"},
+  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading"},
                                   {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
                                   func);
   db.commit();

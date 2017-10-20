@@ -69,7 +69,7 @@ create table vor
   dme_altitude integer,         -- Feet - null if navaid is VOR only
   dme_lonx double,              -- Null if navaid is VOR only
   dme_laty double,              -- "
-  altitude integer not null,    -- Feet
+  altitude integer,             -- Feet or null if not available
   lonx double not null,
   laty double not null,
 foreign key(file_id) references bgl_file(bgl_file_id),
@@ -93,8 +93,9 @@ create table ndb
   region varchar(2),          -- ICAO two letter region identifier
   airport_id integer,         -- Reference to airport if applicable
   type varchar(15),           -- See enum atools::fs::bgl::nav::NdbType
+                              -- CP MH H HH
   frequency integer not null, -- Frequency - kHz * 100
-  range integer,              -- Navaid radio range in NM
+  range integer,              -- Navaid radio range in NM or null if not available
   mag_var double  not null,   -- Magnetic variance in degree < 0 for West and > 0 for East
   altitude integer,           -- Feet
   lonx double not null,
@@ -155,7 +156,7 @@ create table ils
   loc_airport_ident varchar(4),
   loc_runway_name varchar(10),
   loc_heading double not null,     -- Localizer heading in degree true
-  loc_width double not null,       -- Width of localizer in degree
+  loc_width double,                -- Width of localizer in degree or null if not available
   end1_lonx double not null,       -- Pre-calculated first endpoint for a 8 NM feather
   end1_laty double not null,       -- "
   end_mid_lonx double not null,    -- Pre-calculated endpoint in the center of the end
