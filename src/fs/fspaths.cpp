@@ -353,7 +353,7 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V4;
   else if(type == "XP11")
     return XPLANE11;
-  else if(type == "NAVIGRAPH")
+  else if(type == "NAVIGRAPH" || type == "DFD")
     return NAVIGRAPH;
   else
     return UNKNOWN;

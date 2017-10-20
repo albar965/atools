@@ -643,42 +643,8 @@ bool NavDatabase::basicValidation(ProgressHandler *progress)
   if((aborted = progress->reportOther(tr("Basic Validation"))))
     return true;
 
-  // Numbers are currently hardcoded to DFD database and will fail if running against a FSX/P3D database
-  basicValidateTable("airport", 13000);
-  basicValidateTable("airport_file", 0);
-  basicValidateTable("airport_large", 2000);
-  basicValidateTable("airport_medium", 7000);
-  basicValidateTable("airway", 8000);
-  basicValidateTable("approach", 90000);
-  basicValidateTable("approach_leg", 430000);
-  basicValidateTable("apron", 0);
-  basicValidateTable("apron_light", 0);
-  basicValidateTable("bgl_file", 1);
-  basicValidateTable("boundary", 0);
-  basicValidateTable("com", 0);
-  basicValidateTable("delete_airport", 0);
-  basicValidateTable("fence", 0);
-  basicValidateTable("helipad", 0);
-  basicValidateTable("ils", 4000);
-  basicValidateTable("magdecl", 1);
-  basicValidateTable("marker", 1500);
-  basicValidateTable("metadata", 1);
-  basicValidateTable("nav_search", 200000);
-  basicValidateTable("ndb", 5502);
-  basicValidateTable("parking", 0);
-  basicValidateTable("route_edge_airway", 82000);
-  basicValidateTable("route_edge_radio", 200000);
-  basicValidateTable("route_node_airway", 41000);
-  basicValidateTable("route_node_radio", 9000);
-  basicValidateTable("runway", 17000);
-  basicValidateTable("runway_end", 30000);
-  basicValidateTable("scenery_area", 1);
-  basicValidateTable("start", 0);
-  basicValidateTable("taxi_path", 0);
-  basicValidateTable("transition", 96000);
-  basicValidateTable("transition_leg", 300000);
-  basicValidateTable("vor", 4000);
-  basicValidateTable("waypoint", 200000);
+  for(const QString& table : options->getBasicValidationTables().keys())
+    basicValidateTable(table, options->getBasicValidationTables().value(table));
 
   return false;
 }

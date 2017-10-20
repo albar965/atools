@@ -111,7 +111,7 @@ insert into ils ( ident, region, frequency, range, mag_var, has_backcourse,
 select
   l.llz_identifier as ident,
   l.icao_code as region,
-  l.llz_frequency * 100 as frequency,
+  l.llz_frequency * 1000 as frequency,
   27 as range, -- default range used by FSX
   l.station_declination as mag_var,
   0 as has_backcourse, -- Not available

@@ -432,7 +432,7 @@ void DfdCompiler::writeNavaids()
   SqlScript script(db, true /*options->isVerbose()*/);
 
   // Write VOR and NDB
-  script.executeScript(":/atools/resources/sql/fs/db/airac/populate_navaids.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_navaids.sql");
   db.commit();
 }
 

@@ -177,7 +177,7 @@ QStringList NavDatabaseOptions::createFilterList(const QStringList& pathList)
   return retval;
 }
 
-void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
+void NavDatabaseOptions::loadFromSettings(QSettings& settings)
 {
   setReadInactive(settings.value("Options/IgnoreInactive", false).toBool());
   setVerbose(settings.value("Options/Verbose", false).toBool());
@@ -203,6 +203,11 @@ void NavDatabaseOptions::loadFromSettings(const QSettings& settings)
   addToAirportIcaoFilterExclude(settings.value("Filter/ExcludeAirportIcaoFilter").toStringList());
   addToBglObjectFilterInclude(settings.value("Filter/IncludeBglObjectFilter").toStringList());
   addToBglObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
+
+  settings.beginGroup("BasicValidationTables");
+  for(const QString& key : settings.childKeys())
+    basicValidationTables.insert(key, settings.value(key).toInt());
+  settings.endGroup();
 }
 
 bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,

@@ -25,6 +25,7 @@
 #include <QSet>
 #include <QFlags>
 #include <QRegExp>
+#include <QMap>
 
 class QSettings;
 class QStringList;
@@ -155,7 +156,7 @@ public:
    *
    * @param settings path to the .ini file
    */
-  void loadFromSettings(const QSettings& settings);
+  void loadFromSettings(QSettings& settings);
 
   /*
    * Set scenery.cfg file. This is mandatory.
@@ -400,6 +401,17 @@ public:
       flags &= ~value;
   }
 
+  /* Maps table name to minimum number of rows */
+  const QMap<QString, int>& getBasicValidationTables() const
+  {
+    return basicValidationTables;
+  }
+
+  void setBasicValidationTables(const QMap<QString, int>& value)
+  {
+    basicValidationTables = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -428,6 +440,7 @@ private:
 
   atools::fs::type::OptionFlags flags;
 
+  QMap<QString, int> basicValidationTables;
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
                  dirExcludes /* Not loaded from config file */,

@@ -62,6 +62,9 @@ public:
     /* Not a simulator but a database */
     NAVIGRAPH = 8,
 
+    /* Synonym for database */
+    DFD = 8,
+
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
 
