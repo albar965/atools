@@ -445,7 +445,7 @@ void DfdCompiler::writeAirways()
     "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
     "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
     "  w.lonx, w.laty "
-    "from src.tbl_airways_pr a "
+    "from src.tbl_airways a "
     "join waypoint w on "
     "  a.waypoint_identifier = w.ident and a.icao_code = w.region and a.waypoint_longitude = w.lonx and "
     "  a.waypoint_latitude = w.laty "
@@ -547,13 +547,13 @@ void DfdCompiler::writeAirways()
 void DfdCompiler::writeProcedures()
 {
   progress->reportOther("Writing approaches and transitions");
-  writeProcedure("src.tbl_iaps_pr", "APPCH");
+  writeProcedure("src.tbl_iaps", "APPCH");
 
   progress->reportOther("Writing SIDs");
-  writeProcedure("src.tbl_sids_pr", "SID");
+  writeProcedure("src.tbl_sids", "SID");
 
   progress->reportOther("Writing STARs");
-  writeProcedure("src.tbl_stars_pr", "STAR");
+  writeProcedure("src.tbl_stars", "STAR");
 }
 
 void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
@@ -785,7 +785,7 @@ void DfdCompiler::initQueries()
     metadataWriter->initQueries();
 
   airportQuery = new SqlQuery(db);
-  airportQuery->prepare("select * from src.tbl_airports_pr order by airport_identifier");
+  airportQuery->prepare("select * from src.tbl_airports order by airport_identifier");
 
   airportWriteQuery = new SqlQuery(db);
   airportWriteQuery->prepare(
@@ -799,7 +799,7 @@ void DfdCompiler::initQueries()
         }, true /* named bindings */));
 
   runwayQuery = new SqlQuery(db);
-  runwayQuery->prepare("select * from src.tbl_runways_pr order by icao_code, airport_identifier, runway_identifier");
+  runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");
 
   runwayWriteQuery = new SqlQuery(db);
   runwayWriteQuery->prepare(

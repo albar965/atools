@@ -95,14 +95,14 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       if(!quiet)
         qWarning().nospace().noquote() << sceneryAreaDirStr << " is not a directory.";
-      errorMessages.append(tr("<i>%2</i> is not a directory.").arg(sceneryAreaDirStr));
+      errorMessages.append(tr("\"%2\" is not a directory.").arg(sceneryAreaDirStr));
     }
   }
   else
   {
     if(!quiet)
       qWarning().nospace().noquote() << "Directory " << sceneryAreaDirStr << " does not exist.";
-    errorMessages.append(tr("<i>%2</i> does not exist.").arg(sceneryAreaDirStr));
+    errorMessages.append(tr("\"%2\" does not exist.").arg(sceneryAreaDirStr));
   }
   return numFiles;
 }
