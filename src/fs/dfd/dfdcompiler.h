@@ -86,6 +86,11 @@ public:
    * Also creates NDB and VOR waypoints from airway and procedure references */
   void writeNavaids();
 
+  /*
+   * Fills com table - airport communications.
+   */
+  void writeCom();
+
   /* Update declination for waypoint and NDB */
   void updateMagvar();
 

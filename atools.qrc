@@ -34,5 +34,6 @@
         <file>resources/sql/fs/db/xplane/prepare_airway.sql</file>
         <file>resources/sql/fs/db/update_num_ils.sql</file>
         <file>resources/sql/fs/db/dfd/populate_navaids.sql</file>
+        <file>resources/sql/fs/db/dfd/populate_com.sql</file>
     </qresource>
 </RCC>

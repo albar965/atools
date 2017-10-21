@@ -440,8 +440,7 @@ DISTFILES += \
     uncrustify.cfg \
     CHANGELOG.txt \
     BUILD.txt \
-    resources/sql/fs/db/README.txt \
-    resources/sql/fs/db/xplane/populate_airway_point.sql
+    resources/sql/fs/db/README.txt
 
 RESOURCES += \
     atools.qrc

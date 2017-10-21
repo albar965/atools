@@ -440,6 +440,17 @@ void DfdCompiler::writeNavaids()
   db.commit();
 }
 
+void DfdCompiler::writeCom()
+{
+  progress->reportOther("Writing COM Frequencies");
+
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  // Write COM frequencies
+  script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_com.sql");
+  db.commit();
+}
+
 void DfdCompiler::writeAirways()
 {
   progress->reportOther("Writing airways");

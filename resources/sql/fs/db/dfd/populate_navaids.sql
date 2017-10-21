@@ -325,3 +325,6 @@ from (
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
 ) a join src.tbl_enroute_ndbnavaids v on
   a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
+
+
+

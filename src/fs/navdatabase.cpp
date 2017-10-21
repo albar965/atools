@@ -474,6 +474,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   dfdCompiler->writeAirports();
   dfdCompiler->writeRunways();
   dfdCompiler->writeNavaids();
+  dfdCompiler->writeCom();
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
