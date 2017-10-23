@@ -398,12 +398,13 @@ QString capNavString(const QString& str)
           "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
           "ILS", "NDBDME",
           // Frequencies
-          "ATIS", "AWOS", "ASOS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
+          "ATIS", "AWOS", "ASOS", "AWIS", "CTAF", "FSS", "CAT", "LOC", "I", "II", "III",
           // Navaid and precision approach types
           "H", "HH", "MH", "VASI", "PAPI",
           // Airspace abbreviations
-          "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "FIZ", "FTZ",
-          "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA"
+          "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "UIR", "FIZ", "FTZ",
+          "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA",
+          "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG"
         });
 
   return atools::capString(str, {}, {}, ignore);
