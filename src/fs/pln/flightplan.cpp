@@ -984,7 +984,8 @@ void Flightplan::saveFlp(const QString& file, bool saveProcedures)
     throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
 }
 
-void Flightplan::saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps)
+void Flightplan::saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps,
+                         int cruiseAltFt)
 {
   filename = file;
 
@@ -1037,12 +1038,9 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
     writer.writeTextElement("desc", descr);
 
     // Write route ========================================================
-    for(const FlightplanEntry& entry : entries)
+    for(int i = 0; i < entries.size(); i++)
     {
-      if(entry.isNoSave())
-        // Do not save procedure points
-        continue;
-
+      const FlightplanEntry& entry = entries.at(i);
       // <rtept lat="52.0" lon="13.5">
       // <ele>33.0</ele>
       // <time>2011-12-13T23:59:59Z</time>
@@ -1051,6 +1049,11 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
       writer.writeStartElement("rtept");
       writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
       writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+
+      if(i > 0 && i < entries.size() - 1)
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
+      else
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
 
       writer.writeTextElement("name", entry.getWaypointId());
       writer.writeTextElement("desc", entry.getWaypointTypeAsString());
@@ -1076,7 +1079,6 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
 
         writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
         writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
-
         writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
         if(!timestamps.isEmpty())

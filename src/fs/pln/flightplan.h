@@ -80,7 +80,7 @@ public:
   void saveFms(const QString& file, const QString& airacCycle, bool version11Format);
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
-  void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps);
+  void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps, int cruiseAltFt);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
