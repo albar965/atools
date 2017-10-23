@@ -38,7 +38,8 @@ enum ApproachType
   VORDME = 0x08,
   NDBDME = 0x09,
   RNAV = 0x0a,
-  LOCALIZER_BACKCOURSE = 0x0b
+  LOCALIZER_BACKCOURSE = 0x0b,
+  TACAN = VORDME | ILS /* From P3D v4 upwards */
 };
 
 QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);

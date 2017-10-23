@@ -71,9 +71,12 @@ QString approachTypeToStr(ap::ApproachType type)
 
     case ap::LOCALIZER_BACKCOURSE:
       return "LOCB";
+
+    case ap::TACAN:
+      return "TCN";
   }
   qWarning().nospace().noquote() << "Invalid approach type " << type;
-  return "INVALID";
+  return "UNKN";
 }
 
 QString approachFixTypeToStr(ap::fix::ApproachFixType type)
