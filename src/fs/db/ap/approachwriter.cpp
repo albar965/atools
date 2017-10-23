@@ -45,7 +45,10 @@ void ApproachWriter::writeObject(const Approach *type)
 
   bind(":approach_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":type", bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType()));
+
+  QString apptype = bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType());
+  bind(":type", apptype);
+
   if(type->getSuffix() == '0' || type->getSuffix() == 0)
     bindNullString(":suffix");
   else
