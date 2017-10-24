@@ -1046,6 +1046,18 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
       // <time>2011-12-13T23:59:59Z</time>
       // <name>rtept 1</name>
       // </rtept>
+
+      if(i > 0)
+      {
+        // Skip equal points from procedures
+        const FlightplanEntry& prev = entries.at(i - 1);
+        if(entry.getIcaoIdent() == prev.getIcaoIdent() &&
+           entry.getIcaoRegion() == prev.getIcaoRegion() &&
+           entry.getPosition().almostEqual(prev.getPosition(), atools::geo::Pos::POS_EPSILON_100M)
+           )
+          continue;
+      }
+
       writer.writeStartElement("rtept");
       writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
       writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
