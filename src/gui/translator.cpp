@@ -39,11 +39,11 @@ void Translator::load(const QString& language)
     QString appPath = appFilePath.absolutePath();
     QString appBaseName = appFilePath.baseName();
 
-    // Load application files
+    // Load application files - will not be loaded if the files does not exist or is empty
     bool loadDefault = loadApp(appBaseName, appPath, language);
     qDebug() << "Translations for" << appPath << language << "found";
 
-    // Load atools translations
+    // Load atools translations - not required
     loadApp("atools", appPath, language);
 
     if(loadDefault)
@@ -104,15 +104,15 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
 
   QTranslator *t = new QTranslator();
   if(!t->load(locale, name, "_", dir))
-    qInfo() << "Qt translation file" << name << "not loaded from dir" << dir;
+    qInfo() << "Qt translation file" << name << "not loaded from dir" << dir << "locale" << locale.name();
   else if(QCoreApplication::instance()->installTranslator(t))
   {
-    qDebug() << "Qt translation file" << name << "from dir" << dir << "installed";
+    qDebug() << "Qt translation file" << name << "from dir" << dir << "installed" << "locale" << locale.name();
     translators.append(t);
     return true;
   }
   else
-    qDebug() << "Qt translation file" << name << "not installed from dir" << dir;
+    qDebug() << "Qt translation file" << name << "not installed from dir" << dir << "locale" << locale.name();
 
   delete t;
   return false;

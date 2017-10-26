@@ -20,13 +20,13 @@
 //
 // $Id$
 
-#ifndef _METAR_HXX
-#define _METAR_HXX
+#ifndef ATOOLS_METAR_HXX
+#define ATOOLS_METAR_HXX
 
 #include "atools.h"
 #include "geo/calculations.h"
 
-#include <QObject>
+#include <QCoreApplication>
 #include <vector>
 #include <map>
 #include <string>
@@ -40,7 +40,7 @@ namespace weather {
 struct Token
 {
   const char *id;
-  const char *text;
+  QString text;
 };
 
 const Q_DECL_CONSTEXPR float INVALID_METAR_VALUE = std::numeric_limits<float>::max();
@@ -52,6 +52,7 @@ class MetarParser;
 class MetarVisibility
 {
   friend class MetarParser;
+  Q_DECLARE_TR_FUNCTIONS(MetarVisibility)
 
 public:
   MetarVisibility() :
@@ -112,11 +113,12 @@ protected:
 class MetarRunway
 {
   friend class MetarParser;
+  Q_DECLARE_TR_FUNCTIONS(MetarRunway)
 
 public:
   MetarRunway() :
-    _deposit(-1), _deposit_string(0), _extent(-1), _extent_string(0), _depth(INVALID_METAR_VALUE),
-    _friction(INVALID_METAR_VALUE), _friction_string(0), _comment(0), _wind_shear(false)
+    _deposit(-1), _extent(-1), _depth(INVALID_METAR_VALUE),
+    _friction(INVALID_METAR_VALUE), _wind_shear(false)
   {
   }
 
@@ -179,13 +181,13 @@ protected:
   MetarVisibility _min_visibility;
   MetarVisibility _max_visibility;
   int _deposit;
-  const char *_deposit_string;
+  QString _deposit_string;
   int _extent;
-  const char *_extent_string;
+  QString _extent_string;
   float _depth;
   float _friction;
-  const char *_friction_string;
-  const char *_comment;
+  QString _friction_string;
+  QString _comment;
   bool _wind_shear;
 };
 
@@ -195,6 +197,7 @@ protected:
 class MetarCloud
 {
   friend class MetarParser;
+  Q_DECLARE_TR_FUNCTIONS(MetarCloud)
 
 public:
   enum Coverage
@@ -207,15 +210,15 @@ public:
     COVERAGE_OVERCAST = 4
   };
 
-  static const char *COVERAGE_NIL_STRING;
-  static const char *COVERAGE_CLEAR_STRING;
-  static const char *COVERAGE_FEW_STRING;
-  static const char *COVERAGE_SCATTERED_STRING;
-  static const char *COVERAGE_BROKEN_STRING;
-  static const char *COVERAGE_OVERCAST_STRING;
+  static QString COVERAGE_NIL_STRING;
+  static QString COVERAGE_CLEAR_STRING;
+  static QString COVERAGE_FEW_STRING;
+  static QString COVERAGE_SCATTERED_STRING;
+  static QString COVERAGE_BROKEN_STRING;
+  static QString COVERAGE_OVERCAST_STRING;
 
   MetarCloud() :
-    _coverage(COVERAGE_NIL), _altitude(INVALID_METAR_VALUE), _type(0), _type_long(0)
+    _coverage(COVERAGE_NIL), _altitude(INVALID_METAR_VALUE), _type(0)
   {
   }
 
@@ -249,13 +252,15 @@ protected:
   Coverage _coverage; // quarters: 0 -> clear ... 4 -> overcast
   float _altitude; // 1000 m
   const char *_type; // CU
-  const char *_type_long; // cumulus
+  QString _type_long; // cumulus
 };
 
 // ============================================================================
 // ============================================================================
 class MetarParser
 {
+  Q_DECLARE_TR_FUNCTIONS(MetarParser)
+
 public:
   MetarParser(const QString& metar);
   ~MetarParser();
@@ -521,4 +526,4 @@ protected:
 } // namespace fs
 } // namespace atools
 
-#endif // _METAR_HXX
+#endif // ATOOLS_METAR_HXX
