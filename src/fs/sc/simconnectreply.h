@@ -95,14 +95,6 @@ public:
   }
 
   /*
-   * @return Error status text for last reading or writing call
-   */
-  const QString& getStatusText() const
-  {
-    return SIMCONNECT_STATUS_TEXT.at(status);
-  }
-
-  /*
    * @return data version for this packet format
    */
   static int getReplyVersion()

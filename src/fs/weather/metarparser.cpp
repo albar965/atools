@@ -1600,13 +1600,6 @@ MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
   return COVERAGE_NIL;
 }
 
-QString MetarCloud::COVERAGE_NIL_STRING = MetarCloud::tr("nil");
-QString MetarCloud::COVERAGE_CLEAR_STRING = MetarCloud::tr("clear");
-QString MetarCloud::COVERAGE_FEW_STRING = MetarCloud::tr("few");
-QString MetarCloud::COVERAGE_SCATTERED_STRING = MetarCloud::tr("scattered");
-QString MetarCloud::COVERAGE_BROKEN_STRING = MetarCloud::tr("broken");
-QString MetarCloud::COVERAGE_OVERCAST_STRING = MetarCloud::tr("overcast");
-
 void MetarVisibility::set(float dist, int dir, int mod, int tend)
 {
   _distance = dist;

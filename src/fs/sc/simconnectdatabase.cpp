@@ -27,12 +27,33 @@ namespace sc {
 
 SimConnectDataBase::SimConnectDataBase()
 {
-
 }
 
 SimConnectDataBase::~SimConnectDataBase()
 {
 
+}
+
+QString SimConnectDataBase::getStatusText() const
+{
+  switch(status)
+  {
+    case atools::fs::sc::OK:
+      return QObject::tr("No Error");
+
+    case atools::fs::sc::INVALID_MAGIC_NUMBER:
+      return QObject::tr("Invalid magic number");
+
+    case atools::fs::sc::VERSION_MISMATCH:
+      return QObject::tr("Version mismatch");
+
+    case atools::fs::sc::INSUFFICIENT_WRITE:
+      return QObject::tr("Incomplete write");
+
+    case atools::fs::sc::WRITE_ERROR:
+      return QObject::tr("Write error");
+  }
+  return QObject::tr("Unknown Status");
 }
 
 void SimConnectDataBase::writeString(QDataStream& out, const QString& str)

@@ -210,13 +210,6 @@ public:
     COVERAGE_OVERCAST = 4
   };
 
-  static QString COVERAGE_NIL_STRING;
-  static QString COVERAGE_CLEAR_STRING;
-  static QString COVERAGE_FEW_STRING;
-  static QString COVERAGE_SCATTERED_STRING;
-  static QString COVERAGE_BROKEN_STRING;
-  static QString COVERAGE_OVERCAST_STRING;
-
   MetarCloud() :
     _coverage(COVERAGE_NIL), _altitude(INVALID_METAR_VALUE), _type(0)
   {

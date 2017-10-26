@@ -68,15 +68,6 @@ enum AircraftFlag
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
 
-const QVector<QString> SIMCONNECT_STATUS_TEXT =
-{
-  QObject::tr("No Error"),
-  QObject::tr("Invalid magic number"),
-  QObject::tr("Version mismatch"),
-  QObject::tr("Incomplete write"),
-  QObject::tr("Write error")
-};
-
 struct MetarResult
 {
   QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
