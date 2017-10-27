@@ -342,7 +342,7 @@ void Flightplan::loadFms(const QString& file)
     else
       throw Exception(tr("Invalid FMS file. Invalid version %2: %1").arg(fmsFile.fileName()).arg(version));
 
-    float maxAlt = std::numeric_limits<float>::min();
+    int maxAlt = std::numeric_limits<int>::min();
 
     while(!stream.atEnd())
     {
@@ -417,7 +417,11 @@ void Flightplan::loadFms(const QString& file)
 
         if(list.size() >= minListSize)
         {
-          float altitude = list.at(2 + fieldOffset).toFloat();
+          int altitude = list.at(2 + fieldOffset).toInt();
+          if(altitude > std::numeric_limits<int>::max() / 2)
+            // Avoid excessive altitudes
+            altitude = 0;
+
           atools::geo::Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
           if(!position.isValid() || position.isNull())
             break;
@@ -471,6 +475,7 @@ void Flightplan::loadFms(const QString& file)
     routeType = DIRECT;
     cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
     adjustDepartureAndDestination();
+    assignAltitudeToAllEntries(cruisingAlt);
 
     fileFormat = v11Format ? FMS11 : FMS3;
   }
@@ -1711,6 +1716,13 @@ int Flightplan::numEntriesSave()
       num++;
   }
   return num;
+}
+
+void Flightplan::assignAltitudeToAllEntries(int altitude)
+{
+  for(FlightplanEntry& entry : entries)
+    entry.setPosition(atools::geo::Pos(entry.getPosition().getLonX(),
+                                       entry.getPosition().getLatY(), altitude));
 }
 
 } // namespace pln

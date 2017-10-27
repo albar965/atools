@@ -60,7 +60,7 @@ void SimConnectDataBase::writeString(QDataStream& out, const QString& str)
 {
   // Write string as an size prefixed character array max length 256 UTF-8
   QByteArray strBytes;
-  strBytes.append(str);
+  strBytes.append(str.toUtf8());
   if(strBytes.size() > 255)
     strBytes = strBytes.left(255);
 
@@ -95,7 +95,7 @@ void SimConnectDataBase::writeLongString(QDataStream& out, const QString& str)
 {
   // Write string as an size prefixed character array max length 65535 UTF-8
   QByteArray strBytes;
-  strBytes.append(str);
+  strBytes.append(str.toUtf8());
   if(strBytes.size() > 65535)
     strBytes = strBytes.left(65535);
 
