@@ -4,6 +4,8 @@ Version 2.6.8
 * Now populating channel in VORTACs.
 * Fixed flight plan GPX export to save procedure points and altitude now.
 * Added new aviation acronyms to capitalization function.
+* Fixed error when loading FMS flight plans with invalid altitude values resulted in missing
+  flight plan line in elevation profile.
 
 Version 2.6.7
 
