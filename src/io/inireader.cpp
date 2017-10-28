@@ -112,7 +112,7 @@ void IniReader::read(const QString& iniFilename)
     QTextStream sceneryCfg(&sceneryCfgFile);
 
     if(!codec.isEmpty())
-      sceneryCfg.setCodec(codec.toLatin1());
+      sceneryCfg.setCodec(codec.toLatin1().constData());
 
     onStartDocument(filename);
 

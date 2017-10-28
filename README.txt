@@ -56,7 +56,10 @@ Miscellaneous utilities.
 * zip
 A copy of the unsupported and Qt zip class. Improved for better error handling.
 
--------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- LICENSE -------------------------------------------------------------------
+------------------------------------------------------------------------------
+
 This software is licensed under GPL3 or any later version.
 
 The source code for this application is available at Github:
@@ -64,10 +67,6 @@ https://github.com/albar965/atools
 
 Copyright 2015-2017 Alexander Barthel (albar965@mailbox.org).
 
-Acknowledgements
+-------------------------------------------------------------------------------
+French translation copyright 2017 Patrick JUNG alias Patbest (patrickjung@laposte.net). 
 
-Thanks to the community around fsdeveloper.com. The BGL reader would not be possible
-without their documentation at http://www.fsdeveloper.com/wiki/index.php?title=BGL_File_Format.
-
-Thanks to lc0277 (http://lc0277.nerim.net) for providing an example how to read
-the logbook file.

@@ -326,6 +326,9 @@ private:
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
   QString programInfo();
 
+  /* Set altitude in all positions */
+  void assignAltitudeToAllEntries(int altitude);
+
   /* Number of entries including start and destination but excluding procedure points */
   int numEntriesSave();
 
@@ -338,6 +341,9 @@ private:
   /* Values for FSX */
   const QString APPVERSION_BUILD = QString("61472");
   const QString APPVERSION_MAJOR = QString("10");
+
+  /* Limit altitude to this value */
+  const int MAX_ALTITUDE = 80000;
 
   atools::fs::pln::FileFormat fileFormat = PLN_FSX;
   atools::fs::pln::FlightplanType flightplanType = VFR;

@@ -27,7 +27,6 @@ namespace sc {
 
 SimConnectDataBase::SimConnectDataBase()
 {
-
 }
 
 SimConnectDataBase::~SimConnectDataBase()
@@ -35,11 +34,33 @@ SimConnectDataBase::~SimConnectDataBase()
 
 }
 
+QString SimConnectDataBase::getStatusText() const
+{
+  switch(status)
+  {
+    case atools::fs::sc::OK:
+      return QObject::tr("No Error");
+
+    case atools::fs::sc::INVALID_MAGIC_NUMBER:
+      return QObject::tr("Invalid magic number");
+
+    case atools::fs::sc::VERSION_MISMATCH:
+      return QObject::tr("Version mismatch");
+
+    case atools::fs::sc::INSUFFICIENT_WRITE:
+      return QObject::tr("Incomplete write");
+
+    case atools::fs::sc::WRITE_ERROR:
+      return QObject::tr("Write error");
+  }
+  return QObject::tr("Unknown Status");
+}
+
 void SimConnectDataBase::writeString(QDataStream& out, const QString& str)
 {
   // Write string as an size prefixed character array max length 256 UTF-8
   QByteArray strBytes;
-  strBytes.append(str);
+  strBytes.append(str.toUtf8());
   if(strBytes.size() > 255)
     strBytes = strBytes.left(255);
 
@@ -74,7 +95,7 @@ void SimConnectDataBase::writeLongString(QDataStream& out, const QString& str)
 {
   // Write string as an size prefixed character array max length 65535 UTF-8
   QByteArray strBytes;
-  strBytes.append(str);
+  strBytes.append(str.toUtf8());
   if(strBytes.size() > 65535)
     strBytes = strBytes.left(65535);
 

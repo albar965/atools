@@ -45,10 +45,7 @@ public:
   /*
    * @return Error status text for last reading or writing call
    */
-  const QString& getStatusText() const
-  {
-    return SIMCONNECT_STATUS_TEXT.at(status);
-  }
+  QString getStatusText() const;
 
   static int writeBlock(QIODevice *ioDevice, const QByteArray& block,
                         atools::fs::sc::SimConnectStatus& status);

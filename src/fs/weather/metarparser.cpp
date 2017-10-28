@@ -44,10 +44,14 @@
 #include <exception>
 #include <iostream>
 
-// #include <simgear/debug/logstream.hxx>
-// #include <simgear/structure/exception.hxx>
+// #define QT_NO_CAST_FROM_BYTEARRAY
+// #define QT_NO_CAST_TO_ASCII
+// #define QT_NO_CAST_FROM_ASCII
 
 #include "fs/weather/metarparser.h"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcomma"
 
 /** Feet to Meters */
 #define SG_FEET_TO_METER 0.3048
@@ -160,7 +164,7 @@ MetarParser::MetarParser(const QString& metar) :
   {
     delete[] _data;
     _data = nullptr;
-    throw std::runtime_error("metar data bogus");
+    throw std::runtime_error(tr("metar data bogus").toStdString());
   }
   scanModifier();
 
@@ -204,7 +208,7 @@ MetarParser::MetarParser(const QString& metar) :
   {
     delete[] _data;
     _data = nullptr;
-    throw std::runtime_error("metar data incomplete ");
+    throw std::runtime_error(tr("metar data incomplete ").toStdString());
   }
 
   _url = "";
@@ -230,13 +234,13 @@ QString MetarParser::getReportTypeString() const
       return QString();
 
     case atools::fs::weather::MetarParser::AUTO:
-      return QObject::tr("Auto");
+      return tr("Auto");
 
     case atools::fs::weather::MetarParser::COR:
-      return QObject::tr("Corrected");
+      return tr("Corrected");
 
     case atools::fs::weather::MetarParser::RTD:
-      return QObject::tr("Routine delayed observation");
+      return tr("Routine delayed observation");
 
   }
   return QString();
@@ -251,13 +255,13 @@ QString MetarParser::getIntensityString(int intensity) const
       return QString();
 
     case atools::fs::weather::MetarParser::LIGHT:
-      return QObject::tr("Light");
+      return tr("Light");
 
     case atools::fs::weather::MetarParser::MODERATE:
-      return QObject::tr("Moderate");
+      return tr("Moderate");
 
     case atools::fs::weather::MetarParser::HEAVY:
-      return QObject::tr("Heavy");
+      return tr("Heavy");
   }
   return QString();
 }
@@ -483,9 +487,9 @@ bool MetarParser::scanWind()
   _m = m;
   _wind_dir = dir;
   if(speed < INVALID_METAR_VALUE)
-    _wind_speed = speed * factor;
+    _wind_speed = static_cast<float>(speed * factor);
   if(gust < INVALID_METAR_VALUE)
-    _gust_speed = gust * factor;
+    _gust_speed = static_cast<float>(gust * factor);
   _grpcount++;
   return true;
 }
@@ -622,7 +626,7 @@ bool MetarParser::scanVisibility()
   else
     v = &_max_visibility;
 
-  v->_distance = distance;
+  v->_distance = static_cast<float>(distance);
   v->_modifier = modifier;
   v->_direction = dir;
   _m = m;
@@ -705,120 +709,120 @@ bool MetarParser::scanRwyVisRange()
 
 static const struct Token special[] = {
   {
-    "NSW", "No significant weather"
+    "NSW", MetarParser::tr("No significant weather")
   },
   /*	{ "VCSH", "showers in the vicinity" },
    *  { "VCTS", "thunderstorm in the vicinity" }, */
   {
-    0, 0
+    0, QString()
   }
 };
 
 static const struct Token description[] = {
   {
-    "SH", "Showers of"
+    "SH", MetarParser::tr("Showers of")
   },
   {
-    "TS", "Thunderstorm with"
+    "TS", MetarParser::tr("Thunderstorm with")
   },
   {
-    "BC", "Patches of"
+    "BC", MetarParser::tr("Patches of")
   },
   {
-    "BL", "Blowing"
+    "BL", MetarParser::tr("Blowing")
   },
   {
-    "DR", "Low drifting"
+    "DR", MetarParser::tr("Low drifting")
   },
   {
-    "FZ", "Freezing"
+    "FZ", MetarParser::tr("Freezing")
   },
   {
-    "MI", "Shallow"
+    "MI", MetarParser::tr("Shallow")
   },
   {
-    "PR", "Partial"
+    "PR", MetarParser::tr("Partial")
   },
   {
-    0, 0
+    0, QString()
   }
 };
 
 static const struct Token phenomenon[] = {
   {
-    "DZ", "Drizzle"
+    "DZ", MetarParser::tr("Drizzle")
   },
   {
-    "GR", "Hail"
+    "GR", MetarParser::tr("Hail")
   },
   {
-    "GS", "Small hail and/or snow pellets"
+    "GS", MetarParser::tr("Small hail and/or snow pellets")
   },
   {
-    "IC", "Ice crystals"
+    "IC", MetarParser::tr("Ice crystals")
   },
   {
-    "PE", "Ice pellets"
+    "PE", MetarParser::tr("Ice pellets")
   },
   {
-    "RA", "Rain"
+    "RA", MetarParser::tr("Rain")
   },
   {
-    "SG", "Snow grains"
+    "SG", MetarParser::tr("Snow grains")
   },
   {
-    "SN", "Snow"
+    "SN", MetarParser::tr("Snow")
   },
   {
-    "UP", "Unknown precipitation"
+    "UP", MetarParser::tr("Unknown precipitation")
   },
   {
-    "BR", "Mist"
+    "BR", MetarParser::tr("Mist")
   },
   {
-    "DU", "Widespread dust"
+    "DU", MetarParser::tr("Widespread dust")
   },
   {
-    "FG", "Fog"
+    "FG", MetarParser::tr("Fog")
   },
   {
-    "FGBR", "Fog bank"
+    "FGBR", MetarParser::tr("Fog bank")
   },
   {
-    "FU", "Smoke"
+    "FU", MetarParser::tr("Smoke")
   },
   {
-    "HZ", "Haze"
+    "HZ", MetarParser::tr("Haze")
   },
   {
-    "PY", "Spray"
+    "PY", MetarParser::tr("Spray")
   },
   {
-    "SA", "Sand"
+    "SA", MetarParser::tr("Sand")
   },
   {
-    "VA", "Volcanic ash"
+    "VA", MetarParser::tr("Volcanic ash")
   },
   {
-    "DS", "Duststorm"
+    "DS", MetarParser::tr("Duststorm")
   },
   {
-    "FC", "Funnel cloud/tornado waterspout"
+    "FC", MetarParser::tr("Funnel cloud/tornado waterspout")
   },
   {
-    "PO", "Well-developed dust/sand whirls"
+    "PO", MetarParser::tr("Well-developed dust/sand whirls")
   },
   {
-    "SQ", "Squalls"
+    "SQ", MetarParser::tr("Squalls")
   },
   {
-    "SS", "Sandstorm"
+    "SS", MetarParser::tr("Sandstorm")
   },
   {
-    "UP", "Unknown"
+    "UP", MetarParser::tr("Unknown")
   }, // ... due to failed automatic acquisition
   {
-    0, 0
+    0, QString()
   }
 };
 
@@ -850,7 +854,7 @@ bool MetarParser::scanWeather()
     if(!scanBoundary(&m))
       return false;
 
-    _weather.push_back(a->text);
+    _weather.push_back(a->text.toStdString());
     _m = m;
     return true;
   }
@@ -859,29 +863,29 @@ bool MetarParser::scanWeather()
   struct Weather w;
 
   if(*m == '-')
-    m++, pre = "Light ", w.intensity = LIGHT;
+    m++, pre = tr("Light ").toStdString(), w.intensity = LIGHT;
   else if(*m == '+')
-    m++, pre = "Heavy ", w.intensity = HEAVY;
+    m++, pre = tr("Heavy ").toStdString(), w.intensity = HEAVY;
   else if(!strncmp(m, "VC", 2))
-    m += 2, post = "in the vicinity ", w.vincinity = true;
+    m += 2, post = tr("in the vicinity ").toStdString(), w.vincinity = true;
   else
-    pre = "Moderate ", w.intensity = MODERATE;
+    pre = tr("Moderate ").toStdString(), w.intensity = MODERATE;
 
   int i;
   for(i = 0; i < 3; i++)
   {
     if(!(a = scanToken(&m, description)))
       break;
-    w.descriptions.push_back(a->id);
-    weather += string(a->text) + " ";
+    w.descriptions.push_back(QString::fromLatin1(a->id));
+    weather += a->text.toStdString() + " ";
   }
 
   for(i = 0; i < 3; i++)
   {
     if(!(a = scanToken(&m, phenomenon)))
       break;
-    w.phenomena.push_back(a->id);
-    weather += string(a->text) + " ";
+    w.phenomena.push_back(QString::fromLatin1(a->id));
+    weather += a->text.toStdString() + " ";
     if(!strcmp(a->id, "RA"))
       _rain = w.intensity;
     else if(!strcmp(a->id, "HA"))
@@ -910,64 +914,64 @@ bool MetarParser::scanWeather()
 
 static const struct Token cloud_types[] = {
   {
-    "AC", "altocumulus"
+    "AC", MetarParser::tr("altocumulus")
   },
   {
-    "ACC", "altocumulus castellanus"
+    "ACC", MetarParser::tr("altocumulus castellanus")
   },
   {
-    "ACSL", "altocumulus standing lenticular"
+    "ACSL", MetarParser::tr("altocumulus standing lenticular")
   },
   {
-    "AS", "altostratus"
+    "AS", MetarParser::tr("altostratus")
   },
   {
-    "CB", "cumulonimbus"
+    "CB", MetarParser::tr("cumulonimbus")
   },
   {
-    "CBMAM", "cumulonimbus mammatus"
+    "CBMAM", MetarParser::tr("cumulonimbus mammatus")
   },
   {
-    "CC", "cirrocumulus"
+    "CC", MetarParser::tr("cirrocumulus")
   },
   {
-    "CCSL", "cirrocumulus standing lenticular"
+    "CCSL", MetarParser::tr("cirrocumulus standing lenticular")
   },
   {
-    "CI", "cirrus"
+    "CI", MetarParser::tr("cirrus")
   },
   {
-    "CS", "cirrostratus"
+    "CS", MetarParser::tr("cirrostratus")
   },
   {
-    "CU", "cumulus"
+    "CU", MetarParser::tr("cumulus")
   },
   {
-    "CUFRA", "cumulus fractus"
+    "CUFRA", MetarParser::tr("cumulus fractus")
   },
   {
-    "NS", "nimbostratus"
+    "NS", MetarParser::tr("nimbostratus")
   },
   {
-    "SAC", "stratoaltocumulus"
+    "SAC", MetarParser::tr("stratoaltocumulus")
   }, // guessed
   {
-    "SC", "stratocumulus"
+    "SC", MetarParser::tr("stratocumulus")
   },
   {
-    "SCSL", "stratocumulus standing lenticular"
+    "SCSL", MetarParser::tr("stratocumulus standing lenticular")
   },
   {
-    "ST", "stratus"
+    "ST", MetarParser::tr("stratus")
   },
   {
-    "STFRA", "stratus fractus"
+    "STFRA", MetarParser::tr("stratus fractus")
   },
   {
-    "TCU", "towering cumulus"
+    "TCU", MetarParser::tr("towering cumulus")
   },
   {
-    0, 0
+    0, QString()
   }
 };
 
@@ -1004,7 +1008,6 @@ bool MetarParser::scanSkyCondition()
     _m = m;
     return true;
   }
-
 
   if(!strncmp(m, "CLR", i = 3) // clear
      || !strncmp(m, "SKC", i = 3) // sky clear
@@ -1205,35 +1208,46 @@ bool MetarParser::scanPressure()
   return true;
 }
 
-static const char *runway_deposit[] =
+static const QString runway_deposit[] =
 {
-  "clear and dry",
-  "damp",
-  "wet or puddles",
-  "frost",
-  "dry snow",
-  "wet snow",
-  "slush",
-  "ice",
-  "compacted snow",
-  "frozen ridges"
+  MetarParser::tr("clear and dry"),
+  MetarParser::tr("damp"),
+  MetarParser::tr("wet or puddles"),
+  MetarParser::tr("frost"),
+  MetarParser::tr("dry snow"),
+  MetarParser::tr("wet snow"),
+  MetarParser::tr("slush"),
+  MetarParser::tr("ice"),
+  MetarParser::tr("compacted snow"),
+  MetarParser::tr("frozen ridges")
 };
 
-static const char *runway_deposit_extent[] =
+static const QString runway_deposit_extent[] =
 {
-  0, "1-10%", "11-25%", 0, 0, "26-50%", 0, 0, 0, "51-100%"
+  QString(),
+  MetarParser::tr("1-10%"),
+  MetarParser::tr("11-25%"),
+  QString(),
+  QString(),
+  MetarParser::tr("26-50%"),
+  QString(),
+  QString(),
+  QString(),
+  MetarParser::tr("51-100%")
 };
 
-static const char *runway_friction[] =
+static const QString runway_friction[] =
 {
-  0,
-  "poor braking action",
-  "poor/medium braking action",
-  "medium braking action",
-  "medium/good braking action",
-  "good braking action",
-  0, 0, 0,
-  "friction: unreliable measurement"
+  QString(),
+  MetarParser::tr("poor braking action"),
+  MetarParser::tr("poor/medium braking action"),
+  MetarParser::tr("medium braking action"),
+  MetarParser::tr("medium/good braking action"),
+  MetarParser::tr("good braking action"),
+  QString(),
+  QString(),
+  QString(),
+  MetarParser::tr("friction: unreliable measurement")
 };
 
 // \d\d(CLRD|[\d/]{4})(\d\d|//)
@@ -1262,7 +1276,7 @@ bool MetarParser::scanRunwayReport()
   if(!strncmp(m, "CLRD", 4))
   {
     m += 4; // runway cleared
-    r._deposit_string = "cleared";
+    r._deposit_string = MetarParser::tr("cleared");
   }
   else
   {
@@ -1298,7 +1312,7 @@ bool MetarParser::scanRunwayReport()
     else if(i >= 92 && i <= 98)
       r._depth = (i - 90) / 20.0;
     else if(i == 99)
-      r._comment = "runway not in use";
+      r._comment = MetarParser::tr("runway not in use");
     else if(i == -1) // no depth given ("//")
       ;
     else
@@ -1409,25 +1423,25 @@ bool MetarParser::scanTrendForecast()
 // (BLU|WHT|GRN|YLO|AMB|RED)
 static const struct Token colors[] = {
   {
-    "BLU", "Blue"
+    "BLU", MetarParser::tr("Blue")
   }, // 2500 ft,  8.0 km
   {
-    "WHT", "White"
+    "WHT", MetarParser::tr("White")
   }, // 1500 ft,  5.0 km
   {
-    "GRN", "Green"
+    "GRN", MetarParser::tr("Green")
   }, // 700 ft,  3.7 km
   {
-    "YLO", "Yellow"
+    "YLO", MetarParser::tr("Yellow")
   }, // 300 ft,  1.6 km
   {
-    "AMB", "Amber"
+    "AMB", MetarParser::tr("Amber")
   }, // 200 ft,  0.8 km
   {
-    "RED", "Red"
+    "RED", MetarParser::tr("Red")
   }, // <200 ft, <0.8 km
   {
-    0, 0
+    0, QString()
   }
 };
 
@@ -1549,49 +1563,42 @@ QString MetarCloud::getCoverageString() const
       return QString();
 
     case atools::fs::weather::MetarCloud::COVERAGE_CLEAR:
-      return QObject::tr("Clear");
+      return tr("Clear");
 
     case atools::fs::weather::MetarCloud::COVERAGE_FEW:
-      return QObject::tr("Few");
+      return tr("Few");
 
     case atools::fs::weather::MetarCloud::COVERAGE_SCATTERED:
-      return QObject::tr("Scattered");
+      return tr("Scattered");
 
     case atools::fs::weather::MetarCloud::COVERAGE_BROKEN:
-      return QObject::tr("Broken");
+      return tr("Broken");
 
     case atools::fs::weather::MetarCloud::COVERAGE_OVERCAST:
-      return QObject::tr("Overcast");
+      return tr("Overcast");
   }
   return QString();
 }
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
 {
-  if(coverage == "clear")
+  if(coverage == QLatin1Literal("clear"))
     return COVERAGE_CLEAR;
 
-  if(coverage == "few")
+  if(coverage == QLatin1Literal("few"))
     return COVERAGE_FEW;
 
-  if(coverage == "scattered")
+  if(coverage == QLatin1Literal("scattered"))
     return COVERAGE_SCATTERED;
 
-  if(coverage == "broken")
+  if(coverage == QLatin1Literal("broken"))
     return COVERAGE_BROKEN;
 
-  if(coverage == "overcast")
+  if(coverage == QLatin1Literal("overcast"))
     return COVERAGE_OVERCAST;
 
   return COVERAGE_NIL;
 }
-
-const char *MetarCloud::COVERAGE_NIL_STRING = "nil";
-const char *MetarCloud::COVERAGE_CLEAR_STRING = "clear";
-const char *MetarCloud::COVERAGE_FEW_STRING = "few";
-const char *MetarCloud::COVERAGE_SCATTERED_STRING = "scattered";
-const char *MetarCloud::COVERAGE_BROKEN_STRING = "broken";
-const char *MetarCloud::COVERAGE_OVERCAST_STRING = "overcast";
 
 void MetarVisibility::set(float dist, int dir, int mod, int tend)
 {
@@ -1610,19 +1617,21 @@ QString MetarVisibility::getModifierString() const
   switch(mod)
   {
     case atools::fs::weather::MetarVisibility::NOGO:
-      return QObject::tr("Vertical visibility");
+      return tr("Vertical visibility");
 
     case atools::fs::weather::MetarVisibility::EQUALS:
       return QString();
 
     case atools::fs::weather::MetarVisibility::LESS_THAN:
-      return QObject::tr("Less than");
+      return tr("Less than");
 
     case atools::fs::weather::MetarVisibility::GREATER_THAN:
-      return QObject::tr("Greater than");
+      return tr("Greater than");
   }
   return QString();
 }
+
+#pragma GCC diagnostic pop
 
 } // namespace weather
 } // namespace fs
