@@ -342,7 +342,7 @@ void Flightplan::loadFms(const QString& file)
     else
       throw Exception(tr("Invalid FMS file. Invalid version %2: %1").arg(fmsFile.fileName()).arg(version));
 
-    int maxAlt = std::numeric_limits<int>::min();
+    float maxAlt = std::numeric_limits<float>::min();
 
     while(!stream.atEnd())
     {
@@ -417,10 +417,10 @@ void Flightplan::loadFms(const QString& file)
 
         if(list.size() >= minListSize)
         {
-          int altitude = list.at(2 + fieldOffset).toInt();
+          float altitude = list.at(2 + fieldOffset).toFloat();
           if(altitude > std::numeric_limits<int>::max() / 2)
             // Avoid excessive altitudes
-            altitude = 0;
+            altitude = 0.f;
 
           atools::geo::Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
           if(!position.isValid() || position.isNull())
