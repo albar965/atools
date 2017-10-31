@@ -19,6 +19,7 @@
 #include "sql/sqlexception.h"
 
 #include <QSettings>
+#include <QDebug>
 
 namespace atools {
 
@@ -89,6 +90,16 @@ void SqlDatabase::open(const QStringList& pragmas)
 
   if(!readonly)
     transaction();
+
+  atools::sql::SqlQuery query(db);
+  for(const QString& pragmaQuery : pragmas)
+  {
+    QString pragma = pragmaQuery.section("=", 0, 0);
+    query.exec(pragma);
+    if(query.next())
+      qInfo() << pragma << "value is now: " << query.value(0).toString();
+    query.finish();
+  }
 }
 
 void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)

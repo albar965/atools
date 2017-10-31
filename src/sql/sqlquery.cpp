@@ -449,6 +449,21 @@ const QSqlQuery& SqlQuery::getQSqlQuery() const
   return query;
 }
 
+QString SqlQuery::getFullQueryString() const
+{
+  QString retval = getQueryString();
+
+  for(const QString& name : boundValues().keys())
+  {
+    QVariant val = boundValue(name);
+    if(val.type() == QVariant::String)
+      retval.replace(name, "'" + val.toString() + "' /* " + name + " */");
+    else
+      retval.replace(name, val.toString() + " /* " + name + " */");
+  }
+  return retval;
+}
+
 } // namespace sql
 
 } // namespace atools

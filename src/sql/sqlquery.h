@@ -199,6 +199,9 @@ public:
     return queryString;
   }
 
+  /* Get a full annotated query string with bound values replaced for debugging (only for named bindings) */
+  QString getFullQueryString() const;
+
   void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
   void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
 
