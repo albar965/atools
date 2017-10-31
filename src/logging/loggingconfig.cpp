@@ -176,8 +176,17 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
                          "%{if-critical}CRIT %{endif}"
                          "%{if-fatal}FATAL%{endif}]: %{message}");
 
+  QString pattern = settings->value("configuration/messagepattern", QVariant(defaultPattern)).toString();
+
+#ifdef QT_NO_DEBUG
+  pattern.replace(" %{file}:%{line}:", ":");
+  pattern.replace("%{file}:%{line}", "");
+  pattern.replace("%{file}", "");
+  pattern.replace("%{line}", "");
+#endif
+
   // Set the configured message pattern
-  qSetMessagePattern(settings->value("configuration/messagepattern", QVariant(defaultPattern)).toString());
+  qSetMessagePattern(pattern);
 
   QString filesParameter = settings->value("configuration/files").toString();
   if(filesParameter == "truncate" || filesParameter == "roll")
