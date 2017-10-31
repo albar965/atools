@@ -395,7 +395,21 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
           }
         }
 
-        if(!line.startsWith("#") && !line.isEmpty())
+        if(flags & READ_AIRSPACE && !line.startsWith("AN"))
+        {
+          // Strip OpenAirport file comments except for airport names
+          int idx = line.indexOf("*");
+          if(idx != -1)
+            line = line.left(line.indexOf("*"));
+        }
+        else if(!(flags & READ_CIFP))
+        {
+          // Strip dat-file comments
+          if(line.startsWith("#"))
+            line.clear();
+        }
+
+        if(!line.isEmpty())
         {
           if(flags & READ_CIFP)
             fields = line.split(",");

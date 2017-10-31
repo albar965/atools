@@ -63,10 +63,6 @@ void XpAirspaceWriter::write(const QStringList& line, const XpWriterContext& con
 {
   ctx = &context;
 
-  if(at(line, 0).startsWith("*"))
-    // Comment
-    return;
-
   QString key = at(line, 0);
 
   if(writingCoordinates && !key.startsWith("D") && key != "V")
@@ -121,9 +117,7 @@ void XpAirspaceWriter::writeBoundary()
   if(curLine.size() > 2)
   {
     // calculate bounding rectangle
-    Rect bounding;
-    for(const Pos& p : curLine)
-      bounding.extend(p);
+    Rect bounding = curLine.boundingRect();
 
     if(!bounding.isPoint())
     {
