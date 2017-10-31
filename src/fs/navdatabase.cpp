@@ -350,6 +350,10 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     // Read airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
+    if(sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::XPLANE11)
+      // Drop large segments only for FSX/P3D - default is 1000 nm
+      resolver.setMaxAirwaySegmentLength(20000);
+
     resolver.assignWaypointIds();
 
     if((aborted = resolver.run()))

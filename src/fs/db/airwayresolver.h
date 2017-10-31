@@ -58,8 +58,13 @@ public:
    */
   void assignWaypointIds();
 
+  void setMaxAirwaySegmentLength(int value)
+  {
+    maxAirwaySegmentLength = value;
+  }
+
 private:
-  static const int MAX_AIRWAY_SEGMENT_LENGTH_NM = 1000;
+  int maxAirwaySegmentLength = 1000;
 
   typedef std::pair<QString, QVariant> TypeRowValue;
   typedef QVector<TypeRowValue> TypeRowValueVector;

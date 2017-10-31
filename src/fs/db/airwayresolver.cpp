@@ -205,7 +205,7 @@ bool AirwayResolver::run()
       // Previous waypoint found - add segment
       Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
 
-      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(maxAirwaySegmentLength))
         airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevDir, prevMinAlt, prevMaxAlt, awType,
                                     prevPos, currentWpPos));
     }
@@ -215,7 +215,7 @@ bool AirwayResolver::run()
       // Next waypoint found - add segment
       Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
 
-      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(MAX_AIRWAY_SEGMENT_LENGTH_NM))
+      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(maxAirwaySegmentLength))
         airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType,
                                     currentWpPos, nextPos));
     }
