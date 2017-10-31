@@ -90,13 +90,15 @@ public:
    * @return true if application major version and database major version are equal
    */
   bool isDatabaseCompatible() const;
-  bool isDatabaseCompatible(int majorVersion) const;
+  bool isDatabaseCompatible(int major) const;
 
   /* Update the version information in the database */
   void updateVersion(int majorVer, int minorVer);
   void updateVersion();
-  void updateAiracCycle(const QString& cycle);
+  void updateAiracCycle(const QString& cycle, const QString& fromTo);
   void updateAiracCycle();
+  void updateDataSource(const QString& src);
+  void updateDataSource();
 
   /* Set database version to application version and timestamp to current time */
   void updateAll();
@@ -113,8 +115,9 @@ public:
    * 2 cycle metadata
    * 3 nullable altitude types in boundary
    * 4 nullable path in scenery
+   * 5 metadata changes for DFD database
    */
-  static const int DB_VERSION_MINOR = 4;
+  static const int DB_VERSION_MINOR = 5;
 
   void init();
 
@@ -124,9 +127,25 @@ public:
     return airacCycle;
   }
 
-  void setAiracCycle(const QString& value)
+  const QString& getValidThrough() const
+  {
+    return validThrough;
+  }
+
+  void setAiracCycle(const QString& value, const QString& validFromTo = QString())
   {
     airacCycle = value;
+    validThrough = validFromTo;
+  }
+
+  const QString& getDataSource() const
+  {
+    return dataSource;
+  }
+
+  void setDataSource(const QString& value)
+  {
+    dataSource = value;
   }
 
 private:
@@ -139,7 +158,7 @@ private:
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false;
-  QString airacCycle;
+  QString airacCycle, validThrough, dataSource;
 };
 
 } // namespace db

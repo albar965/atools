@@ -56,6 +56,8 @@ void DatabaseMeta::init()
       lastLoadTime = rec.value("last_load_timestamp").toDateTime();
       sidStar = rec.valueBool("has_sid_star", false);
       airacCycle = rec.valueStr("airac_cycle", QString());
+      validThrough = rec.valueStr("valid_through", QString());
+      dataSource = rec.valueStr("data_source", QString());
       valid = true;
     }
     query.finish();
@@ -70,8 +72,7 @@ void DatabaseMeta::updateVersion(int majorVer, int minorVer)
   SqlQuery query(db);
   query.exec("delete from metadata");
 
-  query.prepare("insert into metadata (db_version_major, db_version_minor) "
-                "values(:major, :minor)");
+  query.prepare("insert into metadata (db_version_major, db_version_minor) values(:major, :minor)");
   query.bindValue(":major", majorVersion);
   query.bindValue(":minor", minorVersion);
   query.exec();
@@ -83,19 +84,35 @@ void DatabaseMeta::updateVersion()
   updateVersion(DB_VERSION_MAJOR, DB_VERSION_MINOR);
 }
 
-void DatabaseMeta::updateAiracCycle(const QString& cycle)
+void DatabaseMeta::updateAiracCycle(const QString& cycle, const QString& fromTo)
 {
   airacCycle = cycle;
   SqlQuery query(db);
-  query.prepare("update metadata set airac_cycle = :cycle");
+  query.prepare("update metadata set airac_cycle = :cycle, valid_through = :valid");
   query.bindValue(":cycle", cycle);
+  query.bindValue(":valid", fromTo);
   query.exec();
   db->commit();
 }
 
 void DatabaseMeta::updateAiracCycle()
 {
-  updateAiracCycle(airacCycle);
+  updateAiracCycle(airacCycle, validThrough);
+}
+
+void DatabaseMeta::updateDataSource(const QString& src)
+{
+  dataSource = src;
+  SqlQuery query(db);
+  query.prepare("update metadata set data_source = :src");
+  query.bindValue(":src", src);
+  query.exec();
+  db->commit();
+}
+
+void DatabaseMeta::updateDataSource()
+{
+  updateDataSource(dataSource);
 }
 
 void DatabaseMeta::updateTimestamp()
@@ -132,6 +149,7 @@ void DatabaseMeta::updateAll()
   updateTimestamp();
   updateFlags();
   updateAiracCycle();
+  updateDataSource();
 }
 
 bool DatabaseMeta::hasSchema() const
@@ -154,10 +172,10 @@ bool DatabaseMeta::isDatabaseCompatible() const
   return isDatabaseCompatible(DB_VERSION_MAJOR);
 }
 
-bool DatabaseMeta::isDatabaseCompatible(int majorVersion) const
+bool DatabaseMeta::isDatabaseCompatible(int major) const
 {
   if(isValid())
-    return majorVersion == getMajorVersion();
+    return major == getMajorVersion();
 
   return false;
 }

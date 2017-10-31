@@ -29,7 +29,9 @@ create table metadata
   db_version_minor integer not null,  -- Minor version. Only for updates that do not break compatibility.
   last_load_timestamp varchar(100),   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
   has_sid_star integer,               -- 1 if any SID or STAR procedures are in the database
-  airac_cycle varchar(10)             -- AIRAC cycle (not FSX/P3D)
+  airac_cycle varchar(10),            -- AIRAC cycle (not FSX/P3D)
+  valid_through varchar(10),          -- AIRAC cycle valid through (not FSX/P3D/XP11)
+  data_source varchar(10)             -- Data source, FSX, FSXSE, P3DV2, P3DV3, P3DV3, XP11 or NG (Navigraph)
 );
 
 -- **************************************************
