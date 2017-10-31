@@ -48,7 +48,7 @@ const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
 const int PROGRESS_NUM_ANALYZE_STEPS = 1;
 const int PROGRESS_NUM_VACCUM_STEPS = 1;
-const int PROGRESS_DFD_EXTRA_STEPS = 10;
+const int PROGRESS_DFD_EXTRA_STEPS = 12;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -227,13 +227,15 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   QElapsedTimer timer;
   timer.start();
 
+  FsPaths::SimulatorType sim = options->getSimulatorType();
+
   if(options->isAutocommit())
     db->setAutocommit(true);
 
   // ==============================================================================
   // Calculate the total number of progress steps
   int total = 0, routePartFraction = 1;
-  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
+  if(sim == atools::fs::FsPaths::XPLANE11)
   {
     numProgressReports = atools::fs::xp::XpDataCompiler::calculateReportCount(*options);
     numSceneryAreas = 1; // X-Plane
@@ -246,7 +248,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     // Around 9000 navaids - total / routePartFraction has to be lower than this
     routePartFraction = 20;
   }
-  else if(options->getSimulatorType() == atools::fs::FsPaths::NAVIGRAPH)
+  else if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS;
     routePartFraction = 4;
@@ -298,7 +300,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   // ================================================================================================
   // Start compilation
-  if(options->getSimulatorType() == atools::fs::FsPaths::NAVIGRAPH)
+  if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
     atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString());
@@ -312,7 +314,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     loadDfd(&progress, dfdCompiler.data(), area);
     dfdCompiler->close();
   }
-  else if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE11)
+  else if(sim == atools::fs::FsPaths::XPLANE11)
   {
     // Create a single X-Plane scenery area
     atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
@@ -342,7 +344,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  if(options->isResolveAirways() && options->getSimulatorType() != atools::fs::FsPaths::NAVIGRAPH)
+  if(options->isResolveAirways() && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = progress.reportOther(tr("Creating airways"))))
       return;
@@ -360,8 +362,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
       return;
   }
 
-  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11 &&
-     options->getSimulatorType() != atools::fs::FsPaths::NAVIGRAPH)
+  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
@@ -376,7 +377,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
     return;
 
-  if(options->getSimulatorType() != atools::fs::FsPaths::XPLANE11)
+  if(sim != atools::fs::FsPaths::XPLANE11)
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS
@@ -413,13 +414,17 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
 
+  // =====================================================================
+  // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
   databaseMetadata.updateAll();
 
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
   if(!dfdCompiler.isNull())
-    databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle());
+    databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle(), dfdCompiler->getValidThrough());
+
+  databaseMetadata.setDataSource(FsPaths::typeToShortName(sim));
 
   databaseMetadata.updateAll();
   db->commit();
@@ -475,9 +480,26 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   dfdCompiler->initQueries();
   dfdCompiler->compileMagDeclBgl();
   dfdCompiler->readHeader();
-  dfdCompiler->writeAirports();
-  dfdCompiler->writeRunways();
-  dfdCompiler->writeNavaids();
+
+  if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
+  {
+    dfdCompiler->writeAirports();
+    if(options->isIncludedNavDbObject(atools::fs::type::RUNWAY))
+      dfdCompiler->writeRunways();
+  }
+  if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT) ||
+     options->isIncludedNavDbObject(atools::fs::type::VOR) ||
+     options->isIncludedNavDbObject(atools::fs::type::NDB) ||
+     options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
+     options->isIncludedNavDbObject(atools::fs::type::ILS))
+    dfdCompiler->writeNavaids();
+
+  if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
+  {
+    dfdCompiler->writeAirspaces();
+    dfdCompiler->writeAirspaceCom();
+  }
+
   dfdCompiler->writeCom();
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
@@ -490,11 +512,15 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
       return true;
   }
 
-  dfdCompiler->writeAirways();
+  if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
+    dfdCompiler->writeAirways();
+
   dfdCompiler->updateMagvar();
   dfdCompiler->updateTacanChannel();
   dfdCompiler->updateIlsGeometry();
-  dfdCompiler->writeProcedures();
+
+  if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
+    dfdCompiler->writeProcedures();
 
   db->commit();
 

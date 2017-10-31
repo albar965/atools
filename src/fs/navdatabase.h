@@ -109,7 +109,11 @@ public:
 private:
   /* Creates database schema only */
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
+
+  /* Internal creation of the full database */
   void createInternal(const QString& sceneryConfigCodec);
+
+  /* Read FSX/P3D scenery configuration */
   void readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg);
 
   /* Source dependent compilation methods */

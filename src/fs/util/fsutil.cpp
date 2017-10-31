@@ -404,7 +404,8 @@ QString capNavString(const QString& str)
           // Airspace abbreviations
           "ALS", "ATZ", "CAE", "CTA", "CTR", "FIR", "UIR", "FIZ", "FTZ",
           "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA",
-          "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG"
+          "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
+          "NOTAM", "CERAP", "ARTCC",
         });
 
   return atools::capString(str, {}, {}, ignore);

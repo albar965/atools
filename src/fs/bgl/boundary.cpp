@@ -101,6 +101,7 @@ QString Boundary::boundaryTypeToStr(boundary::BoundaryType type)
     case atools::fs::bgl::boundary::TRAINING:
       return "TR";
 
+      // return "CN";Caution- DFD
       // return "WW";Wave window - OpenAir format
       // return "GP";Glider prohibited - OpenAir format
   }

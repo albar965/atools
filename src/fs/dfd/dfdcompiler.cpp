@@ -31,6 +31,7 @@
 #include "geo/calculations.h"
 #include "atools.h"
 #include "fs/common/airportindex.h"
+#include "fs/common/binarygeometry.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -44,6 +45,7 @@ using atools::sql::SqlScript;
 using atools::sql::SqlRecordVector;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
+using atools::geo::LineString;
 using atools::geo::DPos;
 using atools::geo::Rect;
 namespace utl = atools::fs::util;
@@ -75,45 +77,52 @@ void DfdCompiler::writeAirports()
 {
   progress->reportOther("Writing airports");
 
+  // Clear in memory indexes
   airportRectMap.clear();
   longestRunwaySurfaceMap.clear();
 
-  // Fill default values
-  airportWriteQuery->bindValue(":fuel_flags", 0); // Not available
-  airportWriteQuery->bindValue(":has_avgas", 0); // Not available
-  airportWriteQuery->bindValue(":has_jetfuel", 0); // Not available
-  airportWriteQuery->bindValue(":has_tower_object", 0); // Not available
-  airportWriteQuery->bindValue(":is_closed", 0); // Not available
-  airportWriteQuery->bindValue(":is_addon", 0); // Not available
-  airportWriteQuery->bindValue(":num_boundary_fence", 0); // Not available
-  airportWriteQuery->bindValue(":num_parking_gate", 0); // Not available
-  airportWriteQuery->bindValue(":num_parking_ga_ramp", 0); // Not available
-  airportWriteQuery->bindValue(":num_parking_cargo", 0); // Not available
-  airportWriteQuery->bindValue(":num_parking_mil_cargo", 0); // Not available
-  airportWriteQuery->bindValue(":num_parking_mil_combat", 0); // Not available
-  airportWriteQuery->bindValue(":num_runway_light", 0); // Not available
-  airportWriteQuery->bindValue(":num_runway_end_closed", 0); // Not available
-  airportWriteQuery->bindValue(":num_runway_end_vasi", 0); // Not available
-  airportWriteQuery->bindValue(":num_runway_end_als", 0); // Not available
-  airportWriteQuery->bindValue(":num_apron", 0); // Not available
-  airportWriteQuery->bindValue(":num_taxi_path", 0); // Not available
-  airportWriteQuery->bindValue(":num_helipad", 0); // Not available
-  airportWriteQuery->bindValue(":num_jetway", 0); // Not available
-  airportWriteQuery->bindValue(":num_starts", 0); // Not available
-  airportWriteQuery->bindValue(":rating", 1);
+  // Fill default values which are not nullable an are not available
+  airportWriteQuery->bindValue(":fuel_flags", 0);
+  airportWriteQuery->bindValue(":has_avgas", 0);
+  airportWriteQuery->bindValue(":has_jetfuel", 0);
+  airportWriteQuery->bindValue(":has_tower_object", 0);
+  airportWriteQuery->bindValue(":is_closed", 0);
+  airportWriteQuery->bindValue(":is_addon", 0);
+  airportWriteQuery->bindValue(":num_boundary_fence", 0);
+  airportWriteQuery->bindValue(":num_parking_gate", 0);
+  airportWriteQuery->bindValue(":num_parking_ga_ramp", 0);
+  airportWriteQuery->bindValue(":num_parking_cargo", 0);
+  airportWriteQuery->bindValue(":num_parking_mil_cargo", 0);
+  airportWriteQuery->bindValue(":num_parking_mil_combat", 0);
+  airportWriteQuery->bindValue(":num_runway_light", 0);
+  airportWriteQuery->bindValue(":num_runway_end_closed", 0);
+  airportWriteQuery->bindValue(":num_runway_end_vasi", 0);
+  airportWriteQuery->bindValue(":num_runway_end_als", 0);
+  airportWriteQuery->bindValue(":num_apron", 0);
+  airportWriteQuery->bindValue(":num_taxi_path", 0);
+  airportWriteQuery->bindValue(":num_helipad", 0);
+  airportWriteQuery->bindValue(":num_jetway", 0);
+  airportWriteQuery->bindValue(":num_starts", 0);
 
-  airportWriteQuery->bindValue(":num_com", 0); // TODO fill later
+  airportWriteQuery->bindValue(":rating", 1); // Set minimum value so that airports are not empty
+
+  airportWriteQuery->bindValue(":num_com", 0); // Filled later in populate_com.sql
   airportWriteQuery->bindValue(":num_approach", 0); // Filled later by procedure writer
 
-  airportWriteQuery->bindValue(":num_runway_hard", 0); // Filled later
-  airportWriteQuery->bindValue(":num_runway_soft", 0); // Filled later
-  airportWriteQuery->bindValue(":num_runway_water", 0); // Filled later
-  airportWriteQuery->bindValue(":longest_runway_length", 0); // Filled later
-  airportWriteQuery->bindValue(":longest_runway_width", 0); // Filled later
-  airportWriteQuery->bindValue(":longest_runway_heading", 0); // Filled later
-  airportWriteQuery->bindValue(":num_runway_end_ils", 0); // Filled later
-  airportWriteQuery->bindValue(":num_runways", 0); // Filled later
+  // "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency":
+  // Filled later in populate_com.sql
 
+  // Fill default values which are not nullable and are populated later
+  airportWriteQuery->bindValue(":num_runway_hard", 0);
+  airportWriteQuery->bindValue(":num_runway_soft", 0);
+  airportWriteQuery->bindValue(":num_runway_water", 0);
+  airportWriteQuery->bindValue(":longest_runway_length", 0);
+  airportWriteQuery->bindValue(":longest_runway_width", 0);
+  airportWriteQuery->bindValue(":longest_runway_heading", 0);
+  airportWriteQuery->bindValue(":num_runway_end_ils", 0);
+  airportWriteQuery->bindValue(":num_runways", 0);
+
+  // Read airports from source
   airportQuery->exec();
   while(airportQuery->next())
   {
@@ -123,14 +132,18 @@ void DfdCompiler::writeAirports()
 
     QString ident = airportQuery->valueStr("airport_identifier");
 
+    // Start with a minimum rectangle of about 100 meter which will be extended later
     Rect airportRect(pos);
-    // Start with a minimum rectangle of about 100 meter
     airportRect.inflate(Pos::POS_EPSILON_100M, Pos::POS_EPSILON_100M);
+    // Remember in the memory map
     airportRectMap.insert(ident, airportRect);
 
+    // Needed later for workaround for number or runways with certain surfaces
     longestRunwaySurfaceMap.insert(ident, airportQuery->valueStr("longest_runway_surface_code"));
 
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
+
+    // Add ident to id mapping
     airportIndex->addAirport(ident, curAirportId);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
@@ -139,6 +152,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));
     airportWriteQuery->bindValue(":is_military", utl::isNameMilitary(airportQuery->valueStr("airport_name")));
 
+    // Will be extended later when reading runways
     airportWriteQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());
     airportWriteQuery->bindValue(":top_laty", airportRect.getTopLeft().getLatY());
     airportWriteQuery->bindValue(":right_lonx", airportRect.getBottomRight().getLonX());
@@ -198,7 +212,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
   // llz_identifier
   // llz_mls_gls_category
 
-  // Find matching opposing ends
+  // Find matching opposing ends in the list
   pairRunways(runwaypairs, runways);
 
   int numRunways = 0, numRunwayIls = 0, longestRunwayLength = 0, longestRunwayWidth = 0;
@@ -211,28 +225,32 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     SqlRecord primaryRec = runwaypair.first;
     SqlRecord secondaryRec = runwaypair.second;
 
+    // Generate new end ids here
     int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
 
     int length = primaryRec.valueInt("runway_length");
     int width = primaryRec.valueInt("runway_width");
 
-    // Use average threshold altitude
+    // Use average threshold elevation for runway elevation
     int alt = (primaryRec.valueInt("landing_threshold_elevation") +
                secondaryRec.valueInt("landing_threshold_elevation")) / 2;
 
+    // Get primary and secondary end coordinates
+    Pos primaryPos(primaryRec.valueFloat("runway_longitude"), primaryRec.valueFloat("runway_latitude"));
+    Pos secondaryPos(secondaryRec.valueFloat("runway_longitude"), secondaryRec.valueFloat("runway_latitude"));
+
     // Calculate center point
-    float lonX = (primaryRec.valueFloat("runway_longitude") + secondaryRec.valueFloat("runway_longitude")) / 2.f;
-    float latY = (primaryRec.valueFloat("runway_latitude") + secondaryRec.valueFloat("runway_latitude")) / 2.f;
-    Pos pos(lonX, latY);
+    Pos centerPos = primaryPos.interpolate(secondaryPos, 0.5f);
 
     // Calcuate true heading from magnetic which is needed for painting
-    float magvar = magDecReader->getMagVar(pos);
+    float magvar = magDecReader->getMagVar(centerPos);
     float heading = atools::geo::normalizeCourse(primaryRec.valueFloat("runway_magnetic_bearing") + magvar);
     float opposedHeading = atools::geo::normalizeCourse(secondaryRec.valueFloat("runway_magnetic_bearing") + magvar);
 
     // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
     // << secondaryEndId << s.valueStr("runway_identifier");
 
+    // Count ILS
     if(primaryRec.valueStr("llz_identifier").isEmpty())
       numRunwayIls++;
 
@@ -246,9 +264,6 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     numRunways++;
 
     // Calculate the end coordinates
-    float lengthMeter = atools::geo::feetToMeter(static_cast<float>(length));
-    Pos primaryPos = pos.endpoint(lengthMeter / 2.f, opposedHeading).normalize();
-    Pos secondaryPos = pos.endpoint(lengthMeter / 2.f, heading).normalize();
     airportRect.extend(primaryPos);
     airportRect.extend(secondaryPos);
 
@@ -271,8 +286,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayWriteQuery->bindValue(":secondary_lonx", secondaryPos.getLonX());
     runwayWriteQuery->bindValue(":secondary_laty", secondaryPos.getLatY());
     runwayWriteQuery->bindValue(":altitude", alt);
-    runwayWriteQuery->bindValue(":lonx", lonX);
-    runwayWriteQuery->bindValue(":laty", latY);
+    runwayWriteQuery->bindValue(":lonx", centerPos.getLonX());
+    runwayWriteQuery->bindValue(":laty", centerPos.getLatY());
 
     // Write the primary end =======================================
     runwayEndWriteQuery->bindValue(":runway_end_id", primaryEndId);
@@ -360,8 +375,9 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
 }
 
 void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs,
-                              SqlRecordVector& runways)
+                              const SqlRecordVector& runways)
 {
+  // Go through the list of runways and find matching runway ends like 9R / 27L
   QSet<QString> found;
   for(const SqlRecord& rw : runways)
   {
@@ -373,13 +389,13 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
       // Already worked on that runway end
       continue;
 
-    // RW11R -> 11R
+    // Strip prefix: RW11R -> 11R
     QString rname = rwident.mid(2);
 
-    // 11
+    // Get pure number: 11
     int rnum = rname.mid(0, 2).toInt();
 
-    // R
+    // Get designator: R
     QString desig = rname.size() > 2 ? rname.at(2) : QString();
 
     // Calculate opposed name
@@ -393,20 +409,21 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     if(opposedRnum > 36)
       opposedRnum -= 36;
 
-    // RW29L
+    // Build opposed name: RW29L
     QString opposedRname = "RW" + (opposedRnum < 10 ? "0" : QString()) + QString::number(opposedRnum) + opposedDesig;
 
     // Try to find the other end in the list
     bool foundEnd = false;
-    for(const SqlRecord& orw : runways)
+    for(const SqlRecord& opposed : runways)
     {
-      if(orw.valueStr("runway_identifier") == opposedRname)
+      if(opposed.valueStr("runway_identifier") == opposedRname)
       {
         // Remember that we already worked on this
         found.insert(opposedRname);
         found.insert(rwident);
 
-        runwaypairs.append(std::make_pair(rw, orw));
+        // Add to result
+        runwaypairs.append(std::make_pair(rw, opposed));
         foundEnd = true;
         break;
       }
@@ -414,17 +431,18 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
 
     if(!foundEnd)
     {
-      // Assume other end is closed if no pair way found
-      SqlRecord orec(rw);
-      orec.setValue("runway_identifier", opposedRname);
-      orec.setValue("displaced_threshold_distance", 0);
-      orec.setValue("llz_identifier", QVariant(QVariant::String));
-      orec.setValue("runway_true_bearing", opposedHeading);
+      // Nothing found - assume other end is closed if not found
+      SqlRecord opposedRec(rw);
+      opposedRec.setValue("runway_identifier", opposedRname);
+      opposedRec.setValue("displaced_threshold_distance", 0);
+      opposedRec.setValue("llz_identifier", QVariant(QVariant::String));
+      opposedRec.setValue("runway_true_bearing", opposedHeading);
 
-      orec.appendField("is_closed", QVariant::Bool);
-      orec.setValue("is_closed", true);
+      // Set closed sign
+      opposedRec.appendField("is_closed", QVariant::Bool);
+      opposedRec.setValue("is_closed", true);
 
-      runwaypairs.append(std::make_pair(rw, orec));
+      runwaypairs.append(std::make_pair(rw, opposedRec));
     }
   }
 }
@@ -449,6 +467,410 @@ void DfdCompiler::writeCom()
   // Write COM frequencies
   script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_com.sql");
   db.commit();
+}
+
+void DfdCompiler::writeAirspaces()
+{
+  progress->reportOther("Writing Airspaces");
+
+  QString arcCols("arc_origin_latitude, arc_origin_longitude, arc_distance, arc_bearing, ");
+
+  // Controlled airspaces =================================================================
+  SqlQuery controlled("select "
+                      "icao_code, "
+                      "airspace_center, "
+                      "controlled_airspace_name as name, "
+                      "airspace_type as type, "
+                      "airspace_classification, "
+                      "seqno, "
+                      "boundary_via, "
+                      "flightlevel, "
+                      "latitude, "
+                      "longitude, "
+                      + arcCols +
+                      "unit_indicator_lower_limit, "
+                      "lower_limit, "
+                      "unit_indicator_upper_limit, "
+                      "upper_limit "
+                      "from src.tbl_controlled_airspace", db);
+
+  writeAirspace(controlled, &DfdCompiler::beginControlledAirspace);
+
+  // Restricted airspaces =================================================================
+  SqlQuery restrictive("select "
+                       "icao_code, "
+                       "restrictive_airspace_designation, "
+                       "restrictive_airspace_name as name, "
+                       "restrictive_type as type, "
+                       "multiple_code, "
+                       "seqno, "
+                       "boundary_via, "
+                       "flightlevel, "
+                       "latitude, "
+                       "longitude, "
+                       + arcCols +
+                       "unit_indicator_lower_limit, "
+                       "lower_limit, "
+                       "unit_indicator_upper_limit, "
+                       "upper_limit "
+                       "from src.tbl_restrictive_airspace", db);
+
+  writeAirspace(restrictive, &DfdCompiler::beginRestrictiveAirspace);
+
+  // FIR / UIR regions =================================================================
+  QString firUirCols("fir_uir_identifier, area_code, fir_uir_name as name, seqno, boundary_via, "
+                     "fir_uir_latitude as latitude, fir_uir_longitude as longitude, " + arcCols);
+
+  // FIR ===========================
+  SqlQuery fir("select "
+               + firUirCols +
+               "fir_uir_indicator, "
+               "'M' as unit_indicator_lower_limit, "
+               "0 as lower_limit, "
+               "'M' as unit_indicator_upper_limit, "
+               "fir_upper_limit as upper_limit "
+               "from src.tbl_fir_uir where fir_uir_indicator = 'F'", db);
+  writeAirspace(fir, &DfdCompiler::beginFirUirAirspace);
+
+  // UIR ===========================
+  SqlQuery uir("select "
+               + firUirCols +
+               "fir_uir_indicator, "
+               "'M' as unit_indicator_lower_limit, "
+               "uir_lower_limit as lower_limit, "
+               "'M' as unit_indicator_upper_limit, "
+               "uir_upper_limit as upper_limit "
+               "from src.tbl_fir_uir where fir_uir_indicator = 'U'", db);
+  writeAirspace(uir, &DfdCompiler::beginFirUirAirspace);
+
+  // Split all regions with attribute both into one FIR and one UIR record
+  // FIR from regions with attribute both ===========================
+  SqlQuery fir2("select "
+                + firUirCols +
+                "'F' as fir_uir_indicator, "
+                "'M' as unit_indicator_lower_limit, "
+                "0 as lower_limit, "
+                "'M' as unit_indicator_upper_limit, "
+                "fir_upper_limit as upper_limit "
+                "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
+  writeAirspace(fir2, &DfdCompiler::beginFirUirAirspace);
+
+  // UIR from regions with attribute both ===========================
+  SqlQuery uir2("select "
+                + firUirCols +
+                "'U' as fir_uir_indicator, "
+                "fir_uir_indicator, "
+                "'M' as unit_indicator_lower_limit, "
+                "uir_lower_limit as lower_limit, "
+                "'M' as unit_indicator_upper_limit, "
+                "uir_upper_limit as upper_limit "
+                "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
+  writeAirspace(uir2, &DfdCompiler::beginFirUirAirspace);
+
+  db.commit();
+}
+
+void DfdCompiler::writeAirspaceCom()
+{
+  progress->reportOther("Writing Airspaces COM");
+
+  // Update COM fields in boundary
+  SqlQuery updateBoundaryQuery(db);
+  updateBoundaryQuery.prepare("update boundary "
+                              "set com_type = :type, com_frequency = :frequency, com_name = :name "
+                              "where boundary_id = :id");
+
+  // Select COM joined with FIR/UIR regions.
+  SqlQuery comQuery(
+    "select a.area_code, a.fir_uir_identifier, a.fir_uir_indicator, c.remote_name as name, "
+    "min(c.communication_frequency) as frequency "
+    "from tbl_fir_uir a join tbl_enroute_communication c on "
+    "  a.area_code = c.area_code and "
+    "  a.fir_uir_identifier= c.fir_rdo_ident and "
+    "  a.fir_uir_indicator = c.fir_uir_indicator "
+    "where a.fir_uir_name is not null and "
+    // Only certain types - Area Control Center, Information and Radio
+    "  c.communication_type in ('ACC', 'INF', 'RDO') and "
+    // Only VHF frequencies
+    "  frequency_units = 'V' and "
+    // Do not include secondary frequencies
+    "  (service_indicator is null or substr(service_indicator, 2,1) <> 'S') "
+    "group by a.area_code, a.fir_uir_identifier, a.fir_uir_indicator, c.remote_name", db);
+
+  comQuery.exec();
+  while(comQuery.next())
+  {
+    QString ind = comQuery.valueStr("fir_uir_indicator");
+
+    if(ind == "F" || ind == "U")
+    {
+      int id = airspaceIdentIdMap.value(QString("%1|%2|%3").
+                                        arg(comQuery.valueStr("area_code")).
+                                        arg(comQuery.valueStr("fir_uir_identifier")).
+                                        arg(ind), -1);
+      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+    }
+    else if(ind == "B")
+    {
+      // Search the index twice since regions were split up earlier
+      int id = airspaceIdentIdMap.value(QString("%1|%2|%3").
+                                        arg(comQuery.valueStr("area_code")).
+                                        arg(comQuery.valueStr("fir_uir_identifier")).
+                                        arg("F"), -1);
+      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+
+      id = airspaceIdentIdMap.value(QString("%1|%2|%3").
+                                    arg(comQuery.valueStr("area_code")).
+                                    arg(comQuery.valueStr("fir_uir_identifier")).
+                                    arg("U"), -1);
+      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+    }
+  }
+  db.commit();
+}
+
+void DfdCompiler::updateAirspaceCom(const atools::sql::SqlQuery& com, atools::sql::SqlQuery& update, int airportId)
+{
+  if(airportId != -1)
+  {
+    update.bindValue(":frequency", static_cast<int>(com.valueFloat("frequency") * 1000));
+    update.bindValue(":type", "CTR");
+    update.bindValue(":name", com.valueStr("name"));
+    update.bindValue(":id", airportId);
+    update.exec();
+  }
+}
+
+void DfdCompiler::writeAirspace(atools::sql::SqlQuery& query,
+                                void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&))
+{
+  query.exec();
+
+  int lastSeqNo = 0;
+  while(query.next())
+  {
+    int seqNo = query.valueInt("seqno");
+
+    if(lastSeqNo != 0 && seqNo <= lastSeqNo)
+      // Sequence is lower than before - write current airspace
+      finishAirspace();
+
+    // Write geometry always
+    writeAirspaceGeometry(query);
+
+    if(lastSeqNo == 0 || seqNo <= lastSeqNo)
+    {
+      // Start airspace general information
+      beginAirspace(query);
+
+      // Call function parameter for specific
+      (this->*beginFunc)(query);
+    }
+    lastSeqNo = seqNo;
+  }
+  finishAirspace();
+}
+
+void DfdCompiler::writeAirspaceGeometry(atools::sql::SqlQuery& query)
+{
+  Pos pos(query.valueFloat("longitude"), query.valueFloat("latitude"));
+  Pos center(query.valueFloat("arc_origin_longitude"), query.valueFloat("arc_origin_latitude"));
+  airspaceSegments.append({pos, center, query.valueStr("boundary_via"), query.valueFloat("arc_distance")});
+}
+
+void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
+{
+  QString type = query.valueStr("type");
+  QString cls = query.valueStr("airspace_classification");
+  QString dbType;
+  // X // K // W // Y // Q
+  if(!cls.isEmpty())
+    dbType = "C" + cls;
+  else if(type == "M")
+    dbType = "T"; // Terminal Control Area, ICAO Designation (TMA or TCA) - to tower
+  else if(type == "R")
+    dbType = "RD"; // Radar Zone or Radar Area (USA)
+  else if(type == "A")
+    dbType = "CC"; // Class C Airspace (USA)
+  else if(type == "C")
+    dbType = "C"; // Control Area, ICAO Designation (CTA)
+  else if(type == "T")
+    dbType = "CB"; // Class B Airspace (USA)
+  else if(type == "Z")
+    dbType = "CD"; // Class D Airspace, ICAO Designation (CTR)
+
+  airspaceWriteQuery->bindValue(":type", dbType);
+  airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
+}
+
+void DfdCompiler::beginFirUirAirspace(atools::sql::SqlQuery& query)
+{
+  airspaceIdentIdMap.insert(QString("%1|%2|%3").
+                            arg(query.valueStr("area_code")).
+                            arg(query.valueStr("fir_uir_identifier")).
+                            arg(query.valueStr("fir_uir_indicator")), curAirspaceId);
+
+  QString indicator = query.valueStr("fir_uir_indicator");
+  // Convert all to center
+  airspaceWriteQuery->bindValue(":type", "C");
+
+  // Attach type to name
+  QString suffix;
+  if(indicator == "F")
+    suffix = " (FIR)";
+  else if(indicator == "U")
+    suffix = " (UIR)";
+  else if(indicator == "B")
+    suffix = " (FIR/UIR)";
+  airspaceWriteQuery->bindValue(":name", query.valueStr("name") + suffix);
+}
+
+void DfdCompiler::beginRestrictiveAirspace(atools::sql::SqlQuery& query)
+{
+  QString type = query.valueStr("type");
+  QString dbtype;
+  if(type == "A") // Alert
+    dbtype = "AL";
+  else if(type == "C") // Caution
+    dbtype = "CN";
+  else if(type == "D") // Danger
+    dbtype = "DA";
+  else if(type == "M") // MOA
+    dbtype = "M";
+  else if(type == "P") // Prohibited
+    dbtype = "P";
+  else if(type == "R") // Restricted
+    dbtype = "R";
+  else if(type == "T") // Training
+    dbtype = "TR";
+  else if(type == "W") // Warning
+    dbtype = "W";
+
+  airspaceWriteQuery->bindValue(":type", dbtype);
+  airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
+}
+
+void DfdCompiler::beginAirspace(const atools::sql::SqlQuery& query)
+{
+  airspaceWriteQuery->bindValue(":boundary_id", ++curAirspaceId);
+  airspaceWriteQuery->bindValue(":file_id", FILE_ID);
+
+  // Read altitude limits - lower
+  QString lowerLimit = query.valueStr("lower_limit");
+  QString lowerInd = query.valueStr("unit_indicator_lower_limit");
+
+  if(lowerLimit == "GND")
+  {
+    airspaceWriteQuery->bindValue(":min_altitude_type", "AGL");
+    airspaceWriteQuery->bindValue(":min_altitude", 0);
+  }
+  else if(lowerLimit == "MSL")
+  {
+    airspaceWriteQuery->bindValue(":min_altitude_type", "MSL");
+    airspaceWriteQuery->bindValue(":min_altitude", 0);
+  }
+  else
+  {
+    if(lowerInd == "A")
+      airspaceWriteQuery->bindValue(":min_altitude_type", "AGL");
+    else if(lowerInd == "M")
+      airspaceWriteQuery->bindValue(":min_altitude_type", "MSL");
+
+    airspaceWriteQuery->bindValue(":min_altitude", airspaceAlt(lowerLimit));
+  }
+
+  // Read altitude limits - upper
+  QString upperInd = query.valueStr("unit_indicator_upper_limit");
+  QString upperLimit = query.valueStr("upper_limit");
+  if(upperLimit == "UNLTD")
+  {
+    airspaceWriteQuery->bindValue(":max_altitude_type", "UL");
+    airspaceWriteQuery->bindValue(":max_altitude", 100000);
+  }
+  else
+  {
+    if(upperInd == "A")
+      airspaceWriteQuery->bindValue(":max_altitude_type", "AGL");
+    else if(upperInd == "M")
+      airspaceWriteQuery->bindValue(":max_altitude_type", "MSL");
+
+    airspaceWriteQuery->bindValue(":max_altitude", airspaceAlt(upperLimit));
+  }
+
+  // case atools::fs::bgl::boundary::UNKNOWN: return "UNKNOWN";
+  // case atools::fs::bgl::boundary::MEAN_SEA_LEVEL: return "MSL";
+  // case atools::fs::bgl::boundary::ABOVE_GROUND_LEVEL: return "AGL";
+  // case atools::fs::bgl::boundary::UNLIMITED: return "UL";
+}
+
+int DfdCompiler::airspaceAlt(const QString& altStr)
+{
+  if(altStr.startsWith("UN"))
+    // Unlimited
+    return 100000;
+  else if(altStr == "GND")
+    return 0;
+  else
+  {
+    if(altStr.startsWith("FL"))
+      return altStr.mid(2).toInt() * 100;
+    else
+      return altStr.toInt();
+  }
+}
+
+void DfdCompiler::finishAirspace()
+{
+  // Do not write if type was not found
+  if(!airspaceWriteQuery->boundValue(":type").isNull())
+  {
+    // Create geometry
+    LineString curAirspaceLine;
+
+    for(int i = 0; i < airspaceSegments.size(); i++)
+    {
+      const AirspaceSeg& seg = airspaceSegments.at(i);
+      Pos nextPos = i < airspaceSegments.size() - 1 ? airspaceSegments.at(i + 1).pos : airspaceSegments.first().pos;
+
+      if(seg.pos.isNull() && !seg.center.isNull())
+        // Create a circular polygon with 24 segments
+        curAirspaceLine.append(LineString(seg.center, atools::geo::nmToMeter(seg.distance), 24));
+      else
+      {
+        if(seg.center.isNull())
+          curAirspaceLine.append(seg.pos);
+        else
+        {
+          // Create an arc
+          bool clockwise = seg.via.isEmpty() ? true : seg.via.at(0) == "R";
+          curAirspaceLine.append(LineString(seg.center, seg.pos, nextPos, clockwise, 24));
+        }
+      }
+    }
+
+    // Move points away from the poles to avoid display artifacts
+    for(Pos& pos:curAirspaceLine)
+    {
+      if(pos.getLatY() > 89.f)
+        pos.setLatY(89.f);
+      if(pos.getLatY() < -89.)
+        pos.setLatY(-89.f);
+    }
+    airspaceWriteQuery->bindValue(":file_id", FILE_ID);
+
+    Rect bounding = curAirspaceLine.boundingRect();
+    airspaceWriteQuery->bindValue(":max_lonx", bounding.getEast());
+    airspaceWriteQuery->bindValue(":max_laty", bounding.getNorth());
+    airspaceWriteQuery->bindValue(":min_lonx", bounding.getWest());
+    airspaceWriteQuery->bindValue(":min_laty", bounding.getSouth());
+
+    atools::fs::common::BinaryGeometry geo(curAirspaceLine);
+    airspaceWriteQuery->bindValue(":geometry", geo.writeToByteArray());
+    airspaceWriteQuery->exec();
+  }
+
+  airspaceWriteQuery->clearBoundValues();
+  airspaceSegments.clear();
 }
 
 void DfdCompiler::writeAirways()
@@ -594,6 +1016,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 
     if(!curAirport.isEmpty() && airportIdent != curAirport)
     {
+      // Write all procedures of this airport
       procWriter->finish(procInput);
       procWriter->reset();
     }
@@ -609,6 +1032,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
     procInput.airportIdent = airportIdent;
     procInput.airportId = airportIndex->getAirportId(airportIdent).toInt();
 
+    // Fill data for procedure writer
     fillProcedureInput(procInput, query);
 
     // Leave the complicated states to the procedure writer
@@ -691,7 +1115,10 @@ void DfdCompiler::readHeader()
   // Extract cycle
   metadataQuery->exec();
   if(metadataQuery->next())
+  {
     airacCycle = metadataQuery->valueStr("current_airac");
+    validThrough = metadataQuery->valueStr("effective_fromto");
+  }
 }
 
 void DfdCompiler::compileMagDeclBgl()
@@ -841,6 +1268,11 @@ void DfdCompiler::initQueries()
 
   metadataQuery = new SqlQuery(db);
   metadataQuery->prepare(SqlUtil(db).buildSelectStatement("src.tbl_header"));
+
+  airspaceWriteQuery = new SqlQuery(db);
+  airspaceWriteQuery->prepare(SqlUtil(db).buildInsertStatement("boundary", QString(), {
+          "com_name", "com_type", "com_frequency"
+        }));
 }
 
 void DfdCompiler::deInitQueries()
@@ -868,6 +1300,9 @@ void DfdCompiler::deInitQueries()
 
   delete metadataQuery;
   metadataQuery = nullptr;
+
+  delete airspaceWriteQuery;
+  airspaceWriteQuery = nullptr;
 }
 
 void DfdCompiler::attachDatabase()

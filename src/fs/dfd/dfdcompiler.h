@@ -19,6 +19,7 @@
 #define ATOOLS_DFDDATACOMPILER_H
 
 #include "geo/rect.h"
+#include "geo/linestring.h"
 
 #include <QString>
 
@@ -46,7 +47,7 @@ class ProgressHandler;
 namespace ng {
 
 /*
- * Creates a Little Navmap scenery database from a DFD database.
+ * Creates a Little Navmap scenery database from an extended DFD database.
  * Only for command line based compilation.
  */
 class DfdCompiler
@@ -58,9 +59,16 @@ public:
 
   void close();
 
+  /* AIRAC cycle as read from the source database by readHeader() */
   const QString& getAiracCycle() const
   {
     return airacCycle;
+  }
+
+  /* Validity period as read from the source database by readHeader() */
+  const QString& getValidThrough() const
+  {
+    return validThrough;
   }
 
   /* Read magnetic declination. */
@@ -86,9 +94,13 @@ public:
    * Also creates NDB and VOR waypoints from airway and procedure references */
   void writeNavaids();
 
-  /*
-   * Fills com table - airport communications.
-   */
+  /* Fills boundary table from DFD tables */
+  void writeAirspaces();
+
+  /* Update FIR/UIR com frequencies in boundaries table */
+  void writeAirspaceCom();
+
+  /* Fills com table - airport communications. Also updates airport fields. */
   void writeCom();
 
   /* Update declination for waypoint and NDB */
@@ -115,9 +127,47 @@ private:
 
   /* Match opposing runway ends */
   void pairRunways(QVector<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
-                   sql::SqlRecordVector& runways);
+                   const sql::SqlRecordVector& runways);
+
+  /* Fill input structure for ProcedureWriter */
   void fillProcedureInput(atools::fs::common::ProcedureInput& procInput, const atools::sql::SqlQuery& query);
+
+  /* Write on procedure type - SID, STAR, approaches */
   void writeProcedure(const QString& table, const QString& rowCode);
+
+  /* Start airspace and fill insert query with general airspace data like limits and name from the first source column */
+  void beginAirspace(const sql::SqlQuery& query);
+
+  /* Specialized begin airspace methods - passed as pointer to writeAirspace() */
+  void beginRestrictiveAirspace(atools::sql::SqlQuery& query);
+  void beginFirUirAirspace(atools::sql::SqlQuery& query);
+  void beginControlledAirspace(atools::sql::SqlQuery& query);
+
+  /* Bind airspace geometry from airspaceSegments to insert query */
+  void writeAirspaceGeometry(sql::SqlQuery& query);
+  void updateAirspaceCom(const sql::SqlQuery& com, atools::sql::SqlQuery& update, int airportId);
+
+  /* Reads all rows of source airspace table */
+  void writeAirspace(atools::sql::SqlQuery & query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&));
+
+  /* Finalize and execute insert query */
+  void finishAirspace();
+
+  /* Get aispace altitude restriction which can start with FL and is converted into feet in this case */
+  int airspaceAlt(const QString& altStr);
+
+  /* Airspace segment containing information */
+  struct AirspaceSeg
+  {
+    atools::geo::Pos pos, center /* Circle or arc center */;
+    QString via; /* Flags */
+    float distance; /* Circle or arc radius */
+  };
+
+  QVector<AirspaceSeg> airspaceSegments;
+
+  /* Maps concatenated FIR and UIR airspace key columns to boundary_id in database */
+  QHash<QString, int> airspaceIdentIdMap;
 
   const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
@@ -128,11 +178,11 @@ private:
   atools::fs::common::ProcedureWriter *procWriter = nullptr;
   atools::fs::common::MetadataWriter *metadataWriter = nullptr;
 
-  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0;
+  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curAirspaceId = 0;
 
-  /* Hardcoded dummy ids */
+  /* Hardcoded dummy ids. Only one entry is created. */
   const int FILE_ID = 1, SCENERY_ID = 1;
-  QString airacCycle;
+  QString airacCycle, validThrough;
 
   /* Remember surface of longest runway for an airport*/
   QHash<QString, QString> longestRunwaySurfaceMap;
@@ -140,7 +190,7 @@ private:
 
   atools::sql::SqlQuery *airportQuery = nullptr, *airportWriteQuery = nullptr, *airportUpdateQuery = nullptr,
                         *runwayQuery = nullptr, *runwayWriteQuery = nullptr, *runwayEndWriteQuery = nullptr,
-                        *metadataQuery = nullptr;
+                        *metadataQuery = nullptr, *airspaceWriteQuery = nullptr;
 
 };
 

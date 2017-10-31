@@ -15,6 +15,11 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- ==================================================================================
+-- Fill COM table
+
+delete from com;
+
 insert into com (airport_id, type, frequency, name)
 select airport_id,
   case
@@ -74,3 +79,50 @@ select airport_id,
   callsign as name
 from src.tbl_airport_communication c
 join airport a on c.airport_identifier = a.ident;
+
+
+-- ==================================================================================
+-- Update airport fields with COM information
+-- Use lowest frequency if more than one available
+
+-- Number of frequencies
+update airport set num_com =
+coalesce((select count(1)
+from com c
+where c.airport_id = airport.airport_id
+group by c.airport_id), 0);
+
+-- Tower
+update airport set tower_frequency =
+(select min(frequency)
+from com c
+where c.airport_id = airport.airport_id and c.type = 'T'
+group by c.airport_id);
+
+-- ATIS
+update airport set atis_frequency =
+(select min(frequency)
+from com c
+where c.airport_id = airport.airport_id and c.type = 'ATIS'
+group by c.airport_id);
+
+-- AWOS
+update airport set awos_frequency =
+(select min(frequency)
+from com c
+where c.airport_id = airport.airport_id and c.type = 'AWOS'
+group by c.airport_id);
+
+-- ASOS
+update airport set asos_frequency =
+(select min(frequency)
+from com c
+where c.airport_id = airport.airport_id and c.type = 'ASOS'
+group by c.airport_id);
+
+-- Unicom
+update airport set unicom_frequency =
+(select min(frequency)
+from com c
+where c.airport_id = airport.airport_id and c.type = 'UC'
+group by c.airport_id);
