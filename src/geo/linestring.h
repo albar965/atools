@@ -77,7 +77,7 @@ public:
   /* Calculate Length of the line string in meter */
   float lengthMeter() const;
 
-  /* Calculate bounding rectangle of all positions */
+  /* Calculate bounding rectangle of all positions considering date boundary. Expensive. */
   Rect boundingRect() const;
 
   bool isValid() const
@@ -89,6 +89,13 @@ public:
   {
     return size() == 1 || (size() == 2 && first() == last());
   }
+
+  bool isClosed() const
+  {
+    return isValid() && first() == last();
+  }
+
+  friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);
 
 };
 

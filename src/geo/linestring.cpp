@@ -34,13 +34,19 @@ LineString::LineString(const std::initializer_list<Pos>& list)
 }
 
 LineString::LineString(const Pos& pos)
-  : QVector({pos})
+  : QVector(
+    {
+      pos
+    })
 {
 
 }
 
 LineString::LineString(const Pos& pos1, const Pos& pos2)
-  : QVector({pos1, pos2})
+  : QVector(
+    {
+      pos1, pos2
+    })
 {
 
 }
@@ -147,10 +153,10 @@ void LineString::reverse()
 void LineString::removeInvalid()
 {
   auto it = std::remove_if(begin(), end(),
-                           [] (const Pos &pos)->bool
-                           {
-                             return !pos.isValid();
-                           });
+                           [](const Pos& pos) -> bool
+      {
+        return !pos.isValid();
+      });
 
   if(it != end())
     erase(it, end());
@@ -253,26 +259,33 @@ atools::geo::Pos LineString::interpolate(float totalDistanceMeter, float fractio
   return retval;
 }
 
-Rect LineString::boundingRect() const
-{
-  if(!isEmpty())
-  {
-    Rect bounding(first());
-
-    for(const Pos& p : *this)
-      bounding.extend(p);
-    return bounding;
-  }
-  else
-    return Rect();
-}
-
 float LineString::lengthMeter() const
 {
   float length = 0.f;
   for(int i = 0; i < size() - 1; i++)
     length += at(i).distanceMeterTo(at(i + 1));
   return length;
+}
+
+QDebug operator<<(QDebug out, const LineString& record)
+{
+  QDebugStateSaver saver(out);
+  out.nospace().noquote() << "LineString[";
+
+  for(const Pos& p:record)
+    out.nospace().noquote() << p << ", ";
+
+  return out;
+}
+
+Rect LineString::boundingRect() const
+{
+  if(!isValid())
+    return Rect();
+
+  Rect retval;
+  atools::geo::boundingRect(retval, *this);
+  return retval;
 }
 
 } // namespace geo

@@ -160,5 +160,161 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
   }
 }
 
+void boundingRect(Rect& rect, const QVector<atools::geo::Pos>& positions)
+{
+  // If the line string is empty return an empty boundingbox
+  if(positions.size() == 0)
+  {
+    rect = Rect();
+    return;
+  }
+
+  float lonX = positions.begin()->getLonX(), latY = positions.begin()->getLatY();
+
+  float north = latY;
+  float south = latY;
+  float west = lonX;
+  float east = lonX;
+
+  // If there's only a single node stored then the boundingbox only contains that point
+  if(positions.size() == 1)
+  {
+    rect = Rect(west, north, east, south);
+    return;
+  }
+
+  // Specifies whether the polygon crosses the IDL
+  bool idlCrossed = false;
+
+  // "idlCrossState" specifies the state concerning IDL crossage.
+  // This is needed in order to create optimal bounding boxes in case of covering the IDL
+  // Every time the IDL gets crossed from east to west the idlCrossState value gets
+  // increased by one.
+  // Every time the IDL gets crossed from west to east the idlCrossState value gets
+  // decreased by one.
+
+  int idlCrossState = 0;
+  int idlMaxCrossState = 0;
+  int idlMinCrossState = 0;
+
+  // Holds values for east and west while idlCrossState != 0
+  float otherWest = lonX;
+  float otherEast = lonX;
+
+  float previousLon = lonX;
+
+  int currentSign = (lonX < 0) ? -1 : +1;
+  int previousSign = currentSign;
+
+  QVector<Pos>::ConstIterator it(positions.begin());
+  QVector<Pos>::ConstIterator itEnd(positions.end());
+
+  bool processingLastNode = false;
+
+  while(it != itEnd)
+  {
+    // Get coordinates and normalize them to the desired range.
+    lonX = it->getLonX();
+    latY = it->getLatY();
+
+    // Determining the maximum and minimum latitude
+    if(latY > north)
+      north = latY;
+    if(latY < south)
+      south = latY;
+
+    currentSign = (lonX < 0.f) ? -1 : +1;
+
+    // Once the polyline crosses the dateline the covered bounding box
+    // would cover the whole [-M_PI; M_PI] range.
+    // When looking separately at the longitude range that gets covered
+    // east and west from the IDL we get two bounding boxes (we prefix
+    // the resulting longitude range on the "other side" with "other").
+    // By picking the "inner" range values we get a more appropriate
+    // optimized single bounding box.
+
+    // IDL check
+    if(previousSign != currentSign && fabs(previousLon) + fabs(lonX) > 180.f)
+    {
+
+      // Initialize values for otherWest and otherEast
+      if(idlCrossed == false)
+      {
+        otherWest = lonX;
+        otherEast = lonX;
+        idlCrossed = true;
+      }
+
+      // Determine the new IDL Cross State
+      if(previousLon < 0.f)
+      {
+        idlCrossState++;
+        if(idlCrossState > idlMaxCrossState)
+          idlMaxCrossState = idlCrossState;
+      }
+      else
+      {
+        idlCrossState--;
+        if(idlCrossState < idlMinCrossState)
+          idlMinCrossState = idlCrossState;
+      }
+    }
+
+    if(idlCrossState == 0)
+    {
+      if(lonX > east)
+        east = lonX;
+      if(lonX < west)
+        west = lonX;
+    }
+    else
+    {
+      if(lonX > otherEast)
+        otherEast = lonX;
+      if(lonX < otherWest)
+        otherWest = lonX;
+    }
+
+    previousLon = lonX;
+    previousSign = currentSign;
+
+    if(processingLastNode)
+      break;
+
+    ++it;
+
+    if(positions.first() == positions.last() /* is closed */ && it == itEnd)
+    {
+      it = positions.begin();
+      processingLastNode = true;
+    }
+  }
+
+  if(idlCrossed)
+  {
+    if(idlMinCrossState < 0)
+      east = otherEast;
+    if(idlMaxCrossState > 0)
+      west = otherWest;
+
+    if((idlMinCrossState < 0 && idlMaxCrossState > 0) ||
+       idlMinCrossState < -1 || idlMaxCrossState > 1 ||
+       west <= east)
+    {
+      east = +180.f;
+      west = -180.f;
+      // if polygon fully in south hemisphere, contain south pole
+      if(north < 0)
+        south = -90.f;
+      else
+        north = 90.f;
+    }
+  }
+
+  // explicit Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
+  // return Rect(north, south, east, west);
+  rect = Rect(west, north, east, south);
+}
+
 } // namespace geo
 } // namespace atools

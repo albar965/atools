@@ -17,6 +17,9 @@
 
 #include "geo/line.h"
 
+#include "geo/linestring.h"
+#include "geo/calculations.h"
+
 namespace atools {
 namespace geo {
 
@@ -237,9 +240,11 @@ Pos Line::intersectionWithCircle(const Pos& center, float radiusMeter, float acc
 
 Rect Line::boundingRect() const
 {
+  if(!isValid())
+    return Rect();
+
   Rect retval;
-  retval.extend(pos1);
-  retval.extend(pos2);
+  atools::geo::boundingRect(retval, {pos1, pos2});
   return retval;
 }
 
@@ -251,7 +256,7 @@ bool Line::isPoint(float epsilonDegree) const
 QDebug operator<<(QDebug out, const Line& record)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Line[" << record.pos1 << record.pos2 << "]";
+  out.nospace().noquote() << "Line[" << record.pos1 << ", " << record.pos2 << "]";
   return out;
 }
 

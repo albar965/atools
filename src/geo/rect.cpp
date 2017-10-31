@@ -103,14 +103,76 @@ bool Rect::contains(const Pos& pos) const
 
 bool Rect::overlaps(const Rect& other) const
 {
-  if(isValid() || other.isValid())
+  if(!isValid() || !other.isValid())
+    return false;
+
+  if(isPoint() && other.isPoint())
+    return *this == other;
+
+  float n = getNorth(), s = getSouth(), e = getEast(), w = getWest();
+  float n2 = other.getNorth(), s2 = other.getSouth(), e2 = other.getEast(), w2 = other.getWest();
+  // check the intersection criterion for the latitude first:
+
+  // Case 1: northern boundary of other box intersects:
+  if((n >= n2 && s <= n2)
+     // Case 2: northern boundary of this box intersects:
+     || (n2 >= n && s2 <= n)
+     // Case 3: southern boundary of other box intersects:
+     || (n >= s2 && s <= s2)
+     // Case 4: southern boundary of this box intersects:
+     || (n2 >= s && s2 <= s))
   {
-    for(const Rect& r1 : splitAtAntiMeridian())
-      for(const Rect &r2 : other.splitAtAntiMeridian())
-        if(r1.overlapsInternal(r2))
+    if(!crossesAntiMeridian())
+    {
+      if(!other.crossesAntiMeridian())
+      {
+        // "Normal" case: both bounding boxes don't cross the date line
+        // Case 1: eastern boundary of other box intersects:
+        if((e >= e2 && w <= e2)
+           // Case 2: eastern boundary of this box intersects:
+           || (e2 >= e && w2 <= e)
+           // Case 3: western boundary of other box intersects:
+           || (e >= w2 && w <= w2)
+           // Case 4: western boundary of this box intersects:
+           || (e2 >= w && w2 <= w))
           return true;
+      }
+      else
+      {
+        // The other bounding box crosses the date line, "this" one does not:
+        // So the date line splits the other bounding box in two parts.
+        if(w <= e2 || e >= w2)
+          return true;
+      }
+    }
+    else
+    {
+      if(other.crossesAntiMeridian())
+        // The trivial case: both bounding boxes cross the date line and intersect
+        return true;
+      else
+      {
+        // "This" bounding box crosses the date line, the other one does not.
+        // So the date line splits "this" bounding box in two parts.
+        //
+        // This also covers the case where this bounding box covers the whole
+        // longitude range ( -180 <= lon <= + 180 ).
+        if(w2 <= e || e2 >= w)
+          return true;
+      }
+    }
   }
+
   return false;
+
+  // if(isValid() || other.isValid())
+  // {
+  // for(const Rect& r1 : splitAtAntiMeridian())
+  // for(const Rect &r2 : other.splitAtAntiMeridian())
+  // if(r1.overlapsInternal(r2))
+  // return true;
+  // }
+  // return false;
 }
 
 void Rect::inflate(float degreesLon, float degreesLat)
@@ -214,29 +276,13 @@ void Rect::extend(const Pos& pos)
   if(!pos.isValid())
     return;
 
-  if(!isValid())
-    *this = Rect(pos);
+  if(isValid())
+    atools::geo::boundingRect(*this, {pos,
+                                      getTopLeft(), getTopRight(),
+                                      getBottomRight(), getBottomLeft()});
   else
-  {
-    float x = pos.getLonX(), y = pos.getLatY(),
-          leftLonX = topLeft.getLonX(), topLatY = topLeft.getLatY(),
-          rightLonX = bottomRight.getLonX(), bottomLatY = bottomRight.getLatY();
-
-    if(x < leftLonX || leftLonX == 0.f)
-      leftLonX = x;
-
-    if(x > rightLonX || rightLonX == 0.f)
-      rightLonX = x;
-
-    if(y > topLatY || topLatY == 0.f)
-      topLatY = y;
-
-    if(y < bottomLatY || bottomLatY == 0.f)
-      bottomLatY = y;
-
-    topLeft = Pos(leftLonX, topLatY);
-    bottomRight = Pos(rightLonX, bottomLatY);
-  }
+    // Create single point rect if this is not valid
+    *this = Rect(pos);
 }
 
 void Rect::extend(const Rect& rect)
@@ -244,10 +290,14 @@ void Rect::extend(const Rect& rect)
   if(!rect.isValid())
     return;
 
-  extend(rect.getTopLeft());
-  extend(rect.getTopRight());
-  extend(rect.getBottomRight());
-  extend(rect.getBottomLeft());
+  if(isValid())
+    atools::geo::boundingRect(*this, {rect.getTopLeft(), rect.getTopRight(),
+                                      rect.getBottomRight(), rect.getBottomLeft(),
+                                      getTopLeft(), getTopRight(),
+                                      getBottomRight(), getBottomLeft()});
+  else
+    // Use other if this is not valid
+    *this = rect;
 }
 
 Pos Rect::getCenter() const
@@ -288,7 +338,7 @@ void Rect::swap(Rect& other)
 QDebug operator<<(QDebug out, const Rect& record)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Rect[" << record.topLeft.toString() << record.bottomRight.toString() << "]";
+  out.nospace().noquote() << "Rect[tl " << record.topLeft << ", br " << record.bottomRight << "]";
   return out;
 }
 

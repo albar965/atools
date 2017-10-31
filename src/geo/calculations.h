@@ -31,6 +31,7 @@ namespace geo {
 class Line;
 class LineString;
 class Pos;
+class Rect;
 
 enum LineDist
 {
@@ -60,6 +61,10 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
 * of the line. left = counter clockwise. Fills distance if not null and lines with the approximation if not null. */
 void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center, bool left,
                    float *length, atools::geo::LineString *lines = nullptr);
+
+/* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
+ * mean that left > right */
+void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
 
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)
