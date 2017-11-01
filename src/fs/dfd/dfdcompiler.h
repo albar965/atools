@@ -188,9 +188,9 @@ private:
   QHash<QString, QString> longestRunwaySurfaceMap;
   QHash<QString, atools::geo::Rect> airportRectMap;
 
-  atools::sql::SqlQuery *airportQuery = nullptr, *airportWriteQuery = nullptr, *airportUpdateQuery = nullptr,
-                        *runwayQuery = nullptr, *runwayWriteQuery = nullptr, *runwayEndWriteQuery = nullptr,
-                        *metadataQuery = nullptr, *airspaceWriteQuery = nullptr;
+  atools::sql::SqlQuery *airportQuery = nullptr, *airportWriteQuery = nullptr, *airportFileWriteQuery = nullptr,
+                        *airportUpdateQuery = nullptr, *runwayQuery = nullptr, *runwayWriteQuery = nullptr,
+                        *runwayEndWriteQuery = nullptr, *metadataQuery = nullptr, *airspaceWriteQuery = nullptr;
 
 };
 

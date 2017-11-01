@@ -163,6 +163,9 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":lonx", pos.getLonX());
     airportWriteQuery->bindValue(":laty", pos.getLatY());
     airportWriteQuery->exec();
+
+    airportFileWriteQuery->bindValue(":ident", ident);
+    airportFileWriteQuery->exec();
   }
   db.commit();
 }
@@ -1238,6 +1241,9 @@ void DfdCompiler::initQueries()
           "tower_altitude", "tower_lonx", "tower_laty"
         }, true /* named bindings */));
 
+  airportFileWriteQuery = new SqlQuery(db);
+  airportFileWriteQuery->prepare(QString("insert into airport_file (file_id, ident) values(%1, :ident)").arg(FILE_ID));
+
   runwayQuery = new SqlQuery(db);
   runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");
 
@@ -1294,6 +1300,9 @@ void DfdCompiler::deInitQueries()
 
   delete airportWriteQuery;
   airportWriteQuery = nullptr;
+
+  delete airportFileWriteQuery;
+  airportFileWriteQuery = nullptr;
 
   delete airportUpdateQuery;
   airportUpdateQuery = nullptr;
