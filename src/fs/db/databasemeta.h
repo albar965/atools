@@ -116,8 +116,9 @@ public:
    * 3 nullable altitude types in boundary
    * 4 nullable path in scenery
    * 5 metadata changes for DFD database
+   * 5 compiler version to metadata
    */
-  static const int DB_VERSION_MINOR = 5;
+  static const int DB_VERSION_MINOR = 6;
 
   void init();
 

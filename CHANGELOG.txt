@@ -1,3 +1,12 @@
+2.7.0.develop
+
+* Finished DFD compiler
+* Disabling maximum airway segment length for data sources that contain a valid airspace geometry
+  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Extended database metadata with optional compiler_version, valid_through and data source columns.
+* Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
+* Fixed problems with bounding box and overlap calculations around the anti meridian.
+
 Version 2.6.8
 * Adapted weather parser for language translation.
 * Fixed exception when running into new TACAN approach in P3D version 4.1.
