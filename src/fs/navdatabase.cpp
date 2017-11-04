@@ -31,6 +31,7 @@
 #include "fs/xp/xpdatacompiler.h"
 #include "fs/dfd/dfdcompiler.h"
 #include "fs/db/databasemeta.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QDir>
@@ -60,8 +61,8 @@ using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
 
 NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
-                         NavDatabaseErrors *databaseErrors)
-  : db(sqlDb), errors(databaseErrors), options(readerOptions)
+                         NavDatabaseErrors *databaseErrors, const QString& revision)
+  : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
 {
 
 }
@@ -417,7 +418,6 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   // =====================================================================
   // Update the metadata in the database
   atools::fs::db::DatabaseMeta databaseMetadata(db);
-  databaseMetadata.updateAll();
 
   if(!xpDataCompiler.isNull())
     databaseMetadata.setAiracCycle(xpDataCompiler->getAiracCycle());
@@ -425,6 +425,12 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     databaseMetadata.setAiracCycle(dfdCompiler->getAiracCycle(), dfdCompiler->getValidThrough());
 
   databaseMetadata.setDataSource(FsPaths::typeToShortName(sim));
+  databaseMetadata.setCompilerVersion(QString("atools %1 (revision %2) %3 %4 (%5)").
+                                      arg(atools::version()).
+                                      arg(atools::gitRevision()).
+                                      arg(QApplication::applicationName()).
+                                      arg(QApplication::applicationVersion()).
+                                      arg(gitRevision));
 
   databaseMetadata.updateAll();
   db->commit();

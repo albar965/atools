@@ -31,7 +31,8 @@ create table metadata
   has_sid_star integer,               -- 1 if any SID or STAR procedures are in the database
   airac_cycle varchar(10),            -- AIRAC cycle (not FSX/P3D)
   valid_through varchar(10),          -- AIRAC cycle valid through (not FSX/P3D/XP11)
-  data_source varchar(10)             -- Data source, FSX, FSXSE, P3DV2, P3DV3, P3DV3, XP11 or NG (Navigraph)
+  data_source varchar(10),            -- Data source, FSX, FSXSE, P3DV2, P3DV3, P3DV3, XP11 or NG (Navigraph)
+  compiler_version varchar(1000)      -- Compiler program version and revision string
 );
 
 -- **************************************************

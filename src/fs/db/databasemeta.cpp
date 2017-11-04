@@ -58,6 +58,7 @@ void DatabaseMeta::init()
       airacCycle = rec.valueStr("airac_cycle", QString());
       validThrough = rec.valueStr("valid_through", QString());
       dataSource = rec.valueStr("data_source", QString());
+      compilerVersion = rec.valueStr("compiler_version", QString());
       valid = true;
     }
     query.finish();
@@ -115,6 +116,21 @@ void DatabaseMeta::updateDataSource()
   updateDataSource(dataSource);
 }
 
+void DatabaseMeta::updateCompilerVersion(const QString& versionStr)
+{
+  compilerVersion = versionStr;
+  SqlQuery query(db);
+  query.prepare("update metadata set compiler_version = :vers");
+  query.bindValue(":vers", versionStr);
+  query.exec();
+  db->commit();
+}
+
+void DatabaseMeta::updateCompilerVersion()
+{
+  updateCompilerVersion(compilerVersion);
+}
+
 void DatabaseMeta::updateTimestamp()
 {
   lastLoadTime = QDateTime::currentDateTime();
@@ -150,6 +166,7 @@ void DatabaseMeta::updateAll()
   updateFlags();
   updateAiracCycle();
   updateDataSource();
+  updateCompilerVersion();
 }
 
 bool DatabaseMeta::hasSchema() const

@@ -47,7 +47,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::P3D_V3, "P3DV3"},
       {FsPaths::P3D_V4, "P3DV4"},
       {FsPaths::XPLANE11, "XP11"},
-      {FsPaths::NAVIGRAPH, "NG"}
+      {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(

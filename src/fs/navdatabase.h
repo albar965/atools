@@ -68,7 +68,7 @@ public:
    * @param sqlDb Database to fill with data
    */
   NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
-              atools::fs::NavDatabaseErrors *databaseErrors);
+              atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision);
 
   /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.
    * @param codec Scenery.cfg codec */
@@ -136,10 +136,13 @@ private:
   /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
 
+  /* For metadata */
+
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;
   const atools::fs::NavDatabaseOptions *options;
   bool aborted = false;
+  QString gitRevision;
 
 };
 

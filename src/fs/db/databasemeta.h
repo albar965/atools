@@ -148,6 +148,19 @@ public:
     dataSource = value;
   }
 
+  void updateCompilerVersion();
+  void updateCompilerVersion(const QString& versionStr);
+
+  const QString& getCompilerVersion() const
+  {
+    return compilerVersion;
+  }
+
+  void setCompilerVersion(const QString& value)
+  {
+    compilerVersion = value;
+  }
+
 private:
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
@@ -158,7 +171,7 @@ private:
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
   bool valid = false, sidStar = false;
-  QString airacCycle, validThrough, dataSource;
+  QString airacCycle, validThrough, dataSource, compilerVersion;
 };
 
 } // namespace db
