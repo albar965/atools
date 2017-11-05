@@ -119,6 +119,20 @@ entry::WaypointType FlightplanEntry::stringToWaypointType(const QString& str)
   return entry::UNKNOWN;
 }
 
+QDebug operator<<(QDebug out, const FlightplanEntry& record)
+{
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << "FlightplanEntry[id " << record.getWaypointId()
+                          << ", type " << record.getWaypointTypeAsString()
+                          << ", ident " << record.getIcaoIdent()
+                          << ", region " << record.getIcaoRegion()
+                          << ", airway " << record.getAirway()
+                          << ", pos " << record.getPosition()
+                          << ", save " << !record.isNoSave() << "]" << endl;
+  return out;
+}
+
 } // namespace pln
 } // namespace fs
 } // namespace atools

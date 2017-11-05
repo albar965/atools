@@ -309,6 +309,8 @@ public:
   bool canSaveUserWaypointName() const;
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
+
   void loadFsx(const QString& file);
   void loadFs9(const QString& file);
   void loadFlp(const QString& file);

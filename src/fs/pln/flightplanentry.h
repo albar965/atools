@@ -150,6 +150,8 @@ public:
   }
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
+
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
 

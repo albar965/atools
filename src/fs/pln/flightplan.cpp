@@ -1725,6 +1725,21 @@ void Flightplan::assignAltitudeToAllEntries(int altitude)
                                        entry.getPosition().getLatY(), altitude));
 }
 
+QDebug operator<<(QDebug out, const Flightplan& record)
+{
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << "Flightplan[fmt" << record.getFileFormat()
+                          << ", from/to " << record.getDepartureIdent()
+                          << " -> " << record.getDestinationIdent() << endl;
+
+  int i = 1;
+  for(const FlightplanEntry& entry: record.getEntries())
+    out << i++ << entry;
+  out << "]";
+  return out;
+}
+
 } // namespace pln
 } // namespace fs
 } // namespace atools
