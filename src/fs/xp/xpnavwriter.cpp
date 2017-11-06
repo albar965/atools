@@ -262,7 +262,9 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
 void XpNavWriter::bindIlsGlideslope(const QStringList& line)
 {
   insertIlsQuery->bindValue(":gs_range", at(line, RANGE).toInt());
-  insertIlsQuery->bindValue(":gs_pitch", std::floor((at(line, HDG).toFloat() / 1000.f) / 100.f));
+  float pitchHdg = at(line, HDG).toFloat();
+  float pitch = std::floor(pitchHdg / 1000.f) / 100.f;
+  insertIlsQuery->bindValue(":gs_pitch", pitch);
   insertIlsQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
   insertIlsQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
   insertIlsQuery->bindValue(":gs_laty", at(line, LATY).toFloat());

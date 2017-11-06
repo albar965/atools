@@ -1,6 +1,7 @@
 2.7.1.develop
 
 * Finished DFD compiler
+* Fixed error with wrong ILS pitch in X-Plane compiler.
 * Disabling maximum airway segment length for data sources that contain a valid airspace geometry
   (X-Plane and DFD - FSX/P3D contain invalid segments).
 * Extended database metadata with optional compiler_version, valid_through and data source columns.
