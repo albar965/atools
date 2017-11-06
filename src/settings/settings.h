@@ -49,6 +49,12 @@ public:
    * That is currently the filename and the settings directory. */
   static void logSettingsInformation();
 
+  /* Overrides the organization path if not empty */
+  static void setOverrideOrganisation(const QString& value)
+  {
+    overrideOrganisation = value;
+  }
+
   /*
    * Get an application specific filename plus extension. The file will be
    * stored in the organization settings directory and have a name based on
@@ -118,6 +124,8 @@ private:
   ~Settings();
 
   QSettings *qSettings;
+
+  static QString overrideOrganisation;
 
   static Settings *settingsInstance;
   static QString appNameForFiles();

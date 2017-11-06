@@ -36,6 +36,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Organization" << QCoreApplication::organizationName()
           << "domain" << QCoreApplication::organizationDomain();
   qInfo() << "Application file path" << QCoreApplication::applicationFilePath();
+  qInfo() << "Application arguments" << QCoreApplication::arguments();
   qInfo() << "Current working directory" << QDir(".").absolutePath();
 
   int i = 1;
@@ -79,7 +80,7 @@ void LoggingUtil::logStandardPaths()
   qInfo() << "ConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::ConfigLocation);
   qInfo() << "DownloadLocation" << QStandardPaths::standardLocations(QStandardPaths::DownloadLocation);
   qInfo() << "GenericCacheLocation" << QStandardPaths::standardLocations(QStandardPaths::GenericCacheLocation);
-  qInfo() << "GenericConfigLocation" << QStandardPaths::standardLocations( QStandardPaths::GenericConfigLocation);
+  qInfo() << "GenericConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::GenericConfigLocation);
   qInfo() << "AppDataLocation" << QStandardPaths::standardLocations(QStandardPaths::AppDataLocation);
   qInfo() << "AppConfigLocation" << QStandardPaths::standardLocations(QStandardPaths::AppConfigLocation);
 }

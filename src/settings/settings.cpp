@@ -28,12 +28,11 @@ namespace atools {
 namespace settings {
 
 Settings *Settings::settingsInstance = nullptr;
+QString Settings::overrideOrganisation;
 
 Settings::Settings()
 {
-  qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope,
-                            orgNameForDirs(),
-                            appNameForFiles());
+  qSettings = new QSettings(QSettings::IniFormat, QSettings::UserScope, orgNameForDirs(), appNameForFiles());
 
   QString p = QFileInfo(qSettings->fileName()).path();
   if(!QFileInfo::exists(p))
@@ -244,7 +243,10 @@ QString Settings::getPath()
 
 QString Settings::orgNameForDirs()
 {
-  return QApplication::organizationName().replace(' ', '_');
+  if(overrideOrganisation.isEmpty())
+    return QApplication::organizationName().replace(' ', '_');
+  else
+    return overrideOrganisation.replace(' ', '_');
 }
 
 QString Settings::appNameForFiles()
