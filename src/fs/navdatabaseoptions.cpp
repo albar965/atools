@@ -190,8 +190,9 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setWriteIncompleteObjects(settings.value("Options/SaveIncomplete", true).toBool());
   setAutocommit(settings.value("Options/Autocommit", false).toBool());
   setFlag(type::BASIC_VALIDATION, settings.value("Options/BasicValidation", false).toBool());
-  setFlag(type::VACUUM_DATABASE, settings.value("Options/VacuumDatabase", false).toBool());
-  setFlag(type::ANALYZE_DATABASE, settings.value("Options/AnalyzeDatabase", false).toBool());
+  setFlag(type::VACUUM_DATABASE, settings.value("Options/VacuumDatabase", true).toBool());
+  setFlag(type::ANALYZE_DATABASE, settings.value("Options/AnalyzeDatabase", true).toBool());
+  setFlag(type::DROP_INDEXES, settings.value("Options/DropAllIndexes", false).toBool());
 
   addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
   addToFilenameFilterExclude(settings.value("Filter/ExcludeFilenames").toStringList());

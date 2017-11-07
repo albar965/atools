@@ -75,3 +75,12 @@ foreign key(scenery_area_id) references scenery_area(scenery_area_id)
 
 create index if not exists idx_bgl_file_scenery_area_id on bgl_file(scenery_area_id);
 
+drop table if exists script;
+
+-- A database preparation script containiing create index statements for example
+-- Table is to be cleared after execution
+create table script
+(
+  script_id integer primary key,
+  statement varchar(4096)  -- SQL statement that is executed to prepare the database
+);

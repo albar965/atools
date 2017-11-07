@@ -133,7 +133,10 @@ enum OptionFlag
   VACUUM_DATABASE = 1 << 12,
 
   /* Run SQLite analyze command */
-  ANALYZE_DATABASE = 1 << 13
+  ANALYZE_DATABASE = 1 << 13,
+
+  /* Remove all indexes */
+  DROP_INDEXES = 1 << 14
 };
 
 Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
@@ -344,6 +347,11 @@ public:
   bool isAnalyzeDatabase() const
   {
     return flags & type::ANALYZE_DATABASE;
+  }
+
+  bool isDropIndexes() const
+  {
+    return flags & type::DROP_INDEXES;
   }
 
   bool isBasicValidation() const

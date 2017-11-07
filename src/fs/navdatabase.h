@@ -106,6 +106,9 @@ public:
    */
   static bool isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type);
 
+  /* Executes all statements like create index in the table script and deletes it afterwards */
+  static void runPreparationScript(atools::sql::SqlDatabase& db);
+
 private:
   /* Creates database schema only */
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
@@ -135,6 +138,9 @@ private:
 
   /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
+
+  void createPreparationScript();
+  void dropAllIndexes();
 
   /* For metadata */
 

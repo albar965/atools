@@ -49,6 +49,7 @@ const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
 const int PROGRESS_NUM_ANALYZE_STEPS = 1;
 const int PROGRESS_NUM_VACCUM_STEPS = 1;
+const int PROGRESS_NUM_DROP_INDEX_STEPS = 2;
 const int PROGRESS_DFD_EXTRA_STEPS = 12;
 
 using atools::sql::SqlDatabase;
@@ -280,6 +281,9 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if(options->isVacuumDatabase())
     total += PROGRESS_NUM_VACCUM_STEPS;
 
+  if(options->isDropIndexes())
+    total += PROGRESS_NUM_DROP_INDEX_STEPS;
+
   // Assume this one takes a quarter of the total number of steps
   int numRouteSteps = total / routePartFraction;
   if(options->isCreateRouteTables())
@@ -453,6 +457,18 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     createDatabaseReport(&progress);
   }
 
+  if(options->isDropIndexes())
+  {
+    if((aborted = progress.reportOther(tr("Creating Database preparation Script"))))
+      return;
+
+    createPreparationScript();
+
+    if((aborted = progress.reportOther(tr("Dropping All Indexes"))))
+      return;
+
+    dropAllIndexes();
+  }
   if(options->isVacuumDatabase())
   {
     if((aborted = progress.reportOther(tr("Vacuum Database"))))
@@ -698,7 +714,58 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
 
 
   qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
+}
 
+void NavDatabase::runPreparationScript(atools::sql::SqlDatabase& db)
+{
+  if(SqlUtil(db).hasTable("script"))
+  {
+    SqlQuery scriptQuery("select statement from script ", db);
+    scriptQuery.exec();
+    while(scriptQuery.next())
+    {
+      qDebug() << "prepare script" << scriptQuery.valueStr("statement");
+      db.exec(scriptQuery.valueStr("statement"));
+    }
+  }
+  db.commit();
+
+  db.exec("delete from script");
+  db.commit();
+}
+
+void NavDatabase::createPreparationScript()
+{
+  if(SqlUtil(db).hasTable("script"))
+  {
+    SqlQuery insertScript(db);
+    insertScript.prepare("insert into script (statement) values(:stmt)");
+
+    SqlQuery indexQuery("select sql from sqlite_master where type = 'index' and sql is not null", db);
+    indexQuery.exec();
+    while(indexQuery.next())
+    {
+      insertScript.bindValue(":stmt", indexQuery.valueStr("sql"));
+      insertScript.exec();
+    }
+  }
+  db->commit();
+}
+
+void NavDatabase::dropAllIndexes()
+{
+  QStringList stmts;
+
+  {
+    SqlQuery indexQuery("select name from sqlite_master where type = 'index' and sql is not null", db);
+    indexQuery.exec();
+    while(indexQuery.next())
+      stmts.append("drop index if exists " + indexQuery.valueStr("name"));
+  }
+
+  for(const QString& stmt : stmts)
+    db->exec(stmt);
+  db->commit();
 }
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)

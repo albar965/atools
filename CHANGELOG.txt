@@ -1,5 +1,7 @@
 2.7.1.develop
 
+* Added option to drop indexes after database creation.
+* Added script table and option to store create index scripts in that table for preparation by the client.
 * Finished DFD compiler
 * Fixed error with wrong ILS pitch in X-Plane compiler.
 * Disabling maximum airway segment length for data sources that contain a valid airspace geometry
