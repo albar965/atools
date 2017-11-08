@@ -7,7 +7,7 @@
 QT       += sql xml core widgets network
 QT       -= gui
 
-CONFIG += c++11
+CONFIG += c++14
 
 INCLUDEPATH += $$PWD/src
 
