@@ -44,7 +44,7 @@ FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
   icaoRegion = other.icaoRegion;
   icaoIdent = other.icaoIdent;
   name = other.name;
-  parking = other.parking;
+  magvar = other.magvar;
   position = other.position;
   noSave = other.noSave;
   return *this;

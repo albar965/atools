@@ -149,6 +149,28 @@ public:
     return !operator==(other);
   }
 
+  /* Name is not saved with PLN file */
+  QString getName() const
+  {
+    return name;
+  }
+
+  void setName(const QString& value)
+  {
+    name = value;
+  }
+
+  /* Magnetic variance is not saved with PLN file */
+  float getMagvar() const
+  {
+    return magvar;
+  }
+
+  void setMagvar(float value)
+  {
+    magvar = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
@@ -156,8 +178,9 @@ private:
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
 
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
-  QString waypointId, airway, icaoRegion, icaoIdent, name, parking;
+  QString waypointId, airway, icaoRegion, icaoIdent, name;
   atools::geo::Pos position;
+  float magvar = 0.f;
   bool noSave = false;
 };
 

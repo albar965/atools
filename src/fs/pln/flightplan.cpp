@@ -39,6 +39,58 @@ static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularEx
 
 static const QRegularExpression FS9_MATCH("(^appversion\\s*=|^title\\s*=|^description\\s*=|^type\\s*=|"
                                           "^routetype\\s*=|^cruising_altitude\\s*=|^departure_id\\s*=|^destination_id\\s*=)");
+
+/* Format structs for the Majestic Software MJC8 Q400.
+ * Structs need to be packed to avoid padding. */
+namespace fpr {
+
+const static int NavSystem_UNITYPE_WPT = 1;
+const static int NavSystem_UNITYPE_NAV = 2;
+const static int NavSystem_UNITYPE_AIRPORT = 3;
+
+const static int NavSystem_PROCTYPE_FP = 4; // Usual FP (fix to fix, great circle)
+
+const static int NavSystem_LEG_SEGMENT_FP_CRS = 0x05;
+
+struct __attribute__((__packed__)) Waypoint
+{
+  char designator[10]; // short name
+
+  char fullName[12]; // full name
+  double latYRad;
+  double lonXRad;
+  qint8 waypointType; // of type NavSystem_UNITYPE_NONE
+  int databaseId; // -1 if unknown
+  qint8 boolVal;
+  double magvarRad;
+};
+
+struct __attribute__((__packed__)) Leg
+{
+  qint8 proc_type; // of type NavSystem_PROCTYPE_NONE. SID STAR and so on
+
+  int legHash; // unique hash for this leg
+  char legType[3]; // FA and so on...
+  char legSegType; // Transition type of type FMC_LEG_SEGMENT_XXX
+  qint8 iapTypeIAP_type; // type for IAP. A = GPS (ILS), D = ILSDME, N=NDB, Q=?, S=?, I=ILS, L=?. BIG MISTERY!
+  char transition[6]; // this is a runway leg also, otherwise transition name
+  Waypoint waypoint;
+
+  quint8 fill[210];
+};
+
+static const int FMC_FLIGHT_PLAN_MAX_LEGS = 128;
+
+struct __attribute__((__packed__)) FlightPlan
+{
+  qint16 numLegs;
+
+  Leg legs[FMC_FLIGHT_PLAN_MAX_LEGS];
+  quint8 fill[503];
+};
+} // namespace fpr
+
+// =============================================================================================
 Flightplan::Flightplan()
 {
 
@@ -1377,6 +1429,97 @@ void Flightplan::saveRte(const QString& file)
   }
   else
     throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(rteFile.errorString()));
+}
+
+void Flightplan::saveFpr(const QString& file)
+{
+  filename = file;
+  QFile fprFile(filename);
+
+  // Create base hash from 0 to 32768
+  std::srand(static_cast<unsigned int>(std::time(0)));
+  int hashSeed = std::rand() * std::numeric_limits<qint16>::max() / RAND_MAX;
+
+  if(fprFile.open(QIODevice::WriteOnly))
+  {
+    QDataStream ds(&fprFile);
+
+    fpr::FlightPlan plan;
+    memset(&plan, 0, sizeof(plan));
+
+    int legIdx = 0;
+    for(int i = 0; i < entries.size(); ++i)
+    {
+      const FlightplanEntry& e = entries.at(i);
+
+      if(e.isNoSave())
+        // Omit proceedures
+        continue;
+
+      fpr::Leg *leg = &plan.legs[legIdx];
+
+      switch(e.getWaypointType())
+      {
+        // Omit any user and unknown waypoints
+        case atools::fs::pln::entry::USER:
+        case atools::fs::pln::entry::UNKNOWN:
+          continue;
+
+        case atools::fs::pln::entry::AIRPORT:
+          leg->waypoint.waypointType = fpr::NavSystem_UNITYPE_AIRPORT;
+          break;
+
+        case atools::fs::pln::entry::INTERSECTION:
+          leg->waypoint.waypointType = fpr::NavSystem_UNITYPE_WPT;
+          break;
+
+        case atools::fs::pln::entry::VOR:
+          leg->waypoint.waypointType = fpr::NavSystem_UNITYPE_NAV;
+          break;
+
+        case atools::fs::pln::entry::NDB:
+          leg->waypoint.waypointType = fpr::NavSystem_UNITYPE_NAV;
+          break;
+      }
+
+      leg->proc_type = fpr::NavSystem_PROCTYPE_FP;
+      leg->legHash = hashSeed + i;
+      leg->legSegType = fpr::NavSystem_LEG_SEGMENT_FP_CRS;
+
+      writeBinaryString(leg->legType, "TF", sizeof(leg->legType));
+      writeBinaryString(leg->transition, QString(), sizeof(leg->transition));
+      writeBinaryString(leg->waypoint.designator, e.getIcaoIdent(), sizeof(leg->waypoint.designator));
+      writeBinaryString(leg->waypoint.fullName, e.getName(), sizeof(leg->waypoint.fullName));
+
+      leg->waypoint.latYRad = atools::geo::toRadians(e.getPosition().getLatY());
+      leg->waypoint.lonXRad = atools::geo::toRadians(e.getPosition().getLonX());
+
+      // Will not show valid coordinates in the FMS but flight plan is usable anyway
+      leg->waypoint.databaseId = -1;
+      leg->waypoint.magvarRad = atools::geo::toRadians(e.getMagvar());
+
+      plan.numLegs++;
+      legIdx++;
+    }
+
+    // Write the memory block to the file
+    ds.writeRawData(reinterpret_cast<const char *>(&plan), sizeof(plan));
+    fprFile.close();
+  }
+}
+
+void Flightplan::writeBinaryString(char *mem, QString str, int length)
+{
+  // Cut off if too long and leave space for trailing 0
+  str.truncate(length - 1);
+
+  const char *data = str.toLatin1().data();
+  memcpy(mem, data, strlen(data));
+
+  // Fill rest with nulls
+  size_t rest = static_cast<size_t>(length) - strlen(data);
+  if(rest > 0)
+    memset(&mem[length], 0, rest);
 }
 
 void Flightplan::removeNoSaveEntries()

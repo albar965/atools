@@ -72,7 +72,7 @@ public:
   /* PMDG RTE format */
   void saveRte(const QString& file);
 
-  /* Aerosoft Airbus FLP format */
+  /* Aerosoft Airbus and X-Plane FLP format */
   void saveFlp(const QString& file, bool saveProcedures);
 
   /* X-Plane FMS format.
@@ -81,6 +81,9 @@ public:
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps, int cruiseAltFt);
+
+  /* Majestic Dash 400 binary format */
+  void saveFpr(const QString& file);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
@@ -339,6 +342,9 @@ private:
 
   /* Copy departure and destination from first and last entry */
   void adjustDepartureAndDestination();
+
+  /* Write string into memory location, truncate if needed and fill up to length with null */
+  void writeBinaryString(char *mem, QString str, int length);
 
   /* Values for FSX */
   const QString APPVERSION_BUILD = QString("61472");
