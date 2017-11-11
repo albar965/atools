@@ -115,11 +115,14 @@ QString Dialog::saveFileDialog(const QString& title,
                                const QString& defaultFileSuffix,
                                const QString& settingsPrefix,
                                const QString& path,
-                               const QString& filename)
+                               const QString& filename,
+                               bool dontComfirmOverwrite)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::AnyFile);
   dlg.setAcceptMode(QFileDialog::AcceptSave);
+  dlg.setOption(QFileDialog::DontConfirmOverwrite, dontComfirmOverwrite);
+
   return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path, filename);
 }
 
