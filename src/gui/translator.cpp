@@ -41,7 +41,7 @@ void Translator::load(const QString& language)
 
     // Load application files - will not be loaded if the files does not exist or is empty
     bool loadDefault = loadApp(appBaseName, appPath, language);
-    qDebug() << "Translations for" << appPath << language << "found";
+    qDebug() << "Translations for appPath" << appPath << "lang" << language << "loadDefault" << loadDefault;
 
     // Load atools translations - not required
     loadApp("atools", appPath, language);
@@ -85,6 +85,9 @@ void Translator::unload()
 {
   if(loaded)
   {
+    for(QTranslator *trans : translators)
+      QCoreApplication::removeTranslator(trans);
+
     qDeleteAll(translators);
     translators.clear();
     loaded = false;
