@@ -449,4 +449,6 @@ DISTFILES += \
 RESOURCES += \
     atools.qrc
 
- TRANSLATIONS = atools_fr.ts
+TRANSLATIONS = atools_fr.ts \
+               atools_it.ts \
+               atools_de.ts
