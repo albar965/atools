@@ -1436,9 +1436,9 @@ void Flightplan::saveFpr(const QString& file)
   filename = file;
   QFile fprFile(filename);
 
-  // Create base hash from 0 to 32768
-  std::srand(static_cast<unsigned int>(std::time(0)));
-  int hashSeed = std::rand() * std::numeric_limits<qint16>::max() / RAND_MAX;
+  // Create base hash from 0 to 32768 - use qt functions which also compile on mac
+  qsrand(static_cast<unsigned int>(std::time(0)));
+  int hashSeed = qrand() * std::numeric_limits<qint16>::max() / RAND_MAX;
 
   if(fprFile.open(QIODevice::WriteOnly))
   {
