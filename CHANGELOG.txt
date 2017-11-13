@@ -1,17 +1,18 @@
-2.7.1.develop
+2.8.0.beta
 
-* Added option to drop indexes after database creation.
-* Added script table and option to store create index scripts in that table for preparation by the client.
-* Finished DFD compiler
-* Fixed error with wrong ILS pitch in X-Plane compiler.
-* Disabling maximum airway segment length for data sources that contain a valid airspace geometry
-  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Finished DFD to Little Navmap database compiler for Navigraph data. #126
+* Added script table and option to store create index scripts in that table for preparation by the client. #126
+* Added option to drop indexes after database creation to keep the file small.
+* Vacuum and analyze option for database creation now defaults to true to get smaller and better organized files. #126
 * Extended database metadata with optional compiler_version, valid_through and data source columns.
-
-2.7.0.develop
-
+* Increased database minor version to 6.
+* Added flight plan export option for Majestic Dash. #140
+* Updated French translation files.
+* Fixed error with wrong ILS pitch in X-Plane compiler.
+* Disabling maximum airway segment length now for data sources that contain a valid airspace geometry
+  (X-Plane and DFD - FSX/P3D contain invalid segments).
+* Fixed several problems with bounding box and overlap calculations around the anti meridian.
 * Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
-* Fixed problems with bounding box and overlap calculations around the anti meridian.
 
 Version 2.6.8
 * Adapted weather parser for language translation.
