@@ -15,6 +15,7 @@
 * Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
 
 Version 2.6.8
+
 * Adapted weather parser for language translation.
 * Fixed exception when running into new TACAN approach in P3D version 4.1.
 * Now populating channel in VORTACs.
