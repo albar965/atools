@@ -57,8 +57,16 @@ void SceneryCfg::sortAreas()
   // Sort areas by layer
   std::sort(areaEntries.begin(), areaEntries.end(), [](const SceneryArea& a1, const SceneryArea& a2) -> bool
         {
-          return a1.getLayer() < a2.getLayer();
+          if(a1.isHighPriority() == a2.isHighPriority())
+            return a1.getLayer() < a2.getLayer();
+          else
+            return a1.isHighPriority() < a2.isHighPriority();
         });
+}
+
+void SceneryCfg::setAreaHighPriority(int index, bool value)
+{
+  areaEntries[index].setHighPriority(true);
 }
 
 void SceneryCfg::onStartSection(const QString& section, const QString& sectionSuffix)

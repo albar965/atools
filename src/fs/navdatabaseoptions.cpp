@@ -67,6 +67,14 @@ bool NavDatabaseOptions::isIncludedDirectory(const QString& filepath) const
   return includeObject(adaptPath(filepath), QList<QRegExp>(), dirExcludes);
 }
 
+bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
+{
+  if(highPriorityFiltersInc.isEmpty())
+    return false;
+
+  return includeObject(adaptPath(filepath), highPriorityFiltersInc, QList<QRegExp>());
+}
+
 bool NavDatabaseOptions::isAddonDirectory(const QString& filepath) const
 {
   return includeObject(adaptPath(filepath), QList<QRegExp>(), addonDirExcludes);
@@ -133,6 +141,11 @@ void NavDatabaseOptions::addToBglObjectFilterExclude(const QStringList& filters)
   addToBglObjectFilter(filters, navDbObjectTypeFiltersExcl);
 }
 
+void NavDatabaseOptions::addToHighPriorityFiltersInc(const QStringList& filters)
+{
+  addToFilter(filters, highPriorityFiltersInc);
+}
+
 void NavDatabaseOptions::addToBglObjectFilter(const QStringList& filters,
                                               QSet<atools::fs::type::NavDbObjectType>& filterList)
 {
@@ -193,6 +206,8 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   setFlag(type::VACUUM_DATABASE, settings.value("Options/VacuumDatabase", true).toBool());
   setFlag(type::ANALYZE_DATABASE, settings.value("Options/AnalyzeDatabase", true).toBool());
   setFlag(type::DROP_INDEXES, settings.value("Options/DropAllIndexes", false).toBool());
+
+  addToHighPriorityFiltersInc(settings.value("Filter/IncludeHighPriorityFilter").toStringList());
 
   addToFilenameFilterInclude(settings.value("Filter/IncludeFilenames").toStringList());
   addToFilenameFilterExclude(settings.value("Filter/ExcludeFilenames").toStringList());

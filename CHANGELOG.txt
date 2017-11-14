@@ -13,6 +13,8 @@
   (X-Plane and DFD - FSX/P3D contain invalid segments).
 * Fixed several problems with bounding box and overlap calculations around the anti meridian.
 * Better handling of X-Plane OpenAirspace comments and fixed problem where airspace names contain a comment character.
+* FSX/P3D: Added workaround for scenery sort order with add-on.xml files missing layer id.
+  Now forcing navaid updates to end of all scenery entries.
 
 Version 2.6.8
 

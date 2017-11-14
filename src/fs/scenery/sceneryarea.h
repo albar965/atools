@@ -93,12 +93,22 @@ public:
 
   void fixTitle();
 
+  bool isHighPriority() const
+  {
+    return highPriority;
+  }
+
+  void setHighPriority(bool value = true)
+  {
+    highPriority = value;
+  }
+
 private:
   friend class SceneryCfg;
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false;
+  bool active = false, required = false, highPriority = false;
   QString title, remotePath, localPath, exclude;
 };
 

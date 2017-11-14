@@ -946,7 +946,20 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
     for(int i = 0; i < noLayerComponents.size(); i++)
       cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i)));
+  } // if(options->isReadAddOnXml()
+
+  // Check if some areas have to be sorted to the end of the list
+  for(SceneryArea& area : cfg.getAreas())
+  {
+    if(options->isHighPriority(area.getLocalPath()))
+    {
+      area.setHighPriority();
+      qInfo() << Q_FUNC_INFO << "Moving to highest layer:" << area;
+    }
   }
+
+  // Sort again to get high priority layers to the end of the list
+  cfg.sortAreas();
 }
 
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,

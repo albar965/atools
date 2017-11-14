@@ -384,6 +384,9 @@ public:
   bool isIncludedAirportIdent(const QString& icao) const;
   bool isIncludedDirectory(const QString& filepath) const;
 
+  /* If true scenery will be added to end of list */
+  bool isHighPriority(const QString& filepath) const;
+
   bool isAddonLocalPath(const QString& filepath) const;
   bool isAddonDirectory(const QString& filepath) const;
 
@@ -434,6 +437,8 @@ private:
   void addToBglObjectFilterInclude(const QStringList& filters);
   void addToBglObjectFilterExclude(const QStringList& filters);
 
+  void addToHighPriorityFiltersInc(const QStringList& filters);
+
   void addToFilter(const QStringList& filters, QList<QRegExp>& filterList);
   bool includeObject(const QString& string, const QList<QRegExp>& filterListInc,
                      const QList<QRegExp>& filterListExcl) const;
@@ -451,6 +456,7 @@ private:
   QMap<QString, int> basicValidationTables;
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
+                 highPriorityFiltersInc,
                  dirExcludes /* Not loaded from config file */,
                  addonDirExcludes /* Not loaded from config file */;
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;

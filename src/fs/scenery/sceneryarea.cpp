@@ -50,6 +50,7 @@ QDebug operator<<(QDebug out, const SceneryArea& area)
                           << ", title " << area.title
                           << ", layer " << area.layer
                           << ", active " << area.active
+                          << ", highPriority " << area.highPriority
                           << ", required " << area.required
                           << ", localPath " << area.localPath
                           << ", textureId " << area.textureId

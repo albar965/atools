@@ -46,6 +46,11 @@ public:
     return areaEntries;
   }
 
+  QList<atools::fs::scenery::SceneryArea>& getAreas()
+  {
+    return areaEntries;
+  }
+
   void appendArea(const atools::fs::scenery::SceneryArea& area)
   {
     areaEntries.append(area);
@@ -53,6 +58,9 @@ public:
 
   /* Sort areas by layer */
   void sortAreas();
+
+  /* Put a scenery area at the end of the list */
+  void setAreaHighPriority(int index, bool value = true);
 
 private:
   virtual void onStartDocument(const QString& filename) override;
