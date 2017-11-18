@@ -1,3 +1,9 @@
+2.8.1.beta
+
+* Fixed crash when getting simulator base path for unknown simulator type.
+* Fixed help handler to use GUI language instead of system locale for links to help and legend.
+* Updated French translation from Patrick.
+
 2.8.0.beta
 
 * Finished DFD to Little Navmap database compiler for Navigraph data. #126
