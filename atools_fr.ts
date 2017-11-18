@@ -791,7 +791,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="311"/>
         <source>Navigraph</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Navigraph</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="325"/>
@@ -801,22 +801,22 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="462"/>
         <source>Creating Database preparation Script</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Création d&apos;un script de préparation de base de données</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="467"/>
         <source>Dropping All Indexes</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abandonner tous les indexes</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="474"/>
         <source>Vacuum Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Base de données vide</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="482"/>
         <source>Analyze Database</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Analyser la base de données</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="630"/>
@@ -895,7 +895,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="696"/>
         <source>Basic Validation</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Validation de base</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="776"/>
@@ -968,7 +968,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/sc/simconnectdatabase.cpp" line="56"/>
         <source>Unknown Status</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Statut inconnu</translation>
     </message>
     <message>
         <location filename="src/logging/loggingguiabort.cpp" line="41"/>
