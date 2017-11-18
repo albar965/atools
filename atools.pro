@@ -9,6 +9,9 @@ QT       -= gui
 
 CONFIG += c++14
 
+# Use to debug release builds
+#CONFIG+=force_debug_info
+
 INCLUDEPATH += $$PWD/src
 
 DEFINES += QT_NO_CAST_FROM_BYTEARRAY

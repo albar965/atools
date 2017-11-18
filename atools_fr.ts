@@ -6,12 +6,12 @@
     <message>
         <location filename="src/fs/scenery/addonpackage.cpp" line="89"/>
         <source>Cannot read file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible de lire le fichier %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible de lire le fichier %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/addonpackage.cpp" line="92"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Motif: %2</translation>
     </message>
 </context>
 <context>
@@ -24,7 +24,7 @@
     <message>
         <location filename="src/fs/db/routeedgewriter.cpp" line="137"/>
         <source>Populating VOR/NDB Routing Table</source>
-        <translation type="unfinished">Table de routage VOR/NDB de remplissage</translation>
+        <translation type="unfinished">Tableau de routage VOR/NDB de remplissage</translation>
     </message>
 </context>
 <context>
@@ -116,18 +116,18 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="778"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="930"/>
         <location filename="src/fs/pln/flightplan.cpp" line="1173"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier PLN %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1041"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FLP %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1094"/>
@@ -142,7 +142,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1336"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FMS %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1365"/>
@@ -152,7 +152,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1431"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier RTE %1. Raison: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1791"/>
@@ -923,22 +923,22 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/ap/airportloader.cpp" line="73"/>
         <source>The file is not an runways.xml file. Element &quot;data&quot; not found.</source>
-        <translation type="unfinished">Le fichier n&apos;est pas un fichier runways. xml. Elément &quot;données&quot; introuvable.</translation>
+        <translation type="unfinished">Le fichier n&apos;est pas un fichier runways.xml. Elément &quot;données&quot; introuvable.</translation>
     </message>
     <message>
         <location filename="src/fs/ap/airportloader.cpp" line="84"/>
         <source>Error reading runways.xml file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Erreur de lecture des pistes d&apos;atterrissage. xml fichier &quot;%1&quot;. Raison: %2.</translation>
+        <translation type="unfinished">Erreur de lecture des pistes d&apos;atterrissage.xml fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
         <location filename="src/fs/ap/airportloader.cpp" line="91"/>
         <source>Cannot open runways.xml file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Cannot open runways.xml file &quot;%1&quot;. Reason: %2.</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir les pistes. fichier.xml &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
         <location filename="src/fs/ap/airportloader.cpp" line="106"/>
         <source>The file is not an runways.xml file. Element &quot;ICAO&quot; not found.</source>
-        <translation type="unfinished">Le fichier n&apos;est pas un fichier runways. xml. Elément &quot;OACI&quot; introuvable.</translation>
+        <translation type="unfinished">Le fichier n&apos;est pas un fichier runways.xml. Elément &quot;OACI&quot; introuvable.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/simconnectdatabase.cpp" line="42"/>
@@ -1073,7 +1073,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/ns/navserverworker.cpp" line="56"/>
         <source>Error creating network socket: %1.</source>
-        <translation type="unfinished">Erreur dans la création de la prise réseau: %1.</translation>
+        <translation type="unfinished">Erreur dans la création d&apos;une prise réseau: %1.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserverworker.cpp" line="63"/>
@@ -1126,7 +1126,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="76"/>
         <source>Connected to simulator.</source>
-        <translation type="unfinished">Raccordé au simulateur.</translation>
+        <translation type="unfinished">Connecté au simulateur.</translation>
     </message>
     <message>
         <location filename="src/fs/sc/datareaderthread.cpp" line="152"/>
@@ -1175,12 +1175,12 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/io/inireader.cpp" line="143"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Reason: %2</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/io/inireader.cpp" line="148"/>
         <source>%1. File &quot;%2&quot;, line %3:&quot;%4&quot;</source>
-        <translation type="unfinished">%1. Fichier &quot;%2&quot;, line %3:&quot;%4&quot;</translation>
+        <translation type="unfinished">%1. Fichier &quot;%2&quot;, ligne %3:&quot;%4&quot;</translation>
     </message>
 </context>
 <context>
@@ -1252,7 +1252,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/gui/helphandler.cpp" line="214"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation type="unfinished">L&apos;URL est vide pour &quot;%1&quot; and anchor &quot;%2&quot;.</translation>
+        <translation type="unfinished">L&apos;URL est vide pour &quot;%1&quot; et anchor &quot;%2&quot;.</translation>
     </message>
 </context>
 <context>
