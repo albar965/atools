@@ -116,7 +116,7 @@ void FsPaths::logAllPaths()
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;
-  if(type == NAVIGRAPH || type == XPLANE11)
+  if(type == NAVIGRAPH || type == XPLANE11 || type == UNKNOWN)
     return QString();
 
 #if defined(Q_OS_WIN32)
@@ -139,7 +139,7 @@ QString FsPaths::getBasePath(SimulatorType type)
     }
   }
 
-  if(found && settings.contains(keys.last()))
+  if(found && !keys.isEmpty() && settings.contains(keys.last()))
   {
     fsPath = settings.value(keys.last()).toString();
 
@@ -264,9 +264,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
       return programData + QDir::separator() + "Microsoft\\FSX\\Scenery.CFG";
 
 #elif defined(DEBUG_FS_PATHS)
-      return home + QDir::separator() +
-             "Temp" + QDir::separator() +
-             "FSX" + QDir::separator() + "scenery.cfg";
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
 
 #endif
 
@@ -276,9 +274,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
       return programData + QDir::separator() + "Microsoft\\FSX-SE\\Scenery.CFG";
 
 #elif defined(DEBUG_FS_PATHS)
-      return home + QDir::separator() +
-             "Temp" + QDir::separator() +
-             "FSXSE" + QDir::separator() + "scenery.cfg";
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
 
 #endif
 
@@ -288,9 +284,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
       return appData + QDir::separator() + "Lockheed Martin\\Prepar3D v2\\Scenery.CFG";
 
 #elif defined(DEBUG_FS_PATHS)
-      return home + QDir::separator() +
-             "Temp" + QDir::separator() +
-             "P3DV2" + QDir::separator() + "scenery.cfg";
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
 
 #endif
 
@@ -300,9 +294,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
       return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v3\\Scenery.CFG";
 
 #elif defined(DEBUG_FS_PATHS)
-      return home + QDir::separator() +
-             "Temp" + QDir::separator() +
-             "P3DV3" + QDir::separator() + "scenery.cfg";
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
 
 #endif
 
@@ -312,9 +304,7 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
       return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v4\\Scenery.CFG";
 
 #elif defined(DEBUG_FS_PATHS)
-      return home + QDir::separator() +
-             "Temp" + QDir::separator() +
-             "P3DV4" + QDir::separator() + "scenery.cfg";
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
 
 #endif
 
