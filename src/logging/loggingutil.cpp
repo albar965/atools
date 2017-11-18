@@ -44,6 +44,8 @@ void LoggingUtil::logSystemInformation()
     qInfo() << "Log file" << i++ << f;
 
   qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();
+  qInfo() << "Locale name" << QLocale::system().bcp47Name();
+  qInfo() << "UI languages" << QLocale().uiLanguages();
 
   qInfo() << "ABI" << QSysInfo::buildAbi();
   qInfo() << "build CPU arch" << QSysInfo::buildCpuArchitecture() << "current" << QSysInfo::currentCpuArchitecture();

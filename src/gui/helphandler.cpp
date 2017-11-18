@@ -190,6 +190,25 @@ QUrl HelpHandler::getHelpUrl(QWidget *parent, const QString& urlString, const QS
   return url;
 }
 
+QString HelpHandler::getHelpFile(const QString& urlString, const QStringList& languages)
+{
+  QString lang = getLanguage();
+
+  if(!languages.contains(lang))
+    // Fallback to English
+    lang = "en";
+
+  QString file;
+  // Replace variable and create URL
+  QString urlStr(atools::replaceVar(urlString, "LANG", lang));
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
+    file = QCoreApplication::applicationDirPath() + QDir::separator() + urlStr;
+  else
+    file = urlStr;
+
+  return file;
+}
+
 QUrl HelpHandler::getHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor)
 {
   return getHelpUrl(parentWidget, urlString, languages, anchor);
@@ -222,7 +241,12 @@ QString HelpHandler::getLanguage()
   QString lang;
 
   if(overrideLang.isEmpty())
-    lang = QLocale::system().bcp47Name().section('-', 0, 0);
+  {
+    if(!QLocale().uiLanguages().isEmpty())
+      lang = QLocale().uiLanguages().first().section('-', 0, 0);
+    else
+      lang = "en";
+  }
   else
     lang = overrideLang;
 
