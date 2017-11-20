@@ -70,14 +70,22 @@ bool Translator::loadApp(const QString& appBaseName, const QString& appPath, con
 {
   // try resources first
   if(!loadAndInstall(appBaseName, ":/" + appBaseName, language))
+  {
     // try resources translations second
     if(!loadAndInstall(appBaseName, ":/" + appBaseName + "/translations", language))
-      // Last try in executable directory
+    {
+      // Executable directory
       if(!loadAndInstall(appBaseName, appPath, language))
       {
-        // No translations for this application found - force English to avoid mixed language in dialogs
-        return false;
+        // Last try in executable directory + "translations"
+        if(!loadAndInstall(appBaseName, appPath + QDir::separator() + "translations", language))
+        {
+          // No translations for this application found - force English to avoid mixed language in dialogs
+          return false;
+        }
       }
+    }
+  }
   return true;
 }
 
@@ -107,10 +115,10 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
 
   QTranslator *t = new QTranslator();
   if(!t->load(locale, name, "_", dir))
-    qInfo() << "Qt translation file" << name << "not loaded from dir" << dir << "locale" << locale.name();
+    qDebug() << "Qt translation file" << name << "not loaded from dir" << dir << "locale" << locale.name();
   else if(QCoreApplication::instance()->installTranslator(t))
   {
-    qDebug() << "Qt translation file" << name << "from dir" << dir << "installed" << "locale" << locale.name();
+    qInfo() << "Qt translation file" << name << "from dir" << dir << "installed" << "locale" << locale.name();
     translators.append(t);
     return true;
   }
