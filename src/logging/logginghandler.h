@@ -23,6 +23,8 @@
 #include <QHash>
 #include <QVector>
 #include <QMutex>
+#include <QLoggingCategory>
+
 #include <functional>
 
 class QTextStream;
@@ -107,11 +109,11 @@ public:
    */
   static QStringList getLogFiles();
 
-  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
+  typedef std::function<void (QtMsgType type, const QMessageLogContext &context, const QString &msg)> LogFunctionType;
   /* Function will be called on the calling thread context */
   static void setLogFunction(LogFunctionType loggingFunction);
 
-  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> AbortFunctionType;
+  typedef std::function<void (QtMsgType type, const QMessageLogContext &context, const QString &msg)> AbortFunctionType;
 
   /* All functions will be called on the calling thread context - do not use GUI elements there */
   static void setAbortFunction(AbortFunctionType abortFunction);
@@ -136,17 +138,20 @@ private:
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
   static void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
+  static void categoryFilter(QLoggingCategory *category);
 
   static LoggingHandler *instance;
 
   atools::logging::internal::LoggingConfig *logConfig;
-  QtMessageHandler oldMessageHandler;
+  QtMessageHandler oldMessageHandler = nullptr;
+  QLoggingCategory::CategoryFilter oldCategoryFilter = nullptr;
 
   mutable QMutex mutex;
 
   static LogFunctionType logFunc;
   static AbortFunctionType abortFunc;
   static QWidget *parentWidget;
+
 };
 
 } // namespace logging

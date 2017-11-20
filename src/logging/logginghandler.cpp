@@ -39,16 +39,18 @@ LoggingHandler::LoggingHandler(const QString& logConfiguration,
 {
   logConfig = new LoggingConfig(logConfiguration, logDirectory, logFilePrefix);
 
+  // Override category filter since some systems disable debug logging in the qtlogging.ini
+  oldCategoryFilter = QLoggingCategory::installFilter(categoryFilter);
+
+  // Install callback function
   oldMessageHandler = qInstallMessageHandler(LoggingHandler::messageHandler);
 }
 
 LoggingHandler::~LoggingHandler()
 {
   qInstallMessageHandler(oldMessageHandler);
-  oldMessageHandler = nullptr;
-
+  QLoggingCategory::installFilter(oldCategoryFilter);
   delete logConfig;
-  logConfig = nullptr;
 }
 
 void LoggingHandler::initialize(const QString& logConfiguration,
@@ -128,12 +130,15 @@ void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *
   QMutexLocker locker(&mutex);
 
   if(category.isEmpty())
+  {
     for(QTextStream *stream : streamList2)
       (*stream) << message << endl << flush;
+  }
   else if(streamListCat.contains(category))
+  {
     for(QTextStream *stream : streamListCat[category])
       (*stream) << message << endl << flush;
-
+  }
 }
 
 void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg)
@@ -184,6 +189,18 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
                              category);
 
   instance->checkAbortType(type, context, msg);
+}
+
+void LoggingHandler::categoryFilter(QLoggingCategory *category)
+{
+  // Enable all - we do our own category filtering
+  if(category != nullptr)
+  {
+    category->setEnabled(QtDebugMsg, true);
+    category->setEnabled(QtCriticalMsg, true);
+    category->setEnabled(QtInfoMsg, true);
+    category->setEnabled(QtWarningMsg, true);
+  }
 }
 
 } // namespace logging
