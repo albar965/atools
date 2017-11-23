@@ -1250,7 +1250,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <translation type="unfinished">Fichier d&apos;aide &lt;i&gt;%1&lt;/i&gt; introuvable</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="214"/>
+        <location filename="src/gui/helphandler.cpp" line="233"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
         <translation type="unfinished">L&apos;URL est vide pour &quot;%1&quot; et anchor &quot;%2&quot;.</translation>
     </message>
