@@ -33,41 +33,41 @@ select
     icao_code as region,
     -- Type -----------------
     -- VOR, VORDME and DME
-    case when substr(navaid_class, 1,2) in ('V ', 'VD', ' D') then
-        case substr(navaid_class, 3,1)
+    case when substr(navaid_class, 1, 2) in ('V ', 'VD', ' D') then
+        case substr(navaid_class, 3, 1)
         when 'U' then
         -- Range class is unknown - create from given range use H if not available
         case when range < 30 then 'T' when range < 50 then 'L' else 'H' end
-        else substr(navaid_class, 3,1)
+        else substr(navaid_class, 3, 1)
         end
     -- VORTAC normal and military
-    when substr(navaid_class, 1,2) in ('VT', 'VM') then
-        case substr(navaid_class, 3,1)
+    when substr(navaid_class, 1, 2) in ('VT', 'VM') then
+        case substr(navaid_class, 3, 1)
         when 'U' then
         -- Range class is unknown - create from given range use H if not available
         case when range < 30 then 'VTT' when range < 50 then 'VTL' else 'VTH' end
-        else 'VT' || substr(navaid_class, 3,1)
+        else 'VT' || substr(navaid_class, 3, 1)
         end
     -- TACAN normal and military
-    when substr(navaid_class, 1,2) in (' T', ' M') then 'TC' else 'INVALID "' || navaid_class || '"'
+    when substr(navaid_class, 1, 2) in (' T', ' M') then 'TC' else 'INVALID "' || navaid_class || '"'
     end as type,
     vor_frequency * 1000 as frequency,
     null as channel, -- Calculated later in C++ code
     range,
     station_declination as mag_var,
     -- Set flag for DME only VOR
-    case when substr(navaid_class, 1,2) =' D' then 1 else 0 end as dme_only,
+    case when substr(navaid_class, 1, 2) =' D' then 1 else 0 end as dme_only,
     -- Exclude DME data if VOR only
-    case when substr(navaid_class, 2,1) = (' ') then null else dme_elevation end as dme_altitude,
-    case when substr(navaid_class, 2,1) = (' ') then null else dme_longitude end as dme_lonx,
-    case when substr(navaid_class, 2,1) = (' ') then null else dme_latitude end as dme_laty,
+    case when substr(navaid_class, 2, 1) = (' ') then null else dme_elevation end as dme_altitude,
+    case when substr(navaid_class, 2, 1) = (' ') then null else dme_longitude end as dme_lonx,
+    case when substr(navaid_class, 2, 1) = (' ') then null else dme_latitude end as dme_laty,
     -- Use DME elevation as elevation - VOR without DME have no elevation
-    case when substr(navaid_class, 1,2) ='V ' and dme_elevation = 0  then null else dme_elevation end as altitude,
+    case when substr(navaid_class, 1, 2) ='V ' and dme_elevation = 0  then null else dme_elevation end as altitude,
     vor_longitude as lonx,
     vor_latitude as laty
 from src.tbl_vhfnavaids
 -- Get all except ILS and MLS
-where substr(navaid_class, 2,1) not in ('I', 'N', 'P');
+where substr(navaid_class, 2, 1) not in ('I', 'N', 'P');
 
 
 -- *********************************************************************************************
@@ -76,7 +76,7 @@ where substr(navaid_class, 2,1) not in ('I', 'N', 'P');
 
 delete from ndb;
 
-insert into ndb (file_id,ident,name,region,type,frequency,mag_var,altitude,lonx,laty)
+insert into ndb (file_id, ident, name, region, type, frequency, range, mag_var, altitude, lonx, laty)
 select
   1 as file_id,
   ndb_identifier as ident,
@@ -84,12 +84,18 @@ select
   icao_code as region,
    --  CP MH H HH
   case
-    when substr(navaid_class, 3,1) = 'L' then 'CP'
-    when substr(navaid_class, 3,1) = 'M' then 'MH'
-    when substr(navaid_class, 3,1) = 'H' then 'H'
+    when substr(navaid_class, 3, 1) = 'L' then 'CP'
+    when substr(navaid_class, 3, 1) = 'M' then 'MH'
+    when substr(navaid_class, 3, 1) = 'H' then 'H'
     else null
   end as type,
   ndb_frequency * 100 as frequency,
+  case
+    when substr(navaid_class, 3, 1) = 'L' then 15
+    when substr(navaid_class, 3, 1) = 'M' then 25
+    when substr(navaid_class, 3, 1) = 'H' then 50
+    else null
+  end as range,
   0 as  mag_var, -- Calculated later in C++ code
   null as altitude, -- Not available
   ndb_longitude as lonx,
