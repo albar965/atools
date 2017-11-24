@@ -221,8 +221,16 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   addToBglObjectFilterExclude(settings.value("Filter/ExcludeBglObjectFilter").toStringList());
 
   settings.beginGroup("BasicValidationTables");
+
+  QString simStr = simulatorType == FsPaths::DFD ? "DFD" : FsPaths::typeToShortName(simulatorType);
+
   for(const QString& key : settings.childKeys())
-    basicValidationTables.insert(key, settings.value(key).toInt());
+  {
+    // Addd keys without prefix or keys with matching prefix
+    if(!key.contains('.') || key.section('.', 0, 0) == simStr)
+      basicValidationTables.insert(key.section('.', 1, 1), settings.value(key).toInt());
+  }
+
   settings.endGroup();
 }
 

@@ -63,7 +63,7 @@ public:
     NAVIGRAPH = 8,
 
     /* Synonym for database */
-    DFD = 8,
+    DFD = NAVIGRAPH,
 
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
