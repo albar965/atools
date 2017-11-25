@@ -652,7 +652,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
 
   if(line.pathTerm == "RF")
   {
-    if(!line.centerFixOrTaaPt.trimmed().isEmpty())
+    if(!line.centerFixOrTaaPt.isEmpty())
     {
       NavIdInfo centerNavInfo = navaidType(line.context + ". RF recommended",
                                            QString(), line.centerSecCode, line.centerSubCode,
@@ -666,32 +666,17 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     else
       qWarning() << line.context << "No center fix for RF leg";
   }
-  else if(!line.recdNavaid.trimmed().isEmpty())
+  else if(!line.recdNavaid.isEmpty())
   {
     NavIdInfo recdNavInfo = navaidType(line.context + ". recommended",
                                        QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
                                        line.recdWaypointPos);
 
-    if(!recdNavInfo.type.isEmpty())
-    {
-      rec.setValue(":recommended_fix_type", recdNavInfo.type);
-      rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
-      rec.setValue(":recommended_fix_region", recdNavInfo.region);
-    }
+    rec.setValue(":recommended_fix_type", recdNavInfo.type);
+    rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
+    rec.setValue(":recommended_fix_region", recdNavInfo.region);
   }
   // else null
-
-  if(atools::contains(line.pathTerm, {"CD", "VD", "CR", "VR"}) && line.fixIdent.isEmpty())
-  {
-    // to DME distance and to radial - populate fix from recommended if missing
-    NavIdInfo ni = navaidType(line.context + ". CD VD CR VR fix",
-                              QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
-                              line.recdWaypointPos);
-
-    rec.setValue(":fix_type", ni.type);
-    rec.setValue(":fix_ident", line.recdNavaid);
-    rec.setValue(":fix_region", ni.region);
-  }
 
   if(line.pathTerm == "AF" && line.recdNavaid.trimmed().isEmpty())
     qWarning() << line.context << "No recommended fix for AF leg";

@@ -1066,7 +1066,7 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
 
   procInput.turnDir = query.valueStr("turn_direction");
   procInput.pathTerm = query.valueStr("path_termination");
-  procInput.recdNavaid = query.valueStr("recommanded_navaid");
+  procInput.recdNavaid = query.valueStr("recommanded_navaid").trimmed();
   // procInput.recdIcaoCode = query.valueStr(""); // Not available
   // procInput.recdSecCode = query.valueStr("");  // Not available
   // procInput.recdSubCode = query.valueStr("");  // Not available
