@@ -71,7 +71,7 @@ struct ProcedureInput
   QString transIdent; // 21-25   5.11
 
   QString fixIdent; // 30-34   5.13
-  QString icaoCode; // 35-36   5.14
+  QString region; // 35-36   5.14
   QString secCode; // 37      5.4
   QString subCode; // 38      5.5
   QString descCode; // 40-43   5.17
@@ -81,7 +81,7 @@ struct ProcedureInput
   QString pathTerm; // 48-49   5.21
 
   QString recdNavaid; // 51-54   5.23
-  QString recdIcaoCode; // 55-56   5.14
+  QString recdRegion; // 55-56   5.14
   QString recdSecCode; // 79      5.4
   QString recdSubCode; // 80      5.5
   atools::geo::DPos recdWaypointPos;
@@ -149,6 +149,20 @@ private:
     atools::sql::SqlRecordVector legRecords;
   };
 
+  /* Gets type and region for a navaid that was retrieved using incomplete information */
+  struct NavIdInfo
+  {
+    NavIdInfo()
+    {
+    }
+
+    NavIdInfo(const QString& typeParam, const QString& regionParam) : type(typeParam), region(regionParam)
+    {
+    }
+
+    QString type, region; // Region is always set - either value passed to the method or found value
+  };
+
   void initQueries();
   void deInitQueries();
 
@@ -176,9 +190,9 @@ private:
 
   /* Calculate a navaid type based on section and subsection code or waypoint description.
    *  If not valid query the database for navaids */
-  QString navaidType(const QString& context, const QString& descCode, const QString& sectionCode,
-                     const QString& subSectionCode, const QString& name, const QString& region, const geo::DPos& pos);
-  QString navaidTypeFix(const ProcedureInput& line);
+  NavIdInfo navaidType(const QString& context, const QString& descCode, const QString& sectionCode,
+                       const QString& subSectionCode, const QString& name, const QString& region, const geo::DPos& pos);
+  NavIdInfo navaidTypeFix(const ProcedureInput& line);
 
   /* Calculate a database procedure type based on route type */
   QString procedureType(const ProcedureInput& line);

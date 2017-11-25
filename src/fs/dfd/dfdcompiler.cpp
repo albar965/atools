@@ -1053,8 +1053,8 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.routeType = atools::strToChar(query.valueStr("route_type"));
   procInput.sidStarAppIdent = query.valueStr("procedure_identifier");
   procInput.transIdent = query.valueStr("transition_identifier");
-  procInput.fixIdent = query.valueStr("waypoint_identifier");
-  procInput.icaoCode = query.valueStr("waypoint_icao_code");
+  procInput.fixIdent = query.valueStr("waypoint_identifier").trimmed();
+  procInput.region = query.valueStr("waypoint_icao_code").trimmed();
   // procInput.secCode = query.valueStr(""); // Not available
   // procInput.subCode = query.valueStr(""); // Not available
   procInput.descCode = query.valueStr("waypoint_description_code");
@@ -1073,11 +1073,18 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.rho = query.valueFloat("rho");
   procInput.magCourse = query.valueFloat("magnetic_course");
 
+  float distTime = query.valueFloat("route_distance_holding_distance_time");
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   if(procInput.pathTerm.startsWith("H"))
-    procInput.rteHoldTime = query.valueFloat("route_distance_holding_distance_time");
+  {
+    // Guess the unit - everything larger than 2.5 must be distance
+    if(distTime > 2.5)
+      procInput.rteHoldDist = distTime;
+    else
+      procInput.rteHoldTime = distTime;
+  }
   else
-    procInput.rteHoldDist = query.valueFloat("route_distance_holding_distance_time");
+    procInput.rteHoldDist = distTime;
 
   procInput.altDescr = query.valueStr("altitude_description");
   procInput.altitude = query.valueStr("altitude1");

@@ -492,15 +492,16 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
     rec.setValue(":runway_end_id", airportIndex->getRunwayEndId(line.airportIdent, rwy));
   }
 
+  NavIdInfo navInfo = navaidTypeFix(line);
   // Might be reset later when writing the FAP leg
-  rec.setValue(":fix_type", navaidTypeFix(line));
+  rec.setValue(":fix_type", navInfo.type);
 
   if(curRouteType == rc::APPROACH)
-    rec.setValue(":fix_ident", line.fixIdent.trimmed());
+    rec.setValue(":fix_ident", line.fixIdent);
   else // SID and STAR
     rec.setValue(":fix_ident", line.sidStarAppIdent.trimmed());
 
-  rec.setValue(":fix_region", line.icaoCode.trimmed());
+  rec.setValue(":fix_region", navInfo.region);
 
   approaches.append(Procedure(curRowCode, rec));
 
@@ -521,10 +522,11 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
 
   if(waypointDescr.size() > 3 && waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
   {
+    NavIdInfo fafInfo = navaidTypeFix(line);
     // FAF - use this one to set the approach name
-    approaches.last().record.setValue(":fix_type", navaidTypeFix(line));
-    approaches.last().record.setValue(":fix_ident", line.fixIdent.trimmed());
-    approaches.last().record.setValue(":fix_region", line.icaoCode.trimmed());
+    approaches.last().record.setValue(":fix_type", fafInfo.type);
+    approaches.last().record.setValue(":fix_ident", line.fixIdent);
+    approaches.last().record.setValue(":fix_region", fafInfo.region);
   }
 
   if(!writingMissedApproach)
@@ -542,10 +544,11 @@ void ProcedureWriter::writeTransition(const ProcedureInput& line)
   // Ids are assigned later
   SqlRecord rec(TRANSITION_RECORD);
 
+  NavIdInfo navInfo = navaidTypeFix(line);
   rec.setValue(":type", "F"); // set later to D if DME arc leg terminator
-  rec.setValue(":fix_type", navaidTypeFix(line));
+  rec.setValue(":fix_type", navInfo.type);
   rec.setValue(":fix_ident", line.transIdent.trimmed());
-  rec.setValue(":fix_region", line.icaoCode.trimmed());
+  rec.setValue(":fix_region", navInfo.region);
 
   transitions.append(Procedure(curRowCode, rec));
 
@@ -574,7 +577,7 @@ void ProcedureWriter::writeTransitionLeg(const ProcedureInput& line)
     if(!line.recdNavaid.trimmed().isEmpty())
     {
       transitions.last().record.setValue(":dme_ident", line.recdNavaid.trimmed());
-      transitions.last().record.setValue(":dme_region", line.recdIcaoCode.trimmed());
+      transitions.last().record.setValue(":dme_region", line.recdRegion.trimmed());
     }
     else
       qWarning() << line.context << "No recommended navaid for AF leg";
@@ -640,39 +643,55 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     rec.setValue(":turn_direction", turnDir);
   // else null
 
-  rec.setValue(":fix_type", navaidTypeFix(line));
-  rec.setValue(":fix_ident", line.fixIdent.trimmed());
-  rec.setValue(":fix_region", line.icaoCode.trimmed());
+  NavIdInfo navInfo = navaidTypeFix(line);
+
+  rec.setValue(":fix_type", navInfo.type);
+  rec.setValue(":fix_ident", line.fixIdent);
+  rec.setValue(":fix_region", navInfo.region);
   // not used: fix_airport_ident
 
   if(line.pathTerm == "RF")
   {
     if(!line.centerFixOrTaaPt.trimmed().isEmpty())
     {
+      NavIdInfo centerNavInfo = navaidType(line.context + ". RF recommended",
+                                           QString(), line.centerSecCode, line.centerSubCode,
+                                           line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos);
+
       // Constant radius arc
-      rec.setValue(":recommended_fix_type",
-                   navaidType(line.context + ". RF recommended", QString(), line.centerSecCode, line.centerSubCode,
-                              line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos));
+      rec.setValue(":recommended_fix_type", centerNavInfo.type);
       rec.setValue(":recommended_fix_ident", line.centerFixOrTaaPt.trimmed());
-      rec.setValue(":recommended_fix_region", line.centerIcaoCode.trimmed());
+      rec.setValue(":recommended_fix_region", centerNavInfo.region);
     }
     else
       qWarning() << line.context << "No center fix for RF leg";
   }
   else if(!line.recdNavaid.trimmed().isEmpty())
   {
-    QString recommendedType = navaidType(line.context + ". recommended",
-                                         QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdIcaoCode,
-                                         line.recdWaypointPos);
+    NavIdInfo recdNavInfo = navaidType(line.context + ". recommended",
+                                       QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
+                                       line.recdWaypointPos);
 
-    if(!recommendedType.isEmpty())
+    if(!recdNavInfo.type.isEmpty())
     {
-      rec.setValue(":recommended_fix_type", recommendedType);
+      rec.setValue(":recommended_fix_type", recdNavInfo.type);
       rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
-      rec.setValue(":recommended_fix_region", line.recdIcaoCode.trimmed());
+      rec.setValue(":recommended_fix_region", recdNavInfo.region);
     }
   }
   // else null
+
+  if(atools::contains(line.pathTerm, {"CD", "VD", "CR", "VR"}) && line.fixIdent.isEmpty())
+  {
+    // to DME distance and to radial - populate fix from recommended if missing
+    NavIdInfo ni = navaidType(line.context + ". CD VD CR VR fix",
+                              QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
+                              line.recdWaypointPos);
+
+    rec.setValue(":fix_type", ni.type);
+    rec.setValue(":fix_ident", line.recdNavaid);
+    rec.setValue(":fix_region", ni.region);
+  }
 
   if(line.pathTerm == "AF" && line.recdNavaid.trimmed().isEmpty())
     qWarning() << line.context << "No recommended fix for AF leg";
@@ -853,19 +872,21 @@ QString ProcedureWriter::procedureType(const ProcedureInput& line)
   return type;
 }
 
-QString ProcedureWriter::navaidTypeFix(const ProcedureInput& line)
+ProcedureWriter::NavIdInfo ProcedureWriter::navaidTypeFix(const ProcedureInput& line)
 {
   return navaidType(line.context + ". fix_type", line.descCode, line.secCode, line.subCode, line.fixIdent,
-                    line.icaoCode, line.waypointPos);
+                    line.region, line.waypointPos);
 
 }
 
-QString ProcedureWriter::navaidType(const QString& context, const QString& descCode, const QString& sectionCode,
-                                    const QString& subSectionCode, const QString& name, const QString& region,
-                                    const atools::geo::DPos& pos)
+ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, const QString& descCode,
+                                                       const QString& sectionCode,
+                                                       const QString& subSectionCode, const QString& name,
+                                                       const QString& region,
+                                                       const atools::geo::DPos& pos)
 {
   if(name.isEmpty())
-    return QString();
+    return NavIdInfo();
 
   if(sectionCode.trimmed().isEmpty())
   {
@@ -879,16 +900,16 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
       {
         case atools::fs::common::dc::HELIPORT_AS_WAYPOINT:
         case atools::fs::common::dc::AIRPORT_AS_WAYPOINT:
-          return "A";
+          return NavIdInfo("A", region);
 
         case atools::fs::common::dc::RUNWAY_AS_WAYPOINT:
-          return "R";
+          return NavIdInfo("R", region);
 
         case atools::fs::common::dc::NDB_NAVAID_AS_WAYPOINT:
-          return "N";
+          return NavIdInfo("N", region);
 
         case atools::fs::common::dc::VHF_NAVAID_AS_WAYPOINT:
-          return "V";
+          return NavIdInfo("V", region);
 
         // Values below can refer to waypoint, VOR or NDB resolve them below
         case atools::fs::common::dc::NON_ESSENTIAL_WAYPOINT:
@@ -904,7 +925,7 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
     {
       // Try an exact and faster coordinate search first
       // For that we need double coordinate values
-      QString type;
+      NavIdInfo inf;
       findWaypointExactQuery->bindValue(":ident", name);
       findWaypointExactQuery->bindValue(":region", region.isEmpty() ? "%" : region);
       findWaypointExactQuery->bindValue(":lonx", pos.getLonX());
@@ -912,7 +933,10 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
       findWaypointExactQuery->exec();
 
       if(findWaypointExactQuery->next())
-        type = findWaypointExactQuery->valueStr("type");
+      {
+        inf.type = findWaypointExactQuery->valueStr("type");
+        inf.region = findWaypointExactQuery->valueStr("region");
+      }
       else
       {
         // Nothing found at position - look in vicinity
@@ -922,22 +946,28 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
         findWaypointQuery->bindValue(":laty", pos.getLatY());
         findWaypointQuery->exec();
         if(findWaypointQuery->next())
-          type = findWaypointQuery->valueStr("type");
+        {
+          inf.type = findWaypointQuery->valueStr("type");
+          inf.region = findWaypointQuery->valueStr("region");
+        }
       }
 
-      if(!type.isEmpty())
+      if(!inf.type.isEmpty())
       {
         // N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
-        if(type == "WN" || type == "WU")
-          return "W";
-        else if(type == "N" || type == "V")
-          return type;
+        if(inf.type == "WN" || inf.type == "WU")
+        {
+          inf.type = "W";
+          return inf;
+        }
+        else if(inf.type == "N" || inf.type == "V")
+          return inf;
       }
     }
     else if(!pos.isNull())
       qWarning() << context << "Cannot find navaid type for" << name << "/" << region << pos;
 
-    return QString();
+    return NavIdInfo();
   }
 
   sc::SectionCode sc = static_cast<sc::SectionCode>(sectionCode.at(0).toLatin1());
@@ -959,24 +989,24 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
     switch(subSec)
     {
       case atools::fs::common::sc::TERMINAL_WAYPOINTS:
-        return "TW";
+        return NavIdInfo("TW", region);
 
       case atools::fs::common::sc::RUNWAYS:
-        return "R";
+        return NavIdInfo("R", region);
 
       case atools::fs::common::sc::LOCALIZER_MARKER:
       case atools::fs::common::sc::LOCALIZER_GLIDE_SLOPE:
-        return "L";
+        return NavIdInfo("L", region);
 
       case atools::fs::common::sc::TERMINAL_NDB:
-        return "TN";
+        return NavIdInfo("TN", region);
 
       case atools::fs::common::sc::REFERENCE_POINTS:
-        return "A"; // Airport reference point - new with X-Plane
+        return NavIdInfo("A", region); // Airport reference point - new with X-Plane
 
       case atools::fs::common::sc::GLS_STATION:
         // ignore these
-        return QString();
+        return NavIdInfo();
 
       case atools::fs::common::sc::PATH_POINT:
       case atools::fs::common::sc::GATES:
@@ -1000,10 +1030,10 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
     switch(subSec)
     {
       case atools::fs::common::sc::WAYPOINTS:
-        return "W";
+        return NavIdInfo("W", region);
 
       case atools::fs::common::sc::VORDME:
-        return "V";
+        return NavIdInfo("V", region);
 
       case atools::fs::common::sc::AIRWAY_MARKERS:
       case atools::fs::common::sc::HOLDING_PATTERNS:
@@ -1022,17 +1052,17 @@ QString ProcedureWriter::navaidType(const QString& context, const QString& descC
     switch(subSec)
     {
       case atools::fs::common::sc::VHF:
-        return "V";
+        return NavIdInfo("V", region);
 
       case atools::fs::common::sc::NDB:
-        return "N";
+        return NavIdInfo("N", region);
     }
     qWarning() << context << "Unexpected navaid section" << sectionCode << "sub" << subSectionCode;
   }
   else
     qWarning() << context << "Unexpected section" << sectionCode;
 
-  return QString();
+  return NavIdInfo();
 }
 
 QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)

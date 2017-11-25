@@ -101,14 +101,14 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.sidStarAppIdent = at(line, SID_STAR_APP_IDENT).trimmed();
   procInput.transIdent = at(line, TRANS_IDENT).trimmed();
   procInput.fixIdent = at(line, FIX_IDENT).trimmed();
-  procInput.icaoCode = at(line, ICAO_CODE).trimmed();
+  procInput.region = at(line, ICAO_CODE).trimmed();
   procInput.secCode = at(line, SEC_CODE);
   procInput.subCode = at(line, SUB_CODE);
   procInput.descCode = at(line, DESC_CODE);
   procInput.turnDir = at(line, TURN_DIR).trimmed();
   procInput.pathTerm = at(line, PATH_TERM).trimmed();
   procInput.recdNavaid = at(line, RECD_NAVAID).trimmed();
-  procInput.recdIcaoCode = at(line, RECD_ICAO_CODE).trimmed();
+  procInput.recdRegion = at(line, RECD_ICAO_CODE).trimmed();
   procInput.recdSecCode = at(line, RECD_SEC_CODE);
   procInput.recdSubCode = at(line, RECD_SUB_CODE);
 
