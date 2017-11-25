@@ -1013,6 +1013,10 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
   {
     QString airportIdent = query.valueStr("airport_identifier");
 
+    // if(airportIdent != "EKAH")
+    // continue;
+    // qDebug() << query.record();
+
     // Give some feedback for long process
     if((++num % 10000) == 0)
       qDebug() << num << airportIdent << "...";

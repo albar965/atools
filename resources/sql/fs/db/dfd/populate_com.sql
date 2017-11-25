@@ -77,7 +77,7 @@ select airport_id,
   end as frequency,
   --service_indicator,
   callsign as name
-from src.tbl_airport_communication c
+from tbl_airport_communication c
 join airport a on c.airport_identifier = a.ident;
 
 

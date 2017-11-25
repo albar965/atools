@@ -65,7 +65,7 @@ select
     case when substr(navaid_class, 1, 2) ='V ' and dme_elevation = 0  then null else dme_elevation end as altitude,
     vor_longitude as lonx,
     vor_latitude as laty
-from src.tbl_vhfnavaids
+from tbl_vhfnavaids
 -- Get all except ILS and MLS
 where substr(navaid_class, 2, 1) not in ('I', 'N', 'P');
 
@@ -102,10 +102,10 @@ select
   ndb_latitude as laty
 from (
 select  area_code, icao_code, ndb_identifier, ndb_name, ndb_frequency, navaid_class, ndb_latitude, ndb_longitude
-from src.tbl_enroute_ndbnavaids
+from tbl_enroute_ndbnavaids
 union
 select  area_code, icao_code, ndb_identifier, ndb_name, ndb_frequency, navaid_class, ndb_latitude, ndb_longitude
-from src.tbl_terminal_ndbnavaids);
+from tbl_terminal_ndbnavaids);
 
 -- *********************************************************************************************
 -- Fill ILS table
@@ -147,7 +147,7 @@ select
   0 as altitude,
   l.llz_longitude as lonx,
   l.llz_latitude as laty
-from src.tbl_localizers_glideslopes l left outer join src.tbl_vhfnavaids d on
+from tbl_localizers_glideslopes l left outer join tbl_vhfnavaids d on
   l.llz_identifier = d.vor_identifier and l.icao_code = d.icao_code;
 
 
@@ -173,9 +173,9 @@ select
   coalesce(r.landing_threshold_elevation, 0) as altitude,
   m.marker_longitude as lonx,
   m.marker_latitude as laty
-from src.tbl_localizer_marker m
+from tbl_localizer_marker m
 -- Get heading and altitude from runway if possible
-left outer join src.tbl_runways r on
+left outer join tbl_runways r on
   m.airport_identifier = r.airport_identifier and
   m.icao_code = r.icao_code and
   m.runway_identifier = r.runway_identifier;
@@ -201,11 +201,11 @@ select
 from (
 select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, waypoint_usage,
   waypoint_latitude, waypoint_longitude
-from src.tbl_enroute_waypoints
+from tbl_enroute_waypoints
 union
 select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, null as waypoint_usage,
   waypoint_latitude, waypoint_longitude
-from src.tbl_terminal_waypoints);
+from tbl_terminal_waypoints);
 
 -- *********************************************************************************************
 -- Now add VOR, NDB and other dummy waypoints that are needed for routing and procedure display
@@ -226,10 +226,12 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
-) a join src.tbl_vhfnavaids v on
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
+) a join tbl_vhfnavaids v on
   a.waypoint_identifier = v.vor_identifier and a.waypoint_icao_code = v.icao_code and
-  a.waypoint_latitude = v.vor_latitude and a.waypoint_longitude = v.vor_longitude;
+  a.waypoint_latitude = v.vor_latitude and a.waypoint_longitude = v.vor_longitude
+-- Get all except ILS and MLS
+where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
 
 insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
@@ -248,8 +250,11 @@ from (
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
   union
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join src.tbl_vhfnavaids v on
-  a.ident = v.vor_identifier and a.laty = v.vor_latitude and a.lonx = v.vor_longitude;
+) a join tbl_vhfnavaids v on
+  a.ident = v.vor_identifier and a.laty = v.vor_latitude and a.lonx = v.vor_longitude
+-- Get all except ILS and MLS
+where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
+
 
 -- **********************************************************
 -- Add terminal NDB waypoints that are referenced by airways and procedures
@@ -266,8 +271,8 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
-) a join src.tbl_terminal_ndbnavaids v on
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
+) a join tbl_terminal_ndbnavaids v on
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
 
@@ -288,7 +293,7 @@ from (
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
   union
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join src.tbl_terminal_ndbnavaids v on
+) a join tbl_terminal_ndbnavaids v on
   a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
 
 
@@ -307,8 +312,8 @@ from (
   union
     select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
   union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from src.tbl_enroute_airways
-) a join src.tbl_enroute_ndbnavaids v on
+    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
+) a join tbl_enroute_ndbnavaids v on
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
 
@@ -329,7 +334,7 @@ from (
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
   union
     select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join src.tbl_enroute_ndbnavaids v on
+) a join tbl_enroute_ndbnavaids v on
   a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
 
 
