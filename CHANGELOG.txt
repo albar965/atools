@@ -1,8 +1,11 @@
-2.8.1.beta
+2.8.2.beta
 
 * DFD compiler now estimates if holding is given in time or distance for procedure legs.
 * DFD compiler now always sets region for fixes where it was missing for procedure legs.
 * Solved problem where fix was not set for DME distance and radial terminated procedure legs. Now copying recommended fix.
+
+2.8.1.beta
+
 * Fixed crash when getting simulator base path for unknown simulator type.
 * Fixed help handler to use GUI language instead of system locale for links to help and legend.
 * Updated French translation from Patrick.
