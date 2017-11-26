@@ -116,9 +116,10 @@ public:
    * 3 nullable altitude types in boundary
    * 4 nullable path in scenery
    * 5 metadata changes for DFD database
-   * 5 compiler version to metadata
+   * 6
+   * 7 Fixes for procedure legs
    */
-  static const int DB_VERSION_MINOR = 6;
+  static const int DB_VERSION_MINOR = 7;
 
   void init();
 
