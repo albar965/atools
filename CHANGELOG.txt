@@ -1,3 +1,7 @@
+Version 2.8.3
+
+* No changes except version.
+
 2.8.2.beta
 
 * DFD compiler now estimates if holding is given in time or distance for procedure legs.
