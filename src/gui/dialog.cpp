@@ -23,6 +23,7 @@
 #include <QMessageBox>
 #include <QCheckBox>
 #include <QStandardPaths>
+#include <QDebug>
 
 namespace atools {
 namespace gui {
@@ -72,6 +73,17 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
     else if(dir.isFile())
       dlg.setDirectory(dir.absolutePath());
   }
+  else
+  {
+    qDebug() << dir.absoluteFilePath() << "does not exist";
+    // Go up the directory level until a valid dir is found - avoid endless iterations
+    int i = 50;
+    while(!dir.exists() && !dir.isRoot() && i-- > 0)
+      dir = dir.dir().path();
+
+    dlg.setDirectory(dir.absoluteFilePath());
+    qDebug() << dir.absoluteFilePath() << "corrected path";
+  }
 
   if(!filename.isEmpty())
     dlg.selectFile(filename);
@@ -89,7 +101,6 @@ QString Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString
     return dlg.selectedFiles().at(0);
   }
   return QString();
-
 }
 
 QString Dialog::openDirectoryDialog(const QString& title, const QString& settingsPrefix,
