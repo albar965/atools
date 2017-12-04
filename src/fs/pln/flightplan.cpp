@@ -37,22 +37,27 @@ namespace pln {
 static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
 static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);
 
-static const QRegularExpression FS9_MATCH("(^appversion\\s*=|^title\\s*=|^description\\s*=|^type\\s*=|"
-                                          "^routetype\\s*=|^cruising_altitude\\s*=|^departure_id\\s*=|^destination_id\\s*=)");
+static const QRegularExpression FS9_MATCH(
+  "(^appversion\\s*=|^title\\s*=|^description\\s*=|^type\\s*=|"
+  "^routetype\\s*=|^cruising_altitude\\s*=|^departure_id\\s*=|^destination_id\\s*=)");
 
 /* Format structs for the Majestic Software MJC8 Q400.
  * Structs need to be packed to avoid padding. */
 namespace fpr {
 
-const static int NavSystem_UNITYPE_WPT = 1;
-const static int NavSystem_UNITYPE_NAV = 2;
-const static int NavSystem_UNITYPE_AIRPORT = 3;
+const static qint32 NavSystem_UNITYPE_WPT = 1;
+const static qint32 NavSystem_UNITYPE_NAV = 2;
+const static qint32 NavSystem_UNITYPE_AIRPORT = 3;
 
-const static int NavSystem_PROCTYPE_FP = 4; // Usual FP (fix to fix, great circle)
+const static qint32 NavSystem_PROCTYPE_FP = 4; // Usual FP (fix to fix, great circle)
 
-const static int NavSystem_LEG_SEGMENT_FP_CRS = 0x05;
+const static qint32 NavSystem_LEG_SEGMENT_FP_CRS = 0x05;
 
-struct __attribute__((__packed__)) Waypoint
+const static qint32 FPR_FILE_SIZE = 36089;
+
+#pragma pack(push, 1)
+
+struct Waypoint
 {
   char designator[10]; // short name
 
@@ -60,16 +65,16 @@ struct __attribute__((__packed__)) Waypoint
   double latYRad;
   double lonXRad;
   qint8 waypointType; // of type NavSystem_UNITYPE_NONE
-  int databaseId; // -1 if unknown
+  qint32 databaseId; // -1 if unknown
   qint8 boolVal;
   double magvarRad;
 };
 
-struct __attribute__((__packed__)) Leg
+struct Leg
 {
   qint8 proc_type; // of type NavSystem_PROCTYPE_NONE. SID STAR and so on
 
-  int legHash; // unique hash for this leg
+  qint32 legHash; // unique hash for this leg
   char legType[3]; // FA and so on...
   char legSegType; // Transition type of type FMC_LEG_SEGMENT_XXX
   qint8 iapTypeIAP_type; // type for IAP. A = GPS (ILS), D = ILSDME, N=NDB, Q=?, S=?, I=ILS, L=?. BIG MISTERY!
@@ -79,15 +84,18 @@ struct __attribute__((__packed__)) Leg
   quint8 fill[210];
 };
 
-static const int FMC_FLIGHT_PLAN_MAX_LEGS = 128;
+static const qint32 FMC_FLIGHT_PLAN_MAX_LEGS = 128;
 
-struct __attribute__((__packed__)) FlightPlan
+struct FlightPlan
 {
   qint16 numLegs;
 
   Leg legs[FMC_FLIGHT_PLAN_MAX_LEGS];
   quint8 fill[503];
 };
+
+#pragma pack(pop)
+
 } // namespace fpr
 
 // =============================================================================================
@@ -1363,11 +1371,11 @@ void Flightplan::saveRte(const QString& file)
     stream.setCodec("UTF-8");
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
-      arg(QApplication::applicationName()).
-      arg(QApplication::applicationVersion()).
-      arg(atools::gitRevision()).
-      arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
-      replace("-", " ") << endl << endl;
+    arg(QApplication::applicationName()).
+    arg(QApplication::applicationVersion()).
+    arg(atools::gitRevision()).
+    arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+    replace("-", " ") << endl << endl;
 
     stream << numEntriesSave() << endl << endl;
 
@@ -1504,7 +1512,13 @@ void Flightplan::saveFpr(const QString& file)
 
     // Write the memory block to the file
     ds.writeRawData(reinterpret_cast<const char *>(&plan), sizeof(plan));
+
+    qint64 size = fprFile.size();
     fprFile.close();
+
+    if(size != fpr::FPR_FILE_SIZE)
+      throw Exception(tr("Internal error writing %1: File has invalid size %2 != %3 will not be usable.").
+                      arg(filename).arg(size).arg(fpr::FPR_FILE_SIZE));
   }
 }
 
@@ -1525,10 +1539,10 @@ void Flightplan::writeBinaryString(char *mem, QString str, int length)
 void Flightplan::removeNoSaveEntries()
 {
   auto it = std::remove_if(entries.begin(), entries.end(),
-                           [](const FlightplanEntry& type) -> bool
-        {
-          return type.isNoSave();
-        });
+                           [] (const FlightplanEntry &type)->bool
+                           {
+                             return type.isNoSave();
+                           });
 
   if(it != entries.end())
     entries.erase(it, entries.end());
@@ -1873,11 +1887,11 @@ QDebug operator<<(QDebug out, const Flightplan& record)
   QDebugStateSaver saver(out);
 
   out.noquote().nospace() << "Flightplan[fmt" << record.getFileFormat()
-                          << ", from/to " << record.getDepartureIdent()
-                          << " -> " << record.getDestinationIdent() << endl;
+  << ", from/to " << record.getDepartureIdent()
+  << " -> " << record.getDestinationIdent() << endl;
 
   int i = 1;
-  for(const FlightplanEntry& entry: record.getEntries())
+  for(const FlightplanEntry& entry : record.getEntries())
     out << i++ << entry;
   out << "]";
   return out;
