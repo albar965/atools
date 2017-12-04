@@ -43,11 +43,11 @@ void Translator::load(const QString& language)
     bool loadDefault = loadApp(appBaseName, appPath, language);
     qDebug() << "Translations for appPath" << appPath << "lang" << language << "loadDefault" << loadDefault;
 
-    // Load atools translations - not required
-    loadApp("atools", appPath, language);
-
     if(loadDefault)
     {
+      // Load atools translations if main app language was found
+      loadApp("atools", appPath, language);
+
       // Load the Qt translations only if a language was found for the application to avoid mixed language dialogs
       QString translationsPath = QLibraryInfo::location(QLibraryInfo::TranslationsPath);
       // First application path
@@ -108,10 +108,11 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
 {
   QLocale locale;
   if(language.isEmpty())
-    locale = QLocale::system();
+    // Use only one language here since the translation API will try to load second and third languages
+    locale = QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().first();
   else
     // Override system language for translations only
-    locale = QLocale(language);
+    locale = language;
 
   QTranslator *t = new QTranslator();
   if(!t->load(locale, name, "_", dir))
