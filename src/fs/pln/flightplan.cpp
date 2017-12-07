@@ -403,6 +403,7 @@ void Flightplan::loadFms(const QString& file)
       throw Exception(tr("Invalid FMS file. Invalid version %2: %1").arg(fmsFile.fileName()).arg(version));
 
     float maxAlt = std::numeric_limits<float>::min();
+    QString destinationRwy;
 
     while(!stream.atEnd())
     {
@@ -462,7 +463,7 @@ void Flightplan::loadFms(const QString& file)
           }
           else if(key == "DESRWY")
           {
-            properties.insert(APPROACHRW, value.mid(2));
+            destinationRwy = value.mid(2);
             continue;
           }
           else if(key == "ADES" || key == "DES" || key == "ADEP" || key == "DEP" || key == "NUMENR")
@@ -530,6 +531,14 @@ void Flightplan::loadFms(const QString& file)
       }
     }
     fmsFile.close();
+
+    if(!destinationRwy.isEmpty())
+    {
+      if(properties.contains(APPROACH))
+        properties.insert(APPROACHRW, destinationRwy);
+      else if(properties.contains(STAR))
+        properties.insert(STARRW, destinationRwy);
+    }
 
     flightplanType = IFR;
     routeType = DIRECT;
@@ -1246,10 +1255,15 @@ void Flightplan::saveFms(const QString& file, const QString& airacCycle, bool ve
       else
         stream << "DES " << getDestinationIdent() << endl;
 
-      // Arrival approach and transition
+      // Arrival runway
       if(!properties.value(APPROACHRW).isEmpty())
+        // Use approach runway if there is an approach
         stream << "DESRWY RW" << properties.value(APPROACHRW) << endl;
+      else if(!properties.value(STARRW).isEmpty())
+        // Use STAR runway if no approach but STAR
+        stream << "DESRWY RW" << properties.value(STARRW) << endl;
 
+      // Arrival approach and transition
       // Arrival STAR
       if(!properties.value(STAR).isEmpty())
         stream << "STAR " << properties.value(STAR) << endl;
@@ -1371,11 +1385,11 @@ void Flightplan::saveRte(const QString& file)
     stream.setCodec("UTF-8");
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
-    arg(QApplication::applicationName()).
-    arg(QApplication::applicationVersion()).
-    arg(atools::gitRevision()).
-    arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
-    replace("-", " ") << endl << endl;
+      arg(QApplication::applicationName()).
+      arg(QApplication::applicationVersion()).
+      arg(atools::gitRevision()).
+      arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+      replace("-", " ") << endl << endl;
 
     stream << numEntriesSave() << endl << endl;
 
@@ -1539,10 +1553,10 @@ void Flightplan::writeBinaryString(char *mem, QString str, int length)
 void Flightplan::removeNoSaveEntries()
 {
   auto it = std::remove_if(entries.begin(), entries.end(),
-                           [] (const FlightplanEntry &type)->bool
-                           {
-                             return type.isNoSave();
-                           });
+                           [](const FlightplanEntry& type) -> bool
+        {
+          return type.isNoSave();
+        });
 
   if(it != entries.end())
     entries.erase(it, entries.end());
@@ -1887,8 +1901,8 @@ QDebug operator<<(QDebug out, const Flightplan& record)
   QDebugStateSaver saver(out);
 
   out.noquote().nospace() << "Flightplan[fmt" << record.getFileFormat()
-  << ", from/to " << record.getDepartureIdent()
-  << " -> " << record.getDestinationIdent() << endl;
+                          << ", from/to " << record.getDepartureIdent()
+                          << " -> " << record.getDestinationIdent() << endl;
 
   int i = 1;
   for(const FlightplanEntry& entry : record.getEntries())

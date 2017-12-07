@@ -63,6 +63,7 @@ const QLatin1Literal SIDTRANS("sidtrans");
 const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
 const QLatin1Literal SIDTRANSSIZE("sidtranssize");
 const QLatin1Literal STAR("star");
+const QLatin1Literal STARRW("starrw");
 const QLatin1Literal STARDISTANCE("stardistance");
 const QLatin1Literal STARSIZE("starsize");
 const QLatin1Literal STARTRANS("startrans");
@@ -83,8 +84,11 @@ const QLatin1Literal APPROACHSIZE("approachsize");
 /* Speed as is not supported by PLN format */
 const QLatin1Literal SPEED("speed");
 
-/* Source database simulator */
+/* Source database navigation data */
 const QLatin1Literal NAVDATA("navdata");
+
+/* Source database simulator */
+const QLatin1Literal SIMDATA("simdata");
 
 /* AIRAC cycle (not FSX/P3D) */
 const QLatin1Literal AIRAC_CYCLE("cycle");
