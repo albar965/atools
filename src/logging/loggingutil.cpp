@@ -38,6 +38,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Application file path" << QCoreApplication::applicationFilePath();
   qInfo() << "Application arguments" << QCoreApplication::arguments();
   qInfo() << "Current working directory" << QDir(".").absolutePath();
+  qInfo() << "Library paths" << QCoreApplication::libraryPaths();
 
   int i = 1;
   for(const QString& f : LoggingHandler::getLogFiles())
