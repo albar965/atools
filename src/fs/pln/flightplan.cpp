@@ -176,7 +176,7 @@ void Flightplan::load(const QString& file)
           // CYCLE 1710
           (lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("1100 version") &&
-          lines.at(2).startsWith("cycle "))
+          lines.at(2).startsWith("cycle"))
     loadFms(file);
   else
     throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
