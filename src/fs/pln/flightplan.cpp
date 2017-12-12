@@ -1640,8 +1640,13 @@ void Flightplan::saveGarminGns(const QString& file)
       writer.writeStartElement("waypoint");
 
       writer.writeTextElement("identifier", key.value(0).toUpper());
-      writer.writeTextElement("type", key.value(1).toUpper());
-      writer.writeTextElement("country-code", key.value(2).toUpper());
+      writer.writeTextElement("type", key.value(1));
+
+      QString region = key.value(2).toUpper();
+      if(region.isEmpty() && key.value(1) != "USER WAYPOINT")
+        qDebug() << Q_FUNC_INFO << "Region is empty for" << key << "in" << filename;
+
+      writer.writeTextElement("country-code", region);
 
       const Pos& pos = waypointList.value(key);
       writer.writeTextElement("lat", QString::number(pos.getLatY(), 'f', 6));
@@ -1674,21 +1679,17 @@ void Flightplan::saveGarminGns(const QString& file)
 
       writer.writeStartElement("route-point");
 
-      QString type = gnsType(entry);
-
-      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
-         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      if(userWaypointNameIndex.contains(curIdx))
       {
-        if(userWaypointNameIndex.contains(curIdx))
-          // Renamed user waypoint
-          writer.writeTextElement("waypoint-identifier", userWaypointNameIndex.value(curIdx).toUpper());
-        else
-          writer.writeTextElement("waypoint-identifier", entry.getWaypointId().toUpper());
+        // Probably renamed user waypoint
+        writer.writeTextElement("waypoint-identifier", userWaypointNameIndex.value(curIdx).toUpper());
+        writer.writeTextElement("waypoint-type", "USER WAYPOINT");
       }
       else
+      {
         writer.writeTextElement("waypoint-identifier", entry.getIcaoIdent().toUpper());
-
-      writer.writeTextElement("waypoint-type", type);
+        writer.writeTextElement("waypoint-type", gnsType(entry));
+      }
 
       writer.writeTextElement("waypoint-country-code", entry.getIcaoRegion().toUpper());
 
