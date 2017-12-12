@@ -118,8 +118,9 @@ public:
    * 5 metadata changes for DFD database
    * 6
    * 7 Fixes for procedure legs
+   * 8 airport.is_3d and airport.region added
    */
-  static const int DB_VERSION_MINOR = 7;
+  static const int DB_VERSION_MINOR = 8;
 
   void init();
 
