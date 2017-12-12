@@ -113,6 +113,7 @@ void DfdCompiler::writeAirports()
   // Filled later in populate_com.sql
 
   // Fill default values which are not nullable and are populated later
+  airportWriteQuery->bindValue(":is_3d", 0); // X-Plane only
   airportWriteQuery->bindValue(":num_runway_hard", 0);
   airportWriteQuery->bindValue(":num_runway_soft", 0);
   airportWriteQuery->bindValue(":num_runway_water", 0);
@@ -150,6 +151,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":ident", ident);
     airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->valueStr("airport_name")));
     airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));
+    airportWriteQuery->bindValue(":region", airportQuery->valueStr("icao_code"));
     airportWriteQuery->bindValue(":is_military", utl::isNameMilitary(airportQuery->valueStr("airport_name")));
 
     // Will be extended later when reading runways

@@ -116,6 +116,11 @@ void AirportWriter::writeObject(const Airport *type)
   bindNullString(":state");
   bindNullString(":city");
 
+  if(type->getRegion().isEmpty())
+    bindNullString(":region");
+  else
+    bind(":region", type->getRegion());
+
   NameListMapConstIterType it = nameListIndex.find(type->getIdent());
   if(it != nameListIndex.end())
   {
@@ -125,6 +130,9 @@ void AirportWriter::writeObject(const Airport *type)
       bind(":country", nl->getCountryName());
       bind(":state", nl->getStateName());
       bind(":city", nl->getCityName());
+
+      if(!nl->getRegionIdent().isEmpty())
+        bind(":region", nl->getRegionIdent());
     }
     else
       qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
@@ -153,6 +161,7 @@ void AirportWriter::writeObject(const Airport *type)
   bindBool(":is_military", type->isMilitary());
 
   bindBool(":is_addon", isAddon);
+  bindBool(":is_3d", 0);
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());

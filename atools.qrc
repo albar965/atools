@@ -27,7 +27,7 @@
         <file>resources/sql/fs/db/populate_nav_search.sql</file>
         <file>resources/sql/fs/db/populate_route_edge.sql</file>
         <file>resources/sql/fs/db/populate_route_node.sql</file>
-        <file>resources/sql/fs/db/update_ils_ids.sql</file>
+        <file>resources/sql/fs/db/update_airport.sql</file>
         <file>resources/sql/fs/db/update_approaches.sql</file>
         <file>resources/sql/fs/db/update_wp_ids.sql</file>
         <file>resources/sql/fs/db/update_vor.sql</file>
@@ -35,5 +35,6 @@
         <file>resources/sql/fs/db/update_num_ils.sql</file>
         <file>resources/sql/fs/db/dfd/populate_navaids.sql</file>
         <file>resources/sql/fs/db/dfd/populate_com.sql</file>
+        <file>resources/sql/fs/db/update_airport_ils.sql</file>
     </qresource>
 </RCC>

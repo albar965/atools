@@ -43,7 +43,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 20;
+const int PROGRESS_NUM_STEPS = 21;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -382,11 +382,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
     return;
 
+  if((aborted = runScript(&progress, "fs/db/update_airport.sql", tr("Updating Airports"))))
+    return;
+
   if(sim != atools::fs::FsPaths::XPLANE11)
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS
-    if((aborted = runScript(&progress, "fs/db/update_ils_ids.sql", tr("Updating ILS"))))
+    if((aborted = runScript(&progress, "fs/db/update_airport_ils.sql", tr("Updating ILS"))))
       return;
   }
 
@@ -711,7 +714,6 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
   int count = 0;
   if((count = util.rowCount(table)) < minCount)
     throw Exception(QString("Table \"%1\" has only %2 rows. Minimum required is %3").arg(table).arg(count).arg(minCount));
-
 
   qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
 }

@@ -928,6 +928,8 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
     insertAirportQuery->bindValue(":country", value);
+  else if(key.startsWith("region") && !value.isEmpty()) // Documentation is not clear - region_id or region_code
+    insertAirportQuery->bindValue(":region", value);
   else if(key == "datum_lat" && atools::almostNotEqual(value.toFloat(), 0.f))
     airportPos.setLatY(value.toFloat());
   else if(key == "datum_lon" && atools::almostNotEqual(value.toFloat(), 0.f))
@@ -1358,9 +1360,11 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":has_tower_object", hasTower);
 
     // Rating
-    int rating = atools::fs::util::calculateAirportRatingXp(context.flags & IS_ADDON, context.flags & IS_3D,
-                                                            hasTower, numTaxiPath, numParking, numApron);
+    int rating =
+      atools::fs::util::calculateAirportRatingXp(context.flags.testFlag(IS_ADDON), context.flags.testFlag(IS_3D),
+                                                 hasTower, numTaxiPath, numParking, numApron);
     insertAirportQuery->bindValue(":rating", rating);
+    insertAirportQuery->bindValue(":is_3d", context.flags.testFlag(IS_3D));
 
     insertAirportQuery->bindValue(":num_parking_gate", numParkingGate);
     insertAirportQuery->bindValue(":num_parking_ga_ramp", numParkingGaRamp);

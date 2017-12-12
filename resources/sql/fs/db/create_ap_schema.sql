@@ -28,11 +28,12 @@ create table airport
 (
   airport_id integer primary key,
   file_id integer not null,                   -- BGL file id
-  ident varchar(4) not null,                  -- ICAO ident
+  ident varchar(10) not null,                  -- ICAO ident
   name varchar(50) collate nocase,
   city varchar(50) collate nocase,
   state varchar(50) collate nocase,
   country varchar(50) collate nocase,
+  region varchar(4) collate nocase,           -- ICAO region like DE, LF, K6 - not used for search
   fuel_flags integer not null,                -- see enum atools::fs::bgl::ap::FuelFlags
   has_avgas integer not null,                 -- boolean
   has_jetfuel integer not null,               -- "
@@ -86,6 +87,7 @@ create table airport
   rating integer not null,                   -- 0-5. An airport gets a point for having
                                              -- taxi paths, parking, aprons, tower object.
                                              -- An additional point is give for add-on airports
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
 
   scenery_local_path varchar(250) collate nocase, -- Path of the BGL relative to the FS base directory
   bgl_filename varchar(300) collate nocase,       -- BGL filename
