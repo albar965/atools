@@ -98,6 +98,8 @@ struct FlightPlan
 
 } // namespace fpr
 
+using atools::geo::Pos;
+
 // =============================================================================================
 Flightplan::Flightplan()
 {
@@ -260,8 +262,8 @@ void Flightplan::loadFlp(const QString& file)
             entry.setWaypointId(value);
           }
           else if(coords.toLower() == "coordinates")
-            entry.setPosition(atools::geo::Pos(value.section(',', 1, 1).toFloat(),
-                                               value.section(',', 0, 0).toFloat()));
+            entry.setPosition(Pos(value.section(',', 1, 1).toFloat(),
+                                  value.section(',', 0, 0).toFloat()));
         }
         else if(key.startsWith("airway"))
         {
@@ -483,7 +485,7 @@ void Flightplan::loadFms(const QString& file)
             // Avoid excessive altitudes
             altitude = 0.f;
 
-          atools::geo::Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
+          Pos position(list.at(4 + fieldOffset).toFloat(), list.at(3 + fieldOffset).toFloat(), altitude);
           if(!position.isValid() || position.isNull())
             break;
 
@@ -624,7 +626,7 @@ void Flightplan::loadFs9(const QString& file)
         {
           // departure_id=EGPB, N59* 52.88', W001* 17.63', +000020.00
           departureIdent = value.section(',', 0, 0).trimmed();
-          departurePos = atools::geo::Pos(value.section(',', 1, 3).trimmed());
+          departurePos = Pos(value.section(',', 1, 3).trimmed());
         }
         else if(key == "departure_position")
           // departure_position=1
@@ -636,7 +638,7 @@ void Flightplan::loadFs9(const QString& file)
         {
           // destination_id=EISG, N54* 16.82', W008* 35.95', +000011.00
           destinationIdent = value.section(',', 0, 0).trimmed();
-          destinationPos = atools::geo::Pos(value.section(',', 1, 3).trimmed());
+          destinationPos = Pos(value.section(',', 1, 3).trimmed());
         }
         else if(key == "destination_name")
           // destination_name=SLIGO
@@ -645,7 +647,7 @@ void Flightplan::loadFs9(const QString& file)
         {
           FlightplanEntry entry;
 
-          atools::geo::Pos pos(value.section(',', 5, 7).trimmed(), false);
+          Pos pos(value.section(',', 5, 7).trimmed(), false);
           if(pos.isValid())
           {
             // waypoint.0=   , EGPB, , EGPB, A, N59* 52.88', W001* 17.63', +000020.00,
@@ -663,7 +665,7 @@ void Flightplan::loadFs9(const QString& file)
           {
             // waypoint.1= D205T, I, N56* 59.87', W2* 28.54', +000000.00,
             // ----------- 0      1  2            3           4           5
-            pos = atools::geo::Pos(value.section(',', 2, 4).trimmed(), false);
+            pos = Pos(value.section(',', 2, 4).trimmed(), false);
 
             if(pos.isValid())
             {
@@ -899,7 +901,7 @@ void Flightplan::saveFsx(const QString& file, bool clean)
       if(!entry.getPosition().isValid())
         throw atools::Exception("Invalid position in flightplan for id " + entry.getWaypointId());
 
-      atools::geo::Pos pos = entry.getPosition();
+      Pos pos = entry.getPosition();
 
       // Use null altitude for all except airports
       if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
@@ -1127,7 +1129,7 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
         const FlightplanEntry& prev = entries.at(i - 1);
         if(entry.getIcaoIdent() == prev.getIcaoIdent() &&
            entry.getIcaoRegion() == prev.getIcaoRegion() &&
-           entry.getPosition().almostEqual(prev.getPosition(), atools::geo::Pos::POS_EPSILON_100M)
+           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M)
            )
           continue;
       }
@@ -1160,7 +1162,7 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
 
       for(int i = 0; i < track.size(); ++i)
       {
-        const atools::geo::Pos& pos = track.at(i);
+        const Pos& pos = track.at(i);
         writer.writeStartElement("trkpt");
 
         writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
@@ -1536,6 +1538,200 @@ void Flightplan::saveFpr(const QString& file)
   }
 }
 
+void Flightplan::saveGarminGns(const QString& file)
+{
+  filename = file;
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QXmlStreamWriter writer(&xmlFile);
+    writer.setCodec("utf-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+
+    writer.writeStartDocument("1.0");
+    writer.writeStartElement("flight-plan");
+    writer.writeAttribute("xmlns", "http://www8.garmin.com/xmlschemas/FlightPlan/v1");
+    // 2017-01-15T15:20:54Z
+    writer.writeTextElement("file-description", programInfo());
+    writer.writeTextElement("created", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
+
+    // <xsd:simpleType name="Identifier_t">
+    // <xsd:restriction base="xsd:string">
+    // <xsd:pattern value="[A-Z0-9]{1,12}" />
+    // </xsd:restriction>
+    // </xsd:simpleType>
+
+    // Collect waypoints first for a unique list =============================
+    int wpNum = 1;
+    int curIdx = 0;
+
+    // Unique list of waypoints for output
+    QMap<QStringList, Pos> waypointList;
+
+    // Remember renamed user waypoints by index
+    QHash<int, QString> userWaypointNameIndex;
+
+    // Remember already added user waypoints
+    QSet<QString> addedUserWaypoints;
+
+    for(const FlightplanEntry& entry : entries)
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      // Adjust name of user waypoints
+      QString ident;
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
+         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      {
+        ident = entry.getWaypointId();
+
+        // Remove all invalid characters
+        ident.replace(QRegularExpression("[^A-Z0-9]"), "");
+        ident = ident.left(12);
+
+        if(ident.isEmpty() || addedUserWaypoints.contains(ident))
+          // Replace with own name if nothing left or a user waypoint with the same name already exists
+          ident = QString("USRWPT%1").arg(wpNum++);
+
+        // Remember changed name in index
+        userWaypointNameIndex.insert(curIdx, ident);
+        addedUserWaypoints.insert(ident);
+      }
+      else
+        // Normal waypoint - airport, vor, ndb, intersection
+        ident = entry.getIcaoIdent();
+
+      QStringList wptDat({ident, gnsType(entry), entry.getIcaoRegion()});
+
+      if(waypointList.contains(wptDat))
+      {
+        // Waypoint already in index
+        const Pos& pos = waypointList.value(wptDat);
+
+        if(!pos.almostEqual(entry.getPosition(), Pos::POS_EPSILON_5M))
+        {
+          // Same identifier but different location - add as user waypoint
+          wptDat[0] = QString("USRWPT%1").arg(wpNum++);
+          wptDat[1] = "USER WAYPOINT";
+          userWaypointNameIndex.insert(curIdx, ident);
+          addedUserWaypoints.insert(ident);
+        }
+      }
+
+      // Add and deduplicate at the same time
+      waypointList.insert(wptDat, entry.getPosition());
+
+      curIdx++;
+    }
+
+    // Write waypoint list =============================
+    writer.writeStartElement("waypoint-table");
+    // <identifier>LFAT</identifier>
+    // <type>AIRPORT</type>
+    // <country-code>LF</country-code>
+    // <lat>50.514722</lat>
+    // <lon>1.627500</lon>
+    for(const QStringList& key : waypointList.keys())
+    {
+      writer.writeStartElement("waypoint");
+
+      writer.writeTextElement("identifier", key.value(0).toUpper());
+      writer.writeTextElement("type", key.value(1).toUpper());
+      writer.writeTextElement("country-code", key.value(2).toUpper());
+
+      const Pos& pos = waypointList.value(key);
+      writer.writeTextElement("lat", QString::number(pos.getLatY(), 'f', 6));
+      writer.writeTextElement("lon", QString::number(pos.getLonX(), 'f', 6));
+
+      writer.writeTextElement("comment", QString());
+
+      writer.writeEndElement(); // waypoint
+    }
+
+    writer.writeEndElement(); // waypoint-table
+
+    // Write route =============================
+    writer.writeStartElement("route");
+
+    writer.writeTextElement("route-name", getDepartureIdent() + " / " + getDestinationIdent());
+    writer.writeTextElement("flight-plan-index", "1");
+
+    // <route-point>
+    // <waypoint-identifier>LFAT</waypoint-identifier>
+    // <waypoint-type>AIRPORT</waypoint-type>
+    // <waypoint-country-code>LF</waypoint-country-code>
+    // </route-point>
+    curIdx = 0;
+    for(const FlightplanEntry& entry : entries)
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      writer.writeStartElement("route-point");
+
+      QString type = gnsType(entry);
+
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
+         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      {
+        if(userWaypointNameIndex.contains(curIdx))
+          // Renamed user waypoint
+          writer.writeTextElement("waypoint-identifier", userWaypointNameIndex.value(curIdx).toUpper());
+        else
+          writer.writeTextElement("waypoint-identifier", entry.getWaypointId().toUpper());
+      }
+      else
+        writer.writeTextElement("waypoint-identifier", entry.getIcaoIdent().toUpper());
+
+      writer.writeTextElement("waypoint-type", type);
+
+      writer.writeTextElement("waypoint-country-code", entry.getIcaoRegion().toUpper());
+
+      writer.writeEndElement(); // route-point
+      curIdx++;
+    }
+
+    writer.writeEndElement(); // route
+    writer.writeEndElement(); // flight-plan
+    writer.writeEndDocument();
+    xmlFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+
+}
+
+QString Flightplan::gnsType(const atools::fs::pln::FlightplanEntry& entry)
+{
+  QString type;
+  switch(entry.getWaypointType())
+  {
+    case atools::fs::pln::entry::UNKNOWN:
+    case atools::fs::pln::entry::USER:
+      type = "USER WAYPOINT";
+      break;
+    case atools::fs::pln::entry::AIRPORT:
+      type = "AIRPORT";
+      break;
+    case atools::fs::pln::entry::INTERSECTION:
+      type = "INT";
+      break;
+    case atools::fs::pln::entry::VOR:
+      type = "VOR";
+      break;
+    case atools::fs::pln::entry::NDB:
+      type = "NDB";
+      break;
+      // <xsd:enumeration value="INT-VRP" /> ignored
+  }
+  return type;
+}
+
 void Flightplan::writeBinaryString(char *mem, QString str, int length)
 {
   // Cut off if too long and leave space for trailing 0
@@ -1657,8 +1853,8 @@ void Flightplan::clear()
   departureAiportName.clear();
   destinationAiportName.clear();
 
-  departurePos = atools::geo::Pos();
-  destinationPos = atools::geo::Pos();
+  departurePos = Pos();
+  destinationPos = Pos();
 
   flightplanType = VFR;
   fileFormat = PLN_FSX;
@@ -1814,7 +2010,7 @@ RouteType Flightplan::stringToRouteTypeFs9(const QString& str)
   return DIRECT;
 }
 
-QString Flightplan::programInfo()
+QString Flightplan::programInfo() const
 {
   return tr("Created by %1 Version %2 (revision %3) on %4").
          arg(QApplication::applicationName()).
@@ -1892,8 +2088,8 @@ int Flightplan::numEntriesSave()
 void Flightplan::assignAltitudeToAllEntries(int altitude)
 {
   for(FlightplanEntry& entry : entries)
-    entry.setPosition(atools::geo::Pos(entry.getPosition().getLonX(),
-                                       entry.getPosition().getLatY(), altitude));
+    entry.setPosition(Pos(entry.getPosition().getLonX(),
+                          entry.getPosition().getLatY(), altitude));
 }
 
 QDebug operator<<(QDebug out, const Flightplan& record)

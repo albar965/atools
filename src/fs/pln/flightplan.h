@@ -85,6 +85,9 @@ public:
   /* Majestic Dash 400 binary format */
   void saveFpr(const QString& file);
 
+  /* Reality XP GNS XML format. */
+  void saveGarminGns(const QString& file);
+
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
    */
@@ -325,11 +328,13 @@ private:
   static atools::fs::pln::RouteType stringToRouteType(const QString& str);
   RouteType stringToRouteTypeFs9(const QString& str);
 
+  QString gnsType(const FlightplanEntry& entry);
+
   void readUntilElement(QXmlStreamReader& reader, const QString& name);
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
-  QString programInfo();
+  QString programInfo() const;
 
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries(int altitude);
