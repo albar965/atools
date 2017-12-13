@@ -452,7 +452,10 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
   // Extract runway name "B" suffixes, "ALL" and CTL are ignored
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
+  {
     rwy = sidStarRunwayNameAndSuffix(line);
+    rec.setValue(":arinc_name", line.transIdent);
+  }
   else
     rwy = apprRunwayNameAndSuffix(line, suffix);
 
