@@ -74,78 +74,84 @@ File: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="138"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="148"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="174"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="184"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="380"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="390"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="395"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="405"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="520"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="531"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="662"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="681"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="778"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="797"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="930"/>
-        <location filename="src/fs/pln/flightplan.cpp" line="1173"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="949"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1192"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1730"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1041"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1060"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1094"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1113"/>
         <source> Flight Plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1139"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1158"/>
         <source> Track</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1336"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1360"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1365"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1389"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1431"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1455"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="1791"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="1536"/>
+        <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplan.cpp" line="2038"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation type="unfinished"></translation>
     </message>
@@ -785,101 +791,106 @@ File: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="389"/>
+        <location filename="src/fs/navdatabase.cpp" line="385"/>
+        <source>Updating Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="392"/>
         <source>Updating ILS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="394"/>
+        <location filename="src/fs/navdatabase.cpp" line="397"/>
         <source>Updating ILS Count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="398"/>
+        <location filename="src/fs/navdatabase.cpp" line="401"/>
         <source>Collecting navaids for search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="402"/>
+        <location filename="src/fs/navdatabase.cpp" line="405"/>
         <source>Populating routing tables</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="407"/>
+        <location filename="src/fs/navdatabase.cpp" line="410"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="416"/>
+        <location filename="src/fs/navdatabase.cpp" line="419"/>
         <source>Creating route edges waypoints</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="419"/>
+        <location filename="src/fs/navdatabase.cpp" line="422"/>
         <source>Creating indexes for search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="462"/>
+        <location filename="src/fs/navdatabase.cpp" line="465"/>
         <source>Creating Database preparation Script</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="467"/>
+        <location filename="src/fs/navdatabase.cpp" line="470"/>
         <source>Dropping All Indexes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="474"/>
+        <location filename="src/fs/navdatabase.cpp" line="477"/>
         <source>Vacuum Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="482"/>
+        <location filename="src/fs/navdatabase.cpp" line="485"/>
         <source>Analyze Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="527"/>
-        <location filename="src/fs/navdatabase.cpp" line="607"/>
-        <location filename="src/fs/navdatabase.cpp" line="681"/>
+        <location filename="src/fs/navdatabase.cpp" line="530"/>
+        <location filename="src/fs/navdatabase.cpp" line="610"/>
+        <location filename="src/fs/navdatabase.cpp" line="684"/>
         <source>Creating indexes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="533"/>
-        <location filename="src/fs/navdatabase.cpp" line="620"/>
-        <location filename="src/fs/navdatabase.cpp" line="687"/>
+        <location filename="src/fs/navdatabase.cpp" line="536"/>
+        <location filename="src/fs/navdatabase.cpp" line="623"/>
+        <location filename="src/fs/navdatabase.cpp" line="690"/>
         <source>Clean up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="630"/>
+        <location filename="src/fs/navdatabase.cpp" line="633"/>
         <source>Preparing Airways</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="696"/>
+        <location filename="src/fs/navdatabase.cpp" line="699"/>
         <source>Basic Validation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="776"/>
+        <location filename="src/fs/navdatabase.cpp" line="778"/>
         <source>Creating table statistics</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="782"/>
+        <location filename="src/fs/navdatabase.cpp" line="784"/>
         <source>Creating report on values</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="788"/>
+        <location filename="src/fs/navdatabase.cpp" line="790"/>
         <source>Creating report on duplicates</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="826"/>
+        <location filename="src/fs/navdatabase.cpp" line="828"/>
         <source>Creating report on coordinate duplicates</source>
         <translation type="unfinished"></translation>
     </message>
