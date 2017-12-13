@@ -86,7 +86,7 @@ public:
   void saveFpr(const QString& file);
 
   /* Reality XP GNS XML format. */
-  void saveGarminGns(const QString& file);
+  void saveGarminGns(const QString& file, bool userWaypointOption);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.

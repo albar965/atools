@@ -86,7 +86,7 @@ struct Leg
 
 static const qint32 FMC_FLIGHT_PLAN_MAX_LEGS = 128;
 
-struct FlightPlan
+struct FprPlan
 {
   qint16 numLegs;
 
@@ -1468,7 +1468,7 @@ void Flightplan::saveFpr(const QString& file)
   {
     QDataStream ds(&fprFile);
 
-    fpr::FlightPlan plan;
+    fpr::FprPlan plan;
     memset(&plan, 0, sizeof(plan));
 
     int legIdx = 0;
@@ -1538,8 +1538,33 @@ void Flightplan::saveFpr(const QString& file)
   }
 }
 
-void Flightplan::saveGarminGns(const QString& file)
+void Flightplan::saveGarminGns(const QString& file, bool userWaypointOption)
 {
+  // Create a copy so we can easily change all waypoints to user defined is this is desired
+  QList<atools::fs::pln::FlightplanEntry> planEntries = entries;
+
+  if(userWaypointOption)
+  {
+    // Convert all waypoints to user defined waypoints keeping the names
+    int i = 0;
+    for(FlightplanEntry& entry : planEntries)
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      if(i > 0 && i < planEntries.size() - 1)
+      {
+        entry.setAirway(QString());
+        entry.setIcaoRegion(QString());
+        entry.setWaypointId(entry.getIcaoIdent());
+        entry.setWaypointType(entry::USER);
+      }
+
+      i++;
+    }
+  }
+
   filename = file;
   QFile xmlFile(filename);
 
@@ -1576,7 +1601,7 @@ void Flightplan::saveGarminGns(const QString& file)
     // Remember already added user waypoints
     QSet<QString> addedUserWaypoints;
 
-    for(const FlightplanEntry& entry : entries)
+    for(const FlightplanEntry& entry : planEntries)
     {
       if(entry.isNoSave())
         // Do not save procedure points
@@ -1584,8 +1609,7 @@ void Flightplan::saveGarminGns(const QString& file)
 
       // Adjust name of user waypoints
       QString ident;
-      if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
-         entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+      if(entry.getWaypointType() == entry::USER || entry.getWaypointType() == entry::UNKNOWN)
       {
         ident = entry.getWaypointId();
 
@@ -1595,7 +1619,7 @@ void Flightplan::saveGarminGns(const QString& file)
 
         if(ident.isEmpty() || addedUserWaypoints.contains(ident))
           // Replace with own name if nothing left or a user waypoint with the same name already exists
-          ident = QString("USRWPT%1").arg(wpNum++);
+          ident = QString("UPT%1").arg(wpNum++);
 
         // Remember changed name in index
         userWaypointNameIndex.insert(curIdx, ident);
@@ -1615,7 +1639,7 @@ void Flightplan::saveGarminGns(const QString& file)
         if(!pos.almostEqual(entry.getPosition(), Pos::POS_EPSILON_5M))
         {
           // Same identifier but different location - add as user waypoint
-          wptDat[0] = QString("USRWPT%1").arg(wpNum++);
+          wptDat[0] = QString("UPT%1").arg(wpNum++);
           wptDat[1] = "USER WAYPOINT";
           userWaypointNameIndex.insert(curIdx, ident);
           addedUserWaypoints.insert(ident);
@@ -1671,7 +1695,7 @@ void Flightplan::saveGarminGns(const QString& file)
     // <waypoint-country-code>LF</waypoint-country-code>
     // </route-point>
     curIdx = 0;
-    for(const FlightplanEntry& entry : entries)
+    for(const FlightplanEntry& entry : planEntries)
     {
       if(entry.isNoSave())
         // Do not save procedure points
@@ -1709,28 +1733,26 @@ void Flightplan::saveGarminGns(const QString& file)
 
 QString Flightplan::gnsType(const atools::fs::pln::FlightplanEntry& entry)
 {
-  QString type;
   switch(entry.getWaypointType())
   {
     case atools::fs::pln::entry::UNKNOWN:
     case atools::fs::pln::entry::USER:
-      type = "USER WAYPOINT";
-      break;
+      return "USER WAYPOINT";
+
     case atools::fs::pln::entry::AIRPORT:
-      type = "AIRPORT";
-      break;
+      return "AIRPORT";
+
     case atools::fs::pln::entry::INTERSECTION:
-      type = "INT";
-      break;
+      return "INT";
+
     case atools::fs::pln::entry::VOR:
-      type = "VOR";
-      break;
+      return "VOR";
+
     case atools::fs::pln::entry::NDB:
-      type = "NDB";
-      break;
+      return "NDB";
       // <xsd:enumeration value="INT-VRP" /> ignored
   }
-  return type;
+  return QString();
 }
 
 void Flightplan::writeBinaryString(char *mem, QString str, int length)
