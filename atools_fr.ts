@@ -158,7 +158,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="1536"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplan.cpp" line="2038"/>
@@ -807,7 +807,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="385"/>
         <source>Updating Airports</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Mise à jour des aéroports</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="465"/>
