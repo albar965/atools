@@ -184,27 +184,27 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1566"/>
         <source>Clear</source>
-        <translation type="unfinished">Beau temps à </translation>
+        <translation type="unfinished">Beau temps à</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1569"/>
         <source>Few</source>
-        <translation type="unfinished">Peu nuageux à </translation>
+        <translation type="unfinished">Peu nuageux à</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1572"/>
         <source>Scattered</source>
-        <translation type="unfinished">Éclaircies à </translation>
+        <translation type="unfinished">Éclaircies à</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1575"/>
         <source>Broken</source>
-        <translation type="unfinished">Partiellement couvert à </translation>
+        <translation type="unfinished">Partiellement couvert à</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1578"/>
         <source>Overcast</source>
-        <translation type="unfinished">Couvert à </translation>
+        <translation type="unfinished">Couvert à</translation>
     </message>
     <message>
         <source>nil</source>
