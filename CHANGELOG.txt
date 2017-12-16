@@ -1,3 +1,20 @@
+Version 2.8.4
+
+* Added Garmin GNS XML flight plan export.
+* Added option to save GNS XML flightplans with user defined waypoints.
+* Column "arinc_name" in table "approaches" is now filled for SID and STAR to get runway
+  information for multiple or all. Needed for future fixes of albar965/littlenavmap#179.
+* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it.
+* Database minor version bumped up to 8.
+* Made flight plan format detection more tolerant for FMS 11 with missing cycle information.
+* Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. albar965/littlenavmap#173
+* Fixed problem where translations for second and third languages were loaded.
+* Solved problem where translation files were loaded mixed in some cases.
+* Fixed invalid Majestic Dash FPR flight plan file export on Windows and added error check for invalid file size.
+* Fixed problem with wrong directory selection if default does not exist in dialog tools.
+* Logging library paths now for debugging.
+* Updated French translation.
+
 Version 2.8.3
 
 * No changes except version.

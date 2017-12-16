@@ -1619,7 +1619,7 @@ void Flightplan::saveGarminGns(const QString& file, bool userWaypointOption)
 
         if(ident.isEmpty() || addedUserWaypoints.contains(ident))
           // Replace with own name if nothing left or a user waypoint with the same name already exists
-          ident = QString("UPT%1").arg(wpNum++);
+          ident = QString("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
 
         // Remember changed name in index
         userWaypointNameIndex.insert(curIdx, ident);
@@ -1639,7 +1639,7 @@ void Flightplan::saveGarminGns(const QString& file, bool userWaypointOption)
         if(!pos.almostEqual(entry.getPosition(), Pos::POS_EPSILON_5M))
         {
           // Same identifier but different location - add as user waypoint
-          wptDat[0] = QString("UPT%1").arg(wpNum++);
+          wptDat[0] = QString("UPT%1").arg(wpNum++, 2, 10, QChar('0'));
           wptDat[1] = "USER WAYPOINT";
           userWaypointNameIndex.insert(curIdx, ident);
           addedUserWaypoints.insert(ident);
