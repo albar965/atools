@@ -24,16 +24,21 @@
 namespace atools {
 namespace util {
 
-static const QRegularExpression VERSION_REGEXP("^(\\d+)\\.(\\d+)\\.(\\d+)\\.?(.*)$");
+static const QRegularExpression VERSION_REGEXP("^(\\d+)\\.(\\d+)\\.(\\d+)"
+                                               "[-\\.]?"
+                                               "([a-zA-Z_]*)"
+                                               "([0-9]*)$");
 
-Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName)
-  : majorVersion(verMajor), minorVersion(verMinor), patchlevelVersion(verPatchlevel), name(verName)
+Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName, int verNameSub)
+  : majorVersion(verMajor), minorVersion(verMinor), patchlevelVersion(verPatchlevel), nameSubVersion(verNameSub),
+  name(verName)
 {
   versionString = QString("%1.%2.%3%4").
                   arg(majorVersion).
                   arg(minorVersion).
                   arg(patchlevelVersion).
-                  arg(name.isEmpty() ? QString() : "." + name);
+                  arg(name.isEmpty() ? QString() : "." + name).
+                  arg(nameSubVersion >= 0 ? QString() : QString::number(nameSubVersion));
 }
 
 Version::Version(const QString& str)
@@ -87,13 +92,47 @@ void Version::initFromString(const QString& str)
       }
     }
     if(captured.size() >= 4)
+    {
       name = captured.at(4);
+      if(namePriority() == -1)
+        qWarning() << "Error reading version information: invalid name" << str;
+    }
+
+    if(captured.size() >= 5 && !captured.at(5).isEmpty())
+    {
+      ok = false;
+      nameSubVersion = captured.at(5).toInt(&ok);
+
+      if(!ok)
+        qWarning() << "Error reading version information: invalid sub version" << str;
+    }
   }
+  else
+    qWarning() << "Empty version";
+}
+
+int Version::namePriority() const
+{
+  if(isDevelop())
+    return 0;
+  else if(isBeta())
+    return 1;
+  else if(isReleaseCandidate())
+    return 2;
+  else if(isStable())
+    return 3;
+
+  return -1;
 }
 
 bool Version::isStable() const
 {
   return name.isEmpty();
+}
+
+bool Version::isReleaseCandidate() const
+{
+  return name.toLower() == "rc";
 }
 
 bool Version::isBeta() const
@@ -114,6 +153,10 @@ bool Version::operator<(const Version& other) const
     return minorVersion < other.minorVersion;
   else if(patchlevelVersion != other.patchlevelVersion)
     return patchlevelVersion < other.patchlevelVersion;
+  else if(namePriority() != other.namePriority())
+    return namePriority() < other.namePriority();
+  else if(nameSubVersion != other.nameSubVersion)
+    return nameSubVersion < other.nameSubVersion;
   else
     // equal
     return false;
@@ -121,7 +164,7 @@ bool Version::operator<(const Version& other) const
 
 bool Version::isValid() const
 {
-  return majorVersion >= 0 && minorVersion >= 0 && patchlevelVersion >= 0;
+  return majorVersion >= 0 && minorVersion >= 0 && patchlevelVersion >= 0 && namePriority() >= 0;
 }
 
 QDebug operator<<(QDebug out, const atools::util::Version& version)
