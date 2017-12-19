@@ -1138,12 +1138,12 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
 
     QString als = alsToDb(static_cast<ApproachLight>(at(line, rw::PRIMARY_ALS).toInt()), &context);
     if(!als.isEmpty())
-      rec.setValue(":app_light_system_type", als);
-    else
     {
       numRunwayEndAls++;
-      rec.setValue(":app_light_system_type", QVariant(QVariant::String));
+      rec.setValue(":app_light_system_type", als);
     }
+    else
+      rec.setValue(":app_light_system_type", QVariant(QVariant::String));
 
     rec.setValue(":has_reils", at(line, rw::PRIMARY_REIL).toInt() > 0);
     rec.setValue(":has_touchdown_lights", at(line, rw::PRIMARY_TDZ_LIGHT).toInt());
@@ -1187,7 +1187,10 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
 
     QString als = alsToDb(static_cast<ApproachLight>(at(line, rw::SECONDARY_ALS).toInt()), &context);
     if(!als.isEmpty())
+    {
+      numRunwayEndAls++;
       rec.setValue(":app_light_system_type", als);
+    }
     else
       rec.setValue(":app_light_system_type", QVariant(QVariant::String));
 

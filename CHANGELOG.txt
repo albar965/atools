@@ -12,6 +12,8 @@ Version 2.8.4
 * Solved problem where translation files were loaded mixed in some cases.
 * Fixed invalid Majestic Dash FPR flight plan file export on Windows and added error check for invalid file size.
 * Fixed problem with wrong directory selection if default does not exist in dialog tools.
+* Number of ALS is now correctly assigned to airports in X-Plane data compiler.
+  This resulted in many airports having an ALS indication where none is.
 * Logging library paths now for debugging.
 * Updated French translation.
 
