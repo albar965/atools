@@ -24,13 +24,13 @@ namespace atools {
 namespace util {
 
 /*
- * Parses version numbers like "0.9.5.develop" (major.minor.patchlevel[.name]) into their parts.
+ * Parses version numbers like "0.9.5", "1.12.24-rc1" (major.minor.patchlevel[.name][namesubver]) into their parts.
  */
 class Version
 {
 public:
-  Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName = QString());
-  Version(const QString& str);
+  explicit Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName = QString(), int verNameSub = -1);
+  explicit Version(const QString& str);
   Version();
   ~Version();
 
@@ -60,6 +60,7 @@ public:
   }
 
   bool isStable() const;
+  bool isReleaseCandidate() const;
   bool isBeta() const;
   bool isDevelop() const;
 
@@ -96,8 +97,9 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::util::Version& version);
   void initFromString(const QString& str);
+  int namePriority() const;
 
-  int majorVersion = -1, minorVersion = -1, patchlevelVersion = -1;
+  int majorVersion = -1, minorVersion = -1, patchlevelVersion = -1, nameSubVersion = -1;
   QString name, versionString;
 
 };
