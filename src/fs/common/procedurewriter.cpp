@@ -763,8 +763,8 @@ atools::fs::common::rc::RowCode ProcedureWriter::toRowCode(const ProcedureInput&
     return rc::STAR;
   else if(code == "RWY")
     return rc::RWY;
-  // else if(code == "PRDAT")
-  // return rc::PRDAT;
+  else if(code == "PRDAT")
+    return rc::PRDAT;
   else
   {
     qWarning() << line.context << "Unexpexted row code" << code;
