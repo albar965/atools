@@ -86,7 +86,12 @@ XpCifpWriter::~XpCifpWriter()
 void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context)
 {
   ctx = &context;
-  if(line.isEmpty() || line.at(PROC_ROW_CODE).startsWith("RWY"))
+  if(line.isEmpty())
+    return;
+
+  QString rowCode = line.at(PROC_ROW_CODE);
+  if(!(rowCode == "SID" || rowCode == "STAR" || rowCode == "APPCH"))
+    // Skip all unknown row codes
     return;
 
   atools::fs::common::ProcedureInput procInput;
