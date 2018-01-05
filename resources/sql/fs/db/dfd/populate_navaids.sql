@@ -259,6 +259,8 @@ where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
 -- **********************************************************
 -- Add terminal NDB waypoints that are referenced by airways and procedures
 
+-- A part of the waypoints are not needed by procedures and will be removed later
+
 insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
   1 as file_id, a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,

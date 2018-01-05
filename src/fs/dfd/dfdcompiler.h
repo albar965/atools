@@ -38,6 +38,7 @@ class MetadataWriter;
 class AirportIndex;
 class ProcedureWriter;
 struct ProcedureInput;
+
 }
 
 class NavDatabaseOptions;
@@ -148,7 +149,7 @@ private:
   void updateAirspaceCom(const sql::SqlQuery& com, atools::sql::SqlQuery& update, int airportId);
 
   /* Reads all rows of source airspace table */
-  void writeAirspace(atools::sql::SqlQuery & query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&));
+  void writeAirspace(atools::sql::SqlQuery& query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&));
 
   /* Finalize and execute insert query */
   void finishAirspace();

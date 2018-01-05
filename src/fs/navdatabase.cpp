@@ -378,7 +378,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return;
 
-  // Set the nav_ids (VOR, NDB) in the approach table
+  if(sim == atools::fs::FsPaths::NAVIGRAPH)
+  {
+    // Remove all unreferenced dummy waypoints that were added for airway generation
+    if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Merging VOR and TACAN to VORTAC"))))
+      return;
+  }
+
+  // Set the runway_end_ids in the approach table
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
     return;
 
@@ -548,6 +555,8 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
     dfdCompiler->writeProcedures();
 
   db->commit();
+
+  // dfdCompiler->removeDummyWaypoints();
 
   dfdCompiler->deInitQueries();
 
