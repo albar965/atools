@@ -1,3 +1,10 @@
+Version 2.8.5
+
+* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
+* Fixes for missing airway segments in DFD compiler.
+* Fixed overly eager de-duplication of waypoints. albar965/littlenavmap#201
+* Updated from Qt 5.9.1 to 5.9.3
+
 Version 2.8.4
 
 * Added Garmin GNS XML flight plan export.
