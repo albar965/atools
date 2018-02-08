@@ -138,15 +138,22 @@ private:
     {
     }
 
-    Procedure(rc::RowCode rc, const atools::sql::SqlRecord& rec)
-      : rowCode(rc), record(rec)
+    Procedure(rc::RowCode rc, const atools::sql::SqlRecord& rec, bool commonRouteParam, const QString& sidStarNameParam)
+      : rowCode(rc), record(rec), isCommonRoute(commonRouteParam), sidStarName(sidStarNameParam)
     {
+    }
+
+    bool isValid() const
+    {
+      return rowCode != rc::NONE;
     }
 
     QStringList runways;
     rc::RowCode rowCode = rc::NONE;
     atools::sql::SqlRecord record;
     atools::sql::SqlRecordVector legRecords;
+    bool isCommonRoute = false;
+    QString sidStarName;
   };
 
   /* Gets type and region for a navaid that was retrieved using incomplete information */
@@ -199,6 +206,7 @@ private:
 
   /* Assigns new ids to the currently stored approaches */
   void assignApproachIds(ProcedureWriter::Procedure& proc);
+  void assignApproachLegIds(atools::sql::SqlRecordVector& records);
 
   /* Assigns new ids to the currently stored transitions */
   void assignTransitionIds(ProcedureWriter::Procedure& proc);
@@ -226,7 +234,8 @@ private:
   atools::fs::common::AirportIndex *airportIndex;
   const atools::sql::SqlRecord APPROACH_RECORD, APPROACH_LEG_RECORD, TRANSITION_RECORD, TRANSITION_LEG_RECORD;
 
-  /* Temporary storage before writing to database */
+  /* Temporary storage before writing to database keeps one approach/SID/STAR and respective transitions
+   *  before writing  */
   QVector<Procedure> approaches;
   QVector<Procedure> transitions;
 

@@ -142,10 +142,23 @@ static const std::initializer_list<rt::SidRouteType> SID_TRANS =
   rt::VECTOR_SID_ENROUTE_TRANSITION
 };
 
+// All route types that are common SID routes
+static const std::initializer_list<rt::SidRouteType> SID_COMMON =
+{
+  rt::SID_OR_SID_COMMON_ROUTE, rt::RNAV_SID_OR_SID_COMMON_ROUTE, rt::FMS_SID_OR_SID_COMMON_ROUTE
+};
+
 // All route types that are STAR transitions
 static const std::initializer_list<rt::StarRouteType> STAR_TRANS =
 {
   rt::STAR_ENROUTE_TRANSITION, rt::RNAV_STAR_ENROUTE_TRANSITION, rt::PROFILE_DESCENT_ENROUTE_TRANSITION
+};
+
+// All route types that are common STAR routes
+static const std::initializer_list<rt::StarRouteType> STAR_COMMON =
+{
+  rt::STAR_OR_STAR_COMMON_ROUTE, rt::RNAV_STAR_OR_STAR_COMMON_ROUTE, rt::PROFILE_DESCENT_COMMON_ROUTE,
+  rt::FMS_STAR_OR_STAR_COMMON_ROUTE
 };
 
 }
@@ -359,8 +372,11 @@ void ProcedureWriter::writeProcedureLeg(const ProcedureInput& line)
 void ProcedureWriter::assignApproachIds(ProcedureWriter::Procedure& proc)
 {
   proc.record.setValue(":approach_id", ++curApproachId);
+}
 
-  for(SqlRecord& rec : proc.legRecords)
+void ProcedureWriter::assignApproachLegIds(atools::sql::SqlRecordVector& records)
+{
+  for(SqlRecord& rec : records)
   {
     rec.setValue(":approach_leg_id", ++curApproachLegId);
     rec.setValue(":approach_id", curApproachId);
@@ -394,6 +410,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
       // Write approach
       Procedure& appr = approaches.first();
       assignApproachIds(appr);
+      assignApproachLegIds(appr.legRecords);
       insertApproachQuery->bindAndExecRecord(appr.record);
       insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
 
@@ -408,6 +425,14 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
   }
   else if(curRowCode == rc::STAR || curRowCode == rc::SID)
   {
+    // KNRM SID
+    // 5 RNAV_SID_OR_SID_COMMON_ROUTE
+    // 6 RNAV_SID_ENROUTE_TRANSITION
+    // more 6
+    // 4 RNAV_SID_RUNWAY_TRANSITION
+    // 6 RNAV_SID_ENROUTE_TRANSITION
+    // more 6
+
     // STAR: First in file are transitions then multiple approaches
     // duplicate all transitions for each approach before writing
 
@@ -416,22 +441,96 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
 
     numProcedures += approaches.size() + transitions.size();
 
-    // Write all procedures
-    for(Procedure& appr : approaches)
+    if(approaches.isEmpty())
+      qWarning() << line.context << "No SID/STAR found. Invalid state.";
+    else
     {
-      assignApproachIds(appr);
-      insertApproachQuery->bindAndExecRecord(appr.record);
-      insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
-
-      // Assign a new set of ids and write a duplicate of all transitions for the current approach
-      for(Procedure& trans : transitions)
+      int numCommon = 0;
+      for(const Procedure& appr : approaches)
       {
-        assignTransitionIds(trans);
-        insertTransitionQuery->bindAndExecRecord(trans.record);
-        insertTransitionLegQuery->bindAndExecRecords(trans.legRecords);
+        if(appr.isCommonRoute)
+          numCommon++;
+      }
+
+      if(numCommon > 1)
+        qWarning() << line.context << "Found more than one common route for SID/STAR.";
+
+      Procedure sidCommon, starCommon;
+      if(curRowCode == rc::SID &&
+         approaches.last().isCommonRoute && !approaches.first().isCommonRoute)
+      {
+        // Example: EDDT SID
+        // 4 RNAV_SID_RUNWAY_TRANSITION
+        // more 4
+        // 5 RNAV_SID_OR_SID_COMMON_ROUTE
+
+        sidCommon = approaches.takeLast();
+
+        // Remove the IF of the common route
+        if(sidCommon.legRecords.first().value(":type") == "IF")
+          sidCommon.legRecords.removeFirst();
+      }
+
+      if(curRowCode == rc::STAR && !approaches.last().isCommonRoute)
+      {
+        // Example: KBOI STAR
+        // 4 RNAV_STAR_ENROUTE_TRANSITION
+        // more 4
+        // 5 RNAV_STAR_OR_STAR_COMMON_ROUTE
+        // 6 RNAV_STAR_RUNWAY_TRANSITION
+        // more 6
+
+        for(int i = 0; i < approaches.size(); i++)
+        {
+          if(approaches.at(i).isCommonRoute)
+          {
+            starCommon = approaches.takeAt(i);
+            break;
+          }
+        }
+      }
+
+      // Write all procedures - get a copy of the object since it is modified
+      for(Procedure appr : approaches)
+      {
+        assignApproachIds(appr);
+        // qDebug() << appr.legRecords;
+        insertApproachQuery->bindAndExecRecord(appr.record);
+
+        if(starCommon.isValid())
+        {
+          // Prefix the common route legs to the STAR
+          assignApproachLegIds(starCommon.legRecords);
+          insertApproachLegQuery->bindAndExecRecords(starCommon.legRecords);
+
+          // Remove the IF of the STAR which will be replaced by the TF of the common route
+          if(appr.legRecords.first().value(":type") == "IF")
+            appr.legRecords.removeFirst();
+        }
+
+        // Write SID or STAR legs
+        assignApproachLegIds(appr.legRecords);
+        insertApproachLegQuery->bindAndExecRecords(appr.legRecords);
+
+        if(sidCommon.isValid())
+        {
+          // Append the common route legs to the SID
+          assignApproachLegIds(sidCommon.legRecords);
+          insertApproachLegQuery->bindAndExecRecords(sidCommon.legRecords);
+        }
+
+        // Assign a new set of ids and write a duplicate of all transitions for the current approach
+        for(Procedure& trans : transitions)
+        {
+          assignTransitionIds(trans);
+          // qDebug() << trans.legRecords;
+          insertTransitionQuery->bindAndExecRecord(trans.record);
+          insertTransitionLegQuery->bindAndExecRecords(trans.legRecords);
+        }
       }
     }
   }
+
   reset();
 }
 
@@ -450,11 +549,19 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   if(curRowCode == rc::APPROACH)
     rec.setValue(":arinc_name", apprIdent);
 
+  bool commonRoute = false;
+
   // Extract runway name "B" suffixes, "ALL" and CTL are ignored
   if(curRowCode == rc::SID || curRowCode == rc::STAR)
   {
     rwy = sidStarRunwayNameAndSuffix(line);
     rec.setValue(":arinc_name", line.transIdent);
+
+    if(curRowCode == rc::SID)
+      commonRoute = atools::contains(static_cast<rt::SidRouteType>(curRouteType), rt::SID_COMMON);
+
+    if(curRowCode == rc::STAR)
+      commonRoute = atools::contains(static_cast<rt::StarRouteType>(curRouteType), rt::STAR_COMMON);
   }
   else
     rwy = apprRunwayNameAndSuffix(line, suffix);
@@ -506,7 +613,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
   rec.setValue(":fix_region", navInfo.region);
 
-  approaches.append(Procedure(curRowCode, rec));
+  approaches.append(Procedure(curRowCode, rec, commonRoute, line.sidStarAppIdent.trimmed()));
 
   writeApproachLeg(line);
 
@@ -559,7 +666,7 @@ void ProcedureWriter::writeTransition(const ProcedureInput& line)
   rec.setValue(":fix_ident", line.transIdent.trimmed());
   rec.setValue(":fix_region", navInfo.region);
 
-  transitions.append(Procedure(curRowCode, rec));
+  transitions.append(Procedure(curRowCode, rec, false /* common route */, line.sidStarAppIdent.trimmed()));
 
   writeTransitionLeg(line);
 
