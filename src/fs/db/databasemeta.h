@@ -119,8 +119,9 @@ public:
    * 6
    * 7 Fixes for procedure legs
    * 8 airport.is_3d and airport.region added
+   * 9 approach_fix_type and runway end altitude added. Fixes for common route in SID/STAR and runway heading.
    */
-  static const int DB_VERSION_MINOR = 8;
+  static const int DB_VERSION_MINOR = 9;
 
   void init();
 

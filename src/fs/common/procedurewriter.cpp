@@ -523,13 +523,19 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
 
   QString waypointDescr = line.descCode;
 
-  if(waypointDescr.size() > 3 && waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
+  if(waypointDescr.size() > 3)
   {
-    NavIdInfo fafInfo = navaidTypeFix(line);
-    // FAF - use this one to set the approach name
-    approaches.last().record.setValue(":fix_type", fafInfo.type);
-    approaches.last().record.setValue(":fix_ident", line.fixIdent);
-    approaches.last().record.setValue(":fix_region", fafInfo.region);
+    if(waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
+    {
+      NavIdInfo fafInfo = navaidTypeFix(line);
+      // FAF - use this one to set the approach name
+      approaches.last().record.setValue(":fix_type", fafInfo.type);
+      approaches.last().record.setValue(":fix_ident", line.fixIdent);
+      approaches.last().record.setValue(":fix_region", fafInfo.region);
+    }
+
+    if(waypointDescr.at(3) != " " && curRowCode == rc::APPROACH)
+      rec.setValue(":approach_fix_type", waypointDescr.at(3));
   }
 
   if(!writingMissedApproach)

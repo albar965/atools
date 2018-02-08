@@ -312,6 +312,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", primaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", heading);
+    runwayEndWriteQuery->bindValue(":altitude", primaryRec.valueInt("landing_threshold_elevation"));
     runwayEndWriteQuery->bindValue(":lonx", primaryPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", primaryPos.getLatY());
     runwayEndWriteQuery->exec();
@@ -334,6 +335,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", secondaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", opposedHeading);
+    runwayEndWriteQuery->bindValue(":altitude", secondaryRec.valueInt("landing_threshold_elevation"));
     runwayEndWriteQuery->bindValue(":lonx", secondaryPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", secondaryPos.getLatY());
     runwayEndWriteQuery->exec();
