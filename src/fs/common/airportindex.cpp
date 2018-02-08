@@ -124,6 +124,29 @@ void AirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwa
   icaoRunwayNameToEndId.insert(IndexName2(airportIcao, runwayName), runwayEndId);
 }
 
+void AirportIndex::addAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent,
+                                 int ilsId)
+{
+  airportIlsIdMap.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), ilsId);
+}
+
+int AirportIndex::getAirportIlsId(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent)
+{
+  return airportIlsIdMap.value(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), -1);
+}
+
+void AirportIndex::addSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
+                                        const QString& ilsIdent)
+{
+  skippedIlsSet.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
+}
+
+bool AirportIndex::hasSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
+                                        const QString& ilsIdent)
+{
+  return skippedIlsSet.contains(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
+}
+
 } // namespace common
 } // namespace fs
 } // namespace atools

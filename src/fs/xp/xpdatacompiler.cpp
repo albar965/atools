@@ -249,8 +249,7 @@ bool XpDataCompiler::compileAirspaces()
 
 bool XpDataCompiler::compileLocalizers()
 {
-
-  QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "Global Airports",
+  QString path = buildPathNoCase({options.getBasepath(), "Custom Scenery", "Global Airports",
                                   "Earth nav data", "earth_nav.dat"});
 
   if(QFileInfo::exists(path))

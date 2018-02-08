@@ -199,36 +199,31 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
   progress->incNumMarker();
 }
 
-void XpNavWriter::finishIls()
-{
-  if(writingIls)
-  {
-    // if(context.flags & READ_LOCALIZERS)
-    // Duplicates are delete later in SQL script
-
-    insertIlsQuery->exec();
-    insertIlsQuery->clearBoundValues();
-    writingIls = false;
-    progress->incNumIls();
-  }
-}
-
-void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriterContext& context)
+void XpNavWriter::writeIls(const QStringList& line, int curFileId, const XpWriterContext& context)
 {
   Q_UNUSED(curFileId);
 
-  if(writingIls)
-    throw atools::Exception("Recursive ILS write");
-  QString airportIdent = at(line, AIRPORT);
-  QString runwayName = at(line, RW);
+  const QString& airportIdent = at(line, AIRPORT);
+  const QString& airportRegion = at(line, REGION);
+  const QString& ilsIdent = at(line, IDENT);
 
+  if(airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent) != -1)
+  {
+    // Remember what was skipped in this file so DME and GS update functions can skip too
+    airportIndex->addSkippedAirportIls(airportIdent, airportRegion, ilsIdent);
+    return;
+  }
+
+  airportIndex->addAirportIls(airportIdent, airportRegion, ilsIdent, ++curIlsId);
+
+  const QString& runwayName = at(line, RW);
   atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
-  insertIlsQuery->bindValue(":ils_id", ++curIlsId);
+  insertIlsQuery->bindValue(":ils_id", curIlsId);
   insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt() * 10);
   insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
   insertIlsQuery->bindValue(":loc_heading", at(line, HDG).toFloat());
-  insertIlsQuery->bindValue(":ident", at(line, IDENT));
+  insertIlsQuery->bindValue(":ident", ilsIdent);
   insertIlsQuery->bindValue(":loc_airport_ident", airportIdent);
   insertIlsQuery->bindValue(":region", at(line, REGION));
   insertIlsQuery->bindValue(":loc_runway_name", runwayName);
@@ -256,26 +251,55 @@ void XpNavWriter::bindIls(const QStringList& line, int curFileId, const XpWriter
   insertIlsQuery->bindValue(":end_mid_laty", pmid.getLatY());
   insertIlsQuery->bindValue(":end2_lonx", p2.getLonX());
   insertIlsQuery->bindValue(":end2_laty", p2.getLatY());
-  writingIls = true;
+
+  insertIlsQuery->exec();
+  insertIlsQuery->clearBoundValues();
+  progress->incNumIls();
 }
 
-void XpNavWriter::bindIlsGlideslope(const QStringList& line)
+void XpNavWriter::updateIlsGlideslope(const QStringList& line)
 {
-  insertIlsQuery->bindValue(":gs_range", at(line, RANGE).toInt());
+  const QString& airportIdent = at(line, AIRPORT);
+  const QString& airportRegion = at(line, REGION);
+  const QString& ilsIdent = at(line, IDENT);
+
+  if(airportIndex->hasSkippedAirportIls(airportIdent, airportRegion, ilsIdent))
+    // Already skipped in this file
+    return;
+
+  int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
+
   float pitchHdg = at(line, HDG).toFloat();
   float pitch = std::floor(pitchHdg / 1000.f) / 100.f;
-  insertIlsQuery->bindValue(":gs_pitch", pitch);
-  insertIlsQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
-  insertIlsQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
-  insertIlsQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
+  updateIlsGsQuery->bindValue(":id", ilsId);
+  updateIlsGsQuery->bindValue(":gs_range", at(line, RANGE).toInt());
+  updateIlsGsQuery->bindValue(":gs_pitch", pitch);
+  updateIlsGsQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
+  updateIlsGsQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
+  updateIlsGsQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
+  updateIlsGsQuery->exec();
+  updateIlsGsQuery->clearBoundValues();
 }
 
-void XpNavWriter::bindIlsDme(const QStringList& line)
+void XpNavWriter::updateIlsDme(const QStringList& line)
 {
-  insertIlsQuery->bindValue(":dme_range", at(line, RANGE).toInt());
-  insertIlsQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
-  insertIlsQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
-  insertIlsQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
+  const QString& airportIdent = at(line, AIRPORT);
+  const QString& airportRegion = at(line, REGION);
+  const QString& ilsIdent = at(line, IDENT);
+
+  if(airportIndex->hasSkippedAirportIls(airportIdent, airportRegion, ilsIdent))
+    // Already skipped in this file
+    return;
+
+  int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
+
+  updateIlsDmeQuery->bindValue(":id", ilsId);
+  updateIlsDmeQuery->bindValue(":dme_range", at(line, RANGE).toInt());
+  updateIlsDmeQuery->bindValue(":dme_altitude", at(line, ALT).toInt());
+  updateIlsDmeQuery->bindValue(":dme_lonx", at(line, LONX).toFloat());
+  updateIlsDmeQuery->bindValue(":dme_laty", at(line, LATY).toFloat());
+  updateIlsDmeQuery->exec();
+  updateIlsDmeQuery->clearBoundValues();
 }
 
 void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
@@ -284,6 +308,8 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 
   // lat lon
   // ("28.000708333", "-83.423330556", "KNOST", "ENRT", "K7")
+  // if(at(line, IDENT) == "OEV")
+  // qDebug() << "OEV";
 
   NavRowCode rowCode = static_cast<NavRowCode>(at(line, ROWCODE).toInt());
 
@@ -294,28 +320,25 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
   {
     // 2 NDB (Non-Directional Beacon) Includes NDB component of Locator Outer Markers (LOM)
     case NDB:
-      finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::NDB))
         writeNdb(line, context.curFileId, context);
       break;
 
     // 3 VOR (including VOR-DME and VORTACs) Includes VORs, VOR-DMEs, TACANs and VORTACs
     case VOR:
-      finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::VOR))
         writeVor(line, context.curFileId, false);
       break;
 
     case LOC: // 4 Localizer component of an ILS (Instrument Landing System)
     case LOC_ONLY: // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
-      finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
-        bindIls(line, context.curFileId, context);
+        writeIls(line, context.curFileId, context);
       break;
 
     // 6 Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel
     case GS:
-      bindIlsGlideslope(line);
+      updateIlsGlideslope(line);
       break;
 
     // 7 Outer markers (OM) for an ILS Includes outer maker component of LOMs
@@ -324,7 +347,6 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case MM:
     // 9 Inner markers (IM) for an ILS
     case IM:
-      finishIls();
       if(options.isIncludedNavDbObject(atools::fs::type::MARKER))
         writeMarker(line, context.curFileId, rowCode);
       break;
@@ -334,7 +356,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
         if(line.last() == "DME-ILS")
-          bindIlsDme(line);
+          updateIlsDme(line);
       }
       break;
 
@@ -343,10 +365,9 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
         if(line.last() == "DME-ILS")
-          bindIlsDme(line);
+          updateIlsDme(line);
         else
         {
-          finishIls();
           writeVor(line, true, context.curFileId);
         }
       }
@@ -355,8 +376,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case atools::fs::xp::SBAS_GBAS_FINAL:
     case atools::fs::xp::GBAS:
     case atools::fs::xp::SBAS_GBAS_TRESHOLD:
-      finishIls();
-
+      break;
       // 14 Final approach path alignment point of an SBAS or GBAS approach path Will not appear in X-Plane’s charts
       // 15 GBAS differential ground station of a GLS Will not appear in X-Plane’s charts
       // 16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach Will not appear in X-Plane’s charts
@@ -366,13 +386,11 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 void XpNavWriter::finish(const XpWriterContext& context)
 {
   Q_UNUSED(context);
-
-  finishIls();
 }
 
 void XpNavWriter::reset()
 {
-
+  airportIndex->clearSkippedIls();
 }
 
 void XpNavWriter::initQueries()
@@ -392,6 +410,14 @@ void XpNavWriter::initQueries()
 
   insertIlsQuery = new SqlQuery(db);
   insertIlsQuery->prepare(util.buildInsertStatement("ils"));
+
+  updateIlsDmeQuery = new SqlQuery(db);
+  updateIlsDmeQuery->prepare("update ils set dme_range = :dme_range, dme_altitude = :dme_altitude, "
+                             "dme_lonx = :dme_lonx, dme_laty = :dme_laty where ils_id = :id");
+
+  updateIlsGsQuery = new SqlQuery(db);
+  updateIlsGsQuery->prepare("update ils set gs_range = :gs_range, gs_pitch = :gs_pitch, gs_altitude = :gs_altitude, "
+                            "gs_lonx = :gs_lonx, gs_laty = :gs_laty where ils_id = :id");
 }
 
 void XpNavWriter::deInitQueries()
@@ -407,6 +433,12 @@ void XpNavWriter::deInitQueries()
 
   delete insertIlsQuery;
   insertIlsQuery = nullptr;
+
+  delete updateIlsDmeQuery;
+  updateIlsDmeQuery = nullptr;
+
+  delete updateIlsGsQuery;
+  updateIlsGsQuery = nullptr;
 }
 
 } // namespace xp

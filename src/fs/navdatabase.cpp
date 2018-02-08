@@ -593,6 +593,13 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
       return true;
   }
 
+  if(options->isIncludedNavDbObject(atools::fs::type::ILS))
+  {
+    // ILS corrections - "X-PLane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat"
+    if((aborted = xpDataCompiler->compileLocalizers()))
+      return true;
+  }
+
   if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT))
   {
     // In resources or Custom Data - mandatory
