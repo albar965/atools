@@ -1,3 +1,14 @@
+Version 2.8.6
+
+* Custom Scenery/Global Airports/Earth nav data/earth_nav.dat is now read to get fixed ILS for X-Plane. #209
+* Fixed reading of ILS for non consecutive entries in X-Plane dat file. #209
+* Corrected wrong runway heading from DFD compilation. #214
+* SID and STAR common routes are now merged correctly into procedures for DFD and X-Plane compiler. #193
+* Airport idents from DFD compilation are now all converted to original three-letter code if available. #203
+* Added new columns runway_end.altitude, approach_leg.approach_fix_type and transition_leg.approach_fix_type
+  for future use.
+* Updated database minor version to 9.
+
 Version 2.8.5
 
 * Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
