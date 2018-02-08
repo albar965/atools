@@ -247,10 +247,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     // Calculate center point
     Pos centerPos = primaryPos.interpolate(secondaryPos, 0.5f);
 
-    // Calcuate true heading from magnetic which is needed for painting
-    float magvar = magDecReader->getMagVar(centerPos);
-    float heading = atools::geo::normalizeCourse(primaryRec.valueFloat("runway_magnetic_bearing") + magvar);
-    float opposedHeading = atools::geo::normalizeCourse(secondaryRec.valueFloat("runway_magnetic_bearing") + magvar);
+    float heading = primaryRec.valueFloat("runway_true_bearing");
+    float opposedHeading = secondaryRec.valueFloat("runway_true_bearing");
 
     // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
     // << secondaryEndId << s.valueStr("runway_identifier");
