@@ -50,7 +50,7 @@ const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
 const int PROGRESS_NUM_ANALYZE_STEPS = 1;
 const int PROGRESS_NUM_VACCUM_STEPS = 1;
 const int PROGRESS_NUM_DROP_INDEX_STEPS = 2;
-const int PROGRESS_DFD_EXTRA_STEPS = 12;
+const int PROGRESS_DFD_EXTRA_STEPS = 13;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -553,6 +553,8 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
 
   if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
     dfdCompiler->writeProcedures();
+
+  dfdCompiler->updateTreeLetterAirportCodes();
 
   db->commit();
 

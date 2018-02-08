@@ -1235,6 +1235,57 @@ void DfdCompiler::updateIlsGeometry()
   db.commit();
 }
 
+void DfdCompiler::updateTreeLetterAirportCodes()
+{
+  progress->reportOther("Updating airport idents");
+
+  SqlRecord rec = db.record("src.tbl_airports");
+  if(!rec.contains("airport_identifier_3letter"))
+  {
+    qWarning() << "tbl_airports.airport_identifier_3letter not found - skipping";
+    return;
+  }
+
+  QHash<QString, QString> codeMap;
+  SqlQuery codeQuery("select airport_identifier, airport_identifier_3letter "
+                     "from src.tbl_airports where airport_identifier_3letter is not null", db);
+  codeQuery.exec();
+  while(codeQuery.next())
+    codeMap.insert(codeQuery.valueStr("airport_identifier"), codeQuery.valueStr("airport_identifier_3letter"));
+  codeQuery.finish();
+
+  updateTreeLetterAirportCodes(codeMap, "airport", "ident");
+  updateTreeLetterAirportCodes(codeMap, "airport_file", "ident");
+  updateTreeLetterAirportCodes(codeMap, "approach", "airport_ident");
+
+  // Not used in DFD
+  // updateTreeLetterAirportCodes(codeMap, "approach", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "approach_leg", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition", "dme_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition_leg", "fix_airport_ident");
+
+  updateTreeLetterAirportCodes(codeMap, "ils", "loc_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "airway_point", "next_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "airway_point", "previous_airport_ident");
+}
+
+void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString> codeMap, const QString& table,
+                                               const QString& column)
+{
+  qInfo() << "Updating three-letter codes in" << table << column;
+  SqlQuery update(db);
+  update.prepare("update " + table + " set " + column + " = :code3 where " + column + " = :code4");
+
+  QList<QString> codes4 = codeMap.keys();
+  for(const QString& code4 :codes4)
+  {
+    update.bindValue(":code4", code4);
+    update.bindValue(":code3", codeMap.value(code4));
+    update.exec();
+  }
+}
+
 void DfdCompiler::initQueries()
 {
   deInitQueries();

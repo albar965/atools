@@ -122,6 +122,9 @@ public:
   void initQueries();
   void deInitQueries();
 
+  /* Convert all airport ident columns to the three letter codes since DFD has only four-letters */
+  void updateTreeLetterAirportCodes();
+
 private:
   /* Write all collected runways for an airport */
   void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
@@ -156,6 +159,9 @@ private:
 
   /* Get aispace altitude restriction which can start with FL and is converted into feet in this case */
   int airspaceAlt(const QString& altStr);
+
+  /* Update airport ident with three letter code for given table */
+  void updateTreeLetterAirportCodes(const QHash<QString, QString> codeMap, const QString& table, const QString& column);
 
   /* Airspace segment containing information */
   struct AirspaceSeg
