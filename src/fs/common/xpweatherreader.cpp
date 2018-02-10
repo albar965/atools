@@ -90,7 +90,7 @@ atools::fs::sc::MetarResult XpWeatherReader::getXplaneMetar(const QString& stati
 
 QString XpWeatherReader::getMetar(const QString& ident)
 {
-  return metars.value(ident);
+  return metars.value(ident).metar;
 }
 
 // 2017/07/30 18:45
@@ -116,6 +116,8 @@ void XpWeatherReader::read()
 
     int lineNum = 1;
     QString line;
+    QDateTime lastTimestamp;
+
     while(!stream.atEnd())
     {
       line = stream.readLine().trimmed();
@@ -126,13 +128,29 @@ void XpWeatherReader::read()
       if(line.size() >= 4)
       {
         if(DATE_REGEXP.match(line).hasMatch())
-          // Ignore date rows
+        {
+          // 2017/10/29 11:45
+          lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
           continue;
+        }
 
         QString ident = line.section(' ', 0, 0);
         if(IDENT_REGEXP.match(ident).hasMatch())
+        {
+          if(metars.contains(ident))
+          {
+            MetarData md = metars.value(ident);
+            if(md.timestamp > lastTimestamp)
+              // Ignore. Already loaded is newer.
+              continue;
+
+            // if(md.time == lastDate && md.metar != line)
+            // qWarning() << "Duplicate METAR in file" << file.fileName() << md.metar << line;
+          }
+
           // Starts with an airport ident
-          metars.insert(ident, line);
+          metars.insert(ident, {ident, line, lastTimestamp});
+        }
         else
           qWarning() << "Metar does not match in file" << file.fileName() << "line num" << lineNum << "line" << line;
       }

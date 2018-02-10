@@ -1013,6 +1013,7 @@ bool MetarParser::scanSkyCondition()
      || !strncmp(m, "SKC", i = 3) // sky clear
      || !strncmp(m, "NCD", i = 3) // nil cloud detected
      || !strncmp(m, "NSC", i = 3) // no significant clouds
+     || !strncmp(m, "CAVOK 9999", i = 10) // ceiling and visibility OK 9999 sometimes given too
      || !strncmp(m, "CAVOK", i = 5)) // ceiling and visibility OK (implies 9999)
   {
     m += i;

@@ -79,8 +79,14 @@ private:
   typedef std::pair<atools::geo::Pos, QString> XpCoordIdxEntryType;
   QVector<XpCoordIdxEntryType> xpAirportCoordinates;
 
+  struct MetarData
+  {
+    QString ident, metar;
+    QDateTime timestamp;
+  };
+
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
-  QHash<QString, QString> metars;
+  QHash<QString, MetarData> metars;
   QString weatherFile;
   QDateTime weatherFileTimestamp;
   QFileSystemWatcher *fsWatcher = nullptr;
