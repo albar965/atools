@@ -88,6 +88,9 @@ protected:
 protected:
   QString filename;
 
+  bool toBool(const QString& str);
+  int toInt(const QString& str);
+
 private:
   int currentLineNum;
   QString currentLine, currentSection, currentSectionSuffix;

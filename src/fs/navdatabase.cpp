@@ -22,6 +22,7 @@
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
 #include "fs/scenery/scenerycfg.h"
+#include "fs/scenery/addoncfg.h"
 #include "fs/db/airwayresolver.h"
 #include "fs/db/routeedgewriter.h"
 #include "fs/progresshandler.h"
@@ -57,6 +58,8 @@ using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::fs::scenery::SceneryCfg;
+using atools::fs::scenery::AddOnCfg;
+using atools::fs::scenery::AddOnCfgEntry;
 using atools::fs::scenery::SceneryArea;
 using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
@@ -891,65 +894,74 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     for(const SceneryArea& area : cfg.getAreas())
       areaNum = std::max(areaNum, area.getAreaNumber());
 
+    // Set layer later to these
     QVector<AddOnComponent> noLayerComponents;
     QStringList noLayerPaths;
 
+    // Use this to weed out duplicates to the add-on.xml files
+    QSet<QString> addonFilePaths;
+
+    // Got through the two or more discovery paths ===============
     for(const QString& addonPath : addonPaths)
     {
       QDir addonDir(addonPath);
       if(addonDir.exists())
       {
+        QFileInfoList addonEntries(addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot));
+
         // Read addon directories as they appear in the file system
-        for(QFileInfo addonEntry : addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
-        {
-          QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
-          if(addonFile.exists() && addonFile.isFile())
-          {
-            qInfo() << "Found addon file" << addonFile.filePath();
-
-            AddOnPackage package(addonFile.filePath());
-            qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
-
-            for(const AddOnComponent& component : package.getComponents())
-            {
-              qInfo() << "Component" << component.getLayer()
-                      << "Name" << component.getName()
-                      << "Description" << component.getPath();
-
-              QDir compPath(component.getPath());
-
-              if(compPath.isRelative())
-                // Convert relative path to absolute based on add-on file directory
-                compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
-
-              if(compPath.dirName().toLower() == "scenery")
-                // Remove if it points to scenery directory
-                compPath.cdUp();
-
-              compPath.makeAbsolute();
-
-              areaNum++;
-
-              if(!compPath.exists())
-                qWarning() << "Path does not exist" << compPath;
-
-              if(component.getLayer() == -1)
-              {
-                // Add entries without layers later at the end of the list
-                // Layer is only used if add-on does not provide a layer
-                noLayerComponents.append(component);
-                noLayerPaths.append(compPath.path());
-              }
-              else
-                cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
-            }
-          }
-          else
-            qWarning() << Q_FUNC_INFO << addonFile.filePath() << "does not exist or is not a directory";
-        }
+        for(QFileInfo addonEntry : addonEntries)
+          readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
       }
       else
         qWarning() << Q_FUNC_INFO << addonDir << "does not exist";
+    }
+
+    // Go through all references in the add-on.cfg file in Roaming ===============
+    // Read add-ons.cfg file from roaming
+#if defined(Q_OS_WIN32)
+    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+    QString addonsCfgFile = QString(qgetenv("APPDATA"));
+#else
+    // Use $HOME/.config for testing
+    QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
+
+    addonsCfgFile +=
+      QDir::separator() + QString("Lockheed Martin") +
+      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+      QDir::separator() + "add-ons.cfg";
+
+    if(QFileInfo::exists(addonsCfgFile))
+    {
+      // AppData\Roaming\Lockheed Martin\Prepar3D v4\add-ons.cfg
+      AddOnCfg addonConfigRoaming("utf-8");
+      addonConfigRoaming.read(addonsCfgFile);
+      for(const AddOnCfgEntry& entry:addonConfigRoaming.getEntries())
+        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
+    }
+
+    // Read the add-on.cfg from ProgramData =========================
+    // "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\add-ons.cfg"
+#if defined(Q_OS_WIN32)
+    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+    QString addonsAllUsersCfgFile = QString(qgetenv("PROGRAMDATA"));
+#else
+    // Use /tmp for testing
+    QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
+#endif
+
+    addonsAllUsersCfgFile +=
+      QDir::separator() + QString("Lockheed Martin") +
+      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+      QDir::separator() + "add-ons.cfg";
+
+    if(QFileInfo::exists(addonsAllUsersCfgFile))
+    {
+      AddOnCfg addonConfigProgramData("utf-8");
+      addonConfigProgramData.read(addonsAllUsersCfgFile);
+      for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
+        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
     }
 
     // Bring added add-on.xml in order with the rest sort by layer
@@ -980,6 +992,63 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
   // Sort again to get high priority layers to the end of the list
   cfg.sortAreas();
+}
+
+void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
+                                      QVector<AddOnComponent>& noLayerComponents,
+                                      QStringList& noLayerPaths, QSet<QString>& addonPaths, QFileInfo addonEntry)
+{
+  QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+  if(addonFile.exists() && addonFile.isFile())
+  {
+    if(addonPaths.contains(addonFile.absoluteFilePath()))
+    {
+      qInfo() << "Found duplicate addon file" << addonFile.filePath();
+      return;
+    }
+
+    qInfo() << "Found addon file" << addonFile.filePath();
+    addonPaths.insert(addonFile.absoluteFilePath());
+
+    AddOnPackage package(addonFile.filePath());
+    qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
+
+    for(const AddOnComponent& component : package.getComponents())
+    {
+      qInfo() << "Component" << component.getLayer()
+              << "Name" << component.getName()
+              << "Description" << component.getPath();
+
+      QDir compPath(component.getPath());
+
+      if(compPath.isRelative())
+        // Convert relative path to absolute based on add-on file directory
+        compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
+
+      if(compPath.dirName().toLower() == "scenery")
+        // Remove if it points to scenery directory
+        compPath.cdUp();
+
+      compPath.makeAbsolute();
+
+      areaNum++;
+
+      if(!compPath.exists())
+        qWarning() << "Path does not exist" << compPath;
+
+      if(component.getLayer() == -1)
+      {
+        // Add entries without layers later at the end of the list
+        // Layer is only used if add-on does not provide a layer
+        noLayerComponents.append(component);
+        noLayerPaths.append(compPath.path());
+      }
+      else
+        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
+    }
+  }
+  else
+    qWarning() << Q_FUNC_INFO << addonFile.filePath() << "does not exist or is not a directory";
 }
 
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,

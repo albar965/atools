@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_SCENERY_SCENERYCFG_H
-#define ATOOLS_SCENERY_SCENERYCFG_H
+#ifndef ATOOLS_SCENERY_ADDONCFG_H
+#define ATOOLS_SCENERY_ADDONCFG_H
 
 #include "fs/scenery/sceneryarea.h"
 #include "io/inireader.h"
@@ -28,33 +28,35 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
+struct AddOnCfgEntry
+{
+  int packageNum = 0;
+  QString path, title;
+  bool active = false, required = false;
+};
+
 /*
  * Reads flight simulator scenery.cfg entries. Call atools::io::IniReader::read to load a scenery.cfg file.
  * All section and key names are passed in lower case.
  */
-class SceneryCfg :
+class AddOnCfg :
   public atools::io::IniReader
 {
-  Q_DECLARE_TR_FUNCTIONS(SceneryCfg)
+  Q_DECLARE_TR_FUNCTIONS(AddonCfg)
 
 public:
-  SceneryCfg(const QString& textCodec);
-  virtual ~SceneryCfg();
+  AddOnCfg(const QString& textCodec);
+  virtual ~AddOnCfg();
 
-  const QList<atools::fs::scenery::SceneryArea>& getAreas() const
+  const QList<atools::fs::scenery::AddOnCfgEntry>& getEntries() const
   {
-    return areaEntries;
+    return entries;
   }
 
-  QList<atools::fs::scenery::SceneryArea>& getAreas()
+  QList<atools::fs::scenery::AddOnCfgEntry>& getEntries()
   {
-    return areaEntries;
+    return entries;
   }
-
-  void appendArea(const atools::fs::scenery::SceneryArea& area);
-
-  /* Sort areas by layer */
-  void sortAreas();
 
   /* Put a scenery area at the end of the list */
   void setAreaHighPriority(int index, bool value = true);
@@ -67,11 +69,8 @@ private:
   virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) override;
 
-  atools::fs::scenery::SceneryArea currentArea;
-  QString title, description;
-  bool cleanOnExit;
-
-  QList<atools::fs::scenery::SceneryArea> areaEntries;
+  atools::fs::scenery::AddOnCfgEntry currentEntry;
+  QList<atools::fs::scenery::AddOnCfgEntry> entries;
 
 };
 
@@ -79,4 +78,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_SCENERY_SCENERYCFG_H
+#endif // ATOOLS_SCENERY_ADDONCFG_H

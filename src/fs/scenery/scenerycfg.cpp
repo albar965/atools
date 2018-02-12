@@ -37,6 +37,11 @@ SceneryCfg::~SceneryCfg()
 {
 }
 
+void SceneryCfg::appendArea(const SceneryArea& area)
+{
+  areaEntries.append(area);
+}
+
 void SceneryCfg::onStartDocument(const QString& filename)
 {
   Q_UNUSED(filename);
@@ -66,7 +71,7 @@ void SceneryCfg::sortAreas()
 
 void SceneryCfg::setAreaHighPriority(int index, bool value)
 {
-  areaEntries[index].setHighPriority(true);
+  areaEntries[index].setHighPriority(value);
 }
 
 void SceneryCfg::onStartSection(const QString& section, const QString& sectionSuffix)
@@ -91,7 +96,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
     currentArea.fixTitle();
     if(!currentArea.title.isEmpty() && currentArea.areaNumber != -1 &&
        (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
-      areaEntries.append(currentArea);
+      appendArea(currentArea);
     else
       qWarning() << "Found empty area: number" << currentArea.areaNumber << "in section" << section;
 
@@ -143,29 +148,6 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
   }
   else
     qWarning() << "Unexpected section" << section << "file" << filename;
-}
-
-bool SceneryCfg::toBool(const QString& str)
-{
-  QString tmp = str.toLower().trimmed();
-
-  if(tmp == "true" || tmp == "t" || tmp == "y" || tmp == "yes" || tmp == "1")
-    return true;
-  else if(tmp == "false" || tmp == "f" || tmp == "n" || tmp == "no" || tmp == "0")
-    return false;
-
-  qWarning() << "Boolean value not valid in scenery area" << currentArea.title;
-  return false;
-}
-
-int SceneryCfg::toInt(const QString& str)
-{
-  int retval = 0;
-  bool ok = false;
-  retval = str.toInt(&ok);
-  if(!ok)
-    qWarning() << "Int value not valid in scenery area" << currentArea.title;
-  return retval;
 }
 
 } // namespace scenery

@@ -24,6 +24,7 @@
 
 #include <QDebug>
 #include <QCoreApplication>
+#include <QFileInfo>
 
 namespace atools {
 namespace sql {
@@ -36,6 +37,7 @@ class NavDatabaseOptions;
 
 namespace scenery {
 class SceneryCfg;
+class AddOnComponent;
 }
 
 namespace db {
@@ -141,6 +143,10 @@ private:
 
   void createPreparationScript();
   void dropAllIndexes();
+
+  void readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
+                           QVector<scenery::AddOnComponent>& noLayerComponents,
+                           QStringList& noLayerPaths, QSet<QString>& addonPaths, QFileInfo addonEntry);
 
   /* For metadata */
 

@@ -63,8 +63,15 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
 
+      QFileInfoList sceneryDirs;
+      sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs));
+
+      if(sceneryDirs.isEmpty() && sceneryAreaDir.dirName().toLower() == "scenery")
+        // Special case where entry points to scenery directory which is allowed by P3D
+        sceneryDirs.append(QFileInfo(sceneryAreaDir.path()));
+
       // get all scenery directories - normally only one
-      for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
+      for(QFileInfo scenery : sceneryDirs)
       {
         QDir sceneryAreaDirObj(scenery.filePath());
         // Check if directory is included
