@@ -55,7 +55,7 @@ void AddOnCfg::onStartSection(const QString& section, const QString& sectionSuff
     currentEntry.packageNum = sectionSuffix.toInt(&ok);
     if(!ok)
     {
-      qWarning() << "Area number" << sectionSuffix << "not valid in section" << section;
+      qWarning() << "Entry number" << sectionSuffix << "not valid in section" << section;
       currentEntry.packageNum = -1;
     }
   }
@@ -84,7 +84,7 @@ void AddOnCfg::onKeyValue(const QString& section, const QString& sectionSuffix, 
 #ifdef Q_OS_UNIX
       currentEntry.path = QString(value).replace("\\", "/");
 #else
-      currentArea.path = value;
+      currentEntry.path = value;
 #endif
     }
     else if(key == "active")
