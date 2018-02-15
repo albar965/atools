@@ -140,6 +140,7 @@ create table airport_medium
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
@@ -172,6 +173,7 @@ create table airport_large
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
