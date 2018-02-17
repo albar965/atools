@@ -141,7 +141,7 @@ void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
   }
 }
 
-int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery&)> func)
+int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery &)> func)
 {
   int copied = 0;
   SqlRecord fromRec;
@@ -191,6 +191,12 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
 void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
                                   const QStringList& insertcolumns, UpdateColFuncType func)
 {
+  updateColumnInTable(table, idColum, queryColumns, insertcolumns, QString(), func);
+}
+
+void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
+                                  const QStringList& insertcolumns, const QString& whereClause, UpdateColFuncType func)
+{
   SqlUtil util(db);
 
   QStringList queryCols(queryColumns);
@@ -202,7 +208,12 @@ void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, 
     insertSet.append(ic + " = :" + ic);
 
   SqlQuery insert(db);
-  insert.prepare("update " + table + " set " + insertSet.join(", ") + " where " + idColum + " = :" + idColum);
+  QString queryStr = "update " + table + " set " + insertSet.join(", ") + " where " + idColum + " = :" + idColum;
+
+  if(!whereClause.isEmpty())
+    queryStr += " and (" + whereClause + ")";
+
+  insert.prepare(queryStr);
 
   select.exec();
 

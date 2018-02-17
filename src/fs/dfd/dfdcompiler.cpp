@@ -1174,6 +1174,7 @@ void DfdCompiler::updateMagvar()
   SqlUtil util(db);
   util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
   util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
+  util.updateColumnInTable("vor", "vor_id", {"lonx", "laty"}, {"mag_var"}, "mag_var is null", func);
   db.commit();
 }
 
