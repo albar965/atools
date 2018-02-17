@@ -1,3 +1,7 @@
+Version 2.8.7
+
+*  Now updating magnetic declination for VOR with calculated value where missing.
+
 Version 2.8.6
 
 * Custom Scenery/Global Airports/Earth nav data/earth_nav.dat is now read to get fixed ILS for X-Plane. #209
