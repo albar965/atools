@@ -352,6 +352,21 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
     out << f.pattern() << ", ";
   out << "]";
 
+  out << ", Include high priority filter [";
+  for(const QRegExp& f : opts.highPriorityFiltersInc)
+    out << f.pattern() << ", ";
+  out << "]";
+
+  out << ", Exclude directory filter [";
+  for(const QRegExp& f : opts.dirExcludes)
+    out << f.pattern() << ", ";
+  out << "]";
+
+  out << ", Exclude addon directory filter [";
+  for(const QRegExp& f : opts.addonDirExcludes)
+    out << f.pattern() << ", ";
+  out << "]";
+
   out << ", Include type filter [";
   for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersInc)
     out << type::navDbObjectTypeToString(type) << ", ";
