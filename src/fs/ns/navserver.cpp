@@ -104,21 +104,25 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
     if(options & HIDE_HOST)
       qInfo(gui).noquote().nospace() << tr("Server is listening.");
     else if(options & NO_HTML)
-      qInfo(gui).noquote().nospace()
-        << tr("Server is listening on hostname%1 %2 (IP address%3 %4) port %5.").
-        arg(hostNameList.size() > 1 ? tr("s") : QString()).
-        arg(hostNameList.join(", ")).
-        arg(hostIpList.size() > 1 ? tr("es") : QString()).
-        arg(hostIpList.join(", ")).
-        arg(serverPort());
+    {
+      QString hostname = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
+                         tr("Server is listening on hostname %1 ");
+
+      QString ipaddr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
+
+      qInfo(gui).noquote().nospace() << QString(hostname + ipaddr + tr("port %3.")).
+        arg(hostNameList.join(", ")).arg(hostIpList.join(", ")).arg(serverPort());
+    }
     else
     {
+      QString hostname = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
+                         tr("Server is listening on hostname %1 ");
+
+      QString ipaddr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
+
       qInfo(gui).noquote().nospace()
-        << tr("Server is listening on hostname%1 %2 (IP address%3 %4) "
-              "port <span style=\"color: #ff0000; font-weight:bold\">%5</span>.").
-        arg(hostNameList.size() > 1 ? tr("s") : QString()).
+        << QString(hostname + ipaddr + tr("port <span style=\"color: #ff0000; font-weight:bold\">%3</span>.")).
         arg(BLUESPAN + hostNameList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
-        arg(hostIpList.size() > 1 ? tr("es") : QString()).
         arg(BLUESPAN + hostIpList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
         arg(serverPort());
     }
