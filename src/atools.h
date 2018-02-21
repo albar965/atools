@@ -61,6 +61,10 @@ QString buildPath(const QStringList& paths);
  * File has to be open for reading */
 QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
 
+/* Calculate the step size for an axis along a range for number of steps.
+ * Steps will stick to the 1, 2, and 5 range */
+float calculateSteps(float range, float numSteps);
+
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE mod(TYPE x, TYPE y)

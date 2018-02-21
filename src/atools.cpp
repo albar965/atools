@@ -255,4 +255,25 @@ QString elideTextShort(const QString& str, int maxLength)
   return str;
 }
 
+float calculateSteps(float range, float numSteps)
+{
+  float a = range;
+  float step = numSteps;
+  float mag = std::pow(10.f, std::floor(std::log10(a / step)));
+  float val = std::floor((a / step) / mag);
+
+  qDebug() << "val" << val;
+
+  if(val < 1.f)
+    val = 1.f;
+  else if(val < 2.f)
+    val = 2.f;
+  else if(val < 5.f)
+    val = 5.f;
+  else
+    val = 10.f;
+
+  return val * mag;
+}
+
 } // namespace atools

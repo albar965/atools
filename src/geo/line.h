@@ -131,6 +131,9 @@ public:
     pos2 = value;
   }
 
+  /* Needs pos 1 as the wester part and pos 2 as the eastern part */
+  bool crossesAntiMeridian() const;
+
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);
 

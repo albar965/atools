@@ -228,6 +228,16 @@ Pos Rect::getTopCenter() const
   return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, topLeft.getLatY());
 }
 
+Pos Rect::getLeftCenter() const
+{
+  return Pos(topLeft.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+}
+
+Pos Rect::getRightCenter() const
+{
+  return Pos(bottomRight.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+}
+
 bool Rect::isPoint(float epsilonDegree) const
 {
   return isValid() &&

@@ -34,7 +34,7 @@ class Rect
 public:
   /* Create an invalid rectangle */
   Rect();
-  Rect(const Rect& other);
+  Rect(const atools::geo::Rect& other);
   /* Create a single point rectangle */
   explicit Rect(const atools::geo::Pos& singlePos);
   explicit Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
@@ -45,11 +45,11 @@ public:
   /* Create rectangle that includes the given circle. Radius in meter. */
   Rect(const atools::geo::Pos& center, float radiusMeter);
 
-  Rect& operator=(const Rect& other);
+  atools::geo::Rect& operator=(const atools::geo::Rect& other);
 
-  bool operator==(const Rect& other) const;
+  bool operator==(const atools::geo::Rect& other) const;
 
-  bool operator!=(const Rect& other) const
+  bool operator!=(const atools::geo::Rect& other) const
   {
     return !(*this == other);
   }
@@ -62,7 +62,7 @@ public:
   /*
    * @return true if rectangle overlaps this rectangle
    */
-  bool overlaps(const Rect& other) const;
+  bool overlaps(const atools::geo::Rect& other) const;
 
   /* add margins to this rectangle */
   void inflate(float degreesLon, float degreesLat);
@@ -114,10 +114,10 @@ public:
   void extend(const atools::geo::Pos& pos);
   void extend(const atools::geo::Rect& rect);
 
-  Pos getCenter() const;
+  atools::geo::Pos getCenter() const;
 
   /* Returns two rectangles if this crosses the anti meridian otherwise *this. */
-  QList<Rect> splitAtAntiMeridian() const;
+  QList<atools::geo::Rect> splitAtAntiMeridian() const;
   bool crossesAntiMeridian() const;
 
   /*
@@ -133,13 +133,15 @@ public:
   bool isPoint(float epsilonDegree = 0.f) const;
 
   /* Convert this position from rad to degree and return reference */
-  Rect& toDeg();
+  atools::geo::Rect& toDeg();
 
   /* Convert this position from degree to rad and return reference */
-  Rect& toRad();
+  atools::geo::Rect& toRad();
 
-  Pos getBottomCenter() const;
-  Pos getTopCenter() const;
+  atools::geo::Pos getBottomCenter() const;
+  atools::geo::Pos getTopCenter() const;
+  atools::geo::Pos getLeftCenter() const;
+  atools::geo::Pos getRightCenter() const;
 
   void swap(Rect& other);
 
