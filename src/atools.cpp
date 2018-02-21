@@ -262,8 +262,6 @@ float calculateSteps(float range, float numSteps)
   float mag = std::pow(10.f, std::floor(std::log10(a / step)));
   float val = std::floor((a / step) / mag);
 
-  qDebug() << "val" << val;
-
   if(val < 1.f)
     val = 1.f;
   else if(val < 2.f)
