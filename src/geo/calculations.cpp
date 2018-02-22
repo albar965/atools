@@ -316,5 +316,29 @@ void boundingRect(Rect& rect, const QVector<atools::geo::Pos>& positions)
   rect = Rect(west, north, east, south);
 }
 
+QRect rectToSquare(const QRect& rect)
+{
+  QRect retval = rect.normalized();
+  if(retval.width() > retval.height())
+    retval.setRect(retval.x(), retval.y() - (retval.width() - retval.height()) / 2,
+                   retval.width(), retval.width());
+  else if(retval.width() < retval.height())
+    retval.setRect(retval.x() - (retval.height() - retval.width()) / 2, retval.y(),
+                   retval.height(), retval.height());
+  return retval;
+}
+
+QRectF rectToSquare(const QRectF& rect)
+{
+  QRectF retval = rect.normalized();
+  if(retval.width() > retval.height())
+    retval.setRect(retval.x(), retval.y() - (retval.width() - retval.height()) / 2.,
+                   retval.width(), retval.width());
+  else if(retval.width() < retval.height())
+    retval.setRect(retval.x() - (retval.height() - retval.width()) / 2., retval.y(),
+                   retval.height(), retval.height());
+  return retval;
+}
+
 } // namespace geo
 } // namespace atools

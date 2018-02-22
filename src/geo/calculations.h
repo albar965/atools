@@ -66,6 +66,10 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
 
+/* Converts rectangles to square rectangles so that width == height */
+QRect rectToSquare(const QRect& rect);
+QRectF rectToSquare(const QRectF& rect);
+
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)
 {
