@@ -161,6 +161,12 @@ public:
     return trackTrueDeg;
   }
 
+  /* Uses several parameters since on-ground is unreliable in the first X-Plane packets */
+  bool isFlying() const
+  {
+    return !isOnGround() && getGroundSpeedKts() > 20.f && getAltitudeAboveGroundFt() > 10.f;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectData;
