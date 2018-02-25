@@ -251,7 +251,8 @@ HEADERS += src/atools.h \
     src/fs/db/dbairportindex.h \
     src/fs/dfd/dfdcompiler.h \
     src/fs/common/procedurewriter.h \
-    src/fs/scenery/addoncfg.h
+    src/fs/scenery/addoncfg.h \
+    src/fs/userdata/userdatamanager.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -446,7 +447,8 @@ SOURCES += src/atools.cpp \
     src/fs/db/dbairportindex.cpp \
     src/fs/dfd/dfdcompiler.cpp \
     src/fs/common/procedurewriter.cpp \
-    src/fs/scenery/addoncfg.cpp
+    src/fs/scenery/addoncfg.cpp \
+    src/fs/userdata/userdatamanager.cpp
 
 
 unix {

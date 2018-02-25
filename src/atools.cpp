@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "atools.h"
+#include "exception.h"
 
 #include <QDebug>
 #include <QLocale>
@@ -23,6 +24,8 @@
 #include <QVector>
 #include <QDir>
 #include <QTextCodec>
+#include <QCoreApplication>
+#include <QDateTime>
 
 namespace atools {
 
@@ -272,6 +275,89 @@ float calculateSteps(float range, float numSteps)
     val = 10.f;
 
   return val * mag;
+}
+
+QString programFileInfo()
+{
+  return QObject::tr("Created by %1 Version %2 (revision %3) on %4").
+         arg(QCoreApplication::applicationName()).
+         arg(QCoreApplication::applicationVersion()).
+         arg(atools::gitRevision()).
+         arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+         replace("-", " ");
+}
+
+bool fileEndsWithEol(const QString& filepath)
+{
+  bool endsWithEol = false;
+  QFile tmp(filepath);
+  if(tmp.open(QFile::ReadOnly))
+  {
+    tmp.seek(tmp.size() - 1);
+    char lastChar = '\0';
+    tmp.read(&lastChar, 1);
+    tmp.close();
+
+    endsWithEol = lastChar == '\n' || lastChar == '\r';
+  }
+  else
+    throw atools::Exception(QObject::tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(tmp.errorString()));
+  return endsWithEol;
+}
+
+QStringList readCsvLine(const QString& line, QChar separator, QChar escape)
+{
+  QStringList retval;
+  readCsvLine(retval, line, separator, escape);
+  return retval;
+}
+
+void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape)
+{
+  values.clear();
+  QString curValue;
+  QChar lastChar = '\0', c;
+
+  // true if inside "
+  bool escaped = false;
+
+  for(int i = 0; i < line.size(); i++)
+  {
+    c = line.at(i);
+
+    if(c == escape)
+    {
+      // Found escape character "
+      if(escaped)
+        // End of escaped text
+        escaped = false;
+      else
+      {
+        if(lastChar == escape)
+          // Escape char itself doubled "" - add single escape " to value and keep escaped state
+          curValue.append(c);
+        escaped = true;
+      }
+      lastChar = c;
+
+      // Do not store value
+      continue;
+    }
+
+    if(c == separator && !escaped)
+    {
+      // Separator in unescaped text - start new value
+      values.append(curValue);
+      curValue.clear();
+      lastChar = c;
+      continue;
+    }
+
+    // Regular character
+    curValue.append(c);
+    lastChar = c;
+  }
+  values.append(curValue);
 }
 
 } // namespace atools

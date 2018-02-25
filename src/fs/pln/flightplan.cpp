@@ -841,7 +841,7 @@ void Flightplan::saveFsx(const QString& file, bool clean)
     writer.writeAttribute("version", "1,0");
     writer.writeTextElement("Descr", "AceXML Document");
 
-    properties.insert("_lnm", programInfo());
+    properties.insert("_lnm", atools::programFileInfo());
 
     if(!clean)
     {
@@ -1086,7 +1086,7 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
     // writer.writeAttribute("xsi:schemaLocation",
     // "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 
-    // writer.writeComment(programInfo());
+    // writer.writeComment(programFileInfo());
 
     // <metadata>
     // <link href="http://www.garmin.com">
@@ -1097,7 +1097,7 @@ void Flightplan::saveGpx(const QString& file, const geo::LineString& track, cons
     writer.writeStartElement("metadata");
     writer.writeStartElement("link");
     writer.writeAttribute("href", "https://albar965.github.io/littlenavmap.html");
-    writer.writeTextElement("text", programInfo());
+    writer.writeTextElement("text", atools::programFileInfo());
     writer.writeEndElement(); // link
     writer.writeEndElement(); // metadata
 
@@ -1579,7 +1579,7 @@ void Flightplan::saveGarminGns(const QString& file, bool userWaypointOption)
     writer.writeStartElement("flight-plan");
     writer.writeAttribute("xmlns", "http://www8.garmin.com/xmlschemas/FlightPlan/v1");
     // 2017-01-15T15:20:54Z
-    writer.writeTextElement("file-description", programInfo());
+    writer.writeTextElement("file-description", atools::programFileInfo());
     writer.writeTextElement("created", QDateTime::currentDateTimeUtc().toString(Qt::ISODate));
 
     // <xsd:simpleType name="Identifier_t">
@@ -2031,16 +2031,6 @@ RouteType Flightplan::stringToRouteTypeFs9(const QString& str)
       return HIGH_ALTITUDE;
   }
   return DIRECT;
-}
-
-QString Flightplan::programInfo() const
-{
-  return tr("Created by %1 Version %2 (revision %3) on %4").
-         arg(QApplication::applicationName()).
-         arg(QApplication::applicationVersion()).
-         arg(atools::gitRevision()).
-         arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
-         replace("-", " ");
 }
 
 QStringList Flightplan::probeFile(const QString& file)

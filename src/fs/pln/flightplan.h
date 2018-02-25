@@ -334,7 +334,6 @@ private:
   void readAppVersion(QXmlStreamReader& reader);
   void readWaypoint(QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
-  QString programInfo() const;
 
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries(int altitude);

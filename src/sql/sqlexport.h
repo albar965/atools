@@ -40,7 +40,7 @@ public:
   }
 
   /*
-   * Writes the fully result set from the given query to the output stream.
+   * Writes the full result set from the given query to the output stream.
    *
    * @param query A prepared and valid query to read values from
    * @param out QDebug, QTextStream or std::iostream object. The stream needs

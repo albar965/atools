@@ -34,6 +34,20 @@ QString gitRevision();
 QString replaceVar(QString str, const QString& name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
+/* Program information which can be added to file headers:
+ * Created by %1 Version %2 (revision %3) on %4*/
+QString programFileInfo();
+
+/* Return true if the file ends with an carriage return or line feed.
+ *  An Exception is thrown if the file cannot be opened */
+bool fileEndsWithEol(const QString& filepath);
+
+/* Read a CSV line considering escape characters and double escape characters. This allows linefeeds in fields.
+ * Example: value1,"value2 with , separator",value3,"value4 with "" escaped",value4
+ * */
+void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape);
+QStringList readCsvLine(const QString& line, QChar separator, QChar escape);
+
 template<typename TYPE>
 bool contains(const TYPE& name, const std::initializer_list<TYPE>& list)
 {
