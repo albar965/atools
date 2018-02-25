@@ -1222,11 +1222,7 @@ void Flightplan::saveFms(const QString& file, const QString& airacCycle, bool ve
     stream.setCodec("UTF-8");
 
     // OS
-     #if defined(Q_OS_MACOS)
-    stream << "A" << endl;
-     #else
     stream << "I" << endl;
-     #endif
 
     // File version
     if(version11Format)
@@ -1823,9 +1819,9 @@ void Flightplan::readAppVersion(QXmlStreamReader& reader)
   {
     QStringRef aName = reader.name();
     if(aName == "AppVersionMajor")
-      appVersionMajor = reader.readElementText().toInt();
+      appVersionMajor = reader.readElementText();
     else if(aName == "AppVersionBuild")
-      appVersionBuild = reader.readElementText().toInt();
+      appVersionBuild = reader.readElementText();
     else
       reader.skipCurrentElement();
   }
