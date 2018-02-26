@@ -43,6 +43,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
+using atools::sql::SqlRecord;
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static int VISIBLE_FROM_DEFAULT_NM = 250;
@@ -119,6 +120,13 @@ void UserdataManager::createSchema()
   db->commit();
 }
 
+void UserdataManager::clearData()
+{
+  SqlQuery query("delete from userdata", db);
+  query.exec();
+  db->commit();
+}
+
 void UserdataManager::updateCoordinates(int id, const geo::Pos& position)
 {
   SqlQuery query(db);
@@ -129,15 +137,48 @@ void UserdataManager::updateCoordinates(int id, const geo::Pos& position)
   query.exec();
 }
 
-void UserdataManager::updateField(const QString& column, const QVector<int> ids, const QVariant& value)
+void UserdataManager::updateField(const QString& column, const QVector<int>& ids, const QVariant& value)
 {
   SqlQuery query(db);
   query.prepare("update userdata set " + column + " = ? where userdata_id = ?");
 
   for(int id : ids)
   {
+    // Update field for all rows with the given id
     query.bindValue(0, value);
     query.bindValue(1, id);
+    query.exec();
+  }
+}
+
+void UserdataManager::insertByRecord(const sql::SqlRecord& record)
+{
+  QVariantList vals = record.values();
+  SqlQuery query(db);
+  query.prepare("insert into userdata (" + record.fieldNames().join(", ") + ") " +
+                "values(" + QString("?, ").repeated(vals.size() - 1) + " ?)");
+  for(int i = 0; i < vals.size(); i++)
+    query.bindValue(i, vals.at(i));
+  query.exec();
+}
+
+void UserdataManager::updateByRecord(sql::SqlRecord record, const QVector<int>& ids)
+{
+  if(record.contains("userdata_id"))
+    // Get rid of id column - it is not needed here
+    record.remove(record.indexOf("userdata_id"));
+
+  SqlQuery query(db);
+  query.prepare("update userdata set " + record.fieldNames().join(" = ?, ") + " = ? where userdata_id = ?");
+
+  QVariantList vals = record.values();
+  for(int id : ids)
+  {
+    // For each row with given id ...
+    for(int i = 0; i < vals.size(); i++)
+      // ... update all given columns with given values
+      query.bindValue(i, vals.at(i));
+    query.bindValue(vals.size(), id);
     query.exec();
   }
 }
@@ -152,6 +193,44 @@ void UserdataManager::removeRows(const QVector<int> ids)
     query.bindValue(0, id);
     query.exec();
   }
+}
+
+void UserdataManager::records(QVector<SqlRecord>& records, const QVector<int> ids)
+{
+  SqlQuery query(db);
+  query.prepare("select * from userdata where userdata_id = ?");
+
+  for(int id : ids)
+  {
+    query.bindValue(0, id);
+    query.exec();
+    if(query.next())
+      records.append(query.record());
+  }
+}
+
+SqlRecord UserdataManager::record(int id)
+{
+  QVector<SqlRecord> recs;
+  records(recs, {id});
+  return recs.isEmpty() ? SqlRecord() : recs.first();
+}
+
+void UserdataManager::emptyRecord(SqlRecord& record)
+{
+  record = db->record("userdata");
+}
+
+SqlRecord UserdataManager::emptyRecord()
+{
+  SqlRecord rec;
+  emptyRecord(rec);
+  return rec;
+}
+
+void UserdataManager::commit()
+{
+  db->commit();
 }
 
 // create table userdata

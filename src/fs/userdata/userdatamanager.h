@@ -24,6 +24,7 @@ namespace atools {
 
 namespace sql {
 class SqlDatabase;
+class SqlRecord;
 }
 
 namespace geo {
@@ -34,6 +35,8 @@ namespace userdata {
 
 enum Flag
 {
+  NONE,
+
   /* CSV import/export */
   CSV_HEADER = 1 << 0,
 
@@ -64,14 +67,33 @@ public:
   /* Create database schema. Drops current schema if tables already exist. */
   void createSchema();
 
+  /* Remove all data from the table. */
+  void clearData();
+
   /* Updates the coordinates of an user defined waypoint. Does not commit. */
   void updateCoordinates(int id, const atools::geo::Pos& position);
 
   /* Updates columns for all rows with the given ids. Does not commit. */
-  void updateField(const QString& column, const QVector<int> ids, const QVariant& value);
+  void updateField(const QString& column, const QVector<int>& ids, const QVariant& value);
+
+  /* Updates all columns found in the record for all rows with the given ids. Does not commit. */
+  void updateByRecord(sql::SqlRecord record, const QVector<int>& ids);
+
+  /* Adds new record to database */
+  void insertByRecord(const sql::SqlRecord& record);
 
   /* Removes entries. Does not commit. */
   void removeRows(const QVector<int> ids);
+
+  /* Get records with content for ids */
+  void records(QVector<atools::sql::SqlRecord>& records, const QVector<int> ids);
+  atools::sql::SqlRecord record(int id);
+
+  /* Empty records with schema populated */
+  void emptyRecord(atools::sql::SqlRecord& record);
+  atools::sql::SqlRecord emptyRecord();
+
+  void commit();
 
   /* Import and export from a predefined CSV format */
   void importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator, QChar escape);

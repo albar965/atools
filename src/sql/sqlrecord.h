@@ -173,7 +173,15 @@ public:
   QVariant::Type fieldType(int i) const;
   QVariant::Type fieldType(const QString& name) const;
 
+  void remove(int pos);
+  void remove(const QString& name);
+
+  QStringList fieldNames() const;
+  QVariantList values() const;
+
 private:
+  friend QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record);
+
   QSqlRecord sqlRecord;
   QString queryString;
 
