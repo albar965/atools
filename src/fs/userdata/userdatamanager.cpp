@@ -148,6 +148,8 @@ void UserdataManager::updateField(const QString& column, const QVector<int>& ids
     query.bindValue(0, value);
     query.bindValue(1, id);
     query.exec();
+    if(query.numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
   }
 }
 
@@ -160,6 +162,8 @@ void UserdataManager::insertByRecord(const sql::SqlRecord& record)
   for(int i = 0; i < vals.size(); i++)
     query.bindValue(i, vals.at(i));
   query.exec();
+  if(query.numRowsAffected() != 1)
+    qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
 }
 
 void UserdataManager::updateByRecord(sql::SqlRecord record, const QVector<int>& ids)
@@ -180,6 +184,8 @@ void UserdataManager::updateByRecord(sql::SqlRecord record, const QVector<int>& 
       query.bindValue(i, vals.at(i));
     query.bindValue(vals.size(), id);
     query.exec();
+    if(query.numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
   }
 }
 
@@ -192,6 +198,8 @@ void UserdataManager::removeRows(const QVector<int> ids)
   {
     query.bindValue(0, id);
     query.exec();
+    if(query.numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
   }
 }
 
@@ -206,6 +214,9 @@ void UserdataManager::records(QVector<SqlRecord>& records, const QVector<int> id
     query.exec();
     if(query.next())
       records.append(query.record());
+    else
+      qWarning() << Q_FUNC_INFO << "nothing found for id" << id;
+
   }
 }
 
