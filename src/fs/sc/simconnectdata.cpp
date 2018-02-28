@@ -173,6 +173,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   SimConnectData data;
   data.userAircraft.position = pos;
+  data.userAircraft.position.setAltitude(8000);
 
   if(lastPos.isValid())
   {
@@ -207,7 +208,10 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneAirline = "Airline";
   data.userAircraft.airplaneFlightnumber = "965";
   data.userAircraft.fromIdent = "EDDF";
+
   data.userAircraft.toIdent = "LIRF";
+  data.userAircraft.altitudeAboveGroundFt = 8000;
+
   data.userAircraft.debug = true;
 
   return data;
