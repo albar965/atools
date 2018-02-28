@@ -66,6 +66,8 @@ public:
    */
   QString openFileDialog(const QString& title, const QString& filter,
                          const QString& settingsPrefix = QString(), const QString& path = QString());
+  QStringList openFileDialogMulti(const QString& title, const QString& filter,
+                         const QString& settingsPrefix = QString(), const QString& path = QString());
 
   /*
    * Creates an open directory dialog and returns the selected directory otherwise an
@@ -145,7 +147,7 @@ public:
                          QMessageBox::StandardButton defaultButton);
 
 private:
-  QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
+  QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                      const QString& settingsPrefix, const QString& defaultFileSuffix,
                      const QString& path, const QString& filename);
 
