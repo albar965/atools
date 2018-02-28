@@ -31,6 +31,11 @@ namespace geo {
 class Pos;
 }
 namespace fs {
+
+namespace common {
+class MagDecReader;
+}
+
 namespace userdata {
 
 enum Flag
@@ -55,7 +60,7 @@ class UserdataManager
   Q_DECLARE_TR_FUNCTIONS(UserdataManager)
 
 public:
-  UserdataManager(atools::sql::SqlDatabase *sqlDb);
+  UserdataManager(atools::sql::SqlDatabase *sqlDb, atools::fs::common::MagDecReader *magDecReader);
   ~UserdataManager();
 
   /* True if table userdata is presend in database */
@@ -123,6 +128,7 @@ private:
   QString adjustIdent(QString ident);
 
   atools::sql::SqlDatabase *db;
+  atools::fs::common::MagDecReader *magDec;
 };
 
 } // namespace userdata

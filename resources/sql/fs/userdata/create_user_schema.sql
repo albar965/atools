@@ -21,17 +21,16 @@ drop table if exists userdata;
 create table userdata
 (
   userdata_id integer primary key,
-  type varchar(10) collate nocase,    -- VRP, POI, OBS, IFR, etc.
+  type varchar(10) collate nocase,           -- VRP, POI, OBS, IFR, etc.
   name varchar(200) collate nocase,
-  ident varchar(10) collate nocase,
+  ident varchar(10) collate nocase,          -- Maximum five characters for export
   description varchar(1024) collate nocase,
-  tags varchar(1024) collate nocase,
-  last_edit_timestamp varchar(100) not null,   -- Timestamp of last edit (i.e. "2016-07-05T15:45:30.396")
-  import_timestamp varchar(100),   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
-  import_file_path varchar(512),   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
-  visible_from integer,  -- Visible from zoom
-  mag_var double,
-  altitude integer,
+  tags varchar(1024) collate nocase,         -- Used for region in export
+  last_edit_timestamp varchar(100) not null, -- Timestamp of last edit (i.e. "2016-07-05T15:45:30.396")
+  import_timestamp varchar(100),             -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
+  import_file_path varchar(512),             -- Full path filename from import
+  visible_from integer,                      -- Visible from zoom NM
+  altitude integer,                          -- ft
   lonx double not null,
   laty double not null
 );

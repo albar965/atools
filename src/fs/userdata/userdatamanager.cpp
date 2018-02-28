@@ -24,6 +24,7 @@
 #include "sql/sqlquery.h"
 #include "atools.h"
 #include "geo/pos.h"
+#include "fs/common/magdecreader.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -38,6 +39,7 @@ namespace atools {
 namespace fs {
 namespace userdata {
 
+using atools::geo::Pos;
 using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
@@ -91,8 +93,8 @@ enum Index
 
 }
 
-UserdataManager::UserdataManager(sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+UserdataManager::UserdataManager(sql::SqlDatabase *sqlDb, atools::fs::common::MagDecReader *magDecReader)
+  : db(sqlDb), magDec(magDecReader)
 {
 
 }
@@ -298,7 +300,6 @@ void UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::F
       insertQuery.bindValue(":name", at(values, csv::NAME));
       insertQuery.bindValue(":ident", at(values, csv::IDENT));
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
-      insertQuery.bindValue(":mag_var", at(values, csv::MAGVAR));
       insertQuery.bindValue(":tags", at(values, csv::TAGS));
       insertQuery.bindValue(":last_edit_timestamp", now);
       insertQuery.bindValue(":import_timestamp", now);
@@ -466,14 +467,27 @@ void UserdataManager::exportCsv(const QString& filepath, atools::fs::userdata::F
     sqlExport.setEscapeChar(escape);
     sqlExport.setHeader(flags & CSV_HEADER);
 
-    SqlQuery query("select type, name, ident, laty, lonx, altitude as elevation, mag_var, tags, description "
-                   "from userdata", db);
+    SqlQuery query("select type, name, ident, laty, lonx, altitude as elevation, "
+                   "0 as mag_var, tags, description " "from userdata", db);
 
     if(!endsWithEol && flags & APPEND)
       // Add needed linefeed for append
       stream << endl;
 
-    sqlExport.printResultSet(query, stream);
+    bool first = true;
+
+    while(query.next())
+    {
+      if(first && flags & CSV_HEADER)
+      {
+        first = false;
+        stream << sqlExport.getResultSetHeader(query.record());
+      }
+      SqlRecord record = query.record();
+      record.setValue("mag_var", magDec->getMagVar(Pos(record.valueFloat("lonx"), record.valueFloat("laty"))));
+
+      stream << sqlExport.getResultSetRow(record);
+    }
 
     file.close();
   }
@@ -642,8 +656,10 @@ void UserdataManager::exportBgl(const QString& filepath)
       writer.writeAttribute("lat", query.valueStr("laty"));
       writer.writeAttribute("lon", query.valueStr("lonx"));
       writer.writeAttribute("waypointType", "NAMED");
-      writer.writeAttribute("mag_var", query.valueStr("NAMED"));
       writer.writeAttribute("waypointRegion", region);
+      writer.writeAttribute("magvar",
+                            QString::number(magDec->getMagVar(Pos(query.valueFloat("lonx"),
+                                                                  query.valueFloat("laty")))));
       writer.writeAttribute("waypointIdent", adjustIdent(query.valueStr("ident")));
       writer.writeEndElement(); // Waypoint
     }
