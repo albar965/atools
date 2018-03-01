@@ -305,14 +305,14 @@ bool fileEndsWithEol(const QString& filepath)
   return endsWithEol;
 }
 
-QStringList readCsvLine(const QString& line, QChar separator, QChar escape)
+QStringList readCsvLine(const QString& line, QChar separator, QChar escape, bool trim)
 {
   QStringList retval;
-  readCsvLine(retval, line, separator, escape);
+  readCsvLine(retval, line, separator, escape, trim);
   return retval;
 }
 
-void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape)
+void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape, bool trim)
 {
   values.clear();
   QString curValue;
@@ -347,7 +347,7 @@ void readCsvLine(QStringList& values, const QString& line, QChar separator, QCha
     if(c == separator && !escaped)
     {
       // Separator in unescaped text - start new value
-      values.append(curValue);
+      values.append(trim ? curValue.trimmed() : curValue);
       curValue.clear();
       lastChar = c;
       continue;
@@ -357,7 +357,7 @@ void readCsvLine(QStringList& values, const QString& line, QChar separator, QCha
     curValue.append(c);
     lastChar = c;
   }
-  values.append(curValue);
+  values.append(trim ? curValue.trimmed() : curValue);
 }
 
 } // namespace atools

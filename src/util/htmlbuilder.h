@@ -181,6 +181,10 @@ public:
   HtmlBuilder& row2Var(const QString& name, const QVariant& value,
                        html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Adds row if string is not empty*/
+  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE,
+                      QColor color = QColor());
+
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor = QColor());
   HtmlBuilder& trEnd();

@@ -45,8 +45,8 @@ bool fileEndsWithEol(const QString& filepath);
 /* Read a CSV line considering escape characters and double escape characters. This allows linefeeds in fields.
  * Example: value1,"value2 with , separator",value3,"value4 with "" escaped",value4
  * */
-void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape);
-QStringList readCsvLine(const QString& line, QChar separator, QChar escape);
+void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape, bool trim);
+QStringList readCsvLine(const QString& line, QChar separator, QChar escape, bool trim);
 
 template<typename TYPE>
 bool contains(const TYPE& name, const std::initializer_list<TYPE>& list)

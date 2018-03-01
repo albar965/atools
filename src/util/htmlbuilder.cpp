@@ -138,6 +138,19 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html::Flags flags, QColor color)
+{
+  if(!value.isEmpty())
+  {
+    htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+                arg(asText(name, flags | atools::util::html::BOLD, color)).
+                arg(asText(value, flags, color));
+    tableIndex++;
+    numLines++;
+  }
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).

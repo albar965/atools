@@ -294,7 +294,7 @@ void UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::F
       if(line.isEmpty())
         continue;
 
-      readCsvLine(values, line, separator, escape);
+      readCsvLine(values, line, separator, escape, true /* trim */);
 
       insertQuery.bindValue(":type", at(values, csv::TYPE));
       insertQuery.bindValue(":name", at(values, csv::NAME));
