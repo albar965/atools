@@ -162,6 +162,10 @@ public:
 
   void appendField(const QString& fieldName, QVariant::Type type);
 
+  /* Adds field if not exists and value too. Type is derived from value */
+  SqlRecord& appendFieldAndValue(const QString& fieldName, QVariant value);
+  SqlRecord& appendFieldAndNullValue(const QString& fieldName, QVariant::Type type);
+
   void setValue(int i, const QVariant& val);
   void setValue(const QString& name, const QVariant& val);
   void setNull(int i);

@@ -170,6 +170,22 @@ void SqlRecord::appendField(const QString& fieldName, QVariant::Type type)
   sqlRecord.append(QSqlField(fieldName, type));
 }
 
+SqlRecord& SqlRecord::appendFieldAndValue(const QString& fieldName, QVariant value)
+{
+  if(!contains(fieldName))
+    appendField(fieldName, value.type());
+  setValue(fieldName, value);
+  return *this;
+}
+
+SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant::Type type)
+{
+  if(!contains(fieldName))
+    appendField(fieldName, type);
+  setNull(fieldName);
+  return *this;
+}
+
 void SqlRecord::remove(int pos)
 {
   sqlRecord.remove(pos);

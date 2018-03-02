@@ -85,7 +85,7 @@ public:
   void updateByRecord(sql::SqlRecord record, const QVector<int>& ids);
 
   /* Adds new record to database */
-  void insertByRecord(const sql::SqlRecord& record);
+  void insertByRecord(sql::SqlRecord record);
 
   /* Removes entries. Does not commit. */
   void removeRows(const QVector<int> ids);

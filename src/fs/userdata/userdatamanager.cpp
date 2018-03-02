@@ -155,8 +155,12 @@ void UserdataManager::updateField(const QString& column, const QVector<int>& ids
   }
 }
 
-void UserdataManager::insertByRecord(const sql::SqlRecord& record)
+void UserdataManager::insertByRecord(sql::SqlRecord record)
 {
+  if(record.contains("userdata_id"))
+    // Get rid of id column - it is not needed here
+    record.remove(record.indexOf("userdata_id"));
+
   QVariantList vals = record.values();
   SqlQuery query(db);
   query.prepare("insert into userdata (" + record.fieldNames().join(", ") + ") " +
