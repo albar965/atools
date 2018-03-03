@@ -19,6 +19,7 @@
 
 #include "geo/pos.h"
 #include "atools.h"
+#include "exception.h"
 
 #include <cmath>
 #include <QRegularExpression>
@@ -371,177 +372,204 @@ atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured)
   return atools::geo::EMPTY_POS;
 }
 
+QRegularExpressionMatch safeMatch(const QRegularExpression& regexp, const QString& str)
+{
+  if(!regexp.isValid())
+    throw  atools::Exception(
+            "Invalid regular expression: " + regexp.errorString() + " at " +
+            QString::number(regexp.patternErrorOffset()));
+  else
+    return regexp.match(str);
+}
+
+QString safeCaptured(const QRegularExpressionMatch& match, const QString& str)
+{
+  QString retval = match.captured(str);
+  if(retval.isNull())
+    throw  atools::Exception("Match not found: " + str + " in " + match.regularExpression().pattern() +
+                             ". Match groups: " + match.regularExpression().namedCaptureGroups().join(", "));
+  return retval;
+}
+
+atools::geo::Pos degMinSecFromMatch(const QRegularExpressionMatch& match)
+{
+  QString ns = safeCaptured(match, "NS");
+  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
+  int latYMin = safeCaptured(match, "LATY_MIN").toInt();
+  float latYSec = safeCaptured(match, "LATY_DEC_SEC").toFloat();
+
+  QString ew = safeCaptured(match, "EW");
+  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
+  int lonXMin = safeCaptured(match, "LONX_MIN").toInt();
+  float lonXSec = safeCaptured(match, "LONX_DEC_SEC").toFloat();
+
+  float latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == "S" ? -1.f : 1.f);
+  float lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "W" ? -1.f : 1.f);
+  return Pos(lonX, latY);
+}
+
+atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
+{
+  QString ns = safeCaptured(match, "NS");
+  int latYDeg = safeCaptured(match, "LATY_DEG").toInt();
+  float latYMin = safeCaptured(match, "LATY_DEC_MIN").toFloat();
+
+  QString ew = safeCaptured(match, "EW");
+  int lonXDeg = safeCaptured(match, "LONX_DEG").toInt();
+  float lonXMin = safeCaptured(match, "LONX_DEC_MIN").toFloat();
+
+  float latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
+  float lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
+  return Pos(lonX, latY);
+}
+
+atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
+{
+  float latYDeg = safeCaptured(match, "LATY_DEC_DEG").toFloat();
+  QString ns = safeCaptured(match, "NS");
+
+  float lonXDeg = safeCaptured(match, "LONX_DEC_DEG").toFloat();
+  QString ew = safeCaptured(match, "EW");
+
+  float latY = latYDeg * (ns == "S" ? -1.f : 1.f);
+  float lonX = lonXDeg * (ew == "W" ? -1.f : 1.f);
+  return Pos(lonX, latY);
+}
+
 geo::Pos fromAnyFormat(const QString& coords)
 {
-  float lonX = 0.f, latY = 0.f;
+  if(coords.simplified().isEmpty())
+    return atools::geo::EMPTY_POS;
 
   // Convert local dependent decimal point to dot
   QString coordStr(coords.simplified().toUpper().replace(QLocale().decimalPoint(), "."));
 
+  // North/south and east/west designator
+  const static QLatin1Literal NS("(?<NS>[NS])");
+  const static QLatin1Literal EW("(?<EW>[EW])");
+
+  // Optional n-space
+  const static QLatin1Literal SP("\\s*");
+
+  // Degree, minute and seconds signs or space
+  const static QLatin1Literal DEG("[ °\\*]");
+  const static QLatin1Literal MIN("[ ']");
+  const static QLatin1Literal SEC("[ \"]");
+
+  // Degree, minute and seconds signs
+  const static QLatin1Literal DEGEND("[°\\*]?");
+  const static QLatin1Literal MINEND("[']?");
+  const static QLatin1Literal SECEND("[\"]?");
+
+  // Integer degree with named capture
+  const static QLatin1Literal LONX_DEG("(?<LONX_DEG>[0-9]+)");
+  const static QLatin1Literal LATY_DEG("(?<LATY_DEG>[0-9]+)");
+
+  // Decimal degree
+  const static QLatin1Literal LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
+  const static QLatin1Literal LATY_DEC_DEG("(?<LATY_DEC_DEG>[0-9\\.]+)");
+
+  // Minutes
+  const static QLatin1Literal LONX_MIN("(?<LONX_MIN>[0-9]+)");
+  const static QLatin1Literal LATY_MIN("(?<LATY_MIN>[0-9]+)");
+
+  // Decimal minutes
+  const static QLatin1Literal LONX_DEC_MIN("(?<LONX_DEC_MIN>[0-9\\.]+)");
+  const static QLatin1Literal LATY_DEC_MIN("(?<LATY_DEC_MIN>[0-9\\.]+)");
+
+  // Decimal seconds
+  const static QLatin1Literal LONX_DEC_SEC("(?<LONX_DEC_SEC>[0-9\\.]+)");
+  const static QLatin1Literal LATY_DEC_SEC("(?<LATY_DEC_SEC>[0-9\\.]+)");
+
+  // ================================================================================
+  // Build regular expressions
+
   // N49° 26' 41.57" E9° 12' 5.49"
   static const QRegularExpression FORMAT_DEG_MIN_SEC_REGEXP(
-    "([NS])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*"
-    "([EW])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"");
-
-  // N54* 16.82' W008* 35.95'
-  static const QRegularExpression FORMAT_DEG_MIN_REGEXP(
-    "([NS])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'\\s*"
-    "([EW])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'");
-
-  // N 52 33.58 E 13 17.26
-  static const QRegularExpression FORMAT_DEG_MIN2_REGEXP(
-    "([NS])\\s*([0-9]+)\\s+([0-9\\.]+)\\s*"
-    "([EW])\\s*([0-9]+)\\s+([0-9\\.]+)");
+    "^" + NS + SP + LATY_DEG + SP + DEG + SP + LATY_MIN + SP + MIN + SP + LATY_DEC_SEC + SP + SEC + SP +
+    "" + EW + SP + LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + "$");
 
   // 49° 26' 41,57" N 9° 12' 5,49" E
   static const QRegularExpression FORMAT_DEG_MIN_SEC_REGEXP2(
-    "([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*([NS])\\s*"
-    "([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*([EW])");
+    "^" + LATY_DEG + SP + DEG + SP + LATY_MIN + SP + MIN + SP + LATY_DEC_SEC + SP + SECEND + SP + NS + SP +
+    "" + LONX_DEG + SP + DEG + SP + LONX_MIN + SP + MIN + SP + LONX_DEC_SEC + SP + SECEND + SP + EW + "$");
 
   // 49° 26,69' N 9° 12,09' E
-  static const QRegularExpression FORMAT_DEG_MIN3_REGEXP(
-    "([0-9]+)\\s*°\\s*([0-9\\.]+)\\s*'\\s*([NS])\\s*"
-    "([0-9]+)\\s*°\\s*([0-9\\.]+)\\s*'\\s*([EW])");
+  static const QRegularExpression FORMAT_DEG_MIN_REGEXP2(
+    "^" + LATY_DEG + SP + DEG + SP + LATY_DEC_MIN + SP + MIN + SP + NS + SP +
+    "" + LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MIN + SP + EW + "$");
+
+  // N54* 16.82' W008* 35.95'
+  static const QRegularExpression FORMAT_DEG_MIN_REGEXP(
+    "^" + NS + SP + LATY_DEG + SP + DEG + SP + LATY_DEC_MIN + SP + MIN + SP +
+    "" + EW + SP + LONX_DEG + SP + DEG + SP + LONX_DEC_MIN + SP + MINEND + SP + "$");
 
   // 49,4449° N 9,2015° E
   static const QRegularExpression FORMAT_DEG_REGEXP(
-    "([0-9\\.]+)\\s*°?\\s*([NS])\\s*"
-    "([0-9\\.]+)\\s*°?\\s*([EW])");
+    "^" + LATY_DEC_DEG + SP + DEGEND + SP + NS + SP +
+    "" + LONX_DEC_DEG + SP + DEGEND + SP + EW + "$");
 
   // N 49,4449° E 9,2015°
-  static const QRegularExpression FORMAT_DEG2_REGEXP(
-    "([NS])\\s*([0-9\\.]+)\\s*°?\\s*"
-    "([EW])\\s*([0-9\\.]+)\\s*°?");
+  static const QRegularExpression FORMAT_DEG_REGEXP2(
+    "^" + NS + SP + LATY_DEC_DEG + SP + DEG + SP +
+    "" + EW + SP + LONX_DEC_DEG + SP + DEGEND + "$");
 
-  // N49° 26' 41.57" E9° 12' 5.49"
-  QRegularExpressionMatch match = FORMAT_DEG_MIN_SEC_REGEXP.match(coordStr);
+  // ================================================================================
+  // Decimal degree formats
+  // 49,4449° N 9,2015° E
+  QRegularExpressionMatch match = safeMatch(FORMAT_DEG_REGEXP, coordStr);
   if(match.hasMatch())
   {
-    QString ns = match.captured(1);
-    int latYDeg = match.captured(2).toInt();
-    int latYMin = match.captured(3).toInt();
-    float latYSec = match.captured(4).toFloat();
-
-    QString ew = match.captured(5);
-    int lonXDeg = match.captured(6).toInt();
-    int lonXMin = match.captured(7).toInt();
-    float lonXSec = match.captured(8).toFloat();
-
-    latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == "S" ? -1.f : 1.f);
-    lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
+    Pos pos = degFromMatch(match);
     if(pos.isValidRange())
       return pos;
   }
 
+  // N 49,4449° E 9,2015°
+  match = safeMatch(FORMAT_DEG_REGEXP2, coordStr);
+  if(match.hasMatch())
+  {
+    Pos pos = degFromMatch(match);
+    if(pos.isValidRange())
+      return pos;
+  }
+
+  // ================================================================================
+  // Degree and decimal minute formats
   // N54* 16.82' W008* 35.95'
-  match = FORMAT_DEG_MIN_REGEXP.match(coordStr);
+  match = safeMatch(FORMAT_DEG_MIN_REGEXP, coordStr);
   if(match.hasMatch())
   {
-    QString ns = match.captured(1);
-    int latYDeg = match.captured(2).toInt();
-    float latYMin = match.captured(3).toFloat();
-
-    QString ew = match.captured(4);
-    int lonXDeg = match.captured(5).toInt();
-    float lonXMin = match.captured(6).toFloat();
-
-    latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
-    lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
+    Pos pos = degMinFromMatch(match);
     if(pos.isValidRange())
       return pos;
   }
 
-  // N 52 33.58 E 13 17.26
-  match = FORMAT_DEG_MIN2_REGEXP.match(coordStr);
+  // 49° 26,69' N 9° 12,09' E
+  match = safeMatch(FORMAT_DEG_MIN_REGEXP2, coordStr);
   if(match.hasMatch())
   {
-    QString ns = match.captured(1);
-    int latYDeg = match.captured(2).toInt();
-    float latYMin = match.captured(3).toFloat();
+    Pos pos = degMinFromMatch(match);
+    if(pos.isValidRange())
+      return pos;
+  }
 
-    QString ew = match.captured(4);
-    int lonXDeg = match.captured(5).toInt();
-    float lonXMin = match.captured(6).toFloat();
-
-    latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
-    lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
+  // ================================================================================
+  // Degree, minute and second formats
+  // N49° 26' 41.57" E9° 12' 5.49"
+  match = safeMatch(FORMAT_DEG_MIN_SEC_REGEXP, coordStr);
+  if(match.hasMatch())
+  {
+    Pos pos = degMinSecFromMatch(match);
     if(pos.isValidRange())
       return pos;
   }
 
   // 49° 26' 41,57" N 9° 12' 5,49" E
-  match = FORMAT_DEG_MIN_SEC_REGEXP2.match(coordStr);
+  match = safeMatch(FORMAT_DEG_MIN_SEC_REGEXP2, coordStr);
   if(match.hasMatch())
   {
-    int latYDeg = match.captured(1).toInt();
-    int latYMin = match.captured(2).toInt();
-    float latYSec = match.captured(3).toFloat();
-    QString ns = match.captured(4);
-
-    int lonXDeg = match.captured(5).toInt();
-    int lonXMin = match.captured(6).toInt();
-    float lonXSec = match.captured(7).toFloat();
-    QString ew = match.captured(8);
-
-    latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == "S" ? -1.f : 1.f);
-    lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
-    if(pos.isValidRange())
-      return pos;
-  }
-
-  // 49° 26,69' N 9° 12,09' E
-  match = FORMAT_DEG_MIN3_REGEXP.match(coordStr);
-  if(match.hasMatch())
-  {
-    int latYDeg = match.captured(1).toInt();
-    float latYMin = match.captured(2).toFloat();
-    QString ns = match.captured(3);
-
-    int lonXDeg = match.captured(4).toInt();
-    float lonXMin = match.captured(5).toFloat();
-    QString ew = match.captured(6);
-
-    latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
-    lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
-    if(pos.isValidRange())
-      return pos;
-  }
-
-  // 49,4449° N 9,2015° E
-  match = FORMAT_DEG_REGEXP.match(coordStr);
-  if(match.hasMatch())
-  {
-    float latYDeg = match.captured(1).toFloat();
-    QString ns = match.captured(2);
-
-    float lonXDeg = match.captured(3).toFloat();
-    QString ew = match.captured(4);
-
-    latY = latYDeg * (ns == "S" ? -1.f : 1.f);
-    lonX = lonXDeg * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
-    if(pos.isValidRange())
-      return pos;
-  }
-
-  // N 49,4449° E 9,2015°
-  match = FORMAT_DEG2_REGEXP.match(coordStr);
-  if(match.hasMatch())
-  {
-    QString ns = match.captured(1);
-    float latYDeg = match.captured(2).toFloat();
-
-    QString ew = match.captured(3);
-    float lonXDeg = match.captured(4).toFloat();
-
-    latY = latYDeg * (ns == "S" ? -1.f : 1.f);
-    lonX = lonXDeg * (ew == "W" ? -1.f : 1.f);
-    Pos pos(lonX, latY);
+    Pos pos = degMinSecFromMatch(match);
     if(pos.isValidRange())
       return pos;
   }
