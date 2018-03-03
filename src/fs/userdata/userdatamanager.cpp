@@ -25,6 +25,7 @@
 #include "atools.h"
 #include "geo/pos.h"
 #include "fs/common/magdecreader.h"
+#include "fs/util/fsutil.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -572,7 +573,7 @@ void UserdataManager::exportXplane(const QString& filepath, atools::fs::userdata
 
       stream << query.valueDouble("laty")
              << " " << query.valueDouble("lonx")
-             << " " << adjustIdent(query.valueStr("ident"))
+             << " " << atools::fs::util::adjustIdent(query.valueStr("ident"))
              << " " << (airport.isEmpty() ? "ENRT" : airport)
              << " " << (region.isEmpty() ? "ZZ" : region)
              << endl;
@@ -608,7 +609,7 @@ void UserdataManager::exportGarmin(const QString& filepath, atools::fs::userdata
     // OCEAN,,32.687356725,-51.45543634
     query.exec();
     while(query.next())
-      stream << adjustIdent(query.valueStr("ident"))
+      stream << atools::fs::util::adjustIdent(query.valueStr("ident"))
              << ","
              << query.valueStr("name").simplified().toUpper().replace(QRegularExpression("[^A-Z0-9 /]"), "").left(25)
              << ","
@@ -664,7 +665,7 @@ void UserdataManager::exportBgl(const QString& filepath)
       writer.writeAttribute("magvar",
                             QString::number(magDec->getMagVar(Pos(query.valueFloat("lonx"),
                                                                   query.valueFloat("laty")))));
-      writer.writeAttribute("waypointIdent", adjustIdent(query.valueStr("ident")));
+      writer.writeAttribute("waypointIdent", atools::fs::util::adjustIdent(query.valueStr("ident")));
       writer.writeEndElement(); // Waypoint
     }
 
@@ -680,11 +681,6 @@ QString UserdataManager::at(const QStringList& line, int index)
 
   qWarning() << "Index" << index << "not found in file";
   return QString();
-}
-
-QString UserdataManager::adjustIdent(QString ident)
-{
-  return ident.toUpper().replace(QRegularExpression("[^A-Z0-9]"), "").left(5);
 }
 
 } // namespace userdata

@@ -124,9 +124,6 @@ private:
   /* Prints a warning of colummn does not exist */
   QString at(const QStringList& line, int index);
 
-  /* Limits ident to upper case characters and trims length to five */
-  QString adjustIdent(QString ident);
-
   atools::sql::SqlDatabase *db;
   atools::fs::common::MagDecReader *magDec;
 };

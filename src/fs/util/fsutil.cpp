@@ -422,6 +422,46 @@ QString capAirportName(const QString& str)
   return atools::capString(str, upper);
 }
 
+QString adjustFsxUserWpName(QString name, int length)
+{
+  static const QRegularExpression NAME_REGEXP("[^A-Za-z0-9_ ]");
+  name.replace(NAME_REGEXP, "");
+  name = name.left(length);
+  if(name.isEmpty())
+    name = "User_WP";
+  return name;
+}
+
+QString adjustIdent(QString ident, int length)
+{
+  static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
+  ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
+  if(ident.isEmpty())
+    ident = QString("N%1").arg(qrand() * 9999 / RAND_MAX);
+  return ident;
+}
+
+QString adjustRegion(QString ident)
+{
+  static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
+  ident = ident.toUpper().replace(IDENT_REGEXP, "").left(2);
+  if(ident.length() != 2)
+    ident = "ZZ";
+  return ident;
+}
+
+bool isValidIdent(const QString& ident)
+{
+  static const QRegularExpression IDENT_REGEXP("^[A-Z][A-Z0-9]{1-4}$");
+  return IDENT_REGEXP.match(ident).hasMatch();
+}
+
+bool isValidRegion(const QString& ident)
+{
+  static const QRegularExpression REGION_REGEXP("^[A-Z]{2}$");
+  return REGION_REGEXP.match(ident).hasMatch();
+}
+
 } // namespace util
 } // namespace fs
 } // namespace atools

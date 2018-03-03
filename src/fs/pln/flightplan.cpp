@@ -20,6 +20,7 @@
 #include "geo/pos.h"
 #include "geo/calculations.h"
 #include "atools.h"
+#include "fs/util/fsutil.h"
 #include "geo/linestring.h"
 #include "fs/util/coordinates.h"
 
@@ -890,12 +891,7 @@ void Flightplan::saveFsx(const QString& file, bool clean)
       writer.writeStartElement("ATCWaypoint");
 
       // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
-      QString name = entry.getWaypointId();
-      name.replace(QRegularExpression("[^A-Za-z0-9_ ]"), "");
-      name = name.left(10);
-      if(name.isEmpty())
-        name = "User_WP";
-      writer.writeAttribute("id", name);
+      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getWaypointId()));
       writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsString());
 
       if(!entry.getPosition().isValid())
