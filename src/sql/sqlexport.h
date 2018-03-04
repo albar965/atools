@@ -103,6 +103,13 @@ public:
   /* Build a data row from the given QVariant list */
   QString getResultSetRow(const QVariantList& values) const;
 
+  int getNumberPrecision() const;
+
+  void setNumberPrecision(int value)
+  {
+    numberPrecision = value;
+  }
+
 private:
   QString printEndl() const;
   QString buildString(QString value) const;
@@ -112,6 +119,8 @@ private:
   int maxValues = -1;
   QChar separator = ',', escapeString = '"';
   QString nullValue = "";
+
+  int numberPrecision = 6;
 };
 
 // -----------------------------------------------------------

@@ -291,6 +291,10 @@ bool fileEndsWithEol(const QString& filepath)
 {
   bool endsWithEol = false;
   QFile tmp(filepath);
+  if(!tmp.exists())
+    // No file - no need to add extra EOL
+    return true;
+
   if(tmp.open(QFile::ReadOnly))
   {
     tmp.seek(tmp.size() - 1);
@@ -303,61 +307,6 @@ bool fileEndsWithEol(const QString& filepath)
   else
     throw atools::Exception(QObject::tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(tmp.errorString()));
   return endsWithEol;
-}
-
-QStringList readCsvLine(const QString& line, QChar separator, QChar escape, bool trim)
-{
-  QStringList retval;
-  readCsvLine(retval, line, separator, escape, trim);
-  return retval;
-}
-
-void readCsvLine(QStringList& values, const QString& line, QChar separator, QChar escape, bool trim)
-{
-  values.clear();
-  QString curValue;
-  QChar lastChar = '\0', c;
-
-  // true if inside "
-  bool escaped = false;
-
-  for(int i = 0; i < line.size(); i++)
-  {
-    c = line.at(i);
-
-    if(c == escape)
-    {
-      // Found escape character "
-      if(escaped)
-        // End of escaped text
-        escaped = false;
-      else
-      {
-        if(lastChar == escape)
-          // Escape char itself doubled "" - add single escape " to value and keep escaped state
-          curValue.append(c);
-        escaped = true;
-      }
-      lastChar = c;
-
-      // Do not store value
-      continue;
-    }
-
-    if(c == separator && !escaped)
-    {
-      // Separator in unescaped text - start new value
-      values.append(trim ? curValue.trimmed() : curValue);
-      curValue.clear();
-      lastChar = c;
-      continue;
-    }
-
-    // Regular character
-    curValue.append(c);
-    lastChar = c;
-  }
-  values.append(trim ? curValue.trimmed() : curValue);
 }
 
 } // namespace atools

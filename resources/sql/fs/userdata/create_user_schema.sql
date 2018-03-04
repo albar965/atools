@@ -27,7 +27,6 @@ create table userdata
   description varchar(1024) collate nocase,
   tags varchar(1024) collate nocase,         -- Used for region in export
   last_edit_timestamp varchar(100) not null, -- Timestamp of last edit (i.e. "2016-07-05T15:45:30.396")
-  import_timestamp varchar(100),             -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
   import_file_path varchar(512),             -- Full path filename from import
   visible_from integer,                      -- Visible from zoom NM
   altitude integer,                          -- ft
@@ -41,7 +40,6 @@ create index if not exists idx_userdata_ident on userdata(ident);
 create index if not exists idx_userdata_description on userdata(description);
 create index if not exists idx_userdata_tags on userdata(tags);
 create index if not exists idx_userdata_last_edit_timestamp on userdata(last_edit_timestamp);
-create index if not exists idx_userdata_import_timestamp on userdata(import_timestamp);
 create index if not exists idx_userdata_import_file_path on userdata(import_file_path);
 create index if not exists idx_userdata_lonx on userdata(lonx);
 create index if not exists idx_userdata_laty on userdata(laty);

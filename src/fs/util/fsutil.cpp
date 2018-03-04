@@ -432,12 +432,12 @@ QString adjustFsxUserWpName(QString name, int length)
   return name;
 }
 
-QString adjustIdent(QString ident, int length)
+QString adjustIdent(QString ident, int length, int id)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
   ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
-  if(ident.isEmpty())
-    ident = QString("N%1").arg(qrand() * 9999 / RAND_MAX);
+  if(ident.isEmpty() && id != -1)
+    ident = QString("N%1").arg(id, 4, 10, QChar('0')).left(length);
   return ident;
 }
 

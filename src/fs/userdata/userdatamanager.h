@@ -60,7 +60,7 @@ class UserdataManager
   Q_DECLARE_TR_FUNCTIONS(UserdataManager)
 
 public:
-  UserdataManager(atools::sql::SqlDatabase *sqlDb, atools::fs::common::MagDecReader *magDecReader);
+  UserdataManager(atools::sql::SqlDatabase *sqlDb);
   ~UserdataManager();
 
   /* True if table userdata is presend in database */
@@ -82,43 +82,46 @@ public:
   void updateField(const QString& column, const QVector<int>& ids, const QVariant& value);
 
   /* Updates all columns found in the record for all rows with the given ids. Does not commit. */
-  void updateByRecord(sql::SqlRecord record, const QVector<int>& ids);
+  void updateByRecord(sql::SqlRecord getRecord, const QVector<int>& ids);
 
   /* Adds new record to database */
-  void insertByRecord(sql::SqlRecord record);
+  void insertByRecord(sql::SqlRecord getRecord);
 
   /* Removes entries. Does not commit. */
   void removeRows(const QVector<int> ids);
 
   /* Get records with content for ids */
-  void records(QVector<atools::sql::SqlRecord>& records, const QVector<int> ids);
-  atools::sql::SqlRecord record(int id);
+  void getRecords(QVector<atools::sql::SqlRecord>& getRecords, const QVector<int> ids);
+  atools::sql::SqlRecord getRecord(int id);
 
   /* Empty records with schema populated */
-  void emptyRecord(atools::sql::SqlRecord& record);
-  atools::sql::SqlRecord emptyRecord();
+  void getEmptyRecord(atools::sql::SqlRecord& getRecord);
+  atools::sql::SqlRecord getEmptyRecord();
 
   void commit();
 
   /* Import and export from a predefined CSV format */
-  void importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator, QChar escape);
-  void exportCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator, QChar escape);
+  int importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator, QChar escape);
+  int exportCsv(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags,
+                QChar separator, QChar escape);
 
   /* Import and export user_fix.dat file from X-Plane */
-  void importXplane(const QString& filepath);
-  void exportXplane(const QString& filepath, atools::fs::userdata::Flags flags);
+  int importXplane(const QString& filepath);
+  int exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags);
 
   /* Import and export Garmin GTN user waypoint database */
-  void importGarmin(const QString& filepath);
-  void exportGarmin(const QString& filepath, atools::fs::userdata::Flags flags);
+  int importGarmin(const QString& filepath);
+  int exportGarmin(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags);
 
   /* Export waypoints into a XML file for BGL compilation */
-  void exportBgl(const QString& filepath);
+  int exportBgl(const QString& filepath, const QVector<int>& ids);
 
   atools::sql::SqlDatabase *getDatabase() const
   {
     return db;
   }
+
+  void setMagDecReader(atools::fs::common::MagDecReader *value);
 
 private:
   /* Prints a warning of colummn does not exist */
