@@ -628,12 +628,12 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
   // Read all default entries
   QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : defaultEntries)
-    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+    entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
 
   // Read custom entries and overwrite default
   QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : customEntries)
-    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+    entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
 
   if(!additionalDir.isEmpty())
   {
@@ -641,7 +641,7 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
     QDir ad(additionalDir);
     QFileInfoList additonalEntries = ad.entryInfoList(pattern, QDir::Files, QDir::NoSort);
     for(const QFileInfo& fileInfo : additonalEntries)
-      entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+      entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
   }
 
   QStringList retval;
