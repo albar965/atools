@@ -437,17 +437,17 @@ QString adjustIdent(QString ident, int length, int id)
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
   ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
   if(ident.isEmpty() && id != -1)
-    ident = QString("N%1").arg(id, 4, 10, QChar('0')).left(length);
-  return ident;
+    ident = QString("N%1").arg(id, 4, 36, QChar('0')).left(length);
+  return ident.toUpper();
 }
 
-QString adjustRegion(QString ident)
+QString adjustRegion(QString region)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
-  ident = ident.toUpper().replace(IDENT_REGEXP, "").left(2);
-  if(ident.length() != 2)
-    ident = "ZZ";
-  return ident;
+  region = region.toUpper().replace(IDENT_REGEXP, "").left(2);
+  if(region.length() != 2)
+    region = "ZZ";
+  return region.toUpper();
 }
 
 bool isValidIdent(const QString& ident)
@@ -456,10 +456,10 @@ bool isValidIdent(const QString& ident)
   return IDENT_REGEXP.match(ident).hasMatch();
 }
 
-bool isValidRegion(const QString& ident)
+bool isValidRegion(const QString& region)
 {
   static const QRegularExpression REGION_REGEXP("^[A-Z]{2}$");
-  return REGION_REGEXP.match(ident).hasMatch();
+  return REGION_REGEXP.match(region).hasMatch();
 }
 
 } // namespace util

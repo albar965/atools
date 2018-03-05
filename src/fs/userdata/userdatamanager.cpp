@@ -26,6 +26,7 @@
 #include "atools.h"
 #include "geo/pos.h"
 #include "fs/common/magdecreader.h"
+#include "settings/settings.h"
 #include "fs/util/fsutil.h"
 
 #include <QDateTime>
@@ -52,6 +53,42 @@ using atools::sql::SqlRecord;
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static int VISIBLE_FROM_DEFAULT_NM = 250;
 
+/* Simple SqlQuery wrapper which can be used to export all rows or a list of rows by id */
+class QueryWrapper
+{
+public:
+  QueryWrapper(const QString& queryStr, const SqlDatabase *sqlDb, const QVector<int>& idList)
+    : q(sqlDb), ids(idList), hasIds(!ids.isEmpty())
+  {
+    q.prepare(queryStr + (hasIds ? " where userdata_id = :id" : QString()));
+  }
+
+  void exec()
+  {
+    if(!hasIds)
+      q.exec();
+  }
+
+  bool next()
+  {
+    if(hasIds)
+    {
+      if(ids.isEmpty())
+        return false;
+
+      q.bindValue(":id", ids.takeFirst());
+      q.exec();
+    }
+    return q.next();
+  }
+
+  SqlQuery q;
+
+private:
+  QVector<int> ids;
+  bool hasIds = false;
+};
+
 namespace csv {
 /* Column indexes in CSV format */
 enum Index
@@ -64,7 +101,8 @@ enum Index
   ALT = 5,
   MAGVAR = 6,
   TAGS = 7,
-  DESCRIPTION = 8
+  DESCRIPTION = 8,
+  REGION = 9
 };
 
 }
@@ -126,6 +164,13 @@ void UserdataManager::createSchema()
 
 void UserdataManager::clearData()
 {
+  // Create a backup in the settings directory
+  QString settingsPath = atools::settings::Settings::instance().getPath();
+  QString filename = settingsPath + QDir::separator() + QString("little_navmap_userdata_backup_%1.csv")
+                     .arg(QDateTime::currentDateTime().currentSecsSinceEpoch());
+
+  exportCsv(filename);
+
   SqlQuery query("delete from userdata", db);
   query.exec();
   db->commit();
@@ -315,6 +360,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       insertQuery.bindValue(":type", at(values, csv::TYPE));
       insertQuery.bindValue(":name", at(values, csv::NAME));
       insertQuery.bindValue(":ident", at(values, csv::IDENT));
+      insertQuery.bindValue(":region", at(values, csv::REGION, true /* no warning */));
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
       insertQuery.bindValue(":tags", at(values, csv::TAGS));
       insertQuery.bindValue(":last_edit_timestamp", now);
@@ -383,11 +429,8 @@ int UserdataManager::importXplane(const QString& filepath)
 
       insertQuery.bindValue(":type", "WPT");
       insertQuery.bindValue(":ident", at(cols, xp::IDENT));
-      // Put airport/ENRT and region into the tags field
-      if(at(cols, xp::AIRPORT).isEmpty())
-        insertQuery.bindValue(":tags", at(cols, xp::REGION));
-      else
-        insertQuery.bindValue(":tags", at(cols, xp::AIRPORT) + "/" + at(cols, xp::REGION));
+      insertQuery.bindValue(":region", at(cols, xp::REGION));
+      insertQuery.bindValue(":tags", at(cols, xp::AIRPORT));
       insertQuery.bindValue(":last_edit_timestamp", now);
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
@@ -429,7 +472,8 @@ int UserdataManager::importXplane(const QString& filepath)
 int UserdataManager::importGarmin(const QString& filepath)
 {
   QString insert = SqlUtil(db).buildInsertStatement("userdata",
-                                                    QString(), {"userdata_id", "description", "altitude"}, true);
+                                                    QString(), {"userdata_id", "description", "altitude", "region"},
+                                                    true);
   SqlQuery insertQuery(db);
   insertQuery.prepare(insert);
 
@@ -492,8 +536,8 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setHeader(flags & CSV_HEADER);
     sqlExport.setNumberPrecision(10);
 
-    SqlQuery query("select type, name, ident, laty, lonx, altitude as elevation, "
-                   "0 as mag_var, tags, description " "from userdata", db);
+    QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
+                       "0 as mag_var, tags, description, region from userdata", db, ids);
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
@@ -501,14 +545,15 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
 
     bool first = true;
 
+    query.exec();
     while(query.next())
     {
       if(first && flags & CSV_HEADER)
       {
         first = false;
-        stream << sqlExport.getResultSetHeader(query.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
       }
-      SqlRecord record = query.record();
+      SqlRecord record = query.q.record();
       // Need to cast otherwise it is not recognized as a floating point number
       record.setValue("mag_var",
                       static_cast<double>(magDec->getMagVar(Pos(record.valueFloat("lonx"),
@@ -560,7 +605,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
         inFile.remove();
 
         // Copy the temporary file back into place
-        tempOutFile.copy(filepath);
+        tempOutFile.rename(filepath);
       }
       else
         throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").
@@ -586,21 +631,20 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
       // Add file header
       stream << "I" << endl << "1101 Version - data cycle any. " << atools::programFileInfo() << endl << endl;
 
-    SqlQuery query("select userdata_id, ident, name, tags, laty, lonx, altitude, tags from userdata", db);
+    QueryWrapper query("select userdata_id, ident, name, tags, laty, lonx, altitude, tags, region from userdata", db,
+                       ids);
     // 50.88166700    12.58666700  PACEC PACEC ZZ
     // 46.646819444 -123.722388889 AAYRR KSEA  K1 4530263
     // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
     query.exec();
     while(query.next())
     {
-      QString tags = query.valueStr("tags").toUpper();
-      QString airport = tags.section('/', 0, 0);
-      QString region = tags.section('/', 1, 1);
+      QString region = query.q.valueStr("region").toUpper();
 
-      stream << QString::number(query.valueDouble("laty"), 'f', 8)
-             << " " << QString::number(query.valueDouble("lonx"), 'f', 8)
-             << " " << atools::fs::util::adjustIdent(query.valueStr("ident"), 5, query.valueInt("userdata_id"))
-             << " " << (airport.isEmpty() ? "ENRT" : airport)
+      stream << QString::number(query.q.valueDouble("laty"), 'f', 8)
+             << " " << QString::number(query.q.valueDouble("lonx"), 'f', 8)
+             << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
+             << " " << "ENRT" // Ignore airport here
              << " " << (region.isEmpty() ? "ZZ" : region)
              << endl;
       numExported++;
@@ -631,9 +675,9 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     stream.setCodec("UTF-8");
 
     if(!endsWithEol && (flags & APPEND))
-      stream << "\r";
+      stream << endl;
 
-    SqlQuery query("select userdata_id, ident, name,  laty, lonx from userdata", db);
+    QueryWrapper query("select userdata_id, ident, name,  laty, lonx from userdata", db, ids);
     // MTHOOD,MT HOOD PEAK,45.3723,-121.69783
     // CRTRLK,CRATER LAKE,42.94683,-122.11083
     // EIFFEL,EIFFEL TOWER,48.858151,2.294384
@@ -641,14 +685,14 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     query.exec();
     while(query.next())
     {
-      stream << atools::fs::util::adjustIdent(query.valueStr("ident"), 5, query.valueInt("userdata_id"))
+      stream << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
              << ","
-             << query.valueStr("name").simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
+             << query.q.valueStr("name").simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
              << ","
-             << QString::number(query.valueDouble("laty"), 'f', 8)
+             << QString::number(query.q.valueDouble("laty"), 'f', 8)
              << ","
-             << QString::number(query.valueDouble("lonx"), 'f', 8)
-             << "\r";
+             << QString::number(query.q.valueDouble("lonx"), 'f', 8)
+             << endl;
       numExported++;
     }
 
@@ -683,24 +727,25 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
     writer.writeAttribute("xsi:noNamespaceSchemaLocation", "bglcomp.xsd");
     writer.writeComment(atools::programFileInfo());
 
-    SqlQuery query("select userdata_id, ident, tags, laty, lonx from userdata", db);
+    QueryWrapper query("select userdata_id, ident, region, tags, laty, lonx from userdata", db, ids);
     query.exec();
     while(query.next())
     {
-      QString region = query.valueStr("tags").toUpper();
+      QString region = query.q.valueStr("region").toUpper();
       if(region.size() != 2)
         region = "ZZ";
 
       writer.writeStartElement("Waypoint");
-      writer.writeAttribute("lat", QString::number(query.valueDouble("laty"), 'f', 8));
-      writer.writeAttribute("lon", QString::number(query.valueDouble("lonx"), 'f', 8));
+      writer.writeAttribute("lat", QString::number(query.q.valueDouble("laty"), 'f', 8));
+      writer.writeAttribute("lon", QString::number(query.q.valueDouble("lonx"), 'f', 8));
       writer.writeAttribute("waypointType", "NAMED");
       writer.writeAttribute("waypointRegion", region);
       writer.writeAttribute("magvar",
-                            QString::number(magDec->getMagVar(Pos(query.valueFloat("lonx"),
-                                                                  query.valueFloat("laty"))), 'f', 8));
+                            QString::number(magDec->getMagVar(Pos(query.q.valueFloat("lonx"),
+                                                                  query.q.valueFloat("laty"))), 'f', 8));
       writer.writeAttribute("waypointIdent",
-                            atools::fs::util::adjustIdent(query.valueStr("ident"), 5, query.valueInt("userdata_id")));
+                            atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5,
+                                                          query.q.valueInt("userdata_id")));
       writer.writeEndElement(); // Waypoint
       numExported++;
     }
@@ -711,12 +756,13 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
   return numExported;
 }
 
-QString UserdataManager::at(const QStringList& line, int index)
+QString UserdataManager::at(const QStringList& line, int index, bool nowarn)
 {
   if(index < line.size())
     return line.at(index);
 
-  qWarning() << "Index" << index << "not found in file";
+  if(!nowarn)
+    qWarning() << "Index" << index << "not found in file";
   return QString();
 }
 

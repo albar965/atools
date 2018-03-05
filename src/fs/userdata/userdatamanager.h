@@ -19,6 +19,7 @@
 #define ATOOLS_FS_USERDATAMANAGER_H
 
 #include <QApplication>
+#include <QVector>
 
 namespace atools {
 
@@ -101,17 +102,21 @@ public:
   void commit();
 
   /* Import and export from a predefined CSV format */
-  int importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator, QChar escape);
-  int exportCsv(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags,
-                QChar separator, QChar escape);
+  int importCsv(const QString& filepath, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
+                QChar separator = ',', QChar escape = '"');
+  int exportCsv(const QString& filepath, const QVector<int>& ids = QVector<int>(),
+                atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
+                QChar separator = ',', QChar escape = '"');
 
   /* Import and export user_fix.dat file from X-Plane */
   int importXplane(const QString& filepath);
-  int exportXplane(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags);
+  int exportXplane(const QString& filepath, const QVector<int>& ids = QVector<int>(),
+                   atools::fs::userdata::Flags flags = atools::fs::userdata::NONE);
 
   /* Import and export Garmin GTN user waypoint database */
   int importGarmin(const QString& filepath);
-  int exportGarmin(const QString& filepath, const QVector<int>& ids, atools::fs::userdata::Flags flags);
+  int exportGarmin(const QString& filepath, const QVector<int>& ids = QVector<int>(),
+                   atools::fs::userdata::Flags flags = atools::fs::userdata::NONE);
 
   /* Export waypoints into a XML file for BGL compilation */
   int exportBgl(const QString& filepath, const QVector<int>& ids);
@@ -125,7 +130,7 @@ public:
 
 private:
   /* Prints a warning of colummn does not exist */
-  QString at(const QStringList& line, int index);
+  QString at(const QStringList& line, int index, bool nowarn = false);
 
   atools::sql::SqlDatabase *db;
   atools::fs::common::MagDecReader *magDec;

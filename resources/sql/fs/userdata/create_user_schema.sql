@@ -24,8 +24,9 @@ create table userdata
   type varchar(10) collate nocase,           -- VRP, POI, OBS, IFR, etc.
   name varchar(200) collate nocase,
   ident varchar(10) collate nocase,          -- Maximum five characters for export
+  region varchar(10) collate nocase,          -- Max two characters for export
   description varchar(1024) collate nocase,
-  tags varchar(1024) collate nocase,         -- Used for region in export
+  tags varchar(1024) collate nocase,         -- Simple text file
   last_edit_timestamp varchar(100) not null, -- Timestamp of last edit (i.e. "2016-07-05T15:45:30.396")
   import_file_path varchar(512),             -- Full path filename from import
   visible_from integer,                      -- Visible from zoom NM
@@ -37,6 +38,7 @@ create table userdata
 create index if not exists idx_userdata_type on userdata(type);
 create index if not exists idx_userdata_name on userdata(name);
 create index if not exists idx_userdata_ident on userdata(ident);
+create index if not exists idx_userdata_region on userdata(region);
 create index if not exists idx_userdata_description on userdata(description);
 create index if not exists idx_userdata_tags on userdata(tags);
 create index if not exists idx_userdata_last_edit_timestamp on userdata(last_edit_timestamp);

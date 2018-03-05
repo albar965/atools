@@ -53,7 +53,7 @@ QString capAirportName(const QString& str);
 QString adjustIdent(QString ident, int length = 5, int id = -1);
 
 /* Limits region to upper case characters and trims length to 2. Returns "ZZ" if empty. */
-QString adjustRegion(QString ident);
+QString adjustRegion(QString region);
 
 /* Max 10 characters, digits, space and underscore */
 QString adjustFsxUserWpName(QString name, int length = 10);
@@ -62,7 +62,7 @@ QString adjustFsxUserWpName(QString name, int length = 10);
 bool isValidIdent(const QString& ident);
 
 /* Upper case characters length equal 2 */
-bool isValidRegion(const QString& ident);
+bool isValidRegion(const QString& region);
 
 } // namespace util
 } // namespace fs
