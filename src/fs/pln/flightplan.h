@@ -32,6 +32,8 @@ class LineString;
 namespace fs {
 namespace pln {
 
+class FlightplanIO;
+
 /*
  * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
  */
@@ -45,48 +47,6 @@ public:
   ~Flightplan();
 
   atools::fs::pln::Flightplan& operator=(const atools::fs::pln::Flightplan& other);
-
-  /*
-   * Load a flightplan. An exception is thrown if the file is not valid. The type will be detected automatically
-   * by the content of the first few lines and supports FSX/P3D XML, FS9 ini-style, FLP and FMS files.
-   *
-   * @param file filepath of a valid flight plan file
-   */
-  void load(const QString& file);
-
-  /*
-   * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
-   * Although the flight simulator cannot deal with flight plans that have no valid start
-   * or destination (start or destaintion are merely a waypoint) it is allowed to that save one.
-   *
-   * The plan is saved in the same format as loaded, FSX/P3D, FLP or FMS.
-   *
-   * @param file filepath of the file to be saved
-   * @param clean if true save all properties in a XML comment
-   */
-  void save(const QString& file, const QString& airacCycle, bool clean = false);
-
-  /* FSX/P3D XML format */
-  void saveFsx(const QString& file, bool clean);
-
-  /* PMDG RTE format */
-  void saveRte(const QString& file);
-
-  /* Aerosoft Airbus and X-Plane FLP format */
-  void saveFlp(const QString& file, bool saveProcedures);
-
-  /* X-Plane FMS format.
-   * @param version11Format Version 11 otherwise 3 */
-  void saveFms(const QString& file, const QString& airacCycle, bool version11Format);
-
-  /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
-  void saveGpx(const QString& file, const geo::LineString& track, const QVector<quint32>& timestamps, int cruiseAltFt);
-
-  /* Majestic Dash 400 binary format */
-  void saveFpr(const QString& file);
-
-  /* Reality XP GNS XML format. */
-  void saveGarminGns(const QString& file, bool userWaypointOption);
 
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
@@ -317,38 +277,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
-  void loadFsx(const QString& file);
-  void loadFs9(const QString& file);
-  void loadFlp(const QString& file);
-  void loadFms(const QString& file);
-
-  static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
-  static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
-  static QString routeTypeToString(atools::fs::pln::RouteType type);
-  static atools::fs::pln::RouteType stringToRouteType(const QString& str);
-  RouteType stringToRouteTypeFs9(const QString& str);
-
-  QString gnsType(const FlightplanEntry& entry);
-
-  void readUntilElement(QXmlStreamReader& reader, const QString& name);
-  void readAppVersion(QXmlStreamReader& reader);
-  void readWaypoint(QXmlStreamReader& reader);
-  void posToRte(QTextStream& stream, const geo::Pos& pos, bool alt);
-
-  /* Set altitude in all positions */
-  void assignAltitudeToAllEntries(int altitude);
-
-  /* Number of entries including start and destination but excluding procedure points */
-  int numEntriesSave();
-
-  /* Get the first four lines of a file converted to lowercase to check type */
-  QStringList probeFile(const QString& file);
-
-  /* Copy departure and destination from first and last entry */
-  void adjustDepartureAndDestination();
-
-  /* Write string into memory location, truncate if needed and fill up to length with null */
-  void writeBinaryString(char *mem, QString str, int length);
+  friend class atools::fs::pln::FlightplanIO;
 
   /* Values for FSX */
   const QString APPVERSION_BUILD = QString("61472");
@@ -364,7 +293,7 @@ private:
   QList<atools::fs::pln::FlightplanEntry> entries;
 
   int cruisingAlt;
-  QString filename, title, departureIdent, destinationIdent, description,
+  QString title, departureIdent, destinationIdent, description,
           departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
 
