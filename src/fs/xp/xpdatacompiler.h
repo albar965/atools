@@ -24,6 +24,7 @@
 
 class QTextStream;
 class QFile;
+class QFileInfo;
 
 namespace atools {
 
@@ -235,6 +236,8 @@ private:
 
   /* Extract airac cycle from the navdata and airport header files */
   void updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum);
+  bool includeFile(const QFileInfo& fileinfo);
+  static bool includeFile(const atools::fs::NavDatabaseOptions& opts, const QFileInfo& fileinfo);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath;
