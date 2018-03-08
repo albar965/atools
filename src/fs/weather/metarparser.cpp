@@ -43,6 +43,7 @@
 #include <cstring>
 #include <exception>
 #include <iostream>
+#include <QDate>
 
 // #define QT_NO_CAST_FROM_BYTEARRAY
 // #define QT_NO_CAST_TO_ASCII
@@ -153,9 +154,13 @@ MetarParser::MetarParser(const QString& metar) :
   _m = _data;
   _icao[0] = '\0';
 
+  bool correctDate = false;
   // NOAA preample
   if(!scanPreambleDate())
+  {
     useCurrentDate();
+    correctDate = true;
+  }
   scanPreambleTime();
 
   // METAR header
@@ -212,6 +217,21 @@ MetarParser::MetarParser(const QString& metar) :
   }
 
   _url = "";
+
+  if(correctDate)
+  {
+    QDate date(_year, _month, _day);
+    int months = 0;
+
+    // Keep substracting months until it is not in the future and the day matches
+    // but not more than one year to avoid endless loops
+    while((date > QDate::currentDate() || _day != date.day()) && months < 12)
+      date = QDate(_year, _month, _day).addMonths(-(++months));
+
+    _month = date.month();
+    _day = date.day();
+    _year = date.year();
+  }
 }
 
 /**
