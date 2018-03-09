@@ -427,7 +427,7 @@ int UserdataManager::importXplane(const QString& filepath)
 
       QStringList cols = line.split(" ");
 
-      insertQuery.bindValue(":type", "WPT");
+      insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":ident", at(cols, xp::IDENT));
       insertQuery.bindValue(":region", at(cols, xp::REGION));
       insertQuery.bindValue(":tags", at(cols, xp::AIRPORT));
@@ -496,7 +496,7 @@ int UserdataManager::importGarmin(const QString& filepath)
 
       QStringList cols = line.split(",");
 
-      insertQuery.bindValue(":type", "WPT");
+      insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":name", at(cols, gm::NAME));
       insertQuery.bindValue(":ident", at(cols, gm::IDENT));
       insertQuery.bindValue(":last_edit_timestamp", now);
