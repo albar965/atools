@@ -116,6 +116,16 @@ void SimConnectAircraft::write(QDataStream& out) const
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
 }
 
+bool SimConnectAircraft::isSameAircraft(const SimConnectAircraft& other) const
+{
+  return airplaneTitle == other.airplaneTitle &&
+         airplaneModel == other.airplaneModel &&
+         airplaneReg == other.airplaneReg &&
+         airplaneType == other.airplaneType &&
+         airplaneAirline == other.airplaneAirline &&
+         airplaneFlightnumber == other.airplaneFlightnumber;
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools

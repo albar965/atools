@@ -253,6 +253,9 @@ public:
     return debug;
   }
 
+  /* Compares only registration, type and others */
+  bool isSameAircraft(const SimConnectAircraft& other) const;
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;

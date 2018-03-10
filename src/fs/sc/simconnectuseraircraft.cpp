@@ -45,9 +45,10 @@ void SimConnectUserAircraft::read(QDataStream& in)
   SimConnectAircraft::read(in);
   in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt
   >> ambientTemperatureCelsius >> totalAirTemperatureCelsius >> seaLevelPressureMbar
-  >> pitotIcePercent >> structuralIcePercent >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >> airplaneEmptyWeightLbs
+  >> pitotIcePercent >> structuralIcePercent >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >>
+  airplaneEmptyWeightLbs
   >> fuelTotalQuantityGallons >> fuelTotalWeightLbs >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibilityMeter
-  >> trackMagDeg >> trackTrueDeg>> localDateTime >> zuluDateTime;
+  >> trackMagDeg >> trackTrueDeg >> localDateTime >> zuluDateTime;
 }
 
 void SimConnectUserAircraft::write(QDataStream& out) const
@@ -55,9 +56,44 @@ void SimConnectUserAircraft::write(QDataStream& out) const
   SimConnectAircraft::write(out);
   out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt
       << ambientTemperatureCelsius << totalAirTemperatureCelsius << seaLevelPressureMbar
-      << pitotIcePercent << structuralIcePercent << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs << airplaneEmptyWeightLbs
-      << fuelTotalQuantityGallons << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg << ambientVisibilityMeter
+      << pitotIcePercent << structuralIcePercent << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs <<
+    airplaneEmptyWeightLbs
+      << fuelTotalQuantityGallons << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg <<
+    ambientVisibilityMeter
       << trackMagDeg << trackTrueDeg << localDateTime << zuluDateTime;
+}
+
+float SimConnectUserAircraft::getConsumedFuelLbs(const SimConnectUserAircraft& past) const
+{
+  return past.getFuelTotalWeightLbs() - getFuelTotalWeightLbs();
+}
+
+float SimConnectUserAircraft::getConsumedFuelGallons(const SimConnectUserAircraft& past) const
+{
+  return past.getFuelTotalQuantityGallons() - getFuelTotalQuantityGallons();
+}
+
+float SimConnectUserAircraft::getAverageFuelFlowPPH(const SimConnectUserAircraft& past) const
+{
+  float mins = getTravelingTimeMinutes(past);
+  if(mins > 0)
+    return (getConsumedFuelLbs(past) / mins) * 60.f;
+
+  return 0.f;
+}
+
+float SimConnectUserAircraft::getAverageFuelFlowGPH(const SimConnectUserAircraft& past) const
+{
+  float mins = getTravelingTimeMinutes(past);
+  if(mins > 0)
+    return (getConsumedFuelGallons(past) / mins) * 60.f;
+
+  return 0.f;
+}
+
+int SimConnectUserAircraft::getTravelingTimeMinutes(const SimConnectUserAircraft& past) const
+{
+  return static_cast<int>((getZuluTime().toSecsSinceEpoch() - past.getZuluTime().toSecsSinceEpoch()) / 60L);
 }
 
 } // namespace sc

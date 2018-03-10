@@ -167,6 +167,14 @@ public:
     return !isOnGround() && getGroundSpeedKts() > 20.f && getAltitudeAboveGroundFt() > 50.f;
   }
 
+  /* Calculate flight parameters that are based on time.
+   * "This" is the current aircraft state where "past" is the older one at takeoff */
+  float getConsumedFuelLbs(const SimConnectUserAircraft& past) const;
+  float getConsumedFuelGallons(const SimConnectUserAircraft& past) const;
+  float getAverageFuelFlowPPH(const SimConnectUserAircraft& past) const;
+  float getAverageFuelFlowGPH(const SimConnectUserAircraft& past) const;
+  int getTravelingTimeMinutes(const SimConnectUserAircraft& past) const;
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectData;
