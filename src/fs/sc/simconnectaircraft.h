@@ -247,6 +247,16 @@ public:
     return flags & IN_SNOW;
   }
 
+  bool isSimPaused() const
+  {
+    return flags & SIM_PAUSED;
+  }
+
+  bool isSimReplay() const
+  {
+    return flags & SIM_REPLAY;
+  }
+
   /* Create artificially by mouse movements */
   bool isDebug() const
   {

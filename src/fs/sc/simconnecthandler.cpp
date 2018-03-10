@@ -466,6 +466,9 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
     aircraft.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
     aircraft.flags |= atools::fs::sc::IS_USER;
+
+  if(simPaused > 0)
+    aircraft.flags |= atools::fs::sc::SIM_PAUSED;
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)

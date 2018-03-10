@@ -62,7 +62,13 @@ enum AircraftFlag
 
   /* Indicated source simulator for all aircraft */
   SIM_FSX_P3D = 0x0020,
-  SIM_XPLANE = 0x0040
+  SIM_XPLANE = 0x0040,
+
+  /* Simulator is in pause mode */
+  SIM_PAUSED = 0x0080,
+
+  /* Replay is active - only X-Plane */
+  SIM_REPLAY = 0x0100
 };
 
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
