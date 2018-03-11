@@ -28,6 +28,7 @@
 #include "fs/common/magdecreader.h"
 #include "settings/settings.h"
 #include "fs/util/fsutil.h"
+#include "io/fileroller.h"
 
 #include <QDateTime>
 #include <QFile>
@@ -162,14 +163,24 @@ void UserdataManager::createSchema()
   db->commit();
 }
 
+void UserdataManager::backup()
+{
+  if(hasData())
+  {
+    // Create a backup in the settings directory
+    QString settingsPath = atools::settings::Settings::instance().getPath();
+    QString filename = settingsPath + QDir::separator() + QString("little_navmap_userdata_backup.csv");
+
+    atools::io::FileRoller roller(3);
+    roller.rollFile(filename);
+
+    exportCsv(filename);
+  }
+}
+
 void UserdataManager::clearData()
 {
-  // Create a backup in the settings directory
-  QString settingsPath = atools::settings::Settings::instance().getPath();
-  QString filename = settingsPath + QDir::separator() + QString("little_navmap_userdata_backup_%1.csv")
-                     .arg(QDateTime::currentDateTime().currentSecsSinceEpoch());
-
-  exportCsv(filename);
+  backup();
 
   SqlQuery query("delete from userdata", db);
   query.exec();

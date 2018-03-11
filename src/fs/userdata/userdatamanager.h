@@ -126,7 +126,11 @@ public:
     return db;
   }
 
+  /* Set later to avoid circular dependeny in database */
   void setMagDecReader(atools::fs::common::MagDecReader *value);
+
+  /* Create a CSV backup in the settings directory and roll the files over. */
+  void backup();
 
 private:
   /* Prints a warning of colummn does not exist */
