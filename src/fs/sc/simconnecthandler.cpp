@@ -457,7 +457,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
   aircraft.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
 
-  aircraft.trueSpeedKts = simDataUserAircraft.airspeedTrueKts;
+  aircraft.trueAirspeedKts = simDataUserAircraft.airspeedTrueKts;
   aircraft.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
   aircraft.machSpeed = simDataUserAircraft.airspeedMach;
   aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;

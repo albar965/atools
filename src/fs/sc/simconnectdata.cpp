@@ -173,7 +173,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   SimConnectData data;
   data.userAircraft.position = pos;
-  data.userAircraft.position.setAltitude(8000);
+  data.userAircraft.position.setAltitude(1000);
 
   if(lastPos.isValid())
   {
@@ -185,7 +185,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
           data.userAircraft.trackTrueDeg =
             h;
 
-    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueSpeedKts = 200.f;
+    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = 200.f;
   }
   else
   {
@@ -210,7 +210,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.fromIdent = "EDDF";
 
   data.userAircraft.toIdent = "LIRF";
-  data.userAircraft.altitudeAboveGroundFt = 8000;
+  data.userAircraft.altitudeAboveGroundFt = 1000;
 
   data.userAircraft.debug = true;
 

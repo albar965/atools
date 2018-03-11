@@ -22,7 +22,6 @@
 #include "fs/sc/simconnectdatabase.h"
 
 #include <QString>
-#include <QDateTime>
 
 class QIODevice;
 
@@ -154,9 +153,9 @@ public:
     return indicatedAltitudeFt;
   }
 
-  float getTrueSpeedKts() const
+  float getTrueAirspeedKts() const
   {
-    return trueSpeedKts;
+    return trueAirspeedKts;
   }
 
   float getMachSpeed() const
@@ -263,6 +262,12 @@ public:
     return debug;
   }
 
+  /* true if empty default initialized object */
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
   /* Compares only registration, type and others */
   bool isSameAircraft(const SimConnectAircraft& other) const;
 
@@ -277,7 +282,7 @@ private:
 
   atools::geo::Pos position;
   float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
-        indicatedSpeedKts = 0.f, trueSpeedKts = 0.f,
+        indicatedSpeedKts = 0.f, trueAirspeedKts = 0.f,
         machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
   quint16 modelRadiusFt = 0, wingSpanFt = 0;
 
