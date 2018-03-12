@@ -101,6 +101,7 @@ create table airport
   tower_altitude integer,                       -- Feet
   tower_lonx double,
   tower_laty double,
+  transition_altitude integer,                  -- Feet
   altitude integer not null,                    -- Feet
   lonx double not null,                         -- Coordinates of the airport center
   laty double not null,                         -- Coordinates of the airport center
