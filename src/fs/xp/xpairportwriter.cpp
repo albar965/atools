@@ -406,7 +406,23 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   airportRect.extend(start);
   airportRect.extend(end);
 
-  QString name = line.size() > te::NAME ? at(line, te::NAME) : QString();
+  QString name = line.size() > te::NAME ? at(line, te::NAME).simplified() : QString();
+
+  // Filter out the various garbage names
+  QString nameCompare = name.toUpper();
+  if(nameCompare == QLatin1Literal("*") ||
+     nameCompare == QLatin1Literal("**") ||
+     nameCompare == QLatin1Literal("+") ||
+     nameCompare == QLatin1Literal("-") ||
+     nameCompare == QLatin1Literal(".") ||
+     nameCompare == QLatin1Literal("TAXIWAY") ||
+     nameCompare == QLatin1Literal("TAXI_TO_RAMP") ||
+     nameCompare == QLatin1Literal("TAXI_RAMP") ||
+     nameCompare == QLatin1Literal("TAXY_RAMP") ||
+     nameCompare == QLatin1Literal("UNNAMED") ||
+     nameCompare == QLatin1Literal("TWY") ||
+     nameCompare == QLatin1Literal("TAXI"))
+    name.clear();
 
   numTaxiPath++;
   insertTaxiQuery->bindValue(":taxi_path_id", ++curTaxiPathId);
