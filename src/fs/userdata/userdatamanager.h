@@ -100,6 +100,7 @@ public:
   atools::sql::SqlRecord getEmptyRecord();
 
   void commit();
+  void rollback();
 
   /* Import and export from a predefined CSV format */
   int importCsv(const QString& filepath, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
@@ -135,6 +136,9 @@ public:
 private:
   /* Prints a warning of colummn does not exist */
   QString at(const QStringList& line, int index, bool nowarn = false);
+
+  /* throws an exception if the coodinates are not valid */
+  void validateCoordinates(const QString& line, const QString& lonx, const QString& laty);
 
   atools::sql::SqlDatabase *db;
   atools::fs::common::MagDecReader *magDec;

@@ -310,6 +310,11 @@ void UserdataManager::commit()
   db->commit();
 }
 
+void UserdataManager::rollback()
+{
+  db->rollback();
+}
+
 // create table userdata
 // (
 // userdata_id integer primary key,
@@ -378,6 +383,8 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
       insertQuery.bindValue(":altitude", at(values, csv::ALT));
+
+      validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY));
       insertQuery.bindValue(":lonx", at(values, csv::LONX));
       insertQuery.bindValue(":laty", at(values, csv::LATY));
       insertQuery.exec();
@@ -390,6 +397,27 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
   return numImported;
+}
+
+void UserdataManager::validateCoordinates(const QString& line, const QString& lonx, const QString& laty)
+{
+  bool lonxOk = true, latyOk = true;
+  Pos pos(lonx.toFloat(&lonxOk), laty.toFloat(&latyOk));
+
+  if(!lonxOk)
+    throw Exception(tr("Longitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+
+  if(!latyOk)
+    throw Exception(tr("Latitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+
+  if(!pos.isValid())
+    throw Exception(tr("Coordinates are not valid in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+
+  if(pos.isNull())
+    throw Exception(tr("Coordinates are null in line\n\n\"%1\"\n\nImport stopped.").arg(line));
+
+  if(!pos.isValidRange())
+    throw Exception(tr("Coordinates are not in a valid range in line\n\n\"%1\"\n\nImport stopped.").arg(line));
 }
 
 // I
@@ -445,6 +473,8 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":last_edit_timestamp", now);
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+
+      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
       insertQuery.exec();
@@ -513,6 +543,8 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":last_edit_timestamp", now);
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+
+      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
       insertQuery.exec();
