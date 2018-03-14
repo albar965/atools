@@ -452,13 +452,13 @@ QString adjustRegion(QString region)
 
 bool isValidIdent(const QString& ident)
 {
-  static const QRegularExpression IDENT_REGEXP("^[A-Z][A-Z0-9]{1-4}$");
+  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{1-5}$");
   return IDENT_REGEXP.match(ident).hasMatch();
 }
 
 bool isValidRegion(const QString& region)
 {
-  static const QRegularExpression REGION_REGEXP("^[A-Z]{2}$");
+  static const QRegularExpression REGION_REGEXP("^[A-Z0-9]$");
   return REGION_REGEXP.match(region).hasMatch();
 }
 
