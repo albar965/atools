@@ -35,7 +35,7 @@ ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomI
                                          QAction *zoomOutAction, QAction *zoomDefaultAction,
                                          QString settingsKeyStr)
   : itemView(view), actionZoomIn(zoomInAction), actionZoomOut(zoomOutAction),
-    actionZoomDefault(zoomDefaultAction), settingsKey(settingsKeyStr)
+  actionZoomDefault(zoomDefaultAction), settingsKey(settingsKeyStr)
 {
   Q_ASSERT(view != nullptr);
 
@@ -89,7 +89,7 @@ void ItemViewZoomHandler::initTableViewZoom()
 
   QTableView *tableView = dynamic_cast<QTableView *>(itemView);
   if(tableView != nullptr)
-      defaultTableViewFontPointSize *= 1.4f;
+    defaultTableViewFontPointSize *= 1.4f;
 #endif
 
   float newPointSize = 0.f;
@@ -98,6 +98,10 @@ void ItemViewZoomHandler::initTableViewZoom()
                                                    defaultTableViewFontPointSize);
   else
     newPointSize = defaultTableViewFontPointSize;
+
+  qDebug() << Q_FUNC_INFO << "newPointSize" << newPointSize
+           << "defaultTableViewFontPointSize" << defaultTableViewFontPointSize;
+
   setTableViewFontSize(newPointSize);
 }
 

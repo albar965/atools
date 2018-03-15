@@ -452,7 +452,7 @@ QString adjustRegion(QString region)
 
 bool isValidIdent(const QString& ident)
 {
-  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{1-5}$");
+  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{1,5}$");
   return IDENT_REGEXP.match(ident).hasMatch();
 }
 
