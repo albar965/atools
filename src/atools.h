@@ -59,6 +59,9 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 
+/* Cut linefeed separated text. Return maxLength lines where \n... is included  */
+QString elideTextLinesShort(QString str, int maxLength);
+
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);
 

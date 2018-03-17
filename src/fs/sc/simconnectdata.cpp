@@ -20,6 +20,8 @@
 #include <QDebug>
 #include <QDataStream>
 
+using atools::fs::weather::MetarResult;
+
 namespace atools {
 namespace fs {
 namespace sc {

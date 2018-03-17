@@ -201,9 +201,7 @@ HEADERS += src/atools.h \
     src/fs/sc/datareaderthread.h \
     src/fs/sc/weatherrequest.h \
     src/gui/widgetutil.h \
-    src/fs/weather/metar.h \
     src/util/timedcache.h \
-    src/fs/weather/metarparser.h \
     src/util/paintercontextsaver.h \
     src/fs/db/ap/airportfilewriter.h \
     src/geo/line.h \
@@ -234,7 +232,6 @@ HEADERS += src/atools.h \
     src/fs/xp/xpcifpwriter.h \
     src/fs/common/globereader.h \
     src/fs/common/magdecreader.h \
-    src/fs/common/xpweatherreader.h \
     src/fs/util/coordinates.h \
     src/fs/pln/flightplanconstants.h \
     src/util/updatecheck.h \
@@ -254,7 +251,14 @@ HEADERS += src/atools.h \
     src/fs/scenery/addoncfg.h \
     src/fs/userdata/userdatamanager.h \
     src/util/csvreader.h \
-    src/fs/pln/flightplanio.h
+    src/fs/pln/flightplanio.h \
+    src/geo/simplespatialindex.h \
+    src/fs/weather/weathernetdownload.h \
+    src/fs/weather/weathernetsingle.h \
+    src/fs/weather/metarparser.h \
+    src/fs/weather/metar.h \
+    src/fs/weather/weathertypes.h \
+    src/fs/weather/xpweatherreader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -398,9 +402,7 @@ SOURCES += src/atools.cpp \
     src/fs/sc/datareaderthread.cpp \
     src/fs/sc/weatherrequest.cpp \
     src/gui/widgetutil.cpp \
-    src/fs/weather/metar.cpp \
     src/util/timedcache.cpp \
-    src/fs/weather/metarparser.cpp \
     src/fs/bgl/nav/airwaysegment.cpp \
     src/util/paintercontextsaver.cpp \
     src/fs/db/ap/airportfilewriter.cpp \
@@ -432,7 +434,6 @@ SOURCES += src/atools.cpp \
     src/fs/xp/xpcifpwriter.cpp \
     src/fs/common/globereader.cpp \
     src/fs/common/magdecreader.cpp \
-    src/fs/common/xpweatherreader.cpp \
     src/fs/util/coordinates.cpp \
     src/fs/pln/flightplanconstants.cpp \
     src/util/updatecheck.cpp \
@@ -452,7 +453,14 @@ SOURCES += src/atools.cpp \
     src/fs/scenery/addoncfg.cpp \
     src/fs/userdata/userdatamanager.cpp \
     src/util/csvreader.cpp \
-    src/fs/pln/flightplanio.cpp
+    src/fs/pln/flightplanio.cpp \
+    src/geo/simplespatialindex.cpp \
+    src/fs/weather/weathernetdownload.cpp \
+    src/fs/weather/weathernetsingle.cpp \
+    src/fs/weather/metarparser.cpp \
+    src/fs/weather/metar.cpp \
+    src/fs/weather/weathertypes.cpp \
+    src/fs/weather/xpweatherreader.cpp
 
 
 unix {

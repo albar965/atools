@@ -74,39 +74,6 @@ enum AircraftFlag
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
 
-struct MetarResult
-{
-  QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
-  atools::geo::Pos requestPos;
-  QDateTime timestamp;
-
-  bool isValid() const
-  {
-    return !requestIdent.isEmpty() && requestPos.isValid();
-  }
-
-  bool isEmpty() const
-  {
-    return !isValid() ||
-           (metarForStation.isEmpty() && metarForNearest.isEmpty() && metarForInterpolated.isEmpty());
-  }
-
-  bool operator==(const atools::fs::sc::MetarResult& other)
-  {
-    return requestIdent == other.requestIdent &&
-           metarForStation == other.metarForStation &&
-           metarForNearest == other.metarForNearest &&
-           metarForInterpolated == other.metarForInterpolated &&
-           requestPos == other.requestPos;
-  }
-
-  bool operator!=(const atools::fs::sc::MetarResult& other)
-  {
-    return !operator==(other);
-  }
-
-};
-
 } // namespace sc
 } // namespace fs
 } // namespace atools

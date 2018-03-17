@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fs/common/xpweatherreader.h"
+#include "fs/weather/xpweatherreader.h"
 
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -25,10 +25,10 @@
 
 namespace atools {
 namespace fs {
-namespace common {
+namespace weather {
 
 XpWeatherReader::XpWeatherReader(QObject *parent)
-  : QObject(parent)
+  : QObject(parent), index(5000)
 {
 }
 
@@ -37,7 +37,7 @@ XpWeatherReader::~XpWeatherReader()
   clear();
 }
 
-void atools::fs::common::XpWeatherReader::readWeatherFile(const QString& file)
+void XpWeatherReader::readWeatherFile(const QString& file)
 {
   clear();
   weatherFile = file;
@@ -52,45 +52,36 @@ void atools::fs::common::XpWeatherReader::readWeatherFile(const QString& file)
 void XpWeatherReader::clear()
 {
   deleteFsWatcher();
-  metars.clear();
+  index.clear();
   weatherFile.clear();
 }
 
-atools::fs::sc::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
+atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  atools::fs::sc::MetarResult result;
+  atools::fs::weather::MetarResult result;
   result.requestIdent = station;
   result.requestPos = pos;
 
-  result.metarForStation = getMetar(station);
-
-  if(result.metarForStation.isEmpty())
+  MetarData data;
+  QString foundKey = index.getTypeOrNearest(data, station, pos);
+  if(!foundKey.isEmpty())
   {
-    const XpCoordIdxEntryType *nearest = nullptr;
-    float nearestDistance = std::numeric_limits<float>::max();
-
-    for(const XpCoordIdxEntryType& entry : xpAirportCoordinates)
-    {
-      float dist = entry.first.distanceSimpleTo(pos);
-      if(dist < nearestDistance)
-      {
-        nearestDistance = dist;
-        nearest = &entry;
-      }
-    }
-
-    if(nearest != nullptr)
-      result.metarForNearest = getMetar(nearest->second);
+    // Found a METAR
+    if(foundKey == station)
+      // Found exact match
+      result.metarForStation = data.metar;
+    else
+      // Found a station nearby
+      result.metarForNearest = data.metar;
   }
 
   result.timestamp = QDateTime::currentDateTime();
   return result;
-
 }
 
 QString XpWeatherReader::getMetar(const QString& ident)
 {
-  return metars.value(ident).metar;
+  return index.value(ident).metar;
 }
 
 // 2017/07/30 18:45
@@ -137,19 +128,18 @@ void XpWeatherReader::read()
         QString ident = line.section(' ', 0, 0);
         if(IDENT_REGEXP.match(ident).hasMatch())
         {
-          if(metars.contains(ident))
+          if(index.contains(ident))
           {
-            MetarData md = metars.value(ident);
+            MetarData md = index.value(ident);
             if(md.timestamp > lastTimestamp)
               // Ignore. Already loaded is newer.
               continue;
-
-            // if(md.time == lastDate && md.metar != line)
-            // qWarning() << "Duplicate METAR in file" << file.fileName() << md.metar << line;
           }
 
-          // Starts with an airport ident
-          metars.insert(ident, {ident, line, lastTimestamp});
+          // Starts with an airport ident - add if position is valid
+          atools::geo::Pos pos = fetchAirportCoords(ident);
+          if(pos.isValid())
+            index.insert(ident, {ident, line, lastTimestamp}, pos);
         }
         else
           qWarning() << "Metar does not match in file" << file.fileName() << "line num" << lineNum << "line" << line;
@@ -157,11 +147,11 @@ void XpWeatherReader::read()
       lineNum++;
     }
     file.close();
-
-    buildXplaneAirportIndex();
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+
+  qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars";
 }
 
 /* Called on directory or file change */
@@ -184,10 +174,10 @@ void XpWeatherReader::pathChanged(const QString& path)
   else
   {
     // File does not exist
-    if(!metars.isEmpty())
+    if(!index.isEmpty())
     {
       qDebug() << Q_FUNC_INFO << "removed" << weatherFile;
-      metars.clear();
+      index.clear();
       weatherFileTimestamp = QDateTime();
       emit weatherUpdated();
     }
@@ -225,33 +215,6 @@ void XpWeatherReader::createFsWatcher()
     qWarning() << "cannot watch" << fileinfo.path();
 }
 
-void XpWeatherReader::buildXplaneAirportIndex()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  xpAirportCoordinates.clear();
-
-  if(!fetchAirportCoords)
-    return;
-
-  int num = 0;
-  for(const QString& ident: getMetarAirportIdents())
-  {
-    atools::geo::Pos pos = fetchAirportCoords(ident);
-    if(pos.isValid())
-    {
-      xpAirportCoordinates.append(std::make_pair(pos, ident));
-      num++;
-    }
-  }
-  qDebug() << Q_FUNC_INFO << "updated" << num << "airports";
-}
-
-void XpWeatherReader::setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
-{
-  fetchAirportCoords = value;
-}
-
-} // namespace common
+} // namespace weather
 } // namespace fs
 } // namespace atools

@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 #include "fs/sc/simconnecttypes.h"
+#include "fs/weather/weathertypes.h"
 #include "fs/sc/simconnectuseraircraft.h"
 
 #include <QString>
@@ -111,12 +112,12 @@ public:
     return aiAircraft;
   }
 
-  const QVector<atools::fs::sc::MetarResult>& getMetars() const
+  const QVector<atools::fs::weather::MetarResult>& getMetars() const
   {
     return metarResults;
   }
 
-  void setMetars(const QVector<atools::fs::sc::MetarResult>& value)
+  void setMetars(const QVector<atools::fs::weather::MetarResult>& value)
   {
     metarResults = value;
   }
@@ -141,7 +142,7 @@ private:
   atools::fs::sc::SimConnectUserAircraft userAircraft;
   QVector<atools::fs::sc::SimConnectAircraft> aiAircraft;
 
-  QVector<atools::fs::sc::MetarResult> metarResults;
+  QVector<atools::fs::weather::MetarResult> metarResults;
 };
 
 const atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;

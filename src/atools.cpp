@@ -258,6 +258,21 @@ QString elideTextShort(const QString& str, int maxLength)
   return str;
 }
 
+QString elideTextLinesShort(QString str, int maxLength)
+{
+  QStringList lines;
+  QTextStream stream(&str, QIODevice::ReadOnly);
+
+  int i = 0;
+  while(!stream.atEnd() && ++i < maxLength)
+    lines.append(stream.readLine());
+
+  if(i >= maxLength)
+    return lines.join("\n") + "\n…";
+  else
+    return lines.join("\n");
+}
+
 float calculateSteps(float range, float numSteps)
 {
   float a = range;

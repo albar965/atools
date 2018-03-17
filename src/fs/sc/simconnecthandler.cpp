@@ -33,6 +33,8 @@
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
+using atools::fs::weather::MetarResult;
+
 namespace atools {
 namespace fs {
 namespace sc {
