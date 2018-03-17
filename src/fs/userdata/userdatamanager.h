@@ -76,6 +76,9 @@ public:
   /* Remove all data from the table. */
   void clearData();
 
+  /* Remove all data from the table which has the temporary flag set. */
+  void clearTemporary();
+
   /* Updates the coordinates of an user defined waypoint. Does not commit. */
   void updateCoordinates(int id, const atools::geo::Pos& position);
 
@@ -132,6 +135,12 @@ public:
 
   /* Create a CSV backup in the settings directory and roll the files over. */
   void backup();
+
+  /* Do any schema updates if needed */
+  void updateSchema();
+
+  /* Drops schema tables and indexes */
+  void dropSchema();
 
 private:
   /* Prints a warning of colummn does not exist */

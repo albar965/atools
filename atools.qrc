@@ -38,5 +38,6 @@
         <file>resources/sql/fs/db/update_airport_ils.sql</file>
         <file>resources/sql/fs/db/dfd/clean_waypoints.sql</file>
         <file>resources/sql/fs/userdata/create_user_schema.sql</file>
+        <file>resources/sql/fs/userdata/drop_user_schema.sql</file>
     </qresource>
 </RCC>

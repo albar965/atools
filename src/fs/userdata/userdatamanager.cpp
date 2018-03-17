@@ -155,11 +155,35 @@ bool UserdataManager::hasData()
   return SqlUtil(db).hasTableAndRows("userdata");
 }
 
+void UserdataManager::updateSchema()
+{
+  if(!db->record("userdata").contains("temp"))
+  {
+    qDebug() << Q_FUNC_INFO;
+    // Add missing column and index
+    db->exec("alter table userdata add column temp integer");
+    db->exec("create index if not exists idx_userdata_temp on userdata(temp)");
+    db->commit();
+  }
+}
+
 void UserdataManager::createSchema()
 {
+  qDebug() << Q_FUNC_INFO;
+
   SqlScript script(db, true /*options->isVerbose()*/);
 
   script.executeScript(":/atools/resources/sql/fs/userdata/create_user_schema.sql");
+  db->commit();
+}
+
+void UserdataManager::dropSchema()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  script.executeScript(":/atools/resources/sql/fs/userdata/drop_user_schema.sql");
   db->commit();
 }
 
@@ -167,6 +191,8 @@ void UserdataManager::backup()
 {
   if(hasData())
   {
+    qDebug() << Q_FUNC_INFO;
+
     // Create a backup in the settings directory
     QString settingsPath = atools::settings::Settings::instance().getPath();
     QString filename = settingsPath + QDir::separator() + QString("little_navmap_userdata_backup.csv");
@@ -183,6 +209,13 @@ void UserdataManager::clearData()
   backup();
 
   SqlQuery query("delete from userdata", db);
+  query.exec();
+  db->commit();
+}
+
+void UserdataManager::clearTemporary()
+{
+  SqlQuery query("delete from userdata where temp = 1", db);
   query.exec();
   db->commit();
 }

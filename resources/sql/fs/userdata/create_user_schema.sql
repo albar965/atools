@@ -31,6 +31,7 @@ create table userdata
   import_file_path varchar(512),             -- Full path filename from import
   visible_from integer,                      -- Visible from zoom NM
   altitude integer,                          -- ft
+  temp integer,                         -- Entry will be deleted on startup if 1
   lonx double not null,
   laty double not null
 );
@@ -41,6 +42,7 @@ create index if not exists idx_userdata_ident on userdata(ident);
 create index if not exists idx_userdata_region on userdata(region);
 create index if not exists idx_userdata_description on userdata(description);
 create index if not exists idx_userdata_tags on userdata(tags);
+create index if not exists idx_userdata_temp on userdata(temp);
 create index if not exists idx_userdata_last_edit_timestamp on userdata(last_edit_timestamp);
 create index if not exists idx_userdata_import_file_path on userdata(import_file_path);
 create index if not exists idx_userdata_lonx on userdata(lonx);
