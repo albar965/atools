@@ -21,10 +21,10 @@
 #include "geo/simplespatialindex.h"
 #include "fs/weather/weathertypes.h"
 
-#include <QNetworkAccessManager>
-#include <QTimer>
-
 namespace atools {
+namespace util {
+class HttpDownloader;
+}
 namespace fs {
 namespace weather {
 
@@ -51,13 +51,10 @@ public:
   atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* Set download request URL */
-  void setRequestUrl(const QString& url)
-  {
-    requestUrl = url;
-  }
+  void setRequestUrl(const QString& url);
 
   /* Re-download every number of seconds and emit weatherUpdated when done. This will start the update timer. */
-  void setSetUpdatePeriod(int seconds);
+  void setUpdatePeriod(int seconds);
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
   void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
@@ -65,28 +62,19 @@ public:
     fetchAirportCoords = value;
   }
 
-  void startTimer();
-
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
 
 private:
-  void httpFinished();
-  void cancelReply();
-  void readyRead();
-  void parseFile();
+  void downloadFinished(const QByteArray& data);
+  void downloadFailed(const QString& error);
+  void parseFile(const QByteArray& data);
 
-  QNetworkAccessManager networkManager;
-  QTimer updateTimer;
-  QString requestUrl;
-  int updatePeriodSeconds = 300;
-  QNetworkReply *reply = nullptr;
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
 
   atools::geo::SimpleSpatialIndex<QString, QString> index;
-  QByteArray metarFile;
-
+  atools::util::HttpDownloader *downloader = nullptr;
 };
 
 } // namespace weather

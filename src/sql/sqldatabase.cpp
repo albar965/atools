@@ -225,8 +225,6 @@ SqlQuery SqlDatabase::exec(const QString& query) const
 
 QSqlError SqlDatabase::lastError() const
 {
-  checkError(isValid(), "SqlDatabase::lastError() on invalid database");
-  checkError(isOpen(), "SqlDatabase::lastError() on closed database");
   return db.lastError();
 }
 

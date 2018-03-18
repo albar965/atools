@@ -29,7 +29,7 @@ namespace sql {
  * Exception for SQL module which also carries the QSqlError
  */
 class SqlException :
-  public Exception
+  public atools::Exception
 {
 public:
   SqlException(const QSqlError& sqlErr, const QString& message = QString(), const QString& message2 = QString());

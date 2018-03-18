@@ -92,7 +92,6 @@ void WeatherNetSingle::loadMetar(const QString& airportIcao)
   // http://www.aviationweather.gov/static/adds/metars/stations.txt
   // http://weather.noaa.gov/pub/data/observations/metar/stations/EDDL.TXT
   // http://weather.noaa.gov/pub/data/observations/metar/
-  // request.setRawHeader("User-Agent", "Qt NetworkAccess 1.3");
 
   // VATSIM
   // http://metar.vatsim.net/metar.php?id=EDDF

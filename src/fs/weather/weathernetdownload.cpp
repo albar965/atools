@@ -16,9 +16,7 @@
 *****************************************************************************/
 
 #include "fs/weather/weathernetdownload.h"
-#include "exception.h"
-
-#include <QNetworkReply>
+#include "util/httpdownloader.h"
 
 namespace atools {
 namespace fs {
@@ -27,31 +25,20 @@ namespace weather {
 WeatherNetDownload::WeatherNetDownload(QObject *parent)
   : QObject(parent), index(5000)
 {
-  connect(&updateTimer, &QTimer::timeout, this, &WeatherNetDownload::download);
+  downloader = new atools::util::HttpDownloader(parent);
+
+  connect(downloader, &atools::util::HttpDownloader::downloadFinished, this, &WeatherNetDownload::downloadFinished);
+  connect(downloader, &atools::util::HttpDownloader::downloadFailed, this, &WeatherNetDownload::downloadFailed);
 }
 
 WeatherNetDownload::~WeatherNetDownload()
 {
-  updateTimer.stop();
-  cancelReply();
+  delete downloader;
 }
 
 void WeatherNetDownload::download()
 {
-  cancelReply();
-
-  QNetworkRequest request((QUrl(requestUrl)));
-
-  reply = networkManager.get(request);
-
-  if(reply != nullptr)
-  {
-    connect(reply, &QNetworkReply::finished, this, &WeatherNetDownload::httpFinished);
-    connect(reply, &QNetworkReply::readyRead, this, &WeatherNetDownload::readyRead);
-  }
-  else
-    qWarning() << "METAR Reply is null";
-
+  downloader->startDownload();
 }
 
 atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& airportIcao, const atools::geo::Pos& pos)
@@ -74,73 +61,33 @@ atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& air
   return result;
 }
 
-void WeatherNetDownload::startTimer()
+void WeatherNetDownload::setRequestUrl(const QString& url)
 {
-  updateTimer.setInterval(updatePeriodSeconds * 1000);
-  updateTimer.start();
+  downloader->setUrl(url);
 }
 
-void WeatherNetDownload::setSetUpdatePeriod(int seconds)
+void WeatherNetDownload::downloadFinished(const QByteArray& data)
 {
-  updatePeriodSeconds = seconds;
-  startTimer();
+  parseFile(data);
+  emit weatherUpdated();
 }
 
-void WeatherNetDownload::cancelReply()
+void WeatherNetDownload::downloadFailed(const QString& error)
 {
-  if(reply != nullptr)
-  {
-    disconnect(reply, &QNetworkReply::finished, this, &WeatherNetDownload::httpFinished);
-    reply->abort();
-    reply->deleteLater();
-    reply = nullptr;
-  }
+  qWarning() << Q_FUNC_INFO << "Error downloading from" << downloader->getUrl() << ":" << error;
 }
 
-void WeatherNetDownload::httpFinished()
+void WeatherNetDownload::setUpdatePeriod(int seconds)
 {
-  qDebug() << Q_FUNC_INFO;
-
-  if(reply != nullptr)
-  {
-    metarFile.append(reply->readAll());
-
-    if(reply->error() == QNetworkReply::NoError)
-    {
-      parseFile();
-      startTimer();
-      emit weatherUpdated();
-    }
-    else
-    {
-      qWarning() << Q_FUNC_INFO << "Error downloading IVAO metar file" << reply->errorString();
-      // throw atools::Exception(tr("Unable to download METAR file from \"%1\"").arg(requestUrl));
-    }
-
-    cancelReply();
-  }
-}
-
-void WeatherNetDownload::readyRead()
-{
-  if(reply != nullptr)
-  {
-    qint64 byteAvailable = reply->bytesAvailable();
-    QByteArray bytes = reply->read(byteAvailable);
-
-    metarFile.append(bytes);
-
-    if(reply->error() != QNetworkReply::NoError)
-      qWarning() << Q_FUNC_INFO << "Error downloading IVAO metar file" << reply->errorString();
-  }
+  downloader->setUpdatePeriod(seconds);
 }
 
 // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
 // AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
 // AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
-void WeatherNetDownload::parseFile()
+void WeatherNetDownload::parseFile(const QByteArray& data)
 {
-  QTextStream stream(&metarFile, QIODevice::ReadOnly | QIODevice::Text);
+  QTextStream stream(data, QIODevice::ReadOnly | QIODevice::Text);
 
   while(!stream.atEnd())
   {
@@ -152,7 +99,7 @@ void WeatherNetDownload::parseFile()
     if(pos.isValid())
       index.insert(ident, line, pos);
   }
-  qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars from" << requestUrl;
+  qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars from" << downloader->getUrl();
 }
 
 } // namespace weather
