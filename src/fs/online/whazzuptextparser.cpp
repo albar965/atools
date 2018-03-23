@@ -174,6 +174,7 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
   insertQuery->bindValue(":vid", at(line, index++));
   insertQuery->bindValue(":name", at(line, index++));
 
+  // Get client type so we can check if it goes into a atc or client table
   QString clientType = at(line, index++);
   bool atc = clientType == "ATC";
   insertQuery->bindValue(":client_type", clientType);
@@ -229,10 +230,12 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     insertQuery->bindValue(":flightplan_departure_time", at(line, index++));
     insertQuery->bindValue(":flightplan_actual_departure_time", at(line, index++));
 
+    // Convert two fields to minutes
     int hoursEnroute = atInt(line, index++);
     int minsEnroute = atInt(line, index++);
     insertQuery->bindValue(":flightplan_enroute_minutes", hoursEnroute * 60 + minsEnroute);
 
+    // Convert two fields to minutes
     int hoursEndurance = atInt(line, index++);
     int minsEndurance = atInt(line, index++);
     insertQuery->bindValue(":flightplan_endurance_minutes", hoursEndurance * 60 + minsEndurance);
