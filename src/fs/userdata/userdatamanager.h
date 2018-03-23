@@ -64,10 +64,10 @@ public:
   UserdataManager(atools::sql::SqlDatabase *sqlDb);
   ~UserdataManager();
 
-  /* True if table userdata is presend in database */
+  /* True if table userdata is present in database */
   bool hasSchema();
 
-  /* True if table userdata is presend in database and is filled*/
+  /* True if table userdata is present in database and is filled*/
   bool hasData();
 
   /* Create database schema. Drops current schema if tables already exist. */

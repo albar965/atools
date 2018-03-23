@@ -324,4 +324,41 @@ bool fileEndsWithEol(const QString& filepath)
   return endsWithEol;
 }
 
+QString at(const QStringList& columns, int index)
+{
+  if(index < columns.size())
+    return columns.at(index).trimmed();
+  else
+    qWarning() << "Invalid index" << index << "for" << columns;
+  return QString();
+}
+
+int atInt(const QStringList& columns, int index)
+{
+  int num = 0;
+  QString str = at(columns, index).trimmed();
+  if(!str.isEmpty())
+  {
+    bool ok;
+    num = str.toInt(&ok);
+    if(!ok)
+      qWarning() << "Invalid number" << str << "at" << index << "for" << columns;
+  }
+  return num;
+}
+
+float atFloat(const QStringList& columns, int index)
+{
+  float num = 0.f;
+  QString str = at(columns, index).trimmed();
+  if(!str.isEmpty())
+  {
+    bool ok;
+    num = str.toFloat(&ok);
+    if(!ok)
+      qWarning() << "Invalid floating point number" << str << "at" << index << "for" << columns;
+  }
+  return num;
+}
+
 } // namespace atools

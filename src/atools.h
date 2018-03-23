@@ -135,6 +135,13 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
   return defaultType;
 }
 
+/* Writes a warning message includiing the string list */
+QString at(const QStringList& columns, int index);
+
+/* Both write a warning message if number format is wrong */
+int atInt(const QStringList& columns, int index);
+float atFloat(const QStringList& columns, int index);
+
 /* Remove all special characters from the filename that can disturb any filesystem */
 QString cleanFilename(const QString& filename);
 

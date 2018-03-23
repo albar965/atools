@@ -259,7 +259,11 @@ HEADERS += src/atools.h \
     src/fs/weather/metar.h \
     src/fs/weather/weathertypes.h \
     src/fs/weather/xpweatherreader.h \
-    src/util/httpdownloader.h
+    src/util/httpdownloader.h \
+    src/fs/online/statustextparser.h \
+    src/fs/online/whazzuptextparser.h \
+    src/fs/online/onlinedatamanager.h \
+    src/fs/online/onlinetypes.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -462,7 +466,11 @@ SOURCES += src/atools.cpp \
     src/fs/weather/metar.cpp \
     src/fs/weather/weathertypes.cpp \
     src/fs/weather/xpweatherreader.cpp \
-    src/util/httpdownloader.cpp
+    src/util/httpdownloader.cpp \
+    src/fs/online/statustextparser.cpp \
+    src/fs/online/whazzuptextparser.cpp \
+    src/fs/online/onlinedatamanager.cpp \
+    src/fs/online/onlinetypes.cpp
 
 
 unix {
