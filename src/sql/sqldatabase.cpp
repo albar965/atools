@@ -39,6 +39,7 @@ SqlDatabase::SqlDatabase(const SqlDatabase& other)
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
   readonly = other.readonly;
+  automaticTransactions = other.automaticTransactions;
 }
 
 SqlDatabase::SqlDatabase(const QString& connectionName)
@@ -73,6 +74,7 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
   readonly = other.readonly;
+  automaticTransactions = other.automaticTransactions;
   return *this;
 }
 
@@ -88,8 +90,8 @@ void SqlDatabase::open(const QStringList& pragmas)
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  if(!readonly)
-    transaction();
+  if(!readonly && automaticTransactions)
+    transactionInternal();
 
   atools::sql::SqlQuery query(db);
   for(const QString& pragmaQuery : pragmas)
@@ -114,15 +116,15 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  if(!readonly)
-    transaction();
+  if(!readonly && automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::close()
 {
   checkError(isValid(), "Trying to close invalid database");
   checkError(isOpen(), "Closing already closed database");
-  if(!readonly)
+  if(!readonly && automaticTransactions)
     rollback();
   db.close();
 }
@@ -233,13 +235,21 @@ bool SqlDatabase::isValid() const
   return db.isValid();
 }
 
-void SqlDatabase::transaction()
+void SqlDatabase::transactionInternal()
 {
   checkError(isValid(), "SqlDatabase::transaction() on invalid database");
   checkError(isOpen(), "SqlDatabase::transaction() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.transaction(), "SqlDatabase::transaction() error");
+}
+
+void SqlDatabase::transaction()
+{
+  if(automaticTransactions)
+    return;
+
+  transactionInternal();
 }
 
 void SqlDatabase::commit()
@@ -250,7 +260,9 @@ void SqlDatabase::commit()
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.commit(), "SqlDatabase::commit() error");
-  transaction();
+
+  if(automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::rollback()
@@ -261,7 +273,9 @@ void SqlDatabase::rollback()
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.rollback(), "SqlDatabase::rollback() error");
-  transaction();
+
+  if(automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::setDatabaseName(const QString& name)

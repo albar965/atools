@@ -30,6 +30,7 @@ class QSettings;
 namespace atools {
 namespace sql {
 
+class SqlTransaction;
 /*
  * Wrapper around QSqlDatabase that adds exceptions to avoid plenty of
  * boilerplate coding. In case of error or invalid connections SqlException
@@ -71,15 +72,20 @@ public:
   QSqlError lastError() const;
   bool isValid() const;
 
-  /* commit all changes. No need to call transaction before. This is done
+  /* Commit all changes. No need to call transaction before. This is done
    * automatically.
+   * Opens a transaction after rollback if automatic transactions are on,
    */
   void commit();
 
-  /* rollback all changes. No need to call transaction before. This is done
+  /* Rollback all changes. No need to call transaction before. This is done
    * automatically.
+   * Opens a transaction after rollback if automatic transactions are on,
    */
   void rollback();
+
+  /* Use only if automatic transactions are off */
+  void transaction();
 
   void setDatabaseName(const QString& name);
   void setUserName(const QString& name);
@@ -151,17 +157,27 @@ public:
   /* Sqlite only. Gather schema statistics for query optimization. */
   void analyze();
 
-private:
-  SqlDatabase(const QSqlDatabase& other);
+  bool isAutomaticTransactions() const
+  {
+    return automaticTransactions;
+  }
 
-  /* Keep it private so we can handle this automatically */
-  void transaction();
+  void setAutomaticTransactions(bool value)
+  {
+    automaticTransactions = value;
+  }
+
+private:
+  friend class atools::sql::SqlTransaction;
+
+  SqlDatabase(const QSqlDatabase& other);
 
   /* check for return value of a method and throw Exception if false */
   void checkError(bool retval = true, const QString& msg = QString()) const;
+  void transactionInternal();
 
   QSqlDatabase db;
-  bool autocommit = false, readonly = false;
+  bool autocommit = false, readonly = false, automaticTransactions = true;
 };
 
 } // namespace sql
