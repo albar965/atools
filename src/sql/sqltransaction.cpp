@@ -27,36 +27,45 @@ namespace sql {
 SqlTransaction::SqlTransaction(SqlDatabase& sqlDb)
   : db(&sqlDb)
 {
-  if(!db->isAutomaticTransactions())
-    db->transaction();
+  // Does nothing for automatic transactions since already open
+  db->transaction();
 }
 
 SqlTransaction::SqlTransaction(SqlDatabase *sqlDb)
   : db(sqlDb)
 {
-  if(!db->isAutomaticTransactions())
-    db->transaction();
+  // Does nothing for automatic transactions
+  db->transaction();
 }
 
 SqlTransaction::~SqlTransaction()
 {
-  if(!db->isAutomaticTransactions() && transactionOpen)
+  if(rollbackNeeded)
   {
     // Use rollback in Qt database to avoid nested exceptions
     if(!db->db.rollback())
-      qWarning() << Q_FUNC_INFO << "Rollback failed";
+      qWarning() << Q_FUNC_INFO << "Rollback failed"
+                 << db->lastError().databaseText() << db->lastError().driverText();
+
+    if(db->isAutomaticTransactions())
+    {
+      // Reopen
+      if(!db->db.transaction())
+        qWarning() << Q_FUNC_INFO << "Transaction failed"
+                   << db->lastError().databaseText() << db->lastError().driverText();
+    }
   }
 }
 
 void SqlTransaction::commit()
 {
-  transactionOpen = false;
+  rollbackNeeded = false;
   db->commit();
 }
 
 void SqlTransaction::rollback()
 {
-  transactionOpen = false;
+  rollbackNeeded = false;
   db->rollback();
 }
 

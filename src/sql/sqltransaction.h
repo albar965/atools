@@ -39,7 +39,7 @@ public:
 
 private:
   atools::sql::SqlDatabase *db;
-  bool transactionOpen = true;
+  bool rollbackNeeded = true;
 };
 
 } // namespace sql
