@@ -102,9 +102,6 @@ public:
   void getEmptyRecord(atools::sql::SqlRecord& getRecord);
   atools::sql::SqlRecord getEmptyRecord();
 
-  void commit();
-  void rollback();
-
   /* Import and export from a predefined CSV format */
   int importCsv(const QString& filepath, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
                 QChar separator = ',', QChar escape = '"');

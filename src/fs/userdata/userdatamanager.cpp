@@ -21,6 +21,7 @@
 #include "sql/sqlutil.h"
 #include "sql/sqlscript.h"
 #include "sql/sqlexport.h"
+#include "sql/sqltransaction.h"
 #include "sql/sqlquery.h"
 #include "util/csvreader.h"
 #include "atools.h"
@@ -50,6 +51,7 @@ using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
+using atools::sql::SqlTransaction;
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static int VISIBLE_FROM_DEFAULT_NM = 250;
@@ -160,10 +162,12 @@ void UserdataManager::updateSchema()
   if(!db->record("userdata").contains("temp"))
   {
     qDebug() << Q_FUNC_INFO;
+
+    SqlTransaction transaction(db);
     // Add missing column and index
     db->exec("alter table userdata add column temp integer");
     db->exec("create index if not exists idx_userdata_temp on userdata(temp)");
-    db->commit();
+    transaction.commit();
   }
 }
 
@@ -171,20 +175,21 @@ void UserdataManager::createSchema()
 {
   qDebug() << Q_FUNC_INFO;
 
+  SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
   script.executeScript(":/atools/resources/sql/fs/userdata/create_user_schema.sql");
-  db->commit();
+  transaction.commit();
 }
 
 void UserdataManager::dropSchema()
 {
   qDebug() << Q_FUNC_INFO;
-
+  SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
   script.executeScript(":/atools/resources/sql/fs/userdata/drop_user_schema.sql");
-  db->commit();
+  transaction.commit();
 }
 
 void UserdataManager::backup()
@@ -208,16 +213,18 @@ void UserdataManager::clearData()
 {
   backup();
 
+  SqlTransaction transaction(db);
   SqlQuery query("delete from userdata", db);
   query.exec();
-  db->commit();
+  transaction.commit();
 }
 
 void UserdataManager::clearTemporary()
 {
+  SqlTransaction transaction(db);
   SqlQuery query("delete from userdata where temp = 1", db);
   query.exec();
-  db->commit();
+  transaction.commit();
 }
 
 void UserdataManager::updateCoordinates(int id, const geo::Pos& position)
@@ -338,37 +345,13 @@ SqlRecord UserdataManager::getEmptyRecord()
   return rec;
 }
 
-void UserdataManager::commit()
-{
-  db->commit();
-}
-
-void UserdataManager::rollback()
-{
-  db->rollback();
-}
-
-// create table userdata
-// (
-// userdata_id integer primary key,
-// type varchar(10) collate nocase,    -- VRP, POI, OBS, IFR, etc.
-// name varchar(200) collate nocase,
-// ident varchar(10) collate nocase,
-// region varchar(4) collate nocase,
-// description varchar(1024) collate nocase,
-// region varchar(4) collate nocase,
-// last_edit_timestamp varchar(100) not null,   -- Timestamp of last edit (i.e. "2016-07-05T15:45:30.396")
-// import_file_path varchar(512) not null,   -- Timestamp of last loading (i.e. "2016-07-05T15:45:30.396")
-// altitude integer,
-// lonx double not null,
-// laty double not null
-// );
-
 // VRP,  1NM NORTH SALERNO TOWN, 1NSAL, 40.6964,            14.785,         0,0, IT, FROM SOR VOR: 069° 22NM
 // POI,  Cedar Butte lava flow,  POI,   43.4352891960911, -112.892122541337,0,0,   , photoreal areas
 int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Flags flags, QChar separator,
                                QChar escape)
 {
+  SqlTransaction transaction(db);
+
   // Autogenerate id
   QString insert = SqlUtil(db).buildInsertStatement("userdata", QString(), {"userdata_id"}, true);
   SqlQuery insertQuery(db);
@@ -424,11 +407,11 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       lineNum++;
       numImported++;
     }
-    db->commit();
     file.close();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+  transaction.commit();
   return numImported;
 }
 
@@ -461,6 +444,7 @@ void UserdataManager::validateCoordinates(const QString& line, const QString& lo
 // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
 int UserdataManager::importXplane(const QString& filepath)
 {
+  SqlTransaction transaction(db);
   QString insert = SqlUtil(db).buildInsertStatement("userdata",
                                                     QString(), {"userdata_id", "description", "altitude"}, true);
   SqlQuery insertQuery(db);
@@ -514,11 +498,11 @@ int UserdataManager::importXplane(const QString& filepath)
       lineNum++;
       numImported++;
     }
-    db->commit();
     file.close();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+  transaction.commit();
   return numImported;
 }
 
@@ -545,6 +529,7 @@ int UserdataManager::importXplane(const QString& filepath)
 // OCEAN,,32.687356725,-51.45543634
 int UserdataManager::importGarmin(const QString& filepath)
 {
+  SqlTransaction transaction(db);
   QString insert = SqlUtil(db).buildInsertStatement("userdata",
                                                     QString(), {"userdata_id", "description", "altitude", "region"},
                                                     true);
@@ -584,11 +569,11 @@ int UserdataManager::importGarmin(const QString& filepath)
       lineNum++;
       numImported++;
     }
-    db->commit();
     file.close();
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
+  transaction.commit();
   return numImported;
 }
 
