@@ -22,7 +22,8 @@
 namespace atools {
 namespace util {
 
-HttpDownloader::HttpDownloader(QObject *parent) : QObject(parent)
+HttpDownloader::HttpDownloader(QObject *parent, bool logVerbose)
+  : QObject(parent), verbose(logVerbose)
 {
   connect(&updateTimer, &QTimer::timeout, this, &HttpDownloader::startDownload);
 }
@@ -30,13 +31,15 @@ HttpDownloader::HttpDownloader(QObject *parent) : QObject(parent)
 HttpDownloader::~HttpDownloader()
 {
   stopTimer();
-  cancelReply();
+  deleteReply();
 }
 
 void HttpDownloader::startDownload()
 {
-  cancelReply();
-  data.clear();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << url;
+
+  cancelDownload();
 
   QNetworkRequest request((QUrl(url)));
 
@@ -49,9 +52,17 @@ void HttpDownloader::startDownload()
   {
     connect(reply, &QNetworkReply::finished, this, &HttpDownloader::httpFinished);
     connect(reply, &QNetworkReply::readyRead, this, &HttpDownloader::readyRead);
+    connect(reply, &QNetworkReply::downloadProgress, this, &HttpDownloader::downloadProgressInternal);
   }
   else
     qWarning() << Q_FUNC_INFO << "Reply is null" << url;
+}
+
+void HttpDownloader::cancelDownload()
+{
+  stopTimer();
+  deleteReply();
+  data.clear();
 }
 
 void HttpDownloader::startTimer()
@@ -75,33 +86,52 @@ void HttpDownloader::setUpdatePeriod(int seconds)
   updatePeriodSeconds = seconds;
 }
 
-void HttpDownloader::cancelReply()
+void HttpDownloader::deleteReply()
 {
   if(reply != nullptr)
   {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << reply->request().url();
+
     disconnect(reply, &QNetworkReply::finished, this, &HttpDownloader::httpFinished);
+    disconnect(reply, &QNetworkReply::readyRead, this, &HttpDownloader::readyRead);
+    disconnect(reply, &QNetworkReply::downloadProgress, this, &HttpDownloader::downloadProgressInternal);
+
     reply->abort();
     reply->deleteLater();
     reply = nullptr;
   }
 }
 
+void HttpDownloader::downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal)
+{
+  emit downloadProgress(bytesReceived, bytesTotal, reply != nullptr ? reply->url().toString() : QString());
+}
+
 void HttpDownloader::httpFinished()
 {
-  qDebug() << Q_FUNC_INFO;
-
   if(reply != nullptr)
   {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << reply->request().url();
+
     data.append(reply->readAll());
 
     if(reply->error() == QNetworkReply::NoError)
-      emit downloadFinished(data);
+    {
+      emit downloadFinished(data, reply->url().toString());
+      deleteReply();
+      startTimer();
+    }
     else
-      emit downloadFailed(reply->errorString());
-
-    cancelReply();
-    startTimer();
+    {
+      emit downloadFailed(reply->errorString(), reply->url().toString());
+      deleteReply();
+      startTimer();
+    }
   }
+  else
+    qWarning() << Q_FUNC_INFO << "No reply";
 }
 
 void HttpDownloader::readyRead()
@@ -109,9 +139,13 @@ void HttpDownloader::readyRead()
   if(reply != nullptr)
   {
     if(reply->error() != QNetworkReply::NoError)
-      emit downloadFailed(reply->errorString());
-
-    data.append(reply->read(reply->bytesAvailable()));
+    {
+      emit downloadFailed(reply->errorString(), reply->url().toString());
+      deleteReply();
+      startTimer();
+    }
+    else
+      data.append(reply->read(reply->bytesAvailable()));
   }
 }
 

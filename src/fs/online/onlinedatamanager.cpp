@@ -35,70 +35,70 @@ namespace atools {
 namespace fs {
 namespace online {
 
-OnlineDataManager::OnlineDataManager(sql::SqlDatabase *sqlDb)
+OnlinedataManager::OnlinedataManager(sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
   status = new StatusTextParser;
   whazzup = new WhazzupTextParser(db);
 }
 
-OnlineDataManager::~OnlineDataManager()
+OnlinedataManager::~OnlinedataManager()
 {
   delete status;
   delete whazzup;
 }
 
-void OnlineDataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
+void OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
 {
   whazzup->read(whazzupTxt, format);
 }
 
-void OnlineDataManager::readFromStatus(const QString& statusTxt)
+void OnlinedataManager::readFromStatus(const QString& statusTxt)
 {
   status->read(statusTxt);
 }
 
-QString OnlineDataManager::getWhazzupUrlFromStatus() const
+QString OnlinedataManager::getWhazzupUrlFromStatus(bool& gzipped) const
 {
-  return status->getRandomUrl();
+  return status->getRandomUrl(gzipped);
 }
 
-QString OnlineDataManager::getWhazzupVoiceUrlFromStatus() const
+QString OnlinedataManager::getWhazzupVoiceUrlFromStatus() const
 {
   return status->getRandomVoiceUrl();
 }
 
-const QString& OnlineDataManager::getMessageFromStatus()
+const QString& OnlinedataManager::getMessageFromStatus()
 {
   return status->getMessage();
 }
 
-int OnlineDataManager::getAtisAllowMinutesFromWhazzup() const
+int OnlinedataManager::getAtisAllowMinutesFromWhazzup() const
 {
   return whazzup->getAtisAllowMinutes();
 }
 
-QDateTime OnlineDataManager::getLastUpdateTimeFromWhazzup() const
+QDateTime OnlinedataManager::getLastUpdateTimeFromWhazzup() const
 {
   return whazzup->getLastUpdateTime();
 }
 
-int OnlineDataManager::getReloadMinutesFromWhazzup() const
+int OnlinedataManager::getReloadMinutesFromWhazzup() const
 {
   return whazzup->getReloadMinutes();
 }
 
-bool OnlineDataManager::hasSchema()
+bool OnlinedataManager::hasSchema()
 {
   return SqlUtil(db).hasTable("client");
 }
 
-bool OnlineDataManager::hasData()
+bool OnlinedataManager::hasData()
 {
   return SqlUtil(db).hasTableAndRows("client");
 }
 
-void OnlineDataManager::createSchema()
+void OnlinedataManager::createSchema()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -108,19 +108,19 @@ void OnlineDataManager::createSchema()
   db->commit();
 }
 
-void OnlineDataManager::clearData()
+void OnlinedataManager::clearData()
 {
   QStringList tables = db->tables();
   for(const QString& table : tables)
     db->exec("delete from " + table);
 }
 
-void OnlineDataManager::updateSchema()
+void OnlinedataManager::updateSchema()
 {
   // for later schema evolution
 }
 
-void OnlineDataManager::dropSchema()
+void OnlinedataManager::dropSchema()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -130,18 +130,18 @@ void OnlineDataManager::dropSchema()
   db->commit();
 }
 
-void OnlineDataManager::reset()
+void OnlinedataManager::reset()
 {
   status->reset();
   whazzup->reset();
 }
 
-void OnlineDataManager::initQueries()
+void OnlinedataManager::initQueries()
 {
   whazzup->initQueries();
 }
 
-void OnlineDataManager::deInitQueries()
+void OnlinedataManager::deInitQueries()
 {
   whazzup->deInitQueries();
 }

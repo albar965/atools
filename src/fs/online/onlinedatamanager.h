@@ -44,12 +44,12 @@ class WhazzupTextParser;
  *
  * Check for schema and create this before reading.
  */
-class OnlineDataManager
+class OnlinedataManager
 {
 
 public:
-  OnlineDataManager(atools::sql::SqlDatabase *sqlDb);
-  ~OnlineDataManager();
+  OnlinedataManager(atools::sql::SqlDatabase *sqlDb);
+  ~OnlinedataManager();
 
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */
   void readFromStatus(const QString& statusTxt);
@@ -58,7 +58,7 @@ public:
   void readFromWhazzup(const QString& whazzupTxt, Format format);
 
   /* Get a randon URL from the status file which points to the redundant whazzup files */
-  QString getWhazzupUrlFromStatus() const;
+  QString getWhazzupUrlFromStatus(bool& gzipped) const;
 
   /* Get a randon voice server URL from the status file which points to the redundant whazzup files */
   QString getWhazzupVoiceUrlFromStatus() const;

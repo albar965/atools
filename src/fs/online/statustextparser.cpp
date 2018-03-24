@@ -90,6 +90,8 @@ void StatusTextParser::read(QTextStream& stream)
 
     if(key == "url0")
       urlList.append(line.section('=', 1).trimmed());
+    if(key == "gzurl0")
+      urlListGzip.append(line.section('=', 1).trimmed());
     else if(key == "url1")
       urlListVoice.append(line.section('=', 1).trimmed());
     else if(key == "msg0")
@@ -101,19 +103,35 @@ void StatusTextParser::reset()
 {
   urlList.clear();
   urlListVoice.clear();
+  urlListGzip.clear();
   message.clear();
 }
 
-QString StatusTextParser::getRandomUrl() const
+QString StatusTextParser::getRandomUrl(bool& gzipped) const
 {
-  return urlList.at(static_cast<int>(static_cast<quint64>(qrand()) *
-                                     static_cast<quint64>(urlList.size() - 1) / RAND_MAX));
+  if(!urlListGzip.isEmpty())
+  {
+    gzipped = true;
+    return urlListGzip.at(static_cast<int>(static_cast<quint64>(qrand()) *
+                                           static_cast<quint64>(urlListGzip.size() - 1) / RAND_MAX));
+  }
+  else if(!urlList.isEmpty())
+  {
+    gzipped = false;
+    return urlList.at(static_cast<int>(static_cast<quint64>(qrand()) *
+                                       static_cast<quint64>(urlList.size() - 1) / RAND_MAX));
+  }
+  else
+    return QString();
 }
 
 QString StatusTextParser::getRandomVoiceUrl() const
 {
-  return urlListVoice.at(static_cast<int>(static_cast<quint64>(qrand()) *
-                                          static_cast<quint64>(urlListVoice.size() - 1) / RAND_MAX));
+  if(!urlListVoice.isEmpty())
+    return urlListVoice.at(static_cast<int>(static_cast<quint64>(qrand()) *
+                                            static_cast<quint64>(urlListVoice.size() - 1) / RAND_MAX));
+  else
+    return QString();
 }
 
 } // namespace online

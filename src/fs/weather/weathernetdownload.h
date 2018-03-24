@@ -67,8 +67,8 @@ signals:
   void weatherUpdated();
 
 private:
-  void downloadFinished(const QByteArray& data);
-  void downloadFailed(const QString& error);
+  void downloadFinished(const QByteArray& data, QString url);
+  void downloadFailed(const QString& error, QString url);
   void parseFile(const QByteArray& data);
 
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;

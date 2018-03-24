@@ -45,7 +45,7 @@ public:
   void reset();
 
   /* Get a random URL pointing to a whazzup.txt from the file. This is key "url0". */
-  QString getRandomUrl() const;
+  QString getRandomUrl(bool& gzipped) const;
 
   /* Get a random URL pointing to a whazzup.txt from the file which contains server information. This is key "url1". */
   QString getRandomVoiceUrl() const;
@@ -57,7 +57,7 @@ public:
   }
 
 private:
-  QStringList urlList, urlListVoice;
+  QStringList urlList, urlListGzip, urlListVoice;
   QString message;
 };
 

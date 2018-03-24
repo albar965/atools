@@ -49,6 +49,38 @@ void WhazzupTextParser::read(QString file, Format streamFormat)
 void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
 {
   reset();
+
+  // Read through file to get all sections
+  QSet<QString> sections;
+  while(!stream.atEnd())
+  {
+    QString line = stream.readLine().trimmed();
+    if(line.startsWith("!"))
+      // Remember section
+      sections.insert(line.mid(1).toUpper().trimmed().replace(':', ""));
+  }
+
+  // Delete tables for available sections and keep others
+  if(sections.contains("CLIENTS"))
+  {
+    db->exec("delete from client");
+    db->exec("delete from atc");
+  }
+
+  if(sections.contains("PREFILE"))
+    db->exec("delete from prefile");
+
+  if(sections.contains("SERVERS"))
+    db->exec("delete from server");
+
+  if(sections.contains("AIRPORTS"))
+    db->exec("delete from airport");
+
+  if(sections.contains("VOICE") || sections.contains("VOICE_SERVERS") || sections.contains("VOICE SERVERS"))
+    db->exec("delete from voice_server");
+
+  // Got back and read the whole file
+  stream.seek(0);
   format = streamFormat;
   while(!stream.atEnd())
   {
@@ -192,6 +224,8 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     if(alt.startsWith("FL"))
       // Convert flight level to altitude
       insertQuery->bindValue(":altitude", alt.mid(2).toInt() * 100);
+    else if(alt.startsWith("F"))
+      insertQuery->bindValue(":altitude", alt.mid(1).toInt() * 100);
     else
       insertQuery->bindValue(":altitude", alt.toInt());
   }

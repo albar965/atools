@@ -66,15 +66,17 @@ void WeatherNetDownload::setRequestUrl(const QString& url)
   downloader->setUrl(url);
 }
 
-void WeatherNetDownload::downloadFinished(const QByteArray& data)
+void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
 {
+  qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
+
   parseFile(data);
   emit weatherUpdated();
 }
 
-void WeatherNetDownload::downloadFailed(const QString& error)
+void WeatherNetDownload::downloadFailed(const QString& error, QString url)
 {
-  qWarning() << Q_FUNC_INFO << "Error downloading from" << downloader->getUrl() << ":" << error;
+  qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error;
 }
 
 void WeatherNetDownload::setUpdatePeriod(int seconds)

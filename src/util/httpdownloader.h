@@ -37,13 +37,14 @@ class HttpDownloader :
   Q_OBJECT
 
 public:
-  HttpDownloader(QObject *parent);
+  HttpDownloader(QObject *parent, bool logVerbose = false);
   virtual ~HttpDownloader();
 
   /* Download file and emit downloadFinished when done.
    * Will start update timer after download if period <> -1.
    * Cancels all previous downloads. */
   void startDownload();
+  void cancelDownload();
 
   /* Set download request URL */
   void setUrl(const QString& requestUrl)
@@ -80,18 +81,21 @@ public:
 
 signals:
   /* Emitted when file was downloaded and udpated */
-  void downloadFinished(const QByteArray& data);
-  void downloadFailed(const QString& error);
+  void downloadFinished(const QByteArray& data, QString url);
+  void downloadFailed(const QString& error, QString url);
+  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString url);
 
 private:
   /* Request completely finished */
   void httpFinished();
 
   /* Cancel request and free resources */
-  void cancelReply();
+  void deleteReply();
 
   /* A chunk of data is available */
   void readyRead();
+
+  void downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal);
 
   QNetworkAccessManager networkManager;
   QTimer updateTimer;
@@ -99,6 +103,7 @@ private:
   int updatePeriodSeconds = -1;
   QNetworkReply *reply = nullptr;
   QByteArray data;
+  bool verbose;
 };
 
 } // namespace util
