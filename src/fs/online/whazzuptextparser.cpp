@@ -19,12 +19,14 @@
 
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
+#include "sql/sqltransaction.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::sql::SqlTransaction;
 
 namespace atools {
 namespace fs {
@@ -49,6 +51,8 @@ void WhazzupTextParser::read(QString file, Format streamFormat)
 void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
 {
   reset();
+
+  SqlTransaction transaction(db);
 
   // Read through file to get all sections
   QSet<QString> sections;
@@ -118,7 +122,7 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
         parseVoiceSection(line);
     }
   }
-  db->commit();
+  transaction.commit();
 }
 
 void WhazzupTextParser::parseGeneralSection(const QString& line)

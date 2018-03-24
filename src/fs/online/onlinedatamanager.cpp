@@ -40,17 +40,24 @@ OnlinedataManager::OnlinedataManager(sql::SqlDatabase *sqlDb)
 {
   status = new StatusTextParser;
   whazzup = new WhazzupTextParser(db);
+  whazzupServers = new WhazzupTextParser(db);
 }
 
 OnlinedataManager::~OnlinedataManager()
 {
   delete status;
   delete whazzup;
+  delete whazzupServers;
 }
 
 void OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
 {
   whazzup->read(whazzupTxt, format);
+}
+
+void OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format)
+{
+  whazzupServers->read(whazzupTxt, format);
 }
 
 void OnlinedataManager::readFromStatus(const QString& statusTxt)
@@ -134,16 +141,18 @@ void OnlinedataManager::reset()
 {
   status->reset();
   whazzup->reset();
+  whazzupServers->reset();
 }
 
 void OnlinedataManager::initQueries()
 {
   whazzup->initQueries();
+  whazzupServers->initQueries();
 }
 
 void OnlinedataManager::deInitQueries()
 {
-  whazzup->deInitQueries();
+  whazzupServers->deInitQueries();
 }
 
 } // namespace online

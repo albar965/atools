@@ -57,6 +57,9 @@ public:
   /* Read all from whazzup.txt file with file content in string and writes all into the database */
   void readFromWhazzup(const QString& whazzupTxt, Format format);
 
+  /* Read all servers and voice_servers from whazzup.txt file with file content in string and writes all into the database */
+  void readServersFromWhazzup(const QString& whazzupTxt, Format format);
+
   /* Get a randon URL from the status file which points to the redundant whazzup files */
   QString getWhazzupUrlFromStatus(bool& gzipped) const;
 
@@ -110,6 +113,7 @@ private:
   atools::sql::SqlDatabase *db;
 
   atools::fs::online::WhazzupTextParser *whazzup = nullptr;
+  atools::fs::online::WhazzupTextParser *whazzupServers = nullptr;
   atools::fs::online::StatusTextParser *status = nullptr;
 
 };
