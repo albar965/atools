@@ -291,7 +291,7 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     index += 4;
     if(atc)
     {
-      insertQuery->bindValue(":atis", at(line, index++));
+      insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
       insertQuery->bindValue(":atis_time", at(line, index++));
     }
     else
@@ -326,7 +326,7 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
 
     if(atc)
     {
-      insertQuery->bindValue(":atis", at(line, index++));
+      insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
       insertQuery->bindValue(":atis_time", at(line, index++));
     }
     else
@@ -446,6 +446,14 @@ void WhazzupTextParser::deInitQueries()
 
   delete airportInsertQuery;
   airportInsertQuery = nullptr;
+}
+
+QString WhazzupTextParser::convertAtisText(const QString& atis)
+{
+  QStringList lines = atis.split("^§");
+  for(QString& line : lines)
+    line = line.trimmed();
+  return lines.join("\n");
 }
 
 } // namespace online

@@ -91,6 +91,7 @@ private:
   void parseServersSection(const QString& line);
   void parseVoiceSection(const QString& line);
   void parseAirportSection(const QString& line);
+  QString convertAtisText(const QString& atis);
 
   QString curSection;
   atools::fs::online::Format format = atools::fs::online::UNKNOWN;
