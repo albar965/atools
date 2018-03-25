@@ -615,10 +615,14 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
         stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
       }
       SqlRecord record = query.q.record();
+
+      float magvar = 0.f;
+      if(magDec->isValid())
+        // Can be invalid if not database is loaded (no declination data) and backup is done
+        magvar = magDec->getMagVar(Pos(record.valueFloat("lonx"), record.valueFloat("laty")));
+
       // Need to cast otherwise it is not recognized as a floating point number
-      record.setValue("mag_var",
-                      static_cast<double>(magDec->getMagVar(Pos(record.valueFloat("lonx"),
-                                                                record.valueFloat("laty")))));
+      record.setValue("mag_var", static_cast<double>(magvar));
 
       stream << sqlExport.getResultSetRow(record) << endl;
       numExported++;
