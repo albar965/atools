@@ -21,6 +21,7 @@
 #include "fs/online/whazzuptextparser.h"
 
 #include "sql/sqlquery.h"
+#include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlscript.h"
 
@@ -28,6 +29,7 @@
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
+using atools::sql::SqlTransaction;
 using atools::sql::SqlUtil;
 using atools::sql::SqlScript;
 
@@ -109,10 +111,11 @@ void OnlinedataManager::createSchema()
 {
   qDebug() << Q_FUNC_INFO;
 
+  SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
   script.executeScript(":/atools/resources/sql/fs/online/create_online_schema.sql");
-  db->commit();
+  transaction.commit();
 }
 
 void OnlinedataManager::clearData()
@@ -131,10 +134,11 @@ void OnlinedataManager::dropSchema()
 {
   qDebug() << Q_FUNC_INFO;
 
+  SqlTransaction transaction(db);
   SqlScript script(db, true /*options->isVerbose()*/);
 
   script.executeScript(":/atools/resources/sql/fs/online/drop_online_schema.sql");
-  db->commit();
+  transaction.commit();
 }
 
 void OnlinedataManager::reset()

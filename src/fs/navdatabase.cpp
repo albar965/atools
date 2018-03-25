@@ -21,6 +21,7 @@
 #include "fs/db/datawriter.h"
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
+#include "sql/sqltransaction.h"
 #include "fs/scenery/scenerycfg.h"
 #include "fs/scenery/addoncfg.h"
 #include "fs/db/airwayresolver.h"
@@ -57,6 +58,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::sql::SqlTransaction;
 using atools::fs::scenery::SceneryCfg;
 using atools::fs::scenery::AddOnCfg;
 using atools::fs::scenery::AddOnCfgEntry;
@@ -86,8 +88,9 @@ void NavDatabase::createSchema()
 
 void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 {
-  SqlScript script(db, true /* options->isVerbose()*/);
+  SqlTransaction transaction(db);
 
+  SqlScript script(db, true /* options->isVerbose()*/);
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Views"))))
       return;
@@ -129,8 +132,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
-
-  db->commit();
+  transaction.commit();
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Creating Database Schema"))))
@@ -142,7 +144,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   script.executeScript(":/atools/resources/sql/fs/db/create_route_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_views.sql");
-  db->commit();
+  transaction.commit();
 }
 
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QString& error)

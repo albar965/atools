@@ -20,6 +20,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QFileInfo>
 
 namespace atools {
 
@@ -93,6 +94,7 @@ void SqlDatabase::open(const QStringList& pragmas)
   if(!readonly && automaticTransactions)
     transactionInternal();
 
+  qInfo() << "Opened database" << databaseName();
   atools::sql::SqlQuery query(db);
   for(const QString& pragmaQuery : pragmas)
   {
@@ -110,6 +112,7 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
   checkError(db.open(user, password), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
 
+  qInfo() << "Opened database" << databaseName();
   for(const QString& pragma : pragmas)
   {
     db.exec(pragma);
@@ -127,6 +130,16 @@ void SqlDatabase::close()
   if(!readonly && automaticTransactions)
     rollback();
   db.close();
+
+  qInfo() << "Closed database" << databaseName();
+
+  QString journalName(db.databaseName() + "-journal");
+  QFileInfo journal(journalName);
+  if(journal.exists() && journal.isFile() && journal.size() == 0)
+  {
+    if(QFile::remove(journalName))
+      qDebug() << Q_FUNC_INFO << "Removed" << journalName;
+  }
 }
 
 void SqlDatabase::executePragmas(const QStringList& pragmas)

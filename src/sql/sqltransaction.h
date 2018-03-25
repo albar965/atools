@@ -25,6 +25,8 @@ class SqlDatabase;
 
 /*
  * Helper class that can be used if automatic transactions are off.
+ * Opens a transaction on instantiation.
+ *
  * Automatically rolls back in destructor if e.g. an exception is thrown.
  */
 class SqlTransaction
@@ -39,6 +41,8 @@ public:
 
 private:
   atools::sql::SqlDatabase *db;
+
+  /* False if user called commit or rollback */
   bool rollbackNeeded = true;
 };
 
