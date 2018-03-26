@@ -19,9 +19,10 @@
 
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "sql/sqltransaction.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
+
+#include <QTextCodec>
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
@@ -52,8 +53,6 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
 {
   reset();
 
-  SqlTransaction transaction(db);
-
   // Read through file to get all sections
   QSet<QString> sections;
   while(!stream.atEnd())
@@ -71,17 +70,14 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
     db->exec("delete from atc");
   }
 
-  if(sections.contains("PREFILE"))
-    db->exec("delete from prefile");
-
   if(sections.contains("SERVERS"))
-    db->exec("delete from server");
+    db->exec("delete from server where voice_type is null");
 
   if(sections.contains("AIRPORTS"))
     db->exec("delete from airport");
 
   if(sections.contains("VOICE") || sections.contains("VOICE_SERVERS") || sections.contains("VOICE SERVERS"))
-    db->exec("delete from voice_server");
+    db->exec("delete from server where voice_type is not null");
 
   // Got back and read the whole file
   stream.seek(0);
@@ -108,12 +104,12 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
 
         // Check client type
         if(at(columns, 3) == "ATC")
-          parseSection(atcInsertQuery, columns);
+          parseSection(columns, true /*ATC*/, false /* prefile */);
         else
-          parseSection(clientInsertQuery, columns);
+          parseSection(columns, false /*ATC*/, false /* prefile */);
       }
       else if(curSection == "PREFILE")
-        parseSection(prefileInsertQuery, line.split(":"));
+        parseSection(line.split(":"), false /*ATC*/, true /* prefile */);
       else if(curSection == "SERVERS")
         parseServersSection(line);
       else if(curSection == "VOICE" || curSection == "VOICE_SERVERS" || curSection == "VOICE SERVERS")
@@ -122,7 +118,6 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
         parseVoiceSection(line);
     }
   }
-  transaction.commit();
 }
 
 void WhazzupTextParser::parseGeneralSection(const QString& line)
@@ -147,7 +142,7 @@ void WhazzupTextParser::parseGeneralSection(const QString& line)
   // connectedClients = value.toInt();
 }
 
-void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const QStringList& line)
+void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool isPrefile)
 {
   // Columns in file
   // IVAO format .................................. // VATSIM format
@@ -204,11 +199,16 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
   // .............................................. // 40 QNH_Mb
   // IVAO format .................................. // VATSIM format
 
+  atools::sql::SqlQuery *insertQuery = isAtc ? atcInsertQuery : clientInsertQuery;
+
   int index = 0;
   insertQuery->clearBoundValues();
   insertQuery->bindValue(":callsign", at(line, index++));
   insertQuery->bindValue(":vid", at(line, index++));
-  insertQuery->bindValue(":name", at(line, index++));
+  insertQuery->bindValue(":name", convertName(at(line, index++)));
+
+  if(!isAtc)
+    insertQuery->bindValue(":prefile", isPrefile);
 
   // Get client type so we can check if it goes into a atc or client table
   QString clientType = at(line, index++);
@@ -292,12 +292,12 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     if(atc)
     {
       insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
-      insertQuery->bindValue(":atis_time", at(line, index++));
+      insertQuery->bindValue(":atis_time", parseDateTime(line, index++));
     }
     else
       index += 2;
 
-    insertQuery->bindValue(":connection_time", QDateTime::fromString(at(line, index++), "yyyyMMddhhmmss"));
+    insertQuery->bindValue(":connection_time", parseDateTime(line, index++));
     insertQuery->bindValue(":software_name", at(line, index++));
     insertQuery->bindValue(":software_version", at(line, index++));
     insertQuery->bindValue(":administrative_rating", atInt(line, index++));
@@ -327,12 +327,12 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     if(atc)
     {
       insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
-      insertQuery->bindValue(":atis_time", at(line, index++));
+      insertQuery->bindValue(":atis_time", parseDateTime(line, index++));
     }
     else
       index += 2;
 
-    insertQuery->bindValue(":connection_time", at(line, index++));
+    insertQuery->bindValue(":connection_time", parseDateTime(line, index++));
     if(!atc)
       insertQuery->bindValue(":heading", atInt(line, index));
     index++;
@@ -342,6 +342,14 @@ void WhazzupTextParser::parseSection(atools::sql::SqlQuery *insertQuery, const Q
     insertQuery->bindValue(":qnh_mb", (atools::geo::inHgToMbar(qnhInHg) + qnhInMbar) / 2.f);
   }
   insertQuery->exec();
+}
+
+QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
+{
+  QDateTime datetime = QDateTime::fromString(at(line, index++), "yyyyMMddhhmmss");
+  if(!datetime.isValid())
+    qWarning() << "Invalid datetime at index" << index << "in line" << line;
+  return datetime;
 }
 
 void WhazzupTextParser::parseServersSection(const QString& line)
@@ -379,13 +387,13 @@ void WhazzupTextParser::parseVoiceSection(const QString& line)
 
   QStringList columns = line.split(":");
   int index = 0;
-  voiceInsertQuery->clearBoundValues();
-  voiceInsertQuery->bindValue(":hostname", at(columns, index++));
-  voiceInsertQuery->bindValue(":location", at(columns, index++));
-  voiceInsertQuery->bindValue(":name", at(columns, index++));
-  voiceInsertQuery->bindValue(":allowed_connections", atInt(columns, index++));
-  voiceInsertQuery->bindValue(":type", at(columns, index++));
-  voiceInsertQuery->exec();
+  serverInsertQuery->clearBoundValues();
+  serverInsertQuery->bindValue(":hostname", at(columns, index++));
+  serverInsertQuery->bindValue(":location", at(columns, index++));
+  serverInsertQuery->bindValue(":name", at(columns, index++));
+  serverInsertQuery->bindValue(":allowed_connections", atInt(columns, index++));
+  serverInsertQuery->bindValue(":voice_type", at(columns, index++));
+  serverInsertQuery->exec();
 }
 
 void WhazzupTextParser::parseAirportSection(const QString& line)
@@ -409,22 +417,16 @@ void WhazzupTextParser::initQueries()
   SqlUtil util(db);
 
   clientInsertQuery = new SqlQuery(db);
-  clientInsertQuery->prepare(util.buildInsertStatement("client"));
+  clientInsertQuery->prepare(util.buildInsertStatement("client", QString(), {"client_id"}));
 
   atcInsertQuery = new SqlQuery(db);
-  atcInsertQuery->prepare(util.buildInsertStatement("atc"));
-
-  prefileInsertQuery = new SqlQuery(db);
-  prefileInsertQuery->prepare(util.buildInsertStatement("prefile"));
+  atcInsertQuery->prepare(util.buildInsertStatement("atc", QString(), {"atc_id"}));
 
   serverInsertQuery = new SqlQuery(db);
-  serverInsertQuery->prepare(util.buildInsertStatement("server"));
-
-  voiceInsertQuery = new SqlQuery(db);
-  voiceInsertQuery->prepare(util.buildInsertStatement("voice_server"));
+  serverInsertQuery->prepare(util.buildInsertStatement("server", QString(), {"server_id"}));
 
   airportInsertQuery = new SqlQuery(db);
-  airportInsertQuery->prepare(util.buildInsertStatement("airport"));
+  airportInsertQuery->prepare(util.buildInsertStatement("airport", QString(), {"airport_id"}));
 }
 
 void WhazzupTextParser::deInitQueries()
@@ -435,25 +437,28 @@ void WhazzupTextParser::deInitQueries()
   delete atcInsertQuery;
   atcInsertQuery = nullptr;
 
-  delete prefileInsertQuery;
-  prefileInsertQuery = nullptr;
-
   delete serverInsertQuery;
   serverInsertQuery = nullptr;
-
-  delete voiceInsertQuery;
-  voiceInsertQuery = nullptr;
 
   delete airportInsertQuery;
   airportInsertQuery = nullptr;
 }
 
-QString WhazzupTextParser::convertAtisText(const QString& atis)
+QString WhazzupTextParser::convertAtisText(QString atis)
 {
+  if(atis.startsWith("$"))
+    atis = atis.mid(1).trimmed();
+
   QStringList lines = atis.split("^§");
   for(QString& line : lines)
     line = line.trimmed();
   return lines.join("\n");
+}
+
+QString WhazzupTextParser::convertName(QString name)
+{
+  QTextCodec *codec = QTextCodec::codecForName("Windows-1252");
+  return codec->fromUnicode(name);
 }
 
 } // namespace online

@@ -87,11 +87,19 @@ public:
 
 private:
   void parseGeneralSection(const QString& line);
-  void parseSection(sql::SqlQuery *insertQuery, const QStringList& line);
+  void parseSection(const QStringList& line, bool isAtc, bool isPrefile);
   void parseServersSection(const QString& line);
   void parseVoiceSection(const QString& line);
   void parseAirportSection(const QString& line);
-  QString convertAtisText(const QString& atis);
+
+  /* Remove special characters from ATC text */
+  QString convertAtisText(QString atis);
+
+  /* Read datetime format */
+  QDateTime parseDateTime(const QStringList& line, int index);
+
+  /* Fix UTF-8 name embedded in ANSI encoding in file */
+  QString convertName(QString name);
 
   QString curSection;
   atools::fs::online::Format format = atools::fs::online::UNKNOWN;
@@ -109,8 +117,8 @@ private:
   int atisAllowMin = 0;
 
   atools::sql::SqlDatabase *db;
-  atools::sql::SqlQuery *clientInsertQuery = nullptr, *prefileInsertQuery = nullptr, *atcInsertQuery = nullptr,
-                        *serverInsertQuery = nullptr, *voiceInsertQuery = nullptr, *airportInsertQuery = nullptr;
+  atools::sql::SqlQuery *clientInsertQuery = nullptr, *atcInsertQuery = nullptr,
+                        *serverInsertQuery = nullptr, *airportInsertQuery = nullptr;
 
 };
 

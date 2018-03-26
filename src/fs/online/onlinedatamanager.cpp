@@ -54,12 +54,16 @@ OnlinedataManager::~OnlinedataManager()
 
 void OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
 {
+  SqlTransaction transaction(db);
   whazzup->read(whazzupTxt, format);
+  transaction.commit();
 }
 
 void OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format)
 {
+  SqlTransaction transaction(db);
   whazzupServers->read(whazzupTxt, format);
+  transaction.commit();
 }
 
 void OnlinedataManager::readFromStatus(const QString& statusTxt)

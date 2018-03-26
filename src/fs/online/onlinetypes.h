@@ -65,8 +65,8 @@ enum AdministrativeRating
 
 }
 
-namespace atc {
-enum AtcRating
+namespace pilot {
+enum PilotRating
 {
   OBSERVER = 1,
   BASIC_FLIGHT_STUDENT_FS1 = 2,
@@ -78,6 +78,23 @@ enum AtcRating
   AIRLINE_TRANSPORT_PILOT_ATP = 8,
   SENIOR_FLIGHT_INSTRUCTOR_SFI = 9,
   CHIEF_FLIGHT_INSTRUCTOR_CFI = 10
+};
+
+}
+
+namespace atc {
+enum AtcRating
+{
+  OBSERVER = 1,
+  ATC_APPLICANT_AS1 = 2,
+  ATC_TRAINEE_AS2 = 3,
+  ADVANCED_ATC_TRAINEE_AS3 = 4,
+  AERODROME_CONTROLLER_ADC = 5,
+  APPROACH_CONTROLLER_APC = 6,
+  CENTER_CONTROLLER_ACC = 7,
+  SENIOR_CONTROLLER_SEC = 8,
+  SENIOR_ATC_INSTRUCTOR_SAI = 9,
+  CHIEF_ATC_INSTRUCTOR_CAI = 10
 };
 
 }
@@ -109,6 +126,15 @@ enum Simulator
 };
 
 }
+
+QString facilityTypeText(atools::fs::online::fac::FacilityType type);
+QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);
+QString simulatorText(atools::fs::online::sim::Simulator simulator);
+
+QString pilotRatingText(atools::fs::online::pilot::PilotRating rating);
+QString pilotRatingTextShort(atools::fs::online::pilot::PilotRating rating);
+QString atcRatingText(atools::fs::online::atc::AtcRating rating);
+QString atcRatingTextShort(atools::fs::online::atc::AtcRating rating);
 
 } // namespace online
 } // namespace fs

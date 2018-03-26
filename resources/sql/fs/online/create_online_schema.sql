@@ -82,54 +82,7 @@ create table client
   callsign varchar(200),
   vid varchar(200),
   name varchar(200)  collate nocase,
-  client_type  varchar(200),
-  groundspeed varchar(200),
-  flightplan_aircraft varchar(200),
-  flightplan_cruising_speed varchar(200),
-  flightplan_departure_aerodrome varchar(200),
-  flightplan_cruising_level varchar(200),
-  flightplan_destination_aerodrome varchar(200),
-  server varchar(200),
-  protocol varchar(200),
-  combined_rating varchar(200),
-  transponder_code varchar(200),
-  facility_type integer,
-  visual_range integer,                                       --Nm
-  flightplan_revision varchar(200),
-  flightplan_flight_rules varchar(200),
-  flightplan_departure_time varchar(200),
-  flightplan_actual_departure_time varchar(200),
-  flightplan_enroute_minutes integer,
-  flightplan_endurance_minutes integer,
-  flightplan_alternate_aerodrome varchar(200),
-  flightplan_other_info varchar(200),
-  flightplan_route varchar(200),
-  connection_time varchar(200),
-  software_name varchar(200),
-  software_version varchar(200),
-  administrative_rating integer,
-  atc_pilot_rating integer,
-  flightplan_2nd_alternate_aerodrome varchar(200),
-  flightplan_type_of_flight varchar(200),
-  flightplan_persons_on_board integer,
-  heading integer, -- degree
-  on_ground integer,
-  simulator integer,
-  plane varchar(200),
-  qnh_mb integer,
-  altitude integer,                          -- ft
-  lonx double not null,
-  laty double not null
-);
-
-drop table if exists prefile;
-
-create table prefile
-(
-  client_id integer primary key,
-  callsign varchar(200),
-  vid varchar(200),
-  name varchar(200)  collate nocase,
+  prefile integer,
   client_type  varchar(200),
   groundspeed varchar(200),
   flightplan_aircraft varchar(200),
@@ -174,7 +127,7 @@ drop table if exists atc;
 
 create table atc
 (
-  client_id integer primary key,
+  atc_id integer primary key,
   callsign varchar(200),
   vid varchar(200),
   name varchar(200)  collate nocase,
@@ -210,6 +163,9 @@ drop table if exists server;
 --
 -- VATSIM
 -- ident:hostname_or_IP:location:name:clients_connection_allowed:
+--
+-- VATSIM Voice server
+-- hostname_or_IP:location:name:clients_connection_allowed:type_of_voice_server:
 create table server
 (
   server_id integer primary key,
@@ -218,21 +174,8 @@ create table server
   location varchar(200),
   name varchar(200),
   client_connections_allowed integer,
-  allowed_connections integer
-);
-
-drop table if exists voice_server;
-
--- VATSIM
--- hostname_or_IP:location:name:clients_connection_allowed:type_of_voice_server:
-create table voice_server
-(
-  voice_server_id integer primary key,
-  hostname varchar(200),
-  location varchar(200),
-  name varchar(200),
   allowed_connections integer,
-  type varchar(200)
+  voice_type varchar(200)
 );
 
 drop table if exists airport;

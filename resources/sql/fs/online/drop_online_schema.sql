@@ -17,8 +17,7 @@
 
 
 drop table if exists airport;
+drop table if exists atc;
 drop table if exists client;
-drop table if exists prefile;
 drop table if exists server;
-drop table if exists voice_server;
 
