@@ -346,10 +346,16 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
 QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
 {
-  QDateTime datetime = QDateTime::fromString(at(line, index++), "yyyyMMddhhmmss");
-  if(!datetime.isValid())
-    qWarning() << "Invalid datetime at index" << index << "in line" << line;
-  return datetime;
+  QString str = at(line, index++);
+  if(!str.isEmpty())
+  {
+    QDateTime datetime = QDateTime::fromString(str, "yyyyMMddhhmmss");
+    if(!datetime.isValid())
+      qWarning() << "Invalid datetime at index" << index << "in line" << line;
+    return datetime;
+  }
+  else
+    return QDateTime();
 }
 
 void WhazzupTextParser::parseServersSection(const QString& line)
