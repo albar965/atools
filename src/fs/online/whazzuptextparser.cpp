@@ -351,7 +351,7 @@ QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
   {
     QDateTime datetime = QDateTime::fromString(str, "yyyyMMddhhmmss");
     if(!datetime.isValid())
-      qWarning() << "Invalid datetime at index" << index << "in line" << line;
+      qWarning() << "Invalid datetime at index" << index << line.at(index) << "in line" << line;
     return datetime;
   }
   else

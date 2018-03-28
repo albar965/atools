@@ -92,7 +92,7 @@ atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
       // Origin needed later
       continue;
     else if(segment.getType() == bl::CIRCLE)
-      // Append line string build from circle parameters - one point every 20 degrees
+      // Append line string build from circle parameters - one point every 15 degrees
       processedLines.append(LineString(segments.at(i - 1).getPosition(), segment.getRadius(), 24));
     else if(segment.getType() == bl::ARC_CCW || segment.getType() == bl::ARC_CW)
       // Build an arc

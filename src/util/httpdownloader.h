@@ -27,9 +27,12 @@ class QNetworkReply;
 namespace atools {
 namespace util {
 
+template<typename KEY, typename TYPE>
+class TimedCache;
+
 /*
  * Simple async HTTP download tool that reads files from web addresses.
- * Has a timer to do recurring downloads.
+ * Has a timer to do recurring downloads and can use a timed cache.
  */
 class HttpDownloader :
   public QObject
@@ -51,6 +54,12 @@ public:
   {
     url = requestUrl;
   }
+
+  /* Enable an internal cache for each request URL */
+  void enableCache(int secondsTimeout);
+
+  /* Disable and clear cache*/
+  void disableCache();
 
   const QString& getUrl() const
   {
@@ -74,10 +83,14 @@ public:
     return userAgent;
   }
 
+  /* Set to empty string to use Qt default */
   void setUserAgent(const QString& value)
   {
     userAgent = value;
   }
+
+  /* Sets the user agent based on application name, version and OS. */
+  void setUserAgent();
 
 signals:
   /* Emitted when file was downloaded and udpated */
@@ -104,6 +117,9 @@ private:
   QNetworkReply *reply = nullptr;
   QByteArray data;
   bool verbose;
+
+  /* Maps URL to result */
+  atools::util::TimedCache<QString, QByteArray> *dataCache = nullptr;
 };
 
 } // namespace util
