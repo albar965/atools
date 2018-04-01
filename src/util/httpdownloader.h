@@ -52,7 +52,7 @@ public:
   /* Set download request URL */
   void setUrl(const QString& requestUrl)
   {
-    url = requestUrl;
+    downloadUrl = requestUrl;
   }
 
   /* Enable an internal cache for each request URL */
@@ -63,7 +63,7 @@ public:
 
   const QString& getUrl() const
   {
-    return url;
+    return downloadUrl;
   }
 
   /* Re-download every number of seconds and emit downloadFinished when done. */
@@ -94,9 +94,9 @@ public:
 
 signals:
   /* Emitted when file was downloaded and udpated */
-  void downloadFinished(const QByteArray& data, QString url);
-  void downloadFailed(const QString& error, QString url);
-  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString url);
+  void downloadFinished(const QByteArray& data, QString downloadUrl);
+  void downloadFailed(const QString& error, QString downloadUrl);
+  void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
 
 private:
   /* Request completely finished */
@@ -112,7 +112,7 @@ private:
 
   QNetworkAccessManager networkManager;
   QTimer updateTimer;
-  QString url, userAgent;
+  QString downloadUrl, userAgent;
   int updatePeriodSeconds = -1;
   QNetworkReply *reply = nullptr;
   QByteArray data;

@@ -19,6 +19,7 @@
 #include "util/timedcache.h"
 
 #include <QApplication>
+#include <QFileInfo>
 #include <QNetworkReply>
 
 namespace atools {
@@ -40,34 +41,71 @@ HttpDownloader::~HttpDownloader()
 void HttpDownloader::startDownload()
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << url;
+    qDebug() << Q_FUNC_INFO << downloadUrl;
 
-  QByteArray *cachedData = nullptr;
-  if(dataCache != nullptr && (cachedData = dataCache->value(QUrl(url).toString())) != nullptr)
+  // Check if the URL points to a local file
+  QString filename;
+  QFileInfo fileinfo(downloadUrl);
+  if(fileinfo.exists() && fileinfo.isFile())
+    // Is direct path to file
+    filename = downloadUrl;
+  else
   {
-    // Found value in the cache
-    data = *cachedData;
-    emit downloadFinished(data, url);
+    QUrl url(downloadUrl);
+    if(url.isLocalFile())
+    {
+      // file:// schema
+      fileinfo = QFileInfo(url.fileName());
+      if(fileinfo.exists() && fileinfo.isFile())
+        // Is URL to local file
+        filename = downloadUrl;
+    }
+  }
+
+  if(!filename.isEmpty())
+  {
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
+    {
+      data = file.readAll();
+      file.close();
+
+      emit downloadFinished(data, downloadUrl);
+
+      startTimer();
+    }
   }
   else
   {
-    cancelDownload();
-
-    QNetworkRequest request((QUrl(url)));
-
-    if(!userAgent.isEmpty())
-      request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
-
-    reply = networkManager.get(request);
-
-    if(reply != nullptr)
+    QByteArray *cachedData = nullptr;
+    if(dataCache != nullptr && (cachedData = dataCache->value(QUrl(downloadUrl).toString())) != nullptr)
     {
-      connect(reply, &QNetworkReply::finished, this, &HttpDownloader::httpFinished);
-      connect(reply, &QNetworkReply::readyRead, this, &HttpDownloader::readyRead);
-      connect(reply, &QNetworkReply::downloadProgress, this, &HttpDownloader::downloadProgressInternal);
+      // Found value in the cache
+      data = *cachedData;
+      emit downloadFinished(data, downloadUrl);
+
+      startTimer();
     }
     else
-      qWarning() << Q_FUNC_INFO << "Reply is null" << url;
+    {
+      cancelDownload();
+
+      QNetworkRequest request((QUrl(downloadUrl)));
+
+      if(!userAgent.isEmpty())
+        request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
+
+      reply = networkManager.get(request);
+
+      if(reply != nullptr)
+      {
+        connect(reply, &QNetworkReply::finished, this, &HttpDownloader::httpFinished);
+        connect(reply, &QNetworkReply::readyRead, this, &HttpDownloader::readyRead);
+        connect(reply, &QNetworkReply::downloadProgress, this, &HttpDownloader::downloadProgressInternal);
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Reply is null" << downloadUrl;
+    }
   }
 }
 
