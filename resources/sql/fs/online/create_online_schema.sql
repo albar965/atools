@@ -130,14 +130,16 @@ create table atc
   atc_id integer primary key,
   callsign varchar(200),
   vid varchar(200),
-  name varchar(200)  collate nocase,
+  name varchar(200) collate nocase,
+  type varchar(15),               -- Same as boundary.type
+  com_type varchar(30),           -- Same as boundary.com_type
   client_type  varchar(200),
   frequency varchar(200),
   server varchar(200),
   protocol varchar(200),
   combined_rating varchar(200),
   facility_type integer,
-  visual_range integer,                                       --Nm
+  visual_range integer,           --Nm
   atis varchar(200),
   atis_time varchar(200),
   connection_time varchar(200),
@@ -148,7 +150,12 @@ create table atc
   simulator integer,
   qnh_mb integer,
   lonx double not null,
-  laty double not null
+  laty double not null,
+  max_lonx double not null,       -- Bounding rectangle
+  max_laty double not null,       -- "
+  min_lonx double not null,       -- Bounding rectangle
+  min_laty double not null,       -- "
+  geometry blob                   -- Pre calculated geometry (circle)
 );
 
 drop table if exists server;

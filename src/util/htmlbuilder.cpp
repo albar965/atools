@@ -529,7 +529,7 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
   if(flags & html::NO_ENTITIES)
     return prefix + str + suffix;
   else
-    return prefix + toEntities(str.toHtmlEscaped()) + suffix;
+    return prefix + toEntities(str.toHtmlEscaped()).replace("\n", "<br/>") + suffix;
 }
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)

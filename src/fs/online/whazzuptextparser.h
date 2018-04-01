@@ -77,13 +77,8 @@ public:
     return reload;
   }
 
-  void reset()
-  {
-    curSection.clear();
-    version = reload = atisAllowMin = 0;
-    format = atools::fs::online::UNKNOWN;
-    update.setSecsSinceEpoch(0);
-  }
+  void reset();
+  void resetForNewOptions();
 
 private:
   void parseGeneralSection(const QString& line);
@@ -100,6 +95,7 @@ private:
 
   /* Fix UTF-8 name embedded in ANSI encoding in file */
   QString convertName(QString name);
+  int getSemiPermanentId(QHash<QString, int>& idMap, int& curId, const QString& key);
 
   QString curSection;
   atools::fs::online::Format format = atools::fs::online::UNKNOWN;
@@ -119,6 +115,13 @@ private:
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *clientInsertQuery = nullptr, *atcInsertQuery = nullptr,
                         *serverInsertQuery = nullptr, *airportInsertQuery = nullptr;
+
+  // Assign row ids manually
+  int curClientId = 1, curAtcId = 1;
+
+  // Keep a map of callsign to row id in the database to reuse the ids for the same centers and clients
+  // This is to avoid id changes on every reload
+  QHash<QString, int> clientIdMap, atcIdMap;
 
 };
 

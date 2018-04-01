@@ -18,6 +18,7 @@
 #ifndef ATOOLS_SQL_SQLRECORD_H
 #define ATOOLS_SQL_SQLRECORD_H
 
+#include <QDateTime>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QVector>
@@ -64,6 +65,16 @@ public:
   QString valueStr(const QString& name) const
   {
     return value(name).toString();
+  }
+
+  QDateTime valueDateTime(int i) const
+  {
+    return value(i).toDateTime();
+  }
+
+  QDateTime valueDateTime(const QString& name) const
+  {
+    return value(name).toDateTime();
   }
 
   int valueInt(int i) const

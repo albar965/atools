@@ -38,6 +38,11 @@ QString clientType(const QString& type)
   // FOLME  Follow Me Car connections
 }
 
+QString facilityTypeText(int type)
+{
+  return facilityTypeText(static_cast<fac::FacilityType>(type));
+}
+
 QString facilityTypeText(fac::FacilityType type)
 {
   switch(type)

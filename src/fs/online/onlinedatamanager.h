@@ -108,6 +108,7 @@ public:
   void deInitQueries();
 
   void reset();
+  void resetForNewOptions();
 
 private:
   atools::sql::SqlDatabase *db;

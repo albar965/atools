@@ -127,6 +127,7 @@ enum Simulator
 
 }
 
+QString facilityTypeText(int type);
 QString facilityTypeText(atools::fs::online::fac::FacilityType type);
 QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);
 QString simulatorText(atools::fs::online::sim::Simulator simulator);

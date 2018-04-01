@@ -35,9 +35,9 @@ create table boundary
   max_altitude_type varchar(15),  -- "
   min_altitude integer,           -- Lower altitude for this airspace in feet
   max_altitude integer,           -- Upper altitude for this airspace in feet
-  max_lonx double not null,       -- Bounding rectange
+  max_lonx double not null,       -- Bounding rectangle
   max_laty double not null,       -- "
-  min_lonx double not null,       -- Bounding rectange
+  min_lonx double not null,       -- Bounding rectangle
   min_laty double not null,       -- "
   geometry blob,                  -- Pre calculated geometry
 foreign key(file_id) references bgl_file(bgl_file_id)

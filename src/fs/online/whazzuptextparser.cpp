@@ -21,6 +21,8 @@
 #include "sql/sqlutil.h"
 #include "geo/calculations.h"
 #include "sql/sqldatabase.h"
+#include "geo/linestring.h"
+#include "fs/common/binarygeometry.h"
 
 #include <QTextCodec>
 
@@ -28,6 +30,9 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::sql::SqlTransaction;
+using atools::geo::Rect;
+using atools::geo::LineString;
+using atools::geo::Pos;
 
 namespace atools {
 namespace fs {
@@ -103,10 +108,7 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
         QStringList columns = line.split(":");
 
         // Check client type
-        if(at(columns, 3) == "ATC")
-          parseSection(columns, true /*ATC*/, false /* prefile */);
-        else
-          parseSection(columns, false /*ATC*/, false /* prefile */);
+        parseSection(columns, at(columns, 3) == "ATC" /*ATC*/, false /* prefile */);
       }
       else if(curSection == "PREFILE")
         parseSection(line.split(":"), false /*ATC*/, true /* prefile */);
@@ -203,8 +205,12 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
   int index = 0;
   insertQuery->clearBoundValues();
-  insertQuery->bindValue(":callsign", at(line, index++));
-  insertQuery->bindValue(":vid", at(line, index++));
+
+  const QString callsign = at(line, index++);
+  insertQuery->bindValue(":callsign", callsign);
+
+  const QString vid = at(line, index++);
+  insertQuery->bindValue(":vid", vid);
   insertQuery->bindValue(":name", convertName(at(line, index++)));
 
   if(!isAtc)
@@ -216,11 +222,19 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
   insertQuery->bindValue(":client_type", clientType);
 
   if(atc)
-    insertQuery->bindValue(":frequency", at(line, index));
+  {
+    QStringList freqStrToBind;
+    for(const QString& str : at(line, index).split("&"))
+      freqStrToBind.append(QString::number(atools::roundToInt(str.trimmed().toDouble() * 1000.)));
+    insertQuery->bindValue(":frequency", freqStrToBind);
+  }
   index++;
 
-  insertQuery->bindValue(":laty", atFloat(line, index++));
-  insertQuery->bindValue(":lonx", atFloat(line, index++));
+  float laty = atFloat(line, index++);
+  insertQuery->bindValue(":laty", laty);
+
+  float lonx = atFloat(line, index++);
+  insertQuery->bindValue(":lonx", lonx);
 
   if(!atc)
   {
@@ -258,8 +272,55 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     insertQuery->bindValue(":transponder_code", at(line, index));
   index++;
 
-  insertQuery->bindValue(":facility_type", atInt(line, index++));
-  insertQuery->bindValue(":visual_range", atInt(line, index++));
+  atools::fs::online::fac::FacilityType facilityType =
+    static_cast<atools::fs::online::fac::FacilityType>(atInt(line, index++));
+  insertQuery->bindValue(":facility_type", facilityType);
+
+  if(atc)
+  {
+    // Convert the facility type to database airspace types
+    QString boundaryType, comType;
+    switch(facilityType)
+    {
+      case atools::fs::online::fac::OBSERVER:
+        boundaryType = "OBS";
+        break;
+      case atools::fs::online::fac::FLIGHT_INFORMATION:
+        boundaryType = "C"; // Center
+        comType = "INF"; // Information
+        break;
+      case atools::fs::online::fac::DELIVERY:
+        boundaryType = "CL"; // Clearance
+        comType = "C"; // Clearance delivery
+        break;
+      case atools::fs::online::fac::GROUND:
+        boundaryType = "G";
+        comType = "G"; // Ground control
+        break;
+      case atools::fs::online::fac::TOWER:
+        boundaryType = "T";
+        comType = "T"; // Tower, Air Traffic Control
+        break;
+      case atools::fs::online::fac::APPROACH:
+        boundaryType = "A";
+        comType = "A"; // Approach control
+        break;
+      case atools::fs::online::fac::ACC:
+        boundaryType = "C"; // Center
+        comType = "CTR"; // Area control center
+        break;
+      case atools::fs::online::fac::DEPARTURE:
+        boundaryType = "D";
+        comType = "D"; // Departure control
+        break;
+
+    }
+    insertQuery->bindValue(":type", boundaryType);
+    insertQuery->bindValue(":com_type", comType);
+  }
+
+  int visualRange = atInt(line, index++);
+  insertQuery->bindValue(":visual_range", visualRange);
 
   if(!atc)
   {
@@ -341,7 +402,48 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     float qnhInMbar = atFloat(line, index++);
     insertQuery->bindValue(":qnh_mb", (atools::geo::inHgToMbar(qnhInHg) + qnhInMbar) / 2.f);
   }
+
+  if(atc)
+  {
+    // Prepare bounding rectangle and a pre-compile circle geometry so it can be used by the same
+    // airspace query classes
+
+    // Create a circular polygon with 24 segments
+    Pos center(lonx, laty);
+    LineString lineString(center, atools::geo::nmToMeter(visualRange), 24);
+
+    // Add bounding rectancle
+    Rect bounding = lineString.boundingRect();
+    insertQuery->bindValue(":max_lonx", bounding.getEast());
+    insertQuery->bindValue(":max_laty", bounding.getNorth());
+    insertQuery->bindValue(":min_lonx", bounding.getWest());
+    insertQuery->bindValue(":min_laty", bounding.getSouth());
+
+    // Store geometry in same format as boundaries
+    atools::fs::common::BinaryGeometry geo(lineString);
+    insertQuery->bindValue(":geometry", geo.writeToByteArray());
+  }
+
+  // Create sort of a hash key to identiy rows with the same data
+  QString hashKey = callsign + "|" + QString::number(facilityType) + "|" + vid;
+  // Look up recent database id by key or get a new one
+  int id = getSemiPermanentId(isAtc ? atcIdMap : clientIdMap, isAtc ? curAtcId : curClientId, hashKey);
+
+  // qDebug() << hashKey << id;
+  insertQuery->bindValue(isAtc ? ":atc_id" : ":client_id", id);
+
   insertQuery->exec();
+}
+
+int WhazzupTextParser::getSemiPermanentId(QHash<QString, int>& idMap, int& curId, const QString& key)
+{
+  int id = idMap.value(key, -1);
+  if(id == -1)
+  {
+    id = curId++;
+    idMap.insert(key, id);
+  }
+  return id;
 }
 
 QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
@@ -423,10 +525,10 @@ void WhazzupTextParser::initQueries()
   SqlUtil util(db);
 
   clientInsertQuery = new SqlQuery(db);
-  clientInsertQuery->prepare(util.buildInsertStatement("client", QString(), {"client_id"}));
+  clientInsertQuery->prepare(util.buildInsertStatement("client", "or replace"));
 
   atcInsertQuery = new SqlQuery(db);
-  atcInsertQuery->prepare(util.buildInsertStatement("atc", QString(), {"atc_id"}));
+  atcInsertQuery->prepare(util.buildInsertStatement("atc", "or replace"));
 
   serverInsertQuery = new SqlQuery(db);
   serverInsertQuery->prepare(util.buildInsertStatement("server", QString(), {"server_id"}));
@@ -448,6 +550,22 @@ void WhazzupTextParser::deInitQueries()
 
   delete airportInsertQuery;
   airportInsertQuery = nullptr;
+}
+
+void WhazzupTextParser::resetForNewOptions()
+{
+  // Clear the id maps but do not reset the current ids to avoid overlaps
+  atcIdMap.clear();
+  clientIdMap.clear();
+  reset();
+}
+
+void WhazzupTextParser::reset()
+{
+  curSection.clear();
+  version = reload = atisAllowMin = 0;
+  format = atools::fs::online::UNKNOWN;
+  update.setSecsSinceEpoch(0);
 }
 
 QString WhazzupTextParser::convertAtisText(QString atis)

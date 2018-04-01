@@ -152,6 +152,13 @@ void OnlinedataManager::reset()
   whazzupServers->reset();
 }
 
+void OnlinedataManager::resetForNewOptions()
+{
+  status->reset();
+  whazzup->resetForNewOptions();
+  whazzupServers->resetForNewOptions();
+}
+
 void OnlinedataManager::initQueries()
 {
   whazzup->initQueries();
