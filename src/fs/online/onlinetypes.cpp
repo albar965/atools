@@ -74,6 +74,11 @@ QString facilityTypeText(fac::FacilityType type)
   return QString::number(type);
 }
 
+QString admRatingText(int rating)
+{
+  return admRatingText(static_cast<adm::AdministrativeRating>(rating));
+}
+
 QString admRatingText(adm::AdministrativeRating rating)
 {
   switch(rating)
@@ -170,6 +175,11 @@ QString pilotRatingTextShort(atools::fs::online::pilot::PilotRating rating)
   return QString::number(rating);
 }
 
+QString atcRatingText(int rating)
+{
+  return atcRatingText(static_cast<atc::AtcRating>(rating));
+}
+
 QString atcRatingText(atc::AtcRating rating)
 {
   switch(rating)
@@ -242,6 +252,11 @@ QString atcRatingTextShort(atc::AtcRating rating)
       return QObject::tr("CAI");
   }
   return QString::number(rating);
+}
+
+QString simulatorText(int simulator)
+{
+  return simulatorText(static_cast<sim::Simulator>(simulator));
 }
 
 QString simulatorText(sim::Simulator simulator)

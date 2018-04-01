@@ -129,11 +129,16 @@ enum Simulator
 
 QString facilityTypeText(int type);
 QString facilityTypeText(atools::fs::online::fac::FacilityType type);
+QString admRatingText(int rating);
 QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);
+
+QString simulatorText(int simulator);
 QString simulatorText(atools::fs::online::sim::Simulator simulator);
 
 QString pilotRatingText(atools::fs::online::pilot::PilotRating rating);
 QString pilotRatingTextShort(atools::fs::online::pilot::PilotRating rating);
+
+QString atcRatingText(int rating);
 QString atcRatingText(atools::fs::online::atc::AtcRating rating);
 QString atcRatingTextShort(atools::fs::online::atc::AtcRating rating);
 

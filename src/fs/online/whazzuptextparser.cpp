@@ -408,9 +408,9 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     // Prepare bounding rectangle and a pre-compile circle geometry so it can be used by the same
     // airspace query classes
 
-    // Create a circular polygon with 24 segments
+    // Create a circular polygon with 10 degree segments
     Pos center(lonx, laty);
-    LineString lineString(center, atools::geo::nmToMeter(visualRange), 24);
+    LineString lineString(center, atools::geo::nmToMeter(visualRange), 36);
 
     // Add bounding rectancle
     Rect bounding = lineString.boundingRect();
