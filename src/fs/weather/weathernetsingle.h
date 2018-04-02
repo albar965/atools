@@ -19,6 +19,7 @@
 #define ATOOLS_FS_WEATHERNETWORK_H
 
 #include "util/timedcache.h"
+#include "geo/simplespatialindex.h"
 
 #include <QHash>
 #include <QNetworkAccessManager>
@@ -26,8 +27,17 @@
 #include <QTimer>
 
 namespace atools {
+namespace util {
+class HttpDownloader;
+}
+namespace geo {
+class Pos;
+}
+
 namespace fs {
 namespace weather {
+
+struct MetarResult;
 
 /*
  * Provides a source of metar data for airports. Supports NOAA and VATSIM like weather services
@@ -49,13 +59,27 @@ public:
   /*
    * @return metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
+   *
+   * Also fetches index page if set.
    */
-  QString getMetar(const QString& airportIcao);
+  atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
   /* Set request URL. %1 is ICAO placeholder */
   void setRequestUrl(const QString& url)
   {
     requestUrl = url;
+  }
+
+  /* Set URL and a parse function of a page that contains all available request URLs.
+   *  Will trigger a new fetch on next weather request */
+  void setStationIndexUrl(const QString& url,
+                          const std::function<void(QString & icao, QDateTime & lastUpdate,
+                                                   const QString &line)>& parseFunc);
+
+  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
+  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+  {
+    fetchAirportCoords = value;
   }
 
 signals:
@@ -71,6 +95,11 @@ private:
   void cancelReply();
   void flushRequestQueue();
 
+  void loadIndex();
+  void indexDownloadFinished(const QByteArray& data, QString downloadUrl);
+
+  QString getMetarInternal(const QString& airportIcao);
+
   atools::util::TimedCache<QString, QString> metarCache;
 
   QNetworkAccessManager networkManager;
@@ -83,7 +112,12 @@ private:
   QStringList metarRequests;
 
   QTimer flushQueueTimer;
-  QString requestUrl;
+  QString requestUrl, stationIndexUrl;
+  std::function<void(QString & icao, QDateTime & lastUpdate, const QString &line)> indexParseFunction = nullptr;
+  QSet<QString> stationIndex;
+  atools::util::HttpDownloader *indexDownloader = nullptr;
+  atools::geo::SimpleSpatialIndex<QString, QString> index;
+  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
 
 };
 

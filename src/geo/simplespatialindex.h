@@ -46,11 +46,13 @@ public:
 
   /* Add entry, key and position to index */
   void insert(const KEY& key, const TYPE& type, const atools::geo::Pos& pos);
+  void insert(const KEY& key, const atools::geo::Pos& pos);
 
   /* Returned KEY will differ if only nearest was found.
    * Will be equal to passed key is exact was found.
    * Key is empty if nothing was found. */
   KEY getTypeOrNearest(TYPE& type, const KEY& key, const atools::geo::Pos& pos);
+  KEY getTypeOrNearest(const KEY& key, const atools::geo::Pos& pos);
 
   bool contains(const KEY& key) const
   {
@@ -97,6 +99,12 @@ template<typename KEY, typename TYPE>
 void SimpleSpatialIndex<KEY, TYPE>::insert(const KEY& key, const TYPE& type, const geo::Pos& pos)
 {
   index.insert(key, {key, type, pos});
+}
+
+template<typename KEY, typename TYPE>
+void SimpleSpatialIndex<KEY, TYPE>::insert(const KEY& key, const Pos& pos)
+{
+  index.insert(key, {key, TYPE(), pos});
 }
 
 template<typename KEY, typename TYPE>
@@ -149,6 +157,13 @@ KEY SimpleSpatialIndex<KEY, TYPE>::getTypeOrNearest(TYPE& type, const KEY& key,
     }
   }
   return KEY();
+}
+
+template<typename KEY, typename TYPE>
+KEY SimpleSpatialIndex<KEY, TYPE>::getTypeOrNearest(const KEY& key, const Pos& pos)
+{
+  TYPE dummy;
+  return getTypeOrNearest(dummy, key, pos);
 }
 
 template<typename KEY, typename TYPE>

@@ -16,6 +16,9 @@
 *****************************************************************************/
 
 #include "fs/weather/weathernetsingle.h"
+#include "fs/weather/weathertypes.h"
+
+#include "util/httpdownloader.h"
 
 #include <QDebug>
 #include <QNetworkRequest>
@@ -23,12 +26,14 @@
 #include <QTimer>
 #include <QEventLoop>
 
+using atools::util::HttpDownloader;
+
 namespace atools {
 namespace fs {
 namespace weather {
 
 WeatherNetSingle::WeatherNetSingle(QObject *parent, int timeoutMs)
-  : QObject(parent), metarCache(timeoutMs)
+  : QObject(parent), metarCache(timeoutMs), index(5000)
 {
   connect(&flushQueueTimer, &QTimer::timeout, this, &WeatherNetSingle::flushRequestQueue);
 
@@ -39,14 +44,44 @@ WeatherNetSingle::WeatherNetSingle(QObject *parent, int timeoutMs)
 WeatherNetSingle::~WeatherNetSingle()
 {
   flushQueueTimer.stop();
+  delete indexDownloader;
 
   // Remove any outstanding requests
   cancelReply();
 }
 
-QString WeatherNetSingle::getMetar(const QString& airportIcao)
+MetarResult WeatherNetSingle::getMetar(const QString& airportIcao, const geo::Pos& pos)
 {
-  if(!requestUrl.isEmpty())
+  // Load the web page containing the index to all files
+  loadIndex();
+
+  atools::fs::weather::MetarResult result;
+  result.requestIdent = airportIcao;
+  result.requestPos = pos;
+
+  if(stationIndexUrl.isEmpty())
+    // Do not use downloaded index - try direct
+    result.metarForStation = getMetarInternal(airportIcao);
+  else
+  {
+    // This will rely on loadIndex()
+    QString foundKey = index.getTypeOrNearest(airportIcao, pos);
+    if(!foundKey.isEmpty())
+    {
+      if(foundKey == airportIcao)
+        result.metarForStation = getMetarInternal(airportIcao);
+      else
+        result.metarForNearest = getMetarInternal(foundKey);
+    }
+  }
+
+  result.timestamp = QDateTime::currentDateTime();
+  return result;
+}
+
+QString WeatherNetSingle::getMetarInternal(const QString& airportIcao)
+{
+  if(!requestUrl.isEmpty() && (stationIndex.isEmpty() || stationIndex.contains(airportIcao)))
   {
     QString *metar = metarCache.value(airportIcao);
     if(metar != nullptr)
@@ -60,8 +95,18 @@ QString WeatherNetSingle::getMetar(const QString& airportIcao)
       }
     }
   }
-
   return QString();
+}
+
+void WeatherNetSingle::setStationIndexUrl(const QString& url,
+                                          const std::function<void(QString & icao, QDateTime & lastUpdate,
+                                                                   const QString &line)>& parseFunc)
+{
+  delete indexDownloader;
+  indexDownloader = nullptr;
+
+  stationIndexUrl = url;
+  indexParseFunction = parseFunc;
 }
 
 void WeatherNetSingle::flushRequestQueue()
@@ -72,6 +117,55 @@ void WeatherNetSingle::flushRequestQueue()
 
     loadMetar(metarRequests.last());
   }
+}
+
+void WeatherNetSingle::loadIndex()
+{
+  // Trigger download of the index page
+  if(stationIndex.isEmpty() && !stationIndexUrl.isEmpty() && indexParseFunction != nullptr &&
+     indexDownloader == nullptr)
+  {
+    indexDownloader = new HttpDownloader(parent());
+    indexDownloader->setUrl(stationIndexUrl);
+
+    connect(indexDownloader, &HttpDownloader::downloadFinished, this, &WeatherNetSingle::indexDownloadFinished);
+
+    indexDownloader->startDownload();
+  }
+}
+
+void WeatherNetSingle::indexDownloadFinished(const QByteArray& data, QString downloadUrl)
+{
+  QTextStream stream(data, QIODevice::ReadOnly | QIODevice::Text);
+
+  // Maximum age is six hours
+  QDateTime old = QDateTime::currentDateTimeUtc().addSecs(-3600 * 6);
+  stationIndex.clear();
+
+  // Read and parse the (HTML) page
+  while(!stream.atEnd())
+  {
+    QString line = stream.readLine().simplified();
+    QString icao;
+    QDateTime datetime;
+    indexParseFunction(icao, datetime, line);
+
+    if(!icao.isEmpty() && fetchAirportCoords != nullptr && (!datetime.isValid() || datetime > old))
+    {
+      atools::geo::Pos pos = fetchAirportCoords(icao);
+
+      if(pos.isValid())
+      {
+        index.insert(icao, pos);
+        stationIndex.insert(icao);
+      }
+    }
+  }
+
+  qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << stationIndex.size()
+           << "metars from" << downloadUrl;
+
+  emit weatherUpdated();
 }
 
 void WeatherNetSingle::cancelReply()

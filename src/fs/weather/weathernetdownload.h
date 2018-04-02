@@ -19,7 +19,6 @@
 #define ATOOLS_FS_WEATHERNETDOWNLOAD_H
 
 #include "geo/simplespatialindex.h"
-#include "fs/weather/weathertypes.h"
 
 namespace atools {
 namespace util {
@@ -27,6 +26,8 @@ class HttpDownloader;
 }
 namespace fs {
 namespace weather {
+
+struct MetarResult;
 
 /*
  * Manages metar files that are download fully from the web like IVAO.

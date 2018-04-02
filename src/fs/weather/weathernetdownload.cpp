@@ -17,6 +17,7 @@
 
 #include "fs/weather/weathernetdownload.h"
 #include "util/httpdownloader.h"
+#include "fs/weather/weathertypes.h"
 
 namespace atools {
 namespace fs {
@@ -101,7 +102,8 @@ void WeatherNetDownload::parseFile(const QByteArray& data)
     if(pos.isValid())
       index.insert(ident, line, pos);
   }
-  qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars from" << downloader->getUrl();
+  qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << index.size()
+           << "metars from" << downloader->getUrl();
 }
 
 } // namespace weather
