@@ -51,6 +51,19 @@ bool testUrl(const QString& url, const QString& airportIcao, QString& result)
   }
 }
 
+QDebug operator<<(QDebug out, const MetarResult& record)
+{
+  QDebugStateSaver saver(out);
+
+  out << "MetarResult[requestIdent" << record.requestIdent
+      << "metarForStation" << record.metarForStation
+      << "metarForNearest" << record.metarForNearest
+      << "metarForInterpolated" << record.metarForInterpolated
+      << "requestPos" << record.requestPos
+      << "timestamp" << record.timestamp << "]";
+  return out;
+}
+
 } // namespace weather
 } // namespace fs
 } // namespace atools

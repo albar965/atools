@@ -66,7 +66,8 @@ public:
     return downloadUrl;
   }
 
-  /* Re-download every number of seconds and emit downloadFinished when done. */
+  /* Re-download every number of seconds and emit downloadFinished when done.
+   *  Timer will start after first reply from startDownload */
   void setUpdatePeriod(int seconds);
 
   void startTimer();
@@ -110,6 +111,8 @@ private:
 
   void downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal);
 
+  QString curUrl();
+
   QNetworkAccessManager networkManager;
   QTimer updateTimer;
   QString downloadUrl, userAgent;
@@ -120,6 +123,7 @@ private:
 
   /* Maps URL to result */
   atools::util::TimedCache<QString, QByteArray> *dataCache = nullptr;
+
 };
 
 } // namespace util

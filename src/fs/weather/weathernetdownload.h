@@ -39,15 +39,14 @@ class WeatherNetDownload :
   Q_OBJECT
 
 public:
-  WeatherNetDownload(QObject *parent);
+  WeatherNetDownload(QObject *parent, bool verboseLogging);
   virtual ~WeatherNetDownload();
-
-  /* Download text file and emit weatherUpdated when done. Will start update timer. */
-  void download();
 
   /*
    * @return metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
+   *
+   * Download and timer is triggered on first call.
    */
   atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
@@ -76,6 +75,7 @@ private:
 
   atools::geo::SimpleSpatialIndex<QString, QString> index;
   atools::util::HttpDownloader *downloader = nullptr;
+  bool verbose = false;
 };
 
 } // namespace weather

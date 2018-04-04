@@ -53,7 +53,7 @@ class WeatherNetSingle :
   Q_OBJECT
 
 public:
-  WeatherNetSingle(QObject *parent, int timeoutMs);
+  WeatherNetSingle(QObject *parent, int timeoutMs, bool verboseLogging);
   virtual ~WeatherNetSingle();
 
   /*
@@ -118,6 +118,7 @@ private:
   atools::util::HttpDownloader *indexDownloader = nullptr;
   atools::geo::SimpleSpatialIndex<QString, QString> index;
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
+  bool verbose = false;
 
 };
 

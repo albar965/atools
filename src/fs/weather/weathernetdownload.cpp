@@ -23,10 +23,10 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-WeatherNetDownload::WeatherNetDownload(QObject *parent)
-  : QObject(parent), index(5000)
+WeatherNetDownload::WeatherNetDownload(QObject *parent, bool verboseLogging)
+  : QObject(parent), index(5000), verbose(verboseLogging)
 {
-  downloader = new atools::util::HttpDownloader(parent);
+  downloader = new atools::util::HttpDownloader(parent, verboseLogging);
 
   connect(downloader, &atools::util::HttpDownloader::downloadFinished, this, &WeatherNetDownload::downloadFinished);
   connect(downloader, &atools::util::HttpDownloader::downloadFailed, this, &WeatherNetDownload::downloadFailed);
@@ -37,25 +37,25 @@ WeatherNetDownload::~WeatherNetDownload()
   delete downloader;
 }
 
-void WeatherNetDownload::download()
-{
-  downloader->startDownload();
-}
-
 atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   atools::fs::weather::MetarResult result;
   result.requestIdent = airportIcao;
   result.requestPos = pos;
 
-  QString data;
-  QString foundKey = index.getTypeOrNearest(data, airportIcao, pos);
-  if(!foundKey.isEmpty())
+  if(index.isEmpty())
+    downloader->startDownload();
+  else
   {
-    if(foundKey == airportIcao)
-      result.metarForStation = data;
-    else
-      result.metarForNearest = data;
+    QString data;
+    QString foundKey = index.getTypeOrNearest(data, airportIcao, pos);
+    if(!foundKey.isEmpty())
+    {
+      if(foundKey == airportIcao)
+        result.metarForStation = data;
+      else
+        result.metarForNearest = data;
+    }
   }
 
   result.timestamp = QDateTime::currentDateTime();
@@ -69,7 +69,8 @@ void WeatherNetDownload::setRequestUrl(const QString& url)
 
 void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
 {
-  qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
   parseFile(data);
   emit weatherUpdated();
@@ -102,8 +103,9 @@ void WeatherNetDownload::parseFile(const QByteArray& data)
     if(pos.isValid())
       index.insert(ident, line, pos);
   }
-  qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << index.size()
-           << "metars from" << downloader->getUrl();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << index.size()
+             << "metars from" << downloader->getUrl();
 }
 
 } // namespace weather

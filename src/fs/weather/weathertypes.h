@@ -63,6 +63,8 @@ struct MetarResult
 
 };
 
+QDebug operator<<(QDebug out, const atools::fs::weather::MetarResult& record);
+
 /*
  * Test the weather server URL synchronously
  * @param url URL containing a %1 placeholder for the metar

@@ -32,8 +32,8 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-WeatherNetSingle::WeatherNetSingle(QObject *parent, int timeoutMs)
-  : QObject(parent), metarCache(timeoutMs), index(5000)
+WeatherNetSingle::WeatherNetSingle(QObject *parent, int timeoutMs, bool verboseLogging)
+  : QObject(parent), metarCache(timeoutMs), index(5000), verbose(verboseLogging)
 {
   connect(&flushQueueTimer, &QTimer::timeout, this, &WeatherNetSingle::flushRequestQueue);
 
@@ -113,7 +113,8 @@ void WeatherNetSingle::flushRequestQueue()
 {
   if(!metarRequests.isEmpty() && replyMetar == nullptr && !requestUrl.isEmpty())
   {
-    qDebug() << Q_FUNC_INFO << "flushing queue" << metarRequests;
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "flushing queue" << metarRequests;
 
     loadMetar(metarRequests.last());
   }
@@ -125,7 +126,7 @@ void WeatherNetSingle::loadIndex()
   if(stationIndex.isEmpty() && !stationIndexUrl.isEmpty() && indexParseFunction != nullptr &&
      indexDownloader == nullptr)
   {
-    indexDownloader = new HttpDownloader(parent());
+    indexDownloader = new HttpDownloader(parent(), verbose);
     indexDownloader->setUrl(stationIndexUrl);
 
     connect(indexDownloader, &HttpDownloader::downloadFinished, this, &WeatherNetSingle::indexDownloadFinished);
@@ -162,8 +163,9 @@ void WeatherNetSingle::indexDownloadFinished(const QByteArray& data, QString dow
     }
   }
 
-  qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << stationIndex.size()
-           << "metars from" << downloadUrl;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << stationIndex.size()
+             << "metars from" << downloadUrl;
 
   emit weatherUpdated();
 }
@@ -194,13 +196,15 @@ void WeatherNetSingle::loadMetar(const QString& airportIcao)
   {
     if(!metarRequests.contains(airportIcao))
     {
-      qDebug() << Q_FUNC_INFO << airportIcao;
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << airportIcao;
       metarRequests.append(airportIcao);
     }
   }
   else
   {
-    qDebug() << Q_FUNC_INFO << "Building METAR request" << airportIcao << requestUrl;
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Building METAR request" << airportIcao << requestUrl;
     cancelReply();
 
     metarRequestIcao = airportIcao;
@@ -218,7 +222,8 @@ void WeatherNetSingle::loadMetar(const QString& airportIcao)
 /* Called by network reply signal */
 void WeatherNetSingle::httpFinishedMetar()
 {
-  qDebug() << Q_FUNC_INFO << metarRequestIcao;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << metarRequestIcao;
 
   metarRequests.removeAll(metarRequestIcao);
   httpFinished(metarRequestIcao);

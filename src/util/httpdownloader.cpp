@@ -180,7 +180,15 @@ void HttpDownloader::deleteReply()
 
 void HttpDownloader::downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal)
 {
-  emit downloadProgress(bytesReceived, bytesTotal, reply != nullptr ? reply->url().toString() : QString());
+  // if(verbose)
+  // qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "URL" << curUrl();
+
+  emit downloadProgress(bytesReceived, bytesTotal, curUrl());
+}
+
+QString HttpDownloader::curUrl()
+{
+  return reply != nullptr ? reply->url().toString() : QString();
 }
 
 void HttpDownloader::httpFinished()
@@ -188,7 +196,7 @@ void HttpDownloader::httpFinished()
   if(reply != nullptr)
   {
     if(verbose)
-      qDebug() << Q_FUNC_INFO << reply->request().url();
+      qDebug() << Q_FUNC_INFO << "URL" << curUrl();
 
     data.append(reply->readAll());
 
@@ -203,7 +211,7 @@ void HttpDownloader::httpFinished()
     }
     else
     {
-      emit downloadFailed(reply->errorString(), reply->url().toString());
+      emit downloadFailed(reply->errorString(), curUrl());
       deleteReply();
       startTimer();
     }
@@ -218,12 +226,16 @@ void HttpDownloader::readyRead()
   {
     if(reply->error() != QNetworkReply::NoError)
     {
-      emit downloadFailed(reply->errorString(), reply->url().toString());
+      emit downloadFailed(reply->errorString(), curUrl());
       deleteReply();
       startTimer();
     }
     else
+    {
+      // if(verbose)
+      // qDebug() << Q_FUNC_INFO << "reply->bytesAvailable()" << reply->bytesAvailable() << "URL" << curUrl();
       data.append(reply->read(reply->bytesAvailable()));
+    }
   }
 }
 
