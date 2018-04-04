@@ -36,6 +36,9 @@ struct MetarResult
   atools::geo::Pos requestPos;
   QDateTime timestamp;
 
+  /* True if the origin is a simulator request. Currently only FSX/P3D. */
+  bool simulator = false;
+
   bool isValid() const
   {
     return !requestIdent.isEmpty() && requestPos.isValid();
