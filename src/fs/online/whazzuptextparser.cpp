@@ -405,6 +405,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
   if(atc)
   {
+    // =============================================================================
     // Prepare bounding rectangle and a pre-compile circle geometry so it can be used by the same
     // airspace query classes
 
@@ -424,7 +425,8 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     insertQuery->bindValue(":geometry", geo.writeToByteArray());
   }
 
-  // Create sort of a hash key to identiy rows with the same data
+  // =============================================================================
+  // Create sort of a hash key to identify rows with the same data
   QString hashKey = callsign + "|" + QString::number(facilityType) + "|" + vid;
   // Look up recent database id by key or get a new one
   int id = getSemiPermanentId(isAtc ? atcIdMap : clientIdMap, isAtc ? curAtcId : curClientId, hashKey);

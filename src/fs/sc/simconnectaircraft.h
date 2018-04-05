@@ -31,6 +31,10 @@ class XpConnect;
 
 namespace atools {
 namespace fs {
+namespace online {
+class OnlinedataManager;
+}
+
 namespace sc {
 
 class SimConnectHandler;
@@ -276,6 +280,7 @@ private:
   friend class atools::fs::sc::SimConnectHandlerPrivate;
   friend class atools::fs::sc::SimConnectData;
   friend class xpc::XpConnect;
+  friend class atools::fs::online::OnlinedataManager;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;

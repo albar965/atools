@@ -68,7 +68,10 @@ enum AircraftFlag
   SIM_PAUSED = 0x0080,
 
   /* Replay is active - only X-Plane */
-  SIM_REPLAY = 0x0100
+  SIM_REPLAY = 0x0100,
+
+  /* Built from online network data - not in simulator */
+  SIM_ONLINE = 0x0200
 };
 
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);

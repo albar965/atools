@@ -24,6 +24,7 @@
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "sql/sqlscript.h"
+#include "fs/sc/simconnectaircraft.h"
 
 #include <QDebug>
 
@@ -157,6 +158,100 @@ void OnlinedataManager::resetForNewOptions()
   status->reset();
   whazzup->resetForNewOptions();
   whazzupServers->resetForNewOptions();
+}
+
+void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
+{
+  SqlQuery query(db);
+  query.prepare("select * from client where client_id = :id");
+  query.bindValue(":id", id);
+  query.exec();
+  if(query.next())
+    fillFromClient(aircraft, query.record());
+  query.finish();
+}
+
+void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
+{
+  if(record.valueBool("prefile") || record.valueStr("client_type") != "PILOT")
+    return;
+
+  using namespace atools::fs::sc;
+
+  ac.headingTrueDeg =
+    ac.indicatedAltitudeFt =
+      ac.indicatedSpeedKts =
+        ac.trueAirspeedKts =
+          ac.machSpeed =
+            ac.verticalSpeedFeetPerMin = atools::fs::sc::SC_INVALID_FLOAT;
+
+  ac.modelRadiusFt = ac.wingSpanFt = 0;
+
+  ac.category = atools::fs::sc::UNKNOWN;
+  ac.engineType = atools::fs::sc::UNSUPPORTED;
+  ac.numberOfEngines = 0;
+
+  ac.objectId = static_cast<quint32>(record.valueInt("client_id"));
+  ac.airplaneReg = record.valueStr("callsign");
+
+  // record.valueStr("vid");
+  // record.valueStr("name");
+  // record.valueStr("prefile");
+
+  // ac.airplaneTitle,
+  // ac.airplaneType,
+  // ac.airplaneModel,
+  // ac.airplaneReg,
+  // ac.airplaneAirline,
+  // ac.airplaneFlightnumber,
+
+  ac.groundSpeedKts = record.valueFloat("groundspeed");
+  ac.airplaneType = record.valueStr("flightplan_aircraft");
+
+  // record.valueStr("flightplan_cruising_speed");
+
+  ac.fromIdent = record.valueStr("flightplan_departure_aerodrome");
+
+  // record.valueStr("flightplan_cruising_level");
+
+  ac.toIdent = record.valueStr("flightplan_destination_aerodrome");
+
+  // record.valueStr("server");
+  // record.valueStr("protocol");
+  // record.valueStr("combined_rating");
+  // record.valueStr("transponder_code");
+  // record.valueStr("facility_type");
+  // record.valueStr("visual_range");
+  // record.valueStr("flightplan_revision");
+  // record.valueStr("flightplan_flight_rules");
+  // record.valueStr("flightplan_departure_time");
+  // record.valueStr("flightplan_actual_departure_time");
+  // record.valueStr("flightplan_enroute_minutes");
+  // record.valueStr("flightplan_endurance_minutes");
+  // record.valueStr("flightplan_alternate_aerodrome");
+  // record.valueStr("flightplan_other_info");
+  // record.valueStr("flightplan_route");
+  // record.valueStr("connection_time");
+  // record.valueStr("software_name");
+  // record.valueStr("software_version");
+  // record.valueStr("administrative_rating");
+  // record.valueStr("atc_pilot_rating");
+  // record.valueStr("flightplan_2nd_alternate_aerodrome");
+  // record.valueStr("flightplan_type_of_flight");
+  // record.valueStr("flightplan_persons_on_board");
+
+  ac.headingMagDeg = record.valueFloat("heading");
+
+  ac.flags = atools::fs::sc::SIM_ONLINE;
+  if(record.valueBool("on_ground"))
+    ac.flags |= atools::fs::sc::ON_GROUND;
+
+  // record.valueStr("simulator");
+  // record.valueStr("plane");
+  // record.valueStr("qnh_mb");
+
+  ac.position = atools::geo::Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
+
 }
 
 void OnlinedataManager::initQueries()

@@ -28,9 +28,14 @@ namespace atools {
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
+class SqlRecord;
 }
 
 namespace fs {
+namespace sc {
+class SimConnectAircraft;
+}
+
 namespace online {
 
 class StatusTextParser;
@@ -109,6 +114,12 @@ public:
 
   void reset();
   void resetForNewOptions();
+
+  /* Fill from a record based on table client */
+  static void fillFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
+
+  /* Get aircraft from table client by id */
+  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
 
 private:
   atools::sql::SqlDatabase *db;
