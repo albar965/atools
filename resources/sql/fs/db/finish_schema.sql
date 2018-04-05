@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+-- Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -91,7 +91,7 @@ delete from airport_large;
 insert into airport_large select
   airport_id, ident, name,
   has_avgas, has_jetfuel, tower_frequency,
-  is_closed, is_military, is_addon,
+  is_closed, is_military, is_addon, is_3d,
   num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
   longest_runway_length, longest_runway_heading, rating,
   left_lonx, top_laty, right_lonx, bottom_laty,
@@ -112,6 +112,8 @@ create index if not exists idx_airport_large_laty on airport_large(laty);
 
 create index if not exists idx_airport_large_longest_runway_length on airport_large(longest_runway_length);
 create index if not exists idx_airport_large_rating on airport_large(rating);
+create index if not exists idx_airport_large_is_addon on airport_large(is_addon);
+create index if not exists idx_airport_large_is_3d on airport_large(is_3d);
 
 --------------------
 
@@ -120,7 +122,7 @@ delete from airport_medium;
 insert into airport_medium select
   airport_id, ident, name,
   has_avgas, has_jetfuel, tower_frequency,
-  is_closed, is_military, is_addon,
+  is_closed, is_military, is_addon, is_3d,
   num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
   longest_runway_length, longest_runway_heading, rating,
   left_lonx, top_laty, right_lonx, bottom_laty,
@@ -141,6 +143,8 @@ create index if not exists idx_airport_medium_laty on airport_medium(laty);
 
 create index if not exists idx_airport_medium_longest_runway_length on airport_medium(longest_runway_length);
 create index if not exists idx_airport_medium_rating on airport_medium(rating);
+create index if not exists idx_airport_medium_is_addon on airport_medium(is_addon);
+create index if not exists idx_airport_medium_is_3d on airport_medium(is_3d);
 
 -------------------------------------------------------------------------------------------
 

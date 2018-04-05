@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #ifndef ATOOLS_SQL_SQLRECORD_H
 #define ATOOLS_SQL_SQLRECORD_H
 
+#include <QDateTime>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QVector>
@@ -64,6 +65,16 @@ public:
   QString valueStr(const QString& name) const
   {
     return value(name).toString();
+  }
+
+  QDateTime valueDateTime(int i) const
+  {
+    return value(i).toDateTime();
+  }
+
+  QDateTime valueDateTime(const QString& name) const
+  {
+    return value(name).toDateTime();
   }
 
   int valueInt(int i) const
@@ -162,6 +173,10 @@ public:
 
   void appendField(const QString& fieldName, QVariant::Type type);
 
+  /* Adds field if not exists and value too. Type is derived from value */
+  SqlRecord& appendFieldAndValue(const QString& fieldName, QVariant value);
+  SqlRecord& appendFieldAndNullValue(const QString& fieldName, QVariant::Type type);
+
   void setValue(int i, const QVariant& val);
   void setValue(const QString& name, const QVariant& val);
   void setNull(int i);
@@ -173,7 +188,15 @@ public:
   QVariant::Type fieldType(int i) const;
   QVariant::Type fieldType(const QString& name) const;
 
+  void remove(int pos);
+  void remove(const QString& name);
+
+  QStringList fieldNames() const;
+  QVariantList values() const;
+
 private:
+  friend QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record);
+
   QSqlRecord sqlRecord;
   QString queryString;
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,14 @@ QString gitRevision();
 QString replaceVar(QString str, const QString& name, const QVariant& value);
 QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 
+/* Program information which can be added to file headers:
+ * Created by %1 Version %2 (revision %3) on %4*/
+QString programFileInfo();
+
+/* Return true if the file ends with an carriage return or line feed.
+ *  An Exception is thrown if the file cannot be opened */
+bool fileEndsWithEol(const QString& filepath);
+
 template<typename TYPE>
 bool contains(const TYPE& name, const std::initializer_list<TYPE>& list)
 {
@@ -51,6 +59,9 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 
+/* Cut linefeed separated text. Return maxLength lines where \n... is included  */
+QString elideTextLinesShort(QString str, int maxLength);
+
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);
 
@@ -60,6 +71,10 @@ QString buildPath(const QStringList& paths);
 /* Read a part of the file and find out the text codec if it has a BOM.
  * File has to be open for reading */
 QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
+
+/* Calculate the step size for an axis along a range for number of steps.
+ * Steps will stick to the 1, 2, and 5 range */
+float calculateSteps(float range, float numSteps);
 
 /* different to std::fmod and std::remainder. Sign follows the divisor or be Euclidean. Remainder of x/y */
 template<typename TYPE>
@@ -119,6 +134,13 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
     qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
   return defaultType;
 }
+
+/* Writes a warning message includiing the string list */
+QString at(const QStringList& columns, int index);
+
+/* Both write a warning message if number format is wrong */
+int atInt(const QStringList& columns, int index);
+float atFloat(const QStringList& columns, int index);
 
 /* Remove all special characters from the filename that can disturb any filesystem */
 QString cleanFilename(const QString& filename);

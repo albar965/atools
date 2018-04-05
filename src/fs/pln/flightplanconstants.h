@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,20 @@
 namespace atools {
 namespace fs {
 namespace pln {
+
+enum SaveOption
+{
+  SAVE_NO_OPTIONS = 0,
+
+  /* No XML comments (annotations) that can confuse incapable programs */
+  SAVE_CLEAN = 1 << 1,
+
+  /* Save Garmin GNS format with user waypoints */
+  SAVE_GNS_USER_WAYPOINTS = 1 << 2
+};
+
+Q_DECLARE_FLAGS(SaveOptions, SaveOption);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::SaveOptions);
 
 enum FileFormat
 {
@@ -59,20 +73,25 @@ const QLatin1Literal SIDAPPR("sidappr");
 const QLatin1Literal SIDAPPRRW("sidapprrw");
 const QLatin1Literal SIDAPPRDISTANCE("sidapprdistance");
 const QLatin1Literal SIDAPPRSIZE("sidapprsize");
+
 const QLatin1Literal SIDTRANS("sidtrans");
 const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
 const QLatin1Literal SIDTRANSSIZE("sidtranssize");
+
 const QLatin1Literal STAR("star");
 const QLatin1Literal STARRW("starrw");
 const QLatin1Literal STARDISTANCE("stardistance");
 const QLatin1Literal STARSIZE("starsize");
+
 const QLatin1Literal STARTRANS("startrans");
 const QLatin1Literal STARTRANSDISTANCE("startransdistance");
 const QLatin1Literal STARTRANSSIZE("startranssize");
+
 const QLatin1Literal TRANSITION("transition");
 const QLatin1Literal TRANSITIONTYPE("transitiontype");
 const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
 const QLatin1Literal TRANSITIONSIZE("transitionsize");
+
 const QLatin1Literal APPROACH("approach");
 const QLatin1Literal APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
 const QLatin1Literal APPROACHTYPE("approachtype");

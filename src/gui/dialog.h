@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,8 @@ public:
    * @see atools::settings::Settings
    */
   QString openFileDialog(const QString& title, const QString& filter,
+                         const QString& settingsPrefix = QString(), const QString& path = QString());
+  QStringList openFileDialogMulti(const QString& title, const QString& filter,
                          const QString& settingsPrefix = QString(), const QString& path = QString());
 
   /*
@@ -145,7 +147,7 @@ public:
                          QMessageBox::StandardButton defaultButton);
 
 private:
-  QString fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
+  QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                      const QString& settingsPrefix, const QString& defaultFileSuffix,
                      const QString& path, const QString& filename);
 

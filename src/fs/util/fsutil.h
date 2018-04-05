@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,22 @@ QString capNavString(const QString& str);
 
 /* Capitalize airport name making special designators (AFB, ...) upper case */
 QString capAirportName(const QString& str);
+
+/* Limits ident to upper case characters and digits and trims length to five.
+ * Returns N with following number if empty. */
+QString adjustIdent(QString ident, int length = 5, int id = -1);
+
+/* Limits region to upper case characters and trims length to 2. Returns "ZZ" if empty. */
+QString adjustRegion(QString region);
+
+/* Max 10 characters, digits, space and underscore */
+QString adjustFsxUserWpName(QString name, int length = 10);
+
+/* Upper case characters and digits and length between 2 and 5 */
+bool isValidIdent(const QString& ident);
+
+/* Upper case characters length equal 2 */
+bool isValidRegion(const QString& region);
 
 } // namespace util
 } // namespace fs

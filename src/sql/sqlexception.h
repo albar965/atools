@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ namespace sql {
  * Exception for SQL module which also carries the QSqlError
  */
 class SqlException :
-  public Exception
+  public atools::Exception
 {
 public:
   SqlException(const QSqlError& sqlErr, const QString& message = QString(), const QString& message2 = QString());

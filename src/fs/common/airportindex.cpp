@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -122,6 +122,29 @@ bool AirportIndex::addAirport(const QString& airportIcao, int airportId)
 void AirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId)
 {
   icaoRunwayNameToEndId.insert(IndexName2(airportIcao, runwayName), runwayEndId);
+}
+
+void AirportIndex::addAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent,
+                                 int ilsId)
+{
+  airportIlsIdMap.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), ilsId);
+}
+
+int AirportIndex::getAirportIlsId(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent)
+{
+  return airportIlsIdMap.value(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), -1);
+}
+
+void AirportIndex::addSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
+                                        const QString& ilsIdent)
+{
+  skippedIlsSet.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
+}
+
+bool AirportIndex::hasSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
+                                        const QString& ilsIdent)
+{
+  return skippedIlsSet.contains(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
 }
 
 } // namespace common

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,8 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_reils", type->getApproachLights().hasReils());
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
   bind(":num_strobes", type->getApproachLights().getNumStrobes());
+
+  bindNullString(":altitude");
 
   if(type->getIlsIdent().isEmpty())
     bindNullString(":ils_ident");

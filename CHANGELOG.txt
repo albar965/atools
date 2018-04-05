@@ -1,3 +1,59 @@
+Version 2.9.1.develop
+
+* Now filtering out taxiway garbage names in X-Plane compiler.
+* Added transition_altitude to airport table for DFD compiler and updated database minor version to 11.
+* Added backup functionality to userdata. albar965/littlenavmap#3
+* Added sim paused and replay flags in sim data.
+* Weather report now corrects any future dates back to last valid date.
+* Fixed issues with file or directory exclusion for X-Plane scenery loader.
+* Fixed problem where CIFP files with wrong case were not recognized correctly.
+* Added userdata manager.
+* Added CSV reader. Fixed several issues in Sql to CSV export class. Fixed issues in export
+  functions of userdata manager. Removed import_timestamp from userdata table. albar965/littlenavmap#3
+* Fixed coordinate recognition methods to allow degree/minute/second signs or not.
+* Added functions to adjust ident and region values from user defined data.
+* Userpoint CSV import is now trimmed to avoid fields containing only spaces.
+  albar965/littlenavmap#3
+* More work on user waypoint database. Added coordinate string parsing method that can deal with
+  10+ formats. albar965/littlenavmap#3
+* Fixed wrong header indication "A" for X-Plane flight plans. Fixed app version read in a wrong way
+  for FSX/P3D plans.
+* Added schema SQL script for user waypoint management. Added user data manager class including
+  import and export functions for CSV, X-Plane user_fix.dat, Garmin GTN user waypoints and BGL XML.
+  albar965/littlenavmap#3
+* Fixed old problem where on-ground indication is unreliable for first packets from X-Plane.
+* Translation problems fixed for log message.
+* Fixed issue when loading fsbuild flight plans which are missing the altitude field.
+* Now updating magnetic declination for VOR with calculated value where missing.
+* Logging directory and addon excludes now in navdatabase options.
+* Added is_3d to airport_medium and airport_large overview tables.
+* Now reading FSX/P3D scenery entries pointing to "scenery" directory which is allowed in P3D.
+  These were omitted previously. Reading Roaming/.../add-on.cfg and ProgramData/.../add-on.cfg now.
+  albar965/littlenavmap#211
+* Fixed issue with X-Plane airports that have wrong reference datum. Now falling back to center of
+  bouding rect or center of a single runway.
+* Fixed error on METAR stations improperly reporting CAVOK 9999. Mitigated problem with X-Plane
+  METAR.rwx containing duplicate records. albar965/littlenavmap#212
+* Custom Scenery/Global Airports/Earth nav data/earth_nav.dat is now read to get fixed ILS. Fixed
+  reading of ILS for non consecutive entries in dat file. albar965/littlenavmap#209
+* Corrected wrong runway heading from DFD compilation. albar965/littlenavmap#214
+* SID and STAR common routes are now merged correctly into procedures for DFD and X-Plane compiler.
+  albar965/littlenavmap#193
+* Airport idents from DFD compilation are now all converted to original three-letter code if
+  available. albar965/littlenavmap#203
+* Added new columns runway_end.altitude, approach_leg.approach_fix_type and
+  transition_leg.approach_fix_type. Updated database minor version to 9.
+* Merge branch 'release/2.8'
+* Now removing all unneeded dummy NDB and VOR waypoints that were created for airway generation.
+  albar965/littlenavmap#201
+
+Version 2.8.5
+
+* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
+* Fixes for missing airway segments in DFD compiler.
+* Fixed overly eager de-duplication of waypoints. albar965/littlenavmap#201
+* Updated from Qt 5.9.1 to 5.9.3
+
 Version 2.8.4
 
 * Added Garmin GNS XML flight plan export.

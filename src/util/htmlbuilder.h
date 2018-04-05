@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -180,6 +180,10 @@ public:
                     html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2Var(const QString& name, const QVariant& value,
                        html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Adds row if string is not empty*/
+  HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE,
+                      QColor color = QColor());
 
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor = QColor());

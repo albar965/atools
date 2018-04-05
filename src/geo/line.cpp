@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -251,6 +251,13 @@ Rect Line::boundingRect() const
 bool Line::isPoint(float epsilonDegree) const
 {
   return isValid() && pos1.almostEqual(pos2, epsilonDegree);
+}
+
+bool Line::crossesAntiMeridian() const
+{
+  // east / west
+  return pos2.getLonX() < pos1.getLonX() ||
+         (atools::almostEqual(pos2.getLonX(), 180.f) && atools::almostEqual(pos1.getLonX(), -180.f));
 }
 
 QDebug operator<<(QDebug out, const Line& record)

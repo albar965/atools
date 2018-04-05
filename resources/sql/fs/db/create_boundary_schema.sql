@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+-- Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ create table boundary
   max_altitude_type varchar(15),  -- "
   min_altitude integer,           -- Lower altitude for this airspace in feet
   max_altitude integer,           -- Upper altitude for this airspace in feet
-  max_lonx double not null,       -- Bounding rectange
+  max_lonx double not null,       -- Bounding rectangle
   max_laty double not null,       -- "
-  min_lonx double not null,       -- Bounding rectange
+  min_lonx double not null,       -- Bounding rectangle
   min_laty double not null,       -- "
   geometry blob,                  -- Pre calculated geometry
 foreign key(file_id) references bgl_file(bgl_file_id)

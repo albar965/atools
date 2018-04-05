@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -147,6 +147,29 @@ void IniReader::throwException(const QString& message)
 {
   throw Exception(tr("%1. File \"%2\", line %3:\"%4\"").
                   arg(message).arg(filename).arg(currentLineNum).arg(currentLine));
+}
+
+bool IniReader::toBool(const QString& str)
+{
+  QString tmp = str.toLower().trimmed();
+
+  if(tmp == "true" || tmp == "t" || tmp == "y" || tmp == "yes" || tmp == "1")
+    return true;
+  else if(tmp == "false" || tmp == "f" || tmp == "n" || tmp == "no" || tmp == "0")
+    return false;
+
+  qWarning() << "Boolean value not valid in scenery area line" << currentLineNum << "file" << filename;
+  return false;
+}
+
+int IniReader::toInt(const QString& str)
+{
+  int retval = 0;
+  bool ok = false;
+  retval = str.toInt(&ok);
+  if(!ok)
+    qWarning() << "Int value not valid in scenery area line" << currentLineNum << "file" << filename;
+  return retval;
 }
 
 } // namespace io

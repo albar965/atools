@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -161,6 +161,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":bottom_laty", airportRect.getBottomRight().getLatY());
 
     airportWriteQuery->bindValue(":mag_var", magDecReader->getMagVar(pos));
+    airportWriteQuery->bindValue(":transition_altitude", airportQuery->value("transition_altitude"));
     airportWriteQuery->bindValue(":altitude", pos.getAltitude());
     airportWriteQuery->bindValue(":lonx", pos.getLonX());
     airportWriteQuery->bindValue(":laty", pos.getLatY());
@@ -247,10 +248,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     // Calculate center point
     Pos centerPos = primaryPos.interpolate(secondaryPos, 0.5f);
 
-    // Calcuate true heading from magnetic which is needed for painting
-    float magvar = magDecReader->getMagVar(centerPos);
-    float heading = atools::geo::normalizeCourse(primaryRec.valueFloat("runway_magnetic_bearing") + magvar);
-    float opposedHeading = atools::geo::normalizeCourse(secondaryRec.valueFloat("runway_magnetic_bearing") + magvar);
+    float heading = primaryRec.valueFloat("runway_true_bearing");
+    float opposedHeading = secondaryRec.valueFloat("runway_true_bearing");
 
     // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
     // << secondaryEndId << s.valueStr("runway_identifier");
@@ -312,6 +311,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", primaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", heading);
+    runwayEndWriteQuery->bindValue(":altitude", primaryRec.valueInt("landing_threshold_elevation"));
     runwayEndWriteQuery->bindValue(":lonx", primaryPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", primaryPos.getLatY());
     runwayEndWriteQuery->exec();
@@ -334,6 +334,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":num_strobes", 0);
     runwayEndWriteQuery->bindValue(":ils_ident", secondaryRec.valueStr("llz_identifier"));
     runwayEndWriteQuery->bindValue(":heading", opposedHeading);
+    runwayEndWriteQuery->bindValue(":altitude", secondaryRec.valueInt("landing_threshold_elevation"));
     runwayEndWriteQuery->bindValue(":lonx", secondaryPos.getLonX());
     runwayEndWriteQuery->bindValue(":laty", secondaryPos.getLatY());
     runwayEndWriteQuery->exec();
@@ -1174,6 +1175,7 @@ void DfdCompiler::updateMagvar()
   SqlUtil util(db);
   util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
   util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
+  util.updateColumnInTable("vor", "vor_id", {"lonx", "laty"}, {"mag_var"}, "mag_var is null", func);
   db.commit();
 }
 
@@ -1231,6 +1233,57 @@ void DfdCompiler::updateIlsGeometry()
                                   {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
                                   func);
   db.commit();
+}
+
+void DfdCompiler::updateTreeLetterAirportCodes()
+{
+  progress->reportOther("Updating airport idents");
+
+  SqlRecord rec = db.record("src.tbl_airports");
+  if(!rec.contains("airport_identifier_3letter"))
+  {
+    qWarning() << "tbl_airports.airport_identifier_3letter not found - skipping";
+    return;
+  }
+
+  QHash<QString, QString> codeMap;
+  SqlQuery codeQuery("select airport_identifier, airport_identifier_3letter "
+                     "from src.tbl_airports where airport_identifier_3letter is not null", db);
+  codeQuery.exec();
+  while(codeQuery.next())
+    codeMap.insert(codeQuery.valueStr("airport_identifier"), codeQuery.valueStr("airport_identifier_3letter"));
+  codeQuery.finish();
+
+  updateTreeLetterAirportCodes(codeMap, "airport", "ident");
+  updateTreeLetterAirportCodes(codeMap, "airport_file", "ident");
+  updateTreeLetterAirportCodes(codeMap, "approach", "airport_ident");
+
+  // Not used in DFD
+  // updateTreeLetterAirportCodes(codeMap, "approach", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "approach_leg", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition", "fix_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition", "dme_airport_ident");
+  // updateTreeLetterAirportCodes(codeMap, "transition_leg", "fix_airport_ident");
+
+  updateTreeLetterAirportCodes(codeMap, "ils", "loc_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "airway_point", "next_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "airway_point", "previous_airport_ident");
+}
+
+void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString> codeMap, const QString& table,
+                                               const QString& column)
+{
+  qInfo() << "Updating three-letter codes in" << table << column;
+  SqlQuery update(db);
+  update.prepare("update " + table + " set " + column + " = :code3 where " + column + " = :code4");
+
+  QList<QString> codes4 = codeMap.keys();
+  for(const QString& code4 :codes4)
+  {
+    update.bindValue(":code4", code4);
+    update.bindValue(":code3", codeMap.value(code4));
+    update.exec();
+  }
 }
 
 void DfdCompiler::initQueries()

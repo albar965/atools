@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,19 +63,18 @@ private:
   void writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context);
   void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
 
-  void bindIls(const QStringList& line, int curFileId, const XpWriterContext& context);
-  void bindIlsGlideslope(const QStringList& line);
-  void bindIlsDme(const QStringList& line);
-  void finishIls();
+  void writeIls(const QStringList& line, int curFileId, const XpWriterContext& context);
+  void updateIlsGlideslope(const QStringList& line);
+  void updateIlsDme(const QStringList& line);
 
-  bool writingIls = false;
   const int FEATHER_LEN_NM = 9;
   const float FEATHER_WIDTH = 4.f;
 
   int curVorId = 0, curNdbId = 0, curMarkerId = 0, curIlsId = 0;
 
   atools::sql::SqlQuery *insertVorQuery = nullptr, *insertNdbQuery = nullptr,
-                        *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr;
+                        *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr,
+                        *updateIlsGsQuery = nullptr, *updateIlsDmeQuery = nullptr;
   atools::fs::common::AirportIndex *airportIndex;
 
 };

@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+-- Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -101,6 +101,7 @@ create table airport
   tower_altitude integer,                       -- Feet
   tower_lonx double,
   tower_laty double,
+  transition_altitude integer,                  -- Feet
   altitude integer not null,                    -- Feet
   lonx double not null,                         -- Coordinates of the airport center
   laty double not null,                         -- Coordinates of the airport center
@@ -140,6 +141,7 @@ create table airport_medium
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
@@ -172,6 +174,7 @@ create table airport_large
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
@@ -372,7 +375,7 @@ create table runway
   primary_laty double not null,        -- Coordinates of the primary end
   secondary_lonx double not null,      -- Coordinates of the secondary end
   secondary_laty double not null,      -- Coordinates of the secondary end
-  altitude integer not null,            -- Feet
+  altitude integer not null,            -- Feet - center or average elevation
   lonx double not null,
   laty double not null,
 foreign key(airport_id) references airport(airport_id),
@@ -392,29 +395,30 @@ drop table if exists runway_end;
 create table runway_end
 (
   runway_end_id integer primary key,
-  name varchar(10) not null,             -- Full name like "12", "24C" or "N"
-  end_type varchar(1) not null,          -- Primary or secondary
-  offset_threshold integer not null,     -- Feet - this is part of the runway length and will reduce landing distance
-  blast_pad integer not null,            -- Feet - not part of the runway length
-  overrun integer not null,              -- Feet - not part of the runway length
-  left_vasi_type varchar(15),            -- see enum atools::fs::bgl::rw::VasiType
-  left_vasi_pitch double,                -- Degrees
-  right_vasi_type varchar(15),           -- see enum atools::fs::bgl::rw::VasiType
-  right_vasi_pitch double,               -- Degrees
-  has_closed_markings integer not null,  -- Threshow crossed out and runway closed for landing
-  has_stol_markings integer not null,    -- Has STOL text
-  is_takeoff integer not null,           -- Is used for takeoff or not
-  is_landing integer not null,           -- Is used for landing or not
-  is_pattern varchar(10) not null,       -- see enum atools::fs::bgl::rw::Pattern
-  app_light_system_type varchar(15),     -- see enum atools::fs::bgl::rw::ApproachLightSystem
-  has_end_lights integer not null,       -- Boolean
-  has_reils integer not null,            -- Boolean has runway end identifier lights or not
-  has_touchdown_lights integer not null, -- Boolean lighting for the touchdown zone
+  name varchar(10) not null,              -- Full name like "12", "24C" or "N"
+  end_type varchar(1) not null,           -- Primary or secondary
+  offset_threshold integer not null,      -- Feet - this is part of the runway length and will reduce landing distance
+  blast_pad integer not null,             -- Feet - not part of the runway length
+  overrun integer not null,               -- Feet - not part of the runway length
+  left_vasi_type varchar(15),             -- see enum atools::fs::bgl::rw::VasiType
+  left_vasi_pitch double,                 -- Degrees
+  right_vasi_type varchar(15),            -- see enum atools::fs::bgl::rw::VasiType
+  right_vasi_pitch double,                -- Degrees
+  has_closed_markings integer not null,   -- Threshow crossed out and runway closed for landing
+  has_stol_markings integer not null,     -- Has STOL text
+  is_takeoff integer not null,            -- Is used for takeoff or not
+  is_landing integer not null,            -- Is used for landing or not
+  is_pattern varchar(10) not null,        -- see enum atools::fs::bgl::rw::Pattern
+  app_light_system_type varchar(15),      -- see enum atools::fs::bgl::rw::ApproachLightSystem
+  has_end_lights integer not null,        -- Boolean
+  has_reils integer not null,             -- Boolean has runway end identifier lights or not
+  has_touchdown_lights integer not null,  -- Boolean lighting for the touchdown zone
   num_strobes integer not null,           -- Number of strobe lights
-  ils_ident varchar(10),           -- Ident of the ILS or null if none
-  heading double not null,        -- Duplicated from runway
-  lonx double not null,           -- "
-  laty double not null            -- "
+  ils_ident varchar(10),                  -- Ident of the ILS or null if none
+  heading double not null,                -- Duplicated from runway
+  altitude integer,                       -- Threshold elevation for this end if available
+  lonx double not null,                   -- "
+  laty double not null                    -- "
 );
 
 create index if not exists idx_runway_end_name on runway_end(name);
@@ -490,6 +494,7 @@ create table approach_leg
   approach_id integer not null,
   is_missed integer not null,         -- 1 if this leg is part of a missed approach
   type varchar(10),                   -- see enum atools::fs::bgl::leg::Type
+  approach_fix_type varchar(1),       -- A = IAF, M = MAP,  H = Holding fix, etc. see ARINC-424 spec
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
                                       -- "A": at, "+": at or above, "-": at or below, "B": between altitude2 and altitude1
   turn_direction varchar(10),         -- see enum atools::fs::bgl::leg::TurnDirection
@@ -526,6 +531,7 @@ create table transition_leg
   transition_leg_id integer primary key,
   transition_id integer not null,
   type varchar(10) not null,
+  approach_fix_type varchar(1),
   alt_descriptor varchar(10),
   turn_direction varchar(10),
   fix_type varchar(25),

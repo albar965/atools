@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -242,13 +242,11 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
   QString programData(qgetenv("PROGRAMDATA"));
 
   // Win 7+ C:\Users\{username}\AppData\Roaming
-  // Win XP C:\Documents and Settings\{username}\Application Data
   QString appData(qgetenv("APPDATA"));
 
   QString allUsersProfile(qgetenv("ALLUSERSPROFILE"));
 
   if(programData.isEmpty())
-    // Win XP - ALLUSERSPROFILE = C:\Documents and Settings\All Users
     programData = allUsersProfile + QDir::separator() + QDir(appData).dirName();
 #else
   // If not windows use emulation for testing

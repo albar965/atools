@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -420,6 +420,46 @@ QString capAirportName(const QString& str)
         });
 
   return atools::capString(str, upper);
+}
+
+QString adjustFsxUserWpName(QString name, int length)
+{
+  static const QRegularExpression NAME_REGEXP("[^A-Za-z0-9_ ]");
+  name.replace(NAME_REGEXP, "");
+  name = name.left(length);
+  if(name.isEmpty())
+    name = "User_WP";
+  return name;
+}
+
+QString adjustIdent(QString ident, int length, int id)
+{
+  static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
+  ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
+  if(ident.isEmpty() && id != -1)
+    ident = QString("N%1").arg(id, 4, 36, QChar('0')).left(length);
+  return ident.toUpper();
+}
+
+QString adjustRegion(QString region)
+{
+  static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
+  region = region.toUpper().replace(IDENT_REGEXP, "").left(2);
+  if(region.length() != 2)
+    region = "ZZ";
+  return region.toUpper();
+}
+
+bool isValidIdent(const QString& ident)
+{
+  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{1,5}$");
+  return IDENT_REGEXP.match(ident).hasMatch();
+}
+
+bool isValidRegion(const QString& region)
+{
+  static const QRegularExpression REGION_REGEXP("^[A-Z0-9]$");
+  return REGION_REGEXP.match(region).hasMatch();
 }
 
 } // namespace util

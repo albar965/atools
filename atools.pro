@@ -1,10 +1,21 @@
-#-------------------------------------------------
+#*****************************************************************************
+# Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 #
-# Project created by QtCreator 2015-08-17T13:16:57
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 #
-#-------------------------------------------------
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#****************************************************************************
 
-QT       += sql xml core widgets network
+QT       += sql xml svg core widgets network
 QT       -= gui
 
 CONFIG += c++14
@@ -190,9 +201,7 @@ HEADERS += src/atools.h \
     src/fs/sc/datareaderthread.h \
     src/fs/sc/weatherrequest.h \
     src/gui/widgetutil.h \
-    src/fs/weather/metar.h \
     src/util/timedcache.h \
-    src/fs/weather/metarparser.h \
     src/util/paintercontextsaver.h \
     src/fs/db/ap/airportfilewriter.h \
     src/geo/line.h \
@@ -223,7 +232,6 @@ HEADERS += src/atools.h \
     src/fs/xp/xpcifpwriter.h \
     src/fs/common/globereader.h \
     src/fs/common/magdecreader.h \
-    src/fs/common/xpweatherreader.h \
     src/fs/util/coordinates.h \
     src/fs/pln/flightplanconstants.h \
     src/util/updatecheck.h \
@@ -239,7 +247,25 @@ HEADERS += src/atools.h \
     src/fs/common/airportindex.h \
     src/fs/db/dbairportindex.h \
     src/fs/dfd/dfdcompiler.h \
-    src/fs/common/procedurewriter.h
+    src/fs/common/procedurewriter.h \
+    src/fs/scenery/addoncfg.h \
+    src/fs/userdata/userdatamanager.h \
+    src/util/csvreader.h \
+    src/fs/pln/flightplanio.h \
+    src/geo/simplespatialindex.h \
+    src/fs/weather/weathernetdownload.h \
+    src/fs/weather/weathernetsingle.h \
+    src/fs/weather/metarparser.h \
+    src/fs/weather/metar.h \
+    src/fs/weather/weathertypes.h \
+    src/fs/weather/xpweatherreader.h \
+    src/util/httpdownloader.h \
+    src/fs/online/statustextparser.h \
+    src/fs/online/whazzuptextparser.h \
+    src/fs/online/onlinedatamanager.h \
+    src/fs/online/onlinetypes.h \
+    src/zip/gzip.h \
+    src/sql/sqltransaction.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -383,9 +409,7 @@ SOURCES += src/atools.cpp \
     src/fs/sc/datareaderthread.cpp \
     src/fs/sc/weatherrequest.cpp \
     src/gui/widgetutil.cpp \
-    src/fs/weather/metar.cpp \
     src/util/timedcache.cpp \
-    src/fs/weather/metarparser.cpp \
     src/fs/bgl/nav/airwaysegment.cpp \
     src/util/paintercontextsaver.cpp \
     src/fs/db/ap/airportfilewriter.cpp \
@@ -417,7 +441,6 @@ SOURCES += src/atools.cpp \
     src/fs/xp/xpcifpwriter.cpp \
     src/fs/common/globereader.cpp \
     src/fs/common/magdecreader.cpp \
-    src/fs/common/xpweatherreader.cpp \
     src/fs/util/coordinates.cpp \
     src/fs/pln/flightplanconstants.cpp \
     src/util/updatecheck.cpp \
@@ -433,7 +456,25 @@ SOURCES += src/atools.cpp \
     src/fs/common/airportindex.cpp \
     src/fs/db/dbairportindex.cpp \
     src/fs/dfd/dfdcompiler.cpp \
-    src/fs/common/procedurewriter.cpp
+    src/fs/common/procedurewriter.cpp \
+    src/fs/scenery/addoncfg.cpp \
+    src/fs/userdata/userdatamanager.cpp \
+    src/util/csvreader.cpp \
+    src/fs/pln/flightplanio.cpp \
+    src/geo/simplespatialindex.cpp \
+    src/fs/weather/weathernetdownload.cpp \
+    src/fs/weather/weathernetsingle.cpp \
+    src/fs/weather/metarparser.cpp \
+    src/fs/weather/metar.cpp \
+    src/fs/weather/weathertypes.cpp \
+    src/fs/weather/xpweatherreader.cpp \
+    src/util/httpdownloader.cpp \
+    src/fs/online/statustextparser.cpp \
+    src/fs/online/whazzuptextparser.cpp \
+    src/fs/online/onlinedatamanager.cpp \
+    src/fs/online/onlinetypes.cpp \
+    src/zip/gzip.cpp \
+    src/sql/sqltransaction.cpp
 
 
 unix {

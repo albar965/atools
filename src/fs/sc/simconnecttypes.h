@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -62,44 +62,20 @@ enum AircraftFlag
 
   /* Indicated source simulator for all aircraft */
   SIM_FSX_P3D = 0x0020,
-  SIM_XPLANE = 0x0040
+  SIM_XPLANE = 0x0040,
+
+  /* Simulator is in pause mode */
+  SIM_PAUSED = 0x0080,
+
+  /* Replay is active - only X-Plane */
+  SIM_REPLAY = 0x0100,
+
+  /* Built from online network data - not in simulator */
+  SIM_ONLINE = 0x0200
 };
 
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
-
-struct MetarResult
-{
-  QString requestIdent, metarForStation, metarForNearest, metarForInterpolated;
-  atools::geo::Pos requestPos;
-  QDateTime timestamp;
-
-  bool isValid() const
-  {
-    return !requestIdent.isEmpty() && requestPos.isValid();
-  }
-
-  bool isEmpty() const
-  {
-    return !isValid() ||
-           (metarForStation.isEmpty() && metarForNearest.isEmpty() && metarForInterpolated.isEmpty());
-  }
-
-  bool operator==(const atools::fs::sc::MetarResult& other)
-  {
-    return requestIdent == other.requestIdent &&
-           metarForStation == other.metarForStation &&
-           metarForNearest == other.metarForNearest &&
-           metarForInterpolated == other.metarForInterpolated &&
-           requestPos == other.requestPos;
-  }
-
-  bool operator!=(const atools::fs::sc::MetarResult& other)
-  {
-    return !operator==(other);
-  }
-
-};
 
 } // namespace sc
 } // namespace fs

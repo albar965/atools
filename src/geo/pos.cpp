@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,14 +41,14 @@ const static QString LONG_FORMAT("%1%2° %3' %4\",%5%6° %7' %8\",%9%10");
 const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ns])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
-  "([+-]?)\\s*([0-9\\.]+)");
+  "([+-]?)\\s*([0-9\\.]+)?");
 
 // Format as used in FS9 flight plans
 // N54* 16.82', W008* 35.95', +000011.00
 const static QRegularExpression LONG_FORMAT_OLD_REGEXP(
   "([ns])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'\\s*,\\s*"
   "([ew])\\s*([0-9]+)\\s*[\\*°]\\s*([0-9\\.]+)\\s*[']?\\s*'\\s*,\\s*"
-  "([+-]?)\\s*([0-9\\.]+)");
+  "([+-]?)\\s*([0-9\\.]+)?");
 
 using atools::absInt;
 

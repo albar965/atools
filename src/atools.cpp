@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "atools.h"
+#include "exception.h"
 
 #include <QDebug>
 #include <QLocale>
@@ -23,12 +24,14 @@
 #include <QVector>
 #include <QDir>
 #include <QTextCodec>
+#include <QCoreApplication>
+#include <QDateTime>
 
 namespace atools {
 
 QString version()
 {
-  return "2.8.4"; // VERSION_NUMBER
+  return "2.9.1.develop"; // VERSION_NUMBER
 }
 
 QString gitRevision()
@@ -253,6 +256,109 @@ QString elideTextShort(const QString& str, int maxLength)
     return str.left(maxLength - 1) + "…";
 
   return str;
+}
+
+QString elideTextLinesShort(QString str, int maxLength)
+{
+  QStringList lines;
+  QTextStream stream(&str, QIODevice::ReadOnly);
+
+  int i = 0;
+  while(!stream.atEnd() && ++i < maxLength)
+    lines.append(stream.readLine());
+
+  if(i >= maxLength)
+    return lines.join("\n") + "\n…";
+  else
+    return lines.join("\n");
+}
+
+float calculateSteps(float range, float numSteps)
+{
+  float a = range;
+  float step = numSteps;
+  float mag = std::pow(10.f, std::floor(std::log10(a / step)));
+  float val = std::floor((a / step) / mag);
+
+  if(val < 1.f)
+    val = 1.f;
+  else if(val < 2.f)
+    val = 2.f;
+  else if(val < 5.f)
+    val = 5.f;
+  else
+    val = 10.f;
+
+  return val * mag;
+}
+
+QString programFileInfo()
+{
+  return QObject::tr("Created by %1 Version %2 (revision %3) on %4").
+         arg(QCoreApplication::applicationName()).
+         arg(QCoreApplication::applicationVersion()).
+         arg(atools::gitRevision()).
+         arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+         replace("-", " ");
+}
+
+bool fileEndsWithEol(const QString& filepath)
+{
+  bool endsWithEol = false;
+  QFile tmp(filepath);
+  if(!tmp.exists())
+    // No file - no need to add extra EOL
+    return true;
+
+  if(tmp.open(QFile::ReadOnly))
+  {
+    tmp.seek(tmp.size() - 1);
+    char lastChar = '\0';
+    tmp.read(&lastChar, 1);
+    tmp.close();
+
+    endsWithEol = lastChar == '\n' || lastChar == '\r';
+  }
+  else
+    throw atools::Exception(QObject::tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(tmp.errorString()));
+  return endsWithEol;
+}
+
+QString at(const QStringList& columns, int index)
+{
+  if(index < columns.size())
+    return columns.at(index).trimmed();
+  else
+    qWarning() << "Invalid index" << index << "for" << columns;
+  return QString();
+}
+
+int atInt(const QStringList& columns, int index)
+{
+  int num = 0;
+  QString str = at(columns, index).trimmed();
+  if(!str.isEmpty())
+  {
+    bool ok;
+    num = str.toInt(&ok);
+    if(!ok)
+      qWarning() << "Invalid number" << str << "at" << index << "for" << columns;
+  }
+  return num;
+}
+
+float atFloat(const QStringList& columns, int index)
+{
+  float num = 0.f;
+  QString str = at(columns, index).trimmed();
+  if(!str.isEmpty())
+  {
+    bool ok;
+    num = str.toFloat(&ok);
+    if(!ok)
+      qWarning() << "Invalid floating point number" << str << "at" << index << "for" << columns;
+  }
+  return num;
 }
 
 } // namespace atools

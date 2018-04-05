@@ -1,5 +1,5 @@
 -- *****************************************************************************
--- Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+-- Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -259,6 +259,8 @@ where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
 -- **********************************************************
 -- Add terminal NDB waypoints that are referenced by airways and procedures
 
+-- A part of the waypoints are not needed by procedures and will be removed later
+
 insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
   1 as file_id, a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,
@@ -338,4 +340,10 @@ from (
   a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
 
 
-
+-- Delete all duplicate waypoints where type NDB overlaps with type VOR (mostly DME)
+-- Leave the NDB waypoints
+delete from waypoint where waypoint_id in (
+select w2.waypoint_id
+from waypoint w1 join waypoint w2 on w1.ident = w2.ident and w1.region = w2.region
+where (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.000001 and
+w1.type = 'N' and w2.type='V');

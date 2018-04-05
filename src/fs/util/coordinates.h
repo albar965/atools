@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,18 @@ class Pos;
 namespace fs {
 namespace util {
 
+/* Recognizes the following formats or alternatively one from fromAnyWaypointFormat:
+ *
+ *  N49° 26' 41.57" E9° 12' 5.49"
+ *  N54* 16.82' W008* 35.95'
+ *  N 52 33.58 E 13 17.26
+ *  49° 26' 41,57" N 9° 12' 5,49" E
+ *  49° 26,69' N 9° 12,09' E
+ *  49,4449° N 9,2015° E
+ *  N 49,4449° E 9,2015°
+ */
+atools::geo::Pos fromAnyFormat(const QString& coords);
+
 QString toGfpFormat(const atools::geo::Pos& pos);
 QString toDegMinFormat(const atools::geo::Pos& pos);
 
@@ -51,8 +63,8 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str);
 atools::geo::Pos fromNatFormat(const QString& str);
 
 /* OpenAir airspace format
- *  50:40:42 N 003:13:30 E
- *  39:06.2 N 121:35.5 E */
+*  50:40:42 N 003:13:30 E
+*  39:06.2 N 121:35.5 E */
 atools::geo::Pos fromOpenAirFormat(const QString& coordStr);
 
 } // namespace util

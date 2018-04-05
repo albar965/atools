@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -135,6 +135,19 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
               arg(asText(name, flags, color), value.toString());
   tableIndex++;
   numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html::Flags flags, QColor color)
+{
+  if(!value.isEmpty())
+  {
+    htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
+                arg(asText(name, flags | atools::util::html::BOLD, color)).
+                arg(asText(value, flags, color));
+    tableIndex++;
+    numLines++;
+  }
   return *this;
 }
 
@@ -516,7 +529,7 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
   if(flags & html::NO_ENTITIES)
     return prefix + str + suffix;
   else
-    return prefix + toEntities(str.toHtmlEscaped()) + suffix;
+    return prefix + toEntities(str.toHtmlEscaped()).replace("\n", "<br/>") + suffix;
 }
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)

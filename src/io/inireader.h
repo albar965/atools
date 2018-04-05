@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,9 @@ protected:
 
 protected:
   QString filename;
+
+  bool toBool(const QString& str);
+  int toInt(const QString& str);
 
 private:
   int currentLineNum;

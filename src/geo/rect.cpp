@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -226,6 +226,16 @@ Pos Rect::getBottomCenter() const
 Pos Rect::getTopCenter() const
 {
   return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, topLeft.getLatY());
+}
+
+Pos Rect::getLeftCenter() const
+{
+  return Pos(topLeft.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+}
+
+Pos Rect::getRightCenter() const
+{
+  return Pos(bottomRight.getLonX(), (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
 }
 
 bool Rect::isPoint(float epsilonDegree) const

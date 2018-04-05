@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,9 @@
 #ifndef ATOOLS_XPWEATHERREADER_H
 #define ATOOLS_XPWEATHERREADER_H
 
-#include "fs/sc/simconnecttypes.h"
+#include "fs/weather/weathertypes.h"
+
+#include "geo/simplespatialindex.h"
 
 #include <QDateTime>
 #include <QHash>
@@ -30,7 +32,7 @@ class QFileSystemWatcher;
 
 namespace atools {
 namespace fs {
-namespace common {
+namespace weather {
 
 /*
  * Reads the X-Plane METAR.rwx the watches the file for changes.
@@ -47,10 +49,13 @@ public:
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
   QString getMetar(const QString& ident);
 
+  /* Get station and/or nearest METAR */
+  atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
+
   /* Get all ICAO codes that have a weather station */
   QSet<QString> getMetarAirportIdents() const
   {
-    return metars.keys().toSet();
+    return index.keys().toSet();
   }
 
   /* Read METAR.rwx and watch the file if needed */
@@ -59,11 +64,11 @@ public:
   /* Remove METARs and stop watching the file */
   void clear();
 
-  /* Get station and/or nearest METAR */
-  atools::fs::sc::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
-
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value);
+  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+  {
+    fetchAirportCoords = value;
+  }
 
 signals:
   void weatherUpdated();
@@ -73,21 +78,24 @@ private:
   void deleteFsWatcher();
   void createFsWatcher();
   void pathChanged(const QString& path);
-  void buildXplaneAirportIndex();
 
-  /* Simple index to allow a full search for nearest */
-  typedef std::pair<atools::geo::Pos, QString> XpCoordIdxEntryType;
-  QVector<XpCoordIdxEntryType> xpAirportCoordinates;
+  struct MetarData
+  {
+    QString ident, metar;
+    QDateTime timestamp;
+  };
+
+  atools::geo::SimpleSpatialIndex<QString, MetarData> index;
 
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
-  QHash<QString, QString> metars;
+
   QString weatherFile;
   QDateTime weatherFileTimestamp;
   QFileSystemWatcher *fsWatcher = nullptr;
 
 };
 
-} // namespace common
+} // namespace weather
 } // namespace fs
 } // namespace atools
 

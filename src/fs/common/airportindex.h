@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #define ATOOLS_XPAIRPORTINDEX_H
 
 #include <QHash>
+#include <QSet>
 #include <QVariant>
 
 namespace atools {
@@ -94,15 +95,29 @@ public:
   bool addAirport(const QString& airportIcao, int airportId);
   void addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId);
 
+  void addAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent, int ilsId);
+  int getAirportIlsId(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
+
+  void addSkippedAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
+  bool hasSkippedAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
+
+  void clearSkippedIls()
+  {
+    skippedIlsSet.clear();
+  }
+
   void clear()
   {
     icaoToIdMap.clear();
     icaoRunwayNameToEndId.clear();
+    airportIlsIdMap.clear();
   }
 
 private:
   // Map ICAO id to database airport_id
   QHash<IndexName, int> icaoToIdMap;
+  QHash<QString, int> airportIlsIdMap;
+  QSet<QString> skippedIlsSet;
   QHash<IndexName2, int> icaoRunwayNameToEndId;
 
 };

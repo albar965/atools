@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 
 #include <QSettings>
 #include <QDebug>
+#include <QFileInfo>
 
 namespace atools {
 
@@ -39,6 +40,7 @@ SqlDatabase::SqlDatabase(const SqlDatabase& other)
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
   readonly = other.readonly;
+  automaticTransactions = other.automaticTransactions;
 }
 
 SqlDatabase::SqlDatabase(const QString& connectionName)
@@ -73,6 +75,7 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
   db = QSqlDatabase(other.db);
   autocommit = other.autocommit;
   readonly = other.readonly;
+  automaticTransactions = other.automaticTransactions;
   return *this;
 }
 
@@ -88,9 +91,10 @@ void SqlDatabase::open(const QStringList& pragmas)
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  if(!readonly)
-    transaction();
+  if(!readonly && automaticTransactions)
+    transactionInternal();
 
+  qInfo() << "Opened database" << databaseName();
   atools::sql::SqlQuery query(db);
   for(const QString& pragmaQuery : pragmas)
   {
@@ -108,23 +112,34 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
   checkError(db.open(user, password), "Error opening database");
   checkError(isValid(), "Database not valid after opening");
 
+  qInfo() << "Opened database" << databaseName();
   for(const QString& pragma : pragmas)
   {
     db.exec(pragma);
     checkError(isValid(), "Database not valid after \"" + pragma + "\"");
   }
 
-  if(!readonly)
-    transaction();
+  if(!readonly && automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::close()
 {
   checkError(isValid(), "Trying to close invalid database");
   checkError(isOpen(), "Closing already closed database");
-  if(!readonly)
+  if(!readonly && automaticTransactions)
     rollback();
   db.close();
+
+  qInfo() << "Closed database" << databaseName();
+
+  QString journalName(db.databaseName() + "-journal");
+  QFileInfo journal(journalName);
+  if(journal.exists() && journal.isFile() && journal.size() == 0)
+  {
+    if(QFile::remove(journalName))
+      qDebug() << Q_FUNC_INFO << "Removed" << journalName;
+  }
 }
 
 void SqlDatabase::executePragmas(const QStringList& pragmas)
@@ -225,8 +240,6 @@ SqlQuery SqlDatabase::exec(const QString& query) const
 
 QSqlError SqlDatabase::lastError() const
 {
-  checkError(isValid(), "SqlDatabase::lastError() on invalid database");
-  checkError(isOpen(), "SqlDatabase::lastError() on closed database");
   return db.lastError();
 }
 
@@ -235,13 +248,21 @@ bool SqlDatabase::isValid() const
   return db.isValid();
 }
 
-void SqlDatabase::transaction()
+void SqlDatabase::transactionInternal()
 {
   checkError(isValid(), "SqlDatabase::transaction() on invalid database");
   checkError(isOpen(), "SqlDatabase::transaction() on closed database");
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.transaction(), "SqlDatabase::transaction() error");
+}
+
+void SqlDatabase::transaction()
+{
+  if(automaticTransactions)
+    return;
+
+  transactionInternal();
 }
 
 void SqlDatabase::commit()
@@ -252,7 +273,9 @@ void SqlDatabase::commit()
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.commit(), "SqlDatabase::commit() error");
-  transaction();
+
+  if(automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::rollback()
@@ -263,7 +286,9 @@ void SqlDatabase::rollback()
   if(!db.driver()->hasFeature(QSqlDriver::Transactions))
     throw SqlException("Database has no transaction support");
   checkError(db.rollback(), "SqlDatabase::rollback() error");
-  transaction();
+
+  if(automaticTransactions)
+    transactionInternal();
 }
 
 void SqlDatabase::setDatabaseName(const QString& name)

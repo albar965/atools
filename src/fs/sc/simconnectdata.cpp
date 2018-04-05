@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,8 @@
 
 #include <QDebug>
 #include <QDataStream>
+
+using atools::fs::weather::MetarResult;
 
 namespace atools {
 namespace fs {
@@ -173,6 +175,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   SimConnectData data;
   data.userAircraft.position = pos;
+  data.userAircraft.position.setAltitude(1000);
 
   if(lastPos.isValid())
   {
@@ -184,7 +187,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
           data.userAircraft.trackTrueDeg =
             h;
 
-    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueSpeedKts = 200.f;
+    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = 200.f;
   }
   else
   {
@@ -207,7 +210,10 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneAirline = "Airline";
   data.userAircraft.airplaneFlightnumber = "965";
   data.userAircraft.fromIdent = "EDDF";
+
   data.userAircraft.toIdent = "LIRF";
+  data.userAircraft.altitudeAboveGroundFt = 1000;
+
   data.userAircraft.debug = true;
 
   return data;

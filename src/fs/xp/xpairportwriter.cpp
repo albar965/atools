@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -406,7 +406,23 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   airportRect.extend(start);
   airportRect.extend(end);
 
-  QString name = line.size() > te::NAME ? at(line, te::NAME) : QString();
+  QString name = line.size() > te::NAME ? at(line, te::NAME).simplified() : QString();
+
+  // Filter out the various garbage names
+  QString nameCompare = name.toUpper();
+  if(nameCompare == QLatin1Literal("*") ||
+     nameCompare == QLatin1Literal("**") ||
+     nameCompare == QLatin1Literal("+") ||
+     nameCompare == QLatin1Literal("-") ||
+     nameCompare == QLatin1Literal(".") ||
+     nameCompare == QLatin1Literal("TAXIWAY") ||
+     nameCompare == QLatin1Literal("TAXI_TO_RAMP") ||
+     nameCompare == QLatin1Literal("TAXI_RAMP") ||
+     nameCompare == QLatin1Literal("TAXY_RAMP") ||
+     nameCompare == QLatin1Literal("UNNAMED") ||
+     nameCompare == QLatin1Literal("TWY") ||
+     nameCompare == QLatin1Literal("TAXI"))
+    name.clear();
 
   numTaxiPath++;
   insertTaxiQuery->bindValue(":taxi_path_id", ++curTaxiPathId);
@@ -931,9 +947,9 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   else if(key.startsWith("region") && !value.isEmpty()) // Documentation is not clear - region_id or region_code
     insertAirportQuery->bindValue(":region", value);
   else if(key == "datum_lat" && atools::almostNotEqual(value.toFloat(), 0.f))
-    airportPos.setLatY(value.toFloat());
+    airportDatumPos.setLatY(value.toFloat());
   else if(key == "datum_lon" && atools::almostNotEqual(value.toFloat(), 0.f))
-    airportPos.setLonX(value.toFloat());
+    airportDatumPos.setLonX(value.toFloat());
 
   // 1302 city Seattle
   // 1302 country United States
@@ -1043,6 +1059,8 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   airportRect.extend(primaryPos);
   airportRect.extend(secondaryPos);
 
+  numRunway++;
+
   // Update airport counts
   if(isSurfaceHard(surface))
     numHardRunway++;
@@ -1061,6 +1079,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
     longestRunwayWidth = widthFeet;
     longestRunwayHeading = primaryHeading;
     longestRunwaySurface = surfaceStr;
+    longestRunwayCenterPos = center;
   }
 
   insertRunwayQuery->bindValue(":runway_id", primRwEndId);
@@ -1168,6 +1187,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":is_pattern", "N"); // not available
 
   rec.setValue(":heading", primaryHeading);
+  rec.setNull(":altitude");
   rec.setValue(":lonx", primaryPos.getLonX());
   rec.setValue(":laty", primaryPos.getLatY());
 
@@ -1217,6 +1237,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":is_pattern", "N"); // NONE
 
   rec.setValue(":heading", secondaryHeading);
+  rec.setNull(":altitude");
   rec.setValue(":lonx", secondaryPos.getLonX());
   rec.setValue(":laty", secondaryPos.getLatY());
 
@@ -1316,11 +1337,11 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 void XpAirportWriter::reset()
 {
   airportRect = Rect();
-  airportPos = Pos();
+  longestRunwayCenterPos = airportPos = airportDatumPos = Pos();
 
   longestRunwayLength = longestRunwayWidth = longestRunwayHeading = 0;
   longestRunwaySurface = "UNKNOWN";
-  numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
+  numRunway = numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
   numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
   numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
   airportClosed = false;
@@ -1377,7 +1398,44 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     // Find the bounding rect
     if(!airportRect.isValid())
-      airportRect = Rect(airportPos);
+    {
+      qWarning() << context.messagePrefix() << airportIcao << "No bounding rectangle for airport found";
+      // Find valid starting point for bounding rectangle
+      if(airportDatumPos.isValid())
+      {
+        airportRect = Rect(airportDatumPos);
+        airportPos = airportDatumPos;
+      }
+      else if(longestRunwayCenterPos.isValid())
+      {
+        airportRect = Rect(longestRunwayCenterPos);
+        airportPos = longestRunwayCenterPos;
+      }
+      else
+        qWarning() << context.messagePrefix() << airportIcao << "Could not determine bounding rectangle for airport";
+    }
+    else
+    {
+      if(airportDatumPos.isValid())
+      {
+        // Check if the datum is nearby the bounding rectangle
+        Rect testRect(airportRect);
+        testRect.inflate(Pos::POS_EPSILON_100M, Pos::POS_EPSILON_100M);
+
+        if(testRect.contains(airportDatumPos))
+          // Optional datum seems to be valid
+          airportPos = airportDatumPos;
+        else
+        {
+          // Datum is invalid use runway or center of rect
+          // qWarning() << context.messagePrefix() << airportIcao << "Airport datum not within bounding rectangle";
+          if(numRunway == 1)
+            airportPos = longestRunwayCenterPos;
+          else
+            airportPos = airportRect.getCenter();
+        }
+      }
+    }
 
     if(airportRect.isPoint())
       airportRect.inflate(1.f / 60.f, 1.f / 60.f);

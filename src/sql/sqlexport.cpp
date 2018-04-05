@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,8 @@
 *****************************************************************************/
 
 #include "sql/sqlexport.h"
+
+#include <QRegularExpression>
 
 namespace atools {
 
@@ -72,14 +74,16 @@ QString SqlExport::getResultSetRow(const QVariantList& values) const
 
 QString SqlExport::buildString(QString value) const
 {
+  static const QRegularExpression WHITESPACE("^\\s+$");
+
   QString retval = value;
 
   // Surround the string with " if any special characters or separator are found
-  if(value.contains(separator) || value.contains(QChar::LineFeed) || value.contains(QChar::CarriageReturn))
+  if(value.contains(separator) || value.contains(escapeString) || value.contains(QChar::LineFeed) ||
+     value.contains(QChar::CarriageReturn) || WHITESPACE.match(value).hasMatch())
   {
-    if(value.contains(escapeString))
-      // Escape any inside the string
-      retval.replace(QString(escapeString), QString(escapeString) + QString(escapeString));
+    // Escape any escapes inside the string
+    retval.replace(QString(escapeString), QString(escapeString) + QString(escapeString));
 
     retval.prepend(escapeString).append(escapeString);
   }
@@ -96,7 +100,9 @@ QString SqlExport::printValue(QVariant value) const
     retval += nullValue;
   else
   {
-    if(value.canConvert(QVariant::String))
+    if(value.type() == QVariant::Double)
+      retval += QString::number(value.toDouble(), 'f', numberPrecision);
+    else if(value.canConvert(QVariant::String))
       retval += buildString(value.toString());
     else
     {

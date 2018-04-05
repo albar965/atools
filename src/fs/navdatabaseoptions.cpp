@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -349,6 +349,21 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 
   out << ", Exclude addon filter [";
   for(const QRegExp& f : opts.addonFiltersExcl)
+    out << f.pattern() << ", ";
+  out << "]";
+
+  out << ", Include high priority filter [";
+  for(const QRegExp& f : opts.highPriorityFiltersInc)
+    out << f.pattern() << ", ";
+  out << "]";
+
+  out << ", Exclude directory filter [";
+  for(const QRegExp& f : opts.dirExcludes)
+    out << f.pattern() << ", ";
+  out << "]";
+
+  out << ", Exclude addon directory filter [";
+  for(const QRegExp& f : opts.addonDirExcludes)
     out << f.pattern() << ", ";
   out << "]";
 

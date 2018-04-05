@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,9 @@
 #include "fs/db/datawriter.h"
 #include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
+#include "sql/sqltransaction.h"
 #include "fs/scenery/scenerycfg.h"
+#include "fs/scenery/addoncfg.h"
 #include "fs/db/airwayresolver.h"
 #include "fs/db/routeedgewriter.h"
 #include "fs/progresshandler.h"
@@ -50,13 +52,16 @@ const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
 const int PROGRESS_NUM_ANALYZE_STEPS = 1;
 const int PROGRESS_NUM_VACCUM_STEPS = 1;
 const int PROGRESS_NUM_DROP_INDEX_STEPS = 2;
-const int PROGRESS_DFD_EXTRA_STEPS = 12;
+const int PROGRESS_DFD_EXTRA_STEPS = 13;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::sql::SqlTransaction;
 using atools::fs::scenery::SceneryCfg;
+using atools::fs::scenery::AddOnCfg;
+using atools::fs::scenery::AddOnCfgEntry;
 using atools::fs::scenery::SceneryArea;
 using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
@@ -83,8 +88,9 @@ void NavDatabase::createSchema()
 
 void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 {
-  SqlScript script(db, true /* options->isVerbose()*/);
+  SqlTransaction transaction(db);
 
+  SqlScript script(db, true /* options->isVerbose()*/);
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Views"))))
       return;
@@ -126,8 +132,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
       return;
 
   script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
-
-  db->commit();
+  transaction.commit();
 
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Creating Database Schema"))))
@@ -139,7 +144,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   script.executeScript(":/atools/resources/sql/fs/db/create_route_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_views.sql");
-  db->commit();
+  transaction.commit();
 }
 
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QString& error)
@@ -378,7 +383,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return;
 
-  // Set the nav_ids (VOR, NDB) in the approach table
+  if(sim == atools::fs::FsPaths::NAVIGRAPH)
+  {
+    // Remove all unreferenced dummy waypoints that were added for airway generation
+    if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Merging VOR and TACAN to VORTAC"))))
+      return;
+  }
+
+  // Set the runway_end_ids in the approach table
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
     return;
 
@@ -547,7 +559,11 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
     dfdCompiler->writeProcedures();
 
+  dfdCompiler->updateTreeLetterAirportCodes();
+
   db->commit();
+
+  // dfdCompiler->removeDummyWaypoints();
 
   dfdCompiler->deInitQueries();
 
@@ -579,6 +595,13 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
     // Mandatory
     if((aborted = xpDataCompiler->compileDefaultApt()))
+      return true;
+  }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::ILS))
+  {
+    // ILS corrections - "X-PLane/Custom Scenery/Global Airports/Earth nav data/earth_nav.dat"
+    if((aborted = xpDataCompiler->compileLocalizers()))
       return true;
   }
 
@@ -873,65 +896,74 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     for(const SceneryArea& area : cfg.getAreas())
       areaNum = std::max(areaNum, area.getAreaNumber());
 
+    // Set layer later to these
     QVector<AddOnComponent> noLayerComponents;
     QStringList noLayerPaths;
 
+    // Use this to weed out duplicates to the add-on.xml files
+    QSet<QString> addonFilePaths;
+
+    // Got through the two or more discovery paths ===============
     for(const QString& addonPath : addonPaths)
     {
       QDir addonDir(addonPath);
       if(addonDir.exists())
       {
+        QFileInfoList addonEntries(addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot));
+
         // Read addon directories as they appear in the file system
-        for(QFileInfo addonEntry : addonDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
-        {
-          QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
-          if(addonFile.exists() && addonFile.isFile())
-          {
-            qInfo() << "Found addon file" << addonFile.filePath();
-
-            AddOnPackage package(addonFile.filePath());
-            qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
-
-            for(const AddOnComponent& component : package.getComponents())
-            {
-              qInfo() << "Component" << component.getLayer()
-                      << "Name" << component.getName()
-                      << "Description" << component.getPath();
-
-              QDir compPath(component.getPath());
-
-              if(compPath.isRelative())
-                // Convert relative path to absolute based on add-on file directory
-                compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
-
-              if(compPath.dirName().toLower() == "scenery")
-                // Remove if it points to scenery directory
-                compPath.cdUp();
-
-              compPath.makeAbsolute();
-
-              areaNum++;
-
-              if(!compPath.exists())
-                qWarning() << "Path does not exist" << compPath;
-
-              if(component.getLayer() == -1)
-              {
-                // Add entries without layers later at the end of the list
-                // Layer is only used if add-on does not provide a layer
-                noLayerComponents.append(component);
-                noLayerPaths.append(compPath.path());
-              }
-              else
-                cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
-            }
-          }
-          else
-            qWarning() << Q_FUNC_INFO << addonFile.filePath() << "does not exist or is not a directory";
-        }
+        for(QFileInfo addonEntry : addonEntries)
+          readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
       }
       else
         qWarning() << Q_FUNC_INFO << addonDir << "does not exist";
+    }
+
+    // Go through all references in the add-on.cfg file in Roaming ===============
+    // Read add-ons.cfg file from roaming
+#if defined(Q_OS_WIN32)
+    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+    QString addonsCfgFile = QString(qgetenv("APPDATA"));
+#else
+    // Use $HOME/.config for testing
+    QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
+
+    addonsCfgFile +=
+      QDir::separator() + QString("Lockheed Martin") +
+      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+      QDir::separator() + "add-ons.cfg";
+
+    if(QFileInfo::exists(addonsCfgFile))
+    {
+      // AppData\Roaming\Lockheed Martin\Prepar3D v4\add-ons.cfg
+      AddOnCfg addonConfigRoaming("utf-8");
+      addonConfigRoaming.read(addonsCfgFile);
+      for(const AddOnCfgEntry& entry:addonConfigRoaming.getEntries())
+        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
+    }
+
+    // Read the add-on.cfg from ProgramData =========================
+    // "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\add-ons.cfg"
+#if defined(Q_OS_WIN32)
+    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+    QString addonsAllUsersCfgFile = QString(qgetenv("PROGRAMDATA"));
+#else
+    // Use /tmp for testing
+    QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
+#endif
+
+    addonsAllUsersCfgFile +=
+      QDir::separator() + QString("Lockheed Martin") +
+      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+      QDir::separator() + "add-ons.cfg";
+
+    if(QFileInfo::exists(addonsAllUsersCfgFile))
+    {
+      AddOnCfg addonConfigProgramData("utf-8");
+      addonConfigProgramData.read(addonsAllUsersCfgFile);
+      for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
+        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
     }
 
     // Bring added add-on.xml in order with the rest sort by layer
@@ -962,6 +994,63 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
   // Sort again to get high priority layers to the end of the list
   cfg.sortAreas();
+}
+
+void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
+                                      QVector<AddOnComponent>& noLayerComponents,
+                                      QStringList& noLayerPaths, QSet<QString>& addonPaths, QFileInfo addonEntry)
+{
+  QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+  if(addonFile.exists() && addonFile.isFile())
+  {
+    if(addonPaths.contains(addonFile.absoluteFilePath()))
+    {
+      qInfo() << "Found duplicate addon file" << addonFile.filePath();
+      return;
+    }
+
+    qInfo() << "Found addon file" << addonFile.filePath();
+    addonPaths.insert(addonFile.absoluteFilePath());
+
+    AddOnPackage package(addonFile.filePath());
+    qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
+
+    for(const AddOnComponent& component : package.getComponents())
+    {
+      qInfo() << "Component" << component.getLayer()
+              << "Name" << component.getName()
+              << "Description" << component.getPath();
+
+      QDir compPath(component.getPath());
+
+      if(compPath.isRelative())
+        // Convert relative path to absolute based on add-on file directory
+        compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
+
+      if(compPath.dirName().toLower() == "scenery")
+        // Remove if it points to scenery directory
+        compPath.cdUp();
+
+      compPath.makeAbsolute();
+
+      areaNum++;
+
+      if(!compPath.exists())
+        qWarning() << "Path does not exist" << compPath;
+
+      if(component.getLayer() == -1)
+      {
+        // Add entries without layers later at the end of the list
+        // Layer is only used if add-on does not provide a layer
+        noLayerComponents.append(component);
+        noLayerPaths.append(compPath.path());
+      }
+      else
+        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
+    }
+  }
+  else
+    qWarning() << Q_FUNC_INFO << addonFile.filePath() << "does not exist or is not a directory";
 }
 
 void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util,

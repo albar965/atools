@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ void ErrorHandler::handleException(const std::exception& e, const QString& messa
   qCritical() << "Caught exception:" << e.what();
 
   QMessageBox::critical(parent, QApplication::applicationName(),
-                        tr("%1\nCaught exception\n\"%2\"").arg(message).arg(e.what()),
+                        tr("%1\nCaught exception\n\n%2").arg(message).arg(e.what()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }
 

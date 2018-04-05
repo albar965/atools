@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -51,10 +51,7 @@ public:
     return areaEntries;
   }
 
-  void appendArea(const atools::fs::scenery::SceneryArea& area)
-  {
-    areaEntries.append(area);
-  }
+  void appendArea(const atools::fs::scenery::SceneryArea& area);
 
   /* Sort areas by layer */
   void sortAreas();
@@ -69,8 +66,6 @@ private:
   virtual void onEndSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value) override;
-  bool toBool(const QString& str);
-  int toInt(const QString& str);
 
   atools::fs::scenery::SceneryArea currentArea;
   QString title, description;

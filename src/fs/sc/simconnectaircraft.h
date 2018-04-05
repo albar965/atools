@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 #include "fs/sc/simconnectdatabase.h"
 
 #include <QString>
-#include <QDateTime>
 
 class QIODevice;
 
@@ -32,6 +31,10 @@ class XpConnect;
 
 namespace atools {
 namespace fs {
+namespace online {
+class OnlinedataManager;
+}
+
 namespace sc {
 
 class SimConnectHandler;
@@ -154,9 +157,9 @@ public:
     return indicatedAltitudeFt;
   }
 
-  float getTrueSpeedKts() const
+  float getTrueAirspeedKts() const
   {
-    return trueSpeedKts;
+    return trueAirspeedKts;
   }
 
   float getMachSpeed() const
@@ -247,24 +250,44 @@ public:
     return flags & IN_SNOW;
   }
 
+  bool isSimPaused() const
+  {
+    return flags & SIM_PAUSED;
+  }
+
+  bool isSimReplay() const
+  {
+    return flags & SIM_REPLAY;
+  }
+
   /* Create artificially by mouse movements */
   bool isDebug() const
   {
     return debug;
   }
 
+  /* true if empty default initialized object */
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
+  /* Compares only registration, type and others */
+  bool isSameAircraft(const SimConnectAircraft& other) const;
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
   friend class atools::fs::sc::SimConnectData;
   friend class xpc::XpConnect;
+  friend class atools::fs::online::OnlinedataManager;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
   atools::geo::Pos position;
   float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
-        indicatedSpeedKts = 0.f, trueSpeedKts = 0.f,
+        indicatedSpeedKts = 0.f, trueAirspeedKts = 0.f,
         machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
   quint16 modelRadiusFt = 0, wingSpanFt = 0;
 

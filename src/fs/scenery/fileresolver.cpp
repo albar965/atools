@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -63,32 +63,51 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     {
       QDir sceneryAreaDir(sceneryArea.filePath());
 
-      // get all scenery directories - normally only one
-      for(QFileInfo scenery : sceneryAreaDir.entryInfoList({"scenery"}, QDir::Dirs))
-      {
-        QDir sceneryAreaDirObj(scenery.filePath());
-        // Check if directory is included
-        if(options.isIncludedDirectory(sceneryAreaDirObj.absolutePath()))
-        {
-          // Get all BGL files
-          for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList(
-                {"*.bgl"}, QDir::Files, QDir::Name | QDir::IgnoreCase))
-          {
-            QString filename = bglFile.fileName();
+      QFileInfoList sceneryDirs;
+      sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"},
+                                                      QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot));
 
-            // Check if file is included
-            if(options.isIncludedFilename(filename))
+      if(sceneryDirs.isEmpty() && sceneryAreaDir.dirName().toLower() == "scenery")
+        // Special case where entry points to scenery directory which is allowed by P3D
+        sceneryDirs.append(QFileInfo(sceneryAreaDir.path()));
+
+      // get all scenery directories - normally only one
+      for(QFileInfo scenery : sceneryDirs)
+      {
+        if(scenery.isDir())
+        {
+          QDir sceneryAreaDirObj(scenery.filePath());
+          // Check if directory is included
+          if(options.isIncludedDirectory(sceneryAreaDirObj.absolutePath()))
+          {
+            // Get all BGL files
+            for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList(
+                  {"*.bgl"}, QDir::Files | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
+                  QDir::Name | QDir::IgnoreCase))
             {
-              numFiles++;
-              if(filepaths != nullptr)
-                filepaths->append(bglFile.filePath());
-              if(filenames != nullptr)
-                filenames->append(bglFile.fileName());
+              if(bglFile.isFile() && bglFile.isReadable())
+              {
+                QString filename = bglFile.fileName();
+
+                // Check if file is included
+                if(options.isIncludedFilename(filename))
+                {
+                  numFiles++;
+                  if(filepaths != nullptr)
+                    filepaths->append(bglFile.filePath());
+                  if(filenames != nullptr)
+                    filenames->append(bglFile.fileName());
+                }
+              }
+              else
+                qWarning().nospace().noquote() << scenery.filePath() << " is no file or not readable.";
             }
           }
+          else
+            qInfo().nospace().noquote() << scenery.filePath() << " is excluded.";
         }
         else
-          qInfo().nospace().noquote() << scenery.filePath() << " is excluded.";
+          qWarning().nospace().noquote() << scenery.filePath() << " is no directory.";
       }
     }
     else

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,12 @@ XpCifpWriter::~XpCifpWriter()
 void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context)
 {
   ctx = &context;
-  if(line.isEmpty() || line.at(PROC_ROW_CODE).startsWith("RWY"))
+  if(line.isEmpty())
+    return;
+
+  QString rowCode = line.at(PROC_ROW_CODE);
+  if(!(rowCode == "SID" || rowCode == "STAR" || rowCode == "APPCH"))
+    // Skip all unknown row codes
     return;
 
   atools::fs::common::ProcedureInput procInput;

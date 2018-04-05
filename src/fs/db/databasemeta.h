@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -119,8 +119,11 @@ public:
    * 6
    * 7 Fixes for procedure legs
    * 8 airport.is_3d and airport.region added
+   * 9 approach_fix_type and runway end altitude added. Fixes for common route in SID/STAR and runway heading.
+   * 10 is_3d in airport_medium and airport_large
+   * 11 transition_altitude in airport
    */
-  static const int DB_VERSION_MINOR = 8;
+  static const int DB_VERSION_MINOR = 11;
 
   void init();
 

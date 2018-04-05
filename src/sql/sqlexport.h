@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ public:
   }
 
   /*
-   * Writes the fully result set from the given query to the output stream.
+   * Writes the full result set from the given query to the output stream.
    *
    * @param query A prepared and valid query to read values from
    * @param out QDebug, QTextStream or std::iostream object. The stream needs
@@ -103,6 +103,13 @@ public:
   /* Build a data row from the given QVariant list */
   QString getResultSetRow(const QVariantList& values) const;
 
+  int getNumberPrecision() const;
+
+  void setNumberPrecision(int value)
+  {
+    numberPrecision = value;
+  }
+
 private:
   QString printEndl() const;
   QString buildString(QString value) const;
@@ -112,6 +119,8 @@ private:
   int maxValues = -1;
   QChar separator = ',', escapeString = '"';
   QString nullValue = "";
+
+  int numberPrecision = 6;
 };
 
 // -----------------------------------------------------------

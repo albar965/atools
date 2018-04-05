@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ public:
    * @return number of rows copied
    */
   static int copyResultValues(SqlQuery& from, SqlQuery& to,
-                              std::function<bool(SqlQuery& from, SqlQuery& to)> func);
+                              std::function<bool(SqlQuery & from, SqlQuery & to)> func);
   static int copyResultValues(SqlQuery& from, SqlQuery& to);
 
   /*
@@ -104,6 +104,9 @@ public:
    * @param queryColumns Columns needed in the source table
    * @param insertcolumns Columns in the target statement to be modified.
    */
+  void updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
+                           const QStringList& insertcolumns, const QString& whereClause,
+                           atools::sql::SqlUtil::UpdateColFuncType func);
   void updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
                            const QStringList& insertcolumns, atools::sql::SqlUtil::UpdateColFuncType func);
 

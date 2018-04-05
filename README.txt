@@ -65,8 +65,8 @@ This software is licensed under GPL3 or any later version.
 The source code for this application is available at Github:
 https://github.com/albar965/atools
 
-Copyright 2015-2017 Alexander Barthel (albar965@mailbox.org).
+Copyright 2015-2018 Alexander Barthel (albar965@mailbox.org).
 
 -------------------------------------------------------------------------------
-French translation copyright 2017 Patrick JUNG alias Patbest (patrickjung@laposte.net). 
+French translation copyright 2017 Patrick JUNG alias Patbest (patrickjung@laposte.net).
 

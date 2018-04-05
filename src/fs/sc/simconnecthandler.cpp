@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 #include <QLatin1Literal>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+
+using atools::fs::weather::MetarResult;
 
 namespace atools {
 namespace fs {
@@ -457,7 +459,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.headingMagDeg = simDataUserAircraft.planeHeadingMagneticDeg;
   aircraft.headingTrueDeg = simDataUserAircraft.planeHeadingTrueDeg;
 
-  aircraft.trueSpeedKts = simDataUserAircraft.airspeedTrueKts;
+  aircraft.trueAirspeedKts = simDataUserAircraft.airspeedTrueKts;
   aircraft.indicatedSpeedKts = simDataUserAircraft.airspeedIndicatedKts;
   aircraft.machSpeed = simDataUserAircraft.airspeedMach;
   aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
@@ -466,6 +468,9 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
     aircraft.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
     aircraft.flags |= atools::fs::sc::IS_USER;
+
+  if(simPaused > 0)
+    aircraft.flags |= atools::fs::sc::SIM_PAUSED;
 }
 
 bool SimConnectHandlerPrivate::checkCall(HRESULT hr, const QString& message)

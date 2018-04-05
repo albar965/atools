@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,6 +65,10 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
+
+/* Converts rectangles to square rectangles so that width == height */
+QRect rectToSquare(const QRect& rect);
+QRectF rectToSquare(const QRectF& rect);
 
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)

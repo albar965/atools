@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -130,6 +130,9 @@ public:
   {
     pos2 = value;
   }
+
+  /* Needs pos 1 as the wester part and pos 2 as the eastern part */
+  bool crossesAntiMeridian() const;
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);

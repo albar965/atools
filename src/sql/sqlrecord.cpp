@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -170,6 +170,50 @@ void SqlRecord::appendField(const QString& fieldName, QVariant::Type type)
   sqlRecord.append(QSqlField(fieldName, type));
 }
 
+SqlRecord& SqlRecord::appendFieldAndValue(const QString& fieldName, QVariant value)
+{
+  if(!contains(fieldName))
+    appendField(fieldName, value.type());
+  setValue(fieldName, value);
+  return *this;
+}
+
+SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant::Type type)
+{
+  if(!contains(fieldName))
+    appendField(fieldName, type);
+  setNull(fieldName);
+  return *this;
+}
+
+void SqlRecord::remove(int pos)
+{
+  sqlRecord.remove(pos);
+}
+
+void SqlRecord::remove(const QString& name)
+{
+  sqlRecord.remove(indexOf(name));
+}
+
+QStringList SqlRecord::fieldNames() const
+{
+  QStringList fieldList;
+
+  for(int i = 0; i < count(); i++)
+    fieldList.append(fieldName(i));
+  return fieldList;
+}
+
+QVariantList SqlRecord::values() const
+{
+  QVariantList valueList;
+
+  for(int i = 0; i < count(); i++)
+    valueList.append(value(i));
+  return valueList;
+}
+
 void SqlRecord::setValue(int i, const QVariant& val)
 {
   if(sqlRecord.fieldName(i).isEmpty())
@@ -218,7 +262,7 @@ QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record)
 
   out << "SqlRecord[";
   for(int i = 0; i < record.count(); ++i)
-    out << record.fieldName(i) << record.value(i) << endl;
+    out << record.sqlRecord.fieldName(i) << record.sqlRecord.value(i) << endl;
   out << "]";
 
   return out;

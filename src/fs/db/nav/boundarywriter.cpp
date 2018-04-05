@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ atools::geo::LineString BoundaryWriter::fetchAirspaceLines(const Boundary *type)
       // Origin needed later
       continue;
     else if(segment.getType() == bl::CIRCLE)
-      // Append line string build from circle parameters - one point every 20 degrees
+      // Append line string build from circle parameters - one point every 15 degrees
       processedLines.append(LineString(segments.at(i - 1).getPosition(), segment.getRadius(), 24));
     else if(segment.getType() == bl::ARC_CCW || segment.getType() == bl::ARC_CW)
       // Build an arc

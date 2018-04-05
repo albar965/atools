@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void SimConnectAircraft::read(QDataStream& in)
 
   in >> lonx >> laty >> altitude >> headingTrueDeg >> headingMagDeg
   >> groundSpeedKts >> indicatedSpeedKts >> verticalSpeedFeetPerMin
-  >> indicatedAltitudeFt >> trueSpeedKts >> machSpeed
+  >> indicatedAltitudeFt >> trueAirspeedKts >> machSpeed
   >> numberOfEngines >> wingSpanFt >> modelRadiusFt >> categoryByte >> engineTypeByte;
 
   position.setAltitude(altitude);
@@ -111,9 +111,19 @@ void SimConnectAircraft::write(QDataStream& out) const
 
   out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrueDeg << headingMagDeg
       << groundSpeedKts << indicatedSpeedKts << verticalSpeedFeetPerMin
-      << indicatedAltitudeFt << trueSpeedKts << machSpeed
+      << indicatedAltitudeFt << trueAirspeedKts << machSpeed
       << numberOfEngines << wingSpanFt << modelRadiusFt
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
+}
+
+bool SimConnectAircraft::isSameAircraft(const SimConnectAircraft& other) const
+{
+  return airplaneTitle == other.airplaneTitle &&
+         airplaneModel == other.airplaneModel &&
+         airplaneReg == other.airplaneReg &&
+         airplaneType == other.airplaneType &&
+         airplaneAirline == other.airplaneAirline &&
+         airplaneFlightnumber == other.airplaneFlightnumber;
 }
 
 } // namespace sc

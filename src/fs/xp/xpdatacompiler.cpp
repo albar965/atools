@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -249,8 +249,7 @@ bool XpDataCompiler::compileAirspaces()
 
 bool XpDataCompiler::compileLocalizers()
 {
-
-  QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "Global Airports",
+  QString path = buildPathNoCase({options.getBasepath(), "Custom Scenery", "Global Airports",
                                   "Earth nav data", "earth_nav.dat"});
 
   if(QFileInfo::exists(path))
@@ -320,12 +319,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   QString progressMsg = tr("Reading: %1").arg(filepath);
   QFileInfo fileinfo(filepath);
 
-  if(!options.isIncludedLocalPath(fileinfo.path()))
-    // Excluded in configuration file
-    return false;
-
-  if(!options.isIncludedDirectory(fileinfo.absolutePath()))
-    // Excluded in the GUI
+  if(!includeFile(fileinfo))
     return false;
 
   if(!options.isAddonDirectory(fileinfo.absolutePath()))
@@ -597,6 +591,9 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
 
     QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
 
+    if(!includeFile(opts, aptDat))
+      continue;
+
     if(aptDat.exists() && aptDat.isFile())
       retval.append(aptDat.filePath());
   }
@@ -629,12 +626,18 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
   // Read all default entries
   QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : defaultEntries)
-    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+  {
+    if(includeFile(opts, fileInfo))
+      entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+  }
 
   // Read custom entries and overwrite default
   QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : customEntries)
-    entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+  {
+    if(includeFile(opts, fileInfo))
+      entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+  }
 
   if(!additionalDir.isEmpty())
   {
@@ -642,12 +645,20 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
     QDir ad(additionalDir);
     QFileInfoList additonalEntries = ad.entryInfoList(pattern, QDir::Files, QDir::NoSort);
     for(const QFileInfo& fileInfo : additonalEntries)
-      entryMap.insert(makeUnique ? fileInfo.fileName() : fileInfo.filePath(), fileInfo);
+    {
+      if(includeFile(opts, fileInfo))
+        entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
+    }
   }
 
   QStringList retval;
   for(const QFileInfo& fileInfo : entryMap.values())
     retval.append(fileInfo.filePath());
+
+  // qDebug() << "== Files ==============================================================================";
+  // qDebug() << Q_FUNC_INFO << retval;
+  // qDebug() << "================================================================================";
+
   return retval;
 }
 
@@ -739,7 +750,8 @@ QString XpDataCompiler::buildBasePath(const atools::fs::NavDatabaseOptions& opts
   QString customPath(buildPathNoCase({opts.getBasepath(), "Custom Data"}));
   QString defaultPath(buildPathNoCase({opts.getBasepath(), "Resources", "default data"}));
 
-  if(QFileInfo::exists(buildPathNoCase({customPath, "earth_fix.dat"})) &&
+  if(includeFile(opts, customPath) &&
+     QFileInfo::exists(buildPathNoCase({customPath, "earth_fix.dat"})) &&
      QFileInfo::exists(buildPathNoCase({customPath, "earth_awy.dat"})) &&
      QFileInfo::exists(buildPathNoCase({customPath, "earth_nav.dat"})))
     basePath = customPath;
@@ -766,6 +778,32 @@ atools::fs::xp::ContextFlags XpDataCompiler::flagsFromOptions()
   flags |= (options.isIncludedNavDbObject(atools::fs::type::APPROACH) ? INCLUDE_APPROACH : NO_FLAG);
   flags |= (options.isIncludedNavDbObject(atools::fs::type::APPROACHLEG) ? INCLUDE_APPROACHLEG : NO_FLAG);
   return flags;
+}
+
+bool XpDataCompiler::includeFile(const QFileInfo& fileinfo)
+{
+  return includeFile(options, fileinfo);
+}
+
+bool XpDataCompiler::includeFile(const NavDatabaseOptions& opts, const QFileInfo& fileinfo)
+{
+  if(!opts.isIncludedLocalPath(fileinfo.path()))
+    // Excluded in configuration file
+    return false;
+
+  // Excluded in the GUI
+  if(fileinfo.isDir())
+  {
+    if(!opts.isIncludedDirectory(fileinfo.absoluteFilePath()))
+      return false;
+  }
+  else if(fileinfo.isFile())
+  {
+    if(!opts.isIncludedDirectory(fileinfo.absolutePath()))
+      return false;
+  }
+
+  return true;
 }
 
 } // namespace xp

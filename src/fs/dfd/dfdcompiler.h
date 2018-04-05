@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2017 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2018 Alexander Barthel albar965@mailbox.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ class MetadataWriter;
 class AirportIndex;
 class ProcedureWriter;
 struct ProcedureInput;
+
 }
 
 class NavDatabaseOptions;
@@ -121,6 +122,9 @@ public:
   void initQueries();
   void deInitQueries();
 
+  /* Convert all airport ident columns to the three letter codes since DFD has only four-letters */
+  void updateTreeLetterAirportCodes();
+
 private:
   /* Write all collected runways for an airport */
   void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
@@ -148,13 +152,16 @@ private:
   void updateAirspaceCom(const sql::SqlQuery& com, atools::sql::SqlQuery& update, int airportId);
 
   /* Reads all rows of source airspace table */
-  void writeAirspace(atools::sql::SqlQuery & query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&));
+  void writeAirspace(atools::sql::SqlQuery& query, void (DfdCompiler::*beginFunc)(atools::sql::SqlQuery&));
 
   /* Finalize and execute insert query */
   void finishAirspace();
 
   /* Get aispace altitude restriction which can start with FL and is converted into feet in this case */
   int airspaceAlt(const QString& altStr);
+
+  /* Update airport ident with three letter code for given table */
+  void updateTreeLetterAirportCodes(const QHash<QString, QString> codeMap, const QString& table, const QString& column);
 
   /* Airspace segment containing information */
   struct AirspaceSeg
