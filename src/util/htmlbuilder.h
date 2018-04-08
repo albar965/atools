@@ -185,6 +185,13 @@ public:
   HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE,
                       QColor color = QColor());
 
+  /* Adds row if value > 0 */
+  HtmlBuilder& row2If(const QString& name, int value, html::Flags flags = html::NONE, QColor color = QColor());
+
+  /* Adds row if value is valid and not null */
+  HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE,
+                         QColor color = QColor());
+
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor = QColor());
   HtmlBuilder& trEnd();

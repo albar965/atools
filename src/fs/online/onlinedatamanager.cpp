@@ -32,6 +32,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlTransaction;
 using atools::sql::SqlUtil;
+using atools::sql::SqlRecord;
 using atools::sql::SqlScript;
 
 namespace atools {
@@ -125,9 +126,11 @@ void OnlinedataManager::createSchema()
 
 void OnlinedataManager::clearData()
 {
+  SqlTransaction transaction(db);
   QStringList tables = db->tables();
   for(const QString& table : tables)
     db->exec("delete from " + table);
+  transaction.commit();
 }
 
 void OnlinedataManager::updateSchema()
@@ -160,15 +163,29 @@ void OnlinedataManager::resetForNewOptions()
   whazzupServers->resetForNewOptions();
 }
 
-void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
+void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId)
+{
+  sql::SqlRecord rec = getClientRecordById(clientId);
+  if(!rec.isEmpty())
+    fillFromClient(aircraft, rec);
+}
+
+sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 {
   SqlQuery query(db);
   query.prepare("select * from client where client_id = :id");
-  query.bindValue(":id", id);
+  query.bindValue(":id", clientId);
   query.exec();
+  SqlRecord rec;
   if(query.next())
-    fillFromClient(aircraft, query.record());
+    rec = query.record();
   query.finish();
+  return rec;
+}
+
+int OnlinedataManager::getNumClients() const
+{
+  return SqlUtil(db).rowCount("atc");
 }
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)

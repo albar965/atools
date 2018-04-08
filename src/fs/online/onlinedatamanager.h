@@ -112,14 +112,22 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
+  /* Reset all URLs and timestamps. Does not reset the tables for semi-permanent ids */
   void reset();
+
+  /* Reset all URLs and timestamps and the tables for semi-permanent ids */
   void resetForNewOptions();
 
   /* Fill from a record based on table client */
   static void fillFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
-  /* Get aircraft from table client by id */
-  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
+  /* Get aircraft from table client by id and fill data into aircraft class. */
+  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId);
+
+  atools::sql::SqlRecord getClientRecordById(int clientId);
+
+  /* Number of client aircraft in client table */
+  int getNumClients() const;
 
 private:
   atools::sql::SqlDatabase *db;

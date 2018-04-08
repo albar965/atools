@@ -197,7 +197,7 @@ public:
     return objectId;
   }
 
-  int getId()
+  int getId() const
   {
     return static_cast<int>(objectId);
   }

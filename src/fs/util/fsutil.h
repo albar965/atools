@@ -64,6 +64,29 @@ bool isValidIdent(const QString& ident);
 /* Upper case characters length equal 2 */
 bool isValidRegion(const QString& region);
 
+/*
+ * Gets speed and altitude from strings in ICAO route format.
+ *  N0490F360
+ *  M084F330
+ *  Speed
+ *  K0800 (800 Kilometers)
+ *  N0490 (490 Knots)
+ *  M082 (Mach 0.82)
+ *  Level/altitude
+ *  F340 (Flight level 340)
+ *  S1260 (12600 Meters)
+ *  A100 (10000 Feet)
+ *  M0890 (8900 Meters)
+ */
+bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet, bool *speedOk = nullptr,
+                             bool *altitudeOk = nullptr);
+
+/* Speed and altitude have to match the pattern. Values are not checked. */
+bool speedAndAltitudeMatch(const QString& item);
+
+/* Gives always NXXXAXXX for altitude < 18000 ft or NXXXFXXX for altitude > 18000 */
+QString createSpeedAndAltitude(float speedKnots, float altFeet);
+
 } // namespace util
 } // namespace fs
 } // namespace atools

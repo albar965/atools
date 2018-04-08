@@ -101,6 +101,11 @@ QString admRatingText(adm::AdministrativeRating rating)
   return QString::number(rating);
 }
 
+QString pilotRatingText(int rating)
+{
+  return pilotRatingText(static_cast<atools::fs::online::pilot::PilotRating>(rating));
+}
+
 QString pilotRatingText(atools::fs::online::pilot::PilotRating rating)
 {
   switch(rating)
