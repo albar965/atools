@@ -260,6 +260,11 @@ public:
     return flags & SIM_REPLAY;
   }
 
+  bool isOnline() const
+  {
+    return flags & SIM_ONLINE;
+  }
+
   /* Create artificially by mouse movements */
   bool isDebug() const
   {

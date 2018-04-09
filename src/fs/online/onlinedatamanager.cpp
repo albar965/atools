@@ -185,7 +185,7 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 
 int OnlinedataManager::getNumClients() const
 {
-  return SqlUtil(db).rowCount("atc");
+  return SqlUtil(db).rowCount("client");
 }
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
@@ -204,7 +204,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
 
   ac.modelRadiusFt = ac.wingSpanFt = 0;
 
-  ac.category = atools::fs::sc::UNKNOWN;
+  ac.category = atools::fs::sc::AIRPLANE;
   ac.engineType = atools::fs::sc::UNSUPPORTED;
   ac.numberOfEngines = 0;
 
