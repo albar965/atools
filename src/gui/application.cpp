@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QUrl>
 #include <QThread>
+#include <QTimer>
 
 namespace atools {
 namespace gui {
@@ -44,6 +45,17 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
   try
   {
+    if(event->type() == QEvent::ApplicationFontChange)
+    {
+      qInfo() << Q_FUNC_INFO << "Application font change";
+
+      // Send async on next event loop run
+      QTimer::singleShot(0, [ = ]() -> void
+          {
+            emit fontChanged();
+          });
+    }
+
     return QApplication::notify(receiver, event);
   }
   catch(std::exception& e)
