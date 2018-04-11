@@ -144,16 +144,27 @@ void HttpDownloader::stopTimer()
   updateTimer.stop();
 }
 
-void HttpDownloader::setUserAgent()
+void HttpDownloader::setDefaultUserAgent(const QString& extension)
 {
   // Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:59.0) Gecko/20100101 Firefox/59.0
-  userAgent = QString("%1/%2 (%3; %4; Qt %5; %6)").
+  // Little Navmap/1.9.1.develop (Ubuntu 17.10; x86_64; de-DE) Qt 5.9.3 extension
+  userAgent = QString("%1/%2 (%3; %4; %5) Qt %6%7").
               arg(QApplication::applicationName()).
               arg(QApplication::applicationVersion()).
               arg(QSysInfo::prettyProductName()).
               arg(QSysInfo::buildCpuArchitecture()).
+              arg(QLocale().uiLanguages().join("; ")).
               arg(QT_VERSION_STR).
-              arg(QLocale().uiLanguages().join(";"));
+              arg(extension);
+}
+
+void HttpDownloader::setDefaultUserAgentShort(const QString& extension)
+{
+  // Little Navmap/1.9.1.develop extension
+  userAgent = QString("%1/%2%3").
+              arg(QApplication::applicationName()).
+              arg(QApplication::applicationVersion()).
+              arg(extension);
 }
 
 void HttpDownloader::setUpdatePeriod(int seconds)
