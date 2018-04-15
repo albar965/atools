@@ -1501,6 +1501,102 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
   }
 }
 
+void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
+{
+  // YSSY,
+  // YMML,
+  // ,
+  // 32000,
+  // ,
+  // ,
+  // ,
+  // ,
+  // ,
+  // ,
+  // -1,
+  // ,
+  // ,
+  // ,
+  // ,
+  // -1,
+  // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,TANTA,0,-35.880000 148.531666,0,0,221.25749,0,0,0,0,0.793,0,32000,-1000,12355,1506,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,RUMIE,0,-36.329721 147.728611,0,0,222.05078,0,0,0,0,0.793,0,32000,-1000,12053,1868,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,NABBA,0,-36.705277 147.041944,0,0,222.94175,0,0,0,0,0.793,0,32000,-1000,11798,2174,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,BULLA,0,-37.077778 146.347221,0,0,223.35175,0,0,0,0,0.793,0,32000,-1000,11544,2480,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,TAREX,0,-37.306666 145.914999,0,0,224.05443,0,0,0,0,0.793,0,32000,-1000,11386,2670,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+
+  filename = file;
+  QFile fltplanFile(filename);
+
+  if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fltplanFile);
+    stream.setCodec("UTF-8");
+
+    // YSSY,
+    // YMML,
+    stream << plan.getDepartureIdent() << "," << endl << plan.getDestinationIdent() << "," << endl;
+
+    // ,
+    stream << "," << endl;
+
+    // 32000,
+    stream << plan.getCruisingAltitude() << "," << endl;
+
+    // ,
+    // ,
+    // ,
+    // ,
+    // ,
+    // ,
+    stream << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl;
+
+    // -1,
+    // ,
+    // ,
+    // ,
+    // ,
+    // -1,
+    stream << "-1" << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1" << endl;
+
+    for(int i = 0; i < plan.entries.size(); i++)
+    {
+      if(i == 0 || i == plan.entries.size() - 1)
+        // Start or destination
+        continue;
+
+      const FlightplanEntry& entry = plan.entries.at(i);
+      if(entry.isNoSave())
+        continue;
+
+      // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+      // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+      if(entry.getAirway().isEmpty())
+        stream << "DIRECT,3,";
+      else
+        stream << entry.getAirway() << ",2,";
+
+      stream << entry.getIcaoIdent() << ",0,";
+      stream << forcepoint << qSetRealNumberPrecision(9)
+             << entry.getPosition().getLatY() << " " << entry.getPosition().getLonX() << reset;
+      stream << ",0,0,";
+      stream << forcepoint << qSetRealNumberPrecision(8)
+             << std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition())) << reset;
+
+      // Ignore rest of the fields
+      stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
+                "-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,";
+      stream << endl;
+    }
+
+    fltplanFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open FLTPLAN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+}
+
 void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const QString& file,
                                  SaveOptions options)
 {

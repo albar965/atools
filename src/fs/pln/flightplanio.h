@@ -90,6 +90,9 @@ public:
   /* Majestic Dash 400 binary format */
   void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* iFly text format .FLTPLAN */
+  void saveFltplan(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* Reality XP GNS XML format. */
   void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
                      atools::fs::pln::SaveOptions options);
