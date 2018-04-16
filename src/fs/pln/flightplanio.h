@@ -139,6 +139,8 @@ private:
   /* Copy departure and destination from first and last entry */
   void adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan);
 
+  QString coordStringFs9(const atools::geo::Pos& pos);
+
   QString filename;
 };
 

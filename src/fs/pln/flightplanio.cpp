@@ -1694,6 +1694,82 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
     throw Exception(tr("Cannot open FLTPLAN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
 }
 
+QString FlightplanIO::coordStringFs9(const atools::geo::Pos& pos)
+{
+  // N53* 37.82', E009* 59.29', +000053.00
+  const static QString LONG_FORMAT("%1%2* %3', %4%5* %6', %7%8");
+
+  return LONG_FORMAT.
+         arg(pos.getLatY() > 0.f ? "N" : "S").
+         arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
+         arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 2, 'f', 0, QChar('0')).
+         arg(pos.getLonX() > 0.f ? "E" : "W").
+         arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
+         arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
+         arg(pos.getAltitude() >= 0.f ? "+" : "-").
+         arg(pos.getAltitude(), 6, 'f', 2, QChar('0'));
+}
+
+void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& file)
+{
+  filename = file;
+  QFile fltplanFile(filename);
+
+  if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fltplanFile);
+    stream.setCodec("UTF-8");
+
+    // [flightplan]
+    // title=EDDH to LIRF
+    // description=EDDH, LIRF
+    // type=IFR
+    // routetype=3
+    stream << "[flightplan]" << endl;
+    stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << endl;
+    stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << endl;
+    stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << endl;
+    stream << "routetype=" << routeTypeToStringFs9(plan.getRouteType()) << endl;
+
+    // cruising_altitude=29000
+    // departure_id=EDDH, N53* 37.82', E009* 59.29', +000053.00
+    // destination_id=LIRF, N41* 48.02', E012* 14.33', +000014.00
+    // departure_name=HAMBURG
+    // destination_name=FIUMICINO
+    stream << "cruising_altitude" << plan.getCruisingAltitude() << endl;
+    stream << "departure_id=" << plan.getDepartureIdent() << ", "
+           << coordStringFs9(plan.getDeparturePosition()) << endl;
+    stream << "destination_id=" << plan.getDestinationIdent() << ", "
+           << coordStringFs9(plan.getDestinationPosition()) << endl;
+    stream << "departure_name=" << plan.getDepartureAiportName().toUpper() << endl;
+    stream << "destination_name=" << plan.getDestinationAiportName().toUpper() << endl;
+
+    // waypoint.0=EDDH, A, N53* 37.82', E009* 59.29', +000053.00,
+    // waypoint.1=AMLUH, I, N53* 25.74', E010* 19.35', +000000.00,
+    // ...
+    // waypoint.19=RITEB, I, N42* 41.92', E012* 9.82', +000000.00, T369
+    // waypoint.20=LIRF, A, N41* 48.02', E012* 14.33', +000014.00,
+    int idx = 0;
+    for(const FlightplanEntry& entry : plan.entries)
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+      stream << "waypoint." << idx << "=" << entry.getIcaoIdent() << ", ";
+      stream << entry.getWaypointTypeAsStringShort() << ", ";
+      stream << coordStringFs9(entry.getPosition()) << ", ";
+      stream << entry.getAirway();
+
+      stream << endl;
+      idx++;
+    }
+
+    fltplanFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+}
+
 void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const QString& file,
                                  SaveOptions options)
 {
