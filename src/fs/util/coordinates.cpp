@@ -110,6 +110,23 @@ QString toDegMinFormat(const atools::geo::Pos& pos)
     return QString();
 }
 
+// Skyvector 481050N0113157E
+QString toDegMinSecFormat(const atools::geo::Pos& pos)
+{
+  if(pos.isValid())
+    return COORDS_FLIGHTPLAN_FORMAT_DEG_MIN_SEC.
+           arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
+           arg(atools::absInt(pos.getLatYMin()), 2, 10, QChar('0')).
+           arg(std::abs(pos.getLatYSec()), 2, 'f', 0, QChar('0')).
+           arg(pos.getLatY() > 0.f ? "N" : "S").
+           arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
+           arg(atools::absInt(pos.getLonXMin()), 2, 10, QChar('0')).
+           arg(std::abs(pos.getLonXSec()), 2, 'f', 0, QChar('0')).
+           arg(pos.getLonX() > 0.f ? "E" : "W");
+  else
+    return QString();
+}
+
 // Garmin format N48194W123096
 atools::geo::Pos fromGfpFormat(const QString& str)
 {
