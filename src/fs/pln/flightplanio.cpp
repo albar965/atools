@@ -915,16 +915,19 @@ void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOpti
     if(!(options & SAVE_CLEAN))
     {
       QStringList comment;
-
-      comment.append("_lnm=" + atools::programFileInfo());
-
       for(const QString& key : plan.properties.keys())
       {
+        if(key == "_lnm")
+          continue;
+
         if(!key.isEmpty())
           comment.append("\n         " + key + "=" + plan.properties.value(key));
       }
 
       std::sort(comment.begin(), comment.end());
+
+      comment.prepend("\n         _lnm=" + atools::programFileInfo());
+
       writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
     }
 
