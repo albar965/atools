@@ -45,7 +45,8 @@ enum FileFormat
   PLN_FS9, // FS9 ini style PLN flight plan - can load only
   FMS3, // X-Plane version 3 FMS file - can load and save
   FMS11, // X-Plane version 11 FMS file - can load and save
-  FLP // Aerosoft airbus or FlightFactor Boeing - can load and save
+  FLP, // Aerosoft airbus or FlightFactor Boeing - can load and save
+  PLN_FSC // FSC ini style PLN flight plan - can load only
 };
 
 enum FlightplanType

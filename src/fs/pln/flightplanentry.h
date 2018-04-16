@@ -56,6 +56,9 @@ public:
    */
   const QString& getWaypointTypeAsString() const;
 
+  /* FS9 one character. First of getWaypointTypeAsString() */
+  QString getWaypointTypeAsStringShort() const;
+
   atools::fs::pln::entry::WaypointType getWaypointType() const;
 
   /* Can use FSX or FS9 types */

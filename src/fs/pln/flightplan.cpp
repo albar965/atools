@@ -144,43 +144,46 @@ void Flightplan::setFileFormatBySuffix(const QString& file)
 
 bool Flightplan::canSaveAltitude() const
 {
-  // FS9 format can be used here since it is always overwritten with FSX
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FMS11 || fileFormat == FMS3;
+  // FS9 and FSC formats can be used here since it is always overwritten with FSX
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC || fileFormat == FMS11 ||
+         fileFormat == FMS3;
 }
 
 bool Flightplan::canSaveFlightplanType() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC;
 }
 
 bool Flightplan::canSaveRouteType() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC;
 }
 
 bool Flightplan::canSaveSpeed() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC;
 }
 
 bool Flightplan::canSaveDepartureParking() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC;
 }
 
 bool Flightplan::canSaveUserWaypointName() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC;
 }
 
 bool Flightplan::canSaveAirways() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP || fileFormat == FMS11;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC || fileFormat == FLP ||
+         fileFormat == FMS11;
 }
 
 bool Flightplan::canSaveProcedures() const
 {
-  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == FLP || fileFormat == FMS11;
+  return fileFormat == PLN_FSX || fileFormat == PLN_FS9 || fileFormat == PLN_FSC || fileFormat == FLP ||
+         fileFormat == FMS11;
 }
 
 QDebug operator<<(QDebug out, const Flightplan& record)
