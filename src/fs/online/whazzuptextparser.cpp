@@ -29,7 +29,6 @@
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
-using atools::sql::SqlTransaction;
 using atools::geo::Rect;
 using atools::geo::LineString;
 using atools::geo::Pos;
@@ -48,13 +47,13 @@ WhazzupTextParser::~WhazzupTextParser()
   deInitQueries();
 }
 
-void WhazzupTextParser::read(QString file, Format streamFormat)
+bool WhazzupTextParser::read(QString file, Format streamFormat, const QDateTime& lastUpdate)
 {
   QTextStream stream(&file, QIODevice::ReadOnly | QIODevice::Text);
-  read(stream, streamFormat);
+  return read(stream, streamFormat, lastUpdate);
 }
 
-void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
+bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDateTime& lastUpdate)
 {
   reset();
 
@@ -102,7 +101,16 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
     {
       // Parse the section data  (CSV like with : separator
       if(curSection == "GENERAL")
+      {
         parseGeneralSection(line);
+
+        if(update.isValid())
+        {
+          if(update <= lastUpdate)
+            // This is older than the last update - bail out
+            return false;
+        }
+      }
       else if(curSection == "CLIENTS")
       {
         QStringList columns = line.split(":");
@@ -120,6 +128,7 @@ void WhazzupTextParser::read(QTextStream& stream, Format streamFormat)
         parseVoiceSection(line);
     }
   }
+  return true;
 }
 
 void WhazzupTextParser::parseGeneralSection(const QString& line)
@@ -142,6 +151,7 @@ void WhazzupTextParser::parseGeneralSection(const QString& line)
     atisAllowMin = value.toInt();
   // else if(key == "CONNECTED CLIENTS")
   // connectedClients = value.toInt();
+
 }
 
 void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool isPrefile)
@@ -567,7 +577,7 @@ void WhazzupTextParser::reset()
   curSection.clear();
   version = reload = atisAllowMin = 0;
   format = atools::fs::online::UNKNOWN;
-  update.setSecsSinceEpoch(0);
+  update = QDateTime();
 }
 
 QString WhazzupTextParser::convertAtisText(QString atis)

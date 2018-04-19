@@ -54,18 +54,27 @@ OnlinedataManager::~OnlinedataManager()
   delete whazzupServers;
 }
 
-void OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
+bool OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format,
+                                        const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
-  whazzup->read(whazzupTxt, format);
-  transaction.commit();
+  bool retval = whazzup->read(whazzupTxt, format, lastUpdate);
+  if(retval)
+    transaction.commit();
+  else
+    transaction.rollback();
+  return retval;
 }
 
-void OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format)
+bool OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
-  whazzupServers->read(whazzupTxt, format);
-  transaction.commit();
+  bool retval = whazzupServers->read(whazzupTxt, format, lastUpdate);
+  if(retval)
+    transaction.commit();
+  else
+    transaction.rollback();
+  return retval;
 }
 
 void OnlinedataManager::readFromStatus(const QString& statusTxt)

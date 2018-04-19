@@ -59,11 +59,12 @@ public:
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */
   void readFromStatus(const QString& statusTxt);
 
-  /* Read all from whazzup.txt file with file content in string and writes all into the database */
-  void readFromWhazzup(const QString& whazzupTxt, Format format);
+  /* Read all from whazzup.txt file with file content in string and writes all into the database.
+   * Returns true if the file was read and is more recent than lastUpdate. */
+  bool readFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
 
   /* Read all servers and voice_servers from whazzup.txt file with file content in string and writes all into the database */
-  void readServersFromWhazzup(const QString& whazzupTxt, Format format);
+  bool readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
 
   /* Get a randon URL from the status file which points to the redundant whazzup files */
   QString getWhazzupUrlFromStatus(bool& gzipped) const;

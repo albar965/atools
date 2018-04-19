@@ -47,11 +47,13 @@ public:
   WhazzupTextParser(atools::sql::SqlDatabase *sqlDb);
   virtual ~WhazzupTextParser();
 
-  /* Read file content given in string and store results in database. Commit is executed when done. */
-  void read(QString file, atools::fs::online::Format streamFormat);
+  /* Read file content given in string and store results in database. Commit is executed when done.
+   *  Returns true if the file was read and is more recent than lastUpdate. */
+  bool read(QString file, atools::fs::online::Format streamFormat, const QDateTime& lastUpdate);
 
-  /* Read file content given in stream and store results in database. Commit is executed when done. */
-  void read(QTextStream& stream, atools::fs::online::Format streamFormat);
+  /* Read file content given in stream and store results in database. Commit is executed when done.
+   *  Returns true if the file was read and is more recent than lastUpdate. */
+  bool read(QTextStream& stream, atools::fs::online::Format streamFormat, const QDateTime& lastUpdate);
 
   /* Create all queries */
   void initQueries();

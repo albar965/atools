@@ -44,11 +44,13 @@ public:
   /* Reset internal state back */
   void reset();
 
-  /* Get a random URL pointing to a whazzup.txt from the file. This is key "url0". */
-  QString getRandomUrl(bool& gzipped) const;
+  /* Get one URL pointing to a whazzup.txt from the file. This is key "url0".
+   *  A round robin strategy is used to select the URLs from the list. */
+  QString getRandomUrl(bool& gzipped);
 
-  /* Get a random URL pointing to a whazzup.txt from the file which contains server information. This is key "url1". */
-  QString getRandomVoiceUrl() const;
+  /* Get one URL pointing to a whazzup.txt from the file which contains server information. This is key "url1".
+   *  A round robin strategy is used to select the URLs from the list. */
+  QString getRandomVoiceUrl();
 
   /* Get the message which has to be shown if available */
   const QString& getMessage() const
@@ -58,6 +60,7 @@ public:
 
 private:
   QStringList urlList, urlListGzip, urlListVoice;
+  int curUrlIndex = 0, curGzipUrlIndex = 0, curVoiceUrlIndex = 0;
   QString message;
 };
 
