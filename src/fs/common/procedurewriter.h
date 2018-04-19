@@ -212,7 +212,7 @@ private:
   void assignTransitionIds(ProcedureWriter::Procedure& proc);
 
   /* Extract runway names */
-  QString apprRunwayNameAndSuffix(const ProcedureInput& line, QString& suffix);
+  void apprRunwayNameAndSuffix(const ProcedureInput& line, QString& runway, QString& suffix);
   QString sidStarRunwayNameAndSuffix(const ProcedureInput& line);
 
   /* Extract altitude probably containing a FL prefix*/
