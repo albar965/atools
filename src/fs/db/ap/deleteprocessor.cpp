@@ -18,6 +18,7 @@
 #include "fs/db/ap/deleteprocessor.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
+#include "geo/calculations.h"
 #include "sql/sqlutil.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/ap/del/deleteairport.h"
@@ -111,7 +112,7 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   selectAirportStmt->prepare(
     "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, "
     "num_approach, num_starts, is_addon, rating, "
-    "bgl_filename, scenery_local_path, lonx, laty "
+    "bgl_filename, scenery_local_path, altitude, lonx, laty "
     "from airport where ident = :apIdent and airport_id <> :curApId order by airport_id desc limit 1");
 
   // Delete all facilities of the old airport
@@ -625,6 +626,14 @@ void DeleteProcessor::extractPreviousAirportFeatures()
     prevAirportId = selectAirportStmt->value("airport_id").toInt();
 
     hasPrevious = true;
+
+    qInfo().nospace().noquote()
+      << "Add-on airport altitude for "
+      << newAirport->getIdent()
+      << " changed from " << selectAirportStmt->valueInt("altitude") << " ft"
+      << " (BGL " << sceneryLocalPath << "/" << bglFilename << ")"
+      << " to " << atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude()))
+      << " ft";
   }
   selectAirportStmt->finish();
 }
