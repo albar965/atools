@@ -41,5 +41,7 @@
         <file>resources/sql/fs/userdata/drop_user_schema.sql</file>
         <file>resources/sql/fs/online/drop_online_schema.sql</file>
         <file>resources/sql/fs/online/create_online_schema.sql</file>
+        <file>resources/sql/fs/db/update_sea_base.sql</file>
+        <file>resources/sql/fs/db/finish_airport_schema.sql</file>
     </qresource>
 </RCC>

@@ -45,7 +45,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 21;
+const int PROGRESS_NUM_STEPS = 23;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -251,13 +251,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
     xplaneExtraSteps--; // ILS id not executed
     xplaneExtraSteps--; // VORTAC merge not executed
+    xplaneExtraSteps--; // No runway cleanup
     total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
     // Around 9000 navaids - total / routePartFraction has to be lower than this
     routePartFraction = 20;
   }
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
-    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS;
+    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS - 1 /* No rw cleanup*/;
     routePartFraction = 4;
   }
   else
@@ -267,7 +268,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
     // Count the files for exact progress reporting
     countFiles(cfg, &numProgressReports, &numSceneryAreas);
-    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
+    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS;
     routePartFraction = 4;
   }
 
@@ -430,6 +431,15 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
     return;
+
+  if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
+    return;
+
+  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  {
+    if((aborted = runScript(&progress, "fs/db/update_sea_base.sql", tr("Clean up runways"))))
+      return;
+  }
 
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
