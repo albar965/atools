@@ -491,7 +491,7 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
 
-      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
+      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY));
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
       insertQuery.exec();
@@ -562,7 +562,7 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
 
-      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
+      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY));
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
       insertQuery.exec();
@@ -715,8 +715,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
       numExported++;
     }
 
-    if(flags & APPEND)
-      stream << "99" << endl;
+    stream << "99" << endl;
 
     file.close();
   }
