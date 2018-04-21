@@ -302,6 +302,15 @@ QString programFileInfo()
          replace("-", " ");
 }
 
+QString programFileInfoNoDate()
+{
+  return QObject::tr("Created by %1 Version %2 (revision %3)").
+         arg(QCoreApplication::applicationName()).
+         arg(QCoreApplication::applicationVersion()).
+         arg(atools::gitRevision()).
+         replace("-", " ");
+}
+
 bool fileEndsWithEol(const QString& filepath)
 {
   bool endsWithEol = false;
