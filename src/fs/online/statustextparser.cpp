@@ -24,6 +24,14 @@
 namespace atools {
 namespace fs {
 namespace online {
+
+void rollIndex(const QStringList& list, int& index)
+{
+  index++;
+  if(index >= list.size())
+    index = 0;
+}
+
 // Any line starting with ; or # should be regarded as comments and ignored by the client parser.
 // ; IMPORTANT NOTE: to use less bandwidth, please download this file ONE TIME ONLY when
 // ;                 your application starts, and load it locally
@@ -105,31 +113,34 @@ void StatusTextParser::reset()
   urlListVoice.clear();
   urlListGzip.clear();
   message.clear();
+  curUrlIndex = curGzipUrlIndex = curVoiceUrlIndex = 0;
 }
 
-QString StatusTextParser::getRandomUrl(bool& gzipped) const
+QString StatusTextParser::getRandomUrl(bool& gzipped)
 {
   if(!urlListGzip.isEmpty())
   {
     gzipped = true;
-    return urlListGzip.at(static_cast<int>(static_cast<quint64>(qrand()) *
-                                           static_cast<quint64>(urlListGzip.size() - 1) / RAND_MAX));
+    rollIndex(urlListGzip, curGzipUrlIndex);
+    return urlListGzip.at(curGzipUrlIndex);
   }
   else if(!urlList.isEmpty())
   {
     gzipped = false;
-    return urlList.at(static_cast<int>(static_cast<quint64>(qrand()) *
-                                       static_cast<quint64>(urlList.size() - 1) / RAND_MAX));
+    rollIndex(urlList, curUrlIndex);
+    return urlList.at(curUrlIndex);
   }
   else
     return QString();
 }
 
-QString StatusTextParser::getRandomVoiceUrl() const
+QString StatusTextParser::getRandomVoiceUrl()
 {
   if(!urlListVoice.isEmpty())
-    return urlListVoice.at(static_cast<int>(static_cast<quint64>(qrand()) *
-                                            static_cast<quint64>(urlListVoice.size() - 1) / RAND_MAX));
+  {
+    rollIndex(urlListVoice, curVoiceUrlIndex);
+    return urlListVoice.at(curVoiceUrlIndex);
+  }
   else
     return QString();
 }

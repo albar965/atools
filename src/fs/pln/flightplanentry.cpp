@@ -55,6 +55,12 @@ const QString& FlightplanEntry::getWaypointTypeAsString() const
   return waypointTypeToString(waypointType);
 }
 
+QString FlightplanEntry::getWaypointTypeAsStringShort() const
+{
+  const QString type = waypointTypeToString(waypointType);
+  return type.isEmpty() ? type : type.at(0);
+}
+
 atools::fs::pln::entry::WaypointType FlightplanEntry::getWaypointType() const
 {
   return waypointType;

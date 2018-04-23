@@ -90,8 +90,18 @@ public:
     userAgent = value;
   }
 
-  /* Sets the user agent based on application name, version and OS. */
-  void setUserAgent();
+  /*
+   * Sets the user agent based on application name, version and OS.
+   * "Little Navmap/1.9.1.develop (Ubuntu 17.10; x86_64; de-DE) Qt 5.9.3 EXTENSION"
+   */
+  void setDefaultUserAgent(const QString& extension = QString());
+
+  /*
+   * Sets the user agent based on application name and version.
+   * Short version not revealing too much information about OS.
+   * "Little Navmap/1.9.1.develop EXTENSION"
+   */
+  void setDefaultUserAgentShort(const QString& extension = QString());
 
 signals:
   /* Emitted when file was downloaded and udpated */

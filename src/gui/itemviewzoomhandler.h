@@ -41,6 +41,9 @@ public:
                         nullptr, QAction *actionZoomDefault = nullptr, QString settingsKeyStr = QString());
   virtual ~ItemViewZoomHandler();
 
+  /* Call slot for application font changes. Resets back to default size */
+  void fontChanged();
+
   /* Use zoom methods for direct changes instead actions */
   void zoomTableView(int value);
   void zoomIn();

@@ -86,6 +86,10 @@ public:
 
   static QString generalErrorMessage();
 
+signals:
+  /* Application font has changed. */
+  void fontChanged();
+
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 

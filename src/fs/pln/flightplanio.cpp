@@ -115,43 +115,41 @@ FlightplanIO::~FlightplanIO()
 
 void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
 {
-  QStringList lines = probeFile(file);
+  // Get first four non empty lines - always returns a list of four
+  QStringList lines = probeFile4(file);
 
   if(lines.isEmpty())
     throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
 
-  if(!lines.isEmpty() &&
-     lines.first().startsWith("[corte]"))
+  if(lines.first().startsWith("[corte]"))
     // FLP: [CoRte]
     loadFlp(plan, file);
-  else if(lines.size() >= 2 &&
-          lines.at(0).startsWith("<?xml version") &&
-          lines.at(1).startsWith("<simbase.document"))
+  else if(lines.at(0).startsWith("<?xml version") && lines.at(1).startsWith("<simbase.document"))
     // FSX PLN <?xml version
     loadFsx(plan, file);
-  else if(lines.size() >= 2 &&
-          lines.at(0).startsWith("[flightplan]") &&
-          FS9_MATCH.match(lines.at(1)).hasMatch())
+  else if(lines.at(0).startsWith("[flightplan]") && FS9_MATCH.match(lines.at(1)).hasMatch())
+    // FS9 ini format
     loadFs9(plan, file);
-  else if(lines.size() >= 4 &&
-          // Old format
-          // I
-          // 3 version
-          // 1
-          // 4
-          (lines.at(0) == "i" || lines.at(0) == "a") &&
+  else if(lines.at(0).startsWith("[fscfp]"))
+    // FSC ini format
+    loadFsc(plan, file);
+  else if((lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("3 version") &&
           lines.at(2).at(0).isDigit() &&
           lines.at(3).at(0).isDigit())
+    // Old format
+    // I
+    // 3 version
+    // 1
+    // 4
     loadFms(plan, file);
-  else if(lines.size() >= 3 &&
-          // New v11 format
-          // I
-          // 1100 Version
-          // CYCLE 1710
-          (lines.at(0) == "i" || lines.at(0) == "a") &&
+  else if((lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("1100 version") &&
           lines.at(2).startsWith("cycle"))
+    // New v11 format
+    // I
+    // 1100 Version
+    // CYCLE 1710
     loadFms(plan, file);
   else
     throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
@@ -525,6 +523,103 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
   }
 }
 
+void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+  // [FSCFP]
+  // DepartAPCode=LIDT
+  // DepartNum=0
+  // DepartID=18
+  // DepartType=Rwy
+  // DestAPCode=LSZS
+  // RouteType=0
+  // SID=
+  // STAR=
+  // Transition=
+  // WP=1,Fix,80VOR,TNT347008,46.15109,11.10340,0.00,353.2240,2.818,1,0,0,,0,0,61831
+  // ...
+  // WP=24,Int,RONAG,RONAG,46.77942,10.25900,0.00,252.4302,2.587,1,0,0,,0,0,22797
+  // WP=25,Int,ARDED,ARDED,46.73528,10.12778,0.00,243.8965,2.587,1,0,0,,0,0,22725
+
+  filename = file;
+
+  QFile plnFile(filename);
+
+  if(plnFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&plnFile);
+    FlightplanEntry departure, destination;
+
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().simplified();
+      if(!line.isEmpty())
+      {
+        QString key = line.section('=', 0, 0).toLower().trimmed();
+        QStringList values = line.section('=', 1).simplified().split(",");
+
+        if(values.isEmpty())
+          continue;
+
+        if(key == "departapcode")
+        {
+          departure.setIcaoIdent(values.first());
+          departure.setWaypointId(values.first());
+          departure.setWaypointType(atools::fs::pln::entry::AIRPORT);
+        }
+        else if(key == "destapcode")
+        {
+          destination.setIcaoIdent(values.first());
+          destination.setWaypointId(values.first());
+          destination.setWaypointType(atools::fs::pln::entry::AIRPORT);
+        }
+        // Ignored keys
+        // else if(key == "DepartNum")
+        // else if(key == "DepartID")
+        // else if(key == "DepartType")
+        // else if(key == "SID")
+        // else if(key == "STAR")
+        // else if(key == "Transition")
+        else if(key == "wp")
+        {
+          QString type = values.value(1).toLower();
+          QString ident = values.value(2);
+          QString name = values.value(3);
+          QString airway = values.value(16);
+
+          FlightplanEntry entry;
+          entry.setIcaoIdent(ident);
+          entry.setWaypointId(ident);
+          entry.setName(name);
+          entry.setAirway(airway);
+
+          float latY = values.value(4).toFloat();
+          float lonX = values.value(5).toFloat();
+          entry.setPosition(Pos(lonX, latY));
+
+          if(type == "fix" || type == "int")
+            entry.setWaypointType(atools::fs::pln::entry::INTERSECTION);
+          else if(type == "uwp" || !atools::fs::util::isValidIdent(ident))
+            entry.setWaypointType(atools::fs::pln::entry::USER);
+
+          plan.entries.append(entry);
+        }
+      }
+    }
+
+    plan.entries.prepend(departure);
+    plan.entries.append(destination);
+
+    plnFile.close();
+
+    plan.flightplanType = IFR;
+    plan.routeType = UNKNOWN; // Determine type when resolving navaids from the database
+    plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
+    plan.fileFormat = PLN_FSC;
+    adjustDepartureAndDestination(plan);
+  }
+}
+
 void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& file)
 {
   qDebug() << Q_FUNC_INFO;
@@ -777,7 +872,9 @@ void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QSt
   {
     case atools::fs::pln::NONE:
     case atools::fs::pln::PLN_FSX:
+    // FS9 and FSC formats are read only and will be saved as FSX
     case atools::fs::pln::PLN_FS9:
+    case atools::fs::pln::PLN_FSC:
       saveFsx(flightplan, file, options);
       break;
 
@@ -818,16 +915,19 @@ void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOpti
     if(!(options & SAVE_CLEAN))
     {
       QStringList comment;
-
-      comment.append("_lnm=" + atools::programFileInfo());
-
       for(const QString& key : plan.properties.keys())
       {
+        if(key == "_lnm")
+          continue;
+
         if(!key.isEmpty())
           comment.append("\n         " + key + "=" + plan.properties.value(key));
       }
 
       std::sort(comment.begin(), comment.end());
+
+      comment.prepend("\n         _lnm=" + atools::programFileInfo());
+
       writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
     }
 
@@ -1501,6 +1601,178 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
   }
 }
 
+void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
+{
+  // YSSY,
+  // YMML,
+  // ,
+  // 32000,
+  // ,
+  // ,
+  // ,
+  // ,
+  // ,
+  // ,
+  // -1,
+  // ,
+  // ,
+  // ,
+  // ,
+  // -1,
+  // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,TANTA,0,-35.880000 148.531666,0,0,221.25749,0,0,0,0,0.793,0,32000,-1000,12355,1506,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,RUMIE,0,-36.329721 147.728611,0,0,222.05078,0,0,0,0,0.793,0,32000,-1000,12053,1868,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,NABBA,0,-36.705277 147.041944,0,0,222.94175,0,0,0,0,0.793,0,32000,-1000,11798,2174,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,BULLA,0,-37.077778 146.347221,0,0,223.35175,0,0,0,0,0.793,0,32000,-1000,11544,2480,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+  // Q29,2,TAREX,0,-37.306666 145.914999,0,0,224.05443,0,0,0,0,0.793,0,32000,-1000,11386,2670,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+
+  filename = file;
+  QFile fltplanFile(filename);
+
+  if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fltplanFile);
+    stream.setCodec("UTF-8");
+
+    // YSSY,
+    // YMML,
+    stream << plan.getDepartureIdent() << "," << endl << plan.getDestinationIdent() << "," << endl;
+
+    // ,
+    stream << "," << endl;
+
+    // 32000,
+    stream << plan.getCruisingAltitude() << "," << endl;
+
+    // ,
+    // ,
+    // ,
+    // ,
+    // ,
+    // ,
+    stream << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl;
+
+    // -1,
+    // ,
+    // ,
+    // ,
+    // ,
+    // -1,
+    stream << "-1" << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1" << endl;
+
+    for(int i = 0; i < plan.entries.size(); i++)
+    {
+      if(i == 0 || i == plan.entries.size() - 1)
+        // Start or destination
+        continue;
+
+      const FlightplanEntry& entry = plan.entries.at(i);
+      if(entry.isNoSave())
+        continue;
+
+      // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+      // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+      if(entry.getAirway().isEmpty())
+        stream << "DIRECT,3,";
+      else
+        stream << entry.getAirway() << ",2,";
+
+      stream << entry.getIcaoIdent() << ",0,";
+      stream << forcepoint << qSetRealNumberPrecision(9)
+             << entry.getPosition().getLatY() << " " << entry.getPosition().getLonX() << reset;
+      stream << ",0,0,";
+      stream << forcepoint << qSetRealNumberPrecision(8)
+             << std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition())) << reset;
+
+      // Ignore rest of the fields
+      stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
+                "-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,";
+      stream << endl;
+    }
+
+    fltplanFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open FLTPLAN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+}
+
+QString FlightplanIO::coordStringFs9(const atools::geo::Pos& pos)
+{
+  // N53* 37.82', E009* 59.29', +000053.00
+  const static QString LONG_FORMAT("%1%2* %3', %4%5* %6', %7%8");
+
+  return LONG_FORMAT.
+         arg(pos.getLatY() > 0.f ? "N" : "S").
+         arg(atools::absInt(pos.getLatYDeg()), 2, 10, QChar('0')).
+         arg(std::abs(pos.getLatYMin() + pos.getLatYSec() / 60.f), 2, 'f', 0, QChar('0')).
+         arg(pos.getLonX() > 0.f ? "E" : "W").
+         arg(atools::absInt(pos.getLonXDeg()), 3, 10, QChar('0')).
+         arg(std::abs(pos.getLonXMin() + pos.getLonXSec() / 60.f), 2, 'f', 0, QChar('0')).
+         arg(pos.getAltitude() >= 0.f ? "+" : "-").
+         arg(pos.getAltitude(), 6, 'f', 2, QChar('0'));
+}
+
+void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& file)
+{
+  filename = file;
+  QFile fltplanFile(filename);
+
+  if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fltplanFile);
+    stream.setCodec("UTF-8");
+
+    // [flightplan]
+    // title=EDDH to LIRF
+    // description=EDDH, LIRF
+    // type=IFR
+    // routetype=3
+    stream << "[flightplan]" << endl;
+    stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << endl;
+    stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << endl;
+    stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << endl;
+    stream << "routetype=" << routeTypeToStringFs9(plan.getRouteType()) << endl;
+
+    // cruising_altitude=29000
+    // departure_id=EDDH, N53* 37.82', E009* 59.29', +000053.00
+    // destination_id=LIRF, N41* 48.02', E012* 14.33', +000014.00
+    // departure_name=HAMBURG
+    // destination_name=FIUMICINO
+    stream << "cruising_altitude" << plan.getCruisingAltitude() << endl;
+    stream << "departure_id=" << plan.getDepartureIdent() << ", "
+           << coordStringFs9(plan.getDeparturePosition()) << endl;
+    stream << "destination_id=" << plan.getDestinationIdent() << ", "
+           << coordStringFs9(plan.getDestinationPosition()) << endl;
+    stream << "departure_name=" << plan.getDepartureAiportName().toUpper() << endl;
+    stream << "destination_name=" << plan.getDestinationAiportName().toUpper() << endl;
+
+    // waypoint.0=EDDH, A, N53* 37.82', E009* 59.29', +000053.00,
+    // waypoint.1=AMLUH, I, N53* 25.74', E010* 19.35', +000000.00,
+    // ...
+    // waypoint.19=RITEB, I, N42* 41.92', E012* 9.82', +000000.00, T369
+    // waypoint.20=LIRF, A, N41* 48.02', E012* 14.33', +000014.00,
+    int idx = 0;
+    for(const FlightplanEntry& entry : plan.entries)
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+      stream << "waypoint." << idx << "=" << entry.getIcaoIdent() << ", ";
+      stream << entry.getWaypointTypeAsStringShort() << ", ";
+      stream << coordStringFs9(entry.getPosition()) << ", ";
+      stream << entry.getAirway();
+
+      stream << endl;
+      idx++;
+    }
+
+    fltplanFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+}
+
 void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const QString& file,
                                  SaveOptions options)
 {
@@ -1695,7 +1967,7 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
 
 }
 
-QStringList FlightplanIO::probeFile(const QString& file)
+QStringList FlightplanIO::probeFile4(const QString& file)
 {
   QFile testFile(file);
 
@@ -1715,6 +1987,9 @@ QStringList FlightplanIO::probeFile(const QString& file)
         numLines++;
       }
     }
+
+    for(int i = lines.size(); i < 4; i++)
+      lines.append(QString());
     testFile.close();
   }
   else
@@ -1794,6 +2069,26 @@ RouteType FlightplanIO::stringToRouteTypeFs9(const QString& str)
       return HIGH_ALTITUDE;
   }
   return DIRECT;
+}
+
+int FlightplanIO::routeTypeToStringFs9(atools::fs::pln::RouteType type)
+{
+  switch(type)
+  {
+    case atools::fs::pln::LOW_ALTITUDE:
+      return 2;
+
+    case atools::fs::pln::HIGH_ALTITUDE:
+      return 3;
+
+    case atools::fs::pln::VOR:
+      return 1;
+
+    case atools::fs::pln::DIRECT:
+    case atools::fs::pln::UNKNOWN:
+      return 0;
+  }
+  return 0;
 }
 
 void FlightplanIO::adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan)

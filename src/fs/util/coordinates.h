@@ -41,6 +41,7 @@ atools::geo::Pos fromAnyFormat(const QString& coords);
 
 QString toGfpFormat(const atools::geo::Pos& pos);
 QString toDegMinFormat(const atools::geo::Pos& pos);
+QString toDegMinSecFormat(const atools::geo::Pos& pos);
 
 atools::geo::Pos fromAnyWaypointFormat(const QString& str);
 

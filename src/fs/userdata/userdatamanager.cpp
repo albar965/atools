@@ -491,7 +491,7 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
 
-      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
+      validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY));
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
       insertQuery.bindValue(":laty", at(cols, xp::LATY));
       insertQuery.exec();
@@ -562,7 +562,7 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
 
-      validateCoordinates(line, at(cols, csv::LONX), at(cols, csv::LATY));
+      validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY));
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
       insertQuery.bindValue(":laty", at(cols, gm::LATY));
       insertQuery.exec();
@@ -689,12 +689,18 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
     stream.setCodec("UTF-8");
 
     // I
-    // 1101 Version - data cycle 1704, build 20170325, metadata FixXP1101. NoCopyright (c) 2017 achwodu
+    // 1100 Version - data cycle 1804, build 20180421, metadata FixXP1100. Created by Little Navmap Version 1.9.1.develop (revision 47ef66a) on 2018 04 21T13:25:52
     //
 
     if(!(flags & APPEND))
+    {
       // Add file header
-      stream << "I" << endl << "1101 Version - data cycle any. " << atools::programFileInfo() << endl << endl;
+      stream << "I" << endl << "1100 Version - "
+             << "data cycle " << QDateTime::currentDateTime().toString("yyMM") << ", "
+             << "build " << QDateTime::currentDateTime().toString("yyyyMMdd") << ", "
+             << "metadata FixXP1100. "
+             << atools::programFileInfoNoDate() << "." << endl << endl;
+    }
 
     QueryWrapper query("select userdata_id, ident, name, tags, laty, lonx, altitude, tags, region from userdata", db,
                        ids);
@@ -715,8 +721,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
       numExported++;
     }
 
-    if(flags & APPEND)
-      stream << "99" << endl;
+    stream << "99" << endl;
 
     file.close();
   }

@@ -135,6 +135,7 @@ QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);
 QString simulatorText(int simulator);
 QString simulatorText(atools::fs::online::sim::Simulator simulator);
 
+QString pilotRatingText(int rating);
 QString pilotRatingText(atools::fs::online::pilot::PilotRating rating);
 QString pilotRatingTextShort(atools::fs::online::pilot::PilotRating rating);
 

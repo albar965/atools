@@ -564,7 +564,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
       commonRoute = atools::contains(static_cast<rt::StarRouteType>(curRouteType), rt::STAR_COMMON);
   }
   else
-    rwy = apprRunwayNameAndSuffix(line, suffix);
+    apprRunwayNameAndSuffix(line, rwy, suffix);
 
   // Create the SID/STAR workaround as it is used by FSX/P3D
   QString type = procedureType(line);
@@ -1191,37 +1191,49 @@ QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
   return QString();
 }
 
-QString ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QString& suffix)
+void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QString& runway, QString& suffix)
 {
-  QString ident = line.sidStarAppIdent;
-  QString runway;
+  const QString ident = line.sidStarAppIdent;
   suffix.clear();
 
-  if(ident.size() > 4)
-    suffix = ident.mid(4, 1);
+  // Get runway
+  QString rw = ident.mid(1, 2);
+  QString desig = ident.mid(3, 1);
 
-  // Get designator if there is one
-  QString desig = ident.size() > 3 ? ident.at(3) : QString();
+  // Check for digits to get runway - circle to land if no runway given
+  bool hasRunway = rw.size() == 2 && rw.at(0).isDigit() && rw.at(1).isDigit() &&
+                   atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"});
 
-  if(ident.at(1).isDigit() && ident.at(2).isDigit() &&
-     !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
-    qWarning() << line.context << "Invalid designator" << desig;
+  if(hasRunway && ident.size() >= 4 && ident.at(3).isDigit())
+    // Full number like P168 - this is not a runway
+    hasRunway = false;
 
-  // TODO consider true course
-
-  if(desig != "B") // B = multiple runways with same number but different designator
+  if(hasRunway)
   {
-
-    if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C")
-      desig.clear();
-
-    // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
-    if(ident.at(1).isDigit() && ident.at(2).isDigit())
-      runway = ident.mid(1, 2) + desig;
-    else if(ident.size() > 3) // CVORY etc.
+    // TODO consider true designator
+    // D26 D26-1 D26-2 D26-Y D26-Z D26LZ
+    // I26L, B08R, R29, V01L, N35 L16RA, L16RB, V08-A, V08-B I18L1, I18L2, N08T R35-Y, R35-Z
+    if(desig == "L" || desig == "R" || desig == "C")
+      // Add only real designators and not "B"
+      runway = rw + desig;
+    else
+      runway = rw;
+    suffix = ident.mid(4, 1);
+  }
+  else
+  {
+    // CNDB CNDM CVDM CVOR CVORY
+    // VDME VDMF VDMH VOR1 VOR2 VORA VORB
+    // VORA, VORB VOR-A, VOR-B, NDBB, CVOR, VDMA, LOCD,BI P168, NDAT (NDB, DME, Alpha, True), NDB-1, NDB-2
+    if(ident.contains("-"))
+      // Suffix after dash
+      suffix = ident.section('-', 1, 1);
+    else if(ident.startsWith("C"))
+      // Special case for CNDB or CVOR
+      suffix = ident.mid(4, 1);
+    else
       suffix = ident.mid(3, 1);
   }
-  return runway;
 }
 
 void ProcedureWriter::initQueries()

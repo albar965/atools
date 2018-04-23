@@ -17,6 +17,7 @@
 
 #include "fs/util/fsutil.h"
 #include "atools.h"
+#include "geo/calculations.h"
 
 #include <QRegularExpression>
 #include <QSet>
@@ -29,6 +30,10 @@ namespace util {
 static const QRegularExpression REGEXP_CLOSED(QLatin1Literal("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
 const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
+
+/* ICAO speed and altitude matches */
+const static QRegularExpression REGEXP_SPDALT("^([NMK])(\\d{2,4})(([FSAM])(\\d{2,4}))?$");
+const static QRegularExpression REGEXP_SPDALT_ALL("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
 
 // Look for military designator words
 static const QVector<QRegularExpression> REGEXP_MIL({
@@ -460,6 +465,80 @@ bool isValidRegion(const QString& region)
 {
   static const QRegularExpression REGION_REGEXP("^[A-Z0-9]$");
   return REGION_REGEXP.match(region).hasMatch();
+}
+
+bool speedAndAltitudeMatch(const QString& item)
+{
+  return REGEXP_SPDALT_ALL.match(item).hasMatch();
+}
+
+bool extractSpeedAndAltitude(const QString& item, float& speedKnots, float& altFeet, bool *speedOk, bool *altitudeOk)
+{
+  // N0490F360
+  // M084F330
+  // Speed
+  // K0800 (800 Kilometers)
+  // N0490 (490 Knots)
+  // M082 (Mach 0.82)
+  // Level/altitude
+  // F340 (Flight level 340)
+  // S1260 (12600 Meters)
+  // A100 (10000 Feet)
+  // M0890 (8900 Meters)
+
+  bool spdOk = true, altOk = true;
+  speedKnots = 0.f;
+  altFeet = 0.f;
+
+  // const static QRegularExpression SPDALT(""^([NMK])(\\d{3,4})(([FSAM])(\\d{3,4}))?$"");
+  QRegularExpressionMatch match = REGEXP_SPDALT.match(item);
+  if(match.hasMatch())
+  {
+    QString speedUnit = match.captured(1);
+    float speed = match.captured(2).toFloat(&spdOk);
+
+    QString altUnit = match.captured(4);
+    float alt = match.captured(5).toFloat(&altOk);
+
+    // Altitude ==============================
+    if(altUnit == "F") // Flight Level
+      altFeet = alt >= 1000.f ? alt : alt * 100.f;
+    else if(altUnit == "S") // Standard Metric Level in tens of meters
+      altFeet = atools::geo::meterToFeet(alt * 10.f);
+    else if(altUnit == "A") // Altitude in hundreds of feet
+      altFeet = alt >= 1000.f ? alt : alt * 100.f;
+    else if(altUnit == "M") // Altitude in tens of meters
+      altFeet = atools::geo::meterToFeet(alt * 10.f);
+    else
+      altOk = false;
+
+    // Speed ==============================
+    if(speedUnit == "K") // km/h
+      speedKnots = atools::geo::meterToNm(speed * 1000.f);
+    else if(speedUnit == "N") // knots
+      speedKnots = speed;
+    else if(speedUnit == "M") // mach
+      speedKnots = atools::geo::machToTasFromAlt(altFeet, speed / 100.f);
+    else
+      spdOk = false;
+  }
+  else
+    spdOk = altOk = false;
+
+  if(speedOk != nullptr)
+    *speedOk = spdOk;
+  if(altitudeOk != nullptr)
+    *altitudeOk = altOk;
+
+  return spdOk && altOk;
+}
+
+QString createSpeedAndAltitude(float speedKnots, float altFeet)
+{
+  if(altFeet < 18000.f)
+    return QString("N%1A%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
+  else
+    return QString("N%1F%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
 }
 
 } // namespace util

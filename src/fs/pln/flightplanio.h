@@ -90,19 +90,27 @@ public:
   /* Majestic Dash 400 binary format */
   void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* iFly text format .FLTPLAN */
+  void saveFltplan(const atools::fs::pln::Flightplan& plan, const QString& file);
+
+  /* PLN for Blackbox Simulations Airbus. Same as FS9 PLN format. */
+  void saveBbsPln(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* Reality XP GNS XML format. */
   void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
                      atools::fs::pln::SaveOptions options);
 
 private:
-  /* Get the first four lines of a file converted to lowercase to check type */
-  QStringList probeFile(const QString& file);
+  /* Get the first four lines of a file converted to lowercase to check type.
+   *  Returns a list with always four strings. */
+  QStringList probeFile4(const QString& file);
 
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFs9(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFlp(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFms(atools::fs::pln::Flightplan& plan, const QString& file);
+  void loadFsc(atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* Write string into memory location, truncate if needed and fill up to length with null */
   void writeBinaryString(char *mem, QString str, int length);
@@ -111,7 +119,9 @@ private:
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);
   static QString routeTypeToString(atools::fs::pln::RouteType type);
   static atools::fs::pln::RouteType stringToRouteType(const QString& str);
+
   RouteType stringToRouteTypeFs9(const QString& str);
+  int routeTypeToStringFs9(atools::fs::pln::RouteType type);
 
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry);
 
@@ -128,6 +138,8 @@ private:
 
   /* Copy departure and destination from first and last entry */
   void adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan);
+
+  QString coordStringFs9(const atools::geo::Pos& pos);
 
   QString filename;
 };

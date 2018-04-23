@@ -197,7 +197,7 @@ public:
     return objectId;
   }
 
-  int getId()
+  int getId() const
   {
     return static_cast<int>(objectId);
   }
@@ -258,6 +258,11 @@ public:
   bool isSimReplay() const
   {
     return flags & SIM_REPLAY;
+  }
+
+  bool isOnline() const
+  {
+    return flags & SIM_ONLINE;
   }
 
   /* Create artificially by mouse movements */

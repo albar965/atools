@@ -37,6 +37,7 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues);
 /* Program information which can be added to file headers:
  * Created by %1 Version %2 (revision %3) on %4*/
 QString programFileInfo();
+QString programFileInfoNoDate();
 
 /* Return true if the file ends with an carriage return or line feed.
  *  An Exception is thrown if the file cannot be opened */

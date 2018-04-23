@@ -151,6 +151,22 @@ HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::row2If(const QString& name, int value, html::Flags flags, QColor color)
+{
+  if(value > 0)
+    row2(name, QString::number(value), flags, color);
+
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::row2IfVar(const QString& name, const QVariant& value, html::Flags flags, QColor color)
+{
+  if(!value.isNull() && value.isValid())
+    row2(name, value.toString(), flags, color);
+
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).

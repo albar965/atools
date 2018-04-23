@@ -32,6 +32,7 @@ using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
 using atools::sql::SqlTransaction;
 using atools::sql::SqlUtil;
+using atools::sql::SqlRecord;
 using atools::sql::SqlScript;
 
 namespace atools {
@@ -53,18 +54,27 @@ OnlinedataManager::~OnlinedataManager()
   delete whazzupServers;
 }
 
-void OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format)
+bool OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format,
+                                        const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
-  whazzup->read(whazzupTxt, format);
-  transaction.commit();
+  bool retval = whazzup->read(whazzupTxt, format, lastUpdate);
+  if(retval)
+    transaction.commit();
+  else
+    transaction.rollback();
+  return retval;
 }
 
-void OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format)
+bool OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
-  whazzupServers->read(whazzupTxt, format);
-  transaction.commit();
+  bool retval = whazzupServers->read(whazzupTxt, format, lastUpdate);
+  if(retval)
+    transaction.commit();
+  else
+    transaction.rollback();
+  return retval;
 }
 
 void OnlinedataManager::readFromStatus(const QString& statusTxt)
@@ -125,9 +135,11 @@ void OnlinedataManager::createSchema()
 
 void OnlinedataManager::clearData()
 {
+  SqlTransaction transaction(db);
   QStringList tables = db->tables();
   for(const QString& table : tables)
     db->exec("delete from " + table);
+  transaction.commit();
 }
 
 void OnlinedataManager::updateSchema()
@@ -160,15 +172,29 @@ void OnlinedataManager::resetForNewOptions()
   whazzupServers->resetForNewOptions();
 }
 
-void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)
+void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId)
+{
+  sql::SqlRecord rec = getClientRecordById(clientId);
+  if(!rec.isEmpty())
+    fillFromClient(aircraft, rec);
+}
+
+sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 {
   SqlQuery query(db);
   query.prepare("select * from client where client_id = :id");
-  query.bindValue(":id", id);
+  query.bindValue(":id", clientId);
   query.exec();
+  SqlRecord rec;
   if(query.next())
-    fillFromClient(aircraft, query.record());
+    rec = query.record();
   query.finish();
+  return rec;
+}
+
+int OnlinedataManager::getNumClients() const
+{
+  return SqlUtil(db).rowCount("client");
 }
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
@@ -187,7 +213,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
 
   ac.modelRadiusFt = ac.wingSpanFt = 0;
 
-  ac.category = atools::fs::sc::UNKNOWN;
+  ac.category = atools::fs::sc::AIRPLANE;
   ac.engineType = atools::fs::sc::UNSUPPORTED;
   ac.numberOfEngines = 0;
 

@@ -1,3 +1,27 @@
+Numbers (#) refer to Github issues.
+For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
+
+Version 3.0.0.beta
+
+* Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
+* Fixed issues with X-Plane user_fix.dat export. Now using correct metadata so that X-Plane can read the file.
+* Issues with X-Plane and Garmin userpoint import and export fixed.
+
+* Added script by Gérard to clean out fake runways for AI in FSX/P3D.
+* Added logging for airport altitude when reading delete records from FSX/P3D.
+  Example: "Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft"
+* Improved BGL file and scenery reading to include hidden and system files.
+* Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
+* Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
+
+* Flight plan export for Blackbox Simulations Airbus. albar965/littlenavmap#200
+* Added loading method for FSC flight plans.
+* Export for iFly flight plan file. albar965/littlenavmap#231
+
+* Now removing empty journal files from database when closing.
+* Database locking improved.
+* Added gzip tools.
+
 Version 2.9.1.develop
 
 * Now filtering out taxiway garbage names in X-Plane compiler.

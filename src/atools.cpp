@@ -31,7 +31,7 @@ namespace atools {
 
 QString version()
 {
-  return "2.9.1.develop"; // VERSION_NUMBER
+  return "3.0.0.beta"; // VERSION_NUMBER
 }
 
 QString gitRevision()
@@ -299,6 +299,15 @@ QString programFileInfo()
          arg(QCoreApplication::applicationVersion()).
          arg(atools::gitRevision()).
          arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
+         replace("-", " ");
+}
+
+QString programFileInfoNoDate()
+{
+  return QObject::tr("Created by %1 Version %2 (revision %3)").
+         arg(QCoreApplication::applicationName()).
+         arg(QCoreApplication::applicationVersion()).
+         arg(atools::gitRevision()).
          replace("-", " ");
 }
 

@@ -59,11 +59,12 @@ public:
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */
   void readFromStatus(const QString& statusTxt);
 
-  /* Read all from whazzup.txt file with file content in string and writes all into the database */
-  void readFromWhazzup(const QString& whazzupTxt, Format format);
+  /* Read all from whazzup.txt file with file content in string and writes all into the database.
+   * Returns true if the file was read and is more recent than lastUpdate. */
+  bool readFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
 
   /* Read all servers and voice_servers from whazzup.txt file with file content in string and writes all into the database */
-  void readServersFromWhazzup(const QString& whazzupTxt, Format format);
+  bool readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
 
   /* Get a randon URL from the status file which points to the redundant whazzup files */
   QString getWhazzupUrlFromStatus(bool& gzipped) const;
@@ -112,14 +113,22 @@ public:
   /* Delete all queries */
   void deInitQueries();
 
+  /* Reset all URLs and timestamps. Does not reset the tables for semi-permanent ids */
   void reset();
+
+  /* Reset all URLs and timestamps and the tables for semi-permanent ids */
   void resetForNewOptions();
 
   /* Fill from a record based on table client */
   static void fillFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
-  /* Get aircraft from table client by id */
-  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
+  /* Get aircraft from table client by id and fill data into aircraft class. */
+  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId);
+
+  atools::sql::SqlRecord getClientRecordById(int clientId);
+
+  /* Number of client aircraft in client table */
+  int getNumClients() const;
 
 private:
   atools::sql::SqlDatabase *db;

@@ -59,6 +59,13 @@ ItemViewZoomHandler::~ItemViewZoomHandler()
     disconnect(actionZoomDefault, &QAction::triggered, this, &ItemViewZoomHandler::zoomDefault);
 }
 
+void ItemViewZoomHandler::fontChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  setTableViewFontSize(defaultTableViewFontPointSize);
+}
+
 void ItemViewZoomHandler::setTableViewFontSize(float pointSize)
 {
   QFont newFont(itemView->font());
