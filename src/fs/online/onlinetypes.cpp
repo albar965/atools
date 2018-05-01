@@ -70,8 +70,68 @@ QString facilityTypeText(fac::FacilityType type)
 
     case atools::fs::online::fac::DEPARTURE:
       return QObject::tr("Departure");
+
+    case atools::fs::online::fac::UNKNOWN:
+      return QObject::tr("Unknown");
   }
   return QString::number(type);
+}
+
+QString facilityTypeTextSettings(fac::FacilityType type)
+{
+  switch(type)
+  {
+    case atools::fs::online::fac::OBSERVER:
+      return QLatin1Literal("Observer");
+
+    case atools::fs::online::fac::FLIGHT_INFORMATION:
+      return QLatin1Literal("FIR");
+
+    case atools::fs::online::fac::DELIVERY:
+      return QLatin1Literal("Delivery");
+
+    case atools::fs::online::fac::GROUND:
+      return QLatin1Literal("Ground");
+
+    case atools::fs::online::fac::TOWER:
+      return QLatin1Literal("Tower");
+
+    case atools::fs::online::fac::APPROACH:
+      return QLatin1Literal("Approach");
+
+    case atools::fs::online::fac::ACC:
+      return QLatin1Literal("ACC");
+
+    case atools::fs::online::fac::DEPARTURE:
+      return QLatin1Literal("Departure");
+
+    case atools::fs::online::fac::UNKNOWN:
+      return QLatin1Literal("Unknown");
+  }
+  return QString::number(type);
+}
+
+fac::FacilityType textToFacilityType(QString value)
+{
+  value = value.toUpper();
+  if(value == "OBSERVER")
+    return atools::fs::online::fac::OBSERVER;
+  else if(value == "FIR")
+    return atools::fs::online::fac::FLIGHT_INFORMATION;
+  else if(value == "DELIVERY")
+    return atools::fs::online::fac::DELIVERY;
+  else if(value == "GROUND")
+    return atools::fs::online::fac::GROUND;
+  else if(value == "TOWER")
+    return atools::fs::online::fac::TOWER;
+  else if(value == "APPROACH")
+    return atools::fs::online::fac::APPROACH;
+  else if(value == "ACC")
+    return atools::fs::online::fac::ACC;
+  else if(value == "DEPARTURE")
+    return atools::fs::online::fac::DEPARTURE;
+
+  return atools::fs::online::fac::UNKNOWN;
 }
 
 QString admRatingText(int rating)
@@ -332,6 +392,22 @@ QString simulatorText(sim::Simulator simulator)
       return QObject::tr("P3D");
   }
   return QString::number(simulator);
+}
+
+const QVector<atools::fs::online::fac::FacilityType>& allFacilityTypes()
+{
+  const static QVector<atools::fs::online::fac::FacilityType> TYPES(
+        {
+          fac::OBSERVER,
+          fac::FLIGHT_INFORMATION,
+          fac::DELIVERY,
+          fac::GROUND,
+          fac::TOWER,
+          fac::APPROACH,
+          fac::ACC,
+          fac::DEPARTURE
+        });
+  return TYPES;
 }
 
 } // namespace online

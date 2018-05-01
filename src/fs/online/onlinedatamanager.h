@@ -101,9 +101,6 @@ public:
     return db;
   }
 
-  /* Do any schema updates if needed */
-  void updateSchema();
-
   /* Drops schema tables and indexes */
   void dropSchema();
 
@@ -129,6 +126,9 @@ public:
 
   /* Number of client aircraft in client table */
   int getNumClients() const;
+
+  /* Set default circle radii for certain ATC types where visual range is unusable */
+  void setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value);
 
 private:
   atools::sql::SqlDatabase *db;

@@ -142,11 +142,6 @@ void OnlinedataManager::clearData()
   transaction.commit();
 }
 
-void OnlinedataManager::updateSchema()
-{
-  // for later schema evolution
-}
-
 void OnlinedataManager::dropSchema()
 {
   qDebug() << Q_FUNC_INFO;
@@ -195,6 +190,11 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
 int OnlinedataManager::getNumClients() const
 {
   return SqlUtil(db).rowCount("client");
+}
+
+void OnlinedataManager::setAtcRadius(const QHash<fac::FacilityType, int>& value)
+{
+  whazzup->setAtcRadius(value);
 }
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)

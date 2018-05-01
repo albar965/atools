@@ -151,6 +151,7 @@ create table atc
   qnh_mb integer,
   lonx double not null,
   laty double not null,
+  radius integer not null,        --Nm - painting radius for circle
   max_lonx double not null,       -- Bounding rectangle
   max_laty double not null,       -- "
   min_lonx double not null,       -- Bounding rectangle

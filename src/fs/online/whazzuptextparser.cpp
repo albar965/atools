@@ -286,12 +286,17 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     static_cast<atools::fs::online::fac::FacilityType>(atInt(line, index++));
   insertQuery->bindValue(":facility_type", facilityType);
 
+  int visualRange = atInt(line, index++);
+  int circleRadius = visualRange;
+
   if(atc)
   {
     // Convert the facility type to database airspace types
     QString boundaryType, comType;
     switch(facilityType)
     {
+      case atools::fs::online::fac::UNKNOWN:
+        break;
       case atools::fs::online::fac::OBSERVER:
         boundaryType = "OBS";
         break;
@@ -325,11 +330,17 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
         break;
 
     }
+
+    // Value -1: not applicable / not set
+    circleRadius = atcRadius.value(facilityType, -1);
+    if(circleRadius == -1)
+      circleRadius = visualRange;
+
     insertQuery->bindValue(":type", boundaryType);
     insertQuery->bindValue(":com_type", comType);
+    insertQuery->bindValue(":radius", circleRadius);
   }
 
-  int visualRange = atInt(line, index++);
   insertQuery->bindValue(":visual_range", visualRange);
 
   if(!atc)
@@ -421,7 +432,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
     // Create a circular polygon with 10 degree segments
     Pos center(lonx, laty);
-    LineString lineString(center, atools::geo::nmToMeter(visualRange), 36);
+    LineString lineString(center, atools::geo::nmToMeter(circleRadius), 36);
 
     // Add bounding rectancle
     Rect bounding = lineString.boundingRect();
@@ -456,6 +467,11 @@ int WhazzupTextParser::getSemiPermanentId(QHash<QString, int>& idMap, int& curId
     idMap.insert(key, id);
   }
   return id;
+}
+
+void WhazzupTextParser::setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value)
+{
+  atcRadius = value;
 }
 
 QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)

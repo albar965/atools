@@ -18,7 +18,10 @@
 #ifndef ATOOLS_ONLINETYPES_H
 #define ATOOLS_ONLINETYPES_H
 
+#include <QVector>
+
 class QString;
+class QStringList;
 
 namespace atools {
 namespace fs {
@@ -41,6 +44,7 @@ QString clientType(const QString& type);
 namespace fac {
 enum FacilityType
 {
+  UNKNOWN = -1,
   OBSERVER = 0,
   FLIGHT_INFORMATION = 1,
   DELIVERY = 2,
@@ -129,6 +133,15 @@ enum Simulator
 
 QString facilityTypeText(int type);
 QString facilityTypeText(atools::fs::online::fac::FacilityType type);
+
+/* Convert untranslated values to enum */
+atools::fs::online::fac::FacilityType textToFacilityType(QString value);
+
+/* Untranslated names*/
+QString facilityTypeTextSettings(fac::FacilityType type);
+
+const QVector<atools::fs::online::fac::FacilityType>& allFacilityTypes();
+
 QString admRatingText(int rating);
 QString admRatingText(atools::fs::online::adm::AdministrativeRating rating);
 
