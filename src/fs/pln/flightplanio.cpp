@@ -153,7 +153,7 @@ void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
     loadFms(plan, file);
   else
     throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
-                       "Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.").arg(file));
+                       "Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.").arg(file));
 
 }
 
