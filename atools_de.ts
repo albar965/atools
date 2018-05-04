@@ -326,7 +326,8 @@ Datei: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="284"/>
         <source>Heavy</source>
-        <translation>Schwer</translation>
+        <translatorcomment>Die meinsten Wetterphänomene sind im Deutschen maskulin</translatorcomment>
+        <translation>Schwerer</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="732"/>
@@ -500,12 +501,13 @@ Datei: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="886"/>
         <source>Light </source>
-        <translation>Leicht </translation>
+        <translatorcomment>Die meinsten Wetterphänomene sind im Deutschen maskulin</translatorcomment>
+        <translation>Leichter </translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="888"/>
         <source>Heavy </source>
-        <translation>Stark </translation>
+        <translation>Starker </translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="890"/>
@@ -515,7 +517,7 @@ Datei: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="892"/>
         <source>Moderate </source>
-        <translation>Mittel </translation>
+        <translation>Moderater </translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="937"/>
