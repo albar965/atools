@@ -1,6 +1,11 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.0.1.beta
+
+* Weather texts are now shown translated.
+* Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
 Version 3.0.0.beta
 
 * Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
