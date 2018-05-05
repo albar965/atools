@@ -255,31 +255,31 @@ Datei: &quot;%2&quot;
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1587"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1619"/>
         <source>Clear</source>
         <translatorcomment>METAR-Begriffe werden in der Regel nicht übersetzt.</translatorcomment>
         <translation>Klar</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1590"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1622"/>
         <source>Few</source>
         <translatorcomment>METAR-Begriffe werden in der Regel nicht übersetzt.</translatorcomment>
         <translation>Vereinzelt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1593"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1625"/>
         <source>Scattered</source>
         <translatorcomment>METAR-Begriffe werden in der Regel nicht übersetzt.</translatorcomment>
         <translation>Verteilt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1596"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1628"/>
         <source>Broken</source>
         <translatorcomment>METAR-Begriffe werden in der Regel nicht übersetzt.</translatorcomment>
         <translation>Überwiegend bedeckt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1599"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1631"/>
         <source>Overcast</source>
         <translatorcomment>METAR-Begriffe werden in der Regel nicht übersetzt.</translatorcomment>
         <translation>Bedeckt</translation>
@@ -288,470 +288,470 @@ Datei: &quot;%2&quot;
 <context>
     <name>MetarParser</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="172"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="441"/>
         <source>metar data bogus</source>
         <translation>METAR-Daten ungültig</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="485"/>
         <source>metar data incomplete </source>
         <translation>METAR-DATEN unvollständig </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="257"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="526"/>
         <source>Auto</source>
         <translation>Automatisch</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="260"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="529"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="263"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="532"/>
         <source>Routine delayed observation</source>
         <translatorcomment>Ich habe diesen Ausdruck nirgends finden können. Bist Du sicher, dass der genau so richtig ist? Da METAR ja  routinemäßig wiederholte bzw. erneuerte Daten sind, wäre für mich &quot;Delayed routine observation&quot;, also &quot;Verzögerte Routinebeobachtung&quot; vorstellbar. </translatorcomment>
         <translation>Verzögerte Routinebeobachtung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="278"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="547"/>
         <source>Light</source>
         <translation>Leicht</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="281"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="550"/>
         <source>Moderate</source>
         <translation>Mittel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="284"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="553"/>
         <source>Heavy</source>
         <translatorcomment>Die meinsten Wetterphänomene sind im Deutschen maskulin</translatorcomment>
         <translation>Schwerer</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="732"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="247"/>
         <source>No significant weather</source>
         <translatorcomment>Besser: &quot;Keine signifikante Wettererscheinung&quot;</translatorcomment>
         <translation>Keine signifikante Wettererscheinung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="743"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="137"/>
         <source>Showers of</source>
         <translatorcomment>Das &quot;of&quot; ist hier schwer enzubinden, weil das was nach &quot;of&quot; kommt, im Deutschen vor dem &quot;Schauer&quot; steht, z.B.: &quot;shower of sleet&quot; = &quot;Graupelschauer&quot;</translatorcomment>
         <translation>Schauer von</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="746"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="140"/>
         <source>Thunderstorm with</source>
         <translation>Gewitter mit</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="749"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="143"/>
         <source>Patches of</source>
         <translation>Flächen mit</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="752"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="146"/>
         <source>Blowing</source>
         <translatorcomment>&quot;Blowing&quot; im meteorologischen Kontext ist ein &quot;Gestöber&quot;, z.B. &quot;Blowing snow&quot; = &quot;Schneegestöber&quot;</translatorcomment>
         <translation>Gestöber</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="755"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="149"/>
         <source>Low drifting</source>
         <translatorcomment>Mit &quot;Low Drifting&quot; wird Schnee, Sand oder Staub, der in weniger als 2 m Höhe über Grund treibt, beschrieben. </translatorcomment>
         <translation>Niedrig treibender</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="758"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
         <source>Freezing</source>
         <translation>Gefrierend</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="761"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="155"/>
         <source>Shallow</source>
         <translation>Flach</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="764"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="158"/>
         <source>Partial</source>
         <translation>Teilweise</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="773"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
         <source>Drizzle</source>
         <translation>Nieselregen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="776"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
         <source>Hail</source>
         <translation>Hagel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="779"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
         <source>Small hail and/or snow pellets</source>
         <translation>Kleiner Hagel bzw. Schneegraupel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="782"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
         <source>Ice crystals</source>
         <translation>Eiskristalle</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="785"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
         <source>Ice pellets</source>
         <translation>Graupel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="788"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="183"/>
         <source>Rain</source>
         <translation>Regen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="791"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="186"/>
         <source>Snow grains</source>
         <translation>Schneekörner</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="794"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="189"/>
         <source>Snow</source>
         <translation>Schnee</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="797"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="192"/>
         <source>Unknown precipitation</source>
         <translation>Unbekannter Niederschlag</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="800"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="195"/>
         <source>Mist</source>
         <translation>Dunst</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="803"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="198"/>
         <source>Widespread dust</source>
         <translation>Verteilter Staub</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="806"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="201"/>
         <source>Fog</source>
         <translation>Nebel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="809"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="204"/>
         <source>Fog bank</source>
         <translation>Nebelbank</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="812"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="207"/>
         <source>Smoke</source>
         <translation>Rauch</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="815"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
         <source>Haze</source>
         <translation>Dunst</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="818"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
         <source>Spray</source>
         <translation>Sprühregen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="821"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
         <source>Sand</source>
         <translation>Sand</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="824"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
         <source>Volcanic ash</source>
         <translation>Vulkanasche</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="827"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="222"/>
         <source>Duststorm</source>
         <translation>Staubsturm</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="830"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
         <source>Funnel cloud/tornado waterspout</source>
         <translation>Tornado/Wasserhose</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="833"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="228"/>
         <source>Well-developed dust/sand whirls</source>
         <translation>Starke Staub-/Sandwirbel</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="836"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
         <source>Squalls</source>
         <translation>Böen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="839"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
         <source>Sandstorm</source>
         <translation>Sandsturm</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="842"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="237"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="886"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1036"/>
         <source>Light </source>
         <translatorcomment>Die meinsten Wetterphänomene sind im Deutschen maskulin</translatorcomment>
         <translation>Leichter </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="888"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1038"/>
         <source>Heavy </source>
         <translation>Starker </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="890"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1040"/>
         <source>in the vicinity </source>
         <translation>im Umkreis </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="892"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1042"/>
         <source>Moderate </source>
         <translation>Moderater </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="937"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="284"/>
         <source>altocumulus</source>
         <translation>Altocumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="940"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="287"/>
         <source>altocumulus castellanus</source>
         <translation>Altocumulus Castellanus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="943"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="290"/>
         <source>altocumulus standing lenticular</source>
         <translation>Altocumulus Lenticularis</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="946"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="293"/>
         <source>altostratus</source>
         <translation>Altostratus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="949"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="296"/>
         <source>cumulonimbus</source>
         <translation>Cumulonimbus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="952"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="299"/>
         <source>cumulonimbus mammatus</source>
         <translation>Cumulonimbus Mammatus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="955"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="302"/>
         <source>cirrocumulus</source>
         <translation>Cirrocumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="958"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="305"/>
         <source>cirrocumulus standing lenticular</source>
         <translation>Cirrocumulus Lenticularis</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="961"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="308"/>
         <source>cirrus</source>
         <translation>Cirrus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="964"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="311"/>
         <source>cirrostratus</source>
         <translation>Cirrostratus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="967"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="314"/>
         <source>cumulus</source>
         <translation>Cumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="970"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="317"/>
         <source>cumulus fractus</source>
         <translation>Cumulus Fractus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="973"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="320"/>
         <source>nimbostratus</source>
         <translation>Nimbostratus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="976"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="323"/>
         <source>stratoaltocumulus</source>
         <translation>Stratoaltocumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="979"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="326"/>
         <source>stratocumulus</source>
         <translation>Stratocumulus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="982"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="329"/>
         <source>stratocumulus standing lenticular</source>
         <translation>Stratocumulus Lenticularis</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="985"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="332"/>
         <source>stratus</source>
         <translation>Stratus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="988"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="335"/>
         <source>stratus fractus</source>
         <translation>Stratus Fractus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="991"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="338"/>
         <source>towering cumulus</source>
         <translation>Cumulus Congestus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1234"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="347"/>
         <source>clear and dry</source>
         <translation>klar und trocken</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1235"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="348"/>
         <source>damp</source>
         <translation>feucht</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1236"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="349"/>
         <source>wet or puddles</source>
         <translation>nass oder Pfützen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1237"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="350"/>
         <source>frost</source>
         <translation>Reif</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1238"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="351"/>
         <source>dry snow</source>
         <translation>trockener Schnee</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1239"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="352"/>
         <source>wet snow</source>
         <translation>nasser Schnee</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1240"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="353"/>
         <source>slush</source>
         <translation>Matsch</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1241"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="354"/>
         <source>ice</source>
         <translation>Eis</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1242"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="355"/>
         <source>compacted snow</source>
         <translation>verdichteter Schnee</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1243"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="356"/>
         <source>frozen ridges</source>
         <translation>gefrorener Ränder</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1249"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="363"/>
         <source>1-10%</source>
         <translation>1-10%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1250"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="364"/>
         <source>11-25%</source>
         <translation>11-25%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1253"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="367"/>
         <source>26-50%</source>
         <translation>26-50%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1257"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="371"/>
         <source>51-100%</source>
         <translation>51-100%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1263"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="378"/>
         <source>poor braking action</source>
         <translation>schlechte Bremswirkung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1264"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="379"/>
         <source>poor/medium braking action</source>
         <translation>schlechte/mittlere Bremswirkung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1265"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="380"/>
         <source>medium braking action</source>
         <translation>mittlere Bremswirkung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1266"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="381"/>
         <source>medium/good braking action</source>
         <translation>mittlere/gute Bremswirkung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1267"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="382"/>
         <source>good braking action</source>
         <translation>gute Bremswirkung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1271"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="386"/>
         <source>friction: unreliable measurement</source>
         <translation>Reibung: Unzuverlässige Messung</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1300"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1345"/>
         <source>cleared</source>
         <translation>geräumt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1336"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
         <source>runway not in use</source>
         <translatorcomment>Sollte (ggf. auf Platzgründen) &quot;Runway&quot; vielleicht besser nicht übersetzt werden?</translatorcomment>
         <translation>Runway nicht benutzt</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1447"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="259"/>
         <source>Blue</source>
         <translation>Blau</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1450"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
         <source>White</source>
         <translation>Weiß</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1453"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="265"/>
         <source>Green</source>
         <translation>Grün</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1456"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="268"/>
         <source>Yellow</source>
         <translation>Gelb</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1459"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="271"/>
         <source>Amber</source>
         <translation>Amber</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1462"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="274"/>
         <source>Red</source>
         <translation>Rot</translation>
     </message>
@@ -759,17 +759,17 @@ Datei: &quot;%2&quot;
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1641"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1673"/>
         <source>Vertical visibility</source>
         <translation>Vertikale Sicht</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1647"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1679"/>
         <source>Less than</source>
         <translation>Weniger als</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1650"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1682"/>
         <source>Greater than</source>
         <translation>Mehr als</translation>
     </message>
@@ -1095,10 +1095,10 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="51"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="90"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="114"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="193"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="230"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="150"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="174"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="253"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="290"/>
         <source>Observer</source>
         <translation>Beobachter</translation>
     </message>
@@ -1129,7 +1129,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="248"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="308"/>
         <source>ACC</source>
         <translation>ACC</translation>
     </message>
@@ -1139,308 +1139,309 @@ Datei: &quot;%2&quot;
         <translation>Abflug</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="87"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="147"/>
         <source>Suspended</source>
         <translation>Suspendiert</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="93"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="153"/>
         <source>User</source>
         <translation>Nutzer</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="96"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="156"/>
         <source>Supervisor</source>
         <translation>Supervisor</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="99"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="159"/>
         <source>Administrator</source>
         <translation>Administrator</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="117"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="177"/>
         <source>Basic flight student (FS1)</source>
         <translatorcomment>Ich nehme an, Du beziehst Dich hier auf die IVAO-Ausbildungsgrade, oder? Dafür gibt es soweit ich weiß keine deutsche Übersetzung.</translatorcomment>
         <translation>Basic flight student (FS1)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="120"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="180"/>
         <source>Flight student (FS2)</source>
         <translation>Flight student (FS2)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="123"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="183"/>
         <source>Advanced flight student (FS3)</source>
         <translation>Advanced flight student (FS3)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="126"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="186"/>
         <source>Private pilot (PP)</source>
         <translation>Private pilot (PP)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="129"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="189"/>
         <source>Senior private pilot (SPP)</source>
         <translation>Senior private pilot (SPP)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="132"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="192"/>
         <source>Commercial pilot (CP)</source>
         <translation>Commercial pilot (CP)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="135"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="195"/>
         <source>Airline transport pilot (ATP)</source>
         <translation>Airline transport pilot (ATP)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="138"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="198"/>
         <source>Senior flight instructor (SFI)</source>
         <translation>Senior flight instructor (SFI)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="141"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="201"/>
         <source>Chief flight instructor (CFI)</source>
         <translation>Chief flight instructor (CFI)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="151"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="211"/>
         <source>OBS</source>
         <translation>OBS</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="154"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="214"/>
         <source>FS1</source>
         <translation>FS1</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="157"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="217"/>
         <source>FS2</source>
         <translation>FS2</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="160"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="220"/>
         <source>FS3</source>
         <translation>FS3</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="163"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="223"/>
         <source>PP</source>
         <translation>PP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="166"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="226"/>
         <source>SPP</source>
         <translation>SPP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="169"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="229"/>
         <source>CP</source>
         <translation>CP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="172"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="232"/>
         <source>ATP</source>
         <translation>ATP</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="175"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="235"/>
         <source>SFI</source>
         <translation>SFI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="178"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="238"/>
         <source>CFI</source>
         <translation>CFI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="196"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="256"/>
         <source>ATC Applicant (AS1)</source>
         <translation>ATC Applicant (AS1)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="199"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="259"/>
         <source>ATC Trainee (AS2)</source>
         <translation>ATC Trainee (AS2)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="202"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="262"/>
         <source>Advanced ATC Trainee (AS3)</source>
         <translation>Advanced ATC Trainee (AS3)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="205"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="265"/>
         <source>Aerodrome Controller (ADC)</source>
         <translation>Aerodrome Controller (ADC)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="208"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="268"/>
         <source>Approach Controller (APC)</source>
         <translation>Approach Controller (APC)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="211"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="271"/>
         <source>Center Controller (ACC)</source>
         <translation>Center Controller (ACC)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="214"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="274"/>
         <source>Senior Controller (SEC)</source>
         <translation>Senior Controller (SEC)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="217"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="277"/>
         <source>Senior ATC Instructor (SAI)</source>
         <translation>Senior ATC Instructor (SAI)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="220"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="280"/>
         <source>Chief ATC Instructor (CAI)</source>
         <translation>Chief ATC Instructor (CAI)</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="233"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="293"/>
         <source>AS1</source>
         <translation>AS1</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="236"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="296"/>
         <source>AS2</source>
         <translation>AS2</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="239"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="299"/>
         <source>AS3</source>
         <translation>AS3</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="242"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="302"/>
         <source>ADC</source>
         <translation>ADC</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="245"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="305"/>
         <source>APC</source>
         <translation>APC</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="251"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="311"/>
         <source>SEC</source>
         <translation>SEC</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="254"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="314"/>
         <source>SAI</source>
         <translation>SAI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="257"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="317"/>
         <source>CAI</source>
         <translation>CAI</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="272"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="332"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="275"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="335"/>
         <source>FS95</source>
         <translation>FS95</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="278"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="338"/>
         <source>FS98</source>
         <translation>FS98</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="281"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="341"/>
         <source>CFS</source>
         <translation>CFS</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="284"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="344"/>
         <source>FS2000</source>
         <translation>FS2000</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="287"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="347"/>
         <source>CFS2</source>
         <translation>CFS2</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="290"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="350"/>
         <source>FS2002</source>
         <translation>FS2002</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="293"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="353"/>
         <source>CFS3</source>
         <translation>CFS3</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="296"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="356"/>
         <source>FS2004</source>
         <translation>FS2004</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="299"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="359"/>
         <source>FSX</source>
         <translation>FSX</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="302"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="362"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="305"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="365"/>
         <source>X-Plane 8</source>
         <translation>X-Plane 8</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="308"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="368"/>
         <source>X-Plane 9</source>
         <translation>X-Plane 9</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="311"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="371"/>
         <source>X-Plane 10</source>
         <translation>X-Plane 10</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="314"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="374"/>
         <source>PS1</source>
         <translation>PS1</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="317"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="377"/>
         <source>X-Plane 11</source>
         <translation>X-Plane 11</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="320"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="380"/>
         <source>X-Plane 12</source>
         <translation>X-Plane 12</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="323"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="383"/>
         <source>Fly</source>
         <translation>Fly</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="326"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="386"/>
         <source>Fly 2</source>
         <translation>Fly 2</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="329"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="389"/>
         <source>FlightGear</source>
         <translation>FlightGear</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="332"/>
+        <location filename="src/fs/online/onlinetypes.cpp" line="392"/>
         <source>P3D</source>
         <translation>P3D</translation>
     </message>
