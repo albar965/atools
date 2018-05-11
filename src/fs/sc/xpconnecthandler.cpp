@@ -105,7 +105,7 @@ bool XpConnectHandler::fetchData(fs::sc::SimConnectData& data, int radiusKm, fs:
       {
         if(!(options & atools::fs::sc::FETCH_AI_AIRCRAFT))
           // Have to clear this here since the X-Plane plugin has no configuration option
-          data.getAiAircraftNonConst().clear();
+          data.getAiAircraft().clear();
 
         return true;
       }

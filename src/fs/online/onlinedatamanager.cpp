@@ -187,6 +187,27 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
   return rec;
 }
 
+sql::SqlRecordVector OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
+{
+  SqlQuery query(db);
+  query.prepare("select * from client where callsign = :callsign");
+  query.bindValue(":callsign", callsign);
+  query.exec();
+  sql::SqlRecordVector recs;
+  while(query.next())
+    recs.append(query.record());
+  return recs;
+}
+
+void OnlinedataManager::getClientCallsignAndPosMap(QHash<QString, geo::Pos>& clientMap)
+{
+  clientMap.clear();
+  SqlQuery query("select callsign, lonx, laty from client", db);
+  query.exec();
+  while(query.next())
+    clientMap.insert(query.valueStr("callsign"), atools::geo::Pos(query.valueFloat("lonx"), query.valueFloat("laty")));
+}
+
 int OnlinedataManager::getNumClients() const
 {
   return SqlUtil(db).rowCount("client");

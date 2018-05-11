@@ -122,7 +122,7 @@ void DataReaderThread::run()
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
 
         // Remove boat and ship traffic depending on settings for testing purposes
-        QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraftNonConst();
+        QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
         if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
         {
           QVector<SimConnectAircraft>::iterator it =

@@ -96,18 +96,22 @@ public:
 
   // fs data ----------------------------------------------------
 
-  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraftConst() const
   {
     return userAircraft;
   }
 
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraftConst() const
   {
     return aiAircraft;
   }
 
-  /* Only needed to modify replay */
-  QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraftNonConst()
+  atools::fs::sc::SimConnectUserAircraft& getUserAircraft()
+  {
+    return userAircraft;
+  }
+
+  QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft()
   {
     return aiAircraft;
   }
