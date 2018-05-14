@@ -432,7 +432,11 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
     // Create a circular polygon with 10 degree segments
     Pos center(lonx, laty);
-    LineString lineString(center, atools::geo::nmToMeter(circleRadius), 36);
+
+    // at least 1/10 nm radius
+    LineString lineString(center,
+                          atools::geo::nmToMeter(std::min(1000.f, std::max(1.f, static_cast<float>(circleRadius)))),
+                          36);
 
     // Add bounding rectancle
     Rect bounding = lineString.boundingRect();

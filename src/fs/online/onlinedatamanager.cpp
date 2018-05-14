@@ -119,7 +119,7 @@ bool OnlinedataManager::hasSchema()
 
 bool OnlinedataManager::hasData()
 {
-  return SqlUtil(db).hasTableAndRows("client");
+  return SqlUtil(db).hasTableAndRows("client") || SqlUtil(db).hasTableAndRows("atc");
 }
 
 void OnlinedataManager::createSchema()
