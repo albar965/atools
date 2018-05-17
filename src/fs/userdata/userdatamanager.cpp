@@ -398,6 +398,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
       insertQuery.bindValue(":tags", at(values, csv::TAGS));
       insertQuery.bindValue(":import_file_path", absfilepath);
+      insertQuery.bindValue(":temp", 0);
 
       // YYYY-MM-DDTHH:mm:ss
       QDateTime lastEdit = QDateTime::fromString(at(values, csv::LAST_EDIT, true /* no warning */), Qt::ISODate);
@@ -505,6 +506,7 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(":temp", 0);
 
       validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY));
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
@@ -576,6 +578,7 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(":temp", 0);
 
       validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY));
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
@@ -732,7 +735,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << " " << QString::number(query.q.valueDouble("lonx"), 'f', 8)
              << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
              << " " << "ENRT" // Ignore airport here
-             << " " << (region.isEmpty() ? "ZZ" : region)
+             << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region))
              << endl;
       numExported++;
     }
