@@ -24,6 +24,11 @@
 
 delete from vor;
 
+-- 25, 40 and 130 correspond to VORs classified as terminal, low and high.﻿
+-- 125 rang﻿e is where the VOR has n﻿o﻿ published ter﻿m/low/high classifica﻿ti﻿on.
+-- These VORs might have the power output of a high VOR, but are not tested/certified to fulfill the
+-- high altitude SV﻿V﻿﻿.
+
 insert into vor (file_id, ident, name, region, type, frequency, channel, range, mag_var,
                  dme_only, dme_altitude, dme_lonx, dme_laty, altitude, lonx, laty)
 select
