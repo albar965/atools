@@ -38,9 +38,9 @@ Caught exception
         <oldsource>%1
 Caught exception
 &quot;%2&quot;</oldsource>
-        <translation type="unfinished">%1
+        <translation>%1
 Exception concernant
-&quot;%2&quot;</translation>
+%2</translation>
     </message>
     <message>
         <location filename="src/gui/errorhandler.cpp" line="44"/>
@@ -86,109 +86,42 @@ Fichier: &quot;%2&quot;
     </message>
 </context>
 <context>
-    <name>Flightplan</name>
-    <message>
-        <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier de plan de vol vide &quot;%1&quot;.</translation>
-    </message>
-    <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier de plan de vol &quot;%1&quot;. Aucun format de plan de vol pris en charge détecté. Seuls PLN (FSX XML et FS9 INI), FMS et FLP sont pris en charge.</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Cannot read version number: %1</source>
-        <translation type="vanished">Fichier FMS non valide. Numéro de version illisible: %1</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Invalid version %2: %1</source>
-        <translation type="vanished">Fichier FMS non valide. Version non valide %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Number of sections is not %2: %1</source>
-        <translation type="vanished">Fichier FMS non valide. Nombre de sections n&apos;est pas %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Fichier de plan de vol invalide &quot;%1&quot;.</translation>
-    </message>
-    <message>
-        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
-    </message>
-    <message>
-        <source> Flight Plan</source>
-        <translation type="vanished"> Plan de vol</translation>
-    </message>
-    <message>
-        <source> Track</source>
-        <translation type="vanished"> Trace</translation>
-    </message>
-    <message>
-        <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
-    </message>
-    <message>
-        <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
-        <translation type="vanished">PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
-    </message>
-    <message>
-        <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation type="vanished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
-    </message>
-    <message>
-        <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
-        <translation type="vanished">Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
-    </message>
-    <message>
-        <source>Created by %1 Version %2 (revision %3) on %4</source>
-        <translation type="vanished">Créé par %1 Version %2 (révision %3) sur %4</translation>
-    </message>
-</context>
-<context>
     <name>FlightplanIO</name>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="122"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de plan de vol vide &quot;%1&quot;.</translation>
+        <translation>Impossible d&apos;ouvrir le fichier de plan de vol vide &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="155"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</oldsource>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de plan de vol &quot;%1&quot;. Aucun format de plan de vol pris en charge détecté. Seuls PLN (FSX XML et FS9 INI), FMS et FLP sont pris en charge.</translation>
+        <translation>Impossible d&apos;ouvrir le fichier de plan de vol &quot;%1&quot;. Aucun format de plan de vol pris en charge détecté. Seuls PLN (FSX XML et FS9 INI), FMS et FLP sont pris en charge.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="361"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
-        <translation type="unfinished">Fichier FMS non valide. Numéro de version illisible: %1</translation>
+        <translation>Fichier FMS non valide. Numéro de version illisible: %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="376"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
-        <translation type="unfinished">Fichier FMS non valide. Version non valide %2: %1</translation>
+        <translation>Fichier FMS non valide. Version non valide %2: %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="502"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
-        <translation type="unfinished">Fichier FMS non valide. Nombre de sections n&apos;est pas %2: %1</translation>
+        <translation>Fichier FMS non valide. Nombre de sections n&apos;est pas %2: %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="749"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
-        <translation type="unfinished">Fichier de plan de vol invalide &quot;%1&quot;.</translation>
+        <translation>Fichier de plan de vol invalide &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="865"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
@@ -196,47 +129,47 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/pln/flightplanio.cpp" line="1773"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1966"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1125"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1179"/>
         <source> Flight Plan</source>
-        <translation type="unfinished"> Plan de vol</translation>
+        <translation> Plan de vol</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1224"/>
         <source> Track</source>
-        <translation type="unfinished"> Trace</translation>
+        <translation> Trace</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1423"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1452"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
-        <translation type="unfinished">PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
+        <translation>PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1518"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1599"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
-        <translation type="unfinished">Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
+        <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1697"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FLTPLAN %1. Motif : %2</translation>
+        <translation>Impossible d&apos;ouvrir le fichier FLTPLAN %1. Motif : %2</translation>
     </message>
 </context>
 <context>
@@ -278,30 +211,6 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/weather/metarparser.cpp" line="1631"/>
         <source>Overcast</source>
         <translation>Couvert à</translation>
-    </message>
-    <message>
-        <source>nil</source>
-        <translation type="obsolete">rien</translation>
-    </message>
-    <message>
-        <source>clear</source>
-        <translation type="obsolete">beau temps</translation>
-    </message>
-    <message>
-        <source>few</source>
-        <translation type="obsolete">peu nuageux</translation>
-    </message>
-    <message>
-        <source>scattered</source>
-        <translation type="obsolete">éclaircies</translation>
-    </message>
-    <message>
-        <source>broken</source>
-        <translation type="obsolete">partiellement couvert</translation>
-    </message>
-    <message>
-        <source>overcast</source>
-        <translation type="obsolete">couvert</translation>
     </message>
 </context>
 <context>
@@ -885,12 +794,12 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="435"/>
         <source>Creating indexes for airport</source>
-        <translation type="unfinished">Création d&apos;index pour les aérodromes</translation>
+        <translation>Création d&apos;index pour les aérodromes</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="440"/>
         <source>Clean up runways</source>
-        <translation type="unfinished">Nettoyage des pistes</translation>
+        <translation>Nettoyage des pistes</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="487"/>
@@ -1073,32 +982,32 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/atools.cpp" line="297"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
-        <translation type="unfinished">Créé par %1 Version %2 (révision %3) sur %4</translation>
+        <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="307"/>
         <source>Created by %1 Version %2 (revision %3)</source>
-        <translation type="unfinished">Créé par %1 Version %2 (révision %3)</translation>
+        <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="332"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
+        <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="29"/>
         <source>ATC</source>
-        <translation type="unfinished">ATC</translation>
+        <translation>ATC</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="31"/>
         <source>Pilot</source>
-        <translation type="unfinished">Pilote</translation>
+        <translation>Pilote</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="33"/>
         <source>Follow me car</source>
-        <translation type="unfinished">Suivez-moi en voiture</translation>
+        <translation>Suivez-moi en voiture</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="51"/>
@@ -1107,349 +1016,349 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/online/onlinetypes.cpp" line="253"/>
         <location filename="src/fs/online/onlinetypes.cpp" line="290"/>
         <source>Observer</source>
-        <translation type="unfinished">Observateur</translation>
+        <translation>Observateur</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="54"/>
         <source>FIR</source>
-        <translation type="unfinished">FIR</translation>
+        <translation>FIR</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="57"/>
         <source>Delivery</source>
-        <translation type="unfinished">Livraison</translation>
+        <translation>Livraison</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="60"/>
         <source>Ground</source>
-        <translation type="unfinished">Sol</translation>
+        <translation>Sol</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="63"/>
         <source>Tower</source>
-        <translation type="unfinished">Tour de contrôle</translation>
+        <translation>Tour de contrôle</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="66"/>
         <source>Approach</source>
-        <translation type="unfinished">Approche</translation>
+        <translation>Approche</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
         <location filename="src/fs/online/onlinetypes.cpp" line="308"/>
         <source>ACC</source>
-        <translation type="unfinished">ACC</translation>
+        <translation>ACC</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="72"/>
         <source>Departure</source>
-        <translation type="unfinished">Départ</translation>
+        <translation>Départ</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="147"/>
         <source>Suspended</source>
-        <translation type="unfinished">Suspendu</translation>
+        <translation>Suspendu</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="153"/>
         <source>User</source>
-        <translation type="unfinished">Utilisateur</translation>
+        <translation>Utilisateur</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="156"/>
         <source>Supervisor</source>
-        <translation type="unfinished">Superviseur</translation>
+        <translation>Superviseur</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="159"/>
         <source>Administrator</source>
-        <translation type="unfinished">Administrateur</translation>
+        <translation>Administrateur</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="177"/>
         <source>Basic flight student (FS1)</source>
-        <translation type="unfinished">Étudiant en vol de base (FS1)</translation>
+        <translation>Étudiant en vol de base (FS1)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="180"/>
         <source>Flight student (FS2)</source>
-        <translation type="unfinished">Étudiant de vol (FS2)</translation>
+        <translation>Étudiant de vol (FS2)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="183"/>
         <source>Advanced flight student (FS3)</source>
-        <translation type="unfinished">Étudiant en vol avancé (FS3)</translation>
+        <translation>Étudiant en vol avancé (FS3)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="186"/>
         <source>Private pilot (PP)</source>
-        <translation type="unfinished">Pilote privé (PP)</translation>
+        <translation>Pilote privé (PP)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="189"/>
         <source>Senior private pilot (SPP)</source>
-        <translation type="unfinished">Pilote privé confirmé (SPP)</translation>
+        <translation>Pilote privé confirmé (SPP)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="192"/>
         <source>Commercial pilot (CP)</source>
-        <translation type="unfinished">Pilote professionnel (CP)</translation>
+        <translation>Pilote professionnel (CP)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="195"/>
         <source>Airline transport pilot (ATP)</source>
-        <translation type="unfinished">Pilote de compagnie aérienne (ATP)</translation>
+        <translation>Pilote de compagnie aérienne (ATP)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="198"/>
         <source>Senior flight instructor (SFI)</source>
-        <translation type="unfinished">Instructeur de vol confirmé (SFI)</translation>
+        <translation>Instructeur de vol confirmé (SFI)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="201"/>
         <source>Chief flight instructor (CFI)</source>
-        <translation type="unfinished">Instructeur de vol en chef (CFI)</translation>
+        <translation>Instructeur de vol en chef (CFI)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="211"/>
         <source>OBS</source>
-        <translation type="unfinished">OBS</translation>
+        <translation>OBS</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="214"/>
         <source>FS1</source>
-        <translation type="unfinished">FS1</translation>
+        <translation>FS1</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="217"/>
         <source>FS2</source>
-        <translation type="unfinished">FS2</translation>
+        <translation>FS2</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="220"/>
         <source>FS3</source>
-        <translation type="unfinished">FS3</translation>
+        <translation>FS3</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="223"/>
         <source>PP</source>
-        <translation type="unfinished">PP</translation>
+        <translation>PP</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="226"/>
         <source>SPP</source>
-        <translation type="unfinished">SPP</translation>
+        <translation>SPP</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="229"/>
         <source>CP</source>
-        <translation type="unfinished">CP</translation>
+        <translation>CP</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="232"/>
         <source>ATP</source>
-        <translation type="unfinished">ATP</translation>
+        <translation>ATP</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="235"/>
         <source>SFI</source>
-        <translation type="unfinished">SFI</translation>
+        <translation>SFI</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="238"/>
         <source>CFI</source>
-        <translation type="unfinished">CFI</translation>
+        <translation>CFI</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="256"/>
         <source>ATC Applicant (AS1)</source>
-        <translation type="unfinished">Demandeur ATC (AS1)</translation>
+        <translation>Demandeur ATC (AS1)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="259"/>
         <source>ATC Trainee (AS2)</source>
-        <translation type="unfinished">Stagiaire ATC (AS2)</translation>
+        <translation>Stagiaire ATC (AS2)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="262"/>
         <source>Advanced ATC Trainee (AS3)</source>
-        <translation type="unfinished">Stagiaire ATC avancé (AS3)</translation>
+        <translation>Stagiaire ATC avancé (AS3)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="265"/>
         <source>Aerodrome Controller (ADC)</source>
-        <translation type="unfinished">Contrôleur d&apos;aérodrome (ADC)</translation>
+        <translation>Contrôleur d&apos;aérodrome (ADC)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="268"/>
         <source>Approach Controller (APC)</source>
-        <translation type="unfinished">Contrôleur d&apos;approche (APC)</translation>
+        <translation>Contrôleur d&apos;approche (APC)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="271"/>
         <source>Center Controller (ACC)</source>
-        <translation type="unfinished">Contrôleur central (ACC)</translation>
+        <translation>Contrôleur central (ACC)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="274"/>
         <source>Senior Controller (SEC)</source>
-        <translation type="unfinished">Contrôleur confirmé (SEC)</translation>
+        <translation>Contrôleur confirmé (SEC)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="277"/>
         <source>Senior ATC Instructor (SAI)</source>
-        <translation type="unfinished">Instructeur ATC confirmé (SAI)</translation>
+        <translation>Instructeur ATC confirmé (SAI)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="280"/>
         <source>Chief ATC Instructor (CAI)</source>
-        <translation type="unfinished">Instructeur en chef ATC (CAI)</translation>
+        <translation>Instructeur en chef ATC (CAI)</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="293"/>
         <source>AS1</source>
-        <translation type="unfinished">AS1</translation>
+        <translation>AS1</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="296"/>
         <source>AS2</source>
-        <translation type="unfinished">AS2</translation>
+        <translation>AS2</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="299"/>
         <source>AS3</source>
-        <translation type="unfinished">AS3</translation>
+        <translation>AS3</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="302"/>
         <source>ADC</source>
-        <translation type="unfinished">ADC</translation>
+        <translation>ADC</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="305"/>
         <source>APC</source>
-        <translation type="unfinished">APC</translation>
+        <translation>APC</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="311"/>
         <source>SEC</source>
-        <translation type="unfinished">SEC</translation>
+        <translation>SEC</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="314"/>
         <source>SAI</source>
-        <translation type="unfinished">SAI</translation>
+        <translation>SAI</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="317"/>
         <source>CAI</source>
-        <translation type="unfinished">CAI</translation>
+        <translation>CAI</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
         <location filename="src/fs/online/onlinetypes.cpp" line="332"/>
         <source>Unknown</source>
-        <translation type="unfinished">Inconnu</translation>
+        <translation>Inconnu</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="335"/>
         <source>FS95</source>
-        <translation type="unfinished">FS95</translation>
+        <translation>FS95</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="338"/>
         <source>FS98</source>
-        <translation type="unfinished">FS98</translation>
+        <translation>FS98</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="341"/>
         <source>CFS</source>
-        <translation type="unfinished">CFS</translation>
+        <translation>CFS</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="344"/>
         <source>FS2000</source>
-        <translation type="unfinished">FS2000</translation>
+        <translation>FS2000</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="347"/>
         <source>CFS2</source>
-        <translation type="unfinished">CFS2</translation>
+        <translation>CFS2</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="350"/>
         <source>FS2002</source>
-        <translation type="unfinished">FS2002</translation>
+        <translation>FS2002</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="353"/>
         <source>CFS3</source>
-        <translation type="unfinished">CFS3</translation>
+        <translation>CFS3</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="356"/>
         <source>FS2004</source>
-        <translation type="unfinished">FS2004</translation>
+        <translation>FS2004</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="359"/>
         <source>FSX</source>
-        <translation type="unfinished">FSX</translation>
+        <translation>FSX</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="362"/>
         <source>X-Plane</source>
-        <translation type="unfinished">X-Plane</translation>
+        <translation>X-Plane</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="365"/>
         <source>X-Plane 8</source>
-        <translation type="unfinished">X-Plane 8</translation>
+        <translation>X-Plane 8</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="368"/>
         <source>X-Plane 9</source>
-        <translation type="unfinished">X-Plane 9</translation>
+        <translation>X-Plane 9</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="371"/>
         <source>X-Plane 10</source>
-        <translation type="unfinished">X-Plane 10</translation>
+        <translation>X-Plane 10</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="374"/>
         <source>PS1</source>
-        <translation type="unfinished">PS1</translation>
+        <translation>PS1</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="377"/>
         <source>X-Plane 11</source>
-        <translation type="unfinished">X-Plane 11</translation>
+        <translation>X-Plane 11</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="380"/>
         <source>X-Plane 12</source>
-        <translation type="unfinished">X-Plane 12</translation>
+        <translation>X-Plane 12</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="383"/>
         <source>Fly</source>
-        <translation type="unfinished">Fly</translation>
+        <translation>Fly</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="386"/>
         <source>Fly 2</source>
-        <translation type="unfinished">Fly2</translation>
+        <translation>Fly 2</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="389"/>
         <source>FlightGear</source>
-        <translation type="unfinished">FlightGear</translation>
+        <translation>FlightGear</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="392"/>
         <source>P3D</source>
-        <translation type="unfinished">P3D</translation>
+        <translation>P3D</translation>
     </message>
 </context>
 <context>
@@ -1463,77 +1372,77 @@ Fichier: &quot;%2&quot;
 <context>
     <name>UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="413"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="504"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="575"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="634"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="676"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="680"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="772"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="429"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="521"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="593"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="653"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="695"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="699"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="748"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="791"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
+        <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="424"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="440"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Longitude n&apos;est pas un nombre valide en ligne
+        <translation>Longitude n&apos;est pas un nombre valide en ligne
 
 &quot;%1&quot;
 
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="427"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="443"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Latitude n&apos;est pas un nombre valide en ligne
+        <translation>Latitude n&apos;est pas un nombre valide en ligne
 
 &quot;%1&quot;
 
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="430"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="446"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Les coordonnées ne sont pas valides en ligne
+        <translation>Les coordonnées ne sont pas valides en ligne
 
 &quot;%1&quot;
 
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="433"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="449"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Les coordonnées sont nulles dans la ligne
+        <translation>Les coordonnées sont nulles dans la ligne
 
 &quot;%1&quot;
 
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="436"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="452"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation type="unfinished">Les coordonnées ne sont pas dans une plage valide en ligne
+        <translation>Les coordonnées ne sont pas dans une plage valide en ligne
 
 &quot;%1&quot;
 
@@ -1606,47 +1515,35 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <location filename="src/fs/ns/navserver.cpp" line="118"/>
         <source>Server is listening on hostnames %1 </source>
         <oldsource>Server is listening on hostname%1 %2 (IP address%3 %4) port %5.</oldsource>
-        <translation type="unfinished">Le serveur écoute sur les noms d&apos;hôtes %1 </translation>
+        <translation>Le serveur écoute sur les noms d&apos;hôtes %1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="109"/>
         <location filename="src/fs/ns/navserver.cpp" line="119"/>
         <source>Server is listening on hostname %1 </source>
-        <translation type="unfinished">Le serveur écoute sur le nom d&apos;hôte %1 </translation>
+        <translation>Le serveur écoute sur le nom d&apos;hôte %1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="111"/>
         <location filename="src/fs/ns/navserver.cpp" line="121"/>
         <source>(IP addresses %2) </source>
-        <translation type="unfinished">(IP addresses %2) </translation>
+        <translation>(IP addresses %2) </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="111"/>
         <location filename="src/fs/ns/navserver.cpp" line="121"/>
         <source>(IP address %2) </source>
-        <translation type="unfinished">(IP address %2) </translation>
+        <translation>(IP address %2) </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="113"/>
         <source>port %3.</source>
-        <translation type="unfinished">port %3.</translation>
+        <translation>port %3.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="124"/>
         <source>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</source>
-        <translation type="unfinished">port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
-    </message>
-    <message>
-        <source>s</source>
-        <translation type="vanished">s</translation>
-    </message>
-    <message>
-        <source>es</source>
-        <translation type="vanished">es</translation>
-    </message>
-    <message>
-        <source>Server is listening on hostname%1 %2 (IP address%3 %4) port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%5&lt;/span&gt;.</source>
-        <translation type="vanished">Le serveur est en écoute. sur hostname%1 %2 (adresse IP%3 %4) port &lt;span style=&quot;color: #ff0000; font-weight: bold&quot;&gt;%5&lt;/span&gt;.</translation>
+        <translation>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1654,7 +1551,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/ns/navserverworker.cpp" line="56"/>
         <source>Error creating network socket: %1.</source>
-        <translation type="unfinished">Erreur lors de la création d&apos;une connexion réseau: %1.</translation>
+        <translation>Erreur lors de la création d&apos;une connexion réseau: %1.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserverworker.cpp" line="63"/>
@@ -1689,7 +1586,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/ns/navserverworker.cpp" line="180"/>
         <source>Dropped more than %1 packages. Reason: %2. Increase update time interval.</source>
-        <translation type="unfinished">A perdu plus de %1 paquets. Motif: %2. Augmenter l&apos;intervalle de mise à jour.</translation>
+        <translation>A perdu plus de %1 paquets. Motif: %2. Augmenter l&apos;intervalle de mise à jour.</translation>
     </message>
 </context>
 <context>
@@ -1839,7 +1736,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="115"/>
+        <location filename="src/util/updatecheck.cpp" line="114"/>
         <source>Unknown Error</source>
         <translation>Erreur inconnue</translation>
     </message>
