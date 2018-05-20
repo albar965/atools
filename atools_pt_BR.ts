@@ -82,69 +82,6 @@ Ocorreu um erro no Sql
     </message>
 </context>
 <context>
-    <name>Flightplan</name>
-    <message>
-        <source> Flight Plan</source>
-        <translation type="vanished"> Plano de Voo</translation>
-    </message>
-    <message>
-        <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation type="vanished">Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation type="vanished">Não foi possível abrir o arquivo FMS %1. Razão: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation type="vanished">Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
-    </message>
-    <message>
-        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="vanished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</source>
-        <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Formato não suportado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
-    </message>
-    <message>
-        <source>Created by %1 Version %2 (revision %3) on %4</source>
-        <translation type="vanished">Criado por %1 Versão %2 (revisão %3) em %4</translation>
-    </message>
-    <message>
-        <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
-        <translation type="vanished">Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Cannot read version number: %1</source>
-        <translation type="vanished">FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Invalid version %2: %1</source>
-        <translation type="vanished">FMS arquivo inválido. Versão invalida %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Number of sections is not %2: %1</source>
-        <translation type="vanished">FMS arquivo inválido . Numero de seções %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
-    </message>
-    <message>
-        <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
-        <translation type="vanished">PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
-    </message>
-</context>
-<context>
     <name>FlightplanIO</name>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1179"/>
@@ -198,7 +135,7 @@ Ocorreu um erro no Sql
         <location filename="src/fs/pln/flightplanio.cpp" line="155"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</oldsource>
-        <translation type="unfinished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Formato não suportado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
+        <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1599"/>
@@ -1431,19 +1368,19 @@ Ocorreu um erro no Sql
 <context>
     <name>UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="413"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="504"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="575"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="634"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="676"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="680"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="772"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="429"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="521"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="593"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="653"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="695"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="699"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="748"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="791"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="436"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="452"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -1456,7 +1393,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="430"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="446"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1469,7 +1406,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="433"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="449"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1482,7 +1419,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="427"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="443"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1495,7 +1432,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="424"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="440"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1582,11 +1519,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
         <location filename="src/fs/ns/navserver.cpp" line="118"/>
         <source>Server is listening on hostnames %1 </source>
         <oldsource>Server is listening on hostname%1 %2 (IP address%3 %4) port %5.</oldsource>
-        <translation type="unfinished">Servidor está conectado no hostname%1 %2 (Endereço de IP%3 %4) porta %5.</translation>
-    </message>
-    <message>
-        <source>Server is listening on hostname%1 %2 (IP address%3 %4) port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%5&lt;/span&gt;.</source>
-        <translation type="vanished">Servidor está conectado no hostname%1 %2 (Endereço de IP%3 %4) porta &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%5&lt;/span&gt;.</translation>
+        <translation>O servidor está escutando em nomes de host %1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="105"/>
@@ -1799,7 +1732,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="115"/>
+        <location filename="src/util/updatecheck.cpp" line="114"/>
         <source>Unknown Error</source>
         <translation>Erro desconhecido</translation>
     </message>
