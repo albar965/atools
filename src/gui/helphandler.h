@@ -38,23 +38,17 @@ public:
   HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
   virtual ~HelpHandler();
 
-  /* Open the help HTML file in the default browser */
-  void help();
-  QUrl getHelpUrlForFile(const QString& dir, const QString& file, const QString& anchor = QString());
-  static QUrl getHelpUrlForFile(QWidget *parent, const QString& dir, const QString& file,
-                                const QString& anchor = QString());
-
-  static QString getHelpFile(const QString& urlString, const QStringList& languages);
+  static QString getHelpFile(const QString& urlString, bool override);
 
   /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
    * supported langages */
-  static QUrl getHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
+  static QUrl getHelpUrl(QWidget *parent, const QString& urlString, const QString& language,
                          const QString& anchor = QString());
-  QUrl getHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor = QString());
+  QUrl getHelpUrl(const QString& urlString, const QString& language, const QString& anchor = QString());
 
-  static void openHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
+  static void openHelpUrl(QWidget *parent, const QString& urlString, const QString& language,
                           const QString& anchor = QString());
-  void openHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor = QString());
+  void openHelpUrl(const QString& urlString, const QString& language, const QString& anchor = QString());
 
   /* Display about this application dialog */
   void about();
@@ -68,12 +62,9 @@ public:
   void openUrl(const QString& url);
   static void openUrl(QWidget *parent, const QString& url);
 
-  /* fileTemplate is a regexp like "little-navmap-user-manual-([a-z]{2})\.pdf".
-   * Capture 1 is the language. */
-  static QStringList getInstalledLanguages(const QString& directory, const QString& fileTemplate);
-
 private:
   static QString getLanguage();
+  static QString getLanguageFull();
 
   QWidget *parentWidget;
   QString message, rev;
