@@ -98,8 +98,9 @@ QUrl HelpHandler::getHelpUrl(QWidget *parent, const QString& urlString, const QS
   QUrl url;
   // Replace variable and create URL
   QString urlStr(atools::replaceVar(urlString, "LANG", language));
-  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
-    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr);
+  // Do not use system separator since this uses URLs
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
+    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/" + urlStr);
   else
     url = QUrl(urlStr);
 
@@ -120,9 +121,10 @@ QString HelpHandler::getHelpFile(const QString& urlString, bool override)
   // Replace variable and create URL
   QString urlStr(atools::replaceVar(urlString, "LANG", lang));
 
-  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
+  // Do not use system separator since this uses URLs
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
     // Full match with language and region if given
-    return QCoreApplication::applicationDirPath() + QDir::separator() + urlStr;
+    return QCoreApplication::applicationDirPath() + "/" + urlStr;
   else
   {
     // Try a file without region
@@ -130,12 +132,12 @@ QString HelpHandler::getHelpFile(const QString& urlString, bool override)
     if(!lang.isEmpty())
     {
       urlStr = atools::replaceVar(urlString, "LANG", lang);
-      if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
-        return QCoreApplication::applicationDirPath() + QDir::separator() + urlStr;
+      if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
+        return QCoreApplication::applicationDirPath() + "/" + urlStr;
     }
 
     // Try same language with any region by iterating over dir
-    QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + QFileInfo(urlString).path());
+    QDir dir(QCoreApplication::applicationDirPath() + "/" + QFileInfo(urlString).path());
     QString filter(atools::replaceVar(QFileInfo(urlString).fileName(), "LANG", lang + "_*"));
     QFileInfoList list = dir.entryInfoList({filter});
 
@@ -144,7 +146,7 @@ QString HelpHandler::getHelpFile(const QString& urlString, bool override)
 
     // Fall back to plain English
     urlStr = atools::replaceVar(urlString, "LANG", "en");
-    return QCoreApplication::applicationDirPath() + QDir::separator() + urlStr;
+    return QCoreApplication::applicationDirPath() + "/" + urlStr;
   }
 }
 
