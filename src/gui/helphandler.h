@@ -38,17 +38,30 @@ public:
   HelpHandler(QWidget *parent, const QString& aboutMessage, const QString& gitRevision);
   virtual ~HelpHandler();
 
-  static QString getHelpFile(const QString& urlString, bool override);
+  /*
+   * Get a help file where the ${LANG} variable in filepath will replaced with the
+   * system UI language.
+   *
+   * Falls back to English if indicator file is missing.
+   *
+   * This will consider region fallbacks in both directions like pt_BR -> pt or pt -> pt_BR
+   */
+  static QString getHelpFile(const QString& filepath, bool override);
 
-  /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
-   * supported langages */
-  static QUrl getHelpUrl(QWidget *parent, const QString& urlString, const QString& language,
-                         const QString& anchor = QString());
-  QUrl getHelpUrl(const QString& urlString, const QString& language, const QString& anchor = QString());
+  /*
+   * Open a help URL where the ${LANG} variable in urlString will replaced with the
+   * system UI language.
+   *
+   * Falls back to English if indicator file is missing.
+   *
+   * This will consider region fallbacks in both directions like pt_BR -> pt or pt -> pt_BR
+   */
+  static void openHelpUrlWeb(QWidget *parent, const QString& urlString, const QString& language,
+                             const QString& anchor = QString());
+  void openHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor = QString());
 
-  static void openHelpUrl(QWidget *parent, const QString& urlString, const QString& language,
-                          const QString& anchor = QString());
-  void openHelpUrl(const QString& urlString, const QString& language, const QString& anchor = QString());
+  static void openHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language);
+  void openHelpUrlFile(const QString& urlString, const QString& language);
 
   /* Display about this application dialog */
   void about();
@@ -56,13 +69,25 @@ public:
   /* Display about Qt dialog */
   void aboutQt();
 
-  /* Open an URL in the default browser. If that fails show an error dialog */
+  /* Open an URL in the default browser or application. If that fails show an error dialog */
   void openUrl(const QUrl& url);
   static void openUrl(QWidget *parent, const QUrl& url);
-  void openUrl(const QString& url);
-  static void openUrl(QWidget *parent, const QString& url);
+
+  /* Open a file in the default browser. If that fails show an error dialog */
+  void openUrlWeb(const QString& url);
+  static void openUrlWeb(QWidget *parent, const QString& url);
+
+  /* Open a file using the default application. If that fails show an error dialog */
+  void openFile(const QString& filepath);
+  static void openFile(QWidget *parent, const QString& filepath);
 
 private:
+  /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
+   * supported langages */
+  static QUrl getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor = QString());
+  static QUrl getHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language);
+  QUrl getHelpUrlFile(const QString& urlString, const QString& language);
+
   static QString getLanguage();
   static QString getLanguageFull();
 
