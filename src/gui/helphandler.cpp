@@ -103,7 +103,7 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
   qDebug() << Q_FUNC_INFO << filepath;
 
   if(QFile::exists(filepath))
-    openUrl(parent, QUrl::fromLocalFile(filepath));
+    openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
   else
     QMessageBox::warning(parent, QApplication::applicationName(), QString(
                            tr("Help file <i>%1</i> not found")).arg(filepath));
@@ -174,7 +174,7 @@ QString HelpHandler::getHelpFile(const QString& filepath, bool override)
 
 QUrl HelpHandler::getHelpUrlFile(const QString& urlString, const QString& language)
 {
-  return getHelpUrlFile(urlString, language);
+  return getHelpUrlFile(parentWidget, urlString, language);
 }
 
 void HelpHandler::openHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
