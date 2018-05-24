@@ -172,6 +172,13 @@ QString FsPaths::getBasePath(SimulatorType type)
   }
 #endif
 
+  QFileInfo basePathInfo(fsPath);
+  if(!basePathInfo.exists() || !basePathInfo.isDir())
+  {
+    qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
+    fsPath.clear();
+  }
+
   // qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
 
   return fsPath;
