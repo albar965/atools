@@ -1,6 +1,19 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.0.2.rc1
+
+* Updated translations: Brazilian Portuguese, French, Spanish and German. All finished.
+
+* Now exporting all userdata columns. Added last_edit_timestamp and visible_from. Columns are optional for import.
+* Fixed region field not adjusted in X-Plane userdata export.
+* Now filling temp flag in userdata on import to avoid wrong indication of temporary userpoints.
+
+* Fixed issue where missing centers were interpreted as an empty online database.
+* Now using minimum and maximum circle radii for online ATC geometry.
+* Added version to palette settings to allow upgrades for color customization files.
+* Added functions to create shadow aircraft that exist in both the simulator and online network.
+
 Version 3.0.1.beta
 
 * Weather texts are now shown translated.
