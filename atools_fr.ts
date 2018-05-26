@@ -1717,20 +1717,25 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
         <translation>À propos de Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="89"/>
+        <location filename="src/gui/helphandler.cpp" line="82"/>
         <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
         <translation>Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="158"/>
-        <location filename="src/gui/helphandler.cpp" line="188"/>
+        <location filename="src/gui/helphandler.cpp" line="109"/>
+        <location filename="src/gui/helphandler.cpp" line="134"/>
         <source>Help file &lt;i&gt;%1&lt;/i&gt; not found</source>
         <translation>Fichier d&apos;aide &lt;i&gt;%1&lt;/i&gt; introuvable</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="233"/>
+        <location filename="src/gui/helphandler.cpp" line="195"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
         <translation>L&apos;URL est vide pour &quot;%1&quot; et anchor &quot;%2&quot;.</translation>
+    </message>
+    <message>
+        <location filename="src/gui/helphandler.cpp" line="212"/>
+        <source>URL is empty for &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

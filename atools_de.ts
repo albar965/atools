@@ -85,74 +85,6 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
-    <name>Flightplan</name>
-    <message>
-        <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Leere Flugplandatei &quot;%1&quot; kann nicht geöffnet werden.</translation>
-    </message>
-    <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</source>
-        <translation type="vanished">Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML und FS9 INI), FMS und FLP werden unterstützt.</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Cannot read version number: %1</source>
-        <translation type="vanished">Ungültige FMS-Datei. Versionsnummer %1 kann nicht gelesen werden</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Invalid version %2: %1</source>
-        <translation type="vanished">Ungültige FMS-Datei. Ungültige Version %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid FMS file. Number of sections is not %2: %1</source>
-        <translatorcomment>Ich finde die Übersetzung mind. mal etwas holprig, eigentlich eher sogar falsch. Vorschlag: &quot;Anzahl der Abschnitte ist nicht&quot;</translatorcomment>
-        <translation type="vanished">Ungültige FMS-Datei. Anzahl der Abschnitte ist nicht %2: %1</translation>
-    </message>
-    <message>
-        <source>Invalid flight plan file &quot;%1&quot;.</source>
-        <translation type="vanished">Ungültige Flugplandatei &quot;%1&quot;.</translation>
-    </message>
-    <message>
-        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation type="vanished">PLN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
-    </message>
-    <message>
-        <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation type="vanished">FLP-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
-    </message>
-    <message>
-        <source> Flight Plan</source>
-        <translation type="vanished"> Flugplan</translation>
-    </message>
-    <message>
-        <source> Track</source>
-        <translation type="vanished"> Pfad</translation>
-    </message>
-    <message>
-        <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation type="vanished">FMS-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
-    </message>
-    <message>
-        <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
-        <translation type="vanished">PMDG RTE erstellt mit %1 Version %2 (Revision %3) am %4 </translation>
-    </message>
-    <message>
-        <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation type="vanished">RTE-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
-    </message>
-    <message>
-        <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
-        <translation type="vanished">Interner Schreibfehler %1: Ungültige Dateigröße %2 ungleich %3. Datei kann nicht genutzt werden.</translation>
-    </message>
-    <message>
-        <source>Created by %1 Version %2 (revision %3) on %4</source>
-        <translation type="vanished">Erstellt mit %1 Version %2 (Revision %3) am %4</translation>
-    </message>
-</context>
-<context>
     <name>FlightplanIO</name>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="122"/>
@@ -1457,19 +1389,19 @@ Datei: &quot;%2&quot;
 <context>
     <name>UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="413"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="504"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="575"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="634"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="676"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="680"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="729"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="772"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="429"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="521"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="593"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="653"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="695"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="699"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="748"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="791"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="424"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="440"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1482,7 +1414,7 @@ Import stopped.</source>
 Importieren gestoppt.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="427"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="443"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1495,7 +1427,7 @@ Import stopped.</source>
 Importieren gestoppt.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="430"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="446"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1508,7 +1440,7 @@ Import stopped.</source>
 Importieren gestoppt.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="433"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="449"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1521,7 +1453,7 @@ Import stopped.</source>
 Importieren gestoppt.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="436"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="452"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -1630,11 +1562,6 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <location filename="src/fs/ns/navserver.cpp" line="124"/>
         <source>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</source>
         <translation>Port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
-    </message>
-    <message>
-        <source>Server is listening on hostname%1 %2 (IP address%3 %4) port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%5&lt;/span&gt;.</source>
-        <translatorcomment>&quot;Server lauscht auf&quot;? Besser vielleicht &quot;Server empfängt von&quot; oder &quot;Server wartet auf&quot;?</translatorcomment>
-        <translation type="vanished">Server wartet auf %2 (IP-Adresse(n) %4) Port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%5&lt;/span&gt;.</translation>
     </message>
 </context>
 <context>
@@ -1808,26 +1735,31 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <translation>Über Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="89"/>
+        <location filename="src/gui/helphandler.cpp" line="82"/>
         <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
         <translation>Fehler beim Öffnen der Hilfs-URL &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="158"/>
-        <location filename="src/gui/helphandler.cpp" line="188"/>
+        <location filename="src/gui/helphandler.cpp" line="109"/>
+        <location filename="src/gui/helphandler.cpp" line="134"/>
         <source>Help file &lt;i&gt;%1&lt;/i&gt; not found</source>
         <translation>Hilfedatei &lt;i&gt;%1&lt;/i&gt; wurde nicht gefunden</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="233"/>
+        <location filename="src/gui/helphandler.cpp" line="195"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
         <translation>URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
+    </message>
+    <message>
+        <location filename="src/gui/helphandler.cpp" line="212"/>
+        <source>URL is empty for &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>atools::util::UpdateCheck</name>
     <message>
-        <location filename="src/util/updatecheck.cpp" line="115"/>
+        <location filename="src/util/updatecheck.cpp" line="114"/>
         <source>Unknown Error</source>
         <translation>Unbekannter Fehler</translation>
     </message>
