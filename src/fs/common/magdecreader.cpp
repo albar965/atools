@@ -79,7 +79,7 @@ void MagDecReader::readFromBgl(const QString& filename)
       int year = QString::number(referenceYear, 16).toInt();
       referenceDate.setDate(year, referenceMonth, referenceDay);
 
-      qInfo() << "MagDec World Set" << worldSet
+      qInfo() << Q_FUNC_INFO << "MagDec World Set" << worldSet
               << "day" << referenceDay << "month" << referenceMonth << "year" << hex << referenceYear << dec;
 
       if(numLongValues != 360)
@@ -159,6 +159,9 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
       QDateTime timestamp;
       timestamp.setTime_t(query.value("reference_time").toUInt());
       referenceDate = timestamp.date();
+
+      qInfo() << Q_FUNC_INFO << db.databaseName() << "Reference date" << referenceDate;
+
       return true;
     }
     else
