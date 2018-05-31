@@ -1379,7 +1379,7 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>La URL está vacío por &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>
