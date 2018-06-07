@@ -127,15 +127,6 @@ int Dialog::warning(QWidget *parentWidget, const QString& text, int button0, int
   return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, button0, button1, button2);
 }
 
-int Dialog::warning(QWidget *parentWidget, const QString& text, const QString& button0Text,
-                    const QString& button1Text, const QString& button2Text, int defaultButtonNumber,
-                    int escapeButtonNumber)
-{
-  qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QApplication::applicationName(),
-                              text, button0Text, button1Text, button2Text, defaultButtonNumber, escapeButtonNumber);
-}
-
 int Dialog::warning(QWidget *parentWidget, const QString& text,
                     QMessageBox::StandardButton button0, QMessageBox::StandardButton button1)
 {

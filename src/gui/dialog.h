@@ -60,9 +60,6 @@ public:
                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
   static int warning(QWidget *parentWidget, const QString& text,
                      int button0, int button1, int button2 = 0);
-  static int warning(QWidget *parentWidget, const QString& text, const QString& button0Text,
-                     const QString& button1Text = QString(),
-                     const QString& button2Text = QString(), int defaultButtonNumber = 0, int escapeButtonNumber = -1);
   static int warning(QWidget *parentWidget, const QString& text,
                      QMessageBox::StandardButton button0, QMessageBox::StandardButton button1);
 
