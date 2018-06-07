@@ -21,6 +21,7 @@
 #include "settings/settings.h"
 #include "atools.h"
 #include "gui/application.h"
+#include "gui/dialog.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -78,8 +79,7 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
   qDebug() << Q_FUNC_INFO << "About to open URL" << url;
 
   if(!QDesktopServices::openUrl(url))
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(parent, tr("Error opening help URL <i>%1</i>").arg(url.toDisplayString()));
 }
 
 void HelpHandler::openUrlWeb(const QString& url)
@@ -105,8 +105,7 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
   if(QFile::exists(filepath))
     openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Help file <i>%1</i> not found")).arg(filepath));
+    atools::gui::Dialog::warning(parent, tr("Help file <i>%1</i> not found").arg(filepath));
 }
 
 QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
@@ -130,8 +129,7 @@ QUrl HelpHandler::getHelpUrlFile(QWidget *parent, const QString& urlString, cons
   if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
     url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/" + urlStr);
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Help file <i>%1</i> not found")).arg(urlStr));
+    atools::gui::Dialog::warning(parent, tr("Help file <i>%1</i> not found").arg(urlStr));
 
   return url;
 }
@@ -191,8 +189,7 @@ void HelpHandler::openHelpUrlWeb(QWidget *parent, const QString& urlString, cons
   if(!url.isEmpty())
     openUrl(parent, url);
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("URL is empty for \"%1\" and anchor \"%2\".").arg(urlString).arg(anchor)));
+    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\" and anchor \"%2\".").arg(urlString).arg(anchor));
 }
 
 void HelpHandler::openHelpUrlFile(const QString& urlString, const QString& language)
@@ -208,8 +205,7 @@ void HelpHandler::openHelpUrlFile(QWidget *parent, const QString& urlString, con
   if(!url.isEmpty())
     openUrl(parent, url);
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("URL is empty for \"%1\".").arg(urlString)));
+    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
 }
 
 QString HelpHandler::getLanguage()

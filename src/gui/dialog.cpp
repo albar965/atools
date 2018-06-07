@@ -113,6 +113,36 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
   return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString()).first();
 }
 
+QMessageBox::StandardButton Dialog::warning(QWidget *parentWidget, const QString& text,
+                                            QMessageBox::StandardButtons buttons,
+                                            QMessageBox::StandardButton defaultButton)
+{
+  qWarning() << Q_FUNC_INFO << text;
+  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, buttons, defaultButton);
+}
+
+int Dialog::warning(QWidget *parentWidget, const QString& text, int button0, int button1, int button2)
+{
+  qWarning() << Q_FUNC_INFO << text;
+  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, button0, button1, button2);
+}
+
+int Dialog::warning(QWidget *parentWidget, const QString& text, const QString& button0Text,
+                    const QString& button1Text, const QString& button2Text, int defaultButtonNumber,
+                    int escapeButtonNumber)
+{
+  qWarning() << Q_FUNC_INFO << text;
+  return QMessageBox::warning(parentWidget, QApplication::applicationName(),
+                              text, button0Text, button1Text, button2Text, defaultButtonNumber, escapeButtonNumber);
+}
+
+int Dialog::warning(QWidget *parentWidget, const QString& text,
+                    QMessageBox::StandardButton button0, QMessageBox::StandardButton button1)
+{
+  qWarning() << Q_FUNC_INFO << text;
+  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, button0, button1);
+}
+
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix,
                                const QString& path)
 {
