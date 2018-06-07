@@ -1518,48 +1518,46 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
 <context>
     <name>atools::fs::ns::NavServer</name>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="101"/>
+        <location filename="src/fs/ns/navserver.cpp" line="102"/>
         <source>Unable to start the server: %1.</source>
         <translation>Server kann nicht gestartet werden: %1.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="105"/>
+        <location filename="src/fs/ns/navserver.cpp" line="106"/>
         <source>Server is listening.</source>
-        <translatorcomment>&quot;Server lauscht&quot;? Besser vielleicht &quot;Server empfängt&quot;  oder &quot;Server wartet&quot;?</translatorcomment>
         <translation>Server wartet.</translation>
-    </message>
-    <message>
-        <location filename="src/fs/ns/navserver.cpp" line="108"/>
-        <location filename="src/fs/ns/navserver.cpp" line="118"/>
-        <source>Server is listening on hostnames %1 </source>
-        <oldsource>Server is listening on hostname%1 %2 (IP address%3 %4) port %5.</oldsource>
-        <translation>Server wartet auf %2 (IP-Adresse(n) %4) Port %5.</translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="109"/>
         <location filename="src/fs/ns/navserver.cpp" line="119"/>
-        <source>Server is listening on hostname %1 </source>
-        <translation>Server wartet auf IP-Adresse</translation>
+        <source>Server is listening on hostnames %1 </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="111"/>
-        <location filename="src/fs/ns/navserver.cpp" line="121"/>
+        <location filename="src/fs/ns/navserver.cpp" line="110"/>
+        <location filename="src/fs/ns/navserver.cpp" line="120"/>
+        <source>Server is listening on hostname %1 </source>
+        <translation>Server wartet auf computer %1 </translation>
+    </message>
+    <message>
+        <location filename="src/fs/ns/navserver.cpp" line="112"/>
+        <location filename="src/fs/ns/navserver.cpp" line="122"/>
         <source>(IP addresses %2) </source>
         <translation>(IP-Adressen %2) </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="111"/>
-        <location filename="src/fs/ns/navserver.cpp" line="121"/>
+        <location filename="src/fs/ns/navserver.cpp" line="112"/>
+        <location filename="src/fs/ns/navserver.cpp" line="122"/>
         <source>(IP address %2) </source>
         <translation>(IP-Adresse %2) </translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="113"/>
+        <location filename="src/fs/ns/navserver.cpp" line="114"/>
         <source>port %3.</source>
         <translation>Port %3.</translation>
     </message>
     <message>
-        <location filename="src/fs/ns/navserver.cpp" line="124"/>
+        <location filename="src/fs/ns/navserver.cpp" line="123"/>
         <source>port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</source>
         <translation>Port &lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;%3&lt;/span&gt;.</translation>
     </message>
@@ -1720,17 +1718,17 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="51"/>
+        <location filename="src/gui/helphandler.cpp" line="52"/>
         <source>About %1</source>
         <translation>Über %1</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="52"/>
+        <location filename="src/gui/helphandler.cpp" line="53"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (Revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (Revision %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="68"/>
+        <location filename="src/gui/helphandler.cpp" line="69"/>
         <source>About Qt</source>
         <translation>Über Qt</translation>
     </message>
@@ -1740,20 +1738,20 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <translation>Fehler beim Öffnen der Hilfs-URL &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="109"/>
-        <location filename="src/gui/helphandler.cpp" line="134"/>
+        <location filename="src/gui/helphandler.cpp" line="108"/>
+        <location filename="src/gui/helphandler.cpp" line="132"/>
         <source>Help file &lt;i&gt;%1&lt;/i&gt; not found</source>
         <translation>Hilfedatei &lt;i&gt;%1&lt;/i&gt; wurde nicht gefunden</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="195"/>
+        <location filename="src/gui/helphandler.cpp" line="192"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
         <translation>URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="212"/>
+        <location filename="src/gui/helphandler.cpp" line="208"/>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>URL für &quot;%1&quot; ist leer.</translation>
     </message>
 </context>
 <context>

@@ -30,6 +30,7 @@ namespace fs {
 namespace ns {
 
 const QString BLUESPAN("<span style=\"color: #0000ff; font-weight:bold\">"), ENDSPAN("</span>");
+const QString REDSPAN("<span style=\"color: #ff0000; font-weight:bold\">");
 
 NavServer::NavServer(QObject *parent, atools::fs::ns::NavServerOptions optionFlags, int inetPort)
   : QTcpServer(parent), options(optionFlags), port(inetPort)
@@ -115,13 +116,15 @@ bool NavServer::startServer(atools::fs::sc::DataReaderThread *dataReaderThread)
     }
     else
     {
-      QString hostname = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
-                         tr("Server is listening on hostname %1 ");
+      QString hostnameStr = hostNameList.size() > 1 ? tr("Server is listening on hostnames %1 ") :
+                            tr("Server is listening on hostname %1 ");
 
-      QString ipaddr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
+      QString ipAddrStr = hostIpList.size() > 1 ? tr("(IP addresses %2) ") : tr("(IP address %2) ");
+      QString portStr = tr("port <span style=\"color: #ff0000; font-weight:bold\">%3</span>.");
+      QString str(hostnameStr + ipAddrStr + portStr);
 
       qInfo(gui).noquote().nospace()
-        << QString(hostname + ipaddr + tr("port <span style=\"color: #ff0000; font-weight:bold\">%3</span>.")).
+        << str.
         arg(BLUESPAN + hostNameList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
         arg(BLUESPAN + hostIpList.join(ENDSPAN + ", " + BLUESPAN) + ENDSPAN).
         arg(serverPort());
