@@ -81,10 +81,11 @@ public:
   void openFile(const QString& filepath);
   static void openFile(QWidget *parent, const QString& filepath);
 
+  static QUrl getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor = QString());
+
 private:
   /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
    * supported langages */
-  static QUrl getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor = QString());
   static QUrl getHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language);
   QUrl getHelpUrlFile(const QString& urlString, const QString& language);
 

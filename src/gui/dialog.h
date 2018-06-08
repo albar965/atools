@@ -131,6 +131,7 @@ public:
    * @see atools::settings::Settings
    */
   void showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage);
+  void showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage);
 
   /*
    * Shows a simple question message box that includes a checkbox which can be

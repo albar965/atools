@@ -176,8 +176,25 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
   // show only if the key is true
   if(s.valueBool(settingsKey, true))
   {
-    QMessageBox msg(QMessageBox::Information,
-                    QApplication::applicationName(), message, QMessageBox::Ok, parent);
+    QMessageBox msg(QMessageBox::Information, QApplication::applicationName(), message, QMessageBox::Ok, parent);
+    msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
+    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    msg.setWindowModality(Qt::ApplicationModal);
+
+    msg.exec();
+    s.setValue(settingsKey, !msg.checkBox()->isChecked());
+    s.syncSettings();
+  }
+}
+
+void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
+{
+  Settings& s = Settings::instance();
+
+  // show only if the key is true
+  if(s.valueBool(settingsKey, true))
+  {
+    QMessageBox msg(QMessageBox::Warning, QApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
     msg.setWindowModality(Qt::ApplicationModal);
