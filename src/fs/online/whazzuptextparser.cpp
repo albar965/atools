@@ -102,7 +102,7 @@ bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDa
       // Parse the section data  (CSV like with : separator
       if(curSection == "GENERAL")
       {
-        parseGeneralSection(line);
+        QDateTime update = parseGeneralSection(line);
 
         if(update.isValid())
         {
@@ -110,6 +110,7 @@ bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDa
             // This is older than the last update - bail out
             return false;
         }
+        updateTimestamp = update;
       }
       else if(curSection == "CLIENTS")
       {
@@ -131,7 +132,7 @@ bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDa
   return true;
 }
 
-void WhazzupTextParser::parseGeneralSection(const QString& line)
+QDateTime WhazzupTextParser::parseGeneralSection(const QString& line)
 {
   // VERSION = 8
   // RELOAD = 2
@@ -140,7 +141,7 @@ void WhazzupTextParser::parseGeneralSection(const QString& line)
   // CONNECTED CLIENTS = 1118
   QString key = line.section('=', 0, 0).trimmed().toUpper();
   QString value = line.section('=', 1).trimmed().toUpper();
-
+  QDateTime update;
   if(key == "VERSION")
     version = value.toInt();
   else if(key == "RELOAD")
@@ -152,6 +153,7 @@ void WhazzupTextParser::parseGeneralSection(const QString& line)
   // else if(key == "CONNECTED CLIENTS")
   // connectedClients = value.toInt();
 
+  return update;
 }
 
 void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool isPrefile)
@@ -259,8 +261,9 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
   }
   index++;
 
+  QString groundspeed = at(line, index);
   if(!atc)
-    insertQuery->bindValue(":groundspeed", at(line, index));
+    insertQuery->bindValue(":groundspeed", groundspeed);
   index++;
 
   if(!atc)
@@ -418,6 +421,13 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     if(!atc)
       insertQuery->bindValue(":heading", atInt(line, index));
     index++;
+
+    if(!atc)
+    {
+      bool ok = false;
+      float gs = groundspeed.toFloat(&ok);
+      insertQuery->bindValue(":on_ground", ok && gs < 30.f);
+    }
 
     float qnhInHg = atFloat(line, index++);
     float qnhInMbar = atFloat(line, index++);
@@ -597,7 +607,7 @@ void WhazzupTextParser::reset()
   curSection.clear();
   version = reload = atisAllowMin = 0;
   format = atools::fs::online::UNKNOWN;
-  update = QDateTime();
+  updateTimestamp = QDateTime();
 }
 
 QString WhazzupTextParser::convertAtisText(QString atis)
