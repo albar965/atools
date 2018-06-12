@@ -774,7 +774,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     query.exec();
     while(query.next())
     {
-      stream << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
+      stream << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 6, query.q.valueInt("userdata_id"))
              << ","
              << query.q.valueStr("name").simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
              << ","
