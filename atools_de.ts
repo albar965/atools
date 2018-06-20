@@ -1531,13 +1531,13 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
         <location filename="src/fs/ns/navserver.cpp" line="109"/>
         <location filename="src/fs/ns/navserver.cpp" line="119"/>
         <source>Server is listening on hostnames %1 </source>
-        <translation type="unfinished"></translation>
+        <translation>Server wartet auf Computer %1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="110"/>
         <location filename="src/fs/ns/navserver.cpp" line="120"/>
         <source>Server is listening on hostname %1 </source>
-        <translation>Server wartet auf computer %1 </translation>
+        <translation>Server wartet auf Computer %1 </translation>
     </message>
     <message>
         <location filename="src/fs/ns/navserver.cpp" line="112"/>
