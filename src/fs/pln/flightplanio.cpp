@@ -1659,7 +1659,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
     // ,
     // ,
     // -1,
-    stream << "-1" << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1" << endl;
+    stream << "-1," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1," << endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -1674,16 +1674,28 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
       // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       if(entry.getAirway().isEmpty())
-        stream << "DIRECT,3,";
+      {
+        if(i == 1)
+          stream << "DIRECT,3,";
+        else
+          stream << ",2,";
+      }
       else
         stream << entry.getAirway() << ",2,";
 
-      stream << entry.getIcaoIdent() << ",0,";
+      float heading = std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition()));
+      if(entry.getMagvar() < std::numeric_limits<float>::max())
+        heading -= entry.getMagvar();
+
+      stream << entry.getIcaoIdent() << ",0, ";
       stream << forcepoint << qSetRealNumberPrecision(9)
-             << entry.getPosition().getLatY() << " " << entry.getPosition().getLonX() << reset;
+             << entry.getPosition().getLatY()
+             << " "
+             << entry.getPosition().getLonX() << reset;
       stream << ",0,0,";
       stream << forcepoint << qSetRealNumberPrecision(8)
-             << std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition())) << reset;
+             << heading
+             << reset;
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
