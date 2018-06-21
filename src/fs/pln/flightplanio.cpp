@@ -1632,7 +1632,8 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
 
   if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QTextStream stream(&fltplanFile);
+    QString textString;
+    QTextStream stream(&textString);
     stream.setCodec("UTF-8");
 
     // YSSY,
@@ -1683,19 +1684,22 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
       else
         stream << entry.getAirway() << ",2,";
 
-      float heading = std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition()));
+      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition()));
       if(entry.getMagvar() < std::numeric_limits<float>::max())
         heading -= entry.getMagvar();
 
+      // 51.578888-000.918889
+      // 51.330874 000.034811
+      QString latY = QString("%1").arg(entry.getPosition().getLatY(), 9, 'f', 6);
+      QString lonX = QString("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
+      if(entry.getPosition().getLonX() < 0.f)
+        lonX.prepend("-");
+      else
+        lonX.prepend(" ");
+
       stream << entry.getIcaoIdent() << ",0, ";
-      stream << forcepoint << qSetRealNumberPrecision(9)
-             << entry.getPosition().getLatY()
-             << " "
-             << entry.getPosition().getLonX() << reset;
-      stream << ",0,0,";
-      stream << forcepoint << qSetRealNumberPrecision(8)
-             << heading
-             << reset;
+      stream << latY << lonX;
+      stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
@@ -1703,6 +1707,13 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
       stream << endl;
     }
 
+#ifndef Q_OS_WIN32
+    // Convert EOL always to Windows (0x0a -> 0x0d0a)
+    textString.replace("\n", "\r\n");
+#endif
+
+    QByteArray utf8 = textString.toUtf8();
+    fltplanFile.write(utf8.data(), utf8.size());
     fltplanFile.close();
   }
   else
