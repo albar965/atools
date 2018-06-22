@@ -1690,7 +1690,12 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
 
       // 51.578888-000.918889
       // 51.330874 000.034811
-      QString latY = QString("%1").arg(entry.getPosition().getLatY(), 9, 'f', 6);
+      QString latY = QString("%1").arg(std::abs(entry.getPosition().getLatY()), 9, 'f', 6);
+      if(entry.getPosition().getLatY() < 0.f)
+        latY.prepend("-");
+      else
+        latY.prepend(" ");
+
       QString lonX = QString("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
       if(entry.getPosition().getLonX() < 0.f)
         lonX.prepend("-");
