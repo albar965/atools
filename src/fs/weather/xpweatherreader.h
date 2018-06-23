@@ -75,7 +75,7 @@ signals:
   void weatherUpdated();
 
 private:
-  void read();
+  bool read();
   void deleteFsWatcher();
   void createFsWatcher();
   void pathChanged();
@@ -92,8 +92,12 @@ private:
 
   QString weatherFile;
   QDateTime weatherFileTimestamp;
+  qint64 lastFileSize = 0;
   QFileSystemWatcher *fsWatcher = nullptr;
   QTimer timer;
+
+  /* Need at least one megabyte to be valid */
+  static const int MIN_FILE_SIZE = 1024 * 1024;
 
 };
 
