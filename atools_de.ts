@@ -125,8 +125,8 @@ Datei: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1258"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1773"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1966"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1801"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1994"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>PLN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
@@ -166,7 +166,7 @@ Datei: &quot;%2&quot;
         <translation>Interner Schreibfehler %1: Ungültige Dateigröße %2 ungleich %3. Datei kann nicht genutzt werden.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1697"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1725"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>FLTPLAN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>

@@ -99,7 +99,7 @@ Ocorreu um erro no Sql
         <translation>Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1697"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1725"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FLTPLAN %1. Razão: %2</translation>
     </message>
@@ -111,8 +111,8 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1258"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1773"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1966"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1801"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1994"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
     </message>

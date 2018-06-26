@@ -124,8 +124,8 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1258"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1773"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1966"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1801"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1994"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Kan PLN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
@@ -165,7 +165,7 @@ Bestand:&quot;%2&quot;
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1697"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1725"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Kan FLTPLAN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
