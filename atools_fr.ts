@@ -126,8 +126,8 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1258"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1773"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1966"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1801"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1994"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
     </message>
@@ -167,7 +167,7 @@ Fichier: &quot;%2&quot;
         <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1697"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1725"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier FLTPLAN %1. Motif : %2</translation>
     </message>
@@ -1735,7 +1735,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/gui/helphandler.cpp" line="208"/>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>L&apos;URL est vide pour &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>
