@@ -236,6 +236,11 @@ void Settings::setValueVar(const QString& key, const QVariant& value)
   qSettings->setValue(key, value);
 }
 
+QStringList Settings::childGroups() const
+{
+  return qSettings->childGroups();
+}
+
 QString Settings::getPath()
 {
   return QFileInfo(instance().getQSettings()->fileName()).path();

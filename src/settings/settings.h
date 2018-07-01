@@ -119,6 +119,8 @@ public:
   void setValue(const QString& key, double value);
   void setValueVar(const QString& key, const QVariant& value);
 
+  QStringList childGroups() const;
+
 private:
   Settings();
   ~Settings();
