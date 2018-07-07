@@ -570,8 +570,8 @@ void DeleteProcessor::extractDeleteFlags()
   if(newAirport->getApproaches().isEmpty())
     deleteFlags &= ~bgl::del::APPROACHES;
 
-  if(newAirport->getAprons().isEmpty())
-    deleteFlags &= ~bgl::del::APRONS;
+  // if(newAirport->getAprons().isEmpty())
+  // deleteFlags &= ~bgl::del::APRONS;
 
   if(newAirport->getComs().isEmpty())
     deleteFlags &= ~bgl::del::COMS;
