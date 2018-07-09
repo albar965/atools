@@ -60,11 +60,13 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
-  // Read subrecords (name only)
-  while(bs->tellg() < startOffset + size)
+  // Read only name subrecord
+  if(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
-    rec::NdbRecordType t = r.getId<rec::NdbRecordType>();
+    unsigned int id = r.getId();
+
+    rec::NdbRecordType t = static_cast<rec::NdbRecordType>(id & 0x00ff);
     if(checkSubRecord(r))
       return;
 
@@ -90,8 +92,8 @@ QDebug operator<<(QDebug out, const Ndb& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const NavBase&>(record)
-  << " Ndb[type " << Ndb::ndbTypeToStr(record.type)
-  << "]";
+                          << " Ndb[type " << Ndb::ndbTypeToStr(record.type)
+                          << "]";
   return out;
 }
 

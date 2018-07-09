@@ -267,6 +267,7 @@ void BglFile::readRecords(BinaryStream *bs)
     for(int i = 0; i < numRec; i++)
     {
       const Record *rec = nullptr;
+      qint64 previousPos = bs->tellg();
 
       switch(type)
       {
@@ -356,13 +357,22 @@ void BglFile::readRecords(BinaryStream *bs)
         case section::ICAO_RUNWAY:
           break;
         default:
-          qWarning() << "Unknown section type" << type;
+          qWarning().nospace().noquote() << "Unknown section type at 0x" << hex << bs->tellg() << dec << ": " << type;
 
       }
       if(rec == nullptr)
         // Create empty record, just to skip it
         rec = createRecord<Record>(bs, nullptr);
-      rec->seekToEnd();
+
+      if(rec->getSize() < bs->getFileSize() && rec->getSize() > 0)
+        rec->seekToEnd();
+      else
+        qWarning().nospace().noquote() << "Invalid record size " << rec->getSize()
+                                       << " at 0x" << hex << bs->tellg()
+                                       << " type 0x" << rec->getId();
+
+      if(previousPos == bs->tellg())
+        throw Exception("Error in BGL file. Record size is zero and nothing read.");
     }
   }
 }

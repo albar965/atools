@@ -14,6 +14,8 @@ Version 3.0.3.rc1
 * Now logging all warning dialog messages to logfile.
 * Fixed translation issues in navserver resulting in confusing messages in Little Navconnect log window.
 * Increased Garmin userdata export ident length.
+* Workaround for invalid record length for NDB and waypoints in APX27190.bgl from P3D v4.3 which causes errors
+  when reading the scenery library.
 
 Version 3.0.2
 

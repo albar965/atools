@@ -96,11 +96,13 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
   if(ident.isEmpty() && type != nav::UNNAMED && !isDisabled())
     qWarning().nospace().noquote() << "Waypoint at " << position << " region " << region << " has no ident";
 
-  if(options->isIncludedNavDbObject(type::AIRWAY))
+  // Read airways if desired by configuration
+  for(int i = 0; i < numAirways; i++)
   {
-    // Read airways if desired by configuration
-    for(int i = 0; i < numAirways; i++)
-      airways.append(AirwaySegment(options, bs, *this));
+    // Read always to avoid messing up current file position
+    AirwaySegment segment(options, bs, *this);
+    if(options->isIncludedNavDbObject(type::AIRWAY))
+      airways.append(segment);
   }
 
   for(const AirwaySegment& re : airways)
