@@ -1,13 +1,11 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
-Version 3.0.3.rc2
+Version 3.0.3
 
+* Fixed issue where aprons from stock airports remained in add-ons.
 * Updated French translation from Patrick.
 * Fix missing first update of X-Plane weather.
-
-Version 3.0.3.rc1
-
 * Fixed issues with export for flight plans for iFly 737 that could crash the simulator.
 * Fixed issue when parsing whazzup with small timeintervals.
 * Now assuming that aircraft is on ground for VATSIM and GS < 30 kts (VATSIM has no on_ground indication).
