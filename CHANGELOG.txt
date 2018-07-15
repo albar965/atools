@@ -1,3 +1,60 @@
+Numbers (#) refer to Github issues.
+For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
+
+Version 3.0.3
+
+* Fixed issue where aprons from stock airports remained in add-ons.
+* Updated French translation from Patrick.
+* Fix missing first update of X-Plane weather.
+* Fixed issues with export for flight plans for iFly 737 that could crash the simulator.
+* Fixed issue when parsing whazzup with small timeintervals.
+* Now assuming that aircraft is on ground for VATSIM and GS < 30 kts (VATSIM has no on_ground indication).
+* Now logging all warning dialog messages to logfile.
+* Fixed translation issues in navserver resulting in confusing messages in Little Navconnect log window.
+* Increased Garmin userdata export ident length.
+* Workaround for invalid record length for NDB and waypoints in APX27190.bgl from P3D v4.3 which causes errors
+  when reading the scenery library.
+
+Version 3.0.2
+
+* Updated translations: Brazilian Portuguese, French, Spanish and German. All finished.
+
+* Now exporting all userdata columns. Added last_edit_timestamp and visible_from. Columns are optional for import.
+* Fixed region field not adjusted in X-Plane userdata export.
+* Now filling temp flag in userdata on import to avoid wrong indication of temporary userpoints.
+
+* Fixed issue where missing centers were interpreted as an empty online database.
+* Now using minimum and maximum circle radii for online ATC geometry.
+* Added version to palette settings to allow upgrades for color customization files.
+* Added functions to create shadow aircraft that exist in both the simulator and online network.
+
+Version 3.0.1.beta
+
+* Weather texts are now shown translated.
+* Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
+Version 3.0.0.beta
+
+* Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
+* Fixed issues with X-Plane user_fix.dat export. Now using correct metadata so that X-Plane can read the file.
+* Issues with X-Plane and Garmin userpoint import and export fixed.
+
+* Added script by Gérard to clean out fake runways for AI in FSX/P3D.
+* Added logging for airport altitude when reading delete records from FSX/P3D.
+  Example: "Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft"
+* Improved BGL file and scenery reading to include hidden and system files.
+* Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
+* Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
+* Now ignoring artificial circle-to-land approaches in DFD compiler.
+
+* Flight plan export for Blackbox Simulations Airbus. albar965/littlenavmap#200
+* Added loading method for FSC flight plans.
+* Export for iFly flight plan file. albar965/littlenavmap#231
+
+* Now removing empty journal files from database when closing.
+* Database locking improved.
+* Added gzip tools.
+
 Version 2.9.1.develop
 
 * Now filtering out taxiway garbage names in X-Plane compiler.

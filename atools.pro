@@ -496,4 +496,6 @@ RESOURCES += \
 TRANSLATIONS = atools_fr.ts \
                atools_it.ts \
                atools_nl.ts \
-               atools_de.ts
+               atools_de.ts \
+               atools_es.ts \
+               atools_pt_BR.ts

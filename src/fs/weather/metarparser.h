@@ -37,9 +37,12 @@ namespace atools {
 namespace fs {
 namespace weather {
 
+/* Initialize static translateable texts */
+void initTranslateableTexts();
+
 struct Token
 {
-  const char *id;
+  QString id;
   QString text;
 };
 
@@ -56,7 +59,7 @@ class MetarVisibility
 
 public:
   MetarVisibility() :
-    _distance(INVALID_METAR_VALUE), _direction(-1), _modifier(EQUALS), _tendency(NONE)
+    distance(INVALID_METAR_VALUE), direction(-1), modifier(EQUALS), tendency(NONE)
   {
   }
 
@@ -80,31 +83,31 @@ public:
 
   inline float getVisibilityMeter() const
   {
-    return _distance;
+    return distance;
   }
 
   inline int getDirection() const
   {
-    return _direction;
+    return direction;
   }
 
   inline int getModifier() const
   {
-    return _modifier;
+    return modifier;
   }
 
   QString getModifierString() const;
 
   inline int getTendency() const
   {
-    return _tendency;
+    return tendency;
   }
 
 protected:
-  float _distance;
-  int _direction;
-  int _modifier;
-  int _tendency;
+  float distance;
+  int direction;
+  int modifier;
+  int tendency;
 };
 
 // ============================================================================
@@ -117,78 +120,78 @@ class MetarRunway
 
 public:
   MetarRunway() :
-    _deposit(-1), _extent(-1), _depth(INVALID_METAR_VALUE),
-    _friction(INVALID_METAR_VALUE), _wind_shear(false)
+    deposit(-1), extent(-1), depth(INVALID_METAR_VALUE),
+    friction(INVALID_METAR_VALUE), windShear(false)
   {
   }
 
   inline int getDeposit() const
   {
-    return _deposit;
+    return deposit;
   }
 
   inline QString getDepositString() const
   {
-    return _deposit_string;
+    return depositString;
   }
 
   inline float getExtent() const
   {
-    return _extent;
+    return extent;
   }
 
   inline QString getExtentString() const
   {
-    return _extent_string;
+    return extentString;
   }
 
   inline float getDepth() const
   {
-    return _depth;
+    return depth;
   }
 
   inline float getFriction() const
   {
-    return _friction;
+    return friction;
   }
 
   inline QString getFrictionString() const
   {
-    return _friction_string;
+    return frictionString;
   }
 
   inline QString getComment() const
   {
-    return _comment;
+    return comment;
   }
 
   inline bool getWindShear() const
   {
-    return _wind_shear;
+    return windShear;
   }
 
   inline const MetarVisibility& getMinVisibility() const
   {
-    return _min_visibility;
+    return minVisibility;
   }
 
   inline const MetarVisibility& getMaxVisibility() const
   {
-    return _max_visibility;
+    return maxVisibility;
   }
 
 protected:
-  MetarVisibility _min_visibility;
-  MetarVisibility _max_visibility;
-  int _deposit;
-  QString _deposit_string;
-  int _extent;
-  QString _extent_string;
-  float _depth;
-  float _friction;
-  QString _friction_string;
-  QString _comment;
-  bool _wind_shear;
+  MetarVisibility minVisibility;
+  MetarVisibility maxVisibility;
+  int deposit;
+  QString depositString;
+  int extent;
+  QString extentString;
+  float depth;
+  float friction;
+  QString frictionString;
+  QString comment;
+  bool windShear;
 };
 
 // ============================================================================
@@ -211,7 +214,7 @@ public:
   };
 
   MetarCloud() :
-    _coverage(COVERAGE_NIL), _altitude(INVALID_METAR_VALUE), _type(0)
+    coverage(COVERAGE_NIL), altitude(INVALID_METAR_VALUE)
   {
   }
 
@@ -219,7 +222,7 @@ public:
 
   inline Coverage getCoverage() const
   {
-    return _coverage;
+    return coverage;
   }
 
   QString getCoverageString() const;
@@ -228,24 +231,24 @@ public:
 
   inline float getAltitudeMeter() const
   {
-    return _altitude;
+    return altitude;
   }
 
   inline QString getTypeString() const
   {
-    return _type;
+    return type;
   }
 
   inline QString getTypeLongString() const
   {
-    return _type_long;
+    return typeLong;
   }
 
 protected:
-  Coverage _coverage; // quarters: 0 -> clear ... 4 -> overcast
-  float _altitude; // 1000 m
-  const char *_type; // CU
-  QString _type_long; // cumulus
+  Coverage coverage; // quarters: 0 -> clear ... 4 -> overcast
+  float altitude; // 1000 m
+  QString type; // CU
+  QString typeLong; // cumulus
 };
 
 // ============================================================================
@@ -510,7 +513,7 @@ protected:
 
   int scanNumber(char **str, int *num, int min, int max = 0);
   bool scanBoundary(char **str);
-  const struct Token *scanToken(char **str, const struct Token *list);
+  const struct Token *scanToken(char **str, const QVector<Token>& list);
   void normalizeData();
 
 };

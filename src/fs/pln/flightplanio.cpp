@@ -153,7 +153,7 @@ void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
     loadFms(plan, file);
   else
     throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
-                       "Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.").arg(file));
+                       "Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.").arg(file));
 
 }
 
@@ -1632,7 +1632,8 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
 
   if(fltplanFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QTextStream stream(&fltplanFile);
+    QString textString;
+    QTextStream stream(&textString);
     stream.setCodec("UTF-8");
 
     // YSSY,
@@ -1659,7 +1660,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
     // ,
     // ,
     // -1,
-    stream << "-1" << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1" << endl;
+    stream << "-1," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1," << endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -1674,16 +1675,36 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
       // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       if(entry.getAirway().isEmpty())
-        stream << "DIRECT,3,";
+      {
+        if(i == 1)
+          stream << "DIRECT,3,";
+        else
+          stream << ",2,";
+      }
       else
         stream << entry.getAirway() << ",2,";
 
-      stream << entry.getIcaoIdent() << ",0,";
-      stream << forcepoint << qSetRealNumberPrecision(9)
-             << entry.getPosition().getLatY() << " " << entry.getPosition().getLonX() << reset;
-      stream << ",0,0,";
-      stream << forcepoint << qSetRealNumberPrecision(8)
-             << std::round(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition())) << reset;
+      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition()));
+      if(entry.getMagvar() < std::numeric_limits<float>::max())
+        heading -= entry.getMagvar();
+
+      // 51.578888-000.918889
+      // 51.330874 000.034811
+      QString latY = QString("%1").arg(std::abs(entry.getPosition().getLatY()), 9, 'f', 6);
+      if(entry.getPosition().getLatY() < 0.f)
+        latY.prepend("-");
+      else
+        latY.prepend(" ");
+
+      QString lonX = QString("%1").arg(std::abs(entry.getPosition().getLonX()), 10, 'f', 6, '0');
+      if(entry.getPosition().getLonX() < 0.f)
+        lonX.prepend("-");
+      else
+        lonX.prepend(" ");
+
+      stream << entry.getIcaoIdent() << ",0, ";
+      stream << latY << lonX;
+      stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
@@ -1691,6 +1712,13 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
       stream << endl;
     }
 
+#ifndef Q_OS_WIN32
+    // Convert EOL always to Windows (0x0a -> 0x0d0a)
+    textString.replace("\n", "\r\n");
+#endif
+
+    QByteArray utf8 = textString.toUtf8();
+    fltplanFile.write(utf8.data(), utf8.size());
     fltplanFile.close();
   }
   else

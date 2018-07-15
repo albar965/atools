@@ -51,6 +51,19 @@ public:
   }
 
   /*
+   * All warning methods are the same as QMessageBox::warning
+   * except that the text is logged in the warning category.
+   *  Title is always QApplication::applicationName()
+   */
+  static QMessageBox::StandardButton warning(QWidget *parentWidget, const QString& text,
+                                             QMessageBox::StandardButtons buttons = QMessageBox::Ok,
+                                             QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
+  static int warning(QWidget *parentWidget, const QString& text,
+                     int button0, int button1, int button2 = 0);
+  static int warning(QWidget *parentWidget, const QString& text,
+                     QMessageBox::StandardButton button0, QMessageBox::StandardButton button1);
+
+  /*
    * Creates an open file dialog and returns the selected file otherwise an
    * empty string. Stores dialog settings and current directory in the settings
    * object.
@@ -67,7 +80,7 @@ public:
   QString openFileDialog(const QString& title, const QString& filter,
                          const QString& settingsPrefix = QString(), const QString& path = QString());
   QStringList openFileDialogMulti(const QString& title, const QString& filter,
-                         const QString& settingsPrefix = QString(), const QString& path = QString());
+                                  const QString& settingsPrefix = QString(), const QString& path = QString());
 
   /*
    * Creates an open directory dialog and returns the selected directory otherwise an
@@ -118,6 +131,7 @@ public:
    * @see atools::settings::Settings
    */
   void showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage);
+  void showWarnMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage);
 
   /*
    * Shows a simple question message box that includes a checkbox which can be
@@ -148,8 +162,8 @@ public:
 
 private:
   QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
-                     const QString& settingsPrefix, const QString& defaultFileSuffix,
-                     const QString& path, const QString& filename);
+                         const QString& settingsPrefix, const QString& defaultFileSuffix,
+                         const QString& path, const QString& filename);
 
   QWidget *parent = nullptr;
 };

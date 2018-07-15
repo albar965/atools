@@ -26,6 +26,7 @@
 #include <QHash>
 #include <QObject>
 #include <QSet>
+#include <QTimer>
 #include <functional>
 
 class QFileSystemWatcher;
@@ -74,10 +75,10 @@ signals:
   void weatherUpdated();
 
 private:
-  void read();
+  bool read();
   void deleteFsWatcher();
   void createFsWatcher();
-  void pathChanged(const QString& path);
+  void pathChanged();
 
   struct MetarData
   {
@@ -91,7 +92,12 @@ private:
 
   QString weatherFile;
   QDateTime weatherFileTimestamp;
+  qint64 lastFileSize = 0;
   QFileSystemWatcher *fsWatcher = nullptr;
+  QTimer timer;
+
+  /* Need at least one megabyte to be valid */
+  static const int MIN_FILE_SIZE = 1024 * 1024;
 
 };
 

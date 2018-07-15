@@ -1015,6 +1015,9 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
   while(query.next())
   {
     QString airportIdent = query.valueStr("airport_identifier");
+    if(query.valueStr("area_code") == "CTL")
+      // Ignore artificial circle-to-land duplicates
+      continue;
 
     // if(airportIdent != "EKAH")
     // continue;

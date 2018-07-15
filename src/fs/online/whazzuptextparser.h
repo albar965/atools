@@ -70,7 +70,7 @@ public:
   /* The last date and time this file has been updated. */
   QDateTime getLastUpdateTime() const
   {
-    return update;
+    return updateTimestamp;
   }
 
   /* Time in minutes this file will be updated */
@@ -82,8 +82,11 @@ public:
   void reset();
   void resetForNewOptions();
 
+  /* Set default circle radii for certain ATC types where visual range is unusable */
+  void setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value);
+
 private:
-  void parseGeneralSection(const QString& line);
+  QDateTime parseGeneralSection(const QString& line);
   void parseSection(const QStringList& line, bool isAtc, bool isPrefile);
   void parseServersSection(const QString& line);
   void parseVoiceSection(const QString& line);
@@ -109,7 +112,7 @@ private:
   int reload = 0;
 
   /* The last date and time this file has been updated. */
-  QDateTime update;
+  QDateTime updateTimestamp;
 
   /*  Time in minutes to wait before allowing manual Atis refresh by way of web page interface */
   int atisAllowMin = 0;
@@ -124,7 +127,7 @@ private:
   // Keep a map of callsign to row id in the database to reuse the ids for the same centers and clients
   // This is to avoid id changes on every reload
   QHash<QString, int> clientIdMap, atcIdMap;
-
+  QHash<atools::fs::online::fac::FacilityType, int> atcRadius;
 };
 
 } // namespace online

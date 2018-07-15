@@ -92,7 +92,7 @@ QString XpWeatherReader::getMetar(const QString& ident)
 //
 // 2017/07/30 18:47
 // KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
-void XpWeatherReader::read()
+bool XpWeatherReader::read()
 {
   // Recognize METAR airport
   static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
@@ -103,6 +103,8 @@ void XpWeatherReader::read()
   QFile file(weatherFile);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    index.clear();
+
     QTextStream stream(&file);
 
     int lineNum = 1;
@@ -149,26 +151,34 @@ void XpWeatherReader::read()
     file.close();
   }
   else
+  {
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+    return false;
+  }
 
   qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars";
+  return true;
 }
 
 /* Called on directory or file change */
-void XpWeatherReader::pathChanged(const QString& path)
+void XpWeatherReader::pathChanged()
 {
-  Q_UNUSED(path);
   QFileInfo fileinfo(weatherFile);
-  if(fileinfo.exists() && fileinfo.isFile())
+  if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > MIN_FILE_SIZE)
   {
-    // File exists
-    if(fileinfo.lastModified() > weatherFileTimestamp)
+    // File exists - first call or older than two minutes or file differs
+    if(!weatherFileTimestamp.isValid() ||
+       fileinfo.lastModified() > weatherFileTimestamp ||
+       lastFileSize != fileinfo.size())
     {
       // Timestamp of file has changed
       qDebug() << Q_FUNC_INFO << "reading" << weatherFile;
-      read();
-      weatherFileTimestamp = fileinfo.lastModified();
-      emit weatherUpdated();
+      if(read())
+      {
+        weatherFileTimestamp = fileinfo.lastModified();
+        lastFileSize = fileinfo.size();
+        emit weatherUpdated();
+      }
     }
   }
   else
@@ -179,6 +189,7 @@ void XpWeatherReader::pathChanged(const QString& path)
       qDebug() << Q_FUNC_INFO << "removed" << weatherFile;
       index.clear();
       weatherFileTimestamp = QDateTime();
+      lastFileSize = fileinfo.size();
       emit weatherUpdated();
     }
   }
@@ -193,6 +204,8 @@ void XpWeatherReader::deleteFsWatcher()
     fsWatcher->deleteLater();
     fsWatcher = nullptr;
   }
+  timer.stop();
+  timer.disconnect(&timer, &QTimer::timeout, this, &XpWeatherReader::pathChanged);
 }
 
 void XpWeatherReader::createFsWatcher()
@@ -213,6 +226,11 @@ void XpWeatherReader::createFsWatcher()
   QFileInfo fileinfo(weatherFile);
   if(!fsWatcher->addPath(fileinfo.path()))
     qWarning() << "cannot watch" << fileinfo.path();
+
+  // Check every ten seconds since the watcher is unreliable
+  timer.setInterval(10000);
+  timer.connect(&timer, &QTimer::timeout, this, &XpWeatherReader::pathChanged);
+  timer.start();
 }
 
 } // namespace weather

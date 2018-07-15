@@ -25,10 +25,15 @@
 class QDateTime;
 
 namespace atools {
+namespace geo {
+class Pos;
+}
+
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
+class SqlRecordVector;
 }
 
 namespace fs {
@@ -101,9 +106,6 @@ public:
     return db;
   }
 
-  /* Do any schema updates if needed */
-  void updateSchema();
-
   /* Drops schema tables and indexes */
   void dropSchema();
 
@@ -125,10 +127,20 @@ public:
   /* Get aircraft from table client by id and fill data into aircraft class. */
   void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId);
 
+  /* Get all rows for a client_id */
   atools::sql::SqlRecord getClientRecordById(int clientId);
+
+  /* Get all rows for clients that match the callsign. Normally only one. */
+  atools::sql::SqlRecordVector getClientRecordsByCallsign(const QString& callsign);
+
+  /* Fill the map with callsign as key and position as value. Used for online/simulator deduplication. */
+  void getClientCallsignAndPosMap(QHash<QString, geo::Pos>& clientMap);
 
   /* Number of client aircraft in client table */
   int getNumClients() const;
+
+  /* Set default circle radii for certain ATC types where visual range is unusable */
+  void setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value);
 
 private:
   atools::sql::SqlDatabase *db;

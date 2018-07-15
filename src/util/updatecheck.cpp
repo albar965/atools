@@ -19,7 +19,6 @@
 #include "util/version.h"
 
 #include <QNetworkReply>
-#include <QSettings>
 #include <QApplication>
 
 namespace atools {

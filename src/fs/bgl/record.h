@@ -85,6 +85,11 @@ public:
     return static_cast<ENUM>(id);
   }
 
+  unsigned int getId() const
+  {
+    return id;
+  }
+
   /*
    * @return true if this record was found to be excluded after reading due to configuration or reading errors
    */

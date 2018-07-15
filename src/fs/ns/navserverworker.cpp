@@ -137,7 +137,7 @@ void NavServerWorker::postSimConnectData(atools::fs::sc::SimConnectData dataPack
     if(options & VERBOSE)
       qDebug() << "NavServerWorker::postSimConnectData metars num " << dataPacket.getMetars().size();
 
-    if(dataPacket.getUserAircraft().getPosition().isValid())
+    if(dataPacket.getUserAircraftConst().getPosition().isValid())
       qWarning() << "Aircraft and metar mixed";
   }
 

@@ -21,6 +21,7 @@
 #include "settings/settings.h"
 #include "atools.h"
 #include "gui/application.h"
+#include "gui/dialog.h"
 
 #include <QDebug>
 #include <QMessageBox>
@@ -68,13 +69,6 @@ void HelpHandler::aboutQt()
   QMessageBox::aboutQt(parentWidget, tr("About Qt"));
 }
 
-void HelpHandler::help()
-{
-  QUrl url = getHelpUrlForFile("help", "index.html");
-  if(!url.isEmpty())
-    openUrl(url);
-}
-
 void HelpHandler::openUrl(const QUrl& url)
 {
   openUrl(parentWidget, url);
@@ -85,155 +79,145 @@ void HelpHandler::openUrl(QWidget *parent, const QUrl& url)
   qDebug() << Q_FUNC_INFO << "About to open URL" << url;
 
   if(!QDesktopServices::openUrl(url))
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Error opening help URL <i>%1</i>")).arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(parent, tr("Error opening help URL <i>%1</i>").arg(url.toDisplayString()));
 }
 
-void HelpHandler::openUrl(const QString& url)
+void HelpHandler::openUrlWeb(const QString& url)
 {
-  openUrl(QUrl(url));
+  openUrlWeb(parentWidget, url);
 }
 
-void HelpHandler::openUrl(QWidget *parent, const QString& url)
+void HelpHandler::openUrlWeb(QWidget *parent, const QString& url)
 {
+  qDebug() << Q_FUNC_INFO << url;
   openUrl(parent, QUrl(url));
 }
 
-QStringList HelpHandler::getInstalledLanguages(const QString& directory, const QString& fileTemplate)
+void HelpHandler::openFile(const QString& filepath)
 {
-  QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
-
-  QStringList retval;
-  QDir dir(appPath + QDir::separator() + directory);
-  QRegularExpression regexp(fileTemplate, QRegularExpression::CaseInsensitiveOption);
-
-  for(QFileInfo file : dir.entryInfoList(QDir::Files))
-  {
-    QRegularExpressionMatch match = regexp.match(file.fileName());
-    if(match.hasMatch() && !match.captured(1).isEmpty())
-      retval.append(match.captured(1));
-  }
-
-  if(retval.isEmpty())
-    // English is always supported
-    retval.append("en");
-
-  return retval;
+  openFile(parentWidget, filepath);
 }
 
-QUrl HelpHandler::getHelpUrlForFile(const QString& dir, const QString& file, const QString& anchor)
+void HelpHandler::openFile(QWidget *parent, const QString& filepath)
 {
-  return getHelpUrlForFile(parentWidget, dir, file, anchor);
-}
+  qDebug() << Q_FUNC_INFO << filepath;
 
-QUrl HelpHandler::getHelpUrlForFile(QWidget *parent, const QString& dir, const QString& file,
-                                    const QString& anchor)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  QString appPath = QFileInfo(QCoreApplication::applicationFilePath()).absolutePath();
-  QString helpPrefix(appPath + QDir::separator() + dir + QDir::separator());
-  QString helpSuffix(QString(QDir::separator()) + file);
-
-  QString helpFile(helpPrefix + getLanguage() + helpSuffix),
-  defaultHelpFile(helpPrefix + "en" + helpSuffix);
-
-  qDebug() << "appPath" << appPath << "helpPrefix" << helpPrefix << "helpSuffix" << helpSuffix;
-  qDebug() << "helpFile" << helpFile;
-  qDebug() << "defaultHelpFile" << defaultHelpFile;
-
-  QUrl url;
-  if(QFileInfo::exists(helpFile))
-  {
-    qDebug() << "helpFile" << helpFile << "exists";
-    url = QUrl::fromLocalFile(helpFile);
-  }
-  else if(QFileInfo::exists(defaultHelpFile))
-  {
-    qDebug() << "defaultHelpFile" << defaultHelpFile << "exists";
-    url = QUrl::fromLocalFile(defaultHelpFile);
-  }
+  if(QFile::exists(filepath))
+    openUrl(parent, QUrl::fromLocalFile(QDir::toNativeSeparators(filepath)));
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Help file <i>%1</i> not found")).arg(QDir::toNativeSeparators(defaultHelpFile)));
-
-  url.setFragment(anchor);
-
-  qDebug() << "Help file URL" << url;
-  return url;
+    atools::gui::Dialog::warning(parent, tr("Help file <i>%1</i> not found").arg(filepath));
 }
 
-QUrl HelpHandler::getHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
-                             const QString& anchor)
+QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
 {
-  QString lang = getLanguage();
-
-  if(!languages.contains(lang))
-    // Fallback to English
-    lang = "en";
-
-  QUrl url;
   // Replace variable and create URL
-  QString urlStr(atools::replaceVar(urlString, "LANG", lang));
-  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
-    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr);
-  else
-    url = QUrl(urlStr);
+  QUrl url = QUrl(atools::replaceVar(urlString, "LANG", language));
 
   if(!anchor.isEmpty())
-    url.setFragment(atools::replaceVar(anchor, "LANG", lang));
-
-  if(url.isLocalFile() && !QFileInfo::exists(url.toLocalFile()))
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("Help file <i>%1</i> not found")).arg(QDir::toNativeSeparators(url.toLocalFile())));
+    url.setFragment(atools::replaceVar(anchor, "LANG", language));
 
   return url;
 }
 
-QString HelpHandler::getHelpFile(const QString& urlString, const QStringList& languages)
+QUrl HelpHandler::getHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language)
 {
-  QString lang = getLanguage();
-
-  if(!languages.contains(lang))
-    // Fallback to English
-    lang = "en";
-
-  QString file;
+  QUrl url;
   // Replace variable and create URL
-  QString urlStr(atools::replaceVar(urlString, "LANG", lang));
-  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + QDir::separator() + urlStr))
-    file = QCoreApplication::applicationDirPath() + QDir::separator() + urlStr;
+  QString urlStr(atools::replaceVar(urlString, "LANG", language));
+
+  // Do not use system separator since this uses URLs
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
+    url = QUrl::fromLocalFile(QCoreApplication::applicationDirPath() + "/" + urlStr);
   else
-    file = urlStr;
+    atools::gui::Dialog::warning(parent, tr("Help file <i>%1</i> not found").arg(urlStr));
 
-  return file;
+  return url;
 }
 
-QUrl HelpHandler::getHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor)
+QString HelpHandler::getHelpFile(const QString& filepath, bool override)
 {
-  return getHelpUrl(parentWidget, urlString, languages, anchor);
+  QString lang = override ? "en" : getLanguageFull();
+
+  // Replace variable and create URL
+  QString urlStr(atools::replaceVar(filepath, "LANG", lang));
+
+  // Do not use system separator since this uses URLs
+  if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
+    // Full match with language and region if given
+    return QCoreApplication::applicationDirPath() + "/" + urlStr;
+  else
+  {
+    // Try a file without region
+    lang = lang.section("_", 0, 0);
+    if(!lang.isEmpty())
+    {
+      urlStr = atools::replaceVar(filepath, "LANG", lang);
+      if(QFileInfo::exists(QCoreApplication::applicationDirPath() + "/" + urlStr))
+        return QCoreApplication::applicationDirPath() + "/" + urlStr;
+    }
+
+    // Try same language with any region by iterating over dir
+    QDir dir(QCoreApplication::applicationDirPath() + "/" + QFileInfo(filepath).path());
+    QString filter(atools::replaceVar(QFileInfo(filepath).fileName(), "LANG", lang + "_*"));
+    QFileInfoList list = dir.entryInfoList({filter});
+
+    if(!list.isEmpty())
+      return list.first().filePath();
+
+    // Fall back to plain English
+    urlStr = atools::replaceVar(filepath, "LANG", "en");
+    return QCoreApplication::applicationDirPath() + "/" + urlStr;
+  }
 }
 
-void HelpHandler::openHelpUrl(const QString& urlString, const QStringList& languages, const QString& anchor)
+QUrl HelpHandler::getHelpUrlFile(const QString& urlString, const QString& language)
 {
-  openHelpUrl(parentWidget, urlString, languages, anchor);
+  return getHelpUrlFile(parentWidget, urlString, language);
 }
 
-void HelpHandler::openHelpUrl(QWidget *parent, const QString& urlString, const QStringList& languages,
-                              const QString& anchor)
+void HelpHandler::openHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
 {
-  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString
-           << "languages" << languages << "anchor" << anchor;
+  openHelpUrlWeb(parentWidget, urlString, language, anchor);
+}
 
-  QUrl url = getHelpUrl(parent, urlString, languages, anchor);
+void HelpHandler::openHelpUrlWeb(QWidget *parent, const QString& urlString, const QString& language,
+                                 const QString& anchor)
+{
+  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString << "languages" << language << "anchor" << anchor;
+
+  QUrl url = getHelpUrlWeb(urlString, language, anchor);
   if(!url.isEmpty())
     openUrl(parent, url);
   else
-    QMessageBox::warning(parent, QApplication::applicationName(), QString(
-                           tr("URL is empty for \"%1\" and anchor \"%2\".").arg(urlString).arg(anchor)));
+    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\" and anchor \"%2\".").arg(urlString).arg(anchor));
+}
+
+void HelpHandler::openHelpUrlFile(const QString& urlString, const QString& language)
+{
+  openHelpUrlFile(parentWidget, urlString, language);
+}
+
+void HelpHandler::openHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language)
+{
+  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString << "languages" << language;
+
+  QUrl url = getHelpUrlFile(parent, urlString, language);
+  if(!url.isEmpty())
+    openUrl(parent, url);
+  else
+    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
 }
 
 QString HelpHandler::getLanguage()
+{
+  QString lang = getLanguageFull();
+  if(!lang.isEmpty())
+    return lang.section(QRegularExpression("[_-]"), 0, 0);
+  else
+    return "en";
+}
+
+QString HelpHandler::getLanguageFull()
 {
   QString overrideLang =
     atools::settings::Settings::instance().valueStr("MainWindow/HelpLanguage", QString());
@@ -242,8 +226,10 @@ QString HelpHandler::getLanguage()
 
   if(overrideLang.isEmpty())
   {
-    if(!QLocale().uiLanguages().isEmpty())
-      lang = QLocale().uiLanguages().first().section('-', 0, 0);
+    QStringList uiLanguages = QLocale().uiLanguages();
+
+    if(!uiLanguages.isEmpty())
+      lang = uiLanguages.first().replace("-", "_");
     else
       lang = "en";
   }

@@ -69,6 +69,11 @@ atools::fs::xp::XpNavWriter::~XpNavWriter()
 
 void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
+  // 25, 40 and 130 correspond to VORs classified as terminal, low and high.﻿
+  // 125 rang﻿e is where the VOR has n﻿o﻿ published ter﻿m/low/high classifica﻿ti﻿on.
+  // These VORs might have the power output of a high VOR, but are not tested/certified to fulfill the
+  // high altitude SV﻿V﻿﻿.
+
   int range = at(line, RANGE).toInt();
   QString type;
   QString rangeType;

@@ -119,6 +119,275 @@ namespace atools {
 namespace fs {
 namespace weather {
 
+static QVector<Token> description;
+static QVector<Token> phenomenon;
+static QVector<Token> special;
+static QVector<Token> colors;
+static QVector<Token> cloud_types;
+
+static QStringList runway_deposit;
+static QStringList runway_deposit_extent;
+static QStringList runway_friction;
+
+void initTranslateableTexts()
+{
+  description =
+  {
+    {
+      "SH", MetarParser::tr("Showers of")
+    },
+    {
+      "TS", MetarParser::tr("Thunderstorm with")
+    },
+    {
+      "BC", MetarParser::tr("Patches of")
+    },
+    {
+      "BL", MetarParser::tr("Blowing")
+    },
+    {
+      "DR", MetarParser::tr("Low drifting")
+    },
+    {
+      "FZ", MetarParser::tr("Freezing")
+    },
+    {
+      "MI", MetarParser::tr("Shallow")
+    },
+    {
+      "PR", MetarParser::tr("Partial")
+    },
+    {
+      QString(), QString()
+    }
+  };
+
+  phenomenon =
+  {
+    {
+      "DZ", MetarParser::tr("Drizzle")
+    },
+    {
+      "GR", MetarParser::tr("Hail")
+    },
+    {
+      "GS", MetarParser::tr("Small hail and/or snow pellets")
+    },
+    {
+      "IC", MetarParser::tr("Ice crystals")
+    },
+    {
+      "PE", MetarParser::tr("Ice pellets")
+    },
+    {
+      "RA", MetarParser::tr("Rain")
+    },
+    {
+      "SG", MetarParser::tr("Snow grains")
+    },
+    {
+      "SN", MetarParser::tr("Snow")
+    },
+    {
+      "UP", MetarParser::tr("Unknown precipitation")
+    },
+    {
+      "BR", MetarParser::tr("Mist")
+    },
+    {
+      "DU", MetarParser::tr("Widespread dust")
+    },
+    {
+      "FG", MetarParser::tr("Fog")
+    },
+    {
+      "FGBR", MetarParser::tr("Fog bank")
+    },
+    {
+      "FU", MetarParser::tr("Smoke")
+    },
+    {
+      "HZ", MetarParser::tr("Haze")
+    },
+    {
+      "PY", MetarParser::tr("Spray")
+    },
+    {
+      "SA", MetarParser::tr("Sand")
+    },
+    {
+      "VA", MetarParser::tr("Volcanic ash")
+    },
+    {
+      "DS", MetarParser::tr("Duststorm")
+    },
+    {
+      "FC", MetarParser::tr("Funnel cloud/tornado waterspout")
+    },
+    {
+      "PO", MetarParser::tr("Well-developed dust/sand whirls")
+    },
+    {
+      "SQ", MetarParser::tr("Squalls")
+    },
+    {
+      "SS", MetarParser::tr("Sandstorm")
+    },
+    {
+      "UP", MetarParser::tr("Unknown")
+    }, // ... due to failed automatic acquisition
+    {
+      QString(), QString()
+    }
+  };
+
+  special =
+  {
+    {
+      "NSW", MetarParser::tr("No significant weather")
+    },
+    {
+      QString(), QString()
+    }
+    /*	{ "VCSH", "showers in the vicinity" },
+     *  { "VCTS", "thunderstorm in the vicinity" }, */
+  };
+
+  colors =
+  {
+    {
+      "BLU", MetarParser::tr("Blue")
+    }, // 2500 ft,  8.0 km
+    {
+      "WHT", MetarParser::tr("White")
+    }, // 1500 ft,  5.0 km
+    {
+      "GRN", MetarParser::tr("Green")
+    }, // 700 ft,  3.7 km
+    {
+      "YLO", MetarParser::tr("Yellow")
+    }, // 300 ft,  1.6 km
+    {
+      "AMB", MetarParser::tr("Amber")
+    }, // 200 ft,  0.8 km
+    {
+      "RED", MetarParser::tr("Red")
+    },
+    {
+      QString(), QString()
+    }
+  };
+
+  cloud_types =
+  {
+    {
+      "AC", MetarParser::tr("altocumulus")
+    },
+    {
+      "ACC", MetarParser::tr("altocumulus castellanus")
+    },
+    {
+      "ACSL", MetarParser::tr("altocumulus standing lenticular")
+    },
+    {
+      "AS", MetarParser::tr("altostratus")
+    },
+    {
+      "CB", MetarParser::tr("cumulonimbus")
+    },
+    {
+      "CBMAM", MetarParser::tr("cumulonimbus mammatus")
+    },
+    {
+      "CC", MetarParser::tr("cirrocumulus")
+    },
+    {
+      "CCSL", MetarParser::tr("cirrocumulus standing lenticular")
+    },
+    {
+      "CI", MetarParser::tr("cirrus")
+    },
+    {
+      "CS", MetarParser::tr("cirrostratus")
+    },
+    {
+      "CU", MetarParser::tr("cumulus")
+    },
+    {
+      "CUFRA", MetarParser::tr("cumulus fractus")
+    },
+    {
+      "NS", MetarParser::tr("nimbostratus")
+    },
+    {
+      "SAC", MetarParser::tr("stratoaltocumulus")
+    }, // guessed
+    {
+      "SC", MetarParser::tr("stratocumulus")
+    },
+    {
+      "SCSL", MetarParser::tr("stratocumulus standing lenticular")
+    },
+    {
+      "ST", MetarParser::tr("stratus")
+    },
+    {
+      "STFRA", MetarParser::tr("stratus fractus")
+    },
+    {
+      "TCU", MetarParser::tr("towering cumulus")
+    },
+    {
+      QString(), QString()
+    }
+  };
+
+  runway_deposit = QStringList(
+        {
+          MetarParser::tr("clear and dry"),
+          MetarParser::tr("damp"),
+          MetarParser::tr("wet or puddles"),
+          MetarParser::tr("frost"),
+          MetarParser::tr("dry snow"),
+          MetarParser::tr("wet snow"),
+          MetarParser::tr("slush"),
+          MetarParser::tr("ice"),
+          MetarParser::tr("compacted snow"),
+          MetarParser::tr("frozen ridges"),
+          QString()
+        });
+
+  runway_deposit_extent = QStringList(
+        {
+          QString(),
+          MetarParser::tr("1-10%"),
+          MetarParser::tr("11-25%"),
+          QString(),
+          QString(),
+          MetarParser::tr("26-50%"),
+          QString(),
+          QString(),
+          QString(),
+          MetarParser::tr("51-100%"),
+          QString()
+        });
+
+  runway_friction = QStringList(
+        {
+          QString(),
+          MetarParser::tr("poor braking action"),
+          MetarParser::tr("poor/medium braking action"),
+          MetarParser::tr("medium braking action"),
+          MetarParser::tr("medium/good braking action"),
+          MetarParser::tr("good braking action"),
+          QString(),
+          QString(),
+          QString(),
+          MetarParser::tr("friction: unreliable measurement"),
+          QString()
+        });
+}
+
 /**
  * The constructor takes a Metar string
  * The constructor throws sg_io_exceptions on failure. The "METAR"
@@ -641,14 +910,14 @@ bool MetarParser::scanVisibility()
   MetarVisibility *v;
   if(dir != -1)
     v = &_dir_visibility[dir / 45];
-  else if(!(_min_visibility._distance < INVALID_METAR_VALUE))
+  else if(!(_min_visibility.distance < INVALID_METAR_VALUE))
     v = &_min_visibility;
   else
     v = &_max_visibility;
 
-  v->_distance = static_cast<float>(distance);
-  v->_modifier = modifier;
-  v->_direction = dir;
+  v->distance = static_cast<float>(distance);
+  v->modifier = modifier;
+  v->direction = dir;
   _m = m;
   _grpcount++;
   return true;
@@ -679,9 +948,9 @@ bool MetarParser::scanRwyVisRange()
 
   int from, to;
   if(*m == 'P')
-    m++, r._min_visibility._modifier = MetarVisibility::GREATER_THAN;
+    m++, r.minVisibility.modifier = MetarVisibility::GREATER_THAN;
   else if(*m == 'M')
-    m++, r._min_visibility._modifier = MetarVisibility::LESS_THAN;
+    m++, r.minVisibility.modifier = MetarVisibility::LESS_THAN;
   if(!scanNumber(&m, &from, 4))
     return false;
 
@@ -689,9 +958,9 @@ bool MetarParser::scanRwyVisRange()
   {
     m++;
     if(*m == 'P')
-      m++, r._max_visibility._modifier = MetarVisibility::GREATER_THAN;
+      m++, r.maxVisibility.modifier = MetarVisibility::GREATER_THAN;
     else if(*m == 'M')
-      m++, r._max_visibility._modifier = MetarVisibility::LESS_THAN;
+      m++, r.maxVisibility.modifier = MetarVisibility::LESS_THAN;
     if(!scanNumber(&m, &to, 4))
       return false;
   }
@@ -704,147 +973,28 @@ bool MetarParser::scanRwyVisRange()
     to = int(to * SG_FEET_TO_METER);
     m += 2;
   }
-  r._min_visibility._distance = from;
-  r._max_visibility._distance = to;
+  r.minVisibility.distance = from;
+  r.maxVisibility.distance = to;
 
   if(*m == '/') // this is not in the spec!
     m++;
   if(*m == 'D')
-    m++, r._min_visibility._tendency = MetarVisibility::DECREASING;
+    m++, r.minVisibility.tendency = MetarVisibility::DECREASING;
   else if(*m == 'N')
-    m++, r._min_visibility._tendency = MetarVisibility::STABLE;
+    m++, r.minVisibility.tendency = MetarVisibility::STABLE;
   else if(*m == 'U')
-    m++, r._min_visibility._tendency = MetarVisibility::INCREASING;
+    m++, r.minVisibility.tendency = MetarVisibility::INCREASING;
 
   if(!scanBoundary(&m))
     return false;
 
   _m = m;
 
-  _runways[id]._min_visibility = r._min_visibility;
-  _runways[id]._max_visibility = r._max_visibility;
+  _runways[id].minVisibility = r.minVisibility;
+  _runways[id].maxVisibility = r.maxVisibility;
   _grpcount++;
   return true;
 }
-
-static const struct Token special[] = {
-  {
-    "NSW", MetarParser::tr("No significant weather")
-  },
-  /*	{ "VCSH", "showers in the vicinity" },
-   *  { "VCTS", "thunderstorm in the vicinity" }, */
-  {
-    0, QString()
-  }
-};
-
-static const struct Token description[] = {
-  {
-    "SH", MetarParser::tr("Showers of")
-  },
-  {
-    "TS", MetarParser::tr("Thunderstorm with")
-  },
-  {
-    "BC", MetarParser::tr("Patches of")
-  },
-  {
-    "BL", MetarParser::tr("Blowing")
-  },
-  {
-    "DR", MetarParser::tr("Low drifting")
-  },
-  {
-    "FZ", MetarParser::tr("Freezing")
-  },
-  {
-    "MI", MetarParser::tr("Shallow")
-  },
-  {
-    "PR", MetarParser::tr("Partial")
-  },
-  {
-    0, QString()
-  }
-};
-
-static const struct Token phenomenon[] = {
-  {
-    "DZ", MetarParser::tr("Drizzle")
-  },
-  {
-    "GR", MetarParser::tr("Hail")
-  },
-  {
-    "GS", MetarParser::tr("Small hail and/or snow pellets")
-  },
-  {
-    "IC", MetarParser::tr("Ice crystals")
-  },
-  {
-    "PE", MetarParser::tr("Ice pellets")
-  },
-  {
-    "RA", MetarParser::tr("Rain")
-  },
-  {
-    "SG", MetarParser::tr("Snow grains")
-  },
-  {
-    "SN", MetarParser::tr("Snow")
-  },
-  {
-    "UP", MetarParser::tr("Unknown precipitation")
-  },
-  {
-    "BR", MetarParser::tr("Mist")
-  },
-  {
-    "DU", MetarParser::tr("Widespread dust")
-  },
-  {
-    "FG", MetarParser::tr("Fog")
-  },
-  {
-    "FGBR", MetarParser::tr("Fog bank")
-  },
-  {
-    "FU", MetarParser::tr("Smoke")
-  },
-  {
-    "HZ", MetarParser::tr("Haze")
-  },
-  {
-    "PY", MetarParser::tr("Spray")
-  },
-  {
-    "SA", MetarParser::tr("Sand")
-  },
-  {
-    "VA", MetarParser::tr("Volcanic ash")
-  },
-  {
-    "DS", MetarParser::tr("Duststorm")
-  },
-  {
-    "FC", MetarParser::tr("Funnel cloud/tornado waterspout")
-  },
-  {
-    "PO", MetarParser::tr("Well-developed dust/sand whirls")
-  },
-  {
-    "SQ", MetarParser::tr("Squalls")
-  },
-  {
-    "SS", MetarParser::tr("Sandstorm")
-  },
-  {
-    "UP", MetarParser::tr("Unknown")
-  }, // ... due to failed automatic acquisition
-  {
-    0, QString()
-  }
-};
 
 // (+|-|VC)?(NSW|MI|PR|BC|DR|BL|SH|TS|FZ)?((DZ|RA|SN|SG|IC|PE|GR|GS|UP){0,3})(BR|FG|FU|VA|DU|SA|HZ|PY|PO|SQ|FC|SS|DS){0,3}
 bool MetarParser::scanWeather()
@@ -896,7 +1046,7 @@ bool MetarParser::scanWeather()
   {
     if(!(a = scanToken(&m, description)))
       break;
-    w.descriptions.push_back(QString::fromLatin1(a->id));
+    w.descriptions.push_back(a->id);
     weather += a->text.toStdString() + " ";
   }
 
@@ -904,13 +1054,13 @@ bool MetarParser::scanWeather()
   {
     if(!(a = scanToken(&m, phenomenon)))
       break;
-    w.phenomena.push_back(QString::fromLatin1(a->id));
+    w.phenomena.push_back(a->id);
     weather += a->text.toStdString() + " ";
-    if(!strcmp(a->id, "RA"))
+    if(a->id == "RA")
       _rain = w.intensity;
-    else if(!strcmp(a->id, "HA"))
+    else if(a->id == "HA")
       _hail = w.intensity;
-    else if(!strcmp(a->id, "SN"))
+    else if(a->id == "SN")
       _snow = w.intensity;
   }
   if(!weather.length())
@@ -931,69 +1081,6 @@ bool MetarParser::scanWeather()
   _grpcount++;
   return true;
 }
-
-static const struct Token cloud_types[] = {
-  {
-    "AC", MetarParser::tr("altocumulus")
-  },
-  {
-    "ACC", MetarParser::tr("altocumulus castellanus")
-  },
-  {
-    "ACSL", MetarParser::tr("altocumulus standing lenticular")
-  },
-  {
-    "AS", MetarParser::tr("altostratus")
-  },
-  {
-    "CB", MetarParser::tr("cumulonimbus")
-  },
-  {
-    "CBMAM", MetarParser::tr("cumulonimbus mammatus")
-  },
-  {
-    "CC", MetarParser::tr("cirrocumulus")
-  },
-  {
-    "CCSL", MetarParser::tr("cirrocumulus standing lenticular")
-  },
-  {
-    "CI", MetarParser::tr("cirrus")
-  },
-  {
-    "CS", MetarParser::tr("cirrostratus")
-  },
-  {
-    "CU", MetarParser::tr("cumulus")
-  },
-  {
-    "CUFRA", MetarParser::tr("cumulus fractus")
-  },
-  {
-    "NS", MetarParser::tr("nimbostratus")
-  },
-  {
-    "SAC", MetarParser::tr("stratoaltocumulus")
-  }, // guessed
-  {
-    "SC", MetarParser::tr("stratocumulus")
-  },
-  {
-    "SCSL", MetarParser::tr("stratocumulus standing lenticular")
-  },
-  {
-    "ST", MetarParser::tr("stratus")
-  },
-  {
-    "STFRA", MetarParser::tr("stratus fractus")
-  },
-  {
-    "TCU", MetarParser::tr("towering cumulus")
-  },
-  {
-    0, QString()
-  }
-};
 
 // (FEW|SCT|BKN|OVC|SKC|CLR|CAVOK|VV)([0-9]{3}|///)?[:cloud_type:]?
 bool MetarParser::scanSkyCondition()
@@ -1042,7 +1129,7 @@ bool MetarParser::scanSkyCondition()
 
     if(i == 3)
     {
-      cl._coverage = MetarCloud::COVERAGE_CLEAR;
+      cl.coverage = MetarCloud::COVERAGE_CLEAR;
       _clouds.push_back(cl);
     }
     else
@@ -1056,13 +1143,13 @@ bool MetarParser::scanSkyCondition()
   if(!strncmp(m, "VV", i = 2)) // vertical visibility
     ;
   else if(!strncmp(m, "FEW", i = 3))
-    cl._coverage = MetarCloud::COVERAGE_FEW;
+    cl.coverage = MetarCloud::COVERAGE_FEW;
   else if(!strncmp(m, "SCT", i = 3))
-    cl._coverage = MetarCloud::COVERAGE_SCATTERED;
+    cl.coverage = MetarCloud::COVERAGE_SCATTERED;
   else if(!strncmp(m, "BKN", i = 3))
-    cl._coverage = MetarCloud::COVERAGE_BROKEN;
+    cl.coverage = MetarCloud::COVERAGE_BROKEN;
   else if(!strncmp(m, "OVC", i = 3))
-    cl._coverage = MetarCloud::COVERAGE_OVERCAST;
+    cl.coverage = MetarCloud::COVERAGE_OVERCAST;
   else
     return false;
 
@@ -1078,28 +1165,28 @@ bool MetarParser::scanSkyCondition()
   else if(!scanNumber(&m, &i, 2, 3))
     i = -1;
 
-  if(cl._coverage == MetarCloud::COVERAGE_NIL)
+  if(cl.coverage == MetarCloud::COVERAGE_NIL)
   {
     if(!scanBoundary(&m))
       return false;
 
     if(i == -1) // 'VV///'
-      _vert_visibility._modifier = MetarVisibility::NOGO;
+      _vert_visibility.modifier = MetarVisibility::NOGO;
     else
-      _vert_visibility._distance = i * 100 * SG_FEET_TO_METER;
+      _vert_visibility.distance = i * 100 * SG_FEET_TO_METER;
     _m = m;
     return true;
   }
 
   if(i != -1)
-    cl._altitude = i * 100 * SG_FEET_TO_METER;
+    cl.altitude = i * 100 * SG_FEET_TO_METER;
 
   const struct Token *a;
 
   if((a = scanToken(&m, cloud_types)))
   {
-    cl._type = a->id;
-    cl._type_long = a->text;
+    cl.type = a->id;
+    cl.typeLong = a->text;
   }
 
   // @see WMO-49 Section 4.5.4.5
@@ -1229,48 +1316,6 @@ bool MetarParser::scanPressure()
   return true;
 }
 
-static const QString runway_deposit[] =
-{
-  MetarParser::tr("clear and dry"),
-  MetarParser::tr("damp"),
-  MetarParser::tr("wet or puddles"),
-  MetarParser::tr("frost"),
-  MetarParser::tr("dry snow"),
-  MetarParser::tr("wet snow"),
-  MetarParser::tr("slush"),
-  MetarParser::tr("ice"),
-  MetarParser::tr("compacted snow"),
-  MetarParser::tr("frozen ridges")
-};
-
-static const QString runway_deposit_extent[] =
-{
-  QString(),
-  MetarParser::tr("1-10%"),
-  MetarParser::tr("11-25%"),
-  QString(),
-  QString(),
-  MetarParser::tr("26-50%"),
-  QString(),
-  QString(),
-  QString(),
-  MetarParser::tr("51-100%")
-};
-
-static const QString runway_friction[] =
-{
-  QString(),
-  MetarParser::tr("poor braking action"),
-  MetarParser::tr("poor/medium braking action"),
-  MetarParser::tr("medium braking action"),
-  MetarParser::tr("medium/good braking action"),
-  MetarParser::tr("good braking action"),
-  QString(),
-  QString(),
-  QString(),
-  MetarParser::tr("friction: unreliable measurement")
-};
-
 // \d\d(CLRD|[\d/]{4})(\d\d|//)
 bool MetarParser::scanRunwayReport()
 {
@@ -1297,14 +1342,14 @@ bool MetarParser::scanRunwayReport()
   if(!strncmp(m, "CLRD", 4))
   {
     m += 4; // runway cleared
-    r._deposit_string = MetarParser::tr("cleared");
+    r.depositString = MetarParser::tr("cleared");
   }
   else
   {
     if(scanNumber(&m, &i, 1))
     {
-      r._deposit = i;
-      r._deposit_string = runway_deposit[i];
+      r.deposit = i;
+      r.depositString = runway_deposit[i];
     }
     else if(*m == '/')
       m++;
@@ -1313,8 +1358,8 @@ bool MetarParser::scanRunwayReport()
 
     if(*m == '1' || *m == '2' || *m == '5' || *m == '9') // extent of deposit
     {
-      r._extent = *m - '0';
-      r._extent_string = runway_deposit_extent[*m - '0'];
+      r.extent = *m - '0';
+      r.extentString = runway_deposit_extent[*m - '0'];
     }
     else if(*m != '/')
       return false;
@@ -1327,13 +1372,13 @@ bool MetarParser::scanRunwayReport()
       return false;
 
     if(i == 0)
-      r._depth = 0.0005; // < 1 mm deep (let's say 0.5 :-)
+      r.depth = 0.0005; // < 1 mm deep (let's say 0.5 :-)
     else if(i > 0 && i <= 90)
-      r._depth = i / 1000.0; // i mm deep
+      r.depth = i / 1000.0; // i mm deep
     else if(i >= 92 && i <= 98)
-      r._depth = (i - 90) / 20.0;
+      r.depth = (i - 90) / 20.0;
     else if(i == 99)
-      r._comment = MetarParser::tr("runway not in use");
+      r.comment = MetarParser::tr("runway not in use");
     else if(i == -1) // no depth given ("//")
       ;
     else
@@ -1347,23 +1392,23 @@ bool MetarParser::scanRunwayReport()
 
   if(i >= 1 && i < 90)
   {
-    r._friction = i / 100.0;
+    r.friction = i / 100.0;
   }
   else if((i >= 91 && i <= 95) || i == 99)
   {
-    r._friction_string = runway_friction[i - 90];
+    r.frictionString = runway_friction[i - 90];
   }
   if(!scanBoundary(&m))
     return false;
 
-  _runways[id]._deposit = r._deposit;
-  _runways[id]._deposit_string = r._deposit_string;
-  _runways[id]._extent = r._extent;
-  _runways[id]._extent_string = r._extent_string;
-  _runways[id]._depth = r._depth;
-  _runways[id]._friction = r._friction;
-  _runways[id]._friction_string = r._friction_string;
-  _runways[id]._comment = r._comment;
+  _runways[id].deposit = r.deposit;
+  _runways[id].depositString = r.depositString;
+  _runways[id].extent = r.extent;
+  _runways[id].extentString = r.extentString;
+  _runways[id].depth = r.depth;
+  _runways[id].friction = r.friction;
+  _runways[id].frictionString = r.frictionString;
+  _runways[id].comment = r.comment;
   _m = m;
   _grpcount++;
   return true;
@@ -1395,7 +1440,7 @@ bool MetarParser::scanWindShear()
     if(!scanBoundary(&m))
       return false;
 
-    _runways["ALL"]._wind_shear = true;
+    _runways["ALL"].windShear = true;
     _m = m;
     return true;
   }
@@ -1419,10 +1464,10 @@ bool MetarParser::scanWindShear()
     if(!scanBoundary(&m))
       return false;
 
-    _runways[id]._wind_shear = true;
+    _runways[id].windShear = true;
   }
   if(!cnt)
-    _runways["ALL"]._wind_shear = true;
+    _runways["ALL"].windShear = true;
   _m = m;
   return true;
 }
@@ -1440,31 +1485,6 @@ bool MetarParser::scanTrendForecast()
   _m = m;
   return true;
 }
-
-// (BLU|WHT|GRN|YLO|AMB|RED)
-static const struct Token colors[] = {
-  {
-    "BLU", MetarParser::tr("Blue")
-  }, // 2500 ft,  8.0 km
-  {
-    "WHT", MetarParser::tr("White")
-  }, // 1500 ft,  5.0 km
-  {
-    "GRN", MetarParser::tr("Green")
-  }, // 700 ft,  3.7 km
-  {
-    "YLO", MetarParser::tr("Yellow")
-  }, // 300 ft,  1.6 km
-  {
-    "AMB", MetarParser::tr("Amber")
-  }, // 200 ft,  0.8 km
-  {
-    "RED", MetarParser::tr("Red")
-  }, // <200 ft, <0.8 km
-  {
-    0, QString()
-  }
-};
 
 bool MetarParser::scanColorState()
 {
@@ -1551,34 +1571,46 @@ int MetarParser::scanNumber(char **src, int *num, int min, int max)
 }
 
 // find longest match of str in list
-const struct Token *MetarParser::scanToken(char **str, const struct Token *list)
+const struct Token *MetarParser::scanToken(char **str, const QVector<Token>& list)
 {
-  const struct Token *longest = 0;
-  int maxlen = 0, len;
-  const char *s;
-  for(int i = 0; (s = list[i].id); i++)
+  const struct Token *longest = nullptr;
+  int maxlen = 0;
+  QString string(*str);
+
+  for(const Token& token : list)
   {
-    len = strlen(s);
-    if(!strncmp(s, *str, len) && len > maxlen)
+    int len = token.id.size();
+    if(string.left(len) == token.id && len > maxlen)
     {
       maxlen = len;
-      longest = &list[i];
+      longest = &token;
     }
   }
+
+  // const char *s;
+  // for(int i = 0; (s = list[i].id); i++)
+  // {
+  // len = strlen(s);
+  // if(!strncmp(s, *str, len) && len > maxlen)
+  // {
+  // maxlen = len;
+  // longest = &list[i];
+  // }
+  // }
   *str += maxlen;
   return longest;
 }
 
 void MetarCloud::set(float alt, Coverage cov)
 {
-  _altitude = alt;
+  altitude = alt;
   if(cov != -1)
-    _coverage = cov;
+    coverage = cov;
 }
 
 QString MetarCloud::getCoverageString() const
 {
-  switch(_coverage)
+  switch(coverage)
   {
     case atools::fs::weather::MetarCloud::COVERAGE_NIL:
       return QString();
@@ -1623,18 +1655,18 @@ MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
 
 void MetarVisibility::set(float dist, int dir, int mod, int tend)
 {
-  _distance = dist;
+  distance = dist;
   if(dir != -1)
-    _direction = dir;
+    direction = dir;
   if(mod != -1)
-    _modifier = mod;
+    modifier = mod;
   if(tend != 1)
-    _tendency = tend;
+    tendency = tend;
 }
 
 QString MetarVisibility::getModifierString() const
 {
-  Modifier mod = static_cast<Modifier>(_modifier);
+  Modifier mod = static_cast<Modifier>(modifier);
   switch(mod)
   {
     case atools::fs::weather::MetarVisibility::NOGO:

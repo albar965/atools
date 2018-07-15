@@ -17,6 +17,8 @@
 
 #include "fs/sc/simconnectdata.h"
 
+#include "geo/calculations.h"
+
 #include <QDebug>
 #include <QDataStream>
 
@@ -177,26 +179,15 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.position = pos;
   data.userAircraft.position.setAltitude(1000);
 
+  float h = 0.f;
   if(lastPos.isValid())
   {
-
-    float h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
-    data.userAircraft.headingMagDeg =
-      data.userAircraft.headingTrueDeg =
-        data.userAircraft.trackMagDeg =
-          data.userAircraft.trackTrueDeg =
-            h;
-
+    h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
     data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = 200.f;
   }
-  else
-  {
-    data.userAircraft.headingMagDeg =
-      data.userAircraft.headingTrueDeg =
-        data.userAircraft.trackMagDeg =
-          data.userAircraft.trackTrueDeg =
-            0.f;
-  }
+
+  data.userAircraft.trackMagDeg = data.userAircraft.trackTrueDeg = h;
+  data.userAircraft.headingMagDeg = data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 20.f);
 
   data.userAircraft.category = AIRPLANE;
   data.userAircraft.engineType = PISTON;

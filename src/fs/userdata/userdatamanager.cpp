@@ -105,7 +105,9 @@ enum Index
   MAGVAR = 6,
   TAGS = 7,
   DESCRIPTION = 8,
-  REGION = 9
+  REGION = 9,
+  VISIBLE_FROM = 10,
+  LAST_EDIT = 11
 };
 
 }
@@ -395,14 +397,28 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       insertQuery.bindValue(":region", at(values, csv::REGION, true /* no warning */));
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
       insertQuery.bindValue(":tags", at(values, csv::TAGS));
-      insertQuery.bindValue(":last_edit_timestamp", now);
       insertQuery.bindValue(":import_file_path", absfilepath);
-      insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(":temp", 0);
+
+      // YYYY-MM-DDTHH:mm:ss
+      QDateTime lastEdit = QDateTime::fromString(at(values, csv::LAST_EDIT, true /* no warning */), Qt::ISODate);
+      if(lastEdit.isValid())
+        insertQuery.bindValue(":last_edit_timestamp", lastEdit.toString(Qt::ISODate));
+      else
+        insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
+
+      bool ok;
+      int visibleFrom = at(values, csv::VISIBLE_FROM, true /* no warning */).toInt(&ok);
+      if(visibleFrom > 0 && ok)
+        insertQuery.bindValue(":visible_from", visibleFrom);
+      else
+        insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+
       insertQuery.bindValue(":altitude", at(values, csv::ALT));
 
       validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY));
-      insertQuery.bindValue(":lonx", at(values, csv::LONX));
-      insertQuery.bindValue(":laty", at(values, csv::LATY));
+      insertQuery.bindValue(":lonx", atFloat(values, csv::LONX));
+      insertQuery.bindValue(":laty", atFloat(values, csv::LATY));
       insertQuery.exec();
       lineNum++;
       numImported++;
@@ -487,9 +503,10 @@ int UserdataManager::importXplane(const QString& filepath)
       insertQuery.bindValue(":ident", at(cols, xp::IDENT));
       insertQuery.bindValue(":region", at(cols, xp::REGION));
       insertQuery.bindValue(":tags", at(cols, xp::AIRPORT));
-      insertQuery.bindValue(":last_edit_timestamp", now);
+      insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(":temp", 0);
 
       validateCoordinates(line, at(cols, xp::LONX), at(cols, xp::LATY));
       insertQuery.bindValue(":lonx", at(cols, xp::LONX));
@@ -558,9 +575,10 @@ int UserdataManager::importGarmin(const QString& filepath)
       insertQuery.bindValue(":type", "Waypoint");
       insertQuery.bindValue(":name", at(cols, gm::NAME));
       insertQuery.bindValue(":ident", at(cols, gm::IDENT));
-      insertQuery.bindValue(":last_edit_timestamp", now);
+      insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
       insertQuery.bindValue(":import_file_path", absfilepath);
       insertQuery.bindValue(":visible_from", VISIBLE_FROM_DEFAULT_NM);
+      insertQuery.bindValue(":temp", 0);
 
       validateCoordinates(line, at(cols, gm::LONX), at(cols, gm::LATY));
       insertQuery.bindValue(":lonx", at(cols, gm::LONX));
@@ -598,7 +616,8 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setNumberPrecision(10);
 
     QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
-                       "0 as mag_var, tags, description, region from userdata", db, ids);
+                       "0 as mag_var, tags, description, region, visible_from, last_edit_timestamp from userdata", db,
+                       ids);
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
@@ -716,7 +735,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << " " << QString::number(query.q.valueDouble("lonx"), 'f', 8)
              << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
              << " " << "ENRT" // Ignore airport here
-             << " " << (region.isEmpty() ? "ZZ" : region)
+             << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region))
              << endl;
       numExported++;
     }

@@ -172,9 +172,9 @@ public:
     return flags;
   }
 
-  AircraftFlags& getFlags()
+  void setFlags(AircraftFlags value)
   {
-    return flags;
+    flags = value;
   }
 
   Category getCategory() const
@@ -263,6 +263,12 @@ public:
   bool isOnline() const
   {
     return flags & SIM_ONLINE;
+  }
+
+  /* This simulator aircraft is a shadow of an online network aircraft (by matching callsign to reg) */
+  bool isOnlineShadow() const
+  {
+    return flags & SIM_ONLINE_SHADOW;
   }
 
   /* Create artificially by mouse movements */
