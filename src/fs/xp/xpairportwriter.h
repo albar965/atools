@@ -123,6 +123,9 @@ private:
   int compareGate(const QString& gate1, const QString& gate2);
   int compareRamp(const QString& ramp1, const QString& ramp2);
 
+  /* Calculate center of parking spot for position of tick mark */
+  void calculateParkingPos(geo::Pos& position, float heading, float radiusFeet);
+
   /* State information */
   bool writingAirport = false, ignoringAirport = false,
        writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false,

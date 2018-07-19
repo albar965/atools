@@ -36,6 +36,7 @@ void LoggingUtil::logSystemInformation()
   qInfo() << "Organization" << QCoreApplication::organizationName()
           << "domain" << QCoreApplication::organizationDomain();
   qInfo() << "Application file path" << QCoreApplication::applicationFilePath();
+  qInfo() << "Application dir path" << QCoreApplication::applicationDirPath();
   qInfo() << "Application arguments" << QCoreApplication::arguments();
   qInfo() << "Current working directory" << QDir(".").absolutePath();
   qInfo() << "Library paths" << QCoreApplication::libraryPaths();

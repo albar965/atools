@@ -421,6 +421,7 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
      nameCompare == QLatin1Literal("TAXY_RAMP") ||
      nameCompare == QLatin1Literal("UNNAMED") ||
      nameCompare == QLatin1Literal("TWY") ||
+     nameCompare == QLatin1Literal("TAXY") ||
      nameCompare == QLatin1Literal("TAXI"))
     name.clear();
 
@@ -619,14 +620,12 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
   insertParkingQuery->bindValue(":parking_id", ++curParkingId);
   insertParkingQuery->bindValue(":airport_id", curAirportId);
 
-  Pos pos(at(line, sl::LONX).toFloat(), at(line, sl::LATY).toFloat());
-  airportRect.extend(pos);
-  insertParkingQuery->bindValue(":laty", pos.getLatY());
-  insertParkingQuery->bindValue(":lonx", pos.getLonX());
+  insertParkingQuery->bindValue(":laty", at(line, sl::LATY).toFloat());
+  insertParkingQuery->bindValue(":lonx", at(line, sl::LONX).toFloat());
 
   insertParkingQuery->bindValue(":heading", at(line, sl::HEADING).toFloat());
   insertParkingQuery->bindValue(":number", -1);
-  insertParkingQuery->bindValue(":radius", 50.f);
+  insertParkingQuery->bindValue(":radius", 50.f); // Feet
   // Fill airline codes later from metadata
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
 
@@ -711,43 +710,43 @@ void XpAirportWriter::writeStartupLocationMetadata(const QStringList& line,
     insertParkingQuery->bindValue(":airline_codes", line.value(sm::AIRLINE).toUpper());
 
   QString sizeType("S");
-  float radius = 10.f;
+  float radiusFeet = 10.f;
 
   // ICAO width code A 15 m, B 25 m, C 35 m, D 50 m, E 65 m, F 80 m
   // TODO size type is not clear - not in 850
   QString widthCode = line.value(sm::WIDTH);
   if(widthCode == "A")
   {
-    radius = 25.f;
+    radiusFeet = 25.f;
     sizeType = "S";
   }
   else if(widthCode == "B")
   {
-    radius = 40.f;
+    radiusFeet = 40.f;
     sizeType = "S";
   }
   else if(widthCode == "C")
   {
-    radius = 60.f;
+    radiusFeet = 60.f;
     sizeType = "M";
   }
   else if(widthCode == "D")
   {
-    radius = 80.f;
+    radiusFeet = 80.f;
     sizeType = "M";
   }
   else if(widthCode == "E")
   {
-    radius = 100.f;
+    radiusFeet = 100.f;
     sizeType = "H";
   }
   else if(widthCode == "F")
   {
-    radius = 130.f;
+    radiusFeet = 130.f;
     sizeType = "H";
   }
 
-  insertParkingQuery->bindValue(":radius", radius);
+  insertParkingQuery->bindValue(":radius", radiusFeet);
 
   if(!isFuel)
   {
@@ -810,6 +809,13 @@ void XpAirportWriter::finishStartupLocation()
     insertAirportQuery->bindValue(":largest_parking_ramp", largestParkingRamp);
     insertAirportQuery->bindValue(":largest_parking_gate", largestParkingGate);
 
+    Pos pos(insertParkingQuery->boundValue(":lonx").toFloat(), insertParkingQuery->boundValue(":laty").toFloat());
+    calculateParkingPos(pos, insertParkingQuery->boundValue(":heading").toFloat(),
+                        insertParkingQuery->boundValue(":radius").toFloat());
+    insertParkingQuery->bindValue(":laty", pos.getLatY());
+    insertParkingQuery->bindValue(":lonx", pos.getLonX());
+    airportRect.extend(pos);
+
     insertParkingQuery->exec();
     insertParkingQuery->clearBoundValues();
     writingStartLocation = false;
@@ -829,20 +835,24 @@ void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp
   insertParkingQuery->bindValue(":parking_id", ++curParkingId);
   insertParkingQuery->bindValue(":airport_id", curAirportId);
 
-  Pos pos(at(line, s::LONX).toFloat(), at(line, s::LATY).toFloat());
-  airportRect.extend(pos);
-  insertParkingQuery->bindValue(":laty", pos.getLatY());
-  insertParkingQuery->bindValue(":lonx", pos.getLonX());
+  insertParkingQuery->bindValue(":laty", at(line, s::LATY).toFloat());
+  insertParkingQuery->bindValue(":lonx", at(line, s::LONX).toFloat());
 
   insertParkingQuery->bindValue(":heading", at(line, s::HEADING).toFloat());
   insertParkingQuery->bindValue(":number", -1);
-  insertParkingQuery->bindValue(":radius", 50.f);
+  insertParkingQuery->bindValue(":radius", 50.f); // Feet
   insertParkingQuery->bindValue(":airline_codes", QVariant(QVariant::String));
   insertParkingQuery->bindValue(":name", mid(line, s::NAME, true /* ignore error */));
   insertParkingQuery->bindValue(":has_jetway", 0);
   insertParkingQuery->bindValue(":type", "");
 
   finishStartupLocation();
+}
+
+void XpAirportWriter::calculateParkingPos(atools::geo::Pos& position, float heading, float radiusFeet)
+{
+  position = position.endpoint(atools::geo::feetToMeter(radiusFeet), atools::geo::opposedCourseDeg(heading));
+  position.normalize();
 }
 
 void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
