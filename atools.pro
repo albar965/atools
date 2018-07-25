@@ -265,7 +265,8 @@ HEADERS += src/atools.h \
     src/fs/online/onlinedatamanager.h \
     src/fs/online/onlinetypes.h \
     src/zip/gzip.h \
-    src/sql/sqltransaction.h
+    src/sql/sqltransaction.h \
+    src/logging/loggingtypes.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \

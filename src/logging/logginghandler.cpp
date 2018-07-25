@@ -27,6 +27,7 @@ namespace atools {
 namespace logging {
 
 using internal::LoggingConfig;
+using internal::Channel;
 
 LoggingHandler *LoggingHandler::instance = nullptr;
 LoggingHandler::LogFunctionType LoggingHandler::logFunc = nullptr;
@@ -122,23 +123,29 @@ void LoggingHandler::resetAbortFunction()
   parentWidget = nullptr;
 }
 
-void LoggingHandler::logToCatChannels(const QHash<QString, QVector<QTextStream *> >& streamListCat,
-                                      const QVector<QTextStream *>& streamList2,
-                                      const QString& message,
+void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
+                                      internal::ChannelVector& streamList, const QString& message,
                                       const QString& category)
 {
-  QMutexLocker locker(&mutex);
+  mutex.lock();
 
   if(category.isEmpty())
   {
-    for(QTextStream *stream : streamList2)
-      (*stream) << message << endl << flush;
+    for(Channel *channel : streamList)
+    {
+      (*channel->stream) << message << endl << flush;
+      instance->logConfig->checkStreamSize(channel);
+    }
   }
   else if(streamListCat.contains(category))
   {
-    for(QTextStream *stream : streamListCat[category])
-      (*stream) << message << endl << flush;
+    for(Channel *channel : streamListCat[category])
+    {
+      (*channel->stream) << message << endl << flush;
+      instance->logConfig->checkStreamSize(channel);
+    }
   }
+  mutex.unlock();
 }
 
 void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg)

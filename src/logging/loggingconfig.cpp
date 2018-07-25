@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QSettings>
 #include <QApplication>
+#include <QDateTime>
 
 namespace atools {
 namespace logging {
@@ -57,7 +58,7 @@ LoggingConfig::LoggingConfig(const QString& logConfiguration, const QString& log
   // Read general parameters
   readConfigurationSection(settings);
 
-  QHash<QString, QTextStream *> channelMap;
+  QHash<QString, Channel *> channelMap;
   // Create all file streams and add them to the channelMap
   readChannels(settings, channelMap);
 
@@ -69,34 +70,134 @@ LoggingConfig::LoggingConfig(const QString& logConfiguration, const QString& log
 
 LoggingConfig::~LoggingConfig()
 {
-  debugStreams.clear();
-  infoStreams.clear();
-  warningStreams.clear();
-  criticalStreams.clear();
-  fatalStreams.clear();
+  // Close streams and files and collect channel objects which are duplicated between streams
+  QSet<Channel *> channels;
 
-  for(QTextStream *str : streams)
-    str->flush();
-  qDeleteAll(streams);
-  streams.clear();
+  closeStreams(channels, debugStreams);
+  closeStreams(channels, infoStreams);
+  closeStreams(channels, warningStreams);
+  closeStreams(channels, criticalStreams);
+  closeStreams(channels, fatalStreams);
+  closeStreams(channels, emptyStreams);
 
-  for(QFile *file : files)
-    file->close();
-  qDeleteAll(files);
-  files.clear();
+  closeStreams(channels, debugStreamsCat);
+  closeStreams(channels, infoStreamsCat);
+  closeStreams(channels, warningStreamsCat);
+  closeStreams(channels, criticalStreamsCat);
+  closeStreams(channels, fatalStreamsCat);
+  closeStreams(channels, emptyStreamsCat);
+
+  // Delete channels
+  qDeleteAll(channels);
+}
+
+void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelMap& channelMap)
+{
+  for(ChannelVector channelVector : channelMap.values())
+    closeStreams(channels, channelVector);
+}
+
+void LoggingConfig::closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector)
+{
+  for(Channel *channel : channelVector)
+  {
+    if(channel->stream != nullptr)
+      channel->stream->flush();
+
+    if(channel->file != nullptr)
+    {
+      // This is a log file and not stderr or stdout
+      if(channel->file->isOpen())
+        channel->file->close();
+
+      if(channel->stream != nullptr)
+        channel->stream->setDevice(nullptr);
+
+      delete channel->file;
+      channel->file = nullptr;
+    }
+
+    delete channel->stream;
+    channel->stream = nullptr;
+
+    // Remember object for later deletion
+    channels.insert(channel);
+  }
 }
 
 QStringList LoggingConfig::getLogFiles()
 {
-  QStringList retval;
+  QSet<QString> filenames;
+  collectFileNames(filenames, debugStreams);
+  collectFileNames(filenames, infoStreams);
+  collectFileNames(filenames, warningStreams);
+  collectFileNames(filenames, criticalStreams);
+  collectFileNames(filenames, fatalStreams);
+  collectFileNames(filenames, emptyStreams);
 
-  for(QFile *f : files)
-    retval.append(QFileInfo(f->fileName()).absoluteFilePath());
-
-  return retval;
+  collectFileNames(filenames, debugStreamsCat);
+  collectFileNames(filenames, infoStreamsCat);
+  collectFileNames(filenames, warningStreamsCat);
+  collectFileNames(filenames, criticalStreamsCat);
+  collectFileNames(filenames, fatalStreamsCat);
+  collectFileNames(filenames, emptyStreamsCat);
+  return filenames.toList();
 }
 
-QVector<QTextStream *> LoggingConfig::getStream(QtMsgType type)
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap)
+{
+  for(const ChannelVector& channel : channelMap.values())
+    collectFileNames(filenames, {channel});
+}
+
+void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector)
+{
+  for(const Channel *channel : channelVector)
+  {
+    if(channel->file != nullptr)
+    {
+      QString filename = channel->file->fileName();
+
+      if(!filename.isEmpty())
+        filenames.insert(filename);
+    }
+  }
+}
+
+void LoggingConfig::checkStreamSize(Channel *channel)
+{
+  // This needs to be called withing mutex lock
+  if(maximumFileSizeBytes > 0 && channel->file != nullptr && channel->file->size() > maximumFileSizeBytes)
+  {
+    // Maximum size is active and exceeded
+    channel->stream->flush();
+
+    // Remember filename
+    QString filename = channel->file->fileName();
+
+    // Close file and delete file object
+    channel->file->close();
+    channel->stream->setDevice(nullptr);
+    delete channel->file;
+    channel->file = nullptr;
+
+    // Backup and delete log
+    io::FileRoller(maximumBackupFiles).rollFile(filename);
+
+    // Create new log file
+    QFile *file = new QFile(filename);
+    if(file->open(mode))
+    {
+      // Put log file into stream
+      channel->file = file;
+      channel->stream->setDevice(channel->file);
+      channel->stream->setCodec("UTF-8");
+      channel->stream->setLocale(QLocale::C);
+    }
+  }
+}
+
+ChannelVector& LoggingConfig::getStream(QtMsgType type)
 {
   switch(type)
   {
@@ -118,7 +219,7 @@ QVector<QTextStream *> LoggingConfig::getStream(QtMsgType type)
   return emptyStreams;
 }
 
-QHash<QString, QVector<QTextStream *> > LoggingConfig::getCatStream(QtMsgType type)
+ChannelMap& LoggingConfig::getCatStream(QtMsgType type)
 {
   switch(type)
   {
@@ -141,30 +242,32 @@ QHash<QString, QVector<QTextStream *> > LoggingConfig::getCatStream(QtMsgType ty
 }
 
 void LoggingConfig::addDefaultChannels(const QStringList& channelsForLevel,
-                                       const QHash<QString, QTextStream *>& channelMap,
-                                       QVector<QTextStream *>& streamList)
+                                       const QHash<QString, Channel *>& channelMap,
+                                       ChannelVector& channelList)
 {
   for(QString name : channelsForLevel)
     if(channelMap.contains(name))
-      streamList.append(channelMap.value(name));
+      channelList.append(channelMap.value(name));
 }
 
 void LoggingConfig::addCatChannels(const QString& category, const QStringList& channelsForLevel,
-                                   const QHash<QString, QTextStream *>& channelMap,
-                                   QHash<QString, QVector<QTextStream *> >& streamList)
+                                   const QHash<QString, Channel *>& channelMap,
+                                   ChannelMap& streamList)
 {
   for(QString name : channelsForLevel)
+  {
     if(channelMap.contains(name))
     {
       if(streamList.contains(category))
         streamList[category].append(channelMap.value(name));
       else
       {
-        QVector<QTextStream *> catstr;
+        ChannelVector catstr;
         catstr.append(channelMap.value(name));
         streamList.insert(category, catstr);
       }
     }
+  }
 }
 
 void LoggingConfig::readConfigurationSection(QSettings *settings)
@@ -188,6 +291,8 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
   // Set the configured message pattern
   qSetMessagePattern(pattern);
 
+  maximumFileSizeBytes = settings->value("configuration/maxsize").toLongLong();
+
   QString filesParameter = settings->value("configuration/files").toString();
   if(filesParameter == "truncate" || filesParameter == "roll")
     mode = QIODevice::WriteOnly | QIODevice::Text;
@@ -200,8 +305,12 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
     mode = QIODevice::WriteOnly | QIODevice::Text;
   }
 
+  // Always append if rolling by size - rolling is done in the logging function
+  if(maximumFileSizeBytes > 0)
+    mode = QIODevice::Append | QIODevice::Text;
+
   rolling = settings->value("configuration/files").toString() == "roll";
-  maxFiles = settings->value("configuration/maxfiles").toInt();
+  maximumBackupFiles = settings->value("configuration/maxfiles").toInt();
 
   QString abortOn = settings->value("configuration/abort", QVariant("fatal")).toString();
   if(abortOn == "warning")
@@ -215,10 +324,8 @@ void LoggingConfig::readConfigurationSection(QSettings *settings)
                << "use either warning, critical or fatal (default).";
 }
 
-void LoggingConfig::readChannels(QSettings *settings, QHash<QString, QTextStream *>& channelMap)
+void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>& channelMap)
 {
-  io::FileRoller fr(maxFiles);
-
   settings->beginGroup("channels");
   for(QString key : settings->allKeys())
   {
@@ -229,16 +336,14 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, QTextStream
       QTextStream *io = new QTextStream(stdout);
       // Most terminals can deal with utf-8
       io->setCodec("UTF-8");
-      channelMap.insert(key, io);
-      streams.append(io);
+      channelMap.insert(key, new Channel({io, nullptr}));
     }
     else if(channelName == "stderr")
     {
       QTextStream *err = new QTextStream(stderr);
       // Most terminals can deal with utf-8
       err->setCodec("UTF-8");
-      channelMap.insert(key, err);
-      streams.append(err);
+      channelMap.insert(key, new Channel({err, nullptr}));
     }
     else
     {
@@ -262,25 +367,24 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, QTextStream
       if(!logDir.isEmpty())
         filename = logDir + QDir::separator() + filename;
 
-      if(rolling)
+      if(rolling && maximumFileSizeBytes <= 0)
         // Create log file backups
-        fr.rollFile(filename);
+        io::FileRoller(maximumBackupFiles).rollFile(filename);
 
       QFile *file = new QFile(filename);
       if(file->open(mode))
       {
-        QTextStream *str = new QTextStream(file);
-        str->setCodec("UTF-8");
-        channelMap.insert(key, str);
-        files.append(file);
-        streams.append(str);
+        QTextStream *stream = new QTextStream(file);
+        stream->setCodec("UTF-8");
+        stream->setLocale(QLocale::C);
+        channelMap.insert(key, new Channel({stream, file}));
       }
     }
   }
   settings->endGroup();
 }
 
-void LoggingConfig::readLevels(QSettings *settings, QHash<QString, QTextStream *>& channelMap)
+void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& channelMap)
 {
   settings->beginGroup("levels");
   for(QString levelName : settings->allKeys())

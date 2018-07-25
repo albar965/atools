@@ -18,6 +18,8 @@
 #ifndef ATOOLS_LOGGING_LOGGINGCONFIG_H
 #define ATOOLS_LOGGING_LOGGINGCONFIG_H
 
+#include "logging/loggingtypes.h"
+
 #include <QString>
 #include <QIODevice>
 #include <QVector>
@@ -53,17 +55,16 @@ private:
   }
 
   /* get all default streams for the given level */
-  QVector<QTextStream *> getStream(QtMsgType type);
+  ChannelVector& getStream(QtMsgType type);
 
   /* get all categorized streams for the given level */
-  QHash<QString, QVector<QTextStream *> > getCatStream(QtMsgType type);
+  ChannelMap& getCatStream(QtMsgType type);
 
-  void addDefaultChannels(const QStringList& channelsForLevel,
-                          const QHash<QString, QTextStream *>& channelMap,
-                          QVector<QTextStream *>& streamList);
+  void addDefaultChannels(const QStringList& channelsForLevel, const QHash<QString, Channel *>& channelMap,
+                          ChannelVector& channelList);
+
   void addCatChannels(const QString& category, const QStringList& channelsForLevel,
-                      const QHash<QString, QTextStream *>& channelMap,
-                      QHash<QString, QVector<QTextStream *> >& streamList);
+                      const QHash<QString, Channel *>& channelMap, ChannelMap& streamList);
 
   /* Populate the channelMap with name/stream pairs (stdio, stderr and files)
    *
@@ -72,7 +73,7 @@ private:
    * console-err = stderr
    * log = littlelogbook.log
    */
-  void readChannels(QSettings *settings, QHash<QString, QTextStream *>& channelMap);
+  void readChannels(QSettings *settings, QHash<QString, Channel *>& channelMap);
 
   /* Read the channelMap and assign the log levels to channels
    *
@@ -83,36 +84,46 @@ private:
    * critical.default = console-err,log
    * fatal.default = console-err,log
    */
-  void readLevels(QSettings *settings, QHash<QString, QTextStream *>& channelMap);
+  void readLevels(QSettings *settings, QHash<QString, Channel *>& channelMap);
 
   QIODevice::OpenMode readFilesParameter(QSettings *settings) const;
   bool readFilesRollParameter(QSettings *settings) const;
   int readFilesMaxParameter(QSettings *settings) const;
   void readConfigurationSection(QSettings *settings);
 
+  void closeStreams(QSet<Channel *>& channels,
+                    const ChannelMap& channelMap);
+
+  void closeStreams(QSet<Channel *>& channels, const ChannelVector& channelVector);
+
+  /* Collects all log files names into set */
+  void collectFileNames(QSet<QString>& filenames, const ChannelVector& channelVector);
+  void collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap);
+
+  /* Check if file size exceeds limit. Rolls files, creates a new one and replaces device in text stream */
+  void checkStreamSize(Channel *channel);
+
   QIODevice::OpenMode mode = QIODevice::NotOpen;
   bool rolling = false;
-  int maxFiles = 0;
+  int maximumBackupFiles = 0;
+
+  /* 0 of -1 if not used */
+  qint64 maximumFileSizeBytes = 0;
 
   QString logConfig, logDir, logPrefix;
-
-  // All open files for deletion
-  QVector<QFile *> files;
-  // All open streams for deletion
-  QVector<QTextStream *> streams;
 
   // Messages of this type or worse cause a call to abort()
   QtMsgType abortType = QtFatalMsg;
 
   // Streams for default logging category one for each message type
-  QVector<QTextStream *> debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams,
-                         emptyStreams;
-  // Streams for all other categories in a hash-list where the key is the
-  // category name.
+  // Channel objects can be shared between lists
+  ChannelVector debugStreams, infoStreams, warningStreams, criticalStreams, fatalStreams,
+                emptyStreams;
+  // Streams for all other categories in a hash-list where the key is the category name.
   // One container for each message type
-  QHash<QString, QVector<QTextStream *> > debugStreamsCat, infoStreamsCat, warningStreamsCat,
-                                          criticalStreamsCat, fatalStreamsCat, emptyStreamsCat;
-
+  // Channel objects can be shared between lists
+  ChannelMap debugStreamsCat, infoStreamsCat, warningStreamsCat,
+             criticalStreamsCat, fatalStreamsCat, emptyStreamsCat;
 };
 
 } // namespace internal

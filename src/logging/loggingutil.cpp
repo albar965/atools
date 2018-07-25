@@ -31,8 +31,10 @@ namespace logging {
 
 void LoggingUtil::logSystemInformation()
 {
+  qInfo() << "================================================================================";
   qInfo() << "Starting" << QCoreApplication::applicationName()
           << "version" << QCoreApplication::applicationVersion();
+
   qInfo() << "Organization" << QCoreApplication::organizationName()
           << "domain" << QCoreApplication::organizationDomain();
   qInfo() << "Application file path" << QCoreApplication::applicationFilePath();

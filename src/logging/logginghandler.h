@@ -18,6 +18,8 @@
 #ifndef ATOOLS_LOGGING_LOGGINGHANDLER_H
 #define ATOOLS_LOGGING_LOGGINGHANDLER_H
 
+#include "logging/loggingtypes.h"
+
 #include <QString>
 #include <QIODevice>
 #include <QHash>
@@ -109,11 +111,11 @@ public:
    */
   static QStringList getLogFiles();
 
-  typedef std::function<void (QtMsgType type, const QMessageLogContext &context, const QString &msg)> LogFunctionType;
+  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> LogFunctionType;
   /* Function will be called on the calling thread context */
   static void setLogFunction(LogFunctionType loggingFunction);
 
-  typedef std::function<void (QtMsgType type, const QMessageLogContext &context, const QString &msg)> AbortFunctionType;
+  typedef std::function<void (QtMsgType type, const QMessageLogContext& context, const QString& msg)> AbortFunctionType;
 
   /* All functions will be called on the calling thread context - do not use GUI elements there */
   static void setAbortFunction(AbortFunctionType abortFunction);
@@ -130,10 +132,9 @@ private:
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
   ~LoggingHandler();
 
-  void logToCatChannels(const QHash<QString, QVector<QTextStream *> >& streamListCat,
-                        const QVector<QTextStream *>& streamList2,
-                        const QString& message,
-                        const QString& category = QString());
+  void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat,
+                        atools::logging::internal::ChannelVector& streamList,
+                        const QString& message, const QString& category = QString());
 
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
