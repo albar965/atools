@@ -831,6 +831,9 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
       qWarning() << line.context << "Invalid speed limit" << spdDescr;
   }
   // else null
+
+  // arinc_descr_code varchar(25), -- ARINC description code 5.17
+  rec.setValue(":arinc_descr_code", line.descCode);
 }
 
 float ProcedureWriter::altitudeFromStr(const QString& altStr)

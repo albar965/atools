@@ -494,6 +494,7 @@ create table approach_leg
   approach_id integer not null,
   is_missed integer not null,         -- 1 if this leg is part of a missed approach
   type varchar(10),                   -- see enum atools::fs::bgl::leg::Type
+  arinc_descr_code varchar(25), -- ARINC description code 5.17
   approach_fix_type varchar(1),       -- A = IAF, M = MAP,  H = Holding fix, etc. see ARINC-424 spec
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
                                       -- "A": at, "+": at or above, "-": at or below, "B": between altitude2 and altitude1
@@ -531,6 +532,7 @@ create table transition_leg
   transition_leg_id integer primary key,
   transition_id integer not null,
   type varchar(10) not null,
+  arinc_descr_code varchar(25), -- ARINC description code 5.17
   approach_fix_type varchar(1),
   alt_descriptor varchar(10),
   turn_direction varchar(10),
