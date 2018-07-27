@@ -130,6 +130,10 @@ void XpAirspaceWriter::writeBoundary()
       atools::fs::common::BinaryGeometry geo(curLine);
       insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
+      // Fields not used by X-Plane
+      insertAirspaceQuery->bindValue(":multiple_code", QVariant(QVariant::String));
+      insertAirspaceQuery->bindValue(":time_code", "U");
+
       insertAirspaceQuery->exec();
 
       progress->incNumBoundaries();

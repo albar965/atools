@@ -47,6 +47,10 @@ void BoundaryWriter::writeObject(const Boundary *type)
   else
     bind(":name", type->getName());
 
+  // Fields not used by P3D/FSX
+  bindNullString(":multiple_code");
+  bind(":time_code", "U");
+
   if(type->hasCom())
   {
     bind(":com_type", bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getComType()));

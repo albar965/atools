@@ -482,18 +482,26 @@ void DfdCompiler::writeAirspaces()
   QString arcCols("arc_origin_latitude, arc_origin_longitude, arc_distance, arc_bearing, ");
 
   // Controlled airspaces =================================================================
+  QStringList newCols;
+  sql::SqlRecord rec = db.record("src.tbl_controlled_airspace");
+  if(rec.contains("multiple_code"))
+    newCols.append("multiple_code");
+  if(rec.contains("time_code"))
+    newCols.append("time_code");
+
   SqlQuery controlled("select "
                       "icao_code, "
                       "airspace_center, "
                       "controlled_airspace_name as name, "
                       "airspace_type as type, "
-                      "airspace_classification, "
+                      "airspace_classification, " +
+                      (newCols.isEmpty() ? QString() : (newCols.join(", ") + ", ")) +
                       "seqno, "
                       "boundary_via, "
                       "flightlevel, "
                       "latitude, "
-                      "longitude, "
-                      + arcCols +
+                      "longitude, " +
+                      arcCols +
                       "unit_indicator_lower_limit, "
                       "lower_limit, "
                       "unit_indicator_upper_limit, "
@@ -503,18 +511,25 @@ void DfdCompiler::writeAirspaces()
   writeAirspace(controlled, &DfdCompiler::beginControlledAirspace);
 
   // Restricted airspaces =================================================================
+  rec = db.record("src.tbl_restrictive_airspace");
+  newCols.clear();
+  if(rec.contains("multiple_code"))
+    newCols.append("multiple_code");
+  if(rec.contains("time_code"))
+    newCols.append("time_code");
+
   SqlQuery restrictive("select "
                        "icao_code, "
                        "restrictive_airspace_designation, "
                        "restrictive_airspace_name as name, "
-                       "restrictive_type as type, "
-                       "multiple_code, "
+                       "restrictive_type as type, " +
+                       (newCols.isEmpty() ? QString() : (newCols.join(", ") + ", ")) +
                        "seqno, "
                        "boundary_via, "
                        "flightlevel, "
                        "latitude, "
-                       "longitude, "
-                       + arcCols +
+                       "longitude, " +
+                       arcCols +
                        "unit_indicator_lower_limit, "
                        "lower_limit, "
                        "unit_indicator_upper_limit, "
@@ -803,6 +818,14 @@ void DfdCompiler::beginAirspace(const atools::sql::SqlQuery& query)
     airspaceWriteQuery->bindValue(":max_altitude", airspaceAlt(upperLimit));
   }
 
+  airspaceWriteQuery->bindValue(":multiple_code", query.valueStr("multiple_code", ""));
+
+  if(query.hasField("time_code"))
+    airspaceWriteQuery->bindValue(":time_code", query.valueStr("time_code"));
+  else
+    // Unknown - do not display information
+    airspaceWriteQuery->bindValue(":time_code", "U");
+
   // case atools::fs::bgl::boundary::UNKNOWN: return "UNKNOWN";
   // case atools::fs::bgl::boundary::MEAN_SEA_LEVEL: return "MSL";
   // case atools::fs::bgl::boundary::ABOVE_GROUND_LEVEL: return "AGL";
@@ -1087,11 +1110,19 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   if(procInput.pathTerm.startsWith("H"))
   {
-    // Guess the unit - everything larger than 2.5 must be distance
-    if(distTime > 2.5)
+    QString distTimeFlag = query.valueStr("distance_time", QString()).trimmed().toUpper();
+    if(distTimeFlag == "D")
       procInput.rteHoldDist = distTime;
-    else
+    else if(distTimeFlag == "T")
       procInput.rteHoldTime = distTime;
+    else
+    {
+      // Guess the unit if field is not available - everything larger than 2.5 must be distance
+      if(distTime > 2.5)
+        procInput.rteHoldDist = distTime;
+      else
+        procInput.rteHoldTime = distTime;
+    }
   }
   else
     procInput.rteHoldDist = distTime;

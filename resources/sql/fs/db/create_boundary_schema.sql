@@ -28,6 +28,12 @@ create table boundary
   file_id integer not null,
   type varchar(15),               -- see enum atools::fs::bgl::boundary::BoundaryType
   name varchar(250),
+  multiple_code varchar(5),       -- Airspace having the same designator but subdivided or differently divided by lateral and/or vertical detail
+  time_code varchar(5),           -- C active continuously, including holidays
+                                  -- H active continuously, excluding holidays
+                                  -- N active not continuously - time not known
+                                  -- NULL active times announced by Notams
+                                  -- U Unknown - do not display value
   com_type varchar(30),           -- If airspace has a COM frequency. see enum atools::fs::bgl::com::ComType
   com_frequency integer,          -- frequency in MHz * 1000
   com_name varchar(50),
