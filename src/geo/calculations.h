@@ -23,6 +23,7 @@
 #include <cmath>
 #include <limits>
 
+#include <QLineF>
 #include <QString>
 
 namespace atools {
@@ -65,6 +66,44 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
+
+/* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
+inline bool ordinateValid(int ord)
+{
+  return ord > std::numeric_limits<int>::min() / 2 && ord < std::numeric_limits<int>::max() / 2;
+}
+
+inline bool ordinateValidF(float ord)
+{
+  return std::isfinite(ord) && ord > std::numeric_limits<float>::min() / 2 &&
+         ord < std::numeric_limits<float>::max() / 2;
+}
+
+inline bool ordinateValidD(double ord)
+{
+  return std::isfinite(ord) && ord > std::numeric_limits<double>::min() / 2 &&
+         ord < std::numeric_limits<double>::max() / 2;
+}
+
+inline bool pointValid(const QPointF& point)
+{
+  return ordinateValidD(point.x()) && ordinateValidD(point.y());
+}
+
+inline bool pointValid(const QPoint& point)
+{
+  return ordinateValid(point.x()) && ordinateValid(point.y());
+}
+
+inline bool lineValid(const QLineF& line)
+{
+  return pointValid(line.p1()) && pointValid(line.p2());
+}
+
+inline bool lineValid(const QLine& line)
+{
+  return pointValid(line.p1()) && pointValid(line.p2());
+}
 
 /* Converts rectangles to square rectangles so that width == height */
 QRect rectToSquare(const QRect& rect);
