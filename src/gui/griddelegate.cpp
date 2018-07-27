@@ -24,13 +24,18 @@ namespace atools {
 namespace gui {
 
 GridDelegate::GridDelegate(QObject *parent) :
-  QStyledItemDelegate(parent),
-  gridPen(QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), 1.5))
+  QStyledItemDelegate(parent)
 {
+  styleChanged();
 }
 
 GridDelegate::~GridDelegate()
 {
+}
+
+void GridDelegate::styleChanged()
+{
+  gridPen = QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), 1.5);
 }
 
 void GridDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,

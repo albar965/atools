@@ -32,6 +32,8 @@ public:
   GridDelegate(QObject *parent);
   virtual ~GridDelegate();
 
+  void styleChanged();
+
 private:
   void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
