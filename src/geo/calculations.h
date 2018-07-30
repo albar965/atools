@@ -67,22 +67,46 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
 
+/* Returns time with milliseconds set to 0
+ *  zenith:      Sun's zenith for sunrise/sunset
+ *  offical      = 90 degrees 50'
+ *  civil        = 96 degrees (relevant for aviation)
+ *  nautical     = 102 degrees
+ *  astronomical = 108 degrees
+ *
+ * Negative zenith for sunset and positive for sunrise
+ *
+ * Returns null time if sun never rises or sets at this position and date
+ *
+ * http://edwilliams.org/sunrise_sunset_algorithm.htm
+ */
+const float SUNRISE_OFFICIAL = 90.f + (50.f / 60.f);
+const float SUNSET_OFFICIAL = 90.f + (50.f / 60.f);
+const float SUNRISE_CIVIL = 96.f;
+const float SUNSET_CIVIL = -96.f;
+const float SUNRISE_NAUTICAL = 102.f;
+const float SUNSET_NAUTICAL = -102.f;
+const float SUNRISE_ASTRONOMICAL = 108.f;
+const float SUNSET_ASTRONOMICAL = -108.f;
+
+QTime calculateSunriseSunset(const atools::geo::Pos& position, const QDate& date, float zenith);
+
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
 {
-  return ord > std::numeric_limits<int>::min() / 2 && ord < std::numeric_limits<int>::max() / 2;
+  return ord > std::numeric_limits<int>::lowest() / 2 && ord < std::numeric_limits<int>::max() / 2;
 }
 
 inline bool ordinateValidF(float ord)
 {
-  return std::isfinite(ord) && ord > std::numeric_limits<float>::min() / 2 &&
-         ord < std::numeric_limits<float>::max() / 2;
+  return std::isfinite(ord) &&
+         ord > std::numeric_limits<float>::lowest() / 2.f && ord < std::numeric_limits<float>::max() / 2.f;
 }
 
 inline bool ordinateValidD(double ord)
 {
-  return std::isfinite(ord) && ord > std::numeric_limits<double>::min() / 2 &&
-         ord < std::numeric_limits<double>::max() / 2;
+  return std::isfinite(ord) &&
+         ord > std::numeric_limits<double>::lowest() / 2. && ord < std::numeric_limits<double>::max() / 2.;
 }
 
 inline bool pointValid(const QPointF& point)
@@ -402,6 +426,43 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE tasToMach(TYPE sat, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) / (std::sqrt(static_cast<double>(sat) + 273.15) * 39.));
+}
+
+/* Collection of trigonometric functions that accept or return degree */
+template<typename TYPE>
+inline TYPE sinDeg(TYPE value)
+{
+  return static_cast<TYPE>(sin(toRadians(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE asinDeg(TYPE value)
+{
+  return static_cast<TYPE>(toDegree(asin(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE cosDeg(TYPE value)
+{
+  return static_cast<TYPE>(cos(toRadians(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE acosDeg(TYPE value)
+{
+  return static_cast<TYPE>(toDegree(acos(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE tanDeg(TYPE value)
+{
+  return static_cast<TYPE>(tan(toRadians(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE atanDeg(TYPE value)
+{
+  return static_cast<TYPE>(toDegree(atan(static_cast<double>(value))));
 }
 
 } /* namespace geo */

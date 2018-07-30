@@ -19,6 +19,7 @@
 #include "geo/line.h"
 #include "geo/linestring.h"
 
+#include <QDateTime>
 #include <QLineF>
 #include <QPointF>
 #include <QRect>
@@ -338,6 +339,84 @@ QRectF rectToSquare(const QRectF& rect)
     retval.setRect(retval.x() - (retval.height() - retval.width()) / 2., retval.y(),
                    retval.height(), retval.height());
   return retval;
+}
+
+QTime calculateSunriseSunset(const atools::geo::Pos& position, const QDate& date, float zenith)
+{
+  // 1. first calculate the day of the year
+  int dayOfYear = date.dayOfYear();
+
+  // 2. convert the longitude to hour value and calculate an approximate time
+  double longitudeHour = position.getLonX() / 15.;
+  double t;
+  if(zenith > 0.)
+    t = dayOfYear + ((6. - longitudeHour) / 24.);
+  else
+    t = dayOfYear + ((18. - longitudeHour) / 24.);
+
+  // 3. calculate the Sun's mean anomaly
+  double sunMeanAnomaly = (0.9856 * t) - 3.289;
+
+  // 4. calculate the Sun's true longitude
+  double sunLongitude = sunMeanAnomaly +
+                        (1.916 * sinDeg(sunMeanAnomaly)) +
+                        (0.020 * sinDeg(2. * sunMeanAnomaly)) + 282.634;
+  if(sunLongitude > 360.)
+    sunLongitude -= 360.;
+  if(sunLongitude < 0.)
+    sunLongitude += 360.;
+
+  // 5a. calculate the Sun's right ascension
+  double rightAcension = atanDeg(0.91764 * tanDeg(sunLongitude));
+
+  // 5b. right ascension value needs to be in the same quadrant as L
+  double longitudeQuadrant = (floor(sunLongitude / 90.)) * 90.;
+  double raQuadrant = (floor(rightAcension / 90.)) * 90.;
+  rightAcension = rightAcension + (longitudeQuadrant - raQuadrant);
+
+  // 5c. right ascension value needs to be converted into hours
+  rightAcension = rightAcension / 15.;
+
+  // 6. calculate the Sun's declination
+  double sinDeclination = 0.39782 * sinDeg(sunLongitude);
+  double cosDeclination = cosDeg(asinDeg(sinDeclination));
+
+  // 7a. calculate the Sun's local hour angle
+  double cosHourAngle = (cosDeg(std::abs(zenith)) - (sinDeclination * sinDeg(position.getLatY()))) /
+                        (cosDeclination * cosDeg(position.getLatY()));
+
+  if(cosHourAngle > 1.)
+    // the sun never rises on this location (on the specified date)
+    return QTime();
+
+  if(cosHourAngle < -1.)
+    // the sun never sets on this location (on the specified date)
+    return QTime();
+
+  // 7b. finish calculating H and convert into hours
+  double hourAngle;
+  if(zenith > 0.)
+    hourAngle = 360. - acosDeg(cosHourAngle);
+  else
+    hourAngle = acosDeg(cosHourAngle);
+
+  // H = H / 15
+  hourAngle = hourAngle / 15.;
+
+  // 8. calculate local mean time of rising/setting
+  double localMeanTime = hourAngle + rightAcension - (0.06571 * t) - 6.622;
+
+  // 9. adjust back to UTC
+  double utcTime = localMeanTime - longitudeHour;
+
+  if(utcTime > 24.)
+    utcTime -= 24.;
+  if(utcTime < 0.)
+    utcTime += 24.;
+
+  // Erase milliseconds
+  QTime time = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(utcTime * 3600) * 1000);
+  return time;
 }
 
 } // namespace geo

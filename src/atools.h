@@ -96,6 +96,12 @@ Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
   return index >= 0 && index < list.size();
 }
 
+/* Returns 0 if without throwing an exception if index is not valid */
+inline QChar strAt(const QString& str, int index)
+{
+  return index >= 0 && index < str.size() ? str.at(index) : QChar('\0');
+}
+
 template<typename TYPE>
 const TYPE& at(const QList<TYPE>& list, int index, const TYPE& defaultType = TYPE())
 {
