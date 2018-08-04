@@ -266,7 +266,8 @@ HEADERS += src/atools.h \
     src/fs/online/onlinetypes.h \
     src/zip/gzip.h \
     src/sql/sqltransaction.h \
-    src/logging/loggingtypes.h
+    src/logging/loggingtypes.h \
+    src/fs/xp/scenerypacks.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -475,7 +476,8 @@ SOURCES += src/atools.cpp \
     src/fs/online/onlinedatamanager.cpp \
     src/fs/online/onlinetypes.cpp \
     src/zip/gzip.cpp \
-    src/sql/sqltransaction.cpp
+    src/sql/sqltransaction.cpp \
+    src/fs/xp/scenerypacks.cpp
 
 
 unix {

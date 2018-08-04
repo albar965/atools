@@ -24,6 +24,7 @@
 #include "fs/xp/xpairportwriter.h"
 #include "fs/xp/xpcifpwriter.h"
 #include "fs/xp/xpairspacewriter.h"
+#include "fs/xp/scenerypacks.h"
 #include "fs/common/magdecreader.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
@@ -55,6 +56,8 @@ using atools::settings::Settings;
 using atools::fs::common::MagDecReader;
 using atools::fs::common::MetadataWriter;
 using atools::fs::common::AirportIndex;
+using atools::fs::xp::SceneryPack;
+using atools::fs::xp::SceneryPacks;
 
 namespace atools {
 namespace fs {
@@ -170,7 +173,7 @@ bool XpDataCompiler::compileCustomApt()
 {
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options);
+  QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options, errors, progress);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
     if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT))
@@ -299,7 +302,8 @@ bool XpDataCompiler::compileUserFix()
 bool XpDataCompiler::compileMagDeclBgl()
 {
   // Look first in config dir and then in local dir
-  QString file = Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec", "magdec.bgl"}));
+  QString file =
+    Settings::instance().getOverloadedPath(buildPath({QApplication::applicationDirPath(), "magdec", "magdec.bgl"}));
 
   qInfo() << "Reading" << file;
 
@@ -461,7 +465,8 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   return aborted;
 }
 
-bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QString& filename, atools::fs::xp::ContextFlags flags,
+bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QString& filename,
+                              atools::fs::xp::ContextFlags flags,
                               int& lineNum, int& totalNumLines, int& fileVersion)
 {
   filepath.setFileName(filename);
@@ -503,7 +508,8 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
       if(!fields.isEmpty() && fileVersion < minFileVersion)
       {
-        qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" << minFileVersion;
+        qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" <<
+          minFileVersion;
         throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").
                                 arg(fields.first()).arg(minFileVersion));
       }
@@ -573,57 +579,66 @@ void XpDataCompiler::close()
   deInitQueries();
 }
 
-QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts)
+QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
+                                                  atools::fs::NavDatabaseErrors *navdatabaseErrors,
+                                                  atools::fs::ProgressHandler *progressHandler)
 {
   QStringList retval;
 
-  // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
-  // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-
-  QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}));
-
-  QStringList dirs = customApt.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
-
-  for(const QString& dir : dirs)
+  if(!opts.isReadInactive())
+    // Read only apt.dat from scenery_packs.ini - Global Airports are excluded and read separately
+    retval = loadFilepathsFromSceneryPacks(opts, progressHandler, navdatabaseErrors);
+  else
   {
-    if(dir.toLower() == "global airports")
-      continue;
+    // Read all apt.dat files in the directory structure
 
-    QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
+    // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
+    // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
+    QDir customApt(buildPathNoCase({opts.getBasepath(), "Custom Scenery"}));
 
-    if(!includeFile(opts, aptDat))
-      continue;
+    QStringList dirs = customApt.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name);
 
-    if(aptDat.exists() && aptDat.isFile())
-      retval.append(aptDat.filePath());
+    for(const QString& dir : dirs)
+    {
+      if(dir.toLower() == "global airports")
+        continue;
+
+      QFileInfo aptDat(buildPathNoCase({customApt.path(), dir, "Earth nav data", "apt.dat"}));
+
+      if(!includeFile(opts, aptDat))
+        continue;
+
+      if(aptDat.exists() && aptDat.isFile())
+        retval.append(aptDat.filePath());
+    }
   }
   return retval;
 }
 
-QStringList XpDataCompiler::findAirspaceFiles(const atools::fs::NavDatabaseOptions& opts)
+QStringList XpDataCompiler::findAirspaceFiles(const NavDatabaseOptions& opts)
 {
   QString additionalDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
                           QDir::separator() + "Little Navmap" + QDir::separator() + "X-Plane Airspaces";
   if(!QFile::exists(additionalDir))
     additionalDir.clear();
 
-  return findFiles(opts, "airspaces", {"*.txt"}, additionalDir, false);
+  return findFiles(opts, "airspaces", {"*.txt"}, additionalDir, false /* makeUnique */);
 }
 
-QStringList XpDataCompiler::findCifpFiles(const atools::fs::NavDatabaseOptions& opts)
+QStringList XpDataCompiler::findCifpFiles(const NavDatabaseOptions& opts)
 {
-  return findFiles(opts, "CIFP", {"*.dat"}, QString(), true);
+  return findFiles(opts, "CIFP", {"*.dat"}, QString(), true /* makeUnique */);
 }
 
-QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts, const QString& subdir,
-                                      const QStringList& pattern, const QString& additionalDir, bool makeUnique)
+QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QString& subdir,
+                                      const QStringList& pattern, const QString& additionalDir,
+                                      bool makeUnique)
 {
-  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
-  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
-
   QMap<QString, QFileInfo> entryMap;
 
+  // Resources ==================================
   // Read all default entries
+  QDir defaultDir(buildPathNoCase({opts.getBasepath(), "Resources", "default data", subdir}));
   QFileInfoList defaultEntries = defaultDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : defaultEntries)
   {
@@ -631,7 +646,10 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
       entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
   }
 
+  // Custom Scenery ==================================
   // Read custom entries and overwrite default
+  // Simply read all found filess in the scenery directories
+  QDir customDir(buildPathNoCase({opts.getBasepath(), "Custom Data", subdir}));
   QFileInfoList customEntries = customDir.entryInfoList(pattern, QDir::Files, QDir::NoSort);
   for(const QFileInfo& fileInfo : customEntries)
   {
@@ -662,7 +680,7 @@ QStringList XpDataCompiler::findFiles(const atools::fs::NavDatabaseOptions& opts
   return retval;
 }
 
-int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& opts)
+int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
 {
   int reportCount = 0;
   // Default or custom scenery files
@@ -682,7 +700,7 @@ int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& o
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
-  reportCount += findCustomAptDatFiles(opts).count();
+  reportCount += findCustomAptDatFiles(opts, nullptr, nullptr).count();
 
   // earth_nav.dat localizers $X-Plane/Custom Scenery/Global Airports/Earth nav data/
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(),
@@ -698,6 +716,44 @@ int XpDataCompiler::calculateReportCount(const atools::fs::NavDatabaseOptions& o
   return reportCount;
 }
 
+QStringList XpDataCompiler::loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+                                                          ProgressHandler *progressHandler,
+                                                          NavDatabaseErrors *navdatabaseErrors)
+{
+  qDebug() << Q_FUNC_INFO << "Reading scenery_packs.ini";
+  QStringList entryMap;
+
+  // Read X-Plane 11/Custom Scenery/scenery_packs.ini
+  SceneryPacks sceneryPacks;
+  sceneryPacks.read(opts.getBasepath());
+
+  for(const SceneryPack& pack : sceneryPacks.getEntries())
+  {
+    if(pack.valid)
+    {
+      if(!pack.disabled)
+      {
+        QFileInfo fileInfo(pack.filepath);
+        if(includeFile(opts, fileInfo))
+          entryMap.append(fileInfo.filePath());
+      }
+      else
+        qInfo() << "Disabled path" << pack.filepath;
+    }
+    else
+    {
+      if(progressHandler != nullptr)
+        progressHandler->reportError();
+      if(navdatabaseErrors != nullptr)
+        navdatabaseErrors->sceneryErrors.first().fileErrors.append({pack.filepath, pack.errorText, pack.errorLine});
+
+      qWarning() << Q_FUNC_INFO << "Error in file" << pack.filepath << "line" << pack.errorLine << ":" <<
+        pack.errorText;
+    }
+  }
+  return entryMap;
+}
+
 void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum)
 {
   // 1100 Version - data cycle 1709, build 20170910, metadata AwyXP1101. Copyright (c) 2017 Navdata Provider
@@ -708,7 +764,8 @@ void XpDataCompiler::updateAiracCycleFromHeader(const QString& header, const QSt
     if(c.isEmpty())
     {
       progress->reportError();
-      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum << ": AIRAC cycle in file is empty.";
+      qWarning() << Q_FUNC_INFO << "Error in file" << filepath << "line" << lineNum <<
+        ": AIRAC cycle in file is empty.";
       errors->sceneryErrors.first().fileErrors.append({filepath, tr("AIRAC cycle in file is empty."), lineNum});
     }
     else if(airacCycle.isEmpty())
@@ -744,7 +801,7 @@ void XpDataCompiler::deInitQueries()
     metadataWriter->deInitQueries();
 }
 
-QString XpDataCompiler::buildBasePath(const atools::fs::NavDatabaseOptions& opts)
+QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts)
 {
   QString basePath;
   QString customPath(buildPathNoCase({opts.getBasepath(), "Custom Data"}));

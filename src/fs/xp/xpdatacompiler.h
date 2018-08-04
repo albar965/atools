@@ -221,7 +221,8 @@ private:
   static QString buildBasePath(const NavDatabaseOptions& opts);
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */
-  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts);
+  static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
+                                           NavDatabaseErrors *navdatabaseErrors, ProgressHandler *progressHandler);
 
   /* Find CIFP files like X-Plane 11/Resources/default data/CIFP/KSEA.dat */
   static QStringList findCifpFiles(const atools::fs::NavDatabaseOptions& opts);
@@ -238,6 +239,11 @@ private:
   void updateAiracCycleFromHeader(const QString& header, const QString& filepath, int lineNum);
   bool includeFile(const QFileInfo& fileinfo);
   static bool includeFile(const atools::fs::NavDatabaseOptions& opts, const QFileInfo& fileinfo);
+
+  /* Read X-Plane 11/Custom Scenery/scenery_packs.ini */
+  static QStringList loadFilepathsFromSceneryPacks(const NavDatabaseOptions& opts,
+                                                   atools::fs::ProgressHandler *progressHandler,
+                                                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
 
   int curFileId = 0, curSceneryId = 0;
   QString basePath;
