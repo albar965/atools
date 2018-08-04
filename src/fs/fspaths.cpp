@@ -98,6 +98,7 @@ void FsPaths::logAllPaths()
   qInfo() << "Looking for flight simulator installations:";
   qInfo() << "PROGRAMDATA" << QString(qgetenv("PROGRAMDATA"));
   qInfo() << "APPDATA" << QString(qgetenv("APPDATA"));
+  qInfo() << "LOCALAPPDATA" << QString(qgetenv("LOCALAPPDATA"));
   qInfo() << "ALLUSERSPROFILE" << QString(qgetenv("ALLUSERSPROFILE"));
 
   for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
@@ -116,71 +117,100 @@ void FsPaths::logAllPaths()
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;
-  if(type == NAVIGRAPH || type == XPLANE11 || type == UNKNOWN)
+  if(type == NAVIGRAPH || type == UNKNOWN)
     return QString();
 
+  if(type == XPLANE11)
+  {
+    // The location of this file varies by operating system:
+    // OS X – the file will be in the user’s preferences folder, e.g. ~/Library/Preferences/.
+    // Windows –  the file will be in the user’s local app data folder, e.g. C:\Users\nnnn\AppData\Local\.
+    // Use CSIDL_LOCAL_APPDATA to find the location.
+    // Linux – the file will be in the user’s home folder in a .x-plane/ sub folder, e.g. ~/.x-plane/.
+
 #if defined(Q_OS_WIN32)
-  // Try to get the FSX path from the Windows registry
-  QSettings settings(registryPath(type), QSettings::NativeFormat);
+    // "C:\Users\USERS\AppData\Local\x-plane_install_11.txt"
+    return validXplaneBasePath(QString(qgetenv("LOCALAPPDATA")) + QDir::separator() + "x-plane_install_11.txt");
 
-  QStringList keys(registryKey(type));
-  bool found = true;
+#elif defined(Q_OS_MACOS)
+    // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
+    return validXplaneBasePath(
+      QDir::homePath() + QDir::separator() +
+      "Library" + QDir::separator() +
+      "Preferences" + QDir::separator() +
+      "x-plane_install_11.txt");
 
-  // Last entry is the value
-  // Avoid using value on the whole tree since it creates empty entries
-  for(int i = 0; i < keys.size() - 1; i++)
-  {
-    if(settings.childGroups().contains(keys.at(i)))
-      settings.beginGroup(keys.at(i));
-    else
-    {
-      found = false;
-      break;
-    }
+#elif defined(Q_OS_LINUX)
+    // "/home/USER/.x-plane/x-plane_install_11.txt"
+    return validXplaneBasePath(
+      QDir::homePath() + QDir::separator() + ".x-plane" + QDir::separator() + "x-plane_install_11.txt");
+
+#endif
   }
-
-  if(found && !keys.isEmpty() && settings.contains(keys.last()))
+  else
   {
-    fsPath = settings.value(keys.last()).toString();
+#if defined(Q_OS_WIN32)
+    // Try to get the FSX path from the Windows registry
+    QSettings settings(registryPath(type), QSettings::NativeFormat);
 
-    if(fsPath.endsWith('\\'))
-      fsPath.chop(1);
-  }
-#elif defined(DEBUG_FS_PATHS)
-  // No Windows here - get the path for debugging purposes
-  // from the configuration file
-  Settings& s = Settings::instance();
-  QString key = settingsKey(type);
+    QStringList keys(registryKey(type));
+    bool found = true;
 
-  if(!key.isEmpty())
-  {
-    fsPath = s.valueStr(key);
-    if(fsPath.isEmpty())
+    // Last entry is the value
+    // Avoid using value on the whole tree since it creates empty entries
+    for(int i = 0; i < keys.size() - 1; i++)
     {
-      // If it is not present in the settings file use one of the predefined paths
-      // Useful with symlinks for debugging
-      QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
-      QString nonWinPath = nonWindowsPath(type);
-
-      if(!nonWinPath.isEmpty())
+      if(settings.childGroups().contains(keys.at(i)))
+        settings.beginGroup(keys.at(i));
+      else
       {
-        QFileInfo fi(home + QDir::separator() + nonWinPath);
-        if(fi.exists() && fi.isDir() && fi.isReadable())
-          fsPath = fi.absoluteFilePath();
+        found = false;
+        break;
       }
     }
-  }
+
+    if(found && !keys.isEmpty() && settings.contains(keys.last()))
+    {
+      fsPath = settings.value(keys.last()).toString();
+
+      if(fsPath.endsWith('\\'))
+        fsPath.chop(1);
+    }
+#elif defined(DEBUG_FS_PATHS)
+    // No Windows here - get the path for debugging purposes
+    // from the configuration file
+    Settings& s = Settings::instance();
+    QString key = settingsKey(type);
+
+    if(!key.isEmpty())
+    {
+      fsPath = s.valueStr(key);
+      if(fsPath.isEmpty())
+      {
+        // If it is not present in the settings file use one of the predefined paths
+        // Useful with symlinks for debugging
+        QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+        QString nonWinPath = nonWindowsPath(type);
+
+        if(!nonWinPath.isEmpty())
+        {
+          QFileInfo fi(home + QDir::separator() + nonWinPath);
+          if(fi.exists() && fi.isDir() && fi.isReadable())
+            fsPath = fi.absoluteFilePath();
+        }
+      }
+    }
 #endif
 
-  QFileInfo basePathInfo(fsPath);
-  if(!basePathInfo.exists() || !basePathInfo.isDir())
-  {
-    qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
-    fsPath.clear();
+    QFileInfo basePathInfo(fsPath);
+    if(!basePathInfo.exists() || !basePathInfo.isDir())
+    {
+      qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
+      fsPath.clear();
+    }
+
+    // qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
   }
-
-  // qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
-
   return fsPath;
 }
 
@@ -471,6 +501,34 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
       break;
   }
   return QString();
+}
+
+QString FsPaths::validXplaneBasePath(const QString& installationFile)
+{
+  QString dir;
+  QFile file(installationFile);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+
+    while(!stream.atEnd())
+    {
+      QFileInfo fi(stream.readLine().trimmed());
+      if(fi.exists() && fi.isDir())
+      {
+        dir = fi.absoluteFilePath();
+        break;
+      }
+      else
+        qWarning() << Q_FUNC_INFO << fi.absoluteFilePath() << "does not exist or is not a directory";
+    }
+
+    file.close();
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Cannot open" << installationFile << "error" << file.errorString();
+
+  return dir;
 }
 
 } // namespace fs

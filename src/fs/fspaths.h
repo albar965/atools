@@ -149,6 +149,7 @@ private:
 
   static QString documentsDirectory(QString simBasePath);
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
+  static QString validXplaneBasePath(const QString& installationFile);
 
 };
 
