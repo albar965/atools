@@ -27,9 +27,10 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-XpWeatherReader::XpWeatherReader(QObject *parent)
-  : QObject(parent), index(5000)
+XpWeatherReader::XpWeatherReader(QObject *parent, bool verboseLogging)
+  : QObject(parent), index(5000), verbose(verboseLogging)
 {
+  timer.setObjectName("XpWeatherReader.timer");
 }
 
 XpWeatherReader::~XpWeatherReader()
@@ -160,12 +161,19 @@ bool XpWeatherReader::read()
   return true;
 }
 
-/* Called on directory or file change */
+/* Called on directory or file change and QTimer timer */
 void XpWeatherReader::pathChanged()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << sender()->objectName();
+
   QFileInfo fileinfo(weatherFile);
   if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > MIN_FILE_SIZE)
   {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "File exists" << fileinfo.exists()
+               << "size" << fileinfo.size() << "last modified" << fileinfo.lastModified();
+
     // File exists - first call or older than two minutes or file differs
     if(!weatherFileTimestamp.isValid() ||
        fileinfo.lastModified() > weatherFileTimestamp ||
@@ -180,19 +188,12 @@ void XpWeatherReader::pathChanged()
         emit weatherUpdated();
       }
     }
+    else if(verbose)
+      qDebug() << Q_FUNC_INFO << "File not changed";
   }
   else
-  {
-    // File does not exist
-    if(!index.isEmpty())
-    {
-      qDebug() << Q_FUNC_INFO << "removed" << weatherFile;
-      index.clear();
-      weatherFileTimestamp = QDateTime();
-      lastFileSize = fileinfo.size();
-      emit weatherUpdated();
-    }
-  }
+    // File was deleted - keep current weather information
+    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << index.isEmpty();
 }
 
 void XpWeatherReader::deleteFsWatcher()
@@ -214,6 +215,8 @@ void XpWeatherReader::createFsWatcher()
   {
     // Watch file for changes and directory too to catch file deletions
     fsWatcher = new QFileSystemWatcher(this);
+    fsWatcher->setObjectName("XpWeatherReader.fsWatcher");
+
     fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &XpWeatherReader::pathChanged);
     fsWatcher->connect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &XpWeatherReader::pathChanged);
   }

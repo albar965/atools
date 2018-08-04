@@ -44,7 +44,7 @@ class XpWeatherReader
   Q_OBJECT
 
 public:
-  explicit XpWeatherReader(QObject *parent);
+  explicit XpWeatherReader(QObject *parent, bool verboseLogging);
   virtual ~XpWeatherReader();
 
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
@@ -99,6 +99,7 @@ private:
   /* Need at least one megabyte to be valid */
   static const int MIN_FILE_SIZE = 1024 * 1024;
 
+  bool verbose;
 };
 
 } // namespace weather
