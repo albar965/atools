@@ -69,6 +69,16 @@ const static QRegularExpression CLOUD_EXTENSION(
 const static QVector<QString> CLOUD_DENSITIES({"CLR", "FEW", "FEW", "SCT",
                                                "SCT", "BKN", "BKN", "BKN", "OVC"});
 
+Metar::Metar()
+{
+  parsed = new MetarParser(QString());
+}
+
+Metar::Metar(const Metar& other)
+{
+  this->operator=(other);
+}
+
 Metar::Metar(const QString& metarString, const QString& metarStation, const QDateTime& metarTimestamp,
              bool isSimFormat)
   : metar(metarString), station(metarStation), simFormat(isSimFormat), timestamp(metarTimestamp)
@@ -90,6 +100,24 @@ Metar::Metar(const QString& metarString, const QString& metarStation, const QDat
 Metar::~Metar()
 {
   delete parsed;
+}
+
+Metar& Metar::operator=(const Metar& other)
+{
+  cleanMetar = other.cleanMetar;
+  metar = other.metar;
+  station = other.station;
+  simFormat = other.simFormat;
+  timestamp = other.timestamp;
+
+  parsed = new MetarParser(QString());
+  *parsed = *other.parsed;
+  return *this;
+}
+
+bool Metar::isValid() const
+{
+  return parsed != nullptr && parsed->isValid();
 }
 
 // K53S&A1 000000Z 24705G06KT&D975NG 13520KT&A1528NG 129V141 9999 2ST025&ST001FNVN002N

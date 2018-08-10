@@ -501,6 +501,14 @@ MetarParser::MetarParser(const QString& metar) :
     _day = date.day();
     _year = date.year();
   }
+
+  // Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling
+  postProcess();
+
+  delete[] _data;
+  _data = nullptr;
+
+  valid = true;
 }
 
 /**
@@ -512,6 +520,64 @@ MetarParser::~MetarParser()
   _runways.clear();
   _weather.clear();
   delete[] _data;
+}
+
+void MetarParser::postProcess()
+{
+  QVector<MetarCloud> clouds = getClouds();
+
+  // The lowest "BKN" or "OVC" layer specifies the cloud ceiling.
+  float minAltitudeMeter = INVALID_METAR_VALUE;
+  float lowestAltitudeMeter = INVALID_METAR_VALUE;
+
+  // Calculate lowest and maximum coverage
+  maxCoverage = MetarCloud::COVERAGE_CLEAR;
+  lowestCoverage = MetarCloud::COVERAGE_CLEAR;
+  for(const MetarCloud& cloud : clouds)
+  {
+    MetarCloud::Coverage coverage = cloud.getCoverage();
+    if((coverage == MetarCloud::COVERAGE_BROKEN || coverage == MetarCloud::COVERAGE_OVERCAST) &&
+       cloud.getAltitudeMeter() < minAltitudeMeter)
+      // Only broken and overcast counts for flight rule calculation
+      minAltitudeMeter = cloud.getAltitudeMeter();
+
+    if(coverage > maxCoverage)
+      maxCoverage = coverage;
+
+    if(cloud.getAltitudeMeter() < lowestAltitudeMeter)
+    {
+      lowestAltitudeMeter = cloud.getAltitudeMeter();
+      lowestCoverage = cloud.coverage;
+    }
+  }
+
+  // Calculate the flight rules depending on ceiling and visiblity
+  float ceilingFt = atools::geo::meterToFeet(minAltitudeMeter);
+  float visibilityMi = atools::geo::meterToMi(getMinVisibility().getVisibilityMeter());
+
+  if(visibilityMi < 1.f || ceilingFt < 500.f)
+    flightRules = LIFR;
+  else if(visibilityMi < 3.f || ceilingFt < 1000.f)
+    flightRules = IFR;
+  else if(visibilityMi <= 5.f || ceilingFt <= 3000.f)
+    flightRules = MVFR;
+  else
+    flightRules = VFR;
+
+  if(getWindDir() >= 0)
+    prevailingWindDir = getWindDir();
+  else if(getWindRangeFrom() != -1 && getWindRangeTo() != -1)
+  {
+    // Calculate the average wind direction based on variable wind
+    int from = getWindRangeFrom(), to;
+    if(getWindRangeFrom() < getWindRangeTo())
+      to = getWindRangeTo();
+    else
+      to = getWindRangeTo() + 360;
+    prevailingWindDir = atools::geo::normalizeCourse(from + (to - from) / 2);
+  }
+
+  prevailingWindSpeed = getWindSpeedMeterPerSec();
 }
 
 QString MetarParser::getReportTypeString() const
@@ -533,6 +599,22 @@ QString MetarParser::getReportTypeString() const
 
   }
   return QString();
+}
+
+float MetarParser::getWindSpeedKts() const
+{
+  if(_wind_speed < INVALID_METAR_VALUE / 2.f)
+    return _wind_speed / SG_KT_TO_MPS;
+  else
+    return INVALID_METAR_VALUE;
+}
+
+float MetarParser::getGustSpeedKts() const
+{
+  if(_gust_speed < INVALID_METAR_VALUE / 2.f)
+    return _gust_speed / SG_KT_TO_MPS;
+  else
+    return INVALID_METAR_VALUE;
 }
 
 QString MetarParser::getIntensityString(int intensity) const
@@ -1280,6 +1362,58 @@ QStringList MetarParser::getWeather() const
   return retval;
 }
 
+QString MetarParser::getFlightRulesStringLong() const
+{
+  switch(flightRules)
+  {
+    case atools::fs::weather::MetarParser::UNKNOWN:
+      return QString();
+
+    case atools::fs::weather::MetarParser::LIFR:
+      return tr("Low Instrument Flight Rules");
+
+    case atools::fs::weather::MetarParser::IFR:
+      return tr("Instrument Flight Rules");
+
+    case atools::fs::weather::MetarParser::MVFR:
+      return tr("Marginal Visual Flight Rules");
+
+    case atools::fs::weather::MetarParser::VFR:
+      return tr("Visual Flight Rules");
+  }
+  return QString();
+}
+
+QString MetarParser::getFlightRulesString() const
+{
+  switch(flightRules)
+  {
+    case atools::fs::weather::MetarParser::UNKNOWN:
+      return QString();
+
+    case atools::fs::weather::MetarParser::LIFR:
+      return tr("LIFR");
+
+    case atools::fs::weather::MetarParser::IFR:
+      return tr("IFR");
+
+    case atools::fs::weather::MetarParser::MVFR:
+      return tr("MVFR");
+
+    case atools::fs::weather::MetarParser::VFR:
+      return tr("VFR");
+  }
+  return QString();
+}
+
+float MetarParser::getPrevailingWindSpeedKnots() const
+{
+  if(prevailingWindSpeed < INVALID_METAR_VALUE / 2.f)
+    return prevailingWindSpeed / SG_KT_TO_MPS;
+  else
+    return INVALID_METAR_VALUE;
+}
+
 // [AQ]\d{4}             (spec)
 // [AQ]\d{2}(\d{2}|//)   (Namibia)
 bool MetarParser::scanPressure()
@@ -1608,9 +1742,9 @@ void MetarCloud::set(float alt, Coverage cov)
     coverage = cov;
 }
 
-QString MetarCloud::getCoverageString() const
+QString MetarCloud::getCoverageString(MetarCloud::Coverage cloudCoverage)
 {
-  switch(coverage)
+  switch(cloudCoverage)
   {
     case atools::fs::weather::MetarCloud::COVERAGE_NIL:
       return QString();
@@ -1631,6 +1765,12 @@ QString MetarCloud::getCoverageString() const
       return tr("Overcast");
   }
   return QString();
+
+}
+
+QString MetarCloud::getCoverageString() const
+{
+  return getCoverageString(coverage);
 }
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)

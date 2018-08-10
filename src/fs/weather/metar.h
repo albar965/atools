@@ -31,9 +31,13 @@ class MetarParser;
 class Metar
 {
 public:
-  Metar(const QString& metarString, const QString& metarStation = QString(),
-        const QDateTime& metarTimestamp = QDateTime(), bool isSimFormat = false);
+  Metar();
+  Metar(const atools::fs::weather::Metar& other);
+  explicit Metar(const QString& metarString, const QString& metarStation = QString(),
+                 const QDateTime& metarTimestamp = QDateTime(), bool isSimFormat = false);
   virtual ~Metar();
+
+  Metar& operator=(const atools::fs::weather::Metar& other);
 
   /* Fixes multiple flaws in FSX metar strings */
 
@@ -63,12 +67,14 @@ public:
     return cleanMetar;
   }
 
+  bool isValid() const;
+
 private:
   void buildCleanMetar();
 
   QString cleanMetar, metar, station;
-  bool simFormat;
-  const QDateTime timestamp;
+  bool simFormat = false;
+  QDateTime timestamp;
   atools::fs::weather::MetarParser *parsed = nullptr;
 
 };

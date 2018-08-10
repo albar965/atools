@@ -103,7 +103,7 @@ public:
     return tendency;
   }
 
-protected:
+private:
   float distance;
   int direction;
   int modifier;
@@ -180,7 +180,7 @@ public:
     return maxVisibility;
   }
 
-protected:
+private:
   MetarVisibility minVisibility;
   MetarVisibility maxVisibility;
   int deposit;
@@ -225,6 +225,7 @@ public:
     return coverage;
   }
 
+  static QString getCoverageString(Coverage cloudCoverage);
   QString getCoverageString() const;
 
   static Coverage getCoverage(const QString& coverage);
@@ -244,7 +245,7 @@ public:
     return typeLong;
   }
 
-protected:
+private:
   Coverage coverage; // quarters: 0 -> clear ... 4 -> overcast
   float altitude; // 1000 m
   QString type; // CU
@@ -260,6 +261,31 @@ class MetarParser
 public:
   MetarParser(const QString& metar);
   ~MetarParser();
+
+  enum FlightRules
+  {
+    UNKNOWN = -1,
+
+    /* Magenta
+     * Low Instrument Flight Rules (LIFR): Ceilings are less than 500 feet and/or visibility is less than 1 mile.
+     * LIFR = <500′ and/or <1 mile*/
+    LIFR = 0,
+
+    /* Red
+     * Instrument Flight Rules (IFR): Ceilings 500 to less than 1,000 feet and/or visibility 1 to less than 3 miles.
+     * IFR = 500-1000′ and/or 1-3 miles */
+    IFR = 1,
+
+    /* Blue
+     * Marginal VFR (MVFR): Ceilings 1,000 to 3,000 feet and/or visibility is 3-5 miles inclusive.
+     * MVFR = 1000-3000′ and/or 3-5 miles */
+    MVFR = 2,
+
+    /* Green
+     * VFR: Ceiling greater than 3000 feet and visibility greater than 5 miles(includes sky clear).
+     * VFR = > 3000′ and > 5 miles*/
+    VFR = 3
+  };
 
   enum ReportType
   {
@@ -290,11 +316,6 @@ public:
     QStringList descriptions;
     QStringList phenomena;
   };
-
-  inline QString getData() const
-  {
-    return _data;
-  }
 
   inline QString getUnusedData() const
   {
@@ -353,10 +374,14 @@ public:
     return _wind_speed;
   }
 
+  float getWindSpeedKts() const;
+
   inline float getGustSpeedMeterPerSec() const
   {
     return _gust_speed;
   }
+
+  float getGustSpeedKts() const;
 
   inline int getWindRangeFrom() const
   {
@@ -444,7 +469,7 @@ public:
 
   bool isValid() const
   {
-    return _data != nullptr;
+    return valid;
   }
 
   QString getRemark() const
@@ -452,42 +477,50 @@ public:
     return QString::fromStdString(_remark);
   }
 
-protected:
-  std::string _url;
-  int _grpcount;
-  bool _x_proxy;
-  char *_data = nullptr;
-  char *_m = nullptr;
-  char _icao[5];
-  int _year;
-  int _month;
-  int _day;
-  int _hour;
-  int _minute;
-  int _report_type;
-  int _wind_dir;
-  float _wind_speed;
-  float _gust_speed;
-  int _wind_range_from;
-  int _wind_range_to;
-  float _temp;
-  float _dewp;
-  float _pressure;
-  int _rain;
-  int _hail;
-  int _snow;
-  bool _cavok;
-  std::vector<struct Weather> _weather2;
+  FlightRules getFlightRules() const
+  {
+    return flightRules;
+  }
 
-  MetarVisibility _min_visibility;
-  MetarVisibility _max_visibility;
-  MetarVisibility _vert_visibility;
-  MetarVisibility _dir_visibility[8];
-  std::vector<MetarCloud> _clouds;
-  std::map<std::string, MetarRunway> _runways;
-  std::vector<std::string> _weather;
-  std::string _remark;
+  QString getFlightRulesStringLong() const;
+  QString getFlightRulesString() const;
 
+  /* Direction might be average of varable wind */
+  int getPrevailingWindDir() const
+  {
+    return prevailingWindDir;
+  }
+
+  float getPrevailingWindSpeedMeterPerSec() const
+  {
+    return prevailingWindSpeed;
+  }
+
+  float getPrevailingWindSpeedKnots() const;
+
+  /* Thickest cloud coverage */
+  MetarCloud::Coverage getMaxCoverage() const
+  {
+    return maxCoverage;
+  }
+
+  QString getMaxCoverageString() const
+  {
+    return MetarCloud::getCoverageString(maxCoverage);
+  }
+
+  /* Coverage of lowest cloud layer */
+  MetarCloud::Coverage getLowestCoverage() const
+  {
+    return lowestCoverage;
+  }
+
+  QString getLowestCoverageString() const
+  {
+    return MetarCloud::getCoverageString(lowestCoverage);
+  }
+
+private:
   bool scanPreambleDate();
   bool scanPreambleTime();
   void useCurrentDate();
@@ -515,6 +548,51 @@ protected:
   bool scanBoundary(char **str);
   const struct Token *scanToken(char **str, const QVector<Token>& list);
   void normalizeData();
+
+  /* Calculate flight rules (IFR, VFR, etc.), max and lowest ceiling*/
+  void postProcess();
+
+  bool valid = false;
+  std::string _url;
+  int _grpcount;
+  bool _x_proxy;
+  char *_data = nullptr;
+  char *_m = nullptr;
+  char _icao[5];
+  int _year;
+  int _month;
+  int _day;
+  int _hour;
+  int _minute;
+  int _report_type;
+  int _wind_dir;
+  float _wind_speed;
+  float _gust_speed;
+  int _wind_range_from;
+  int _wind_range_to;
+  float _temp;
+  float _dewp;
+  float _pressure;
+  int _rain;
+  int _hail;
+  int _snow;
+  bool _cavok;
+  std::vector<struct Weather> _weather2;
+
+  FlightRules flightRules = UNKNOWN;
+  MetarCloud::Coverage maxCoverage = MetarCloud::COVERAGE_CLEAR;
+  MetarCloud::Coverage lowestCoverage = MetarCloud::COVERAGE_CLEAR;
+  int prevailingWindDir = -1;
+  float prevailingWindSpeed = INVALID_METAR_VALUE;
+
+  MetarVisibility _min_visibility;
+  MetarVisibility _max_visibility;
+  MetarVisibility _vert_visibility;
+  MetarVisibility _dir_visibility[8];
+  std::vector<MetarCloud> _clouds;
+  std::map<std::string, MetarRunway> _runways;
+  std::vector<std::string> _weather;
+  std::string _remark;
 
 };
 
