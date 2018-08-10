@@ -341,8 +341,11 @@ QRectF rectToSquare(const QRectF& rect)
   return retval;
 }
 
-QTime calculateSunriseSunset(const atools::geo::Pos& position, const QDate& date, float zenith)
+QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::geo::Pos& position, const QDate& date,
+                             float zenith)
 {
+  neverRises = neverSets = false;
+
   // 1. first calculate the day of the year
   int dayOfYear = date.dayOfYear();
 
@@ -386,12 +389,18 @@ QTime calculateSunriseSunset(const atools::geo::Pos& position, const QDate& date
                         (cosDeclination * cosDeg(position.getLatY()));
 
   if(cosHourAngle > 1.)
+  {
     // the sun never rises on this location (on the specified date)
+    neverRises = true;
     return QTime();
+  }
 
   if(cosHourAngle < -1.)
+  {
     // the sun never sets on this location (on the specified date)
+    neverSets = true;
     return QTime();
+  }
 
   // 7b. finish calculating H and convert into hours
   double hourAngle;

@@ -89,7 +89,8 @@ const float SUNSET_NAUTICAL = -102.f;
 const float SUNRISE_ASTRONOMICAL = 108.f;
 const float SUNSET_ASTRONOMICAL = -108.f;
 
-QTime calculateSunriseSunset(const atools::geo::Pos& position, const QDate& date, float zenith);
+QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::geo::Pos& position, const QDate& date,
+                             float zenith);
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
