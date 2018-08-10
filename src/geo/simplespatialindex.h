@@ -50,7 +50,8 @@ public:
 
   /* Returned KEY will differ if only nearest was found.
    * Will be equal to passed key is exact was found.
-   * Key is empty if nothing was found. */
+   * Key is empty if nothing was found.
+   * Exact result will be returned if pos is not valid. */
   KEY getTypeOrNearest(TYPE& type, const KEY& key, const atools::geo::Pos& pos);
   KEY getTypeOrNearest(const KEY& key, const atools::geo::Pos& pos);
 
@@ -119,7 +120,7 @@ KEY SimpleSpatialIndex<KEY, TYPE>::getTypeOrNearest(TYPE& type, const KEY& key,
       type = index.value(key).type;
       return key;
     }
-    else
+    else if(pos.isValid())
     {
       // Check cache to avoid costly calculations
       Entry *nearest = cache.object(key);
