@@ -259,7 +259,7 @@ class MetarParser
   Q_DECLARE_TR_FUNCTIONS(MetarParser)
 
 public:
-  MetarParser(const QString& metar);
+  explicit MetarParser(const QString& metar);
   ~MetarParser();
 
   enum FlightRules
@@ -319,7 +319,7 @@ public:
 
   inline QString getUnusedData() const
   {
-    return _m;
+    return QString::fromStdString(unusedData);
   }
 
   inline bool getProxy() const
@@ -592,7 +592,7 @@ private:
   std::vector<MetarCloud> _clouds;
   std::map<std::string, MetarRunway> _runways;
   std::vector<std::string> _weather;
-  std::string _remark;
+  std::string _remark, unusedData;
 
 };
 

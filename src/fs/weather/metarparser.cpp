@@ -507,6 +507,8 @@ MetarParser::MetarParser(const QString& metar) :
 
   delete[] _data;
   _data = nullptr;
+  unusedData = _m;
+  _m = nullptr;
 
   valid = true;
 }
