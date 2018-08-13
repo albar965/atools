@@ -44,12 +44,15 @@ namespace common {
 class MoraReader
 {
 public:
-  MoraReader(const atools::sql::SqlDatabase *sqlDb);
-  MoraReader(const atools::sql::SqlDatabase& sqlDb);
+  MoraReader(atools::sql::SqlDatabase *sqlDb);
+  MoraReader(atools::sql::SqlDatabase& sqlDb);
   virtual ~MoraReader();
 
   /* Read values from table "mora_grid". returns true if successfull and table exists. */
   bool readFromTable();
+
+  /* Sets database and reads as above */
+  bool readFromTable(sql::SqlDatabase& sqlDb);
 
   /* Writes values to table "mora_grid". Object has to be valid. Copies data to this instance. */
   void writeToTable(const QVector<quint16>& datagrid, int columns, int rows);
@@ -86,7 +89,7 @@ public:
   const static quint16 OCEAN = 0;
 
 private:
-  const atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db;
   bool dataAvailable = false;
   QVector<quint16> datagrid;
   int lonxColums = 0, latyRows = 0;

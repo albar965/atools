@@ -29,13 +29,13 @@ namespace atools {
 namespace fs {
 namespace common {
 
-MoraReader::MoraReader(const sql::SqlDatabase *sqlDb)
+MoraReader::MoraReader(sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
 
 }
 
-MoraReader::MoraReader(const sql::SqlDatabase& sqlDb)
+MoraReader::MoraReader(sql::SqlDatabase& sqlDb)
   : db(&sqlDb)
 {
 
@@ -46,15 +46,21 @@ MoraReader::~MoraReader()
 
 }
 
+bool MoraReader::readFromTable(atools::sql::SqlDatabase& sqlDb)
+{
+  db = &sqlDb;
+  return readFromTable();
+}
+
 bool MoraReader::readFromTable()
 {
+  clear();
+
   if(!SqlUtil(db).hasTableAndRows("mora_grid"))
   {
     qWarning() << Q_FUNC_INFO << "No MORA data found";
     return false;
   }
-
-  clear();
 
   SqlQuery moraReadQuery(db);
   moraReadQuery.exec("select * from mora_grid");
