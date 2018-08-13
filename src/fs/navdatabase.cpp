@@ -258,7 +258,8 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   }
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
-    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS - 1 /* No rw cleanup*/;
+    total = numProgressReports + numSceneryAreas +
+            PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS - 1 /* No rw cleanup*/ - 1 /* Read MORA */;
     routePartFraction = 4;
   }
   else
@@ -527,6 +528,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   dfdCompiler->initQueries();
   dfdCompiler->compileMagDeclBgl();
   dfdCompiler->readHeader();
+  dfdCompiler->writeMora();
 
   if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
   {

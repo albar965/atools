@@ -119,6 +119,9 @@ public:
   /* Read approaches, transitions, SIDs and STARs */
   void writeProcedures();
 
+  /* minimum off route altitude - read source table and write to mora_grid table */
+  void writeMora();
+
   void initQueries();
   void deInitQueries();
 
@@ -197,7 +200,8 @@ private:
 
   atools::sql::SqlQuery *airportQuery = nullptr, *airportWriteQuery = nullptr, *airportFileWriteQuery = nullptr,
                         *airportUpdateQuery = nullptr, *runwayQuery = nullptr, *runwayWriteQuery = nullptr,
-                        *runwayEndWriteQuery = nullptr, *metadataQuery = nullptr, *airspaceWriteQuery = nullptr;
+                        *runwayEndWriteQuery = nullptr, *metadataQuery = nullptr, *airspaceWriteQuery = nullptr,
+                        *moraQuery = nullptr;
 
 };
 

@@ -267,7 +267,8 @@ HEADERS += src/atools.h \
     src/zip/gzip.h \
     src/sql/sqltransaction.h \
     src/logging/loggingtypes.h \
-    src/fs/xp/scenerypacks.h
+    src/fs/xp/scenerypacks.h \
+    src/fs/common/morareader.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -477,7 +478,8 @@ SOURCES += src/atools.cpp \
     src/fs/online/onlinetypes.cpp \
     src/zip/gzip.cpp \
     src/sql/sqltransaction.cpp \
-    src/fs/xp/scenerypacks.cpp
+    src/fs/xp/scenerypacks.cpp \
+    src/fs/common/morareader.cpp
 
 
 unix {

@@ -22,17 +22,17 @@
 namespace atools {
 namespace util {
 
-PainterContextSaver::PainterContextSaver(QPainter *painter)
-  : ptr(painter)
+PainterContextSaver::PainterContextSaver(QPainter *painterToSave)
+  : painter(painterToSave)
 {
-  if(ptr != nullptr)
-    ptr->save();
+  if(painter != nullptr)
+    painter->save();
 }
 
 PainterContextSaver::~PainterContextSaver()
 {
-  if(ptr != nullptr)
-    ptr->restore();
+  if(painter != nullptr)
+    painter->restore();
 }
 
 } // namespace util

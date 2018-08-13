@@ -23,14 +23,17 @@ class QPainter;
 namespace atools {
 namespace util {
 
+/*
+ * Helper to save the paint context and restore it in the destructor.
+ */
 class PainterContextSaver
 {
 public:
-  PainterContextSaver(QPainter *painter);
+  PainterContextSaver(QPainter *painterToSave);
   ~PainterContextSaver();
 
 private:
-  QPainter *ptr = nullptr;
+  QPainter *painter = nullptr;
 };
 
 } // namespace util
