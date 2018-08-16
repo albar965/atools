@@ -60,6 +60,15 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 
+/* Turns a string list into a string of blocked text.
+ * E.g:
+ * blockText({"A","B","C","D","E","F"}, 2, ",", "\n")
+ * ->
+ * "A,B,\nC,D,\nE,F"
+ */
+QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
+                  const QString& lineSeparator);
+
 /* Cut linefeed separated text. Return maxLength lines where \n... is included  */
 QString elideTextLinesShort(QString str, int maxLength);
 

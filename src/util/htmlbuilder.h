@@ -31,6 +31,8 @@ namespace html {
 enum Flag
 {
   NONE = 0x0000,
+
+  /* HTML formatting attributes */
   BOLD = 0x0001,
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
@@ -39,10 +41,14 @@ enum Flag
   SUPERSCRIPT = 0x0020,
   SMALL = 0x0040,
   BIG = 0x0080,
-  NOBR = 0x0100,
-  LINK_NO_UL = 0x0200, // Do not underline links
-  NO_ENTITIES = 0x0400, // Do not convert entities
-  ALIGN_RIGHT = 0x1000 // Only for table data
+
+  NOBR = 0x0100, /* HTML no break */
+
+  LINK_NO_UL = 0x0200, /* Do not underline links */
+  NO_ENTITIES = 0x0400, /* Do not convert entities */
+  ALIGN_RIGHT = 0x1000, /* Only for table data */
+  AUTOLINK = 0x2000, /* Automatically create links from http:// and https:// in text */
+  REPLACE_CRLF = 0x4000 /* Replace carriage return and linefeed with <br/> */
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -273,7 +279,7 @@ public:
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
-  QString asText(const QString& str, html::Flags flags, QColor color);
+  QString asText(QString str, html::Flags flags, QColor color);
 
   QString rowBackColor, rowBackColorAlt, tableRowHeader;
   QStringList tableRow, tableRowAlignRight, tableRowBegin;

@@ -23,9 +23,14 @@
 #include <QDateTime>
 #include <QBuffer>
 #include <QIcon>
+#include <QRegularExpression>
 
 namespace atools {
 namespace util {
+
+// Matches "http://blah" and "https://www.example.com/blah" links
+static const QRegularExpression LINK_REGEXP(
+  "\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
 
 HtmlBuilder::HtmlBuilder(bool hasBackgroundColor)
   : hasBackColor(hasBackgroundColor)
@@ -479,7 +484,7 @@ HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color
   return *this;
 }
 
-QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
+QString HtmlBuilder::asText(QString str, html::Flags flags, QColor color)
 {
   QString prefix, suffix;
   if(flags & html::BOLD)
@@ -542,10 +547,20 @@ QString HtmlBuilder::asText(const QString& str, html::Flags flags, QColor color)
     suffix.prepend("</span>");
   }
 
-  if(flags & html::NO_ENTITIES)
-    return prefix + str + suffix;
-  else
-    return prefix + toEntities(str.toHtmlEscaped()).replace("\n", "<br/>") + suffix;
+  if(!(flags & html::NO_ENTITIES))
+    str = toEntities(str.toHtmlEscaped()).replace("\n", "<br/>");
+
+  if(flags & html::REPLACE_CRLF)
+  {
+    str = str.replace("\r\n", "<br/>");
+    str = str.replace("\n", "<br/>");
+    str = str.replace("\r", "<br/>");
+  }
+
+  if(flags & html::AUTOLINK)
+    str.replace(LINK_REGEXP, "<a href=\"\\1\">\\1</a>");
+
+  return prefix + str + suffix;
 }
 
 bool HtmlBuilder::checklength(int maxLines, const QString& msg)

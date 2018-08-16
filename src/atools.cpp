@@ -250,6 +250,27 @@ QString buildPath(const QStringList& paths)
   return retval;
 }
 
+QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
+                  const QString& lineSeparator)
+{
+  // Convert long list of items to blocks
+  QVector<QStringList> blocks;
+  blocks.append(QStringList());
+
+  for(const QString& str : texts)
+  {
+    if(blocks.last().size() >= maxItemsPerLine)
+      blocks.append(QStringList());
+    blocks.last().append(str);
+  }
+
+  // Join items by , and blocks by linefeed
+  QString txt;
+  for(const QStringList& list : blocks)
+    txt.append((txt.isEmpty() ? "" : itemSeparator + lineSeparator) + list.join(itemSeparator));
+  return txt;
+}
+
 QString elideTextShort(const QString& str, int maxLength)
 {
   if(str.size() > maxLength)
