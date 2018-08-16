@@ -276,10 +276,10 @@ public:
   /* Set progress callback function/method */
   void setProgressCallback(ProgressCallbackType func);
 
-  /* Exclude absolute directories just by path.  */
+  /* Exclude absolute directories just by path. Used by the GUI options dialog. */
   void addToDirectoryExcludes(const QStringList& filter);
 
-  /* Exclude absolute directories from add-on recognition */
+  /* Exclude absolute directories from add-on recognition. Used by the GUI options dialog. */
   void addToAddonDirectoryExcludes(const QStringList& filter);
 
   void setSimulatorType(const atools::fs::FsPaths::SimulatorType& value)

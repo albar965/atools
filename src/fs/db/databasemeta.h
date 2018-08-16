@@ -122,6 +122,7 @@ public:
    * 9 approach_fix_type and runway end altitude added. Fixes for common route in SID/STAR and runway heading.
    * 10 is_3d in airport_medium and airport_large
    * 11 transition_altitude in airport
+   * 12 Several changes towards 3.2.
    */
   static const int DB_VERSION_MINOR = 11;
 

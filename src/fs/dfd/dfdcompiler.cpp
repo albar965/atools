@@ -771,6 +771,10 @@ void DfdCompiler::beginRestrictiveAirspace(atools::sql::SqlQuery& query)
 
   airspaceWriteQuery->bindValue(":type", dbtype);
   airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
+
+  // Store the type without mapping
+  airspaceWriteQuery->bindValue(":restrictive_type", type);
+  airspaceWriteQuery->bindValue(":restrictive_designation", query.valueStr("restrictive_airspace_designation"));
 }
 
 void DfdCompiler::beginAirspace(const atools::sql::SqlQuery& query)

@@ -49,6 +49,8 @@ void BoundaryWriter::writeObject(const Boundary *type)
 
   // Fields not used by P3D/FSX
   bindNullString(":multiple_code");
+  bindNullString(":restrictive_type");
+  bindNullString(":restrictive_designation");
   bind(":time_code", "U");
 
   if(type->hasCom())

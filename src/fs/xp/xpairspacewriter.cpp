@@ -131,6 +131,8 @@ void XpAirspaceWriter::writeBoundary()
       insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
       // Fields not used by X-Plane
+      insertAirspaceQuery->bindValue(":restrictive_designation", QVariant(QVariant::String));
+      insertAirspaceQuery->bindValue(":restrictive_type", QVariant(QVariant::String));
       insertAirspaceQuery->bindValue(":multiple_code", QVariant(QVariant::String));
       insertAirspaceQuery->bindValue(":time_code", "U");
 
