@@ -162,6 +162,12 @@ void LineString::removeInvalid()
     erase(it, end());
 }
 
+void LineString::removeDuplicates()
+{
+  auto it = std::unique(begin(), end());
+  resize(static_cast<int>(std::distance(begin(), it)));
+}
+
 void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result, int *index) const
 {
   LineDistance lineResult, closestLineResult;

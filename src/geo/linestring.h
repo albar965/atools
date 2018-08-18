@@ -55,6 +55,9 @@ public:
   /* Remove all invalid points */
   void removeInvalid();
 
+  /* Remove consecutive duplicates */
+  void removeDuplicates();
+
   /* Calculate status, cross track distance and more to this line. */
   void distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result,
                                  int *index = nullptr) const;
