@@ -1,6 +1,23 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.0.4
+
+* Added restrictive_designation and restrictive_type to boundary table and DFD compiler.
+* Database minor version updated to 12.
+* Added mora_grid table for minimum off route altitude data to schema.
+* DFD compiler now populates mora_grid table. albar965/littlenavmap#84
+* Now reading scenery_packs.ini for X-Plane to allow disabling of scenery by tools. albar965/littlenavmap#151
+* Attempt to fix weather loading issues (disappearing report) for X-Plane metar.dat. Weather data is now kept if files was deleted.
+* Now fetching the first X-Plane installation path from x-plane_install_11.txt as base path.
+* Added sunrise and sunset calculation. albar965/littlenavmap#281
+* Added multiple_code and time_code columns to schema to indicate overlapping airspaces.
+  albar965/littlenavmap#279
+* Added arinc_descr_code to database that allows to identify IAF, MAF and FAF. albar965/littlenavmap#196
+* GridDelegate now allows to update colors on style change. albar965/littlenavmap#142
+* Refactoring in cleanup in logging system. Log files can now be rotated if a given size is exceeded. albar965/littlenavmap#275
+* X-Plane parking positions are now at correct coordinates. albar965/littlenavmap#256
+
 Version 3.0.3
 
 * Fixed issue where aprons from stock airports remained in add-ons.
