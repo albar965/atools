@@ -32,10 +32,10 @@ namespace util {
 static const QRegularExpression LINK_REGEXP(
   "\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
 
-HtmlBuilder::HtmlBuilder(bool hasBackgroundColor)
-  : hasBackColor(hasBackgroundColor)
+HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
+  : hasBackColor(backgroundColorUsed)
 {
-  if(hasBackgroundColor)
+  if(hasBackColor)
   {
     // Create darker colors dynamically from default palette
     rowBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base).

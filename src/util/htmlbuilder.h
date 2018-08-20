@@ -67,7 +67,7 @@ public:
   /*
    * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
    */
-  HtmlBuilder(bool hasBackgroundColor);
+  HtmlBuilder(bool backgroundColorUsed);
   ~HtmlBuilder();
 
   const QString& getHtml() const
@@ -275,6 +275,11 @@ public:
   static QString getEncodedImageHref(const QIcon& icon, QSize imageSize);
 
   static QString toEntities(const QString& src);
+
+  bool hasBackgroundColor() const
+  {
+    return hasBackColor;
+  }
 
 private:
   /* Select alternating entries based on the index from the string list */
