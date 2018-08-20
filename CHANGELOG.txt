@@ -17,6 +17,7 @@ Version 3.0.4
 * GridDelegate now allows to update colors on style change. albar965/littlenavmap#142
 * Refactoring in cleanup in logging system. Log files can now be rotated if a given size is exceeded. albar965/littlenavmap#275
 * X-Plane parking positions are now at correct coordinates. albar965/littlenavmap#256
+* Now populating airport_id in tables vor, ndb and waypoint in DFD compiler. albar965/littlenavmap#289
 
 Version 3.0.3
 
