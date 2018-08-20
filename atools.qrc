@@ -43,5 +43,6 @@
         <file>resources/sql/fs/online/create_online_schema.sql</file>
         <file>resources/sql/fs/db/update_sea_base.sql</file>
         <file>resources/sql/fs/db/finish_airport_schema.sql</file>
+        <file>resources/sql/fs/db/dfd/update_navaids.sql</file>
     </qresource>
 </RCC>
