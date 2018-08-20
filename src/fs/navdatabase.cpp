@@ -570,6 +570,18 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
 
   if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
     dfdCompiler->writeProcedures();
+  db->commit();
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
+
+  db->commit();
+
+  // Update airport_id from ndb, vor and waypoint
+  if((aborted = runScript(progress, "fs/db/dfd/update_navaids.sql", tr("Creating indexes"))))
+    return true;
+
+  db->commit();
 
   dfdCompiler->updateTreeLetterAirportCodes();
 

@@ -19,11 +19,14 @@
 -- Create application indexes after all post processes
 -- *************************************************************
 
--- Create indexes on columns that are potentially used in searches
-
+-- Drop temporary tables
 drop table if exists airway_temp;
 drop table if exists airway_point;
+drop table if exists tmp_waypoint_ap;
+drop table if exists tmp_ndb_ap;
+drop table if exists tmp_vor_ap;
 
+-- Create indexes on columns that are potentially used in searches
 create index if not exists idx_ils_ident on ils(ident);
 
 create index if not exists idx_airway_left_lonx on airway(left_lonx);
