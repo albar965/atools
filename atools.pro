@@ -268,7 +268,8 @@ HEADERS += src/atools.h \
     src/sql/sqltransaction.h \
     src/logging/loggingtypes.h \
     src/fs/xp/scenerypacks.h \
-    src/fs/common/morareader.h
+    src/fs/common/morareader.h \
+    src/util/roundedpolygon.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -479,7 +480,8 @@ SOURCES += src/atools.cpp \
     src/zip/gzip.cpp \
     src/sql/sqltransaction.cpp \
     src/fs/xp/scenerypacks.cpp \
-    src/fs/common/morareader.cpp
+    src/fs/common/morareader.cpp \
+    src/util/roundedpolygon.cpp
 
 
 unix {

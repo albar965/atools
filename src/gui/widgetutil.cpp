@@ -157,7 +157,7 @@ void changeStarIndication(QAction *action, bool changed)
 void changeWidgetColor(QWidget *widget, const QColor& color)
 {
   widget->setStyleSheet("background-color: " + color.name() +
-                        (color.value() < 128 ? "; color: white" : QString()));
+                        (color.value() < 180 ? "; color: white" : "; color: black"));
 }
 
 } // namespace util

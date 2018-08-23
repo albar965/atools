@@ -180,7 +180,7 @@ Q_DECL_CONSTEXPR long long absLongLong(long long value)
 template<typename TYPE>
 Q_DECL_CONSTEXPR int roundToInt(TYPE value)
 {
-  return static_cast<int>(round(value));
+  return static_cast<int>(static_cast<double>(value) + 0.5);
 }
 
 /* Extract the first latin1 character from string. Return null if string is empty */
