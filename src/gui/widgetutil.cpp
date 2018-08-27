@@ -39,7 +39,7 @@ bool canTextEditUpdate(const QTextEdit *textEdit)
          !textEdit->horizontalScrollBar()->isSliderDown();
 }
 
-void updateTextEdit(QTextEdit *textEdit, const QString& text)
+void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection)
 {
   // Remember cursor position
   QTextCursor cursor = textEdit->textCursor();
@@ -51,7 +51,7 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text)
   int hScrollPos = textEdit->horizontalScrollBar()->value();
   textEdit->setText(text);
 
-  if(anchor != pos)
+  if(anchor != pos && keepSelection)
   {
     // There is a selection - Reset cursor
     int maxPos = textEdit->document()->characterCount() - 1;
@@ -66,9 +66,12 @@ void updateTextEdit(QTextEdit *textEdit, const QString& text)
     textEdit->setTextCursor(cursor);
   }
 
-  // Reset scroll bars
-  textEdit->verticalScrollBar()->setValue(vScrollPos);
-  textEdit->horizontalScrollBar()->setValue(hScrollPos);
+  if(!scrollToTop)
+  {
+    // Reset scroll bars
+    textEdit->verticalScrollBar()->setValue(vScrollPos);
+    textEdit->horizontalScrollBar()->setValue(hScrollPos);
+  }
 }
 
 void showHideLayoutElements(const QList<QLayout *> layouts, bool visible,

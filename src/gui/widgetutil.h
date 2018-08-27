@@ -38,7 +38,7 @@ void changeWidgetColor(QWidget *widget, const QColor& color);
 bool canTextEditUpdate(const QTextEdit *textEdit);
 
 /* Update text edit and keep selection and scrollbar position */
-void updateTextEdit(QTextEdit *textEdit, const QString& text);
+void updateTextEdit(QTextEdit *textEdit, const QString& text, bool scrollToTop, bool keepSelection);
 
 /*
  * Shows or hides all widgets in a list of layouts.
