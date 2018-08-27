@@ -22,16 +22,11 @@
 
 #include "geo/simplespatialindex.h"
 
-#include <QDateTime>
-#include <QHash>
-#include <QObject>
-#include <QSet>
-#include <QTimer>
-#include <functional>
-
-class QFileSystemWatcher;
-
 namespace atools {
+namespace util {
+class FileSystemWatcher;
+}
+
 namespace fs {
 namespace weather {
 
@@ -78,7 +73,7 @@ private:
   bool read();
   void deleteFsWatcher();
   void createFsWatcher();
-  void pathChanged();
+  void pathChanged(const QString& filename);
 
   struct MetarData
   {
@@ -86,18 +81,11 @@ private:
     QDateTime timestamp;
   };
 
+  QString weatherFile;
   atools::geo::SimpleSpatialIndex<QString, MetarData> index;
+  atools::util::FileSystemWatcher *fsWatcher = nullptr;
 
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
-
-  QString weatherFile;
-  QDateTime weatherFileTimestamp;
-  qint64 lastFileSize = 0;
-  QFileSystemWatcher *fsWatcher = nullptr;
-  QTimer timer;
-
-  /* Need at least one megabyte to be valid */
-  static const int MIN_FILE_SIZE = 1024 * 1024;
 
   bool verbose;
 };

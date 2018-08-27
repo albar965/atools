@@ -17,20 +17,22 @@
 
 #include "fs/weather/xpweatherreader.h"
 
+#include "util/filesystemwatcher.h"
+
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QTextStream>
 #include <QDebug>
-#include <QFileSystemWatcher>
 
 namespace atools {
 namespace fs {
 namespace weather {
 
+using atools::util::FileSystemWatcher;
+
 XpWeatherReader::XpWeatherReader(QObject *parent, bool verboseLogging)
   : QObject(parent), index(5000), verbose(verboseLogging)
 {
-  timer.setObjectName("XpWeatherReader.timer");
 }
 
 XpWeatherReader::~XpWeatherReader()
@@ -161,33 +163,21 @@ bool XpWeatherReader::read()
   return true;
 }
 
-/* Called on directory or file change and QTimer timer */
-void XpWeatherReader::pathChanged()
+void XpWeatherReader::pathChanged(const QString& filename)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << sender()->objectName();
+    qDebug() << Q_FUNC_INFO << filename;
 
   QFileInfo fileinfo(weatherFile);
-  if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > MIN_FILE_SIZE)
+  if(fileinfo.exists() && fileinfo.isFile())
   {
     if(verbose)
       qDebug() << Q_FUNC_INFO << "File exists" << fileinfo.exists()
                << "size" << fileinfo.size() << "last modified" << fileinfo.lastModified();
 
-    // File exists - first call or older than two minutes or file differs
-    if(!weatherFileTimestamp.isValid() ||
-       fileinfo.lastModified() > weatherFileTimestamp ||
-       lastFileSize != fileinfo.size())
-    {
-      // Timestamp of file has changed
-      qDebug() << Q_FUNC_INFO << "reading" << weatherFile;
-      if(read())
-      {
-        weatherFileTimestamp = fileinfo.lastModified();
-        lastFileSize = fileinfo.size();
-        emit weatherUpdated();
-      }
-    }
+    qDebug() << Q_FUNC_INFO << "reading" << weatherFile;
+    if(read())
+      emit weatherUpdated();
     else if(verbose)
       qDebug() << Q_FUNC_INFO << "File not changed";
   }
@@ -200,13 +190,10 @@ void XpWeatherReader::deleteFsWatcher()
 {
   if(fsWatcher != nullptr)
   {
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &XpWeatherReader::pathChanged);
-    fsWatcher->disconnect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &XpWeatherReader::pathChanged);
+    fsWatcher->disconnect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
     fsWatcher->deleteLater();
     fsWatcher = nullptr;
   }
-  timer.stop();
-  timer.disconnect(&timer, &QTimer::timeout, this, &XpWeatherReader::pathChanged);
 }
 
 void XpWeatherReader::createFsWatcher()
@@ -214,26 +201,11 @@ void XpWeatherReader::createFsWatcher()
   if(fsWatcher == nullptr)
   {
     // Watch file for changes and directory too to catch file deletions
-    fsWatcher = new QFileSystemWatcher(this);
-    fsWatcher->setObjectName("XpWeatherReader.fsWatcher");
-
-    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::fileChanged, this, &XpWeatherReader::pathChanged);
-    fsWatcher->connect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &XpWeatherReader::pathChanged);
+    fsWatcher = new FileSystemWatcher(this, verbose);
+    fsWatcher->connect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
   }
 
-  // Watch file to get changes
-  if(!fsWatcher->addPath(weatherFile))
-    qWarning() << "cannot watch" << weatherFile;
-
-  // Watch directory to get added or removed file changes
-  QFileInfo fileinfo(weatherFile);
-  if(!fsWatcher->addPath(fileinfo.path()))
-    qWarning() << "cannot watch" << fileinfo.path();
-
-  // Check every ten seconds since the watcher is unreliable
-  timer.setInterval(10000);
-  timer.connect(&timer, &QTimer::timeout, this, &XpWeatherReader::pathChanged);
-  timer.start();
+  fsWatcher->setFilenameAndStart(weatherFile);
 }
 
 } // namespace weather
