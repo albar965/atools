@@ -152,9 +152,9 @@ void SceneryPacks::read(const QString& basePath)
               pack.errorLine = -1;
 
               // Add only to index if path exists
-              QString canonicalFilePath = QFileInfo(pack.filepath).canonicalFilePath();
-              if(!canonicalFilePath.isEmpty())
-                index.insert(canonicalFilePath, entries.size());
+              QString absoluteFilePath = QFileInfo(pack.filepath).absoluteFilePath();
+              if(!absoluteFilePath.isEmpty())
+                index.insert(absoluteFilePath, entries.size());
             }
 
             entries.append(pack);
@@ -178,7 +178,7 @@ const QVector<SceneryPack>& SceneryPacks::getEntries() const
 const SceneryPack *SceneryPacks::getEntryByPath(const QString& filepath) const
 {
   QFileInfo fi(filepath);
-  int idx = index.value(fi.canonicalFilePath(), -1);
+  int idx = index.value(fi.absoluteFilePath(), -1);
   return idx >= 0 ? &entries.at(idx) : nullptr;
 }
 

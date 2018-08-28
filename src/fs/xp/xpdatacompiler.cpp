@@ -856,7 +856,8 @@ bool XpDataCompiler::includeFile(const NavDatabaseOptions& opts, const QFileInfo
   }
   else if(fileinfo.isFile())
   {
-    if(!opts.isIncludedDirectory(fileinfo.absolutePath()))
+    // Check if file is included from config file and GUI options
+    if(!opts.isIncludedDirectory(fileinfo.absolutePath()) || !opts.isIncludedFilePath(fileinfo.absoluteFilePath()))
       return false;
   }
 

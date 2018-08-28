@@ -69,7 +69,7 @@ public:
   /* Get list of entries from file after calling read */
   const QVector<SceneryPack>& getEntries() const;
 
-  /* Get an entry by canonical path. Returns null if it does not exist or path does not exist */
+  /* Get an entry by absolute path. Returns null if it does not exist or path does not exist */
   const SceneryPack *getEntryByPath(const QString& filepath) const;
 
   int getFileVersion() const
@@ -80,7 +80,7 @@ public:
 private:
   QVector<SceneryPack> entries;
 
-  /* Canonical path to index in entry list */
+  /* Absolute path to index in entry list */
   QHash<QString, int> index;
   int fileVersion;
 

@@ -44,7 +44,12 @@ NavDatabaseOptions::ProgressCallbackType NavDatabaseOptions::getProgressCallback
 
 void NavDatabaseOptions::addToDirectoryExcludes(const QStringList& filter)
 {
-  addToFilter(createFilterList(filter), dirExcludes);
+  addToFilter(createFilterList(filter), dirExcludesGui);
+}
+
+void NavDatabaseOptions::addToFilePathExcludes(const QStringList& filter)
+{
+  addToFilter(fromNativeSeparators(filter), filePathExcludesGui);
 }
 
 void NavDatabaseOptions::addToAddonDirectoryExcludes(const QStringList& filter)
@@ -62,9 +67,14 @@ bool NavDatabaseOptions::isAddonLocalPath(const QString& filepath) const
   return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
-bool NavDatabaseOptions::isIncludedDirectory(const QString& filepath) const
+bool NavDatabaseOptions::isIncludedDirectory(const QString& dirpath) const
 {
-  return includeObject(adaptPath(filepath), QList<QRegExp>(), dirExcludes);
+  return includeObject(adaptPath(dirpath), QList<QRegExp>(), dirExcludesGui);
+}
+
+bool NavDatabaseOptions::isIncludedFilePath(const QString& filepath) const
+{
+  return includeObject(fromNativeSeparator(filepath), QList<QRegExp>(), filePathExcludesGui);
 }
 
 bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
@@ -358,7 +368,7 @@ QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
   out << "]";
 
   out << ", Exclude directory filter [";
-  for(const QRegExp& f : opts.dirExcludes)
+  for(const QRegExp& f : opts.dirExcludesGui)
     out << f.pattern() << ", ";
   out << "]";
 

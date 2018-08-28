@@ -163,6 +163,23 @@ void changeWidgetColor(QWidget *widget, const QColor& color)
                         (color.value() < 180 ? "; color: white" : "; color: black"));
 }
 
+QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel)
+{
+  QVector<int> indexes;
+  if(selectionModel != nullptr)
+  {
+    // Create list in reverse order so that deleting can start at the bottom of the list
+    QModelIndexList localSelectedRows = selectionModel->selectedRows();
+    for(const QModelIndex& index : localSelectedRows)
+      indexes.append(index.row());
+
+    std::sort(indexes.begin(), indexes.end());
+    std::reverse(indexes.begin(), indexes.end());
+
+  }
+  return indexes;
+}
+
 } // namespace util
 } // namespace gui
 } // namespace atools

@@ -276,8 +276,9 @@ public:
   /* Set progress callback function/method */
   void setProgressCallback(ProgressCallbackType func);
 
-  /* Exclude absolute directories just by path. Used by the GUI options dialog. */
+  /* Exclude absolute directories and file paths. Used by the GUI options dialog. */
   void addToDirectoryExcludes(const QStringList& filter);
+  void addToFilePathExcludes(const QStringList& filter);
 
   /* Exclude absolute directories from add-on recognition. Used by the GUI options dialog. */
   void addToAddonDirectoryExcludes(const QStringList& filter);
@@ -379,10 +380,16 @@ public:
     return flags & type::READ_ADDON_XML;
   }
 
+  /* Pure file name */
   bool isIncludedFilename(const QString& filename) const;
+
+  /* Path relative to base */
   bool isIncludedLocalPath(const QString& filepath) const;
   bool isIncludedAirportIdent(const QString& icao) const;
-  bool isIncludedDirectory(const QString& filepath) const;
+
+  /* Options that are not save with the object */
+  bool isIncludedDirectory(const QString& dirpath) const;
+  bool isIncludedFilePath(const QString& filepath) const;
 
   /* If true scenery will be added to end of list */
   bool isHighPriority(const QString& filepath) const;
@@ -457,7 +464,8 @@ private:
   QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
                  fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
                  highPriorityFiltersInc,
-                 dirExcludes /* Not loaded from config file */,
+                 dirExcludesGui /* Not loaded from config file */,
+                 filePathExcludesGui /* Not loaded from config file */,
                  addonDirExcludes /* Not loaded from config file */;
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;

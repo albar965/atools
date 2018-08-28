@@ -18,7 +18,9 @@
 #ifndef ATOOLS_WIDGETTOOLS_H
 #define ATOOLS_WIDGETTOOLS_H
 
+#include <QItemSelectionModel>
 #include <QList>
+#include <QModelIndexList>
 
 class QLayout;
 class QWidget;
@@ -30,6 +32,9 @@ class QColor;
 namespace atools {
 namespace gui {
 namespace util {
+
+/* Returns indexes in reverse order so that items can be deleted from the end of the list. */
+QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
 
 /* Changes the background color of the widget using stylesheets and adapts text color for readability */
 void changeWidgetColor(QWidget *widget, const QColor& color);

@@ -50,13 +50,12 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     // Scenery local path is relative - add base path
     sceneryAreaDirStr = options.getBasepath() + QDir::separator() + areaLocalPathStr;
 
-  // Remove any .. in the path
-  QString sceneryAreaDirStrCanonical = QFileInfo(sceneryAreaDirStr).canonicalFilePath();
+  // Remove any .. in the path but do not change symlinks
+  QString sceneryAreaDirStrFilePath = QFileInfo(sceneryAreaDirStr).absoluteFilePath();
 
   qInfo() << "Scenery path" << sceneryAreaDirStr;
-  // qInfo() << "Scenery canonical path" << sceneryAreaDirStrCanonical;
 
-  QFileInfo sceneryArea(sceneryAreaDirStrCanonical);
+  QFileInfo sceneryArea(sceneryAreaDirStrFilePath);
   if(sceneryArea.exists())
   {
     if(sceneryArea.isDir())
@@ -88,15 +87,16 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
               if(bglFile.isFile() && bglFile.isReadable())
               {
                 QString filename = bglFile.fileName();
+                QString filepath = bglFile.filePath();
 
-                // Check if file is included
-                if(options.isIncludedFilename(filename))
+                // Check if file is included from config file and GUI options
+                if(options.isIncludedFilename(filename) && options.isIncludedFilePath(filepath))
                 {
                   numFiles++;
                   if(filepaths != nullptr)
-                    filepaths->append(bglFile.filePath());
+                    filepaths->append(filepath);
                   if(filenames != nullptr)
-                    filenames->append(bglFile.fileName());
+                    filenames->append(filename);
                 }
               }
               else
