@@ -67,12 +67,51 @@ HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
   tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAlt + "\">");
 
   tableRowHeader = "<tr><td>%1</td></tr>";
+}
+
+HtmlBuilder::HtmlBuilder(const atools::util::HtmlBuilder& other)
+{
+  this->operator=(other);
 
 }
 
 HtmlBuilder::~HtmlBuilder()
 {
 
+}
+
+HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
+{
+  rowBackColor = other.rowBackColor;
+  rowBackColorAlt = other.rowBackColorAlt;
+  tableRowHeader = other.tableRowHeader;
+  tableRow = other.tableRow;
+  tableRowAlignRight = other.tableRowAlignRight;
+  tableRowBegin = other.tableRowBegin;
+  tableIndex = other.tableIndex;
+  defaultPrecision = other.defaultPrecision;
+  numLines = other.numLines;
+  htmlText = other.htmlText;
+  locale = other.locale;
+  dateFormat = other.dateFormat;
+  hasBackColor = other.hasBackColor;
+
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::clear()
+{
+  htmlText.clear();
+  numLines = 0;
+  tableIndex = 0;
+  return *this;
+}
+
+HtmlBuilder HtmlBuilder::cleared() const
+{
+  HtmlBuilder html(*this);
+  html.clear();
+  return html;
 }
 
 HtmlBuilder& HtmlBuilder::append(const HtmlBuilder& other)
@@ -203,9 +242,27 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, int value, html::Flags flags
 
 HtmlBuilder& HtmlBuilder::td(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText += QString("<td") + (flags & html::ALIGN_RIGHT ? " align=\"right\"" : "") + ">";
+  htmlText += QString("<td") + (flags & html::ALIGN_RIGHT ? " style=\"text-align: right;\"" : "") + ">";
   text(str, flags, color);
   htmlText += "</td>\n";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::tdF(html::Flags flags)
+{
+  htmlText += QString("<td") +
+              (flags & html::ALIGN_RIGHT ? " style=\"text-align: right;\"" : "") + ">";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::tdAtts(const QHash<QString, QString>& attributes)
+{
+  QString atts;
+  for(const QString& name : attributes.keys())
+    atts += QString(" %1=\"%2\" ").arg(name).arg(attributes.value(name));
+
+  htmlText += "<td " + atts + ">";
+  tableIndex = 0;
   return *this;
 }
 
@@ -215,7 +272,7 @@ HtmlBuilder& HtmlBuilder::td()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::td(int widthPercent)
+HtmlBuilder& HtmlBuilder::tdW(int widthPercent)
 {
   htmlText += QString("<td width=\"%1%\">").arg(widthPercent);
   return *this;
@@ -251,6 +308,14 @@ HtmlBuilder& HtmlBuilder::tr(QColor backgroundColor)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::tr()
+{
+  htmlText += "<tr>\n";
+  tableIndex++;
+  numLines++;
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::trEnd()
 {
   htmlText += "</tr>\n";
@@ -264,7 +329,7 @@ HtmlBuilder& HtmlBuilder::table()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::tableWithAtts(const QHash<QString, QString>& attributes)
+HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
   for(const QString& name : attributes.keys())
@@ -581,6 +646,12 @@ HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor col
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::textHtml(const HtmlBuilder& other)
+{
+  text(other.getHtml(), html::NO_ENTITIES);
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 {
   htmlText += "<p>";
@@ -615,13 +686,6 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css)
 HtmlBuilder& HtmlBuilder::docEnd()
 {
   htmlText += "</body>\n</html>\n";
-  return *this;
-}
-
-HtmlBuilder& HtmlBuilder::clear()
-{
-  htmlText.clear();
-  numLines = 0;
   return *this;
 }
 

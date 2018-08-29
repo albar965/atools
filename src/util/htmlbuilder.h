@@ -68,12 +68,21 @@ public:
    * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
    */
   HtmlBuilder(bool backgroundColorUsed);
+  HtmlBuilder(const atools::util::HtmlBuilder& other);
   ~HtmlBuilder();
 
   const QString& getHtml() const
   {
     return htmlText;
   }
+
+  HtmlBuilder& operator=(const atools::util::HtmlBuilder& other);
+
+  /* Clears this instance except settings */
+  HtmlBuilder& clear();
+
+  /* Returns a clean copy of this instance */
+  HtmlBuilder cleared() const;
 
   /* Appends raw data without conversion */
   atools::util::HtmlBuilder& append(const atools::util::HtmlBuilder& other);
@@ -130,6 +139,9 @@ public:
   /* Add text with color and attributes */
   HtmlBuilder& text(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Add other`s HTML not escaping entities */
+  HtmlBuilder& textHtml(const atools::util::HtmlBuilder& other);
+
   /* Add string enclosed in a paragraph */
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
@@ -170,7 +182,7 @@ public:
 
   /* Add table and table body */
   HtmlBuilder& table();
-  HtmlBuilder& tableWithAtts(const QHash<QString, QString>& attributes);
+  HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
   HtmlBuilder& tableEnd();
 
   /* all row2 methods add two rows to a table.
@@ -199,14 +211,20 @@ public:
                          QColor color = QColor());
 
   /* Add/end table row Text background may alternate depending on configuration */
-  HtmlBuilder& tr(QColor backgroundColor = QColor());
+  HtmlBuilder& tr(QColor backgroundColor);
+
+  /* Table row without alternating background color */
+  HtmlBuilder& tr();
   HtmlBuilder& trEnd();
 
   /* Add table data */
   HtmlBuilder& td();
-  HtmlBuilder& td(int widthPercent);
-  HtmlBuilder& tdEnd();
+  HtmlBuilder& tdW(int widthPercent);
   HtmlBuilder& td(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& tdF(html::Flags flags);
+  HtmlBuilder& tdAtts(const QHash<QString, QString>& attributes);
+  HtmlBuilder& tdEnd();
+
   HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Document begin and end */
@@ -225,8 +243,6 @@ public:
   {
     return htmlText.isEmpty();
   }
-
-  HtmlBuilder& clear();
 
   /* Date format for row2Var */
   QLocale::FormatType getDateFormat() const
@@ -258,16 +274,6 @@ public:
     return numLines;
   }
 
-  bool isTruncated() const
-  {
-    return truncated;
-  }
-
-  void setTruncated(bool value)
-  {
-    truncated = value;
-  }
-
   /*
    * Create the href content with an base64 encoded image.
    * @return "data:image/png;base64, AKLDSAKLJKL"
@@ -294,7 +300,6 @@ private:
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
-  bool truncated = false;
   bool hasBackColor = false;
 };
 
