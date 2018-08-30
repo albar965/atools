@@ -92,6 +92,11 @@ const float SUNSET_ASTRONOMICAL = -108.f;
 QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::geo::Pos& position, const QDate& date,
                              float zenith);
 
+/* Get desired heading to fly course in wind conditions.
+ * returns std::numeric_limits<float>::max() is impossible due to tailwind > TAS
+ */
+float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
+
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
 {
@@ -167,14 +172,14 @@ inline float manhattanDistanceF(float x1, float y1, float x2, float y2)
 template<typename TYPE>
 Q_DECL_CONSTEXPR int simpleDistance(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
-  return static_cast<int>(std::round(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
+  return static_cast<int>(std::round(std::sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)))));
 }
 
 /* Euclidian distance between points */
 template<typename TYPE>
 Q_DECL_CONSTEXPR float simpleDistanceF(TYPE x1, TYPE y1, TYPE x2, TYPE y2)
 {
-  return static_cast<float>(sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
+  return static_cast<float>(std::sqrt(static_cast<double>((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))));
 }
 
 /* Temperature from celsius to farenheit */
@@ -464,6 +469,12 @@ template<typename TYPE>
 inline TYPE atanDeg(TYPE value)
 {
   return static_cast<TYPE>(toDegree(atan(static_cast<double>(value))));
+}
+
+template<typename TYPE>
+inline TYPE atan2Deg(TYPE y, TYPE x)
+{
+  return static_cast<TYPE>(toDegree(atan2(static_cast<double>(y), static_cast<double>(x))));
 }
 
 } /* namespace geo */

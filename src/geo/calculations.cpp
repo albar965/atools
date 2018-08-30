@@ -428,5 +428,49 @@ QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::ge
   return time;
 }
 
+double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double courseRad, double trueAirspeed)
+{
+  if(almostEqual(windSpeed, 0.) && trueAirspeed > 0.)
+    // No wind - course = heading
+    return courseRad;
+
+  if(almostEqual(trueAirspeed, 0.))
+    // No airspeed - invalid
+    return std::numeric_limits<double>::max();
+
+  double swc = (windSpeed / trueAirspeed) * sin(windDirectionRad - courseRad);
+
+  double correctedHeading = 0.;
+  if(std::abs(swc) >= 1.)
+    // course cannot be flown-- wind too strong
+    return std::numeric_limits<double>::max();
+  else
+  {
+    correctedHeading = courseRad + asin(swc);
+
+    // Correct range
+    if(correctedHeading < 0.)
+      correctedHeading = correctedHeading + 2. * M_PI;
+    if(correctedHeading > 2. * M_PI)
+      correctedHeading = correctedHeading - 2. * M_PI;
+
+    double groundSpeed = trueAirspeed * sqrt(1. - (swc * swc)) - windSpeed * cos(windDirectionRad - courseRad);
+    if(groundSpeed <= 0.)
+      // course cannot be flown-- wind too strong
+      return std::numeric_limits<double>::max();
+  }
+
+  return correctedHeading;
+}
+
+float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed)
+{
+  double heading = windCorrectedHeadingRad(windSpeed, toRadians(windDirectionDeg), toRadians(courseDeg), trueAirspeed);
+  if(heading < std::numeric_limits<double>::max() / 2.)
+    return static_cast<float>(normalizeCourse(toDegree(heading)));
+  else
+    return std::numeric_limits<float>::max();
+}
+
 } // namespace geo
 } // namespace atools
