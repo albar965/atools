@@ -53,6 +53,26 @@ public:
     hash.clear();
   }
 
+  /* true if object is old. does not modify cache */
+  bool isTimedOut(const KEY& key) const;
+
+  /* Flush from cache if old. true if timed out */
+  bool timeOut(const KEY& key);
+
+  /* true if in cache. Timmout is not triggered */
+  bool containsNoTimeout(const KEY& key) const
+  {
+    return hash.contains(key);
+  }
+
+  /* Get from cache. Timeout is not triggered */
+  TYPE *valueNoTimeout(const KEY& key);
+
+  /* Return a copy and then timeout value */
+  TYPE valueCopyAndTimeout(const KEY& key);
+
+  void remove(const KEY& key);
+
 private:
   struct Entry
   {
@@ -79,7 +99,7 @@ TYPE *TimedCache<KEY, TYPE>::checkTimeout(const KEY& key)
     return nullptr;
   else
   {
-    if(hash.value(key).timestamp.addSecs(timeout) < QDateTime::currentDateTime())
+    if(isTimedOut(key))
     {
       hash.remove(key);
       return nullptr;
@@ -87,6 +107,44 @@ TYPE *TimedCache<KEY, TYPE>::checkTimeout(const KEY& key)
     else
       return &hash[key].value;
   }
+}
+
+template<typename KEY, typename TYPE>
+bool TimedCache<KEY, TYPE>::isTimedOut(const KEY& key) const
+{
+  return hash.value(key).timestamp.addSecs(timeout) < QDateTime::currentDateTime();
+}
+
+template<typename KEY, typename TYPE>
+bool TimedCache<KEY, TYPE>::timeOut(const KEY& key)
+{
+  return checkTimeout(key) == nullptr;
+}
+
+template<typename KEY, typename TYPE>
+TYPE *TimedCache<KEY, TYPE>::valueNoTimeout(const KEY& key)
+{
+  if(containsNoTimeout(key))
+    return &hash[key].value;
+  else
+    return nullptr;
+}
+
+template<typename KEY, typename TYPE>
+TYPE TimedCache<KEY, TYPE>::valueCopyAndTimeout(const KEY& key)
+{
+  TYPE type;
+  TYPE *ptr = valueNoTimeout(key);
+  if(ptr != nullptr)
+    type = *ptr;
+  timeOut(key);
+  return type;
+}
+
+template<typename KEY, typename TYPE>
+void TimedCache<KEY, TYPE>::remove(const KEY& key)
+{
+  hash.remove(key);
 }
 
 } // namespace util
