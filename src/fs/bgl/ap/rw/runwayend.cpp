@@ -22,8 +22,6 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-using atools::io::BinaryStream;
-
 QString RunwayEnd::patternToStr(rw::Pattern pattern)
 {
   switch(pattern)

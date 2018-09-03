@@ -46,7 +46,7 @@ enum VorFlags
 };
 
 Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
-  : NavBase(options, bs), dme(nullptr)
+  : NavBase(options, bs)
 {
   type = static_cast<nav::IlsVorType>(bs->readUByte());
   int flags = bs->readUByte();

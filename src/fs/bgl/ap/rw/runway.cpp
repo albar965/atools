@@ -27,7 +27,6 @@ namespace fs {
 namespace bgl {
 
 using atools::io::BinaryStream;
-using atools::geo::Pos;
 
 QString Runway::runwayMarkingsToStr(rw::RunwayMarkings flags)
 {
