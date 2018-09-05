@@ -16,3 +16,54 @@
 *****************************************************************************/
 
 #include "fs/pln/flightplanconstants.h"
+
+#include <QHash>
+
+namespace atools {
+namespace fs {
+namespace pln {
+
+void copyProperty(QHash<QString, QString>& to, const QHash<QString, QString>& from, const QString& key)
+{
+  to.remove(key);
+  if(from.contains(key))
+    to.insert(key, from.value(key));
+}
+
+void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
+{
+  copyProperty(to, from, SIDAPPR);
+  copyProperty(to, from, SIDAPPRRW);
+  copyProperty(to, from, SIDAPPRDISTANCE);
+  copyProperty(to, from, SIDAPPRSIZE);
+  copyProperty(to, from, SIDTRANS);
+  copyProperty(to, from, SIDTRANSDISTANCE);
+  copyProperty(to, from, SIDTRANSSIZE);
+}
+
+void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
+{
+  copyProperty(to, from, TRANSITION);
+  copyProperty(to, from, TRANSITIONTYPE);
+  copyProperty(to, from, TRANSITIONDISTANCE);
+  copyProperty(to, from, TRANSITIONSIZE);
+  copyProperty(to, from, APPROACH);
+  copyProperty(to, from, APPROACH_ARINC);
+  copyProperty(to, from, APPROACHTYPE);
+  copyProperty(to, from, APPROACHRW);
+  copyProperty(to, from, APPROACHSUFFIX);
+  copyProperty(to, from, APPROACHDISTANCE);
+  copyProperty(to, from, APPROACHSIZE);
+}
+
+void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
+{
+  copyProperty(to, from, STAR);
+  copyProperty(to, from, STARRW);
+  copyProperty(to, from, STARDISTANCE);
+  copyProperty(to, from, STARSIZE);
+}
+
+} // namespace pln
+} // namespace fs
+} // namespace atools

@@ -101,6 +101,11 @@ const QLatin1Literal APPROACHSUFFIX("approachsuffix");
 const QLatin1Literal APPROACHDISTANCE("approachdistance");
 const QLatin1Literal APPROACHSIZE("approachsize");
 
+/* Copies all related properties and deletes the ones in "to" that do not exist in "from". */
+void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
+void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
+void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
+
 /* Speed as is not supported by PLN format */
 const QLatin1Literal SPEED("speed");
 
