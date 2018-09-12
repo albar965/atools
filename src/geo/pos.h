@@ -33,7 +33,7 @@ enum CrossTrackStatus
   AFTER_END /* Point is after end - distance is point to end */
 };
 
-/* Result for point to line distance measurments. All distances in meter. */
+/* Result for point to line distance measurement. All distances in meter. */
 struct LineDistance
 {
   CrossTrackStatus status = INVALID;

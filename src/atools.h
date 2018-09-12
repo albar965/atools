@@ -158,6 +158,30 @@ QString at(const QStringList& columns, int index);
 int atInt(const QStringList& columns, int index);
 float atFloat(const QStringList& columns, int index);
 
+template<typename TYPE>
+TYPE *firstOrNull(QList<TYPE>& list)
+{
+  return list.isEmpty() ? nullptr : &list.first();
+}
+
+template<typename TYPE>
+const TYPE *firstOrNull(const QList<TYPE>& list)
+{
+  return list.isEmpty() ? nullptr : &list.first();
+}
+
+template<typename TYPE>
+TYPE *firstOrNull(QVector<TYPE>& list)
+{
+  return list.isEmpty() ? nullptr : &list.first();
+}
+
+template<typename TYPE>
+const TYPE *firstOrNull(const QVector<TYPE>& list)
+{
+  return list.isEmpty() ? nullptr : &list.first();
+}
+
 /* Remove all special characters from the filename that can disturb any filesystem */
 QString cleanFilename(const QString& filename);
 
