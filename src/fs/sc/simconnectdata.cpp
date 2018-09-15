@@ -177,7 +177,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   SimConnectData data;
   data.userAircraft.position = pos;
-  data.userAircraft.position.setAltitude(1000);
+  // data.userAircraft.position.setAltitude(1000);
 
   float h = 0.f;
   if(lastPos.isValid())
@@ -203,7 +203,8 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.fromIdent = "EDDF";
 
   data.userAircraft.toIdent = "LIRF";
-  data.userAircraft.altitudeAboveGroundFt = 1000;
+  data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
+  data.userAircraft.indicatedAltitudeFt = pos.getAltitude();
 
   data.userAircraft.debug = true;
 

@@ -211,6 +211,11 @@ HtmlBuilder& HtmlBuilder::row2IfVar(const QString& name, const QVariant& value, 
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::row2(const QString& name, const HtmlBuilder& value, html::Flags flags, QColor color)
+{
+  return row2(name, value.getHtml(), flags | html::NO_ENTITIES, color);
+}
+
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
@@ -394,6 +399,30 @@ HtmlBuilder& HtmlBuilder::b(const QString& str)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::b()
+{
+  htmlText += "<b>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::bEnd()
+{
+  htmlText += "</b>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::i()
+{
+  htmlText += "<i>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::iEnd()
+{
+  htmlText += "</i>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::nbsp()
 {
   htmlText += "&nbsp;";
@@ -406,9 +435,33 @@ HtmlBuilder& HtmlBuilder::u(const QString& str)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::u()
+{
+  htmlText += "<u>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::uEnd()
+{
+  htmlText += "</u>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::sub(const QString& str)
 {
   text(str, html::SUBSCRIPT);
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::sub()
+{
+  htmlText += "<sub>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::subEnd()
+{
+  htmlText += "</sub>";
   return *this;
 }
 
@@ -418,15 +471,51 @@ HtmlBuilder& HtmlBuilder::sup(const QString& str)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::sup()
+{
+  htmlText += "<sup>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::supEnd()
+{
+  htmlText += "</sup>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::small(const QString& str)
 {
   text(str, html::SMALL);
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::small()
+{
+  htmlText += "<small>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::smallEnd()
+{
+  htmlText += "</small>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::big(const QString& str)
 {
   text(str, html::BIG);
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::big()
+{
+  htmlText += "<big>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::bigEnd()
+{
+  htmlText += "</big>";
   return *this;
 }
 

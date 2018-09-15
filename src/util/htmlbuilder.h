@@ -92,24 +92,38 @@ public:
 
   /* Add bold text */
   HtmlBuilder& b(const QString& str);
+  HtmlBuilder& b();
+  HtmlBuilder& bEnd();
 
   /* Add italic text */
   HtmlBuilder& i(const QString& str);
+  HtmlBuilder& i();
+  HtmlBuilder& iEnd();
 
   /* Add underlined text */
   HtmlBuilder& u(const QString& str);
+  HtmlBuilder& u();
+  HtmlBuilder& uEnd();
 
   /* Add subscripted text */
   HtmlBuilder& sub(const QString& str);
+  HtmlBuilder& sub();
+  HtmlBuilder& subEnd();
 
   /* Add superscripted text */
   HtmlBuilder& sup(const QString& str);
+  HtmlBuilder& sup();
+  HtmlBuilder& supEnd();
 
   /* Add small text */
   HtmlBuilder& small(const QString& str);
+  HtmlBuilder& small();
+  HtmlBuilder& smallEnd();
 
   /* Add big text */
   HtmlBuilder& big(const QString& str);
+  HtmlBuilder& big();
+  HtmlBuilder& bigEnd();
 
   /* Add text with no break attribute */
   HtmlBuilder& nobr(const QString& str);
@@ -188,6 +202,8 @@ public:
   /* all row2 methods add two rows to a table.
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
    * Text background may alternate depending on configuration */
+  HtmlBuilder& row2(const QString& name, const atools::util::HtmlBuilder& value,
+                    html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, const QString& value = QString(),
                     html::Flags flags = html::NONE, QColor color = QColor());
   HtmlBuilder& row2(const QString& name, float value, int precision = -1,
