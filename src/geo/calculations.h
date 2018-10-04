@@ -139,6 +139,7 @@ inline bool lineValid(const QLine& line)
 QRect rectToSquare(const QRect& rect);
 QRectF rectToSquare(const QRectF& rect);
 
+/* Checks if course (0-360°) is within min/max */
 template<typename TYPE>
 bool angleInRange(TYPE angle, TYPE min, TYPE max)
 {
@@ -148,6 +149,31 @@ bool angleInRange(TYPE angle, TYPE min, TYPE max)
   else
     // min 260 max 100
     return (angle > max && angle <= 360.) || (angle < min && angle >= 0.);
+}
+
+/* Calculates difference between courses (0-360 Deg).
+ * Result is always positive and never > 180 Deg */
+template<typename TYPE>
+TYPE angleAbsDiff(TYPE angle1, TYPE angle2)
+{
+  if(angle2 > angle1)
+  {
+    // 100 to 260
+    if(angle2 - angle1 < 180.)
+      return angle2 - angle1;
+    else
+      // 10 to 350
+      return angle1 + 360. - angle2;
+  }
+  else
+  {
+    // 260 to 100
+    if(angle1 - angle2 < 180.)
+      return angle1 - angle2;
+    else
+      // 350 to 10
+      return angle2 + 360. - angle2;
+  }
 }
 
 /* Square distance */
