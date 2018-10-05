@@ -100,6 +100,7 @@ create table client
   flightplan_flight_rules varchar(200),
   flightplan_departure_time varchar(200),
   flightplan_actual_departure_time varchar(200),
+  flightplan_estimated_arrival_time varchar(200),
   flightplan_enroute_minutes integer,
   flightplan_endurance_minutes integer,
   flightplan_alternate_aerodrome varchar(200),

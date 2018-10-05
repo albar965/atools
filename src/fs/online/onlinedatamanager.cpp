@@ -273,6 +273,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   // record.valueStr("flightplan_flight_rules");
   // record.valueStr("flightplan_departure_time");
   // record.valueStr("flightplan_actual_departure_time");
+  // record.valueStr("flightplan_estimated_arrival_time"); // Not in whazzup
   // record.valueStr("flightplan_enroute_minutes");
   // record.valueStr("flightplan_endurance_minutes");
   // record.valueStr("flightplan_alternate_aerodrome");

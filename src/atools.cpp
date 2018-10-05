@@ -391,4 +391,16 @@ float atFloat(const QStringList& columns, int index)
   return num;
 }
 
+QTime timeFromHourMinStr(const QString& timeStr)
+{
+  QTime time;
+  bool okHours = true, okMinutes = true;
+  if(timeStr.contains(":"))
+    time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
+  else if(timeStr.length() == 3 || timeStr.length() == 4)
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
+
+  return !okHours || !okMinutes ? QTime() : time;
+}
+
 } // namespace atools

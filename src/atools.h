@@ -251,6 +251,9 @@ QString capString(const QString& str, const QSet<QString>& toUpper = {}, const Q
 /* Returns a string containing value number of stars and maxValue - value number of dashes */
 QString ratingString(int value, int maxValue);
 
+/* Convert 24 hour and minute time string to time (500, 2314, 12:30) */
+QTime timeFromHourMinStr(const QString& timeStr);
+
 template<typename TYPE>
 int sign(TYPE t)
 {

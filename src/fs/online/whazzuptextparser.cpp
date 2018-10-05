@@ -350,18 +350,35 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
   {
     insertQuery->bindValue(":flightplan_revision", at(line, index++));
     insertQuery->bindValue(":flightplan_flight_rules", at(line, index++));
-    insertQuery->bindValue(":flightplan_departure_time", at(line, index++));
-    insertQuery->bindValue(":flightplan_actual_departure_time", at(line, index++));
+    QString departureTime = at(line, index++);
+    if(!departureTime.isEmpty() && departureTime != "0")
+      insertQuery->bindValue(":flightplan_departure_time", departureTime);
+    QString actualDepartureTime = at(line, index++);
+    if(!actualDepartureTime.isEmpty() && actualDepartureTime != "0")
+      insertQuery->bindValue(":flightplan_actual_departure_time", actualDepartureTime);
 
     // Convert two fields to minutes
     int hoursEnroute = atInt(line, index++);
     int minsEnroute = atInt(line, index++);
     insertQuery->bindValue(":flightplan_enroute_minutes", hoursEnroute * 60 + minsEnroute);
 
-    // Convert two fields to minutes
-    int hoursEndurance = atInt(line, index++);
-    int minsEndurance = atInt(line, index++);
-    insertQuery->bindValue(":flightplan_endurance_minutes", hoursEndurance * 60 + minsEndurance);
+    QTime eta;
+    double enrouteMin = hoursEnroute * 60 + minsEnroute;
+    if(enrouteMin > 0.)
+    {
+      QTime depTime = atools::timeFromHourMinStr(departureTime);
+      QTime actDepTime = atools::timeFromHourMinStr(actualDepartureTime);
+
+      if(actDepTime.isValid())
+        eta = QTime::fromMSecsSinceStartOfDay(
+          static_cast<int>(actDepTime.msecsSinceStartOfDay() + enrouteMin * 60. * 1000.));
+      else if(depTime.isValid())
+        eta = QTime::fromMSecsSinceStartOfDay(
+          static_cast<int>(depTime.msecsSinceStartOfDay() + enrouteMin * 60. * 1000.));
+
+      if(eta.isValid())
+        insertQuery->bindValue(":flightplan_estimated_arrival_time", eta.toString("hhmm"));
+    }
 
     insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, index++));
     insertQuery->bindValue(":flightplan_other_info", at(line, index++));
