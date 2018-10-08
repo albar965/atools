@@ -29,6 +29,11 @@
 namespace atools {
 namespace geo {
 
+/* Use maximum numbers to indicate invalid values */
+const float INVALID_FLOAT = std::numeric_limits<float>::max();
+const double INVALID_DOUBLE = std::numeric_limits<double>::max();
+const int INVALID_INT = std::numeric_limits<int>::max();
+
 class Line;
 class LineString;
 class Pos;
@@ -93,26 +98,26 @@ QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::ge
                              float zenith);
 
 /* Get desired heading to fly course in wind conditions.
- * returns std::numeric_limits<float>::max() is impossible due to tailwind > TAS
+ * returns INVALID_FLOAT is impossible due to tailwind > TAS
  */
 float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
 {
-  return ord > std::numeric_limits<int>::lowest() / 2 && ord < std::numeric_limits<int>::max() / 2;
+  return ord > std::numeric_limits<int>::lowest() / 2 && ord < INVALID_INT / 2;
 }
 
 inline bool ordinateValidF(float ord)
 {
   return std::isfinite(ord) &&
-         ord > std::numeric_limits<float>::lowest() / 2.f && ord < std::numeric_limits<float>::max() / 2.f;
+         ord > std::numeric_limits<float>::lowest() / 2.f && ord < INVALID_FLOAT / 2.f;
 }
 
 inline bool ordinateValidD(double ord)
 {
   return std::isfinite(ord) &&
-         ord > std::numeric_limits<double>::lowest() / 2. && ord < std::numeric_limits<double>::max() / 2.;
+         ord > std::numeric_limits<double>::lowest() / 2. && ord < INVALID_DOUBLE / 2.;
 }
 
 inline bool pointValid(const QPointF& point)
@@ -347,19 +352,33 @@ Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
          static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
 }
 
+/* Normalizes a number to an arbitrary range by assuming the range wraps around when going below min or above max */
+template<typename TYPE>
+TYPE normalizeRange(TYPE value, TYPE start, TYPE end)
+{
+  TYPE width = end - start;
+  TYPE offsetValue = value - start; // Make value relative to 0
+
+  // Reset back to start of original range by adding start
+  return (offsetValue - (floor(offsetValue / width) * width)) + start;
+}
+
+/* Normalizes a number to an arbitrary range by assuming the range wraps around when going below min or above max */
+template<>
+inline int normalizeRange<int>(int value, int start, int end)
+{
+  int width = end - start;
+  int offsetValue = value - start; // Make value relative to 0
+
+  // Reset back to start of original range by adding start
+  return (offsetValue - ((offsetValue / width) * width)) + start;
+}
+
 /* Normalize course to 0 < course < 360 */
 template<typename TYPE>
 TYPE normalizeCourse(TYPE courseDegree)
 {
-  if(courseDegree > std::numeric_limits<TYPE>::max() / 2)
-    return courseDegree;
-
-  double result = static_cast<double>(courseDegree);
-  while(result > 360.)
-    result = result - 360.;
-  while(result < 0.)
-    result = result + 360.;
-  return static_cast<TYPE>(result);
+  return static_cast<TYPE>(normalizeRange(static_cast<double>(courseDegree), 0., 360.));
 }
 
 /* Get opposed course */
@@ -370,48 +389,18 @@ Q_DECL_CONSTEXPR TYPE opposedCourseDeg(TYPE courseDegree)
          static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
 }
 
-template<typename TYPE>
-TYPE normalizeRad(TYPE rad)
-{
-  if(rad > std::numeric_limits<TYPE>::max() / 2)
-    return rad;
-
-  double result = static_cast<double>(rad);
-  while(result > M_PI * 2.)
-    result = result - M_PI * 2.;
-  while(result < 0.)
-    result = result + M_PI * 2.;
-  return static_cast<TYPE>(result);
-}
-
 /* Normalize lonx to -180 < lonx < 180 */
 template<typename TYPE>
 TYPE normalizeLonXDeg(TYPE lonX)
 {
-  if(lonX > std::numeric_limits<TYPE>::max() / 2)
-    return lonX;
-
-  double result = static_cast<double>(lonX);
-  while(result > 180.)
-    result = result - 360.;
-  while(result < -180.)
-    result = result + 360.;
-  return static_cast<TYPE>(result);
+  return static_cast<TYPE>(normalizeRange(static_cast<double>(lonX), -180., 180.));
 }
 
 /* Normalize laty to -90 < laty < 90 */
 template<typename TYPE>
 TYPE normalizeLatYDeg(TYPE latY)
 {
-  if(latY > std::numeric_limits<TYPE>::max() / 2)
-    return latY;
-
-  double result = static_cast<double>(latY);
-  while(result > 90.)
-    result = result - 180.;
-  while(result < -90.)
-    result = result + 180.;
-  return static_cast<TYPE>(result);
+  return static_cast<TYPE>(normalizeRange(static_cast<double>(latY), -90., 90.));
 }
 
 /* Convert angle in degrees (0 = north, counting CW) to Qt for QLineF::setAngle */

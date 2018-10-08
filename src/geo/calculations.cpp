@@ -33,7 +33,7 @@ float distanceToLine(float x, float y, float x1, float y1, float x2, float y2, b
 {
   float vx = x2 - x1, vy = y2 - y1;
   float wx = x - x1, wy = y - y1;
-  float dist = std::numeric_limits<float>::max();
+  float dist = INVALID_FLOAT;
   float c1 = vx * wx + vy * wy; // dot product
   if(c1 <= 0)
   {
@@ -436,14 +436,14 @@ double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double
 
   if(almostEqual(trueAirspeed, 0.))
     // No airspeed - invalid
-    return std::numeric_limits<double>::max();
+    return INVALID_DOUBLE;
 
   double swc = (windSpeed / trueAirspeed) * sin(windDirectionRad - courseRad);
 
   double correctedHeading = 0.;
   if(std::abs(swc) >= 1.)
     // course cannot be flown-- wind too strong
-    return std::numeric_limits<double>::max();
+    return INVALID_DOUBLE;
   else
   {
     correctedHeading = courseRad + asin(swc);
@@ -457,7 +457,7 @@ double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double
     double groundSpeed = trueAirspeed * sqrt(1. - (swc * swc)) - windSpeed * cos(windDirectionRad - courseRad);
     if(groundSpeed <= 0.)
       // course cannot be flown-- wind too strong
-      return std::numeric_limits<double>::max();
+      return INVALID_DOUBLE;
   }
 
   return correctedHeading;
@@ -465,11 +465,191 @@ double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double
 
 float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed)
 {
+  if(!(courseDeg < INVALID_FLOAT / 2.f) ||
+     !(windDirectionDeg < INVALID_FLOAT / 2.f))
+    return INVALID_FLOAT;
+
   double heading = windCorrectedHeadingRad(windSpeed, toRadians(windDirectionDeg), toRadians(courseDeg), trueAirspeed);
-  if(heading < std::numeric_limits<double>::max() / 2.)
+  if(heading < INVALID_DOUBLE / 2.)
     return static_cast<float>(normalizeCourse(toDegree(heading)));
   else
-    return std::numeric_limits<float>::max();
+    return INVALID_FLOAT;
+}
+
+// Unit conversions
+const static float FEET2METER = 0.3048f;
+const static float FEET2NM = 1.64578833693305e-04f;
+const static float NM2METER = 1852.f;
+const static float FEETPERSEC2KT = FEET2NM * 3600.f;
+const static float METERPERSEC2KT = 3600.f / NM2METER;
+
+// Pressure
+const static float p0 = 101325.f; // Pascal at MSL
+const static float p1 = 22632.05545875171f; // Pascal at 11000 m
+const static float p2 = 5474.884659730908f; // Pascal at 20000 m
+const static float p3 = 868.0176477556424f; // Pascal at 32000 m
+
+// Temperature
+const static float T0 = 288.15f; // Kelvin at MSL
+const static float T1 = 216.65f; // Kelvin 11000 - 20000 m
+const static float T2 = 216.65f; // Kelvin 20000 - 32000 m
+
+// Altitude layers
+const static float alt1Ft = 36089.238845144355f; // ft = 11000 m
+const static float alt2Ft = 65616.79790026246f; // ft = 20000 m
+const static float alt3Ft = 104986.87664041994f; // ft = 32000 m
+
+// Temperature gradient
+const static float deltaTdh0 = -0.0019812f; // Kelvin/ft MSL - 11000 m
+const static float deltaTdh0SI = -0.0065f; // Kelvin/m MSL - 11000 m
+const static float deltaTdh2 = 0.0003048f; // Kelvin/ft 11000 - 32000 m
+const static float deltaTdh2SI = 0.001f; // Kelvin/m 11000 - 32000 m
+
+// Other constants
+const static float RGasSI = 287.053f; // J/(kg*Kelvin) Gas constant for for dry air
+const static float gSI = 9.80665f; // acceleration on earth m/s^2
+const static float gRGasSI = gSI / RGasSI;
+const static float gRGas = (gSI * FEET2METER) / RGasSI;
+const static float gamma = 1.4f; // -
+const static float gammaRGas = (gamma * RGasSI) / (FEET2METER * FEET2METER); // ft^2/(s^2*Kelvin)
+const static float aSLSI = std::sqrt(gamma * RGasSI * T0);
+const static float pressureSLSI = p0; // Pascal
+const static float aSLNU = aSLSI * METERPERSEC2KT; // kts
+
+bool isaAtmosphere(float& temperatureK, float& pressurePa, float altitudeFt)
+{
+  temperatureK = 0.f;
+  pressurePa = 0.f;
+
+  if(altitudeFt <= alt1Ft)
+  {
+    // Troposphere
+    temperatureK = T0 + deltaTdh0 * altitudeFt;
+    pressurePa = p0 * std::pow((T0 / temperatureK), (gRGasSI / deltaTdh0SI));
+  }
+  else if(altitudeFt <= alt2Ft)
+  {
+    // Tropopause
+    temperatureK = T1;
+    pressurePa = p1 * std::exp((gRGas / T1) * (alt1Ft - altitudeFt));
+  }
+  else if(altitudeFt <= alt3Ft)
+  {
+    // Stratosphere
+    temperatureK = T2 + deltaTdh2 * (altitudeFt - alt2Ft);
+    pressurePa = p2 * std::pow((T2 / temperatureK), (gRGasSI / deltaTdh2SI));
+  }
+  else
+  {
+    // Not valid - too hight
+    temperatureK = 0.f;
+    pressurePa = 0.f;
+    return false;
+  }
+
+  return true;
+}
+
+float machCrossover(float casKts, float mach)
+{
+  float p =
+    (p0 *
+     ((std::pow(((std::pow(casKts, 2.f) / (5.f * std::pow(aSLNU, 2.f))) + 1.f),
+                (gamma / (gamma - 1.f)))) - 1.f)) /
+    ((std::pow((((std::pow(mach, 2.f)) / 5.f) + 1.f), (gamma / (gamma - 1.f)))) - 1.f);
+  float altFt;
+
+  if(p < p1)
+    altFt = alt1Ft - (T1 / gRGas) * std::log(p / p1);
+  else
+    altFt = (((T0 * (std::pow((p / p0), (-deltaTdh0SI / gRGasSI)))) - T0) / deltaTdh0);
+
+  return altFt;
+}
+
+bool speedFromCAS(float& mach, float& tasKts, float casKts, float altFt, float isaDelta)
+{
+  float T = 0.0;
+  float p = 0.0;
+
+  if(!isaAtmosphere(T, p, altFt))
+    return false;
+
+  T = T + isaDelta;
+
+  float a = std::sqrt(gammaRGas * T);
+
+  tasKts = std::sqrt(5.f) * a *
+           std::sqrt(std::pow(((pressureSLSI / p) *
+                               (std::pow((casKts * casKts / (5.0f * aSLNU * aSLNU)) + 1.f,
+                                         (gamma / (gamma - 1.f))) - 1.f) + 1.f), (gamma - 1.f) / gamma) - 1.f);
+
+  mach = tasKts / a;
+
+  tasKts *= FEETPERSEC2KT;
+  return true;
+}
+
+bool pressureAltitude(float& altFt, float pressurePa)
+{
+  if(pressurePa >= p1)
+    // Layer 0 > Troposphere
+    altFt = T0 * (std::pow((p0 / pressurePa), (deltaTdh0SI / gRGasSI)) - 1.0f) / deltaTdh0;
+  else if(pressurePa >= p2)
+    // Layer 1 > Tropopause
+    altFt = alt1Ft - std::log(pressurePa / p1) * T1 / gRGas;
+  else if(pressurePa >= p3)
+    // Layer 2 > Stratosphere (1/2)
+    altFt = alt2Ft + T2 * (std::pow((p2 / pressurePa), (deltaTdh2SI / gRGasSI)) - 1.0f) / deltaTdh2;
+  else
+    return false;
+
+  return true;
+}
+
+bool speedFromMach(float& casKts, float& tasKts, float mach, float altFt, float isaDelta)
+{
+  float T, p;
+  if(!isaAtmosphere(T, p, altFt))
+    return false;
+
+  T += isaDelta;
+
+  float a = std::sqrt(gammaRGas * T);
+
+  tasKts = mach * a;
+  tasKts *= FEETPERSEC2KT;
+
+  casKts = std::sqrt(5.f) * aSLNU *
+           std::sqrt(std::pow(((p / pressureSLSI) *
+                               (std::pow((tasKts * tasKts / (5.0f * a * a)) + 1.f,
+                                         (gamma / (gamma - 1.f))) - 1.f) + 1.f),
+                              (gamma - 1.f) / gamma) - 1.f);
+
+  return true;
+}
+
+bool speedFromTAS(float& casKts, float& mach, float tasKts, float altFt, float isaDelta)
+{
+  tasKts /= FEETPERSEC2KT;
+
+  float T, p;
+  if(!isaAtmosphere(T, p, altFt))
+    return false;
+
+  T += isaDelta;
+
+  float a = std::sqrt(gammaRGas * T);
+
+  mach = tasKts / a;
+
+  casKts = std::sqrt(5.f) * aSLNU *
+           std::sqrt(std::pow(((p / pressureSLSI) *
+                               (std::pow((tasKts * tasKts / (5.f * a * a)) + 1.f,
+                                         (gamma / (gamma - 1.f))) - 1.f) + 1.f),
+                              (gamma - 1.f) / gamma) - 1.f);
+
+  return true;
 }
 
 } // namespace geo
