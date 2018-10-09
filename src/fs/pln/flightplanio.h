@@ -100,6 +100,8 @@ public:
   void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
                      atools::fs::pln::SaveOptions options);
 
+  static const QStringList& getAcceptedFlightPlanExtensions();
+
 private:
   /* Get the first four lines of a file converted to lowercase to check type.
    *  Returns a list with always four strings. */

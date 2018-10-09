@@ -39,6 +39,8 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+static const QStringList ACCEPTED_EXTENSIONS({"fms", "flp", "pln"});
+
 static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
 static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);
 
@@ -1993,6 +1995,11 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
   else
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 
+}
+
+const QStringList& FlightplanIO::getAcceptedFlightPlanExtensions()
+{
+  return ACCEPTED_EXTENSIONS;
 }
 
 QStringList FlightplanIO::probeFile4(const QString& file)
