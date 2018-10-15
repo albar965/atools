@@ -207,6 +207,14 @@ Q_DECL_CONSTEXPR int roundToInt(TYPE value)
   return static_cast<int>(static_cast<double>(value) + 0.5);
 }
 
+/* Linear interpolation
+ * f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0) */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
+{
+  return f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
+}
+
 /* Extract the first latin1 character from string. Return null if string is empty */
 inline char strToChar(const QString& str)
 {

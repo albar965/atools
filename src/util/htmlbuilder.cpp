@@ -519,6 +519,24 @@ HtmlBuilder& HtmlBuilder::bigEnd()
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::code(const QString& str)
+{
+  text(str, html::CODE);
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::code()
+{
+  htmlText += "<code>";
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::codeEnd()
+{
+  htmlText += "</code>";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::nobr(const QString& str)
 {
   text(str, html::NOBR);
@@ -687,6 +705,12 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor color)
   {
     prefix.append("<big>");
     suffix.prepend("</big>");
+  }
+
+  if(flags & html::CODE)
+  {
+    prefix.append("<code>");
+    suffix.prepend("</code>");
   }
 
   if(flags & html::NOBR)

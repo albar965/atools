@@ -17,11 +17,13 @@
 
 #include "gui/tools.h"
 #include "gui/dialog.h"
+#include "gui/helphandler.h"
 
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
 #include <QUrl>
+#include <QDebug>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -99,6 +101,28 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
     return true;
 
 #endif
+}
+
+void anchorClicked(QWidget *parent, const QUrl& url)
+{
+  qDebug() << Q_FUNC_INFO << url;
+
+  if(url.scheme() == "http" || url.scheme() == "https" || url.scheme() == "ftp")
+    // Open a normal link from the userpoint description
+    atools::gui::HelpHandler::openUrl(parent, url);
+  else if(url.scheme() == "file")
+  {
+    if(url.isLocalFile())
+    {
+      QFileInfo info(url.toLocalFile());
+      if(info.exists())
+        // Open a file from the userpoint description
+        atools::gui::HelpHandler::openUrl(parent, url);
+      else
+        atools::gui::Dialog::warning(parent, QObject::tr("File or directory \"%1\" does not exist.").
+                                     arg(url.toDisplayString()));
+    }
+  }
 }
 
 } // namespace gui

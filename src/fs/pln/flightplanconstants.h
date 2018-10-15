@@ -106,8 +106,10 @@ void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString
 void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 
-/* Speed as is not supported by PLN format */
-const QLatin1Literal SPEED("speed");
+/* Aircraft performance */
+const QLatin1Literal AIRCRAFT_PERF_NAME("aircraftperfname");
+const QLatin1Literal AIRCRAFT_PERF_TYPE("aircraftperftype");
+const QLatin1Literal AIRCRAFT_PERF_FILE("aircraftperffile");
 
 /* Source database navigation data */
 const QLatin1Literal NAVDATA("navdata");

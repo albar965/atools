@@ -30,25 +30,26 @@ namespace html {
 /* HTML formatting flags for text */
 enum Flag
 {
-  NONE = 0x0000,
+  NONE = 0,
 
   /* HTML formatting attributes */
-  BOLD = 0x0001,
-  ITALIC = 0x0002,
-  UNDERLINE = 0x0004,
-  STRIKEOUT = 0x0008,
-  SUBSCRIPT = 0x0010,
-  SUPERSCRIPT = 0x0020,
-  SMALL = 0x0040,
-  BIG = 0x0080,
+  BOLD = 1 << 0,
+  ITALIC = 1 << 1,
+  UNDERLINE = 1 << 2,
+  STRIKEOUT = 1 << 3,
+  SUBSCRIPT = 1 << 4,
+  SUPERSCRIPT = 1 << 5,
+  SMALL = 1 << 6,
+  BIG = 1 << 7,
+  CODE = 1 << 8,
 
-  NOBR = 0x0100, /* HTML no break */
+  NOBR = 1 << 9, /* HTML no break */
 
-  LINK_NO_UL = 0x0200, /* Do not underline links */
-  NO_ENTITIES = 0x0400, /* Do not convert entities */
-  ALIGN_RIGHT = 0x1000, /* Only for table data */
-  AUTOLINK = 0x2000, /* Automatically create links from http:// and https:// in text */
-  REPLACE_CRLF = 0x4000 /* Replace carriage return and linefeed with <br/> */
+  LINK_NO_UL = 1 << 10, /* Do not underline links */
+  NO_ENTITIES = 1 << 11, /* Do not convert entities */
+  ALIGN_RIGHT = 1 << 12, /* Only for table data */
+  AUTOLINK = 1 << 13, /* Automatically create links from http:// and https:// in text */
+  REPLACE_CRLF = 1 << 14 /* Replace carriage return and linefeed with <br/> */
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -124,6 +125,11 @@ public:
   HtmlBuilder& big(const QString& str);
   HtmlBuilder& big();
   HtmlBuilder& bigEnd();
+
+  /* Add code / monospace */
+  HtmlBuilder& code(const QString& str);
+  HtmlBuilder& code();
+  HtmlBuilder& codeEnd();
 
   /* Add text with no break attribute */
   HtmlBuilder& nobr(const QString& str);
@@ -301,6 +307,16 @@ public:
   bool hasBackgroundColor() const
   {
     return hasBackColor;
+  }
+
+  QColor getRowBackColor() const
+  {
+    return rowBackColor;
+  }
+
+  QColor getRowBackColorAlt() const
+  {
+    return rowBackColorAlt;
   }
 
 private:

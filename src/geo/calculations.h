@@ -100,7 +100,15 @@ QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::ge
 /* Get desired heading to fly course in wind conditions.
  * returns INVALID_FLOAT is impossible due to tailwind > TAS
  */
+float windCorrectedHeading(float& groundSpeed, float windSpeed, float windDirectionDeg, float courseDeg,
+                           float trueAirspeed);
 float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
+float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed);
+
+/* Calculate head and cross wind for a given course and wind direction.
+ *  If head wind is < 0 it is a tail wind.
+ *  If cross wind is < 0 wind is from left */
+void windForCourse(float& headWind, float& crossWind, float windSpeed, float windDirectionDeg, float courseDeg);
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
@@ -447,6 +455,13 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE tasToMach(TYPE sat, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) / (std::sqrt(static_cast<double>(sat) + 273.15) * 39.));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE tasToMachFromAlt(TYPE altFeet, TYPE tas)
+{
+  return static_cast<TYPE>(static_cast<double>(tas) /
+                           (std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15) * 39.));
 }
 
 /* Collection of trigonometric functions that accept or return degree */

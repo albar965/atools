@@ -428,15 +428,23 @@ QTime calculateSunriseSunset(bool& neverRises, bool& neverSets, const atools::ge
   return time;
 }
 
-double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double courseRad, double trueAirspeed)
+double windCorrectedHeadingRad(double& groundSpeed, double windSpeed, double windDirectionRad, double courseRad,
+                               double trueAirspeed)
 {
   if(almostEqual(windSpeed, 0.) && trueAirspeed > 0.)
-    // No wind - course = heading
+  {
+    // No wind - course = heading, GS = TAS
+    groundSpeed = trueAirspeed;
     return courseRad;
+  }
 
   if(almostEqual(trueAirspeed, 0.))
-    // No airspeed - invalid
+  {
+    groundSpeed = trueAirspeed;
+
+    // No airspeed - heading invalid
     return INVALID_DOUBLE;
+  }
 
   double swc = (windSpeed / trueAirspeed) * sin(windDirectionRad - courseRad);
 
@@ -454,10 +462,13 @@ double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double
     if(correctedHeading > 2. * M_PI)
       correctedHeading = correctedHeading - 2. * M_PI;
 
-    double groundSpeed = trueAirspeed * sqrt(1. - (swc * swc)) - windSpeed * cos(windDirectionRad - courseRad);
+    groundSpeed = trueAirspeed * sqrt(1. - (swc * swc)) - windSpeed * cos(windDirectionRad - courseRad);
     if(groundSpeed <= 0.)
+    {
+      groundSpeed = INVALID_DOUBLE;
       // course cannot be flown-- wind too strong
       return INVALID_DOUBLE;
+    }
   }
 
   return correctedHeading;
@@ -465,11 +476,33 @@ double windCorrectedHeadingRad(double windSpeed, double windDirectionRad, double
 
 float windCorrectedHeading(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed)
 {
+  float gsDummy;
+  return windCorrectedHeading(gsDummy, windSpeed, windDirectionDeg, courseDeg, trueAirspeed);
+}
+
+float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float courseDeg, float trueAirspeed)
+{
+  float gs;
+  windCorrectedHeading(gs, windSpeed, windDirectionDeg, courseDeg, trueAirspeed);
+  return gs;
+}
+
+float windCorrectedHeading(float& groundSpeed, float windSpeed, float windDirectionDeg, float courseDeg,
+                           float trueAirspeed)
+{
   if(!(courseDeg < INVALID_FLOAT / 2.f) ||
      !(windDirectionDeg < INVALID_FLOAT / 2.f))
     return INVALID_FLOAT;
 
-  double heading = windCorrectedHeadingRad(windSpeed, toRadians(windDirectionDeg), toRadians(courseDeg), trueAirspeed);
+  double gs;
+  double heading = windCorrectedHeadingRad(gs, windSpeed, toRadians(windDirectionDeg), toRadians(
+                                             courseDeg), trueAirspeed);
+
+  if(gs < INVALID_DOUBLE)
+    groundSpeed = static_cast<float>(gs);
+  else
+    groundSpeed = INVALID_FLOAT;
+
   if(heading < INVALID_DOUBLE / 2.)
     return static_cast<float>(normalizeCourse(toDegree(heading)));
   else
@@ -650,6 +683,13 @@ bool speedFromTAS(float& casKts, float& mach, float tasKts, float altFt, float i
                               (gamma - 1.f) / gamma) - 1.f);
 
   return true;
+}
+
+void windForCourse(float& headWind, float& crossWind, float windSpeed, float windDirectionDeg, float courseDeg)
+{
+  float diffRad = atools::geo::toRadians(windDirectionDeg - courseDeg);
+  headWind = windSpeed * std::cos(diffRad);
+  crossWind = windSpeed * std::sin(diffRad);
 }
 
 } // namespace geo
