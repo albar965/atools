@@ -271,7 +271,10 @@ HEADERS += src/atools.h \
     src/fs/common/morareader.h \
     src/util/roundedpolygon.h \
     src/util/filesystemwatcher.h \
-    src/gui/tools.h
+    src/gui/tools.h \
+    src/fs/perf/aircraftperf.h \
+    src/fs/perf/aircraftperfhandler.h \
+    src/fs/perf/aircraftperfconstants.h
 
 SOURCES += src/atools.cpp \
     src/exception.cpp \
@@ -485,7 +488,10 @@ SOURCES += src/atools.cpp \
     src/fs/common/morareader.cpp \
     src/util/roundedpolygon.cpp \
     src/util/filesystemwatcher.cpp \
-    src/gui/tools.cpp
+    src/gui/tools.cpp \
+    src/fs/perf/aircraftperf.cpp \
+    src/fs/perf/aircraftperfhandler.cpp \
+    src/fs/perf/aircraftperfconstants.cpp
 
 
 unix {
