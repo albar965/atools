@@ -68,7 +68,7 @@ public:
   /*
    * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
    */
-  HtmlBuilder(bool backgroundColorUsed);
+  HtmlBuilder(bool backgroundColorUsed = false);
   HtmlBuilder(const atools::util::HtmlBuilder& other);
   ~HtmlBuilder();
 
@@ -90,6 +90,10 @@ public:
 
   /* Appends raw data without conversion */
   atools::util::HtmlBuilder& append(const QString& other);
+
+  /* Error message. Bold white text on red background. */
+  HtmlBuilder& error(const QString& str);
+  static QString errorMessage(const QString& str);
 
   /* Add bold text */
   HtmlBuilder& b(const QString& str);

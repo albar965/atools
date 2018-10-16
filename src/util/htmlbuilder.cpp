@@ -126,6 +126,22 @@ HtmlBuilder& HtmlBuilder::append(const QString& other)
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::error(const QString& str)
+{
+  htmlText += HtmlBuilder::errorMessage(str);
+  return *this;
+}
+
+QString HtmlBuilder::errorMessage(const QString& str)
+{
+  if(!str.isEmpty())
+    return QString("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
+                     "%1"
+                   "</span>").arg(str.toHtmlEscaped());
+
+  return str;
+}
+
 HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, html::Flags flags,
                                   QColor color)
 {
