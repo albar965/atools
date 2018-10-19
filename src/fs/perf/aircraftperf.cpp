@@ -89,6 +89,7 @@ void AircraftPerf::save(const QString& filepath)
 
 void AircraftPerf::setNull()
 {
+  resetToDefault();
   taxiFuel =
     reserveFuel =
       extraFuel =
