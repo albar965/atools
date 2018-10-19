@@ -21,32 +21,6 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-QString fuelUnitToString(FuelUnit type)
-{
-  switch(type)
-  {
-    case atools::fs::perf::UNKNOWN:
-      break;
-
-    case atools::fs::perf::VOLUME:
-      return QLatin1Literal("Volume");
-
-    case atools::fs::perf::WEIGHT:
-      return QLatin1Literal("Weight");
-  }
-  return QString();
-}
-
-FuelUnit fuelUnitFromString(const QString& value)
-{
-  if(value == "Volume")
-    return atools::fs::perf::VOLUME;
-  else if(value == "Weight")
-    return atools::fs::perf::WEIGHT;
-
-  return atools::fs::perf::UNKNOWN;
-}
-
 } // namespace perf
 } // namespace fs
 } // namespace atools

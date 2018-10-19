@@ -70,6 +70,10 @@ public:
     maxEntries = value;
   }
 
+  /* Enable or disable all file menu entries - not the clear action */
+  void enableAll();
+  void disableAll();
+
 signals:
   /* Emitted when the user selects a recent file action */
   void fileSelected(const QString& filename);

@@ -24,24 +24,23 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-/* Use to indicate invalid values */
-const float INVALID_PERF_VALUE = std::numeric_limits<float>::max();
-
-/* Default which is used if no performance is available */
-const float DEFAULT_SPEED = 100.f;
-const float DEFAULT_CLIMB_DESCENT = 333.f;
-
-/* Fuel unit used in AircraftPerf */
-enum FuelUnit
+/* Flight segment as detected by the AircraftPerfHandler for simulator events.
+ *  Numeric order is important */
+enum FlightSegment
 {
-  // Number used as index in combo boxes
-  WEIGHT, /* lbs or kg */
-  VOLUME, /* gallons or liters */
-  UNKNOWN = -1
+  NONE,
+  DEPARTURE_PARKING,
+  DEPARTURE_TAXI,
+  CLIMB,
+  CRUISE,
+  DESCENT,
+  DESTINATION_TAXI,
+  DESTINTATION_PARKING,
+  INVALID
 };
 
-QString fuelUnitToString(atools::fs::perf::FuelUnit type);
-atools::fs::perf::FuelUnit fuelUnitFromString(const QString& value);
+/* Use to indicate invalid values */
+const float INVALID_PERF_VALUE = std::numeric_limits<float>::max();
 
 } // namespace perf
 } // namespace fs

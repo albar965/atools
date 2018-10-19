@@ -43,12 +43,15 @@ class AircraftPerf
   Q_DECLARE_TR_FUNCTIONS(AircraftPerf)
 
 public:
-  AircraftPerf();
-  ~AircraftPerf();
-
   /* Load and save throw Exception in case of error */
   void load(const QString& filepath);
   void save(const QString& filepath);
+
+  /* Set all speed, fuel flow and fuel values to 0 */
+  void setNull();
+
+  /* Reset all back to default values */
+  void resetToDefault();
 
   /* Climb and descent rates to calculate profile slope */
   float getClimbRateFtPerNm() const;
@@ -57,6 +60,10 @@ public:
   /* Flight path angles in degree */
   float getClimbFlightPathAngle() const;
   float getDescentFlightPathAngle() const;
+
+  /* True if speed and vertical speed are valid */
+  bool isClimbValid() const;
+  bool isDescentValid() const;
 
   /* Does not compare version numbers and other metadata */
   bool operator==(const AircraftPerf& other) const;
@@ -79,45 +86,45 @@ public:
   }
 
   /* Use either gallons or lbs as fuel unit */
-  atools::fs::perf::FuelUnit getFuelUnit() const
+  bool useFuelAsVolume() const
   {
-    return fuelUnit;
+    return fuelAsVolume;
   }
 
-  void setFuelUnit(const atools::fs::perf::FuelUnit& value)
+  void setFuelAsVolume(bool fuelAsVol)
   {
-    fuelUnit = value;
+    fuelAsVolume = fuelAsVol;
   }
 
   /* lbs or gallons - not part of trip fuel */
-  int getTaxiFuel() const
+  float getTaxiFuel() const
   {
     return taxiFuel;
   }
 
-  void setTaxiFuel(int value)
+  void setTaxiFuel(float value)
   {
     taxiFuel = value;
   }
 
   /* lbs or gallons - not part of trip fuel */
-  int getReserveFuel() const
+  float getReserveFuel() const
   {
     return reserveFuel;
   }
 
-  void setReserveFuel(int value)
+  void setReserveFuel(float value)
   {
     reserveFuel = value;
   }
 
   /* lbs or gallons - not part of trip fuel */
-  int getExtraFuel() const
+  float getExtraFuel() const
   {
     return extraFuel;
   }
 
-  void setExtraFuel(int value)
+  void setExtraFuel(float value)
   {
     extraFuel = value;
   }
@@ -129,100 +136,100 @@ public:
   }
 
   /* Should be added to trip fuel. Value in percent (0 - 500) */
-  int getContingencyFuel() const
+  float getContingencyFuel() const
   {
     return contingencyFuel;
   }
 
-  void setContingencyFuel(int value)
+  void setContingencyFuel(float value)
   {
     contingencyFuel = value;
   }
 
   /* Average climb speed in feet per minute */
-  int getClimbVertSpeed() const
+  float getClimbVertSpeed() const
   {
     return climbVertSpeed;
   }
 
-  void setClimbVertSpeed(int value)
+  void setClimbVertSpeed(float value)
   {
     climbVertSpeed = value;
   }
 
   /* Speed in climb phase in knots TAS */
-  int getClimbSpeed() const
+  float getClimbSpeed() const
   {
     return climbSpeed;
   }
 
-  void setClimbSpeed(int value)
+  void setClimbSpeed(float value)
   {
     climbSpeed = value;
   }
 
   /* Average fuel flow in climb phase in gallons/lbs per hour */
-  int getClimbFuelFlow() const
+  float getClimbFuelFlow() const
   {
     return climbFuelFlow;
   }
 
-  void setClimbFuelFlow(int value)
+  void setClimbFuelFlow(float value)
   {
     climbFuelFlow = value;
   }
 
   /* Speed in cruise phase in knots TAS */
-  int getCruiseSpeed() const
+  float getCruiseSpeed() const
   {
     return cruiseSpeed;
   }
 
-  void setCruiseSpeed(int value)
+  void setCruiseSpeed(float value)
   {
     cruiseSpeed = value;
   }
 
   /* Average fuel flow in cruise phase in gallons/lbs per hour */
-  int getCruiseFuelFlow() const
+  float getCruiseFuelFlow() const
   {
     return cruiseFuelFlow;
   }
 
-  void setCruiseFuelFlow(int value)
+  void setCruiseFuelFlow(float value)
   {
     cruiseFuelFlow = value;
   }
 
   /* Speed in descent phase in knots TAS */
-  int getDescentSpeed() const
+  float getDescentSpeed() const
   {
     return descentSpeed;
   }
 
-  void setDescentSpeed(int value)
+  void setDescentSpeed(float value)
   {
     descentSpeed = value;
   }
 
   /* Average fuel flow in descent phase in gallons/lbs per hour */
-  int getDescentFuelFlow() const
+  float getDescentFuelFlow() const
   {
     return descentFuelFlow;
   }
 
-  void setDescentFuelFlow(int value)
+  void setDescentFuelFlow(float value)
   {
     descentFuelFlow = value;
   }
 
-  /* Average descent speed in feet per minute */
-  int getDescentVertSpeed() const
+  /* Average descent speed in feet per minute. Always positive. */
+  float getDescentVertSpeed() const
   {
     return descentVertSpeed;
   }
 
-  void setDescentVertSpeed(int value)
+  void setDescentVertSpeed(float value)
   {
     descentVertSpeed = value;
   }
@@ -267,25 +274,26 @@ private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
 
-  atools::fs::perf::FuelUnit fuelUnit = WEIGHT;
+  bool fuelAsVolume = false;
 
   QString name, type, description, programVersion, formatVersion;
 
-  int taxiFuel = 0;
-  int reserveFuel = 0;
-  int extraFuel = 0;
+  /* Default values give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
+  float taxiFuel = 0.f;
+  float reserveFuel = 0.f;
+  float extraFuel = 0.f;
 
-  int climbVertSpeed = 1500;
-  int climbSpeed = 100;
-  int climbFuelFlow = 0;
+  float climbVertSpeed = 550.f;
+  float climbSpeed = 100.f;
+  float climbFuelFlow = 0.f;
 
-  int cruiseSpeed = 100;
-  int cruiseFuelFlow = 0;
-  int contingencyFuel = 0;
+  float cruiseSpeed = 100.f;
+  float cruiseFuelFlow = 0.f;
+  float contingencyFuel = 0.f;
 
-  int descentSpeed = 100;
-  int descentVertSpeed = 1500;
-  int descentFuelFlow = 0;
+  float descentSpeed = 100.f;
+  float descentVertSpeed = 550.f;
+  float descentFuelFlow = 0.f;
 };
 
 } // namespace perf

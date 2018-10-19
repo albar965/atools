@@ -30,15 +30,6 @@ namespace perf {
 
 const QLatin1Literal AircraftPerf::FORMAT_VERSION("1.0.0");
 
-AircraftPerf::AircraftPerf()
-{
-
-}
-
-AircraftPerf::~AircraftPerf()
-{
-}
-
 float AircraftPerf::getClimbRateFtPerNm() const
 {
   return getClimbVertSpeed() * 60.f / getClimbSpeed();
@@ -57,6 +48,18 @@ float AircraftPerf::getClimbFlightPathAngle() const
 float AircraftPerf::getDescentFlightPathAngle() const
 {
   return static_cast<float>(atools::geo::toDegree(std::atan(atools::geo::feetToNm(getDescentRateFtPerNm()))));
+}
+
+bool AircraftPerf::isClimbValid() const
+{
+  return climbSpeed > 10.f && climbSpeed < INVALID_PERF_VALUE &&
+         climbVertSpeed > 10.f && climbVertSpeed < INVALID_PERF_VALUE;
+}
+
+bool AircraftPerf::isDescentValid() const
+{
+  return descentSpeed > 10.f && descentSpeed < INVALID_PERF_VALUE &&
+         descentVertSpeed > 10.f && descentVertSpeed < INVALID_PERF_VALUE;
 }
 
 void AircraftPerf::load(const QString& filepath)
@@ -84,9 +87,30 @@ void AircraftPerf::save(const QString& filepath)
     throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for writing.").arg(filepath));
 }
 
+void AircraftPerf::setNull()
+{
+  taxiFuel =
+    reserveFuel =
+      extraFuel =
+        climbVertSpeed =
+          climbSpeed =
+            climbFuelFlow =
+              cruiseSpeed =
+                cruiseFuelFlow =
+                  contingencyFuel =
+                    descentSpeed =
+                      descentVertSpeed =
+                        descentFuelFlow = 0.f;
+}
+
+void AircraftPerf::resetToDefault()
+{
+  *this = AircraftPerf();
+}
+
 bool AircraftPerf::operator==(const AircraftPerf& other) const
 {
-  return fuelUnit == other.fuelUnit &&
+  return fuelAsVolume == other.fuelAsVolume &&
          name == other.name &&
          type == other.type &&
          description == other.description &&
@@ -106,29 +130,28 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
 
 void AircraftPerf::readFromSettings(const QSettings& settings)
 {
-  fuelUnit = fuelUnitFromString(settings.value("Options/FuelUnit").toString());
-
   name = settings.value("Options/Name").toString();
   type = settings.value("Options/AircraftType").toString();
   description = settings.value("Options/Description").toString();
   programVersion = settings.value("Options/ProgramVersion").toString();
   formatVersion = settings.value("Options/FormatVersion").toString();
 
-  taxiFuel = settings.value("Perf/TaxiFuelLbs").toInt();
-  reserveFuel = settings.value("Perf/ReserveFuelLbs").toInt();
-  extraFuel = settings.value("Perf/ExtraFuelLbs").toInt();
-  contingencyFuel = settings.value("Perf/ContingencyFuelPercent").toInt();
+  fuelAsVolume = settings.value("Options/FuelAsVolume").toBool();
+  taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
+  reserveFuel = settings.value("Perf/ReserveFuelLbs").toFloat();
+  extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
+  contingencyFuel = settings.value("Perf/ContingencyFuelPercent").toFloat();
 
-  climbVertSpeed = settings.value("Perf/ClimbVertSpeedFtPerMin").toInt();
-  climbSpeed = settings.value("Perf/ClimbSpeedKtsTAS").toInt();
-  climbFuelFlow = settings.value("Perf/ClimbFuelFlowLbsGalPerHour").toInt();
+  climbVertSpeed = settings.value("Perf/ClimbVertSpeedFtPerMin").toFloat();
+  climbSpeed = settings.value("Perf/ClimbSpeedKtsTAS").toFloat();
+  climbFuelFlow = settings.value("Perf/ClimbFuelFlowLbsGalPerHour").toFloat();
 
-  cruiseSpeed = settings.value("Perf/CruiseSpeedKtsTAS").toInt();
-  cruiseFuelFlow = settings.value("Perf/CruiseFuelFlowLbsGalPerHour").toInt();
+  cruiseSpeed = settings.value("Perf/CruiseSpeedKtsTAS").toFloat();
+  cruiseFuelFlow = settings.value("Perf/CruiseFuelFlowLbsGalPerHour").toFloat();
 
-  descentSpeed = settings.value("Perf/DescentSpeedKtsTAS").toInt();
-  descentVertSpeed = settings.value("Perf/DescentVertSpeedFtPerMin").toInt();
-  descentFuelFlow = settings.value("Perf/DescentFuelFlowLbsGalPerHour").toInt();
+  descentSpeed = settings.value("Perf/DescentSpeedKtsTAS").toFloat();
+  descentVertSpeed = settings.value("Perf/DescentVertSpeedFtPerMin").toFloat();
+  descentFuelFlow = settings.value("Perf/DescentFuelFlowLbsGalPerHour").toFloat();
 }
 
 void AircraftPerf::writeToSettings(QSettings& settings)
@@ -136,26 +159,26 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/Metadata", atools::programFileInfo());
   settings.setValue("Options/ProgramVersion", QCoreApplication::applicationVersion());
   settings.setValue("Options/FormatVersion", FORMAT_VERSION);
-  settings.setValue("Options/FuelUnit", fuelUnitToString(fuelUnit));
   settings.setValue("Options/Name", name);
   settings.setValue("Options/AircraftType", type);
   settings.setValue("Options/Description", description);
 
-  settings.setValue("Perf/TaxiFuelLbs", taxiFuel);
-  settings.setValue("Perf/ReserveFuelLbs", reserveFuel);
-  settings.setValue("Perf/ExtraFuelLbs", extraFuel);
-  settings.setValue("Perf/ContingencyFuelPercent", contingencyFuel);
+  settings.setValue("Options/FuelAsVolume", fuelAsVolume);
+  settings.setValue("Perf/TaxiFuelLbs", QString::number(taxiFuel));
+  settings.setValue("Perf/ReserveFuelLbs", QString::number(reserveFuel));
+  settings.setValue("Perf/ExtraFuelLbs", QString::number(extraFuel));
+  settings.setValue("Perf/ContingencyFuelPercent", QString::number(contingencyFuel));
 
-  settings.setValue("Perf/ClimbVertSpeedFtPerMin", climbVertSpeed);
-  settings.setValue("Perf/ClimbSpeedKtsTAS", climbSpeed);
-  settings.setValue("Perf/ClimbFuelFlowLbsGalPerHour", climbFuelFlow);
+  settings.setValue("Perf/ClimbVertSpeedFtPerMin", QString::number(climbVertSpeed));
+  settings.setValue("Perf/ClimbSpeedKtsTAS", QString::number(climbSpeed));
+  settings.setValue("Perf/ClimbFuelFlowLbsGalPerHour", QString::number(climbFuelFlow));
 
-  settings.setValue("Perf/CruiseSpeedKtsTAS", cruiseSpeed);
-  settings.setValue("Perf/CruiseFuelFlowLbsGalPerHour", cruiseFuelFlow);
+  settings.setValue("Perf/CruiseSpeedKtsTAS", QString::number(cruiseSpeed));
+  settings.setValue("Perf/CruiseFuelFlowLbsGalPerHour", QString::number(cruiseFuelFlow));
 
-  settings.setValue("Perf/DescentSpeedKtsTAS", descentSpeed);
-  settings.setValue("Perf/DescentVertSpeedFtPerMin", descentVertSpeed);
-  settings.setValue("Perf/DescentFuelFlowLbsGalPerHour", descentFuelFlow);
+  settings.setValue("Perf/DescentSpeedKtsTAS", QString::number(descentSpeed));
+  settings.setValue("Perf/DescentVertSpeedFtPerMin", QString::number(descentVertSpeed));
+  settings.setValue("Perf/DescentFuelFlowLbsGalPerHour", QString::number(descentFuelFlow));
 }
 
 } // namespace perf

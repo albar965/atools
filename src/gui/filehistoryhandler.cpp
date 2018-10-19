@@ -81,6 +81,21 @@ void FileHistoryHandler::removeFile(const QString& filename)
   updateMenu();
 }
 
+void FileHistoryHandler::enableAll()
+{
+  for(QAction *a : recentMenu->actions())
+    a->setEnabled(true);
+}
+
+void FileHistoryHandler::disableAll()
+{
+  for(QAction *a : recentMenu->actions())
+  {
+    if(a != clearAction)
+      a->setEnabled(false);
+  }
+}
+
 void FileHistoryHandler::itemTriggered(QAction *action)
 {
   if(action == clearAction)

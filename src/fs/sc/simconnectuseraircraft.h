@@ -111,6 +111,11 @@ public:
     return airplaneEmptyWeightLbs;
   }
 
+  float getFuelTotalGalLbs(bool volume) const
+  {
+    return volume ? fuelTotalQuantityGallons : fuelTotalWeightLbs;
+  }
+
   float getFuelTotalQuantityGallons() const
   {
     return fuelTotalQuantityGallons;
@@ -119,6 +124,11 @@ public:
   float getFuelTotalWeightLbs() const
   {
     return fuelTotalWeightLbs;
+  }
+
+  float getFuelFlowGalLbsPerHour(bool volume) const
+  {
+    return volume ? fuelFlowGPH : fuelFlowPPH;
   }
 
   float getFuelFlowPPH() const
@@ -165,6 +175,11 @@ public:
   bool isFlying() const
   {
     return !isOnGround() && getGroundSpeedKts() > 20.f && getAltitudeAboveGroundFt() > 50.f;
+  }
+
+  bool hasFuelFlow() const
+  {
+    return fuelFlowGPH > 1.f || fuelFlowPPH > 0.1f;
   }
 
   /* Calculate flight parameters that are based on time.
