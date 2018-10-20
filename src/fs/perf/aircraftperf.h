@@ -65,6 +65,9 @@ public:
   bool isClimbValid() const;
   bool isDescentValid() const;
 
+  /* true if all fuel flow is > 0 */
+  bool isFuelFlowValid() const;
+
   /* Does not compare version numbers and other metadata */
   bool operator==(const AircraftPerf& other) const;
 

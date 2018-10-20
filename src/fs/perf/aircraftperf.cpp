@@ -62,6 +62,11 @@ bool AircraftPerf::isDescentValid() const
          descentVertSpeed > 10.f && descentVertSpeed < INVALID_PERF_VALUE;
 }
 
+bool AircraftPerf::isFuelFlowValid() const
+{
+  return climbFuelFlow > 0.f && cruiseFuelFlow > 0.1 && descentFuelFlow > 0.1;
+}
+
 void AircraftPerf::load(const QString& filepath)
 {
   QFileInfo fi(filepath);
