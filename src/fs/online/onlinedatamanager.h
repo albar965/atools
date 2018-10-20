@@ -140,7 +140,7 @@ public:
   int getNumClients() const;
 
   /* Set default circle radii for certain ATC types where visual range is unusable */
-  void setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value);
+  void setAtcSize(const QHash<atools::fs::online::fac::FacilityType, int>& value);
 
 private:
   atools::sql::SqlDatabase *db;

@@ -66,7 +66,7 @@ QString facilityTypeText(fac::FacilityType type)
       return QObject::tr("Approach");
 
     case atools::fs::online::fac::ACC:
-      return QObject::tr("ACC");
+      return QObject::tr("Area Control Center");
 
     case atools::fs::online::fac::DEPARTURE:
       return QObject::tr("Departure");

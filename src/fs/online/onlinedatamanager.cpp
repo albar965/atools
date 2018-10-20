@@ -213,9 +213,9 @@ int OnlinedataManager::getNumClients() const
   return SqlUtil(db).rowCount("client");
 }
 
-void OnlinedataManager::setAtcRadius(const QHash<fac::FacilityType, int>& value)
+void OnlinedataManager::setAtcSize(const QHash<fac::FacilityType, int>& value)
 {
-  whazzup->setAtcRadius(value);
+  whazzup->setAtcSize(value);
 }
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)

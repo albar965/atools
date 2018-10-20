@@ -500,11 +500,6 @@ int WhazzupTextParser::getSemiPermanentId(QHash<QString, int>& idMap, int& curId
   return id;
 }
 
-void WhazzupTextParser::setAtcRadius(const QHash<atools::fs::online::fac::FacilityType, int>& value)
-{
-  atcRadius = value;
-}
-
 QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
 {
   QString str = at(line, index++);
