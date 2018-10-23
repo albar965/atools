@@ -21,6 +21,7 @@
 #include "fs/xp/xpwriter.h"
 
 #include "geo/rect.h"
+#include "geo/line.h"
 #include "fs/xp/xpconstants.h"
 #include "fs/common/xpgeometry.h"
 #include "sql/sqlrecord.h"
@@ -149,6 +150,16 @@ private:
   atools::sql::SqlRecordVector runwayEndRecords;
   /* pre-filled record */
   const atools::sql::SqlRecord runwayEndRecord;
+
+  /* Keep runway information to ease assigning of VASI to a runway end */
+  struct RwGeo
+  {
+    QString primaryName, secondaryName;
+    float primaryHeading, secondaryHeading;
+    atools::geo::Line runway;
+  };
+
+  QVector<RwGeo> runwayGeometry;
 
   float airportAltitude = 0.f;
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;

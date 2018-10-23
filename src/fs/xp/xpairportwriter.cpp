@@ -544,7 +544,6 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
   // Find runway by name - does not exist in some 850 airport files
   SqlRecord *bestRunwayEnd = nullptr;
   QString rwName = line.value(v::RUNWAY);
-  float orientation = at(line, v::ORIENT).toFloat();
 
   if(!rwName.isEmpty())
   {
@@ -558,21 +557,66 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
       }
     }
   }
+  float orientation = atools::geo::normalizeCourse(at(line, v::ORIENT).toFloat());
 
   if(bestRunwayEnd == nullptr)
   {
-    // Try to find by angle
-    float bestAngle = std::numeric_limits<float>::max() / 4.f;
+    // Do a heuristic search for a runway end =========================================
+    Pos vasiPos(at(line, v::LONX).toFloat(), at(line, v::LATY).toFloat());
 
-    for(SqlRecord& rec : runwayEndRecords)
+    atools::geo::LineDistance curResult, nearestResult;
+    QString closestRunwayName;
+    // Find nearest runway by distance where VASI is along line
+    for(const RwGeo& rg: runwayGeometry)
     {
-      // Do simple comparison - this will not catch any differences like 355 to 5 degrees
-      float diff = std::abs(rec.valueFloat(":heading") - orientation);
-      if(diff < 10.f && diff < std::abs(bestAngle - orientation))
+      // Calculate distance from VASI to runway
+      rg.runway.distanceMeterToLine(vasiPos, curResult);
+      if(curResult.status == atools::geo::ALONG_TRACK)
       {
-        // Smaller angle difference
-        bestRunwayEnd = &rec;
-        bestAngle = rec.valueFloat(":heading");
+        // VASI is at side of runway
+        QString primaryName, secondaryName;
+        if(atools::geo::angleAbsDiff(orientation, rg.primaryHeading) <
+           atools::geo::angleAbsDiff(orientation, rg.secondaryHeading))
+        {
+          // Primary is better than secondary - check heading difference
+          if(atools::geo::angleAbsDiff(orientation, rg.primaryHeading) < 20.f)
+            primaryName = rg.primaryName;
+        }
+        else
+        {
+          // Secondary is better than primary - check heading difference
+          if(atools::geo::angleAbsDiff(orientation, rg.secondaryHeading) < 20.f)
+            secondaryName = rg.secondaryName;
+        }
+
+        if((!primaryName.isEmpty() || !secondaryName.isEmpty()) &&
+           (nearestResult.status == atools::geo::INVALID ||
+            std::abs(curResult.distance) < std::abs(nearestResult.distance)))
+        {
+          // Found a closer runway - remember nearest distance and runway name
+          nearestResult = curResult;
+          if(!primaryName.isEmpty())
+            closestRunwayName = primaryName;
+          else if(!secondaryName.isEmpty())
+            closestRunwayName = secondaryName;
+        }
+      }
+    }
+
+    // qDebug() << "Found VASI runway" << vasiPos << closestRunwayName << orientation
+    // << "geo p " << closestGeo.primaryName << closestGeo.primaryHeading
+    // << "geo s" << closestGeo.secondaryName << closestGeo.secondaryHeading;
+
+    if(!closestRunwayName.isEmpty())
+    {
+      // Find runway end record by name
+      for(SqlRecord& rec : runwayEndRecords)
+      {
+        if(rec.valueStr(":name") == closestRunwayName)
+        {
+          bestRunwayEnd = &rec;
+          break;
+        }
       }
     }
   }
@@ -585,8 +629,8 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     bestRunwayEnd->setValue(":right_vasi_type", "UNKN");
     bestRunwayEnd->setValue(":right_vasi_pitch", 0.f);
   }
-  else
-    qWarning() << context.messagePrefix() << "No runway end" << rwName
+  else if(!runwayGeometry.isEmpty())
+    qWarning() << context.messagePrefix() << airportIcao << "No runway end" << rwName
                << "for VASI with orientation" << orientation << "found";
 }
 
@@ -1069,6 +1113,9 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   airportRect.extend(primaryPos);
   airportRect.extend(secondaryPos);
 
+  runwayGeometry.append({primaryName, secondaryName, primaryHeading, secondaryHeading,
+                         atools::geo::Line(primaryPos, secondaryPos)});
+
   numRunway++;
 
   // Update airport counts
@@ -1360,6 +1407,7 @@ void XpAirportWriter::reset()
   airportRowCode = NO_ROWCODE;
   airportIcao.clear();
   runwayEndRecords.clear();
+  runwayGeometry.clear();
   taxiNodes.clear();
   largestParkingGate.clear();
   largestParkingRamp.clear();
