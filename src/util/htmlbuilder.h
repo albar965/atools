@@ -59,6 +59,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(html::Flags);
 /*
  * Text base HTML builder class that does not use any XML frameworks and does no validation.
  * Useful for generating tootips or QTextEdit HTML text.
+ *
+ * Has functions for alternating row colors in tables.
  */
 class HtmlBuilder
 {
@@ -66,9 +68,14 @@ class HtmlBuilder
 
 public:
   /*
-   * @param hasBackColor if true a alternating background color (gray/lightgray) is used for tables.
+   * @param hasBackColor if true a alternating background color taken from the
+   * system palette (gray/lightgray) is used for tables.
    */
   HtmlBuilder(bool backgroundColorUsed = false);
+
+  /* Pass alternating table row colors in */
+  HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt);
+
   HtmlBuilder(const atools::util::HtmlBuilder& other);
   ~HtmlBuilder();
 
@@ -313,20 +320,11 @@ public:
     return hasBackColor;
   }
 
-  QColor getRowBackColor() const
-  {
-    return rowBackColor;
-  }
-
-  QColor getRowBackColorAlt() const
-  {
-    return rowBackColorAlt;
-  }
-
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
   QString asText(QString str, html::Flags flags, QColor color);
+  void initColors(const QColor& rowColor, const QColor& rowColorAlt);
 
   QString rowBackColor, rowBackColorAlt, tableRowHeader;
   QStringList tableRow, tableRowAlignRight, tableRowBegin;

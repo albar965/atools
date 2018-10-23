@@ -32,41 +32,21 @@ namespace util {
 static const QRegularExpression LINK_REGEXP(
   "\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
 
+HtmlBuilder::HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt)
+  : hasBackColor(true)
+{
+  initColors(rowColor, rowColorAlt);
+}
+
 HtmlBuilder::HtmlBuilder(bool backgroundColorUsed)
   : hasBackColor(backgroundColorUsed)
 {
   if(hasBackColor)
-  {
     // Create darker colors dynamically from default palette
-    rowBackColor = QApplication::palette().color(QPalette::Active, QPalette::Base).
-                   darker(105).name(QColor::HexRgb);
-    rowBackColorAlt = QApplication::palette().color(QPalette::Active, QPalette::AlternateBase).
-                      darker(105).name(QColor::HexRgb);
-
-    tableRow.append("<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td>%2</td></tr>");
-    tableRow.append("<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td>%2</td></tr>");
-
-    tableRowAlignRight.append(
-      "<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
-    tableRowAlignRight.append(
-      "<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
-  }
+    initColors(QApplication::palette().color(QPalette::Active, QPalette::Base).darker(105),
+               QApplication::palette().color(QPalette::Active, QPalette::AlternateBase).darker(105));
   else
-  {
-    rowBackColor = QColor(Qt::white).name(QColor::HexRgb);
-    rowBackColorAlt = QColor(Qt::white).darker(120).name(QColor::HexRgb);
-
-    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
-    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
-
-    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
-    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
-  }
-
-  tableRowBegin.append("<tr bgcolor=\"" + rowBackColor + "\">");
-  tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAlt + "\">");
-
-  tableRowHeader = "<tr><td>%1</td></tr>";
+    initColors(QColor(Qt::white), QColor(Qt::white).darker(120));
 }
 
 HtmlBuilder::HtmlBuilder(const atools::util::HtmlBuilder& other)
@@ -97,6 +77,36 @@ HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
   hasBackColor = other.hasBackColor;
 
   return *this;
+}
+
+void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
+{
+  // Create darker colors dynamically from default palette
+  rowBackColor = rowColor.name(QColor::HexRgb);
+  rowBackColorAlt = rowColorAlt.name(QColor::HexRgb);
+
+  if(hasBackColor)
+  {
+    tableRow.append("<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td>%2</td></tr>");
+
+    tableRowAlignRight.append(
+      "<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append(
+      "<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+
+    tableRowBegin.append("<tr bgcolor=\"" + rowBackColor + "\">");
+    tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAlt + "\">");
+  }
+  else
+  {
+    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr><td>%1</td><td>%2</td></tr>");
+
+    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
+    tableRowAlignRight.append("<tr><td>%1</td><td align=\"right\">%2</td></tr>");
+  }
+  tableRowHeader = "<tr><td>%1</td></tr>";
 }
 
 HtmlBuilder& HtmlBuilder::clear()
