@@ -1,6 +1,44 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.0.beta
+
+* HtmlBuilder now allows to set table background and alternating background color. albar965/littlenavmap#246
+* Fixed issues with assignment of stray VASIs to runways in X-Plane.
+* Renamed "ACC" to Area Control Center for online centers. More small refactoring. albar965/littlenavmap#267
+* Added facilities for automatic performance calculation. albar965/littlenavmap#255
+* Added aircraft performance data class. albar965/littlenavmap#255
+* Added accepted extensions for drag and drop. albar965/littlenavmap#291
+* Changed normalize functions to avoid program freezes. Added normalizeRange functions.
+* Added flightplan_estimated_arrival_time to online database schema. Calculating flightplan_estimated_arrival_time now. albar965/littlenavmap#303
+* Filtering invalid time values "0" from now. All whazzup text parser for albar965/littlenavmap#303
+* Fixed potential geometry problem reading X-Plane airspaces.
+* Added copy functions for procedure properties. albar965/littlenavmap#264
+* Added function to calculate crab angle from wind, course and TAS. albar965/littlenavmap#284
+* Work on HTML builder. Added copy operator and constructor and more methods for table data. albar965/littlenavmap#284
+* Fixed issues with symbolic links in scenery loader. Now using paths as is instead of converting to canonical paths. albar965/littlenavmap#29
+* Added scenery configuration exclude options for single files. albar965/littlenavmap#29
+* Added file system watcher which hopefully fixes problems with not recognized updates.
+* Improved color change for push buttons in changeWidgetColor. albar965/littlenavmap#197
+* Added class for drawing rounded polygons. albar965/littlenavmap#197
+* Now setting airport_id for ndb, vor and waypoint in DFD compiler. albar965/littlenavmap#289
+* Added restrictive_designation and restrictive_type to boundary table and DFD compiler.
+* Added mora_grid table for minimum off route altitude data to schema. DFD compiler now populates mora_grid table. albar965/littlenavmap#84
+* Added methods to TimedCache to avoid flushing old objects. albar965/littlenavmap#6
+* Fixed garbled unused data in Metar class. albar965/littlenavmap#6
+* Metar class now calculates flight rules. albar965/littlenavmap#6
+* Attempt to fix weather loading issues (disappearing report) for X-Plane metar.dat. Weather data is now kept if file was deleted.
+* Now reading scenery_packs.ini for X-Plane to allow disabling of scenery by tools. albar965/littlenavmap#151
+* Now fetching the first X-Plane installation path from x-plane_install_11.txt as base path.
+* Added sunrise and sunset calculation. albar965/littlenavmap#281
+* Added multiple_code and time_code columns to schema to indicate overlapping airspaces. albar965/littlenavmap#279
+* Added arinc_descr_code to database that allows to identify IAF, MAF and FAF albar965/littlenavmap#196
+* GridDelegate now allows to update colors on style change. albar965/littlenavmap#142
+* Refactoring in cleanup in logging system. Log files can now be rotated if a given size is exceeded. albar965/littlenavmap#275
+* X-Plane parking positions are now at correct coordinates. albar965/littlenavmap#256
+* Updated all translations.
+* Database minor version updated to 13.
+
 Version 3.0.3
 
 * Fixed issue where aprons from stock airports remained in add-ons.
