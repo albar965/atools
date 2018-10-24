@@ -15,6 +15,20 @@
     </message>
 </context>
 <context>
+    <name>AircraftPerf</name>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="74"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="81"/>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="92"/>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AirwayResolver</name>
     <message>
         <location filename="src/fs/db/airwayresolver.cpp" line="158"/>
@@ -86,86 +100,86 @@ Bestand:&quot;%2&quot;
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="122"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="124"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Kan leeg vluchtplan bestand &quot;%1&quot; niet openen.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="155"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="157"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</oldsource>
         <translation>Kan vluchtplan bestand &quot;%1&quot; niet openen. Formaat vluchtplan wordt niet herkend. Alleen PLN (FSX XML en FS9 INI), FMS en FLP worden ondersteund.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="361"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="363"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>Ongeldig FMS bestand. Kan versie nummer niet lezen: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="376"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="378"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>Ongeldig FMS bestand. Ongeldige versie %2:%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="502"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="504"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>Ongeldig FMS bestand. Aantal secties is niet %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="749"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="751"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Ongeldig vluchtplan bestand &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="865"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="867"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1019"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1258"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1801"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1994"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1021"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1260"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1803"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1996"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Kan PLN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1125"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1127"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
         <translation>Kan FLP bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1179"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1181"/>
         <source> Flight Plan</source>
         <translation> Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1224"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1226"/>
         <source> Track</source>
         <translation> Track</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1423"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1425"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation>Kan FMS bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1452"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1454"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Gemaakt door %1 Versie %2 (revisie %3) op %4 </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1518"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1520"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation>Kan RTE bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1599"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1601"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1725"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1727"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Kan FLTPLAN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
@@ -173,12 +187,12 @@ Bestand:&quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="96"/>
+        <location filename="src/util/htmlbuilder.cpp" line="166"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="96"/>
+        <location filename="src/util/htmlbuilder.cpp" line="166"/>
         <source>No</source>
         <translation>Neen</translation>
     </message>
@@ -186,27 +200,27 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1619"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1755"/>
         <source>Clear</source>
         <translation>Klaar</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1622"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1758"/>
         <source>Few</source>
         <translation>Weinig</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1625"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1761"/>
         <source>Scattered</source>
         <translation>Verspreid</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1628"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1764"/>
         <source>Broken</source>
         <translation>Gebroken</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1631"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1767"/>
         <source>Overcast</source>
         <translation>Overtrokken</translation>
     </message>
@@ -224,32 +238,32 @@ Bestand:&quot;%2&quot;
         <translation>metar data niet compleet </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="526"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="594"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="529"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="597"/>
         <source>Corrected</source>
         <translation>Gecorrigeerd</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="532"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="600"/>
         <source>Routine delayed observation</source>
         <translation>Uitgestelde routine waargenomen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="547"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="631"/>
         <source>Light</source>
         <translation>Licht</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="550"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="634"/>
         <source>Moderate</source>
         <translation>Gemiddeld</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="553"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="637"/>
         <source>Heavy</source>
         <translation>Hevig</translation>
     </message>
@@ -419,22 +433,22 @@ Bestand:&quot;%2&quot;
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1036"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1120"/>
         <source>Light </source>
         <translation>Licht </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1038"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1122"/>
         <source>Heavy </source>
         <translation>Hevig </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1040"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1124"/>
         <source>in the vicinity </source>
         <translation>in de omgeving </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1042"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1126"/>
         <source>Moderate </source>
         <translation>Gemiddeld </translation>
     </message>
@@ -634,12 +648,52 @@ Bestand:&quot;%2&quot;
         <translation>wrijving: onbetrouwbare meting</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1345"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1375"/>
+        <source>Low Instrument Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1378"/>
+        <source>Instrument Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
+        <source>Marginal Visual Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1384"/>
+        <source>Visual Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
+        <source>LIFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1400"/>
+        <source>IFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1403"/>
+        <source>MVFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1406"/>
+        <source>VFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/metarparser.cpp" line="1481"/>
         <source>cleared</source>
         <translation>opgelost</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1517"/>
         <source>runway not in use</source>
         <translation>start- of landingsbaan niet in gebruik</translation>
     </message>
@@ -677,17 +731,17 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1673"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1815"/>
         <source>Vertical visibility</source>
         <translation>Vertikale zichtbaarheid</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1679"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1821"/>
         <source>Less than</source>
         <translation>Minder dan</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1682"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1824"/>
         <source>Greater than</source>
         <translation>Groter dan</translation>
     </message>
@@ -775,147 +829,149 @@ Bestand:&quot;%2&quot;
         <translation>Folder bestaat niet</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="317"/>
+        <location filename="src/fs/navdatabase.cpp" line="318"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="331"/>
+        <location filename="src/fs/navdatabase.cpp" line="332"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="360"/>
+        <location filename="src/fs/navdatabase.cpp" line="361"/>
         <source>Creating airways</source>
         <translation>Creëren Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="379"/>
-        <location filename="src/fs/navdatabase.cpp" line="390"/>
+        <location filename="src/fs/navdatabase.cpp" line="380"/>
+        <location filename="src/fs/navdatabase.cpp" line="391"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Samenvoegen VOR en TACAN tot VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="384"/>
+        <location filename="src/fs/navdatabase.cpp" line="385"/>
         <source>Updating waypoints</source>
         <translation>Updaten waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="395"/>
+        <location filename="src/fs/navdatabase.cpp" line="396"/>
         <source>Updating approaches</source>
         <translation>Updaten aanvliegroutes (approaches)</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="398"/>
+        <location filename="src/fs/navdatabase.cpp" line="399"/>
         <source>Updating Airports</source>
         <translation>Luchthavens aan het Updaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="405"/>
+        <location filename="src/fs/navdatabase.cpp" line="406"/>
         <source>Updating ILS</source>
         <translation>Updaten ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="410"/>
+        <location filename="src/fs/navdatabase.cpp" line="411"/>
         <source>Updating ILS Count</source>
         <translation>Updaten ILS telling</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="414"/>
+        <location filename="src/fs/navdatabase.cpp" line="415"/>
         <source>Collecting navaids for search</source>
         <translation>Verzamelen navaids voor zoekopdracht</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="418"/>
+        <location filename="src/fs/navdatabase.cpp" line="419"/>
         <source>Populating routing tables</source>
         <translation>Invullen routetabellen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="423"/>
+        <location filename="src/fs/navdatabase.cpp" line="424"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>Creëren grenzen voor VOR en NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="432"/>
+        <location filename="src/fs/navdatabase.cpp" line="433"/>
         <source>Creating route edges waypoints</source>
         <translation>Creëren grenzen voor waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="435"/>
+        <location filename="src/fs/navdatabase.cpp" line="436"/>
         <source>Creating indexes for airport</source>
         <translation>Index voor luchthaven creêren</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="440"/>
+        <location filename="src/fs/navdatabase.cpp" line="441"/>
         <source>Clean up runways</source>
         <translation>Start- en landingsbanen opruimen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="444"/>
+        <location filename="src/fs/navdatabase.cpp" line="445"/>
         <source>Creating indexes for search</source>
         <translation>Creëren indexen voor zoekopdracht</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="487"/>
+        <location filename="src/fs/navdatabase.cpp" line="488"/>
         <source>Creating Database preparation Script</source>
         <translation>Creëren Script voorbereiding Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="492"/>
+        <location filename="src/fs/navdatabase.cpp" line="493"/>
         <source>Dropping All Indexes</source>
         <translation>Alle Indexen laten vallen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="499"/>
+        <location filename="src/fs/navdatabase.cpp" line="500"/>
         <source>Vacuum Database</source>
         <translation>Vacuum Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="507"/>
+        <location filename="src/fs/navdatabase.cpp" line="508"/>
         <source>Analyze Database</source>
         <translation>Analyseren Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="552"/>
-        <location filename="src/fs/navdatabase.cpp" line="643"/>
-        <location filename="src/fs/navdatabase.cpp" line="717"/>
+        <location filename="src/fs/navdatabase.cpp" line="554"/>
+        <location filename="src/fs/navdatabase.cpp" line="575"/>
+        <location filename="src/fs/navdatabase.cpp" line="581"/>
+        <location filename="src/fs/navdatabase.cpp" line="657"/>
+        <location filename="src/fs/navdatabase.cpp" line="731"/>
         <source>Creating indexes</source>
         <translation>Creëren indexen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="558"/>
-        <location filename="src/fs/navdatabase.cpp" line="656"/>
-        <location filename="src/fs/navdatabase.cpp" line="723"/>
+        <location filename="src/fs/navdatabase.cpp" line="560"/>
+        <location filename="src/fs/navdatabase.cpp" line="670"/>
+        <location filename="src/fs/navdatabase.cpp" line="737"/>
         <source>Clean up</source>
         <translation>Opschonen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="666"/>
+        <location filename="src/fs/navdatabase.cpp" line="680"/>
         <source>Preparing Airways</source>
         <translation>Voorbereiden Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="732"/>
+        <location filename="src/fs/navdatabase.cpp" line="746"/>
         <source>Basic Validation</source>
         <translation>Basis Goedkeuring</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="src/fs/navdatabase.cpp" line="825"/>
         <source>Creating table statistics</source>
         <translation>Creëren tabel statistieken</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="817"/>
+        <location filename="src/fs/navdatabase.cpp" line="831"/>
         <source>Creating report on values</source>
         <translation>Creëren rapport voor waarden</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="823"/>
+        <location filename="src/fs/navdatabase.cpp" line="837"/>
         <source>Creating report on duplicates</source>
         <translation>Creëren rapport voor duplicaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="861"/>
+        <location filename="src/fs/navdatabase.cpp" line="875"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Creëren rapport van duplicaten van coördinaten</translation>
     </message>
@@ -978,17 +1034,17 @@ Bestand:&quot;%2&quot;
         <translation>&lt;b&gt;Fatale fout.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Toets OK om de applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="297"/>
+        <location filename="src/atools.cpp" line="318"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3) op %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="307"/>
+        <location filename="src/atools.cpp" line="328"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="332"/>
+        <location filename="src/atools.cpp" line="353"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
@@ -1042,7 +1098,6 @@ Bestand:&quot;%2&quot;
         <translation>Aanvliegroute</translation>
     </message>
     <message>
-        <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
         <location filename="src/fs/online/onlinetypes.cpp" line="308"/>
         <source>ACC</source>
         <translation>ACC</translation>
@@ -1051,6 +1106,11 @@ Bestand:&quot;%2&quot;
         <location filename="src/fs/online/onlinetypes.cpp" line="72"/>
         <source>Departure</source>
         <translation>Vertrek</translation>
+    </message>
+    <message>
+        <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
+        <source>Area Control Center</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="147"/>
@@ -1358,6 +1418,17 @@ Bestand:&quot;%2&quot;
         <source>P3D</source>
         <translation>P3D</translation>
     </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="86"/>
+        <location filename="src/gui/tools.cpp" line="97"/>
+        <source>Error opening path &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="122"/>
+        <source>File or directory &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1450,40 +1521,40 @@ Importeren gestopt.</translation>
 <context>
     <name>XpDataCompiler</name>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="123"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="140"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="166"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="217"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="126"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="143"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="169"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="220"/>
         <source>Default file &quot;%1&quot; not found</source>
         <translation>Standaard bestand &quot;%1&quot; niet gevonden</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="146"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="149"/>
         <source>Post procecssing Airways</source>
         <translation>Naverwerken Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="319"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="323"/>
         <source>Reading: %1</source>
         <translation>Aan het lezen: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="712"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="769"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>AIRAC cycle bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="720"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="777"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Meerdere AIRAC cycles in de navdatabestanden gevonden. %1 en %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="730"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="787"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>AIRAC cycle niet gevonden in bestand.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="763"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="820"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -1494,6 +1565,64 @@ Niet in &quot;%1&quot; or
 &quot;%2&quot;
 
 Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op deze plaats.</translation>
+    </message>
+</context>
+<context>
+    <name>XpSceneryPacks</name>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="58"/>
+        <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="63"/>
+        <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="68"/>
+        <source>&quot;Version&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="73"/>
+        <source>Version number not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="78"/>
+        <source>&quot;SCENERY&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
+        <source>Empty line after &quot;SCENERY&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="98"/>
+        <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="138"/>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="170"/>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation type="unfinished">Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
 </context>
 <context>
@@ -1585,6 +1714,59 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
         <location filename="src/fs/ns/navserverworker.cpp" line="180"/>
         <source>Dropped more than %1 packages. Reason: %2. Increase update time interval.</source>
         <translation>Meer dan %1 paketten verloren. Reden: %2. Vergroot het tijdsinterval.</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::perf::AircraftPerfHandler</name>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="265"/>
+        <source>Invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="268"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="271"/>
+        <source>Departure Parking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="274"/>
+        <source>Departure Taxi and Takeoff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="277"/>
+        <source>Climb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="280"/>
+        <source>Cruise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="283"/>
+        <source>Descent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="286"/>
+        <source>Destination Taxi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="289"/>
+        <source>Destination Parking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="292"/>
+        <source>Unknown</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

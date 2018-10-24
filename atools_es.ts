@@ -13,6 +13,17 @@
     </message>
 </context>
 <context>
+    <name>AircraftPerf</name>
+    <message>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AirwayResolver</name>
     <message>
         <source>Populating VOR/NDB Routing Table</source>
@@ -540,6 +551,38 @@ Atrapada excepción
     <message>
         <source>metar data incomplete </source>
         <translation>datos de metar incompletos </translation>
+    </message>
+    <message>
+        <source>Low Instrument Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instrument Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Marginal Visual Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Visual Flight Rules</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LIFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MVFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VFR</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1082,6 +1125,18 @@ Atrapada excepción
         <source>P3D</source>
         <translation>P3D</translation>
     </message>
+    <message>
+        <source>Area Control Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening path &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File or directory &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1193,6 +1248,53 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
     </message>
 </context>
 <context>
+    <name>XpSceneryPacks</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;Version&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version number not valid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;SCENERY&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Empty line after &quot;SCENERY&quot; missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation type="unfinished">No puedo abrir archivo &quot;%1&quot;. Motivo: %2.</translation>
+    </message>
+</context>
+<context>
     <name>atools::fs::ns::NavServer</name>
     <message>
         <source>Server is listening.</source>
@@ -1260,6 +1362,49 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
     <message>
         <source>Missing reply</source>
         <translation>Respuesta perdida</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::perf::AircraftPerfHandler</name>
+    <message>
+        <source>Invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Departure Parking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Departure Taxi and Takeoff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Climb</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cruise</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Descent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination Taxi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Destination Parking</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Desconocido</translation>
     </message>
 </context>
 <context>
