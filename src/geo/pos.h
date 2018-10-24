@@ -37,11 +37,12 @@ enum CrossTrackStatus
 struct LineDistance
 {
   CrossTrackStatus status = INVALID;
+
   /* All distances in meter */
-  float distance, /* Positive means right of course,  negative means left of course.
+  float distance, /* Cross track distance - Positive means right of course,  negative means left of course.
                    *  Can also contain distance to nearest point depending on status */
-        distanceFrom1, /* Distance from point to start of line or linestring */
-        distanceFrom2; /* Distance from point to end of line or linestring */
+        distanceFrom1, /* Along track distance from point to start of line or linestring */
+        distanceFrom2; /* Along track distance from point to end of line or linestring */
 };
 
 QDebug operator<<(QDebug out, const LineDistance& lineDist);

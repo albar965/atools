@@ -311,10 +311,8 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
   double distFrom2 = distanceRad(p2.lonX, p2.latY, p.lonX, p.latY);
 
   // (positive XTD means right of course, negative means left)
-  // XTD =asin(sin(dist_AD)*sin(crs_AD-crs_AB))
   double crossTrack = asin(sin(distFrom1) * sin(courseFrom1 - course1To2));
 
-  // ATD=acos(cos(dist_AD)/cos(XTD))
   // The "along track distance", ATD, the distance from A along the course towards B to the point abeam D is given by:
   double distAlongFrom1 = acos(cos(distFrom1) / cos(crossTrack));
   double distAlongFrom2 = acos(cos(distFrom2) / cos(-crossTrack));
@@ -333,7 +331,6 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
     result.distance = static_cast<float>((distFrom1 < distFrom2 ? distFrom1 : distFrom2) * EARTH_RADIUS_METER);
     result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
     result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
-
   }
   // else invalid
 }
@@ -685,23 +682,23 @@ QDataStream& operator>>(QDataStream& in, Pos& obj)
 
 QDebug operator<<(QDebug out, const LineDistance& lineDist)
 {
-  out << "LineDistance[distance" << lineDist.distance
-      << ", distanceFrom1" << lineDist.distanceFrom1
-      << ", distanceFrom2" << lineDist.distanceFrom2;
+  out << "LineDistance[distance" << atools::geo::meterToNm(lineDist.distance)
+      << ", distanceFrom1" << atools::geo::meterToNm(lineDist.distanceFrom1)
+      << ", distanceFrom2" << atools::geo::meterToNm(lineDist.distanceFrom2);
 
   switch(lineDist.status)
   {
     case atools::geo::INVALID:
-      out << " invalid";
+      out << " INVALID";
       break;
     case atools::geo::ALONG_TRACK:
-      out << " along";
+      out << " ALONG_TRACK";
       break;
     case atools::geo::BEFORE_START:
-      out << " before start";
+      out << " BEFORE_START";
       break;
     case atools::geo::AFTER_END:
-      out << " after end";
+      out << " AFTER_END";
       break;
   }
   out << "]";
