@@ -3,6 +3,7 @@ For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap
 
 Version 3.2.0.beta
 
+* Fixed issue for FSX/P3D flight plans missing byte order mark which were not accepted by ASN or ASX.
 * HtmlBuilder now allows to set table background and alternating background color. albar965/littlenavmap#246
 * Fixed issues with assignment of stray VASIs to runways in X-Plane.
 * Renamed "ACC" to Area Control Center for online centers. More small refactoring. albar965/littlenavmap#267

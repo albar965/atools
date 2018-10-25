@@ -897,124 +897,127 @@ void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QSt
 void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOptions options)
 {
   filename = file;
-  QFile xmlFile(filename);
 
-  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  // Write XML to string first ===================
+  QString xmlString;
+  QXmlStreamWriter writer(&xmlString);
+  writer.setCodec("UTF-8");
+  writer.setAutoFormatting(true);
+  writer.setAutoFormattingIndent(4);
+
+  writer.writeStartDocument("1.0");
+  writer.writeStartElement("SimBase.Document");
+  writer.writeAttribute("Type", "AceXML");
+  writer.writeAttribute("version", "1,0");
+  writer.writeTextElement("Descr", "AceXML Document");
+
+  if(!(options & SAVE_CLEAN))
   {
-    QString xmlString;
-
-    QXmlStreamWriter writer(&xmlString);
-    writer.setCodec("UTF-8");
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(4);
-
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("SimBase.Document");
-    writer.writeAttribute("Type", "AceXML");
-    writer.writeAttribute("version", "1,0");
-    writer.writeTextElement("Descr", "AceXML Document");
-
-    if(!(options & SAVE_CLEAN))
+    QStringList comment;
+    for(const QString& key : plan.properties.keys())
     {
-      QStringList comment;
-      for(const QString& key : plan.properties.keys())
-      {
-        if(key == "_lnm")
-          continue;
-
-        if(!key.isEmpty())
-          comment.append("\n         " + key + "=" + plan.properties.value(key));
-      }
-
-      std::sort(comment.begin(), comment.end());
-
-      comment.prepend("\n         _lnm=" + atools::programFileInfo());
-
-      writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
-    }
-
-    writer.writeStartElement("FlightPlan.FlightPlan");
-
-    writer.writeTextElement("Title", plan.title);
-    writer.writeTextElement("FPType", flightplanTypeToString(plan.flightplanType));
-
-    if(plan.routeType != DIRECT)
-      writer.writeTextElement("RouteType", routeTypeToString(plan.routeType));
-
-    writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
-    writer.writeTextElement("DepartureID", plan.departureIdent);
-    writer.writeTextElement("DepartureLLA",
-                            plan.departurePos.isValid() ? plan.departurePos.toLongString() : QString());
-    writer.writeTextElement("DestinationID", plan.destinationIdent);
-    writer.writeTextElement("DestinationLLA",
-                            plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
-    writer.writeTextElement("Descr", plan.description);
-    writer.writeTextElement("DeparturePosition", plan.departureParkingName);
-    writer.writeTextElement("DepartureName", plan.departureAiportName);
-    writer.writeTextElement("DestinationName", plan.destinationAiportName);
-
-    writer.writeStartElement("AppVersion");
-    writer.writeTextElement("AppVersionMajor", plan.APPVERSION_MAJOR); // Always use fsx values
-    writer.writeTextElement("AppVersionBuild", plan.APPVERSION_BUILD);
-    writer.writeEndElement(); // AppVersion
-
-    for(const FlightplanEntry& entry : plan.entries)
-    {
-      if(entry.isNoSave())
-        // Do not save stuff like procedure points
+      if(key == "_lnm")
         continue;
 
-      writer.writeStartElement("ATCWaypoint");
-
-      // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
-      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getWaypointId()));
-      writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsString());
-
-      if(!entry.getPosition().isValid())
-        throw atools::Exception("Invalid position in flightplan for id " + entry.getWaypointId());
-
-      Pos pos = entry.getPosition();
-
-      // Use null altitude for all except airports
-      if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
-        pos.setAltitude(0.f);
-
-      writer.writeTextElement("WorldPosition", pos.toLongString());
-
-      if(!entry.getAirway().isEmpty())
-        writer.writeTextElement("ATCAirway", entry.getAirway());
-
-      if(!entry.getIcaoRegion().isEmpty() || !entry.getIcaoIdent().isEmpty())
-      {
-        writer.writeStartElement("ICAO");
-
-        if(!entry.getIcaoRegion().isEmpty())
-          writer.writeTextElement("ICAORegion", entry.getIcaoRegion());
-        writer.writeTextElement("ICAOIdent", entry.getIcaoIdent());
-
-        writer.writeEndElement(); // ICAO
-      }
-
-      writer.writeEndElement(); // ATCWaypoint
+      if(!key.isEmpty())
+        comment.append("\n         " + key + "=" + plan.properties.value(key));
     }
 
-    writer.writeEndElement(); // FlightPlan.FlightPlan
-    writer.writeEndElement(); // SimBase.Document
-    writer.writeEndDocument();
+    std::sort(comment.begin(), comment.end());
 
-    // Fixed Qt's retarded change where they think encoding is not needed in a string
-    xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    comment.prepend("\n         _lnm=" + atools::programFileInfo());
+
+    writer.writeComment(" LNMDATA" + comment.join("|") + "\n");
+  }
+
+  writer.writeStartElement("FlightPlan.FlightPlan");
+
+  writer.writeTextElement("Title", plan.title);
+  writer.writeTextElement("FPType", flightplanTypeToString(plan.flightplanType));
+
+  if(plan.routeType != DIRECT)
+    writer.writeTextElement("RouteType", routeTypeToString(plan.routeType));
+
+  writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
+  writer.writeTextElement("DepartureID", plan.departureIdent);
+  writer.writeTextElement("DepartureLLA",
+                          plan.departurePos.isValid() ? plan.departurePos.toLongString() : QString());
+  writer.writeTextElement("DestinationID", plan.destinationIdent);
+  writer.writeTextElement("DestinationLLA",
+                          plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
+  writer.writeTextElement("Descr", plan.description);
+  writer.writeTextElement("DeparturePosition", plan.departureParkingName);
+  writer.writeTextElement("DepartureName", plan.departureAiportName);
+  writer.writeTextElement("DestinationName", plan.destinationAiportName);
+
+  writer.writeStartElement("AppVersion");
+  writer.writeTextElement("AppVersionMajor", plan.APPVERSION_MAJOR); // Always use fsx values
+  writer.writeTextElement("AppVersionBuild", plan.APPVERSION_BUILD);
+  writer.writeEndElement(); // AppVersion
+
+  for(const FlightplanEntry& entry : plan.entries)
+  {
+    if(entry.isNoSave())
+      // Do not save stuff like procedure points
+      continue;
+
+    writer.writeStartElement("ATCWaypoint");
+
+    // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
+    writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getWaypointId()));
+    writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsString());
+
+    if(!entry.getPosition().isValid())
+      throw atools::Exception("Invalid position in flightplan for id " + entry.getWaypointId());
+
+    Pos pos = entry.getPosition();
+
+    // Use null altitude for all except airports
+    if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+      pos.setAltitude(0.f);
+
+    writer.writeTextElement("WorldPosition", pos.toLongString());
+
+    if(!entry.getAirway().isEmpty())
+      writer.writeTextElement("ATCAirway", entry.getAirway());
+
+    if(!entry.getIcaoRegion().isEmpty() || !entry.getIcaoIdent().isEmpty())
+    {
+      writer.writeStartElement("ICAO");
+
+      if(!entry.getIcaoRegion().isEmpty())
+        writer.writeTextElement("ICAORegion", entry.getIcaoRegion());
+      writer.writeTextElement("ICAOIdent", entry.getIcaoIdent());
+
+      writer.writeEndElement(); // ICAO
+    }
+
+    writer.writeEndElement(); // ATCWaypoint
+  }
+
+  writer.writeEndElement(); // FlightPlan.FlightPlan
+  writer.writeEndElement(); // SimBase.Document
+  writer.writeEndDocument();
+
+  // Fixed Qt's retarded change where they think encoding is not needed in a string
+  xmlString.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
 #ifndef Q_OS_WIN32
-    // Convert EOL always to Windows (0x0a -> 0x0d0a)
-    xmlString.replace("\n", "\r\n");
+  // Convert EOL always to Windows (0x0a -> 0x0d0a)
+  xmlString.replace("\n", "\r\n");
 #endif
 
-    // Breaks XML standard but gives better compatibility for third party applications
-    xmlString.replace("&quot;", "\"");
+  // Breaks XML standard but gives better compatibility for third party applications
+  xmlString.replace("&quot;", "\"");
 
-    QByteArray utf8 = xmlString.toUtf8();
-    xmlFile.write(utf8.data(), utf8.size());
+  // Write XML to file ===================
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&xmlFile);
+    stream.setCodec("UTF-8");
+    stream.setGenerateByteOrderMark(true);
+    stream << xmlString.toUtf8();
     xmlFile.close();
   }
   else
