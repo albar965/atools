@@ -112,8 +112,10 @@ public:
   }
 
 private:
-  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value) const;
-  QVariant loadWidget(atools::settings::Settings& settings, QObject *w) const;
+  void saveWidget(atools::settings::Settings& settings, const QObject *w, const QVariant& value,
+                  const QString& objName = QString()) const;
+  QVariant loadWidget(atools::settings::Settings& settings, QObject *w,
+                      const QString& objName = QString()) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
   void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
