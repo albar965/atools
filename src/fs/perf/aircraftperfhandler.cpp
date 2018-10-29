@@ -53,12 +53,28 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   if(perf->getName().isEmpty())
     perf->setName(aircraft.getAirplaneTitle());
 
-  // Remember fuel in tanks if not done already
-  bool fuelAsVol = perf->useFuelAsVolume();
-  if(startFuel < 0.1f)
-    startFuel = aircraft.getFuelTotalGalLbs(fuelAsVol);
+  // Determine fuel type ========================================================
+  if(atools::almostEqual(weightVolRatio, 0.f) &&
+     aircraft.getFuelTotalWeightLbs() > 5.f && aircraft.getFuelTotalQuantityGallons() > 1.f)
+  {
+    weightVolRatio = aircraft.getFuelTotalWeightLbs() / aircraft.getFuelTotalQuantityGallons();
 
-  totalFuelConsumed = startFuel - aircraft.getFuelTotalGalLbs(fuelAsVol);
+    if(atools::almostEqual(weightVolRatio, 6.f, 0.2f))
+      perf->setAvgas();
+    else if(atools::almostEqual(weightVolRatio, 6.7f, 0.3f))
+      perf->setJetFuel();
+
+    qDebug() << Q_FUNC_INFO << "weightVolRatio" << weightVolRatio << "jetfuel" << perf->isJetFuel();
+  }
+
+  // Remember fuel in tanks if not done already ========================================================
+  if(startFuel < 0.1f)
+  {
+    startFuel = aircraft.getFuelTotalWeightLbs();
+    qDebug() << Q_FUNC_INFO << "startFuel" << startFuel;
+  }
+
+  totalFuelConsumed = startFuel - aircraft.getFuelTotalWeightLbs();
 
   // Determine current flight sement ================================================================
   FlightSegment flightSegment = currentFlightSegment;
@@ -141,7 +157,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   // Sum up taxi fuel  ========================================================
   if(currentFlightSegment == DEPARTURE_TAXI)
-    perf->setTaxiFuel(startFuel - aircraft.getFuelTotalGalLbs(fuelAsVol));
+    perf->setTaxiFuel(startFuel - aircraft.getFuelTotalWeightLbs());
 
   // Sample every 500 ms ========================================
   if(now > lastSampleTimeMs + SAMPLE_TIME_MS)
@@ -173,8 +189,6 @@ float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSamp
 void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConnectUserAircraft& aircraft,
                                       qint64 now, qint64 curSampleDuration)
 {
-  bool fuelAsVol = perf->useFuelAsVolume();
-
   // Calculate all average values for each flight phase
   switch(flightSegment)
   {
@@ -194,7 +208,7 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
         perf->setClimbVertSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbVertSpeed(),
                                             aircraft.getVerticalSpeedFeetPerMin()));
         perf->setClimbFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbFuelFlow(),
-                                           aircraft.getFuelFlowGalLbsPerHour(fuelAsVol)));
+                                           aircraft.getFuelFlowPPH()));
       }
       break;
 
@@ -204,7 +218,7 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
         perf->setCruiseSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseSpeed(),
                                          aircraft.getTrueAirspeedKts()));
         perf->setCruiseFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseFuelFlow(),
-                                            aircraft.getFuelFlowGalLbsPerHour(fuelAsVol)));
+                                            aircraft.getFuelFlowPPH()));
       }
       break;
 
@@ -217,7 +231,7 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
                                               perf->getDescentVertSpeed(),
                                               std::abs(aircraft.getVerticalSpeedFeetPerMin())));
         perf->setDescentFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentFuelFlow(),
-                                             aircraft.getFuelFlowGalLbsPerHour(fuelAsVol)));
+                                             aircraft.getFuelFlowPPH()));
       }
       break;
   }

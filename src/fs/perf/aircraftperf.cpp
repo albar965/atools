@@ -114,6 +114,36 @@ void AircraftPerf::resetToDefault()
   *this = AircraftPerf();
 }
 
+float AircraftPerf::fromGalToLbs(bool jetFuel, float value)
+{
+  return value *= (jetFuel ? 6.7f : 6.f);
+}
+
+float AircraftPerf::fromLbsToGal(bool jetFuel, float value)
+{
+  return value /= (jetFuel ? 6.7f : 6.f);
+}
+
+void AircraftPerf::fromGalToLbs()
+{
+  taxiFuel = fromGalToLbs(jetFuel, taxiFuel);
+  reserveFuel = fromGalToLbs(jetFuel, reserveFuel);
+  extraFuel = fromGalToLbs(jetFuel, extraFuel);
+  climbFuelFlow = fromGalToLbs(jetFuel, climbFuelFlow);
+  cruiseFuelFlow = fromGalToLbs(jetFuel, cruiseFuelFlow);
+  descentFuelFlow = fromGalToLbs(jetFuel, descentFuelFlow);
+}
+
+void AircraftPerf::fromLbsToGal()
+{
+  taxiFuel = fromLbsToGal(jetFuel, taxiFuel);
+  reserveFuel = fromLbsToGal(jetFuel, reserveFuel);
+  extraFuel = fromLbsToGal(jetFuel, extraFuel);
+  climbFuelFlow = fromLbsToGal(jetFuel, climbFuelFlow);
+  cruiseFuelFlow = fromLbsToGal(jetFuel, cruiseFuelFlow);
+  descentFuelFlow = fromLbsToGal(jetFuel, descentFuelFlow);
+}
+
 bool AircraftPerf::operator==(const AircraftPerf& other) const
 {
   return fuelAsVolume == other.fuelAsVolume &&
@@ -143,6 +173,8 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   formatVersion = settings.value("Options/FormatVersion").toString();
 
   fuelAsVolume = settings.value("Options/FuelAsVolume").toBool();
+  jetFuel = settings.value("Options/JetFuel").toBool();
+
   taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
   reserveFuel = settings.value("Perf/ReserveFuelLbs").toFloat();
   extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
@@ -170,6 +202,8 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/Description", description);
 
   settings.setValue("Options/FuelAsVolume", fuelAsVolume);
+  settings.setValue("Options/JetFuel", jetFuel);
+
   settings.setValue("Perf/TaxiFuelLbs", QString::number(taxiFuel));
   settings.setValue("Perf/ReserveFuelLbs", QString::number(reserveFuel));
   settings.setValue("Perf/ExtraFuelLbs", QString::number(extraFuel));

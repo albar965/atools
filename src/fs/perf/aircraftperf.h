@@ -53,6 +53,9 @@ public:
   /* Reset all back to default values */
   void resetToDefault();
 
+  void fromGalToLbs();
+  void fromLbsToGal();
+
   /* Climb and descent rates to calculate profile slope */
   float getClimbRateFtPerNm() const;
   float getDescentRateFtPerNm() const;
@@ -88,7 +91,6 @@ public:
     return formatVersion;
   }
 
-  /* Use either gallons or lbs as fuel unit */
   bool useFuelAsVolume() const
   {
     return fuelAsVolume;
@@ -273,11 +275,40 @@ public:
   /* Current format */
   const static QLatin1Literal FORMAT_VERSION;
 
+  bool isJetFuel() const
+  {
+    return jetFuel;
+  }
+
+  bool isAvgas() const
+  {
+    return !jetFuel;
+  }
+
+  void setJetFuel(bool value)
+  {
+    jetFuel = value;
+  }
+
+  void setJetFuel()
+  {
+    jetFuel = true;
+  }
+
+  void setAvgas()
+  {
+    jetFuel = false;
+  }
+
+  /* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
+  static float fromGalToLbs(bool jetFuel, float value);
+  static float fromLbsToGal(bool jetFuel, float value);
+
 private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
 
-  bool fuelAsVolume = false;
+  bool fuelAsVolume = false, jetFuel = false;
 
   QString name, type, description, programVersion, formatVersion;
 

@@ -42,6 +42,8 @@ class AircraftPerf;
  * Calculates taxi fuel, average speed, average vertical speed and fuel flow for all flight segments.
  * Detects flight segments (climb, cruise, descent) automatically.
  *
+ * All fuel numbers collected are lbs.
+ *
  */
 class AircraftPerfHandler
   : public QObject
@@ -112,6 +114,8 @@ private:
   atools::fs::perf::FlightSegment currentFlightSegment = NONE;
   float cruiseAltitude = 0.f, startFuel = 0.f, totalFuelConsumed = 0.f;
 
+  /* Check lbs/gal ratio if jetfuel or avgas */
+  float weightVolRatio = 0.f;
   /* Do not calculate values more often than this */
   const static qint64 SAMPLE_TIME_MS = 500L;
 
