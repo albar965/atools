@@ -98,40 +98,40 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1181"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1184"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1226"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1229"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1127"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1130"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1727"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1730"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FLTPLAN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1425"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1428"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FMS %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1021"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1260"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1803"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1996"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1024"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1263"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1806"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1999"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1520"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1523"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
@@ -152,7 +152,7 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1601"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1604"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -177,7 +177,7 @@ Ocorreu um erro no Sql
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1454"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1457"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1717,52 +1717,52 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="265"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="279"/>
         <source>Invalid</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="268"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="282"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="271"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="285"/>
         <source>Departure Parking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="274"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="288"/>
         <source>Departure Taxi and Takeoff</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="277"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="291"/>
         <source>Climb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="280"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="294"/>
         <source>Cruise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="283"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="297"/>
         <source>Descent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="286"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="300"/>
         <source>Destination Taxi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="289"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="303"/>
         <source>Destination Parking</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="292"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="306"/>
         <source>Unknown</source>
         <translation type="unfinished">Desconhecido</translation>
     </message>
