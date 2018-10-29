@@ -362,6 +362,11 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     int minsEnroute = atInt(line, index++);
     insertQuery->bindValue(":flightplan_enroute_minutes", hoursEnroute * 60 + minsEnroute);
 
+    // Convert two fields to minutes
+    int hoursEndurance = atInt(line, index++);
+    int minsEndurance = atInt(line, index++);
+    insertQuery->bindValue(":flightplan_endurance_minutes", hoursEndurance * 60 + minsEndurance);
+
     QTime eta;
     double enrouteMin = hoursEnroute * 60 + minsEnroute;
     if(enrouteMin > 0.)
