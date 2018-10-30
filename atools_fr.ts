@@ -20,12 +20,12 @@
         <location filename="src/fs/perf/aircraftperf.cpp" line="74"/>
         <location filename="src/fs/perf/aircraftperf.cpp" line="81"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;aéronef &quot;%1&quot; pour la lecture.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="92"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;aéronef &quot;%1&quot; pour l&apos;écriture.</translation>
     </message>
 </context>
 <context>
@@ -138,50 +138,50 @@ Fichier: &quot;%2&quot;
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1024"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1263"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1806"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1999"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1021"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1260"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1803"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1996"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier PLN %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1130"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1127"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1184"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1181"/>
         <source> Flight Plan</source>
         <translation> Plan de vol</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1229"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1226"/>
         <source> Track</source>
         <translation> Trace</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1428"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1425"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1457"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1454"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1523"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1520"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1604"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1601"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1730"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1727"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier FLTPLAN %1. Motif : %2</translation>
     </message>
@@ -437,7 +437,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1120"/>
         <source>Light </source>
-        <translation>Eclairage </translation>
+        <translation type="unfinished">Eclaircie </translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1122"/>
@@ -652,42 +652,42 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1375"/>
         <source>Low Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Règles de vol aux instruments légers</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1378"/>
         <source>Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Règles de vol aux instruments</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
         <source>Marginal Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Règles marginales de vol à vue</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1384"/>
         <source>Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Règles de vol à vue</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
         <source>LIFR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">LIFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1400"/>
         <source>IFR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">IFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1403"/>
         <source>MVFR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MVFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1406"/>
         <source>VFR</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">VFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1481"/>
@@ -1112,7 +1112,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
         <source>Area Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Centre de contrôle régional</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="147"/>
@@ -1424,12 +1424,12 @@ Fichier: &quot;%2&quot;
         <location filename="src/gui/tools.cpp" line="86"/>
         <location filename="src/gui/tools.cpp" line="97"/>
         <source>Error opening path &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Erreur lors de l&apos;ouverture du chemin d&apos;accès &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/tools.cpp" line="122"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier ou répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
 </context>
 <context>
@@ -1574,52 +1574,52 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="58"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Pas de fichier scenery_packs.ini. %2.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="63"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Intitiale &quot;I&quot; ou &quot;A&quot; manquant</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="68"/>
         <source>&quot;Version&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&quot;Version&quot; manquantes</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="73"/>
         <source>Version number not valid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Numéro de version non valide</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="78"/>
         <source>&quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ligne vide après &quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="98"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Entrée non valable à la ligne %1 dans &quot;%2&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="138"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;existe pas.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="170"/>
@@ -1721,52 +1721,52 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="279"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="265"/>
         <source>Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Invalide</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="282"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="268"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Aucun</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="285"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="271"/>
         <source>Departure Parking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parking de départ</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="288"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="274"/>
         <source>Departure Taxi and Takeoff</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Départ en taxi et décollage</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="291"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="277"/>
         <source>Climb</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Montée</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="294"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="280"/>
         <source>Cruise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="297"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="283"/>
         <source>Descent</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Descente</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="300"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="286"/>
         <source>Destination Taxi</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Taxi à destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="303"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="289"/>
         <source>Destination Parking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Parking de destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="306"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="292"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>
