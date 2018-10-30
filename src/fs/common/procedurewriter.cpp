@@ -732,9 +732,21 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     // At altitude
     rec.setValue(":alt_descriptor", "A");
   else if(altDescr == "G" || altDescr == "I")
+    // G Glide Slope altitude (MSL) specified in the second “Altitude” field and
+    // “at” altitude specified in the first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+    // with electronic Glide Slope.
+    // I Glide Slope Intercept Altitude specified in second “Altitude” field and
+    // “at” altitude specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
+    // with electronic Glide Slope
     // Ignore Glide Slope altitude and turn into simple at restriction
     rec.setValue(":alt_descriptor", "A");
   else if(altDescr == "H" || altDescr == "J")
+    // H Glide Slope Altitude (MSL) specified in second “Altitude” field and
+    // “at or above” altitude specified in first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+    // with electronic Glide Slope
+    // J Glide Slope Intercept Altitude specified in second “Altitude” field and
+    // “at or above” altitude J specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
+    // with electronic Glide Slope “At” altitude on the coded vertical angle in the
     // Ignore Glide Slope altitude and turn into simple at or above restriction
     rec.setValue(":alt_descriptor", "+");
   else if(altDescr == "V")
