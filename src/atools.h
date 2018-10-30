@@ -152,11 +152,11 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
 }
 
 /* Writes a warning message includiing the string list */
-QString at(const QStringList& columns, int index);
+QString at(const QStringList& columns, int index, bool error);
 
 /* Both write a warning message if number format is wrong */
-int atInt(const QStringList& columns, int index);
-float atFloat(const QStringList& columns, int index);
+int atInt(const QStringList& columns, int index, bool error);
+float atFloat(const QStringList& columns, int index, bool error);
 
 template<typename TYPE>
 TYPE *firstOrNull(QList<TYPE>& list)

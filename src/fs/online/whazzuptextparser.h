@@ -44,7 +44,7 @@ namespace online {
 class WhazzupTextParser
 {
 public:
-  WhazzupTextParser(atools::sql::SqlDatabase *sqlDb);
+  WhazzupTextParser(atools::sql::SqlDatabase *sqlDb, bool verboseErrorReporting);
   virtual ~WhazzupTextParser();
 
   /* Read file content given in string and store results in database. Commit is executed when done.
@@ -131,6 +131,9 @@ private:
   // This is to avoid id changes on every reload
   QHash<QString, int> clientIdMap, atcIdMap;
   QHash<atools::fs::online::fac::FacilityType, int> atcRadius;
+
+  // Report errors on warning channel
+  bool error = false;
 };
 
 } // namespace online

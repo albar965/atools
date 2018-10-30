@@ -354,16 +354,16 @@ bool fileEndsWithEol(const QString& filepath)
   return endsWithEol;
 }
 
-QString at(const QStringList& columns, int index)
+QString at(const QStringList& columns, int index, bool error)
 {
   if(index < columns.size())
     return columns.at(index).trimmed();
-  else
+  else if(error)
     qWarning() << "Invalid index" << index << "for" << columns;
   return QString();
 }
 
-int atInt(const QStringList& columns, int index)
+int atInt(const QStringList& columns, int index, bool error)
 {
   int num = 0;
   QString str = at(columns, index).trimmed();
@@ -371,13 +371,13 @@ int atInt(const QStringList& columns, int index)
   {
     bool ok;
     num = str.toInt(&ok);
-    if(!ok)
+    if(!ok && error)
       qWarning() << "Invalid number" << str << "at" << index << "for" << columns;
   }
   return num;
 }
 
-float atFloat(const QStringList& columns, int index)
+float atFloat(const QStringList& columns, int index, bool error)
 {
   float num = 0.f;
   QString str = at(columns, index).trimmed();
@@ -385,7 +385,7 @@ float atFloat(const QStringList& columns, int index)
   {
     bool ok;
     num = str.toFloat(&ok);
-    if(!ok)
+    if(!ok && error)
       qWarning() << "Invalid floating point number" << str << "at" << index << "for" << columns;
   }
   return num;

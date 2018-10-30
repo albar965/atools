@@ -417,8 +417,8 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
       insertQuery.bindValue(":altitude", at(values, csv::ALT));
 
       validateCoordinates(line, at(values, csv::LONX), at(values, csv::LATY));
-      insertQuery.bindValue(":lonx", atFloat(values, csv::LONX));
-      insertQuery.bindValue(":laty", atFloat(values, csv::LATY));
+      insertQuery.bindValue(":lonx", atFloat(values, csv::LONX, true));
+      insertQuery.bindValue(":laty", atFloat(values, csv::LATY, true));
       insertQuery.exec();
       lineNum++;
       numImported++;

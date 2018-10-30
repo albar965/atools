@@ -39,12 +39,12 @@ namespace atools {
 namespace fs {
 namespace online {
 
-OnlinedataManager::OnlinedataManager(sql::SqlDatabase *sqlDb)
+OnlinedataManager::OnlinedataManager(sql::SqlDatabase *sqlDb, bool verboseErrorReporting)
   : db(sqlDb)
 {
   status = new StatusTextParser;
-  whazzup = new WhazzupTextParser(db);
-  whazzupServers = new WhazzupTextParser(db);
+  whazzup = new WhazzupTextParser(db, verboseErrorReporting);
+  whazzupServers = new WhazzupTextParser(db, verboseErrorReporting);
 }
 
 OnlinedataManager::~OnlinedataManager()

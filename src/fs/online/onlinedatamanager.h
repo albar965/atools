@@ -58,7 +58,7 @@ class OnlinedataManager
 {
 
 public:
-  OnlinedataManager(atools::sql::SqlDatabase *sqlDb);
+  OnlinedataManager(atools::sql::SqlDatabase *sqlDb, bool verboseErrorReporting);
   ~OnlinedataManager();
 
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */

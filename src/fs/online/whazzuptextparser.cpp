@@ -37,8 +37,8 @@ namespace atools {
 namespace fs {
 namespace online {
 
-WhazzupTextParser::WhazzupTextParser(sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+WhazzupTextParser::WhazzupTextParser(sql::SqlDatabase *sqlDb, bool verboseErrorReporting)
+  : db(sqlDb), error(verboseErrorReporting)
 {
 }
 
@@ -117,7 +117,7 @@ bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDa
         QStringList columns = line.split(":");
 
         // Check client type
-        parseSection(columns, at(columns, 3) == "ATC" /*ATC*/, false /* prefile */);
+        parseSection(columns, at(columns, 3, error) == "ATC" /*ATC*/, false /* prefile */);
       }
       else if(curSection == "PREFILE")
         parseSection(line.split(":"), false /*ATC*/, true /* prefile */);
@@ -218,39 +218,39 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
   int index = 0;
   insertQuery->clearBoundValues();
 
-  const QString callsign = at(line, index++);
+  const QString callsign = at(line, index++, error);
   insertQuery->bindValue(":callsign", callsign);
 
-  const QString vid = at(line, index++);
+  const QString vid = at(line, index++, error);
   insertQuery->bindValue(":vid", vid);
-  insertQuery->bindValue(":name", convertName(at(line, index++)));
+  insertQuery->bindValue(":name", convertName(at(line, index++, error)));
 
   if(!isAtc)
     insertQuery->bindValue(":prefile", isPrefile);
 
   // Get client type so we can check if it goes into a atc or client table
-  QString clientType = at(line, index++);
+  QString clientType = at(line, index++, error);
   bool atc = clientType == "ATC";
   insertQuery->bindValue(":client_type", clientType);
 
   if(atc)
   {
     QStringList freqStrToBind;
-    for(const QString& str : at(line, index).split("&"))
+    for(const QString& str : at(line, index, error).split("&"))
       freqStrToBind.append(QString::number(atools::roundToInt(str.trimmed().toDouble() * 1000.)));
     insertQuery->bindValue(":frequency", freqStrToBind);
   }
   index++;
 
-  float laty = atFloat(line, index++);
+  float laty = atFloat(line, index++, error);
   insertQuery->bindValue(":laty", laty);
 
-  float lonx = atFloat(line, index++);
+  float lonx = atFloat(line, index++, error);
   insertQuery->bindValue(":lonx", lonx);
 
   if(!atc)
   {
-    QString alt = at(line, index).trimmed();
+    QString alt = at(line, index, error).trimmed();
     if(alt.startsWith("FL"))
       // Convert flight level to altitude
       insertQuery->bindValue(":altitude", alt.mid(2).toInt() * 100);
@@ -261,35 +261,35 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
   }
   index++;
 
-  QString groundspeed = at(line, index);
+  QString groundspeed = at(line, index, error);
   if(!atc)
     insertQuery->bindValue(":groundspeed", groundspeed);
   index++;
 
   if(!atc)
   {
-    insertQuery->bindValue(":flightplan_aircraft", at(line, index++));
-    insertQuery->bindValue(":flightplan_cruising_speed", at(line, index++));
-    insertQuery->bindValue(":flightplan_departure_aerodrome", at(line, index++));
-    insertQuery->bindValue(":flightplan_cruising_level", at(line, index++));
-    insertQuery->bindValue(":flightplan_destination_aerodrome", at(line, index++));
+    insertQuery->bindValue(":flightplan_aircraft", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_cruising_speed", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_departure_aerodrome", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_cruising_level", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_destination_aerodrome", at(line, index++, error));
   }
   else
     index += 5;
 
-  insertQuery->bindValue(":server", at(line, index++));
-  insertQuery->bindValue(":protocol", at(line, index++));
-  insertQuery->bindValue(":combined_rating", at(line, index++));
+  insertQuery->bindValue(":server", at(line, index++, error));
+  insertQuery->bindValue(":protocol", at(line, index++, error));
+  insertQuery->bindValue(":combined_rating", at(line, index++, error));
 
   if(!atc)
-    insertQuery->bindValue(":transponder_code", at(line, index));
+    insertQuery->bindValue(":transponder_code", at(line, index, error));
   index++;
 
   atools::fs::online::fac::FacilityType facilityType =
-    static_cast<atools::fs::online::fac::FacilityType>(atInt(line, index++));
+    static_cast<atools::fs::online::fac::FacilityType>(atInt(line, index++, error));
   insertQuery->bindValue(":facility_type", facilityType);
 
-  int visualRange = atInt(line, index++);
+  int visualRange = atInt(line, index++, error);
   int circleRadius = visualRange;
 
   if(atc)
@@ -348,23 +348,23 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
   if(!atc)
   {
-    insertQuery->bindValue(":flightplan_revision", at(line, index++));
-    insertQuery->bindValue(":flightplan_flight_rules", at(line, index++));
-    QString departureTime = at(line, index++);
+    insertQuery->bindValue(":flightplan_revision", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_flight_rules", at(line, index++, error));
+    QString departureTime = at(line, index++, error);
     if(!departureTime.isEmpty() && departureTime != "0")
       insertQuery->bindValue(":flightplan_departure_time", departureTime);
-    QString actualDepartureTime = at(line, index++);
+    QString actualDepartureTime = at(line, index++, error);
     if(!actualDepartureTime.isEmpty() && actualDepartureTime != "0")
       insertQuery->bindValue(":flightplan_actual_departure_time", actualDepartureTime);
 
     // Convert two fields to minutes
-    int hoursEnroute = atInt(line, index++);
-    int minsEnroute = atInt(line, index++);
+    int hoursEnroute = atInt(line, index++, error);
+    int minsEnroute = atInt(line, index++, error);
     insertQuery->bindValue(":flightplan_enroute_minutes", hoursEnroute * 60 + minsEnroute);
 
     // Convert two fields to minutes
-    int hoursEndurance = atInt(line, index++);
-    int minsEndurance = atInt(line, index++);
+    int hoursEndurance = atInt(line, index++, error);
+    int minsEndurance = atInt(line, index++, error);
     insertQuery->bindValue(":flightplan_endurance_minutes", hoursEndurance * 60 + minsEndurance);
 
     QTime eta;
@@ -385,9 +385,9 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
         insertQuery->bindValue(":flightplan_estimated_arrival_time", eta.toString("hhmm"));
     }
 
-    insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, index++));
-    insertQuery->bindValue(":flightplan_other_info", at(line, index++));
-    insertQuery->bindValue(":flightplan_route", at(line, index++));
+    insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_other_info", at(line, index++, error));
+    insertQuery->bindValue(":flightplan_route", at(line, index++, error));
   }
   else
     index += 11;
@@ -398,32 +398,32 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     index += 4;
     if(atc)
     {
-      insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
+      insertQuery->bindValue(":atis", convertAtisText(at(line, index++, error)));
       insertQuery->bindValue(":atis_time", parseDateTime(line, index++));
     }
     else
       index += 2;
 
     insertQuery->bindValue(":connection_time", parseDateTime(line, index++));
-    insertQuery->bindValue(":software_name", at(line, index++));
-    insertQuery->bindValue(":software_version", at(line, index++));
-    insertQuery->bindValue(":administrative_rating", atInt(line, index++));
-    insertQuery->bindValue(":atc_pilot_rating", atInt(line, index++));
+    insertQuery->bindValue(":software_name", at(line, index++, error));
+    insertQuery->bindValue(":software_version", at(line, index++, error));
+    insertQuery->bindValue(":administrative_rating", atInt(line, index++, error));
+    insertQuery->bindValue(":atc_pilot_rating", atInt(line, index++, error));
 
     if(!atc)
     {
-      insertQuery->bindValue(":flightplan_2nd_alternate_aerodrome", at(line, index++));
-      insertQuery->bindValue(":flightplan_type_of_flight", at(line, index++));
-      insertQuery->bindValue(":flightplan_persons_on_board", atInt(line, index++));
-      insertQuery->bindValue(":heading", atInt(line, index++));
-      insertQuery->bindValue(":on_ground", atInt(line, index++));
+      insertQuery->bindValue(":flightplan_2nd_alternate_aerodrome", at(line, index++, error));
+      insertQuery->bindValue(":flightplan_type_of_flight", at(line, index++, error));
+      insertQuery->bindValue(":flightplan_persons_on_board", atInt(line, index++, error));
+      insertQuery->bindValue(":heading", atInt(line, index++, error));
+      insertQuery->bindValue(":on_ground", atInt(line, index++, error));
     }
     else
       index += 5;
 
-    insertQuery->bindValue(":simulator", at(line, index++));
+    insertQuery->bindValue(":simulator", at(line, index++, error));
     if(!atc)
-      insertQuery->bindValue(":plane", at(line, index));
+      insertQuery->bindValue(":plane", at(line, index, error));
     index++;
   }
   else if(format == VATSIM)
@@ -433,7 +433,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
     if(atc)
     {
-      insertQuery->bindValue(":atis", convertAtisText(at(line, index++)));
+      insertQuery->bindValue(":atis", convertAtisText(at(line, index++, error)));
       insertQuery->bindValue(":atis_time", parseDateTime(line, index++));
     }
     else
@@ -441,7 +441,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
     insertQuery->bindValue(":connection_time", parseDateTime(line, index++));
     if(!atc)
-      insertQuery->bindValue(":heading", atInt(line, index));
+      insertQuery->bindValue(":heading", atInt(line, index, error));
     index++;
 
     if(!atc)
@@ -451,8 +451,8 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
       insertQuery->bindValue(":on_ground", ok && gs < 30.f);
     }
 
-    float qnhInHg = atFloat(line, index++);
-    float qnhInMbar = atFloat(line, index++);
+    float qnhInHg = atFloat(line, index++, error);
+    float qnhInMbar = atFloat(line, index++, error);
     insertQuery->bindValue(":qnh_mb", (atools::geo::inHgToMbar(qnhInHg) + qnhInMbar) / 2.f);
   }
 
@@ -507,11 +507,11 @@ int WhazzupTextParser::getSemiPermanentId(QHash<QString, int>& idMap, int& curId
 
 QDateTime WhazzupTextParser::parseDateTime(const QStringList& line, int index)
 {
-  QString str = at(line, index++);
+  QString str = at(line, index++, error);
   if(!str.isEmpty())
   {
     QDateTime datetime = QDateTime::fromString(str, "yyyyMMddhhmmss");
-    if(!datetime.isValid())
+    if(!datetime.isValid() && error)
       qWarning() << "Invalid datetime at index" << index << line.at(index) << "in line" << line;
     return datetime;
   }
@@ -535,14 +535,14 @@ void WhazzupTextParser::parseServersSection(const QString& line)
   QStringList columns = line.split(":");
   int index = 0;
   serverInsertQuery->clearBoundValues();
-  serverInsertQuery->bindValue(":ident", at(columns, index++));
-  serverInsertQuery->bindValue(":hostname", at(columns, index++));
-  serverInsertQuery->bindValue(":location", at(columns, index++));
-  serverInsertQuery->bindValue(":name", at(columns, index++));
-  serverInsertQuery->bindValue(":client_connections_allowed", atInt(columns, index++));
+  serverInsertQuery->bindValue(":ident", at(columns, index++, error));
+  serverInsertQuery->bindValue(":hostname", at(columns, index++, error));
+  serverInsertQuery->bindValue(":location", at(columns, index++, error));
+  serverInsertQuery->bindValue(":name", at(columns, index++, error));
+  serverInsertQuery->bindValue(":client_connections_allowed", atInt(columns, index++, error));
 
   if(format == IVAO)
-    serverInsertQuery->bindValue(":allowed_connections", atInt(columns, index++));
+    serverInsertQuery->bindValue(":allowed_connections", atInt(columns, index++, error));
   serverInsertQuery->exec();
 }
 
@@ -555,11 +555,11 @@ void WhazzupTextParser::parseVoiceSection(const QString& line)
   QStringList columns = line.split(":");
   int index = 0;
   serverInsertQuery->clearBoundValues();
-  serverInsertQuery->bindValue(":hostname", at(columns, index++));
-  serverInsertQuery->bindValue(":location", at(columns, index++));
-  serverInsertQuery->bindValue(":name", at(columns, index++));
-  serverInsertQuery->bindValue(":allowed_connections", atInt(columns, index++));
-  serverInsertQuery->bindValue(":voice_type", at(columns, index++));
+  serverInsertQuery->bindValue(":hostname", at(columns, index++, error));
+  serverInsertQuery->bindValue(":location", at(columns, index++, error));
+  serverInsertQuery->bindValue(":name", at(columns, index++, error));
+  serverInsertQuery->bindValue(":allowed_connections", atInt(columns, index++, error));
+  serverInsertQuery->bindValue(":voice_type", at(columns, index++, error));
   serverInsertQuery->exec();
 }
 
@@ -572,8 +572,8 @@ void WhazzupTextParser::parseAirportSection(const QString& line)
   QStringList columns = line.split(":");
   int index = 0;
   airportInsertQuery->clearBoundValues();
-  airportInsertQuery->bindValue(":ident", at(columns, index++));
-  airportInsertQuery->bindValue(":atis", at(columns, index++));
+  airportInsertQuery->bindValue(":ident", at(columns, index++, error));
+  airportInsertQuery->bindValue(":atis", at(columns, index++, error));
   airportInsertQuery->exec();
 }
 
