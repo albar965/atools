@@ -93,6 +93,8 @@ void WidgetState::save(const QObject *widget) const
     else if(const QAbstractSlider *sl = dynamic_cast<const QAbstractSlider *>(widget))
     {
       saveWidget(s, sl, sl->value());
+      saveWidget(s, sl, sl->minimum(), sl->objectName() + "_Min");
+      saveWidget(s, sl, sl->maximum(), sl->objectName() + "_Max");
       saveWidgetVisible(s, sl);
     }
     else if(const QTabWidget *tw = dynamic_cast<const QTabWidget *>(widget))
@@ -214,6 +216,15 @@ void WidgetState::restore(QObject *widget) const
       QVariant v = loadWidget(s, widget);
       if(v.isValid())
         sl->setValue(v.toInt());
+
+      v = loadWidget(s, sl, sl->objectName() + "_Min");
+      if(v.isValid())
+        sl->setMinimum(v.toInt());
+
+      v = loadWidget(s, sl, sl->objectName() + "_Max");
+      if(v.isValid())
+        sl->setMaximum(v.toInt());
+
       loadWidgetVisible(s, sl);
     }
     else if(QTabWidget *tw = dynamic_cast<QTabWidget *>(widget))
