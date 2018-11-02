@@ -867,8 +867,8 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
-void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QString& file, const QString& airacCycle,
-                        SaveOptions options)
+void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QVector<float>& altitudes,
+                        const QString& file, const QString& airacCycle, SaveOptions options)
 {
   switch(flightplan.fileFormat)
   {
@@ -881,11 +881,11 @@ void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QSt
       break;
 
     case atools::fs::pln::FMS3:
-      saveFms(flightplan, file, airacCycle, false /* FMS 11 */);
+      saveFms(flightplan, altitudes, file, airacCycle, false /* FMS 11 */);
       break;
 
     case atools::fs::pln::FMS11:
-      saveFms(flightplan, file, airacCycle, true /* FMS 11 */);
+      saveFms(flightplan, altitudes, file, airacCycle, true /* FMS 11 */);
       break;
 
     case atools::fs::pln::FLP:
@@ -1281,8 +1281,8 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
 // 11 MOATS V155 0.000000 35.621601 -79.092964
 // 3 RDU V155 0.000000 35.872520 -78.783340
 // 1 KRDU ADES 435.000000 35.877640 -78.787476
-void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QString& file,
-                           const QString& airacCycle, bool version11Format)
+void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QVector<float>& altitudes,
+                           const QString& file, const QString& airacCycle, bool version11Format)
 {
   filename = file;
   QFile fmsFile(filename);
@@ -1359,8 +1359,10 @@ void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QStrin
     }
 
     int index = 0;
-    for(const FlightplanEntry& entry : plan.entries)
+    for(int i = 0; i < plan.entries.size(); i++)
     {
+      const FlightplanEntry& entry = plan.entries.at(i);
+
       if(entry.isNoSave())
         continue;
 
@@ -1409,8 +1411,9 @@ void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QStrin
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
 
-      float alt = plan.getCruisingAltitude();
-      if(index == 0 || index >= numEntries - 1)
+      float alt = altitudes.isEmpty() ? plan.getCruisingAltitude() : altitudes.at(i);
+
+      if(altitudes.isEmpty() && (index == 0 || index >= numEntries - 1))
         alt = 0.f;
 
       stream << QString::number(alt, 'f', 6) << " "
