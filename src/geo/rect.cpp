@@ -65,14 +65,26 @@ Rect::Rect(float lonX, float latY)
 
 Rect::Rect(const Pos& center, float radiusMeter)
 {
-  using namespace atools::geo;
-  Pos north = center.endpoint(radiusMeter, 0.).normalize();
-  Pos east = center.endpoint(radiusMeter, 90.).normalize();
-  Pos south = center.endpoint(radiusMeter, 180.).normalize();
-  Pos west = center.endpoint(radiusMeter, 270.).normalize();
+  float east = center.endpoint(radiusMeter, 90.).normalize().getLonX();
+  float west = center.endpoint(radiusMeter, 270.).normalize().getLonX();
 
-  topLeft = Pos(west.getLonX(), north.getLatY());
-  bottomRight = Pos(east.getLonX(), south.getLatY());
+  float radiusNm = meterToNm(radiusMeter);
+  float north = center.getLatY() + radiusNm / 60.f;
+  float south = center.getLatY() - radiusNm / 60.f;
+
+  if(north > 90.f || south < -90.f)
+  {
+    east = 180.f;
+    west = -180.f;
+  }
+
+  if(north > 90.f)
+    north = 90.f;
+  if(south < -90.f)
+    south = -90.f;
+
+  topLeft = Pos(west, north);
+  bottomRight = Pos(east, south);
 }
 
 Rect& Rect::operator=(const Rect& other)
