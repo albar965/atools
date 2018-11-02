@@ -175,9 +175,21 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   fuelAsVolume = settings.value("Options/FuelAsVolume").toBool();
   jetFuel = settings.value("Options/JetFuel").toBool();
 
-  taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
-  reserveFuel = settings.value("Perf/ReserveFuelLbs").toFloat();
-  extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
+  if(settings.contains("Perf/TaxiFuelLbs"))
+    taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
+  if(settings.contains("Perf/TaxiFuelLbsGal"))
+    taxiFuel = settings.value("Perf/TaxiFuelLbsGal").toFloat();
+
+  if(settings.contains("Perf/ReserveFuelLbs"))
+    reserveFuel = settings.value("Perf/ReserveFuelLbs").toFloat();
+  if(settings.contains("Perf/ReserveFuelLbsGal"))
+    reserveFuel = settings.value("Perf/ReserveFuelLbsGal").toFloat();
+
+  if(settings.contains("Perf/ExtraFuelLbs"))
+    extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
+  if(settings.contains("Perf/ExtraFuelLbs"))
+    extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
+
   contingencyFuel = settings.value("Perf/ContingencyFuelPercent").toFloat();
 
   climbVertSpeed = settings.value("Perf/ClimbVertSpeedFtPerMin").toFloat();
@@ -194,6 +206,10 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
 
 void AircraftPerf::writeToSettings(QSettings& settings)
 {
+  settings.remove("Perf/TaxiFuelLbs");
+  settings.remove("Perf/ReserveFuelLbs");
+  settings.remove("Perf/ExtraFuelLbs");
+
   settings.setValue("Options/Metadata", atools::programFileInfo());
   settings.setValue("Options/ProgramVersion", QCoreApplication::applicationVersion());
   settings.setValue("Options/FormatVersion", FORMAT_VERSION);
@@ -204,9 +220,9 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/FuelAsVolume", fuelAsVolume);
   settings.setValue("Options/JetFuel", jetFuel);
 
-  settings.setValue("Perf/TaxiFuelLbs", QString::number(taxiFuel));
-  settings.setValue("Perf/ReserveFuelLbs", QString::number(reserveFuel));
-  settings.setValue("Perf/ExtraFuelLbs", QString::number(extraFuel));
+  settings.setValue("Perf/TaxiFuelLbsGal", QString::number(taxiFuel));
+  settings.setValue("Perf/ReserveFuelLbsGal", QString::number(reserveFuel));
+  settings.setValue("Perf/ExtraFuelLbsGal", QString::number(extraFuel));
   settings.setValue("Perf/ContingencyFuelPercent", QString::number(contingencyFuel));
 
   settings.setValue("Perf/ClimbVertSpeedFtPerMin", QString::number(climbVertSpeed));
