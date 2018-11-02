@@ -168,40 +168,34 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
     float length = line.lengthMeter();
 
-    if(length > MIN_LENGTH_FOR_INTERPOLATION)
+    line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
+
+    Pos lastDropped;
+    for(const Pos& pos : positions)
     {
-      line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
+      float elevation = getElevation(pos);
 
-      Pos lastDropped;
-      for(const Pos& pos : positions)
+      if(!elevations.isEmpty())
       {
-        float elevation = getElevation(pos);
-
-        if(!elevations.isEmpty())
+        if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
         {
-          if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
-          {
-            // Drop points with similar altitude
-            lastDropped = pos;
-            lastDropped.setAltitude(elevation);
-            continue;
-          }
-          else if(lastDropped.isValid())
-          {
-            // Add last point of a stretch with similar altitude
-            elevations.append(lastDropped);
-            lastDropped = Pos();
-          }
+          // Drop points with similar altitude
+          lastDropped = pos;
+          lastDropped.setAltitude(elevation);
+          continue;
         }
-
-        elevations.append(pos.alt(elevation));
+        else if(lastDropped.isValid())
+        {
+          // Add last point of a stretch with similar altitude
+          elevations.append(lastDropped);
+          lastDropped = Pos();
+        }
       }
+
+      elevations.append(pos.alt(elevation));
     }
-    else if(!elevations.isEmpty())
-      elevations.append(line.getPos1().alt(getElevation(elevations.last())));
-    else
-      elevations.append(line.getPos1().alt(0.f));
   }
+
   elevations.append(linestring.last());
   if(!elevations.isEmpty())
     elevations.last().setAltitude(getElevation(elevations.last()));

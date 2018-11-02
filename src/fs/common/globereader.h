@@ -72,8 +72,6 @@ private:
   static Q_DECL_CONSTEXPR int GRID_COLUMNS = 4 * TILE_COLUMNS;
   static Q_DECL_CONSTEXPR int GRID_ROWS = 2 * 6000 + 2 * 4800;
 
-  /* Cut segments into points if it is shorter than this value in meter */
-  static Q_DECL_CONSTEXPR float MIN_LENGTH_FOR_INTERPOLATION = 1000.f;
   /* Distance between sampling points meter */
   static Q_DECL_CONSTEXPR float INTERPOLATION_SEGMENT_LENGTH = 250.f;
   /* Points are considered equal if they are equal within this range in meter */
