@@ -21,6 +21,8 @@
 #include <cmath>
 
 #include <QDebug>
+#include <QLineF>
+#include <QPointF>
 
 class QFile;
 
@@ -213,6 +215,16 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
 {
   return f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
+}
+
+Q_DECL_CONSTEXPR QPointF interpolateForX(const QLineF& line, double x)
+{
+  return line.pointAt((x - line.x1()) / line.dx());
+}
+
+Q_DECL_CONSTEXPR QPointF interpolateForY(const QLineF& line, double y)
+{
+  return line.pointAt((y - line.y1()) / line.dy());
 }
 
 /* Extract the first latin1 character from string. Return null if string is empty */

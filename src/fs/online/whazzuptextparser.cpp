@@ -109,8 +109,9 @@ bool WhazzupTextParser::read(QTextStream& stream, Format streamFormat, const QDa
           if(update <= lastUpdate)
             // This is older than the last update - bail out
             return false;
+
+          updateTimestamp = update;
         }
-        updateTimestamp = update;
       }
       else if(curSection == "CLIENTS")
       {
