@@ -65,7 +65,7 @@ public:
    * @param file filepath of the file to be saved
    * @param clean if true save all properties in a XML comment
    */
-  void save(const atools::fs::pln::Flightplan& flightplan, const QVector<float>& altitudes, const QString& file, const QString& airacCycle,
+  void save(const atools::fs::pln::Flightplan& flightplan, const QString& file, const QString& airacCycle,
             atools::fs::pln::SaveOptions options);
 
   /* FSX/P3D XML format */
@@ -80,7 +80,8 @@ public:
 
   /* X-Plane FMS format.
    * @param version11Format Version 11 otherwise 3 */
-  void saveFms(const atools::fs::pln::Flightplan& plan, const QVector<float>& altitudes, const QString& file, const QString& airacCycle,
+  void saveFms(const atools::fs::pln::Flightplan& plan, const QString& file,
+               const QString& airacCycle,
                bool version11Format);
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */

@@ -134,6 +134,25 @@ public:
     position = value;
   }
 
+  /* sets lat and lon but not altitude */
+  void setCoords(const atools::geo::Pos& value)
+  {
+    position.setLonX(value.getLonX());
+    position.setLatY(value.getLatY());
+  }
+
+  /* sets altitude in ft but not lat and lon */
+  void setAltitude(const atools::geo::Pos& value)
+  {
+    position.setAltitude(value.getAltitude());
+  }
+
+  /* Altitude [ft] which is part of the position is used by some export functions */
+  void setAltitude(float value)
+  {
+    position.setAltitude(value);
+  }
+
   /* Do not save entry into the file */
   bool isNoSave() const
   {

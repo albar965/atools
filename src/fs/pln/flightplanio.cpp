@@ -867,7 +867,7 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
-void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QVector<float>& altitudes,
+void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan,
                         const QString& file, const QString& airacCycle, SaveOptions options)
 {
   switch(flightplan.fileFormat)
@@ -881,11 +881,11 @@ void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan, const QVe
       break;
 
     case atools::fs::pln::FMS3:
-      saveFms(flightplan, altitudes, file, airacCycle, false /* FMS 11 */);
+      saveFms(flightplan, file, airacCycle, false /* FMS 11 */);
       break;
 
     case atools::fs::pln::FMS11:
-      saveFms(flightplan, altitudes, file, airacCycle, true /* FMS 11 */);
+      saveFms(flightplan, file, airacCycle, true /* FMS 11 */);
       break;
 
     case atools::fs::pln::FLP:
@@ -1281,7 +1281,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
 // 11 MOATS V155 0.000000 35.621601 -79.092964
 // 3 RDU V155 0.000000 35.872520 -78.783340
 // 1 KRDU ADES 435.000000 35.877640 -78.787476
-void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QVector<float>& altitudes,
+void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan,
                            const QString& file, const QString& airacCycle, bool version11Format)
 {
   filename = file;
@@ -1411,12 +1411,7 @@ void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan, const QVecto
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
 
-      float alt = altitudes.isEmpty() ? plan.getCruisingAltitude() : altitudes.at(i);
-
-      if(altitudes.isEmpty() && (index == 0 || index >= numEntries - 1))
-        alt = 0.f;
-
-      stream << QString::number(alt, 'f', 6) << " "
+      stream << QString::number(entry.getPosition().getAltitude(), 'f', 6) << " "
              << QString::number(entry.getPosition().getLatY(), 'f', 6)
              << " "
              << QString::number(entry.getPosition().getLonX(), 'f', 6)
