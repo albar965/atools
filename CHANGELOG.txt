@@ -1,6 +1,21 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.1.beta
+
+* Added saving of altitudes for X-Plane FMS formats.
+* Fixed issue when creating bounding rectangle from radius covering one of the poles.
+  This affected distance search in LNM.
+* Fixed issue where short lines were given wrong elevation (first 0) in GLOBE reader.
+* Renamed fuel key names in aircraft performance file and added update functions.
+* Fixed update time in whazzup parser.
+* Added option to limit excessive error logging in whazzup reader.
+* Fixed regression when reading whazzup files where heading and other values were missing.
+* Added fuel type to performance class now allowing conversion from weight to volume.
+  Performance handler now detects fuel type and uses lbs as default now. albar965/littlenavmap#255
+* Added saving of widgetstate for editable combo boxes.
+* Updated French translation from Patrick.
+
 Version 3.2.0.beta
 
 * Fixed issue for FSX/P3D flight plans missing byte order mark which were not accepted by ASN or ASX.
