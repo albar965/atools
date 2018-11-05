@@ -273,7 +273,10 @@ Rect& Rect::toRad()
 
 float Rect::getWidthDegree() const
 {
-  return bottomRight.getLonX() - topLeft.getLonX();
+  if(crossesAntiMeridian())
+    return 180.f - topLeft.getLonX() + bottomRight.getLonX() + 180.f;
+  else
+    return bottomRight.getLonX() - topLeft.getLonX();
 }
 
 float Rect::getHeightDegree() const
