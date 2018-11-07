@@ -20,12 +20,12 @@
         <location filename="src/fs/perf/aircraftperf.cpp" line="74"/>
         <location filename="src/fs/perf/aircraftperf.cpp" line="81"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo de perfomance da aeronave &quot;%1&quot; para leitura.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="92"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo de perfomance da aeronave &quot;%1&quot; para gravação.</translation>
     </message>
 </context>
 <context>
@@ -113,25 +113,25 @@ Ocorreu um erro no Sql
         <translation>Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1730"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1728"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FLTPLAN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1428"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1426"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo FMS %1. Razão: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1024"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1263"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1806"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1999"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1804"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1997"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1523"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1521"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
@@ -152,7 +152,7 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1604"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1602"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -177,7 +177,7 @@ Ocorreu um erro no Sql
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1457"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1455"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -638,42 +638,42 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1375"/>
         <source>Low Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regras de voo por instrumentos em baixa altitude</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1378"/>
         <source>Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regras de Voo por Instrumentos</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
         <source>Marginal Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regras de voo visual marginais</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1384"/>
         <source>Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Regras de voo visual</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
         <source>LIFR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1400"/>
         <source>IFR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1403"/>
         <source>MVFR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1406"/>
         <source>VFR</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1517"/>
@@ -1164,7 +1164,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
         <source>Area Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Centro de Controle da Área</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="214"/>
@@ -1420,12 +1420,12 @@ Ocorreu um erro no Sql
         <location filename="src/gui/tools.cpp" line="86"/>
         <location filename="src/gui/tools.cpp" line="97"/>
         <source>Error opening path &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao abrir o caminho &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/tools.cpp" line="122"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo ou diretório &quot;%1&quot; não existe.</translation>
     </message>
 </context>
 <context>
@@ -1570,57 +1570,57 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="58"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo &quot;%1&quot;. Não é um arquivo scenery_packs.ini. %2.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="63"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;I&quot; inicial ou &quot;A&quot; perdido</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="68"/>
         <source>&quot;Version&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Versão&quot; perdida</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="73"/>
         <source>Version number not valid</source>
-        <translation type="unfinished"></translation>
+        <translation>Número da versão não válido</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="78"/>
         <source>&quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;SCENERY&quot; perdido</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Linha vazia após a falta de &quot;SCENERY&quot;</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="98"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada inválida na linha%1 em &quot;%2&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="138"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; na linha%2 em &quot;%3&quot; não existe.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; na linha%2 em &quot;%3&quot; não é um diretório.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; na linha%2 em &quot;%3&quot; não é legível.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="170"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
+        <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
 </context>
 <context>
@@ -1719,52 +1719,52 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="279"/>
         <source>Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Inválido</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="282"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Nenhum</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="285"/>
         <source>Departure Parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Partida de estacionamento</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="288"/>
         <source>Departure Taxi and Takeoff</source>
-        <translation type="unfinished"></translation>
+        <translation>Táxi e Partida</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="291"/>
         <source>Climb</source>
-        <translation type="unfinished"></translation>
+        <translation>Subir</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="294"/>
         <source>Cruise</source>
-        <translation type="unfinished"></translation>
+        <translation>Cruzeiro</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="297"/>
         <source>Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>Descida</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="300"/>
         <source>Destination Taxi</source>
-        <translation type="unfinished"></translation>
+        <translation>Táxi de Destino</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="303"/>
         <source>Destination Parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Estacionamento de destino</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="306"/>
         <source>Unknown</source>
-        <translation type="unfinished">Desconhecido</translation>
+        <translation>Desconhecido</translation>
     </message>
 </context>
 <context>
@@ -1913,7 +1913,7 @@ Certifique-se que o  earth_fix.dat, earth_awy.dat e earth_nav.dat podem ser enco
     <message>
         <location filename="src/gui/helphandler.cpp" line="208"/>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>O URL está vazio para &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>

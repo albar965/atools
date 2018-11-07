@@ -138,8 +138,8 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1024"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1263"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1806"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1999"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1804"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1997"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
         <translation>Kan PLN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
@@ -159,27 +159,27 @@ Bestand:&quot;%2&quot;
         <translation> Track</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1428"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1426"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
         <translation>Kan FMS bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1457"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1455"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Gemaakt door %1 Versie %2 (revisie %3) op %4 </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1523"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1521"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
         <translation>Kan RTE bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1604"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1602"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1730"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1728"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>Kan FLTPLAN bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
