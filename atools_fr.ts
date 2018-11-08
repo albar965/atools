@@ -1738,7 +1738,7 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="288"/>
         <source>Departure Taxi and Takeoff</source>
-        <translation type="unfinished">Départ en taxi et décollage</translation>
+        <translation type="unfinished">Départ | Taxi et Décollage</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="291"/>
