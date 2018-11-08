@@ -1,45 +1,52 @@
-Build Instructions
-------------------------------------------------------
+# Compile the `atools` Library
 
 Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.6.
 GIT command line tools are required.
 
-- Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
+You need to install the FSX/P3D Simconnect libraries for the Windows build.
 
-Windows
-------------------------------------------------------
+## Common
 
 - Get and install Qt Creator from http://www.qt.io.
-- Import atools into the workspace.
+- Set a base directory for the builds in `Options` -> `Build & Run`: For example `C:\Projects`
+- Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
+
+## Windows
+
+- Import atools into the Qt Creator workspace.
 - Configure the project and enable shadow build for release or debug versions.
--- Clone atools from GIT to e.g.: "C:\Projects\atools"
--- Use "../build-%{CurrentProject:Name}-%{CurrentBuild:Name}" for "Default build directory"
-     in the Qt Creator options dialog.
--- For atools use the build directory of e.g.: "C:\Projects\build-atools-release"
-- Adapt the QT_BIN and GIT_BIN variables in "atools.pro".
+- Clone atools from GIT to e.g.: `C:\Projects\atools`
+- Use `../build-%{CurrentProject:Name}-%{CurrentBuild:Type}` for `Default build directory` in the Qt Creator options dialog.
+- For atools use the build directory of e.g.: `C:\Projects\build-atools-release`
+- Adapt the `QT_BIN`, `GIT_BIN`, `SIMCONNECT`, `INCLUDEPATH` and `LIBS` variables in `atools.pro`.
+- Set the build kit for atools and littlenavmap to MinGW 32bit.
 - Run qmake from Qt Creator
 - Build
 
 Do not use the default shadow build directory names, this will break project dependencies.
 
-The atools can be built using the mingw environment or MSVC >= 2013.
-If SimConnect is not installed add DEFINES+=SIMCONNECT_DUMMY to the qmake run
-SimConnect will and can only be used when compiling with MSVC.
+The atools can be built using the mingw environment only.
 
-Linux / macOS
-------------------------------------------------------
+## Linux / macOS
+
 Install Qt development packages. Version at least 5.6.
 
-Create the build directories on the same level as the source directory "atools".
+Create the build directories on the same level as the source directory `atools`.
 
-To build the release version:
-- mkdir build-atools-release
-- cd build-atools-release
-- qmake ../atools/atools.pro CONFIG+=release
-- make
+### To build the release version:
 
-To build the debug version:
-- mkdir build-atools-debug
-- cd build-atools-debug
-- qmake ../atools/atools.pro CONFIG+=debug
-- make
+```
+mkdir build-atools-release
+cd build-atools-release
+qmake ../atools/atools.pro CONFIG+=release
+make
+```
+
+### To build the debug version:
+
+```
+mkdir build-atools-debug
+cd build-atools-debug
+qmake ../atools/atools.pro CONFIG+=debug
+make
+```
