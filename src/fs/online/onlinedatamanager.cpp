@@ -225,7 +225,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
 
   using namespace atools::fs::sc;
 
-  ac.headingTrueDeg =
+  ac.headingMagDeg =
     ac.indicatedAltitudeFt =
       ac.indicatedSpeedKts =
         ac.trueAirspeedKts =
@@ -288,7 +288,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   // record.valueStr("flightplan_type_of_flight");
   // record.valueStr("flightplan_persons_on_board");
 
-  ac.headingMagDeg = record.valueFloat("heading");
+  ac.headingTrueDeg = record.valueFloat("heading");
 
   ac.flags = atools::fs::sc::SIM_ONLINE;
   if(record.valueBool("on_ground"))
