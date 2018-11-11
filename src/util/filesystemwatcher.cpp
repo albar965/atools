@@ -17,6 +17,8 @@
 
 #include "util/filesystemwatcher.h"
 
+#include "atools.h"
+
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QTextStream>
@@ -66,14 +68,13 @@ void FileSystemWatcher::pathOrFileChanged()
                << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
 
     // File exists - first call or older than two minutes or file differs
-    if(!fileTimestamp.isValid() || fileinfo.lastModified() > fileTimestamp || lastFileSize != fileinfo.size())
+    if(!fileTimestampLastRead.isValid() ||
+       atools::almostNotEqual(fileinfo.lastModified().toSecsSinceEpoch(), fileTimestampLastRead.toSecsSinceEpoch(),
+                              static_cast<qint64>(1)) || lastFileSizeRead != fileinfo.size())
     {
       // Timestamp of file has changed
       if(verbose)
         qDebug() << Q_FUNC_INFO << "changed" << filename;
-
-      fileTimestamp = fileinfo.lastModified();
-      lastFileSize = fileinfo.size();
 
       // Start or extend the delayed notification
       delayTimer.start(delayMs);
@@ -98,7 +99,15 @@ void FileSystemWatcher::fileUpdatedDelayed()
   if(verbose)
     qDebug() << Q_FUNC_INFO;
 
-  emit fileUpdated(filename);
+  QFileInfo fileinfo(filename);
+  if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > minFileSize)
+  {
+    // Remember file size and timestamp of the file
+    fileTimestampLastRead = fileinfo.lastModified();
+    lastFileSizeRead = fileinfo.size();
+
+    emit fileUpdated(filename);
+  }
 
   periodicCheckTimer.start(checkMs);
 }

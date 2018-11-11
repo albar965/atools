@@ -84,8 +84,8 @@ private:
   void fileUpdatedDelayed();
 
   QString filename;
-  QDateTime fileTimestamp;
-  qint64 lastFileSize = 0;
+  QDateTime fileTimestampLastRead;
+  qint64 lastFileSizeRead = 0;
   QFileSystemWatcher *fsWatcher = nullptr;
   QTimer periodicCheckTimer, delayTimer;
 
