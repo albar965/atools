@@ -343,4 +343,6 @@ Q_DECLARE_METATYPE(atools::geo::Pos);
 Q_DECLARE_TYPEINFO(atools::geo::DPos, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(atools::geo::DPos);
 
+Q_DECLARE_TYPEINFO(atools::geo::LineDistance, Q_PRIMITIVE_TYPE);
+
 #endif // ATOOLS_GEO_POSITION_H
