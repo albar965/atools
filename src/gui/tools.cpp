@@ -63,7 +63,9 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
     PROCESS_INFORMATION processInfo;
     ::ZeroMemory(&processInfo, sizeof(processInfo));
 
-    QString cmd = QString("explorer.exe /select,\"%1\"").arg(QDir::toNativeSeparators(fp.filePath()));
+    QString nativePath(QDir::toNativeSeparators(fp.canonicalFilePath()));
+    QString cmd = QString("explorer /select,\"%1\"").arg(nativePath);
+    qDebug() << Q_FUNC_INFO << "command" << cmd;
     LPWSTR lpCmd = new WCHAR[cmd.size() + 1];
     cmd.toWCharArray(lpCmd);
     lpCmd[cmd.size()] = 0;
@@ -76,6 +78,7 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
       ::CloseHandle(processInfo.hProcess);
       ::CloseHandle(processInfo.hThread);
     }
+    return true;
   }
   else
   {
@@ -90,7 +93,9 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
       return true;
   }
 #else
-  QUrl url = QUrl::fromLocalFile(QFileInfo(filepath).path());
+  QFileInfo fi(filepath);
+  QUrl url = QUrl::fromLocalFile(fi.canonicalFilePath());
+  qDebug() << Q_FUNC_INFO << "url" << url;
 
   if(!QDesktopServices::openUrl(url))
   {
