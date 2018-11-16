@@ -94,7 +94,7 @@ bool showInFileManager(const QString& filepath, QWidget *parent)
   }
 #else
   QFileInfo fi(filepath);
-  QUrl url = QUrl::fromLocalFile(fi.canonicalFilePath());
+  QUrl url = QUrl::fromLocalFile(fi.canonicalPath());
   qDebug() << Q_FUNC_INFO << "url" << url;
 
   if(!QDesktopServices::openUrl(url))
