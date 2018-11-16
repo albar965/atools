@@ -32,6 +32,7 @@ class LineString :
 public:
   LineString();
   explicit LineString(const std::initializer_list<atools::geo::Pos>& list);
+  explicit LineString(const std::initializer_list<float>& coordinatePairs);
   explicit LineString(const atools::geo::Pos& pos);
   explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
 

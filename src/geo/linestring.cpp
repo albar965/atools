@@ -33,6 +33,19 @@ LineString::LineString(const std::initializer_list<Pos>& list)
 {
 }
 
+LineString::LineString(const std::initializer_list<float>& coordinatePairs)
+{
+  float lastVal = 0.f;
+  int idx = 0;
+  for(float val : coordinatePairs)
+  {
+    if((idx++ % 2) == 1)
+      append(Pos(lastVal, val));
+
+    lastVal = val;
+  }
+}
+
 LineString::LineString(const Pos& pos)
   : QVector(
     {
