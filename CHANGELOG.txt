@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.2.rc1
+
+* Fixed issues where files were not shown and selected in Windows Explorer.
+* Small improvements to file system watcher to improve reliability.
+* Heading for online aircraft now read correctly as true heading for VATSIM and IVAO.
+* Updated French translation by Patrick.
+* Fixed issue in Rect::getWidthDegree that caused wrong zooming in LNM on the anti-meridian.
+
+
 Version 3.2.1.beta
 
 * Added saving of altitudes for X-Plane FMS formats.
