@@ -1421,13 +1421,13 @@ Fichier: &quot;%2&quot;
         <translation>P3D</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="86"/>
-        <location filename="src/gui/tools.cpp" line="97"/>
+        <location filename="src/gui/tools.cpp" line="89"/>
+        <location filename="src/gui/tools.cpp" line="102"/>
         <source>Error opening path &quot;%1&quot;</source>
         <translation type="unfinished">Erreur lors de l&apos;ouverture du chemin d&apos;accès &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="122"/>
+        <location filename="src/gui/tools.cpp" line="127"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Fichier ou répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
