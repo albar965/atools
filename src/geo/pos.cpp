@@ -654,17 +654,17 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   return Pos(lon3, lat3).toDeg().normalize();
 }
 
-QDebug operator<<(QDebug out, const Pos& record)
+QDebug operator<<(QDebug out, const Pos& pos)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Pos[" << record.toString() << "]";
+  out.nospace().noquote() << "Pos(" << pos.toString() << ")";
   return out;
 }
 
-QDebug operator<<(QDebug out, const DPos& record)
+QDebug operator<<(QDebug out, const DPos& pos)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "DPos[lonX " << record.lonX << ", latY " << record.latY << "]";
+  out.nospace().noquote() << "DPos(" << pos.lonX << "," << pos.latY << ")";
   return out;
 }
 

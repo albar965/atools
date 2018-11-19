@@ -18,6 +18,7 @@
 #include "geo/rect.h"
 #include "geo/calculations.h"
 #include "atools.h"
+#include "geo/linestring.h"
 
 #include <QDataStream>
 
@@ -187,10 +188,10 @@ bool Rect::overlaps(const Rect& other) const
   // return false;
 }
 
-void Rect::inflate(float degreesLon, float degreesLat)
+Rect& Rect::inflate(float degreesLon, float degreesLat)
 {
   if(!isValid())
-    return;
+    return *this;
 
   if(getWest() - degreesLon > -180.f)
     topLeft.setLonX(getWest() - degreesLon);
@@ -211,6 +212,7 @@ void Rect::inflate(float degreesLon, float degreesLat)
     bottomRight.setLatY(getSouth() - degreesLat);
   else
     bottomRight.setLatY(-90.f);
+  return *this;
 }
 
 bool Rect::overlapsInternal(const Rect& other) const
@@ -232,12 +234,14 @@ Pos Rect::getBottomLeft() const
 
 Pos Rect::getBottomCenter() const
 {
-  return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, bottomRight.getLatY());
+  Pos center = getCenter();
+  return Pos(center.getLonX(), bottomRight.getLatY());
 }
 
 Pos Rect::getTopCenter() const
 {
-  return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2, topLeft.getLatY());
+  Pos center = getCenter();
+  return Pos(center.getLonX(), topLeft.getLatY());
 }
 
 Pos Rect::getLeftCenter() const
@@ -296,10 +300,10 @@ float Rect::getHeightMeter() const
   return Pos(centerX, topLeft.getLatY()).distanceMeterTo(Pos(centerX, bottomRight.getLatY()));
 }
 
-void Rect::extend(const Pos& pos)
+Rect& Rect::extend(const Pos& pos)
 {
   if(!pos.isValid())
-    return;
+    return *this;
 
   if(isValid())
     atools::geo::boundingRect(*this, {pos,
@@ -308,12 +312,13 @@ void Rect::extend(const Pos& pos)
   else
     // Create single point rect if this is not valid
     *this = Rect(pos);
+  return *this;
 }
 
-void Rect::extend(const Rect& rect)
+Rect& Rect::extend(const Rect& rect)
 {
   if(!rect.isValid())
-    return;
+    return *this;
 
   if(isValid())
     atools::geo::boundingRect(*this, {rect.getTopLeft(), rect.getTopRight(),
@@ -323,13 +328,53 @@ void Rect::extend(const Rect& rect)
   else
     // Use other if this is not valid
     *this = rect;
+  return *this;
+}
+
+Rect& Rect::extend(const atools::geo::LineString& pos)
+{
+  for(const Pos& ext : pos)
+    extend(ext);
+  return *this;
+}
+
+Rect& Rect::scale(float horizontalFactor, float verticalFactor)
+{
+  float deltaY = 0.5f * getHeightDegree() * verticalFactor;
+  float deltaX = 0.5f * getWidthDegree() * horizontalFactor;
+
+  Pos center = getCenter();
+  float north = std::min((center.getLatY() + deltaY), 90.f);
+  float south = std::max((center.getLatY() - deltaY), -90.f);
+  float east, west;
+  if(deltaX > 180.f)
+  {
+    east = 180.f;
+    west = -180.f;
+  }
+  else
+  {
+    east = normalizeLonXDeg(center.getLonX() + deltaX);
+    west = normalizeLonXDeg(center.getLonX() - deltaX);
+  }
+  topLeft.setLonX(west);
+  topLeft.setLatY(north);
+  bottomRight.setLonX(east);
+  bottomRight.setLatY(south);
+  return *this;
 }
 
 Pos Rect::getCenter() const
 {
   if(isValid())
-    return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
-               (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  {
+    if(crossesAntiMeridian())
+      return Pos(bottomRight.getLonX() + 360.f - (bottomRight.getLonX() + 360.f - topLeft.getLonX()) / 2.f,
+                 (topLeft.getLatY() + bottomRight.getLatY()) / 2.f).normalize();
+    else
+      return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
+                 (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+  }
   else
     return EMPTY_POS;
 }
@@ -360,10 +405,15 @@ void Rect::swap(Rect& other)
   bottomRight.swap(other.bottomRight);
 }
 
-QDebug operator<<(QDebug out, const Rect& record)
+QString Rect::toString() const
+{
+  return topLeft.toString() + "," + bottomRight.toString();
+}
+
+QDebug operator<<(QDebug out, const Rect& rect)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Rect[tl " << record.topLeft << ", br " << record.bottomRight << "]";
+  out.nospace().noquote() << "Rect(" << rect.toString() << ")";
   return out;
 }
 

@@ -25,6 +25,8 @@
 namespace atools {
 namespace geo {
 
+class LineString;
+
 /*
  * Geographic rectangle class. Calculations based on
  *  http://williams.best.vwh.net/avform.htm
@@ -65,7 +67,10 @@ public:
   bool overlaps(const atools::geo::Rect& other) const;
 
   /* add margins to this rectangle */
-  void inflate(float degreesLon, float degreesLat);
+  atools::geo::Rect& inflate(float degreesLon, float degreesLat);
+
+  /* Scales the rectangle keeping the center */
+  atools::geo::Rect& scale(float horizontalFactor, float verticalFactor);
 
   const atools::geo::Pos& getTopLeft() const
   {
@@ -111,8 +116,9 @@ public:
   /* Extend rectangle to include given point or rectangle.
    * Creates a singular rectangle for first call on invalid rect.
    *  Ignores invalid positions. */
-  void extend(const atools::geo::Pos& pos);
-  void extend(const atools::geo::Rect& rect);
+  atools::geo::Rect& extend(const atools::geo::Pos& pos);
+  atools::geo::Rect& extend(const atools::geo::Rect& rect);
+  atools::geo::Rect& extend(const atools::geo::LineString& pos);
 
   atools::geo::Pos getCenter() const;
 
@@ -144,6 +150,8 @@ public:
   atools::geo::Pos getRightCenter() const;
 
   void swap(Rect& other);
+
+  QString toString() const;
 
 private:
   friend QDataStream& operator<<(QDataStream& out, const Rect& obj);
