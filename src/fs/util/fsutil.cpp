@@ -65,6 +65,7 @@ static const QVector<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QLatin1Literal("\\bNAWS\\b")),
         QRegularExpression(QLatin1Literal("\\bNOLF\\b")),
         QRegularExpression(QLatin1Literal("\\bNS\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSF\\b")),
         QRegularExpression(QLatin1Literal("\\bRAF\\b")),
         QRegularExpression(QLatin1Literal("\\bRNAS\\b")),
         QRegularExpression(QLatin1Literal("\\bROYAL MARINES\\b")),
@@ -420,8 +421,8 @@ QString capAirportName(const QString& str)
 {
   const static QSet<QString> upper({
           // Military designators to upper
-          "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "MCAF", "MCALF", "MCAS", "NAF", "NALF",
-          "NAS", "NAWS", "NOLF", "NS", "RAF", "RNAS", "AFLD", "PMRF"
+          "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
+          "NALF", "NAS", "NAWS", "NOLF", "NS", "NSF", "RAF", "RNAS", "AFLD"
         });
 
   return atools::capString(str, upper);
