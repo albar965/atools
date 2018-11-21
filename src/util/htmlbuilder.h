@@ -102,6 +102,10 @@ public:
   HtmlBuilder& error(const QString& str);
   static QString errorMessage(const QString& str);
 
+  /* Warning message. Orange bold text. */
+  HtmlBuilder& warning(const QString& str);
+  static QString warningMessage(const QString& str);
+
   /* Add bold text */
   HtmlBuilder& b(const QString& str);
   HtmlBuilder& b();

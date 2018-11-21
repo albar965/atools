@@ -145,7 +145,23 @@ HtmlBuilder& HtmlBuilder::error(const QString& str)
 QString HtmlBuilder::errorMessage(const QString& str)
 {
   if(!str.isEmpty())
-    return QString("<span style=\"background-color: #ff0000; color: #ffffff; font-weight:bold;\">"
+    return QString("<span style=\"background-color: #ff0000; color: #ffffff; font-weight: bold;\">"
+                     "%1"
+                   "</span>").arg(str.toHtmlEscaped());
+
+  return str;
+}
+
+HtmlBuilder& HtmlBuilder::warning(const QString& str)
+{
+  htmlText += HtmlBuilder::warningMessage(str);
+  return *this;
+}
+
+QString HtmlBuilder::warningMessage(const QString& str)
+{
+  if(!str.isEmpty())
+    return QString("<span style=\"color: #ff5000; font-weight: bold\">"
                      "%1"
                    "</span>").arg(str.toHtmlEscaped());
 
