@@ -27,6 +27,15 @@ namespace util {
 /* Get the aircraft type name for the ICAO code */
 QString aircraftTypeForCode(const QString& code);
 
+/* Floating point frequency rounded to the next 0.025 MHz value */
+float roundComFrequencyF(float frequency);
+
+/* Integer frequency * 1000 rounded to the next 0.025 MHz value */
+float roundComFrequency(int frequency)
+{
+  return roundComFrequencyF(frequency / 1000.f);
+}
+
 /* Maximum rating is 5 */
 const int MAX_RATING = 5;
 

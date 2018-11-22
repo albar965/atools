@@ -542,6 +542,11 @@ QString createSpeedAndAltitude(float speedKnots, float altFeet)
     return QString("N%1F%2").arg(speedKnots, 4, 'f', 0, QChar('0')).arg(altFeet / 100.f, 3, 'f', 0, QChar('0'));
 }
 
+float roundComFrequencyF(float frequency)
+{
+  return std::round(frequency / 0.025f) * 0.025f;
+}
+
 } // namespace util
 } // namespace fs
 } // namespace atools
