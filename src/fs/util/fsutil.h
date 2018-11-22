@@ -31,7 +31,7 @@ QString aircraftTypeForCode(const QString& code);
 float roundComFrequencyF(float frequency);
 
 /* Integer frequency * 1000 rounded to the next 0.025 MHz value */
-float roundComFrequency(int frequency)
+inline float roundComFrequency(int frequency)
 {
   return roundComFrequencyF(frequency / 1000.f);
 }
