@@ -1826,6 +1826,11 @@ QString MetarVisibility::getModifierString() const
   return QString();
 }
 
+QDateTime atools::fs::weather::MetarParser::getDateTime() const
+{
+  return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()));
+}
+
 #pragma GCC diagnostic pop
 
 } // namespace weather

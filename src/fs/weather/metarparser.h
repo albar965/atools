@@ -357,6 +357,8 @@ public:
     return _minute;
   }
 
+  QDateTime getDateTime() const;
+
   inline int getReportType() const
   {
     return _report_type;
