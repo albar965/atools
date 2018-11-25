@@ -69,13 +69,13 @@ struct MetarResult
 QDebug operator<<(QDebug out, const atools::fs::weather::MetarResult& record);
 
 /*
- * Test the weather server URL synchronously
+ * Test the weather server URL or file synchronously.
  * @param url URL containing a %1 placeholder for the metar
  * @param url an airport ICAO
  * @param result metar if successfull - otherwise error message
  * @return true if successfull
  */
-bool testUrl(const QString& url, const QString& airportIcao, QString& result);
+bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result);
 
 } // namespace weather
 } // namespace fs

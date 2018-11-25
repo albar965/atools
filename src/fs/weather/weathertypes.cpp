@@ -18,6 +18,7 @@
 #include "fs/weather/weathertypes.h"
 
 #include <QEventLoop>
+#include <QFileInfo>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
@@ -25,30 +26,63 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-bool testUrl(const QString& url, const QString& airportIcao, QString& result)
+bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result)
 {
-  QNetworkAccessManager network;
-  QNetworkRequest request(QUrl(url.arg(airportIcao)));
-  QNetworkReply *reply = network.get(request);
-
-  QEventLoop eventLoop;
-  QObject::connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
-  eventLoop.exec();
-
-  if(reply->error() == QNetworkReply::NoError)
+  if(urlStr.startsWith("http://", Qt::CaseInsensitive) || urlStr.startsWith("https://", Qt::CaseInsensitive))
   {
-    result = reply->readLine();
-    result.append(reply->readLine());
-    result.append(reply->readLine());
-    reply->deleteLater();
-    return true;
+    QNetworkAccessManager network;
+    QNetworkRequest request(QUrl(urlStr.arg(airportIcao)));
+    QNetworkReply *reply = network.get(request);
+
+    QEventLoop eventLoop;
+    QObject::connect(reply, &QNetworkReply::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+
+    if(reply->error() == QNetworkReply::NoError)
+    {
+      result.append(reply->readLine());
+      result.append(reply->readLine());
+      result.append(reply->readLine());
+      reply->deleteLater();
+      return true;
+    }
+    else
+    {
+      result.append(reply->errorString());
+      reply->deleteLater();
+    }
   }
   else
   {
-    result = reply->errorString();
-    reply->deleteLater();
-    return false;
+    QFileInfo fi(urlStr);
+
+    if(fi.exists())
+    {
+      if(fi.isFile())
+      {
+        QFile file(urlStr);
+        if(file.open(QIODevice::Text | QIODevice::ReadOnly))
+        {
+          QTextStream stream(&file);
+          result.append(stream.readLine());
+          result.append(stream.readLine());
+          result.append(stream.readLine());
+          file.close();
+          return true;
+        }
+        else
+          result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
+                        arg(urlStr).arg(file.errorString()));
+      }
+      else
+        result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
+                      arg(urlStr).arg(QObject::tr("Is not a file.")));
+    }
+    else
+      result.append(QObject::tr("Cannot open file \"%1\". Reason: %2.").
+                    arg(urlStr).arg(QObject::tr("File does not exist")));
   }
+  return false;
 }
 
 QDebug operator<<(QDebug out, const MetarResult& record)
