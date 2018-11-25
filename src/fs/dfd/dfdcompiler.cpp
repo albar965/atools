@@ -656,7 +656,7 @@ void DfdCompiler::updateAirspaceCom(const atools::sql::SqlQuery& com, atools::sq
 {
   if(airportId != -1)
   {
-    update.bindValue(":frequency", static_cast<int>(com.valueFloat("frequency") * 1000));
+    update.bindValue(":frequency", atools::roundToInt(com.valueFloat("frequency") * 1000.f));
     update.bindValue(":type", "CTR");
     update.bindValue(":name", com.valueStr("name"));
     update.bindValue(":id", airportId);
