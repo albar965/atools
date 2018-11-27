@@ -44,7 +44,11 @@ atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& air
   result.requestPos = pos;
 
   if(index.isEmpty())
-    downloader->startDownload();
+  {
+    if(!downloader->isDownloading())
+      downloader->startDownload();
+    // else already downloading - message will be sent for update once done
+  }
   else
   {
     QString data;

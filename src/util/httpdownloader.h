@@ -103,6 +103,12 @@ public:
    */
   void setDefaultUserAgentShort(const QString& extension = QString());
 
+  /* true if download is in progress */
+  bool isDownloading() const
+  {
+    return reply != nullptr;
+  }
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
