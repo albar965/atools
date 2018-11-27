@@ -26,7 +26,7 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result)
+bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result, int readLines)
 {
   if(urlStr.startsWith("http://", Qt::CaseInsensitive) || urlStr.startsWith("https://", Qt::CaseInsensitive))
   {
@@ -40,9 +40,8 @@ bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& res
 
     if(reply->error() == QNetworkReply::NoError)
     {
-      result.append(reply->readLine());
-      result.append(reply->readLine());
-      result.append(reply->readLine());
+      for(int i = 0; i <= readLines && !reply->atEnd(); i++)
+        result.append(reply->readLine());
       reply->deleteLater();
       return true;
     }
@@ -64,9 +63,8 @@ bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& res
         if(file.open(QIODevice::Text | QIODevice::ReadOnly))
         {
           QTextStream stream(&file);
-          result.append(stream.readLine());
-          result.append(stream.readLine());
-          result.append(stream.readLine());
+          for(int i = 0; i <= readLines && !stream.atEnd(); i++)
+            result.append(stream.readLine());
           file.close();
           return true;
         }

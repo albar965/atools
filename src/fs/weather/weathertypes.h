@@ -75,7 +75,7 @@ QDebug operator<<(QDebug out, const atools::fs::weather::MetarResult& record);
  * @param result metar if successfull - otherwise error message
  * @return true if successfull
  */
-bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result);
+bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result, int readLines = 6);
 
 } // namespace weather
 } // namespace fs
