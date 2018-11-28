@@ -185,12 +185,12 @@ Ocorreu um erro no Sql
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="166"/>
+        <location filename="src/util/htmlbuilder.cpp" line="182"/>
         <source>No</source>
         <translation>Não</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="166"/>
+        <location filename="src/util/htmlbuilder.cpp" line="182"/>
         <source>Yes</source>
         <translation>Sim</translation>
     </message>
@@ -1103,6 +1103,9 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/atools.cpp" line="353"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
@@ -1426,6 +1429,16 @@ Ocorreu um erro no Sql
         <location filename="src/gui/tools.cpp" line="127"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation>Arquivo ou diretório &quot;%1&quot; não existe.</translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
+        <source>Is not a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
+        <source>File does not exist</source>
+        <translation type="unfinished">Arquivo não encontrado</translation>
     </message>
 </context>
 <context>

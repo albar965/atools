@@ -188,12 +188,12 @@ Datei: &quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="166"/>
+        <location filename="src/util/htmlbuilder.cpp" line="182"/>
         <source>Yes</source>
         <translation>Ja</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="166"/>
+        <location filename="src/util/htmlbuilder.cpp" line="182"/>
         <source>No</source>
         <translation>Nein</translation>
     </message>
@@ -1063,6 +1063,9 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/atools.cpp" line="353"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
@@ -1447,6 +1450,16 @@ Datei: &quot;%2&quot;
         <location filename="src/gui/tools.cpp" line="127"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
+        <source>Is not a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
+        <source>File does not exist</source>
+        <translation type="unfinished">Datei existiert nicht</translation>
     </message>
 </context>
 <context>

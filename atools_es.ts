@@ -1137,6 +1137,14 @@ Atrapada excepción
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Is not a file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File does not exist</source>
+        <translation type="unfinished">El archivo no existe</translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
