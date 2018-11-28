@@ -1,6 +1,13 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.2.rc2
+
+* Fixed rounding error for COM frequencies in DFD compiler.
+* Fixed warning message "q_startOperation was called more than once" by skipping if already downloading weather files.
+* Change test URL function to allow also files.
+* Added methods to fix com frequencies into 25 kHz steps.
+
 Version 3.2.2.rc1
 
 * Fixed issues where files were not shown and selected in Windows Explorer.
