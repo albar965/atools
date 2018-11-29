@@ -55,6 +55,9 @@ void SceneryPacks::read(const QString& basePath)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
+
     QString msg(tr("Cannot open file \"%1\". Not a scenery_packs.ini file. %2."));
 
     // I ================
