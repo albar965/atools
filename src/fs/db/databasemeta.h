@@ -125,7 +125,7 @@ public:
    * 12 Several changes towards 3.2.
    * 13 Fix for VASI assignment in X-Plane
    */
-  static const int DB_VERSION_MINOR = 12;
+  static const int DB_VERSION_MINOR = 13;
 
   void init();
 
