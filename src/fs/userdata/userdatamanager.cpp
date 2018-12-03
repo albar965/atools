@@ -223,10 +223,17 @@ void UserdataManager::clearData()
 
 void UserdataManager::clearTemporary()
 {
-  SqlTransaction transaction(db);
-  SqlQuery query("delete from userdata where temp = 1", db);
-  query.exec();
-  transaction.commit();
+  int tempRows = SqlUtil(db).rowCount("userdata", "temp = 1");
+
+  qDebug() << Q_FUNC_INFO << "tempRows" << tempRows;
+
+  if(tempRows > 0)
+  {
+    SqlTransaction transaction(db);
+    SqlQuery deleteQuery("delete from userdata where temp = 1", db);
+    deleteQuery.exec();
+    transaction.commit();
+  }
 }
 
 void UserdataManager::updateCoordinates(int id, const geo::Pos& position)
