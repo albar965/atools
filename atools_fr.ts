@@ -1456,19 +1456,19 @@ Fichier: &quot;%2&quot;
 <context>
     <name>UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="429"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="521"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="593"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="653"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="695"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="699"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="748"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="791"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="436"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="528"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="600"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="660"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="702"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="706"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="755"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="798"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="440"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="447"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1481,7 +1481,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="443"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="450"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1494,7 +1494,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="446"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="453"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1507,7 +1507,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="449"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="456"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1520,7 +1520,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="452"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="459"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -1585,57 +1585,57 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>XpSceneryPacks</name>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="58"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="61"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Pas de fichier scenery_packs.ini. %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="63"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="66"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
         <translation type="unfinished">Intitiale &quot;I&quot; ou &quot;A&quot; manquant</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="68"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="71"/>
         <source>&quot;Version&quot; missing</source>
         <translation type="unfinished">&quot;Version&quot; manquantes</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="73"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="76"/>
         <source>Version number not valid</source>
         <translation type="unfinished">Numéro de version non valide</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="78"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="81"/>
         <source>&quot;SCENERY&quot; missing</source>
         <translation type="unfinished">&quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="86"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
         <translation type="unfinished">Ligne vide après &quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="98"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="101"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation type="unfinished">Entrée non valable à la ligne %1 dans &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="138"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="147"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="170"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="173"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
