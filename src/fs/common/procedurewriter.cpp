@@ -582,6 +582,19 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   }
   else
   {
+    // Indicator Definition Field Content
+    // Procedure Not Authorized for GPS or FMS Overlay, 0
+    // Procedure Authorized for GPS Overlay, primary Navaids operating and monitored, 1
+    // Procedure Authorized for GPS Overlay, primary Navaids installed, not monitored, 2
+    // Procedure Authorized for GPS Overlay, Procedure Title includes "GPS", 3
+    // Procedure Authorized for FMS Overlay, 4
+    // Procedure Authorized for FMS and GPS Overlay, 5
+    // RNAV (GPS), Procedure, can be flown with SBAS (WAAS), A
+    // RNAV (GPS) Procedure, cannot be B flown with SBAS (WAAS), B
+    // RNAV (GPS) Procedure, use of SBAS (WAAS) not specified, C
+    // Stand Alone GPS Procedure P
+    // Procedure Overlay Authorization unspecified, U
+
     // GPS overlay flag
     QString gpsIndicator = line.gnssFmsIndicator.trimmed();
     rec.setValue(":has_gps_overlay", type != "GPS" &&
@@ -732,21 +745,21 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     // At altitude
     rec.setValue(":alt_descriptor", "A");
   else if(altDescr == "G" || altDescr == "I")
-    // G Glide Slope altitude (MSL) specified in the second “Altitude” field and
-    // “at” altitude specified in the first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+    // G Glide Slope altitude (MSL) specified in the second "Altitude" field and
+    // "at" altitude specified in the first "Altitude" field on the FAF Waypoint in Precision Approach Coding
     // with electronic Glide Slope.
-    // I Glide Slope Intercept Altitude specified in second “Altitude” field and
-    // “at” altitude specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
+    // I Glide Slope Intercept Altitude specified in second "Altitude" field and
+    // "at" altitude specified in first "Altitude" field on the FACF Waypoint in Precision Approach Coding
     // with electronic Glide Slope
     // Ignore Glide Slope altitude and turn into simple at restriction
     rec.setValue(":alt_descriptor", "A");
   else if(altDescr == "H" || altDescr == "J")
-    // H Glide Slope Altitude (MSL) specified in second “Altitude” field and
-    // “at or above” altitude specified in first “Altitude” field on the FAF Waypoint in Precision Approach Coding
+    // H Glide Slope Altitude (MSL) specified in second "Altitude" field and
+    // "at or above" altitude specified in first "Altitude" field on the FAF Waypoint in Precision Approach Coding
     // with electronic Glide Slope
-    // J Glide Slope Intercept Altitude specified in second “Altitude” field and
-    // “at or above” altitude J specified in first “Altitude” field on the FACF Waypoint in Precision Approach Coding
-    // with electronic Glide Slope “At” altitude on the coded vertical angle in the
+    // J Glide Slope Intercept Altitude specified in second "Altitude" field and
+    // "at or above" altitude J specified in first "Altitude" field on the FACF Waypoint in Precision Approach Coding
+    // with electronic Glide Slope "At" altitude on the coded vertical angle in the
     // Ignore Glide Slope altitude and turn into simple at or above restriction
     rec.setValue(":alt_descriptor", "+");
   else if(altDescr == "V")
