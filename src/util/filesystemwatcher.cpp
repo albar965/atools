@@ -92,6 +92,8 @@ void FileSystemWatcher::pathOrFileChanged()
     qDebug() << Q_FUNC_INFO << "File" << filename << "does not exist.";
     periodicCheckTimer.start(checkMs);
   }
+
+  setPaths(true);
 }
 
 void FileSystemWatcher::fileUpdatedDelayed()
@@ -147,18 +149,41 @@ void FileSystemWatcher::createFsWatcher()
     fsWatcher->connect(fsWatcher, &QFileSystemWatcher::directoryChanged, this, &FileSystemWatcher::pathOrFileChanged);
   }
 
-  // Watch file to get changes
-  if(!fsWatcher->addPath(filename))
-    qWarning() << "cannot watch" << filename;
-
-  // Watch directory to get added or removed file changes
-  QFileInfo fileinfo(filename);
-  if(!fsWatcher->addPath(fileinfo.path()))
-    qWarning() << "cannot watch" << fileinfo.path();
+  setPaths(false);
 
   // Check every ten seconds since the watcher is unreliable
   periodicCheckTimer.connect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathOrFileChanged);
   periodicCheckTimer.start(checkMs);
+}
+
+void FileSystemWatcher::setPaths(bool update)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << filename << "files" << fsWatcher->files() << "dirs" << fsWatcher->directories();
+
+  if(fsWatcher == nullptr)
+    return;
+
+  // Watch file to get changes
+  if(!fsWatcher->files().contains(filename))
+  {
+    if(update && verbose)
+      qWarning() << "dropped file" << filename << fsWatcher->files();
+
+    if(!fsWatcher->addPath(filename))
+      qWarning() << "cannot watch file" << filename;
+  }
+
+  // Watch directory to get added or removed file changes
+  QString dir = QFileInfo(filename).canonicalPath();
+  if(!fsWatcher->directories().contains(dir))
+  {
+    if(update && verbose)
+      qWarning() << "dropped dir" << dir << fsWatcher->directories();
+
+    if(!fsWatcher->addPath(dir))
+      qWarning() << "cannot watch dir" << dir;
+  }
 }
 
 } // namespace util

@@ -82,6 +82,7 @@ private:
   void createFsWatcher();
   void pathOrFileChanged();
   void fileUpdatedDelayed();
+  void setPaths(bool update);
 
   QString filename;
   QDateTime fileTimestampLastRead;
