@@ -1437,7 +1437,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
         <source>Is not a file.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ce n&apos;est pas un fichier.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
