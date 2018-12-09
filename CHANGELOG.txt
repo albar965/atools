@@ -1,6 +1,8 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.2
+
 * Now reading scenery_packs.ini with correct encoding to avoid issues where paths have special characters.
 * Updated database minor version to 13.
 * Updated German translation.
