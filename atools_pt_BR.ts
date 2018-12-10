@@ -1433,12 +1433,12 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
         <source>Is not a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>não é um arquivo.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
         <source>File does not exist</source>
-        <translation type="unfinished">Arquivo não encontrado</translation>
+        <translation>Arquivo não existe</translation>
     </message>
 </context>
 <context>
