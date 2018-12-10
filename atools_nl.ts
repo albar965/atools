@@ -20,12 +20,12 @@
         <location filename="src/fs/perf/aircraftperf.cpp" line="74"/>
         <location filename="src/fs/perf/aircraftperf.cpp" line="81"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan.&quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te lezen.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="92"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan.&quot;aircraft performance&quot;-bestand &quot;%1&quot; niet openen om te schrijven.</translation>
     </message>
 </context>
 <context>
@@ -650,42 +650,42 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1375"/>
         <source>Low Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>LOw Instrument Vluchtregels</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1378"/>
         <source>Instrument Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Intrument Vluchtregels</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
         <source>Marginal Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Marginal Visual Vluchtregels</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1384"/>
         <source>Visual Flight Rules</source>
-        <translation type="unfinished"></translation>
+        <translation>Visual Vluchtregels</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
         <source>LIFR</source>
-        <translation type="unfinished"></translation>
+        <translation>LIFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1400"/>
         <source>IFR</source>
-        <translation type="unfinished"></translation>
+        <translation>IFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1403"/>
         <source>MVFR</source>
-        <translation type="unfinished"></translation>
+        <translation>MVFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1406"/>
         <source>VFR</source>
-        <translation type="unfinished"></translation>
+        <translation>VFR</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="1481"/>
@@ -1113,7 +1113,7 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="69"/>
         <source>Area Control Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Area Control Center</translation>
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="147"/>
@@ -1425,12 +1425,12 @@ Bestand:&quot;%2&quot;
         <location filename="src/gui/tools.cpp" line="89"/>
         <location filename="src/gui/tools.cpp" line="102"/>
         <source>Error opening path &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Fout bij openen pad &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/tools.cpp" line="127"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestand of folder &quot;%1&quot; bestaat niet.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
@@ -1585,57 +1585,57 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="61"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan bestand &quot;%1&quot; niet openen. Is geen scenery_packs.ini bestand. %2.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="66"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Initiële &quot;I&quot; of &quot;A&quot; ontbreekt</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="71"/>
         <source>&quot;Version&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;Versie&quot; ontbreekt</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="76"/>
         <source>Version number not valid</source>
-        <translation type="unfinished"></translation>
+        <translation>Versie-nummer niet geldig</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="81"/>
         <source>&quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;SCENERY&quot; ontbreekt</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="86"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Lege lijn na &quot;SCENERY&quot; ontbreekt</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="101"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongeldige invoer van lijn %1 in &quot;%2&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; bestaat niet.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; is geen folder.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="147"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; van lijn %2 in &quot;%3&quot; is niet leesbaar.</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="173"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
+        <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
 </context>
 <context>
@@ -1734,52 +1734,52 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="279"/>
         <source>Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation>Ongeldig</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="282"/>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>Geen</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="285"/>
         <source>Departure Parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Parking Vertrek</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="288"/>
         <source>Departure Taxi and Takeoff</source>
-        <translation type="unfinished"></translation>
+        <translation>Taxi en Takeoff Vertrek</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="291"/>
         <source>Climb</source>
-        <translation type="unfinished"></translation>
+        <translation>Klimfase</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="294"/>
         <source>Cruise</source>
-        <translation type="unfinished"></translation>
+        <translation>Cruise</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="297"/>
         <source>Descent</source>
-        <translation type="unfinished"></translation>
+        <translation>Daling</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="300"/>
         <source>Destination Taxi</source>
-        <translation type="unfinished"></translation>
+        <translation>Taxi Aankomst</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="303"/>
         <source>Destination Parking</source>
-        <translation type="unfinished"></translation>
+        <translation>Parking Aankomst</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="306"/>
         <source>Unknown</source>
-        <translation type="unfinished"></translation>
+        <translation>Onbekend</translation>
     </message>
 </context>
 <context>
@@ -1928,7 +1928,7 @@ Maak dat earth_fix.dat, earth_awy.dat en earth_nav.dat gevonden kunnen worden op
     <message>
         <location filename="src/gui/helphandler.cpp" line="208"/>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>URL is leeg voor &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>
