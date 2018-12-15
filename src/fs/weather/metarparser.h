@@ -262,6 +262,8 @@ public:
   explicit MetarParser(const QString& metar);
   ~MetarParser();
 
+  static QDateTime extractDateTime(const QString& metar);
+
   enum FlightRules
   {
     UNKNOWN = -1,

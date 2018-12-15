@@ -107,6 +107,12 @@ Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
   return index >= 0 && index < list.size();
 }
 
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
+{
+  return std::min(std::max(value, minValue), maxValue);
+}
+
 /* Returns 0 if without throwing an exception if index is not valid */
 inline QChar strAt(const QString& str, int index)
 {

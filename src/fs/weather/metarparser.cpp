@@ -524,6 +524,19 @@ MetarParser::~MetarParser()
   delete[] _data;
 }
 
+QDateTime MetarParser::extractDateTime(const QString& metar)
+{
+  try
+  {
+    return MetarParser(metar).getDateTime();
+  }
+  catch(const std::exception& e)
+  {
+    qWarning() << "Caught exception parsing metar " << metar << ":" << e.what();
+  }
+  return QDateTime();
+}
+
 void MetarParser::postProcess()
 {
   QVector<MetarCloud> clouds = getClouds();
