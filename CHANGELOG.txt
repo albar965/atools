@@ -1,6 +1,8 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.3
+
 * X-Plane scenery_packs.ini now read case insensitive.
 
 Version 3.2.2
