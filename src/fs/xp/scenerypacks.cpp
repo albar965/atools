@@ -61,13 +61,13 @@ void SceneryPacks::read(const QString& basePath)
     QString msg(tr("Cannot open file \"%1\". Not a scenery_packs.ini file. %2."));
 
     // I ================
-    QString line = stream.readLine().trimmed().toUpper();
+    QString line = stream.readLine().trimmed();
     if(!(line.compare("I", Qt::CaseInsensitive) == 0 || line.compare("A", Qt::CaseInsensitive) == 0))
       throw atools::Exception(msg.arg(filepath).arg(tr("Intital \"I\" or \"A\" missing")));
 
     // 1000 Version ================
     line = stream.readLine().trimmed();
-    if(line.section(' ', 1, 1).compare("Version", Qt::CaseInsensitive) == 0)
+    if(line.section(' ', 1, 1).compare("Version", Qt::CaseInsensitive) != 0)
       throw atools::Exception(msg.arg(filepath).arg(tr("\"Version\" missing")));
 
     bool ok;
@@ -77,7 +77,7 @@ void SceneryPacks::read(const QString& basePath)
 
     // SCENERY ================
     line = stream.readLine().trimmed();
-    if(line.compare("SCENERY", Qt::CaseInsensitive) == 0)
+    if(line.compare("SCENERY", Qt::CaseInsensitive) != 0)
       throw atools::Exception(msg.arg(filepath).arg(tr("\"SCENERY\" missing")));
 
     // Empty line ================
