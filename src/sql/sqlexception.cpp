@@ -68,7 +68,7 @@ void SqlException::createSqlMessage()
       msg += ".";
   }
 
-  whatMessage = msg.toLocal8Bit();
+  whatMessage = msg.toUtf8();
 }
 
 } // namespace sql

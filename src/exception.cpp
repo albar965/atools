@@ -22,7 +22,7 @@ namespace atools {
 Exception::Exception(const QString& messageStr)
 {
   this->message = messageStr;
-  whatMessage = message.toLocal8Bit();
+  whatMessage = message.toUtf8();
 }
 
 Exception::Exception()
