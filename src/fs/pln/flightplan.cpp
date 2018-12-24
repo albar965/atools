@@ -111,6 +111,17 @@ void Flightplan::clear()
   appVersionMajor = APPVERSION_MAJOR;
 }
 
+void Flightplan::setDeparturePosition(const geo::Pos& value)
+{
+  departurePos = value;
+}
+
+void Flightplan::setDeparturePosition(const geo::Pos& value, float altitude)
+{
+  departurePos = value;
+  departurePos.setAltitude(altitude);
+}
+
 void Flightplan::reverse()
 {
   std::reverse(entries.begin(), entries.end());

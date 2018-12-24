@@ -212,10 +212,8 @@ public:
     return departurePos;
   }
 
-  void setDeparturePosition(const atools::geo::Pos& value)
-  {
-    departurePos = value;
-  }
+  void setDeparturePosition(const atools::geo::Pos& value);
+  void setDeparturePosition(const atools::geo::Pos& value, float altitude);
 
   /*
    * @return title of the flight plan like "EDMA to LESU"
