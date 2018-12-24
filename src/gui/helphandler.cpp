@@ -220,7 +220,7 @@ QString HelpHandler::getLanguage()
 QString HelpHandler::getLanguageFull()
 {
   QString overrideLang =
-    atools::settings::Settings::instance().valueStr("MainWindow/HelpLanguage", QString());
+    atools::settings::Settings::instance().valueStr("Options/Language", QString());
 
   QString lang;
 
