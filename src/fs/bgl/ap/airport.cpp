@@ -373,7 +373,9 @@ int Airport::calculateRating(bool isAddon) const
 {
   // Maximum rating is 5
   return atools::fs::util::calculateAirportRating(isAddon,
-                                                  hasTowerObj(), getTaxiPaths().size(), getParkings().size(),
+                                                  hasTowerObj(),
+                                                  getTaxiPaths().size(),
+                                                  getParkings().size() + getHelipads().size(),
                                                   getAprons().size());
 }
 
