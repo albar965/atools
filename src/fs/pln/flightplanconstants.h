@@ -46,7 +46,8 @@ enum FileFormat
   FMS3, // X-Plane version 3 FMS file - can load and save
   FMS11, // X-Plane version 11 FMS file - can load and save
   FLP, // Aerosoft airbus or FlightFactor Boeing - can load and save
-  PLN_FSC // FSC ini style PLN flight plan - can load only
+  PLN_FSC, // FSC ini style PLN flight plan - can load only
+  FLIGHTGEAR // FlightGear XML format - load and save
 };
 
 enum FlightplanType

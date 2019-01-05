@@ -84,6 +84,12 @@ QString buildPath(const QStringList& paths);
  * File has to be open for reading */
 QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
 
+/* Get the first four lines of a file converted to lowercase to check type.
+ *  Returns a list with always four strings.
+ *  Empty lines are removed and line length is limited to 80 characters.
+ *  All trimmed and converted to lower case. */
+QStringList probeFile(const QString& file);
+
 /* Calculate the step size for an axis along a range for number of steps.
  * Steps will stick to the 1, 2, and 5 range */
 float calculateSteps(float range, float numSteps);

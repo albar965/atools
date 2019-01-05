@@ -23,6 +23,7 @@
 #include <QApplication>
 
 class QXmlStreamReader;
+class QXmlStreamWriter;
 
 namespace atools {
 namespace geo {
@@ -55,6 +56,9 @@ public:
    */
   void load(atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* Detect format by reading the first few lines */
+  static atools::fs::pln::FileFormat detectFormat(const QString& file);
+
   /*
    * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
    * Although the flight simulator cannot deal with flight plans that have no valid start
@@ -71,6 +75,9 @@ public:
   /* FSX/P3D XML format */
   void saveFsx(const atools::fs::pln::Flightplan& plan, const QString& file,
                atools::fs::pln::SaveOptions options);
+
+  /* FlightGear route manager XML format */
+  void saveFlightGear(const Flightplan& plan, const QString& file);
 
   /* PMDG RTE format */
   void saveRte(const atools::fs::pln::Flightplan& plan, const QString& file);
@@ -101,19 +108,14 @@ public:
   void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
                      atools::fs::pln::SaveOptions options);
 
-  static const QStringList& getAcceptedFlightPlanExtensions();
-
 private:
-  /* Get the first four lines of a file converted to lowercase to check type.
-   *  Returns a list with always four strings. */
-  QStringList probeFile4(const QString& file);
-
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFs9(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFlp(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFms(atools::fs::pln::Flightplan& plan, const QString& file);
   void loadFsc(atools::fs::pln::Flightplan& plan, const QString& file);
+  void loadFlightGear(atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* Write string into memory location, truncate if needed and fill up to length with null */
   void writeBinaryString(char *mem, QString str, int length);
@@ -132,6 +134,12 @@ private:
   void readAppVersion(Flightplan& plan, QXmlStreamReader& reader);
   void readWaypoint(Flightplan& plan, QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt);
+
+  /* Support for FlightGear propery lists */
+  void writePropertyStr(QXmlStreamWriter& writer, const QString& name, const QString& value);
+  void writePropertyBool(QXmlStreamWriter& writer, const QString& name, bool value = true);
+  void writePropertyInt(QXmlStreamWriter& writer, const QString& name, int value);
+  void writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value);
 
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries(Flightplan& plan);

@@ -56,6 +56,40 @@ QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec)
   return codec;
 }
 
+QStringList probeFile(const QString& file)
+{
+  QFile testFile(file);
+
+  QStringList lines;
+  if(testFile.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&testFile);
+    stream.setCodec("UTF-8");
+    stream.setAutoDetectUnicode(true);
+
+    int numLines = 0, numLinesTotal = 0;
+    while(!stream.atEnd() && numLines < 6 && numLinesTotal < 20)
+    {
+      QString line = stream.readLine(256).trimmed();
+      if(!line.isEmpty())
+      {
+        lines.append(line.toLower().simplified());
+        numLines++;
+      }
+      numLinesTotal++;
+    }
+
+    // Fill missing entries with empty strings to ease checking.
+    for(int i = lines.size(); i < 6; i++)
+      lines.append(QString());
+    testFile.close();
+  }
+  else
+    throw Exception("Error reading \"" + file + "\": " + testFile.errorString());
+
+  return lines;
+}
+
 void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
              const QSet<QString>& toLower, const QSet<QString>& ignore)
 {

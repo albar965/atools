@@ -39,8 +39,6 @@ namespace atools {
 namespace fs {
 namespace pln {
 
-static const QStringList ACCEPTED_EXTENSIONS({"fms", "flp", "pln"});
-
 static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
 static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);
 
@@ -117,24 +115,63 @@ FlightplanIO::~FlightplanIO()
 
 void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
 {
+  FileFormat format = detectFormat(file);
+
+  switch(format)
+  {
+    case atools::fs::pln::NONE:
+      throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
+                         "Only PLN (FSX XML, FS9 INI and FSC), FMS, FLP and FlightGear FGFP are supported.").arg(file));
+
+    case atools::fs::pln::PLN_FSX:
+      loadFsx(plan, file);
+      break;
+
+    case atools::fs::pln::PLN_FS9:
+      loadFs9(plan, file);
+      break;
+
+    case atools::fs::pln::FMS11:
+    case atools::fs::pln::FMS3:
+      loadFms(plan, file);
+      break;
+
+    case atools::fs::pln::FLP:
+      loadFlp(plan, file);
+      break;
+
+    case atools::fs::pln::PLN_FSC:
+      loadFsc(plan, file);
+      break;
+
+    case atools::fs::pln::FLIGHTGEAR:
+      loadFlightGear(plan, file);
+      break;
+  }
+}
+
+FileFormat FlightplanIO::detectFormat(const QString& file)
+{
   // Get first four non empty lines - always returns a list of four
-  QStringList lines = probeFile4(file);
+  QStringList lines = probeFile(file);
 
   if(lines.isEmpty())
     throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
 
   if(lines.first().startsWith("[corte]"))
     // FLP: [CoRte]
-    loadFlp(plan, file);
-  else if(lines.at(0).startsWith("<?xml version") && lines.at(1).startsWith("<simbase.document"))
+    return FLP;
+  else if(lines.at(0).startsWith("<?xml version") &&
+          (lines.at(1).startsWith("<simbase.document type=\"acexml\"") ||
+           lines.at(0).contains("<simbase.document type=\"acexml\"")))
     // FSX PLN <?xml version
-    loadFsx(plan, file);
+    return PLN_FSX;
   else if(lines.at(0).startsWith("[flightplan]") && FS9_MATCH.match(lines.at(1)).hasMatch())
     // FS9 ini format
-    loadFs9(plan, file);
+    return PLN_FS9;
   else if(lines.at(0).startsWith("[fscfp]"))
     // FSC ini format
-    loadFsc(plan, file);
+    return PLN_FSC;
   else if((lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("3 version") &&
           lines.at(2).at(0).isDigit() &&
@@ -144,7 +181,7 @@ void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
     // 3 version
     // 1
     // 4
-    loadFms(plan, file);
+    return FMS3;
   else if((lines.at(0) == "i" || lines.at(0) == "a") &&
           lines.at(1).startsWith("1100 version") &&
           lines.at(2).startsWith("cycle"))
@@ -152,11 +189,16 @@ void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
     // I
     // 1100 Version
     // CYCLE 1710
-    loadFms(plan, file);
+    return FMS11;
+  else if(lines.at(0).startsWith("<?xml version") &&
+          (lines.at(1).startsWith("<propertylist") || lines.at(0).contains("<propertylist"))
+          /* && lines.at(2).startsWith("<version type=\"int\">")*/)
+    // <?xml version="1.0" encoding="UTF-8"?>
+    // <PropertyList>
+    // <version type="int">1</version>
+    return FLIGHTGEAR;
   else
-    throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
-                       "Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.").arg(file));
-
+    return NONE;
 }
 
 void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -304,7 +346,10 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
 
     plan.fileFormat = FLP;
     adjustDepartureAndDestination(plan);
+    flpFile.close();
   }
+  else
+    throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
 }
 
 void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -522,7 +567,10 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
     assignAltitudeToAllEntries(plan);
 
     plan.fileFormat = v11Format ? FMS11 : FMS3;
+    fmsFile.close();
   }
+  else
+    throw Exception(tr("Cannot open FMS file %1. Reason: %2").arg(file).arg(fmsFile.errorString()));
 }
 
 void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -619,7 +667,11 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
     plan.fileFormat = PLN_FSC;
     adjustDepartureAndDestination(plan);
+
+    plnFile.close();
   }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(plnFile.errorString()));
 }
 
 void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -759,6 +811,8 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
     plnFile.close();
     plan.fileFormat = PLN_FS9;
   }
+  else
+    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(plnFile.errorString()));
 }
 
 void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -867,6 +921,178 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
+// <PropertyList>
+// <version type="int">2</version>
+// <departure>
+// <airport type="string">KOAK</airport>
+// <sid type="string">(none)</sid>
+// <runway type="string">29</runway>
+// </departure>
+// <destination>
+// <airport type="string">KSJC</airport>
+// <star type="string">(none)</star>
+// <transition type="string"></transition>
+// <runway type="string">11</runway>
+// </destination>
+// <route>
+// <wp>
+// <type type="string">runway</type>
+// <departure type="bool">true</departure>
+// <generated type="bool">true</generated>
+// <ident type="string">29</ident>
+// <icao type="string">KOAK</icao>
+// </wp>
+void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QString& file)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  filename = file;
+
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::ReadOnly))
+  {
+    plan.entries.clear();
+    QXmlStreamReader reader(&xmlFile);
+
+    QString departureIcao, departureRunway, sid, sidTransition,
+            destinationIcao, destinationRunway, star, starTransition;
+
+    while(!reader.atEnd())
+    {
+      if(!reader.readNextStartElement())
+        continue;
+
+      if(reader.error() != QXmlStreamReader::NoError)
+        throw Exception("Error reading \"" + filename + "\": " + reader.errorString());
+
+      QStringRef name = reader.name();
+      if(name == "PropertyList" || name == "version")
+        continue;
+      else if(name == "departure")
+      {
+        // Read sub elements for departure =====================================
+        while(reader.readNextStartElement())
+        {
+          QStringRef depname = reader.name();
+          if(depname == "airport")
+            departureIcao = reader.readElementText();
+          else if(depname == "runway")
+            departureRunway = reader.readElementText();
+          else if(depname == "sid")
+            sid = reader.readElementText();
+          else if(depname == "transition")
+            sidTransition = reader.readElementText();
+          else
+            reader.skipCurrentElement();
+        }
+      }
+      else if(name == "destination")
+      {
+        // Read sub elements for destination =====================================
+        while(reader.readNextStartElement())
+        {
+          QStringRef destname = reader.name();
+          if(destname == "airport")
+            destinationIcao = reader.readElementText();
+          else if(destname == "runway")
+            destinationRunway = reader.readElementText();
+          else if(destname == "star")
+            star = reader.readElementText();
+          else if(destname == "transition")
+            starTransition = reader.readElementText();
+          else
+            reader.skipCurrentElement();
+        }
+      }
+      else if(name == "route")
+      {
+        // Read wp elements for route =====================================
+        while(reader.readNextStartElement())
+        {
+          FlightplanEntry entry;
+
+          QStringRef destname = reader.name();
+          if(destname == "wp")
+          {
+            QString wptype, wpicao, wpident, wplon, wplat;
+
+            while(reader.readNextStartElement())
+            {
+              QStringRef wpname = reader.name();
+
+              if(wpname == "type")
+                wptype = reader.readElementText();
+              else if(wpname == "icao")
+                wpicao = reader.readElementText();
+              else if(wpname == "ident")
+                wpident = reader.readElementText();
+              else if(wpname == "lon")
+                wplon = reader.readElementText();
+              else if(wpname == "lat")
+                wplat = reader.readElementText();
+              else
+                reader.skipCurrentElement();
+            }
+
+            entry.setPosition(Pos(wplon.toFloat(), wplat.toFloat()));
+            if(wptype == "runway")
+            {
+              // Runway entry for airport =================================================
+              QString id = wpicao.isEmpty() ? wpident : wpicao;
+              entry.setIcaoIdent(id);
+              entry.setWaypointId(id);
+              plan.getEntries().append(entry);
+            }
+            else if(wptype == "navaid")
+            {
+              // Normal navaid =================================
+              entry.setIcaoIdent(wpident);
+              entry.setWaypointId(wpident);
+              plan.getEntries().append(entry);
+            }
+          }
+          else
+            reader.skipCurrentElement();
+        }
+      }
+      else
+        reader.skipCurrentElement();
+    }
+
+    if(!plan.entries.isEmpty())
+    {
+      // Correct start and destination entry types ================================================
+      plan.entries.first().setWaypointType(atools::fs::pln::entry::AIRPORT);
+      plan.entries.last().setWaypointType(atools::fs::pln::entry::AIRPORT);
+    }
+
+    plan.setDepartureIdent(departureIcao);
+    plan.setDestinationIdent(destinationIcao);
+
+    // Set departure procedure =========================================================
+    if(!departureRunway.isEmpty())
+      plan.getProperties().insert(SIDAPPRRW, departureRunway);
+    if(!sid.isEmpty())
+      plan.getProperties().insert(SIDAPPR, sid);
+    if(!sidTransition.isEmpty())
+      plan.getProperties().insert(SIDTRANS, sidTransition);
+
+    // Set arrival procedure =========================================================
+    if(!destinationRunway.isEmpty())
+      plan.getProperties().insert(STARRW, destinationRunway);
+    if(!star.isEmpty())
+      plan.getProperties().insert(STAR, star);
+    if(!starTransition.isEmpty())
+      plan.getProperties().insert(STARTRANS, starTransition);
+
+    xmlFile.close();
+    plan.fileFormat = FLIGHTGEAR;
+  }
+  else
+    throw Exception(tr("Cannot open FlightGear file \"%1\". Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
 void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan,
                         const QString& file, const QString& airacCycle, SaveOptions options)
 {
@@ -890,6 +1116,10 @@ void FlightplanIO::save(const atools::fs::pln::Flightplan& flightplan,
 
     case atools::fs::pln::FLP:
       saveFlp(flightplan, file);
+      break;
+
+    case atools::fs::pln::FLIGHTGEAR:
+      saveFlightGear(flightplan, file);
       break;
   }
 }
@@ -1022,6 +1252,174 @@ void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOpti
   }
   else
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+}
+
+/*
+ *  <?xml version="1.0"?>
+ *  <PropertyList>
+ *  <version type="int">2</version>
+ *  <departure>
+ *   <airport type="string">KOAK</airport>
+ *   <sid type="string">(none)</sid>
+ *   <runway type="string">29</runway>
+ *  </departure>
+ *  <destination>
+ *   <airport type="string">KSJC</airport>
+ *   <star type="string">(none)</star>
+ *   <transition type="string"></transition>
+ *   <runway type="string">11</runway>
+ *  </destination>
+ *  <route>
+ *   <wp>
+ *     <type type="string">runway</type>
+ *     <departure type="bool">true</departure>
+ *     <generated type="bool">true</generated>
+ *     <ident type="string">29</ident>
+ *     <icao type="string">KOAK</icao>
+ *   </wp>
+ *   <wp n="1">
+ *     <type type="string">offset-navaid</type>
+ *     <alt-restrict type="string">at</alt-restrict>
+ *     <altitude-ft type="double">7500</altitude-ft>
+ *     <ident type="string">SFO</ident>
+ *     <lon type="double">-122.3738889</lon>
+ *     <lat type="double">37.61947222</lat>
+ *     <radial-deg type="double">88.22972768</radial-deg>
+ *     <distance-nm type="double">16</distance-nm>
+ *   </wp>
+ *   <wp n="2">
+ *     <type type="string">navaid</type>
+ *     <alt-restrict type="string">at</alt-restrict>
+ *     <altitude-ft type="double">10000</altitude-ft>
+ *     <ident type="string">MISON</ident>
+ *     <lon type="double">-121.890306</lon>
+ *     <lat type="double">37.496806</lat>
+ *   </wp>
+ *   <wp n="3">
+ *     <type type="string">runway</type>
+ *     <arrival type="bool">true</arrival>
+ *     <generated type="bool">true</generated>
+ *     <ident type="string">11</ident>
+ *     <icao type="string">KSJC</icao>
+ *   </wp>
+ *  </route>
+ *  </PropertyList>
+ */
+void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
+{
+  filename = file;
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QXmlStreamWriter writer(&xmlFile);
+    writer.setCodec("UTF-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+
+    writer.writeStartDocument("1.0");
+    writer.writeStartElement("PropertyList");
+    writePropertyInt(writer, "version", 2);
+
+    writer.writeStartElement("departure");
+    writePropertyStr(writer, "airport", plan.getDepartureIdent());
+
+    // Writer departure procedure information ===============================================================
+    if(!plan.properties.value(SIDAPPRRW).isEmpty())
+      writePropertyStr(writer, "runway", plan.properties.value(SIDAPPRRW));
+    if(!plan.properties.value(SIDAPPR).isEmpty())
+      writePropertyStr(writer, "sid", plan.properties.value(SIDAPPR));
+    if(!plan.properties.value(SIDTRANS).isEmpty())
+      writePropertyStr(writer, "transition", plan.properties.value(SIDTRANS));
+
+    writer.writeEndElement(); // departure
+
+    // Writer arrival procedure information ===============================================================
+    writer.writeStartElement("destination");
+    writePropertyStr(writer, "airport", plan.getDestinationIdent());
+
+    if(!plan.properties.value(STARRW).isEmpty())
+      writePropertyStr(writer, "runway", plan.properties.value(STARRW));
+    if(!plan.properties.value(STAR).isEmpty())
+      writePropertyStr(writer, "star", plan.properties.value(STAR));
+    if(!plan.properties.value(STARTRANS).isEmpty())
+      writePropertyStr(writer, "transition", plan.properties.value(STARTRANS));
+
+    writer.writeEndElement(); // destination
+
+    // route ===================================================================================
+    writer.writeStartElement("route");
+
+    for(int i = 0; i < plan.entries.size(); i++)
+    {
+      const FlightplanEntry& entry = plan.entries.at(i);
+
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      writer.writeStartElement("wp");
+
+      if(i > 0)
+        writer.writeAttribute("n", QString::number(i));
+
+      bool hasProcedure = false;
+      if(i == 0)
+      {
+        // Departure airport ===========================================
+        // <departure type="bool">true</departure>
+        writePropertyBool(writer, "departure");
+        if(!plan.properties.value(SIDAPPRRW).isEmpty())
+        {
+          // <type type="string">runway</type>
+          // <ident type="string">07R</ident>
+          // <icao type="string">EDDF</icao>
+          writePropertyStr(writer, "type", "runway");
+          writePropertyStr(writer, "ident", plan.properties.value(SIDAPPRRW));
+          writePropertyStr(writer, "icao", entry.getIcaoIdent());
+          hasProcedure = true;
+        }
+      }
+      else if(i == plan.entries.size() - 1)
+      {
+        // Destination airport ===========================================
+        // <approach type="bool">true</approach>
+        writePropertyBool(writer, "approach");
+
+        if(!plan.properties.value(STARRW).isEmpty())
+        {
+          // <type type="string">runway</type>
+          // <ident type="string">07</ident>
+          // <icao type="string">LIRF</icao>
+          writePropertyStr(writer, "type", "runway");
+          writePropertyStr(writer, "ident", plan.properties.value(STARRW));
+          writePropertyStr(writer, "icao", entry.getIcaoIdent());
+          hasProcedure = true;
+        }
+      }
+
+      if(!hasProcedure)
+      {
+        writePropertyStr(writer, "type", "navaid");
+        writePropertyStr(writer, "ident", entry.getIcaoIdent());
+      }
+
+      // <lon type="double">8.541722452</lon>
+      // <lat type="double">50.03219323</lat>
+      writePropertyFloat(writer, "lon", entry.getPosition().getLonX());
+      writePropertyFloat(writer, "lat", entry.getPosition().getLatY());
+
+      writer.writeEndElement(); // wp
+    }
+
+    writer.writeEndElement(); // route
+    writer.writeEndElement(); // PropertyList
+    writer.writeEndDocument();
+
+    xmlFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open FlightGear XML file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
 }
 
 void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QString& file)
@@ -1995,43 +2393,6 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
   }
   else
     throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
-
-}
-
-const QStringList& FlightplanIO::getAcceptedFlightPlanExtensions()
-{
-  return ACCEPTED_EXTENSIONS;
-}
-
-QStringList FlightplanIO::probeFile4(const QString& file)
-{
-  QFile testFile(file);
-
-  QStringList lines;
-  if(testFile.open(QIODevice::ReadOnly))
-  {
-    QTextStream stream(&testFile);
-    stream.setCodec("UTF-8");
-    stream.setAutoDetectUnicode(true);
-    int numLines = 0;
-    while(!stream.atEnd() && numLines < 4)
-    {
-      QString line = stream.readLine().trimmed();
-      if(!line.isEmpty())
-      {
-        lines.append(line.toLower().simplified());
-        numLines++;
-      }
-    }
-
-    for(int i = lines.size(); i < 4; i++)
-      lines.append(QString());
-    testFile.close();
-  }
-  else
-    throw Exception("Error reading \"" + filename + "\": " + testFile.errorString());
-
-  return lines;
 }
 
 QString FlightplanIO::flightplanTypeToString(FlightplanType type)
@@ -2279,6 +2640,38 @@ void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, QXmlStreamRea
       reader.skipCurrentElement();
   }
   plan.entries.append(entry);
+}
+
+void FlightplanIO::writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value)
+{
+  writer.writeStartElement(name);
+  writer.writeAttribute("type", "double");
+  writer.writeCharacters(QString::number(value, 'f', 8));
+  writer.writeEndElement();
+}
+
+void FlightplanIO::writePropertyInt(QXmlStreamWriter& writer, const QString& name, int value)
+{
+  writer.writeStartElement(name);
+  writer.writeAttribute("type", "int");
+  writer.writeCharacters(QString::number(value));
+  writer.writeEndElement();
+}
+
+void FlightplanIO::writePropertyBool(QXmlStreamWriter& writer, const QString& name, bool value)
+{
+  writer.writeStartElement(name);
+  writer.writeAttribute("type", "bool");
+  writer.writeCharacters(value ? "true" : "false");
+  writer.writeEndElement();
+}
+
+void FlightplanIO::writePropertyStr(QXmlStreamWriter& writer, const QString& name, const QString& value)
+{
+  writer.writeStartElement(name);
+  writer.writeAttribute("type", "string");
+  writer.writeCharacters(value);
+  writer.writeEndElement();
 }
 
 } // namespace pln

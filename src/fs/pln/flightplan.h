@@ -253,24 +253,10 @@ public:
     return fileFormat;
   }
 
-  atools::fs::pln::FileFormat getFileFormatBySuffix(const QString& file) const;
-
-  void setFileFormatBySuffix(const QString& file);
-
   void setFileFormat(const atools::fs::pln::FileFormat& value)
   {
     fileFormat = value;
   }
-
-  /* Feature support depending on current format type */
-  bool canSaveAltitude() const;
-  bool canSaveFlightplanType() const;
-  bool canSaveRouteType() const;
-  bool canSaveSpeed() const;
-  bool canSaveAirways() const;
-  bool canSaveProcedures() const;
-  bool canSaveDepartureParking() const;
-  bool canSaveUserWaypointName() const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
