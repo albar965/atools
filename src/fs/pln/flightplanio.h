@@ -88,8 +88,7 @@ public:
   /* X-Plane FMS format.
    * @param version11Format Version 11 otherwise 3 */
   void saveFms(const atools::fs::pln::Flightplan& plan, const QString& file,
-               const QString& airacCycle,
-               bool version11Format);
+               const QString& airacCycle, bool version11Format);
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file, const atools::geo::LineString& track,

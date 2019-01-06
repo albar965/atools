@@ -121,7 +121,8 @@ void FlightplanIO::load(atools::fs::pln::Flightplan& plan, const QString& file)
   {
     case atools::fs::pln::NONE:
       throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
-                         "Only PLN (FSX XML, FS9 INI and FSC), FMS, FLP and FlightGear FGFP are supported.").arg(file));
+                         "Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.").
+                      arg(file));
 
     case atools::fs::pln::PLN_FSX:
       loadFsx(plan, file);
@@ -191,7 +192,10 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // CYCLE 1710
     return FMS11;
   else if(lines.at(0).startsWith("<?xml version") &&
-          (lines.at(1).startsWith("<propertylist") || lines.at(0).contains("<propertylist"))
+          (lines.at(1).startsWith("<propertylist") || lines.at(0).contains("<propertylist")) &&
+          (lines.at(2).startsWith("<version") || lines.at(0).contains("<version") ||
+           lines.at(2).startsWith("<departure") || lines.at(0).contains("<departure") ||
+           lines.at(2).startsWith("<source") || lines.at(0).contains("<source"))
           /* && lines.at(2).startsWith("<version type=\"int\">")*/)
     // <?xml version="1.0" encoding="UTF-8"?>
     // <PropertyList>
@@ -957,6 +961,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
     QString departureIcao, departureRunway, sid, sidTransition,
             destinationIcao, destinationRunway, star, starTransition;
+    float maxAlt = std::numeric_limits<float>::min();
 
     while(!reader.atEnd())
     {
@@ -1015,7 +1020,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
           QStringRef destname = reader.name();
           if(destname == "wp")
           {
-            QString wptype, wpicao, wpident, wplon, wplat;
+            QString wptype, wpicao, wpident, wplon, wplat, wpalt;
 
             while(reader.readNextStartElement())
             {
@@ -1031,11 +1036,21 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
                 wplon = reader.readElementText();
               else if(wpname == "lat")
                 wplat = reader.readElementText();
+              else if(wpname == "altitude-ft")
+                wpalt = reader.readElementText();
               else
                 reader.skipCurrentElement();
             }
 
-            entry.setPosition(Pos(wplon.toFloat(), wplat.toFloat()));
+            float altitude = wpalt.toFloat();
+            if(altitude > std::numeric_limits<int>::max() / 2)
+              // Avoid excessive altitudes
+              altitude = 0.f;
+
+            maxAlt = std::max(maxAlt, altitude);
+
+            entry.setPosition(Pos(wplon.toFloat(), wplat.toFloat(), altitude));
+
             if(wptype == "runway")
             {
               // Runway entry for airport =================================================
@@ -1087,6 +1102,11 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
       plan.getProperties().insert(STARTRANS, starTransition);
 
     xmlFile.close();
+
+    plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
+    adjustDepartureAndDestination(plan);
+    assignAltitudeToAllEntries(plan);
+
     plan.fileFormat = FLIGHTGEAR;
   }
   else
@@ -1321,6 +1341,9 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
     writer.writeStartElement("PropertyList");
     writePropertyInt(writer, "version", 2);
 
+    // <source type="string">https://flightplandatabase.com/plan/1551256</source>
+    writePropertyStr(writer, "source", atools::programFileInfo());
+
     writer.writeStartElement("departure");
     writePropertyStr(writer, "airport", plan.getDepartureIdent());
 
@@ -1399,10 +1422,23 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
       }
 
       if(!hasProcedure)
-      {
         writePropertyStr(writer, "type", "navaid");
-        writePropertyStr(writer, "ident", entry.getIcaoIdent());
+
+      if(i > 0 && i < plan.entries.size() - 1)
+      {
+        // Write altitude except for first and last =====================
+        // <alt-restrict type="string">at</alt-restrict>
+        writePropertyStr(writer, "alt-restrict", "at");
+
+        // <altitude-ft type="double">19100</altitude-ft>
+        writer.writeStartElement("altitude-ft");
+        writer.writeAttribute("type", "double");
+        writer.writeCharacters(QString::number(atools::roundToInt(entry.getPosition().getAltitude())));
+        writer.writeEndElement();
       }
+
+      if(!hasProcedure)
+        writePropertyStr(writer, "ident", entry.getIcaoIdent());
 
       // <lon type="double">8.541722452</lon>
       // <lat type="double">50.03219323</lat>
