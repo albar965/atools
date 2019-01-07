@@ -160,7 +160,7 @@ QString FsPaths::getBasePath(SimulatorType type)
     // Avoid using value on the whole tree since it creates empty entries
     for(int i = 0; i < keys.size() - 1; i++)
     {
-      if(settings.childGroups().contains(keys.at(i)))
+      if(settings.childGroups().contains(keys.at(i), Qt::CaseInsensitive))
         settings.beginGroup(keys.at(i));
       else
       {
