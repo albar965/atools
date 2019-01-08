@@ -442,8 +442,18 @@ void Airport::updateSummaryFields()
       numRunwayEndClosed++;
   }
 
-  // If all runways are closed the airport is closed
+  // If all runways are closed the airport is closed ...
   airportClosed = !runways.isEmpty() && numRunwayEndClosed / 2 == runways.size();
+
+  // ... except if there are open helipads
+  for(const Helipad& pad : helipads)
+  {
+    if(!pad.isClosed())
+    {
+      airportClosed = false;
+      break;
+    }
+  }
 
   for(const Com& c : coms)
   {
