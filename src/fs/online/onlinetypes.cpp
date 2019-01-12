@@ -329,7 +329,7 @@ QString simulatorText(sim::Simulator simulator)
   switch(simulator)
   {
     case atools::fs::online::sim::UNKNOWN:
-      return QObject::tr("Unknown");
+      return QString();
 
     case atools::fs::online::sim::MICROSOFT_FLIGHT_SIMULATOR_95:
       return QObject::tr("FS95");
