@@ -108,9 +108,20 @@ void FsPaths::logAllPaths()
     QString filesPath = getFilesPath(type);
     QString sceneryFilepath = getSceneryLibraryPath(type);
 
-    qInfo() << "  Base" << basePath << "exists" << QFileInfo::exists(basePath);
-    qInfo() << "  Files" << filesPath << "exists" << QFileInfo::exists(filesPath);
-    qInfo() << "  Scenery.cfg" << sceneryFilepath << "exists" << QFileInfo::exists(sceneryFilepath);
+    if(basePath.isEmpty())
+      qInfo() << "  Base is empty";
+    else
+      qInfo() << "  Base" << basePath << "exists" << QFileInfo::exists(basePath);
+
+    if(filesPath.isEmpty())
+      qInfo() << "  Files path is empty";
+    else
+      qInfo() << "  Files" << filesPath << "exists" << QFileInfo::exists(filesPath);
+
+    if(sceneryFilepath.isEmpty())
+      qInfo() << "  Scenery.cfg path is empty";
+    else
+      qInfo() << "  Scenery.cfg" << sceneryFilepath << "exists" << QFileInfo::exists(sceneryFilepath);
   }
 }
 
@@ -202,12 +213,17 @@ QString FsPaths::getBasePath(SimulatorType type)
     }
 #endif
 
-    QFileInfo basePathInfo(fsPath);
-    if(!basePathInfo.exists() || !basePathInfo.isDir())
+    if(!fsPath.isEmpty())
     {
-      qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
-      fsPath.clear();
+      QFileInfo basePathInfo(fsPath);
+      if(!basePathInfo.exists() || !basePathInfo.isDir())
+      {
+        qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
+        fsPath.clear();
+      }
     }
+    else
+      qWarning() << Q_FUNC_INFO << "Path is empty";
 
     // qDebug() << "Found a flight simulator base path for type" << type << "at" << fsPath;
   }
