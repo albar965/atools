@@ -117,7 +117,8 @@ public:
   QString saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix,
                          const QString& settingsPrefix = QString(),
                          const QString& path = QString(),
-                         const QString& filename = QString(), bool dontComfirmOverwrite = false);
+                         const QString& filename = QString(), bool dontComfirmOverwrite = false,
+                         bool autoNumberFilename = false);
 
   /*
    * Shows a simple information message box that includes a checkbox which can
@@ -163,7 +164,7 @@ public:
 private:
   QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                          const QString& settingsPrefix, const QString& defaultFileSuffix,
-                         const QString& path, const QString& filename);
+                         const QString& path, const QString& filename, bool autoNumberFilename);
 
   QWidget *parent = nullptr;
 };
