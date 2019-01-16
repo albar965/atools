@@ -94,7 +94,7 @@ Datei: &quot;%2&quot;
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</oldsource>
-        <translation>Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML, FS9 INI und FSC), FMS und FLP werden unterstützt.</translation>
+        <translation type="vanished">Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML, FS9 INI und FSC), FMS und FLP werden unterstützt.</translation>
     </message>
     <message>
         <source>Invalid FMS file. Cannot read version number: %1</source>
@@ -151,6 +151,22 @@ Datei: &quot;%2&quot;
     <message>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
         <translation>FLTPLAN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <translation>Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML, FS9 INI und FSC), FMS, FLP und FlightGear FGFP werden unterstützt.</translation>
+    </message>
+    <message>
+        <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
+        <translation>FlightGear-Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open FlightGear XML file %1. Reason: %2</source>
+        <translation>FlightGear-Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open FPL file %1. Reason: %2</source>
+        <translation>FPL-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
 </context>
 <context>

@@ -107,6 +107,12 @@ public:
   void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
                      atools::fs::pln::SaveOptions options);
 
+  /* Feelthere/Wilco Embraer */
+  void saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, const QString& file, int groundSpeed);
+
+  /* Flight plan format for B767 Level-D */
+  void saveLeveldRte(const atools::fs::pln::Flightplan& plan, const QString& file);
+
 private:
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
