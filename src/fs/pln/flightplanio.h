@@ -117,6 +117,9 @@ public:
   void saveEfbr(const atools::fs::pln::Flightplan& plan, const QString& file, const QString& route,
                 const QString& cycle, const QString& departureRw, const QString& destinationRw);
 
+  /* Quality Wings RTE format */
+  void saveQwRte(const Flightplan& plan, const QString& file);
+
 private:
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);

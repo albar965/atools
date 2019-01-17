@@ -1812,6 +1812,92 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& file, const Q
     throw Exception(errorMsg.arg(file).arg(efbFile.errorString()));
 }
 
+// [FlightPlan]
+// EDDH             53.630389  9.988228  APT ---
+// IDEKO            52.993947  9.450494  WPT ---
+// TIMEN            52.632222  9.358889  WPT ---    Y900
+// ROBEG            52.233617  9.269619  WPT ---    UL126
+// PIROT            52.053431  9.236903  WPT ---    UL126
+// LARBU            51.885556  9.193056  WPT ---    UL126
+// WRB              51.505697  9.110914  WPT 113.70    UL126
+// RANAX            51.207222  9.046111  WPT ---    UN850
+// EDEGA            51.034722  9.007778  WPT ---    UN850
+// AMETU            50.833056  8.964444  WPT ---    UN850
+// SOGMI            50.527500  8.899167  WPT ---    UN850
+// BOMBI            50.056667  8.800278  WPT ---    UN850
+// OMOGI            49.655833  8.989167  WPT ---    T721
+// SUNEG            49.198611  8.864167  WPT ---    T721
+// TEDGO            48.618408  9.259208  WPT ---    UL607
+// UTABA            48.255000  9.461667  WPT ---    UL607
+// BATUB            48.019167  9.563889  WPT ---    UM738
+// OSDOV            47.440000  10.183333  WPT ---    UM738
+// MADEB            47.324375  10.288886  WPT ---    UM738
+// TIRUL            47.057175  10.528708  WPT ---    UM738
+// NATAG            46.857992  10.618750  WPT ---    UM738
+// LORLO            46.724167  10.678889  WPT ---
+// ADOSA            45.644444  11.026389  WPT ---
+// GAVRA            43.776111  11.824722  WPT ---
+// RITEB            42.698611  12.163611  WPT ---
+// LIRF             41.800278  12.238889  APT ---
+void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& file)
+{
+  filename = file;
+  QFile rteFile(filename);
+
+  if(rteFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&rteFile);
+    stream.setCodec("UTF-8");
+    stream.setRealNumberPrecision(8);
+
+    stream << "[FlightPlan]" << endl;
+
+    for(int i = 0; i < plan.entries.size(); i++)
+    {
+      const FlightplanEntry& entry = plan.entries.at(i);
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      QString ident = QString("%1").arg(entry.getIcaoIdent(), -17);
+
+      QString frequency("---"), type;
+      entry::WaypointType waypointType = entry.getWaypointType();
+      switch(waypointType)
+      {
+        case atools::fs::pln::entry::AIRPORT:
+          type = "APT";
+          break;
+        case atools::fs::pln::entry::UNKNOWN:
+        case atools::fs::pln::entry::INTERSECTION:
+        case atools::fs::pln::entry::USER:
+          type = "WPT";
+          break;
+        case atools::fs::pln::entry::VOR:
+          type = "WPT";
+          if(entry.getFrequency() > 0)
+            frequency = QString("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
+          break;
+        case atools::fs::pln::entry::NDB:
+          type = "WPT";
+          if(entry.getFrequency() > 0)
+            frequency = QString("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
+          break;
+      }
+
+      // MADEB            47.324375  10.288886  WPT ---    UM738
+      stream << ident
+             << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "  "
+             << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0')) << "  "
+             << type << " " << frequency << "    " << entry.getAirway() << endl;
+    }
+
+    rteFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(file).arg(rteFile.errorString()));
+}
+
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file,
                            const geo::LineString& track,
                            const QVector<quint32>& timestamps, int cruiseAltFt)
