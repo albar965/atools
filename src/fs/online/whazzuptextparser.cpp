@@ -383,7 +383,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
           static_cast<int>(depTime.msecsSinceStartOfDay() + enrouteMin * 60. * 1000.));
 
       if(eta.isValid())
-        insertQuery->bindValue(":flightplan_estimated_arrival_time", eta.toString("hhmm"));
+        insertQuery->bindValue(":flightplan_estimated_arrival_time", eta.toString("HHmm"));
     }
 
     insertQuery->bindValue(":flightplan_alternate_aerodrome", at(line, index++, error));
