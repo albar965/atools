@@ -118,11 +118,11 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation>PLN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">PLN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation>FLP-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">FLP-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source> Flight Plan</source>
@@ -134,7 +134,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation>FMS-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">FMS-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
@@ -142,7 +142,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation>RTE-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">RTE-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
@@ -150,7 +150,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
-        <translation>FLTPLAN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">FLTPLAN-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
@@ -162,11 +162,15 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open FlightGear XML file %1. Reason: %2</source>
-        <translation>FlightGear-Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">FlightGear-Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open FPL file %1. Reason: %2</source>
-        <translation>FPL-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+        <translation type="vanished">FPL-Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
 </context>
 <context>

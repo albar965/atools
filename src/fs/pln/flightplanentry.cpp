@@ -47,6 +47,7 @@ FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
   magvar = other.magvar;
   position = other.position;
   noSave = other.noSave;
+  frequency = other.frequency;
   return *this;
 }
 

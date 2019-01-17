@@ -193,6 +193,17 @@ public:
     magvar = value;
   }
 
+  /* NDB or VOR frequency, kHz * 100 or MHz * 1000 - not saved */
+  int getFrequency() const
+  {
+    return frequency;
+  }
+
+  void setFrequency(int value)
+  {
+    frequency = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
@@ -204,6 +215,7 @@ private:
   atools::geo::Pos position;
   float magvar = 0.f;
   bool noSave = false;
+  int frequency = 0;
 };
 
 } // namespace pln

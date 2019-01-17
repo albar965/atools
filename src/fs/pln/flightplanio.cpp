@@ -105,7 +105,7 @@ struct FprPlan
 
 FlightplanIO::FlightplanIO()
 {
-
+  errorMsg = tr("Cannot open file %1. Reason: %2");
 }
 
 FlightplanIO::~FlightplanIO()
@@ -353,7 +353,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
     flpFile.close();
   }
   else
-    throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(flpFile.errorString()));
 }
 
 void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -574,7 +574,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
     fmsFile.close();
   }
   else
-    throw Exception(tr("Cannot open FMS file %1. Reason: %2").arg(file).arg(fmsFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(fmsFile.errorString()));
 }
 
 void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -675,7 +675,7 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
     plnFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(plnFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(plnFile.errorString()));
 }
 
 void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -816,7 +816,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.fileFormat = PLN_FS9;
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(plnFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(plnFile.errorString()));
 }
 
 void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& file)
@@ -1271,7 +1271,7 @@ void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOpti
     xmlFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(xmlFile.errorString()));
 }
 
 /*
@@ -1455,7 +1455,7 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
     xmlFile.close();
   }
   else
-    throw Exception(tr("Cannot open FlightGear XML file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(xmlFile.errorString()));
 }
 
 void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QString& file)
@@ -1561,7 +1561,7 @@ void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QStrin
     flpFile.close();
   }
   else
-    throw Exception(tr("Cannot open FLP file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(flpFile.errorString()));
 }
 
 // Feelthere PLN=EHRDLEPA01.nz2k.fpl
@@ -1654,7 +1654,7 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
     flpFile.close();
   }
   else
-    throw Exception(tr("Cannot open FPL file %1. Reason: %2").arg(file).arg(flpFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(flpFile.errorString()));
 }
 
 // LeveL-D PLN=EDDMCYVR01.rte
@@ -1688,7 +1688,6 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
 
     stream << "H," << plan.departureIdent << "," << plan.destinationIdent << ", ," << endl;
 
-    QString lastAirwayTo;
     for(int i = 0; i < plan.entries.size(); i++)
     {
       const FlightplanEntry& entry = plan.entries.at(i);
@@ -1707,7 +1706,110 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
     rteFile.close();
   }
   else
-    throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(rteFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(rteFile.errorString()));
+}
+
+// [AivlaSoft EFB Route - www.aivlasoft.com]
+////Saved 2019-01-16 16:34:45z
+////AIRAC cycle 1703
+// Format=1
+// ATS=IDEKO ABMAL Z990 HLZ M852 POVEL Z94 GALMA M736 LIZUM N503 VIC L12 LUMAV M726 GAVRA Z806 GIKIN L865 TAQ
+// Generator=SimBrief
+// Origin=EDDH
+// Destination=LIRF
+// CruiseAltitude=29000
+// DepartureProcedureInfo=23|IDEK5B|IDEKO|
+// ArrivalProcedureInfo=16R|TAQ1C|TAQ
+// ApproachProcedureInfo=||
+// Wpt=Enroute|0|IDEKO||Fix|0|ED|52.993947|9.450494|0|DCT
+// Wpt=Enroute|1|ABMAL||Fix|0|ED|53.442069|10.911981|0|DCT
+// Wpt=Enroute|2|IRKIS||Fix|0|ED|53.248889|10.888611|0|Z990
+// Wpt=Enroute|3|DIRBO||Fix|0|ED|52.832119|10.844158|0|Z990
+// Wpt=Enroute|4|HLZ|HEHLINGEN|VORDME|117.30|ED|52.363394|10.795219|0|Z990
+// Wpt=Enroute|5|POVEL||Fix|0|ED|52.128378|10.827778|0|M852
+// Wpt=Enroute|6|ABGUS||Fix|0|ED|51.867058|11.053431|0|Z94
+// Wpt=Enroute|7|KENIG||Fix|0|ED|51.619572|11.264394|0|Z94
+// Wpt=Enroute|8|GALMA||Fix|0|ED|51.398056|11.451111|0|Z94
+// ...
+// Wpt=Enroute|35|VERUN||Fix|0|LI|43.281389|11.921389|0|Z806
+// Wpt=Enroute|36|OKBIS||Fix|0|LI|43.002222|11.975556|0|Z806
+// Wpt=Enroute|37|UPONO||Fix|0|LI|42.849167|12.004722|0|Z806
+// Wpt=Enroute|38|GIKIN||Fix|0|LI|42.618333|12.048611|0|Z806
+// Wpt=Enroute|39|TAQ|TARQUINIA|VORDME|111.80|LI|42.215056|11.732611|0|L865
+// [END]
+// DepartureProcedureInfo=23|||
+// ArrivalProcedureInfo=26R||
+// ApproachProcedureInfo=||
+void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& file, const QString& route, const QString& cycle,
+                            const QString& departureRw, const QString& destinationRw)
+{
+  filename = file;
+  QFile efbFile(filename);
+
+  if(efbFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&efbFile);
+    stream.setCodec("UTF-8");
+    stream.setRealNumberPrecision(8);
+
+    stream << "[AivlaSoft EFB Route - www.aivlasoft.com]" << endl;
+    stream << "//Saved " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd HH:mm:ss'z'") << endl;
+    stream << "//AIRAC cycle " << cycle << endl;
+    stream << "Format=1" << endl;
+    stream << "ATS=" << route << endl;
+    stream << "Generator=" << QApplication::applicationName() << endl;
+    stream << "Origin=" << plan.departureIdent << endl;
+    stream << "Destination=" << plan.destinationIdent << endl;
+    stream << "CruiseAltitude=" << plan.getCruisingAltitude() << endl;
+    stream << "DepartureProcedureInfo=" << departureRw << "|||" << endl;
+    stream << "ArrivalProcedureInfo=" << destinationRw << "||" << endl;
+    stream << "ApproachProcedureInfo=||" << endl;
+
+    for(int i = 0; i < plan.entries.size(); i++)
+    {
+      const FlightplanEntry& entry = plan.entries.at(i);
+      if(entry.isNoSave() || i == 0 || i == plan.entries.size() - 1)
+        // Do not save procedure points, neither start nor destination
+        continue;
+
+      // Wpt=Enroute|38|GIKIN||Fix|0|LI|42.618333|12.048611|0|Z806
+      // Wpt=Enroute|39|TAQ|TARQUINIA|VORDME|111.80|LI|42.215056|11.732611|0|L865
+      stream << "Wpt=Enroute|" << (i - 1) << "|" << entry.getIcaoIdent() << "|" << entry.getName().toUpper() << "|";
+      entry::WaypointType waypointType = entry.getWaypointType();
+      QString frequency("0");
+
+      switch(waypointType)
+      {
+        case atools::fs::pln::entry::UNKNOWN:
+        case atools::fs::pln::entry::AIRPORT:
+        case atools::fs::pln::entry::INTERSECTION:
+        case atools::fs::pln::entry::USER:
+          stream << "Fix";
+          break;
+        case atools::fs::pln::entry::VOR:
+          stream << "VORDME";
+          if(entry.getFrequency() > 0)
+            frequency = QString("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
+          break;
+        case atools::fs::pln::entry::NDB:
+          stream << "NDB";
+          if(entry.getFrequency() > 0)
+            frequency = QString("%1").arg(entry.getFrequency() / 100., 0, 'f', 1, QChar('0'));
+          break;
+      }
+
+      stream << "|" << frequency << "|" << entry.getIcaoRegion() << "|"
+             << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "|"
+             << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6,
+                           QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << endl;
+    }
+
+    stream << "[END]";
+
+    efbFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(file).arg(efbFile.errorString()));
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file,
@@ -1840,7 +1942,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
     gpxFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(gpxFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(gpxFile.errorString()));
 }
 
 // I
@@ -2003,7 +2105,7 @@ void FlightplanIO::saveFms(const atools::fs::pln::Flightplan& plan,
     fmsFile.close();
   }
   else
-    throw Exception(tr("Cannot open FMS file %1. Reason: %2").arg(file).arg(fmsFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(fmsFile.errorString()));
 }
 
 void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QString& file)
@@ -2098,7 +2200,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
     rteFile.close();
   }
   else
-    throw Exception(tr("Cannot open RTE file %1. Reason: %2").arg(file).arg(rteFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(rteFile.errorString()));
 }
 
 void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QString& file)
@@ -2305,7 +2407,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& file)
     fltplanFile.close();
   }
   else
-    throw Exception(tr("Cannot open FLTPLAN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(fltplanFile.errorString()));
 }
 
 QString FlightplanIO::coordStringFs9(const atools::geo::Pos& pos)
@@ -2381,7 +2483,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& file)
     fltplanFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(fltplanFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(fltplanFile.errorString()));
 }
 
 void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const QString& file,
@@ -2574,7 +2676,7 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
     xmlFile.close();
   }
   else
-    throw Exception(tr("Cannot open PLN file %1. Reason: %2").arg(file).arg(xmlFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(xmlFile.errorString()));
 }
 
 QString FlightplanIO::flightplanTypeToString(FlightplanType type)

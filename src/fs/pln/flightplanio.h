@@ -113,6 +113,10 @@ public:
   /* Flight plan format for B767 Level-D */
   void saveLeveldRte(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* Electronic flight bag */
+  void saveEfbr(const atools::fs::pln::Flightplan& plan, const QString& file, const QString& route,
+                const QString& cycle, const QString& departureRw, const QString& destinationRw);
+
 private:
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
@@ -157,7 +161,7 @@ private:
 
   QString coordStringFs9(const atools::geo::Pos& pos);
 
-  QString filename;
+  QString filename, errorMsg;
 };
 
 } // namespace pln
