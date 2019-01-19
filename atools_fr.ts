@@ -278,12 +278,12 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="247"/>
         <source>No significant weather</source>
-        <translation>Pas de temps important</translation>
+        <translation type="unfinished">Pas de météo significative</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="137"/>
         <source>Showers of</source>
-        <translation>Douches de</translation>
+        <translation type="unfinished">Des averses</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="140"/>
@@ -293,7 +293,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="143"/>
         <source>Patches of</source>
-        <translation>Des patchs de</translation>
+        <translation type="unfinished">Des correctifs de</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="146"/>
@@ -303,7 +303,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="149"/>
         <source>Low drifting</source>
-        <translation>Faible dérive</translation>
+        <translation type="unfinished">Dérive faible</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="152"/>
@@ -373,7 +373,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="198"/>
         <source>Widespread dust</source>
-        <translation>Poussière généralisée</translation>
+        <translation type="unfinished">Poussière très répandue</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="201"/>
@@ -418,7 +418,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="225"/>
         <source>Funnel cloud/tornado waterspout</source>
-        <translation>Nuage d&apos;entonnoir/trombe de tornade</translation>
+        <translation type="unfinished">Nuage en entonnoir/trombe de tornade</translation>
     </message>
     <message>
         <location filename="src/fs/weather/metarparser.cpp" line="228"/>
