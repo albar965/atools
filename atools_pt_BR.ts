@@ -98,86 +98,92 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1184"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2009"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1229"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2054"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1130"/>
         <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation>Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo FLP %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1728"/>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
-        <translation>Não foi possível abrir o arquivo FLTPLAN %1. Razão: %2</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo FLTPLAN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1426"/>
         <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation>Não foi possível abrir o arquivo FMS %1. Razão: %2</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo FMS %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1024"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1263"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1804"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1997"/>
         <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation>Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo PLN %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1521"/>
         <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation>Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
+        <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="124"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="160"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="867"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="925"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="157"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML and FS9 INI), FMS and FLP are supported.</oldsource>
-        <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
+        <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1602"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2427"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="363"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="412"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="378"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="108"/>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished">Não é possível abrir o arquivo %1. Razão: %2</translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="427"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="504"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="553"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="751"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="807"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1455"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1113"/>
+        <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2280"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -198,27 +204,27 @@ Ocorreu um erro no Sql
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1764"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1777"/>
         <source>Broken</source>
         <translation>Quebrada</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1755"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1768"/>
         <source>Clear</source>
         <translation>Limpo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1758"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1771"/>
         <source>Few</source>
         <translation>Poucas</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1767"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1780"/>
         <source>Overcast</source>
         <translation>Nublado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1761"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1774"/>
         <source>Scattered</source>
         <translation>Dispersos</translation>
     </message>
@@ -251,7 +257,7 @@ Ocorreu um erro no Sql
         <translation>Âmbar</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="594"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="607"/>
         <source>Auto</source>
         <translation>Automático</translation>
     </message>
@@ -266,7 +272,7 @@ Ocorreu um erro no Sql
         <translation>Azul</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="597"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="610"/>
         <source>Corrected</source>
         <translation>Corrigido</translation>
     </message>
@@ -316,12 +322,12 @@ Ocorreu um erro no Sql
         <translation>Neblina</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="637"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="650"/>
         <source>Heavy</source>
         <translation>Pesado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1122"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1135"/>
         <source>Heavy </source>
         <translation>Pesado </translation>
     </message>
@@ -336,12 +342,12 @@ Ocorreu um erro no Sql
         <translation>Bolas de gelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="631"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="644"/>
         <source>Light</source>
         <translation>Luzes</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1120"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1133"/>
         <source>Light </source>
         <translation>Luzes </translation>
     </message>
@@ -356,12 +362,12 @@ Ocorreu um erro no Sql
         <translation>Névoa</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="634"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="647"/>
         <source>Moderate</source>
         <translation>Moderado</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1126"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1139"/>
         <source>Moderate </source>
         <translation>Moderado </translation>
     </message>
@@ -391,7 +397,7 @@ Ocorreu um erro no Sql
         <translation>Vermelho</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="600"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="613"/>
         <source>Routine delayed observation</source>
         <translation>Observação de atraso de rotina</translation>
     </message>
@@ -531,7 +537,7 @@ Ocorreu um erro no Sql
         <translation>limpo e seco</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1481"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1494"/>
         <source>cleared</source>
         <translation>limpo</translation>
     </message>
@@ -596,7 +602,7 @@ Ocorreu um erro no Sql
         <translation>gelo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1124"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1137"/>
         <source>in the vicinity </source>
         <translation>na proximidade </translation>
     </message>
@@ -636,47 +642,47 @@ Ocorreu um erro no Sql
         <translation>fraca travagem</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1375"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1388"/>
         <source>Low Instrument Flight Rules</source>
         <translation>Regras de voo por instrumentos em baixa altitude</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1378"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1391"/>
         <source>Instrument Flight Rules</source>
         <translation>Regras de Voo por Instrumentos</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1381"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1394"/>
         <source>Marginal Visual Flight Rules</source>
         <translation>Regras de voo visual marginais</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1384"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
         <source>Visual Flight Rules</source>
         <translation>Regras de voo visual</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1397"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1410"/>
         <source>LIFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1400"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1413"/>
         <source>IFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1403"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1416"/>
         <source>MVFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1406"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1419"/>
         <source>VFR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1517"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1530"/>
         <source>runway not in use</source>
         <translation>Pista não está em uso</translation>
     </message>
@@ -729,17 +735,17 @@ Ocorreu um erro no Sql
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1824"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1837"/>
         <source>Greater than</source>
         <translation>Maior que</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1821"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1834"/>
         <source>Less than</source>
         <translation>Menor que</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1815"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1828"/>
         <source>Vertical visibility</source>
         <translation>Visibilidade vertical</translation>
     </message>
@@ -1102,7 +1108,7 @@ Ocorreu um erro no Sql
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="353"/>
+        <location filename="src/atools.cpp" line="387"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
@@ -1135,12 +1141,12 @@ Ocorreu um erro no Sql
         <translation>Piloto comercial (CP)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="328"/>
+        <location filename="src/atools.cpp" line="362"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Criado por %1 Versão %2 (revisão %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="318"/>
+        <location filename="src/atools.cpp" line="352"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Criado por %1 Versão %2 (revisão %3) em %4</translation>
     </message>
@@ -1365,7 +1371,6 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
-        <location filename="src/fs/online/onlinetypes.cpp" line="332"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>

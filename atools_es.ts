@@ -89,7 +89,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), FMS and FLP are supported.</source>
-        <translation>No puedo abrir Plan de Vuelo &quot;%1&quot;. Formato de Plan de Vuelo no soportado. Solo PLN (FSX XML, FS9 INI y FSC), FMS y FLP son soportados.</translation>
+        <translation type="vanished">No puedo abrir Plan de Vuelo &quot;%1&quot;. Formato de Plan de Vuelo no soportado. Solo PLN (FSX XML, FS9 INI y FSC), FMS y FLP son soportados.</translation>
     </message>
     <message>
         <source>Invalid FMS file. Cannot read version number: %1</source>
@@ -113,11 +113,11 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open PLN file %1. Reason: %2</source>
-        <translation>No puedo abrir archivo PLN %1. Motivo: %2</translation>
+        <translation type="vanished">No puedo abrir archivo PLN %1. Motivo: %2</translation>
     </message>
     <message>
         <source>Cannot open FLP file %1. Reason: %2</source>
-        <translation>No puedo abrir archivo FLP %1. Motivo: %2</translation>
+        <translation type="vanished">No puedo abrir archivo FLP %1. Motivo: %2</translation>
     </message>
     <message>
         <source> Flight Plan</source>
@@ -129,7 +129,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open FMS file %1. Reason: %2</source>
-        <translation>No puedo abrir archivo FMS %1. Motivo: %2</translation>
+        <translation type="vanished">No puedo abrir archivo FMS %1. Motivo: %2</translation>
     </message>
     <message>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
@@ -137,7 +137,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open RTE file %1. Reason: %2</source>
-        <translation>No puedo abrir archivo RTE %1. Motivo: %2</translation>
+        <translation type="vanished">No puedo abrir archivo RTE %1. Motivo: %2</translation>
     </message>
     <message>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
@@ -145,7 +145,19 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open FLTPLAN file %1. Reason: %2</source>
-        <translation>No puedo abrir archivo FLTPLAN %1. Razón: %2</translation>
+        <translation type="vanished">No puedo abrir archivo FLTPLAN %1. Razón: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
