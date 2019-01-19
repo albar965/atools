@@ -7,7 +7,7 @@ Modules (by directory in "src"):
 
 * fs
 Microsoft Flight Simulator related functionality. Contains a class that automatically finds
-flight simulator installtions and related paths.
+flight simulator installations and related paths.
 
 ** fs/ap
 Simple runways.xml reading tool. Needs MakeRunways by Peter Dowson.
