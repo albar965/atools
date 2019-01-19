@@ -120,6 +120,9 @@ public:
   /* Quality Wings RTE format */
   void saveQwRte(const Flightplan& plan, const QString& file);
 
+  /* Leonardo Maddoc MDX */
+  void saveMdx(const Flightplan& plan, const QString& file);
+
 private:
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
@@ -131,6 +134,8 @@ private:
 
   /* Write string into memory location, truncate if needed and fill up to length with null */
   void writeBinaryString(char *mem, QString str, int length);
+
+  QString identOrDegMinFormat(const atools::fs::pln::FlightplanEntry& entry);
 
   static QString flightplanTypeToString(atools::fs::pln::FlightplanType type);
   static atools::fs::pln::FlightplanType stringFlightplanType(const QString& str);

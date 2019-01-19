@@ -1546,12 +1546,7 @@ void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QStrin
       }
       else if(entry.getWaypointId() != lastAirwayTo)
       {
-        if(entry.getWaypointType() == atools::fs::pln::entry::USER)
-          // Use parseable coordinate format instead of waypoint name
-          stream << "DctWpt" << index << "=" << atools::fs::util::toDegMinFormat(entry.getPosition()) << endl;
-        else
-          stream << "DctWpt" << index << "=" << entry.getWaypointId() << endl;
-
+        stream << "DctWpt" << index << "=" << identOrDegMinFormat(entry) << endl;
         stream << "DctWpt" << index << "Coordinates=" << coords << endl;
         lastAirwayTo.clear();
         index++;
@@ -1643,7 +1638,7 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
         continue;
 
       QString prefix = QString("Wpt.%1.").arg(index, 2, 10, QChar('0'));
-      stream << prefix << "ident=" << entry.getIcaoIdent() << endl;
+      stream << prefix << "ident=" << identOrDegMinFormat(entry) << endl;
       stream << prefix << "type=" << (i == plan.entries.size() - 1 ? "1" : "4") << endl;
       stream << prefix << "latitude=" << entry.getPosition().getLatY() << endl;
       stream << prefix << "longitude=" << entry.getPosition().getLonX() << endl;
@@ -1695,7 +1690,7 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
         // Do not save procedure points, neither start nor destination
         continue;
 
-      stream << "W," << entry.getIcaoIdent() << "," << entry.getAirway() << ",30,"
+      stream << "W," << identOrDegMinFormat(entry) << "," << entry.getAirway() << ",30,"
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << ","
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0'))
              << ",0.000000,0.000000,0,0,0,0" << endl;
@@ -1774,7 +1769,8 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& file, const Q
 
       // Wpt=Enroute|38|GIKIN||Fix|0|LI|42.618333|12.048611|0|Z806
       // Wpt=Enroute|39|TAQ|TARQUINIA|VORDME|111.80|LI|42.215056|11.732611|0|L865
-      stream << "Wpt=Enroute|" << (i - 1) << "|" << entry.getIcaoIdent() << "|" << entry.getName().toUpper() << "|";
+      stream << "Wpt=Enroute|" << (i - 1) << "|" << identOrDegMinFormat(entry) << "|" << entry.getName().toUpper() <<
+        "|";
       entry::WaypointType waypointType = entry.getWaypointType();
       QString frequency("0");
 
@@ -1859,25 +1855,26 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& file)
         // Do not save procedure points
         continue;
 
-      QString ident = QString("%1").arg(entry.getIcaoIdent(), -17);
-
       QString frequency("---"), type;
       entry::WaypointType waypointType = entry.getWaypointType();
       switch(waypointType)
       {
-        case atools::fs::pln::entry::AIRPORT:
-          type = "APT";
-          break;
-        case atools::fs::pln::entry::UNKNOWN:
         case atools::fs::pln::entry::INTERSECTION:
+        case atools::fs::pln::entry::UNKNOWN:
         case atools::fs::pln::entry::USER:
           type = "WPT";
           break;
+
+        case atools::fs::pln::entry::AIRPORT:
+          type = "APT";
+          break;
+
         case atools::fs::pln::entry::VOR:
           type = "WPT";
           if(entry.getFrequency() > 0)
             frequency = QString("%1").arg(entry.getFrequency() / 1000., 0, 'f', 2, QChar('0'));
           break;
+
         case atools::fs::pln::entry::NDB:
           type = "WPT";
           if(entry.getFrequency() > 0)
@@ -1886,7 +1883,7 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& file)
       }
 
       // MADEB            47.324375  10.288886  WPT ---    UM738
-      stream << ident
+      stream << QString("%1").arg(identOrDegMinFormat(entry), -17)
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "  "
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0')) << "  "
              << type << " " << frequency << "    " << entry.getAirway() << endl;
@@ -1896,6 +1893,66 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& file)
   }
   else
     throw Exception(errorMsg.arg(file).arg(rteFile.errorString()));
+}
+
+// LSZH
+// EIDW
+// DIRECT DITON 47.302222 8.333333
+// UL613 DIDOR 49.313611 3.281944
+// UT10 ALESO 50.575556 1.225556
+// UT420 BIG 51.330875 0.034811
+// UL9 KENET 51.520556 -1.455000
+// UN14 MEDOG 51.950278 -3.549444
+// UL18 LIPGO 53.063917 -5.500000
+void FlightplanIO::saveMdx(const Flightplan& plan, const QString& file)
+{
+  filename = file;
+  QFile mdxFile(filename);
+
+  if(mdxFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&mdxFile);
+    stream.setCodec("UTF-8");
+
+    stream << plan.departureIdent << endl;
+    stream << plan.destinationIdent << endl;
+
+    QString lastAirway;
+    for(int i = 1; i < plan.entries.size(); i++)
+    {
+      const FlightplanEntry& entry = plan.entries.at(i);
+
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      if(!lastAirway.isEmpty() && lastAirway == entry.getAirway())
+        // Repeating the same airway - skip waypoint
+        continue;
+
+      const FlightplanEntry& prev = plan.entries.at(i - 1);
+      if(!lastAirway.isEmpty())
+        // Airway has changed - print the last waypoint
+        stream << lastAirway << " " << prev.getWaypointId() << " " << QString("%1 %2").
+          arg(prev.getPosition().getLatY(), 0, 'f', 6).
+          arg(prev.getPosition().getLonX(), 0, 'f', 6) << endl;
+
+      if(entry.getAirway().isEmpty() && i != plan.entries.size() - 1)
+      {
+        // Not an airway - print as is
+        QString coords = QString("%1 %2").
+                         arg(entry.getPosition().getLatY(), 0, 'f', 6).
+                         arg(entry.getPosition().getLonX(), 0, 'f', 6);
+
+        stream << "DIRECT" << " " << identOrDegMinFormat(entry) << " " << coords << endl;
+      }
+      lastAirway = entry.getAirway();
+    }
+
+    mdxFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(file).arg(mdxFile.errorString()));
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file,
@@ -2295,7 +2352,7 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
   QFile fprFile(filename);
 
   // Create base hash from 0 to 32768 - use qt functions which also compile on mac
-  qsrand(static_cast<unsigned int>(std::time(0)));
+  qsrand(static_cast<unsigned int>(std::time(nullptr)));
   int hashSeed = qrand() * std::numeric_limits<qint16>::max() / RAND_MAX;
 
   if(fprFile.open(QIODevice::WriteOnly))
@@ -3042,6 +3099,15 @@ void FlightplanIO::writePropertyStr(QXmlStreamWriter& writer, const QString& nam
   writer.writeAttribute("type", "string");
   writer.writeCharacters(value);
   writer.writeEndElement();
+}
+
+QString FlightplanIO::identOrDegMinFormat(const atools::fs::pln::FlightplanEntry& entry)
+{
+  if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
+     entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
+    return atools::fs::util::toDegMinFormat(entry.getPosition());
+  else
+    return entry.getIcaoIdent();
 }
 
 } // namespace pln
