@@ -1319,8 +1319,8 @@ bool MetarParser::scanTemperature()
 
   temp *= sign;
 
-  if(*m++ != '/')
-    return false;
+  if(*m == '/')
+    m++;
 
   if(!scanBoundary(&m))
   {
