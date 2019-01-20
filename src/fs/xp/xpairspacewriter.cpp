@@ -67,7 +67,7 @@ void XpAirspaceWriter::write(const QStringList& line, const XpWriterContext& con
 
   if(writingCoordinates && !key.startsWith("D") && key != "V")
   {
-    // Done with coordinates - write old boundary an start a new one
+    // Done with coordinates - write old boundary and start a new one
     writingCoordinates = false;
     writeBoundary();
   }
@@ -80,7 +80,7 @@ void XpAirspaceWriter::write(const QStringList& line, const XpWriterContext& con
   }
   else if(key == "AC")
     // Class
-    bindClass(at(line, 1));
+    bindClass(line.value(1));
   else if(key == "AN")
     // Name
     bindName(mid(line, 1));
