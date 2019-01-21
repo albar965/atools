@@ -56,7 +56,7 @@ QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec)
   return codec;
 }
 
-QStringList probeFile(const QString& file)
+QStringList probeFile(const QString& file, int numLinesRead)
 {
   QFile testFile(file);
 
@@ -68,7 +68,7 @@ QStringList probeFile(const QString& file)
     stream.setAutoDetectUnicode(true);
 
     int numLines = 0, numLinesTotal = 0;
-    while(!stream.atEnd() && numLines < 6 && numLinesTotal < 20)
+    while(!stream.atEnd() && numLines < numLinesRead && numLinesTotal < numLinesRead * 2)
     {
       QString line = stream.readLine(256).trimmed();
       if(!line.isEmpty())

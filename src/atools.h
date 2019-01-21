@@ -88,7 +88,7 @@ QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
  *  Returns a list with always four strings.
  *  Empty lines are removed and line length is limited to 80 characters.
  *  All trimmed and converted to lower case. */
-QStringList probeFile(const QString& file);
+QStringList probeFile(const QString& file, int numLinesRead = 6);
 
 /* Calculate the step size for an axis along a range for number of steps.
  * Steps will stick to the 1, 2, and 5 range */
