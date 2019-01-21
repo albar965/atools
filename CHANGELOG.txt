@@ -1,6 +1,27 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.4.rc1
+
+* Fixed issue with error messages when loading OpenAIR files with missing airspace class. Now omitting only the invalid airspaces.
+* Made METAR parser more tolerant for invalid temperature values not separated by /.
+* Fixed issue in whazzup parser which could result in invalid dates on systems with AM/PM data locale setting.
+* Added option to file dialog to add number to default file name if file already exists.
+* Avoiding access to invalid empty paths when detecting simulators.
+* Small fix for missing simulator type in online networks.
+* Airports with helipads and closed runways are now considered open.
+* Now considering helipads for rating calculation for airports.
+* Now looking for registry keys in a case insensitive manner.
+* Options/Language override in settings now fixed for online help and legend loading.
+* Forcing altitude when setting departure position in flight plan.
+* Fixed wrong display of exception messages with special characters in Windows.
+* Added saving and loading of FlightGear XML flight plans. albar965/littlenavmap#361
+* Adapted flight plan file type detection to new plan format and improved it.
+* Added export for Leonardo Maddog X. albar965/littlenavmap#232
+* Added export for QualityWings aircraft. albar965/littlenavmap#335
+* Added export for AivlaSoft EFB. albar965/littlenavmap#226
+* Added flight plan export for FeelThere and Level-D. albar965/littlenavmap#206
+
 Version 3.2.3
 
 * X-Plane scenery_packs.ini now read case insensitive.
