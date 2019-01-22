@@ -62,6 +62,9 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 
+/* Cuts text in the center and uses combined ellipsis character */
+QString elideTextShortMiddle(const QString& str, int maxLength);
+
 /* Turns a string list into a string of blocked text.
  * E.g:
  * blockText({"A","B","C","D","E","F"}, 2, ",", "\n")

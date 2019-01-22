@@ -313,6 +313,14 @@ QString elideTextShort(const QString& str, int maxLength)
   return str;
 }
 
+QString elideTextShortMiddle(const QString& str, int maxLength)
+{
+  if(str.size() > maxLength)
+    return str.left(maxLength / 2) + "…" + str.right(maxLength / 2);
+
+  return str;
+}
+
 QString elideTextLinesShort(QString str, int maxLength)
 {
   QStringList lines;
