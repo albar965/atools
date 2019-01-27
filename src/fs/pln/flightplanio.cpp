@@ -1373,6 +1373,7 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
     // route ===================================================================================
     writer.writeStartElement("route");
 
+    int index = 0;
     for(int i = 0; i < plan.entries.size(); i++)
     {
       const FlightplanEntry& entry = plan.entries.at(i);
@@ -1382,9 +1383,7 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& file)
         continue;
 
       writer.writeStartElement("wp");
-
-      if(i > 0)
-        writer.writeAttribute("n", QString::number(i));
+      writer.writeAttribute("n", QString::number(index++));
 
       bool hasProcedure = false;
       if(i == 0)
