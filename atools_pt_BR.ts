@@ -155,12 +155,12 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="108"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished">Não é possível abrir o arquivo %1. Razão: %2</translation>
+        <translation>Não é possível abrir o arquivo %1. Razão: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP são suportados.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="427"/>
@@ -180,7 +180,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1113"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="2280"/>
