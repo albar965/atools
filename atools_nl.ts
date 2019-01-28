@@ -112,12 +112,12 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="108"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished">Kan bestand %1 niet openen. Reden: %2</translation>
+        <translation>Kan bestand %1 niet openen. Reden: %2</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan vluchtplan bestand &quot;%1&quot; niet openen. Geen ondersteund vluchtplan formaat gedetecteerd. Alleen PLN (FSX XML, FS9 INI en FSC), X-Plane FMS, FLP en FlightGear FGFP worden ondersteund.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="412"/>
@@ -147,7 +147,7 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1113"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kan Flightgear bestand %1 niet openen. Reden: %2</translation>
     </message>
     <message>
         <source>Cannot open PLN file %1. Reason: %2</source>
@@ -158,12 +158,12 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FLP bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2009"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2008"/>
         <source> Flight Plan</source>
         <translation> Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2054"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2053"/>
         <source> Track</source>
         <translation> Track</translation>
     </message>
@@ -172,7 +172,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FMS bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2280"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2279"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Gemaakt door %1 Versie %2 (revisie %3) op %4 </translation>
     </message>
@@ -181,7 +181,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan RTE bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2427"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2426"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>
@@ -1040,17 +1040,17 @@ Bestand:&quot;%2&quot;
         <translation>&lt;b&gt;Fatale fout.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Toets OK om de applicatie te verlaten.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="352"/>
+        <location filename="src/atools.cpp" line="360"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3) op %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="362"/>
+        <location filename="src/atools.cpp" line="370"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="387"/>
+        <location filename="src/atools.cpp" line="395"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
@@ -1440,12 +1440,12 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
         <source>Is not a file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Is geen bestand.</translation>
     </message>
     <message>
         <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
         <source>File does not exist</source>
-        <translation type="unfinished">Bestand bestaat niet</translation>
+        <translation>Bestand bestaat niet</translation>
     </message>
 </context>
 <context>
