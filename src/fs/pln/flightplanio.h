@@ -120,7 +120,7 @@ public:
   /* Quality Wings RTE format */
   void saveQwRte(const Flightplan& plan, const QString& file);
 
-  /* Leonardo Maddoc MDX */
+  /* Leonardo Maddog MDX */
   void saveMdx(const Flightplan& plan, const QString& file);
 
 private:

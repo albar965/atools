@@ -1627,7 +1627,6 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
     stream << "gspd=" << groundSpeed << endl;
     stream << "countOfPoints=" << (numEntriesSave(plan) - 1) << endl;
 
-    QString lastAirwayTo;
     int index = 0;
     for(int i = 1; i < plan.entries.size(); i++)
     {
