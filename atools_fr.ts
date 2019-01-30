@@ -119,7 +119,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="123"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier du plan de vol &quot;%1&quot;. Aucun format de plan de vol pris en charge n&apos;a été détecté. Seuls PLN (FSX XML, FS9 INI et FSC), X-Plane FMS, FLP et FlightGear FGFP sont supportés.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="412"/>
@@ -149,7 +149,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1113"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier FlightGear &quot;%1&quot;. Raison : %2</translation>
     </message>
     <message>
         <source>Cannot open PLN file %1. Reason: %2</source>
@@ -160,12 +160,12 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2008"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2007"/>
         <source> Flight Plan</source>
         <translation> Plan de vol</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2053"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2052"/>
         <source> Track</source>
         <translation> Trace</translation>
     </message>
@@ -174,7 +174,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2279"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2278"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
     </message>
@@ -183,7 +183,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2426"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2425"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
