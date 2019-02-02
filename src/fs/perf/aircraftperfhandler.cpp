@@ -44,6 +44,11 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   if(perf == nullptr)
     return;
 
+  if(!simulatorData.isUserAircraftValid() ||
+     simulatorData.getUserAircraftConst().isSimPaused() ||
+     simulatorData.getUserAircraftConst().isSimReplay())
+    return;
+
   const SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
 
   // Fill metadata if still empty
