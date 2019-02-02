@@ -88,12 +88,15 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
   QString name(filename);
   if(autoNumberFilename && dir.isDir() && !name.isEmpty())
   {
+    // Choose separator depending on filename
+    QString sep = name.contains(" ") ? " " : "_";
     QFileInfo base(dir.filePath() + QDir::separator() + name);
     QFileInfo fi(base);
 
     int i = 1;
     while(fi.exists() && i < 100)
-      fi = dir.filePath() + QDir::separator() + base.baseName() + QString("_%1").arg(i++) + "." + base.completeSuffix();
+      fi = dir.filePath() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." +
+           base.completeSuffix();
 
     name = fi.fileName();
   }
