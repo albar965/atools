@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2019 Alexander Barthel albar965@mailbox.org
+* Copyright 2015-2019 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1990,7 +1990,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
     // </metadata>
     writer.writeStartElement("metadata");
     writer.writeStartElement("link");
-    writer.writeAttribute("href", "https://albar965.github.io/littlenavmap.html");
+    writer.writeAttribute("href", "https://www.littlenavmap.org");
     writer.writeTextElement("text", atools::programFileInfo());
     writer.writeEndElement(); // link
     writer.writeEndElement(); // metadata
