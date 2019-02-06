@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.4
+
+* Fixed issue with wrong waypoint numbering in FlightGear export causing the simulator to crash.
+  This happens only when using SID and/or STAR. #361
+* Now disabling aircraft performance collection when sim is paused or replaying.
+* Now choosing separator for file autonumbering on save depending on filename.
+* Changed email address and links. albar965/littlenavmap#238
+* Updated translations.
+
 Version 3.2.4.rc1
 
 * Fixed issue with error messages when loading OpenAIR files with missing airspace class. Now omitting only the invalid airspaces.
