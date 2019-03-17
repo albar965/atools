@@ -496,7 +496,8 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
           // Airway column
           QString col2 = list.value(2);
-          if(!col2.isEmpty() && col2 != "DRCT" && col2 != "ADEP" && col2 != "DEP" && col2 != "ADES" && col2 != "DES")
+          if(!col2.isEmpty() && col2 != "DRCT" && col2 != "DIRECT" &&
+             col2 != "ADEP" && col2 != "DEP" && col2 != "ADES" && col2 != "DES")
             airway = col2;
         }
 
