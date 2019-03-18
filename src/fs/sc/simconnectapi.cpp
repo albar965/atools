@@ -47,7 +47,7 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
 
   bool error = false;
 
-#if defined(Q_OS_WIN32)
+#if defined(SIMCONNECT_BUILD)
   BINDSC(Open);
   BINDSC(Close);
 

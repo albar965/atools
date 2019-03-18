@@ -20,7 +20,7 @@
 
 #include <QtGlobal>
 
-#if !defined(Q_OS_WIN32)
+#if !defined(SIMCONNECT_BUILD)
 
 #if !defined(Q_CC_MSVC)
 
