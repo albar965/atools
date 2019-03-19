@@ -25,7 +25,7 @@
 #include <QUrl>
 #include <QDebug>
 
-#ifdef SIMCONNECT_BUILD
+#ifdef Q_OS_WIN32
 #include <windows.h>
 #endif
 
