@@ -31,6 +31,10 @@
 # ATOOLS_QUIET
 # Optional. Set this to "true" to avoid qmake messages.
 #
+# ATOOLS_NO_FS
+# Optional. Set this to "true" to omit all flight simulator code if not needed.
+# Reduces compilation time.
+#
 # This project has no deploy or install target. The include and library should
 # be used directly from the source tree.
 #
@@ -51,6 +55,7 @@ TEMPLATE = lib
 GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
 QUIET=$$(ATOOLS_QUIET)
+ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
 
 # =======================================================================
 # Set compiler flags and paths
@@ -94,6 +99,7 @@ DEFINES += QT_NO_CAST_TO_ASCII
 message(-----------------------------------)
 message(GIT_PATH: $$GIT_PATH)
 message(GIT_REVISION: $$GIT_REVISION)
+message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
 message(LIBS: $$LIBS)
@@ -107,11 +113,125 @@ message(-----------------------------------)
 }
 
 # =====================================================================
-# Files
+# General Files
 
 HEADERS += \
   src/atools.h \
   src/exception.h \
+  src/geo/calculations.h \
+  src/geo/line.h \
+  src/geo/linestring.h \
+  src/geo/pos.h \
+  src/geo/rect.h \
+  src/geo/simplespatialindex.h \
+  src/gui/actionstatesaver.h \
+  src/gui/actiontextsaver.h \
+  src/gui/application.h \
+  src/gui/consoleapplication.h \
+  src/gui/dialog.h \
+  src/gui/errorhandler.h \
+  src/gui/filehistoryhandler.h \
+  src/gui/griddelegate.h \
+  src/gui/helphandler.h \
+  src/gui/itemviewzoomhandler.h \
+  src/gui/mapposhistory.h \
+  src/gui/palettesettings.h \
+  src/gui/tools.h \
+  src/gui/translator.h \
+  src/gui/widgetstate.h \
+  src/gui/widgetutil.h \
+  src/io/binarystream.h \
+  src/io/fileroller.h \
+  src/io/inireader.h \
+  src/logging/loggingconfig.h \
+  src/logging/loggingguiabort.h \
+  src/logging/logginghandler.h \
+  src/logging/loggingtypes.h \
+  src/logging/loggingutil.h \
+  src/settings/settings.h \
+  src/sql/sqldatabase.h \
+  src/sql/sqlexception.h \
+  src/sql/sqlexport.h \
+  src/sql/sqlquery.h \
+  src/sql/sqlrecord.h \
+  src/sql/sqlscript.h \
+  src/sql/sqltransaction.h \
+  src/sql/sqlutil.h \
+  src/util/csvreader.h \
+  src/util/filesystemwatcher.h \
+  src/util/heap.h \
+  src/util/htmlbuilder.h \
+  src/util/httpdownloader.h \
+  src/util/paintercontextsaver.h \
+  src/util/roundedpolygon.h \
+  src/util/timedcache.h \
+  src/util/updatecheck.h \
+  src/util/version.h \
+  src/win/activationcontext.h \
+  src/zip/gzip.h \
+  src/zip/zipreader.h \
+  src/zip/zipwriter.h
+
+SOURCES += \
+  src/atools.cpp \
+  src/exception.cpp \
+  src/geo/calculations.cpp \
+  src/geo/line.cpp \
+  src/geo/linestring.cpp \
+  src/geo/pos.cpp \
+  src/geo/rect.cpp \
+  src/geo/simplespatialindex.cpp \
+  src/gui/actionstatesaver.cpp \
+  src/gui/actiontextsaver.cpp \
+  src/gui/application.cpp \
+  src/gui/consoleapplication.cpp \
+  src/gui/dialog.cpp \
+  src/gui/errorhandler.cpp \
+  src/gui/filehistoryhandler.cpp \
+  src/gui/griddelegate.cpp \
+  src/gui/helphandler.cpp \
+  src/gui/itemviewzoomhandler.cpp \
+  src/gui/mapposhistory.cpp \
+  src/gui/palettesettings.cpp \
+  src/gui/tools.cpp \
+  src/gui/translator.cpp \
+  src/gui/widgetstate.cpp \
+  src/gui/widgetutil.cpp \
+  src/io/binarystream.cpp \
+  src/io/fileroller.cpp \
+  src/io/inireader.cpp \
+  src/logging/loggingconfig.cpp \
+  src/logging/loggingguiabort.cpp \
+  src/logging/logginghandler.cpp \
+  src/logging/loggingutil.cpp \
+  src/settings/settings.cpp \
+  src/sql/sqldatabase.cpp \
+  src/sql/sqlexception.cpp \
+  src/sql/sqlexport.cpp \
+  src/sql/sqlquery.cpp \
+  src/sql/sqlrecord.cpp \
+  src/sql/sqlscript.cpp \
+  src/sql/sqltransaction.cpp \
+  src/sql/sqlutil.cpp \
+  src/util/csvreader.cpp \
+  src/util/filesystemwatcher.cpp \
+  src/util/heap.cpp \
+  src/util/htmlbuilder.cpp \
+  src/util/httpdownloader.cpp \
+  src/util/paintercontextsaver.cpp \
+  src/util/roundedpolygon.cpp \
+  src/util/timedcache.cpp \
+  src/util/updatecheck.cpp \
+  src/util/version.cpp \
+  src/win/activationcontext.cpp \
+  src/zip/gzip.cpp \
+  src/zip/zip.cpp
+
+# =====================================================================
+# Flight simulator files
+
+!isEqual(ATOOLS_NO_FS, "true") {
+HEADERS += \
   src/fs/ap/airportloader.h \
   src/fs/bgl/ap/airport.h \
   src/fs/bgl/ap/approach.h \
@@ -276,64 +396,9 @@ HEADERS += \
   src/fs/xp/xpdatacompiler.h \
   src/fs/xp/xpfixwriter.h \
   src/fs/xp/xpnavwriter.h \
-  src/fs/xp/xpwriter.h \
-  src/geo/calculations.h \
-  src/geo/line.h \
-  src/geo/linestring.h \
-  src/geo/pos.h \
-  src/geo/rect.h \
-  src/geo/simplespatialindex.h \
-  src/gui/actionstatesaver.h \
-  src/gui/actiontextsaver.h \
-  src/gui/application.h \
-  src/gui/consoleapplication.h \
-  src/gui/dialog.h \
-  src/gui/errorhandler.h \
-  src/gui/filehistoryhandler.h \
-  src/gui/griddelegate.h \
-  src/gui/helphandler.h \
-  src/gui/itemviewzoomhandler.h \
-  src/gui/mapposhistory.h \
-  src/gui/palettesettings.h \
-  src/gui/tools.h \
-  src/gui/translator.h \
-  src/gui/widgetstate.h \
-  src/gui/widgetutil.h \
-  src/io/binarystream.h \
-  src/io/fileroller.h \
-  src/io/inireader.h \
-  src/logging/loggingconfig.h \
-  src/logging/loggingguiabort.h \
-  src/logging/logginghandler.h \
-  src/logging/loggingtypes.h \
-  src/logging/loggingutil.h \
-  src/settings/settings.h \
-  src/sql/sqldatabase.h \
-  src/sql/sqlexception.h \
-  src/sql/sqlexport.h \
-  src/sql/sqlquery.h \
-  src/sql/sqlrecord.h \
-  src/sql/sqlscript.h \
-  src/sql/sqltransaction.h \
-  src/sql/sqlutil.h \
-  src/util/csvreader.h \
-  src/util/filesystemwatcher.h \
-  src/util/heap.h \
-  src/util/htmlbuilder.h \
-  src/util/httpdownloader.h \
-  src/util/paintercontextsaver.h \
-  src/util/roundedpolygon.h \
-  src/util/timedcache.h \
-  src/util/updatecheck.h \
-  src/util/version.h \
-  src/win/activationcontext.h \
-  src/zip/gzip.h \
-  src/zip/zipreader.h \
-  src/zip/zipwriter.h
+  src/fs/xp/xpwriter.h
 
 SOURCES += \
-  src/atools.cpp \
-  src/exception.cpp \
   src/fs/ap/airportloader.cpp \
   src/fs/bgl/ap/airport.cpp \
   src/fs/bgl/ap/approach.cpp \
@@ -496,58 +561,8 @@ SOURCES += \
   src/fs/xp/xpdatacompiler.cpp \
   src/fs/xp/xpfixwriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
-  src/fs/xp/xpwriter.cpp \
-  src/geo/calculations.cpp \
-  src/geo/line.cpp \
-  src/geo/linestring.cpp \
-  src/geo/pos.cpp \
-  src/geo/rect.cpp \
-  src/geo/simplespatialindex.cpp \
-  src/gui/actionstatesaver.cpp \
-  src/gui/actiontextsaver.cpp \
-  src/gui/application.cpp \
-  src/gui/consoleapplication.cpp \
-  src/gui/dialog.cpp \
-  src/gui/errorhandler.cpp \
-  src/gui/filehistoryhandler.cpp \
-  src/gui/griddelegate.cpp \
-  src/gui/helphandler.cpp \
-  src/gui/itemviewzoomhandler.cpp \
-  src/gui/mapposhistory.cpp \
-  src/gui/palettesettings.cpp \
-  src/gui/tools.cpp \
-  src/gui/translator.cpp \
-  src/gui/widgetstate.cpp \
-  src/gui/widgetutil.cpp \
-  src/io/binarystream.cpp \
-  src/io/fileroller.cpp \
-  src/io/inireader.cpp \
-  src/logging/loggingconfig.cpp \
-  src/logging/loggingguiabort.cpp \
-  src/logging/logginghandler.cpp \
-  src/logging/loggingutil.cpp \
-  src/settings/settings.cpp \
-  src/sql/sqldatabase.cpp \
-  src/sql/sqlexception.cpp \
-  src/sql/sqlexport.cpp \
-  src/sql/sqlquery.cpp \
-  src/sql/sqlrecord.cpp \
-  src/sql/sqlscript.cpp \
-  src/sql/sqltransaction.cpp \
-  src/sql/sqlutil.cpp \
-  src/util/csvreader.cpp \
-  src/util/filesystemwatcher.cpp \
-  src/util/heap.cpp \
-  src/util/htmlbuilder.cpp \
-  src/util/httpdownloader.cpp \
-  src/util/paintercontextsaver.cpp \
-  src/util/roundedpolygon.cpp \
-  src/util/timedcache.cpp \
-  src/util/updatecheck.cpp \
-  src/util/version.cpp \
-  src/win/activationcontext.cpp \
-  src/zip/gzip.cpp \
-  src/zip/zip.cpp
+  src/fs/xp/xpwriter.cpp
+}
 
 RESOURCES += \
   atools.qrc
