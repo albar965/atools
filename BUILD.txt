@@ -1,37 +1,59 @@
-# Compile the `atools` Library
+# Build Instructions
 
 Qt development packages of Core, Widgets, XML and SQL are needed with minimum version 5.6.
-GIT command line tools are required.
+GIT command line tools are needed for revision detection but are not required to build.
 
-You need to install the FSX/P3D Simconnect libraries for the Windows build.
+FSX/P3D Simconnect libraries for the Windows build are optional and only needed for FSX/P3D support.
+The `atools.pro` file contains information how to enable the SimConnect build with the environment variable
+`ATOOLS_SIMCONNECT_PATH`.
 
 ## Common
 
-- Get and install Qt Creator from http://www.qt.io.
-- Set a base directory for the builds in `Options` -> `Build & Run`: For example `C:\Projects`
-- Clone atools GIT repository (git clone https://github.com/albar965/atools.git)
+- Get and install Qt from http://www.qt.io or from the direct download https://download.qt.io/archive/qt .
+  At least a version at or above 5.6 is needed. Linux users might use the Qt that comes with the distribution.
+- Set a base directory for the builds in Qt Creator `Options` -> `Build & Run` if you'd like to use the GUI.
+  For example `C:\Projects` or `$HOME/Projects`.
+- Clone the atools GIT repository (`git clone https://github.com/albar965/atools.git`)
+
+Look at the `atools.pro` file. There is a list of documented environment variables that can be set to customize the
+build, like the inclusion of SimConnect or paths to the projects. Most of these variables are optional and use
+a reasonable default value. Set these variables in the Qt Creator GUI or on the command line.
+
+There is no need to edit the `*.pro` files.
+
+## Default paths and Environment Variables
+
+The projects can be built with almost no configuration changes since all project files fall back to sensible
+default paths if the corresponding environment variables are not set. `APROJECTS` is the placeholder for the base directory.
+Avoid paths with spaces if possible.
+
+* `APROJECTS/atools`                           Sources.
+* `APROJECTS/build-atools-debug`               Debug build.
+* `APROJECTS/build-atools-release`             Release build.
+* `C:\Program Files (x86)\...\SimConnect SDK`  SimConnect on Windows only. Optional. `ATOOLS_SIMCONNECT_PATH`
 
 ## Windows
 
 - Import atools into the Qt Creator workspace.
 - Configure the project and enable shadow build for release or debug versions.
 - Clone atools from GIT to e.g.: `C:\Projects\atools`
-- Use `../build-%{CurrentProject:Name}-%{CurrentBuild:Type}` for `Default build directory` in the Qt Creator options dialog.
-- For atools use the build directory of e.g.: `C:\Projects\build-atools-release`
-- Adapt the `QT_BIN`, `GIT_BIN`, `SIMCONNECT`, `INCLUDEPATH` and `LIBS` variables in `atools.pro`.
-- Set the build kit for atools and littlenavmap to MinGW 32bit.
-- Run qmake from Qt Creator
-- Build
+- Use `../build-%{CurrentProject:Name}-%{CurrentBuild:Type}` for `Default build directory` in the
+  Qt Creator options dialog. Otherwise adapt environment variables for depending builds.
+- For atools use the default build directory of e.g.: `C:\Projects\build-atools-release`
+- Set the build kit for atools MinGW 32bit.
+- Run qmake from Qt Creator.
+- Build.
 
-Do not use the default shadow build directory names, this will break project dependencies.
-
-The atools can be built using the mingw environment only.
+The atools can be built using the MinGW environment only. MSVC will not work.
 
 ## Linux / macOS
 
 Install Qt development packages. Version at least 5.6.
 
-Create the build directories on the same level as the source directory `atools`.
+You can build the program on Linux or macOS similar to the Windows instructions above either using
+the Qt Creator GUI or the command line.
+
+SimConnect is not available on these platforms.
 
 ### To build the release version:
 
