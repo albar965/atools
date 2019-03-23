@@ -65,9 +65,6 @@ enum RouteType
   UNKNOWN /* Has to be changed later when resolving the ident to database objects */
 };
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
-
 /* Common key that are used int flight plan properties that are not supported in PLN.
  * Will be save inside a XML comment in pln files. */
 /* Keys that describe procedures*/
@@ -126,8 +123,6 @@ const QLatin1Literal PARKING("parking");
 
 /* Position of parking as fallback */
 const QLatin1Literal PARKINGPOS("parkingposition");
-
-#pragma GCC diagnostic pop
 
 } // namespace pln
 } // namespace fs
