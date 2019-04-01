@@ -17,7 +17,7 @@ before_install:
     - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.10.1-trusty
     - sudo apt-get -qq update
     # Decrypt auth token for deployment
-    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_32e4a7602a6c_key -iv $encrypted_32e4a7602a6c_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || openssl aes-256-cbc -K $encrypted_32e4a7602a6c_key -iv $encrypted_32e4a7602a6c_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
 
 install:
     # Install needed Qt modules
