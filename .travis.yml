@@ -43,6 +43,6 @@ script:
 
 after_success:
     # Deploy artefacts to dropbox
-    - '[ -f ~/.dropbox_uploader ] && ./deployment/dropbox_uploader.sh delete build-atools-release'
-    - '[ -f ~/.dropbox_uploader ] && ./deployment/dropbox_uploader.sh mkdir build-atools-release'
-    - '[ -f ~/.dropbox_uploader ] && ./deployment/dropbox_uploader.sh upload ../build-atools-release build-atools-release'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh delete build-atools-release'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh mkdir build-atools-release'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh upload ./ build-atools-release'
