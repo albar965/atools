@@ -2594,7 +2594,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& file)
     // destination_id=LIRF, N41* 48.02', E012* 14.33', +000014.00
     // departure_name=HAMBURG
     // destination_name=FIUMICINO
-    stream << "cruising_altitude" << plan.getCruisingAltitude() << endl;
+    stream << "cruising_altitude=" << plan.getCruisingAltitude() << endl;
     stream << "departure_id=" << plan.getDepartureIdent() << ", "
            << coordStringFs9(plan.getDeparturePosition()) << endl;
     stream << "destination_id=" << plan.getDestinationIdent() << ", "
