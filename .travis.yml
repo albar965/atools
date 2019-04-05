@@ -35,7 +35,7 @@ install:
     - export CC=gcc-7
     - export CXX=g++-7
 
-    before_script:
+before_script:
     # Clone atoolstest
     - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
 
@@ -53,7 +53,7 @@ script:
     - make -j2
 
     # Run tests
-    - ./atoolstest --RunAll
+    - './atoolstest --RunAll'
 
 after_success:
     # Deploy artefacts to dropbox
