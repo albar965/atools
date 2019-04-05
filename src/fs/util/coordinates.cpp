@@ -458,8 +458,9 @@ geo::Pos fromAnyFormat(const QString& coords)
   if(coords.simplified().isEmpty())
     return atools::geo::EMPTY_POS;
 
-  // Convert local dependent decimal point to dot
-  QString coordStr(coords.simplified().toUpper().replace(QLocale().decimalPoint(), "."));
+  // Convert local dependent decimal point and comma to dot - i.e. allow comma. dot and
+  // locale dependent separator in all languages
+  QString coordStr(coords.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", "."));
 
   // North/south and east/west designator
   const static QLatin1Literal NS("(?<NS>[NS])");
