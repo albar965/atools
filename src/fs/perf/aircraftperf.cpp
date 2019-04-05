@@ -187,8 +187,8 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
 
   if(settings.contains("Perf/ExtraFuelLbs"))
     extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
-  if(settings.contains("Perf/ExtraFuelLbs"))
-    extraFuel = settings.value("Perf/ExtraFuelLbs").toFloat();
+  if(settings.contains("Perf/ExtraFuelLbsGal"))
+    extraFuel = settings.value("Perf/ExtraFuelLbsGal").toFloat();
 
   contingencyFuel = settings.value("Perf/ContingencyFuelPercent").toFloat();
 
