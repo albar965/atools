@@ -39,6 +39,11 @@ before_script:
     # Clone atoolstest
     - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
 
+    # Download and extract needed files for the tests
+    - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'
+    - wget -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
+    - tar -xvzf '../Global Land One-kilometer Base Elevation (GLOBE)/all10g.tgz' -C '../Global Land One-kilometer Base Elevation (GLOBE)/'
+
 script:
     # Build atools
     - mkdir ../build-atools-release
