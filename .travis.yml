@@ -62,6 +62,7 @@ script:
 
 after_success:
     # Deploy artefacts to dropbox
-    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh delete linux/build-atools-release'
+    - tar -cvzf ../atools-release.tar.gz ../build-atools-release/
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh delete linux/atools-release.tar.gz'
     - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh mkdir linux'
-    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh upload ../build-atools-release/ linux'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh upload ../atools-release.tar.gz linux'
