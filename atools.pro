@@ -171,7 +171,22 @@ HEADERS += \
   src/win/activationcontext.h \
   src/zip/gzip.h \
   src/zip/zipreader.h \
-  src/zip/zipwriter.h
+  src/zip/zipwriter.h \
+  src/httpserver/httprequest.h \
+  src/httpserver/httpconnectionhandler.h \
+  src/httpserver/httpconnectionhandlerpool.h \
+  src/httpserver/httplistener.h \
+  src/httpserver/httpsessionstore.h \
+  src/httpserver/staticfilecontroller.h \
+  src/httpserver/httpglobal.h \
+  src/httpserver/httprequesthandler.h \
+  src/httpserver/httpcookie.h \
+  src/httpserver/httpresponse.h \
+  src/httpserver/httpsession.h \
+  src/templateengine/template.h \
+  src/templateengine/templateglobal.h \
+  src/templateengine/templatecache.h \
+  src/templateengine/templateloader.h
 
 SOURCES += \
   src/atools.cpp \
@@ -226,7 +241,21 @@ SOURCES += \
   src/util/version.cpp \
   src/win/activationcontext.cpp \
   src/zip/gzip.cpp \
-  src/zip/zip.cpp
+  src/zip/zip.cpp \
+  src/httpserver/httpresponse.cpp \
+  src/httpserver/staticfilecontroller.cpp \
+  src/httpserver/httprequesthandler.cpp \
+  src/httpserver/httpglobal.cpp \
+  src/httpserver/httprequest.cpp \
+  src/httpserver/httpsession.cpp \
+  src/httpserver/httpconnectionhandler.cpp \
+  src/httpserver/httplistener.cpp \
+  src/httpserver/httpsessionstore.cpp \
+  src/httpserver/httpcookie.cpp \
+  src/httpserver/httpconnectionhandlerpool.cpp \
+  src/templateengine/templatecache.cpp \
+  src/templateengine/templateloader.cpp \
+  src/templateengine/template.cpp
 
 # =====================================================================
 # Flight simulator files

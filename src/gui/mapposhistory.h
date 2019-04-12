@@ -97,8 +97,8 @@ class MapPosHistory :
   Q_OBJECT
 
 public:
-  explicit MapPosHistory(QObject *parent = 0);
-  virtual ~MapPosHistory();
+  explicit MapPosHistory(QObject *parent = nullptr);
+  virtual ~MapPosHistory() override;
 
   /* Get next entry in the history and emit signal historyChanged */
   const MapPosHistoryEntry& next();

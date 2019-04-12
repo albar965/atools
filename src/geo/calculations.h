@@ -225,7 +225,7 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToKm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-         static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1000.);
+         static_cast<TYPE>(static_cast<double>(value) * 1.852216);
 }
 
 /* Distance from nautical miles to statue miles */
@@ -250,6 +250,14 @@ Q_DECL_CONSTEXPR TYPE meterToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
          static_cast<TYPE>(static_cast<double>(value) / 1852.216);
+}
+
+/* Distance from km to nautical miles */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE kmToNm(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+                                                          static_cast<TYPE>(static_cast<double>(value) / 1.852216);
 }
 
 template<typename TYPE>
