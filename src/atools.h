@@ -59,6 +59,20 @@ bool contains(const QString& name, const std::initializer_list<QString>& list);
 
 bool contains(const QString& name, const std::initializer_list<const char *>& list);
 
+template<typename TYPE1, typename TYPE2>
+void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
+{
+  for(TYPE2 type : src)
+    dest.append(type);
+}
+
+template<typename TYPE1, typename TYPE2>
+void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
+{
+  for(TYPE2 type : src)
+    dest.append(type);
+}
+
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 

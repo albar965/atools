@@ -40,6 +40,7 @@
 #include <QTextEdit>
 #include <QTableWidget>
 #include <QTreeWidget>
+#include <QListWidget>
 
 namespace atools {
 namespace gui {
@@ -112,6 +113,23 @@ void WidgetState::save(const QObject *widget) const
       saveWidget(s, tv, tv->horizontalHeader()->saveState());
     else if(const QTableWidget *tblw = dynamic_cast<const QTableWidget *>(widget))
       saveWidget(s, tblw, tblw->horizontalHeader()->saveState());
+    else if(const QListView *lv = dynamic_cast<const QListView *>(widget))
+    {
+      QItemSelectionModel *sm = lv->selectionModel();
+      if(sm != nullptr)
+      {
+        QVariantList varList;
+        QModelIndex currentIndex = lv->currentIndex();
+        if(currentIndex.isValid())
+          varList << currentIndex.row() << currentIndex.column();
+        else
+          varList << -1 << -1;
+
+        for(const QModelIndex& index : sm->selectedIndexes())
+          varList << index.row() << index.column();
+        saveWidget(s, lv, varList);
+      }
+    }
     else if(const QTreeView *trv = dynamic_cast<const QTreeView *>(widget))
       saveWidget(s, trv, trv->header()->saveState());
     else if(const QTreeWidget *trw = dynamic_cast<const QTreeWidget *>(widget))
@@ -265,6 +283,36 @@ void WidgetState::restore(QObject *widget) const
       QVariant v = loadWidget(s, widget);
       if(v.isValid())
         taw->horizontalHeader()->restoreState(v.toByteArray());
+    }
+    else if(QListView *lv = dynamic_cast<QListView *>(widget))
+    {
+      QVariant var = loadWidget(s, widget);
+      if(var.isValid())
+      {
+        QItemSelectionModel *sm = lv->selectionModel();
+
+        if(sm != nullptr)
+        {
+          sm->clearSelection();
+
+          QVariantList varList = var.toList();
+
+          for(int i = 0; i < varList.size() / 2; i++)
+          {
+            int row = varList.value(i * 2).toInt();
+            int col = varList.value(i * 2 + 1).toInt();
+            if(i == 0)
+            {
+              if(row != -1 && col != -1)
+                lv->setCurrentIndex(lv->model()->index(row, col));
+            }
+            else
+            {
+              sm->select(lv->model()->index(row, col), QItemSelectionModel::Select);
+            }
+          }
+        }
+      }
     }
     else if(QTreeView *trv = dynamic_cast<QTreeView *>(widget))
     {
