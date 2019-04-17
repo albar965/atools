@@ -1,7 +1,6 @@
 #include "httpglobal.h"
 
-const char* getQtWebAppLibVersion()
+const char *getQtWebAppLibVersion()
 {
-    return "1.7.8";
+  return "1.7.8";
 }
-

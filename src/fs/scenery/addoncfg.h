@@ -19,7 +19,7 @@
 #define ATOOLS_SCENERY_ADDONCFG_H
 
 #include "fs/scenery/sceneryarea.h"
-#include "io/inireader.h"
+#include "io/abstractinireader.h"
 
 #include <QList>
 #include <QCoreApplication>
@@ -40,7 +40,7 @@ struct AddOnCfgEntry
  * All section and key names are passed in lower case.
  */
 class AddOnCfg :
-  public atools::io::IniReader
+  public atools::io::AbstractIniReader
 {
   Q_DECLARE_TR_FUNCTIONS(AddonCfg)
 
@@ -62,8 +62,8 @@ public:
   void setAreaHighPriority(int index, bool value = true);
 
 private:
-  virtual void onStartDocument(const QString& filename) override;
-  virtual void onEndDocument(const QString& filename) override;
+  virtual void onStartDocument(const QString& filepath) override;
+  virtual void onEndDocument(const QString& filepath) override;
   virtual void onStartSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onEndSection(const QString& section, const QString& sectionSuffix) override;
   virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,

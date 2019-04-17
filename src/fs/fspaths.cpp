@@ -200,7 +200,8 @@ QString FsPaths::getBasePath(SimulatorType type)
       {
         // If it is not present in the settings file use one of the predefined paths
         // Useful with symlinks for debugging
-        QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
+        QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0) + QDir::separator() +
+                       QString("Simulators");
         QString nonWinPath = nonWindowsPath(type);
 
         if(!nonWinPath.isEmpty())

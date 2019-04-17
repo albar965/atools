@@ -29,7 +29,7 @@ namespace fs {
 namespace scenery {
 
 SceneryCfg::SceneryCfg(const QString& textCodec)
-  : IniReader(textCodec), cleanOnExit(false)
+  : AbstractIniReader(textCodec), cleanOnExit(false)
 {
 }
 
@@ -117,7 +117,7 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "clean_on_exit")
       cleanOnExit = toBool(value);
     else
-      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filename;
+      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filepath;
   }
   else if(section == "area")
   {
@@ -144,10 +144,10 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     else if(key == "exclude")
       currentArea.exclude = value;
     else
-      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filename;
+      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filepath;
   }
   else
-    qWarning() << "Unexpected section" << section << "file" << filename;
+    qWarning() << "Unexpected section" << section << "file" << filepath;
 }
 
 } // namespace scenery

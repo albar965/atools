@@ -15,94 +15,44 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_INI_INIREADER_H
-#define ATOOLS_INI_INIREADER_H
+#ifndef ATOOLS_INIREADER_H
+#define ATOOLS_INIREADER_H
 
-#include <QString>
-#include <QCoreApplication>
+#include "io/abstractinireader.h"
+
+#include <QHash>
+#include <QVariant>
 
 namespace atools {
 namespace io {
 
-/*
- * Abstract class that can read ini files and supports numbered sections like [area.001].
- * Line comments starting with "#" and ";" are supported.
- */
-class IniReader
-{
-  Q_DECLARE_TR_FUNCTIONS(atools::fs::scenery::IniReader)
+typedef QHash<QString, QVariant> IniKeyValues;
 
+/*
+ *  Reads INI style classes without the issues of QSettings (forced write back).
+ */
+class IniReader :
+  public atools::io::AbstractIniReader
+{
 public:
   IniReader(const QString& textCodec = QString());
-  virtual ~IniReader();
+  virtual ~IniReader() override;
 
-  /* Read the file and trigger the on* methods */
-  void read(const QString& iniFilename);
+  /* Get all key value pairs for a [section] */
+  const IniKeyValues& getKeyValuePairs(const QString& section);
 
-protected:
-  /*
-   * Called on reading the document
-   * @param filename
-   */
-  virtual void onStartDocument(const QString& filename) = 0;
-
-  /*
-   * Called at document end
-   * @param filename
-   */
-  virtual void onEndDocument(const QString& filename) = 0;
-
-  /*
-   * Called when a section in square brackets starts
-   * @param name section name in square brackets
-   * @param nameSuffix part of the section name after a dot
-   */
-  virtual void onStartSection(const QString& name, const QString& nameSuffix) = 0;
-
-  /*
-   * Called when a section in square brackets ends
-   * @param name section name in square brackets
-   * @param nameSuffix part of the section name after a dot
-   */
-  virtual void onEndSection(const QString& section, const QString& sectionSuffix) = 0;
-
-  /*
-   * Called when a key = value pair was found
-   * @param section section name in square brackets
-   * @param sectionSuffix part of the section name after a dot
-   * @param key before equal sign
-   * @param value after equal sign
-   */
-  virtual void onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
-                          const QString& value) = 0;
-
-  /* Throw an exception with file and line information */
-#if defined(Q_CC_MSVC)
-  void throwException(const QString& message);
-
-#else
-  [[noreturn]]  void throwException(const QString& message);
-
-#endif
+  /* Get value for a [section] and key=value */
+  QVariant getValue(const QString& section, const QString& key);
+  QString getValueString(const QString& section, const QString& key);
 
 protected:
-  QString filename;
+  virtual void onKeyValue(const QString& section, const QString& key, const QString& value) override;
 
-  bool toBool(const QString& str);
-  int toInt(const QString& str);
-
-private:
-  int currentLineNum;
-  QString currentLine, currentSection, currentSectionSuffix;
-
-  void handleComment();
-  void handleKeyValue();
-  void handleSection();
-
-  QString codec;
+  /* Map of sections to keys to values */
+  QHash<QString, QHash<QString, QVariant> > keys;
 };
 
 } // namespace io
 } // namespace atools
 
-#endif // ATOOLS_INI_INIREADER_H
+#endif // ATOOLS_INIREADER_H

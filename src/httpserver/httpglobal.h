@@ -1,7 +1,7 @@
 /**
-  @file
-  @author Stefan Frings
-*/
+ *  @file
+ *  @author Stefan Frings
+ */
 
 #ifndef HTTPGLOBAL_H
 #define HTTPGLOBAL_H
@@ -21,8 +21,6 @@
 #endif
 
 /** Get the library version number */
-DECLSPEC const char* getQtWebAppLibVersion();
-
+DECLSPEC const char *getQtWebAppLibVersion();
 
 #endif // HTTPGLOBAL_H
-

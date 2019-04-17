@@ -1,7 +1,7 @@
 /**
-  @file
-  @author Stefan Frings
-*/
+ *  @file
+ *  @author Stefan Frings
+ */
 
 #ifndef TEMPLATEGLOBAL_H
 #define TEMPLATEGLOBAL_H
@@ -21,4 +21,3 @@
 #endif
 
 #endif // TEMPLATEGLOBAL_H
-

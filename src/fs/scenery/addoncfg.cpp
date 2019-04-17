@@ -28,7 +28,7 @@ namespace fs {
 namespace scenery {
 
 AddOnCfg::AddOnCfg(const QString& textCodec)
-  : IniReader(textCodec)
+  : AbstractIniReader(textCodec)
 {
 }
 
@@ -92,14 +92,14 @@ void AddOnCfg::onKeyValue(const QString& section, const QString& sectionSuffix, 
     else if(key == "required")
       currentEntry.required = toBool(value);
     else
-      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filename;
+      qWarning() << "Unexpected key" << key << "in section" << section << "file" << filepath;
   }
   else if(section == "discoverypath")
   {
     // Ignore
   }
   else
-    qWarning() << "Unexpected section" << section << "file" << filename;
+    qWarning() << "Unexpected section" << section << "file" << filepath;
 }
 
 } // namespace scenery

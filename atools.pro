@@ -141,6 +141,7 @@ HEADERS += \
   src/gui/translator.h \
   src/gui/widgetstate.h \
   src/gui/widgetutil.h \
+  src/io/abstractinireader.h \
   src/io/binarystream.h \
   src/io/fileroller.h \
   src/io/inireader.h \
@@ -213,6 +214,7 @@ SOURCES += \
   src/gui/translator.cpp \
   src/gui/widgetstate.cpp \
   src/gui/widgetutil.cpp \
+  src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
   src/io/fileroller.cpp \
   src/io/inireader.cpp \
