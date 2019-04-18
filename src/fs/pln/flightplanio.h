@@ -120,8 +120,8 @@ public:
   /* Quality Wings RTE format */
   void saveQwRte(const Flightplan& plan, const QString& file);
 
-  /* Leonardo Maddog MDX */
-  void saveMdx(const Flightplan& plan, const QString& file);
+  /* Leonardo Maddog MDX / MDR */
+  void saveMdr(const Flightplan& plan, const QString& file);
 
 private:
   /* Load specific formats after content detection */
