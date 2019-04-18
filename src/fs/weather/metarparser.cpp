@@ -1312,6 +1312,12 @@ bool MetarParser::scanTemperature()
     return scanBoundary(&_m);
   }
 
+  if(!strncmp(m, "/////", 5))
+  {
+    _m += 5;
+    return scanBoundary(&_m);
+  }
+
   if(*m == 'M')
     m++, sign = -1;
   if(!scanNumber(&m, &temp, 2))
