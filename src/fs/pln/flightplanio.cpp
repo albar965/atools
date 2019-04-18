@@ -1903,14 +1903,14 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& file)
 // UL9 KENET 51.520556 -1.455000
 // UN14 MEDOG 51.950278 -3.549444
 // UL18 LIPGO 53.063917 -5.500000
-void FlightplanIO::saveMdx(const Flightplan& plan, const QString& file)
+void FlightplanIO::saveMdr(const Flightplan& plan, const QString& file)
 {
   filename = file;
-  QFile mdxFile(filename);
+  QFile mdrFile(filename);
 
-  if(mdxFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  if(mdrFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    QTextStream stream(&mdxFile);
+    QTextStream stream(&mdrFile);
     stream.setCodec("UTF-8");
 
     stream << plan.departureIdent << endl;
@@ -1948,10 +1948,10 @@ void FlightplanIO::saveMdx(const Flightplan& plan, const QString& file)
       lastAirway = entry.getAirway();
     }
 
-    mdxFile.close();
+    mdrFile.close();
   }
   else
-    throw Exception(errorMsg.arg(file).arg(mdxFile.errorString()));
+    throw Exception(errorMsg.arg(file).arg(mdrFile.errorString()));
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file,
