@@ -263,6 +263,16 @@ private:
 
   friend class atools::fs::pln::FlightplanIO;
 
+  const QString& departNameOrIdent() const
+  {
+    return departureAiportName.isEmpty() ? departureIdent : departureAiportName;
+  }
+
+  const QString& destNameOrIdent() const
+  {
+    return destinationAiportName.isEmpty() ? destinationIdent : destinationAiportName;
+  }
+
   /* Values for FSX */
   const QString APPVERSION_BUILD = QString("61472");
   const QString APPVERSION_MAJOR = QString("10");

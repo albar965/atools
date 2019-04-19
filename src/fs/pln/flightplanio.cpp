@@ -1198,8 +1198,8 @@ void FlightplanIO::saveFsx(const Flightplan& plan, const QString& file, SaveOpti
                           plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
   writer.writeTextElement("Descr", plan.description);
   writer.writeTextElement("DeparturePosition", plan.departureParkingName);
-  writer.writeTextElement("DepartureName", plan.departureAiportName);
-  writer.writeTextElement("DestinationName", plan.destinationAiportName);
+  writer.writeTextElement("DepartureName", plan.departNameOrIdent());
+  writer.writeTextElement("DestinationName", plan.destNameOrIdent());
 
   writer.writeStartElement("AppVersion");
   writer.writeTextElement("AppVersionMajor", plan.APPVERSION_MAJOR); // Always use fsx values
@@ -1999,8 +1999,8 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
     writer.writeStartElement("rte");
 
     QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6, %7").
-                    arg(plan.departureAiportName).arg(plan.departureIdent).
-                    arg(plan.destinationAiportName).arg(plan.destinationIdent).
+                    arg(plan.departNameOrIdent()).arg(plan.departureIdent).
+                    arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
                     arg(plan.getCruisingAltitude()).
                     arg(flightplanTypeToString(plan.flightplanType)).
                     arg(routeTypeToString(plan.routeType));
@@ -2599,8 +2599,8 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& file)
            << coordStringFs9(plan.getDeparturePosition()) << endl;
     stream << "destination_id=" << plan.getDestinationIdent() << ", "
            << coordStringFs9(plan.getDestinationPosition()) << endl;
-    stream << "departure_name=" << plan.getDepartureAiportName().toUpper() << endl;
-    stream << "destination_name=" << plan.getDestinationAiportName().toUpper() << endl;
+    stream << "departure_name=" << plan.departNameOrIdent().toUpper() << endl;
+    stream << "destination_name=" << plan.destNameOrIdent().toUpper() << endl;
 
     // waypoint.0=EDDH, A, N53* 37.82', E009* 59.29', +000053.00,
     // waypoint.1=AMLUH, I, N53* 25.74', E010* 19.35', +000000.00,
