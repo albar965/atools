@@ -77,6 +77,16 @@ QString Application::generalErrorMessage()
                 "of the contact addresses below.</b><br/>").arg(QApplication::applicationName());
 }
 
+void Application::sendFontChanged()
+{
+  Application *app = dynamic_cast<Application *>(instance());
+
+  if(app != nullptr)
+    emit app->fontChanged();
+  else
+    qWarning() << Q_FUNC_INFO << "app is null";
+}
+
 void Application::handleException(const char *file, int line, const std::exception& e)
 {
   qCritical() << "Caught exception in file" << file << "line" << line << "what" << e.what();

@@ -41,7 +41,7 @@ class Application :
 
 public:
   Application(int& argc, char **argv, int = ApplicationFlags);
-  virtual ~Application();
+  virtual ~Application() override;
 
   /*
    * Shows an error dialog with the exception message and after that exits the application with code 1.
@@ -85,6 +85,8 @@ public:
   static void processEventsExtended();
 
   static QString generalErrorMessage();
+
+  static void sendFontChanged();
 
 signals:
   /* Application font has changed. */
