@@ -1,0 +1,68 @@
+language: cpp
+os: linux
+compiler: gcc
+dist: xenial
+
+addons:
+  apt:
+    # Get new gcc
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+      - g++-7
+
+before_install:
+    # Add repository for Qt
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.12.2-xenial
+    - sudo apt-get -qq update
+
+    # Decrypt auth token for deployment
+    - '[ "$TRAVIS_SECURE_ENV_VARS" == "false" ] || openssl aes-256-cbc -K $encrypted_32e4a7602a6c_key -iv $encrypted_32e4a7602a6c_iv -in deployment/.dropbox_uploader.enc -out ~/.dropbox_uploader -d'
+
+install:
+    # Install needed Qt modules and libraries for qt
+    - sudo apt-get --yes install libgl1-mesa-dev qt512base qt512svg qt512script
+
+    # Set Qt variables
+    - QTDIR="/opt/qt512"
+    - PATH="$QTDIR/bin:$PATH"
+    - source /opt/qt512/bin/qt512-env.sh
+
+    # Set used gcc version
+    - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
+    - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
+    - export CC=gcc-7
+    - export CXX=g++-7
+
+before_script:
+    # Clone atoolstest
+    - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
+
+    # Download and extract needed files for the tests
+    - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'
+    - wget -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
+    - tar -xvzf '../Global Land One-kilometer Base Elevation (GLOBE)/all10g.tgz' -C '../Global Land One-kilometer Base Elevation (GLOBE)/'
+
+script:
+    # Build atools
+    - mkdir ../build-atools-release
+    - cd ../build-atools-release
+    - qmake ../atools/atools.pro CONFIG+=release
+    - make -j2
+
+    # Build atoolstest
+    - mkdir ../build-atoolstest-release
+    - cd ../build-atoolstest-release
+    - qmake ../atoolstest/atoolstest.pro CONFIG+=release
+    - make -j2
+
+    # Run tests
+    - './atoolstest --RunAll'
+
+after_success:
+    # Deploy artefacts to dropbox
+    - tar -cvzf ../atools-release.tar.gz ../build-atools-release/
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh delete linux/atools-release.tar.gz'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh mkdir linux'
+    - '[ -f ~/.dropbox_uploader ] && ../atools/deployment/dropbox_uploader.sh upload ../atools-release.tar.gz linux'
