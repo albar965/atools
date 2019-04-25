@@ -667,9 +667,30 @@ unix:!macx {
 win32 {
   defineReplace(p){return ($$shell_quote($$shell_path($$1)))}
 
+  # Creates a list of xcopy commands separated by && to copy the header files from $$HEADERS
+  # First parameter is the destination folder, e.g. "../deploy/atools/include"
+  defineReplace(copyHeaderFilesCommands) {
+    headers =
+    dest = $$1
+    destpath = $$eval(dest) # C:/Projects/deploy/atools/include
+
+    for(name, HEADERS) {
+      header = $$absolute_path($$name)               # C:/Users/YOU/Projects/atools/src/fs/xp/xpnavwriter.h
+      dpath = $$relative_path($$header, $${PWD}/src) # fs/xp/xpnavwriter.h
+      dpath2 = $${destpath}/$${dpath}
+      headers += xcopy $$p($$header) $$p($$dirname(dpath2)) &&
+    }
+    return($$headers)
+  }
+
   deploy.commands = rmdir /s /q $$p($$DEPLOY_BASE/$$TARGET_NAME) &
-  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/sqldrivers) &&
-  deploy.commands += xcopy $$p($$OUT_PWD/atoolstest.exe) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
+  deploy.commands += xcopy /T /E $$p($$PWD/src) $$p($$DEPLOY_BASE/$$TARGET_NAME/include) &&
+  deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_BASE/$$TARGET_NAME/include)
+  deploy.commands += xcopy $$p($$OUT_PWD/libatools.a) $$p($$DEPLOY_BASE/$$TARGET_NAME/lib) &&
+  deploy.commands += xcopy $$p($${PWD}/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME)
