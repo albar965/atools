@@ -28,6 +28,9 @@
 # Path to SimConnect SDK. SimConnect support will be omitted in build if not set.
 # Example: "C:\Program Files (x86)\Microsoft Games\Microsoft Flight Simulator X SDK\SDK\Core Utilities Kit\SimConnect SDK"
 #
+# DEPLOY_BASE
+# Optional. Target folder for "make deploy". Default is "../deploy" plus project name ($$TARGET_NAME).
+#
 # ATOOLS_QUIET
 # Optional. Set this to "true" to avoid qmake messages.
 #
@@ -46,7 +49,10 @@ QT += sql xml svg core widgets network
 QT -= gui
 CONFIG += build_all c++14 staticlib
 CONFIG -= debug_and_release debug_and_release_target
+
 TARGET = atools
+TARGET_NAME=$$TARGET
+
 TEMPLATE = lib
 
 # =======================================================================
@@ -54,8 +60,17 @@ TEMPLATE = lib
 
 GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
+DEPLOY_BASE=$$(DEPLOY_BASE)
 QUIET=$$(ATOOLS_QUIET)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
+
+# =======================================================================
+# Fill defaults for unset
+
+CONFIG(debug, debug|release) : CONF_TYPE=debug
+CONFIG(release, debug|release) : CONF_TYPE=release
+
+isEmpty(DEPLOY_BASE) : DEPLOY_BASE=$$PWD/../deploy
 
 # =======================================================================
 # Set compiler flags and paths
@@ -615,3 +630,55 @@ TRANSLATIONS = \
   atools_it.ts \
   atools_nl.ts \
   atools_pt_BR.ts
+
+# Linux specific deploy target
+unix:!macx {
+  # Creates a list of mkdir and cp commands separated by && to copy the header files from $$HEADERS
+  # First parameter is the destination folder, e.g. "../deploy/atools/include"
+  defineReplace(copyHeaderFilesCommands) {
+    headers =
+    dest = $$1
+    destpath = $$eval(dest) # /home/YOU/Projects/deploy/atools/include
+
+    for(name, HEADERS) {
+      header = $$absolute_path($$name)               # /home/YOU/Projects/atools/src/fs/xp/xpnavwriter.h
+      dpath = $$relative_path($$header, $${PWD}/src) # fs/xp/xpnavwriter.h
+      headers += mkdir -pv $${destpath}/$$dirname(dpath) && cp -v $$header $${destpath}/$${dpath} &&
+    }
+    return($$headers)
+  }
+
+  DEPLOY_DIR=\"$$DEPLOY_BASE/$$TARGET_NAME\"
+  DEPLOY_DIR_LIB=\"$$DEPLOY_BASE/$$TARGET_NAME/lib\"
+  DEPLOY_DIR_INCLUDE=\"$$DEPLOY_BASE/$$TARGET_NAME/include\"
+
+  deploy.commands = rm -Rfv $$DEPLOY_DIR &&
+  deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB &&
+  deploy.commands += mkdir -pv $$DEPLOY_DIR_INCLUDE &&
+  deploy.commands += $$copyHeaderFilesCommands($$DEPLOY_DIR_INCLUDE)
+  deploy.commands += cp -Rvf $$PWD/atools*.qm $$DEPLOY_DIR &&
+  deploy.commands += cp -Rvf $$OUT_PWD/libatools.a $$DEPLOY_DIR_LIB &&
+  deploy.commands += cp -vf $$PWD/CHANGELOG.txt $$DEPLOY_DIR &&
+  deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
+  deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR
+}
+
+# Windows specific deploy target only for release builds
+win32 {
+  defineReplace(p){return ($$shell_quote($$shell_path($$1)))}
+
+  deploy.commands = rmdir /s /q $$p($$DEPLOY_BASE/$$TARGET_NAME) &
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/sqldrivers) &&
+  deploy.commands += xcopy $$p($$OUT_PWD/atoolstest.exe) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME)
+}
+
+# =====================================================================
+# Additional targets
+
+# Deploy needs compiling before
+deploy.depends = all
+
+QMAKE_EXTRA_TARGETS += deploy all
