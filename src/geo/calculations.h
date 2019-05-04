@@ -34,10 +34,23 @@ const float INVALID_FLOAT = std::numeric_limits<float>::max();
 const double INVALID_DOUBLE = std::numeric_limits<double>::max();
 const int INVALID_INT = std::numeric_limits<int>::max();
 
+/* Forward declarations */
 class Line;
 class LineString;
 class Pos;
 class Rect;
+
+template<typename TYPE>
+inline TYPE atan2Deg(TYPE y, TYPE x);
+
+template<typename TYPE>
+TYPE normalizeCourse(TYPE courseDegree);
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg);
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad);
 
 enum LineDist
 {
@@ -109,6 +122,38 @@ float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float co
  *  If head wind is < 0 it is a tail wind.
  *  If cross wind is < 0 wind is from left */
 void windForCourse(float& headWind, float& crossWind, float windSpeed, float windDirectionDeg, float courseDeg);
+
+/* Calculate wind speed from u and v components
+ * V component of wind; northward_wind;
+ * U component of wind; eastward_wind;
+ *  A positive Ugeo component represents wind blowing to the East (confusingly known as a "westerly").
+ * +Vgeo is wind to the North (a "southerly" ). This is right handed with respect to an upward +Wgeo.*/
+inline float windSpeedFromUV(float u, float v)
+{
+  return std::sqrt(u * u + v * v);
+}
+
+/* Calculate wind true heading from u and v components
+ * V component of wind; northward_wind;
+ * U component of wind; eastward_wind; */
+inline float windDirectionFromUV(float u, float v)
+{
+  return atools::geo::normalizeCourse(atan2Deg(u, v));
+}
+
+/* Calculate wind eastward component from speed and direction in degrees
+ * U component of wind; eastward_wind; */
+inline float windUComponent(float speed, float dir)
+{
+  return static_cast<float>(speed * sin(toRadians(dir)));
+}
+
+/* Calculate wind eastward component from speed and direction in degrees
+ * V component of wind; northward_wind; */
+inline float windVComponent(float speed, float dir)
+{
+  return static_cast<float>(speed * cos(toRadians(dir)));
+}
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
@@ -257,7 +302,7 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE kmToNm(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
-                                                          static_cast<TYPE>(static_cast<double>(value) / 1.852216);
+         static_cast<TYPE>(static_cast<double>(value) / 1.852216);
 }
 
 template<typename TYPE>
@@ -458,6 +503,19 @@ Q_DECL_CONSTEXPR TYPE tasToMachFromAlt(TYPE altFeet, TYPE tas)
 {
   return static_cast<TYPE>(static_cast<double>(tas) /
                            (std::sqrt(isaTemperature(static_cast<double>(altFeet)) + 273.15) * 39.));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE pressureMbarForAltMeter(TYPE altMeter)
+{
+  return static_cast<TYPE>(1013.25 * std::pow(1.0 - ((0.0065 * static_cast<double>(altMeter)) / 288.15), 5.255));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE altMeterForPressureMbar(TYPE pressureMbar)
+{
+  return static_cast<TYPE>(288.15 / 0.0065 *
+                           (1 - std::pow((static_cast<double>(pressureMbar) / 1013.25), (1. / 5.255))));
 }
 
 /* Collection of trigonometric functions that accept or return degree */

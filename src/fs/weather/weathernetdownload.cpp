@@ -80,9 +80,9 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   emit weatherUpdated();
 }
 
-void WeatherNetDownload::downloadFailed(const QString& error, QString url)
+void WeatherNetDownload::downloadFailed(const QString& error, int errorCode, QString url)
 {
-  qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error;
+  qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error << errorCode;
 }
 
 void WeatherNetDownload::setUpdatePeriod(int seconds)

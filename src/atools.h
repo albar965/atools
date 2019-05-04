@@ -243,14 +243,19 @@ Q_DECL_CONSTEXPR int roundToInt(TYPE value)
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE interpolate(TYPE f0, TYPE f1, TYPE x0, TYPE x1, TYPE x)
 {
-  return f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
+  if(f0 == f1)
+    return f0;
+  else
+    return f0 + ((f1 - f0) / (x1 - x0)) * (x - x0);
 }
 
+/* Get coordinate where x crosses the line  */
 Q_DECL_CONSTEXPR QPointF interpolateForX(const QLineF& line, double x)
 {
   return line.pointAt((x - line.x1()) / line.dx());
 }
 
+/* Get coordinate where y crosses the line */
 Q_DECL_CONSTEXPR QPointF interpolateForY(const QLineF& line, double y)
 {
   return line.pointAt((y - line.y1()) / line.dy());

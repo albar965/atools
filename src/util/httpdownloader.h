@@ -68,7 +68,10 @@ public:
 
   /* Re-download every number of seconds and emit downloadFinished when done.
    *  Timer will start after first reply from startDownload */
-  void setUpdatePeriod(int seconds);
+  void setUpdatePeriod(int seconds)
+  {
+    updatePeriodSeconds = seconds;
+  }
 
   void startTimer();
   void stopTimer();
@@ -112,7 +115,7 @@ public:
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
-  void downloadFailed(const QString& error, QString downloadUrl);
+  void downloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
 
 private:

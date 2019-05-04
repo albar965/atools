@@ -210,6 +210,8 @@ public:
 
   /* Find point between start and end on GC route if distance between points is not known */
   atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
+
+  /* positions includes this but not pos2 if numPoints > 0 */
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
                          QList<atools::geo::Pos>& positions) const;
 

@@ -35,6 +35,10 @@
 # Optional. Set this to "true" to omit all flight simulator code if not needed.
 # Reduces compilation time.
 #
+# ATOOLS_NO_GRIB
+# Optional. Set this to "true" to omit all GRIB2 decoding code if not needed.
+# Reduces compilation time.
+#
 # This project has no deploy or install target. The include and library should
 # be used directly from the source tree.
 #
@@ -56,6 +60,7 @@ GIT_PATH=$$(ATOOLS_GIT_PATH)
 SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
 QUIET=$$(ATOOLS_QUIET)
 ATOOLS_NO_FS=$$(ATOOLS_NO_FS)
+ATOOLS_NO_GRIB=$$(ATOOLS_NO_GRIB)
 
 # =======================================================================
 # Set compiler flags and paths
@@ -100,6 +105,7 @@ message(-----------------------------------)
 message(GIT_PATH: $$GIT_PATH)
 message(GIT_REVISION: $$GIT_REVISION)
 message(ATOOLS_NO_FS: $$ATOOLS_NO_FS)
+message(ATOOLS_NO_GRIB: $$ATOOLS_NO_GRIB)
 message(SIMCONNECT_PATH: $$SIMCONNECT_PATH)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -594,7 +600,74 @@ SOURCES += \
   src/fs/xp/xpfixwriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
   src/fs/xp/xpwriter.cpp
-}
+} # ATOOLS_NO_FS
+
+
+# =====================================================================
+# GRIB2 decoding files
+
+!isEqual(ATOOLS_NO_GRIB, "true") {
+HEADERS += \
+  src/g2clib/drstemplates.h \
+  src/g2clib/grib2.h \
+  src/g2clib/gridtemplates.h \
+  src/g2clib/pdstemplates.h \
+  src/grib/gribcommon.h \
+  src/grib/gribdownloader.h \
+  src/grib/gribreader.h \
+  src/grib/gribwindquery.h
+
+SOURCES += \
+  src/g2clib/cmplxpack.c \
+  src/g2clib/compack.c \
+  src/g2clib/comunpack.c \
+  src/g2clib/dec_jpeg2000.c \
+  src/g2clib/dec_png.c \
+  src/g2clib/drstemplates.c \
+  src/g2clib/enc_jpeg2000.c \
+  src/g2clib/enc_png.c \
+  src/g2clib/g2_addfield.c \
+  src/g2clib/g2_addgrid.c \
+  src/g2clib/g2_addlocal.c \
+  src/g2clib/g2_create.c \
+  src/g2clib/g2_free.c \
+  src/g2clib/g2_getfld.c \
+  src/g2clib/g2_gribend.c \
+  src/g2clib/g2_info.c \
+  src/g2clib/g2_miss.c \
+  src/g2clib/g2_unpack1.c \
+  src/g2clib/g2_unpack2.c \
+  src/g2clib/g2_unpack3.c \
+  src/g2clib/g2_unpack4.c \
+  src/g2clib/g2_unpack5.c \
+  src/g2clib/g2_unpack6.c \
+  src/g2clib/g2_unpack7.c \
+  src/g2clib/gbits.c \
+  src/g2clib/getdim.c \
+  src/g2clib/getpoly.c \
+  src/g2clib/gridtemplates.c \
+  src/g2clib/int_power.c \
+  src/g2clib/jpcpack.c \
+  src/g2clib/jpcunpack.c \
+  src/g2clib/misspack.c \
+  src/g2clib/mkieee.c \
+  src/g2clib/pack_gp.c \
+  src/g2clib/pdstemplates.c \
+  src/g2clib/pngpack.c \
+  src/g2clib/pngunpack.c \
+  src/g2clib/rdieee.c \
+  src/g2clib/reduce.c \
+  src/g2clib/seekgb.c \
+  src/g2clib/simpack.c \
+  src/g2clib/simunpack.c \
+  src/g2clib/specpack.c \
+  src/g2clib/specunpack.c \
+  src/grib/gribcommon.cpp \
+  src/grib/gribdownloader.cpp \
+  src/grib/gribreader.cpp \
+  src/grib/gribwindquery.cpp
+} # ATOOLS_NO_GRIB
+
 
 RESOURCES += \
   atools.qrc
@@ -602,6 +675,8 @@ RESOURCES += \
 OTHER_FILES += \
   resources/sql/fs/db/README.txt \
   *.ts \
+  .travis.yml \
+  .gitignore \
   BUILD.txt \
   CHANGELOG.txt \
   LICENSE.txt \

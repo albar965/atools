@@ -167,11 +167,6 @@ void HttpDownloader::setDefaultUserAgentShort(const QString& extension)
               arg(extension);
 }
 
-void HttpDownloader::setUpdatePeriod(int seconds)
-{
-  updatePeriodSeconds = seconds;
-}
-
 void HttpDownloader::deleteReply()
 {
   if(reply != nullptr)
@@ -222,7 +217,7 @@ void HttpDownloader::httpFinished()
     }
     else
     {
-      emit downloadFailed(reply->errorString(), curUrl());
+      emit downloadFailed(reply->errorString(), reply->error(), curUrl());
       deleteReply();
       startTimer();
     }
@@ -237,7 +232,7 @@ void HttpDownloader::readyRead()
   {
     if(reply->error() != QNetworkReply::NoError)
     {
-      emit downloadFailed(reply->errorString(), curUrl());
+      emit downloadFailed(reply->errorString(), reply->error(), curUrl());
       deleteReply();
       startTimer();
     }
