@@ -32,7 +32,7 @@
 # Optional. Set this to "true" to avoid qmake messages.
 #
 # ATOOLS_NO_FS
-# Optional. Set this to "true" to omit all flight simulator code if not needed.
+# Optional. Set this to "true" to omit all flight simulator code except "weather" and "sc" if not needed.
 # Reduces compilation time.
 #
 # ATOOLS_NO_GRIB
@@ -125,6 +125,25 @@ message(-----------------------------------)
 HEADERS += \
   src/atools.h \
   src/exception.h \
+  src/fs/sc/connecthandler.h \
+  src/fs/sc/datareaderthread.h \
+  src/fs/sc/simconnectaircraft.h \
+  src/fs/sc/simconnectapi.h \
+  src/fs/sc/simconnectdata.h \
+  src/fs/sc/simconnectdatabase.h \
+  src/fs/sc/simconnectdummy.h \
+  src/fs/sc/simconnecthandler.h \
+  src/fs/sc/simconnectreply.h \
+  src/fs/sc/simconnecttypes.h \
+  src/fs/sc/simconnectuseraircraft.h \
+  src/fs/sc/weatherrequest.h \
+  src/fs/sc/xpconnecthandler.h \
+  src/fs/weather/metar.h \
+  src/fs/weather/metarparser.h \
+  src/fs/weather/weathernetdownload.h \
+  src/fs/weather/weathernetsingle.h \
+  src/fs/weather/weathertypes.h \
+  src/fs/weather/xpweatherreader.h \
   src/geo/calculations.h \
   src/geo/line.h \
   src/geo/linestring.h \
@@ -147,6 +166,17 @@ HEADERS += \
   src/gui/translator.h \
   src/gui/widgetstate.h \
   src/gui/widgetutil.h \
+  src/httpserver/httpconnectionhandler.h \
+  src/httpserver/httpconnectionhandlerpool.h \
+  src/httpserver/httpcookie.h \
+  src/httpserver/httpglobal.h \
+  src/httpserver/httplistener.h \
+  src/httpserver/httprequest.h \
+  src/httpserver/httprequesthandler.h \
+  src/httpserver/httpresponse.h \
+  src/httpserver/httpsession.h \
+  src/httpserver/httpsessionstore.h \
+  src/httpserver/staticfilecontroller.h \
   src/io/abstractinireader.h \
   src/io/binarystream.h \
   src/io/fileroller.h \
@@ -165,6 +195,10 @@ HEADERS += \
   src/sql/sqlscript.h \
   src/sql/sqltransaction.h \
   src/sql/sqlutil.h \
+  src/templateengine/template.h \
+  src/templateengine/templatecache.h \
+  src/templateengine/templateglobal.h \
+  src/templateengine/templateloader.h \
   src/util/csvreader.h \
   src/util/filesystemwatcher.h \
   src/util/heap.h \
@@ -178,26 +212,29 @@ HEADERS += \
   src/win/activationcontext.h \
   src/zip/gzip.h \
   src/zip/zipreader.h \
-  src/zip/zipwriter.h \
-  src/httpserver/httprequest.h \
-  src/httpserver/httpconnectionhandler.h \
-  src/httpserver/httpconnectionhandlerpool.h \
-  src/httpserver/httplistener.h \
-  src/httpserver/httpsessionstore.h \
-  src/httpserver/staticfilecontroller.h \
-  src/httpserver/httpglobal.h \
-  src/httpserver/httprequesthandler.h \
-  src/httpserver/httpcookie.h \
-  src/httpserver/httpresponse.h \
-  src/httpserver/httpsession.h \
-  src/templateengine/template.h \
-  src/templateengine/templateglobal.h \
-  src/templateengine/templatecache.h \
-  src/templateengine/templateloader.h
+  src/zip/zipwriter.h
 
 SOURCES += \
   src/atools.cpp \
   src/exception.cpp \
+  src/fs/sc/connecthandler.cpp \
+  src/fs/sc/datareaderthread.cpp \
+  src/fs/sc/simconnectaircraft.cpp \
+  src/fs/sc/simconnectapi.cpp \
+  src/fs/sc/simconnectdata.cpp \
+  src/fs/sc/simconnectdatabase.cpp \
+  src/fs/sc/simconnectdummy.cpp \
+  src/fs/sc/simconnecthandler.cpp \
+  src/fs/sc/simconnectreply.cpp \
+  src/fs/sc/simconnectuseraircraft.cpp \
+  src/fs/sc/weatherrequest.cpp \
+  src/fs/sc/xpconnecthandler.cpp \
+  src/fs/weather/metar.cpp \
+  src/fs/weather/metarparser.cpp \
+  src/fs/weather/weathernetdownload.cpp \
+  src/fs/weather/weathernetsingle.cpp \
+  src/fs/weather/weathertypes.cpp \
+  src/fs/weather/xpweatherreader.cpp \
   src/geo/calculations.cpp \
   src/geo/line.cpp \
   src/geo/linestring.cpp \
@@ -220,6 +257,17 @@ SOURCES += \
   src/gui/translator.cpp \
   src/gui/widgetstate.cpp \
   src/gui/widgetutil.cpp \
+  src/httpserver/httpconnectionhandler.cpp \
+  src/httpserver/httpconnectionhandlerpool.cpp \
+  src/httpserver/httpcookie.cpp \
+  src/httpserver/httpglobal.cpp \
+  src/httpserver/httplistener.cpp \
+  src/httpserver/httprequest.cpp \
+  src/httpserver/httprequesthandler.cpp \
+  src/httpserver/httpresponse.cpp \
+  src/httpserver/httpsession.cpp \
+  src/httpserver/httpsessionstore.cpp \
+  src/httpserver/staticfilecontroller.cpp \
   src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
   src/io/fileroller.cpp \
@@ -237,6 +285,9 @@ SOURCES += \
   src/sql/sqlscript.cpp \
   src/sql/sqltransaction.cpp \
   src/sql/sqlutil.cpp \
+  src/templateengine/template.cpp \
+  src/templateengine/templatecache.cpp \
+  src/templateengine/templateloader.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \
   src/util/heap.cpp \
@@ -249,21 +300,7 @@ SOURCES += \
   src/util/version.cpp \
   src/win/activationcontext.cpp \
   src/zip/gzip.cpp \
-  src/zip/zip.cpp \
-  src/httpserver/httpresponse.cpp \
-  src/httpserver/staticfilecontroller.cpp \
-  src/httpserver/httprequesthandler.cpp \
-  src/httpserver/httpglobal.cpp \
-  src/httpserver/httprequest.cpp \
-  src/httpserver/httpsession.cpp \
-  src/httpserver/httpconnectionhandler.cpp \
-  src/httpserver/httplistener.cpp \
-  src/httpserver/httpsessionstore.cpp \
-  src/httpserver/httpcookie.cpp \
-  src/httpserver/httpconnectionhandlerpool.cpp \
-  src/templateengine/templatecache.cpp \
-  src/templateengine/templateloader.cpp \
-  src/templateengine/template.cpp
+  src/zip/zip.cpp
 
 # =====================================================================
 # Flight simulator files
@@ -394,19 +431,6 @@ HEADERS += \
   src/fs/pln/flightplanentry.h \
   src/fs/pln/flightplanio.h \
   src/fs/progresshandler.h \
-  src/fs/sc/connecthandler.h \
-  src/fs/sc/datareaderthread.h \
-  src/fs/sc/simconnectaircraft.h \
-  src/fs/sc/simconnectapi.h \
-  src/fs/sc/simconnectdata.h \
-  src/fs/sc/simconnectdatabase.h \
-  src/fs/sc/simconnectdummy.h \
-  src/fs/sc/simconnecthandler.h \
-  src/fs/sc/simconnectreply.h \
-  src/fs/sc/simconnecttypes.h \
-  src/fs/sc/simconnectuseraircraft.h \
-  src/fs/sc/weatherrequest.h \
-  src/fs/sc/xpconnecthandler.h \
   src/fs/scenery/addoncfg.h \
   src/fs/scenery/addoncomponent.h \
   src/fs/scenery/addonpackage.h \
@@ -418,12 +442,6 @@ HEADERS += \
   src/fs/util/fsutil.h \
   src/fs/util/morsecode.h \
   src/fs/util/tacanfrequencies.h \
-  src/fs/weather/metar.h \
-  src/fs/weather/metarparser.h \
-  src/fs/weather/weathernetdownload.h \
-  src/fs/weather/weathernetsingle.h \
-  src/fs/weather/weathertypes.h \
-  src/fs/weather/xpweatherreader.h \
   src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
   src/fs/xp/xpairportwriter.h \
@@ -560,18 +578,6 @@ SOURCES += \
   src/fs/pln/flightplanentry.cpp \
   src/fs/pln/flightplanio.cpp \
   src/fs/progresshandler.cpp \
-  src/fs/sc/connecthandler.cpp \
-  src/fs/sc/datareaderthread.cpp \
-  src/fs/sc/simconnectaircraft.cpp \
-  src/fs/sc/simconnectapi.cpp \
-  src/fs/sc/simconnectdata.cpp \
-  src/fs/sc/simconnectdatabase.cpp \
-  src/fs/sc/simconnectdummy.cpp \
-  src/fs/sc/simconnecthandler.cpp \
-  src/fs/sc/simconnectreply.cpp \
-  src/fs/sc/simconnectuseraircraft.cpp \
-  src/fs/sc/weatherrequest.cpp \
-  src/fs/sc/xpconnecthandler.cpp \
   src/fs/scenery/addoncfg.cpp \
   src/fs/scenery/addoncomponent.cpp \
   src/fs/scenery/addonpackage.cpp \
@@ -583,12 +589,6 @@ SOURCES += \
   src/fs/util/fsutil.cpp \
   src/fs/util/morsecode.cpp \
   src/fs/util/tacanfrequencies.cpp \
-  src/fs/weather/metar.cpp \
-  src/fs/weather/metarparser.cpp \
-  src/fs/weather/weathernetdownload.cpp \
-  src/fs/weather/weathernetsingle.cpp \
-  src/fs/weather/weathertypes.cpp \
-  src/fs/weather/xpweatherreader.cpp \
   src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
   src/fs/xp/xpairportwriter.cpp \
