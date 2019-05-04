@@ -98,7 +98,7 @@ void GribReader::readFile(const QString& filename)
   long skipBytes, numGribBytes, seekBytes = 0L;
   g2int expand = 1, unpack = 1, ret, ierr;
 
-  FILE *fptr = fopen(filename.toUtf8().data(), "r");
+  FILE *fptr = fopen(filename.toUtf8().data(), "rb");
   while(true)
   {
     if(verbose)
@@ -107,7 +107,7 @@ void GribReader::readFile(const QString& filename)
     // Search for next/first GRIB message ========================================
     seekgb(fptr, seekBytes, 128000, &skipBytes, &numGribBytes);
     if(numGribBytes == 0)
-      break; // end loop at EOF or problem
+      break;  // end loop at EOF or problem
 
     cgrib = new unsigned char[static_cast<size_t>(numGribBytes)];
     ret = fseek(fptr, skipBytes, SEEK_SET);
@@ -385,18 +385,18 @@ void GribReader::readFile(const QString& filename)
 
       g2_free(gribField);
     }
-    free(cgrib);
+    delete[] cgrib;
   }
 
   // Sort first by altitude from low to high and second by parameter type from U to V
   std::sort(datasets.begin(), datasets.end(),
-            [](const atools::grib::GribDataset& d1, const atools::grib::GribDataset& d2) -> bool
-      {
-        if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
-          return d1.parameterType < d2.parameterType;
-        else
-          return d1.altFeetCalculated < d2.altFeetCalculated;
-      });
+            [] (const atools::grib::GribDataset & d1, const atools::grib::GribDataset & d2)->bool
+            {
+              if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
+                return d1.parameterType < d2.parameterType;
+              else
+                return d1.altFeetCalculated < d2.altFeetCalculated;
+            });
 }
 
 void GribReader::readData(const QByteArray& data)
