@@ -131,7 +131,7 @@ void MagDecReader::readFromBytes(const QByteArray& bytes)
 void MagDecReader::writeToTable(sql::SqlDatabase& db) const
 {
   if(!isValid())
-    throw new Exception("MagDecReader is invalid");
+    throw Exception("MagDecReader is invalid");
 
   db.exec("delete from magdecl");
 
@@ -179,7 +179,7 @@ void MagDecReader::clear()
 QByteArray MagDecReader::writeToBytes() const
 {
   if(!isValid())
-    throw new Exception("MagDecReader is invalid");
+    throw Exception("MagDecReader is invalid");
 
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);
@@ -196,7 +196,7 @@ QByteArray MagDecReader::writeToBytes() const
 float MagDecReader::getMagVar(const geo::Pos& pos) const
 {
   if(!isValid())
-    throw new Exception("MagDecReader is invalid");
+    throw Exception("MagDecReader is invalid");
 
   Pos posNorm(pos.normalized());
   float lonX = posNorm.getLonX();
@@ -245,7 +245,7 @@ float MagDecReader::magvar(int offset) const
   if(offset >= 0 && offset < static_cast<int>(numValues))
     return magDeclValues[offset];
   else
-    throw new Exception(QString("Wrong offset into magvar array %1").arg(offset));
+    throw Exception(QString("Wrong offset into magvar array %1").arg(offset));
 }
 
 int MagDecReader::offset(int lonX, int latY) const
