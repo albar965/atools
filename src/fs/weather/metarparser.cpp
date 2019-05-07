@@ -1203,6 +1203,16 @@ bool MetarParser::scanSkyCondition()
     return true;
   }
 
+  if(!strncmp(m, "//////TCU", 9))
+  {
+    m += 9;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
   if(!strncmp(m, "//////", 6))
   {
     m += 6;
