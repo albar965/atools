@@ -41,10 +41,10 @@ FileSystemWatcher::~FileSystemWatcher()
 {
   qDebug() << Q_FUNC_INFO;
 
-  clear();
+  stopWatching();
 }
 
-void FileSystemWatcher::clear()
+void FileSystemWatcher::stopWatching()
 {
   deleteFsWatcher();
   filename.clear();
@@ -118,7 +118,7 @@ void FileSystemWatcher::setFilenameAndStart(const QString& value)
 {
   qDebug() << Q_FUNC_INFO << value;
 
-  clear();
+  stopWatching();
   filename = value;
   createFsWatcher();
 }

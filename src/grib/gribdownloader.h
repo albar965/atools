@@ -53,7 +53,7 @@ public:
   /* Start initial download. This will also trigger a recurring download method that gets the file
    * every 30 minutes.
    * Uses the latest file date if timestamp is not set. */
-  void startDownload(const QDateTime& timestamp = QDateTime());
+  void startDownload(const QDateTime& timestamp = QDateTime(), const QString& baseUrlParam = QString());
 
   /* Stop any download in progress */
   void stopDownload();
@@ -118,6 +118,9 @@ private:
   QVector<int> surfaces;
   QStringList parameters;
   QDateTime datetime;
+
+  /* Use default if empty */
+  QString baseUrl;
 
   bool verbose = false;
   /* Counter for retries if current date is not available */

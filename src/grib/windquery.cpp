@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "grib/gribwindquery.h"
+#include "grib/windquery.h"
 
 #include "grib/gribdownloader.h"
 #include "grib/gribreader.h"
@@ -23,6 +23,7 @@
 #include "geo/rect.h"
 #include "geo/linestring.h"
 #include "atools.h"
+#include "util/filesystemwatcher.h"
 #include "exception.h"
 #include "geo/line.h"
 
@@ -59,8 +60,28 @@ QDebug operator<<(QDebug out, const Wind& wind)
   return out;
 }
 
+inline float interpolateDir(float f0, float f1, float x0, float x1, float x)
+{
+  if(f0 < INVALID_DIR_VALUE / 2 && f1 < INVALID_DIR_VALUE / 2)
+  {
+    if(atools::almostEqual(f0, f1))
+      return normalizeCourse(f0);
+    else
+      return normalizeCourse(f0 + ((f1 - f0) / (x1 - x0)) * (x - x0));
+  }
+  else
+  {
+    if(f0 < INVALID_DIR_VALUE / 2)
+      return normalizeCourse(f0);
+
+    if(f1 < INVALID_DIR_VALUE / 2)
+      return normalizeCourse(f1);
+  }
+  return 0.f;
+}
+
 // ===============================================================
-GribWindQuery::GribWindQuery(QObject *parentObject, bool logVerbose)
+WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   : QObject(parentObject), verbose(logVerbose)
 {
   downloader = new GribDownloader(parentObject, logVerbose);
@@ -71,47 +92,64 @@ GribWindQuery::GribWindQuery(QObject *parentObject, bool logVerbose)
   // Layers 80 ft AGL and other values are mbar layers
   downloader->setSurfaces({-80, 200, 300, 450, 700});
 
-  connect(downloader, &GribDownloader::gribDownloadFinished, this, &GribWindQuery::gribDownloadFinished);
-  connect(downloader, &GribDownloader::gribDownloadFailed, this, &GribWindQuery::gribDownloadFailed);
+  connect(downloader, &GribDownloader::gribDownloadFinished, this, &WindQuery::gribDownloadFinished);
+  connect(downloader, &GribDownloader::gribDownloadFailed, this, &WindQuery::gribDownloadFailed);
+
+  fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
+  fileWatcher->setMinFileSize(180000);
+  connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &WindQuery::gribFileUpdated);
 }
 
-GribWindQuery::~GribWindQuery()
+WindQuery::~WindQuery()
 {
   delete downloader;
 }
 
-void GribWindQuery::init()
+void WindQuery::initFromUrl(const QString& baseUrl)
 {
+  deinit();
+
   // Start download and conversion when done
-  downloader->startDownload();
+  downloader->startDownload(QDateTime(), baseUrl);
 }
 
-void GribWindQuery::initFromFile(const QString& filename)
+void WindQuery::initFromFile(const QString& filename)
 {
-  GribReader reader(verbose);
-  reader.readFile(filename);
-  convertDataset(reader.getDatasets());
+  deinit();
+
+  // Inital load
+  gribFileUpdated(filename);
+
+  // Start checking for changes
+  fileWatcher->setFilenameAndStart(filename);
+
+  emit windDataUpdated();
 }
 
-void GribWindQuery::initFromData(const QByteArray& data)
+void WindQuery::initFromData(const QByteArray& data)
 {
+  deinit();
+
   GribReader reader(verbose);
   reader.readData(data);
   convertDataset(reader.getDatasets());
+
+  emit windDataUpdated();
 }
 
-void GribWindQuery::deinit()
+void WindQuery::deinit()
 {
   windLayers.clear();
   downloader->stopDownload();
+  fileWatcher->stopWatching();
 }
 
-Wind GribWindQuery::getWindForPos(const Pos& pos) const
+Wind WindQuery::getWindForPos(const Pos& pos) const
 {
   return getWindForPos(pos, pos.getAltitude());
 }
 
-Wind GribWindQuery::getWindForPos(const Pos& pos, float altFeet) const
+Wind WindQuery::getWindForPos(const Pos& pos, float altFeet) const
 {
   // Calculate grid position
   int col = static_cast<int>(pos.getLonX() + 180.f);
@@ -136,21 +174,24 @@ Wind GribWindQuery::getWindForPos(const Pos& pos, float altFeet) const
     // Interpolate between upper and lower layer
     Wind wind;
     wind.speed = interpolate(lW.speed, uW.speed, lower.altitude, upper.altitude, altFeet);
-    wind.dir = normalizeCourse(interpolate(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet));
+    wind.dir = interpolateDir(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet);
     return wind;
   }
   return lW;
 }
 
-atools::grib::WindPosVector GribWindQuery::getWindForRect(const Rect& rect, float altFeet) const
+atools::grib::WindPosVector WindQuery::getWindForRect(const Rect& rect, float altFeet) const
 {
   WindPosVector result;
   getWindForRect(result, rect, altFeet);
   return result;
 }
 
-void GribWindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float altFeet) const
+void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float altFeet) const
 {
+  if(windLayers.isEmpty())
+    return;
+
   if(rect.isPoint())
   {
     // No need to interpolate for single point rect
@@ -196,14 +237,15 @@ void GribWindQuery::getWindForRect(WindPosVector& result, const Rect& rect, floa
           if(upper != lower)
           {
             // Interpolate wind within a grid rectangle for the upper layer if layers differ
-            wp.wind.dir = normalizeCourse(interpolate(upper.winds.at(idx).dir, lower.winds.at(idx).dir,
-                                                      upper.altitude, lower.altitude, altFeet));
+            wp.wind.dir = interpolateDir(upper.winds.at(idx).dir, lower.winds.at(idx).dir,
+                                         upper.altitude, lower.altitude, altFeet);
             wp.wind.speed = interpolate(upper.winds.at(idx).speed, lower.winds.at(idx).speed,
                                         upper.altitude, lower.altitude, altFeet);
           }
           else
           {
-            wp.wind.dir = normalizeCourse(lower.winds.at(idx).dir);
+            float dir = lower.winds.at(idx).dir;
+            wp.wind.dir = dir < INVALID_DIR_VALUE / 2 ? normalizeCourse(dir) : 0.f;
             wp.wind.speed = lower.winds.at(idx).speed;
           }
 
@@ -225,7 +267,7 @@ void GribWindQuery::getWindForRect(WindPosVector& result, const Rect& rect, floa
   }
 }
 
-Wind GribWindQuery::getWindAverageForLineString(const geo::LineString& linestring, float altFeet) const
+Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring, float altFeet) const
 {
   if(linestring.size() == 1)
     // Only one position
@@ -241,7 +283,7 @@ Wind GribWindQuery::getWindAverageForLineString(const geo::LineString& linestrin
     {
       Wind w = getWindAverageForLine(linestring.at(i), linestring.at(i + 1), altFeet);
       speed += w.speed;
-      dir += w.dir;
+      dir += w.dir < INVALID_DIR_VALUE / 2 ? w.dir : 0.f;
     }
 
     // Calculate average
@@ -253,12 +295,12 @@ Wind GribWindQuery::getWindAverageForLineString(const geo::LineString& linestrin
   }
 }
 
-Wind GribWindQuery::getWindAverageForLine(const Line& line, float altFeet) const
+Wind WindQuery::getWindAverageForLine(const Line& line, float altFeet) const
 {
   return getWindAverageForLine(line.getPos1(), line.getPos2(), altFeet);
 }
 
-Wind GribWindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float altFeet) const
+Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float altFeet) const
 {
   // Calculate the number of samples for a line. Roughly four samples per degree.
   float distanceMeter = pos1.distanceMeterTo(pos2);
@@ -304,12 +346,12 @@ Wind GribWindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, floa
 
       // Interpolate at altitude between layers
       s = interpolate(lW.speed, uW.speed, lower.altitude, upper.altitude, altFeet);
-      d = normalizeCourse(interpolate(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet));
+      d = interpolateDir(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet);
     }
     else
     {
       s = lW.speed;
-      d = lW.dir;
+      d = lW.dir < INVALID_DIR_VALUE / 2 ? lW.dir : 0.f;
     }
     // qDebug() << pos << "s" << s << "d" << d;
     wind.speed += s;
@@ -322,7 +364,7 @@ Wind GribWindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, floa
   return wind;
 }
 
-void GribWindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float altitude) const
+void WindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float altitude) const
 {
   if(windLayers.size() == 1)
     // Only one wind layer
@@ -334,8 +376,17 @@ void GribWindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float 
     LayerMap::const_iterator it = windLayers.lowerBound(altitude);
     if(it != windLayers.end())
     {
-      if(atools::almostEqual(it->altitude, altitude, ALTITUDE_EPSILON) || it == windLayers.begin())
+      if(atools::almostEqual(it->altitude, altitude, ALTITUDE_EPSILON))
+        // Layer is at requested altitude - no need to interpolate
         lower = upper = *it;
+      else if(it == windLayers.begin())
+      {
+        // First layer - add a zero wind layer for interpolation between layer and ground
+        upper = *it;
+
+        lower.altitude = 0.f;
+        lower.winds.fill({INVALID_DIR_VALUE, 0.f}, 360 * 181);
+      }
       else
       {
         lower = *(it - 1);
@@ -347,7 +398,7 @@ void GribWindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float 
   }
 }
 
-Wind GribWindQuery::interpolateRect(const WindRect& windRect, const geo::Pos& pos, int leftCol, int topRow) const
+Wind WindQuery::interpolateRect(const WindRect& windRect, const geo::Pos& pos, int leftCol, int topRow) const
 {
   // Calculate right and bottom cell index
   int rightCol = leftCol < 359 ? leftCol + 1 : 0;
@@ -362,18 +413,17 @@ Wind GribWindQuery::interpolateRect(const WindRect& windRect, const geo::Pos& po
   // Interpolate at top and bottom between left and right
   Wind wTop, wBottom, wind;
   wTop.speed = interpolate(windRect.topLeft.speed, windRect.topRight.speed, left, right, pos.getLonX());
-  wTop.dir = normalizeCourse(interpolate(windRect.topLeft.dir, windRect.topRight.dir, left, right, pos.getLonX()));
+  wTop.dir = interpolateDir(windRect.topLeft.dir, windRect.topRight.dir, left, right, pos.getLonX());
   wBottom.speed = interpolate(windRect.bottomLeft.speed, windRect.bottomRight.speed, left, right, pos.getLonX());
-  wBottom.dir = normalizeCourse(interpolate(windRect.bottomLeft.dir, windRect.bottomRight.dir,
-                                            left, right, pos.getLonX()));
+  wBottom.dir = interpolateDir(windRect.bottomLeft.dir, windRect.bottomRight.dir, left, right, pos.getLonX());
 
   // Interpolate between top and bottom
   wind.speed = interpolate(wTop.speed, wBottom.speed, top, bottom, pos.getLatY());
-  wind.dir = normalizeCourse(interpolate(wTop.dir, wBottom.dir, top, bottom, pos.getLatY()));
+  wind.dir = interpolateDir(wTop.dir, wBottom.dir, top, bottom, pos.getLatY());
   return wind;
 }
 
-void GribWindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& layer, int leftCol, int topRow) const
+void WindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& layer, int leftCol, int topRow) const
 {
   int rightCol = leftCol < 359 ? leftCol + 1 : 0;
   int bottomRow = topRow < 180 ? topRow + 1 : 0;
@@ -384,16 +434,25 @@ void GribWindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& lay
   windRect.bottomLeft = windForLayer(layer, leftCol, bottomRow);
 }
 
-void GribWindQuery::gribDownloadFinished(const GribDatasetVector& datasets, QString)
+void WindQuery::gribDownloadFinished(const GribDatasetVector& datasets, QString)
 {
   // Download finished - update coordinates
   convertDataset(datasets);
-  emit windDownloadFinished();
+  emit windDataUpdated();
 }
 
-void GribWindQuery::gribDownloadFailed(const QString& error, int errorCode, QString)
+void WindQuery::gribDownloadFailed(const QString& error, int errorCode, QString)
 {
   emit windDownloadFailed(error, errorCode);
+}
+
+void WindQuery::gribFileUpdated(const QString& filename)
+{
+  GribReader reader(verbose);
+  reader.readFile(filename);
+  convertDataset(reader.getDatasets());
+
+  emit windDataUpdated();
 }
 
 // Required GRIB parameters:
@@ -417,7 +476,7 @@ void GribWindQuery::gribDownloadFailed(const QString& error, int errorCode, QStr
 // j direction - south to north along a meridian, or bottom to top along a y-axis.
 // V component of wind; northward_wind;
 // U component of wind; eastward_wind;
-void GribWindQuery::convertDataset(const GribDatasetVector& datasets)
+void WindQuery::convertDataset(const GribDatasetVector& datasets)
 {
   for(int dsidx = 0; dsidx < datasets.size(); dsidx += 2)
   {

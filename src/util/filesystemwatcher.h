@@ -50,7 +50,8 @@ public:
   /* Set file and start watching */
   void setFilenameAndStart(const QString& value);
 
-  void clear();
+  /* Stop all notifications and watching */
+  void stopWatching();
 
   int getMinFileSize() const
   {

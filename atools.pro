@@ -165,6 +165,7 @@ HEADERS += \
   src/geo/pos.h \
   src/geo/rect.h \
   src/geo/simplespatialindex.h \
+  src/grib/windquery.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/application.h \
@@ -257,6 +258,7 @@ SOURCES += \
   src/geo/pos.cpp \
   src/geo/rect.cpp \
   src/geo/simplespatialindex.cpp \
+  src/grib/windquery.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/application.cpp \
@@ -631,8 +633,7 @@ HEADERS += \
   src/g2clib/pdstemplates.h \
   src/grib/gribcommon.h \
   src/grib/gribdownloader.h \
-  src/grib/gribreader.h \
-  src/grib/gribwindquery.h
+  src/grib/gribreader.h
 
 SOURCES += \
   src/g2clib/cmplxpack.c \
@@ -681,8 +682,7 @@ SOURCES += \
   src/g2clib/specunpack.c \
   src/grib/gribcommon.cpp \
   src/grib/gribdownloader.cpp \
-  src/grib/gribreader.cpp \
-  src/grib/gribwindquery.cpp
+  src/grib/gribreader.cpp
 } # ATOOLS_NO_GRIB
 
 

@@ -45,8 +45,10 @@ GribDownloader::~GribDownloader()
   delete downloader;
 }
 
-void GribDownloader::startDownload(const QDateTime& timestamp)
+void GribDownloader::startDownload(const QDateTime& timestamp, const QString& baseUrlParam)
 {
+  baseUrl = baseUrlParam;
+
   // Stop current request
   if(downloader->isDownloading())
     downloader->cancelDownload();
@@ -99,10 +101,11 @@ void GribDownloader::startDownloadInternal()
     parameterStr.append(QString("var_%1=on&").arg(parameter));
 
   // Buld URL ===============================
-  QString url = QString("https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl?"
-                        "file=gfs.t" + datetime.toString("hh") + "z.pgrb2.1p00.anl&" +
-                        levelStr + parameterStr + "dir=%2Fgfs." +
-                        datetime.toString("yyyyMMddhh"));
+  QString base = baseUrl.isEmpty() ? "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl" : baseUrl;
+
+  QString url = base + "?file=gfs.t" + datetime.toString("hh") + "z.pgrb2.1p00.anl&" +
+                levelStr + parameterStr + "dir=%2Fgfs." +
+                datetime.toString("yyyyMMddhh");
 
   downloader->setUrl(url);
 

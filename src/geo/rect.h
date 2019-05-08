@@ -113,6 +113,26 @@ public:
     return topLeft.getLonX();
   }
 
+  void setNorth(float value)
+  {
+    topLeft.setLatY(value);
+  }
+
+  void setSouth(float value)
+  {
+    bottomRight.setLatY(value);
+  }
+
+  void  setEast(float value)
+  {
+    bottomRight.setLonX(value);
+  }
+
+  void  setWest(float value)
+  {
+    topLeft.setLonX(value);
+  }
+
   /* Extend rectangle to include given point or rectangle.
    * Creates a singular rectangle for first call on invalid rect.
    *  Ignores invalid positions. */

@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_GRIBWINDQUERY_H
-#define ATOOLS_GRIBWINDQUERY_H
+#ifndef ATOOLS_GRIB_WINDQUERY_H
+#define ATOOLS_GRIB_WINDQUERY_H
 
 #include "grib/gribcommon.h"
 
@@ -28,6 +28,10 @@
 class QObject;
 
 namespace atools {
+namespace util {
+class FileSystemWatcher;
+}
+
 namespace geo {
 class Rect;
 class Line;
@@ -76,14 +80,21 @@ struct WindPos
 
 typedef QVector<WindPos> WindPosVector;
 
+/* Invalid values if they cannot be calculated */
+const float INVALID_WIND_VALUE = std::numeric_limits<float>::max();
+const float INVALID_DIR_VALUE = std::numeric_limits<float>::max();
+const float INVALID_ALT_VALUE = std::numeric_limits<float>::max();
+
 /*
  * Takes care for downloading/reading and decoding of GRIB2 wind files. Provides a query API to calculate and interpolate
  * winds for points, rectangles and lines.
  *
  * Wind speed and direction are interpolated for positions in the grid and given altitudes between layers.
  * Fetching data above the highest altitude will use the highest data.
+ * Fetching data below the lowest altitude will interpolate between lowest layer and zero.
  *
  * Data is updated automatically every 30 minutes.
+ * Files are checked for changes.
  *
  * Downloaded/possible sets are:
  * Altitide | Act. pressure | Pressure param | Downloaded | Used by X-Plane
@@ -95,21 +106,23 @@ typedef QVector<WindPos> WindPosVector;
  * 35000 ft | 23.8 mb       | 250            |            | XP
  * 40000 ft | 18.8 mb       | 200            | *          |
  */
-class GribWindQuery
+class WindQuery
   : public QObject
 {
   Q_OBJECT
 
 public:
-  GribWindQuery(QObject *parentObject, bool logVerbose);
-  ~GribWindQuery();
+  WindQuery(QObject *parentObject, bool logVerbose);
+  ~WindQuery();
 
-  /* Initialize download from https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl
-   *  Will download and update every 30 minutes */
-  void init();
+  /* Initialize download from https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl if baseUrl is empty
+   *  Will download and update every 30 minutes and terminate any file watching. */
+  void initFromUrl(const QString& baseUrl = QString());
 
-  /* Read data from file or byte array */
+  /* Read data from file and start watching for changes - terminates downloads */
   void initFromFile(const QString& filename);
+
+  /* Read data from byte array */
   void initFromData(const QByteArray& data);
 
   /* Clear data and stop periodic downloads */
@@ -123,7 +136,7 @@ public:
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates.*/
-  void getWindForRect(atools::grib::WindPosVector& result, const atools::geo::Rect& rect, float altFeet) const;
+  void getWindForRect(atools::grib::WindPosVector& result, const geo::Rect& rect, float altFeet) const;
   atools::grib::WindPosVector getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
@@ -133,21 +146,13 @@ public:
   Wind getWindAverageForLineString(const atools::geo::LineString& linestring, float altFeet) const;
 
 signals:
-  /* Download successfully finished. Only for void init(). */
-  void windDownloadFinished();
+  /* Download successfully finished. Emitted for all init methods. */
+  void windDataUpdated();
 
   /* Download failed.  Only for void init(). */
   void windDownloadFailed(const QString& error, int errorCode);
 
 private:
-  /* Allowed inaccuracy when comparing layer altitudes. */
-  Q_CONSTEXPR static float ALTITUDE_EPSILON = 10.f;
-
-  /* Do roughly four samples per degree when interpolating winds for lines */
-  Q_CONSTEXPR static int SAMPLES_PER_DEGREE = 4;
-  atools::grib::GribDownloader *downloader = nullptr;
-  bool verbose = false;
-
   /* Internal data structure for wind direction and speed computed from U/V speeds */
   struct WindAltLayer
   {
@@ -202,12 +207,26 @@ private:
 
   void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString);
   void gribDownloadFailed(const QString &error, int errorCode, QString);
+  void gribFileUpdated(const QString& filename);
+
+  /* Allowed inaccuracy when comparing layer altitudes. */
+  Q_CONSTEXPR static float ALTITUDE_EPSILON = 10.f;
+
+  /* Do roughly four samples per degree when interpolating winds for lines */
+  Q_CONSTEXPR static int SAMPLES_PER_DEGREE = 4;
+
+  /* Used for regular downloads from NOAA site */
+  atools::grib::GribDownloader *downloader = nullptr;
+
+  /* Check for file changes */
+  atools::util::FileSystemWatcher *fileWatcher = nullptr;
+
+  bool verbose = false;
 
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
   typedef QMap<float, WindAltLayer> LayerMap;
 
   LayerMap windLayers;
-
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);
@@ -222,4 +241,4 @@ Q_DECLARE_METATYPE(atools::grib::WindPos);
 Q_DECLARE_TYPEINFO(atools::grib::Wind, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(atools::grib::WindPos, Q_PRIMITIVE_TYPE);
 
-#endif // ATOOLS_GRIBWINDQUERY_H
+#endif // ATOOLS_GRIB_WINDQUERY_H

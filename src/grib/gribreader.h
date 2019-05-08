@@ -21,6 +21,7 @@
 #include "grib/gribcommon.h"
 
 #include <QVector>
+#include <QApplication>
 
 namespace atools {
 namespace grib {
@@ -35,6 +36,8 @@ namespace grib {
  */
 class GribReader
 {
+  Q_DECLARE_TR_FUNCTIONS(GribReader)
+
 public:
   GribReader(bool verboseParam = false);
 
@@ -51,6 +54,10 @@ public:
   {
     return datasets;
   }
+
+  /* Check if this is a GRIB version 2 file. true if mark exists. */
+  static bool validateGribFile(const QString& path);
+  static bool validateGribData(QByteArray bytes);
 
 private:
   atools::grib::GribDatasetVector datasets;
