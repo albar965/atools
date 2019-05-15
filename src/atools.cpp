@@ -31,7 +31,7 @@ namespace atools {
 
 QString version()
 {
-  return "3.2.4"; // VERSION_NUMBER - atools
+  return "3.2.5"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()

@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.2.5
+
+* Fixed crash when loading P3D scenery that appears when using fsAerodata cycle 1905r1 or later.
+* Fixed Maddog X export to use correct file extension mdr.
+* Added support for X-Plane 8.33 kHz frequency spacing.
+* Fixed parsing issue with coordinates in some cases.
+* Fixed missing "=" in cruise altitude for BBS export.
+* Made loading of FMS flight plans more tolerant for wrong "DIRECT" instead of correct "DRCT".
+
 Version 3.2.4
 
 * Fixed issue with wrong waypoint numbering in FlightGear export causing the simulator to crash.
