@@ -39,7 +39,7 @@ create table airport
   has_jetfuel integer not null,               -- "
   has_tower_object integer not null,          -- "
 
-  tower_frequency integer,                    -- MHz * 1000
+  tower_frequency integer,                    -- MHz * 1000 or MHz * 100000 for 8.33 kHz spacing
   atis_frequency integer,                     -- "
   awos_frequency integer,                     -- "
   asos_frequency integer,                     -- "

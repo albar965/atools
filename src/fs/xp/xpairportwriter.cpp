@@ -339,6 +339,7 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
       bindFuel(line, context);
       break;
 
+    // Legacy frequencies ========================
     case x::COM_WEATHER:
     case x::COM_UNICOM:
     case x::COM_CLEARANCE:
@@ -346,7 +347,18 @@ void XpAirportWriter::write(const QStringList& line, const XpWriterContext& cont
     case x::COM_TOWER:
     case x::COM_APPROACH:
     case x::COM_DEPARTURE:
-      writeCom(line, rowCode, context);
+      writeCom(line, rowCode, context, false /* no 8.33 kHz spacing */);
+      break;
+
+    // New frequencies ========================
+    case x::COM_NEW_WEATHER:
+    case x::COM_NEW_UNICOM:
+    case x::COM_NEW_CLEARANCE:
+    case x::COM_NEW_GROUND:
+    case x::COM_NEW_TOWER:
+    case x::COM_NEW_APPROACH:
+    case x::COM_NEW_DEPARTURE:
+      writeCom(line, rowCode, context, true /* 8.33 kHz spacing */);
       break;
 
     // Unused rowcodes
@@ -900,8 +912,14 @@ void XpAirportWriter::calculateParkingPos(atools::geo::Pos& position, float head
 }
 
 void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
-                               const atools::fs::xp::XpWriterContext& context)
+                               const atools::fs::xp::XpWriterContext& context, bool spacing833Khz)
 {
+  // New
+  // 1054 118600 TWR
+  // 1050 126250 ATIS
+  // 1053 121700 GND
+  // 1054 123950 TWR
+
   if(ignoringAirport)
     return;
 
@@ -912,13 +930,13 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
   insertComQuery->bindValue(":com_id", ++curComId);
   insertComQuery->bindValue(":airport_id", curAirportId);
 
-  int frequency = at(line, com::FREQUENCY).toInt() * 10;
+  int frequency = at(line, com::FREQUENCY).toInt() * (spacing833Khz ? 1000 : 10);
   QString name = mid(line, com::NAME, true /* ignore error */);
   insertComQuery->bindValue(":name", name);
   insertComQuery->bindValue(":frequency", frequency);
   insertComQuery->bindValue(":type", "NONE");
 
-  if(rowCode == x::COM_WEATHER)
+  if(rowCode == x::COM_WEATHER || rowCode == x::COM_NEW_WEATHER)
   {
     // Check name for general weather frequency
     if(name.contains("atis", Qt::CaseInsensitive))
@@ -942,23 +960,23 @@ void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,
       insertComQuery->bindValue(":type", "ATIS");
     }
   }
-  else if(rowCode == x::COM_UNICOM)
+  else if(rowCode == x::COM_UNICOM || rowCode == x::COM_NEW_UNICOM)
   {
     insertAirportQuery->bindValue(":unicom_frequency", frequency);
     insertComQuery->bindValue(":type", "UC");
   }
-  else if(rowCode == x::COM_TOWER)
+  else if(rowCode == x::COM_TOWER || rowCode == x::COM_NEW_TOWER)
   {
     insertAirportQuery->bindValue(":tower_frequency", frequency);
     insertComQuery->bindValue(":type", "T");
   }
-  else if(rowCode == x::COM_CLEARANCE)
+  else if(rowCode == x::COM_CLEARANCE || rowCode == x::COM_NEW_CLEARANCE)
     insertComQuery->bindValue(":type", "C");
-  else if(rowCode == x::COM_GROUND)
+  else if(rowCode == x::COM_GROUND || rowCode == x::COM_NEW_GROUND)
     insertComQuery->bindValue(":type", "G");
-  else if(rowCode == x::COM_APPROACH)
+  else if(rowCode == x::COM_APPROACH || rowCode == x::COM_NEW_APPROACH)
     insertComQuery->bindValue(":type", "A");
-  else if(rowCode == x::COM_DEPARTURE)
+  else if(rowCode == x::COM_DEPARTURE || rowCode == x::COM_NEW_DEPARTURE)
     insertComQuery->bindValue(":type", "D");
 
   insertComQuery->exec();

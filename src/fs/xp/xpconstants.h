@@ -133,13 +133,24 @@ enum AirportRowCode
   METADATA_RECORDS = 1302, // Zero or many for each airport.
   TRUCK_PARKING_LOCATION = 1400, // Not explicitly connected to taxi route network.
   TRUCK_DESTINATION_LOCATION = 1401, // Not explicitly connected to taxi route network.
+
+  // 50 – 56 Legacy 25kHz communication frequencies Zero, one or many for each airport. Ignored if row codes 1050-1056 exist.
   COM_WEATHER = 50, // AWOS, ASOS or ATIS
   COM_UNICOM = 51, // UNICOM
   COM_CLEARANCE = 52, // Clearance delivery
   COM_GROUND = 53, // Ground
   COM_TOWER = 54, // Tower
   COM_APPROACH = 55, // Approach
-  COM_DEPARTURE = 56 // Departure
+  COM_DEPARTURE = 56, // Departure
+
+  // 1050 –1056 8.33kHz communication frequencies (11.30+) Zero, one or many for each airport
+  COM_NEW_WEATHER = 1050, // AWOS, ASOS or ATIS
+  COM_NEW_UNICOM = 1051, // UNICOM
+  COM_NEW_CLEARANCE = 1052, // Clearance delivery
+  COM_NEW_GROUND = 1053, // Ground
+  COM_NEW_TOWER = 1054, // Tower
+  COM_NEW_APPROACH = 1055, // Approach
+  COM_NEW_DEPARTURE = 1056 // Departure
 };
 
 /* X-Plane specific surface codes */
