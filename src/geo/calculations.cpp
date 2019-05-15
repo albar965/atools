@@ -692,5 +692,45 @@ void windForCourse(float& headWind, float& crossWind, float windSpeed, float win
   crossWind = windSpeed * std::sin(diffRad);
 }
 
+float interpolateWindDir(float wind0, float wind1, float alt0, float alt1, float alt)
+{
+  float dir = 0.f;
+  wind0 = normalizeCourse(wind0);
+  wind1 = normalizeCourse(wind1);
+  if(wind0 < INVALID_FLOAT / 2.f && wind1 < INVALID_FLOAT / 2.f)
+  {
+    if(atools::almostEqual(wind0, wind1))
+      // Nothing to interpolate
+      return wind0;
+    else
+    {
+      if(wind1 > wind0)
+      {
+        if(wind1 - wind0 <= 180.)
+          // 100 to 260
+          dir = interpolate(wind0, wind1, alt0, alt1, alt);
+        else
+          // 10 to 350 // angle1 + 360. - angle2;
+          dir = interpolate(wind1, wind0 + 360, alt1, alt0, alt);
+      }
+      else
+      {
+        if(wind0 - wind1 <= 180.)
+          // 260 to 100
+          dir = interpolate(wind1, wind0, alt1, alt0, alt);
+        else
+          // 350 to 10
+          dir = interpolate(wind0, wind1 + 360, alt0, alt1, alt);
+      }
+    }
+  }
+  else if(wind0 < INVALID_FLOAT / 2.f)
+    return wind0;
+  else if(wind1 < INVALID_FLOAT / 2.f)
+    return wind1;
+
+  return normalizeCourse(dir);
+}
+
 } // namespace geo
 } // namespace atools

@@ -408,9 +408,9 @@ void GribReader::readFile(const QString& filename)
           printArrFloat("fld", gribField->fld, std::min(gribField->ndpts, g2int(100)));
         }
 
-        // Wind in m/s - convert to knots
+        // Copy data as is
         for(int i = 0; i < gribField->ndpts; i++)
-          dataset.data.append(atools::geo::meterToNm(gribField->fld[i]) * 3600.f);
+          dataset.data.append(gribField->fld[i]);
 
         datasets.append(dataset);
 

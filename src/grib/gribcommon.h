@@ -68,7 +68,8 @@ public:
     return datetime;
   }
 
-  /* Wind vectors in knots organized in 360 columns (0-359) and 181 rows (0-180)
+  /* Wind vectors in meters per second organized in 360 columns (0-359) and 181 rows (0-180)
+   * Index 0,0 contains information for 90° North and 0° E/W
    *
    *  Ni — number of points along a parallel - 360
    *  Nj — number of points along a meridian - 181

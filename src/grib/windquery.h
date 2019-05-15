@@ -80,6 +80,9 @@ struct WindPos
 
 typedef QVector<WindPos> WindPosVector;
 
+struct WindRect;
+struct GridRect;
+
 /* Invalid values if they cannot be calculated */
 const float INVALID_WIND_VALUE = std::numeric_limits<float>::max();
 const float INVALID_DIR_VALUE = std::numeric_limits<float>::max();
@@ -105,6 +108,8 @@ const float INVALID_ALT_VALUE = std::numeric_limits<float>::max();
  * 30000 ft | 30.1 mb       | 300            | *          |
  * 35000 ft | 23.8 mb       | 250            |            | XP
  * 40000 ft | 18.8 mb       | 200            | *          |
+ * 45000 ft | 14.7 mb       | 150            | *          |
+ * 50000 ft | 11.6 mb       | 100            |            |
  */
 class WindQuery
   : public QObject
@@ -132,7 +137,7 @@ public:
   Wind getWindForPos(const atools::geo::Pos& pos) const;
 
   /* Get interpolated wind data for single position and altitude. */
-  Wind getWindForPos(const atools::geo::Pos& pos, float altFeet) const;
+  Wind getWindForPos(const atools::geo::Pos& pos, float altFeet, bool interpolateValue = true) const;
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates.*/
@@ -149,7 +154,7 @@ signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();
 
-  /* Download failed.  Only for void init(). */
+  /* Download failed.  Only for void init() and initFromFile(). */
   void windDownloadFailed(const QString& error, int errorCode);
 
 private:
@@ -181,33 +186,32 @@ private:
 
   };
 
-  /* One grid cell with all wind values at the corners for interpolation */
-  struct WindRect
-  {
-    Wind topLeft, topRight, bottomRight, bottomLeft;
-  };
-
   /* Wind for grid position */
-  Wind windForLayer(const WindAltLayer& layer, int col, int row) const
+  Wind windForLayer(const WindAltLayer& layer, const QPoint& point) const
   {
-    return layer.winds.at(col + row * 360);
+    return layer.winds.at(point.x() + point.y() * 360);
   }
 
   /* Get layer above and below (or at) altitude */
   void layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float altitude) const;
 
   /* Fill cell rectangle with wind values at corners */
-  void windRectForLayer(WindRect& windRect, const WindAltLayer& layer, int leftCol, int topRow) const;
+  void windRectForLayer(WindRect& windRect, const WindAltLayer& layer, const atools::grib::GridRect& rect) const;
 
   /* Quadratic interpolation- Returns wind for position in the grid cell */
-  Wind interpolateRect(const WindRect& windRect, const geo::Pos& pos, int leftCol, int topRow) const;
+  Wind interpolateRect(const WindRect& windRect, const geo::Rect& rect, const geo::Pos& pos) const;
 
   /* Convert data from U/V components to speed/heading */
   void convertDataset(const atools::grib::GribDatasetVector& datasets);
 
-  void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString);
-  void gribDownloadFailed(const QString &error, int errorCode, QString);
+  void gribDownloadFinished(const atools::grib::GribDatasetVector & datasets, QString);
+  void gribDownloadFailed(const QString & error, int errorCode, QString);
   void gribFileUpdated(const QString& filename);
+
+  /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar */
+  const QVector<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700};
+  /* Parameters to download from NOAA - U/V wind component */
+  const QStringList PARAMETERS = {"UGRD", "VGRD"};
 
   /* Allowed inaccuracy when comparing layer altitudes. */
   Q_CONSTEXPR static float ALTITUDE_EPSILON = 10.f;

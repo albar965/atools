@@ -138,22 +138,28 @@ inline float windSpeedFromUV(float u, float v)
  * U component of wind; eastward_wind; */
 inline float windDirectionFromUV(float u, float v)
 {
-  return atools::geo::normalizeCourse(atan2Deg(u, v));
+  if(atools::almostEqual(u, 0.f) && atools::almostEqual(v, 0.f))
+    return 0.f; // Otherwise 180
+  else
+    return atools::geo::normalizeCourse(atan2Deg(-u, -v));
 }
 
 /* Calculate wind eastward component from speed and direction in degrees
  * U component of wind; eastward_wind; */
 inline float windUComponent(float speed, float dir)
 {
-  return static_cast<float>(speed * sin(toRadians(dir)));
+  return static_cast<float>(-speed * sin(toRadians(dir)));
 }
 
 /* Calculate wind eastward component from speed and direction in degrees
  * V component of wind; northward_wind; */
 inline float windVComponent(float speed, float dir)
 {
-  return static_cast<float>(speed * cos(toRadians(dir)));
+  return static_cast<float>(-speed * cos(toRadians(dir)));
 }
+
+/* Interpolates wind course logically, i.e. 50 percent: 100-260 = 180 or 350-20 = 10.*/
+float interpolateWindDir(float wind0, float wind1, float alt0, float alt1, float alt);
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)
@@ -329,6 +335,20 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToFeet(TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : meterToFeet(nmToMeter(value));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE meterPerSecToKnots(TYPE value)
+{
+  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
+                           static_cast<double>(value) * 1.943844);
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE knotsToMeterPerSec(TYPE value)
+{
+  return static_cast<TYPE>((value > std::numeric_limits<TYPE>::max() / 2) ? value :
+                           static_cast<double>(value) / 1.943844);
 }
 
 template<typename TYPE>

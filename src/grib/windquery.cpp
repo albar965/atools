@@ -34,19 +34,31 @@ using atools::geo::Line;
 using atools::geo::LineString;
 using atools::geo::normalizeCourse;
 using atools::interpolate;
-using atools::geo::normalizeLonXDeg;
-using atools::geo::normalizeLatYDeg;
+using atools::geo::windSpeedFromUV;
+using atools::geo::windDirectionFromUV;
+using atools::geo::interpolateWindDir;
 
 namespace atools {
 namespace grib {
+
+/* One grid cell with all wind values at the corners for interpolation. top left corresponds to queried position. */
+struct WindRect
+{
+  Wind topLeft, topRight, bottomRight, bottomLeft;
+};
+
+/* One grid cell with all grid positions values at the corners for interpolation. top left corresponds to queried position. */
+struct GridRect
+{
+  QPoint topLeft, topRight, bottomRight, bottomLeft;
+};
 
 // Debug IO =======================================================================
 QDebug operator<<(QDebug out, const WindPos& windPos)
 {
   QDebugStateSaver saver(out);
 
-  out.noquote().nospace() << "Wind(speed " << windPos.wind.speed << ", "
-                          << "dir " << windPos.wind.dir << ", " << windPos.pos << ")";
+  out.noquote().nospace() << "WindPos(" << windPos.wind << ", " << windPos.pos << ")";
 
   return out;
 }
@@ -55,29 +67,74 @@ QDebug operator<<(QDebug out, const Wind& wind)
 {
   QDebugStateSaver saver(out);
 
-  out.noquote().nospace() << "Wind[speed " << wind.speed << ", dir " << wind.dir << "]";
+  out.noquote().nospace() << "Wind(speed " << wind.speed << ", dir " << wind.dir << ")";
 
   return out;
 }
 
-inline float interpolateDir(float f0, float f1, float x0, float x1, float x)
+/* Interpolate wind speed and direction between two altitude layers */
+Wind interpolateWind(Wind w0, Wind w1, float alt0, float alt1, float alt)
 {
-  if(f0 < INVALID_DIR_VALUE / 2 && f1 < INVALID_DIR_VALUE / 2)
-  {
-    if(atools::almostEqual(f0, f1))
-      return normalizeCourse(f0);
-    else
-      return normalizeCourse(f0 + ((f1 - f0) / (x1 - x0)) * (x - x0));
-  }
-  else
-  {
-    if(f0 < INVALID_DIR_VALUE / 2)
-      return normalizeCourse(f0);
+  Wind w;
+  w.dir = interpolateWindDir(w0.dir, w1.dir, alt0, alt1, alt);
+  w.speed = interpolate(w0.speed, w1.speed, alt0, alt1, alt);
+  if(atools::almostEqual(w.speed, 0.f))
+    w.dir = 0.f;
+  return w;
+}
 
-    if(f1 < INVALID_DIR_VALUE / 2)
-      return normalizeCourse(f1);
-  }
-  return 0.f;
+/* Column number in grid */
+inline int colNum(const atools::geo::Pos& pos)
+{
+  return static_cast<int>(pos.getLonX() < 0.f ? 360.f + pos.getLonX() : pos.getLonX());
+}
+
+/* Row number in grid */
+inline int rowNum(const atools::geo::Pos& pos)
+{
+  return static_cast<int>(180.f - (pos.getLatY() + 90.f)) + (pos.getLonX() < 0.f ? 1 : 0);
+}
+
+/* Get colum and row number for position at one degree boundary. */
+inline QPoint gridPos(const atools::geo::Pos& pos)
+{
+  return QPoint(colNum(pos), rowNum(pos));
+}
+
+/* A rectangle at one degree cell boundaries covering the given postion */
+inline atools::geo::Rect globalRect(const atools::geo::Pos& pos)
+{
+  atools::geo::Rect rect;
+  rect.setNorth(std::ceil(pos.getLatY()));
+  rect.setWest(std::floor(pos.getLonX()));
+  rect.setSouth(std::floor(pos.getLatY()));
+  rect.setEast(std::ceil(pos.getLonX()));
+
+  // Return at least a one degree width or height
+  if(atools::almostEqual(rect.getWidthDegree(), 0.f))
+    rect.setEast(rect.getEast() + 1.f);
+  if(atools::almostEqual(rect.getHeightMeter(), 0.f))
+    rect.setSouth(rect.getNorth() - 1.f);
+
+  return rect;
+}
+
+/* Gives a rectangle for grid positions for the given world coordinate rect */
+inline GridRect gridRect(const atools::geo::Rect& rect)
+{
+  GridRect retval;
+  retval.topLeft = gridPos(rect.getTopLeft());
+  retval.topRight = gridPos(rect.getTopRight());
+  retval.bottomRight = gridPos(rect.getBottomRight());
+  retval.bottomLeft = gridPos(rect.getBottomLeft());
+  return retval;
+}
+
+/* true if the given position is within approx 500 meters from a one degree grid point */
+inline bool nearGrid(const atools::geo::Pos& pos)
+{
+  return almostEqual(pos.getLonX(), std::round(pos.getLonX()), Pos::POS_EPSILON_500M) &&
+         almostEqual(pos.getLatY(), std::round(pos.getLatY()), Pos::POS_EPSILON_500M);
 }
 
 // ===============================================================
@@ -87,14 +144,15 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   downloader = new GribDownloader(parentObject, logVerbose);
 
   // Download or read U and V components of wind - will be used to calculated speed and direction
-  downloader->setParameters({"UGRD", "VGRD"});
+  downloader->setParameters(PARAMETERS);
 
-  // Layers 80 ft AGL and other values are mbar layers
-  downloader->setSurfaces({-80, 200, 300, 450, 700});
+  // Layers 80 meters (260 ft) AGL and other values are mbar layers
+  downloader->setSurfaces(SURFACES);
 
   connect(downloader, &GribDownloader::gribDownloadFinished, this, &WindQuery::gribDownloadFinished);
   connect(downloader, &GribDownloader::gribDownloadFailed, this, &WindQuery::gribDownloadFailed);
 
+  // Set up file watcher for file based updates
   fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
   fileWatcher->setMinFileSize(180000);
   connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &WindQuery::gribFileUpdated);
@@ -103,6 +161,7 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
 WindQuery::~WindQuery()
 {
   delete downloader;
+  delete fileWatcher;
 }
 
 void WindQuery::initFromUrl(const QString& baseUrl)
@@ -122,8 +181,6 @@ void WindQuery::initFromFile(const QString& filename)
 
   // Start checking for changes
   fileWatcher->setFilenameAndStart(filename);
-
-  emit windDataUpdated();
 }
 
 void WindQuery::initFromData(const QByteArray& data)
@@ -133,8 +190,6 @@ void WindQuery::initFromData(const QByteArray& data)
   GribReader reader(verbose);
   reader.readData(data);
   convertDataset(reader.getDatasets());
-
-  emit windDataUpdated();
 }
 
 void WindQuery::deinit()
@@ -149,35 +204,51 @@ Wind WindQuery::getWindForPos(const Pos& pos) const
   return getWindForPos(pos, pos.getAltitude());
 }
 
-Wind WindQuery::getWindForPos(const Pos& pos, float altFeet) const
+Wind WindQuery::getWindForPos(const Pos& pos, float altFeet, bool interpolateValue) const
 {
   // Calculate grid position
-  int col = static_cast<int>(pos.getLonX() + 180.f);
-  int row = static_cast<int>(180.f - (pos.getLatY() + 90.f));
+  QPoint gPos = gridPos(pos);
+
+  qDebug() << Q_FUNC_INFO << pos << gPos;
 
   // Get next layers below and above altitude
   WindAltLayer lower, upper;
   layersByAlt(lower, upper, altFeet);
 
-  // Interpolate wind withing a grid rectangle for the lower layer
-  WindRect windRectLower;
-  windRectForLayer(windRectLower, lower, col, row);
-  Wind lW = interpolateRect(windRectLower, pos, col, row);
-
-  if(upper != lower)
+  if(!interpolateValue || nearGrid(pos))
   {
-    // Interpolate wind within a grid rectangle for the upper layer if layers differ
-    WindRect windRectUpper;
-    windRectForLayer(windRectUpper, upper, col, row);
-    Wind uW = interpolateRect(windRectUpper, pos, col, row);
+    Wind lW = windForLayer(lower, gPos);
 
-    // Interpolate between upper and lower layer
-    Wind wind;
-    wind.speed = interpolate(lW.speed, uW.speed, lower.altitude, upper.altitude, altFeet);
-    wind.dir = interpolateDir(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet);
-    return wind;
+    if(upper != lower)
+    {
+      Wind uW = windForLayer(upper, gPos);
+      // Interpolate between upper and lower layer
+      return interpolateWind(lW, uW, lower.altitude, upper.altitude, altFeet);
+    }
+    return lW;
   }
-  return lW;
+  else
+  {
+    Rect global = globalRect(pos);
+    GridRect grid = gridRect(global);
+
+    // Interpolate wind within a grid rectangle for the lower layer
+    WindRect windRectLower;
+    windRectForLayer(windRectLower, lower, grid);
+    Wind lWind = interpolateRect(windRectLower, global, pos);
+
+    if(upper != lower)
+    {
+      // Interpolate wind within a grid rectangle for the upper layer if layers differ
+      WindRect windRectUpper;
+      windRectForLayer(windRectUpper, upper, grid);
+      Wind uWind = interpolateRect(windRectUpper, global, pos);
+
+      // Interpolate between upper and lower wind
+      return interpolateWind(lWind, uWind, lower.altitude, upper.altitude, altFeet);
+    }
+    return lWind;
+  }
 }
 
 atools::grib::WindPosVector WindQuery::getWindForRect(const Rect& rect, float altFeet) const
@@ -205,65 +276,43 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
     // Split rectangle if it crosses the anti-metidian (date line)
     for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
     {
-      // Calculate grid cell boundaries
-      int leftIdx = static_cast<int>(std::floor(r.getWest() + 180.f));
-      int rightIdx = static_cast<int>(std::ceil(r.getEast() + 180.f));
-      int topIdx = static_cast<int>(std::floor(180.f - (r.getNorth() + 90.f)));
-      int bottomIdx = static_cast<int>(std::ceil(180.f - (r.getSouth() + 90.f)));
-
-      // Roll over - there is no value for 360
-      if(leftIdx >= 360)
-        leftIdx = 359;
-      if(rightIdx >= 360)
-        rightIdx = 359;
 
       // Get next layers below and above altitude
       WindAltLayer lower, upper;
       layersByAlt(lower, upper, altFeet);
 
-      // Read one column
-      for(int row = topIdx; row <= bottomIdx; row++)
+      for(float lonx = std::floor(r.getWest()); lonx <= r.getEast(); lonx += 1.f)
       {
-        int startIndex = leftIdx + row * 360;
-        int endIndex = rightIdx + row * 360;
-
-        // Read one row of values
-        for(int idx = startIndex, col = leftIdx; idx <= endIndex; idx++, col++)
+        for(float laty = std::ceil(r.getNorth()); laty >= r.getSouth(); laty -= 1.f)
         {
+          Pos cell(lonx, laty);
+          QPoint gPos = gridPos(cell);
+
           WindPos wp;
           // Calcualte grid cell upper left position (position for value)
-          wp.pos = Pos(static_cast<float>(col) - 180.f, 180.f - (static_cast<float>(row) + 90.f));
+          wp.pos = cell;
+          wp.pos.setAltitude(altFeet);
 
           if(upper != lower)
           {
+            Wind lWind = windForLayer(lower, gPos);
+            Wind uWind = windForLayer(upper, gPos);
+
             // Interpolate wind within a grid rectangle for the upper layer if layers differ
-            wp.wind.dir = interpolateDir(upper.winds.at(idx).dir, lower.winds.at(idx).dir,
-                                         upper.altitude, lower.altitude, altFeet);
-            wp.wind.speed = interpolate(upper.winds.at(idx).speed, lower.winds.at(idx).speed,
-                                        upper.altitude, lower.altitude, altFeet);
+            wp.wind = interpolateWind(lWind, uWind, lower.altitude, upper.altitude, altFeet);
           }
           else
           {
-            float dir = lower.winds.at(idx).dir;
-            wp.wind.dir = dir < INVALID_DIR_VALUE / 2 ? normalizeCourse(dir) : 0.f;
-            wp.wind.speed = lower.winds.at(idx).speed;
-          }
+            Wind lWind = windForLayer(lower, gPos);
 
+            float dir = lWind.dir;
+            wp.wind.dir = dir < INVALID_DIR_VALUE / 2 ? normalizeCourse(dir) : 0.f;
+            wp.wind.speed = lWind.speed;
+          }
           result.append(wp);
         }
       }
     }
-
-    // Sort to get order by y and x values (row by col)
-    std::sort(result.begin(), result.end(),
-              [](const WindPos& w1, const WindPos& w2) -> bool
-        {
-          if(atools::almostEqual(w1.pos.getLatY(), w2.pos.getLatY()))
-            return w1.pos.getLonX() < w2.pos.getLonX();
-          else
-            return w1.pos.getLatY() > w2.pos.getLatY();
-        });
-
   }
 }
 
@@ -329,33 +378,31 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float al
 
   for(const atools::geo::Pos& pos : positions)
   {
-    // Calculate grid position
-    int col = static_cast<int>(pos.getLonX() + 180.f);
-    int row = static_cast<int>(180.f - (pos.getLatY() + 90.f));
+    Rect global = globalRect(pos);
+    GridRect grid = gridRect(global);
 
     // Get interpolated wind in grid cell at lower layer
-    windRectForLayer(windRectLower, lower, col, row);
-    Wind lW = interpolateRect(windRectLower, pos, col, row);
+    windRectForLayer(windRectLower, lower, grid);
+    Wind lW = interpolateRect(windRectLower, global, pos);
 
-    float s, d;
+    Wind w;
     if(upper != lower)
     {
       // Get interpolated wind in grid cell at upper layer
-      windRectForLayer(windRectUpper, upper, col, row);
-      Wind uW = interpolateRect(windRectUpper, pos, col, row);
+      windRectForLayer(windRectUpper, upper, grid);
+      Wind uW = interpolateRect(windRectUpper, global, pos);
 
       // Interpolate at altitude between layers
-      s = interpolate(lW.speed, uW.speed, lower.altitude, upper.altitude, altFeet);
-      d = interpolateDir(lW.dir, uW.dir, lower.altitude, upper.altitude, altFeet);
+      w = interpolateWind(lW, uW, lower.altitude, upper.altitude, altFeet);
     }
     else
     {
-      s = lW.speed;
-      d = lW.dir < INVALID_DIR_VALUE / 2 ? lW.dir : 0.f;
+      w.speed = lW.speed;
+      w.dir = lW.dir < INVALID_DIR_VALUE / 2 ? lW.dir : 0.f;
     }
     // qDebug() << pos << "s" << s << "d" << d;
-    wind.speed += s;
-    wind.dir += d;
+    wind.speed += w.speed;
+    wind.dir += w.dir;
   }
 
   wind.speed /= positions.size();
@@ -398,40 +445,25 @@ void WindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float alti
   }
 }
 
-Wind WindQuery::interpolateRect(const WindRect& windRect, const geo::Pos& pos, int leftCol, int topRow) const
+Wind WindQuery::interpolateRect(const WindRect& windRect, const atools::geo::Rect& rect, const geo::Pos& pos) const
 {
-  // Calculate right and bottom cell index
-  int rightCol = leftCol < 359 ? leftCol + 1 : 0;
-  int bottomRow = topRow < 180 ? topRow + 1 : 0;
-
-  // Calculate cell border coordinates in degree
-  float left = normalizeLonXDeg(leftCol - 180.f);
-  float right = normalizeLonXDeg(rightCol - 180.f);
-  float top = 180.f - (topRow + 90.f);
-  float bottom = 180.f - (bottomRow + 90.f);
+  float left = rect.getWest(), right = rect.getEast(), top = rect.getNorth(), bottom = rect.getSouth();
 
   // Interpolate at top and bottom between left and right
-  Wind wTop, wBottom, wind;
-  wTop.speed = interpolate(windRect.topLeft.speed, windRect.topRight.speed, left, right, pos.getLonX());
-  wTop.dir = interpolateDir(windRect.topLeft.dir, windRect.topRight.dir, left, right, pos.getLonX());
-  wBottom.speed = interpolate(windRect.bottomLeft.speed, windRect.bottomRight.speed, left, right, pos.getLonX());
-  wBottom.dir = interpolateDir(windRect.bottomLeft.dir, windRect.bottomRight.dir, left, right, pos.getLonX());
+  Wind wTop, wBottom;
+  wTop = interpolateWind(windRect.topLeft, windRect.topRight, left, right, pos.getLonX());
+  wBottom = interpolateWind(windRect.bottomLeft, windRect.bottomRight, left, right, pos.getLonX());
 
   // Interpolate between top and bottom
-  wind.speed = interpolate(wTop.speed, wBottom.speed, top, bottom, pos.getLatY());
-  wind.dir = interpolateDir(wTop.dir, wBottom.dir, top, bottom, pos.getLatY());
-  return wind;
+  return interpolateWind(wTop, wBottom, top, bottom, pos.getLatY());
 }
 
-void WindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& layer, int leftCol, int topRow) const
+void WindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& layer, const GridRect& rect) const
 {
-  int rightCol = leftCol < 359 ? leftCol + 1 : 0;
-  int bottomRow = topRow < 180 ? topRow + 1 : 0;
-
-  windRect.topLeft = windForLayer(layer, leftCol, topRow);
-  windRect.topRight = windForLayer(layer, rightCol, topRow);
-  windRect.bottomRight = windForLayer(layer, rightCol, bottomRow);
-  windRect.bottomLeft = windForLayer(layer, leftCol, bottomRow);
+  windRect.topLeft = windForLayer(layer, rect.topLeft);
+  windRect.topRight = windForLayer(layer, rect.topRight);
+  windRect.bottomRight = windForLayer(layer, rect.bottomRight);
+  windRect.bottomLeft = windForLayer(layer, rect.bottomLeft);
 }
 
 void WindQuery::gribDownloadFinished(const GribDatasetVector& datasets, QString)
@@ -496,14 +528,10 @@ void WindQuery::convertDataset(const GribDatasetVector& datasets)
       {
         for(int i = 0; i < 360; i++) // x
         {
-          int i2 = i + 1;
-          if(i2 >= 360) // 359 is last
-            i2 = 0;
-
           float u = dataU.at(i + j * 360);
           float v = dataV.at(i + j * 360);
           Wind wind;
-          wind.speed = atools::geo::windSpeedFromUV(u, v);
+          wind.speed = atools::geo::meterPerSecToKnots(atools::geo::windSpeedFromUV(u, v));
           wind.dir = normalizeCourse(atools::geo::windDirectionFromUV(u, v));
           layer.winds.append(wind);
         }
