@@ -65,11 +65,11 @@ Namelist::Namelist(const NavDatabaseOptions *options, BinaryStream *bs)
   for(int i = 0; i < numICAO; i++)
   {
     NamelistEntry icaoRec;
-    icaoRec.regionName = regions.at(bs->readUByte());
-    icaoRec.countryName = countries.at(bs->readUByte());
-    icaoRec.stateName = states.at(bs->readShort() >> 4);
-    icaoRec.cityName = cities.at(bs->readShort());
-    icaoRec.airportName = airports.at(bs->readShort());
+    icaoRec.regionName = regions.value(bs->readUByte());
+    icaoRec.countryName = countries.value(bs->readUByte());
+    icaoRec.stateName = states.value(bs->readShort() >> 4);
+    icaoRec.cityName = cities.value(bs->readShort());
+    icaoRec.airportName = airports.value(bs->readShort());
     icaoRec.airportIdent = converter::intToIcao(bs->readUInt());
     icaoRec.regionIdent = converter::intToIcao(bs->readUInt());
 
