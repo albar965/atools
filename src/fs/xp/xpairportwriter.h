@@ -93,7 +93,7 @@ private:
   void writeHelipad(const QStringList& line, const XpWriterContext& context);
 
   /* TWR, ASOS, ATIS, etc. */
-  void writeCom(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context);
+  void writeCom(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context, bool spacing833Khz);
 
   /* Add vasi to runway end */
   void bindVasi(const QStringList& line, const XpWriterContext& context);
