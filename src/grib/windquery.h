@@ -79,6 +79,7 @@ struct WindPos
 };
 
 typedef QVector<WindPos> WindPosVector;
+typedef QList<WindPos> WindPosList;
 
 struct WindRect;
 struct GridRect;

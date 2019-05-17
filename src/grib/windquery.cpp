@@ -130,13 +130,6 @@ inline GridRect gridRect(const atools::geo::Rect& rect)
   return retval;
 }
 
-/* true if the given position is within approx 500 meters from a one degree grid point */
-inline bool nearGrid(const atools::geo::Pos& pos)
-{
-  return almostEqual(pos.getLonX(), std::round(pos.getLonX()), Pos::POS_EPSILON_500M) &&
-         almostEqual(pos.getLatY(), std::round(pos.getLatY()), Pos::POS_EPSILON_500M);
-}
-
 // ===============================================================
 WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   : QObject(parentObject), verbose(logVerbose)
@@ -215,7 +208,7 @@ Wind WindQuery::getWindForPos(const Pos& pos, float altFeet, bool interpolateVal
   WindAltLayer lower, upper;
   layersByAlt(lower, upper, altFeet);
 
-  if(!interpolateValue || nearGrid(pos))
+  if(!interpolateValue || pos.nearGrid())
   {
     Wind lW = windForLayer(lower, gPos);
 
