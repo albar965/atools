@@ -53,6 +53,12 @@ public:
 
   void reverse();
 
+  /* Set altitude to all points and return a copy */
+  atools::geo::LineString alt(float alt) const;
+
+  /* Set altitude to all points */
+  void setAltitude(float alt);
+
   /* Remove all invalid points */
   void removeInvalid();
 

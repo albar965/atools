@@ -192,12 +192,7 @@ void WindQuery::deinit()
   fileWatcher->stopWatching();
 }
 
-Wind WindQuery::getWindForPos(const Pos& pos) const
-{
-  return getWindForPos(pos, pos.getAltitude());
-}
-
-Wind WindQuery::getWindForPos(const Pos& pos, float altFeet, bool interpolateValue) const
+Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
 {
   // Calculate grid position
   QPoint gPos = gridPos(pos);
@@ -206,17 +201,18 @@ Wind WindQuery::getWindForPos(const Pos& pos, float altFeet, bool interpolateVal
 
   // Get next layers below and above altitude
   WindAltLayer lower, upper;
-  layersByAlt(lower, upper, altFeet);
+  layersByAlt(lower, upper, pos.getAltitude());
 
   if(!interpolateValue || pos.nearGrid())
   {
+    // No need to interpolate within grid - use position as is
     Wind lW = windForLayer(lower, gPos);
 
     if(upper != lower)
     {
       Wind uW = windForLayer(upper, gPos);
       // Interpolate between upper and lower layer
-      return interpolateWind(lW, uW, lower.altitude, upper.altitude, altFeet);
+      return interpolateWind(lW, uW, lower.altitude, upper.altitude, pos.getAltitude());
     }
     return lW;
   }
@@ -238,7 +234,7 @@ Wind WindQuery::getWindForPos(const Pos& pos, float altFeet, bool interpolateVal
       Wind uWind = interpolateRect(windRectUpper, global, pos);
 
       // Interpolate between upper and lower wind
-      return interpolateWind(lWind, uWind, lower.altitude, upper.altitude, altFeet);
+      return interpolateWind(lWind, uWind, lower.altitude, upper.altitude, pos.getAltitude());
     }
     return lWind;
   }
@@ -260,7 +256,7 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
   {
     // No need to interpolate for single point rect
     WindPos wp;
-    wp.wind = getWindForPos(rect.getTopLeft(), altFeet);
+    wp.wind = getWindForPos(rect.getTopLeft().alt(altFeet)); // Set altitude into pos
     wp.pos = rect.getTopLeft();
     result.append(wp);
   }
@@ -269,7 +265,6 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
     // Split rectangle if it crosses the anti-metidian (date line)
     for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
     {
-
       // Get next layers below and above altitude
       WindAltLayer lower, upper;
       layersByAlt(lower, upper, altFeet);
@@ -309,21 +304,21 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
   }
 }
 
-Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring, float altFeet) const
+Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring) const
 {
   if(linestring.size() == 1)
     // Only one position
-    return getWindForPos(linestring.getPos1(), altFeet);
+    return getWindForPos(linestring.getPos1());
   else if(linestring.size() == 2)
     // Only one line
-    return getWindAverageForLine(linestring.at(0), linestring.at(1), altFeet);
+    return getWindAverageForLine(linestring.at(0), linestring.at(1));
   else
   {
     // Sum up values
     double speed = 0., dir = 0.;
     for(int i = 0; i < linestring.size() - 1; i++)
     {
-      Wind w = getWindAverageForLine(linestring.at(i), linestring.at(i + 1), altFeet);
+      Wind w = getWindAverageForLine(linestring.at(i), linestring.at(i + 1));
       speed += w.speed;
       dir += w.dir < INVALID_DIR_VALUE / 2 ? w.dir : 0.f;
     }
@@ -337,12 +332,12 @@ Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring, f
   }
 }
 
-Wind WindQuery::getWindAverageForLine(const Line& line, float altFeet) const
+Wind WindQuery::getWindAverageForLine(const Line& line) const
 {
-  return getWindAverageForLine(line.getPos1(), line.getPos2(), altFeet);
+  return getWindAverageForLine(line.getPos1(), line.getPos2());
 }
 
-Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float altFeet) const
+Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2) const
 {
   // Calculate the number of samples for a line. Roughly four samples per degree.
   float distanceMeter = pos1.distanceMeterTo(pos2);
@@ -355,16 +350,12 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float al
   if(numPoints > 1)
   {
     // Calculate number of points - will include origin but not pos2
-    pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
+    pos1.interpolatePointsAlt(pos2, distanceMeter, numPoints, positions);
     positions.append(pos2);
   }
   else
     // Only start and end needed
     positions << pos1 << pos2;
-
-  // Get next layers below and above altitude
-  WindAltLayer lower, upper;
-  layersByAlt(lower, upper, altFeet);
 
   Wind wind = {0.f, 0.f};
   WindRect windRectLower, windRectUpper;
@@ -373,6 +364,10 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float al
   {
     Rect global = globalRect(pos);
     GridRect grid = gridRect(global);
+
+    // Get next layers below and above altitude
+    WindAltLayer lower, upper;
+    layersByAlt(lower, upper, pos.getAltitude());
 
     // Get interpolated wind in grid cell at lower layer
     windRectForLayer(windRectLower, lower, grid);
@@ -386,7 +381,7 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2, float al
       Wind uW = interpolateRect(windRectUpper, global, pos);
 
       // Interpolate at altitude between layers
-      w = interpolateWind(lW, uW, lower.altitude, upper.altitude, altFeet);
+      w = interpolateWind(lW, uW, lower.altitude, upper.altitude, pos.getAltitude());
     }
     else
     {
@@ -503,6 +498,8 @@ void WindQuery::gribFileUpdated(const QString& filename)
 // U component of wind; eastward_wind;
 void WindQuery::convertDataset(const GribDatasetVector& datasets)
 {
+  windLayers.clear();
+
   for(int dsidx = 0; dsidx < datasets.size(); dsidx += 2)
   {
     const GribDataset& datasetUWind = datasets.at(dsidx);

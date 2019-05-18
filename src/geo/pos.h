@@ -219,6 +219,10 @@ public:
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
                          QList<atools::geo::Pos>& positions) const;
 
+  /* interpolate altitude value in positins too */
+  void interpolatePointsAlt(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
+                            QList<atools::geo::Pos>& positions) const;
+
   /* Find point between start and end on rhumb line */
   atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter,
                                     float fraction) const;

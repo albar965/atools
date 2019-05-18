@@ -163,6 +163,19 @@ void LineString::reverse()
   std::reverse(begin(), end());
 }
 
+LineString LineString::alt(float alt) const
+{
+  LineString retval(*this);
+  retval.setAltitude(alt);
+  return retval;
+}
+
+void LineString::setAltitude(float alt)
+{
+  for(Pos& p : *this)
+    p.setAltitude(alt);
+}
+
 void LineString::removeInvalid()
 {
   auto it = std::remove_if(begin(), end(),

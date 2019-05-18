@@ -48,6 +48,11 @@ struct Wind
   /* Degrees true and knots */
   float dir, speed;
 
+  void init()
+  {
+    dir = speed = 0.f;
+  }
+
   bool operator==(const Wind& other) const
   {
     return atools::almostEqual(speed, other.speed) && atools::almostEqual(dir, other.dir);
@@ -65,6 +70,12 @@ struct WindPos
 {
   atools::geo::Pos pos;
   Wind wind;
+
+  void init()
+  {
+    pos = atools::geo::Pos();
+    wind.init();
+  }
 
   bool operator==(const WindPos& other) const
   {
@@ -99,6 +110,8 @@ const float INVALID_ALT_VALUE = std::numeric_limits<float>::max();
  *
  * Data is updated automatically every 30 minutes.
  * Files are checked for changes.
+ *
+ * Most query methods use the altitude from the Pos parameter.
  *
  * Downloaded/possible sets are:
  * Altitide | Act. pressure | Pressure param | Downloaded | Used by X-Plane
@@ -135,10 +148,7 @@ public:
   void deinit();
 
   /* Get interpolated wind data for single position. Altitude in feet is used from position. */
-  Wind getWindForPos(const atools::geo::Pos& pos) const;
-
-  /* Get interpolated wind data for single position and altitude. */
-  Wind getWindForPos(const atools::geo::Pos& pos, float altFeet, bool interpolateValue = true) const;
+  Wind getWindForPos(const atools::geo::Pos& pos, bool interpolateValue = true) const;
 
   /* Get an array of wind data for the given rectangle at the given altitude from the data grid.
    * Data is only interpolated between layers. Result is sorted by y and x coordinates.*/
@@ -146,10 +156,16 @@ public:
   atools::grib::WindPosVector getWindForRect(const atools::geo::Rect& rect, float altFeet) const;
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
-   *  Wind data is fetched for a certain number of spots along the line and thus not perfectly accurate. */
-  Wind getWindAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2, float altFeet) const;
-  Wind getWindAverageForLine(const atools::geo::Line& line, float altFeet) const;
-  Wind getWindAverageForLineString(const atools::geo::LineString& linestring, float altFeet) const;
+   *  Wind data is fetched for a certain number of spots along the line and thus not perfectly accurate.
+   * Uses altitude from positions and interpolates between altitudes too they are different. */
+  Wind getWindAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+  Wind getWindAverageForLine(const atools::geo::Line& line) const;
+  Wind getWindAverageForLineString(const atools::geo::LineString& linestring) const;
+
+  bool hasWindData() const
+  {
+    return !windLayers.isEmpty();
+  }
 
 signals:
   /* Download successfully finished. Emitted for all init methods. */
@@ -190,7 +206,7 @@ private:
   /* Wind for grid position */
   Wind windForLayer(const WindAltLayer& layer, const QPoint& point) const
   {
-    return layer.winds.at(point.x() + point.y() * 360);
+    return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : Wind{0.f, 0.f};
   }
 
   /* Get layer above and below (or at) altitude */

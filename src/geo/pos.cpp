@@ -173,6 +173,7 @@ Pos& Pos::snapToGrid()
 {
   lonX = std::round(lonX);
   latY = std::round(latY);
+  return *this;
 }
 
 Pos& Pos::normalize()
@@ -544,7 +545,22 @@ void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoi
 
   float step = 1.f / numPoints;
   for(int j = 0; j < numPoints; j++)
-    positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)));
+    positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)).alt(altitude));
+}
+
+void Pos::interpolatePointsAlt(const Pos& otherPos, float distanceMeter, int numPoints, QList<Pos>& positions) const
+{
+  interpolatePoints(otherPos, distanceMeter, numPoints, positions);
+
+  float alt1 = getAltitude(), alt2 = otherPos.getAltitude();
+  if(almostNotEqual(alt1, alt2))
+  {
+    // positions includes this but not pos2 if numPoints > 0
+    // interpolate altitude values
+    for(Pos& pos : positions)
+      // f(x) = f0 + ((f1 - f0) / (x1 - x0)) * (x - x0)
+      pos.setAltitude(atools::interpolate(alt1, alt2, 0.f, distanceMeter, distanceMeterTo(pos)));
+  }
 }
 
 /* Check if seconds or minutes value is rounded up to 60.00 when convertin to string */
