@@ -28,6 +28,7 @@ class QAction;
 class QObject;
 class QTextEdit;
 class QColor;
+class QMenu;
 
 namespace atools {
 namespace gui {
@@ -74,6 +75,8 @@ bool noneChecked(const QList<const QAction *>& actions);
 
 /* Add a "* " to an action text or remove it */
 void changeStarIndication(QAction *action, bool changed);
+
+void addMenuShortcuts(QMenu *menu);
 
 } // namespace util
 } // namespace gui

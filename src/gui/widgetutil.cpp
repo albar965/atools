@@ -27,6 +27,7 @@
 #include <QAction>
 #include <QTextEdit>
 #include <QScrollBar>
+#include <QMenu>
 
 namespace atools {
 namespace gui {
@@ -178,6 +179,23 @@ QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionMod
 
   }
   return indexes;
+}
+
+void addMenuShortcuts(QMenu *menu)
+{
+  // traverse context menu and tell each action to show shortcut text
+  // this inelegant hack due to ill-advised Qt change in Qt5.10
+  // https://bugreports.qt.io/browse/QTBUG-49435
+  for(QAction *action: menu->actions())
+  {
+    if(action->isSeparator())
+      continue;
+
+    if(action->menu())
+      addMenuShortcuts(action->menu());
+    else
+      action->setShortcutVisibleInContextMenu(true);
+  }
 }
 
 } // namespace util
