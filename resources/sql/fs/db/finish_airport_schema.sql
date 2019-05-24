@@ -53,7 +53,6 @@ create index if not exists idx_airport_longest_runway_length on airport(longest_
 create index if not exists idx_airport_largest_parking_ramp on airport(largest_parking_ramp);
 create index if not exists idx_airport_largest_parking_gate on airport(largest_parking_gate);
 create index if not exists idx_airport_rating on airport(rating);
-create index if not exists idx_airport_3d on airport(is_3d);
 
 create index if not exists idx_airport_scenery_local_path on airport(scenery_local_path);
 create index if not exists idx_airport_bgl_filename on airport(bgl_filename);

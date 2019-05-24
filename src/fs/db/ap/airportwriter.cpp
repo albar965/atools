@@ -161,7 +161,6 @@ void AirportWriter::writeObject(const Airport *type)
   bindBool(":is_military", type->isMilitary());
 
   bindBool(":is_addon", isAddon);
-  bindBool(":is_3d", 0);
 
   bind(":num_boundary_fence", type->getNumBoundaryFence());
   bind(":num_com", type->getComs().size());
