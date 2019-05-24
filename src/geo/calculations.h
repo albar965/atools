@@ -133,6 +133,11 @@ inline float windSpeedFromUV(float u, float v)
   return std::sqrt(u * u + v * v);
 }
 
+inline double windSpeedFromUV(double u, double v)
+{
+  return std::sqrt(u * u + v * v);
+}
+
 /* Calculate wind true heading from u and v components
  * V component of wind; northward_wind;
  * U component of wind; eastward_wind; */
@@ -144,11 +149,24 @@ inline float windDirectionFromUV(float u, float v)
     return atools::geo::normalizeCourse(atan2Deg(-u, -v));
 }
 
+inline double windDirectionFromUV(double u, double v)
+{
+  if(atools::almostEqual(u, 0.) && atools::almostEqual(v, 0.))
+    return 0.; // Otherwise 180
+  else
+    return atools::geo::normalizeCourse(atan2Deg(-u, -v));
+}
+
 /* Calculate wind eastward component from speed and direction in degrees
  * U component of wind; eastward_wind; */
 inline float windUComponent(float speed, float dir)
 {
   return static_cast<float>(-speed * sin(toRadians(dir)));
+}
+
+inline double windUComponent(double speed, double dir)
+{
+  return -speed *sin(toRadians(dir));
 }
 
 /* Calculate wind eastward component from speed and direction in degrees
@@ -158,8 +176,10 @@ inline float windVComponent(float speed, float dir)
   return static_cast<float>(-speed * cos(toRadians(dir)));
 }
 
-/* Interpolates wind course logically, i.e. 50 percent: 100-260 = 180 or 350-20 = 10.*/
-float interpolateWindDir(float wind0, float wind1, float alt0, float alt1, float alt);
+inline double windVComponent(double speed, double dir)
+{
+  return -speed *cos(toRadians(dir));
+}
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
 inline bool ordinateValid(int ord)

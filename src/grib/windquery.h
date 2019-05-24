@@ -94,11 +94,8 @@ typedef QList<WindPos> WindPosList;
 
 struct WindRect;
 struct GridRect;
-
-/* Invalid values if they cannot be calculated */
-const float INVALID_WIND_VALUE = std::numeric_limits<float>::max();
-const float INVALID_DIR_VALUE = std::numeric_limits<float>::max();
-const float INVALID_ALT_VALUE = std::numeric_limits<float>::max();
+struct WindData;
+struct WindAltLayer;
 
 /*
  * Takes care for downloading/reading and decoding of GRIB2 wind files. Provides a query API to calculate and interpolate
@@ -111,6 +108,7 @@ const float INVALID_ALT_VALUE = std::numeric_limits<float>::max();
  * Data is updated automatically every 30 minutes.
  * Files are checked for changes.
  *
+ * All internal calculations the U and V components of the wind instead of speed and direction.
  * Most query methods use the altitude from the Pos parameter.
  *
  * Downloaded/possible sets are:
@@ -144,7 +142,16 @@ public:
   /* Read data from byte array */
   void initFromData(const QByteArray& data);
 
-  /* Clear data and stop periodic downloads */
+  /* Create a fixed model assuming zero wind at 0 altitude and given values at given altitude.
+   *  Dir in degrees true, speed in knots and altutude in feet. */
+  void initFromFixedModel(float dir, float speed, float altitude);
+
+  /* Create a fixed model with two layers.
+   *  Dir in degrees true, speed in knots and altutude in feet. */
+  void initFromFixedModel(float dirLower, float speedLower, float altitudeLower, float dirUpper, float speedUpper,
+                          float altitudeUpper);
+
+  /* Clear data, stop periodic downloads and file watching */
   void deinit();
 
   /* Get interpolated wind data for single position. Altitude in feet is used from position. */
@@ -157,7 +164,7 @@ public:
 
   /* Get average wind for the great circle line between the two given positions at the given altitude.
    *  Wind data is fetched for a certain number of spots along the line and thus not perfectly accurate.
-   * Uses altitude from positions and interpolates between altitudes too they are different. */
+   * Uses altitude from positions and interpolates between altitudes too if they are different. */
   Wind getWindAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
   Wind getWindAverageForLine(const atools::geo::Line& line) const;
   Wind getWindAverageForLineString(const atools::geo::LineString& linestring) const;
@@ -165,6 +172,12 @@ public:
   bool hasWindData() const
   {
     return !windLayers.isEmpty();
+  }
+
+  /* Samples per degree for wind interpolation along lines and line strings */
+  void setSamplesPerDegree(int value)
+  {
+    samplesPerDegree = value;
   }
 
 signals:
@@ -175,39 +188,8 @@ signals:
   void windDownloadFailed(const QString& error, int errorCode);
 
 private:
-  /* Internal data structure for wind direction and speed computed from U/V speeds */
-  struct WindAltLayer
-  {
-    float altitude = 0.f;
-    QVector<Wind> winds;
-
-    bool operator<(const WindAltLayer& l) const
-    {
-      return altitude < l.altitude;
-    }
-
-    bool operator==(const WindAltLayer& l) const
-    {
-      return atools::almostEqual(altitude, l.altitude, ALTITUDE_EPSILON);
-    }
-
-    bool operator!=(const WindAltLayer& l) const
-    {
-      return !(*this == l);
-    }
-
-    bool isValid() const
-    {
-      return !winds.isEmpty();
-    }
-
-  };
-
   /* Wind for grid position */
-  Wind windForLayer(const WindAltLayer& layer, const QPoint& point) const
-  {
-    return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : Wind{0.f, 0.f};
-  }
+  WindData windForLayer(const WindAltLayer& layer, const QPoint& point) const;
 
   /* Get layer above and below (or at) altitude */
   void layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float altitude) const;
@@ -216,7 +198,7 @@ private:
   void windRectForLayer(WindRect& windRect, const WindAltLayer& layer, const atools::grib::GridRect& rect) const;
 
   /* Quadratic interpolation- Returns wind for position in the grid cell */
-  Wind interpolateRect(const WindRect& windRect, const geo::Rect& rect, const geo::Pos& pos) const;
+  WindData interpolateRect(const WindRect& windRect, const geo::Rect& rect, const geo::Pos& pos) const;
 
   /* Convert data from U/V components to speed/heading */
   void convertDataset(const atools::grib::GribDatasetVector& datasets);
@@ -225,16 +207,19 @@ private:
   void gribDownloadFailed(const QString & error, int errorCode, QString);
   void gribFileUpdated(const QString& filename);
 
+  /* get interpolated wind for two sets at two altitudes */
+  WindData interpolateWind(const WindData& w0, const WindData& w1, float alt0, float alt1, float alt) const;
+
+  /* Get average wind for a line between two points. Uses only U and V components */
+  WindData windAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
+
   /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar */
   const QVector<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700};
   /* Parameters to download from NOAA - U/V wind component */
   const QStringList PARAMETERS = {"UGRD", "VGRD"};
 
-  /* Allowed inaccuracy when comparing layer altitudes. */
-  Q_CONSTEXPR static float ALTITUDE_EPSILON = 10.f;
-
   /* Do roughly four samples per degree when interpolating winds for lines */
-  Q_CONSTEXPR static int SAMPLES_PER_DEGREE = 4;
+  int samplesPerDegree = 4;
 
   /* Used for regular downloads from NOAA site */
   atools::grib::GribDownloader *downloader = nullptr;
@@ -245,9 +230,8 @@ private:
   bool verbose = false;
 
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
-  typedef QMap<float, WindAltLayer> LayerMap;
+  QMap<float, WindAltLayer> windLayers;
 
-  LayerMap windLayers;
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);

@@ -156,7 +156,7 @@ public:
   /*
    * @return true if rectangle is a single point
    */
-  bool isPoint(float epsilonDegree = 0.f) const;
+  bool isPoint(float epsilonDegree = atools::geo::Pos::POS_EPSILON_MIN) const;
 
   /* Convert this position from rad to degree and return reference */
   atools::geo::Rect& toDeg();

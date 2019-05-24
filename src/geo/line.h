@@ -116,6 +116,12 @@ public:
     pos1 = value;
   }
 
+  /* Creates a line with same start and end position */
+  void setPosAll(const atools::geo::Pos& value)
+  {
+    pos1 = pos2 = value;
+  }
+
   /*
    * @return true if line is a single point
    */

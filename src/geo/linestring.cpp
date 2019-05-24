@@ -18,6 +18,8 @@
 #include "geo/linestring.h"
 #include "geo/calculations.h"
 
+#include "geo/line.h"
+
 #include <cmath>
 
 namespace atools {
@@ -31,6 +33,18 @@ LineString::LineString()
 LineString::LineString(const std::initializer_list<Pos>& list)
   : QVector(list)
 {
+}
+
+LineString::LineString(const QVector<Pos>& list)
+  : QVector(list)
+{
+
+}
+
+LineString::LineString(const QList<Pos>& list)
+  : QVector(list.toVector())
+{
+
 }
 
 LineString::LineString(const std::initializer_list<float>& coordinatePairs)
@@ -188,10 +202,19 @@ void LineString::removeInvalid()
     erase(it, end());
 }
 
+void LineString::removeDuplicates(float epsilon)
+{
+  resize(static_cast<int>(std::distance(begin(),
+                                        std::unique(begin(), end(),
+                                                    [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool
+      {
+        return p1.almostEqual(p2, epsilon);
+      }))));
+}
+
 void LineString::removeDuplicates()
 {
-  auto it = std::unique(begin(), end());
-  resize(static_cast<int>(std::distance(begin(), it)));
+  removeDuplicates(std::numeric_limits<float>::epsilon());
 }
 
 void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result, int *index) const
@@ -246,6 +269,11 @@ void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result,
     if(index != nullptr)
       *index = std::numeric_limits<int>::max();
   }
+}
+
+atools::geo::Line LineString::toLine() const
+{
+  return isEmpty() ? Line() : Line(first(), last());
 }
 
 Pos LineString::interpolate(float fraction) const

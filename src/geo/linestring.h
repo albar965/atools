@@ -23,6 +23,8 @@
 namespace atools {
 namespace geo {
 
+class Line;
+
 /*
  * List of geographic positions
  */
@@ -32,6 +34,8 @@ class LineString :
 public:
   LineString();
   explicit LineString(const std::initializer_list<atools::geo::Pos>& list);
+  explicit LineString(const QVector<atools::geo::Pos>& list);
+  explicit LineString(const QList<atools::geo::Pos>& list);
   explicit LineString(const std::initializer_list<float>& coordinatePairs);
   explicit LineString(const atools::geo::Pos& pos);
   explicit LineString(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2);
@@ -62,12 +66,16 @@ public:
   /* Remove all invalid points */
   void removeInvalid();
 
-  /* Remove consecutive duplicates */
+  /* Remove consecutive duplicates optionally closer than epsilon (degrees) */
+  void removeDuplicates(float epsilon);
   void removeDuplicates();
 
   /* Calculate status, cross track distance and more to this line. */
   void distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result,
                                  int *index = nullptr) const;
+
+  /* Line with first and last point */
+  atools::geo::Line toLine() const;
 
   /* Find point between start and end on GC route if distance between points is already known.
    *  fraction is 0 <= fraction <= 1 where 0 equals first and 1 equal last pos */
@@ -82,6 +90,27 @@ public:
   const atools::geo::Pos& getPos2() const
   {
     return isEmpty() ? EMPTY_POS : last();
+  }
+
+  /* Typed version of mid.
+   * Returns a sub-vector which contains elements from this vector, starting at position pos.
+   * If length is -1 (the default), all elements after pos are included; otherwise length elements
+   * (or all remaining elements if there are less than length elements) are included.*/
+  atools::geo::LineString mid(int pos, int len = -1) const
+  {
+    return atools::geo::LineString(QVector::mid(pos, len));
+  }
+
+  /* Returns a string with len number of coordinates from the beginning of the list */
+  atools::geo::LineString left(int len) const
+  {
+    return atools::geo::LineString(QVector::mid(0, len));
+  }
+
+  /* Returns a string with len number of coordinates from the end of the list */
+  atools::geo::LineString right(int len) const
+  {
+    return atools::geo::LineString(QVector::mid(size() - len));
   }
 
   /* Calculate Length of the line string in meter */
