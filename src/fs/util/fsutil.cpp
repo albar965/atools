@@ -366,7 +366,7 @@ int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int nu
 
 int calculateAirportRatingXp(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons)
 {
-  calculateAirportRating(isAddon, hasTower, numTaxiPaths, numParkings, numAprons);
+  return calculateAirportRating(isAddon, hasTower, numTaxiPaths, numParkings, numAprons);
   //// Count all as is - max 5
   // return (numTaxiPaths > 0) + (numParkings > 0) + (numAprons > 0) + hasTower + isAddon;
 }
