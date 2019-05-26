@@ -96,7 +96,7 @@ QString TempFile::buildFilename(const QString& suffix)
 {
   return QDir::tempPath() + QString("/%1_%2%3").
          arg(QApplication::applicationName().replace(" ", "_").toLower()).
-         arg(QUuid::createUuid().toString(QUuid::WithoutBraces)).
+         arg(QUuid::createUuid().toString().replace("{", "").replace("}", "")).
          arg(suffix.isEmpty() ? ".temp" : suffix);
 }
 
