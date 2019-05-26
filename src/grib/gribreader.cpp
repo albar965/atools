@@ -17,6 +17,7 @@
 
 #include "grib/gribreader.h"
 #include "geo/calculations.h"
+#include "io/tempfile.h"
 
 extern "C" {
 #include "g2clib/grib2.h"
@@ -446,22 +447,10 @@ void GribReader::readData(const QByteArray& data)
     throw atools::Exception(tr("Not a GRIB file"));
 
   // Create a temporary file since the GRIB reader can only deal with files
-  QFile file(QDir::tempPath() + QString("/little_navmap_wind_download-%1-%2.grib").
-             arg(QDateTime::currentMSecsSinceEpoch()).arg(QCoreApplication::applicationPid()));
-  if(file.open(QIODevice::WriteOnly))
-  {
-    file.write(data);
-    file.close();
+  atools::io::TempFile temp(data, ".grib");
 
-    datasets.clear();
-    readFile(file.fileName());
-  }
-  else
-  {
-    file.remove();
-    throw atools::Exception(tr("Cannot create temporary file %1").arg(file.fileName()));
-  }
-  file.remove();
+  datasets.clear();
+  readFile(temp.getFilePath());
 }
 
 void GribReader::clear()

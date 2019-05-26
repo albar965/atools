@@ -1272,14 +1272,7 @@ void DfdCompiler::readHeader()
 
 void DfdCompiler::compileMagDeclBgl()
 {
-  // Look first in config dir and then in local dir
-  QString file =
-    atools::settings::Settings::instance().getOverloadedPath(atools::buildPath({QApplication::applicationDirPath(),
-                                                                                "magdec", "magdec.bgl"}));
-
-  qInfo() << "Reading" << file;
-
-  magDecReader->readFromBgl(file);
+  magDecReader->readFromWmm();
   magDecReader->writeToTable(db);
   db.commit();
 }

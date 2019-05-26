@@ -44,5 +44,7 @@
         <file>resources/sql/fs/db/update_sea_base.sql</file>
         <file>resources/sql/fs/db/finish_airport_schema.sql</file>
         <file>resources/sql/fs/db/dfd/update_navaids.sql</file>
+        <file>resources/wmm/EGM9615.buf</file>
+        <file>resources/wmm/WMM.COF</file>
     </qresource>
 </RCC>

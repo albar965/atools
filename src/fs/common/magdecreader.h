@@ -25,6 +25,7 @@ namespace atools {
 namespace geo {
 class Pos;
 }
+
 namespace sql {
 class SqlDatabase;
 }
@@ -41,6 +42,13 @@ public:
   MagDecReader();
   virtual ~MagDecReader();
 
+  /* Calculate values from world magnetic model based on current year and month or current date if not given.
+   * Values can be saved to database.
+   *  January = 1 */
+  void readFromWmm(int year, int month = 1);
+  void readFromWmm(const QDate& date);
+  void readFromWmm();
+
   /* Read values from magdec.bgl file */
   void readFromBgl(const QString& filename);
 
@@ -54,10 +62,7 @@ public:
   void clear();
 
   /* true if loaded */
-  bool isValid() const
-  {
-    return magDeclValues != nullptr;
-  }
+  bool isValid() const;
 
   /* East values are positive while West values are negative.
    * Throws exception if object is not valid.
@@ -69,6 +74,12 @@ public:
     return referenceDate;
   }
 
+  /* Version information for world magnetic model if one of the readFromWmm methods was used */
+  QString getWmmVersion() const
+  {
+    return wmmVersion;
+  }
+
 private:
   QByteArray writeToBytes() const;
   void readFromBytes(const QByteArray& bytes);
@@ -78,7 +89,11 @@ private:
 
   QDate referenceDate;
   quint32 numValues = 0;
-  float *magDeclValues = nullptr;
+
+  /* https://www.fsdeveloper.com/wiki/index.php?title=Magdec_BGL_File */
+  float *magDecValues = nullptr;
+
+  QString wmmVersion;
 };
 
 } // namespace common

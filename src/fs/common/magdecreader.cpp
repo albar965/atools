@@ -21,6 +21,7 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 #include "atools.h"
+#include "wmm/magdectool.h"
 
 #include <QFile>
 #include <QDebug>
@@ -40,13 +41,42 @@ MagDecReader::MagDecReader()
 
 MagDecReader::~MagDecReader()
 {
-  delete[] magDeclValues;
+  clear();
+}
+
+void MagDecReader::readFromWmm()
+{
+  readFromWmm(QDate::currentDate());
+}
+
+void MagDecReader::readFromWmm(const QDate& date)
+{
+  readFromWmm(date.year(), date.month());
+}
+
+void MagDecReader::readFromWmm(int year, int month)
+{
+  clear();
+
+  // Create WMM model data
+  atools::wmm::MagDecTool magDecTool;
+  magDecTool.init(year, month);
+
+  referenceDate = magDecTool.getReferenceDate();
+  numValues = 360 * 181;
+
+  // Copy to internal representation that allows saving and loading
+  magDecValues = new float[numValues];
+  for(int latY = -90; latY <= 90; latY++)
+  {
+    for(int lonX = -180; lonX < 180; lonX++)
+      magDecValues[offset(lonX, latY)] = magDecTool.getMagVar(lonX, latY);
+  }
 }
 
 void MagDecReader::readFromBgl(const QString& filename)
 {
-  delete[] magDeclValues;
-  magDeclValues = nullptr;
+  clear();
 
   QFile file(filename);
 
@@ -96,7 +126,7 @@ void MagDecReader::readFromBgl(const QString& filename)
 
       numValues = numLongValues * numLatValues;
 
-      magDeclValues = new float[numValues];
+      magDecValues = new float[numValues];
 
       // Decode all values
       for(quint32 i = 0; i < numValues; i++)
@@ -105,7 +135,7 @@ void MagDecReader::readFromBgl(const QString& filename)
         // MV (E03.4°) = 65536*3.4/360 = 619 (0x26B)
         // A W01.1° value will be coded as:
         // MV (W01.1°) = 65536 - (65536*1.1/360) = 65336 (0xFF38)
-        magDeclValues[i] = static_cast<float>(stream.readShort()) / 65536.f * 360.f;
+        magDecValues[i] = static_cast<float>(stream.readShort()) / 65536.f * 360.f;
 
       file.close();
     }
@@ -114,18 +144,17 @@ void MagDecReader::readFromBgl(const QString& filename)
 
 void MagDecReader::readFromBytes(const QByteArray& bytes)
 {
-  delete[] magDeclValues;
-  magDeclValues = nullptr;
+  clear();
 
   QDataStream in(bytes);
   in.setVersion(QDataStream::Qt_5_5);
   in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
   in >> numValues;
-  magDeclValues = new float[numValues];
+  magDecValues = new float[numValues];
 
   for(unsigned int i = 0; i < numValues; i++)
-    in >> magDeclValues[i];
+    in >> magDecValues[i];
 }
 
 void MagDecReader::writeToTable(sql::SqlDatabase& db) const
@@ -172,8 +201,15 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
 
 void MagDecReader::clear()
 {
-  delete[] magDeclValues;
-  magDeclValues = nullptr;
+  delete[] magDecValues;
+  magDecValues = nullptr;
+  referenceDate = QDate();
+  wmmVersion.clear();
+}
+
+bool MagDecReader::isValid() const
+{
+  return magDecValues != nullptr;
 }
 
 QByteArray MagDecReader::writeToBytes() const
@@ -188,7 +224,7 @@ QByteArray MagDecReader::writeToBytes() const
 
   out << numValues;
   for(quint32 i = 0; i < numValues; i++)
-    out << magDeclValues[i];
+    out << magDecValues[i];
 
   return bytes;
 }
@@ -205,9 +241,9 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
   int minLonX1 = static_cast<int>(std::floor(lonX)), maxLonX2 = static_cast<int>(std::ceil(lonX)),
       minLatY1 = static_cast<int>(std::floor(latY)), maxLatY2 = static_cast<int>(std::ceil(latY));
 
-  if(minLonX1 == maxLonX2 && minLatY1 == maxLatY2)
-    // Exact degree - nothing to interpolate
-    return magvar(offset(minLonX1, minLatY1));
+  if(pos.nearGrid(atools::geo::Pos::POS_EPSILON_500M))
+    // Exact or near degree - nothing to interpolate
+    return magvar(offset(atools::roundToInt(pos.getLonX()), atools::roundToInt(pos.getLatY())));
   else
   {
     // Get four exact degree points around the coordinate
@@ -243,11 +279,30 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
 float MagDecReader::magvar(int offset) const
 {
   if(offset >= 0 && offset < static_cast<int>(numValues))
-    return magDeclValues[offset];
+    return magDecValues[offset];
   else
     throw Exception(QString("Wrong offset into magvar array %1").arg(offset));
 }
 
+// Latitude/Longitude table is 130,320 bytes length and starts at offset 0x88.
+// Magnetic variations for all entire degree latitude/longitude values are stored as a WORD list starting at E000-S90.
+// For each longitude value from E000 to W179, the list tabulates magnetic variations by increasing latitude from S90 to N90.
+// This organization can be sumarized as follows:
+// E000 (S90->S89->S88...->S01->N00->N01->...->N90), then
+// E001 (S90->S89->S88...->S01->N00->N01->...->N90), followed by E002, E003 lines
+// ...
+// E180 (S90->S89->S88...->S01->N00->N01->...->N90), then
+// W179 (S90->S89->S88...->S01->N00->N01->...->N90), followed by W178, W177 lines
+// ...
+// W001 (S90->S89->S88...->S01->N00->N01->...->N90) that is the last line
+// Therefore, for each of the 360 longitude values, there is 181 latitude values for a total of 65,160 consecutive WORD values.
+// First value of this table is at offset 0x88 (E000/S90) and last is at offset 0x1FD96 (W001/N90).
+// File offset for a given Lat/Long can be obtained using the following formula
+// For positive (East) longitudes (from 0 to 180):
+// Offset = (Long*362)+(Lat*2)+316
+// For negative (West) longitudes (from -1 to -179):
+// Offset =((Long+360)*362)+(Lat*2)+316
+// Note that North latitudes should be entered as positive values (0 to 90) and South latitudes as negative values (-1 to -90)
 int MagDecReader::offset(int lonX, int latY) const
 {
   if(lonX == -180)

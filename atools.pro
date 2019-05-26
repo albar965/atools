@@ -198,6 +198,7 @@ HEADERS += \
   src/io/binarystream.h \
   src/io/fileroller.h \
   src/io/inireader.h \
+  src/io/tempfile.h \
   src/logging/loggingconfig.h \
   src/logging/loggingguiabort.h \
   src/logging/logginghandler.h \
@@ -227,6 +228,8 @@ HEADERS += \
   src/util/updatecheck.h \
   src/util/version.h \
   src/win/activationcontext.h \
+  src/wmm/GeomagnetismHeader.h \
+  src/wmm/magdectool.h \
   src/zip/gzip.h \
   src/zip/zipreader.h \
   src/zip/zipwriter.h
@@ -291,6 +294,7 @@ SOURCES += \
   src/io/binarystream.cpp \
   src/io/fileroller.cpp \
   src/io/inireader.cpp \
+  src/io/tempfile.cpp \
   src/logging/loggingconfig.cpp \
   src/logging/loggingguiabort.cpp \
   src/logging/logginghandler.cpp \
@@ -318,6 +322,8 @@ SOURCES += \
   src/util/updatecheck.cpp \
   src/util/version.cpp \
   src/win/activationcontext.cpp \
+  src/wmm/GeomagnetismLibrary.c \
+  src/wmm/magdectool.cpp \
   src/zip/gzip.cpp \
   src/zip/zip.cpp
 
