@@ -85,9 +85,9 @@ void MagDecTool::init(int year, int month)
   // Put coeffizients file into a temporary, so that the C code can read it
   atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
 
-  MAGtype_MagneticModel *magneticModels[1];
+  MAGtype_MagneticModel *magneticModel;
   // https://stackoverflow.com/questions/30470866/c-to-c-array-of-pointers-conversion-issue
-  if(!MAG_robustReadMagModels(temp.getFilePathData(), (MAGtype_MagneticModel * (*)[])magneticModels, 1))
+  if(!MAG_robustReadMagModels(temp.getFilePathData(), &magneticModel, 1))
     throw atools::Exception(tr("Magnetic coeffizient file \"%1\" not found.").arg(temp.getFilePath()));
 
   MAGtype_Ellipsoid ellipsoid;
@@ -100,11 +100,11 @@ void MagDecTool::init(int year, int month)
   geoid.Geoid_Initialized = 1;
 
   // Calculate declination grid
-  QVector<float> declinations = MAG_GridInternal(year, month, magneticModels[0], &geoid, ellipsoid);
+  QVector<float> declinations = MAG_GridInternal(year, month, magneticModel, &geoid, ellipsoid);
   if(declinations.isEmpty())
     throw atools::Exception(tr("Error in MAG_GridInternal."));
 
-  MAG_FreeMagneticModelMemory(magneticModels[0]);
+  MAG_FreeMagneticModelMemory(magneticModel);
 
   // Create new plain float array and copy data before vector is destroyed
   magdecGrid = new float[static_cast<unsigned int>(declinations.size())];

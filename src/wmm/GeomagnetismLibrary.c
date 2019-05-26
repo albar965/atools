@@ -593,7 +593,7 @@ int MAG_robustReadMagneticModel_Large(char *filename, char *filenameSV, MAGtype_
   return 1;
 } /*MAG_robustReadMagneticModel_Large*/
 
-int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmodels)[], int array_size)
+int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel **magneticmodel, int array_size)
 {
   char line[MAXLINELENGTH];
   int n, nMax = 0, num_terms, a;
@@ -609,7 +609,7 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmod
   }
   if(line[0] == '%')
   {
-    MAG_readMagneticModel_SHDF(filename, magneticmodels, array_size);
+    printf("MAG_readMagneticModel_SHDF(filename, magneticmodel, array_size);");
   }
   else if(array_size == 1)
   {
@@ -623,11 +623,11 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel *(*magneticmod
         nMax = n;
     } while(n < 99999 && a == 1);
     num_terms = CALCULATE_NUMTERMS(nMax);
-    (*magneticmodels)[0] = MAG_AllocateModelMemory(num_terms);
-    (*magneticmodels)[0]->nMax = nMax;
-    (*magneticmodels)[0]->nMaxSecVar = nMax;
-    MAG_readMagneticModel(filename, (*magneticmodels)[0]);
-    (*magneticmodels)[0]->CoefficientFileEndDate = (*magneticmodels)[0]->epoch + 5;
+    *magneticmodel = MAG_AllocateModelMemory(num_terms);
+    (*magneticmodel)->nMax = nMax;
+    (*magneticmodel)->nMaxSecVar = nMax;
+    MAG_readMagneticModel(filename, *magneticmodel);
+    (*magneticmodel)->CoefficientFileEndDate = (*magneticmodel)->epoch + 5;
 
   }
   else
@@ -2345,169 +2345,6 @@ int MAG_readMagneticModel_Large(char *filename, char *filenameSV, MAGtype_Magnet
 
   return TRUE;
 } /*MAG_readMagneticModel_Large*/
-
-int MAG_readMagneticModel_SHDF(char *filename, MAGtype_MagneticModel *(*magneticmodels)[], int array_size)
-/*
- * MAG_readMagneticModels - Read the Magnetic Models from an SHDF format file
- *
- * Input:
- *  filename - Path to the SHDF format model file to be read
- *  array_size - Max No of models to be read from the file
- *
- * Output:
- *  magneticmodels[] - Array of magnetic models read from the file
- *
- * Return value:
- *  Returns the number of models read from the file.
- *  -2 implies that internal or external static degree was not found in the file, hence memory cannot be allocated
- *  -1 implies some error during file processing (I/O)
- *  0 implies no models were read from the file
- *  if ReturnValue > array_size then there were too many models in model file but only <array_size> number were read .
- *  if ReturnValue <= array_size then the function execution was successful.
- */
-{
-  char paramkeys[NOOFPARAMS][MAXLINELENGTH] =
-  {
-    "SHDF ",
-    "ModelName: ",
-    "Publisher: ",
-    "ReleaseDate: ",
-    "DataCutOff: ",
-    "ModelStartYear: ",
-    "ModelEndYear: ",
-    "Epoch: ",
-    "IntStaticDeg: ",
-    "IntSecVarDeg: ",
-    "ExtStaticDeg: ",
-    "ExtSecVarDeg: ",
-    "GeoMagRefRad: ",
-    "Normalization: ",
-    "SpatBasFunc: "
-  };
-
-  char paramvalues[NOOFPARAMS][MAXLINELENGTH];
-  char *line = (char *)malloc(MAXLINELENGTH);
-  char *ptrreset;
-  char paramvalue[MAXLINELENGTH];
-  int paramvaluelength = 0;
-  int paramkeylength = 0;
-  int i = 0, j = 0;
-  int newrecord = 1;
-  int header_index = -1;
-  int numterms;
-  int tempint;
-  int allocationflag = 0;
-  char coefftype; /* Internal or External (I/E) */
-
-  /* For reading coefficients */
-  int n, m;
-  double gnm, hnm, dgnm, dhnm, cutoff;
-  int index;
-
-  FILE *stream;
-  ptrreset = line;
-  stream = fopen(filename, READONLYMODE);
-  if(stream == NULL)
-  {
-    perror("File open error");
-    return header_index;
-  }
-
-  /* Read records from the model file and store header information. */
-  while(fgets(line, MAXLINELENGTH, stream) != NULL)
-  {
-    j++;
-    if(strlen(MAG_Trim(line)) == 0)
-      continue;
-    if(*line == '%')
-    {
-      line++;
-      if(newrecord)
-      {
-        if(header_index > -1)
-        {
-          MAG_AssignHeaderValues((*magneticmodels)[header_index], paramvalues);
-        }
-        header_index++;
-        if(header_index >= array_size)
-        {
-          fprintf(stderr, "Header limit exceeded - too many models in model file. (%d)\n", header_index);
-          return array_size + 1;
-        }
-        newrecord = 0;
-        allocationflag = 0;
-      }
-      for(i = 0; i < NOOFPARAMS; i++)
-      {
-
-        paramkeylength = strlen(paramkeys[i]);
-        if(!strncmp(line, paramkeys[i], paramkeylength))
-        {
-          paramvaluelength = strlen(line) - paramkeylength;
-          strncpy(paramvalue, line + paramkeylength, paramvaluelength);
-          paramvalue[paramvaluelength] = '\0';
-          strcpy(paramvalues[i], paramvalue);
-          if(!strcmp(paramkeys[i], paramkeys[INTSTATICDEG]) || !strcmp(paramkeys[i], paramkeys[EXTSTATICDEG]))
-          {
-            tempint = atoi(paramvalues[i]);
-            if(tempint > 0 && allocationflag == 0)
-            {
-              numterms = CALCULATE_NUMTERMS(tempint);
-              (*magneticmodels)[header_index] = MAG_AllocateModelMemory(numterms);
-              /* model = (*magneticmodels)[header_index]; */
-              allocationflag = 1;
-            }
-          }
-          break;
-        }
-      }
-      line--;
-    }
-    else if(*line == '#')
-    {
-      /* process comments */
-
-    }
-    else if(sscanf(line, "%c,%d,%d", &coefftype, &n, &m) == 3)
-    {
-      if(m == 0)
-      {
-        sscanf(line, "%c,%d,%d,%lf,,%lf,", &coefftype, &n, &m, &gnm, &dgnm);
-        hnm = 0;
-        dhnm = 0;
-      }
-      else
-        sscanf(line, "%c,%d,%d,%lf,%lf,%lf,%lf", &coefftype, &n, &m, &gnm, &hnm, &dgnm, &dhnm);
-      newrecord = 1;
-      if(!allocationflag)
-      {
-        fprintf(stderr, "Degree not found in model. Memory cannot be allocated.\n");
-        return _DEGREE_NOT_FOUND;
-      }
-      if(m <= n)
-      {
-        index = (n * (n + 1) / 2 + m);
-        (*magneticmodels)[header_index]->Main_Field_Coeff_G[index] = gnm;
-        (*magneticmodels)[header_index]->Secular_Var_Coeff_G[index] = dgnm;
-        (*magneticmodels)[header_index]->Main_Field_Coeff_H[index] = hnm;
-        (*magneticmodels)[header_index]->Secular_Var_Coeff_H[index] = dhnm;
-      }
-    }
-  }
-  if(header_index > -1)
-    MAG_AssignHeaderValues((*magneticmodels)[header_index], paramvalues);
-  fclose(stream);
-
-  cutoff = (*magneticmodels)[array_size - 1]->CoefficientFileEndDate;
-
-  for(i = 0; i < array_size; i++)
-    (*magneticmodels)[i]->CoefficientFileEndDate = cutoff;
-
-  free(ptrreset);
-  line = NULL;
-  ptrreset = NULL;
-  return header_index + 1;
-} /*MAG_readMagneticModel_SHDF*/
 
 char *MAG_Trim(char *str)
 {
