@@ -111,9 +111,9 @@ void NoaaWeatherDownloader::startDownload()
     QDateTime datetime = QDateTime::currentDateTimeUtc();
     datetime.setTime(QTime(datetime.time().hour(), 0, 0));
 
+    appendJob(datetime, -1); // UTC + 1 - either day ago or newly populated
     appendJob(datetime, 0); // UTC
     appendJob(datetime, 1); // UTC - 1 hour
-    appendJob(datetime, 2); // UTC - 2 hours
 
     download();
   }
