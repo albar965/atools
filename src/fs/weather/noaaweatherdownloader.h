@@ -15,82 +15,95 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_WEATHERNETDOWNLOAD_H
-#define ATOOLS_FS_WEATHERNETDOWNLOAD_H
+#ifndef ATOOLS_NOAAWEATHERDOWNLOADER_H
+#define ATOOLS_NOAAWEATHERDOWNLOADER_H
 
-#include "geo/simplespatialindex.h"
+#include <QObject>
+#include <functional>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace util {
 class HttpDownloader;
 }
+
 namespace fs {
 namespace weather {
 
+class MetarIndex;
 struct MetarResult;
 
 /*
- * Manages metar files that are download fully from the web like IVAO.
- * Has a timer that triggers a recurrent lookup.
+ * Downloads the three latest METAR files from https://tgftp.nws.noaa.gov/data/observations/metar/cycles/00Z.TXT and
+ * merges the METAR entries into an index.
  */
-class WeatherNetDownload :
+class NoaaWeatherDownloader :
   public QObject
 {
   Q_OBJECT
 
 public:
-  WeatherNetDownload(QObject *parent, int indexSize, bool verboseLogging);
-  virtual ~WeatherNetDownload();
+  explicit NoaaWeatherDownloader(QObject *parent, int indexSize, bool verboseLogging);
+  virtual ~NoaaWeatherDownloader() override;
 
   /*
    * @return metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
-   *
-   * Download and timer is triggered on first call.
    */
   atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
 
-  /* Set download request URL */
+  /* Set request base URL. https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT */
   void setRequestUrl(const QString& url);
 
-  /* Re-download every number of seconds and emit weatherUpdated when done. This will start the update timer. */
+  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
+  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value);
+
+  /* Download files again every given number of seconds */
   void setUpdatePeriod(int seconds);
 
-  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
-  {
-    fetchAirportCoords = value;
-  }
+  /* Download in progress or file downloads outstanding */
+  bool isDownloading() const;
 
   /* Copy airports from the complete list to the index with coordinates.
-   * Copies only airports that exist in the current simulator database. */
+   * Copies only airports that exist in the current simulator database, i.e. where fetchAirportCoords returns
+   * a valid coordinate. */
   void updateIndex();
 
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
-
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
 
 private:
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
-  void parseFile(const QByteArray& data);
 
-  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
+  /* Read downloaded METAR file contents */
+  bool read(const QByteArray& data, const QString& url);
 
-  /* Contains all found airports but only latest reports */
-  QHash<QString, QString> metarMap;
+  /* Append download jobs to the queue and start if not already downloading */
+  void startDownload();
 
-  /* Contains all airports that are also available in the current simulator database. */
-  atools::geo::SimpleSpatialIndex<QString, QString> index;
+  /* Start download of next job in the queue */
+  void download();
 
+  /* Append a job to the download queue. timeOffset will be substracted from current UTC hour. */
+  void appendJob(const QDateTime& datetime, int timeOffset);
+
+  atools::fs::weather::MetarIndex *index = nullptr;
   atools::util::HttpDownloader *downloader = nullptr;
-  bool verbose = false;
+
+  /* https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT */
+  QString baseUrl;
+  bool verbose;
+  QStringList downloadQueue;
+  int updatePeriod = 900;
 };
 
 } // namespace weather
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_WEATHERNETDOWNLOAD_H
+#endif // ATOOLS_NOAAWEATHERDOWNLOADER_H

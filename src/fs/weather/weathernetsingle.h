@@ -73,8 +73,8 @@ public:
   /* Set URL and a parse function of a page that contains all available request URLs.
    *  Will trigger a new fetch on next weather request */
   void setStationIndexUrl(const QString& url,
-                          const std::function<void(QString & icao, QDateTime & lastUpdate,
-                                                   const QString &line)>& parseFunc);
+                          const std::function<void(QString& icao, QDateTime& lastUpdate,
+                                                   const QString& line)>& parseFunc);
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
   void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
@@ -85,6 +85,7 @@ public:
 signals:
   /* Emitted when a request to weather was fullfilled */
   void weatherUpdated();
+  void weatherDownloadFailed(const QString& error, int errorCode, QString url);
 
 private:
   void loadMetar(const QString& airportIcao);
@@ -113,7 +114,7 @@ private:
 
   QTimer flushQueueTimer;
   QString requestUrl, stationIndexUrl;
-  std::function<void(QString & icao, QDateTime & lastUpdate, const QString &line)> indexParseFunction = nullptr;
+  std::function<void(QString& icao, QDateTime& lastUpdate, const QString& line)> indexParseFunction = nullptr;
   QSet<QString> stationIndex;
   atools::util::HttpDownloader *indexDownloader = nullptr;
   atools::geo::SimpleSpatialIndex<QString, QString> index;

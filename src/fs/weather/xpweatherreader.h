@@ -20,8 +20,6 @@
 
 #include "fs/weather/weathertypes.h"
 
-#include "geo/simplespatialindex.h"
-
 namespace atools {
 namespace util {
 class FileSystemWatcher;
@@ -29,6 +27,8 @@ class FileSystemWatcher;
 
 namespace fs {
 namespace weather {
+
+class MetarIndex;
 
 /*
  * Reads the X-Plane METAR.rwx the watches the file for changes.
@@ -39,8 +39,8 @@ class XpWeatherReader
   Q_OBJECT
 
 public:
-  explicit XpWeatherReader(QObject *parent, bool verboseLogging);
-  virtual ~XpWeatherReader();
+  explicit XpWeatherReader(QObject *parent, int indexSize, bool verboseLogging);
+  virtual ~XpWeatherReader() override;
 
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
   QString getMetar(const QString& ident);
@@ -49,10 +49,7 @@ public:
   atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /* Get all ICAO codes that have a weather station */
-  QSet<QString> getMetarAirportIdents() const
-  {
-    return index.keys().toSet();
-  }
+  QSet<QString> getMetarAirportIdents() const;
 
   /* Read METAR.rwx and watch the file if needed */
   void readWeatherFile(const QString& file);
@@ -61,31 +58,20 @@ public:
   void clear();
 
   /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
-  {
-    fetchAirportCoords = value;
-  }
+  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value);
 
 signals:
   void weatherUpdated();
 
 private:
-  bool read();
   void deleteFsWatcher();
   void createFsWatcher();
   void pathChanged(const QString& filename);
+  bool read();
 
-  struct MetarData
-  {
-    QString ident, metar;
-    QDateTime timestamp;
-  };
-
-  QString weatherFile;
-  atools::geo::SimpleSpatialIndex<QString, MetarData> index;
+  atools::fs::weather::MetarIndex *index = nullptr;
   atools::util::FileSystemWatcher *fsWatcher = nullptr;
-
-  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
+  QString weatherFile;
 
   bool verbose;
 };

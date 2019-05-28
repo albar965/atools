@@ -186,8 +186,8 @@ void HttpDownloader::deleteReply()
 
 void HttpDownloader::downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal)
 {
-  // if(verbose)
-  // qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "URL" << curUrl();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal << "URL" << curUrl();
 
   emit downloadProgress(bytesReceived, bytesTotal, curUrl());
 }
@@ -238,8 +238,8 @@ void HttpDownloader::readyRead()
     }
     else
     {
-      // if(verbose)
-      // qDebug() << Q_FUNC_INFO << "reply->bytesAvailable()" << reply->bytesAvailable() << "URL" << curUrl();
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "reply->bytesAvailable()" << reply->bytesAvailable() << "URL" << curUrl();
       data.append(reply->read(reply->bytesAvailable()));
     }
   }

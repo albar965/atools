@@ -23,8 +23,8 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-WeatherNetDownload::WeatherNetDownload(QObject *parent, bool verboseLogging)
-  : QObject(parent), index(5000), verbose(verboseLogging)
+WeatherNetDownload::WeatherNetDownload(QObject *parent, int indexSize, bool verboseLogging)
+  : QObject(parent), index(indexSize), verbose(verboseLogging)
 {
   downloader = new atools::util::HttpDownloader(parent, verboseLogging);
 
@@ -77,17 +77,33 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
     qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
   parseFile(data);
+
   emit weatherUpdated();
 }
 
 void WeatherNetDownload::downloadFailed(const QString& error, int errorCode, QString url)
 {
   qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error << errorCode;
+
+  emit weatherDownloadFailed(error, errorCode, url);
 }
 
 void WeatherNetDownload::setUpdatePeriod(int seconds)
 {
   downloader->setUpdatePeriod(seconds);
+}
+
+void WeatherNetDownload::updateIndex()
+{
+  for(auto it = metarMap.begin(); it != metarMap.end(); ++it)
+  {
+    atools::geo::Pos pos = fetchAirportCoords(it.key());
+    if(pos.isValid())
+      index.insert(it.key(), it.value(), pos);
+  }
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Updated" << index.size() << "metar positions";
 }
 
 // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
@@ -100,15 +116,13 @@ void WeatherNetDownload::parseFile(const QByteArray& data)
   while(!stream.atEnd())
   {
     QString line = stream.readLine().simplified();
-    QString ident = line.section(' ', 0, 0);
-
-    atools::geo::Pos pos = fetchAirportCoords(ident);
-
-    if(pos.isValid())
-      index.insert(ident, line, pos);
+    metarMap.insert(line.section(' ', 0, 0), line);
   }
+
+  updateIndex();
+
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << index.size()
+    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarMap.size()
              << "metars from" << downloader->getUrl();
 }
 

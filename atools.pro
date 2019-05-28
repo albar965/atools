@@ -154,7 +154,9 @@ HEADERS += \
   src/fs/sc/weatherrequest.h \
   src/fs/sc/xpconnecthandler.h \
   src/fs/weather/metar.h \
+  src/fs/weather/metarindex.h \
   src/fs/weather/metarparser.h \
+  src/fs/weather/noaaweatherdownloader.h \
   src/fs/weather/weathernetdownload.h \
   src/fs/weather/weathernetsingle.h \
   src/fs/weather/weathertypes.h \
@@ -250,7 +252,9 @@ SOURCES += \
   src/fs/sc/weatherrequest.cpp \
   src/fs/sc/xpconnecthandler.cpp \
   src/fs/weather/metar.cpp \
+  src/fs/weather/metarindex.cpp \
   src/fs/weather/metarparser.cpp \
+  src/fs/weather/noaaweatherdownloader.cpp \
   src/fs/weather/weathernetdownload.cpp \
   src/fs/weather/weathernetsingle.cpp \
   src/fs/weather/weathertypes.cpp \

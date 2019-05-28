@@ -18,6 +18,7 @@
 #include "fs/weather/xpweatherreader.h"
 
 #include "util/filesystemwatcher.h"
+#include "fs/weather/metarindex.h"
 
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -30,14 +31,16 @@ namespace weather {
 
 using atools::util::FileSystemWatcher;
 
-XpWeatherReader::XpWeatherReader(QObject *parent, bool verboseLogging)
-  : QObject(parent), index(5000), verbose(verboseLogging)
+XpWeatherReader::XpWeatherReader(QObject *parent, int indexSize, bool verboseLogging)
+  : QObject(parent), verbose(verboseLogging)
 {
+  index = new atools::fs::weather::MetarIndex(indexSize, verboseLogging);
 }
 
 XpWeatherReader::~XpWeatherReader()
 {
   clear();
+  delete index;
 }
 
 void XpWeatherReader::readWeatherFile(const QString& file)
@@ -55,112 +58,43 @@ void XpWeatherReader::readWeatherFile(const QString& file)
 void XpWeatherReader::clear()
 {
   deleteFsWatcher();
-  index.clear();
+  index->clear();
   weatherFile.clear();
+}
+
+void XpWeatherReader::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
+{
+  index->setFetchAirportCoords(value);
+}
+
+bool XpWeatherReader::read()
+{
+  bool retval = false;
+  QFile file(weatherFile);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    retval = index->read(stream, weatherFile, false /* merge */);
+    file.close();
+  }
+  else
+    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
+  return retval;
 }
 
 atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  atools::fs::weather::MetarResult result;
-  result.requestIdent = station;
-  result.requestPos = pos;
+  return index->getMetar(station, pos);
+}
 
-  MetarData data;
-  QString foundKey = index.getTypeOrNearest(data, station, pos);
-  if(!foundKey.isEmpty())
-  {
-    // Found a METAR
-    if(foundKey == station)
-      // Found exact match
-      result.metarForStation = data.metar;
-    else
-      // Found a station nearby
-      result.metarForNearest = data.metar;
-  }
-
-  result.timestamp = QDateTime::currentDateTime();
-  return result;
+QSet<QString> XpWeatherReader::getMetarAirportIdents() const
+{
+  return index->getMetarAirportIdents();
 }
 
 QString XpWeatherReader::getMetar(const QString& ident)
 {
-  return index.value(ident).metar;
-}
-
-// 2017/07/30 18:45
-// KHYI 301845Z 13007KT 070V130 10SM SCT075 38/17 A2996
-//
-// 2017/07/30 18:55
-// KPRO 301855Z AUTO 11003KT 10SM CLR 26/14 A3022 RMK AO2 T02570135
-//
-// 2017/07/30 18:47
-// KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
-bool XpWeatherReader::read()
-{
-  // Recognize METAR airport
-  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
-
-  // Recognize date part
-  static const QRegularExpression DATE_REGEXP("^[\\d]{4}/[\\d]{2}/[\\d]{2}");
-
-  QFile file(weatherFile);
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-  {
-    index.clear();
-
-    QTextStream stream(&file);
-
-    int lineNum = 1;
-    QString line;
-    QDateTime lastTimestamp;
-
-    while(!stream.atEnd())
-    {
-      line = stream.readLine().trimmed();
-
-      if(line.isEmpty())
-        continue;
-
-      if(line.size() >= 4)
-      {
-        if(DATE_REGEXP.match(line).hasMatch())
-        {
-          // 2017/10/29 11:45
-          lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
-          continue;
-        }
-
-        QString ident = line.section(' ', 0, 0);
-        if(IDENT_REGEXP.match(ident).hasMatch())
-        {
-          if(index.contains(ident))
-          {
-            MetarData md = index.value(ident);
-            if(md.timestamp > lastTimestamp)
-              // Ignore. Already loaded is newer.
-              continue;
-          }
-
-          // Starts with an airport ident - add if position is valid
-          atools::geo::Pos pos = fetchAirportCoords(ident);
-          if(pos.isValid())
-            index.insert(ident, {ident, line, lastTimestamp}, pos);
-        }
-        else
-          qWarning() << "Metar does not match in file" << file.fileName() << "line num" << lineNum << "line" << line;
-      }
-      lineNum++;
-    }
-    file.close();
-  }
-  else
-  {
-    qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
-    return false;
-  }
-
-  qDebug() << Q_FUNC_INFO << "Loaded" << index.size() << "metars";
-  return true;
+  return index->getMetar(ident);
 }
 
 void XpWeatherReader::pathChanged(const QString& filename)
@@ -183,7 +117,7 @@ void XpWeatherReader::pathChanged(const QString& filename)
   }
   else
     // File was deleted - keep current weather information
-    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << index.isEmpty();
+    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << index->isEmpty();
 }
 
 void XpWeatherReader::deleteFsWatcher()
