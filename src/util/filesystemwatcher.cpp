@@ -120,6 +120,8 @@ void FileSystemWatcher::setFilenameAndStart(const QString& value)
 
   stopWatching();
   filename = value;
+
+  createFsWatcher();
 }
 
 void FileSystemWatcher::deleteFsWatcher()
