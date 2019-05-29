@@ -19,6 +19,7 @@
 #define ATOOLS_NOAAWEATHERDOWNLOADER_H
 
 #include <QObject>
+#include <QTimer>
 #include <functional>
 
 namespace atools {
@@ -71,6 +72,9 @@ public:
    * a valid coordinate. */
   void updateIndex();
 
+  /* Append download jobs to the queue and start if not already downloading */
+  void startDownload();
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
@@ -83,23 +87,25 @@ private:
   /* Read downloaded METAR file contents */
   bool read(const QByteArray& data, const QString& url);
 
-  /* Append download jobs to the queue and start if not already downloading */
-  void startDownload();
-
   /* Start download of next job in the queue */
   void download();
 
   /* Append a job to the download queue. timeOffset will be substracted from current UTC hour. */
-  void appendJob(const QDateTime& datetime, int timeOffset);
+  void appendJob(QDateTime datetime, int timeOffsetHour);
+  void startTimer();
+  void stopTimer();
 
   atools::fs::weather::MetarIndex *index = nullptr;
   atools::util::HttpDownloader *downloader = nullptr;
+
+  /* Need to do own updates since more files have to be queued */
+  QTimer updateTimer;
 
   /* https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT */
   QString baseUrl;
   bool verbose;
   QStringList downloadQueue;
-  int updatePeriod = 900;
+  int updatePeriodSeconds = 600;
 };
 
 } // namespace weather

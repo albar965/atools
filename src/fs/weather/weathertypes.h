@@ -39,6 +39,8 @@ struct MetarResult
   /* True if the origin is a simulator request. Currently only FSX/P3D. */
   bool simulator = false;
 
+  void init(const QString& station, const atools::geo::Pos& pos);
+
   bool isValid() const
   {
     return !requestIdent.isEmpty() && requestPos.isValid();

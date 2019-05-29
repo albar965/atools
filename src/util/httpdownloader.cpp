@@ -28,6 +28,7 @@ namespace util {
 HttpDownloader::HttpDownloader(QObject *parent, bool logVerbose)
   : QObject(parent), verbose(logVerbose)
 {
+  updateTimer.setSingleShot(true);
   connect(&updateTimer, &QTimer::timeout, this, &HttpDownloader::startDownload);
 }
 

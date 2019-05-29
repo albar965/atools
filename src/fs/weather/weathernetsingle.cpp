@@ -56,8 +56,7 @@ MetarResult WeatherNetSingle::getMetar(const QString& airportIcao, const geo::Po
   loadIndex();
 
   atools::fs::weather::MetarResult result;
-  result.requestIdent = airportIcao;
-  result.requestPos = pos;
+  result.init(airportIcao, pos);
 
   if(stationIndexUrl.isEmpty())
     // Do not use downloaded index - try direct
@@ -75,7 +74,6 @@ MetarResult WeatherNetSingle::getMetar(const QString& airportIcao, const geo::Po
     }
   }
 
-  result.timestamp = QDateTime::currentDateTime();
   return result;
 }
 
@@ -99,8 +97,8 @@ QString WeatherNetSingle::getMetarInternal(const QString& airportIcao)
 }
 
 void WeatherNetSingle::setStationIndexUrl(const QString& url,
-                                          const std::function<void(QString & icao, QDateTime & lastUpdate,
-                                                                   const QString &line)>& parseFunc)
+                                          const std::function<void(QString& icao, QDateTime& lastUpdate,
+                                                                   const QString& line)>& parseFunc)
 {
   delete indexDownloader;
   indexDownloader = nullptr;

@@ -36,19 +36,37 @@ NoaaWeatherDownloader::NoaaWeatherDownloader(QObject *parent, int indexSize, boo
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &NoaaWeatherDownloader::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &NoaaWeatherDownloader::downloadFailed);
+
+  updateTimer.setSingleShot(true);
+  connect(&updateTimer, &QTimer::timeout, this, &NoaaWeatherDownloader::startDownload);
 }
 
 NoaaWeatherDownloader::~NoaaWeatherDownloader()
 {
+  stopTimer();
+
   delete downloader;
   delete index;
 }
 
+void NoaaWeatherDownloader::startTimer()
+{
+  if(updatePeriodSeconds > 0)
+  {
+    updateTimer.setInterval(updatePeriodSeconds * 1000);
+    updateTimer.start();
+  }
+  else
+    updateTimer.stop();
+}
+
+void NoaaWeatherDownloader::stopTimer()
+{
+  updateTimer.stop();
+}
+
 MetarResult NoaaWeatherDownloader::getMetar(const QString& airportIcao, const geo::Pos& pos)
 {
-  if(index->isEmpty())
-    // Nothing loaded yet - start
-    startDownload();
   return index->getMetar(airportIcao, pos);
 }
 
@@ -64,7 +82,7 @@ void NoaaWeatherDownloader::setFetchAirportCoords(const std::function<geo::Pos(c
 
 void NoaaWeatherDownloader::setUpdatePeriod(int seconds)
 {
-  downloader->setUpdatePeriod(seconds);
+  updatePeriodSeconds = seconds;
 }
 
 bool NoaaWeatherDownloader::isDownloading() const
@@ -85,9 +103,15 @@ bool NoaaWeatherDownloader::read(const QByteArray& data, const QString& url)
 
 void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url)
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "downloadQueue" << downloadQueue;
+
   if(read(data, url) && downloadQueue.isEmpty())
     // Notification only if no outstanding downloads
     emit weatherUpdated();
+
+  if(downloadQueue.isEmpty())
+    startTimer();
 
   // Start later in the event queue to allow the download to finish
   QTimer::singleShot(0, this, &NoaaWeatherDownloader::download);
@@ -96,6 +120,8 @@ void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url
 void NoaaWeatherDownloader::downloadFailed(const QString& error, int errorCode, QString url)
 {
   emit weatherDownloadFailed(error, errorCode, url);
+
+  startTimer();
 
   // Start later in the event queue to allow the download to finish
   QTimer::singleShot(0, this, &NoaaWeatherDownloader::download);
@@ -111,17 +137,19 @@ void NoaaWeatherDownloader::startDownload()
     QDateTime datetime = QDateTime::currentDateTimeUtc();
     datetime.setTime(QTime(datetime.time().hour(), 0, 0));
 
-    appendJob(datetime, -1); // UTC + 1 - either day ago or newly populated
-    appendJob(datetime, 0); // UTC
-    appendJob(datetime, 1); // UTC - 1 hour
+    int startOffset = 1;
+    appendJob(datetime, startOffset--); // UTC + 1 - either old or newly populated
+    appendJob(datetime, startOffset--); // UTC - current
+    appendJob(datetime, startOffset--); // UTC - 1 hour - older which might be still populated
 
     download();
   }
 }
 
-void NoaaWeatherDownloader::appendJob(const QDateTime& datetime, int timeOffset)
+void NoaaWeatherDownloader::appendJob(QDateTime datetime, int timeOffsetHour)
 {
-  QString url = baseUrl.arg(datetime.time().hour() - timeOffset, 2, 10, QChar('0'));
+  datetime = datetime.addSecs(timeOffsetHour * 3600);
+  QString url = baseUrl.arg(datetime.time().hour(), 2, 10, QChar('0'));
 
   // Do not append duplicates
   if(!downloadQueue.contains(url))
@@ -130,6 +158,9 @@ void NoaaWeatherDownloader::appendJob(const QDateTime& datetime, int timeOffset)
 
 void NoaaWeatherDownloader::download()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "downloadQueue" << downloadQueue;
+
   if(!downloader->isDownloading())
   {
     if(!downloadQueue.isEmpty())

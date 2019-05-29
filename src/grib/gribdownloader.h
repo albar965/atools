@@ -94,6 +94,8 @@ public:
     return datasets;
   }
 
+  bool isDownloading() const;
+
 signals:
   /* Sent if download finished successfully */
   void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);

@@ -145,5 +145,10 @@ void GribDownloader::downloadFailed(const QString& error, int errorCode, QString
   }
 }
 
+bool atools::grib::GribDownloader::isDownloading() const
+{
+  return downloader->isDownloading();
+}
+
 } // namespace grib
 } // namespace atools

@@ -40,8 +40,7 @@ WeatherNetDownload::~WeatherNetDownload()
 atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& airportIcao, const atools::geo::Pos& pos)
 {
   atools::fs::weather::MetarResult result;
-  result.requestIdent = airportIcao;
-  result.requestPos = pos;
+  result.init(airportIcao, pos);
 
   if(index.isEmpty())
   {
@@ -62,7 +61,6 @@ atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& air
     }
   }
 
-  result.timestamp = QDateTime::currentDateTime();
   return result;
 }
 

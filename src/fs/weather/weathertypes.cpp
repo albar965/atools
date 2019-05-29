@@ -83,6 +83,13 @@ bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& res
   return false;
 }
 
+void MetarResult::init(const QString& station, const geo::Pos& pos)
+{
+  requestIdent = station;
+  requestPos = pos;
+  timestamp = QDateTime::currentDateTimeUtc();
+}
+
 QDebug operator<<(QDebug out, const MetarResult& record)
 {
   QDebugStateSaver saver(out);

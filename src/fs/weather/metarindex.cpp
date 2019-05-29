@@ -176,8 +176,7 @@ bool MetarIndex::isEmpty() const
 atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, const atools::geo::Pos& pos)
 {
   atools::fs::weather::MetarResult result;
-  result.requestIdent = station;
-  result.requestPos = pos;
+  result.init(station, pos);
 
   MetarData data;
   QString foundKey = index->getTypeOrNearest(data, station, pos);
@@ -192,7 +191,6 @@ atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, co
       result.metarForNearest = data.metar;
   }
 
-  result.timestamp = QDateTime::currentDateTime();
   return result;
 }
 
