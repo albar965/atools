@@ -39,6 +39,9 @@ NoaaWeatherDownloader::NoaaWeatherDownloader(QObject *parent, int indexSize, boo
 
   updateTimer.setSingleShot(true);
   connect(&updateTimer, &QTimer::timeout, this, &NoaaWeatherDownloader::startDownload);
+
+  initialDownloadTimer.setSingleShot(true);
+  connect(&initialDownloadTimer, &QTimer::timeout, this, &NoaaWeatherDownloader::startDownload);
 }
 
 NoaaWeatherDownloader::~NoaaWeatherDownloader()
@@ -67,6 +70,12 @@ void NoaaWeatherDownloader::stopTimer()
 
 MetarResult NoaaWeatherDownloader::getMetar(const QString& airportIcao, const geo::Pos& pos)
 {
+  if(index->isEmpty())
+  {
+    // Nothing loaded yet - start
+    initialDownloadTimer.start(2000);
+  }
+
   return index->getMetar(airportIcao, pos);
 }
 

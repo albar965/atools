@@ -99,7 +99,7 @@ private:
   atools::util::HttpDownloader *downloader = nullptr;
 
   /* Need to do own updates since more files have to be queued */
-  QTimer updateTimer;
+  QTimer updateTimer, initialDownloadTimer;
 
   /* https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT */
   QString baseUrl;
