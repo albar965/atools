@@ -348,5 +348,15 @@ Rect LineString::boundingRect() const
   return retval;
 }
 
+bool LineString::hasAllValidPoints() const
+{
+  for(const Pos& p : *this)
+  {
+    if(!p.isValid())
+      return false;
+  }
+  return true;
+}
+
 } // namespace geo
 } // namespace atools

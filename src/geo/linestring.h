@@ -124,6 +124,9 @@ public:
     return !isEmpty();
   }
 
+  /* true if all points are valid. O(n) runtime. */
+  bool hasAllValidPoints() const;
+
   bool isPoint() const
   {
     return size() == 1 || (size() == 2 && first() == last());
