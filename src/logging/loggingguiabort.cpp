@@ -37,19 +37,20 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
     qWarning() << Q_FUNC_INFO << "LoggingHandler::instance==nullptr";
 
   // Called by signal on main thread context
-  QMessageBox::warning(LoggingHandler::parentWidget, QApplication::applicationName(),
-                       QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
-                                   "<i>%1</i><br/><br/>"
-                                   "%2"
-                                   "<hr/>%3"
-                                     "<hr/>%4<br/>"
-                                     "<h3>Press OK to exit application.</h3>"
-                                   ).
-                       arg(msg).
-                       arg(atools::gui::Application::generalErrorMessage()).
-                       arg(atools::gui::Application::getEmailHtml()).
-                       arg(atools::gui::Application::getReportPathHtml())
-                       );
+  if(atools::gui::Application::isShowExceptionDialog())
+    QMessageBox::warning(LoggingHandler::parentWidget, QApplication::applicationName(),
+                         QObject::tr("<b>A fatal error has occured.</b><br/><br/>"
+                                     "<i>%1</i><br/><br/>"
+                                     "%2"
+                                     "<hr/>%3"
+                                       "<hr/>%4<br/>"
+                                       "<h3>Press OK to exit application.</h3>"
+                                     ).
+                         arg(msg).
+                         arg(atools::gui::Application::generalErrorMessage()).
+                         arg(atools::gui::Application::getEmailHtml()).
+                         arg(atools::gui::Application::getReportPathHtml())
+                         );
 
 #ifdef Q_OS_WIN32
   // Will not call any crash handler on windows - is not helpful anyway

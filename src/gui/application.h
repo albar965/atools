@@ -88,6 +88,17 @@ public:
 
   static void sendFontChanged();
 
+  static bool isShowExceptionDialog()
+  {
+    return showExceptionDialog;
+  }
+
+  /* Shows a dialog for exceptions. Otherwise just logs a message and exits with return code 1. */
+  static void setShowExceptionDialog(bool value)
+  {
+    showExceptionDialog = value;
+  }
+
 signals:
   /* Application font has changed. */
   void fontChanged();
@@ -98,6 +109,8 @@ private:
   static QHash<QString, QStringList> reportFiles;
 
   static QStringList emailAddresses;
+
+  static bool showExceptionDialog;
 
 };
 
