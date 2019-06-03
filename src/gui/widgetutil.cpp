@@ -184,9 +184,6 @@ QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionMod
 void addMenuShortcuts(QMenu *menu)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-  // traverse context menu and tell each action to show shortcut text
-  // this inelegant hack due to ill-advised Qt change in Qt5.10
-  // https://bugreports.qt.io/browse/QTBUG-49435
   for(QAction *action: menu->actions())
   {
     if(action->isSeparator())
@@ -197,6 +194,8 @@ void addMenuShortcuts(QMenu *menu)
     else
       action->setShortcutVisibleInContextMenu(true);
   }
+#else
+  Q_UNUSED(menu);
 #endif
 }
 

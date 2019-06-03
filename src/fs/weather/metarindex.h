@@ -37,7 +37,8 @@ struct MetarData
   }
 
 };
-class MetarResult;
+
+struct MetarResult;
 
 /*
  * Downloads caches and indexes (by position) METAR reports in NOAA style as also used by X-Plane.

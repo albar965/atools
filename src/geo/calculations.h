@@ -46,12 +46,6 @@ inline TYPE atan2Deg(TYPE y, TYPE x);
 template<typename TYPE>
 TYPE normalizeCourse(TYPE courseDegree);
 
-template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg);
-
-template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad);
-
 enum LineDist
 {
   DIST_TO_LINE, /* Distance is to the line */
@@ -84,6 +78,22 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
+
+/* Degree to rad */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
+{
+  return (deg > std::numeric_limits<TYPE>::max() / 2) ? deg :
+         static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
+}
+
+/* Rad to degree */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
+{
+  return (rad > std::numeric_limits<TYPE>::max() / 2) ? rad :
+         static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
+}
 
 /* Returns time with milliseconds set to 0
  *  zenith:      Sun's zenith for sunrise/sunset
@@ -161,24 +171,24 @@ inline double windDirectionFromUV(double u, double v)
  * U component of wind; eastward_wind; */
 inline float windUComponent(float speed, float dir)
 {
-  return static_cast<float>(-speed * sin(toRadians(dir)));
+  return static_cast<float>(-speed * sin(atools::geo::toRadians(dir)));
 }
 
 inline double windUComponent(double speed, double dir)
 {
-  return -speed *sin(toRadians(dir));
+  return -speed *sin(atools::geo::toRadians(dir));
 }
 
 /* Calculate wind eastward component from speed and direction in degrees
  * V component of wind; northward_wind; */
 inline float windVComponent(float speed, float dir)
 {
-  return static_cast<float>(-speed * cos(toRadians(dir)));
+  return static_cast<float>(-speed * cos(atools::geo::toRadians(dir)));
 }
 
 inline double windVComponent(double speed, double dir)
 {
-  return -speed *cos(toRadians(dir));
+  return -speed *cos(atools::geo::toRadians(dir));
 }
 
 /* Check for invalid coordinates if they are not exceeding bounds and are not NaN or INF if floating point */
@@ -400,22 +410,6 @@ Q_DECL_CONSTEXPR TYPE meterToRad(TYPE value)
   return (value > std::numeric_limits<TYPE>::max() / 2) ? value : nmToRad(meterToNm(value));
 }
 
-/* Degree to rad */
-template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toRadians(TYPE deg)
-{
-  return (deg > std::numeric_limits<TYPE>::max() / 2) ? deg :
-         static_cast<TYPE>(static_cast<double>(deg) * 0.017453292519943295769236907684886);
-}
-
-/* Rad to degree */
-template<typename TYPE>
-Q_DECL_CONSTEXPR TYPE toDegree(TYPE rad)
-{
-  return (rad > std::numeric_limits<TYPE>::max() / 2) ? rad :
-         static_cast<TYPE>(static_cast<double>(rad) / 0.017453292519943295769236907684886);
-}
-
 /* Normalizes a number to an arbitrary range by assuming the range wraps around when going below min or above max */
 template<typename TYPE>
 TYPE normalizeRange(TYPE value, TYPE start, TYPE end)
@@ -562,43 +556,43 @@ Q_DECL_CONSTEXPR TYPE altMeterForPressureMbar(TYPE pressureMbar)
 template<typename TYPE>
 inline TYPE sinDeg(TYPE value)
 {
-  return static_cast<TYPE>(sin(toRadians(static_cast<double>(value))));
+  return static_cast<TYPE>(sin(atools::geo::toRadians(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE asinDeg(TYPE value)
 {
-  return static_cast<TYPE>(toDegree(asin(static_cast<double>(value))));
+  return static_cast<TYPE>(atools::geo::toDegree(asin(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE cosDeg(TYPE value)
 {
-  return static_cast<TYPE>(cos(toRadians(static_cast<double>(value))));
+  return static_cast<TYPE>(cos(atools::geo::toRadians(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE acosDeg(TYPE value)
 {
-  return static_cast<TYPE>(toDegree(acos(static_cast<double>(value))));
+  return static_cast<TYPE>(atools::geo::toDegree(acos(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE tanDeg(TYPE value)
 {
-  return static_cast<TYPE>(tan(toRadians(static_cast<double>(value))));
+  return static_cast<TYPE>(tan(atools::geo::toRadians(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE atanDeg(TYPE value)
 {
-  return static_cast<TYPE>(toDegree(atan(static_cast<double>(value))));
+  return static_cast<TYPE>(atools::geo::toDegree(atan(static_cast<double>(value))));
 }
 
 template<typename TYPE>
 inline TYPE atan2Deg(TYPE y, TYPE x)
 {
-  return static_cast<TYPE>(toDegree(atan2(static_cast<double>(y), static_cast<double>(x))));
+  return static_cast<TYPE>(atools::geo::toDegree(atan2(static_cast<double>(y), static_cast<double>(x))));
 }
 
 } /* namespace geo */
