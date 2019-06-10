@@ -46,7 +46,7 @@ FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
   name = other.name;
   magvar = other.magvar;
   position = other.position;
-  noSave = other.noSave;
+  flags = other.flags;
   frequency = other.frequency;
   return *this;
 }
@@ -136,6 +136,7 @@ QDebug operator<<(QDebug out, const FlightplanEntry& record)
                           << ", region " << record.getIcaoRegion()
                           << ", airway " << record.getAirway()
                           << ", pos " << record.getPosition()
+                          << ", flags " << record.getFlags()
                           << ", save " << !record.isNoSave() << "]" << endl;
   return out;
 }

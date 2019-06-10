@@ -122,18 +122,6 @@ void Flightplan::setDeparturePosition(const geo::Pos& value, float altitude)
   departurePos.setAltitude(altitude);
 }
 
-void Flightplan::reverse()
-{
-  std::reverse(entries.begin(), entries.end());
-
-  departureAiportName.swap(destinationAiportName);
-  departureIdent.swap(destinationIdent);
-
-  // Overwrite parking position with airport position
-  departurePos = entries.first().getPosition();
-  setDepartureParkingName(QString());
-}
-
 QDebug operator<<(QDebug out, const Flightplan& record)
 {
   QDebugStateSaver saver(out);

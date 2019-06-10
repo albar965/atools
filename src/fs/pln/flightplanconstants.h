@@ -99,10 +99,14 @@ const QLatin1Literal APPROACHSUFFIX("approachsuffix");
 const QLatin1Literal APPROACHDISTANCE("approachdistance");
 const QLatin1Literal APPROACHSIZE("approachsize");
 
+/* List of alternate airport(s) separated by "#" */
+const QLatin1Literal ALTERNATES("alternates");
+
 /* Copies all related properties and deletes the ones in "to" that do not exist in "from". */
 void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
+void copyAlternateProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 
 /* Aircraft performance */
 const QLatin1Literal AIRCRAFT_PERF_NAME("aircraftperfname");

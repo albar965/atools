@@ -228,11 +228,6 @@ public:
     title = value;
   }
 
-  /*
-   * Reverse start and destination and the order of all entries
-   */
-  void reverse();
-
   const QHash<QString, QString>& getProperties() const
   {
     return properties;

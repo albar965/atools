@@ -64,6 +64,11 @@ void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QStrin
   copyProperty(to, from, STARSIZE);
 }
 
+void copyAlternateProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
+{
+  copyProperty(to, from, ALTERNATES);
+}
+
 } // namespace pln
 } // namespace fs
 } // namespace atools

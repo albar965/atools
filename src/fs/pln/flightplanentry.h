@@ -37,6 +37,16 @@ enum WaypointType
   USER
 };
 
+enum Flag
+{
+  NONE = 0,
+  PROCEDURE = 1 << 1, /* Flight plan entry is any procedure leg */
+  ALTERNATE = 1 << 2 /* Flight plan entry leads to an alternate airport */
+};
+
+Q_DECLARE_FLAGS(Flags, Flag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags);
+
 }
 
 /*
@@ -153,15 +163,10 @@ public:
     position.setAltitude(value);
   }
 
-  /* Do not save entry into the file */
+  /* Do not save entry into the file if it is a procedure or an alternate airport */
   bool isNoSave() const
   {
-    return noSave;
-  }
-
-  void setNoSave(bool value)
-  {
-    noSave = value;
+    return (flags& entry::PROCEDURE) || (flags & entry::ALTERNATE);
   }
 
   bool operator==(const atools::fs::pln::FlightplanEntry& other);
@@ -204,6 +209,21 @@ public:
     frequency = value;
   }
 
+  const atools::fs::pln::entry::Flags& getFlags() const
+  {
+    return flags;
+  }
+
+  void setFlags(const atools::fs::pln::entry::Flags& value)
+  {
+    flags = value;
+  }
+
+  void setFlag(atools::fs::pln::entry::Flag value, bool on = true)
+  {
+    flags.setFlag(value, on);
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
@@ -213,8 +233,8 @@ private:
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
   QString waypointId, airway, icaoRegion, icaoIdent, name;
   atools::geo::Pos position;
+  atools::fs::pln::entry::Flags flags = atools::fs::pln::entry::NONE;
   float magvar = 0.f;
-  bool noSave = false;
   int frequency = 0;
 };
 
