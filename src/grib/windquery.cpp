@@ -263,7 +263,8 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
   // Calculate grid position
   QPoint gPos = gridPos(pos);
 
-  qDebug() << Q_FUNC_INFO << pos << gPos;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << pos << gPos;
 
   // Get next layers below and above altitude
   WindAltLayer lower, upper;
@@ -407,6 +408,20 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2) const
 
 WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
 {
+  WindData windData = {0.f, 0.f};
+
+  if(!pos1.isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "invalid pos1";
+    return windData;
+  }
+
+  if(!pos2.isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "invalid pos2";
+    return windData;
+  }
+
   // Calculate the number of samples for a line. Roughly four samples per degree.
   float distanceMeter = pos1.distanceMeterTo(pos2);
   float meterPerDeg = atools::geo::nmToMeter(60.f);
@@ -425,7 +440,6 @@ WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
     // Only start and end needed
     positions << pos1 << pos2;
 
-  WindData windData = {0.f, 0.f};
   WindRect windRectLower, windRectUpper;
 
   for(const atools::geo::Pos& pos : positions)
