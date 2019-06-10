@@ -205,6 +205,13 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
   data.userAircraft.indicatedAltitudeFt = pos.getAltitude();
+  data.userAircraft.airplaneEmptyWeightLbs = 1500.f;
+  data.userAircraft.airplaneTotalWeightLbs = 3000.f;
+  data.userAircraft.airplaneMaxGrossWeightLbs = 4000.f;
+  data.userAircraft.fuelTotalWeightLbs = 1000.f;
+  data.userAircraft.fuelTotalQuantityGallons = 1000.f / 6.f;
+  data.userAircraft.fuelFlowPPH = 100.f;
+  data.userAircraft.fuelFlowGPH = 100.f / 6.f;
 
   data.userAircraft.debug = true;
 
