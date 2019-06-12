@@ -260,6 +260,11 @@ void WindQuery::deinit()
 
 Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
 {
+  if(!pos.isValid())
+  {
+    qWarning() << Q_FUNC_INFO << "invalid pos";
+    return {0.f, 0.f};
+  }
   // Calculate grid position
   QPoint gPos = gridPos(pos);
 
