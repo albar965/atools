@@ -99,6 +99,10 @@ const QLatin1Literal APPROACHSUFFIX("approachsuffix");
 const QLatin1Literal APPROACHDISTANCE("approachdistance");
 const QLatin1Literal APPROACHSIZE("approachsize");
 
+/* Only for approachtype = CUSTOM */
+const QLatin1Literal APPROACH_CUSTOM_DISTANCE("approachcustomdistance");
+const QLatin1Literal APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude");
+
 /* List of alternate airport(s) separated by "#" */
 const QLatin1Literal ALTERNATES("alternates");
 

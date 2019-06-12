@@ -54,6 +54,8 @@ void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QSt
   copyProperty(to, from, APPROACHSUFFIX);
   copyProperty(to, from, APPROACHDISTANCE);
   copyProperty(to, from, APPROACHSIZE);
+  copyProperty(to, from, APPROACH_CUSTOM_DISTANCE);
+  copyProperty(to, from, APPROACH_CUSTOM_ALTITUDE);
 }
 
 void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
