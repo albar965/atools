@@ -148,7 +148,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
     }
   }
 
-  // Remember segment dependet sample time to allow averaging =============
+  // Remember segment dependent sample time to allow averaging =============
   qint64 now = QDateTime::currentMSecsSinceEpoch();
   if(flightSegment != currentFlightSegment)
   {
@@ -224,6 +224,10 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
                                          aircraft.getTrueAirspeedKts()));
         perf->setCruiseFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseFuelFlow(),
                                             aircraft.getFuelFlowPPH()));
+
+        // Use cruise as default for alternate - user can adjust manually
+        perf->setAlternateFuelFlow(perf->getCruiseFuelFlow());
+        perf->setAlternateSpeed(perf->getCruiseSpeed());
       }
       break;
 
