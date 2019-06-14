@@ -225,6 +225,7 @@ HEADERS += \
   src/util/htmlbuilder.h \
   src/util/httpdownloader.h \
   src/util/paintercontextsaver.h \
+  src/util/properties.h \
   src/util/roundedpolygon.h \
   src/util/timedcache.h \
   src/util/updatecheck.h \
@@ -321,6 +322,7 @@ SOURCES += \
   src/util/htmlbuilder.cpp \
   src/util/httpdownloader.cpp \
   src/util/paintercontextsaver.cpp \
+  src/util/properties.cpp \
   src/util/roundedpolygon.cpp \
   src/util/timedcache.cpp \
   src/util/updatecheck.cpp \
