@@ -21,6 +21,41 @@ namespace atools {
 namespace fs {
 namespace perf {
 
+QString runwayTypeToStr(RunwayType type)
+{
+  switch(type)
+  {
+    case atools::fs::perf::SOFT:
+      return "Soft";
+
+    case atools::fs::perf::HARD:
+      return "Hard";
+
+    case atools::fs::perf::WATER:
+      return "Water";
+
+    case atools::fs::perf::WATER_LAND:
+      return "WaterLand";
+  }
+  return QString();
+}
+
+RunwayType runwayTypeFromStr(QString str)
+{
+  str = str.toLower();
+
+  if(str == "soft")
+    return atools::fs::perf::SOFT;
+  else if(str == "hard")
+    return atools::fs::perf::HARD;
+  else if(str == "water")
+    return atools::fs::perf::WATER;
+  else if(str == "waterland")
+    return atools::fs::perf::WATER_LAND;
+  else
+    return atools::fs::perf::SOFT;
+}
+
 } // namespace perf
 } // namespace fs
 } // namespace atools

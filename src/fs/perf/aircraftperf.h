@@ -300,6 +300,66 @@ public:
     jetFuel = false;
   }
 
+  /* Usable fuel from aircraft lbs or gallons */
+  float getUsableFuel() const
+  {
+    return usableFuel;
+  }
+
+  void setUsableFuel(float value)
+  {
+    usableFuel = value;
+  }
+
+  /* Speed when flying to alternate in knots TAS */
+  float getAlternateSpeed() const
+  {
+    return alternateSpeed;
+  }
+
+  void setAlternateSpeed(float value)
+  {
+    alternateSpeed = value;
+  }
+
+  /* Average fuel flow in hold or flight to alternate in gallons/lbs per hour */
+  float getAlternateFuelFlow() const
+  {
+    return alternateFuelFlow;
+  }
+
+  void setAlternateFuelFlow(float value)
+  {
+    alternateFuelFlow = value;
+  }
+
+  /* Estimate of minimum needed runway length for landing and/or takeoff - feet */
+  float getMinRunwayLength() const
+  {
+    return minRunwayLength;
+  }
+
+  void setMinRunwayLength(float value)
+  {
+    minRunwayLength = value;
+  }
+
+  /* Required runway type */
+  atools::fs::perf::RunwayType getRunwayType() const
+  {
+    return runwayType;
+  }
+
+  void setRunwayType(int value)
+  {
+    runwayType = static_cast<atools::fs::perf::RunwayType>(value);
+  }
+
+  void setRunwayType(atools::fs::perf::RunwayType value)
+  {
+    runwayType = value;
+  }
+
   /* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
   static float fromGalToLbs(bool jetFuel, float value);
   static float fromLbsToGal(bool jetFuel, float value);
@@ -328,6 +388,15 @@ private:
   float descentSpeed = 100.f;
   float descentVertSpeed = 550.f;
   float descentFuelFlow = 0.f;
+
+  float alternateSpeed = 100.f;
+  float alternateFuelFlow = 0.f;
+
+  float usableFuel = 0.f;
+  float minRunwayLength = 0.f;
+
+  /* Default is soft and hard */
+  atools::fs::perf::RunwayType runwayType = SOFT;
 };
 
 } // namespace perf

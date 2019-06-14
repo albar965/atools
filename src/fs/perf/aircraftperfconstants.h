@@ -39,6 +39,17 @@ enum FlightSegment
   INVALID
 };
 
+enum RunwayType
+{
+  SOFT, /* Soft or hard runways */
+  HARD, /* Hard runways only */
+  WATER, /* Water runways only */
+  WATER_LAND /* Water and soft/hard runways (amphibian) */
+};
+
+QString runwayTypeToStr(atools::fs::perf::RunwayType type);
+atools::fs::perf::RunwayType runwayTypeFromStr(QString str);
+
 /* Use to indicate invalid values */
 const float INVALID_PERF_VALUE = std::numeric_limits<float>::max();
 

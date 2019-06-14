@@ -28,7 +28,7 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-const QLatin1Literal AircraftPerf::FORMAT_VERSION("1.0.0");
+const QLatin1Literal AircraftPerf::FORMAT_VERSION("2.4.0");
 
 float AircraftPerf::getClimbRateFtPerNm() const
 {
@@ -95,18 +95,16 @@ void AircraftPerf::save(const QString& filepath)
 void AircraftPerf::setNull()
 {
   resetToDefault();
-  taxiFuel =
-    reserveFuel =
-      extraFuel =
-        climbVertSpeed =
-          climbSpeed =
-            climbFuelFlow =
-              cruiseSpeed =
-                cruiseFuelFlow =
-                  contingencyFuel =
-                    descentSpeed =
-                      descentVertSpeed =
-                        descentFuelFlow = 0.f;
+  taxiFuel = reserveFuel = extraFuel =
+    contingencyFuel =
+      climbVertSpeed = climbSpeed = climbFuelFlow =
+        cruiseSpeed = cruiseFuelFlow =
+          descentSpeed = descentVertSpeed = descentFuelFlow =
+            alternateSpeed = alternateFuelFlow =
+              usableFuel =
+                minRunwayLength =
+                  0.f;
+  runwayType = SOFT;
 }
 
 void AircraftPerf::resetToDefault()
@@ -132,6 +130,7 @@ void AircraftPerf::fromGalToLbs()
   climbFuelFlow = fromGalToLbs(jetFuel, climbFuelFlow);
   cruiseFuelFlow = fromGalToLbs(jetFuel, cruiseFuelFlow);
   descentFuelFlow = fromGalToLbs(jetFuel, descentFuelFlow);
+  alternateFuelFlow = fromGalToLbs(jetFuel, alternateFuelFlow);
 }
 
 void AircraftPerf::fromLbsToGal()
@@ -142,6 +141,7 @@ void AircraftPerf::fromLbsToGal()
   climbFuelFlow = fromLbsToGal(jetFuel, climbFuelFlow);
   cruiseFuelFlow = fromLbsToGal(jetFuel, cruiseFuelFlow);
   descentFuelFlow = fromLbsToGal(jetFuel, descentFuelFlow);
+  alternateFuelFlow = fromLbsToGal(jetFuel, alternateFuelFlow);
 }
 
 bool AircraftPerf::operator==(const AircraftPerf& other) const
@@ -161,7 +161,13 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
          atools::almostEqual(contingencyFuel, other.contingencyFuel) &&
          atools::almostEqual(descentSpeed, other.descentSpeed) &&
          atools::almostEqual(descentVertSpeed, other.descentVertSpeed) &&
-         atools::almostEqual(descentFuelFlow, other.descentFuelFlow);
+         atools::almostEqual(descentFuelFlow, other.descentFuelFlow) &&
+         atools::almostEqual(alternateSpeed, other.alternateSpeed) &&
+         atools::almostEqual(alternateFuelFlow, other.alternateFuelFlow) &&
+         atools::almostEqual(usableFuel, other.usableFuel) &&
+         atools::almostEqual(minRunwayLength, other.minRunwayLength) &&
+         runwayType == other.runwayType;
+
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)
@@ -174,6 +180,8 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
 
   fuelAsVolume = settings.value("Options/FuelAsVolume").toBool();
   jetFuel = settings.value("Options/JetFuel").toBool();
+
+  usableFuel = settings.value("Perf/UsableFuel").toFloat();
 
   if(settings.contains("Perf/TaxiFuelLbs"))
     taxiFuel = settings.value("Perf/TaxiFuelLbs").toFloat();
@@ -202,6 +210,12 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   descentSpeed = settings.value("Perf/DescentSpeedKtsTAS").toFloat();
   descentVertSpeed = settings.value("Perf/DescentVertSpeedFtPerMin").toFloat();
   descentFuelFlow = settings.value("Perf/DescentFuelFlowLbsGalPerHour").toFloat();
+
+  alternateSpeed = settings.value("Perf/AlternateSpeed", cruiseSpeed).toFloat();
+  alternateFuelFlow = settings.value("Perf/AlternateFuelFlow", cruiseFuelFlow).toFloat();
+
+  minRunwayLength = settings.value("Perf/MinRunwayLength").toFloat();
+  runwayType = runwayTypeFromStr(settings.value("Perf/RunwayType", "Soft").toString());
 }
 
 void AircraftPerf::writeToSettings(QSettings& settings)
@@ -220,6 +234,7 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/FuelAsVolume", fuelAsVolume);
   settings.setValue("Options/JetFuel", jetFuel);
 
+  settings.setValue("Perf/UsableFuel", QString::number(usableFuel));
   settings.setValue("Perf/TaxiFuelLbsGal", QString::number(taxiFuel));
   settings.setValue("Perf/ReserveFuelLbsGal", QString::number(reserveFuel));
   settings.setValue("Perf/ExtraFuelLbsGal", QString::number(extraFuel));
@@ -235,6 +250,12 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Perf/DescentSpeedKtsTAS", QString::number(descentSpeed));
   settings.setValue("Perf/DescentVertSpeedFtPerMin", QString::number(descentVertSpeed));
   settings.setValue("Perf/DescentFuelFlowLbsGalPerHour", QString::number(descentFuelFlow));
+
+  settings.setValue("Perf/AlternateSpeed", QString::number(alternateSpeed));
+  settings.setValue("Perf/AlternateFuelFlow", QString::number(alternateFuelFlow));
+
+  settings.setValue("Perf/MinRunwayLength", QString::number(minRunwayLength));
+  settings.setValue("Perf/RunwayType", runwayTypeToStr(runwayType));
 }
 
 } // namespace perf
