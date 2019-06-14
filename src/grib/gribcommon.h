@@ -119,4 +119,6 @@ typedef  QVector<GribDataset> GribDatasetVector;
 } // namespace grib
 } // namespace atools
 
+QDebug operator<<(QDebug out, const atools::grib::GribDataset& type);
+
 #endif // ATOOLS_GRIBCOMMON_H

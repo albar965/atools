@@ -101,11 +101,14 @@ void GribDownloader::startDownloadInternal()
     parameterStr.append(QString("var_%1=on&").arg(parameter));
 
   // Buld URL ===============================
+  // https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl?file=gfs.t00z.pgrb2.1p00.anl&lev_80_m_above_ground=on&
+  // lev_150_mb=on&lev_200_mb=on&lev_250_mb=on&lev_300_mb=on&lev_450_mb=on&lev_700_mb=on&var_UGRD=on&var_VGRD=on&dir=%2Fgfs.20190614/00
   QString base = baseUrl.isEmpty() ? "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl" : baseUrl;
 
   QString url = base + "?file=gfs.t" + datetime.toString("hh") + "z.pgrb2.1p00.anl&" +
                 levelStr + parameterStr + "dir=%2Fgfs." +
-                datetime.toString("yyyyMMddhh");
+                datetime.toString("yyyyMMdd") + "%2F" +
+                datetime.toString("hh");
 
   downloader->setUrl(url);
 

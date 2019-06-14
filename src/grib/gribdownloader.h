@@ -35,8 +35,8 @@ namespace grib {
  * Downloads and decodes GRIB2 files from base URL https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl
  *
  * Example:
- * https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl?file=gfs.t06z.pgrb2.1p00.anl&lev_200_mb=on&lev_300_mb=on&
- * lev_450_mb=on&lev_700_mb=on&var_UGRD=on&var_VGRD=on&dir=%2Fgfs.2019042606
+ * https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl?file=gfs.t00z.pgrb2.1p00.anl&lev_80_m_above_ground=on&
+ * lev_150_mb=on&lev_200_mb=on&lev_250_mb=on&lev_300_mb=on&lev_450_mb=on&lev_700_mb=on&var_UGRD=on&var_VGRD=on&dir=%2Fgfs.20190614/00
  *
  * Only U/V wind components, full earth bounding rectangle and one-degree raster supported.
  *

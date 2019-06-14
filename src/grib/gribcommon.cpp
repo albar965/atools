@@ -17,8 +17,27 @@
 
 #include "gribcommon.h"
 
+#include <QDebug>
+
 namespace atools {
 namespace grib {
 
 } // namespace grib
 } // namespace atools
+
+QDebug operator<<(QDebug out, const atools::grib::GribDataset& type)
+{
+  QDebugStateSaver saver(out);
+
+  out.noquote().nospace() << "GribDataset["
+                          << type.getDatetime()
+                          << ", surface " << type.getSurface()
+                          << ", type " << type.getSurfaceType()
+                          << ", param type " << type.getParameterType()
+                          << ", alt round " << type.getAltFeetRounded()
+                          << ", alt calc " << type.getAltFeetCalculated()
+                          << ", size " << type.getData().size()
+                          << "]";
+
+  return out;
+}

@@ -451,6 +451,13 @@ void GribReader::readData(const QByteArray& data)
 
   datasets.clear();
   readFile(temp.getFilePath());
+
+  if(verbose)
+  {
+    qDebug() << Q_FUNC_INFO << "Datasets ============================================================";
+    for(const GribDataset& dataset : datasets)
+      qDebug() << dataset;
+  }
 }
 
 void GribReader::clear()
