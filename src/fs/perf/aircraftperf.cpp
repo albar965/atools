@@ -112,18 +112,11 @@ void AircraftPerf::resetToDefault()
   *this = AircraftPerf();
 }
 
-float AircraftPerf::fromGalToLbs(bool jetFuel, float value)
-{
-  return value *= (jetFuel ? 6.7f : 6.f);
-}
-
-float AircraftPerf::fromLbsToGal(bool jetFuel, float value)
-{
-  return value /= (jetFuel ? 6.7f : 6.f);
-}
-
 void AircraftPerf::fromGalToLbs()
 {
+  using atools::geo::fromGalToLbs;
+
+  usableFuel = fromGalToLbs(jetFuel, usableFuel);
   taxiFuel = fromGalToLbs(jetFuel, taxiFuel);
   reserveFuel = fromGalToLbs(jetFuel, reserveFuel);
   extraFuel = fromGalToLbs(jetFuel, extraFuel);
@@ -135,6 +128,9 @@ void AircraftPerf::fromGalToLbs()
 
 void AircraftPerf::fromLbsToGal()
 {
+  using atools::geo::fromLbsToGal;
+
+  usableFuel = fromLbsToGal(jetFuel, usableFuel);
   taxiFuel = fromLbsToGal(jetFuel, taxiFuel);
   reserveFuel = fromLbsToGal(jetFuel, reserveFuel);
   extraFuel = fromLbsToGal(jetFuel, extraFuel);

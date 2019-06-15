@@ -395,6 +395,51 @@ Q_DECL_CONSTEXPR TYPE lbsToKg(TYPE value)
          value : static_cast<TYPE>(static_cast<double>(value) / 2.204623);
 }
 
+/* Litre to US Gallon */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE literToGallon(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) / 3.785411784);
+}
+
+/* US Gallon to Litre */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE gallonToLiter(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) * 3.785411784);
+}
+
+/* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE  fromGalToLbs(bool jetFuel, TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) * (jetFuel ? 6.7 : 6.));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE  fromLbsToGal(bool jetFuel, TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(static_cast<double>(value) / (jetFuel ? 6.7 : 6.));
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE  fromLiterToKg(bool jetFuel, TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(fromGalToLbs(jetFuel, static_cast<double>(value) / 4.54609) / 2.204623);
+}
+
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE  fromKgToLiter(bool jetFuel, TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ?
+         value : static_cast<TYPE>(fromLbsToGal(jetFuel, static_cast<double>(value) * 2.204623) * 4.54609);
+}
+
 /* NM to rad (longitude or latitude) */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE nmToRad(TYPE value)

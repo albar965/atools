@@ -360,10 +360,6 @@ public:
     runwayType = value;
   }
 
-  /* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
-  static float fromGalToLbs(bool jetFuel, float value);
-  static float fromLbsToGal(bool jetFuel, float value);
-
 private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
