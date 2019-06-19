@@ -29,27 +29,46 @@ namespace perf {
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectData;
 using atools::roundToInt;
+using atools::fs::perf::AircraftPerf;
 
 AircraftPerfHandler::AircraftPerfHandler(QObject *parent)
   : QObject(parent)
 {
+  perf = new AircraftPerf;
+  perf->setNull();
 }
 
 AircraftPerfHandler::~AircraftPerfHandler()
 {
+  delete perf;
+}
+
+void AircraftPerfHandler::start()
+{
+  currentFlightSegment = NONE;
+  startFuel = totalFuelConsumed = weightVolRatio = 0.f;
+  lastSampleTimeMs = lastCruiseSampleTimeMs = lastClimbSampleTimeMs = lastDescentSampleTimeMs = 0L;
+
+  perf->setNull();
+
+  active = true;
+}
+
+void AircraftPerfHandler::reset()
+{
+  start();
+}
+
+void AircraftPerfHandler::stop()
+{
+  active = false;
 }
 
 void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData)
 {
-  if(perf == nullptr)
+  const sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  if(!active || !aircraft.isValid() || aircraft.isSimPaused() || aircraft.isSimReplay())
     return;
-
-  if(!simulatorData.isUserAircraftValid() ||
-     simulatorData.getUserAircraftConst().isSimPaused() ||
-     simulatorData.getUserAircraftConst().isSimReplay())
-    return;
-
-  const SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
 
   // Fill metadata if still empty
   if(perf->getAircraftType().isEmpty())
@@ -140,10 +159,12 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
       case DESTINATION_TAXI:
         if(!aircraft.hasFuelFlow())
           // Engine shutdown
-          flightSegment = DESTINTATION_PARKING;
+          flightSegment = DESTINATION_PARKING;
         break;
 
-      case DESTINTATION_PARKING:
+      case DESTINATION_PARKING:
+        // Finish on engine shutdown - stop collecting
+        active = false;
         break;
     }
   }
@@ -179,6 +200,16 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   }
 }
 
+bool AircraftPerfHandler::isFinished() const
+{
+  return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING;
+}
+
+void AircraftPerfHandler::setAircraftPerformance(const AircraftPerf& value)
+{
+  *perf = value;
+}
+
 float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue,
                                        float curValue)
 {
@@ -197,12 +228,12 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
   // Calculate all average values for each flight phase
   switch(flightSegment)
   {
-    case atools::fs::perf::NONE:
-    case atools::fs::perf::DEPARTURE_PARKING:
-    case atools::fs::perf::INVALID:
-    case atools::fs::perf::DESTINTATION_PARKING:
-    case atools::fs::perf::DESTINATION_TAXI:
-    case atools::fs::perf::DEPARTURE_TAXI:
+    case NONE:
+    case DEPARTURE_PARKING:
+    case INVALID:
+    case DESTINATION_PARKING:
+    case DESTINATION_TAXI:
+    case DEPARTURE_TAXI:
       break;
 
     case atools::fs::perf::CLIMB:
@@ -308,7 +339,7 @@ QString AircraftPerfHandler::getFlightSegmentString(atools::fs::perf::FlightSegm
     case DESTINATION_TAXI:
       return tr("Destination Taxi");
 
-    case DESTINTATION_PARKING:
+    case DESTINATION_PARKING:
       return tr("Destination Parking");
 
   }

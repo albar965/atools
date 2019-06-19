@@ -54,36 +54,37 @@ public:
   explicit AircraftPerfHandler(QObject *parent);
   virtual ~AircraftPerfHandler() override;
 
-  /* Get active flight segment as detected */
-  FlightSegment getCurrentFlightSegment() const
-  {
-    return currentFlightSegment;
-  }
+  /* Cruise altitude must be set before sending sim data events to this class. Cruise altitude in ft.
+   * Performance object that will be filled with data once started.
+   * Fuel unit set in this object will determine collected units (weight/volume). */
+  void start();
+  void reset();
 
-  QString getCurrentFlightSegmentString() const;
-  static QString getFlightSegmentString(atools::fs::perf::FlightSegment currentFlightSegment);
+  /* Stops collection process */
+  void stop();
 
-  /* Must be set before sending sim data events to this class. Value in ft */
+  /* Flight plan cruise altitude. Value in ft */
   void setCruiseAltitude(float value)
   {
     cruiseAltitude = value;
   }
 
-  /* Performance object that will be filled with data.
-   * Must be set before sending sim data events to this class.
-   *  Fuel unit set in this object will determine collected units. */
-  void setAircraftPerformance(AircraftPerf *value)
+  /* Get active flight segment/phase as detected */
+  atools::fs::perf::FlightSegment getCurrentFlightSegment() const
   {
-    perf = value;
+    return currentFlightSegment;
   }
 
-  /* Fuel in lbs/gal before engine start */
-  float getStartFuel() const
+  /* Started collection after detecting engine startup / TAXI phase */
+  bool hasFlightSegment() const
   {
-    return startFuel;
+    return currentFlightSegment != atools::fs::perf::NONE;
   }
 
-  /* Fuel in lbs/gal consumed since engine start */
+  QString getCurrentFlightSegmentString() const;
+  static QString getFlightSegmentString(atools::fs::perf::FlightSegment currentFlightSegment);
+
+  /* Fuel in lbs/gal consumed since engine start. Unit depends on set AircraftPerf */
   float getTotalFuelConsumed() const
   {
     return totalFuelConsumed;
@@ -92,9 +93,26 @@ public:
   /* Simulator event that trigger data collection */
   void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
 
+  /* Done after landing or engine shutdown */
+  bool isFinished() const;
+
+  /* Currently collecting */
+  bool isActive() const
+  {
+    return active;
+  }
+
+  /* Get latest updated performance */
+  const atools::fs::perf::AircraftPerf& getAircraftPerformance() const
+  {
+    return *perf;
+  }
+
+  /* Sets a copy */
+  void setAircraftPerformance(const atools::fs::perf::AircraftPerf& value);
+
 signals:
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
-  void reportUpdated();
 
 private:
   /* -1 if below, 0 if at and 1 if above flight plan cruise altitude. Uses a altitude dependent buffer to avoid jitters. */
@@ -107,6 +125,8 @@ private:
   /* Sample data for current flight phase, calculate averages */
   void samplePhase(FlightSegment flightSegment, const sc::SimConnectUserAircraft& aircraft, qint64 now,
                    qint64 curSampleDuration);
+
+  /* Samples a datum for current flight phase, calculate averages */
   float sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue, float curValue);
 
   atools::fs::perf::AircraftPerf *perf = nullptr;
@@ -116,8 +136,12 @@ private:
 
   /* Check lbs/gal ratio if jetfuel or avgas */
   float weightVolRatio = 0.f;
+
   /* Do not calculate values more often than this */
   const static qint64 SAMPLE_TIME_MS = 500L;
+
+  /* Collecting data if true. Set to false after landing. */
+  bool active = false;
 
   /* Last time of sample to allow calculation of averages */
   qint64 lastSampleTimeMs = 0L;

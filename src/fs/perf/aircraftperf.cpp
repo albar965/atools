@@ -92,6 +92,11 @@ void AircraftPerf::save(const QString& filepath)
     throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for writing.").arg(filepath));
 }
 
+void AircraftPerf::resetToDefault()
+{
+  *this = AircraftPerf();
+}
+
 void AircraftPerf::setNull()
 {
   resetToDefault();
@@ -105,11 +110,6 @@ void AircraftPerf::setNull()
                 minRunwayLength =
                   0.f;
   runwayType = SOFT;
-}
-
-void AircraftPerf::resetToDefault()
-{
-  *this = AircraftPerf();
 }
 
 void AircraftPerf::fromGalToLbs()
@@ -142,7 +142,7 @@ void AircraftPerf::fromLbsToGal()
 
 bool AircraftPerf::operator==(const AircraftPerf& other) const
 {
-  return fuelAsVolume == other.fuelAsVolume &&
+  return volume == other.volume &&
          name == other.name &&
          type == other.type &&
          description == other.description &&
@@ -166,6 +166,86 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
 
 }
 
+float AircraftPerf::getTaxiFuelLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, taxiFuel) : taxiFuel;
+}
+
+float AircraftPerf::getTaxiFuelGal() const
+{
+  return volume ? taxiFuel : atools::geo::fromLbsToGal(jetFuel, taxiFuel);
+}
+
+float AircraftPerf::getReserveFuelLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, reserveFuel) : reserveFuel;
+}
+
+float AircraftPerf::getReserveFuelGal() const
+{
+  return volume ? reserveFuel : atools::geo::fromLbsToGal(jetFuel, reserveFuel);
+}
+
+float AircraftPerf::getExtraFuelLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, extraFuel) : extraFuel;
+}
+
+float AircraftPerf::getExtraFuelGal() const
+{
+  return volume ? extraFuel : atools::geo::fromLbsToGal(jetFuel, extraFuel);
+}
+
+float AircraftPerf::getClimbFuelFlowLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, climbFuelFlow) : climbFuelFlow;
+}
+
+float AircraftPerf::getClimbFuelFlowGal() const
+{
+  return volume ? climbFuelFlow : atools::geo::fromLbsToGal(jetFuel, climbFuelFlow);
+}
+
+float AircraftPerf::getCruiseFuelFlowLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, cruiseFuelFlow) : cruiseFuelFlow;
+}
+
+float AircraftPerf::getCruiseFuelFlowGal() const
+{
+  return volume ? cruiseFuelFlow : atools::geo::fromLbsToGal(jetFuel, cruiseFuelFlow);
+}
+
+float AircraftPerf::getDescentFuelFlowLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, descentFuelFlow) : descentFuelFlow;
+}
+
+float AircraftPerf::getDescentFuelFlowGal() const
+{
+  return volume ? descentFuelFlow : atools::geo::fromLbsToGal(jetFuel, descentFuelFlow);
+}
+
+float AircraftPerf::getUsableFuelLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, usableFuel) : usableFuel;
+}
+
+float AircraftPerf::getUsableFuelGal() const
+{
+  return volume ? usableFuel : atools::geo::fromLbsToGal(jetFuel, usableFuel);
+}
+
+float AircraftPerf::getAlternateFuelFlowLbs() const
+{
+  return volume ? atools::geo::fromGalToLbs(jetFuel, alternateFuelFlow) : alternateFuelFlow;
+}
+
+float AircraftPerf::getAlternateFuelFlowGal() const
+{
+  return volume ? alternateFuelFlow : atools::geo::fromLbsToGal(jetFuel, alternateFuelFlow);
+}
+
 void AircraftPerf::readFromSettings(const QSettings& settings)
 {
   name = settings.value("Options/Name").toString();
@@ -174,7 +254,7 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   programVersion = settings.value("Options/ProgramVersion").toString();
   formatVersion = settings.value("Options/FormatVersion").toString();
 
-  fuelAsVolume = settings.value("Options/FuelAsVolume").toBool();
+  volume = settings.value("Options/FuelAsVolume").toBool();
   jetFuel = settings.value("Options/JetFuel").toBool();
 
   usableFuel = settings.value("Perf/UsableFuel").toFloat();
@@ -227,7 +307,7 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/AircraftType", type);
   settings.setValue("Options/Description", description);
 
-  settings.setValue("Options/FuelAsVolume", fuelAsVolume);
+  settings.setValue("Options/FuelAsVolume", volume);
   settings.setValue("Options/JetFuel", jetFuel);
 
   settings.setValue("Perf/UsableFuel", QString::number(usableFuel));

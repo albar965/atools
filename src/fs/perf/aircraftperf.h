@@ -26,9 +26,6 @@
 class QSettings;
 
 namespace atools {
-namespace geo {
-class LineString;
-}
 
 namespace fs {
 namespace perf {
@@ -37,6 +34,7 @@ namespace perf {
  * Aircraft performance data which can be loaded and saved from or to an ini-file.
  *
  * All speeds are TAS knots, fuel is gallons/lbs and vertical speeds are feet/minute.
+ * Fuel flow is gallons/lbs per hour.
  */
 class AircraftPerf
 {
@@ -93,12 +91,12 @@ public:
 
   bool useFuelAsVolume() const
   {
-    return fuelAsVolume;
+    return volume;
   }
 
   void setFuelAsVolume(bool fuelAsVol)
   {
-    fuelAsVolume = fuelAsVol;
+    volume = fuelAsVol;
   }
 
   /* lbs or gallons - not part of trip fuel */
@@ -106,6 +104,9 @@ public:
   {
     return taxiFuel;
   }
+
+  float getTaxiFuelLbs() const;
+  float getTaxiFuelGal() const;
 
   void setTaxiFuel(float value)
   {
@@ -118,6 +119,9 @@ public:
     return reserveFuel;
   }
 
+  float getReserveFuelLbs() const;
+  float getReserveFuelGal() const;
+
   void setReserveFuel(float value)
   {
     reserveFuel = value;
@@ -128,6 +132,9 @@ public:
   {
     return extraFuel;
   }
+
+  float getExtraFuelLbs() const;
+  float getExtraFuelGal() const;
 
   void setExtraFuel(float value)
   {
@@ -179,6 +186,9 @@ public:
     return climbFuelFlow;
   }
 
+  float getClimbFuelFlowLbs() const;
+  float getClimbFuelFlowGal() const;
+
   void setClimbFuelFlow(float value)
   {
     climbFuelFlow = value;
@@ -201,6 +211,9 @@ public:
     return cruiseFuelFlow;
   }
 
+  float getCruiseFuelFlowLbs() const;
+  float getCruiseFuelFlowGal() const;
+
   void setCruiseFuelFlow(float value)
   {
     cruiseFuelFlow = value;
@@ -222,6 +235,9 @@ public:
   {
     return descentFuelFlow;
   }
+
+  float getDescentFuelFlowLbs() const;
+  float getDescentFuelFlowGal() const;
 
   void setDescentFuelFlow(float value)
   {
@@ -306,6 +322,9 @@ public:
     return usableFuel;
   }
 
+  float getUsableFuelLbs() const;
+  float getUsableFuelGal() const;
+
   void setUsableFuel(float value)
   {
     usableFuel = value;
@@ -327,6 +346,9 @@ public:
   {
     return alternateFuelFlow;
   }
+
+  float getAlternateFuelFlowLbs() const;
+  float getAlternateFuelFlowGal() const;
 
   void setAlternateFuelFlow(float value)
   {
@@ -364,7 +386,7 @@ private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
 
-  bool fuelAsVolume = false, jetFuel = false;
+  bool volume = false, jetFuel = false;
 
   QString name, type, description, programVersion, formatVersion;
 
