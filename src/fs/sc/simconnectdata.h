@@ -126,7 +126,7 @@ public:
     metarResults = value;
   }
 
-  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos);
+  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground, float vertSpeed, float tas, float fuelflow);
 
   bool isUserAircraftValid() const
   {

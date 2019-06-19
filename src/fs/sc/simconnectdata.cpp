@@ -170,7 +170,8 @@ int SimConnectData::write(QIODevice *ioDevice)
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
 }
 
-SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos)
+SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
+                                                     float vertSpeed, float tas, float fuelflow)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -183,7 +184,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   if(lastPos.isValid())
   {
     h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
-    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = 200.f;
+    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = tas;
   }
 
   data.userAircraft.trackMagDeg = data.userAircraft.trackTrueDeg = h;
@@ -194,13 +195,15 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
   data.userAircraft.localDateTime = QDateTime::currentDateTime();
 
-  data.userAircraft.airplaneTitle = "Title";
-  data.userAircraft.airplaneType = "Type";
-  data.userAircraft.airplaneModel = "Model";
-  data.userAircraft.airplaneReg = "Ref";
+  data.userAircraft.airplaneTitle = "Airplane Title";
+  data.userAircraft.airplaneType = "Airplane Type";
+  data.userAircraft.airplaneModel = "MODEL";
+  data.userAircraft.airplaneReg = "Airplane Registration";
   data.userAircraft.airplaneAirline = "Airline";
   data.userAircraft.airplaneFlightnumber = "965";
   data.userAircraft.fromIdent = "EDDF";
+
+  data.userAircraft.verticalSpeedFeetPerMin = vertSpeed;
 
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
@@ -209,9 +212,10 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneTotalWeightLbs = 3000.f;
   data.userAircraft.airplaneMaxGrossWeightLbs = 4000.f;
   data.userAircraft.fuelTotalWeightLbs = 1000.f;
-  data.userAircraft.fuelTotalQuantityGallons = 1000.f / 6.f;
-  data.userAircraft.fuelFlowPPH = 100.f;
-  data.userAircraft.fuelFlowGPH = 100.f / 6.f;
+  data.userAircraft.fuelTotalQuantityGallons = atools::geo::fromLbsToGal(false, data.userAircraft.fuelTotalWeightLbs);
+  data.userAircraft.fuelFlowPPH = fuelflow;
+  data.userAircraft.fuelFlowGPH = atools::geo::fromLbsToGal(false, fuelflow);
+  data.userAircraft.flags = IS_USER | (ground ? ON_GROUND : NONE);
 
   data.userAircraft.debug = true;
 
