@@ -438,11 +438,6 @@ HEADERS += \
   src/fs/db/writerbasebasic.h \
   src/fs/dfd/dfdcompiler.h \
   src/fs/fspaths.h \
-  src/fs/lb/logbook.h \
-  src/fs/lb/logbookentry.h \
-  src/fs/lb/logbookentryfilter.h \
-  src/fs/lb/logbookloader.h \
-  src/fs/lb/types.h \
   src/fs/navdatabase.h \
   src/fs/navdatabaseerrors.h \
   src/fs/navdatabaseoptions.h \
@@ -585,11 +580,6 @@ SOURCES += \
   src/fs/db/writerbasebasic.cpp \
   src/fs/dfd/dfdcompiler.cpp \
   src/fs/fspaths.cpp \
-  src/fs/lb/logbook.cpp \
-  src/fs/lb/logbookentry.cpp \
-  src/fs/lb/logbookentryfilter.cpp \
-  src/fs/lb/logbookloader.cpp \
-  src/fs/lb/types.cpp \
   src/fs/navdatabase.cpp \
   src/fs/navdatabaseerrors.cpp \
   src/fs/navdatabaseoptions.cpp \

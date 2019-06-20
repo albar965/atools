@@ -4,10 +4,6 @@
         <file>resources/sql/ap/create_schema.sql</file>
         <file>resources/sql/ap/drop_schema.sql</file>
         <file>resources/sql/ap/finish_schema.sql</file>
-        <file>resources/sql/lb/clean_schema.sql</file>
-        <file>resources/sql/lb/create_schema.sql</file>
-        <file>resources/sql/lb/drop_schema.sql</file>
-        <file>resources/sql/lb/finish_schema.sql</file>
         <file>resources/sql/fs/db/create_ap_schema.sql</file>
         <file>resources/sql/fs/db/create_boundary_schema.sql</file>
         <file>resources/sql/fs/db/create_indexes_post_load.sql</file>
