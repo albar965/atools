@@ -18,6 +18,7 @@
 #include "grib/gribreader.h"
 #include "geo/calculations.h"
 #include "io/tempfile.h"
+#include "exception.h"
 
 extern "C" {
 #include "g2clib/grib2.h"
@@ -28,7 +29,6 @@ extern "C" {
 #include <QDebug>
 #include <QDir>
 #include <QFile>
-#include <exception.h>
 
 namespace atools {
 namespace grib {

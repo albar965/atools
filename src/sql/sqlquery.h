@@ -18,11 +18,8 @@
 #ifndef ATOOLS_SQL_SQLQUERY_H
 #define ATOOLS_SQL_SQLQUERY_H
 
-#include "sql/sqlrecord.h"
-
 #include <QSqlQuery>
-#include <QSqlResult>
-#include <QString>
+#include <QVariant>
 
 class QSqlResult;
 
@@ -30,6 +27,8 @@ namespace atools {
 namespace sql {
 
 class SqlDatabase;
+class SqlRecord;
+class SqlRecordVector;
 
 /*
  * Wrapper around QSqlQuery that adds exceptions to avoid plenty of

@@ -18,6 +18,7 @@
 #include "fs/xp/xpairwaywriter.h"
 
 #include "sql/sqlutil.h"
+#include "sql/sqlquery.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;

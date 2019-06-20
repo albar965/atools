@@ -18,12 +18,14 @@
 #ifndef ATOOLS_SQL_SQLSCRIPT_H
 #define ATOOLS_SQL_SQLSCRIPT_H
 
-#include "sql/sqldatabase.h"
+#include <QString>
 
 class QTextStream;
 
 namespace atools {
 namespace sql {
+
+class SqlDatabase;
 
 /*
  * Runs full SQL scripts. Allows SQL line comments "--" and C block comments
@@ -42,8 +44,8 @@ public:
   /*
    * @param sqlDb Database to use
    */
-  SqlScript(SqlDatabase *sqlDb, bool verboseLogging = true);
-  SqlScript(SqlDatabase& sqlDb, bool verboseLogging = true);
+  SqlScript(atools::sql::SqlDatabase *sqlDb, bool verboseLogging = true);
+  SqlScript(atools::sql::SqlDatabase& sqlDb, bool verboseLogging = true);
 
   /* Run a script provided in the given filename */
   void executeScript(const QString& filename);

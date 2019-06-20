@@ -18,6 +18,7 @@
 #include "sql/sqlexception.h"
 #include "sql/sqlrecord.h"
 
+#include <QDateTime>
 #include <QDebug>
 #include <QSqlField>
 #include <QVariant>
@@ -77,6 +78,16 @@ QVariant SqlRecord::value(const QString& name) const
                        name + "\" does not exist in query \"" + queryString + "\"");
   return retval;
 
+}
+
+QDateTime SqlRecord::valueDateTime(int i) const
+{
+  return value(i).toDateTime();
+}
+
+QDateTime SqlRecord::valueDateTime(const QString& name) const
+{
+  return value(name).toDateTime();
 }
 
 bool SqlRecord::isNull(int i) const

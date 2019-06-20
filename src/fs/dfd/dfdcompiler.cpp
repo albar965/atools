@@ -26,6 +26,7 @@
 #include "fs/util/fsutil.h"
 #include "fs/util/tacanfrequencies.h"
 #include "sql/sqlscript.h"
+#include "sql/sqlquery.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/common/procedurewriter.h"
 #include "geo/calculations.h"

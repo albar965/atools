@@ -18,14 +18,16 @@
 #ifndef ATOOLS_SQL_SQLUTIL_H
 #define ATOOLS_SQL_SQLUTIL_H
 
-#include "sql/sqldatabase.h"
-#include "sql/sqlexception.h"
-
+#include <QStringList>
+#include <QVariant>
 #include <functional>
-#include <QTextStream>
 
 namespace atools {
 namespace sql {
+
+class SqlDatabase;
+class SqlQuery;
+class SqlRecord;
 
 class SqlUtil
 {
@@ -33,8 +35,8 @@ public:
   /*
    * Create a util using the given database.
    */
-  explicit SqlUtil(SqlDatabase *sqlDb);
-  explicit SqlUtil(SqlDatabase& sqlDb);
+  explicit SqlUtil(atools::sql::SqlDatabase *sqlDb);
+  explicit SqlUtil(atools::sql::SqlDatabase& sqlDb);
 
   /*
    * Prints row counts for all tables in the database.
@@ -80,9 +82,9 @@ public:
    * inserted. Will be called after all variables are bound.
    * @return number of rows copied
    */
-  static int copyResultValues(SqlQuery& from, SqlQuery& to,
-                              std::function<bool(SqlQuery & from, SqlQuery & to)> func);
-  static int copyResultValues(SqlQuery& from, SqlQuery& to);
+  static int copyResultValues(atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
+                              std::function<bool(atools::sql::SqlQuery& from, atools::sql::SqlQuery& to)> func);
+  static int copyResultValues(atools::sql::SqlQuery& from, atools::sql::SqlQuery& to);
 
   /*
    * Copies the values of one row from one statement to another.
@@ -90,7 +92,7 @@ public:
    * @param to a valid prepared query having the same number of bind variables
    * as the from query columns
    */
-  static void copyRowValues(const SqlQuery& from, SqlQuery& to);
+  static void copyRowValues(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to);
 
   void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols,
                              const QString& column, const QVariant& minValue,
@@ -114,10 +116,10 @@ private:
   SqlDatabase *db;
 
   QStringList buildTableList(const QStringList& tables);
-  QStringList buildResultList(SqlQuery& query);
+  QStringList buildResultList(atools::sql::SqlQuery& query);
 
-  static void copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
-                                    const SqlRecord& fromRec, const QMap<QString, QVariant>& bound);
+  static void copyRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
+                                    const atools::sql::SqlRecord& fromRec, const QMap<QString, QVariant>& bound);
 
 };
 

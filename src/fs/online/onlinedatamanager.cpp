@@ -23,6 +23,8 @@
 #include "sql/sqlquery.h"
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlrecord.h"
 #include "sql/sqlscript.h"
 #include "fs/sc/simconnectaircraft.h"
 

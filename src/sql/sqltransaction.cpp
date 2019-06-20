@@ -20,6 +20,7 @@
 #include "sql/sqldatabase.h"
 
 #include <QDebug>
+#include <QSqlError>
 
 namespace atools {
 namespace sql {

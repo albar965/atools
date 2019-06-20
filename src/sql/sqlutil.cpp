@@ -16,9 +16,14 @@
 *****************************************************************************/
 
 #include "sql/sqlutil.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlrecord.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlexception.h"
 
 #include <QDebug>
 #include <QString>
+#include <QSqlDatabase>
 
 namespace atools {
 
@@ -141,7 +146,7 @@ void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
   }
 }
 
-int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery &)> func)
+int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery&)> func)
 {
   int copied = 0;
   SqlRecord fromRec;

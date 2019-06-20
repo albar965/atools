@@ -28,6 +28,7 @@
 #include "fs/common/binarygeometry.h"
 
 #include "sql/sqlutil.h"
+#include "sql/sqlquery.h"
 
 #include <QRegularExpression>
 #include <QTextCodec>

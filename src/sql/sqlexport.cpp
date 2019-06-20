@@ -17,6 +17,8 @@
 
 #include "sql/sqlexport.h"
 
+#include "sql/sqlrecord.h"
+
 #include <QRegularExpression>
 
 namespace atools {

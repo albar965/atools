@@ -17,8 +17,10 @@
 
 #include "fs/common/morareader.h"
 #include "sql/sqlquery.h"
+#include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
 #include "geo/pos.h"
+#include "exception.h"
 
 #include <QDataStream>
 

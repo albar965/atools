@@ -18,10 +18,11 @@
 #ifndef ATOOLS_SQL_SQLRECORD_H
 #define ATOOLS_SQL_SQLRECORD_H
 
-#include <QDateTime>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QVector>
+
+class QSqlRecord;
 
 namespace atools {
 namespace sql {
@@ -67,15 +68,9 @@ public:
     return value(name).toString();
   }
 
-  QDateTime valueDateTime(int i) const
-  {
-    return value(i).toDateTime();
-  }
+  QDateTime valueDateTime(int i) const;
 
-  QDateTime valueDateTime(const QString& name) const
-  {
-    return value(name).toDateTime();
-  }
+  QDateTime valueDateTime(const QString& name) const;
 
   int valueInt(int i) const
   {

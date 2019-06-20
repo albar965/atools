@@ -34,6 +34,7 @@
 #include "fs/dfd/dfdcompiler.h"
 #include "fs/db/databasemeta.h"
 #include "atools.h"
+#include "exception.h"
 
 #include <QDebug>
 #include <QDir>

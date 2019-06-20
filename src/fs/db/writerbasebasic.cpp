@@ -19,6 +19,7 @@
 #include "fs/db/datawriter.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
+#include "sql/sqlexception.h"
 
 #include <QDataStream>
 

@@ -17,10 +17,14 @@
 
 #include "sql/sqldatabase.h"
 #include "sql/sqlexception.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 
 #include <QSettings>
 #include <QDebug>
 #include <QFileInfo>
+#include <QSqlIndex>
+#include <QSqlDriver>
 
 namespace atools {
 

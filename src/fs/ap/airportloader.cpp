@@ -22,6 +22,7 @@
 #include "sql/sqlscript.h"
 #include "sql/sqlutil.h"
 #include "settings/settings.h"
+#include "exception.h"
 
 #include <QFile>
 

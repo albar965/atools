@@ -18,6 +18,8 @@
 #include "fs/xp/xpairportwriter.h"
 
 #include "sql/sqlutil.h"
+#include "sql/sqlquery.h"
+#include "sql/sqldatabase.h"
 #include "geo/calculations.h"
 #include "fs/util/fsutil.h"
 #include "fs/progresshandler.h"

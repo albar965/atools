@@ -16,9 +16,12 @@
 *****************************************************************************/
 
 #include "fs/db/databasemeta.h"
+#include "sql/sqlrecord.h"
 
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
+#include "sql/sqldatabase.h"
+
 
 namespace atools {
 namespace fs {

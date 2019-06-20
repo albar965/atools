@@ -22,6 +22,8 @@
 #include "fs/progresshandler.h"
 #include "atools.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqlquery.h"
+#include "sql/sqldatabase.h"
 
 #include "sql/sqlutil.h"
 

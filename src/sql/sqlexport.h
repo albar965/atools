@@ -19,13 +19,16 @@
 #define ATOOLS_SQL_SQLEXPORT_H
 
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 
-#include <QString>
+#include <QVariantList>
 
 namespace atools {
 namespace sql {
 
 class SqlDatabase;
+class SqlQuery;
+class SqlRecord;
 
 /*
  * Allows to export CSV files according to RFC:
@@ -47,7 +50,7 @@ public:
    * to have an operator<< for QString.
    */
   template<class OUT>
-  void printResultSet(SqlQuery& query, OUT& out);
+  void printResultSet(atools::sql::SqlQuery& query, OUT& out);
 
   /* Write a header containing the column names from the result set or not */
   void setHeader(bool value)
@@ -126,7 +129,7 @@ private:
 // -----------------------------------------------------------
 
 template<class OUT>
-void SqlExport::printResultSet(SqlQuery& query, OUT& out)
+void SqlExport::printResultSet(atools::sql::SqlQuery& query, OUT& out)
 {
   bool first = true;
 

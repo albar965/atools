@@ -18,11 +18,7 @@
 #ifndef ATOOLS_SQL_SQLDATABASE_H
 #define ATOOLS_SQL_SQLDATABASE_H
 
-#include "sql/sqlquery.h"
-
-#include <QSqlDriver>
-#include <QSqlError>
-#include <QSqlIndex>
+#include <QSqlDatabase>
 #include <QStringList>
 
 class QSettings;
@@ -31,6 +27,9 @@ namespace atools {
 namespace sql {
 
 class SqlTransaction;
+class SqlQuery;
+class SqlRecord;
+
 /*
  * Wrapper around QSqlDatabase that adds exceptions to avoid plenty of
  * boilerplate coding. In case of error or invalid connections SqlException
