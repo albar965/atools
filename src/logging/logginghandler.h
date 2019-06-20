@@ -20,13 +20,9 @@
 
 #include "logging/loggingtypes.h"
 
-#include <QString>
-#include <QIODevice>
-#include <QHash>
-#include <QVector>
-#include <QMutex>
 #include <QLoggingCategory>
-
+#include <QMutex>
+#include <QObject>
 #include <functional>
 
 class QTextStream;

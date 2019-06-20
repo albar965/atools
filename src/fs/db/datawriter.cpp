@@ -55,6 +55,7 @@
 #include "atools.h"
 #include "fs/common/magdecreader.h"
 #include "settings/settings.h"
+#include "exception.h"
 
 #include <QDebug>
 #include <QFileInfo>

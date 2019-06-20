@@ -19,12 +19,13 @@
 #define ATOOLS_GEO_LINE_H
 
 #include "geo/pos.h"
-#include "geo/rect.h"
 
 #include <QDebug>
 
 namespace atools {
 namespace geo {
+
+class Rect;
 
 /*
  * Geographic line class. Calculations based on

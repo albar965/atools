@@ -19,7 +19,6 @@
 #define ATOOLS_GUI_TRANSLATOR_H
 
 #include <QVector>
-#include <QString>
 
 class QTranslator;
 
@@ -67,7 +66,6 @@ private:
 
   static QVector<QTranslator *> translators;
   static bool loaded;
-
 
 };
 

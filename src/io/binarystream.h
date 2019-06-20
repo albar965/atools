@@ -18,8 +18,6 @@
 #ifndef ATOOLS_IO_BINARYSTREAM_H
 #define ATOOLS_IO_BINARYSTREAM_H
 
-#include "exception.h"
-
 #include <QDataStream>
 
 class QFile;

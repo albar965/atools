@@ -18,7 +18,10 @@
 #ifndef ATOOLS_GEO_LINESTRING_H
 #define ATOOLS_GEO_LINESTRING_H
 
+#include "geo/pos.h"
 #include "geo/rect.h"
+
+#include <QVector>
 
 namespace atools {
 namespace geo {
@@ -71,7 +74,7 @@ public:
   void removeDuplicates();
 
   /* Calculate status, cross track distance and more to this line. */
-  void distanceMeterToLineString(const atools::geo::Pos& pos, LineDistance& result,
+  void distanceMeterToLineString(const atools::geo::Pos& pos, atools::geo::LineDistance& result,
                                  int *index = nullptr) const;
 
   /* Line with first and last point */

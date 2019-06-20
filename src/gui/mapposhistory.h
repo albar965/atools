@@ -20,9 +20,6 @@
 
 #include "geo/pos.h"
 
-#include <QObject>
-#include <QApplication>
-
 namespace atools {
 namespace gui {
 

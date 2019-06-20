@@ -40,7 +40,7 @@ class ConsoleApplication :
 
 public:
   ConsoleApplication(int& argc, char **argv, int = ApplicationFlags);
-  virtual ~ConsoleApplication();
+  virtual ~ConsoleApplication() override;
 
 #if defined(Q_CC_MSVC)
   // MSVC cannot deal with newer C++ features

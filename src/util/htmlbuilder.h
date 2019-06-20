@@ -18,9 +18,9 @@
 #ifndef ATOOLS_UTIL_HTMLBUILDER_H
 #define ATOOLS_UTIL_HTMLBUILDER_H
 
-#include <QLocale>
-#include <QCoreApplication>
 #include <QColor>
+#include <QCoreApplication>
+#include <QLocale>
 #include <QSize>
 
 namespace atools {

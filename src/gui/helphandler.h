@@ -19,7 +19,6 @@
 #define ATOOLS_HELPMENUHANDLER_H
 
 #include <QObject>
-#include <QVector>
 
 class QWidget;
 

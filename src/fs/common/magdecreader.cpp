@@ -22,12 +22,12 @@
 #include "sql/sqlutil.h"
 #include "atools.h"
 #include "wmm/magdectool.h"
+#include "exception.h"
+#include "sql/sqlquery.h"
 
 #include <QFile>
 #include <QDebug>
 #include <cmath>
-
-#include "sql/sqlquery.h"
 
 using atools::geo::Pos;
 

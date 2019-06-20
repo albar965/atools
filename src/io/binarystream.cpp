@@ -19,6 +19,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include "exception.h"
 
 namespace atools {
 namespace io {

@@ -20,10 +20,8 @@
 
 #include "logging/loggingtypes.h"
 
-#include <QString>
 #include <QIODevice>
 #include <QVector>
-#include <QHash>
 
 class QFile;
 class QTextStream;

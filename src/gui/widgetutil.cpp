@@ -28,6 +28,7 @@
 #include <QTextEdit>
 #include <QScrollBar>
 #include <QMenu>
+#include <QItemSelectionModel>
 
 namespace atools {
 namespace gui {

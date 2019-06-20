@@ -18,7 +18,11 @@
 #ifndef ATOOLS_WIDGETSTATESAVER_H
 #define ATOOLS_WIDGETSTATESAVER_H
 
-#include <QObject>
+#include <QString>
+
+class QObject;
+class QWidget;
+class QVariant;
 
 namespace atools {
 namespace settings {

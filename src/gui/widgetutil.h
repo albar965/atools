@@ -18,9 +18,7 @@
 #ifndef ATOOLS_WIDGETTOOLS_H
 #define ATOOLS_WIDGETTOOLS_H
 
-#include <QItemSelectionModel>
 #include <QList>
-#include <QModelIndexList>
 
 class QLayout;
 class QWidget;
@@ -29,6 +27,7 @@ class QObject;
 class QTextEdit;
 class QColor;
 class QMenu;
+class QItemSelectionModel;
 
 namespace atools {
 namespace gui {

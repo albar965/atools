@@ -18,8 +18,7 @@
 #ifndef ATOOLS_UTIL_FILESYSTEMWATCHER_H
 #define ATOOLS_UTIL_FILESYSTEMWATCHER_H
 
-#include "fs/weather/weathertypes.h"
-
+#include <QDateTime>
 #include <QTimer>
 
 class QFileSystemWatcher;
