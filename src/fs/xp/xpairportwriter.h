@@ -137,7 +137,7 @@ private:
       curParkingId = 0, curApronId = 0, curTaxiPathId = 0, curHelipadStartNumber = 0,
       curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
 
-  bool hasTower = false;
+  bool hasTower = false, is3d = false;
 
   /* Counters for redundant airport data */
   int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,

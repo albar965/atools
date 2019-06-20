@@ -191,7 +191,7 @@ bool XpDataCompiler::compileCustomGlobalApt()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 1, airportWriter, IS_3D);
+    bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG);
     if(!aborted)
       db.commit();
     return aborted;

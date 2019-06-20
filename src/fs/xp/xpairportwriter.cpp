@@ -1012,7 +1012,9 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   QString key = at(line, m::KEY).toLower();
   QString value = mid(line, m::VALUE, true /* ignore error */);
 
-  if(key == "city")
+  if(key == "gui_label")
+    is3d = value.compare("3d", Qt::CaseInsensitive) == 0;
+  else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
     insertAirportQuery->bindValue(":country", value);
@@ -1024,6 +1026,7 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     airportDatumPos.setLonX(value.toFloat());
 
   // 1302 city Seattle
+  // 1302 gui_label 3D
   // 1302 country United States
   // 1302 datum_lat 47.449888889
   // 1302 datum_lon -122.311777778
@@ -1419,7 +1422,7 @@ void XpAirportWriter::reset()
   numRunway = numSoftRunway = numWaterRunway = numHardRunway = numHelipad = numLightRunway = 0;
   numParkingGate = numParkingGaRamp = numParkingCargo = numParkingMilCargo = numParkingMilCombat = 0;
   numCom = numStart = numRunwayEndVasi = numApron = numTaxiPath = numRunwayEndAls = numParking = 0;
-  airportClosed = false;
+  airportClosed = is3d = false;
   airportAltitude = 0.f;
   curHelipadStartNumber = 0;
   airportRowCode = NO_ROWCODE;
@@ -1461,10 +1464,10 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     // Rating
     int rating =
-      atools::fs::util::calculateAirportRatingXp(context.flags.testFlag(IS_ADDON), context.flags.testFlag(IS_3D),
-                                                 hasTower, numTaxiPath, numParking, numApron);
+      atools::fs::util::calculateAirportRatingXp(context.flags.testFlag(IS_ADDON),
+                                                 is3d, hasTower, numTaxiPath, numParking, numApron);
     insertAirportQuery->bindValue(":rating", rating);
-    insertAirportQuery->bindValue(":is_3d", context.flags.testFlag(IS_3D));
+    insertAirportQuery->bindValue(":is_3d", is3d);
 
     insertAirportQuery->bindValue(":num_parking_gate", numParkingGate);
     insertAirportQuery->bindValue(":num_parking_ga_ramp", numParkingGaRamp);
