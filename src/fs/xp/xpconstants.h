@@ -32,7 +32,7 @@ enum ContextFlag
 {
   NO_FLAG = 0x0000,
   IS_ADDON = 0x0001,
-  // IS_3D = 0x0002, obsolete with X-Plane 11.33
+  IS_3D = 0x0002,
   INCLUDE_ILS = 0x0004,
   INCLUDE_VOR = 0x0008,
   INCLUDE_NDB = 0x0010,

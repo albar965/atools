@@ -38,7 +38,7 @@ const int MAX_RATING = 5;
 int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
 
 /* Calculate for X-Plane based on airport facilities */
-int calculateAirportRatingXp(bool isAddon, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
+int calculateAirportRatingXp(bool isAddon, bool is3D, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
 
 /* Check the airport name if it contains military designators */
 bool isNameMilitary(const QString& airportName);

@@ -124,9 +124,8 @@ public:
    * 11 transition_altitude in airport
    * 12 Several changes towards 3.2.
    * 13 Fix for VASI assignment in X-Plane
-   * 14 is_3d remove for X-Plane > 11.33
    */
-  static const int DB_VERSION_MINOR = 14;
+  static const int DB_VERSION_MINOR = 13;
 
   void init();
 

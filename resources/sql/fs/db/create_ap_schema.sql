@@ -87,6 +87,7 @@ create table airport
   rating integer not null,                   -- 0-5. An airport gets a point for having
                                              -- taxi paths, parking, aprons, tower object.
                                              -- An additional point is give for add-on airports
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
 
   scenery_local_path varchar(250) collate nocase, -- Path of the BGL relative to the FS base directory
   bgl_filename varchar(300) collate nocase,       -- BGL filename
@@ -140,6 +141,7 @@ create table airport_medium
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
@@ -172,6 +174,7 @@ create table airport_large
   is_closed integer not null,
   is_military integer not null,
   is_addon integer not null,
+  is_3d integer not null,                    -- X-Plane only - airport has 3D objects
   num_runway_hard integer not null,
   num_runway_soft integer not null,
   num_runway_water integer not null,
