@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/atools">
-        <file>resources/sql/ap/clean_schema.sql</file>
-        <file>resources/sql/ap/create_schema.sql</file>
-        <file>resources/sql/ap/drop_schema.sql</file>
-        <file>resources/sql/ap/finish_schema.sql</file>
         <file>resources/sql/fs/db/create_ap_schema.sql</file>
         <file>resources/sql/fs/db/create_boundary_schema.sql</file>
         <file>resources/sql/fs/db/create_indexes_post_load.sql</file>

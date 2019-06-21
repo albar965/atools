@@ -338,7 +338,6 @@ SOURCES += \
 
 !isEqual(ATOOLS_NO_FS, "true") {
 HEADERS += \
-  src/fs/ap/airportloader.h \
   src/fs/bgl/ap/airport.h \
   src/fs/bgl/ap/approach.h \
   src/fs/bgl/ap/approachleg.h \
@@ -481,7 +480,6 @@ HEADERS += \
   src/fs/xp/xpwriter.h
 
 SOURCES += \
-  src/fs/ap/airportloader.cpp \
   src/fs/bgl/ap/airport.cpp \
   src/fs/bgl/ap/approach.cpp \
   src/fs/bgl/ap/approachleg.cpp \
