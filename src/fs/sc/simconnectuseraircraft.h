@@ -44,9 +44,9 @@ class SimConnectUserAircraft :
 public:
   SimConnectUserAircraft();
   SimConnectUserAircraft(const SimConnectUserAircraft& other);
-  virtual ~SimConnectUserAircraft();
+  virtual ~SimConnectUserAircraft() override;
 
-  virtual void read(QDataStream& in) override;
+  virtual void read(QDataStream & in) override;
   virtual void write(QDataStream& out) const override;
 
   // fs data ----------------------------------------------------
@@ -181,6 +181,10 @@ public:
   {
     return fuelFlowGPH > 1.f || fuelFlowPPH > 0.1f;
   }
+
+  /* Calculate the weight/volume ratio and determine if it is jet fuel
+   *  weightVolRatio is 0 if quantity/weight is not sufficient */
+  bool isJetfuel(float& weightVolRatio) const;
 
   /* Calculate flight parameters that are based on time.
    * "This" is the current aircraft state where "past" is the older one at takeoff */

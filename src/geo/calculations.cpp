@@ -161,6 +161,13 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
   }
 }
 
+Rect boundingRect(const QVector<Pos>& positions)
+{
+  Rect rect;
+  boundingRect(rect, positions);
+  return rect;
+}
+
 void boundingRect(Rect& rect, const QVector<atools::geo::Pos>& positions)
 {
   // If the line string is empty return an empty boundingbox
@@ -690,6 +697,21 @@ void windForCourse(float& headWind, float& crossWind, float windSpeed, float win
   float diffRad = atools::geo::toRadians(windDirectionDeg - courseDeg);
   headWind = windSpeed * std::cos(diffRad);
   crossWind = windSpeed * std::sin(diffRad);
+}
+
+bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio)
+{
+  if(fuelWeightLbs > 5.f && fuelQuantityGal > 1.f)
+  {
+    weightVolRatio = fuelWeightLbs / fuelQuantityGal;
+
+    if(atools::almostEqual(weightVolRatio, 6.f, 0.2f))
+      return false;
+    else if(atools::almostEqual(weightVolRatio, 6.7f, 0.3f))
+      return true;
+  }
+  weightVolRatio = 0.f;
+  return false;
 }
 
 } // namespace geo

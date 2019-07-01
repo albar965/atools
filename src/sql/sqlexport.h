@@ -50,7 +50,7 @@ public:
    * to have an operator<< for QString.
    */
   template<class OUT>
-  void printResultSet(atools::sql::SqlQuery& query, OUT& out);
+  int printResultSet(atools::sql::SqlQuery& query, OUT& out);
 
   /* Write a header containing the column names from the result set or not */
   void setHeader(bool value)
@@ -129,7 +129,7 @@ private:
 // -----------------------------------------------------------
 
 template<class OUT>
-void SqlExport::printResultSet(atools::sql::SqlQuery& query, OUT& out)
+int SqlExport::printResultSet(atools::sql::SqlQuery& query, OUT& out)
 {
   bool first = true;
 
@@ -147,6 +147,7 @@ void SqlExport::printResultSet(atools::sql::SqlQuery& query, OUT& out)
     out << getResultSetRow(query.record());
     i++;
   }
+  return i;
 }
 
 } // namespace sql

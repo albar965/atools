@@ -74,14 +74,14 @@ class SimConnectAircraft :
 public:
   SimConnectAircraft();
   SimConnectAircraft(const SimConnectAircraft& other);
-  virtual ~SimConnectAircraft();
+  virtual ~SimConnectAircraft() override;
 
-  virtual void read(QDataStream& in);
+  virtual void read(QDataStream & in);
   virtual void write(QDataStream& out) const;
 
   // fs data ----------------------------------------------------
 
-  /* Mooney, Boeing, */
+  /* Mooney, Boeing, Actually aircraft model. */
   const QString& getAirplaneType() const
   {
     return airplaneType;
@@ -103,7 +103,7 @@ public:
     return airplaneTitle;
   }
 
-  /* Short ICAO code MD80, BE58, etc. */
+  /* Short ICAO code MD80, BE58, etc. Actually type designator. */
   const QString& getAirplaneModel() const
   {
     return airplaneModel;

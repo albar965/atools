@@ -37,12 +37,14 @@ public:
   /* Create an invalid rectangle */
   Rect();
   Rect(const atools::geo::Rect& other);
+
   /* Create a single point rectangle */
   explicit Rect(const atools::geo::Pos& singlePos);
+  explicit Rect(float lonX, float latY);
+
   explicit Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   explicit Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);
   explicit Rect(double leftLonX, double topLatY, double rightLonX, double bottomLatY);
-  explicit Rect(float lonX, float latY);
 
   /* Create rectangle that includes the given circle. Radius in meter. */
   Rect(const atools::geo::Pos& center, float radiusMeter);

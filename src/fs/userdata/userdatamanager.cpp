@@ -21,6 +21,7 @@
 #include "sql/sqlutil.h"
 #include "sql/sqlscript.h"
 #include "sql/sqlexport.h"
+#include "sql/sqldatabase.h"
 #include "sql/sqltransaction.h"
 #include "sql/sqlquery.h"
 #include "util/csvreader.h"
@@ -30,12 +31,8 @@
 #include "settings/settings.h"
 #include "fs/util/fsutil.h"
 #include "io/fileroller.h"
+#include "exception.h"
 
-#include <QDateTime>
-#include <QFile>
-#include <QFileInfo>
-#include <QDebug>
-#include <QTemporaryFile>
 #include <QDir>
 #include <QRegularExpression>
 #include <QXmlStreamReader>
@@ -55,42 +52,6 @@ using atools::sql::SqlTransaction;
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static int VISIBLE_FROM_DEFAULT_NM = 250;
-
-/* Simple SqlQuery wrapper which can be used to export all rows or a list of rows by id */
-class QueryWrapper
-{
-public:
-  QueryWrapper(const QString& queryStr, const SqlDatabase *sqlDb, const QVector<int>& idList)
-    : q(sqlDb), ids(idList), hasIds(!ids.isEmpty())
-  {
-    q.prepare(queryStr + (hasIds ? " where userdata_id = :id" : QString()));
-  }
-
-  void exec()
-  {
-    if(!hasIds)
-      q.exec();
-  }
-
-  bool next()
-  {
-    if(hasIds)
-    {
-      if(ids.isEmpty())
-        return false;
-
-      q.bindValue(":id", ids.takeFirst());
-      q.exec();
-    }
-    return q.next();
-  }
-
-  SqlQuery q;
-
-private:
-  QVector<int> ids;
-  bool hasIds = false;
-};
 
 namespace csv {
 /* Column indexes in CSV format */
@@ -139,7 +100,10 @@ enum Index
 }
 
 UserdataManager::UserdataManager(sql::SqlDatabase *sqlDb)
-  : db(sqlDb)
+  : DataManagerBase(sqlDb, "userdata", "userdata_id",
+                    ":/atools/resources/sql/fs/userdata/create_user_schema.sql",
+                    ":/atools/resources/sql/fs/userdata/drop_user_schema.sql",
+                    "little_navmap_userdata_backup.csv")
 {
 
 }
@@ -149,209 +113,33 @@ UserdataManager::~UserdataManager()
 
 }
 
-bool UserdataManager::hasSchema()
-{
-  return SqlUtil(db).hasTable("userdata");
-}
-
-bool UserdataManager::hasData()
-{
-  return SqlUtil(db).hasTableAndRows("userdata");
-}
-
 void UserdataManager::updateSchema()
 {
-  if(!db->record("userdata").contains("temp"))
+  if(!db->record(tableName).contains("temp"))
   {
     qDebug() << Q_FUNC_INFO;
 
     SqlTransaction transaction(db);
     // Add missing column and index
-    db->exec("alter table userdata add column temp integer");
-    db->exec("create index if not exists idx_userdata_temp on userdata(temp)");
+    db->exec("alter table " + tableName + " add column temp integer");
+    db->exec("create index if not exists idx_userdata_temp on " + tableName + "(temp)");
     transaction.commit();
   }
 }
 
-void UserdataManager::createSchema()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  SqlTransaction transaction(db);
-  SqlScript script(db, true /*options->isVerbose()*/);
-
-  script.executeScript(":/atools/resources/sql/fs/userdata/create_user_schema.sql");
-  transaction.commit();
-}
-
-void UserdataManager::dropSchema()
-{
-  qDebug() << Q_FUNC_INFO;
-  SqlTransaction transaction(db);
-  SqlScript script(db, true /*options->isVerbose()*/);
-
-  script.executeScript(":/atools/resources/sql/fs/userdata/drop_user_schema.sql");
-  transaction.commit();
-}
-
-void UserdataManager::backup()
-{
-  if(hasData())
-  {
-    qDebug() << Q_FUNC_INFO;
-
-    // Create a backup in the settings directory
-    QString settingsPath = atools::settings::Settings::instance().getPath();
-    QString filename = settingsPath + QDir::separator() + QString("little_navmap_userdata_backup.csv");
-
-    atools::io::FileRoller roller(3);
-    roller.rollFile(filename);
-
-    exportCsv(filename);
-  }
-}
-
-void UserdataManager::clearData()
-{
-  backup();
-
-  SqlTransaction transaction(db);
-  SqlQuery query("delete from userdata", db);
-  query.exec();
-  transaction.commit();
-}
-
 void UserdataManager::clearTemporary()
 {
-  int tempRows = SqlUtil(db).rowCount("userdata", "temp = 1");
+  int tempRows = SqlUtil(db).rowCount(tableName, "temp = 1");
 
   qDebug() << Q_FUNC_INFO << "tempRows" << tempRows;
 
   if(tempRows > 0)
   {
     SqlTransaction transaction(db);
-    SqlQuery deleteQuery("delete from userdata where temp = 1", db);
+    SqlQuery deleteQuery("delete from " + tableName + " where temp = 1", db);
     deleteQuery.exec();
     transaction.commit();
   }
-}
-
-void UserdataManager::updateCoordinates(int id, const geo::Pos& position)
-{
-  SqlQuery query(db);
-  query.prepare("update userdata set lonx = ?, laty = ? where userdata_id = ?");
-  query.bindValue(0, position.getLonX());
-  query.bindValue(1, position.getLatY());
-  query.bindValue(2, id);
-  query.exec();
-}
-
-void UserdataManager::updateField(const QString& column, const QVector<int>& ids, const QVariant& value)
-{
-  SqlQuery query(db);
-  query.prepare("update userdata set " + column + " = ? where userdata_id = ?");
-
-  for(int id : ids)
-  {
-    // Update field for all rows with the given id
-    query.bindValue(0, value);
-    query.bindValue(1, id);
-    query.exec();
-    if(query.numRowsAffected() != 1)
-      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
-  }
-}
-
-void UserdataManager::insertByRecord(sql::SqlRecord record)
-{
-  if(record.contains("userdata_id"))
-    // Get rid of id column - it is not needed here
-    record.remove(record.indexOf("userdata_id"));
-
-  QVariantList vals = record.values();
-  SqlQuery query(db);
-  query.prepare("insert into userdata (" + record.fieldNames().join(", ") + ") " +
-                "values(" + QString("?, ").repeated(vals.size() - 1) + " ?)");
-  for(int i = 0; i < vals.size(); i++)
-    query.bindValue(i, vals.at(i));
-  query.exec();
-  if(query.numRowsAffected() != 1)
-    qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
-}
-
-void UserdataManager::updateByRecord(sql::SqlRecord record, const QVector<int>& ids)
-{
-  if(record.contains("userdata_id"))
-    // Get rid of id column - it is not needed here
-    record.remove(record.indexOf("userdata_id"));
-
-  SqlQuery query(db);
-  query.prepare("update userdata set " + record.fieldNames().join(" = ?, ") + " = ? where userdata_id = ?");
-
-  QVariantList vals = record.values();
-  for(int id : ids)
-  {
-    // For each row with given id ...
-    for(int i = 0; i < vals.size(); i++)
-      // ... update all given columns with given values
-      query.bindValue(i, vals.at(i));
-    query.bindValue(vals.size(), id);
-    query.exec();
-    if(query.numRowsAffected() != 1)
-      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
-  }
-}
-
-void UserdataManager::removeRows(const QVector<int> ids)
-{
-  SqlQuery query(db);
-  query.prepare("delete from userdata where userdata_id = ?");
-
-  for(int id : ids)
-  {
-    query.bindValue(0, id);
-    query.exec();
-    if(query.numRowsAffected() != 1)
-      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
-  }
-}
-
-void UserdataManager::getRecords(QVector<SqlRecord>& records, const QVector<int> ids)
-{
-  SqlQuery query(db);
-  query.prepare("select * from userdata where userdata_id = ?");
-
-  for(int id : ids)
-  {
-    query.bindValue(0, id);
-    query.exec();
-    if(query.next())
-      records.append(query.record());
-    else
-      qWarning() << Q_FUNC_INFO << "nothing found for id" << id;
-
-  }
-}
-
-SqlRecord UserdataManager::getRecord(int id)
-{
-  QVector<SqlRecord> recs;
-  getRecords(recs, {id});
-
-  // Nothing found
-  return recs.isEmpty() ? SqlRecord() : recs.first();
-}
-
-void UserdataManager::getEmptyRecord(SqlRecord& record)
-{
-  record = db->record("userdata");
-}
-
-SqlRecord UserdataManager::getEmptyRecord()
-{
-  SqlRecord rec;
-  getEmptyRecord(rec);
-  return rec;
 }
 
 // VRP,  1NM NORTH SALERNO TOWN, 1NSAL, 40.6964,            14.785,         0,0, IT, FROM SOR VOR: 069° 22NM
@@ -362,7 +150,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
   SqlTransaction transaction(db);
 
   // Autogenerate id
-  QString insert = SqlUtil(db).buildInsertStatement("userdata", QString(), {"userdata_id"}, true);
+  QString insert = SqlUtil(db).buildInsertStatement(tableName, QString(), {idColumnName}, true);
   SqlQuery insertQuery(db);
   insertQuery.prepare(insert);
 
@@ -381,11 +169,14 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
     int lineNum = 0;
     while(!stream.atEnd())
     {
+      QString line = stream.readLine();
+
       if(flags & CSV_HEADER && lineNum == 0)
+      {
+        lineNum++;
         // Ignore header
         continue;
-
-      QString line = stream.readLine();
+      }
 
       // Skip empty lines but add them if within an escaped field
       if(line.isEmpty() && !reader.isInEscape())
@@ -438,27 +229,6 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
   return numImported;
 }
 
-void UserdataManager::validateCoordinates(const QString& line, const QString& lonx, const QString& laty)
-{
-  bool lonxOk = true, latyOk = true;
-  Pos pos(lonx.toFloat(&lonxOk), laty.toFloat(&latyOk));
-
-  if(!lonxOk)
-    throw Exception(tr("Longitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
-
-  if(!latyOk)
-    throw Exception(tr("Latitude is not a valid number in line\n\n\"%1\"\n\nImport stopped.").arg(line));
-
-  if(!pos.isValid())
-    throw Exception(tr("Coordinates are not valid in line\n\n\"%1\"\n\nImport stopped.").arg(line));
-
-  if(pos.isNull())
-    throw Exception(tr("Coordinates are null in line\n\n\"%1\"\n\nImport stopped.").arg(line));
-
-  if(!pos.isValidRange())
-    throw Exception(tr("Coordinates are not in a valid range in line\n\n\"%1\"\n\nImport stopped.").arg(line));
-}
-
 // I
 // 1101 Version - data cycle 1704, build 20170325, metadata FixXP1101. NoCopyright (c) 2017 achwodu
 //
@@ -468,8 +238,8 @@ void UserdataManager::validateCoordinates(const QString& line, const QString& lo
 int UserdataManager::importXplane(const QString& filepath)
 {
   SqlTransaction transaction(db);
-  QString insert = SqlUtil(db).buildInsertStatement("userdata",
-                                                    QString(), {"userdata_id", "description", "altitude"}, true);
+  QString insert = SqlUtil(db).buildInsertStatement(tableName,
+                                                    QString(), {idColumnName, "description", "altitude"}, true);
   SqlQuery insertQuery(db);
   insertQuery.prepare(insert);
 
@@ -554,8 +324,8 @@ int UserdataManager::importXplane(const QString& filepath)
 int UserdataManager::importGarmin(const QString& filepath)
 {
   SqlTransaction transaction(db);
-  QString insert = SqlUtil(db).buildInsertStatement("userdata",
-                                                    QString(), {"userdata_id", "description", "altitude", "region"},
+  QString insert = SqlUtil(db).buildInsertStatement(tableName,
+                                                    QString(), {idColumnName, "description", "altitude", "region"},
                                                     true);
   SqlQuery insertQuery(db);
   insertQuery.prepare(insert);
@@ -623,8 +393,8 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setNumberPrecision(10);
 
     QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
-                       "0 as mag_var, tags, description, region, visible_from, last_edit_timestamp from userdata", db,
-                       ids);
+                       "0 as mag_var, tags, description, region, visible_from, last_edit_timestamp from " + tableName,
+                       db, ids, idColumnName);
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
@@ -728,8 +498,8 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << atools::programFileInfoNoDate() << "." << endl << endl;
     }
 
-    QueryWrapper query("select userdata_id, ident, name, tags, laty, lonx, altitude, tags, region from userdata", db,
-                       ids);
+    QueryWrapper query("select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName,
+                       db, ids, idColumnName);
     // 50.88166700    12.58666700  PACEC PACEC ZZ
     // 46.646819444 -123.722388889 AAYRR KSEA  K1 4530263
     // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
@@ -740,7 +510,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
 
       stream << QString::number(query.q.valueDouble("laty"), 'f', 8)
              << " " << QString::number(query.q.valueDouble("lonx"), 'f', 8)
-             << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt("userdata_id"))
+             << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt(idColumnName))
              << " " << "ENRT" // Ignore airport here
              << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region))
              << endl;
@@ -773,7 +543,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     if(!endsWithEol && (flags & APPEND))
       stream << endl;
 
-    QueryWrapper query("select userdata_id, ident, name,  laty, lonx from userdata", db, ids);
+    QueryWrapper query("select " + idColumnName + ", ident, name,  laty, lonx from " + tableName, db, ids, idColumnName);
     // MTHOOD,MT HOOD PEAK,45.3723,-121.69783
     // CRTRLK,CRATER LAKE,42.94683,-122.11083
     // EIFFEL,EIFFEL TOWER,48.858151,2.294384
@@ -781,7 +551,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     query.exec();
     while(query.next())
     {
-      stream << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 6, query.q.valueInt("userdata_id"))
+      stream << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 6, query.q.valueInt(idColumnName))
              << ","
              << query.q.valueStr("name").simplified().toUpper().replace(ADJUST_NAME_REGEXP, "").left(25)
              << ","
@@ -823,7 +593,7 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
     writer.writeAttribute("xsi:noNamespaceSchemaLocation", "bglcomp.xsd");
     writer.writeComment(atools::programFileInfo());
 
-    QueryWrapper query("select userdata_id, ident, region, tags, laty, lonx from userdata", db, ids);
+    QueryWrapper query("select " + idColumnName + ", ident, region, tags, laty, lonx from " + tableName, db, ids, idColumnName);
     query.exec();
     while(query.next())
     {
@@ -841,7 +611,7 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
                                                                   query.q.valueFloat("laty"))), 'f', 8));
       writer.writeAttribute("waypointIdent",
                             atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5,
-                                                          query.q.valueInt("userdata_id")));
+                                                          query.q.valueInt(idColumnName)));
       writer.writeEndElement(); // Waypoint
       numExported++;
     }
@@ -850,21 +620,6 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
     writer.writeEndDocument();
   }
   return numExported;
-}
-
-QString UserdataManager::at(const QStringList& line, int index, bool nowarn)
-{
-  if(index < line.size())
-    return line.at(index);
-
-  if(!nowarn)
-    qWarning() << "Index" << index << "not found in file";
-  return QString();
-}
-
-void UserdataManager::setMagDecReader(atools::fs::common::MagDecReader *reader)
-{
-  magDec = reader;
 }
 
 } // namespace userdata

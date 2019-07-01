@@ -79,7 +79,13 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
 QString SqlUtil::buildSelectStatement(const QString& tablename)
 {
   // TODO use QSqlDriver::sqlStatement()
-  QString columnList;
+  return "select " + buildColumnList(tablename).join(", ") + " from " + tablename;
+}
+
+QStringList SqlUtil::buildColumnList(const QString& tablename, const QStringList& excludeColumns)
+{
+  // TODO use QSqlDriver::sqlStatement()
+  QStringList columnList;
 
   SqlRecord record = db->record(tablename);
 
@@ -87,11 +93,12 @@ QString SqlUtil::buildSelectStatement(const QString& tablename)
   {
     QString name = record.fieldName(i);
 
-    if(!columnList.isEmpty())
-      columnList += ", ";
-    columnList += name;
+    if(excludeColumns.contains(name))
+      continue;
+
+    columnList.append(name);
   }
-  return "select " + columnList + " from " + tablename;
+  return columnList;
 }
 
 QString SqlUtil::buildSelectStatement(const QString& tablename, const QStringList& columns)

@@ -90,6 +90,11 @@ QDateTime SqlRecord::valueDateTime(const QString& name) const
   return value(name).toDateTime();
 }
 
+QDateTime SqlRecord::valueDateTime(const QString& name, const QDateTime& defaultValue) const
+{
+  return contains(name) ? valueDateTime(name) : defaultValue;
+}
+
 bool SqlRecord::isNull(int i) const
 {
   if(sqlRecord.fieldName(i).isEmpty())

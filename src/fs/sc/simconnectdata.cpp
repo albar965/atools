@@ -171,7 +171,7 @@ int SimConnectData::write(QIODevice *ioDevice)
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
-                                                     float vertSpeed, float tas, float fuelflow)
+                                                     float vertSpeed, float tas, float fuelflow, float totalFuel)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -211,7 +211,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneEmptyWeightLbs = 1500.f;
   data.userAircraft.airplaneTotalWeightLbs = 3000.f;
   data.userAircraft.airplaneMaxGrossWeightLbs = 4000.f;
-  data.userAircraft.fuelTotalWeightLbs = 1000.f;
+  data.userAircraft.fuelTotalWeightLbs = totalFuel;
   data.userAircraft.fuelTotalQuantityGallons = atools::geo::fromLbsToGal(false, data.userAircraft.fuelTotalWeightLbs);
   data.userAircraft.fuelFlowPPH = fuelflow;
   data.userAircraft.fuelFlowGPH = atools::geo::fromLbsToGal(false, fuelflow);

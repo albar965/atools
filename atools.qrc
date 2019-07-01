@@ -38,5 +38,7 @@
         <file>resources/sql/fs/db/dfd/update_navaids.sql</file>
         <file>resources/wmm/EGM9615.buf</file>
         <file>resources/wmm/WMM.COF</file>
+        <file>resources/sql/fs/logbook/drop_logbook_schema.sql</file>
+        <file>resources/sql/fs/logbook/create_logbook_schema.sql</file>
     </qresource>
 </RCC>

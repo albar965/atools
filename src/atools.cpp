@@ -433,6 +433,11 @@ float atFloat(const QStringList& columns, int index, bool error)
   return num;
 }
 
+QDateTime atDateTime(const QStringList& columns, int index, bool error)
+{
+  return QDateTime::fromString(at(columns, index, error), Qt::ISODate);
+}
+
 QTime timeFromHourMinStr(const QString& timeStr)
 {
   QTime time;

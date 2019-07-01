@@ -18,25 +18,17 @@
 #ifndef ATOOLS_FS_USERDATAMANAGER_H
 #define ATOOLS_FS_USERDATAMANAGER_H
 
-#include <QApplication>
-#include <QVector>
+#include "fs/userdata/datamanagerbase.h"
 
 namespace atools {
 
 namespace sql {
 class SqlDatabase;
-class SqlRecord;
-}
-
-namespace geo {
-class Pos;
 }
 namespace fs {
-
 namespace common {
 class MagDecReader;
 }
-
 namespace userdata {
 
 enum Flag
@@ -55,52 +47,17 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags);
 
 /*
  * Contains functionality around the userdata database which keeps user defined waypoints, bookmarks and others.
+ * Uses SqlRecord as a base structure to exchange data.
  */
-class UserdataManager
+class UserdataManager :
+  public DataManagerBase
 {
-  Q_DECLARE_TR_FUNCTIONS(UserdataManager)
-
 public:
   UserdataManager(atools::sql::SqlDatabase *sqlDb);
-  ~UserdataManager();
-
-  /* True if table userdata is present in database */
-  bool hasSchema();
-
-  /* True if table userdata is present in database and is filled*/
-  bool hasData();
-
-  /* Create database schema. Drops current schema if tables already exist. */
-  void createSchema();
-
-  /* Remove all data from the table. */
-  void clearData();
+  virtual ~UserdataManager() override;
 
   /* Remove all data from the table which has the temporary flag set. */
   void clearTemporary();
-
-  /* Updates the coordinates of an user defined waypoint. Does not commit. */
-  void updateCoordinates(int id, const atools::geo::Pos& position);
-
-  /* Updates columns for all rows with the given ids. Does not commit. */
-  void updateField(const QString& column, const QVector<int>& ids, const QVariant& value);
-
-  /* Updates all columns found in the record for all rows with the given ids. Does not commit. */
-  void updateByRecord(sql::SqlRecord getRecord, const QVector<int>& ids);
-
-  /* Adds new record to database */
-  void insertByRecord(sql::SqlRecord getRecord);
-
-  /* Removes entries. Does not commit. */
-  void removeRows(const QVector<int> ids);
-
-  /* Get records with content for ids */
-  void getRecords(QVector<atools::sql::SqlRecord>& getRecords, const QVector<int> ids);
-  atools::sql::SqlRecord getRecord(int id);
-
-  /* Empty records with schema populated */
-  void getEmptyRecord(atools::sql::SqlRecord& getRecord);
-  atools::sql::SqlRecord getEmptyRecord();
 
   /* Import and export from a predefined CSV format */
   int importCsv(const QString& filepath, atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
@@ -122,31 +79,16 @@ public:
   /* Export waypoints into a XML file for BGL compilation */
   int exportBgl(const QString& filepath, const QVector<int>& ids);
 
-  atools::sql::SqlDatabase *getDatabase() const
-  {
-    return db;
-  }
-
-  /* Set later to avoid circular dependeny in database */
-  void setMagDecReader(atools::fs::common::MagDecReader *value);
-
-  /* Create a CSV backup in the settings directory and roll the files over. */
-  void backup();
-
   /* Do any schema updates if needed */
   void updateSchema();
 
-  /* Drops schema tables and indexes */
-  void dropSchema();
+  /* Set later to avoid circular dependeny in database */
+  void setMagDecReader(atools::fs::common::MagDecReader *reader)
+  {
+    magDec = reader;
+  }
 
 private:
-  /* Prints a warning of colummn does not exist */
-  QString at(const QStringList& line, int index, bool nowarn = false);
-
-  /* throws an exception if the coodinates are not valid */
-  void validateCoordinates(const QString& line, const QString& lonx, const QString& laty);
-
-  atools::sql::SqlDatabase *db;
   atools::fs::common::MagDecReader *magDec;
 };
 

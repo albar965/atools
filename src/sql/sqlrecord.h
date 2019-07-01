@@ -143,6 +143,8 @@ public:
     return contains(name) ? valueBool(name) : defaultValue;
   }
 
+  QDateTime valueDateTime(const QString& name, const QDateTime& defaultValue) const;
+
   bool isNull(int i) const;
   bool isNull(const QString& name) const;
 

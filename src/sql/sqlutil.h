@@ -47,6 +47,9 @@ public:
    */
   void printTableStats(QDebug& out, const QStringList& tables = QStringList());
 
+  /* Create a list of columns for the given table excluding all in excludeColumns */
+  QStringList buildColumnList(const QString& tablename, const QStringList& excludeColumns = QStringList());
+
   void createColumnReport(QDebug& out, const QStringList& tables = QStringList());
   void reportDuplicates(QDebug& out, const QString& table, const QString& idColumn,
                         const QStringList& identityColumns);

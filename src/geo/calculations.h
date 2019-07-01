@@ -78,6 +78,7 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
 void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
+atools::geo::Rect boundingRect(const QVector<Pos>& positions);
 
 /* Degree to rad */
 template<typename TYPE>
@@ -410,6 +411,10 @@ Q_DECL_CONSTEXPR TYPE gallonToLiter(TYPE value)
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
          value : static_cast<TYPE>(static_cast<double>(value) * 3.785411784);
 }
+
+/* Calculate the weight/volume ratio and determine if it is jet fuel
+ *  weightVolRatio is 0 if quantity/weight is not sufficient */
+bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio);
 
 /* Avgas 1 gal = 6 lbs, Jetfuel 1 gal = 6,7 lbs */
 template<typename TYPE>

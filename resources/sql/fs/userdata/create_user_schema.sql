@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
+-- *******************************************************************************
+-- This script creates the user defined waypoint table which is kept in its own database
+-- *******************************************************************************
+
 drop table if exists userdata;
 
 -- VRP,1NM NORTH SALERNO TOWN,1NSAL,40.6964,14.785,0,0,IT,FROM SOR VOR: 069° 22NM

@@ -17,6 +17,8 @@
 
 #include "fs/sc/simconnectuseraircraft.h"
 
+#include "geo/calculations.h"
+
 #include <QDebug>
 #include <QDataStream>
 
@@ -61,6 +63,11 @@ void SimConnectUserAircraft::write(QDataStream& out) const
       << fuelTotalQuantityGallons << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg <<
     ambientVisibilityMeter
       << trackMagDeg << trackTrueDeg << localDateTime << zuluDateTime;
+}
+
+bool SimConnectUserAircraft::isJetfuel(float& weightVolRatio) const
+{
+  return atools::geo::isJetFuel(fuelTotalWeightLbs, fuelTotalQuantityGallons, weightVolRatio);
 }
 
 float SimConnectUserAircraft::getConsumedFuelLbs(const SimConnectUserAircraft& past) const

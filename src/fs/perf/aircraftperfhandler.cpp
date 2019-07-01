@@ -20,6 +20,7 @@
 #include "fs/perf/aircraftperf.h"
 #include "fs/sc/simconnectdata.h"
 #include "atools.h"
+#include "geo/calculations.h"
 #include "fs/sc/simconnectuseraircraft.h"
 
 namespace atools {
@@ -78,17 +79,16 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
     perf->setName(aircraft.getAirplaneTitle());
 
   // Determine fuel type ========================================================
-  if(atools::almostEqual(weightVolRatio, 0.f) &&
-     aircraft.getFuelTotalWeightLbs() > 5.f && aircraft.getFuelTotalQuantityGallons() > 1.f)
+  if(atools::almostEqual(weightVolRatio, 0.f))
   {
-    weightVolRatio = aircraft.getFuelTotalWeightLbs() / aircraft.getFuelTotalQuantityGallons();
+    bool jetfuel = atools::geo::isJetFuel(aircraft.getFuelTotalWeightLbs(),
+                                          aircraft.getFuelTotalQuantityGallons(), weightVolRatio);
 
-    if(atools::almostEqual(weightVolRatio, 6.f, 0.2f))
-      perf->setAvgas();
-    else if(atools::almostEqual(weightVolRatio, 6.7f, 0.3f))
-      perf->setJetFuel();
-
-    qDebug() << Q_FUNC_INFO << "weightVolRatio" << weightVolRatio << "jetfuel" << perf->isJetFuel();
+    if(weightVolRatio > 0.f)
+    {
+      perf->setJetFuel(jetfuel);
+      qDebug() << Q_FUNC_INFO << "weightVolRatio" << weightVolRatio << "jetfuel" << perf->isJetFuel();
+    }
   }
 
   // Remember fuel in tanks if not done already ========================================================
