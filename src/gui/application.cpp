@@ -96,7 +96,7 @@ void Application::handleException(const char *file, int line, const std::excepti
                           arg(getEmailHtml()).
                           arg(getReportPathHtml()));
 
-  std::exit(1);
+  std::abort();
 }
 
 void Application::handleException(const char *file, int line)
@@ -116,7 +116,7 @@ void Application::handleException(const char *file, int line)
                           arg(getEmailHtml()).
                           arg(getReportPathHtml()));
 
-  std::exit(1);
+  std::abort();
 }
 
 void Application::addReportPath(const QString& header, const QStringList& paths)
