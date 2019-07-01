@@ -312,6 +312,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 {
   QFile file;
   QTextStream stream;
+  stream.setCodec("UTF-8");
   bool aborted = false;
 
   QString progressMsg = tr("Reading: %1").arg(filepath);

@@ -74,6 +74,7 @@ bool XpWeatherReader::read()
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
+    stream.setCodec("UTF-8");
     retval = index->read(stream, weatherFile, false /* merge */);
     file.close();
   }
