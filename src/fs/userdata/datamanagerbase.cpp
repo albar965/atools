@@ -25,7 +25,6 @@
 #include "settings/settings.h"
 #include "io/fileroller.h"
 #include "exception.h"
-#include "sql/sqlrecord.h"
 #include "sql/sqldatabase.h"
 
 #include <QDir>

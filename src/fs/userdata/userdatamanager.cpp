@@ -17,20 +17,15 @@
 
 #include "fs/userdata/userdatamanager.h"
 
-#include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
-#include "sql/sqlscript.h"
 #include "sql/sqlexport.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqltransaction.h"
-#include "sql/sqlquery.h"
 #include "util/csvreader.h"
 #include "atools.h"
 #include "geo/pos.h"
 #include "fs/common/magdecreader.h"
-#include "settings/settings.h"
 #include "fs/util/fsutil.h"
-#include "io/fileroller.h"
 #include "exception.h"
 
 #include <QDir>
@@ -44,7 +39,6 @@ namespace userdata {
 using atools::geo::Pos;
 using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
-using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
@@ -498,8 +492,9 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << atools::programFileInfoNoDate() << "." << endl << endl;
     }
 
-    QueryWrapper query("select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName,
-                       db, ids, idColumnName);
+    QueryWrapper query(
+      "select " + idColumnName + ", ident, name, tags, laty, lonx, altitude, tags, region from " + tableName,
+      db, ids, idColumnName);
     // 50.88166700    12.58666700  PACEC PACEC ZZ
     // 46.646819444 -123.722388889 AAYRR KSEA  K1 4530263
     // 37.770908333 -122.082811111 AAAME ENRT  K2 4530263
@@ -543,7 +538,8 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     if(!endsWithEol && (flags & APPEND))
       stream << endl;
 
-    QueryWrapper query("select " + idColumnName + ", ident, name,  laty, lonx from " + tableName, db, ids, idColumnName);
+    QueryWrapper query("select " + idColumnName + ", ident, name,  laty, lonx from " + tableName, db, ids,
+                       idColumnName);
     // MTHOOD,MT HOOD PEAK,45.3723,-121.69783
     // CRTRLK,CRATER LAKE,42.94683,-122.11083
     // EIFFEL,EIFFEL TOWER,48.858151,2.294384
@@ -593,7 +589,8 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
     writer.writeAttribute("xsi:noNamespaceSchemaLocation", "bglcomp.xsd");
     writer.writeComment(atools::programFileInfo());
 
-    QueryWrapper query("select " + idColumnName + ", ident, region, tags, laty, lonx from " + tableName, db, ids, idColumnName);
+    QueryWrapper query("select " + idColumnName + ", ident, region, tags, laty, lonx from " + tableName, db, ids,
+                       idColumnName);
     query.exec();
     while(query.next())
     {

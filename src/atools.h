@@ -89,7 +89,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
                   const QString& lineSeparator);
 
 /* Cut linefeed separated text. Return maxLength lines where \n... is included  */
-QString elideTextLinesShort(QString str, int maxLength);
+QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0);
 
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);

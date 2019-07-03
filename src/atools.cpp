@@ -321,16 +321,16 @@ QString elideTextShortMiddle(const QString& str, int maxLength)
   return str;
 }
 
-QString elideTextLinesShort(QString str, int maxLength)
+QString elideTextLinesShort(QString str, int maxLines, int maxLength)
 {
   QStringList lines;
   QTextStream stream(&str, QIODevice::ReadOnly);
 
   int i = 0;
-  while(!stream.atEnd() && ++i < maxLength)
-    lines.append(stream.readLine());
+  while(!stream.atEnd() && ++i < maxLines)
+    lines.append(maxLength > 0 ? elideTextShort(stream.readLine(), maxLength) : stream.readLine());
 
-  if(i >= maxLength)
+  if(i >= maxLines)
     return lines.join("\n") + "\n…";
   else
     return lines.join("\n");

@@ -80,6 +80,23 @@ Pos::Pos(double longitudeX, double latitudeY, double alt)
   altitude = static_cast<float>(alt);
 }
 
+Pos::Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt)
+{
+  if(!longitudeX.isNull() && !latitudeY.isNull() && longitudeX.isValid() && latitudeY.isValid())
+  {
+    *this = Pos(longitudeX.toFloat(), latitudeY.toFloat());
+
+    if(!alt.isNull() && alt.isValid())
+      altitude = alt.toFloat();
+  }
+  else
+  {
+    lonX = INVALID_VALUE;
+    latY = INVALID_VALUE;
+    altitude = 0.f;
+  }
+}
+
 Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
          int latYDeg, int latYMin, float latYSec, bool south, float alt)
 {

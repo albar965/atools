@@ -168,8 +168,17 @@ Rect boundingRect(const QVector<Pos>& positions)
   return rect;
 }
 
-void boundingRect(Rect& rect, const QVector<atools::geo::Pos>& positions)
+void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
 {
+  // Remove all invalid positions
+  auto iter = std::remove_if(positions.begin(), positions.end(), [](const atools::geo::Pos& p) -> bool
+      {
+        return !p.isValid();
+      });
+
+  if(iter != positions.end())
+    positions.erase(iter, positions.end());
+
   // If the line string is empty return an empty boundingbox
   if(positions.size() == 0)
   {

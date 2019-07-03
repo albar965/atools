@@ -17,26 +17,15 @@
 
 #include "fs/userdata/logdatamanager.h"
 
-#include "sql/sqldatabase.h"
 #include "sql/sqlutil.h"
-#include "sql/sqlscript.h"
 #include "sql/sqlexport.h"
 #include "sql/sqltransaction.h"
-#include "sql/sqlquery.h"
 #include "util/csvreader.h"
-#include "atools.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
-#include "fs/common/magdecreader.h"
-#include "settings/settings.h"
-#include "fs/util/fsutil.h"
-#include "io/fileroller.h"
 #include "exception.h"
 
 #include <QDateTime>
-#include <QFile>
-#include <QFileInfo>
-#include <QDebug>
 #include <QDir>
 
 namespace atools {
@@ -46,7 +35,6 @@ namespace userdata {
 using atools::geo::Pos;
 using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
-using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
@@ -88,9 +76,9 @@ enum Index
   DESTINATION_TIME,
   DESTINATION_TIME_SIM,
   SIMULATOR,
-  DESCRIPTION,
-  PLAN_GEOMETRY,
-  TRAIL_GEOMETRY
+  DESCRIPTION
+  // PLAN_GEOMETRY,
+  // TRAIL_GEOMETRY
 };
 
 }
@@ -228,8 +216,8 @@ int LogdataManager::importCsv(const QString& filepath)
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
 
       // Geometry ===============================================================
-      insertQuery.bindValue(":plan_geometry", at(values, csv::PLAN_GEOMETRY));
-      insertQuery.bindValue(":trail_geometry", at(values, csv::TRAIL_GEOMETRY));
+      // insertQuery.bindValue(":plan_geometry", at(values, csv::PLAN_GEOMETRY));
+      // insertQuery.bindValue(":trail_geometry", at(values, csv::TRAIL_GEOMETRY));
 
       insertQuery.exec();
 
@@ -357,6 +345,7 @@ int LogdataManager::importXplane(const QString& filepath,
         }
 
         insertQuery.bindValue(":departure_time_sim", departureTime);
+        insertQuery.bindValue(":departure_time", departureTime);
 
         // Destination =====================================================
         // Get name and coordinates from database
@@ -374,6 +363,7 @@ int LogdataManager::importXplane(const QString& filepath,
           insertQuery.bindValue(":destination_alt", destinationPos.getAltitude());
         }
         insertQuery.bindValue(":destination_time_sim", destinationTime);
+        insertQuery.bindValue(":destination_time", destinationTime);
 
         // Aircraft ====================================================
         if(TAIL_NUMBER < line.size())

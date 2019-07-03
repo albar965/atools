@@ -77,7 +77,7 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 
 /* Calculate a bounding rectangle for a list of positions. Also around the anti meridian which can
  * mean that left > right */
-void boundingRect(atools::geo::Rect& rect, const QVector<Pos>& positions);
+void boundingRect(atools::geo::Rect& rect, QVector<Pos> positions);
 atools::geo::Rect boundingRect(const QVector<Pos>& positions);
 
 /* Degree to rad */

@@ -63,6 +63,9 @@ public:
   explicit Pos(float longitudeX, float latitudeY, float alt = 0.f);
   explicit Pos(double longitudeX, double latitudeY, double alt = 0.);
 
+  /* Will be invalid if variants are null or not valid */
+  explicit Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt = QVariant(0.f));
+
   /* @param str format like
    * N49° 26' 41.57",E9° 12' 5.49",+005500.00 or
    * N54* 16.82', W008* 35.95', +000011.00 */
