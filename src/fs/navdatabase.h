@@ -152,7 +152,7 @@ private:
 
   atools::sql::SqlDatabase *db;
   atools::fs::NavDatabaseErrors *errors = nullptr;
-  const atools::fs::NavDatabaseOptions *options;
+  const atools::fs::NavDatabaseOptions *options = nullptr;
   bool aborted = false;
   QString gitRevision;
 

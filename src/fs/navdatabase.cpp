@@ -76,6 +76,9 @@ NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDataba
 
 void NavDatabase::create(const QString& codec)
 {
+  if(options != nullptr)
+    qDebug() << Q_FUNC_INFO << *options;
+
   createInternal(codec);
   if(aborted)
     // Remove all (partial) changes

@@ -802,6 +802,9 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts)
   QString customPath(buildPathNoCase({opts.getBasepath(), "Custom Data"}));
   QString defaultPath(buildPathNoCase({opts.getBasepath(), "Resources", "default data"}));
 
+  qDebug() << Q_FUNC_INFO << "customPath" << customPath;
+  qDebug() << Q_FUNC_INFO << "defaultPath" << defaultPath;
+
   if(includeFile(opts, customPath) &&
      QFileInfo::exists(buildPathNoCase({customPath, "earth_fix.dat"})) &&
      QFileInfo::exists(buildPathNoCase({customPath, "earth_awy.dat"})) &&
@@ -814,8 +817,11 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts)
   else
     throw atools::Exception(tr("Cannot find valid files for X-Plane navdata in either\n\"%1\" or\n\"%2\"\n\n"
                                "Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat "
-                               "can be found in on of these paths.").
+                               "can be found in one of these paths.").
                             arg(customPath).arg(defaultPath));
+
+  qDebug() << Q_FUNC_INFO << "basePath" << basePath;
+
   return basePath;
 }
 
