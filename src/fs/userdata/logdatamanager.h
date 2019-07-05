@@ -52,7 +52,22 @@ public:
   /* Update schema to latest. Checks for new columns and tables. */
   void updateSchema();
 
-private:
+  /* Get various statistical information for departure times */
+  void getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim, QDateTime& latestSim);
+
+  /* Flight plant distances in NM for logbook entries */
+  void getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage);
+
+  /* Trip Time in hours */
+  void getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim, float& timeAverageSim);
+
+  /* Various numbers */
+  void getFlightStatsAirports(int& numDepartAirports, int& numDestAirports);
+  void getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators);
+
+  /* Simulator to number of logbook entries */
+  void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
+
 };
 
 } // namespace userdata

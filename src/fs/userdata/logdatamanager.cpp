@@ -440,6 +440,84 @@ void LogdataManager::updateSchema()
   // no-op
 }
 
+void LogdataManager::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim,
+                                        QDateTime& latestSim)
+{
+  SqlQuery query("select min(departure_time), max(departure_time), "
+                 "min(departure_time_sim), max(departure_time_sim) from " + tableName, db);
+  query.exec();
+  if(query.next())
+  {
+    earliest = query.valueDateTime(0);
+    latest = query.valueDateTime(1);
+    earliestSim = query.valueDateTime(2);
+    latestSim = query.valueDateTime(3);
+  }
+}
+
+void LogdataManager::getFlightStatsDistance(float& distTotal, float& distMax, float& distAverage)
+{
+  SqlQuery query("select sum(distance), max(distance), avg(distance) from " + tableName, db);
+  query.exec();
+  if(query.next())
+  {
+    distTotal = query.valueFloat(0);
+    distMax = query.valueFloat(1);
+    distAverage = query.valueFloat(2);
+  }
+}
+
+void LogdataManager::getFlightStatsAirports(int& numDepartAirports, int& numDestAirports)
+{
+  SqlQuery query("select count(distinct departure_ident), count(distinct destination_ident) from " + tableName, db);
+  query.exec();
+  if(query.next())
+  {
+    numDepartAirports = query.valueInt(0);
+    numDestAirports = query.valueInt(1);
+  }
+}
+
+void LogdataManager::getFlightStatsAircraft(int& numTypes, int& numRegistrations, int& numNames, int& numSimulators)
+{
+  SqlQuery query("select count(distinct aircraft_type), count(distinct aircraft_registration), "
+                 "count(distinct aircraft_name), count(distinct simulator) "
+                 "from " + tableName, db);
+  query.exec();
+  if(query.next())
+  {
+    numTypes = query.valueInt(0);
+    numRegistrations = query.valueInt(1);
+    numNames = query.valueInt(2);
+    numSimulators = query.valueInt(3);
+  }
+}
+
+void LogdataManager::getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators)
+{
+  SqlQuery query("select count(1), simulator from " + tableName + " group by simulator order by count(1) desc", db);
+  query.exec();
+  while(query.next())
+    numSimulators.append(std::make_pair(query.valueInt(0), query.valueStr(1)));
+}
+
+void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
+                                            float& timeAverageSim)
+{
+  SqlQuery query("select max(time_real), avg(time_real), max(time_sim), avg(time_sim) from (select "
+                 "strftime('%s', destination_time) - strftime('%s', departure_time) as time_real, "
+                 "strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) as time_sim "
+                 "from " + tableName + ")", db);
+  query.exec();
+  if(query.next())
+  {
+    timeMaximum = query.valueFloat(0) / 3600.f;
+    timeAverage = query.valueFloat(1) / 3600.f;
+    timeMaximumSim = query.valueFloat(2) / 3600.f;
+    timeAverageSim = query.valueFloat(3) / 3600.f;
+  }
+}
+
 } // namespace userdata
 } // namespace fs
 } // namespace atools

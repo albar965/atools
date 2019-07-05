@@ -18,6 +18,7 @@
 #ifndef ATOOLS_SQL_SQLQUERY_H
 #define ATOOLS_SQL_SQLQUERY_H
 
+#include <QDateTime>
 #include <QSqlQuery>
 #include <QVariant>
 
@@ -99,19 +100,29 @@ public:
     return value(i).toFloat();
   }
 
-  double valueDouble(int i) const
-  {
-    return value(i).toDouble();
-  }
-
   float valueFloat(const QString& name) const
   {
     return value(name).toFloat();
   }
 
+  double valueDouble(int i) const
+  {
+    return value(i).toDouble();
+  }
+
   double valueDouble(const QString& name) const
   {
     return value(name).toDouble();
+  }
+
+  QDateTime valueDateTime(int i) const
+  {
+    return value(i).toDateTime();
+  }
+
+  QDateTime valueDateTime(const QString& name) const
+  {
+    return value(name).toDateTime();
   }
 
   int valueBool(int i) const
@@ -148,6 +159,11 @@ public:
   double valueDouble(const QString& name, double defaultValue) const
   {
     return hasField(name) ? valueDouble(name) : defaultValue;
+  }
+
+  QDateTime valueDateTime(const QString& name, QDateTime defaultValue) const
+  {
+    return hasField(name) ? valueDateTime(name) : defaultValue;
   }
 
   int valueBool(const QString& name, bool defaultValue) const
