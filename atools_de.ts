@@ -174,6 +174,33 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>GribReader</name>
+    <message>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot seek in file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot read file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>GRIB data empty</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not a GRIB file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>HtmlBuilder</name>
     <message>
         <source>Yes</source>
@@ -182,6 +209,25 @@ Datei: &quot;%2&quot;
     <message>
         <source>No</source>
         <translation>Nein</translation>
+    </message>
+</context>
+<context>
+    <name>MagDecTool</name>
+    <message>
+        <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error in MAG_SetDefaults.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error in MAG_GridInternal.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open geoid buffer &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -825,19 +871,19 @@ Datei: &quot;%2&quot;
     <name>QObject</name>
     <message>
         <source>The file is not an runways.xml file. Element &quot;data&quot; not found.</source>
-        <translation>Die Datei ist keine runways.xml Datei. Element &quot;data&quot; wurde nicht gefunden.</translation>
+        <translation type="vanished">Die Datei ist keine runways.xml Datei. Element &quot;data&quot; wurde nicht gefunden.</translation>
     </message>
     <message>
         <source>Error reading runways.xml file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Lesefehler bei runways.xml Datei &quot;%1&quot;. Grund: %2.</translation>
+        <translation type="vanished">Lesefehler bei runways.xml Datei &quot;%1&quot;. Grund: %2.</translation>
     </message>
     <message>
         <source>Cannot open runways.xml file &quot;%1&quot;. Reason: %2.</source>
-        <translation>runways.xml Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation type="vanished">runways.xml Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
         <source>The file is not an runways.xml file. Element &quot;ICAO&quot; not found.</source>
-        <translation>Die Datei ist keine runways.xml Datei. Element &quot;ICAO&quot; wurde nicht gefunden.</translation>
+        <translation type="vanished">Die Datei ist keine runways.xml Datei. Element &quot;ICAO&quot; wurde nicht gefunden.</translation>
     </message>
     <message>
         <source>No Error</source>
@@ -1197,10 +1243,25 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>TempFile</name>
+    <message>
+        <source>Cannot read from &quot;%1&quot;. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open &quot;%1&quot; for reading. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation type="vanished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
         <source>Longitude is not a valid number in line
@@ -1262,6 +1323,10 @@ Import stopped.</source>
 
 Importieren gestoppt.</translation>
     </message>
+    <message>
+        <source>Cannot open backup file %1. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>XpDataCompiler</name>
@@ -1295,11 +1360,19 @@ Importieren gestoppt.</translation>
 &quot;%2&quot;
 
 Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on of these paths.</source>
-        <translation>Kann weder in
+        <translation type="vanished">Kann weder in
 %1 noch in
 %2
 gültige X-Plane Navigationsdaten finden.
 Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem dieser Pfade gefunden werden kann.</translation>
+    </message>
+    <message>
+        <source>Cannot find valid files for X-Plane navdata in either
+&quot;%1&quot; or
+&quot;%2&quot;
+
+Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in one of these paths.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1518,6 +1591,33 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     <message>
         <source>%1. File &quot;%2&quot;, line %3:&quot;%4&quot;</source>
         <translation>%1. Datei &quot;%2&quot;, Zeile %3: &quot;%4&quot;</translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::userdata::LogdataManager</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+    </message>
+    <message>
+        <source>Imported from X-Plane logbook %1
+Number of landings: %2
+Cross country time: %3
+IFR time: %4
+Night time: %5</source>
+        <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open backup file %1. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::userdata::UserdataManager</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
+        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
 </context>
 <context>
