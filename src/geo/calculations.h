@@ -318,6 +318,14 @@ Q_DECL_CONSTEXPR TYPE nmToMi(TYPE value)
          static_cast<TYPE>(static_cast<double>(value) * 1852.216 / 1609.3426);
 }
 
+/* Distance from statue miles to nautical miles */
+template<typename TYPE>
+Q_DECL_CONSTEXPR TYPE miToNm(TYPE value)
+{
+  return (value > std::numeric_limits<TYPE>::max() / 2) ? value :
+         static_cast<TYPE>(static_cast<double>(value) * 1609.3426 / 1852.216);
+}
+
 /* Distance from meter to statue miles */
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE meterToMi(TYPE value)

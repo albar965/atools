@@ -385,7 +385,8 @@ int LogdataManager::importXplane(const QString& filepath,
         insertQuery.bindValue(":simulator", "X-Plane 11");
 
         // Description ===================================================================
-        QString description(tr("Imported from %1\n"
+        /*: The text "Imported from X-Plane logbook" has to match the one in LogdataController::importXplane */
+        QString description(tr("Imported from X-Plane logbook %1\n"
                                "Number of landings: %2\n"
                                "Cross country time: %3\n"
                                "IFR time: %4\n"
