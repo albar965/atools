@@ -18,8 +18,8 @@
 #ifndef ATOOLS_FS_COMMON_MAGDECREADER_H
 #define ATOOLS_FS_COMMON_MAGDECREADER_H
 
-#include <QByteArray>
 #include <QDate>
+#include <QApplication>
 
 namespace atools {
 namespace geo {
@@ -38,12 +38,14 @@ namespace common {
  */
 class MagDecReader
 {
+  Q_DECLARE_TR_FUNCTIONS(MagDecReader)
+
 public:
   MagDecReader();
   virtual ~MagDecReader();
 
   /* Calculate values from world magnetic model based on current year and month or current date if not given.
-   * Values can be saved to database.
+   * Values can be saved to database. Result is always valid.
    *  January = 1 */
   void readFromWmm(int year, int month = 1);
   void readFromWmm(const QDate& date);

@@ -699,7 +699,12 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
 bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
 {
+  // Prepare structure for error collection
+  NavDatabaseErrors::SceneryErrors err;
+  fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
   fsDataWriter->readMagDeclBgl();
+  if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+    errors->sceneryErrors.append(err);
 
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
   {
@@ -709,12 +714,8 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
       if((aborted = progress->reportSceneryArea(&area)))
         return true;
 
-      NavDatabaseErrors::SceneryErrors err;
-      if(errors != nullptr)
-        // Prepare structure for error collection
-        fsDataWriter->setSceneryErrors(&err);
-      else
-        fsDataWriter->setSceneryErrors(nullptr);
+      err = NavDatabaseErrors::SceneryErrors();
+      fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
 
       // Read all BGL files in the scenery area into classes of the bgl namespace and
       // write the contents to the database

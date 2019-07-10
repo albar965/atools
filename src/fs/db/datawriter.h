@@ -18,11 +18,12 @@
 #ifndef ATOOLS_FS_DB_DATAWRITER_H
 #define ATOOLS_FS_DB_DATAWRITER_H
 
+#include "fs/navdatabaseerrors.h"
+
 #include <QList>
 #include <QSet>
 #include <QString>
-
-#include "fs/navdatabaseerrors.h"
+#include <QApplication>
 
 namespace atools {
 namespace sql {
@@ -79,6 +80,8 @@ class BoundaryWriter;
  */
 class DataWriter
 {
+  Q_DECLARE_TR_FUNCTIONS(DataWriter)
+
 public:
   DataWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
              atools::fs::ProgressHandler *progress);
@@ -254,7 +257,7 @@ public:
   /* Close all writers and queries */
   void close();
 
-  float getMagVar(const atools::geo::Pos & pos, float defaultValue) const;
+  float getMagVar(const atools::geo::Pos& pos, float defaultValue) const;
 
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,

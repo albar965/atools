@@ -337,15 +337,55 @@ void DataWriter::readMagDeclBgl()
 
   qInfo() << "Reading" << file;
 
-  magDecReader->readFromBgl(file);
+  bool loaded = false;
 
-  if(magDecReader->isValid())
+  if(!file.isEmpty())
   {
+    try
+    {
+      magDecReader->readFromBgl(file);
+    }
+    catch(atools::Exception& e)
+    {
+      qCritical() << "Caught exception reading" << file << ":" << e.what();
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->fileErrors.append({file, QString(e.what()), 0});
+    }
+    catch(...)
+    {
+      qCritical() << "Caught unknown exception reading" << file;
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->fileErrors.append({file, tr("Cannot read file. Falling back to world magnetic model."), 0});
+    }
+
+    if(magDecReader->isValid())
+    {
+      magDecReader->writeToTable(db);
+      db.commit();
+      loaded = true;
+    }
+    else
+    {
+      progressHandler->reportError();
+      if(sceneryErrors != nullptr)
+        sceneryErrors->fileErrors.append({file, tr("File not valid. Falling back to world magnetic model."), 0});
+    }
+  }
+  else
+  {
+    progressHandler->reportError();
+    if(sceneryErrors != nullptr)
+      sceneryErrors->fileErrors.append({"magdec.bgl", tr("File not found. Falling back to world magnetic model."), 0});
+  }
+
+  if(!loaded)
+  {
+    magDecReader->readFromWmm();
     magDecReader->writeToTable(db);
     db.commit();
   }
-  else
-    qWarning() << "Error reading" << file;
 }
 
 void DataWriter::logResults()

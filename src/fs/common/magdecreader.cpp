@@ -80,66 +80,67 @@ void MagDecReader::readFromBgl(const QString& filename)
 
   QFile file(filename);
 
-  if(file.exists())
+  if(file.open(QIODevice::ReadOnly))
   {
-    if(file.open(QIODevice::ReadOnly))
+    // Offset	Length	Description	Content
+    // 0x00	1 - BYTE	World set number	0X01
+    // 0x01	127 - ?	Unknown	All 0, except 0x80 at offset 0x6E
+    // 0x80	2 - WORD	Number of longitude values	0x168 (360)
+    // 0x82	2 - WORD	Number of latitude values	0xB5 (181)
+    // 0x84	1 - BYTE	Reference date day (?)	0x01
+    // 0x85	1 - BYTE	Reference date month (?)	0x01 (FS2004) - 0x11 (FSX/P3D)
+    // 0x86	2 - WORD	Reference date year (?)	0x1993 (FS2004) - 0x2006 (FSX/P3D)
+
+    atools::io::BinaryStream stream(&file);
+    int worldSet = stream.readByte();
+
+    // skip unknown bytes
+    stream.seekg(0x80);
+    quint32 numLongValues = stream.readUShort();
+    quint32 numLatValues = stream.readUShort();
+
+    int referenceDay = stream.readByte();
+    int referenceMonth = stream.readByte();
+    int referenceYear = stream.readShort();
+
+    // Convert the obscure hex notation to decimal
+    int year = QString::number(referenceYear, 16).toInt();
+    referenceDate.setDate(year, referenceMonth, referenceDay);
+
+    qInfo() << Q_FUNC_INFO << "MagDec World Set" << worldSet
+            << "day" << referenceDay << "month" << referenceMonth << "year" << hex << referenceYear << dec;
+
+    if(numLongValues != 360)
     {
-      // Offset	Length	Description	Content
-      // 0x00	1 - BYTE	World set number	0X01
-      // 0x01	127 - ?	Unknown	All 0, except 0x80 at offset 0x6E
-      // 0x80	2 - WORD	Number of longitude values	0x168 (360)
-      // 0x82	2 - WORD	Number of latitude values	0xB5 (181)
-      // 0x84	1 - BYTE	Reference date day (?)	0x01
-      // 0x85	1 - BYTE	Reference date month (?)	0x01 (FS2004) - 0x11 (FSX/P3D)
-      // 0x86	2 - WORD	Reference date year (?)	0x1993 (FS2004) - 0x2006 (FSX/P3D)
-
-      atools::io::BinaryStream stream(&file);
-      int worldSet = stream.readByte();
-
-      // skip unknown bytes
-      stream.seekg(0x80);
-      quint32 numLongValues = stream.readUShort();
-      quint32 numLatValues = stream.readUShort();
-
-      int referenceDay = stream.readByte();
-      int referenceMonth = stream.readByte();
-      int referenceYear = stream.readShort();
-
-      // Convert the obscure hex notation to decimal
-      int year = QString::number(referenceYear, 16).toInt();
-      referenceDate.setDate(year, referenceMonth, referenceDay);
-
-      qInfo() << Q_FUNC_INFO << "MagDec World Set" << worldSet
-              << "day" << referenceDay << "month" << referenceMonth << "year" << hex << referenceYear << dec;
-
-      if(numLongValues != 360)
-      {
-        qWarning() << "MagDecReader numLongValues is not valid" << numLongValues;
-        return;
-      }
-
-      if(numLatValues != 181)
-      {
-        qWarning() << "MagDecReader numLatValues is not valid" << numLatValues;
-        return;
-      }
-
-      numValues = numLongValues * numLatValues;
-
-      magDecValues = new float[numValues];
-
-      // Decode all values
-      for(quint32 i = 0; i < numValues; i++)
-        // East values are positive while West values are negative
-        // As an example a E03.4° value will be coded as:
-        // MV (E03.4°) = 65536*3.4/360 = 619 (0x26B)
-        // A W01.1° value will be coded as:
-        // MV (W01.1°) = 65536 - (65536*1.1/360) = 65336 (0xFF38)
-        magDecValues[i] = static_cast<float>(stream.readShort()) / 65536.f * 360.f;
-
-      file.close();
+      qWarning() << "MagDecReader numLongValues is not valid" << numLongValues;
+      throw atools::Exception(tr("Number of longitude values is not valid when reading magdec.bgl: %1").
+                              arg(numLongValues));
     }
+
+    if(numLatValues != 181)
+    {
+      qWarning() << "MagDecReader numLatValues is not valid" << numLatValues;
+      throw atools::Exception(tr("Number of latitude values is not valid when reading magdec.bgl: %1").
+                              arg(numLatValues));
+    }
+
+    numValues = numLongValues * numLatValues;
+
+    magDecValues = new float[numValues];
+
+    // Decode all values
+    for(quint32 i = 0; i < numValues; i++)
+      // East values are positive while West values are negative
+      // As an example a E03.4° value will be coded as:
+      // MV (E03.4°) = 65536*3.4/360 = 619 (0x26B)
+      // A W01.1° value will be coded as:
+      // MV (W01.1°) = 65536 - (65536*1.1/360) = 65336 (0xFF38)
+      magDecValues[i] = static_cast<float>(stream.readShort()) / 65536.f * 360.f;
+
+    file.close();
   }
+  else
+    throw atools::Exception(tr("Cannot read %1. Reason: %2").arg(file.fileName()).arg(file.errorString()));
 }
 
 void MagDecReader::readFromBytes(const QByteArray& bytes)
@@ -194,7 +195,7 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
       return true;
     }
     else
-      qWarning() << "Nothing found in table magdecl";
+      throw atools::Exception(tr("Cannot read declination from database."));
   }
   return false;
 }
@@ -215,7 +216,7 @@ bool MagDecReader::isValid() const
 QByteArray MagDecReader::writeToBytes() const
 {
   if(!isValid())
-    throw Exception("MagDecReader is invalid");
+    throw Exception("Magnetic declination values are invalid");
 
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);
@@ -281,7 +282,7 @@ float MagDecReader::magvar(int offset) const
   if(offset >= 0 && offset < static_cast<int>(numValues))
     return magDecValues[offset];
   else
-    throw Exception(QString("Wrong offset into magvar array %1").arg(offset));
+    throw Exception(QString("Wrong offset into magnetic declination %1").arg(offset));
 }
 
 // Latitude/Longitude table is 130,320 bytes length and starts at offset 0x88.
