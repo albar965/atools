@@ -198,7 +198,8 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
 QString buildPathNoCase(const QStringList& paths)
 {
 
-#if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
+  // Use the same for macOS since case sensitive file systems can cause problems
+#if defined(Q_OS_WIN32)
   return buildPath(paths);
 
 #else
