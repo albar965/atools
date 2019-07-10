@@ -66,6 +66,8 @@ public:
   /* Read file and fill entries list. */
   void read(const QString& basePath);
 
+  static bool exists(const QString& basePath, QString& error, QString& filepath);
+
   /* Get list of entries from file after calling read */
   const QVector<SceneryPack>& getEntries() const;
 
