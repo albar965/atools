@@ -42,6 +42,24 @@
     </message>
 </context>
 <context>
+    <name>DataWriter</name>
+    <message>
+        <location filename="src/fs/db/datawriter.cpp" line="360"/>
+        <source>Cannot read file. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/db/datawriter.cpp" line="373"/>
+        <source>File not valid. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/db/datawriter.cpp" line="380"/>
+        <source>File not found. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ErrorHandler</name>
     <message>
         <location filename="src/gui/errorhandler.cpp" line="35"/>
@@ -237,6 +255,29 @@ Fichier: &quot;%2&quot;
         <location filename="src/util/htmlbuilder.cpp" line="182"/>
         <source>No</source>
         <translation>Non</translation>
+    </message>
+</context>
+<context>
+    <name>MagDecReader</name>
+    <message>
+        <location filename="src/fs/common/magdecreader.cpp" line="116"/>
+        <source>Number of longitude values is not valid when reading magdec.bgl: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/common/magdecreader.cpp" line="123"/>
+        <source>Number of latitude values is not valid when reading magdec.bgl: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/common/magdecreader.cpp" line="143"/>
+        <source>Cannot read %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/common/magdecreader.cpp" line="198"/>
+        <source>Cannot read declination from database.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -948,14 +989,14 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="579"/>
         <location filename="src/fs/navdatabase.cpp" line="585"/>
         <location filename="src/fs/navdatabase.cpp" line="661"/>
-        <location filename="src/fs/navdatabase.cpp" line="735"/>
+        <location filename="src/fs/navdatabase.cpp" line="736"/>
         <source>Creating indexes</source>
         <translation>Création d&apos;index</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="564"/>
         <location filename="src/fs/navdatabase.cpp" line="674"/>
-        <location filename="src/fs/navdatabase.cpp" line="741"/>
+        <location filename="src/fs/navdatabase.cpp" line="742"/>
         <source>Clean up</source>
         <translation>Nettoyage</translation>
     </message>
@@ -1016,27 +1057,27 @@ Fichier: &quot;%2&quot;
         <translation>Création d&apos;index pour la recherche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="750"/>
+        <location filename="src/fs/navdatabase.cpp" line="751"/>
         <source>Basic Validation</source>
         <translation>Validation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="829"/>
+        <location filename="src/fs/navdatabase.cpp" line="830"/>
         <source>Creating table statistics</source>
         <translation>Création de statistiques de table</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="835"/>
+        <location filename="src/fs/navdatabase.cpp" line="836"/>
         <source>Creating report on values</source>
         <translation>Création d&apos;un rapport sur les valeurs</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="841"/>
+        <location filename="src/fs/navdatabase.cpp" line="842"/>
         <source>Creating report on duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="879"/>
+        <location filename="src/fs/navdatabase.cpp" line="880"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
@@ -1095,17 +1136,17 @@ Fichier: &quot;%2&quot;
         <translation>&lt;b&gt;Une erreur fatale s&apos;est produite. &lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Pressez OK pour quitter l&apos;application. &lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="360"/>
+        <location filename="src/atools.cpp" line="361"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="370"/>
+        <location filename="src/atools.cpp" line="371"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="395"/>
+        <location filename="src/atools.cpp" line="396"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
@@ -1666,57 +1707,72 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>XpSceneryPacks</name>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="61"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="51"/>
+        <source>File is not a regular file</source>
+        <translation type="unfinished">Le fichier n&apos;est pas un fichier régulier</translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="54"/>
+        <source>File is not readable</source>
+        <translation type="unfinished">Le fichier n&apos;est pas lisible</translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="57"/>
+        <source>File does not exist</source>
+        <translation type="unfinished">Le fichier n&apos;existe pas</translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
         <source>Cannot open file &quot;%1&quot;. Not a scenery_packs.ini file. %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Pas de fichier scenery_packs.ini. %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="66"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="88"/>
         <source>Intital &quot;I&quot; or &quot;A&quot; missing</source>
         <translation type="unfinished">Intitiale &quot;I&quot; ou &quot;A&quot; manquant</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="71"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="93"/>
         <source>&quot;Version&quot; missing</source>
         <translation type="unfinished">&quot;Version&quot; manquantes</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="76"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="98"/>
         <source>Version number not valid</source>
         <translation type="unfinished">Numéro de version non valide</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="81"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="103"/>
         <source>&quot;SCENERY&quot; missing</source>
         <translation type="unfinished">&quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="86"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="108"/>
         <source>Empty line after &quot;SCENERY&quot; missing</source>
         <translation type="unfinished">Ligne vide après &quot;SCENERY&quot; manquante</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="101"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="123"/>
         <source>Invalid entry at line %1 in &quot;%2&quot;.</source>
         <translation type="unfinished">Entrée non valable à la ligne %1 dans &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="141"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="163"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; does not exist.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="144"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="166"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not a directory.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="147"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="169"/>
         <source>&quot;%1&quot; at line %2 in &quot;%3&quot; is not readable.</source>
         <translation type="unfinished">&quot;%1&quot; à la ligne %2 dans &quot;%3&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/scenerypacks.cpp" line="173"/>
+        <location filename="src/fs/xp/scenerypacks.cpp" line="195"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
@@ -1815,52 +1871,87 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="319"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="233"/>
+        <source>on ground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="235"/>
+        <source>fuel flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="242"/>
+        <source>climbing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="244"/>
+        <source>descending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
+        <source>at cruise altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="250"/>
+        <source>below cruise altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
+        <source>above cruise altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="375"/>
         <source>Invalid</source>
         <translation type="unfinished">Invalide</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="322"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="378"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="325"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="381"/>
         <source>Departure Parking</source>
         <translation type="unfinished">Parking de départ</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="328"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="384"/>
         <source>Departure Taxi and Takeoff</source>
         <translation type="unfinished">Départ | Taxi et Décollage</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="331"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="387"/>
         <source>Climb</source>
         <translation type="unfinished">Montée</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="334"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="390"/>
         <source>Cruise</source>
         <translation type="unfinished">Croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="337"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="393"/>
         <source>Descent</source>
         <translation type="unfinished">Descente</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="340"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="396"/>
         <source>Destination Taxi</source>
         <translation type="unfinished">Taxi à destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="343"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
         <source>Destination Parking</source>
         <translation type="unfinished">Parking de destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="346"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>

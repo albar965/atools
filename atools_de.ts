@@ -36,6 +36,21 @@
     </message>
 </context>
 <context>
+    <name>DataWriter</name>
+    <message>
+        <source>Cannot read file. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not valid. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File not found. Falling back to world magnetic model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ErrorHandler</name>
     <message>
         <source>%1
@@ -209,6 +224,25 @@ Datei: &quot;%2&quot;
     <message>
         <source>No</source>
         <translation>Nein</translation>
+    </message>
+</context>
+<context>
+    <name>MagDecReader</name>
+    <message>
+        <source>Number of longitude values is not valid when reading magdec.bgl: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of latitude values is not valid when reading magdec.bgl: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot read %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot read declination from database.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1421,6 +1455,18 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
+    <message>
+        <source>File is not a regular file</source>
+        <translation type="unfinished">Datei ist keine reguläre Datei</translation>
+    </message>
+    <message>
+        <source>File is not readable</source>
+        <translation type="unfinished">Datei ist nicht lesbar</translation>
+    </message>
+    <message>
+        <source>File does not exist</source>
+        <translation type="unfinished">Datei existiert nicht</translation>
+    </message>
 </context>
 <context>
     <name>atools::fs::ns::NavServer</name>
@@ -1533,6 +1579,34 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     <message>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
+    </message>
+    <message>
+        <source>on ground</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fuel flow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>climbing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>descending</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>at cruise altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>below cruise altitude</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>above cruise altitude</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
