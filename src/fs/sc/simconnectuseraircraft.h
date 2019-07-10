@@ -179,7 +179,7 @@ public:
 
   bool hasFuelFlow() const
   {
-    return fuelFlowGPH > 1.f || fuelFlowPPH > 0.1f;
+    return fuelFlowGPH > 0.5f || fuelFlowPPH > 1.0f;
   }
 
   /* Calculate the weight/volume ratio and determine if it is jet fuel

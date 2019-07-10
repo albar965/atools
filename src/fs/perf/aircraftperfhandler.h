@@ -111,6 +111,9 @@ public:
   /* Sets a copy */
   void setAircraftPerformance(const atools::fs::perf::AircraftPerf& value);
 
+  /* Get a list describing aircraft status, like cruise, fuel flow, etc */
+  QStringList getAircraftStatusTexts();
+
 signals:
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 
@@ -142,6 +145,12 @@ private:
 
   /* Collecting data if true. Set to false after landing. */
   bool active = false;
+
+  bool aircraftClimb = false, aircraftDescent = false, aircraftFuelFlow = false, aircraftGround = false,
+       aircraftFlying = false;
+
+  /* -1 if below, 0 if at and 1 if above flight plan cruise altitude. Use below as default. */
+  int aircraftCruise = -1;
 
   /* Last time of sample to allow calculation of averages */
   qint64 lastSampleTimeMs = 0L;
