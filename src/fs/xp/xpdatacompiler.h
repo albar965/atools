@@ -231,7 +231,7 @@ private:
   static QStringList findAirspaceFiles(const atools::fs::NavDatabaseOptions& opts);
 
   static QStringList findFiles(const atools::fs::NavDatabaseOptions& opts, const QString& subdir,
-                               const QStringList& pattern, const QString& additionalDir, bool makeUnique);
+                               const QStringList& pattern, bool makeUnique);
 
   atools::fs::xp::ContextFlags flagsFromOptions();
 

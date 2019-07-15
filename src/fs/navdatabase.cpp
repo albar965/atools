@@ -85,6 +85,15 @@ void NavDatabase::create(const QString& codec)
     db->rollback();
 }
 
+void NavDatabase::createAirspaceSchema()
+{
+  SqlScript script(db, true /* options->isVerbose()*/);
+  script.executeScript(":/atools/resources/sql/fs/db/drop_meta.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
+}
+
 void NavDatabase::createSchema()
 {
   createSchemaInternal(nullptr);

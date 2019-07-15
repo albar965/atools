@@ -80,6 +80,10 @@ public:
    * Configuration is not used and can be null. atools::Exception is thrown in case of error. */
   void createSchema();
 
+  /* Creates only metadata and boundary tables for user airspaces. Does not use progress and does not open a
+   * transaction. */
+  void createAirspaceSchema();
+
   /*
    *
    * @return true if loading was aborted by the progress callback

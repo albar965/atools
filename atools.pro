@@ -153,6 +153,8 @@ HEADERS += \
   src/fs/sc/simconnectuseraircraft.h \
   src/fs/sc/weatherrequest.h \
   src/fs/sc/xpconnecthandler.h \
+  src/fs/userdata/airspacereaderbase.h \
+  src/fs/userdata/airspacereaderopenair.h \
   src/fs/userdata/datamanagerbase.h \
   src/fs/userdata/logdatamanager.h \
   src/fs/weather/metar.h \
@@ -254,6 +256,8 @@ SOURCES += \
   src/fs/sc/simconnectuseraircraft.cpp \
   src/fs/sc/weatherrequest.cpp \
   src/fs/sc/xpconnecthandler.cpp \
+  src/fs/userdata/airspacereaderbase.cpp \
+  src/fs/userdata/airspacereaderopenair.cpp \
   src/fs/userdata/datamanagerbase.cpp \
   src/fs/userdata/logdatamanager.cpp \
   src/fs/weather/metar.cpp \

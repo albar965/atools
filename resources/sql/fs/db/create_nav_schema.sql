@@ -320,3 +320,18 @@ create table magdecl
   reference_time integer not null,  -- Reference time. Seconds since Epoch.
   mag_var blob                      -- A list of single precision float values prefixed by size
 );
+
+-- **************************************************
+
+-- minimum off route altitude
+drop table if exists mora_grid;
+
+-- MORA grid
+create table mora_grid
+(
+  mora_grid_id integer primary key,
+  version integer not null,
+  lonx_columns integer not null,
+  laty_rows integer not null,
+  geometry blob not null
+);

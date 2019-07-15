@@ -53,15 +53,3 @@ foreign key(file_id) references bgl_file(bgl_file_id)
 
 create index if not exists idx_boundary_file_id on boundary(file_id);
 
--- minimum off route altitude
-drop table if exists mora_grid;
-
--- MORA grid
-create table mora_grid
-(
-  mora_grid_id integer primary key,
-  version integer not null,
-  lonx_columns integer not null,
-  laty_rows integer not null,
-  geometry blob not null
-);

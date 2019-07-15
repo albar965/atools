@@ -612,22 +612,16 @@ QStringList XpDataCompiler::findCustomAptDatFiles(const atools::fs::NavDatabaseO
 
 QStringList XpDataCompiler::findAirspaceFiles(const NavDatabaseOptions& opts)
 {
-  QString additionalDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first() +
-                          QDir::separator() + "Little Navmap" + QDir::separator() + "X-Plane Airspaces";
-  if(!QFile::exists(additionalDir))
-    additionalDir.clear();
-
-  return findFiles(opts, "airspaces", {"*.txt"}, additionalDir, false /* makeUnique */);
+  return findFiles(opts, "airspaces", {"*.txt"}, false /* makeUnique */);
 }
 
 QStringList XpDataCompiler::findCifpFiles(const NavDatabaseOptions& opts)
 {
-  return findFiles(opts, "CIFP", {"*.dat"}, QString(), true /* makeUnique */);
+  return findFiles(opts, "CIFP", {"*.dat"}, true /* makeUnique */);
 }
 
 QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QString& subdir,
-                                      const QStringList& pattern, const QString& additionalDir,
-                                      bool makeUnique)
+                                      const QStringList& pattern, bool makeUnique)
 {
   QMap<QString, QFileInfo> entryMap;
 
@@ -650,18 +644,6 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
   {
     if(includeFile(opts, fileInfo))
       entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
-  }
-
-  if(!additionalDir.isEmpty())
-  {
-    // Read the additional directory
-    QDir ad(additionalDir);
-    QFileInfoList additonalEntries = ad.entryInfoList(pattern, QDir::Files, QDir::NoSort);
-    for(const QFileInfo& fileInfo : additonalEntries)
-    {
-      if(includeFile(opts, fileInfo))
-        entryMap.insert(makeUnique ? fileInfo.fileName().toUpper() : fileInfo.filePath(), fileInfo);
-    }
   }
 
   QStringList retval;

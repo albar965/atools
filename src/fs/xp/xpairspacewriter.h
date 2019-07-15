@@ -35,6 +35,10 @@ class NavDatabaseOptions;
 class ProgressHandler;
 class NavDatabaseErrors;
 
+namespace userdata {
+class AirspaceReaderOpenAir;
+}
+
 namespace xp {
 
 /*
@@ -42,36 +46,22 @@ namespace xp {
  */
 class XpAirportIndex;
 
-class XpAirspaceWriter :
-  public atools::fs::xp::XpWriter
+class XpAirspaceWriter
+  : public atools::fs::xp::XpWriter
 {
 public:
   XpAirspaceWriter(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
                    atools::fs::ProgressHandler *progressHandler,
                    atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirspaceWriter();
+  virtual ~XpAirspaceWriter() override;
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
   virtual void reset() override;
 
 private:
-  void initQueries();
-  void deInitQueries();
-
-  void writeBoundary();
-  void bindAltitude(const QStringList& line, bool isMax);
-  void bindClass(const QString& cls);
-  void bindName(const QString& name);
-  void bindCoordinate(const QStringList& line);
-
-  bool writingCoordinates = false;
-  atools::geo::LineString curLine;
-  atools::geo::Pos center;
-  bool clockwise = true;
-
-  atools::sql::SqlQuery *insertAirspaceQuery = nullptr;
-  int curAirspaceId = 0;
+  atools::fs::userdata::AirspaceReaderOpenAir *airspaceWriter;
+  void postWrite();
 };
 
 } // namespace xp
