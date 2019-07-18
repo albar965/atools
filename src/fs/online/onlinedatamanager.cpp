@@ -220,6 +220,11 @@ void OnlinedataManager::setAtcSize(const QHash<fac::FacilityType, int>& value)
   whazzup->setAtcSize(value);
 }
 
+void OnlinedataManager::setGeometryCallback(GeoCallbackType func)
+{
+  whazzup->setGeometryCallback(func);
+}
+
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
 {
   if(record.valueBool("prefile") || record.valueStr("client_type") != "PILOT")

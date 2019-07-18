@@ -46,7 +46,7 @@ namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 23;
+const int PROGRESS_NUM_STEPS = 24;
 const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
 const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
 const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
@@ -92,6 +92,7 @@ void NavDatabase::createAirspaceSchema()
   script.executeScript(":/atools/resources/sql/fs/db/drop_nav.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
+  script.executeScript(":/atools/resources/sql/fs/db/create_indexes_post_load_boundary.sql");
 }
 
 void NavDatabase::createSchema()
@@ -567,6 +568,9 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
 
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))
+    return true;
+
   if(options->isDeduplicate())
   {
     // Delete duplicates before any foreign keys ids are assigned
@@ -586,6 +590,9 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   db->commit();
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))
     return true;
 
   db->commit();
@@ -670,6 +677,9 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
 
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))
+    return true;
+
   if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
   {
     // Airspaces
@@ -743,6 +753,9 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
   db->commit();
 
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
+    return true;
+
+  if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))
     return true;
 
   if(options->isDeduplicate())

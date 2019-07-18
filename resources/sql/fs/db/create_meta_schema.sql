@@ -66,14 +66,16 @@ create table bgl_file
   scenery_area_id integer not null,
   bgl_create_time integer not null,        -- Creation time that was stored in the BGL. Seconds since Epoch.
   file_modification_time integer not null, -- Modification time of the file. Seconds since Epoch.
-  filepath varchar(1000),         -- Absolute filename including full path
-  filename varchar(250),          -- Filename only - redundant and used for search functionality
+  filepath varchar(1000) collate nocase,   -- Absolute filename including full path
+  filename varchar(250) collate nocase,    -- Filename only - redundant and used for search functionality
   size integer not null,                   -- File size in bytes
   comment varchar(1000),                   -- Currently used for the header in the X-Plane files
 foreign key(scenery_area_id) references scenery_area(scenery_area_id)
 );
 
 create index if not exists idx_bgl_file_scenery_area_id on bgl_file(scenery_area_id);
+create index if not exists idx_bgl_file_filepath on bgl_file(filepath);
+create index if not exists idx_bgl_file_filename on bgl_file(filename);
 
 drop table if exists script;
 

@@ -35,9 +35,13 @@ namespace common {
 class BinaryGeometry
 {
 public:
-  BinaryGeometry(const atools::geo::LineString& value);
-  BinaryGeometry(const QByteArray& bytes);
   BinaryGeometry();
+
+  /* Sets line string geometry and does nothing else */
+  BinaryGeometry(const atools::geo::LineString& value);
+
+  /* Reads from byte array and provides line string */
+  BinaryGeometry(const QByteArray& bytes);
 
   void readFromByteArray(const QByteArray& bytes);
   QByteArray writeToByteArray();

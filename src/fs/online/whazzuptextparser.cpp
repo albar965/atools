@@ -459,17 +459,28 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
 
   if(atc)
   {
-    // =============================================================================
-    // Prepare bounding rectangle and a pre-compile circle geometry so it can be used by the same
-    // airspace query classes
+    // Geometry for centers =============================================================================
+    LineString lineString;
+    if(geometryCallback)
+    {
+      // Try to get from callback (i.e. user airspace database)
+      LineString *ptr = geometryCallback(callsign, facilityType);
+      if(ptr != nullptr)
+        // Copy cache object
+        lineString = *ptr;
+    }
 
-    // Create a circular polygon with 10 degree segments
-    Pos center(lonx, laty);
+    if(lineString.isEmpty())
+    {
+      // Nothing found or no callback - create a circle shape
+      // Create a circular polygon with 10 degree segments
+      Pos center(lonx, laty);
 
-    // at least 1/10 nm radius
-    LineString lineString(center,
-                          atools::geo::nmToMeter(std::min(1000.f, std::max(1.f, static_cast<float>(circleRadius)))),
-                          36);
+      // at least 1/10 nm radius
+      lineString = LineString(center,
+                              atools::geo::nmToMeter(std::min(1000.f, std::max(1.f, static_cast<float>(circleRadius)))),
+                              36);
+    }
 
     // Add bounding rectancle
     Rect bounding = lineString.boundingRect();
@@ -479,8 +490,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     insertQuery->bindValue(":min_laty", bounding.getSouth());
 
     // Store geometry in same format as boundaries
-    atools::fs::common::BinaryGeometry geo(lineString);
-    insertQuery->bindValue(":geometry", geo.writeToByteArray());
+    insertQuery->bindValue(":geometry", atools::fs::common::BinaryGeometry(lineString).writeToByteArray());
   }
 
   // =============================================================================

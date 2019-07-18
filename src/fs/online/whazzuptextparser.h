@@ -88,6 +88,13 @@ public:
     atcRadius = value;
   }
 
+  /* Set a callback that tries to fetch geometry from the user airspace database.
+   * Default circle will be used if this returns an empty byte array. */
+  void setGeometryCallback(GeoCallbackType func)
+  {
+    geometryCallback = func;
+  }
+
 private:
   QDateTime parseGeneralSection(const QString& line);
   void parseSection(const QStringList& line, bool isAtc, bool isPrefile);
@@ -134,6 +141,8 @@ private:
 
   // Report errors on warning channel
   bool error = false;
+
+  GeoCallbackType geometryCallback;
 };
 
 } // namespace online

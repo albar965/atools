@@ -18,12 +18,16 @@
 #ifndef ATOOLS_ONLINETYPES_H
 #define ATOOLS_ONLINETYPES_H
 
+#include <functional>
 #include <QVector>
 
 class QString;
 class QStringList;
 
 namespace atools {
+namespace geo {
+class LineString;
+}
 namespace fs {
 namespace online {
 
@@ -130,6 +134,11 @@ enum Simulator
 };
 
 }
+
+/* Callback which tries to fetch geometry from the user airspace database.
+ * Default circle will be used if this returns an empty byte array. */
+typedef std::function<atools::geo::LineString *(const QString& callsign,
+                                                atools::fs::online::fac::FacilityType type)> GeoCallbackType;
 
 QString facilityTypeText(int type);
 QString facilityTypeText(atools::fs::online::fac::FacilityType type);

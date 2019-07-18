@@ -142,6 +142,10 @@ public:
   /* Set default circle radii for certain ATC types where visual range is unusable */
   void setAtcSize(const QHash<atools::fs::online::fac::FacilityType, int>& value);
 
+  /* Set a callback that tries to fetch geometry from the user airspace database.
+   * Default circle will be used if this returns an empty byte array or a null pointer. */
+  void setGeometryCallback(atools::fs::online::GeoCallbackType func);
+
 private:
   atools::sql::SqlDatabase *db;
 

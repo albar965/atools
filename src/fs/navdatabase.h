@@ -77,7 +77,8 @@ public:
   void create(const QString& codec);
 
   /* Does not load anything and only creates the empty database schema.
-   * Configuration is not used and can be null. atools::Exception is thrown in case of error. */
+   * Configuration is not used and can be null. atools::Exception is thrown in case of error.
+   * Opens own transaction and commits if successfull */
   void createSchema();
 
   /* Creates only metadata and boundary tables for user airspaces. Does not use progress and does not open a
