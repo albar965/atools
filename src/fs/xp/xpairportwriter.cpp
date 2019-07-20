@@ -480,11 +480,13 @@ void XpAirportWriter::bindPavement(const QStringList& line, const XpWriterContex
 
   // Start an apron record
   numApron++;
+
+  Surface surface = static_cast<Surface>(at(line, p::SURFACE).toInt());
   insertApronQuery->bindValue(":apron_id", ++curApronId);
   insertApronQuery->bindValue(":airport_id", curAirportId);
-  insertApronQuery->bindValue(":is_draw_surface", 1);
+  insertApronQuery->bindValue(":is_draw_surface", surface != TRANSPARENT);
   insertApronQuery->bindValue(":is_draw_detail", 1);
-  insertApronQuery->bindValue(":surface", surfaceToDb(static_cast<Surface>(at(line, p::SURFACE).toInt()), &context));
+  insertApronQuery->bindValue(":surface", surfaceToDb(surface, &context));
 }
 
 void XpAirportWriter::bindPavementNode(const QStringList& line, atools::fs::xp::AirportRowCode rowCode,
