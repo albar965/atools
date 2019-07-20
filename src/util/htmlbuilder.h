@@ -152,6 +152,9 @@ public:
   /* Add horizontal ruler */
   HtmlBuilder& hr(int size = 1, int widthPercent = 100);
 
+  /* Ruler made of a number of dashes and br */
+  HtmlBuilder& textBar(int lenght = 10, html::Flags flags = html::NONE, QColor color = QColor());
+
   /* Add link (anchor/href) */
   HtmlBuilder& a(const QString& text, const QString& href,
                  html::Flags flags = html::NONE, QColor color = QColor());

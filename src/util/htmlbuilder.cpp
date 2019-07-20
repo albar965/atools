@@ -795,6 +795,14 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
   return false;
 }
 
+HtmlBuilder& HtmlBuilder::textBar(int lenght, html::Flags flags, QColor color)
+{
+  QString str;
+  str.resize(lenght, QChar(L'—'));
+  text(str, flags, color).br();
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor color)
 {
   htmlText += asText(str, flags, color);
