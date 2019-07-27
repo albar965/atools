@@ -125,7 +125,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   // Create close this tab action
   QAction *closeAction = new QAction(QString(), &menu);
   int index = tabWidget->tabBar()->tabAt(pos);
-  if(index != -1)
+  if(index != -1 && tabWidget->count() > 1)
     // Enabled
     closeAction->setText(tr("&Close tab %1").arg(tabWidget->tabText(index).remove('&')));
   else
@@ -296,18 +296,21 @@ void TabWidgetHandler::tabCloseRequested(int index)
 {
   qDebug() << Q_FUNC_INFO;
 
-  // int height = tabWidget->cornerWidget()->height();
-  int id = idForIndex(index);
-  tabWidget->removeTab(index);
-  // tabWidget->cornerWidget()->setMinimumHeight(height);
+  if(tabWidget->count() > 1)
+  {
+    // int height = tabWidget->cornerWidget()->height();
+    int id = idForIndex(index);
+    tabWidget->removeTab(index);
+    // tabWidget->cornerWidget()->setMinimumHeight(height);
 
-  // Update action but disable signals to avoid recursion
-  QAction *action = tabs.at(index).action;
-  QSignalBlocker actionBlocker(action);
-  action->setChecked(true);
+    // Update action but disable signals to avoid recursion
+    QAction *action = tabs.at(index).action;
+    QSignalBlocker actionBlocker(action);
+    action->setChecked(true);
 
-  updateWidgets();
-  emit tabClosed(id);
+    updateWidgets();
+    emit tabClosed(id);
+  }
 }
 
 void TabWidgetHandler::toolbarActionTriggered()
