@@ -185,6 +185,7 @@ HEADERS += \
   src/gui/mapposhistory.h \
   src/gui/palettesettings.h \
   src/gui/signalblocker.h \
+  src/gui/tabwidgethandler.h \
   src/gui/tools.h \
   src/gui/translator.h \
   src/gui/widgetstate.h \
@@ -288,6 +289,7 @@ SOURCES += \
   src/gui/mapposhistory.cpp \
   src/gui/palettesettings.cpp \
   src/gui/signalblocker.cpp \
+  src/gui/tabwidgethandler.cpp \
   src/gui/tools.cpp \
   src/gui/translator.cpp \
   src/gui/widgetstate.cpp \
