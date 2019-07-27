@@ -219,6 +219,9 @@ int LogdataManager::importCsv(const QString& filepath)
       // insertQuery.bindValue(":plan_geometry", at(values, csv::PLAN_GEOMETRY));
       // insertQuery.bindValue(":trail_geometry", at(values, csv::TRAIL_GEOMETRY));
 
+      // Fill null fields with empty strings to avoid issues when searching
+      fixEmptyFields(insertQuery);
+
       insertQuery.exec();
 
       // Reset unassigned fields to null
@@ -397,6 +400,10 @@ int LogdataManager::importXplane(const QString& filepath,
                             arg(atFloat(line, TIME_IFR, true), 0, 'f', 1).
                             arg(atFloat(line, TIME_NIGHT, true), 0, 'f', 1));
         insertQuery.bindValue(":description", description);
+
+        // Fill null fields with empty strings to avoid issues when searching
+        fixEmptyFields(insertQuery);
+
         insertQuery.exec();
         insertQuery.clearBoundValues();
       } // if(line.size() >= 10)
@@ -500,6 +507,46 @@ void LogdataManager::getFlightStatsSimulator(QVector<std::pair<int, QString> >& 
   query.exec();
   while(query.next())
     numSimulators.append(std::make_pair(query.valueInt(0), query.valueStr(1)));
+}
+
+void LogdataManager::fixEmptyStrField(sql::SqlRecord& rec, const QString& name)
+{
+  if(rec.contains(name) && rec.isNull(name))
+    rec.setValue(name, "");
+}
+
+void LogdataManager::fixEmptyStrField(sql::SqlQuery& query, const QString& name)
+{
+  if(query.boundValue(name, true).isNull())
+    query.bindValue(name, "");
+}
+
+void LogdataManager::fixEmptyFields(sql::SqlRecord& rec)
+{
+  if(rec.contains("distance") && rec.isNull("distance"))
+    rec.setValue("distance", 0.f);
+
+  fixEmptyStrField(rec, "aircraft_name");
+  fixEmptyStrField(rec, "aircraft_type");
+  fixEmptyStrField(rec, "aircraft_registration");
+  fixEmptyStrField(rec, "description");
+  fixEmptyStrField(rec, "simulator");
+  fixEmptyStrField(rec, "departure_ident");
+  fixEmptyStrField(rec, "destination_ident");
+}
+
+void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
+{
+  if(query.boundValue(":distance", true).isNull())
+    query.bindValue(":distance", 0.f);
+
+  fixEmptyStrField(query, ":aircraft_name");
+  fixEmptyStrField(query, ":aircraft_type");
+  fixEmptyStrField(query, ":aircraft_registration");
+  fixEmptyStrField(query, ":description");
+  fixEmptyStrField(query, ":simulator");
+  fixEmptyStrField(query, ":departure_ident");
+  fixEmptyStrField(query, ":destination_ident");
 }
 
 void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,

@@ -68,6 +68,14 @@ public:
   /* Simulator to number of logbook entries */
   void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
 
+  /* Fills null fields with empty strings to avoid issue when searching */
+  static void fixEmptyFields(atools::sql::SqlRecord& rec);
+  static void fixEmptyFields(atools::sql::SqlQuery& query);
+
+private:
+  static void fixEmptyStrField(atools::sql::SqlRecord& rec, const QString& name);
+  static void fixEmptyStrField(atools::sql::SqlQuery& query, const QString& name);
+
 };
 
 } // namespace userdata
