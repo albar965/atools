@@ -35,13 +35,15 @@ using atools::geo::LineString;
 using atools::geo::normalizeCourse;
 using atools::interpolate;
 using atools::geo::windSpeedFromUV;
+using atools::geo::windUComponent;
+using atools::geo::windVComponent;
 using atools::geo::windDirectionFromUV;
 
 namespace atools {
 namespace grib {
 
 /* Allowed altitude inaccuracy when comparing layer altitudes. */
-Q_CONSTEXPR static float ALTITUDE_EPSILON = 50.f;
+Q_CONSTEXPR static int ALTITUDE_EPSILON = 50.f;
 
 struct WindData
 {
@@ -71,8 +73,9 @@ struct WindData
 /* Internal data structure for wind direction and speed computed from U/V speeds */
 struct WindAltLayer
 {
-  float altitude = 0.f;
+  int altitude = 0;
   QVector<WindData> winds;
+  float surface;
 
   bool operator<(const WindAltLayer& l) const
   {
@@ -239,16 +242,16 @@ void WindQuery::initFromFixedModel(float dirLower, float speedLower, float altit
   // Add lower layer ==========================
   WindAltLayer groundLayer;
   groundLayer.altitude = altitudeLower;
-  groundLayer.winds.fill(WindData{atools::geo::windUComponent(speedLower, dirLower),
-                                  atools::geo::windVComponent(speedLower, dirLower)}, 360 * 181);
-  windLayers.insert(groundLayer.altitude, groundLayer);
+  groundLayer.winds.fill(WindData{windUComponent(speedLower, dirLower),
+                                  windVComponent(speedLower, dirLower)}, 360 * 181);
+  windLayers.insert(atools::roundToInt(groundLayer.altitude), groundLayer);
 
   // Add upper layer ==========================
   WindAltLayer altLayer;
   altLayer.altitude = altitudeUpper;
-  altLayer.winds.fill(WindData{atools::geo::windUComponent(speedUpper, dirUpper),
-                               atools::geo::windVComponent(speedUpper, dirUpper)}, 360 * 181);
-  windLayers.insert(altLayer.altitude, altLayer);
+  altLayer.winds.fill(WindData{windUComponent(speedUpper, dirUpper),
+                               windVComponent(speedUpper, dirUpper)}, 360 * 181);
+  windLayers.insert(atools::roundToInt(altLayer.altitude), altLayer);
 }
 
 void WindQuery::deinit()
@@ -396,6 +399,30 @@ Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring) c
   }
 }
 
+QString WindQuery::getDebug(const geo::Pos& pos) const
+{
+  QString retval;
+  QTextStream out(&retval);
+  out.setCodec("UTF-8");
+  out.setRealNumberPrecision(2);
+  out.setRealNumberNotation(QTextStream::FixedNotation);
+  out << "=================" << endl;
+  for(int altitude : windLayers.keys())
+  {
+    WindAltLayer layer = windLayers.value(altitude);
+    QPoint grid = gridPos(pos);
+    WindData wind = windForLayer(layer, grid);
+
+    out << "altitude " << altitude << " surface " << layer.surface
+        << " grid x " << grid.x() << " y " << grid.y() << endl;
+    out << "wind u " << wind.u << " v " << wind.v << " kts "
+        << " dir " << windDirectionFromUV(wind.u, wind.v) << " deg T"
+        << " speed " << windSpeedFromUV(wind.u, wind.v) << " kts" << endl;
+    out << "-----------" << endl;
+  }
+  return retval;
+}
+
 WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point) const
 {
   return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : WindData{0.f, 0.f};
@@ -491,10 +518,10 @@ void WindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float alti
   {
     // Returns an iterator pointing to the first item with key key in the map.
     // If the map contains no item with key key, the function returns an iterator to the nearest item with a greater key.
-    QMap<float, WindAltLayer>::const_iterator it = windLayers.lowerBound(altitude);
+    QMap<int, WindAltLayer>::const_iterator it = windLayers.lowerBound(atools::roundToInt(altitude));
     if(it != windLayers.end())
     {
-      if(atools::almostEqual(it->altitude, altitude, ALTITUDE_EPSILON))
+      if(atools::almostEqual(it->altitude, atools::roundToInt(altitude), ALTITUDE_EPSILON))
         // Layer is at requested altitude - no need to interpolate
         lower = upper = *it;
       else if(it == windLayers.begin())
@@ -595,6 +622,7 @@ void WindQuery::convertDataset(const GribDatasetVector& datasets)
       const QVector<float>& dataV = datasetVWind.getData();
       WindAltLayer layer;
       layer.altitude = datasetUWind.getAltFeetRounded();
+      layer.surface = datasetUWind.getSurface();
 
       for(int j = 0; j < 181; j++) // y
       {
@@ -606,7 +634,7 @@ void WindQuery::convertDataset(const GribDatasetVector& datasets)
           layer.winds.append(wind);
         }
       }
-      windLayers.insert(layer.altitude, layer);
+      windLayers.insert(atools::roundToInt(layer.altitude), layer);
     }
     else
       throw atools::Exception("Invalid dataset order for  U and V wind component");

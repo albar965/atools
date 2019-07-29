@@ -180,6 +180,8 @@ public:
     samplesPerDegree = value;
   }
 
+  QString getDebug(const atools::geo::Pos& pos) const;
+
 signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();
@@ -230,7 +232,7 @@ private:
   bool verbose = false;
 
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
-  QMap<float, WindAltLayer> windLayers;
+  QMap<int, WindAltLayer> windLayers;
 
 };
 
