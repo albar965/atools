@@ -85,7 +85,7 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
       continue;
     }
 
-    if(xplane && line.startsWith("MDEG "))
+    if(xplane && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
     {
       lineNum++;
       // Ignore X-Plane's special coordinate format
