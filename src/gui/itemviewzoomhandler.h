@@ -54,9 +54,9 @@ public:
   void zoomPercent(int percent);
 
   /* Section height will be font height plus this value */
-  int getSectionToFontSize() const
+  float getSectionToFontSize() const
   {
-    return sectionToFontSize;
+    return static_cast<float>(sectionToFontSize);
   }
 
   void setSectionToFontSize(int value)
@@ -65,9 +65,9 @@ public:
   }
 
   /* Minimum font size in pixel */
-  int getMinFontSize() const
+  float getMinFontSize() const
   {
-    return minFontSize;
+    return static_cast<float>(minFontSize);
   }
 
   void setMinFontSize(int value)
@@ -76,9 +76,9 @@ public:
   }
 
   /* Maximum font size in pixel */
-  int getMaxFontSize() const
+  float getMaxFontSize() const
   {
-    return maxFontSize;
+    return static_cast<float>(maxFontSize);
   }
 
   void setMaxFontSize(int value)
@@ -96,14 +96,13 @@ private:
   void initTableViewZoom();
 
   /* Change font size and adjust row height accordingly */
-  void setTableViewFontSize(float pointSize);
+  void setTableViewFontSize(double pointSize);
 
 private:
-  float defaultTableViewFontPointSize;
-
-  int sectionToFontSize = 2;
-  int minFontSize = 7;
-  int maxFontSize = 16;
+  double defaultTableViewFontPointSize = 0.;
+  double sectionToFontSize = 2.;
+  double minFontSize = 7.;
+  double maxFontSize = 16.;
 
   QAbstractItemView *itemView;
   QAction *actionZoomIn, *actionZoomOut, *actionZoomDefault;
