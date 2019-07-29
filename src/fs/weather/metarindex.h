@@ -56,7 +56,7 @@ struct MetarResult;
 class MetarIndex
 {
 public:
-  MetarIndex(int size = 100000, bool verboseLogging = false);
+  MetarIndex(int size = 100000, bool xplaneFormat = false, bool verboseLogging = false);
   ~MetarIndex();
 
   /* Read METARs from stream and add them to the index. Merges into current list or clears list before.
@@ -101,6 +101,7 @@ private:
   atools::geo::SimpleSpatialIndex<QString, MetarData> *index = nullptr;
 
   bool verbose = false;
+  bool xplane = false;
 };
 
 } // namespace weather

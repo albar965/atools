@@ -28,8 +28,8 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-MetarIndex::MetarIndex(int size, bool verboseLogging)
-  : verbose(verboseLogging)
+MetarIndex::MetarIndex(int size, bool xplaneFormat, bool verboseLogging)
+  : verbose(verboseLogging), xplane(xplaneFormat)
 {
   index = new atools::geo::SimpleSpatialIndex<QString, MetarData>(size);
 }
@@ -80,15 +80,27 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
     line = stream.readLine().trimmed();
 
     if(line.isEmpty())
+    {
+      lineNum++;
       continue;
+    }
+
+    if(xplane && line.startsWith("MDEG "))
+    {
+      lineNum++;
+      // Ignore X-Plane's special coordinate format
+      continue;
+    }
 
     if(line.size() >= 4)
     {
+
       if(DATE_REGEXP.match(line).hasMatch())
       {
         // Found line containing date like "2017/10/29 11:45"
         lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
         lastTimestamp.setTimeZone(QTimeZone::utc());
+        lineNum++;
         continue;
       }
 
@@ -96,6 +108,7 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
       {
         // Ignore METARs with future UTC time
         futureDates++;
+        lineNum++;
         continue;
       }
 

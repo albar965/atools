@@ -59,40 +59,57 @@ void FileSystemWatcher::pathOrFileChanged()
   periodicCheckTimer.stop();
 
   QFileInfo fileinfo(filename);
-  if(fileinfo.exists() && fileinfo.isFile() && fileinfo.size() > minFileSize)
+  if(fileinfo.exists())
   {
-    if(verbose)
-      qDebug() << Q_FUNC_INFO << "File" << filename
-               << "exists" << fileinfo.exists()
-               << "size" << fileinfo.size()
-               << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
-
-    // File exists - first call or older than two minutes or file differs
-    if(!fileTimestampLastRead.isValid() ||
-       atools::almostNotEqual(fileinfo.lastModified().toSecsSinceEpoch(), fileTimestampLastRead.toSecsSinceEpoch(),
-                              static_cast<qint64>(1)) || lastFileSizeRead != fileinfo.size())
+    if(fileinfo.isFile())
     {
-      // Timestamp of file has changed
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << "changed" << filename;
+      if(fileinfo.size() > minFileSize)
+      {
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "File" << filename
+                   << "exists" << fileinfo.exists()
+                   << "size" << fileinfo.size()
+                   << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
 
-      // Start or extend the delayed notification
-      delayTimer.start(delayMs);
+        // File exists - first call or older than two minutes or file differs
+        if(!fileTimestampLastRead.isValid() ||
+           atools::almostNotEqual(fileinfo.lastModified().toSecsSinceEpoch(), fileTimestampLastRead.toSecsSinceEpoch(),
+                                  static_cast<qint64>(1)) || lastFileSizeRead != fileinfo.size())
+        {
+          // Timestamp of file has changed
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "changed" << filename;
+
+          // Start or extend the delayed notification
+          delayTimer.start(delayMs);
+        }
+        else
+        {
+          if(verbose)
+            qDebug() << Q_FUNC_INFO << "File" << filename << "not changed";
+          periodicCheckTimer.start(checkMs);
+        }
+      }
+      else
+      {
+        // File was deleted - keep current weather information
+        qDebug() << Q_FUNC_INFO << "File" << filename << "smaller than" << minFileSize << "bytes";
+        periodicCheckTimer.start(checkMs);
+      }
     }
     else
     {
-      if(verbose)
-        qDebug() << Q_FUNC_INFO << "File" << filename << "not changed";
+      // File was deleted - keep current weather information
+      qDebug() << Q_FUNC_INFO << "File" << filename << "is not a file";
       periodicCheckTimer.start(checkMs);
     }
   }
   else
   {
     // File was deleted - keep current weather information
-    qDebug() << Q_FUNC_INFO << "File" << filename << "does not exist.";
+    qDebug() << Q_FUNC_INFO << "File" << filename << "does not exist";
     periodicCheckTimer.start(checkMs);
   }
-
   setPaths(true);
 }
 

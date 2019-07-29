@@ -34,7 +34,7 @@ using atools::util::FileSystemWatcher;
 XpWeatherReader::XpWeatherReader(QObject *parent, int indexSize, bool verboseLogging)
   : QObject(parent), verbose(verboseLogging)
 {
-  index = new atools::fs::weather::MetarIndex(indexSize, verboseLogging);
+  index = new atools::fs::weather::MetarIndex(indexSize, true /* xplane */, verboseLogging);
 }
 
 XpWeatherReader::~XpWeatherReader()
@@ -43,20 +43,34 @@ XpWeatherReader::~XpWeatherReader()
   delete index;
 }
 
-void XpWeatherReader::readWeatherFile(const QString& file)
+void XpWeatherReader::setWeatherFile(const QString& file)
 {
   clear();
   weatherFile = file;
-  createFsWatcher();
+}
 
-  QFileInfo fileinfo(file);
-  if(fileinfo.exists() && fileinfo.isFile())
-    read();
-  // else wait for file created
+void XpWeatherReader::readWeatherFile()
+{
+  // File set and not watching a file already
+  if(!weatherFile.isEmpty() && fsWatcher == nullptr)
+  {
+    qDebug() << Q_FUNC_INFO << weatherFile;
+
+    index->clear();
+    deleteFsWatcher();
+
+    createFsWatcher();
+
+    QFileInfo fileinfo(weatherFile);
+    if(fileinfo.exists() && fileinfo.isFile())
+      read();
+    // else wait for file created
+  }
 }
 
 void XpWeatherReader::clear()
 {
+  qDebug() << Q_FUNC_INFO;
   deleteFsWatcher();
   index->clear();
   weatherFile.clear();
@@ -73,6 +87,7 @@ bool XpWeatherReader::read()
   QFile file(weatherFile);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
+    qDebug() << Q_FUNC_INFO << weatherFile;
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
     retval = index->read(stream, weatherFile, false /* merge */);
@@ -85,16 +100,19 @@ bool XpWeatherReader::read()
 
 atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
+  readWeatherFile();
   return index->getMetar(station, pos);
 }
 
-QSet<QString> XpWeatherReader::getMetarAirportIdents() const
+QSet<QString> XpWeatherReader::getMetarAirportIdents()
 {
+  readWeatherFile();
   return index->getMetarAirportIdents();
 }
 
 QString XpWeatherReader::getMetar(const QString& ident)
 {
+  readWeatherFile();
   return index->getMetar(ident);
 }
 
@@ -137,6 +155,9 @@ void XpWeatherReader::createFsWatcher()
   {
     // Watch file for changes and directory too to catch file deletions
     fsWatcher = new FileSystemWatcher(this, verbose);
+
+    // Set to smaller value to deal with ASX weather files
+    fsWatcher->setMinFileSize(1000);
     fsWatcher->connect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
   }
 

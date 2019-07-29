@@ -49,10 +49,10 @@ public:
   atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
 
   /* Get all ICAO codes that have a weather station */
-  QSet<QString> getMetarAirportIdents() const;
+  QSet<QString> getMetarAirportIdents();
 
-  /* Read METAR.rwx and watch the file if needed */
-  void readWeatherFile(const QString& file);
+  /* File is loaded on demand on first access */
+  void setWeatherFile(const QString& file);
 
   /* Remove METARs and stop watching the file */
   void clear();
@@ -64,6 +64,9 @@ signals:
   void weatherUpdated();
 
 private:
+  /* Read METAR.rwx and watch the file if needed */
+  void readWeatherFile();
+
   void deleteFsWatcher();
   void createFsWatcher();
   void pathChanged(const QString& filename);

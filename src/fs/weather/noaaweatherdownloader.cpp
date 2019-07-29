@@ -31,7 +31,7 @@ using atools::util::HttpDownloader;
 NoaaWeatherDownloader::NoaaWeatherDownloader(QObject *parent, int indexSize, bool verboseLogging)
   : QObject(parent), verbose(verboseLogging)
 {
-  index = new MetarIndex(indexSize, verboseLogging);
+  index = new MetarIndex(indexSize, false /* xplane */, verboseLogging);
   downloader = new HttpDownloader(parent, verbose);
 
   connect(downloader, &HttpDownloader::downloadFinished, this, &NoaaWeatherDownloader::downloadFinished);
