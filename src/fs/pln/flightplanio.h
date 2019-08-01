@@ -123,6 +123,9 @@ public:
   /* Leonardo Maddog MDX / MDR */
   void saveMdr(const Flightplan& plan, const QString& file);
 
+  /* TFDi Design 717 XML */
+  void saveTfdi(const Flightplan& plan, const QString& file, const QBitArray& jetAirways);
+
 private:
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);

@@ -26,6 +26,7 @@
 #include "fs/util/coordinates.h"
 #include "fs/pln/flightplan.h"
 
+#include <QBitArray>
 #include <QDataStream>
 #include <QDateTime>
 #include <QFile>
@@ -1952,6 +1953,101 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& file)
   }
   else
     throw Exception(errorMsg.arg(file).arg(mdrFile.errorString()));
+}
+
+/*
+ *  <?xml version="1.0" encoding="UTF-8"?>
+ *  <Version1>
+ *  <Departure>KALB</Departure>
+ *  <Arrival>KBWI</Arrival>
+ *  <CostIndex>24</CostIndex>
+ *  <CruiseLevel>28000</CruiseLevel>
+ *  <Legs>
+ *   <Leg Type="Waypoint" Ident="ATHOS" Latitude="42.2471" Longitude="- 73.8121"/>
+ *   <Leg Type="Navaid" Ident="CMK" Latitude="41.2801" Longitude="-73.5813"/>
+ *   <Leg Type="AirwayLeg" Level="H" Wpt2Ident="CAE" Wpt2Latitude="33.8573" Wpt2Longitude="-81.0539" Airway="J75" />
+ *   <Leg Type="Airport" ICAO="KIAD" Latitude="38.9474" Longitude="-77.4599"/>
+ *   <Leg Type="PilotDefinedWaypoint" Ident="PBD01" Elevation="0" Latitude="33.7197" Longitude="-84.4191" PBDPlace="KATL" PBDDist="5" PBDBearing="5" />
+ *   <Leg Type="Discontinuity" />
+ *  </Legs>
+ *  </Version1>
+ */
+void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& file, const QBitArray& jetAirways)
+{
+  filename = file;
+
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    // Write XML to string first ===================
+    QXmlStreamWriter writer(&xmlFile);
+    writer.setCodec("UTF-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(4);
+
+    writer.writeStartDocument("1.0");
+    writer.writeStartElement("Version1");
+    writer.writeTextElement("Departure", plan.departureIdent);
+    writer.writeTextElement("Arrival", plan.destinationIdent);
+    writer.writeTextElement("CruiseLevel", QString::number(plan.cruisingAlt));
+    writer.writeStartElement("Legs");
+
+    int wpIdent = 0;
+    for(int i = 1; i < plan.entries.size() - 1; i++)
+    {
+      const FlightplanEntry& entry = plan.entries.at(i);
+      if(entry.isNoSave())
+        // Do not save stuff like procedure points
+        continue;
+
+      writer.writeStartElement("Leg");
+
+      if(entry.getAirway().isEmpty())
+      {
+        switch(entry.getWaypointType())
+        {
+          case atools::fs::pln::entry::AIRPORT:
+            writer.writeAttribute("Type", "Airport");
+            writer.writeAttribute("ICAO", entry.getIcaoIdent());
+            break;
+          case atools::fs::pln::entry::INTERSECTION:
+            writer.writeAttribute("Type", "Waypoint");
+            writer.writeAttribute("Ident", entry.getIcaoIdent());
+            break;
+          case atools::fs::pln::entry::VOR:
+          case atools::fs::pln::entry::NDB:
+            writer.writeAttribute("Type", "Navaid");
+            writer.writeAttribute("Ident", entry.getIcaoIdent());
+            break;
+          case atools::fs::pln::entry::UNKNOWN:
+          case atools::fs::pln::entry::USER:
+            writer.writeAttribute("Type", "PilotDefinedWaypoint");
+            writer.writeAttribute("Ident", QString("WP%1").arg(wpIdent++));
+            break;
+        }
+        writer.writeAttribute("Latitude", QString::number(entry.getPosition().getLatY(), 'f', 4));
+        writer.writeAttribute("Longitude", QString::number(entry.getPosition().getLonX(), 'f', 4));
+      }
+      else
+      {
+        writer.writeAttribute("Type", "AirwayLeg");
+        writer.writeAttribute("Level", jetAirways.at(i) ? "H" : "L");
+        writer.writeAttribute("Wpt2Ident", entry.getIcaoIdent());
+        writer.writeAttribute("Wpt2Latitude", QString::number(entry.getPosition().getLatY(), 'f', 4));
+        writer.writeAttribute("Wpt2Longitude", QString::number(entry.getPosition().getLonX(), 'f', 4));
+        writer.writeAttribute("Airway", entry.getAirway());
+      }
+      writer.writeEndElement(); // Leg
+    }
+
+    writer.writeEndElement(); // Legs
+    writer.writeEndElement(); // Version1
+    writer.writeEndDocument();
+
+    xmlFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(file).arg(xmlFile.errorString()));
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file,
