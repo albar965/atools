@@ -278,6 +278,7 @@ public:
    * @return true if text is too long
    */
   bool checklength(int maxLines, const QString& msg);
+  bool checklengthTextBar(int maxLines, const QString& msg, int lenght);
 
   bool isEmpty() const
   {

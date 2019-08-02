@@ -795,6 +795,18 @@ bool HtmlBuilder::checklength(int maxLines, const QString& msg)
   return false;
 }
 
+bool HtmlBuilder::checklengthTextBar(int maxLines, const QString& msg, int lenght)
+{
+  QString dotText(QString("<b>%1</b>").arg(msg));
+  if(numLines > maxLines)
+  {
+    if(!htmlText.endsWith(dotText))
+      textBar(lenght).b(msg);
+    return true;
+  }
+  return false;
+}
+
 HtmlBuilder& HtmlBuilder::textBar(int lenght, html::Flags flags, QColor color)
 {
   QString str;
