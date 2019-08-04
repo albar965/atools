@@ -135,7 +135,7 @@ inline int colNum(const atools::geo::Pos& pos)
 /* Row number in grid */
 inline int rowNum(const atools::geo::Pos& pos)
 {
-  return static_cast<int>(180.f - (pos.getLatY() + 90.f)) + (pos.getLonX() < 0.f ? 1 : 0);
+  return static_cast<int>(180.f - (pos.getLatY() + 90.f));
 }
 
 /* Get colum and row number for position at one degree boundary. */
