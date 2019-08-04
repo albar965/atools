@@ -219,7 +219,7 @@ public:
                   QColor color = QColor(), const QString& id = QString());
 
   /* Add table and table body */
-  HtmlBuilder& table();
+  HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor());
   HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
   HtmlBuilder& tableEnd();
 
@@ -328,13 +328,24 @@ public:
     return hasBackColor;
   }
 
+  const QColor getRowBackColor() const
+  {
+    return rowBackColor;
+  }
+
+  const QColor& getRowBackColorAlt() const
+  {
+    return rowBackColorAlt;
+  }
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
   QString asText(QString str, html::Flags flags, QColor color);
   void initColors(const QColor& rowColor, const QColor& rowColorAlt);
 
-  QString rowBackColor, rowBackColorAlt, tableRowHeader;
+  QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;
+  QColor rowBackColor, rowBackColorAlt;
   QStringList tableRow, tableRowAlignRight, tableRowBegin;
 
   int tableIndex = 0, defaultPrecision = 0, numLines = 0;

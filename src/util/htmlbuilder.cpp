@@ -62,6 +62,8 @@ HtmlBuilder::~HtmlBuilder()
 
 HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
 {
+  rowBackColorStr = other.rowBackColorStr;
+  rowBackColorAltStr = other.rowBackColorAltStr;
   rowBackColor = other.rowBackColor;
   rowBackColorAlt = other.rowBackColorAlt;
   tableRowHeader = other.tableRowHeader;
@@ -82,21 +84,24 @@ HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
 void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
 {
   // Create darker colors dynamically from default palette
-  rowBackColor = rowColor.name(QColor::HexRgb);
-  rowBackColorAlt = rowColorAlt.name(QColor::HexRgb);
+  rowBackColor = rowColor;
+  rowBackColorAlt = rowColorAlt;
+
+  rowBackColorStr = rowBackColor.name(QColor::HexRgb);
+  rowBackColorAltStr = rowBackColorAlt.name(QColor::HexRgb);
 
   if(hasBackColor)
   {
-    tableRow.append("<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td>%2</td></tr>");
-    tableRow.append("<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr bgcolor=\"" + rowBackColorStr + "\"><td>%1</td><td>%2</td></tr>");
+    tableRow.append("<tr bgcolor=\"" + rowBackColorAltStr + "\"><td>%1</td><td>%2</td></tr>");
 
     tableRowAlignRight.append(
-      "<tr bgcolor=\"" + rowBackColor + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+      "<tr bgcolor=\"" + rowBackColorStr + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
     tableRowAlignRight.append(
-      "<tr bgcolor=\"" + rowBackColorAlt + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
+      "<tr bgcolor=\"" + rowBackColorAltStr + "\"><td>%1</td><td align=\"right\">%2</td></tr>");
 
-    tableRowBegin.append("<tr bgcolor=\"" + rowBackColor + "\">");
-    tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAlt + "\">");
+    tableRowBegin.append("<tr bgcolor=\"" + rowBackColorStr + "\">");
+    tableRowBegin.append("<tr bgcolor=\"" + rowBackColorAltStr + "\">");
   }
   else
   {
@@ -369,9 +374,14 @@ HtmlBuilder& HtmlBuilder::trEnd()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::table()
+HtmlBuilder& HtmlBuilder::table(int border, int padding, int spacing, int widthPercent, QColor bgcolor)
 {
-  htmlText += "<table border=\"0\" cellpadding=\"2\" cellspacing=\"0\">\n<tbody>\n";
+  htmlText += "<table border=\"" + QString::number(border) + "\" cellpadding=\"" +
+              QString::number(padding) + "\" cellspacing=\"" + QString::number(spacing) + "\"" +
+              (bgcolor.isValid() ? " bgcolor=\"" + bgcolor.name(QColor::HexRgb) + "\"" : QString()) +
+              (widthPercent > 0 ? " width=\"" + QString::number(widthPercent) + "%\"" : QString()) +
+
+              ">\n<tbody>\n";
   tableIndex = 0;
   return *this;
 }
