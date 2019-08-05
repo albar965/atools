@@ -384,7 +384,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setEscapeChar(escape);
     sqlExport.setEndline(false);
     sqlExport.setHeader(flags & CSV_HEADER);
-    sqlExport.setNumberPrecision(10);
+    sqlExport.setNumberPrecision(5);
 
     QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
                        "0 as mag_var, tags, description, region, visible_from, last_edit_timestamp from " + tableName,

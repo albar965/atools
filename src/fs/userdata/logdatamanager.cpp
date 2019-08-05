@@ -428,7 +428,7 @@ int LogdataManager::exportCsv(const QString& filepath)
   {
     QTextStream out(&file);
     out.setCodec("UTF-8");
-    out.setRealNumberPrecision(4);
+    out.setRealNumberPrecision(5);
     out.setRealNumberNotation(QTextStream::FixedNotation);
 
     SqlUtil util(db);
