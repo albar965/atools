@@ -53,12 +53,32 @@ public:
   LineString(const LineString& other);
   LineString& operator=(const LineString& other);
 
-  void append(const atools::geo::Pos& pos);
-  void append(const atools::geo::LineString& linestring);
-  void append(float longitudeX, float latitudeY, float alt = 0.f);
-  void append(double longitudeX, double latitudeY, double alt = 0.f);
+  void append(const atools::geo::Pos& pos)
+  {
+    QVector::append(pos);
+  }
 
-  void reverse();
+  void append(const atools::geo::LineString& linestring)
+  {
+    QVector::append(linestring);
+  }
+
+  void append(float longitudeX, float latitudeY, float alt = 0.f)
+  {
+    QVector::append(Pos(longitudeX, latitudeY, alt));
+  }
+
+  void append(double longitudeX, double latitudeY, double alt = 0.f)
+  {
+    QVector::append(Pos(longitudeX, latitudeY, alt));
+  }
+
+  LineString reversed();
+
+  void reverse()
+  {
+    std::reverse(begin(), end());
+  }
 
   /* Set altitude to all points and return a copy */
   atools::geo::LineString alt(float alt) const;

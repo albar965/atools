@@ -152,29 +152,11 @@ LineString& LineString::operator=(const LineString& other)
   return *this;
 }
 
-void LineString::append(const Pos& pos)
+LineString LineString::reversed()
 {
-  QVector::append(pos);
-}
-
-void LineString::append(const LineString& linestring)
-{
-  QVector::append(linestring);
-}
-
-void LineString::append(float longitudeX, float latitudeY, float alt)
-{
-  QVector::append(Pos(longitudeX, latitudeY, alt));
-}
-
-void LineString::append(double longitudeX, double latitudeY, double alt)
-{
-  QVector::append(Pos(longitudeX, latitudeY, alt));
-}
-
-void LineString::reverse()
-{
-  std::reverse(begin(), end());
+  LineString linestring(*this);
+  linestring.reverse();
+  return linestring;
 }
 
 LineString LineString::alt(float alt) const
