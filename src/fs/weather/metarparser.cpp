@@ -883,6 +883,13 @@ bool MetarParser::scanWind()
 // \d{3}V\d{3}
 bool MetarParser::scanVariability()
 {
+  if(!strncmp(_m, "///V/// ", 8)) // spec compliant?
+  {
+    _m += 8;
+    _grpcount++;
+    return true;
+  }
+
   char *m = _m;
   int from, to;
   if(!scanNumber(&m, &from, 3))
@@ -910,6 +917,13 @@ bool MetarParser::scanVisibility()
   if(!strncmp(_m, "//// ", 5)) // spec compliant?
   {
     _m += 5;
+    _grpcount++;
+    return true;
+  }
+
+  if(!strncmp(_m, "////SM ", 7)) // spec compliant?
+  {
+    _m += 7;
     _grpcount++;
     return true;
   }
@@ -1186,24 +1200,7 @@ bool MetarParser::scanSkyCondition()
   int i;
   MetarCloud cl;
 
-  if(!strncmp(m, "NOSIG ", 6))
-  {
-    _m += 6;
-    _m = m;
-    return false;
-  }
-
   if(!strncmp(m, "/////////", 9))
-  {
-    m += 9;
-    if(!scanBoundary(&m))
-      return false;
-
-    _m = m;
-    return true;
-  }
-
-  if(!strncmp(m, "//////TCU", 9))
   {
     m += 9;
     if(!scanBoundary(&m))
@@ -1223,10 +1220,51 @@ bool MetarParser::scanSkyCondition()
     return true;
   }
 
+  if(!strncmp(m, "//////TCU", 9))
+  {
+    m += 9;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
+  if(!strncmp(m, "//////CB", 8))
+  {
+    m += 8;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
+  if(!strncmp(m, "///CB", 5))
+  {
+    m += 5;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
+  if(!strncmp(m, "/////", 5))
+  {
+    m += 5;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
   if(!strncmp(m, "CLR", i = 3) // clear
      || !strncmp(m, "SKC", i = 3) // sky clear
      || !strncmp(m, "NCD", i = 3) // nil cloud detected
      || !strncmp(m, "NSC", i = 3) // no significant clouds
+     || !strncmp(m, "NOSIG", i = 3) // no significant clouds
      || !strncmp(m, "CAVOK 9999", i = 10) // ceiling and visibility OK 9999 sometimes given too
      || !strncmp(m, "CAVOK", i = 5)) // ceiling and visibility OK (implies 9999)
   {
@@ -1247,6 +1285,7 @@ bool MetarParser::scanSkyCondition()
     return true;
   }
 
+  bool unknown = false;
   if(!strncmp(m, "VV", i = 2)) // vertical visibility
     ;
   else if(!strncmp(m, "FEW", i = 3))
@@ -1257,6 +1296,11 @@ bool MetarParser::scanSkyCondition()
     cl.coverage = MetarCloud::COVERAGE_BROKEN;
   else if(!strncmp(m, "OVC", i = 3))
     cl.coverage = MetarCloud::COVERAGE_OVERCAST;
+  else if(!strncmp(m, "///", i = 3))
+  {
+    unknown = true;
+    cl.coverage = MetarCloud::COVERAGE_NIL;
+  }
   else
     return false;
 
@@ -1272,7 +1316,7 @@ bool MetarParser::scanSkyCondition()
   else if(!scanNumber(&m, &i, 2, 3))
     i = -1;
 
-  if(cl.coverage == MetarCloud::COVERAGE_NIL)
+  if(cl.coverage == MetarCloud::COVERAGE_NIL && !unknown)
   {
     if(!scanBoundary(&m))
       return false;
@@ -1472,10 +1516,11 @@ bool MetarParser::scanPressure()
   else
     return false;
 
+  _pressure = press * factor;
+
   if(!scanBoundary(&m))
     return false;
 
-  _pressure = press * factor;
   _m = m;
   _grpcount++;
   return true;
