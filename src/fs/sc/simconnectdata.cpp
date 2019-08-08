@@ -171,7 +171,8 @@ int SimConnectData::write(QIODevice *ioDevice)
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
-                                                     float vertSpeed, float tas, float fuelflow, float totalFuel)
+                                                     float vertSpeed, float tas, float fuelflow, float totalFuel,
+                                                     float ice)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -190,6 +191,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.trackMagDeg = data.userAircraft.trackTrueDeg = h;
   data.userAircraft.headingMagDeg = data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 20.f);
 
+  data.userAircraft.structuralIcePercent = ice;
   data.userAircraft.category = AIRPLANE;
   data.userAircraft.engineType = PISTON;
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();

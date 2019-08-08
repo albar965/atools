@@ -173,9 +173,17 @@ QString HtmlBuilder::warningMessage(const QString& str)
   return str;
 }
 
+HtmlBuilder& HtmlBuilder::row2AlignRight(bool alignRight)
+{
+  row2AlignRightFlag = alignRight;
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, html::Flags flags,
                                   QColor color)
 {
+  flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
+
   QString valueStr;
   switch(value.type())
   {
@@ -231,6 +239,7 @@ HtmlBuilder& HtmlBuilder::row2Var(const QString& name, const QVariant& value, ht
 
 HtmlBuilder& HtmlBuilder::row2If(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
+  flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
   if(!value.isEmpty())
   {
     htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
@@ -263,8 +272,19 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const HtmlBuilder& value, ht
   return row2(name, value.getHtml(), flags | html::NO_ENTITIES, color);
 }
 
+HtmlBuilder& HtmlBuilder::row2Warning(const QString& name, const QString& value)
+{
+  return row2(name, warningMessage(value), html::NO_ENTITIES);
+}
+
+HtmlBuilder& HtmlBuilder::row2Error(const QString& name, const QString& value)
+{
+  return row2(name, errorMessage(value), html::NO_ENTITIES);
+}
+
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)
 {
+  flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags | atools::util::html::BOLD, color)).
               arg(asText(value, flags, color));

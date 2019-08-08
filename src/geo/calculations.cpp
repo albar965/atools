@@ -708,6 +708,11 @@ void windForCourse(float& headWind, float& crossWind, float windSpeed, float win
   crossWind = windSpeed * std::sin(diffRad);
 }
 
+float headWindForCourse(float windSpeed, float windDirectionDeg, float courseDeg)
+{
+  return windSpeed * std::cos(atools::geo::toRadians(windDirectionDeg - courseDeg));
+}
+
 bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio)
 {
   if(fuelWeightLbs > 5.f && fuelQuantityGal > 1.f)

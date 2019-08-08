@@ -133,6 +133,7 @@ float windCorrectedGroundSpeed(float windSpeed, float windDirectionDeg, float co
  *  If head wind is < 0 it is a tail wind.
  *  If cross wind is < 0 wind is from left */
 void windForCourse(float& headWind, float& crossWind, float windSpeed, float windDirectionDeg, float courseDeg);
+float headWindForCourse(float windSpeed, float windDirectionDeg, float courseDeg);
 
 /* Calculate wind speed from u and v components
  * V component of wind; northward_wind;

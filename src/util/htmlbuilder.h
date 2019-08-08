@@ -239,6 +239,9 @@ public:
   HtmlBuilder& row2Var(const QString& name, const QVariant& value,
                        html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Set alignment globally for the value colums for all row2 methods */
+  HtmlBuilder& row2AlignRight(bool alignRight = true);
+
   /* Adds row if string is not empty*/
   HtmlBuilder& row2If(const QString& name, const QString& value, html::Flags flags = html::NONE,
                       QColor color = QColor());
@@ -249,6 +252,10 @@ public:
   /* Adds row if value is valid and not null */
   HtmlBuilder& row2IfVar(const QString& name, const QVariant& value, html::Flags flags = html::NONE,
                          QColor color = QColor());
+
+  /* Display two column row with value as warning or error */
+  HtmlBuilder& row2Warning(const QString& name, const QString& value);
+  HtmlBuilder& row2Error(const QString& name, const QString& value);
 
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor);
@@ -353,7 +360,7 @@ private:
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
-  bool hasBackColor = false;
+  bool hasBackColor = false, row2AlignRightFlag = false;
 };
 
 } // namespace util
