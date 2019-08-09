@@ -287,14 +287,14 @@ bool TabWidgetHandler::isTabVisible(int id) const
 
 void TabWidgetHandler::currentChanged()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << tabWidget->objectName();
 
   emit tabChanged(getCurrentTabId());
 }
 
 void TabWidgetHandler::tabCloseRequested(int index)
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << tabWidget->objectName();
 
   if(tabWidget->count() > 1)
   {
@@ -315,7 +315,7 @@ void TabWidgetHandler::tabCloseRequested(int index)
 
 void TabWidgetHandler::toolbarActionTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << tabWidget->objectName();
 
   QAction *sendAction = dynamic_cast<QAction *>(sender());
   QWidget *current = tabWidget->currentWidget();
