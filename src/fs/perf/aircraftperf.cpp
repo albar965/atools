@@ -24,30 +24,42 @@
 #include <QFileInfo>
 #include <QSettings>
 
+namespace ageo = atools::geo;
+
 namespace atools {
 namespace fs {
 namespace perf {
 
 const QLatin1Literal AircraftPerf::FORMAT_VERSION("2.4.0");
 
-float AircraftPerf::getClimbRateFtPerNm() const
+float AircraftPerf::getTimeToClimb(float departureAltFt, float cruiseAltFt) const
 {
-  return getClimbVertSpeed() * 60.f / getClimbSpeed();
+  return (cruiseAltFt - departureAltFt) / getClimbVertSpeed() / 60.f;
 }
 
-float AircraftPerf::getDescentRateFtPerNm() const
+float AircraftPerf::getTimeToDescent(float destinationAltFt, float cruiseAltFt) const
 {
-  return getDescentVertSpeed() * 60.f / getDescentSpeed();
+  return (cruiseAltFt - destinationAltFt) / getDescentVertSpeed() / 60.f;
 }
 
-float AircraftPerf::getClimbFlightPathAngle() const
+float AircraftPerf::getClimbRateFtPerNm(float headWind) const
 {
-  return static_cast<float>(atools::geo::toDegree(std::atan(atools::geo::feetToNm(getClimbRateFtPerNm()))));
+  return getClimbVertSpeed() * 60.f / (getClimbSpeed() - headWind);
 }
 
-float AircraftPerf::getDescentFlightPathAngle() const
+float AircraftPerf::getDescentRateFtPerNm(float headWind) const
 {
-  return static_cast<float>(atools::geo::toDegree(std::atan(atools::geo::feetToNm(getDescentRateFtPerNm()))));
+  return getDescentVertSpeed() * 60.f / (getDescentSpeed() - headWind);
+}
+
+float AircraftPerf::getClimbFlightPathAngle(float headWind) const
+{
+  return static_cast<float>(ageo::toDegree(std::atan(ageo::feetToNm(getClimbRateFtPerNm(headWind)))));
+}
+
+float AircraftPerf::getDescentFlightPathAngle(float headWind) const
+{
+  return static_cast<float>(ageo::toDegree(std::atan(ageo::feetToNm(getDescentRateFtPerNm(headWind)))));
 }
 
 bool AircraftPerf::isClimbValid() const
@@ -114,7 +126,7 @@ void AircraftPerf::setNull()
 
 void AircraftPerf::fromGalToLbs()
 {
-  using atools::geo::fromGalToLbs;
+  using ageo::fromGalToLbs;
 
   usableFuel = fromGalToLbs(jetFuel, usableFuel);
   taxiFuel = fromGalToLbs(jetFuel, taxiFuel);
@@ -128,7 +140,7 @@ void AircraftPerf::fromGalToLbs()
 
 void AircraftPerf::fromLbsToGal()
 {
-  using atools::geo::fromLbsToGal;
+  using ageo::fromLbsToGal;
 
   usableFuel = fromLbsToGal(jetFuel, usableFuel);
   taxiFuel = fromLbsToGal(jetFuel, taxiFuel);
@@ -168,82 +180,82 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
 
 float AircraftPerf::getTaxiFuelLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, taxiFuel) : taxiFuel;
+  return volume ? ageo::fromGalToLbs(jetFuel, taxiFuel) : taxiFuel;
 }
 
 float AircraftPerf::getTaxiFuelGal() const
 {
-  return volume ? taxiFuel : atools::geo::fromLbsToGal(jetFuel, taxiFuel);
+  return volume ? taxiFuel : ageo::fromLbsToGal(jetFuel, taxiFuel);
 }
 
 float AircraftPerf::getReserveFuelLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, reserveFuel) : reserveFuel;
+  return volume ? ageo::fromGalToLbs(jetFuel, reserveFuel) : reserveFuel;
 }
 
 float AircraftPerf::getReserveFuelGal() const
 {
-  return volume ? reserveFuel : atools::geo::fromLbsToGal(jetFuel, reserveFuel);
+  return volume ? reserveFuel : ageo::fromLbsToGal(jetFuel, reserveFuel);
 }
 
 float AircraftPerf::getExtraFuelLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, extraFuel) : extraFuel;
+  return volume ? ageo::fromGalToLbs(jetFuel, extraFuel) : extraFuel;
 }
 
 float AircraftPerf::getExtraFuelGal() const
 {
-  return volume ? extraFuel : atools::geo::fromLbsToGal(jetFuel, extraFuel);
+  return volume ? extraFuel : ageo::fromLbsToGal(jetFuel, extraFuel);
 }
 
 float AircraftPerf::getClimbFuelFlowLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, climbFuelFlow) : climbFuelFlow;
+  return volume ? ageo::fromGalToLbs(jetFuel, climbFuelFlow) : climbFuelFlow;
 }
 
 float AircraftPerf::getClimbFuelFlowGal() const
 {
-  return volume ? climbFuelFlow : atools::geo::fromLbsToGal(jetFuel, climbFuelFlow);
+  return volume ? climbFuelFlow : ageo::fromLbsToGal(jetFuel, climbFuelFlow);
 }
 
 float AircraftPerf::getCruiseFuelFlowLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, cruiseFuelFlow) : cruiseFuelFlow;
+  return volume ? ageo::fromGalToLbs(jetFuel, cruiseFuelFlow) : cruiseFuelFlow;
 }
 
 float AircraftPerf::getCruiseFuelFlowGal() const
 {
-  return volume ? cruiseFuelFlow : atools::geo::fromLbsToGal(jetFuel, cruiseFuelFlow);
+  return volume ? cruiseFuelFlow : ageo::fromLbsToGal(jetFuel, cruiseFuelFlow);
 }
 
 float AircraftPerf::getDescentFuelFlowLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, descentFuelFlow) : descentFuelFlow;
+  return volume ? ageo::fromGalToLbs(jetFuel, descentFuelFlow) : descentFuelFlow;
 }
 
 float AircraftPerf::getDescentFuelFlowGal() const
 {
-  return volume ? descentFuelFlow : atools::geo::fromLbsToGal(jetFuel, descentFuelFlow);
+  return volume ? descentFuelFlow : ageo::fromLbsToGal(jetFuel, descentFuelFlow);
 }
 
 float AircraftPerf::getUsableFuelLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, usableFuel) : usableFuel;
+  return volume ? ageo::fromGalToLbs(jetFuel, usableFuel) : usableFuel;
 }
 
 float AircraftPerf::getUsableFuelGal() const
 {
-  return volume ? usableFuel : atools::geo::fromLbsToGal(jetFuel, usableFuel);
+  return volume ? usableFuel : ageo::fromLbsToGal(jetFuel, usableFuel);
 }
 
 float AircraftPerf::getAlternateFuelFlowLbs() const
 {
-  return volume ? atools::geo::fromGalToLbs(jetFuel, alternateFuelFlow) : alternateFuelFlow;
+  return volume ? ageo::fromGalToLbs(jetFuel, alternateFuelFlow) : alternateFuelFlow;
 }
 
 float AircraftPerf::getAlternateFuelFlowGal() const
 {
-  return volume ? alternateFuelFlow : atools::geo::fromLbsToGal(jetFuel, alternateFuelFlow);
+  return volume ? alternateFuelFlow : ageo::fromLbsToGal(jetFuel, alternateFuelFlow);
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)

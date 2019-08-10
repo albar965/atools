@@ -54,17 +54,22 @@ public:
   void fromGalToLbs();
   void fromLbsToGal();
 
-  /* Climb and descent rates to calculate profile slope */
-  float getClimbRateFtPerNm() const;
-  float getDescentRateFtPerNm() const;
+  /* Climb and descent rates to calculate profile slope.
+   *  Negative head wind is tailwind */
+  float getClimbRateFtPerNm(float headWind) const;
+  float getDescentRateFtPerNm(float headWind) const;
 
   /* Flight path angles in degree */
-  float getClimbFlightPathAngle() const;
-  float getDescentFlightPathAngle() const;
+  float getClimbFlightPathAngle(float headWind) const;
+  float getDescentFlightPathAngle(float headWind) const;
 
   /* True if speed and vertical speed are valid */
   bool isClimbValid() const;
   bool isDescentValid() const;
+
+  /* Time to TOC and time to TOD in decimal hours. Unaffected by wind.  */
+  float getTimeToClimb(float departureAltFt, float cruiseAltFt) const;
+  float getTimeToDescent(float destinationAltFt, float cruiseAltFt) const;
 
   /* true if all fuel flow is > 0 */
   bool isFuelFlowValid() const;

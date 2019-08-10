@@ -514,7 +514,7 @@ float windCorrectedHeading(float& groundSpeed, float windSpeed, float windDirect
   double heading = windCorrectedHeadingRad(gs, windSpeed, toRadians(windDirectionDeg), toRadians(
                                              courseDeg), trueAirspeed);
 
-  if(gs < INVALID_DOUBLE)
+  if(gs < INVALID_DOUBLE && gs > 1.f)
     groundSpeed = static_cast<float>(gs);
   else
     groundSpeed = INVALID_FLOAT;
