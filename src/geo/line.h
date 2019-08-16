@@ -37,6 +37,7 @@ public:
   Line();
   Line(const atools::geo::Line& other);
   Line(const atools::geo::Pos& p1, const atools::geo::Pos& p2);
+  Line(const atools::geo::Pos& pos, float distanceMeter, float course);
 
   /* Create a line with length 0 */
   explicit Line(const atools::geo::Pos& p);
@@ -91,6 +92,16 @@ public:
    * Will find the nearest intersection point. */
   atools::geo::Pos intersectionWithCircle(const atools::geo::Pos& center, float radiusMeter,
                                           float accuracyMeter) const;
+
+  /* Create a parallel line to this one.
+   * Positive distance: Parallel to the right (looking from pos1 to pos2)
+   * Negative distance: Parallel to the left (looking from pos1 to pos2) */
+  atools::geo::Line parallel(float distanceMeter);
+
+  /* Make line longer or shorted
+   * Positive distance: Move pos outward - line will be longer
+   * Negative distance: Move pos inward - line will be shorted */
+  atools::geo::Line extended(float distanceMeter1, float distanceMeter2);
 
   /* Calculate and return bounding rectangle for this line */
   atools::geo::Rect boundingRect() const;
