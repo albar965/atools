@@ -1397,18 +1397,18 @@ void DfdCompiler::updateTreeLetterAirportCodes()
   updateTreeLetterAirportCodes(codeMap, "airway_point", "previous_airport_ident");
 }
 
-void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString> codeMap, const QString& table,
+void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString>& codeMap, const QString& table,
                                                const QString& column)
 {
   qInfo() << "Updating three-letter codes in" << table << column;
   SqlQuery update(db);
   update.prepare("update " + table + " set " + column + " = :code3 where " + column + " = :code4");
 
-  QList<QString> codes4 = codeMap.keys();
-  for(const QString& code4 :codes4)
+  for(const QString& code4 :codeMap.keys())
   {
+    QString code3 = codeMap.value(code4);
     update.bindValue(":code4", code4);
-    update.bindValue(":code3", codeMap.value(code4));
+    update.bindValue(":code3", code3);
     update.exec();
   }
 }
