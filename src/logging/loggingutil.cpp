@@ -23,7 +23,6 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QTextCodec>
-#include <QSslSocket>
 #include <QStyleFactory>
 
 namespace atools {

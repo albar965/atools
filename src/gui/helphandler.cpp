@@ -31,6 +31,7 @@
 #include <QFileInfo>
 #include <QDesktopServices>
 #include <QRegularExpression>
+#include <QSslSocket>
 
 namespace atools {
 namespace gui {
@@ -48,18 +49,31 @@ HelpHandler::~HelpHandler()
 
 void HelpHandler::about()
 {
+  QString sslTxt;
+
+  if(QSslSocket::supportsSsl())
+  {
+    if(QSslSocket::sslLibraryBuildVersionString() == QSslSocket::sslLibraryVersionString())
+      sslTxt = tr("<p>%1 (build and library)</p>").arg(QSslSocket::sslLibraryBuildVersionString());
+    else
+      sslTxt = tr("<p>%1 (build)<br/>%2 (library)</p>").
+               arg(QSslSocket::sslLibraryBuildVersionString()).arg(QSslSocket::sslLibraryVersionString());
+  }
+
   QMessageBox::about(parentWidget,
                      tr("About %1").arg(QApplication::applicationName()),
                      tr("<p><b>%1</b></p>%2<p><hr/>Version %3 (revision %4)</p>"
                           "<p>atools Version %5 (revision %6)</p>"
-                            "<hr/>%7"
-                              "<hr/>%8<br/>").
+                            "%7"
+                            "<hr/>%8"
+                              "<hr/>%9<br/>").
                      arg(QApplication::applicationName()).
                      arg(message).
                      arg(QApplication::applicationVersion()).
                      arg(rev).
                      arg(atools::version()).
                      arg(atools::gitRevision()).
+                     arg(sslTxt).
                      arg(atools::gui::Application::getEmailHtml()).
                      arg(atools::gui::Application::getReportPathHtml()));
 }
