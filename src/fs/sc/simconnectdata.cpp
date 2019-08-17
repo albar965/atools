@@ -188,8 +188,10 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
     data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = tas;
   }
 
-  data.userAircraft.trackMagDeg = data.userAircraft.trackTrueDeg = h;
-  data.userAircraft.headingMagDeg = data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 20.f);
+  data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(h + 20.f);
+  data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(h + 25.f);
+  data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(h + 10.f);
+  data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 15.f);
 
   data.userAircraft.structuralIcePercent = ice;
   data.userAircraft.category = AIRPLANE;
