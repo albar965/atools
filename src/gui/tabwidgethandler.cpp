@@ -248,7 +248,7 @@ int TabWidgetHandler::getCurrentTabId() const
 
 void TabWidgetHandler::setCurrentTab(int id, bool left)
 {
-  int index = indexForId(id);
+  int index = getIndexForId(id);
   if(index != -1)
     // Already open - push to front
     tabWidget->setCurrentIndex(index);
@@ -269,7 +269,7 @@ void TabWidgetHandler::setCurrentTab(int id, bool left)
 
 void TabWidgetHandler::openTab(int id, bool left)
 {
-  int index = indexForId(id);
+  int index = getIndexForId(id);
   if(index == -1)
   {
     {
@@ -282,7 +282,7 @@ void TabWidgetHandler::openTab(int id, bool left)
 
 bool TabWidgetHandler::isTabVisible(int id) const
 {
-  return indexForId(id) != -1;
+  return getIndexForId(id) != -1;
 }
 
 void TabWidgetHandler::currentChanged()
@@ -356,7 +356,7 @@ void TabWidgetHandler::toolbarActionTriggered()
       else
       {
         // Remove
-        int index = indexForId(actionId);
+        int index = getIndexForId(actionId);
         if(index != -1)
           tabWidget->removeTab(index);
       }
@@ -376,6 +376,8 @@ int TabWidgetHandler::insertTab(int index, int id)
   int idx = tabWidget->insertTab(index, tab.widget, tab.title);
   tabWidget->setTabToolTip(idx, tab.tooltip);
   tabWidget->setCurrentWidget(tab.widget);
+
+  emit tabOpened(id);
   return idx;
 }
 
@@ -388,6 +390,8 @@ int TabWidgetHandler::addTab(int id)
   const Tab& tab = tabs.at(id);
   int idx = tabWidget->addTab(tab.widget, tab.title);
   tabWidget->setTabToolTip(idx, tab.tooltip);
+
+  emit tabOpened(id);
   return idx;
 }
 
@@ -440,7 +444,7 @@ int TabWidgetHandler::idForWidget(QWidget *widget) const
   return widget->property(ID_PROPERTY).toInt();
 }
 
-int TabWidgetHandler::indexForId(int id) const
+int TabWidgetHandler::getIndexForId(int id) const
 {
   return tabWidget->indexOf(tabs.at(id).widget);
 }

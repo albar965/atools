@@ -77,12 +77,18 @@ public:
    * is set to current. */
   void reset();
 
+  /* Get index in tab widget for id or -1 if tab is not contained by widget. */
+  int getIndexForId(int id) const;
+
 signals:
   /* Current tab has changed */
   void  tabChanged(int id);
 
   /* A tab was closed */
   void  tabClosed(int id);
+
+  /* A tab was opened */
+  void  tabOpened(int id);
 
 private:
   /* Removes actions from menu button before running init */
@@ -104,9 +110,6 @@ private:
 
   /* Update widget/action state based on active tabs in the widget - also replaces close button on last tab */
   void updateWidgets();
-
-  /* Get index in tab widget for id or -1 if tab is not contained by widget */
-  int indexForId(int id) const;
 
   /* Get id for tab or -1 if index is not valid */
   int idForIndex(int index) const;
