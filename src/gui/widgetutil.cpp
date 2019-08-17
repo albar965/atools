@@ -182,24 +182,6 @@ QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionMod
   return indexes;
 }
 
-void addMenuShortcuts(QMenu *menu)
-{
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
-  for(QAction *action: menu->actions())
-  {
-    if(action->isSeparator())
-      continue;
-
-    if(action->menu())
-      addMenuShortcuts(action->menu());
-    else
-      action->setShortcutVisibleInContextMenu(true);
-  }
-#else
-  Q_UNUSED(menu);
-#endif
-}
-
 } // namespace util
 } // namespace gui
 } // namespace atools

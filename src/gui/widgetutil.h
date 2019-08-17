@@ -75,11 +75,6 @@ bool noneChecked(const QList<const QAction *>& actions);
 /* Add a "* " to an action text or remove it */
 void changeStarIndication(QAction *action, bool changed);
 
-/* Traverse context menu and tell each action to show shortcut text
- * this inelegant hack due to ill-advised Qt change in Qt5.10
- * https://bugreports.qt.io/browse/QTBUG-49435 */
-void addMenuShortcuts(QMenu *menu);
-
 } // namespace util
 } // namespace gui
 } // namespace atools
