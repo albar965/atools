@@ -196,10 +196,10 @@ public:
   HtmlBuilder& br();
 
   /* Add text and break */
-  HtmlBuilder& textBr(const QString& str);
+  HtmlBuilder& textBr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add break and text */
-  HtmlBuilder& brText(const QString& str);
+  HtmlBuilder& brText(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Add non breaking space */
   HtmlBuilder& nbsp();

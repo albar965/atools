@@ -286,7 +286,7 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
 {
   flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
-              arg(asText(name, flags | atools::util::html::BOLD, color)).
+              arg(asText(name, flags | html::BOLD, color)).
               arg(asText(value, flags, color));
   tableIndex++;
   numLines++;
@@ -644,16 +644,16 @@ HtmlBuilder& HtmlBuilder::pre(const QString& str, html::Flags flags, QColor colo
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::brText(const QString& str)
+HtmlBuilder& HtmlBuilder::brText(const QString& str, html::Flags flags, QColor color)
 {
   br();
-  htmlText += str.toHtmlEscaped();
+  text(str, flags, color);
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::textBr(const QString& str)
+HtmlBuilder& HtmlBuilder::textBr(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText += str.toHtmlEscaped();
+  text(str, flags, color);
   return br();
 }
 
