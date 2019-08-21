@@ -114,20 +114,24 @@ public:
   /* Get a list describing aircraft status, like cruise, fuel flow, etc */
   QStringList getAircraftStatusTexts();
 
+  const atools::fs::sc::SimConnectUserAircraft& getCurSimAircraft() const
+  {
+    return *curSimAircraft;
+  }
+
 signals:
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 
 private:
   /* -1 if below, 0 if at and 1 if above flight plan cruise altitude. Uses a altitude dependent buffer to avoid jitters. */
-  int isAtCruise(const sc::SimConnectUserAircraft& aircraft) const;
+  int isAtCruise() const;
 
   /* True if speed below or above 200 ft/min */
-  bool isClimbing(const sc::SimConnectUserAircraft& aircraft) const;
-  bool isDescending(const sc::SimConnectUserAircraft& aircraft) const;
+  bool isClimbing() const;
+  bool isDescending() const;
 
   /* Sample data for current flight phase, calculate averages */
-  void samplePhase(FlightSegment flightSegment, const sc::SimConnectUserAircraft& aircraft, qint64 now,
-                   qint64 curSampleDuration);
+  void samplePhase(FlightSegment flightSegment, qint64 now, qint64 curSampleDuration);
 
   /* Samples a datum for current flight phase, calculate averages */
   float sampleValue(qint64 lastSampleDuration, qint64 curSampleDuration, float lastValue, float curValue);
@@ -142,6 +146,9 @@ private:
 
   /* Do not calculate values more often than this */
   const static qint64 SAMPLE_TIME_MS = 500L;
+
+  /* Last detected aircraft status - aggregated and therefore never null */
+  atools::fs::sc::SimConnectUserAircraft *curSimAircraft;
 
   /* Collecting data if true. Set to false after landing. */
   bool active = false;

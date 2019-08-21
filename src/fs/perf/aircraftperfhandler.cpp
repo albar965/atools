@@ -37,11 +37,14 @@ AircraftPerfHandler::AircraftPerfHandler(QObject *parent)
 {
   perf = new AircraftPerf;
   perf->setNull();
+
+  curSimAircraft = new SimConnectUserAircraft;
 }
 
 AircraftPerfHandler::~AircraftPerfHandler()
 {
   delete perf;
+  delete curSimAircraft;
 }
 
 void AircraftPerfHandler::start()
@@ -57,6 +60,7 @@ void AircraftPerfHandler::start()
   perf->setNull();
 
   active = true;
+  *curSimAircraft = SimConnectUserAircraft();
 }
 
 void AircraftPerfHandler::reset()
@@ -71,29 +75,29 @@ void AircraftPerfHandler::stop()
 
 void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData)
 {
-  const sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
-  if(!active || !aircraft.isValid() || aircraft.isSimPaused() || aircraft.isSimReplay())
+  *curSimAircraft = simulatorData.getUserAircraftConst();
+  if(!active || !curSimAircraft->isValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
     return;
 
-  aircraftClimb = isClimbing(aircraft);
-  aircraftDescent = isDescending(aircraft);
-  aircraftCruise = isAtCruise(aircraft);
-  aircraftFuelFlow = aircraft.hasFuelFlow();
-  aircraftGround = aircraft.isOnGround();
-  aircraftFlying = aircraft.isFlying();
+  aircraftClimb = isClimbing();
+  aircraftDescent = isDescending();
+  aircraftCruise = isAtCruise();
+  aircraftFuelFlow = curSimAircraft->hasFuelFlow();
+  aircraftGround = curSimAircraft->isOnGround();
+  aircraftFlying = curSimAircraft->isFlying();
 
   // Fill metadata if still empty
   if(perf->getAircraftType().isEmpty())
-    perf->setAircraftType(aircraft.getAirplaneModel());
+    perf->setAircraftType(curSimAircraft->getAirplaneModel());
 
   if(perf->getName().isEmpty())
-    perf->setName(aircraft.getAirplaneTitle());
+    perf->setName(curSimAircraft->getAirplaneTitle());
 
   // Determine fuel type ========================================================
   if(atools::almostEqual(weightVolRatio, 0.f))
   {
-    bool jetfuel = atools::geo::isJetFuel(aircraft.getFuelTotalWeightLbs(),
-                                          aircraft.getFuelTotalQuantityGallons(), weightVolRatio);
+    bool jetfuel = atools::geo::isJetFuel(curSimAircraft->getFuelTotalWeightLbs(),
+                                          curSimAircraft->getFuelTotalQuantityGallons(), weightVolRatio);
 
     if(weightVolRatio > 0.f)
     {
@@ -108,16 +112,16 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
   // in fuel amount before flight
   if(startFuel < 0.1f && aircraftFuelFlow)
   {
-    startFuel = aircraft.getFuelTotalWeightLbs();
+    startFuel = curSimAircraft->getFuelTotalWeightLbs();
     qDebug() << Q_FUNC_INFO << "startFuel" << startFuel;
   }
 
   if(aircraftFuelFlow)
-    totalFuelConsumed = startFuel - aircraft.getFuelTotalWeightLbs();
+    totalFuelConsumed = startFuel - curSimAircraft->getFuelTotalWeightLbs();
 
   // Determine current flight sement ================================================================
   FlightSegment flightSegment = currentFlightSegment;
-  if(aircraft.isValid())
+  if(curSimAircraft->isValid())
   {
     switch(currentFlightSegment)
     {
@@ -130,9 +134,9 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
           flightSegment = aircraftFuelFlow ? DEPARTURE_TAXI : DEPARTURE_PARKING;
         else if(aircraftCruise == 0)
           flightSegment = CRUISE;
-        else if(isClimbing(aircraft) && aircraftCruise == -1)
+        else if(isClimbing() && aircraftCruise == -1)
           flightSegment = CLIMB;
-        else if(isDescending(aircraft) && aircraftCruise == -1)
+        else if(isDescending() && aircraftCruise == -1)
           flightSegment = DESCENT;
         break;
 
@@ -198,12 +202,12 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   // Sum up taxi fuel  ========================================================
   if(currentFlightSegment == DEPARTURE_TAXI && aircraftFuelFlow)
-    perf->setTaxiFuel(startFuel - aircraft.getFuelTotalWeightLbs());
+    perf->setTaxiFuel(startFuel - curSimAircraft->getFuelTotalWeightLbs());
 
   // Sample every 500 ms ========================================
   if(now > lastSampleTimeMs + SAMPLE_TIME_MS)
   {
-    samplePhase(flightSegment, aircraft, now, now - lastSampleTimeMs);
+    samplePhase(flightSegment, now, now - lastSampleTimeMs);
     lastSampleTimeMs = now;
   }
 
@@ -278,8 +282,7 @@ float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSamp
                             static_cast<double>(lastSampleDuration + curSampleDuration));
 }
 
-void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConnectUserAircraft& aircraft,
-                                      qint64 now, qint64 curSampleDuration)
+void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, qint64 now, qint64 curSampleDuration)
 {
   // Calculate all average values for each flight phase
   switch(flightSegment)
@@ -296,11 +299,11 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
       {
         qint64 lastSampleDuration = now - lastClimbSampleTimeMs;
         perf->setClimbSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbSpeed(),
-                                        aircraft.getTrueAirspeedKts()));
+                                        curSimAircraft->getTrueAirspeedKts()));
         perf->setClimbVertSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbVertSpeed(),
-                                            aircraft.getVerticalSpeedFeetPerMin()));
+                                            curSimAircraft->getVerticalSpeedFeetPerMin()));
         perf->setClimbFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getClimbFuelFlow(),
-                                           aircraft.getFuelFlowPPH()));
+                                           curSimAircraft->getFuelFlowPPH()));
       }
       break;
 
@@ -308,9 +311,9 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
       {
         qint64 lastSampleDuration = now - lastCruiseSampleTimeMs;
         perf->setCruiseSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseSpeed(),
-                                         aircraft.getTrueAirspeedKts()));
+                                         curSimAircraft->getTrueAirspeedKts()));
         perf->setCruiseFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getCruiseFuelFlow(),
-                                            aircraft.getFuelFlowPPH()));
+                                            curSimAircraft->getFuelFlowPPH()));
 
         // Use cruise as default for alternate - user can adjust manually
         perf->setAlternateFuelFlow(perf->getCruiseFuelFlow());
@@ -322,41 +325,41 @@ void AircraftPerfHandler::samplePhase(FlightSegment flightSegment, const SimConn
       {
         qint64 lastSampleDuration = now - lastDescentSampleTimeMs;
         perf->setDescentSpeed(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentSpeed(),
-                                          aircraft.getTrueAirspeedKts()));
+                                          curSimAircraft->getTrueAirspeedKts()));
         perf->setDescentVertSpeed(sampleValue(lastSampleDuration, curSampleDuration,
                                               perf->getDescentVertSpeed(),
-                                              std::abs(aircraft.getVerticalSpeedFeetPerMin())));
+                                              std::abs(curSimAircraft->getVerticalSpeedFeetPerMin())));
         perf->setDescentFuelFlow(sampleValue(lastSampleDuration, curSampleDuration, perf->getDescentFuelFlow(),
-                                             aircraft.getFuelFlowPPH()));
+                                             curSimAircraft->getFuelFlowPPH()));
       }
       break;
   }
 }
 
-bool AircraftPerfHandler::isClimbing(const SimConnectUserAircraft& aircraft) const
+bool AircraftPerfHandler::isClimbing() const
 {
-  return aircraft.getVerticalSpeedFeetPerMin() > 150.f;
+  return curSimAircraft->getVerticalSpeedFeetPerMin() > 150.f;
 }
 
-bool AircraftPerfHandler::isDescending(const SimConnectUserAircraft& aircraft) const
+bool AircraftPerfHandler::isDescending() const
 {
-  return aircraft.getVerticalSpeedFeetPerMin() < -150.f;
+  return curSimAircraft->getVerticalSpeedFeetPerMin() < -150.f;
 }
 
-int AircraftPerfHandler::isAtCruise(const SimConnectUserAircraft& aircraft) const
+int AircraftPerfHandler::isAtCruise() const
 {
   float buffer = std::max(cruiseAltitude * 0.01f, 200.f);
-  int result = !(aircraft.getIndicatedAltitudeFt() > cruiseAltitude - buffer &&
-                 aircraft.getIndicatedAltitudeFt() < cruiseAltitude + buffer);
+  int result = !(curSimAircraft->getIndicatedAltitudeFt() > cruiseAltitude - buffer &&
+                 curSimAircraft->getIndicatedAltitudeFt() < cruiseAltitude + buffer);
 
   if(result == 1)
   {
     // Use a larger buffer for deviations
     float buffer2 = std::max(cruiseAltitude * 0.02f, 200.f);
-    if(aircraft.getIndicatedAltitudeFt() < cruiseAltitude - buffer2)
+    if(curSimAircraft->getIndicatedAltitudeFt() < cruiseAltitude - buffer2)
       result = -1;
 
-    if(aircraft.getIndicatedAltitudeFt() > cruiseAltitude + buffer2)
+    if(curSimAircraft->getIndicatedAltitudeFt() > cruiseAltitude + buffer2)
       result = 1;
   }
   return result;
