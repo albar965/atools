@@ -76,7 +76,12 @@ bool AircraftPerf::isDescentValid() const
 
 bool AircraftPerf::isFuelFlowValid() const
 {
-  return climbFuelFlow > 0.f && cruiseFuelFlow > 0.1 && descentFuelFlow > 0.1;
+  return climbFuelFlow > 0.1f && cruiseFuelFlow > 0.1f && descentFuelFlow > 0.1f;
+}
+
+bool AircraftPerf::isSpeedValid() const
+{
+  return climbSpeed > 1.0f && cruiseSpeed > 1.0f && descentSpeed > 1.0f;
 }
 
 void AircraftPerf::load(const QString& filepath)

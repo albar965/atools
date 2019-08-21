@@ -51,6 +51,7 @@ public:
   /* Reset all back to default values */
   void resetToDefault();
 
+  /* Change all fuel values in this object */
   void fromGalToLbs();
   void fromLbsToGal();
 
@@ -73,6 +74,9 @@ public:
 
   /* true if all fuel flow is > 0 */
   bool isFuelFlowValid() const;
+
+  /* true if all speeds are > 0 */
+  bool isSpeedValid() const;
 
   /* Does not compare version numbers and other metadata */
   bool operator==(const AircraftPerf& other) const;
