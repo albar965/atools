@@ -61,12 +61,20 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
   toolButtonCorner->addAction(actionNone);
   connect(actionNone, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
 
-  // Create and add select all action =====================================
-  actionReset = new QAction(tr("&Reset View"), toolButtonCorner);
+  // Create and add reset action =====================================
+  actionReset = new QAction(tr("&Reset Tab Layout"), toolButtonCorner);
   actionReset->setToolTip(tr("Show all tabs and reset order back to default"));
   actionReset->setStatusTip(actionReset->toolTip());
   toolButtonCorner->addAction(actionReset);
   connect(actionReset, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
+
+  // Create and add lock action =====================================
+  actionLock = new QAction(tr("&Lock Tab Layout"), toolButtonCorner);
+  actionLock->setToolTip(tr("Hides close buttons and fixes tabs at current position"));
+  actionLock->setStatusTip(actionLock->toolTip());
+  actionLock->setCheckable(true);
+  toolButtonCorner->addAction(actionLock);
+  connect(actionLock, &QAction::toggled, this, &TabWidgetHandler::toolbarActionTriggered);
 
   // Enable and connect context menu
   tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -79,6 +87,7 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
 TabWidgetHandler::~TabWidgetHandler()
 {
   clear();
+  delete actionLock;
   delete actionReset;
   delete actionNone;
   delete actionAll;
@@ -141,6 +150,8 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   menu.addAction(actionNone);
   menu.addAction(actionReset);
   menu.addSeparator();
+  menu.addAction(actionLock);
+  menu.addSeparator();
   menu.addAction(closeAction);
   menu.addSeparator();
 
@@ -190,8 +201,10 @@ void TabWidgetHandler::init(const QVector<int>& tabIdsParam, const QString& sett
 
 void TabWidgetHandler::restoreState()
 {
+  settings::Settings& settings = atools::settings::Settings::instance();
+
   // A list of tab ids in the same order as contained by the tab widget
-  QStringList tabList = atools::settings::Settings::instance().valueStrList(settingsPrefix + "TabIds");
+  QStringList tabList = settings.valueStrList(settingsPrefix + "TabIds");
 
   if(!tabList.isEmpty())
   {
@@ -221,24 +234,36 @@ void TabWidgetHandler::restoreState()
   }
 
   // Restore current tab from separate setting
-  setCurrentTab(atools::settings::Settings::instance().valueInt(settingsPrefix + "CurrentTabId", 0));
+  setCurrentTab(settings.valueInt(settingsPrefix + "CurrentTabId", 0));
+
+  {
+    // Restore lock state
+    QSignalBlocker blocker(actionLock);
+    actionLock->setChecked(settings.valueBool(settingsPrefix + "Locked", false));
+  }
 
   // Update actions
+  updateTabs();
   updateWidgets();
 }
 
 void TabWidgetHandler::saveState()
 {
+  settings::Settings& settings = atools::settings::Settings::instance();
+
   // A list of tab ids in the same order as contained by the tab widget
   QStringList tabList;
   for(int index = 0; index < tabWidget->count(); index++)
     tabList.append(QString::number(idForIndex(index)));
 
   // Save tabs
-  atools::settings::Settings::instance().setValue(settingsPrefix + "TabIds", tabList);
+  settings.setValue(settingsPrefix + "TabIds", tabList);
 
   // Save current tab
-  atools::settings::Settings::instance().setValue(settingsPrefix + "CurrentTabId", getCurrentTabId());
+  settings.setValue(settingsPrefix + "CurrentTabId", getCurrentTabId());
+
+  // Save lock state
+  settings.setValue(settingsPrefix + "Locked", isLocked());
 }
 
 int TabWidgetHandler::getCurrentTabId() const
@@ -341,6 +366,12 @@ void TabWidgetHandler::toolbarActionTriggered()
     else if(sendAction == actionReset)
       // Reset open/close state and order and select first ============================================
       resetInternal();
+    else if(sendAction == actionLock)
+    {
+      // Disallow movement and remove close buttons ============================================
+      updateWidgets();
+      updateTabs();
+    }
     else if(sendAction != nullptr)
     {
       // Open/close individual tabs ============================================================
@@ -411,11 +442,9 @@ void TabWidgetHandler::fixSingleTab()
 
 void TabWidgetHandler::clearTabWidget()
 {
-  // int height = tabWidget->cornerWidget()->height();
   tabWidget->blockSignals(true);
   tabWidget->clear();
   tabWidget->blockSignals(false);
-  // tabWidget->cornerWidget()->setMinimumHeight(height);
 }
 
 QVector<int> TabWidgetHandler::missingTabIds() const
@@ -447,6 +476,20 @@ int TabWidgetHandler::idForWidget(QWidget *widget) const
 int TabWidgetHandler::getIndexForId(int id) const
 {
   return tabWidget->indexOf(tabs.at(id).widget);
+}
+
+bool TabWidgetHandler::isLocked() const
+{
+  return actionLock->isChecked();
+}
+
+void TabWidgetHandler::updateTabs()
+{
+  tabWidget->setMovable(!isLocked());
+  tabWidget->setTabsClosable(!isLocked());
+
+  if(tabWidget->count() > 0)
+    tabWidget->setTabText(0, tabWidget->tabText(0));
 }
 
 void TabWidgetHandler::updateWidgets()

@@ -80,6 +80,9 @@ public:
   /* Get index in tab widget for id or -1 if tab is not contained by widget. */
   int getIndexForId(int id) const;
 
+  /* True if tab layout is locked and close buttons are hidden */
+  bool isLocked() const;
+
 signals:
   /* Current tab has changed */
   void  tabChanged(int id);
@@ -110,6 +113,9 @@ private:
 
   /* Update widget/action state based on active tabs in the widget - also replaces close button on last tab */
   void updateWidgets();
+
+  /* Update tab widget movable and closable properties */
+  void updateTabs();
 
   /* Get id for tab or -1 if index is not valid */
   int idForIndex(int index) const;
@@ -158,7 +164,7 @@ private:
   QVector<Tab> tabs;
 
   /* Various action to restore, close or reset all tabs */
-  QAction *actionAll = nullptr, *actionNone = nullptr, *actionReset = nullptr;
+  QAction *actionAll = nullptr, *actionNone = nullptr, *actionReset = nullptr, *actionLock = nullptr;
 
   QTabWidget *tabWidget;
   QToolButton *toolButtonCorner = nullptr;
