@@ -635,6 +635,19 @@ HtmlBuilder& HtmlBuilder::pEnd()
   return *this;
 }
 
+HtmlBuilder& HtmlBuilder::pre()
+{
+  htmlText += "<pre>";
+  numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::preEnd()
+{
+  htmlText += "</pre>\n";
+  return *this;
+}
+
 HtmlBuilder& HtmlBuilder::pre(const QString& str, html::Flags flags, QColor color)
 {
 
@@ -783,6 +796,12 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor color)
   {
     prefix.append("<code>");
     suffix.prepend("</code>");
+  }
+
+  if(flags & html::PRE)
+  {
+    prefix.append("<pre>");
+    suffix.prepend("</pre>");
   }
 
   if(flags & html::NOBR)

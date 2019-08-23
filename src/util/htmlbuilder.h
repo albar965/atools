@@ -42,14 +42,15 @@ enum Flag
   SMALL = 1 << 6,
   BIG = 1 << 7,
   CODE = 1 << 8,
+  PRE = 1 << 9,
 
-  NOBR = 1 << 9, /* HTML no break */
+  NOBR = 1 << 10, /* HTML no break */
 
-  LINK_NO_UL = 1 << 10, /* Do not underline links */
-  NO_ENTITIES = 1 << 11, /* Do not convert entities */
-  ALIGN_RIGHT = 1 << 12, /* Only for table data */
-  AUTOLINK = 1 << 13, /* Automatically create links from http:// and https:// in text */
-  REPLACE_CRLF = 1 << 14 /* Replace carriage return and linefeed with <br/> */
+  LINK_NO_UL = 1 << 11, /* Do not underline links */
+  NO_ENTITIES = 1 << 12, /* Do not convert entities */
+  ALIGN_RIGHT = 1 << 13, /* Only for table data */
+  AUTOLINK = 1 << 14, /* Automatically create links from http:// and https:// in text */
+  REPLACE_CRLF = 1 << 15 /* Replace carriage return and linefeed with <br/> */
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -191,6 +192,8 @@ public:
 
   /* Add preformatted text */
   HtmlBuilder& pre(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+  HtmlBuilder& pre();
+  HtmlBuilder& preEnd();
 
   /* Add break */
   HtmlBuilder& br();
