@@ -50,10 +50,16 @@ bool Application::notify(QObject *receiver, QEvent *event)
   }
   catch(std::exception& e)
   {
+    qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
+    qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+
     ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
+    qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
+    qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
