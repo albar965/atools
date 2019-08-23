@@ -321,7 +321,7 @@ void TabWidgetHandler::tabCloseRequested(int index)
 {
   qDebug() << Q_FUNC_INFO << tabWidget->objectName();
 
-  if(tabWidget->count() > 1)
+  if(tabWidget->count() > 1 && !isLocked())
   {
     // int height = tabWidget->cornerWidget()->height();
     int id = idForIndex(index);
@@ -489,6 +489,7 @@ void TabWidgetHandler::updateTabs()
   tabWidget->setTabsClosable(!isLocked());
 
   if(tabWidget->count() > 0)
+    // Dummy text change to force a re-layout of the widget - otherwise tabs remain large
     tabWidget->setTabText(0, tabWidget->tabText(0));
 }
 
