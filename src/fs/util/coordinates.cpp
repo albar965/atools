@@ -550,7 +550,8 @@ geo::Pos fromAnyFormat(const QString& coords)
     "" + EW + SP + LONX_DEC_DEG + SP + DEGEND + "$");
 
   // Signed Lat lon or lon lat
-  static const QRegularExpression FORMAT_NUMBER_SIGNED(LATY_DEC_DEG_SIGN + "[\\s\\|_/#;:]+" + LONX_DEC_DEG_SIGN);
+  static const QRegularExpression FORMAT_NUMBER_SIGNED(
+    "^" + LATY_DEC_DEG_SIGN + "[\\s\\|_/#;:]+" + LONX_DEC_DEG_SIGN + "$");
 
   // ================================================================================
   // Decimal degree formats
