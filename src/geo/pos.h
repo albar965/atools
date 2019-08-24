@@ -130,6 +130,12 @@ public:
     return altitude;
   }
 
+  atools::geo::Pos& swapLonXLatY()
+  {
+    std::swap(lonX, latY);
+    return *this;
+  }
+
   /* true if the position is within approx 500 meters from a one degree grid point */
   bool nearGrid(float epsilon = POS_EPSILON_500M) const;
   atools::geo::Pos& snapToGrid();

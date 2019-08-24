@@ -392,9 +392,8 @@ atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured)
 QRegularExpressionMatch safeMatch(const QRegularExpression& regexp, const QString& str)
 {
   if(!regexp.isValid())
-    throw  atools::Exception(
-            "Invalid regular expression: " + regexp.errorString() + " at " +
-            QString::number(regexp.patternErrorOffset()));
+    throw atools::Exception("Invalid regular expression: " + regexp.errorString() + " at " +
+                            QString::number(regexp.patternErrorOffset()));
   else
     return regexp.match(str);
 }
@@ -438,6 +437,20 @@ atools::geo::Pos degMinFromMatch(const QRegularExpressionMatch& match)
   float latY = (latYDeg + latYMin / 60.f) * (ns == "S" ? -1.f : 1.f);
   float lonX = (lonXDeg + lonXMin / 60.f) * (ew == "W" ? -1.f : 1.f);
   return Pos(lonX, latY);
+}
+
+atools::geo::Pos degFromMatchSigned(const QRegularExpressionMatch& match)
+{
+  bool ok;
+  float latYDeg = safeCaptured(match, "LATY_DEC_DEG_SIGN").toFloat(&ok);
+  if(!ok)
+    return atools::geo::EMPTY_POS;
+
+  float lonXDeg = safeCaptured(match, "LONX_DEC_DEG_SIGN").toFloat(&ok);
+  if(!ok)
+    return atools::geo::EMPTY_POS;
+
+  return Pos(lonXDeg, latYDeg);
 }
 
 atools::geo::Pos degFromMatch(const QRegularExpressionMatch& match)
@@ -487,6 +500,10 @@ geo::Pos fromAnyFormat(const QString& coords)
   const static QLatin1Literal LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
   const static QLatin1Literal LATY_DEC_DEG("(?<LATY_DEC_DEG>[0-9\\.]+)");
 
+  // Decimal degree with sign
+  const static QLatin1Literal LONX_DEC_DEG_SIGN("(?<LONX_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
+  const static QLatin1Literal LATY_DEC_DEG_SIGN("(?<LATY_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
+
   // Minutes
   const static QLatin1Literal LONX_MIN("(?<LONX_MIN>[0-9]+)");
   const static QLatin1Literal LATY_MIN("(?<LATY_MIN>[0-9]+)");
@@ -532,10 +549,22 @@ geo::Pos fromAnyFormat(const QString& coords)
     "^" + NS + SP + LATY_DEC_DEG + SP + DEG + SP +
     "" + EW + SP + LONX_DEC_DEG + SP + DEGEND + "$");
 
+  // Signed Lat lon or lon lat
+  static const QRegularExpression FORMAT_NUMBER_SIGNED(LATY_DEC_DEG_SIGN + "[\\s\\|_/#;:]+" + LONX_DEC_DEG_SIGN);
+
   // ================================================================================
   // Decimal degree formats
+  // 49,4449 -9,2015 - caller probably has to swap lat/lon
+  QRegularExpressionMatch match = safeMatch(FORMAT_NUMBER_SIGNED, coordStr);
+  if(match.hasMatch())
+  {
+    Pos pos = degFromMatchSigned(match);
+    if(pos.isValidRange())
+      return pos;
+  }
+
   // 49,4449° N 9,2015° E
-  QRegularExpressionMatch match = safeMatch(FORMAT_DEG_REGEXP, coordStr);
+  match = safeMatch(FORMAT_DEG_REGEXP, coordStr);
   if(match.hasMatch())
   {
     Pos pos = degFromMatch(match);

@@ -29,6 +29,7 @@ namespace util {
 
 /* Recognizes the following formats or alternatively one from fromAnyWaypointFormat:
  *
+ *  49,4449 -9,2015
  *  N49° 26' 41.57" E9° 12' 5.49"
  *  N54* 16.82' W008* 35.95'
  *  N 52 33.58 E 13 17.26
