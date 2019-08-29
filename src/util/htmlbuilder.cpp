@@ -886,7 +886,7 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css)
+HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QString& bodyStyle)
 {
   htmlText +=
     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -901,7 +901,11 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css)
 
   // <link rel="stylesheet" href="css/style.css" type="text/css" />
   htmlText += "</head>\n";
-  htmlText += "<body style=\"font-family:'sans'; font-size:8pt; font-weight:400; font-style:normal;\">\n";
+
+  if(!bodyStyle.isEmpty())
+    htmlText += "<body style=\"" + bodyStyle + "\">\n";
+  else
+    htmlText += "<body>\n";
 
   tableIndex = 0;
   return *this;

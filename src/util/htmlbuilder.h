@@ -278,7 +278,8 @@ public:
   HtmlBuilder& th(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Document begin and end */
-  HtmlBuilder& doc(const QString& title = QString(), const QString& css = QString());
+  HtmlBuilder& doc(const QString& title = QString(), const QString& css = QString(),
+                   const QString& bodyStyle = QString());
   HtmlBuilder& docEnd();
 
   /*
