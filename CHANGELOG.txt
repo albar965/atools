@@ -1,14 +1,104 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.0.beta
+
+* New coordinate format for parsing: Plain numbers with sign.
+* Added display of SSL version into about dialog.
+* Fixed several METAR parsing issues. closes albar965/littlenavmap#441
+* Reduced exaggerated number precision in CSV userpoint export.
+* Added TFDi Design 717 flight plan export format. albar965/littlenavmap#399
+* Fixed issue where table cells where initially not resized properly in itemview zoom handler.
+* Now ignoring special ASX weather files written for X-Plane. Fixed excessive logging about missing
+  file. albar965/littlenavmap#422
+* Added tab widget handler to manage movable and closable tabs.
+* Fixed display flags for transparent aprons in X-Plane.
+* Added geometry callback for whazzup parser to fetch user airspace geometry. Trying to get center
+  boundary and falling back to circle shape if missing.
+* Removed option to read airspaces from "Documents/Little Navmap" in X-Plane compiler.
+  Refactored reading of OpenAir airspaces out of X-Plane compiler for general usage.
+  Added option to create schema for user airspaces only. albar965/littlenavmap#236
+* Aircraft performance handler: Fixed issues in where states were not detected properly.
+  Corrected fuel calculation which is now only done if fuel flow is detected to avoid case where
+  user changes fuel in the simulator.
+* Fixed issue where aircraft descending was not detected. Added method to give aircraft state as
+  text. albar965/littlenavmap#340
+* Added method to check X-Plane file "scenery_packs.ini".
+* Potential fix on macOS folder resolution problems that appear when using case sensitive file
+  systems.
+* Better error handling and reporting around "magdec.bgl" file and database. Now falling back to WMM
+  if file could not be read.
+* Added methods to get statistics for logbook entries. albar965/littlenavmap#346
+* Set codec to UTF when reading X-Plane and weather files.
+* Replaced exit on failure with abort to get core dump.
+* Added functions and SQL scripts for logbook management. Created base class for userdata and
+  logbook data manager. More refactoring around fuel calculation.
+* Removed obsolete FSX logbook code.
+* Added support for gui_label 3D attribute in X-Plane 11.35 and higher. Updated rating calculation.
+  albar965/littlenavmap#424
+* Fixed error in rating calculation function for X-Plane. albar965/littlenavmap#410
+* Updated aircraft performance class and collection handler for permanent data collection.
+  More get methods for fuel volume and weight in performance. albar965/littlenavmap#340
+* Updating aircraft performance alternate parameters with cruise parameters as default now when
+  collecting. albar965/littlenavmap#367
+* Added alternate speed, alternate fuel flow, min runway length, runway type and usable fuel to
+  aircraft performance. albar965/littlenavmap#367
+* Adapted wind download to new NOAA url changes. Added more debug output for wind download.
+  albar965/littlenavmap#283
+* Added flight plan properties for custom approaches. albar965/littlenavmap#307
+* Added flags field for flight plan entry. Added flags and support for alternate airports.
+  albar965/littlenavmap#230
+* Added two second delay for initial weather download of NOAA data. albar965/littlenavmap#283
+* Added option to application to disable exception dialog.
+* Changed NOAA weather download schedule to catch latest METARs. albar965/littlenavmap#359
+* Refactoring of weather, METAR and download code. Added class to download NOAA METAR files to
+  avoid requests for single airports. Bug fixes in station index. albar965/littlenavmap#359
+* Added geomagnetic model calculation class. MagDecTool. Changed X-Plane and DFD compiler to save
+  declination based on current year and month into database. albar965/littlenavmap#300
+* Wind query allows to interpolate wind for lines through levels now, i.e. lines with positions
+  having different altitude. Added point interpolation methods that also considers altitude set in
+  position. Changed wind query interface to use altitude from position.
+* Fixed crash that appears when using fsAerodata cycle 1905r1 or later. albar965/littlenavmap#413
+* Added support for X-Plane 8.33 kHz frequency spacing. albar965/littlenavmap#409
+* GRIB downloader now allows to set base URL. Changed GRIB reader to ignore data sets with invalid
+  parameters instead of throwing an exception. Wind query class not checks file for changes. Now
+  interpolating between null values and next upper layer if querying wind data for a level lower than
+  the lowest. albar965/littlenavmap#283
+* Fixed issue where temperature and QNH were omitted if METAR contains //////TCU string.
+* Fixed issue when saving flight plans from airports with empty names (crashes P3D).
+* Fixed issue where QNH was not recognized with invalid temperature.
+  Example: "EIWF 041830Z 01007KT 340V040 CAVOK ///// Q0988"
+* Fixed Maddog X export to use correct file extension mdr.
+* Fixed several issues in HTTP server due to abuse of QSettings (forced write back) for parameter
+  passing. Implemented own INI reader class since QSettings cannot be set to read only. albar965/littlenavmap#163
+* Added option to save list view selection state in widget state.
+* Added web server by Stefan Frings (http://stefanfrings.de/qtwebapp/index.html). albar965/littlenavmap#163
+* Fixed parsing issue with coordinates when using C locale.
+* Fixed issue when loading old style aircraft performance files where key ExtraFuelLbsGal is not recognized.
+* Fixed missing "=" in cruise altitude for BBS export. albar965/littlenavmap#396
+* Made loading of X-Plane FMS flight plans more tolerant for wrong "DIRECT" instead of "DRCT" which
+  comes from invalid SimBrief plans.
+
+Build and Deployment for Developers: albar965/littlenavmap#387
+* Updated for Qt 5.12.4. Changed OpenSSL to 1.1.1.
+* Linux compilation now uses system OpenSSL again and is based on Ubuntu 18.04.
+* Added build for Travis CI. Thanks to Jannik for all his work!
+* Complete update of project files to allow configuration with environment variables. Removed all hard coded paths.
+* Added documentation about environment variables to configure build and updated build instructions
+  in "BUILD.txt" and "atools.pro" files.
+
+===============================================================================
+
 Version 3.2.4
 
 * Fixed issue with wrong waypoint numbering in FlightGear export causing the simulator to crash.
   This happens only when using SID and/or STAR. #361
 * Now disabling aircraft performance collection when sim is paused or replaying.
-* Now choosing separator for file autonumbering on save depending on filename.
+* Now choosing separator for file auto numbering on save depending on filename.
 * Changed email address and links. albar965/littlenavmap#238
 * Updated translations.
+
+===============================================================================
 
 Version 3.2.4.rc1
 
@@ -31,9 +121,13 @@ Version 3.2.4.rc1
 * Added export for AivlaSoft EFB. albar965/littlenavmap#226
 * Added flight plan export for FeelThere and Level-D. albar965/littlenavmap#206
 
+===============================================================================
+
 Version 3.2.3
 
 * X-Plane scenery_packs.ini now read case insensitive.
+
+===============================================================================
 
 Version 3.2.2
 
@@ -41,12 +135,16 @@ Version 3.2.2
 * Updated database minor version to 13.
 * Updated German translation.
 
+===============================================================================
+
 Version 3.2.2.rc2
 
 * Fixed rounding error for COM frequencies in DFD compiler.
 * Fixed warning message "q_startOperation was called more than once" by skipping if already downloading weather files.
 * Change test URL function to allow also files.
 * Added methods to fix com frequencies into 25 kHz steps.
+
+===============================================================================
 
 Version 3.2.2.rc1
 
@@ -56,6 +154,7 @@ Version 3.2.2.rc1
 * Updated French translation by Patrick.
 * Fixed issue in Rect::getWidthDegree that caused wrong zooming in LNM on the anti-meridian.
 
+===============================================================================
 
 Version 3.2.1.beta
 
@@ -71,6 +170,8 @@ Version 3.2.1.beta
   Performance handler now detects fuel type and uses lbs as default now. albar965/littlenavmap#255
 * Added saving of widgetstate for editable combo boxes.
 * Updated French translation from Patrick.
+
+===============================================================================
 
 Version 3.2.0.beta
 
@@ -111,6 +212,8 @@ Version 3.2.0.beta
 * Updated all translations.
 * Database minor version updated to 13.
 
+===============================================================================
+
 Version 3.0.3
 
 * Fixed issue where aprons from stock airports remained in add-ons.
@@ -125,6 +228,8 @@ Version 3.0.3
 * Workaround for invalid record length for NDB and waypoints in APX27190.bgl from P3D v4.3 which causes errors
   when reading the scenery library.
 
+===============================================================================
+
 Version 3.0.2
 
 * Updated translations: Brazilian Portuguese, French, Spanish and German. All finished.
@@ -138,10 +243,14 @@ Version 3.0.2
 * Added version to palette settings to allow upgrades for color customization files.
 * Added functions to create shadow aircraft that exist in both the simulator and online network.
 
+===============================================================================
+
 Version 3.0.1.beta
 
 * Weather texts are now shown translated.
 * Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+
+===============================================================================
 
 Version 3.0.0.beta
 
