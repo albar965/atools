@@ -24,6 +24,13 @@
     </message>
 </context>
 <context>
+    <name>AirspaceWriter</name>
+    <message>
+        <source>In file &quot;%1&quot; on line %2: Index out of bounds: Index: %1, size: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AirwayResolver</name>
     <message>
         <source>Populating VOR/NDB Routing Table</source>
@@ -870,6 +877,10 @@ Atrapada excepción
         <source>Clean up runways</source>
         <translation>Limpiando pistas</translation>
     </message>
+    <message>
+        <source>Creating boundary indexes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1633,6 +1644,13 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
 </context>
 <context>
+    <name>atools::fs::userdata::AirspaceReaderOpenAir</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
@@ -1714,11 +1732,70 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</source>
-        <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versión %3 (revisión %4)&lt;/p&gt;&lt;p&gt;Versión atools  %5 (revisión %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versión %3 (revisión %4)&lt;/p&gt;&lt;p&gt;Versión atools  %5 (revisión %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>La URL está vacío por &quot;%1&quot;.</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::TabWidgetHandler</name>
+    <message>
+        <source>&amp;Open All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show all tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close All Except Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close all tabs except the current tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Reset Tab Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show all tabs and reset order back to default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Lock Tab Layout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hides close buttons and fixes tabs at current position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close tab %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open or close tab %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
