@@ -161,7 +161,8 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   // Open menu
   QAction *action = menu.exec(menuPos);
   if(action == closeAction)
-    tabCloseRequested(index);
+    // Use internal which does not check locked status
+    tabCloseRequestedInternal(index);
 }
 
 void TabWidgetHandler::init(const QVector<int>& tabIdsParam, const QString& settingsPrefixParam)
@@ -317,16 +318,14 @@ void TabWidgetHandler::currentChanged()
   emit tabChanged(getCurrentTabId());
 }
 
-void TabWidgetHandler::tabCloseRequested(int index)
+void TabWidgetHandler::tabCloseRequestedInternal(int index)
 {
   qDebug() << Q_FUNC_INFO << tabWidget->objectName();
 
-  if(tabWidget->count() > 1 && !isLocked())
+  if(tabWidget->count() > 1)
   {
-    // int height = tabWidget->cornerWidget()->height();
     int id = idForIndex(index);
     tabWidget->removeTab(index);
-    // tabWidget->cornerWidget()->setMinimumHeight(height);
 
     // Update action but disable signals to avoid recursion
     QAction *action = tabs.at(index).action;
@@ -336,6 +335,12 @@ void TabWidgetHandler::tabCloseRequested(int index)
     updateWidgets();
     emit tabClosed(id);
   }
+}
+
+void TabWidgetHandler::tabCloseRequested(int index)
+{
+  if(!isLocked())
+    tabCloseRequestedInternal(index);
 }
 
 void TabWidgetHandler::toolbarActionTriggered()
@@ -386,10 +391,10 @@ void TabWidgetHandler::toolbarActionTriggered()
       }
       else
       {
-        // Remove
         int index = getIndexForId(actionId);
         if(index != -1)
-          tabWidget->removeTab(index);
+          // Remove
+          tabCloseRequestedInternal(index);
       }
     }
   }

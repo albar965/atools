@@ -108,6 +108,9 @@ private:
   /* Signal from tab widget - Replaces close button with an empty dummy label if only one tab is left. */
   void tabCloseRequested(int index);
 
+  /* Same as above but does not check lock status */
+  void tabCloseRequestedInternal(int index);
+
   /* Any of the none, all, reset or other actions were triggered or toggled */
   void toolbarActionTriggered();
 
@@ -171,7 +174,6 @@ private:
 
   /* Prefix used when saving settings */
   QString settingsPrefix;
-
 };
 
 } // namespace gui
