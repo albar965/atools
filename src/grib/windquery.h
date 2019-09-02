@@ -42,15 +42,34 @@ namespace grib {
 
 class GribDownloader;
 
+Q_DECL_CONSTEXPR static float INVALID_WIND_DIR_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_WIND_SPEED_VALUE = std::numeric_limits<float>::max();
+
 /* Combines wind speed and direction */
 struct Wind
 {
+  Wind(float windDir, float windSpeed)
+  {
+    dir = windDir;
+    speed = windSpeed;
+  }
+
+  Wind()
+  {
+    dir = speed = 0.f;
+  }
+
   /* Degrees true and knots */
   float dir, speed;
 
-  void init()
+  bool isValid() const
   {
-    dir = speed = 0.f;
+    return speed < INVALID_WIND_SPEED_VALUE && dir < INVALID_WIND_DIR_VALUE;
+  }
+
+  bool isNull() const
+  {
+    return speed < 1.f;
   }
 
   bool operator==(const Wind& other) const
@@ -65,16 +84,18 @@ struct Wind
 
 };
 
+/* Invalid wind */
+const atools::grib::Wind EMPTY_WIND;
+
 /* Combines wind speed and direction at a position */
 struct WindPos
 {
   atools::geo::Pos pos;
   Wind wind;
 
-  void init()
+  bool isValid() const
   {
-    pos = atools::geo::Pos();
-    wind.init();
+    return pos.isValid() && wind.isValid();
   }
 
   bool operator==(const WindPos& other) const
@@ -88,6 +109,9 @@ struct WindPos
   }
 
 };
+
+/* Invalid wind pos */
+const atools::grib::WindPos EMPTY_WIND_POS;
 
 typedef QVector<WindPos> WindPosVector;
 typedef QList<WindPos> WindPosList;

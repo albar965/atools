@@ -70,6 +70,8 @@ struct WindData
 
 };
 
+const static atools::grib::WindData EMPTY_WIND_DATA = {0.f, 0.f};
+
 /* Internal data structure for wind direction and speed computed from U/V speeds */
 struct WindAltLayer
 {
@@ -241,14 +243,14 @@ void WindQuery::initFromFixedModel(float dirLower, float speedLower, float altit
 
   // Add lower layer ==========================
   WindAltLayer groundLayer;
-  groundLayer.altitude = altitudeLower;
+  groundLayer.altitude = roundToInt(altitudeLower);
   groundLayer.winds.fill(WindData{windUComponent(speedLower, dirLower),
                                   windVComponent(speedLower, dirLower)}, 360 * 181);
   windLayers.insert(atools::roundToInt(groundLayer.altitude), groundLayer);
 
   // Add upper layer ==========================
   WindAltLayer altLayer;
-  altLayer.altitude = altitudeUpper;
+  altLayer.altitude = roundToInt(altitudeUpper);
   altLayer.winds.fill(WindData{windUComponent(speedUpper, dirUpper),
                                windVComponent(speedUpper, dirUpper)}, 360 * 181);
   windLayers.insert(atools::roundToInt(altLayer.altitude), altLayer);
@@ -266,7 +268,7 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
   if(!pos.isValid())
   {
     qWarning() << Q_FUNC_INFO << "invalid pos";
-    return {0.f, 0.f};
+    return EMPTY_WIND;
   }
   // Calculate grid position
   QPoint gPos = gridPos(pos);
@@ -382,7 +384,7 @@ Wind WindQuery::getWindAverageForLineString(const geo::LineString& linestring) c
     return getWindAverageForLine(linestring.toLine());
   else
   {
-    WindData windData = {0.f, 0.f};
+    WindData windData = EMPTY_WIND_DATA;
     // Sum up values
     for(int i = 0; i < linestring.size() - 1; i++)
     {
@@ -425,7 +427,7 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
 
 WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point) const
 {
-  return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : WindData{0.f, 0.f};
+  return layer.isValid() ? layer.winds.at(point.x() + point.y() * 360) : EMPTY_WIND_DATA;
 }
 
 Wind WindQuery::getWindAverageForLine(const Line& line) const
@@ -440,7 +442,7 @@ Wind WindQuery::getWindAverageForLine(const Pos& pos1, const Pos& pos2) const
 
 WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
 {
-  WindData windData = {0.f, 0.f};
+  WindData windData = EMPTY_WIND_DATA;
 
   if(!pos1.isValid())
   {
@@ -530,7 +532,7 @@ void WindQuery::layersByAlt(WindAltLayer& lower, WindAltLayer& upper, float alti
         upper = *it;
 
         lower.altitude = 0.f;
-        lower.winds.fill({0.f, 0.f}, 360 * 181);
+        lower.winds.fill(EMPTY_WIND_DATA, 360 * 181);
       }
       else
       {
@@ -621,7 +623,7 @@ void WindQuery::convertDataset(const GribDatasetVector& datasets)
       const QVector<float>& dataU = datasetUWind.getData();
       const QVector<float>& dataV = datasetVWind.getData();
       WindAltLayer layer;
-      layer.altitude = datasetUWind.getAltFeetRounded();
+      layer.altitude = roundToInt(datasetUWind.getAltFeetRounded());
       layer.surface = datasetUWind.getSurface();
 
       for(int j = 0; j < 181; j++) // y
