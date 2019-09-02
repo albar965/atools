@@ -64,7 +64,7 @@ struct Wind
 
   bool isValid() const
   {
-    return speed < INVALID_WIND_SPEED_VALUE && dir < INVALID_WIND_DIR_VALUE;
+    return speed >= 0.f && speed < 1000.f && dir >= 0.f && dir <= 360.f;
   }
 
   bool isNull() const
