@@ -2231,7 +2231,7 @@ Night time: %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="191"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="192"/>
         <source>Open or close tab %1</source>
         <translation type="unfinished"></translation>
     </message>
