@@ -67,7 +67,8 @@ create table logbook
   destination_time varchar(100),                      -- "
   destination_time_sim varchar(100),                  -- "
 
-  simulator varchar(50) collate nocase,               -- X-Plane 11, Prepar3D v4, etc.
+  route_string varchar(1024         ),               -- ICAO route string
+  simulator varchar(50) collate nocase,              -- X-Plane 11, Prepar3D v4, etc.
   description varchar(2048) collate nocase           -- Free text by user
   -- plan_geometry blob,                                 -- Flight plan preview - currently not used
   -- trail_geometry blob                                 -- Flown trail - currently not used

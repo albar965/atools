@@ -20,6 +20,7 @@
 #include "sql/sqlutil.h"
 #include "sql/sqlexport.h"
 #include "sql/sqltransaction.h"
+#include "sql/sqldatabase.h"
 #include "util/csvreader.h"
 #include "geo/pos.h"
 #include "geo/calculations.h"
@@ -75,6 +76,7 @@ enum Index
   DESTINATION_ALT,
   DESTINATION_TIME,
   DESTINATION_TIME_SIM,
+  ROUTE_STRING,
   SIMULATOR,
   DESCRIPTION
   // PLAN_GEOMETRY,
@@ -212,6 +214,7 @@ int LogdataManager::importCsv(const QString& filepath)
                             QDateTime::fromString(at(values, csv::DESTINATION_TIME_SIM, true), Qt::ISODate));
 
       // Other ===============================================================
+      insertQuery.bindValue(":route_string", at(values, csv::ROUTE_STRING));
       insertQuery.bindValue(":simulator", at(values, csv::SIMULATOR));
       insertQuery.bindValue(":description", at(values, csv::DESCRIPTION));
 
@@ -445,7 +448,15 @@ int LogdataManager::exportCsv(const QString& filepath)
 
 void LogdataManager::updateSchema()
 {
-  // no-op
+  if(!db->record(tableName).contains("route_string"))
+  {
+    qDebug() << Q_FUNC_INFO;
+
+    SqlTransaction transaction(db);
+    // Add missing column
+    db->exec("alter table " + tableName + " add column route_string varchar(1024)");
+    transaction.commit();
+  }
 }
 
 void LogdataManager::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim,
@@ -529,6 +540,7 @@ void LogdataManager::fixEmptyFields(sql::SqlRecord& rec)
   fixEmptyStrField(rec, "aircraft_name");
   fixEmptyStrField(rec, "aircraft_type");
   fixEmptyStrField(rec, "aircraft_registration");
+  fixEmptyStrField(rec, "route_string");
   fixEmptyStrField(rec, "description");
   fixEmptyStrField(rec, "simulator");
   fixEmptyStrField(rec, "departure_ident");
@@ -543,6 +555,7 @@ void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
   fixEmptyStrField(query, ":aircraft_name");
   fixEmptyStrField(query, ":aircraft_type");
   fixEmptyStrField(query, ":aircraft_registration");
+  fixEmptyStrField(query, ":route_string");
   fixEmptyStrField(query, ":description");
   fixEmptyStrField(query, ":simulator");
   fixEmptyStrField(query, ":departure_ident");
