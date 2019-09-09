@@ -177,6 +177,7 @@ HEADERS += \
   src/gui/application.h \
   src/gui/consoleapplication.h \
   src/gui/dialog.h \
+  src/gui/dockwidgethandler.h \
   src/gui/errorhandler.h \
   src/gui/filehistoryhandler.h \
   src/gui/griddelegate.h \
@@ -281,6 +282,7 @@ SOURCES += \
   src/gui/application.cpp \
   src/gui/consoleapplication.cpp \
   src/gui/dialog.cpp \
+  src/gui/dockwidgethandler.cpp \
   src/gui/errorhandler.cpp \
   src/gui/filehistoryhandler.cpp \
   src/gui/griddelegate.cpp \
