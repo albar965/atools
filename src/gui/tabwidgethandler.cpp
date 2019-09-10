@@ -26,6 +26,8 @@
 #include <QDebug>
 #include <QLabel>
 #include <QMenu>
+#include <QApplication>
+#include <QStyle>
 
 const static char ID_PROPERTY[] = "tabid";
 
@@ -35,6 +37,8 @@ namespace gui {
 TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon, const QString& toolButtonTooltip)
   : QObject(tabWidgetParam), tabWidget(tabWidgetParam)
 {
+  styleChanged();
+
   connect(tabWidget, &QTabWidget::tabCloseRequested, this, &TabWidgetHandler::tabCloseRequested);
   connect(tabWidget, &QTabWidget::currentChanged, this, &TabWidgetHandler::currentChanged);
 
@@ -486,6 +490,23 @@ int TabWidgetHandler::getIndexForId(int id) const
 bool TabWidgetHandler::isLocked() const
 {
   return actionLock->isChecked();
+}
+
+void TabWidgetHandler::styleChanged()
+{
+  // workaround for macOS tabs which grow too big
+#if defined(Q_OS_MACOS)
+
+  QStyle *style = QApplication::style();
+  if(style != nullptr)
+  {
+    QString name = style->objectName();
+    if(name.contains("macintosh", Qt::CaseInsensitive) || name.contains("macos", Qt::CaseInsensitive))
+      tabWidget->setElideMode(Qt::ElideRight);
+    else
+      tabWidget->setElideMode(Qt::ElideNone);
+  }
+#endif
 }
 
 void TabWidgetHandler::updateTabs()

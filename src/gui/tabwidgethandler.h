@@ -83,6 +83,9 @@ public:
   /* True if tab layout is locked and close buttons are hidden */
   bool isLocked() const;
 
+  /* Changes tab bar attributes for macOS style */
+  void styleChanged();
+
 signals:
   /* Current tab has changed */
   void  tabChanged(int id);
