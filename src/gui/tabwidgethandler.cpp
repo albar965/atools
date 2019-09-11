@@ -506,6 +506,7 @@ void TabWidgetHandler::styleChanged()
     else
       tabWidget->setElideMode(Qt::ElideNone);
   }
+  tabWidget->setUsesScrollButtons(true);
 #endif
 }
 
