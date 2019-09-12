@@ -29,8 +29,10 @@ SceneryArea::SceneryArea()
 
 }
 
-SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath)
-  : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath)
+SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath,
+                         const QString& sourceConfigFile)
+  : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath),
+  sourceConfig(sourceConfigFile)
 {
   fixTitle();
 }
@@ -45,18 +47,19 @@ QDebug operator<<(QDebug out, const SceneryArea& area)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "SceneryCfg["
-                          << "areaNumber " << area.areaNumber
-                          << ", title " << area.title
-                          << ", layer " << area.layer
-                          << ", active " << area.active
-                          << ", highPriority " << area.highPriority
-                          << ", required " << area.required
-                          << ", localPath " << area.localPath
-                          << ", textureId " << area.textureId
-                          << ", remotePath" << area.remotePath
-                          << ", exclude " << area.exclude
-                          << "]";
+  out.nospace() << "SceneryArea["
+                << "number " << area.areaNumber
+                << ", title " << area.title
+                << ", layer " << area.layer
+                << ", active " << area.active
+                << ", highPriority " << area.highPriority
+                << ", required " << area.required
+                << ", localPath " << area.localPath
+                << ", textureId " << area.textureId
+                << ", remotePath" << area.remotePath
+                << ", exclude " << area.exclude
+                << ", sourceConfig " << area.sourceConfig
+                << "]";
   return out;
 }
 

@@ -60,6 +60,8 @@ public:
   void setAreaHighPriority(int index, bool value = true);
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryCfg& cfg);
+
   virtual void onStartDocument(const QString& filepath) override;
   virtual void onEndDocument(const QString& filepath) override;
   virtual void onStartSection(const QString& section, const QString& sectionSuffix) override;

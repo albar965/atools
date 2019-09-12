@@ -329,7 +329,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString());
+    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString(), "Navigraph");
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -343,7 +343,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   else if(sim == atools::fs::FsPaths::XPLANE11)
   {
     // Create a single X-Plane scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
+    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString(), "X-Plane");
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -725,6 +725,9 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
+  qInfo() << Q_FUNC_INFO << "Scenery configuration ================================================";
+  qInfo() << cfg;
+
   for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
   {
     if((area.isActive() || options->isReadInactive()) &&
@@ -1030,7 +1033,8 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     }
 
     for(int i = 0; i < noLayerComponents.size(); i++)
-      cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i)));
+      cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i),
+                                 addonsAllUsersCfgFile));
   } // if(options->isReadAddOnXml()
 
   // Check if some areas have to be sorted to the end of the list
@@ -1070,7 +1074,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
     {
       qInfo() << "Component" << component.getLayer()
               << "Name" << component.getName()
-              << "Description" << component.getPath();
+              << "Path" << component.getPath();
 
       QDir compPath(component.getPath());
 
@@ -1097,7 +1101,8 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
         noLayerPaths.append(compPath.path());
       }
       else
-        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
+        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path(),
+                                   addonFile.absoluteFilePath()));
     }
   }
   else

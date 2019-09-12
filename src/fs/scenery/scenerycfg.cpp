@@ -150,6 +150,22 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
     qWarning() << "Unexpected section" << section << "file" << filepath;
 }
 
+QDebug operator<<(QDebug out, const SceneryCfg& cfg)
+{
+  QDebugStateSaver saver(out);
+
+  out.nospace() << "SceneryCfg["
+                << "title " << cfg.title
+                << ", description " << cfg.description
+                << ", cleanOnExit " << cfg.cleanOnExit << endl;
+
+  for(const SceneryArea& area : cfg.areaEntries)
+    out.nospace().noquote() << area << endl;
+
+  out.nospace().noquote() << endl << "]";
+  return out;
+}
+
 } // namespace scenery
 } // namespace fs
 } // namespace atools
