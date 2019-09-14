@@ -75,7 +75,7 @@ QDebug operator<<(QDebug debug, const MapPosHistoryEntry& entry)
 {
   QDebugStateSaver save(debug);
   debug.nospace() << "MapPosHistoryEntry(" << entry.pos << ","
-  << entry.distance << "," << entry.timestamp << ")";
+                  << entry.distance << "," << entry.timestamp << ")";
   return debug;
 }
 
@@ -206,7 +206,7 @@ void MapPosHistory::restoreState(const QString& filename)
           in >> currentIndex >> entries;
         else
           qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid version number:" <<
-          version;
+            version;
       }
       else
         qWarning() << "Cannot read history" << historyFile.fileName() << ". Invalid magic number:" << magic;
@@ -226,6 +226,12 @@ void MapPosHistory::restoreState(const QString& filename)
 void MapPosHistory::activate()
 {
   active = true;
+}
+
+void MapPosHistory::clear()
+{
+  entries.clear();
+  currentIndex = -1;
 }
 
 } // namespace gui

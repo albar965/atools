@@ -116,7 +116,11 @@ public:
   /* load history from file */
   void restoreState(const QString& filename);
 
+  /* Start collection of positions */
   void activate();
+
+  /* Clear all entries and reset current index */
+  void clear();
 
 signals:
   /* Emitted when the history changes
