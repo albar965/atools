@@ -99,6 +99,18 @@ public:
     showExceptionDialog = value;
   }
 
+  static bool isRestartProcess()
+  {
+    return restartProcess;
+  }
+
+  /* Set to true to restart the same process with the same arguments after shutdown.
+   *  Useful for settings reset. */
+  static void setRestartProcess(bool value)
+  {
+    restartProcess = value;
+  }
+
 signals:
   /* Application font has changed. */
   void fontChanged();
@@ -110,7 +122,7 @@ private:
 
   static QStringList emailAddresses;
 
-  static bool showExceptionDialog;
+  static bool showExceptionDialog, restartProcess;
 
 };
 

@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <QDir>
+#include <QDateTime>
 
 namespace atools {
 namespace settings {
@@ -58,8 +59,31 @@ Settings& Settings::instance()
   return *settingsInstance;
 }
 
+void Settings::clearAndShutdown()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Write current settings
+  syncSettings();
+
+  // Create a backup
+  QFileInfo file = getFilename();
+  QString newFile = file.path() + QDir::separator() + file.baseName() +
+                    "_" + QDateTime::currentDateTime().toString("yyyyMMdd-HHmmss") + ".ini";
+
+  if(QFile::copy(file.filePath(), newFile))
+    qInfo() << "Copied settings from" << file.filePath() << "to" << newFile;
+  else
+    qWarning() << "Copying from" << file.filePath() << "to" << newFile << "failed";
+
+  // Remove all key/value pairs and continue shutdown
+  clearSettings();
+  shutdown();
+}
+
 void Settings::shutdown()
 {
+  qDebug() << Q_FUNC_INFO;
   if(settingsInstance != nullptr)
   {
     delete settingsInstance;
@@ -141,8 +165,19 @@ void Settings::syncSettings()
   qs->sync();
 
   if(qs->status() != QSettings::NoError)
-    throw Exception(QString("Error creating settings file \"%1\" reason %2").
+    throw Exception(QString("Error writing to settings file \"%1\" reason %2").
                     arg(qs->fileName()).arg(qs->status()));
+}
+
+void Settings::clearSettings()
+{
+  QSettings *qs = instance().getQSettings();
+  qs->clear();
+
+  if(qs->status() != QSettings::NoError)
+    throw Exception(QString("Error clearing settings file \"%1\" reason %2").
+                    arg(qs->fileName()).arg(qs->status()));
+  syncSettings();
 }
 
 bool Settings::contains(const QString& key) const

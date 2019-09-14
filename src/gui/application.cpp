@@ -23,6 +23,7 @@
 #include <QUrl>
 #include <QThread>
 #include <QTimer>
+#include <QProcess>
 
 namespace atools {
 namespace gui {
@@ -30,16 +31,25 @@ namespace gui {
 QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
 bool Application::showExceptionDialog = true;
+bool Application::restartProcess = false;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
 {
-
 }
 
 Application::~Application()
 {
-
+  if(restartProcess)
+  {
+    qDebug() << Q_FUNC_INFO << "Starting" << QApplication::applicationFilePath();
+    restartProcess = false;
+    bool result = QProcess::startDetached(QApplication::applicationFilePath(), QApplication::arguments());
+    if(result)
+      qInfo() << Q_FUNC_INFO << "Success.";
+    else
+      qWarning() << Q_FUNC_INFO << "FAILED.";
+  }
 }
 
 bool Application::notify(QObject *receiver, QEvent *event)

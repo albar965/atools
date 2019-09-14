@@ -45,6 +45,9 @@ public:
   /* Flush settings and release all resources */
   static void shutdown();
 
+  /* Clear all values and shutdown */
+  static void clearAndShutdown();
+
   /* Log relevant settings information into the qInfo channel.
    * That is currently the filename and the settings directory. */
   static void logSettingsInformation();
@@ -89,6 +92,9 @@ public:
 
   /* Write settings to file and reload all changes in settings file */
   static void syncSettings();
+
+  /* Remove all key/value pairs */
+  static void clearSettings();
 
   /*
    * @return The single QSettings object.
