@@ -99,7 +99,7 @@ void Application::handleException(const char *file, int line, const std::excepti
 
   if(showExceptionDialog)
     QMessageBox::critical(nullptr, QApplication::applicationName(),
-                          tr("<b>Caught exception in file %1 line %2.</b><br/><br/>"
+                          tr("<b>Caught exception in file \"%1\" line %2.</b><br/><br/>"
                              "<i>%3</i><br/><br/>"
                              "%4"
                              "<hr/>%5"
