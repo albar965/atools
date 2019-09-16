@@ -168,8 +168,6 @@ void WidgetState::save(const QObject *widget) const
     else
       qWarning() << "Found unsupported widet type in save" << widget->metaObject()->className();
   }
-  else
-    qWarning() << "Found null widget in save";
 }
 
 void WidgetState::restore(QObject *widget) const
@@ -391,8 +389,6 @@ void WidgetState::restore(QObject *widget) const
     if(block)
       widget->blockSignals(false);
   }
-  else
-    qWarning() << "Found null widget in load";
 }
 
 void WidgetState::syncSettings()

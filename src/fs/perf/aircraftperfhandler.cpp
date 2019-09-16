@@ -132,7 +132,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
         // Nothing sampled yet - start from scratch ==============
         if(aircraftGround)
           flightSegment = aircraftFuelFlow ? DEPARTURE_TAXI : DEPARTURE_PARKING;
-        else if(aircraftCruise == 0)
+        else if(aircraftCruise >= 0)
           flightSegment = CRUISE;
         else if(isClimbing() && aircraftCruise == -1)
           flightSegment = CLIMB;
