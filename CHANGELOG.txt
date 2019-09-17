@@ -1,6 +1,18 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.1.beta
+
+* Changed aircraft performance handler to detect cruise if aircraft is above cruise altitude.
+* Made file name display in dialogs consistent.
+* Added methods to clear program settings and restart application.
+* Added debug output to log for scenery configuration when loading scenery libraries.
+* Fixed macOS tabs which grow too big depending on style.
+* Added route description field to logbook.
+* Added dock widget handler which allows to deal with stacked docks properly.
+
+===============================================================================
+
 Version 3.4.0.beta
 
 * New coordinate format for parsing: Plain numbers with sign.
