@@ -1693,7 +1693,7 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Reteniendo excepción del archivo %1 línea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Presione OK para salir de la aplicación.&lt;/h3&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Reteniendo excepción del archivo %1 línea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Presione OK para salir de la aplicación.&lt;/h3&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
@@ -1707,6 +1707,10 @@ Night time: %5</source>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Si el problema persiste u ocurre durante el inicio, borre todas las configuraciones de los archivos de bases de datos %4 y reintente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si desea reportar este error, adjunte los archivos de log y configuración a su reporte y agregue cualquier otra información valiosa, envíela a la dirección de contacto aquí debajo.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
+    <message>
+        <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>atools::gui::HelpHandler</name>
@@ -1716,11 +1720,11 @@ Night time: %5</source>
     </message>
     <message>
         <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
-        <translation>Error abriendo ayuda desde URL &lt;i&gt;%1&lt;/i&gt;</translation>
+        <translation type="vanished">Error abriendo ayuda desde URL &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
         <source>Help file &lt;i&gt;%1&lt;/i&gt; not found</source>
-        <translation>Archivo de ayuda &lt;i&gt;%1&lt;/i&gt; no encontrado</translation>
+        <translation type="vanished">Archivo de ayuda &lt;i&gt;%1&lt;/i&gt; no encontrado</translation>
     </message>
     <message>
         <source>About Qt</source>
@@ -1748,6 +1752,14 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error opening help URL &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Help file &quot;%1&quot; not found</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

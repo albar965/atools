@@ -991,7 +991,7 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="571"/>
         <location filename="src/fs/navdatabase.cpp" line="595"/>
         <location filename="src/fs/navdatabase.cpp" line="680"/>
-        <location filename="src/fs/navdatabase.cpp" line="758"/>
+        <location filename="src/fs/navdatabase.cpp" line="761"/>
         <source>Creating boundary indexes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1005,14 +1005,14 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="592"/>
         <location filename="src/fs/navdatabase.cpp" line="601"/>
         <location filename="src/fs/navdatabase.cpp" line="677"/>
-        <location filename="src/fs/navdatabase.cpp" line="755"/>
+        <location filename="src/fs/navdatabase.cpp" line="758"/>
         <source>Creating indexes</source>
         <translation>Création d&apos;index</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="577"/>
         <location filename="src/fs/navdatabase.cpp" line="693"/>
-        <location filename="src/fs/navdatabase.cpp" line="764"/>
+        <location filename="src/fs/navdatabase.cpp" line="767"/>
         <source>Clean up</source>
         <translation>Nettoyage</translation>
     </message>
@@ -1073,27 +1073,27 @@ Fichier: &quot;%2&quot;
         <translation>Création d&apos;index pour la recherche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="773"/>
+        <location filename="src/fs/navdatabase.cpp" line="776"/>
         <source>Basic Validation</source>
         <translation>Validation de base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="852"/>
+        <location filename="src/fs/navdatabase.cpp" line="855"/>
         <source>Creating table statistics</source>
         <translation>Création de statistiques de table</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="858"/>
+        <location filename="src/fs/navdatabase.cpp" line="861"/>
         <source>Creating report on values</source>
         <translation>Création d&apos;un rapport sur les valeurs</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="864"/>
+        <location filename="src/fs/navdatabase.cpp" line="867"/>
         <source>Creating report on duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="902"/>
+        <location filename="src/fs/navdatabase.cpp" line="905"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Création d&apos;un rapport sur les doublons de coordonnées</translation>
     </message>
@@ -2055,13 +2055,13 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="236"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="416"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="239"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="419"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="392"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="395"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -2071,7 +2071,7 @@ Night time: %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="441"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="444"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2094,37 +2094,41 @@ Night time: %5</source>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="69"/>
+        <location filename="src/gui/application.cpp" line="79"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Si le problème persiste ou survient au démarrage, supprimez tous les paramètres et fichiers de la base de données de %4 et réessayer.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si vous souhaitez signaler cette erreur, joignez le journal et les fichiers de configuration à votre rapport, ajoutez toutes les autres informations disponibles et envoyez-les à l&apos;une des adresses de contact suivantes.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="92"/>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation>&lt;b&gt;Exception retenue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Exception retenue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="114"/>
+        <location filename="src/gui/application.cpp" line="102"/>
+        <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="124"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Pris l&apos;exception inconnue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="135"/>
+        <location filename="src/gui/application.cpp" line="145"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="160"/>
+        <location filename="src/gui/application.cpp" line="170"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="164"/>
+        <location filename="src/gui/application.cpp" line="174"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="167"/>
+        <location filename="src/gui/application.cpp" line="177"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
@@ -2162,14 +2166,16 @@ Night time: %5</source>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="96"/>
-        <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
-        <translation>Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &lt;i&gt;%1&lt;/i&gt;</translation>
+        <source>Error opening help URL &quot;%1&quot;</source>
+        <oldsource>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</oldsource>
+        <translation type="unfinished">Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="122"/>
         <location filename="src/gui/helphandler.cpp" line="146"/>
-        <source>Help file &lt;i&gt;%1&lt;/i&gt; not found</source>
-        <translation>Fichier d&apos;aide &lt;i&gt;%1&lt;/i&gt; introuvable</translation>
+        <source>Help file &quot;%1&quot; not found</source>
+        <oldsource>Help file &lt;i&gt;%1&lt;/i&gt; not found</oldsource>
+        <translation type="unfinished">Fichier d&apos;aide &lt;i&gt;%1&lt;/i&gt; introuvable</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="206"/>
@@ -2185,57 +2191,57 @@ Night time: %5</source>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="51"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="55"/>
         <source>&amp;Open All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="52"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="56"/>
         <source>Show all tabs</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="58"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
         <source>&amp;Close All Except Current</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="59"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="63"/>
         <source>Close all tabs except the current tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="65"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="69"/>
         <source>&amp;Reset Tab Layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="66"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="70"/>
         <source>Show all tabs and reset order back to default</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="72"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
         <source>&amp;Lock Tab Layout</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="73"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="139"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="143"/>
         <source>&amp;Close tab %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="143"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="147"/>
         <source>Close tab</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="192"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="196"/>
         <source>Open or close tab %1</source>
         <translation type="unfinished"></translation>
     </message>
