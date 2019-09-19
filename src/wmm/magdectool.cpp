@@ -83,7 +83,7 @@ void MagDecTool::init(int year, int month)
   referenceDate.setDate(year, month, 1);
 
   // Put coeffizients file into a temporary, so that the C code can read it
-  atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_ü_wmm.cof");
+  atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
 
 #if defined(Q_OS_WIN32)
   // Windows fopen uses local charset for filename - convert UTF-8 to UTF-16 and use wfopen
