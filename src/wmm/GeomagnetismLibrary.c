@@ -89,30 +89,30 @@
 
 int MAG_Geomag(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical CoordSpherical, MAGtype_CoordGeodetic CoordGeodetic,
                MAGtype_MagneticModel *TimedMagneticModel, MAGtype_GeoMagneticElements *GeoMagneticElements)
-/*
- *  The main subroutine that calls a sequence of WMM sub-functions to calculate the magnetic field elements for a single point.
- *  The function expects the model coefficients and point coordinates as input and returns the magnetic field elements and
- *  their rate of change. Though, this subroutine can be called successively to calculate a time series, profile or grid
- *  of magnetic field, these are better achieved by the subroutine MAG_Grid.
- *
- *  INPUT: Ellip
- *             CoordSpherical
- *             CoordGeodetic
- *             TimedMagneticModel
- *
- *  OUTPUT : GeoMagneticElements
- *
- *  CALLS:    MAG_AllocateLegendreFunctionMemory(NumTerms);  ( For storing the ALF functions )
- *                    MAG_ComputeSphericalHarmonicVariables( Ellip, CoordSpherical, TimedMagneticModel->nMax, &SphVariables); (Compute Spherical Harmonic variables  )
- *                    MAG_AssociatedLegendreFunction(CoordSpherical, TimedMagneticModel->nMax, LegendreFunction);   Compute ALF
- *                    MAG_Summation(LegendreFunction, TimedMagneticModel, SphVariables, CoordSpherical, &MagneticResultsSph);  Accumulate the spherical harmonic coefficients
- *                    MAG_SecVarSummation(LegendreFunction, TimedMagneticModel, SphVariables, CoordSpherical, &MagneticResultsSphVar); Sum the Secular Variation Coefficients
- *                    MAG_RotateMagneticVector(CoordSpherical, CoordGeodetic, MagneticResultsSph, &MagneticResultsGeo); Map the computed Magnetic fields to Geodetic coordinates
- *                    MAG_CalculateGeoMagneticElements(&MagneticResultsGeo, GeoMagneticElements);   Calculate the Geomagnetic elements
- *                    MAG_CalculateSecularVariationElements(MagneticResultsGeoVar, GeoMagneticElements); Calculate the secular variation of each of the Geomagnetic elements
- *
- */
 {
+  /*
+   *  The main subroutine that calls a sequence of WMM sub-functions to calculate the magnetic field elements for a single point.
+   *  The function expects the model coefficients and point coordinates as input and returns the magnetic field elements and
+   *  their rate of change. Though, this subroutine can be called successively to calculate a time series, profile or grid
+   *  of magnetic field, these are better achieved by the subroutine MAG_Grid.
+   *
+   *  INPUT: Ellip
+   *             CoordSpherical
+   *             CoordGeodetic
+   *             TimedMagneticModel
+   *
+   *  OUTPUT : GeoMagneticElements
+   *
+   *  CALLS:    MAG_AllocateLegendreFunctionMemory(NumTerms);  ( For storing the ALF functions )
+   *                    MAG_ComputeSphericalHarmonicVariables( Ellip, CoordSpherical, TimedMagneticModel->nMax, &SphVariables); (Compute Spherical Harmonic variables  )
+   *                    MAG_AssociatedLegendreFunction(CoordSpherical, TimedMagneticModel->nMax, LegendreFunction);   Compute ALF
+   *                    MAG_Summation(LegendreFunction, TimedMagneticModel, SphVariables, CoordSpherical, &MagneticResultsSph);  Accumulate the spherical harmonic coefficients
+   *                    MAG_SecVarSummation(LegendreFunction, TimedMagneticModel, SphVariables, CoordSpherical, &MagneticResultsSphVar); Sum the Secular Variation Coefficients
+   *                    MAG_RotateMagneticVector(CoordSpherical, CoordGeodetic, MagneticResultsSph, &MagneticResultsGeo); Map the computed Magnetic fields to Geodetic coordinates
+   *                    MAG_CalculateGeoMagneticElements(&MagneticResultsGeo, GeoMagneticElements);   Calculate the Geomagnetic elements
+   *                    MAG_CalculateSecularVariationElements(MagneticResultsGeoVar, GeoMagneticElements); Calculate the secular variation of each of the Geomagnetic elements
+   *
+   */
   MAGtype_LegendreFunction *LegendreFunction;
   MAGtype_SphericalHarmonicVariables *SphVariables;
   int NumTerms;
@@ -205,71 +205,72 @@ void MAG_Gradient(MAGtype_Ellipsoid Ellip, MAGtype_CoordGeodetic CoordGeodetic,
 }
 
 int MAG_Grid(MAGtype_CoordGeodetic minimum, MAGtype_CoordGeodetic maximum, double
-             cord_step_size, double altitude_step_size, double time_step, MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid
+             cord_step_size, double altitude_step_size, double time_step, MAGtype_MagneticModel *MagneticModel,
+             MAGtype_Geoid
              *Geoid, MAGtype_Ellipsoid Ellip, MAGtype_Date StartDate, MAGtype_Date EndDate, int ElementOption,
              int UncertaintyOption, int PrintOption,
              char *OutputFile)
-/*This function calls WMM subroutines to generate a grid as defined by the user. The function may be used
- *  to generate a grid of magnetic field elements, time series or a profile. The selected geomagnetic element
- *  is either printed to the file GridResults.txt or to the screen depending on user option.
- *
- *  INPUT: minimum :Data structure with the following elements (minimum limits of the grid)
- *                               double lambda; (longitude)
- *                               double phi; ( geodetic latitude)
- *                               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *                               double HeightAboveGeoid;(height above the Geoid )
- *               maximum : same as the above (maximum limist of the grid)
- *               step_size  : double  : spatial step size, in decimal degrees
- *               a_step_size : double  :  double altitude step size (km)
- *               step_time : double  : time step size (decimal years)
- *               StartDate :  data structure with the following elements used
- *                                       double DecimalYear;     ( decimal years )
- *               EndDate :	Same as the above;
- *               MagneticModel :	 data structure with the following elements
- *                       double EditionDate;
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                       char  ModelName[20];
- *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       int nMax;  Maximum degree of spherical harmonic model
- *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
- *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
- *               Geoid :  data structure with the following elements
- *       Pointer to data structure Geoid with the following elements
- *                       int NumbGeoidCols ;   ( 360 degrees of longitude at 15 minute spacing )
- *                       int NumbGeoidRows ;   ( 180 degrees of latitude  at 15 minute spacing )
- *                       int NumbHeaderItems ;    ( min, max lat, min, max long, lat, long spacing )
- *                       int	ScaleFactor;    ( 4 grid cells per degree at 15 minute spacing  )
- *                       float *GeoidHeightBuffer;   (Pointer to the memory to store the Geoid elevation data )
- *                       int NumbGeoidElevs;    (number of points in the gridded file )
- *                       int  Geoid_Initialized ;  ( indicates successful initialization )
- *  Ellip  data  structure with the following elements
- *                       double a; semi-major axis of the ellipsoid
- *                       double b; semi-minor axis of the ellipsoid
- *                       double fla;  flattening
- *                       double epssq; first eccentricity squared
- *                       double eps;  first eccentricity
- *                       double re; mean radius of  ellipsoid
- *         ElementOption : int : Geomagnetic Element to print
- *        UncertaintyOption: int: 1-Append uncertainties.  Otherwise do not append uncertainties.
- *         PrintOption : int : 1 Print to File, Otherwise, print to screen
- *
- *  OUTPUT: none (prints the output to a file )
- *
- *  CALLS : MAG_AllocateModelMemory To allocate memory for model coefficients
- *     MAG_TimelyModifyMagneticModel This modifies the Magnetic coefficients to the correct date.
- *                 MAG_ConvertGeoidToEllipsoidHeight (&CoordGeodetic, &Geoid);   Convert height above msl to height above WGS-84 ellipsoid
- *                 MAG_GeodeticToSpherical Convert from geodeitic to Spherical Equations: 7-8, WMM Technical report
- *                 MAG_ComputeSphericalHarmonicVariables Compute Spherical Harmonic variables
- *                 MAG_AssociatedLegendreFunction Compute ALF  Equations 5-6, WMM Technical report
- *                 MAG_Summation Accumulate the spherical harmonic coefficients Equations 10:12 , WMM Technical report
- *                 MAG_RotateMagneticVector Map the computed Magnetic fields to Geodeitic coordinates Equation 16 , WMM Technical report
- *                 MAG_CalculateGeoMagneticElements Calculate the geoMagnetic elements, Equation 18 , WMM Technical report
- *
- */
 {
+  /*This function calls WMM subroutines to generate a grid as defined by the user. The function may be used
+   *  to generate a grid of magnetic field elements, time series or a profile. The selected geomagnetic element
+   *  is either printed to the file GridResults.txt or to the screen depending on user option.
+   *
+   *  INPUT: minimum :Data structure with the following elements (minimum limits of the grid)
+   *                               double lambda; (longitude)
+   *                               double phi; ( geodetic latitude)
+   *                               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *                               double HeightAboveGeoid;(height above the Geoid )
+   *               maximum : same as the above (maximum limist of the grid)
+   *               step_size  : double  : spatial step size, in decimal degrees
+   *               a_step_size : double  :  double altitude step size (km)
+   *               step_time : double  : time step size (decimal years)
+   *               StartDate :  data structure with the following elements used
+   *                                       double DecimalYear;     ( decimal years )
+   *               EndDate :	Same as the above;
+   *               MagneticModel :	 data structure with the following elements
+   *                       double EditionDate;
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                       char  ModelName[20];
+   *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       int nMax;  Maximum degree of spherical harmonic model
+   *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
+   *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
+   *               Geoid :  data structure with the following elements
+   *       Pointer to data structure Geoid with the following elements
+   *                       int NumbGeoidCols ;   ( 360 degrees of longitude at 15 minute spacing )
+   *                       int NumbGeoidRows ;   ( 180 degrees of latitude  at 15 minute spacing )
+   *                       int NumbHeaderItems ;    ( min, max lat, min, max long, lat, long spacing )
+   *                       int	ScaleFactor;    ( 4 grid cells per degree at 15 minute spacing  )
+   *                       float *GeoidHeightBuffer;   (Pointer to the memory to store the Geoid elevation data )
+   *                       int NumbGeoidElevs;    (number of points in the gridded file )
+   *                       int  Geoid_Initialized ;  ( indicates successful initialization )
+   *  Ellip  data  structure with the following elements
+   *                       double a; semi-major axis of the ellipsoid
+   *                       double b; semi-minor axis of the ellipsoid
+   *                       double fla;  flattening
+   *                       double epssq; first eccentricity squared
+   *                       double eps;  first eccentricity
+   *                       double re; mean radius of  ellipsoid
+   *         ElementOption : int : Geomagnetic Element to print
+   *        UncertaintyOption: int: 1-Append uncertainties.  Otherwise do not append uncertainties.
+   *         PrintOption : int : 1 Print to File, Otherwise, print to screen
+   *
+   *  OUTPUT: none (prints the output to a file )
+   *
+   *  CALLS : MAG_AllocateModelMemory To allocate memory for model coefficients
+   *     MAG_TimelyModifyMagneticModel This modifies the Magnetic coefficients to the correct date.
+   *                 MAG_ConvertGeoidToEllipsoidHeight (&CoordGeodetic, &Geoid);   Convert height above msl to height above WGS-84 ellipsoid
+   *                 MAG_GeodeticToSpherical Convert from geodeitic to Spherical Equations: 7-8, WMM Technical report
+   *                 MAG_ComputeSphericalHarmonicVariables Compute Spherical Harmonic variables
+   *                 MAG_AssociatedLegendreFunction Compute ALF  Equations 5-6, WMM Technical report
+   *                 MAG_Summation Accumulate the spherical harmonic coefficients Equations 10:12 , WMM Technical report
+   *                 MAG_RotateMagneticVector Map the computed Magnetic fields to Geodeitic coordinates Equation 16 , WMM Technical report
+   *                 MAG_CalculateGeoMagneticElements Calculate the geoMagnetic elements, Equation 18 , WMM Technical report
+   *
+   */
   int NumTerms;
   double a, b, c, d, PrintElement, ErrorElement = 0;
 
@@ -294,7 +295,7 @@ int MAG_Grid(MAGtype_CoordGeodetic minimum, MAGtype_CoordGeodetic maximum, doubl
   }
 
   if(fabs(cord_step_size) < 1.0e-10)
-    cord_step_size = 99999.0; /*checks to make sure that the step_size is not too small*/
+    cord_step_size = 99999.0;  /*checks to make sure that the step_size is not too small*/
   if(fabs(altitude_step_size) < 1.0e-10)
     altitude_step_size = 99999.0;
   if(fabs(time_step) < 1.0e-10)
@@ -319,7 +320,7 @@ int MAG_Grid(MAGtype_CoordGeodetic minimum, MAGtype_CoordGeodetic maximum, doubl
       for(minimum.lambda = c; minimum.lambda <= maximum.lambda; minimum.lambda += cord_step_size) /*Longitude loop*/
       {
         if(Geoid->UseGeoid == 1)
-          MAG_ConvertGeoidToEllipsoidHeight(&minimum, Geoid); /* This converts the height above mean sea level to height above the WGS-84 ellipsoid */
+          MAG_ConvertGeoidToEllipsoidHeight(&minimum, Geoid);  /* This converts the height above mean sea level to height above the WGS-84 ellipsoid */
         else
           minimum.HeightAboveEllipsoid = minimum.HeightAboveGeoid;
         MAG_GeodeticToSpherical(Ellip, minimum, &CoordSpherical);
@@ -479,7 +480,7 @@ int MAG_Grid(MAGtype_CoordGeodetic minimum, MAGtype_CoordGeodetic maximum, doubl
           if(PrintOption == 1)
             fprintf(fileout, "\n");
           else
-            printf("\n"); /* Complete line */
+            printf("\n");  /* Complete line */
 
           /**Below can be used for XYZ Printing format (longitude latitude output_data)
            *  fprintf(fileout, "%5.2f %6.2f %10.4f\n", minimum.lambda, minimum.phi, PrintElement); **/
@@ -502,15 +503,15 @@ int MAG_Grid(MAGtype_CoordGeodetic minimum, MAGtype_CoordGeodetic maximum, doubl
 } /*MAG_Grid*/
 
 int MAG_SetDefaults(MAGtype_Ellipsoid *Ellip, MAGtype_Geoid *Geoid)
-/*
- *       Sets default values for WMM subroutines.
- *
- *       UPDATES : Ellip
- *                       Geoid
- *
- *       CALLS : none
- */
 {
+  /*
+   *       Sets default values for WMM subroutines.
+   *
+   *       UPDATES : Ellip
+   *                       Geoid
+   *
+   *       CALLS : none
+   */
 
   /* Sets WGS-84 parameters */
   Ellip->a = 6378.137; /*semi-major axis of the ellipsoid in */
@@ -593,12 +594,11 @@ int MAG_robustReadMagneticModel_Large(char *filename, char *filenameSV, MAGtype_
   return 1;
 } /*MAG_robustReadMagneticModel_Large*/
 
-int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel **magneticmodel, int array_size)
+int MAG_robustReadMagModels(FILE *MODELFILE, MAGtype_MagneticModel **magneticmodel, int array_size)
 {
   char line[MAXLINELENGTH];
   int n, nMax = 0, num_terms, a;
-  FILE *MODELFILE;
-  MODELFILE = fopen(filename, "r");
+
   if(MODELFILE == 0)
   {
     return 0;
@@ -626,14 +626,15 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel **magneticmode
     *magneticmodel = MAG_AllocateModelMemory(num_terms);
     (*magneticmodel)->nMax = nMax;
     (*magneticmodel)->nMaxSecVar = nMax;
-    MAG_readMagneticModel(filename, *magneticmodel);
+
+    fseek(MODELFILE, 0L, SEEK_SET);
+    MAG_readMagneticModel(MODELFILE, *magneticmodel);
     (*magneticmodel)->CoefficientFileEndDate = (*magneticmodel)->epoch + 5;
 
   }
   else
     return 0;
 
-  fclose(MODELFILE);
   return 1;
 } /*MAG_robustReadMagModels*/
 
@@ -647,13 +648,13 @@ int MAG_robustReadMagModels(char *filename, MAGtype_MagneticModel **magneticmode
 ******************************************************************************/
 
 void MAG_Error(int control)
-/*This prints WMM errors.
- *  INPUT     control     Error look up number
- *  OUTPUT	  none
- *  CALLS : none
- *
- */
 {
+  /*This prints WMM errors.
+   *  INPUT     control     Error look up number
+   *  OUTPUT	  none
+   *  CALLS : none
+   *
+   */
   switch(control)
   {
     case 1:
@@ -796,13 +797,13 @@ char MAG_GeomagIntroduction_EMM(MAGtype_MagneticModel *MagneticModel, char *Vers
 }
 
 char MAG_GeomagIntroduction_WMM(MAGtype_MagneticModel *MagneticModel, char *VersionDate, char *ModelDate)
-/*Prints the introduction to the Geomagnetic program.  It needs the Magnetic model for the epoch.
- *
- * INPUT  MagneticModel		: MAGtype_MagneticModel With Model epoch  (input)
- *  OUTPUT ans   (char)  user selection
- *  CALLS : none
- */
 {
+  /*Prints the introduction to the Geomagnetic program.  It needs the Magnetic model for the epoch.
+   *
+   * INPUT  MagneticModel		: MAGtype_MagneticModel With Model epoch  (input)
+   *  OUTPUT ans   (char)  user selection
+   *  CALLS : none
+   */
   char help = 'h';
   char ans;
   printf("\n\n Welcome to the World Magnetic Model (WMM) %d C-Program\n\n", (int)MagneticModel->epoch);
@@ -887,27 +888,27 @@ int MAG_GetUserGrid(MAGtype_CoordGeodetic *minimum, MAGtype_CoordGeodetic *maxim
                     double *a_step_size, double *step_time, MAGtype_Date
                     *StartDate, MAGtype_Date *EndDate, int *ElementOption, int *PrintOption, char *OutputFile,
                     MAGtype_Geoid *Geoid)
-/* Prompts user to enter parameters to compute a grid - for use with the MAG_grid function
- *  Note: The user entries are not validated before here. The function populates the input variables & data structures.
- *
- *  UPDATE : minimum Pointer to data structure with the following elements
- *               double lambda; (longitude)
- *               double phi; ( geodetic latitude)
- *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *               double HeightAboveGeoid;(height above the Geoid )
- *
- *               maximum   -same as the above -MAG_USE_GEOID
- *               step_size  : double pointer : spatial step size, in decimal degrees
- *               a_step_size : double pointer :  double altitude step size (km)
- *               step_time : double pointer : time step size (decimal years)
- *               StartDate : pointer to data structure with the following elements updates
- *                                       double DecimalYear;     ( decimal years )
- *               EndDate :	Same as the above
- *  CALLS : none
- *
- *
- */
 {
+  /* Prompts user to enter parameters to compute a grid - for use with the MAG_grid function
+   *  Note: The user entries are not validated before here. The function populates the input variables & data structures.
+   *
+   *  UPDATE : minimum Pointer to data structure with the following elements
+   *               double lambda; (longitude)
+   *               double phi; ( geodetic latitude)
+   *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *               double HeightAboveGeoid;(height above the Geoid )
+   *
+   *               maximum   -same as the above -MAG_USE_GEOID
+   *               step_size  : double pointer : spatial step size, in decimal degrees
+   *               a_step_size : double pointer :  double altitude step size (km)
+   *               step_time : double pointer : time step size (decimal years)
+   *               StartDate : pointer to data structure with the following elements updates
+   *                                       double DecimalYear;     ( decimal years )
+   *               EndDate :	Same as the above
+   *  CALLS : none
+   *
+   *
+   */
   FILE *fileout;
   char filename[] = "GridProgramDirective.txt";
   char buffer[20];
@@ -1120,9 +1121,11 @@ int MAG_GetUserGrid(MAGtype_CoordGeodetic *minimum, MAGtype_CoordGeodetic *maxim
   }
   else
     fprintf(fileout, "\nResults printed in Console\n");
-  fprintf(fileout,
-          "Minimum Latitude: %f\t\tMaximum Latitude: %f\t\tStep Size: %f\nMinimum Longitude: %f\t\tMaximum Longitude: %f\t\tStep Size: %f\n", minimum->phi, maximum->phi, *step_size, minimum->lambda, maximum->lambda,
-          *step_size);
+  fprintf(
+    fileout,
+    "Minimum Latitude: %f\t\tMaximum Latitude: %f\t\tStep Size: %f\nMinimum Longitude: %f\t\tMaximum Longitude: %f\t\tStep Size: %f\n",
+    minimum->phi, maximum->phi, *step_size, minimum->lambda, maximum->lambda,
+    *step_size);
   if(Geoid->UseGeoid == 1)
     fprintf(fileout, "Minimum Altitude above MSL: %f\tMaximum Altitude above MSL: %f\tStep Size: %f\n",
             minimum->HeightAboveGeoid, maximum->HeightAboveGeoid, *a_step_size);
@@ -1137,35 +1140,35 @@ int MAG_GetUserGrid(MAGtype_CoordGeodetic *minimum, MAGtype_CoordGeodetic *maxim
 
 int MAG_GetUserInput(MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid *Geoid, MAGtype_CoordGeodetic *CoordGeodetic,
                      MAGtype_Date *MagneticDate)
-/*
- *  This prompts the user for coordinates, and accepts many entry formats.
- *  It takes the MagneticModel and Geoid as input and outputs the Geographic coordinates and Date as objects.
- *  Returns 0 when the user wants to exit and 1 if the user enters valid input data.
- *  INPUT :  MagneticModel  : Data structure with the following elements used here
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *               : Geoid Pointer to data structure MAGtype_Geoid (used for converting HeightAboveGeoid to HeightABoveEllipsoid
- *
- *  OUTPUT: CoordGeodetic : Pointer to data structure. Following elements are updated
- *                       double lambda; (longitude)
- *                       double phi; ( geodetic latitude)
- *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *                       double HeightAboveGeoid;(height above the Geoid )
- *
- *               MagneticDate : Pointer to data structure MAGtype_Date with the following elements updated
- *                       int	Year; (If user directly enters decimal year this field is not populated)
- *                       int	Month;(If user directly enters decimal year this field is not populated)
- *                       int	Day; (If user directly enters decimal year this field is not populated)
- *                       double DecimalYear;      decimal years
- *
- *  CALLS:  MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses this to convert the string into a decimal longitude.)
- *               MAG_ValidateDMSstringlong(buffer, Error_Message)
- *               MAG_ValidateDMSstringlat(buffer, Error_Message)
- *               MAG_Warnings
- *               MAG_ConvertGeoidToEllipsoidHeight
- *               MAG_DateToYear
- *
- */
 {
+  /*
+   *  This prompts the user for coordinates, and accepts many entry formats.
+   *  It takes the MagneticModel and Geoid as input and outputs the Geographic coordinates and Date as objects.
+   *  Returns 0 when the user wants to exit and 1 if the user enters valid input data.
+   *  INPUT :  MagneticModel  : Data structure with the following elements used here
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *               : Geoid Pointer to data structure MAGtype_Geoid (used for converting HeightAboveGeoid to HeightABoveEllipsoid
+   *
+   *  OUTPUT: CoordGeodetic : Pointer to data structure. Following elements are updated
+   *                       double lambda; (longitude)
+   *                       double phi; ( geodetic latitude)
+   *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *                       double HeightAboveGeoid;(height above the Geoid )
+   *
+   *               MagneticDate : Pointer to data structure MAGtype_Date with the following elements updated
+   *                       int	Year; (If user directly enters decimal year this field is not populated)
+   *                       int	Month;(If user directly enters decimal year this field is not populated)
+   *                       int	Day; (If user directly enters decimal year this field is not populated)
+   *                       double DecimalYear;      decimal years
+   *
+   *  CALLS:  MAG_DMSstringToDegree(buffer, &CoordGeodetic->lambda); (The program uses this to convert the string into a decimal longitude.)
+   *               MAG_ValidateDMSstringlong(buffer, Error_Message)
+   *               MAG_ValidateDMSstringlat(buffer, Error_Message)
+   *               MAG_Warnings
+   *               MAG_ConvertGeoidToEllipsoidHeight
+   *               MAG_DateToYear
+   *
+   */
   char Error_Message[255];
   char buffer[40];
   int i, j, a, b, c, done = 0;
@@ -1174,16 +1177,19 @@ int MAG_GetUserInput(MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid *Geoid,
   int alt_bound[2] = {ALT_BOUND_MIN, NO_ALT_MAX};
   char *Qstring = malloc(sizeof(char) * 1028);
   strcpy(buffer, ""); /*Clear the input    */
-  strcpy(Qstring,
-         "\nPlease enter latitude\nNorth Latitude positive, For example:\n30, 30, 30 (D,M,S) or 30.508 (Decimal Degrees) (both are north)\n");
+  strcpy(
+    Qstring,
+    "\nPlease enter latitude\nNorth Latitude positive, For example:\n30, 30, 30 (D,M,S) or 30.508 (Decimal Degrees) (both are north)\n");
   MAG_GetDeg(Qstring, &CoordGeodetic->phi, lat_bound);
   strcpy(buffer, ""); /*Clear the input*/
-  strcpy(Qstring,
-         "\nPlease enter longitude\nEast longitude positive, West negative.  For example:\n-100.5 or -100, 30, 0 for 100.5 degrees west\n");
+  strcpy(
+    Qstring,
+    "\nPlease enter longitude\nEast longitude positive, West negative.  For example:\n-100.5 or -100, 30, 0 for 100.5 degrees west\n");
   MAG_GetDeg(Qstring, &CoordGeodetic->lambda, lon_bound);
 
-  strcpy(Qstring,
-         "\nPlease enter height above mean sea level (in kilometers):\n[For height above WGS-84 Ellipsoid prefix E, for example (E20.1)]\n");
+  strcpy(
+    Qstring,
+    "\nPlease enter height above mean sea level (in kilometers):\n[For height above WGS-84 Ellipsoid prefix E, for example (E20.1)]\n");
   if(MAG_GetAltitude(Qstring, Geoid, CoordGeodetic, alt_bound, FALSE) == USER_GAVE_UP)
     return FALSE;
 
@@ -1313,49 +1319,49 @@ void MAG_PrintGradient(MAGtype_Gradient Gradient)
 
 void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements, MAGtype_CoordGeodetic SpaceInput,
                        MAGtype_Date TimeInput, MAGtype_MagneticModel *MagneticModel, MAGtype_Geoid *Geoid)
-/* This function prints the results in  Geomagnetic Elements for a point calculation. It takes the calculated
- *  Geomagnetic elements "GeomagElements" as input.
- *  As well as the coordinates, date, and Magnetic Model.
- *  INPUT :  GeomagElements : Data structure MAGtype_GeoMagneticElements with the following elements
- *                       double Decl; (Angle between the magnetic field vector and true north, positive east)
- *                       double Incl; Angle between the magnetic field vector and the horizontal plane, positive down
- *                       double F; Magnetic Field Strength
- *                       double H; Horizontal Magnetic Field Strength
- *                       double X; Northern component of the magnetic field vector
- *                       double Y; Eastern component of the magnetic field vector
- *                       double Z; Downward component of the magnetic field vector4
- *                       double Decldot; Yearly Rate of change in declination
- *                       double Incldot; Yearly Rate of change in inclination
- *                       double Fdot; Yearly rate of change in Magnetic field strength
- *                       double Hdot; Yearly rate of change in horizontal field strength
- *                       double Xdot; Yearly rate of change in the northern component
- *                       double Ydot; Yearly rate of change in the eastern component
- *                       double Zdot; Yearly rate of change in the downward component
- *                       double GVdot;Yearly rate of chnage in grid variation
- *       CoordGeodetic Pointer to the  data  structure with the following elements
- *                       double lambda; (longitude)
- *                       double phi; ( geodetic latitude)
- *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *                       double HeightAboveGeoid;(height above the Geoid )
- *       TimeInput :  data structure MAGtype_Date with the following elements
- *                       int	Year;
- *                       int	Month;
- *                       int	Day;
- *                       double DecimalYear;      decimal years
- *       MagneticModel :	 data structure with the following elements
- *                       double EditionDate;
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                       char  ModelName[20];
- *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       int nMax;  Maximum degree of spherical harmonic model
- *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
- *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
- *       OUTPUT : none
- */
 {
+  /* This function prints the results in  Geomagnetic Elements for a point calculation. It takes the calculated
+   *  Geomagnetic elements "GeomagElements" as input.
+   *  As well as the coordinates, date, and Magnetic Model.
+   *  INPUT :  GeomagElements : Data structure MAGtype_GeoMagneticElements with the following elements
+   *                       double Decl; (Angle between the magnetic field vector and true north, positive east)
+   *                       double Incl; Angle between the magnetic field vector and the horizontal plane, positive down
+   *                       double F; Magnetic Field Strength
+   *                       double H; Horizontal Magnetic Field Strength
+   *                       double X; Northern component of the magnetic field vector
+   *                       double Y; Eastern component of the magnetic field vector
+   *                       double Z; Downward component of the magnetic field vector4
+   *                       double Decldot; Yearly Rate of change in declination
+   *                       double Incldot; Yearly Rate of change in inclination
+   *                       double Fdot; Yearly rate of change in Magnetic field strength
+   *                       double Hdot; Yearly rate of change in horizontal field strength
+   *                       double Xdot; Yearly rate of change in the northern component
+   *                       double Ydot; Yearly rate of change in the eastern component
+   *                       double Zdot; Yearly rate of change in the downward component
+   *                       double GVdot;Yearly rate of chnage in grid variation
+   *       CoordGeodetic Pointer to the  data  structure with the following elements
+   *                       double lambda; (longitude)
+   *                       double phi; ( geodetic latitude)
+   *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *                       double HeightAboveGeoid;(height above the Geoid )
+   *       TimeInput :  data structure MAGtype_Date with the following elements
+   *                       int	Year;
+   *                       int	Month;
+   *                       int	Day;
+   *                       double DecimalYear;      decimal years
+   *       MagneticModel :	 data structure with the following elements
+   *                       double EditionDate;
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                       char  ModelName[20];
+   *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       int nMax;  Maximum degree of spherical harmonic model
+   *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
+   *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
+   *       OUTPUT : none
+   */
   char DeclString[100];
   char InclString[100];
   MAG_DegreeToDMSstring(GeomagElements.Incl, 2, InclString);
@@ -1429,8 +1435,8 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements, MAGtype_Coord
   }
 
   if(SpaceInput.phi <= -55 || SpaceInput.phi >= 55)
-  /* Print Grid Variation */
   {
+    /* Print Grid Variation */
     MAG_DegreeToDMSstring(GeomagElements.GV, 2, InclString);
     printf("\n\n Grid variation =%20s\n", InclString);
   }
@@ -1438,14 +1444,14 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements, MAGtype_Coord
 } /*MAG_PrintUserData*/
 
 int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
-/* Validates a latitude DMS string, and returns 1 for a success and returns 0 for a failure.
- *  It copies an error message to the Error string in the event of a failure.
- *
- *  INPUT : input (DMS string)
- *  OUTPUT : Error : Error string
- *  CALLS : none
- */
 {
+  /* Validates a latitude DMS string, and returns 1 for a success and returns 0 for a failure.
+   *  It copies an error message to the Error string in the event of a failure.
+   *
+   *  INPUT : input (DMS string)
+   *  OUTPUT : Error : Error string
+   *  CALLS : none
+   */
   int degree, minute, second, j = 0, n, max_minute = 60, max_second = 60;
   int i;
   degree = -1000;
@@ -1458,15 +1464,16 @@ int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
     if((input[i] < '0' || input[i] > '9') &&
        (input[i] != ',' && input[i] != ' ' && input[i] != '-' && input[i] != '\0' && input[i] != '\n'))
     {
-      strcpy(Error,
-             "\nError: Input contains an illegal character, legal characters for Degree, Minute, Second format are:\n '0-9' ',' '-' '[space]' '[Enter]'\n");
+      strcpy(
+        Error,
+        "\nError: Input contains an illegal character, legal characters for Degree, Minute, Second format are:\n '0-9' ',' '-' '[space]' '[Enter]'\n");
       return FALSE;
     }
     if(input[i] == ',')
       j++;
   }
   if(j == 2)
-    j = sscanf(input, "%d, %d, %d", &degree, &minute, &second); /*tests for legal formatting and range*/
+    j = sscanf(input, "%d, %d, %d", &degree, &minute, &second);  /*tests for legal formatting and range*/
   else
     j = sscanf(input, "%d %d %d", &degree, &minute, &second);
   if(j == 1)
@@ -1477,8 +1484,9 @@ int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
   }
   if(j != 3)
   {
-    strcpy(Error,
-           "\nError: Not enough numbers used for Degrees, Minutes, Seconds format\n or they were incorrectly formatted\n The legal format is DD,MM,SS or DD MM SS\n");
+    strcpy(
+      Error,
+      "\nError: Not enough numbers used for Degrees, Minutes, Seconds format\n or they were incorrectly formatted\n The legal format is DD,MM,SS or DD MM SS\n");
     return FALSE;
   }
   if(degree > max || degree < min)
@@ -1504,18 +1512,18 @@ int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
 } /*MAG_ValidateDMSstring*/
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel)
-/*Return value 0 means end program, Return value 1 means get new data, Return value 2 means continue.
- *  This prints a warning to the screen determined by the control integer. It also takes the value of the parameter causing the warning as a double.  This is unnecessary for some warnings.
- *  It requires the MagneticModel to determine the current epoch.
- *
- *  INPUT control :int : (Warning number)
- *               value  : double: Magnetic field strength
- *               MagneticModel
- *  OUTPUT : none
- *  CALLS : none
- *
- */
 {
+  /*Return value 0 means end program, Return value 1 means get new data, Return value 2 means continue.
+   *  This prints a warning to the screen determined by the control integer. It also takes the value of the parameter causing the warning as a double.  This is unnecessary for some warnings.
+   *  It requires the MagneticModel to determine the current epoch.
+   *
+   *  INPUT control :int : (Warning number)
+   *               value  : double: Magnetic field strength
+   *               MagneticModel
+   *  OUTPUT : none
+   *  CALLS : none
+   *
+   */
   char ans[20];
   strcpy(ans, "");
 
@@ -1652,22 +1660,22 @@ int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel
 ******************************************************************************/
 
 MAGtype_LegendreFunction *MAG_AllocateLegendreFunctionMemory(int NumTerms)
-/* Allocate memory for Associated Legendre Function data types.
- *  Should be called before computing Associated Legendre Functions.
- *
- *  INPUT: NumTerms : int : Total number of spherical harmonic coefficients in the model
- *
- *
- *  OUTPUT:    Pointer to data structure MAGtype_LegendreFunction with the following elements
- *                       double *Pcup;  (  pointer to store Legendre Function  )
- *                       double *dPcup; ( pointer to store  Derivative of Legendre function )
- *
- *                       FALSE: Failed to allocate memory
- *
- *  CALLS : none
- *
- */
 {
+  /* Allocate memory for Associated Legendre Function data types.
+   *  Should be called before computing Associated Legendre Functions.
+   *
+   *  INPUT: NumTerms : int : Total number of spherical harmonic coefficients in the model
+   *
+   *
+   *  OUTPUT:    Pointer to data structure MAGtype_LegendreFunction with the following elements
+   *                       double *Pcup;  (  pointer to store Legendre Function  )
+   *                       double *dPcup; ( pointer to store  Derivative of Legendre function )
+   *
+   *                       FALSE: Failed to allocate memory
+   *
+   *  CALLS : none
+   *
+   */
   MAGtype_LegendreFunction *LegendreFunction;
 
   LegendreFunction = (MAGtype_LegendreFunction *)calloc(1, sizeof(MAGtype_LegendreFunction));
@@ -1693,28 +1701,28 @@ MAGtype_LegendreFunction *MAG_AllocateLegendreFunctionMemory(int NumTerms)
 } /*MAGtype_LegendreFunction*/
 
 MAGtype_MagneticModel *MAG_AllocateModelMemory(int NumTerms)
-/* Allocate memory for WMM Coefficients
- * Should be called before reading the model file *
- *
- *  INPUT: NumTerms : int : Total number of spherical harmonic coefficients in the model
- *
- *
- *  OUTPUT:    Pointer to data structure MAGtype_MagneticModel with the following elements
- *                       double EditionDate;
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                       char  ModelName[20];
- *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       int nMax;  Maximum degree of spherical harmonic model
- *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
- *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
- *
- *                       FALSE: Failed to allocate memory
- *  CALLS : none
- */
 {
+  /* Allocate memory for WMM Coefficients
+   * Should be called before reading the model file *
+   *
+   *  INPUT: NumTerms : int : Total number of spherical harmonic coefficients in the model
+   *
+   *
+   *  OUTPUT:    Pointer to data structure MAGtype_MagneticModel with the following elements
+   *                       double EditionDate;
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                       char  ModelName[20];
+   *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       int nMax;  Maximum degree of spherical harmonic model
+   *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
+   *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
+   *
+   *                       FALSE: Failed to allocate memory
+   *  CALLS : none
+   */
   MAGtype_MagneticModel *MagneticModel;
   int i;
 
@@ -1806,9 +1814,9 @@ void MAG_AssignHeaderValues(MAGtype_MagneticModel *model, char values[][MAXLINEL
 
 void MAG_AssignMagneticModelCoeffs(MAGtype_MagneticModel *Assignee, MAGtype_MagneticModel *Source, int nMax,
                                    int nMaxSecVar)
-/* This function assigns the first nMax degrees of the Source model to the Assignee model, leaving the other coefficients
- *  untouched*/
 {
+  /* This function assigns the first nMax degrees of the Source model to the Assignee model, leaving the other coefficients
+   *  untouched*/
   int n, m, index;
   assert(nMax <= Source->nMax);
   assert(nMax <= Assignee->nMax);
@@ -1838,30 +1846,30 @@ void MAG_AssignMagneticModelCoeffs(MAGtype_MagneticModel *Assignee, MAGtype_Magn
 
 int MAG_FreeMemory(MAGtype_MagneticModel *MagneticModel, MAGtype_MagneticModel *TimedMagneticModel,
                    MAGtype_LegendreFunction *LegendreFunction)
-/* Free memory used by WMM functions. Only to be called at the end of the main function.
- *  INPUT :  MagneticModel	pointer to data structure with the following elements
- *
- *                       double EditionDate;
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                       char  ModelName[20];
- *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       int nMax;  Maximum degree of spherical harmonic model
- *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
- *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
- *
- *               TimedMagneticModel   Pointer to data structure similar to the first input.
- *               LegendreFunction Pointer to data structure with the following elements
- *                                               double *Pcup;  (  pointer to store Legendre Function  )
- *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
- *
- *  OUTPUT  none
- *  CALLS : none
- *
- */
 {
+  /* Free memory used by WMM functions. Only to be called at the end of the main function.
+   *  INPUT :  MagneticModel	pointer to data structure with the following elements
+   *
+   *                       double EditionDate;
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                       char  ModelName[20];
+   *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       int nMax;  Maximum degree of spherical harmonic model
+   *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
+   *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
+   *
+   *               TimedMagneticModel   Pointer to data structure similar to the first input.
+   *               LegendreFunction Pointer to data structure with the following elements
+   *                                               double *Pcup;  (  pointer to store Legendre Function  )
+   *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
+   *
+   *  OUTPUT  none
+   *  CALLS : none
+   *
+   */
   if(MagneticModel->Main_Field_Coeff_G)
   {
     free(MagneticModel->Main_Field_Coeff_G);
@@ -1935,25 +1943,25 @@ int MAG_FreeMemory(MAGtype_MagneticModel *MagneticModel, MAGtype_MagneticModel *
 } /*MAG_FreeMemory */
 
 int MAG_FreeMagneticModelMemory(MAGtype_MagneticModel *MagneticModel)
-/* Free the magnetic model memory used by WMM functions.
- *  INPUT :  MagneticModel	pointer to data structure with the following elements
- *
- *                       double EditionDate;
- *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                       char  ModelName[20];
- *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                       int nMax;  Maximum degree of spherical harmonic model
- *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
- *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
- *
- *  OUTPUT  none
- *  CALLS : none
- *
- */
 {
+  /* Free the magnetic model memory used by WMM functions.
+   *  INPUT :  MagneticModel	pointer to data structure with the following elements
+   *
+   *                       double EditionDate;
+   *                       double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                       char  ModelName[20];
+   *                       double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                       double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                       int nMax;  Maximum degree of spherical harmonic model
+   *                       int nMaxSecVar; Maxumum degree of spherical harmonic secular model
+   *                       int SecularVariationUsed; Whether or not the magnetic secular variation vector will be needed by program
+   *
+   *  OUTPUT  none
+   *  CALLS : none
+   *
+   */
   if(MagneticModel->Main_Field_Coeff_G)
   {
     free(MagneticModel->Main_Field_Coeff_G);
@@ -1984,16 +1992,16 @@ int MAG_FreeMagneticModelMemory(MAGtype_MagneticModel *MagneticModel)
 } /*MAG_FreeMagneticModelMemory */
 
 int MAG_FreeLegendreMemory(MAGtype_LegendreFunction *LegendreFunction)
-/* Free the Legendre Coefficients memory used by the WMM functions.
- *  INPUT : LegendreFunction Pointer to data structure with the following elements
- *                                               double *Pcup;  (  pointer to store Legendre Function  )
- *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
- *
- *  OUTPUT: none
- *  CALLS : none
- *
- */
 {
+  /* Free the Legendre Coefficients memory used by the WMM functions.
+   *  INPUT : LegendreFunction Pointer to data structure with the following elements
+   *                                               double *Pcup;  (  pointer to store Legendre Function  )
+   *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
+   *
+   *  OUTPUT: none
+   *  CALLS : none
+   *
+   */
   if(LegendreFunction->Pcup)
   {
     free(LegendreFunction->Pcup);
@@ -2014,15 +2022,15 @@ int MAG_FreeLegendreMemory(MAGtype_LegendreFunction *LegendreFunction)
 } /*MAG_FreeLegendreMemory */
 
 int MAG_FreeSphVarMemory(MAGtype_SphericalHarmonicVariables *SphVar)
-/* Free the Spherical Harmonic Variable memory used by the WMM functions.
- *  INPUT : LegendreFunction Pointer to data structure with the following elements
- *                                               double *RelativeRadiusPower
- *                                               double *cos_mlambda
- *                                               double *sin_mlambda
- *  OUTPUT: none
- *  CALLS : none
- */
 {
+  /* Free the Spherical Harmonic Variable memory used by the WMM functions.
+   *  INPUT : LegendreFunction Pointer to data structure with the following elements
+   *                                               double *RelativeRadiusPower
+   *                                               double *cos_mlambda
+   *                                               double *sin_mlambda
+   *  OUTPUT: none
+   *  CALLS : none
+   */
   if(SphVar->RelativeRadiusPower)
   {
     free(SphVar->RelativeRadiusPower);
@@ -2181,7 +2189,7 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
   }
 } /*MAG_PrintSHDFFormat*/
 
-int MAG_readMagneticModel(char *filename, MAGtype_MagneticModel *MagneticModel)
+int MAG_readMagneticModel(FILE *MAG_COF_File, MAGtype_MagneticModel *MagneticModel)
 {
 
   /* READ WORLD Magnetic MODEL SPHERICAL HARMONIC COEFFICIENTS (WMM.cof)
@@ -2199,11 +2207,9 @@ int MAG_readMagneticModel(char *filename, MAGtype_MagneticModel *MagneticModel)
    *
    */
 
-  FILE *MAG_COF_File;
   char c_str[81], c_new[5]; /*these strings are used to read a line from coefficient file*/
   int i, icomp, m, n, EOF_Flag = 0, index;
   double epoch, gnm, hnm, dgnm, dhnm;
-  MAG_COF_File = fopen(filename, "r");
 
   if(MAG_COF_File == NULL)
   {
@@ -2248,28 +2254,27 @@ int MAG_readMagneticModel(char *filename, MAGtype_MagneticModel *MagneticModel)
     }
   }
 
-  fclose(MAG_COF_File);
   return TRUE;
 } /*MAG_readMagneticModel*/
 
 int MAG_readMagneticModel_Large(char *filename, char *filenameSV, MAGtype_MagneticModel *MagneticModel)
-/*  To read the high-degree model coefficients (for example, NGDC 720)
- *  INPUT :  filename   file name for static coefficients
- *                       filenameSV file name for secular variation coefficients
- *
- *                       MagneticModel : Pointer to the data structure with the following fields required as inputs
- *                               nMaxSecVar : Number of secular variation coefficients
- *                               nMax :   Number of static coefficients
- *  UPDATES : MagneticModel : Pointer to the data structure with the following fields populated
- *                               double epoch;       Base time of Geomagnetic model epoch (yrs)
- *                               double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
- *                               double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
- *                               double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *                               double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
- *       CALLS : none
- *
- */
 {
+  /*  To read the high-degree model coefficients (for example, NGDC 720)
+   *  INPUT :  filename   file name for static coefficients
+   *                       filenameSV file name for secular variation coefficients
+   *
+   *                       MagneticModel : Pointer to the data structure with the following fields required as inputs
+   *                               nMaxSecVar : Number of secular variation coefficients
+   *                               nMax :   Number of static coefficients
+   *  UPDATES : MagneticModel : Pointer to the data structure with the following fields populated
+   *                               double epoch;       Base time of Geomagnetic model epoch (yrs)
+   *                               double *Main_Field_Coeff_G;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                               double *Main_Field_Coeff_H;          C - Gauss coefficients of main geomagnetic model (nT)
+   *                               double *Secular_Var_Coeff_G;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *                               double *Secular_Var_Coeff_H;  CD - Gauss coefficients of secular geomagnetic model (nT/yr)
+   *       CALLS : none
+   *
+   */
   FILE *MAG_COF_File;
   FILE *MAG_COFSV_File;
   char c_str[81], c_str2[81]; /* these strings are used to read a line from coefficient file */
@@ -2368,7 +2373,7 @@ char *MAG_Trim(char *str)
 /*End of Memory and File Processing functions*/
 
 /******************************************************************************
-*************Conversions, Transformations, and other Calculations**************
+* *************Conversions, Transformations, and other Calculations**************
 * This grouping consists of functions that perform unit conversions, coordinate
 * transformations and other simple or straightforward calculations that are
 * usually easily replicable with a typical scientific calculator.
@@ -2386,22 +2391,22 @@ void MAG_BaseErrors(double DeclCoef, double DeclBaseline, double InclOffset, dou
 
 int MAG_CalculateGeoMagneticElements(MAGtype_MagneticResults *MagneticResultsGeo,
                                      MAGtype_GeoMagneticElements *GeoMagneticElements)
-/* Calculate all the Geomagnetic elements from X,Y and Z components
- *  INPUT     MagneticResultsGeo   Pointer to data structure with the following elements
- *                       double Bx;    ( North )
- *                       double By;	  ( East )
- *                       double Bz;    ( Down )
- *  OUTPUT    GeoMagneticElements    Pointer to data structure with the following elements
- *                       double Decl; (Angle between the magnetic field vector and true north, positive east)
- *                       double Incl; Angle between the magnetic field vector and the horizontal plane, positive down
- *                       double F; Magnetic Field Strength
- *                       double H; Horizontal Magnetic Field Strength
- *                       double X; Northern component of the magnetic field vector
- *                       double Y; Eastern component of the magnetic field vector
- *                       double Z; Downward component of the magnetic field vector
- *  CALLS : none
- */
 {
+  /* Calculate all the Geomagnetic elements from X,Y and Z components
+   *  INPUT     MagneticResultsGeo   Pointer to data structure with the following elements
+   *                       double Bx;    ( North )
+   *                       double By;	  ( East )
+   *                       double Bz;    ( Down )
+   *  OUTPUT    GeoMagneticElements    Pointer to data structure with the following elements
+   *                       double Decl; (Angle between the magnetic field vector and true north, positive east)
+   *                       double Incl; Angle between the magnetic field vector and the horizontal plane, positive down
+   *                       double F; Magnetic Field Strength
+   *                       double H; Horizontal Magnetic Field Strength
+   *                       double X; Northern component of the magnetic field vector
+   *                       double Y; Eastern component of the magnetic field vector
+   *                       double Z; Downward component of the magnetic field vector
+   *  CALLS : none
+   */
   GeoMagneticElements->X = MagneticResultsGeo->Bx;
   GeoMagneticElements->Y = MagneticResultsGeo->By;
   GeoMagneticElements->Z = MagneticResultsGeo->Bz;
@@ -2417,25 +2422,25 @@ int MAG_CalculateGeoMagneticElements(MAGtype_MagneticResults *MagneticResultsGeo
 } /*MAG_CalculateGeoMagneticElements */
 
 int MAG_CalculateGridVariation(MAGtype_CoordGeodetic location, MAGtype_GeoMagneticElements *elements)
-/*Computes the grid variation for |latitudes| > MAG_MAX_LAT_DEGREE
- *
- *  Grivation (or grid variation) is the angle between grid north and
- *  magnetic north. This routine calculates Grivation for the Polar Stereographic
- *  projection for polar locations (Latitude => |55| deg). Otherwise, it computes the grid
- *  variation in UTM projection system. However, the UTM projection codes may be used to compute
- *  the grid variation at any latitudes.
- *
- *  INPUT    location    Data structure with the following elements
- *               double lambda; (longitude)
- *               double phi; ( geodetic latitude)
- *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *               double HeightAboveGeoid;(height above the Geoid )
- *  OUTPUT  elements Data  structure with the following elements updated
- *               double GV; ( The Grid Variation )
- *  CALLS : MAG_GetTransverseMercator
- *
- */
 {
+  /*Computes the grid variation for |latitudes| > MAG_MAX_LAT_DEGREE
+   *
+   *  Grivation (or grid variation) is the angle between grid north and
+   *  magnetic north. This routine calculates Grivation for the Polar Stereographic
+   *  projection for polar locations (Latitude => |55| deg). Otherwise, it computes the grid
+   *  variation in UTM projection system. However, the UTM projection codes may be used to compute
+   *  the grid variation at any latitudes.
+   *
+   *  INPUT    location    Data structure with the following elements
+   *               double lambda; (longitude)
+   *               double phi; ( geodetic latitude)
+   *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *               double HeightAboveGeoid;(height above the Geoid )
+   *  OUTPUT  elements Data  structure with the following elements updated
+   *               double GV; ( The Grid Variation )
+   *  CALLS : MAG_GetTransverseMercator
+   *
+   */
   MAGtype_UTMParameters UTMParameters;
   if(location.phi >= MAG_PS_MAX_LAT_DEGREE)
   {
@@ -2476,31 +2481,32 @@ void MAG_CalculateGradientElements(MAGtype_MagneticResults GradResults, MAGtype_
 
 int MAG_CalculateSecularVariationElements(MAGtype_MagneticResults MagneticVariation,
                                           MAGtype_GeoMagneticElements *MagneticElements)
-/*This takes the Magnetic Variation in x, y, and z and uses it to calculate the secular variation of each of the Geomagnetic elements.
- *       INPUT     MagneticVariation   Data structure with the following elements
- *                               double Bx;    ( North )
- *                               double By;	  ( East )
- *                               double Bz;    ( Down )
- *       OUTPUT   MagneticElements   Pointer to the data  structure with the following elements updated
- *                       double Decldot; Yearly Rate of change in declination
- *                       double Incldot; Yearly Rate of change in inclination
- *                       double Fdot; Yearly rate of change in Magnetic field strength
- *                       double Hdot; Yearly rate of change in horizontal field strength
- *                       double Xdot; Yearly rate of change in the northern component
- *                       double Ydot; Yearly rate of change in the eastern component
- *                       double Zdot; Yearly rate of change in the downward component
- *                       double GVdot;Yearly rate of chnage in grid variation
- *       CALLS : none
- *
- */
 {
+  /*This takes the Magnetic Variation in x, y, and z and uses it to calculate the secular variation of each of the Geomagnetic elements.
+   *       INPUT     MagneticVariation   Data structure with the following elements
+   *                               double Bx;    ( North )
+   *                               double By;	  ( East )
+   *                               double Bz;    ( Down )
+   *       OUTPUT   MagneticElements   Pointer to the data  structure with the following elements updated
+   *                       double Decldot; Yearly Rate of change in declination
+   *                       double Incldot; Yearly Rate of change in inclination
+   *                       double Fdot; Yearly rate of change in Magnetic field strength
+   *                       double Hdot; Yearly rate of change in horizontal field strength
+   *                       double Xdot; Yearly rate of change in the northern component
+   *                       double Ydot; Yearly rate of change in the eastern component
+   *                       double Zdot; Yearly rate of change in the downward component
+   *                       double GVdot;Yearly rate of chnage in grid variation
+   *       CALLS : none
+   *
+   */
   MagneticElements->Xdot = MagneticVariation.Bx;
   MagneticElements->Ydot = MagneticVariation.By;
   MagneticElements->Zdot = MagneticVariation.Bz;
   MagneticElements->Hdot =
     (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot) / MagneticElements->H; /* See equation 19 in the WMM technical report */
   MagneticElements->Fdot =
-    (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot + MagneticElements->Z *
+    (MagneticElements->X * MagneticElements->Xdot + MagneticElements->Y * MagneticElements->Ydot +
+     MagneticElements->Z *
      MagneticElements->Zdot) / MagneticElements->F;
   MagneticElements->Decldot = 180.0 / M_PI *
                               (MagneticElements->X * MagneticElements->Ydot - MagneticElements->Y *
@@ -2605,20 +2611,20 @@ MAGtype_CoordGeodetic MAG_CoordGeodeticAssign(MAGtype_CoordGeodetic CoordGeodeti
 }
 
 int MAG_DateToYear(MAGtype_Date *CalendarDate, char *Error)
-/* Converts a given calendar date into a decimal year,
- *  it also outputs an error string if there is a problem
- *  INPUT  CalendarDate  Pointer to the  data  structure with the following elements
- *                       int	Year;
- *                       int	Month;
- *                       int	Day;
- *                       double DecimalYear;      decimal years
- *  OUTPUT  CalendarDate  Pointer to the  data  structure with the following elements updated
- *                       double DecimalYear;      decimal years
- *               Error	pointer to an error string
- *  CALLS : none
- *
- */
 {
+  /* Converts a given calendar date into a decimal year,
+   *  it also outputs an error string if there is a problem
+   *  INPUT  CalendarDate  Pointer to the  data  structure with the following elements
+   *                       int	Year;
+   *                       int	Month;
+   *                       int	Day;
+   *                       double DecimalYear;      decimal years
+   *  OUTPUT  CalendarDate  Pointer to the  data  structure with the following elements updated
+   *                       double DecimalYear;      decimal years
+   *               Error	pointer to an error string
+   *  CALLS : none
+   *
+   */
   int temp = 0; /*Total number of days */
   int MonthDays[13];
   int ExtraDay = 0;
@@ -2666,16 +2672,16 @@ int MAG_DateToYear(MAGtype_Date *CalendarDate, char *Error)
 } /*MAG_DateToYear*/
 
 void MAG_DegreeToDMSstring(double DegreesOfArc, int UnitDepth, char *DMSstring)
-/*This converts a given decimal degree into a DMS string.
- *  INPUT  DegreesOfArc   decimal degree
- *          UnitDepth	How many iterations should be printed,
- *                       1 = Degrees
- *                       2 = Degrees, Minutes
- *                       3 = Degrees, Minutes, Seconds
- *  OUPUT  DMSstring   pointer to DMSString.  Must be at least 30 characters.
- *  CALLS : none
- */
 {
+  /*This converts a given decimal degree into a DMS string.
+   *  INPUT  DegreesOfArc   decimal degree
+   *          UnitDepth	How many iterations should be printed,
+   *                       1 = Degrees
+   *                       2 = Degrees, Minutes
+   *                       3 = Degrees, Minutes, Seconds
+   *  OUPUT  DMSstring   pointer to DMSString.  Must be at least 30 characters.
+   *  CALLS : none
+   */
   int DMS[3], i;
   double temp = DegreesOfArc;
   char tempstring[36] = "";
@@ -2709,12 +2715,12 @@ void MAG_DegreeToDMSstring(double DegreesOfArc, int UnitDepth, char *DMSstring)
 } /*MAG_DegreeToDMSstring*/
 
 void MAG_DMSstringToDegree(char *DMSstring, double *DegreesOfArc)
-/*This converts a given DMS string into decimal degrees.
- *  INPUT  DMSstring   pointer to DMSString
- *  OUTPUT  DegreesOfArc   decimal degree
- *  CALLS : none
- */
 {
+  /*This converts a given DMS string into decimal degrees.
+   *  INPUT  DMSstring   pointer to DMSString
+   *  OUTPUT  DegreesOfArc   decimal degree
+   *  CALLS : none
+   */
   int second, minute, degree, sign = 1, j = 0;
   j = sscanf(DMSstring, "%d, %d, %d", &degree, &minute, &second);
   if(j != 3)
@@ -2747,31 +2753,31 @@ void MAG_ErrorCalc(MAGtype_GeoMagneticElements B, MAGtype_GeoMagneticElements *E
 
 int MAG_GeodeticToSpherical(MAGtype_Ellipsoid Ellip, MAGtype_CoordGeodetic CoordGeodetic,
                             MAGtype_CoordSpherical *CoordSpherical)
-/* Converts Geodetic coordinates to Spherical coordinates
- *
- *  INPUT   Ellip  data  structure with the following elements
- *                       double a; semi-major axis of the ellipsoid
- *                       double b; semi-minor axis of the ellipsoid
- *                       double fla;  flattening
- *                       double epssq; first eccentricity squared
- *                       double eps;  first eccentricity
- *                       double re; mean radius of  ellipsoid
- *
- *               CoordGeodetic  Pointer to the  data  structure with the following elements updates
- *                       double lambda; ( longitude )
- *                       double phi; ( geodetic latitude )
- *                       double HeightAboveEllipsoid; ( height above the WGS84 ellipsoid (HaE) )
- *                       double HeightAboveGeoid; (height above the EGM96 Geoid model )
- *
- *  OUTPUT		CoordSpherical  Pointer to the data structure with the following elements
- *                       double lambda; ( longitude)
- *                       double phig; ( geocentric latitude )
- *                       double r;      ( distance from the center of the ellipsoid)
- *
- *  CALLS : none
- *
- */
 {
+  /* Converts Geodetic coordinates to Spherical coordinates
+   *
+   *  INPUT   Ellip  data  structure with the following elements
+   *                       double a; semi-major axis of the ellipsoid
+   *                       double b; semi-minor axis of the ellipsoid
+   *                       double fla;  flattening
+   *                       double epssq; first eccentricity squared
+   *                       double eps;  first eccentricity
+   *                       double re; mean radius of  ellipsoid
+   *
+   *               CoordGeodetic  Pointer to the  data  structure with the following elements updates
+   *                       double lambda; ( longitude )
+   *                       double phi; ( geodetic latitude )
+   *                       double HeightAboveEllipsoid; ( height above the WGS84 ellipsoid (HaE) )
+   *                       double HeightAboveGeoid; (height above the EGM96 Geoid model )
+   *
+   *  OUTPUT		CoordSpherical  Pointer to the data structure with the following elements
+   *                       double lambda; ( longitude)
+   *                       double phig; ( geocentric latitude )
+   *                       double r;      ( distance from the center of the ellipsoid)
+   *
+   *  CALLS : none
+   *
+   */
   double CosLat, SinLat, rc, xp, zp; /*all local variables */
 
   /*
@@ -2879,19 +2885,19 @@ MAGtype_GeoMagneticElements MAG_GeoMagneticElementsSubtract(MAGtype_GeoMagneticE
 }
 
 int MAG_GetTransverseMercator(MAGtype_CoordGeodetic CoordGeodetic, MAGtype_UTMParameters *UTMParameters)
-/* Gets the UTM Parameters for a given Latitude and Longitude.
- *
- *  INPUT: CoordGeodetic : Data structure MAGtype_CoordGeodetic.
- *  OUTPUT : UTMParameters : Pointer to data structure MAGtype_UTMParameters with the following elements
- *                    double Easting;  (X) in meters
- *                    double Northing; (Y) in meters
- *                    int Zone; UTM Zone
- *                    char HemiSphere ;
- *                    double CentralMeridian; Longitude of the Central Meridian of the UTM Zone
- *                    double ConvergenceOfMeridians;  Convergence of Meridians
- *                    double PointScale;
- */
 {
+  /* Gets the UTM Parameters for a given Latitude and Longitude.
+   *
+   *  INPUT: CoordGeodetic : Data structure MAGtype_CoordGeodetic.
+   *  OUTPUT : UTMParameters : Pointer to data structure MAGtype_UTMParameters with the following elements
+   *                    double Easting;  (X) in meters
+   *                    double Northing; (Y) in meters
+   *                    int Zone; UTM Zone
+   *                    char HemiSphere ;
+   *                    double CentralMeridian; Longitude of the Central Meridian of the UTM Zone
+   *                    double ConvergenceOfMeridians;  Convergence of Meridians
+   *                    double PointScale;
+   */
 
   double Eps, Epssq;
   double Acoeff[8];
@@ -2987,18 +2993,18 @@ int MAG_GetUTMParameters(double Latitude,
   long temp_zone;
   int Error_Code = 0;
 
-  if((Latitude < DEG2RAD(MAG_UTM_MIN_LAT_DEGREE)) || (Latitude > DEG2RAD(MAG_UTM_MAX_LAT_DEGREE)))
-  { /* Latitude out of range */
+  if((Latitude < DEG2RAD(MAG_UTM_MIN_LAT_DEGREE)) || (Latitude > DEG2RAD(MAG_UTM_MAX_LAT_DEGREE))) /* Latitude out of range */
+  {
     MAG_Error(23);
     Error_Code = 1;
   }
-  if((Longitude < -M_PI) || (Longitude > (2 * M_PI)))
-  { /* Longitude out of range */
+  if((Longitude < -M_PI) || (Longitude > (2 * M_PI))) /* Longitude out of range */
+  {
     MAG_Error(24);
     Error_Code = 1;
   }
-  if(!Error_Code)
-  { /* no errors */
+  if(!Error_Code) /* no errors */
+  {
     if(Longitude < 0)
       Longitude += (2 * M_PI) + 1.0e-10;
     Lat_Degrees = (long)(Latitude * 180.0 / M_PI);
@@ -3049,42 +3055,42 @@ int MAG_isNaN(double d)
 
 int MAG_RotateMagneticVector(MAGtype_CoordSpherical CoordSpherical, MAGtype_CoordGeodetic CoordGeodetic,
                              MAGtype_MagneticResults MagneticResultsSph, MAGtype_MagneticResults *MagneticResultsGeo)
-/* Rotate the Magnetic Vectors to Geodetic Coordinates
- *  Manoj Nair, June, 2009 Manoj.C.Nair@Noaa.Gov
- *  Equation 16, WMM Technical report
- *
- *  INPUT : CoordSpherical : Data structure MAGtype_CoordSpherical with the following elements
- *                       double lambda; ( longitude)
- *                       double phig; ( geocentric latitude )
- *                       double r;      ( distance from the center of the ellipsoid)
- *
- *               CoordGeodetic : Data structure MAGtype_CoordGeodetic with the following elements
- *                       double lambda; (longitude)
- *                       double phi; ( geodetic latitude)
- *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *                       double HeightAboveGeoid;(height above the Geoid )
- *
- *               MagneticResultsSph : Data structure MAGtype_MagneticResults with the following elements
- *                       double Bx;      North
- *                       double By;      East
- *                       double Bz;      Down
- *
- *  OUTPUT: MagneticResultsGeo Pointer to the data structure MAGtype_MagneticResults, with the following elements
- *                       double Bx;      North
- *                       double By;      East
- *                       double Bz;      Down
- *
- *  CALLS : none
- *
- */
 {
+  /* Rotate the Magnetic Vectors to Geodetic Coordinates
+   *  Manoj Nair, June, 2009 Manoj.C.Nair@Noaa.Gov
+   *  Equation 16, WMM Technical report
+   *
+   *  INPUT : CoordSpherical : Data structure MAGtype_CoordSpherical with the following elements
+   *                       double lambda; ( longitude)
+   *                       double phig; ( geocentric latitude )
+   *                       double r;      ( distance from the center of the ellipsoid)
+   *
+   *               CoordGeodetic : Data structure MAGtype_CoordGeodetic with the following elements
+   *                       double lambda; (longitude)
+   *                       double phi; ( geodetic latitude)
+   *                       double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *                       double HeightAboveGeoid;(height above the Geoid )
+   *
+   *               MagneticResultsSph : Data structure MAGtype_MagneticResults with the following elements
+   *                       double Bx;      North
+   *                       double By;      East
+   *                       double Bz;      Down
+   *
+   *  OUTPUT: MagneticResultsGeo Pointer to the data structure MAGtype_MagneticResults, with the following elements
+   *                       double Bx;      North
+   *                       double By;      East
+   *                       double Bz;      Down
+   *
+   *  CALLS : none
+   *
+   */
   double Psi;
   /* Difference between the spherical and Geodetic latitudes */
   Psi = (M_PI / 180) * (CoordSpherical.phig - CoordGeodetic.phi);
 
   /* Rotate spherical field components to the Geodetic system */
-  MagneticResultsGeo->Bz = MagneticResultsSph.Bx * sin(Psi) + MagneticResultsSph.Bz * cos(Psi);
-  MagneticResultsGeo->Bx = MagneticResultsSph.Bx * cos(Psi) - MagneticResultsSph.Bz * sin(Psi);
+  MagneticResultsGeo->Bz = MagneticResultsSph.Bx * sin(Psi) + MagneticResultsSph.Bz *cos(Psi);
+  MagneticResultsGeo->Bx = MagneticResultsSph.Bx * cos(Psi) - MagneticResultsSph.Bz *sin(Psi);
   MagneticResultsGeo->By = MagneticResultsSph.By;
   return TRUE;
 } /*MAG_RotateMagneticVector*/
@@ -3301,19 +3307,19 @@ void MAG_TMfwd4(double Eps, double Epssq, double K0R4, double K0R4oa,
 } /*MAG_TMfwd4*/
 
 int MAG_YearToDate(MAGtype_Date *CalendarDate)
-/* Converts a given Decimal year into a Year, Month and Date
- *  it also outputs an error string if there is a problem
- *  INPUT  CalendarDate  Pointer to the  data  structure with the following elements
- *                   double DecimalYear;      decimal years
- *  OUTPUT  CalendarDate  Pointer to the  data  structure with the following elements updated
- * int Year
- * int Month
- * int Day
- *              Error    pointer to an error string
- *  CALLS : none
- *
- */
 {
+  /* Converts a given Decimal year into a Year, Month and Date
+   *  it also outputs an error string if there is a problem
+   *  INPUT  CalendarDate  Pointer to the  data  structure with the following elements
+   *                   double DecimalYear;      decimal years
+   *  OUTPUT  CalendarDate  Pointer to the  data  structure with the following elements updated
+   * int Year
+   * int Month
+   * int Day
+   *              Error    pointer to an error string
+   *  CALLS : none
+   *
+   */
   int MonthDays[13], CumulativeDays = 0;
   int ExtraDay = 0;
   int i, DayOfTheYear;
@@ -3373,22 +3379,22 @@ int MAG_YearToDate(MAGtype_Date *CalendarDate)
 
 int MAG_AssociatedLegendreFunction(MAGtype_CoordSpherical CoordSpherical, int nMax,
                                    MAGtype_LegendreFunction *LegendreFunction)
-/* Computes  all of the Schmidt-semi normalized associated Legendre
- *  functions up to degree nMax. If nMax <= 16, function MAG_PcupLow is used.
- *  Otherwise MAG_PcupHigh is called.
- *  INPUT  CoordSpherical   A data structure with the following elements
- *                                               double lambda; ( longitude)
- *                                               double phig; ( geocentric latitude )
- *                                               double r;      ( distance from the center of the ellipsoid)
- *               nMax         integer    ( Maxumum degree of spherical harmonic secular model)
- *               LegendreFunction Pointer to data structure with the following elements
- *                                               double *Pcup;  (  pointer to store Legendre Function  )
- *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
- *
- *  OUTPUT  LegendreFunction  Calculated Legendre variables in the data structure
- *
- */
 {
+  /* Computes  all of the Schmidt-semi normalized associated Legendre
+   *  functions up to degree nMax. If nMax <= 16, function MAG_PcupLow is used.
+   *  Otherwise MAG_PcupHigh is called.
+   *  INPUT  CoordSpherical   A data structure with the following elements
+   *                                               double lambda; ( longitude)
+   *                                               double phig; ( geocentric latitude )
+   *                                               double r;      ( distance from the center of the ellipsoid)
+   *               nMax         integer    ( Maxumum degree of spherical harmonic secular model)
+   *               LegendreFunction Pointer to data structure with the following elements
+   *                                               double *Pcup;  (  pointer to store Legendre Function  )
+   *                                               double *dPcup; ( pointer to store  Derivative of Lagendre function )
+   *
+   *  OUTPUT  LegendreFunction  Calculated Legendre variables in the data structure
+   *
+   */
   double sin_phi;
   int FLAG = 1;
 
@@ -3405,22 +3411,22 @@ int MAG_AssociatedLegendreFunction(MAGtype_CoordSpherical CoordSpherical, int nM
 } /*MAG_AssociatedLegendreFunction */
 
 int MAG_CheckGeographicPole(MAGtype_CoordGeodetic *CoordGeodetic)
-/* Check if the latitude is equal to -90 or 90. If it is,
- *  offset it by 1e-5 to avoid division by zero. This is not currently used in the Geomagnetic
- *  main function. This may be used to avoid calling MAG_SummationSpecial.
- *  The function updates the input data structure.
- *
- *  INPUT   CoordGeodetic Pointer to the  data  structure with the following elements
- *               double lambda; (longitude)
- *               double phi; ( geodetic latitude)
- *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
- *               double HeightAboveGeoid;(height above the Geoid )
- *  OUTPUT  CoordGeodetic  Pointer to the  data  structure with the following elements updates
- *               double phi; ( geodetic latitude)
- *  CALLS : none
- *
- */
 {
+  /* Check if the latitude is equal to -90 or 90. If it is,
+   *  offset it by 1e-5 to avoid division by zero. This is not currently used in the Geomagnetic
+   *  main function. This may be used to avoid calling MAG_SummationSpecial.
+   *  The function updates the input data structure.
+   *
+   *  INPUT   CoordGeodetic Pointer to the  data  structure with the following elements
+   *               double lambda; (longitude)
+   *               double phi; ( geodetic latitude)
+   *               double HeightAboveEllipsoid; (height above the ellipsoid (HaE) )
+   *               double HeightAboveGeoid;(height above the Geoid )
+   *  OUTPUT  CoordGeodetic  Pointer to the  data  structure with the following elements updates
+   *               double phi; ( geodetic latitude)
+   *  CALLS : none
+   *
+   */
   CoordGeodetic->phi = CoordGeodetic->phi <
                        (-90.0 + MAG_GEO_POLE_TOLERANCE) ? (-90.0 + MAG_GEO_POLE_TOLERANCE) : CoordGeodetic->phi;
   CoordGeodetic->phi = CoordGeodetic->phi >
@@ -3430,29 +3436,29 @@ int MAG_CheckGeographicPole(MAGtype_CoordGeodetic *CoordGeodetic)
 
 int MAG_ComputeSphericalHarmonicVariables(MAGtype_Ellipsoid Ellip, MAGtype_CoordSpherical CoordSpherical, int nMax,
                                           MAGtype_SphericalHarmonicVariables *SphVariables)
-/* Computes Spherical variables
- *      Variables computed are (a/r)^(n+2), cos_m(lamda) and sin_m(lambda) for spherical harmonic
- *      summations. (Equations 10-12 in the WMM Technical Report)
- *      INPUT   Ellip  data  structure with the following elements
- *                            double a; semi-major axis of the ellipsoid
- *                            double b; semi-minor axis of the ellipsoid
- *                            double fla;  flattening
- *                            double epssq; first eccentricity squared
- *                            double eps;  first eccentricity
- *                            double re; mean radius of  ellipsoid
- *                    CoordSpherical  A data structure with the following elements
- *                            double lambda; ( longitude)
- *                            double phig; ( geocentric latitude )
- *                            double r;     ( distance from the center of the ellipsoid)
- *                    nMax   integer   ( Maxumum degree of spherical harmonic secular model)\
- *
- *    OUTPUT  SphVariables  Pointer to the   data structure with the following elements
- *            double RelativeRadiusPower[MAG_MAX_MODEL_DEGREES+1];   [earth_reference_radius_km  sph. radius ]^n
- *            double cos_mlambda[MAG_MAX_MODEL_DEGREES+1]; cp(m)  - cosine of (mspherical coord. longitude)
- *            double sin_mlambda[MAG_MAX_MODEL_DEGREES+1];  sp(m)  - sine of (mspherical coord. longitude)
- *    CALLS : none
- */
 {
+  /* Computes Spherical variables
+   *      Variables computed are (a/r)^(n+2), cos_m(lamda) and sin_m(lambda) for spherical harmonic
+   *      summations. (Equations 10-12 in the WMM Technical Report)
+   *      INPUT   Ellip  data  structure with the following elements
+   *                            double a; semi-major axis of the ellipsoid
+   *                            double b; semi-minor axis of the ellipsoid
+   *                            double fla;  flattening
+   *                            double epssq; first eccentricity squared
+   *                            double eps;  first eccentricity
+   *                            double re; mean radius of  ellipsoid
+   *                    CoordSpherical  A data structure with the following elements
+   *                            double lambda; ( longitude)
+   *                            double phig; ( geocentric latitude )
+   *                            double r;     ( distance from the center of the ellipsoid)
+   *                    nMax   integer   ( Maxumum degree of spherical harmonic secular model)\
+   *
+   *    OUTPUT  SphVariables  Pointer to the   data structure with the following elements
+   *            double RelativeRadiusPower[MAG_MAX_MODEL_DEGREES+1];   [earth_reference_radius_km  sph. radius ]^n
+   *            double cos_mlambda[MAG_MAX_MODEL_DEGREES+1]; cp(m)  - cosine of (mspherical coord. longitude)
+   *            double sin_mlambda[MAG_MAX_MODEL_DEGREES+1];  sp(m)  - sine of (mspherical coord. longitude)
+   *    CALLS : none
+   */
   double cos_lambda, sin_lambda;
   int m, n;
   cos_lambda = cos(DEG2RAD(CoordSpherical.lambda));
@@ -3546,58 +3552,58 @@ void MAG_GradYSummation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_Magn
     GradY->Bz = GradY->Bz / (cos_phi);
   }
   else
-  /* Special calculation for component - By - at Geographic poles.
-   * If the user wants to avoid using this function,  please make sure that
-   * the latitude is not exactly +/-90. An option is to make use the function
-   * MAG_CheckGeographicPoles.
-   */
   {
+    /* Special calculation for component - By - at Geographic poles.
+     * If the user wants to avoid using this function,  please make sure that
+     * the latitude is not exactly +/-90. An option is to make use the function
+     * MAG_CheckGeographicPoles.
+     */
     /* MAG_SummationSpecial(MagneticModel, SphVariables, CoordSpherical, GradY); */
   }
 }
 
 int MAG_PcupHigh(double *Pcup, double *dPcup, double x, int nMax)
-/*	This function evaluates all of the Schmidt-semi normalized associated Legendre
- *       functions up to degree nMax. The functions are initially scaled by
- *       10^280 sin^m in order to minimize the effects of underflow at large m
- *       near the poles (see Holmes and Featherstone 2002, J. Geodesy, 76, 279-299).
- *       Note that this function performs the same operation as MAG_PcupLow.
- *       However this function also can be used for high degree (large nMax) models.
- *
- *       Calling Parameters:
- *               INPUT
- *                       nMax:	 Maximum spherical harmonic degree to compute.
- *                       x:		cos(colatitude) or sin(latitude).
- *
- *               OUTPUT
- *                       Pcup:	A vector of all associated Legendgre polynomials evaluated at
- *                                       x up to nMax. The lenght must by greater or equal to (nMax+1)*(nMax+2)/2.
- *                 dPcup:   Derivative of Pcup(x) with respect to latitude
- *
- *               CALLS : none
- *       Notes:
- *
- *
- *
- *  Adopted from the FORTRAN code written by Mark Wieczorek September 25, 2005.
- *
- *  Manoj Nair, Nov, 2009 Manoj.C.Nair@Noaa.Gov
- *
- *  Change from the previous version
- *  The prevous version computes the derivatives as
- *  dP(n,m)(x)/dx, where x = sin(latitude) (or cos(colatitude) ).
- *  However, the WMM Geomagnetic routines requires dP(n,m)(x)/dlatitude.
- *  Hence the derivatives are multiplied by sin(latitude).
- *  Removed the options for CS phase and normalizations.
- *
- *  Note: In geomagnetism, the derivatives of ALF are usually found with
- *  respect to the colatitudes. Here the derivatives are found with respect
- *  to the latitude. The difference is a sign reversal for the derivative of
- *  the Associated Legendre Functions.
- *
- *  The derivatives can't be computed for latitude = |90| degrees.
- */
 {
+  /*	This function evaluates all of the Schmidt-semi normalized associated Legendre
+   *       functions up to degree nMax. The functions are initially scaled by
+   *       10^280 sin^m in order to minimize the effects of underflow at large m
+   *       near the poles (see Holmes and Featherstone 2002, J. Geodesy, 76, 279-299).
+   *       Note that this function performs the same operation as MAG_PcupLow.
+   *       However this function also can be used for high degree (large nMax) models.
+   *
+   *       Calling Parameters:
+   *               INPUT
+   *                       nMax:	 Maximum spherical harmonic degree to compute.
+   *                       x:		cos(colatitude) or sin(latitude).
+   *
+   *               OUTPUT
+   *                       Pcup:	A vector of all associated Legendgre polynomials evaluated at
+   *                                       x up to nMax. The lenght must by greater or equal to (nMax+1)*(nMax+2)/2.
+   *                 dPcup:   Derivative of Pcup(x) with respect to latitude
+   *
+   *               CALLS : none
+   *       Notes:
+   *
+   *
+   *
+   *  Adopted from the FORTRAN code written by Mark Wieczorek September 25, 2005.
+   *
+   *  Manoj Nair, Nov, 2009 Manoj.C.Nair@Noaa.Gov
+   *
+   *  Change from the previous version
+   *  The prevous version computes the derivatives as
+   *  dP(n,m)(x)/dx, where x = sin(latitude) (or cos(colatitude) ).
+   *  However, the WMM Geomagnetic routines requires dP(n,m)(x)/dlatitude.
+   *  Hence the derivatives are multiplied by sin(latitude).
+   *  Removed the options for CS phase and normalizations.
+   *
+   *  Note: In geomagnetism, the derivatives of ALF are usually found with
+   *  respect to the colatitudes. Here the derivatives are found with respect
+   *  to the latitude. The difference is a sign reversal for the derivative of
+   *  the Associated Legendre Functions.
+   *
+   *  The derivatives can't be computed for latitude = |90| degrees.
+   */
   double pm2, pm1, pmm, plm, rescalem, z, scalef;
   double *f1, *f2, *PreSqr;
   int k, kstart, m, n, NumTerms;
@@ -3724,30 +3730,30 @@ int MAG_PcupHigh(double *Pcup, double *dPcup, double x, int nMax)
 } /* MAG_PcupHigh */
 
 int MAG_PcupLow(double *Pcup, double *dPcup, double x, int nMax)
-/*   This function evaluates all of the Schmidt-semi normalized associated Legendre
- *       functions up to degree nMax.
- *
- *       Calling Parameters:
- *               INPUT
- *                       nMax:	 Maximum spherical harmonic degree to compute.
- *                       x:		cos(colatitude) or sin(latitude).
- *
- *               OUTPUT
- *                       Pcup:	A vector of all associated Legendgre polynomials evaluated at
- *                                       x up to nMax.
- *                  dPcup: Derivative of Pcup(x) with respect to latitude
- *
- *       Notes: Overflow may occur if nMax > 20 , especially for high-latitudes.
- *       Use MAG_PcupHigh for large nMax.
- *
- *  Written by Manoj Nair, June, 2009 . Manoj.C.Nair@Noaa.Gov.
- *
- *  Note: In geomagnetism, the derivatives of ALF are usually found with
- *  respect to the colatitudes. Here the derivatives are found with respect
- *  to the latitude. The difference is a sign reversal for the derivative of
- *  the Associated Legendre Functions.
- */
 {
+  /*   This function evaluates all of the Schmidt-semi normalized associated Legendre
+   *       functions up to degree nMax.
+   *
+   *       Calling Parameters:
+   *               INPUT
+   *                       nMax:	 Maximum spherical harmonic degree to compute.
+   *                       x:		cos(colatitude) or sin(latitude).
+   *
+   *               OUTPUT
+   *                       Pcup:	A vector of all associated Legendgre polynomials evaluated at
+   *                                       x up to nMax.
+   *                  dPcup: Derivative of Pcup(x) with respect to latitude
+   *
+   *       Notes: Overflow may occur if nMax > 20 , especially for high-latitudes.
+   *       Use MAG_PcupHigh for large nMax.
+   *
+   *  Written by Manoj Nair, June, 2009 . Manoj.C.Nair@Noaa.Gov.
+   *
+   *  Note: In geomagnetism, the derivatives of ALF are usually found with
+   *  respect to the colatitudes. Here the derivatives are found with respect
+   *  to the latitude. The difference is a sign reversal for the derivative of
+   *  the Associated Legendre Functions.
+   */
   int n, m, index, index1, index2, NumTerms;
   double k, z, *schmidtQuasiNorm;
   Pcup[0] = 1.0;
@@ -3902,8 +3908,8 @@ int MAG_SecVarSummation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_Magn
     MagneticResults->By = MagneticResults->By / cos_phi;
   }
   else
-  /* Special calculation for component By at Geographic poles */
   {
+    /* Special calculation for component By at Geographic poles */
     MAG_SecVarSummationSpecial(MagneticModel, SphVariables, CoordSpherical, MagneticResults);
   }
   return TRUE;
@@ -4047,12 +4053,12 @@ int MAG_Summation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_MagneticMo
     MagneticResults->By = MagneticResults->By / cos_phi;
   }
   else
-  /* Special calculation for component - By - at Geographic poles.
-   * If the user wants to avoid using this function,  please make sure that
-   * the latitude is not exactly +/-90. An option is to make use the function
-   * MAG_CheckGeographicPoles.
-   */
   {
+    /* Special calculation for component - By - at Geographic poles.
+     * If the user wants to avoid using this function,  please make sure that
+     * the latitude is not exactly +/-90. An option is to make use the function
+     * MAG_CheckGeographicPoles.
+     */
     MAG_SummationSpecial(MagneticModel, SphVariables, CoordSpherical, MagneticResults);
   }
   return TRUE;
@@ -4060,17 +4066,17 @@ int MAG_Summation(MAGtype_LegendreFunction *LegendreFunction, MAGtype_MagneticMo
 
 int MAG_SummationSpecial(MAGtype_MagneticModel *MagneticModel, MAGtype_SphericalHarmonicVariables SphVariables,
                          MAGtype_CoordSpherical CoordSpherical, MAGtype_MagneticResults *MagneticResults)
-/* Special calculation for the component By at Geographic poles.
- *  Manoj Nair, June, 2009 manoj.c.nair@noaa.gov
- *  INPUT: MagneticModel
- *          SphVariables
- *          CoordSpherical
- *  OUTPUT: MagneticResults
- *  CALLS : none
- *  See Section 1.4, "SINGULARITIES AT THE GEOGRAPHIC POLES", WMM Technical report
- *
- */
 {
+  /* Special calculation for the component By at Geographic poles.
+   *  Manoj Nair, June, 2009 manoj.c.nair@noaa.gov
+   *  INPUT: MagneticModel
+   *          SphVariables
+   *          CoordSpherical
+   *  OUTPUT: MagneticResults
+   *  CALLS : none
+   *  See Section 1.4, "SINGULARITIES AT THE GEOGRAPHIC POLES", WMM Technical report
+   *
+   */
   int n, index;
   double k, sin_phi, *PcupS, schmidtQuasiNorm1, schmidtQuasiNorm2, schmidtQuasiNorm3;
 
@@ -4126,18 +4132,18 @@ int MAG_SummationSpecial(MAGtype_MagneticModel *MagneticModel, MAGtype_Spherical
 
 int MAG_TimelyModifyMagneticModel(MAGtype_Date UserDate, MAGtype_MagneticModel *MagneticModel,
                                   MAGtype_MagneticModel *TimedMagneticModel)
-/* Time change the Model coefficients from the base year of the model using secular variation coefficients.
- *  Store the coefficients of the static model with their values advanced from epoch t0 to epoch t.
- *  Copy the SV coefficients.  If input "t�" is the same as "t0", then this is merely a copy operation.
- *  If the address of "TimedMagneticModel" is the same as the address of "MagneticModel", then this procedure overwrites
- *  the given item "MagneticModel".
- *
- *  INPUT: UserDate
- *          MagneticModel
- *  OUTPUT:TimedMagneticModel
- *  CALLS : none
- */
 {
+  /* Time change the Model coefficients from the base year of the model using secular variation coefficients.
+   *  Store the coefficients of the static model with their values advanced from epoch t0 to epoch t.
+   *  Copy the SV coefficients.  If input "t�" is the same as "t0", then this is merely a copy operation.
+   *  If the address of "TimedMagneticModel" is the same as the address of "MagneticModel", then this procedure overwrites
+   *  the given item "MagneticModel".
+   *
+   *  INPUT: UserDate
+   *          MagneticModel
+   *  OUTPUT:TimedMagneticModel
+   *  CALLS : none
+   */
   int n, m, index, a, b;
   TimedMagneticModel->EditionDate = MagneticModel->EditionDate;
   TimedMagneticModel->epoch = MagneticModel->epoch;
@@ -4182,27 +4188,26 @@ int MAG_TimelyModifyMagneticModel(MAGtype_Date UserDate, MAGtype_MagneticModel *
 ******************************************************************************/
 
 int MAG_ConvertGeoidToEllipsoidHeight(MAGtype_CoordGeodetic *CoordGeodetic, MAGtype_Geoid *Geoid)
-/*
- * The function Convert_Geoid_To_Ellipsoid_Height converts the specified WGS84
- * Geoid height at the specified geodetic coordinates to the equivalent
- * ellipsoid height, using the EGM96 gravity model.
- *
- *   CoordGeodetic->phi        : Geodetic latitude in degress           (input)
- *    CoordGeodetic->lambda     : Geodetic longitude in degrees          (input)
- *    CoordGeodetic->HeightAboveEllipsoid	     : Ellipsoid height, in kilometers         (output)
- *    CoordGeodetic->HeightAboveGeoid: Geoid height, in kilometers           (input)
- *
- *       CALLS : MAG_GetGeoidHeight (
- *
- */
 {
+  /*
+   * The function Convert_Geoid_To_Ellipsoid_Height converts the specified WGS84
+   * Geoid height at the specified geodetic coordinates to the equivalent
+   * ellipsoid height, using the EGM96 gravity model.
+   *
+   *   CoordGeodetic->phi        : Geodetic latitude in degress           (input)
+   *    CoordGeodetic->lambda     : Geodetic longitude in degrees          (input)
+   *    CoordGeodetic->HeightAboveEllipsoid	     : Ellipsoid height, in kilometers         (output)
+   *    CoordGeodetic->HeightAboveGeoid: Geoid height, in kilometers           (input)
+   *
+   *       CALLS : MAG_GetGeoidHeight (
+   *
+   */
   double DeltaHeight;
   int Error_Code;
   double lat, lon;
 
-  if(Geoid->UseGeoid == 1)
-  { /* Geoid correction required */
-    /* To ensure that latitude is less than 90 call MAG_EquivalentLatLon() */
+  if(Geoid->UseGeoid == 1) /* Geoid correction required */
+  { /* To ensure that latitude is less than 90 call MAG_EquivalentLatLon() */
     MAG_EquivalentLatLon(CoordGeodetic->phi, CoordGeodetic->lambda, &lat, &lon);
     Error_Code = MAG_GetGeoidHeight(lat, lon, &DeltaHeight, Geoid);
     CoordGeodetic->HeightAboveEllipsoid = CoordGeodetic->HeightAboveGeoid + DeltaHeight / 1000; /*  Input and output should be kilometers,
@@ -4220,19 +4225,19 @@ int MAG_GetGeoidHeight(double Latitude,
                        double Longitude,
                        double *DeltaHeight,
                        MAGtype_Geoid *Geoid)
-/*
- * The  function MAG_GetGeoidHeight returns the height of the
- * EGM96 geiod above or below the WGS84 ellipsoid,
- * at the specified geodetic coordinates,
- * using a grid of height adjustments from the EGM96 gravity model.
- *
- *    Latitude            : Geodetic latitude in radians           (input)
- *    Longitude           : Geodetic longitude in radians          (input)
- *    DeltaHeight         : Height Adjustment, in meters.          (output)
- *    Geoid				  : MAGtype_Geoid with Geoid grid		   (input)
- *       CALLS : none
- */
 {
+  /*
+   * The  function MAG_GetGeoidHeight returns the height of the
+   * EGM96 geiod above or below the WGS84 ellipsoid,
+   * at the specified geodetic coordinates,
+   * using a grid of height adjustments from the EGM96 gravity model.
+   *
+   *    Latitude            : Geodetic latitude in radians           (input)
+   *    Longitude           : Geodetic longitude in radians          (input)
+   *    DeltaHeight         : Height Adjustment, in meters.          (output)
+   *    Geoid				  : MAGtype_Geoid with Geoid grid		   (input)
+   *       CALLS : none
+   */
   long Index;
   double DeltaX, DeltaY;
   double ElevationSE, ElevationSW, ElevationNE, ElevationNW;
@@ -4246,18 +4251,17 @@ int MAG_GetGeoidHeight(double Latitude,
     MAG_Error(5);
     return FALSE;
   }
-  if((Latitude < -90) || (Latitude > 90))
-  { /* Latitude out of range */
+  if((Latitude < -90) || (Latitude > 90)) /* Latitude out of range */
+  {
     Error_Code |= 1;
   }
-  if((Longitude < -180) || (Longitude > 360))
-  { /* Longitude out of range */
+  if((Longitude < -180) || (Longitude > 360)) /* Longitude out of range */
+  {
     Error_Code |= 1;
   }
 
-  if(!Error_Code)
-  { /* no errors */
-    /*  Compute X and Y Offsets into Geoid Height Array:                          */
+  if(!Error_Code) /* no errors */
+  { /*  Compute X and Y Offsets into Geoid Height Array:                          */
 
     if(Longitude < 0.0)
     {
@@ -4306,10 +4310,10 @@ int MAG_GetGeoidHeight(double Latitude,
 } /*MAG_GetGeoidHeight*/
 
 void MAG_EquivalentLatLon(double lat, double lon, double *repairedLat, double *repairedLon)
-/*This function takes a latitude and longitude that are ordinarily out of range
- *  and gives in range values that are equivalent on the Earth's surface.  This is
- *  required to get correct values for the geoid function.*/
 {
+  /*This function takes a latitude and longitude that are ordinarily out of range
+   *  and gives in range values that are equivalent on the Earth's surface.  This is
+   *  required to get correct values for the geoid function.*/
   double colat;
   colat = 90 - lat;
   *repairedLon = lon;
@@ -4437,8 +4441,8 @@ void MAG_PrintUserDataWithUncertainty(MAGtype_GeoMagneticElements GeomagElements
   }
 
   if(SpaceInput.phi <= -55 || SpaceInput.phi >= 55)
-  /* Print Grid Variation */
   {
+    /* Print Grid Variation */
     MAG_DegreeToDMSstring(GeomagElements.GV, 2, InclString);
     printf("\n\n Grid variation =%20s\n", InclString);
   }

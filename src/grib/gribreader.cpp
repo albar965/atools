@@ -68,7 +68,7 @@ Q_REQUIRED_RESULT inline bool checkValue(const QString& message, TYPE value, TYP
   if(expected != value)
   {
     qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
-      arg(message).arg(value).arg(expected);
+    arg(message).arg(value).arg(expected);
     return false;
   }
   return true;
@@ -85,7 +85,7 @@ Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QVec
       expectedStr.append(QString::number(static_cast<int>(val)));
 
     qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
-      arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
+    arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
     return false;
   }
   return true;
@@ -105,8 +105,17 @@ void GribReader::readFile(const QString& filename)
   long skipBytes, numGribBytes, seekBytes = 0L;
   g2int expand = 1, unpack = 1, ret, ierr;
 
-  // Binary mode is required on Windows
+#if defined(Q_OS_WIN32)
+  // Windows fopen uses local charset for filename - convert UTF-8 to UTF-16 and use wfopen
+  wchar_t *path = new wchar_t[static_cast<unsigned int>(filename.size()) + 1];
+  filename.toWCharArray(path);
+  path[filename.size()] = L'\0';
+
+  FILE *fptr = _wfopen(path, L"rb");
+#else
   FILE *fptr = fopen(filename.toUtf8().data(), "rb");
+#endif
+
   if(fptr != nullptr)
   {
     while(true)
@@ -117,7 +126,7 @@ void GribReader::readFile(const QString& filename)
       // Search for next/first GRIB message ========================================
       seekgb(fptr, seekBytes, 128000, &skipBytes, &numGribBytes);
       if(numGribBytes == 0)
-        break; // end loop at EOF or problem
+        break;  // end loop at EOF or problem
 
       cgrib = new unsigned char[static_cast<size_t>(numGribBytes)];
       ret = fseek(fptr, skipBytes, SEEK_SET);
@@ -427,18 +436,22 @@ void GribReader::readFile(const QString& filename)
 
     // Sort first by altitude from low to high and second by parameter type from U to V
     std::sort(datasets.begin(), datasets.end(),
-              [](const atools::grib::GribDataset& d1, const atools::grib::GribDataset& d2) -> bool
-        {
-          if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
-            return d1.parameterType < d2.parameterType;
-          else
-            return d1.altFeetCalculated < d2.altFeetCalculated;
-        });
+              [] (const atools::grib::GribDataset & d1, const atools::grib::GribDataset & d2)->bool
+              {
+                if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
+                  return d1.parameterType < d2.parameterType;
+                else
+                  return d1.altFeetCalculated < d2.altFeetCalculated;
+              });
 
     fclose(fptr);
   }
   else
     throw atools::Exception(tr("Cannot open file %1").arg(filename));
+
+#if defined(Q_OS_WIN32)
+  delete[] path;
+#endif
 }
 
 void GribReader::readData(const QByteArray& data)

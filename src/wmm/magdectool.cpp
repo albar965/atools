@@ -83,11 +83,22 @@ void MagDecTool::init(int year, int month)
   referenceDate.setDate(year, month, 1);
 
   // Put coeffizients file into a temporary, so that the C code can read it
-  atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
+  atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_ü_wmm.cof");
 
-  MAGtype_MagneticModel *magneticModel;
+#if defined(Q_OS_WIN32)
+  // Windows fopen uses local charset for filename - convert UTF-8 to UTF-16 and use wfopen
+  wchar_t *path = new wchar_t[static_cast<unsigned int>(temp.getFilePath().size()) + 1];
+  temp.getFilePath().toWCharArray(path);
+  path[temp.getFilePath().size()] = L'\0';
+
+  FILE *f = _wfopen(path, L"r");
+#else
+  FILE *f = fopen(temp.getFilePathData(), "r");
+#endif
+
   // https://stackoverflow.com/questions/30470866/c-to-c-array-of-pointers-conversion-issue
-  if(!MAG_robustReadMagModels(temp.getFilePathData(), &magneticModel, 1))
+  MAGtype_MagneticModel *magneticModel;
+  if(!MAG_robustReadMagModels(f, &magneticModel, 1))
     throw atools::Exception(tr("Magnetic coeffizient file \"%1\" not found.").arg(temp.getFilePath()));
 
   MAGtype_Ellipsoid ellipsoid;
@@ -109,6 +120,12 @@ void MagDecTool::init(int year, int month)
   // Create new plain float array and copy data before vector is destroyed
   magdecGrid = new float[static_cast<unsigned int>(declinations.size())];
   std::memcpy(magdecGrid, declinations.data(), static_cast<unsigned int>(declinations.size()) * sizeof(float));
+
+  fclose(f);
+
+#if defined(Q_OS_WIN32)
+  delete[] path;
+#endif
 }
 
 // Only needed to write the cumbersome large 8MB EGM9615.h file into a plain file
@@ -222,7 +239,7 @@ QVector<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magn
 
   double cord_step_size = 1.;
   if(fabs(cord_step_size) < 1.0e-10)
-    cord_step_size = 99999.0; // checks to make sure that the step_size is not too small
+    cord_step_size = 99999.0;  // checks to make sure that the step_size is not too small
 
   numTerms = ((magneticModel->nMax + 1) * (magneticModel->nMax + 2) / 2);
   timedMagneticModel = MAG_AllocateModelMemory(numTerms);
