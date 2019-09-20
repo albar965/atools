@@ -33,7 +33,7 @@
     <message>
         <location filename="src/fs/userdata/airspacereaderbase.cpp" line="93"/>
         <source>In file &quot;%1&quot; on line %2: Index out of bounds: Index: %1, size: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Nel file &quot;%1&quot; linea %2: Indice fuori dai limiti: Index: %1, dimensione: %2</translation>
     </message>
 </context>
 <context>
@@ -54,17 +54,17 @@
     <message>
         <location filename="src/fs/db/datawriter.cpp" line="360"/>
         <source>Cannot read file. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il file. Torno al modello magnetico mondiale.</translation>
     </message>
     <message>
         <location filename="src/fs/db/datawriter.cpp" line="373"/>
         <source>File not valid. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>File non valido. Torno al modello magnetico mondiale.</translation>
     </message>
     <message>
         <location filename="src/fs/db/datawriter.cpp" line="380"/>
         <source>File not found. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>File non trovato. Torno al modello magnetico mondiale.</translation>
     </message>
 </context>
 <context>
@@ -291,33 +291,33 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/grib/gribreader.cpp" line="88"/>
         <source>, </source>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="125"/>
+        <location filename="src/grib/gribreader.cpp" line="134"/>
         <source>Cannot seek in file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile cercare nel file %1</translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="130"/>
-        <location filename="src/grib/gribreader.cpp" line="135"/>
+        <location filename="src/grib/gribreader.cpp" line="139"/>
+        <location filename="src/grib/gribreader.cpp" line="144"/>
         <source>Cannot read file %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/grib/gribreader.cpp" line="441"/>
-        <source>Cannot open file %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="src/grib/gribreader.cpp" line="447"/>
-        <source>GRIB data empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere il file %1</translation>
     </message>
     <message>
         <location filename="src/grib/gribreader.cpp" line="450"/>
+        <source>Cannot open file %1</source>
+        <translation>Impossibile aprire il file %1</translation>
+    </message>
+    <message>
+        <location filename="src/grib/gribreader.cpp" line="460"/>
+        <source>GRIB data empty</source>
+        <translation>Dati GRIB vuoti</translation>
+    </message>
+    <message>
+        <location filename="src/grib/gribreader.cpp" line="463"/>
         <source>Not a GRIB file</source>
-        <translation type="unfinished"></translation>
+        <translation>Non è un file GRIB</translation>
     </message>
 </context>
 <context>
@@ -338,45 +338,45 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/common/magdecreader.cpp" line="116"/>
         <source>Number of longitude values is not valid when reading magdec.bgl: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Il numero di valori di longitudine non è valido durante la lettura di magdec.bgl: %1</translation>
     </message>
     <message>
         <location filename="src/fs/common/magdecreader.cpp" line="123"/>
         <source>Number of latitude values is not valid when reading magdec.bgl: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Il numero di valori di latitudine non è valido durante la lettura di magdec.bgl: %1</translation>
     </message>
     <message>
         <location filename="src/fs/common/magdecreader.cpp" line="143"/>
         <source>Cannot read %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere %1. Causa: %2</translation>
     </message>
     <message>
         <location filename="src/fs/common/magdecreader.cpp" line="198"/>
         <source>Cannot read declination from database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere la declinazione dal database.</translation>
     </message>
 </context>
 <context>
     <name>MagDecTool</name>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="91"/>
+        <location filename="src/wmm/magdectool.cpp" line="102"/>
         <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>File coefficiente magnetico &quot;%1&quot; non trovato.</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="96"/>
+        <location filename="src/wmm/magdectool.cpp" line="107"/>
         <source>Error in MAG_SetDefaults.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore in MAG_SetDefaults.</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="105"/>
+        <location filename="src/wmm/magdectool.cpp" line="116"/>
         <source>Error in MAG_GridInternal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore in MAG_GridInternal.</translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="188"/>
+        <location filename="src/wmm/magdectool.cpp" line="205"/>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il buffer geoid &quot;%1&quot;.</translation>
     </message>
 </context>
 <context>
@@ -1126,7 +1126,7 @@ File: &quot;%2&quot;
         <location filename="src/fs/navdatabase.cpp" line="680"/>
         <location filename="src/fs/navdatabase.cpp" line="761"/>
         <source>Creating boundary indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Creazione di indici di confine</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="577"/>
@@ -1641,17 +1641,17 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/io/tempfile.cpp" line="41"/>
         <source>Cannot read from &quot;%1&quot;. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile leggere da %1. Errore: %2</translation>
     </message>
     <message>
         <location filename="src/io/tempfile.cpp" line="52"/>
         <source>Cannot open &quot;%1&quot; for reading. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire &quot;%1&quot; per la lettura. Errore: %2</translation>
     </message>
     <message>
         <location filename="src/io/tempfile.cpp" line="92"/>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire &quot;%1&quot; per la scrittura. Errore: %2</translation>
     </message>
 </context>
 <context>
@@ -1663,7 +1663,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/userdata/datamanagerbase.cpp" line="114"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il file di backup &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/datamanagerbase.cpp" line="260"/>
@@ -1773,7 +1773,11 @@ Importazione interrotta.</translation>
 &quot;%2&quot;
 
 Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in one of these paths.</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile trovare file navdata validi per X-Plane in entrambi
+&quot;%1&quot; o
+&quot;%2&quot;
+
+Assicurati che earth_fix.dat, earth_awy.dat e earth_nav.dat possano essere trovati in uno di questi percorsi.</translation>
     </message>
     <message>
         <source>Cannot find valid files for X-Plane navdata in either
@@ -1793,17 +1797,17 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="51"/>
         <source>File is not a regular file</source>
-        <translation type="unfinished">Il File non è un file regolare</translation>
+        <translation>Il File non è un file regolare</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="54"/>
         <source>File is not readable</source>
-        <translation type="unfinished">Il File non è leggibile</translation>
+        <translation>Il File non è leggibile</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="57"/>
         <source>File does not exist</source>
-        <translation type="unfinished">Il File non esiste</translation>
+        <translation>Il File non esiste</translation>
     </message>
     <message>
         <location filename="src/fs/xp/scenerypacks.cpp" line="83"/>
@@ -1961,37 +1965,37 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
         <source>on ground</source>
-        <translation type="unfinished"></translation>
+        <translation>al suolo</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="239"/>
         <source>fuel flow</source>
-        <translation type="unfinished"></translation>
+        <translation>consumo carburante</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
         <source>climbing</source>
-        <translation type="unfinished"></translation>
+        <translation>in salita</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
         <source>descending</source>
-        <translation type="unfinished"></translation>
+        <translation>in discesa</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
         <source>at cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>all&apos;altitudine di crociera</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
         <source>below cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>sotto l&apos;altitudine di crociera</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="256"/>
         <source>above cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>sopra l&apos;altitudine di crociera</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperfhandler.cpp" line="378"/>
@@ -2121,7 +2125,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
     <message>
         <location filename="src/fs/userdata/airspacereaderopenair.cpp" line="85"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2130,7 +2134,7 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
         <location filename="src/fs/userdata/logdatamanager.cpp" line="239"/>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="419"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="395"/>
@@ -2140,12 +2144,16 @@ Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Importato dal diario di bordo X-Plane %1
+Numero di atterraggi: %2
+Ore di navigazione: %3
+Ore IFR: %4
+Ore Notturne: %5</translation>
     </message>
     <message>
         <location filename="src/fs/userdata/logdatamanager.cpp" line="444"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Impossibile aprire il file di backup &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -2160,7 +2168,7 @@ Night time: %5</source>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="520"/>
         <location filename="src/fs/userdata/userdatamanager.cpp" line="564"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
+        <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
 </context>
 <context>
@@ -2177,7 +2185,7 @@ Night time: %5</source>
     <message>
         <location filename="src/gui/application.cpp" line="102"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="124"/>
@@ -2232,28 +2240,28 @@ Night time: %5</source>
     <message>
         <location filename="src/gui/helphandler.cpp" line="57"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;%1 (costruire e memorizzare)&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="59"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;%1 (costruire)&lt;br/&gt;%2 (archiviare)&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="65"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Versione %3 (revisione %4)&lt;/p&gt;&lt;p&gt;atools Versione %5 (revisione %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="96"/>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Errore aprendo ULR di aiuto &quot;%1&quot;</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="122"/>
         <location filename="src/gui/helphandler.cpp" line="146"/>
         <source>Help file &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation>File Aiuto &quot;%1&quot; non trovato</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="206"/>
@@ -2271,57 +2279,57 @@ Night time: %5</source>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="55"/>
         <source>&amp;Open All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Apri Tutti</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="56"/>
         <source>Show all tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra tutte le schede</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
         <source>&amp;Close All Except Current</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Chiudi Tutto Tranne Corrente</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="63"/>
         <source>Close all tabs except the current tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi tutte le schede tranne la scheda corrente</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="69"/>
         <source>&amp;Reset Tab Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reimposta Layout Scheda</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="70"/>
         <source>Show all tabs and reset order back to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra tutte le schede e ripristina l&apos;ordine al valore predefinito</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
         <source>&amp;Lock Tab Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Blocca Layout Scheda</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
         <source>Hides close buttons and fixes tabs at current position</source>
-        <translation type="unfinished"></translation>
+        <translation>Nasconde i pulsanti di chiusura e blocca le schede nella posizione corrente</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="143"/>
         <source>&amp;Close tab %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Chiudi scheda %1</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="147"/>
         <source>Close tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Chiudi scheda</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="196"/>
         <source>Open or close tab %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Apri o chiudi scheda %1</translation>
     </message>
 </context>
 <context>

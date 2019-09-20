@@ -224,28 +224,28 @@ Bestand:&quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="125"/>
+        <location filename="src/grib/gribreader.cpp" line="134"/>
         <source>Cannot seek in file %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="130"/>
-        <location filename="src/grib/gribreader.cpp" line="135"/>
+        <location filename="src/grib/gribreader.cpp" line="139"/>
+        <location filename="src/grib/gribreader.cpp" line="144"/>
         <source>Cannot read file %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="441"/>
+        <location filename="src/grib/gribreader.cpp" line="450"/>
         <source>Cannot open file %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="447"/>
+        <location filename="src/grib/gribreader.cpp" line="460"/>
         <source>GRIB data empty</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/grib/gribreader.cpp" line="450"/>
+        <location filename="src/grib/gribreader.cpp" line="463"/>
         <source>Not a GRIB file</source>
         <translation type="unfinished"></translation>
     </message>
@@ -289,22 +289,22 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MagDecTool</name>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="91"/>
+        <location filename="src/wmm/magdectool.cpp" line="102"/>
         <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="96"/>
+        <location filename="src/wmm/magdectool.cpp" line="107"/>
         <source>Error in MAG_SetDefaults.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="105"/>
+        <location filename="src/wmm/magdectool.cpp" line="116"/>
         <source>Error in MAG_GridInternal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="188"/>
+        <location filename="src/wmm/magdectool.cpp" line="205"/>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
