@@ -224,11 +224,6 @@ bool AircraftPerfHandler::isFinished() const
   return currentFlightSegment == DESTINATION_TAXI || currentFlightSegment == DESTINATION_PARKING;
 }
 
-void AircraftPerfHandler::setAircraftPerformance(const AircraftPerf& value)
-{
-  *perf = value;
-}
-
 QStringList AircraftPerfHandler::getAircraftStatusTexts()
 {
   QStringList retval;
@@ -275,6 +270,9 @@ float AircraftPerfHandler::sampleValue(qint64 lastSampleDuration, qint64 curSamp
 {
   if(lastSampleDuration == 0 || curSampleDuration == 0)
     return lastValue;
+
+  if(atools::almostEqual(lastValue, 0.f))
+    return curValue;
 
   // Calculate weighted average
   return static_cast<float>((lastValue * static_cast<double>(lastSampleDuration) +

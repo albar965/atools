@@ -84,8 +84,8 @@ public:
   QString getCurrentFlightSegmentString() const;
   static QString getFlightSegmentString(atools::fs::perf::FlightSegment currentFlightSegment);
 
-  /* Fuel in lbs/gal consumed since engine start. Unit depends on set AircraftPerf */
-  float getTotalFuelConsumed() const
+  /* Fuel in lbs consumed since engine start. */
+  float getTotalFuelConsumedLbs() const
   {
     return totalFuelConsumed;
   }
@@ -102,14 +102,11 @@ public:
     return active;
   }
 
-  /* Get latest updated performance */
-  const atools::fs::perf::AircraftPerf& getAircraftPerformance() const
+  /* Get latest updated performance. Fuel unit is always lbs. */
+  const atools::fs::perf::AircraftPerf& getAircraftPerformanceLbs() const
   {
     return *perf;
   }
-
-  /* Sets a copy */
-  void setAircraftPerformance(const atools::fs::perf::AircraftPerf& value);
 
   /* Get a list describing aircraft status, like cruise, fuel flow, etc */
   QStringList getAircraftStatusTexts();
