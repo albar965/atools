@@ -646,7 +646,7 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     bestRunwayEnd->setValue(":right_vasi_pitch", 0.f);
   }
   else if(!runwayGeometry.isEmpty())
-    qWarning() << context.messagePrefix() << airportIcao << "No runway end" << rwName
+    qWarning() << context.messagePrefix() << airportIdent << "No runway end" << rwName
                << "for VASI with orientation" << orientation << "found";
 }
 
@@ -1018,6 +1018,10 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
 
   if(key == "gui_label")
     is3d = value.compare("3d", Qt::CaseInsensitive) == 0;
+  else if(key == "icao_code")
+    insertAirportQuery->bindValue(":icao", value);
+  else if(key == "iata_code")
+    insertAirportQuery->bindValue(":iata", value);
   else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
@@ -1125,8 +1129,8 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   int secRwEndId = ++curRunwayEndId;
 
   // Add to index
-  airportIndex->addRunwayEnd(airportIcao, primaryName, primRwEndId);
-  airportIndex->addRunwayEnd(airportIcao, secondaryName, secRwEndId);
+  airportIndex->addRunwayEnd(airportIdent, primaryName, primRwEndId);
+  airportIndex->addRunwayEnd(airportIdent, secondaryName, secRwEndId);
 
   // Calculate heading and positions
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
@@ -1365,11 +1369,11 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     qWarning() << context.messagePrefix() << "Invalid ignoring airport state in bindAirport";
 
   int airportId = ++curAirportId;
-  airportIcao = line.value(ap::ICAO);
+  airportIdent = line.value(ap::ICAO);
 
-  writeAirportFile(airportIcao, context.curFileId);
+  writeAirportFile(airportIdent, context.curFileId);
 
-  if(!airportIndex->addAirport(airportIcao, airportId) || !options.isIncludedAirportIdent(airportIcao))
+  if(!airportIndex->addAirport(airportIdent, airportId) || !options.isIncludedAirportIdent(airportIdent))
     // Airport was already read before - ignore it completely
     ignoringAirport = true;
   else
@@ -1394,7 +1398,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     bool isMil = atools::fs::util::isNameMilitary(name);
     name = atools::fs::util::capAirportName(name);
 
-    insertAirportQuery->bindValue(":ident", airportIcao);
+    insertAirportQuery->bindValue(":ident", airportIdent);
     insertAirportQuery->bindValue(":name", name);
     insertAirportQuery->bindValue(":fuel_flags", 0); // not available
     insertAirportQuery->bindValue(":has_tower_object", 0);
@@ -1430,7 +1434,7 @@ void XpAirportWriter::reset()
   airportAltitude = 0.f;
   curHelipadStartNumber = 0;
   airportRowCode = NO_ROWCODE;
-  airportIcao.clear();
+  airportIdent.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
   taxiNodes.clear();
@@ -1482,7 +1486,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     // Find the bounding rect
     if(!airportRect.isValid())
     {
-      qWarning() << context.messagePrefix() << airportIcao << "No bounding rectangle for airport found";
+      qWarning() << context.messagePrefix() << airportIdent << "No bounding rectangle for airport found";
       // Find valid starting point for bounding rectangle
       if(airportDatumPos.isValid())
       {
@@ -1495,7 +1499,7 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
         airportPos = longestRunwayCenterPos;
       }
       else
-        qWarning() << context.messagePrefix() << airportIcao << "Could not determine bounding rectangle for airport";
+        qWarning() << context.messagePrefix() << airportIdent << "Could not determine bounding rectangle for airport";
     }
     else
     {

@@ -20,6 +20,9 @@
 -- The indexes are needed for post process steps
 -- *************************************************************
 
+create index if not exists idx_airport_icao on airport(icao);
+create index if not exists idx_airport_iata on airport(iata);
+
 create index if not exists idx_airport_file_ident on airport_file(ident);
 create index if not exists idx_airport_file_file_id on airport_file(file_id);
 

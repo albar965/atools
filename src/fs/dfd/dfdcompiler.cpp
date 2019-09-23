@@ -135,6 +135,9 @@ void DfdCompiler::writeAirports()
             airportQuery->valueFloat("elevation"));
 
     QString ident = airportQuery->valueStr("airport_identifier");
+    QString iata;
+    if(airportQuery->hasField("iata_ata_designator"))
+      iata = airportQuery->valueStr("iata_ata_designator");
 
     // Start with a minimum rectangle of about 100 meter which will be extended later
     Rect airportRect(pos);
@@ -152,6 +155,11 @@ void DfdCompiler::writeAirports()
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
+    airportWriteQuery->bindValue(":icao", ident);
+    if(iata.isEmpty())
+      airportWriteQuery->bindValue(":iata", QVariant::String);
+    else
+      airportWriteQuery->bindValue(":iata", iata);
     airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->valueStr("airport_name")));
     airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));
     airportWriteQuery->bindValue(":region", airportQuery->valueStr("icao_code"));

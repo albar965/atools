@@ -28,7 +28,9 @@ create table airport
 (
   airport_id integer primary key,
   file_id integer not null,                   -- BGL file id
-  ident varchar(10) not null,                  -- ICAO ident
+  ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
+  icao varchar(10),                           -- ICAO ident
+  iata varchar(10),                           -- IATA ident if available
   name varchar(50) collate nocase,
   city varchar(50) collate nocase,
   state varchar(50) collate nocase,
@@ -133,7 +135,9 @@ drop table if exists airport_medium;
 create table airport_medium
 (
   airport_id integer primary key,
-  ident varchar(4) not null,
+  ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
+  icao varchar(10),                           -- ICAO ident
+  iata varchar(10),                           -- IATA ident if available
   name varchar(50) collate nocase,
   has_avgas integer not null,
   has_jetfuel integer not null,
@@ -166,7 +170,9 @@ drop table if exists airport_large;
 create table airport_large
 (
   airport_id integer primary key,
-  ident varchar(4) not null,
+  ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
+  icao varchar(10),                           -- ICAO ident
+  iata varchar(10),                           -- IATA ident if available
   name varchar(50) collate nocase,
   has_avgas integer not null,
   has_jetfuel integer not null,

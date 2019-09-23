@@ -125,8 +125,9 @@ public:
    * 12 Several changes towards 3.2.
    * 13 Fix for VASI assignment in X-Plane
    * 14 Usage of X-Plane 3D attribute
+   * 15 Fix for X-Plane ICAO names
    */
-  static const int DB_VERSION_MINOR = 14;
+  static const int DB_VERSION_MINOR = 15;
 
   void init();
 

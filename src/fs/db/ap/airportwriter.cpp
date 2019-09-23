@@ -143,6 +143,8 @@ void AirportWriter::writeObject(const Airport *type)
   bind(":airport_id", nextAirportId);
   bind(":file_id", bglFileWriter->getCurrentId());
   bind(":ident", type->getIdent());
+  bindNullString(":icao");
+  bindNullString(":iata");
   bind(":name", type->getName());
   bind(":fuel_flags", type->getFuelFlags());
 
