@@ -1,6 +1,18 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.2.beta
+
+* Fixed issues when reading GRIB winds aloft or WMM (magentic declination) data on Windows
+  if user's home path contains special characters like umlauts or accents.
+* Added real ICAO code to airport to circumvent issues with X-Plane artificial airport ids.
+* Added IATA code to airport table.
+* Database minor version up to 15.
+* Now ignoring first zero value when interpolating fuel for aircraft performance.
+* Updated French and Italian translations. Now complete.
+
+===============================================================================
+
 Version 3.4.1.beta
 
 * Changed aircraft performance handler to detect cruise if aircraft is above cruise altitude.
