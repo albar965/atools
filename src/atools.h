@@ -131,6 +131,12 @@ Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
 }
 
 template<typename TYPE>
+Q_DECL_CONSTEXPR bool inRange(TYPE minValue, TYPE maxValue, TYPE index)
+{
+  return index >= minValue && index <= maxValue;
+}
+
+template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
 {
   return std::min(std::max(value, minValue), maxValue);
