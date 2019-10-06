@@ -444,14 +444,14 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE  fromLiterToKg(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(fromGalToLbs(jetFuel, static_cast<double>(value) / 4.54609) / 2.204623);
+         value : static_cast<TYPE>(lbsToKg(fromGalToLbs(jetFuel, literToGallon(static_cast<double>(value)))));
 }
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE  fromKgToLiter(bool jetFuel, TYPE value)
 {
   return (value > std::numeric_limits<TYPE>::max() / 2) ?
-         value : static_cast<TYPE>(fromLbsToGal(jetFuel, static_cast<double>(value) * 2.204623) * 4.54609);
+         value : static_cast<TYPE>(gallonToLiter(fromLbsToGal(jetFuel, kgToLbs(static_cast<double>(value)))));
 }
 
 /* NM to rad (longitude or latitude) */

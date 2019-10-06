@@ -132,6 +132,7 @@ void AircraftPerf::setNull()
 void AircraftPerf::fromGalToLbs()
 {
   using ageo::fromGalToLbs;
+  volume = false;
 
   usableFuel = fromGalToLbs(jetFuel, usableFuel);
   taxiFuel = fromGalToLbs(jetFuel, taxiFuel);
@@ -146,6 +147,7 @@ void AircraftPerf::fromGalToLbs()
 void AircraftPerf::fromLbsToGal()
 {
   using ageo::fromLbsToGal;
+  volume = true;
 
   usableFuel = fromLbsToGal(jetFuel, usableFuel);
   taxiFuel = fromLbsToGal(jetFuel, taxiFuel);
