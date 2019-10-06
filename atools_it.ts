@@ -1963,87 +1963,87 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="232"/>
         <source>on ground</source>
         <translation>al suolo</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="239"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="234"/>
         <source>fuel flow</source>
         <translation>consumo carburante</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="241"/>
         <source>climbing</source>
         <translation>in salita</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="243"/>
         <source>descending</source>
         <translation>in discesa</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="247"/>
         <source>at cruise altitude</source>
         <translation>all&apos;altitudine di crociera</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="249"/>
         <source>below cruise altitude</source>
         <translation>sotto l&apos;altitudine di crociera</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="256"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="251"/>
         <source>above cruise altitude</source>
         <translation>sopra l&apos;altitudine di crociera</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="378"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="376"/>
         <source>Invalid</source>
         <translation>Non valido</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="381"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="379"/>
         <source>None</source>
         <translation>Nessuno</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="384"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="382"/>
         <source>Departure Parking</source>
         <translation>Parcheggio di Partenza</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="387"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="385"/>
         <source>Departure Taxi and Takeoff</source>
         <translation>Taxi e Decollo di Partenza</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="390"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="388"/>
         <source>Climb</source>
         <translation>Salita</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="393"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="391"/>
         <source>Cruise</source>
         <translation>Crociera</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="396"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="394"/>
         <source>Descent</source>
         <translation>Discesa</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="397"/>
         <source>Destination Taxi</source>
         <translation>Taxi di Destinazione</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="400"/>
         <source>Destination Parking</source>
         <translation>Parcheggio di Destinazione</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="403"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
@@ -2317,17 +2317,17 @@ Ore Notturne: %5</translation>
         <translation>Nasconde i pulsanti di chiusura e blocca le schede nella posizione corrente</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="143"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="148"/>
         <source>&amp;Close tab %1</source>
         <translation>&amp;Chiudi scheda %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="147"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="152"/>
         <source>Close tab</source>
         <translation>Chiudi scheda</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="196"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="201"/>
         <source>Open or close tab %1</source>
         <translation>Apri o chiudi scheda %1</translation>
     </message>

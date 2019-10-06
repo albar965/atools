@@ -1891,87 +1891,87 @@ Assurez-vous que earth_fix. dat, earth_awy. dat et earth_nav. dat se trouvent da
 <context>
     <name>atools::fs::perf::AircraftPerfHandler</name>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="237"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="232"/>
         <source>on ground</source>
         <translation type="unfinished">au sol</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="239"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="234"/>
         <source>fuel flow</source>
         <translation type="unfinished">débit de carburant</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="246"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="241"/>
         <source>climbing</source>
         <translation type="unfinished">montée</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="248"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="243"/>
         <source>descending</source>
         <translation type="unfinished">descente</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="252"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="247"/>
         <source>at cruise altitude</source>
         <translation type="unfinished">à l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="254"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="249"/>
         <source>below cruise altitude</source>
         <translation type="unfinished">au-dessous de l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="256"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="251"/>
         <source>above cruise altitude</source>
         <translation type="unfinished">au-dessus de l&apos;altitude de croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="378"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="376"/>
         <source>Invalid</source>
         <translation type="unfinished">Invalide</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="381"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="379"/>
         <source>None</source>
         <translation type="unfinished">Aucun</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="384"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="382"/>
         <source>Departure Parking</source>
         <translation type="unfinished">Parking de départ</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="387"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="385"/>
         <source>Departure Taxi and Takeoff</source>
         <translation type="unfinished">Départ | Taxi et Décollage</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="390"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="388"/>
         <source>Climb</source>
         <translation type="unfinished">Montée</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="393"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="391"/>
         <source>Cruise</source>
         <translation type="unfinished">Croisière</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="396"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="394"/>
         <source>Descent</source>
         <translation type="unfinished">Descente</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="399"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="397"/>
         <source>Destination Taxi</source>
         <translation type="unfinished">Taxi à destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="402"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="400"/>
         <source>Destination Parking</source>
         <translation type="unfinished">Parking de destination</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="405"/>
+        <location filename="src/fs/perf/aircraftperfhandler.cpp" line="403"/>
         <source>Unknown</source>
         <translation type="unfinished">Inconnu</translation>
     </message>
@@ -2239,17 +2239,17 @@ Période nocturne : %5</translation>
         <translation type="unfinished">Masque les boutons de fermeture et fixe les onglets à la position actuelle</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="143"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="148"/>
         <source>&amp;Close tab %1</source>
         <translation type="unfinished">&amp;Fermer l&apos;onglet %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="147"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="152"/>
         <source>Close tab</source>
         <translation type="unfinished">Fermer l&apos;onglet</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="196"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="201"/>
         <source>Open or close tab %1</source>
         <translation type="unfinished">Ouvrir ou fermer l&apos;onglet %1</translation>
     </message>
