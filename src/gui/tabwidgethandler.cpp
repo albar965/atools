@@ -113,8 +113,13 @@ void TabWidgetHandler::reset()
   {
     QSignalBlocker blocker(tabWidget);
     resetInternal();
+
+    QSignalBlocker blocker2(actionLock);
+    actionLock->setChecked(false);
   }
   updateWidgets();
+  updateTabs();
+
 }
 
 void TabWidgetHandler::resetInternal()
