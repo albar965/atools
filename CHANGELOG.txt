@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.3.rc1
+
+* Fixed issues resulting in wrong fuel conversions.
+* Tab widget reset now reverts locked state when calling reset.
+* Disabled color buttons on macOS since the look wrong.
+* Removed logging banners inflating log unnecessarily when loading P3D or FSX scenery library.
+
+===============================================================================
+
 Version 3.4.2.beta
 
 * Fixed issues when reading GRIB winds aloft or WMM (magentic declination) data on Windows
