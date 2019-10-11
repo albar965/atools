@@ -288,7 +288,7 @@ private:
 
 };
 
-/* Invalid postion */
+/* Invalid position */
 const atools::geo::Pos EMPTY_POS;
 
 uint qHash(const atools::geo::Pos& pos);

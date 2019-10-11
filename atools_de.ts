@@ -27,7 +27,7 @@
     <name>AirspaceWriter</name>
     <message>
         <source>In file &quot;%1&quot; on line %2: Index out of bounds: Index: %1, size: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>In Datei &quot;%1&quot;, Zeile %2: Index außerhalb der Grenzen: Index: %1, Größe: %2</translation>
     </message>
 </context>
 <context>
@@ -46,15 +46,15 @@
     <name>DataWriter</name>
     <message>
         <source>Cannot read file. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei kann nicht gelesen werden. Rückgriff auf das magnetische Weltmodell.</translation>
     </message>
     <message>
         <source>File not valid. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei nicht gültig. Rückgriff auf das magnetische Weltmodell.</translation>
     </message>
     <message>
         <source>File not found. Falling back to world magnetic model.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei nicht gefunden. Rückgriff auf das magnetische Weltmodell.</translation>
     </message>
 </context>
 <context>
@@ -199,27 +199,27 @@ Datei: &quot;%2&quot;
     <name>GribReader</name>
     <message>
         <source>, </source>
-        <translation type="unfinished"></translation>
+        <translation>, </translation>
     </message>
     <message>
         <source>Cannot seek in file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann nicht in Datei %1 suchen</translation>
     </message>
     <message>
         <source>Cannot read file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Datei %1 nicht lesen</translation>
     </message>
     <message>
         <source>Cannot open file %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Datei %1 nicht öffnen</translation>
     </message>
     <message>
         <source>GRIB data empty</source>
-        <translation type="unfinished"></translation>
+        <translation>GRIB Daten sind leer</translation>
     </message>
     <message>
         <source>Not a GRIB file</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine GRIB-Datei</translation>
     </message>
 </context>
 <context>
@@ -237,38 +237,38 @@ Datei: &quot;%2&quot;
     <name>MagDecReader</name>
     <message>
         <source>Number of longitude values is not valid when reading magdec.bgl: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahl der Längenwerte ist beim Lesen der magdec.bgl nicht gültig: %1</translation>
     </message>
     <message>
         <source>Number of latitude values is not valid when reading magdec.bgl: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Anzahl der Breitenwerte ist beim Lesen von magdec.bgl nicht gültig: %1</translation>
     </message>
     <message>
         <source>Cannot read %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann %1 nicht lesen. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot read declination from database.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Deklination nicht aus der Datenbank lesen.</translation>
     </message>
 </context>
 <context>
     <name>MagDecTool</name>
     <message>
         <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 für magnetische Koeffizienten nicht gefunden.</translation>
     </message>
     <message>
         <source>Error in MAG_SetDefaults.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in MAG_SetDefaults.</translation>
     </message>
     <message>
         <source>Error in MAG_GridInternal.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in MAG_GridInternal.</translation>
     </message>
     <message>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Geoid-Puffer &quot;%1&quot; nicht öffnen.</translation>
     </message>
 </context>
 <context>
@@ -909,7 +909,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Creating boundary indexes</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstellen von Grenzindizes</translation>
     </message>
 </context>
 <context>
@@ -1291,15 +1291,15 @@ Datei: &quot;%2&quot;
     <name>TempFile</name>
     <message>
         <source>Cannot read from &quot;%1&quot;. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 kann nicht gelesen werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open &quot;%1&quot; for reading. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 kann nicht geschrieben werden. Grund: %2</translation>
     </message>
 </context>
 <context>
@@ -1370,7 +1370,7 @@ Importieren gestoppt.</translation>
     </message>
     <message>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Sicherheitskopie %1 nicht öffnen. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
@@ -1417,7 +1417,11 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
 &quot;%2&quot;
 
 Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in one of these paths.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann weder in
+&quot;%1&quot; noch in
+&quot;%2&quot;
+gültige X-Plane Navigationsdaten finden.
+Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem dieser Pfade gefunden werden kann.</translation>
     </message>
 </context>
 <context>
@@ -1468,15 +1472,15 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>File is not a regular file</source>
-        <translation type="unfinished">Datei ist keine reguläre Datei</translation>
+        <translation>Datei ist keine reguläre Datei</translation>
     </message>
     <message>
         <source>File is not readable</source>
-        <translation type="unfinished">Datei ist nicht lesbar</translation>
+        <translation>Datei ist nicht lesbar</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation type="unfinished">Datei existiert nicht</translation>
+        <translation>Datei existiert nicht</translation>
     </message>
 </context>
 <context>
@@ -1593,31 +1597,31 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>on ground</source>
-        <translation type="unfinished"></translation>
+        <translation>am Boden</translation>
     </message>
     <message>
         <source>fuel flow</source>
-        <translation type="unfinished"></translation>
+        <translation>Treibstofffluss</translation>
     </message>
     <message>
         <source>climbing</source>
-        <translation type="unfinished"></translation>
+        <translation>steigt</translation>
     </message>
     <message>
         <source>descending</source>
-        <translation type="unfinished"></translation>
+        <translation>sinkt</translation>
     </message>
     <message>
         <source>at cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>auf Reiseflughöhe</translation>
     </message>
     <message>
         <source>below cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>unter Reiseflughöhe</translation>
     </message>
     <message>
         <source>above cruise altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>über Reiseflughöhe</translation>
     </message>
 </context>
 <context>
@@ -1682,14 +1686,14 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     <name>atools::fs::userdata::AirspaceReaderOpenAir</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
     <message>
         <source>Imported from X-Plane logbook %1
@@ -1698,18 +1702,22 @@ Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation type="unfinished"></translation>
+        <translation>Aus X-Plane Logbuch importiert %1
+Anzahl Landungen: %2
+Überlandzeit: %3
+IFR-Zeit: %4
+Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Sicherheitskopie %1 nicht öffnen. Grund: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2.</translation>
     </message>
 </context>
 <context>
@@ -1744,7 +1752,7 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;Ausnahmefehler in der Datei &quot;%1&quot; Zeile %2 aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
 </context>
 <context>
@@ -1779,70 +1787,70 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;%1 (Build und Bibliothek)&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;%1 (Build)&lt;br/&gt;%2 (Bibliothek)&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (Revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (Revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Öffnen der Hilfe-URL &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Help file &quot;%1&quot; not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Hilfedatei &quot;%1&quot; wurde nicht gefunden</translation>
     </message>
 </context>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
         <source>&amp;Open All</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Alle Öffnen</translation>
     </message>
     <message>
         <source>Show all tabs</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle Reiter zeigen</translation>
     </message>
     <message>
         <source>&amp;Close All Except Current</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle außer aktiven &amp;schließen</translation>
     </message>
     <message>
         <source>Close all tabs except the current tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe alle Reiter außer den aktiven</translation>
     </message>
     <message>
         <source>&amp;Reset Tab Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiteranordnung zurücksetzen</translation>
     </message>
     <message>
         <source>Show all tabs and reset order back to default</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige alle Reiter und setze die Reihenfolge auf den Standard zurück</translation>
     </message>
     <message>
         <source>&amp;Lock Tab Layout</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Sperre Anordnung der Reiter</translation>
     </message>
     <message>
         <source>Hides close buttons and fixes tabs at current position</source>
-        <translation type="unfinished"></translation>
+        <translation>Versteckt die Schließen-Schaltflächen und fixiert Reiter an der aktuellen Position</translation>
     </message>
     <message>
         <source>&amp;Close tab %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Reiter %1 schließen</translation>
     </message>
     <message>
         <source>Close tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiter schließen</translation>
     </message>
     <message>
         <source>Open or close tab %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Reiter %1 öffnen oder schließen</translation>
     </message>
 </context>
 <context>

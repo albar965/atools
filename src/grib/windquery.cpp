@@ -146,7 +146,7 @@ inline QPoint gridPos(const atools::geo::Pos& pos)
   return QPoint(colNum(pos), rowNum(pos));
 }
 
-/* A rectangle at one degree cell boundaries covering the given postion */
+/* A rectangle at one degree cell boundaries covering the given position */
 inline atools::geo::Rect globalRect(const atools::geo::Pos& pos)
 {
   atools::geo::Rect rect;
