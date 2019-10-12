@@ -38,21 +38,22 @@ AddOnCfg::~AddOnCfg()
 
 void AddOnCfg::onStartDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
   entries.clear();
 }
 
 void AddOnCfg::onEndDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
 }
 
 void AddOnCfg::onStartSection(const QString& section, const QString& sectionSuffix)
 {
-  if(section == "package")
+  if(section == "package" || section == "discoverypath")
   {
     bool ok = false;
     currentEntry.packageNum = sectionSuffix.toInt(&ok);
+    currentEntry.discoveryPath = section == "discoverypath";
     if(!ok)
     {
       qWarning() << "Entry number" << sectionSuffix << "not valid in section" << section;
@@ -63,10 +64,14 @@ void AddOnCfg::onStartSection(const QString& section, const QString& sectionSuff
 
 void AddOnCfg::onEndSection(const QString& section, const QString& sectionSuffix)
 {
-  Q_UNUSED(sectionSuffix);
-  if(section == "package")
+  Q_UNUSED(sectionSuffix)
+  if(section == "package" || section == "discoverypath")
   {
-    entries.append(currentEntry);
+    if(currentEntry.discoveryPath)
+      entriesDiscovery.append(currentEntry);
+    else
+      entries.append(currentEntry);
+
     currentEntry = AddOnCfgEntry();
   }
 }
@@ -74,8 +79,8 @@ void AddOnCfg::onEndSection(const QString& section, const QString& sectionSuffix
 void AddOnCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                           const QString& value)
 {
-  Q_UNUSED(sectionSuffix);
-  if(section == "package")
+  Q_UNUSED(sectionSuffix)
+  if(section == "package" || section == "discoverypath")
   {
     if(key == "title")
       currentEntry.title = value;
@@ -93,10 +98,6 @@ void AddOnCfg::onKeyValue(const QString& section, const QString& sectionSuffix, 
       currentEntry.required = toBool(value);
     else
       qWarning() << "Unexpected key" << key << "in section" << section << "file" << filepath;
-  }
-  else if(section == "discoverypath")
-  {
-    // Ignore
   }
   else
     qWarning() << "Unexpected section" << section << "file" << filepath;

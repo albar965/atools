@@ -32,7 +32,13 @@ struct AddOnCfgEntry
 {
   int packageNum = 0;
   QString path, title;
-  bool active = false, required = false;
+  bool active = false, required = false, discoveryPath = false;
+
+  bool isValid() const
+  {
+    return !path.isEmpty();
+  }
+
 };
 
 /*
@@ -46,7 +52,7 @@ class AddOnCfg :
 
 public:
   AddOnCfg(const QString& textCodec);
-  virtual ~AddOnCfg();
+  virtual ~AddOnCfg() override;
 
   const QList<atools::fs::scenery::AddOnCfgEntry>& getEntries() const
   {
@@ -56,6 +62,11 @@ public:
   QList<atools::fs::scenery::AddOnCfgEntry>& getEntries()
   {
     return entries;
+  }
+
+  QList<atools::fs::scenery::AddOnCfgEntry>& getEntriesDiscovery()
+  {
+    return entriesDiscovery;
   }
 
   /* Put a scenery area at the end of the list */
@@ -70,7 +81,7 @@ private:
                           const QString& value) override;
 
   atools::fs::scenery::AddOnCfgEntry currentEntry;
-  QList<atools::fs::scenery::AddOnCfgEntry> entries;
+  QList<atools::fs::scenery::AddOnCfgEntry> entries, entriesDiscovery;
 
 };
 

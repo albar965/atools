@@ -29,10 +29,8 @@ SceneryArea::SceneryArea()
 
 }
 
-SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath,
-                         const QString& sourceConfigFile)
-  : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath),
-  sourceConfig(sourceConfigFile)
+SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath)
+  : areaNumber(areaNum), layer(layerNum), active(true), title(sceneryTitle), localPath(sceneryLocalPath)
 {
   fixTitle();
 }
@@ -58,7 +56,6 @@ QDebug operator<<(QDebug out, const SceneryArea& area)
                 << ", textureId " << area.textureId
                 << ", remotePath" << area.remotePath
                 << ", exclude " << area.exclude
-                << ", sourceConfig " << area.sourceConfig
                 << "]";
   return out;
 }

@@ -30,8 +30,7 @@ public:
   SceneryArea();
 
   /* Constructed from P3D add-on packages */
-  SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath,
-              const QString& sourceConfig);
+  SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath);
 
   /*
    * @return true to indicate that the scenery should be rendered by default.
@@ -104,18 +103,13 @@ public:
     highPriority = value;
   }
 
-  const QString getSourceConfig() const
-  {
-    return sourceConfig;
-  }
-
 private:
   friend class SceneryCfg;
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
   bool active = false, required = false, highPriority = false;
-  QString title, remotePath, localPath, exclude, sourceConfig;
+  QString title, remotePath, localPath, exclude;
 };
 
 } // namespace scenery

@@ -152,40 +152,40 @@ void AbstractIniReader::read(const QString& iniFilename)
 
 void AbstractIniReader::onStartDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
 }
 
 void AbstractIniReader::onEndDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
 }
 
 void AbstractIniReader::onStartSection(const QString& name, const QString& nameSuffix)
 {
-  Q_UNUSED(name);
-  Q_UNUSED(nameSuffix);
+  Q_UNUSED(name)
+  Q_UNUSED(nameSuffix)
 }
 
 void AbstractIniReader::onEndSection(const QString& section, const QString& sectionSuffix)
 {
-  Q_UNUSED(section);
-  Q_UNUSED(sectionSuffix);
+  Q_UNUSED(section)
+  Q_UNUSED(sectionSuffix)
 }
 
 void AbstractIniReader::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                                    const QString& value)
 {
-  Q_UNUSED(section);
-  Q_UNUSED(sectionSuffix);
-  Q_UNUSED(key);
-  Q_UNUSED(value);
+  Q_UNUSED(section)
+  Q_UNUSED(sectionSuffix)
+  Q_UNUSED(key)
+  Q_UNUSED(value)
 }
 
 void AbstractIniReader::onKeyValue(const QString& section, const QString& key, const QString& value)
 {
-  Q_UNUSED(section);
-  Q_UNUSED(key);
-  Q_UNUSED(value);
+  Q_UNUSED(section)
+  Q_UNUSED(key)
+  Q_UNUSED(value)
 }
 
 void AbstractIniReader::throwException(const QString& message)

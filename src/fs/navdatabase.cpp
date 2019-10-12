@@ -329,7 +329,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString(), "Navigraph");
+    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -343,7 +343,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   else if(sim == atools::fs::FsPaths::XPLANE11)
   {
     // Create a single X-Plane scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString(), "X-Plane");
+    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -927,6 +927,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
   // Get entries from scenery.cfg file
   cfg.read(options->getSceneryFile());
 
+  bool readInactive = options->isReadInactive();
   FsPaths::SimulatorType sim = options->getSimulatorType();
 
   if(options->isReadAddOnXml() && (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4))
@@ -936,29 +937,123 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
     int simNum = sim == atools::fs::FsPaths::P3D_V3 ? 3 : 4;
 
-    // Add both path alternatives since documentation is not clear
-    QStringList addonPaths;
-    // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
-    addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Add-ons").arg(simNum));
-
-    // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
-    addonPaths.append(documents + QDir::separator() + QString("Prepar3D v%1 Files").arg(simNum) +
-                      QDir::separator() + QLatin1Literal("add-ons"));
-
     // Calculate maximum area number
     int areaNum = std::numeric_limits<int>::min();
     for(const SceneryArea& area : cfg.getAreas())
       areaNum = std::max(areaNum, area.getAreaNumber());
 
+    QStringList addonsCfgFiles;
+
+    // The priority for how content based add-on configuration files are initialized is as follows:
+    // Local: Configuration files found at: %LOCALAPPDATA%\Lockheed Martin\Prepar3D v4
+    // Roaming: Configuration files found at: %APPDATA%\Lockheed Martin\Prepar3D v4
+    // ProgramData: Configuration files found at: %PROGRAMDATA%\Lockheed Martin\Prepar3D v4
+
+    // Read add-ons.cfg file from local =========================
+    {
+#if defined(Q_OS_WIN32)
+      // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+      QString addonsCfgFileLocal = QString(qgetenv("LOCALAPPDATA"));
+#else
+      // Use $HOME/.config for testing
+      QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
+      addonsCfgFileLocal +=
+        QDir::separator() + QString("Lockheed Martin") +
+        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+#if !defined(Q_OS_WIN32)
+        " LocalData" +
+#endif
+        QDir::separator() + "add-ons.cfg";
+      addonsCfgFiles.append(addonsCfgFileLocal);
+    }
+
+    // Read add-ons.cfg file from roaming =========================
+    {
+
+#if defined(Q_OS_WIN32)
+      // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+      QString addonsCfgFile = QString(qgetenv("APPDATA"));
+#else
+      // Use $HOME/.config for testing
+      QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
+      addonsCfgFile +=
+        QDir::separator() + QString("Lockheed Martin") +
+        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+        QDir::separator() + "add-ons.cfg";
+      addonsCfgFiles.append(addonsCfgFile);
+    }
+
+    // Read the add-ons.cfg from ProgramData =========================
+    // "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\add-ons.cfg"
+    {
+#if defined(Q_OS_WIN32)
+      // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
+      QString addonsAllUsersCfgFile = QString(qgetenv("PROGRAMDATA"));
+#else
+      // Use /tmp for testing
+      QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+#endif
+      addonsAllUsersCfgFile +=
+        QDir::separator() + QString("Lockheed Martin") +
+        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+#if !defined(Q_OS_WIN32)
+        " ProgramData" +
+#endif
+        QDir::separator() + "add-ons.cfg";
+      addonsCfgFiles.append(addonsAllUsersCfgFile);
+    }
+
+    // ==================================================================
+    // Read all add-ons.cfg files from the paths
+    // Use this to weed out duplicates to the add-on.xml files
+    QSet<QString> addonFilePaths;
     // Set layer later to these
     QVector<AddOnComponent> noLayerComponents;
     QStringList noLayerPaths;
+    QStringList addonDiscoveryPaths;
+    QSet<QString> inactiveAddOnPaths;
 
-    // Use this to weed out duplicates to the add-on.xml files
-    QSet<QString> addonFilePaths;
+    for(const QString& addonsCfg : addonsCfgFiles)
+    {
+      if(QFileInfo::exists(addonsCfg))
+      {
+        qInfo() << Q_FUNC_INFO << "Reading" << addonsCfg;
+        AddOnCfg addonConfigProgramData("utf-8");
+        addonConfigProgramData.read(addonsCfg);
+        for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
+        {
+          if(entry.discoveryPath)
+          {
+            if(entry.active || readInactive)
+              addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
+          }
+          else
+          {
+            if(entry.active || readInactive)
+              readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
+            else
+              inactiveAddOnPaths.insert(buildAddonFile(QFileInfo(entry.path)).canonicalFilePath().toLower());
+          }
+        }
+      }
+    }
 
-    // Got through the two or more discovery paths ===============
-    for(const QString& addonPath : addonPaths)
+    // Go through the two or more discovery paths ===============
+    // Add both path alternatives since documentation is not clear
+    // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
+    // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
+    addonDiscoveryPaths.prepend(documents + QDir::separator() + QString("Prepar3D v%1 Files").arg(simNum) +
+                                QDir::separator() + QLatin1Literal("add-ons"));
+
+    addonDiscoveryPaths.prepend(documents + QDir::separator() + QString("Prepar3D v%1 Add-ons").arg(simNum));
+
+    qInfo() << Q_FUNC_INFO << "Discovery paths" << addonDiscoveryPaths;
+
+    // ====================================================================================
+    // Read add-on.xml files from the discovery paths
+    for(const QString& addonPath : addonDiscoveryPaths)
     {
       QDir addonDir(addonPath);
       if(addonDir.exists())
@@ -967,57 +1062,15 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
         // Read addon directories as they appear in the file system
         for(QFileInfo addonEntry : addonEntries)
-          readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
+        {
+          if(readInactive || !inactiveAddOnPaths.contains(buildAddonFile(addonEntry).canonicalFilePath().toLower()))
+            readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
+          else
+            qInfo() << Q_FUNC_INFO << "Skipping inactive" << addonEntry;
+        }
       }
       else
         qWarning() << Q_FUNC_INFO << addonDir << "does not exist";
-    }
-
-    // Go through all references in the add-on.cfg file in Roaming ===============
-    // Read add-ons.cfg file from roaming
-#if defined(Q_OS_WIN32)
-    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-    QString addonsCfgFile = QString(qgetenv("APPDATA"));
-#else
-    // Use $HOME/.config for testing
-    QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
-#endif
-
-    addonsCfgFile +=
-      QDir::separator() + QString("Lockheed Martin") +
-      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
-      QDir::separator() + "add-ons.cfg";
-
-    if(QFileInfo::exists(addonsCfgFile))
-    {
-      // AppData\Roaming\Lockheed Martin\Prepar3D v4\add-ons.cfg
-      AddOnCfg addonConfigRoaming("utf-8");
-      addonConfigRoaming.read(addonsCfgFile);
-      for(const AddOnCfgEntry& entry:addonConfigRoaming.getEntries())
-        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
-    }
-
-    // Read the add-on.cfg from ProgramData =========================
-    // "C:\\ProgramData\\Lockheed Martin\\Prepar3D v3\\add-ons.cfg"
-#if defined(Q_OS_WIN32)
-    // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-    QString addonsAllUsersCfgFile = QString(qgetenv("PROGRAMDATA"));
-#else
-    // Use /tmp for testing
-    QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
-#endif
-
-    addonsAllUsersCfgFile +=
-      QDir::separator() + QString("Lockheed Martin") +
-      QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
-      QDir::separator() + "add-ons.cfg";
-
-    if(QFileInfo::exists(addonsAllUsersCfgFile))
-    {
-      AddOnCfg addonConfigProgramData("utf-8");
-      addonConfigProgramData.read(addonsAllUsersCfgFile);
-      for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
-        readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
     }
 
     // Bring added add-on.xml in order with the rest sort by layer
@@ -1033,8 +1086,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     }
 
     for(int i = 0; i < noLayerComponents.size(); i++)
-      cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i),
-                                 addonsAllUsersCfgFile));
+      cfg.appendArea(SceneryArea(++lastArea, ++lastLayer, noLayerComponents.at(i).getName(), noLayerPaths.at(i)));
   } // if(options->isReadAddOnXml()
 
   // Check if some areas have to be sorted to the end of the list
@@ -1051,21 +1103,27 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
   cfg.sortAreas();
 }
 
-void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
-                                      QVector<AddOnComponent>& noLayerComponents,
-                                      QStringList& noLayerPaths, QSet<QString>& addonPaths, QFileInfo addonEntry)
+QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  QFileInfo addonFile(addonEntry.absoluteFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+}
+
+void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
+                                      QVector<AddOnComponent>& noLayerComponents, QStringList& noLayerPaths,
+                                      QSet<QString>& addonPaths, const QFileInfo& addonEntry)
+{
+  QFileInfo addonFile = buildAddonFile(addonEntry);
+
   if(addonFile.exists() && addonFile.isFile())
   {
-    if(addonPaths.contains(addonFile.absoluteFilePath()))
+    if(addonPaths.contains(addonFile.canonicalFilePath()))
     {
       qInfo() << "Found duplicate addon file" << addonFile.filePath();
       return;
     }
 
     qInfo() << "Found addon file" << addonFile.filePath();
-    addonPaths.insert(addonFile.absoluteFilePath());
+    addonPaths.insert(addonFile.canonicalFilePath());
 
     AddOnPackage package(addonFile.filePath());
     qInfo() << "Name" << package.getName() << "Description" << package.getDescription();
@@ -1101,8 +1159,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
         noLayerPaths.append(compPath.path());
       }
       else
-        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path(),
-                                   addonFile.absoluteFilePath()));
+        cfg.appendArea(SceneryArea(areaNum, component.getLayer(), component.getName(), compPath.path()));
     }
   }
   else
