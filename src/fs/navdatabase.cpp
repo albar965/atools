@@ -1022,20 +1022,19 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
         qInfo() << Q_FUNC_INFO << "Reading" << addonsCfg;
         AddOnCfg addonConfigProgramData("utf-8");
         addonConfigProgramData.read(addonsCfg);
+
+        for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntriesDiscovery())
+        {
+          if(entry.active || readInactive)
+            addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
+        }
+
         for(const AddOnCfgEntry& entry:addonConfigProgramData.getEntries())
         {
-          if(entry.discoveryPath)
-          {
-            if(entry.active || readInactive)
-              addonDiscoveryPaths.append(QFileInfo(entry.path).canonicalFilePath());
-          }
+          if(entry.active || readInactive)
+            readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
           else
-          {
-            if(entry.active || readInactive)
-              readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, QFileInfo(entry.path));
-            else
-              inactiveAddOnPaths.insert(buildAddonFile(QFileInfo(entry.path)).canonicalFilePath().toLower());
-          }
+            inactiveAddOnPaths.insert(buildAddonFile(QFileInfo(entry.path)).canonicalFilePath().toLower());
         }
       }
     }
