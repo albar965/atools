@@ -2231,7 +2231,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
         <source>&amp;Lock Tab Layout</source>
-        <translation type="unfinished">&amp;Vérouiller les onglets</translation>
+        <translation type="unfinished">&amp;Verrouillage des Onglets</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
