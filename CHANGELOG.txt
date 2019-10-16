@@ -1,6 +1,13 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.4
+
+* Fixed issue where scenery entries were read despite being disabled in add-ons.cfg for P3D.
+* Discovery paths from add-ons.cfg are now read for P3D.
+
+===============================================================================
+
 Version 3.4.3.rc1
 
 * Fixed issues resulting in wrong fuel conversions.
