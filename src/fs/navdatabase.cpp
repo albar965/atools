@@ -1065,7 +1065,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
           if(readInactive || !inactiveAddOnPaths.contains(buildAddonFile(addonEntry).canonicalFilePath().toLower()))
             readAddOnComponents(areaNum, cfg, noLayerComponents, noLayerPaths, addonFilePaths, addonEntry);
           else
-            qInfo() << Q_FUNC_INFO << "Skipping inactive" << addonEntry;
+            qInfo() << Q_FUNC_INFO << "Skipping inactive" << addonEntry.canonicalFilePath();
         }
       }
       else
