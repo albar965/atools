@@ -122,13 +122,10 @@ void HelpHandler::openFile(QWidget *parent, const QString& filepath)
     atools::gui::Dialog::warning(parent, tr("Help file \"%1\" not found").arg(filepath));
 }
 
-QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
+QUrl HelpHandler::getHelpUrlWeb(const QString& urlString, const QString& language)
 {
   // Replace variable and create URL
   QUrl url = QUrl(atools::replaceVar(urlString, "LANG", language));
-
-  if(!anchor.isEmpty())
-    url.setFragment(atools::replaceVar(anchor, "LANG", language));
 
   return url;
 }
@@ -189,21 +186,20 @@ QUrl HelpHandler::getHelpUrlFile(const QString& urlString, const QString& langua
   return getHelpUrlFile(parentWidget, urlString, language);
 }
 
-void HelpHandler::openHelpUrlWeb(const QString& urlString, const QString& language, const QString& anchor)
+void HelpHandler::openHelpUrlWeb(const QString& urlString, const QString& language)
 {
-  openHelpUrlWeb(parentWidget, urlString, language, anchor);
+  openHelpUrlWeb(parentWidget, urlString, language);
 }
 
-void HelpHandler::openHelpUrlWeb(QWidget *parent, const QString& urlString, const QString& language,
-                                 const QString& anchor)
+void HelpHandler::openHelpUrlWeb(QWidget *parent, const QString& urlString, const QString& language)
 {
-  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString << "languages" << language << "anchor" << anchor;
+  qDebug() << Q_FUNC_INFO << "About to open URL" << urlString << "languages" << language;
 
-  QUrl url = getHelpUrlWeb(urlString, language, anchor);
+  QUrl url = getHelpUrlWeb(urlString, language);
   if(!url.isEmpty())
     openUrl(parent, url);
   else
-    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\" and anchor \"%2\".").arg(urlString).arg(anchor));
+    atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
 }
 
 void HelpHandler::openHelpUrlFile(const QString& urlString, const QString& language)
