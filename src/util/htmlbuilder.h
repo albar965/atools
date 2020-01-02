@@ -279,7 +279,7 @@ public:
 
   /* Document begin and end */
   HtmlBuilder& doc(const QString& title = QString(), const QString& css = QString(),
-                   const QString& bodyStyle = QString());
+                   const QString& bodyStyle = QString(), const QStringList& headerLines = QStringList());
   HtmlBuilder& docEnd();
 
   /*
