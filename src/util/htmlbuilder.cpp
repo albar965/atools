@@ -886,7 +886,8 @@ HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QString& bodyStyle)
+HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QString& bodyStyle,
+                              const QStringList& headerLines)
 {
   htmlText +=
     "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -898,6 +899,10 @@ HtmlBuilder& HtmlBuilder::doc(const QString& title, const QString& css, const QS
 
   if(!title.isEmpty())
     htmlText += QString("<title>%1</title>\n").arg(title);
+
+  // Other header lines like "meta"
+  for(const QString& line : headerLines)
+    htmlText += line;
 
   // <link rel="stylesheet" href="css/style.css" type="text/css" />
   htmlText += "</head>\n";
