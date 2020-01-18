@@ -20,10 +20,10 @@
 
 #include <QDebug>
 
-class QRegularExpression;
-
 namespace atools {
 namespace geo {
+
+class Point3D;
 
 enum CrossTrackStatus
 {
@@ -256,6 +256,23 @@ public:
     altitude = value;
   }
 
+  /*
+   * Methods to convert the coordinate points into a 3D cartesian system.
+   * Earth center is zero-origin in cartesian and units are meter.
+   */
+  /*  *INDENT-OFF* */
+  // Coordinate axes:
+  //   | Z
+  //   |
+  //   |___ Y
+  //  /
+  // / X
+  /* *INDENT-ON* */
+  atools::geo::Point3D toCartesian() const;
+  void toCartesian(atools::geo::Point3D& point) const;
+  void toCartesian(double& x, double& y, double& z) const;
+  void toCartesian(float& x, float& y, float& z) const;
+
   // 1 deg / minutes / nm to meter / to 10 cm
   Q_DECL_CONSTEXPR static float POS_EPSILON_MIN = std::numeric_limits<float>::epsilon();
   Q_DECL_CONSTEXPR static float POS_EPSILON_10CM = 1.f / 60.f / 1852.216f / 10.f; /* ca 10 cm for lat and lon nearby equator */
@@ -267,6 +284,9 @@ public:
   Q_DECL_CONSTEXPR static float POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f; /* ca 1 km for lat and lon nearby equator */
 
   Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();
+
+  Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER = 6371. * 1000.;
+  Q_DECL_CONSTEXPR static float EARTH_RADIUS_METER_FLOAT = 6371.f * 1000.f;
 
 private:
   // Länge (x),Breite (y)

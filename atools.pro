@@ -168,9 +168,12 @@ HEADERS += \
   src/geo/calculations.h \
   src/geo/line.h \
   src/geo/linestring.h \
+  src/geo/point3d.h \
   src/geo/pos.h \
   src/geo/rect.h \
   src/geo/simplespatialindex.h \
+  src/geo/nanoflann.h \
+  src/geo/spatialindex.h \
   src/grib/windquery.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
@@ -273,9 +276,11 @@ SOURCES += \
   src/geo/calculations.cpp \
   src/geo/line.cpp \
   src/geo/linestring.cpp \
+  src/geo/point3d.cpp \
   src/geo/pos.cpp \
   src/geo/rect.cpp \
   src/geo/simplespatialindex.cpp \
+  src/geo/spatialindex.cpp \
   src/grib/windquery.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \

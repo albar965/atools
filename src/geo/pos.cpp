@@ -17,11 +17,13 @@
 
 #include "geo/calculations.h"
 #include "geo/pos.h"
+#include "geo/point3d.h"
 #include "exception.h"
 #include "atools.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
+#include <QVector3D>
 
 namespace atools {
 namespace geo {
@@ -29,7 +31,6 @@ namespace geo {
 const static QString OVERFLOW_60_TEST("%1");
 const static QString OVERFLOW_60_TEST_TEXT("60");
 const static float MAX_SECONDS = 59.98f;
-const static double EARTH_RADIUS_METER = 6371. * 1000.;
 
 const static QString SHORT_FORMAT("%1,%2");
 const static QString SHORT_FORMAT_ALT("%1,%2,%3");
@@ -696,6 +697,43 @@ atools::geo::Pos Pos::intersectingRadials(const atools::geo::Pos& p1, float brng
   double lon3 = lon1 + dlon13;
 
   return Pos(lon3, lat3).toDeg().normalize();
+}
+
+atools::geo::Point3D Pos::toCartesian() const
+{
+  Point3D vector;
+  toCartesian(vector);
+  return vector;
+}
+
+void Pos::toCartesian(atools::geo::Point3D& point) const
+{
+  float x, y, z;
+  toCartesian(x, y, z);
+  point.set(x, y, z);
+}
+
+void Pos::toCartesian(float& x, float& y, float& z) const
+{
+  double xx, yy, zz;
+  toCartesian(xx, yy, zz);
+  x = static_cast<float>(xx);
+  y = static_cast<float>(yy);
+  z = static_cast<float>(zz);
+}
+
+void Pos::toCartesian(double& x, double& y, double& z) const
+{
+  // ISO convention as used in physics
+  // Θ, theta, polar angle, latY, 0° to 180°
+  // φ, phi, azimuthal angle, lonX, −180° bis 180°
+  double theta = static_cast<double>(90.f - latY);
+  double phi = static_cast<double>(lonX);
+
+  double sinTheta = sinDeg(theta);
+  x = EARTH_RADIUS_METER * sinTheta * cosDeg(phi);
+  y = EARTH_RADIUS_METER * sinTheta * sinDeg(phi);
+  z = EARTH_RADIUS_METER * cosDeg(theta);
 }
 
 QDebug operator<<(QDebug out, const Pos& pos)
