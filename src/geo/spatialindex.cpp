@@ -91,8 +91,9 @@ void SpatialIndexPrivate::nearestPoints(QVector<int>& indexes, const Pos& pos, i
 
   QVector<float> resultSqDist(number);
   indexes.clear();
-  indexes.reserve(number);
-  p->index.knnSearch(pt, static_cast<size_t>(number), indexes.data(), resultSqDist.data());
+  indexes.fill(0.f, number);
+  size_t numFound = p->index.knnSearch(pt, static_cast<size_t>(number), indexes.data(), resultSqDist.data());
+  indexes.resize(static_cast<int>(numFound));
 }
 
 /* Callback for radius searches. Does min and max distance comparison. */
