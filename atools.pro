@@ -473,6 +473,10 @@ HEADERS += \
   src/fs/pln/flightplanentry.h \
   src/fs/pln/flightplanio.h \
   src/fs/progresshandler.h \
+  src/routing/routefinder.h \
+  src/routing/routenetwork.h \
+  src/routing/routenetworkairway.h \
+  src/routing/routenetworkradio.h \
   src/fs/scenery/addoncfg.h \
   src/fs/scenery/addoncomponent.h \
   src/fs/scenery/addonpackage.h \
@@ -614,6 +618,10 @@ SOURCES += \
   src/fs/pln/flightplanentry.cpp \
   src/fs/pln/flightplanio.cpp \
   src/fs/progresshandler.cpp \
+  src/routing/routefinder.cpp \
+  src/routing/routenetwork.cpp \
+  src/routing/routenetworkairway.cpp \
+  src/routing/routenetworkradio.cpp \
   src/fs/scenery/addoncfg.cpp \
   src/fs/scenery/addoncomponent.cpp \
   src/fs/scenery/addonpackage.cpp \
