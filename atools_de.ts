@@ -1779,7 +1779,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation>URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
+        <translation type="vanished">URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot;.</source>
