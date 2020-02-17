@@ -155,6 +155,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   script.executeScript(":/atools/resources/sql/fs/db/create_boundary_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_nav_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_ap_schema.sql");
+  // if(options->isCreateRouteTables())
   script.executeScript(":/atools/resources/sql/fs/db/create_route_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_meta_schema.sql");
   script.executeScript(":/atools/resources/sql/fs/db/create_views.sql");
@@ -286,6 +287,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS;
     routePartFraction = 4;
   }
+  qDebug() << Q_FUNC_INFO << "progress total" << total;
 
   if(options->isDatabaseReport())
     total += PROGRESS_NUM_DB_REPORT_STEPS;
@@ -429,12 +431,12 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/populate_nav_search.sql", tr("Collecting navaids for search"))))
     return;
 
-  // Fill tables for automatic flight plan calculation
-  if((aborted = runScript(&progress, "fs/db/populate_route_node.sql", tr("Populating routing tables"))))
-    return;
-
   if(options->isCreateRouteTables())
   {
+    // Fill tables for automatic flight plan calculation
+    if((aborted = runScript(&progress, "fs/db/populate_route_node.sql", tr("Populating routing tables"))))
+      return;
+
     if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))))
       return;
 
@@ -442,10 +444,10 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, numRouteSteps);
     if((aborted = edgeWriter.run()))
       return;
-  }
 
-  if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
-    return;
+    if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
+      return;
+  }
 
   if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
     return;
@@ -458,6 +460,12 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
     return;
+
+  if(options->isCreateRouteTables())
+  {
+    if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for search"))))
+      return;
+  }
 
   // =====================================================================
   // Update the metadata in the database
