@@ -281,9 +281,31 @@ create table nav_search
   name varchar(50) collate nocase,  -- Name for case insensitive searching
   region varchar(2),                -- Two letter ICAO region code
   range integer,                    -- Range in NM if nav_type is VORDME, VOR, DME or NDB
-  type varchar(15),                 -- Subtype dependent on nav_type
-                                    -- NAMED, UNNAMED -- HIGH, LOW, TERMINAL -- HH, H, MH, COMPASS_POINT
-  nav_type varchar(15),             -- WAYPOINT, VORDME, VOR, DME, NDB
+
+  type varchar(15),     -- Subtype dependent on nav_type
+                        -- 'VH'  - VOR/VORTAC - High
+                        -- 'VL'  - VOR/VORTAC - Low
+                        -- 'VT'  - VOR/VORTAC - Terminal
+                        -- 'NHH' - NDB - HH
+                        -- 'NH'  - NDB - H
+                        -- 'NMH' - NDB - MH
+                        -- 'NCP' - NDB - Compass Locator
+                        -- 'WN'  - Waypoint - Named
+                        -- 'WU'  - Waypoint - Unnamed
+                        -- 'V'   - Waypoint - VOR
+                        -- 'N'   - Waypoint - NDB
+
+  nav_type varchar(15), -- WAYPOINT, VORDME, VOR, DME, NDB
+                        -- (nav_type like ('V%') or nav_type in ('D', 'TC'))       All VOR/VORTAC/TACAN
+                        -- (nav_type like ('V%') or nav_type in ('D', 'TC', 'N'))  All VOR/VORTAC/TACAN/NDB
+                        -- nav_type in ('VD')                                      Only VOR-DME
+                        -- nav_type in ('V')                                       Only VOR
+                        -- nav_type in ('D')                                       Only DME
+                        -- nav_type in ('VT')                                      Only VORTAC
+                        -- nav_type in ('TC', 'TCD')                               Only TACAN
+                        -- nav_type = 'N'                                          All NDB
+                        -- nav_type = 'W'                                          All Waypoints
+
   frequency integer,                  -- VOR: MHz * 10000, NDB kHz * 100 to allow differentiation between NDB and VOR
   channel varchar(10),                 --  TACAN channel of TACAN or VORTAC
   waypoint_num_victor_airway integer, -- Number of victor airways attached to this waypoint

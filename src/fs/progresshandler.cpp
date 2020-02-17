@@ -97,6 +97,8 @@ bool ProgressHandler::reportFinish()
   info.newSceneryArea = false;
   info.newOther = false;
 
+  qDebug() << Q_FUNC_INFO << "info.current" << info.current;
+
   return callHandler();
 }
 
