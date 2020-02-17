@@ -2176,18 +2176,18 @@ Tempo Noturno: %5</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="122"/>
-        <location filename="src/gui/helphandler.cpp" line="146"/>
+        <location filename="src/gui/helphandler.cpp" line="143"/>
         <source>Help file &quot;%1&quot; not found</source>
         <oldsource>Help file &lt;i&gt;%1&lt;/i&gt; not found</oldsource>
         <translation>Arquivo de ajuda &quot;%1&quot; não encontrado</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="206"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation>URL está vazio por &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
+        <translation type="vanished">URL está vazio por &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="222"/>
+        <location filename="src/gui/helphandler.cpp" line="202"/>
+        <location filename="src/gui/helphandler.cpp" line="218"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>O URL está vazio para &quot;%1&quot;.</translation>
     </message>

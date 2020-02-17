@@ -2259,17 +2259,17 @@ Ore Notturne: %5</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="122"/>
-        <location filename="src/gui/helphandler.cpp" line="146"/>
+        <location filename="src/gui/helphandler.cpp" line="143"/>
         <source>Help file &quot;%1&quot; not found</source>
         <translation>File Aiuto &quot;%1&quot; non trovato</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="206"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation>URL è vuoto per &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
+        <translation type="vanished">URL è vuoto per &quot;%1&quot; e ancora &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="222"/>
+        <location filename="src/gui/helphandler.cpp" line="202"/>
+        <location filename="src/gui/helphandler.cpp" line="218"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>URL è vuoto per &quot;%1&quot;.</translation>
     </message>

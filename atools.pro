@@ -729,6 +729,7 @@ TRANSLATIONS = \
   atools_fr.ts \
   atools_it.ts \
   atools_nl.ts \
+  atools_cn.ts \
   atools_pt_BR.ts
 
 # Linux specific deploy target

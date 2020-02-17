@@ -1716,7 +1716,7 @@ Night time: %5</source>
     <name>atools::gui::HelpHandler</name>
     <message>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation>La URL está vacía por &quot;%1&quot; y ancla &quot;%2&quot;.</translation>
+        <translation type="vanished">La URL está vacía por &quot;%1&quot; y ancla &quot;%2&quot;.</translation>
     </message>
     <message>
         <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
