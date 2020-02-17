@@ -175,7 +175,7 @@ void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& pos, 
                                          float radiusMaxMeter, bool sort, const Pos *destPos) const
 {
   Point3D destPt;
-  if(destPos != nullptr)
+  if(destPos != nullptr && destPos->isValid())
     destPos->toCartesian(destPt);
 
   float originPtArr[3];
@@ -215,6 +215,16 @@ void SpatialIndexPrivate::append(const Point3D& point)
 void SpatialIndexPrivate::clear()
 {
   p->points.clear();
+}
+
+void SpatialIndexPrivate::reserve(int size)
+{
+  p->points.reserve(size);
+}
+
+QVector<Point3D>& SpatialIndexPrivate::points3D()
+{
+  return p->points;
 }
 
 SpatialIndexPrivate::SpatialIndexPrivate()

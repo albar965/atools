@@ -55,7 +55,7 @@ public:
   /* Overrides the organization path if not empty */
   static void setOverrideOrganisation(const QString& value)
   {
-    overrideOrganisation = value;
+   overrideOrganisation = value;
   }
 
   /*

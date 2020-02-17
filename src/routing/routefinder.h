@@ -19,22 +19,29 @@
 #define ATOOLS_ROUTEFINDER_H
 
 #include "util/heap.h"
-#include "routing/routenetwork.h"
+#include "routing/routenetworktypes.h"
 
 namespace atools {
 namespace routing {
 
+class RouteNetwork;
+
 struct RouteLeg
 {
-  int navId, /* Network ID */
-      airwayId;
+  int navId, /* Network ID as used as node id in the network */
+      airwayId; /* Airway ID as used in the network or -1 if not applicable */
   atools::routing::NodeType type; /* Network type */
   atools::geo::Pos pos;
+
+  friend QDebug operator<<(QDebug out, const atools::routing::RouteLeg& obj);
+
 };
 
 /*
  * Calculates flight plans within a route network which can be an airway or radio navaid network.
- * Use A* algorithm and several cost factor adjustments to get reasonable routes.
+ * Uses A* algorithm and several cost factor adjustments to get reasonable routes.
+ *
+ * The class has a state (i.e. start and destination) and is not re-entrant.
  */
 class RouteFinder
 {
@@ -49,9 +56,13 @@ public:
    * @param from departure position
    * @param to destination position
    * @param flownAltitude create a flight plan using airways for the given altitude. Set to 0 to ignore.
-   * @return true if a route was found
+   * @return true if a route was found and callback did not cancel
    */
-  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude);
+  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude, Modes modeParam);
+
+  /* Delegate to RouteNetwork::ensureLoaded. Loads network data if not already done.
+   *  Call before using calculateRoute */
+  void ensureNetworkLoaded();
 
   /* Prefer VORs to transition from departure to airway network */
   void setPreferVorToAirway(bool value)
@@ -65,23 +76,36 @@ public:
     preferNdbToAirway = value;
   }
 
+  /* Extract legs of shortest route and distance not including departure and destination. */
   void extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const;
 
-  RouteNetwork *getNetwork() const
+  const RouteNetwork *getNetwork() const
   {
     return network;
   }
 
+  /* Callback for progress reporting. distToDest is the direct euclidian distance in 3D space between
+   * departure and destination. curDistToDest is the direct euclidian distance in 3D space of
+   * the current node processed to the destination.
+   * return false to stop calculation. */
+  typedef std::function<bool (int distToDest, int curDistToDest)> RouteFinderCallbackType;
+
+  void setProgressCallback(RouteFinderCallbackType progressCallback)
+  {
+    callback = progressCallback;
+  }
+
 private:
   /* Expands a node by investigating all successors */
-  void expandNode(const atools::routing::Node& node, const atools::routing::Node& destNode);
+  void expandNode(const atools::routing::Node& node);
 
   /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
    * will have several factors applied to get reasonable routes */
-  float calculateEdgeCost(const atools::routing::Node& node, const atools::routing::Node& successorNode, int lengthMeter);
+  float calculateEdgeCost(const atools::routing::Node& node, const atools::routing::Node& successorNode,
+                          int lengthMeter);
 
   /* GC distance in meter as costs between nodes */
-  float costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& destNode);
+  float costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& nextNode);
   bool combineRanges(std::pair<int, int>& range1, int min, int max);
 
   /* Force algortihm to avoid direct route from start to destination */
@@ -96,7 +120,7 @@ private:
   static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB = 1.2f;
 
   /* Increase costs to force reception of at least one radio navaid along the route */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_UNREACHABLE_RADIONAV = 2.f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_UNREACHABLE_RADIONAV = 1.2f;
 
   /* Try to avoid NDBs */
   static Q_DECL_CONSTEXPR float COST_FACTOR_NDB = 1.5f;
@@ -104,18 +128,17 @@ private:
   /* Try to avoid VORs (no DME) */
   static Q_DECL_CONSTEXPR float COST_FACTOR_VOR = 1.2f;
 
-  /* Avoid too long airway segments */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_LONG_AIRWAY = 1.2f;
-
   /* Avoid airway changes during routing */
   static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.2f;
 
-  /* Distance to define a long airway segment in meter */
-  static Q_DECL_CONSTEXPR float DISTANCE_LONG_AIRWAY_METER = atools::geo::nmToMeter(200.f);
-
+  /* Altitude to use  for airway selection of 0 if not used */
   int altitude = 0;
 
-  RouteNetwork *network;
+  /* Mode which defines which nodes are to be selected while routing. */
+  atools::routing::Modes mode = atools::routing::MODE_ALL;
+
+  /* Used network */
+  atools::routing::RouteNetwork *network;
 
   /* Heap structure storing open nodes.
    * Sort order is defined by costs from start to node + estimate to destination */
@@ -133,15 +156,24 @@ private:
 
   /* Maps node id to predecessor node id */
   QHash<int, int> nodePredecessor;
+
   /* Maps node id to predecessor airway id */
   QHash<int, int> nodeAirwayId;
-  QHash<int, QString> nodeAirwayName;
+
+  /* Maps node id to predecessor airway name hash  */
+  QHash<int, quint32> nodeAirwayHash;
+
+  atools::routing::Node startNode, destNode;
 
   /* For RouteNetwork::getNeighbours to avoid instantiations */
   QVector<atools::routing::Node> successorNodes;
   QVector<atools::routing::Edge> successorEdges;
 
   bool preferVorToAirway = false, preferNdbToAirway = false;
+
+  /* Direct euclidian distances in 3D space for callback */
+  int distMeterToDest = 0, currentDistMeterToDest = 0;
+  RouteFinderCallbackType callback;
 };
 
 } // namespace route

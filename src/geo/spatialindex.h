@@ -69,13 +69,15 @@ public:
   void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
                  bool sort = true, const atools::geo::Pos *destPos = nullptr) const;
   void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
-                        bool sort = true, const atools::geo::Pos *destPos = nullptr) const;
+                        bool sort = true,
+                        const atools::geo::Pos *destPos = nullptr) const;
 
   /* Rebuild the KD-tree and Point3D vector. Call this after changing the base class vector. */
-  void buildIndex();
+  void updateIndex();
 
   /* Get points converted to 3D euclidian space from base vector. */
   const QVector<Point3D>& getPoints3D() const;
+  const Point3D& atPoint3D(int index) const;
 
 private:
   /* Copy objects from base vector to result set. */
@@ -110,6 +112,7 @@ class SpatialIndexPrivate
   void buildIndex();
   void append(const Point3D& point);
   void clear();
+  void reserve(int size);
   QVector<Point3D>& points3D();
 
   /* Data source containing nanoflann structures. */
@@ -156,7 +159,7 @@ void SpatialIndex<T>::getNearest(QVector<T>& objects, const Pos& pos, int number
 
 template<typename T>
 void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMinMeter, float radiusMaxMeter,
-                                bool sort, const Pos *destPos) const
+                                bool sort, const atools::geo::Pos *destPos) const
 {
   QVector<int> indexes;
   p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, sort, destPos);
@@ -177,21 +180,20 @@ void SpatialIndex<T>::getNearestIndexes(QVector<int>& indexes, const Pos& pos, i
 
 template<typename T>
 void SpatialIndex<T>::getRadiusIndexes(QVector<int>& indexes, const Pos& pos, float radiusMinMeter,
-                                       float radiusMaxMeter, bool sort, const Pos *destPos) const
+                                       float radiusMaxMeter, bool sort, const geo::Pos *destPos) const
 {
   p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, sort, destPos);
 }
 
 template<typename T>
-void SpatialIndex<T>::buildIndex()
+void SpatialIndex<T>::updateIndex()
 {
+  QVector<T>::squeeze();
   p->clear();
-  Point3D pt;
+  p->reserve(QVector<T>::size());
+
   for(const T& data : *this)
-  {
-    data.getPosition().toCartesian(pt);
-    p->append(pt);
-  }
+    p->append(data.getPosition().toCartesian());
 
   p->buildIndex();
 }
@@ -200,6 +202,12 @@ template<typename T>
 const QVector<Point3D>& SpatialIndex<T>::getPoints3D() const
 {
   return p->points3D();
+}
+
+template<typename T>
+const Point3D& SpatialIndex<T>::atPoint3D(int index) const
+{
+  return p->points3D().at(index);
 }
 
 } // namespace geo

@@ -332,12 +332,6 @@ Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2)
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2)
-{
-  return std::abs(f1 - f2) >= std::numeric_limits<TYPE>::epsilon();
-}
-
-template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
   return std::abs(f1 - f2) <= epsilon;
@@ -362,27 +356,33 @@ Q_DECL_CONSTEXPR bool almostEqual<long long>(long long f1, long long f2, long lo
 }
 
 template<typename TYPE>
+Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2)
+{
+  return !almostEqual<TYPE>(f1, f2);
+}
+
+template<typename TYPE>
 Q_DECL_CONSTEXPR bool almostNotEqual(TYPE f1, TYPE f2, TYPE epsilon)
 {
-  return std::abs(f1 - f2) >= epsilon;
+  return !almostEqual<TYPE>(f1, f2, epsilon);
 }
 
 template<>
 Q_DECL_CONSTEXPR bool almostNotEqual<int>(int f1, int f2, int epsilon)
 {
-  return atools::absInt(f1 - f2) >= epsilon;
+  return !almostEqual<int>(f1, f2, epsilon);
 }
 
 template<>
 Q_DECL_CONSTEXPR bool almostNotEqual<long>(long f1, long f2, long epsilon)
 {
-  return atools::absLong(f1 - f2) >= epsilon;
+  return !almostEqual<long>(f1, f2, epsilon);
 }
 
 template<>
 Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long long epsilon)
 {
-  return atools::absLongLong(f1 - f2) >= epsilon;
+  return !almostEqual<long long>(f1, f2, epsilon);
 }
 
 } // namespace atools

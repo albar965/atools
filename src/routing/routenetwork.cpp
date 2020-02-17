@@ -15,563 +15,432 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "routenetwork.h"
+#include "routing/routenetwork.h"
 
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "sql/sqlutil.h"
-
-#include "geo/pos.h"
-#include "geo/rect.h"
+#include "geo/calculations.h"
 
 #include <QElapsedTimer>
 
-using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
-using atools::sql::SqlRecord;
-using atools::geo::Pos;
-using atools::geo::Rect;
 
 namespace atools {
 namespace routing {
 
-RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
-                           const QString& edgeTableName, const QStringList& nodeExtraColumns,
-                           const QStringList& edgeExtraColumns)
-  : db(sqlDb), nodeTable(nodeTableName), edgeTable(edgeTableName), nodeExtraCols(nodeExtraColumns),
-  edgeExtraCols(edgeExtraColumns)
+RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, DataSource dataSource)
+  : db(sqlDb), source(dataSource)
 {
-  nodeCache.reserve(60000);
-  destinationNodePredecessors.reserve(1000);
-  airwayRouting = mode & atools::routing::ROUTE_JET || mode & atools::routing::ROUTE_VICTOR;
-  initQueries();
 }
 
 RouteNetwork::~RouteNetwork()
 {
-  deInitQueries();
+  deInit();
 }
 
-int RouteNetwork::getNumberOfNodesDatabase()
+void RouteNetwork::ensureLoaded()
 {
-  if(numNodesDb == -1)
-    numNodesDb = atools::sql::SqlUtil(db).rowCount(nodeTable);
-  return numNodesDb;
+  if(nodeIndex.isEmpty())
+    init();
 }
 
-int RouteNetwork::getNumberOfNodesCache() const
+void RouteNetwork::nodeNeighbours(QVector<Node>& nodes, QVector<Edge>& edges,
+                                  const Node& from, const geo::Pos& destPos) const
 {
-  return nodeCache.size();
-}
+  atools::geo::Point3D p3dFrom = nodeToCartesian(from);
+  bool destValid = destinationPoint3D.isValid();
 
-void RouteNetwork::setMode(atools::routing::Modes routeMode)
-{
-  mode = routeMode;
-  airwayRouting = mode & atools::routing::ROUTE_JET || mode & atools::routing::ROUTE_VICTOR;
-}
-
-void RouteNetwork::clearStartAndDestinationNodes()
-{
-  departurePos = atools::geo::EMPTY_POS;
-  destinationPos = atools::geo::EMPTY_POS;
-  nodeCache.clear();
-  destinationNodePredecessors.clear();
-  numNodesDb = -1;
-  nodeIndexesCreated = false;
-  edgeIndexesCreated = false;
-  nodeCache.reserve(60000);
-  destinationNodePredecessors.reserve(1000);
-}
-
-void RouteNetwork::getNeighbours(const atools::routing::Node& from, QVector<atools::routing::Node>& neighbours,
-                                 QVector<Edge>& edges)
-{
-  for(const Edge& e : from.edges)
+  if(source == SOURCE_AIRWAY)
   {
-    bool add = false;
+    // Add airway edges =======================================
+    nodes.reserve(from.edges.size() + 10);
+    edges.reserve(from.edges.size() + 10);
 
-    // Handle airways differently to keep cache for low and high alt routes together
-    if(e.type == AIRWAY_BOTH)
-      add = mode & ROUTE_JET || mode & ROUTE_VICTOR;
-    else if(e.type == AIRWAY_JET)
-      add = mode & ROUTE_JET;
-    else if(e.type == AIRWAY_VICTOR)
-      add = mode & ROUTE_VICTOR;
-    else
-      add = true;
+    float fromToDestDistance = destValid ? p3dFrom.directDistanceMeter(destinationPoint3D) : 0.f;
 
-    if(add)
+    // Look at all node edges/airways
+    for(const Edge& edge : from.edges)
     {
-      // Add nodes and edges only if they match airway mode
-      neighbours.append(fetchNode(e.toNodeId));
-      edges.append(e);
-    }
-  }
-}
-
-void RouteNetwork::addDepartureAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to)
-{
-  qDebug() << "adding start and  destination to network";
-
-  if(departurePos == from && destinationPos == to)
-    return;
-
-  if(destinationPos != to)
-  {
-    // Remove all references to destination node
-    cleanDestNodeEdges();
-
-    // Add destination first so it can be added to start successors
-    destinationPos = to;
-
-    destinationNodeRect = Rect(to, NODE_SEARCH_RADIUS_METER);
-
-    // Will use the bounding rectangle to add any neighbor nodes to dest
-    fetchNode(to.getLonX(), to.getLatY(), false, DESTINATION_NODE_ID);
-
-    for(int id : nodeCache.keys())
-      // Fill destination node predecessor index
-      addDestNodeEdges(nodeCache[id]);
-  }
-
-  if(departurePos != from)
-  {
-    departurePos = from;
-    fetchNode(from.getLonX(), from.getLatY(), true, DEPARTURE_NODE_ID);
-  }
-  qDebug() << "adding start and  destination to network done";
-}
-
-atools::routing::Node RouteNetwork::getDepartureNode() const
-{
-  return nodeCache.value(DEPARTURE_NODE_ID);
-}
-
-atools::routing::Node RouteNetwork::getDestinationNode() const
-{
-  return nodeCache.value(DESTINATION_NODE_ID);
-}
-
-atools::routing::Node RouteNetwork::getNode(int id)
-{
-  if(id == -1)
-    return atools::routing::Node();
-  else
-    return fetchNode(id);
-}
-
-/* Remove all references to the destination node from the cache */
-void RouteNetwork::cleanDestNodeEdges()
-{
-  // Remove all references to destination node
-  for(int i : destinationNodePredecessors)
-  {
-    if(nodeCache.contains(i))
-    {
-      // node is in cache
-      // Remove all edges from the node that point to the destination node
-      QVector<Edge>& edges = nodeCache[i].edges;
-      QVector<Edge>::iterator it = std::remove_if(edges.begin(), edges.end(),
-                                                  [ = ](const Edge& e) -> bool
-          {
-            return e.toNodeId == DESTINATION_NODE_ID;
-          });
-
-      if(it == edges.end())
-        qWarning() << "No node destination predecessors deleted for node" << nodeCache.value(i).id;
-      else
-        edges.erase(it, edges.end());
-    }
-    else
-      qWarning() << "No node destination found" << nodeCache.value(i).id;
-  }
-
-  // Clear predecessor cache
-  destinationNodePredecessors.clear();
-}
-
-/* Add a destination node virtual edge to the node if it is inside the destination bounding rectangle */
-void RouteNetwork::addDestNodeEdges(atools::routing::Node& node)
-{
-  if(destinationNodeRect.contains(node.pos) && !destinationNodePredecessors.contains(node.id) &&
-     node.id != DESTINATION_NODE_ID)
-  {
-    // Node is not dest and not indexed yet - create virtual edge
-    atools::routing::Edge edge(DESTINATION_NODE_ID, static_cast<int>(node.pos.distanceMeterTo(destinationPos)));
-
-    // Near destination - add as successor
-    node.edges.append(edge);
-    // Remember in cache for later cleanup
-    destinationNodePredecessors.insert(node.id);
-  }
-}
-
-void RouteNetwork::getNavIdAndTypeForNode(int nodeId, int& navId, atools::routing::NodeType& type)
-{
-  if(nodeId == DEPARTURE_NODE_ID)
-  {
-    type = DEPARTURE;
-    navId = -1; // No database id available
-  }
-  else if(nodeId == DESTINATION_NODE_ID)
-  {
-    type = DESTINATION;
-    navId = -1; // No database id available
-  }
-  else
-  {
-    nodeNavIdAndTypeQuery->bindValue(":id", nodeId);
-    nodeNavIdAndTypeQuery->exec();
-
-    if(nodeNavIdAndTypeQuery->next())
-    {
-      navId = nodeNavIdAndTypeQuery->value("nav_id").toInt();
-
-      int typeVal = nodeNavIdAndTypeQuery->value("type").toInt();
-
-      if(airwayRouting)
-        // This is an airway network which has the type in the upper four bits
-        type = static_cast<atools::routing::NodeType>(typeVal >> 4);
-      else
-        type = static_cast<atools::routing::NodeType>(typeVal);
-    }
-    else
-    {
-      navId = -1;
-      type = atools::routing::NONE;
-    }
-    nodeNavIdAndTypeQuery->finish();
-  }
-}
-
-/* Create a virtual node at the given coordinates with the given id */
-atools::routing::Node RouteNetwork::fetchNode(float lonx, float laty, bool loadSuccessors, int id)
-{
-  nodeCache.remove(id);
-
-  Node node;
-  node.id = id;
-  node.range = 0;
-
-  if(id == DEPARTURE_NODE_ID)
-    node.type = DEPARTURE;
-  else if(id == DESTINATION_NODE_ID)
-    node.type = DESTINATION;
-  else
-    node.type = NONE;
-
-  node.pos.setLonX(lonx);
-  node.pos.setLatY(laty);
-
-  if(loadSuccessors)
-  {
-    // Load all successor nodes within the query rectangle
-    Rect queryRect(Pos(lonx, laty), NODE_SEARCH_RADIUS_METER);
-
-    // Use a set for de-duplication
-    QSet<Edge> tempEdges;
-    tempEdges.reserve(1000);
-
-    for(const Rect& rect : queryRect.splitAtAntiMeridian())
-    {
-      bindCoordRect(rect, nearestNodesQuery);
-      nearestNodesQuery->exec();
-      while(nearestNodesQuery->next())
+      // Check if edge type matches
+      if(matchEdge(edge))
       {
-        int nodeId = nearestNodesQuery->value("node_id").toInt();
-        if(testType(static_cast<atools::routing::NodeType>(nearestNodesQuery->value("type").toInt())))
+        const Node& node = getNode(edge.toIndex);
+        atools::geo::Point3D p3dNode = nodeToCartesian(node);
+
+        // Add only nodes/edges that are ahead of the current node and lead towards the destination
+        if(!destValid || p3dNode.directDistanceMeter(destinationPoint3D) < fromToDestDistance)
         {
-          Pos otherPos(nearestNodesQuery->value("lonx").toFloat(), nearestNodesQuery->value("laty").toFloat());
-          tempEdges.insert(Edge(nodeId, static_cast<int>(node.pos.distanceMeterTo(otherPos))));
+          // Check if node type matches
+          if(matchNode(node))
+          {
+            nodes.append(node);
+            edges.append(edge);
+          }
         }
       }
     }
-    node.edges = tempEdges.values().toVector();
-
-    // Add edges to destination node if there are any
-    addDestNodeEdges(node);
-  }
-
-  nodeCache.insert(node.id, node);
-
-  return node;
-}
-
-/* Get the node either from cache of from the database. The node will include all edges. */
-atools::routing::Node RouteNetwork::fetchNode(int id)
-{
-  if(nodeCache.contains(id))
-    return nodeCache.value(id);
-
-  nodeByIdQuery->bindValue(":id", id);
-  nodeByIdQuery->exec();
-  atools::routing::Node node;
-
-  if(nodeByIdQuery->next())
-  {
-    node = createNode(nodeByIdQuery->record());
-    node.id = id;
-
-    QSet<Edge> tempEdges;
-    tempEdges.reserve(1000);
-
-    // Add ingoing edges
-    edgeToQuery->bindValue(":id", id);
-    edgeToQuery->exec();
-
-    while(edgeToQuery->next())
-    {
-      int nodeId = edgeToQuery->value("to_node_id").toInt();
-      if(nodeId != id && testType(static_cast<atools::routing::NodeType>(edgeToQuery->value("to_node_type").toInt())))
-        tempEdges.insert(createEdge(edgeToQuery->record(), nodeId, false /* reverseDirection */));
-    }
-
-    // Add outgoing edges
-    edgeFromQuery->bindValue(":id", id);
-    edgeFromQuery->exec();
-
-    while(edgeFromQuery->next())
-    {
-      int nodeId = edgeFromQuery->value("from_node_id").toInt();
-      if(nodeId != id && testType(static_cast<atools::routing::NodeType>(edgeFromQuery->value("from_node_type").toInt())))
-        tempEdges.insert(createEdge(edgeFromQuery->record(), nodeId, true /* reverseDirection */));
-    }
-
-    node.edges = tempEdges.values().toVector();
-    addDestNodeEdges(node);
-
-    nodeCache.insert(node.id, node);
-  }
-  nodeByIdQuery->finish();
-  return node;
-}
-
-void RouteNetwork::initQueries()
-{
-  QString nodeCols = nodeExtraCols.join(",");
-  if(!nodeExtraCols.isEmpty())
-    nodeCols.append(", ");
-
-  QString edgeCols = edgeExtraCols.join(",");
-  if(!edgeExtraCols.isEmpty())
-    edgeCols.append(", ");
-
-  nodeByNavIdQuery = new SqlQuery(db);
-  nodeByNavIdQuery->prepare("select node_id from " + nodeTable + " where nav_id = :id and type = :type");
-
-  nodeNavIdAndTypeQuery = new SqlQuery(db);
-  nodeNavIdAndTypeQuery->prepare("select nav_id, type from " + nodeTable + " where node_id = :id");
-
-  nearestNodesQuery = new SqlQuery(db);
-  nearestNodesQuery->prepare(
-    "select node_id, type, lonx, laty from " + nodeTable +
-    " where lonx between :leftx and :rightx and laty between :bottomy and :topy");
-
-  nodeByIdQuery = new SqlQuery(db);
-  nodeByIdQuery->prepare(
-    "select " + nodeCols + " type, lonx, laty from " + nodeTable + " where node_id = :id");
-
-  edgeToQuery = new SqlQuery(db);
-  edgeToQuery->prepare(
-    "select " + edgeCols + " to_node_id, to_node_type from " + edgeTable +
-    " where from_node_id = :id");
-
-  edgeFromQuery = new SqlQuery(db);
-  edgeFromQuery->prepare(
-    "select " + edgeCols + " from_node_id, from_node_type from " + edgeTable +
-    " where to_node_id = :id");
-}
-
-void RouteNetwork::deInitQueries()
-{
-  clearStartAndDestinationNodes();
-
-  delete nodeByNavIdQuery;
-  nodeByNavIdQuery = nullptr;
-
-  delete nodeNavIdAndTypeQuery;
-  nodeNavIdAndTypeQuery = nullptr;
-
-  delete nearestNodesQuery;
-  nearestNodesQuery = nullptr;
-
-  delete nodeByIdQuery;
-  nodeByIdQuery = nullptr;
-
-  delete edgeToQuery;
-  edgeToQuery = nullptr;
-
-  delete edgeFromQuery;
-  edgeFromQuery = nullptr;
-}
-
-/* Create node from SQL record */
-atools::routing::Node RouteNetwork::createNode(const SqlRecord& rec)
-{
-  // Update indexes into SQL record
-  updateNodeIndexes(rec);
-  Node node;
-
-  if(airwayRouting)
-  {
-    node.type = static_cast<atools::routing::NodeType>(rec.valueInt(nodeTypeIndex) >> 4);
-    node.subtype = static_cast<atools::routing::NodeType>(rec.valueInt(nodeTypeIndex) & 0x0f);
   }
   else
-    node.type = static_cast<atools::routing::NodeType>(rec.valueInt(nodeTypeIndex));
-
-  if(nodeRangeIndex != -1)
-    // Add range if part of the extra columns
-    node.range = rec.valueInt(nodeRangeIndex);
-  node.pos.setLonX(rec.valueFloat(nodeLonXIndex));
-  node.pos.setLatY(rec.valueFloat(nodeLatYIndex));
-  return node;
-}
-
-/* Update node index caches to avoid string lookups in SqlRecord */
-void RouteNetwork::updateNodeIndexes(const SqlRecord& rec)
-{
-  if(!nodeIndexesCreated)
   {
-    nodeTypeIndex = rec.indexOf("type");
-    if(rec.contains("range"))
-      nodeRangeIndex = rec.indexOf("range");
-    else
-      nodeRangeIndex = -1;
-    nodeLonXIndex = rec.indexOf("lonx");
-    nodeLatYIndex = rec.indexOf("laty");
-    nodeIndexesCreated = true;
-  }
-}
+    // Find nearest navaids =======================================
+    // Nodes are already removed if they are not ahead towards destination
+    QVector<int> indexes;
+    nodeIndex.getRadiusIndexes(indexes, from.pos,
+                               // Allow to use closest navaid at departure
+                               from.index == DEPARTURE_NODE_INDEX ? 0 : atools::geo::nmToMeter(minNearestDistanceNm),
+                               atools::geo::nmToMeter(maxNearestDistanceNm), false /* sort */, &destPos);
 
-/* Create edge from SQL record */
-atools::routing::Edge RouteNetwork::createEdge(const atools::sql::SqlRecord& rec, int toNodeId, bool reverseDirection)
-{
-  updateEdgeIndexes(rec);
-  Edge edge;
-  edge.toNodeId = toNodeId;
+    nodes.reserve(indexes.size() + 10);
+    edges.reserve(indexes.size() + 10);
 
-  if(edgeTypeIndex != -1)
-    edge.type = static_cast<atools::routing::EdgeType>(rec.valueInt(edgeTypeIndex));
-
-  if(edgeDirectionIndex != -1)
-  {
-    edge.direction = static_cast<atools::routing::EdgeDirection>(rec.valueInt(edgeDirectionIndex));
-    if(reverseDirection && edge.direction != BOTH)
+    for(int idx : indexes)
     {
-      if(edge.direction == FORWARD)
-        edge.direction = BACKWARD;
-      else if(edge.direction == BACKWARD)
-        edge.direction = FORWARD;
+      const Node& node = nodeIndex.at(idx);
+      if(matchNode(node))
+      {
+        // Add node and edge leading to it
+        nodes.append(node);
+        edges.append(Edge(idx, p3dFrom.gcDistanceMeter(nodeIndex.atPoint3D(idx))));
+      }
     }
   }
 
-  if(edgeMinAltIndex != -1)
+  // Add destination node and calculate edges to it if in range ==========================================
+  if(destValid && p3dFrom.directDistanceMeter(destinationPoint3D) < atools::geo::nmToMeter(nearestDestDistanceNm))
   {
-    int minAlt = rec.valueInt(edgeMinAltIndex);
-    if(minAlt > 0)
-      edge.minAltFt = minAlt;
-  }
-
-  if(edgeMaxAltIndex != -1)
-  {
-    int maxAlt = rec.valueInt(edgeMaxAltIndex);
-    if(maxAlt > 0)
-      edge.maxAltFt = maxAlt;
-    // otherwise leave max value
-  }
-  if(edgeAirwayIdIndex != -1)
-    edge.airwayId = rec.valueInt(edgeAirwayIdIndex);
-
-  if(edgeAirwayNameIndex != -1)
-    edge.airwayName = rec.valueStr(edgeAirwayNameIndex);
-
-  if(edgeDistanceIndex != -1)
-    edge.lengthMeter = rec.valueInt(edgeDistanceIndex);
-  return edge;
-}
-
-/* Update edge index caches to avoid string lookups in SqlRecord */
-void RouteNetwork::updateEdgeIndexes(const atools::sql::SqlRecord& rec)
-{
-  if(!edgeIndexesCreated)
-  {
-    if(rec.contains("type"))
-      edgeTypeIndex = rec.indexOf("type");
-    else
-      edgeTypeIndex = -1;
-
-    if(rec.contains("direction"))
-      edgeDirectionIndex = rec.indexOf("direction");
-    else
-      edgeDirectionIndex = -1;
-
-    if(rec.contains("minimum_altitude"))
-      edgeMinAltIndex = rec.indexOf("minimum_altitude");
-    else
-      edgeMinAltIndex = -1;
-
-    if(rec.contains("maximum_altitude"))
-      edgeMaxAltIndex = rec.indexOf("maximum_altitude");
-    else
-      edgeMaxAltIndex = -1;
-
-    if(rec.contains("airway_name"))
-      edgeAirwayNameIndex = rec.indexOf("airway_name");
-    else
-      edgeAirwayNameIndex = -1;
-
-    if(rec.contains("airway_id"))
-      edgeAirwayIdIndex = rec.indexOf("airway_id");
-    else
-      edgeAirwayIdIndex = -1;
-
-    if(rec.contains("distance"))
-      edgeDistanceIndex = rec.indexOf("distance");
-    else
-      edgeDistanceIndex = -1;
-
-    edgeIndexesCreated = true;
+    nodes.append(destinationNode);
+    edges.append(Edge(DESTINATION_NODE_INDEX, p3dFrom.gcDistanceMeter(destinationPoint3D)));
   }
 }
 
-/* Check if the node type is part of the network and usable for the current mode */
-bool RouteNetwork::testType(atools::routing::NodeType type)
+void RouteNetwork::setParameters(const geo::Pos& from, const geo::Pos& to, int altitudeParam, Modes modeParam)
 {
-  atools::routing::NodeType tmp = type;
-  if(airwayRouting)
-    tmp = static_cast<atools::routing::NodeType>(static_cast<int>(type) >> 4);
+  clearParameters();
 
-  switch(tmp)
+  altitude = altitudeParam;
+  mode = modeParam;
+
+  // Add departure node to network ====================
+  departureNode.index = DEPARTURE_NODE_INDEX;
+  departureNode.pos = from;
+  departureNode.type = DEPARTURE;
+  departureNode.range = 0;
+  departureNode.subtype = NONE;
+  from.toCartesian(departurePoint3D);
+
+  // Add extending edges of departure node
+  QVector<int> indexes;
+  nodeIndex.getRadiusIndexes(indexes, departureNode.pos, 0.f,
+                             atools::geo::nmToMeter(nearestDepartureDistanceNm), false /* sort */, &to);
+  atools::geo::Point3D p3d = from.toCartesian();
+  for(int idx : indexes)
+    departureNode.edges.append(Edge(idx, p3d.gcDistanceMeter(nodeIndex.atPoint3D(idx))));
+
+  // Add destination node to network ====================
+  destinationNode.index = DESTINATION_NODE_INDEX;
+  destinationNode.pos = to;
+  destinationNode.type = DESTINATION;
+  destinationNode.range = 0;
+  destinationNode.subtype = NONE;
+  to.toCartesian(destinationPoint3D);
+}
+
+void RouteNetwork::clearParameters()
+{
+  altitude = 0;
+  mode = MODE_ALL;
+  departureNode = Node();
+  departurePoint3D = atools::geo::Point3D();
+
+  destinationNode = Node();
+  destinationPoint3D = atools::geo::Point3D();
+}
+
+const Node& RouteNetwork::getNode(int index) const
+{
+  const static atools::routing::Node INVALID;
+
+  if(index >= 0)
+    return nodeIndex.at(index);
+  else if(index == DEPARTURE_NODE_INDEX)
+    return departureNode;
+  else if(index == DESTINATION_NODE_INDEX)
+    return destinationNode;
+  else
+    return INVALID;
+}
+
+const geo::Point3D& RouteNetwork::point3D(int index) const
+{
+  const static atools::geo::Point3D INVALID;
+
+  if(index >= 0)
+    return nodeIndex.atPoint3D(index);
+  else if(index == DEPARTURE_NODE_INDEX)
+    return departurePoint3D;
+  else if(index == DESTINATION_NODE_INDEX)
+    return destinationPoint3D;
+  else
+    return INVALID;
+}
+
+void RouteNetwork::clearIndexes()
+{
+  nodeIndex.clear();
+  nodeIndex.updateIndex();
+  nodeIdIndexMap.clear();
+}
+
+void RouteNetwork::init()
+{
+  QElapsedTimer timer;
+  timer.start();
+
+  deInit();
+
+  int currentIndex = 0;
+
+  if(source == SOURCE_RADIO)
   {
-    case atools::routing::WAYPOINT_VICTOR:
-    case atools::routing::WAYPOINT_JET:
-    case atools::routing::WAYPOINT_BOTH:
-      return mode & ROUTE_JET || mode & ROUTE_VICTOR;
+    // Load VOR, VORDME and VORTAC. No DME and no TACAN. ==========================================
+    readNodesRadio("select v.vor_id as id, v.type, "
+                   "case when v.dme_altitude is null then 0 else 1 end as has_dme, v.range, v.lonx, v.laty "
+                   "from vor v where type <> 'TC' and dme_only = 0", currentIndex, true);
 
-    case atools::routing::NDB:
+    // Load all NDB =================================================
+    readNodesRadio("select n.ndb_id as id, n.range, n.lonx, n.laty from ndb n", currentIndex, false);
+  }
+  else if(source == SOURCE_AIRWAY)
+  {
+    // Load waypoints and airways ====================================
+
+    // Outgoing edges for node id
+    QMultiHash<int, Edge> nodeEdgeMap;
+    nodeEdgeMap.reserve(200000);
+
+    // Read all airways from database into map. Edge::toIndex gets database id temporarily
+    readEdgesAirway(nodeEdgeMap);
+
+    nodeIdIndexMap.reserve(300000);
+
+    QVector<Node> nodesTemp;
+    nodesTemp.reserve(300000);
+
+    // Read navaids into nodeIdIndexMap and into nodesTemp
+    // Waypoints without airways
+    readNodesAirway(nodesTemp,
+                    "select w.waypoint_id, w.type, w.lonx, w.laty "
+                    "from waypoint w "
+                    "where w.type like 'W%' and w.num_jet_airway = 0 and w.num_victor_airway = 0",
+                    currentIndex);
+
+    // Airway waypoints
+    readNodesAirway(nodesTemp,
+                    "select w.waypoint_id, w.type, w.num_jet_airway, w.num_victor_airway, w.lonx, w.laty "
+                    "from waypoint w "
+                    "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
+                    currentIndex);
+
+    // Airway VOR waypoints
+    readNodesAirway(nodesTemp,
+                    "select w.waypoint_id, w.type, v.type as vortype, v.dme_altitude, "
+                    "v.dme_only, v.range, w.num_jet_airway, w.num_victor_airway, w.lonx, w.laty "
+                    "from waypoint w join vor v on w.nav_id = v.vor_id "
+                    "where w.type = 'V' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
+                    currentIndex);
+
+    // Airway NDB waypoints
+    readNodesAirway(nodesTemp,
+                    "select w.waypoint_id, w.type, n.type as ndbtype, n.range, "
+                    "w.num_jet_airway, w.num_victor_airway, w.lonx, w.laty "
+                    "from waypoint w join ndb n on w.nav_id = n.ndb_id "
+                    "where w.type = 'N' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
+                    currentIndex);
+
+    // Insert outgoing edges to each node and copy them to the index
+    nodeIndex.reserve(nodesTemp.size());
+    for(Node n : nodesTemp)
+    {
+      n.edges = nodeEdgeMap.values(n.id).toVector();
+
+      // Replace database ids in Edge::toIndex with array indexes
+      for(Edge& e : n.edges)
+        e.toIndex = nodeIdIndexMap.value(e.toIndex);
+
+      nodeIndex.append(n);
+    }
+  }
+  nodeIndex.updateIndex();
+
+  // Calculate great circle distance for all edges
+  for(Node& n : nodeIndex)
+  {
+    for(Edge& e : n.edges)
+      e.lengthMeter =
+        atools::roundToInt(nodeIndex.atPoint3D(n.index).gcDistanceMeter(nodeIndex.atPoint3D(e.toIndex)));
+  }
+
+  qDebug() << Q_FUNC_INFO << timer.restart() << "ms";
+}
+
+void RouteNetwork::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const
+{
+  SqlQuery query("select a.airway_id, a.from_waypoint_id, a.to_waypoint_id, "
+                 "a.minimum_altitude, a.maximum_altitude, a.airway_type, a.direction, a.airway_name from airway a", db);
+  query.exec();
+  int idx = 0;
+  while(query.next())
+  {
+    Edge edge;
+    edge.airwayId = query.valueInt("airway_id");
+    edge.minAltFt =
+      static_cast<quint16>(std::min(query.valueInt("minimum_altitude"), static_cast<int>(Edge::MAX_ALTITUDE)));
+    edge.maxAltFt =
+      static_cast<quint16>(std::min(query.valueInt("maximum_altitude"), static_cast<int>(Edge::MAX_ALTITUDE)));
+    edge.airwayHash = qHash(query.valueStr("airway_name")) + 1; // Avoid null
+
+    QString type = query.valueStr("airway_type");
+    if(type == "J")
+      edge.type = AIRWAY_JET;
+    else if(type == "V")
+      edge.type = AIRWAY_VICTOR;
+    else if(type == "B")
+      edge.type = AIRWAY_BOTH;
+
+    // Add one edge for each allowed direction
+    QString dir = query.valueStr("direction");
+    int from = query.valueInt("from_waypoint_id");
+    int to = query.valueInt("to_waypoint_id");
+    if(dir == "F" || dir == "N")
+    {
+      // Forward or both directions allowed
+      edge.toIndex = to;
+      nodeEdgeMap.insert(from, edge);
+      idx++;
+    }
+
+    if(dir == "B" || dir == "N")
+    {
+      // Backward or both directions allowed
+      edge.toIndex = from;
+      nodeEdgeMap.insert(to, edge);
+      idx++;
+    }
+  }
+}
+
+bool RouteNetwork::matchNode(const atools::routing::Node& node) const
+{
+  switch(node.type)
+  {
     case atools::routing::VOR:
     case atools::routing::VORDME:
-      return mode & ROUTE_RADIONAV;
+    case atools::routing::DME:
+    case atools::routing::NDB:
+      return mode & MODE_RADIONAV;
 
-    case atools::routing::DEPARTURE:
-    case atools::routing::DESTINATION:
-      return true;
+    case atools::routing::WAYPOINT_VICTOR:
+      return mode & MODE_WAYPOINT || mode & MODE_VICTOR;
+
+    case atools::routing::WAYPOINT_JET:
+      return mode & MODE_WAYPOINT || mode & MODE_JET;
+
+    case atools::routing::WAYPOINT_BOTH:
+      return mode & MODE_WAYPOINT || mode & MODE_JET || mode & MODE_VICTOR;
+
+    case atools::routing::WAYPOINT_UNNAMED:
+    case atools::routing::WAYPOINT_NAMED:
+      return mode & MODE_WAYPOINT;
 
     case atools::routing::NONE:
+    case atools::routing::DEPARTURE:
+    case atools::routing::DESTINATION:
       break;
   }
-
-  return false;
+  return true;
 }
 
-void RouteNetwork::bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query)
+void RouteNetwork::readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx)
 {
-  query->bindValue(":leftx", rect.getWest());
-  query->bindValue(":rightx", rect.getEast());
-  query->bindValue(":bottomy", rect.getSouth());
-  query->bindValue(":topy", rect.getNorth());
+  SqlQuery query(queryStr, db);
+  query.exec();
+  while(query.next())
+  {
+    Node node;
+    node.index = idx;
+    node.id = query.valueInt("waypoint_id");
+
+    node.pos.setLonX(query.valueFloat("lonx"));
+    node.pos.setLatY(query.valueFloat("laty"));
+    node.range = atools::geo::nmToMeter(query.valueInt("range", 0));
+
+    // Use number of attached airways to determine type
+    QString type = query.valueStr("type");
+    int numJet = query.valueInt("num_jet_airway", 0);
+    int numVictor = query.valueInt("num_victor_airway", 0);
+    if(numJet > 0 && numVictor > 0)
+      node.type = WAYPOINT_BOTH;
+    else if(numJet > 0)
+      node.type = WAYPOINT_JET;
+    else if(numVictor > 0)
+      node.type = WAYPOINT_VICTOR;
+    else if(type == "WN")
+      node.type = WAYPOINT_NAMED;
+    else if(type == "WU")
+      node.type = WAYPOINT_UNNAMED;
+
+    if(query.hasField("vortype"))
+    {
+      // Query uses VOR table ====================
+      QString vortype = query.valueStr("vortype");
+      if(vortype == "H" || vortype == "L" || vortype == "T" || vortype.startsWith("VT"))
+      {
+        if(query.valueBool("dme_only"))
+          node.subtype = DME;
+        else
+          node.subtype = query.isNull("dme_altitude") ? VOR : VORDME;
+      }
+    }
+    else if(query.hasField("ndbtype"))
+      // Query uses NDB table ====================
+      node.subtype = NDB;
+
+    if(node.type == NONE)
+      qWarning() << "No node type" << query.record();
+
+    nodes.append(node);
+    nodeIdIndexMap.insert(node.id, idx);
+    idx++;
+  }
+}
+
+void RouteNetwork::readNodesRadio(const QString& queryStr, int& idx, bool vor)
+{
+  SqlQuery query(queryStr, db);
+  query.exec();
+  while(query.next())
+  {
+    Node node;
+    node.index = idx;
+    node.id = query.valueInt("id");
+    node.pos.setLonX(query.valueFloat("lonx"));
+    node.pos.setLatY(query.valueFloat("laty"));
+    node.range = atools::geo::nmToMeter(query.valueInt("range"));
+
+    if(vor)
+      node.type = query.valueBool("has_dme") ? VORDME : VOR;
+    else
+      node.type = NDB;
+
+    nodeIndex.append(node);
+    idx++;
+  }
+}
+
+void RouteNetwork::deInit()
+{
+  clearIndexes();
 }
 
 } // namespace route

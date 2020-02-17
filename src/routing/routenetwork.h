@@ -15,274 +15,191 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_ROUTENETWORK_H
-#define ATOOLS_ROUTENETWORK_H
+#ifndef ATOOLS_ROUTENETWORKWP_H
+#define ATOOLS_ROUTENETWORKWP_H
 
-#include "geo/calculations.h"
-#include "geo/pos.h"
-#include "geo/rect.h"
-
-#include <QHash>
-#include <QVector>
-
-namespace  atools {
-namespace sql {
-class SqlDatabase;
-class SqlQuery;
-class SqlRecord;
-}
-}
+#include "geo/spatialindex.h"
+#include "routing/routenetworktypes.h"
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+
 namespace routing {
 
-/* Network mode. Changes some internal behavior of the network. */
-enum Mode
-{
-  ROUTE_NONE = 0x00,
-  ROUTE_RADIONAV = 0x01, /* VOR/NDB to VOR/NDB */
-  ROUTE_VICTOR = 0x02, /* Low airways  */
-  ROUTE_JET = 0x04 /* High airways */
-};
-
-Q_DECLARE_FLAGS(Modes, Mode);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::routing::Modes);
-
-/* Type and subtype of a node */
-enum NodeType
-{
-  NONE = 0,
-  VOR = 1, /* Type or subtype for an airway waypoint */
-  VORDME = 2, /* Type or subtype for an airway waypoint */
-  // DME = 3, DME and TACAN are not part of the network
-  NDB = 4, /* Type or subtype for an airway waypoint */
-  WAYPOINT_VICTOR = 5, /* Airway waypoint */
-  WAYPOINT_JET = 6, /* Airway waypoint */
-  WAYPOINT_BOTH = 7, /* Airway waypoint */
-  DEPARTURE = 10, /* User defined departure virtual node */
-  DESTINATION = 11 /* User defined destination virtual node */
-};
-
-/* Edge type for airway routing */
-enum EdgeType
-{
-  AIRWAY_NONE = 0,
-  AIRWAY_VICTOR = 5,
-  AIRWAY_JET = 6,
-  AIRWAY_BOTH = 7
-};
-
-enum EdgeDirection
-{
-  /* 0 = both, 1 = forward only (from -> to), 2 = backward only (to -> from) */
-  BOTH = 0,
-  FORWARD = 1,
-  BACKWARD = 2
-};
-
-/* Network edge that connects two nodes. Is loaded from the database. */
-struct Edge
-{
-  static constexpr int MIN_ALTITUDE = 0;
-  static constexpr int MAX_ALTITUDE = std::numeric_limits<int>::max();
-
-  Edge()
-    : toNodeId(-1), lengthMeter(0), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), airwayId(-1),
-    type(atools::routing::AIRWAY_NONE), direction(atools::routing::BOTH)
-  {
-  }
-
-  Edge(int to, int distance)
-    : toNodeId(to), lengthMeter(distance), minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), airwayId(-1),
-    type(atools::routing::AIRWAY_NONE), direction(atools::routing::BOTH)
-  {
-  }
-
-  int toNodeId /* database "node_id" */, lengthMeter, minAltFt, maxAltFt, airwayId;
-  atools::routing::EdgeType type;
-  atools::routing::EdgeDirection direction;
-  QString airwayName;
-
-  bool operator==(const atools::routing::Edge& other) const
-  {
-    // Need compare both since edges are added for both directions
-    return toNodeId == other.toNodeId && type == other.type;
-  }
-
-  bool operator!=(const atools::routing::Edge& other) const
-  {
-    return !operator==(other);
-  }
-
-};
-
-inline int qHash(const atools::routing::Edge& edge)
-{
-  return edge.toNodeId ^ edge.type;
-}
-
-/* Network node. VOR, NDB, waypoint or user defined departure/destination */
-struct Node
-{
-  Node()
-    : id(-1), range(0), type(atools::routing::NONE), subtype(atools::routing::NONE)
-  {
-  }
-
-  Node(int nodeId, atools::routing::NodeType nodeType, atools::routing::NodeType nodeType2,
-       const atools::geo::Pos& position, int nodeRange = 0)
-    : id(nodeId), range(nodeRange), pos(position), type(nodeType), subtype(nodeType2)
-  {
-  }
-
-  int id = -1; /* Database id ("node_id") */
-  int range; /* Range for a radio navaid or 0 if not applicable */
-  QVector<Edge> edges; /* Attached edges leading to adjacent nodes */
-  atools::geo::Pos pos;
-
-  atools::routing::NodeType type /* VOR, NDB, ..., WAYPOINT_VICTOR, ... */,
-                          subtype /* VOR, VORDME, NDB, ... for airway network if type is one of WAYPOINT_* */;
-
-  bool operator==(const atools::routing::Node& other) const
-  {
-    return id == other.id && type == other.type && subtype == other.subtype;
-  }
-
-  bool operator!=(const atools::routing::Node& other) const
-  {
-    return !operator==(other);
-  }
-
-};
-
-inline int qHash(const atools::routing::Node& node)
-{
-  return node.id;
-}
-
 /*
- * Routing network that loads and caches nodes and edges from the database.
- * Allows to resolve relations between objects and walk through the network.
+ * Network forming a directed graph by navaid nodes and airway edges or generated edges by neares neighbor search.
+ *
+ * Data is loaded from tables airway, waypoint, vor and ndb depending on source.
+ *
+ * The class has a state (i.e. start and destination) and is not re-entrant.
  */
 class RouteNetwork
 {
 public:
-  /*
-   * Create network object and provide the needed tables. Tables need to have a certain layout.
-   * @param sqlDb Database to use
-   * @param nodeTableName Where nodes are loaded from
-   * @param edgeTableName Where edges are loaded from
-   * @param nodeExtraColumns Extra columns that are loaded with the nodes
-   * @param edgeExtraColumns Extra columns that are loaded with the edges
-   */
-  RouteNetwork(atools::sql::SqlDatabase *sqlDb, const QString& nodeTableName,
-               const QString& edgeTableName, const QStringList& nodeExtraColumns,
-               const QStringList& edgeExtraColumns);
+  /* Does not load the data */
+  RouteNetwork(atools::sql::SqlDatabase *sqlDb, atools::routing::DataSource dataSource);
   virtual ~RouteNetwork();
 
-  /* Get the navaid id and type for the given network node id. */
-  void getNavIdAndTypeForNode(int nodeId, int& navId, atools::routing::NodeType& type);
+  /* Loads network data if not already done. */
+  void ensureLoaded();
 
-  /* Set up and prepare all queries */
-  void initQueries();
+  /* Set up and prepare all queries. Data is reloaded if already done. */
+  void init();
 
   /* Disconnect queries from database and remove departure and destination nodes */
-  void deInitQueries();
+  void deInit();
 
-  /* Get all adjacent nodes and attached edges for the given node */
-  void getNeighbours(const atools::routing::Node& from, QVector<atools::routing::Node>& neighbours,
-                     QVector<atools::routing::Edge>& edges);
-
-  /* Integrate departure and destination positions into the network as virtual nodes/edges */
-  void addDepartureAndDestinationNodes(const atools::geo::Pos& from, const atools::geo::Pos& to);
-
-  /* Get the virtual departure node that was added using addDepartureAndDestinationNodes */
-  atools::routing::Node getDepartureNode() const;
-
-  /* Get the virtual destination node that was added using addDepartureAndDestinationNodes */
-  atools::routing::Node getDestinationNode() const;
-
-  /* Get a node by routing network node id. If id is -1 an invalid node with id -1 is returned */
-  atools::routing::Node getNode(int id);
-
-  /* Number of nodes in the database */
-  int getNumberOfNodesDatabase();
-
-  /* Number of nodes in the memory cache */
-  int getNumberOfNodesCache() const;
-
-  /* true if mode is either ROUTE_VICTOR, ROUTE_JET  or both flags */
-  bool isAirwayRouting() const
+  /* Get all adjacent nodes and attached edges for the given node. Edges might be different than Node::edges.
+   * Adjacent objects are filtered based on distance and type criteria like airway types.
+   * Edges may be airways or generated edges by nearest neighbor search.
+   * Nodes/edges having a longer distance to the destination than the origin are filtered out.*/
+  void getNeighbours(QVector<atools::routing::Node>& nodes, QVector<Edge>& edges,
+                     const atools::routing::Node& from) const
   {
-    return airwayRouting;
+    nodeNeighbours(nodes, edges, from, destinationNode.pos);
   }
 
-  /* Sets the route mode. This will change some internal behavior like checking subtypes and more */
-  void setMode(atools::routing::Modes routeMode);
+  /* Get great circle distance between two nodes. The calculation in euclidian 3D space
+   * which is used here is faster than the usual haversine formula. */
+  float getGcDistanceMeter(const atools::routing::Node& node1, const atools::routing::Node& node2) const
+  {
+    return nodeToCartesian(node1).gcDistanceMeter(nodeToCartesian(node2));
+  }
+
+  /* Get direct euclidian distance (tunnel-through distance) in 3D space between two nodes.
+   * The calculation is more efficient than getGcDistanceMeter
+   * but underestimates the distance. */
+  float getDirectDistanceMeter(const atools::routing::Node& node1, const atools::routing::Node& node2) const
+  {
+    return nodeToCartesian(node1).directDistanceMeter(nodeToCartesian(node2));
+  }
+
+  /* Integrate departure and destination positions into the network as virtual nodes/edges.
+   * Altitude is used to filter airway edges if > 0. Modes provides and additional neighbor filter. */
+  void setParameters(const atools::geo::Pos& from, const atools::geo::Pos& to, int altitudeParam,
+                     atools::routing::Modes modeParam);
+
+  /* Reset all parameters set by above method*/
+  void clearParameters();
+
+  /* Get the virtual departure node that was added using setParameters */
+  const atools::routing::Node& getDepartureNode() const
+  {
+    return departureNode;
+  }
+
+  /* Get the virtual destination node that was added using setParameters */
+  const atools::routing::Node& getDestinationNode() const
+  {
+    return destinationNode;
+  }
+
+  /* Get a node by routing network node index. If index is -1 an invalid node with id -1 is returned */
+  const atools::routing::Node& getNode(int index) const;
+
+  /* Get a node by database id ("waypoint_id" or other navaid id) */
+  const atools::routing::Node& getNodeById(int navId) const
+  {
+    return nodeIndex.at(nodeIdIndexMap.value(navId));
+  }
+
+  /* Get nodes vector. The index parameter can be used to access nodes fast.*/
+  const QVector<atools::routing::Node>& getNodes() const
+  {
+    return nodeIndex;
+  }
+
+  /* true if airways and other navaids are used as data source. Otherwise radio navaid only. */
+  bool isAirwayRouting() const
+  {
+    return source == SOURCE_AIRWAY;
+  }
+
+  /* Minimum distance for neares neighbor search. Not for airways. */
+  void setMinNearestDistanceNm(float value)
+  {
+    minNearestDistanceNm = value;
+  }
+
+  /* Maximum distance for neares neighbor search. Not for airways. */
+  void setMaxNearestDistanceNm(float value)
+  {
+    maxNearestDistanceNm = value;
+  }
+
+  /* Search distance for nearest nodes around start node added using setParameters */
+  void setNearestDepartureDistanceNm(float value)
+  {
+    nearestDepartureDistanceNm = value;
+  }
+
+  /* Search distance for destination node added using setParameters */
+  void setNearestDestDistanceNm(float value)
+  {
+    nearestDestDistanceNm = value;
+  }
+
+  /* Departure virtual node index for nodes added by setParameters */
+  constexpr static int DEPARTURE_NODE_INDEX = -10;
+
+  /* Destination virtual node index for nodes added by setParameters */
+  constexpr static int DESTINATION_NODE_INDEX = -20;
 
 private:
-  void clearStartAndDestinationNodes();
+  /* Get neighbor nodes */
+  void nodeNeighbours(QVector<Node>& nodes, QVector<Edge>& edges, const Node& from,
+                      const geo::Pos& destPos) const;
 
-  atools::routing::Node fetchNode(int id);
-  atools::routing::Node fetchNode(float lonx, float laty, bool loadSuccessors, int id);
+  void clearIndexes();
 
-  void addDestNodeEdges(atools::routing::Node& node);
-  void cleanDestNodeEdges();
+  /* Read VOR and NDB into index */
+  void readNodesRadio(const QString& queryStr, int& idx, bool vor);
 
-  void bindCoordRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
-  bool testType(atools::routing::NodeType type);
-  atools::routing::Node createNode(const atools::sql::SqlRecord& rec);
-  atools::routing::Edge createEdge(const atools::sql::SqlRecord& rec, int toNodeId, bool reverseDirection);
+  /* Read waypoints and airways into index */
+  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx);
+  void readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const;
 
-  void updateNodeIndexes(const atools::sql::SqlRecord& rec);
-  void updateEdgeIndexes(const atools::sql::SqlRecord& rec);
+  /* Check node filter based on mode. */
+  bool matchNode(const atools::routing::Node& node) const;
 
-  /* Search radius for nodes around departure and destination position */
-  static Q_DECL_CONSTEXPR int NODE_SEARCH_RADIUS_METER = atools::geo::nmToMeter(200);
+  atools::geo::Point3D nodeToCartesian(const atools::routing::Node& node) const
+  {
+    return node.index >= 0 ? nodeIndex.atPoint3D(node.index) : node.pos.toCartesian();
+  }
 
-  /* Departure virtual node id */
-  const int DEPARTURE_NODE_ID = -10;
-  /* Destination virtual node id */
-  const int DESTINATION_NODE_ID = -20;
+  bool matchEdge(const atools::routing::Edge& edge) const
+  {
+    return altitude == 0 || (altitude >= edge.minAltFt && altitude <= edge.maxAltFt);
+  }
 
-  /* Cache the number of nodes in the database */
-  int numNodesDb = -1;
+  const atools::geo::Point3D& point3D(int index) const;
 
-  atools::sql::SqlQuery *nodeByNavIdQuery = nullptr, *nodeNavIdAndTypeQuery = nullptr,
-                        *nearestNodesQuery = nullptr, *nodeByIdQuery = nullptr, *edgeToQuery = nullptr,
-                        *edgeFromQuery = nullptr;
+  float minNearestDistanceNm = 20.f, maxNearestDistanceNm = 500.f, nearestDepartureDistanceNm = 500.f,
+        nearestDestDistanceNm = 500.f;
 
-  /* Bounding rectangle around destination used to find virtual successor edges */
-  atools::geo::Rect destinationNodeRect;
-  atools::geo::Pos departurePos, destinationPos;
+  /* Used to filter airway edges by altitude restrictions. */
+  int altitude = 0;
 
-  /* Collected destination predecessor node ids */
-  QSet<int> destinationNodePredecessors;
-
+  /* Filter for getNeighbours */
+  atools::routing::Modes mode = atools::routing::MODE_ALL;
   atools::sql::SqlDatabase *db;
-  atools::routing::Modes mode;
 
-  /* Cache for nodes (also containing edges) for the whole network. Filled on demand. */
-  QHash<int, atools::routing::Node> nodeCache;
+  atools::routing::Node departureNode, destinationNode;
+  atools::geo::Point3D departurePoint3D, destinationPoint3D;
 
-  /* Database tables and extra columns */
-  QString nodeTable, edgeTable;
-  QStringList nodeExtraCols, edgeExtraCols;
+  /* Spatial index for nearest neighbor search using KD-tree internally */
+  atools::geo::SpatialIndex<Node> nodeIndex;
 
-  /* Index caches to avoid string lookups in SqlRecord */
-  bool nodeIndexesCreated = false;
-  int nodeTypeIndex = -1, nodeRangeIndex = -1, nodeLonXIndex = -1, nodeLatYIndex = -1;
-  bool edgeIndexesCreated = false;
-  int edgeTypeIndex = -1, edgeAirwayNameIndex = -1, edgeDirectionIndex = -1, edgeMinAltIndex = -1, edgeMaxAltIndex = -1,
-      edgeAirwayIdIndex = -1, edgeDistanceIndex = -1;
+  /* Maps database id to index */
+  QHash<int, int> nodeIdIndexMap;
 
-  bool airwayRouting;
+  atools::routing::DataSource source = atools::routing::SOURCE_NONE;
+
 };
 
 } // namespace route
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::routing::Node, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(atools::routing::Edge, Q_MOVABLE_TYPE);
-
-#endif // ATOOLS_ROUTENETWORK_H
+#endif // ATOOLS_ROUTENETWORKWP_H

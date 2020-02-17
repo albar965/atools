@@ -59,6 +59,7 @@ public:
   /* true if initialized, i.e. coordinates are not null (earth center) */
   bool isValid() const
   {
+    // Not in earth center which is default invalid value
     return std::abs(x) + std::abs(y) + std::abs(z) > 0.f;
   }
 

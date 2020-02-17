@@ -16,8 +16,11 @@
 *****************************************************************************/
 
 #include "routing/routefinder.h"
-#include "geo/calculations.h"
+
+#include "routing/routenetwork.h"
 #include "atools.h"
+
+#include <QElapsedTimer>
 
 using atools::geo::Pos;
 
@@ -32,7 +35,7 @@ RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
   nodeAltRange.reserve(10000);
   nodePredecessor.reserve(10000);
   nodeAirwayId.reserve(10000);
-  nodeAirwayName.reserve(10000);
+  nodeAirwayHash.reserve(10000);
 
   successorNodes.reserve(500);
   successorEdges.reserve(500);
@@ -43,21 +46,33 @@ RouteFinder::~RouteFinder()
 
 }
 
-bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude)
+bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude,
+                                 atools::routing::Modes modeParam)
 {
-  altitude = flownAltitude;
-  network->addDepartureAndDestinationNodes(from, to);
-  Node startNode = network->getDepartureNode();
-  Node destNode = network->getDestinationNode();
+  ensureNetworkLoaded();
 
-  int numNodesTotal = network->getNumberOfNodesDatabase();
+  QElapsedTimer timer;
+  timer.start();
+
+  altitude = flownAltitude;
+  mode = modeParam;
+  network->ensureLoaded();
+  network->setParameters(from, to, altitude, mode);
+  startNode = network->getDepartureNode();
+  destNode = network->getDestinationNode();
+  distMeterToDest = currentDistMeterToDest = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
+
+  int numNodesTotal = network->getNodes().size();
 
   if(startNode.edges.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "No edges for start node at" << from;
     return false;
+  }
 
   openNodesHeap.push(startNode, 0.f);
-  nodeCosts[startNode.id] = 0.f;
-  nodeAltRange[startNode.id] = std::make_pair(0, std::numeric_limits<int>::max());
+  nodeCosts[startNode.index] = 0.f;
+  nodeAltRange[startNode.index] = std::make_pair(0, std::numeric_limits<int>::max());
 
   Node currentNode;
   bool destinationFound = false;
@@ -66,124 +81,91 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     // Contains known nodes
     openNodesHeap.pop(currentNode);
 
-    if(currentNode.id == destNode.id)
+    if(currentNode.index == destNode.index)
     {
       destinationFound = true;
       break;
     }
 
+    // Invoke user callback if set
+    if(callback)
+    {
+      int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
+      // Call only if changed for more than two percent
+      if(dist * 100 < currentDistMeterToDest * 98)
+      {
+        currentDistMeterToDest = dist;
+        if(!callback(distMeterToDest, currentDistMeterToDest))
+          break;
+      }
+    }
+
     // Contains nodes with known shortest path
-    closedNodes.insert(currentNode.id);
+    closedNodes.insert(currentNode.index);
 
     if(closedNodes.size() > numNodesTotal / 2)
       // If we read too much nodes routing will fail
       break;
 
     // Work on successors
-    expandNode(currentNode, destNode);
+    expandNode(currentNode);
   }
 
-  qDebug() << "found" << destinationFound << "heap size" << openNodesHeap.size()
-           << "close nodes size" << closedNodes.size();
-
-  qDebug() << "num nodes database" << network->getNumberOfNodesDatabase()
-           << "num nodes cache" << network->getNumberOfNodesCache();
+  qDebug() << Q_FUNC_INFO << "found" << destinationFound << "heap size" << openNodesHeap.size()
+           << "close nodes size" << closedNodes.size() << timer.restart() << "ms";
 
   return destinationFound;
 }
 
-void RouteFinder::extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const
+void RouteFinder::ensureNetworkLoaded()
 {
-  distanceMeter = 0.f;
-  routeLegs.reserve(500);
-
-  // Build route
-  atools::routing::Node pred = network->getDestinationNode();
-  while(pred.id != -1)
-  {
-    int navId;
-    atools::routing::NodeType type;
-    network->getNavIdAndTypeForNode(pred.id, navId, type);
-
-    if(type != atools::routing::DEPARTURE && type != atools::routing::DESTINATION)
-    {
-      RouteLeg leg;
-      leg.navId = navId;
-      leg.type = type;
-      leg.airwayId = nodeAirwayId.value(pred.id, -1);
-      leg.pos = pred.pos;
-      routeLegs.prepend(leg);
-    }
-
-    atools::routing::Node next = network->getNode(nodePredecessor.value(pred.id, -1));
-    if(next.pos.isValid())
-      distanceMeter += pred.pos.distanceMeterTo(next.pos);
-    pred = next;
-  }
+  network->ensureLoaded();
 }
 
-void RouteFinder::expandNode(const atools::routing::Node& currentNode, const atools::routing::Node& destNode)
+void RouteFinder::expandNode(const atools::routing::Node& currentNode)
 {
   successorNodes.clear();
   successorEdges.clear();
-  network->getNeighbours(currentNode, successorNodes, successorEdges);
+  network->getNeighbours(successorNodes, successorEdges, currentNode);
 
-  QString currentNodeAirway;
+  quint32 currentNodeAirwayHash = 0;
   if(network->isAirwayRouting())
-    currentNodeAirway = nodeAirwayName[currentNode.id];
+    currentNodeAirwayHash = nodeAirwayHash[currentNode.index];
 
   for(int i = 0; i < successorNodes.size(); i++)
   {
     const Node& successor = successorNodes.at(i);
 
-    if(closedNodes.contains(successor.id))
+    if(closedNodes.contains(successor.index))
       // Already has a shortest path
       continue;
 
     const Edge& edge = successorEdges.at(i);
 
-    // Calculate set altitude if altitude > 0
-    if(altitude > 0 && !(altitude >= edge.minAltFt && altitude <= edge.maxAltFt))
-      // Altitude restrictions do not match - ignore this edge to the node
-      continue;
-
-    // if(edge.airwayName == "UJ3")
-    // qDebug() << Q_FUNC_INFO;
-
-    if(edge.direction == atools::routing::BACKWARD)
-      // Do not travel against a one-way airway
-      continue;
-
-    int lengthMeter = edge.lengthMeter;
-
-    if(lengthMeter == 0)
-      // No distance given for airways - have to calculate this here
-      lengthMeter = static_cast<int>(currentNode.pos.distanceMeterTo(successor.pos));
-
-    float successorEdgeCosts = calculateEdgeCost(currentNode, successor, lengthMeter);
+    float successorEdgeCosts = calculateEdgeCost(currentNode, successor, edge.lengthMeter);
 
     // Avoid jumping between equal airways
-    if(!currentNodeAirway.isEmpty() && !edge.airwayName.isEmpty() && currentNodeAirway != edge.airwayName)
+    if(currentNodeAirwayHash != edge.airwayHash)
       successorEdgeCosts *= COST_FACTOR_AIRWAY_CHANGE;
 
-    float successorNodeCosts = nodeCosts.value(currentNode.id) + successorEdgeCosts;
+    float successorNodeCosts = nodeCosts.value(currentNode.index) + successorEdgeCosts;
 
-    if(successorNodeCosts >= nodeCosts.value(successor.id) && openNodesHeap.contains(successor))
+    if(successorNodeCosts >= nodeCosts.value(successor.index) && openNodesHeap.contains(successor))
       // New path is not cheaper
       continue;
 
-    std::pair<int, int> successorNodeAltRange = nodeAltRange.value(currentNode.id);
+    std::pair<int, int> successorNodeAltRange = nodeAltRange.value(currentNode.index);
 
     if(!combineRanges(successorNodeAltRange, edge.minAltFt, edge.maxAltFt))
       continue;
 
     // New path is cheaper - update node
-    nodeAirwayId[successor.id] = successorEdges.at(i).airwayId;
+    nodeAirwayId[successor.index] = successorEdges.at(i).airwayId;
     if(network->isAirwayRouting())
-      nodeAirwayName[successor.id] = successorEdges.at(i).airwayName;
-    nodePredecessor[successor.id] = currentNode.id;
-    nodeCosts[successor.id] = successorNodeCosts;
-    nodeAltRange[successor.id] = successorNodeAltRange;
+      nodeAirwayHash[successor.index] = successorEdges.at(i).airwayHash;
+    nodePredecessor[successor.index] = currentNode.index;
+    nodeCosts[successor.index] = successorNodeCosts;
+    nodeAltRange[successor.index] = successorNodeAltRange;
 
     // Costs from start to successor + estimate to destination = sort order in heap
     float totalCost = successorNodeCosts + costEstimate(successor, destNode);
@@ -251,17 +233,11 @@ float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
     }
   }
 
-  if(network->isAirwayRouting())
-  {
-    if(lengthMeter > DISTANCE_LONG_AIRWAY_METER)
-      // Avoid certain airway segments that have an excessive length
-      costs *= COST_FACTOR_LONG_AIRWAY;
-  }
-  else
+  if(!network->isAirwayRouting())
   {
     if((currentNode.range != 0 || successorNode.range != 0) &&
        currentNode.range + successorNode.range < lengthMeter)
-      // Put higher costs on radio navaids that are not withing range
+      // Put higher costs on radio navaids that are not within range
       costs *= COST_FACTOR_UNREACHABLE_RADIONAV;
 
     if(successorNode.type == atools::routing::VOR)
@@ -274,9 +250,49 @@ float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
   return costs;
 }
 
-float RouteFinder::costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& destNode)
+float RouteFinder::costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& nextNode)
 {
-  return currentNode.pos.distanceMeterTo(destNode.pos);
+  return currentNode.pos.distanceMeterTo(nextNode.pos);
+}
+
+void RouteFinder::extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const
+{
+  distanceMeter = 0.f;
+  routeLegs.clear();
+  routeLegs.reserve(500);
+
+  // Build route
+  atools::routing::Node pred = network->getDestinationNode();
+  while(pred.index != -1)
+  {
+    if(pred.type != atools::routing::DEPARTURE && pred.type != atools::routing::DESTINATION)
+    {
+      RouteLeg leg;
+      leg.navId = pred.id;
+      leg.type = pred.type;
+      leg.airwayId = nodeAirwayId.value(pred.index, -1);
+      leg.pos = pred.pos;
+      routeLegs.prepend(leg);
+    }
+
+    atools::routing::Node next = network->getNode(nodePredecessor.value(pred.index, -1));
+    if(next.pos.isValid())
+      distanceMeter += pred.pos.distanceMeterTo(next.pos);
+    pred = next;
+  }
+}
+
+QDebug operator<<(QDebug out, const RouteLeg& obj)
+{
+  QDebugStateSaver saver(out);
+
+  out.nospace().noquote() << "RouteLeg("
+                          << "id " << obj.navId
+                          << ", airway " << obj.airwayId
+                          << ", " << obj.pos
+                          << ", type " << obj.type
+                          << ")";
+  return out;
 }
 
 } // namespace route
