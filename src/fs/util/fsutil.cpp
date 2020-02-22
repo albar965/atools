@@ -422,7 +422,10 @@ QString capAirportName(const QString& str)
   const static QSet<QString> upper({
           // Military designators to upper
           "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
-          "NALF", "NAS", "NAWS", "NOLF", "NS", "NSF", "RAF", "RNAS", "AFLD"
+          "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD",
+
+          // Not military but an acronym
+          "USFS"
         });
 
   return atools::capString(str, upper);
