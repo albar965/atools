@@ -239,6 +239,14 @@ create table airway
   airway_id integer primary key,
   airway_name varchar(5) not null,     -- Airway name
   airway_type varchar(15) not null,    -- V = victor, J = jet, B = both
+  route_type varchar(5),               -- ARINC 5.7 Enroute Airway Records (ER), Airway Type
+                                       -- A Airline Airway (Tailored Data)
+                                       -- C Control
+                                       -- D Direct Route
+                                       -- H Helicopter Airways
+                                       -- O Officially Designated Airways, except RNAV, Helicopter Airways
+                                       -- R RNAV Airways
+                                       -- S Undesignated ATS Route
   airway_fragment_no integer not null, -- Designates a not connected fragment with the same name
   sequence_no integer not null,        -- Segment number
   from_waypoint_id integer not null,

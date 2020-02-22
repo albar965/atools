@@ -924,7 +924,7 @@ void DfdCompiler::writeAirways()
   // Get airways joined with waypoints
   QString query(
     "select  a.route_identifier, a.seqno, a.flightlevel, a.waypoint_description_code, w.waypoint_id, "
-    "  a.direction_restriction, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
+    "  a.direction_restriction, a.route_type, a.minimum_altitude1, a.minimum_altitude2, a.maximum_altitude, "
     "  w.lonx, w.laty "
     "from src.tbl_enroute_airways a "
     "join waypoint w on "
@@ -979,6 +979,8 @@ void DfdCompiler::writeAirways()
           insert.bindValue(":airway_type", "V");
         else
           insert.bindValue(":airway_type", "B");
+
+        insert.bindValue(":route_type", lastRec.valueStr("route_type"));
 
         insert.bindValue(":airway_fragment_no", fragmentNumber);
         insert.bindValue(":sequence_no", sequenceNumber++);
