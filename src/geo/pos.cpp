@@ -162,14 +162,6 @@ Pos::Pos(const QString& str, bool errorOnInvalid)
   }
 }
 
-Pos& Pos::operator=(const Pos& other)
-{
-  lonX = other.lonX;
-  latY = other.latY;
-  altitude = other.altitude;
-  return *this;
-}
-
 bool Pos::operator==(const Pos& other) const
 {
   return atools::almostEqual(lonX, other.lonX) &&

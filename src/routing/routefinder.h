@@ -63,6 +63,7 @@ public:
   /* Delegate to RouteNetwork::ensureLoaded. Loads network data if not already done.
    *  Call before using calculateRoute */
   void ensureNetworkLoaded();
+  bool isNetworkLoaded() const;
 
   /* Prefer VORs to transition from departure to airway network */
   void setPreferVorToAirway(bool value)
@@ -102,17 +103,23 @@ private:
   /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
    * will have several factors applied to get reasonable routes */
   float calculateEdgeCost(const atools::routing::Node& node, const atools::routing::Node& successorNode,
-                          int lengthMeter);
+                          const Edge& edge);
 
   /* GC distance in meter as costs between nodes */
   float costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& nextNode);
-  bool combineRanges(std::pair<int, int>& range1, int min, int max);
+  bool combineRanges(quint16 min1, quint16 max1, quint16 min, quint16 max);
+
+  void freeArrays();
+  void allocArrays();
 
   /* Force algortihm to avoid direct route from start to destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;
 
   /* Force algortihm to use close waypoints near start and destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
+
+  /* Avoid direct waypoint connections when using airways */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_AIRWAYS = 1.3f;
 
   /* Force algortihm to use closest radio navaids near start and destination before waypoints */
   /* Has to be smaller than COST_FACTOR_FORCE_CLOSE_NODES */
@@ -140,34 +147,36 @@ private:
   /* Used network */
   atools::routing::RouteNetwork *network;
 
-  /* Heap structure storing open nodes.
+  /* Heap structure storing the index of open nodes.
    * Sort order is defined by costs from start to node + estimate to destination */
-  atools::util::Heap<atools::routing::Node> openNodesHeap;
+  atools::util::Heap<int> openNodesHeap;
 
   /* Nodes that have been processed already and have a known shortest path */
-  QSet<int> closedNodes;
+  bool *closedNodes = nullptr;
+
+  // Using plain arrays below to speed up access compared to hash tables
 
   /* Costs from start to this node. Maps node id to costs. Costs are distance in meter
    * adjusted by some factors. */
-  QHash<int, float> nodeCosts;
+  float *nodeCostArr = nullptr;
 
   /* Min and maximum altitude range of airways to this node so far */
-  QHash<int, std::pair<int, int> > nodeAltRange;
+  quint16 *nodeAltRangeMinArr = nullptr;
+  quint16 *nodeAltRangeMaxArr = nullptr;
 
-  /* Maps node id to predecessor node id */
-  QHash<int, int> nodePredecessor;
+  /* Maps node index to predecessor node id */
+  int *nodePredecessorArr = nullptr;
 
-  /* Maps node id to predecessor airway id */
-  QHash<int, int> nodeAirwayId;
+  /* Maps node index to predecessor airway id */
+  int *nodeAirwayIdArr = nullptr;
 
-  /* Maps node id to predecessor airway name hash  */
-  QHash<int, quint32> nodeAirwayHash;
+  /* Airway name hash value for node at index */
+  quint32 *nodeAirwayArr = nullptr;
 
   atools::routing::Node startNode, destNode;
 
   /* For RouteNetwork::getNeighbours to avoid instantiations */
-  QVector<atools::routing::Node> successorNodes;
-  QVector<atools::routing::Edge> successorEdges;
+  atools::routing::Result successors;
 
   bool preferVorToAirway = false, preferNdbToAirway = false;
 

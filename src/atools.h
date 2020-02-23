@@ -385,6 +385,33 @@ Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long
   return !almostEqual<long long>(f1, f2, epsilon);
 }
 
+template<typename TYPE>
+inline TYPE *allocArray(int size)
+{
+  unsigned long num = static_cast<unsigned long>(size);
+  TYPE *arr = new TYPE[num];
+  memset(arr, 0, sizeof(arr[0]) * num);
+  return arr;
+}
+
+template<typename TYPE>
+inline TYPE *allocArray(int size, const TYPE& fill)
+{
+  unsigned long num = static_cast<unsigned long>(size);
+  TYPE *arr = new TYPE[num];
+  for(int i = 0; i < size; i++)
+    arr[i] = fill;
+  return arr;
+}
+
+template<typename TYPE>
+inline void freeArray(TYPE *& arr)
+{
+  if(arr != nullptr)
+    delete[] arr;
+  arr = nullptr;
+}
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H

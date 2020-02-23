@@ -48,7 +48,7 @@ public:
   ~SpatialIndex();
 
   /* Get one nearest object from the vector. */
-  T getNearest(const atools::geo::Pos& pos) const;
+  const T& getNearest(const atools::geo::Pos& pos) const;
   void getNearest(T& obj, const atools::geo::Pos& pos) const;
 
   /* Get index of one nearest object. Index can be used to access objects from the underlying vector or
@@ -67,10 +67,13 @@ public:
    *  Can be used to achieve a fast directional filtering of results.
    */
   void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
-                 bool sort = true, const atools::geo::Pos *destPos = nullptr) const;
+                 float directDistanceFactor,
+                 bool sort = false, const atools::geo::Pos *destPos = nullptr,
+                 const QSet<int> *excludeIndexes = nullptr) const;
   void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
-                        bool sort = true,
-                        const atools::geo::Pos *destPos = nullptr) const;
+                        float directDistanceFactor,
+                        bool sort = true, const atools::geo::Pos *destPos = nullptr,
+                        const QSet<int> *excludeIndexes = nullptr) const;
 
   /* Rebuild the KD-tree and Point3D vector. Call this after changing the base class vector. */
   void updateIndex();
@@ -108,7 +111,8 @@ class SpatialIndexPrivate
   int nearestPoint(const atools::geo::Pos& pos) const;
   void nearestPoints(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const;
   void pointsInRadius(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMaxMeter,
-                      bool sort, const Pos *destPos) const;
+                      float directDistanceFactor,
+                      bool sort, const Pos *destPos, const QSet<int> *excludeIndexes) const;
   void buildIndex();
   void append(const Point3D& point);
   void clear();
@@ -136,17 +140,19 @@ SpatialIndex<T>::~SpatialIndex()
 }
 
 template<typename T>
-T SpatialIndex<T>::getNearest(const Pos& pos) const
+const T& SpatialIndex<T>::getNearest(const Pos& pos) const
 {
+  static const T EMPTY;
   int idx = p->nearestPoint(pos);
-  return idx >= 0 ? this->at(idx) : T();
+  return idx >= 0 ? this->at(idx) : EMPTY;
 }
 
 template<typename T>
 void SpatialIndex<T>::getNearest(T& obj, const Pos& pos) const
 {
+  static const T EMPTY;
   int idx = p->nearestPoint(pos);
-  obj = idx >= 0 ? this->at(idx) : T();
+  obj = idx >= 0 ? this->at(idx) : EMPTY;
 }
 
 template<typename T>
@@ -159,10 +165,11 @@ void SpatialIndex<T>::getNearest(QVector<T>& objects, const Pos& pos, int number
 
 template<typename T>
 void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMinMeter, float radiusMaxMeter,
-                                bool sort, const atools::geo::Pos *destPos) const
+                                float directDistanceFactor, bool sort, const atools::geo::Pos *destPos,
+                                const QSet<int> *excludeIndexes) const
 {
   QVector<int> indexes;
-  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, sort, destPos);
+  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, directDistanceFactor, sort, destPos, excludeIndexes);
   copyData(objects, indexes);
 }
 
@@ -180,9 +187,10 @@ void SpatialIndex<T>::getNearestIndexes(QVector<int>& indexes, const Pos& pos, i
 
 template<typename T>
 void SpatialIndex<T>::getRadiusIndexes(QVector<int>& indexes, const Pos& pos, float radiusMinMeter,
-                                       float radiusMaxMeter, bool sort, const geo::Pos *destPos) const
+                                       float radiusMaxMeter, float directDistanceFactor, bool sort,
+                                       const geo::Pos *destPos, const QSet<int> *excludeIndexes) const
 {
-  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, sort, destPos);
+  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, directDistanceFactor, sort, destPos, excludeIndexes);
 }
 
 template<typename T>

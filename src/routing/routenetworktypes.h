@@ -20,9 +20,6 @@
 
 #include "geo/pos.h"
 
-namespace  atools {
-}
-
 namespace atools {
 namespace routing {
 
@@ -43,9 +40,12 @@ enum Mode : unsigned char
   MODE_VICTOR = 1 << 2, /* Low airways */
   MODE_JET = 1 << 3, /* High airways */
 
-  MODE_ALL_AIRWAY = MODE_VICTOR | MODE_JET,
-  MODE_ALL_NAVAID = MODE_RADIONAV | MODE_WAYPOINT,
-  MODE_ALL = MODE_ALL_AIRWAY | MODE_ALL_NAVAID,
+  MODE_NO_RNAV = 1 << 4, /* Do not use RNAV airways */
+
+  MODE_AIRWAY = MODE_VICTOR | MODE_JET,
+  MODE_AIRWAY_AND_WAYPOINT = MODE_VICTOR | MODE_JET | MODE_WAYPOINT,
+  MODE_NAVAID = MODE_RADIONAV | MODE_WAYPOINT,
+  MODE_ALL = MODE_AIRWAY | MODE_NAVAID,
 };
 
 Q_DECLARE_FLAGS(Modes, Mode);
@@ -79,6 +79,18 @@ enum EdgeType : unsigned char
   AIRWAY_BOTH = 7 /* " */
 };
 
+enum RouteType : unsigned char
+{
+  NO_ROUTE_TYPE,
+  AIRLINE, /* A Airline Airway (Tailored Data) */
+  CONTROL, /* C Control (appears in DFD) */
+  DIRECT, /* D Direct Route */
+  HELICOPTER, /* H Helicopter Airways */
+  OFFICIAL, /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
+  RNAV, /* R RNAV Airways (appears in DFD) */
+  UNDESIGNATED /* S Undesignated ATS Route */
+};
+
 /* Network edge that connects two nodes. Is loaded from the database or
  * generated based on a nearesr neighbor query.
  * Edges form a directed graph. Nodes connected by an airway without one-way restriction
@@ -91,14 +103,29 @@ struct Edge
 
   Edge()
     : toIndex(-1), lengthMeter(0), airwayId(-1), airwayHash(0),
-    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::AIRWAY_NONE)
+    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::AIRWAY_NONE), routeType(NO_ROUTE_TYPE)
   {
   }
 
   Edge(int to, float distance)
     : toIndex(to), lengthMeter(static_cast<int>(distance)), airwayId(-1), airwayHash(0),
-    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::AIRWAY_NONE)
+    minAltFt(MIN_ALTITUDE), maxAltFt(MAX_ALTITUDE), type(atools::routing::AIRWAY_NONE), routeType(NO_ROUTE_TYPE)
   {
+  }
+
+  bool isVictorAirway() const
+  {
+    return type == AIRWAY_VICTOR || type == AIRWAY_BOTH;
+  }
+
+  bool isJetAirway() const
+  {
+    return type == AIRWAY_JET || type == AIRWAY_BOTH;
+  }
+
+  bool isAnyAirway() const
+  {
+    return type == AIRWAY_VICTOR || type == AIRWAY_JET || type == AIRWAY_BOTH;
   }
 
   int toIndex, /* Internal index (not ID) of end node */
@@ -107,6 +134,7 @@ struct Edge
   quint32 airwayHash; /* Airway name hash. */
   quint16 minAltFt, maxAltFt; /* Altitude restrictions for airway edges */
   atools::routing::EdgeType type;
+  RouteType routeType; /* Route according to ARINC 5.7 */
 
   friend QDebug operator<<(QDebug out, const atools::routing::Edge& obj);
 
@@ -128,7 +156,41 @@ struct Node
   atools::routing::NodeType type /* VOR, NDB, ..., WAYPOINT_VICTOR, ... */,
                             subtype /* VOR, VORDME, NDB, ... for airway network if type is one of WAYPOINT_* */;
 
-  QVector<Edge> edges; /* Attached outgoing edges */
+  QVector<Edge> edges; /* Attached outgoing edges on airway only.
+                        * Do not use this since edges are already filtered by the RouteNetwork. */
+
+  /* Departure virtual node index for nodes added by setParameters.
+   * Do not change value since it is used in RouteFinder as index. */
+  constexpr static int DEPARTURE_INDEX = -2;
+
+  /* Destination virtual node index for nodes added by setParameters.
+   * Do not change value since it is used in RouteFinder as index. */
+  constexpr static int DESTINATION_INDEX = -3;
+
+  bool isDeparture() const
+  {
+    return index == DEPARTURE_INDEX;
+  }
+
+  bool isDestination() const
+  {
+    return index == DESTINATION_INDEX;
+  }
+
+  bool isVictorAirway() const
+  {
+    return type == WAYPOINT_VICTOR || type == WAYPOINT_BOTH;
+  }
+
+  bool isJetAirway() const
+  {
+    return type == WAYPOINT_JET || type == WAYPOINT_BOTH;
+  }
+
+  bool isAnyAirway() const
+  {
+    return isVictorAirway() || isJetAirway();
+  }
 
   bool operator==(const atools::routing::Node& other) const
   {
@@ -153,6 +215,35 @@ inline int qHash(const atools::routing::Node& node)
 {
   return node.index;
 }
+
+struct Result
+{
+  QVector<int> nodes;
+  QVector<Edge> edges;
+
+  void clear()
+  {
+    nodes.clear();
+    edges.clear();
+  }
+
+  void reserve(int size)
+  {
+    nodes.reserve(size);
+    edges.reserve(size);
+  }
+
+  int size() const
+  {
+    return nodes.size();
+  }
+
+  bool isEmpty() const
+  {
+    return nodes.isEmpty();
+  }
+
+};
 
 } // namespace route
 } // namespace atools

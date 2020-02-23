@@ -71,8 +71,6 @@ public:
    * N54* 16.82', W008* 35.95', +000011.00 */
   explicit Pos(const QString& str, bool errorOnInvalid = true);
 
-  atools::geo::Pos& operator=(const atools::geo::Pos& other);
-
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const;
 

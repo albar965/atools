@@ -18,6 +18,7 @@
 #include "geo/spatialindex.h"
 #include "geo/nanoflann.h"
 #include "geo/pos.h"
+#include "geo/calculations.h"
 
 using namespace std;
 using namespace nanoflann;
@@ -96,19 +97,35 @@ void SpatialIndexPrivate::nearestPoints(QVector<int>& indexes, const Pos& pos, i
   indexes.resize(static_cast<int>(numFound));
 }
 
-/* Callback for radius searches. Does min and max distance comparison. */
+struct IndexEntry
+{
+  int index;
+  float distance;
+};
+
+struct IndexEntrySorter
+{
+  inline bool operator()(const IndexEntry& entry1, const IndexEntry& entry2) const
+  {
+    return entry1.distance < entry2.distance;
+  }
+
+};
+
+/* Callback for radius searches. Does min and max distance comparison. All distances in meter. */
 class RadiusResults
 {
 public:
-  RadiusResults(QVector<std::pair<int, float> >& resultParam, const QVector<Point3D>& pointsParam,
-                float radiusMinMeterParam, float radiusMaxMeterParam, const Point3D& originPointParam,
-                const Point3D& destPointParam)
-    : radiusMinMeter(radiusMinMeterParam), radiusMaxMeter(radiusMaxMeterParam), result(resultParam),
-    points(pointsParam), destPoint(destPointParam), originPoint(originPointParam)
+  RadiusResults(QVector<IndexEntry>& resultParam, const QVector<Point3D>& pointsParam,
+                float radiusMinParam, float radiusMaxParam, const Point3D& originPoint, const Point3D& destPoint,
+                const QSet<int> *excludeIndexesParam, float directDistanceFactor)
+    : radiusMin(radiusMinParam), radiusMax(radiusMaxParam), directDistFactor(directDistanceFactor),
+    result(resultParam), points(pointsParam.data()), dest(destPoint), origin(originPoint),
+    excludeIndexes(excludeIndexesParam)
   {
     // Calculate distance from origin to destination
-    if(destPoint.isValid() && originPoint.isValid())
-      destDistMeter = destPoint.gcDistanceMeter(originPoint);
+    if(dest.isValid() && origin.isValid())
+      originToDestDist = dest.gcDistanceMeter(origin);
   }
 
   size_t size() const
@@ -128,17 +145,41 @@ public:
    */
   bool addPoint(float dist, int index)
   {
-    if(dist < radiusMaxMeter)
+    if(dist < radiusMax)
     {
       bool ok = true;
-      if(destDistMeter > 0.f)
-        ok &= points.at(index).directDistanceMeter(destPoint) < destDistMeter;
 
-      if(radiusMinMeter > 0.f)
-        ok &= points.at(index).gcDistanceMeter(originPoint) > radiusMinMeter;
+      // Do not use nodes in the exclude list
+      if(excludeIndexes != nullptr)
+        ok &= !excludeIndexes->contains(index);
+
+      if(ok && originToDestDist > 0.f)
+      {
+        // Current point to destination
+        float distToDest = points[index].directDistanceMeter(dest);
+
+        if(originToDestDist < atools::geo::nmToMeter(100.f))
+          // Allow nodes after destination if close enough
+          ok &= distToDest < originToDestDist + atools::geo::nmToMeter(50.f);
+        else
+        {
+          // Include only if distance is smaller than distance between origin and destination
+          // i.e. do not include points behind the origin (search center)
+          ok &= distToDest < originToDestDist;
+
+          // Include only points where the total distance (origin -> current -> destination) is not much
+          // bigger than the direct connection (origin -> destination * directDistanceFactor)
+          if(ok && directDistFactor > 1.f)
+            ok &= distToDest + points[index].directDistanceMeter(origin) < originToDestDist * directDistFactor;
+        }
+      }
+
+      // Filter out anything inside the minimum radius if given
+      if(ok && radiusMin > 0.f)
+        ok &= points[index].directDistanceMeter(origin) > radiusMin;
 
       if(ok)
-        result.push_back(std::make_pair(index, dist));
+        result.push_back({index, dist});
     }
 
     // keep adding points
@@ -147,32 +188,24 @@ public:
 
   float worstDist() const
   {
-    return radiusMaxMeter;
+    return radiusMax;
   }
 
 private:
-  const float radiusMinMeter, radiusMaxMeter;
-  float destDistMeter = 0.f;
+  float radiusMin, radiusMax, originToDestDist = 0.f, directDistFactor;
 
-  QVector<std::pair<int, float> >& result;
-  const QVector<Point3D>& points;
-  Point3D destPoint, originPoint;
-};
+  QVector<IndexEntry>& result;
 
-/* Operator for distance sorting of a pair (index/distance) vector. */
-struct IndexDistSorter
-{
-  /** PairType will be typically: std::pair<IndexType,DistanceType> */
-  template<typename PairType>
-  inline bool operator()(const PairType& p1, const PairType& p2) const
-  {
-    return p1.second < p2.second;
-  }
+  // Use plain array for all points for performance
+  const Point3D *points;
 
+  Point3D dest, origin;
+  const QSet<int> *excludeIndexes = nullptr;
 };
 
 void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& pos, float radiusMinMeter,
-                                         float radiusMaxMeter, bool sort, const Pos *destPos) const
+                                         float radiusMaxMeter, float directDistanceFactor, bool sort,
+                                         const Pos *destPos, const QSet<int> *excludeIndexes) const
 {
   Point3D destPt;
   if(destPos != nullptr && destPos->isValid())
@@ -182,24 +215,20 @@ void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& pos, 
   pos.toCartesian(originPtArr[0], originPtArr[1], originPtArr[2]);
   Point3D originPt(originPtArr[0], originPtArr[1], originPtArr[2]);
 
-  QVector<std::pair<int, float> > indicesDists;
+  QVector<IndexEntry> indicesDists;
   indicesDists.reserve(100000);
-  RadiusResults resultCallback(indicesDists, p->points, radiusMinMeter, radiusMaxMeter, originPt, destPt);
+  RadiusResults resultCallback(indicesDists, p->points, radiusMinMeter, radiusMaxMeter, originPt, destPt,
+                               excludeIndexes, directDistanceFactor);
   nanoflann::SearchParams params;
   params.sorted = false;
 
   int num = static_cast<int>(p->index.radiusSearchCustomCallback(originPtArr, resultCallback, params));
 
   if(sort)
-  {
-    // for(std::pair<int, float>& indexDist : indicesDists)
-    // indexDist.second = p->points.at(indexDist.first).gcDistanceMeter(originPt);
-
-    std::sort(indicesDists.begin(), indicesDists.end(), IndexDistSorter());
-  }
+    std::sort(indicesDists.begin(), indicesDists.end(), IndexEntrySorter());
 
   for(int i = 0; i < num; i++)
-    indexes.append(static_cast<int>(indicesDists.at(i).first));
+    indexes.append(indicesDists.at(i).index);
 }
 
 void SpatialIndexPrivate::buildIndex()
@@ -241,3 +270,5 @@ SpatialIndexPrivate::~SpatialIndexPrivate()
 
 } // namespace geo
 } // namespace atools
+
+Q_DECLARE_TYPEINFO(atools::geo::internal::IndexEntry, Q_PRIMITIVE_TYPE);
