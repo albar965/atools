@@ -176,13 +176,11 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode)
 
 bool RouteFinder::combineRanges(quint16 min1, quint16 max1, quint16 min, quint16 max)
 {
-  // qDebug() << "[" << range1.first << "," << range1.second << "]" << "[" << min << "," << max << "]";
   if(max1 < min || min1 > max)
     return false;
 
   min1 = std::max(min1, min);
   max1 = std::min(max1, max);
-  // qDebug() << "RESULT [" << range1.first << "," << range1.second << "]";
   return true;
 }
 
