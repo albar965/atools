@@ -22,76 +22,18 @@
 
 #include <QVector>
 #include <cmath>
+#include <functional>
 
 namespace atools {
 namespace geo {
 
 class Pos;
-
-namespace internal {
-class SpatialIndexPrivate;
-}
-
-/*
- * Spatial index wrapping the nanoflann librar< which uses KD-tree for nearest neighbor search.
- *
- * Changing the underlying vector needs a call of buildIndex() afterwards.
- *
- * Note that squared distance is used internally for lookup and resulting distances are therefore not accurate.
- */
 template<typename T>
-class SpatialIndex :
-  public QVector<T>
-{
-public:
-  SpatialIndex();
-  ~SpatialIndex();
+class SpatialIndex;
 
-  /* Get one nearest object from the vector. */
-  const T& getNearest(const atools::geo::Pos& pos) const;
-  void getNearest(T& obj, const atools::geo::Pos& pos) const;
-
-  /* Get index of one nearest object. Index can be used to access objects from the underlying vector or
-   * the Point3D vector using getPoints3D().*/
-  int getNearestIndex(const atools::geo::Pos& pos) const;
-
-  /* Get number nearest objects or indexes from the vector. */
-  void getNearest(QVector<T>& objects, const atools::geo::Pos& pos, int number) const;
-  void getNearestIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const;
-
-  /* Get all nearest objects or indexes from the vector fulfilling criteria.
-   *  radiusMinMeter: Minimum distance to position. Measured accurately.
-   *  radiusMeter: Maximum distance from position. Measured using squared distance and therefore not accurate.
-   *  sort: Sort the result by distance to point.
-   *  destPos: Use distance to a destination point to filter out all points farther away than pos if not null.
-   *  Can be used to achieve a fast directional filtering of results.
-   */
-  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
-                 float directDistanceFactor,
-                 bool sort = false, const atools::geo::Pos *destPos = nullptr,
-                 const QSet<int> *excludeIndexes = nullptr) const;
-  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMeter,
-                        float directDistanceFactor,
-                        bool sort = true, const atools::geo::Pos *destPos = nullptr,
-                        const QSet<int> *excludeIndexes = nullptr) const;
-
-  /* Rebuild the KD-tree and Point3D vector. Call this after changing the base class vector. */
-  void updateIndex();
-
-  /* Get points converted to 3D euclidian space from base vector. */
-  const QVector<Point3D>& getPoints3D() const;
-  const Point3D& atPoint3D(int index) const;
-
-private:
-  /* Copy objects from base vector to result set. */
-  void copyData(QVector<T>& objects, QVector<int>& indexes) const
-  {
-    for(int idx : indexes)
-      objects.append(this->at(idx));
-  }
-
-  atools::geo::internal::SpatialIndexPrivate *p = nullptr;
-};
+/* A callback that can be used as a secondary filter stage for the radius search
+ * after filtering by manhattan distance to origin. */
+typedef std::function<bool (float, int)> RadiusCallbackType;
 
 /* Private parts *************************************************************************************/
 
@@ -110,34 +52,109 @@ class SpatialIndexPrivate
 
   int nearestPoint(const atools::geo::Pos& pos) const;
   void nearestPoints(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const;
-  void pointsInRadius(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMinMeter, float radiusMaxMeter,
-                      float directDistanceFactor,
-                      bool sort, const Pos *destPos, const QSet<int> *excludeIndexes) const;
+  void pointsInRadius(QVector<int>& indexes, const atools::geo::Pos& origin, float radiusMaxMeter,
+                      const RadiusCallbackType& callback) const;
+  void set(const Point3D& point, int index);
   void buildIndex();
-  void append(const Point3D& point);
   void clear();
   void reserve(int size);
-  QVector<Point3D>& points3D();
+  const Point3D *points3D();
 
   /* Data source containing nanoflann structures. */
   DataSource *p = nullptr;
+
 };
 
 } // namespace internal
+/* End of private parts *************************************************************************************/
+
+/*
+ * Spatial index wrapping the nanoflann librar< which uses KD-tree for nearest neighbor search.
+ *
+ * Changing the underlying vector needs a call of buildIndex() afterwards.
+ *
+ * Note that squared distance is used internally for lookup and resulting distances are therefore not accurate.
+ */
+template<typename T>
+class SpatialIndex :
+  public QVector<T>
+{
+public:
+  SpatialIndex()
+  {
+    p = new atools::geo::internal::SpatialIndexPrivate;
+  }
+
+  ~SpatialIndex()
+  {
+    delete p;
+  }
+
+  /* Get one nearest object from the vector. */
+  const T& getNearest(const atools::geo::Pos& pos) const;
+  void getNearest(T& obj, const atools::geo::Pos& pos) const;
+
+  /* Get index of one nearest object. Index can be used to access objects from the underlying vector or
+   * the Point3D vector using getPoints3D().*/
+  int getNearestIndex(const atools::geo::Pos& pos) const
+  {
+    return p->nearestPoint(pos);
+  }
+
+  /* Get number nearest objects or indexes from the vector. */
+  void getNearest(QVector<T>& objects, const atools::geo::Pos& pos, int number) const;
+
+  void getNearestIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, int number) const
+  {
+    p->nearestPoints(indexes, pos, number);
+  }
+
+  /* Get all nearest objects or indexes from the vector fulfilling criteria.
+   *  radiusMeter: Maximum distance from position. Measured using squared distance and therefore not accurate.
+   */
+  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter,
+                 const RadiusCallbackType& callback) const;
+
+  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter,
+                        const RadiusCallbackType& callback) const
+  {
+    p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);
+  }
+
+  void getRadius(QVector<T>& objects, const atools::geo::Pos& pos, float radiusMeter) const;
+
+  void getRadiusIndexes(QVector<int>& indexes, const atools::geo::Pos& pos, float radiusMaxMeter) const
+  {
+    p->pointsInRadius(indexes, pos, radiusMaxMeter, RadiusCallbackType());
+  }
+
+  /* Rebuild the KD-tree and Point3D vector. Call this after changing the base class vector. */
+  void updateIndex();
+
+  /* Get points converted to 3D euclidian space from base vector.
+   * Size is the same as in the underlying parent QVector. */
+  const Point3D *getPoints3D() const
+  {
+    return p->points3D();
+  }
+
+  const Point3D& atPoint3D(int index) const
+  {
+    return p->points3D()[index];
+  }
+
+private:
+  /* Copy objects from base vector to result set. */
+  void copyData(QVector<T>& objects, QVector<int>& indexes) const
+  {
+    for(int idx : indexes)
+      objects.append(this->at(idx));
+  }
+
+  atools::geo::internal::SpatialIndexPrivate *p = nullptr;
+};
 
 /* Methods *************************************************************************************/
-
-template<typename T>
-SpatialIndex<T>::SpatialIndex()
-{
-  p = new atools::geo::internal::SpatialIndexPrivate;
-}
-
-template<typename T>
-SpatialIndex<T>::~SpatialIndex()
-{
-  delete p;
-}
 
 template<typename T>
 const T& SpatialIndex<T>::getNearest(const Pos& pos) const
@@ -164,58 +181,32 @@ void SpatialIndex<T>::getNearest(QVector<T>& objects, const Pos& pos, int number
 }
 
 template<typename T>
-void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMinMeter, float radiusMaxMeter,
-                                float directDistanceFactor, bool sort, const atools::geo::Pos *destPos,
-                                const QSet<int> *excludeIndexes) const
+void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter,
+                                const RadiusCallbackType& callback) const
 {
   QVector<int> indexes;
-  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, directDistanceFactor, sort, destPos, excludeIndexes);
+  p->pointsInRadius(indexes, pos, radiusMaxMeter, callback);
   copyData(objects, indexes);
 }
 
 template<typename T>
-int SpatialIndex<T>::getNearestIndex(const Pos& pos) const
+void SpatialIndex<T>::getRadius(QVector<T>& objects, const Pos& pos, float radiusMaxMeter) const
 {
-  return p->nearestPoint(pos);
-}
-
-template<typename T>
-void SpatialIndex<T>::getNearestIndexes(QVector<int>& indexes, const Pos& pos, int number) const
-{
-  p->nearestPoints(indexes, pos, number);
-}
-
-template<typename T>
-void SpatialIndex<T>::getRadiusIndexes(QVector<int>& indexes, const Pos& pos, float radiusMinMeter,
-                                       float radiusMaxMeter, float directDistanceFactor, bool sort,
-                                       const geo::Pos *destPos, const QSet<int> *excludeIndexes) const
-{
-  p->pointsInRadius(indexes, pos, radiusMinMeter, radiusMaxMeter, directDistanceFactor, sort, destPos, excludeIndexes);
+  QVector<int> indexes;
+  p->pointsInRadius(indexes, pos, radiusMaxMeter, RadiusCallbackType());
+  copyData(objects, indexes);
 }
 
 template<typename T>
 void SpatialIndex<T>::updateIndex()
 {
   QVector<T>::squeeze();
-  p->clear();
   p->reserve(QVector<T>::size());
 
-  for(const T& data : *this)
-    p->append(data.getPosition().toCartesian());
+  for(int i = 0; i < QVector<T>::size(); i++)
+    p->set(QVector<T>::at(i).getPosition().toCartesian(), i);
 
   p->buildIndex();
-}
-
-template<typename T>
-const QVector<Point3D>& SpatialIndex<T>::getPoints3D() const
-{
-  return p->points3D();
-}
-
-template<typename T>
-const Point3D& SpatialIndex<T>::atPoint3D(int index) const
-{
-  return p->points3D().at(index);
 }
 
 } // namespace geo

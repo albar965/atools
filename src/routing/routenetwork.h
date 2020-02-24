@@ -76,8 +76,8 @@ public:
 
   /* Integrate departure and destination positions into the network as virtual nodes/edges.
    * Altitude is used to filter airway edges if > 0. Modes provides and additional neighbor filter. */
-  void setParameters(const atools::geo::Pos& from, const atools::geo::Pos& to, int altitudeParam,
-                     atools::routing::Modes modeParam);
+  void setParameters(const atools::geo::Pos& departurePos, const atools::geo::Pos& destinationPos,
+                     int altitudeParam, atools::routing::Modes modeParam);
 
   /* Reset all parameters set by above method*/
   void clearParameters();
@@ -119,21 +119,27 @@ public:
   }
 
   /* Minimum distance for neares neighbor search. Not for airways. */
-  void setMinNearestDistanceNm(float value)
+  void setMinNearestDistanceRadioNm(float value)
   {
-    minNearestDistanceNm = value;
+    minNearestDistanceRadioNm = value;
   }
 
   /* Maximum distance for neares neighbor search. Not for airways (SOURCE_AIRWAY) but for waypoints. */
-  void setMaxNearestDistanceNm(float value)
+  void setMinNearestDistanceWpNm(float value)
   {
-    maxNearestDistanceNm = value;
+    minNearestDistanceWpNm = value;
   }
 
-  /* Maximum distance for neares neighbor search. Only for radionav search (SOURCE_RADIO). */
+  /* Maximum distance for nearest neighbor search. Only for radionav search (SOURCE_RADIO). */
   void setMaxNearestDistanceRadioNm(float value)
   {
     maxNearestDistanceRadioNm = value;
+  }
+
+  /* Maximum distance for nearest neighbor search. Only for airway/waypoint search (SOURCE_WAYPOINT). */
+  void setMaxNearestDistanceWpNm(float value)
+  {
+    maxNearestDistanceWpNm = value;
   }
 
   /* Search distance for nearest nodes around start node added using setParameters */
@@ -151,9 +157,15 @@ public:
   /* Include only points where the total distance (origin->current->destination) is not
    * bigger than the direct connection (origin->destination * directDistanceFactor).
    * Value must be bigger than 1 */
-  void setDirectDistanceFactor(float value)
+  void setDirectDistanceFactorWp(float value)
   {
-    directDistanceFactor = value;
+    directDistanceFactorWp = value;
+  }
+
+  /* Same as above but for radionav search (SOURCE_RADIO). */
+  void setDirectDistanceFactorRadio(float value)
+  {
+    directDistanceFactorRadio = value;
   }
 
 private:
@@ -169,7 +181,7 @@ private:
   void readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const;
 
   /* Get nearest nodes and edges */
-  void searchNearest(atools::routing::Result& result, const Node& from, float minDistanceMeter,
+  void searchNearest(atools::routing::Result& result, const Node& origin, float minDistanceMeter,
                      float maxDistanceMeter, const QSet<int> *excludeIndexes = nullptr) const;
 
   /* Check node filter based on mode. */
@@ -188,8 +200,10 @@ private:
 
   const atools::geo::Point3D& point3D(int index) const;
 
-  float minNearestDistanceNm = 20.f, maxNearestDistanceNm = 500.f, maxNearestDistanceRadioNm = 1000.f,
-        nearestDepartureDistanceNm = 500.f, nearestDestDistanceNm = 500.f, directDistanceFactor = 1.02f;
+  float
+    minNearestDistanceRadioNm = 20.f, maxNearestDistanceRadioNm = 1000.f, directDistanceFactorRadio = 1.2f,
+    minNearestDistanceWpNm = 100.f, maxNearestDistanceWpNm = 300.f, directDistanceFactorWp = 1.02f,
+    nearestDepartureDistanceNm = 500.f, nearestDestDistanceNm = 500.f;
 
   /* Used to filter airway edges by altitude restrictions. */
   int altitude = 0;
@@ -210,7 +224,7 @@ private:
   atools::routing::DataSource source = atools::routing::SOURCE_NONE;
 };
 
-} // namespace route
+} // namespace routing
 } // namespace atools
 
 #endif // ATOOLS_ROUTENETWORKWP_H

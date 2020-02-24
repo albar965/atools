@@ -146,7 +146,7 @@ struct Edge
 struct Node
 {
   Node()
-    : index(-1), id(-1), range(0), type(atools::routing::NONE), subtype(atools::routing::NONE)
+    : index(INVALID_INDEX), id(-1), range(0), type(atools::routing::NONE), subtype(atools::routing::NONE)
   {
   }
 
@@ -161,6 +161,9 @@ struct Node
   QVector<Edge> edges; /* Attached outgoing edges on airway only.
                         * Do not use this since edges are already filtered by the RouteNetwork. */
 
+  /* Default unitialized */
+  constexpr static int INVALID_INDEX = -1;
+
   /* Departure virtual node index for nodes added by setParameters.
    * Do not change value since it is used in RouteFinder as index. */
   constexpr static int DEPARTURE_INDEX = -2;
@@ -168,6 +171,11 @@ struct Node
   /* Destination virtual node index for nodes added by setParameters.
    * Do not change value since it is used in RouteFinder as index. */
   constexpr static int DESTINATION_INDEX = -3;
+
+  bool isValid() const
+  {
+    return index != INVALID_INDEX;
+  }
 
   bool isDeparture() const
   {

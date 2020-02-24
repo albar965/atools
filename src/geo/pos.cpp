@@ -716,16 +716,21 @@ void Pos::toCartesian(float& x, float& y, float& z) const
 
 void Pos::toCartesian(double& x, double& y, double& z) const
 {
-  // ISO convention as used in physics
-  // Θ, theta, polar angle, latY, 0° to 180°
-  // φ, phi, azimuthal angle, lonX, −180° bis 180°
-  double theta = static_cast<double>(90.f - latY);
-  double phi = static_cast<double>(lonX);
+  if(isValid())
+  {
+    // ISO convention as used in physics
+    // Θ, theta, polar angle, latY, 0° to 180°
+    // φ, phi, azimuthal angle, lonX, −180° bis 180°
+    double theta = static_cast<double>(90.f - latY);
+    double phi = static_cast<double>(lonX);
 
-  double sinTheta = sinDeg(theta);
-  x = EARTH_RADIUS_METER * sinTheta * cosDeg(phi);
-  y = EARTH_RADIUS_METER * sinTheta * sinDeg(phi);
-  z = EARTH_RADIUS_METER * cosDeg(theta);
+    double sinTheta = sinDeg(theta);
+    x = EARTH_RADIUS_METER * sinTheta * cosDeg(phi);
+    y = EARTH_RADIUS_METER * sinTheta * sinDeg(phi);
+    z = EARTH_RADIUS_METER * cosDeg(theta);
+  }
+  else
+    x = y = z = 0.;
 }
 
 QDebug operator<<(QDebug out, const Pos& pos)

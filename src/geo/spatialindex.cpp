@@ -36,10 +36,29 @@ struct DataSource
   {
   }
 
+  ~DataSource()
+  {
+    free();
+  }
+
+  void init(int size)
+  {
+    free();
+    points = new Point3D[static_cast<size_t>(size)];
+    pointsSize = size;
+  }
+
+  void free()
+  {
+    delete[] points;
+    points = nullptr;
+    pointsSize = 0;
+  }
+
   // Must return the number of data points
   size_t kdtree_get_point_count() const
   {
-    return static_cast<size_t>(points.size());
+    return static_cast<size_t>(pointsSize);
   }
 
   // Returns the dim'th component of the idx'th point in the class:
@@ -48,11 +67,11 @@ struct DataSource
   float kdtree_get_pt(const size_t idx, const size_t dim) const
   {
     if(dim == 0)
-      return points.at(static_cast<int>(idx)).getX();
+      return points[idx].getX();
     else if(dim == 1)
-      return points.at(static_cast<int>(idx)).getY();
+      return points[idx].getY();
     else
-      return points.at(static_cast<int>(idx)).getZ();
+      return points[idx].getZ();
   }
 
   // Optional bounding-box computation: return false to default to a standard bbox computation loop.
@@ -67,7 +86,8 @@ struct DataSource
   constexpr static int DIMENSIONS = 3;
   constexpr static int MAX_LEAF_SIZE = 20;
 
-  QVector<Point3D> points; // Must be initialized before the index
+  int pointsSize = 0;
+  Point3D *points = nullptr; // Must be initialized before the index
   KDTreeSingleIndexAdaptor<L1_Adaptor<float, DataSource>, DataSource, DIMENSIONS, int> index;
 };
 
@@ -103,29 +123,13 @@ struct IndexEntry
   float distance;
 };
 
-struct IndexEntrySorter
-{
-  inline bool operator()(const IndexEntry& entry1, const IndexEntry& entry2) const
-  {
-    return entry1.distance < entry2.distance;
-  }
-
-};
-
 /* Callback for radius searches. Does min and max distance comparison. All distances in meter. */
 class RadiusResults
 {
 public:
-  RadiusResults(QVector<IndexEntry>& resultParam, const QVector<Point3D>& pointsParam,
-                float radiusMinParam, float radiusMaxParam, const Point3D& originPoint, const Point3D& destPoint,
-                const QSet<int> *excludeIndexesParam, float directDistanceFactor)
-    : radiusMin(radiusMinParam), radiusMax(radiusMaxParam), directDistFactor(directDistanceFactor),
-    result(resultParam), points(pointsParam.data()), dest(destPoint), origin(originPoint),
-    excludeIndexes(excludeIndexesParam)
+  RadiusResults(QVector<IndexEntry>& resultParam, float radiusMaxParam, const RadiusCallbackType& radiusCallback)
+    : radiusMax(radiusMaxParam), result(resultParam), callback(radiusCallback)
   {
-    // Calculate distance from origin to destination
-    if(dest.isValid() && origin.isValid())
-      originToDestDist = dest.gcDistanceMeter(origin);
   }
 
   size_t size() const
@@ -145,42 +149,8 @@ public:
    */
   bool addPoint(float dist, int index)
   {
-    if(dist < radiusMax)
-    {
-      bool ok = true;
-
-      // Do not use nodes in the exclude list
-      if(excludeIndexes != nullptr)
-        ok &= !excludeIndexes->contains(index);
-
-      if(ok && originToDestDist > 0.f)
-      {
-        // Current point to destination
-        float distToDest = points[index].directDistanceMeter(dest);
-
-        if(originToDestDist < atools::geo::nmToMeter(100.f))
-          // Allow nodes after destination if close enough
-          ok &= distToDest < originToDestDist + atools::geo::nmToMeter(50.f);
-        else
-        {
-          // Include only if distance is smaller than distance between origin and destination
-          // i.e. do not include points behind the origin (search center)
-          ok &= distToDest < originToDestDist;
-
-          // Include only points where the total distance (origin -> current -> destination) is not much
-          // bigger than the direct connection (origin -> destination * directDistanceFactor)
-          if(ok && directDistFactor > 1.f)
-            ok &= distToDest + points[index].directDistanceMeter(origin) < originToDestDist * directDistFactor;
-        }
-      }
-
-      // Filter out anything inside the minimum radius if given
-      if(ok && radiusMin > 0.f)
-        ok &= points[index].directDistanceMeter(origin) > radiusMin;
-
-      if(ok)
-        result.push_back({index, dist});
-    }
+    if(dist < radiusMax && (!callback || callback(dist, index)))
+      result.push_back({index, dist});
 
     // keep adding points
     return true;
@@ -192,40 +162,26 @@ public:
   }
 
 private:
-  float radiusMin, radiusMax, originToDestDist = 0.f, directDistFactor;
-
+  float radiusMax;
   QVector<IndexEntry>& result;
-
-  // Use plain array for all points for performance
-  const Point3D *points;
-
-  Point3D dest, origin;
-  const QSet<int> *excludeIndexes = nullptr;
+  RadiusCallbackType callback;
 };
 
-void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& pos, float radiusMinMeter,
-                                         float radiusMaxMeter, float directDistanceFactor, bool sort,
-                                         const Pos *destPos, const QSet<int> *excludeIndexes) const
+void SpatialIndexPrivate::pointsInRadius(QVector<int>& indexes, const Pos& origin, float radiusMaxMeter,
+                                         const RadiusCallbackType& callback) const
 {
-  Point3D destPt;
-  if(destPos != nullptr && destPos->isValid())
-    destPos->toCartesian(destPt);
-
   float originPtArr[3];
-  pos.toCartesian(originPtArr[0], originPtArr[1], originPtArr[2]);
+  origin.toCartesian(originPtArr[0], originPtArr[1], originPtArr[2]);
   Point3D originPt(originPtArr[0], originPtArr[1], originPtArr[2]);
 
   QVector<IndexEntry> indicesDists;
   indicesDists.reserve(100000);
-  RadiusResults resultCallback(indicesDists, p->points, radiusMinMeter, radiusMaxMeter, originPt, destPt,
-                               excludeIndexes, directDistanceFactor);
+  RadiusResults resultCallback(indicesDists, radiusMaxMeter, callback);
+
   nanoflann::SearchParams params;
   params.sorted = false;
 
   int num = static_cast<int>(p->index.radiusSearchCustomCallback(originPtArr, resultCallback, params));
-
-  if(sort)
-    std::sort(indicesDists.begin(), indicesDists.end(), IndexEntrySorter());
 
   for(int i = 0; i < num; i++)
     indexes.append(indicesDists.at(i).index);
@@ -236,22 +192,22 @@ void SpatialIndexPrivate::buildIndex()
   p->index.buildIndex();
 }
 
-void SpatialIndexPrivate::append(const Point3D& point)
+void SpatialIndexPrivate::set(const Point3D& point, int index)
 {
-  p->points.append(point);
+  p->points[index] = point;
 }
 
 void SpatialIndexPrivate::clear()
 {
-  p->points.clear();
+  p->free();
 }
 
 void SpatialIndexPrivate::reserve(int size)
 {
-  p->points.reserve(size);
+  p->init(size);
 }
 
-QVector<Point3D>& SpatialIndexPrivate::points3D()
+const atools::geo::Point3D *SpatialIndexPrivate::points3D()
 {
   return p->points;
 }
