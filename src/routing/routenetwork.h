@@ -35,6 +35,8 @@ namespace routing {
  * Data is loaded from tables airway, waypoint, vor and ndb depending on source.
  *
  * The class has a state (i.e. start and destination) and is not re-entrant.
+ *
+ * A call to setParameters with valid departure and destination is required before using any other methods.
  */
 class RouteNetwork
 {
@@ -57,7 +59,13 @@ public:
    * Adjacent objects are filtered based on distance and type criteria like airway types.
    * Edges may be airways or generated edges by nearest neighbor search.
    * Nodes/edges having a longer distance to the destination than the origin are filtered out .*/
-  void getNeighbours(atools::routing::Result& result, const atools::routing::Node& from) const;
+  void getNeighbours(atools::routing::Result& result, const atools::routing::Node& origin) const;
+
+  /* Same as above but uses a the nearest node for the position. */
+  void getNeighbours(atools::routing::Result& result, const atools::geo::Pos& origin) const
+  {
+    getNeighbours(result, getNearestNode(origin));
+  }
 
   /* Get great circle distance between two nodes. The calculation in euclidian 3D space
    * which is used here is faster than the usual haversine formula. */
@@ -98,7 +106,10 @@ public:
   const atools::routing::Node& getNode(int index) const;
 
   /* Get a single nearest node to the position. */
-  const atools::routing::Node& getNearestNode(const atools::geo::Pos& pos) const;
+  const atools::routing::Node& getNearestNode(const atools::geo::Pos& pos) const
+  {
+    return nodeIndex.getNearest(pos);
+  }
 
   /* Get a node by database id ("waypoint_id" or other navaid id) */
   const atools::routing::Node& getNodeById(int navId) const
@@ -118,41 +129,28 @@ public:
     return source == SOURCE_AIRWAY;
   }
 
-  /* Minimum distance for neares neighbor search. Not for airways. */
-  void setMinNearestDistanceRadioNm(float value)
+  bool isRadionavRouting() const
   {
-    minNearestDistanceRadioNm = value;
+    return source == SOURCE_RADIO;
   }
+
+  /* Minimum distance for neares neighbor search. Not for airways. */
+  void setMinNearestDistanceRadioNm(float value);
 
   /* Maximum distance for neares neighbor search. Not for airways (SOURCE_AIRWAY) but for waypoints. */
-  void setMinNearestDistanceWpNm(float value)
-  {
-    minNearestDistanceWpNm = value;
-  }
+  void setMinNearestDistanceWpNm(float value);
 
   /* Maximum distance for nearest neighbor search. Only for radionav search (SOURCE_RADIO). */
-  void setMaxNearestDistanceRadioNm(float value)
-  {
-    maxNearestDistanceRadioNm = value;
-  }
+  void setMaxNearestDistanceRadioNm(float value);
 
-  /* Maximum distance for nearest neighbor search. Only for airway/waypoint search (SOURCE_WAYPOINT). */
-  void setMaxNearestDistanceWpNm(float value)
-  {
-    maxNearestDistanceWpNm = value;
-  }
+  /* Maximum distance for nearest neighbor search. Only for airway/waypoint search (SOURCE_AIRWAY). */
+  void setMaxNearestDistanceWpNm(float value);
 
   /* Search distance for nearest nodes around start node added using setParameters */
-  void setNearestDepartureDistanceNm(float value)
-  {
-    nearestDepartureDistanceNm = value;
-  }
+  void setNearestDepartureDistanceNm(float value);
 
   /* Search distance for destination node added using setParameters */
-  void setNearestDestDistanceNm(float value)
-  {
-    nearestDestDistanceNm = value;
-  }
+  void setNearestDestDistanceNm(float value);
 
   /* Include only points where the total distance (origin->current->destination) is not
    * bigger than the direct connection (origin->destination * directDistanceFactor).
@@ -168,16 +166,21 @@ public:
     directDistanceFactorRadio = value;
   }
 
+  /* Same as above but for airways (SOURCE_AIRWAY). */
+  void setDirectDistanceFactorAirway(float value)
+  {
+    directDistanceFactorAirway = value;
+  }
+
 private:
   void clearIndexes();
-
   void initInternal();
 
   /* Read VOR and NDB into index */
   void readNodesRadio(const QString& queryStr, int& idx, bool vor);
 
   /* Read waypoints and airways into index */
-  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx);
+  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb, bool airway);
   void readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const;
 
   /* Get nearest nodes and edges */
@@ -185,25 +188,25 @@ private:
                      float maxDistanceMeter, const QSet<int> *excludeIndexes = nullptr) const;
 
   /* Check node filter based on mode. */
-  bool matchNode(const atools::routing::Node& node) const;
+  bool matchNode(int index) const;
 
   atools::geo::Point3D nodeToCartesian(const atools::routing::Node& node) const
   {
     return node.index >= 0 ? nodeIndex.atPoint3D(node.index) : node.pos.toCartesian();
   }
 
-  bool matchEdge(const atools::routing::Edge& edge) const
-  {
-    return (altitude == 0 || (altitude >= edge.minAltFt && altitude <= edge.maxAltFt)) &&
-           (!(mode & MODE_NO_RNAV) || edge.routeType == RNAV);
-  }
+  /* Check if altitude and RNAV constraints allow to use this edge */
+  bool matchEdge(const atools::routing::Edge& edge) const;
 
+  /* Get point in 3D space. Returns destination or departure for appropriate indexes. */
   const atools::geo::Point3D& point3D(int index) const;
 
-  float
-    minNearestDistanceRadioNm = 20.f, maxNearestDistanceRadioNm = 1000.f, directDistanceFactorRadio = 1.2f,
-    minNearestDistanceWpNm = 100.f, maxNearestDistanceWpNm = 300.f, directDistanceFactorWp = 1.02f,
-    nearestDepartureDistanceNm = 500.f, nearestDestDistanceNm = 500.f;
+  /* All distances in meter */
+  float minNearestDistanceRadioM, maxNearestDistanceRadioM,
+        minNearestDistanceWpM, maxNearestDistanceWpM,
+        nearestDepartureDistanceM, nearestDestDistanceM;
+
+  float directDistanceFactorRadio, directDistanceFactorWp, directDistanceFactorAirway;
 
   /* Used to filter airway edges by altitude restrictions. */
   int altitude = 0;
@@ -213,12 +216,13 @@ private:
   atools::sql::SqlDatabase *db;
 
   atools::routing::Node departureNode, destinationNode;
-  atools::geo::Point3D departurePoint3D, destinationPoint3D;
+  atools::geo::Point3D departurePoint, destinationPoint;
+  float routeDirectDistance = 0.f, routeGcDistance = 0.f;
 
   /* Spatial index for nearest neighbor search using KD-tree internally */
   atools::geo::SpatialIndex<Node> nodeIndex;
 
-  /* Maps database id to index */
+  /* Maps database ids to index */
   QHash<int, int> nodeIdIndexMap;
 
   atools::routing::DataSource source = atools::routing::SOURCE_NONE;

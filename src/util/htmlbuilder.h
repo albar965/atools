@@ -102,10 +102,12 @@ public:
   /* Error message. Bold white text on red background. */
   HtmlBuilder& error(const QString& str);
   static QString errorMessage(const QString& str);
+  static QString errorMessage(const QStringList& stringList, const QString& separator = "<br/>");
 
   /* Warning message. Orange bold text. */
   HtmlBuilder& warning(const QString& str);
   static QString warningMessage(const QString& str);
+  static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>");
 
   /* Add bold text */
   HtmlBuilder& b(const QString& str);

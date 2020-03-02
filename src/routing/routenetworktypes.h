@@ -35,18 +35,21 @@ enum DataSource
 enum Mode : unsigned char
 {
   MODE_NONE = 0,
-  MODE_RADIONAV = 1 << 0, /* VOR/NDB to VOR/NDB */
-  MODE_WAYPOINT = 1 << 1, /* Waypoint (no airway) */
-  MODE_VICTOR = 1 << 2, /* Low airways */
-  MODE_JET = 1 << 3, /* High airways */
+  MODE_RADIONAV_VOR = 1 << 0, /* VOR/NDB to VOR/NDB */
+  MODE_RADIONAV_NDB = 1 << 1, /* VOR/NDB to VOR/NDB */
+  MODE_WAYPOINT = 1 << 2, /* Waypoint (no airway) */
+  MODE_VICTOR = 1 << 3, /* Low airways */
+  MODE_JET = 1 << 4, /* High airways */
 
-  MODE_NO_RNAV = 1 << 4, /* Do not use RNAV airways */
+  MODE_NO_RNAV = 1 << 5, /* Do not use RNAV airways */
 
   MODE_AIRWAY = MODE_VICTOR | MODE_JET,
   MODE_AIRWAY_AND_WAYPOINT = MODE_VICTOR | MODE_JET | MODE_WAYPOINT,
   MODE_JET_AND_WAYPOINT = MODE_JET | MODE_WAYPOINT,
   MODE_VICTOR_AND_WAYPOINT = MODE_VICTOR | MODE_WAYPOINT,
-  MODE_NAVAID = MODE_RADIONAV | MODE_WAYPOINT,
+
+  MODE_NAVAID = MODE_RADIONAV_VOR | MODE_RADIONAV_NDB | MODE_WAYPOINT,
+  MODE_RADIONAV = MODE_RADIONAV_VOR | MODE_RADIONAV_NDB,
   MODE_ALL = MODE_AIRWAY | MODE_NAVAID,
 };
 
@@ -76,21 +79,21 @@ QString nodeTypeToStr(NodeType type);
 enum EdgeType : unsigned char
 {
   AIRWAY_NONE = 0, /* No airway edge. Typically a generated edge. */
-  AIRWAY_VICTOR = 5, /* Airway edge as loaded from the database */
-  AIRWAY_JET = 6, /* " */
-  AIRWAY_BOTH = 7 /* " */
+  AIRWAY_VICTOR = 1, /* Airway edge as loaded from the database */
+  AIRWAY_JET = 2, /* " */
+  AIRWAY_BOTH = 3 /* " */
 };
 
 enum RouteType : unsigned char
 {
-  NO_ROUTE_TYPE,
-  AIRLINE, /* A Airline Airway (Tailored Data) */
-  CONTROL, /* C Control (appears in DFD) */
-  DIRECT, /* D Direct Route */
-  HELICOPTER, /* H Helicopter Airways */
-  OFFICIAL, /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
-  RNAV, /* R RNAV Airways (appears in DFD) */
-  UNDESIGNATED /* S Undesignated ATS Route */
+  NO_ROUTE_TYPE = '\0',
+  AIRLINE = 'A', /* A Airline Airway (Tailored Data) */
+  CONTROL = 'C', /* C Control (appears in DFD) */
+  DIRECT = 'D', /* D Direct Route */
+  HELICOPTER = 'H', /* H Helicopter Airways */
+  OFFICIAL = 'O', /* O Officially Designated Airways, except RNAV, Helicopter Airways (appears in DFD) */
+  RNAV = 'R', /* R RNAV Airways (appears in DFD) */
+  UNDESIGNATED = 'S' /* S Undesignated ATS Route */
 };
 
 /* Network edge that connects two nodes. Is loaded from the database or
@@ -127,7 +130,12 @@ struct Edge
 
   bool isAnyAirway() const
   {
-    return type == AIRWAY_VICTOR || type == AIRWAY_JET || type == AIRWAY_BOTH;
+    return !isNoAirway();
+  }
+
+  bool isNoAirway() const
+  {
+    return type == AIRWAY_NONE;
   }
 
   int toIndex, /* Internal index (not ID) of end node */

@@ -46,8 +46,9 @@ RouteFinder::~RouteFinder()
 }
 
 bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude,
-                                 atools::routing::Modes modeParam)
+                                 atools::routing::Modes mode)
 {
+  qDebug() << Q_FUNC_INFO << "from" << from << "to" << to << "altitude" << flownAltitude << "mode" << mode;
   ensureNetworkLoaded();
 
   allocArrays();
@@ -56,7 +57,6 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   timer.start();
 
   altitude = flownAltitude;
-  mode = modeParam;
   network->setParameters(from, to, altitude, mode);
   startNode = network->getDepartureNode();
   destNode = network->getDestinationNode();
@@ -230,7 +230,7 @@ float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
   if(network->isAirwayRouting())
   {
     if(!edge.isAnyAirway())
-      costs *= COST_FACTOR_FORCE_AIRWAYS;
+      costs *= costFactorForceAirways;
   }
   else
   {

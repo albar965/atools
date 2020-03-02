@@ -147,6 +147,14 @@ HtmlBuilder& HtmlBuilder::error(const QString& str)
   return *this;
 }
 
+QString HtmlBuilder::errorMessage(const QStringList& stringList, const QString& separator)
+{
+  QStringList errList;
+  for(const QString& str : stringList)
+    errList.append(errorMessage(str));
+  return errList.join(separator);
+}
+
 QString HtmlBuilder::errorMessage(const QString& str)
 {
   if(!str.isEmpty())
@@ -171,6 +179,14 @@ QString HtmlBuilder::warningMessage(const QString& str)
                    "</span>").arg(str.toHtmlEscaped());
 
   return str;
+}
+
+QString HtmlBuilder::warningMessage(const QStringList& stringList, const QString& separator)
+{
+  QStringList warnList;
+  for(const QString& str : stringList)
+    warnList.append(warningMessage(str));
+  return warnList.join(separator);
 }
 
 HtmlBuilder& HtmlBuilder::row2AlignRight(bool alignRight)

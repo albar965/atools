@@ -58,7 +58,7 @@ public:
    * @param flownAltitude create a flight plan using airways for the given altitude. Set to 0 to ignore.
    * @return true if a route was found and callback did not cancel
    */
-  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude, Modes modeParam);
+  bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude, Modes mode);
 
   /* Delegate to RouteNetwork::ensureLoaded. Loads network data if not already done.
    *  Call before using calculateRoute */
@@ -96,6 +96,11 @@ public:
     callback = progressCallback;
   }
 
+  void setCostFactorForceAirways(float value)
+  {
+    costFactorForceAirways = value;
+  }
+
 private:
   /* Expands a node by investigating all successors */
   void expandNode(const atools::routing::Node& node);
@@ -112,14 +117,14 @@ private:
   void freeArrays();
   void allocArrays();
 
+  /* Avoid direct waypoint connections when using airways */
+  float costFactorForceAirways = 1.3f;
+
   /* Force algortihm to avoid direct route from start to destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;
 
   /* Force algortihm to use close waypoints near start and destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
-
-  /* Avoid direct waypoint connections when using airways */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_AIRWAYS = 1.3f;
 
   /* Force algortihm to use closest radio navaids near start and destination before waypoints */
   /* Has to be smaller than COST_FACTOR_FORCE_CLOSE_NODES */
@@ -141,9 +146,6 @@ private:
   /* Altitude to use  for airway selection of 0 if not used */
   int altitude = 0;
 
-  /* Mode which defines which nodes are to be selected while routing. */
-  atools::routing::Modes mode = atools::routing::MODE_ALL;
-
   /* Used network */
   atools::routing::RouteNetwork *network;
 
@@ -151,10 +153,12 @@ private:
    * Sort order is defined by costs from start to node + estimate to destination */
   atools::util::Heap<int> openNodesHeap;
 
+  /* Using plain arrays below to speed up access compared to hash tables
+   * Positions 0 and 1 are reserved for departure and destination. 2 is invalid.
+   * 3 corresponds to first index in nodeIndex.*/
+
   /* Nodes that have been processed already and have a known shortest path */
   bool *closedNodes = nullptr;
-
-  // Using plain arrays below to speed up access compared to hash tables
 
   /* Costs from start to this node. Maps node id to costs. Costs are distance in meter
    * adjusted by some factors. */
