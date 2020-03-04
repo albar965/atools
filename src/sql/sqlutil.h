@@ -67,9 +67,13 @@ public:
 
   /* @return true if table exists */
   bool hasTable(const QString& tablename);
+  bool hasTableAndColumn(const QString& tablename, const QString& columnname);
 
   /* @return true if table exists and has rows */
   bool hasTableAndRows(const QString& tablename);
+
+  /* @return number of distinct rows if table and column exist. Otherwise -1. */
+  int getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname);
 
   /* Get number of rows in table. Throws exception if the table does not exist. */
   int rowCount(const QString& tablename, const QString& criteria = QString());

@@ -112,12 +112,29 @@ bool SqlUtil::hasTable(const QString& tablename)
   return !db->record(tablename).isEmpty();
 }
 
+bool SqlUtil::hasTableAndColumn(const QString& tablename, const QString& columnname)
+{
+  return db->record(tablename).contains(columnname);
+}
+
 bool SqlUtil::hasTableAndRows(const QString& tablename)
 {
   if(!db->record(tablename).isEmpty())
     return hasRows(tablename);
 
   return false;
+}
+
+int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname)
+{
+  if(hasTableAndColumn(tablename, columnname))
+  {
+    SqlQuery q(db);
+    q.exec("select count(distinct " + columnname + ") from " + tablename);
+    if(q.next())
+      return q.value(0).toInt();
+  }
+  return -1;
 }
 
 int SqlUtil::rowCount(const QString& tablename, const QString& criteria)
