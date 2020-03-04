@@ -86,6 +86,12 @@ public:
     return sidStar;
   }
 
+  /* True if table airway has route_type */
+  bool hasRouteType() const
+  {
+    return routeType;
+  }
+
   /*
    * @return true if application major version and database major version are equal
    */
@@ -188,7 +194,7 @@ private:
 
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
-  bool valid = false, sidStar = false;
+  bool valid = false, sidStar = false, routeType = false;
   QString airacCycle, validThrough, dataSource, compilerVersion;
 };
 

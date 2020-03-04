@@ -22,7 +22,6 @@
 #include "sql/sqlutil.h"
 #include "sql/sqldatabase.h"
 
-
 namespace atools {
 namespace fs {
 namespace db {
@@ -44,7 +43,8 @@ DatabaseMeta::DatabaseMeta(sql::SqlDatabase& sqlDb)
 
 void DatabaseMeta::init()
 {
-  if(SqlUtil(db).hasTable("metadata"))
+  SqlUtil util(db);
+  if(util.hasTable("metadata"))
   {
     SqlQuery query(db);
 
@@ -66,6 +66,8 @@ void DatabaseMeta::init()
     }
     query.finish();
   }
+
+  routeType = util.getTableColumnAndDistinctRows("airway", "route_type") > 0;
 }
 
 void DatabaseMeta::updateVersion(int majorVer, int minorVer)
