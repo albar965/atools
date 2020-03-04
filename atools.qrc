@@ -41,5 +41,6 @@
         <file>resources/sql/fs/logbook/drop_logbook_schema.sql</file>
         <file>resources/sql/fs/logbook/create_logbook_schema.sql</file>
         <file>resources/sql/fs/db/create_indexes_post_load_boundary.sql</file>
+        <file>resources/sql/fs/db/finish_schema_route.sql</file>
     </qresource>
 </RCC>

@@ -1,6 +1,15 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.5
+
+Separated creation of routing schema and data from other compiler steps.
+* Routing tables are now kept but not populated if disabled.
+  This is done to avoid crashes with older LNM version accessing the new database. albar965/littlenavmap#466
+* Added airway route type to DFD compiler. albar965/littlenavmap#466
+
+===============================================================================
+
 Version 3.4.4
 
 * Fixed issue where scenery entries were read despite being disabled in add-ons.cfg for P3D.
