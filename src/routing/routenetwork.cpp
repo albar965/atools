@@ -41,7 +41,7 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, DataSource dataSourc
   maxNearestDistanceRadioM = nmToMeter(1000.f);
 
   minNearestDistanceWpM = nmToMeter(100.f);
-  maxNearestDistanceWpM = nmToMeter(250.f);
+  maxNearestDistanceWpM = nmToMeter(200.f);
 
   directDistanceFactorRadio = 1.2f;
   directDistanceFactorWp = 1.02f;
@@ -106,7 +106,12 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
 
     // Additionally search for direct waypoint connections
     if((mode & MODE_WAYPOINT && result.size() < 2) || origin.isDeparture())
-      searchNearest(result, origin, minNearestDistanceWpM, maxNearestDistanceWpM, &nodeIndexes);
+    {
+      int found = searchNearest(result, origin, minNearestDistanceWpM, maxNearestDistanceWpM, &nodeIndexes);
+
+      if(found < 2)
+        searchNearest(result, origin, minNearestDistanceWpM * 2, maxNearestDistanceWpM * 8, &nodeIndexes);
+    }
   }
   else
     // Find nearest navaids =======================================
@@ -120,8 +125,8 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
   }
 }
 
-void RouteNetwork::searchNearest(Result& result, const Node& origin,
-                                 float minDistanceMeter, float maxDistanceMeter, const QSet<int> *excludeIndexes) const
+int RouteNetwork::searchNearest(Result& result, const Node& origin,
+                                float minDistanceMeter, float maxDistanceMeter, const QSet<int> *excludeIndexes) const
 {
   /* Callback class used for secondary stage filtering in radius searches.
    * Mainly used to keep all local variables accessible for the callback method. */
@@ -151,7 +156,6 @@ void RouteNetwork::searchNearest(Result& result, const Node& origin,
         // Include only if distance is smaller than distance between origin and destination
         // i.e. include points ahead but not behind the origin (search center)
         ok &= curToDestDist < originToDestDist;
-
       }
 
       if(ok)
@@ -191,7 +195,7 @@ void RouteNetwork::searchNearest(Result& result, const Node& origin,
   RadiusCallback callbackObj;
   callbackObj.origin = nodeToCartesian(origin);
   callbackObj.points = nodeIndex.getPoints3D();
-  callbackObj.excludeIndexes = excludeIndexes;
+  callbackObj.excludeIndexes = (excludeIndexes == nullptr || excludeIndexes->isEmpty()) ? nullptr : excludeIndexes;
   callbackObj.radionav = isRadionavRouting();
 
   callbackObj.directDistFactor = isAirwayRouting() ? directDistanceFactorWp : directDistanceFactorRadio;
@@ -222,6 +226,7 @@ void RouteNetwork::searchNearest(Result& result, const Node& origin,
   result.edges.reserve(indexes.size());
 
   // Copy node indexes and edges to result ======================
+  int numFound = 0;
   Point3D originPoint = nodeToCartesian(origin);
   for(int idx : indexes)
   {
@@ -230,8 +235,10 @@ void RouteNetwork::searchNearest(Result& result, const Node& origin,
       // Add node and edge leading to it
       result.nodes.append(idx);
       result.edges.append(Edge(idx, originPoint.gcDistanceMeter(nodeIndex.atPoint3D(idx))));
+      numFound++;
     }
   }
+  return numFound;
 }
 
 void RouteNetwork::setParameters(const geo::Pos& departurePos, const geo::Pos& destinationPos, int altitudeParam,
@@ -451,36 +458,37 @@ void RouteNetwork::initInternal()
 
     // Read navaids into nodeIdIndexMap and into nodesTemp
     // Named waypoints without airways
+    // Unnamed degree confluence waypoints
     readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.type, w.lonx, w.laty "
+                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
                     "from waypoint w "
-                    "where w.type = 'WN' and "
+                    "where (w.type = 'WN' or (w.type = 'WU' and w.airport_id is null)) and "
                     "w.num_jet_airway = 0 and w.num_victor_airway = 0",
-                    currentIndex, false, false, false);
-    // "where (w.type = 'WN' or (w.type = 'WU' and w.airport_id is null)) and "
+                    currentIndex, false, false, false, true /* filterUnnamed */);
+    // "where w.type = 'WN' and "
 
     // Airway waypoints
     readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
+                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                     "from waypoint w "
                     "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, false, false, true /* airways */);
+                    currentIndex, false, false, true /* airways */, false);
 
     // Airway VOR waypoints
     readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
+                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
                     "v.range, v.type as radiotype, v.dme_altitude,  v.dme_only "
                     "from waypoint w join vor v on w.nav_id = v.vor_id "
                     "where w.type = 'V' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, true /* VOR */, false, true /* airways */);
+                    currentIndex, true /* VOR */, false, true /* airways */, false);
 
     // Airway NDB waypoints
     readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
+                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
                     "n.range "
                     "from waypoint w join ndb n on w.nav_id = n.ndb_id "
                     "where w.type = 'N' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, false, true /* NDB */, true /* airways */);
+                    currentIndex, false, true /* NDB */, true /* airways */, false);
 
     // Insert outgoing edges to each node and copy them to the index
     nodeIndex.reserve(nodesTemp.size());
@@ -595,37 +603,65 @@ void RouteNetwork::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const
 }
 
 void RouteNetwork::readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb,
-                                   bool airway)
+                                   bool airway, bool filterUnnamed)
 {
   // Column indexes
-  // 0            1     2     3     4               5                  6      7        8             9
-  // waypoint_id, type, lonx, laty, num_jet_airway, num_victor_airway
-  // waypoint_id, type, lonx, laty, num_jet_airway, num_victor_airway, range, radiotype, dme_altitude, dme_only
-  // waypoint_id, type, lonx, laty, num_jet_airway, num_victor_airway, range
+  // 0            1      2     3     4               5                  6      7        8             9
+  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway
+  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway, range, radiotype, dme_altitude, dme_only
+  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway, range
   enum
   {
     ID = 0,
-    TYPE = 1,
-    LONX = 2,
-    LATY = 3,
-    NUM_JET_AIRWAY = 4,
-    NUM_VICTOR_AIRWAY = 5,
-    RANGE = 6,
-    RADIO_TYPE = 7,
-    DME_ALTITUDE = 8,
-    DME_ONLY = 9
+    IDENT = 1,
+    TYPE = 2,
+    LONX = 3,
+    LATY = 4,
+    NUM_JET_AIRWAY = 5,
+    NUM_VICTOR_AIRWAY = 6,
+    RANGE = 7,
+    RADIO_TYPE = 8,
+    DME_ALTITUDE = 9,
+    DME_ONLY = 10
   };
 
   SqlQuery query(queryStr, db);
   query.exec();
   while(query.next())
   {
+    QString type = query.valueStr(TYPE);
+    atools::geo::Pos pos(query.valueFloat(LONX), query.valueFloat(LATY));
+
+    if(filterUnnamed && type == "WU")
+    {
+      // Include all one degree grid confluence points
+      bool ok = pos.nearGrid(atools::geo::Pos::POS_EPSILON_10M);
+
+      if(!ok)
+      {
+        // Include unnamed oceanic waypoints like 2230N 6900E 51N50 32W20 02E60
+        QString ident = query.valueStr(IDENT);
+        // First two characters need to be digits
+        if(atools::charAt(ident, 0).isDigit() && atools::charAt(ident, 1).isDigit())
+        {
+          // Compass direction or digit followed by a digit
+          char at2 = atools::latin1CharAt(ident, 2);
+          if((std::isdigit(at2) || atools::contains(at2, {'N', 'S', 'E', 'W'})) && atools::charAt(ident, 3).isDigit())
+          {
+            char at4 = atools::latin1CharAt(ident, 4);
+            ok = std::isdigit(at4) || atools::contains(at4, {'N', 'S', 'E', 'W'});
+          }
+        }
+      }
+
+      if(!ok)
+        continue;
+    }
+
     Node node;
     node.index = idx;
     node.id = query.valueInt(ID);
-    QString type = query.valueStr(TYPE);
-    node.pos.setLonX(query.valueFloat(LONX));
-    node.pos.setLatY(query.valueFloat(LATY));
+    node.pos = pos;
 
     int numJet = airway ? query.valueInt(NUM_JET_AIRWAY) : 0;
     int numVictor = airway ? query.valueInt(NUM_VICTOR_AIRWAY) : 0;

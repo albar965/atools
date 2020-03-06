@@ -180,11 +180,11 @@ private:
   void readNodesRadio(const QString& queryStr, int& idx, bool vor);
 
   /* Read waypoints and airways into index */
-  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb, bool airway);
+  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb, bool airway, bool filterUnnamed);
   void readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const;
 
   /* Get nearest nodes and edges */
-  void searchNearest(atools::routing::Result& result, const Node& origin, float minDistanceMeter,
+  int searchNearest(atools::routing::Result& result, const Node& origin, float minDistanceMeter,
                      float maxDistanceMeter, const QSet<int> *excludeIndexes = nullptr) const;
 
   /* Check node filter based on mode. */

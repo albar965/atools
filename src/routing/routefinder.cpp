@@ -60,7 +60,8 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   network->setParameters(from, to, altitude, mode);
   startNode = network->getDepartureNode();
   destNode = network->getDestinationNode();
-  distMeterToDest = currentDistMeterToDest = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
+  int totalDist = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
+  int lastDist = totalDist;
 
   openNodesHeap.pushData(startNode.index, 0.f);
   at(nodeAltRangeMaxArr, startNode.index) = std::numeric_limits<quint16>::max();
@@ -84,11 +85,10 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     if(callback)
     {
       int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
-      // Call only if changed for more than one percent
-      if(dist * 100 < currentDistMeterToDest * 99)
+      if(dist < lastDist)
       {
-        currentDistMeterToDest = dist;
-        if(!callback(distMeterToDest, currentDistMeterToDest))
+        lastDist = dist;
+        if(!callback(totalDist, lastDist))
           break;
       }
     }

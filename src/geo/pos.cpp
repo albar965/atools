@@ -164,8 +164,7 @@ Pos::Pos(const QString& str, bool errorOnInvalid)
 
 bool Pos::operator==(const Pos& other) const
 {
-  return atools::almostEqual(lonX, other.lonX) &&
-         atools::almostEqual(latY, other.latY);
+  return atools::almostEqual(lonX, other.lonX) && atools::almostEqual(latY, other.latY);
 }
 
 bool Pos::almostEqual(const Pos& other, float epsilon) const

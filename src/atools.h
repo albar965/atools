@@ -143,9 +143,15 @@ Q_DECL_CONSTEXPR TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
 }
 
 /* Returns 0 if without throwing an exception if index is not valid */
-inline QChar strAt(const QString& str, int index)
+inline QChar charAt(const QString& str, int index)
 {
   return index >= 0 && index < str.size() ? str.at(index) : QChar('\0');
+}
+
+/* Returns 0 if without throwing an exception if index is not valid */
+inline char latin1CharAt(const QString& str, int index)
+{
+  return index >= 0 && index < str.size() ? str.at(index).toLatin1() : '\0';
 }
 
 template<typename TYPE>

@@ -136,6 +136,7 @@ public:
 
   /* true if the position is within approx 500 meters from a one degree grid point */
   bool nearGrid(float epsilon = POS_EPSILON_500M) const;
+
   atools::geo::Pos& snapToGrid();
 
   /* Normalize this position to -180 < lonx < 180 and -90 < laty < 90 and return reference */

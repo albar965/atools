@@ -25,6 +25,7 @@ QDebug operator<<(QDebug out, const Node& obj)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Node("
                           << "index " << obj.index
+                          << "id " << obj.id
                           << ", " << obj.pos
                           << ", range " << obj.range
                           << ", type " << nodeTypeToStr(obj.type)

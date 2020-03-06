@@ -184,8 +184,6 @@ private:
 
   bool preferVorToAirway = false, preferNdbToAirway = false;
 
-  /* Direct euclidian distances in 3D space for callback */
-  int distMeterToDest = 0, currentDistMeterToDest = 0;
   RouteFinderCallbackType callback;
 };
 
