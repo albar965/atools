@@ -19,6 +19,7 @@
 
 #include "routing/routenetwork.h"
 #include "atools.h"
+#include "geo/calculations.h"
 
 #include <QElapsedTimer>
 
@@ -229,8 +230,15 @@ float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
 
   if(network->isAirwayRouting())
   {
-    if(!edge.isAnyAirway())
+    if(edge.isNoAirway())
+    {
       costs *= costFactorForceAirways;
+
+      if(edge.lengthMeter > atools::geo::nmToMeter(300))
+        costs *= COST_FACTOR_FAR_WAYPOINTS;
+      else if(edge.lengthMeter < atools::geo::nmToMeter(25))
+        costs *= COST_FACTOR_NEAR_WAYPOINTS;
+    }
   }
   else
   {

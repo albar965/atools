@@ -44,7 +44,7 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, DataSource dataSourc
   maxNearestDistanceWpM = nmToMeter(200.f);
 
   directDistanceFactorRadio = 1.2f;
-  directDistanceFactorWp = 1.02f;
+  directDistanceFactorWp = 1.1f;
   directDistanceFactorAirway = 1.2f;
 }
 

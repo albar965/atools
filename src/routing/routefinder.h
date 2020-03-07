@@ -122,6 +122,8 @@ private:
 
   /* Force algortihm to avoid direct route from start to destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_DIRECT = 2.f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_NEAR_WAYPOINTS = 1.1f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_FAR_WAYPOINTS = 1.1f;
 
   /* Force algortihm to use close waypoints near start and destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
