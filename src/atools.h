@@ -45,19 +45,24 @@ QString programFileInfoNoDate();
  *  An Exception is thrown if the file cannot be opened */
 bool fileEndsWithEol(const QString& filepath);
 
+/* Return true if one of the elements in list is equal to str */
+bool contains(const QString& name, const std::initializer_list<QString>& list);
+bool contains(const QString& name, const std::initializer_list<const char *>& list);
+
 template<typename TYPE>
-bool contains(const TYPE& name, const std::initializer_list<TYPE>& list)
+bool contains(const TYPE& str, const std::initializer_list<TYPE>& list)
 {
   for(const TYPE& val : list)
-    if(val == name)
+    if(val == str)
       return true;
 
   return false;
 }
 
-bool contains(const QString& name, const std::initializer_list<QString>& list);
-
-bool contains(const QString& name, const std::initializer_list<const char *>& list);
+/* Returns true if the string contains one of the list */
+bool strContains(const QString& name, const std::initializer_list<QString>& list);
+bool strContains(const QString& name, const std::initializer_list<const char *>& list);
+bool strContains(const QString& name, const std::initializer_list<char>& list);
 
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
@@ -72,6 +77,9 @@ void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
   for(TYPE2 type : src)
     dest.append(type);
 }
+
+/* Read whole file into a string */
+QString strFromFile(const QString& filename);
 
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);

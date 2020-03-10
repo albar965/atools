@@ -177,6 +177,33 @@ QString cleanFilename(const QString& filename)
          replace("  ", " ");
 }
 
+bool strContains(const QString& name, const std::initializer_list<QString>& list)
+{
+  for(const QString& val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
+bool strContains(const QString& name, const std::initializer_list<const char *>& list)
+{
+  for(const char *val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
+bool strContains(const QString& name, const std::initializer_list<char>& list)
+{
+  for(char val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
 bool contains(const QString& name, const std::initializer_list<QString>& list)
 {
   for(const QString& val : list)
@@ -449,6 +476,17 @@ QTime timeFromHourMinStr(const QString& timeStr)
     time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
+}
+
+QString strFromFile(const QString& filename)
+{
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    return stream.readAll();
+  }
+  return QString();
 }
 
 } // namespace atools
