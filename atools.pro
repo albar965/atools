@@ -230,6 +230,9 @@ HEADERS += \
   src/templateengine/templatecache.h \
   src/templateengine/templateglobal.h \
   src/templateengine/templateloader.h \
+  src/track/trackdownloader.h \
+  src/track/trackreader.h \
+  src/track/tracktypes.h \
   src/util/csvreader.h \
   src/util/filesystemwatcher.h \
   src/util/heap.h \
@@ -337,6 +340,9 @@ SOURCES += \
   src/templateengine/template.cpp \
   src/templateengine/templatecache.cpp \
   src/templateengine/templateloader.cpp \
+  src/track/trackdownloader.cpp \
+  src/track/trackreader.cpp \
+  src/track/tracktypes.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \
   src/util/heap.cpp \
