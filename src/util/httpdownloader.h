@@ -49,10 +49,29 @@ public:
   void startDownload();
   void cancelDownload();
 
-  /* Set download request URL */
+  /* Set download request URL for GET and POST methods */
   void setUrl(const QString& requestUrl)
   {
     downloadUrl = requestUrl;
+  }
+
+  /* Set parameters for POST method. GET is used if empty. Translates to "key1=value1&key2=value2". */
+  void setPostParameters(const QHash<QString, QString>& parameters)
+  {
+    postParameters.clear();
+    postParametersQuery = parameters;
+  }
+
+  /* Set parameters for POST method. GET is used if empty. */
+  void setPostParameters(const QByteArray& parameters)
+  {
+    postParametersQuery.clear();
+    postParameters = parameters;
+  }
+
+  const QByteArray& getPostParameters() const
+  {
+    return postParameters;
   }
 
   /* Enable an internal cache for each request URL */
@@ -135,6 +154,10 @@ private:
   QNetworkAccessManager networkManager;
   QTimer updateTimer;
   QString downloadUrl, userAgent;
+
+  QByteArray postParameters;
+  QHash<QString, QString> postParametersQuery;
+
   int updatePeriodSeconds = -1;
   QNetworkReply *reply = nullptr;
   QByteArray data;
