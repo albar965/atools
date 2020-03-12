@@ -2728,7 +2728,7 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
                                  SaveOptions options)
 {
   // Create a copy so we can easily change all waypoints to user defined is this is desired
-  QList<atools::fs::pln::FlightplanEntry> planEntries = plan.entries;
+  atools::fs::pln::FlightplanEntryListType planEntries = plan.entries;
 
   if(options & SAVE_GNS_USER_WAYPOINTS)
   {

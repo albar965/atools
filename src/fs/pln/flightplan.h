@@ -34,6 +34,8 @@ namespace pln {
 
 class FlightplanIO;
 
+typedef QList<atools::fs::pln::FlightplanEntry> FlightplanEntryListType;
+
 /*
  * A class to load, modify and save FSX (and all other compatible simulators) flight plans.
  */
@@ -51,7 +53,7 @@ public:
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
    */
-  QList<atools::fs::pln::FlightplanEntry>& getEntries()
+  atools::fs::pln::FlightplanEntryListType& getEntries()
   {
     return entries;
   }
@@ -62,7 +64,7 @@ public:
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
    */
-  const QList<atools::fs::pln::FlightplanEntry>& getEntries() const
+  const atools::fs::pln::FlightplanEntryListType& getEntries() const
   {
     return entries;
   }
@@ -279,7 +281,7 @@ private:
   atools::fs::pln::FlightplanType flightplanType = VFR;
   atools::fs::pln::RouteType routeType = DIRECT;
 
-  QList<atools::fs::pln::FlightplanEntry> entries;
+  atools::fs::pln::FlightplanEntryListType entries;
 
   int cruisingAlt;
   QString title, departureIdent, destinationIdent, description,
