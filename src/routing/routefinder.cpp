@@ -21,6 +21,7 @@
 #include "atools.h"
 #include "geo/calculations.h"
 
+#include <QDateTime>
 #include <QElapsedTimer>
 
 using atools::geo::Pos;
@@ -67,6 +68,8 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   openNodesHeap.pushData(startNode.index, 0.f);
   at(nodeAltRangeMaxArr, startNode.index) = std::numeric_limits<quint16>::max();
 
+  qint64 time = QDateTime::currentMSecsSinceEpoch();
+
   Node currentNode;
   bool destinationFound = false;
   while(!openNodesHeap.isEmpty())
@@ -85,10 +88,14 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     // Invoke user callback if set
     if(callback)
     {
-      int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
-      if(dist < lastDist)
+      qint64 now = QDateTime::currentMSecsSinceEpoch();
+      if(now > time + 200)
       {
-        lastDist = dist;
+        int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
+        if(dist < lastDist)
+          lastDist = dist;
+        time = now;
+
         if(!callback(totalDist, lastDist))
           break;
       }
