@@ -136,6 +136,12 @@ void TrackDownloader::startDownload(TrackType type)
   downloaders[type]->startDownload();
 }
 
+void TrackDownloader::cancelAllDownloads()
+{
+  for(HttpDownloader *downloader : downloaders.values())
+    downloader->cancelDownload();
+}
+
 const atools::track::TrackVectorType& TrackDownloader::getTracks(TrackType type)
 {
   return trackList[type];

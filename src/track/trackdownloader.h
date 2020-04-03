@@ -44,7 +44,7 @@ class TrackDownloader :
   Q_OBJECT
 
 public:
-  explicit TrackDownloader(QObject *parent = nullptr, bool logVerbose = false);
+  explicit TrackDownloader(QObject *parent, bool logVerbose = false);
   virtual ~TrackDownloader() override;
 
   /* Set URL for GET request for given track type */
@@ -56,6 +56,7 @@ public:
   /* Start downloads. downloadFinished or downloadFailed will be emitted once done. */
   void startAllDownloads();
   void startDownload(atools::track::TrackType type);
+  void cancelAllDownloads();
 
   /* Get downloaded tracks. */
   const TrackVectorType& getTracks(atools::track::TrackType type);

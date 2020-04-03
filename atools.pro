@@ -341,7 +341,7 @@ SOURCES += \
   src/templateengine/templatecache.cpp \
   src/templateengine/templateloader.cpp \
   src/track/trackdownloader.cpp \
-  src/track/trackreader.cpp \
+src/track/trackreader.cpp \
   src/track/tracktypes.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \

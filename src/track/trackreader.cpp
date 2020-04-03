@@ -66,7 +66,7 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
   switch(type)
   {
     case atools::track::UNKNOWN:
-      qWarning() << Q_FUNC_INFO << "Track type not valid";
+      qWarning() << Q_FUNC_INFO << "Track type" << static_cast<int>(type) << "not valid";
       break;
 
     case atools::track::NATS:
@@ -361,6 +361,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
   QDateTime from, to;
   int year = QDateTime::currentDateTimeUtc().date().year();
 
+  atools::track::TrackVectorType temp;
   for(const QString& line : lines)
   {
     // Get name and list of waypoints ============================================
@@ -377,7 +378,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       track.type = NATS;
       track.validFrom = from;
       track.validTo = to;
-      tracks.append(track);
+      temp.append(track);
     }
     // Get levels ============================================
     else if(line.startsWith("EAST LVLS"))
@@ -386,7 +387,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       for(const QString& level : line.split(" ").mid(2))
       {
         if(level != "NIL")
-          tracks.last().eastLevels.append(level.toShort());
+          temp.last().eastLevels.append(level.toShort());
       }
     }
     else if(line.startsWith("WEST LVLS"))
@@ -395,7 +396,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       for(const QString& level : line.split(" ").mid(2))
       {
         if(level != "NIL")
-          tracks.last().westLevels.append(level.toShort());
+          temp.last().westLevels.append(level.toShort());
       }
     }
     // Read validity ============================================
@@ -417,6 +418,19 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       }
     }
   }
+
+  // Update direction based on levels ==========================
+  for(Track& track : temp)
+  {
+    if(!track.westLevels.isEmpty() && !track.eastLevels.isEmpty())
+      track.direction = BOTH;
+    else if(!track.westLevels.isEmpty())
+      track.direction = WEST;
+    else if(!track.eastLevels.isEmpty())
+      track.direction = EAST;
+  }
+
+  tracks.append(temp);
 }
 
 int TrackReader::monthFromStr(const QString& str)

@@ -24,13 +24,26 @@
 namespace atools {
 namespace track {
 
-enum TrackType : unsigned char
+/* Has to match database defintions in create_track_schema.sql */
+enum TrackType : char
 {
-  UNKNOWN,
-  NATS,
-  PACOTS,
-  AUSOTS
+  UNKNOWN = '\0',
+  NATS = 'N',
+  PACOTS = 'P',
+  AUSOTS = 'A'
 };
+
+static const QVector<TrackType> ALL_TRACK_TYPES = {NATS, PACOTS, AUSOTS};
+
+enum TrackDirection : char
+{
+  NONE = '\0',
+  EAST = 'E',
+  WEST = 'W',
+  BOTH = 'B'
+};
+
+QString typeToString(atools::track::TrackType type);
 
 struct Track
 {
@@ -38,6 +51,7 @@ struct Track
   QString name;
 
   TrackType type = UNKNOWN;
+  TrackDirection direction = NONE;
 
   /* Waypoint names, coordinates and/or airway idents. */
   QStringList route;
@@ -62,11 +76,14 @@ struct Track
            (type != NATS || eastLevels.size() + westLevels.size() > 0);
   }
 
+  QString typeString() const
+  {
+    return typeToString(type);
+  }
+
 };
 
 typedef QVector<atools::track::Track> TrackVectorType;
-
-QString typeToString(atools::track::TrackType type);
 
 QDebug operator<<(QDebug out, const atools::track::Track& record);
 
