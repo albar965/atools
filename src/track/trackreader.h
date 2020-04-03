@@ -29,11 +29,11 @@ namespace atools {
 namespace track {
 
 /*
- * Parses HTML pages from the various services for NATS, AUSOTS and PACOTS and returns a list
+ * Parses HTML pages from the various services for NAT, AUSOTS and PACOTS and returns a list
  * of Track objects.
  *
  * AUSOTS: https://www.airservicesaustralia.com/flextracks/text.asp?ver=1
- * NATS: https://notams.aim.faa.gov/nat.html
+ * NAT: https://notams.aim.faa.gov/nat.html
  * PACOTS:  https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
  */
 class TrackReader
@@ -78,23 +78,23 @@ private:
   int monthFromStr(const QString& str);
 
   /* Convert e.g. "58/20" to "5820N" and "5530/20" to "H5530". */
-  QStringList toNatsWaypoints(const QStringList& str);
+  QStringList toNatWaypoints(const QStringList& str);
 
   /* Extract all tracks into the track vector that begin with nameRegexp and end with a ")".
    * nameRegexp needs to have a group returning the name. */
   void extractTracks(const QStringList& lines, const QRegularExpression& nameRegexp, TrackType type, bool removeEmpty);
 
-  /* Extract NATS tracks into the track vector. */
+  /* Extract NAT tracks into the track vector. */
   void extractNatTracks(const QStringList& lines);
 
   /* Extract PACOTS tracks into the track vector. */
-  void extractPacotTracks(const QStringList& lines);
+  void extractPacotsTracks(const QStringList& lines);
 
   /* Extract the PACOTS flex tracks into the track vector. */
-  void extractPacotTracksFlex(const QStringList& text);
+  void extractPacotsTracksFlex(const QStringList& text);
 
   /* Extract AUSOTS tracks into the track vector. */
-  void extractAusotTracks(const QStringList& lines);
+  void extractAusotsTracks(const QStringList& lines);
 
   atools::track::TrackVectorType tracks;
 

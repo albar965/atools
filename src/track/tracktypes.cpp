@@ -50,8 +50,8 @@ QString typeToString(TrackType type)
     case atools::track::UNKNOWN:
       return QObject::tr("UNKNOWN");
 
-    case atools::track::NATS:
-      return QObject::tr("NATS");
+    case atools::track::NAT:
+      return QObject::tr("NAT");
 
     case atools::track::PACOTS:
       return QObject::tr("PACOTS");

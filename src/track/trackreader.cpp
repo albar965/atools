@@ -69,7 +69,7 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
       qWarning() << Q_FUNC_INFO << "Track type" << static_cast<int>(type) << "not valid";
       break;
 
-    case atools::track::NATS:
+    case atools::track::NAT:
       // Read NAT - <PRE> is not reliable since the HTML is not valid
       extractNatTracks(extractSections(lines, "(NAT-", ")"));
       break;
@@ -79,14 +79,14 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
         // Get all lines of <PRE> elements.
         QStringList sections = extractSections(lines, "<PRE>", "</PRE>");
         // Get tracks
-        extractPacotTracks(extractSections(sections, "(TDM TRK", ")"));
+        extractPacotsTracks(extractSections(sections, "(TDM TRK", ")"));
         // Get flex tracks
-        extractPacotTracksFlex(sections);
+        extractPacotsTracksFlex(sections);
       }
       break;
 
     case atools::track::AUSOTS:
-      extractAusotTracks(lines);
+      extractAusotsTracks(lines);
       break;
   }
 }
@@ -112,7 +112,7 @@ int TrackReader::removeInvalid(TrackVectorType& trackVector)
   return num;
 }
 
-void TrackReader::extractPacotTracksFlex(const QStringList& lines)
+void TrackReader::extractPacotsTracksFlex(const QStringList& lines)
 {
   // TRACK 1.
   static const QRegularExpression PACOTS_TRACK_REGEXP("^TRACK (\\d+).$");
@@ -230,13 +230,13 @@ void TrackReader::extractPacotTracksFlex(const QStringList& lines)
   }
 }
 
-void TrackReader::extractPacotTracks(const QStringList& lines)
+void TrackReader::extractPacotsTracks(const QStringList& lines)
 {
   static const QRegularExpression PACOT_NAME_REGEXP("^\\(TDM TRK (\\S+)");
   extractTracks(lines, PACOT_NAME_REGEXP, PACOTS, false /* removeEmpty */);
 }
 
-void TrackReader::extractAusotTracks(const QStringList& lines)
+void TrackReader::extractAusotsTracks(const QStringList& lines)
 {
   static const QRegularExpression AUSOT_NAME_REGEXP("^TDM TRK (\\S+)");
   extractTracks(lines, AUSOT_NAME_REGEXP, AUSOTS, true /* removeEmpty */);
@@ -336,8 +336,8 @@ void TrackReader::extractTracks(const QStringList& lines, const QRegularExpressi
 void TrackReader::extractNatTracks(const QStringList& lines)
 {
   // MAR 08/0100Z TO MAR 08/0800Z
-  static const QRegularExpression NATS_DATE_REGEXP("^([A-Z]+) (\\d+)/(\\d\\d)(\\d\\d)Z TO "
-                                                   "([A-Z]+) (\\d+)/(\\d\\d)(\\d\\d)Z");
+  static const QRegularExpression NAT_DATE_REGEXP("^([A-Z]+) (\\d+)/(\\d\\d)(\\d\\d)Z TO "
+                                                  "([A-Z]+) (\\d+)/(\\d\\d)(\\d\\d)Z");
 
   // More than one track for each element. Validity date at the beginning.
   // <pre>
@@ -373,9 +373,9 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       track.name = split.takeFirst();
 
       // Convert coordinates to NAT waypoints
-      track.route = toNatsWaypoints(split);
+      track.route = toNatWaypoints(split);
 
-      track.type = NATS;
+      track.type = NAT;
       track.validFrom = from;
       track.validTo = to;
       temp.append(track);
@@ -403,7 +403,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
     else
     {
       // MAR 08/0100Z TO MAR 08/0800Z
-      QRegularExpressionMatch match = NATS_DATE_REGEXP.match(line);
+      QRegularExpressionMatch match = NAT_DATE_REGEXP.match(line);
       if(match.hasMatch())
       {
         QDateTime f = QDateTime(QDate(year, monthFromStr(match.captured(1)), match.captured(2).toInt()),
@@ -520,7 +520,7 @@ QStringList TrackReader::readLines(QTextStream& stream)
   return sections;
 }
 
-QStringList TrackReader::toNatsWaypoints(const QStringList& str)
+QStringList TrackReader::toNatWaypoints(const QStringList& str)
 {
   // "58/20" to "5820N"
   static const QRegularExpression DEG("^(\\d\\d)/(\\d\\d)$");

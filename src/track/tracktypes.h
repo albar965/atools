@@ -28,12 +28,12 @@ namespace track {
 enum TrackType : char
 {
   UNKNOWN = '\0',
-  NATS = 'N',
+  NAT = 'N',
   PACOTS = 'P',
   AUSOTS = 'A'
 };
 
-static const QVector<TrackType> ALL_TRACK_TYPES = {NATS, PACOTS, AUSOTS};
+static const QVector<TrackType> ALL_TRACK_TYPES = {NAT, PACOTS, AUSOTS};
 
 enum TrackDirection : char
 {
@@ -56,7 +56,7 @@ struct Track
   /* Waypoint names, coordinates and/or airway idents. */
   QStringList route;
 
-  /* Eastern or western flight levels. Only for NATS. */
+  /* Eastern or western flight levels. Only for NAT. */
   QVector<short> eastLevels, westLevels;
 
   /* Validity period. All dates in UTC. */
@@ -73,7 +73,7 @@ struct Track
   {
     return type != UNKNOWN && route.size() >= 2 &&
            !name.isEmpty() && validTo.isValid() && validFrom.isValid() &&
-           (type != NATS || eastLevels.size() + westLevels.size() > 0);
+           (type != NAT || eastLevels.size() + westLevels.size() > 0);
   }
 
   QString typeString() const

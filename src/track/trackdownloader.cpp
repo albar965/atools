@@ -29,7 +29,7 @@ namespace track {
 // curl  "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1" > AUSOTS.html
 
 // NAT
-// curl  "https://notams.aim.faa.gov/nat.html" > NATS.html
+// curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
 
 // PACOTS
 // https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
@@ -38,13 +38,13 @@ namespace track {
 
 TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose) : QObject(parent)
 {
-  // Initialize NATS downloader ============================================================
-  HttpDownloader *natsDownloader = new HttpDownloader(parent, logVerbose);
-  natsDownloader->setUrl("https://notams.aim.faa.gov/nat.html");
-  connect(natsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::natsDownloadFinished);
-  connect(natsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natsDownloadFailed);
-  downloaders.insert(NATS, natsDownloader);
-  trackList.insert(NATS, atools::track::TrackVectorType());
+  // Initialize NAT downloader ============================================================
+  HttpDownloader *natDownloader = new HttpDownloader(parent, logVerbose);
+  natDownloader->setUrl("https://notams.aim.faa.gov/nat.html");
+  connect(natDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::natDownloadFinished);
+  connect(natDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natDownloadFailed);
+  downloaders.insert(NAT, natDownloader);
+  trackList.insert(NAT, atools::track::TrackVectorType());
 
   // Initialize PACOTS downloader ============================================================
   HttpDownloader *pacotsDownloader = new HttpDownloader(parent, logVerbose);
@@ -72,13 +72,13 @@ TrackDownloader::~TrackDownloader()
   qDeleteAll(downloaders);
 }
 
-void TrackDownloader::natsDownloadFinished(const QByteArray& data, QString)
+void TrackDownloader::natDownloadFinished(const QByteArray& data, QString)
 {
   TrackReader reader;
-  reader.readTracks(data, NATS);
-  trackList[NATS] = reader.getTracks();
+  reader.readTracks(data, NAT);
+  trackList[NAT] = reader.getTracks();
 
-  emit downloadFinished(trackList.value(NATS), NATS);
+  emit downloadFinished(trackList.value(NAT), NAT);
 }
 
 void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
@@ -99,9 +99,9 @@ void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString)
   emit downloadFinished(trackList.value(AUSOTS), AUSOTS);
 }
 
-void TrackDownloader::natsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
+void TrackDownloader::natDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
-  emit downloadFailed(error, errorCode, downloadUrl, NATS);
+  emit downloadFailed(error, errorCode, downloadUrl, NAT);
 }
 
 void TrackDownloader::pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)

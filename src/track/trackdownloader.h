@@ -29,12 +29,12 @@ class HttpDownloader;
 namespace track {
 
 /*
- * Downloads HTML pages asynchronously from various services for NATS, AUSOTS and PACOTS and fills a list
+ * Downloads HTML pages asynchronously from various services for NAT, AUSOTS and PACOTS and fills a list
  * of Track objects.
  *
  * Default URLs are:
  * AUSOTS: https://www.airservicesaustralia.com/flextracks/text.asp?ver=1
- * NATS: https://notams.aim.faa.gov/nat.html
+ * NAT: https://notams.aim.faa.gov/nat.html
  * PACOTS: https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
  *         Uses POST with parameters "queryType=pacificTracks&actionType=advancedNOTAMFunctions"
  */
@@ -79,11 +79,11 @@ signals:
   void downloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
 
 private:
-  void natsDownloadFinished(const QByteArray & data, QString);
+  void natDownloadFinished(const QByteArray & data, QString);
   void pacotsDownloadFinished(const QByteArray & data, QString);
   void ausotsDownloadFinished(const QByteArray & data, QString);
 
-  void natsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
+  void natDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void ausotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
 
