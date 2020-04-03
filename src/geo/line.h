@@ -152,6 +152,14 @@ public:
   /* Needs pos 1 as the wester part and pos 2 as the eastern part */
   bool crossesAntiMeridian() const;
 
+  /* true if heading of "from" to "to" is towards west or east. */
+  bool isWestCourse() const;
+
+  bool isEastCourse() const
+  {
+    return !isWestCourse();
+  }
+
 private:
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::Line& obj);
 

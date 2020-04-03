@@ -199,11 +199,7 @@ private:
 
 };
 
-class SqlRecordVector :
-  public QVector<SqlRecord>
-{
-
-};
+typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 
 QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record);
 

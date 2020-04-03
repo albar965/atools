@@ -288,6 +288,14 @@ bool Line::crossesAntiMeridian() const
          (atools::almostEqual(pos2.getLonX(), 180.f) && atools::almostEqual(pos1.getLonX(), -180.f));
 }
 
+bool Line::isWestCourse() const
+{
+  if(crossesAntiMeridian())
+    return pos1.getLonX() + 360.f > pos2.getLonX();
+  else
+    return pos1.getLonX() > pos2.getLonX();
+}
+
 QDebug operator<<(QDebug out, const Line& record)
 {
   QDebugStateSaver saver(out);

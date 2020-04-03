@@ -29,7 +29,8 @@ namespace sql {
 
 class SqlDatabase;
 class SqlRecord;
-class SqlRecordVector;
+
+typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 
 /*
  * Wrapper around QSqlQuery that adds exceptions to avoid plenty of

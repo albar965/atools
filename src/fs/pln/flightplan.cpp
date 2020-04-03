@@ -126,13 +126,13 @@ QDebug operator<<(QDebug out, const Flightplan& record)
 {
   QDebugStateSaver saver(out);
 
-  out.noquote().nospace() << "Flightplan[fmt" << record.getFileFormat()
-                          << ", from/to " << record.getDepartureIdent()
-                          << " -> " << record.getDestinationIdent() << endl;
+  out.noquote().nospace() << "Flightplan[fmt " << record.getFileFormat()
+                          << ", " << record.getDepartureIdent()
+                          << " -> " << record.getDestinationIdent();
 
   int i = 1;
   for(const FlightplanEntry& entry : record.getEntries())
-    out << i++ << entry;
+    out << endl << i++ << " " << entry;
   out << "]";
   return out;
 }

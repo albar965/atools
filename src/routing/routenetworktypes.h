@@ -229,9 +229,9 @@ struct Node
 
 };
 
-inline int qHash(const atools::routing::Node& node)
+inline uint qHash(const atools::routing::Node& node)
 {
-  return node.index;
+  return static_cast<uint>(node.index);
 }
 
 struct Result

@@ -137,7 +137,7 @@ QDebug operator<<(QDebug out, const FlightplanEntry& record)
                           << ", airway " << record.getAirway()
                           << ", pos " << record.getPosition()
                           << ", flags " << record.getFlags()
-                          << ", save " << !record.isNoSave() << "]" << endl;
+                          << ", save " << !record.isNoSave() << "]";
   return out;
 }
 

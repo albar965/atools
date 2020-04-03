@@ -27,8 +27,8 @@ namespace atools {
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
-class SqlRecordVector;
 class SqlRecord;
+typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 namespace fs {
 
@@ -164,7 +164,8 @@ private:
   int airspaceAlt(const QString& altStr);
 
   /* Update airport ident with three letter code for given table */
-  void updateTreeLetterAirportCodes(const QHash<QString, QString>& codeMap, const QString& table, const QString& column);
+  void updateTreeLetterAirportCodes(const QHash<QString, QString>& codeMap, const QString& table,
+                                    const QString& column);
 
   /* Airspace segment containing information */
   struct AirspaceSeg

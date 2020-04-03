@@ -47,7 +47,7 @@ class DataManagerBase
 
 public:
   DataManagerBase(atools::sql::SqlDatabase *sqlDb, const QString& tableNameParam, const QString& idColumnNameParam,
-                  const QString& createSqlScript, const QString& dropSqlScript, const QString& backupFile);
+                  const QString& createSqlScript, const QString& dropSqlScript, const QString& backupFile = QString());
   virtual ~DataManagerBase();
 
   /* True if table is present in database */
@@ -59,6 +59,9 @@ public:
   /* Create database schema. Drops current schema if tables already exist. */
   void createSchema();
 
+  /* Update schema if needed */
+  void updateSchema();
+
   /* Remove all data from table. */
   void clearData();
 
@@ -69,13 +72,35 @@ public:
   void updateField(const QString& column, const QVector<int>& ids, const QVariant& value);
 
   /* Updates all columns found in the record for all rows with the given ids. Does not commit. */
-  void updateByRecord(sql::SqlRecord getRecord, const QVector<int>& ids);
+  void updateByRecord(atools::sql::SqlRecord record, const QVector<int>& ids);
 
-  /* Adds new record to database */
-  void insertByRecord(sql::SqlRecord getRecord, int *lastInsertedRowid = nullptr);
+  /* Adds new record to database. Created record id automatically. */
+  void insertByRecord(atools::sql::SqlRecord record, int *lastInsertedRowid = nullptr);
+
+  /* Adds new record to database but keeps the id column unchanged. */
+  void insertByRecordId(const atools::sql::SqlRecord& record);
+
+  /* Add all records from vector into database */
+  void insertRecords(const atools::sql::SqlRecordVector& records);
+  void insertRecords(const atools::sql::SqlRecordVector& records, const QString& table);
+
+  /* Removes all data */
+  void removeRows();
 
   /* Removes entries. Does not commit. */
   void removeRows(const QVector<int> ids);
+
+  /* Removes entries where column equals value. Does not commit. */
+  void removeRows(const QString& column, QVariant value);
+
+  /* Removes all data */
+  void removeRows(const QString& table);
+
+  /* Removes entries. Does not commit. */
+  void removeRows(const QString& table, const QVector<int> ids);
+
+  /* Removes entries where column equals value. Does not commit. */
+  void removeRows(const QString& table, const QString& column, QVariant value);
 
   /* Get records with content for ids */
   void getRecords(QVector<atools::sql::SqlRecord>& getRecords, const QVector<int> ids);
@@ -141,6 +166,8 @@ private:
 
   /* throws an exception if the coodinates are not valid */
   geo::Pos validateCoordinates(const QString& line, const QString& lonx, const QString& laty);
+
+  void insertByRecordInternal(const sql::SqlRecord& record, int *lastInsertedRowid);
 
   atools::sql::SqlDatabase *db = nullptr;
   QString tableName, idColumnName, /* id column name */

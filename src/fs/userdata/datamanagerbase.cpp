@@ -76,6 +76,11 @@ void DataManagerBase::createSchema()
   transaction.commit();
 }
 
+void DataManagerBase::updateSchema()
+{
+  //
+}
+
 void DataManagerBase::dropSchema()
 {
   qDebug() << Q_FUNC_INFO << tableName;
@@ -89,9 +94,9 @@ void DataManagerBase::dropSchema()
 
 void DataManagerBase::backup()
 {
-  qDebug() << Q_FUNC_INFO << tableName;
+  qDebug() << Q_FUNC_INFO << tableName << backupFilename;
 
-  if(hasData())
+  if(hasData() && !backupFilename.isEmpty())
   {
     // Create a backup in the settings directory
     QString settingsPath = atools::settings::Settings::instance().getPath();
@@ -114,16 +119,6 @@ void DataManagerBase::backup()
       throw atools::Exception(tr("Cannot open backup file %1. Reason: %2 (%3)").
                               arg(filePath).arg(file.errorString()).arg(file.error()));
   }
-}
-
-void DataManagerBase::clearData()
-{
-  backup();
-
-  SqlTransaction transaction(db);
-  SqlQuery query("delete from " + tableName, db);
-  query.exec();
-  transaction.commit();
 }
 
 void DataManagerBase::updateCoordinates(int id, const geo::Pos& position)
@@ -152,12 +147,44 @@ void DataManagerBase::updateField(const QString& column, const QVector<int>& ids
   }
 }
 
+void DataManagerBase::insertByRecordId(const sql::SqlRecord& record)
+{
+  insertByRecordInternal(record, nullptr);
+}
+
+void DataManagerBase::insertRecords(const sql::SqlRecordVector& records)
+{
+  insertRecords(records, tableName);
+}
+
+void DataManagerBase::insertRecords(const sql::SqlRecordVector& records, const QString& table)
+{
+  SqlQuery query(db);
+  QString insertStr = SqlUtil(db).buildInsertStatement(table, QString(), QStringList(), false);
+  query.prepare(insertStr);
+
+  for(const SqlRecord& record : records)
+  {
+    QVariantList vals = record.values();
+    for(int i = 0; i < vals.size(); i++)
+      query.bindValue(i, vals.at(i));
+    query.exec();
+    if(query.numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
+  }
+}
+
 void DataManagerBase::insertByRecord(sql::SqlRecord record, int *lastInsertedRowid)
 {
   if(record.contains(idColumnName))
     // Get rid of id column - it is not needed here
     record.remove(record.indexOf(idColumnName));
 
+  insertByRecordInternal(record, lastInsertedRowid);
+}
+
+void DataManagerBase::insertByRecordInternal(const sql::SqlRecord& record, int *lastInsertedRowid)
+{
   QVariantList vals = record.values();
   SqlQuery query(db);
   query.prepare("insert into " + tableName + " (" + record.fieldNames().join(", ") + ") " +
@@ -200,10 +227,39 @@ void DataManagerBase::updateByRecord(sql::SqlRecord record, const QVector<int>& 
   }
 }
 
+void DataManagerBase::clearData()
+{
+  backup();
+
+  SqlTransaction transaction(db);
+  removeRows();
+  transaction.commit();
+}
+
+void DataManagerBase::removeRows()
+{
+  removeRows(tableName);
+}
+
 void DataManagerBase::removeRows(const QVector<int> ids)
 {
+  removeRows(tableName, ids);
+}
+
+void DataManagerBase::removeRows(const QString& column, QVariant value)
+{
+  removeRows(tableName, column, value);
+}
+
+void DataManagerBase::removeRows(const QString& table)
+{
+  SqlQuery("delete from " + table, db).exec();
+}
+
+void DataManagerBase::removeRows(const QString& table, const QVector<int> ids)
+{
   SqlQuery query(db);
-  query.prepare("delete from " + tableName + " where " + idColumnName + " = ?");
+  query.prepare("delete from " + table + " where " + idColumnName + " = ?");
 
   for(int id : ids)
   {
@@ -212,6 +268,14 @@ void DataManagerBase::removeRows(const QVector<int> ids)
     if(query.numRowsAffected() != 1)
       qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1";
   }
+}
+
+void DataManagerBase::removeRows(const QString& table, const QString& column, QVariant value)
+{
+  SqlQuery query(db);
+  query.prepare("delete from " + table + " where " + column + " = ?");
+  query.bindValue(0, value);
+  query.exec();
 }
 
 void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QVector<int> ids)

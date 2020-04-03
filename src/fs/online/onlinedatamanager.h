@@ -33,7 +33,7 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
-class SqlRecordVector;
+typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 
 namespace fs {
