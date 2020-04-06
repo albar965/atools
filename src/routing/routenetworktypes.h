@@ -42,6 +42,7 @@ enum Mode : unsigned char
   MODE_JET = 1 << 4, /* High airways */
 
   MODE_NO_RNAV = 1 << 5, /* Do not use RNAV airways */
+  MODE_TRACKS = 1 << 6, /* Use NAT, PACOTS and AUSOTS tracks */
 
   MODE_AIRWAY = MODE_VICTOR | MODE_JET,
   MODE_AIRWAY_AND_WAYPOINT = MODE_VICTOR | MODE_JET | MODE_WAYPOINT,
