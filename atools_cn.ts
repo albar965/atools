@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AddOnPackage</name>
     <message>
         <location filename="src/fs/scenery/addonpackage.cpp" line="89"/>
         <source>Cannot read file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法读取文件 %1。原因是： %2</translation>
     </message>
     <message>
         <location filename="src/fs/scenery/addonpackage.cpp" line="92"/>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
 </context>
 <context>
