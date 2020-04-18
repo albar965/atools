@@ -41,6 +41,7 @@ public:
   /* Create a single point rectangle */
   explicit Rect(const atools::geo::Pos& singlePos);
   explicit Rect(float lonX, float latY);
+  explicit Rect(double lonX, double latY);
 
   explicit Rect(const atools::geo::Pos& topLeftPos, const atools::geo::Pos& bottomRightPos);
   explicit Rect(float leftLonX, float topLatY, float rightLonX, float bottomLatY);

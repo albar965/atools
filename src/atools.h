@@ -399,6 +399,7 @@ Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long
   return !almostEqual<long long>(f1, f2, epsilon);
 }
 
+/* Allocates array and fills with 0 */
 template<typename TYPE>
 inline TYPE *allocArray(int size)
 {
@@ -408,6 +409,7 @@ inline TYPE *allocArray(int size)
   return arr;
 }
 
+/* Allocates array and fills with given type */
 template<typename TYPE>
 inline TYPE *allocArray(int size, const TYPE& fill)
 {
@@ -418,6 +420,7 @@ inline TYPE *allocArray(int size, const TYPE& fill)
   return arr;
 }
 
+/* Frees array and sets pointer to nullptr */
 template<typename TYPE>
 inline void freeArray(TYPE *& arr)
 {

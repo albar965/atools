@@ -122,6 +122,8 @@ public:
   }
 
 private:
+  friend QDebug operator<<(QDebug out, const atools::geo::Point3D& pt);
+
   float x, y, z;
   static constexpr float RADIUS2 = 6371.f * 1000.f * 2.f; // 2∗average  radius  of  earth in km
   static constexpr float INV_RADIUS2 = 1.0f / RADIUS2;

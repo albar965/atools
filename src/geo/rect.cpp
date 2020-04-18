@@ -69,6 +69,12 @@ Rect::Rect(float lonX, float latY)
   bottomRight = Pos(lonX, latY);
 }
 
+Rect::Rect(double lonX, double latY)
+{
+  topLeft = Pos(lonX, latY);
+  bottomRight = Pos(lonX, latY);
+}
+
 Rect::Rect(const Pos& center, float radiusMeter)
 {
   float east = center.endpoint(radiusMeter, 90.).normalize().getLonX();

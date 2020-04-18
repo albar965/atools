@@ -15,21 +15,10 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "geo/point3d.h"
-
-#include <QDebug>
+#include "io/binaryutil.h"
 
 namespace atools {
-namespace geo {
+namespace io {
 
-QDebug operator<<(QDebug out, const Point3D& pt)
-{
-  QDebugStateSaver saver(out);
-  out.nospace().noquote() << fixed << qSetRealNumberPrecision(1)
-                          << "Point3D(x " << pt.x << ", y " << pt.y << ", z " << pt.z
-                          << ", valid " << pt.isValid() << ")";
-  return out;
-}
-
-} // namespace geo
+} // namespace io
 } // namespace atools
