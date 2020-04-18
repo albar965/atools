@@ -25,11 +25,12 @@ QDebug operator<<(QDebug out, const Node& obj)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Node("
                           << "index " << obj.index
-                          << "id " << obj.id
+                          << ", id " << obj.id
                           << ", " << obj.pos
                           << ", range " << obj.range
                           << ", type " << nodeTypeToStr(obj.type)
-                          << ", subtype " << obj.subtype
+                          << ", subtype " << nodeTypeToStr(obj.subtype)
+                          << ", connections " << nodeConnectionsToStr(obj.con)
                           << ", num edges " << obj.edges.size()
                           << ")";
   return out;
@@ -41,7 +42,7 @@ QDebug operator<<(QDebug out, const Edge& obj)
   QDebugStateSaver saver(out);
   out.nospace().noquote() << "Edge("
                           << "toIndex " << obj.toIndex
-                          << ", airwayId " << obj.airwayId
+                          << ", airwayId " << obj.id
                           << ", airwayHash " << obj.airwayHash
                           << ", lengthMeter " << obj.lengthMeter
                           << ")";
@@ -50,45 +51,43 @@ QDebug operator<<(QDebug out, const Edge& obj)
 
 QString nodeTypeToStr(atools::routing::NodeType type)
 {
-  switch(type)
-  {
-    case atools::routing::NONE:
-      return "NONE";
+  if(type == atools::routing::NODE_NONE)
+    return "NODE_NONE";
+  else if(type == atools::routing::NODE_DME)
+    return "NODE_DME";
+  else if(type == atools::routing::NODE_VOR)
+    return "NODE_VOR";
+  else if(type == atools::routing::NODE_VORDME)
+    return "NODE_VORDME";
+  else if(type == atools::routing::NODE_NDB)
+    return "NODE_NDB";
+  else if(type == atools::routing::NODE_WAYPOINT)
+    return "NODE_WAYPOINT";
+  else if(type == atools::routing::NODE_DEPARTURE)
+    return "NODE_DEPARTURE";
+  else if(type == atools::routing::NODE_DESTINATION)
+    return "NODE_DESTINATION";
 
-    case atools::routing::DME:
-      return "DME";
-
-    case atools::routing::VOR:
-      return "VOR";
-
-    case atools::routing::VORDME:
-      return "VORDME";
-
-    case atools::routing::NDB:
-      return "NDB";
-
-    case atools::routing::WAYPOINT_VICTOR:
-      return "WAYPOINT_VICTOR";
-
-    case atools::routing::WAYPOINT_JET:
-      return "WAYPOINT_JET";
-
-    case atools::routing::WAYPOINT_BOTH:
-      return "WAYPOINT_BOTH";
-
-    case atools::routing::WAYPOINT_NAMED:
-      return "WAYPOINT_NAMED";
-
-    case atools::routing::WAYPOINT_UNNAMED:
-      return "WAYPOINT_UNNAMED";
-
-    case atools::routing::DEPARTURE:
-      return "DEPARTURE";
-
-    case atools::routing::DESTINATION:
-      return "DESTINATION";
-  }
   return QString();
+}
+
+QString nodeConnectionsToStr(NodeConnection con)
+{
+  QStringList text;
+
+  if(con == CONNECTION_NONE)
+    return "CONNECTION_NONE";
+
+  if(con & CONNECTION_VICTOR)
+    text.append("CONNECTION_VICTOR");
+  if(con & CONNECTION_JET)
+    text.append("CONNECTION_JET");
+  if(con & CONNECTION_TRACK)
+    text.append("CONNECTION_TRACK");
+  if(con & CONNECTION_TRACK_START_END)
+    text.append("CONNECTION_TRACK_START_END");
+
+  return text.join(", ");
 }
 
 } // namespace route

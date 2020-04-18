@@ -35,6 +35,8 @@ enum TrackType : char
 
 static const QVector<TrackType> ALL_TRACK_TYPES = {NAT, PACOTS, AUSOTS};
 
+QString typeToString(atools::track::TrackType type);
+
 enum TrackDirection : char
 {
   NONE = '\0',
@@ -43,8 +45,16 @@ enum TrackDirection : char
   BOTH = 'B'
 };
 
-QString typeToString(atools::track::TrackType type);
+// ===========================================================================
+/* Offset for generated ids to keep ids unique between generated waypoints and true waypoints */
+Q_DECL_CONSTEXPR static int TRACKPOINT_ID_OFFSET = 10000000;
 
+/* Same as above for tracks and airways */
+Q_DECL_CONSTEXPR static int TRACK_ID_OFFSET = 10000000;
+
+/* ===========================================================================
+ * Structure covering a full yet undecoded track.
+ */
 struct Track
 {
   /* Name, number or character. */
@@ -57,7 +67,7 @@ struct Track
   QStringList route;
 
   /* Eastern or western flight levels. Only for NAT. */
-  QVector<short> eastLevels, westLevels;
+  QVector<quint16> eastLevels, westLevels;
 
   /* Validity period. All dates in UTC. */
   QDateTime validFrom, validTo;

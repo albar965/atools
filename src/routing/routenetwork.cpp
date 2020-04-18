@@ -17,30 +17,25 @@
 
 #include "routing/routenetwork.h"
 
-#include "sql/sqldatabase.h"
-#include "sql/sqlquery.h"
-#include "sql/sqlrecord.h"
 #include "geo/calculations.h"
 
-#include <QElapsedTimer>
-
-using atools::sql::SqlQuery;
 using atools::geo::nmToMeter;
 using atools::geo::Point3D;
 
 namespace atools {
 namespace routing {
 
-RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, DataSource dataSource)
-  : db(sqlDb), source(dataSource)
+RouteNetwork::RouteNetwork(atools::routing::DataSource dataSource)
+  : source(dataSource)
 {
+  // Default values
   nearestDepartureDistanceM = nmToMeter(500.f);
   nearestDestDistanceM = nmToMeter(500.f);
 
   minNearestDistanceRadioM = nmToMeter(20.f);
   maxNearestDistanceRadioM = nmToMeter(1000.f);
 
-  minNearestDistanceWpM = nmToMeter(100.f);
+  minNearestDistanceWpM = nmToMeter(50.f);
   maxNearestDistanceWpM = nmToMeter(200.f);
 
   directDistanceFactorRadio = 1.2f;
@@ -50,10 +45,9 @@ RouteNetwork::RouteNetwork(atools::sql::SqlDatabase *sqlDb, DataSource dataSourc
 
 RouteNetwork::~RouteNetwork()
 {
-  deInit();
 }
 
-void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
+void RouteNetwork::getNeighbours(Result& result, const Node& origin, const Edge *prevEdge) const
 {
   Q_ASSERT(destinationNode.isValid());
   Q_ASSERT(departureNode.isValid());
@@ -61,6 +55,11 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
   // Node might be also departure or destination
   Point3D originPoint = point3D(origin.index);
   float originToDestDist = originPoint.directDistanceMeter(destinationPoint);
+
+  // Check for track/non-track or non-track/track tansition if true
+  // Limits neighbours if origin is in the middle of a track and not an endpoint
+  bool originNotTrackEnd = source == SOURCE_AIRWAY && mode & MODE_TRACK &&
+                           prevEdge != nullptr && !origin.isTrackStartEnd();
 
   if(source == SOURCE_AIRWAY)
   {
@@ -77,40 +76,60 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
       for(const Edge& edge : origin.edges)
       {
         // Check if edge type matches criteria (altitude, RNAV and airway type)
-        if(matchEdge(edge))
+        if(!matchEdge(edge))
+          continue;
+
+        const Node& node = nodeIndex.at(edge.toIndex);
+        // Check if node type matches like airway type
+        if(!matchNode(node))
+          continue;
+
+        // Avoid track transitions at the wrong points
+        if(originNotTrackEnd && prevEdge->isTrack() != edge.isTrack())
+          continue;
+
+        // Edge can have only another node - not departure or destination
+        Point3D curPoint = nodeIndex.atPoint3D(edge.toIndex);
+        float curToDestDist = curPoint.directDistanceMeter(destinationPoint);
+
+        // Add only nodes/edges that are ahead of the current node and lead towards the destination
+        if(curToDestDist < originToDestDist)
         {
-          // Check if node type matches like airway type
-          if(matchNode(edge.toIndex))
+          float curToOriginDist = curPoint.directDistanceMeter(originPoint);
+          if(curToDestDist + curToOriginDist < originToDestDist * directDistanceFactorAirway)
           {
-            // Edge can have only another node - not departure or destination
-            Point3D curPoint = nodeIndex.atPoint3D(edge.toIndex);
-            float curToDestDist = curPoint.directDistanceMeter(destinationPoint);
+            result.nodes.append(edge.toIndex);
+            result.edges.append(edge);
 
-            // Add only nodes/edges that are ahead of the current node and lead towards the destination
-            if(curToDestDist < originToDestDist)
-            {
-              float curToOriginDist = curPoint.directDistanceMeter(originPoint);
-              if(curToDestDist + curToOriginDist < originToDestDist * directDistanceFactorAirway)
-              {
-                result.nodes.append(edge.toIndex);
-                result.edges.append(edge);
-
-                if(mode & MODE_WAYPOINT)
-                  nodeIndexes.insert(edge.toIndex);
-              }
-            }
+            if(mode & MODE_WAYPOINT)
+              nodeIndexes.insert(edge.toIndex);
           }
         }
       }
     }
 
-    // Additionally search for direct waypoint connections
+    // Additionally search for direct waypoint connections if result is limited
     if((mode & MODE_WAYPOINT && result.size() < 2) || origin.isDeparture())
     {
       int found = searchNearest(result, origin, minNearestDistanceWpM, maxNearestDistanceWpM, &nodeIndexes);
 
-      if(found < 2)
-        searchNearest(result, origin, minNearestDistanceWpM * 2, maxNearestDistanceWpM * 8, &nodeIndexes);
+      if(found < 6)
+        // Not enough results - try with larger search radius
+        searchNearest(result, origin, minNearestDistanceWpM * 2, maxNearestDistanceWpM * 5, &nodeIndexes);
+
+      // Check for track transitions and remove any edges/nodes beginning from the end of the list
+      if(originNotTrackEnd)
+      {
+        int size = result.edges.size();
+        for(int i = size - 1; i >= 0; i--)
+        {
+          if(prevEdge->isTrack() != result.edges.at(i).isTrack())
+          {
+            result.nodes.removeAt(i);
+            result.edges.removeAt(i);
+          }
+        }
+      }
     }
   }
   else
@@ -120,8 +139,12 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin) const
   // Add destination node and calculate edges to it if in range ==========================================
   if(originToDestDist < nearestDestDistanceM)
   {
-    result.nodes.append(destinationNode.index);
-    result.edges.append(Edge(Node::DESTINATION_INDEX, originPoint.gcDistanceMeter(destinationPoint)));
+    // Avoid jumping directly into a track
+    if(!(originNotTrackEnd && prevEdge->isTrack()))
+    {
+      result.nodes.append(destinationNode.index);
+      result.edges.append(Edge(Node::DESTINATION_INDEX, originPoint.gcDistanceMeter(destinationPoint)));
+    }
   }
 }
 
@@ -230,7 +253,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   Point3D originPoint = nodeToCartesian(origin);
   for(int idx : indexes)
   {
-    if(matchNode(idx))
+    if(matchNode(nodeIndex.at(idx)))
     {
       // Add node and edge leading to it
       result.nodes.append(idx);
@@ -254,9 +277,10 @@ void RouteNetwork::setParameters(const geo::Pos& departurePos, const geo::Pos& d
     // Add departure node to network ====================
     departureNode.index = Node::DEPARTURE_INDEX;
     departureNode.pos = departurePos;
-    departureNode.type = DEPARTURE;
+    departureNode.type = NODE_DEPARTURE;
     departureNode.range = 0;
-    departureNode.subtype = NONE;
+    departureNode.subtype = NODE_NONE;
+    departureNode.con = CONNECTION_NONE;
     departurePos.toCartesian(departurePoint);
   }
 
@@ -265,9 +289,10 @@ void RouteNetwork::setParameters(const geo::Pos& departurePos, const geo::Pos& d
     // Add destination node to network ====================
     destinationNode.index = Node::DESTINATION_INDEX;
     destinationNode.pos = destinationPos;
-    destinationNode.type = DESTINATION;
+    destinationNode.type = NODE_DESTINATION;
     destinationNode.range = 0;
-    destinationNode.subtype = NONE;
+    destinationNode.subtype = NODE_NONE;
+    destinationNode.con = CONNECTION_NONE;
     destinationPos.toCartesian(destinationPoint);
 
     if(departurePos.isValid())
@@ -348,37 +373,41 @@ const geo::Point3D& RouteNetwork::point3D(int index) const
     return INVALID;
 }
 
-bool RouteNetwork::matchNode(int index) const
+bool RouteNetwork::matchNode(const Node& node) const
 {
-  switch(nodeIndex.at(index).type)
+  atools::routing::NodeType nodeType = node.type;
+  bool ok = true;
+
+  switch(nodeType)
   {
-    case atools::routing::VOR:
-    case atools::routing::VORDME:
-    case atools::routing::DME:
-      return mode & MODE_RADIONAV_VOR;
+    case atools::routing::NODE_VOR:
+    case atools::routing::NODE_VORDME:
+    case atools::routing::NODE_DME:
+      ok &= mode & MODE_RADIONAV_VOR;
+      break;
 
-    case atools::routing::NDB:
-      return mode & MODE_RADIONAV_NDB;
+    case atools::routing::NODE_NDB:
+      ok &= mode & MODE_RADIONAV_NDB;
+      break;
 
-    case atools::routing::WAYPOINT_VICTOR:
-      return mode & MODE_WAYPOINT || mode & MODE_VICTOR;
+    case atools::routing::NODE_WAYPOINT:
+      {
+        // Check if track or airway type matches filter mode
+        atools::routing::NodeConnections con = node.con;
+        bool wp = mode.testFlag(MODE_WAYPOINT);
+        ok &= con.testFlag(CONNECTION_JET) ? mode.testFlag(MODE_JET) | wp : true;
+        ok &= con.testFlag(CONNECTION_VICTOR) ? mode.testFlag(MODE_VICTOR) | wp : true;
+        ok &= con.testFlag(CONNECTION_TRACK) ? mode.testFlag(MODE_TRACK) | wp : true;
+        ok &= con == CONNECTION_NONE ? wp : true;
+      }
+      break;
 
-    case atools::routing::WAYPOINT_JET:
-      return mode & MODE_WAYPOINT || mode & MODE_JET;
-
-    case atools::routing::WAYPOINT_BOTH:
-      return mode & MODE_WAYPOINT || mode & MODE_JET || mode & MODE_VICTOR;
-
-    case atools::routing::WAYPOINT_UNNAMED:
-    case atools::routing::WAYPOINT_NAMED:
-      return mode & MODE_WAYPOINT;
-
-    case atools::routing::NONE:
-    case atools::routing::DEPARTURE:
-    case atools::routing::DESTINATION:
+    case atools::routing::NODE_NONE:
+    case atools::routing::NODE_DEPARTURE:
+    case atools::routing::NODE_DESTINATION:
       break;
   }
-  return true;
+  return ok;
 }
 
 bool RouteNetwork::matchEdge(const Edge& edge) const
@@ -386,364 +415,41 @@ bool RouteNetwork::matchEdge(const Edge& edge) const
   bool ok = (altitude == 0 || (altitude >= edge.minAltFt && altitude <= edge.maxAltFt));
 
   // Check if RNAV has to be excluded
-  ok &= !(mode & MODE_NO_RNAV) || edge.routeType != RNAV;
+  ok &= edge.routeType != RNAV || !(mode & MODE_NO_RNAV);
 
-  ok &= (edge.isJetAirway() && mode & MODE_JET) ||
-        (edge.isVictorAirway() && mode & MODE_VICTOR) ||
-        (edge.isNoAirway() && mode & MODE_WAYPOINT);
+  // Check if track or airway type matches filter mode
+  if(ok)
+    ok &= (edge.isJetAirway() && mode & MODE_JET) ||
+          (edge.isVictorAirway() && mode & MODE_VICTOR) ||
+          (edge.isNoConnection() && mode & MODE_WAYPOINT) ||
+          (edge.isTrack() && mode & MODE_TRACK);
+
+  // Test altitude levels if attached - independent of direction
+  if(ok && altitude > 0 && edge.hasAltLevels)
+  {
+    int level = altitude / 100;
+
+    if(altLevelsEast.contains(edge.id))
+      ok &= altLevelsEast.value(edge.id).contains(static_cast<quint16>(level));
+    if(altLevelsWest.contains(edge.id))
+      ok &= altLevelsWest.value(edge.id).contains(static_cast<quint16>(level));
+  }
 
   return ok;
 }
 
-void RouteNetwork::clearIndexes()
+void RouteNetwork::clear()
 {
+  clearParameters();
   nodeIndex.clear();
   nodeIndex.updateIndex();
-  nodeIdIndexMap.clear();
-}
-
-void RouteNetwork::ensureLoaded()
-{
-  if(!isLoaded())
-    initInternal();
+  altLevelsEast.clear();
+  altLevelsWest.clear();
 }
 
 bool RouteNetwork::isLoaded() const
 {
   return !nodeIndex.isEmpty();
-}
-
-void RouteNetwork::init()
-{
-  // Clear all for the next call to ensureLoaded
-  clearIndexes();
-}
-
-void RouteNetwork::initInternal()
-{
-  QElapsedTimer timer;
-  timer.start();
-
-  deInit();
-
-  int currentIndex = 0;
-
-  if(source == SOURCE_RADIO)
-  {
-    // Load VOR, VORDME and VORTAC. No DME and no TACAN. ==========================================
-    readNodesRadio("select v.vor_id, v.lonx, v.laty, v.range, "
-                   "case when v.dme_altitude is null then 0 else 1 end as has_dme "
-                   "from vor v where type <> 'TC' and dme_only = 0", currentIndex, true);
-
-    // Load all NDB =================================================
-    readNodesRadio("select n.ndb_id, n.lonx, n.laty, n.range, null as has_dme from ndb n", currentIndex, false);
-  }
-  else if(source == SOURCE_AIRWAY)
-  {
-    // Load waypoints and airways ====================================
-
-    // Outgoing edges for node id
-    QMultiHash<int, Edge> nodeEdgeMap;
-    nodeEdgeMap.reserve(200000);
-
-    // Read all airways from database into map. Edge::toIndex gets database id temporarily
-    readEdgesAirway(nodeEdgeMap);
-
-    nodeIdIndexMap.reserve(300000);
-
-    QVector<Node> nodesTemp;
-    nodesTemp.reserve(300000);
-
-    // Column order is important in the queries
-
-    // Read navaids into nodeIdIndexMap and into nodesTemp
-    // Named waypoints without airways
-    // Unnamed degree confluence waypoints
-    readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
-                    "from waypoint w "
-                    "where (w.type = 'WN' or (w.type = 'WU' and w.airport_id is null)) and "
-                    "w.num_jet_airway = 0 and w.num_victor_airway = 0",
-                    currentIndex, false, false, false, true /* filterUnnamed */);
-    // "where w.type = 'WN' and "
-
-    // Airway waypoints
-    readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
-                    "from waypoint w "
-                    "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, false, false, true /* airways */, false);
-
-    // Airway VOR waypoints
-    readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
-                    "v.range, v.type as radiotype, v.dme_altitude,  v.dme_only "
-                    "from waypoint w join vor v on w.nav_id = v.vor_id "
-                    "where w.type = 'V' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, true /* VOR */, false, true /* airways */, false);
-
-    // Airway NDB waypoints
-    readNodesAirway(nodesTemp,
-                    "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway, "
-                    "n.range "
-                    "from waypoint w join ndb n on w.nav_id = n.ndb_id "
-                    "where w.type = 'N' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                    currentIndex, false, true /* NDB */, true /* airways */, false);
-
-    // Insert outgoing edges to each node and copy them to the index
-    nodeIndex.reserve(nodesTemp.size());
-    for(Node n : nodesTemp)
-    {
-      n.edges = nodeEdgeMap.values(n.id).toVector();
-
-      // Replace database ids in Edge::toIndex with array indexes
-      for(Edge& e : n.edges)
-        e.toIndex = nodeIdIndexMap.value(e.toIndex);
-
-      nodeIndex.append(n);
-    }
-  }
-  nodeIndex.updateIndex();
-
-  // Calculate great circle distance for all edges
-  for(Node& n : nodeIndex)
-  {
-    for(Edge& e : n.edges)
-      e.lengthMeter =
-        atools::roundToInt(nodeIndex.atPoint3D(n.index).gcDistanceMeter(nodeIndex.atPoint3D(e.toIndex)));
-  }
-
-  qDebug() << Q_FUNC_INFO << timer.restart() << "ms";
-}
-
-void RouteNetwork::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const
-{
-  QString cols;
-  atools::sql::SqlRecord rec = db->record("airway");
-  if(rec.contains("route_type"))
-  {
-    cols = "airway_id, minimum_altitude, maximum_altitude, airway_name, "
-           "route_type, airway_type, direction, from_waypoint_id, to_waypoint_id";
-  }
-  else
-    cols = "airway_id, minimum_altitude, maximum_altitude, airway_name, "
-           "null as route_type, airway_type, direction, from_waypoint_id, to_waypoint_id";
-
-  // Column indexes
-  enum
-  {
-    ID = 0,
-    MIN = 1,
-    MAX = 2,
-    NAME = 3,
-    ROUTE_TYPE = 4,
-    TYPE = 5,
-    DIRECTION = 6,
-    FROM = 7,
-    TO = 8
-  };
-
-  SqlQuery query("select  " + cols + " from airway", db);
-  query.exec();
-  while(query.next())
-  {
-    Edge edge;
-    edge.airwayId = query.valueInt(ID);
-    edge.minAltFt =
-      static_cast<quint16>(std::min(query.valueInt(MIN), static_cast<int>(Edge::MAX_ALTITUDE)));
-    edge.maxAltFt =
-      static_cast<quint16>(std::min(query.valueInt(MAX), static_cast<int>(Edge::MAX_ALTITUDE)));
-    edge.airwayHash = qHash(query.valueStr(NAME)) + 1; // Avoid null
-
-    char routeType = atools::strToChar(query.valueStr(ROUTE_TYPE));
-    if(routeType == 'A')
-      edge.routeType = AIRLINE; /* A Airline Airway (Tailored Data) */
-    else if(routeType == 'C')
-      edge.routeType = CONTROL; /* C Control */
-    else if(routeType == 'D')
-      edge.routeType = DIRECT; /* D Direct Route */
-    else if(routeType == 'H')
-      edge.routeType = HELICOPTER; /* H Helicopter Airways */
-    else if(routeType == 'O')
-      edge.routeType = OFFICIAL; /* O Officially Designated Airways, except RNAV, Helicopter Airways */
-    else if(routeType == 'R')
-      edge.routeType = RNAV; /* R RNAV Airways */
-    else if(routeType == 'S')
-      edge.routeType = UNDESIGNATED; /* S Undesignated ATS Route */
-    else
-      edge.routeType = NO_ROUTE_TYPE;
-
-    char type = atools::strToChar(query.valueStr(TYPE));
-    if(type == 'J')
-      edge.type = AIRWAY_JET;
-    else if(type == 'V')
-      edge.type = AIRWAY_VICTOR;
-    else if(type == 'B')
-      edge.type = AIRWAY_BOTH;
-
-    // Add one edge for each allowed direction
-    char dir = atools::strToChar(query.valueStr(DIRECTION));
-    int from = query.valueInt(FROM);
-    int to = query.valueInt(TO);
-
-    if(dir == 'F' || dir == 'N')
-    {
-      // Forward or both directions allowed
-      edge.toIndex = to;
-      nodeEdgeMap.insert(from, edge);
-    }
-
-    if(dir == 'B' || dir == 'N')
-    {
-      // Backward or both directions allowed
-      edge.toIndex = from;
-      nodeEdgeMap.insert(to, edge);
-    }
-  }
-}
-
-void RouteNetwork::readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb,
-                                   bool airway, bool filterUnnamed)
-{
-  // Column indexes
-  // 0            1      2     3     4               5                  6      7        8             9
-  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway
-  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway, range, radiotype, dme_altitude, dme_only
-  // waypoint_id, ident, type, lonx, laty, num_jet_airway, num_victor_airway, range
-  enum
-  {
-    ID = 0,
-    IDENT = 1,
-    TYPE = 2,
-    LONX = 3,
-    LATY = 4,
-    NUM_JET_AIRWAY = 5,
-    NUM_VICTOR_AIRWAY = 6,
-    RANGE = 7,
-    RADIO_TYPE = 8,
-    DME_ALTITUDE = 9,
-    DME_ONLY = 10
-  };
-
-  SqlQuery query(queryStr, db);
-  query.exec();
-  while(query.next())
-  {
-    QString type = query.valueStr(TYPE);
-    atools::geo::Pos pos(query.valueFloat(LONX), query.valueFloat(LATY));
-
-    if(filterUnnamed && type == "WU")
-    {
-      // Include all one degree grid confluence points
-      bool ok = pos.nearGrid(atools::geo::Pos::POS_EPSILON_10M);
-
-      if(!ok)
-      {
-        // Include unnamed oceanic waypoints like 2230N 6900E 51N50 32W20 02E60
-        QString ident = query.valueStr(IDENT);
-        // First two characters need to be digits
-        if(atools::charAt(ident, 0).isDigit() && atools::charAt(ident, 1).isDigit())
-        {
-          // Compass direction or digit followed by a digit
-          char at2 = atools::latin1CharAt(ident, 2);
-          if((std::isdigit(at2) || atools::contains(at2, {'N', 'S', 'E', 'W'})) && atools::charAt(ident, 3).isDigit())
-          {
-            char at4 = atools::latin1CharAt(ident, 4);
-            ok = std::isdigit(at4) || atools::contains(at4, {'N', 'S', 'E', 'W'});
-          }
-        }
-      }
-
-      if(!ok)
-        continue;
-    }
-
-    Node node;
-    node.index = idx;
-    node.id = query.valueInt(ID);
-    node.pos = pos;
-
-    int numJet = airway ? query.valueInt(NUM_JET_AIRWAY) : 0;
-    int numVictor = airway ? query.valueInt(NUM_VICTOR_AIRWAY) : 0;
-
-    // Use number of attached airways to determine type
-    if(numJet > 0 && numVictor > 0)
-      node.type = WAYPOINT_BOTH;
-    else if(numJet > 0)
-      node.type = WAYPOINT_JET;
-    else if(numVictor > 0)
-      node.type = WAYPOINT_VICTOR;
-    else if(type == "WN")
-      node.type = WAYPOINT_NAMED;
-    else if(type == "WU")
-      node.type = WAYPOINT_UNNAMED;
-
-    if(vor || ndb)
-      node.range = nmToMeter(query.valueInt(RANGE));
-
-    if(vor)
-    {
-      // Query uses VOR table ====================
-      QString vortype = query.valueStr(RADIO_TYPE);
-      if(vortype == "H" || vortype == "L" || vortype == "T" || vortype.startsWith("VT"))
-      {
-        if(query.valueBool(DME_ONLY))
-          node.subtype = DME;
-        else
-          node.subtype = query.isNull(DME_ALTITUDE) ? VOR : VORDME;
-      }
-    }
-
-    if(ndb)
-      // Query uses NDB table ====================
-      node.subtype = NDB;
-
-    if(node.type == NONE)
-      qWarning() << "No node type" << query.record();
-
-    nodes.append(node);
-    nodeIdIndexMap.insert(node.id, idx);
-    idx++;
-  }
-}
-
-void RouteNetwork::readNodesRadio(const QString& queryStr, int& idx, bool vor)
-{
-  // Column indexes
-  // id, lonx, laty, range, has_dme
-  enum
-  {
-    ID = 0,
-    LONX = 1,
-    LATY = 2,
-    RANGE = 3,
-    HAS_DME = 4
-  };
-
-  SqlQuery query(queryStr, db);
-  query.exec();
-  while(query.next())
-  {
-    Node node;
-    node.index = idx;
-    node.id = query.valueInt(ID);
-    node.pos.setLonX(query.valueFloat(LONX));
-    node.pos.setLatY(query.valueFloat(LATY));
-    node.range = nmToMeter(query.valueInt(RANGE));
-
-    if(vor)
-      node.type = query.valueBool(HAS_DME) ? VORDME : VOR;
-    else
-      node.type = NDB;
-
-    nodeIndex.append(node);
-    idx++;
-  }
-}
-
-void RouteNetwork::deInit()
-{
-  clearIndexes();
 }
 
 } // namespace route

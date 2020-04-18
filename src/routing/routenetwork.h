@@ -22,17 +22,18 @@
 #include "routing/routenetworktypes.h"
 
 namespace atools {
-namespace sql {
-class SqlDatabase;
-}
-
 namespace routing {
+
+class RouteNetworkLoader;
 
 /*
  * Network forming a directed graph by navaid nodes and airway edges or generated edges by neares neighbor search.
  * The class already applies various filtering mechanisms (e.g. distance to destination) when looking for nearest nodes.
+ * It also avoid jumping out and into tracks at invalid positions.
  *
  * Data is loaded from tables airway, waypoint, vor and ndb depending on source.
+ *
+ * Several optimizations limit the number of returned neighbors.
  *
  * The class has a state (i.e. start and destination) and is not re-entrant.
  *
@@ -42,29 +43,27 @@ class RouteNetwork
 {
 public:
   /* Does not load the data */
-  RouteNetwork(atools::sql::SqlDatabase *sqlDb, atools::routing::DataSource dataSource);
+  RouteNetwork(atools::routing::DataSource dataSource);
   virtual ~RouteNetwork();
 
-  /* Loads network data if not already done. */
-  void ensureLoaded();
+  /* true if network is loaded. */
   bool isLoaded() const;
 
-  /* Set up and prepare all queries. Data is reloaded if already done. */
-  void init();
-
-  /* Disconnect queries from database and remove departure and destination nodes */
-  void deInit();
+  /* Remove departure and destination nodes */
+  void clear();
 
   /* Get all adjacent nodes and attached edges for the given node. Edges might be different than Node::edges.
    * Adjacent objects are filtered based on distance and type criteria like airway types.
    * Edges may be airways or generated edges by nearest neighbor search.
    * Nodes/edges having a longer distance to the destination than the origin are filtered out .*/
-  void getNeighbours(atools::routing::Result& result, const atools::routing::Node& origin) const;
+  void getNeighbours(atools::routing::Result& result, const atools::routing::Node& origin,
+                     const Edge *prevEdge = nullptr) const;
 
   /* Same as above but uses a the nearest node for the position. */
-  void getNeighbours(atools::routing::Result& result, const atools::geo::Pos& origin) const
+  void getNeighbours(atools::routing::Result& result, const atools::geo::Pos& origin,
+                     const Edge *prevEdge = nullptr) const
   {
-    getNeighbours(result, getNearestNode(origin));
+    getNeighbours(result, getNearestNode(origin), prevEdge);
   }
 
   /* Get great circle distance between two nodes. The calculation in euclidian 3D space
@@ -83,7 +82,7 @@ public:
   }
 
   /* Integrate departure and destination positions into the network as virtual nodes/edges.
-   * Altitude is used to filter airway edges if > 0. Modes provides and additional neighbor filter. */
+   * Altitude is used to filter airway edges if > 0. Modes provides and additional neighbour filter. */
   void setParameters(const atools::geo::Pos& departurePos, const atools::geo::Pos& destinationPos,
                      int altitudeParam, atools::routing::Modes modeParam);
 
@@ -111,24 +110,19 @@ public:
     return nodeIndex.getNearest(pos);
   }
 
-  /* Get a node by database id ("waypoint_id" or other navaid id) */
-  const atools::routing::Node& getNodeById(int navId) const
-  {
-    return nodeIndex.at(nodeIdIndexMap.value(navId));
-  }
-
   /* Get nodes vector. The index parameter can be used to access nodes fast.*/
   const QVector<atools::routing::Node>& getNodes() const
   {
     return nodeIndex;
   }
 
-  /* true if airways and other navaids are used as data source. Otherwise radio navaid only. */
+  /* true if airways and other navaids are used as data source. */
   bool isAirwayRouting() const
   {
     return source == SOURCE_AIRWAY;
   }
 
+  /* true if VOR or NDB are used as data source. */
   bool isRadionavRouting() const
   {
     return source == SOURCE_RADIO;
@@ -172,30 +166,39 @@ public:
     directDistanceFactorAirway = value;
   }
 
+  /* Altitude levels as assigned to NAT tracks. trackId is database track.track_id. */
+  const QVector<quint16> getAltitudeLevelsEast(int trackId) const
+  {
+    return altLevelsEast.value(trackId);
+  }
+
+  QVector<quint16> getAltitudeLevelsWest(int trackId) const
+  {
+    return altLevelsWest.value(trackId);
+  }
+
+  /* Mode that defines which features are used for edge filtering (airways, tracks, direct connections, etc.) */
+  atools::routing::Modes getMode() const
+  {
+    return mode;
+  }
+
 private:
-  void clearIndexes();
-  void initInternal();
-
-  /* Read VOR and NDB into index */
-  void readNodesRadio(const QString& queryStr, int& idx, bool vor);
-
-  /* Read waypoints and airways into index */
-  void readNodesAirway(QVector<Node>& nodes, const QString& queryStr, int& idx, bool vor, bool ndb, bool airway, bool filterUnnamed);
-  void readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap) const;
+  friend class atools::routing::RouteNetworkLoader;
 
   /* Get nearest nodes and edges */
   int searchNearest(atools::routing::Result& result, const Node& origin, float minDistanceMeter,
-                     float maxDistanceMeter, const QSet<int> *excludeIndexes = nullptr) const;
+                    float maxDistanceMeter, const QSet<int> *excludeIndexes = nullptr) const;
 
   /* Check node filter based on mode. */
-  bool matchNode(int index) const;
+  bool matchNode(const Node& node) const;
 
   atools::geo::Point3D nodeToCartesian(const atools::routing::Node& node) const
   {
     return node.index >= 0 ? nodeIndex.atPoint3D(node.index) : node.pos.toCartesian();
   }
 
-  /* Check if altitude and RNAV constraints allow to use this edge */
+  /* Check if altitude, RNAV constraints and more allow to use this edge */
   bool matchEdge(const atools::routing::Edge& edge) const;
 
   /* Get point in 3D space. Returns destination or departure for appropriate indexes. */
@@ -213,7 +216,6 @@ private:
 
   /* Filter for getNeighbours */
   atools::routing::Modes mode = atools::routing::MODE_ALL;
-  atools::sql::SqlDatabase *db;
 
   atools::routing::Node departureNode, destinationNode;
   atools::geo::Point3D departurePoint, destinationPoint;
@@ -222,8 +224,8 @@ private:
   /* Spatial index for nearest neighbor search using KD-tree internally */
   atools::geo::SpatialIndex<Node> nodeIndex;
 
-  /* Maps database ids to index */
-  QHash<int, int> nodeIdIndexMap;
+  /* Map database track.track_id to altitude levels if existing */
+  QHash<int, QVector<quint16> > altLevelsEast, altLevelsWest;
 
   atools::routing::DataSource source = atools::routing::SOURCE_NONE;
 };

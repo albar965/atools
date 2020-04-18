@@ -23,13 +23,20 @@ drop table if exists trackmeta;
 create table trackmeta
 (
   trackmeta_id integer primary key,
-  track_name varchar(15) not null,         -- Track name, letter or number
-  track_type varchar(1) not null,          -- N = NAT track, P = PACOTS track, A = AUSOTS track
-  route varchar(255) not null,             -- Track name, letter or number
-  valid_from  varchar(50) not null,        -- Date time valid from UTC
-  valid_to varchar(50) not null,           -- "
-  download_timestamp varchar(50) not null  -- Date of download - local time
+  track_name varchar(15) not null,          -- Track name, letter or number
+  track_type varchar(1) not null,           -- N = NAT track, P = PACOTS track, A = AUSOTS track
+  route varchar(255) not null,              -- Track name, letter or number
+  startpoint_id integer not null,           -- Start of track. Refers to trackpoint.trackpoint_id.
+  endpoint_id integer not null,             -- End of track. Refers to trackpoint.trackpoint_id.
+  valid_from  varchar(50) not null,         -- Date time valid from UTC
+  valid_to varchar(50) not null,            -- "
+  download_timestamp varchar(50) not null,  -- Date of download - local time
+foreign key(startpoint_id) references trackpoint(trackpoint_id),
+foreign key(endpoint_id) references trackpoint(trackpoint_id)
 );
+
+create index if not exists idx_trackmeta_start_id on trackmeta(startpoint_id);
+create index if not exists idx_trackmeta_end_id on trackmeta(endpoint_id);
 
 -- **************************************************
 
@@ -73,6 +80,7 @@ foreign key(to_waypoint_id) references trackpoint(trackpoint_id)
 );
 
 create index if not exists idx_track_type on track(track_type);
+create index if not exists idx_track_meta on track(trackmeta_id);
 create index if not exists idx_track_from_waypoint_id on track(from_waypoint_id);
 create index if not exists idx_track_to_waypoint_id on track(to_waypoint_id);
 
@@ -115,3 +123,4 @@ create index if not exists idx_trackpoint_ident on trackpoint(ident);
 create index if not exists idx_trackpoint_region on trackpoint(region);
 create index if not exists idx_trackpoint_lonx on trackpoint(lonx);
 create index if not exists idx_trackpoint_laty on trackpoint(laty);
+

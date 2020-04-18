@@ -60,11 +60,6 @@ public:
    */
   bool calculateRoute(const atools::geo::Pos& from, const atools::geo::Pos& to, int flownAltitude, Modes mode);
 
-  /* Delegate to RouteNetwork::ensureLoaded. Loads network data if not already done.
-   *  Call before using calculateRoute */
-  void ensureNetworkLoaded();
-  bool isNetworkLoaded() const;
-
   /* Prefer VORs to transition from departure to airway network */
   void setPreferVorToAirway(bool value)
   {
@@ -103,7 +98,7 @@ public:
 
 private:
   /* Expands a node by investigating all successors */
-  void expandNode(const atools::routing::Node& node);
+  void expandNode(const atools::routing::Node& node, const Edge& prevEdge);
 
   /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
    * will have several factors applied to get reasonable routes */
@@ -125,6 +120,9 @@ private:
   static Q_DECL_CONSTEXPR float COST_FACTOR_NEAR_WAYPOINTS = 1.1f;
   static Q_DECL_CONSTEXPR float COST_FACTOR_FAR_WAYPOINTS = 1.1f;
 
+  /* Prefer tracks if enabled */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_TRACK = 0.8f;
+
   /* Force algortihm to use close waypoints near start and destination */
   static Q_DECL_CONSTEXPR float COST_FACTOR_FORCE_CLOSE_NODES = 1.5f;
 
@@ -143,7 +141,10 @@ private:
   static Q_DECL_CONSTEXPR float COST_FACTOR_VOR = 1.2f;
 
   /* Avoid airway changes during routing */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.2f;
+  static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.1f;
+
+  /* Avoid track changes during routing */
+  static Q_DECL_CONSTEXPR float COST_FACTOR_TRACK_CHANGE = 10.f;
 
   /* Altitude to use  for airway selection of 0 if not used */
   int altitude = 0;
@@ -173,11 +174,11 @@ private:
   /* Maps node index to predecessor node id */
   int *nodePredecessorArr = nullptr;
 
-  /* Maps node index to predecessor airway id */
-  int *nodeAirwayIdArr = nullptr;
+  /* Maps node index to predecessor edge - similar as above */
+  atools::routing::Edge *edgePredecessorArr = nullptr;
 
-  /* Airway name hash value for node at index */
-  quint32 *nodeAirwayArr = nullptr;
+  /* Airway name hash value for edge at index */
+  quint32 *edgeNameHashArr = nullptr;
 
   atools::routing::Node startNode, destNode;
 

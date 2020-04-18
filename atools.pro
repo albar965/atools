@@ -222,6 +222,7 @@ HEADERS += \
   src/httpserver/staticfilecontroller.h \
   src/io/abstractinireader.h \
   src/io/binarystream.h \
+  src/io/binaryutil.h \
   src/io/fileroller.h \
   src/io/inireader.h \
   src/io/tempfile.h \
@@ -231,6 +232,7 @@ HEADERS += \
   src/logging/loggingtypes.h \
   src/logging/loggingutil.h \
   src/routing/routenetwork.h \
+  src/routing/routenetworkloader.h \
   src/routing/routenetworktypes.h \
   src/settings/settings.h \
   src/sql/sqldatabase.h \
@@ -334,6 +336,7 @@ SOURCES += \
   src/httpserver/staticfilecontroller.cpp \
   src/io/abstractinireader.cpp \
   src/io/binarystream.cpp \
+  src/io/binaryutil.cpp \
   src/io/fileroller.cpp \
   src/io/inireader.cpp \
   src/io/tempfile.cpp \
@@ -342,6 +345,7 @@ SOURCES += \
   src/logging/logginghandler.cpp \
   src/logging/loggingutil.cpp \
   src/routing/routenetwork.cpp \
+  src/routing/routenetworkloader.cpp \
   src/routing/routenetworktypes.cpp \
   src/settings/settings.cpp \
   src/sql/sqldatabase.cpp \
