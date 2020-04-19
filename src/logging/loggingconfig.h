@@ -52,6 +52,12 @@ private:
     return abortType;
   }
 
+  /* true if filepaths and function names should be shortened. */
+  bool getNarrow() const
+  {
+    return narrow;
+  }
+
   /* get all default streams for the given level */
   ChannelVector& getStream(QtMsgType type);
 
@@ -107,6 +113,9 @@ private:
 
   /* 0 of -1 if not used */
   qint64 maximumFileSizeBytes = 0;
+
+  /* Shorten file and method names if true. */
+  bool narrow = false;
 
   QString logConfig, logDir, logPrefix;
 

@@ -135,6 +135,7 @@ private:
   void checkAbortType(QtMsgType type, const QMessageLogContext& context, const QString& msg);
 
   static void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg);
+  static void messageHandlerNarrow(QtMsgType type, const QMessageLogContext& context, const QString& msg);
   static void categoryFilter(QLoggingCategory *category);
 
   static LoggingHandler *instance;

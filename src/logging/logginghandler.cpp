@@ -44,7 +44,10 @@ LoggingHandler::LoggingHandler(const QString& logConfiguration,
   oldCategoryFilter = QLoggingCategory::installFilter(categoryFilter);
 
   // Install callback function
-  oldMessageHandler = qInstallMessageHandler(LoggingHandler::messageHandler);
+  if(logConfig->narrow)
+    oldMessageHandler = qInstallMessageHandler(LoggingHandler::messageHandlerNarrow);
+  else
+    oldMessageHandler = qInstallMessageHandler(LoggingHandler::messageHandler);
 }
 
 LoggingHandler::~LoggingHandler()
@@ -185,17 +188,107 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
   if(logFunc != nullptr)
     logFunc(type, context, msg);
 
-  QString category = context.category;
+  instance->logToCatChannels(instance->logConfig->getCatStream(type),
+                             instance->logConfig->getStream(type),
+                             qFormatLogMessage(type, context, msg),
+                             context.category);
 
-  if(category == "default")
+  instance->checkAbortType(type, context, msg);
+}
+
+void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+  static const QLatin1Literal DOUBLE_COLON("::");
+  static const QLatin1Literal VOID("void ");
+  static const QLatin1Literal STATIC_VOID("static void ");
+  static const QLatin1Literal VIRTUAL_VOID("virtual void ");
+  static const QLatin1Literal VIRTUAL("virtual ");
+  static const QLatin1Literal DEFAULT("default");
+
+  QString message = msg;
+  QString function(context.function);
+  QString file(context.file);
+
+  // Remove file path ========================
+  int idx = file.lastIndexOf(QDir::separator());
+  if(idx != -1)
+    file = file.mid(idx + 1);
+
+  // Remove function name from message ========================
+  bool funcRemoved = false;
+  if(message.startsWith(function))
+  {
+    message.remove(0, function.size());
+    funcRemoved = true;
+  }
+
+  // Remove method signature ========================
+  idx = function.lastIndexOf('(');
+  if(idx != -1)
+    function = function.left(idx + 1) + ')';
+
+  // Remove namespaces ========================
+  int cnt = function.count(DOUBLE_COLON);
+  if(cnt > 1)
+  {
+    // Get last :: in "namespace::Class::method"
+    idx = function.lastIndexOf(DOUBLE_COLON);
+    if(idx != -1)
+    {
+      // Get second last :: in "namespace::Class::method"
+      int idx2 = function.lastIndexOf(DOUBLE_COLON, idx - 2);
+      if(idx2 != -1)
+        function = function.mid(idx2 + 2);
+      else
+        function = function.mid(idx);
+    }
+  }
+
+  // Remove any return types ====================
+  if(function.startsWith(VOID))
+    function.remove(0, VOID.size());
+  if(function.startsWith(STATIC_VOID))
+    function.remove(0, STATIC_VOID.size());
+  if(function.startsWith(VIRTUAL_VOID))
+    function.remove(0, VIRTUAL_VOID.size());
+  if(function.startsWith(VIRTUAL))
+    function.remove(0, VIRTUAL.size());
+
+  // Add shortened function name again if it was removed before
+  if(funcRemoved)
+    message.prepend(function);
+
+  // Keep arrays for the lifetime of this function until logging is finished
+  QByteArray fileBytes(file.toLocal8Bit());
+  QByteArray functionBytes(function.toLocal8Bit());
+
+  // Create a copy of the context
+  QMessageLogContext ctx;
+  ctx.version = context.version;
+  ctx.line = context.line;
+  ctx.file = fileBytes.data();
+  ctx.function = functionBytes.data();
+  ctx.category = context.category;
+
+  if(logFunc != nullptr)
+    logFunc(type, ctx, message);
+
+  QString category = ctx.category;
+
+  if(category == DEFAULT)
     category.clear();
 
   instance->logToCatChannels(instance->logConfig->getCatStream(type),
                              instance->logConfig->getStream(type),
-                             qFormatLogMessage(type, context, msg),
+                             qFormatLogMessage(type, ctx, message),
                              category);
 
-  instance->checkAbortType(type, context, msg);
+  instance->checkAbortType(type, ctx, message);
+
+  // Null pointers to avoid double free
+  ctx.file = nullptr;
+  ctx.function = nullptr;
+  ctx.category = nullptr;
 }
 
 void LoggingHandler::categoryFilter(QLoggingCategory *category)
