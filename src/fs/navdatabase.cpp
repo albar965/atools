@@ -938,12 +938,19 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
   bool readInactive = options->isReadInactive();
   FsPaths::SimulatorType sim = options->getSimulatorType();
 
-  if(options->isReadAddOnXml() && (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4))
+  if(options->isReadAddOnXml() &&
+     (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4 || sim == atools::fs::FsPaths::P3D_V5))
   {
     // Read the Prepar3D add on packages and add them to the scenery list ===============================
     QString documents(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first());
 
-    int simNum = sim == atools::fs::FsPaths::P3D_V3 ? 3 : 4;
+    int simNum = 0;
+    if(sim == atools::fs::FsPaths::P3D_V3)
+      simNum = 3;
+    else if(sim == atools::fs::FsPaths::P3D_V4)
+      simNum = 4;
+    else if(sim == atools::fs::FsPaths::P3D_V5)
+      simNum = 5;
 
     // Calculate maximum area number
     int areaNum = std::numeric_limits<int>::min();
