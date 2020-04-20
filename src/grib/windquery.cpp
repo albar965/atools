@@ -579,9 +579,23 @@ void WindQuery::gribDownloadFailed(const QString& error, int errorCode, QString)
 
 void WindQuery::gribFileUpdated(const QString& filename)
 {
-  GribReader reader(verbose);
-  reader.readFile(filename);
-  convertDataset(reader.getDatasets());
+  try
+  {
+    GribReader reader(verbose);
+
+    reader.readFile(filename);
+    convertDataset(reader.getDatasets());
+  }
+  catch(atools::Exception& e)
+  {
+    emit windDownloadFailed(e.getMessage(), 0);
+    return;
+  }
+  catch(...)
+  {
+    emit windDownloadFailed(tr("Unknown error."), 0);
+    return;
+  }
 
   emit windDataUpdated();
 }
