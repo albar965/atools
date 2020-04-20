@@ -291,7 +291,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
     edge.minAltFt = static_cast<quint16>(std::min(query.valueInt(MIN), static_cast<int>(Edge::MAX_ALTITUDE)));
 
     // Assign max altitude if given - otherwise max
-    if(!query.isNull(MAX))
+    if(query.valueInt(MAX) > 0)
       edge.maxAltFt = static_cast<quint16>(std::min(query.valueInt(MAX), static_cast<int>(Edge::MAX_ALTITUDE)));
     else
       edge.maxAltFt = Edge::MAX_ALTITUDE;
@@ -336,7 +336,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
       // Add one edge for each allowed direction
       char dir = atools::strToChar(query.valueStr(DIRECTION));
 
-      if(dir == 'F' || dir == 'N')
+      if(dir == '\0' || dir == 'F' || dir == 'N')
       {
         // Forward or both directions allowed
         // Use id temporarily - will be replaced with index later
@@ -344,7 +344,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
         nodeEdgeMap.insert(fromId, edge);
       }
 
-      if(dir == 'B' || dir == 'N')
+      if(dir == '\0' || dir == 'B' || dir == 'N')
       {
         // Backward or both directions allowed
         // Use id temporarily - will be replaced with index later

@@ -415,7 +415,8 @@ bool RouteNetwork::matchEdge(const Edge& edge) const
   bool ok = (altitude == 0 || (altitude >= edge.minAltFt && altitude <= edge.maxAltFt));
 
   // Check if RNAV has to be excluded
-  ok &= edge.routeType != RNAV || !(mode & MODE_NO_RNAV);
+  if(mode & MODE_NO_RNAV)
+    ok &= edge.routeType != RNAV;
 
   // Check if track or airway type matches filter mode
   if(ok)
