@@ -30,6 +30,15 @@ namespace bgl {
 
 class Subsection;
 
+/* Identifier for simulator type which is filled dependent on record type and passed to records. */
+enum StructureType
+{
+  STRUCT_FS9,
+  STRUCT_FSX,
+  STRUCT_P3DV4,
+  STRUCT_P3DV5
+};
+
 /*
  * Base for all record types.
  */
@@ -109,10 +118,14 @@ public:
   /* Byte size that will be read by this class */
   const int SIZE = 6;
 
+  /* Default to be implemented by derived. */
   virtual bool isValid() const
   {
     return true;
   }
+
+  /* Checks if id and record size is within bounds. */
+  virtual bool isFullyValid() const;
 
   virtual QString getObjectName() const;
 

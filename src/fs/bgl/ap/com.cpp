@@ -34,48 +34,63 @@ QString Com::comTypeToStr(com::ComType type)
       return "NONE";
 
     case com::ATIS:
+    case com::ATIS_P3D_V5:
       return "ATIS";
 
     case com::MULTICOM:
+    case com::MULTICOM_P3D_V5:
       return "MC";
 
     case com::UNICOM:
+    case com::UNICOM_P3D_V5:
       return "UC";
 
     case com::CTAF:
+    case com::CTAF_P3D_V5:
       return "CTAF";
 
     case com::GROUND:
+    case com::GROUND_P3D_V5:
       return "G";
 
     case com::TOWER:
+    case com::TOWER_P3D_V5:
       return "T";
 
     case com::CLEARANCE:
+    case com::CLEARANCE_P3D_V5:
       return "C";
 
     case com::APPROACH:
+    case com::APPROACH_P3D_V5:
       return "A";
 
     case com::DEPARTURE:
+    case com::DEPARTURE_P3D_V5:
       return "D";
 
     case com::CENTER:
+    case com::CENTER_P3D_V5:
       return "CTR";
 
     case com::FSS:
+    case com::FSS_P3D_V5:
       return "FSS";
 
     case com::AWOS:
+    case com::AWOS_P3D_V5:
       return "AWOS";
 
     case com::ASOS:
+    case com::ASOS_P3D_V5:
       return "ASOS";
 
     case com::CLEARANCE_PRE_TAXI:
+    case com::CLEARANCE_PRE_TAXI_P3D_V5:
       return "CPT";
 
     case com::REMOTE_CLEARANCE_DELIVERY:
+    case com::REMOTE_CLEARANCE_DELIVERY_P3D_V5:
       return "RCD";
   }
   qWarning().nospace().noquote() << "Invalid COM type " << type;
@@ -100,10 +115,10 @@ QDebug operator<<(QDebug out, const Com& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Com[type " << Com::comTypeToStr(record.type)
-  << ", name " << record.name
-  << ", frequency " << record.frequency
-  << "]";
+                          << " Com[type " << Com::comTypeToStr(record.type)
+                          << ", name " << record.name
+                          << ", frequency " << record.frequency
+                          << "]";
 
   return out;
 }

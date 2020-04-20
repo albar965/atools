@@ -98,6 +98,12 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
     case ap::fix::TERMINAL_NDB:
       return "TN";
 
+    /* From P3D v5 upwards - these are wrong types for this field taken from the XSD.
+     * They will be converted to WAYPOINT. */
+    case ap::fix::MANUAL_TERMINATION:
+    case ap::fix::COURSE_TO_ALT:
+    case ap::fix::COURSE_TO_DIST:
+    case ap::fix::HEADING_TO_ALT:
     case ap::fix::WAYPOINT:
       return "W";
 

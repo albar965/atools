@@ -105,11 +105,17 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::APRON_FIRST:
       return "APRON_FIRST";
 
+    case rec::APRON_FIRST_P3D_V5:
+      return "APRON_FIRST_P3D_V5";
+
     case rec::APRON_SECOND:
       return "APRON_SECOND";
 
     case rec::APRON_SECOND_P3D_V4:
       return "APRON_SECOND_P3D_V4";
+
+    case rec::APRON_SECOND_P3D_V5:
+      return "APRON_SECOND_P3D_V5";
 
     case rec::APRON_EDGE_LIGHTS:
       return "APRON_EDGE_LIGHTS";
@@ -117,8 +123,14 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::TAXI_POINT:
       return "TAXI_POINT";
 
+    case rec::TAXI_POINT_P3DV5:
+      return "TAXI_POINT_P3DV5";
+
     case rec::TAXI_PARKING:
       return "TAXI_PARKING";
+
+    case rec::TAXI_PARKING_P3D_V5:
+      return "TAXI_PARKING_P3D_V5";
 
     case rec::TAXI_PARKING_FS9:
       return "TAXI_PARKING_FS9";
@@ -128,6 +140,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::TAXI_PATH_P3D_V4:
       return "TAXI_PATH_P3D_V4";
+
+    case rec::TAXI_PATH_P3D_V5:
+      return "TAXI_PATH_P3D_V5";
 
     case rec::TAXI_NAME:
       return "TAXI_NAME";
@@ -155,29 +170,34 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 {
   switch(type)
   {
-    case RUNWAY_P3D_V4:
-    case APRON_SECOND_P3D_V4:
-    case TAXI_PATH_P3D_V4:
-    case rec::NAME:
-    case rec::TOWER_OBJ:
-    case rec::RUNWAY:
     case rec::AIRPORT_WAYPOINT:
-    case rec::HELIPAD:
-    case rec::START:
+    case rec::APPROACH:
+    case rec::APRON_EDGE_LIGHTS:
+    case rec::APRON_FIRST:
+    case rec::APRON_FIRST_P3D_V5:
+    case rec::APRON_SECOND:
+    case rec::APRON_SECOND_P3D_V4:
+    case rec::APRON_SECOND_P3D_V5:
     case rec::COM:
     case rec::DELETE_AIRPORT:
-    case rec::APRON_FIRST:
-    case rec::APRON_SECOND:
-    case rec::APRON_EDGE_LIGHTS:
-    case rec::TAXI_POINT:
-    case rec::TAXI_PARKING:
-    case rec::TAXI_PARKING_FS9:
-    case rec::TAXI_PATH:
-    case rec::TAXI_NAME:
-    case rec::JETWAY:
-    case rec::APPROACH:
     case rec::FENCE_BLAST:
     case rec::FENCE_BOUNDARY:
+    case rec::HELIPAD:
+    case rec::JETWAY:
+    case rec::NAME:
+    case rec::RUNWAY:
+    case rec::RUNWAY_P3D_V4:
+    case rec::START:
+    case rec::TAXI_NAME:
+    case rec::TAXI_PARKING:
+    case rec::TAXI_PARKING_FS9:
+    case rec::TAXI_PARKING_P3D_V5:
+    case rec::TAXI_PATH:
+    case rec::TAXI_PATH_P3D_V4:
+    case rec::TAXI_PATH_P3D_V5:
+    case rec::TAXI_POINT:
+    case rec::TAXI_POINT_P3DV5:
+    case rec::TOWER_OBJ:
     case rec::UNKNOWN_REC:
       return true;
   }

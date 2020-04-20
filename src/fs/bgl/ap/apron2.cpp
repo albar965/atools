@@ -25,7 +25,7 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, bool p3dV4Structure)
+Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, StructureType structureType)
   : bgl::Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
@@ -33,9 +33,12 @@ Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::Binary
   drawSurface = (flags & 1) == 1;
   drawDetail = (flags & 2) == 2;
 
-  if(p3dV4Structure)
+  if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
     bs->skip(16);
+
+  if(structureType == STRUCT_P3DV5)
+    bs->skip(4);
 
   int numVertices = bs->readShort();
   int numTriangles = bs->readShort();

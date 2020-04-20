@@ -33,7 +33,8 @@ class Apron :
   public atools::fs::bgl::Record
 {
 public:
-  Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+        atools::fs::bgl::StructureType structureType);
   virtual ~Apron();
 
   atools::fs::bgl::rw::Surface getSurface() const

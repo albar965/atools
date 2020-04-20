@@ -20,6 +20,8 @@
 
 #include "fs/bgl/bglposition.h"
 #include "fs/bgl/ap/parking.h"
+#include "fs/bgl/ap/parking.h"
+#include "fs/bgl/record.h"
 
 #include <QString>
 
@@ -62,7 +64,7 @@ class TaxiPoint
 {
 public:
   TaxiPoint();
-  TaxiPoint(atools::io::BinaryStream *bs);
+  TaxiPoint(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
   TaxiPoint(const atools::fs::bgl::Parking& parking);
 
   atools::fs::bgl::taxipoint::PointType getType() const
