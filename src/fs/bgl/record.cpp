@@ -39,6 +39,11 @@ void Record::seekToEnd() const
   bs->seekg(startOffset + size);
 }
 
+bool Record::isFullyValid() const
+{
+  return id > 0 && startOffset > 0 && size > 0 && startOffset + size <= bs->getFileSize();
+}
+
 QString Record::getObjectName() const
 {
   return QString(" Record[offset 0x%1, id 0x%2, size %3] ").

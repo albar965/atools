@@ -167,7 +167,8 @@ QString Runway::surfaceToStr(rw::Surface surface)
   return "INVALID";
 }
 
-Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent, bool p3dV4Structure)
+Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent,
+               StructureType structureType)
   : Record(options, bs)
 {
   surface = static_cast<rw::Surface>(bs->readShort() & rw::SURFACE_MASK);
@@ -233,7 +234,7 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   else
     secondary.pattern = rw::LEFT;
 
-  if(p3dV4Structure)
+  if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
     bs->skip(16);
 

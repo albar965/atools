@@ -25,7 +25,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-TaxiPath::TaxiPath(io::BinaryStream *bs, bool p3dV4Structure)
+TaxiPath::TaxiPath(io::BinaryStream *bs, StructureType structureType)
 {
   startPoint = bs->readShort();
   int flags = bs->readShort();
@@ -52,9 +52,12 @@ TaxiPath::TaxiPath(io::BinaryStream *bs, bool p3dV4Structure)
   bs->readFloat(); // weight limit
   bs->skip(4);
 
-  if(p3dV4Structure)
+  if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
     bs->skip(16);
+
+  if(structureType == STRUCT_P3DV5)
+    bs->skip(4);
 }
 
 QString TaxiPath::getName() const

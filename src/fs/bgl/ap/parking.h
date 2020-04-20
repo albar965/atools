@@ -20,6 +20,7 @@
 
 #include "fs/bgl/bglposition.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/bgl/record.h"
 
 #include <QString>
 #include <QStringList>
@@ -115,7 +116,7 @@ class Parking
 {
 public:
   Parking();
-  Parking(atools::io::BinaryStream *bs, atools::fs::bgl::rec::AirportRecordType rectype);
+  Parking(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
   virtual ~Parking();
 
   /*

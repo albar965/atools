@@ -440,6 +440,7 @@ private:
   void updateSummaryFields();
   void removeVehicleParking();
   void updateHelipads();
+  bool isCurrentRecordValid();
 
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
   static const int MIN_RUNWAY_LENGTH_METER = 10;

@@ -221,7 +221,7 @@ Parking::Parking()
 
 }
 
-Parking::Parking(BinaryStream *bs, rec::AirportRecordType rectype)
+Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
 {
   unsigned int flags = bs->readUInt();
   name = static_cast<ap::ParkingName>(flags & 0x3f);
@@ -233,13 +233,16 @@ Parking::Parking(BinaryStream *bs, rec::AirportRecordType rectype)
   radius = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
-  if(rectype == rec::TAXI_PARKING) // TODO wiki mention FS9 format
-    bs->skip(16);  // teeOffset 1-4
+  if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5) // TODO wiki mention FS9 format
+    bs->skip(16); // teeOffset 1-4
 
   position = BglPosition(bs);
 
   for(int i = 0; i < numAirlineCodes; i++)
     airlineCodes.append(bs->readString(4));
+
+  if(structureType == STRUCT_P3DV5)
+    bs->skip(4);
 }
 
 Parking::~Parking()
@@ -298,13 +301,13 @@ QDebug operator<<(QDebug out, const Parking& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " Parking[type " << Parking::parkingTypeToStr(record.type)
-  << ", name " << Parking::parkingNameToStr(record.name)
-  << ", number " << record.number
-  << ", radius " << record.radius
-  << ", heading " << record.heading
-  << ", jetway " << record.jetway
-  << ", " << record.position
-  << "]";
+                          << ", name " << Parking::parkingNameToStr(record.name)
+                          << ", number " << record.number
+                          << ", radius " << record.radius
+                          << ", heading " << record.heading
+                          << ", jetway " << record.jetway
+                          << ", " << record.position
+                          << "]";
   return out;
 }
 

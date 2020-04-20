@@ -46,7 +46,26 @@ enum TransitionFixType
   NDB = 3,
   TERMINAL_NDB = 4,
   WAYPOINT = 5,
-  TERMINAL_WAYPOINT = 6
+  TERMINAL_WAYPOINT = 6,
+
+  /* From P3D v5 upwards - these are wrong types for this field taken from the XSD.
+   * They will be converted to WAYPOINT. */
+  // <xs:enumeration value="NDB" />
+  // <xs:enumeration value="COURSE_TO_DIST" />
+  // <xs:enumeration value="COURSE_TO_ALT" />
+  // <xs:enumeration value="HEADING_TO_ALT" />
+  // <xs:enumeration value="MANUAL_TERMINATION" />
+  // <xs:enumeration value="TERMINAL_NDB" />
+  // <xs:enumeration value="TERMINAL_WAYPOINT" />
+  // <xs:enumeration value="VOR" />
+  // <xs:enumeration value="WAYPOINT" />
+  // <xs:enumeration value="RUNWAY" />
+  // <xs:enumeration value="LOCALIZER" />
+
+  MANUAL_TERMINATION = 11,
+  COURSE_TO_ALT = 12,
+  COURSE_TO_DIST = 13,
+  HEADING_TO_ALT = 14
 };
 
 }
@@ -54,7 +73,7 @@ enum TransitionFixType
 } // namespace ap
 
 /*
- * Transtition to an approach. Subrecord of approach.
+ * Transition to an approach. Subrecord of approach.
  */
 class Transition :
   public atools::fs::bgl::Record

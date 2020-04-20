@@ -129,7 +129,7 @@ class Runway :
 {
 public:
   Runway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
-         const QString& airportIdent, bool p3dV4Structure);
+         const QString& airportIdent, atools::fs::bgl::StructureType structureType);
   virtual ~Runway();
 
   /*
