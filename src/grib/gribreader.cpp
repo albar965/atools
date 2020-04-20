@@ -68,7 +68,7 @@ Q_REQUIRED_RESULT inline bool checkValue(const QString& message, TYPE value, TYP
   if(expected != value)
   {
     qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not equal to expected value %3").
-    arg(message).arg(value).arg(expected);
+      arg(message).arg(value).arg(expected);
     return false;
   }
   return true;
@@ -85,7 +85,7 @@ Q_REQUIRED_RESULT bool checkValue(const QString& message, TYPE value, const QVec
       expectedStr.append(QString::number(static_cast<int>(val)));
 
     qWarning() << QString("GribReader: Error reading grib file: %1: value %2 not in expected range %3").
-    arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
+      arg(message).arg(value).arg(expectedStr.join(GribReader::tr(", ")));
     return false;
   }
   return true;
@@ -126,7 +126,7 @@ void GribReader::readFile(const QString& filename)
       // Search for next/first GRIB message ========================================
       seekgb(fptr, seekBytes, 128000, &skipBytes, &numGribBytes);
       if(numGribBytes == 0)
-        break;  // end loop at EOF or problem
+        break; // end loop at EOF or problem
 
       cgrib = new unsigned char[static_cast<size_t>(numGribBytes)];
       ret = fseek(fptr, skipBytes, SEEK_SET);
@@ -436,13 +436,13 @@ void GribReader::readFile(const QString& filename)
 
     // Sort first by altitude from low to high and second by parameter type from U to V
     std::sort(datasets.begin(), datasets.end(),
-              [] (const atools::grib::GribDataset & d1, const atools::grib::GribDataset & d2)->bool
-              {
-                if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
-                  return d1.parameterType < d2.parameterType;
-                else
-                  return d1.altFeetCalculated < d2.altFeetCalculated;
-              });
+              [](const atools::grib::GribDataset& d1, const atools::grib::GribDataset& d2) -> bool
+        {
+          if(atools::almostEqual(d1.altFeetCalculated, d2.altFeetCalculated))
+            return d1.parameterType < d2.parameterType;
+          else
+            return d1.altFeetCalculated < d2.altFeetCalculated;
+        });
 
     fclose(fptr);
   }
