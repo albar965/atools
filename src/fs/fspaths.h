@@ -50,16 +50,16 @@ public:
     P3D_V3 = 3,
 
     /* Platform: Prepar3d Version 4 */
-    P3D_V4 = 4,
+    P3D_V4 = 6,
 
     /* Platform: Prepar3d Version 5 */
-    P3D_V5 = 5,
+    P3D_V5 = 9,
 
     /* X-Plane 11 */
-    XPLANE11 = 6,
+    XPLANE11 = 7,
 
     /* Not a simulator but a database */
-    NAVIGRAPH = 7,
+    NAVIGRAPH = 8,
 
     /* Synonym for database */
     DFD = NAVIGRAPH,
