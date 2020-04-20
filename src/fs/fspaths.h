@@ -49,18 +49,17 @@ public:
     /* Platform: Prepar3d Version 3 */
     P3D_V3 = 3,
 
-    /* External data - disabled - keep numbering for compatibility */
-    // EXTERNAL = 4,
-    // EXTERNAL2 = 5,
-
     /* Platform: Prepar3d Version 4 */
-    P3D_V4 = 6,
+    P3D_V4 = 4,
+
+    /* Platform: Prepar3d Version 5 */
+    P3D_V5 = 5,
 
     /* X-Plane 11 */
-    XPLANE11 = 7,
+    XPLANE11 = 6,
 
     /* Not a simulator but a database */
-    NAVIGRAPH = 8,
+    NAVIGRAPH = 7,
 
     /* Synonym for database */
     DFD = NAVIGRAPH,
@@ -127,12 +126,17 @@ private:
   static const char *P3D_V4_REGISTRY_PATH;
   static const QStringList P3D_V4_REGISTRY_KEY;
 
+  /* Platform: Prepar3d Version 5 */
+  static const char *P3D_V5_REGISTRY_PATH;
+  static const QStringList P3D_V5_REGISTRY_KEY;
+
   /* Use this as fallback from the settings if not running on Windows */
   static const char *SETTINGS_FSX_PATH;
   static const char *SETTINGS_FSX_SE_PATH;
   static const char *SETTINGS_P3D_V2_PATH;
   static const char *SETTINGS_P3D_V3_PATH;
   static const char *SETTINGS_P3D_V4_PATH;
+  static const char *SETTINGS_P3D_V5_PATH;
   static const char *SETTINGS_XPLANE11_PATH;
 
   /* Paths for non Windows systems - used for development and debugging purposes */
@@ -141,6 +145,7 @@ private:
   static const char *P3D_V2_NO_WINDOWS_PATH;
   static const char *P3D_V3_NO_WINDOWS_PATH;
   static const char *P3D_V4_NO_WINDOWS_PATH;
+  static const char *P3D_V5_NO_WINDOWS_PATH;
   static const char *P3D_XPLANE11_NO_WINDOWS_PATH;
 
   static QString settingsKey(atools::fs::FsPaths::SimulatorType type);

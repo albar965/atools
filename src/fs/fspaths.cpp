@@ -36,7 +36,8 @@ namespace fs {
 
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
-      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::XPLANE11
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::XPLANE11
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
@@ -46,6 +47,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::P3D_V2, "P3DV2"},
       {FsPaths::P3D_V3, "P3DV3"},
       {FsPaths::P3D_V4, "P3DV4"},
+      {FsPaths::P3D_V5, "P3DV5"},
       {FsPaths::XPLANE11, "XP11"},
       {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
     });
@@ -57,6 +59,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NA
       {FsPaths::P3D_V2, "Prepar3D v2"},
       {FsPaths::P3D_V3, "Prepar3D v3"},
       {FsPaths::P3D_V4, "Prepar3D v4"},
+      {FsPaths::P3D_V5, "Prepar3D v5"},
       {FsPaths::XPLANE11, "X-Plane 11"},
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
@@ -78,11 +81,15 @@ const QStringList FsPaths::P3D_V3_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v
 const char *FsPaths::P3D_V4_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
 const QStringList FsPaths::P3D_V4_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v4", "AppPath"};
 
+const char *FsPaths::P3D_V5_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
+const QStringList FsPaths::P3D_V5_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v5", "AppPath"};
+
 const char *FsPaths::SETTINGS_FSX_PATH = "FsPaths/FsxPath";
 const char *FsPaths::SETTINGS_FSX_SE_PATH = "FsPaths/FsxSePath";
 const char *FsPaths::SETTINGS_P3D_V2_PATH = "FsPaths/P3dV2Path";
 const char *FsPaths::SETTINGS_P3D_V3_PATH = "FsPaths/P3dV3Path";
 const char *FsPaths::SETTINGS_P3D_V4_PATH = "FsPaths/P3dV4Path";
+const char *FsPaths::SETTINGS_P3D_V5_PATH = "FsPaths/P3dV5Path";
 const char *FsPaths::SETTINGS_XPLANE11_PATH = "FsPaths/XPlane11Path";
 
 const char *FsPaths::FSX_NO_WINDOWS_PATH = "Microsoft Flight Simulator X";
@@ -90,6 +97,7 @@ const char *FsPaths::FSX_SE_NO_WINDOWS_PATH = "Flight Simulator - Steam Edition"
 const char *FsPaths::P3D_V2_NO_WINDOWS_PATH = "Prepar3D v2";
 const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
 const char *FsPaths::P3D_V4_NO_WINDOWS_PATH = "Prepar3D v4";
+const char *FsPaths::P3D_V5_NO_WINDOWS_PATH = "Prepar3D v5";
 
 using atools::settings::Settings;
 
@@ -134,10 +142,10 @@ QString FsPaths::getBasePath(SimulatorType type)
   if(type == XPLANE11)
   {
     // The location of this file varies by operating system:
-    // OS X – the file will be in the user’s preferences folder, e.g. ~/Library/Preferences/.
-    // Windows –  the file will be in the user’s local app data folder, e.g. C:\Users\nnnn\AppData\Local\.
+    // OS X - the file will be in the user’s preferences folder, e.g. ~/Library/Preferences/.
+    // Windows -  the file will be in the user’s local app data folder, e.g. C:\Users\nnnn\AppData\Local\.
     // Use CSIDL_LOCAL_APPDATA to find the location.
-    // Linux – the file will be in the user’s home folder in a .x-plane/ sub folder, e.g. ~/.x-plane/.
+    // Linux - the file will be in the user’s home folder in a .x-plane/ sub folder, e.g. ~/.x-plane/.
 
 #if defined(Q_OS_WIN32)
     // "C:\Users\USERS\AppData\Local\x-plane_install_11.txt"
@@ -360,6 +368,16 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 
 #endif
 
+    case P3D_V5:
+      // P3D v5 C:\ProgramData\Lockheed Martin\Prepar3D v5
+#if defined(Q_OS_WIN32)
+      return programData + QDir::separator() + "Lockheed Martin\\Prepar3D v5\\Scenery.CFG";
+
+#elif defined(DEBUG_FS_PATHS)
+      return getBasePath(type) + QDir::separator() + "scenery.cfg";
+
+#endif
+
     // Disable compiler warnings
     case XPLANE11:
     case NAVIGRAPH:
@@ -393,6 +411,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V3;
   else if(type == "P3DV4")
     return P3D_V4;
+  else if(type == "P3DV5")
+    return P3D_V5;
   else if(type == "XP11")
     return XPLANE11;
   else if(type == "NAVIGRAPH" || type == "DFD")
@@ -425,6 +445,9 @@ QString FsPaths::settingsKey(SimulatorType type)
     case P3D_V4:
       return SETTINGS_P3D_V4_PATH;
 
+    case P3D_V5:
+      return SETTINGS_P3D_V5_PATH;
+
     case XPLANE11:
       return SETTINGS_XPLANE11_PATH;
 
@@ -455,6 +478,9 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V4:
       return P3D_V4_REGISTRY_PATH;
 
+    case P3D_V5:
+      return P3D_V5_REGISTRY_PATH;
+
     case XPLANE11:
     case NAVIGRAPH:
     case UNKNOWN:
@@ -483,6 +509,9 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V4:
       return P3D_V4_REGISTRY_KEY;
 
+    case P3D_V5:
+      return P3D_V5_REGISTRY_KEY;
+
     case XPLANE11:
     case NAVIGRAPH:
     case ALL_SIMULATORS:
@@ -510,6 +539,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
 
     case P3D_V4:
       return P3D_V4_NO_WINDOWS_PATH;
+
+    case P3D_V5:
+      return P3D_V5_NO_WINDOWS_PATH;
 
     case XPLANE11:
     case NAVIGRAPH:
