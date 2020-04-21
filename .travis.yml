@@ -37,12 +37,12 @@ install:
 
 before_script:
     # Clone atoolstest VERSION_NUMBER - atoolstest
-    - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
+    # - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
 
     # Download and extract needed files for the tests
-    - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'
-    - wget -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
-    - tar -xvzf '../Global Land One-kilometer Base Elevation (GLOBE)/all10g.tgz' -C '../Global Land One-kilometer Base Elevation (GLOBE)/'
+    # - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'
+    # - wget -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
+    # - tar -xvzf '../Global Land One-kilometer Base Elevation (GLOBE)/all10g.tgz' -C '../Global Land One-kilometer Base Elevation (GLOBE)/'
 
 script:
     # Build atools
@@ -52,13 +52,13 @@ script:
     - make -j2
 
     # Build atoolstest
-    - mkdir ../build-atoolstest-release
-    - cd ../build-atoolstest-release
-    - qmake ../atoolstest/atoolstest.pro CONFIG+=release
-    - make -j2
+    # - mkdir ../build-atoolstest-release
+    # - cd ../build-atoolstest-release
+    # - qmake ../atoolstest/atoolstest.pro CONFIG+=release
+    # - make -j2
 
     # Run tests
-    - './atoolstest --RunAll'
+    # - './atoolstest --RunAll'
 
 after_success:
     # Deploy artefacts to dropbox
