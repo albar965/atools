@@ -1721,6 +1721,20 @@ Nachtzeit: %5</translation>
     </message>
 </context>
 <context>
+    <name>atools::grib::GribDownloader</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Unbekannter Fehler.</translation>
+    </message>
+</context>
+<context>
+    <name>atools::grib::WindQuery</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Unbekannter Fehler.</translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::Application</name>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
@@ -1779,7 +1793,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation type="vanished">URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
+        <translation>URL für &quot;%1&quot; und Anker &quot;%2&quot; ist leer.</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot;.</source>

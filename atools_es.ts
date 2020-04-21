@@ -1678,6 +1678,20 @@ Night time: %5</source>
     </message>
 </context>
 <context>
+    <name>atools::grib::GribDownloader</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::grib::WindQuery</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::Application</name>
     <message>
         <source>&lt;br/&gt;</source>
@@ -1716,7 +1730,7 @@ Night time: %5</source>
     <name>atools::gui::HelpHandler</name>
     <message>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation type="vanished">La URL está vacía por &quot;%1&quot; y ancla &quot;%2&quot;.</translation>
+        <translation>La URL está vacía por &quot;%1&quot; y ancla &quot;%2&quot;.</translation>
     </message>
     <message>
         <source>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</source>
