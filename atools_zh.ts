@@ -2044,7 +2044,7 @@ Night time: %5</source>
     <message>
         <location filename="src/grib/gribdownloader.cpp" line="141"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误。</translation>
     </message>
 </context>
 <context>
@@ -2052,7 +2052,7 @@ Night time: %5</source>
     <message>
         <location filename="src/grib/windquery.cpp" line="596"/>
         <source>Unknown error.</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误。</translation>
     </message>
 </context>
 <context>
@@ -2129,17 +2129,17 @@ Night time: %5</source>
         <location filename="src/gui/helphandler.cpp" line="122"/>
         <location filename="src/gui/helphandler.cpp" line="146"/>
         <source>Help file &quot;%1&quot; not found</source>
-        <translation>帮助文件“%1” 未找到</translation>
+        <translation>帮助文件“%1”未找到</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="206"/>
         <source>URL is empty for &quot;%1&quot; and anchor &quot;%2&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>“%1”及锚 “%2”的URL是空的。</translation>
     </message>
     <message>
         <location filename="src/gui/helphandler.cpp" line="222"/>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation>URL“%1”是空的。</translation>
+        <translation>“%1”的URL是空的。</translation>
     </message>
 </context>
 <context>
