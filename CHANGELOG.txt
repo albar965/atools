@@ -1,6 +1,23 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.6.rc1
+
+P3D v5: #512
+* Added P3D v5 for simulator detection.
+* Adapted loading of BGL files to P3D v5 structure changes and added new records
+  as well as new COM and other types.
+* Enabled loading of add-on packages from "%USERPROFILE%\Documents\Prepar3D v5 Add-ons".
+
+Other:
+* Fixed error reporting in wind download and decoding. #480
+* Chinese translation by John Liu.
+
+Build:
+* Added option to include common "../build_options.pro" file with defines for qmake.
+
+===============================================================================
+
 Version 3.4.5
 
 Separated creation of routing schema and data from other compiler steps.
