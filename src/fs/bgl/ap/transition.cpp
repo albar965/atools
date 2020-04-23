@@ -61,6 +61,7 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
     case ap::tfix::COURSE_TO_ALT:
     case ap::tfix::COURSE_TO_DIST:
     case ap::tfix::HEADING_TO_ALT:
+    case ap::tfix::UNKNOWN_TYPE:
     case ap::tfix::WAYPOINT:
       return "W";
 

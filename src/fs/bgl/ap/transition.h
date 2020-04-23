@@ -62,6 +62,7 @@ enum TransitionFixType
   // <xs:enumeration value="RUNWAY" />
   // <xs:enumeration value="LOCALIZER" />
 
+  UNKNOWN_TYPE = 9, // TODO find out type for 9
   MANUAL_TERMINATION = 11,
   COURSE_TO_ALT = 12,
   COURSE_TO_DIST = 13,
