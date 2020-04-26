@@ -52,13 +52,13 @@ script:
     - make -j2
 
     # Build atoolstest
-    # - mkdir ../build-atoolstest-release
-    # - cd ../build-atoolstest-release
-    # - qmake ../atoolstest/atoolstest.pro CONFIG+=release
-    # - make -j2
+    - mkdir ../build-atoolstest-release
+    - cd ../build-atoolstest-release
+    - qmake ../atoolstest/atoolstest.pro CONFIG+=release
+    - make -j2
 
     # Run tests
-    # - './atoolstest --RunAll'
+    - './atoolstest --RunAll'
 
 after_success:
     # Deploy artefacts to dropbox
