@@ -1,6 +1,33 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+Version 3.4.6
+
+P3D v5: #512
+* Added P3D v5 for simulator detection.
+* Adapted loading of BGL files to P3D v5 structure changes and added new records
+  as well as new COM and other types.
+* Enabled loading of add-on packages from "%USERPROFILE%\Documents\Prepar3D v5 Add-ons".
+
+Other:
+* Fixed error reporting in wind download and decoding. #480
+* Chinese translation by John Liu.
+
+Build:
+* Added option to include common "../build_options.pro" file with defines for qmake.
+  File is included automatically if it exists.
+
+===============================================================================
+
+Version 3.4.5
+
+Separated creation of routing schema and data from other compiler steps.
+* Routing tables are now kept but not populated if disabled.
+  This is done to avoid crashes with older LNM version accessing the new database. albar965/littlenavmap#466
+* Added airway route type to DFD compiler. albar965/littlenavmap#466
+
+===============================================================================
+
 Version 3.4.4
 
 * Fixed issue where scenery entries were read despite being disabled in add-ons.cfg for P3D.

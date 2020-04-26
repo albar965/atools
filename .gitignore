@@ -4,6 +4,7 @@
 /Release/
 /*.pro.user
 /*.log
+*.orig
 *.a
 *.o
 *.d

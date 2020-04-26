@@ -1678,6 +1678,20 @@ Night time: %5</source>
     </message>
 </context>
 <context>
+    <name>atools::grib::GribDownloader</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::grib::WindQuery</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::Application</name>
     <message>
         <source>&lt;br/&gt;</source>

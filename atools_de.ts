@@ -1721,6 +1721,20 @@ Nachtzeit: %5</translation>
     </message>
 </context>
 <context>
+    <name>atools::grib::GribDownloader</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Unbekannter Fehler.</translation>
+    </message>
+</context>
+<context>
+    <name>atools::grib::WindQuery</name>
+    <message>
+        <source>Unknown error.</source>
+        <translation>Unbekannter Fehler.</translation>
+    </message>
+</context>
+<context>
     <name>atools::gui::Application</name>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
