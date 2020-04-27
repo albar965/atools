@@ -126,6 +126,22 @@ entry::WaypointType FlightplanEntry::stringToWaypointType(const QString& str)
   return entry::UNKNOWN;
 }
 
+QString FlightplanEntry::flagsAsString(atools::fs::pln::entry::Flags flags)
+{
+  QStringList retval;
+
+  if(flags == entry::NONE)
+    return "NONE";
+
+  if(flags & entry::PROCEDURE)
+    retval.append("PROCEDURE");
+  if(flags & entry::ALTERNATE)
+    retval.append("ALTERNATE");
+  if(flags & entry::TRACK)
+    retval.append("TRACK");
+  return retval.join(",");
+}
+
 QDebug operator<<(QDebug out, const FlightplanEntry& record)
 {
   QDebugStateSaver saver(out);
@@ -136,7 +152,7 @@ QDebug operator<<(QDebug out, const FlightplanEntry& record)
                           << ", region " << record.getIcaoRegion()
                           << ", airway " << record.getAirway()
                           << ", pos " << record.getPosition()
-                          << ", flags " << record.getFlags()
+                          << ", flags " << FlightplanEntry::flagsAsString(record.getFlags())
                           << ", save " << !record.isNoSave() << "]";
   return out;
 }

@@ -41,7 +41,8 @@ enum Flag
 {
   NONE = 0,
   PROCEDURE = 1 << 1, /* Flight plan entry is any procedure leg */
-  ALTERNATE = 1 << 2 /* Flight plan entry leads to an alternate airport */
+  ALTERNATE = 1 << 2, /* Flight plan entry leads to an alternate airport */
+  TRACK = 1 << 3 /* Flight plan entry airway name is a track */
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -229,6 +230,7 @@ private:
 
   static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
+  static QString flagsAsString(atools::fs::pln::entry::Flags flags);
 
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
   QString waypointId, airway, icaoRegion, icaoIdent, name;
