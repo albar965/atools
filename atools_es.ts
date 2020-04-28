@@ -1248,6 +1248,22 @@ Atrapada excepción
         <source>File does not exist</source>
         <translation type="unfinished">El archivo no existe</translation>
     </message>
+    <message>
+        <source>UNKNOWN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PACOTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AUSOTS</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1268,6 +1284,21 @@ Atrapada excepción
     </message>
     <message>
         <source>Cannot open &quot;%1&quot; for writing. Error: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TrackReader</name>
+    <message>
+        <source>Cannot open track file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error in file on line %1. Found begin marker inside of section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error in file on line %1. Found end marker outside of section.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -255,12 +255,12 @@ Fichier: &quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="195"/>
+        <location filename="src/util/htmlbuilder.cpp" line="211"/>
         <source>Yes</source>
         <translation>Oui</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="195"/>
+        <location filename="src/util/htmlbuilder.cpp" line="211"/>
         <source>No</source>
         <translation>Non</translation>
     </message>
@@ -1153,17 +1153,17 @@ Fichier: &quot;%2&quot;
         <translation>&lt;b&gt;Une erreur fatale s&apos;est produite. &lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Pressez OK pour quitter l&apos;application. &lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="361"/>
+        <location filename="src/atools.cpp" line="388"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="371"/>
+        <location filename="src/atools.cpp" line="398"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="396"/>
+        <location filename="src/atools.cpp" line="423"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
@@ -1560,6 +1560,26 @@ Fichier: &quot;%2&quot;
         <source>File does not exist</source>
         <translation type="unfinished">Le fichier n&apos;existe pas</translation>
     </message>
+    <message>
+        <location filename="src/track/tracktypes.cpp" line="51"/>
+        <source>UNKNOWN</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/track/tracktypes.cpp" line="54"/>
+        <source>NAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/track/tracktypes.cpp" line="57"/>
+        <source>PACOTS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/track/tracktypes.cpp" line="60"/>
+        <source>AUSOTS</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1588,18 +1608,36 @@ Fichier: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>TrackReader</name>
+    <message>
+        <location filename="src/track/trackreader.cpp" line="53"/>
+        <source>Cannot open track file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/track/trackreader.cpp" line="490"/>
+        <source>Error in file on line %1. Found begin marker inside of section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/track/trackreader.cpp" line="504"/>
+        <source>Error in file on line %1. Found end marker outside of section.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation type="vanished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="114"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="119"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de sauvegarde %1. Raison: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="260"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="324"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1612,7 +1650,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="263"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="327"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1625,7 +1663,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="266"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="330"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1638,7 +1676,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="269"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="333"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1651,7 +1689,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="272"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="336"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -2130,7 +2168,7 @@ Période nocturne : %5</translation>
     <message>
         <location filename="src/gui/application.cpp" line="102"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
-        <translation type="unfinished">&lt;b&gt;Prendre une exception dans la ligne &quot;%1&quot; ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Effacer OK pour quitter le programme.&lt;/h3&gt;</translation>
+        <translation type="unfinished">&lt;b&gt;Prendre une exception dans la ligne &quot;%1&quot; ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Cliquez OK pour quitter le programme.&lt;/h3&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="124"/>
