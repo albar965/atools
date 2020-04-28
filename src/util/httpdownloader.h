@@ -62,6 +62,10 @@ public:
     postParametersQuery = parameters;
   }
 
+  /* Set parameters for POST method. GET is used if empty. Translates to "key1=value1&key2=value2".
+   *  List has to contain key/value pairs like key1,value1,key2,value2,... */
+  void setPostParameters(const QStringList& parameters);
+
   /* Set parameters for POST method. GET is used if empty. */
   void setPostParameters(const QByteArray& parameters)
   {

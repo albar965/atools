@@ -52,6 +52,7 @@ public:
 
   /* Set URL and parameters for POST request for given track type */
   void setUrl(atools::track::TrackType type, const QString& url, const QHash<QString, QString>& parameters);
+  void setUrl(atools::track::TrackType type, const QString& url, const QStringList& parameters);
 
   /* Start downloads. downloadFinished or downloadFailed will be emitted once done. */
   void startAllDownloads();
@@ -70,6 +71,10 @@ public:
 
   /* Removes invalid tracks, reports as warning and returns removed number. */
   int removeInvalid();
+
+  /* Public default values */
+  static const QHash<atools::track::TrackType, QString> URL;
+  static const QHash<atools::track::TrackType, QStringList> PARAM;
 
 signals:
   /* Emitted when HTML page was downloaded and parsed */
@@ -92,6 +97,8 @@ private:
 
   /* List of tracks for each type */
   QHash<atools::track::TrackType, atools::track::TrackVectorType> trackList;
+
+  bool verbose = false;
 };
 
 } // namespace track

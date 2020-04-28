@@ -134,6 +134,15 @@ void HttpDownloader::cancelDownload()
   data.clear();
 }
 
+void HttpDownloader::setPostParameters(const QStringList& parameters)
+{
+  postParameters.clear();
+
+  postParametersQuery.clear();
+  for(int i = 0; i < parameters.size() - 1; i += 2)
+    postParametersQuery.insert(parameters.at(i), parameters.at(i + 1));
+}
+
 void HttpDownloader::enableCache(int secondsTimeout)
 {
   delete dataCache;

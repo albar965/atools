@@ -25,42 +25,72 @@ using atools::util::HttpDownloader;
 namespace atools {
 namespace track {
 
-// AUSOTS
-// curl  "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1" > AUSOTS.html
+/* Public default values ====================================================== */
+const QHash<atools::track::TrackType, QString> TrackDownloader::URL =
+{
+  // NAT
+  // curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
+  {
+    NAT, "https://notams.aim.faa.gov/nat.html"
+  },
 
-// NAT
-// curl  "https://notams.aim.faa.gov/nat.html" > NAT.html
+  // PACOTS
+  // https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
+  // ["queryType"] = "pacificTracks", ["actionType"] = "advancedNOTAMFunctions"
+  // curl --data "queryType=pacificTracks&actionType=advancedNOTAMFunctions" https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do >PACOTS.html
+  {
+    PACOTS, "https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do"
+  },
 
-// PACOTS
-// https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do
-// ["queryType"] = "pacificTracks", ["actionType"] = "advancedNOTAMFunctions"
-// curl --data "queryType=pacificTracks&actionType=advancedNOTAMFunctions" https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do >PACOTS.html
+  // AUSOTS
+  // curl  "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1" > AUSOTS.html
+  {
+    AUSOTS, "https://www.airservicesaustralia.com/flextracks/text.asp?ver=1"
+  }
+};
 
-TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose) : QObject(parent)
+const QHash<atools::track::TrackType, QStringList> TrackDownloader::PARAM =
+{
+  {
+    NAT, {}
+  },
+
+  {
+    PACOTS, {
+      "queryType", "pacificTracks", "actionType", "advancedNOTAMFunctions"
+    }
+  },
+
+  {
+    AUSOTS, {}
+  }
+};
+
+TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
+  : QObject(parent), verbose(logVerbose)
 {
   // Initialize NAT downloader ============================================================
-  HttpDownloader *natDownloader = new HttpDownloader(parent, logVerbose);
-  natDownloader->setUrl("https://notams.aim.faa.gov/nat.html");
+  HttpDownloader *natDownloader = new HttpDownloader(parent, verbose);
+  natDownloader->setUrl(URL.value(NAT));
+  natDownloader->setPostParameters(PARAM.value(NAT));
   connect(natDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::natDownloadFinished);
   connect(natDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natDownloadFailed);
   downloaders.insert(NAT, natDownloader);
   trackList.insert(NAT, atools::track::TrackVectorType());
 
   // Initialize PACOTS downloader ============================================================
-  HttpDownloader *pacotsDownloader = new HttpDownloader(parent, logVerbose);
-  pacotsDownloader->setUrl("https://www.notams.faa.gov/dinsQueryWeb/advancedNotamMapAction.do");
+  HttpDownloader *pacotsDownloader = new HttpDownloader(parent, verbose);
+  pacotsDownloader->setUrl(URL.value(PACOTS));
+  pacotsDownloader->setPostParameters(PARAM.value(PACOTS));
   connect(pacotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::pacotsDownloadFinished);
   connect(pacotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::pacotsDownloadFailed);
-  pacotsDownloader->setPostParameters({
-        {"queryType", "pacificTracks"},
-        {"actionType", "advancedNOTAMFunctions"}
-      });
   downloaders.insert(PACOTS, pacotsDownloader);
   trackList.insert(PACOTS, atools::track::TrackVectorType());
 
   // Initialize AUSOTS downloader ============================================================
-  HttpDownloader *ausotsDownloader = new HttpDownloader(parent, logVerbose);
-  ausotsDownloader->setUrl("https://www.airservicesaustralia.com/flextracks/text.asp?ver=1");
+  HttpDownloader *ausotsDownloader = new HttpDownloader(parent, verbose);
+  ausotsDownloader->setUrl(URL.value(AUSOTS));
+  ausotsDownloader->setPostParameters(PARAM.value(AUSOTS));
   connect(ausotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::ausotsDownloadFinished);
   connect(ausotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::ausotsDownloadFailed);
   downloaders.insert(AUSOTS, ausotsDownloader);
@@ -120,6 +150,12 @@ void TrackDownloader::setUrl(TrackType type, const QString& url)
 }
 
 void TrackDownloader::setUrl(TrackType type, const QString& url, const QHash<QString, QString>& parameters)
+{
+  downloaders[type]->setUrl(url);
+  downloaders[type]->setPostParameters(parameters);
+}
+
+void TrackDownloader::setUrl(TrackType type, const QString& url, const QStringList& parameters)
 {
   downloaders[type]->setUrl(url);
   downloaders[type]->setPostParameters(parameters);
