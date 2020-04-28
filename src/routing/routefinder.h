@@ -102,12 +102,18 @@ private:
 
   /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
    * will have several factors applied to get reasonable routes */
-  float calculateEdgeCost(const atools::routing::Node& node, const atools::routing::Node& successorNode,
-                          const Edge& edge);
+  int calculateEdgeCost(const atools::routing::Node& node, const atools::routing::Node& successorNode,
+                        const Edge& edge, quint32 currentEdgeAirwayHash);
 
-  /* GC distance in meter as costs between nodes */
-  float costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& nextNode);
-  bool combineRanges(quint16 min1, quint16 max1, quint16 min, quint16 max);
+  bool combineRanges(quint16& min1, quint16& max1, quint16 min, quint16 max)
+  {
+    if(max1 < min || min1 > max)
+      return false;
+
+    min1 = std::max(min1, min);
+    max1 = std::min(max1, max);
+    return true;
+  }
 
   void freeArrays();
   void allocArrays();
@@ -143,18 +149,15 @@ private:
   /* Avoid airway changes during routing */
   static Q_DECL_CONSTEXPR float COST_FACTOR_AIRWAY_CHANGE = 1.1f;
 
-  /* Avoid track changes during routing */
-  static Q_DECL_CONSTEXPR float COST_FACTOR_TRACK_CHANGE = 10.f;
-
   /* Altitude to use  for airway selection of 0 if not used */
   int altitude = 0;
 
   /* Used network */
   atools::routing::RouteNetwork *network;
 
-  /* Heap structure storing the index of open nodes.
+  /* Heap structure storing the index of open nodes. Costs are based on meters plus factors as integer.
    * Sort order is defined by costs from start to node + estimate to destination */
-  atools::util::Heap<int> openNodesHeap;
+  atools::util::Heap<int, int> openNodesHeap;
 
   /* Using plain arrays below to speed up access compared to hash tables
    * Positions 0 and 1 are reserved for departure and destination. 2 is invalid.
@@ -164,8 +167,8 @@ private:
   bool *closedNodes = nullptr;
 
   /* Costs from start to this node. Maps node id to costs. Costs are distance in meter
-   * adjusted by some factors. */
-  float *nodeCostArr = nullptr;
+   * adjusted by factors. */
+  int *nodeCostArr = nullptr;
 
   /* Min and maximum altitude range of airways to this node so far */
   quint16 *nodeAltRangeMinArr = nullptr;

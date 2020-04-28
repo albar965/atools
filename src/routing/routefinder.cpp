@@ -38,7 +38,7 @@ inline TYPE& at(TYPE *arr, int index)
 }
 
 RouteFinder::RouteFinder(RouteNetwork *routeNetwork)
-  : network(routeNetwork), openNodesHeap(5000)
+  : network(routeNetwork), openNodesHeap(10000)
 {
   successors.reserve(500);
 }
@@ -65,7 +65,7 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   int totalDist = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
   int lastDist = totalDist;
 
-  openNodesHeap.pushData(startNode.index, 0.f);
+  openNodesHeap.pushData(startNode.index, 0);
   at(nodeAltRangeMaxArr, startNode.index) = std::numeric_limits<quint16>::max();
 
   qint64 time = QDateTime::currentMSecsSinceEpoch();
@@ -134,17 +134,17 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
     const Node& successor = network->getNode(successorIndex);
     const Edge& edge = successors.edges.at(i);
 
-    float successorEdgeCosts = calculateEdgeCost(currentNode, successor, edge);
+    int successorEdgeCosts = calculateEdgeCost(currentNode, successor, edge, currentEdgeAirwayHash);
 
-    // Avoid jumping between equal airways or tracks
-    if(currentEdgeAirwayHash != edge.airwayHash)
-      successorEdgeCosts *= /*edge.isTrack() ? COST_FACTOR_TRACK_CHANGE :*/ COST_FACTOR_AIRWAY_CHANGE;
-
-    float successorNodeCosts = at(nodeCostArr, currentNode.index) + successorEdgeCosts;
-
-    if(successorNodeCosts >= at(nodeCostArr, successorIndex) && openNodesHeap.contains(successorIndex))
-      // New path is not cheaper
-      continue;
+    int successorNodeCosts = at(nodeCostArr, currentNode.index) + successorEdgeCosts;
+    bool contains = true;
+    if(successorNodeCosts >= at(nodeCostArr, successorIndex))
+    {
+      contains = openNodesHeap.contains(successorIndex);
+      if(contains)
+        // New path is not cheaper
+        continue;
+    }
 
     quint16 successorNodeAltRangeMin = at(nodeAltRangeMinArr, currentNode.index);
     quint16 successorNodeAltRangeMax = at(nodeAltRangeMaxArr, currentNode.index);
@@ -162,29 +162,19 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
     at(nodeAltRangeMaxArr, successorIndex) = successorNodeAltRangeMax;
 
     // Costs from start to successor + estimate to destination = sort order in heap
-    float totalCost = successorNodeCosts + costEstimate(successor, destNode);
+    int totalCost = successorNodeCosts + network->getGcDistanceMeter(successor, destNode);
 
-    if(openNodesHeap.contains(successorIndex))
-      // Update node and resort heap
-      openNodesHeap.change(successorIndex, totalCost);
+    if(contains)
+      // Update node and resort heap or add node if not exists
+      openNodesHeap.changeOrPush(successorIndex, totalCost);
     else
       openNodesHeap.push(successorIndex, totalCost);
   }
 }
 
-bool RouteFinder::combineRanges(quint16 min1, quint16 max1, quint16 min, quint16 max)
-{
-  if(max1 < min || min1 > max)
-    return false;
-
-  min1 = std::max(min1, min);
-  max1 = std::min(max1, max);
-  return true;
-}
-
-float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
-                                     const atools::routing::Node& successorNode,
-                                     const atools::routing::Edge& edge)
+int RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
+                                   const atools::routing::Node& successorNode,
+                                   const atools::routing::Edge& edge, quint32 currentEdgeAirwayHash)
 {
   float costs = edge.lengthMeter;
 
@@ -254,12 +244,11 @@ float RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
       costs *= COST_FACTOR_NDB;
   }
 
-  return costs;
-}
+  // Avoid jumping between equal airways or tracks
+  if(currentEdgeAirwayHash != edge.airwayHash)
+    costs *= COST_FACTOR_AIRWAY_CHANGE;
 
-float RouteFinder::costEstimate(const atools::routing::Node& currentNode, const atools::routing::Node& nextNode)
-{
-  return network->getGcDistanceMeter(currentNode, nextNode);
+  return costs;
 }
 
 void RouteFinder::extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const
@@ -297,7 +286,7 @@ void RouteFinder::allocArrays()
   int num = network->getNodes().size() + 3;
 
   edgeNameHashArr = atools::allocArray<quint32>(num);
-  nodeCostArr = atools::allocArray<float>(num);
+  nodeCostArr = atools::allocArray<int>(num);
   nodeAltRangeMinArr = atools::allocArray<quint16>(num);
   nodeAltRangeMaxArr = atools::allocArray<quint16>(num);
   nodePredecessorArr = atools::allocArray<int>(num, -1);

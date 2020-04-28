@@ -85,7 +85,11 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin, const Edge 
           continue;
 
         // Avoid track transitions at the wrong points
-        if(originNotTrackEnd && prevEdge->isTrack() != edge.isTrack())
+        if(originNotTrackEnd &&
+           // Do not traverse between track and airway
+           (prevEdge->isTrack() != edge.isTrack() ||
+            // and not between different tracks
+            (prevEdge->isTrack() && edge.isTrack() && prevEdge->airwayHash != edge.airwayHash)))
           continue;
 
         // Edge can have only another node - not departure or destination
