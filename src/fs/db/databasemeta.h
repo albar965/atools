@@ -132,8 +132,9 @@ public:
    * 13 Fix for VASI assignment in X-Plane
    * 14 Usage of X-Plane 3D attribute
    * 15 Fix for X-Plane ICAO names
+   * 16 "route_type" added to table "airway".
    */
-  static const int DB_VERSION_MINOR = 15;
+  static const int DB_VERSION_MINOR = 16;
 
   void init();
 
