@@ -952,7 +952,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
      (sim == atools::fs::FsPaths::P3D_V3 || sim == atools::fs::FsPaths::P3D_V4 || sim == atools::fs::FsPaths::P3D_V5))
   {
     // Read the Prepar3D add on packages and add them to the scenery list ===============================
-    QString documents(QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first());
+    QString documents(atools::documentsDir());
 
     int simNum = 0;
     if(sim == atools::fs::FsPaths::P3D_V3)

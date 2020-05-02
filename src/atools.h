@@ -385,6 +385,13 @@ Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long
   return atools::absLongLong(f1 - f2) >= epsilon;
 }
 
+/* Get well known system folders from QStandardPaths. */
+QString documentsDir();
+QString downloadDir();
+QString tempDir();
+QString desktopDir();
+QString homeDir();
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H

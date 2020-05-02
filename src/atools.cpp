@@ -26,12 +26,13 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QStandardPaths>
 
 namespace atools {
 
 QString version()
 {
-  return "3.4.6"; // VERSION_NUMBER - atools
+  return "3.5.0.develop"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()
@@ -175,6 +176,33 @@ QString cleanFilename(const QString& filename)
   return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
          replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').
          replace("  ", " ");
+}
+
+bool strContains(const QString& name, const std::initializer_list<QString>& list)
+{
+  for(const QString& val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
+bool strContains(const QString& name, const std::initializer_list<const char *>& list)
+{
+  for(const char *val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
+bool strContains(const QString& name, const std::initializer_list<char>& list)
+{
+  for(char val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
 }
 
 bool contains(const QString& name, const std::initializer_list<QString>& list)
@@ -449,6 +477,42 @@ QTime timeFromHourMinStr(const QString& timeStr)
     time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
+}
+
+QString strFromFile(const QString& filename)
+{
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&file);
+    return stream.readAll();
+  }
+  return QString();
+}
+
+QString homeDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+}
+
+QString desktopDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+}
+
+QString documentsDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+}
+
+QString downloadDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+}
+
+QString tempDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
 }
 
 } // namespace atools
