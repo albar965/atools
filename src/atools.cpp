@@ -26,6 +26,7 @@
 #include <QTextCodec>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QStandardPaths>
 
 namespace atools {
 
@@ -487,6 +488,31 @@ QString strFromFile(const QString& filename)
     return stream.readAll();
   }
   return QString();
+}
+
+QString homeDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+}
+
+QString desktopDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+}
+
+QString documentsDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+}
+
+QString downloadDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+}
+
+QString tempDir()
+{
+  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
 }
 
 } // namespace atools

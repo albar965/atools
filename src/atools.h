@@ -429,6 +429,13 @@ inline void freeArray(TYPE *& arr)
   arr = nullptr;
 }
 
+/* Get well known system folders from QStandardPaths. */
+QString documentsDir();
+QString downloadDir();
+QString tempDir();
+QString desktopDir();
+QString homeDir();
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H
