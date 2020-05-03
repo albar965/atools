@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FLIGHTPLANENTRY_H
 #define ATOOLS_FLIGHTPLANENTRY_H
 
-#include <QString>
+#include <QApplication>
 
 #include "geo/pos.h"
 
@@ -31,7 +31,7 @@ enum WaypointType
 {
   UNKNOWN,
   AIRPORT,
-  INTERSECTION,
+  WAYPOINT,
   VOR,
   NDB,
   USER
@@ -55,6 +55,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags);
  */
 class FlightplanEntry
 {
+  Q_DECLARE_TR_FUNCTIONS(FlightplanEntry)
+
 public:
   FlightplanEntry();
   FlightplanEntry(const atools::fs::pln::FlightplanEntry& other);
@@ -65,7 +67,22 @@ public:
   /*
    * @return waypoint type as string like "VOR", "Waypoint" or "User"
    */
-  const QString& getWaypointTypeAsString() const;
+  const QString& getWaypointTypeAsFsxString() const
+  {
+    return waypointTypeToFsxString(waypointType);
+  }
+
+  /* As above but for LNM format */
+  const QString& getWaypointTypeAsLnmString() const
+  {
+    return waypointTypeToLnmString(waypointType);
+  }
+
+  /* Translated for display */
+  QString getWaypointTypeAsDisplayString() const
+  {
+    return waypointTypeToDisplayString(waypointType);
+  }
 
   /* FS9 one character. First of getWaypointTypeAsString() */
   QString getWaypointTypeAsStringShort() const;
@@ -74,23 +91,11 @@ public:
 
   /* Can use FSX or FS9 types */
   void setWaypointType(const QString& value);
+  void setWaypointTypeFromLnm(const QString& value);
 
   void setWaypointType(const atools::fs::pln::entry::WaypointType& value)
   {
     waypointType = value;
-  }
-
-  /*
-   * @return ICAO ident of this waypoint
-   */
-  const QString& getWaypointId() const
-  {
-    return waypointId;
-  }
-
-  void setWaypointId(const QString& value)
-  {
-    waypointId = value;
   }
 
   /*
@@ -109,27 +114,27 @@ public:
   /*
    * @return two letter ICAO region code
    */
-  const QString& getIcaoRegion() const
+  const QString& getRegion() const
   {
-    return icaoRegion;
+    return region;
   }
 
-  void setIcaoRegion(const QString& value)
+  void setRegion(const QString& value)
   {
-    icaoRegion = value;
+    region = value;
   }
 
   /*
    * @return ICAO ident of this waypoint
    */
-  const QString& getIcaoIdent() const
+  const QString& getIdent() const
   {
-    return icaoIdent;
+    return ident;
   }
 
-  void setIcaoIdent(const QString& value)
+  void setIdent(const QString& value)
   {
-    icaoIdent = value;
+    ident = value;
   }
 
   /*
@@ -168,6 +173,16 @@ public:
   bool isNoSave() const
   {
     return (flags& entry::PROCEDURE) || (flags & entry::ALTERNATE);
+  }
+
+  bool isTrack() const
+  {
+    return !airway.isEmpty() && flags & entry::TRACK;
+  }
+
+  bool isAirway() const
+  {
+    return !airway.isEmpty() && !(flags & entry::TRACK);
   }
 
   bool operator==(const atools::fs::pln::FlightplanEntry& other);
@@ -225,15 +240,28 @@ public:
     flags.setFlag(value, on);
   }
 
+  const QString& getComment() const
+  {
+    return comment;
+  }
+
+  void setComment(const QString& value)
+  {
+    comment = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
-  static const QString& waypointTypeToString(atools::fs::pln::entry::WaypointType type);
+  static const QString& waypointTypeToLnmString(atools::fs::pln::entry::WaypointType type);
+  static const QString& waypointTypeToFsxString(atools::fs::pln::entry::WaypointType type);
+  static QString waypointTypeToDisplayString(atools::fs::pln::entry::WaypointType type);
   static atools::fs::pln::entry::WaypointType stringToWaypointType(const QString& str);
+  static atools::fs::pln::entry::WaypointType stringToWaypointTypeLnm(const QString& str);
   static QString flagsAsString(atools::fs::pln::entry::Flags flags);
 
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
-  QString waypointId, airway, icaoRegion, icaoIdent, name;
+  QString airway, region, ident, name, comment;
   atools::geo::Pos position;
   atools::fs::pln::entry::Flags flags = atools::fs::pln::entry::NONE;
   float magvar = 0.f;

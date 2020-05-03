@@ -50,90 +50,95 @@ public:
 
   /*
    * Load a flightplan. An exception is thrown if the file is not valid. The type will be detected automatically
-   * by the content of the first few lines and supports FSX/P3D XML, FS9 ini-style, FLP and FMS files.
+   * by the content of the first few lines and supports LNMPLNm FSX/P3D XML, FS9 ini-style, FLP and FMS files.
    *
    * @param file filepath of a valid flight plan file
+   * Returns detected file format.
    */
-  void load(atools::fs::pln::Flightplan& plan, const QString& file);
+  FileFormat load(atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* Detect format by reading the first few lines */
   static atools::fs::pln::FileFormat detectFormat(const QString& file);
 
-  /*
+  /* LNM own XML format
    * Save a flightplan. An exception is thrown if the flight plan contents are not valid.
    * Although the flight simulator cannot deal with flight plans that have no valid start
    * or destination (start or destaintion are merely a waypoint) it is allowed to that save one.
-   *
-   * The plan is saved in the same format as loaded, FSX/P3D, FLP or FMS.
-   *
-   * @param file filepath of the file to be saved
-   * @param clean if true save all properties in a XML comment
    */
-  void save(const atools::fs::pln::Flightplan& flightplan, const QString& file, const QString& airacCycle,
-            atools::fs::pln::SaveOptions options);
+  void saveLnm(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* FSX/P3D XML format */
-  void saveFsx(const atools::fs::pln::Flightplan& plan, const QString& file,
-               atools::fs::pln::SaveOptions options);
+  void savePln(const atools::fs::pln::Flightplan& plan, const QString& file);
+
+  /* FSX/P3D XML format with annotations as used by previous LNM versions (<= 2.4.5).*/
+  void savePlnAnnotated(const atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* FlightGear route manager XML format */
-  void saveFlightGear(const Flightplan& plan, const QString& file);
+  void saveFlightGear(const Flightplan& plan, const QString& filename);
 
   /* PMDG RTE format */
-  void saveRte(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveRte(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* Aerosoft Airbus and X-Plane FLP format */
-  void saveFlp(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveFlp(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* X-Plane FMS format.
    * @param version11Format Version 11 otherwise 3 */
-  void saveFms(const atools::fs::pln::Flightplan& plan, const QString& file,
-               const QString& airacCycle, bool version11Format);
+  void saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveFms11(const atools::fs::pln::Flightplan& plan, const QString& file);
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
-  void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& file, const atools::geo::LineString& track,
+  void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const atools::geo::LineString& track,
                const QVector<quint32>& timestamps, int cruiseAltFt);
 
   /* Majestic Dash 400 binary format */
-  void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* iFly text format .FLTPLAN */
-  void saveFltplan(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveFltplan(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* PLN for Blackbox Simulations Airbus. Same as FS9 PLN format. */
-  void saveBbsPln(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveBbsPln(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* Reality XP GNS XML format. */
-  void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& file,
+  void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
                      atools::fs::pln::SaveOptions options);
 
   /* Feelthere/Wilco Embraer */
-  void saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, const QString& file, int groundSpeed);
+  void saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, const QString& filename, int groundSpeed);
 
   /* Flight plan format for B767 Level-D */
-  void saveLeveldRte(const atools::fs::pln::Flightplan& plan, const QString& file);
+  void saveLeveldRte(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* Electronic flight bag */
-  void saveEfbr(const atools::fs::pln::Flightplan& plan, const QString& file, const QString& route,
+  void saveEfbr(const atools::fs::pln::Flightplan& plan, const QString& filename, const QString& route,
                 const QString& cycle, const QString& departureRw, const QString& destinationRw);
 
   /* Quality Wings RTE format */
-  void saveQwRte(const Flightplan& plan, const QString& file);
+  void saveQwRte(const Flightplan& plan, const QString& filename);
 
   /* Leonardo Maddog MDX / MDR */
-  void saveMdr(const Flightplan& plan, const QString& file);
+  void saveMdr(const Flightplan& plan, const QString& filename);
 
   /* TFDi Design 717 XML */
-  void saveTfdi(const Flightplan& plan, const QString& file, const QBitArray& jetAirways);
+  void saveTfdi(const Flightplan& plan, const QString& filename, const QBitArray& jetAirways);
+
+  /* Version number to save into LNMPLN files */
+  static const int LNM_VERSION_MAJOR = 0;
+  static const int LNM_VERSION_MINOR = 9;
 
 private:
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated);
+  void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
+
   /* Load specific formats after content detection */
-  void loadFsx(atools::fs::pln::Flightplan& plan, const QString& file);
-  void loadFs9(atools::fs::pln::Flightplan& plan, const QString& file);
-  void loadFlp(atools::fs::pln::Flightplan& plan, const QString& file);
-  void loadFms(atools::fs::pln::Flightplan& plan, const QString& file);
-  void loadFsc(atools::fs::pln::Flightplan& plan, const QString& file);
-  void loadFlightGear(atools::fs::pln::Flightplan& plan, const QString& file);
+  void loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFs9(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFlp(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFms(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFsc(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadFlightGear(atools::fs::pln::Flightplan& plan, const QString& filename);
 
   /* Write string into memory location, truncate if needed and fill up to length with null */
   void writeBinaryString(char *mem, QString str, int length);
@@ -151,7 +156,6 @@ private:
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry);
 
   void readUntilElement(QXmlStreamReader& reader, const QString& name);
-  void readAppVersion(Flightplan& plan, QXmlStreamReader& reader);
   void readWaypoint(Flightplan& plan, QXmlStreamReader& reader);
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt);
 
@@ -160,6 +164,30 @@ private:
   void writePropertyBool(QXmlStreamWriter& writer, const QString& name, bool value = true);
   void writePropertyInt(QXmlStreamWriter& writer, const QString& name, int value);
   void writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value);
+
+  /* Writes element with name if value is not empty */
+  void writeElementIf(QXmlStreamWriter& writer, const QString& name, const QString& value);
+
+  /* Writes element "Pos" if pos is valid */
+  void writeElementPosIf(QXmlStreamWriter& writer, const atools::geo::Pos& pos);
+
+  /* Inserts property if value is not empty */
+  void insertPropertyIf(Flightplan& plan, const QString& key, const QString& value);
+
+  /* Read "Pos" element and attributes from stream in LNM XML format */
+  atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
+
+  /* Read waypoint elements and attributes from stream */
+  void readWaypointsLnm(QXmlStreamReader& reader, QList<FlightplanEntry>& entries, const QString& elementName);
+
+  /* Read until next element and checks error. Throws exception in case of error */
+  bool readNextStartElement(QXmlStreamReader& reader);
+
+  /* Skip element and optionally print a warning about unexpected elements */
+  void skipCurrentElement(QXmlStreamReader& reader, bool warning = false);
+
+  /* Checks error. Throws exception in case of error */
+  void checkError(QXmlStreamReader& reader);
 
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries(Flightplan& plan);
@@ -171,8 +199,9 @@ private:
   void adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan);
 
   QString coordStringFs9(const atools::geo::Pos& pos);
+  void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);
 
-  QString filename, errorMsg;
+  QString errorMsg;
 };
 
 } // namespace pln

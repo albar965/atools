@@ -91,16 +91,6 @@ public:
     flightplanType = value;
   }
 
-  atools::fs::pln::RouteType getRouteType() const
-  {
-    return routeType;
-  }
-
-  void setRouteType(atools::fs::pln::RouteType value)
-  {
-    routeType = value;
-  }
-
   /*
    * @return cruise altitude in feet
    */
@@ -112,19 +102,6 @@ public:
   void setCruisingAltitude(int value)
   {
     cruisingAlt = value;
-  }
-
-  /*
-   * @return "Descr" element of the file like "LOAG, LSZG"
-   */
-  const QString& getDescription() const
-  {
-    return description;
-  }
-
-  void setDescription(const QString& value)
-  {
-    description = value;
   }
 
   /*
@@ -217,19 +194,6 @@ public:
   void setDeparturePosition(const atools::geo::Pos& value);
   void setDeparturePosition(const atools::geo::Pos& value, float altitude);
 
-  /*
-   * @return title of the flight plan like "EDMA to LESU"
-   */
-  const QString& getTitle() const
-  {
-    return title;
-  }
-
-  void setTitle(const QString& value)
-  {
-    title = value;
-  }
-
   const QHash<QString, QString>& getProperties() const
   {
     return properties;
@@ -245,14 +209,34 @@ public:
     properties = value;
   }
 
-  atools::fs::pln::FileFormat getFileFormat() const
+  const QString& getComment() const
   {
-    return fileFormat;
+    return comment;
   }
 
-  void setFileFormat(const atools::fs::pln::FileFormat& value)
+  void setComment(const QString& value)
   {
-    fileFormat = value;
+    comment = value;
+  }
+
+  QString getTitle() const
+  {
+    return departureIdent + " to " + destinationIdent;
+  }
+
+  QString getDescr() const
+  {
+    return departureIdent + ", " + destinationIdent;
+  }
+
+  bool isLnmFormat() const
+  {
+    return lnmFormat;
+  }
+
+  void setLnmFormat(bool value)
+  {
+    lnmFormat = value;
   }
 
 private:
@@ -270,23 +254,19 @@ private:
     return destinationAiportName.isEmpty() ? destinationIdent : destinationAiportName;
   }
 
-  /* Values for FSX */
-  const QString APPVERSION_BUILD = QString("61472");
-  const QString APPVERSION_MAJOR = QString("10");
-
   /* Limit altitude to this value */
   const int MAX_ALTITUDE = 80000;
 
-  atools::fs::pln::FileFormat fileFormat = PLN_FSX;
   atools::fs::pln::FlightplanType flightplanType = VFR;
-  atools::fs::pln::RouteType routeType = DIRECT;
 
   atools::fs::pln::FlightplanEntryListType entries;
 
   int cruisingAlt;
-  QString title, departureIdent, destinationIdent, description,
-          departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
+  QString departureIdent, destinationIdent,
+          departureParkingName, departureAiportName, destinationAiportName, comment;
   atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
+
+  bool lnmFormat = false;
 
   QHash<QString, QString> properties;
 

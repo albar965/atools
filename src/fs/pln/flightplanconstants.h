@@ -24,12 +24,23 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+/* File format for flight plans as detected by FlightplanIO::load and detectFormat */
+enum FileFormat
+{
+  NONE,
+  FSX_PLN, /* FSX or P3D XML PLN flight plan - can load and save */
+  FS9_PLN, /* FS9 ini style PLN flight plan - can load only */
+  FMS3, /* X-Plane version 3 FMS file - can load and save */
+  FMS11, /* X-Plane version 11 FMS file - can load and save */
+  FLP, /* Aerosoft airbus or FlightFactor Boeing - can load and save */
+  FSC_PLN, /* FSC ini style PLN flight plan - can load only */
+  FLIGHTGEAR, /* FlightGear XML format - load and save  */
+  LNM_PLN /* Little Navmap's own flight plan format  */
+};
+
 enum SaveOption
 {
   SAVE_NO_OPTIONS = 0,
-
-  /* No XML comments (annotations) that can confuse incapable programs */
-  SAVE_CLEAN = 1 << 1,
 
   /* Save Garmin GNS format with user waypoints */
   SAVE_GNS_USER_WAYPOINTS = 1 << 2
@@ -38,24 +49,13 @@ enum SaveOption
 Q_DECLARE_FLAGS(SaveOptions, SaveOption);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::SaveOptions);
 
-enum FileFormat
-{
-  NONE,
-  PLN_FSX, // FSX or P3D XML PLN flight plan - can load and save
-  PLN_FS9, // FS9 ini style PLN flight plan - can load only
-  FMS3, // X-Plane version 3 FMS file - can load and save
-  FMS11, // X-Plane version 11 FMS file - can load and save
-  FLP, // Aerosoft airbus or FlightFactor Boeing - can load and save
-  PLN_FSC, // FSC ini style PLN flight plan - can load only
-  FLIGHTGEAR // FlightGear XML format - load and save
-};
-
 enum FlightplanType
 {
   IFR,
   VFR
 };
 
+/* Currently only used for saving FSX/P3D PLN files */
 enum RouteType
 {
   LOW_ALTITUDE,
@@ -119,18 +119,11 @@ const QLatin1Literal AIRCRAFT_PERF_FILE("aircraftperffile");
 
 /* Source database navigation data */
 const QLatin1Literal NAVDATA("navdata");
+const QLatin1Literal NAVDATACYCLE("navdatacycle");
 
 /* Source database simulator */
 const QLatin1Literal SIMDATA("simdata");
-
-/* AIRAC cycle (not FSX/P3D) */
-const QLatin1Literal AIRAC_CYCLE("cycle");
-
-/* Free parking spot name as not supported by PLN */
-const QLatin1Literal PARKING("parking");
-
-/* Position of parking as fallback */
-const QLatin1Literal PARKINGPOS("parkingposition");
+const QLatin1Literal SIMDATACYCLE("simdatacycle");
 
 } // namespace pln
 } // namespace fs
