@@ -18,6 +18,8 @@
 #ifndef ATOOLS_IO_FILEROLLER_H
 #define ATOOLS_IO_FILEROLLER_H
 
+#include <QString>
+
 class QString;
 class QStringList;
 
@@ -34,6 +36,16 @@ public:
    *  @param maxNumFiles Maximum number of backups to keep.
    */
   FileRoller(int maxNumFiles);
+  /*
+   *  @param maxNumFiles Maximum number of backups to keep.
+   *  @parm filePattern
+   *     ${base}: Complete basename.
+   *     ${sep}: fileSeparator.
+   *     ${num}: Counting number.
+   *     ${ext}: File extension.
+   *     Directory is always prepended.
+   */
+  FileRoller(int maxNumFiles, const QString& filePattern);
 
   /*
    * Create numbered backups of a file. Maximum number of files results in:
@@ -50,9 +62,13 @@ public:
   void rollFiles(const QStringList& filenames);
 
 private:
-  int maxFiles = 0;
-  void renameSafe(const QString& oldFile, const QString& newFile);
+  void renameSafe(const QString& oldFile, const QString& newFile) const;
+  QString buildFilename(const QString& filename, int num) const;
 
+  int maxFiles = 0;
+
+  // "${base}${sep}${num}.${ext}"
+  QString pattern = "${base}.${ext}.${num}";
 };
 
 } /* namespace io */

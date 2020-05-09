@@ -17,7 +17,9 @@
 
 #include "io/fileroller.h"
 
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QStringList>
 
 namespace atools {
@@ -25,6 +27,12 @@ namespace io {
 
 FileRoller::FileRoller(int maxNumFiles)
   : maxFiles(maxNumFiles)
+{
+
+}
+
+FileRoller::FileRoller(int maxNumFiles, const QString& filePattern)
+  : maxFiles(maxNumFiles), pattern(filePattern)
 {
 
 }
@@ -39,8 +47,8 @@ void FileRoller::rollFile(const QString& filename)
 {
   for(int i = maxFiles; i >= 1; --i)
   {
-    QFile oldFile(filename + "." + QString::number(i));
-    QFile newFile(filename + "." + QString::number(i + 1));
+    QFile oldFile(buildFilename(filename, i));
+    QFile newFile(buildFilename(filename, i + 1));
 
     if(oldFile.exists())
     {
@@ -54,10 +62,19 @@ void FileRoller::rollFile(const QString& filename)
   }
 
   if(maxFiles > 0)
-    renameSafe(filename, filename + ".1");
+    renameSafe(filename, buildFilename(filename, 1));
 }
 
-void FileRoller::renameSafe(const QString& oldFile, const QString& newFile)
+QString FileRoller::buildFilename(const QString& filename, int num) const
+{
+  QFileInfo fileinfo(filename);
+  return fileinfo.path() + QDir::separator() +
+         QString(pattern).replace("${base}", fileinfo.completeBaseName()).
+         replace("${num}", QString::number(num)).
+         replace("${ext}", fileinfo.suffix());
+}
+
+void FileRoller::renameSafe(const QString& oldFile, const QString& newFile) const
 {
   if(QFile::exists(newFile))
     QFile(newFile).remove();
