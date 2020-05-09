@@ -64,7 +64,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     defaultDir = path;
 
   // Get path from settings use path or documents as default
-  QFileInfo dir = s.valueStr(settingNameDir, defaultDir);
+  QFileInfo dir = settingsPrefix.isEmpty() ? defaultDir : s.valueStr(settingNameDir, defaultDir);
 
   if(dir.exists())
   {
