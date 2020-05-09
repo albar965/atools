@@ -91,6 +91,13 @@ QStringList probeFile(const QString& file, int numLinesRead)
   return lines;
 }
 
+QString capWord(QString str)
+{
+  if(!str.isEmpty())
+    str.replace(0, 1, str.at(0).toUpper());
+  return str;
+}
+
 void capWord(QString& lastWord, QChar last, const QSet<QString>& toUpper,
              const QSet<QString>& toLower, const QSet<QString>& ignore)
 {
@@ -513,6 +520,124 @@ QString downloadDir()
 QString tempDir()
 {
   return QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
+}
+
+QStringList numberVectorToStrList(const QVector<int>& vector)
+{
+  QStringList retval;
+  for(int value : vector)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QVector<int> strListToNumberVector(const QStringList& strings, bool *ok)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QVector<int> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    int val = str.toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.append(val);
+  }
+  return retval;
+}
+
+QStringList numberSetToStrList(const QSet<int>& set)
+{
+  QStringList retval;
+  for(int value : set)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QSet<int> strListToNumberSet(const QStringList& strings, bool *ok)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QSet<int> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    int val = str.toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val);
+  }
+  return retval;
+}
+
+QStringList numberStrHashToStrList(const QHash<int, QString>& hash)
+{
+  QStringList retval;
+
+  for(auto i = hash.begin(); i != hash.end(); ++i)
+  {
+    retval.append(QString::number(i.key()));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+QHash<int, QString> strListToNumberStrHash(const QStringList& strings, bool *ok)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QHash<int, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    int val = strings.at(i).toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
+}
+
+QStringList numberStrMapToStrList(const QMap<int, QString>& map)
+{
+  QStringList retval;
+
+  for(auto i = map.begin(); i != map.end(); ++i)
+  {
+    retval.append(QString::number(i.key()));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QMap<int, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    int val = strings.at(i).toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
 }
 
 } // namespace atools

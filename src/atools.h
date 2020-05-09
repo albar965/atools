@@ -318,6 +318,9 @@ QString numberToString(TYPE value)
   return QString::number(value, 'f', precision);
 }
 
+/* Make first character upper case in given word */
+QString capWord(QString str);
+
 /* Capitalize all words in the string with exceptions that are either forced to upper or lower */
 QString capString(const QString& str, const QSet<QString>& toUpper = {}, const QSet<QString>& toLower = {},
                   const QSet<QString>& ignore = {});
@@ -428,6 +431,23 @@ inline void freeArray(TYPE *& arr)
     delete[] arr;
   arr = nullptr;
 }
+
+/* Functions to convert integer lists and vectors to string lists and back.
+ * Can be used to store configuration lists.
+ *  ok has the same meaning as in QString::toInt() */
+QStringList numberVectorToStrList(const QVector<int>& vector);
+QVector<int> strListToNumberVector(const QStringList& strings, bool *ok = nullptr);
+QStringList numberSetToStrList(const QSet<int>& set);
+QSet<int> strListToNumberSet(const QStringList& strings, bool *ok = nullptr);
+
+/* Functions to convert integer/string maps and hashes to string lists and back.
+ * Can be used to store configuration lists.
+ * ok has the same meaning as in QString::toInt().
+ * string list contains consecutive key/value pairs. */
+QStringList numberStrHashToStrList(const QHash<int, QString>& hash);
+QHash<int, QString> strListToNumberStrHash(const QStringList& strings, bool *ok = nullptr);
+QStringList numberStrMapToStrList(const QMap<int, QString>& map);
+QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok = nullptr);
 
 /* Get well known system folders from QStandardPaths. */
 QString documentsDir();
