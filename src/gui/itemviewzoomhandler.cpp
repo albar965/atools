@@ -33,11 +33,32 @@ using atools::settings::Settings;
 
 ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction,
                                          QAction *zoomOutAction, QAction *zoomDefaultAction,
-                                         QString settingsKeyStr)
-  : itemView(view), actionZoomIn(zoomInAction), actionZoomOut(zoomOutAction),
-  actionZoomDefault(zoomDefaultAction), settingsKey(settingsKeyStr)
+                                         QString settingsKeyStr, double marginParm)
+{
+  init(view, zoomInAction, zoomOutAction, zoomDefaultAction, settingsKeyStr, marginParm);
+}
+
+ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, double marginParam)
+{
+  init(view, nullptr, nullptr, nullptr, QString(), marginParam);
+}
+
+ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view)
+{
+  init(view, nullptr, nullptr, nullptr, QString(), 0.);
+}
+
+void ItemViewZoomHandler::init(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction,
+                               QAction *zoomDefaultAction, QString settingsKeyStr, double marginParm)
 {
   Q_ASSERT(view != nullptr);
+
+  margin = marginParm;
+  itemView = view;
+  actionZoomIn = zoomInAction;
+  actionZoomOut = zoomOutAction;
+  actionZoomDefault = zoomDefaultAction;
+  settingsKey = settingsKeyStr;
 
   initTableViewZoom();
 
@@ -82,8 +103,10 @@ void ItemViewZoomHandler::setTableViewFontSize(double pointSize)
   if(tableView != nullptr)
   {
     // Adjust the cell height - default is too big
-    tableView->verticalHeader()->setMinimumSectionSize(atools::roundToInt(newFontHeight + sectionToFontSize));
-    tableView->verticalHeader()->setDefaultSectionSize(atools::roundToInt(newFontHeight + sectionToFontSize));
+    tableView->verticalHeader()->setMinimumSectionSize(
+      atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
+    tableView->verticalHeader()->setDefaultSectionSize(
+      atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
   }
 }
 

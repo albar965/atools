@@ -37,9 +37,12 @@ public:
   /* Will not support any zooming but set the initial cell and font size
    * if constructed with tableview parameter only. Otherwise font size can be changed using the given
    * actions*/
-  ItemViewZoomHandler(QAbstractItemView *itemView, QAction *actionZoomIn = nullptr, QAction *actionZoomOut =
-                        nullptr, QAction *actionZoomDefault = nullptr, QString settingsKeyStr = QString());
-  virtual ~ItemViewZoomHandler();
+  ItemViewZoomHandler(QAbstractItemView *view, QAction *actionZoomIn, QAction *actionZoomOut,
+                      QAction *actionZoomDefault, QString settingsKeyStr = QString(), double marginParm = 0.);
+  ItemViewZoomHandler(QAbstractItemView *view, double marginParam);
+  ItemViewZoomHandler(QAbstractItemView *view);
+
+  virtual ~ItemViewZoomHandler() override;
 
   /* Call slot for application font changes. Resets back to default size */
   void fontChanged();
@@ -87,6 +90,9 @@ public:
   }
 
 private:
+  void init(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction,
+            QAction *zoomDefaultAction, QString settingsKeyStr, double marginParm);
+
   /* Change font size and store in settings */
 
   /* Update action status (enabled/disabled) */
@@ -103,6 +109,7 @@ private:
   double sectionToFontSize = 2.;
   double minFontSize = 7.;
   double maxFontSize = 16.;
+  double margin = 0.;
 
   QAbstractItemView *itemView;
   QAction *actionZoomIn, *actionZoomOut, *actionZoomDefault;
