@@ -266,7 +266,7 @@ private:
           departureParkingName, departureAiportName, destinationAiportName, comment;
   atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
 
-  bool lnmFormat = false;
+  bool lnmFormat = true;
 
   QHash<QString, QString> properties;
 

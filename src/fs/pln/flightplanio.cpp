@@ -118,8 +118,6 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 {
   FileFormat format = detectFormat(file);
 
-  plan.setLnmFormat(false);
-
   switch(format)
   {
     case atools::fs::pln::NONE:
@@ -134,27 +132,33 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 
     case atools::fs::pln::FSX_PLN:
       loadFsx(plan, file);
+      plan.setLnmFormat(false); // Indicate that a "foreign" format was user to load which cannot be saved directly
       break;
 
     case atools::fs::pln::FS9_PLN:
       loadFs9(plan, file);
+      plan.setLnmFormat(false);
       break;
 
     case atools::fs::pln::FMS11:
     case atools::fs::pln::FMS3:
       loadFms(plan, file);
+      plan.setLnmFormat(false);
       break;
 
     case atools::fs::pln::FLP:
       loadFlp(plan, file);
+      plan.setLnmFormat(false);
       break;
 
     case atools::fs::pln::FSC_PLN:
       loadFsc(plan, file);
+      plan.setLnmFormat(false);
       break;
 
     case atools::fs::pln::FLIGHTGEAR:
       loadFlightGear(plan, file);
+      plan.setLnmFormat(false);
       break;
   }
   return format;

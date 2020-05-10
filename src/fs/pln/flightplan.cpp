@@ -97,7 +97,7 @@ void Flightplan::clear()
   departurePos = Pos();
   destinationPos = Pos();
 
-  lnmFormat = false;
+  lnmFormat = true;
   flightplanType = VFR;
   cruisingAlt = 10000;
 }
