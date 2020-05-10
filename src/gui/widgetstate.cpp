@@ -166,7 +166,7 @@ void WidgetState::save(const QObject *widget) const
     else if(const QFrame *f = dynamic_cast<const QFrame *>(widget))
       saveWidgetVisible(s, f);
     else
-      qWarning() << "Found unsupported widet type in save" << widget->metaObject()->className();
+      qWarning() << Q_FUNC_INFO << "Found unsupported widet type in save" << widget->metaObject()->className();
   }
 }
 
@@ -384,11 +384,16 @@ void WidgetState::restore(QObject *widget) const
     else if(QFrame *f = dynamic_cast<QFrame *>(widget))
       loadWidgetVisible(s, f);
     else
-      qWarning() << "Found unsupported widet type in load" << widget->metaObject()->className();
+      qWarning() << Q_FUNC_INFO << "Found unsupported widet type in load" << widget->metaObject()->className();
 
     if(block)
       widget->blockSignals(false);
   }
+}
+
+bool WidgetState::contains(QObject *widget) const
+{
+  return containsWidget(Settings::instance(), widget);
 }
 
 void WidgetState::syncSettings()
@@ -425,7 +430,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w) const
         settings.setValue(keyPrefix + "_visible_" + w->objectName(), w->isVisible());
     }
     else
-      qWarning() << "Found widget with empty name";
+      qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   }
 }
 
@@ -435,7 +440,17 @@ void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVarian
   if(!name.isEmpty())
     settings.setValueVar(keyPrefix + "_" + name, value);
   else
-    qWarning() << "Found widget with empty name";
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
+}
+
+bool WidgetState::containsWidget(Settings& settings, QObject *w, const QString& objName) const
+{
+  QString name = objName.isEmpty() ? w->objectName() : objName;
+  if(!name.isEmpty())
+    return settings.contains(keyPrefix + "_" + name);
+  else
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
+  return false;
 }
 
 QVariant WidgetState::loadWidget(Settings& settings, QObject *w, const QString& objName) const
@@ -448,7 +463,7 @@ QVariant WidgetState::loadWidget(Settings& settings, QObject *w, const QString& 
       return settings.valueVar(name);
   }
   else
-    qWarning() << "Found widget with empty name";
+    qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   return QVariant();
 }
 
@@ -467,7 +482,7 @@ void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w) const
       }
     }
     else
-      qWarning() << "Found widget with empty name";
+      qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   }
 }
 

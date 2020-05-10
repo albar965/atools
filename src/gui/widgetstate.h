@@ -75,6 +75,9 @@ public:
   void save(const QObject *widget) const;
   void restore(QObject *widget) const;
 
+  /* true if settings file contains the widget */
+  bool contains(QObject *widget) const;
+
   /* Write settings to disk */
   void syncSettings();
 
@@ -120,6 +123,7 @@ private:
                   const QString& objName = QString()) const;
   QVariant loadWidget(atools::settings::Settings& settings, QObject *w,
                       const QString& objName = QString()) const;
+  bool containsWidget(atools::settings::Settings& settings, QObject *w, const QString& objName = QString()) const;
 
   void saveWidgetVisible(atools::settings::Settings& settings, const QWidget *w) const;
   void loadWidgetVisible(atools::settings::Settings& settings, QWidget *w) const;
