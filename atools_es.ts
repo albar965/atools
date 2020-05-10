@@ -104,6 +104,33 @@ Atrapada excepción
     </message>
 </context>
 <context>
+    <name>FlightplanEntry</name>
+    <message>
+        <source>Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Desconocido</translation>
+    </message>
+    <message>
+        <source>Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NDB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation type="unfinished">Usuario</translation>
+    </message>
+</context>
+<context>
     <name>FlightplanIO</name>
     <message>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
@@ -174,11 +201,23 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

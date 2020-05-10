@@ -122,14 +122,48 @@ Ocorreu um erro no Sql
     </message>
 </context>
 <context>
+    <name>FlightplanEntry</name>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="117"/>
+        <source>Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="120"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="135"/>
+        <source>Unknown</source>
+        <translation type="unfinished">Desconhecido</translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="123"/>
+        <source>Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="126"/>
+        <source>VOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="129"/>
+        <source>NDB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="132"/>
+        <source>User</source>
+        <translation type="unfinished">Usuário</translation>
+    </message>
+</context>
+<context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2104"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2548"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2149"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2593"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -154,12 +188,13 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não foi possível abrir o arquivo RTE %1. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="161"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="173"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Não foi possível abrir um arquivo de plano de voo vazio &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="927"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1099"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1198"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -169,12 +204,12 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2522"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="413"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="416"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
@@ -185,31 +220,48 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="124"/>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP são suportados.</translation>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
+        <translation type="unfinished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="428"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="431"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="555"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="557"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="809"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="788"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1115"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="818"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="835"/>
+        <source>Invalid position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="824"/>
+        <source>Invalid position. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="873"/>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1381"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2375"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2835"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1223,7 +1275,7 @@ Ocorreu um erro no Sql
         <translation></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="423"/>
+        <location filename="src/atools.cpp" line="431"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
@@ -1255,12 +1307,12 @@ Ocorreu um erro no Sql
         <translation>Piloto comercial (CP)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="398"/>
+        <location filename="src/atools.cpp" line="406"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Criado por %1 Versão %2 (revisão %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="388"/>
+        <location filename="src/atools.cpp" line="396"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Criado por %1 Versão %2 (revisão %3) em %4</translation>
     </message>

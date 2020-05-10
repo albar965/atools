@@ -122,6 +122,40 @@ File: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>FlightplanEntry</name>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="117"/>
+        <source>Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="120"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="135"/>
+        <source>Unknown</source>
+        <translation type="unfinished">未知</translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="123"/>
+        <source>Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="126"/>
+        <source>VOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="129"/>
+        <source>NDB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="132"/>
+        <source>User</source>
+        <translation type="unfinished">用户</translation>
+    </message>
+</context>
+<context>
     <name>FlightplanIO</name>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="109"/>
@@ -130,61 +164,79 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="124"/>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation>无法打开飞行计划文件 %1。没有检测到受支持的飞行计划文件。只有PLN (FSX XML, FS9 INI 及 FSC), X-Plane FMS, FLP 和 FlightGear FGFP 是受支持的。</translation>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
+        <translation type="unfinished">无法打开飞行计划文件 %1。没有检测到受支持的飞行计划文件。只有PLN (FSX XML, FS9 INI 及 FSC), X-Plane FMS, FLP 和 FlightGear FGFP 是受支持的。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="161"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="173"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>无法打开空飞行计划文件 “%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="413"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="416"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>无效的FMS文件。无法读取版本号：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="428"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="431"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>无效的FMS文件。无效版本 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="555"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="557"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>无效的FMS文件。章节数量不是 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="809"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="788"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>无效的飞行计划文件 “%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="927"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="818"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="835"/>
+        <source>Invalid position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="824"/>
+        <source>Invalid position. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="873"/>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1099"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1198"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1115"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1381"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开FlightGear文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2104"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2548"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2149"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2593"/>
         <source> Track</source>
         <translation> 航向</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2375"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2835"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 版本 %2 (修订 %3) 在 %4 创建的PMDG RTE </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2522"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误: 文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1076,17 +1128,17 @@ File: &quot;%2&quot;
 <context>
     <name>QObject</name>
     <message>
-        <location filename="src/atools.cpp" line="388"/>
+        <location filename="src/atools.cpp" line="396"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>由 %1 版本 %2 (修订 %3) 在 %4 创建</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="398"/>
+        <location filename="src/atools.cpp" line="406"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>由 %1 版本 %2 (修订 %3) 创建</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="423"/>
+        <location filename="src/atools.cpp" line="431"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>

@@ -108,6 +108,33 @@ Datei: &quot;%2&quot;
     </message>
 </context>
 <context>
+    <name>FlightplanEntry</name>
+    <message>
+        <source>Airport</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Unbekannt</translation>
+    </message>
+    <message>
+        <source>Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VOR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NDB</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User</source>
+        <translation type="unfinished">Nutzer</translation>
+    </message>
+</context>
+<context>
     <name>FlightplanIO</name>
     <message>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
@@ -176,7 +203,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation>Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML, FS9 INI und FSC), FMS, FLP und FlightGear FGFP werden unterstützt.</translation>
+        <translation type="vanished">Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur PLN (FSX XML, FS9 INI und FSC), FMS, FLP und FlightGear FGFP werden unterstützt.</translation>
     </message>
     <message>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
@@ -193,6 +220,22 @@ Datei: &quot;%2&quot;
     <message>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+    <message>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
