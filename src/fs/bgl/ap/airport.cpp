@@ -514,15 +514,20 @@ void Airport::updateSummaryFields()
   for(const Com& c : coms)
   {
     // Use lowest frequency for default to have it deterministic
-    if(c.getType() == com::TOWER && (towerFrequency == 0 || c.getFrequency() < towerFrequency))
+    if((c.getType() == com::TOWER || c.getType() == com::TOWER_P3D_V5) &&
+       (towerFrequency == 0 || c.getFrequency() < towerFrequency))
       towerFrequency = c.getFrequency();
-    else if(c.getType() == com::UNICOM && (unicomFrequency == 0 || c.getFrequency() < unicomFrequency))
+    else if((c.getType() == com::UNICOM || c.getType() == com::UNICOM_P3D_V5) &&
+            (unicomFrequency == 0 || c.getFrequency() < unicomFrequency))
       unicomFrequency = c.getFrequency();
-    else if(c.getType() == com::AWOS && (awosFrequency == 0 || c.getFrequency() < awosFrequency))
+    else if((c.getType() == com::AWOS || c.getType() == com::AWOS_P3D_V5) &&
+            (awosFrequency == 0 || c.getFrequency() < awosFrequency))
       awosFrequency = c.getFrequency();
-    else if(c.getType() == com::ASOS && (asosFrequency == 0 || c.getFrequency() < asosFrequency))
+    else if((c.getType() == com::ASOS || c.getType() == com::ASOS_P3D_V5) &&
+            (asosFrequency == 0 || c.getFrequency() < asosFrequency))
       asosFrequency = c.getFrequency();
-    else if(c.getType() == com::ATIS && (atisFrequency == 0 || c.getFrequency() < atisFrequency))
+    else if((c.getType() == com::ATIS || c.getType() == com::ATIS_P3D_V5) &&
+            (atisFrequency == 0 || c.getFrequency() < atisFrequency))
       atisFrequency = c.getFrequency();
   }
 
