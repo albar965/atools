@@ -283,9 +283,7 @@ bool Line::isPoint(float epsilonDegree) const
 
 bool Line::crossesAntiMeridian() const
 {
-  // east / west
-  return pos2.getLonX() < pos1.getLonX() ||
-         (atools::almostEqual(pos2.getLonX(), 180.f) && atools::almostEqual(pos1.getLonX(), -180.f));
+  return atools::geo::crossesAntiMeridian(pos1.getLonX(), pos2.getLonX());
 }
 
 bool Line::isWestCourse() const
