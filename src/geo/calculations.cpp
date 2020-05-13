@@ -728,5 +728,13 @@ bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio
   return false;
 }
 
+bool crossesAntiMeridian(float lonx1, float lonx2)
+{
+  // east / west
+  return std::abs((lonx1 + 360.f) - (lonx2 + 360.f)) > 180.f ||
+         (atools::almostEqual(lonx1, 180.f) && atools::almostEqual(lonx2, -180.f)) ||
+         (atools::almostEqual(lonx2, 180.f) && atools::almostEqual(lonx1, -180.f));
+}
+
 } // namespace geo
 } // namespace atools
