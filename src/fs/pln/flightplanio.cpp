@@ -25,6 +25,7 @@
 #include "geo/linestring.h"
 #include "fs/util/coordinates.h"
 #include "fs/pln/flightplan.h"
+#include "util/xmlstream.h"
 
 #include <QBitArray>
 #include <QDataStream>
@@ -181,8 +182,8 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // FSX PLN <?xml version
     return FSX_PLN;
   else if(lines.at(0).startsWith("<?xml version") &&
-          lines.at(1).contains("<littlenavmap>") &&
-          lines.at(2).contains("<flightplan>"))
+          lines.at(1).startsWith("<littlenavmap>") &&
+          lines.at(2).startsWith("<flightplan>"))
     return LNM_PLN;
   else if(lines.at(0).startsWith("[flightplan]") && FS9_MATCH.match(lines.at(1)).hasMatch())
     // FS9 ini format
@@ -843,51 +844,19 @@ void FlightplanIO::insertPropertyIf(atools::fs::pln::Flightplan& plan, const QSt
     plan.properties.insert(key, value);
 }
 
-void FlightplanIO::skipCurrentElement(QXmlStreamReader& reader, bool warning)
-{
-  if(warning)
-  {
-    QFileDevice *df = dynamic_cast<QFileDevice *>(reader.device());
-    QString filename = df != nullptr ? df->fileName() : QString();
-    qWarning() << Q_FUNC_INFO << "Unexpected element" << reader.name()
-               << "in file" << filename << "in line" << reader.lineNumber();
-  }
-
-  reader.skipCurrentElement();
-}
-
-bool FlightplanIO::readNextStartElement(QXmlStreamReader& reader)
-{
-  bool retval = reader.readNextStartElement();
-  checkError(reader);
-  return retval;
-}
-
-void FlightplanIO::checkError(QXmlStreamReader& reader)
-{
-  if(reader.hasError())
-  {
-    QFileDevice *df = dynamic_cast<QFileDevice *>(reader.device());
-    QString filename = df != nullptr ? df->fileName() : QString();
-
-    QString msg = tr("Error reading \"%1\" on line %2 column %3: %4").
-                  arg(filename).arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString());
-    qWarning() << Q_FUNC_INFO << msg;
-    throw Exception(msg);
-  }
-}
-
-void FlightplanIO::readWaypointsLnm(QXmlStreamReader& reader, QList<FlightplanEntry>& entries,
+void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
                                     const QString& elementName)
 {
-  while(readNextStartElement(reader))
+  QXmlStreamReader& reader = xmlStream.getReader();
+
+  while(reader.readNextStartElement())
   {
     // Read waypoint element
     if(reader.name() == elementName)
     {
       // Read child elements
       FlightplanEntry entry;
-      while(readNextStartElement(reader))
+      while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "Name")
           entry.setName(reader.readElementText());
@@ -910,12 +879,12 @@ void FlightplanIO::readWaypointsLnm(QXmlStreamReader& reader, QList<FlightplanEn
         else if(reader.name() == "Pos")
           entry.setPosition(readPosLnm(reader));
         else
-          skipCurrentElement(reader, true /* warn */);
+          xmlStream.skipCurrentElement(true /* warn */);
       }
       entries.append(entry);
     }
     else
-      skipCurrentElement(reader, true /* warn */);
+      xmlStream.skipCurrentElement(true /* warn */);
   }
 }
 
@@ -928,29 +897,30 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    QXmlStreamReader reader(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile);
+    QXmlStreamReader& reader = xmlStream.getReader();
 
     QList<FlightplanEntry> alternates, waypoints;
 
-    readUntilElement(reader, "LittleNavmap");
-    readUntilElement(reader, "Flightplan");
+    xmlStream.readUntilElement("LittleNavmap");
+    xmlStream.readUntilElement("Flightplan");
 
     // ==================================================================================
     // Read all elements - order does not matter
     // Additional unknown elements are ignored and a warning is logged
 
-    while(readNextStartElement(reader))
+    while(xmlStream.readNextStartElement())
     {
       // Read data from header =========================================
       if(reader.name() == "Header")
       {
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
              reader.name() == "ProgramVersion")
           {
             // Skip these elements without warning
-            skipCurrentElement(reader);
+            xmlStream.skipCurrentElement();
             continue;
           }
 
@@ -959,7 +929,7 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
           else if(reader.name() == "CruisingAlt")
             plan.cruisingAlt = reader.readElementText().toInt();
           else
-            skipCurrentElement(reader, true /* warn */);
+            xmlStream.skipCurrentElement(true /* warn */);
         }
       }
       // Simulator and navdata type and cycle =========================================
@@ -976,7 +946,7 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
       // Used aircraft performance =========================================
       else if(reader.name() == "AircraftPerformance")
       {
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           if(reader.name() == "FilePath")
             insertPropertyIf(plan, AIRCRAFT_PERF_FILE, reader.readElementText());
@@ -985,13 +955,13 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
           else if(reader.name() == "Name")
             insertPropertyIf(plan, AIRCRAFT_PERF_NAME, reader.readElementText());
           else
-            skipCurrentElement(reader, true /* warn */);
+            xmlStream.skipCurrentElement(true /* warn */);
         }
       }
       // Alternate airports list =========================================
       else if(reader.name() == "Alternates")
       {
-        readWaypointsLnm(reader, alternates, "Alternate");
+        readWaypointsLnm(xmlStream, alternates, "Alternate");
         QStringList idents;
         for(FlightplanEntry& entry : alternates)
         {
@@ -1006,24 +976,24 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
       // Departure position (gate, etc.) =========================================
       else if(reader.name() == "Departure")
       {
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           if(reader.name() == "Start")
             plan.departureParkingName = reader.readElementText();
           else if(reader.name() == "Pos")
             plan.departurePos = readPosLnm(reader);
           else
-            skipCurrentElement(reader, true /* warn */);
+            xmlStream.skipCurrentElement(true /* warn */);
         }
       }
       // Procedures =========================================
       else if(reader.name() == "Procedures")
       {
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           if(reader.name() == "SID")
           {
-            while(readNextStartElement(reader))
+            while(xmlStream.readNextStartElement())
             {
               if(reader.name() == "Name")
                 insertPropertyIf(plan, SIDAPPR, reader.readElementText());
@@ -1032,12 +1002,12 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
               else if(reader.name() == "Transition")
                 insertPropertyIf(plan, SIDTRANS, reader.readElementText());
               else
-                skipCurrentElement(reader, true /* warn */);
+                xmlStream.skipCurrentElement(true /* warn */);
             }
           }
           else if(reader.name() == "STAR")
           {
-            while(readNextStartElement(reader))
+            while(xmlStream.readNextStartElement())
             {
               if(reader.name() == "Name")
                 insertPropertyIf(plan, STAR, reader.readElementText());
@@ -1046,12 +1016,12 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
               else if(reader.name() == "Transition")
                 insertPropertyIf(plan, STARTRANS, reader.readElementText());
               else
-                skipCurrentElement(reader, true /* warn */);
+                xmlStream.skipCurrentElement(true /* warn */);
             }
           }
           else if(reader.name() == "Approach")
           {
-            while(readNextStartElement(reader))
+            while(xmlStream.readNextStartElement())
             {
               if(reader.name() == "Name")
                 insertPropertyIf(plan, APPROACH, reader.readElementText());
@@ -1074,17 +1044,17 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
               else if(reader.name() == "CustomAltitude")
                 insertPropertyIf(plan, APPROACH_CUSTOM_ALTITUDE, reader.readElementText());
               else
-                skipCurrentElement(reader, true /* warn */);
+                xmlStream.skipCurrentElement(true /* warn */);
             }
           }
           else
-            skipCurrentElement(reader, true /* warn */);
+            xmlStream.skipCurrentElement(true /* warn */);
         }
       }
       else if(reader.name() == "Waypoints")
-        readWaypointsLnm(reader, waypoints, "Waypoint");
+        readWaypointsLnm(xmlStream, waypoints, "Waypoint");
       else
-        skipCurrentElement(reader, true /* warn */);
+        xmlStream.skipCurrentElement(true /* warn */);
     }
 
     xmlFile.close();
@@ -1108,11 +1078,12 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    QXmlStreamReader reader(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile);
+    QXmlStreamReader& reader = xmlStream.getReader();
 
     // Skip all the useless stuff until we hit the document
-    readUntilElement(reader, "SimBase.Document");
-    readUntilElement(reader, "Descr");
+    xmlStream.readUntilElement("SimBase.Document");
+    xmlStream.readUntilElement("Descr");
     while(!reader.atEnd())
     {
       reader.readNext();
@@ -1131,9 +1102,9 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
         break;
     }
     // Skip all until the flightplan is found
-    readUntilElement(reader, "FlightPlan.FlightPlan");
+    xmlStream.readUntilElement("FlightPlan.FlightPlan");
 
-    while(readNextStartElement(reader))
+    while(xmlStream.readNextStartElement())
     {
       QStringRef name = reader.name();
       // if(name == "Title")
@@ -1170,7 +1141,7 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
       // else if(name == "AppVersion")
       // readAppVersion(plan, reader);
       else if(name == "ATCWaypoint")
-        readWaypoint(plan, reader);
+        readWaypoint(plan, xmlStream);
       else
         reader.skipCurrentElement();
     }
@@ -1228,28 +1199,29 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    QXmlStreamReader reader(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile);
+    QXmlStreamReader& reader = xmlStream.getReader();
 
     QString departureIcao, departureRunway, sid, sidTransition,
             destinationIcao, destinationRunway, star, starTransition;
     float maxAlt = std::numeric_limits<float>::min();
 
-    readUntilElement(reader, "PropertyList");
+    xmlStream.readUntilElement("PropertyList");
 
-    while(readNextStartElement(reader))
+    while(xmlStream.readNextStartElement())
     {
       QStringRef name = reader.name();
       if(name == "version")
       {
         // Skip these elements without warning
-        skipCurrentElement(reader);
+        xmlStream.skipCurrentElement();
         continue;
       }
 
       if(name == "departure")
       {
         // Read sub elements for departure =====================================
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           QStringRef depname = reader.name();
           if(depname == "airport")
@@ -1267,7 +1239,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
       else if(name == "destination")
       {
         // Read sub elements for destination =====================================
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           QStringRef destname = reader.name();
           if(destname == "airport")
@@ -1285,7 +1257,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
       else if(name == "route")
       {
         // Read wp elements for route =====================================
-        while(readNextStartElement(reader))
+        while(xmlStream.readNextStartElement())
         {
           FlightplanEntry entry;
 
@@ -1294,7 +1266,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
           {
             QString wptype, wpicao, wpident, wplon, wplat, wpalt;
 
-            while(readNextStartElement(reader))
+            while(xmlStream.readNextStartElement())
             {
               QStringRef wpname = reader.name();
 
@@ -1444,7 +1416,7 @@ void FlightplanIO::saveLnm(const Flightplan& plan, const QString& filename)
     writeElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
     writeElementIf(writer, "Comment", plan.comment);
     writeElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
-    writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNM_VERSION_MAJOR).arg(LNM_VERSION_MINOR));
+    writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
     writeElementIf(writer, "ProgramName", QCoreApplication::applicationName());
     writeElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
     writer.writeEndElement(); // Header
@@ -3557,19 +3529,14 @@ void FlightplanIO::posToRte(QTextStream& stream, const geo::Pos& pos, bool alt)
   stream << " " << (alt ? pos.getAltitude() : 0.f);
 }
 
-void FlightplanIO::readUntilElement(QXmlStreamReader& reader, const QString& name)
-{
-  while(reader.name() != name)
-    readNextStartElement(reader);
-}
-
-void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, QXmlStreamReader& reader)
+void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, atools::util::XmlStream& xmlStream)
 {
   FlightplanEntry entry;
+  QXmlStreamReader& reader = xmlStream.getReader();
 
   entry.setIdent(reader.attributes().value("id").toString());
 
-  while(readNextStartElement(reader))
+  while(xmlStream.readNextStartElement())
   {
     QStringRef rName = reader.name();
     if(rName == "ATCWaypointType")
@@ -3579,7 +3546,7 @@ void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, QXmlStreamRea
     else if(rName == "ATCAirway")
       entry.setAirway(reader.readElementText());
     else if(rName == "ICAO")
-      while(readNextStartElement(reader))
+      while(xmlStream.readNextStartElement())
       {
         QStringRef iName = reader.name();
         if(iName == "ICAORegion")

@@ -30,6 +30,14 @@ namespace atools {
 namespace fs {
 namespace perf {
 
+/* Detected file format. */
+enum FileFormat
+{
+  FORMAT_NONE, /* Not a valid performance file */
+  FORMAT_INI, /* Old INI format (<= LNM 2.4.5) */
+  FORMAT_XML /* New XML format (>= LNM 2.6.X) */
+};
+
 /*
  * Aircraft performance data which can be loaded and saved from or to an ini-file.
  *
@@ -42,8 +50,17 @@ class AircraftPerf
 
 public:
   /* Load and save throw Exception in case of error */
-  void load(const QString& filepath);
-  void save(const QString& filepath);
+
+  /* Load old INI or new XML format. Format is detected automatically. */
+  void load(const QString& filename);
+
+  /* Save using the new XML format (>= LNM 2.6.X) */
+  void saveXml(const QString& filename);
+
+  /* Save using the old INI format (<= LNM 2.4.5) */
+  void saveIni(const QString& filename);
+
+  static FileFormat detectFormat(const QString& filename);
 
   /* Set all speed, fuel flow and fuel values to 0 */
   void setNull();
@@ -84,18 +101,6 @@ public:
   bool operator!=(const AircraftPerf& other) const
   {
     return !operator==(other);
-  }
-
-  /* Program version as saved in the file*/
-  const QString& getProgramVersion() const
-  {
-    return programVersion;
-  }
-
-  /* File format version as loaded from the file */
-  const QString& getFormatVersion() const
-  {
-    return formatVersion;
   }
 
   bool useFuelAsVolume() const
@@ -391,13 +396,19 @@ public:
     runwayType = value;
   }
 
+  /* Version number to save into LNMPERF XML files */
+  static const int LNMPERF_VERSION_MAJOR = 0;
+  static const int LNMPERF_VERSION_MINOR = 9;
+
 private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
+  void loadIniInternal(const QString& filename);
+  void loadXmlInternal(const QString& filename);
 
   bool volume = false, jetFuel = false;
 
-  QString name, type, description, programVersion, formatVersion;
+  QString name, type, description;
 
   /* Default values give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
   float taxiFuel = 0.f;

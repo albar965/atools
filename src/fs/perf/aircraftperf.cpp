@@ -19,10 +19,13 @@
 #include "atools.h"
 #include "exception.h"
 #include "geo/calculations.h"
+#include "util/xmlstream.h"
 
 #include <QCoreApplication>
+#include <QDateTime>
 #include <QFileInfo>
 #include <QSettings>
+#include <QXmlStreamReader>
 
 namespace ageo = atools::geo;
 
@@ -84,29 +87,265 @@ bool AircraftPerf::isSpeedValid() const
   return climbSpeed > 1.0f && cruiseSpeed > 1.0f && descentSpeed > 1.0f;
 }
 
-void AircraftPerf::load(const QString& filepath)
+void AircraftPerf::load(const QString& filename)
 {
-  QFileInfo fi(filepath);
+  QFileInfo fi(filename);
   if(!fi.exists() || !fi.isReadable())
-    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for reading.").arg(filepath));
+    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for reading.").arg(filename));
 
-  QSettings settings(filepath, QSettings::IniFormat);
+  switch(detectFormat(filename))
+  {
+    case atools::fs::perf::FORMAT_INI:
+      loadIniInternal(filename);
+      break;
+
+    case atools::fs::perf::FORMAT_XML:
+      loadXmlInternal(filename);
+      break;
+
+    case atools::fs::perf::FORMAT_NONE:
+      throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for reading. Invalid format.").
+                              arg(filename));
+  }
+}
+
+void AircraftPerf::saveXml(const QString& filename)
+{
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QXmlStreamWriter writer(&xmlFile);
+    writer.setCodec("UTF-8");
+    writer.setAutoFormatting(true);
+    writer.setAutoFormattingIndent(2);
+
+    writer.writeStartDocument("1.0");
+    writer.writeStartElement("LittleNavmap");
+    writer.writeStartElement("AircraftPerf");
+
+    // Save header and metadata =======================================================
+    writer.writeStartElement("Header");
+    writer.writeTextElement("CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+    writer.writeTextElement("FileVersion", QString("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
+    writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
+    writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
+    writer.writeEndElement(); // Header
+
+    // Options =======================================================
+    writer.writeStartElement("Options");
+    writer.writeTextElement("Name", name);
+    writer.writeTextElement("AircraftType", type);
+    writer.writeTextElement("Description", description);
+    writer.writeTextElement("FuelAsVolume", QString::number(volume));
+    writer.writeTextElement("JetFuel", QString::number(jetFuel));
+    writer.writeEndElement(); // Options
+
+    // Performance =======================================================
+    writer.writeStartElement("Perf");
+
+    // Performance general ============================
+    writer.writeTextElement("ContingencyFuelPercent", QString::number(contingencyFuel, 'f', 1));
+    writer.writeTextElement("ExtraFuelLbsGal", QString::number(extraFuel, 'f', 3));
+    writer.writeTextElement("MinRunwayLengthFt", QString::number(minRunwayLength, 'f', 3));
+    writer.writeTextElement("ReserveFuelLbsGal", QString::number(reserveFuel, 'f', 3));
+    writer.writeTextElement("RunwayType", runwayTypeToStr(runwayType));
+    writer.writeTextElement("TaxiFuelLbsGal", QString::number(taxiFuel, 'f', 3));
+    writer.writeTextElement("UsableFuelLbsGal", QString::number(usableFuel, 'f', 3));
+
+    // Performance alternate ============================
+    writer.writeStartElement("Alternate");
+    writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(alternateFuelFlow, 'f', 3));
+    writer.writeTextElement("SpeedKtsTAS", QString::number(alternateSpeed, 'f', 3));
+    writer.writeEndElement(); // Alternate
+
+    // Performance climb ============================
+    writer.writeStartElement("Climb");
+    writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(climbFuelFlow, 'f', 3));
+    writer.writeTextElement("SpeedKtsTAS", QString::number(climbSpeed, 'f', 3));
+    writer.writeTextElement("VertSpeedFtPerMin", QString::number(climbVertSpeed, 'f', 3));
+    writer.writeEndElement(); // Climb
+
+    // Performance cruise ============================
+    writer.writeStartElement("Cruise");
+    writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(cruiseFuelFlow, 'f', 3));
+    writer.writeTextElement("SpeedKtsTAS", QString::number(cruiseSpeed, 'f', 3));
+    writer.writeEndElement(); // Cruise
+
+    // Performance descent ============================
+    writer.writeStartElement("Descent");
+    writer.writeTextElement("FuelFlowLbsGalPerHour", QString::number(descentFuelFlow, 'f', 3));
+    writer.writeTextElement("SpeedKtsTAS", QString::number(descentSpeed, 'f', 3));
+    writer.writeTextElement("VertSpeedFtPerMin", QString::number(descentVertSpeed, 'f', 3));
+    writer.writeEndElement(); // Descent
+
+    writer.writeEndElement(); // Perf
+    writer.writeEndElement(); // AircraftPerf
+    writer.writeEndElement(); // LittleNavmap
+    writer.writeEndDocument();
+
+    xmlFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open file %1. Reason: %2").arg(filename).arg(xmlFile.errorString()));
+}
+
+void AircraftPerf::loadXmlInternal(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::ReadOnly))
+  {
+    atools::util::XmlStream xmlStream(&xmlFile);
+    QXmlStreamReader& reader = xmlStream.getReader();
+
+    xmlStream.readUntilElement("LittleNavmap");
+    xmlStream.readUntilElement("AircraftPerf");
+
+    while(xmlStream.readNextStartElement())
+    {
+      // Read data from header =========================================
+      if(reader.name() == "Header")
+      {
+        // Skip header without warning
+        xmlStream.skipCurrentElement();
+        continue;
+      }
+      else if(reader.name() == "Options")
+      {
+        while(xmlStream.readNextStartElement())
+        {
+          if(reader.name() == "Name")
+            name = reader.readElementText();
+          else if(reader.name() == "AircraftType")
+            type = reader.readElementText();
+          else if(reader.name() == "Description")
+            description = reader.readElementText();
+          else if(reader.name() == "FuelAsVolume")
+            volume = reader.readElementText().toInt();
+          else if(reader.name() == "JetFuel")
+            jetFuel = reader.readElementText().toInt();
+          else
+            xmlStream.skipCurrentElement(true /* warn */);
+        }
+      }
+      else if(reader.name() == "Perf")
+      {
+        // Performance =======================================================
+        while(xmlStream.readNextStartElement())
+        {
+          if(reader.name() == "Alternate")
+          {
+            while(xmlStream.readNextStartElement())
+            {
+              if(reader.name() == "FuelFlowLbsGalPerHour")
+                alternateFuelFlow = reader.readElementText().toFloat();
+              else if(reader.name() == "SpeedKtsTAS")
+                alternateSpeed = reader.readElementText().toFloat();
+              else
+                xmlStream.skipCurrentElement(true /* warn */);
+            }
+          }
+          else if(reader.name() == "Climb")
+          {
+            while(xmlStream.readNextStartElement())
+            {
+              if(reader.name() == "FuelFlowLbsGalPerHour")
+                climbFuelFlow = reader.readElementText().toFloat();
+              else if(reader.name() == "SpeedKtsTAS")
+                climbSpeed = reader.readElementText().toFloat();
+              else if(reader.name() == "VertSpeedFtPerMin")
+                climbVertSpeed = reader.readElementText().toFloat();
+              else
+                xmlStream.skipCurrentElement(true /* warn */);
+            }
+          }
+          else if(reader.name() == "Cruise")
+          {
+            while(xmlStream.readNextStartElement())
+            {
+              if(reader.name() == "FuelFlowLbsGalPerHour")
+                cruiseFuelFlow = reader.readElementText().toFloat();
+              else if(reader.name() == "SpeedKtsTAS")
+                cruiseSpeed = reader.readElementText().toFloat();
+              else
+                xmlStream.skipCurrentElement(true /* warn */);
+            }
+          }
+          else if(reader.name() == "Descent")
+          {
+            while(xmlStream.readNextStartElement())
+            {
+              if(reader.name() == "FuelFlowLbsGalPerHour")
+                descentFuelFlow = reader.readElementText().toFloat();
+              else if(reader.name() == "SpeedKtsTAS")
+                descentSpeed = reader.readElementText().toFloat();
+              else if(reader.name() == "VertSpeedFtPerMin")
+                descentVertSpeed = reader.readElementText().toFloat();
+              else
+                xmlStream.skipCurrentElement(true /* warn */);
+            }
+          }
+          // Performance general ============================
+          else if(reader.name() == "ContingencyFuelPercent")
+            contingencyFuel = reader.readElementText().toFloat();
+          else if(reader.name() == "ExtraFuelLbsGal")
+            extraFuel = reader.readElementText().toFloat();
+          else if(reader.name() == "MinRunwayLengthFt")
+            minRunwayLength = reader.readElementText().toFloat();
+          else if(reader.name() == "ReserveFuelLbsGal")
+            reserveFuel = reader.readElementText().toFloat();
+          else if(reader.name() == "RunwayType")
+            runwayType = runwayTypeFromStr(reader.readElementText());
+          else if(reader.name() == "TaxiFuelLbsGal")
+            taxiFuel = reader.readElementText().toFloat();
+          else if(reader.name() == "UsableFuelLbsGal")
+            usableFuel = reader.readElementText().toFloat();
+          else
+            xmlStream.skipCurrentElement(true /* warn */);
+        }
+      }
+    }
+    xmlFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+}
+
+void AircraftPerf::loadIniInternal(const QString& filename)
+{
+  QSettings settings(filename, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
   readFromSettings(settings);
 
   if(settings.status() != QSettings::NoError)
-    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for reading.").arg(filepath));
+    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for reading.").arg(filename));
 }
 
-void AircraftPerf::save(const QString& filepath)
+void AircraftPerf::saveIni(const QString& filename)
 {
-  QSettings settings(filepath, QSettings::IniFormat);
+  QSettings settings(filename, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
   writeToSettings(settings);
   settings.sync();
 
   if(settings.status() != QSettings::NoError)
-    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for writing.").arg(filepath));
+    throw atools::Exception(tr("Cannot open aircraft performance file \"%1\" for writing.").arg(filename));
+}
+
+FileFormat AircraftPerf::detectFormat(const QString& filename)
+{
+  QStringList lines = atools::probeFile(filename, 30);
+
+  if(lines.at(0).startsWith("<?xml version") &&
+     lines.at(1).startsWith("<littlenavmap>") &&
+     lines.at(2).startsWith("<aircraftperf>"))
+    return FORMAT_XML;
+  else if(lines.contains("[options]") && lines.contains("[perf]"))
+    return FORMAT_INI;
+  else
+    return FORMAT_NONE;
 }
 
 void AircraftPerf::resetToDefault()
@@ -182,7 +421,6 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
          atools::almostEqual(usableFuel, other.usableFuel) &&
          atools::almostEqual(minRunwayLength, other.minRunwayLength) &&
          runwayType == other.runwayType;
-
 }
 
 float AircraftPerf::getTaxiFuelLbs() const
@@ -270,8 +508,6 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   name = settings.value("Options/Name").toString();
   type = settings.value("Options/AircraftType").toString();
   description = settings.value("Options/Description").toString();
-  programVersion = settings.value("Options/ProgramVersion").toString();
-  formatVersion = settings.value("Options/FormatVersion").toString();
 
   volume = settings.value("Options/FuelAsVolume").toBool();
   jetFuel = settings.value("Options/JetFuel").toBool();

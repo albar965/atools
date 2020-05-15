@@ -26,6 +26,9 @@ class QXmlStreamReader;
 class QXmlStreamWriter;
 
 namespace atools {
+namespace util {
+class XmlStream;
+}
 namespace geo {
 class LineString;
 class Pos;
@@ -124,8 +127,8 @@ public:
   void saveTfdi(const Flightplan& plan, const QString& filename, const QBitArray& jetAirways);
 
   /* Version number to save into LNMPLN files */
-  static const int LNM_VERSION_MAJOR = 0;
-  static const int LNM_VERSION_MINOR = 9;
+  static const int LNMPLN_VERSION_MAJOR = 0;
+  static const int LNMPLN_VERSION_MINOR = 9;
 
 private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated);
@@ -155,8 +158,7 @@ private:
 
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry);
 
-  void readUntilElement(QXmlStreamReader& reader, const QString& name);
-  void readWaypoint(Flightplan& plan, QXmlStreamReader& reader);
+  void readWaypoint(Flightplan& plan, util::XmlStream& xmlStream);
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt);
 
   /* Support for FlightGear propery lists */
@@ -178,16 +180,8 @@ private:
   atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
 
   /* Read waypoint elements and attributes from stream */
-  void readWaypointsLnm(QXmlStreamReader& reader, QList<FlightplanEntry>& entries, const QString& elementName);
-
-  /* Read until next element and checks error. Throws exception in case of error */
-  bool readNextStartElement(QXmlStreamReader& reader);
-
-  /* Skip element and optionally print a warning about unexpected elements */
-  void skipCurrentElement(QXmlStreamReader& reader, bool warning = false);
-
-  /* Checks error. Throws exception in case of error */
-  void checkError(QXmlStreamReader& reader);
+  void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
+                        const QString& elementName);
 
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries(Flightplan& plan);
