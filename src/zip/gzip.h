@@ -23,9 +23,16 @@
 #include <zlib.h>
 
 class QByteArray;
+class QString;
 
+/* Gzip compression support functions
+ * https://www.ietf.org/rfc/rfc1952.txt
+ */
 namespace atools {
 namespace zip {
+
+bool isGzipCompressed(const QString& filename);
+bool isGzipCompressed(const QByteArray& bytes);
 
 /**
  * @brief Compresses the given buffer using the standard GZIP algorithm

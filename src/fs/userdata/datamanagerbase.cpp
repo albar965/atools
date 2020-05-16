@@ -92,6 +92,21 @@ void DataManagerBase::dropSchema()
   transaction.commit();
 }
 
+bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType)
+{
+  if(!db->record(tableName).contains(colName))
+  {
+    qDebug() << Q_FUNC_INFO << colName << colType;
+
+    SqlTransaction transaction(db);
+    // Add missing column
+    db->exec("alter table " + tableName + " add column " + colName + " " + colType);
+    transaction.commit();
+    return true;
+  }
+  return false;
+}
+
 void DataManagerBase::backup()
 {
   qDebug() << Q_FUNC_INFO << tableName << backupFilename;

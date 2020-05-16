@@ -70,6 +70,21 @@ public:
    */
   void saveLnm(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
+  /* Same as above but returns the LNMPLN in a string */
+  QString saveLnmStr(const Flightplan& plan);
+
+  /* Same as above but returns the LNMPLN in a Gzip compressed byte array */
+  QByteArray saveLnmGz(const Flightplan& plan);
+
+  /* Load LNMPLN from file */
+  void loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename);
+
+  /* Load LNMPLN from string */
+  void loadLnmStr(atools::fs::pln::Flightplan& plan, const QString& string);
+
+  /* Load LNMPLN from Gzip compressed byte array */
+  void loadLnmGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes);
+
   /* FSX/P3D XML format */
   void savePln(const atools::fs::pln::Flightplan& plan, const QString& file);
 
@@ -93,6 +108,14 @@ public:
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const atools::geo::LineString& track,
                const QVector<quint32>& timestamps, int cruiseAltFt);
+
+  /* Same as above but returns the file in a string */
+  QString saveGpxStr(const atools::fs::pln::Flightplan& plan, const atools::geo::LineString& track,
+                     const QVector<quint32>& timestamps, int cruiseAltFt);
+
+  /* Same as above but returns the file in a Gzip compressed byte array */
+  QByteArray saveGpxGz(const atools::fs::pln::Flightplan& plan, const atools::geo::LineString& track,
+                       const QVector<quint32>& timestamps, int cruiseAltFt);
 
   /* Majestic Dash 400 binary format */
   void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& filename);
@@ -133,9 +156,12 @@ public:
 private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
+  void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
+  void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
+                       const QVector<quint32>& timestamps, int cruiseAltFt);
+  void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
 
   /* Load specific formats after content detection */
-  void loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFs9(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFlp(atools::fs::pln::Flightplan& plan, const QString& filename);
@@ -196,6 +222,7 @@ private:
   void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);
 
   QString errorMsg;
+
 };
 
 } // namespace pln

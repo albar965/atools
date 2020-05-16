@@ -26,6 +26,7 @@
 #include "fs/util/coordinates.h"
 #include "fs/pln/flightplan.h"
 #include "util/xmlstream.h"
+#include "zip/gzip.h"
 
 #include <QBitArray>
 #include <QDataStream>
@@ -888,185 +889,203 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
   }
 }
 
+void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
+{
+  plan.entries.clear();
+  atools::util::XmlStream xmlStream(string);
+  loadLnmInternal(plan, xmlStream);
+}
+
+void FlightplanIO::loadLnmGz(Flightplan& plan, const QByteArray& bytes)
+{
+  QByteArray uncompressed;
+  atools::zip::gzipDecompress(bytes, uncompressed);
+
+  plan.entries.clear();
+  atools::util::XmlStream xmlStream((QString(uncompressed)));
+  loadLnmInternal(plan, xmlStream);
+}
+
 void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename)
 {
-  qDebug() << Q_FUNC_INFO << filename;
-
   QFile xmlFile(filename);
-
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
     atools::util::XmlStream xmlStream(&xmlFile);
-    QXmlStreamReader& reader = xmlStream.getReader();
-
-    QList<FlightplanEntry> alternates, waypoints;
-
-    xmlStream.readUntilElement("LittleNavmap");
-    xmlStream.readUntilElement("Flightplan");
-
-    // ==================================================================================
-    // Read all elements - order does not matter
-    // Additional unknown elements are ignored and a warning is logged
-
-    while(xmlStream.readNextStartElement())
-    {
-      // Read data from header =========================================
-      if(reader.name() == "Header")
-      {
-        while(xmlStream.readNextStartElement())
-        {
-          if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
-             reader.name() == "ProgramVersion")
-          {
-            // Skip these elements without warning
-            xmlStream.skipCurrentElement();
-            continue;
-          }
-
-          if(reader.name() == "FlightplanType")
-            plan.flightplanType = stringFlightplanType(reader.readElementText());
-          else if(reader.name() == "CruisingAlt")
-            plan.cruisingAlt = reader.readElementText().toInt();
-          else
-            xmlStream.skipCurrentElement(true /* warn */);
-        }
-      }
-      // Simulator and navdata type and cycle =========================================
-      else if(reader.name() == "SimData")
-      {
-        insertPropertyIf(plan, SIMDATA, reader.readElementText());
-        insertPropertyIf(plan, SIMDATACYCLE, reader.attributes().value("Cycle").toString());
-      }
-      else if(reader.name() == "NavData")
-      {
-        insertPropertyIf(plan, NAVDATA, reader.readElementText());
-        insertPropertyIf(plan, NAVDATACYCLE, reader.attributes().value("Cycle").toString());
-      }
-      // Used aircraft performance =========================================
-      else if(reader.name() == "AircraftPerformance")
-      {
-        while(xmlStream.readNextStartElement())
-        {
-          if(reader.name() == "FilePath")
-            insertPropertyIf(plan, AIRCRAFT_PERF_FILE, reader.readElementText());
-          else if(reader.name() == "Type")
-            insertPropertyIf(plan, AIRCRAFT_PERF_TYPE, reader.readElementText());
-          else if(reader.name() == "Name")
-            insertPropertyIf(plan, AIRCRAFT_PERF_NAME, reader.readElementText());
-          else
-            xmlStream.skipCurrentElement(true /* warn */);
-        }
-      }
-      // Alternate airports list =========================================
-      else if(reader.name() == "Alternates")
-      {
-        readWaypointsLnm(xmlStream, alternates, "Alternate");
-        QStringList idents;
-        for(FlightplanEntry& entry : alternates)
-        {
-          entry.setFlag(atools::fs::pln::entry::ALTERNATE);
-          if(!entry.getIdent().isEmpty())
-            idents.append(entry.getIdent());
-
-          if(!idents.isEmpty())
-            plan.properties.insert(ALTERNATES, idents.join('#'));
-        }
-      }
-      // Departure position (gate, etc.) =========================================
-      else if(reader.name() == "Departure")
-      {
-        while(xmlStream.readNextStartElement())
-        {
-          if(reader.name() == "Start")
-            plan.departureParkingName = reader.readElementText();
-          else if(reader.name() == "Pos")
-            plan.departurePos = readPosLnm(reader);
-          else
-            xmlStream.skipCurrentElement(true /* warn */);
-        }
-      }
-      // Procedures =========================================
-      else if(reader.name() == "Procedures")
-      {
-        while(xmlStream.readNextStartElement())
-        {
-          if(reader.name() == "SID")
-          {
-            while(xmlStream.readNextStartElement())
-            {
-              if(reader.name() == "Name")
-                insertPropertyIf(plan, SIDAPPR, reader.readElementText());
-              else if(reader.name() == "Runway")
-                insertPropertyIf(plan, SIDAPPRRW, reader.readElementText());
-              else if(reader.name() == "Transition")
-                insertPropertyIf(plan, SIDTRANS, reader.readElementText());
-              else
-                xmlStream.skipCurrentElement(true /* warn */);
-            }
-          }
-          else if(reader.name() == "STAR")
-          {
-            while(xmlStream.readNextStartElement())
-            {
-              if(reader.name() == "Name")
-                insertPropertyIf(plan, STAR, reader.readElementText());
-              else if(reader.name() == "Runway")
-                insertPropertyIf(plan, STARRW, reader.readElementText());
-              else if(reader.name() == "Transition")
-                insertPropertyIf(plan, STARTRANS, reader.readElementText());
-              else
-                xmlStream.skipCurrentElement(true /* warn */);
-            }
-          }
-          else if(reader.name() == "Approach")
-          {
-            while(xmlStream.readNextStartElement())
-            {
-              if(reader.name() == "Name")
-                insertPropertyIf(plan, APPROACH, reader.readElementText());
-              else if(reader.name() == "ARINC")
-                insertPropertyIf(plan, APPROACH_ARINC, reader.readElementText());
-              else if(reader.name() == "Runway")
-                insertPropertyIf(plan, APPROACHRW, reader.readElementText());
-              else if(reader.name() == "Type")
-                insertPropertyIf(plan, APPROACHTYPE, reader.readElementText());
-              else if(reader.name() == "Suffix")
-                insertPropertyIf(plan, APPROACHSUFFIX, reader.readElementText());
-              // Transition ========================================
-              else if(reader.name() == "Transition")
-                insertPropertyIf(plan, TRANSITION, reader.readElementText());
-              else if(reader.name() == "TransitionType")
-                insertPropertyIf(plan, TRANSITIONTYPE, reader.readElementText());
-              // Custom approach data ========================================
-              else if(reader.name() == "CustomDistance")
-                insertPropertyIf(plan, APPROACH_CUSTOM_DISTANCE, reader.readElementText());
-              else if(reader.name() == "CustomAltitude")
-                insertPropertyIf(plan, APPROACH_CUSTOM_ALTITUDE, reader.readElementText());
-              else
-                xmlStream.skipCurrentElement(true /* warn */);
-            }
-          }
-          else
-            xmlStream.skipCurrentElement(true /* warn */);
-        }
-      }
-      else if(reader.name() == "Waypoints")
-        readWaypointsLnm(xmlStream, waypoints, "Waypoint");
-      else
-        xmlStream.skipCurrentElement(true /* warn */);
-    }
-
+    loadLnmInternal(plan, xmlStream);
     xmlFile.close();
-
-    plan.entries.append(waypoints);
-    adjustDepartureAndDestination(plan);
-
-    if(!plan.departurePos.isValid())
-      plan.departurePos = waypoints.first().getPosition();
   }
   else
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+}
+
+void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
+{
+  QXmlStreamReader& reader = xmlStream.getReader();
+
+  QList<FlightplanEntry> alternates, waypoints;
+
+  xmlStream.readUntilElement("LittleNavmap");
+  xmlStream.readUntilElement("Flightplan");
+
+  // ==================================================================================
+  // Read all elements - order does not matter
+  // Additional unknown elements are ignored and a warning is logged
+
+  while(xmlStream.readNextStartElement())
+  {
+    // Read data from header =========================================
+    if(reader.name() == "Header")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
+           reader.name() == "ProgramVersion")
+        {
+          // Skip these elements without warning
+          xmlStream.skipCurrentElement();
+          continue;
+        }
+
+        if(reader.name() == "FlightplanType")
+          plan.flightplanType = stringFlightplanType(reader.readElementText());
+        else if(reader.name() == "CruisingAlt")
+          plan.cruisingAlt = reader.readElementText().toInt();
+        else
+          xmlStream.skipCurrentElement(true /* warn */);
+      }
+    }
+    // Simulator and navdata type and cycle =========================================
+    else if(reader.name() == "SimData")
+    {
+      insertPropertyIf(plan, SIMDATA, reader.readElementText());
+      insertPropertyIf(plan, SIMDATACYCLE, reader.attributes().value("Cycle").toString());
+    }
+    else if(reader.name() == "NavData")
+    {
+      insertPropertyIf(plan, NAVDATA, reader.readElementText());
+      insertPropertyIf(plan, NAVDATACYCLE, reader.attributes().value("Cycle").toString());
+    }
+    // Used aircraft performance =========================================
+    else if(reader.name() == "AircraftPerformance")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "FilePath")
+          insertPropertyIf(plan, AIRCRAFT_PERF_FILE, reader.readElementText());
+        else if(reader.name() == "Type")
+          insertPropertyIf(plan, AIRCRAFT_PERF_TYPE, reader.readElementText());
+        else if(reader.name() == "Name")
+          insertPropertyIf(plan, AIRCRAFT_PERF_NAME, reader.readElementText());
+        else
+          xmlStream.skipCurrentElement(true /* warn */);
+      }
+    }
+    // Alternate airports list =========================================
+    else if(reader.name() == "Alternates")
+    {
+      readWaypointsLnm(xmlStream, alternates, "Alternate");
+      QStringList idents;
+      for(FlightplanEntry& entry : alternates)
+      {
+        entry.setFlag(atools::fs::pln::entry::ALTERNATE);
+        if(!entry.getIdent().isEmpty())
+          idents.append(entry.getIdent());
+
+        if(!idents.isEmpty())
+          plan.properties.insert(ALTERNATES, idents.join('#'));
+      }
+    }
+    // Departure position (gate, etc.) =========================================
+    else if(reader.name() == "Departure")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "Start")
+          plan.departureParkingName = reader.readElementText();
+        else if(reader.name() == "Pos")
+          plan.departurePos = readPosLnm(reader);
+        else
+          xmlStream.skipCurrentElement(true /* warn */);
+      }
+    }
+    // Procedures =========================================
+    else if(reader.name() == "Procedures")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "SID")
+        {
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "Name")
+              insertPropertyIf(plan, SIDAPPR, reader.readElementText());
+            else if(reader.name() == "Runway")
+              insertPropertyIf(plan, SIDAPPRRW, reader.readElementText());
+            else if(reader.name() == "Transition")
+              insertPropertyIf(plan, SIDTRANS, reader.readElementText());
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
+          }
+        }
+        else if(reader.name() == "STAR")
+        {
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "Name")
+              insertPropertyIf(plan, STAR, reader.readElementText());
+            else if(reader.name() == "Runway")
+              insertPropertyIf(plan, STARRW, reader.readElementText());
+            else if(reader.name() == "Transition")
+              insertPropertyIf(plan, STARTRANS, reader.readElementText());
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
+          }
+        }
+        else if(reader.name() == "Approach")
+        {
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "Name")
+              insertPropertyIf(plan, APPROACH, reader.readElementText());
+            else if(reader.name() == "ARINC")
+              insertPropertyIf(plan, APPROACH_ARINC, reader.readElementText());
+            else if(reader.name() == "Runway")
+              insertPropertyIf(plan, APPROACHRW, reader.readElementText());
+            else if(reader.name() == "Type")
+              insertPropertyIf(plan, APPROACHTYPE, reader.readElementText());
+            else if(reader.name() == "Suffix")
+              insertPropertyIf(plan, APPROACHSUFFIX, reader.readElementText());
+            // Transition ========================================
+            else if(reader.name() == "Transition")
+              insertPropertyIf(plan, TRANSITION, reader.readElementText());
+            else if(reader.name() == "TransitionType")
+              insertPropertyIf(plan, TRANSITIONTYPE, reader.readElementText());
+            // Custom approach data ========================================
+            else if(reader.name() == "CustomDistance")
+              insertPropertyIf(plan, APPROACH_CUSTOM_DISTANCE, reader.readElementText());
+            else if(reader.name() == "CustomAltitude")
+              insertPropertyIf(plan, APPROACH_CUSTOM_ALTITUDE, reader.readElementText());
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
+          }
+        }
+        else
+          xmlStream.skipCurrentElement(true /* warn */);
+      }
+    }
+    else if(reader.name() == "Waypoints")
+      readWaypointsLnm(xmlStream, waypoints, "Waypoint");
+    else
+      xmlStream.skipCurrentElement(true /* warn */);
+  }
+
+  plan.entries.append(waypoints);
+  adjustDepartureAndDestination(plan);
+
+  if(!plan.departurePos.isValid())
+    plan.departurePos = waypoints.first().getPosition();
 }
 
 void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename)
@@ -1395,172 +1414,190 @@ void FlightplanIO::writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEn
   writer.writeEndElement(); // elementName
 }
 
+QByteArray FlightplanIO::saveLnmGz(const Flightplan& plan)
+{
+  QByteArray retval;
+  atools::zip::gzipCompress(saveLnmStr(plan).toUtf8(), retval);
+  return retval;
+}
+
+QString FlightplanIO::saveLnmStr(const Flightplan& plan)
+{
+  QString lnmString;
+  QXmlStreamWriter writer(&lnmString);
+  saveLnmInternal(writer, plan);
+  return lnmString;
+}
+
 void FlightplanIO::saveLnm(const Flightplan& plan, const QString& filename)
 {
   QFile xmlFile(filename);
   if(xmlFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
-    // Write XML to string first ===================
     QXmlStreamWriter writer(&xmlFile);
-    writer.setCodec("UTF-8");
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(2);
-
-    writer.writeStartDocument("1.0");
-    writer.writeStartElement("LittleNavmap");
-    writer.writeStartElement("Flightplan");
-
-    // Save header and metadata =======================================================
-    writer.writeStartElement("Header");
-    writeElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
-    writeElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
-    writeElementIf(writer, "Comment", plan.comment);
-    writeElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
-    writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
-    writeElementIf(writer, "ProgramName", QCoreApplication::applicationName());
-    writeElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
-    writer.writeEndElement(); // Header
-
-    // Nav and sim metadata =======================================================
-    QString cycle = plan.properties.value(SIMDATACYCLE);
-    QString data = plan.properties.value(SIMDATA);
-    if(!data.isEmpty())
-    {
-      writer.writeStartElement("SimData");
-      if(!cycle.isEmpty())
-        writer.writeAttribute("Cycle", plan.properties.value(SIMDATACYCLE));
-      writer.writeCharacters(data);
-      writer.writeEndElement(); // SimData
-    }
-    cycle = plan.properties.value(NAVDATACYCLE);
-    data = plan.properties.value(NAVDATA);
-    if(!data.isEmpty())
-    {
-      writer.writeStartElement("NavData");
-      if(!cycle.isEmpty())
-        writer.writeAttribute("Cycle", plan.properties.value(NAVDATACYCLE));
-      writer.writeCharacters(data);
-      writer.writeEndElement(); // NavData
-    }
-
-    // Aircraft performance =======================================================
-    if(!plan.properties.value(AIRCRAFT_PERF_FILE).isEmpty() || !plan.properties.value(AIRCRAFT_PERF_TYPE).isEmpty() ||
-       !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
-    {
-      writer.writeStartElement("AircraftPerformance");
-      writeElementIf(writer, "FilePath", plan.properties.value(AIRCRAFT_PERF_FILE));
-      writeElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
-      writeElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
-      writer.writeEndElement(); // AircraftPerformance
-    }
-
-    // Departure name and position =======================================================
-    if(plan.departurePos.isValid() || !plan.departureParkingName.isEmpty())
-    {
-      writer.writeStartElement("Departure");
-      writeElementPosIf(writer, plan.departurePos);
-      writeElementIf(writer, "Start", plan.departureParkingName);
-      writer.writeEndElement(); // Departure
-    }
-
-    // Procedures =======================================================
-    if(!plan.properties.value(SIDAPPR).isEmpty() || !plan.properties.value(STAR).isEmpty() ||
-       !plan.properties.value(APPROACH).isEmpty())
-    {
-      writer.writeStartElement("Procedures");
-      if(!plan.properties.value(SIDAPPR).isEmpty())
-      {
-        writer.writeStartElement("SID");
-        writeElementIf(writer, "Name", plan.properties.value(SIDAPPR));
-        writeElementIf(writer, "Runway", plan.properties.value(SIDAPPRRW));
-        writeElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
-        writer.writeEndElement(); // SID
-      }
-
-      if(!plan.properties.value(STAR).isEmpty())
-      {
-        writer.writeStartElement("STAR");
-        writeElementIf(writer, "Name", plan.properties.value(STAR));
-        writeElementIf(writer, "Runway", plan.properties.value(STARRW));
-        writeElementIf(writer, "Transition", plan.properties.value(STARTRANS));
-        writer.writeEndElement(); // STAR
-      }
-
-      if(!plan.properties.value(APPROACH).isEmpty())
-      {
-        writer.writeStartElement("Approach");
-        writeElementIf(writer, "Name", plan.properties.value(APPROACH));
-        writeElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
-        writeElementIf(writer, "Runway", plan.properties.value(APPROACHRW));
-        writeElementIf(writer, "Type", plan.properties.value(APPROACHTYPE));
-        writeElementIf(writer, "Suffix", plan.properties.value(APPROACHSUFFIX));
-
-        // Transition =============================================
-        writeElementIf(writer, "Transition", plan.properties.value(TRANSITION));
-        writeElementIf(writer, "TransitionType", plan.properties.value(TRANSITIONTYPE));
-
-        // Custom approach data =============================================
-        writeElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
-        writeElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
-        writer.writeEndElement(); // Approach
-      }
-      writer.writeEndElement(); // Procedures
-    }
-
-    // Alternates =======================================================
-
-    // First collect all alternates to check if there are any
-    QVector<const FlightplanEntry *> alternates;
-    for(const FlightplanEntry& entry : plan.entries)
-    {
-      if(entry.getFlags() & entry::ALTERNATE)
-        alternates.append(&entry);
-    }
-
-    // Collect alternates from the properties list
-    QStringList alternateIdents = plan.properties.value(ALTERNATES).split('#');
-    alternateIdents.removeAll(QString());
-    if(!alternates.isEmpty() || !alternateIdents.isEmpty())
-    {
-      writer.writeStartElement("Alternates");
-
-      if(!alternates.isEmpty())
-      {
-        // Write alternates with full information
-        for(const FlightplanEntry *entry : alternates)
-          writeWaypointLnm(writer, *entry, "Alternate");
-      }
-      else
-      {
-        for(const QString& ident: alternateIdents)
-        {
-          // Write alternates with ident only
-          writer.writeStartElement("Alternate");
-          writeElementIf(writer, "Ident", ident);
-          writer.writeEndElement(); // Alternate
-        }
-      }
-      writer.writeEndElement(); // Alternates
-    }
-
-    // Waypoints =======================================================
-    writer.writeStartElement("Waypoints");
-    for(const FlightplanEntry& entry : plan.entries)
-    {
-      // Write all as waypoints except procedures and alternates
-      if(!entry.isNoSave())
-        writeWaypointLnm(writer, entry, "Waypoint");
-    }
-    writer.writeEndElement(); // Waypoints
-
-    writer.writeEndElement(); // Flightplan
-    writer.writeEndElement(); // LittleNavmap
-    writer.writeEndDocument();
-
+    saveLnmInternal(writer, plan);
     xmlFile.close();
   }
   else
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
+}
+
+void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan)
+{
+  writer.setCodec("UTF-8");
+  writer.setAutoFormatting(true);
+  writer.setAutoFormattingIndent(2);
+
+  writer.writeStartDocument("1.0");
+  writer.writeStartElement("LittleNavmap");
+  writer.writeStartElement("Flightplan");
+
+  // Save header and metadata =======================================================
+  writer.writeStartElement("Header");
+  writeElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
+  writeElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
+  writeElementIf(writer, "Comment", plan.comment);
+  writeElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+  writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
+  writeElementIf(writer, "ProgramName", QCoreApplication::applicationName());
+  writeElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
+  writer.writeEndElement(); // Header
+
+  // Nav and sim metadata =======================================================
+  QString cycle = plan.properties.value(SIMDATACYCLE);
+  QString data = plan.properties.value(SIMDATA);
+  if(!data.isEmpty())
+  {
+    writer.writeStartElement("SimData");
+    if(!cycle.isEmpty())
+      writer.writeAttribute("Cycle", plan.properties.value(SIMDATACYCLE));
+    writer.writeCharacters(data);
+    writer.writeEndElement(); // SimData
+  }
+  cycle = plan.properties.value(NAVDATACYCLE);
+  data = plan.properties.value(NAVDATA);
+  if(!data.isEmpty())
+  {
+    writer.writeStartElement("NavData");
+    if(!cycle.isEmpty())
+      writer.writeAttribute("Cycle", plan.properties.value(NAVDATACYCLE));
+    writer.writeCharacters(data);
+    writer.writeEndElement(); // NavData
+  }
+
+  // Aircraft performance =======================================================
+  if(!plan.properties.value(AIRCRAFT_PERF_FILE).isEmpty() || !plan.properties.value(AIRCRAFT_PERF_TYPE).isEmpty() ||
+     !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
+  {
+    writer.writeStartElement("AircraftPerformance");
+    writeElementIf(writer, "FilePath", plan.properties.value(AIRCRAFT_PERF_FILE));
+    writeElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
+    writeElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
+    writer.writeEndElement(); // AircraftPerformance
+  }
+
+  // Departure name and position =======================================================
+  if(plan.departurePos.isValid() || !plan.departureParkingName.isEmpty())
+  {
+    writer.writeStartElement("Departure");
+    writeElementPosIf(writer, plan.departurePos);
+    writeElementIf(writer, "Start", plan.departureParkingName);
+    writer.writeEndElement(); // Departure
+  }
+
+  // Procedures =======================================================
+  if(!plan.properties.value(SIDAPPR).isEmpty() || !plan.properties.value(STAR).isEmpty() ||
+     !plan.properties.value(APPROACH).isEmpty())
+  {
+    writer.writeStartElement("Procedures");
+    if(!plan.properties.value(SIDAPPR).isEmpty())
+    {
+      writer.writeStartElement("SID");
+      writeElementIf(writer, "Name", plan.properties.value(SIDAPPR));
+      writeElementIf(writer, "Runway", plan.properties.value(SIDAPPRRW));
+      writeElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
+      writer.writeEndElement(); // SID
+    }
+
+    if(!plan.properties.value(STAR).isEmpty())
+    {
+      writer.writeStartElement("STAR");
+      writeElementIf(writer, "Name", plan.properties.value(STAR));
+      writeElementIf(writer, "Runway", plan.properties.value(STARRW));
+      writeElementIf(writer, "Transition", plan.properties.value(STARTRANS));
+      writer.writeEndElement(); // STAR
+    }
+
+    if(!plan.properties.value(APPROACH).isEmpty())
+    {
+      writer.writeStartElement("Approach");
+      writeElementIf(writer, "Name", plan.properties.value(APPROACH));
+      writeElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
+      writeElementIf(writer, "Runway", plan.properties.value(APPROACHRW));
+      writeElementIf(writer, "Type", plan.properties.value(APPROACHTYPE));
+      writeElementIf(writer, "Suffix", plan.properties.value(APPROACHSUFFIX));
+
+      // Transition =============================================
+      writeElementIf(writer, "Transition", plan.properties.value(TRANSITION));
+      writeElementIf(writer, "TransitionType", plan.properties.value(TRANSITIONTYPE));
+
+      // Custom approach data =============================================
+      writeElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
+      writeElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
+      writer.writeEndElement(); // Approach
+    }
+    writer.writeEndElement(); // Procedures
+  }
+
+  // Alternates =======================================================
+
+  // First collect all alternates to check if there are any
+  QVector<const FlightplanEntry *> alternates;
+  for(const FlightplanEntry& entry : plan.entries)
+  {
+    if(entry.getFlags() & entry::ALTERNATE)
+      alternates.append(&entry);
+  }
+
+  // Collect alternates from the properties list
+  QStringList alternateIdents = plan.properties.value(ALTERNATES).split('#');
+  alternateIdents.removeAll(QString());
+  if(!alternates.isEmpty() || !alternateIdents.isEmpty())
+  {
+    writer.writeStartElement("Alternates");
+
+    if(!alternates.isEmpty())
+    {
+      // Write alternates with full information
+      for(const FlightplanEntry *entry : alternates)
+        writeWaypointLnm(writer, *entry, "Alternate");
+    }
+    else
+    {
+      for(const QString& ident: alternateIdents)
+      {
+        // Write alternates with ident only
+        writer.writeStartElement("Alternate");
+        writeElementIf(writer, "Ident", ident);
+        writer.writeEndElement(); // Alternate
+      }
+    }
+    writer.writeEndElement(); // Alternates
+  }
+
+  // Waypoints =======================================================
+  writer.writeStartElement("Waypoints");
+  for(const FlightplanEntry& entry : plan.entries)
+  {
+    // Write all as waypoints except procedures and alternates
+    if(!entry.isNoSave())
+      writeWaypointLnm(writer, entry, "Waypoint");
+  }
+  writer.writeEndElement(); // Waypoints
+
+  writer.writeEndElement(); // Flightplan
+  writer.writeEndElement(); // LittleNavmap
+  writer.writeEndDocument();
 }
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
@@ -2469,134 +2506,157 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
 }
 
+QString FlightplanIO::saveGpxStr(const Flightplan& plan, const geo::LineString& track,
+                                 const QVector<quint32>& timestamps,
+                                 int cruiseAltFt)
+{
+  QString gpxString;
+  QXmlStreamWriter writer(&gpxString);
+  saveGpxInternal(plan, writer, track, timestamps, cruiseAltFt);
+  return gpxString;
+}
+
+QByteArray FlightplanIO::saveGpxGz(const Flightplan& plan, const geo::LineString& track,
+                                   const QVector<quint32>& timestamps, int cruiseAltFt)
+{
+  QByteArray retval;
+  atools::zip::gzipCompress(saveGpxStr(plan, track, timestamps, cruiseAltFt).toUtf8(), retval);
+  return retval;
+}
+
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename,
                            const geo::LineString& track,
                            const QVector<quint32>& timestamps, int cruiseAltFt)
 {
   QFile gpxFile(filename);
-
   if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&gpxFile);
-    writer.setCodec("UTF-8");
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(2);
-    writer.writeStartDocument("1.0");
-
-    // <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
-    // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
-    writer.writeStartElement("gpx");
-    // writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
-    // writer.writeAttribute("version", "1.1");
-    writer.writeAttribute("creator", "Little Navmap");
-    // writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-    // writer.writeAttribute("xsi:schemaLocation",
-    // "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
-
-    // writer.writeComment(programFileInfo());
-
-    // <metadata>
-    // <link href="http://www.garmin.com">
-    // <text>Garmin International</text>
-    // </link>
-    // <time>2009-10-17T22:58:43Z</time>
-    // </metadata>
-    writer.writeStartElement("metadata");
-    writer.writeStartElement("link");
-    writer.writeAttribute("href", "https://www.littlenavmap.org");
-    writer.writeTextElement("text", atools::programFileInfo());
-    writer.writeEndElement(); // link
-    writer.writeEndElement(); // metadata
-
-    writer.writeStartElement("rte");
-
-    QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
-                    arg(plan.departNameOrIdent()).arg(plan.departureIdent).
-                    arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
-                    arg(plan.getCruisingAltitude()).
-                    arg(flightplanTypeToString(plan.flightplanType));
-
-    writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
-    writer.writeTextElement("desc", descr);
-
-    // Write route ========================================================
-    for(int i = 0; i < plan.entries.size(); i++)
-    {
-      const FlightplanEntry& entry = plan.entries.at(i);
-      // <rtept lat="52.0" lon="13.5">
-      // <ele>33.0</ele>
-      // <time>2011-12-13T23:59:59Z</time>
-      // <name>rtept 1</name>
-      // </rtept>
-
-      if(i > 0)
-      {
-        // Skip equal points from procedures
-        const FlightplanEntry& prev = plan.entries.at(i - 1);
-        if(entry.getIdent() == prev.getIdent() &&
-           entry.getRegion() == prev.getRegion() &&
-           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M)
-           )
-          continue;
-      }
-
-      writer.writeStartElement("rtept");
-      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
-      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
-
-      if(i > 0 && i < plan.entries.size() - 1)
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
-      else
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
-
-      writer.writeTextElement("name", entry.getIdent());
-      writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
-
-      writer.writeEndElement(); // rtept
-    }
-
-    writer.writeEndElement(); // rte
-
-    // Write track ========================================================
-    if(!track.isEmpty())
-    {
-      writer.writeStartElement("trk");
-      writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
-      writer.writeTextElement("desc", descr);
-
-      writer.writeStartElement("trkseg");
-
-      for(int i = 0; i < track.size(); ++i)
-      {
-        const Pos& pos = track.at(i);
-        writer.writeStartElement("trkpt");
-
-        writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
-        writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
-        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
-
-        if(!timestamps.isEmpty())
-        {
-          // (UTC/Zulu) in ISO 8601 format: yyyy-mm-ddThh:mm:ssZ
-          // <time>2011-01-16T23:59:01Z</time>
-          writer.writeTextElement("time", QDateTime::fromTime_t(timestamps.at(i), Qt::UTC).
-                                  toString("yyyy-MM-ddTHH:mm:ssZ"));
-        }
-
-        writer.writeEndElement(); // trkpt
-      }
-      writer.writeEndElement(); // trkseg
-      writer.writeEndElement(); // trk
-    }
-
-    writer.writeEndElement(); // gpx
-    writer.writeEndDocument();
-
+    saveGpxInternal(plan, writer, track, timestamps, cruiseAltFt);
     gpxFile.close();
   }
   else
     throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
+}
+
+void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
+                                   const geo::LineString& track, const QVector<quint32>& timestamps, int cruiseAltFt)
+{
+  writer.setCodec("UTF-8");
+  writer.setAutoFormatting(true);
+  writer.setAutoFormattingIndent(2);
+  writer.writeStartDocument("1.0");
+
+  // <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
+  // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+  writer.writeStartElement("gpx");
+  // writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
+  // writer.writeAttribute("version", "1.1");
+  writer.writeAttribute("creator", "Little Navmap");
+  // writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+  // writer.writeAttribute("xsi:schemaLocation",
+  // "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+
+  // writer.writeComment(programFileInfo());
+
+  // <metadata>
+  // <link href="http://www.garmin.com">
+  // <text>Garmin International</text>
+  // </link>
+  // <time>2009-10-17T22:58:43Z</time>
+  // </metadata>
+  writer.writeStartElement("metadata");
+  writer.writeStartElement("link");
+  writer.writeAttribute("href", "https://www.littlenavmap.org");
+  writer.writeTextElement("text", atools::programFileInfo());
+  writer.writeEndElement(); // link
+  writer.writeEndElement(); // metadata
+
+  writer.writeStartElement("rte");
+
+  QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
+                  arg(plan.departNameOrIdent()).arg(plan.departureIdent).
+                  arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
+                  arg(plan.getCruisingAltitude()).
+                  arg(flightplanTypeToString(plan.flightplanType));
+
+  writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
+  writer.writeTextElement("desc", descr);
+
+  // Write route ========================================================
+  for(int i = 0; i < plan.entries.size(); i++)
+  {
+    const FlightplanEntry& entry = plan.entries.at(i);
+    // <rtept lat="52.0" lon="13.5">
+    // <ele>33.0</ele>
+    // <time>2011-12-13T23:59:59Z</time>
+    // <name>rtept 1</name>
+    // </rtept>
+
+    if(i > 0)
+    {
+      // Skip equal points from procedures
+      const FlightplanEntry& prev = plan.entries.at(i - 1);
+      if(entry.getIdent() == prev.getIdent() &&
+         entry.getRegion() == prev.getRegion() &&
+         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M)
+         )
+        continue;
+    }
+
+    writer.writeStartElement("rtept");
+    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
+    writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+
+    if(i > 0 && i < plan.entries.size() - 1)
+      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
+    else
+      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
+
+    writer.writeTextElement("name", entry.getIdent());
+    writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
+
+    writer.writeEndElement(); // rtept
+  }
+
+  writer.writeEndElement(); // rte
+
+  // Write track ========================================================
+  if(!track.isEmpty())
+  {
+    writer.writeStartElement("trk");
+    writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
+    writer.writeTextElement("desc", descr);
+
+    writer.writeStartElement("trkseg");
+
+    for(int i = 0; i < track.size(); ++i)
+    {
+      const Pos& pos = track.at(i);
+      writer.writeStartElement("trkpt");
+
+      writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
+      writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
+      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
+
+      if(!timestamps.isEmpty())
+      {
+        // (UTC/Zulu) in ISO 8601 format: yyyy-mm-ddThh:mm:ssZ
+        // <time>2011-01-16T23:59:01Z</time>
+        writer.writeTextElement("time", QDateTime::fromTime_t(timestamps.at(i), Qt::UTC).
+                                toString("yyyy-MM-ddTHH:mm:ssZ"));
+      }
+
+      writer.writeEndElement(); // trkpt
+    }
+    writer.writeEndElement(); // trkseg
+    writer.writeEndElement(); // trk
+  }
+
+  writer.writeEndElement(); // gpx
+  writer.writeEndDocument();
+
 }
 
 void FlightplanIO::saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file)

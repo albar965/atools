@@ -161,6 +161,10 @@ private:
     bool hasIds = false;
   };
 
+  /* Add column with given name and type to table if not already present.
+   * Returns true if table was changed. */
+  bool addColumnIf(const QString& colName, const QString& colType);
+
   /* Prints a warning of colummn does not exist */
   QString at(const QStringList& line, int index, bool nowarn = false);
 

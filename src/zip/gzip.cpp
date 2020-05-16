@@ -20,6 +20,7 @@
 #include "zip/gzip.h"
 
 #include <QByteArray>
+#include <QFile>
 
 #define GZIP_WINDOWS_BIT 15 + 16
 #define GZIP_CHUNK_SIZE 32 * 1024
@@ -212,6 +213,23 @@ bool gzipDecompress(const QByteArray& input, QByteArray& output)
   }
   else
     return true;
+}
+
+bool isGzipCompressed(const QString& filename)
+{
+  if(QFile::exists(filename))
+  {
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
+      return isGzipCompressed(file.read(10));
+  }
+
+  return false;
+}
+
+bool isGzipCompressed(const QByteArray& bytes)
+{
+  return bytes.size() >= 2 && bytes.at(0) == '\x1F' && bytes.at(1) == '\x8B';
 }
 
 } // namespace zip
