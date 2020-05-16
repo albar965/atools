@@ -185,13 +185,19 @@ void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& co
 
 void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
+  static const QLatin1Literal DEFAULT("default");
+
   if(logFunc != nullptr)
     logFunc(type, context, msg);
+
+  QString category = context.category;
+  if(category == DEFAULT)
+    category.clear();
 
   instance->logToCatChannels(instance->logConfig->getCatStream(type),
                              instance->logConfig->getStream(type),
                              qFormatLogMessage(type, context, msg),
-                             context.category);
+                             category);
 
   instance->checkAbortType(type, context, msg);
 }
