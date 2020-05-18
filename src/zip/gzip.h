@@ -31,6 +31,7 @@ class QString;
 namespace atools {
 namespace zip {
 
+/* true if input stream is prefixed with Gzip magic number */
 bool isGzipCompressed(const QString& filename);
 bool isGzipCompressed(const QByteArray& bytes);
 
@@ -42,6 +43,7 @@ bool isGzipCompressed(const QByteArray& bytes);
  * @return @c true if the compression was successful, @c false otherwise
  */
 bool gzipCompress(const QByteArray& input, QByteArray& output, int level = -1);
+QByteArray gzipCompress(const QByteArray& input, int level = -1);
 
 /**
  * @brief Decompresses the given buffer using the standard GZIP algorithm
@@ -50,6 +52,7 @@ bool gzipCompress(const QByteArray& input, QByteArray& output, int level = -1);
  * @return @c true if the decompression was successfull, @c false otherwise
  */
 bool gzipDecompress(const QByteArray& input, QByteArray& output);
+QByteArray gzipDecompress(const QByteArray& input);
 
 } // namespace zip
 } // namespace atools

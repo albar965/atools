@@ -184,13 +184,13 @@ bool gzipDecompress(const QByteArray& input, QByteArray& output)
         {
           case Z_NEED_DICT:
             ret = Z_DATA_ERROR;
+            inflateEnd(&strm);
+            return false;
+
           case Z_DATA_ERROR:
           case Z_MEM_ERROR:
           case Z_STREAM_ERROR:
-            // Clean-up
             inflateEnd(&strm);
-
-            // Return
             return false;
         }
 
@@ -230,6 +230,24 @@ bool isGzipCompressed(const QString& filename)
 bool isGzipCompressed(const QByteArray& bytes)
 {
   return bytes.size() >= 2 && bytes.at(0) == '\x1F' && bytes.at(1) == '\x8B';
+}
+
+QByteArray gzipCompress(const QByteArray& input, int level)
+{
+  QByteArray retval;
+  if(gzipCompress(input, retval, level))
+    return retval;
+  else
+    return QByteArray();
+}
+
+QByteArray gzipDecompress(const QByteArray& input)
+{
+  QByteArray retval;
+  if(gzipDecompress(input, retval))
+    return retval;
+  else
+    return QByteArray();
 }
 
 } // namespace zip
