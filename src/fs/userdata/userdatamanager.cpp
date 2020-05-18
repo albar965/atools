@@ -200,7 +200,7 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
         insertQuery.bindValue(":last_edit_timestamp", now.toString(Qt::ISODate));
 
       bool ok;
-      int visibleFrom = at(values, csv::VISIBLE_FROM, true /* no warning */).toInt(&ok);
+      int visibleFrom = atools::roundToInt(at(values, csv::VISIBLE_FROM, true /* no warning */).toFloat(&ok));
       if(visibleFrom > 0 && ok)
         insertQuery.bindValue(":visible_from", visibleFrom);
       else
@@ -387,7 +387,8 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setNumberPrecision(5);
 
     QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
-                       "0 as mag_var, tags, description, region, visible_from, last_edit_timestamp from " + tableName,
+                       "0 as mag_var, tags, description, region, cast(visible_from as integer) as visible_from, "
+                       "last_edit_timestamp from " + tableName,
                        db, ids, idColumnName);
 
     if(!endsWithEol && (flags & APPEND))
