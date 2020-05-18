@@ -32,7 +32,7 @@ create table logbook
 
   -- Flightplan **************************************
   flightplan_number varchar(100) collate nocase,      -- Flight number if available
-  flightplan_cruise_altitude double,                 -- Flight plan cruise altitude in feet
+  flightplan_cruise_altitude double,                  -- Flight plan cruise altitude in feet
 
   -- Files ******************************************
   flightplan_file varchar(1024) collate nocase,       -- Full path to flight plan file
@@ -42,7 +42,7 @@ create table logbook
   block_fuel double,                                  -- From aircraft performance - lbs
   trip_fuel double,                                   --  "
   used_fuel double,                                   --  "
-  is_jetfuel integer,                                  -- Calculated from aircraft fuel - 1 = yes
+  is_jetfuel integer,                                 -- Calculated from aircraft fuel - 1 = yes
   grossweight double,                                 -- Weight at takeoff - lbs
   distance double,                                    -- Flight plan distance in NM
   distance_flown double,                              -- Actual flown distance in NM
@@ -51,9 +51,9 @@ create table logbook
   departure_ident varchar(10) collate nocase,         -- Airport ICAO code
   departure_name varchar(200) collate nocase,         -- Airport name
   departure_runway varchar(10) collate nocase,        -- Runway if available
-  departure_lonx double,                             -- Coordinates if available and airport resolves
-  departure_laty double,                             -- "
-  departure_alt double,                              -- Elevation in feet
+  departure_lonx double,                              -- Coordinates if available and airport resolves
+  departure_laty double,                              -- "
+  departure_alt double,                               -- Elevation in feet
   departure_time varchar(100),                        -- Real world departure time in local time
   departure_time_sim varchar(100),                    -- Simulator departure time in UTC
 
@@ -61,18 +61,19 @@ create table logbook
   destination_ident varchar(10) collate nocase,       -- Same as above for destination
   destination_name varchar(200) collate nocase,       -- "
   destination_runway varchar(10) collate nocase,      -- "
-  destination_lonx double,                           -- "
-  destination_laty double,                           -- "
-  destination_alt  double,                           -- "
+  destination_lonx double,                            -- "
+  destination_laty double,                            -- "
+  destination_alt  double,                            -- "
   destination_time varchar(100),                      -- "
   destination_time_sim varchar(100),                  -- "
 
   route_string varchar(1024         ),               -- ICAO route string
   simulator varchar(50) collate nocase,              -- X-Plane 11, Prepar3D v4, etc.
   description varchar(2048) collate nocase           -- Free text by user
-  -- plan_geometry blob,                                 -- Flight plan preview - currently not used
-  -- trail_geometry blob                                 -- Flown trail - currently not used
-);
+  flightplan blob,                                   -- LNMPLN Gzipped XML file recorded on touchdown
+  aircraft_perf blob,                                -- LNMPERF Gzipped XML file recorded on touchdown
+  aircraft_trail blob                                -- Gzipped GPX aircraft trail file recorded on touchdown
+  );
 
 create index if not exists idx_logbook_aircraft_name on logbook(aircraft_name);
 create index if not exists idx_logbook_aircraft_type on logbook(aircraft_type);

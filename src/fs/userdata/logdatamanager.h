@@ -39,9 +39,11 @@ public:
   LogdataManager(atools::sql::SqlDatabase *sqlDb);
   virtual ~LogdataManager() override;
 
-  /* Import and export from a custom CSV format which covers all fields in the logbook table. */
+  /* Import from a custom CSV format which covers all fields in the logbook table. */
   int importCsv(const QString& filepath);
-  int exportCsv(const QString& filepath);
+
+  /* Import and export from a custom CSV format which covers all fields in the logbook table. */
+  int exportCsv(const QString& filepath, bool exportPlan, bool exportPerf, bool exportGpx);
 
   /* Import X-Plane logbook. Needs a function fetchAirport
    * that resolves airport ident to name and position. */
@@ -75,6 +77,12 @@ public:
 private:
   static void fixEmptyStrField(atools::sql::SqlRecord& rec, const QString& name);
   static void fixEmptyStrField(atools::sql::SqlQuery& query, const QString& name);
+
+  /* Convert Gzipped BLOB to text (file) */
+  static QString blobConversionFunction(const QVariant& value);
+
+  /* Generate empty column if disabled in export options */
+  static QString blobConversionFunctionEmpty(const QVariant&);
 
 };
 

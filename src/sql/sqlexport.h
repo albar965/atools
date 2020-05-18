@@ -103,14 +103,30 @@ public:
   /* Build a data row from the given SQL record */
   QString getResultSetRow(const SqlRecord& record) const;
 
-  /* Build a data row from the given QVariant list */
-  QString getResultSetRow(const QVariantList& values) const;
+  /* Build a data row from the given QVariant list.
+   *  cols is only needed if a conversion callback is used */
+  QString getResultSetRow(const QVariantList& values, const QStringList& cols = QStringList()) const;
 
   int getNumberPrecision() const;
 
   void setNumberPrecision(int value)
   {
     numberPrecision = value;
+  }
+
+  /* Conversion function which converts a variant from the database to a string suitable for CSV.
+   *  Special characters are escaped in the returned value */
+  typedef std::function<QString(const QVariant& value)> ConvertFuncType;
+
+  /* Add a conversion function which is applied to one column with the given name */
+  void addConversionFunc(const ConvertFuncType& value, const QString& col)
+  {
+    conversionFuncs[col] = value;
+  }
+
+  void clearConversionFuncs()
+  {
+    conversionFuncs.clear();
   }
 
 private:
@@ -124,6 +140,9 @@ private:
   QString nullValue = "";
 
   int numberPrecision = 6;
+
+  /* Maps column names to callback functions */
+  QHash<QString, ConvertFuncType> conversionFuncs;
 };
 
 // -----------------------------------------------------------

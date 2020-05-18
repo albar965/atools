@@ -53,13 +53,21 @@ QString SqlExport::getResultSetHeader(const QStringList& strings) const
 
 QString SqlExport::getResultSetRow(const SqlRecord& record) const
 {
+  // Column names are needed too if a conversion function is used
+  bool fillCols = !conversionFuncs.isEmpty();
+
   QVariantList values;
+  QStringList cols;
   for(int i = 0; i < record.count(); i++)
+  {
     values.append(record.value(i));
-  return getResultSetRow(values);
+    if(fillCols)
+      cols.append(record.fieldName(i));
+  }
+  return getResultSetRow(values, cols);
 }
 
-QString SqlExport::getResultSetRow(const QVariantList& values) const
+QString SqlExport::getResultSetRow(const QVariantList& values, const QStringList& cols) const
 {
   QString retval;
 
@@ -68,7 +76,11 @@ QString SqlExport::getResultSetRow(const QVariantList& values) const
     if(i > 0)
       retval += separator;
 
-    retval += printValue(values.at(i));
+    if(!cols.isEmpty() && conversionFuncs.contains(cols.at(i)))
+      // Invoke callback for the given column which is also the key in the map
+      retval += buildString(conversionFuncs.value(cols.at(i))(values.at(i)));
+    else
+      retval += printValue(values.at(i));
   }
   retval += printEndl();
   return retval;
