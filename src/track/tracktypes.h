@@ -95,6 +95,8 @@ struct Track
 
 typedef QVector<atools::track::Track> TrackVectorType;
 
+uint qHash(atools::track::TrackType type);
+
 QDebug operator<<(QDebug out, const atools::track::Track& record);
 
 } // namespace track

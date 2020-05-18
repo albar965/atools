@@ -22,6 +22,11 @@
 namespace atools {
 namespace track {
 
+uint qHash(atools::track::TrackType type)
+{
+  return static_cast<uint>(type);
+}
+
 QDebug operator<<(QDebug out, const Track& record)
 {
   QDebugStateSaver saver(out);
