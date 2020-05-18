@@ -128,19 +128,19 @@ public:
     return departureParkingName;
   }
 
-  const QString& getDepartureAiportName() const
+  const QString& getDepartureName() const
   {
-    return departureAiportName;
+    return departureName;
   }
 
-  const QString& getDestinationAiportName() const
+  const QString& getDestinationName() const
   {
-    return destinationAiportName;
+    return destinationName;
   }
 
-  void setDestinationAiportName(const QString& value)
+  void setDestinationName(const QString& value)
   {
-    destinationAiportName = value;
+    destinationName = value;
   }
 
   bool isEmpty() const
@@ -165,9 +165,9 @@ public:
     departureParkingName = value;
   }
 
-  void setDepartureAiportName(const QString& value)
+  void setDepartureName(const QString& value)
   {
-    departureAiportName = value;
+    departureName = value;
   }
 
   /*
@@ -239,6 +239,14 @@ public:
     lnmFormat = value;
   }
 
+  /* Create a default filename based on departure and destination names. Suffix includes dot.
+   *  Format is "Name (IDENT) to Name (IDENT)${extension}${suffix}" */
+  QString getFilenameLong(const QString& extension = QString(), const QString& suffix = ".lnmpln") const;
+
+  /* Create a default filename based on departure and destination idents. Suffix includes dot.
+   *  Format is "IDENT${sep}IDENT${suffix}" */
+  QString getFilenameShort(const QString& sep = "_", const QString& suffix = ".lnmpln") const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
@@ -246,13 +254,15 @@ private:
 
   const QString& departNameOrIdent() const
   {
-    return departureAiportName.isEmpty() ? departureIdent : departureAiportName;
+    return departureName.isEmpty() ? departureIdent : departureName;
   }
 
   const QString& destNameOrIdent() const
   {
-    return destinationAiportName.isEmpty() ? destinationIdent : destinationAiportName;
+    return destinationName.isEmpty() ? destinationIdent : destinationName;
   }
+
+  QString destinationAirportIdent() const;
 
   /* Limit altitude to this value */
   const int MAX_ALTITUDE = 80000;
@@ -263,7 +273,7 @@ private:
 
   int cruisingAlt;
   QString departureIdent, destinationIdent,
-          departureParkingName, departureAiportName, destinationAiportName, comment;
+          departureParkingName, departureName, destinationName, comment;
   atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
 
   bool lnmFormat = true;

@@ -24,8 +24,14 @@
 #include <QCoreApplication>
 
 class QSettings;
+class QXmlStreamWriter;
+class QXmlStreamReader;
 
 namespace atools {
+
+namespace util {
+class XmlStream;
+}
 
 namespace fs {
 namespace perf {
@@ -55,7 +61,14 @@ public:
   void load(const QString& filename);
 
   /* Save using the new XML format (>= LNM 2.6.X) */
-  void saveXml(const QString& filename);
+  void saveXml(const QString& filename) const;
+  QString saveXmlStr() const;
+  QByteArray saveXmlGz() const;
+
+  /* Load XML format from file, string or Gzip compressed bytes */
+  void loadXml(const QString& filename);
+  void loadXmlStr(const QString& string);
+  void loadXmlGz(const QByteArray& bytes);
 
   /* Save using the old INI format (<= LNM 2.4.5) */
   void saveIni(const QString& filename);
@@ -404,7 +417,9 @@ private:
   void readFromSettings(const QSettings& settings);
   void writeToSettings(QSettings& settings);
   void loadIniInternal(const QString& filename);
-  void loadXmlInternal(const QString& filename);
+
+  void loadXmlInternal(atools::util::XmlStream& xmlStream);
+  void saveXmlInternal(QXmlStreamWriter& writer) const;
 
   bool volume = false, jetFuel = false;
 

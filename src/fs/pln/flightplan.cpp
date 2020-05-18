@@ -49,8 +49,8 @@ Flightplan& Flightplan::operator=(const Flightplan& other)
   departureIdent = other.departureIdent;
   destinationIdent = other.destinationIdent;
   departureParkingName = other.departureParkingName;
-  departureAiportName = other.departureAiportName;
-  destinationAiportName = other.destinationAiportName;
+  departureName = other.departureName;
+  destinationName = other.destinationName;
   departurePos = other.departurePos;
   destinationPos = other.destinationPos;
   entries = other.entries;
@@ -90,8 +90,8 @@ void Flightplan::clear()
   departureIdent.clear();
   destinationIdent.clear();
   departureParkingName.clear();
-  departureAiportName.clear();
-  destinationAiportName.clear();
+  departureName.clear();
+  destinationName.clear();
   comment.clear();
 
   departurePos = Pos();
@@ -111,6 +111,67 @@ void Flightplan::setDeparturePosition(const geo::Pos& value, float altitude)
 {
   departurePos = value;
   departurePos.setAltitude(altitude);
+}
+
+QString Flightplan::getFilenameLong(const QString& extension, const QString& suffix) const
+{
+  QString filename;
+
+  if(isEmpty())
+    return tr("Empty Flightplan") + suffix;
+
+  if(getFlightplanType() == atools::fs::pln::IFR)
+    filename = "IFR ";
+  else if(getFlightplanType() == atools::fs::pln::VFR)
+    filename = "VFR ";
+
+  if(getDepartureName().isEmpty())
+    filename += getEntries().first().getIdent();
+  else
+    filename += getDepartureName() + " (" + getDepartureIdent() + ")";
+
+  filename += " to ";
+
+  if(getDestinationName().isEmpty())
+    filename += destinationAirportIdent();
+  else
+    filename += getDestinationName() + " (" + getDestinationIdent() + ")";
+
+  filename += extension;
+  filename += suffix;
+
+  // Remove characters that are note allowed in most filesystems
+  filename = atools::cleanFilename(filename);
+  return filename;
+}
+
+QString Flightplan::getFilenameShort(const QString& sep, const QString& suffix) const
+{
+  QString filename;
+
+  if(isEmpty())
+    return tr("Empty") + sep + tr("Plan") + suffix;
+
+  filename += getEntries().first().getIdent();
+  filename += sep;
+
+  filename += destinationAirportIdent();
+  filename += suffix;
+
+  // Remove characters that are note allowed in most filesystems
+  filename = atools::cleanFilename(filename);
+  return filename;
+}
+
+QString Flightplan::destinationAirportIdent() const
+{
+  for(int i = entries.size() - 1; i >= 0; i--)
+  {
+    if(!(entries.at(i).isNoSave()))
+      return entries.at(i).getIdent();
+  }
+
+  return tr("Unknown");
 }
 
 QDebug operator<<(QDebug out, const Flightplan& record)

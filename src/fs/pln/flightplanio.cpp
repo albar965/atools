@@ -742,7 +742,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
           plan.departureParkingName = value;
         else if(key == "departure_name")
           // departure_name=SUMBURGH
-          plan.departureAiportName = value;
+          plan.departureName = value;
         else if(key == "destination_id")
         {
           // destination_id=EISG, N54* 16.82', W008* 35.95', +000011.00
@@ -751,7 +751,7 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
         }
         else if(key == "destination_name")
           // destination_name=SLIGO
-          plan.destinationAiportName = value;
+          plan.destinationName = value;
         else if(key.startsWith("waypoint."))
         {
           FlightplanEntry entry;
@@ -865,6 +865,8 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
           entry.setIdent(reader.readElementText());
         else if(reader.name() == "Region")
           entry.setRegion(reader.readElementText());
+        else if(reader.name() == "Name")
+          entry.setName(reader.readElementText());
         else if(reader.name() == "Airway")
           entry.setAirway(reader.readElementText());
         else if(reader.name() == "Track")
@@ -898,12 +900,7 @@ void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
 
 void FlightplanIO::loadLnmGz(Flightplan& plan, const QByteArray& bytes)
 {
-  QByteArray uncompressed;
-  atools::zip::gzipDecompress(bytes, uncompressed);
-
-  plan.entries.clear();
-  atools::util::XmlStream xmlStream((QString(uncompressed)));
-  loadLnmInternal(plan, xmlStream);
+  loadLnmStr(plan, QString(atools::zip::gzipDecompress(bytes)));
 }
 
 void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename)
@@ -1154,9 +1151,9 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
       else if(name == "DeparturePosition")
         plan.departureParkingName = reader.readElementText();
       else if(name == "DepartureName")
-        plan.departureAiportName = reader.readElementText();
+        plan.departureName = reader.readElementText();
       else if(name == "DestinationName")
-        plan.destinationAiportName = reader.readElementText();
+        plan.destinationName = reader.readElementText();
       // else if(name == "AppVersion")
       // readAppVersion(plan, reader);
       else if(name == "ATCWaypoint")
@@ -1416,9 +1413,7 @@ void FlightplanIO::writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEn
 
 QByteArray FlightplanIO::saveLnmGz(const Flightplan& plan)
 {
-  QByteArray retval;
-  atools::zip::gzipCompress(saveLnmStr(plan).toUtf8(), retval);
-  return retval;
+  return atools::zip::gzipCompress(saveLnmStr(plan).toUtf8());
 }
 
 QString FlightplanIO::saveLnmStr(const Flightplan& plan)
@@ -3504,11 +3499,15 @@ void FlightplanIO::adjustDepartureAndDestination(atools::fs::pln::Flightplan& pl
   {
     if(plan.departureIdent.isEmpty())
       plan.departureIdent = plan.entries.first().getIdent();
+    if(plan.departureName.isEmpty())
+      plan.departureName = plan.entries.first().getName();
     if(!plan.departurePos.isValid())
       plan.departurePos = plan.entries.first().getPosition();
 
     if(plan.destinationIdent.isEmpty())
       plan.destinationIdent = plan.entries.last().getIdent();
+    if(plan.destinationName.isEmpty())
+      plan.destinationName = plan.entries.last().getName();
 
     if(!plan.destinationPos.isValid())
       plan.destinationPos = plan.entries.last().getPosition();
