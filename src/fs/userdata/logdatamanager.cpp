@@ -88,48 +88,50 @@ enum Index
   LAST_COL = AIRCRAFT_TRAIL
 };
 
+const static QString HEADER_LINE = "aircraftname,aircrafttype,aircraftregistration,flightplannumber,";
+const static QString HEADER_LINE2 = "aircraft_name,aircraft_type,aircraft_registration,flightplan_number,";
+
 /* Map index to column names. Needed to keep the export order independent of the column order in the table */
-const static QHash<int, QString> COL_MAP =
+const static QHash<int, std::pair<QString,QString>> COL_MAP =
 {
   // LOGBOOK_ID,- not in CSV    logbook_id
-  { AIRCRAFT_NAME,              "aircraft_name"},
-  { AIRCRAFT_TYPE,              "aircraft_type"},
-  { AIRCRAFT_REGISTRATION,      "aircraft_registration"},
-  { FLIGHTPLAN_NUMBER,          "flightplan_number"},
-  { FLIGHTPLAN_CRUISE_ALTITUDE, "flightplan_cruise_altitude"},
-  { FLIGHTPLAN_FILE,            "flightplan_file"},
-  { PERFORMANCE_FILE,           "performance_file"},
-  { BLOCK_FUEL,                 "block_fuel"},
-  { TRIP_FUEL,                  "trip_fuel"},
-  { USED_FUEL,                  "used_fuel"},
-  { IS_JETFUEL,                 "is_jetfuel"},
-  { GROSSWEIGHT,                "grossweight"},
-  { DISTANCE,                   "distance"},
-  { DISTANCE_FLOWN,             "distance_flown"},
-  { DEPARTURE_IDENT,            "departure_ident"},
-  { DEPARTURE_NAME,             "departure_name"},
-  { DEPARTURE_RUNWAY,           "departure_runway"},
-  { DEPARTURE_LONX,             "departure_lonx"},
-  { DEPARTURE_LATY,             "departure_laty"},
-  { DEPARTURE_ALT,              "departure_alt"},
-  { DEPARTURE_TIME,             "departure_time"},
-  { DEPARTURE_TIME_SIM,         "departure_time_sim"},
-  { DESTINATION_IDENT,          "destination_ident"},
-  { DESTINATION_NAME,           "destination_name"},
-  { DESTINATION_RUNWAY,         "destination_runway"},
-  { DESTINATION_LONX,           "destination_lonx"},
-  { DESTINATION_LATY,           "destination_laty"},
-  { DESTINATION_ALT,            "destination_alt"},
-  { DESTINATION_TIME,           "destination_time"},
-  { DESTINATION_TIME_SIM,       "destination_time_sim"},
-  { ROUTE_STRING,               "route_string"},
-  { SIMULATOR,                  "simulator"},
-  { DESCRIPTION,                "description"},
-  { FLIGHTPLAN,                 "flightplan"},
-  { AIRCRAFT_PERF,              "aircraft_perf"},
-  { AIRCRAFT_TRAIL,             "aircraft_trail"}
+  { AIRCRAFT_NAME,              std::make_pair("aircraft_name",              "Aircraft Name"              )},
+  { AIRCRAFT_TYPE,              std::make_pair("aircraft_type",              "Aircraft Type"              )},
+  { AIRCRAFT_REGISTRATION,      std::make_pair("aircraft_registration",      "Aircraft Registration"      )},
+  { FLIGHTPLAN_NUMBER,          std::make_pair("flightplan_number",          "Flightplan Number"          )},
+  { FLIGHTPLAN_CRUISE_ALTITUDE, std::make_pair("flightplan_cruise_altitude", "Flightplan Cruise Altitude" )},
+  { FLIGHTPLAN_FILE,            std::make_pair("flightplan_file",            "Flightplan File"            )},
+  { PERFORMANCE_FILE,           std::make_pair("performance_file",           "Performance File"           )},
+  { BLOCK_FUEL,                 std::make_pair("block_fuel",                 "Block Fuel"                 )},
+  { TRIP_FUEL,                  std::make_pair("trip_fuel",                  "Trip Fuel"                  )},
+  { USED_FUEL,                  std::make_pair("used_fuel",                  "Used Fuel"                  )},
+  { IS_JETFUEL,                 std::make_pair("is_jetfuel",                 "Is Jetfuel"                 )},
+  { GROSSWEIGHT,                std::make_pair("grossweight",                "Grossweight"                )},
+  { DISTANCE,                   std::make_pair("distance",                   "Distance"                   )},
+  { DISTANCE_FLOWN,             std::make_pair("distance_flown",             "Distance Flown"             )},
+  { DEPARTURE_IDENT,            std::make_pair("departure_ident",            "Departure Ident"            )},
+  { DEPARTURE_NAME,             std::make_pair("departure_name",             "Departure Name"             )},
+  { DEPARTURE_RUNWAY,           std::make_pair("departure_runway",           "Departure Runway"           )},
+  { DEPARTURE_LONX,             std::make_pair("departure_lonx",             "Departure Lonx"             )},
+  { DEPARTURE_LATY,             std::make_pair("departure_laty",             "Departure Laty"             )},
+  { DEPARTURE_ALT,              std::make_pair("departure_alt",              "Departure Alt"              )},
+  { DEPARTURE_TIME,             std::make_pair("departure_time",             "Departure Time"             )},
+  { DEPARTURE_TIME_SIM,         std::make_pair("departure_time_sim",         "Departure Time Sim"         )},
+  { DESTINATION_IDENT,          std::make_pair("destination_ident",          "Destination Ident"          )},
+  { DESTINATION_NAME,           std::make_pair("destination_name",           "Destination Name"           )},
+  { DESTINATION_RUNWAY,         std::make_pair("destination_runway",         "Destination Runway"         )},
+  { DESTINATION_LONX,           std::make_pair("destination_lonx",           "Destination Lonx"           )},
+  { DESTINATION_LATY,           std::make_pair("destination_laty",           "Destination Laty"           )},
+  { DESTINATION_ALT,            std::make_pair("destination_alt",            "Destination Alt"            )},
+  { DESTINATION_TIME,           std::make_pair("destination_time",           "Destination Time"           )},
+  { DESTINATION_TIME_SIM,       std::make_pair("destination_time_sim",       "Destination Time Sim"       )},
+  { ROUTE_STRING,               std::make_pair("route_string",               "Route String"               )},
+  { SIMULATOR,                  std::make_pair("simulator",                  "Simulator"                  )},
+  { DESCRIPTION,                std::make_pair("description",                "Description"                )},
+  { FLIGHTPLAN,                 std::make_pair("flightplan",                 "Flightplan"                 )},
+  { AIRCRAFT_PERF,              std::make_pair("aircraft_perf",              "Aircraft Perf"              )},
+  { AIRCRAFT_TRAIL,             std::make_pair("aircraft_trail",             "Aircraft Trail"             )}
 };
-
 }
 /* *INDENT-ON* */
 
@@ -171,9 +173,13 @@ int LogdataManager::importCsv(const QString& filepath)
 
       if(lineNum == 0)
       {
-        lineNum++;
-        // Ignore header
-        continue;
+        QString header = QString(line).replace(" ", QString()).toLower();
+        if(header.startsWith(csv::HEADER_LINE) || header.startsWith(csv::HEADER_LINE2))
+        {
+          lineNum++;
+          // Ignore header
+          continue;
+        }
       }
 
       // Skip empty lines but add them if within an escaped field
@@ -475,7 +481,7 @@ int LogdataManager::importXplane(const QString& filepath,
 
 }
 
-int LogdataManager::exportCsv(const QString& filepath, bool exportPlan, bool exportPerf, bool exportGpx)
+int LogdataManager::exportCsv(const QString& filepath, bool exportPlan, bool exportPerf, bool exportGpx, bool header)
 {
   int exported = 0;
   QFile file(filepath);
@@ -491,20 +497,24 @@ int LogdataManager::exportCsv(const QString& filepath, bool exportPlan, bool exp
     QStringList columns;
     for(int i = csv::FIRST_COL; i <= csv::LAST_COL; i++)
     {
-      QString col = csv::COL_MAP.value(i);
-      if(col != idColumnName)
-        columns.append(col);
+      std::pair<QString, QString> col = csv::COL_MAP.value(i);
+      if(col.first != idColumnName)
+        columns.append(col.first + " as \"" + col.second + "\"");
     }
 
     SqlUtil util(db);
     SqlQuery query(util.buildSelectStatement(tableName, columns), db);
     SqlExport sqlExport;
+    sqlExport.setHeader(header);
 
     // Add callbacks to converting Gzipped BLOBs to strings
     // Convert to empty string if export should be skipped
-    sqlExport.addConversionFunc(exportPlan ? blobConversionFunction : blobConversionFunctionEmpty, "flightplan");
-    sqlExport.addConversionFunc(exportPerf ? blobConversionFunction : blobConversionFunctionEmpty, "aircraft_perf");
-    sqlExport.addConversionFunc(exportGpx ? blobConversionFunction : blobConversionFunctionEmpty, "aircraft_trail");
+    sqlExport.addConversionFunc(exportPlan ? blobConversionFunction : blobConversionFunctionEmpty,
+                                csv::COL_MAP.value(csv::FLIGHTPLAN).second);
+    sqlExport.addConversionFunc(exportPerf ? blobConversionFunction : blobConversionFunctionEmpty,
+                                csv::COL_MAP.value(csv::AIRCRAFT_PERF).second);
+    sqlExport.addConversionFunc(exportGpx ? blobConversionFunction : blobConversionFunctionEmpty,
+                                csv::COL_MAP.value(csv::AIRCRAFT_TRAIL).second);
     exported = sqlExport.printResultSet(query, out);
     file.close();
   }

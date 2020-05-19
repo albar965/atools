@@ -43,7 +43,7 @@ public:
   int importCsv(const QString& filepath);
 
   /* Import and export from a custom CSV format which covers all fields in the logbook table. */
-  int exportCsv(const QString& filepath, bool exportPlan, bool exportPerf, bool exportGpx);
+  int exportCsv(const QString& filepath, bool exportPlan, bool exportPerf, bool exportGpx, bool header);
 
   /* Import X-Plane logbook. Needs a function fetchAirport
    * that resolves airport ident to name and position. */
