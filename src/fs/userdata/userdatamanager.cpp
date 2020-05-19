@@ -165,11 +165,15 @@ int UserdataManager::importCsv(const QString& filepath, atools::fs::userdata::Fl
     {
       QString line = stream.readLine();
 
-      if(flags & CSV_HEADER && lineNum == 0)
+      if(lineNum == 0)
       {
-        lineNum++;
-        // Ignore header
-        continue;
+        QString header = QString(line).replace(" ", QString()).toLower();
+        if(flags & CSV_HEADER || header.startsWith("type,name,ident,latitude,longitude,elevation"))
+        {
+          lineNum++;
+          // Ignore header
+          continue;
+        }
       }
 
       // Skip empty lines but add them if within an escaped field
@@ -386,10 +390,12 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setHeader(flags & CSV_HEADER);
     sqlExport.setNumberPrecision(5);
 
-    QueryWrapper query("select type, name, ident, laty, lonx, altitude as elevation, "
-                       "0 as mag_var, tags, description, region, cast(visible_from as integer) as visible_from, "
-                       "last_edit_timestamp from " + tableName,
-                       db, ids, idColumnName);
+    QueryWrapper query("select type as Type, name as Name, ident as Ident, laty as Latitude, lonx as Longitude, altitude as Elevation, "
+                       "0 as \"Magnetic Declination\", tags as Tags, description as Description, region as Region, "
+                       "cast(visible_from as integer) as \"Visible From\", "
+                       "last_edit_timestamp as \"Last Edit\" from " + tableName,
+                       db, ids,
+                       idColumnName);
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
@@ -410,10 +416,10 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
       float magvar = 0.f;
       if(magDec->isValid())
         // Can be invalid if not database is loaded (no declination data) and backup is done
-        magvar = magDec->getMagVar(Pos(record.valueFloat("lonx"), record.valueFloat("laty")));
+        magvar = magDec->getMagVar(Pos(record.valueFloat("Longitude"), record.valueFloat("Latitude")));
 
       // Need to cast otherwise it is not recognized as a floating point number
-      record.setValue("mag_var", static_cast<double>(magvar));
+      record.setValue("Magnetic Declination", static_cast<double>(magvar));
 
       stream << sqlExport.getResultSetRow(record) << endl;
       numExported++;
