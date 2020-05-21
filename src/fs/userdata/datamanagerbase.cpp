@@ -293,6 +293,31 @@ void DataManagerBase::removeRows(const QString& table, const QString& column, QV
   query.exec();
 }
 
+void DataManagerBase::getValues(QVariantList& values, const QVector<int> ids, const QString& colName)
+{
+  SqlQuery query(db);
+  query.prepare("select " + colName + " from " + tableName + " where " + idColumnName + " = ?");
+
+  for(int id : ids)
+  {
+    query.bindValue(0, id);
+    query.exec();
+    if(query.next())
+      values.append(query.value(0));
+    else
+      qWarning() << Q_FUNC_INFO << "nothing found for id" << id;
+  }
+}
+
+QVariant DataManagerBase::getValue(int id, const QString& colName)
+{
+  QVariantList values;
+  getValues(values, {id}, colName);
+
+  // Nothing found
+  return values.isEmpty() ? QVariant() : values.first();
+}
+
 void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QVector<int> ids)
 {
   SqlQuery query(db);
@@ -360,6 +385,15 @@ QString DataManagerBase::at(const QStringList& line, int index, bool nowarn)
   if(!nowarn)
     qWarning() << "Index" << index << "not found in file";
   return QString();
+}
+
+bool DataManagerBase::hasBlob(int id, const QString& colName)
+{
+  SqlQuery query(db);
+  query.prepare("select 1 from " + tableName + " where " + idColumnName + " = ? and length(" + colName + ") > 0");
+  query.bindValue(0, id);
+  query.exec();
+  return query.next();
 }
 
 } // namespace userdata

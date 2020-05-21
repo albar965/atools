@@ -106,6 +106,10 @@ public:
   void getRecords(QVector<atools::sql::SqlRecord>& getRecords, const QVector<int> ids);
   atools::sql::SqlRecord getRecord(int id);
 
+  /* Get values with content for ids and one column */
+  void getValues(QVariantList& values, const QVector<int> ids, const QString& colName);
+  QVariant getValue(int id, const QString& colName);
+
   /* Empty records with schema populated */
   void getEmptyRecord(atools::sql::SqlRecord& getRecord);
   atools::sql::SqlRecord getEmptyRecord();
@@ -120,6 +124,9 @@ public:
 
   /* Drops schema tables and indexes */
   void dropSchema();
+
+  /* true if row with the given id and column name has a BLOB larger than 0 */
+  bool hasBlob(int id, const QString& colName);
 
 protected:
   /*

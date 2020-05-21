@@ -34,7 +34,7 @@ bool gzipCompress(const QByteArray& input, QByteArray& output, int level)
   output.clear();
 
   // Is there something to do?
-  if(input.length())
+  if(!input.isEmpty())
   {
     // Declare vars
     int flush = 0;
@@ -235,7 +235,7 @@ bool isGzipCompressed(const QByteArray& bytes)
 QByteArray gzipCompress(const QByteArray& input, int level)
 {
   QByteArray retval;
-  if(gzipCompress(input, retval, level))
+  if(!input.isEmpty() && gzipCompress(input, retval, level))
     return retval;
   else
     return QByteArray();
@@ -244,7 +244,7 @@ QByteArray gzipCompress(const QByteArray& input, int level)
 QByteArray gzipDecompress(const QByteArray& input)
 {
   QByteArray retval;
-  if(gzipDecompress(input, retval))
+  if(!input.isEmpty() && gzipDecompress(input, retval))
     return retval;
   else
     return QByteArray();

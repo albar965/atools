@@ -64,6 +64,9 @@ bool strContains(const QString& name, const std::initializer_list<QString>& list
 bool strContains(const QString& name, const std::initializer_list<const char *>& list);
 bool strContains(const QString& name, const std::initializer_list<char>& list);
 
+/* Concatenates all non empty strings in the list with the given separator */
+QString strJoin(const std::initializer_list<QString>& list, const QString& sep);
+
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
 {

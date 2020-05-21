@@ -640,4 +640,20 @@ QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok)
   return retval;
 }
 
+QString strJoin(const std::initializer_list<QString>& list, const QString& sep)
+{
+  QString retval;
+  for(QString str : list)
+  {
+    str = str.trimmed();
+    if(!str.isEmpty())
+    {
+      if(!retval.isEmpty())
+        retval += sep;
+      retval += str;
+    }
+  }
+  return retval;
+}
+
 } // namespace atools
