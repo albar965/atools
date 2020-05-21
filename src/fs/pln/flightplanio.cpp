@@ -817,13 +817,13 @@ atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
 
     if(!pos.isValid())
     {
-      reader.raiseError(tr("Invalid position."));
+      reader.raiseError(tr("Invalid position in LNMPLN."));
       return atools::geo::EMPTY_POS;
     }
 
     if(!pos.isValidRange())
     {
-      reader.raiseError(tr("Invalid position. Ordinates out of range: %1").arg(pos.toString()));
+      reader.raiseError(tr("Invalid position in LNMPLN. Ordinates out of range: %1").arg(pos.toString()));
       return atools::geo::EMPTY_POS;
     }
 
@@ -834,7 +834,40 @@ atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
   }
   else
   {
-    reader.raiseError(tr("Invalid position."));
+    reader.raiseError(tr("Invalid position in LNMPLN."));
+    return atools::geo::EMPTY_POS;
+  }
+}
+
+atools::geo::Pos FlightplanIO::readPosGpx(QXmlStreamReader& reader)
+{
+  bool lonOk, latOk;
+  float lon = reader.attributes().value("lon").toFloat(&lonOk);
+  float lat = reader.attributes().value("lat").toFloat(&latOk);
+
+  // Read only attributes
+  reader.skipCurrentElement();
+
+  if(lonOk && latOk)
+  {
+    atools::geo::Pos pos(lon, lat);
+
+    if(!pos.isValid())
+    {
+      reader.raiseError(tr("Invalid position in GPX."));
+      return atools::geo::EMPTY_POS;
+    }
+
+    if(!pos.isValidRange())
+    {
+      reader.raiseError(tr("Invalid position in GPX. Ordinates out of range: %1").arg(pos.toString()));
+      return atools::geo::EMPTY_POS;
+    }
+    return pos;
+  }
+  else
+  {
+    reader.raiseError(tr("Invalid position in GPX."));
     return atools::geo::EMPTY_POS;
   }
 }
@@ -2652,6 +2685,74 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
   writer.writeEndElement(); // gpx
   writer.writeEndDocument();
 
+}
+
+void FlightplanIO::loadGpxStr(atools::geo::LineString *route, atools::geo::LineString *track, const QString& string)
+{
+  atools::util::XmlStream xmlStream(string);
+  loadGpxInternal(route, track, xmlStream);
+}
+
+void FlightplanIO::loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes)
+{
+  if(!bytes.isEmpty())
+    loadGpxStr(route, track, atools::zip::gzipDecompress(bytes));
+}
+
+void FlightplanIO::loadGpx(atools::geo::LineString *route, atools::geo::LineString *track, const QString& filename)
+{
+  QFile gpxFile(filename);
+  if(gpxFile.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    atools::util::XmlStream xmlStream(&gpxFile);
+    loadGpxInternal(route, track, xmlStream);
+    gpxFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
+}
+
+void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, atools::geo::LineString *track,
+                                   atools::util::XmlStream& xmlStream)
+{
+  QXmlStreamReader& reader = xmlStream.getReader();
+  xmlStream.readUntilElement("gpx");
+
+  while(xmlStream.readNextStartElement())
+  {
+    // Read route elements if needed ======================================================
+    if(reader.name() == "rte" && route != nullptr)
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "rtept")
+          route->append(readPosGpx(reader));
+        else
+          xmlStream.skipCurrentElement(false /* warn */);
+      }
+    }
+    // Read track elements if needed ======================================================
+    else if(reader.name() == "trk" && track != nullptr)
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "trkseg")
+        {
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "trkpt")
+              track->append(readPosGpx(reader));
+            else
+              xmlStream.skipCurrentElement(false /* warn */);
+          }
+        }
+        else
+          xmlStream.skipCurrentElement(false /* warn */);
+      }
+    }
+    else
+      xmlStream.skipCurrentElement(false /* warn */);
+  }
 }
 
 void FlightplanIO::saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file)

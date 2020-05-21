@@ -26,6 +26,8 @@
 #include "zip/gzip.h"
 #include "geo/calculations.h"
 #include "exception.h"
+#include "geo/linestring.h"
+#include "fs/pln/flightplanio.h"
 
 #include <QDateTime>
 #include <QDir>
@@ -543,6 +545,54 @@ void LogdataManager::updateSchema()
   addColumnIf("flightplan", "blob");
   addColumnIf("aircraft_perf", "blob");
   addColumnIf("aircraft_trail", "blob");
+}
+
+const atools::geo::LineString *LogdataManager::getRouteGeometry(int id)
+{
+  return geometryInternal(routeGeometryCache, id, true /* route */);
+}
+
+void LogdataManager::clearGeometryCache()
+{
+  routeGeometryCache.clear();
+  trackGeometryCache.clear();
+}
+
+bool LogdataManager::hasRouteAttached(int id)
+{
+  return hasBlob(id, "flightplan");
+}
+
+bool LogdataManager::hasPerfAttached(int id)
+{
+  return hasBlob(id, "aircraft_perf");
+}
+
+bool LogdataManager::hasTrackAttached(int id)
+{
+  return hasBlob(id, "aircraft_trail");
+}
+
+const atools::geo::LineString *LogdataManager::getTrackGeometry(int id)
+{
+  return geometryInternal(trackGeometryCache, id, false /* route */);
+}
+
+const atools::geo::LineString *LogdataManager::geometryInternal(QCache<int, atools::geo::LineString>& cache, int id,
+                                                                bool route)
+{
+  if(cache.contains(id))
+    return cache.object(id);
+  else
+  {
+    atools::geo::LineString *geo = new atools::geo::LineString;
+    if(route)
+      atools::fs::pln::FlightplanIO().loadGpxGz(geo, nullptr, getValue(id, "aircraft_trail").toByteArray());
+    else
+      atools::fs::pln::FlightplanIO().loadGpxGz(nullptr, geo, getValue(id, "aircraft_trail").toByteArray());
+    cache.insert(id, geo);
+    return geo;
+  }
 }
 
 void LogdataManager::getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim,

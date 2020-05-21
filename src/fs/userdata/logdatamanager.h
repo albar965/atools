@@ -20,8 +20,12 @@
 
 #include "fs/userdata/datamanagerbase.h"
 
-namespace atools {
+#include <QCache>
 
+namespace atools {
+namespace geo {
+class LineString;
+}
 namespace sql {
 class SqlDatabase;
 }
@@ -54,6 +58,20 @@ public:
   /* Update schema to latest. Checks for new columns and tables. */
   void updateSchema();
 
+  /* Get flight plan points from GPX attachment or database BLOB. Request is cached. */
+  const geo::LineString *getRouteGeometry(int id);
+
+  /* Get aircraft track points from GPX attachment or database BLOB.Request is cached. */
+  const geo::LineString *getTrackGeometry(int id);
+
+  /* Clear cache used by getRouteGeometry and getTrackGeometry */
+  void clearGeometryCache();
+
+  /* true if any of the files/BLOBs is present (length > 0) for the dataset */
+  bool hasRouteAttached(int id);
+  bool hasPerfAttached(int id);
+  bool hasTrackAttached(int id);
+
   /* Get various statistical information for departure times */
   void getFlightStatsTime(QDateTime& earliest, QDateTime& latest, QDateTime& earliestSim, QDateTime& latestSim);
 
@@ -83,6 +101,11 @@ private:
 
   /* Generate empty column if disabled in export options */
   static QString blobConversionFunctionEmpty(const QVariant&);
+
+  const atools::geo::LineString *geometryInternal(QCache<int, atools::geo::LineString>& cache, int id, bool route);
+
+  /* Cache to avoid reading BLOBs */
+  QCache<int, atools::geo::LineString> routeGeometryCache, trackGeometryCache;
 
 };
 

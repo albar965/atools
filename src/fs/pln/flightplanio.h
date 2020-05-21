@@ -117,6 +117,13 @@ public:
   QByteArray saveGpxGz(const atools::fs::pln::Flightplan& plan, const atools::geo::LineString& track,
                        const QVector<quint32>& timestamps, int cruiseAltFt);
 
+  /* Loads GPX route coordinates and track points into LineStrings.
+   * Reading is limited to files exported by this class.
+   * track and route can be null and will be ignored then */
+  void loadGpxStr(atools::geo::LineString *route, atools::geo::LineString *track, const QString& string);
+  void loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes);
+  void loadGpx(atools::geo::LineString *route, atools::geo::LineString *track, const QString& filename);
+
   /* Majestic Dash 400 binary format */
   void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
@@ -160,6 +167,7 @@ private:
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
                        const QVector<quint32>& timestamps, int cruiseAltFt);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
+  void loadGpxInternal(atools::geo::LineString *route, atools::geo::LineString *track, util::XmlStream& xmlStream);
 
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename);
@@ -204,6 +212,7 @@ private:
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
   atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
+  atools::geo::Pos readPosGpx(QXmlStreamReader& reader);
 
   /* Read waypoint elements and attributes from stream */
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
