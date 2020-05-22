@@ -211,9 +211,9 @@ public:
   }
 
   /* Return true if close to any pole */
-  bool isPole() const
+  bool isPole(float epsilonDegree = 1.f) const
   {
-    return isValid() && (latY > 89.f || latY < -89.f);
+    return isValid() && (latY > (90.f - epsilonDegree) || (latY < -90.f + epsilonDegree));
   }
 
   /* Find point between start and end on GC route if distance between points is already known.
