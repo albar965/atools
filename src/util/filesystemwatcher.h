@@ -83,6 +83,7 @@ private:
   void pathOrFileChanged();
   void fileUpdatedDelayed();
   void setPaths(bool update);
+  bool warn();
 
   QString filename;
   QDateTime fileTimestampLastRead;
@@ -100,6 +101,9 @@ private:
   int checkMs = 10000;
 
   bool verbose;
+  int numWarnings = 0;
+  const static int MAX_WARNINGS = 20;
+
 };
 
 } // namespace util

@@ -93,21 +93,24 @@ void FileSystemWatcher::pathOrFileChanged()
       else
       {
         // File was deleted - keep current weather information
-        qDebug() << Q_FUNC_INFO << "File" << filename << "smaller than" << minFileSize << "bytes";
+        if(warn())
+          qWarning() << Q_FUNC_INFO << "File" << filename << "smaller than" << minFileSize << "bytes";
         periodicCheckTimer.start(checkMs);
       }
     }
     else
     {
       // File was deleted - keep current weather information
-      qDebug() << Q_FUNC_INFO << "File" << filename << "is not a file";
+      if(warn())
+        qWarning() << Q_FUNC_INFO << "File" << filename << "is not a file";
       periodicCheckTimer.start(checkMs);
     }
   }
   else
   {
     // File was deleted - keep current weather information
-    qDebug() << Q_FUNC_INFO << "File" << filename << "does not exist";
+    if(warn())
+      qWarning() << Q_FUNC_INFO << "File" << filename << "does not exist";
     periodicCheckTimer.start(checkMs);
   }
   setPaths(true);
@@ -189,7 +192,10 @@ void FileSystemWatcher::setPaths(bool update)
       qWarning() << "dropped file" << filename << fsWatcher->files();
 
     if(!fsWatcher->addPath(filename))
-      qWarning() << "cannot watch file" << filename;
+    {
+      if(warn())
+        qWarning() << "cannot watch file" << filename;
+    }
   }
 
   // Watch directory to get added or removed file changes
@@ -200,8 +206,23 @@ void FileSystemWatcher::setPaths(bool update)
       qWarning() << "dropped dir" << dir << fsWatcher->directories();
 
     if(!fsWatcher->addPath(dir))
-      qWarning() << "cannot watch dir" << dir;
+    {
+      if(warn())
+        qWarning() << "cannot watch dir" << dir;
+    }
   }
+}
+
+bool FileSystemWatcher::warn()
+{
+  if(numWarnings < MAX_WARNINGS)
+  {
+    numWarnings++;
+    return true;
+  }
+  else if(numWarnings++ == MAX_WARNINGS)
+    qWarning() << Q_FUNC_INFO << "Maximum number of warnings exceeded";
+  return false;
 }
 
 } // namespace util
