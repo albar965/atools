@@ -1200,26 +1200,6 @@ bool MetarParser::scanSkyCondition()
   int i;
   MetarCloud cl;
 
-  if(!strncmp(m, "/////////", 9))
-  {
-    m += 9;
-    if(!scanBoundary(&m))
-      return false;
-
-    _m = m;
-    return true;
-  }
-
-  if(!strncmp(m, "//////", 6))
-  {
-    m += 6;
-    if(!scanBoundary(&m))
-      return false;
-
-    _m = m;
-    return true;
-  }
-
   if(!strncmp(m, "//////TCU", 9))
   {
     m += 9;
@@ -1243,6 +1223,26 @@ bool MetarParser::scanSkyCondition()
   if(!strncmp(m, "///CB", 5))
   {
     m += 5;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
+  if(!strncmp(m, "/////////", 9))
+  {
+    m += 9;
+    if(!scanBoundary(&m))
+      return false;
+
+    _m = m;
+    return true;
+  }
+
+  if(!strncmp(m, "//////", 6))
+  {
+    m += 6;
     if(!scanBoundary(&m))
       return false;
 
