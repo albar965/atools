@@ -533,10 +533,10 @@ QString LogdataManager::blobConversionFunctionEmpty(const QVariant&)
 
 QString LogdataManager::blobConversionFunction(const QVariant& value)
 {
-  if(value.type() == QVariant::ByteArray)
+  if(value.isValid() && !value.isNull() && value.type() == QVariant::ByteArray)
     return QString(atools::zip::gzipDecompress(value.toByteArray()));
 
-  return "[INVALID_BLOB_VALUE]";
+  return QString();
 }
 
 void LogdataManager::updateSchema()

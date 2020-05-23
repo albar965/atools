@@ -69,7 +69,7 @@ create table logbook
 
   route_string varchar(1024         ),               -- ICAO route string
   simulator varchar(50) collate nocase,              -- X-Plane 11, Prepar3D v4, etc.
-  description varchar(2048) collate nocase           -- Free text by user
+  description varchar(2048) collate nocase,          -- Free text by user
   flightplan blob,                                   -- LNMPLN Gzipped XML file recorded on touchdown
   aircraft_perf blob,                                -- LNMPERF Gzipped XML file recorded on touchdown
   aircraft_trail blob                                -- Gzipped GPX aircraft trail file recorded on touchdown

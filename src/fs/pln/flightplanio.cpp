@@ -927,8 +927,12 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
 void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
-  atools::util::XmlStream xmlStream(string);
-  loadLnmInternal(plan, xmlStream);
+
+  if(!string.isEmpty())
+  {
+    atools::util::XmlStream xmlStream(string);
+    loadLnmInternal(plan, xmlStream);
+  }
 }
 
 void FlightplanIO::loadLnmGz(Flightplan& plan, const QByteArray& bytes)
@@ -2689,8 +2693,11 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
 
 void FlightplanIO::loadGpxStr(atools::geo::LineString *route, atools::geo::LineString *track, const QString& string)
 {
-  atools::util::XmlStream xmlStream(string);
-  loadGpxInternal(route, track, xmlStream);
+  if(!string.isEmpty())
+  {
+    atools::util::XmlStream xmlStream(string);
+    loadGpxInternal(route, track, xmlStream);
+  }
 }
 
 void FlightplanIO::loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes)
