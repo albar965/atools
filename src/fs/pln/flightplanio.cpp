@@ -3214,7 +3214,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         stream << entry.getAirway() << ",2,";
 
-      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegToRhumb(entry.getPosition()));
+      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegTo(entry.getPosition()));
       if(entry.getMagvar() < std::numeric_limits<float>::max())
         heading -= entry.getMagvar();
 
