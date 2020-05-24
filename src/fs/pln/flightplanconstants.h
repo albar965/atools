@@ -24,6 +24,30 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+namespace entry {
+
+enum WaypointType
+{
+  UNKNOWN,
+  AIRPORT,
+  WAYPOINT,
+  VOR,
+  NDB,
+  USER
+};
+
+enum Flag
+{
+  NONE = 0,
+  PROCEDURE = 1 << 1, /* Flight plan entry is any procedure leg */
+  ALTERNATE = 1 << 2, /* Flight plan entry leads to an alternate airport */
+  TRACK = 1 << 3 /* Flight plan entry airway name is a track */
+};
+
+Q_DECLARE_FLAGS(Flags, Flag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags);
+}
+
 /* File format for flight plans as detected by FlightplanIO::load and detectFormat */
 enum FileFormat
 {
@@ -35,7 +59,8 @@ enum FileFormat
   FLP, /* Aerosoft airbus or FlightFactor Boeing - can load and save */
   FSC_PLN, /* FSC ini style PLN flight plan - can load only */
   FLIGHTGEAR, /* FlightGear XML format - load and save  */
-  LNM_PLN /* Little Navmap's own flight plan format  */
+  LNM_PLN, /* Little Navmap's own flight plan format  */
+  GARMIN_FPL /* Garmin FPL - XML format */
 };
 
 enum SaveOption

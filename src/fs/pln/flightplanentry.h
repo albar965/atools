@@ -20,35 +20,12 @@
 
 #include <QApplication>
 
+#include "fs/pln/flightplanconstants.h"
 #include "geo/pos.h"
 
 namespace atools {
 namespace fs {
 namespace pln {
-
-namespace entry {
-enum WaypointType
-{
-  UNKNOWN,
-  AIRPORT,
-  WAYPOINT,
-  VOR,
-  NDB,
-  USER
-};
-
-enum Flag
-{
-  NONE = 0,
-  PROCEDURE = 1 << 1, /* Flight plan entry is any procedure leg */
-  ALTERNATE = 1 << 2, /* Flight plan entry leads to an alternate airport */
-  TRACK = 1 << 3 /* Flight plan entry airway name is a track */
-};
-
-Q_DECLARE_FLAGS(Flags, Flag);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::entry::Flags);
-
-}
 
 /*
  * Waypoint or airport as part of the flight plan. Also covers departure and destination airports.

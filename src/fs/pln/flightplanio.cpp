@@ -120,6 +120,8 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 {
   FileFormat format = detectFormat(file);
 
+  plan.entries.clear();
+
   switch(format)
   {
     case atools::fs::pln::NONE:
@@ -160,6 +162,11 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 
     case atools::fs::pln::FLIGHTGEAR:
       loadFlightGear(plan, file);
+      plan.setLnmFormat(false);
+      break;
+
+    case atools::fs::pln::GARMIN_FPL:
+      loadGarminFpl(plan, file);
       plan.setLnmFormat(false);
       break;
   }
@@ -220,6 +227,14 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // <PropertyList>
     // <version type="int">1</version>
     return FLIGHTGEAR;
+  else if(lines.at(0).startsWith("<?xml version") &&
+          (lines.at(1).startsWith("<flight-plan") &&
+           !lines.filter("<waypoint-table").isEmpty()))
+    // <?xml version="1.0" encoding="utf-8"?>
+    // <flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
+    // <created>2010-11-20T20:54:34Z</created>
+    // <waypoint-table>
+    return GARMIN_FPL;
   else
     return NONE;
 }
@@ -927,7 +942,6 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
 void FlightplanIO::loadLnmStr(Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
-
   if(!string.isEmpty())
   {
     atools::util::XmlStream xmlStream(string);
@@ -942,10 +956,10 @@ void FlightplanIO::loadLnmGz(Flightplan& plan, const QByteArray& bytes)
 
 void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& filename)
 {
+  plan.entries.clear();
   QFile xmlFile(filename);
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    plan.entries.clear();
     atools::util::XmlStream xmlStream(&xmlFile);
     loadLnmInternal(plan, xmlStream);
     xmlFile.close();
@@ -3316,7 +3330,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     throw Exception(errorMsg.arg(filename).arg(fltplanFile.errorString()));
 }
 
-void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const QString& filename,
+void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const QString& filename,
                                  SaveOptions options)
 {
   // Create a copy so we can easily change all waypoints to user defined is this is desired
@@ -3506,6 +3520,162 @@ void FlightplanIO::saveGarminGns(const atools::fs::pln::Flightplan& plan, const 
   }
   else
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
+}
+
+void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
+{
+  QFile xmlFile(filename);
+  if(xmlFile.open(QIODevice::ReadOnly))
+  {
+    plan.entries.clear();
+    atools::util::XmlStream xmlStream(&xmlFile);
+    loadGarminFplInternal(plan, xmlStream);
+    xmlFile.close();
+  }
+  else
+    throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+}
+
+void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
+{
+  plan.entries.clear();
+
+  if(!string.isEmpty())
+  {
+    atools::util::XmlStream xmlStream(string);
+    loadGarminFplInternal(plan, xmlStream);
+  }
+}
+
+void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
+{
+  loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
+}
+
+void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
+{
+  QXmlStreamReader& reader = xmlStream.getReader();
+
+  // ==================================================================================
+  // Read all elements - order does not matter
+  // Additional unknown elements are ignored and a warning is logged
+
+  // Waypoint key is list of ident,region and type
+  QHash<QStringList, atools::fs::pln::FlightplanEntry> waypointIndex;
+
+  xmlStream.readUntilElement("flight-plan");
+  while(xmlStream.readNextStartElement())
+  {
+    if(reader.name() == "waypoint-table")
+    {
+      // Fill waypoint hash map =========================================================
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "waypoint")
+        {
+          FlightplanEntry entry;
+          QString type;
+          Pos pos;
+          while(xmlStream.readNextStartElement())
+          {
+            // . <waypoint>
+            // .   <identifier>CYYZ</identifier>
+            // .   <type>AIRPORT</type>
+            // .   <country-code>CY</country-code>
+            // .   <lat>43.677222</lat>
+            // .   <lon>-79.6305555</lon>
+            // .   <comment></comment>
+            // .   <elevation>173.4312</elevation>
+            // . </waypoint>
+
+            if(reader.name() == "identifier")
+              entry.setIdent(reader.readElementText());
+            else if(reader.name() == "type")
+              type = reader.readElementText();
+            else if(reader.name() == "country-code")
+              entry.setRegion(reader.readElementText());
+            else if(reader.name() == "lat")
+              pos.setLatY(reader.readElementText().toFloat());
+            else if(reader.name() == "lon")
+              pos.setLonX(reader.readElementText().toFloat());
+            else if(reader.name() == "comment")
+              entry.setComment(reader.readElementText());
+            else if(reader.name() == "elevation")
+              pos.setAltitude(reader.readElementText().toFloat());
+            else
+              xmlStream.skipCurrentElement(false /* warn */);
+          }
+          entry.setPosition(pos);
+          entry.setWaypointType(garminToWaypointType(type));
+
+          QStringList key = {entry.getIdent(), entry.getRegion(), type};
+
+          if(waypointIndex.contains(key))
+            qWarning() << Q_FUNC_INFO << "Duplicate key in waypoint index" << key;
+
+          waypointIndex.insert(key, entry);
+        }
+        else
+          xmlStream.skipCurrentElement(false /* warn */);
+      }
+    }
+    else if(reader.name() == "route")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        // Read route points =========================================================
+        if(reader.name() == "route-point")
+        {
+          // . <route-point>
+          // .   <waypoint-identifier>CYYZ</waypoint-identifier>
+          // .   <waypoint-type>AIRPORT</waypoint-type>
+          // .   <waypoint-country-code>CY</waypoint-country-code>
+          // . </route-point>
+
+          QString ident, type, region;
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "waypoint-identifier")
+              ident = reader.readElementText();
+            else if(reader.name() == "waypoint-type")
+              type = reader.readElementText();
+            else if(reader.name() == "waypoint-country-code")
+              region = reader.readElementText();
+            else
+              xmlStream.skipCurrentElement(false /* warn */);
+          }
+          QStringList key = {ident, region, type};
+          if(waypointIndex.contains(key))
+            plan.entries.append(waypointIndex.value(key));
+          else
+            qWarning() << Q_FUNC_INFO << "Key not found in waypoint index" << key;
+        }
+        else
+          xmlStream.skipCurrentElement(false /* warn */);
+      }
+    }
+    else
+      xmlStream.skipCurrentElement(false /* warn */);
+  }
+
+  plan.flightplanType = IFR;
+  plan.cruisingAlt = 0; // Use altitude as set in GUI
+  assignAltitudeToAllEntries(plan);
+  adjustDepartureAndDestination(plan);
+}
+
+atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QString& typeStr) const
+{
+  if(typeStr == "AIRPORT")
+    return atools::fs::pln::entry::AIRPORT;
+  else if(typeStr == "VOR")
+    return atools::fs::pln::entry::VOR;
+  else if(typeStr == "NDB")
+    return atools::fs::pln::entry::NDB;
+  else if(typeStr == "INT")
+    return atools::fs::pln::entry::WAYPOINT;
+
+  return atools::fs::pln::entry::USER;
 }
 
 QString FlightplanIO::flightplanTypeToString(FlightplanType type)

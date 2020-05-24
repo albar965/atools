@@ -124,6 +124,15 @@ public:
   void loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes);
   void loadGpx(atools::geo::LineString *route, atools::geo::LineString *track, const QString& filename);
 
+  /* Garmin FPL (XML) format for Reality XP GNS XML. */
+  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
+                     atools::fs::pln::SaveOptions options);
+  void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadGarminFplStr(atools::fs::pln::Flightplan& plan, const QString& string);
+  void loadGarminFplGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes);
+
+  /* Export only formats below ================================================================ */
+
   /* Majestic Dash 400 binary format */
   void saveFpr(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
@@ -132,10 +141,6 @@ public:
 
   /* PLN for Blackbox Simulations Airbus. Same as FS9 PLN format. */
   void saveBbsPln(const atools::fs::pln::Flightplan& plan, const QString& filename);
-
-  /* Reality XP GNS XML format. */
-  void saveGarminGns(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
-                     atools::fs::pln::SaveOptions options);
 
   /* Feelthere/Wilco Embraer */
   void saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, const QString& filename, int groundSpeed);
@@ -168,6 +173,8 @@ private:
                        const QVector<quint32>& timestamps, int cruiseAltFt);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void loadGpxInternal(atools::geo::LineString *route, atools::geo::LineString *track, util::XmlStream& xmlStream);
+  void loadGarminFplInternal(Flightplan& plan, util::XmlStream& xmlStream);
+  atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
   /* Load specific formats after content detection */
   void loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename);
