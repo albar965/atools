@@ -117,6 +117,7 @@ private:
 
   void freeArrays();
   void allocArrays();
+  bool invokeCallback(const Node& currentNode);
 
   /* Avoid direct waypoint connections when using airways */
   float costFactorForceAirways = 1.3f;
@@ -191,6 +192,10 @@ private:
   bool preferVorToAirway = false, preferNdbToAirway = false;
 
   RouteFinderCallbackType callback;
+  int totalDist = 0;
+  int lastDist = 0;
+  qint64 time = 0L;
+
 };
 
 } // namespace route

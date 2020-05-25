@@ -62,13 +62,13 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
   network->setParameters(from, to, altitude, mode);
   startNode = network->getDepartureNode();
   destNode = network->getDestinationNode();
-  int totalDist = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
-  int lastDist = totalDist;
+  totalDist = atools::roundToInt(network->getDirectDistanceMeter(startNode, destNode));
+  lastDist = totalDist;
 
   openNodesHeap.pushData(startNode.index, 0);
   at(nodeAltRangeMaxArr, startNode.index) = std::numeric_limits<quint16>::max();
 
-  qint64 time = QDateTime::currentMSecsSinceEpoch();
+  time = QDateTime::currentSecsSinceEpoch();
 
   Node currentNode;
   bool destinationFound = false;
@@ -86,20 +86,8 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     currentNode = network->getNode(currentIndex);
 
     // Invoke user callback if set
-    if(callback)
-    {
-      qint64 now = QDateTime::currentMSecsSinceEpoch();
-      if(now > time + 200)
-      {
-        int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
-        if(dist < lastDist)
-          lastDist = dist;
-        time = now;
-
-        if(!callback(totalDist, lastDist))
-          break;
-      }
-    }
+    if(!invokeCallback(currentNode))
+      break;
 
     // Contains nodes with known shortest path
     at(closedNodes, currentNode.index) = true;
@@ -112,6 +100,24 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
            << timer.restart() << "ms";
 
   return destinationFound;
+}
+
+bool RouteFinder::invokeCallback(const atools::routing::Node& currentNode)
+{
+  if(callback)
+  {
+    qint64 now = QDateTime::currentSecsSinceEpoch();
+    if(now > time)
+    {
+      int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
+      if(dist < lastDist)
+        lastDist = dist;
+      time = now;
+
+      return callback(totalDist, lastDist);
+    }
+  }
+  return true;
 }
 
 void RouteFinder::expandNode(const atools::routing::Node& currentNode, const atools::routing::Edge& prevEdge)
@@ -133,6 +139,10 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
 
     const Node& successor = network->getNode(successorIndex);
     const Edge& edge = successors.edges.at(i);
+
+    // Invoke user callback if set
+    if(!invokeCallback(successor))
+      break;
 
     int successorEdgeCosts = calculateEdgeCost(currentNode, successor, edge, currentEdgeAirwayHash);
 
