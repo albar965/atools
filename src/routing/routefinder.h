@@ -86,7 +86,7 @@ public:
 
 private:
   /* Expands a node by investigating all successors */
-  void expandNode(const atools::routing::Node& node, const Edge& prevEdge);
+  bool expandNode(const atools::routing::Node& node, const Edge& prevEdge);
 
   /* Calculates the costs to travel from current to successor. Base is the distance between the nodes in meter that
    * will have several factors applied to get reasonable routes */

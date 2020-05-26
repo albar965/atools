@@ -93,7 +93,8 @@ bool RouteFinder::calculateRoute(const atools::geo::Pos& from, const atools::geo
     at(closedNodes, currentNode.index) = true;
 
     // Work on successors
-    expandNode(currentNode, at(edgePredecessorArr, currentNode.index));
+    if(!expandNode(currentNode, at(edgePredecessorArr, currentNode.index)))
+      break;
   }
 
   qDebug() << Q_FUNC_INFO << "found" << destinationFound << "heap size" << openNodesHeap.size()
@@ -120,7 +121,7 @@ bool RouteFinder::invokeCallback(const atools::routing::Node& currentNode)
   return true;
 }
 
-void RouteFinder::expandNode(const atools::routing::Node& currentNode, const atools::routing::Edge& prevEdge)
+bool RouteFinder::expandNode(const atools::routing::Node& currentNode, const atools::routing::Edge& prevEdge)
 {
   successors.clear();
   network->getNeighbours(successors, currentNode, &prevEdge);
@@ -142,7 +143,7 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
 
     // Invoke user callback if set
     if(!invokeCallback(successor))
-      break;
+      return false;
 
     int successorEdgeCosts = calculateEdgeCost(currentNode, successor, edge, currentEdgeAirwayHash);
 
@@ -180,6 +181,7 @@ void RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
     else
       openNodesHeap.push(successorIndex, totalCost);
   }
+  return true;
 }
 
 int RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
