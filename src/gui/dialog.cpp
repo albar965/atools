@@ -36,6 +36,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
 {
   dlg.setNameFilter(filter);
   dlg.setWindowTitle(QApplication::applicationName() + " - " + title);
+  dlg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   if(!defaultFileSuffix.isEmpty())
     dlg.setDefaultSuffix(defaultFileSuffix);
@@ -195,7 +196,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
   {
     QMessageBox msg(QMessageBox::Information, QApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
-    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
 
     msg.exec();
@@ -213,7 +214,7 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
   {
     QMessageBox msg(QMessageBox::Warning, QApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
-    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
 
     msg.exec();
@@ -276,7 +277,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if(!checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
-    msg.setWindowFlags(msg.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
     retval = msg.exec();
 
