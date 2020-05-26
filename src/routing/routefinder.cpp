@@ -199,22 +199,6 @@ int RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
       // Calculate transition to next airway
       float airwayTransCost = 1.f;
 
-      if(preferVorToAirway)
-      {
-        if(currentNode.isDeparture() && (successorNode.subtype == NODE_VOR || successorNode.subtype == NODE_VORDME))
-          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
-        else if((currentNode.subtype == NODE_VOR || currentNode.subtype == NODE_VORDME) &&
-                successorNode.isDestination())
-          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_VOR;
-      }
-
-      if(preferNdbToAirway)
-      {
-        if((currentNode.type == NODE_DEPARTURE && successorNode.subtype == NODE_NDB) ||
-           (currentNode.subtype == NODE_NDB && successorNode.type == NODE_DESTINATION))
-          airwayTransCost *= COST_FACTOR_FORCE_CLOSE_RADIONAV_NDB;
-      }
-
       if(airwayTransCost > 1.f)
         // Prefer VOR or NDB
         costs *= airwayTransCost;
