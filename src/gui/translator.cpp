@@ -106,7 +106,41 @@ void Translator::unload()
     qWarning() << "Translator::unload called more than once";
 }
 
-QVector<QLocale> Translator::findTranslationFiles(const QString& path)
+QVector<QLocale> Translator::findTranslationFiles()
+{
+  // Get files from current application path (macOS)
+  QVector<QLocale> retval = findTranslationFilesInternal(QString());
+
+  // Get files from translations folder (Linux and Windows)
+  retval.append(findTranslationFilesInternal("translations"));
+
+  // Always add English
+  retval.append(QLocale("en"));
+
+  // Sort by language and country ==================
+  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        if(l1.language() != l2.language())
+          return l1.language() < l2.language();
+        else
+          return l1.country() < l2.country();
+      });
+  // Remove consecutive duplicates in the sorted list ==================
+  retval.erase(std::unique(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        return l1.language() == l2.language() && l1.country() == l2.country();
+      }), retval.end());
+
+  // Now sort list by native language and country name ==============
+  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        int cmp = l1.nativeLanguageName().compare(l2.nativeLanguageName());
+        if(cmp == 0)
+          return l1.nativeCountryName().compare(l2.nativeCountryName()) < 0;
+        else
+          return cmp < 0;
+      });
+  return retval;
+}
+
+QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
 {
   static const QString APP_NAME = QFileInfo(QApplication::applicationFilePath()).baseName();
   static const QString FILTER = QString("%1_*.qm").arg(APP_NAME);
@@ -146,30 +180,6 @@ QVector<QLocale> Translator::findTranslationFiles(const QString& path)
     else
       qWarning() << Q_FUNC_INFO << "No locale found for" << fi.filePath();
   }
-
-  // Always add English
-  retval.append(QLocale("en"));
-
-  // Sort by language and country ==================
-  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
-        if(l1.language() != l2.language())
-          return l1.language() < l2.language();
-        else
-          return l1.country() < l2.country();
-      });
-  // Remove consecutive duplicates in the sorted list ==================
-  retval.erase(std::unique(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
-        return l1.language() == l2.language() && l1.country() == l2.country();
-      }), retval.end());
-
-  // Now sort list by native language and country name ==============
-  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
-        int cmp = l1.nativeLanguageName().compare(l2.nativeLanguageName());
-        if(cmp == 0)
-          return l1.nativeCountryName().compare(l2.nativeCountryName()) < 0;
-        else
-          return cmp < 0;
-      });
   return retval;
 }
 
