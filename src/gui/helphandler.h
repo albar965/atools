@@ -45,7 +45,7 @@ public:
    *
    * This will consider region fallbacks in both directions like pt_BR -> pt or pt -> pt_BR
    */
-  static QString getHelpFile(const QString& filepath, bool override);
+  static QString getHelpFile(const QString& filepath, const QString& language);
 
   /*
    * Open a help URL where the ${LANG} variable in urlString will replaced with the
@@ -57,6 +57,7 @@ public:
    */
   static void openHelpUrlWeb(QWidget *parent, const QString& urlString, const QString& language);
   void openHelpUrlWeb(const QString& urlString, const QString& language);
+  static QUrl getHelpUrlWeb(const QString& urlString, const QString& language);
 
   static void openHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language);
   void openHelpUrlFile(const QString& urlString, const QString& language);
@@ -79,16 +80,11 @@ public:
   void openFile(const QString& filepath);
   static void openFile(QWidget *parent, const QString& filepath);
 
-  static QUrl getHelpUrlWeb(const QString& urlString, const QString& language);
-
 private:
   /* Returns a valid help URL and also replaces the variable ${LANG} with one of the
    * supported langages */
   static QUrl getHelpUrlFile(QWidget *parent, const QString& urlString, const QString& language);
   QUrl getHelpUrlFile(const QString& urlString, const QString& language);
-
-  static QString getLanguage();
-  static QString getLanguageFull();
 
   QWidget *parentWidget;
   QString message, rev;

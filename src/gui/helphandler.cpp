@@ -145,9 +145,9 @@ QUrl HelpHandler::getHelpUrlFile(QWidget *parent, const QString& urlString, cons
   return url;
 }
 
-QString HelpHandler::getHelpFile(const QString& filepath, bool override)
+QString HelpHandler::getHelpFile(const QString& filepath, const QString& language)
 {
-  QString lang = override ? "en" : getLanguageFull();
+  QString lang = language;
 
   // Replace variable and create URL
   QString urlStr(atools::replaceVar(filepath, "LANG", lang));
@@ -216,37 +216,6 @@ void HelpHandler::openHelpUrlFile(QWidget *parent, const QString& urlString, con
     openUrl(parent, url);
   else
     atools::gui::Dialog::warning(parent, tr("URL is empty for \"%1\".").arg(urlString));
-}
-
-QString HelpHandler::getLanguage()
-{
-  QString lang = getLanguageFull();
-  if(!lang.isEmpty())
-    return lang.section(QRegularExpression("[_-]"), 0, 0);
-  else
-    return "en";
-}
-
-QString HelpHandler::getLanguageFull()
-{
-  QString overrideLang =
-    atools::settings::Settings::instance().valueStr("Options/Language", QString());
-
-  QString lang;
-
-  if(overrideLang.isEmpty())
-  {
-    QStringList uiLanguages = QLocale().uiLanguages();
-
-    if(!uiLanguages.isEmpty())
-      lang = uiLanguages.first().replace("-", "_");
-    else
-      lang = "en";
-  }
-  else
-    lang = overrideLang;
-
-  return lang;
 }
 
 } // namespace gui

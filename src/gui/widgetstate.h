@@ -78,6 +78,9 @@ public:
   /* true if settings file contains the widget */
   bool contains(QObject *widget) const;
 
+  /* Get prefix and widget name as stored in the file */
+  QString getSettingsKey(QObject *widget) const;
+
   /* Write settings to disk */
   void syncSettings();
 

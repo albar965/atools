@@ -396,6 +396,11 @@ bool WidgetState::contains(QObject *widget) const
   return containsWidget(Settings::instance(), widget);
 }
 
+QString WidgetState::getSettingsKey(QObject *widget) const
+{
+  return keyPrefix + "_" + widget->objectName();
+}
+
 void WidgetState::syncSettings()
 {
   Settings::instance().syncSettings();

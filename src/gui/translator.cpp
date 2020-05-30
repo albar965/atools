@@ -23,6 +23,8 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QDir>
+#include <QApplication>
+#include <QRegularExpression>
 
 namespace atools {
 
@@ -102,6 +104,73 @@ void Translator::unload()
   }
   else
     qWarning() << "Translator::unload called more than once";
+}
+
+QVector<QLocale> Translator::findTranslationFiles(const QString& path)
+{
+  static const QString APP_NAME = QFileInfo(QApplication::applicationFilePath()).baseName();
+  static const QString FILTER = QString("%1_*.qm").arg(APP_NAME);
+  static const QRegularExpression QM_FILE_LANG(APP_NAME + "_(.+).qm");
+  static const QRegularExpression QM_FILE_LANG_REGION(APP_NAME + "_(.+)_(.+).qm");
+
+  // Setup directory for file detection =====================================
+  QDir dir(QApplication::applicationDirPath() + QDir::separator() + path);
+  dir.setFilter(QDir::Files | QDir::Hidden);
+  dir.setNameFilters({FILTER});
+
+  QVector<QLocale> retval;
+  for(const QFileInfo& fi : dir.entryInfoList())
+  {
+    // Use C locale as invalid
+    QLocale locale(QLocale::C);
+
+    // Try language/region match ========
+    QRegularExpressionMatch match = QM_FILE_LANG_REGION.match(fi.fileName());
+    if(match.hasMatch())
+      locale = QLocale(match.captured(1) + "_" + match.captured(2));
+    else
+    {
+      // Try language match ========
+      QRegularExpressionMatch match2 = QM_FILE_LANG.match(fi.fileName());
+      if(match2.hasMatch())
+        locale = QLocale(match2.captured(1));
+    }
+
+    if(locale.language() != QLocale::C)
+    {
+      qInfo() << Q_FUNC_INFO << fi.filePath() << "name" << locale.name() << "bcp47Name" << locale.bcp47Name()
+              << "country" << locale.countryToString(locale.country()) << "native" << locale.nativeCountryName()
+              << "language" << locale.languageToString(locale.language()) << "native" << locale.nativeLanguageName();
+      retval.append(locale);
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "No locale found for" << fi.filePath();
+  }
+
+  // Always add English
+  retval.append(QLocale("en"));
+
+  // Sort by language and country ==================
+  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        if(l1.language() != l2.language())
+          return l1.language() < l2.language();
+        else
+          return l1.country() < l2.country();
+      });
+  // Remove consecutive duplicates in the sorted list ==================
+  retval.erase(std::unique(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        return l1.language() == l2.language() && l1.country() == l2.country();
+      }), retval.end());
+
+  // Now sort list by native language and country name ==============
+  std::sort(retval.begin(), retval.end(), [](const QLocale& l1, const QLocale& l2) -> bool {
+        int cmp = l1.nativeLanguageName().compare(l2.nativeLanguageName());
+        if(cmp == 0)
+          return l1.nativeCountryName().compare(l2.nativeCountryName()) < 0;
+        else
+          return cmp < 0;
+      });
+  return retval;
 }
 
 bool Translator::loadAndInstall(const QString& name, const QString& dir, const QString& language)
