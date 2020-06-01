@@ -70,20 +70,31 @@ atools::fs::xp::XpNavWriter::~XpNavWriter()
 
 void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
 {
-  // 25, 40 and 130 correspond to VORs classified as terminal, low and high.﻿
-  // 125 rang﻿e is where the VOR has n﻿o﻿ published ter﻿m/low/high classifica﻿ti﻿on.
+  // X-Plane definition
+  // 25, 40 and 130 correspond to VORs classified as terminal, low and high.
+  // 125 range is where the VOR has no published term/low/high classification.
   // These VORs might have the power output of a high VOR, but are not tested/certified to fulfill the
-  // high altitude SV﻿V﻿﻿.
+  // high altitude SVV.
 
   int range = at(line, RANGE).toInt();
   QString type;
   QString rangeType;
-  if(range < 30)
-    rangeType = "T";
-  else if(range < 50)
-    rangeType = "L";
-  else
+  if(range == 125 || range == 0) // Not published or empty string
+  {
     rangeType = "H";
+    // Set to null
+    insertVorQuery->bindValue(":range", QVariant(QVariant::Int));
+  }
+  else
+  {
+    if(range < 30)
+      rangeType = "T";
+    else if(range < 50)
+      rangeType = "L";
+    else if(range < 140)
+      rangeType = "H";
+    insertVorQuery->bindValue(":range", range);
+  }
 
   QString suffix = line.last().toUpper();
   if(suffix == "VOR" || suffix == "DME" || suffix == "VOR-DME" || suffix == "VOR/DME")
@@ -103,7 +114,6 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":region", at(line, REGION));
   insertVorQuery->bindValue(":type", type);
   insertVorQuery->bindValue(":frequency", frequency * 10);
-  insertVorQuery->bindValue(":range", range);
   insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
   insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
