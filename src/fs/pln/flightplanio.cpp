@@ -1000,6 +1000,8 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
           plan.flightplanType = stringFlightplanType(reader.readElementText());
         else if(reader.name() == "CruisingAlt")
           plan.cruisingAlt = reader.readElementText().toInt();
+        else if(reader.name() == "Comment")
+          plan.comment= reader.readElementText();
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
