@@ -21,8 +21,8 @@
 
 -- Create the missing NDB waypoints for airway intersections
 -- Needed to get a closed network
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
-select file_id, ident, region, 'N' as type, 0 as num_victor_airway, 0 as num_jet_airway, mag_var, lonx, laty from (
+insert into waypoint (file_id, ident, region, artificial, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+select file_id, ident, region, 1 as artificial, 'N' as type, 0 as num_victor_airway, 0 as num_jet_airway, mag_var, lonx, laty from (
   select previous_ident as ident, previous_region as region, ndb.file_id, ndb.lonx, ndb.laty, ndb.mag_var
   from airway_temp join ndb on previous_ident = ndb.ident and previous_region = ndb.region
   where previous_type = 2
@@ -32,8 +32,8 @@ union
   where next_type = 2);
 
 -- Create the missing VOR waypoints for airway intersections
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
-select file_id, ident, region, 'V' as type, 0 as num_victor_airway, 0 as num_jet_airway, mag_var, lonx, laty from (
+insert into waypoint (file_id, ident, region, artificial, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+select file_id, ident, region, 1 as artificial, 'V' as type, 0 as num_victor_airway, 0 as num_jet_airway, mag_var, lonx, laty from (
   select previous_ident as ident, previous_region as region, vor.file_id, vor.lonx, vor.laty, vor.mag_var
   from airway_temp join vor on previous_ident = vor.ident and previous_region = vor.region
   where previous_type = 3
