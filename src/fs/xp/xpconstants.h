@@ -131,6 +131,7 @@ enum AirportRowCode
   RAMP_START_METADATA = 1301, // Includes width, operations type, equipment type, & airlines.
 
   METADATA_RECORDS = 1302, // Zero or many for each airport.
+
   TRUCK_PARKING_LOCATION = 1400, // Not explicitly connected to taxi route network.
   TRUCK_DESTINATION_LOCATION = 1401, // Not explicitly connected to taxi route network.
 
