@@ -511,9 +511,13 @@ create table approach_leg
   fix_ident varchar(5),               -- "
   fix_region varchar(2),              -- "
   fix_airport_ident varchar(4),       -- "
+  fix_lonx double,                    -- Optional coordinates to better find the correct navaid
+  fix_laty double,                    -- "
   recommended_fix_type varchar(25),   -- "
   recommended_fix_ident varchar(5),   -- "
   recommended_fix_region varchar(2),  -- "
+  recommended_fix_lonx double,        -- "
+  recommended_fix_laty double,        -- "
   is_flyover integer not null,        -- 1 if this is a flyover fix
   is_true_course integer not null,    -- 1 if course is degrees true
   course double,                      -- leg course in degrees true of magnetic depending on is_true_course
@@ -548,9 +552,13 @@ create table transition_leg
   fix_ident varchar(5),
   fix_region varchar(2),
   fix_airport_ident varchar(4),
+  fix_lonx double,                    -- Optional coordinates to better find the correct navaid
+  fix_laty double,                    -- "
   recommended_fix_type varchar(25),
   recommended_fix_ident varchar(5),
   recommended_fix_region varchar(2),
+  recommended_fix_lonx double,        -- "
+  recommended_fix_laty double,        -- "
   is_flyover integer not null,
   is_true_course integer not null,
   course double,
