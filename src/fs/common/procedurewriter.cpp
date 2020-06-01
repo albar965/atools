@@ -791,6 +791,12 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   rec.setValue(":fix_type", navInfo.type);
   rec.setValue(":fix_ident", line.fixIdent);
   rec.setValue(":fix_region", navInfo.region);
+
+  if(rec.contains(":fix_lonx") && rec.contains(":fix_laty"))
+  {
+    rec.setValue(":fix_lonx", line.waypointPos.getLonX());
+    rec.setValue(":fix_laty", line.waypointPos.getLatY());
+  }
   // not used: fix_airport_ident
 
   if(line.pathTerm == "RF")
@@ -805,6 +811,12 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
       rec.setValue(":recommended_fix_type", centerNavInfo.type);
       rec.setValue(":recommended_fix_ident", line.centerFixOrTaaPt.trimmed());
       rec.setValue(":recommended_fix_region", centerNavInfo.region);
+
+      if(rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+      {
+        rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
+        rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
+      }
     }
     else
       qWarning() << line.context << "No center fix for RF leg";
@@ -818,6 +830,12 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     rec.setValue(":recommended_fix_type", recdNavInfo.type);
     rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
     rec.setValue(":recommended_fix_region", recdNavInfo.region);
+
+    if(rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+    {
+      rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
+      rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
+    }
   }
   // else null
 
