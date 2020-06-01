@@ -127,8 +127,14 @@ public:
    * 14 Usage of X-Plane 3D attribute
    * 15 Fix for X-Plane ICAO names
    * 16 "route_type" added to table "airway".
+   * 17 Coordinates to procedure legs added.
+   *    Fixed issue with duplicate waypoints in airways for DFD, X-Plane and FSX/P3D.
+   *    X-Plane navaid range calculation fixed.
+   *    Added runway smoothness and airport flatten flags from X-Plane to database schema.
+   *    Coordinates for fix and recommended fix in procedure tables added.
+   *    Added flag "artificial" for created NDB and VOR waypoints.
    */
-  static const int DB_VERSION_MINOR = 16;
+  static const int DB_VERSION_MINOR = 17;
 
   void init();
 
