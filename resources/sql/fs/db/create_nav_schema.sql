@@ -30,6 +30,7 @@ create table waypoint
   ident varchar(5),                   -- ICAO ident
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
+  artificial integer,                 -- Created for VOR and NDB navaids to support airway generation
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
                                       -- N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
   num_victor_airway integer not null, -- Number of victor (low altitude) airways crossing this waypoint
