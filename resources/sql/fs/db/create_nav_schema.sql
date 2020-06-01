@@ -63,7 +63,7 @@ create table vor
                                 -- TC = TACAN, VTH = high VORTAC, VTL = low VORTAC, VTT = terminal VORTAC
   frequency integer,            -- Frequency - MHz * 1000
   channel varchar(5),           -- TACAN channel
-  range integer not null,       -- Navaid radio range in NM
+  range integer,                -- Navaid radio range in NM
   mag_var double,               -- Magnetic variance in degree < 0 for West and > 0 for East
                                 -- Will be calculated if null
   dme_only integer not null,    -- 1 if this is only a DME
