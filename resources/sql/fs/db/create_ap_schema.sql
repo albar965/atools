@@ -36,6 +36,7 @@ create table airport
   state varchar(50) collate nocase,
   country varchar(50) collate nocase,
   region varchar(4) collate nocase,           -- ICAO region like DE, LF, K6 - not used for search
+  flatten integer,                            -- 1302 flatten 1. 0, 1 or null. X-Plane only.
   fuel_flags integer not null,                -- see enum atools::fs::bgl::ap::FuelFlags
   has_avgas integer not null,                 -- boolean
   has_jetfuel integer not null,               -- "
@@ -368,6 +369,7 @@ create table runway
   surface varchar(15),                  -- see enum atools::fs::bgl::rw::Surface
                                         -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
                                         -- which are used for data not originating from flight simulator
+  smoothness double,                    -- 0.00 (smooth) to 1.00 (very rough). Default is 0.25. X-Plane only.
   shoulder varchar(15),                 -- Optional column for X-Plane - shoulder surface or null if none
   length integer not null,              -- Feet
   width integer not null,               -- Feet

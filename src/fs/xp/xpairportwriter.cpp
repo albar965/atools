@@ -1026,6 +1026,8 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
     insertAirportQuery->bindValue(":country", value);
+  else if(key == "flatten")
+    insertAirportQuery->bindValue(":flatten", value);
   else if(key.startsWith("region") && !value.isEmpty()) // Documentation is not clear - region_id or region_code
     insertAirportQuery->bindValue(":region", value);
   else if(key == "datum_lat" && atools::almostNotEqual(value.toFloat(), 0.f))
@@ -1173,6 +1175,10 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   insertRunwayQuery->bindValue(":primary_end_id", primRwEndId);
   insertRunwayQuery->bindValue(":secondary_end_id", secRwEndId);
   insertRunwayQuery->bindValue(":surface", surfaceStr);
+  if(rowCode == LAND_RUNWAY)
+    insertRunwayQuery->bindValue(":smoothness", at(line, rw::SMOOTHNESS).toDouble());
+  else
+    insertRunwayQuery->bindValue(":smoothness", QVariant::Double);
 
   // Add shoulder surface (X-Plane only)
   int shoulder = at(line, rw::SHOULDER_SURFACE).toInt();
