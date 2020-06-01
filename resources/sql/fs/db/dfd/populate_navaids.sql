@@ -18,16 +18,19 @@
 -- This script fills the navaid tables from an attached DFD dataset with the name "src"
 -- file_id uses hardcoded value 1 for all datasets
 
+-- Duplicates are inserted and will be removed later
+
 -- *********************************************************************************************
 -- Fill VOR table
 -- *********************************************************************************************
 
 delete from vor;
 
--- 25, 40 and 130 correspond to VORs classified as terminal, low and high.﻿
--- 125 rang﻿e is where the VOR has n﻿o﻿ published ter﻿m/low/high classifica﻿ti﻿on.
+-- X-Plane definition
+-- 25, 40 and 130 correspond to VORs classified as terminal, low and high.
+-- 125 range is where the VOR has no published term/low/high classification.
 -- These VORs might have the power output of a high VOR, but are not tested/certified to fulfill the
--- high altitude SV﻿V﻿﻿.
+-- high altitude SVV.
 
 insert into vor (file_id, ident, name, region, type, frequency, channel, range, mag_var,
                  dme_only, dme_altitude, dme_lonx, dme_laty, altitude, lonx, laty)
@@ -204,146 +207,60 @@ select
   waypoint_longitude as lonx,
   waypoint_latitude as laty
 from (
-select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, waypoint_usage,
-  waypoint_latitude, waypoint_longitude
-from tbl_enroute_waypoints
-union
-select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, null as waypoint_usage,
-  waypoint_latitude, waypoint_longitude
-from tbl_terminal_waypoints);
+  select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, waypoint_usage,
+    waypoint_latitude, waypoint_longitude from tbl_enroute_waypoints
+  union
+  select area_code, icao_code, waypoint_identifier, waypoint_name, waypoint_type, null as waypoint_usage,
+    waypoint_latitude, waypoint_longitude from tbl_terminal_waypoints);
 
 -- *********************************************************************************************
 -- Now add VOR, NDB and other dummy waypoints that are needed for routing and procedure display
 -- *********************************************************************************************
 
 -- **********************************************************
--- Add VOR waypoints that are referenced by airways and procedures
+-- Add VOR waypoints that are referenced by airways
 
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+insert into waypoint (file_id, ident, region, artificial, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
-  1 as file_id, a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'V' as type,
+  1 as file_id, a.waypoint_identifier as ident, a.icao_code as region, 1 as artificial, 'V' as type,
   0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
-from (
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_iaps
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_sids
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
-  union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
-) a join tbl_vhfnavaids v on
-  a.waypoint_identifier = v.vor_identifier and a.waypoint_icao_code = v.icao_code and
+from (select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude
+      from tbl_enroute_airways) a
+join tbl_vhfnavaids v on
+  a.waypoint_identifier = v.vor_identifier and a.icao_code = v.icao_code and
   a.waypoint_latitude = v.vor_latitude and a.waypoint_longitude = v.vor_longitude
 -- Get all except ILS and MLS
 where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
-
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
-select
-  1 as file_id, a.ident as ident, v.icao_code as region, 'V' as type,
-  0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
-  a.lonx as lonx, a.laty as laty
-from (
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_iaps
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_sids
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_stars
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_iaps
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join tbl_vhfnavaids v on
-  a.ident = v.vor_identifier and a.laty = v.vor_latitude and a.lonx = v.vor_longitude
--- Get all except ILS and MLS
-where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
-
 
 -- **********************************************************
 -- Add terminal NDB waypoints that are referenced by airways and procedures
 
 -- A part of the waypoints are not needed by procedures and will be removed later
 
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+insert into waypoint (file_id, ident, region, artificial, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
-  1 as file_id, a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,
+  1 as file_id, a.waypoint_identifier as ident, a.icao_code as region, 1 as artificial, 'N' as type,
   0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
-from (
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_iaps
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_sids
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
-  union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
-) a join tbl_terminal_ndbnavaids v on
-  a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
+from (select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude
+      from tbl_enroute_airways) a
+join tbl_terminal_ndbnavaids v on
+  a.waypoint_identifier = v.ndb_identifier and a.icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
-
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
-select
-  1 as file_id, a.ident as ident, v.icao_code as region, 'N' as type,
-  0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
-  a.lonx as lonx, a.laty as laty
-from (
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_iaps
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_sids
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_stars
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_iaps
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join tbl_terminal_ndbnavaids v on
-  a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
-
 
 -- **********************************************************
 -- Add enroute NDB waypoints that are referenced by airways and procedures
 
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+insert into waypoint (file_id, ident, region, artificial, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
-  1 as file_id, a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,
+  1 as file_id, a.waypoint_identifier as ident, a.icao_code as region, 1 as artificial, 'N' as type,
   0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
-from (
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_iaps
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_sids
-  union
-    select waypoint_identifier, waypoint_icao_code, waypoint_latitude, waypoint_longitude from tbl_stars
-  union
-    select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways
-) a join tbl_enroute_ndbnavaids v on
-  a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
+from (select waypoint_identifier, icao_code, waypoint_latitude, waypoint_longitude from tbl_enroute_airways) a
+join tbl_enroute_ndbnavaids v on
+  a.waypoint_identifier = v.ndb_identifier and a.icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
-
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
-select
-  1 as file_id, a.ident as ident, v.icao_code as region, 'N' as type,
-  0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var,
-  a.lonx as lonx, a.laty as laty
-from (
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_iaps
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_sids
-  union
-    select recommanded_navaid as ident, recommanded_navaid_latitude as laty, recommanded_navaid_longitude as lonx from tbl_stars
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_iaps
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_sids
-  union
-    select center_waypoint as ident, center_waypoint_latitude as laty, center_waypoint_longitude as lonx from tbl_stars
-) a join tbl_enroute_ndbnavaids v on
-  a.ident = v.ndb_identifier and a.laty = v.ndb_latitude and a.lonx = v.ndb_longitude;
-
 
 -- Delete all duplicate waypoints where type NDB overlaps with type VOR (mostly DME)
 -- Leave the NDB waypoints

@@ -41,7 +41,7 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
-// Get all airway_point rows and join previous and next waypoints to the result by ident and region
+// Get all airway_point rows and join previous and next waypoints to the result by ident, region and type
 static const QString WAYPOINT_QUERY(
   "select r.name, r.type, "
   "  prev.waypoint_id as prev_waypoint_id, "
@@ -60,8 +60,8 @@ static const QString WAYPOINT_QUERY(
   "  next.lonx as next_lonx, "
   "  next.laty as next_laty "
   "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
-  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
-  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
+  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region and r.previous_type = prev.type "
+  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region and r.next_type = next.type "
   "order by r.name");
 
 /* Airway segment with from/to position and IDs */
