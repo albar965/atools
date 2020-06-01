@@ -25,13 +25,23 @@ namespace gui {
 ActionTextSaver::ActionTextSaver(QList<QAction *> actions)
 {
   for(QAction *action : actions)
+  {
     texts.insert(action, action->text());
+    tooltips.insert(action, action->toolTip());
+    statustips.insert(action, action->statusTip());
+  }
 }
 
 ActionTextSaver::~ActionTextSaver()
 {
   for(QHash<QAction *, QString>::iterator it = texts.begin(); it != texts.end(); ++it)
     it.key()->setText(it.value());
+
+  for(QHash<QAction *, QString>::iterator it = tooltips.begin(); it != tooltips.end(); ++it)
+    it.key()->setToolTip(it.value());
+
+  for(QHash<QAction *, QString>::iterator it = statustips.begin(); it != statustips.end(); ++it)
+    it.key()->setStatusTip(it.value());
 }
 
 } // namespace gui
