@@ -344,6 +344,42 @@ void SqlQuery::addBindValue(const QVariant& val, QSql::ParamType type)
   query.addBindValue(val, type);
 }
 
+void SqlQuery::bindNullStr(const QString& placeholder)
+{
+  query.bindValue(placeholder, QVariant(QVariant::String));
+  boundValue(placeholder);
+}
+
+void SqlQuery::bindNullStr(int pos)
+{
+  query.bindValue(pos, QVariant(QVariant::String));
+  boundValue(pos);
+}
+
+void SqlQuery::bindNullInt(const QString& placeholder)
+{
+  query.bindValue(placeholder, QVariant(QVariant::Int));
+  boundValue(placeholder);
+}
+
+void SqlQuery::bindNullInt(int pos)
+{
+  query.bindValue(pos, QVariant(QVariant::Int));
+  boundValue(pos);
+}
+
+void SqlQuery::bindNullFloat(const QString& placeholder)
+{
+  query.bindValue(placeholder, QVariant(QVariant::Double));
+  boundValue(placeholder);
+}
+
+void SqlQuery::bindNullFloat(int pos)
+{
+  query.bindValue(pos, QVariant(QVariant::Double));
+  boundValue(pos);
+}
+
 void SqlQuery::bindRecord(const SqlRecord& record)
 {
   for(int i = 0; i < record.count(); i++)

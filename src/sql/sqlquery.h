@@ -194,6 +194,13 @@ public:
   void bindValue(int pos, const QVariant& val, QSql::ParamType type = QSql::In);
   void addBindValue(const QVariant& val, QSql::ParamType type = QSql::In);
 
+  void bindNullStr(const QString& placeholder);
+  void bindNullStr(int pos);
+  void bindNullInt(const QString& placeholder);
+  void bindNullInt(int pos);
+  void bindNullFloat(const QString& placeholder);
+  void bindNullFloat(int pos);
+
   void bindRecord(const atools::sql::SqlRecord& record);
 
   void bindAndExecRecords(const atools::sql::SqlRecordVector& records);

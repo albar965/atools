@@ -119,6 +119,10 @@ public:
   void updateColumnInTable(const QString& table, const QString& idColum, const QStringList& queryColumns,
                            const QStringList& insertcolumns, atools::sql::SqlUtil::UpdateColFuncType func);
 
+  /* Add column with given name and type if it does not exist yet. suffix can be "not null" or similar constraints.
+   * Returns true if a new column was added. */
+  bool addColumnIf(const QString& table, const QString& column, const QString& type, const QString& suffix = QString());
+
 private:
   SqlDatabase *db;
 

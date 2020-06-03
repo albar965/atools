@@ -470,6 +470,17 @@ QStringList SqlUtil::buildResultList(SqlQuery& query)
   return retval;
 }
 
+bool SqlUtil::addColumnIf(const QString& table, const QString& column, const QString& type, const QString& suffix)
+{
+  if(!db->record(table).contains(column))
+  {
+    // Add missing column
+    db->exec("alter table " + table + " add column " + column + " " + type + " " + suffix);
+    return true;
+  }
+  return false;
+}
+
 } // namespace sql
 
 } // namespace atools

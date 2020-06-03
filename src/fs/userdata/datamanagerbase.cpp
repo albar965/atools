@@ -94,17 +94,11 @@ void DataManagerBase::dropSchema()
 
 bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType)
 {
-  if(!db->record(tableName).contains(colName))
-  {
-    qDebug() << Q_FUNC_INFO << colName << colType;
-
-    SqlTransaction transaction(db);
-    // Add missing column
-    db->exec("alter table " + tableName + " add column " + colName + " " + colType);
-    transaction.commit();
-    return true;
-  }
-  return false;
+  qDebug() << Q_FUNC_INFO << colName << colType;
+  SqlTransaction transaction(db);
+  bool retval = SqlUtil(db).addColumnIf(tableName, colName, colType);
+  transaction.commit();
+  return retval;
 }
 
 void DataManagerBase::backup()
