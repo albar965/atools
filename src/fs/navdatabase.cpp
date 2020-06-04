@@ -636,6 +636,8 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
 
   if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
   {
+    // Airports are overloaded by ident
+
     // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
     if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
       return true;
@@ -647,6 +649,9 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
     // Mandatory
     if((aborted = xpDataCompiler->compileDefaultApt()))
+      return true;
+
+    if((aborted = xpDataCompiler->fixDuplicateApt()))
       return true;
   }
 

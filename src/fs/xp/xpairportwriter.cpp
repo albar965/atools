@@ -583,7 +583,7 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
     atools::geo::LineDistance curResult, nearestResult;
     QString closestRunwayName;
     // Find nearest runway by distance where VASI is along line
-    for(const RwGeo& rg: runwayGeometry)
+    for(const RunwayGeo& rg: runwayGeometry)
     {
       // Calculate distance from VASI to runway
       rg.runway.distanceMeterToLine(vasiPos, curResult);
@@ -1043,6 +1043,7 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   // 1302 faa_code SEA
   // 1302 iata_code SEA
   // 1302 icao_code KSEA
+  // 1302 local_code EKTH
 }
 
 void XpAirportWriter::writeHelipad(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
@@ -1131,8 +1132,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   int secRwEndId = ++curRunwayEndId;
 
   // Add to index
-  airportIndex->addRunwayEnd(airportIdent, primaryName, primRwEndId);
-  airportIndex->addRunwayEnd(airportIdent, secondaryName, secRwEndId);
+  runways.append({primaryName, secondaryName, primRwEndId, secRwEndId});
 
   // Calculate heading and positions
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
@@ -1379,7 +1379,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
   writeAirportFile(airportIdent, context.curFileId);
 
-  if(!airportIndex->addAirport(airportIdent, airportId) || !options.isIncludedAirportIdent(airportIdent))
+  if(!airportIndex->addAirportIdent(airportIdent) || !options.isIncludedAirportIdent(airportIdent))
     // Airport was already read before - ignore it completely
     ignoringAirport = true;
   else
@@ -1443,6 +1443,7 @@ void XpAirportWriter::reset()
   airportIdent.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
+  runways.clear();
   taxiNodes.clear();
   largestParkingGate.clear();
   largestParkingRamp.clear();
@@ -1456,6 +1457,38 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 {
   if(writingAirport && !ignoringAirport)
   {
+    // Ident: Airport ICAO code. If no ICAO code exists, use X +
+    // local identifier to create fictional code.
+    // Maximum seven characters. Must be unique.
+
+    // Determine best ident - preferrably ICAO
+    QString ident = insertAirportQuery->boundValue(":ident").toString();
+    QString icao = insertAirportQuery->boundValue(":icao").toString();
+
+    // Set always for disambiguation and add-on overloading
+    insertAirportQuery->bindValue(":xpident", ident);
+
+    QString apIdent;
+
+    if(ident == icao || icao.isEmpty())
+      // Ident is equal to ICAO or no ICAO - fill only ident which is considered ICAO
+      apIdent = ident;
+    else
+      // Not equal and ICAO given - use ICAO as ident
+      apIdent = icao;
+
+    insertAirportQuery->bindValue(":ident", apIdent);
+
+    // Only used for duplicates
+    insertAirportQuery->bindValue(":icao", QVariant(QVariant::String));
+
+    airportIndex->addAirportId(apIdent, curAirportId);
+    for(const Runway& rw : runways)
+    {
+      airportIndex->addRunwayEnd(apIdent, rw.primaryName, rw.primaryEndId);
+      airportIndex->addRunwayEnd(apIdent, rw.secondaryName, rw.secondaryEndId);
+    }
+
     // Update counts
     insertAirportQuery->bindValue(":longest_runway_length", longestRunwayLength);
     insertAirportQuery->bindValue(":longest_runway_width", longestRunwayWidth);

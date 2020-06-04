@@ -18,6 +18,8 @@
 #ifndef ATOOLS_XPAIRPORTINDEX_H
 #define ATOOLS_XPAIRPORTINDEX_H
 
+#include "util/str.h"
+
 #include <QHash>
 #include <QSet>
 #include <QVariant>
@@ -25,57 +27,6 @@
 namespace atools {
 namespace fs {
 namespace common {
-
-// Helper classes to avoid QString and speed up the hash maps
-class IndexName
-{
-public:
-  explicit IndexName(const QString& str);
-  IndexName();
-
-private:
-  friend bool operator==(const IndexName& name1, const IndexName& name2);
-
-  friend uint qHash(const IndexName& name);
-
-  static constexpr int SIZE = 10;
-  char name[SIZE];
-};
-
-inline bool operator==(const IndexName& name1, const IndexName& name2)
-{
-  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
-}
-
-inline bool operator!=(const IndexName& name1, const IndexName& name2)
-{
-  return !operator==(name1, name2);
-}
-
-class IndexName2
-{
-public:
-  explicit IndexName2(const QString& str1, const QString& str2);
-  IndexName2();
-
-private:
-  friend bool operator==(const IndexName2& name1, const IndexName2& name2);
-
-  friend uint qHash(const IndexName2& name);
-
-  static constexpr int SIZE = 20;
-  char name[SIZE];
-};
-
-inline bool operator==(const IndexName2& name1, const IndexName2& name2)
-{
-  return memcmp(name1.name, name2.name, sizeof(name1.name)) == 0;
-}
-
-inline bool operator!=(const IndexName2& name1, const IndexName2& name2)
-{
-  return !operator==(name1, name2);
-}
 
 /*
  * Filled when reading airports in the beginning of the compilation process.
@@ -86,39 +37,60 @@ class AirportIndex
 public:
   AirportIndex();
 
+  /* Add airport to index. Returns true if it was added. ident should be ICAO for X-Plane.
+   *  Uses a different set/hash than getAirportId and addAirportId */
+  bool addAirportIdent(const QString& ident);
+
+  /* Add airport id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
+  bool addAirportId(const QString& ident, int airportId);
+
   /* Get id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */
-  QVariant getAirportId(const QString& airportIcao);
-  QVariant getRunwayEndId(const QString& airportIcao, const QString& runwayName);
+  QVariant getAirportId(const QString& ident) const;
 
-  /* Add airport id to index. Returns true if it is not already indexed and was not added. */
-  bool addAirport(const QString& airportIcao, int airportId);
-  void addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId);
+  /* Add runway end id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
+  void addRunwayEnd(const QString& ident, const QString& runwayName, int runwayEndId);
 
-  void addAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent, int ilsId);
-  int getAirportIlsId(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
+  /* Get runway end id packed in a variant or a null integer variant if not found.
+   *  Returns null if airport id is ENRT */
+  QVariant getRunwayEndId(const QString& ident, const QString& runwayName) const;
 
-  void addSkippedAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
-  bool hasSkippedAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent);
+  void addAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent, int ilsId);
+  int getAirportIlsId(const QString& ident, const QString& airportRegion, const QString& ilsIdent) const;
+
+  void addSkippedAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent);
+  bool hasSkippedAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent) const;
+
+  /* Returns true if ICAO duplicates appear */
+  bool addIdentIcaoMapping(const QString& ident, const QString& icao);
 
   void clearSkippedIls()
   {
     skippedIlsSet.clear();
   }
 
-  void clear()
-  {
-    icaoToIdMap.clear();
-    icaoRunwayNameToEndId.clear();
-    airportIlsIdMap.clear();
-  }
+  void clear();
+
+  typedef atools::util::Str<8> Name;
+  typedef atools::util::StrPair<8> Name2;
+  typedef atools::util::StrTriple<8> Name3;
 
 private:
-  // Map ICAO id to database airport_id
-  QHash<IndexName, int> icaoToIdMap;
-  QHash<QString, int> airportIlsIdMap;
-  QSet<QString> skippedIlsSet;
-  QHash<IndexName2, int> icaoRunwayNameToEndId;
+  // Airport ICAO to airport_id
+  QHash<Name, int> identToIdMap;
+
+  // Airport idents
+  QSet<Name> airportIdents;
+
+  // Maps airport idents to ICAO
+  QHash<Name, Name> identToIcaoMap;
+
+  // Airport ICAO and runway name to runway_end_id
+  QHash<Name2, int> identRunwayNameToEndId;
+
+  // Airport ICAO, airport region and ILS ident to ils_id
+  QHash<Name3, int> airportIlsIdMap;
+  QSet<Name3> skippedIlsSet;
 
 };
 
@@ -126,6 +98,8 @@ private:
 } // namespace fs
 } // namespace atools
 
-Q_DECLARE_TYPEINFO(atools::fs::common::IndexName, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::common::AirportIndex::Name, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::common::AirportIndex::Name2, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(atools::fs::common::AirportIndex::Name3, Q_PRIMITIVE_TYPE);
 
 #endif // ATOOLS_XPAIRPORTINDEX_H

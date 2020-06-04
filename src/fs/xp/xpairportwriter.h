@@ -152,14 +152,21 @@ private:
   const atools::sql::SqlRecord runwayEndRecord;
 
   /* Keep runway information to ease assigning of VASI to a runway end */
-  struct RwGeo
+  struct RunwayGeo
   {
     QString primaryName, secondaryName;
     float primaryHeading, secondaryHeading;
     atools::geo::Line runway;
   };
+  QVector<RunwayGeo> runwayGeometry;
 
-  QVector<RwGeo> runwayGeometry;
+  /* Keep runways until ICAO code is determined */
+  struct Runway
+  {
+    QString primaryName, secondaryName;
+    int primaryEndId, secondaryEndId;
+  };
+  QVector<Runway> runways;
 
   float airportAltitude = 0.f;
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
