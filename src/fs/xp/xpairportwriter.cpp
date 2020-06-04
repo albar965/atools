@@ -244,9 +244,6 @@ enum RunwayFieldIndex
 
 }
 
-// Remove square brackets from name
-const static QRegularExpression NAME_INDICATOR("\\[(h|s|g|x|mil)\\]", QRegularExpression::CaseInsensitiveOption);
-
 XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  NavDatabaseErrors *navdatabaseErrors)
@@ -428,8 +425,11 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
      nameCompare == QLatin1Literal("**") ||
      nameCompare == QLatin1Literal("+") ||
      nameCompare == QLatin1Literal("-") ||
+     nameCompare == QLatin1Literal("_") ||
+     nameCompare == QLatin1Literal(" ") ||
      nameCompare == QLatin1Literal(".") ||
      nameCompare == QLatin1Literal("TAXIWAY") ||
+     nameCompare == QLatin1Literal("TAXYWAY") ||
      nameCompare == QLatin1Literal("TAXI_TO_RAMP") ||
      nameCompare == QLatin1Literal("TAXI_RAMP") ||
      nameCompare == QLatin1Literal("TAXY_RAMP") ||
@@ -1393,15 +1393,25 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     airportAltitude = line.value(ap::ELEVATION).toFloat();
 
-    QString name = mid(line, ap::NAME, true /* ignore error */);
+    QString name = mid(line, ap::NAME, true /* ignore error */).simplified();
     airportClosed = atools::fs::util::isNameClosed(name);
 
-    if(NAME_INDICATOR.match(name).hasMatch())
-      // Remove [H], [S], [g] and [mil] indicators
-      name = name.replace(NAME_INDICATOR, "").trimmed();
+    bool military = false;
+    // Remove [H], [S], [g], [x] and [mil] indicators
+    if(name.startsWith('['))
+    {
+      if(name.startsWith("[mil]", Qt::CaseInsensitive))
+      {
+        name = name.mid(5).trimmed();
+        military = true;
+      }
+      else if(name.length() >= 3 && name.at(2) == ']')
+        name = name.mid(3).trimmed();
+    }
 
     // Check military before converting to caps
-    bool isMil = atools::fs::util::isNameMilitary(name);
+    if(!military)
+      military = atools::fs::util::isNameMilitary(name);
     name = atools::fs::util::capAirportName(name);
 
     insertAirportQuery->bindValue(":ident", airportIdent);
@@ -1409,7 +1419,7 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":fuel_flags", 0); // not available
     insertAirportQuery->bindValue(":has_tower_object", 0);
     insertAirportQuery->bindValue(":is_closed", airportClosed); // extracted from name
-    insertAirportQuery->bindValue(":is_military", isMil);
+    insertAirportQuery->bindValue(":is_military", military);
     insertAirportQuery->bindValue(":is_addon", context.flags.testFlag(IS_ADDON));
     insertAirportQuery->bindValue(":num_boundary_fence", 0);
 
