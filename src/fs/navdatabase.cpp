@@ -415,7 +415,12 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_airport.sql", tr("Updating Airports"))))
     return;
 
-  if(sim != atools::fs::FsPaths::XPLANE11)
+  if(sim == atools::fs::FsPaths::DFD)
+  {
+    if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
+      return;
+  }
+  else if(sim != atools::fs::FsPaths::XPLANE11)
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS

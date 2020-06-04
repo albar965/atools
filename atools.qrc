@@ -42,5 +42,6 @@
         <file>resources/sql/fs/logbook/create_logbook_schema.sql</file>
         <file>resources/sql/fs/db/create_indexes_post_load_boundary.sql</file>
         <file>resources/sql/fs/db/finish_schema_route.sql</file>
+        <file>resources/sql/fs/db/dfd/update_airport_ils.sql</file>
     </qresource>
 </RCC>
