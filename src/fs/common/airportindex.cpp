@@ -21,64 +21,8 @@ namespace atools {
 namespace fs {
 namespace common {
 
-static QLatin1String EN_ROUTE("ENRT");
-
-IndexName::IndexName(const QString& str)
-{
-  for(int i = 0; i < SIZE; i++)
-  {
-    if(i < str.size())
-      name[i] = str.at(i).toLatin1();
-    else
-      name[i] = ' ';
-  }
-}
-
-IndexName::IndexName()
-{
-  memset(name, ' ', SIZE);
-}
-
-uint qHash(const IndexName& name)
-{
-  int retval = 0;
-  for(int i = 0; i < IndexName::SIZE; i++)
-    retval ^= name.name[i] << ((i % 4) * 8);
-
-  return static_cast<uint>(retval);
-}
-
-IndexName2::IndexName2(const QString& str1, const QString& str2)
-{
-  for(int i = 0; i < SIZE / 2; i++)
-  {
-    if(i < str1.size())
-      name[i] = str1.at(i).toLatin1();
-    else
-      name[i] = ' ';
-  }
-  for(int i = 0; i < SIZE / 2; i++)
-  {
-    if(i < str2.size())
-      name[i + SIZE / 2] = str2.at(i).toLatin1();
-    else
-      name[i + SIZE / 2] = ' ';
-  }
-}
-
-IndexName2::IndexName2()
-{
-  memset(name, ' ', SIZE);
-}
-
-uint qHash(const IndexName2& name)
-{
-  int retval = 0;
-  for(int i = 0; i < IndexName2::SIZE; i++)
-    retval ^= name.name[i] << ((i % 4) * 8);
-
-  return static_cast<uint>(retval);
-}
+const static QLatin1String EN_ROUTE("ENRT");
+const static QVariant NULL_INT(QVariant::Int);
 
 // ==========================================================================
 AirportIndex::AirportIndex()
@@ -86,65 +30,97 @@ AirportIndex::AirportIndex()
 
 }
 
-QVariant AirportIndex::getAirportId(const QString& airportIcao)
+bool AirportIndex::addAirportIdent(const QString& ident)
 {
-  if(airportIcao != EN_ROUTE)
+  Name idxName(ident);
+  if(airportIdents.contains(idxName))
+    return false;
+
+  airportIdents.insert(idxName);
+  return true;
+}
+
+QVariant AirportIndex::getAirportId(const QString& ident) const
+{
+  if(!ident.isEmpty() && ident != EN_ROUTE)
   {
-    int id = icaoToIdMap.value(IndexName(airportIcao), -1);
+    int id = identToIdMap.value(Name(ident), -1);
     if(id != -1)
       return id;
   }
-  return QVariant(QVariant::Int);
+  return NULL_INT;
 }
 
-QVariant AirportIndex::getRunwayEndId(const QString& airportIcao, const QString& runwayName)
+QVariant AirportIndex::getRunwayEndId(const QString& ident, const QString& runwayName) const
 {
-  if(airportIcao != EN_ROUTE) // en route
+  QVariant var = NULL_INT;
+
+  if(!ident.isEmpty())
   {
-    int id = icaoRunwayNameToEndId.value(IndexName2(airportIcao, runwayName), -1);
+    int id = identRunwayNameToEndId.value(Name2(ident, runwayName), -1);
     if(id != -1)
       return id;
   }
-  return QVariant(QVariant::Int);
+  return NULL_INT;
 }
 
-bool AirportIndex::addAirport(const QString& airportIcao, int airportId)
+bool AirportIndex::addAirportId(const QString& ident, int airportId)
 {
-  if(icaoToIdMap.contains(IndexName(airportIcao)))
+  if(identToIdMap.contains(Name(ident)))
     return false;
   else
   {
-    icaoToIdMap.insert(IndexName(airportIcao), airportId);
+    identToIdMap.insert(Name(ident), airportId);
     return true;
   }
 }
 
-void AirportIndex::addRunwayEnd(const QString& airportIcao, const QString& runwayName, int runwayEndId)
+void AirportIndex::addRunwayEnd(const QString& ident, const QString& runwayName, int runwayEndId)
 {
-  icaoRunwayNameToEndId.insert(IndexName2(airportIcao, runwayName), runwayEndId);
+  identRunwayNameToEndId.insert(Name2(ident, runwayName), runwayEndId);
 }
 
-void AirportIndex::addAirportIls(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent,
+void AirportIndex::addAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent,
                                  int ilsId)
 {
-  airportIlsIdMap.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), ilsId);
+  airportIlsIdMap.insert(Name3(ident, airportRegion, ilsIdent), ilsId);
 }
 
-int AirportIndex::getAirportIlsId(const QString& airportIcao, const QString& airportRegion, const QString& ilsIdent)
+int AirportIndex::getAirportIlsId(const QString& ident, const QString& airportRegion, const QString& ilsIdent) const
 {
-  return airportIlsIdMap.value(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent), -1);
+  return airportIlsIdMap.value(Name3(ident, airportRegion, ilsIdent), -1);
 }
 
-void AirportIndex::addSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
+void AirportIndex::addSkippedAirportIls(const QString& ident, const QString& airportRegion,
                                         const QString& ilsIdent)
 {
-  skippedIlsSet.insert(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
+  skippedIlsSet.insert(Name3(ident, airportRegion, ilsIdent));
 }
 
-bool AirportIndex::hasSkippedAirportIls(const QString& airportIcao, const QString& airportRegion,
-                                        const QString& ilsIdent)
+bool AirportIndex::hasSkippedAirportIls(const QString& ident, const QString& airportRegion,
+                                        const QString& ilsIdent) const
 {
-  return skippedIlsSet.contains(QString("%1|%2|%3").arg(airportIcao).arg(airportRegion).arg(ilsIdent));
+  return skippedIlsSet.contains(Name3(ident, airportRegion, ilsIdent));
+}
+
+bool AirportIndex::addIdentIcaoMapping(const QString& ident, const QString& icao)
+{
+  bool retval = false;
+  if(!ident.isEmpty() && !icao.isEmpty())
+  {
+    retval = identToIcaoMap.contains(Name(icao));
+    identToIcaoMap.insert(Name(ident), Name(icao));
+  }
+  return retval;
+}
+
+void AirportIndex::clear()
+{
+  identToIdMap.clear();
+  airportIdents.clear();
+  identToIcaoMap.clear();
+  identRunwayNameToEndId.clear();
+  airportIlsIdMap.clear();
 }
 
 } // namespace common

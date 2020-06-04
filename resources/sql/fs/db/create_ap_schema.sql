@@ -27,14 +27,15 @@ drop table if exists airport;
 create table airport
 (
   airport_id integer primary key,
-  file_id integer not null,                   -- BGL file id
-  ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
-  icao varchar(10),                           -- ICAO ident
+  file_id integer not null,                   -- BGL or apt.dat file id
+  ident varchar(10) not null,                 -- ICAO ident or X-Plane internal airport ID for duplicate ICAO
+  icao varchar(10),                           -- ICAO ident if available and different from ident
   iata varchar(10),                           -- IATA ident if available
+  xpident varchar(10),                        -- X-Plane internal ident. Always filled for X-Plane databases.
   name varchar(50) collate nocase,
   city varchar(50) collate nocase,
   state varchar(50) collate nocase,
-  country varchar(50) collate nocase,
+  country varchar(50) collate nocase,         -- Country name or area code in case of DFD
   region varchar(4) collate nocase,           -- ICAO region like DE, LF, K6 - not used for search
   flatten integer,                            -- 1302 flatten 1. 0, 1 or null. X-Plane only.
   fuel_flags integer not null,                -- see enum atools::fs::bgl::ap::FuelFlags

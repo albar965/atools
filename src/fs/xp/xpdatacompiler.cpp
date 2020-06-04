@@ -183,6 +183,94 @@ bool XpDataCompiler::compileCustomApt()
   return false;
 }
 
+bool XpDataCompiler::fixDuplicateApt()
+{
+  static const QVariant NULLSTR(QVariant::String);
+
+  // Get all duplicate idents
+  SqlQuery query("select a1.airport_id as airport_id1, a1.ident as ident1, a1.icao as icao1, a1.iata as iata1, "
+                 "  a1.xpident as xpident1, a1.is_closed as is_closed1, "
+                 "  a2.airport_id as airport_id2, a2.ident as ident2, a2.icao as icao2, a2.iata as iata2, "
+                 "  a2.xpident as xpident2, a2.is_closed as is_closed2 "
+                 "from airport a1 join airport a2 on a1.ident = a2.ident and a1.airport_id < a2.airport_id", db);
+
+  // Update ident and ICAO
+  SqlQuery fixAirportQuery(db);
+  fixAirportQuery.prepare("update airport set ident = :ident, icao = :icao where airport_id = :id");
+
+  query.exec();
+  while(query.next())
+  {
+    int id1 = query.valueInt("airport_id1"), id2 = query.valueInt("airport_id2");
+    bool closed1 = query.valueBool("is_closed1"), closed2 = query.valueBool("is_closed2");
+
+    const QString ident1 = query.valueStr("ident1"), icao1 = query.valueStr("icao1"), iata1 = query.valueStr("iata1"),
+                  xpident1 = query.valueStr("xpident1"),
+                  ident2 = query.valueStr("ident2"), icao2 = query.valueStr("icao2"), iata2 = query.valueStr("iata2"),
+                  xpident2 = query.valueStr("xpident2");
+
+    QVariant ident, icao;
+    int id;
+    if(closed1 && !closed2)
+    {
+      // 1 is closed - append CLSD to ident
+      id = id1;
+      ident = ident1 + "CLSD";
+      icao = icao1.isEmpty() ? NULLSTR : icao1;
+    }
+    else if(!closed1 && closed2)
+    {
+      // 2 is closed - append CLSD to ident
+      id = id2;
+      ident = ident2 + "CLSD";
+      icao = icao2.isEmpty() ? NULLSTR : icao2;
+    }
+    else if((ident1 != xpident1 && ident2 == xpident2))
+    {
+      // First has ident different from XP id move XP id to ident and ident to ICAO
+      id = id1;
+      ident = xpident1;
+      icao = ident1;
+    }
+    else if(ident1 == xpident1 && ident2 != xpident2)
+    {
+      // Second has ident different from XP id move XP id to ident and ident to ICAO
+      id = id2;
+      ident = xpident2;
+      icao = ident2;
+    }
+    else if(xpident1.startsWith('X') && !xpident2.startsWith('X'))
+    {
+      // First has an XP internal ident
+      id = id1;
+      ident = xpident1;
+      icao = ident1;
+    }
+    else if(!xpident1.startsWith('X') && xpident2.startsWith('X'))
+    {
+      // Second has an XP internal ident
+      id = id2;
+      ident = xpident2;
+      icao = ident2;
+    }
+    else
+    {
+      // Simply add suffix to first airport
+      id = id1;
+      ident = ident1 + "DUP";
+      icao = icao1.isEmpty() ? NULLSTR : icao1;
+    }
+    qInfo() << "Fixing airport ident for " << id << "ident" << ident << "icao" << icao;
+
+    // Update airport
+    fixAirportQuery.bindValue(":ident", ident);
+    fixAirportQuery.bindValue(":icao", icao);
+    fixAirportQuery.bindValue(":id", id);
+    fixAirportQuery.exec();
+  }
+  return false;
+}
+
 bool XpDataCompiler::compileCustomGlobalApt()
 {
   // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
