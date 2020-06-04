@@ -792,11 +792,17 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   rec.setValue(":fix_ident", line.fixIdent);
   rec.setValue(":fix_region", navInfo.region);
 
-  if(rec.contains(":fix_lonx") && rec.contains(":fix_laty"))
+  if(line.waypointPos.isValid() && rec.contains(":fix_lonx") && rec.contains(":fix_laty"))
   {
     rec.setValue(":fix_lonx", line.waypointPos.getLonX());
     rec.setValue(":fix_laty", line.waypointPos.getLatY());
   }
+  else
+  {
+    rec.setValue(":fix_lonx", QVariant(QVariant::Double));
+    rec.setValue(":fix_laty", QVariant(QVariant::Double));
+  }
+
   // not used: fix_airport_ident
 
   if(line.pathTerm == "RF")
@@ -812,11 +818,18 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
       rec.setValue(":recommended_fix_ident", line.centerFixOrTaaPt.trimmed());
       rec.setValue(":recommended_fix_region", centerNavInfo.region);
 
-      if(rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+      if(line.recdWaypointPos.isValid() &&
+         rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
       {
         rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
         rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
       }
+      else
+      {
+        rec.setValue(":recommended_fix_lonx", QVariant(QVariant::Double));
+        rec.setValue(":recommended_fix_laty", QVariant(QVariant::Double));
+      }
+
     }
     else
       qWarning() << line.context << "No center fix for RF leg";
@@ -831,10 +844,15 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
     rec.setValue(":recommended_fix_region", recdNavInfo.region);
 
-    if(rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
+    if(line.recdWaypointPos.isValid() && rec.contains(":recommended_fix_lonx") && rec.contains(":recommended_fix_laty"))
     {
       rec.setValue(":recommended_fix_lonx", line.recdWaypointPos.getLonX());
       rec.setValue(":recommended_fix_laty", line.recdWaypointPos.getLatY());
+    }
+    else
+    {
+      rec.setValue(":recommended_fix_lonx", QVariant(QVariant::Double));
+      rec.setValue(":recommended_fix_laty", QVariant(QVariant::Double));
     }
   }
   // else null

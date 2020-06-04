@@ -151,15 +151,15 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
 
     // Add ident to id mapping
-    airportIndex->addAirport(ident, curAirportId);
+    airportIndex->addAirportId(ident, curAirportId);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
-    airportWriteQuery->bindValue(":icao", ident);
     if(iata.isEmpty())
       airportWriteQuery->bindValue(":iata", QVariant::String);
     else
       airportWriteQuery->bindValue(":iata", iata);
+
     airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->valueStr("airport_name")));
     airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));
     airportWriteQuery->bindValue(":region", airportQuery->valueStr("icao_code"));
@@ -1201,7 +1201,11 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.secCode = query.valueStr(""); // Not available
   // procInput.subCode = query.valueStr(""); // Not available
   procInput.descCode = query.valueStr("waypoint_description_code");
-  procInput.waypointPos = DPos(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
+
+  if(!query.isNull("waypoint_longitude") && !query.isNull("waypoint_latitude"))
+    procInput.waypointPos = DPos(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));
+  else
+    procInput.waypointPos = DPos();
 
   procInput.turnDir = query.valueStr("turn_direction");
   procInput.pathTerm = query.valueStr("path_termination");
@@ -1209,8 +1213,12 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.recdIcaoCode = query.valueStr(""); // Not available
   // procInput.recdSecCode = query.valueStr("");  // Not available
   // procInput.recdSubCode = query.valueStr("");  // Not available
-  procInput.recdWaypointPos = DPos(query.valueDouble("recommanded_navaid_longitude"),
-                                   query.valueDouble("recommanded_navaid_latitude"));
+
+  if(!query.isNull("recommanded_navaid_longitude") && !query.isNull("recommanded_navaid_latitude"))
+    procInput.recdWaypointPos = DPos(query.valueDouble("recommanded_navaid_longitude"),
+                                     query.valueDouble("recommanded_navaid_latitude"));
+  else
+    procInput.recdWaypointPos = DPos();
 
   procInput.theta = query.valueFloat("theta");
   procInput.rho = query.valueFloat("rho");
@@ -1248,8 +1256,12 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.centerIcaoCode = query.valueStr(""); // Not available
   // procInput.centerSecCode = query.valueStr("");  // Not available
   // procInput.centerSubCode = query.valueStr("");  // Not available
-  procInput.centerPos = DPos(query.valueDouble("center_waypoint_longitude"),
-                             query.valueDouble("center_waypoint_latitude"));
+
+  if(!query.isNull("center_waypoint_longitude") && !query.isNull("center_waypoint_latitude"))
+    procInput.centerPos = DPos(query.valueDouble("center_waypoint_longitude"),
+                               query.valueDouble("center_waypoint_latitude"));
+  else
+    procInput.centerPos = DPos();
 
   // procInput.gnssFmsIndicator = query.valueStr("");
 }
