@@ -229,6 +229,7 @@ public:
     return departureIdent + ", " + destinationIdent;
   }
 
+  /* true if this was detected and loaded from LNMPLN */
   bool isLnmFormat() const
   {
     return lnmFormat;
@@ -239,13 +240,21 @@ public:
     lnmFormat = value;
   }
 
-  /* Create a default filename based on departure and destination names. Suffix includes dot.
-   *  Format is "Name (IDENT) to Name (IDENT)${extension}${suffix}" */
-  QString getFilenameLong(const QString& extension = QString(), const QString& suffix = ".lnmpln") const;
-
-  /* Create a default filename based on departure and destination idents. Suffix includes dot.
-   *  Format is "IDENT${sep}IDENT${suffix}" */
-  QString getFilenameShort(const QString& sep = "_", const QString& suffix = ".lnmpln") const;
+  /*
+   * Build a filename according to pattern and add suffix.
+   * Filename will be cleaned of invalid characters if clean is set.
+   * ${TYPE}: IFR or VFR
+   * ${DEPARTIDENT}: Departure airport ICAO code
+   * ${DEPARTNAME}: Departure airport name
+   * ${DESTIDENT}: Destination airport ICAO code
+   * ${DESTNAME}: Destination airport name
+   * ${CRUISEALT}: Cruise altitude
+   */
+  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
+  static QString getFilenamePattern(QString pattern, const QString& type,
+                                    const QString& departureName, const QString& departureIdent,
+                                    const QString& destName, const QString& destIdent,
+                                    const QString& suffix, int altitude, bool clean = true);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
@@ -262,7 +271,8 @@ private:
     return destinationName.isEmpty() ? destinationIdent : destinationName;
   }
 
-  QString destinationAirportIdent() const;
+  /* get the first airport which has the no-save flag not set, i.e. the last airport before the alternates */
+  const FlightplanEntry& destinationAirport() const;
 
   /* Limit altitude to this value */
   const int MAX_ALTITUDE = 80000;

@@ -180,9 +180,8 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
 
 QString cleanFilename(const QString& filename)
 {
-  return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').
-         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').
-         replace("  ", " ");
+  return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').replace('\"', ' ').
+         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').simplified();
 }
 
 bool strContains(const QString& name, const std::initializer_list<QString>& list)
