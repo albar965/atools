@@ -248,6 +248,7 @@ HEADERS += \
   src/util/paintercontextsaver.h \
   src/util/properties.h \
   src/util/roundedpolygon.h \
+  src/util/str.h \
   src/util/timedcache.h \
   src/util/updatecheck.h \
   src/util/version.h \
@@ -351,6 +352,7 @@ SOURCES += \
   src/util/paintercontextsaver.cpp \
   src/util/properties.cpp \
   src/util/roundedpolygon.cpp \
+  src/util/str.cpp \
   src/util/timedcache.cpp \
   src/util/updatecheck.cpp \
   src/util/version.cpp \
