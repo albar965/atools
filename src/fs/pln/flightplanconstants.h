@@ -24,6 +24,21 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+namespace pattern {
+
+/* Pattern variables for flight plan names */
+const QLatin1String PLANTYPE("PLANTYPE"); // IFR or VFR
+const QLatin1String DEPARTIDENT("DEPARTIDENT"); // Departure airport ICAO code
+const QLatin1String DEPARTNAME("DEPARTNAME"); // Departure airport name
+const QLatin1String DESTIDENT("DESTIDENT"); // Destination airport ICAO code
+const QLatin1String DESTNAME("DESTNAME"); // Destination airport name
+const QLatin1String CRUISEALT("CRUISEALT"); // Cruise altitude
+
+/* Default patterns */
+const QString SHORT(DEPARTIDENT + " " + DEPARTNAME);
+const QString LONG(PLANTYPE + " " + DEPARTNAME + " (" + DEPARTIDENT + ") to " + DESTNAME + " (" + DESTIDENT + ")");
+}
+
 namespace entry {
 
 enum WaypointType

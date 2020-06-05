@@ -243,12 +243,8 @@ public:
   /*
    * Build a filename according to pattern and add suffix.
    * Filename will be cleaned of invalid characters if clean is set.
-   * ${TYPE}: IFR or VFR
-   * ${DEPARTIDENT}: Departure airport ICAO code
-   * ${DEPARTNAME}: Departure airport name
-   * ${DESTIDENT}: Destination airport ICAO code
-   * ${DESTNAME}: Destination airport name
-   * ${CRUISEALT}: Cruise altitude
+   *
+   * See variable definitions in namespace atools::fs::pln::pattern.
    */
   QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
   static QString getFilenamePattern(QString pattern, const QString& type,
