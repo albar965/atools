@@ -119,10 +119,13 @@ public:
 
   /* Loads GPX route coordinates and track points into LineStrings.
    * Reading is limited to files exported by this class.
-   * track and route can be null and will be ignored then */
-  void loadGpxStr(atools::geo::LineString *route, atools::geo::LineString *track, const QString& string);
-  void loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes);
-  void loadGpx(atools::geo::LineString *route, atools::geo::LineString *track, const QString& filename);
+   * track, route and routenames can be null and will be ignored then */
+  void loadGpxStr(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                  const QString& string);
+  void loadGpxGz(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                 const QByteArray& bytes);
+  void loadGpx(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+               const QString& filename);
 
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
   void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
@@ -172,7 +175,8 @@ private:
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
                        const QVector<quint32>& timestamps, int cruiseAltFt);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
-  void loadGpxInternal(atools::geo::LineString *route, atools::geo::LineString *track, util::XmlStream& xmlStream);
+  void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                       util::XmlStream& xmlStream);
   void loadGarminFplInternal(Flightplan& plan, util::XmlStream& xmlStream);
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
@@ -219,7 +223,7 @@ private:
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
   atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
-  atools::geo::Pos readPosGpx(QXmlStreamReader& reader);
+  void readPosGpx(geo::Pos& pos, QString& name, util::XmlStream& xmlStream);
 
   /* Read waypoint elements and attributes from stream */
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,

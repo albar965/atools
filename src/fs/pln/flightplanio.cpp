@@ -854,36 +854,41 @@ atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
   }
 }
 
-atools::geo::Pos FlightplanIO::readPosGpx(QXmlStreamReader& reader)
+void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, atools::util::XmlStream& xmlStream)
 {
   bool lonOk, latOk;
+  QXmlStreamReader& reader = xmlStream.getReader();
   float lon = reader.attributes().value("lon").toFloat(&lonOk);
   float lat = reader.attributes().value("lat").toFloat(&latOk);
 
-  // Read only attributes
-  reader.skipCurrentElement();
-
   if(lonOk && latOk)
   {
-    atools::geo::Pos pos(lon, lat);
+    pos.setLonX(lon);
+    pos.setLatY(lat);
 
     if(!pos.isValid())
     {
       reader.raiseError(tr("Invalid position in GPX."));
-      return atools::geo::EMPTY_POS;
+      pos = atools::geo::EMPTY_POS;
     }
-
-    if(!pos.isValidRange())
+    else if(!pos.isValidRange())
     {
       reader.raiseError(tr("Invalid position in GPX. Ordinates out of range: %1").arg(pos.toString()));
-      return atools::geo::EMPTY_POS;
+      pos = atools::geo::EMPTY_POS;
     }
-    return pos;
   }
   else
   {
     reader.raiseError(tr("Invalid position in GPX."));
-    return atools::geo::EMPTY_POS;
+    pos = atools::geo::EMPTY_POS;
+  }
+
+  while(xmlStream.readNextStartElement())
+  {
+    if(reader.name() == "name")
+      name = reader.readElementText();
+    else
+      xmlStream.skipCurrentElement(false /* warn */);
   }
 }
 
@@ -898,7 +903,7 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
 {
   QXmlStreamReader& reader = xmlStream.getReader();
 
-  while(reader.readNextStartElement())
+  while(xmlStream.readNextStartElement())
   {
     // Read waypoint element
     if(reader.name() == elementName)
@@ -1001,7 +1006,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
         else if(reader.name() == "CruisingAlt")
           plan.cruisingAlt = reader.readElementText().toInt();
         else if(reader.name() == "Comment")
-          plan.comment= reader.readElementText();
+          plan.comment = reader.readElementText();
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -2707,49 +2712,59 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
 
 }
 
-void FlightplanIO::loadGpxStr(atools::geo::LineString *route, atools::geo::LineString *track, const QString& string)
+void FlightplanIO::loadGpxStr(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                              const QString& string)
 {
   if(!string.isEmpty())
   {
     atools::util::XmlStream xmlStream(string);
-    loadGpxInternal(route, track, xmlStream);
+    loadGpxInternal(route, routenames, track, xmlStream);
   }
 }
 
-void FlightplanIO::loadGpxGz(atools::geo::LineString *route, atools::geo::LineString *track, const QByteArray& bytes)
+void FlightplanIO::loadGpxGz(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                             const QByteArray& bytes)
 {
   if(!bytes.isEmpty())
-    loadGpxStr(route, track, atools::zip::gzipDecompress(bytes));
+    loadGpxStr(route, routenames, track, atools::zip::gzipDecompress(bytes));
 }
 
-void FlightplanIO::loadGpx(atools::geo::LineString *route, atools::geo::LineString *track, const QString& filename)
+void FlightplanIO::loadGpx(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
+                           const QString& filename)
 {
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     atools::util::XmlStream xmlStream(&gpxFile);
-    loadGpxInternal(route, track, xmlStream);
+    loadGpxInternal(route, routenames, track, xmlStream);
     gpxFile.close();
   }
   else
     throw Exception(errorMsg.arg(filename).arg(gpxFile.errorString()));
 }
 
-void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, atools::geo::LineString *track,
-                                   atools::util::XmlStream& xmlStream)
+void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *routenames,
+                                   atools::geo::LineString *track, atools::util::XmlStream& xmlStream)
 {
   QXmlStreamReader& reader = xmlStream.getReader();
   xmlStream.readUntilElement("gpx");
-
+  Pos pos;
+  QString name;
   while(xmlStream.readNextStartElement())
   {
     // Read route elements if needed ======================================================
-    if(reader.name() == "rte" && route != nullptr)
+    if(reader.name() == "rte" && (route != nullptr || routenames != nullptr))
     {
       while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "rtept")
-          route->append(readPosGpx(reader));
+        {
+          readPosGpx(pos, name, xmlStream);
+          if(route != nullptr)
+            route->append(pos);
+          if(routenames != nullptr)
+            routenames->append(name);
+        }
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
@@ -2764,7 +2779,10 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, atools::geo::
           while(xmlStream.readNextStartElement())
           {
             if(reader.name() == "trkpt")
-              track->append(readPosGpx(reader));
+            {
+              readPosGpx(pos, name, xmlStream);
+              track->append(pos);
+            }
             else
               xmlStream.skipCurrentElement(false /* warn */);
           }
