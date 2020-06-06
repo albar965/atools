@@ -45,24 +45,25 @@ SimConnectUserAircraft::~SimConnectUserAircraft()
 void SimConnectUserAircraft::read(QDataStream& in)
 {
   SimConnectAircraft::read(in);
-  in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt
-  >> ambientTemperatureCelsius >> totalAirTemperatureCelsius >> seaLevelPressureMbar
-  >> pitotIcePercent >> structuralIcePercent >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >>
-  airplaneEmptyWeightLbs
-  >> fuelTotalQuantityGallons >> fuelTotalWeightLbs >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibilityMeter
-  >> trackMagDeg >> trackTrueDeg >> localDateTime >> zuluDateTime;
+  in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt >> ambientTemperatureCelsius
+  >> totalAirTemperatureCelsius >> seaLevelPressureMbar
+  >> pitotIcePercent >> structuralIcePercent
+  >> aoaIcePercent >> inletIcePercent >> propIcePercent >> statIcePercent >> windowIcePercent
+  >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >> airplaneEmptyWeightLbs >> fuelTotalQuantityGallons
+  >> fuelTotalWeightLbs >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibilityMeter >> trackMagDeg
+  >> trackTrueDeg >> localDateTime >> zuluDateTime;
 }
 
 void SimConnectUserAircraft::write(QDataStream& out) const
 {
   SimConnectAircraft::write(out);
-  out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt
-      << ambientTemperatureCelsius << totalAirTemperatureCelsius << seaLevelPressureMbar
-      << pitotIcePercent << structuralIcePercent << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs <<
-    airplaneEmptyWeightLbs
-      << fuelTotalQuantityGallons << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg <<
-    ambientVisibilityMeter
-      << trackMagDeg << trackTrueDeg << localDateTime << zuluDateTime;
+  out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt << ambientTemperatureCelsius
+      << totalAirTemperatureCelsius << seaLevelPressureMbar
+      << pitotIcePercent << structuralIcePercent
+      << aoaIcePercent << inletIcePercent << propIcePercent << statIcePercent << windowIcePercent
+      << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs << airplaneEmptyWeightLbs << fuelTotalQuantityGallons
+      << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg << ambientVisibilityMeter << trackMagDeg
+      << trackTrueDeg << localDateTime << zuluDateTime;
 }
 
 bool SimConnectUserAircraft::isJetfuel(float& weightVolRatio) const

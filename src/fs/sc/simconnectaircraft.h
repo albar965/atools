@@ -47,6 +47,8 @@ enum Category
   AIRPLANE,
   HELICOPTER,
   BOAT,
+  CARRIER,
+  FRIGATE,
   GROUNDVEHICLE,
   CONTROLTOWER,
   SIMPLEOBJECT,
@@ -180,6 +182,11 @@ public:
   Category getCategory() const
   {
     return category;
+  }
+
+  bool isAnyBoat() const
+  {
+    return category == BOAT || category == CARRIER || category == FRIGATE;
   }
 
   EngineType getEngineType() const

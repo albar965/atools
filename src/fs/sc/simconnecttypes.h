@@ -85,4 +85,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
 } // namespace fs
 } // namespace atools
 
+Q_DECLARE_METATYPE(atools::fs::sc::SimConnectStatus);
+
 #endif // ATOOLS_SC_TYPES_H

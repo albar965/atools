@@ -96,6 +96,31 @@ public:
     return structuralIcePercent;
   }
 
+  float getAoaIcePercent() const
+  {
+    return aoaIcePercent;
+  }
+
+  float getInletIcePercent() const
+  {
+    return inletIcePercent;
+  }
+
+  float getPropIcePercent() const
+  {
+    return propIcePercent;
+  }
+
+  float getStatIcePercent() const
+  {
+    return statIcePercent;
+  }
+
+  float getWindowIcePercent() const
+  {
+    return windowIcePercent;
+  }
+
   float getAirplaneTotalWeightLbs() const
   {
     return airplaneTotalWeightLbs;
@@ -202,10 +227,15 @@ private:
   float
     altitudeAboveGroundFt = 0.f, groundAltitudeFt = 0.f, windSpeedKts = 0.f, windDirectionDegT = 0.f,
     ambientTemperatureCelsius = 0.f, totalAirTemperatureCelsius = 0.f,
-    seaLevelPressureMbar = 0.f, pitotIcePercent = 0.f, structuralIcePercent = 0.f, airplaneTotalWeightLbs = 0.f,
+    seaLevelPressureMbar = 0.f,
+    airplaneTotalWeightLbs = 0.f,
     airplaneMaxGrossWeightLbs = 0.f, airplaneEmptyWeightLbs = 0.f, fuelTotalQuantityGallons = 0.f,
     fuelTotalWeightLbs = 0.f, fuelFlowPPH = 0.f, fuelFlowGPH = 0.f, magVarDeg = 0.f, ambientVisibilityMeter = 0.f;
   float trackMagDeg = 0.f, trackTrueDeg = 0.f;
+
+  quint8 pitotIcePercent = 0, structuralIcePercent = 0, aoaIcePercent = 0, inletIcePercent = 0,
+         propIcePercent = 0, statIcePercent = 0, windowIcePercent = 0;
+
   QDateTime localDateTime, zuluDateTime;
 };
 
