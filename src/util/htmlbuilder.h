@@ -109,6 +109,16 @@ public:
   static QString warningMessage(const QString& str);
   static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>");
 
+  /* Message.  */
+  HtmlBuilder& message(const QString& str, html::Flags flags = html::NONE,
+                       QColor foreground = QColor(), QColor background = QColor());
+  static QString textMessage(const QString& str, html::Flags flags = html::NONE,
+                             QColor foreground = QColor(), QColor background = QColor());
+
+  static QString textMessage(const QStringList& stringList, html::Flags flags = html::NONE,
+                             QColor foreground = QColor(), QColor background = QColor(),
+                             const QString& separator = "<br/>");
+
   /* Add bold text */
   HtmlBuilder& b(const QString& str);
   HtmlBuilder& b();
@@ -354,7 +364,8 @@ public:
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
-  QString asText(QString str, html::Flags flags, QColor color);
+  static QString asText(QString str, html::Flags flags, QColor foreground, QColor background = QColor());
+
   void initColors(const QColor& rowColor, const QColor& rowColorAlt);
 
   QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;

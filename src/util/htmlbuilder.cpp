@@ -158,9 +158,7 @@ QString HtmlBuilder::errorMessage(const QStringList& stringList, const QString& 
 QString HtmlBuilder::errorMessage(const QString& str)
 {
   if(!str.isEmpty())
-    return QString("<span style=\"background-color: #ff0000; color: #ffffff; font-weight: bold;\">"
-                     "%1"
-                   "</span>").arg(str.toHtmlEscaped());
+    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#ffffff"), QColor("#ff0000"));
 
   return str;
 }
@@ -174,9 +172,7 @@ HtmlBuilder& HtmlBuilder::warning(const QString& str)
 QString HtmlBuilder::warningMessage(const QString& str)
 {
   if(!str.isEmpty())
-    return QString("<span style=\"color: #ff5000; font-weight: bold\">"
-                     "%1"
-                   "</span>").arg(str.toHtmlEscaped());
+    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#ff5000"));
 
   return str;
 }
@@ -186,6 +182,30 @@ QString HtmlBuilder::warningMessage(const QStringList& stringList, const QString
   QStringList warnList;
   for(const QString& str : stringList)
     warnList.append(warningMessage(str));
+  return warnList.join(separator);
+}
+
+HtmlBuilder& HtmlBuilder::message(const QString& str, html::Flags flags, QColor foreground, QColor background)
+{
+  htmlText.append(textMessage(str, flags, foreground, background));
+  numLines++;
+  return *this;
+}
+
+QString HtmlBuilder::textMessage(const QString& str, html::Flags flags, QColor foreground, QColor background)
+{
+  if(!str.isEmpty())
+    return asText(str, flags, foreground, background);
+
+  return str;
+}
+
+QString HtmlBuilder::textMessage(const QStringList& stringList, html::Flags flags, QColor foreground, QColor background,
+                                 const QString& separator)
+{
+  QStringList warnList;
+  for(const QString& str : stringList)
+    warnList.append(textMessage(str, flags, foreground, background));
   return warnList.join(separator);
 }
 
@@ -757,7 +777,7 @@ HtmlBuilder& HtmlBuilder::li(const QString& str, html::Flags flags, QColor color
   return *this;
 }
 
-QString HtmlBuilder::asText(QString str, html::Flags flags, QColor color)
+QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, QColor background)
 {
   QString prefix, suffix;
   if(flags & html::BOLD)
@@ -826,9 +846,21 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor color)
     suffix.prepend("</nobr>");
   }
 
-  if(color.isValid())
+  if(foreground.isValid() || background.isValid())
   {
-    prefix.append("<span style=\"color:" + color.name(QColor::HexRgb) + "\">");
+    prefix.append("<span style=\"");
+
+    if(foreground.isValid())
+      prefix.append("color:" + foreground.name(QColor::HexRgb));
+
+    if(background.isValid())
+    {
+      if(foreground.isValid())
+        prefix.append("; ");
+      prefix.append("background-color:" + background.name(QColor::HexRgb));
+    }
+
+    prefix.append("\">");
     suffix.prepend("</span>");
   }
 
