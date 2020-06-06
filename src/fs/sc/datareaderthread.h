@@ -113,7 +113,11 @@ signals:
   /* Send on each received data package from the simconnect interface */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);
 
-  void postLogMessage(QString messge, bool warning);
+  /* Only used in Navconnect */
+  void postLogMessage(QString messge, bool warning, bool error);
+
+  /* Used by all applications */
+  void postStatus(atools::fs::sc::SimConnectStatus status, QString statusText);
 
   /* Emitted when a connection was established */
   void connectedToSimulator();

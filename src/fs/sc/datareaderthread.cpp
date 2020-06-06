@@ -59,10 +59,16 @@ void DataReaderThread::connectToSimulator()
   int counter = 0;
 
   if(!handler->isLoaded())
-    emit postLogMessage(tr("No flight simulator installation found. SimConnect not loaded."), true);
+  {
+    QString msg = tr("No flight simulator installation found. SimConnect not loaded.");
+    emit postStatus(atools::fs::sc::OK, msg);
+    emit postLogMessage(msg, false, false);
+  }
   else
   {
-    emit postLogMessage(tr("Not connected to the simulator. Waiting ..."), false);
+    QString msg = tr("Not connected to the simulator. Waiting ...");
+    emit postStatus(atools::fs::sc::OK, msg);
+    emit postLogMessage(msg, false, false);
 
     reconnecting = true;
     while(!terminate)
@@ -73,7 +79,9 @@ void DataReaderThread::connectToSimulator()
         {
           connected = true;
           emit connectedToSimulator();
-          emit postLogMessage(tr("Connected to simulator."), false);
+          QString msg = tr("Connected to simulator.");
+          emit postStatus(atools::fs::sc::OK, msg);
+          emit postLogMessage(msg, false, false);
           break;
         }
 
@@ -128,7 +136,7 @@ void DataReaderThread::run()
           QVector<SimConnectAircraft>::iterator it =
             std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
                 {
-                  return !aircraft.isUser() && aircraft.getCategory() != atools::fs::sc::BOAT;
+                  return !aircraft.isUser() && !aircraft.isAnyBoat();
                 });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
@@ -139,7 +147,7 @@ void DataReaderThread::run()
           QVector<SimConnectAircraft>::iterator it =
             std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
                 {
-                  return !aircraft.isUser() && aircraft.getCategory() == atools::fs::sc::BOAT;
+                  return !aircraft.isUser() && aircraft.isAnyBoat();
                 });
           if(it != aiAircraft.end())
             aiAircraft.erase(it, aiAircraft.end());
@@ -149,11 +157,12 @@ void DataReaderThread::run()
       }
       else
       {
+        emit postStatus(data.getStatus(), data.getStatusText());
         emit postLogMessage(tr("Error reading \"%1\": %2.").
-                            arg(loadReplayFilepath).arg(data.getStatusText()), true);
+                            arg(loadReplayFilepath).arg(data.getStatusText()), false, true);
         closeReplay();
       }
-    }
+    } // if(loadReplayFile != nullptr)
     else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM, opts))
     {
       // Data fetched from simconnect - send to client ============================================
@@ -174,18 +183,46 @@ void DataReaderThread::run()
         connected = false;
         emit disconnectedFromSimulator();
 
-        qWarning() << "Error fetching data from simulator.";
+        emit postStatus(data.getStatus(), data.getStatusText());
+
+        qWarning() << "Error fetching data from simulator." << data.getStatusText();
 
         if(numErrors++ > MAX_NUMBER_OF_ERRORS)
         {
           numErrors = 0;
-          emit postLogMessage(tr("Too many errors reading from simulator. Restart program."), true);
+          emit postLogMessage(tr("Too many errors reading from simulator. Disconnected. "
+                                 "Restart <i>%1</i> to try again.").
+                              arg(QApplication::applicationName()), false, true);
           break;
         }
 
         if(!handler->isSimRunning())
           // Try to reconnect if we lost connection to simulator
           connectToSimulator();
+      }
+      else if(data.getStatus() != OK)
+      {
+        connected = false;
+        emit disconnectedFromSimulator();
+
+        emit postStatus(data.getStatus(), data.getStatusText());
+
+        qWarning() << "Error fetching data from simulator." << data.getStatusText();
+
+        emit postLogMessage(tr("Error reading from simulator: %1. Disconnected. "
+                               "Restart <i>%2</i> to try again.").
+                            arg(data.getStatusText()).
+                            arg(QApplication::applicationName()), false, true);
+
+        if(data.getStatus() == INVALID_MAGIC_NUMBER || data.getStatus() == VERSION_MISMATCH)
+        {
+          emit postLogMessage(tr("Your installed version of <i>Little Xpconnect</i> "
+                                 "is not compatible with this version of <i>%2</i>.").
+                              arg(QApplication::applicationName()), false, true);
+          emit postLogMessage(tr("Install the latest version of <i>Little Xpconnect</i>."), false, true);
+        }
+
+        break;
       }
       // else
       // qWarning() << "No data fetched";
@@ -289,7 +326,7 @@ void DataReaderThread::setupReplay()
     {
       if(!loadReplayFile->open(QIODevice::ReadOnly))
       {
-        emit postLogMessage(tr("Cannot open \"%1\".").arg(loadReplayFilepath), true);
+        emit postLogMessage(tr("Cannot open \"%1\".").arg(loadReplayFilepath), false, true);
         delete loadReplayFile;
         loadReplayFile = nullptr;
       }
@@ -305,24 +342,24 @@ void DataReaderThread::setupReplay()
         if(magicNumber != REPLAY_FILE_MAGIC_NUMBER)
         {
           emit postLogMessage(tr("Cannot open \"%1\". Is not a replay file - wrong magic number.").
-                              arg(loadReplayFilepath), true);
+                              arg(loadReplayFilepath), false, true);
           closeReplay();
           return;
         }
         if(version != REPLAY_FILE_VERSION)
         {
-          emit postLogMessage(tr("Cannot open \"%1\". Wrong version.").arg(loadReplayFilepath), true);
+          emit postLogMessage(tr("Cannot open \"%1\". Wrong version.").arg(loadReplayFilepath), false, true);
           closeReplay();
           return;
         }
 
-        emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false);
+        emit postLogMessage(tr("Replaying from \"%1\".").arg(loadReplayFilepath), false, false);
         emit connectedToSimulator();
       }
     }
     else
     {
-      emit postLogMessage(tr("Cannot open \"%1\". File is too small.").arg(loadReplayFilepath), true);
+      emit postLogMessage(tr("Cannot open \"%1\". File is too small.").arg(loadReplayFilepath), false, true);
       closeReplay();
       return;
     }
@@ -332,13 +369,13 @@ void DataReaderThread::setupReplay()
     saveReplayFile = new QFile(saveReplayFilepath);
     if(!saveReplayFile->open(QIODevice::WriteOnly))
     {
-      emit postLogMessage(tr("Cannot open \"%1\".").arg(saveReplayFilepath), true);
+      emit postLogMessage(tr("Cannot open \"%1\".").arg(saveReplayFilepath), false, true);
       delete saveReplayFile;
       saveReplayFile = nullptr;
     }
     else
     {
-      emit postLogMessage(tr("Saving replay to \"%1\".").arg(saveReplayFilepath), false);
+      emit postLogMessage(tr("Saving replay to \"%1\".").arg(saveReplayFilepath), false, false);
 
       // Save file header
       QDataStream out(saveReplayFile);
