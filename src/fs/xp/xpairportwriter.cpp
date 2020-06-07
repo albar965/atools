@@ -1019,9 +1019,9 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   if(key == "gui_label")
     is3d = value.compare("3d", Qt::CaseInsensitive) == 0;
   else if(key == "icao_code")
-    insertAirportQuery->bindValue(":icao", value);
+    airportIcao = value;
   else if(key == "iata_code")
-    insertAirportQuery->bindValue(":iata", value);
+    airportIata = value;
   else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
@@ -1414,7 +1414,6 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
       military = atools::fs::util::isNameMilitary(name);
     name = atools::fs::util::capAirportName(name);
 
-    insertAirportQuery->bindValue(":ident", airportIdent);
     insertAirportQuery->bindValue(":name", name);
     insertAirportQuery->bindValue(":fuel_flags", 0); // not available
     insertAirportQuery->bindValue(":has_tower_object", 0);
@@ -1451,6 +1450,8 @@ void XpAirportWriter::reset()
   curHelipadStartNumber = 0;
   airportRowCode = NO_ROWCODE;
   airportIdent.clear();
+  airportIata.clear();
+  airportIcao.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
   runways.clear();
@@ -1472,22 +1473,21 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     // Maximum seven characters. Must be unique.
 
     // Determine best ident - preferrably ICAO
-    QString ident = insertAirportQuery->boundValue(":ident").toString();
-    QString icao = insertAirportQuery->boundValue(":icao").toString();
 
     // Set always for disambiguation and add-on overloading
-    insertAirportQuery->bindValue(":xpident", ident);
+    insertAirportQuery->bindValue(":xpident", airportIdent);
 
     QString apIdent;
 
-    if(ident == icao || icao.isEmpty())
+    if(airportIdent == airportIcao || airportIcao.isEmpty())
       // Ident is equal to ICAO or no ICAO - fill only ident which is considered ICAO
-      apIdent = ident;
+      apIdent = airportIdent;
     else
       // Not equal and ICAO given - use ICAO as ident
-      apIdent = icao;
+      apIdent = airportIcao;
 
     insertAirportQuery->bindValue(":ident", apIdent);
+    insertAirportQuery->bindValue(":iata", airportIata);
 
     // Only used for duplicates
     insertAirportQuery->bindValue(":icao", QVariant(QVariant::String));
