@@ -62,7 +62,7 @@ void SimConnectAircraft::read(QDataStream& in)
   in >> lonx >> laty >> altitude >> headingTrueDeg >> headingMagDeg
   >> groundSpeedKts >> indicatedSpeedKts >> verticalSpeedFeetPerMin
   >> indicatedAltitudeFt >> trueAirspeedKts >> machSpeed
-  >> numberOfEngines >> wingSpanFt >> modelRadiusFt >> categoryByte >> engineTypeByte;
+  >> numberOfEngines >> wingSpanFt >> modelRadiusFt >> deckHeight >> categoryByte >> engineTypeByte;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -78,19 +78,26 @@ int SimConnectAircraft::getModelRadiusCorrected() const
     return modelRadiusFt;
   else
   {
-    switch(engineType)
+    if(category == CARRIER)
+      return 500;
+    else if(category == FRIGATE)
+      return 160;
+    else
     {
-      case atools::fs::sc::PISTON:
-      case atools::fs::sc::NO_ENGINE:
-      case atools::fs::sc::HELO_TURBINE:
-      case atools::fs::sc::UNSUPPORTED:
-        return 20;
+      switch(engineType)
+      {
+        case PISTON:
+        case NO_ENGINE:
+        case HELO_TURBINE:
+        case UNSUPPORTED:
+          return 20;
 
-      case atools::fs::sc::JET:
-        return 60;
+        case JET:
+          return 60;
 
-      case atools::fs::sc::TURBOPROP:
-        return 40;
+        case TURBOPROP:
+          return 40;
+      }
     }
     return 20;
   }
@@ -112,7 +119,7 @@ void SimConnectAircraft::write(QDataStream& out) const
   out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrueDeg << headingMagDeg
       << groundSpeedKts << indicatedSpeedKts << verticalSpeedFeetPerMin
       << indicatedAltitudeFt << trueAirspeedKts << machSpeed
-      << numberOfEngines << wingSpanFt << modelRadiusFt
+      << numberOfEngines << wingSpanFt << modelRadiusFt << deckHeight
       << static_cast<quint8>(category) << static_cast<quint8>(engineType);
 }
 

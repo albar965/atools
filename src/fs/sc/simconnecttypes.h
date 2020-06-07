@@ -29,6 +29,7 @@ namespace fs {
 namespace sc {
 
 const float SC_INVALID_FLOAT = std::numeric_limits<float>::max();
+const float SC_INVALID_QUINT16 = std::numeric_limits<quint16>::max();
 const int SC_INVALID_INT = std::numeric_limits<int>::max();
 
 enum SimConnectStatus

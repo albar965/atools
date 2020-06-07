@@ -222,6 +222,11 @@ public:
     return wingSpanFt;
   }
 
+  int getDeckHeight() const
+  {
+    return deckHeight;
+  }
+
   const QString& getFromIdent() const
   {
     return fromIdent;
@@ -307,7 +312,7 @@ private:
   float headingTrueDeg = 0.f, headingMagDeg = 0.f, groundSpeedKts = 0.f, indicatedAltitudeFt = 0.f,
         indicatedSpeedKts = 0.f, trueAirspeedKts = 0.f,
         machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
-  quint16 modelRadiusFt = 0, wingSpanFt = 0;
+  quint16 modelRadiusFt = 0, wingSpanFt = 0, deckHeight = 0;
 
   quint32 objectId = 0L;
 

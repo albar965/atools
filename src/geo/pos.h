@@ -210,6 +210,8 @@ public:
     return lonX == 0.f && latY == 0.f;
   }
 
+  bool isNull(float epsilonDegree) const;
+
   /* Return true if close to any pole */
   bool isPole(float epsilonDegree = 1.f) const
   {

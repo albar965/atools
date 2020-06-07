@@ -533,6 +533,11 @@ QString Pos::toHumanReadableString() const
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 
+bool Pos::isNull(float epsilonDegree) const
+{
+  return atools::almostEqual(lonX, 0.f, epsilonDegree) && atools::almostEqual(latY, 0.f, epsilonDegree);
+}
+
 QString Pos::toString(int precision, bool alt) const
 {
   if(!isValid())

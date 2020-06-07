@@ -239,7 +239,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
           ac.machSpeed =
             ac.verticalSpeedFeetPerMin = atools::fs::sc::SC_INVALID_FLOAT;
 
-  ac.modelRadiusFt = ac.wingSpanFt = 0;
+  ac.modelRadiusFt = ac.wingSpanFt = ac.deckHeight = 0;
 
   ac.category = atools::fs::sc::AIRPLANE;
   ac.engineType = atools::fs::sc::UNSUPPORTED;
