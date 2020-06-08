@@ -391,6 +391,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     sqlExport.setHeader(flags & CSV_HEADER);
     sqlExport.setNumberPrecision(5);
 
+    // Use query wrapper to automatically use passed ids or all rows
     QueryWrapper query("select type as Type, "
                        "name as Name, "
                        "ident as Ident, "
@@ -416,6 +417,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
     {
       if(first && flags & CSV_HEADER)
       {
+        // Write header
         first = false;
         stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
       }
@@ -429,6 +431,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
       // Need to cast otherwise it is not recognized as a floating point number
       record.setValue("Magnetic Declination", static_cast<double>(magvar));
 
+      // Write row
       stream << sqlExport.getResultSetRow(record) << endl;
       numExported++;
     }
