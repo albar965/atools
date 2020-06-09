@@ -63,6 +63,12 @@ public:
   /* Id of currently open tab or -1 if none */
   int getCurrentTabId() const;
 
+  template<typename TYPE>
+  TYPE getCurrentTabId() const
+  {
+    return static_cast<TYPE>(getCurrentTabId());
+  }
+
   /* Set current tab. Tab will be re-opened if was closed.
    *  left = true: left side of current otherwise to the right.*/
   void setCurrentTab(int id, bool left = false);

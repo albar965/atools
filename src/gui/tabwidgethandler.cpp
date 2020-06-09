@@ -18,6 +18,7 @@
 #include "gui/tabwidgethandler.h"
 
 #include "settings/settings.h"
+#include "atools.h"
 
 #include <QTabWidget>
 #include <QTabBar>
@@ -538,18 +539,27 @@ void TabWidgetHandler::updateWidgets()
   {
     tabWidget->tabBar()->setTabButton(0, QTabBar::RightSide, new QLabel(tabWidget));
 
-    QAction *action = tabs.at(tabWidget->currentWidget()->property(ID_PROPERTY).toInt()).action;
-    QSignalBlocker actionBlocker(action);
-    action->setChecked(true);
-    action->setDisabled(true);
+    int id = tabWidget->currentWidget()->property(ID_PROPERTY).toInt();
+
+    if(atools::inRange(tabs, id))
+    {
+      QAction *action = tabs.at(id).action;
+      QSignalBlocker actionBlocker(action);
+      action->setChecked(true);
+      action->setDisabled(true);
+    }
   }
   else
   {
     for(int index = 0; index < tabWidget->count(); index++)
     {
-      QAction *action = tabs.at(idForIndex(index)).action;
-      QSignalBlocker actionBlocker(action);
-      action->setChecked(true);
+      int id = idForIndex(index);
+      if(atools::inRange(tabs, id))
+      {
+        QAction *action = tabs.at(id).action;
+        QSignalBlocker actionBlocker(action);
+        action->setChecked(true);
+      }
     }
   }
 }
