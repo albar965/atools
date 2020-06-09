@@ -37,6 +37,10 @@ const static QRegularExpression REGEXP_SPDALT_ALL("^([NMK])(\\d{3,4})([FSAM])(\\
 
 // Look for military designator words
 static const QVector<QRegularExpression> REGEXP_MIL({
+        // "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
+        // "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD", "AAC",
+
+        QRegularExpression(QLatin1Literal("(\\[M\\]|\\[MIL\\])")), // X-Plane special
         QRegularExpression(QLatin1Literal("\\bAAF\\b")),
         QRegularExpression(QLatin1Literal("\\bAB\\b")),
         QRegularExpression(QLatin1Literal("\\bAF\\b")),
@@ -60,16 +64,22 @@ static const QVector<QRegularExpression> REGEXP_MIL({
         QRegularExpression(QLatin1Literal("\\bNAF\\b")),
         QRegularExpression(QLatin1Literal("\\bNALF\\b")),
         QRegularExpression(QLatin1Literal("\\bNAS\\b")),
+        QRegularExpression(QLatin1Literal("\\bNWS\\b")),
         QRegularExpression(QLatin1Literal("\\bNAVAL\\b")),
         QRegularExpression(QLatin1Literal("\\bNAVY\\b")),
         QRegularExpression(QLatin1Literal("\\bNAWS\\b")),
         QRegularExpression(QLatin1Literal("\\bNOLF\\b")),
         QRegularExpression(QLatin1Literal("\\bNS\\b")),
         QRegularExpression(QLatin1Literal("\\bNSF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSB\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSY\\b")),
         QRegularExpression(QLatin1Literal("\\bRAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSWC\\b")),
         QRegularExpression(QLatin1Literal("\\bRNAS\\b")),
         QRegularExpression(QLatin1Literal("\\bROYAL MARINES\\b")),
-        QRegularExpression(QLatin1Literal("\\bAFLD\\b"))
+        QRegularExpression(QLatin1Literal("\\bAFLD\\b")),
+        QRegularExpression(QLatin1Literal("\\bAAC\\b"))
+
       });
 
 static const QHash<QString, QString> NAME_CODE_MAP(
@@ -398,8 +408,8 @@ QString capNavString(const QString& str)
     // Do not capitalize words that contains numbers but not spaces (airspace names)
     return str;
 
-  // Ignore aviation acronyms in capitalization
-  const static QSet<QString> ignore({
+  // Force abbreviations to upper case
+  const static QSet<QString> FORCE_UPPER({
           // Navaids
           "VOR", "VORDME", "TACAN", "VOT", "VORTAC", "DME", "NDB", "GA", "RNAV", "GPS",
           "ILS", "NDBDME",
@@ -414,21 +424,21 @@ QString capNavString(const QString& str)
           "NOTAM", "CERAP", "ARTCC",
         });
 
-  return atools::capString(str, {}, {}, ignore);
+  return atools::capString(str, FORCE_UPPER);
 }
 
 QString capAirportName(const QString& str)
 {
-  const static QSet<QString> upper({
-          // Military designators to upper
+  // Force military designators to upper
+  const static QSet<QString> FORCE_UPPER({
           "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
-          "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD",
+          "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD", "AAC",
 
           // Not military but an acronym
           "USFS"
         });
 
-  return atools::capString(str, upper);
+  return atools::capString(str, FORCE_UPPER);
 }
 
 QString adjustFsxUserWpName(QString name, int length)

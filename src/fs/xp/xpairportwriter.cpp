@@ -244,6 +244,9 @@ enum RunwayFieldIndex
 
 }
 
+const static QRegularExpression REPLACE_SPECIAL_REGEXP("(\\[MIL\\]|\\[[A-Z]?\\])",
+                                                       QRegularExpression::CaseInsensitiveOption);
+
 XpAirportWriter::XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                                  const NavDatabaseOptions& opts, ProgressHandler *progressHandler,
                                  NavDatabaseErrors *navdatabaseErrors)
@@ -1395,24 +1398,13 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     QString name = mid(line, ap::NAME, true /* ignore error */).simplified();
     airportClosed = atools::fs::util::isNameClosed(name);
+    bool military = atools::fs::util::isNameMilitary(name);
 
-    bool military = false;
     // Remove [H], [S], [g], [x] and [mil] indicators
-    if(name.startsWith('['))
-    {
-      if(name.startsWith("[mil]", Qt::CaseInsensitive))
-      {
-        name = name.mid(5).trimmed();
-        military = true;
-      }
-      else if(name.length() >= 3 && name.at(2) == ']')
-        name = name.mid(3).trimmed();
-    }
+    name.replace(REPLACE_SPECIAL_REGEXP, QString());
 
     // Check military before converting to caps
-    if(!military)
-      military = atools::fs::util::isNameMilitary(name);
-    name = atools::fs::util::capAirportName(name);
+    name = atools::fs::util::capAirportName(name.simplified());
 
     insertAirportQuery->bindValue(":name", name);
     insertAirportQuery->bindValue(":fuel_flags", 0); // not available
