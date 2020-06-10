@@ -17,10 +17,9 @@
 
 #include "fs/weather/metarindex.h"
 
-#include "geo/simplespatialindex.h"
+#include "geo/spatialindex.h"
 #include "fs/weather/weathertypes.h"
 
-#include <QFile>
 #include <QTimeZone>
 #include <QRegularExpression>
 
@@ -28,21 +27,70 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-MetarIndex::MetarIndex(int size, bool xplaneFormat, bool verboseLogging)
-  : verbose(verboseLogging), xplane(xplaneFormat)
+/* Internal struct for METAR data. Stored in the spatial index */
+struct MetarData
 {
-  index = new atools::geo::SimpleSpatialIndex<QString, MetarData>(size);
+  MetarData(const QString& identParam, const QString& metarParam, QDateTime timestampParam,
+            const atools::geo::Pos& posParam)
+    : ident(identParam), metar(metarParam), timestamp(timestampParam), pos(posParam)
+  {
+  }
+
+  MetarData()
+  {
+  }
+
+  QString ident, metar;
+  QDateTime timestamp;
+
+  bool isValid() const
+  {
+    return !ident.isEmpty();
+  }
+
+  atools::geo::Pos pos;
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return pos;
+  }
+
+};
+
+// ====================================================================================================
+MetarIndex::MetarIndex(MetarFormat formatParam, bool verboseLogging)
+  : verbose(verboseLogging), format(formatParam)
+{
+  spatialIndex = new atools::geo::SpatialIndex<MetarData>;
 }
 
 MetarIndex::~MetarIndex()
 {
-  delete index;
+  delete spatialIndex;
 }
 
-/* Get all ICAO codes that have a weather station */
-QSet<QString> MetarIndex::getMetarAirportIdents() const
+int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
-  return index->keys().toSet();
+  Q_ASSERT(format != UNKNOWN);
+  Q_ASSERT(fetchAirportCoords);
+
+  switch(format)
+  {
+    case atools::fs::weather::UNKNOWN:
+      break;
+
+    case atools::fs::weather::NOAA:
+    case atools::fs::weather::XPLANE:
+      return readNoaaXplane(stream, fileOrUrl, merge);
+
+      break;
+
+    case atools::fs::weather::FLAT:
+      return readFlat(stream, fileOrUrl, merge);
+
+      break;
+  }
+  return 0;
 }
 
 // 2017/07/30 18:45
@@ -53,9 +101,9 @@ QSet<QString> MetarIndex::getMetarAirportIdents() const
 //
 // 2017/07/30 18:47
 // KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
-bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
+int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
-  // Recognize METAR airport
+  // Recognize METAR airport ident
   static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
 
   // Recognize date part
@@ -63,8 +111,8 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 
   if(!merge)
   {
-    index->clear();
-    metarMap.clear();
+    spatialIndex->clear();
+    identIndexMap.clear();
   }
 
   QDateTime latest, oldest;
@@ -85,7 +133,7 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
       continue;
     }
 
-    if(xplane && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
+    if(format == XPLANE && (line.startsWith("MDEG ") || line.startsWith("DEG ")))
     {
       lineNum++;
       // Ignore X-Plane's special coordinate format
@@ -112,7 +160,7 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
         continue;
       }
 
-      QString ident = line.section(' ', 0, 0);
+      QString ident = line.section(' ', 0, 0).simplified().toUpper();
       if(IDENT_REGEXP.match(ident).hasMatch())
       {
         // Found METAR line
@@ -131,30 +179,11 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
         }
 
         found++;
-
-        if(metarMap.contains(ident))
-        {
-          // Already in list - get writeable reference to entry
-          MetarData& md = metarMap[ident];
-          if(!md.timestamp.isValid() || md.timestamp < lastTimestamp)
-          {
-            // This one is newer - update
-            md.metar = line;
-            md.timestamp = lastTimestamp;
-          }
-          // else leave as is
-        }
-        else
-          // Insert new record
-          metarMap.insert(ident, {ident, line, lastTimestamp});
+        updateOrInsert(line, ident, lastTimestamp);
       }
       else
-      {
-        if(fileOrUrl.isEmpty())
-          qWarning() << "Metar does not match in line num" << lineNum << "line" << line;
-        else
-          qWarning() << "Metar does not match in file" << fileOrUrl << "line num" << lineNum << "line" << line;
-      }
+        qWarning() << "Ident in METAR does not match in file/URL"
+                   << fileOrUrl << "line num" << lineNum << "line" << line;
     }
     lineNum++;
   }
@@ -163,27 +192,163 @@ bool MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
 
   if(verbose)
   {
-    qDebug() << "index->size()" << index->size();
-    qDebug() << "metarMap.size()" << metarMap.size();
+    qDebug() << "index->size()" << spatialIndex->size();
+    qDebug() << "metarMap.size()" << identIndexMap.size();
     qDebug() << "found " << found << "futureDates " << futureDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
   }
 
-  qDebug() << Q_FUNC_INFO << fileOrUrl << index->size();
+  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
+  return found;
+}
 
-  return true;
+// KC99 100906Z AUTO 30022G42KT 10SM CLR M01/M04 A3035 RMK AO2
+// LCEN 100920Z 16004KT 090V230 CAVOK 31/10 Q1010 NOSIG
+// GMFO 100930Z 34004KT 240V010 9999 FEW030 26/00 Q1017 NOSIG
+// KBLI 100922Z AUTO VRB04KT 10SM FEW017 FEW025 OVC037 13/11 A3015 RMK
+// AGGH 100900Z 16003KT 9999 FEW016 FEW017CB SCT300 27/25 Q1010
+// ANYN 100900Z 08005KT 9999 FEW020 27/23 Q1010
+// AYMH 100800Z 16015KT 9999 SHRA BKN090 18/16 Q1018 RMK
+int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool merge)
+{
+  // Recognize METAR airport
+  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
+
+  // Recognize date part
+  static const QRegularExpression DATE_REGEXP("^[\\d]{6}Z");
+
+  if(!merge)
+  {
+    spatialIndex->clear();
+    identIndexMap.clear();
+  }
+
+  QDateTime latest, oldest;
+  QString latestIdent, oldestIdent;
+
+  int lineNum = 1;
+  QString line;
+  QDateTime lastTimestamp, now = QDateTime::currentDateTimeUtc();
+  int futureDates = 0, found = 0;
+
+  while(!stream.atEnd())
+  {
+    line = stream.readLine().simplified().toUpper();
+
+    if(line.isEmpty())
+    {
+      lineNum++;
+      continue;
+    }
+
+    if(line.size() >= 4)
+    {
+      QString ident = line.section(' ', 0, 0).simplified().toUpper();
+      QString dateStr = line.section(' ', 1, 1).simplified().toUpper();
+
+      if(DATE_REGEXP.match(dateStr).hasMatch())
+      {
+        int day = dateStr.left(2).toInt();
+        QDate date = QDate(QDate::currentDate().year(), QDate::currentDate().month(), day);
+
+        // Keep substracting months until it is not in the future and the day matches
+        // but not more than one year to avoid endless loops
+        int months = 0;
+        while((date > QDate::currentDate() || day != date.day()) && months < 12)
+          date = date.addMonths(-(++months));
+
+        if(lastTimestamp > now)
+        {
+          // Ignore METARs with future UTC time
+          futureDates++;
+          lineNum++;
+          continue;
+        }
+
+        if(IDENT_REGEXP.match(ident).hasMatch())
+        {
+          // Found METAR line
+          if(verbose)
+          {
+            if(!latest.isValid() || lastTimestamp > latest)
+            {
+              latest = lastTimestamp;
+              latestIdent = ident;
+            }
+            if(!oldest.isValid() || lastTimestamp < oldest)
+            {
+              oldest = lastTimestamp;
+              oldestIdent = ident;
+            }
+          }
+
+          found++;
+          updateOrInsert(line, ident, lastTimestamp);
+        }
+        else
+          qWarning() << "Ident in METAR does not match in file/URL"
+                     << fileOrUrl << "line num" << lineNum << "line" << line;
+      }
+      else
+        qWarning() << "Date in METAR does not match in file/URL"
+                   << fileOrUrl << "line num" << lineNum << "line" << line;
+    }
+    lineNum++;
+  }
+
+  updateIndex();
+
+  if(verbose)
+  {
+    qDebug() << "index->size()" << spatialIndex->size();
+    qDebug() << "metarMap.size()" << identIndexMap.size();
+    qDebug() << "found " << found << "futureDates " << futureDates;
+    qDebug() << "Latest" << latestIdent << latest;
+    qDebug() << "Oldest" << oldestIdent << oldest;
+  }
+
+  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
+  return found;
+}
+
+void MetarIndex::updateOrInsert(const QString& metar, const QString& ident, const QDateTime& lastTimestamp)
+{
+  int idx = identIndexMap.value(ident, -1);
+  if(idx != -1)
+  {
+    // Already in list - get writeable reference to entry
+    MetarData& md = (*spatialIndex)[idx];
+    if(!md.timestamp.isValid() || md.timestamp < lastTimestamp)
+    {
+      // This one is newer - update
+      md.metar = metar;
+      md.timestamp = lastTimestamp;
+    }
+    // else leave as is
+  }
+  else
+  {
+    // Insert new record
+    spatialIndex->append(MetarData(ident, metar, lastTimestamp, fetchAirportCoords(ident)));
+    identIndexMap.insert(ident, spatialIndex->size() - 1);
+  }
 }
 
 void MetarIndex::clear()
 {
-  index->clear();
-  metarMap.clear();
+  spatialIndex->clear();
+  identIndexMap.clear();
 }
 
 bool MetarIndex::isEmpty() const
 {
-  return index->isEmpty();
+  return spatialIndex->isEmpty();
+}
+
+int MetarIndex::size() const
+{
+  return spatialIndex->size();
 }
 
 atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, const atools::geo::Pos& pos)
@@ -191,17 +356,33 @@ atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, co
   atools::fs::weather::MetarResult result;
   result.init(station, pos);
 
-  MetarData data;
-  QString foundKey = index->getTypeOrNearest(data, station, pos);
-  if(!foundKey.isEmpty())
+  if(!station.isEmpty())
+    result.metarForStation = metarData(station).metar;
+
+  if(result.metarForStation.isEmpty() && pos.isValid())
   {
-    // Found a METAR
-    if(foundKey == station)
-      // Found exact match
-      result.metarForStation = data.metar;
-    else
-      // Found a station nearby
-      result.metarForNearest = data.metar;
+    MetarData data = spatialIndex->getNearest(pos);
+
+    if(data.isValid())
+    {
+      // Found a METAR
+      if(data.ident == station)
+      {
+        // Found exact match
+        result.metarForStation = data.metar;
+
+        if(station.isEmpty())
+          result.requestIdent = data.ident;
+      }
+      else
+      {
+        // Found a station nearby
+        result.metarForNearest = data.metar;
+
+        if(station.isEmpty())
+          result.requestIdent = data.ident;
+      }
+    }
   }
 
   return result;
@@ -209,20 +390,18 @@ atools::fs::weather::MetarResult MetarIndex::getMetar(const QString& station, co
 
 void MetarIndex::updateIndex()
 {
-  index->clear();
-
-  for(const QString& ident : metarMap.keys())
-  {
-    // Starts with an airport ident - add if position is valid
-    atools::geo::Pos pos = fetchAirportCoords(ident);
-    if(pos.isValid())
-      index->insert(ident, metarMap.value(ident), pos);
-  }
+  Q_ASSERT(spatialIndex->size() == identIndexMap.size());
+  spatialIndex->updateIndex();
 }
 
-QString MetarIndex::getMetar(const QString& ident)
+MetarData MetarIndex::metarData(const QString& ident)
 {
-  return index->value(ident).metar;
+  int idx = identIndexMap.value(ident, -1);
+
+  if(idx != -1)
+    return spatialIndex->at(idx);
+
+  return MetarData();
 }
 
 } // namespace weather

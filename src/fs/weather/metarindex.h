@@ -18,31 +18,27 @@
 #ifndef ATOOLS_METARINDEX_H
 #define ATOOLS_METARINDEX_H
 
-#include "geo/simplespatialindex.h"
+#include "fs/weather/weathertypes.h"
 
-#include <QDateTime>
+class QTextStream;
 
 namespace atools {
+
+namespace geo {
+template<typename TYPE>
+class SpatialIndex;
+}
 namespace fs {
 namespace weather {
 
-struct MetarData
-{
-  QString ident, metar;
-  QDateTime timestamp;
-
-  bool isValid() const
-  {
-    return !ident.isEmpty();
-  }
-
-};
-
 struct MetarResult;
+struct MetarData;
 
 /*
- * Downloads caches and indexes (by position) METAR reports in NOAA style as also used by X-Plane.
- * Example:
+ * Reads, caches and indexes (by position) METAR reports in NOAA style as also used by X-Plane.
+ * Can also read flat, plain text METAR files like they are provided by IVAO or VATSIM.
+ *
+ * Example for XPLANE or NOAA:
  *
  * 2017/07/30 18:45
  * KHYI 301845Z 13007KT 070V130 10SM SCT075 38/17 A2996
@@ -52,16 +48,22 @@ struct MetarResult;
  *
  * 2017/07/30 18:47
  * KADS 301847Z 06005G14KT 13SM SKC 32/19 A3007
+ *
+ * Example for format FLAT:
+ *
+ * KC99 100906Z AUTO 30022G42KT 10SM CLR M01/M04 A3035 RMK AO2
+ * LCEN 100920Z 16004KT 090V230 CAVOK 31/10 Q1010 NOSIG
  */
 class MetarIndex
 {
 public:
-  MetarIndex(int size = 100000, bool xplaneFormat = false, bool verboseLogging = false);
+  MetarIndex(atools::fs::weather::MetarFormat formatParam, bool verboseLogging = false);
   ~MetarIndex();
 
   /* Read METARs from stream and add them to the index. Merges into current list or clears list before.
-   * Older of duplicates are ignored/removed. */
-  bool read(QTextStream& stream, const QString& fileName, bool merge);
+   * Older of duplicates are ignored/removed.
+   * Returns number of METARs read. */
+  int read(QTextStream& stream, const QString& fileName, bool merge);
 
   /* Clears all lists */
   void clear();
@@ -69,13 +71,10 @@ public:
   /* true if nothing was read */
   bool isEmpty() const;
 
-  /* Get all ICAO codes that have a weather station */
-  QSet<QString> getMetarAirportIdents() const;
+  /* Number of unique airport idents in index */
+  int size() const;
 
-  /* Get a METAR string. Empty if not available */
-  QString getMetar(const QString& ident);
-
-  /* Get METAR information for station, nearest and interpolated.
+  /* Get METAR information for station or nearest.
    * Also keeps position and ident of original request.*/
   atools::fs::weather::MetarResult getMetar(const QString& station, const atools::geo::Pos& pos);
 
@@ -85,23 +84,37 @@ public:
     fetchAirportCoords = value;
   }
 
+private:
+  /* Get a METAR string. Empty if not available */
+  MetarData metarData(const QString& ident);
+
+  /* Read NOAA or XPLANE format */
+  int readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge);
+
+  /* Read flat file format like IVAO or VATSIM */
+  int readFlat(QTextStream& stream, const QString& fileOrUrl, bool merge);
+
   /* Copy airports from the complete list to the index with coordinates.
    * Copies only airports that exist in the current simulator database, i.e. where fetchAirportCoords returns
    * a valid coordinate. */
   void updateIndex();
 
-private:
+  /* Update or insert a METAR entry */
+  void updateOrInsert(const QString& metar, const QString& ident, const QDateTime& lastTimestamp);
+
   /* Callback to get airport coodinates by ICAO ident */
   std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
 
-  /* Map containing all found METARs */
-  QHash<QString, MetarData> metarMap;
+  /* Map containing all found METARs airport idents mapped to the position in the spatial index */
+  QHash<QString, int> identIndexMap;
 
-  /* Index containing only stations with a valid position */
-  atools::geo::SimpleSpatialIndex<QString, MetarData> *index = nullptr;
+  /* Index containing all stations. Stations without valid position will be located at x/y/z = 0/0/0 and therfore
+   * not considered in the index. */
+  atools::geo::SpatialIndex<MetarData> *spatialIndex = nullptr;
 
   bool verbose = false;
-  bool xplane = false;
+  atools::fs::weather::MetarFormat format = atools::fs::weather::UNKNOWN;
+
 };
 
 } // namespace weather

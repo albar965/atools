@@ -18,9 +18,13 @@
 #ifndef ATOOLS_XPWEATHERREADER_H
 #define ATOOLS_XPWEATHERREADER_H
 
-#include "fs/weather/weathertypes.h"
+#include <QObject>
+#include <functional>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace util {
 class FileSystemWatcher;
 }
@@ -28,6 +32,7 @@ class FileSystemWatcher;
 namespace fs {
 namespace weather {
 
+struct MetarResult;
 class MetarIndex;
 
 /*
@@ -39,17 +44,13 @@ class XpWeatherReader
   Q_OBJECT
 
 public:
-  explicit XpWeatherReader(QObject *parent, int indexSize, bool verboseLogging);
+  explicit XpWeatherReader(QObject *parent, bool verboseLogging);
   virtual ~XpWeatherReader() override;
 
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
-  QString getMetar(const QString& ident);
 
   /* Get station and/or nearest METAR */
   atools::fs::weather::MetarResult getXplaneMetar(const QString& station, const atools::geo::Pos& pos);
-
-  /* Get all ICAO codes that have a weather station */
-  QSet<QString> getMetarAirportIdents();
 
   /* File is loaded on demand on first access */
   void setWeatherFile(const QString& file);
@@ -72,7 +73,7 @@ private:
   void pathChanged(const QString& filename);
   bool read();
 
-  atools::fs::weather::MetarIndex *index = nullptr;
+  atools::fs::weather::MetarIndex *metarIndex = nullptr;
   atools::util::FileSystemWatcher *fsWatcher = nullptr;
   QString weatherFile;
 

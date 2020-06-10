@@ -16,57 +16,23 @@
 *****************************************************************************/
 
 #include "fs/weather/weathernetdownload.h"
+
 #include "util/httpdownloader.h"
-#include "fs/weather/weathertypes.h"
+#include "fs/weather/metarindex.h"
 
 namespace atools {
 namespace fs {
 namespace weather {
 
-WeatherNetDownload::WeatherNetDownload(QObject *parent, int indexSize, bool verboseLogging)
-  : QObject(parent), index(indexSize), verbose(verboseLogging)
+WeatherNetDownload::WeatherNetDownload(QObject *parent, atools::fs::weather::MetarFormat format, bool verbose)
+  : WeatherDownloadBase(parent, format, verbose)
 {
-  downloader = new atools::util::HttpDownloader(parent, verboseLogging);
-
   connect(downloader, &atools::util::HttpDownloader::downloadFinished, this, &WeatherNetDownload::downloadFinished);
   connect(downloader, &atools::util::HttpDownloader::downloadFailed, this, &WeatherNetDownload::downloadFailed);
 }
 
 WeatherNetDownload::~WeatherNetDownload()
 {
-  delete downloader;
-}
-
-atools::fs::weather::MetarResult WeatherNetDownload::getMetar(const QString& airportIcao, const atools::geo::Pos& pos)
-{
-  atools::fs::weather::MetarResult result;
-  result.init(airportIcao, pos);
-
-  if(index.isEmpty())
-  {
-    if(!downloader->isDownloading())
-      downloader->startDownload();
-    // else already downloading - message will be sent for update once done
-  }
-  else
-  {
-    QString data;
-    QString foundKey = index.getTypeOrNearest(data, airportIcao, pos);
-    if(!foundKey.isEmpty())
-    {
-      if(foundKey == airportIcao)
-        result.metarForStation = data;
-      else
-        result.metarForNearest = data;
-    }
-  }
-
-  return result;
-}
-
-void WeatherNetDownload::setRequestUrl(const QString& url)
-{
-  downloader->setUrl(url);
 }
 
 void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
@@ -74,7 +40,15 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
-  parseFile(data);
+  // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
+  // AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
+  // AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
+  QTextStream stream(data, QIODevice::ReadOnly | QIODevice::Text);
+  metarIndex->read(stream, downloader->getUrl(), false /* merge */);
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarIndex->size()
+             << "metars from" << downloader->getUrl();
 
   emit weatherUpdated();
 }
@@ -84,44 +58,6 @@ void WeatherNetDownload::downloadFailed(const QString& error, int errorCode, QSt
   qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error << errorCode;
 
   emit weatherDownloadFailed(error, errorCode, url);
-}
-
-void WeatherNetDownload::setUpdatePeriod(int seconds)
-{
-  downloader->setUpdatePeriod(seconds);
-}
-
-void WeatherNetDownload::updateIndex()
-{
-  for(auto it = metarMap.begin(); it != metarMap.end(); ++it)
-  {
-    atools::geo::Pos pos = fetchAirportCoords(it.key());
-    if(pos.isValid())
-      index.insert(it.key(), it.value(), pos);
-  }
-
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << "Updated" << index.size() << "metar positions";
-}
-
-// AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
-// AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
-// AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
-void WeatherNetDownload::parseFile(const QByteArray& data)
-{
-  QTextStream stream(data, QIODevice::ReadOnly | QIODevice::Text);
-
-  while(!stream.atEnd())
-  {
-    QString line = stream.readLine().simplified();
-    metarMap.insert(line.section(' ', 0, 0), line);
-  }
-
-  updateIndex();
-
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarMap.size()
-             << "metars from" << downloader->getUrl();
 }
 
 } // namespace weather

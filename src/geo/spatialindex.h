@@ -21,7 +21,6 @@
 #include "geo/point3d.h"
 
 #include <QVector>
-#include <cmath>
 #include <functional>
 
 namespace atools {
@@ -69,7 +68,7 @@ class SpatialIndexPrivate
 /* End of private parts *************************************************************************************/
 
 /*
- * Spatial index wrapping the nanoflann librar< which uses KD-tree for nearest neighbor search.
+ * Spatial index wrapping the nanoflann library which uses KD-tree for nearest neighbor search.
  *
  * Changing the underlying vector needs a call of buildIndex() afterwards.
  *

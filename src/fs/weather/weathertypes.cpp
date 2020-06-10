@@ -19,7 +19,6 @@
 
 #include <QEventLoop>
 #include <QFileInfo>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 
 namespace atools {

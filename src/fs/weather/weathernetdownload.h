@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_WEATHERNETDOWNLOAD_H
 #define ATOOLS_FS_WEATHERNETDOWNLOAD_H
 
-#include "geo/simplespatialindex.h"
+#include "fs/weather/weatherdownloadbase.h"
 
 namespace atools {
 namespace util {
@@ -28,65 +28,25 @@ namespace fs {
 namespace weather {
 
 struct MetarResult;
+class MetarIndex;
 
 /*
  * Manages metar files that are download fully from the web like IVAO.
  * Has a timer that triggers a recurrent lookup.
  */
 class WeatherNetDownload :
-  public QObject
+  public WeatherDownloadBase
 {
   Q_OBJECT
 
 public:
-  WeatherNetDownload(QObject *parent, int indexSize, bool verboseLogging);
+  WeatherNetDownload(QObject *parent, atools::fs::weather::MetarFormat format, bool verbose);
   virtual ~WeatherNetDownload();
-
-  /*
-   * @return metar from cache or empty if not entry was found in the cache. Once the request was
-   * completed the signal weatherUpdated is emitted and calling this method again will return the metar.
-   *
-   * Download and timer is triggered on first call.
-   */
-  atools::fs::weather::MetarResult getMetar(const QString& airportIcao, const atools::geo::Pos& pos);
-
-  /* Set download request URL */
-  void setRequestUrl(const QString& url);
-
-  /* Re-download every number of seconds and emit weatherUpdated when done. This will start the update timer. */
-  void setUpdatePeriod(int seconds);
-
-  /* Set to a function that returns the coordinates for an airport ident. Needed to find the nearest. */
-  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
-  {
-    fetchAirportCoords = value;
-  }
-
-  /* Copy airports from the complete list to the index with coordinates.
-   * Copies only airports that exist in the current simulator database. */
-  void updateIndex();
-
-signals:
-  /* Emitted when file was downloaded and udpated */
-  void weatherUpdated();
-
-  void weatherDownloadFailed(const QString& error, int errorCode, QString url);
 
 private:
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
-  void parseFile(const QByteArray& data);
 
-  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
-
-  /* Contains all found airports but only latest reports */
-  QHash<QString, QString> metarMap;
-
-  /* Contains all airports that are also available in the current simulator database. */
-  atools::geo::SimpleSpatialIndex<QString, QString> index;
-
-  atools::util::HttpDownloader *downloader = nullptr;
-  bool verbose = false;
 };
 
 } // namespace weather

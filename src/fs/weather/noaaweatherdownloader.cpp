@@ -19,8 +19,6 @@
 
 #include "fs/weather/metarindex.h"
 #include "util/httpdownloader.h"
-#include "geo/pos.h"
-#include "fs/weather/weathertypes.h"
 
 namespace atools {
 namespace fs {
@@ -28,28 +26,20 @@ namespace weather {
 
 using atools::util::HttpDownloader;
 
-NoaaWeatherDownloader::NoaaWeatherDownloader(QObject *parent, int indexSize, bool verboseLogging)
-  : QObject(parent), verbose(verboseLogging)
+NoaaWeatherDownloader::NoaaWeatherDownloader(QObject *parent, bool verbose)
+  : WeatherDownloadBase(parent, atools::fs::weather::NOAA, verbose)
 {
-  index = new MetarIndex(indexSize, false /* xplane */, verboseLogging);
-  downloader = new HttpDownloader(parent, verbose);
-
   connect(downloader, &HttpDownloader::downloadFinished, this, &NoaaWeatherDownloader::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &NoaaWeatherDownloader::downloadFailed);
 
+  // Use own timer for recurring updates since the one in HttpDownloader cannot be used here
   updateTimer.setSingleShot(true);
   connect(&updateTimer, &QTimer::timeout, this, &NoaaWeatherDownloader::startDownload);
-
-  initialDownloadTimer.setSingleShot(true);
-  connect(&initialDownloadTimer, &QTimer::timeout, this, &NoaaWeatherDownloader::startDownload);
 }
 
 NoaaWeatherDownloader::~NoaaWeatherDownloader()
 {
   stopTimer();
-
-  delete downloader;
-  delete index;
 }
 
 void NoaaWeatherDownloader::startTimer()
@@ -68,30 +58,9 @@ void NoaaWeatherDownloader::stopTimer()
   updateTimer.stop();
 }
 
-MetarResult NoaaWeatherDownloader::getMetar(const QString& airportIcao, const geo::Pos& pos)
-{
-  if(index->isEmpty())
-  {
-    // Nothing loaded yet - start
-    initialDownloadTimer.start(2000);
-  }
-
-  return index->getMetar(airportIcao, pos);
-}
-
 void NoaaWeatherDownloader::setRequestUrl(const QString& url)
 {
   baseUrl = url;
-}
-
-void NoaaWeatherDownloader::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
-{
-  index->setFetchAirportCoords(value);
-}
-
-void NoaaWeatherDownloader::setUpdatePeriod(int seconds)
-{
-  updatePeriodSeconds = seconds;
 }
 
 bool NoaaWeatherDownloader::isDownloading() const
@@ -99,15 +68,10 @@ bool NoaaWeatherDownloader::isDownloading() const
   return downloader->isDownloading() || !downloadQueue.isEmpty();
 }
 
-void NoaaWeatherDownloader::updateIndex()
-{
-  index->updateIndex();
-}
-
 bool NoaaWeatherDownloader::read(const QByteArray& data, const QString& url)
 {
   QTextStream stream(data);
-  return index->read(stream, url, true /* merge */);
+  return metarIndex->read(stream, url, true /* merge */) > 0;
 }
 
 void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url)

@@ -19,7 +19,6 @@
 #define ATOOLS_HTTPDOWNLOADER_H
 
 #include <QNetworkAccessManager>
-#include <QObject>
 #include <QTimer>
 
 class QNetworkReply;
@@ -40,7 +39,7 @@ class HttpDownloader :
   Q_OBJECT
 
 public:
-  HttpDownloader(QObject *parent, bool logVerbose = false);
+  HttpDownloader(QObject *parent, bool verboseLogging = false);
   virtual ~HttpDownloader();
 
   /* Download file and emit downloadFinished when done.

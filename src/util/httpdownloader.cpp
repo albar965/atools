@@ -26,8 +26,8 @@
 namespace atools {
 namespace util {
 
-HttpDownloader::HttpDownloader(QObject *parent, bool logVerbose)
-  : QObject(parent), verbose(logVerbose)
+HttpDownloader::HttpDownloader(QObject *parent, bool verboseLogging)
+  : QObject(parent), verbose(verboseLogging)
 {
   updateTimer.setSingleShot(true);
   connect(&updateTimer, &QTimer::timeout, this, &HttpDownloader::startDownload);
@@ -229,7 +229,7 @@ void HttpDownloader::httpFinished()
   if(reply != nullptr)
   {
     if(verbose)
-      qDebug() << Q_FUNC_INFO << "URL" << curUrl();
+      qDebug() << Q_FUNC_INFO << "URL" << curUrl() << "error" << reply->error();
 
     data.append(reply->readAll());
 
@@ -244,6 +244,7 @@ void HttpDownloader::httpFinished()
     }
     else
     {
+      qWarning() << Q_FUNC_INFO << "URL" << curUrl() << "error" << reply->error();
       emit downloadFailed(reply->errorString(), reply->error(), curUrl());
       deleteReply();
       startTimer();
@@ -259,6 +260,7 @@ void HttpDownloader::readyRead()
   {
     if(reply->error() != QNetworkReply::NoError)
     {
+      qWarning() << Q_FUNC_INFO << "URL" << curUrl() << "error" << reply->error();
       emit downloadFailed(reply->errorString(), reply->error(), curUrl());
       deleteReply();
       startTimer();

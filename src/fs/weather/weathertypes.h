@@ -26,6 +26,14 @@ namespace atools {
 namespace fs {
 namespace weather {
 
+enum MetarFormat
+{
+  UNKNOWN,
+  NOAA, /* Date time and METAR line separated format */
+  XPLANE, /* as NOAA but with X-Plane special keywords */
+  FLAT /* Simple text of "ICAO METAR" strings */
+};
+
 /*
  * Collects METAR information for station, nearest and interpolated values.
  * Also keeps position and ident of original request.
@@ -43,7 +51,7 @@ struct MetarResult
 
   bool isValid() const
   {
-    return !requestIdent.isEmpty() && requestPos.isValid();
+    return !requestIdent.isEmpty();
   }
 
   bool isEmpty() const

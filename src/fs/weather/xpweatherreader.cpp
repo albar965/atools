@@ -21,9 +21,6 @@
 #include "fs/weather/metarindex.h"
 
 #include <QFileInfo>
-#include <QRegularExpression>
-#include <QTextStream>
-#include <QDebug>
 
 namespace atools {
 namespace fs {
@@ -31,16 +28,16 @@ namespace weather {
 
 using atools::util::FileSystemWatcher;
 
-XpWeatherReader::XpWeatherReader(QObject *parent, int indexSize, bool verboseLogging)
+XpWeatherReader::XpWeatherReader(QObject *parent, bool verboseLogging)
   : QObject(parent), verbose(verboseLogging)
 {
-  index = new atools::fs::weather::MetarIndex(indexSize, true /* xplane */, verboseLogging);
+  metarIndex = new atools::fs::weather::MetarIndex(atools::fs::weather::XPLANE, verboseLogging);
 }
 
 XpWeatherReader::~XpWeatherReader()
 {
   clear();
-  delete index;
+  delete metarIndex;
 }
 
 void XpWeatherReader::setWeatherFile(const QString& file)
@@ -56,7 +53,7 @@ void XpWeatherReader::readWeatherFile()
   {
     qDebug() << Q_FUNC_INFO << weatherFile;
 
-    index->clear();
+    metarIndex->clear();
     deleteFsWatcher();
 
     createFsWatcher();
@@ -72,48 +69,35 @@ void XpWeatherReader::clear()
 {
   qDebug() << Q_FUNC_INFO;
   deleteFsWatcher();
-  index->clear();
+  metarIndex->clear();
   weatherFile.clear();
 }
 
 void XpWeatherReader::setFetchAirportCoords(const std::function<geo::Pos(const QString&)>& value)
 {
-  index->setFetchAirportCoords(value);
+  metarIndex->setFetchAirportCoords(value);
 }
 
 bool XpWeatherReader::read()
 {
-  bool retval = false;
   QFile file(weatherFile);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     qDebug() << Q_FUNC_INFO << weatherFile;
     QTextStream stream(&file);
     stream.setCodec("UTF-8");
-    retval = index->read(stream, weatherFile, false /* merge */);
+    metarIndex->read(stream, weatherFile, false /* merge */);
     file.close();
   }
   else
     qWarning() << "cannot open" << file.fileName() << "reason" << file.errorString();
-  return retval;
+  return metarIndex->size();
 }
 
 atools::fs::weather::MetarResult XpWeatherReader::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
   readWeatherFile();
-  return index->getMetar(station, pos);
-}
-
-QSet<QString> XpWeatherReader::getMetarAirportIdents()
-{
-  readWeatherFile();
-  return index->getMetarAirportIdents();
-}
-
-QString XpWeatherReader::getMetar(const QString& ident)
-{
-  readWeatherFile();
-  return index->getMetar(ident);
+  return metarIndex->getMetar(station, pos);
 }
 
 void XpWeatherReader::pathChanged(const QString& filename)
@@ -136,7 +120,7 @@ void XpWeatherReader::pathChanged(const QString& filename)
   }
   else
     // File was deleted - keep current weather information
-    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << index->isEmpty();
+    qDebug() << Q_FUNC_INFO << "File does not exist. Index empty:" << metarIndex->isEmpty();
 }
 
 void XpWeatherReader::deleteFsWatcher()
