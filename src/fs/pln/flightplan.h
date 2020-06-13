@@ -44,12 +44,6 @@ class Flightplan
   Q_DECLARE_TR_FUNCTIONS(Flightplan)
 
 public:
-  Flightplan();
-  Flightplan(const atools::fs::pln::Flightplan& other);
-  ~Flightplan();
-
-  atools::fs::pln::Flightplan& operator=(const atools::fs::pln::Flightplan& other);
-
   /*
    * @return Get all flight plan entries/waypoints. These include start and destination.
    */
@@ -271,7 +265,7 @@ private:
   const FlightplanEntry& destinationAirport() const;
 
   /* Limit altitude to this value */
-  const int MAX_ALTITUDE = 80000;
+  static const int MAX_ALTITUDE = 80000;
 
   atools::fs::pln::FlightplanType flightplanType = VFR;
 

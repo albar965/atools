@@ -26,40 +26,6 @@ namespace pln {
 using atools::geo::Pos;
 
 // =============================================================================================
-Flightplan::Flightplan()
-{
-
-}
-
-Flightplan::Flightplan(const Flightplan& other)
-{
-  this->operator=(other);
-
-}
-
-Flightplan::~Flightplan()
-{
-
-}
-
-Flightplan& Flightplan::operator=(const Flightplan& other)
-{
-  flightplanType = other.flightplanType;
-  cruisingAlt = other.cruisingAlt;
-  departureIdent = other.departureIdent;
-  destinationIdent = other.destinationIdent;
-  departureParkingName = other.departureParkingName;
-  departureName = other.departureName;
-  destinationName = other.destinationName;
-  departurePos = other.departurePos;
-  destinationPos = other.destinationPos;
-  entries = other.entries;
-  properties = other.properties;
-  comment = other.comment;
-  lnmFormat = other.lnmFormat;
-  return *this;
-}
-
 void Flightplan::removeNoSaveEntries()
 {
   auto it = std::remove_if(entries.begin(), entries.end(),

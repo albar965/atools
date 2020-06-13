@@ -110,34 +110,23 @@ enum RouteType
 /* Keys that describe procedures*/
 const QLatin1Literal SIDAPPR("sidappr");
 const QLatin1Literal SIDAPPRRW("sidapprrw");
-const QLatin1Literal SIDAPPRDISTANCE("sidapprdistance");
-const QLatin1Literal SIDAPPRSIZE("sidapprsize");
-
 const QLatin1Literal SIDTRANS("sidtrans");
-const QLatin1Literal SIDTRANSDISTANCE("sidtransdistance");
-const QLatin1Literal SIDTRANSSIZE("sidtranssize");
 
 const QLatin1Literal STAR("star");
 const QLatin1Literal STARRW("starrw");
-const QLatin1Literal STARDISTANCE("stardistance");
-const QLatin1Literal STARSIZE("starsize");
-
 const QLatin1Literal STARTRANS("startrans");
-const QLatin1Literal STARTRANSDISTANCE("startransdistance");
-const QLatin1Literal STARTRANSSIZE("startranssize");
 
 const QLatin1Literal TRANSITION("transition");
 const QLatin1Literal TRANSITIONTYPE("transitiontype");
-const QLatin1Literal TRANSITIONDISTANCE("transitiondistance");
-const QLatin1Literal TRANSITIONSIZE("transitionsize");
 
 const QLatin1Literal APPROACH("approach");
 const QLatin1Literal APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
 const QLatin1Literal APPROACHTYPE("approachtype");
 const QLatin1Literal APPROACHRW("approachrw");
 const QLatin1Literal APPROACHSUFFIX("approachsuffix");
-const QLatin1Literal APPROACHDISTANCE("approachdistance");
-const QLatin1Literal APPROACHSIZE("approachsize");
+
+/* Name of airway which leads to IAF of a STAR or an approach (-transition) */
+const QLatin1Literal PROCAIRWAY("procairway");
 
 /* Only for approachtype = CUSTOM */
 const QLatin1Literal APPROACH_CUSTOM_DISTANCE("approachcustomdistance");

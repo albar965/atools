@@ -35,12 +35,6 @@ class FlightplanEntry
   Q_DECLARE_TR_FUNCTIONS(FlightplanEntry)
 
 public:
-  FlightplanEntry();
-  FlightplanEntry(const atools::fs::pln::FlightplanEntry& other);
-  ~FlightplanEntry();
-
-  FlightplanEntry& operator=(const atools::fs::pln::FlightplanEntry& other);
-
   /*
    * @return waypoint type as string like "VOR", "Waypoint" or "User"
    */

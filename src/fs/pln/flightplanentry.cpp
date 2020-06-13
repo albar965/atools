@@ -21,36 +21,6 @@ namespace atools {
 namespace fs {
 namespace pln {
 
-FlightplanEntry::FlightplanEntry()
-{
-}
-
-FlightplanEntry::~FlightplanEntry()
-{
-
-}
-
-FlightplanEntry::FlightplanEntry(const FlightplanEntry& other)
-{
-  this->operator=(other);
-
-}
-
-FlightplanEntry& FlightplanEntry::operator=(const FlightplanEntry& other)
-{
-  waypointType = other.waypointType;
-  airway = other.airway;
-  region = other.region;
-  ident = other.ident;
-  name = other.name;
-  magvar = other.magvar;
-  position = other.position;
-  flags = other.flags;
-  frequency = other.frequency;
-  comment = other.comment;
-  return *this;
-}
-
 QString FlightplanEntry::getWaypointTypeAsStringShort() const
 {
   const QString type = waypointTypeToFsxString(waypointType);
