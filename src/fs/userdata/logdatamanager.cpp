@@ -137,12 +137,6 @@ const static QHash<int, std::pair<QString,QString>> COL_MAP =
 }
 /* *INDENT-ON* */
 
-struct GpxCacheEntry
-{
-  atools::geo::LineString route, track;
-  QStringList names;
-};
-
 LogdataManager::LogdataManager(sql::SqlDatabase *sqlDb)
   : DataManagerBase(sqlDb, "logbook", "logbook_id",
                     ":/atools/resources/sql/fs/logbook/create_logbook_schema.sql",
@@ -545,7 +539,7 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
       }
       SqlRecord record = query.q.record();
 
-        // Write row
+      // Write row
       stream << sqlExport.getResultSetRow(record) << endl;
       numExported++;
     }
@@ -598,31 +592,21 @@ bool LogdataManager::hasTrackAttached(int id)
   return hasBlob(id, "aircraft_trail");
 }
 
-const atools::geo::LineString *LogdataManager::getRouteGeometry(int id)
+const LogEntryGeometry *LogdataManager::getGeometry(int id)
 {
   loadGpx(id);
-  return &cache.object(id)->route;
-}
-
-const QStringList *LogdataManager::getRouteNames(int id)
-{
-  loadGpx(id);
-  return &cache.object(id)->names;
-}
-
-const atools::geo::LineString *LogdataManager::getTrackGeometry(int id)
-{
-  loadGpx(id);
-  return &cache.object(id)->track;
+  return cache.object(id);
 }
 
 void LogdataManager::loadGpx(int id)
 {
   if(!cache.contains(id))
   {
-    GpxCacheEntry *entry = new GpxCacheEntry;
+    LogEntryGeometry *entry = new LogEntryGeometry;
     atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->track,
                                               getValue(id, "aircraft_trail").toByteArray());
+    entry->routeRect = entry->route.boundingRect();
+    entry->trackRect = entry->track.boundingRect();
     cache.insert(id, entry);
   }
 }
