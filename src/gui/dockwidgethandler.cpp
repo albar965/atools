@@ -20,29 +20,84 @@
 #include <QAction>
 #include <QDockWidget>
 #include <QMainWindow>
+#include <QDebug>
+#include <QEvent>
+#include <QMouseEvent>
 
 namespace atools {
 namespace gui {
 
+class DockEventFilter :
+  public QObject
+{
+public:
+  DockEventFilter()
+  {
+
+  }
+
+  bool autoRaiseDockWindow = false, autoRaiseMainWindow = false;
+
+private:
+  virtual bool eventFilter(QObject *object, QEvent *event) override;
+
+};
+
+bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
+{
+  if(event->type() == QEvent::Enter)
+  {
+    if(autoRaiseDockWindow)
+    {
+      QDockWidget *widget = dynamic_cast<QDockWidget *>(object);
+      if(widget != nullptr)
+      {
+        qDebug() << Q_FUNC_INFO << event->type() << widget->objectName();
+        if(widget->isFloating())
+        {
+          widget->activateWindow();
+          widget->raise();
+        }
+      }
+    }
+
+    if(autoRaiseMainWindow)
+    {
+      QMainWindow *mainWindow = dynamic_cast<QMainWindow *>(object);
+      if(mainWindow != nullptr)
+      {
+        mainWindow->activateWindow();
+        mainWindow->raise();
+      }
+    }
+  }
+
+  return QObject::eventFilter(object, event);
+}
+
 DockWidgetHandler::DockWidgetHandler(QMainWindow *parent, const QList<QDockWidget *>& dockWidgets)
   : mainWindow(parent), dockList(dockWidgets)
 {
-
+  dockEventFilter = new DockEventFilter();
 }
 
 DockWidgetHandler::~DockWidgetHandler()
 {
-
+  delete dockEventFilter;
 }
 
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
+  qDebug() << Q_FUNC_INFO;
+
   Q_UNUSED(topLevel)
   updateDockTabStatus();
 }
 
 void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
 {
+  qDebug() << Q_FUNC_INFO;
+
   Q_UNUSED(area)
   updateDockTabStatus();
 }
@@ -53,6 +108,7 @@ void DockWidgetHandler::connectDockWindow(QDockWidget *dockWidget)
   connect(dockWidget->toggleViewAction(), &QAction::toggled, this, &DockWidgetHandler::dockViewToggled);
   connect(dockWidget, &QDockWidget::dockLocationChanged, this, &DockWidgetHandler::dockLocationChanged);
   connect(dockWidget, &QDockWidget::topLevelChanged, this, &DockWidgetHandler::dockTopLevelChanged);
+  dockWidget->installEventFilter(dockEventFilter);
 }
 
 void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
@@ -144,6 +200,7 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
 
 void DockWidgetHandler::dockViewToggled()
 {
+  qDebug() << Q_FUNC_INFO;
   if(handleDockViews)
   {
     QAction *action = dynamic_cast<QAction *>(sender());
@@ -161,6 +218,7 @@ void DockWidgetHandler::dockViewToggled()
 
 void DockWidgetHandler::activateWindow(QDockWidget *dockWidget)
 {
+  qDebug() << Q_FUNC_INFO;
   dockWidget->show();
   dockWidget->activateWindow();
   dockWidget->raise();
@@ -172,8 +230,29 @@ void DockWidgetHandler::setHandleDockViews(bool value)
   updateDockTabStatus();
 }
 
+bool DockWidgetHandler::isAutoRaiseDockWindows() const
+{
+  return dockEventFilter->autoRaiseDockWindow;
+}
+
+void DockWidgetHandler::setAutoRaiseDockWindows(bool value)
+{
+  dockEventFilter->autoRaiseDockWindow = value;
+}
+
+bool DockWidgetHandler::isAutoRaiseMainWindow() const
+{
+  return dockEventFilter->autoRaiseMainWindow;
+}
+
+void DockWidgetHandler::setAutoRaiseMainWindow(bool value)
+{
+  dockEventFilter->autoRaiseMainWindow = value;
+}
+
 void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
 {
+  qDebug() << Q_FUNC_INFO;
   if(dockWidget->isVisible() && dockWidget->isFloating())
     dockWidget->raise();
 }
@@ -182,6 +261,7 @@ void DockWidgetHandler::connectDockWindows()
 {
   for(QDockWidget *dock : dockList)
     connectDockWindow(dock);
+  mainWindow->installEventFilter(dockEventFilter);
 }
 
 void DockWidgetHandler::raiseFloatingWindows()

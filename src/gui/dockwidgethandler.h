@@ -22,9 +22,11 @@
 
 class QMainWindow;
 class QDockWidget;
+class QMouseEvent;
 
 namespace atools {
 namespace gui {
+class DockEventFilter;
 
 /*
  * Improves dock widget handling expecially if dock windows are stacked.
@@ -57,7 +59,16 @@ public:
     return handleDockViews;
   }
 
+  /* Set to true to enable handler */
   void setHandleDockViews(bool value);
+
+  /* Raise dock windows when mouse enters window */
+  bool isAutoRaiseDockWindows() const;
+  void setAutoRaiseDockWindows(bool value);
+
+  /* Raise main window when mouse enters window */
+  bool isAutoRaiseMainWindow() const;
+  void setAutoRaiseMainWindow(bool value);
 
 private:
   /* One dock view was toggled by the accompanied action */
@@ -85,6 +96,8 @@ private:
 
   /* All handled docks */
   QList<QDockWidget *> dockList;
+
+  DockEventFilter *dockEventFilter;
 };
 
 } // namespace gui
