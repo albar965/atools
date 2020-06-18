@@ -48,7 +48,7 @@ void SimConnectUserAircraft::read(QDataStream& in)
   in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt >> ambientTemperatureCelsius
   >> totalAirTemperatureCelsius >> seaLevelPressureMbar
   >> pitotIcePercent >> structuralIcePercent
-  >> aoaIcePercent >> inletIcePercent >> propIcePercent >> statIcePercent >> windowIcePercent
+  >> aoaIcePercent >> inletIcePercent >> propIcePercent >> statIcePercent >> windowIcePercent >> carbIcePercent
   >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >> airplaneEmptyWeightLbs >> fuelTotalQuantityGallons
   >> fuelTotalWeightLbs >> fuelFlowPPH >> fuelFlowGPH >> magVarDeg >> ambientVisibilityMeter >> trackMagDeg
   >> trackTrueDeg >> localDateTime >> zuluDateTime;
@@ -60,7 +60,7 @@ void SimConnectUserAircraft::write(QDataStream& out) const
   out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt << ambientTemperatureCelsius
       << totalAirTemperatureCelsius << seaLevelPressureMbar
       << pitotIcePercent << structuralIcePercent
-      << aoaIcePercent << inletIcePercent << propIcePercent << statIcePercent << windowIcePercent
+      << aoaIcePercent << inletIcePercent << propIcePercent << statIcePercent << windowIcePercent << carbIcePercent
       << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs << airplaneEmptyWeightLbs << fuelTotalQuantityGallons
       << fuelTotalWeightLbs << fuelFlowPPH << fuelFlowGPH << magVarDeg << ambientVisibilityMeter << trackMagDeg
       << trackTrueDeg << localDateTime << zuluDateTime;

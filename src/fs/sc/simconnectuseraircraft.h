@@ -121,6 +121,11 @@ public:
     return windowIcePercent;
   }
 
+  float getCarbIcePercent() const
+  {
+    return carbIcePercent;
+  }
+
   float getAirplaneTotalWeightLbs() const
   {
     return airplaneTotalWeightLbs;
@@ -234,7 +239,7 @@ private:
   float trackMagDeg = 0.f, trackTrueDeg = 0.f;
 
   quint8 pitotIcePercent = 0, structuralIcePercent = 0, aoaIcePercent = 0, inletIcePercent = 0,
-         propIcePercent = 0, statIcePercent = 0, windowIcePercent = 0;
+         propIcePercent = 0, statIcePercent = 0, windowIcePercent = 0, carbIcePercent = 0;
 
   QDateTime localDateTime, zuluDateTime;
 };
