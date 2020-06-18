@@ -48,7 +48,7 @@ Line::Line(const Pos& p1, const Pos& p2)
 Line::Line(const Pos& pos, float distanceMeter, float course)
 {
   pos1 = pos;
-  pos2 = pos1.endpoint(distanceMeter, course);
+  pos2 = pos1.endpoint(distanceMeter, course).normalize();
 }
 
 Line::Line(const Pos& p)
