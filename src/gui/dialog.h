@@ -110,6 +110,7 @@ public:
    * @param suffix Default suffix that will be added to a file if no suffix was
    * given
    * @param path initial path to use
+   * @param filterIndex Index if used name filter
    *
    * @return Selected filename or empty string if cancel was pressed
    * @see atools::settings::Settings
@@ -118,7 +119,7 @@ public:
                          const QString& settingsPrefix = QString(),
                          const QString& path = QString(),
                          const QString& filename = QString(), bool dontComfirmOverwrite = false,
-                         bool autoNumberFilename = false);
+                         bool autoNumberFilename = false, int *filterIndex = nullptr);
 
   /*
    * Shows a simple information message box that includes a checkbox which can
@@ -164,7 +165,8 @@ public:
 private:
   QStringList fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                          const QString& settingsPrefix, const QString& defaultFileSuffix,
-                         const QString& path, const QString& filename, bool autoNumberFilename);
+                         const QString& path, const QString& filename, bool autoNumberFilename,
+                         int *filterIndex = nullptr);
 
   QWidget *parent = nullptr;
 };

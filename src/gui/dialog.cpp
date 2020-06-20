@@ -32,8 +32,11 @@ using atools::settings::Settings;
 
 QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QString& filter,
                                const QString& settingsPrefix, const QString& defaultFileSuffix,
-                               const QString& path, const QString& filename, bool autoNumberFilename)
+                               const QString& path, const QString& filename, bool autoNumberFilename, int *filterIndex)
 {
+  if(filterIndex != nullptr)
+    *filterIndex = -1;
+
   dlg.setNameFilter(filter);
   dlg.setWindowTitle(QApplication::applicationName() + " - " + title);
   dlg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
@@ -115,6 +118,9 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
       s.syncSettings();
     }
 
+    if(filterIndex != nullptr)
+      *filterIndex = dlg.nameFilters().indexOf(dlg.selectedNameFilter());
+
     QStringList files = dlg.selectedFiles();
     return files.isEmpty() ? QStringList({QString()}) : files;
   }
@@ -176,14 +182,15 @@ QString Dialog::saveFileDialog(const QString& title,
                                const QString& path,
                                const QString& filename,
                                bool dontComfirmOverwrite,
-                               bool autoNumberFilename)
+                               bool autoNumberFilename, int *filterIndex)
 {
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::AnyFile);
   dlg.setAcceptMode(QFileDialog::AcceptSave);
   dlg.setOption(QFileDialog::DontConfirmOverwrite, dontComfirmOverwrite);
 
-  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path, filename, autoNumberFilename).first();
+  return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path, filename, autoNumberFilename,
+                    filterIndex).first();
 }
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,

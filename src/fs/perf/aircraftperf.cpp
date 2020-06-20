@@ -357,6 +357,9 @@ void AircraftPerf::loadIniInternal(const QString& filename)
 
 void AircraftPerf::saveIni(const QString& filename)
 {
+  if(QFile::exists(filename))
+    QFile::remove(filename);
+
   QSettings settings(filename, QSettings::IniFormat);
   settings.setIniCodec("UTF-8");
   writeToSettings(settings);
