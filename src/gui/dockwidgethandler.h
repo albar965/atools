@@ -18,7 +18,7 @@
 #ifndef ATOOLS_DOCKWIDGETHANDLER_H
 #define ATOOLS_DOCKWIDGETHANDLER_H
 
-#include <QObject>
+#include <QDockWidget>
 
 class QMainWindow;
 class QDockWidget;
@@ -70,6 +70,9 @@ public:
   bool isAutoRaiseMainWindow() const;
   void setAutoRaiseMainWindow(bool value);
 
+  /* Forbid docking if value is false. Otherwise restore previous state */
+  void setDockingAllowed(bool value);
+
 private:
   /* One dock view was toggled by the accompanied action */
   void dockViewToggled();
@@ -98,6 +101,7 @@ private:
   QList<QDockWidget *> dockList;
 
   DockEventFilter *dockEventFilter;
+  QVector<Qt::DockWidgetAreas> allowedAreas;
 };
 
 } // namespace gui

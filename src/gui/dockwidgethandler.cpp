@@ -250,6 +250,29 @@ void DockWidgetHandler::setAutoRaiseMainWindow(bool value)
   dockEventFilter->autoRaiseMainWindow = value;
 }
 
+void DockWidgetHandler::setDockingAllowed(bool value)
+{
+  if(allowedAreas.isEmpty())
+  {
+    // Create backup
+    for(QDockWidget *dock : dockList)
+      allowedAreas.append(dock->allowedAreas());
+  }
+
+  if(value)
+  {
+    // Restore backup
+    for(int i = 0; i < dockList.size(); i++)
+      dockList[i]->setAllowedAreas(allowedAreas.value(i));
+  }
+  else
+  {
+    // Forbid docking for all widgets
+    for(QDockWidget *dock : dockList)
+      dock->setAllowedAreas(value ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
+  }
+}
+
 void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
 {
   qDebug() << Q_FUNC_INFO;
