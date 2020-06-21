@@ -65,7 +65,11 @@ bool strContains(const QString& name, const std::initializer_list<const char *>&
 bool strContains(const QString& name, const std::initializer_list<char>& list);
 
 /* Concatenates all non empty strings in the list with the given separator */
-QString strJoin(const std::initializer_list<QString>& list, const QString& sep);
+QString strJoin(const QStringList& list, const QString& sep);
+
+/* Concatenates all non empty strings in the list with the given separator and uses lastSep for separation.
+ *  Example: strJoin({"A", "B", "C"}, ", ", " and ") => "A, B and C" */
+QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix = QString());
 
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)

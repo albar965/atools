@@ -639,7 +639,7 @@ QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok)
   return retval;
 }
 
-QString strJoin(const std::initializer_list<QString>& list, const QString& sep)
+QString strJoin(const QStringList& list, const QString& sep)
 {
   QString retval;
   for(QString str : list)
@@ -652,6 +652,32 @@ QString strJoin(const std::initializer_list<QString>& list, const QString& sep)
       retval += str;
     }
   }
+  return retval;
+}
+
+QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix)
+{
+  QString retval;
+
+  QStringList listTrimmed;
+  for(QString str : list)
+  {
+    str = str.trimmed();
+    if(!str.isEmpty())
+      listTrimmed.append(str);
+  }
+
+  for(int i = 0; i < listTrimmed.size(); i++)
+  {
+    QString str = listTrimmed.at(i);
+    if(!retval.isEmpty())
+      retval += (i >= listTrimmed.size() - 1 ? lastSep : sep);
+    retval += str;
+  }
+
+  if(!retval.isEmpty())
+    retval.append(suffix);
+
   return retval;
 }
 

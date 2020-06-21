@@ -109,6 +109,11 @@ public:
   static QString warningMessage(const QString& str);
   static QString warningMessage(const QStringList& stringList, const QString& separator = "<br/>");
 
+  /* Hint message. Dark green bold text. */
+  HtmlBuilder& note(const QString& str);
+  static QString noteMessage(const QString& str);
+  static QString noteMessage(const QStringList& stringList, const QString& separator = "<br/>");
+
   /* Message.  */
   HtmlBuilder& message(const QString& str, html::Flags flags = html::NONE,
                        QColor foreground = QColor(), QColor background = QColor());

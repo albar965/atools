@@ -185,6 +185,28 @@ QString HtmlBuilder::warningMessage(const QStringList& stringList, const QString
   return warnList.join(separator);
 }
 
+HtmlBuilder& HtmlBuilder::note(const QString& str)
+{
+  htmlText += HtmlBuilder::noteMessage(str);
+  return *this;
+}
+
+QString HtmlBuilder::noteMessage(const QString& str)
+{
+  if(!str.isEmpty())
+    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#00aa00"));
+
+  return str;
+}
+
+QString HtmlBuilder::noteMessage(const QStringList& stringList, const QString& separator)
+{
+  QStringList warnList;
+  for(const QString& str : stringList)
+    warnList.append(noteMessage(str));
+  return warnList.join(separator);
+}
+
 HtmlBuilder& HtmlBuilder::message(const QString& str, html::Flags flags, QColor foreground, QColor background)
 {
   htmlText.append(textMessage(str, flags, foreground, background));
