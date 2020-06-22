@@ -21,6 +21,8 @@
 class QString;
 class QWidget;
 class QUrl;
+class QFont;
+class QLabel;
 
 namespace atools {
 namespace gui {
@@ -31,6 +33,12 @@ bool showInFileManager(const QString& filepath, QWidget *parent);
 
 /* Open HTTP, HTTPS, FTP or FILE link in browser or file manager */
 void anchorClicked(QWidget *parent, const QUrl& url);
+
+/* Return a user readable text for the given font */
+QString fontDescription(const QFont& font);
+
+/* Sets label text and label font */
+void fontDescription(const QFont& font, QLabel *label);
 
 } // namespace gui
 } // namespace atools

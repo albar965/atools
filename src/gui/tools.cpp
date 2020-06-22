@@ -24,6 +24,8 @@
 #include <QFileInfo>
 #include <QUrl>
 #include <QDebug>
+#include <QFontDatabase>
+#include <QLabel>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -128,6 +130,60 @@ void anchorClicked(QWidget *parent, const QUrl& url)
                                      arg(url.toDisplayString()));
     }
   }
+}
+
+void fontDescription(const QFont& font, QLabel *label)
+{
+  label->setFont(font);
+  label->setText(fontDescription(font));
+}
+
+QString fontDescription(const QFont& font)
+{
+  QStringList fontText;
+
+  fontText.append(font.family());
+  fontText.append(QLocale().toString(font.pointSizeF()));
+
+  int weight = font.weight();
+  if(weight == QFont::Thin)
+    fontText.append(QObject::tr("thin"));
+  else if(weight <= QFont::ExtraLight)
+    fontText.append(QObject::tr("extra light"));
+  else if(weight <= QFont::Light)
+    fontText.append(QObject::tr("light"));
+  else if(weight <= QFont::Normal)
+    fontText.append(QObject::tr("normal"));
+  else if(weight <= QFont::Medium)
+    fontText.append(QObject::tr("medium"));
+  else if(weight <= QFont::DemiBold)
+    fontText.append(QObject::tr("demi bold"));
+  else if(weight <= QFont::Bold)
+    fontText.append(QObject::tr("bold"));
+  else if(weight <= QFont::ExtraBold)
+    fontText.append(QObject::tr("extra bold"));
+  else if(weight >= QFont::Black)
+    fontText.append(QObject::tr("black"));
+
+  if(font.italic())
+    fontText.append(QObject::tr("italic"));
+  if(font.overline())
+    fontText.append(QObject::tr("overline"));
+  if(font.underline())
+    fontText.append(QObject::tr("underline"));
+  if(font.strikeOut())
+    fontText.append(QObject::tr("strike out"));
+
+  if(font.fixedPitch())
+    fontText.append(QObject::tr("fixed pitch"));
+
+  QString prefix;
+  if(font == QFontDatabase::systemFont(QFontDatabase::GeneralFont))
+    prefix = QObject::tr("System font: %1");
+  else
+    prefix = QObject::tr("User selected font: %1");
+
+  return prefix.arg(fontText.join(QObject::tr(", ")));
 }
 
 } // namespace gui
