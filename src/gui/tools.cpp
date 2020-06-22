@@ -143,7 +143,10 @@ QString fontDescription(const QFont& font)
   QStringList fontText;
 
   fontText.append(font.family());
-  fontText.append(QLocale().toString(font.pointSizeF()));
+  if(font.pointSizeF() > 0.)
+    fontText.append(QObject::tr("%1 pt").arg(font.pointSizeF()));
+  else if(font.pixelSize() > 0)
+    fontText.append(QObject::tr("%1 px").arg(font.pixelSize()));
 
   int weight = font.weight();
   if(weight == QFont::Thin)
