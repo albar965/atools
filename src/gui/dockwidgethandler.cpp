@@ -222,6 +222,35 @@ DockWidgetHandler::~DockWidgetHandler()
   delete fullscreenState;
 }
 
+void DockWidgetHandler::dockVisibilityChanged(bool visible)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "visible" << visible;
+
+  if(visible)
+  {
+    QDockWidget *dockWidget = dynamic_cast<QDockWidget *>(sender());
+    if(dockWidget != nullptr)
+    {
+      if(dockWidget->isFloating())
+      {
+        // Check if widget or its title bar are off screen and correct position if needed
+        QPoint pos = dockWidget->pos();
+        if(pos.y() < 0)
+          pos.setY(10);
+        if(pos.x() < 0)
+          pos.setX(10);
+        if(pos != dockWidget->pos())
+        {
+          qDebug() << Q_FUNC_INFO << "Correcting dock position for" << dockWidget->objectName()
+                   << "from" << dockWidget->pos() << "to" << pos;
+          dockWidget->move(pos);
+        }
+      }
+    }
+  }
+}
+
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
   if(verbose)
@@ -246,6 +275,7 @@ void DockWidgetHandler::connectDockWindow(QDockWidget *dockWidget)
   connect(dockWidget->toggleViewAction(), &QAction::toggled, this, &DockWidgetHandler::dockViewToggled);
   connect(dockWidget, &QDockWidget::dockLocationChanged, this, &DockWidgetHandler::dockLocationChanged);
   connect(dockWidget, &QDockWidget::topLevelChanged, this, &DockWidgetHandler::dockTopLevelChanged);
+  connect(dockWidget, &QDockWidget::visibilityChanged, this, &DockWidgetHandler::dockVisibilityChanged);
   dockWidget->installEventFilter(dockEventFilter);
 }
 

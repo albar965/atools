@@ -155,6 +155,8 @@ private:
   /* Dock widget docking area changed */
   void dockLocationChanged(Qt::DockWidgetArea area);
 
+  void dockVisibilityChanged(bool visible);
+
   void connectDockWindow(QDockWidget *dockWidget);
 
   /* Stacks are only rememberd if this is true */
