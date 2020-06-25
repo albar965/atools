@@ -23,10 +23,137 @@
 #include <QDebug>
 #include <QEvent>
 #include <QMouseEvent>
+#include <QStatusBar>
+#include <QMenuBar>
+#include <QToolBar>
 
 namespace atools {
 namespace gui {
 
+/* Saves the main window states and states of all attached widgets like the status bars and the menu bar. */
+struct MainWindowState
+{
+  /* Copy state to main window and all related widgets */
+  void toWindow(QMainWindow *mainWindow) const;
+
+  /* Save state from main window and all related widgets */
+  void fromWindow(const QMainWindow *mainWindow);
+
+  /* Create an initial fullscreen configuration without docks and toobars depending on configuration */
+  void initFullscreen(atools::gui::DockFlags flags);
+
+  /* Clear all and set valid to false */
+  void clear();
+
+  /* false if default constructed or cleared */
+  bool isValid() const
+  {
+    return valid;
+  }
+
+  QByteArray mainWindowState; // State from main window including toolbars and dock widgets
+  QSize mainWindowSize;
+  QPoint mainWindowPosition;
+  Qt::WindowStates mainWindowStates = Qt::WindowNoState;
+
+  bool statusBarVisible = true, menuVisible = true, // Not covered by saveState in main window
+       valid = false, verbose = false;
+};
+
+QDebug operator<<(QDebug out, const MainWindowState& obj)
+{
+  QDebugStateSaver saver(out);
+  out.noquote().nospace() << "MainWindowState["
+                          << "size " << obj.mainWindowState.size()
+                          << ", window size " << obj.mainWindowSize
+                          << ", window position " << obj.mainWindowPosition
+                          << ", window states " << obj.mainWindowStates
+                          << ", statusbar " << obj.statusBarVisible
+                          << ", menu " << obj.menuVisible
+                          << ", valid " << obj.valid
+                          << "]";
+  return out;
+}
+
+void MainWindowState::toWindow(QMainWindow *mainWindow) const
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << *this;
+
+  if(!valid)
+    qWarning() << Q_FUNC_INFO << "Calling on invalid state";
+
+  mainWindow->setWindowState(mainWindowStates);
+  if(!mainWindowStates.testFlag(Qt::WindowMaximized) && !mainWindowStates.testFlag(Qt::WindowFullScreen))
+  {
+    // Change size and position only if main window is not maximized or full screen
+    if(mainWindowSize.isValid())
+      mainWindow->resize(mainWindowSize);
+    mainWindow->move(mainWindowPosition);
+  }
+  mainWindow->statusBar()->setVisible(statusBarVisible);
+  mainWindow->menuWidget()->setVisible(menuVisible);
+
+  // Restores the state of this mainwindow's toolbars and dockwidgets. Also restores the corner settings too.
+  // Has to be called after setting size to avoid unwanted widget resizing
+  if(!mainWindowState.isEmpty())
+    mainWindow->restoreState(mainWindowState);
+}
+
+void MainWindowState::fromWindow(const QMainWindow *mainWindow)
+{
+  clear();
+  mainWindowState = mainWindow->saveState();
+  mainWindowSize = mainWindow->size();
+  mainWindowPosition = mainWindow->pos();
+  mainWindowStates = mainWindow->windowState();
+  statusBarVisible = mainWindow->statusBar()->isVisible();
+  menuVisible = mainWindow->menuWidget()->isVisible();
+  valid = true;
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << *this;
+}
+
+void MainWindowState::initFullscreen(atools::gui::DockFlags flags)
+{
+  clear();
+
+  mainWindowStates = flags.testFlag(MAXIMIZE) ? Qt::WindowMaximized : Qt::WindowFullScreen;
+  statusBarVisible = !flags.testFlag(HIDE_STATUSBAR);
+  menuVisible = !flags.testFlag(HIDE_MENUBAR);
+  valid = true;
+
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << *this;
+}
+
+void MainWindowState::clear()
+{
+  mainWindowState.clear();
+  mainWindowSize = QSize();
+  mainWindowPosition = QPoint();
+  mainWindowStates = Qt::WindowNoState;
+  statusBarVisible = true,
+  menuVisible = true;
+  valid = false;
+}
+
+QDataStream& operator<<(QDataStream& out, const atools::gui::MainWindowState& state)
+{
+  out << state.valid << state.mainWindowState << state.mainWindowSize << state.mainWindowPosition
+      << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, atools::gui::MainWindowState& state)
+{
+  in >> state.valid >> state.mainWindowState >> state.mainWindowSize >> state.mainWindowPosition
+  >> state.mainWindowStates >> state.statusBarVisible >> state.menuVisible;
+  return in;
+}
+
+// ===================================================================================
 class DockEventFilter :
   public QObject
 {
@@ -75,20 +202,30 @@ bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
   return QObject::eventFilter(object, event);
 }
 
-DockWidgetHandler::DockWidgetHandler(QMainWindow *parent, const QList<QDockWidget *>& dockWidgets)
-  : mainWindow(parent), dockList(dockWidgets)
+// ===================================================================================
+DockWidgetHandler::DockWidgetHandler(QMainWindow *parentMainWindow, const QList<QDockWidget *>& dockWidgetsParam,
+                                     const QList<QToolBar *>& toolBarsParam, bool verboseLog)
+  : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam),
+  verbose(verboseLog)
 {
   dockEventFilter = new DockEventFilter();
+  normalState = new MainWindowState;
+  normalState->verbose = verbose;
+  fullscreenState = new MainWindowState;
+  fullscreenState->verbose = verbose;
 }
 
 DockWidgetHandler::~DockWidgetHandler()
 {
   delete dockEventFilter;
+  delete normalState;
+  delete fullscreenState;
 }
 
 void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   Q_UNUSED(topLevel)
   updateDockTabStatus();
@@ -96,7 +233,8 @@ void DockWidgetHandler::dockTopLevelChanged(bool topLevel)
 
 void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
 
   Q_UNUSED(area)
   updateDockTabStatus();
@@ -162,7 +300,7 @@ void DockWidgetHandler::updateDockTabStatus()
   if(handleDockViews)
   {
     dockStackList.clear();
-    for(QDockWidget *dock : dockList)
+    for(QDockWidget *dock : dockWidgets)
       updateDockTabStatus(dock);
   }
 }
@@ -200,14 +338,16 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
 
 void DockWidgetHandler::dockViewToggled()
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
   if(handleDockViews)
   {
     QAction *action = dynamic_cast<QAction *>(sender());
     if(action != nullptr)
     {
       bool checked = action->isChecked();
-      for(QDockWidget *dock : dockList)
+      for(QDockWidget *dock : dockWidgets)
       {
         if(action == dock->toggleViewAction())
           toggledDockWindow(dock, checked);
@@ -255,20 +395,20 @@ void DockWidgetHandler::setDockingAllowed(bool value)
   if(allowedAreas.isEmpty())
   {
     // Create backup
-    for(QDockWidget *dock : dockList)
+    for(QDockWidget *dock : dockWidgets)
       allowedAreas.append(dock->allowedAreas());
   }
 
   if(value)
   {
     // Restore backup
-    for(int i = 0; i < dockList.size(); i++)
-      dockList[i]->setAllowedAreas(allowedAreas.value(i));
+    for(int i = 0; i < dockWidgets.size(); i++)
+      dockWidgets[i]->setAllowedAreas(allowedAreas.value(i, Qt::AllDockWidgetAreas));
   }
   else
   {
     // Forbid docking for all widgets
-    for(QDockWidget *dock : dockList)
+    for(QDockWidget *dock : dockWidgets)
       dock->setAllowedAreas(value ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
   }
 }
@@ -282,16 +422,173 @@ void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
 
 void DockWidgetHandler::connectDockWindows()
 {
-  for(QDockWidget *dock : dockList)
+  for(QDockWidget *dock : dockWidgets)
     connectDockWindow(dock);
   mainWindow->installEventFilter(dockEventFilter);
 }
 
 void DockWidgetHandler::raiseFloatingWindows()
 {
-  for(QDockWidget *dock : dockList)
+  for(QDockWidget *dock : dockWidgets)
     raiseFloatingWindow(dock);
+}
+
+// ==========================================================================
+// Fullscreen methods
+
+void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
+{
+  if(!fullscreen)
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO;
+
+    // Copy window layout to state
+    normalState->fromWindow(mainWindow);
+
+    if(!fullscreenState->isValid())
+    {
+      // No saved fullscreen configuration yet - create a new one
+      fullscreenState->initFullscreen(flags);
+
+      if(flags.testFlag(HIDE_TOOLBARS))
+      {
+        for(QToolBar *toolBar: toolBars)
+          toolBar->setVisible(false);
+      }
+
+      if(flags.testFlag(HIDE_DOCKS))
+      {
+        for(QDockWidget *dockWidget : dockWidgets)
+          dockWidget->setVisible(false);
+      }
+    }
+
+    // Main window to fullscreen
+    fullscreenState->toWindow(mainWindow);
+
+    fullscreen = true;
+    delayedFullscreen = false;
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Already fullscreen";
+}
+
+void DockWidgetHandler::setFullScreenOff()
+{
+  if(fullscreen)
+  {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO;
+
+    // Save full screen layout
+    fullscreenState->fromWindow(mainWindow);
+
+    // Assign normal state to window
+    normalState->toWindow(mainWindow);
+
+    fullscreen = false;
+    delayedFullscreen = false;
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Already no fullscreen";
+}
+
+QByteArray DockWidgetHandler::saveState()
+{
+  // Save current state - other state was saved when switching fs/normal
+  if(fullscreen)
+    fullscreenState->fromWindow(mainWindow);
+  else
+    normalState->fromWindow(mainWindow);
+
+  qDebug() << Q_FUNC_INFO << "normalState" << *normalState;
+  qDebug() << Q_FUNC_INFO << "fullscreenState" << *fullscreenState;
+
+  // Save states for each mode and also fullscreen status
+  QByteArray data;
+  QDataStream stream(&data, QIODevice::WriteOnly);
+  stream << fullscreen << *normalState << *fullscreenState;
+  return data;
+}
+
+void DockWidgetHandler::restoreState(QByteArray data)
+{
+  QDataStream stream(&data, QIODevice::ReadOnly);
+  stream >> fullscreen >> *normalState >> *fullscreenState;
+  delayedFullscreen = false;
+
+  qDebug() << Q_FUNC_INFO << "normalState" << *normalState;
+  qDebug() << Q_FUNC_INFO << "fullscreenState" << *fullscreenState;
+}
+
+void DockWidgetHandler::currentStateToWindow()
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
+  if(fullscreen)
+    fullscreenState->toWindow(mainWindow);
+  else
+    normalState->toWindow(mainWindow);
+}
+
+void DockWidgetHandler::normalStateToWindow()
+{
+  normalState->toWindow(mainWindow);
+  delayedFullscreen = fullscreen; // Set flag to allow switch to fullscreen later after showing windows
+  fullscreen = false;
+}
+
+void DockWidgetHandler::fullscreenStateToWindow()
+{
+  fullscreenState->toWindow(mainWindow);
+  fullscreen = true;
+  delayedFullscreen = false;
+}
+
+void DockWidgetHandler::resetWindowState(const QSize& size, const QString& resetWindowStateFileName)
+{
+  QFile file(resetWindowStateFileName);
+  if(file.open(QIODevice::ReadOnly))
+  {
+    QByteArray bytes = file.readAll();
+
+    if(!bytes.isEmpty())
+    {
+      qDebug() << Q_FUNC_INFO;
+
+      // Reset also ends fullscreen mode
+      fullscreen = false;
+
+      // End maximized and fullscreen state
+      mainWindow->setWindowState(Qt::WindowActive);
+
+      // Move to origin and apply size
+      mainWindow->move(0, 0);
+      mainWindow->resize(size);
+
+      // Reload state now. This has to be done after resizing the window.
+      mainWindow->restoreState(bytes);
+
+      normalState->fromWindow(mainWindow);
+      fullscreenState->clear();
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "cannot read file" << resetWindowStateFileName << file.errorString();
+
+    file.close();
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "cannot open file" << resetWindowStateFileName << file.errorString();
+}
+
+void DockWidgetHandler::registerMetaTypes()
+{
+  qRegisterMetaTypeStreamOperators<atools::gui::MainWindowState>();
 }
 
 } // namespace gui
 } // namespace atools
+
+Q_DECLARE_METATYPE(atools::gui::MainWindowState);

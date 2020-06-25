@@ -23,16 +23,35 @@
 class QMainWindow;
 class QDockWidget;
 class QMouseEvent;
+class QToolBar;
 
 namespace atools {
 namespace gui {
 class DockEventFilter;
+class MainWindowState;
+
+/* Flags defining behavior when calling setFullScreenOn() */
+enum DockFlag
+{
+  NONE = 0,
+  HIDE_DOCKS = 1 << 0, /* Hide docks initially when fullscreen mode has no saved layout yet */
+  HIDE_TOOLBARS = 1 << 1, /* As above for tool bars */
+  HIDE_STATUSBAR = 1 << 2, /* As above for the status bar */
+  HIDE_MENUBAR = 1 << 3, /* As above for the main menu bar */
+  MAXIMIZE = 1 << 4 /* Maximize window when going into fullscreen instead of using full screen mode */
+};
+
+Q_DECLARE_FLAGS(DockFlags, DockFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::gui::DockFlags);
 
 /*
  * Improves dock widget handling expecially if dock windows are stacked.
  * Closes whole stack if one dock is closed by the accopanied action.
  * On reopening opens full stack again.
  * Also takes care of raising dock window in a stack if activated.
+ *
+ * Contains more functions for fullscreen mode with maximized central widget
+ * and saving main window states for each normal and fullscreen mode.
  */
 class DockWidgetHandler :
   public QObject
@@ -40,15 +59,36 @@ class DockWidgetHandler :
   Q_OBJECT
 
 public:
-  explicit DockWidgetHandler(QMainWindow *parent, const QList<QDockWidget *>& dockWidgets);
+  /* Need to pass in all dock and toolbars since these cannot be accessed from the main window */
+  explicit DockWidgetHandler(QMainWindow *parentMainWindow, const QList<QDockWidget *>& dockWidgetsParam,
+                             const QList<QToolBar *>& toolBarsParam, bool verboseLog);
   virtual ~DockWidgetHandler() override;
 
-  /* Raise all windows having floating state */
+  /* Raise all dock windows having floating state */
   void raiseFloatingWindows();
   static void raiseFloatingWindow(QDockWidget *dockWidget);
 
   /* Connect all internally */
   void connectDockWindows();
+
+  /* Saves fullscreen and normal main window state to bytes. */
+  QByteArray saveState();
+
+  /* Restores fullscreen and normal state as well as saved window layouts but does not change main window. */
+  void restoreState(QByteArray data);
+
+  /* Assign current state normal or fullscreen to current window.
+   * This covers main menu widget, toolbars and dock widgets */
+  void currentStateToWindow();
+
+  /* As above but assigns the normal state to the main window and sets the delayedFullscreen flag if
+   * fullscreen mode was enable. This allows to switch to fullscreen later to avoid a messed up layout.
+   *  Changes fullscreen to false. */
+  void normalStateToWindow();
+
+  /* As above but assigns the fullscreen state to the main window
+   *  Changes fullscreen to true. */
+  void fullscreenStateToWindow();
 
   /* Show, activate and raise a dock widget */
   static void activateWindow(QDockWidget *dockWidget);
@@ -62,7 +102,7 @@ public:
   /* Set to true to enable handler */
   void setHandleDockViews(bool value);
 
-  /* Raise dock windows when mouse enters window */
+  /* Raise floating dock windows when mouse enters window */
   bool isAutoRaiseDockWindows() const;
   void setAutoRaiseDockWindows(bool value);
 
@@ -70,8 +110,35 @@ public:
   bool isAutoRaiseMainWindow() const;
   void setAutoRaiseMainWindow(bool value);
 
-  /* Forbid docking if value is false. Otherwise restore previous state */
+  /* Forbid docking if value is false. */
   void setDockingAllowed(bool value);
+
+  /* Closes all docks, toolbars and menu bar depending on flags and sets the mainwindow to full screen.
+   * Window will only be maximized depending on flags.
+   * Configuration like docks is stored separately for fullscreen mode. */
+  void setFullScreenOn(atools::gui::DockFlags flags);
+
+  /* Ends fullscreen mode and restores all windows, toolbars, status bar and menu bar again */
+  void setFullScreenOff();
+
+  /* true is central widget is maximized */
+  bool isFullScreen() const
+  {
+    return fullscreen;
+  }
+
+  /* Loads the main windows state from the given file, applies given size to the window and ends fullscreen mode */
+  void resetWindowState(const QSize& size, const QString& resetWindowStateFileName);
+
+  /* true after calling normalStateToWindow() while using fullscreen mode. Can be used to delay the switch to
+   * fullscreen to avoid a distorted layout */
+  bool isDelayedFullscreen() const
+  {
+    return delayedFullscreen;
+  }
+
+  /* Calls qRegisterMetaTypeStreamOperators for needed classes. */
+  static void registerMetaTypes();
 
 private:
   /* One dock view was toggled by the accompanied action */
@@ -95,13 +162,24 @@ private:
 
   /* A list of stacked widgets */
   QList<QList<QDockWidget *> > dockStackList;
+
+  /* Main window to handle */
   QMainWindow *mainWindow;
 
-  /* All handled docks */
-  QList<QDockWidget *> dockList;
+  /* All handled docks and tool bars */
+  QList<QDockWidget *> dockWidgets;
+  QList<QToolBar *> toolBars;
 
+  /* Event filter to detect leave and enter events for auto raise */
   DockEventFilter *dockEventFilter;
+
+  /* Backup of allowed areas used when calling setDockingAllowed() */
   QVector<Qt::DockWidgetAreas> allowedAreas;
+
+  /* Saved state of main window including dock widgets and toolbars */
+  MainWindowState *normalState, *fullscreenState;
+
+  bool fullscreen = false, delayedFullscreen = false, verbose = false;
 };
 
 } // namespace gui
