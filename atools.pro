@@ -281,6 +281,7 @@ SOURCES += \
   src/fs/sc/simconnectdummy.cpp \
   src/fs/sc/simconnecthandler.cpp \
   src/fs/sc/simconnectreply.cpp \
+  src/fs/sc/simconnecttypes.cpp \
   src/fs/sc/simconnectuseraircraft.cpp \
   src/fs/sc/weatherrequest.cpp \
   src/fs/sc/xpconnecthandler.cpp \

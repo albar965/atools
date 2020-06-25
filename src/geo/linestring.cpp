@@ -20,6 +20,7 @@
 
 #include "geo/line.h"
 
+#include <QDataStream>
 #include <cmath>
 
 namespace atools {
@@ -338,6 +339,27 @@ bool LineString::hasAllValidPoints() const
       return false;
   }
   return true;
+}
+
+QDataStream& operator<<(QDataStream& out, const LineString& obj)
+{
+  out << static_cast<quint32>(obj.size());
+  for(const Pos& pos : obj)
+    out << pos;
+  return out;
+}
+
+QDataStream& operator>>(QDataStream& in, LineString& obj)
+{
+  quint32 size;
+  in >> size;
+  for(quint32 i = 0; i < size; i++)
+  {
+    Pos p;
+    in >> p;
+    obj.append(p);
+  }
+  return in;
 }
 
 } // namespace geo

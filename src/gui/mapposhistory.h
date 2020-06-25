@@ -82,10 +82,7 @@ const MapPosHistoryEntry EMPTY_MAP_POS;
 /*
  * Maintains a history list of position/zoom distance combinations.
  *
- * To use this class register the stream operators:
- *  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
- *  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
- *  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
+ * To use this class register the stream operators using registerMetaTypes().
  *
  */
 class MapPosHistory :
@@ -121,6 +118,8 @@ public:
 
   /* Clear all entries and reset current index */
   void clear();
+
+  static void registerMetaTypes();
 
 signals:
   /* Emitted when the history changes

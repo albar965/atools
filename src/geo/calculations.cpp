@@ -736,5 +736,13 @@ bool crossesAntiMeridian(float lonx1, float lonx2)
          (atools::almostEqual(lonx2, 180.f) && atools::almostEqual(lonx1, -180.f));
 }
 
+void registerMetaTypes()
+{
+  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
+  qRegisterMetaTypeStreamOperators<atools::geo::Rect>();
+  qRegisterMetaTypeStreamOperators<atools::geo::Line>();
+  qRegisterMetaTypeStreamOperators<atools::geo::LineString>();
+}
+
 } // namespace geo
 } // namespace atools

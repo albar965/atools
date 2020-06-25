@@ -160,7 +160,10 @@ public:
     return isValid() && first() == last();
   }
 
+private:
   friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);
+  friend QDataStream& operator<<(QDataStream& out, const atools::geo::LineString& obj);
+  friend QDataStream& operator>>(QDataStream& in, atools::geo::LineString& obj);
 
 };
 

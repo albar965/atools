@@ -234,5 +234,11 @@ void MapPosHistory::clear()
   currentIndex = -1;
 }
 
+void MapPosHistory::registerMetaTypes()
+{
+  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
+  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
+}
+
 } // namespace gui
 } // namespace atools

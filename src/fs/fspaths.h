@@ -99,6 +99,8 @@ public:
   /* Print paths for all simulators to the info log channel */
   static void logAllPaths();
 
+static void registerMetaTypes();
+
 private:
   FsPaths()
   {

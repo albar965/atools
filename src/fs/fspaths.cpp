@@ -133,6 +133,11 @@ void FsPaths::logAllPaths()
   }
 }
 
+void FsPaths::registerMetaTypes()
+{
+  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+}
+
 QString FsPaths::getBasePath(SimulatorType type)
 {
   QString fsPath;

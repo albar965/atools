@@ -82,6 +82,8 @@ enum AircraftFlag
 Q_DECLARE_FLAGS(AircraftFlags, AircraftFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::AircraftFlags);
 
+void registerMetaTypes();
+
 } // namespace sc
 } // namespace fs
 } // namespace atools
