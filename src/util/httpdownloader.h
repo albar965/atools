@@ -44,7 +44,7 @@ public:
 
   /* Download file and emit downloadFinished when done.
    * Will start update timer after download if period <> -1.
-   * Cancels all previous downloads. */
+   * Cancels all previous downloads if restartRequest = true. */
   void startDownload();
   void cancelDownload();
 
@@ -134,6 +134,17 @@ public:
     return reply != nullptr;
   }
 
+  /* Cancels current request if true. Waits for request to be finished if false */
+  void setRestartRequest(bool value)
+  {
+    restartRequest = value;
+  }
+
+  bool isRestartRequest() const
+  {
+    return restartRequest;
+  }
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
@@ -151,6 +162,8 @@ private:
   void readyRead();
 
   void downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal);
+
+  bool restartRequest = true;
 
   QString curUrl();
 
