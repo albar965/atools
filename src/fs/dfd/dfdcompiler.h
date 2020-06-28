@@ -147,8 +147,13 @@ private:
 
   /* Specialized begin airspace methods - passed as pointer to writeAirspace() */
   void beginRestrictiveAirspace(atools::sql::SqlQuery& query);
-  void beginFirUirAirspace(atools::sql::SqlQuery& query);
   void beginControlledAirspace(atools::sql::SqlQuery& query);
+
+  /* For old compatible airspaces as centers */
+  void beginFirUirAirspaceCenter(atools::sql::SqlQuery& query);
+
+  /* For new FIR, UIR and BOTH type */
+  void beginFirUirAirspaceNew(atools::sql::SqlQuery& query);
 
   /* Bind airspace geometry from airspaceSegments to insert query */
   void writeAirspaceGeometry(sql::SqlQuery& query);
