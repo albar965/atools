@@ -139,8 +139,9 @@ public:
    *    Added runway smoothness and airport flatten flags from X-Plane to database schema.
    *    Coordinates for fix and recommended fix in procedure tables added.
    *    Added flag "artificial" for created NDB and VOR waypoints.
+   * 18 New FIR and UIR regions deprecating centers
    */
-  static const int DB_VERSION_MINOR = 17;
+  static const int DB_VERSION_MINOR = 18;
 
   void init();
 
