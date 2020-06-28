@@ -518,7 +518,6 @@ void DfdCompiler::writeAirspaces()
                       "unit_indicator_upper_limit, "
                       "upper_limit "
                       "from src.tbl_controlled_airspace", db);
-
   writeAirspace(controlled, &DfdCompiler::beginControlledAirspace);
 
   // Restricted airspaces =================================================================
@@ -546,7 +545,6 @@ void DfdCompiler::writeAirspaces()
                        "unit_indicator_upper_limit, "
                        "upper_limit "
                        "from src.tbl_restrictive_airspace", db);
-
   writeAirspace(restrictive, &DfdCompiler::beginRestrictiveAirspace);
 
   // FIR / UIR regions =================================================================
@@ -562,7 +560,8 @@ void DfdCompiler::writeAirspaces()
                "'M' as unit_indicator_upper_limit, "
                "fir_upper_limit as upper_limit "
                "from src.tbl_fir_uir where fir_uir_indicator = 'F'", db);
-  writeAirspace(fir, &DfdCompiler::beginFirUirAirspace);
+  writeAirspace(fir, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
+  writeAirspace(fir, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
   // UIR ===========================
   SqlQuery uir("select "
@@ -573,9 +572,11 @@ void DfdCompiler::writeAirspaces()
                "'M' as unit_indicator_upper_limit, "
                "uir_upper_limit as upper_limit "
                "from src.tbl_fir_uir where fir_uir_indicator = 'U'", db);
-  writeAirspace(uir, &DfdCompiler::beginFirUirAirspace);
+  writeAirspace(uir, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
+  writeAirspace(uir, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
-  // Split all regions with attribute both into one FIR and one UIR record
+  // ==================================================================================================
+  // Split all regions with attribute both into one FIR and one UIR record for old centers
   // FIR from regions with attribute both ===========================
   SqlQuery fir2("select "
                 + firUirCols +
@@ -585,7 +586,8 @@ void DfdCompiler::writeAirspaces()
                 "'M' as unit_indicator_upper_limit, "
                 "fir_upper_limit as upper_limit "
                 "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
-  writeAirspace(fir2, &DfdCompiler::beginFirUirAirspace);
+  writeAirspace(fir2, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
+  writeAirspace(fir2, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
   // UIR from regions with attribute both ===========================
   SqlQuery uir2("select "
@@ -597,7 +599,8 @@ void DfdCompiler::writeAirspaces()
                 "'M' as unit_indicator_upper_limit, "
                 "uir_upper_limit as upper_limit "
                 "from src.tbl_fir_uir where fir_uir_indicator = 'B'", db);
-  writeAirspace(uir2, &DfdCompiler::beginFirUirAirspace);
+  writeAirspace(uir2, &DfdCompiler::beginFirUirAirspaceCenter); // Old center
+  writeAirspace(uir2, &DfdCompiler::beginFirUirAirspaceNew); // new FIR/UIR type
 
   db.commit();
 }
@@ -636,26 +639,41 @@ void DfdCompiler::writeAirspaceCom()
 
     if(ind == "F" || ind == "U")
     {
-      int id = airspaceIdentIdMap.value(QString("%1|%2|%3").
-                                        arg(comQuery.valueStr("area_code")).
-                                        arg(comQuery.valueStr("fir_uir_identifier")).
-                                        arg(ind), -1);
-      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg(ind), -1));
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg(ind), -1));
     }
     else if(ind == "B")
     {
       // Search the index twice since regions were split up earlier
-      int id = airspaceIdentIdMap.value(QString("%1|%2|%3").
-                                        arg(comQuery.valueStr("area_code")).
-                                        arg(comQuery.valueStr("fir_uir_identifier")).
-                                        arg("F"), -1);
-      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg("F"), -1));
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3O").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg("U"), -1));
 
-      id = airspaceIdentIdMap.value(QString("%1|%2|%3").
-                                    arg(comQuery.valueStr("area_code")).
-                                    arg(comQuery.valueStr("fir_uir_identifier")).
-                                    arg("U"), -1);
-      updateAirspaceCom(comQuery, updateBoundaryQuery, id);
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg("F"), -1));
+      updateAirspaceCom(comQuery, updateBoundaryQuery,
+                        airspaceIdentIdMap.value(QString("%1|%2|%3N").
+                                                 arg(comQuery.valueStr("area_code")).
+                                                 arg(comQuery.valueStr("fir_uir_identifier")).
+                                                 arg("U"), -1));
     }
   }
   db.commit();
@@ -735,9 +753,34 @@ void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
   airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
 }
 
-void DfdCompiler::beginFirUirAirspace(atools::sql::SqlQuery& query)
+void DfdCompiler::beginFirUirAirspaceNew(atools::sql::SqlQuery& query)
 {
-  airspaceIdentIdMap.insert(QString("%1|%2|%3").
+  airspaceIdentIdMap.insert(QString("%1|%2|%3N").
+                            arg(query.valueStr("area_code")).
+                            arg(query.valueStr("fir_uir_identifier")).
+                            arg(query.valueStr("fir_uir_indicator")), curAirspaceId);
+
+  QString indicator = query.valueStr("fir_uir_indicator");
+
+  // Attach type to name
+  QString type;
+  if(indicator == "F")
+    type = "FIR";
+  else if(indicator == "U")
+    type = "UIR";
+  else if(indicator == "B")
+    qWarning() << Q_FUNC_INFO << "Unexpected indicator" << indicator;
+
+  // Convert all to center
+  airspaceWriteQuery->bindValue(":type", type);
+
+  airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
+
+}
+
+void DfdCompiler::beginFirUirAirspaceCenter(atools::sql::SqlQuery& query)
+{
+  airspaceIdentIdMap.insert(QString("%1|%2|%3O").
                             arg(query.valueStr("area_code")).
                             arg(query.valueStr("fir_uir_identifier")).
                             arg(query.valueStr("fir_uir_indicator")), curAirspaceId);
