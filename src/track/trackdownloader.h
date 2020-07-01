@@ -76,12 +76,20 @@ public:
   static const QHash<atools::track::TrackType, QString> URL;
   static const QHash<atools::track::TrackType, QStringList> PARAM;
 
+  /* Set to true to ignore any certificate validation or other SSL errors.
+   * downloadSslErrors is emitted in case of SSL errors.
+   * Sets value to all downloaders. */
+  void setIgnoreSslErrors(bool value);
+
 signals:
   /* Emitted when HTML page was downloaded and parsed */
-  void downloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
+  void trackDownloadFinished(const atools::track::TrackVectorType& tracks, atools::track::TrackType type);
 
   /* Emitted if download failed */
-  void downloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
+  void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
+
+  /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
+  void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 private:
   void natDownloadFinished(const QByteArray & data, QString);

@@ -206,12 +206,19 @@ public:
 
   QString getDebug(const atools::geo::Pos& pos) const;
 
+  /* Set to true to ignore any certificate validation or other SSL errors.
+   * downloadSslErrors is emitted in case of SSL errors. */
+  void setIgnoreSslErrors(bool value);
+
 signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();
 
   /* Download failed.  Only for void init() and initFromFile(). */
   void windDownloadFailed(const QString& error, int errorCode);
+
+  /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
+  void windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 private:
   /* Wind for grid position */

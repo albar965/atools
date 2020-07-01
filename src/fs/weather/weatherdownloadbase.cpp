@@ -30,6 +30,8 @@ WeatherDownloadBase::WeatherDownloadBase(QObject *parent, MetarFormat format, bo
 {
   metarIndex = new MetarIndex(format, verboseLogging);
   downloader = new atools::util::HttpDownloader(parent, verboseLogging);
+  connect(downloader, &atools::util::HttpDownloader::downloadSslErrors,
+          this, &WeatherDownloadBase::weatherDownloadSslErrors);
 }
 
 WeatherDownloadBase::~WeatherDownloadBase()
@@ -74,6 +76,11 @@ void WeatherDownloadBase::setFetchAirportCoords(const std::function<geo::Pos(con
 int WeatherDownloadBase::size() const
 {
   return metarIndex->size();
+}
+
+void WeatherDownloadBase::setIgnoreSslErrors(bool value)
+{
+  downloader->setIgnoreSslErrors(value);
 }
 
 void WeatherDownloadBase::startDownload()

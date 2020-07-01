@@ -189,6 +189,7 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
 
   connect(downloader, &GribDownloader::gribDownloadFinished, this, &WindQuery::gribDownloadFinished);
   connect(downloader, &GribDownloader::gribDownloadFailed, this, &WindQuery::gribDownloadFailed);
+  connect(downloader, &GribDownloader::gribDownloadSslErrors, this, &WindQuery::windDownloadSslErrors);
 
   // Set up file watcher for file based updates
   fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
@@ -423,6 +424,11 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
     out << "-----------" << endl;
   }
   return retval;
+}
+
+void WindQuery::setIgnoreSslErrors(bool value)
+{
+  downloader->setIgnoreSslErrors(value);
 }
 
 WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point) const

@@ -75,6 +75,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   natDownloader->setPostParameters(PARAM.value(NAT));
   connect(natDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::natDownloadFinished);
   connect(natDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natDownloadFailed);
+  connect(natDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(NAT, natDownloader);
   trackList.insert(NAT, atools::track::TrackVectorType());
 
@@ -84,6 +85,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   pacotsDownloader->setPostParameters(PARAM.value(PACOTS));
   connect(pacotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::pacotsDownloadFinished);
   connect(pacotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::pacotsDownloadFailed);
+  connect(pacotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(PACOTS, pacotsDownloader);
   trackList.insert(PACOTS, atools::track::TrackVectorType());
 
@@ -93,6 +95,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   ausotsDownloader->setPostParameters(PARAM.value(AUSOTS));
   connect(ausotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::ausotsDownloadFinished);
   connect(ausotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::ausotsDownloadFailed);
+  connect(ausotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
   downloaders.insert(AUSOTS, ausotsDownloader);
   trackList.insert(AUSOTS, atools::track::TrackVectorType());
 }
@@ -108,7 +111,7 @@ void TrackDownloader::natDownloadFinished(const QByteArray& data, QString)
   reader.readTracks(data, NAT);
   trackList[NAT] = reader.getTracks();
 
-  emit downloadFinished(trackList.value(NAT), NAT);
+  emit trackDownloadFinished(trackList.value(NAT), NAT);
 }
 
 void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
@@ -117,7 +120,7 @@ void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
   reader.readTracks(data, PACOTS);
   trackList[PACOTS] = reader.getTracks();
 
-  emit downloadFinished(trackList.value(PACOTS), PACOTS);
+  emit trackDownloadFinished(trackList.value(PACOTS), PACOTS);
 }
 
 void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString)
@@ -126,22 +129,22 @@ void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString)
   reader.readTracks(data, AUSOTS);
   trackList[AUSOTS] = reader.getTracks();
 
-  emit downloadFinished(trackList.value(AUSOTS), AUSOTS);
+  emit trackDownloadFinished(trackList.value(AUSOTS), AUSOTS);
 }
 
 void TrackDownloader::natDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
-  emit downloadFailed(error, errorCode, downloadUrl, NAT);
+  emit trackDownloadFailed(error, errorCode, downloadUrl, NAT);
 }
 
 void TrackDownloader::pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
-  emit downloadFailed(error, errorCode, downloadUrl, PACOTS);
+  emit trackDownloadFailed(error, errorCode, downloadUrl, PACOTS);
 }
 
 void TrackDownloader::ausotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
-  emit downloadFailed(error, errorCode, downloadUrl, AUSOTS);
+  emit trackDownloadFailed(error, errorCode, downloadUrl, AUSOTS);
 }
 
 void TrackDownloader::setUrl(TrackType type, const QString& url)
@@ -208,6 +211,12 @@ int TrackDownloader::removeInvalid()
   for(atools::track::TrackType key : trackList.keys())
     num += TrackReader::removeInvalid(trackList[key]);
   return num;
+}
+
+void TrackDownloader::setIgnoreSslErrors(bool value)
+{
+  for(HttpDownloader *downloader : downloaders.values())
+    downloader->setIgnoreSslErrors(value);
 }
 
 } // namespace track

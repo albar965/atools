@@ -125,6 +125,7 @@ void HttpDownloader::startDownload()
           connect(reply, &QNetworkReply::finished, this, &HttpDownloader::httpFinished);
           connect(reply, &QNetworkReply::readyRead, this, &HttpDownloader::readyRead);
           connect(reply, &QNetworkReply::downloadProgress, this, &HttpDownloader::downloadProgressInternal);
+          connect(reply, &QNetworkReply::sslErrors, this, &HttpDownloader::sslErrors);
         }
         else
           qWarning() << Q_FUNC_INFO << "Reply is null" << downloadUrl;
@@ -133,6 +134,34 @@ void HttpDownloader::startDownload()
         // is already downloading and waiting for finished required (restartRequest = false)
         startTimer();
     }
+  }
+}
+
+void HttpDownloader::sslErrors(const QList<QSslError>& errors)
+{
+  if(reply != nullptr)
+  {
+    if(!ignoreSslErrors)
+    {
+      if(!sslErrorLogged)
+      {
+        qWarning() << Q_FUNC_INFO << errors << reply->url();
+        sslErrorLogged = true;
+      }
+
+      // Errors not ignored - let user decide if to continue
+      QStringList errorList;
+      for(QSslError err : errors)
+        errorList.append(err.errorString());
+
+      emit downloadSslErrors(errorList, reply->url().toString());
+    }
+
+    // ignoreSslErrors set in call above or not
+
+    if(ignoreSslErrors)
+      // Continue despite of errors
+      reply->ignoreSslErrors();
   }
 }
 

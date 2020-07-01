@@ -38,6 +38,7 @@ GribDownloader::GribDownloader(QObject *parent, bool logVerbose = false)
   downloader = new HttpDownloader(parent, verbose);
   connect(downloader, &HttpDownloader::downloadFinished, this, &GribDownloader::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &GribDownloader::downloadFailed);
+  connect(downloader, &HttpDownloader::downloadSslErrors, this, &GribDownloader::gribDownloadSslErrors);
 }
 
 GribDownloader::~GribDownloader()
@@ -165,6 +166,11 @@ void GribDownloader::downloadFailed(const QString& error, int errorCode, QString
 bool atools::grib::GribDownloader::isDownloading() const
 {
   return downloader->isDownloading();
+}
+
+void GribDownloader::setIgnoreSslErrors(bool value)
+{
+  downloader->setIgnoreSslErrors(value);
 }
 
 } // namespace grib

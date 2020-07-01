@@ -96,12 +96,19 @@ public:
 
   bool isDownloading() const;
 
+  /* Set to true to ignore any certificate validation or other SSL errors.
+   * downloadSslErrors is emitted in case of SSL errors. */
+  void setIgnoreSslErrors(bool value);
+
 signals:
   /* Sent if download finished successfully */
   void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);
 
   /* Sent if download failed for a reason */
   void gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
+
+  /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
+  void gribDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 private:
   void downloadFinished(const QByteArray& data, QString downloadUrl);

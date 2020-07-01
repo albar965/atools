@@ -67,10 +67,17 @@ public:
   /* Number of unique METAR entries in the list */
   virtual int size() const;
 
+  /* Set to true to ignore any certificate validation or other SSL errors.
+   * downloadSslErrors is emitted in case of SSL errors. */
+  void setIgnoreSslErrors(bool value);
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
+
+  /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
+  void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 protected:
   virtual void startDownload();

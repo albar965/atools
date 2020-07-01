@@ -145,11 +145,26 @@ public:
     return restartRequest;
   }
 
+  /* Set to true to ignore any certificate validation or other SSL errors.
+   * downloadSslErrors is emitted in case of SSL errors. */
+  void setIgnoreSslErrors(bool value)
+  {
+    ignoreSslErrors = value;
+  }
+
+  bool isIgnoreSslErrors() const
+  {
+    return ignoreSslErrors;
+  }
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
   void downloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void downloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
+
+  /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
+  void downloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 private:
   /* Request completely finished */
@@ -163,7 +178,9 @@ private:
 
   void downloadProgressInternal(qint64 bytesReceived, qint64 bytesTotal);
 
-  bool restartRequest = true;
+  void sslErrors(const QList<QSslError>& errors);
+
+  bool restartRequest = true, ignoreSslErrors = false, sslErrorLogged = false;
 
   QString curUrl();
 
