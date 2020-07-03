@@ -85,7 +85,7 @@ where
 w1.ils_id < w2.ils_id and
 (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.01);
 
--- Delete all duplicate waypoints that are close together having same name, region and type
+-- Delete all duplicate waypoints that are at the same position having same name, region and type
 -- 1 deg manhattan distance about 60-100 nm at the equator
 delete from waypoint where waypoint_id in (
 select distinct w1.waypoint_id

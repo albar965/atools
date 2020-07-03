@@ -116,6 +116,9 @@ public:
   /* Executes all statements like create index in the table script and deletes it afterwards */
   static void runPreparationScript(atools::sql::SqlDatabase& db);
 
+  /* Delete all tables that are not used in versions > 2.4.5 */
+  static void runPreparationPost245(atools::sql::SqlDatabase& db);
+
 private:
   /* Creates database schema only */
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);

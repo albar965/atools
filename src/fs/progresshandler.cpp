@@ -177,7 +177,10 @@ void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 
 QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)
 {
-  return QString("%1 of %2 (%3 %)").arg(inf.current).arg(inf.total).arg(100 * info.current / info.total);
+  return QString("%1 of %2 (%3 %)").
+         arg(std::min(inf.current, inf.total)).
+         arg(inf.total).
+         arg(std::min(100 * info.current / info.total, 100));
 }
 
 } // namespace fs
