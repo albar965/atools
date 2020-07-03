@@ -25,6 +25,7 @@
 drop table if exists airway;
 drop table if exists airway_point;
 drop table if exists airway_temp;
+drop table if exists waypoint_temp;
 drop table if exists ils;
 drop table if exists marker;
 drop table if exists ndb;

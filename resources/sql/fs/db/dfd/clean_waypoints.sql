@@ -15,5 +15,6 @@
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -- ****************************************************************************/
 
--- Remove all unreferenced dummy waypoints that were added for airway generation
-delete from waypoint where type in ('N', 'V') and num_victor_airway == 0 and num_jet_airway == 0;
+-- Remove all unreferenced dummy waypoints that were added for airway generation but still have no runways
+delete from waypoint where type in ('N', 'V') and artificial = 1 and num_victor_airway == 0 and num_jet_airway == 0;
+

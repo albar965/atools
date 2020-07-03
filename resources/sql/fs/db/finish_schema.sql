@@ -25,6 +25,7 @@ drop table if exists airway_point;
 drop table if exists tmp_waypoint_ap;
 drop table if exists tmp_ndb_ap;
 drop table if exists tmp_vor_ap;
+drop table if exists waypoint_temp;
 
 -- Create indexes on columns that are potentially used in searches
 create index if not exists idx_ils_ident on ils(ident);

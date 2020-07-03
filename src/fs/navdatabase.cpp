@@ -370,8 +370,6 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   // ===========================================================================
   // Loading is done here - now continue with the post process steps
 
-  SqlScript script(db, true /*options->isVerbose()*/);
-
   if(options->isResolveAirways() && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = progress.reportOther(tr("Creating airways"))))
@@ -594,6 +592,10 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if(options->isIncludedNavDbObject(atools::fs::type::AIRWAY))
     dfdCompiler->writeAirways();
 
+  // Create waypoints for fix resolution in procedures - has to be done after airway processing
+  if((aborted = runScript(progress, "fs/db/dfd/populate_navaids_proc.sql", tr("Creating waypoints for procedures"))))
+    return true;
+
   dfdCompiler->updateMagvar();
   dfdCompiler->updateTacanChannel();
   dfdCompiler->updateIlsGeometry();
@@ -611,7 +613,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   db->commit();
 
   // Update airport_id from ndb, vor and waypoint
-  if((aborted = runScript(progress, "fs/db/dfd/update_navaids.sql", tr("Creating indexes"))))
+  if((aborted = runScript(progress, "fs/db/dfd/update_navaids.sql", tr("Updating Navids in Waypoint"))))
     return true;
 
   db->commit();
@@ -813,22 +815,43 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
   qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
 }
 
+void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
+{
+  qDebug() << Q_FUNC_INFO;
+  // Remove the unneeded routing tables since data is loaded dynamically in newer versions
+  if(SqlUtil(db).hasTable("route_edge_airway"))
+    db.exec("delete from route_edge_airway");
+  if(SqlUtil(db).hasTable("route_edge_radio"))
+    db.exec("delete from route_edge_radio");
+  if(SqlUtil(db).hasTable("route_node_airway"))
+    db.exec("delete from route_node_airway");
+  if(SqlUtil(db).hasTable("route_node_radio"))
+    db.exec("delete from route_node_radio");
+  db.commit();
+
+  // Remove artificial waypoints since procedures now use coordinates and all navaids to resolve fixes
+  db.exec("delete from waypoint where artificial = 2");
+  db.commit();
+}
+
 void NavDatabase::runPreparationScript(atools::sql::SqlDatabase& db)
 {
-  if(SqlUtil(db).hasTable("script"))
+  qDebug() << Q_FUNC_INFO;
+  if(SqlUtil(db).hasTableAndRows("script"))
   {
     SqlQuery scriptQuery("select statement from script ", db);
     scriptQuery.exec();
     while(scriptQuery.next())
     {
       qDebug() << "prepare script" << scriptQuery.valueStr("statement");
-      db.exec(scriptQuery.valueStr("statement"));
+      SqlQuery query = db.exec(scriptQuery.valueStr("statement"));
+      qDebug().nospace() << "[" << query.numRowsAffected() << "]";
     }
-  }
-  db.commit();
+    db.commit();
 
-  db.exec("delete from script");
-  db.commit();
+    db.exec("delete from script");
+    db.commit();
+  }
 }
 
 void NavDatabase::createPreparationScript()
