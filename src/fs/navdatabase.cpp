@@ -818,19 +818,23 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
 void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
 {
   qDebug() << Q_FUNC_INFO;
+
+  SqlUtil util(db);
+
   // Remove the unneeded routing tables since data is loaded dynamically in newer versions
-  if(SqlUtil(db).hasTable("route_edge_airway"))
+  if(util.hasTable("route_edge_airway"))
     db.exec("delete from route_edge_airway");
-  if(SqlUtil(db).hasTable("route_edge_radio"))
+  if(util.hasTable("route_edge_radio"))
     db.exec("delete from route_edge_radio");
-  if(SqlUtil(db).hasTable("route_node_airway"))
+  if(util.hasTable("route_node_airway"))
     db.exec("delete from route_node_airway");
-  if(SqlUtil(db).hasTable("route_node_radio"))
+  if(util.hasTable("route_node_radio"))
     db.exec("delete from route_node_radio");
   db.commit();
 
   // Remove artificial waypoints since procedures now use coordinates and all navaids to resolve fixes
-  db.exec("delete from waypoint where artificial = 2");
+  if(util.hasTableAndColumn("waypoint", "artificial"))
+    db.exec("delete from waypoint where artificial = 2");
   db.commit();
 }
 
