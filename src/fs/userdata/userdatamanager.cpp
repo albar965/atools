@@ -504,8 +504,8 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
     {
       // Add file header
       stream << "I" << endl << "1100 Version - "
-             << "data cycle " << QDateTime::currentDateTime().toString("yyMM") << ", "
-             << "build " << QDateTime::currentDateTime().toString("yyyyMMdd") << ", "
+             << "data cycle " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM") << ", "
+             << "build " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyyyMMdd") << ", "
              << "metadata FixXP1100. "
              << atools::programFileInfoNoDate() << "." << endl << endl;
     }

@@ -2849,7 +2849,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         cycle = plan.properties.value(SIMDATACYCLE);
       if(cycle.isEmpty())
         // Fake a cycle by using current year and month
-        cycle = QDateTime::currentDateTime().toString("yyMM");
+        cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
 
       stream << "CYCLE " << cycle << endl;
 

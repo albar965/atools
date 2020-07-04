@@ -174,7 +174,7 @@ void Metar::buildCleanMetar()
 
       if(cleanStr == "000000Z" && timestamp.isValid())
         // Fix empty timestamp
-        cleanStr = timestamp.toString("ddHHmm") + "Z";
+        cleanStr = QLocale(QLocale::C).toString(timestamp, "ddHHmm") + "Z";
       else if(cleanStr == "????")
         // Replace pattern from interpolated with real station name
         cleanStr = station;
