@@ -789,7 +789,7 @@ void DfdCompiler::beginFirUirAirspaceCenter(atools::sql::SqlQuery& query)
   // Convert all to center
   airspaceWriteQuery->bindValue(":type", "C");
 
-  // Attach type to name
+  // Attach type to name - is used to remove the legacy  entries in newer LNM version
   QString suffix;
   if(indicator == "F")
     suffix = " (FIR)";

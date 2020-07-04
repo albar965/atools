@@ -836,6 +836,10 @@ void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
   if(util.hasTableAndColumn("waypoint", "artificial"))
     db.exec("delete from waypoint where artificial = 2");
   db.commit();
+
+  // Delete legacy center boundaries in favor of new types FIR and UIR
+  db.exec("delete from boundary where type = 'C' and name in ('% (FIR)', '% (UIR)', '% (FIR/UIR)')");
+  db.commit();
 }
 
 void NavDatabase::runPreparationScript(atools::sql::SqlDatabase& db)
