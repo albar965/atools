@@ -51,9 +51,6 @@
 
 #include "fs/weather/metarparser.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wcomma"
-
 /** Feet to Meters */
 #define SG_FEET_TO_METER 0.3048
 
@@ -1904,8 +1901,6 @@ QDateTime atools::fs::weather::MetarParser::getDateTime() const
 {
   return QDateTime(QDate(getYear(), getMonth(), getDay()), QTime(getHour(), getMinute()));
 }
-
-#pragma GCC diagnostic pop
 
 } // namespace weather
 } // namespace fs

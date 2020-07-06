@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "grib2.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
+
    int dec_jpeg2000(char *,g2int ,g2int *);
 
 g2int jpcunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
@@ -11,7 +16,7 @@ g2int jpcunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
 // SUBPROGRAM:    jpcunpack
 //   PRGMMR: Gilbert          ORG: W/NP11    DATE: 2003-08-27
 //
-// ABSTRACT: This subroutine unpacks a data field that was packed into a 
+// ABSTRACT: This subroutine unpacks a data field that was packed into a
 //   JPEG2000 code stream
 //   using info from the GRIB2 Data Representation Template 5.40 or 5.40000.
 //
@@ -70,3 +75,5 @@ g2int jpcunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
 
       return(0);
 }
+
+#pragma GCC diagnostic pop

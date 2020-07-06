@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include "grib2.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wabsolute-value"
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wpointer-sign"
+
 int dec_png(unsigned char *,g2int *,g2int *,char *);
 
 g2int pngunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
@@ -11,7 +17,7 @@ g2int pngunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
 // SUBPROGRAM:    pngunpack
 //   PRGMMR: Gilbert          ORG: W/NP11    DATE: 2003-08-27
 //
-// ABSTRACT: This subroutine unpacks a data field that was packed into a 
+// ABSTRACT: This subroutine unpacks a data field that was packed into a
 //   PNG image format
 //   using info from the GRIB2 Data Representation Template 5.41 or 5.40010.
 //
@@ -74,3 +80,4 @@ g2int pngunpack(unsigned char *cpack,g2int len,g2int *idrstmpl,g2int ndpts,
 
       return(0);
 }
+#pragma GCC diagnostic pop
