@@ -26,6 +26,7 @@
 #include <QDataStream>
 #include <QSettings>
 #include <QtGlobal>
+#include <QProcess>
 
 #if defined(Q_OS_WIN32)
 #include <windows.h>
@@ -99,15 +100,17 @@ const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
 const char *FsPaths::P3D_V4_NO_WINDOWS_PATH = "Prepar3D v4";
 const char *FsPaths::P3D_V5_NO_WINDOWS_PATH = "Prepar3D v5";
 
+QProcessEnvironment FsPaths::environment;
+
 using atools::settings::Settings;
 
 void FsPaths::logAllPaths()
 {
   qInfo() << "Looking for flight simulator installations:";
-  qInfo() << "PROGRAMDATA" << QString(qgetenv("PROGRAMDATA"));
-  qInfo() << "APPDATA" << QString(qgetenv("APPDATA"));
-  qInfo() << "LOCALAPPDATA" << QString(qgetenv("LOCALAPPDATA"));
-  qInfo() << "ALLUSERSPROFILE" << QString(qgetenv("ALLUSERSPROFILE"));
+  qInfo() << "PROGRAMDATA" << environment.value("PROGRAMDATA");
+  qInfo() << "APPDATA" << environment.value("APPDATA");
+  qInfo() << "LOCALAPPDATA" << environment.value("LOCALAPPDATA");
+  qInfo() << "ALLUSERSPROFILE" << environment.value("ALLUSERSPROFILE");
 
   for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
   {
@@ -133,9 +136,10 @@ void FsPaths::logAllPaths()
   }
 }
 
-void FsPaths::registerMetaTypes()
+void FsPaths::intitialize()
 {
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+  environment = QProcessEnvironment::systemEnvironment();
 }
 
 QString FsPaths::getBasePath(SimulatorType type)
@@ -154,7 +158,7 @@ QString FsPaths::getBasePath(SimulatorType type)
 
 #if defined(Q_OS_WIN32)
     // "C:\Users\USERS\AppData\Local\x-plane_install_11.txt"
-    return validXplaneBasePath(QString(qgetenv("LOCALAPPDATA")) + QDir::separator() + "x-plane_install_11.txt");
+    return validXplaneBasePath(environment.value("LOCALAPPDATA") + QDir::separator() + "x-plane_install_11.txt");
 
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
@@ -306,12 +310,12 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 {
 #if defined(Q_OS_WIN32)
   // Win 7+ C:\ProgramData
-  QString programData(qgetenv("PROGRAMDATA"));
+  QString programData(environment.value("PROGRAMDATA"));
 
   // Win 7+ C:\Users\{username}\AppData\Roaming
-  QString appData(qgetenv("APPDATA"));
+  QString appData(environment.value("APPDATA"));
 
-  QString allUsersProfile(qgetenv("ALLUSERSPROFILE"));
+  QString allUsersProfile(environment.value("ALLUSERSPROFILE"));
 
   if(programData.isEmpty())
     programData = allUsersProfile + QDir::separator() + QDir(appData).dirName();

@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QObject>
+#include <QProcess>
 
 namespace atools {
 namespace fs {
@@ -32,6 +33,8 @@ class FsPaths
   Q_GADGET
 
 public:
+  FsPaths() = delete;
+
   enum SimulatorType
   {
     /* Force numeric values since these are used as indexes.
@@ -99,14 +102,9 @@ public:
   /* Print paths for all simulators to the info log channel */
   static void logAllPaths();
 
-static void registerMetaTypes();
+  static void intitialize();
 
 private:
-  FsPaths()
-  {
-
-  }
-
   /* registry path and key if running on Windows */
   /* Platform: FSX, FSX XPack, FSX Gold */
   static const char *FSX_REGISTRY_PATH;
@@ -150,6 +148,7 @@ private:
   static const char *P3D_V5_NO_WINDOWS_PATH;
   static const char *P3D_XPLANE11_NO_WINDOWS_PATH;
 
+
   static QString settingsKey(atools::fs::FsPaths::SimulatorType type);
   static QString registryPath(atools::fs::FsPaths::SimulatorType type);
   static QStringList registryKey(atools::fs::FsPaths::SimulatorType type);
@@ -157,6 +156,8 @@ private:
   static QString documentsDirectory(QString simBasePath);
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
   static QString validXplaneBasePath(const QString& installationFile);
+
+  static QProcessEnvironment environment;
 
 };
 

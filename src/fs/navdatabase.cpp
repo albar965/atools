@@ -1009,7 +1009,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     {
 #if defined(Q_OS_WIN32)
       // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-      QString addonsCfgFileLocal = QString(qgetenv("LOCALAPPDATA"));
+      QString addonsCfgFileLocal = QProcessEnvironment::systemEnvironment().value("LOCALAPPDATA");
 #else
       // Use $HOME/.config for testing
       QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
@@ -1029,7 +1029,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
 #if defined(Q_OS_WIN32)
       // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-      QString addonsCfgFile = QString(qgetenv("APPDATA"));
+      QString addonsCfgFile = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
       // Use $HOME/.config for testing
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
@@ -1046,7 +1046,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     {
 #if defined(Q_OS_WIN32)
       // Use the environment variable because QStandardPaths::ConfigLocation returns an unusable path on Windows
-      QString addonsAllUsersCfgFile = QString(qgetenv("PROGRAMDATA"));
+      QString addonsAllUsersCfgFile = QProcessEnvironment::systemEnvironment().value("PROGRAMDATA");
 #else
       // Use /tmp for testing
       QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
