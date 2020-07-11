@@ -129,6 +129,13 @@ public:
     return position;
   }
 
+  /* Leaves altitude intact */
+  void setCoordinates(atools::geo::Pos value)
+  {
+    value.setAltitude(position.getAltitude());
+    position = value;
+  }
+
   float getHeadingDegTrue() const
   {
     return headingTrueDeg;
