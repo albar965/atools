@@ -560,7 +560,7 @@ geo::Pos fromAnyFormat(const QString& coords)
   if(match.hasMatch())
   {
     Pos pos = degFromMatchSigned(match);
-    if(pos.isValidRange())
+    if(pos.isValid()) // Do not check range since lat/lon might be swapped
       return pos;
   }
 
