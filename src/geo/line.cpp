@@ -48,7 +48,7 @@ Line::Line(const Pos& p1, const Pos& p2)
 Line::Line(const Pos& pos, float distanceMeter, float course)
 {
   pos1 = pos;
-  pos2 = pos1.endpoint(distanceMeter, course).normalize();
+  pos2 = pos1.endpoint(distanceMeter, course);
 }
 
 Line::Line(const Pos& p)
@@ -252,17 +252,17 @@ Line Line::parallel(float distanceMeter)
   // Positive distance: Parallel to the right (looking from pos1 to pos2)
   // Negative distance: Parallel to the left (looking from pos1 to pos2)
   float course = normalizeCourse(angleDeg() + (distanceMeter > 0.f ? 90.f : -90.f));
-  return Line(pos1.endpoint(std::abs(distanceMeter), course).normalize(),
-              pos2.endpoint(std::abs(distanceMeter), course).normalize());
+  return Line(pos1.endpoint(std::abs(distanceMeter), course),
+              pos2.endpoint(std::abs(distanceMeter), course));
 }
 
 Line Line::extended(float distanceMeter1, float distanceMeter2)
 {
   Line line(*this);
   if(std::abs(distanceMeter1) > 0.f)
-    line.pos1 = pos1.endpoint(distanceMeter1, opposedCourseDeg(angleDeg())).normalize();
+    line.pos1 = pos1.endpoint(distanceMeter1, opposedCourseDeg(angleDeg()));
   if(std::abs(distanceMeter2) > 0.f)
-    line.pos2 = pos2.endpoint(distanceMeter2, angleDeg()).normalize();
+    line.pos2 = pos2.endpoint(distanceMeter2, angleDeg());
   return line;
 }
 

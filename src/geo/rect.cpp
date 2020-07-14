@@ -77,8 +77,8 @@ Rect::Rect(double lonX, double latY)
 
 Rect::Rect(const Pos& center, float radiusMeter)
 {
-  float east = center.endpoint(radiusMeter, 90.).normalize().getLonX();
-  float west = center.endpoint(radiusMeter, 270.).normalize().getLonX();
+  float east = center.endpoint(radiusMeter, 90.).getLonX();
+  float west = center.endpoint(radiusMeter, 270.).getLonX();
 
   float radiusNm = meterToNm(radiusMeter);
   float north = center.getLatY() + radiusNm / 60.f;

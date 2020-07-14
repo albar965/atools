@@ -191,8 +191,8 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
 
   // Calculate runway end positions for drawing
   primary.pos = primaryPos = position.getPos().endpoint(length / 2.f,
-                                                        atools::geo::opposedCourseDeg(heading)).normalize();
-  secondary.pos = secondaryPos = position.getPos().endpoint(length / 2.f, heading).normalize();
+                                                        atools::geo::opposedCourseDeg(heading));
+  secondary.pos = secondaryPos = position.getPos().endpoint(length / 2.f, heading);
 
   patternAltitude = bs->readFloat();
 

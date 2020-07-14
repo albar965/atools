@@ -1405,12 +1405,12 @@ void DfdCompiler::updateIlsGeometry()
       float heading = atools::geo::opposedCourseDeg(from.valueFloat("loc_heading"));
 
       // Corner endpoints
-      Pos p1 = pos.endpoint(length, heading - ILS_FEATHER_WIDTH / 2.f).normalize();
-      Pos p2 = pos.endpoint(length, heading + ILS_FEATHER_WIDTH / 2.f).normalize();
+      Pos p1 = pos.endpoint(length, heading - ILS_FEATHER_WIDTH / 2.f);
+      Pos p2 = pos.endpoint(length, heading + ILS_FEATHER_WIDTH / 2.f);
 
       // Calculated the center point between corners - move it a bit towareds the pointy end
       float featherWidth = p1.distanceMeterTo(p2);
-      Pos pmid = pos.endpoint(length - featherWidth / 2, heading).normalize();
+      Pos pmid = pos.endpoint(length - featherWidth / 2, heading);
 
       to.bindValue(":end1_lonx", p1.getLonX());
       to.bindValue(":end1_laty", p1.getLatY());

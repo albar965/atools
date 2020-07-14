@@ -257,7 +257,7 @@ Pos Pos::endpoint(float distanceMeter, float angleDeg) const
               meterToRad(static_cast<double>(distanceMeter)), toRadians(
                 -static_cast<double>(angleDeg) + 360.), lon, lat);
 
-  return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat)));
+  return Pos(static_cast<float>(toDegree(lon)), static_cast<float>(toDegree(lat))).normalize();
 }
 
 float Pos::distanceSimpleTo(const Pos& otherPos) const

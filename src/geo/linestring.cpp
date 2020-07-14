@@ -83,7 +83,7 @@ LineString::LineString(const Pos& origin, float radiusMeter, int numSegments)
 {
   int increment = 360 / numSegments;
   for(int j = 0; j < 360; j += increment)
-    append(origin.endpoint(radiusMeter, j).normalize());
+    append(origin.endpoint(radiusMeter, j));
 }
 
 LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool clockwise, int numSegments)
@@ -137,7 +137,7 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
     }
 
     for(float angle : angles)
-      append(origin.endpoint(distance, angle).normalize());
+      append(origin.endpoint(distance, angle));
   }
 }
 

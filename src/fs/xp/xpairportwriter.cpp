@@ -915,7 +915,6 @@ void XpAirportWriter::writeStartup(const QStringList& line, const atools::fs::xp
 void XpAirportWriter::calculateParkingPos(atools::geo::Pos& position, float heading, float radiusFeet)
 {
   position = position.endpoint(atools::geo::feetToMeter(radiusFeet), atools::geo::opposedCourseDeg(heading));
-  position.normalize();
 }
 
 void XpAirportWriter::writeCom(const QStringList& line, AirportRowCode rowCode,

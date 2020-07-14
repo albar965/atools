@@ -202,8 +202,8 @@ void AirspaceReaderOpenAir::bindCoordinate(const QStringList& line)
     // Check minimum radius since some use it for color definitions
     if(radius > 0.2f)
     {
-      Pos pos1 = center.endpoint(atools::geo::nmToMeter(radius), angleStart).normalize();
-      Pos pos2 = center.endpoint(atools::geo::nmToMeter(radius), angleEnd).normalize();
+      Pos pos1 = center.endpoint(atools::geo::nmToMeter(radius), angleStart);
+      Pos pos2 = center.endpoint(atools::geo::nmToMeter(radius), angleEnd);
       if(pos1.isValid() && pos2.isValid() && center.isValidRange())
         curLine.append(LineString(center, pos1, pos2, clockwise, 24));
       else

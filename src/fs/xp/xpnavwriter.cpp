@@ -256,10 +256,10 @@ void XpNavWriter::writeIls(const QStringList& line, int curFileId, const XpWrite
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
   // Calculate the display of the ILS feather
   float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(at(line, HDG).toFloat()));
-  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f).normalize();
-  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f).normalize();
+  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f);
+  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f);
   float featherWidth = p1.distanceMeterTo(p2);
-  atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading).normalize();
+  atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
 
   insertIlsQuery->bindValue(":end1_lonx", p1.getLonX());
   insertIlsQuery->bindValue(":end1_laty", p1.getLatY());
