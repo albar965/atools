@@ -79,7 +79,7 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
         // Get all lines of <PRE> elements.
         QStringList sections = extractSections(lines, "<PRE>", "</PRE>");
         // Get tracks
-        extractPacotsTracks(extractSections(sections, "(TDM TRK", ")"));
+        extractPacotsTracks(extractSections(sections, "(TDM TRK", ")."));
         // Get flex tracks
         extractPacotsTracksFlex(sections);
       }
