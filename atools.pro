@@ -251,6 +251,7 @@ HEADERS += \
   src/track/tracktypes.h \
   src/util/csvreader.h \
   src/util/filesystemwatcher.h \
+  src/util/flags.h \
   src/util/heap.h \
   src/util/htmlbuilder.h \
   src/util/httpdownloader.h \
@@ -365,6 +366,7 @@ src/track/trackreader.cpp \
   src/track/tracktypes.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \
+  src/util/flags.cpp \
   src/util/heap.cpp \
   src/util/htmlbuilder.cpp \
   src/util/httpdownloader.cpp \
