@@ -86,7 +86,7 @@ QStringList probeFile(const QString& file, int numLinesRead)
     testFile.close();
   }
   else
-    throw Exception("Error reading \"" + file + "\": " + testFile.errorString());
+    throw Exception(QObject::tr("Error reading \"%1\": %2").arg(file).arg(testFile.errorString()));
 
   return lines;
 }
@@ -157,7 +157,8 @@ QString capString(const QString& str, const QSet<QString>& toUpper, const QSet<Q
 
 QString ratingString(int value, int maxValue)
 {
-  return QString("★").repeated(value) + QString("−").repeated(maxValue - value);
+  return QString(QObject::tr("★", "Star for rating")).repeated(value) + QString(QObject::tr("−", "For empty rating")).
+         repeated(maxValue - value);
 }
 
 QString replaceVar(QString str, const QString& name, const QVariant& value)
@@ -336,14 +337,14 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
   // Join items by , and blocks by linefeed
   QString txt;
   for(const QStringList& list : blocks)
-    txt.append((txt.isEmpty() ? "" : itemSeparator + lineSeparator) + list.join(itemSeparator));
+    txt.append((txt.isEmpty() ? QString() : itemSeparator + lineSeparator) + list.join(itemSeparator));
   return txt;
 }
 
 QString elideTextShort(const QString& str, int maxLength)
 {
   if(str.size() > maxLength)
-    return str.left(maxLength - 1) + "…";
+    return str.left(maxLength - 1) + QObject::tr("…", "Dots used to shorten texts");
 
   return str;
 }
@@ -351,7 +352,7 @@ QString elideTextShort(const QString& str, int maxLength)
 QString elideTextShortMiddle(const QString& str, int maxLength)
 {
   if(str.size() > maxLength)
-    return str.left(maxLength / 2) + "…" + str.right(maxLength / 2);
+    return str.left(maxLength / 2) + QObject::tr("…", "Dots used to shorten texts") + str.right(maxLength / 2);
 
   return str;
 }
@@ -366,9 +367,10 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength)
     lines.append(maxLength > 0 ? elideTextShort(stream.readLine(), maxLength) : stream.readLine());
 
   if(i >= maxLines)
-    return lines.join("\n") + "\n…";
+    return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts")) +
+           QObject::tr("\n…", "Linefeed and dots used to shorten texts");
   else
-    return lines.join("\n");
+    return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
 }
 
 float calculateSteps(float range, float numSteps)
