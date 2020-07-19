@@ -31,6 +31,7 @@ FileHistoryHandler::FileHistoryHandler(QObject *parent, const QString& settingsN
   QObject(parent), recentMenu(recentMenuList), clearAction(clearMenuAction), settings(settingsName)
 {
   connect(recentMenu, &QMenu::triggered, this, &FileHistoryHandler::itemTriggered);
+  recentMenuList->setToolTipsVisible(true);
 }
 
 FileHistoryHandler::~FileHistoryHandler()

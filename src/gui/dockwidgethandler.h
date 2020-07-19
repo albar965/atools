@@ -128,7 +128,24 @@ public:
   }
 
   /* Loads the main windows state from the given file, applies given size to the window and ends fullscreen mode */
-  void resetWindowState(const QSize& size, const QString& resetWindowStateFileName);
+  void resetWindowState(const QSize& size, const QString& filename);
+
+  /* Save normal and fullscreen window states to file.
+   *  @param allowUndockCentral Has to be true if the central widget can be undocked
+   *  @throws atools::Exception in case of IO error */
+  void saveWindowState(const QString& filename, bool allowUndockCentral);
+
+  /* Load normal and fullscreen window states as well as fullscreen status.
+   * Loaded state is not applied to the main window.
+   * @param allowUndockCentral Has to be true if the central widget can be undocked
+   * @param allowUndockCentralErrorMessage Message to show if the saved state for
+   * allowUndockCentral does not match the given state.
+   * @return true if state was loaded and should be applied
+   * @throws atools::Exception in case of IO error */
+  bool loadWindowState(const QString& filename, bool allowUndockCentral, const QString& allowUndockCentralErrorMessage);
+
+  /* True if files exists, is readable and magic number matches */
+  static bool isWindowLayoutFile(const QString& filename);
 
   /* true after calling normalStateToWindow() while using fullscreen mode. Can be used to delay the switch to
    * fullscreen to avoid a distorted layout */
@@ -182,6 +199,9 @@ private:
   MainWindowState *normalState, *fullscreenState;
 
   bool fullscreen = false, delayedFullscreen = false, verbose = false;
+
+  static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x2D6A9C2F;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 2;
 };
 
 } // namespace gui

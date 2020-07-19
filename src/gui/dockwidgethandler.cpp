@@ -17,6 +17,8 @@
 
 #include "gui/dockwidgethandler.h"
 
+#include "exception.h"
+
 #include <QAction>
 #include <QDockWidget>
 #include <QMainWindow>
@@ -26,6 +28,8 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QToolBar>
+#include <QMessageBox>
+#include <QApplication>
 
 namespace atools {
 namespace gui {
@@ -33,6 +37,15 @@ namespace gui {
 /* Saves the main window states and states of all attached widgets like the status bars and the menu bar. */
 struct MainWindowState
 {
+  explicit MainWindowState(QMainWindow *mainWindow)
+  {
+    fromWindow(mainWindow);
+  }
+
+  MainWindowState()
+  {
+  }
+
   /* Copy state to main window and all related widgets */
   void toWindow(QMainWindow *mainWindow) const;
 
@@ -577,9 +590,9 @@ void DockWidgetHandler::fullscreenStateToWindow()
   delayedFullscreen = false;
 }
 
-void DockWidgetHandler::resetWindowState(const QSize& size, const QString& resetWindowStateFileName)
+void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filename)
 {
-  QFile file(resetWindowStateFileName);
+  QFile file(filename);
   if(file.open(QIODevice::ReadOnly))
   {
     QByteArray bytes = file.readAll();
@@ -605,12 +618,123 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& reset
       fullscreenState->clear();
     }
     else
-      qWarning() << Q_FUNC_INFO << "cannot read file" << resetWindowStateFileName << file.errorString();
+      throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
 
     file.close();
   }
   else
-    qWarning() << Q_FUNC_INFO << "cannot open file" << resetWindowStateFileName << file.errorString();
+    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
+}
+
+void DockWidgetHandler::saveWindowState(const QString& filename, bool allowUndockCentral)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  QFile file(filename);
+  if(file.open(QIODevice::WriteOnly))
+  {
+    // Copy current window status to slot
+    if(fullscreen)
+      fullscreenState->fromWindow(mainWindow);
+    else
+      normalState->fromWindow(mainWindow);
+
+    // Save all to stream
+    QDataStream stream(&file);
+    stream << FILE_MAGIC_NUMBER << FILE_VERSION
+           << allowUndockCentral << fullscreen
+           << *normalState << *fullscreenState;
+
+    if(file.error() != QFileDevice::NoError)
+      throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename).arg(file.errorString()));
+
+    file.close();
+  }
+  else
+    throw atools::Exception(tr("Error writing \"%1\": %2").arg(filename).arg(file.errorString()));
+}
+
+bool DockWidgetHandler::loadWindowState(const QString& filename, bool allowUndockCentral,
+                                        const QString& allowUndockCentralErrorMessage)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly))
+  {
+    QDataStream stream(&file);
+
+    // Read and check magic number and version =================
+    quint32 magicNumber;
+    quint16 version;
+    stream >> magicNumber >> version;
+
+    if(magicNumber != FILE_MAGIC_NUMBER)
+      throw atools::Exception(tr("Error reading \"%1\": Invalid magic number. Not a window layout file.").
+                              arg(filename));
+    if(version != FILE_VERSION)
+      throw atools::Exception(tr("Error reading \"%1\": Invalid version. Incompatible window layout file.").
+                              arg(filename));
+
+    // Read all into temporary variables ===============
+    bool fs, allowUndock = allowUndockCentral;
+    MainWindowState normal, full;
+    stream >> allowUndock >> fs >> normal >> full;
+
+    if(file.error() != QFileDevice::NoError)
+      throw atools::Exception("Error reading \"" + filename + "\": " + file.errorString());
+
+    file.close();
+
+    int retval = QMessageBox::Yes;
+    if(allowUndock != allowUndockCentral)
+      // A layout file can only be applied properly if the state of the central widget (normal or dock widget)
+      // is the same - show warning
+      retval = QMessageBox::question(mainWindow, QApplication::applicationName(),
+                                     allowUndockCentralErrorMessage, QMessageBox::Yes | QMessageBox::Cancel);
+
+    if(retval == QMessageBox::Yes)
+    {
+      // Copy temporary variables to fields
+      // fullscreen = fs; // leave this up to the application
+      *normalState = normal;
+      *fullscreenState = full;
+
+      if(verbose)
+      {
+        qDebug() << Q_FUNC_INFO << "normalState" << *normalState;
+        qDebug() << Q_FUNC_INFO << "fullscreenState" << *fullscreenState;
+      }
+
+      return true;
+    }
+  }
+  else
+    throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
+
+  // nothing to apply
+  return false;
+}
+
+bool DockWidgetHandler::isWindowLayoutFile(const QString& filename)
+{
+  qDebug() << Q_FUNC_INFO << filename;
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly))
+  {
+    QDataStream stream(&file);
+
+    // Read and check magic number and version =================
+    quint32 magicNumber = 0;
+    quint16 version = 0;
+    stream >> magicNumber >> version;
+
+    bool ok = magicNumber == FILE_MAGIC_NUMBER && version == FILE_VERSION && file.error() == QFileDevice::NoError;
+
+    file.close();
+
+    return ok;
+  }
+  return false;
 }
 
 void DockWidgetHandler::registerMetaTypes()
@@ -621,4 +745,5 @@ void DockWidgetHandler::registerMetaTypes()
 } // namespace gui
 } // namespace atools
 
+// Enable use in QVariant
 Q_DECLARE_METATYPE(atools::gui::MainWindowState);
