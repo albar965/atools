@@ -176,7 +176,8 @@ private:
   QVector<Tab> tabs;
 
   /* Various action to restore, close or reset all tabs */
-  QAction *actionAll = nullptr, *actionNone = nullptr, *actionReset = nullptr, *actionLock = nullptr;
+  QAction *actionOpenAll = nullptr, *actionCloseExcept = nullptr, *actionResetLayout = nullptr,
+          *actionLockLayout = nullptr;
 
   QTabWidget *tabWidget;
   QToolButton *toolButtonCorner = nullptr;

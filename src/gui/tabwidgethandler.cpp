@@ -52,34 +52,41 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
   toolButtonCorner->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
   tabWidget->setCornerWidget(toolButtonCorner);
 
+  // Add menu =======
+  toolButtonCorner->setMenu(new QMenu(toolButtonCorner));
+  QMenu *buttonMenu = toolButtonCorner->menu();
+  buttonMenu->setToolTipsVisible(true);
+
   // Create and add select all action =====================================
-  actionAll = new QAction(tr("&Open All"), toolButtonCorner);
-  actionAll->setToolTip(tr("Show all tabs"));
-  actionAll->setStatusTip(actionAll->toolTip());
-  toolButtonCorner->addAction(actionAll);
-  connect(actionAll, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
+  actionOpenAll = new QAction(tr("&Open All"), buttonMenu);
+  actionOpenAll->setToolTip(tr("Show all tabs"));
+  actionOpenAll->setStatusTip(actionOpenAll->toolTip());
+  buttonMenu->addAction(actionOpenAll);
+  connect(actionOpenAll, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
 
   // Create and add select none action =====================================
-  actionNone = new QAction(tr("&Close All Except Current"), toolButtonCorner);
-  actionNone->setToolTip(tr("Close all tabs except the current tab"));
-  actionNone->setStatusTip(actionNone->toolTip());
-  toolButtonCorner->addAction(actionNone);
-  connect(actionNone, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
+  actionCloseExcept = new QAction(tr("&Close All Except Current"), buttonMenu);
+  actionCloseExcept->setToolTip(tr("Close all tabs except the currently active tab"));
+  actionCloseExcept->setStatusTip(actionCloseExcept->toolTip());
+  buttonMenu->addAction(actionCloseExcept);
+  connect(actionCloseExcept, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
 
   // Create and add reset action =====================================
-  actionReset = new QAction(tr("&Reset Tab Layout"), toolButtonCorner);
-  actionReset->setToolTip(tr("Show all tabs and reset order back to default"));
-  actionReset->setStatusTip(actionReset->toolTip());
-  toolButtonCorner->addAction(actionReset);
-  connect(actionReset, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
+  actionResetLayout = new QAction(tr("&Reset Tab Layout"), buttonMenu);
+  actionResetLayout->setToolTip(tr("Show all tabs and reset order back to default"));
+  actionResetLayout->setStatusTip(actionResetLayout->toolTip());
+  buttonMenu->addAction(actionResetLayout);
+  connect(actionResetLayout, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
 
+  buttonMenu->addSeparator();
   // Create and add lock action =====================================
-  actionLock = new QAction(tr("&Lock Tab Layout"), toolButtonCorner);
-  actionLock->setToolTip(tr("Hides close buttons and fixes tabs at current position"));
-  actionLock->setStatusTip(actionLock->toolTip());
-  actionLock->setCheckable(true);
-  toolButtonCorner->addAction(actionLock);
-  connect(actionLock, &QAction::toggled, this, &TabWidgetHandler::toolbarActionTriggered);
+  actionLockLayout = new QAction(tr("&Lock Tab Layout"), buttonMenu);
+  actionLockLayout->setToolTip(tr("Hides close buttons and fixes tabs at current position"));
+  actionLockLayout->setStatusTip(actionLockLayout->toolTip());
+  actionLockLayout->setCheckable(true);
+  buttonMenu->addAction(actionLockLayout);
+  connect(actionLockLayout, &QAction::toggled, this, &TabWidgetHandler::toolbarActionTriggered);
+  buttonMenu->addSeparator();
 
   // Enable and connect context menu
   tabWidget->tabBar()->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -92,10 +99,10 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
 TabWidgetHandler::~TabWidgetHandler()
 {
   clear();
-  delete actionLock;
-  delete actionReset;
-  delete actionNone;
-  delete actionAll;
+  delete actionLockLayout;
+  delete actionResetLayout;
+  delete actionCloseExcept;
+  delete actionOpenAll;
   delete toolButtonCorner;
 }
 
@@ -103,7 +110,7 @@ void TabWidgetHandler::clear()
 {
   for(const Tab& tab : tabs)
   {
-    toolButtonCorner->removeAction(tab.action);
+    toolButtonCorner->menu()->removeAction(tab.action);
     delete tab.action;
   }
   tabs.clear();
@@ -115,8 +122,8 @@ void TabWidgetHandler::reset()
     QSignalBlocker blocker(tabWidget);
     resetInternal();
 
-    QSignalBlocker blocker2(actionLock);
-    actionLock->setChecked(false);
+    QSignalBlocker blocker2(actionLockLayout);
+    actionLockLayout->setChecked(false);
   }
   updateWidgets();
   updateTabs();
@@ -156,11 +163,11 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   closeAction->setToolTip(closeAction->text());
   closeAction->setStatusTip(closeAction->text());
 
-  menu.addAction(actionAll);
-  menu.addAction(actionNone);
-  menu.addAction(actionReset);
+  menu.addAction(actionOpenAll);
+  menu.addAction(actionCloseExcept);
+  menu.addAction(actionResetLayout);
   menu.addSeparator();
-  menu.addAction(actionLock);
+  menu.addAction(actionLockLayout);
   menu.addSeparator();
   menu.addAction(closeAction);
   menu.addSeparator();
@@ -196,14 +203,14 @@ void TabWidgetHandler::init(const QVector<int>& tabIdsParam, const QString& sett
       name = "&" + name;
 
     // Create and fill action
-    QAction *action = new QAction(name, toolButtonCorner);
+    QAction *action = new QAction(name, toolButtonCorner->menu());
     action->setCheckable(true);
     action->setChecked(true);
     QString tooltip = tr("Open or close tab %1").arg(name).remove('&');
     action->setToolTip(tooltip);
     action->setStatusTip(tooltip);
     action->setData(id);
-    toolButtonCorner->addAction(action);
+    toolButtonCorner->menu()->addAction(action);
     connect(action, &QAction::toggled, this, &TabWidgetHandler::toolbarActionTriggered);
 
     tabs.append(Tab(widget, tabWidget->tabText(index), tabWidget->tabToolTip(index), action));
@@ -249,8 +256,8 @@ void TabWidgetHandler::restoreState()
 
   {
     // Restore lock state
-    QSignalBlocker blocker(actionLock);
-    actionLock->setChecked(settings.valueBool(settingsPrefix + "Locked", false));
+    QSignalBlocker blocker(actionLockLayout);
+    actionLockLayout->setChecked(settings.valueBool(settingsPrefix + "Locked", false));
   }
 
   // Update actions
@@ -363,7 +370,7 @@ void TabWidgetHandler::toolbarActionTriggered()
   {
     QSignalBlocker blocker(tabWidget);
 
-    if(sendAction == actionAll)
+    if(sendAction == actionOpenAll)
     {
       // Add all closed tabs at the end of the list - keep current selected ==============================
       QVector<int> missing = missingTabIds();
@@ -372,16 +379,16 @@ void TabWidgetHandler::toolbarActionTriggered()
         addTab(id);
       tabWidget->setCurrentWidget(current);
     }
-    else if(sendAction == actionNone)
+    else if(sendAction == actionCloseExcept)
     {
       // Close all tabls except current one ============================================================
       clearTabWidget();
       addTab(idForWidget(current));
     }
-    else if(sendAction == actionReset)
+    else if(sendAction == actionResetLayout)
       // Reset open/close state and order and select first ============================================
       resetInternal();
-    else if(sendAction == actionLock)
+    else if(sendAction == actionLockLayout)
     {
       // Disallow movement and remove close buttons ============================================
       updateWidgets();
@@ -495,7 +502,7 @@ int TabWidgetHandler::getIndexForId(int id) const
 
 bool TabWidgetHandler::isLocked() const
 {
-  return actionLock->isChecked();
+  return actionLockLayout->isChecked();
 }
 
 void TabWidgetHandler::styleChanged()
@@ -534,6 +541,9 @@ void TabWidgetHandler::updateWidgets()
     tab.action->setChecked(false);
     tab.action->setDisabled(false);
   }
+
+  actionCloseExcept->setDisabled(tabWidget->count() == 1);
+  actionOpenAll->setDisabled(tabWidget->count() == tabs.size());
 
   if(tabWidget->count() == 1)
   {
