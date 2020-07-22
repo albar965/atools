@@ -3394,11 +3394,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         lonX.prepend(" ");
 
-      if(entry.getWaypointType() == atools::fs::pln::entry::USER)
-        // 4218N12112W
-        stream << atools::fs::util::toDegMinFormat(entry.getPosition()) << ",0, ";
-      else
-        stream << entry.getIdent() << ",0, ";
+      stream << identOrDegMinFormat(entry) << ",0, ";
 
       stream << latY << lonX;
       stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
@@ -3456,7 +3452,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << endl;
     stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << endl;
     stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << endl;
-    stream << "routetype=" << routeTypeToStringFs9(DIRECT) << endl;
+    stream << "routetype=3" << endl;
 
     // cruising_altitude=29000
     // departure_id=EDDH, N53* 37.82', E009* 59.29', +000053.00
@@ -3482,7 +3478,8 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
       if(entry.isNoSave())
         // Do not save procedure points
         continue;
-      stream << "waypoint." << idx << "=" << entry.getIdent() << ", ";
+
+      stream << "waypoint." << idx << "=" << identOrDegMinFormat(entry) << ", ";
       stream << entry.getWaypointTypeAsStringShort() << ", ";
       stream << coordStringFs9(entry.getPosition()) << ", ";
       stream << entry.getAirway();
