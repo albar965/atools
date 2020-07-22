@@ -2407,6 +2407,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
     stream << "ArrivalProcedureInfo=" << destinationRw << "||" << endl;
     stream << "ApproachProcedureInfo=||" << endl;
 
+    int num = 0;
     for(int i = 0; i < plan.entries.size(); i++)
     {
       const FlightplanEntry& entry = plan.entries.at(i);
@@ -2416,7 +2417,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
 
       // Wpt=Enroute|38|GIKIN||Fix|0|LI|42.618333|12.048611|0|Z806
       // Wpt=Enroute|39|TAQ|TARQUINIA|VORDME|111.80|LI|42.215056|11.732611|0|L865
-      stream << "Wpt=Enroute|" << (i - 1) << "|" << identOrDegMinFormat(entry) << "|" << entry.getName().toUpper() <<
+      stream << "Wpt=Enroute|" << num << "|" << identOrDegMinFormat(entry) << "|" << entry.getName().toUpper() <<
         "|";
       entry::WaypointType waypointType = entry.getWaypointType();
       QString frequency("0");
@@ -2445,6 +2446,8 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "|"
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6,
                            QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << endl;
+
+      num++;
     }
 
     stream << "[END]";
@@ -3286,6 +3289,16 @@ void FlightplanIO::saveFpr(const atools::fs::pln::Flightplan& plan, const QStrin
   }
 }
 
+// ERROR ===========================
+// DIRECT,3,FJR,0,  43.578362 003.974722,0,0,091.00000,0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+// ,2,NIZ,0,  43.770638 007.254389,0,0,083.00000,0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+// ,2,AMGEL,0,  43.832054 007.374639,0,0,052.00000,0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
+
+// OK ===========================
+// DIRECT,3,MONTPELLIER MEDITERRANEE,FJR,+43.578360+003.974722,0,0,090.819150,0,0,-1,-1,0,-1,-1,-1,-1,0,0,0,0,0,0,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1000,0,
+// DIRECT,3,NICE COTE DAZUR,NIZ,+43.770640+007.254389,0,0,084.234570,0,0,-1,-1,0,-1,-1,-1,-1,0,0,0,0,0,0,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1000,0,
+// DIRECT,3,AMGEL,AMGEL,+43.832050+007.374639,0,0,054.674560,0,0,-1,-1,0,-1,-1,-1,-1,0,0,0,0,0,0,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,17,0,-1000,-1,-1,
+
 void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
 {
   // YSSY,
@@ -3344,7 +3357,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
     // ,
     // ,
     // -1,
-    stream << "-1," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "-1," << endl;
+    stream << "-1," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "0," << endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -3359,12 +3372,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       // DIRECT,3,WOL,0,-34.558056 150.791111,0,0,195.40055,0,0,1,321,0.000,0,18763,-1000,13468,457,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       // H65,2,RAZZI,0,-35.054166 149.960277,0,0,220.43300,0,0,0,0,0.797,0,28908,-1000,12935,859,-1,0,0,000.00000,0,0,,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,
       if(entry.getAirway().isEmpty())
-      {
-        if(i == 1)
-          stream << "DIRECT,3,";
-        else
-          stream << ",2,";
-      }
+        stream << "DIRECT,3,";
       else
         stream << entry.getAirway() << ",2,";
 
@@ -3386,7 +3394,12 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         lonX.prepend(" ");
 
-      stream << entry.getIdent() << ",0, ";
+      if(entry.getWaypointType() == atools::fs::pln::entry::USER)
+        // 4218N12112W
+        stream << atools::fs::util::toDegMinFormat(entry.getPosition()) << ",0, ";
+      else
+        stream << entry.getIdent() << ",0, ";
+
       stream << latY << lonX;
       stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
 
