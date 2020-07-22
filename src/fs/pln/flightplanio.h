@@ -100,6 +100,9 @@ public:
   /* Aerosoft Airbus and X-Plane FLP format */
   void saveFlp(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
+  /* Aerosoft CRJ FLP format */
+  void saveCrjFlp(const atools::fs::pln::Flightplan& plan, const QString& filename);
+
   /* X-Plane FMS format.
    * @param version11Format Version 11 otherwise 3 */
   void saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file);
@@ -174,6 +177,7 @@ private:
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
                        const QVector<quint32>& timestamps, int cruiseAltFt);
+  void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
                        util::XmlStream& xmlStream);
