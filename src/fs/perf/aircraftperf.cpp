@@ -152,6 +152,7 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
   writer.writeTextElement("FileVersion", QString("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
   writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
   writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());
+  writer.writeTextElement("Documentation", "https://www.littlenavmap.org/lnmperf.html");
   writer.writeEndElement(); // Header
 
   // Options =======================================================

@@ -1514,6 +1514,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
   writeElementIf(writer, "ProgramName", QCoreApplication::applicationName());
   writeElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
+  writeElementIf(writer, "Documentation", "https://www.littlenavmap.org/lnmpln.html");
   writer.writeEndElement(); // Header
 
   // Nav and sim metadata =======================================================

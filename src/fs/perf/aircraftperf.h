@@ -410,8 +410,8 @@ public:
   }
 
   /* Version number to save into LNMPERF XML files */
-  static const int LNMPERF_VERSION_MAJOR = 0;
-  static const int LNMPERF_VERSION_MINOR = 9;
+  static const int LNMPERF_VERSION_MAJOR = 1;
+  static const int LNMPERF_VERSION_MINOR = 0;
 
 private:
   void readFromSettings(const QSettings& settings);

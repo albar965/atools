@@ -168,8 +168,8 @@ public:
   void saveTfdi(const Flightplan& plan, const QString& filename, const QBitArray& jetAirways);
 
   /* Version number to save into LNMPLN files */
-  static const int LNMPLN_VERSION_MAJOR = 0;
-  static const int LNMPLN_VERSION_MINOR = 9;
+  static const int LNMPLN_VERSION_MAJOR = 1;
+  static const int LNMPLN_VERSION_MINOR = 0;
 
 private:
   void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated);
