@@ -60,6 +60,9 @@ public:
     return !(*this == other);
   }
 
+  /* Compare for equal with accuracy depending on epsilon. Does not compare altitude. */
+  bool almostEqual(const atools::geo::Rect& other, float epsilon = atools::geo::Pos::POS_EPSILON_MIN) const;
+
   /*
    * @return true if point is inside rectangle
    */
@@ -71,7 +74,10 @@ public:
   bool overlaps(const atools::geo::Rect& other) const;
 
   /* add margins to this rectangle */
-  atools::geo::Rect& inflate(float degreesLon, float degreesLat);
+  atools::geo::Rect& inflate(float degreesLonX, float degreesLatY);
+
+  /* Add approximate margins to this rectangle given in meter. The expansion is done at the center lines. */
+  atools::geo::Rect& inflateMeter(float width, float height);
 
   /* Scales the rectangle keeping the center */
   atools::geo::Rect& scale(float horizontalFactor, float verticalFactor);

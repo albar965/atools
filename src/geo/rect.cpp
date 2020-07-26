@@ -111,6 +111,11 @@ bool Rect::operator==(const Rect& other) const
   return topLeft == other.topLeft && bottomRight == other.bottomRight;
 }
 
+bool Rect::almostEqual(const Rect& other, float epsilon) const
+{
+  return topLeft.almostEqual(other.topLeft, epsilon) && bottomRight.almostEqual(other.bottomRight, epsilon);
+}
+
 bool Rect::contains(const Pos& pos) const
 {
   if(isValid() || pos.isValid())
@@ -197,6 +202,12 @@ bool Rect::overlaps(const Rect& other) const
   // return true;
   // }
   // return false;
+}
+
+atools::geo::Rect& Rect::inflateMeter(float width, float height)
+{
+  return inflate(meterToNm(getWidthMeter() / 60.f) / getWidthDegree() * meterToNm(width) / 60.f,
+                 meterToNm(height) / 60.f);
 }
 
 Rect& Rect::inflate(float degreesLon, float degreesLat)
