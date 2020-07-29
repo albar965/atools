@@ -107,8 +107,9 @@ bool RouteFinder::invokeCallback(const atools::routing::Node& currentNode)
 {
   if(callback)
   {
-    qint64 now = QDateTime::currentSecsSinceEpoch();
-    if(now > time)
+    qint64 now = QDateTime::currentMSecsSinceEpoch();
+    // Check every half second
+    if(now > time + 500)
     {
       int dist = atools::roundToInt(network->getDirectDistanceMeter(currentNode, destNode));
       if(dist < lastDist)

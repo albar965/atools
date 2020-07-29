@@ -297,5 +297,31 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   return retval;
 }
 
+QMessageBox *Dialog::showSimpleProgressDialog(const QString& message)
+{
+  return showSimpleProgressDialog(parent, message);
+}
+
+QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QString& message)
+{
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message,
+                                             QMessageBox::NoButton, parentWidget);
+  progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
+  progressBox->setStandardButtons(QMessageBox::NoButton);
+  progressBox->show();
+  QApplication::processEvents();
+  return progressBox;
+}
+
+void Dialog::deleteSimpleProgressDialog(QMessageBox *messageBox)
+{
+  messageBox->close();
+  messageBox->deleteLater();
+
+  QGuiApplication::restoreOverrideCursor();
+}
+
 } // namespace gui
 } // namespace atools
