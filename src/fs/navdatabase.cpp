@@ -19,7 +19,6 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlscript.h"
 #include "fs/db/datawriter.h"
-#include "fs/scenery/sceneryarea.h"
 #include "sql/sqlutil.h"
 #include "sql/sqltransaction.h"
 #include "fs/scenery/scenerycfg.h"
@@ -29,33 +28,35 @@
 #include "fs/progresshandler.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/addonpackage.h"
-#include "fs/scenery/addoncomponent.h"
 #include "fs/xp/xpdatacompiler.h"
 #include "fs/dfd/dfdcompiler.h"
 #include "fs/db/databasemeta.h"
 #include "atools.h"
 #include "exception.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QElapsedTimer>
-#include <QFileInfo>
 #include <QStandardPaths>
 
 namespace atools {
 namespace fs {
 
 // Number of progress steps besides scenery areas
-const int PROGRESS_NUM_STEPS = 24;
-const int PROGRESS_NUM_DB_REPORT_STEPS = 4;
-const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1;
-const int PROGRESS_NUM_DEDUPLICATE_STEPS = 1;
-const int PROGRESS_NUM_ANALYZE_STEPS = 1;
-const int PROGRESS_NUM_VACCUM_STEPS = 1;
-const int PROGRESS_NUM_DROP_INDEX_STEPS = 2;
-const int PROGRESS_DFD_EXTRA_STEPS = 13;
+// Database report steps
+static const int PROGRESS_NUM_DB_REPORT_STEPS = 5;
 
-using atools::sql::SqlDatabase;
+// Number of steps for general tasks - increase > 1 to make them more visible in progress
+static const int PROGRESS_NUM_TASK_STEPS = 10;
+
+// runScript()
+static const int PROGRESS_NUM_SCRIPT_STEPS = PROGRESS_NUM_TASK_STEPS;
+
+// AirwayResolver steps - larger number makes task take more time of progress bar
+static const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1000;
+
+// createSchemaInternal()
+static const int PROGRESS_NUM_SCHEMA_STEPS = 8;
+
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -105,6 +106,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   SqlTransaction transaction(db);
 
   SqlScript script(db, true /* options->isVerbose()*/);
+
   if(progress != nullptr)
     if((aborted = progress->reportOther(tr("Removing Views"))))
       return;
@@ -241,9 +243,280 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
   return false;
 }
 
+// X-Plane steps ========================================================================================
+// =P=== Total Progress 5604
+// =P=== "1 of 5604 (0 %) [1]" "Removing Views"
+// =P=== "2 of 5604 (0 %) [1]" "Removing Routing and Search"
+// =P=== "3 of 5604 (0 %) [1]" "Removing Navigation Aids"
+// =P=== "4 of 5604 (0 %) [1]" "Removing Airport Facilites"
+// =P=== "5 of 5604 (0 %) [1]" "Removing Approaches"
+// =P=== "6 of 5604 (0 %) [1]" "Removing Airports"
+// =P=== "7 of 5604 (0 %) [1]" "Removing Metadata"
+// =P=== "8 of 5604 (0 %) [1]" "Creating Database Schema"
+// =P=====================================================================
+// =P=== "9 of 5604 (0 %) [1]" "X-Plane"
+// =P=== ""
+// "/home/alex/Daten/Programme/X-Plane 11/Custom Scenery/XXXXXXXXX"
+// =P=== "2382 of 5604 (42 %) [10]" "Creating indexes"
+// =P=== "2392 of 5604 (42 %) [10]" "Creating boundary indexes"
+// =P=== "2403 of 5604 (42 %) [10]" "Clean up"
+// =P=== "2513 of 5604 (44 %) [10]" "Preparing Airways"
+// =P=== "2514 of 5604 (44 %) [1]" "Post procecssing Airways"
+// "/home/alex/Daten/Programme/X-Plane 11/Custom Data/CIFP/XXXXXXXXXXX"
+// =P=== "4515 of 5604 (80 %) [1]" "Creating airways"
+// =P=== "4602 of 5604 (82 %) [1]" "Creating airways: B953..."
+// =P=== "4751 of 5604 (84 %) [1]" "Creating airways: M611..."
+// =P=== "4900 of 5604 (87 %) [1]" "Creating airways: T317..."
+// =P=== "5050 of 5604 (90 %) [1]" "Creating airways: UR544..."
+// =P=== "5198 of 5604 (92 %) [1]" "Creating airways: V37..."
+// =P=== "5343 of 5604 (95 %) [1]" "Creating airways: Y336..."
+// =P=== "5525 of 5604 (98 %) [10]" "Updating waypoints"
+// =P=== "5535 of 5604 (98 %) [10]" "Updating approaches"
+// =P=== "5545 of 5604 (98 %) [10]" "Updating Airports"
+// =P=== "5555 of 5604 (99 %) [10]" "Updating ILS Count"
+// =P=== "5565 of 5604 (99 %) [10]" "Collecting navaids for search"
+// =P=== "5575 of 5604 (99 %) [10]" "Creating indexes for airport"
+// =P=== "5585 of 5604 (99 %) [10]" "Creating indexes for search"
+// =P=== "5595 of 5604 (99 %) [10]" "Vacuum Database"
+// =P=== "5604 of 5604 (100 %) [10]" "Analyze Database"
+int NavDatabase::countXplaneSteps()
+{
+  // Create schema "Removing Views" ... "Creating Database Schema"
+  int total = PROGRESS_NUM_SCHEMA_STEPS;
+  total++; // Scenery "X-Plane"
+  total += atools::fs::xp::XpDataCompiler::calculateReportCount(*options); // All files
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
+  if(options->isDeduplicate())
+    total += PROGRESS_NUM_TASK_STEPS; // "Clean up"
+  total += PROGRESS_NUM_TASK_STEPS; // "Preparing Airways"
+  total++; // "Post procecssing Airways" (XpDataCompiler)
+  if(options->isResolveAirways())
+    total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS; // "Creating airways"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating waypoints"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating approaches"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating Airports"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS Count"
+  total += PROGRESS_NUM_TASK_STEPS; // "Collecting navaids for search"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for airport"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
+  if(options->isVacuumDatabase())
+    total += PROGRESS_NUM_TASK_STEPS; // "Vacuum Database"
+  if(options->isAnalyzeDatabase())
+    total += PROGRESS_NUM_TASK_STEPS; // "Analyze Database"
+
+  total++; // Correction value
+
+  // Usually not used
+  // if(options->isDatabaseReport())
+  // if(options->isDropIndexes())
+  return total;
+}
+
+// DFD steps ========================================================================================
+// void atools::fs::NavDatabase::createInternal(const QString&) =P=== progress total 1164
+// =P=== "1 of 1164 (0 %)" "Removing Views"
+// =P=== "2 of 1164 (0 %)" "Removing Routing and Search"
+// =P=== "3 of 1164 (0 %)" "Removing Navigation Aids"
+// =P=== "4 of 1164 (0 %)" "Removing Airport Facilites"
+// =P=== "5 of 1164 (0 %)" "Removing Approaches"
+// =P=== "6 of 1164 (0 %)" "Removing Airports"
+// =P=== "7 of 1164 (0 %)" "Removing Metadata"
+// =P=== "8 of 1164 (0 %)" "Creating Database Schema"
+// =P=====================================================================
+// =P=== "9 of 1164 (0 %)" "Navigraph"
+// =P=== ""
+// =P=== "10 of 1164 (0 %)" "Writing MORA"
+// =P=== "11 of 1164 (0 %)" "Writing airports"
+// =P=== "12 of 1164 (1 %)" "Writing runways"
+// =P=== "13 of 1164 (1 %)" "Writing navaids"
+// =P=== "14 of 1164 (1 %)" "Writing Airspaces"
+// =P=== "15 of 1164 (1 %)" "Writing Airspaces COM"
+// =P=== "16 of 1164 (1 %)" "Writing COM Frequencies"
+// =P=== "26 of 1164 (2 %)" "Creating indexes"
+// =P=== "36 of 1164 (3 %)" "Creating boundary indexes"
+// =P=== "46 of 1164 (3 %)" "Clean up"
+// =P=== "47 of 1164 (4 %)" "Writing airways"
+// =P=== "57 of 1164 (4 %)" "Creating waypoints for procedures"
+// =P=== "58 of 1164 (4 %)" "Updating magnetic declination"
+// =P=== "59 of 1164 (5 %)" "Updating VORTAC and TACAN channels"
+// =P=== "60 of 1164 (5 %)" "Updating ILS geometry"
+// =P=== "61 of 1164 (5 %)" "Writing approaches and transitions"
+// =P=== "62 of 1164 (5 %)" "Writing SIDs"
+// =P=== "63 of 1164 (5 %)" "Writing STARs"
+// =P=== "73 of 1164 (6 %)" "Creating indexes"
+// =P=== "83 of 1164 (7 %)" "Creating boundary indexes"
+// =P=== "93 of 1164 (7 %)" "Updating Navids in Waypoint"
+// =P=== "94 of 1164 (8 %)" "Updating airport idents"
+// =P=== "104 of 1164 (8 %)" "Updating waypoints"
+// =P=== "114 of 1164 (9 %)" "Merging VOR and TACAN to VORTAC"
+// =P=== "124 of 1164 (10 %)" "Updating approaches"
+// =P=== "134 of 1164 (11 %)" "Updating Airports"
+// =P=== "144 of 1164 (12 %)" "Updating ILS"
+// =P=== "154 of 1164 (13 %)" "Updating ILS Count"
+// =P=== "164 of 1164 (14 %)" "Collecting navaids for search"
+// =P=== "174 of 1164 (14 %)" "Populating routing tables"
+// =P=== "175 of 1164 (15 %)" "Creating route edges for VOR and NDB"
+// =P=== "185 of 1164 (15 %)" "Creating route edges waypoints"
+// =P=== "195 of 1164 (16 %)" "Creating indexes for airport"
+// =P=== "205 of 1164 (17 %)" "Creating indexes for search"
+// =P=== "215 of 1164 (18 %)" "Creating indexes for route"
+// =P=== "216 of 1164 (18 %)" "Basic Validation"
+// =P=== "217 of 1164 (18 %)" "Creating table statistics"
+// =P=== "218 of 1164 (18 %)" "Creating report on values"
+// =P=== "219 of 1164 (18 %)" "Creating report on duplicates"
+// =P=== "220 of 1164 (18 %)" "Creating report on coordinate duplicates"
+// =P=== "221 of 1164 (18 %)" "Creating Database preparation Script"
+// =P=== "222 of 1164 (19 %)" "Dropping All Indexes"
+// =P=== "232 of 1164 (19 %)" "Vacuum Database"
+// =P=== "242 of 1164 (20 %)" "Analyze Database"
+int NavDatabase::countDfdSteps()
+{
+  // Create schema "Removing Views" ... "Creating Database Schema"
+  int total = PROGRESS_NUM_SCHEMA_STEPS;
+  total++; // Scenery "Navigraph"
+  total++; // "Writing MORA"
+  total++; // "Writing airports"
+  total++; // "Writing runways"
+  total++; // "Writing navaids"
+  total++; // "Writing Airspaces"
+  total++; // "Writing Airspaces COM"
+  total++; // "Writing COM Frequencies"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
+  if(options->isDeduplicate())
+    total += PROGRESS_NUM_TASK_STEPS; // "Clean up"
+  total++; // "Writing airways"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating waypoints for procedures"
+  total++; // "Updating magnetic declination"
+  total++; // "Updating VORTAC and TACAN channels"
+  total++; // "Updating ILS geometry"
+  total++; // "Writing approaches and transitions"
+  total++; // "Writing SIDs"
+  total++; // "Writing STARs"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating Navids in Waypoint"
+  total++; // "Updating airport idents"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating waypoints"
+  total += PROGRESS_NUM_TASK_STEPS; // "Merging VOR and TACAN to VORTAC"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating approaches"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating Airports"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS Count"
+  total += PROGRESS_NUM_TASK_STEPS; // "Collecting navaids for search"
+
+  if(options->isCreateRouteTables())
+  {
+    total++; // "Populating routing tables"
+    total += PROGRESS_NUM_TASK_STEPS; // "Creating route edges for VOR and NDB"
+    total += PROGRESS_NUM_TASK_STEPS; // "Creating route edges waypoints"
+  }
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for airport"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
+  total++; // "Creating indexes for route"
+  if(options->isDatabaseReport())
+    // "Basic Validation"
+    // "Creating table statistics" "Creating report on values" "Creating report on duplicates"
+    // "Creating report on coordinate duplicates"
+    total += PROGRESS_NUM_TASK_STEPS;
+
+  if(options->isDropIndexes())
+  {
+    total++; // "Creating Database preparation Script"
+    total++; // "Dropping All Indexes"
+  }
+
+  // "Vacuum Database"
+  if(options->isVacuumDatabase())
+    total += PROGRESS_NUM_TASK_STEPS;
+
+  // "Analyze Database"
+  if(options->isAnalyzeDatabase())
+    total += PROGRESS_NUM_TASK_STEPS;
+
+  total += 4; // Correction value
+
+  return total;
+}
+
+// FSX/P3D steps ========================================================================================
+// =P=== "1 of 3101 (0 %) [1]" "Removing Views"
+// =P=== "2 of 3101 (0 %) [1]" "Removing Routing and Search"
+// =P=== "3 of 3101 (0 %) [1]" "Removing Navigation Aids"
+// =P=== "4 of 3101 (0 %) [1]" "Removing Airport Facilites"
+// =P=== "5 of 3101 (0 %) [1]" "Removing Approaches"
+// =P=== "6 of 3101 (0 %) [1]" "Removing Airports"
+// =P=== "7 of 3101 (0 %) [1]" "Removing Metadata"
+// =P=== "8 of 3101 (0 %) [1]" "Creating Database Schema"
+// =P=====================================================================
+// =P=== "9 of 3101 (0 %) [1]" "Default Terrain"
+// =P=== "Scenery/World"
+// ...
+// =P=====================================================================
+// =P=== "1969 of 3101 (63 %) [1]" "Addon Scenery"
+// =P=== "Addon Scenery"
+// =P=== "1979 of 3101 (63 %) [10]" "Creating indexes"
+// =P=== "1989 of 3101 (64 %) [10]" "Creating boundary indexes"
+// =P=== "1999 of 3101 (64 %) [10]" "Clean up"
+// =P=== "2000 of 3101 (64 %) [1]" "Creating airways"
+// =P=== "2361 of 3101 (76 %) [1]" "Creating airways: R210..."
+// =P=== "2943 of 3101 (94 %) [1]" "Creating airways: W5..."
+// =P=== "3010 of 3101 (97 %) [10]" "Merging VOR and TACAN to VORTAC"
+// =P=== "3020 of 3101 (97 %) [10]" "Updating waypoints"
+// =P=== "3030 of 3101 (97 %) [10]" "Updating approaches"
+// =P=== "3040 of 3101 (98 %) [10]" "Updating Airports"
+// =P=== "3050 of 3101 (98 %) [10]" "Updating ILS"
+// =P=== "3060 of 3101 (98 %) [10]" "Updating ILS Count"
+// =P=== "3070 of 3101 (99 %) [10]" "Collecting navaids for search"
+// =P=== "3080 of 3101 (99 %) [10]" "Creating indexes for airport"
+// =P=== "3090 of 3101 (99 %) [10]" "Clean up runways"
+// =P=== "3100 of 3101 (99 %) [10]" "Creating indexes for search"
+// =P=== "3101 of 3101 (100 %) [10]" "Vacuum Database"
+// =P=== "3101 of 3101 (100 %) [10]" "Analyze Database"
+int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
+{
+  // Count the files for exact progress reporting
+  int numProgressReports = 0, numSceneryAreas = 0;
+  countFiles(cfg, &numProgressReports, &numSceneryAreas);
+
+  qDebug() << Q_FUNC_INFO << "=P=== FSX/P3D files" << numProgressReports << "scenery areas" << numSceneryAreas;
+
+  // PROGRESS_NUM_SCHEMA_STEPS Create schema "Removing Views" ... "Creating Database Schema"
+  int total = numProgressReports + numSceneryAreas + PROGRESS_NUM_SCHEMA_STEPS;
+
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
+  if(options->isDeduplicate())
+    total += PROGRESS_NUM_TASK_STEPS; // "Clean up"
+  if(options->isResolveAirways())
+    total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS; // "Creating airways"
+  total += PROGRESS_NUM_TASK_STEPS; // "Merging VOR and TACAN to VORTAC"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating waypoints"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating approaches"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating Airports"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS Count"
+  total += PROGRESS_NUM_TASK_STEPS; // "Collecting navaids for search"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for airport"
+  total += PROGRESS_NUM_TASK_STEPS; // "Clean up runways"
+  total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes for search"
+  if(options->isVacuumDatabase())
+    total += PROGRESS_NUM_TASK_STEPS; // "Vacuum Database"
+  if(options->isAnalyzeDatabase())
+    total += PROGRESS_NUM_TASK_STEPS; // "Analyze Database"
+
+  // Usually not used
+  // if(options->isDatabaseReport())
+  // if(options->isDropIndexes())
+
+  total++; // Misc correction
+
+  return total;
+}
+
 void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
-  int numProgressReports = 0, numSceneryAreas = 0, xplaneExtraSteps = 0;
   SceneryCfg cfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
@@ -256,61 +529,20 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   // ==============================================================================
   // Calculate the total number of progress steps
-  int total = 0, routePartFraction = 1;
+  int total = 0;
   if(sim == atools::fs::FsPaths::XPLANE11)
-  {
-    numProgressReports = atools::fs::xp::XpDataCompiler::calculateReportCount(*options);
-    numSceneryAreas = 1; // X-Plane
-    xplaneExtraSteps++; // prepare post process airways
-    xplaneExtraSteps++; // post process airways
-
-    xplaneExtraSteps--; // ILS id not executed
-    xplaneExtraSteps--; // VORTAC merge not executed
-    xplaneExtraSteps--; // No runway cleanup
-    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS + xplaneExtraSteps;
-    // Around 9000 navaids - total / routePartFraction has to be lower than this
-    routePartFraction = 20;
-  }
+    total = countXplaneSteps();
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
-  {
-    total = numProgressReports + numSceneryAreas +
-            PROGRESS_NUM_STEPS + PROGRESS_DFD_EXTRA_STEPS - 1 /* No rw cleanup*/ - 1 /* Read MORA */;
-    routePartFraction = 4;
-  }
+    total = countDfdSteps();
   else
   {
     // Read scenery.cfg
     readSceneryConfig(cfg);
 
-    // Count the files for exact progress reporting
-    countFiles(cfg, &numProgressReports, &numSceneryAreas);
-    total = numProgressReports + numSceneryAreas + PROGRESS_NUM_STEPS;
-    routePartFraction = 4;
+    total = countFsxP3dSteps(cfg);
   }
-  qDebug() << Q_FUNC_INFO << "progress total" << total;
 
-  if(options->isDatabaseReport())
-    total += PROGRESS_NUM_DB_REPORT_STEPS;
-
-  if(options->isResolveAirways())
-    total += PROGRESS_NUM_RESOLVE_AIRWAY_STEPS;
-
-  if(options->isDeduplicate())
-    total += PROGRESS_NUM_DEDUPLICATE_STEPS;
-
-  if(options->isAnalyzeDatabase())
-    total += PROGRESS_NUM_ANALYZE_STEPS;
-
-  if(options->isVacuumDatabase())
-    total += PROGRESS_NUM_VACCUM_STEPS;
-
-  if(options->isDropIndexes())
-    total += PROGRESS_NUM_DROP_INDEX_STEPS;
-
-  // Assume this one takes a quarter of the total number of steps
-  int numRouteSteps = total / routePartFraction;
-  if(options->isCreateRouteTables())
-    total += numRouteSteps;
+  qDebug() << "=P=== Total Progress" << total;
 
   ProgressHandler progress(options);
   progress.setTotal(total);
@@ -384,7 +616,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
     resolver.assignWaypointIds();
 
-    if((aborted = resolver.run()))
+    if((aborted = resolver.run(PROGRESS_NUM_RESOLVE_AIRWAY_STEPS)))
       return;
   }
 
@@ -444,9 +676,8 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
       return;
 
     // Create a network of VOR and NDB stations that allow radio navaid routing
-    atools::fs::db::RouteEdgeWriter edgeWriter(db, progress, numRouteSteps);
-    if((aborted = edgeWriter.run()))
-      return;
+    atools::fs::db::RouteEdgeWriter edgeWriter(db);
+    edgeWriter.run();
 
     if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
       return;
@@ -466,7 +697,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if(options->isCreateRouteTables())
   {
-    if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for search"))))
+    if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for route"))))
       return;
   }
 
@@ -522,7 +753,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   }
   if(options->isVacuumDatabase())
   {
-    if((aborted = progress.reportOther(tr("Vacuum Database"))))
+    if((aborted = progress.reportOtherInc(tr("Vacuum Database"), PROGRESS_NUM_TASK_STEPS)))
       return;
 
     db->vacuum();
@@ -530,7 +761,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if(options->isAnalyzeDatabase())
   {
-    if((aborted = progress.reportOther(tr("Analyze Database"))))
+    if((aborted = progress.reportOtherInc(tr("Analyze Database"), PROGRESS_NUM_TASK_STEPS)))
       return;
 
     db->analyze();
@@ -963,8 +1194,9 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
 {
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  if((aborted = progress->reportOther(message)))
-    return true;
+  if(progress != nullptr)
+    if((aborted = progress->reportOtherInc(message, PROGRESS_NUM_SCRIPT_STEPS)))
+      return true;
 
   script.executeScript(":/atools/resources/sql/" + scriptFile);
   db->commit();

@@ -64,7 +64,11 @@ namespace fs {
 namespace xp {
 
 // Reports per large file
-const static int NUM_REPORT_STEPS = 10000;
+const static int NUM_REPORT_STEPS = 1000;
+// Reports per smaller file
+const static int NUM_REPORT_STEPS_SMALL = 100;
+
+const static int NUM_REPORT_STEPS_CIFP = 2000;
 
 /* Report progress twice a second */
 const static int MIN_PROGRESS_REPORT_MS = 500;
@@ -116,7 +120,7 @@ bool XpDataCompiler::compileEarthFix()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 5, fixWriter, UPDATE_CYCLE);
+    bool aborted = readDataFile(path, 5, fixWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
 
     if(!aborted)
       db.commit();
@@ -134,7 +138,7 @@ bool XpDataCompiler::compileEarthAirway()
   if(QFileInfo::exists(path))
   {
 
-    bool aborted = readDataFile(path, 11, airwayWriter, UPDATE_CYCLE);
+    bool aborted = readDataFile(path, 11, airwayWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
     if(!aborted)
       db.commit();
     return aborted;
@@ -160,7 +164,7 @@ bool XpDataCompiler::compileEarthNav()
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 11, navWriter, UPDATE_CYCLE);
+    bool aborted = readDataFile(path, 11, navWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
     if(!aborted)
       db.commit();
     return aborted;
@@ -176,7 +180,8 @@ bool XpDataCompiler::compileCustomApt()
   QStringList localFindCustomAptDatFiles = findCustomAptDatFiles(options, errors, progress);
   for(const QString& aptdat : localFindCustomAptDatFiles)
   {
-    if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT))
+    // Only one progress report per file
+    if(readDataFile(aptdat, 1, airportWriter, IS_ADDON | READ_SHORT_REPORT, 1))
       return true;
   }
   db.commit();
@@ -273,13 +278,13 @@ bool XpDataCompiler::fixDuplicateApt()
 
 bool XpDataCompiler::compileCustomGlobalApt()
 {
-  // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+  // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat (330 MB)
   QString path = buildPathNoCase({options.getBasepath(),
                                   "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"});
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG);
+    bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
     if(!aborted)
       db.commit();
     return aborted;
@@ -292,14 +297,14 @@ bool XpDataCompiler::compileCustomGlobalApt()
 
 bool XpDataCompiler::compileDefaultApt()
 {
-  // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+  // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat (330 MB)
   QString defaultAptDat = buildPathNoCase({options.getBasepath(),
                                            "Resources", "default scenery", "default apt dat",
                                            "Earth nav data", "apt.dat"});
 
   if(QFileInfo::exists(defaultAptDat))
   {
-    bool aborted = readDataFile(defaultAptDat, 1, airportWriter);
+    bool aborted = readDataFile(defaultAptDat, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
     if(!aborted)
       db.commit();
     return aborted;
@@ -312,12 +317,29 @@ bool XpDataCompiler::compileCifp()
 {
   QStringList cifpFiles = findCifpFiles(options);
 
+  int rowsPerStep =
+    static_cast<int>(std::ceil(static_cast<float>(cifpFiles.size()) / static_cast<float>(NUM_REPORT_STEPS_CIFP)));
+  int row = 0, steps = 0;
+
   for(const QString& file : cifpFiles)
   {
     if(options.isIncludedFilename(file))
-      if(readDataFile(file, 1, cifpWriter, READ_CIFP | READ_SHORT_REPORT))
+    {
+      if(readDataFile(file, 1, cifpWriter, READ_CIFP | READ_SHORT_REPORT, 0))
         return true;
+
+      if((row % rowsPerStep) == 0)
+      {
+        progress->reportOther(tr("Reading: %1").arg(file));
+        steps++;
+      }
+      row++;
+    }
   }
+
+  // Consume remaining progress steps
+  progress->increaseCurrent(NUM_REPORT_STEPS_CIFP - steps);
+
   db.commit();
 
   return false;
@@ -330,8 +352,11 @@ bool XpDataCompiler::compileAirspaces()
   for(const QString& file : airspaceFiles)
   {
     if(options.isIncludedFilename(file))
-      if(readDataFile(file, 1, airspaceWriter, READ_AIRSPACE | READ_SHORT_REPORT))
+    {
+      // Only one progress report per file
+      if(readDataFile(file, 1, airspaceWriter, READ_AIRSPACE | READ_SHORT_REPORT, 1))
         return true;
+    }
   }
   db.commit();
 
@@ -345,7 +370,8 @@ bool XpDataCompiler::compileLocalizers()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT);
+    // Only one progress report per file
+    bool aborted = readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT, 1);
     if(!aborted)
       db.commit();
     return aborted;
@@ -363,7 +389,8 @@ bool XpDataCompiler::compileUserNav()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT);
+    // One progress report per file
+    bool aborted = readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT, 1);
     if(!aborted)
       db.commit();
     return aborted;
@@ -378,7 +405,8 @@ bool XpDataCompiler::compileUserFix()
 
   if(QFileInfo::exists(path))
   {
-    bool aborted = readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT);
+    // One progress report per file
+    bool aborted = readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT, 1);
     if(!aborted)
       db.commit();
     return aborted;
@@ -396,7 +424,7 @@ bool XpDataCompiler::compileMagDeclBgl()
 }
 
 bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWriter *writer,
-                                  atools::fs::xp::ContextFlags flags)
+                                  atools::fs::xp::ContextFlags flags, int numReportSteps)
 {
   QFile file;
   QTextStream stream;
@@ -420,6 +448,8 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
     // Open file and read header
     if(openFile(stream, file, filepath, flags, lineNum, totalNumLines, fileVersion))
     {
+      // qInfo() << "=P==== Opened:" << filepath;
+
       XpWriterContext context;
       context.curFileId = curFileId;
       context.fileName = fileinfo.fileName();
@@ -429,9 +459,12 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       context.fileVersion = fileVersion;
       context.magDecReader = magDecReader;
 
-      if(flags & READ_SHORT_REPORT)
+      if(flags & READ_SHORT_REPORT && numReportSteps > 0)
+      {
+        // One progress report per file - otherwise numReportSteps
         if(progress->reportOther(progressMsg))
           return true;
+      }
 
       if(flags & READ_CIFP)
       {
@@ -451,8 +484,11 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       timer.start();
       qint64 elapsed = timer.elapsed();
 
-      int rowsPerStep =
-        static_cast<int>(std::ceil(static_cast<float>(totalNumLines) / static_cast<float>(NUM_REPORT_STEPS)));
+      int rowsPerStep = 0;
+
+      if(numReportSteps > 0)
+        rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(totalNumLines) /
+                                                 static_cast<float>(numReportSteps)));
       int row = 0, steps = 0;
 
       // Read lines
@@ -460,7 +496,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       {
         line = stream.readLine().trimmed();
 
-        if(!(flags & READ_SHORT_REPORT))
+        if(!(flags & READ_SHORT_REPORT) && numReportSteps > 0)
         {
           if((row++ % rowsPerStep) == 0)
           {
@@ -523,9 +559,9 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 
       file.close();
 
-      if(!(flags & READ_SHORT_REPORT))
+      if(!(flags & READ_SHORT_REPORT) && numReportSteps > 0)
         // Eat up any remaining progress steps
-        progress->increaseCurrent(NUM_REPORT_STEPS - steps);
+        progress->increaseCurrent(numReportSteps - steps);
     }
   }
   catch(std::exception& e)
@@ -750,7 +786,7 @@ int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
   int reportCount = 0;
   // Default or custom scenery files
   // earth_fix.dat earth_awy.dat earth_nav.dat
-  reportCount += 3 * NUM_REPORT_STEPS;
+  reportCount += 3 * NUM_REPORT_STEPS_SMALL;
 
   // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
   reportCount += NUM_REPORT_STEPS;
@@ -759,7 +795,7 @@ int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
   reportCount += NUM_REPORT_STEPS;
 
   // Default or custom CIFP/$ICAO.dat
-  reportCount += findCifpFiles(opts).count();
+  reportCount += NUM_REPORT_STEPS_CIFP;
 
   reportCount += findAirspaceFiles(opts).count();
 
@@ -778,6 +814,7 @@ int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_fix.dat"})))
     reportCount++;
 
+  qDebug() << Q_FUNC_INFO << "=P=== X-Plane files" << reportCount;
   return reportCount;
 }
 

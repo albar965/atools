@@ -30,10 +30,14 @@
 #include <QList>
 #include <algorithm>
 #include <QQueue>
+#include <QElapsedTimer>
 
 namespace atools {
 namespace fs {
 namespace db {
+
+/* Report progress twice a second */
+const static int MIN_PROGRESS_REPORT_MS = 500;
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
@@ -129,7 +133,7 @@ void AirwayResolver::assignWaypointIds()
   qInfo() << "Updated" << updated << "waypoint_id in airway table";
 }
 
-bool AirwayResolver::run()
+bool AirwayResolver::run(int numReportSteps)
 {
   bool aborted = false;
 
@@ -143,6 +147,16 @@ bool AirwayResolver::run()
   QSet<AirwaySegment> airway;
   QString currentAirway;
 
+  int totalRowCount = SqlUtil(db).rowCount("airway_point");
+
+  int rowsPerStep =
+    static_cast<int>(std::ceil(static_cast<float>(totalRowCount) / static_cast<float>(numReportSteps)));
+  int row = 0, steps = 0;
+
+  QElapsedTimer timer;
+  timer.start();
+  qint64 elapsed = timer.elapsed();
+
   // Get all airway_point rows and join previous and next waypoints to the result by ident and region
   // Result is ordered by airway name
   query.exec(WAYPOINT_QUERY);
@@ -151,13 +165,16 @@ bool AirwayResolver::run()
     QString awName = query.value("name").toString();
     QString awType = query.value("type").toString();
 
-    if(currentAirway.isEmpty() || awName.at(0) != currentAirway.at(0))
+    if((row++ % rowsPerStep) == 0)
     {
-      // Send a progress report for each airway name having a new first characters
-      db->commit();
-      QString msg = QString(tr("Creating airways: %1...")).arg(awName);
-      qInfo() << msg;
-      if((aborted = progressHandler.reportOtherMsg(msg)) == true)
+      qint64 elapsed2 = timer.elapsed();
+
+      // Update only every 500 ms - otherwise update only progress count
+      bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
+      if(!silent)
+        elapsed = elapsed2;
+      steps++;
+      if((aborted = progressHandler.reportOther(tr("Creating airways: %1...").arg(awName), -1, silent)) == true)
         break;
     }
 
@@ -219,7 +236,10 @@ bool AirwayResolver::run()
         airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType,
                                     currentWpPos, nextPos));
     }
-  }
+  } // while(query.next())
+
+  // Eat up any remaining progress steps
+  progressHandler.increaseCurrent(numReportSteps - steps);
 
   qInfo() << "Added " << numAirways << " airway segments";
 

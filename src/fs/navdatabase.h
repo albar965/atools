@@ -18,8 +18,6 @@
 #ifndef ATOOLS_FS_NAVDATABASE_H
 #define ATOOLS_FS_NAVDATABASE_H
 
-#include "fs/navdatabaseerrors.h"
-
 #include "fs/fspaths.h"
 
 #include <QDebug>
@@ -34,10 +32,12 @@ class SqlUtil;
 
 namespace fs {
 class NavDatabaseOptions;
+class NavDatabaseErrors;
 
 namespace scenery {
 class SceneryCfg;
 class AddOnComponent;
+class SceneryArea;
 }
 
 namespace db {
@@ -156,6 +156,11 @@ private:
                            QVector<scenery::AddOnComponent>& noLayerComponents,
                            QStringList& noLayerPaths, QSet<QString>& addonPaths, const QFileInfo& addonEntry);
   QFileInfo buildAddonFile(const QFileInfo& addonEntry);
+
+  /* Count the number of total steps for progress max value. This covers all files and other steps. */
+  int countDfdSteps();
+  int countXplaneSteps();
+  int countFsxP3dSteps(const scenery::SceneryCfg& cfg);
 
   /* For metadata */
 

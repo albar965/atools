@@ -46,8 +46,7 @@ class RouteEdgeWriter
   Q_DECLARE_TR_FUNCTIONS(AirwayResolver)
 
 public:
-  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress,
-                  int numProgressSteps);
+  RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb);
 
   /*
    * Run the process and fill the route_edge_radio table. Reports process every 500 ms.
@@ -55,7 +54,7 @@ public:
    * scenery areas and BGL files.
    * @return true if the process was aborted
    */
-  bool run();
+  void run();
 
 private:
   void bindCoordinatePointInRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query);
@@ -64,10 +63,7 @@ private:
                int fromRangeMeter, QVariantList& toNodeIds, QVariantList& toNodeTypes,
                QVariantList& toNodeDistances);
 
-  int numSteps = 10;
-  atools::fs::ProgressHandler& progressHandler;
   atools::sql::SqlDatabase *db;
-
 };
 
 } // namespace writer

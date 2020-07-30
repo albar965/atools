@@ -49,7 +49,7 @@ public:
    * scenery areas and BGL files.
    * @return true if the process was aborted
    */
-  bool run();
+  bool run(int numReportSteps);
 
   struct AirwaySegment;
 

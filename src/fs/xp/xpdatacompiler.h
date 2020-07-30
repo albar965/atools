@@ -220,7 +220,7 @@ private:
 
   /* Read file line by line and call writer for each one */
   bool readDataFile(const QString& filepath, int minColumns, atools::fs::xp::XpWriter *writer,
-                    atools::fs::xp::ContextFlags flags = atools::fs::xp::NO_FLAG);
+                    atools::fs::xp::ContextFlags flags, int numReportSteps);
   static QString buildBasePath(const NavDatabaseOptions& opts);
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */

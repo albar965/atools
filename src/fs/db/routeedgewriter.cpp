@@ -62,9 +62,6 @@ const int PRIORITY_BY_TYPE[] = {0 /* None */, 2 /* VOR */, 3 /* VORDME */, 0 /* 
 const float INFLATE_RECT_LON_DEGREES = 6.f;
 const float INFLATE_RECT_LAT_DEGREES = 4.f;
 
-/* Report progress twice a second */
-const int MIN_PROGRESS_REPORT_MS = 500;
-
 // Query result column indexes
 enum ColumnIndex
 {
@@ -79,17 +76,14 @@ enum BindColumnIndex
   TOPY
 };
 
-RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress,
-                                 int numProgressSteps)
-  : numSteps(numProgressSteps), progressHandler(progress), db(sqlDb)
+RouteEdgeWriter::RouteEdgeWriter(atools::sql::SqlDatabase *sqlDb)
+  : db(sqlDb)
 {
 
 }
 
-bool RouteEdgeWriter::run()
+void RouteEdgeWriter::run()
 {
-  bool aborted = false;
-
   // Iterate over all radio navaids
   SqlQuery selectNodesQuery("select node_id, range, type, lonx, laty from route_node_radio", db);
 
@@ -110,35 +104,13 @@ bool RouteEdgeWriter::run()
   int deleted = stmt.numRowsAffected();
   qInfo() << "Removed" << deleted << "from route_edge_radio table";
 
-  int numRows = SqlUtil(db).rowCount("route_node_radio");
-  qInfo() << numRows << "nodes to process";
-  int rowsPerStep = static_cast<int>(std::ceil(static_cast<float>(numRows) / static_cast<float>(numSteps)));
-
   QVariantList toNodeIdVars, toNodeTypeVars, toNodeDistanceVars, fromNodeIdVars, fromNodeTypeVars;
 
-  QElapsedTimer timer;
-  timer.start();
-  qint64 elapsed = timer.elapsed();
-  int row = 0, steps = 0;
   int average = 0, total = 0, maximum = 0, numEmpty = 0;
 
   selectNodesQuery.exec();
   while(selectNodesQuery.next())
   {
-    if((row++ % rowsPerStep) == 0)
-    {
-      qint64 elapsed2 = timer.elapsed();
-
-      // Update only every 500 ms - otherwise update only progress count
-      bool silent = !(elapsed + MIN_PROGRESS_REPORT_MS < elapsed2);
-      if(!silent)
-        elapsed = elapsed2;
-
-      steps++;
-      if((aborted = progressHandler.reportOther(tr("Populating VOR/NDB Routing Table"), -1, silent)) == true)
-        break;
-    }
-
     // Look at each node
     int fromRangeMeter = selectNodesQuery.value(RANGE).toInt();
     int fromNodeId = selectNodesQuery.value(NODE_ID).toInt();
@@ -197,14 +169,6 @@ bool RouteEdgeWriter::run()
 
   qDebug() << "Edge writer: total" << total << "average" << average
            << "max" << maximum << "numEmpty" << numEmpty;
-
-  // Eat up any remaining progress steps
-  progressHandler.increaseCurrent(numSteps - steps);
-
-  if(!aborted)
-    db->commit();
-
-  return aborted;
 }
 
 /*

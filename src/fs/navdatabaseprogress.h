@@ -54,6 +54,12 @@ public:
     return current;
   }
 
+  /* Progress step before incrementing step */
+  int getLastCurrent() const
+  {
+    return lastCurrent;
+  }
+
   /*
    * @return Currently processed BGL filename
    */
@@ -217,7 +223,7 @@ private:
   int numFiles = 0, numAirports = 0, numNamelists = 0, numVors = 0, numIls = 0, numNdbs = 0, numMarker = 0,
       numBoundaries = 0, numWaypoints = 0, numObjectsWritten = 0, numErrors = 0;
 
-  int total = 0, current = 0;
+  int total = 0, current = 0, lastCurrent = 0;
   bool newFile = false, newSceneryArea = false, newOther = false, firstCall = true, lastCall = false;
   QString bglFilepath, otherAction;
   const atools::fs::scenery::SceneryArea *sceneryArea = nullptr;

@@ -35,11 +35,6 @@ void ProgressHandler::increaseCurrent(int increase)
   info.current += increase;
 }
 
-bool ProgressHandler::reportUpdate()
-{
-  return callHandler();
-}
-
 bool ProgressHandler::reportOtherMsg(const QString& otherAction)
 {
   info.otherAction = otherAction;
@@ -52,6 +47,7 @@ bool ProgressHandler::reportOtherMsg(const QString& otherAction)
 
 bool ProgressHandler::reportOther(const QString& otherAction, int current, bool silent)
 {
+  info.lastCurrent = info.current;
   if(current != -1)
     info.current = current;
   else
@@ -68,6 +64,19 @@ bool ProgressHandler::reportOther(const QString& otherAction, int current, bool 
     return callHandler();
 }
 
+bool ProgressHandler::reportOtherInc(const QString& otherAction, int increment)
+{
+  info.lastCurrent = info.current;
+  info.current += increment;
+  info.otherAction = otherAction;
+
+  info.newFile = false;
+  info.newSceneryArea = false;
+  info.newOther = true;
+
+  return callHandler();
+}
+
 void ProgressHandler::reportError()
 {
   info.numErrors++;
@@ -80,6 +89,7 @@ void ProgressHandler::reportErrors(int num)
 
 bool ProgressHandler::reportBglFile(const QString& bglFilepath)
 {
+  info.lastCurrent = info.current;
   info.current++;
   info.bglFilepath = bglFilepath;
 
@@ -111,6 +121,7 @@ void ProgressHandler::reset()
 {
   info.numErrors = 0;
   info.current = 0;
+  info.lastCurrent = 0;
   info.sceneryArea = nullptr;
   info.bglFilepath.clear();
   info.newFile = false;
@@ -120,12 +131,10 @@ void ProgressHandler::reset()
   info.lastCall = false;
 }
 
-bool ProgressHandler::reportSceneryArea(const scenery::SceneryArea *sceneryArea, int current)
+bool ProgressHandler::reportSceneryArea(const scenery::SceneryArea *sceneryArea)
 {
-  if(current != -1)
-    info.current = current;
-  else
-    info.current++;
+  info.lastCurrent = info.current;
+  info.current++;
   info.sceneryArea = sceneryArea;
 
   info.newFile = false;
@@ -157,30 +166,33 @@ bool ProgressHandler::callHandler()
  */
 void ProgressHandler::defaultHandler(const atools::fs::NavDatabaseProgress& inf)
 {
+  // Using "=P===" for easier recognition in the log file
+
   if(inf.isNewFile())
   {
-    qInfo() << "====" << numbersAsString(inf) << inf.getBglFileName();
+    qInfo() << "=P===" << numbersAsString(inf) << inf.getBglFileName();
   }
 
   if(inf.isNewSceneryArea())
   {
-    qInfo() << "======================================================================";
-    qInfo() << "==========" << numbersAsString(inf) << inf.getSceneryTitle();
-    qInfo() << "==========" << inf.getSceneryPath();
+    qInfo() << "=P=====================================================================";
+    qInfo() << "=P===" << numbersAsString(inf) << inf.getSceneryTitle();
+    qInfo() << "=P===" << inf.getSceneryPath();
   }
 
   if(inf.isNewOther())
   {
-    qInfo() << "====" << numbersAsString(inf) << inf.getOtherAction();
+    qInfo() << "=P===" << numbersAsString(inf) << inf.getOtherAction();
   }
 }
 
 QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& inf)
 {
-  return QString("%1 of %2 (%3 %)").
+  return QString("%1 of %2 (%3 %) [%4]").
          arg(std::min(inf.current, inf.total)).
          arg(inf.total).
-         arg(std::min(100 * info.current / info.total, 100));
+         arg(std::min(100 * inf.current / inf.total, 100)).
+         arg(inf.current - inf.lastCurrent);
 }
 
 } // namespace fs

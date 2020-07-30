@@ -38,7 +38,7 @@ public:
   /*
    * Increment progress by one and send message about new scenery area
    */
-  bool reportSceneryArea(const atools::fs::scenery::SceneryArea *sceneryArea, int current = -1);
+  bool reportSceneryArea(const atools::fs::scenery::SceneryArea *sceneryArea);
 
   /*
    * Increment progress by one and send message about new BGL file
@@ -51,9 +51,6 @@ public:
   void reportError();
   void reportErrors(int num);
 
-  /* Report without text update to allow GUI updates */
-  bool reportUpdate();
-
   /*
    * Send the last report
    */
@@ -63,6 +60,11 @@ public:
    * Increment progress by one and send message about other processes like script execution
    */
   bool reportOther(const QString& otherAction, int current = -1, bool silent = false);
+
+  /*
+   * Increment progress by increment and send message about other processes like script execution
+   */
+  bool reportOtherInc(const QString& otherAction, int increment);
 
   /* Only send message without incrementing progress */
   bool reportOtherMsg(const QString& otherAction);
@@ -186,7 +188,7 @@ private:
 
   bool callHandler();
 
-  QString numbersAsString(const atools::fs::NavDatabaseProgress& inf);
+  static QString numbersAsString(const atools::fs::NavDatabaseProgress& inf);
 
 };
 

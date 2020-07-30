@@ -302,8 +302,8 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
 
   QStringList tableList = buildTableList(tables);
 
-  SqlQuery q(db);
-  SqlQuery q2(db);
+  SqlQuery querySelCount(db);
+  SqlQuery queryGroup(db);
 
   for(QString name : tableList)
   {
@@ -316,10 +316,10 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
         for(int i = 0; i < record.count(); i++)
         {
           QString col = record.fieldName(i);
-          q.exec("select count(distinct " + col + ") as cnt from " + name);
-          if(q.next())
+          querySelCount.exec("select count(distinct " + col + ") as cnt from " + name);
+          if(querySelCount.next())
           {
-            int cnt = q.value("cnt").toInt();
+            int cnt = querySelCount.value("cnt").toInt();
             if(cnt < 2)
             {
               out << name << "." << col;
@@ -328,9 +328,15 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
               else if(cnt == 1)
               {
                 out << " has only 1 distinct value: ";
-                q2.exec("select " + col + " from " + name + " group by " + col);
-                while(q2.next())
-                  out << q2.value(0).toString();
+                queryGroup.exec("select " + col + " from " + name + " group by " + col);
+                while(queryGroup.next())
+                {
+                  QVariant val = queryGroup.value(0);
+                  if(val.type() != QVariant::ByteArray && val.canConvert(QVariant::String))
+                    out << val.toString();
+                  else
+                    out << "[" << val.typeName() << "]";
+                }
                 out << endl;
               }
             }
