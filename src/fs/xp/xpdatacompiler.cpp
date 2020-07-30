@@ -784,17 +784,21 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
 int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
 {
   int reportCount = 0;
-  // Default or custom scenery files
+  // Default or custom scenery files - required
   // earth_fix.dat earth_awy.dat earth_nav.dat
   reportCount += 3 * NUM_REPORT_STEPS_SMALL;
 
   // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
-  reportCount += NUM_REPORT_STEPS;
+  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat",
+                                        "Earth nav data", "apt.dat"})))
+    reportCount += NUM_REPORT_STEPS;
 
   // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-  reportCount += NUM_REPORT_STEPS;
+  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data",
+                                        "apt.dat"})))
+    reportCount += NUM_REPORT_STEPS;
 
-  // Default or custom CIFP/$ICAO.dat
+  // Default or custom CIFP/$ICAO.dat - required from either "Resources" or "Custom Data"
   reportCount += NUM_REPORT_STEPS_CIFP;
 
   reportCount += findAirspaceFiles(opts).count();

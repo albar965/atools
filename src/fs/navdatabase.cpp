@@ -263,7 +263,6 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
 // =P=== "2513 of 5604 (44 %) [10]" "Preparing Airways"
 // =P=== "2514 of 5604 (44 %) [1]" "Post procecssing Airways"
 // "/home/alex/Daten/Programme/X-Plane 11/Custom Data/CIFP/XXXXXXXXXXX"
-// =P=== "4515 of 5604 (80 %) [1]" "Creating airways"
 // =P=== "4602 of 5604 (82 %) [1]" "Creating airways: B953..."
 // =P=== "4751 of 5604 (84 %) [1]" "Creating airways: M611..."
 // =P=== "4900 of 5604 (87 %) [1]" "Creating airways: T317..."
@@ -305,9 +304,7 @@ int NavDatabase::countXplaneSteps()
   if(options->isAnalyzeDatabase())
     total += PROGRESS_NUM_TASK_STEPS; // "Analyze Database"
 
-  total++; // Correction value
-
-  // Usually not used
+  // Not used in production
   // if(options->isDatabaseReport())
   // if(options->isDropIndexes())
   return total;
@@ -459,7 +456,6 @@ int NavDatabase::countDfdSteps()
 // =P=== "1979 of 3101 (63 %) [10]" "Creating indexes"
 // =P=== "1989 of 3101 (64 %) [10]" "Creating boundary indexes"
 // =P=== "1999 of 3101 (64 %) [10]" "Clean up"
-// =P=== "2000 of 3101 (64 %) [1]" "Creating airways"
 // =P=== "2361 of 3101 (76 %) [1]" "Creating airways: R210..."
 // =P=== "2943 of 3101 (94 %) [1]" "Creating airways: W5..."
 // =P=== "3010 of 3101 (97 %) [10]" "Merging VOR and TACAN to VORTAC"
@@ -506,11 +502,9 @@ int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
   if(options->isAnalyzeDatabase())
     total += PROGRESS_NUM_TASK_STEPS; // "Analyze Database"
 
-  // Usually not used
+  // Not used in production
   // if(options->isDatabaseReport())
   // if(options->isDropIndexes())
-
-  total++; // Misc correction
 
   return total;
 }
@@ -604,9 +598,6 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if(options->isResolveAirways() && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
-    if((aborted = progress.reportOther(tr("Creating airways"))))
-      return;
-
     // Read airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
