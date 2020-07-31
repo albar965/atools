@@ -43,7 +43,6 @@ namespace fs {
 
 // Number of progress steps besides scenery areas
 // Database report steps
-static const int PROGRESS_NUM_DB_REPORT_STEPS = 5;
 
 // Number of steps for general tasks - increase > 1 to make them more visible in progress
 static const int PROGRESS_NUM_TASK_STEPS = 10;
@@ -56,6 +55,8 @@ static const int PROGRESS_NUM_RESOLVE_AIRWAY_STEPS = 1000;
 
 // createSchemaInternal()
 static const int PROGRESS_NUM_SCHEMA_STEPS = 8;
+
+const static QChar SEP(QDir::separator());
 
 using atools::sql::SqlScript;
 using atools::sql::SqlQuery;
@@ -214,12 +215,12 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
       {
         if(type == atools::fs::FsPaths::XPLANE11)
         {
-          QFileInfo dataDir(filepath + QDir::separator() + "Resources" + QDir::separator() + "default data");
+          QFileInfo dataDir(filepath + SEP + "Resources" + SEP + "default data");
 
           if(dataDir.exists() && dataDir.isDir() && dataDir.isReadable())
             return true;
           else
-            error = tr("\"%1\" not found").arg(QString("Resources") + QDir::separator() + "default data");
+            error = tr("\"%1\" not found").arg(QString("Resources") + SEP + "default data");
         }
         else
         {
@@ -1237,13 +1238,11 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
 #endif
-      addonsCfgFileLocal +=
-        QDir::separator() + QString("Lockheed Martin") +
-        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+      addonsCfgFileLocal += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
 #if !defined(Q_OS_WIN32)
-        " LocalData" +
+                            " LocalData" +
 #endif
-        QDir::separator() + "add-ons.cfg";
+                            SEP + "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFileLocal);
     }
 
@@ -1258,9 +1257,9 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
 #endif
       addonsCfgFile +=
-        QDir::separator() + QString("Lockheed Martin") +
-        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
-        QDir::separator() + "add-ons.cfg";
+        SEP + QString("Lockheed Martin") +
+        SEP + QString("Prepar3D v%1").arg(simNum) +
+        SEP + "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
     }
 
@@ -1275,12 +1274,12 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
 #endif
       addonsAllUsersCfgFile +=
-        QDir::separator() + QString("Lockheed Martin") +
-        QDir::separator() + QString("Prepar3D v%1").arg(simNum) +
+        SEP + QString("Lockheed Martin") +
+        SEP + QString("Prepar3D v%1").arg(simNum) +
 #if !defined(Q_OS_WIN32)
         " ProgramData" +
 #endif
-        QDir::separator() + "add-ons.cfg";
+        SEP + "add-ons.cfg";
       addonsCfgFiles.append(addonsAllUsersCfgFile);
     }
 
@@ -1322,10 +1321,10 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
     // Add both path alternatives since documentation is not clear
     // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
-    addonDiscoveryPaths.prepend(documents + QDir::separator() + QString("Prepar3D v%1 Files").arg(simNum) +
-                                QDir::separator() + QLatin1Literal("add-ons"));
+    addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Files").arg(simNum) +
+                                SEP + QLatin1Literal("add-ons"));
 
-    addonDiscoveryPaths.prepend(documents + QDir::separator() + QString("Prepar3D v%1 Add-ons").arg(simNum));
+    addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Add-ons").arg(simNum));
 
     qInfo() << Q_FUNC_INFO << "Discovery paths" << addonDiscoveryPaths;
 
@@ -1383,7 +1382,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
 
 QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  return QFileInfo(addonEntry.canonicalFilePath() + QDir::separator() + QLatin1Literal("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1Literal("add-on.xml"));
 }
 
 void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
@@ -1416,7 +1415,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
 
       if(compPath.isRelative())
         // Convert relative path to absolute based on add-on file directory
-        compPath = package.getBaseDirectory() + QDir::separator() + compPath.path();
+        compPath = package.getBaseDirectory() + SEP + compPath.path();
 
       if(compPath.dirName().toLower() == "scenery")
         // Remove if it points to scenery directory

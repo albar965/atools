@@ -30,6 +30,8 @@
 
 namespace atools {
 
+const static QChar SEP(QDir::separator());
+
 QString version()
 {
   return "3.5.1.develop"; // VERSION_NUMBER - atools
@@ -277,7 +279,7 @@ QString buildPathNoCase(const QStringList& paths)
 
       if(!entries.isEmpty())
       {
-        if(QFileInfo(dir.path() + QDir::separator() + entries.first()).isDir())
+        if(QFileInfo(dir.path() + SEP + entries.first()).isDir())
         {
           // Directory exists - change into it
           if(!dir.cd(entries.first()))
@@ -292,7 +294,7 @@ QString buildPathNoCase(const QStringList& paths)
       }
       else
         // Nothing found - add potentially wrong case name
-        dir = dir.path() + QDir::separator() + path;
+        dir = dir.path() + SEP + path;
     }
     i++;
   }
@@ -300,7 +302,7 @@ QString buildPathNoCase(const QStringList& paths)
   if(file.isEmpty())
     return dir.path();
   else
-    return dir.path() + QDir::separator() + file;
+    return dir.path() + SEP + file;
 
 #endif
 }
@@ -313,7 +315,7 @@ QString buildPath(const QStringList& paths)
   for(const QString& path : paths)
   {
     if(i > 0)
-      retval += QDir::separator();
+      retval += SEP;
     retval += path;
     i++;
   }
