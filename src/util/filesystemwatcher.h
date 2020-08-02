@@ -46,7 +46,7 @@ public:
     return filename;
   }
 
-  /* Set file and start watching */
+  /* Set file and start watching. Does not emit an initial message. */
   void setFilenameAndStart(const QString& value);
 
   /* Stop all notifications and watching */

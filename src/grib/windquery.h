@@ -236,8 +236,8 @@ private:
   /* Convert data from U/V components to speed/heading */
   void convertDataset(const atools::grib::GribDatasetVector& datasets);
 
-  void gribDownloadFinished(const atools::grib::GribDatasetVector & datasets, QString);
-  void gribDownloadFailed(const QString & error, int errorCode, QString);
+  void gribDownloadFinished(const atools::grib::GribDatasetVector & datasets, QString downloadUrl);
+  void gribDownloadFailed(const QString & error, int errorCode, QString downloadUrl);
   void gribFileUpdated(const QString& filename);
 
   /* get interpolated wind for two sets at two altitudes */

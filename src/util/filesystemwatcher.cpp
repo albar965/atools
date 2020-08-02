@@ -172,6 +172,14 @@ void FileSystemWatcher::createFsWatcher()
 
   setPaths(false);
 
+  // Initialize size and timestamp which will omit the first update signal - user has to do the intial load
+  QFileInfo fileinfo(filename);
+  if(fileinfo.exists() && fileinfo.isFile())
+  {
+    fileTimestampLastRead = fileinfo.lastModified();
+    lastFileSizeRead = fileinfo.size();
+  }
+
   // Check every ten seconds since the watcher is unreliable
   periodicCheckTimer.connect(&periodicCheckTimer, &QTimer::timeout, this, &FileSystemWatcher::pathOrFileChanged);
   periodicCheckTimer.start(checkMs);

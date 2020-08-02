@@ -571,20 +571,24 @@ void WindQuery::windRectForLayer(WindRect& windRect, const WindAltLayer& layer, 
   windRect.bottomLeft = windForLayer(layer, rect.bottomLeft);
 }
 
-void WindQuery::gribDownloadFinished(const GribDatasetVector& datasets, QString)
+void WindQuery::gribDownloadFinished(const GribDatasetVector& datasets, QString downloadUrl)
 {
+  qDebug() << Q_FUNC_INFO << downloadUrl;
+
   // Download finished - update coordinates
   convertDataset(datasets);
   emit windDataUpdated();
 }
 
-void WindQuery::gribDownloadFailed(const QString& error, int errorCode, QString)
+void WindQuery::gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO << error << downloadUrl;
   emit windDownloadFailed(error, errorCode);
 }
 
 void WindQuery::gribFileUpdated(const QString& filename)
 {
+  qDebug() << Q_FUNC_INFO << filename;
   try
   {
     GribReader reader(verbose);

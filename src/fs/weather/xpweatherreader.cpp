@@ -145,6 +145,10 @@ void XpWeatherReader::createFsWatcher()
     fsWatcher->connect(fsWatcher, &FileSystemWatcher::fileUpdated, this, &XpWeatherReader::pathChanged);
   }
 
+  // Load initially
+  pathChanged(weatherFile);
+
+  // Start watching for changes
   fsWatcher->setFilenameAndStart(weatherFile);
 }
 
