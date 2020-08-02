@@ -868,12 +868,12 @@ void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, atools::util
 
     if(!pos.isValid())
     {
-      reader.raiseError(tr("Invalid position in GPX."));
+      qWarning() << Q_FUNC_INFO << "Invalid position in GPX. Ordinates out of range" << pos.toString();
       pos = atools::geo::EMPTY_POS;
     }
     else if(!pos.isValidRange())
     {
-      reader.raiseError(tr("Invalid position in GPX. Ordinates out of range: %1").arg(pos.toString()));
+      qWarning() << Q_FUNC_INFO << "Invalid position in GPX. Ordinates out of range" << pos.toString();
       pos = atools::geo::EMPTY_POS;
     }
   }
@@ -2785,14 +2785,19 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
     // <name>rtept 1</name>
     // </rtept>
 
+    if(!entry.getPosition().isValidRange())
+    {
+      qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
+      continue;
+    }
+
     if(i > 0)
     {
-      // Skip equal points from procedures
+      // Remove duplicates with same name and almost same position
       const FlightplanEntry& prev = plan.entries.at(i - 1);
       if(entry.getIdent() == prev.getIdent() &&
          entry.getRegion() == prev.getRegion() &&
-         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M)
-         )
+         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
         continue;
     }
 
@@ -2898,10 +2903,13 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *
         if(reader.name() == "rtept")
         {
           readPosGpx(pos, name, xmlStream);
-          if(route != nullptr)
-            route->append(pos);
-          if(routenames != nullptr)
-            routenames->append(name);
+          if(pos.isValidRange())
+          {
+            if(route != nullptr)
+              route->append(pos);
+            if(routenames != nullptr)
+              routenames->append(name);
+          }
         }
         else
           xmlStream.skipCurrentElement(false /* warn */);
@@ -2919,7 +2927,8 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *
             if(reader.name() == "trkpt")
             {
               readPosGpx(pos, name, xmlStream);
-              track->append(pos);
+              if(pos.isValidRange())
+                track->append(pos);
             }
             else
               xmlStream.skipCurrentElement(false /* warn */);

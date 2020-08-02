@@ -29,8 +29,12 @@ namespace util {
 class Version
 {
 public:
-  explicit Version(int verMajor, int verMinor, int verPatchlevel, const QString& verName = QString(), int verNameSub = -1);
+  /* Initialize from given parameters */
+  explicit Version(int verMajor, int verMinor, int verPatchlevel,
+                   const QString& verName = QString(), int verNameSub = -1);
   explicit Version(const QString& str);
+
+  /* Initialize from application version */
   Version();
   ~Version();
 
