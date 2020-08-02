@@ -30,6 +30,7 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QApplication>
+#include <QScreen>
 
 namespace atools {
 namespace gui {
@@ -46,8 +47,9 @@ struct MainWindowState
   {
   }
 
-  /* Copy state to main window and all related widgets */
-  void toWindow(QMainWindow *mainWindow) const;
+  /* Copy state to main window and all related widgets. Saved position to place fullscreen and maximized windows
+   * is used if position is null. null = use current screen, otherwise use save screen position. */
+  void toWindow(QMainWindow *mainWindow, const QPoint *position) const;
 
   /* Save state from main window and all related widgets */
   void fromWindow(const QMainWindow *mainWindow);
@@ -77,18 +79,18 @@ QDebug operator<<(QDebug out, const MainWindowState& obj)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MainWindowState["
-                          << "size " << obj.mainWindowState.size()
-                          << ", window size " << obj.mainWindowSize
-                          << ", window position " << obj.mainWindowPosition
-                          << ", window states " << obj.mainWindowStates
-                          << ", statusbar " << obj.statusBarVisible
-                          << ", menu " << obj.menuVisible
-                          << ", valid " << obj.valid
-                          << "]";
+  << "size " << obj.mainWindowState.size()
+  << ", window size " << obj.mainWindowSize
+  << ", window position " << obj.mainWindowPosition
+  << ", window states " << obj.mainWindowStates
+  << ", statusbar " << obj.statusBarVisible
+  << ", menu " << obj.menuVisible
+  << ", valid " << obj.valid
+  << "]";
   return out;
 }
 
-void MainWindowState::toWindow(QMainWindow *mainWindow) const
+void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) const
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << *this;
@@ -96,7 +98,13 @@ void MainWindowState::toWindow(QMainWindow *mainWindow) const
   if(!valid)
     qWarning() << Q_FUNC_INFO << "Calling on invalid state";
 
+  if(mainWindowStates.testFlag(Qt::WindowMaximized) || mainWindowStates.testFlag(Qt::WindowFullScreen))
+    // Move window to position before going fullscreen or maximized to catch right screen
+    mainWindow->move(position == nullptr ? mainWindowPosition : *position);
+
+  // Set normal, maximized or fullscreen
   mainWindow->setWindowState(mainWindowStates);
+
   if(!mainWindowStates.testFlag(Qt::WindowMaximized) && !mainWindowStates.testFlag(Qt::WindowFullScreen))
   {
     // Change size and position only if main window is not maximized or full screen
@@ -155,7 +163,7 @@ void MainWindowState::clear()
 QDataStream& operator<<(QDataStream& out, const atools::gui::MainWindowState& state)
 {
   out << state.valid << state.mainWindowState << state.mainWindowSize << state.mainWindowPosition
-      << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
+  << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
   return out;
 }
 
@@ -219,7 +227,7 @@ bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
 DockWidgetHandler::DockWidgetHandler(QMainWindow *parentMainWindow, const QList<QDockWidget *>& dockWidgetsParam,
                                      const QList<QToolBar *>& toolBarsParam, bool verboseLog)
   : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam),
-  verbose(verboseLog)
+    verbose(verboseLog)
 {
   dockEventFilter = new DockEventFilter();
   normalState = new MainWindowState;
@@ -303,10 +311,10 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
   {
     // Find a stack that contains the widget ==================
     auto it = std::find_if(dockStackList.begin(), dockStackList.end(),
-                           [dockWidget](QList<QDockWidget *>& list)
-        {
-          return list.contains(dockWidget);
-        });
+                           [dockWidget](QList<QDockWidget *> &list)
+                           {
+                             return list.contains(dockWidget);
+                           });
 
     if(it != dockStackList.end())
     {
@@ -356,17 +364,17 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
   QList<QDockWidget *> tabified = mainWindow->tabifiedDockWidgets(dockWidget);
   if(!tabified.isEmpty())
   {
-    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list) -> bool
-        {
-          return list.contains(dockWidget);
-        });
+    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *> &list)->bool
+                           {
+                             return list.contains(dockWidget);
+                           });
 
     if(it == dockStackList.end())
     {
-      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool
-          {
-            return dock->isFloating();
-          });
+      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [] (QDockWidget * dock)->bool
+                                 {
+                                   return dock->isFloating();
+                                 });
       if(rmIt != tabified.end())
         tabified.erase(rmIt, tabified.end());
 
@@ -496,7 +504,7 @@ void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
 
       if(flags.testFlag(HIDE_TOOLBARS))
       {
-        for(QToolBar *toolBar: toolBars)
+        for(QToolBar *toolBar : toolBars)
           toolBar->setVisible(false);
       }
 
@@ -507,8 +515,8 @@ void DockWidgetHandler::setFullScreenOn(atools::gui::DockFlags flags)
       }
     }
 
-    // Main window to fullscreen
-    fullscreenState->toWindow(mainWindow);
+    // Main window to fullscreen - keep window on same screen
+    fullscreenState->toWindow(mainWindow, &normalState->mainWindowPosition);
 
     fullscreen = true;
     delayedFullscreen = false;
@@ -527,8 +535,8 @@ void DockWidgetHandler::setFullScreenOff()
     // Save full screen layout
     fullscreenState->fromWindow(mainWindow);
 
-    // Assign normal state to window
-    normalState->toWindow(mainWindow);
+    // Assign normal state to window and keep window on same screen
+    normalState->toWindow(mainWindow, &fullscreenState->mainWindowPosition);
 
     fullscreen = false;
     delayedFullscreen = false;
@@ -571,21 +579,21 @@ void DockWidgetHandler::currentStateToWindow()
     qDebug() << Q_FUNC_INFO;
 
   if(fullscreen)
-    fullscreenState->toWindow(mainWindow);
+    fullscreenState->toWindow(mainWindow, nullptr);
   else
-    normalState->toWindow(mainWindow);
+    normalState->toWindow(mainWindow, nullptr);
 }
 
 void DockWidgetHandler::normalStateToWindow()
 {
-  normalState->toWindow(mainWindow);
+  normalState->toWindow(mainWindow, nullptr);
   delayedFullscreen = fullscreen; // Set flag to allow switch to fullscreen later after showing windows
   fullscreen = false;
 }
 
 void DockWidgetHandler::fullscreenStateToWindow()
 {
-  fullscreenState->toWindow(mainWindow);
+  fullscreenState->toWindow(mainWindow, nullptr);
   fullscreen = true;
   delayedFullscreen = false;
 }
@@ -608,7 +616,7 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       mainWindow->setWindowState(Qt::WindowActive);
 
       // Move to origin and apply size
-      mainWindow->move(0, 0);
+      mainWindow->move(QGuiApplication::primaryScreen()->availableGeometry().topLeft());
       mainWindow->resize(size);
 
       // Reload state now. This has to be done after resizing the window.

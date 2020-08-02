@@ -78,16 +78,19 @@ public:
   void restoreState(QByteArray data);
 
   /* Assign current state normal or fullscreen to current window.
-   * This covers main menu widget, toolbars and dock widgets */
+   * This covers main menu widget, toolbars and dock widgets.
+   * Moves window to saved screen position.*/
   void currentStateToWindow();
 
   /* As above but assigns the normal state to the main window and sets the delayedFullscreen flag if
    * fullscreen mode was enable. This allows to switch to fullscreen later to avoid a messed up layout.
-   *  Changes fullscreen to false. */
+   * Changes fullscreen to false.
+   * Moves window to saved screen (position).*/
   void normalStateToWindow();
 
   /* As above but assigns the fullscreen state to the main window
-   *  Changes fullscreen to true. */
+   * Changes fullscreen to true.
+   * Moves window to saved screen (position).*/
   void fullscreenStateToWindow();
 
   /* Show, activate and raise a dock widget */
@@ -127,7 +130,8 @@ public:
     return fullscreen;
   }
 
-  /* Loads the main windows state from the given file, applies given size to the window and ends fullscreen mode */
+  /* Loads the main windows state from the given file, applies given size to the window and ends fullscreen mode.
+   * Places window on the primary screen. */
   void resetWindowState(const QSize& size, const QString& filename);
 
   /* Save normal and fullscreen window states to file.
