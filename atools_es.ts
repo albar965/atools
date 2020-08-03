@@ -22,6 +22,18 @@
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished">No puedo abrir archivir &quot;%1&quot;. Motivo: %2</translation>
+    </message>
 </context>
 <context>
     <name>AirspaceWriter</name>
@@ -34,7 +46,7 @@
     <name>AirwayResolver</name>
     <message>
         <source>Populating VOR/NDB Routing Table</source>
-        <translation>Poblando tabla de rutas VOR/NDB</translation>
+        <translation type="vanished">Poblando tabla de rutas VOR/NDB</translation>
     </message>
     <message>
         <source>Creating airways: %1...</source>
@@ -101,6 +113,13 @@ Atrapada excepción
     <message>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>&lt;i&gt;%2&lt;/i&gt; no es un directorio.</translation>
+    </message>
+</context>
+<context>
+    <name>Flightplan</name>
+    <message>
+        <source>Empty Flightplan</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -209,15 +228,15 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position.</source>
+        <source>Invalid position in LNMPLN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position. Ordinates out of range: %1</source>
+        <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <source>Invalid position in GPX.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -750,7 +769,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Creating airways</source>
-        <translation>Creando Rutas Aéreas</translation>
+        <translation type="vanished">Creando Rutas Aéreas</translation>
     </message>
     <message>
         <source>Preparing Airways</source>
@@ -918,6 +937,18 @@ Atrapada excepción
     </message>
     <message>
         <source>Creating boundary indexes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating indexes for route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Creating waypoints for procedures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Updating Navids in Waypoint</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1303,6 +1334,113 @@ Atrapada excepción
         <source>AUSOTS</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Error reading &quot;%1&quot;: %2</source>
+        <translation type="unfinished">Error leyendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+    </message>
+    <message>
+        <source>★</source>
+        <comment>Star for rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>−</source>
+        <comment>For empty rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>…</source>
+        <comment>Dots used to shorten texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+</source>
+        <comment>Linefeed used to shorten large texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>thin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>extra light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>medium</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>demi bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>extra bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>italic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>overline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>underline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>strike out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>fixed pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System font: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User selected font: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1406,6 +1544,17 @@ Importación detenida.</translation>
     </message>
     <message>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>XmlTools</name>
+    <message>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1691,7 +1840,7 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Too many errors reading from simulator. Restart program.</source>
-        <translation>Demasiados errores leyendo el simulador. Reiniciando el programa.</translation>
+        <translation type="vanished">Demasiados errores leyendo el simulador. Reiniciando el programa.</translation>
     </message>
     <message>
         <source>Not connected to the simulator. Waiting ...</source>
@@ -1700,6 +1849,22 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     <message>
         <source>Error reading &quot;%1&quot;: %2.</source>
         <translation>Error leyendo &quot;%1&quot;: %2.</translation>
+    </message>
+    <message>
+        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1733,10 +1898,6 @@ Cross country time: %3
 IFR time: %4
 Night time: %5</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in LogdataController::importXplane</extracomment>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1793,6 +1954,25 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::DockWidgetHandler</name>
+    <message>
+        <source>Error reading &quot;%1&quot;: %2</source>
+        <translation type="unfinished">Error leyendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+    </message>
+    <message>
+        <source>Error writing &quot;%1&quot;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1862,10 +2042,6 @@ Night time: %5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Close all tabs except the current tab</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Reset Tab Layout</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1891,6 +2067,10 @@ Night time: %5</source>
     </message>
     <message>
         <source>Open or close tab %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close all tabs except the currently active tab</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

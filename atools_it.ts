@@ -17,13 +17,28 @@
 <context>
     <name>AircraftPerf</name>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="91"/>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="98"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="356"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
         <translation>Impossibile aprire il file delle prestazioni dell&apos;aeromobile &quot;%1&quot; per la lettura.</translation>
     </message>
     <message>
-        <location filename="src/fs/perf/aircraftperf.cpp" line="109"/>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="108"/>
+        <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="136"/>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="222"/>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished">Impossibile aprire il file &quot;%1&quot;. Causa: %2</translation>
+    </message>
+    <message>
+        <location filename="src/fs/perf/aircraftperf.cpp" line="370"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
         <translation>Impossibile aprire il file delle prestazioni dell&apos;aeromobile &quot;%1&quot; per la scrittura.</translation>
     </message>
@@ -39,14 +54,13 @@
 <context>
     <name>AirwayResolver</name>
     <message>
-        <location filename="src/fs/db/airwayresolver.cpp" line="158"/>
+        <location filename="src/fs/db/airwayresolver.cpp" line="177"/>
         <source>Creating airways: %1...</source>
         <translation>Creazione aerovie: %1...</translation>
     </message>
     <message>
-        <location filename="src/fs/db/routeedgewriter.cpp" line="138"/>
         <source>Populating VOR/NDB Routing Table</source>
-        <translation>Riempimento Tabella Instradamenti VOR/NDB</translation>
+        <translation type="vanished">Riempimento Tabella Instradamenti VOR/NDB</translation>
     </message>
 </context>
 <context>
@@ -189,37 +203,42 @@ File: &quot;%2&quot;
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation type="vanished">Creato da %1 Versione %2 (revisione %3) il %4</translation>
     </message>
+    <message>
+        <location filename="src/fs/pln/flightplan.cpp" line="85"/>
+        <source>Empty Flightplan</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FlightplanEntry</name>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="117"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="87"/>
         <source>Airport</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="120"/>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="135"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="90"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="105"/>
         <source>Unknown</source>
         <translation type="unfinished">Sconosciuto</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="123"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="93"/>
         <source>Waypoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="126"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="96"/>
         <source>VOR</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="129"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="99"/>
         <source>NDB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanentry.cpp" line="132"/>
+        <location filename="src/fs/pln/flightplanentry.cpp" line="102"/>
         <source>User</source>
         <translation type="unfinished">Utente</translation>
     </message>
@@ -227,7 +246,7 @@ File: &quot;%2&quot;
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="173"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="182"/>
         <source>Cannot open empty flight plan file &quot;%1&quot;.</source>
         <translation>Impossibile aprire il file del piano di volo vuoto &quot;%1&quot;.</translation>
     </message>
@@ -240,60 +259,62 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file del piano di volo &quot;%1&quot;. Nessun formato piano di volo riconosciuto. Sono supportati solo PLN (FSX XML e FS9 INI e FSC), FMS e FLP.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="109"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="111"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation>Impossibile aprire il file %1. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="124"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="128"/>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
         <oldsource>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</oldsource>
         <translation type="unfinished">Impossibile aprire il file del piano di volo &quot;%1&quot;. Nessun formato piano di volo riconosciuto. Sono supportati solo PLN (FSX XML e FS9 INI e FSC), FMS per X-Plane e FGFP di FlightGear.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="416"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="433"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>File FMS non valido. Impossibile leggere il numero di versione: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="431"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="448"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>File FMS non valido. Versione %2: %1 non valida</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="557"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="574"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>File FMS non valido. Il numero di sezioni non è %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="788"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="805"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>File del piano di volo non valido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="818"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="835"/>
-        <source>Invalid position.</source>
+        <location filename="src/fs/pln/flightplanio.cpp" line="852"/>
+        <source>Invalid position in LNMPLN.</source>
+        <oldsource>Invalid position.</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="824"/>
-        <source>Invalid position. Ordinates out of range: %1</source>
+        <location filename="src/fs/pln/flightplanio.cpp" line="841"/>
+        <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="873"/>
-        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <location filename="src/fs/pln/flightplanio.cpp" line="882"/>
+        <source>Invalid position in GPX.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1099"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1198"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="973"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1243"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3710"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1381"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1427"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file di FlightGear &quot;%1&quot;. Causa: %2</translation>
     </message>
@@ -306,12 +327,12 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FLP &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2548"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2775"/>
         <source> Flight Plan</source>
         <translation> Piano di volo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2593"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2825"/>
         <source> Track</source>
         <translation> Percorso</translation>
     </message>
@@ -320,7 +341,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FMS &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2835"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3151"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Creato da %1 Versione %2 (revisione %3) il %4 </translation>
     </message>
@@ -329,7 +350,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file RTE &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3297"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Errore interno scrivendo %1: Il file ha dimensione non valida %2 != %3 e non sarà utilizzabile.</translation>
     </message>
@@ -375,12 +396,12 @@ File: &quot;%2&quot;
 <context>
     <name>HtmlBuilder</name>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="211"/>
+        <location filename="src/util/htmlbuilder.cpp" line="253"/>
         <source>Yes</source>
         <translation>Si</translation>
     </message>
     <message>
-        <location filename="src/util/htmlbuilder.cpp" line="211"/>
+        <location filename="src/util/htmlbuilder.cpp" line="253"/>
         <source>No</source>
         <translation>No</translation>
     </message>
@@ -434,27 +455,27 @@ File: &quot;%2&quot;
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1829"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1826"/>
         <source>Clear</source>
         <translation>Sereno</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1832"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1829"/>
         <source>Few</source>
         <translation>Poche nuvole</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1835"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1832"/>
         <source>Scattered</source>
         <translation>Nuvole sparse</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1838"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1835"/>
         <source>Broken</source>
         <translation>Parzialmente coperto</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1841"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1838"/>
         <source>Overcast</source>
         <translation>Coperto</translation>
     </message>
@@ -462,502 +483,502 @@ File: &quot;%2&quot;
 <context>
     <name>MetarParser</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="441"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="438"/>
         <source>metar data bogus</source>
         <translation>dati metar errati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="485"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="482"/>
         <source>metar data incomplete </source>
         <translation>dati metar incompleti </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="607"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="604"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="610"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="607"/>
         <source>Corrected</source>
         <translation>Corretti</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="613"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="610"/>
         <source>Routine delayed observation</source>
         <translation>Osservazioni ripetitive ritardate</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="644"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="641"/>
         <source>Light</source>
         <translation>Leggero</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="647"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="644"/>
         <source>Moderate</source>
         <translation>Moderato</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="650"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="647"/>
         <source>Heavy</source>
         <translation>Intenso</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="247"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="244"/>
         <source>No significant weather</source>
         <translation>Nessun meteo significativo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="137"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="134"/>
         <source>Showers of</source>
         <translation>Acquazzoni da</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="140"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="137"/>
         <source>Thunderstorm with</source>
         <translation>Temporali con</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="143"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="140"/>
         <source>Patches of</source>
         <translation>Palline di</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="146"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="143"/>
         <source>Blowing</source>
         <translation>Soffi</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="149"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="146"/>
         <source>Low drifting</source>
         <translation>Leggera deriva</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="149"/>
         <source>Freezing</source>
         <translation>Ghiaccio</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="155"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="152"/>
         <source>Shallow</source>
         <translation>Superficiale</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="158"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="155"/>
         <source>Partial</source>
         <translation>Parzialmente</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="165"/>
         <source>Drizzle</source>
         <translation>Pioggerella</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="168"/>
         <source>Hail</source>
         <translation>Grandine</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="171"/>
         <source>Small hail and/or snow pellets</source>
         <translation>Piccola grandine e / o palline di neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="174"/>
         <source>Ice crystals</source>
         <translation>Cristalli di ghiaccio</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="177"/>
         <source>Ice pellets</source>
         <translation>Palline di ghiaccio</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="183"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="180"/>
         <source>Rain</source>
         <translation>Pioggia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="186"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="183"/>
         <source>Snow grains</source>
         <translation>Fiocchi di neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="189"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="186"/>
         <source>Snow</source>
         <translation>Neve</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="192"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="189"/>
         <source>Unknown precipitation</source>
         <translation>Precipitazione sconosciuta</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="195"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="192"/>
         <source>Mist</source>
         <translation>Nebbia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="198"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="195"/>
         <source>Widespread dust</source>
         <translation>Polvere diffusa</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="201"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="198"/>
         <source>Fog</source>
         <translation>Nebbia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="204"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="201"/>
         <source>Fog bank</source>
         <translation>Nebbia a banchi</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="207"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="204"/>
         <source>Smoke</source>
         <translation>Fumo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="207"/>
         <source>Haze</source>
         <translation>Foschia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="210"/>
         <source>Spray</source>
         <translation>Spray</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="213"/>
         <source>Sand</source>
         <translation>Sabbia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="216"/>
         <source>Volcanic ash</source>
         <translation>Cenere Vulcanica</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="222"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="219"/>
         <source>Duststorm</source>
         <translation>Tempesta di sabbia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="222"/>
         <source>Funnel cloud/tornado waterspout</source>
         <translation>Funnel nuvola/tornado waterspout</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="228"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="225"/>
         <source>Well-developed dust/sand whirls</source>
         <translation>Vortici di polvere/sabbia ben sviluppati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="228"/>
         <source>Squalls</source>
         <translation>Burrasche</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="231"/>
         <source>Sandstorm</source>
         <translation>Tempesta di sabbia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="237"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="234"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1147"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1144"/>
         <source>Light </source>
         <translation>Leggero </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1149"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1146"/>
         <source>Heavy </source>
         <translation>Intenso </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1151"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1148"/>
         <source>in the vicinity </source>
         <translation>nei pressi </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1153"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1150"/>
         <source>Moderate </source>
         <translation>Moderato </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="284"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="281"/>
         <source>altocumulus</source>
         <translation>altocumuli</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="287"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="284"/>
         <source>altocumulus castellanus</source>
         <translation>altocumuli castellani</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="290"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="287"/>
         <source>altocumulus standing lenticular</source>
         <translation>altocumuli in piedi lenticolari</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="293"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="290"/>
         <source>altostratus</source>
         <translation>altostrati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="296"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="293"/>
         <source>cumulonimbus</source>
         <translation>cumulonembi</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="299"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="296"/>
         <source>cumulonimbus mammatus</source>
         <translation>cumulonembi mammatus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="302"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="299"/>
         <source>cirrocumulus</source>
         <translation>cirrocumuli</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="305"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="302"/>
         <source>cirrocumulus standing lenticular</source>
         <translation>cirrocumuli in piedi lenticolari</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="308"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="305"/>
         <source>cirrus</source>
         <translation>cirri</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="311"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="308"/>
         <source>cirrostratus</source>
         <translation>cirrostrati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="314"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="311"/>
         <source>cumulus</source>
         <translation>cumuli</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="317"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="314"/>
         <source>cumulus fractus</source>
         <translation>cumuli fractus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="320"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="317"/>
         <source>nimbostratus</source>
         <translation>nimbostrati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="323"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="320"/>
         <source>stratoaltocumulus</source>
         <translation>stratoaltocumuli</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="326"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="323"/>
         <source>stratocumulus</source>
         <translation>stratocumuli</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="329"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="326"/>
         <source>stratocumulus standing lenticular</source>
         <translation>stratocumuli in piedi lenticolari</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="332"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="329"/>
         <source>stratus</source>
         <translation>strati</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="335"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="332"/>
         <source>stratus fractus</source>
         <translation>strati fractus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="338"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="335"/>
         <source>towering cumulus</source>
         <translation>cumuli torreggianti</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="347"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="344"/>
         <source>clear and dry</source>
         <translation>sereno e secco</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="348"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="345"/>
         <source>damp</source>
         <translation>umido</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="349"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="346"/>
         <source>wet or puddles</source>
         <translation>bagnato o pozzanghere</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="350"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="347"/>
         <source>frost</source>
         <translation>brina</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="351"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="348"/>
         <source>dry snow</source>
         <translation>neve asciutta</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="352"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="349"/>
         <source>wet snow</source>
         <translation>neve bagnata</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="353"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="350"/>
         <source>slush</source>
         <translation>fanghiglia</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="354"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="351"/>
         <source>ice</source>
         <translation>ghiaccio</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="355"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="352"/>
         <source>compacted snow</source>
         <translation>neve compatta</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="356"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="353"/>
         <source>frozen ridges</source>
         <translation>creste ghiacciate</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="363"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="360"/>
         <source>1-10%</source>
         <translation>1-10%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="364"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="361"/>
         <source>11-25%</source>
         <translation>11-25%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="367"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="364"/>
         <source>26-50%</source>
         <translation>26-50%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="371"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="368"/>
         <source>51-100%</source>
         <translation>51-100%</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="378"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="375"/>
         <source>poor braking action</source>
         <translation>scarsa azione frenante</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="379"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="376"/>
         <source>poor/medium braking action</source>
         <translation>azione frenante scarsa/media</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="380"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="377"/>
         <source>medium braking action</source>
         <translation>azione frenante media</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="381"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="378"/>
         <source>medium/good braking action</source>
         <translation>azione frenante media/buona</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="382"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="379"/>
         <source>good braking action</source>
         <translation>buona azione frenante</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="386"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="383"/>
         <source>friction: unreliable measurement</source>
         <translation>attrito: misura inaffidabile</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1448"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1445"/>
         <source>Low Instrument Flight Rules</source>
         <translation>IFR inferiore</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1451"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1448"/>
         <source>Instrument Flight Rules</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1454"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1451"/>
         <source>Marginal Visual Flight Rules</source>
         <translation>VFR marginale</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1457"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1454"/>
         <source>Visual Flight Rules</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1470"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1467"/>
         <source>LIFR</source>
         <translation>LIRF</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1473"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1470"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1476"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1473"/>
         <source>MVFR</source>
         <translation>MVFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1479"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1476"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1555"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1552"/>
         <source>cleared</source>
         <translation>eliminato</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1591"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1588"/>
         <source>runway not in use</source>
         <translation>pista non in uso</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="259"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="256"/>
         <source>Blue</source>
         <translation>Blu</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="259"/>
         <source>White</source>
         <translation>Bianco</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="265"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="262"/>
         <source>Green</source>
         <translation>Verde</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="268"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="265"/>
         <source>Yellow</source>
         <translation>Giallo</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="271"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="268"/>
         <source>Amber</source>
         <translation>Ambra</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="274"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="271"/>
         <source>Red</source>
         <translation>Rosso</translation>
     </message>
@@ -965,17 +986,17 @@ File: &quot;%2&quot;
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1889"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1886"/>
         <source>Vertical visibility</source>
         <translation>Visibilità verticale</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1895"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1892"/>
         <source>Less than</source>
         <translation>Minore di</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1898"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1895"/>
         <source>Greater than</source>
         <translation>Maggiore di</translation>
     </message>
@@ -983,238 +1004,251 @@ File: &quot;%2&quot;
 <context>
     <name>Navdatabase</name>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="109"/>
+        <location filename="src/fs/navdatabase.cpp" line="112"/>
         <source>Removing Views</source>
         <translation>Rimozione Viste</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="115"/>
+        <location filename="src/fs/navdatabase.cpp" line="118"/>
         <source>Removing Routing and Search</source>
         <translation>Rimozione Instradamenti e Ricerche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="121"/>
+        <location filename="src/fs/navdatabase.cpp" line="124"/>
         <source>Removing Navigation Aids</source>
         <translation>Rimozione Aiuti alla Navigazione</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="127"/>
+        <location filename="src/fs/navdatabase.cpp" line="130"/>
         <source>Removing Airport Facilites</source>
         <translation>Rimozione Strutture Aeroportuali</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="133"/>
+        <location filename="src/fs/navdatabase.cpp" line="136"/>
         <source>Removing Approaches</source>
         <translation>Rimozione Avvicinamenti</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="139"/>
+        <location filename="src/fs/navdatabase.cpp" line="142"/>
         <source>Removing Airports</source>
         <translation>Rimozione Aeroporti</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="145"/>
+        <location filename="src/fs/navdatabase.cpp" line="148"/>
         <source>Removing Metadata</source>
         <translation>Rimozione Metadati</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="152"/>
+        <location filename="src/fs/navdatabase.cpp" line="155"/>
         <source>Creating Database Schema</source>
         <translation>Creazione Schema del Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="194"/>
+        <location filename="src/fs/navdatabase.cpp" line="197"/>
         <source>File is not a regular file</source>
         <translation>Il File non è un file regolare</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="197"/>
+        <location filename="src/fs/navdatabase.cpp" line="200"/>
         <source>File is not readable</source>
         <translation>Il File non è leggibile</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="200"/>
+        <location filename="src/fs/navdatabase.cpp" line="203"/>
         <source>File does not exist</source>
         <translation>Il File non esiste</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="220"/>
+        <location filename="src/fs/navdatabase.cpp" line="223"/>
         <source>&quot;%1&quot; not found</source>
         <translation>&quot;%1&quot; non trovato</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="230"/>
+        <location filename="src/fs/navdatabase.cpp" line="233"/>
         <source>Does not contain a &quot;Scenery&quot; directory</source>
         <translation>Non contiene una cartella &quot;Scenery&quot;</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="234"/>
+        <location filename="src/fs/navdatabase.cpp" line="237"/>
         <source>Is not a directory</source>
         <translation>Non è una cartella</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="237"/>
+        <location filename="src/fs/navdatabase.cpp" line="240"/>
         <source>Directory is not readable</source>
         <translation>La Cartella non è leggibile</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="240"/>
+        <location filename="src/fs/navdatabase.cpp" line="243"/>
         <source>Directory does not exist</source>
         <translation>La Cartella non esiste</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="334"/>
+        <location filename="src/fs/navdatabase.cpp" line="561"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="348"/>
+        <location filename="src/fs/navdatabase.cpp" line="575"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="377"/>
         <source>Creating airways</source>
-        <translation>Creazione aerovie</translation>
+        <translation type="vanished">Creazione aerovie</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="396"/>
-        <location filename="src/fs/navdatabase.cpp" line="407"/>
+        <location filename="src/fs/navdatabase.cpp" line="618"/>
+        <location filename="src/fs/navdatabase.cpp" line="629"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Fusione VOR e TACAN in VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="401"/>
+        <location filename="src/fs/navdatabase.cpp" line="623"/>
         <source>Updating waypoints</source>
         <translation>Aggiornamento punti rotta</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="412"/>
+        <location filename="src/fs/navdatabase.cpp" line="634"/>
         <source>Updating approaches</source>
         <translation>Aggiornamento avvicinamenti</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="415"/>
+        <location filename="src/fs/navdatabase.cpp" line="637"/>
         <source>Updating Airports</source>
         <translation>Aggiornamento Aeroporti</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="422"/>
+        <location filename="src/fs/navdatabase.cpp" line="642"/>
+        <location filename="src/fs/navdatabase.cpp" line="649"/>
         <source>Updating ILS</source>
         <translation>Aggiornamento ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="427"/>
+        <location filename="src/fs/navdatabase.cpp" line="654"/>
         <source>Updating ILS Count</source>
         <translation>Aggiornamento Conteggio ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="431"/>
+        <location filename="src/fs/navdatabase.cpp" line="658"/>
         <source>Collecting navaids for search</source>
         <translation>Indicizzazione aiuti alla navigazione per la ricerca</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="437"/>
+        <location filename="src/fs/navdatabase.cpp" line="664"/>
         <source>Populating routing tables</source>
         <translation>Riempimento tabelle di instradamento</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="440"/>
+        <location filename="src/fs/navdatabase.cpp" line="667"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>Creazione limiti di percorso per VOR e NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="448"/>
+        <location filename="src/fs/navdatabase.cpp" line="674"/>
         <source>Creating route edges waypoints</source>
         <translation>Creazione limiti di percorso punti rotta</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="452"/>
+        <location filename="src/fs/navdatabase.cpp" line="678"/>
         <source>Creating indexes for airport</source>
         <translation>Creazione indici per gli aeroporti</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="457"/>
+        <location filename="src/fs/navdatabase.cpp" line="683"/>
         <source>Clean up runways</source>
         <translation>Pulizia piste</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="461"/>
-        <location filename="src/fs/navdatabase.cpp" line="466"/>
+        <location filename="src/fs/navdatabase.cpp" line="687"/>
         <source>Creating indexes for search</source>
         <translation>Creazione indici per la ricerca</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="510"/>
+        <location filename="src/fs/navdatabase.cpp" line="692"/>
+        <source>Creating indexes for route</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="736"/>
         <source>Creating Database preparation Script</source>
         <translation>Creazione Script di preparazione del Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="515"/>
+        <location filename="src/fs/navdatabase.cpp" line="741"/>
         <source>Dropping All Indexes</source>
         <translation>Scarto di Tutti gli Indici</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="522"/>
+        <location filename="src/fs/navdatabase.cpp" line="748"/>
         <source>Vacuum Database</source>
         <translation>Svuotamento Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="530"/>
+        <location filename="src/fs/navdatabase.cpp" line="756"/>
         <source>Analyze Database</source>
         <translation>Analisi del Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="576"/>
-        <location filename="src/fs/navdatabase.cpp" line="600"/>
-        <location filename="src/fs/navdatabase.cpp" line="609"/>
-        <location filename="src/fs/navdatabase.cpp" line="685"/>
-        <location filename="src/fs/navdatabase.cpp" line="766"/>
+        <location filename="src/fs/navdatabase.cpp" line="802"/>
+        <location filename="src/fs/navdatabase.cpp" line="830"/>
+        <location filename="src/fs/navdatabase.cpp" line="920"/>
+        <location filename="src/fs/navdatabase.cpp" line="1001"/>
         <source>Creating indexes</source>
         <translation>Creazione indici</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="579"/>
-        <location filename="src/fs/navdatabase.cpp" line="603"/>
-        <location filename="src/fs/navdatabase.cpp" line="688"/>
-        <location filename="src/fs/navdatabase.cpp" line="769"/>
+        <location filename="src/fs/navdatabase.cpp" line="805"/>
+        <location filename="src/fs/navdatabase.cpp" line="833"/>
+        <location filename="src/fs/navdatabase.cpp" line="923"/>
+        <location filename="src/fs/navdatabase.cpp" line="1004"/>
         <source>Creating boundary indexes</source>
         <translation>Creazione di indici di confine</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="585"/>
-        <location filename="src/fs/navdatabase.cpp" line="701"/>
-        <location filename="src/fs/navdatabase.cpp" line="775"/>
+        <location filename="src/fs/navdatabase.cpp" line="811"/>
+        <location filename="src/fs/navdatabase.cpp" line="936"/>
+        <location filename="src/fs/navdatabase.cpp" line="1010"/>
         <source>Clean up</source>
         <translation>Pulizia</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="711"/>
+        <location filename="src/fs/navdatabase.cpp" line="819"/>
+        <source>Creating waypoints for procedures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="839"/>
+        <source>Updating Navids in Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="946"/>
         <source>Preparing Airways</source>
         <translation>Preparazione Aerovie</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="784"/>
+        <location filename="src/fs/navdatabase.cpp" line="1019"/>
         <source>Basic Validation</source>
         <translation>Validazione di Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="863"/>
+        <location filename="src/fs/navdatabase.cpp" line="1127"/>
         <source>Creating table statistics</source>
         <translation>Creazione tabella statistiche</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="869"/>
+        <location filename="src/fs/navdatabase.cpp" line="1133"/>
         <source>Creating report on values</source>
         <translation>Creazione rapporto valori</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="875"/>
+        <location filename="src/fs/navdatabase.cpp" line="1139"/>
         <source>Creating report on duplicates</source>
         <translation>Creazione rapporto sui duplicati</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="913"/>
+        <location filename="src/fs/navdatabase.cpp" line="1177"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Creazione rapporto su coordinate duplicate</translation>
     </message>
@@ -1273,20 +1307,59 @@ File: &quot;%2&quot;
         <translation>&lt;b&gt;Incontrato un errore fatale.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%3&lt;hr/&gt;%4&lt;br/&gt;&lt;h3&gt;Premere OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="396"/>
+        <location filename="src/atools.cpp" line="91"/>
+        <source>Error reading &quot;%1&quot;: %2</source>
+        <translation type="unfinished">Errore leggendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="162"/>
+        <source>★</source>
+        <comment>Star for rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="162"/>
+        <source>−</source>
+        <comment>For empty rating</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="349"/>
+        <location filename="src/atools.cpp" line="357"/>
+        <source>…</source>
+        <comment>Dots used to shorten texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="372"/>
+        <location filename="src/atools.cpp" line="375"/>
+        <source>
+</source>
+        <comment>Linefeed used to shorten large texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="373"/>
+        <source>
+…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="399"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Creato da %1 Versione %2 (revisione %3) il %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="406"/>
+        <location filename="src/atools.cpp" line="409"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Creato da %1 Versione %2 (revisione %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="431"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="72"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
-        <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
+        <location filename="src/atools.cpp" line="434"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="71"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="75"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="79"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
@@ -1660,43 +1733,138 @@ File: &quot;%2&quot;
         <translation>P3D</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="89"/>
-        <location filename="src/gui/tools.cpp" line="102"/>
+        <location filename="src/gui/tools.cpp" line="91"/>
+        <location filename="src/gui/tools.cpp" line="104"/>
         <source>Error opening path &quot;%1&quot;</source>
         <translation>Errore aprendo il percorso &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/tools.cpp" line="127"/>
+        <location filename="src/gui/tools.cpp" line="129"/>
         <source>File or directory &quot;%1&quot; does not exist.</source>
         <translation>Il File o la Cartella &quot;%1&quot; non esiste.</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/weathertypes.cpp" line="77"/>
+        <location filename="src/gui/tools.cpp" line="147"/>
+        <source>%1 pt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="149"/>
+        <source>%1 px</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="153"/>
+        <source>thin</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="155"/>
+        <source>extra light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="157"/>
+        <source>light</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="159"/>
+        <source>normal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="161"/>
+        <source>medium</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="163"/>
+        <source>demi bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="165"/>
+        <source>bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="167"/>
+        <source>extra bold</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="169"/>
+        <source>black</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="172"/>
+        <source>italic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="174"/>
+        <source>overline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="176"/>
+        <source>underline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="178"/>
+        <source>strike out</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="181"/>
+        <source>fixed pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="185"/>
+        <source>System font: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="187"/>
+        <source>User selected font: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tools.cpp" line="189"/>
+        <source>, </source>
+        <translation type="unfinished">, </translation>
+    </message>
+    <message>
+        <location filename="src/fs/weather/weathertypes.cpp" line="76"/>
         <source>Is not a file.</source>
         <translation>Non è un file.</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/weathertypes.cpp" line="81"/>
+        <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <source>File does not exist</source>
         <translation>Il File non esiste</translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="51"/>
+        <location filename="src/track/tracktypes.cpp" line="56"/>
         <source>UNKNOWN</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="54"/>
+        <location filename="src/track/tracktypes.cpp" line="59"/>
         <source>NAT</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="57"/>
+        <location filename="src/track/tracktypes.cpp" line="62"/>
         <source>PACOTS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/track/tracktypes.cpp" line="60"/>
+        <location filename="src/track/tracktypes.cpp" line="65"/>
         <source>AUSOTS</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1752,12 +1920,12 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="119"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="128"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation>Impossibile aprire il file di backup &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="324"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="358"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1770,7 +1938,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="327"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="361"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1783,7 +1951,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="330"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="364"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1796,7 +1964,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="333"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="367"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1809,7 +1977,7 @@ Import stopped.</source>
 Importazione interrotta.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="336"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="370"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -1823,42 +1991,56 @@ Importazione interrotta.</translation>
     </message>
 </context>
 <context>
+    <name>XmlTools</name>
+    <message>
+        <location filename="src/util/xmlstream.cpp" line="48"/>
+        <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/util/xmlstream.h" line="89"/>
+        <source>Cannot open file %1. Reason: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>XpDataCompiler</name>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="126"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="143"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="169"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="220"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="130"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="147"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="173"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="313"/>
         <source>Default file &quot;%1&quot; not found</source>
         <translation>File predefinito &quot;%1&quot; non trovato</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="149"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="153"/>
         <source>Post procecssing Airways</source>
         <translation>Processamento Aerovie</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="318"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="333"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="434"/>
         <source>Reading: %1</source>
         <translation>Leggendo: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="746"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="875"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>Il ciclo AIRAC nel file è vuoto.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="754"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="883"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Trovati differenti cicli AIRAC nei file navdata. %1 e %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="764"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="893"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>Ciclo AIRAC non trovato nel file.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="800"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="929"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2142,58 +2324,77 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
 <context>
     <name>atools::fs::sc::DataReaderThread</name>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="62"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="63"/>
         <source>No flight simulator installation found. SimConnect not loaded.</source>
         <translation>Non ho trovato installazioni di flight simulator. SimConnect non caricata.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="65"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="69"/>
         <source>Not connected to the simulator. Waiting ...</source>
         <translation>Non collegato al simulatore. In attesa ...</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="76"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="82"/>
         <source>Connected to simulator.</source>
         <translation>Collegato al simulatore.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="152"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="161"/>
         <source>Error reading &quot;%1&quot;: %2.</source>
         <translation>Errore leggendo &quot;%1&quot;: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="182"/>
         <source>Too many errors reading from simulator. Restart program.</source>
-        <translation>Troppi errori leggendo dal simulatore. Riavvia il programma.</translation>
+        <translation type="vanished">Troppi errori leggendo dal simulatore. Riavvia il programma.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="292"/>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="335"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="193"/>
+        <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="212"/>
+        <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="219"/>
+        <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="222"/>
+        <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="329"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="372"/>
         <source>Cannot open &quot;%1&quot;.</source>
         <translation>Impossibile aprire &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="307"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="344"/>
         <source>Cannot open &quot;%1&quot;. Is not a replay file - wrong magic number.</source>
         <translation>Impossibile aprire &quot;%1&quot;. Non è un file di replay - numero magico errato.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="314"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="351"/>
         <source>Cannot open &quot;%1&quot;. Wrong version.</source>
         <translation>Impossibile aprire &quot;%1&quot;. Versione errata.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="319"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="356"/>
         <source>Replaying from &quot;%1&quot;.</source>
         <translation>Riproduzione da &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="325"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="362"/>
         <source>Cannot open &quot;%1&quot;. File is too small.</source>
         <translation>Impossibile aprire &quot;%1&quot;. Il file è troppo piccolo.</translation>
     </message>
     <message>
-        <location filename="src/fs/sc/datareaderthread.cpp" line="341"/>
+        <location filename="src/fs/sc/datareaderthread.cpp" line="378"/>
         <source>Saving replay to &quot;%1&quot;.</source>
         <translation>Salvataggio replay su &quot;%1&quot;.</translation>
     </message>
@@ -2222,13 +2423,14 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="239"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="419"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="299"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="550"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="395"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="455"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
@@ -2242,22 +2444,21 @@ Ore IFR: %4
 Ore Notturne: %5</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="444"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
-        <translation>Impossibile aprire il file di backup &quot;%1&quot;. Causa: %2 (%3)</translation>
+        <translation type="vanished">Impossibile aprire il file di backup &quot;%1&quot;. Causa: %2 (%3)</translation>
     </message>
 </context>
 <context>
     <name>atools::fs::userdata::UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="221"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="292"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="364"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="424"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="466"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="470"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="520"/>
-        <location filename="src/fs/userdata/userdatamanager.cpp" line="564"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="226"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="297"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="369"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="442"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="484"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="488"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="538"/>
+        <location filename="src/fs/userdata/userdatamanager.cpp" line="582"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
@@ -2265,7 +2466,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="141"/>
+        <location filename="src/grib/gribdownloader.cpp" line="145"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2273,7 +2474,7 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="596"/>
+        <location filename="src/grib/windquery.cpp" line="606"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2318,6 +2519,32 @@ Ore Notturne: %5</translation>
         <location filename="src/gui/application.cpp" line="177"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>atools::gui::DockWidgetHandler</name>
+    <message>
+        <location filename="src/gui/dockwidgethandler.cpp" line="629"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="634"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="720"/>
+        <source>Error reading &quot;%1&quot;: %2</source>
+        <translation type="unfinished">Errore leggendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+    </message>
+    <message>
+        <location filename="src/gui/dockwidgethandler.cpp" line="657"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="662"/>
+        <source>Error writing &quot;%1&quot;: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/dockwidgethandler.cpp" line="680"/>
+        <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/dockwidgethandler.cpp" line="683"/>
+        <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2384,57 +2611,61 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="55"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="61"/>
         <source>&amp;Open All</source>
         <translation>&amp;Apri Tutti</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="56"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
         <source>Show all tabs</source>
         <translation>Mostra tutte le schede</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="62"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="68"/>
         <source>&amp;Close All Except Current</source>
         <translation>&amp;Chiudi Tutto Tranne Corrente</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="63"/>
         <source>Close all tabs except the current tab</source>
-        <translation>Chiudi tutte le schede tranne la scheda corrente</translation>
+        <translation type="vanished">Chiudi tutte le schede tranne la scheda corrente</translation>
     </message>
     <message>
         <location filename="src/gui/tabwidgethandler.cpp" line="69"/>
+        <source>Close all tabs except the currently active tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/tabwidgethandler.cpp" line="75"/>
         <source>&amp;Reset Tab Layout</source>
         <translation>&amp;Reimposta Layout Scheda</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="70"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
         <source>Show all tabs and reset order back to default</source>
         <translation>Mostra tutte le schede e ripristina l&apos;ordine al valore predefinito</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="76"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="83"/>
         <source>&amp;Lock Tab Layout</source>
         <translation>&amp;Blocca Layout Scheda</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="77"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="84"/>
         <source>Hides close buttons and fixes tabs at current position</source>
         <translation>Nasconde i pulsanti di chiusura e blocca le schede nella posizione corrente</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="148"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="156"/>
         <source>&amp;Close tab %1</source>
         <translation>&amp;Chiudi scheda %1</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="152"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="160"/>
         <source>Close tab</source>
         <translation>Chiudi scheda</translation>
     </message>
     <message>
-        <location filename="src/gui/tabwidgethandler.cpp" line="201"/>
+        <location filename="src/gui/tabwidgethandler.cpp" line="209"/>
         <source>Open or close tab %1</source>
         <translation>Apri o chiudi scheda %1</translation>
     </message>
