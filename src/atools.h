@@ -316,6 +316,13 @@ int roundToPrecision(TYPE value, int precision = 0)
   }
 }
 
+/* Round value to nearest multiple of round */
+template<typename TYPE>
+TYPE roundToNearest(TYPE value, TYPE round)
+{
+  return round > 0. ? std::round(value / round) * round : value;
+}
+
 /* To string with changing precision */
 template<typename TYPE>
 QString numberToString(TYPE value)
