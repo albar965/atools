@@ -1,6 +1,44 @@
 Numbers (#) refer to Github issues.
 For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
 
+===============================================================================
+
+Version 3.4.7
+
+Mostly fixes for DFD and other data compilers.
+
+All data compilers and schema changes:
+* Updated database minor version to 18 to reflect changes.
+* Fixed issue with duplicate waypoints in airways for DFD, X-Plane and FSX/P3D compiler causing
+  defects in airway network. Examples: MY/EK and SYA/PA. #516
+* Added flag "artificial" for NDB and VOR waypoints which are created to simplify
+  airway construction. Useful for debugging or future versions. #516
+
+DFD:
+* Updated DFD compiler to create new and separate UIR FIR airspace types besides the old
+  deprecated center with "(FIR)" or "(UIR)" in the name. These new types will be used by the next
+  Little Navmap version. Current versions 2.4.X are compatible with this change and show
+  the old centers. #462
+* Fixed issue where runway ends with more than one ILS had all except one detached from runway.
+  Example: EDDF RWY25R ILSZ IFNW. #532
+* Coordinates for fix and recommended fix in procedure tables added. Used for better navaid
+  resolution in next Little Navmap version. #205
+
+X-Plane:
+* Improved removal of "[X]" prefixes in X-Plane and fixed issue where military airports were not
+  detected in all cases.
+* Changed airport ident to ICAO code for X-Plane compiler now. XP internal ids are now avoided
+  except in duplicates. Added xpident to airport table which keeps the internal ID for
+  X-Plane airports. #448
+* Added runway smoothness and airport flatten flags from X-Plane to database schema.
+* Corrected navaid range calculation for X-Plane. 125 NM is now treated as unpublished.
+
+P3D:
+* Fixed issue with P3D v5 not loading tower, unicom and other frequencies for all airports.
+  As a result all airports are shown in magenta color.
+
+===============================================================================
+
 Version 3.4.6
 
 P3D v5: #512
