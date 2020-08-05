@@ -133,8 +133,8 @@ void FileHistoryHandler::updateMenu()
 #endif
 
     QAction *fileAction = recentMenu->addAction(fname);
-    fileAction->setToolTip(filepath);
-    fileAction->setStatusTip(filepath);
+    fileAction->setToolTip(QDir::toNativeSeparators(filepath));
+    fileAction->setStatusTip(QDir::toNativeSeparators(filepath));
     fileAction->setData(filepath);
     i++;
   }
