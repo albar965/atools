@@ -353,7 +353,7 @@ QString elideTextShort(const QString& str, int maxLength)
 
 QString elideTextShortMiddle(const QString& str, int maxLength)
 {
-  if(str.size() > maxLength)
+  if(maxLength / 2 + maxLength / 2 + 1 < str.size()) // Avoid same size replacement due to round down
     return str.left(maxLength / 2) + QObject::tr("…", "Dots used to shorten texts") + str.right(maxLength / 2);
 
   return str;
