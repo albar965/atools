@@ -680,9 +680,25 @@ HtmlBuilder& HtmlBuilder::br()
   return *this;
 }
 
-HtmlBuilder& HtmlBuilder::p()
+HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
 {
-  htmlText += "<p>";
+  if(flags & html::NOBR_WHITESPACE)
+    htmlText += "<p style=\"white-space:pre\">";
+  else
+    htmlText += "<p>";
+  text(str, flags, color);
+  htmlText += "</p>\n";
+  tableIndex = 0;
+  numLines++;
+  return *this;
+}
+
+HtmlBuilder& HtmlBuilder::p(html::Flags flags)
+{
+  if(flags & html::NOBR_WHITESPACE)
+    htmlText += "<p style=\"white-space:pre\">";
+  else
+    htmlText += "<p>";
   numLines++;
   return *this;
 }
@@ -738,11 +754,11 @@ HtmlBuilder& HtmlBuilder::hr(int size, int widthPercent)
 
 HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flags flags, QColor color)
 {
-  QString style;
+  QString styleTxt;
   if(flags & html::LINK_NO_UL)
-    style = "style=\"text-decoration:none;\"";
+    styleTxt = "style=\"text-decoration:none;\"";
 
-  htmlText += "<a " + style + " " + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
+  htmlText += "<a " + styleTxt + " " + (href.isEmpty() ? QString() : " href=\"" + href + "\"") + ">" +
               asText(text, flags, color) + "</a>";
   return *this;
 }
@@ -943,16 +959,6 @@ HtmlBuilder& HtmlBuilder::text(const QString& str, html::Flags flags, QColor col
 HtmlBuilder& HtmlBuilder::textHtml(const HtmlBuilder& other)
 {
   text(other.getHtml(), html::NO_ENTITIES);
-  return *this;
-}
-
-HtmlBuilder& HtmlBuilder::p(const QString& str, html::Flags flags, QColor color)
-{
-  htmlText += "<p>";
-  text(str, flags, color);
-  htmlText += "</p>\n";
-  tableIndex = 0;
-  numLines++;
   return *this;
 }
 

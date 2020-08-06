@@ -50,7 +50,10 @@ enum Flag
   NO_ENTITIES = 1 << 12, /* Do not convert entities */
   ALIGN_RIGHT = 1 << 13, /* Only for table data */
   AUTOLINK = 1 << 14, /* Automatically create links from http:// and https:// in text */
-  REPLACE_CRLF = 1 << 15 /* Replace carriage return and linefeed with <br/> */
+  REPLACE_CRLF = 1 << 15, /* Replace carriage return and linefeed with <br/> */
+
+  NOBR_WHITESPACE = 1 << 16 /* HTML no break at whitespace for tooltips
+                             * like: <p style='white-space:pre'>. Only for paragraphs. */
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -202,7 +205,7 @@ public:
   HtmlBuilder& p(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
   /* Begin paragraph */
-  HtmlBuilder& p();
+  HtmlBuilder& p(html::Flags flags = html::NONE);
 
   /* End paragraph */
   HtmlBuilder& pEnd();
