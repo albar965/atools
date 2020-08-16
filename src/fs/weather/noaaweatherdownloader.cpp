@@ -94,10 +94,12 @@ void NoaaWeatherDownloader::downloadFailed(const QString& error, int errorCode, 
 {
   emit weatherDownloadFailed(error, errorCode, url);
 
+  downloadQueue.clear();
+
   startTimer();
 
   // Start later in the event queue to allow the download to finish
-  QTimer::singleShot(0, this, &NoaaWeatherDownloader::download);
+  QTimer::singleShot(0, this, &NoaaWeatherDownloader::startDownload);
 }
 
 void NoaaWeatherDownloader::startDownload()
