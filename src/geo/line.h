@@ -170,6 +170,9 @@ private:
   atools::geo::Pos pos1, pos2;
 };
 
+/* Invalid line */
+const atools::geo::Line EMPTY_LINE;
+
 uint qHash(const atools::geo::Line& line);
 
 } // namespace geo

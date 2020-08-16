@@ -482,7 +482,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
                               36);
     }
 
-    // Add bounding rectancle
+    // Add bounding rectangle
     Rect bounding = lineString.boundingRect();
     insertQuery->bindValue(":max_lonx", bounding.getEast());
     insertQuery->bindValue(":max_laty", bounding.getNorth());

@@ -167,6 +167,9 @@ private:
 
 };
 
+/* Invalid lines */
+const atools::geo::LineString EMPTY_LINESTRING;
+
 } // namespace geo
 } // namespace atools
 

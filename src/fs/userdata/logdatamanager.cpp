@@ -141,7 +141,7 @@ LogdataManager::LogdataManager(sql::SqlDatabase *sqlDb)
   : DataManagerBase(sqlDb, "logbook", "logbook_id",
                     ":/atools/resources/sql/fs/logbook/create_logbook_schema.sql",
                     ":/atools/resources/sql/fs/logbook/drop_logbook_schema.sql",
-                    "little_navmap_logbook_backup.csv")
+                    "little_navmap_logbook_backup.csv"), cache(MAX_CACHE_ENTRIES)
 {
 
 }
