@@ -449,22 +449,33 @@ inline void freeArray(TYPE *& arr)
   arr = nullptr;
 }
 
-/* Functions to convert integer lists and vectors to string lists and back.
+/* Functions to convert integer and float lists and vectors to string lists and back.
  * Can be used to store configuration lists.
- *  ok has the same meaning as in QString::toInt() */
-QStringList numberVectorToStrList(const QVector<int>& vector);
-QVector<int> strListToNumberVector(const QStringList& strings, bool *ok = nullptr);
-QStringList numberSetToStrList(const QSet<int>& set);
-QSet<int> strListToNumberSet(const QStringList& strings, bool *ok = nullptr);
+ * Uses the C locale for number conversion.
+ * ok has the same meaning as in QString::toInt() */
+QStringList intVectorToStrList(const QVector<int>& vector);
+QVector<int> strListToIntVector(const QStringList& strings, bool *ok = nullptr);
+QStringList intSetToStrList(const QSet<int>& set);
+QSet<int> strListToIntSet(const QStringList& strings, bool *ok = nullptr);
 
-/* Functions to convert integer/string maps and hashes to string lists and back.
+QStringList floatVectorToStrList(const QVector<float>& vector);
+QVector<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
+QStringList floatSetToStrList(const QSet<float>& set);
+QSet<float> strListToFloatSet(const QStringList& strings, bool *ok = nullptr);
+
+/* Functions to convert integer/float/string maps and hashes to string lists and back.
  * Can be used to store configuration lists.
  * ok has the same meaning as in QString::toInt().
  * string list contains consecutive key/value pairs. */
-QStringList numberStrHashToStrList(const QHash<int, QString>& hash);
-QHash<int, QString> strListToNumberStrHash(const QStringList& strings, bool *ok = nullptr);
-QStringList numberStrMapToStrList(const QMap<int, QString>& map);
-QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok = nullptr);
+QStringList intStrHashToStrList(const QHash<int, QString>& hash);
+QHash<int, QString> strListToIntStrHash(const QStringList& strings, bool *ok = nullptr);
+QStringList intStrMapToStrList(const QMap<int, QString>& map);
+QMap<int, QString> strListToIntStrMap(const QStringList& strings, bool *ok = nullptr);
+
+QStringList floatStrHashToStrList(const QHash<float, QString>& hash);
+QHash<float, QString> strListToFloatStrHash(const QStringList& strings, bool *ok = nullptr);
+QStringList floatStrMapToStrList(const QMap<float, QString>& map);
+QMap<float, QString> strListToFloatStrMap(const QStringList& strings, bool *ok = nullptr);
 
 /* Get well known system folders from QStandardPaths. */
 QString documentsDir();

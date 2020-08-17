@@ -525,7 +525,7 @@ QString tempDir()
   return QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
 }
 
-QStringList numberVectorToStrList(const QVector<int>& vector)
+QStringList intVectorToStrList(const QVector<int>& vector)
 {
   QStringList retval;
   for(int value : vector)
@@ -533,7 +533,15 @@ QStringList numberVectorToStrList(const QVector<int>& vector)
   return retval;
 }
 
-QVector<int> strListToNumberVector(const QStringList& strings, bool *ok)
+QStringList floatVectorToStrList(const QVector<float>& vector)
+{
+  QStringList retval;
+  for(int value : vector)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QVector<int> strListToIntVector(const QStringList& strings, bool *ok)
 {
   if(ok != nullptr)
     *ok = true;
@@ -551,7 +559,25 @@ QVector<int> strListToNumberVector(const QStringList& strings, bool *ok)
   return retval;
 }
 
-QStringList numberSetToStrList(const QSet<int>& set)
+QVector<float> strListToFloatVector(const QStringList& strings, bool *ok)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QVector<float> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    float val = str.toFloat(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.append(val);
+  }
+  return retval;
+}
+
+QStringList intSetToStrList(const QSet<int>& set)
 {
   QStringList retval;
   for(int value : set)
@@ -559,7 +585,15 @@ QStringList numberSetToStrList(const QSet<int>& set)
   return retval;
 }
 
-QSet<int> strListToNumberSet(const QStringList& strings, bool *ok)
+QStringList floatSetToStrList(const QSet<float>& set)
+{
+  QStringList retval;
+  for(float value : set)
+    retval.append(QString::number(value));
+  return retval;
+}
+
+QSet<int> strListToIntSet(const QStringList& strings, bool *ok)
 {
   if(ok != nullptr)
     *ok = true;
@@ -577,7 +611,25 @@ QSet<int> strListToNumberSet(const QStringList& strings, bool *ok)
   return retval;
 }
 
-QStringList numberStrHashToStrList(const QHash<int, QString>& hash)
+QSet<float> strListToFloatSet(const QStringList& strings, bool *ok)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QSet<float> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    float val = str.toFloat(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val);
+  }
+  return retval;
+}
+
+QStringList intStrHashToStrList(const QHash<int, QString>& hash)
 {
   QStringList retval;
 
@@ -589,7 +641,19 @@ QStringList numberStrHashToStrList(const QHash<int, QString>& hash)
   return retval;
 }
 
-QHash<int, QString> strListToNumberStrHash(const QStringList& strings, bool *ok)
+QStringList floatStrHashToStrList(const QHash<float, QString>& hash)
+{
+  QStringList retval;
+
+  for(auto i = hash.begin(); i != hash.end(); ++i)
+  {
+    retval.append(QString::number(i.key()));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+QHash<int, QString> strListToIntStrHash(const QStringList& strings, bool *ok)
 {
   Q_ASSERT((strings.size() % 2) == 0);
 
@@ -610,7 +674,28 @@ QHash<int, QString> strListToNumberStrHash(const QStringList& strings, bool *ok)
   return retval;
 }
 
-QStringList numberStrMapToStrList(const QMap<int, QString>& map)
+QHash<float, QString> strListToFloatStrHash(const QStringList& strings, bool *ok)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QHash<float, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    float val = strings.at(i).toFloat(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
+}
+
+QStringList intStrMapToStrList(const QMap<int, QString>& map)
 {
   QStringList retval;
 
@@ -622,7 +707,19 @@ QStringList numberStrMapToStrList(const QMap<int, QString>& map)
   return retval;
 }
 
-QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok)
+QStringList floatStrMapToStrList(const QMap<float, QString>& map)
+{
+  QStringList retval;
+
+  for(auto i = map.begin(); i != map.end(); ++i)
+  {
+    retval.append(QString::number(i.key()));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+QMap<int, QString> strListToIntStrMap(const QStringList& strings, bool *ok)
 {
   Q_ASSERT((strings.size() % 2) == 0);
 
@@ -634,6 +731,27 @@ QMap<int, QString> strListToNumberStrMap(const QStringList& strings, bool *ok)
   {
     bool localOk;
     int val = strings.at(i).toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
+}
+
+QMap<float, QString> strListToFloatStrMap(const QStringList& strings, bool *ok)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QMap<float, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    float val = strings.at(i).toFloat(&localOk);
 
     if(!localOk && ok != nullptr)
       *ok = false;
