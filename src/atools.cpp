@@ -536,7 +536,7 @@ QStringList intVectorToStrList(const QVector<int>& vector)
 QStringList floatVectorToStrList(const QVector<float>& vector)
 {
   QStringList retval;
-  for(int value : vector)
+  for(float value : vector)
     retval.append(QString::number(value));
   return retval;
 }
