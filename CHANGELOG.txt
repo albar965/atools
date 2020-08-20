@@ -1,5 +1,110 @@
-Numbers (#) refer to Github issues.
-For example: albar965/littlenavmap#3 is https://github.com/albar965/littlenavmap/issues/3.
+﻿Numbers (#) refer to GitHub issues in project `littlenavmap`.
+For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+
+===============================================================================
+
+Version 3.6.0.beta
+
+Flight plan export (class FlightplanIO):
+
+* Added saving and loading for new native LNMPLN format which supports all flight plan features.
+  Added comment field to flight plan and entries. Updated flight plan file type detection. Removed FSX
+  related stuff from Flightplan class: Waypoint ID, route type (DIRECT, VOR, etc.). #293
+* Fixed issue with waypoint numbering when exporting plans for EFB.
+* Small improvements to BBS (Blackbox Simulations Airbus) export. User waypoints now converted to
+  decimal-minute coordinate format. Type is now always set to 3. Procedures are not exported.
+* Attempt to solve problems with iFly fltplan export.
+* Added flight plan export format for Aerosoft CRJ.
+* Now omitting invalid positions when saving and loading GPX files. Fixed exception/crash when
+  loading GPX with invalid position in class FlightplanIO.
+* Changed aircraft performance file saving to new XML format. Old INI format is automatically
+  detected and can still be loaded and saved. #523
+* Removed flight plan property keys for loading outdated FSX procedures.
+
+Scenery Database:
+
+* Progress for scenery database loading with FSX/P3D, X-Plane and DFD reworked to avoid
+  under- or overflow and to have a more balanced progress rate.
+* Fixed issues with user home folders containing special characters. This caused various
+  issues when detecting flight simulators.
+* Now adding artificial waypoints to allow procedure fix resolution in LNM versions <= 2.4.5 in DFD
+  databases. Added method to remove all unneeded data for LNM versions > 2.4.5 in DFD database.
+* Added more invalid taxiway names like `_` to avoid in X-Plane.
+* Added new columns `flightplan`, `aircraft_perf` and `aircraft_trail` to logbook table.
+  Added CSV export and import options for new logbook columns. Fixed issue where column order might be
+  mixed up on export and import. Added callback option for type conversion in SqlExport. #432
+
+X-Plane:
+
+* Added new X-Plane icing options: AOA, inlet, prop, static and window ice given in percent maximum if multiple sources.
+* Added more icing options for X-Plane as well as new boat types frigate and carrier.
+
+Weather:
+
+* Corrected parsing of METAR which failed to read pressure after `//////CB`.
+* Now reading full VATSIM weather file instead of doing single and slow requests for each airport.
+* Solved issue where class FileSystemWatcher caused weather and GRIB to be updated twice. Stopped
+  FileSystemWatcher from sending signal after initializing.
+* Attempt to fix download issues with regional format on Windows which let GRIB wind downloads fail
+  in some cases. #536
+
+Other, technical, internal or development related:
+
+* Fine tuned flight plan calculation to use navaids close to the departure. This fixes missing airway
+  when starting at a SID exit point. #478
+* Moved tool button actions in TabWidgetHandler to menu which allows to add separators and to show
+  tooltips. Now disabling actions `Show All` and `Close all Except` depending on number of open tabs.
+* Added saving and loading of main window layouts to DockWidgetHandler.
+* Now making tool tips visible per default in recent menu (class FileHistoryHandler). #451
+* Added full screen functionality to dock handler and fixed issue where dock window sizes were not
+  restored properly. #121
+* Added handling in all download classes for SSL errors like they happen for self signed
+  certificates, for example.
+* Made TabWidgetHandler more tolerant against old or wrong saved states.
+* Added reading support for Garmin FPL format.
+* Added airline track system parsing and downloading of NATS, PACOTS and AUSOTS from
+  airservicesaustralia and faa.gov
+* Updated SimConnect data version to 10 to force incompatibility.
+* Added normalize function to Pos::endpoint() to avoid errors.
+* Coordinate format longitude/latitude can now be read back by atools::fs::util::fromAnyFormat().
+* Added option to DockWidgetHandler to forbid snapping dock windows back into main.
+* Added raise and activate windows options to dock widget handler.
+* Complete cleanup in weather download classes. Combined weather download functionality into base
+  class WeatherDownloadBase. Moved all METAR download, parsing and disambiguation functionality into
+  MetarIndex. Now using faster nanoflann based nearest neighbor search for getting adjacent weather
+  stations.
+* Fixed error handling in DataReaderThread for incompatible data versions. Now disconnecting if
+  version or magic number does not match in data packet.
+* Added quote and simplify to cleanFilename. Removed flight plan filename building methods and
+  replaced these by one pattern based.
+* Added detection for translation files in class Translator. Removed override language option in help
+  handler. #352
+* Added `Import Filename` to userdata CSV export.
+* Removed option to force route calculcation algorithm to use closest radio navaids near start and
+  destination before waypoints
+* Removed all rhumb line calculation methods.
+* Added a maximum of 20 warning on FileSystemWatcher to avoid log flooding on missing file.
+* Added reading for GPX files in FlightplanIO. More support methods for attached files/BLOBs in
+  LogdataManager.
+* Added reading of waypoint names from attached logbook GPX.
+* Changed userdata export headers for more readability. Added header option for CSV export in
+  userdata.
+* Added header option to logbook export and added header detection on import. #432
+* Fixed issues where `visible_from` in userdata was exported as floating point number which
+  resulted in fallback to default value on import.
+* Added options to save and load compressed LNMPLN and GPX files in class FlightplanIO. Added Gzip file
+  detection and schema update support for adding new columns in DataManagerBase. #432
+* Updated file roller to allow usage of file rename patterns.
+* Fixed issue where default directory in file dialog was not used with empty settings prefix.
+* Fixed issue where a message dialog did not show up again after unchecking `Do not show again`
+  and pressing the help button.
+* Updated logging for separate debug message and narrow patterns which remove namespaces from class
+  and paths from filenames for better readability.
+* Added options for POST in class HttpDownloader.
+* Moved route calculation classes out of littlenavmap repository to atools to ease testing and reuse. #466
+* Added fast spatial index for radius and nearest neighbor searches. Added Point3D and conversion
+  methods in Pos for converting earth coordinates to 3D euclidean space. Added nanoflann header for
+  spatial search. #466
 
 ===============================================================================
 
@@ -11,21 +116,21 @@ All data compilers and schema changes:
 * Updated database minor version to 18 to reflect changes.
 * Fixed issue with duplicate waypoints in airways for DFD, X-Plane and FSX/P3D compiler causing
   defects in airway network. Examples: MY/EK and SYA/PA. #516
-* Added flag "artificial" for NDB and VOR waypoints which are created to simplify
+* Added flag `artificial` for NDB and VOR waypoints which are created to simplify
   airway construction. Useful for debugging or future versions. #516
 
 DFD:
 * Updated DFD compiler to create new and separate UIR FIR airspace types besides the old
-  deprecated center with "(FIR)" or "(UIR)" in the name. These new types will be used by the next
+  deprecated center with `(FIR)` or `(UIR)` in the name. These new types will be used by the next
   Little Navmap version. Current versions 2.4.X are compatible with this change and show
   the old centers. #462
 * Fixed issue where runway ends with more than one ILS had all except one detached from runway.
-  Example: EDDF RWY25R ILSZ IFNW. #532
+  Example: `EDDF RWY25R ILSZ IFNW`. #532
 * Coordinates for fix and recommended fix in procedure tables added. Used for better navaid
   resolution in next Little Navmap version. #205
 
 X-Plane:
-* Improved removal of "[X]" prefixes in X-Plane and fixed issue where military airports were not
+* Improved removal of `[X]` prefixes in X-Plane and fixed issue where military airports were not
   detected in all cases.
 * Changed airport ident to ICAO code for X-Plane compiler now. XP internal ids are now avoided
   except in duplicates. Added xpident to airport table which keeps the internal ID for
@@ -45,14 +150,14 @@ P3D v5: #512
 * Added P3D v5 for simulator detection.
 * Adapted loading of BGL files to P3D v5 structure changes and added new records
   as well as new COM and other types.
-* Enabled loading of add-on packages from "%USERPROFILE%\Documents\Prepar3D v5 Add-ons".
+* Enabled loading of add-on packages from `%USERPROFILE%\Documents\Prepar3D v5 Add-ons`.
 
 Other:
 * Fixed error reporting in wind download and decoding. #480
 * Chinese translation by John Liu.
 
 Build:
-* Added option to include common "../build_options.pro" file with defines for qmake.
+* Added option to include common `../build_options.pro` file with defines for qmake.
   File is included automatically if it exists.
 
 ===============================================================================
@@ -61,8 +166,8 @@ Version 3.4.5
 
 Separated creation of routing schema and data from other compiler steps.
 * Routing tables are now kept but not populated if disabled.
-  This is done to avoid crashes with older LNM version accessing the new database. albar965/littlenavmap#466
-* Added airway route type to DFD compiler. albar965/littlenavmap#466
+  This is done to avoid crashes with older LNM version accessing the new database. #466
+* Added airway route type to DFD compiler. #466
 
 ===============================================================================
 
@@ -110,87 +215,87 @@ Version 3.4.0.beta
 
 * New coordinate format for parsing: Plain numbers with sign.
 * Added display of SSL version into about dialog.
-* Fixed several METAR parsing issues. closes albar965/littlenavmap#441
+* Fixed several METAR parsing issues. closes #441
 * Reduced exaggerated number precision in CSV userpoint export.
-* Added TFDi Design 717 flight plan export format. albar965/littlenavmap#399
+* Added TFDi Design 717 flight plan export format. #399
 * Fixed issue where table cells where initially not resized properly in itemview zoom handler.
 * Now ignoring special ASX weather files written for X-Plane. Fixed excessive logging about missing
-  file. albar965/littlenavmap#422
+  file. #422
 * Added tab widget handler to manage movable and closable tabs.
 * Fixed display flags for transparent aprons in X-Plane.
 * Added geometry callback for whazzup parser to fetch user airspace geometry. Trying to get center
   boundary and falling back to circle shape if missing.
-* Removed option to read airspaces from "Documents/Little Navmap" in X-Plane compiler.
+* Removed option to read airspaces from `Documents/Little Navmap` in X-Plane compiler.
   Refactored reading of OpenAir airspaces out of X-Plane compiler for general usage.
-  Added option to create schema for user airspaces only. albar965/littlenavmap#236
+  Added option to create schema for user airspaces only. #236
 * Aircraft performance handler: Fixed issues in where states were not detected properly.
   Corrected fuel calculation which is now only done if fuel flow is detected to avoid case where
   user changes fuel in the simulator.
 * Fixed issue where aircraft descending was not detected. Added method to give aircraft state as
-  text. albar965/littlenavmap#340
-* Added method to check X-Plane file "scenery_packs.ini".
+  text. #340
+* Added method to check X-Plane file `scenery_packs.ini`.
 * Potential fix on macOS folder resolution problems that appear when using case sensitive file
   systems.
-* Better error handling and reporting around "magdec.bgl" file and database. Now falling back to WMM
+* Better error handling and reporting around `magdec.bgl` file and database. Now falling back to WMM
   if file could not be read.
-* Added methods to get statistics for logbook entries. albar965/littlenavmap#346
+* Added methods to get statistics for logbook entries. #346
 * Set codec to UTF when reading X-Plane and weather files.
 * Replaced exit on failure with abort to get core dump.
 * Added functions and SQL scripts for logbook management. Created base class for userdata and
   logbook data manager. More refactoring around fuel calculation.
 * Removed obsolete FSX logbook code.
 * Added support for gui_label 3D attribute in X-Plane 11.35 and higher. Updated rating calculation.
-  albar965/littlenavmap#424
-* Fixed error in rating calculation function for X-Plane. albar965/littlenavmap#410
+  #424
+* Fixed error in rating calculation function for X-Plane. #410
 * Updated aircraft performance class and collection handler for permanent data collection.
-  More get methods for fuel volume and weight in performance. albar965/littlenavmap#340
+  More get methods for fuel volume and weight in performance. #340
 * Updating aircraft performance alternate parameters with cruise parameters as default now when
-  collecting. albar965/littlenavmap#367
+  collecting. #367
 * Added alternate speed, alternate fuel flow, min runway length, runway type and usable fuel to
-  aircraft performance. albar965/littlenavmap#367
+  aircraft performance. #367
 * Adapted wind download to new NOAA url changes. Added more debug output for wind download.
-  albar965/littlenavmap#283
-* Added flight plan properties for custom approaches. albar965/littlenavmap#307
+  #283
+* Added flight plan properties for custom approaches. #307
 * Added flags field for flight plan entry. Added flags and support for alternate airports.
-  albar965/littlenavmap#230
-* Added two second delay for initial weather download of NOAA data. albar965/littlenavmap#283
+  #230
+* Added two second delay for initial weather download of NOAA data. #283
 * Added option to application to disable exception dialog.
-* Changed NOAA weather download schedule to catch latest METARs. albar965/littlenavmap#359
+* Changed NOAA weather download schedule to catch latest METARs. #359
 * Refactoring of weather, METAR and download code. Added class to download NOAA METAR files to
-  avoid requests for single airports. Bug fixes in station index. albar965/littlenavmap#359
+  avoid requests for single airports. Bug fixes in station index. #359
 * Added geomagnetic model calculation class. MagDecTool. Changed X-Plane and DFD compiler to save
-  declination based on current year and month into database. albar965/littlenavmap#300
+  declination based on current year and month into database. #300
 * Wind query allows to interpolate wind for lines through levels now, i.e. lines with positions
   having different altitude. Added point interpolation methods that also considers altitude set in
   position. Changed wind query interface to use altitude from position.
-* Fixed crash that appears when using fsAerodata cycle 1905r1 or later. albar965/littlenavmap#413
-* Added support for X-Plane 8.33 kHz frequency spacing. albar965/littlenavmap#409
+* Fixed crash that appears when using fsAerodata cycle 1905r1 or later. #413
+* Added support for X-Plane 8.33 kHz frequency spacing. #409
 * GRIB downloader now allows to set base URL. Changed GRIB reader to ignore data sets with invalid
   parameters instead of throwing an exception. Wind query class not checks file for changes. Now
   interpolating between null values and next upper layer if querying wind data for a level lower than
-  the lowest. albar965/littlenavmap#283
+  the lowest. #283
 * Fixed issue where temperature and QNH were omitted if METAR contains //////TCU string.
 * Fixed issue when saving flight plans from airports with empty names (crashes P3D).
 * Fixed issue where QNH was not recognized with invalid temperature.
-  Example: "EIWF 041830Z 01007KT 340V040 CAVOK ///// Q0988"
+  Example: `EIWF 041830Z 01007KT 340V040 CAVOK ///// Q0988`
 * Fixed Maddog X export to use correct file extension mdr.
 * Fixed several issues in HTTP server due to abuse of QSettings (forced write back) for parameter
-  passing. Implemented own INI reader class since QSettings cannot be set to read only. albar965/littlenavmap#163
+  passing. Implemented own INI reader class since QSettings cannot be set to read only. #163
 * Added option to save list view selection state in widget state.
-* Added web server by Stefan Frings (http://stefanfrings.de/qtwebapp/index.html). albar965/littlenavmap#163
+* Added web server by Stefan Frings (http://stefanfrings.de/qtwebapp/index.html). #163
 * Fixed parsing issue with coordinates when using C locale.
 * Fixed issue when loading old style aircraft performance files where key ExtraFuelLbsGal is not recognized.
-* Fixed missing "=" in cruise altitude for BBS export. albar965/littlenavmap#396
-* Made loading of X-Plane FMS flight plans more tolerant for wrong "DIRECT" instead of "DRCT" which
+* Fixed missing `=` in cruise altitude for BBS export. #396
+* Made loading of X-Plane FMS flight plans more tolerant for wrong `DIRECT` instead of `DRCT` which
   comes from invalid SimBrief plans.
 
-Build and Deployment for Developers: albar965/littlenavmap#387
+Build and Deployment for Developers: #387
 * Updated for Qt 5.12.4. Changed OpenSSL to 1.1.1.
 * Linux compilation now uses system OpenSSL again and is based on Ubuntu 18.04.
 * Added build for Travis CI. Thanks to Jannik for all his work!
 * Complete update of project files to allow configuration with environment variables. Removed all hard coded paths.
 * Added documentation about environment variables to configure build and updated build instructions
-  in "BUILD.txt" and "atools.pro" files.
+  in `BUILD.txt` and `atools.pro` files.
 
 ===============================================================================
 
@@ -200,7 +305,7 @@ Version 3.2.4
   This happens only when using SID and/or STAR. #361
 * Now disabling aircraft performance collection when sim is paused or replaying.
 * Now choosing separator for file auto numbering on save depending on filename.
-* Changed email address and links. albar965/littlenavmap#238
+* Changed email address and links. #238
 * Updated translations.
 
 ===============================================================================
@@ -219,12 +324,12 @@ Version 3.2.4.rc1
 * Options/Language override in settings now fixed for online help and legend loading.
 * Forcing altitude when setting departure position in flight plan.
 * Fixed wrong display of exception messages with special characters in Windows.
-* Added saving and loading of FlightGear XML flight plans. albar965/littlenavmap#361
+* Added saving and loading of FlightGear XML flight plans. #361
 * Adapted flight plan file type detection to new plan format and improved it.
-* Added export for Leonardo Maddog X. albar965/littlenavmap#232
-* Added export for QualityWings aircraft. albar965/littlenavmap#335
-* Added export for AivlaSoft EFB. albar965/littlenavmap#226
-* Added flight plan export for FeelThere and Level-D. albar965/littlenavmap#206
+* Added export for Leonardo Maddog X. #232
+* Added export for QualityWings aircraft. #335
+* Added export for AivlaSoft EFB. #226
+* Added flight plan export for FeelThere and Level-D. #206
 
 ===============================================================================
 
@@ -245,7 +350,7 @@ Version 3.2.2
 Version 3.2.2.rc2
 
 * Fixed rounding error for COM frequencies in DFD compiler.
-* Fixed warning message "q_startOperation was called more than once" by skipping if already downloading weather files.
+* Fixed warning message `q_startOperation was called more than once` by skipping if already downloading weather files.
 * Change test URL function to allow also files.
 * Added methods to fix com frequencies into 25 kHz steps.
 
@@ -272,7 +377,7 @@ Version 3.2.1.beta
 * Added option to limit excessive error logging in whazzup reader.
 * Fixed regression when reading whazzup files where heading and other values were missing.
 * Added fuel type to performance class now allowing conversion from weight to volume.
-  Performance handler now detects fuel type and uses lbs as default now. albar965/littlenavmap#255
+  Performance handler now detects fuel type and uses lbs as default now. #255
 * Added saving of widgetstate for editable combo boxes.
 * Updated French translation from Patrick.
 
@@ -281,39 +386,39 @@ Version 3.2.1.beta
 Version 3.2.0.beta
 
 * Fixed issue for FSX/P3D flight plans missing byte order mark which were not accepted by ASN or ASX.
-* HtmlBuilder now allows to set table background and alternating background color. albar965/littlenavmap#246
+* HtmlBuilder now allows to set table background and alternating background color. #246
 * Fixed issues with assignment of stray VASIs to runways in X-Plane.
-* Renamed "ACC" to Area Control Center for online centers. More small refactoring. albar965/littlenavmap#267
-* Added facilities for automatic performance calculation. albar965/littlenavmap#255
-* Added aircraft performance data class. albar965/littlenavmap#255
-* Added accepted extensions for drag and drop. albar965/littlenavmap#291
+* Renamed `ACC` to Area Control Center for online centers. More small refactoring. #267
+* Added facilities for automatic performance calculation. #255
+* Added aircraft performance data class. #255
+* Added accepted extensions for drag and drop. #291
 * Changed normalize functions to avoid program freezes. Added normalizeRange functions.
-* Added flightplan_estimated_arrival_time to online database schema. Calculating flightplan_estimated_arrival_time now. albar965/littlenavmap#303
-* Filtering invalid time values "0" from now. All whazzup text parser for albar965/littlenavmap#303
+* Added flightplan_estimated_arrival_time to online database schema. Calculating flightplan_estimated_arrival_time now. #303
+* Filtering invalid time values `0` from now. All whazzup text parser for #303
 * Fixed potential geometry problem reading X-Plane airspaces.
-* Added copy functions for procedure properties. albar965/littlenavmap#264
-* Added function to calculate crab angle from wind, course and TAS. albar965/littlenavmap#284
-* Work on HTML builder. Added copy operator and constructor and more methods for table data. albar965/littlenavmap#284
-* Fixed issues with symbolic links in scenery loader. Now using paths as is instead of converting to canonical paths. albar965/littlenavmap#29
-* Added scenery configuration exclude options for single files. albar965/littlenavmap#29
+* Added copy functions for procedure properties. #264
+* Added function to calculate crab angle from wind, course and TAS. #284
+* Work on HTML builder. Added copy operator and constructor and more methods for table data. #284
+* Fixed issues with symbolic links in scenery loader. Now using paths as is instead of converting to canonical paths. #29
+* Added scenery configuration exclude options for single files. #29
 * Added file system watcher which hopefully fixes problems with not recognized updates.
-* Improved color change for push buttons in changeWidgetColor. albar965/littlenavmap#197
-* Added class for drawing rounded polygons. albar965/littlenavmap#197
-* Now setting airport_id for ndb, vor and waypoint in DFD compiler. albar965/littlenavmap#289
+* Improved color change for push buttons in changeWidgetColor. #197
+* Added class for drawing rounded polygons. #197
+* Now setting airport_id for ndb, vor and waypoint in DFD compiler. #289
 * Added restrictive_designation and restrictive_type to boundary table and DFD compiler.
-* Added mora_grid table for minimum off route altitude data to schema. DFD compiler now populates mora_grid table. albar965/littlenavmap#84
-* Added methods to TimedCache to avoid flushing old objects. albar965/littlenavmap#6
-* Fixed garbled unused data in Metar class. albar965/littlenavmap#6
-* Metar class now calculates flight rules. albar965/littlenavmap#6
+* Added mora_grid table for minimum off route altitude data to schema. DFD compiler now populates mora_grid table. #84
+* Added methods to TimedCache to avoid flushing old objects. #6
+* Fixed garbled unused data in Metar class. #6
+* Metar class now calculates flight rules. #6
 * Attempt to fix weather loading issues (disappearing report) for X-Plane metar.dat. Weather data is now kept if file was deleted.
-* Now reading scenery_packs.ini for X-Plane to allow disabling of scenery by tools. albar965/littlenavmap#151
+* Now reading scenery_packs.ini for X-Plane to allow disabling of scenery by tools. #151
 * Now fetching the first X-Plane installation path from x-plane_install_11.txt as base path.
-* Added sunrise and sunset calculation. albar965/littlenavmap#281
-* Added multiple_code and time_code columns to schema to indicate overlapping airspaces. albar965/littlenavmap#279
-* Added arinc_descr_code to database that allows to identify IAF, MAF and FAF albar965/littlenavmap#196
-* GridDelegate now allows to update colors on style change. albar965/littlenavmap#142
-* Refactoring in cleanup in logging system. Log files can now be rotated if a given size is exceeded. albar965/littlenavmap#275
-* X-Plane parking positions are now at correct coordinates. albar965/littlenavmap#256
+* Added sunrise and sunset calculation. #281
+* Added multiple_code and time_code columns to schema to indicate overlapping airspaces. #279
+* Added arinc_descr_code to database that allows to identify IAF, MAF and FAF #196
+* GridDelegate now allows to update colors on style change. #142
+* Refactoring in cleanup in logging system. Log files can now be rotated if a given size is exceeded. #275
+* X-Plane parking positions are now at correct coordinates. #256
 * Updated all translations.
 * Database minor version updated to 13.
 
@@ -353,27 +458,27 @@ Version 3.0.2
 Version 3.0.1.beta
 
 * Weather texts are now shown translated.
-* Added separate online control center radius instead of using visible range in online centers. albar965/littlenavmap#45
+* Added separate online control center radius instead of using visible range in online centers. #45
 
 ===============================================================================
 
 Version 3.0.0.beta
 
-* Added complete data management and parsing for IVAO, VATSIM and custom "status.txt" and "whazzup.txt" files.
+* Added complete data management and parsing for IVAO, VATSIM and custom `status.txt` and `whazzup.txt` files.
 * Fixed issues with X-Plane user_fix.dat export. Now using correct metadata so that X-Plane can read the file.
 * Issues with X-Plane and Garmin userpoint import and export fixed.
 
 * Added script by Gérard to clean out fake runways for AI in FSX/P3D.
 * Added logging for airport altitude when reading delete records from FSX/P3D.
-  Example: "Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft"
+  Example: `Add-on airport altitude for VQ10 changed from 7703 ft (BGL Scenery/0902/APX72220.bgl) to 8363 ft`
 * Improved BGL file and scenery reading to include hidden and system files.
 * Fixed issue where approach name and/or suffix were not read correctly in X-Plane and DFD compiler.
 * Fixed error with duplicate VOR/NDB waypoints in DFD compiler.
 * Now ignoring artificial circle-to-land approaches in DFD compiler.
 
-* Flight plan export for Blackbox Simulations Airbus. albar965/littlenavmap#200
+* Flight plan export for Blackbox Simulations Airbus. #200
 * Added loading method for FSC flight plans.
-* Export for iFly flight plan file. albar965/littlenavmap#231
+* Export for iFly flight plan file. #231
 
 * Now removing empty journal files from database when closing.
 * Database locking improved.
@@ -383,68 +488,68 @@ Version 2.9.1.develop
 
 * Now filtering out taxiway garbage names in X-Plane compiler.
 * Added transition_altitude to airport table for DFD compiler and updated database minor version to 11.
-* Added backup functionality to userdata. albar965/littlenavmap#3
+* Added backup functionality to userdata. #3
 * Added sim paused and replay flags in sim data.
 * Weather report now corrects any future dates back to last valid date.
 * Fixed issues with file or directory exclusion for X-Plane scenery loader.
 * Fixed problem where CIFP files with wrong case were not recognized correctly.
 * Added userdata manager.
 * Added CSV reader. Fixed several issues in Sql to CSV export class. Fixed issues in export
-  functions of userdata manager. Removed import_timestamp from userdata table. albar965/littlenavmap#3
+  functions of userdata manager. Removed import_timestamp from userdata table. #3
 * Fixed coordinate recognition methods to allow degree/minute/second signs or not.
 * Added functions to adjust ident and region values from user defined data.
 * Userpoint CSV import is now trimmed to avoid fields containing only spaces.
-  albar965/littlenavmap#3
+  #3
 * More work on user waypoint database. Added coordinate string parsing method that can deal with
-  10+ formats. albar965/littlenavmap#3
-* Fixed wrong header indication "A" for X-Plane flight plans. Fixed app version read in a wrong way
+  10+ formats. #3
+* Fixed wrong header indication `A` for X-Plane flight plans. Fixed app version read in a wrong way
   for FSX/P3D plans.
 * Added schema SQL script for user waypoint management. Added user data manager class including
   import and export functions for CSV, X-Plane user_fix.dat, Garmin GTN user waypoints and BGL XML.
-  albar965/littlenavmap#3
+  #3
 * Fixed old problem where on-ground indication is unreliable for first packets from X-Plane.
 * Translation problems fixed for log message.
 * Fixed issue when loading fsbuild flight plans which are missing the altitude field.
 * Now updating magnetic declination for VOR with calculated value where missing.
 * Logging directory and addon excludes now in navdatabase options.
 * Added is_3d to airport_medium and airport_large overview tables.
-* Now reading FSX/P3D scenery entries pointing to "scenery" directory which is allowed in P3D.
+* Now reading FSX/P3D scenery entries pointing to `scenery` directory which is allowed in P3D.
   These were omitted previously. Reading Roaming/.../add-on.cfg and ProgramData/.../add-on.cfg now.
-  albar965/littlenavmap#211
+  #211
 * Fixed issue with X-Plane airports that have wrong reference datum. Now falling back to center of
   bouding rect or center of a single runway.
 * Fixed error on METAR stations improperly reporting CAVOK 9999. Mitigated problem with X-Plane
-  METAR.rwx containing duplicate records. albar965/littlenavmap#212
+  METAR.rwx containing duplicate records. #212
 * Custom Scenery/Global Airports/Earth nav data/earth_nav.dat is now read to get fixed ILS. Fixed
-  reading of ILS for non consecutive entries in dat file. albar965/littlenavmap#209
-* Corrected wrong runway heading from DFD compilation. albar965/littlenavmap#214
+  reading of ILS for non consecutive entries in dat file. #209
+* Corrected wrong runway heading from DFD compilation. #214
 * SID and STAR common routes are now merged correctly into procedures for DFD and X-Plane compiler.
-  albar965/littlenavmap#193
+  #193
 * Airport idents from DFD compilation are now all converted to original three-letter code if
-  available. albar965/littlenavmap#203
+  available. #203
 * Added new columns runway_end.altitude, approach_leg.approach_fix_type and
   transition_leg.approach_fix_type. Updated database minor version to 9.
 * Merge branch 'release/2.8'
 * Now removing all unneeded dummy NDB and VOR waypoints that were created for airway generation.
-  albar965/littlenavmap#201
+  #201
 
 Version 2.8.5
 
-* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. albar965/littlenavmap#202
+* Fixed errors when compiling the X-Plane database with PRDAT records in CIFP files since AIRAC 1801. #202
 * Fixes for missing airway segments in DFD compiler.
-* Fixed overly eager de-duplication of waypoints. albar965/littlenavmap#201
+* Fixed overly eager de-duplication of waypoints. #201
 * Updated from Qt 5.9.1 to 5.9.3
 
 Version 2.8.4
 
 * Added Garmin GNS XML flight plan export.
 * Added option to save GNS XML flightplans with user defined waypoints.
-* Column "arinc_name" in table "approaches" is now filled for SID and STAR to get runway
-  information for multiple or all. Needed for future fixes of albar965/littlenavmap#179.
-* Added new columns "region" and "is_3d" (X-Plane) in airport table. Adapted all compilers to fill it.
+* Column `arinc_name` in table `approaches` is now filled for SID and STAR to get runway
+  information for multiple or all. Needed for future fixes of #179.
+* Added new columns `region` and `is_3d` (X-Plane) in airport table. Adapted all compilers to fill it.
 * Database minor version bumped up to 8.
 * Made flight plan format detection more tolerant for FMS 11 with missing cycle information.
-* Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. albar965/littlenavmap#173
+* Fixed issues where X-Plane cannot load STAR in FMS 11 flight plans because runway reference is missing. #173
 * Fixed problem where translations for second and third languages were loaded.
 * Solved problem where translation files were loaded mixed in some cases.
 * Fixed invalid Majestic Dash FPR flight plan file export on Windows and added error check for invalid file size.
@@ -728,7 +833,7 @@ Version 2.2.1.beta (not public)
 * Fixed problem of wrong elevation adjustments overwriting add-on airport.
 * BGL files are now read ordered by name to get more determinstic behavior.
 * Only line comments are allowed now in ini files and scenery.cfg to avoid problems with
-  filenames containing "#". Behavior is now equal to flight simulator.
+  filenames containing `#`. Behavior is now equal to flight simulator.
 
 Version 2.2.0.beta
 
@@ -752,7 +857,7 @@ Version 2.0.5 - Stable Release
 * Fixed scenery loading error for airports without city names.
 * Improvement to error handling dialogs to allow instant access to contact and log file.
 * Scenery.cfg reading is now more error tolerant, only prints warnings and ignores invalid entries.
-* Fixed exclude and include directives for scenery not working for relative paths containing "..".
+* Fixed exclude and include directives for scenery not working for relative paths containing `..`.
 * Added static methods and support for fragments to help handler to allow direct linking to anchors.
 
 Version 2.0.4.beta
@@ -782,7 +887,7 @@ Version 2.0.2.beta
 * All BGL files are now read (invalid magic number of BGL files is now ignored).
 * Added support for older add-on sceneries (needs reading of FS9 record structures for airport and parking).
 * Airport reading will now stop if the first record is invalid.
-* Fixed crash with "database locked" exception during ILS update.
+* Fixed crash with `database locked` exception during ILS update.
 * Corrected facility deletion for multiple airports.
 * Airports without name and facilities are now omitted.
 * Added more details to logging during scenery loading.
