@@ -29,75 +29,105 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
+Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, bool sid, bool star)
   : Record(options, bs)
 {
-  suffix = bs->readByte();
-  runwayNumber = bs->readUByte();
-
-  int typeFlags = bs->readUByte();
-  type = static_cast<ap::ApproachType>(typeFlags & 0xf);
-  runwayDesignator = (typeFlags >> 4) & 0x7;
-  gpsOverlay = (typeFlags & 0x80) == 0x80;
-
-  // TODO compare numbers with actual record occurence
-  numTransitions = bs->readUByte();
-  int numLegs = bs->readUByte();
-  Q_UNUSED(numLegs);
-  int numMissedLegs = bs->readUByte();
-  Q_UNUSED(numMissedLegs);
-
-  unsigned int fixFlags = bs->readUInt();
-  fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
-  fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
-
-  unsigned int fixIdentFlags = bs->readUInt();
-  fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
-  fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
-
-  altitude = bs->readFloat();
-  heading = bs->readFloat(); // TODO wiki heading is float degrees
-  missedAltitude = bs->readFloat();
-
-  // Read subrecords
-  while(bs->tellg() < startOffset + size)
+  if(sid || star)
   {
-    Record r(options, bs);
-    rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
-    if(checkSubRecord(r))
-      return;
+    // Disabled attempt to decode SID/STAR - not reliable since structure size varies
+#if 0
+    type = ap::GPS;
+    gpsOverlay = true;
+    if(sid)
+      suffix = 'D';
+    else if(star)
+      suffix = 'A';
+    else
+      suffix = '\0';
 
-    switch(t)
+    bs->skip(6);
+    fixIdent = bs->readString(8);
+    bs->skip(7);
+    runwayNumber = bs->readUByte();
+    runwayDesignator = bs->readUByte();
+    bs->skip(3 + 4 + 2);
+    int num = bs->readUShort();
+    for(int i = 0; i < num; i++)
+      legs.append(ApproachLeg(bs, false, sid || star));
+#endif
+  }
+  else
+  {
+    suffix = bs->readByte();
+    runwayNumber = bs->readUByte();
+
+    int typeFlags = bs->readUByte();
+    type = static_cast<ap::ApproachType>(typeFlags & 0xf);
+    runwayDesignator = (typeFlags >> 4) & 0x7;
+    gpsOverlay = (typeFlags & 0x80) == 0x80;
+
+    // TODO compare numbers with actual record occurence
+    numTransitions = bs->readUByte();
+    int numLegs = bs->readUByte();
+    Q_UNUSED(numLegs);
+    int numMissedLegs = bs->readUByte();
+    Q_UNUSED(numMissedLegs);
+
+    unsigned int fixFlags = bs->readUInt();
+    fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
+    fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
+
+    unsigned int fixIdentFlags = bs->readUInt();
+    fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
+    fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
+
+    altitude = bs->readFloat();
+    heading = bs->readFloat(); // Heading is float degrees
+    missedAltitude = bs->readFloat();
+
+    // Read subrecords
+    while(bs->tellg() < startOffset + size)
     {
-      case rec::TRANSITION:
-        r.seekToStart();
-        transitions.append(Transition(options, bs));
-        break;
+      Record r(options, bs);
+      rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
+      if(checkSubRecord(r))
+        return;
 
-      case rec::LEGS:
-        if(options->isIncludedNavDbObject(type::APPROACHLEG))
-        {
-          int num = bs->readUShort();
-          for(int i = 0; i < num; i++)
-            legs.append(ApproachLeg(bs, false));
-        }
-        break;
-      case rec::MISSED_LEGS:
-        if(options->isIncludedNavDbObject(type::APPROACHLEG))
-        {
-          int num = bs->readUShort();
-          for(int i = 0; i < num; i++)
-            missedLegs.append(ApproachLeg(bs, true));
-        }
-        break;
+      switch(t)
+      {
 
-      case atools::fs::bgl::rec::TRANSITION_LEGS:
-      // TODO clarify TRANSITION_LEGS
-      default:
-        qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
-                                       << " for airport ident " << fixAirportIdent;
+        case rec::LEGS:
+        case rec::LEGS_MSFS:
+          if(options->isIncludedNavDbObject(type::APPROACHLEG))
+          {
+            int num = bs->readUShort();
+            for(int i = 0; i < num; i++)
+              legs.append(ApproachLeg(bs, false, t == rec::LEGS_MSFS));
+          }
+          break;
+
+        case rec::MISSED_LEGS:
+        case rec::MISSED_LEGS_MSFS:
+          if(options->isIncludedNavDbObject(type::APPROACHLEG))
+          {
+            int num = bs->readUShort();
+            for(int i = 0; i < num; i++)
+              missedLegs.append(ApproachLeg(bs, true, t == rec::MISSED_LEGS_MSFS));
+          }
+          break;
+
+        case rec::TRANSITION:
+        case rec::TRANSITION_MSFS:
+          r.seekToStart();
+          transitions.append(Transition(options, bs));
+          break;
+
+        default:
+          qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
+                                         << " for airport ident " << fixAirportIdent << bs->tellg();
+      }
+      r.seekToEnd();
     }
-    r.seekToEnd();
   }
 }
 
@@ -106,16 +136,16 @@ QDebug operator<<(QDebug out, const Approach& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Approach[type "
-  << ap::approachTypeToStr(record.type)
-  << ", rwy " << record.getRunwayName()
-  << ", gps overlay " << record.gpsOverlay
-  << ", fix type " << ap::approachFixTypeToStr(record.fixType)
-  << ", fix " << record.fixIdent
-  << ", fix region " << record.fixRegion
-  << ", ap icao " << record.fixAirportIdent
-  << ", alt " << record.altitude
-  << ", hdg " << record.heading << endl;
+                          << " Approach[type "
+                          << ap::approachTypeToStr(record.type)
+                          << ", rwy " << record.getRunwayName()
+                          << ", gps overlay " << record.gpsOverlay
+                          << ", fix type " << ap::approachFixTypeToStr(record.fixType)
+                          << ", fix " << record.fixIdent
+                          << ", fix region " << record.fixRegion
+                          << ", ap icao " << record.fixAirportIdent
+                          << ", alt " << record.altitude
+                          << ", hdg " << record.heading << endl;
   out << record.transitions;
   out << record.legs;
   out << record.missedLegs;
@@ -131,8 +161,6 @@ QString Approach::getRunwayName() const
 {
   return converter::runwayToStr(runwayNumber, runwayDesignator);
 }
-
-
 
 } // namespace bgl
 } // namespace fs

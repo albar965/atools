@@ -19,6 +19,7 @@
 
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -42,21 +43,24 @@ Namelist::Namelist(const NavDatabaseOptions *options, BinaryStream *bs)
   int airportListOffset = bs->readInt();
   int icaoListOffset = bs->readInt();
 
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+
   // Read all names from the different offsets
   QStringList regions;
-  readList(regions, bs, numRegionNames, regionListOffset);
+  readList(regions, bs, numRegionNames, regionListOffset, encoding);
 
   QStringList countries;
-  readList(countries, bs, numCountryNames, countryListOffset);
+  readList(countries, bs, numCountryNames, countryListOffset, encoding);
 
   QStringList states;
-  readList(states, bs, numStateNames, stateListOffset);
+  readList(states, bs, numStateNames, stateListOffset, encoding);
 
   QStringList cities;
-  readList(cities, bs, numCityNames, cityListOffset);
+  readList(cities, bs, numCityNames, cityListOffset, encoding);
 
   QStringList airports;
-  readList(airports, bs, numAirportNames, airportListOffset);
+  readList(airports, bs, numAirportNames, airportListOffset, encoding);
 
   // Goto to the offset that contains the name indexes
   bs->seekg(startOffset + icaoListOffset);
@@ -83,7 +87,8 @@ Namelist::~Namelist()
 {
 }
 
-void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int listOffset)
+void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int listOffset,
+                        atools::io::Encoding encoding)
 {
   bs->seekg(startOffset + listOffset);
 
@@ -95,7 +100,7 @@ void Namelist::readList(QStringList& names, BinaryStream *bs, int numNames, int 
   for(int i = 0; i < numNames; i++)
   {
     bs->seekg(offs + indexes[i]);
-    names.append(bs->readString());
+    names.append(bs->readString(encoding));
   }
   delete[] indexes;
 }
@@ -105,7 +110,7 @@ QDebug operator<<(QDebug out, const Namelist& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << "Namelist[numIcaoIdent " << record.entries.size() << endl;
+                          << "Namelist[numIcaoIdent " << record.entries.size() << endl;
   out << record.entries;
   out << "]";
 

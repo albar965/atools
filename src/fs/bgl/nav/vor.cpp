@@ -23,6 +23,7 @@
 
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -68,6 +69,8 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
 
   // TODO report wiki error ap ident is never set
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   while(bs->tellg() < startOffset + size)
   {
@@ -79,7 +82,7 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE);
+        name = bs->readString(r.getSize() - Record::SIZE, encoding);
         break;
       case rec::DME:
         r.seekToStart();
@@ -88,9 +91,9 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
       case atools::fs::bgl::rec::LOCALIZER:
       case atools::fs::bgl::rec::GLIDESLOPE:
         break;
-//      default:
-//        qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << hex << t << dec <<
-//        " for ident " << ident;
+        // default:
+        // qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << hex << t << dec <<
+        // " for ident " << ident;
     }
     r.seekToEnd();
   }
@@ -106,9 +109,9 @@ QDebug operator<<(QDebug out, const Vor& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const NavBase&>(record)
-  << " Vor["
-  << "type " << IlsVor::ilsVorTypeToStr(record.type)
-  << ", dmeOnly " << record.dmeOnly;
+                          << " Vor["
+                          << "type " << IlsVor::ilsVorTypeToStr(record.type)
+                          << ", dmeOnly " << record.dmeOnly;
   if(record.dme != nullptr)
     out << ", " << *record.dme;
   out << "]";

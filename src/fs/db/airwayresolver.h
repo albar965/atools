@@ -47,6 +47,7 @@ public:
    * Build airways from airway_point table that uses only idents and region codes to connect waypoints to a chain.
    * This process has to run after all BGL files are loaded since the airways cross multiple
    * scenery areas and BGL files.
+   * Reads from "airway_point" joined with "waypoint" and writes to table "airway".
    * @return true if the process was aborted
    */
   bool run(int numReportSteps);
@@ -58,13 +59,21 @@ public:
    */
   void assignWaypointIds();
 
+  /* Maximum length before creating a new fragment in meter */
   void setMaxAirwaySegmentLength(int value)
   {
     maxAirwaySegmentLength = value;
   }
 
+  /* Set to true to join waypoint type as well. Only for X-Plane and DFD */
+  void setJoinType(bool value)
+  {
+    joinType = value;
+  }
+
 private:
   int maxAirwaySegmentLength = 1000;
+  bool joinType = true;
 
   typedef std::pair<QString, QVariant> TypeRowValue;
   typedef QVector<TypeRowValue> TypeRowValueVector;

@@ -25,6 +25,7 @@
 #include <QPointF>
 
 class QFile;
+class QFileInfo;
 
 namespace atools {
 
@@ -483,6 +484,11 @@ QString downloadDir();
 QString tempDir();
 QString desktopDir();
 QString homeDir();
+
+/* Collect error messages for files or folders if they are readable and more.
+ * Returns empty string if all is ok. */
+QString checkDir(const QFileInfo& dir);
+QString checkFile(const QFileInfo& file);
 
 } // namespace atools
 

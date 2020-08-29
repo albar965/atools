@@ -15,57 +15,48 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_BGL_AP_FENCE_H
-#define ATOOLS_BGL_AP_FENCE_H
+#ifndef ATOOLS_LAYOUTJSON_H
+#define ATOOLS_LAYOUTJSON_H
 
-#include "fs/bgl/record.h"
-#include "fs/bgl/ap/rw/runway.h"
-#include "fs/bgl/bglposition.h"
+#include <QStringList>
 
 namespace atools {
 namespace fs {
-namespace bgl {
-
-namespace fence {
-enum Type
-{
-  UNKNOWN,
-  BLAST,
-  BOUNDARY
-};
-
-}
+namespace scenery {
 
 /*
- * Blast or boundary fence subrecord of airport.
+ * Reads MSFS layout file and extracts the locations for BGL and material "Library.xml" files.
+ * Paths are kept relative as read from file.
  */
-class Fence :
-  public atools::fs::bgl::Record
+class LayoutJson
 {
 public:
-  Fence(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Fence();
+  void read(const QString& filename);
 
-  /*
-   * @return coordinate line string of the fence
-   */
-  const QList<atools::fs::bgl::BglPosition>& getVertices() const
+  void clear()
   {
-    return vertices;
+    bglPaths.clear();
+    materialPaths.clear();
   }
 
-  atools::fs::bgl::fence::Type getType() const;
+  /* Relative paths for all BGL files */
+  const QStringList& getBglPaths() const
+  {
+    return bglPaths;
+  }
 
-  static QString fenceTypeToStr(atools::fs::bgl::fence::Type type);
+  /* Relative paths for all Library.xml files */
+  const QStringList& getMaterialPaths() const
+  {
+    return materialPaths;
+  }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::Fence& record);
-
-  QList<atools::fs::bgl::BglPosition> vertices;
+  QStringList bglPaths, materialPaths;
 };
 
-} // namespace bgl
+} // namespace scenery
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_BGL_AP_FENCE_H
+#endif // ATOOLS_LAYOUTJSON_H

@@ -53,7 +53,6 @@ create table airport
   is_military integer not null,               -- boolean - Military airports are recognized by name - see airport.cpp
   is_addon integer not null,                  -- boolean - 1 if BGL is not int the default scenery directory
 
-  num_boundary_fence integer not null,
   num_com integer not null,                   -- Number of COM frequencies
 
   num_parking_gate integer not null,
@@ -81,7 +80,7 @@ create table airport
   longest_runway_length integer not null,    -- Feet
   longest_runway_width integer not null,     -- Feet
   longest_runway_heading double not null,    -- Heading of primary end in degrees true
-  longest_runway_surface varchar(15),        -- see enum atools::fs::bgl::rw::Surface
+  longest_runway_surface varchar(15),        -- see enum atools::fs::bgl::Surface
                                              -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
                                              -- which are used for data not originating from flight simulator
   num_runways integer not null,
@@ -226,7 +225,7 @@ create table helipad
   helipad_id integer primary key,
   airport_id integer not null,
   start_id integer,
-  surface varchar(15),                 -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),                 -- see enum atools::fs::bgl::Surface
   type varchar(10),                    -- see enum atools::fs::bgl::helipad::HelipadType
   length double not null,              -- Feet
   width double not null,               -- Feet
@@ -276,7 +275,7 @@ create table apron
 (
   apron_id integer primary key,
   airport_id integer not null,
-  surface varchar(15),              -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),              -- see enum atools::fs::bgl::Surface
   is_draw_surface integer not null, -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,  -- Draw FS detail texture
   vertices blob,                    -- Coordinate list of the apron. Single precision float binary format.
@@ -290,38 +289,6 @@ foreign key(airport_id) references airport(airport_id)
 
 create index if not exists idx_apron_airport_id on apron(airport_id);
 
--- **************************************************
-
-drop table if exists apron_light;
-
--- Apron lighting
-create table apron_light
-(
-  apron_light_id integer primary key,
-  airport_id integer not null,
-  vertices blob,                   -- Space and comma separated coordinate list of
-                                   -- lighted edges (lon1 lat1, lon2 lat2, ...)
-  edges blob,                      -- Coordinate indexes for lighted edges
-foreign key(airport_id) references airport(airport_id)
-);
-
-create index if not exists idx_apron_light_airport_id on apron_light(airport_id);
-
--- **************************************************
-
-drop table if exists fence;
-
--- Airport fence like boundary fences or blast barriers
-create table fence
-(
-  fence_id integer primary key,
-  airport_id integer not null,
-  type varchar(15),                -- see enum atools::fs::bgl::fence::Type
-  vertices text,                   -- Space and comma separated coordinate list (lon1 lat1, lon2 lat2, ...)
-foreign key(airport_id) references airport(airport_id)
-);
-
-create index if not exists idx_fence_airport_id on fence(airport_id);
 
 -- **************************************************
 
@@ -334,15 +301,11 @@ create table taxi_path
   taxi_path_id integer primary key,
   airport_id integer not null,
   type varchar(15),                    -- see enum atools::fs::bgl::taxipath::Type
-  surface varchar(15),                 -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),                 -- see enum atools::fs::bgl::Surface
   width double not null,               -- Feet
   name varchar(20),                    -- Taxiway name like A, B, EAST, etc.
   is_draw_surface integer not null,    -- 0 if surface should not be drawn e.g. for photo scenery
   is_draw_detail integer not null,     -- Draw FS detail texture
-  has_centerline integer not null,          -- Boolean
-  has_centerline_light integer not null,    -- "
-  has_left_edge_light integer not null,     -- "
-  has_right_edge_light integer not null,    -- "
   start_type varchar(15),                   -- Type of start point - see enum atools::fs::bgl::taxipoint::PointType
   start_dir varchar(15),                    -- Direction of start point - see enum atools::fs::bgl::taxipoint::PointDir
   start_lonx double not null,
@@ -367,7 +330,7 @@ create table runway
   airport_id integer not null,
   primary_end_id integer not null,      -- Reference to the secondary end
   secondary_end_id integer  not null,   -- Reference to the secondary end
-  surface varchar(15),                  -- see enum atools::fs::bgl::rw::Surface
+  surface varchar(15),                  -- see enum atools::fs::bgl::Surface
                                         -- Additional surface types are unspecified hard "UH" and unspecified soft "US"
                                         -- which are used for data not originating from flight simulator
   smoothness double,                    -- 0.00 (smooth) to 1.00 (very rough). Default is 0.25. X-Plane only.
@@ -615,7 +578,6 @@ create table delete_airport
   num_del_start integer not null,  -- "
   num_del_com integer not null,    -- "
   approaches integer not null,     -- Boolean - if 1 delete the airport facility
-  apronlights integer not null,    -- "
   aprons  integer not null,        -- "
   frequencies  integer not null,   -- "
   helipads  integer not null,      -- "

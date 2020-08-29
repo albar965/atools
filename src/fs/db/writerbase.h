@@ -85,6 +85,13 @@ public:
     return ++id;
   }
 
+  int setCurrentId(int value) const
+  {
+    int oldid = id;
+    id = value;
+    return oldid;
+  }
+
 protected:
   /*
    * Actual writing of BGL records to the database is done here which has to
@@ -102,15 +109,17 @@ private:
 template<typename TYPE>
 int WriterBase<TYPE>::id = 0;
 
-template<typename TYPE> WriterBase<TYPE>::WriterBase(sql::SqlDatabase& db,
-                                                     atools::fs::db::DataWriter& dataWriter,
-                                                     const QString& tablename,
-                                                     const QString& sqlParam)
+template<typename TYPE>
+WriterBase<TYPE>::WriterBase(sql::SqlDatabase& db,
+                             atools::fs::db::DataWriter& dataWriter,
+                             const QString& tablename,
+                             const QString& sqlParam)
   : WriterBaseBasic(db, dataWriter, tablename, sqlParam)
 {
 }
 
-template<typename TYPE> WriterBase<TYPE>::~WriterBase()
+template<typename TYPE>
+WriterBase<TYPE>::~WriterBase()
 {
 }
 

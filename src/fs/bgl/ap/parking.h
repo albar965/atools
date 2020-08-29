@@ -54,7 +54,10 @@ enum ParkingType
   GATE_HEAVY = 0xa,
   DOCK_GA = 0xb,
   FUEL = 0xc,
-  VEHICLES = 0xd
+  VEHICLES = 0xd,
+
+  RAMP_GA_EXTRA = 0xe,
+  GATE_EXTRA = 0xf
 };
 
 enum PushBack

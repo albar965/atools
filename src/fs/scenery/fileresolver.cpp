@@ -18,6 +18,7 @@
 #include "fs/scenery/fileresolver.h"
 #include "fs/scenery/sceneryarea.h"
 #include "fs/navdatabaseoptions.h"
+#include "fs/scenery/layoutjson.h"
 
 #include <QtDebug>
 #include <QFile>
@@ -26,6 +27,8 @@
 namespace atools {
 namespace fs {
 namespace scenery {
+
+const static QChar SEP(QDir::separator());
 
 FileResolver::FileResolver(const NavDatabaseOptions& opts, bool noWarnings)
   : options(opts), quiet(noWarnings)
@@ -38,6 +41,9 @@ FileResolver::~FileResolver()
 
 int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStringList *filenames)
 {
+  if((!area.isActive() && !options.isReadInactive()) || !options.isIncludedLocalPath(area.getLocalPath()))
+    return 0;
+
   int numFiles = 0;
   errorMessages.clear();
 
@@ -47,42 +53,81 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
     // Scenery local path is absolute - use it as is
     sceneryAreaDirStr = areaLocalPathStr;
   else
+  {
     // Scenery local path is relative - add base path
-    sceneryAreaDirStr = options.getBasepath() + QDir::separator() + areaLocalPathStr;
+    if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+    {
+      // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
+
+      if(area.isAddOn())
+        // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
+        sceneryAreaDirStr = options.getBasepath() + SEP + "Community" + SEP + areaLocalPathStr;
+      else
+        // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
+        sceneryAreaDirStr = options.getBasepath() + SEP + "Official" + SEP + "OneStore" + SEP + areaLocalPathStr;
+    }
+    else
+      // FSX or P3D
+      sceneryAreaDirStr = options.getBasepath() + SEP + areaLocalPathStr;
+  }
 
   // Remove any .. in the path but do not change symlinks
-  QString sceneryAreaDirStrFilePath = QFileInfo(sceneryAreaDirStr).absoluteFilePath();
-
   qInfo() << "Scenery path" << sceneryAreaDirStr;
 
-  QFileInfo sceneryArea(sceneryAreaDirStrFilePath);
+  QFileInfo sceneryArea(QFileInfo(sceneryAreaDirStr).absoluteFilePath());
   if(sceneryArea.exists())
   {
     if(sceneryArea.isDir())
     {
-      QDir sceneryAreaDir(sceneryArea.filePath());
-
       QFileInfoList sceneryDirs;
-      sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"},
-                                                      QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot));
+      if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+        // MSFS has one one scenery folder with layout.json
+        sceneryDirs.append(sceneryArea);
+      else
+      {
+        // Get all scenery folders for FSX and P3D
+        QDir sceneryAreaDir(sceneryArea.filePath());
 
-      if(sceneryDirs.isEmpty() && sceneryAreaDir.dirName().toLower() == "scenery")
-        // Special case where entry points to scenery directory which is allowed by P3D
-        sceneryDirs.append(QFileInfo(sceneryAreaDir.path()));
+        sceneryDirs.append(sceneryAreaDir.entryInfoList({"scenery"},
+                                                        QDir::Dirs | QDir::Hidden | QDir::System |
+                                                        QDir::NoDotAndDotDot));
+
+        if(sceneryDirs.isEmpty() && sceneryAreaDir.dirName().toLower() == "scenery")
+          // Special case where entry points to scenery directory which is allowed by P3D
+          sceneryDirs.append(QFileInfo(sceneryAreaDir.path()));
+      }
+
+      scenery::LayoutJson layout;
 
       // get all scenery directories - normally only one
       for(QFileInfo scenery : sceneryDirs)
       {
         if(scenery.isDir())
         {
-          QDir sceneryAreaDirObj(scenery.filePath());
           // Check if directory is included
-          if(options.isIncludedDirectory(sceneryAreaDirObj.absolutePath()))
+          if(options.isIncludedDirectory(scenery.absoluteFilePath()))
           {
+            QFileInfoList bglFiles;
+
+            if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+            {
+              // Read MSFS layout file and add all BGL files ================
+              layout.clear();
+              layout.read(scenery.absoluteFilePath() + SEP + "layout.json");
+              for(const QString& path : layout.getBglPaths())
+                bglFiles.append(sceneryArea.filePath() + SEP + path);
+            }
+            else
+            {
+              // Read all BGL files from directory structure ==============
+              QDir sceneryAreaDirObj(scenery.absoluteFilePath());
+              bglFiles = sceneryAreaDirObj.entryInfoList({"*.bgl"},
+                                                         QDir::Files | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
+                                                         QDir::Name | QDir::IgnoreCase);
+            }
+
             // Get all BGL files
-            for(QFileInfo bglFile : sceneryAreaDirObj.entryInfoList(
-                  {"*.bgl"}, QDir::Files | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot,
-                  QDir::Name | QDir::IgnoreCase))
+            for(const QFileInfo& bglFile : bglFiles)
             {
               if(bglFile.isFile() && bglFile.isReadable())
               {

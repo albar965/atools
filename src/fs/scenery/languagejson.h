@@ -15,36 +15,35 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_DB_FENCEWRITER_H
-#define ATOOLS_FS_DB_FENCEWRITER_H
+#ifndef ATOOLS_LANGUAGEJSON_H
+#define ATOOLS_LANGUAGEJSON_H
 
-#include "fs/db/writerbase.h"
-#include "fs/bgl/ap/fence.h"
+#include <QHash>
+#include <QString>
 
 namespace atools {
 namespace fs {
-namespace db {
+namespace scenery {
 
-class FenceWriter :
-  public atools::fs::db::WriterBase<atools::fs::bgl::Fence>
+/*
+ * Reads MSFS language files like
+ * ".../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/en-US.locPak"
+ * and creates a map for airport names like "TT:AIRPORTXX.MYNN.name" to the real localized name.
+ */
+class LanguageJson
 {
 public:
-  FenceWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "fence")
-  {
-  }
+  LanguageJson(const QString& filename);
 
-  virtual ~FenceWriter()
-  {
-  }
+  /* Get localized airport name from key found in BGL file like "TT:AIRPORTXX.MYNN.name" */
+  QString getName(QString key) const;
 
-protected:
-  virtual void writeObject(const bgl::Fence *type) override;
-
+private:
+  QHash<QString, QString> names;
 };
 
-} // namespace writer
+} // namespace scenery
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_DB_FENCEWRITER_H
+#endif // ATOOLS_LANGUAGEJSON_H

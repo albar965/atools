@@ -172,7 +172,7 @@ void FileSystemWatcher::createFsWatcher()
 
   setPaths(false);
 
-  // Initialize size and timestamp which will omit the first update signal - user has to do the intial load
+  // Initialize size and timestamp which will omit the first update signal - user has to do the initial load
   QFileInfo fileinfo(filename);
   if(fileinfo.exists() && fileinfo.isFile())
   {

@@ -58,11 +58,11 @@ void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
   }
   else
   {
-  bindNullString(":next_type");
-  bindNullString(":next_ident");
-  bindNullString(":next_region");
-  bindNullString(":next_airport_ident");
-  bindNullFloat(":next_minimum_altitude");
+    bindNullString(":next_type");
+    bindNullString(":next_ident");
+    bindNullString(":next_region");
+    bindNullString(":next_airport_ident");
+    bindNullFloat(":next_minimum_altitude");
   }
 
   if(type->hasPreviousWaypoint())
@@ -80,11 +80,11 @@ void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
   }
   else
   {
-  bindNullString(":previous_type");
-  bindNullString(":previous_ident");
-  bindNullString(":previous_region");
-  bindNullString(":previous_airport_ident");
-  bindNullFloat(":previous_minimum_altitude");
+    bindNullString(":previous_type");
+    bindNullString(":previous_ident");
+    bindNullString(":previous_region");
+    bindNullString(":previous_airport_ident");
+    bindNullFloat(":previous_minimum_altitude");
   }
 
   executeStatement();

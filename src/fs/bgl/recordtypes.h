@@ -53,6 +53,7 @@ enum AirportRecordType
   TOWER_OBJ = 0x0066,
   RUNWAY = 0x0004,
   RUNWAY_P3D_V4 = 0x003e,
+  RUNWAY_MSFS = 0x00ce,
   AIRPORT_WAYPOINT = 0x0022,
   HELIPAD = 0x0026,
   START = 0x0011,
@@ -60,6 +61,7 @@ enum AirportRecordType
   DELETE_AIRPORT = 0x0033,
   APRON_FIRST = 0x0037,
   APRON_FIRST_P3D_V5 = 0x00af,
+  APRON_FIRST_MSFS = 0x00d3,
   APRON_SECOND = 0x0030,
   APRON_SECOND_P3D_V4 = 0x0041,
   APRON_SECOND_P3D_V5 = 0x00b0,
@@ -68,16 +70,29 @@ enum AirportRecordType
   TAXI_POINT_P3DV5 = 0x00ac,
   TAXI_PARKING = 0x003d,
   TAXI_PARKING_P3D_V5 = 0x00ad,
+  TAXI_PARKING_MSFS = 0x00e7,
   TAXI_PARKING_FS9 = 0x001b,
   TAXI_PATH = 0x001c,
   TAXI_PATH_P3D_V4 = 0x0040,
   TAXI_PATH_P3D_V5 = 0x00AE,
+  TAXI_PATH_MSFS = 0x00d4,
   TAXI_NAME = 0x001d,
   JETWAY = 0x003a,
   APPROACH = 0x0024,
   FENCE_BLAST = 0x0038,
   FENCE_BOUNDARY = 0x0039,
-  UNKNOWN_REC = 0x003b
+
+  SID_MSFS = 0x0042,
+  STAR_MSFS = 0x0048,
+
+  UNKNOWN_003B = 0x003b,
+  UNKNOWN_MSFS_0057 = 0x0057,
+  UNKNOWN_MSFS_00CD = 0x00cd,
+  UNKNOWN_MSFS_00CF = 0x00cf,
+  UNKNOWN_MSFS_00D8 = 0x00d8,
+  UNKNOWN_MSFS_00D9 = 0x00d9,
+  UNKNOWN_MSFS_00DD = 0x00dd,
+  UNKNOWN_MSFS_00DE = 0x00de
 };
 
 QString airportRecordTypeStr(AirportRecordType type);
@@ -97,18 +112,30 @@ enum RunwayRecordType
   VASI_SEC_LEFT = 0x000D,
   VASI_SEC_RIGHT = 0x000E,
   APP_LIGHTS_PRIM = 0x000f,
-  APP_LIGHTS_SEC = 0x0010
+  APP_LIGHTS_PRIM_MSFS = 0x00df,
+  APP_LIGHTS_SEC = 0x0010,
+  APP_LIGHTS_SEC_MSFS = 0x00e0,
+
+  UNKNOWN_MSFS_003E = 0x003e,
+  UNKNOWN_MSFS_00CB = 0x00cb
 };
 
 QString runwayRecordTypeStr(RunwayRecordType type);
 
-/* Sub record types for approaches */
+/* Sub record types for approaches and transitions */
 enum ApprRecordType
 {
   LEGS = 0x002d,
+  LEGS_MSFS = 0x00e1,
+
   MISSED_LEGS = 0x002e,
+  MISSED_LEGS_MSFS = 0x00e2,
+
   TRANSITION = 0x002c,
-  TRANSITION_LEGS = 0x002f
+  TRANSITION_MSFS = 0x00e3,
+
+  TRANSITION_LEGS = 0x002f,
+  TRANSITION_LEGS_MSFS = 0x00e3
 };
 
 QString approachRecordTypeStr(ApprRecordType type);

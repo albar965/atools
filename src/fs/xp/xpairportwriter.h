@@ -143,7 +143,7 @@ private:
   int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,
       numRunwayEndClosed = 0, numSoftRunway = 0, numRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
       numCom = 0, numStart = 0, numParking = 0, numTaxiPath = 0,
-      numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
+      numRunwayEndVasi = 0, numJetway = 0,
       numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0,
       numParkingMilitaryCombat = 0, numParkingMilCargo = 0, numParkingMilCombat = 0;
 

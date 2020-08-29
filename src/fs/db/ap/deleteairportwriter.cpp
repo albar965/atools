@@ -42,7 +42,6 @@ void DeleteAirportWriter::writeObject(const DeleteAirport *type)
   bind(":num_del_start", type->getDeleteStarts().size());
   bind(":num_del_com", type->getDeleteComs().size());
   bind(":approaches", isFlagSet(flags, bgl::del::APPROACHES));
-  bind(":apronlights", isFlagSet(flags, bgl::del::APRONLIGHTS));
   bind(":aprons", isFlagSet(flags, bgl::del::APRONS));
   bind(":frequencies", isFlagSet(flags, bgl::del::COMS));
   bind(":helipads", isFlagSet(flags, bgl::del::HELIPADS));

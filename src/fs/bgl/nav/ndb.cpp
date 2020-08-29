@@ -19,6 +19,7 @@
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
 #include "io/binarystream.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -60,6 +61,9 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+
   // Read only name subrecord
   if(bs->tellg() < startOffset + size)
   {
@@ -73,7 +77,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::NDB_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE);
+        name = bs->readString(r.getSize() - Record::SIZE, encoding);
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in NDB record 0x"

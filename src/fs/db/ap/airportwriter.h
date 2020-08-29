@@ -68,6 +68,12 @@ public:
 private:
   virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
+  /* Get airport id for given ident */
+  int airportIdByIdent(const QString& ident);
+
+  /* Update frequencies and other flags MSFS airports if encountering a dummy for COM and procedures */
+  void updateMsfsAirport(const bgl::Airport *type, int predId);
+
   typedef QHash<QString, const atools::fs::bgl::NamelistEntry *> NameListMapType;
   typedef NameListMapType::const_iterator NameListMapConstIterType;
   /* Maps airport ICAO idents to NamelistEntrys */
@@ -76,6 +82,7 @@ private:
   QString currentIdent;
   atools::geo::Pos currentPos;
   atools::fs::db::DeleteProcessor deleteProcessor;
+
 };
 
 } // namespace writer

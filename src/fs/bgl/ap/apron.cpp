@@ -28,12 +28,21 @@ namespace bgl {
 Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, StructureType structureType)
   : bgl::Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
+
+  if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
+  {
+    bs->skip(5);
+    materialUuid = bs->readUuid();
+    bs->skip(16);
+  }
 
   if(structureType == STRUCT_P3DV5)
     bs->skip(21);
 
   int numVertices = bs->readShort();
+  if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
+    bs->skip(2);
 
   if(options->isIncludedNavDbObject(type::GEOMETRY))
     for(int i = 0; i < numVertices; i++)
@@ -50,8 +59,8 @@ QDebug operator<<(QDebug out, const Apron& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-                          << " Runway[surface " << Runway::surfaceToStr(record.surface) << "/"
-                          << Runway::surfaceToStr(record.surface) << endl;
+                          << " Runway[surface " << surface::surfaceToDbStr(record.surface) << "/"
+                          << surface::surfaceToDbStr(record.surface) << endl;
   out << record.vertices;
   out << "]";
   return out;

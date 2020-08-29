@@ -47,9 +47,9 @@ TaxiPath::TaxiPath(io::BinaryStream *bs, StructureType structureType)
   rightEdge = static_cast<taxipath::EdgeType>((flags >> 5) & 0x3);
   rightEdgeLight = flags & (1 << 7);
 
-  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
   width = bs->readFloat();
-  bs->readFloat(); // weight limit
+  bs->skip(4); // weight limit
   bs->skip(4);
 
   if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
@@ -58,6 +58,18 @@ TaxiPath::TaxiPath(io::BinaryStream *bs, StructureType structureType)
 
   if(structureType == STRUCT_P3DV5)
     bs->skip(4);
+
+  if(structureType == STRUCT_MSFS)
+  {
+    bs->skip(4);
+
+    // UUID for taxi material {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF}
+    // Raw 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF
+    materialUuid = bs->readUuid();
+
+    bs->skip(6);
+    endPoint = bs->readShort();
+  }
 }
 
 QString TaxiPath::getName() const
@@ -123,7 +135,7 @@ QDebug operator<<(QDebug out, const TaxiPath& record)
 
   out.nospace().noquote() << " TaxiPath["
                           << "type " << TaxiPath::pathTypeToString(record.type)
-                          << ", surface " << Runway::surfaceToStr(record.surface)
+                          << ", surface " << surface::surfaceToDbStr(record.surface)
                           << ", name " << record.getName()
                           << ", left edge " << TaxiPath::edgeTypeToString(record.leftEdge)
                           << ", right edge " << TaxiPath::edgeTypeToString(record.rightEdge)

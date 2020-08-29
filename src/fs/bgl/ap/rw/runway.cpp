@@ -21,6 +21,7 @@
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
 #include "geo/calculations.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -92,86 +93,11 @@ QString Runway::lightToStr(rw::Light type)
   return "INVALID";
 }
 
-QString Runway::surfaceToStr(rw::Surface surface)
-{
-  switch(surface)
-  {
-    case rw::CONCRETE:
-      return "C";
-
-    case rw::GRASS:
-      return "G";
-
-    case rw::WATER:
-      return "W";
-
-    case rw::ASPHALT:
-      return "A";
-
-    case rw::CEMENT:
-      return "CE";
-
-    case rw::CLAY:
-      return "CL";
-
-    case rw::SNOW:
-      return "SN";
-
-    case rw::ICE:
-      return "I";
-
-    case rw::DIRT:
-      return "D";
-
-    case rw::CORAL:
-      return "CR";
-
-    case rw::GRAVEL:
-      return "GR";
-
-    case rw::OIL_TREATED:
-      return "OT";
-
-    case rw::STEEL_MATS:
-      return "SM";
-
-    case rw::BITUMINOUS:
-      return "B";
-
-    case rw::BRICK:
-      return "BR";
-
-    case rw::MACADAM:
-      return "M";
-
-    case rw::PLANKS:
-      return "PL";
-
-    case rw::SAND:
-      return "S";
-
-    case rw::SHALE:
-      return "SH";
-
-    case rw::TARMAC:
-      return "T";
-
-    // X-Plane
-    // case rw::TRANSPARENT:
-    // return "TR";
-
-    case rw::UNKNOWN:
-      return "UNKNOWN";
-  }
-  qWarning() << "Invalid surface type" << surface;
-  return "INVALID";
-}
-
 Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent,
                StructureType structureType)
   : Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readShort() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readShort() & SURFACE_MASK);
   primary.number = bs->readUByte();
   primary.designator = bs->readUByte();
   secondary.number = bs->readUByte();
@@ -184,7 +110,7 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
 
   length = bs->readFloat();
   width = bs->readFloat();
-  heading = bs->readFloat(); // TODO wiki heading is float degrees
+  heading = bs->readFloat(); // Heading is float degrees
 
   primary.heading = heading;
   secondary.heading = atools::geo::opposedCourseDeg(heading);
@@ -237,6 +163,16 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   if(structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5)
     // Skip P3D material set GUID for seasons
     bs->skip(16);
+  else if(structureType == STRUCT_MSFS)
+  {
+    bs->skip(24);
+    // UUID for runway material {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF}
+    // Raw 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF
+    materialUuid = bs->readUuid();
+    bs->skip(4);
+  }
+
+  bool msfs = options->getSimulatorType() == atools::fs::FsPaths::MSFS;
 
   // Read all subrecords
   while(bs->tellg() < startOffset + size)
@@ -249,22 +185,22 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
     switch(t)
     {
       case rec::OFFSET_THRESHOLD_PRIM:
-        primary.offsetThreshold = readRunwayExtLength();
+        primary.offsetThreshold = readRunwayExtLength(msfs);
         break;
       case rec::OFFSET_THRESHOLD_SEC:
-        secondary.offsetThreshold = readRunwayExtLength();
+        secondary.offsetThreshold = readRunwayExtLength(msfs);
         break;
       case rec::BLAST_PAD_PRIM:
-        primary.blastPad = readRunwayExtLength();
+        primary.blastPad = readRunwayExtLength(msfs);
         break;
       case rec::BLAST_PAD_SEC:
-        secondary.blastPad = readRunwayExtLength();
+        secondary.blastPad = readRunwayExtLength(msfs);
         break;
       case rec::OVERRUN_PRIM:
-        primary.overrun = readRunwayExtLength();
+        primary.overrun = readRunwayExtLength(msfs);
         break;
       case rec::OVERRUN_SEC:
-        secondary.overrun = readRunwayExtLength();
+        secondary.overrun = readRunwayExtLength(msfs);
         break;
       case rec::VASI_PRIM_LEFT:
         r.seekToStart();
@@ -283,29 +219,61 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
         secondary.rightVasi = RunwayVasi(options, bs);
         break;
       case rec::APP_LIGHTS_PRIM:
+      case rec::APP_LIGHTS_PRIM_MSFS:
         r.seekToStart();
         primary.approachLights = RunwayApproachLights(options, bs);
         break;
       case rec::APP_LIGHTS_SEC:
+      case rec::APP_LIGHTS_SEC_MSFS:
         r.seekToStart();
         secondary.approachLights = RunwayApproachLights(options, bs);
         break;
+
+      case rec::UNKNOWN_MSFS_003E:
+      case rec::UNKNOWN_MSFS_00CB:
+        break;
+
       default:
         qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
                                        << " for ident " << airportIdent
-                                       << " runway " << primary.getName() << "/" << secondary.getName();
+                                       << " runway " << primary.getName() << "/" << secondary.getName()
+                                       << " " << bs->tellg();
     }
     r.seekToEnd();
   }
 }
 
+Runway::~Runway()
+{
+}
+
 // Read runway length after record fields id and size
-int Runway::readRunwayExtLength()
+int Runway::readRunwayExtLength(bool msfs)
 {
   bs->readShort(); // surface (same as runway)
+
+  if(msfs)
+    bs->skip(16); // Material UUID in MSFS - use same as runway
+
   int len = static_cast<int>(bs->readFloat());
+
   bs->readFloat(); // width (same as runway)
   return len;
+}
+
+bool Runway::isWater() const
+{
+  return atools::fs::bgl::surface::isWater(surface);
+}
+
+bool Runway::isSoft() const
+{
+  return atools::fs::bgl::surface::isSoft(surface);
+}
+
+bool Runway::isHard() const
+{
+  return atools::fs::bgl::surface::isHard(surface);
 }
 
 QDebug operator<<(QDebug out, const Runway& record)
@@ -316,41 +284,11 @@ QDebug operator<<(QDebug out, const Runway& record)
                           << " Runway[length " << record.length
                           << ", width " << record.width
                           << ", hdg " << record.heading
-                          << ", surface " << Runway::surfaceToStr(record.surface) << endl
+                          << ", surface " << surface::surfaceToDbStr(record.surface) << endl
                           << ", primary " << record.primary << endl
                           << ", secondary " << record.secondary << endl
                           << "]";
   return out;
-}
-
-Runway::~Runway()
-{
-}
-
-bool Runway::isWater() const
-{
-  return surface == rw::WATER;
-}
-
-bool atools::fs::bgl::Runway::isSoft() const
-{
-  return !isWater() && !isHard();
-}
-
-bool Runway::isHard() const
-{
-  if(surface == rw::CONCRETE)
-    return true;
-  else if(surface == rw::CEMENT)
-    return true;
-  else if(surface == rw::ASPHALT)
-    return true;
-  else if(surface == rw::BITUMINOUS)
-    return true;
-  else if(surface == rw::TARMAC)
-    return true;
-
-  return false;
 }
 
 } // namespace bgl

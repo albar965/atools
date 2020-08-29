@@ -39,7 +39,9 @@ enum WaypointType
   NDB = 4,
   OFF_AIRWAY = 5,
   IAF = 6,
-  FAF = 7
+  FAF = 7,
+  RNAV = 8,
+  VFR = 9
 };
 
 } // namespace nav

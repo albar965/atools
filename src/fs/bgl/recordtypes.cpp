@@ -75,6 +75,34 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 {
   switch(type)
   {
+    // Unknown but common records from MSFS to silence warnings
+    case rec::UNKNOWN_MSFS_00CF:
+      return "UNKNOWN_MSFS_00CF";
+
+    case rec::UNKNOWN_MSFS_00DE:
+      return "UNKNOWN_MSFS_00DE";
+
+    case rec::UNKNOWN_MSFS_00D9:
+      return "UNKNOWN_MSFS_00D9";
+
+    case rec::UNKNOWN_MSFS_00DD:
+      return "UNKNOWN_MSFS_00DD";
+
+    case rec::UNKNOWN_MSFS_00D8:
+      return "UNKNOWN_MSFS_00D8";
+
+    case rec::UNKNOWN_MSFS_0057:
+      return "UNKNOWN_MSFS_0057";
+
+    case rec::SID_MSFS:
+      return "SID_MSFS";
+
+    case rec::STAR_MSFS:
+      return "STAR_MSFS";
+
+    case rec::UNKNOWN_MSFS_00CD:
+      return "UNKNOWN_MSFS_00CD";
+
     case rec::NAME:
       return "NAME";
 
@@ -86,6 +114,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::RUNWAY_P3D_V4:
       return "RUNWAY_P3D_V4";
+
+    case rec::RUNWAY_MSFS:
+      return "RUNWAY_MSFS";
 
     case rec::AIRPORT_WAYPOINT:
       return "AIRPORT_WAYPOINT";
@@ -107,6 +138,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::APRON_FIRST_P3D_V5:
       return "APRON_FIRST_P3D_V5";
+
+    case rec::APRON_FIRST_MSFS:
+      return "APRON_FIRST_MSFS";
 
     case rec::APRON_SECOND:
       return "APRON_SECOND";
@@ -131,6 +165,9 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 
     case rec::TAXI_PARKING_P3D_V5:
       return "TAXI_PARKING_P3D_V5";
+
+    case rec::TAXI_PARKING_MSFS:
+      return "TAXI_PARKING_MSFS";
 
     case rec::TAXI_PARKING_FS9:
       return "TAXI_PARKING_FS9";
@@ -159,10 +196,13 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::FENCE_BOUNDARY:
       return "FENCE_BOUNDARY";
 
-    case rec::UNKNOWN_REC:
-      return "UNKNOWN_REC";
+    case rec::UNKNOWN_003B:
+      return "UNKNOWN_REC_003B";
+
+    case rec::TAXI_PATH_MSFS:
+      return "TAXI_PATH_MSFS";
   }
-  qWarning().nospace().noquote() << "Invalid airport record type " << type;
+  // qWarning().nospace().noquote() << "Invalid airport record type " << type;
   return "INVALID";
 }
 
@@ -170,11 +210,25 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 {
   switch(type)
   {
+    // Unknown but common records from MSFS to silence warnings
+    case rec::UNKNOWN_MSFS_0057:
+    case rec::UNKNOWN_MSFS_00CD:
+    case rec::UNKNOWN_MSFS_00CF:
+    case rec::UNKNOWN_MSFS_00D8:
+    case rec::UNKNOWN_MSFS_00D9:
+    case rec::UNKNOWN_MSFS_00DD:
+    case rec::UNKNOWN_MSFS_00DE:
+
+    // Known record but structure unknown
+    case rec::SID_MSFS:
+    case rec::STAR_MSFS:
+
     case rec::AIRPORT_WAYPOINT:
     case rec::APPROACH:
     case rec::APRON_EDGE_LIGHTS:
     case rec::APRON_FIRST:
     case rec::APRON_FIRST_P3D_V5:
+    case rec::APRON_FIRST_MSFS:
     case rec::APRON_SECOND:
     case rec::APRON_SECOND_P3D_V4:
     case rec::APRON_SECOND_P3D_V5:
@@ -187,18 +241,23 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
     case rec::NAME:
     case rec::RUNWAY:
     case rec::RUNWAY_P3D_V4:
+    case rec::RUNWAY_MSFS:
     case rec::START:
     case rec::TAXI_NAME:
     case rec::TAXI_PARKING:
     case rec::TAXI_PARKING_FS9:
     case rec::TAXI_PARKING_P3D_V5:
+    case rec::TAXI_PARKING_MSFS:
     case rec::TAXI_PATH:
     case rec::TAXI_PATH_P3D_V4:
     case rec::TAXI_PATH_P3D_V5:
+    case rec::TAXI_PATH_MSFS:
     case rec::TAXI_POINT:
     case rec::TAXI_POINT_P3DV5:
     case rec::TOWER_OBJ:
-    case rec::UNKNOWN_REC:
+
+    // Unknown records to silence warnings
+    case rec::UNKNOWN_003B:
       return true;
   }
   return false;
@@ -208,6 +267,13 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
 {
   switch(type)
   {
+    // Unknown but common records from MSFS to silence warnings
+    case atools::fs::bgl::rec::UNKNOWN_MSFS_003E:
+      return "UNKNOWN_MSFS_003E";
+
+    case atools::fs::bgl::rec::UNKNOWN_MSFS_00CB:
+      return "UNKNOWN_MSFS_00CB";
+
     case rec::OFFSET_THRESHOLD_PRIM:
       return "OFFSET_THRESHOLD_PRIM";
 
@@ -241,8 +307,14 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
     case rec::APP_LIGHTS_PRIM:
       return "APP_LIGHTS_PRIM";
 
+    case rec::APP_LIGHTS_PRIM_MSFS:
+      return "APP_LIGHTS_PRIM_MSFS";
+
     case rec::APP_LIGHTS_SEC:
       return "APP_LIGHTS_SEC";
+
+    case rec::APP_LIGHTS_SEC_MSFS:
+      return "APP_LIGHTS_SEC_MSFS";
   }
   qWarning().nospace().noquote() << "Invalid runway record type " << type;
   return "INVALID";
@@ -255,11 +327,20 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::LEGS:
       return "LEGS";
 
+    case rec::LEGS_MSFS:
+      return "LEGS_MSFS";
+
     case rec::MISSED_LEGS:
       return "MISSED_LEGS";
 
+    case rec::MISSED_LEGS_MSFS:
+      return "MISSED_LEGS_MSFS";
+
     case rec::TRANSITION:
-      return "TRANS";
+      return "TRANSITION";
+
+    case rec::TRANSITION_MSFS:
+      return "TRANSITION_MSFS";
 
     case rec::TRANSITION_LEGS:
       return "TRANS_LEGS";

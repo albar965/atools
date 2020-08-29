@@ -69,6 +69,12 @@ QString Parking::parkingTypeToStr(ap::ParkingType type)
 
     case ap::VEHICLES:
       return "V";
+
+    case ap::RAMP_GA_EXTRA:
+      return "RE";
+
+    case ap::GATE_EXTRA:
+      return "GE";
   }
   qWarning().nospace().noquote() << "Invalid parking type " << type;
   return "INVALID";
@@ -233,16 +239,20 @@ Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
   radius = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
-  if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5) // TODO wiki mention FS9 format
-    bs->skip(16); // teeOffset 1-4
+  if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5 ||
+     structureType == STRUCT_MSFS)
+    bs->skip(16); // teeOffset 1-4 not FS9
 
   position = BglPosition(bs);
 
   for(int i = 0; i < numAirlineCodes; i++)
-    airlineCodes.append(bs->readString(4));
+    airlineCodes.append(bs->readString(4, atools::io::LATIN1));
 
+  // Skip material and runway stuff
   if(structureType == STRUCT_P3DV5)
     bs->skip(4);
+  else if(structureType == STRUCT_MSFS)
+    bs->skip(20);
 }
 
 Parking::~Parking()

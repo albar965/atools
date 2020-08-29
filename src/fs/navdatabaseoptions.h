@@ -57,13 +57,11 @@ enum NavDbObjectType
   MARKER,
   APRON, /* apron and its vertices */
   APRON2, /* apron and its vertices2 lists */
-  APRONLIGHT,
-  FENCE, /* boundary and blast fences */
   TAXIWAY,
   VEHICLE, /* taxiway and parking for airport vehicles */
   TAXIWAY_RUNWAY, /* taxiway across runways */
   AIRWAY, /* all airway route processing */
-  GEOMETRY /* apron and fence geometry */
+  GEOMETRY /* apron geometry */
 };
 
 QString navDbObjectTypeToString(atools::fs::type::NavDbObjectType type);
@@ -387,7 +385,7 @@ public:
   bool isIncludedLocalPath(const QString& filepath) const;
   bool isIncludedAirportIdent(const QString& icao) const;
 
-  /* Options that are not save with the object */
+  /* Options that are not saved with the object */
   bool isIncludedDirectory(const QString& dirpath) const;
   bool isIncludedFilePath(const QString& filepath) const;
 
@@ -430,6 +428,14 @@ public:
     basicValidationTables = value;
   }
 
+  /* Language for MSFS airport, city and country names like "en-US" or "de-DE" */
+  QString getLanguage() const
+  {
+    return language;
+  }
+
+  void setLanguage(const QString& value);
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::NavDatabaseOptions& opts);
 
@@ -456,7 +462,7 @@ private:
   QString fromNativeSeparator(const QString& path) const;
   QStringList createFilterList(const QStringList& pathList);
 
-  QString sceneryFile, basepath, sourceDatabase;
+  QString sceneryFile, basepath, sourceDatabase, language = "en-US";
 
   atools::fs::type::OptionFlags flags;
 

@@ -91,7 +91,6 @@ void DfdCompiler::writeAirports()
   airportWriteQuery->bindValue(":has_tower_object", 0);
   airportWriteQuery->bindValue(":is_closed", 0);
   airportWriteQuery->bindValue(":is_addon", 0);
-  airportWriteQuery->bindValue(":num_boundary_fence", 0);
   airportWriteQuery->bindValue(":num_parking_gate", 0);
   airportWriteQuery->bindValue(":num_parking_ga_ramp", 0);
   airportWriteQuery->bindValue(":num_parking_cargo", 0);

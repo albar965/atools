@@ -54,7 +54,7 @@ Helipad::Helipad()
 Helipad::Helipad(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
 
   int flags = bs->readUByte();
   type = static_cast<helipad::HelipadType>(flags & 0xf);
@@ -75,7 +75,7 @@ QDebug operator<<(QDebug out, const Helipad& record)
 
   out.nospace().noquote() << static_cast<const Record&>(record)
   << " Helipad[type " << Helipad::helipadTypeToStr(record.type)
-  << ", surface " << Runway::surfaceToStr(record.surface) << endl
+  << ", surface " << surface::surfaceToDbStr(record.surface) << endl
   << ", length " << record.length
   << ", width " << record.width
   << ", heading " << record.heading

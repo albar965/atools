@@ -22,6 +22,7 @@
 #include "sql/sqldatabase.h"
 #include "geo/calculations.h"
 #include "fs/util/fsutil.h"
+#include "fs/bgl/surface.h"
 #include "fs/progresshandler.h"
 #include "fs/common/airportindex.h"
 #include "fs/common/magdecreader.h"
@@ -451,11 +452,6 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
   insertTaxiQuery->bindValue(":type", "T" /* taxi */);
   insertTaxiQuery->bindValue(":is_draw_surface", 1);
   insertTaxiQuery->bindValue(":is_draw_detail", 1);
-
-  insertTaxiQuery->bindValue(":has_centerline", 0);
-  insertTaxiQuery->bindValue(":has_centerline_light", 0);
-  insertTaxiQuery->bindValue(":has_left_edge_light", 0);
-  insertTaxiQuery->bindValue(":has_right_edge_light", 0);
 
   insertTaxiQuery->bindValue(":start_type", "N" /* Normal */);
   insertTaxiQuery->bindValue(":start_lonx", start.getLonX());
@@ -1411,7 +1407,6 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
     insertAirportQuery->bindValue(":is_closed", airportClosed); // extracted from name
     insertAirportQuery->bindValue(":is_military", military);
     insertAirportQuery->bindValue(":is_addon", context.flags.testFlag(IS_ADDON));
-    insertAirportQuery->bindValue(":num_boundary_fence", 0);
 
     insertAirportQuery->bindValue(":num_approach", 0); // num_approach filled later when reading CIFP
     insertAirportQuery->bindValue(":num_runway_end_closed", 0); // not available

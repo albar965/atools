@@ -18,6 +18,7 @@
 #include "fs/db/ap/apronwriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
+#include "fs/bgl/surface.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/bgl/ap/rw/runway.h"
@@ -31,6 +32,7 @@ namespace db {
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
 using atools::fs::bgl::Runway;
+using atools::fs::bgl::surface::surfaceToDbStr;
 
 void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apron2 *> *type)
 {
@@ -40,7 +42,12 @@ void ApronWriter::writeObject(const std::pair<const bgl::Apron *, const bgl::Apr
 
   bind(":apron_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-  bind(":surface", Runway::surfaceToStr(type->first->getSurface()));
+
+  // Use MSFS material library is UUID is set
+  if(!type->first->getMaterialUuid().isNull())
+    bind(":surface", surfaceToDbStr(getDataWriter().getSurface(type->first->getMaterialUuid())));
+  else
+    bind(":surface", surfaceToDbStr(type->first->getSurface()));
 
   // New in P3D v4 - apron2 might be missing
   bindBool(":is_draw_surface", type->second != nullptr ? type->second->isDrawSurface() : true);

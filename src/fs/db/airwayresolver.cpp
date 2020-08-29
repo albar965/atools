@@ -46,7 +46,7 @@ using atools::geo::Pos;
 using atools::geo::Rect;
 
 // Get all airway_point rows and join previous and next waypoints to the result by ident, region and type
-static const QString WAYPOINT_QUERY(
+static const QString WAYPOINT_QUERY_TYPE(
   "select r.name, r.type, "
   "  prev.waypoint_id as prev_waypoint_id, "
   "  r.previous_minimum_altitude, "
@@ -64,8 +64,33 @@ static const QString WAYPOINT_QUERY(
   "  next.lonx as next_lonx, "
   "  next.laty as next_laty "
   "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
-  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region and r.previous_type = prev.type "
-  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region and r.next_type = next.type "
+  "  left outer join waypoint prev on "
+  "    r.previous_ident = prev.ident and r.previous_region = prev.region and r.previous_type = prev.type "
+  "  left outer join waypoint next on "
+  "    r.next_ident = next.ident and r.next_region = next.region and r.next_type = next.type "
+  "order by r.name");
+
+// Get all airway_point rows and join previous and next waypoints to the result by ident and region
+static const QString WAYPOINT_QUERY_NO_TYPE(
+  "select r.name, r.type, "
+  "  prev.waypoint_id as prev_waypoint_id, "
+  "  r.previous_minimum_altitude, "
+  "  r.previous_maximum_altitude, "
+  "  r.previous_direction, "
+  "  prev.lonx as prev_lonx, "
+  "  prev.laty as prev_laty, "
+  "  r.waypoint_id, "
+  "  w.lonx as lonx, "
+  "  w.laty as laty, "
+  "  next.waypoint_id as next_waypoint_id, "
+  "  r.next_minimum_altitude, "
+  "  r.next_maximum_altitude, "
+  "  r.next_direction, "
+  "  next.lonx as next_lonx, "
+  "  next.laty as next_laty "
+  "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
+  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
+  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
   "order by r.name");
 
 /* Airway segment with from/to position and IDs */
@@ -159,7 +184,7 @@ bool AirwayResolver::run(int numReportSteps)
 
   // Get all airway_point rows and join previous and next waypoints to the result by ident and region
   // Result is ordered by airway name
-  query.exec(WAYPOINT_QUERY);
+  query.exec(joinType ? WAYPOINT_QUERY_TYPE : WAYPOINT_QUERY_NO_TYPE);
   while(query.next())
   {
     QString awName = query.value("name").toString();

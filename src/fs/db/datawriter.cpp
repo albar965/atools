@@ -19,6 +19,8 @@
 
 #include "fs/bgl/bglfile.h"
 #include "fs/scenery/fileresolver.h"
+#include "fs/scenery/languagejson.h"
+#include "fs/scenery/materiallib.h"
 #include "fs/navdatabaseoptions.h"
 #include "sql/sqldatabase.h"
 #include "fs/db/nav/waypointwriter.h"
@@ -44,8 +46,6 @@
 #include "fs/db/ap/startwriter.h"
 #include "fs/db/ap/helipadwriter.h"
 #include "fs/db/ap/apronwriter.h"
-#include "fs/db/ap/apronlightwriter.h"
-#include "fs/db/ap/fencewriter.h"
 #include "fs/db/ap/taxipathwriter.h"
 #include "fs/db/nav/boundarywriter.h"
 #include "fs/progresshandler.h"
@@ -94,8 +94,6 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   airportHelipadWriter = new HelipadWriter(db, *this);
   airportStartWriter = new StartWriter(db, *this);
   airportApronWriter = new ApronWriter(db, *this);
-  airportApronLightWriter = new ApronLightWriter(db, *this);
-  airportFenceWriter = new FenceWriter(db, *this);
   airportComWriter = new ComWriter(db, *this);
   airportTaxiPathWriter = new TaxiPathWriter(db, *this);
   deleteAirportWriter = new DeleteAirportWriter(db, *this);
@@ -150,10 +148,6 @@ void DataWriter::close()
   airportStartWriter = nullptr;
   delete airportApronWriter;
   airportApronWriter = nullptr;
-  delete airportApronLightWriter;
-  airportApronLightWriter = nullptr;
-  delete airportFenceWriter;
-  airportFenceWriter = nullptr;
   delete airportTaxiPathWriter;
   airportTaxiPathWriter = nullptr;
   delete airportComWriter;
@@ -192,6 +186,34 @@ float DataWriter::getMagVar(const geo::Pos& pos, float defaultValue) const
     return defaultValue;
 }
 
+QString DataWriter::getSurface(const QUuid& key)
+{
+  if(materialLibScenery != nullptr)
+  {
+    QString surface = materialLibScenery->getSurfaceForUuid(key);
+    if(!surface.isEmpty())
+      return surface;
+  }
+
+  if(materialLib != nullptr)
+    return materialLib->getSurfaceForUuid(key);
+  else
+    return QString();
+}
+
+QString DataWriter::getLanguage(const QString& key)
+{
+  if(languageIndex != nullptr)
+  {
+    if(key.startsWith("TT:"))
+      return languageIndex->getName(key);
+
+    return key;
+  }
+  else
+    return key;
+}
+
 void DataWriter::writeSceneryArea(const SceneryArea& area)
 {
   QStringList filepaths, filenames;
@@ -206,7 +228,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
   if(!filepaths.empty())
   {
-    // Write the scenera area metadata
+    // Write the scenery area metadata
     sceneryAreaWriter->writeOne(area);
 
     BglFile bglFile(&options);
@@ -233,11 +255,15 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
       try
       {
+        // ================================================================================
         // Read all records into a internal object tree (atools::fs::bgl namespace)
         bglFile.readFile(currentBglFilePath);
 
         if(bglFile.hasContent() && bglFile.isValid())
         {
+          // ================================================================================
+          // Write to the database
+
           // if(!bglFile.getHeader().hasValidMagicNumber())
           // qWarning() << "Content in file with invalid magic number";
 
@@ -257,6 +283,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           // Write airport and all subrecords like runways, approaches, parking and so on
           airportWriter->write(bglFile.getAirports());
+
           airportFileWriter->write(bglFile.getAirports());
 
           // Write all navaids to the database
@@ -318,9 +345,8 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
   }
 }
 
-void DataWriter::readMagDeclBgl()
+void DataWriter::readMagDeclBgl(const QString& fileScenery)
 {
-  QString fileScenery = atools::buildPathNoCase({options.getBasepath(), "Scenery", "Base", "Scenery", "magdec.bgl"});
   QString fileSettings = atools::buildPath({atools::settings::Settings::instance().getPath(), "magdec.bgl"});
   QString fileApp = atools::buildPath({QApplication::applicationDirPath(), "magdec", "magdec.bgl"});
 

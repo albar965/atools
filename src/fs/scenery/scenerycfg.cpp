@@ -79,11 +79,11 @@ void SceneryCfg::onStartSection(const QString& section, const QString& sectionSu
   if(section == "area")
   {
     bool ok = false;
-    currentArea.areaNumber = sectionSuffix.toInt(&ok);
+    currentArea.setAreaNumber(sectionSuffix.toInt(&ok));
     if(!ok)
     {
       qWarning() << "Area number" << sectionSuffix << "not valid in section" << section;
-      currentArea.areaNumber = -1;
+      currentArea.setAreaNumber(-1);
     }
   }
 }
@@ -94,11 +94,11 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
   if(section == "area")
   {
     currentArea.fixTitle();
-    if(!currentArea.title.isEmpty() && currentArea.areaNumber != -1 &&
-       (!currentArea.remotePath.isEmpty() || !currentArea.localPath.isEmpty()))
+    if(!currentArea.getTitle().isEmpty() && currentArea.getAreaNumber() != -1 &&
+       (!currentArea.getRemotePath().isEmpty() || !currentArea.getLocalPath().isEmpty()))
       appendArea(currentArea);
     else
-      qWarning() << "Found empty area: number" << currentArea.areaNumber << "in section" << section;
+      qWarning() << "Found empty area: number" << currentArea.getAreaNumber() << "in section" << section;
 
     currentArea = SceneryArea();
   }
@@ -122,27 +122,27 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
   else if(section == "area")
   {
     if(key == "title")
-      currentArea.title = value;
+      currentArea.setTitle(value);
     else if(key == "texture_id")
-      currentArea.textureId = toInt(value);
+      currentArea.setTextureId(toInt(value));
     else if(key == "remote")
-      currentArea.remotePath = value;
+      currentArea.setRemotePath(value);
     else if(key == "local")
     {
 #ifdef Q_OS_UNIX
-      currentArea.localPath = QString(value).replace("\\", "/");
+      currentArea.setLocalPath(QString(value).replace("\\", "/"));
 #else
       currentArea.localPath = value;
 #endif
     }
     else if(key == "layer")
-      currentArea.layer = toInt(value);
+      currentArea.setLayer(toInt(value));
     else if(key == "active")
-      currentArea.active = toBool(value);
+      currentArea.setActive(toBool(value));
     else if(key == "required")
-      currentArea.required = toBool(value);
+      currentArea.setRequired(toBool(value));
     else if(key == "exclude")
-      currentArea.exclude = value;
+      currentArea.setExclude(value);
     else
       qWarning() << "Unexpected key" << key << "in section" << section << "file" << filepath;
   }

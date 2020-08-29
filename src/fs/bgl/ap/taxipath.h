@@ -116,7 +116,7 @@ public:
     return rightEdgeLight;
   }
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -132,6 +132,11 @@ public:
   float getWidth() const
   {
     return width;
+  }
+
+  const QUuid& getMaterialUuid() const
+  {
+    return materialUuid;
   }
 
   static QString pathTypeToString(taxipath::Type type);
@@ -153,12 +158,13 @@ private:
   atools::fs::bgl::taxipath::EdgeType leftEdge;
   atools::fs::bgl::taxipath::EdgeType rightEdge;
 
-  atools::fs::bgl::rw::Surface surface;
+  atools::fs::bgl::Surface surface;
   float width;
 
   atools::fs::bgl::TaxiPoint start, end;
 
   bool drawSurface, drawDetail, centerline, centerlineLight, leftEdgeLight, rightEdgeLight;
+  QUuid materialUuid;
 
 };
 

@@ -25,6 +25,12 @@ class QFile;
 namespace atools {
 namespace io {
 
+enum Encoding
+{
+  UTF8,
+  LATIN1
+};
+
 /*
  * Simple wrapper for binary file reading around QDataStream
  * that will throw an Exception in case of
@@ -46,18 +52,20 @@ public:
 
   float readFloat();
 
-  /* reads a null terminated latin-1 string and also stops reading at any
-   * control characters */
-  QString readString();
+  /* reads a null terminated latin-1 or UTF-8 string and also stops reading at NUL */
+  QString readString(Encoding encoding);
 
-  /* Reads a latin-1 string of the given length terminating before at null or
-   * control characters */
-  QString readString(int length);
+  /* Reads a latin-1 or UTF-8 string of the given length terminating at NUL */
+  QString readString(int length, Encoding encoding);
 
   /* Reads a single byte as a latin-1 character */
   QChar readChar();
 
   int readBytes(char bytes[], int size);
+
+  /* Reads 16 bytes like 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF into UUID
+   *  {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF} */
+  QUuid readUuid();
 
   qint64 tellg() const;
   void skip(qint64 bytes);

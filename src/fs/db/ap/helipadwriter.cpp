@@ -18,6 +18,7 @@
 #include "fs/db/ap/helipadwriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
+#include "fs/bgl/surface.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/startwriter.h"
@@ -32,6 +33,7 @@ namespace db {
 using atools::fs::bgl::Helipad;
 using atools::fs::bgl::Runway;
 using atools::geo::meterToFeet;
+using atools::fs::bgl::surface::surfaceToDbStr;
 
 HelipadWriter::HelipadWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
   : WriterBase(db, dataWriter, "helipad")
@@ -57,7 +59,7 @@ void HelipadWriter::writeObject(const Helipad *type)
   else
     bindNullInt(":start_id");
 
-  bind(":surface", Runway::surfaceToStr(type->getSurface()));
+  bind(":surface", surfaceToDbStr(type->getSurface()));
   bind(":type", bgl::util::enumToStr(Helipad::helipadTypeToStr, type->getType()));
   bind(":length", roundToInt(meterToFeet(type->getLength())));
   bind(":width", roundToInt(meterToFeet(type->getWidth())));

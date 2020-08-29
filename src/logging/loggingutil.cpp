@@ -47,7 +47,8 @@ void LoggingUtil::logSystemInformation()
     qInfo() << "Log file" << i++ << f;
 
   qInfo() << "Default text codec" << QTextCodec::codecForLocale()->name();
-  qInfo() << "Locale name" << QLocale::system().bcp47Name();
+  qInfo() << "Locale BCP47 name" << QLocale::system().bcp47Name();
+  qInfo() << "Locale name" << QLocale::system().name();
   qInfo() << "Locale decimal point" << QLocale::system().decimalPoint();
   qInfo() << "Locale group separator" << QLocale::system().groupSeparator();
   qInfo() << "UI languages" << QLocale().uiLanguages();

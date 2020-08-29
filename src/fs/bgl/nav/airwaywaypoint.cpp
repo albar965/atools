@@ -67,11 +67,11 @@ QDebug operator<<(QDebug out, const AirwayWaypoint& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " AirwayWaypoint[type " << AirwayWaypoint::airwayWaypointTypeToStr(record.type)
-  << ", ident " << record.ident
-  << ", region " << record.region
-  << ", min alt " << record.minimumAltitude
-  << ", airport ID " << record.airportIdent << "]";
+                          << " AirwayWaypoint[type " << AirwayWaypoint::airwayWaypointTypeToStr(record.type)
+                          << ", ident " << record.ident
+                          << ", region " << record.region
+                          << ", min alt " << record.minimumAltitude
+                          << ", airport ID " << record.airportIdent << "]";
   return out;
 }
 

@@ -42,6 +42,13 @@ NavDatabaseOptions::ProgressCallbackType NavDatabaseOptions::getProgressCallback
   return progressCallback;
 }
 
+void NavDatabaseOptions::setLanguage(const QString& value)
+{
+  language = value.isEmpty() ? "en-US" : value;
+  language.replace('_', '-');
+  language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+}
+
 void NavDatabaseOptions::addToDirectoryExcludes(const QStringList& filter)
 {
   addToFilter(createFilterList(filter), dirExcludesGui);
@@ -204,7 +211,8 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
 {
   setReadInactive(settings.value("Options/IgnoreInactive", false).toBool());
   setVerbose(settings.value("Options/Verbose", false).toBool());
-  setResolveAirways(settings.value("Options/ResolveAirways", true).toBool());
+  setResolveAirways(settings.value("Options/ResolveRoutes", true).toBool());
+  setLanguage(settings.value("Options/MsfsAirportLanguage", "en-US").toString());
   setCreateRouteTables(settings.value("Options/CreateRouteTables", false).toBool());
   setDatabaseReport(settings.value("Options/DatabaseReport", true).toBool());
   setDeletes(settings.value("Options/ProcessDelete", true).toBool());
@@ -445,12 +453,6 @@ QString type::navDbObjectTypeToString(type::NavDbObjectType type)
     case APRON2:
       return "APRON2";
 
-    case APRONLIGHT:
-      return "APRONLIGHT";
-
-    case FENCE:
-      return "FENCE";
-
     case TAXIWAY:
       return "TAXIWAY";
 
@@ -503,10 +505,6 @@ type::NavDbObjectType type::stringToNavDbObjectType(const QString& typeStr)
     return APRON;
   else if(typeStr == "APRON2")
     return APRON2;
-  else if(typeStr == "APRONLIGHT")
-    return APRONLIGHT;
-  else if(typeStr == "FENCE")
-    return FENCE;
   else if(typeStr == "TAXIWAY")
     return TAXIWAY;
   else if(typeStr == "VEHICLE")

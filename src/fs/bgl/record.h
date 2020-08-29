@@ -36,7 +36,8 @@ enum StructureType
   STRUCT_FS9,
   STRUCT_FSX,
   STRUCT_P3DV4,
-  STRUCT_P3DV5
+  STRUCT_P3DV5,
+  STRUCT_MSFS
 };
 
 /*

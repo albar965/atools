@@ -30,23 +30,22 @@ using atools::io::BinaryStream;
 QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
 {
   QString retval;
-  if((flags & del::APPROACHES) == del::APPROACHES)
+  if(flags.testFlag(del::APPROACHES))
     retval += "APPROACHES,";
-  if((flags & del::APRONLIGHTS) == del::APRONLIGHTS)
-    retval += "APRONLIGHTS,";
-  if((flags & del::APRONS) == del::APRONS)
+  if(flags.testFlag(del::APRONS))
     retval += "APRONS,";
-  if((flags & del::COMS) == del::COMS)
+  if(flags.testFlag(del::COMS))
     retval += "FREQUENCIES,";
-  if((flags & del::HELIPADS) == del::HELIPADS)
+  if(flags.testFlag(del::HELIPADS))
     retval += "HELIPADS,";
-  if((flags & del::RUNWAYS) == del::RUNWAYS)
+  if(flags.testFlag(del::RUNWAYS))
     retval += "RUNWAYS,";
-  if((flags & del::STARTS) == del::STARTS)
+  if(flags.testFlag(del::STARTS))
     retval += "STARTS,";
-  if((flags & del::TAXIWAYS) == del::TAXIWAYS)
+  if(flags.testFlag(del::TAXIWAYS))
     retval += "TAXIWAYS,";
-  // TODO find out missing flags with bgl compiler
+
+  // TODO find out missing flags with bgl compiler also for MSFS
   // else if(flags != 0)
   // qWarning().nospace().noquote() << "Found unknown delete all flags 0x" << hex << flags;
 
@@ -83,13 +82,19 @@ DeleteAirport::DeleteAirport(const NavDatabaseOptions *options, BinaryStream *bs
     deleteComs.append(DeleteCom(options, bs));
 }
 
+DeleteAirport::DeleteAirport(del::DeleteAllFlags deleteAllFlags)
+  : flags(deleteAllFlags)
+{
+
+}
+
 QDebug operator<<(QDebug out, const DeleteAirport& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << "DeleteAirport[flags "
-  << DeleteAirport::deleteAllFlagsToStr(record.flags);
+                          << "DeleteAirport[flags "
+                          << DeleteAirport::deleteAllFlagsToStr(record.flags);
   out << record.deleteRunways;
   out << record.deleteStarts;
   out << record.deleteComs;

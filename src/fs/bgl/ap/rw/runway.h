@@ -20,8 +20,11 @@
 
 #include "fs/bgl/record.h"
 #include "fs/bgl/bglposition.h"
+#include "fs/bgl/surface.h"
 
 #include "runwayend.h"
+
+#include <QUuid>
 
 namespace atools {
 namespace io {
@@ -70,36 +73,6 @@ enum Light
   LOW = 1,
   MEDIUM = 2,
   HIGH = 3
-};
-
-/* Remove upper bit from surface */
-const int SURFACE_MASK = 0x7F;
-
-/* Surface - also used for aprons and taxiways */
-enum Surface
-{
-  CONCRETE = 0x0000,
-  GRASS = 0x0001,
-  WATER = 0x0002,
-  CEMENT = 0x0003, // TODO wiki error report
-  ASPHALT = 0x0004,
-  // GRASS = 0x0005, invalid ADE interprets it as grass
-  CLAY = 0x0007,
-  SNOW = 0x0008,
-  ICE = 0x0009,
-  DIRT = 0x000C,
-  CORAL = 0x000D,
-  GRAVEL = 0x000E,
-  OIL_TREATED = 0x000F,
-  STEEL_MATS = 0x0010,
-  BITUMINOUS = 0x0011,
-  BRICK = 0x0012,
-  MACADAM = 0x0013,
-  PLANKS = 0x0014,
-  SAND = 0x0015,
-  SHALE = 0x0016,
-  TARMAC = 0x0017,
-  UNKNOWN = 0x00FE
 };
 
 enum PatternFlags
@@ -213,7 +186,7 @@ public:
     return secondary;
   }
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -242,16 +215,20 @@ public:
     return secondaryPos;
   }
 
-  static QString runwayMarkingsToStr(atools::fs::bgl::rw::RunwayMarkings surface);
-  static QString lightToStr(atools::fs::bgl::rw::Light surface);
-  static QString surfaceToStr(atools::fs::bgl::rw::Surface value);
+  static QString runwayMarkingsToStr(atools::fs::bgl::rw::RunwayMarkings type);
+  static QString lightToStr(atools::fs::bgl::rw::Light type);
+
+  const QUuid& getMaterialUuid() const
+  {
+    return materialUuid;
+  }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Runway& record);
 
-  int readRunwayExtLength();
+  int readRunwayExtLength(bool msfs);
 
-  atools::fs::bgl::rw::Surface surface;
+  atools::fs::bgl::Surface surface;
 
   atools::fs::bgl::BglPosition position;
   atools::geo::Pos primaryPos, secondaryPos;
@@ -265,6 +242,8 @@ private:
   bool centerRed;
 
   atools::fs::bgl::RunwayEnd primary, secondary;
+
+  QUuid materialUuid;
 };
 
 } // namespace bgl

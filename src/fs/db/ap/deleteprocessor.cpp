@@ -63,10 +63,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   selectAirportStmt = new SqlQuery(sqlDb);
   deleteApronStmt = new SqlQuery(sqlDb);
   updateApronStmt = new SqlQuery(sqlDb);
-  deleteApronLightStmt = new SqlQuery(sqlDb);
-  updateApronLightStmt = new SqlQuery(sqlDb);
-  deleteFenceStmt = new SqlQuery(sqlDb);
-  updateFenceStmt = new SqlQuery(sqlDb);
   deleteHelipadStmt = new SqlQuery(sqlDb);
   updateHelipadStmt = new SqlQuery(sqlDb);
   deleteStartStmt = new SqlQuery(sqlDb);
@@ -122,9 +118,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   deleteParkingStmt->prepare(delAptFeatureStmt("parking"));
   updateParkingStmt->prepare(updateAptFeatureStmt("parking"));
   deleteApronStmt->prepare(delAptFeatureStmt("apron"));
-  deleteApronLightStmt->prepare(delAptFeatureStmt("apron_light"));
-  deleteFenceStmt->prepare(delAptFeatureStmt("fence"));
-  updateFenceStmt->prepare(updateAptFeatureStmt("fence"));
   deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
   deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
@@ -138,7 +131,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateHelipadStmt->prepare(updateAptFeatureStmt("helipad"));
   updateStartStmt->prepare(updateAptFeatureStmt("start"));
   updateApronStmt->prepare(updateAptFeatureStmt("apron"));
-  updateApronLightStmt->prepare(updateAptFeatureStmt("apron_light"));
   updateTaxiPathStmt->prepare(updateAptFeatureStmt("taxi_path"));
 
   // Relink approach (and everything dependent) to a new airport
@@ -187,10 +179,6 @@ DeleteProcessor::~DeleteProcessor()
   delete selectAirportStmt;
   delete deleteApronStmt;
   delete updateApronStmt;
-  delete deleteApronLightStmt;
-  delete updateApronLightStmt;
-  delete deleteFenceStmt;
-  delete updateFenceStmt;
   delete deleteHelipadStmt;
   delete updateHelipadStmt;
   delete deleteStartStmt;
@@ -267,7 +255,6 @@ void DeleteProcessor::postProcessDelete()
   // Work on facilities that will be either removed or attached to the new airport depending on flags
   if(prevHasApron)
   {
-    removeOrUpdate(deleteApronLightStmt, updateApronLightStmt, bgl::del::APRONLIGHTS);
     removeOrUpdate(deleteApronStmt, updateApronStmt, bgl::del::APRONS);
 
     if(!isFlagSet(deleteFlags, bgl::del::APRONS) && hasPrevious)
@@ -341,16 +328,6 @@ void DeleteProcessor::postProcessDelete()
     copyAirportColumns << "num_parking_gate" << "num_parking_ga_ramp" << "num_parking_cargo"
                        << "num_parking_mil_cargo" << "num_parking_mil_combat" << "num_jetway"
                        << "largest_parking_ramp" << "largest_parking_gate";
-  }
-
-  if(!newAirport->getFences().isEmpty())
-    // New airport has fences - delete the previous ones
-    bindAndExecute(deleteFenceStmt, "fences deleted");
-  else if(hasPrevious)
-  {
-    // New airport has no fences - transfer previous ones and update counts
-    bindAndExecute(updateFenceStmt, "fences updated");
-    copyAirportColumns.append("num_boundary_fence");
   }
 
   if(hasPrevious)
@@ -627,13 +604,15 @@ void DeleteProcessor::extractPreviousAirportFeatures()
 
     hasPrevious = true;
 
-    qInfo().nospace().noquote()
-      << "Add-on airport altitude for "
-      << newAirport->getIdent()
-      << " changed from " << selectAirportStmt->valueInt("altitude") << " ft"
-      << " (BGL " << sceneryLocalPath << "/" << bglFilename << ")"
-      << " to " << atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude()))
-      << " ft";
+    if(selectAirportStmt->valueInt("altitude") !=
+       atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude())))
+      qInfo().nospace().noquote()
+        << "Add-on airport altitude for "
+        << newAirport->getIdent()
+        << " changed from " << selectAirportStmt->valueInt("altitude") << " ft"
+        << " (BGL " << sceneryLocalPath << "/" << bglFilename << ")"
+        << " to " << atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude()))
+        << " ft";
   }
   selectAirportStmt->finish();
 }

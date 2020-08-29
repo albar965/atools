@@ -18,6 +18,7 @@
 #include "fs/bgl/ap/del/deleterunway.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
+#include "fs/bgl/surface.h"
 
 namespace atools {
 namespace fs {
@@ -26,9 +27,9 @@ namespace bgl {
 using atools::io::BinaryStream;
 
 DeleteRunway::DeleteRunway(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
-  : BglBase(options, bs), surface(rw::UNKNOWN)
+  : BglBase(options, bs), surface(UNKNOWN)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
   int numPrim = bs->readUByte();
   int numSec = bs->readUByte();
   int desig = bs->readUByte();
@@ -43,7 +44,7 @@ QDebug operator<<(QDebug out, const DeleteRunway& record)
   out.nospace().noquote() << static_cast<const BglBase&>(record)
   << "DeleteRunway[prim name " << record.primaryName
   << ", sec name " << record.secondaryName
-  << ", surface " << Runway::surfaceToStr(record.surface) << "]";
+  << ", surface " << surface::surfaceToDbStr(record.surface) << "]";
   return out;
 }
 

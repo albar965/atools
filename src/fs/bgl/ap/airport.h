@@ -23,14 +23,12 @@
 #include "fs/bgl/ap/approach.h"
 #include "fs/bgl/ap/apron.h"
 #include "fs/bgl/ap/apron2.h"
-#include "fs/bgl/ap/apronedgelight.h"
 #include "fs/bgl/ap/parking.h"
 #include "del/deleteairport.h"
 #include "fs/bgl//bglposition.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/helipad.h"
 #include "fs/bgl/ap/start.h"
-#include "fs/bgl/ap/fence.h"
 #include "fs/bgl/ap/taxipath.h"
 #include "geo/rect.h"
 #include "fs/bgl/bglfile.h"
@@ -208,16 +206,6 @@ public:
     return aprons2;
   }
 
-  const QList<atools::fs::bgl::ApronEdgeLight>& getApronsLights() const
-  {
-    return apronLights;
-  }
-
-  const QList<atools::fs::bgl::Fence>& getFences() const
-  {
-    return fences;
-  }
-
   const QList<atools::fs::bgl::TaxiPath>& getTaxiPaths() const
   {
     return taxipaths;
@@ -255,24 +243,9 @@ public:
     return numRunwayEndIls;
   }
 
-  int getNumHardRunway() const
-  {
-    return numHardRunway;
-  }
-
   int getNumRunwayEndClosed() const
   {
     return numRunwayEndClosed;
-  }
-
-  int getNumSoftRunway() const
-  {
-    return numSoftRunway;
-  }
-
-  int getNumWaterRunway() const
-  {
-    return numWaterRunway;
   }
 
   /*
@@ -294,11 +267,6 @@ public:
   int getNumJetway() const
   {
     return numJetway;
-  }
-
-  int getNumBoundaryFence() const
-  {
-    return numBoundaryFence;
   }
 
   /*
@@ -340,7 +308,7 @@ public:
     return longestRunwayHeading;
   }
 
-  atools::fs::bgl::rw::Surface getLongestRunwaySurface() const
+  atools::fs::bgl::Surface getLongestRunwaySurface() const
   {
     return longestRunwaySurface;
   }
@@ -379,46 +347,6 @@ public:
   }
 
   /*
-   * @return tower COM frequency in MHz * 1000
-   */
-  int getTowerFrequency() const
-  {
-    return towerFrequency;
-  }
-
-  /*
-   * @return ATIS frequency in MHz * 1000
-   */
-  int getAtisFrequency() const
-  {
-    return atisFrequency;
-  }
-
-  /*
-   * @return AWOS frequency in MHz * 1000
-   */
-  int getAwosFrequency() const
-  {
-    return awosFrequency;
-  }
-
-  /*
-   * @return ASOS frequency in MHz * 1000
-   */
-  int getAsosFrequency() const
-  {
-    return asosFrequency;
-  }
-
-  /*
-   * @return UNICOM frequency in MHz * 1000
-   */
-  int getUnicomFrequency() const
-  {
-    return unicomFrequency;
-  }
-
-  /*
    *  Check if this is a dummy airport that comes with some elevation adjustments
    * @return true if there are no runways, no parking, etc.
    */
@@ -430,6 +358,19 @@ public:
 
   virtual bool isValid() const override;
   virtual QString getObjectName() const override;
+
+  /* An empty airport containing only procedures and COM records */
+  bool isMsfsDummyAirport() const
+  {
+    return msfsDummyAirport;
+  }
+
+  void updateRunwaySummaryFields();
+
+  /* Extract main frequencies for overview. All frequency in MHz * 1000. */
+  static void extractMainComFrequencies(const QList<atools::fs::bgl::Com>& coms, int& towerFrequency,
+                                        int& unicomFrequency, int& awosFrequency, int& asosFrequency,
+                                        int& atisFrequency);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Airport& record);
@@ -454,19 +395,17 @@ private:
   QString ident, name, region;
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
-  bool towerObj = false, airportClosed = false, military = false;
+  bool towerObj = false, airportClosed = false, military = false,
+       msfsStar = false /* Will result in five stars rating*/,
+       msfsDummyAirport = false /* From navdata update. Empty airport with COM and procedures */;
 
-  int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numHardRunway = 0,
-      numRunwayEndClosed = 0, numSoftRunway = 0, numWaterRunway = 0, numLightRunway = 0,
-      numRunwayEndVasi = 0, numJetway = 0, numBoundaryFence = 0,
-      numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0,
-      numParkingMilitaryCombat = 0;
-
-  int towerFrequency = 0, atisFrequency = 0, awosFrequency = 0, asosFrequency = 0, unicomFrequency = 0;
+  int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numLightRunway = 0,
+      numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0, numParkingGate = 0,
+      numParkingCargo = 0, numParkingMilitaryCargo = 0, numParkingMilitaryCombat = 0;
 
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 
-  atools::fs::bgl::rw::Surface longestRunwaySurface = atools::fs::bgl::rw::UNKNOWN;
+  atools::fs::bgl::Surface longestRunwaySurface = atools::fs::bgl::UNKNOWN;
   atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN,
                                    largestParkingGate = atools::fs::bgl::ap::UNKNOWN;
 
@@ -480,8 +419,6 @@ private:
   QList<atools::fs::bgl::DeleteAirport> deleteAirports;
   QList<atools::fs::bgl::Apron> aprons;
   QList<atools::fs::bgl::Apron2> aprons2;
-  QList<atools::fs::bgl::ApronEdgeLight> apronLights;
-  QList<atools::fs::bgl::Fence> fences;
   QList<atools::fs::bgl::TaxiPath> taxipaths;
 
 };

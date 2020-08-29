@@ -35,10 +35,14 @@
 namespace atools {
 namespace fs {
 
+QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::basePathMap;
+QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::filesPathMap;
+QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::sceneryFilepathMap;
+
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
-      FsPaths::XPLANE11
+      FsPaths::XPLANE11, FsPaths::MSFS
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
@@ -50,75 +54,94 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::P3D_V4, "P3DV4"},
       {FsPaths::P3D_V5, "P3DV5"},
       {FsPaths::XPLANE11, "XP11"},
+      {FsPaths::MSFS, "MSFS"},
       {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(
     {
       {FsPaths::FSX, "Microsoft Flight Simulator X"},
-      {FsPaths::FSX_SE, "Flight Simulator - Steam Edition"},
+      {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
       {FsPaths::P3D_V2, "Prepar3D v2"},
       {FsPaths::P3D_V3, "Prepar3D v3"},
       {FsPaths::P3D_V4, "Prepar3D v4"},
       {FsPaths::P3D_V5, "Prepar3D v5"},
       {FsPaths::XPLANE11, "X-Plane 11"},
+      {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
   );
 
-const char *FsPaths::FSX_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
-const QStringList FsPaths::FSX_REGISTRY_KEY = {"Microsoft Games", "Flight Simulator", "10.0", "AppPath"};
+/* Platform: FSX, FSX XPack, FSX Gold */
+const QLatin1String FSX_REGISTRY_PATH("HKEY_CURRENT_USER\\Software\\Microsoft");
+const QStringList FSX_REGISTRY_KEY = {"Microsoft Games", "Flight Simulator", "10.0", "AppPath"};
 
-const char *FsPaths::FSX_SE_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software\\Microsoft";
-const QStringList FsPaths::FSX_SE_REGISTRY_KEY =
-{"Microsoft Games", "Flight Simulator - Steam Edition", "10.0", "AppPath"};
+/* Platform: FSX Steam Edition */
+const QLatin1String FSX_SE_REGISTRY_PATH("HKEY_CURRENT_USER\\Software\\Microsoft");
+const QStringList FSX_SE_REGISTRY_KEY = {"Microsoft Games", "Flight Simulator - Steam Edition", "10.0", "AppPath"};
 
-const char *FsPaths::P3D_V2_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
-const QStringList FsPaths::P3D_V2_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v2", "AppPath"};
+/* Platform: Prepar3d Version 2 */
+const QLatin1String P3D_V2_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
+const QStringList P3D_V2_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v2", "AppPath"};
 
-const char *FsPaths::P3D_V3_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
-const QStringList FsPaths::P3D_V3_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v3", "AppPath"};
+/* Platform: Prepar3d Version 3 */
+const QLatin1String P3D_V3_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
+const QStringList P3D_V3_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v3", "AppPath"};
 
-const char *FsPaths::P3D_V4_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
-const QStringList FsPaths::P3D_V4_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v4", "AppPath"};
+/* Platform: Prepar3d Version 4 */
+const QLatin1String P3D_V4_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
+const QStringList P3D_V4_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v4", "AppPath"};
 
-const char *FsPaths::P3D_V5_REGISTRY_PATH = "HKEY_CURRENT_USER\\Software";
-const QStringList FsPaths::P3D_V5_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v5", "AppPath"};
+/* Platform: Prepar3d Version 5 */
+const QLatin1String P3D_V5_REGISTRY_PATH("HKEY_CURRENT_USER\\Software");
+const QStringList P3D_V5_REGISTRY_KEY = {"Lockheed Martin", "Prepar3D v5", "AppPath"};
 
-const char *FsPaths::SETTINGS_FSX_PATH = "FsPaths/FsxPath";
-const char *FsPaths::SETTINGS_FSX_SE_PATH = "FsPaths/FsxSePath";
-const char *FsPaths::SETTINGS_P3D_V2_PATH = "FsPaths/P3dV2Path";
-const char *FsPaths::SETTINGS_P3D_V3_PATH = "FsPaths/P3dV3Path";
-const char *FsPaths::SETTINGS_P3D_V4_PATH = "FsPaths/P3dV4Path";
-const char *FsPaths::SETTINGS_P3D_V5_PATH = "FsPaths/P3dV5Path";
-const char *FsPaths::SETTINGS_XPLANE11_PATH = "FsPaths/XPlane11Path";
+/* Settings keys */
+const QLatin1String SETTINGS_FSX_PATH("FsPaths/FsxPath");
+const QLatin1String SETTINGS_FSX_SE_PATH("FsPaths/FsxSePath");
+const QLatin1String SETTINGS_P3D_V2_PATH("FsPaths/P3dV2Path");
+const QLatin1String SETTINGS_P3D_V3_PATH("FsPaths/P3dV3Path");
+const QLatin1String SETTINGS_P3D_V4_PATH("FsPaths/P3dV4Path");
+const QLatin1String SETTINGS_P3D_V5_PATH("FsPaths/P3dV5Path");
+const QLatin1String SETTINGS_XPLANE11_PATH("FsPaths/XPlane11Path");
+const QLatin1String SETTINGS_MSFS_PATH("FsPaths/MsfsPath");
 
-const char *FsPaths::FSX_NO_WINDOWS_PATH = "Microsoft Flight Simulator X";
-const char *FsPaths::FSX_SE_NO_WINDOWS_PATH = "Flight Simulator - Steam Edition";
-const char *FsPaths::P3D_V2_NO_WINDOWS_PATH = "Prepar3D v2";
-const char *FsPaths::P3D_V3_NO_WINDOWS_PATH = "Prepar3D v3";
-const char *FsPaths::P3D_V4_NO_WINDOWS_PATH = "Prepar3D v4";
-const char *FsPaths::P3D_V5_NO_WINDOWS_PATH = "Prepar3D v5";
+/* Paths for non Windows systems - used for development and debugging purposes */
+const QLatin1String FSX_NO_WINDOWS_PATH("Microsoft Flight Simulator X");
+const QLatin1String FSX_SE_NO_WINDOWS_PATH("Flight Simulator - Steam Edition");
+const QLatin1String P3D_V2_NO_WINDOWS_PATH("Prepar3D v2");
+const QLatin1String P3D_V3_NO_WINDOWS_PATH("Prepar3D v3");
+const QLatin1String P3D_V4_NO_WINDOWS_PATH("Prepar3D v4");
+const QLatin1String P3D_V5_NO_WINDOWS_PATH("Prepar3D v5");
+const QLatin1String MSFS_NO_WINDOWS_PATH("MSFS2020");
 
-QProcessEnvironment FsPaths::environment;
+QProcessEnvironment environment;
 
 using atools::settings::Settings;
 
 void FsPaths::logAllPaths()
 {
-  qInfo() << "Looking for flight simulator installations:";
+  qDebug() << Q_FUNC_INFO;
+
+  // C:\ProgramData
   qInfo() << "PROGRAMDATA" << environment.value("PROGRAMDATA");
+
+  // C:\Users\alex\AppData\Roaming
   qInfo() << "APPDATA" << environment.value("APPDATA");
-  qInfo() << "LOCALAPPDATA" << environment.value("LOCALAPPDATA");
+
+  // C:\Users\alex\AppData\Local
+  qInfo() << "LOCALAPPDATA" << environment.value("LOCALAPPDATA"); // MSFS
+
+  // C:\ProgramData
   qInfo() << "ALLUSERSPROFILE" << environment.value("ALLUSERSPROFILE");
 
   for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
   {
-    qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_NAMES[type];
-    QString basePath = getBasePath(type);
-    QString filesPath = getFilesPath(type);
-    QString sceneryFilepath = getSceneryLibraryPath(type);
+    QString basePath = basePathMap.value(type);
+    QString filesPath = filesPathMap.value(type);
+    QString sceneryFilepath = sceneryFilepathMap.value(type);
 
+    qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_NAMES[type];
     if(basePath.isEmpty())
       qInfo() << "  Base is empty";
     else
@@ -136,13 +159,29 @@ void FsPaths::logAllPaths()
   }
 }
 
+void FsPaths::loadAllPaths()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  basePathMap.clear();
+  filesPathMap.clear();
+  sceneryFilepathMap.clear();
+
+  for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES)
+  {
+    basePathMap.insert(type, initBasePath(type));
+    filesPathMap.insert(type, initFilesPath(type));
+    sceneryFilepathMap.insert(type, initSceneryLibraryPath(type));
+  }
+}
+
 void FsPaths::intitialize()
 {
   qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
   environment = QProcessEnvironment::systemEnvironment();
 }
 
-QString FsPaths::getBasePath(SimulatorType type)
+QString FsPaths::initBasePath(SimulatorType type)
 {
   QString fsPath;
   if(type == NAVIGRAPH || type == UNKNOWN)
@@ -150,6 +189,7 @@ QString FsPaths::getBasePath(SimulatorType type)
 
   if(type == XPLANE11)
   {
+    // =====================================================
     // The location of this file varies by operating system:
     // OS X - the file will be in the user’s preferences folder, e.g. ~/Library/Preferences/.
     // Windows -  the file will be in the user’s local app data folder, e.g. C:\Users\nnnn\AppData\Local\.
@@ -170,13 +210,37 @@ QString FsPaths::getBasePath(SimulatorType type)
 
 #elif defined(Q_OS_LINUX)
     // "/home/USER/.x-plane/x-plane_install_11.txt"
-    return validXplaneBasePath(
+    return xplaneBasePath(
       QDir::homePath() + QDir::separator() + ".x-plane" + QDir::separator() + "x-plane_install_11.txt");
+
+#endif
+  }
+  else if(type == MSFS)
+  {
+    // Read UserCfg.opt to find the packages installation path
+#if defined(Q_OS_WIN32)
+    // Fixed location
+    // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    return validMsfsBasePath(environment.value("LOCALAPPDATA") + QDir::separator() +
+                             "Packages" + QDir::separator() +
+                             "Microsoft.FlightSimulator_8wekyb3d8bbwe" + QDir::separator() +
+                             "LocalCache" + QDir::separator() + "UserCfg.opt");
+
+#elif defined(DEBUG_FS_PATHS)
+
+    QString nonWinPath = nonWindowsPathFull(type);
+
+    ///home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    return msfsBasePath(nonWinPath + QDir::separator() + "Packages" + QDir::separator() +
+                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" + QDir::separator() +
+                        "LocalCache" + QDir::separator() +
+                        "UserCfg.opt");
 
 #endif
   }
   else
   {
+    // Windows simulators =====================================================
 #if defined(Q_OS_WIN32)
     // Try to get the FSX path from the Windows registry
     QSettings settings(registryPath(type), QSettings::NativeFormat);
@@ -205,30 +269,9 @@ QString FsPaths::getBasePath(SimulatorType type)
         fsPath.chop(1);
     }
 #elif defined(DEBUG_FS_PATHS)
-    // No Windows here - get the path for debugging purposes
+    // No Windows here - get the path for debugging purposes =====================================================
     // from the configuration file
-    Settings& s = Settings::instance();
-    QString key = settingsKey(type);
-
-    if(!key.isEmpty())
-    {
-      fsPath = s.valueStr(key);
-      if(fsPath.isEmpty())
-      {
-        // If it is not present in the settings file use one of the predefined paths
-        // Useful with symlinks for debugging
-        QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0) + QDir::separator() +
-                       QString("Simulators");
-        QString nonWinPath = nonWindowsPath(type);
-
-        if(!nonWinPath.isEmpty())
-        {
-          QFileInfo fi(home + QDir::separator() + nonWinPath);
-          if(fi.exists() && fi.isDir() && fi.isReadable())
-            fsPath = fi.absoluteFilePath();
-        }
-      }
-    }
+    fsPath = nonWindowsPathFull(type);
 #endif
 
     if(!fsPath.isEmpty())
@@ -248,12 +291,40 @@ QString FsPaths::getBasePath(SimulatorType type)
   return fsPath;
 }
 
+QString FsPaths::nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type)
+{
+  QString fsPath;
+  // from the configuration file
+  Settings& s = Settings::instance();
+  QString key = settingsKey(type);
+
+  if(!key.isEmpty())
+  {
+    fsPath = s.valueStr(key);
+    if(fsPath.isEmpty())
+    {
+      // If it is not present in the settings file use one of the predefined paths
+      // Useful with symlinks for debugging
+      QString home = QDir::homePath() + QDir::separator() + QString("Simulators");
+      QString nonWinPath = nonWindowsPath(type);
+
+      if(!nonWinPath.isEmpty())
+      {
+        QFileInfo fi(home + QDir::separator() + nonWinPath);
+        if(fi.exists() && fi.isDir() && fi.isReadable())
+          fsPath = fi.absoluteFilePath();
+      }
+    }
+  }
+  return fsPath;
+}
+
 bool FsPaths::hasSim(FsPaths::SimulatorType type)
 {
   return type == XPLANE11 ? true : !getBasePath(type).isEmpty();
 }
 
-QString FsPaths::getFilesPath(SimulatorType type)
+QString FsPaths::initFilesPath(SimulatorType type)
 {
   QString fsFilesDir;
 
@@ -294,19 +365,18 @@ QString FsPaths::getFilesPath(SimulatorType type)
   }
   else
     qDebug() << "No handle from LoadLibrary";
+#else
+  Q_UNUSED(type)
 #endif
 
   // Use fallback on non Windows systems or if not found
   if(fsFilesDir.isEmpty())
-  {
-    qDebug() << "Using fallback to find flight simulator documents path for type" << type;
     fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
-  }
 
   return fsFilesDir;
 }
 
-QString FsPaths::getSceneryLibraryPath(SimulatorType type)
+QString FsPaths::initSceneryLibraryPath(SimulatorType type)
 {
 #if defined(Q_OS_WIN32)
   // Win 7+ C:\ProgramData
@@ -319,9 +389,6 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 
   if(programData.isEmpty())
     programData = allUsersProfile + QDir::separator() + QDir(appData).dirName();
-#else
-  // If not windows use emulation for testing
-  QString home = QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
 #endif
 
   switch(type)
@@ -387,7 +454,8 @@ QString FsPaths::getSceneryLibraryPath(SimulatorType type)
 
 #endif
 
-    // Disable compiler warnings
+    // Disable compiler warnings - simulators that dont have a file reference
+    case MSFS:
     case XPLANE11:
     case NAVIGRAPH:
     case UNKNOWN:
@@ -424,6 +492,8 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return P3D_V5;
   else if(type == "XP11")
     return XPLANE11;
+  else if(type == "MSFS")
+    return MSFS;
   else if(type == "NAVIGRAPH" || type == "DFD")
     return NAVIGRAPH;
   else
@@ -460,6 +530,9 @@ QString FsPaths::settingsKey(SimulatorType type)
     case XPLANE11:
       return SETTINGS_XPLANE11_PATH;
 
+    case MSFS:
+      return SETTINGS_MSFS_PATH;
+
     case NAVIGRAPH:
     case UNKNOWN:
     case ALL_SIMULATORS:
@@ -490,6 +563,7 @@ QString FsPaths::registryPath(SimulatorType type)
     case P3D_V5:
       return P3D_V5_REGISTRY_PATH;
 
+    case MSFS:
     case XPLANE11:
     case NAVIGRAPH:
     case UNKNOWN:
@@ -521,6 +595,7 @@ QStringList FsPaths::registryKey(SimulatorType type)
     case P3D_V5:
       return P3D_V5_REGISTRY_KEY;
 
+    case MSFS:
     case XPLANE11:
     case NAVIGRAPH:
     case ALL_SIMULATORS:
@@ -552,6 +627,9 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
     case P3D_V5:
       return P3D_V5_NO_WINDOWS_PATH;
 
+    case MSFS:
+      return MSFS_NO_WINDOWS_PATH;
+
     case XPLANE11:
     case NAVIGRAPH:
     case UNKNOWN:
@@ -561,7 +639,47 @@ QString FsPaths::nonWindowsPath(SimulatorType type)
   return QString();
 }
 
-QString FsPaths::validXplaneBasePath(const QString& installationFile)
+QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
+{
+  QString dir;
+  QFile fileCfgOpt(userCfgOptFile);
+  if(fileCfgOpt.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QTextStream stream(&fileCfgOpt);
+
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().trimmed();
+
+      if(line.startsWith("InstalledPackagesPath"))
+      {
+        QString name = line.section(' ', 1).trimmed();
+        if(name.startsWith('"'))
+          name.remove(0, 1);
+
+        if(name.endsWith('"'))
+          name.chop(1);
+
+        QFileInfo fi(name);
+        if(fi.exists() && fi.isDir())
+        {
+          dir = fi.absoluteFilePath();
+          break;
+        }
+        else
+          qWarning() << Q_FUNC_INFO << fi.absoluteFilePath() << "does not exist or is not a directory";
+      }
+    }
+
+    fileCfgOpt.close();
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Cannot open" << userCfgOptFile << "error" << fileCfgOpt.errorString();
+
+  return dir;
+}
+
+QString FsPaths::xplaneBasePath(const QString& installationFile)
 {
   QString dir;
   QFile file(installationFile);

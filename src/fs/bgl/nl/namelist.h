@@ -20,6 +20,7 @@
 
 #include "fs/bgl/nl/namelistentry.h"
 #include "fs/bgl/record.h"
+#include "io/binarystream.h"
 
 #include <QString>
 #include <QList>
@@ -56,7 +57,8 @@ private:
 
   QList<atools::fs::bgl::NamelistEntry> entries;
 
-  void readList(QStringList& names, atools::io::BinaryStream *bs, int numRegionNames, int regionListOffset);
+  void readList(QStringList& names, atools::io::BinaryStream *bs, int numRegionNames, int regionListOffset,
+                atools::io::Encoding encoding);
 
 };
 

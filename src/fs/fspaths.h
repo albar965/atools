@@ -18,9 +18,8 @@
 #ifndef ATOOLS_FS_FSPATHS_H
 #define ATOOLS_FS_FSPATHS_H
 
-#include <QString>
+#include <QHash>
 #include <QObject>
-#include <QProcess>
 
 namespace atools {
 namespace fs {
@@ -34,6 +33,15 @@ class FsPaths
 
 public:
   FsPaths() = delete;
+
+  /* Print paths for all simulators to the info log channel */
+  static void logAllPaths();
+
+  /* Load and cache all paths */
+  static void loadAllPaths();
+
+  /* Register types and load process environment */
+  static void intitialize();
 
   enum SimulatorType
   {
@@ -67,6 +75,9 @@ public:
     /* Synonym for database */
     DFD = NAVIGRAPH,
 
+    /* Microsoft Flight Simulator 2020 */
+    MSFS = 10,
+
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
 
@@ -76,21 +87,31 @@ public:
 
   Q_ENUM(SimulatorType)
 
-  /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed */
-  static QString getBasePath(atools::fs::FsPaths::SimulatorType type);
-
-  /* return true if simulator can be found in the registry */
-  static bool hasSim(atools::fs::FsPaths::SimulatorType type);
+  /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
+   * Returns package installation path for MSFS. */
+  static QString getBasePath(atools::fs::FsPaths::SimulatorType type)
+  {
+    return basePathMap.value(type);
+  }
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
-  static QString getFilesPath(atools::fs::FsPaths::SimulatorType type);
+  static QString getFilesPath(atools::fs::FsPaths::SimulatorType type)
+  {
+    return filesPathMap.value(type);
+  }
 
-  /* Path to scenery.cfg */
-  static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type);
+  /* Path to scenery.cfg for FSX/P3D or Content.xml for MSFS. Empty for X-Plane. */
+  static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type)
+  {
+    return sceneryFilepathMap.value(type);
+  }
 
   /* Short abbreviated names */
   static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
+
+  /* return true if simulator can be found in the registry */
+  static bool hasSim(atools::fs::FsPaths::SimulatorType type);
 
   /* Long names */
   static QString typeToName(atools::fs::FsPaths::SimulatorType type);
@@ -99,55 +120,17 @@ public:
   /* Array of all four valid types */
   static const QVector<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
 
-  /* Print paths for all simulators to the info log channel */
-  static void logAllPaths();
-
-  static void intitialize();
-
 private:
-  /* registry path and key if running on Windows */
-  /* Platform: FSX, FSX XPack, FSX Gold */
-  static const char *FSX_REGISTRY_PATH;
-  static const QStringList FSX_REGISTRY_KEY;
+  /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
+   * Returns package installation path for MSFS. */
+  static QString initBasePath(atools::fs::FsPaths::SimulatorType type);
 
-  /* Platform: FSX Steam Edition */
-  static const char *FSX_SE_REGISTRY_PATH;
-  static const QStringList FSX_SE_REGISTRY_KEY;
+  /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
+   * etc. Returns the documents path if FS files cannot be found. */
+  static QString initFilesPath(atools::fs::FsPaths::SimulatorType type);
 
-  /* Platform: Prepar3d Version 2 */
-  static const char *P3D_V2_REGISTRY_PATH;
-  static const QStringList P3D_V2_REGISTRY_KEY;
-
-  /* Platform: Prepar3d Version 3 */
-  static const char *P3D_V3_REGISTRY_PATH;
-  static const QStringList P3D_V3_REGISTRY_KEY;
-
-  /* Platform: Prepar3d Version 4 */
-  static const char *P3D_V4_REGISTRY_PATH;
-  static const QStringList P3D_V4_REGISTRY_KEY;
-
-  /* Platform: Prepar3d Version 5 */
-  static const char *P3D_V5_REGISTRY_PATH;
-  static const QStringList P3D_V5_REGISTRY_KEY;
-
-  /* Use this as fallback from the settings if not running on Windows */
-  static const char *SETTINGS_FSX_PATH;
-  static const char *SETTINGS_FSX_SE_PATH;
-  static const char *SETTINGS_P3D_V2_PATH;
-  static const char *SETTINGS_P3D_V3_PATH;
-  static const char *SETTINGS_P3D_V4_PATH;
-  static const char *SETTINGS_P3D_V5_PATH;
-  static const char *SETTINGS_XPLANE11_PATH;
-
-  /* Paths for non Windows systems - used for development and debugging purposes */
-  static const char *FSX_NO_WINDOWS_PATH;
-  static const char *FSX_SE_NO_WINDOWS_PATH;
-  static const char *P3D_V2_NO_WINDOWS_PATH;
-  static const char *P3D_V3_NO_WINDOWS_PATH;
-  static const char *P3D_V4_NO_WINDOWS_PATH;
-  static const char *P3D_V5_NO_WINDOWS_PATH;
-  static const char *P3D_XPLANE11_NO_WINDOWS_PATH;
-
+  /* Path to scenery.cfg for FSX/P3D or Content.xml for MSFS. Empty for X-Plane. */
+  static QString initSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type);
 
   static QString settingsKey(atools::fs::FsPaths::SimulatorType type);
   static QString registryPath(atools::fs::FsPaths::SimulatorType type);
@@ -155,9 +138,13 @@ private:
 
   static QString documentsDirectory(QString simBasePath);
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
-  static QString validXplaneBasePath(const QString& installationFile);
+  static QString xplaneBasePath(const QString& installationFile);
+  static QString msfsBasePath(const QString& userCfgOptFile);
 
-  static QProcessEnvironment environment;
+  static QHash<atools::fs::FsPaths::SimulatorType, QString> basePathMap;
+  static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
+  static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
+  static QString nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type);
 
 };
 

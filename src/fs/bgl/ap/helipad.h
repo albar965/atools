@@ -58,7 +58,7 @@ public:
 
   static QString helipadTypeToStr(atools::fs::bgl::helipad::HelipadType type);
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -123,7 +123,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Helipad& record);
 
-  atools::fs::bgl::rw::Surface surface = atools::fs::bgl::rw::UNKNOWN;
+  atools::fs::bgl::Surface surface = atools::fs::bgl::UNKNOWN;
   atools::fs::bgl::helipad::HelipadType type = atools::fs::bgl::helipad::NONE;
   atools::fs::bgl::BglPosition position;
   float length = 0.f, width = 0.f, heading = 0.f;

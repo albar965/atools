@@ -33,6 +33,9 @@
 #include "fs/db/databasemeta.h"
 #include "atools.h"
 #include "exception.h"
+#include "fs/scenery/layoutjson.h"
+#include "fs/scenery/languagejson.h"
+#include "fs/scenery/materiallib.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -167,80 +170,60 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QString& error)
 {
-  QFileInfo fi(filename);
-  if(fi.exists())
+  error = atools::checkFile(filename);
+  if(error.isEmpty())
   {
-    if(fi.isReadable())
+    try
     {
-      if(fi.isFile())
-      {
-        try
-        {
-          // Read the scenery file and check if it has at least one scenery area
-          SceneryCfg cfg(codec);
-          cfg.read(filename);
-
-          return !cfg.getAreas().isEmpty();
-        }
-        catch(atools::Exception& e)
-        {
-          qWarning() << "Caught exception reading" << filename << ":" << e.what();
-          error = e.what();
-        }
-        catch(...)
-        {
-          qWarning() << "Caught unknown exception reading" << filename;
-          error = "Unknown exception while reading file";
-        }
-      }
-      else
-        error = tr("File is not a regular file");
+      // Read the scenery.cfg file and check if it has at least one scenery area
+      SceneryCfg cfg(codec);
+      cfg.read(filename);
+      return !cfg.getAreas().isEmpty();
     }
-    else
-      error = tr("File is not readable");
+    catch(atools::Exception& e)
+    {
+      qWarning() << "Caught exception reading" << filename << ":" << e.what();
+      error = e.what();
+    }
+    catch(...)
+    {
+      qWarning() << "Caught unknown exception reading" << filename;
+      error = "Unknown exception while reading file";
+    }
   }
   else
-    error = tr("File does not exist");
+    error = tr("File is not a regular file");
   return false;
 }
 
 bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type)
 {
-  QFileInfo fi(filepath);
-  if(fi.exists())
+  if(type == atools::fs::FsPaths::XPLANE11)
   {
-    if(fi.isReadable())
-    {
-      if(fi.isDir())
-      {
-        if(type == atools::fs::FsPaths::XPLANE11)
-        {
-          QFileInfo dataDir(filepath + SEP + "Resources" + SEP + "default data");
-
-          if(dataDir.exists() && dataDir.isDir() && dataDir.isReadable())
-            return true;
-          else
-            error = tr("\"%1\" not found").arg(QString("Resources") + SEP + "default data");
-        }
-        else
-        {
-          // If path exists check for scenery directory
-          QDir dir(filepath);
-          QFileInfoList scenery = dir.entryInfoList({"scenery"}, QDir::Dirs);
-          if(!scenery.isEmpty())
-            return true;
-          else
-            error = tr("Does not contain a \"Scenery\" directory");
-        }
-      }
-      else
-        error = tr("Is not a directory");
-    }
+    error = atools::checkDir(filepath + SEP + "Resources" + SEP + "default data");
+    if(error.isEmpty())
+      return true;
+  }
+  else if(type == atools::fs::FsPaths::MSFS)
+  {
+    // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
+    QStringList errors;
+    errors.append(atools::checkDir(filepath + SEP + "Official" + SEP + "OneStore" + SEP + "fs-base"));
+    errors.append(atools::checkDir(filepath + SEP + "Official" + SEP + "OneStore" + SEP + "fs-base-nav"));
+    errors.append(atools::checkDir(filepath + SEP + "Community"));
+    errors.removeAll(QString());
+    if(!errors.isEmpty())
+      error = errors.join(tr("\n"));
     else
-      error = tr("Directory is not readable");
+      return true;
   }
   else
-    error = tr("Directory does not exist");
+  {
+    // If path exists check for scenery directory
+    error = atools::checkDir(filepath + SEP + "scenery");
+    if(error.isEmpty())
+      return true;
+  }
   return false;
 }
 
@@ -475,13 +458,36 @@ int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
 {
   // Count the files for exact progress reporting
   int numProgressReports = 0, numSceneryAreas = 0;
-  countFiles(cfg, &numProgressReports, &numSceneryAreas);
+  countFiles(cfg.getAreas(), numProgressReports, numSceneryAreas);
 
   qDebug() << Q_FUNC_INFO << "=P=== FSX/P3D files" << numProgressReports << "scenery areas" << numSceneryAreas;
 
   // PROGRESS_NUM_SCHEMA_STEPS Create schema "Removing Views" ... "Creating Database Schema"
   int total = numProgressReports + numSceneryAreas + PROGRESS_NUM_SCHEMA_STEPS;
 
+  total += countMsSimSteps();
+
+  return total;
+}
+
+int NavDatabase::countMsfsSteps(const SceneryCfg& cfg)
+{
+  int numProgressReports = 0, numSceneryAreas = 0;
+  countFiles(cfg.getAreas(), numProgressReports, numSceneryAreas);
+
+  qDebug() << Q_FUNC_INFO << "=P=== MSFS files" << numProgressReports << "scenery areas" << numSceneryAreas;
+
+  // PROGRESS_NUM_SCHEMA_STEPS Create schema "Removing Views" ... "Creating Database Schema"
+  int total = numProgressReports + numSceneryAreas + PROGRESS_NUM_SCHEMA_STEPS;
+
+  total += countMsSimSteps();
+
+  return total;
+}
+
+int NavDatabase::countMsSimSteps()
+{
+  int total = 0;
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
   if(options->isDeduplicate())
@@ -506,13 +512,12 @@ int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
   // Not used in production
   // if(options->isDatabaseReport())
   // if(options->isDropIndexes())
-
   return total;
 }
 
 void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
-  SceneryCfg cfg(sceneryConfigCodec);
+  SceneryCfg sceneryCfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
   timer.start();
@@ -529,12 +534,17 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     total = countXplaneSteps();
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
     total = countDfdSteps();
-  else
+  else if(sim == atools::fs::FsPaths::MSFS)
+  {
+    // Fill with default required entries but does not read a file
+    readSceneryConfigMsfs(sceneryCfg);
+    total = countMsfsSteps(sceneryCfg);
+  }
+  else // FSX and P3D
   {
     // Read scenery.cfg
-    readSceneryConfig(cfg);
-
-    total = countFsxP3dSteps(cfg);
+    readSceneryConfigFsxP3d(sceneryCfg);
+    total = countFsxP3dSteps(sceneryCfg);
   }
 
   qDebug() << "=P=== Total Progress" << total;
@@ -548,10 +558,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   // -----------------------------------------------------------------------
   // Create empty data writer pointers which will read all files and fill the database
-  // Pointers will be initialized on demand/compilation type
+  // Pointers will be initialized on demand/compilation type and be delete on exit (like thrown exception)
   QScopedPointer<atools::fs::db::DataWriter> fsDataWriter;
   QScopedPointer<atools::fs::xp::XpDataCompiler> xpDataCompiler;
   QScopedPointer<atools::fs::ng::DfdCompiler> dfdCompiler;
+
+  // MSFS indexes and libraries =========================================
+  QScopedPointer<scenery::LanguageJson> languageIndex;
+  QScopedPointer<scenery::MaterialLib> materialLib;
 
   // ================================================================================================
   // Start compilation
@@ -583,11 +597,40 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     loadXplane(&progress, xpDataCompiler.data(), area);
     xpDataCompiler->close();
   }
+  else if(sim == atools::fs::FsPaths::MSFS)
+  {
+    // Load FSX / P3D scenery database ======================================================
+    fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
+
+    // Base is
+    // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
+    // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore\fs-base\en-US.locPak
+
+    // Load the language index for lookup for airport names and more
+    QString packageBase = options->getBasepath() + SEP + "Official" + SEP + "OneStore" + SEP;
+    QFileInfo langFile = packageBase + "fs-base" + SEP + options->getLanguage() + ".locPak";
+    if(!langFile.exists() || !langFile.isFile())
+    {
+      qWarning() << Q_FUNC_INFO << langFile << "not found. Falling back to en-US";
+      langFile = packageBase + "fs-base" + SEP + "en-US.locPak";
+    }
+
+    languageIndex.reset(new scenery::LanguageJson(langFile.filePath()));
+    fsDataWriter->setLanguageIndex(languageIndex.data());
+
+    // Load the two official material libraries
+    materialLib.reset(new scenery::MaterialLib);
+    materialLib->readOfficial(packageBase);
+    fsDataWriter->setMaterialLib(materialLib.data());
+
+    loadMsfs(&progress, fsDataWriter.data(), sceneryCfg);
+    fsDataWriter->close();
+  }
   else
   {
     // Load FSX / P3D scenery database ======================================================
     fsDataWriter.reset(new atools::fs::db::DataWriter(*db, *options, &progress));
-    loadFsxP3d(&progress, fsDataWriter.data(), cfg);
+    loadFsxP3d(&progress, fsDataWriter.data(), sceneryCfg);
     fsDataWriter->close();
   }
 
@@ -603,8 +646,13 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     atools::fs::db::AirwayResolver resolver(db, progress);
 
     if(sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::XPLANE11)
+    {
       // Drop large segments only for FSX/P3D - default is 1000 nm
       resolver.setMaxAirwaySegmentLength(20000);
+
+      // Do not join using waypoint types since these are unreliable for all MS simulators
+      resolver.setJoinType(false);
+    }
 
     resolver.assignWaypointIds();
 
@@ -959,28 +1007,68 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
   return false;
 }
 
-bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
+bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter,
+                             const SceneryCfg& cfg)
 {
   // Prepare structure for error collection
   NavDatabaseErrors::SceneryErrors err;
   fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
-  fsDataWriter->readMagDeclBgl();
+  fsDataWriter->readMagDeclBgl(atools::buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery",
+                                                        "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
   qInfo() << Q_FUNC_INFO << "Scenery configuration ================================================";
   qInfo() << cfg;
 
-  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+  loadFsxP3dMsfsSimulator(progress, fsDataWriter, cfg.getAreas());
+
+  return loadFsxP3dMsfsPost(progress);
+}
+
+bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWriter, const SceneryCfg& cfg)
+{
+  // Prepare structure for error collection
+  NavDatabaseErrors::SceneryErrors err;
+  fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+
+  // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
+  // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
+  fsDataWriter->readMagDeclBgl(atools::buildPathNoCase({options->getBasepath(), "Official",
+                                                        "OneStore", "fs-base", "scenery", "Base", "scenery",
+                                                        "magdec.bgl"}));
+  if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
+    errors->sceneryErrors.append(err);
+
+  qInfo() << Q_FUNC_INFO << "Content.xml ================================================";
+  qInfo() << cfg;
+
+  loadFsxP3dMsfsSimulator(progress, fsDataWriter, cfg.getAreas());
+
+  return loadFsxP3dMsfsPost(progress);
+}
+
+bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
+                                          const QList<atools::fs::scenery::SceneryArea>& areas)
+{
+  scenery::MaterialLib materialLib;
+  for(const atools::fs::scenery::SceneryArea& area : areas)
   {
-    if((area.isActive() || options->isReadInactive()) &&
-       options->isIncludedLocalPath(area.getLocalPath()))
+    if((area.isActive() || options->isReadInactive()) && options->isIncludedLocalPath(area.getLocalPath()))
     {
       if((aborted = progress->reportSceneryArea(&area)))
         return true;
 
-      err = NavDatabaseErrors::SceneryErrors();
+      NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
       fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
+
+      if(options->getSimulatorType() == atools::fs::FsPaths::MSFS && area.isAddOn())
+      {
+        // Load package specific material library for MSFS
+        materialLib.clear();
+        materialLib.readCommunity(options->getBasepath() + SEP + "Community" + SEP + area.getLocalPath());
+        fsDataWriter->setMaterialLibScenery(&materialLib);
+      }
 
       // Read all BGL files in the scenery area into classes of the bgl namespace and
       // write the contents to the database
@@ -992,12 +1080,18 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
         errors->sceneryErrors.append(err);
       }
 
+      fsDataWriter->setMaterialLibScenery(nullptr);
+
       if((aborted = fsDataWriter->isAborted()))
         return true;
     }
   }
   db->commit();
+  return false;
+}
 
+bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
+{
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
 
@@ -1010,7 +1104,6 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
     if((aborted = runScript(progress, "fs/db/delete_duplicates.sql", tr("Clean up"))))
       return true;
   }
-
   return false;
 }
 
@@ -1195,7 +1288,43 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
   return false;
 }
 
-void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
+void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
+{
+  // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
+  // content.read(options->getSceneryFile());
+
+  SceneryArea area(0, 0, tr("Base Airports"), "fs-base");
+  area.setActive(true);
+  cfg.appendArea(area);
+
+  SceneryArea areaNav(1, 1, tr("Base Navigation"), "fs-base-nav");
+  areaNav.setActive(true);
+  cfg.appendArea(areaNav);
+
+  // Read community packages ===============================
+  // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
+  QDir dir(options->getBasepath() + SEP + "Community", QString(),
+           QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+
+  int areaNum = nextAreaNum(cfg.getAreas());
+
+  for(const QFileInfo& fileinfo : dir.entryInfoList())
+  {
+    // Read BGL and material file locations from layout file
+    scenery::LayoutJson layout;
+    layout.read(fileinfo.filePath() + SEP + "layout.json");
+
+    if(!layout.getBglPaths().isEmpty())
+    {
+      SceneryArea area(areaNum, areaNum, tr("Community"), fileinfo.fileName());
+      area.setAddOn(true);
+      cfg.getAreas().append(area);
+      areaNum++;
+    }
+  }
+}
+
+void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 {
   // Get entries from scenery.cfg file
   cfg.read(options->getSceneryFile());
@@ -1218,10 +1347,7 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       simNum = 5;
 
     // Calculate maximum area number
-    int areaNum = std::numeric_limits<int>::min();
-    for(const SceneryArea& area : cfg.getAreas())
-      areaNum = std::max(areaNum, area.getAreaNumber());
-
+    int areaNum = nextAreaNum(cfg.getAreas());
     QStringList addonsCfgFiles;
 
     // The priority for how content based add-on configuration files are initialized is as follows:
@@ -1256,10 +1382,8 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
 #endif
-      addonsCfgFile +=
-        SEP + QString("Lockheed Martin") +
-        SEP + QString("Prepar3D v%1").arg(simNum) +
-        SEP + "add-ons.cfg";
+      addonsCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
+                       SEP + "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
     }
 
@@ -1273,13 +1397,11 @@ void NavDatabase::readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg)
       // Use /tmp for testing
       QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
 #endif
-      addonsAllUsersCfgFile +=
-        SEP + QString("Lockheed Martin") +
-        SEP + QString("Prepar3D v%1").arg(simNum) +
+      addonsAllUsersCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
 #if !defined(Q_OS_WIN32)
-        " ProgramData" +
+                               " ProgramData" +
 #endif
-        SEP + "add-ons.cfg";
+                               SEP + "add-ons.cfg";
       addonsCfgFiles.append(addonsAllUsersCfgFile);
     }
 
@@ -1454,21 +1576,31 @@ void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
   }
 }
 
-void NavDatabase::countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas)
+int NavDatabase::nextAreaNum(const QList<atools::fs::scenery::SceneryArea>& areas)
 {
-  qDebug() << "Counting files";
+  int areaNum = std::numeric_limits<int>::min();
+  for(const SceneryArea& area : areas)
+    areaNum = std::max(areaNum, area.getAreaNumber());
+  areaNum++;
+  return areaNum;
+}
 
-  for(const atools::fs::scenery::SceneryArea& area : cfg.getAreas())
+void NavDatabase::countFiles(const QList<atools::fs::scenery::SceneryArea>& areas, int& numFiles, int& numSceneryAreas)
+{
+  qDebug() << Q_FUNC_INFO << "Entry";
+  atools::fs::scenery::FileResolver resolver(*options, true);
+
+  for(const atools::fs::scenery::SceneryArea& area : areas)
   {
-    if(area.isActive() && options->isIncludedLocalPath(area.getLocalPath()))
-    {
-      atools::fs::scenery::FileResolver resolver(*options, true);
+    int num = resolver.getFiles(area);
 
-      *numFiles += resolver.getFiles(area);
-      (*numSceneryAreas)++;
+    if(num > 0)
+    {
+      numFiles += num;
+      numSceneryAreas++;
     }
   }
-  qDebug() << "Counting files done." << *numFiles << "files to process";
+  qDebug() << Q_FUNC_INFO << "Exit";
 }
 
 } // namespace fs

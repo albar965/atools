@@ -143,7 +143,7 @@ enum TurnDirection
 class ApproachLeg
 {
 public:
-  ApproachLeg(atools::io::BinaryStream *bs, bool ismissed);
+  ApproachLeg(atools::io::BinaryStream *bs, bool ismissed, bool msfs);
 
   atools::fs::bgl::leg::Type getType() const
   {

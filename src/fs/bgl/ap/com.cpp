@@ -17,6 +17,7 @@
 
 #include "fs/bgl/ap/com.h"
 #include "io/binarystream.h"
+#include "fs/navdatabaseoptions.h"
 
 #include <QDebug>
 
@@ -107,7 +108,11 @@ Com::Com(const NavDatabaseOptions *options, BinaryStream *bs)
 {
   type = static_cast<com::ComType>(bs->readShort());
   frequency = bs->readInt() / 1000;
-  name = bs->readString(0x30);
+
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+
+  name = bs->readString(0x30, encoding);
 }
 
 QDebug operator<<(QDebug out, const Com& record)

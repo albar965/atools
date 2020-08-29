@@ -59,17 +59,17 @@ enum ApproachFixType
 
   /* From P3D v5 upwards - these are wrong types for this field taken from the XSD.
    * They will be converted to WAYPOINT. */
-  // <xs:enumeration value="NDB" />
-  // <xs:enumeration value="COURSE_TO_DIST" />
-  // <xs:enumeration value="COURSE_TO_ALT" />
-  // <xs:enumeration value="HEADING_TO_ALT" />
-  // <xs:enumeration value="MANUAL_TERMINATION" />
-  // <xs:enumeration value="TERMINAL_NDB" />
-  // <xs:enumeration value="TERMINAL_WAYPOINT" />
-  // <xs:enumeration value="VOR" />
-  // <xs:enumeration value="WAYPOINT" />
-  // <xs:enumeration value="RUNWAY" />
-  // <xs:enumeration value="LOCALIZER" />
+  // NDB
+  // COURSE_TO_DIST
+  // COURSE_TO_ALT
+  // HEADING_TO_ALT
+  // MANUAL_TERMINATION
+  // TERMINAL_NDB
+  // TERMINAL_WAYPOINT
+  // VOR
+  // WAYPOINT
+  // RUNWAY
+  // LOCALIZER
   MANUAL_TERMINATION = 11,
   COURSE_TO_ALT = 12,
   COURSE_TO_DIST = 13,

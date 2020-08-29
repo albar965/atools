@@ -15,52 +15,52 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_BGL_AP_APRONLIGHT_H
-#define ATOOLS_BGL_AP_APRONLIGHT_H
+#ifndef ATOOLS_CONTENTXML_H
+#define ATOOLS_CONTENTXML_H
 
-#include "fs/bgl/record.h"
-#include "fs/bgl/ap/rw/runway.h"
-#include "fs/bgl/bglposition.h"
+#include <QApplication>
+#include <QVector>
 
 namespace atools {
 namespace fs {
-namespace bgl {
+namespace scenery {
+
+class SceneryArea;
 
 /*
- * Apron edge light geometry. Subrecord of airport.
+ * Reads MSFS content.xml file and creates a list of scenery areas.
+ * This will include only the official packages.
  */
-class ApronEdgeLight :
-  public atools::fs::bgl::Record
+class ContentXml
 {
-public:
-  ApronEdgeLight(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~ApronEdgeLight();
+  Q_DECLARE_TR_FUNCTIONS(ContentXml)
 
-  /*
-   * @return coordinate list that is used with the edge index list
-   */
-  const QList<atools::fs::bgl::BglPosition>& getVertices() const
+public:
+  /* Read the file and add fs-base and fs-base-nav packages */
+  void read(const QString& filename);
+
+  /* Fill with default values without acessing the actual file */
+  void fillDefault();
+
+  const QList<atools::fs::scenery::SceneryArea>& getAreas() const
   {
-    return vertices;
+    return areaEntries;
   }
 
-  /*
-   * @return edgeindex list where each two index entries refer into the vertex list for one edge
-   */
-  const QList<int>& getEdgeIndex() const
+  QList<atools::fs::scenery::SceneryArea>& getAreas()
   {
-    return edges;
+    return areaEntries;
   }
 
 private:
-  friend QDebug operator<<(QDebug out, const atools::fs::bgl::ApronEdgeLight& record);
+  friend QDebug operator<<(QDebug out, const atools::fs::scenery::ContentXml& cfg);
 
-  QList<atools::fs::bgl::BglPosition> vertices;
-  QList<int> edges;
+  QList<atools::fs::scenery::SceneryArea> areaEntries;
+  int number = 0;
 };
 
-} // namespace bgl
+} // namespace scenery
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_BGL_AP_APRONLIGHT_H
+#endif // ATOOLS_CONTENTXML_H

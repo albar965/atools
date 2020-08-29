@@ -808,4 +808,34 @@ QString buildPathNoCase(QString path)
   return buildPathNoCase(path.replace('\\', '/').split('/'));
 }
 
+QString checkDir(const QFileInfo& dir)
+{
+  if(!dir.exists())
+    return QObject::tr("Directory \"%1\" does not exist.").arg(dir.absoluteFilePath());
+  else
+  {
+    if(!dir.isDir())
+      return QObject::tr("File \"%1\" is not a directory.").arg(dir.absoluteFilePath());
+    else if(!dir.isReadable())
+      return QObject::tr("Directory \"%1\" is not readable.").arg(dir.absoluteFilePath());
+  }
+  return QString();
+}
+
+QString checkFile(const QFileInfo& file)
+{
+  if(!file.exists())
+    return QObject::tr("File \"%1\" does not exist.").arg(file.absoluteFilePath());
+  else
+  {
+    if(!file.isFile())
+      return QObject::tr("File \"%1\" is a directory.").arg(file.absoluteFilePath());
+    else if(!file.isReadable())
+      return QObject::tr("File \"%1\" is not readable.").arg(file.absoluteFilePath());
+    else if(file.size() == 0)
+      return QObject::tr("File \"%1\" is empty.").arg(file.absoluteFilePath());
+  }
+  return QString();
+}
+
 } // namespace atools

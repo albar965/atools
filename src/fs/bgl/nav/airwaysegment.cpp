@@ -53,7 +53,7 @@ AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, Bina
   mid = new Waypoint(waypoint);
 
   type = static_cast<nav::AirwayType>(bs->readUByte());
-  name = bs->readString(8);
+  name = bs->readString(8, atools::io::LATIN1);
 
   next = AirwayWaypoint(options, bs);
   previous = AirwayWaypoint(options, bs);
@@ -97,8 +97,8 @@ QDebug operator<<(QDebug out, const AirwaySegment& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-  << " AirwayEntry[type " << AirwaySegment::airwayTypeToStr(record.type)
-  << ", name " << record.name;
+                          << " AirwayEntry[type " << AirwaySegment::airwayTypeToStr(record.type)
+                          << ", name " << record.name;
 
   if(record.hasNextWaypoint())
     out << ", next " << record.next;

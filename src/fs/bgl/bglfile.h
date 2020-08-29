@@ -51,8 +51,10 @@ namespace flags {
 enum CreateFlags
 {
   NONE = 0,
-  AIRPORT_FS9_FORMAT = 0x1,
-  AIRPORT_FSX_FORMAT = 0x2
+  AIRPORT_FS9_FORMAT = 1 << 0,
+  AIRPORT_FSX_FORMAT = 1 << 1,
+  AIRPORT_MSFS_FORMAT = 1 << 2,
+  AIRPORT_MSFS_DUMMY = 1 << 3
 };
 
 }
@@ -153,6 +155,12 @@ public:
    */
   bool isValid();
 
+  /* Creates dummy airports to pull in COM and procedures */
+  bool isMsfsNavdata() const
+  {
+    return msfsNavdata;
+  }
+
 private:
   void deleteAllObjects();
   void readHeader(atools::io::BinaryStream *bs);
@@ -194,6 +202,8 @@ private:
 
   /* Only these sections will be scanned for records */
   QSet<atools::fs::bgl::section::SectionType> supportedSectionTypes;
+
+  bool msfsNavdata = false;
 };
 
 // -------------------------------------------------------------------

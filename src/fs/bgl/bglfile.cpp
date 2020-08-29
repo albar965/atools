@@ -70,6 +70,10 @@ void BglFile::readFile(QString file)
 
   if(ifs.open(QIODevice::ReadOnly))
   {
+    // MSFS dummy to pull in COM and procedures
+    msfsNavdata = options->getSimulatorType() == atools::fs::FsPaths::MSFS &&
+                  QFileInfo(file).fileName().startsWith("NAX", Qt::CaseInsensitive);
+
     BinaryStream bs(&ifs);
 
     this->filename = file;
@@ -86,7 +90,6 @@ void BglFile::readFile(QString file)
       readBoundaryRecords(&bs);
 
     readRecords(&bs);
-
     ifs.close();
   }
 }
@@ -192,9 +195,12 @@ void BglFile::readSections(BinaryStream *bs)
     if(supportedSectionTypes.contains(s.getType()))
     {
       if(options->isVerbose())
-        qDebug() << s;
+        qDebug() << "Section" << s;
       sections.append(s);
     }
+    else if(options->isVerbose())
+      qDebug() << "Unsupported section" << s;
+
   }
 
   // Read subsections for each section
@@ -274,7 +280,8 @@ void BglFile::readRecords(BinaryStream *bs)
           if(options->isIncludedNavDbObject(type::AIRPORT))
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
-            rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
+            rec = createRecord<Airport>(bs, &airports,
+                                        msfsNavdata ? bgl::flags::AIRPORT_MSFS_DUMMY : bgl::flags::NONE);
           break;
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";

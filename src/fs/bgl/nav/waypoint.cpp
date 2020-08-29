@@ -31,6 +31,12 @@ QString Waypoint::waypointTypeToStr(nav::WaypointType type)
 {
   switch(type)
   {
+    case nav::RNAV:
+      return "RNAV";
+
+    case nav::VFR:
+      return "VFR";
+
     case nav::NAMED:
       return "WN";
 
@@ -102,20 +108,19 @@ Waypoint::Waypoint(const NavDatabaseOptions *options, BinaryStream *bs)
     // Read always to avoid messing up current file position
     AirwaySegment segment(options, bs, *this);
     if(options->isIncludedNavDbObject(type::AIRWAY))
-      airways.append(segment);
-  }
-
-  for(const AirwaySegment& re : airways)
-  {
-    if(re.getAirwayType() == atools::fs::bgl::nav::BOTH)
     {
-      numVictorAirway++;
-      numJetAirway++;
+      airways.append(segment);
+
+      if(segment.getAirwayType() == atools::fs::bgl::nav::BOTH)
+      {
+        numVictorAirway++;
+        numJetAirway++;
+      }
+      else if(segment.getAirwayType() == atools::fs::bgl::nav::VICTOR)
+        numVictorAirway++;
+      else if(segment.getAirwayType() == atools::fs::bgl::nav::JET)
+        numJetAirway++;
     }
-    else if(re.getAirwayType() == atools::fs::bgl::nav::VICTOR)
-      numVictorAirway++;
-    else if(re.getAirwayType() == atools::fs::bgl::nav::JET)
-      numJetAirway++;
   }
 }
 

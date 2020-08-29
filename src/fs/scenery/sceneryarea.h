@@ -24,12 +24,14 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
+/* Collect scenery area entries consisting of more than one BGL files from scenery.cfg
+ * Also used to collect entries from add-on.xml files. */
 class SceneryArea
 {
 public:
   SceneryArea();
 
-  /* Constructed from P3D add-on packages */
+  /* Constructed from FSX and P3D add-on packages */
   SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath);
 
   /*
@@ -91,11 +93,19 @@ public:
     return title;
   }
 
+  /* Create a tile based on number if empty */
   void fixTitle();
 
+  /* true if add-on should be loaded on top of all others */
   bool isHighPriority() const
   {
     return highPriority;
+  }
+
+  /* true MSFS add-on */
+  bool isAddOn() const
+  {
+    return addOn;
   }
 
   void setHighPriority(bool value = true)
@@ -103,12 +113,62 @@ public:
     highPriority = value;
   }
 
+  void setAreaNumber(int value)
+  {
+    areaNumber = value;
+  }
+
+  void setTextureId(int value)
+  {
+    textureId = value;
+  }
+
+  void setLayer(int value)
+  {
+    layer = value;
+  }
+
+  void setActive(bool value)
+  {
+    active = value;
+  }
+
+  void setRequired(bool value)
+  {
+    required = value;
+  }
+
+  void setTitle(const QString& value)
+  {
+    title = value;
+  }
+
+  void setRemotePath(const QString& value)
+  {
+    remotePath = value;
+  }
+
+  void setLocalPath(const QString& value)
+  {
+    localPath = value;
+  }
+
+  void setExclude(const QString& value)
+  {
+    exclude = value;
+  }
+
+  /* MSFS only. Indicates that add-on is stored in the path "Community". */
+  void setAddOn(bool value)
+  {
+    addOn = value;
+  }
+
 private:
-  friend class SceneryCfg;
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false, highPriority = false;
+  bool active = false, required = false, highPriority = false, addOn = false;
   QString title, remotePath, localPath, exclude;
 };
 

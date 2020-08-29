@@ -37,7 +37,7 @@ public:
          atools::fs::bgl::StructureType structureType);
   virtual ~Apron2();
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -77,7 +77,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Apron2& record);
 
-  atools::fs::bgl::rw::Surface surface = atools::fs::bgl::rw::UNKNOWN;
+  atools::fs::bgl::Surface surface = atools::fs::bgl::UNKNOWN;
   QList<atools::fs::bgl::BglPosition> vertices;
   QList<int> triangles;
 

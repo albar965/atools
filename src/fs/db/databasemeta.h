@@ -140,8 +140,11 @@ public:
    *    Coordinates for fix and recommended fix in procedure tables added.
    *    Added flag "artificial" for created NDB and VOR waypoints.
    * 18 New FIR and UIR regions deprecating centers
+   * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
+   *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
+   *
    */
-  static const int DB_VERSION_MINOR = 18;
+  static const int DB_VERSION_MINOR = 19;
 
   void init();
 

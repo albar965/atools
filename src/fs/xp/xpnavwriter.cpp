@@ -383,9 +383,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
         if(line.last() == "DME-ILS")
           updateIlsDme(line);
         else
-        {
           writeVor(line, true, context.curFileId);
-        }
       }
       break;
 

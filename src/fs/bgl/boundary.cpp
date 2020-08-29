@@ -18,6 +18,7 @@
 #include "fs/bgl/boundary.h"
 #include "io/binarystream.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -169,6 +170,8 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
 
   minPosition = BglPosition(bs, true, 1000.f);
   maxPosition = BglPosition(bs, true, 1000.f);
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
   int numFreq = 0;
   while(bs->tellg() < startOffset + size)
@@ -186,10 +189,10 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
         // Read COM record directly here
         comType = static_cast<com::ComType>(bs->readShort());
         comFrequency = bs->readInt() / 1000;
-        comName = bs->readString(r.getSize() - 12);
+        comName = bs->readString(r.getSize() - 12, encoding);
         break;
       case rec::BOUNDARY_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE);
+        name = bs->readString(r.getSize() - Record::SIZE, atools::io::LATIN1);
         break;
       case rec::BOUNDARY_LINES:
         {

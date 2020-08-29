@@ -72,8 +72,8 @@ public:
   NavDatabase(const atools::fs::NavDatabaseOptions *readerOptions, atools::sql::SqlDatabase *sqlDb,
               atools::fs::NavDatabaseErrors *databaseErrors, const QString& revision);
 
-  /* Read all BGL files and load data into database. atools::Exception is thrown in case of error.
-   * @param codec Scenery.cfg codec */
+  /* Read all BGL or X-Plane files and load data into database. atools::Exception is thrown in case of error.
+   * @param codec Scenery.cfg codec only applies to FSX/P3D */
   void create(const QString& codec);
 
   /* Does not load anything and only creates the empty database schema.
@@ -96,6 +96,7 @@ public:
 
   /*
    * Checks if scenery.cfg file exists and is valid (contains areas).
+   * Only FSX and P3D.
    *
    * @param filename Scenery.cfg filename
    * @param codec Scenery.cfg codec
@@ -127,13 +128,28 @@ private:
   void createInternal(const QString& sceneryConfigCodec);
 
   /* Read FSX/P3D scenery configuration */
-  void readSceneryConfig(atools::fs::scenery::SceneryCfg& cfg);
+  void readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg);
+
+  /* Fill MSFS scenery configuration with the two default entries */
+  void readSceneryConfigMsfs(scenery::SceneryCfg& cfg);
 
   /* Source dependent compilation methods */
+
+  /* FSX, FSX SE and P3D */
   bool loadFsxP3d(atools::fs::ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter,
                   const scenery::SceneryCfg& cfg);
+
+  /* MSFS 2020 */
+  bool loadMsfs(atools::fs::ProgressHandler *progress, atools::fs::db::DataWriter *fsDataWriter,
+                const scenery::SceneryCfg& cfg);
+
+  /* X-Plane */
   bool loadXplane(atools::fs::ProgressHandler *progress, atools::fs::xp::XpDataCompiler *xpDataCompiler,
                   const atools::fs::scenery::SceneryArea& area);
+
+  bool loadFsxP3dMsfsPost(ProgressHandler *progress);
+
+  /* Navigraph / DFD */
   bool loadDfd(atools::fs::ProgressHandler *progress, atools::fs::ng::DfdCompiler *dfdCompiler,
                const atools::fs::scenery::SceneryArea& area);
 
@@ -144,7 +160,8 @@ private:
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
   /* Count files in FSX/P3D scenery configuration */
-  void countFiles(const atools::fs::scenery::SceneryCfg& cfg, int *numFiles, int *numSceneryAreas);
+  void countFiles(const QList<scenery::SceneryArea>& areas, int& numFiles, int& numSceneryAreas);
+  int nextAreaNum(const QList<atools::fs::scenery::SceneryArea>& areas);
 
   /* Run and report SQL script */
   bool runScript(atools::fs::ProgressHandler *progress, const QString& scriptFile, const QString& message);
@@ -161,6 +178,8 @@ private:
   int countDfdSteps();
   int countXplaneSteps();
   int countFsxP3dSteps(const scenery::SceneryCfg& cfg);
+  int countMsfsSteps(const scenery::SceneryCfg& cfg);
+  int countMsSimSteps();
 
   /* For metadata */
 
@@ -169,6 +188,9 @@ private:
   const atools::fs::NavDatabaseOptions *options = nullptr;
   bool aborted = false;
   QString gitRevision;
+
+  bool loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
+                               const QList<atools::fs::scenery::SceneryArea>& areas);
 
 };
 

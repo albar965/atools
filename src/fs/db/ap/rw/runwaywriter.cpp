@@ -18,6 +18,7 @@
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db//datawriter.h"
 #include "fs/bgl/util.h"
+#include "fs/bgl/surface.h"
 #include "fs/db/ap/airportwriter.h"
 #include "fs/db/ap/rw/runwayendwriter.h"
 #include "fs/db/runwayindex.h"
@@ -59,7 +60,13 @@ void RunwayWriter::writeObject(const Runway *type)
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":primary_end_id", primaryEndId);
   bind(":secondary_end_id", secondaryEndId);
-  bind(":surface", Runway::surfaceToStr(type->getSurface()));
+
+  // Use MSFS material library is UUID is set
+  if(!type->getMaterialUuid().isNull())
+    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(getDataWriter().getSurface(type->getMaterialUuid())));
+  else
+    bind(":surface", atools::fs::bgl::surface::surfaceToDbStr(type->getSurface()));
+
   bind(":length", roundToInt(meterToFeet(type->getLength())));
   bind(":width", roundToInt(meterToFeet(type->getWidth())));
   bind(":heading", type->getHeading());

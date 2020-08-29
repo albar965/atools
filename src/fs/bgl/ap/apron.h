@@ -37,7 +37,7 @@ public:
         atools::fs::bgl::StructureType structureType);
   virtual ~Apron();
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -50,11 +50,18 @@ public:
     return vertices;
   }
 
+  const QUuid& getMaterialUuid() const
+  {
+    return materialUuid;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Apron& record);
 
-  atools::fs::bgl::rw::Surface surface = atools::fs::bgl::rw::UNKNOWN;
+  atools::fs::bgl::Surface surface = atools::fs::bgl::UNKNOWN;
   QList<atools::fs::bgl::BglPosition> vertices;
+  QUuid materialUuid;
+
 };
 
 } // namespace bgl

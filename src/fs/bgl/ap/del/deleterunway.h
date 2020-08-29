@@ -41,7 +41,7 @@ public:
   DeleteRunway(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~DeleteRunway();
 
-  atools::fs::bgl::rw::Surface getSurface() const
+  atools::fs::bgl::Surface getSurface() const
   {
     return surface;
   }
@@ -59,7 +59,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::DeleteRunway& record);
 
-  atools::fs::bgl::rw::Surface surface;
+  atools::fs::bgl::Surface surface;
   QString primaryName;
   QString secondaryName;
 };

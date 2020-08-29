@@ -118,17 +118,15 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::TRANSITION_LEGS:
+      case rec::TRANSITION_LEGS_MSFS:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.append(ApproachLeg(bs, false));
+            legs.append(ApproachLeg(bs, false, t == rec::TRANSITION_LEGS_MSFS));
         }
         break;
 
-      case atools::fs::bgl::rec::LEGS:
-      case atools::fs::bgl::rec::MISSED_LEGS:
-      case atools::fs::bgl::rec::TRANSITION:
       default:
         qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << t << dec
                                        << " for airport ident " << fixAirportIdent;

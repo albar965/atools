@@ -40,6 +40,8 @@ class MagDecReader;
 }
 namespace scenery {
 class SceneryArea;
+class LanguageJson;
+class MaterialLib;
 }
 class ProgressHandler;
 
@@ -70,8 +72,6 @@ class HelipadWriter;
 class RunwayIndex;
 class DbAirportIndex;
 class ApronWriter;
-class ApronLightWriter;
-class FenceWriter;
 class TaxiPathWriter;
 class BoundaryWriter;
 
@@ -92,7 +92,7 @@ public:
    */
   void writeSceneryArea(const atools::fs::scenery::SceneryArea& area);
 
-  void readMagDeclBgl();
+  void readMagDeclBgl(const QString& fileScenery);
 
   /*
    * Log written record number, etc. to the log/console.
@@ -221,16 +221,6 @@ public:
     return airportApronWriter;
   }
 
-  atools::fs::db::ApronLightWriter *getApronLightWriter() const
-  {
-    return airportApronLightWriter;
-  }
-
-  atools::fs::db::FenceWriter *getFenceWriter() const
-  {
-    return airportFenceWriter;
-  }
-
   atools::fs::db::TaxiPathWriter *getTaxiPathWriter() const
   {
     return airportTaxiPathWriter;
@@ -258,6 +248,35 @@ public:
   void close();
 
   float getMagVar(const atools::geo::Pos& pos, float defaultValue) const;
+
+  /* MSFS language index from JSON file */
+  QString getLanguage(const QString& key);
+
+  /* MSFS surface type from material library */
+  QString getSurface(const QUuid& key);
+
+  /* Language index to look up localized MSFS airport and other names that start with "TT:" */
+  void setLanguageIndex(const atools::fs::scenery::LanguageJson *value)
+  {
+    languageIndex = value;
+  }
+
+  /* Global MSFS material library */
+  void setMaterialLib(const atools::fs::scenery::MaterialLib *value)
+  {
+    materialLib = value;
+  }
+
+  /* Package specific MSFS material library */
+  void setMaterialLibScenery(const atools::fs::scenery::MaterialLib *value)
+  {
+    materialLibScenery = value;
+  }
+
+  atools::sql::SqlDatabase& getDatabase() const
+  {
+    return db;
+  }
 
 private:
   int numFiles = 0, numNamelists = 0, numVors = 0, numIls = 0,
@@ -288,8 +307,6 @@ private:
   atools::fs::db::HelipadWriter *airportHelipadWriter = nullptr;
   atools::fs::db::StartWriter *airportStartWriter = nullptr;
   atools::fs::db::ApronWriter *airportApronWriter = nullptr;
-  atools::fs::db::ApronLightWriter *airportApronLightWriter = nullptr;
-  atools::fs::db::FenceWriter *airportFenceWriter = nullptr;
   atools::fs::db::TaxiPathWriter *airportTaxiPathWriter = nullptr;
 
   atools::fs::db::DeleteAirportWriter *deleteAirportWriter = nullptr;
@@ -309,6 +326,8 @@ private:
   atools::fs::common::MagDecReader *magDecReader = nullptr;
 
   const atools::fs::NavDatabaseOptions& options;
+  const atools::fs::scenery::LanguageJson *languageIndex = nullptr;
+  const atools::fs::scenery::MaterialLib *materialLib = nullptr, *materialLibScenery = nullptr;
 };
 
 } // namespace writer

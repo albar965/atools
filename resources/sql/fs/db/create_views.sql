@@ -82,14 +82,14 @@ drop view if exists v_airport_delete;
 
 create view v_airport_delete as
 select airport_id, ident, name, country, state, city,
-  approaches, apronlights, frequencies, helipads, runways, starts, taxiways, filename, layer
+  approaches, frequencies, helipads, runways, starts, taxiways, filename, layer
 from (
-select a.airport_id, a.ident, a.name, a.country, a.state, a.city, d.approaches, d.apronlights, d.frequencies, d.helipads, d.runways, d.starts, d.taxiways, f.filename, a.layer
+select a.airport_id, a.ident, a.name, a.country, a.state, a.city, d.approaches, d.frequencies, d.helipads, d.runways, d.starts, d.taxiways, f.filename, a.layer
 from airport a join delete_airport d on a.airport_id = d.airport_id
 join bgl_file f on a.file_id = f.bgl_file_id
 join scenery_area a on f.scenery_area_id = a.scenery_area_id
 union all
-select o.airport_id, o.ident, o.name, o.country, o.state, o.city, null as approaches, null as apronlights, null as frequencies, null as helipads, null as runways, null as starts, null as taxiways, f.filename, a.layer
+select o.airport_id, o.ident, o.name, o.country, o.state, o.city, null as approaches, null as frequencies, null as helipads, null as runways, null as starts, null as taxiways, f.filename, a.layer
 from airport o join bgl_file f on o.file_id = f.bgl_file_id
 join scenery_area a on f.scenery_area_id = a.scenery_area_id
 where o.airport_id not in (select airport_id from delete_airport) and

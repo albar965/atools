@@ -28,7 +28,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
+ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed, bool msfs)
 {
   missed = ismissed;
   type = static_cast<leg::Type>(bs->readUByte());
@@ -50,7 +50,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
   unsigned int recFixFlags = bs->readUInt();
   recommendedFixType = static_cast<ap::fix::ApproachFixType>(recFixFlags & 0xf);
   recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
-  recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true); // TODO wiki mention mask
+  recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true);
 
   theta = bs->readFloat(); // heading
   rho = bs->readFloat(); // distance
@@ -58,6 +58,10 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed)
   distOrTime = bs->readFloat();
   altitude1 = bs->readFloat();
   altitude2 = bs->readFloat();
+
+  if(msfs)
+    // Skip runway color and other stuff
+    bs->skip(16);
 }
 
 QString ApproachLeg::legTypeToString(leg::Type type)
@@ -188,25 +192,25 @@ QDebug operator<<(QDebug out, const ApproachLeg& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " ApproachLeg["
-  << "type " << ApproachLeg::legTypeToString(record.type)
-  << ", alt descr " << ApproachLeg::altDescriptorToString(record.altDescriptor)
-  << ", turn " << ApproachLeg::turnDirToString(record.turnDirection)
-  << ", fix type " << ap::approachFixTypeToStr(record.fixType)
-  << ", fix ident " << record.fixIdent
-  << ", fix region " << record.fixRegion
-  << ", fix airport " << record.fixAirportIdent
-  << ", recommended fix type" << ap::approachFixTypeToStr(record.recommendedFixType)
-  << ", recommended fix region " << record.recommendedFixRegion
-  << ", theta (heading) " << record.theta
-  << ", rho (distance) " << record.rho
-  << ", course " << record.course
-  << ", distOrTime " << record.distOrTime
-  << ", altitude1 " << record.altitude1
-  << ", altitude2 " << record.altitude2
-  << ", trueCourse " << record.trueCourse
-  << ", time " << record.time
-  << ", flyover " << record.flyover
-  << "]";
+                          << "type " << ApproachLeg::legTypeToString(record.type)
+                          << ", alt descr " << ApproachLeg::altDescriptorToString(record.altDescriptor)
+                          << ", turn " << ApproachLeg::turnDirToString(record.turnDirection)
+                          << ", fix type " << ap::approachFixTypeToStr(record.fixType)
+                          << ", fix ident " << record.fixIdent
+                          << ", fix region " << record.fixRegion
+                          << ", fix airport " << record.fixAirportIdent
+                          << ", recommended fix type" << ap::approachFixTypeToStr(record.recommendedFixType)
+                          << ", recommended fix region " << record.recommendedFixRegion
+                          << ", theta (heading) " << record.theta
+                          << ", rho (distance) " << record.rho
+                          << ", course " << record.course
+                          << ", distOrTime " << record.distOrTime
+                          << ", altitude1 " << record.altitude1
+                          << ", altitude2 " << record.altitude2
+                          << ", trueCourse " << record.trueCourse
+                          << ", time " << record.time
+                          << ", flyover " << record.flyover
+                          << "]";
 
   return out;
 }

@@ -36,6 +36,7 @@ namespace fs {
 namespace bgl {
 
 namespace del {
+
 enum DeleteAllFlag
 {
   // TODO missing not documented flags
@@ -43,9 +44,30 @@ enum DeleteAllFlag
   // deleteAllBoundaryFences = "TRUE"
   // deleteAllControlTowers = "TRUE"
   // deleteAllJetways = "TRUE"
+
+  // deleteAllApproaches
+  // deleteAllApronLights
+  // deleteAllAprons
+  // deleteAllFrequencies
+  // deleteAllHelipads
+  // deleteAllRunways
+  // deleteAllStarts
+  // deleteAllTaxiways
+  // deleteAllBlastFences
+  // deleteAllBoundaryFences
+  // deleteAllControlTowers
+  // deleteAllJetways
+  // deleteAllDepartures
+  // deleteAllArrivals
+  // deleteAllPaintedElements
+  // deleteAllLightSupports
+  // deleteAllTaxiwaySigns
+  // deleteAllILSs
+  // deleteAllTerminalWaypoints
+  // deleteAllTerminalNDBs
+
   NONE = 0,
   APPROACHES = 1 << 0,
-  APRONLIGHTS = 1 << 1,
   APRONS = 1 << 2,
   COMS = 1 << 3,
   HELIPADS = 1 << 4,
@@ -69,6 +91,7 @@ class DeleteAirport :
 {
 public:
   DeleteAirport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  DeleteAirport(atools::fs::bgl::del::DeleteAllFlags deleteAllFlags);
   virtual ~DeleteAirport();
 
   /*

@@ -28,7 +28,8 @@ namespace bgl {
 Apron2::Apron2(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, StructureType structureType)
   : bgl::Record(options, bs)
 {
-  surface = static_cast<rw::Surface>(bs->readUByte() & rw::SURFACE_MASK);
+  surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
+
   int flags = bs->readUByte();
   drawSurface = (flags & 1) == 1;
   drawDetail = (flags & 2) == 2;
@@ -67,8 +68,8 @@ QDebug operator<<(QDebug out, const Apron2& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-                          << " Apron2[surface " << Runway::surfaceToStr(record.surface) << "/"
-                          << Runway::surfaceToStr(record.surface)
+                          << " Apron2[surface " << surface::surfaceToDbStr(record.surface) << "/"
+                          << surface::surfaceToDbStr(record.surface)
                           << ", drawSurface " << record.drawSurface
                           << ", drawDetail " << record.drawDetail << endl;
   out << record.vertices;

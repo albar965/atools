@@ -19,6 +19,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QUuid>
 #include "exception.h"
 
 namespace atools {
@@ -56,6 +57,18 @@ int BinaryStream::readBytes(char bytes[], int size)
   int numRead = is->readRawData(bytes, size);
   checkStream("readBytes");
   return numRead;
+}
+
+QUuid BinaryStream::readUuid()
+{
+  uint l = readUInt();
+  ushort w1, w2;
+  w1 = readUShort();
+  w2 = readUShort();
+
+  char bytes[8];
+  readBytes(bytes, 8);
+  return QUuid(l, w1, w2, bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
 }
 
 qint64 BinaryStream::tellg() const
@@ -156,36 +169,46 @@ QChar BinaryStream::readChar()
   return QChar::fromLatin1(readByte());
 }
 
-QString BinaryStream::readString()
+QString BinaryStream::readString(Encoding encoding)
 {
-  QString retval;
+  QByteArray retval;
   char c = 0;
-  while((c = readByte()) != 0)
+  do
   {
-    if(iscntrl(c))
-      break;
-    retval.append(QChar::fromLatin1(c));
-  }
+    c = readByte();
+    retval.append(c);
+  } while(c != '\0');
 
   checkStream("readString");
 
-  return retval;
+  if(encoding == UTF8)
+    return QString::fromUtf8(retval);
+  else if(encoding == LATIN1)
+    return QString::fromLatin1(retval);
+  else
+    return QString::fromLocal8Bit(retval);
 }
 
-QString BinaryStream::readString(int length)
+QString BinaryStream::readString(int length, Encoding encoding)
 {
   char *buf = new char[length];
   readBytes(buf, length);
 
-  QString retval;
+  QByteArray retval;
   for(int i = 0; i < length; i++)
   {
-    if(iscntrl(buf[i]))
+    retval.append(buf[i]);
+    if(buf[i] == '\0')
       break;
-    retval.append(QChar::fromLatin1(buf[i]));
   }
   delete[] buf;
-  return retval;
+
+  if(encoding == UTF8)
+    return QString::fromUtf8(retval);
+  else if(encoding == LATIN1)
+    return QString::fromLatin1(retval);
+  else
+    return QString::fromLocal8Bit(retval);
 }
 
 void BinaryStream::checkStream(const QString& what) const

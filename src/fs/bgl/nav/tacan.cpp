@@ -21,9 +21,9 @@
 #include "fs/bgl/nav/dme.h"
 #include "fs/bgl/nav/glideslope.h"
 #include "io/binarystream.h"
-
 #include "fs/bgl/converter.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/navdatabaseoptions.h"
 
 namespace atools {
 namespace fs {
@@ -47,6 +47,9 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *bs)
   region = converter::intToIcao(regionFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((regionFlags >> 11) & 0x1fffff, true);
 
+  atools::io::Encoding encoding = options->getSimulatorType() ==
+                                  atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
+
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
@@ -57,7 +60,7 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(t)
     {
       case rec::ILS_VOR_NAME:
-        name = bs->readString(r.getSize() - Record::SIZE);
+        name = bs->readString(r.getSize() - Record::SIZE, encoding);
         break;
       case rec::DME:
         r.seekToStart();
@@ -68,7 +71,7 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in TACAN record 0x" << hex << t << dec <<
-        " for ident " << ident;
+          " for ident " << ident;
     }
     r.seekToEnd();
   }
@@ -84,8 +87,8 @@ QDebug operator<<(QDebug out, const Tacan& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const NavBase&>(record)
-  << " Tacan["
-  << "channel" << record.getChannel();
+                          << " Tacan["
+                          << "channel" << record.getChannel();
   out << "]";
   return out;
 }
