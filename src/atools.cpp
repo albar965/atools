@@ -232,96 +232,6 @@ bool contains(const QString& name, const std::initializer_list<const char *>& li
   return false;
 }
 
-QString buildPathNoCase(const QStringList& paths)
-{
-
-  // Use the same for macOS since case sensitive file systems can cause problems
-#if defined(Q_OS_WIN32)
-  return buildPath(paths);
-
-#else
-  QDir dir;
-  QString file;
-
-  int i = 0;
-  for(const QString& path : paths)
-  {
-    if(i == 0)
-      // First path element
-      dir = path;
-    else
-    {
-      // Get entries that match exacly the next path element
-      QStringList entries = dir.entryList({path});
-
-      if(entries.isEmpty())
-      {
-        // Nothing found - do an expensive manual compare
-        bool found = false;
-        entries = dir.entryList();
-
-        for(const QString& str: entries)
-        {
-          if(str.compare(path, Qt::CaseInsensitive) == 0)
-          {
-            // Found something - use it as the single entry
-            entries.clear();
-            entries.append(str);
-            found = true;
-            break;
-          }
-        }
-
-        if(!found)
-          // Nothing found when searching case insensitive
-          entries.clear();
-      }
-
-      if(!entries.isEmpty())
-      {
-        if(QFileInfo(dir.path() + SEP + entries.first()).isDir())
-        {
-          // Directory exists - change into it
-          if(!dir.cd(entries.first()))
-            break;
-        }
-        else
-        {
-          // Is a file - add by name simply
-          file = entries.first();
-          break;
-        }
-      }
-      else
-        // Nothing found - add potentially wrong case name
-        dir = dir.path() + SEP + path;
-    }
-    i++;
-  }
-
-  if(file.isEmpty())
-    return dir.path();
-  else
-    return dir.path() + SEP + file;
-
-#endif
-}
-
-QString buildPath(const QStringList& paths)
-{
-  QString retval;
-
-  int i = 0;
-  for(const QString& path : paths)
-  {
-    if(i > 0)
-      retval += SEP;
-    retval += path;
-    i++;
-  }
-  return retval;
-}
-
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator)
 {
@@ -806,6 +716,86 @@ QString strJoin(const QStringList& list, const QString& sep, const QString& last
 QString buildPathNoCase(QString path)
 {
   return buildPathNoCase(path.replace('\\', '/').split('/'));
+}
+
+QString buildPath(const QStringList& paths)
+{
+  return paths.join(SEP);
+}
+
+QString buildPathNoCase(const QStringList& paths)
+{
+
+  // Use the same for macOS since case sensitive file systems can cause problems
+#if defined(Q_OS_WIN32)
+  return buildPath(paths);
+
+#else
+  QDir dir;
+  QString file;
+
+  int i = 0;
+  for(const QString& path : paths)
+  {
+    if(i == 0)
+      // First path element
+      dir = path;
+    else
+    {
+      // Get entries that match exacly the next path element
+      QStringList entries = dir.entryList({path});
+
+      if(entries.isEmpty())
+      {
+        // Nothing found - do an expensive manual compare
+        bool found = false;
+        entries = dir.entryList();
+
+        for(const QString& str: entries)
+        {
+          if(str.compare(path, Qt::CaseInsensitive) == 0)
+          {
+            // Found something - use it as the single entry
+            entries.clear();
+            entries.append(str);
+            found = true;
+            break;
+          }
+        }
+
+        if(!found)
+          // Nothing found when searching case insensitive
+          entries.clear();
+      }
+
+      if(!entries.isEmpty())
+      {
+        if(QFileInfo(dir.path() + SEP + entries.first()).isDir())
+        {
+          // Directory exists - change into it
+          if(!dir.cd(entries.first()))
+            break;
+        }
+        else
+        {
+          // Is a file - add by name simply
+          file = entries.first();
+          break;
+        }
+      }
+      else
+        // Nothing found - add potentially wrong case name
+        dir = dir.path() + SEP + path;
+    }
+    i++;
+  }
+
+  if(file.isEmpty())
+    return dir.path();
+  else
+    return dir.path() + SEP + file;
+
+#endif
 }
 
 QString checkDir(const QFileInfo& dir)

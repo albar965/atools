@@ -71,6 +71,7 @@ using atools::fs::scenery::AddOnCfgEntry;
 using atools::fs::scenery::SceneryArea;
 using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
+using atools::buildPathNoCase;
 
 NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
                          NavDatabaseErrors *databaseErrors, const QString& revision)
@@ -200,7 +201,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
 {
   if(type == atools::fs::FsPaths::XPLANE11)
   {
-    error = atools::checkDir(filepath + SEP + "Resources" + SEP + "default data");
+    error = atools::checkDir(buildPathNoCase({filepath, "Resources", "default data"}));
     if(error.isEmpty())
       return true;
   }
@@ -208,9 +209,9 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
   {
     // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
     QStringList errors;
-    errors.append(atools::checkDir(filepath + SEP + "Official" + SEP + "OneStore" + SEP + "fs-base"));
-    errors.append(atools::checkDir(filepath + SEP + "Official" + SEP + "OneStore" + SEP + "fs-base-nav"));
-    errors.append(atools::checkDir(filepath + SEP + "Community"));
+    errors.append(atools::checkDir(buildPathNoCase({filepath, "Official", "OneStore", "fs-base"})));
+    errors.append(atools::checkDir(buildPathNoCase({filepath, "Official", "OneStore", "fs-base-nav"})));
+    errors.append(atools::checkDir(buildPathNoCase({filepath, "Community"})));
     errors.removeAll(QString());
     if(!errors.isEmpty())
       error = errors.join(tr("\n"));
@@ -220,7 +221,7 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atool
   else
   {
     // If path exists check for scenery directory
-    error = atools::checkDir(filepath + SEP + "scenery");
+    error = atools::checkDir(buildPathNoCase({filepath, "scenery"}));
     if(error.isEmpty())
       return true;
   }
@@ -607,12 +608,12 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore\fs-base\en-US.locPak
 
     // Load the language index for lookup for airport names and more
-    QString packageBase = options->getBasepath() + SEP + "Official" + SEP + "OneStore" + SEP;
-    QFileInfo langFile = packageBase + "fs-base" + SEP + options->getLanguage() + ".locPak";
+    QString packageBase = buildPathNoCase({options->getBasepath(), "Official", "OneStore"});
+    QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"});
     if(!langFile.exists() || !langFile.isFile())
     {
       qWarning() << Q_FUNC_INFO << langFile << "not found. Falling back to en-US";
-      langFile = packageBase + "fs-base" + SEP + "en-US.locPak";
+      langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
     }
 
     languageIndex.reset(new scenery::LanguageJson(langFile.filePath()));
@@ -1013,8 +1014,8 @@ bool NavDatabase::loadFsxP3d(ProgressHandler *progress, atools::fs::db::DataWrit
   // Prepare structure for error collection
   NavDatabaseErrors::SceneryErrors err;
   fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
-  fsDataWriter->readMagDeclBgl(atools::buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery",
-                                                        "magdec.bgl"}));
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Scenery", "Base", "Scenery",
+                                                "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1034,9 +1035,9 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
-  fsDataWriter->readMagDeclBgl(atools::buildPathNoCase({options->getBasepath(), "Official",
-                                                        "OneStore", "fs-base", "scenery", "Base", "scenery",
-                                                        "magdec.bgl"}));
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Official",
+                                                "OneStore", "fs-base", "scenery", "Base", "scenery",
+                                                "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);
 
@@ -1066,7 +1067,7 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       {
         // Load package specific material library for MSFS
         materialLib.clear();
-        materialLib.readCommunity(options->getBasepath() + SEP + "Community" + SEP + area.getLocalPath());
+        materialLib.readCommunity(buildPathNoCase({options->getBasepath(), "Community", area.getLocalPath()}));
         fsDataWriter->setMaterialLibScenery(&materialLib);
       }
 
@@ -1303,7 +1304,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Read community packages ===============================
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-  QDir dir(options->getBasepath() + SEP + "Community", QString(),
+  QDir dir(buildPathNoCase({options->getBasepath(), "Community"}), QString(),
            QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
   int areaNum = nextAreaNum(cfg.getAreas());
@@ -1312,7 +1313,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   {
     // Read BGL and material file locations from layout file
     scenery::LayoutJson layout;
-    layout.read(fileinfo.filePath() + SEP + "layout.json");
+    layout.read(buildPathNoCase({fileinfo.filePath(), "layout.json"}));
 
     if(!layout.getBglPaths().isEmpty())
     {
