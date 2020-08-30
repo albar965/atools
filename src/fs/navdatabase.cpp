@@ -39,6 +39,7 @@
 
 #include <QDir>
 #include <QElapsedTimer>
+#include <QProcessEnvironment>
 #include <QStandardPaths>
 
 namespace atools {

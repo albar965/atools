@@ -200,7 +200,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #if defined(Q_OS_WIN32)
     // "C:\Users\USERS\AppData\Local\x-plane_install_11.txt"
-    return validXplaneBasePath(environment.value("LOCALAPPDATA") + SEP + "x-plane_install_11.txt");
+    return xplaneBasePath(environment.value("LOCALAPPDATA") + SEP + "x-plane_install_11.txt");
 
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
@@ -223,14 +223,14 @@ QString FsPaths::initBasePath(SimulatorType type)
 #if defined(Q_OS_WIN32)
     // Fixed location
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
-    fsPath = validMsfsBasePath(environment.value("LOCALAPPDATA") + SEP +
+    fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP +
                                "Packages" + SEP +
                                "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP +
                                "LocalCache" + SEP + "UserCfg.opt");
 
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     if(fsPath.isEmpty())
-      fsPath = validMsfsBasePath(environment.value("APPDATA") + SEP +
+      fsPath = msfsBasePath(environment.value("APPDATA") + SEP +
                                  "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
 
 #elif defined(DEBUG_FS_PATHS)

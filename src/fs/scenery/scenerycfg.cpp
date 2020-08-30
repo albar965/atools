@@ -132,7 +132,7 @@ void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix
 #ifdef Q_OS_UNIX
       currentArea.setLocalPath(QString(value).replace("\\", "/"));
 #else
-      currentArea.localPath = value;
+      currentArea.setLocalPath(value);
 #endif
     }
     else if(key == "layer")
