@@ -30,6 +30,8 @@
 #include <QSet>
 #include <QCache>
 #include <QLatin1Literal>
+#include <QCoreApplication>
+#include <QDir>
 
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 
@@ -598,17 +600,30 @@ bool SimConnectHandler::loadSimConnect(const QString& manifestPath)
 {
   p->simConnectLoaded = false;
 
-  if(!p->context.create(manifestPath))
+  // Try local copy first
+  QString simconnectDll = QCoreApplication::applicationDirPath() + QDir::separator() + "SimConnect.dll";
+  bool activated = false;
+  if(!QFile::exists(simconnectDll))
+  {
+    // No local copy - load from WinSxS
+    if(!p->context.create(manifestPath))
+      return false;
+
+    if(!p->context.activate())
+      return false;
+
+    simconnectDll = "SimConnect.dll";
+    activated = true;
+  }
+
+  if(!p->context.loadLibrary(simconnectDll))
     return false;
 
-  if(!p->context.activate())
-    return false;
-
-  if(!p->context.loadLibrary("SimConnect.dll"))
-    return false;
-
-  if(!p->context.deactivate())
-    return false;
+  if(activated)
+  {
+    if(!p->context.deactivate())
+      return false;
+  }
 
   if(!p->api.bindFunctions(p->context))
     return false;

@@ -50,7 +50,7 @@ public:
   SimConnectApi();
   ~SimConnectApi();
 
-  bool bindFunctions(atools::win::ActivationContext& context);
+  bool bindFunctions(win::ActivationContext& context);
 
   HRESULT Open(LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
   HRESULT Close();

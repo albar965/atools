@@ -18,6 +18,7 @@
 #include "win/activationcontext.h"
 
 #include <QDebug>
+#include <QDir>
 
 #if defined(Q_OS_WIN32)
 extern "C" {
@@ -86,8 +87,10 @@ bool ActivationContext::isAvailable() const
 #endif
 }
 
-bool ActivationContext::create(const QString& manifestPath)
+bool ActivationContext::create(QString manifestPath)
 {
+  manifestPath = QDir::toNativeSeparators(manifestPath);
+
   qDebug() << Q_FUNC_INFO << manifestPath;
 #if defined(Q_OS_WIN32)
   ACTCTX ctx;
@@ -185,8 +188,11 @@ unsigned int ActivationContext::getErrorNumber() const
 #endif
 }
 
-bool ActivationContext::loadLibrary(const QString& libraryName)
+bool ActivationContext::loadLibrary(QString libraryName)
 {
+  libraryName = QDir::toNativeSeparators(libraryName);
+  QString libraryKey = QFileInfo(libraryName).fileName();
+
   qDebug() << Q_FUNC_INFO << libraryName;
 
 #if defined(Q_OS_WIN32)
@@ -195,7 +201,7 @@ bool ActivationContext::loadLibrary(const QString& libraryName)
   p->lastError = GetLastError();
 
   if(hLibrary != NULL)
-    p->loadedLibraries.insert(libraryName, hLibrary);
+    p->loadedLibraries.insert(libraryKey, hLibrary);
 
   delete[] libraryWPath;
 
@@ -210,14 +216,17 @@ bool ActivationContext::loadLibrary(const QString& libraryName)
 #endif
 }
 
-bool ActivationContext::freeLibrary(const QString& libraryName)
+bool ActivationContext::freeLibrary(QString libraryName)
 {
+  libraryName = QDir::toNativeSeparators(libraryName);
+  QString libraryKey = QFileInfo(libraryName).fileName();
+
 #if defined(Q_OS_WIN32)
   bool retval = true;
-  if(p->loadedLibraries.contains(libraryName))
+  if(p->loadedLibraries.contains(libraryKey))
   {
     retval = FreeLibrary(p->loadedLibraries.value(libraryName));
-    p->loadedLibraries.remove(libraryName);
+    p->loadedLibraries.remove(libraryKey);
     p->lastError = GetLastError();
 
     if(!retval)
@@ -234,7 +243,7 @@ bool ActivationContext::freeLibrary(const QString& libraryName)
 #endif
 }
 
-void *ActivationContext::getProcAddress(const QString& libraryName, const QString& procName)
+void *ActivationContext::getProcAddress(QString libraryName, const QString& procName)
 {
 #if defined(Q_OS_WIN32)
   FARPROC ptr = GetProcAddress(p->loadedLibraries.value(libraryName), procName.toLocal8Bit().data());

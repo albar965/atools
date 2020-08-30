@@ -37,7 +37,7 @@ public:
   bool isAvailable() const;
 
   /* Create context. true if successfull */
-  bool create(const QString& manifestPath);
+  bool create(QString manifestPath);
 
   /* Releases a created context */
   void release();
@@ -54,13 +54,13 @@ public:
   /* Windows error number or null */
   unsigned int getErrorNumber() const;
 
-  /* Load a DLL by name */
-  bool loadLibrary(const QString& libraryName);
-  bool freeLibrary(const QString& libraryName);
+  /* Load a DLL by name. File name is extracted from path and used as key in getProcAddress */
+  bool loadLibrary(QString libraryName);
+  bool freeLibrary(QString libraryName);
 
   /* Retrieves the address of an exported function or variable from the specified dynamic-link library (DLL).
    *  DLL "libraryName" has to be loaded before */
-  void *getProcAddress(const QString& libraryName, const QString& procName);
+  void *getProcAddress(QString libraryName, const QString& procName);
 
 private:
   ActivationContextPrivate *p = nullptr;

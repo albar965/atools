@@ -37,8 +37,6 @@ DataReaderThread::DataReaderThread(QObject *parent, bool verboseLog)
   qDebug() << Q_FUNC_INFO;
   setObjectName("DataReaderThread");
 
-  qInfo() << "SimConnect available:" << (handler != nullptr ? handler->isLoaded() : false);
-
   options = atools::fs::sc::FETCH_AI_AIRCRAFT | atools::fs::sc::FETCH_AI_BOAT;
 }
 
@@ -50,8 +48,10 @@ DataReaderThread::~DataReaderThread()
 void DataReaderThread::setHandler(ConnectHandler *connectHandler)
 {
   qDebug() << Q_FUNC_INFO << connectHandler->getName();
+  qDebug() << "SimConnect available:" << (handler != nullptr ? handler->isLoaded() : false);
 
   handler = connectHandler;
+
 }
 
 void DataReaderThread::connectToSimulator()
