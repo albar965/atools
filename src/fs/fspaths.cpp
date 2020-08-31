@@ -18,6 +18,7 @@
 #include "fspaths.h"
 
 #include "settings/settings.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QHash>
@@ -128,10 +129,10 @@ void FsPaths::logAllPaths()
   // C:\ProgramData
   qInfo() << "PROGRAMDATA" << environment.value("PROGRAMDATA");
 
-  // C:\Users\alex\AppData\Roaming
+  // C:\Users\USER\AppData\Roaming
   qInfo() << "APPDATA" << environment.value("APPDATA");
 
-  // C:\Users\alex\AppData\Local
+  // C:\Users\USER\AppData\Local
   qInfo() << "LOCALAPPDATA" << environment.value("LOCALAPPDATA"); // MSFS
 
   // C:\ProgramData
@@ -224,14 +225,14 @@ QString FsPaths::initBasePath(SimulatorType type)
     // Fixed location
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP +
-                               "Packages" + SEP +
-                               "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP +
-                               "LocalCache" + SEP + "UserCfg.opt");
+                          "Packages" + SEP +
+                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP +
+                          "LocalCache" + SEP + "UserCfg.opt");
 
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     if(fsPath.isEmpty())
       fsPath = msfsBasePath(environment.value("APPDATA") + SEP +
-                                 "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
+                            "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
 
 #elif defined(DEBUG_FS_PATHS)
 
@@ -299,6 +300,22 @@ QString FsPaths::initBasePath(SimulatorType type)
   return fsPath;
 }
 
+QString FsPaths::msfsSimPath()
+{
+  // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
+  QString fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
+                   "Microsoft.FlightSimulator_8wekyb3d8bbwe";
+
+  // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
+  if(!atools::checkDir(fsPath).isEmpty())
+    fsPath = environment.value("APPDATA") + SEP + "Microsoft Flight Simulator";
+
+  if(atools::checkDir(fsPath).isEmpty())
+    return fsPath;
+  else
+    return QString();
+}
+
 QString FsPaths::nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type)
 {
   QString fsPath;
@@ -336,46 +353,71 @@ QString FsPaths::initFilesPath(SimulatorType type)
 {
   QString fsFilesDir;
 
-#if defined(Q_OS_WIN32)
-  QString languageDll(getBasePath(type) + SEP + "language.dll");
-  qDebug() << "Language DLL" << languageDll;
-
-  // Copy to wchar and append null
-  wchar_t languageDllWChar[1024];
-  languageDll.toWCharArray(languageDllWChar);
-  languageDllWChar[languageDll.size()] = L'\0';
-
-  // Load the FS language DLL
-  HINSTANCE hInstLanguageDll = LoadLibrary(languageDllWChar);
-  if(hInstLanguageDll)
+  switch(type)
   {
-    qDebug() << "Got handle from LoadLibrary";
+    case atools::fs::FsPaths::XPLANE11:
+      fsFilesDir = atools::buildPathNoCase({getBasePath(type), "Output", "FMS Plans"});
+      break;
 
-    // Get the language dependent files name from the language.dll resources
-    // (parts of code from Peter Dowson in fsdeveloper forum)
-    wchar_t filesPathWChar[MAX_PATH];
-    LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
-    FreeLibrary(hInstLanguageDll);
+    case atools::fs::FsPaths::MSFS:
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
+      // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\LocalState ?
+      fsFilesDir = msfsSimPath();
+      break;
 
-    // Check all Document folders for path - there should be only one
-    for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
-    {
-      QFileInfo fsFilesDirInfo(document + SEP + QString::fromWCharArray(filesPathWChar));
-      if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+    case atools::fs::FsPaths::FSX:
+    case atools::fs::FsPaths::FSX_SE:
+    case atools::fs::FsPaths::P3D_V2:
+    case atools::fs::FsPaths::P3D_V3:
+    case atools::fs::FsPaths::P3D_V4:
+    case atools::fs::FsPaths::P3D_V5:
+#if defined(Q_OS_WIN32)
+
+      QString languageDll(getBasePath(type) + SEP + "language.dll");
+      qDebug() << "Language DLL" << languageDll;
+
+      // Copy to wchar and append null
+      wchar_t languageDllWChar[1024];
+      languageDll.toWCharArray(languageDllWChar);
+      languageDllWChar[languageDll.size()] = L'\0';
+
+      // Load the FS language DLL
+      HINSTANCE hInstLanguageDll = LoadLibrary(languageDllWChar);
+      if(hInstLanguageDll)
       {
-        fsFilesDir = fsFilesDirInfo.absoluteFilePath();
-        qDebug() << "Found" << fsFilesDir;
-        break;
+        qDebug() << "Got handle from LoadLibrary";
+
+        // Get the language dependent files name from the language.dll resources
+        // (parts of code from Peter Dowson in fsdeveloper forum)
+        wchar_t filesPathWChar[MAX_PATH];
+        LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
+        FreeLibrary(hInstLanguageDll);
+
+        // Check all Document folders for path - there should be only one
+        for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
+        {
+          QFileInfo fsFilesDirInfo(document + SEP + QString::fromWCharArray(filesPathWChar));
+          if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+          {
+            fsFilesDir = fsFilesDirInfo.absoluteFilePath();
+            qDebug() << "Found" << fsFilesDir;
+            break;
+          }
+          else
+            qDebug() << "Does not exist" << fsFilesDir;
+        }
       }
       else
-        qDebug() << "Does not exist" << fsFilesDir;
-    }
-  }
-  else
-    qDebug() << "No handle from LoadLibrary";
-#else
-  Q_UNUSED(type)
+        qDebug() << "No handle from LoadLibrary";
 #endif
+      break;
+
+    case atools::fs::FsPaths::NAVIGRAPH:
+    case atools::fs::FsPaths::ALL_SIMULATORS:
+    case atools::fs::FsPaths::UNKNOWN:
+      break;
+
+  }
 
   // Use fallback on non Windows systems or if not found
   if(fsFilesDir.isEmpty())

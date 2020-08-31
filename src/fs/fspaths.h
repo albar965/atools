@@ -140,6 +140,7 @@ private:
   static QString nonWindowsPath(atools::fs::FsPaths::SimulatorType type);
   static QString xplaneBasePath(const QString& installationFile);
   static QString msfsBasePath(const QString& userCfgOptFile);
+  static QString msfsSimPath();
 
   static QHash<atools::fs::FsPaths::SimulatorType, QString> basePathMap;
   static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
