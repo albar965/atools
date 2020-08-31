@@ -30,7 +30,7 @@ class AirwaySegmentWriter :
 {
 public:
   AirwaySegmentWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "airway_point")
+    : WriterBase(db, dataWriter, "tmp_airway_point")
   {
   }
 

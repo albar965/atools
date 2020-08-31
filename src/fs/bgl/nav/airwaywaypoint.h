@@ -26,13 +26,15 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+class Waypoint;
+
 namespace nav {
 
 enum AirwayWaypointType
 {
   AIRWAY_WP_NONE = 0,
-  AIRWAY_WP_NDB = 1, // wiki error reported
   AIRWAY_WP_VOR = 2,
+  AIRWAY_WP_NDB = 3,
   AIRWAY_WP_OTHER = 5
 };
 
@@ -47,6 +49,7 @@ class AirwayWaypoint :
   public atools::fs::bgl::BglBase
 {
 public:
+  AirwayWaypoint(const Waypoint& waypoint);
   AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~AirwayWaypoint();
 

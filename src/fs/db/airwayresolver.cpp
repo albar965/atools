@@ -45,7 +45,7 @@ using atools::sql::SqlUtil;
 using atools::geo::Pos;
 using atools::geo::Rect;
 
-// Get all airway_point rows and join previous and next waypoints to the result by ident, region and type
+// Get all tmp_airway_point rows and join previous and next waypoints to the result by ident, region and type
 static const QString WAYPOINT_QUERY_TYPE(
   "select r.name, r.type, "
   "  prev.waypoint_id as prev_waypoint_id, "
@@ -63,34 +63,15 @@ static const QString WAYPOINT_QUERY_TYPE(
   "  r.next_direction, "
   "  next.lonx as next_lonx, "
   "  next.laty as next_laty "
-  "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
-  "  left outer join waypoint prev on "
-  "    r.previous_ident = prev.ident and r.previous_region = prev.region and r.previous_type = prev.type "
-  "  left outer join waypoint next on "
-  "    r.next_ident = next.ident and r.next_region = next.region and r.next_type = next.type "
-  "order by r.name");
-
-// Get all airway_point rows and join previous and next waypoints to the result by ident and region
-static const QString WAYPOINT_QUERY_NO_TYPE(
-  "select r.name, r.type, "
-  "  prev.waypoint_id as prev_waypoint_id, "
-  "  r.previous_minimum_altitude, "
-  "  r.previous_maximum_altitude, "
-  "  r.previous_direction, "
-  "  prev.lonx as prev_lonx, "
-  "  prev.laty as prev_laty, "
-  "  r.waypoint_id, "
-  "  w.lonx as lonx, "
-  "  w.laty as laty, "
-  "  next.waypoint_id as next_waypoint_id, "
-  "  r.next_minimum_altitude, "
-  "  r.next_maximum_altitude, "
-  "  r.next_direction, "
-  "  next.lonx as next_lonx, "
-  "  next.laty as next_laty "
-  "from airway_point r join waypoint w on r.waypoint_id = w.waypoint_id "
-  "  left outer join waypoint prev on r.previous_ident = prev.ident and r.previous_region = prev.region "
-  "  left outer join waypoint next on r.next_ident = next.ident and r.next_region = next.region "
+  "from tmp_airway_point r join tmp_waypoint w on r.waypoint_id = w.waypoint_id "
+  "  left outer join tmp_waypoint prev on "
+  "    r.previous_ident = prev.ident and "
+  "    r.previous_region = prev.region and "
+  "    r.previous_type = prev.type "
+  "  left outer join tmp_waypoint next on "
+  "    r.next_ident = next.ident and "
+  "    r.next_region = next.region and "
+  "    r.next_type = next.type "
   "order by r.name");
 
 /* Airway segment with from/to position and IDs */
@@ -149,13 +130,22 @@ AirwayResolver::~AirwayResolver()
 
 void AirwayResolver::assignWaypointIds()
 {
-  // Set the waypoint IDs
   SqlQuery query(db);
+
+  query.exec("insert into tmp_waypoint select waypoint_id, "
+             "  case when type == 'V' then 'V' when type == 'N' then 'N' else 'O' end as type, "
+             "  ident, region, "
+             "  lonx, laty from waypoint");
+  query.exec("analyze tmp_waypoint");
+
+  // Set the waypoint IDs
   query.exec(
-    "update airway_point set waypoint_id = ( "
-    "select w.waypoint_id from waypoint w where mid_type = w.type and mid_ident = w.ident and mid_region = w.region )");
+    "update tmp_airway_point set waypoint_id = ( "
+    "  select w.waypoint_id from tmp_waypoint w "
+    "  where mid_type = w.type and mid_ident = w.ident and mid_region = w.region )");
   int updated = query.numRowsAffected();
   qInfo() << "Updated" << updated << "waypoint_id in airway table";
+  query.exec("analyze tmp_airway_point");
 }
 
 bool AirwayResolver::run(int numReportSteps)
@@ -172,7 +162,7 @@ bool AirwayResolver::run(int numReportSteps)
   QSet<AirwaySegment> airway;
   QString currentAirway;
 
-  int totalRowCount = SqlUtil(db).rowCount("airway_point");
+  int totalRowCount = SqlUtil(db).rowCount("tmp_airway_point");
 
   int rowsPerStep =
     static_cast<int>(std::ceil(static_cast<float>(totalRowCount) / static_cast<float>(numReportSteps)));
@@ -182,9 +172,9 @@ bool AirwayResolver::run(int numReportSteps)
   timer.start();
   qint64 elapsed = timer.elapsed();
 
-  // Get all airway_point rows and join previous and next waypoints to the result by ident and region
+  // Get all tmp_airway_point rows and join previous and next waypoints to the result by ident and region
   // Result is ordered by airway name
-  query.exec(joinType ? WAYPOINT_QUERY_TYPE : WAYPOINT_QUERY_NO_TYPE);
+  query.exec(WAYPOINT_QUERY_TYPE);
   while(query.next())
   {
     QString awName = query.value("name").toString();
@@ -247,7 +237,7 @@ bool AirwayResolver::run(int numReportSteps)
       // Previous waypoint found - add segment
       Pos prevPos(query.value("prev_lonx").toFloat(), query.value("prev_laty").toFloat());
 
-      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(maxAirwaySegmentLength))
+      if(currentWpPos.distanceMeterTo(prevPos) < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
         airway.insert(AirwaySegment(prevWpIdColVal.toInt(), currentWpId, prevDir, prevMinAlt, prevMaxAlt, awType,
                                     prevPos, currentWpPos));
     }
@@ -257,7 +247,7 @@ bool AirwayResolver::run(int numReportSteps)
       // Next waypoint found - add segment
       Pos nextPos(query.value("next_lonx").toFloat(), query.value("next_laty").toFloat());
 
-      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(maxAirwaySegmentLength))
+      if(currentWpPos.distanceMeterTo(nextPos) < atools::geo::nmToMeter(maxAirwaySegmentLengthNm))
         airway.insert(AirwaySegment(currentWpId, nextWpIdColVal.toInt(), nextDir, nextMinAlt, nextMaxAlt, awType,
                                     currentWpPos, nextPos));
     }

@@ -49,9 +49,6 @@ public:
                 const atools::fs::bgl::Waypoint& waypoint);
   virtual ~AirwaySegment();
 
-  AirwaySegment(const atools::fs::bgl::AirwaySegment& other);
-  AirwaySegment& operator=(const atools::fs::bgl::AirwaySegment& other);
-
   bool hasNextWaypoint() const;
 
   bool hasPreviousWaypoint() const;
@@ -62,6 +59,14 @@ public:
   const atools::fs::bgl::AirwayWaypoint& getNextWaypoint() const
   {
     return next;
+  }
+
+  /*
+   * @return center waypoint on the airway
+   */
+  const atools::fs::bgl::AirwayWaypoint& getMidWaypoint() const
+  {
+    return mid;
   }
 
   /*
@@ -84,20 +89,13 @@ public:
 
   static QString airwayTypeToStr(atools::fs::bgl::nav::AirwayType type);
 
-  const atools::fs::bgl::Waypoint *getMidWaypoint() const
-  {
-    return mid;
-  }
-
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::AirwaySegment& record);
 
   atools::fs::bgl::nav::AirwayType type;
   QString name;
 
-  atools::fs::bgl::Waypoint *mid = nullptr;
-  atools::fs::bgl::AirwayWaypoint next;
-  atools::fs::bgl::AirwayWaypoint previous;
+  atools::fs::bgl::AirwayWaypoint mid, next, previous;
 };
 
 } // namespace bgl

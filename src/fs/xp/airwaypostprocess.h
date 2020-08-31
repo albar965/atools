@@ -83,7 +83,7 @@ struct AirwaySegment
 
 /*
  * Takes the unordered from/to and to/from lists from X-Plane and converts them into an ordered list with from/via/to rows.
- * Reads from table airway_temp and inserts into airway_point
+ * Reads from table airway_temp and inserts into tmp_airway_point
  */
 class AirwayPostProcess
 {

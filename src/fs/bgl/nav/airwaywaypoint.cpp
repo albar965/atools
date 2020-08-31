@@ -18,12 +18,42 @@
 #include "fs/bgl/nav/airwaywaypoint.h"
 #include "fs/bgl/converter.h"
 #include "io/binarystream.h"
+#include "fs/bgl/nav/waypoint.h"
 
 namespace atools {
 namespace fs {
 namespace bgl {
 
 using atools::io::BinaryStream;
+
+AirwayWaypoint::AirwayWaypoint(const Waypoint& waypoint)
+{
+  ident = waypoint.getIdent();
+  region = waypoint.getRegion();
+  airportIdent = waypoint.getAirportIdent();
+  minimumAltitude = 0.f;
+
+  switch(waypoint.getType())
+  {
+    case atools::fs::bgl::nav::NAMED:
+    case atools::fs::bgl::nav::UNNAMED:
+    case atools::fs::bgl::nav::OFF_AIRWAY:
+    case atools::fs::bgl::nav::IAF:
+    case atools::fs::bgl::nav::FAF:
+    case atools::fs::bgl::nav::RNAV:
+    case atools::fs::bgl::nav::VFR:
+      type = nav::AIRWAY_WP_OTHER;
+      break;
+
+    case atools::fs::bgl::nav::VOR:
+      type = nav::AIRWAY_WP_VOR;
+      break;
+
+    case atools::fs::bgl::nav::NDB:
+      type = nav::AIRWAY_WP_NDB;
+      break;
+  }
+}
 
 AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs)
   : BglBase(options, bs)
@@ -32,7 +62,7 @@ AirwayWaypoint::AirwayWaypoint(const atools::fs::NavDatabaseOptions *options, at
   unsigned int nextIdFlags = bs->readUInt();
   minimumAltitude = bs->readFloat();
 
-  type = static_cast<nav::AirwayWaypointType>(nextFlags & 0x5);
+  type = static_cast<nav::AirwayWaypointType>(nextFlags & 0x7);
   ident = converter::intToIcao((nextFlags >> 5) & 0x7ffffff, true);
   region = converter::intToIcao(nextIdFlags & 0x7ff, true);
   airportIdent = converter::intToIcao((nextIdFlags >> 11) & 0xfffff, true);

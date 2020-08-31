@@ -178,11 +178,27 @@ create index if not exists idx_ils_loc_runway_name on ils(loc_runway_name);
 
 -- **************************************************
 
-drop table if exists airway_point;
+drop table if exists tmp_waypoint;
+
+create table tmp_waypoint
+(
+  waypoint_id integer primary key,
+  type varchar(15) not null,
+  ident varchar(5) not null,
+  region varchar(2) not null,
+  lonx double not null,
+  laty double not null
+);
+
+create index if not exists idx_tmp_waypoint_ident on tmp_waypoint(ident);
+create index if not exists idx_tmp_waypoint_region on tmp_waypoint(region);
+create index if not exists idx_tmp_waypoint_type on tmp_waypoint(type);
+
+drop table if exists tmp_airway_point;
 
 -- Airway segment as read from the FSX/P3D BGL record - this is a temp table and will be dropped later
 -- This table is filled from temp_airway in case of X-Plane
-create table airway_point
+create table tmp_airway_point
 (
   airway_point_id integer primary key,
   waypoint_id integer,
@@ -204,11 +220,20 @@ create table airway_point
   previous_region varchar(2),       -- "
   previous_airport_ident,           -- "
   previous_minimum_altitude integer,-- "
-  previous_maximum_altitude integer,-- "
-foreign key(waypoint_id) references waypoint(waypoint_id)
+  previous_maximum_altitude integer -- "
 );
 
-create index if not exists idx_airway_point_loc_waypoint_id on airway_point(waypoint_id);
+create index if not exists idx_tmp_airway_point_waypoint_id on tmp_airway_point(waypoint_id);
+create index if not exists idx_tmp_airway_point_waypoint_name on tmp_airway_point(name);
+create index if not exists idx_tmp_airway_point_waypoint_mid_type on tmp_airway_point(mid_type);
+create index if not exists idx_tmp_airway_point_waypoint_mid_ident on tmp_airway_point(mid_ident);
+create index if not exists idx_tmp_airway_point_waypoint_mid_region on tmp_airway_point(mid_region);
+create index if not exists idx_tmp_airway_point_waypoint_previous_type on tmp_airway_point(previous_type);
+create index if not exists idx_tmp_airway_point_waypoint_previous_ident on tmp_airway_point(previous_ident);
+create index if not exists idx_tmp_airway_point_waypoint_previous_region on tmp_airway_point(previous_region);
+create index if not exists idx_tmp_airway_point_waypoint_next_type on tmp_airway_point(next_type);
+create index if not exists idx_tmp_airway_point_waypoint_next_ident on tmp_airway_point(next_ident);
+create index if not exists idx_tmp_airway_point_waypoint_next_region on tmp_airway_point(next_region);
 
 -- **************************************************
 

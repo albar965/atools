@@ -20,9 +20,9 @@
 -- in Little Navmap versions below or equal 2.4.5
 -- *********************************************************************************************
 
-drop table if exists waypoint_temp;
+drop table if exists tmp_waypoint_dfd;
 
-create table waypoint_temp
+create table tmp_waypoint_dfd
 (
   waypoint_id integer primary key,
   ident varchar(5),                   -- ICAO ident
@@ -36,7 +36,7 @@ create table waypoint_temp
 -- **********************************************************
 -- Add VOR waypoints that are referenced by procedures
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'V' as type,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
@@ -52,7 +52,7 @@ from (
 -- Get all except ILS and MLS
 where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.ident as ident, v.icao_code as region, 'V' as type,
   a.lonx as lonx, a.laty as laty
@@ -77,7 +77,7 @@ where substr(v.navaid_class, 2, 1) not in ('I', 'N', 'P');
 -- **********************************************************
 -- Add terminal NDB waypoints that are referenced by procedures
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
@@ -91,7 +91,7 @@ from (
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.ident as ident, v.icao_code as region, 'N' as type,
   a.lonx as lonx, a.laty as laty
@@ -114,7 +114,7 @@ from (
 -- **********************************************************
 -- Add enroute NDB waypoints that are referenced by procedures
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.waypoint_identifier as ident, a.waypoint_icao_code as region, 'N' as type,
   a.waypoint_longitude as lonx, a.waypoint_latitude as laty
@@ -128,7 +128,7 @@ from (
   a.waypoint_identifier = v.ndb_identifier and a.waypoint_icao_code = v.icao_code and
   a.waypoint_latitude = v.ndb_latitude and a.waypoint_longitude = v.ndb_longitude;
 
-insert into waypoint_temp (ident, region, type, lonx, laty)
+insert into tmp_waypoint_dfd (ident, region, type, lonx, laty)
 select
   a.ident as ident, v.icao_code as region, 'N' as type,
   a.lonx as lonx, a.laty as laty
@@ -153,14 +153,14 @@ from (
 
 -- Delete all duplicate waypoints that are at the same position having same name, region and type
 -- 1 deg manhattan distance about 60-100 nm at the equator
-delete from waypoint_temp where waypoint_id in (
+delete from tmp_waypoint_dfd where waypoint_id in (
   select distinct w1.waypoint_id
-  from waypoint_temp w1
-  join waypoint_temp w2 on  w1.ident = w2.ident and w1.region = w2.region and w1.type = w2.type
+  from tmp_waypoint_dfd w1
+  join tmp_waypoint_dfd w2 on  w1.ident = w2.ident and w1.region = w2.region and w1.type = w2.type
   where w1.waypoint_id < w2.waypoint_id and (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.00000001);
 
-delete from waypoint_temp where waypoint_id in (
-  select w1.waypoint_id from waypoint_temp w1
+delete from tmp_waypoint_dfd where waypoint_id in (
+  select w1.waypoint_id from tmp_waypoint_dfd w1
   join waypoint w2 on  w1.ident = w2.ident and w1.region = w2.region and w1.type = w2.type
   where (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.00000001);
 
@@ -171,4 +171,4 @@ insert into waypoint (file_id, nav_id, ident, region, airport_id, artificial, ty
                       num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select 1 as file_id, null as nav_id, ident, region, null as airport_id, 2 as artificial, type,
                       0 as num_victor_airway, 0 as num_jet_airway, 0 as mag_var, lonx, laty
-from waypoint_temp;
+from tmp_waypoint_dfd;

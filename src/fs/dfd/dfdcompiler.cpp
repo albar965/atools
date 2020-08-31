@@ -1457,8 +1457,8 @@ void DfdCompiler::updateTreeLetterAirportCodes()
   // updateTreeLetterAirportCodes(codeMap, "transition_leg", "fix_airport_ident");
 
   updateTreeLetterAirportCodes(codeMap, "ils", "loc_airport_ident");
-  updateTreeLetterAirportCodes(codeMap, "airway_point", "next_airport_ident");
-  updateTreeLetterAirportCodes(codeMap, "airway_point", "previous_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "tmp_airway_point", "next_airport_ident");
+  updateTreeLetterAirportCodes(codeMap, "tmp_airway_point", "previous_airport_ident");
 }
 
 void DfdCompiler::updateTreeLetterAirportCodes(const QHash<QString, QString>& codeMap, const QString& table,

@@ -37,10 +37,10 @@ void AirwaySegmentWriter::writeObject(const AirwaySegment *type)
   bind(":name", type->getAirwayName());
   bind(":type", AirwaySegment::airwayTypeToStr(type->getAirwayType()));
 
-  bind(":mid_ident", type->getMidWaypoint()->getIdent());
-  bind(":mid_region", type->getMidWaypoint()->getRegion());
-  bind(":mid_type", bgl::util::enumToStr(bgl::Waypoint::waypointTypeToStr,
-                                         type->getMidWaypoint()->getType()));
+  bind(":mid_ident", type->getMidWaypoint().getIdent());
+  bind(":mid_region", type->getMidWaypoint().getRegion());
+  bind(":mid_type", bgl::util::enumToStr(bgl::AirwayWaypoint::airwayWaypointTypeToStr,
+                                         type->getMidWaypoint().getType()));
 
   if(type->hasNextWaypoint())
   {

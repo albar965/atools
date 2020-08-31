@@ -50,36 +50,16 @@ AirwaySegment::AirwaySegment(const atools::fs::NavDatabaseOptions *options, Bina
                              const atools::fs::bgl::Waypoint& waypoint)
   : BglBase(options, bs)
 {
-  mid = new Waypoint(waypoint);
-
   type = static_cast<nav::AirwayType>(bs->readUByte());
   name = bs->readString(8, atools::io::LATIN1);
 
+  mid = AirwayWaypoint(waypoint);
   next = AirwayWaypoint(options, bs);
   previous = AirwayWaypoint(options, bs);
 }
 
 AirwaySegment::~AirwaySegment()
 {
-  delete mid;
-}
-
-AirwaySegment::AirwaySegment(const atools::fs::bgl::AirwaySegment& other)
-  : BglBase(other.opts, other.bs)
-{
-  this->operator=(other);
-
-}
-
-AirwaySegment& AirwaySegment::operator=(const AirwaySegment& other)
-{
-  type = other.type;
-  name = other.name;
-
-  mid = new Waypoint(*other.mid);
-  next = other.next;
-  previous = other.previous;
-  return *this;
 }
 
 bool AirwaySegment::hasNextWaypoint() const

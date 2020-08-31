@@ -95,10 +95,10 @@ where
 w1.waypoint_id < w2.waypoint_id and
 (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.00000001);
 
-delete from airway_point
+delete from tmp_airway_point
 where airway_point_id not in (
   select max(airway_point_id)
-  from airway_point
+  from tmp_airway_point
   group by name, type, mid_type, mid_ident, mid_region,
       next_type, next_ident, next_region, previous_type, previous_ident, previous_region
 );

@@ -72,7 +72,7 @@ QString convertType(AirwayPointType xptype)
       return QString();
 
     case atools::fs::xp::AW_FIX:
-      return "WN";
+      return "O";
 
     case atools::fs::xp::AW_NDB:
       return "N";
@@ -129,7 +129,7 @@ bool AirwayPostProcess::postProcessEarthAirway()
                  "next_type, next_ident, next_region from airway_temp order by name", db);
 
   SqlQuery insert(db);
-  insert.prepare(SqlUtil(db).buildInsertStatement("airway_point", QString(),
+  insert.prepare(SqlUtil(db).buildInsertStatement("tmp_airway_point", QString(),
                                                   {"airway_point_id", "waypoint_id", "next_airport_ident",
                                                    "previous_airport_ident"}));
 
