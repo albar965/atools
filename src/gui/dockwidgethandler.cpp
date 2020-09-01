@@ -79,14 +79,14 @@ QDebug operator<<(QDebug out, const MainWindowState& obj)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace() << "MainWindowState["
-  << "size " << obj.mainWindowState.size()
-  << ", window size " << obj.mainWindowSize
-  << ", window position " << obj.mainWindowPosition
-  << ", window states " << obj.mainWindowStates
-  << ", statusbar " << obj.statusBarVisible
-  << ", menu " << obj.menuVisible
-  << ", valid " << obj.valid
-  << "]";
+                          << "size " << obj.mainWindowState.size()
+                          << ", window size " << obj.mainWindowSize
+                          << ", window position " << obj.mainWindowPosition
+                          << ", window states " << obj.mainWindowStates
+                          << ", statusbar " << obj.statusBarVisible
+                          << ", menu " << obj.menuVisible
+                          << ", valid " << obj.valid
+                          << "]";
   return out;
 }
 
@@ -163,7 +163,7 @@ void MainWindowState::clear()
 QDataStream& operator<<(QDataStream& out, const atools::gui::MainWindowState& state)
 {
   out << state.valid << state.mainWindowState << state.mainWindowSize << state.mainWindowPosition
-  << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
+      << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
   return out;
 }
 
@@ -227,7 +227,7 @@ bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
 DockWidgetHandler::DockWidgetHandler(QMainWindow *parentMainWindow, const QList<QDockWidget *>& dockWidgetsParam,
                                      const QList<QToolBar *>& toolBarsParam, bool verboseLog)
   : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam),
-    verbose(verboseLog)
+  verbose(verboseLog)
 {
   dockEventFilter = new DockEventFilter();
   normalState = new MainWindowState;
@@ -311,10 +311,10 @@ void DockWidgetHandler::toggledDockWindow(QDockWidget *dockWidget, bool checked)
   {
     // Find a stack that contains the widget ==================
     auto it = std::find_if(dockStackList.begin(), dockStackList.end(),
-                           [dockWidget](QList<QDockWidget *> &list)
-                           {
-                             return list.contains(dockWidget);
-                           });
+                           [dockWidget](QList<QDockWidget *>& list)
+        {
+          return list.contains(dockWidget);
+        });
 
     if(it != dockStackList.end())
     {
@@ -364,17 +364,17 @@ void DockWidgetHandler::updateDockTabStatus(QDockWidget *dockWidget)
   QList<QDockWidget *> tabified = mainWindow->tabifiedDockWidgets(dockWidget);
   if(!tabified.isEmpty())
   {
-    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *> &list)->bool
-                           {
-                             return list.contains(dockWidget);
-                           });
+    auto it = std::find_if(dockStackList.begin(), dockStackList.end(), [dockWidget](QList<QDockWidget *>& list) -> bool
+        {
+          return list.contains(dockWidget);
+        });
 
     if(it == dockStackList.end())
     {
-      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [] (QDockWidget * dock)->bool
-                                 {
-                                   return dock->isFloating();
-                                 });
+      auto rmIt = std::remove_if(tabified.begin(), tabified.end(), [](QDockWidget *dock) -> bool
+          {
+            return dock->isFloating();
+          });
       if(rmIt != tabified.end())
         tabified.erase(rmIt, tabified.end());
 
@@ -439,6 +439,22 @@ bool DockWidgetHandler::isAutoRaiseMainWindow() const
 void DockWidgetHandler::setAutoRaiseMainWindow(bool value)
 {
   dockEventFilter->autoRaiseMainWindow = value;
+}
+
+bool DockWidgetHandler::isStayOnTop() const
+{
+  return mainWindow->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
+}
+
+void DockWidgetHandler::setStayOnTop(bool value)
+{
+  if(mainWindow->windowFlags().testFlag(Qt::WindowStaysOnTopHint) != value)
+  {
+    mainWindow->setWindowFlag(Qt::WindowStaysOnTopHint, value);
+
+    // Need to reopen window since changing window flags closes window
+    mainWindow->show();
+  }
 }
 
 void DockWidgetHandler::setDockingAllowed(bool value)

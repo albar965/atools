@@ -111,6 +111,18 @@ public:
     restartProcess = value;
   }
 
+  /* true if display of tooltips is disabled for the whole application */
+  static bool isTooltipsDisabled()
+  {
+    return tooltipsDisabled;
+  }
+
+  /* Disable display of tooltips for all widgets except the ones given in the exception list */
+  static void setTooltipsDisabled(const QList<QObject *>& exceptions = {});
+
+  /* Enable display of tooltips again */
+  static void setTooltipsEnabled();
+
 signals:
   /* Application font has changed. */
   void fontChanged();
@@ -120,9 +132,11 @@ private:
 
   static QHash<QString, QStringList> reportFiles;
 
+  static QSet<QObject *> tooltipExceptions;
+
   static QStringList emailAddresses;
 
-  static bool showExceptionDialog, restartProcess;
+  static bool showExceptionDialog, restartProcess, tooltipsDisabled;
 
 };
 

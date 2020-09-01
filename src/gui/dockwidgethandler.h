@@ -113,6 +113,10 @@ public:
   bool isAutoRaiseMainWindow() const;
   void setAutoRaiseMainWindow(bool value);
 
+  /* Keep main window on top of others */
+  bool isStayOnTop() const;
+  void setStayOnTop(bool value);
+
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool value);
 

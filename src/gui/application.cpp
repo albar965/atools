@@ -30,8 +30,11 @@ namespace gui {
 
 QHash<QString, QStringList> Application::reportFiles;
 QStringList Application::emailAddresses;
+QSet<QObject *> Application::tooltipExceptions;
+
 bool Application::showExceptionDialog = true;
 bool Application::restartProcess = false;
+bool Application::tooltipsDisabled = false;
 
 Application::Application(int& argc, char **argv, int)
   : QApplication(argc, argv)
@@ -56,7 +59,11 @@ bool Application::notify(QObject *receiver, QEvent *event)
 {
   try
   {
-    return QApplication::notify(receiver, event);
+    if(tooltipsDisabled && (event->type() == QEvent::ToolTip || event->type() == QEvent::ToolTipChange) &&
+       !tooltipExceptions.contains(receiver))
+      return false;
+    else
+      return QApplication::notify(receiver, event);
   }
   catch(std::exception& e)
   {
@@ -91,6 +98,18 @@ void Application::sendFontChanged()
     emit app->fontChanged();
   else
     qWarning() << Q_FUNC_INFO << "app is null";
+}
+
+void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)
+{
+  tooltipExceptions = exceptions.toSet();
+  tooltipsDisabled = true;
+}
+
+void Application::setTooltipsEnabled()
+{
+  tooltipExceptions.clear();
+  tooltipsDisabled = false;
 }
 
 void Application::handleException(const char *file, int line, const std::exception& e)
