@@ -43,36 +43,36 @@ QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::filesPathMap;
 QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::sceneryFilepathMap;
 
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
-    {
-      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
-      FsPaths::XPLANE11, FsPaths::MSFS
-    });
+  {
+    FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+    FsPaths::XPLANE11, FsPaths::MSFS
+  });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
-    {
-      {FsPaths::FSX, "FSX"},
-      {FsPaths::FSX_SE, "FSXSE"},
-      {FsPaths::P3D_V2, "P3DV2"},
-      {FsPaths::P3D_V3, "P3DV3"},
-      {FsPaths::P3D_V4, "P3DV4"},
-      {FsPaths::P3D_V5, "P3DV5"},
-      {FsPaths::XPLANE11, "XP11"},
-      {FsPaths::MSFS, "MSFS"},
-      {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
-    });
+  {
+    {FsPaths::FSX, "FSX"},
+    {FsPaths::FSX_SE, "FSXSE"},
+    {FsPaths::P3D_V2, "P3DV2"},
+    {FsPaths::P3D_V3, "P3DV3"},
+    {FsPaths::P3D_V4, "P3DV4"},
+    {FsPaths::P3D_V5, "P3DV5"},
+    {FsPaths::XPLANE11, "XP11"},
+    {FsPaths::MSFS, "MSFS"},
+    {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
+  });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(
-    {
-      {FsPaths::FSX, "Microsoft Flight Simulator X"},
-      {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
-      {FsPaths::P3D_V2, "Prepar3D v2"},
-      {FsPaths::P3D_V3, "Prepar3D v3"},
-      {FsPaths::P3D_V4, "Prepar3D v4"},
-      {FsPaths::P3D_V5, "Prepar3D v5"},
-      {FsPaths::XPLANE11, "X-Plane 11"},
-      {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
-      {FsPaths::NAVIGRAPH, "Navigraph"}
-    }
+  {
+    {FsPaths::FSX, "Microsoft Flight Simulator X"},
+    {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
+    {FsPaths::P3D_V2, "Prepar3D v2"},
+    {FsPaths::P3D_V3, "Prepar3D v3"},
+    {FsPaths::P3D_V4, "Prepar3D v4"},
+    {FsPaths::P3D_V5, "Prepar3D v5"},
+    {FsPaths::XPLANE11, "X-Plane 11"},
+    {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
+    {FsPaths::NAVIGRAPH, "Navigraph"}
+  }
   );
 
 /* Platform: FSX, FSX XPack, FSX Gold */
@@ -206,15 +206,15 @@ QString FsPaths::initBasePath(SimulatorType type)
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
     return validXplaneBasePath(
-      QDir::homePath() + SEP +
-      "Library" + SEP +
-      "Preferences" + SEP +
-      "x-plane_install_11.txt");
+             QDir::homePath() + SEP +
+             "Library" + SEP +
+             "Preferences" + SEP +
+             "x-plane_install_11.txt");
 
 #elif defined(Q_OS_LINUX)
     // "/home/USER/.x-plane/x-plane_install_11.txt"
     return xplaneBasePath(
-      QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
+             QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
 
 #endif
   }
@@ -238,7 +238,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
     QString nonWinPath = nonWindowsPathFull(type);
 
-    ///home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    // /home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     fsPath = msfsBasePath(nonWinPath + SEP + "Packages" + SEP +
                           "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP +
                           "UserCfg.opt");
@@ -372,43 +372,44 @@ QString FsPaths::initFilesPath(SimulatorType type)
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
 #if defined(Q_OS_WIN32)
-
-      QString languageDll(getBasePath(type) + SEP + "language.dll");
-      qDebug() << "Language DLL" << languageDll;
-
-      // Copy to wchar and append null
-      wchar_t languageDllWChar[1024];
-      languageDll.toWCharArray(languageDllWChar);
-      languageDllWChar[languageDll.size()] = L'\0';
-
-      // Load the FS language DLL
-      HINSTANCE hInstLanguageDll = LoadLibrary(languageDllWChar);
-      if(hInstLanguageDll)
       {
-        qDebug() << "Got handle from LoadLibrary";
+        QString languageDll(getBasePath(type) + SEP + "language.dll");
+        qDebug() << "Language DLL" << languageDll;
 
-        // Get the language dependent files name from the language.dll resources
-        // (parts of code from Peter Dowson in fsdeveloper forum)
-        wchar_t filesPathWChar[MAX_PATH];
-        LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
-        FreeLibrary(hInstLanguageDll);
+        // Copy to wchar and append null
+        wchar_t languageDllWChar[1024];
+        languageDll.toWCharArray(languageDllWChar);
+        languageDllWChar[languageDll.size()] = L'\0';
 
-        // Check all Document folders for path - there should be only one
-        for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
+        // Load the FS language DLL
+        HINSTANCE hInstLanguageDll = LoadLibrary(languageDllWChar);
+        if(hInstLanguageDll)
         {
-          QFileInfo fsFilesDirInfo(document + SEP + QString::fromWCharArray(filesPathWChar));
-          if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+          qDebug() << "Got handle from LoadLibrary";
+
+          // Get the language dependent files name from the language.dll resources
+          // (parts of code from Peter Dowson in fsdeveloper forum)
+          wchar_t filesPathWChar[MAX_PATH];
+          LoadStringW(hInstLanguageDll, 36864, filesPathWChar, MAX_PATH);
+          FreeLibrary(hInstLanguageDll);
+
+          // Check all Document folders for path - there should be only one
+          for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
           {
-            fsFilesDir = fsFilesDirInfo.absoluteFilePath();
-            qDebug() << "Found" << fsFilesDir;
-            break;
+            QFileInfo fsFilesDirInfo(document + SEP + QString::fromWCharArray(filesPathWChar));
+            if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+            {
+              fsFilesDir = fsFilesDirInfo.absoluteFilePath();
+              qDebug() << "Found" << fsFilesDir;
+              break;
+            }
+            else
+              qDebug() << "Does not exist" << fsFilesDir;
           }
-          else
-            qDebug() << "Does not exist" << fsFilesDir;
         }
+        else
+          qDebug() << "No handle from LoadLibrary";
       }
-      else
-        qDebug() << "No handle from LoadLibrary";
 #endif
       break;
 
