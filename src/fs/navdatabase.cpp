@@ -481,6 +481,7 @@ int NavDatabase::countMsfsSteps(const SceneryCfg& cfg)
 
   // PROGRESS_NUM_SCHEMA_STEPS Create schema "Removing Views" ... "Creating Database Schema"
   int total = numProgressReports + numSceneryAreas + PROGRESS_NUM_SCHEMA_STEPS;
+  total++; // Load translations
 
   total += countMsSimSteps();
 
@@ -617,14 +618,17 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
       langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
     }
 
-    languageIndex.reset(new scenery::LanguageJson(langFile.filePath()));
+    // Load translation file in current language for airport names ====================================
+    languageIndex.reset(new scenery::LanguageJson());
+    languageIndex->readFromFile(langFile.filePath(), {"AIRPORT"});
     fsDataWriter->setLanguageIndex(languageIndex.data());
 
-    // Load the two official material libraries
+    // Load the two official material libraries ================================
     materialLib.reset(new scenery::MaterialLib);
     materialLib->readOfficial(packageBase);
     fsDataWriter->setMaterialLib(materialLib.data());
 
+    // Load all community and official scenery/BGL files  =====================================
     loadMsfs(&progress, fsDataWriter.data(), sceneryCfg);
     fsDataWriter->close();
   }
@@ -737,6 +741,17 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   {
     if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for route"))))
       return;
+  }
+
+  if(sim == atools::fs::FsPaths::MSFS)
+  {
+    if((aborted = progress.reportOther(tr("Loading translations"))))
+      return;
+
+    // Load translation files with all languages into the database to allow translating the aircraft names
+    scenery::LanguageJson language;
+    language.readFromDirToDb(db, buildPathNoCase({options->getBasepath(), "Official", "OneStore", "fs-base"}),
+                             "*.locPak", {"ATCCOM.AC_MODEL", "ATCCOM.ATC_NAME"});
   }
 
   // =====================================================================

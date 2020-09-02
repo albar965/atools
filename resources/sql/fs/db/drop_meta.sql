@@ -25,4 +25,5 @@
 drop table if exists bgl_file;
 drop table if exists scenery_area;
 drop table if exists metadata;
+drop table if exists translation;
 

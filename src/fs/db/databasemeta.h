@@ -142,6 +142,7 @@ public:
    * 18 New FIR and UIR regions deprecating centers
    * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
+   *    New table translation for MSFS language files.
    *
    */
   static const int DB_VERSION_MINOR = 19;

@@ -22,6 +22,10 @@
 #include <QString>
 
 namespace atools {
+namespace sql {
+class SqlDatabase;
+}
+
 namespace fs {
 namespace scenery {
 
@@ -29,17 +33,58 @@ namespace scenery {
  * Reads MSFS language files like
  * ".../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/en-US.locPak"
  * and creates a map for airport names like "TT:AIRPORTXX.MYNN.name" to the real localized name.
+ *
+ * The class can only store the translations for one language.
  */
 class LanguageJson
 {
 public:
-  LanguageJson(const QString& filename);
+  /* Read translations for one language from JSON file. Does not clear index before loading. */
+  void readFromFile(const QString& filename, const QStringList& keyPrefixes = {});
 
-  /* Get localized airport name from key found in BGL file like "TT:AIRPORTXX.MYNN.name" */
+  /* Read translations for all languages from directory using given file filter.
+   * Stores translations for all languages to database.
+   * Clears current index. */
+  void readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter,
+                       const QStringList& keyPrefixes = {});
+
+  /* Read translations for the given language from the database into the index. Clears index before reading. */
+  void readFromDb(atools::sql::SqlDatabase *db, const QString& languageParam, const QString& keyPrefix = QString());
+
+  /* Write translations for the given language from the index to the database. Clears index before reading. */
+  void writeToDb(atools::sql::SqlDatabase *db) const;
+
+  /* Clear in memory index */
+  void clear()
+  {
+    names.clear();
+    language.clear();
+  }
+
+  bool isEmpty() const
+  {
+    return names.isEmpty();
+  }
+
+  /* Get localized airport or other name from key found in BGL file like "TT:AIRPORTXX.MYNN.name"
+   * Returns key if it does not start with the translation prefix "TT:" */
   QString getName(QString key) const;
 
+  /* Get language as read from file or db. E.g. "en-US" */
+  const QString& getLanguage() const
+  {
+    return language;
+  }
+
 private:
+  void adjustLanguage();
+
+  /* Maps key like "TT:AIRPORTXX.MYNN.name" to text */
   QHash<QString, QString> names;
+
+  /* Loaded language */
+  QString language;
+
 };
 
 } // namespace scenery

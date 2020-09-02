@@ -17,16 +17,24 @@
 
 #include "fs/scenery/languagejson.h"
 
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
+#include "atools.h"
+
 #include <QFile>
 #include <QDebug>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QDir>
+
+#include <sql/sqldatabase.h>
 
 namespace atools {
 namespace fs {
 namespace scenery {
 
+/* Names that indicate no translation available in MSFS */
 const static QSet<QString> NO_NAMES = {
   "KEINE STADT", "KEIN BUNDESSTAAT", "NO CITY", "NO STATE", "SIN CIUDAD", "SIN ESTADO", "AUCUNE VILLE", "AUCUN ÉTAT",
   "NESSUNA CITTÀ", "NESSUNO STATO", "BRAK MIEJSCOWOŚCI", "BRAK STANU", "SEM CIDADE", "SEM ESTADO"};
@@ -45,20 +53,25 @@ const static QSet<QString> NO_NAMES = {
  *  }
  *  }
  */
-LanguageJson::LanguageJson(const QString& filename)
+void LanguageJson::readFromFile(const QString& filename, const QStringList& keyPrefixes)
 {
+  clear();
+
   QFile file(filename);
   if(file.open(QIODevice::ReadOnly))
   {
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    QJsonObject package = doc.object().value("LocalisationPackage").toObject();
 
-    QJsonObject strings = doc.object().value("LocalisationPackage").toObject().value("Strings").toObject();
+    language = package.value("Language").toString();
+    adjustLanguage();
+    QJsonObject strings = package.value("Strings").toObject();
 
     for(auto it = strings.begin(); it != strings.end(); ++it)
     {
       QString key = it.key();
-      if(key.startsWith("AIRPORT"))
+      if(keyPrefixes.isEmpty() || atools::strStartsWith(keyPrefixes, key))
       {
         QString txt = it.value().toString();
 
@@ -72,9 +85,77 @@ LanguageJson::LanguageJson(const QString& filename)
     qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
 }
 
+void LanguageJson::readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter,
+                                   const QStringList& keyPrefixes)
+{
+  QDir dir(dirname);
+  for(const QFileInfo& file: dir.entryInfoList({fileFilter}, QDir::Files))
+  {
+    readFromFile(file.filePath(), keyPrefixes);
+    writeToDb(db);
+  }
+  clear();
+}
+
+/*
+ *  create table translation
+ *  (
+ *    translation_id integer primary key,
+ *    language varchar(50) not null,             -- Language like "en_US" or "de_DE"
+ *    key varchar(250) not null collate nocase,  -- Key like "ATCCOM.AC_MODEL_TBM9.0.text"
+ *    text varchar(250) not null collate nocase, -- Translated text
+ *  );
+ */
+void LanguageJson::readFromDb(sql::SqlDatabase *db, const QString& languageParam, const QString& keyPrefix)
+{
+  clear();
+
+  if(atools::sql::SqlUtil(db).hasTableAndRows("translation"))
+  {
+    language = languageParam;
+    adjustLanguage();
+
+    atools::sql::SqlQuery query(db);
+    query.prepare("select key, text from translation where language = :lang and key like :key");
+    query.bindValue(":lang", language);
+    query.bindValue(":key", keyPrefix.isEmpty() ? "%" : keyPrefix);
+    query.exec();
+    while(query.next())
+      names.insert(query.valueStr(0), query.valueStr(1));
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Table translation not found in database or empty";
+}
+
+void LanguageJson::writeToDb(sql::SqlDatabase *db) const
+{
+  atools::sql::SqlQuery query(db);
+  query.prepare("insert into translation (language, key, text) values(?, ?, ?)");
+  for(auto it = names.begin(); it != names.end(); ++it)
+  {
+    query.bindValue(0, language);
+    query.bindValue(1, it.key());
+    query.bindValue(2, it.value());
+    query.exec();
+  }
+  db->commit();
+}
+
+void LanguageJson::adjustLanguage()
+{
+  if(language.isEmpty())
+    language = "en-US";
+
+  language.replace('_', '-');
+  language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
+}
+
 QString LanguageJson::getName(QString key) const
 {
-  return names.value(key.startsWith("TT:") ? key.remove(0, 3) : key);
+  if(names.isEmpty())
+    return key;
+  else
+    return names.value(key.startsWith("TT:") ? key.remove(0, 3) : key);
 }
 
 } // namespace scenery

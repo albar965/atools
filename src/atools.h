@@ -72,6 +72,9 @@ QString strJoin(const QStringList& list, const QString& sep);
  *  Example: strJoin({"A", "B", "C"}, ", ", " and ") => "A, B and C" */
 QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix = QString());
 
+/* true if str starts with any of the strings in the list  */
+bool strStartsWith(const QStringList& list, const QString& str);
+
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
 {

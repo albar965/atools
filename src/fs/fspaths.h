@@ -54,10 +54,10 @@ public:
     /* Platform: FSX Steam Edition */
     FSX_SE = 1,
 
-    /* Platform: Prepar3d Version 2 */
+    /* Platform: Prepar3d Version 2 - mostly used for test purposes */
     P3D_V2 = 2,
 
-    /* Platform: Prepar3d Version 3 */
+    /* Platform: Prepar3d Version 3 - mostly used for test purposes */
     P3D_V3 = 3,
 
     /* Platform: Prepar3d Version 4 */

@@ -86,3 +86,20 @@ create table script
   script_id integer primary key,
   statement varchar(4096)  -- SQL statement that is executed to prepare the database
 );
+
+-- **************************************************
+
+drop table if exists translation;
+
+-- Table keeping translated texts from a simulator scenery database starting with prefix "TT:".
+-- Currently only for MSFS files as "en-US.locPak"
+create table translation
+(
+  translation_id integer primary key,
+  language varchar(50) not null,             -- Language like "en_US" or "de_DE"
+  key varchar(250) not null,                 -- Key like "ATCCOM.AC_MODEL_TBM9.0.text"
+  text varchar(250) not null collate nocase  -- Translated text
+);
+
+create index if not exists idx_translation_language on translation(language);
+create index if not exists idx_translation_key on translation(key);

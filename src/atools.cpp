@@ -828,4 +828,15 @@ QString checkFile(const QFileInfo& file)
   return QString();
 }
 
+bool strStartsWith(const QStringList& list, const QString& str)
+{
+  for(const QString& s : list)
+  {
+    if(str.startsWith(s))
+      return true;
+  }
+
+  return false;
+}
+
 } // namespace atools

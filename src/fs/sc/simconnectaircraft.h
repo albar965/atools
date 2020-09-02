@@ -305,6 +305,10 @@ public:
   /* Compares only registration, type and others */
   bool isSameAircraft(const SimConnectAircraft& other) const;
 
+  /* Update all names which allows to replace translation key in MSFS with local translated aircraft names */
+  void updateAircraftNames(const QString& airplaneTypeParam, const QString& airplaneAirlineParam,
+                           const QString& airplaneTitleParam, const QString& airplaneModelParam);
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;

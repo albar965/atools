@@ -133,6 +133,15 @@ bool SimConnectAircraft::isSameAircraft(const SimConnectAircraft& other) const
          airplaneFlightnumber == other.airplaneFlightnumber;
 }
 
+void SimConnectAircraft::updateAircraftNames(const QString& airplaneTypeParam, const QString& airplaneAirlineParam,
+                                             const QString& airplaneTitleParam, const QString& airplaneModelParam)
+{
+  airplaneType = airplaneTypeParam;
+  airplaneAirline = airplaneAirlineParam;
+  airplaneTitle = airplaneTitleParam;
+  airplaneModel = airplaneModelParam;
+}
+
 } // namespace sc
 } // namespace fs
 } // namespace atools
