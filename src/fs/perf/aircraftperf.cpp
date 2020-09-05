@@ -144,6 +144,11 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
 
   writer.writeStartDocument("1.0");
   writer.writeStartElement("LittleNavmap");
+
+  // Schema namespace and reference to XSD ======================
+  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  writer.writeAttribute("xsi:noNamespaceSchemaLocation", "https://www.littlenavmap.org/schema/lnmperf.xsd");
+
   writer.writeStartElement("AircraftPerf");
 
   // Save header and metadata =======================================================
@@ -375,7 +380,7 @@ FileFormat AircraftPerf::detectFormat(const QString& filename)
   QStringList lines = atools::probeFile(filename, 30);
 
   if(lines.at(0).startsWith("<?xml version") &&
-     lines.at(1).startsWith("<littlenavmap>") &&
+     lines.at(1).startsWith("<littlenavmap") &&
      lines.at(2).startsWith("<aircraftperf>"))
     return FORMAT_XML;
   else if(lines.contains("[options]") && lines.contains("[perf]"))

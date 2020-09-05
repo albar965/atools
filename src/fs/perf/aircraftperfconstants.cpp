@@ -26,16 +26,16 @@ QString runwayTypeToStr(RunwayType type)
   switch(type)
   {
     case atools::fs::perf::SOFT:
-      return "Soft";
+      return "SOFT";
 
     case atools::fs::perf::HARD:
-      return "Hard";
+      return "HARD";
 
     case atools::fs::perf::WATER:
-      return "Water";
+      return "WATER";
 
     case atools::fs::perf::WATER_LAND:
-      return "WaterLand";
+      return "WATERLAND";
   }
   return QString();
 }

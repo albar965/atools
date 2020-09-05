@@ -190,8 +190,8 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // FSX PLN <?xml version
     return FSX_PLN;
   else if(lines.at(0).startsWith("<?xml version") &&
-          lines.at(1).startsWith("<littlenavmap>") &&
-          lines.at(2).startsWith("<flightplan>"))
+          lines.at(1).startsWith("<littlenavmap") &&
+          lines.at(2).startsWith("<flightplan"))
     return LNM_PLN;
   else if(lines.at(0).startsWith("[flightplan]") && FS9_MATCH.match(lines.at(1)).hasMatch())
     // FS9 ini format
@@ -1503,6 +1503,11 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
   writer.writeStartDocument("1.0");
   writer.writeStartElement("LittleNavmap");
+
+  // Schema namespace and reference to XSD ======================
+  writer.writeAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+  writer.writeAttribute("xsi:noNamespaceSchemaLocation", "https://www.littlenavmap.org/schema/lnmpln.xsd");
+
   writer.writeStartElement("Flightplan");
 
   // Save header and metadata =======================================================
