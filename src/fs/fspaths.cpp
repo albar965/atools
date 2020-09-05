@@ -43,36 +43,36 @@ QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::filesPathMap;
 QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::sceneryFilepathMap;
 
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
-  {
-    FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
-    FsPaths::XPLANE11, FsPaths::MSFS
-  });
+    {
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::XPLANE11, FsPaths::MSFS
+    });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
-  {
-    {FsPaths::FSX, "FSX"},
-    {FsPaths::FSX_SE, "FSXSE"},
-    {FsPaths::P3D_V2, "P3DV2"},
-    {FsPaths::P3D_V3, "P3DV3"},
-    {FsPaths::P3D_V4, "P3DV4"},
-    {FsPaths::P3D_V5, "P3DV5"},
-    {FsPaths::XPLANE11, "XP11"},
-    {FsPaths::MSFS, "MSFS"},
-    {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
-  });
+    {
+      {FsPaths::FSX, "FSX"},
+      {FsPaths::FSX_SE, "FSXSE"},
+      {FsPaths::P3D_V2, "P3DV2"},
+      {FsPaths::P3D_V3, "P3DV3"},
+      {FsPaths::P3D_V4, "P3DV4"},
+      {FsPaths::P3D_V5, "P3DV5"},
+      {FsPaths::XPLANE11, "XP11"},
+      {FsPaths::MSFS, "MSFS"},
+      {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
+    });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(
-  {
-    {FsPaths::FSX, "Microsoft Flight Simulator X"},
-    {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
-    {FsPaths::P3D_V2, "Prepar3D v2"},
-    {FsPaths::P3D_V3, "Prepar3D v3"},
-    {FsPaths::P3D_V4, "Prepar3D v4"},
-    {FsPaths::P3D_V5, "Prepar3D v5"},
-    {FsPaths::XPLANE11, "X-Plane 11"},
-    {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
-    {FsPaths::NAVIGRAPH, "Navigraph"}
-  }
+    {
+      {FsPaths::FSX, "Microsoft Flight Simulator X"},
+      {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
+      {FsPaths::P3D_V2, "Prepar3D v2"},
+      {FsPaths::P3D_V3, "Prepar3D v3"},
+      {FsPaths::P3D_V4, "Prepar3D v4"},
+      {FsPaths::P3D_V5, "Prepar3D v5"},
+      {FsPaths::XPLANE11, "X-Plane 11"},
+      {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
+      {FsPaths::NAVIGRAPH, "Navigraph"}
+    }
   );
 
 /* Platform: FSX, FSX XPack, FSX Gold */
@@ -206,15 +206,15 @@ QString FsPaths::initBasePath(SimulatorType type)
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
     return validXplaneBasePath(
-             QDir::homePath() + SEP +
-             "Library" + SEP +
-             "Preferences" + SEP +
-             "x-plane_install_11.txt");
+      QDir::homePath() + SEP +
+      "Library" + SEP +
+      "Preferences" + SEP +
+      "x-plane_install_11.txt");
 
 #elif defined(Q_OS_LINUX)
     // "/home/USER/.x-plane/x-plane_install_11.txt"
     return xplaneBasePath(
-             QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
+      QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
 
 #endif
   }
@@ -222,23 +222,29 @@ QString FsPaths::initBasePath(SimulatorType type)
   {
     // Read UserCfg.opt to find the packages installation path
 #if defined(Q_OS_WIN32)
-    // Fixed location
+    // MS installation
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP +
                           "Packages" + SEP +
                           "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP +
                           "LocalCache" + SEP + "UserCfg.opt");
 
+    // Steam installation
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     if(fsPath.isEmpty())
       fsPath = msfsBasePath(environment.value("APPDATA") + SEP +
                             "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
 
+    // MS Boxed installation
+    // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
+    if(fsPath.isEmpty())
+      fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "MSFSPackages" + SEP + "UserCfg.opt");
+
 #elif defined(DEBUG_FS_PATHS)
 
     QString nonWinPath = nonWindowsPathFull(type);
 
-    // /home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    ///home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     fsPath = msfsBasePath(nonWinPath + SEP + "Packages" + SEP +
                           "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP +
                           "UserCfg.opt");
@@ -302,13 +308,20 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 QString FsPaths::msfsSimPath()
 {
+  // MS
   // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
   QString fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
                    "Microsoft.FlightSimulator_8wekyb3d8bbwe";
 
+  // Steam
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
   if(!atools::checkDir(fsPath).isEmpty())
     fsPath = environment.value("APPDATA") + SEP + "Microsoft Flight Simulator";
+
+  // MS Boxed
+  // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
+  if(!atools::checkDir(fsPath).isEmpty())
+    fsPath = environment.value("LOCALAPPDATA") + SEP + "MSFSPackages";
 
   if(atools::checkDir(fsPath).isEmpty())
     return fsPath;
