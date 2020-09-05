@@ -221,6 +221,76 @@ public:
     comment = value;
   }
 
+  /* All below are for MSFS =========================== */
+  const QString& getSid() const
+  {
+    return sid;
+  }
+
+  void setSid(const QString& value)
+  {
+    sid = value;
+  }
+
+  const QString& getStar() const
+  {
+    return star;
+  }
+
+  void setStar(const QString& value)
+  {
+    star = value;
+  }
+
+  const QString& getApproach() const
+  {
+    return approach;
+  }
+
+  const QString& getApproachSuffix() const
+  {
+    return approachSuffix;
+  }
+
+  void setApproach(const QString& approachType, const QString& suffix)
+  {
+    approach = approachType;
+    approachSuffix = suffix;
+  }
+
+  void setApproach(const QString& approachType)
+  {
+    approach = approachType.section('-', 0, 0);
+    approachSuffix = approachType.section('-', 1, 1);
+  }
+
+  const QString& getRunwayNumber() const
+  {
+    return runway;
+  }
+
+  void setRunway(const QString& runwayNumber, const QString& runwayDesignator)
+  {
+    runway = runwayNumber;
+    designator = runwayDesignator;
+  }
+
+  /* One letter code like L, R, C and more */
+  const QString& getRunwayDesignator() const
+  {
+    return designator;
+  }
+
+  const QString& getAirport() const
+  {
+    return airport;
+  }
+
+  void setAirport(const QString& value)
+  {
+    airport = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
@@ -233,6 +303,10 @@ private:
 
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
   QString airway, region, ident, name, comment;
+
+  /* MSFS fields */
+  QString sid, star, approach, approachSuffix, runway, designator, airport;
+
   atools::geo::Pos position;
   atools::fs::pln::entry::Flags flags = atools::fs::pln::entry::NONE;
   float magvar = 0.f;

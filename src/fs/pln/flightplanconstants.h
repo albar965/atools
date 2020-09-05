@@ -75,7 +75,8 @@ enum FileFormat
   FSC_PLN, /* FSC ini style PLN flight plan - can load only */
   FLIGHTGEAR, /* FlightGear XML format - load and save  */
   LNM_PLN, /* Little Navmap's own flight plan format  */
-  GARMIN_FPL /* Garmin FPL - XML format */
+  GARMIN_FPL, /* Garmin FPL - XML format */
+  MSFS_PLN /* MSFS PLN  */
 };
 
 enum SaveOption

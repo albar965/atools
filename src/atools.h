@@ -75,6 +75,9 @@ QString strJoin(const QStringList& list, const QString& sep, const QString& last
 /* true if str starts with any of the strings in the list  */
 bool strStartsWith(const QStringList& list, const QString& str);
 
+/* true if any string in the list starts str */
+bool strAnyStartsWith(const QStringList& list, const QString& str);
+
 template<typename TYPE1, typename TYPE2>
 void convertList(QList<TYPE1>& dest, const QList<TYPE2>& src)
 {
@@ -162,6 +165,12 @@ template<typename TYPE>
 Q_DECL_CONSTEXPR TYPE minmax(TYPE minValue, TYPE maxValue, TYPE value)
 {
   return std::min(std::max(value, minValue), maxValue);
+}
+
+/* Char as string at position or empty string if out of bounds */
+inline QString strAt(const QString& str, int index)
+{
+  return index >= 0 && index < str.size() ? str.at(index) : QString();
 }
 
 /* Returns 0 if without throwing an exception if index is not valid */

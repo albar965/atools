@@ -88,6 +88,9 @@ public:
   /* FSX/P3D XML format */
   void savePln(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* Microsoft Flight Simulator 2020 */
+  void savePlnMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* FSX/P3D XML format with annotations as used by previous LNM versions (<= 2.4.5).*/
   void savePlnAnnotated(const atools::fs::pln::Flightplan& plan, const QString& file);
 
@@ -172,7 +175,7 @@ public:
   static const int LNMPLN_VERSION_MINOR = 0;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated);
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
@@ -185,7 +188,7 @@ private:
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 
   /* Load specific formats after content detection */
-  void loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void loadPln(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFs9(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFlp(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadFms(atools::fs::pln::Flightplan& plan, const QString& filename);
@@ -207,7 +210,8 @@ private:
 
   QString gnsType(const atools::fs::pln::FlightplanEntry& entry);
 
-  void readWaypoint(Flightplan& plan, util::XmlStream& xmlStream);
+  void readWaypointPln(Flightplan& plan, util::XmlStream& xmlStream);
+  void readAppVersionPln(int& appVersionMajor, int& appVersionBuild, atools::util::XmlStream& xmlStream);
   void posToRte(QTextStream& stream, const atools::geo::Pos& pos, bool alt);
 
   /* Support for FlightGear propery lists */

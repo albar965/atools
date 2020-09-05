@@ -126,16 +126,17 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
   {
     case atools::fs::pln::NONE:
       throw Exception(tr("Cannot open flight plan file \"%1\". No supported flight plan format detected. "
-                         "Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and "
-                         "FlightGear FGFP are supported.").arg(file));
+                         "Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and "
+                         "FlightGear FGFP.").arg(file));
 
     case atools::fs::pln::LNM_PLN:
       loadLnm(plan, file);
       plan.setLnmFormat(true); // Indicate that plan was loaded using new native format
       break;
 
+    case atools::fs::pln::MSFS_PLN:
     case atools::fs::pln::FSX_PLN:
-      loadFsx(plan, file);
+      loadPln(plan, file);
       plan.setLnmFormat(false); // Indicate that a "foreign" format was user to load which cannot be saved directly
       break;
 
@@ -175,8 +176,8 @@ atools::fs::pln::FileFormat FlightplanIO::load(atools::fs::pln::Flightplan& plan
 
 FileFormat FlightplanIO::detectFormat(const QString& file)
 {
-  // Get first four non empty lines - always returns a list of four
-  QStringList lines = probeFile(file);
+  // Get first 30 non empty lines - always returns a list of 30
+  QStringList lines = probeFile(file, 30 /* numLinesRead */);
 
   if(lines.isEmpty())
     throw Exception(tr("Cannot open empty flight plan file \"%1\".").arg(file));
@@ -187,8 +188,15 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
   else if(lines.at(0).startsWith("<?xml version") &&
           (lines.at(1).startsWith("<simbase.document type=\"acexml\"") ||
            lines.at(0).contains("<simbase.document type=\"acexml\"")))
-    // FSX PLN <?xml version
-    return FSX_PLN;
+  {
+    // FSX PLN or MSFS PLN <?xml version
+    if(atools::strAnyStartsWith(lines, "<appversionmajor>11"))
+      // Major version 11 is MSFS
+      return MSFS_PLN;
+    else
+      // Major version 10 is FSX and P3D
+      return FSX_PLN;
+  }
   else if(lines.at(0).startsWith("<?xml version") &&
           lines.at(1).startsWith("<littlenavmap") &&
           lines.at(2).startsWith("<flightplan"))
@@ -346,21 +354,21 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
         else if(!value.isEmpty())
         {
           if(key == "rwydep")
-            plan.properties.insert(SIDAPPRRW, value.mid(plan.departureIdent.size()));
+            insertPropertyIf(plan, SIDAPPRRW, value.mid(plan.departureIdent.size()));
           else if(key == "sid")
-            plan.properties.insert(SIDAPPR, value);
+            insertPropertyIf(plan, SIDAPPR, value);
           else if(key == "sid_trans")
-            plan.properties.insert(SIDTRANS, value);
+            insertPropertyIf(plan, SIDTRANS, value);
           else if(key == STAR)
-            plan.properties.insert(STAR, value);
+            insertPropertyIf(plan, STAR, value);
           else if(key == "star_trans")
-            plan.properties.insert(STARTRANS, value);
+            insertPropertyIf(plan, STARTRANS, value);
           else if(key == "rwyarr")
-            plan.properties.insert(APPROACHRW, value.mid(plan.destinationIdent.size()));
+            insertPropertyIf(plan, APPROACHRW, value.mid(plan.destinationIdent.size()));
           else if(key == "rwyarrfinal")
-            plan.properties.insert(APPROACH, value);
+            insertPropertyIf(plan, APPROACH, value);
           else if(key == "appr_trans")
-            plan.properties.insert(TRANSITION, value);
+            insertPropertyIf(plan, TRANSITION, value);
         }
       }
     }
@@ -473,37 +481,37 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           }
           else if(key == "DEPRWY")
           {
-            plan.properties.insert(SIDAPPRRW, value.mid(2));
+            insertPropertyIf(plan, SIDAPPRRW, value.mid(2));
             continue;
           }
           else if(key == "SID")
           {
-            plan.properties.insert(SIDAPPR, value);
+            insertPropertyIf(plan, SIDAPPR, value);
             continue;
           }
           else if(key == "SIDTRANS")
           {
-            plan.properties.insert(SIDTRANS, value);
+            insertPropertyIf(plan, SIDTRANS, value);
             continue;
           }
           else if(key == "STAR")
           {
-            plan.properties.insert(STAR, value);
+            insertPropertyIf(plan, STAR, value);
             continue;
           }
           else if(key == "STARTRANS")
           {
-            plan.properties.insert(STARTRANS, value);
+            insertPropertyIf(plan, STARTRANS, value);
             continue;
           }
           else if(key == "APP")
           {
-            plan.properties.insert(APPROACH_ARINC, value);
+            insertPropertyIf(plan, APPROACH_ARINC, value);
             continue;
           }
           else if(key == "APPTRANS")
           {
-            plan.properties.insert(TRANSITION, value);
+            insertPropertyIf(plan, TRANSITION, value);
             continue;
           }
           else if(key == "DESRWY")
@@ -525,7 +533,7 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
         if(list.size() >= minListSize)
         {
           float altitude = list.at(2 + fieldOffset).toFloat();
-          if(altitude > std::numeric_limits<int>::max() / 2)
+          if(altitude > 1000000.f)
             // Avoid excessive altitudes
             altitude = 0.f;
 
@@ -580,9 +588,9 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
     if(!destinationRwy.isEmpty())
     {
       if(plan.properties.contains(APPROACH))
-        plan.properties.insert(APPROACHRW, destinationRwy);
+        insertPropertyIf(plan, APPROACHRW, destinationRwy);
       else if(plan.properties.contains(STAR))
-        plan.properties.insert(STARRW, destinationRwy);
+        insertPropertyIf(plan, STARRW, destinationRwy);
     }
 
     plan.flightplanType = IFR;
@@ -894,8 +902,8 @@ void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, atools::util
 
 void FlightplanIO::insertPropertyIf(atools::fs::pln::Flightplan& plan, const QString& key, const QString& value)
 {
-  if(!value.isEmpty())
-    plan.properties.insert(key, value);
+  if(!value.trimmed().isEmpty())
+    plan.properties.insert(key, value.trimmed());
 }
 
 void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
@@ -1143,7 +1151,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
     plan.departurePos = waypoints.first().getPosition();
 }
 
-void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& filename)
+void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -1169,7 +1177,7 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
           comment.remove(0, 7);
           QStringList data = comment.split("|");
           for(const QString& prop : data)
-            plan.properties.insert(prop.section("=", 0, 0).trimmed(), prop.section("=", 1, 1).trimmed());
+            insertPropertyIf(plan, prop.section("=", 0, 0).trimmed(), prop.section("=", 1, 1).trimmed());
         }
       }
       if(reader.isStartElement())
@@ -1177,6 +1185,7 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
     }
     // Skip all until the flightplan is found
     xmlStream.readUntilElement("FlightPlan.FlightPlan");
+    int appVersionMajor = 0, appVersionBuild = 0;
 
     while(xmlStream.readNextStartElement())
     {
@@ -1187,7 +1196,7 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
       if(name == "FPType")
         plan.flightplanType = stringFlightplanType(reader.readElementText());
       else if(name == "CruisingAlt")
-        plan.cruisingAlt = reader.readElementText().toInt();
+        plan.cruisingAlt = atools::roundToInt(reader.readElementText().toFloat());
       else if(name == "DepartureID")
         plan.departureIdent = reader.readElementText();
       else if(name == "DepartureLLA")
@@ -1212,10 +1221,10 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
         plan.departureName = reader.readElementText();
       else if(name == "DestinationName")
         plan.destinationName = reader.readElementText();
-      // else if(name == "AppVersion")
-      // readAppVersion(plan, reader);
+      else if(name == "AppVersion")
+        readAppVersionPln(appVersionMajor, appVersionBuild, xmlStream);
       else if(name == "ATCWaypoint")
-        readWaypoint(plan, xmlStream);
+        readWaypointPln(plan, xmlStream);
       else
         reader.skipCurrentElement();
     }
@@ -1237,6 +1246,64 @@ void FlightplanIO::loadFsx(atools::fs::pln::Flightplan& plan, const QString& fil
           // Clear airway to destination
           plan.entries.last().setAirway(QString());
       }
+
+      // Collect MSFS procedure information from all legs ========================================
+      QString sid, sidRunway, sidRunwayDesignator, star, starRunway, starRunwayDesignator, approach, approachSuffix,
+              approachRunway, approachRunwayDesignator;
+      for(int i = 0; i < plan.entries.size(); i++)
+      {
+        FlightplanEntry& entry = plan.entries[i];
+        if(!entry.getSid().isEmpty())
+        {
+          // Leg is part of a SID ==========
+          sid = entry.getSid();
+          sidRunway = entry.getRunwayNumber();
+          sidRunwayDesignator = entry.getRunwayDesignator();
+        }
+        else if(!entry.getStar().isEmpty())
+        {
+          // Leg is part of a STAR ==========
+          star = entry.getStar();
+          starRunway = entry.getRunwayNumber();
+          starRunwayDesignator = entry.getRunwayDesignator();
+        }
+        else if(!entry.getApproach().isEmpty())
+        {
+          // Leg is part of an approach ==========
+          approach = entry.getApproach();
+          approachSuffix = entry.getApproachSuffix();
+          approachRunway = entry.getRunwayNumber();
+          approachRunwayDesignator = entry.getRunwayDesignator();
+        }
+
+        if(i == plan.entries.size() - 1)
+        {
+          // Clear procedure information in destination airport to prevent deletion further down
+          entry.setApproach(QString(), QString());
+          entry.setRunway(QString(), QString());
+        }
+      }
+
+      // Add MSFS procedure information to properties ========================================
+      insertPropertyIf(plan, SIDAPPR, sid);
+      insertPropertyIf(plan, SIDAPPRRW, sidRunway + strAt(sidRunwayDesignator, 0));
+      // insertPropertyIf(plan, SIDTRANS, );
+      insertPropertyIf(plan, STAR, star);
+      insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
+      // insertPropertyIf(plan, STARTRANS, );
+      // insertPropertyIf(plan, TRANSITION, );
+      // insertPropertyIf(plan, TRANSITIONTYPE, );
+      // insertPropertyIf(plan, APPROACH, approach);
+      // insertPropertyIf(plan, APPROACH_ARINC, approach);
+      insertPropertyIf(plan, APPROACHTYPE, approach);
+      insertPropertyIf(plan, APPROACHSUFFIX, approachSuffix);
+      insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
+
+      // Remove the procedure legs ============================
+      plan.entries.erase(std::remove_if(plan.entries.begin(), plan.entries.end(),
+                                        [ = ](const FlightplanEntry& entry) -> bool {
+              return !entry.getSid().isEmpty() || !entry.getStar().isEmpty() || !entry.getApproach().isEmpty();
+            }), plan.entries.end());
     }
   }
   else
@@ -1361,7 +1428,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
             }
 
             float altitude = wpalt.toFloat();
-            if(altitude > std::numeric_limits<int>::max() / 2)
+            if(altitude > 1000000.f)
               // Avoid excessive altitudes
               altitude = 0.f;
 
@@ -1661,20 +1728,21 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */);
+}
+
+void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file)
+{
+  savePlnInternal(plan, file, false /* annotated */, true /* msfs */);
 }
 
 void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, true);
+  savePlnInternal(plan, file, true /* annotated */, false /* msfs */);
 }
 
-void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated)
+void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs)
 {
-  /* Values for FSX */
-  static const QString APPVERSION_BUILD = QString("61472");
-  static const QString APPVERSION_MAJOR = QString("10");
-
   // Write XML to string first ===================
   QString xmlString;
   QXmlStreamWriter writer(&xmlString);
@@ -1727,8 +1795,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("DestinationName", plan.destNameOrIdent());
 
   writer.writeStartElement("AppVersion");
-  writer.writeTextElement("AppVersionMajor", APPVERSION_MAJOR); // Always use fsx values
-  writer.writeTextElement("AppVersionBuild", APPVERSION_BUILD);
+  writer.writeTextElement("AppVersionMajor", msfs ? "11" : "10");
+  writer.writeTextElement("AppVersionBuild", msfs ? "282174" : "61472");
   writer.writeEndElement(); // AppVersion
 
   for(const FlightplanEntry& entry : plan.entries)
@@ -1754,16 +1822,31 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
     writer.writeTextElement("WorldPosition", pos.toLongString());
 
-    if(!entry.getAirway().isEmpty())
-      writer.writeTextElement("ATCAirway", entry.getAirway());
+    writeElementIf(writer, "ATCAirway", entry.getAirway());
 
-    if(!entry.getRegion().isEmpty() || !entry.getIdent().isEmpty())
+    if(msfs)
+    {
+      // Write additional procedure information for MSFS
+      writeElementIf(writer, "DepartureFP", entry.getSid());
+      writeElementIf(writer, "ArrivalFP", entry.getStar());
+      writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
+      writeElementIf(writer, "ApproachTypeFP", entry.getApproach());
+      writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
+      writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+    }
+
+    if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
+       (!entry.getRegion().isEmpty() || !entry.getIdent().isEmpty()))
     {
       writer.writeStartElement("ICAO");
 
       if(!entry.getRegion().isEmpty())
         writer.writeTextElement("ICAORegion", entry.getRegion());
       writer.writeTextElement("ICAOIdent", entry.getIdent());
+
+      if(msfs)
+        // Write airport for waypoint if available
+        writeElementIf(writer, "ICAOAirport", entry.getAirport());
 
       writer.writeEndElement(); // ICAO
     }
@@ -4045,23 +4128,77 @@ void FlightplanIO::posToRte(QTextStream& stream, const geo::Pos& pos, bool alt)
   stream << " " << (alt ? pos.getAltitude() : 0.f);
 }
 
-void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, atools::util::XmlStream& xmlStream)
+/*
+ *  MSFS
+ *  <AppVersion>
+ *      <AppVersionMajor>11</AppVersionMajor>
+ *      <AppVersionBuild>282174</AppVersionBuild>
+ *  </AppVersion>
+ *  FSX
+ *  <AppVersion>
+ *      <AppVersionMajor>10</AppVersionMajor>
+ *      <AppVersionBuild>61472</AppVersionBuild>
+ *  </AppVersion>
+ */
+void FlightplanIO::readAppVersionPln(int& appVersionMajor, int& appVersionBuild, atools::util::XmlStream& xmlStream)
+{
+  while(xmlStream.readNextStartElement())
+  {
+    QStringRef aName = xmlStream.getReader().name();
+    if(aName == "AppVersionMajor")
+      appVersionMajor = xmlStream.getReader().readElementText().toInt();
+    else if(aName == "xmlStream")
+      appVersionBuild = xmlStream.getReader().readElementText().toInt();
+    else
+      xmlStream.skipCurrentElement();
+  }
+}
+
+/*
+ * <ATCWaypoint id="DH111">
+ *     <ATCWaypointType>Intersection</ATCWaypointType>
+ *     <WorldPosition>N53° 34' 31.74",E9° 52' 32.92",+001100.00</WorldPosition>
+ *     <DepartureFP>AMLU1B</DepartureFP>
+ *     <RunwayNumberFP>23</RunwayNumberFP>
+ *     <ICAO>
+ *         <ICAORegion>ED</ICAORegion>
+ *         <ICAOIdent>DH111</ICAOIdent>
+ *         <ICAOAirport>EDDH</ICAOAirport>
+ *     </ICAO>
+ * </ATCWaypoint>
+ */
+void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::util::XmlStream& xmlStream)
 {
   FlightplanEntry entry;
   QXmlStreamReader& reader = xmlStream.getReader();
 
   entry.setIdent(reader.attributes().value("id").toString());
+  QString runway, designator, approach, suffix;
 
   while(xmlStream.readNextStartElement())
   {
-    QStringRef rName = reader.name();
-    if(rName == "ATCWaypointType")
+    QString name = reader.name().toString();
+    if(name == "ATCWaypointType")
       entry.setWaypointType(reader.readElementText());
-    else if(rName == "WorldPosition")
+    else if(name == "WorldPosition")
       entry.setPosition(geo::Pos(reader.readElementText()));
-    else if(rName == "ATCAirway")
+    else if(name == "ATCAirway")
       entry.setAirway(reader.readElementText());
-    else if(rName == "ICAO")
+
+    else if(name == "RunwayNumberFP") // MSFS
+      runway = reader.readElementText();
+    else if(name == "RunwayDesignatorFP") // MSFS
+      designator = reader.readElementText();
+    else if(name == "DepartureFP") // MSFS
+      entry.setSid(reader.readElementText());
+    else if(name == "ArrivalFP") // MSFS
+      entry.setStar(reader.readElementText());
+    else if(name == "ApproachTypeFP") // MSFS
+      approach = reader.readElementText();
+    else if(name == "SuffixFP") // MSFS
+      suffix = reader.readElementText();
+    else if(name == "ICAO")
+    {
       while(xmlStream.readNextStartElement())
       {
         QStringRef iName = reader.name();
@@ -4069,12 +4206,18 @@ void FlightplanIO::readWaypoint(atools::fs::pln::Flightplan& plan, atools::util:
           entry.setRegion(reader.readElementText());
         else if(iName == "ICAOIdent")
           entry.setIdent(reader.readElementText());
+        else if(iName == "ICAOAirport") // MSFS
+          entry.setAirport(reader.readElementText());
         else
           reader.skipCurrentElement();
       }
+    }
     else
       reader.skipCurrentElement();
   }
+  entry.setRunway(runway, designator);
+  entry.setApproach(approach, suffix);
+
   plan.entries.append(entry);
 }
 

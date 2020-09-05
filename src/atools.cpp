@@ -839,4 +839,15 @@ bool strStartsWith(const QStringList& list, const QString& str)
   return false;
 }
 
+bool strAnyStartsWith(const QStringList& list, const QString& str)
+{
+  for(const QString& s : list)
+  {
+    if(s.startsWith(str))
+      return true;
+  }
+
+  return false;
+}
+
 } // namespace atools
