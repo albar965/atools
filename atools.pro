@@ -197,6 +197,7 @@ HEADERS += \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/application.h \
+  src/gui/clicktooltiphandler.h \
   src/gui/consoleapplication.h \
   src/gui/dialog.h \
   src/gui/dockwidgethandler.h \
@@ -319,6 +320,7 @@ SOURCES += \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/application.cpp \
+  src/gui/clicktooltiphandler.cpp \
   src/gui/consoleapplication.cpp \
   src/gui/dialog.cpp \
   src/gui/dockwidgethandler.cpp \
