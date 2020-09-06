@@ -86,9 +86,9 @@ QString Flightplan::getFilenamePattern(const QString& pattern, const QString& su
 
   QString type;
   if(getFlightplanType() == atools::fs::pln::IFR)
-    type = "IFR ";
+    type = tr("IFR");
   else if(getFlightplanType() == atools::fs::pln::VFR)
-    type = "VFR ";
+    type = tr("VFR");
 
   QString departName = getDepartureName(), departIdent = getDepartureIdent(),
           destName = getDestinationName(), destIdent = getDestinationIdent();
@@ -112,9 +112,12 @@ QString Flightplan::getFilenamePattern(QString pattern, const QString& type, con
   if(pattern.isEmpty())
     pattern = pattern::SHORT;
 
-  QString name = pattern.replace(pattern::PLANTYPE, type).
-                 replace(pattern::DEPARTNAME, departureName).replace(pattern::DEPARTIDENT, departureIdent).
-                 replace(pattern::DESTNAME, destName).replace(pattern::DESTIDENT, destIdent).
+  QString name = pattern.
+                 replace(pattern::PLANTYPE, type.trimmed()).
+                 replace(pattern::DEPARTNAME, departureName.simplified()).
+                 replace(pattern::DEPARTIDENT, departureIdent.simplified()).
+                 replace(pattern::DESTNAME, destName.simplified()).
+                 replace(pattern::DESTIDENT, destIdent.simplified()).
                  replace(pattern::CRUISEALT, QString::number(altitude)) + suffix;
 
   return clean ? atools::cleanFilename(name) : name;
