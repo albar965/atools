@@ -257,7 +257,8 @@ const TYPE *firstOrNull(const QVector<TYPE>& list)
 }
 
 /* Remove all special characters from the filename that can disturb any filesystem */
-QString cleanFilename(const QString& filename);
+static const int MAX_FILENAME_CHARS = 150;
+QString cleanFilename(const QString& filename, int maxLength = MAX_FILENAME_CHARS);
 
 Q_DECL_CONSTEXPR int absInt(int value)
 {

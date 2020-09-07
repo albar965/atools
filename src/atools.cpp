@@ -181,10 +181,11 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   return retval;
 }
 
-QString cleanFilename(const QString& filename)
+QString cleanFilename(const QString& filename, int maxLength)
 {
   return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').replace('\"', ' ').
-         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').simplified();
+         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace('|', ' ').
+         simplified().mid(0, maxLength);
 }
 
 bool strContains(const QString& name, const std::initializer_list<QString>& list)
