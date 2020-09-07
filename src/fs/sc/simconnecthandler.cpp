@@ -210,15 +210,15 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
         SIMCONNECT_RECV_OPEN *openData = static_cast<SIMCONNECT_RECV_OPEN *>(pData);
 
         // Print some useful simconnect interface data to log
-        qInfo() << "ApplicationName" << openData->szApplicationName;
-        qInfo().nospace() << "ApplicationVersion " << openData->dwApplicationVersionMajor
-                          << "." << openData->dwApplicationVersionMinor;
-        qInfo().nospace() << "ApplicationBuild " << openData->dwApplicationBuildMajor
-                          << "." << openData->dwApplicationBuildMinor;
-        qInfo().nospace() << "SimConnectVersion " << openData->dwSimConnectVersionMajor
-                          << "." << openData->dwSimConnectVersionMinor;
-        qInfo().nospace() << "SimConnectBuild " << openData->dwSimConnectBuildMajor
-                          << "." << openData->dwSimConnectBuildMinor;
+        qInfo() << Q_FUNC_INFO << "App Name" << openData->szApplicationName
+                << "App Version" << openData->dwApplicationVersionMajor
+                << "." << openData->dwApplicationVersionMinor
+                << "App Build " << openData->dwApplicationBuildMajor
+                << "." << openData->dwApplicationBuildMinor
+                << "Version " << openData->dwSimConnectVersionMajor
+                << "." << openData->dwSimConnectVersionMinor
+                << "Build " << openData->dwSimConnectBuildMajor
+                << "." << openData->dwSimConnectBuildMinor;
         break;
       }
 
