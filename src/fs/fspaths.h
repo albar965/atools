@@ -110,8 +110,12 @@ public:
   /* Short abbreviated names */
   static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
 
-  /* return true if simulator can be found in the registry */
-  static bool hasSim(atools::fs::FsPaths::SimulatorType type);
+  /* return true if simulator can be found in the registry or base path was found */
+  static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
+
+  /* true if FSX, P3D or MSFS were found */
+  static bool hasAnyMsSimulator();
+  static bool hasXplaneSimulator();
 
   /* Long names */
   static QString typeToName(atools::fs::FsPaths::SimulatorType type);

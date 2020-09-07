@@ -42,10 +42,18 @@ QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::basePathMap;
 QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::filesPathMap;
 QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::sceneryFilepathMap;
 
+/* All supported simulators */
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
       FsPaths::XPLANE11, FsPaths::MSFS
+    });
+
+/* All supported MS simulators using SimConnect on Windows */
+static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
+    {
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::MSFS
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
@@ -205,16 +213,12 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
-    return validXplaneBasePath(
-      QDir::homePath() + SEP +
-      "Library" + SEP +
-      "Preferences" + SEP +
-      "x-plane_install_11.txt");
+    return validXplaneBasePath(QDir::homePath() + SEP + "Library" + SEP + "Preferences" + SEP +
+                               "x-plane_install_11.txt");
 
 #elif defined(Q_OS_LINUX)
     // "/home/USER/.x-plane/x-plane_install_11.txt"
-    return xplaneBasePath(
-      QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
+    return xplaneBasePath(QDir::homePath() + SEP + ".x-plane" + SEP + "x-plane_install_11.txt");
 
 #endif
   }
@@ -224,16 +228,13 @@ QString FsPaths::initBasePath(SimulatorType type)
 #if defined(Q_OS_WIN32)
     // MS installation
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
-    fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP +
-                          "Packages" + SEP +
-                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP +
-                          "LocalCache" + SEP + "UserCfg.opt");
+    fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
+                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP + "UserCfg.opt");
 
     // Steam installation
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     if(fsPath.isEmpty())
-      fsPath = msfsBasePath(environment.value("APPDATA") + SEP +
-                            "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
+      fsPath = msfsBasePath(environment.value("APPDATA") + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
 
     // MS Boxed installation
     // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
@@ -357,9 +358,24 @@ QString FsPaths::nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type)
   return fsPath;
 }
 
-bool FsPaths::hasSim(FsPaths::SimulatorType type)
+bool FsPaths::hasSimulator(FsPaths::SimulatorType type)
 {
   return type == XPLANE11 ? true : !getBasePath(type).isEmpty();
+}
+
+bool FsPaths::hasAnyMsSimulator()
+{
+  for(atools::fs::FsPaths::SimulatorType type : ALL_SIMULATOR_TYPES_MS)
+  {
+    if(!basePathMap.value(type).isEmpty())
+      return true;
+  }
+  return false;
+}
+
+bool FsPaths::hasXplaneSimulator()
+{
+  return !basePathMap.value(XPLANE11).isEmpty();
 }
 
 QString FsPaths::initFilesPath(SimulatorType type)
