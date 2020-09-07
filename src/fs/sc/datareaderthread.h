@@ -147,8 +147,10 @@ private:
   /* Have to protect options since they will be modified from outside the thread */
   std::atomic<atools::fs::sc::Options> options;
 
-  /* Radius to include AI aircraft for SimConnect interfaces - not X-Plane */
-  int aiFetchRadiusKm = 370; // around 200 NM
+  /* Radius to include AI aircraft for SimConnect interfaces - not X-Plane.
+  * The error SIMCONNECT_EXCEPTION_OUT_OF_BOUNDS will be returned if a radius is
+  * given and it exceeds the maximum allowed (200000 meters, or 200 Km). */
+  int aiFetchRadiusKm = 200; // around 105 NM
 
   int numErrors = 0;
   const int MAX_NUMBER_OF_ERRORS = 50;
