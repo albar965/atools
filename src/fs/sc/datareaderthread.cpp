@@ -163,7 +163,7 @@ void DataReaderThread::run()
         closeReplay();
       }
     } // if(loadReplayFile != nullptr)
-    else if(fetchData(data, SIMCONNECT_AI_RADIUS_KM, opts))
+    else if(fetchData(data, aiFetchRadiusKm, opts))
     {
       // Data fetched from simconnect - send to client ============================================
       if(verbose && !data.getMetars().isEmpty())
@@ -304,16 +304,6 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
     qDebug() << Q_FUNC_INFO << "leave";
 
   return retval;
-}
-
-void DataReaderThread::setSimconnectOptions(Options value)
-{
-  options = value;
-}
-
-void DataReaderThread::setReconnectRateSec(int reconnectSec)
-{
-  reconnectRateSec = reconnectSec;
 }
 
 void DataReaderThread::setupReplay()

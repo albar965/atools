@@ -62,7 +62,10 @@ public:
   }
 
   /* If simulator connection is lost try to reconnect every reconnectSec seconds. */
-  void setReconnectRateSec(int reconnectSec);
+  void setReconnectRateSec(int reconnectSec)
+  {
+    reconnectRateSec = reconnectSec;
+  }
 
   bool isConnected() const
   {
@@ -98,7 +101,15 @@ public:
   /* Sets a one shot request to fetch on next iteration */
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);
 
-  void setSimconnectOptions(atools::fs::sc::Options value);
+  void setSimconnectOptions(atools::fs::sc::Options value)
+  {
+    options = value;
+  }
+
+  void setAiFetchRadius(int radiusKm)
+  {
+    aiFetchRadiusKm = radiusKm;
+  }
 
   /* What type of handler is set now */
   bool isFsxHandler();
@@ -136,6 +147,9 @@ private:
   /* Have to protect options since they will be modified from outside the thread */
   std::atomic<atools::fs::sc::Options> options;
 
+  /* Radius to include AI aircraft for SimConnect interfaces - not X-Plane */
+  int aiFetchRadiusKm = 370; // around 200 NM
+
   int numErrors = 0;
   const int MAX_NUMBER_OF_ERRORS = 50;
 
@@ -143,8 +157,6 @@ private:
   const quint32 REPLAY_FILE_VERSION = 1;
   const int REPLAY_FILE_DATA_START_OFFSET = sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
                                             sizeof(quint32);
-
-  const int SIMCONNECT_AI_RADIUS_KM = 200;
 
   QString saveReplayFilepath, loadReplayFilepath;
   int replaySpeed = 1;
