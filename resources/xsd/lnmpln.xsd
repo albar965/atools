@@ -32,6 +32,7 @@
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="FlightplanType"/>
         <xs:element minOccurs="1" maxOccurs="1" ref="CruisingAlt"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="Comment"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="CreationDate"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="FileVersion"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="ProgramName"/>
@@ -42,6 +43,7 @@
   </xs:element>
   <xs:element name="FlightplanType" type="xs:string"/>
   <xs:element name="CruisingAlt" type="xs:decimal"/>
+  <xs:element name="Comment" type="xs:string"/>
   <xs:element name="CreationDate" type="xs:string"/>
   <xs:element name="FileVersion" type="xs:decimal"/>
   <xs:element name="ProgramName" type="xs:string"/>
