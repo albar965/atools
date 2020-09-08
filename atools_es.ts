@@ -54,6 +54,21 @@
     </message>
 </context>
 <context>
+    <name>ContentXml</name>
+    <message>
+        <source>Base Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished">No puedo abrir archivir &quot;%1&quot;. Motivo: %2</translation>
+    </message>
+</context>
+<context>
     <name>DataWriter</name>
     <message>
         <source>Cannot read file. Falling back to world magnetic model.</source>
@@ -119,6 +134,14 @@ Atrapada excepción
     <name>Flightplan</name>
     <message>
         <source>Empty Flightplan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>VFR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -224,10 +247,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid position in LNMPLN.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -237,6 +256,10 @@ Atrapada excepción
     </message>
     <message>
         <source>Invalid position in GPX.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -801,7 +824,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Does not contain a &quot;Scenery&quot; directory</source>
-        <translation>No contiene un directorio &quot;Escenario&quot;</translation>
+        <translation type="vanished">No contiene un directorio &quot;Escenario&quot;</translation>
     </message>
     <message>
         <source>Creating Database Schema</source>
@@ -833,7 +856,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Directory is not readable</source>
-        <translation>Imposible leer el directorio</translation>
+        <translation type="vanished">Imposible leer el directorio</translation>
     </message>
     <message>
         <source>File is not a regular file</source>
@@ -865,7 +888,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Is not a directory</source>
-        <translation>No es un directorio</translation>
+        <translation type="vanished">No es un directorio</translation>
     </message>
     <message>
         <source>Updating waypoints</source>
@@ -873,7 +896,7 @@ Atrapada excepción
     </message>
     <message>
         <source>File is not readable</source>
-        <translation>El archivo no es legible</translation>
+        <translation type="vanished">El archivo no es legible</translation>
     </message>
     <message>
         <source>Removing Airports</source>
@@ -885,7 +908,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Directory does not exist</source>
-        <translation>El directorio no existe</translation>
+        <translation type="vanished">El directorio no existe</translation>
     </message>
     <message>
         <source>Analyze Database</source>
@@ -909,11 +932,11 @@ Atrapada excepción
     </message>
     <message>
         <source>&quot;%1&quot; not found</source>
-        <translation>&quot;%1&quot; no encontrado</translation>
+        <translation type="vanished">&quot;%1&quot; no encontrado</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation>El archivo no existe</translation>
+        <translation type="vanished">El archivo no existe</translation>
     </message>
     <message>
         <source>Updating ILS Count</source>
@@ -949,6 +972,27 @@ Atrapada excepción
     </message>
     <message>
         <source>Updating Navids in Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading translations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Community</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1439,6 +1483,34 @@ Atrapada excepción
     </message>
     <message>
         <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is not a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory &quot;%1&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

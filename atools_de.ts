@@ -55,6 +55,21 @@
     </message>
 </context>
 <context>
+    <name>ContentXml</name>
+    <message>
+        <source>Base Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
+        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+    </message>
+</context>
+<context>
     <name>DataWriter</name>
     <message>
         <source>Cannot read file. Falling back to world magnetic model.</source>
@@ -124,6 +139,14 @@ Datei: &quot;%2&quot;
     <message>
         <source>Empty Flightplan</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IFR</source>
+        <translation type="unfinished">IFR</translation>
+    </message>
+    <message>
+        <source>VFR</source>
+        <translation type="unfinished">VFR</translation>
     </message>
 </context>
 <context>
@@ -241,10 +264,6 @@ Datei: &quot;%2&quot;
         <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
-        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Only LNMPLN, PLN (FSX XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP are supported.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invalid position in LNMPLN.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -254,6 +273,10 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid position in GPX.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -827,31 +850,31 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>File is not readable</source>
-        <translation>Datei ist nicht lesbar</translation>
+        <translation type="vanished">Datei ist nicht lesbar</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation>Datei existiert nicht</translation>
+        <translation type="vanished">Datei existiert nicht</translation>
     </message>
     <message>
         <source>&quot;%1&quot; not found</source>
-        <translation>&quot;%1&quot; wurde nicht gefunden</translation>
+        <translation type="vanished">&quot;%1&quot; wurde nicht gefunden</translation>
     </message>
     <message>
         <source>Does not contain a &quot;Scenery&quot; directory</source>
-        <translation>Enthält kein &quot;Scenery&quot; Verzeichnis</translation>
+        <translation type="vanished">Enthält kein &quot;Scenery&quot; Verzeichnis</translation>
     </message>
     <message>
         <source>Is not a directory</source>
-        <translation>Ist kein Verzeichnis</translation>
+        <translation type="vanished">Ist kein Verzeichnis</translation>
     </message>
     <message>
         <source>Directory is not readable</source>
-        <translation>Verzeichnis ist nicht lesbar</translation>
+        <translation type="vanished">Verzeichnis ist nicht lesbar</translation>
     </message>
     <message>
         <source>Directory does not exist</source>
-        <translation>Verzeichnis existiert nicht</translation>
+        <translation type="vanished">Verzeichnis existiert nicht</translation>
     </message>
     <message>
         <source>Navigraph</source>
@@ -983,6 +1006,27 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Updating Navids in Waypoint</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loading translations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Base Navigation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Community</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1475,6 +1519,34 @@ Datei: &quot;%2&quot;
     <message>
         <source>, </source>
         <translation type="unfinished">, </translation>
+    </message>
+    <message>
+        <source>Directory &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is not a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory &quot;%1&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is a directory.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is not readable.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File &quot;%1&quot; is empty.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
