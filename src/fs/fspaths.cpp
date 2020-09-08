@@ -309,10 +309,12 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 QString FsPaths::msfsSimPath()
 {
+  QString fsPath;
+#if defined(Q_OS_WIN32)
   // MS
   // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
-  QString fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
-                   "Microsoft.FlightSimulator_8wekyb3d8bbwe";
+  fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
+           "Microsoft.FlightSimulator_8wekyb3d8bbwe";
 
   // Steam
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
@@ -323,6 +325,11 @@ QString FsPaths::msfsSimPath()
   // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
   if(!atools::checkDir(fsPath).isEmpty())
     fsPath = environment.value("LOCALAPPDATA") + SEP + "MSFSPackages";
+#elif defined(DEBUG_FS_PATHS)
+  // No Windows here - get the path for debugging purposes =====================================================
+  // from the configuration file
+  fsPath = atools::buildPathNoCase({nonWindowsPathFull(MSFS), "Packages", "Microsoft.FlightSimulator_8wekyb3d8bbwe"});
+#endif
 
   if(atools::checkDir(fsPath).isEmpty())
     return fsPath;
@@ -391,7 +398,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
     case atools::fs::FsPaths::MSFS:
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
       // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\LocalState ?
-      fsFilesDir = msfsSimPath();
+      fsFilesDir = msfsSimPath() + SEP + "LocalState";
       break;
 
     case atools::fs::FsPaths::FSX:

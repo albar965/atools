@@ -150,14 +150,6 @@ void LanguageJson::adjustLanguage()
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
-QString LanguageJson::getName(QString key) const
-{
-  if(names.isEmpty())
-    return key;
-  else
-    return names.value(key.startsWith("TT:") ? key.remove(0, 3) : key);
-}
-
 } // namespace scenery
 } // namespace fs
 } // namespace atools

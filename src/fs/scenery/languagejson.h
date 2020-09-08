@@ -67,8 +67,11 @@ public:
   }
 
   /* Get localized airport or other name from key found in BGL file like "TT:AIRPORTXX.MYNN.name"
-   * Returns key if it does not start with the translation prefix "TT:" */
-  QString getName(QString key) const;
+   * Returns key if it does not start with the translation prefix "TT:" or list is empty */
+  QString getName(QString key) const
+  {
+    return key.startsWith("TT:") ? names.value(key.remove(0, 3), key) : key;
+  }
 
   /* Get language as read from file or db. E.g. "en-US" */
   const QString& getLanguage() const
