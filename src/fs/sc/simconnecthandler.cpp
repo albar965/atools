@@ -190,6 +190,7 @@ public:
   atools::fs::sc::WeatherRequest weatherRequest;
   QVector<QString> fetchedMetars;
   SIMCONNECT_EXCEPTION simconnectException;
+  SIMCONNECT_RECV_OPEN openData;
 
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
        userDataFetched = false, aiDataFetched = false, weatherDataFetched = false;
@@ -205,25 +206,27 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
   switch(pData->dwID)
   {
     case SIMCONNECT_RECV_ID_OPEN:
-      {
-        // enter code to handle SimConnect version information received in a SIMCONNECT_RECV_OPEN structure.
-        SIMCONNECT_RECV_OPEN *openData = static_cast<SIMCONNECT_RECV_OPEN *>(pData);
+      // enter code to handle SimConnect version information received in a SIMCONNECT_RECV_OPEN structure.
+      openData = *static_cast<SIMCONNECT_RECV_OPEN *>(pData);
 
-        // App Name Microsoft Flight Simulator X App Version 10.0 App Build  62615.0 Version  10.0 Build  62615.0
+      // FSX ==========
+      // App Name Microsoft Flight Simulator X App Version 10.0 App Build  62615.0 Version  10.0 Build  62615.0
 
-        // Print some useful simconnect interface data to log ====================
-        qInfo().nospace() << "SimConnectHandler "
-                          << "App Name " << openData->szApplicationName
-                          << " App Version " << openData->dwApplicationVersionMajor
-                          << "." << openData->dwApplicationVersionMinor
-                          << " App Build " << openData->dwApplicationBuildMajor
-                          << "." << openData->dwApplicationBuildMinor
-                          << " Version " << openData->dwSimConnectVersionMajor
-                          << "." << openData->dwSimConnectVersionMinor
-                          << " Build " << openData->dwSimConnectBuildMajor
-                          << "." << openData->dwSimConnectBuildMinor;
-        break;
-      }
+      // MSFS ==========
+      // SimConnectHandler App Name KittyHawk App Version 11.0 App Build 282174.999 Version 11.0 Build 62651.3
+
+      // Print some useful simconnect interface data to log ====================
+      qInfo().nospace() << "SimConnectHandler "
+                        << "App Name " << openData.szApplicationName
+                        << " App Version " << openData.dwApplicationVersionMajor
+                        << "." << openData.dwApplicationVersionMinor
+                        << " App Build " << openData.dwApplicationBuildMajor
+                        << "." << openData.dwApplicationBuildMinor
+                        << " Version " << openData.dwSimConnectVersionMajor
+                        << "." << openData.dwSimConnectVersionMinor
+                        << " Build " << openData.dwSimConnectBuildMajor
+                        << "." << openData.dwSimConnectBuildMinor;
+      break;
 
     case SIMCONNECT_RECV_ID_EXCEPTION:
       {
@@ -938,6 +941,13 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
 bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
 {
+  // Do not fetch weather in MSFS sice functions are deprecated.
+  // MSFS: SimConnect Version 11.0 Build 62651.3
+  // if(p->openData.dwSimConnectVersionMajor >= 11 && p->openData.dwSimConnectBuildMajor >= 62651)
+  // return false;
+  if(QString(p->openData.szApplicationName) == "KittyHawk")
+    return false;
+
   if(p->weatherRequest.isValid())
   {
     p->fetchedMetars.clear();
