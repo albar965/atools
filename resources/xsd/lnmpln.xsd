@@ -43,7 +43,6 @@
   </xs:element>
   <xs:element name="FlightplanType" type="xs:string"/>
   <xs:element name="CruisingAlt" type="xs:decimal"/>
-  <xs:element name="Comment" type="xs:string"/>
   <xs:element name="CreationDate" type="xs:string"/>
   <xs:element name="FileVersion" type="xs:decimal"/>
   <xs:element name="ProgramName" type="xs:string"/>
@@ -123,12 +122,16 @@
         <xs:element minOccurs="0" maxOccurs="1" ref="Suffix"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Transition"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="TransitionType"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="CustomDistance"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="CustomAltitude"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
   <xs:element name="ARINC" type="xs:string"/>
   <xs:element name="Suffix" type="xs:string"/>
   <xs:element name="TransitionType" type="xs:string"/>
+  <xs:element name="CustomDistance" type="xs:decimal"/>
+  <xs:element name="CustomAltitude" type="xs:decimal"/>
   <xs:element name="Alternates">
     <xs:complexType>
       <xs:sequence>
@@ -161,6 +164,7 @@
         <xs:element minOccurs="0" maxOccurs="1" ref="Region"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Airway"/>
         <xs:element ref="Type"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="Comment"/>
         <xs:element ref="Pos"/>
       </xs:sequence>
     </xs:complexType>
@@ -169,6 +173,7 @@
   <xs:element name="Airway" type="xs:string"/>
   <xs:element name="Type" type="SimpleWaypointType"/>
   <xs:element name="Name" type="xs:string"/>
+  <xs:element name="Comment" type="xs:string"/>
   <xs:element name="Pos">
     <xs:complexType>
       <xs:attribute name="Alt" type="xs:decimal"/>
