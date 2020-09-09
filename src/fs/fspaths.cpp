@@ -213,7 +213,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
-    return validXplaneBasePath(QDir::homePath() + SEP + "Library" + SEP + "Preferences" + SEP +
+    return xplaneBasePath(QDir::homePath() + SEP + "Library" + SEP + "Preferences" + SEP +
                                "x-plane_install_11.txt");
 
 #elif defined(Q_OS_LINUX)

@@ -28,7 +28,7 @@ class QToolBar;
 namespace atools {
 namespace gui {
 class DockEventFilter;
-class MainWindowState;
+struct MainWindowState;
 
 /* Flags defining behavior when calling setFullScreenOn() */
 enum DockFlag

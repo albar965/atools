@@ -614,7 +614,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"});
     if(!langFile.exists() || !langFile.isFile())
     {
-      qWarning() << Q_FUNC_INFO << langFile << "not found. Falling back to en-US";
+      qWarning() << Q_FUNC_INFO << langFile.absoluteFilePath() << "not found. Falling back to en-US";
       langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
     }
 
