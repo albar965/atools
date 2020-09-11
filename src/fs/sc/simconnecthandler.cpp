@@ -70,13 +70,13 @@ enum DataDefinitionId
 struct SimDataAircraft
 {
   char aircraftTitle[256];
-  char aircraftAtcType[32];
-  char aircraftAtcModel[32];
-  char aircraftAtcId[32];
-  char aircraftAtcAirline[64];
-  char aircraftAtcFlightNumber[32];
+  char aircraftAtcType[256];
+  char aircraftAtcModel[256];
+  char aircraftAtcId[256];
+  char aircraftAtcAirline[256];
+  char aircraftAtcFlightNumber[256];
+  char category[256]; // "Airplane", "Helicopter", "Boat", "GroundVehicle", "ControlTower", "SimpleObject", "Viewer"
 
-  char category[32]; // "Airplane", "Helicopter", "Boat", "GroundVehicle", "ControlTower", "SimpleObject", "Viewer"
   qint32 userSim;
   qint32 modelRadius;
   qint32 wingSpan;
@@ -536,17 +536,17 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   // Set up the data definition, but do not yet do anything with it
   api.AddToDataDefinition(definitionId, "Title", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Type", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "ATC Type", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Id", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "ATC Id", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Airline", NULL, SIMCONNECT_DATATYPE_STRING64);
+  api.AddToDataDefinition(definitionId, "ATC Airline", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Flight Number", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "ATC Flight Number", NULL, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "Category", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "Category", NULL, SIMCONNECT_DATATYPE_STRING256);
 
   api.AddToDataDefinition(definitionId, "Is User Sim", "bool", SIMCONNECT_DATATYPE_INT32);
 
