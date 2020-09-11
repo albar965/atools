@@ -1790,7 +1790,8 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("DestinationLLA",
                           plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
   writer.writeTextElement("Descr", plan.getDescr());
-  writer.writeTextElement("DeparturePosition", plan.departureParkingName);
+  if(!msfs)
+    writer.writeTextElement("DeparturePosition", plan.departureParkingName);
   writer.writeTextElement("DepartureName", plan.departNameOrIdent());
   writer.writeTextElement("DestinationName", plan.destNameOrIdent());
 
@@ -1830,7 +1831,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeElementIf(writer, "DepartureFP", entry.getSid());
       writeElementIf(writer, "ArrivalFP", entry.getStar());
       writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
-      writeElementIf(writer, "ApproachTypeFP", entry.getApproach());
+      writeElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
       writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
       writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
@@ -1881,6 +1882,16 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   }
   else
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
+}
+
+QString FlightplanIO::msfsApproachType(const QString& type)
+{
+  if(type == "LOC")
+    return "LOCALIZER";
+  else
+    // GPS (not saved by MSFS), VOR, VORDME, RNAV, NDBDME, NDB, ILS
+    // TACAN not supported
+    return type;
 }
 
 /*
