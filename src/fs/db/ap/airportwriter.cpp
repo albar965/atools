@@ -182,7 +182,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     bindBool(":has_tower_object", type->hasTowerObj());
 
-    int towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency;
+    int towerFrequency = 0, unicomFrequency = 0, awosFrequency = 0, asosFrequency = 0, atisFrequency = 0;
     Airport::extractMainComFrequencies(
       type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency);
     bindIntOrNull(":tower_frequency", towerFrequency);
@@ -352,7 +352,7 @@ int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident)
 
 void atools::fs::db::AirportWriter::updateMsfsAirport(const Airport *type, int predId)
 {
-  int towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency;
+  int towerFrequency = 0, unicomFrequency = 0, awosFrequency = 0, asosFrequency = 0, atisFrequency = 0;
   Airport::extractMainComFrequencies(type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency,
                                      atisFrequency);
 
