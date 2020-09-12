@@ -150,6 +150,30 @@ void LanguageJson::adjustLanguage()
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
+QString LanguageJson::getName(const QString& key) const
+{
+  QString value;
+  if(key.startsWith("TT:"))
+  {
+    // Translated string
+    QString k = key.mid(3);
+    value = names.value(k);
+    if(value.isEmpty() && k.endsWith(".text"))
+    {
+      // Nothing found - try tts suffix again
+      k.chop(4);
+      value = names.value(k + "tts");
+    }
+    // Otherweise return empty
+  }
+  else if(key.startsWith("$$:"))
+    value = key.mid(3);
+  else
+    value = key;
+
+  return value;
+}
+
 } // namespace scenery
 } // namespace fs
 } // namespace atools
