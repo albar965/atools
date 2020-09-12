@@ -851,4 +851,26 @@ bool strAnyStartsWith(const QStringList& list, const QString& str)
   return false;
 }
 
+QString removeNonPrintable(const QString& str)
+{
+  QString trimmed;
+  for(QChar c : str)
+  {
+    if(c.isPrint())
+      trimmed.append(c);
+  }
+  return trimmed;
+}
+
+QString removeNonAlphaNum(const QString& str)
+{
+  QString trimmed;
+  for(QChar c : str)
+  {
+    if(c.isLetterOrNumber() || c.isPunct())
+      trimmed.append(c);
+  }
+  return trimmed;
+}
+
 } // namespace atools

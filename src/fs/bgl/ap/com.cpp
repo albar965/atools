@@ -18,6 +18,7 @@
 #include "fs/bgl/ap/com.h"
 #include "io/binarystream.h"
 #include "fs/navdatabaseoptions.h"
+#include "atools.h"
 
 #include <QDebug>
 
@@ -112,7 +113,7 @@ Com::Com(const NavDatabaseOptions *options, BinaryStream *bs)
   atools::io::Encoding encoding = options->getSimulatorType() ==
                                   atools::fs::FsPaths::MSFS ? atools::io::UTF8 : atools::io::LATIN1;
 
-  name = bs->readString(0x30, encoding);
+  name = atools::removeNonAlphaNum(bs->readString(0x30, encoding));
 }
 
 QDebug operator<<(QDebug out, const Com& record)
