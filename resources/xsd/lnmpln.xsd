@@ -163,6 +163,7 @@
         <xs:element ref="Ident"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Region"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Airway"/>
+        <xs:element minOccurs="0" maxOccurs="1" ref="Track"/>
         <xs:element ref="Type"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Comment"/>
         <xs:element ref="Pos"/>
@@ -171,6 +172,7 @@
   </xs:element>
   <xs:element name="Region" type="xs:string"/>
   <xs:element name="Airway" type="xs:string"/>
+  <xs:element name="Track" type="xs:string"/>
   <xs:element name="Type" type="SimpleWaypointType"/>
   <xs:element name="Name" type="xs:string"/>
   <xs:element name="Comment" type="xs:string"/>
