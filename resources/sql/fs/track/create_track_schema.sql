@@ -28,8 +28,8 @@ create table trackmeta
   route varchar(255) not null,              -- Track name, letter or number
   startpoint_id integer not null,           -- Start of track. Refers to trackpoint.trackpoint_id.
   endpoint_id integer not null,             -- End of track. Refers to trackpoint.trackpoint_id.
-  valid_from  varchar(50) not null,         -- Date time valid from UTC
-  valid_to varchar(50) not null,            -- "
+  valid_from  varchar(50),                  -- Date time valid from UTC
+  valid_to varchar(50),                     -- "
   download_timestamp varchar(50) not null,  -- Date of download - local time
 foreign key(startpoint_id) references trackpoint(trackpoint_id),
 foreign key(endpoint_id) references trackpoint(trackpoint_id)

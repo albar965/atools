@@ -20,6 +20,8 @@
 #include "track/trackreader.h"
 #include "util/httpdownloader.h"
 
+#include <QFile>
+
 using atools::util::HttpDownloader;
 
 namespace atools {
@@ -107,6 +109,15 @@ TrackDownloader::~TrackDownloader()
 
 void TrackDownloader::natDownloadFinished(const QByteArray& data, QString)
 {
+#ifdef DEBUG_TRACK_TEST_SAVE
+  QFile file("/tmp/NAT.txt");
+  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    file.write(data);
+    file.close();
+  }
+#endif
+
   TrackReader reader;
   reader.readTracks(data, NAT);
   trackList[NAT] = reader.getTracks();
@@ -116,6 +127,15 @@ void TrackDownloader::natDownloadFinished(const QByteArray& data, QString)
 
 void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
 {
+#ifdef DEBUG_TRACK_TEST_SAVE
+  QFile file("/tmp/PACOTS.txt");
+  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    file.write(data);
+    file.close();
+  }
+#endif
+
   TrackReader reader;
   reader.readTracks(data, PACOTS);
   trackList[PACOTS] = reader.getTracks();
@@ -125,6 +145,15 @@ void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
 
 void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString)
 {
+#ifdef DEBUG_TRACK_TEST_SAVE
+  QFile file("/tmp/AUSOTS.txt");
+  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    file.write(data);
+    file.close();
+  }
+#endif
+
   TrackReader reader;
   reader.readTracks(data, AUSOTS);
   trackList[AUSOTS] = reader.getTracks();
