@@ -265,7 +265,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="981"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1310"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3798"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3809"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
@@ -275,22 +275,22 @@ File: &quot;%2&quot;
         <translation>无法打开FlightGear文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2863"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2874"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2913"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2924"/>
         <source> Track</source>
         <translation> 航向</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3239"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3250"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 版本 %2 (修订 %3) 在 %4 创建的PMDG RTE </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3385"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3396"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误: 文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -2377,14 +2377,14 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="299"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="550"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="300"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="481"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="552"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>无法打开文件 %1。原因是： %2。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="455"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="456"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3

@@ -339,7 +339,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="981"/>
         <location filename="src/fs/pln/flightplanio.cpp" line="1310"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3798"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3809"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2</translation>
     </message>
@@ -357,12 +357,12 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FLP &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2863"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2874"/>
         <source> Flight Plan</source>
         <translation> Piano di volo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2913"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2924"/>
         <source> Track</source>
         <translation> Percorso</translation>
     </message>
@@ -371,7 +371,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FMS &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3239"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3250"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Creato da %1 Versione %2 (revisione %3) il %4 </translation>
     </message>
@@ -380,7 +380,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file RTE &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3385"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3396"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Errore interno scrivendo %1: Il file ha dimensione non valida %2 != %3 e non sarà utilizzabile.</translation>
     </message>
@@ -2507,14 +2507,14 @@ Assicurarsi che earth_fix.dat, earth_awy.dat e earth_nav.dat siano in uno di que
 <context>
     <name>atools::fs::userdata::LogdataManager</name>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="299"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="479"/>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="550"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="300"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="481"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="552"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/logdatamanager.cpp" line="455"/>
+        <location filename="src/fs/userdata/logdatamanager.cpp" line="456"/>
         <source>Imported from X-Plane logbook %1
 Number of landings: %2
 Cross country time: %3
