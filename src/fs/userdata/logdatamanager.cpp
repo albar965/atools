@@ -283,6 +283,7 @@ int LogdataManager::importCsv(const QString& filepath)
                                                                             true /* nowarn */).toUtf8()));
 
       // Fill null fields with empty strings to avoid issues when searching
+      // Also turn empty BLOBs to NULL
       fixEmptyFields(insertQuery);
 
       insertQuery.exec();
@@ -465,6 +466,7 @@ int LogdataManager::importXplane(const QString& filepath,
         insertQuery.bindValue(":description", description);
 
         // Fill null fields with empty strings to avoid issues when searching
+        // Also turn empty BLOBs to NULL
         fixEmptyFields(insertQuery);
 
         insertQuery.exec();
@@ -680,8 +682,20 @@ void LogdataManager::fixEmptyStrField(sql::SqlRecord& rec, const QString& name)
 
 void LogdataManager::fixEmptyStrField(sql::SqlQuery& query, const QString& name)
 {
-  if(query.boundValue(name, true).isNull())
+  if(query.boundValue(name, true /* ignoreInvalid */).isNull())
     query.bindValue(name, "");
+}
+
+void LogdataManager::fixEmptyBlobField(sql::SqlRecord& rec, const QString& name)
+{
+  if(rec.contains(name) && (rec.value(name).toByteArray().isEmpty()))
+    rec.setNull(name);
+}
+
+void LogdataManager::fixEmptyBlobField(sql::SqlQuery& query, const QString& name)
+{
+  if(query.boundValue(name, true /* ignoreInvalid */).toByteArray().isEmpty())
+    query.bindValue(name, QVariant(QVariant::ByteArray));
 }
 
 void LogdataManager::fixEmptyFields(sql::SqlRecord& rec)
@@ -697,6 +711,10 @@ void LogdataManager::fixEmptyFields(sql::SqlRecord& rec)
   fixEmptyStrField(rec, "simulator");
   fixEmptyStrField(rec, "departure_ident");
   fixEmptyStrField(rec, "destination_ident");
+
+  fixEmptyBlobField(rec, "flightplan");
+  fixEmptyBlobField(rec, "aircraft_perf");
+  fixEmptyBlobField(rec, "aircraft_trail");
 }
 
 void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
@@ -712,6 +730,10 @@ void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
   fixEmptyStrField(query, ":simulator");
   fixEmptyStrField(query, ":departure_ident");
   fixEmptyStrField(query, ":destination_ident");
+
+  fixEmptyBlobField(query, "flightplan");
+  fixEmptyBlobField(query, "aircraft_perf");
+  fixEmptyBlobField(query, "aircraft_trail");
 }
 
 void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,

@@ -107,6 +107,8 @@ public:
 private:
   static void fixEmptyStrField(atools::sql::SqlRecord& rec, const QString& name);
   static void fixEmptyStrField(atools::sql::SqlQuery& query, const QString& name);
+  static void fixEmptyBlobField(atools::sql::SqlRecord& rec, const QString& name);
+  static void fixEmptyBlobField(atools::sql::SqlQuery& query, const QString& name);
 
   /* Convert Gzipped BLOB to text (file) */
   static QString blobConversionFunction(const QVariant& value);

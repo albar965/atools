@@ -112,6 +112,16 @@ public:
     return value(name).toBool();
   }
 
+  QByteArray valueBytes(int i) const
+  {
+    return value(i).toByteArray();
+  }
+
+  QByteArray valueBytes(const QString& name) const
+  {
+    return value(name).toByteArray();
+  }
+
   /* Getters which return a default value if field does not exit in record instead of throwing an exception. */
   QVariant value(const QString& name, const QVariant& defaulValue) const
   {
@@ -141,6 +151,11 @@ public:
   int valueBool(const QString& name, bool defaultValue) const
   {
     return contains(name) ? valueBool(name) : defaultValue;
+  }
+
+  QByteArray valueBytes(const QString& name, const QByteArray& defaultValue) const
+  {
+    return contains(name) ? valueBytes(name) : defaultValue;
   }
 
   QDateTime valueDateTime(const QString& name, const QDateTime& defaultValue) const;
