@@ -42,7 +42,6 @@ class Rect;
 
 void registerMetaTypes();
 
-
 template<typename TYPE>
 inline TYPE atan2Deg(TYPE y, TYPE x);
 
@@ -85,6 +84,9 @@ atools::geo::Rect boundingRect(const QVector<Pos>& positions);
 
 /* true if longitude values cross the anti-meridian independent of direction */
 bool crossesAntiMeridian(float lonx1, float lonx2);
+
+bool isWestCourse(float lonx1, float lonx2);
+bool isEastCourse(float lonx1, float lonx2);
 
 /* Degree to rad */
 template<typename TYPE>

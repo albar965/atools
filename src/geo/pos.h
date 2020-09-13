@@ -67,8 +67,9 @@ public:
   explicit Pos(const QVariant& longitudeX, const QVariant& latitudeY, const QVariant& alt = QVariant(0.f));
 
   /* @param str format like
-   * N49° 26' 41.57",E9° 12' 5.49",+005500.00 or
-   * N54* 16.82', W008* 35.95', +000011.00 */
+   * N49° 26' 41.57",E9° 12' 5.49",+005500.00
+   * N54* 16.82', W008* 35.95', +000011.00
+   * 54.765892 , -130.647858,+5000 */
   explicit Pos(const QString& str, bool errorOnInvalid = true);
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */

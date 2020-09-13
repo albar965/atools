@@ -45,11 +45,13 @@ SqlDatabase::SqlDatabase(const SqlDatabase& other)
   autocommit = other.autocommit;
   readonly = other.readonly;
   automaticTransactions = other.automaticTransactions;
+  name = other.name;
 }
 
 SqlDatabase::SqlDatabase(const QString& connectionName)
 {
   db = QSqlDatabase::database(connectionName, false);
+  name = connectionName;
 }
 
 SqlDatabase::SqlDatabase(const QSettings& settings, const QString& groupName)
@@ -58,7 +60,7 @@ SqlDatabase::SqlDatabase(const QSettings& settings, const QString& groupName)
   if(type.isEmpty())
     type = "QSQLITE";
 
-  QString name = settings.value(groupName + "/ConnectionName").toString();
+  name = settings.value(groupName + "/ConnectionName").toString();
   if(name.isEmpty())
     name = QLatin1String(QSqlDatabase::defaultConnection);
   db = QSqlDatabase::addDatabase(type, name);
@@ -80,6 +82,7 @@ SqlDatabase& SqlDatabase::operator=(const SqlDatabase& other)
   autocommit = other.autocommit;
   readonly = other.readonly;
   automaticTransactions = other.automaticTransactions;
+  name = other.name;
   return *this;
 }
 

@@ -744,5 +744,43 @@ void registerMetaTypes()
   qRegisterMetaTypeStreamOperators<atools::geo::LineString>();
 }
 
+bool isWestCourse(float lonx1, float lonx2)
+{
+  // Fix all the corner cases around the anti-meridian
+  if((almostEqual(lonx2, 180.f) && lonx1 < 0.f) || (almostEqual(lonx2, -180.f) && lonx1 > 0.f))
+    lonx2 = -lonx2;
+
+  if((almostEqual(lonx1, 180.f) && lonx2 < 0.f) || (almostEqual(lonx1, -180.f) && lonx2 > 0.f))
+    lonx1 = -lonx1;
+
+  // Either equal or -90/90 or 90/-90 where result is undefined
+  if(almostEqual(lonx1, lonx2) || almostEqual(angleAbsDiff(lonx1, lonx2), 180.f))
+    return false;
+
+  if(crossesAntiMeridian(lonx1, lonx2))
+    return lonx2 < 0.f ? (lonx1 > lonx2 + 360.f) : (lonx1 + 360.f > lonx2);
+  else
+    return lonx1 > lonx2;
+}
+
+bool isEastCourse(float lonx1, float lonx2)
+{
+  // Fix all the corner cases around the anti-meridian
+  if((almostEqual(lonx2, 180.f) && lonx1 < 0.f) || (almostEqual(lonx2, -180.f) && lonx1 > 0.f))
+    lonx2 = -lonx2;
+
+  if((almostEqual(lonx1, 180.f) && lonx2 < 0.f) || (almostEqual(lonx1, -180.f) && lonx2 > 0.f))
+    lonx1 = -lonx1;
+
+  // Either equal or -90/90 or 90/-90 where result is undefined
+  if(almostEqual(lonx1, lonx2) || almostEqual(angleAbsDiff(lonx1, lonx2), 180.f))
+    return false;
+
+  if(crossesAntiMeridian(lonx1, lonx2))
+    return lonx2 < 0.f ? (lonx1 < lonx2 + 360.f) : (lonx1 + 360.f < lonx2);
+  else
+    return lonx1 < lonx2;
+}
+
 } // namespace geo
 } // namespace atools

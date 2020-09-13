@@ -44,6 +44,12 @@ const static QRegularExpression LONG_FORMAT_REGEXP(
   "([ew])\\s*([0-9]+)\\s*°\\s*([0-9]+)\\s*'\\s*([0-9\\.]+)\\s*\"\\s*,\\s*"
   "([+-]?)\\s*([0-9\\.]+)?");
 
+// Skyvector to FSX export tool
+// 54.765892 , -130.647858,+5000
+const static QRegularExpression LONG_FORMAT_REGEXP_SIGNED("([0-9\\.\\-\\+]+)\\s*,\\s*"
+                                                          "([0-9\\.\\-\\+]+)\\s*,\\s*"
+                                                          "([0-9\\.\\-\\+]+)");
+
 // Format as used in FS9 flight plans
 // N54* 16.82', W008* 35.95', +000011.00
 const static QRegularExpression LONG_FORMAT_OLD_REGEXP(
@@ -109,14 +115,14 @@ Pos::Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
 Pos::Pos(const QString& str, bool errorOnInvalid)
   : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
 {
-  QString coordStr(str.trimmed().toLower());
+  QString coordStr(str.simplified().toLower());
 
-  if(coordStr.trimmed().isEmpty() && errorOnInvalid)
+  if(coordStr.isEmpty() && errorOnInvalid)
     throw Exception("Coordinate string is empty");
 
-  QRegularExpressionMatch match = LONG_FORMAT_REGEXP.match(coordStr);
+  QRegularExpressionMatch match;
 
-  if(match.hasMatch())
+  if((match = LONG_FORMAT_REGEXP.match(coordStr)).hasMatch())
   {
     QString ns = match.captured(1);
     int latYDeg = match.captured(2).toInt();
@@ -136,30 +142,32 @@ Pos::Pos(const QString& str, bool errorOnInvalid)
     latY = (latYDeg + latYMin / 60.f + latYSec / 3600.f) * (ns == "s" ? -1.f : 1.f);
     lonX = (lonXDeg + lonXMin / 60.f + lonXSec / 3600.f) * (ew == "w" ? -1.f : 1.f);
   }
-  else
+  else if((match = LONG_FORMAT_REGEXP_SIGNED.match(coordStr)).hasMatch())
   {
-    QRegularExpressionMatch matchOld = LONG_FORMAT_OLD_REGEXP.match(coordStr);
-    if(matchOld.hasMatch())
-    {
-      QString ns = matchOld.captured(1);
-      int latYDeg = matchOld.captured(2).toInt();
-      float latYMin = matchOld.captured(3).toFloat();
-
-      QString ew = matchOld.captured(4);
-      int lonXDeg = matchOld.captured(5).toInt();
-      float lonXMin = matchOld.captured(6).toFloat();
-
-      QString altSign = matchOld.captured(7);
-      QString altNum = matchOld.captured(8);
-
-      altitude = QString(altSign + altNum).toFloat();
-
-      latY = (latYDeg + latYMin / 60.f) * (ns == "s" ? -1.f : 1.f);
-      lonX = (lonXDeg + lonXMin / 60.f) * (ew == "w" ? -1.f : 1.f);
-    }
-    else if(errorOnInvalid)
-      throw Exception("Invalid lat/long format \"" + str + "\"");
+    latY = match.captured(1).toFloat();
+    lonX = match.captured(2).toFloat();
+    altitude = match.captured(3).toFloat();
   }
+  else if((match = LONG_FORMAT_OLD_REGEXP.match(coordStr)).hasMatch())
+  {
+    QString ns = match.captured(1);
+    int latYDeg = match.captured(2).toInt();
+    float latYMin = match.captured(3).toFloat();
+
+    QString ew = match.captured(4);
+    int lonXDeg = match.captured(5).toInt();
+    float lonXMin = match.captured(6).toFloat();
+
+    QString altSign = match.captured(7);
+    QString altNum = match.captured(8);
+
+    altitude = QString(altSign + altNum).toFloat();
+
+    latY = (latYDeg + latYMin / 60.f) * (ns == "s" ? -1.f : 1.f);
+    lonX = (lonXDeg + lonXMin / 60.f) * (ew == "w" ? -1.f : 1.f);
+  }
+  else if(errorOnInvalid)
+    throw Exception("Invalid lat/long format \"" + str + "\"");
 }
 
 bool Pos::operator==(const Pos& other) const

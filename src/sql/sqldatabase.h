@@ -177,6 +177,7 @@ private:
 
   QSqlDatabase db;
   bool autocommit = false, readonly = false, automaticTransactions = true;
+  QString name;
 };
 
 } // namespace sql
