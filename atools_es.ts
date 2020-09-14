@@ -860,7 +860,7 @@ Atrapada excepción
     </message>
     <message>
         <source>File is not a regular file</source>
-        <translation>El archivo no es un archivo común</translation>
+        <translation type="vanished">El archivo no es un archivo común</translation>
     </message>
     <message>
         <source>Creating indexes</source>
@@ -975,11 +975,6 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Loading translations</source>
         <translation type="unfinished"></translation>
     </message>
@@ -993,6 +988,14 @@ Atrapada excepción
     </message>
     <message>
         <source>Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;%1&quot; does not contain any scenery areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown exception while reading file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1724,15 +1727,15 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>File is not a regular file</source>
-        <translation type="unfinished">El archivo no es un archivo común</translation>
+        <translation type="obsolete">El archivo no es un archivo común</translation>
     </message>
     <message>
         <source>File is not readable</source>
-        <translation type="unfinished">El archivo no es legible</translation>
+        <translation type="obsolete">El archivo no es legible</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation type="unfinished">El archivo no existe</translation>
+        <translation type="obsolete">El archivo no existe</translation>
     </message>
 </context>
 <context>

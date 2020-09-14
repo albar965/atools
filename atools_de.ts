@@ -846,7 +846,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>File is not a regular file</source>
-        <translation>Datei ist keine reguläre Datei</translation>
+        <translation type="vanished">Datei ist keine reguläre Datei</translation>
     </message>
     <message>
         <source>File is not readable</source>
@@ -1009,11 +1009,6 @@ Datei: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Loading translations</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1027,6 +1022,14 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&quot;%1&quot; does not contain any scenery areas</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown exception while reading file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1767,15 +1770,15 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>File is not a regular file</source>
-        <translation>Datei ist keine reguläre Datei</translation>
+        <translation type="vanished">Datei ist keine reguläre Datei</translation>
     </message>
     <message>
         <source>File is not readable</source>
-        <translation>Datei ist nicht lesbar</translation>
+        <translation type="vanished">Datei ist nicht lesbar</translation>
     </message>
     <message>
         <source>File does not exist</source>
-        <translation>Datei existiert nicht</translation>
+        <translation type="vanished">Datei existiert nicht</translation>
     </message>
 </context>
 <context>
