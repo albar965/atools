@@ -363,12 +363,12 @@ QString FsPaths::msfsSimPath()
 
   // Steam
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
-  if(!atools::checkDir(fsPath).isEmpty())
+  if(atools::checkDir(fsPath))
     fsPath = environment.value("APPDATA") + SEP + "Microsoft Flight Simulator";
 
   // MS Boxed
   // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
-  if(!atools::checkDir(fsPath).isEmpty())
+  if(atools::checkDir(fsPath))
     fsPath = environment.value("LOCALAPPDATA") + SEP + "MSFSPackages";
 #elif defined(DEBUG_FS_PATHS)
   // No Windows here - get the path for debugging purposes =====================================================
@@ -376,7 +376,7 @@ QString FsPaths::msfsSimPath()
   fsPath = atools::buildPathNoCase({nonWindowsPathFull(MSFS), "Packages", "Microsoft.FlightSimulator_8wekyb3d8bbwe"});
 #endif
 
-  if(atools::checkDirMsg(fsPath).isEmpty())
+  if(atools::checkDir(fsPath))
     return fsPath;
   else
     return QString();
