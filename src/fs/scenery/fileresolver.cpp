@@ -61,10 +61,10 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
 
       if(area.isAddOn())
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-        sceneryAreaDirStr = options.getBasepath() + SEP + "Community" + SEP + areaLocalPathStr;
+        sceneryAreaDirStr = options.getMsfsCommunityPath() + SEP + areaLocalPathStr;
       else
         // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
-        sceneryAreaDirStr = options.getBasepath() + SEP + "Official" + SEP + "OneStore" + SEP + areaLocalPathStr;
+        sceneryAreaDirStr = options.getMsfsOfficialPath() + SEP + areaLocalPathStr;
     }
     else
       // FSX or P3D

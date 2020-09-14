@@ -170,63 +170,76 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
   transaction.commit();
 }
 
-bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QString& error)
+bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors)
 {
-  error = atools::checkFile(filename);
-  if(error.isEmpty())
+  errors.append(atools::checkFileMsg(filename));
+  errors.removeAll(QString());
+
+  if(errors.isEmpty())
   {
     try
     {
       // Read the scenery.cfg file and check if it has at least one scenery area
       SceneryCfg cfg(codec);
       cfg.read(filename);
-      return !cfg.getAreas().isEmpty();
+
+      if(cfg.getAreas().isEmpty())
+        errors.append(tr("\"%1\" does not contain any scenery areas").arg(filename));
     }
     catch(atools::Exception& e)
     {
       qWarning() << "Caught exception reading" << filename << ":" << e.what();
-      error = e.what();
+      errors.append(e.what());
     }
     catch(...)
     {
       qWarning() << "Caught unknown exception reading" << filename;
-      error = "Unknown exception while reading file";
+      errors.append(tr("Unknown exception while reading file"));
     }
   }
-  else
-    error = tr("File is not a regular file");
-  return false;
+
+  errors.removeAll(QString());
+  return errors.isEmpty();
 }
 
-bool NavDatabase::isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type)
+bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type)
 {
   if(type == atools::fs::FsPaths::XPLANE11)
-  {
-    error = atools::checkDir(buildPathNoCase({filepath, "Resources", "default data"}));
-    if(error.isEmpty())
-      return true;
-  }
+    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Resources", "default data"})));
   else if(type == atools::fs::FsPaths::MSFS)
   {
     // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
-    QStringList errors;
-    errors.append(atools::checkDir(buildPathNoCase({filepath, "Official", "OneStore", "fs-base"})));
-    errors.append(atools::checkDir(buildPathNoCase({filepath, "Official", "OneStore", "fs-base-nav"})));
-    errors.append(atools::checkDir(buildPathNoCase({filepath, "Community"})));
-    errors.removeAll(QString());
-    if(!errors.isEmpty())
-      error = errors.join(tr("\n"));
-    else
-      return true;
+
+    // Check for both path variations in the official folder
+    QString baseMs = buildPathNoCase({filepath, "Official", "OneStore", "fs-base"});
+    QString baseNavMs = buildPathNoCase({filepath, "Official", "OneStore", "fs-base-nav"});
+
+    QString baseSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base"});
+    QString baseNavSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base-nav"});
+
+    bool hasMs = checkDir(baseMs) && checkDir(baseNavMs);
+    bool hasSteam = checkDir(baseSteam) && checkDir(baseNavSteam);
+
+    if(!hasMs && !hasSteam)
+    {
+      // Neither one exists add error messages
+      errors.append(atools::checkDirMsg(baseMs));
+      errors.append(atools::checkDirMsg(baseNavMs));
+      errors.append(atools::checkDirMsg(baseSteam));
+      errors.append(atools::checkDirMsg(baseNavSteam));
+    }
+
+    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Community"})));
   }
   else
-  {
+    // FSX and P3D ======================================================
     // If path exists check for scenery directory
-    error = atools::checkDir(buildPathNoCase({filepath, "scenery"}));
-    if(error.isEmpty())
-      return true;
-  }
-  return false;
+    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "scenery"})));
+
+  // Delete empty messages
+  errors.removeAll(QString());
+
+  return errors.isEmpty();
 }
 
 // X-Plane steps ========================================================================================
@@ -610,7 +623,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore\fs-base\en-US.locPak
 
     // Load the language index for lookup for airport names and more
-    QString packageBase = buildPathNoCase({options->getBasepath(), "Official", "OneStore"});
+    QString packageBase = options->getMsfsOfficialPath();
     QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"});
     if(!langFile.exists() || !langFile.isFile())
     {
@@ -750,7 +763,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
     // Load translation files with all languages into the database to allow translating the aircraft names
     scenery::LanguageJson language;
-    language.readFromDirToDb(db, buildPathNoCase({options->getBasepath(), "Official", "OneStore", "fs-base"}),
+    language.readFromDirToDb(db, buildPathNoCase({options->getMsfsOfficialPath(), "fs-base"}),
                              "*.locPak", {"ATCCOM.AC_MODEL", "ATCCOM.ATC_NAME"});
   }
 
@@ -1047,8 +1060,7 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 
   // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore/fs-base/scenery/Base/scenery/magdec.bgl
-  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getBasepath(), "Official",
-                                                "OneStore", "fs-base", "scenery", "Base", "scenery",
+  fsDataWriter->readMagDeclBgl(buildPathNoCase({options->getMsfsOfficialPath(), "fs-base", "scenery", "Base", "scenery",
                                                 "magdec.bgl"}));
   if((!err.fileErrors.isEmpty() || !err.sceneryErrorsMessages.isEmpty()) && errors != nullptr)
     errors->sceneryErrors.append(err);

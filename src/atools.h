@@ -98,6 +98,9 @@ QString strFromFile(const QString& filename);
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 
+/* Cuts text at the left and uses combined ellipsis character */
+QString elideTextShortLeft(const QString& str, int maxLength);
+
 /* Cuts text in the center and uses combined ellipsis character */
 QString elideTextShortMiddle(const QString& str, int maxLength);
 
@@ -504,10 +507,14 @@ QString tempDir();
 QString desktopDir();
 QString homeDir();
 
-/* Collect error messages for files or folders if they are readable and more.
+/* Collect error messages for files or folders if they are readable, not empty and more.
  * Returns empty string if all is ok. */
-QString checkDir(const QFileInfo& dir);
-QString checkFile(const QFileInfo& file);
+QString checkDirMsg(const QFileInfo& dir, int maxLength = 80);
+QString checkFileMsg(const QFileInfo& file, int maxLength = 80);
+
+/* Same as above but prints warnings into the log if flag is set and returns false if something is not ok */
+bool checkFile(const QFileInfo& file, bool warn = true);
+bool checkDir(const QFileInfo& dir, bool warn = true);
 
 } // namespace atools
 

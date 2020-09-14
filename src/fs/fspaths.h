@@ -89,23 +89,20 @@ public:
 
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
    * Returns package installation path for MSFS. */
-  static QString getBasePath(atools::fs::FsPaths::SimulatorType type)
-  {
-    return basePathMap.value(type);
-  }
+  static QString getBasePath(atools::fs::FsPaths::SimulatorType type);
 
   /* Get full path to language dependent "Flight Simulator X Files" or "Flight Simulator X-Dateien",
    * etc. Returns the documents path if FS files cannot be found. */
-  static QString getFilesPath(atools::fs::FsPaths::SimulatorType type)
-  {
-    return filesPathMap.value(type);
-  }
+  static QString getFilesPath(atools::fs::FsPaths::SimulatorType type);
 
   /* Path to scenery.cfg for FSX/P3D or Content.xml for MSFS. Empty for X-Plane. */
-  static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type)
-  {
-    return sceneryFilepathMap.value(type);
-  }
+  static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type);
+
+  /* Path to official MSFS scenery containing fs-base and fs-base-nav */
+  static QString getMsfsOfficialPath();
+
+  /* Path to community folder */
+  static QString getMsfsCommunityPath();
 
   /* Short abbreviated names */
   static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
@@ -145,10 +142,6 @@ private:
   static QString xplaneBasePath(const QString& installationFile);
   static QString msfsBasePath(const QString& userCfgOptFile);
   static QString msfsSimPath();
-
-  static QHash<atools::fs::FsPaths::SimulatorType, QString> basePathMap;
-  static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
-  static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
   static QString nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type);
 
 };

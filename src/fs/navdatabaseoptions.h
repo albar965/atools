@@ -175,6 +175,16 @@ public:
     basepath = value;
   }
 
+  void setMsfsCommunityPath(const QString& value)
+  {
+    msfsCommunityPath = value;
+  }
+
+  void setMsfsOfficialPath(const QString& value)
+  {
+    msfsOfficialPath = value;
+  }
+
   /*
    * Set source database to copy from.
    */
@@ -291,6 +301,18 @@ public:
   const QString& getBasepath() const
   {
     return basepath;
+  }
+
+  /* .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Community */
+  const QString& getMsfsCommunityPath() const
+  {
+    return msfsCommunityPath;
+  }
+
+  /* .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/OneStore */
+  const QString& getMsfsOfficialPath() const
+  {
+    return msfsOfficialPath;
   }
 
   const QString& getSourceDatabase() const
@@ -462,7 +484,7 @@ private:
   QString fromNativeSeparator(const QString& path) const;
   QStringList createFilterList(const QStringList& pathList);
 
-  QString sceneryFile, basepath, sourceDatabase, language = "en-US";
+  QString sceneryFile, basepath, msfsCommunityPath, msfsOfficialPath, sourceDatabase, language = "en-US";
 
   atools::fs::type::OptionFlags flags;
 

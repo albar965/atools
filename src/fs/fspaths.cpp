@@ -38,9 +38,9 @@ namespace fs {
 
 const static QChar SEP(QDir::separator());
 
-QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::basePathMap;
-QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::filesPathMap;
-QHash<atools::fs::FsPaths::SimulatorType, QString> FsPaths::sceneryFilepathMap;
+static QHash<atools::fs::FsPaths::SimulatorType, QString> basePathMap;
+static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
+static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
 /* All supported simulators */
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
@@ -82,6 +82,8 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NA
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
   );
+
+static QString msfsOfficialPath, msfsCommunityPath;
 
 /* Platform: FSX, FSX XPack, FSX Gold */
 const QLatin1String FSX_REGISTRY_PATH("HKEY_CURRENT_USER\\Software\\Microsoft");
@@ -132,7 +134,7 @@ using atools::settings::Settings;
 
 void FsPaths::logAllPaths()
 {
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << "====================================================";
 
   // C:\ProgramData
   qInfo() << "PROGRAMDATA" << environment.value("PROGRAMDATA");
@@ -167,6 +169,12 @@ void FsPaths::logAllPaths()
       qInfo() << "  Scenery.cfg path is empty";
     else
       qInfo() << "  Scenery.cfg" << sceneryFilepath << "exists" << QFileInfo::exists(sceneryFilepath);
+
+    if(type == MSFS)
+    {
+      qInfo() << "msfsCommunityPath" << msfsCommunityPath;
+      qInfo() << "msfsOfficialPath" << msfsOfficialPath;
+    }
   }
 }
 
@@ -192,6 +200,31 @@ void FsPaths::intitialize()
   environment = QProcessEnvironment::systemEnvironment();
 }
 
+QString FsPaths::getBasePath(FsPaths::SimulatorType type)
+{
+  return basePathMap.value(type);
+}
+
+QString FsPaths::getFilesPath(FsPaths::SimulatorType type)
+{
+  return filesPathMap.value(type);
+}
+
+QString FsPaths::getSceneryLibraryPath(FsPaths::SimulatorType type)
+{
+  return sceneryFilepathMap.value(type);
+}
+
+QString FsPaths::getMsfsOfficialPath()
+{
+  return msfsOfficialPath;
+}
+
+QString FsPaths::getMsfsCommunityPath()
+{
+  return msfsCommunityPath;
+}
+
 QString FsPaths::initBasePath(SimulatorType type)
 {
   QString fsPath;
@@ -214,7 +247,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 #elif defined(Q_OS_MACOS)
     // "/Users/USER/Library/Preferences/x-plane_install_11.txt"
     return xplaneBasePath(QDir::homePath() + SEP + "Library" + SEP + "Preferences" + SEP +
-                               "x-plane_install_11.txt");
+                          "x-plane_install_11.txt");
 
 #elif defined(Q_OS_LINUX)
     // "/home/USER/.x-plane/x-plane_install_11.txt"
@@ -253,6 +286,18 @@ QString FsPaths::initBasePath(SimulatorType type)
     if(fsPath.isEmpty())
       fsPath = msfsBasePath(nonWinPath + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
 #endif
+
+    if(!fsPath.isEmpty())
+    {
+      // fsPath = ...\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
+      msfsCommunityPath = fsPath + SEP + "Community";
+
+      // Find one of the official path variations for MS and Steam
+      if(checkDir(fsPath + SEP + "Official" + SEP + "OneStore"))
+        msfsOfficialPath = fsPath + SEP + "Official" + SEP + "OneStore";
+      else if(checkDir(fsPath + SEP + "Official" + SEP + "Steam"))
+        msfsOfficialPath = fsPath + SEP + "Official" + SEP + "Steam";
+    }
   }
   else
   {
@@ -331,7 +376,7 @@ QString FsPaths::msfsSimPath()
   fsPath = atools::buildPathNoCase({nonWindowsPathFull(MSFS), "Packages", "Microsoft.FlightSimulator_8wekyb3d8bbwe"});
 #endif
 
-  if(atools::checkDir(fsPath).isEmpty())
+  if(atools::checkDirMsg(fsPath).isEmpty())
     return fsPath;
   else
     return QString();

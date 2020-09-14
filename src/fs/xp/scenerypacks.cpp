@@ -36,26 +36,12 @@ SceneryPacks::~SceneryPacks()
 
 }
 
-bool SceneryPacks::exists(const QString& basePath, QString& error, QString& filepath)
+bool SceneryPacks::exists(const QString& basePath, QStringList& errors, QString& filepath)
 {
   filepath = atools::buildPathNoCase({basePath, "Custom Scenery", "scenery_packs.ini"});
-
-  QFileInfo fi(filepath);
-  if(fi.exists())
-  {
-    if(fi.isReadable())
-    {
-      if(fi.isFile())
-        return true;
-      else
-        error = tr("File is not a regular file");
-    }
-    else
-      error = tr("File is not readable");
-  }
-  else
-    error = tr("File does not exist");
-  return false;
+  errors.append(atools::checkFileMsg(filepath));
+  errors.removeAll(QString());
+  return errors.isEmpty();
 }
 
 void SceneryPacks::read(const QString& basePath)

@@ -103,7 +103,7 @@ public:
    * @param error An error message will be placed in this string
    * @return true if file is valid
    */
-  static bool isSceneryConfigValid(const QString& filename, const QString& codec, QString& error);
+  static bool isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors);
 
   /*
    * Checks if the flight simulator base path is valid and contains a "scenery" directory.
@@ -112,7 +112,7 @@ public:
    * @param error An error message will be placed in this string
    * @return true if path is valid
    */
-  static bool isBasePathValid(const QString& filepath, QString& error, atools::fs::FsPaths::SimulatorType type);
+  static bool isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type);
 
   /* Executes all statements like create index in the table script and deletes it afterwards */
   static void runPreparationScript(atools::sql::SqlDatabase& db);
