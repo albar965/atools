@@ -110,6 +110,9 @@ public:
     url = QUrl(value);
   }
 
+  /* Force notification and ignore time and skip lists */
+  void setForceDebug(bool value);
+
 signals:
   /* Sent if updates were found */
   void updateFound(UpdateList updates);

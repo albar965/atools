@@ -218,6 +218,11 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
       });
 }
 
+void UpdateCheck::setForceDebug(bool value)
+{
+  debug = value;
+}
+
 /* Remove reply */
 void UpdateCheck::endRequest()
 {
