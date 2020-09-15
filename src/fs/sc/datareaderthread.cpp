@@ -172,7 +172,7 @@ void DataReaderThread::run()
       emit postSimConnectData(data);
 
       if(saveReplayFile != nullptr && saveReplayFile->isOpen() && data.getPacketId() > 0)
-        // Save only simulator packets, not weather replys
+        // Save only simulator packets, not weather replays
         data.write(saveReplayFile);
     }
     else
@@ -391,9 +391,14 @@ void DataReaderThread::closeReplay()
   }
 }
 
-bool DataReaderThread::isSimconnectAvailable()
+bool DataReaderThread::isSimconnectAvailable() const
 {
   return handler->isLoaded();
+}
+
+bool DataReaderThread::canFetchWeather() const
+{
+  return handler->canFetchWeather();
 }
 
 bool DataReaderThread::isFsxHandler()
@@ -410,6 +415,9 @@ void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO;
+
+  if(!canFetchWeather())
+    return;
 
   if(saveReplayFile != nullptr)
   {

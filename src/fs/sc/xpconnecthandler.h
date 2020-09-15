@@ -69,6 +69,8 @@ public:
   /* Not used */
   virtual bool isSimPaused() const override;
 
+  virtual bool canFetchWeather() const override;
+
   /* State shows if we are attached or not */
   virtual atools::fs::sc::State getState() const override;
 
@@ -80,6 +82,7 @@ private:
 
   QSharedMemory sharedMemory;
   atools::fs::sc::State state = DISCONNECTED;
+
 };
 
 } // namespace sc

@@ -648,6 +648,16 @@ bool SimConnectHandler::isSimPaused() const
   return p->simPaused;
 }
 
+bool SimConnectHandler::canFetchWeather() const
+{
+  // Do not fetch weather in MSFS sice functions are deprecated.
+  // MSFS: SimConnect Version 11.0 Build 62651.3
+  // if(p->openData.dwSimConnectVersionMajor >= 11 && p->openData.dwSimConnectBuildMajor >= 62651)
+  // return false;
+  return !(QString(p->openData.szApplicationName) == "KittyHawk" ||
+           (p->openData.dwSimConnectVersionMajor == 11 && p->openData.dwSimConnectBuildMajor == 62651));
+}
+
 bool SimConnectHandler::isLoaded() const
 {
   return p->simConnectLoaded;
@@ -941,13 +951,6 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
 bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
 {
-  // Do not fetch weather in MSFS sice functions are deprecated.
-  // MSFS: SimConnect Version 11.0 Build 62651.3
-  // if(p->openData.dwSimConnectVersionMajor >= 11 && p->openData.dwSimConnectBuildMajor >= 62651)
-  // return false;
-  if(QString(p->openData.szApplicationName) == "KittyHawk")
-    return false;
-
   if(p->weatherRequest.isValid())
   {
     p->fetchedMetars.clear();

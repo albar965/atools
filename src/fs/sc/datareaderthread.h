@@ -96,7 +96,9 @@ public:
 
   void closeReplay();
 
-  bool isSimconnectAvailable();
+  bool isSimconnectAvailable() const;
+
+  bool canFetchWeather() const;
 
   /* Sets a one shot request to fetch on next iteration */
   void setWeatherRequest(atools::fs::sc::WeatherRequest request);

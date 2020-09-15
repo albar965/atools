@@ -65,6 +65,8 @@ public:
 
   virtual bool isSimPaused() const = 0;
 
+  virtual bool canFetchWeather() const = 0;
+
   /* Get state of last call. */
   virtual sc::State getState() const = 0;
 

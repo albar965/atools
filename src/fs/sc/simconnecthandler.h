@@ -59,6 +59,8 @@ public:
 
   virtual bool isSimPaused() const override;
 
+  virtual bool canFetchWeather() const override;
+
   /* Get state of last call. */
   virtual sc::State getState() const override;
 

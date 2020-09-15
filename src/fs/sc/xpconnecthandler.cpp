@@ -146,6 +146,11 @@ bool XpConnectHandler::isSimPaused() const
   return false;
 }
 
+bool XpConnectHandler::canFetchWeather() const
+{
+  return false;
+}
+
 atools::fs::sc::State XpConnectHandler::getState() const
 {
   return state;
