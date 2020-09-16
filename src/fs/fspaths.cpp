@@ -265,7 +265,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     temp = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
                         "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP + "UserCfg.opt");
-    if(checkFile(temp))
+    if(checkDir(temp))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -274,7 +274,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // Steam installation ====================
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     temp = msfsBasePath(environment.value("APPDATA") + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
-    if(checkFile(temp))
+    if(checkDir(temp))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -283,7 +283,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // MS Boxed installation ====================
     // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
     temp = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "MSFSPackages" + SEP + "UserCfg.opt");
-    if(checkFile(temp))
+    if(checkDir(temp))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -352,8 +352,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
     if(!fsPath.isEmpty())
     {
-      QFileInfo basePathInfo(fsPath);
-      if(!basePathInfo.exists() || !basePathInfo.isDir())
+      if(checkDir(fsPath))
       {
         qWarning() << Q_FUNC_INFO << "Path does not exist or is not a directory" << fsPath;
         fsPath.clear();
@@ -432,7 +431,7 @@ QString FsPaths::nonWindowsPathFull(atools::fs::FsPaths::SimulatorType type)
       if(!nonWinPath.isEmpty())
       {
         QFileInfo fi(home + SEP + nonWinPath);
-        if(fi.exists() && fi.isDir() && fi.isReadable())
+        if(checkDir(fi))
           fsPath = fi.absoluteFilePath();
       }
     }
@@ -508,7 +507,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
           for(QString document : QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation))
           {
             QFileInfo fsFilesDirInfo(document + SEP + QString::fromWCharArray(filesPathWChar));
-            if(fsFilesDirInfo.exists() && fsFilesDirInfo.isDir() && fsFilesDirInfo.isReadable())
+            if(checkDir(fsFilesDirInfo))
             {
               fsFilesDir = fsFilesDirInfo.absoluteFilePath();
               qDebug() << "Found" << fsFilesDir;
@@ -808,6 +807,7 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
   if(fileCfgOpt.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&fileCfgOpt);
+    stream.setCodec("UTF-8");
 
     while(!stream.atEnd())
     {
@@ -848,11 +848,12 @@ QString FsPaths::xplaneBasePath(const QString& installationFile)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
+    stream.setCodec("UTF-8");
 
     while(!stream.atEnd())
     {
       QFileInfo fi(stream.readLine().trimmed());
-      if(fi.exists() && fi.isDir())
+      if(checkDir(fi))
       {
         dir = fi.absoluteFilePath();
         break;
