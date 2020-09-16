@@ -2476,7 +2476,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="606"/>
+        <location filename="src/grib/windquery.cpp" line="604"/>
         <source>Unknown error.</source>
         <translation type="unfinished"></translation>
     </message>
