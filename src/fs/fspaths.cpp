@@ -259,15 +259,15 @@ QString FsPaths::initBasePath(SimulatorType type)
   {
     // Read UserCfg.opt to find the packages installation path
 #if defined(Q_OS_WIN32)
-    // MS installation
-    // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
-    fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
-                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP + "UserCfg.opt");
-
     // Steam installation
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     if(fsPath.isEmpty())
       fsPath = msfsBasePath(environment.value("APPDATA") + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
+
+    // MS online installation
+    // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    fsPath = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
+                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP + "UserCfg.opt");
 
     // MS Boxed installation
     // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
@@ -292,11 +292,11 @@ QString FsPaths::initBasePath(SimulatorType type)
       // fsPath = ...\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
       msfsCommunityPath = fsPath + SEP + "Community";
 
-      // Find one of the official path variations for MS and Steam
-      if(checkDir(fsPath + SEP + "Official" + SEP + "OneStore"))
-        msfsOfficialPath = fsPath + SEP + "Official" + SEP + "OneStore";
-      else if(checkDir(fsPath + SEP + "Official" + SEP + "Steam"))
+      if(checkDir(fsPath + SEP + "Official" + SEP + "Steam"))
         msfsOfficialPath = fsPath + SEP + "Official" + SEP + "Steam";
+      // Find one of the official path variations for MS and Steam
+      else if(checkDir(fsPath + SEP + "Official" + SEP + "OneStore"))
+        msfsOfficialPath = fsPath + SEP + "Official" + SEP + "OneStore";
     }
   }
   else
@@ -356,20 +356,21 @@ QString FsPaths::msfsSimPath()
 {
   QString fsPath;
 #if defined(Q_OS_WIN32)
-  // MS
-  // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
-  fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
-           "Microsoft.FlightSimulator_8wekyb3d8bbwe";
-
   // Steam
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
   if(atools::checkDir(fsPath))
     fsPath = environment.value("APPDATA") + SEP + "Microsoft Flight Simulator";
 
+  // MS online installation
+  // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
+  fsPath = environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
+           "Microsoft.FlightSimulator_8wekyb3d8bbwe";
+
   // MS Boxed
   // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
   if(atools::checkDir(fsPath))
     fsPath = environment.value("LOCALAPPDATA") + SEP + "MSFSPackages";
+
 #elif defined(DEBUG_FS_PATHS)
   // No Windows here - get the path for debugging purposes =====================================================
   // from the configuration file
