@@ -115,11 +115,13 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin, const Edge 
     // Additionally search for direct waypoint connections if result is limited
     if((mode & MODE_WAYPOINT && result.size() < 2) || origin.isDeparture())
     {
-      int found = searchNearest(result, origin, minNearestDistanceWpM, maxNearestDistanceWpM, &nodeIndexes);
+      // Use nearest of underlying waypoint if calculating for selected route legs
+      float minDist = mode.testFlag(MODE_POINT_TO_POINT) && origin.isDeparture() ? 0.f : minNearestDistanceWpM;
+      int found = searchNearest(result, origin, minDist, maxNearestDistanceWpM, &nodeIndexes);
 
       if(found < 6)
         // Not enough results - try with larger search radius
-        searchNearest(result, origin, minNearestDistanceWpM * 2, maxNearestDistanceWpM * 5, &nodeIndexes);
+        searchNearest(result, origin, minDist * 2, maxNearestDistanceWpM * 5, &nodeIndexes);
 
       // Check for track transitions and remove any edges/nodes beginning from the end of the list
       if(originNotTrackEnd)
@@ -212,6 +214,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
       return ok;
     }
 
+    // All distances in meter
     float originToDestDist = 0.f, radiusMin = 0.f, directDistFactor = 1.f;
     Point3D origin, dest;
     const Point3D *points;
@@ -230,15 +233,28 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   callbackObj.originToDestDist = getDirectDistanceMeter(origin, destinationNode);
   callbackObj.dest = destinationPoint;
 
-  if(origin.isDeparture())
-    // Allow all points close to departure
-    callbackObj.radiusMin = 0.f;
-  else if(callbackObj.radionav)
-    // Do not use minimum near near destination or at departure
-    callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ? 0.f : minDistanceMeter;
+  if(callbackObj.radionav)
+  {
+    if(origin.isDeparture())
+      // Allow all points close to departure
+      callbackObj.radiusMin = 0.f;
+    else
+      // Do not use minimum near near destination or at departure
+      callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ?
+                              0.f :
+                              minDistanceMeter;
+  }
   else
-    // No minimum near departure and destination
-    callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ? minDistanceMeter / 4.f : minDistanceMeter;
+  {
+    if(origin.isDeparture())
+      // Lower minimum distance for departure
+      callbackObj.radiusMin = minDistanceMeter / 5.f;
+    else
+      // Do not use minimum near near destination or at departure
+      callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ?
+                              minDistanceMeter / 4.f :
+                              minDistanceMeter;
+  }
 
   // Limit search radius by distance to destination for airway and waypoint search
   if(!callbackObj.radionav)
@@ -389,22 +405,33 @@ bool RouteNetwork::matchNode(const Node& node) const
     case atools::routing::NODE_VOR:
     case atools::routing::NODE_VORDME:
     case atools::routing::NODE_DME:
-      ok &= mode & MODE_RADIONAV_VOR;
+      ok &= mode.testFlag(MODE_RADIONAV_VOR);
       break;
 
     case atools::routing::NODE_NDB:
-      ok &= mode & MODE_RADIONAV_NDB;
+      ok &= mode.testFlag(MODE_RADIONAV_NDB);
       break;
 
     case atools::routing::NODE_WAYPOINT:
+
+      if(mode.testFlag(MODE_WAYPOINT))
+        // Can use any waypoint in this mode
+        ok = true;
+      else
       {
+        ok = false;
+
         // Check if track or airway type matches filter mode
         atools::routing::NodeConnections con = node.con;
-        bool wp = mode.testFlag(MODE_WAYPOINT);
-        ok &= con.testFlag(CONNECTION_JET) ? mode.testFlag(MODE_JET) | wp : true;
-        ok &= con.testFlag(CONNECTION_VICTOR) ? mode.testFlag(MODE_VICTOR) | wp : true;
-        ok &= con.testFlag(CONNECTION_TRACK) ? mode.testFlag(MODE_TRACK) | wp : true;
-        ok &= con == CONNECTION_NONE ? wp : true;
+
+        if(mode.testFlag(MODE_JET) && con.testFlag(CONNECTION_JET))
+          ok = true;
+
+        if(mode.testFlag(MODE_VICTOR) && con.testFlag(CONNECTION_VICTOR))
+          ok = true;
+
+        if(mode.testFlag(MODE_TRACK) && con.testFlag(CONNECTION_TRACK))
+          ok = true;
       }
       break;
 
@@ -426,10 +453,10 @@ bool RouteNetwork::matchEdge(const Edge& edge) const
 
   // Check if track or airway type matches filter mode
   if(ok)
-    ok &= (edge.isJetAirway() && mode & MODE_JET) ||
-          (edge.isVictorAirway() && mode & MODE_VICTOR) ||
-          (edge.isNoConnection() && mode & MODE_WAYPOINT) ||
-          (edge.isTrack() && mode & MODE_TRACK);
+    ok &= (edge.isJetAirway() && mode.testFlag(MODE_JET)) ||
+          (edge.isVictorAirway() && mode.testFlag(MODE_VICTOR)) ||
+          (edge.isNoConnection() && mode.testFlag(MODE_WAYPOINT)) ||
+          (edge.isTrack() && mode.testFlag(MODE_TRACK));
 
   // Test altitude levels if attached - independent of direction
   if(ok && altitude > 0 && edge.hasAltLevels)

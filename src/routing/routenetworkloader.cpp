@@ -196,7 +196,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
           break;
 
         case atools::routing::EDGE_BOTH:
-          connections |= CONNECTION_AIRWAY;
+          connections |= CONNECTION_AIRWAY_BOTH;
           break;
 
         case atools::routing::EDGE_TRACK:

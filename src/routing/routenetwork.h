@@ -128,7 +128,7 @@ public:
     return source == SOURCE_RADIO;
   }
 
-  /* Minimum distance for neares neighbor search. Not for airways. */
+  /* Minimum distance for nearest neighbor search. Not for airways. */
   void setMinNearestDistanceRadioNm(float value);
 
   /* Maximum distance for neares neighbor search. Not for airways (SOURCE_AIRWAY) but for waypoints. */
@@ -140,7 +140,7 @@ public:
   /* Maximum distance for nearest neighbor search. Only for airway/waypoint search (SOURCE_AIRWAY). */
   void setMaxNearestDistanceWpNm(float value);
 
-  /* Search distance for nearest nodes around start node added using setParameters */
+  /* Search distance for nearest nodes around start node */
   void setNearestDepartureDistanceNm(float value);
 
   /* Search distance for destination node added using setParameters */

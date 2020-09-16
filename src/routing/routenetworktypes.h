@@ -44,6 +44,10 @@ enum Mode : unsigned char
   MODE_NO_RNAV = 1 << 5, /* Do not use RNAV airways */
   MODE_TRACK = 1 << 6, /* Use NAT, PACOTS or AUSOTS tracks */
 
+  MODE_POINT_TO_POINT = 1 << 7, /* Calculate between selected present route legs
+                                * instead of airport to airport.
+                                * Sets minimum distance at departure to zero. */
+
   MODE_AIRWAY = MODE_VICTOR | MODE_JET,
   MODE_AIRWAY_WAYPOINT = MODE_VICTOR | MODE_JET | MODE_WAYPOINT,
   MODE_AIRWAY_TRACK = MODE_AIRWAY | MODE_TRACK,
@@ -78,14 +82,14 @@ QString nodeTypeToStr(NodeType type);
 /* Attached airway or tracks at a node. */
 enum NodeConnection : unsigned char
 {
-  CONNECTION_NONE = 0, /* Airway waypoint */
+  CONNECTION_NONE = 0, /* Single waypoint - not connected to airways */
   CONNECTION_VICTOR = 1 << 0, /* Airway waypoint */
   CONNECTION_JET = 1 << 1, /* Airway waypoint */
   CONNECTION_TRACK = 1 << 2, /* Artificial waypoint in track only */
   CONNECTION_TRACK_START_END = 1 << 3, /* Start or end of one or more tracks */
 
-  CONNECTION_AIRWAY = CONNECTION_JET | CONNECTION_VICTOR,
-  CONNECTION_AIRWAY_TRACK = CONNECTION_AIRWAY | CONNECTION_TRACK
+  CONNECTION_AIRWAY_BOTH = CONNECTION_JET | CONNECTION_VICTOR,
+  CONNECTION_AIRWAY_TRACK = CONNECTION_AIRWAY_BOTH | CONNECTION_TRACK
 };
 
 Q_DECLARE_FLAGS(NodeConnections, NodeConnection);
