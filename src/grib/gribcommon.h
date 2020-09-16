@@ -62,7 +62,7 @@ public:
     return parameterType;
   }
 
-  /* Date from metadata */
+  /* Date from metadata - analysis time - updated four times a day every six hours */
   const QDateTime& getDatetime() const
   {
     return datetime;

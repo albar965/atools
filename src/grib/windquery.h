@@ -163,9 +163,6 @@ public:
   /* Read data from file and start watching for changes - terminates downloads */
   void initFromFile(const QString& filename);
 
-  /* Read data from byte array */
-  void initFromData(const QByteArray& data);
-
   /* Create a fixed model assuming zero wind at 0 altitude and given values at given altitude.
    *  Dir in degrees true, speed in knots and altutude in feet. */
   void initFromFixedModel(float dir, float speed, float altitude);
@@ -210,6 +207,15 @@ public:
    * downloadSslErrors is emitted in case of SSL errors. */
   void setIgnoreSslErrors(bool value);
 
+  /* Latest analysis time from the dataset. Updated four times a day in six hour steps */
+  const QDateTime& getAnalyisTime() const
+  {
+    return analyisTime;
+  }
+
+  /* Validity period */
+  void getValidity(QDateTime& from, QDateTime& to) const;
+
 signals:
   /* Download successfully finished. Emitted for all init methods. */
   void windDataUpdated();
@@ -236,8 +242,8 @@ private:
   /* Convert data from U/V components to speed/heading */
   void convertDataset(const atools::grib::GribDatasetVector& datasets);
 
-  void gribDownloadFinished(const atools::grib::GribDatasetVector & datasets, QString downloadUrl);
-  void gribDownloadFailed(const QString & error, int errorCode, QString downloadUrl);
+  void gribDownloadFinished(const atools::grib::GribDatasetVector& datasets, QString downloadUrl);
+  void gribDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void gribFileUpdated(const QString& filename);
 
   /* get interpolated wind for two sets at two altitudes */
@@ -264,7 +270,7 @@ private:
 
   /* Maps rounded altitude to wind layer data. Sorted by altitude. */
   QMap<int, WindAltLayer> windLayers;
-
+  QDateTime analyisTime;
 };
 
 QDebug operator<<(QDebug out, const atools::grib::Wind& wind);

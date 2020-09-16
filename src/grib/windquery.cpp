@@ -222,15 +222,6 @@ void WindQuery::initFromFile(const QString& filename)
   fileWatcher->setFilenameAndStart(filename);
 }
 
-void WindQuery::initFromData(const QByteArray& data)
-{
-  deinit();
-
-  GribReader reader(verbose);
-  reader.readData(data);
-  convertDataset(reader.getDatasets());
-}
-
 void WindQuery::initFromFixedModel(float dir, float speed, float altitude)
 {
   // Zero wind at zero altitude as lower layer
@@ -259,6 +250,7 @@ void WindQuery::initFromFixedModel(float dirLower, float speedLower, float altit
 
 void WindQuery::deinit()
 {
+  analyisTime = QDateTime();
   windLayers.clear();
   downloader->stopDownload();
   fileWatcher->stopWatching();
@@ -429,6 +421,12 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
 void WindQuery::setIgnoreSslErrors(bool value)
 {
   downloader->setIgnoreSslErrors(value);
+}
+
+void WindQuery::getValidity(QDateTime& from, QDateTime& to) const
+{
+  from = analyisTime;
+  to = analyisTime.addSecs(3600 * 6);
 }
 
 WindData WindQuery::windForLayer(const WindAltLayer& layer, const QPoint& point) const
@@ -644,6 +642,9 @@ void WindQuery::convertDataset(const GribDatasetVector& datasets)
     if(datasetUWind.getParameterType() == atools::grib::U_WIND &&
        datasetVWind.getParameterType() == atools::grib::V_WIND)
     {
+      if(datasetUWind.getDatetime().isValid())
+        analyisTime = datasetUWind.getDatetime();
+
       const QVector<float>& dataU = datasetUWind.getData();
       const QVector<float>& dataV = datasetVWind.getData();
       WindAltLayer layer;
