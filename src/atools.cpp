@@ -760,7 +760,7 @@ QString buildPathNoCase(const QStringList& paths)
         bool found = false;
         entries = dir.entryList();
 
-        for(const QString& str: entries)
+        for(const QString& str : entries)
         {
           if(str.compare(path, Qt::CaseInsensitive) == 0)
           {
@@ -809,23 +809,31 @@ QString buildPathNoCase(const QStringList& paths)
 
 QString checkDirMsg(const QFileInfo& dir, int maxLength)
 {
-  QString shortName = elideTextShortLeft(dir.absoluteFilePath(), maxLength);
-  if(!dir.exists())
+  if(dir.filePath().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "does not exist";
-    return QObject::tr("Directory \"%1\" does not exist.").arg(shortName);
+    qWarning() << Q_FUNC_INFO << "Dir is empty";
+    return QObject::tr("Directory name is empty.");
   }
   else
   {
-    if(!dir.isDir())
+    QString shortName = elideTextShortLeft(dir.absoluteFilePath(), maxLength);
+    if(!dir.exists())
     {
-      qWarning() << Q_FUNC_INFO << "File" << dir.absoluteFilePath() << "is not a directory";
-      return QObject::tr("File \"%1\" is not a directory.").arg(shortName);
+      qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "does not exist";
+      return QObject::tr("Directory \"%1\" does not exist.").arg(shortName);
     }
-    else if(!dir.isReadable())
+    else
     {
-      qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "is not readable";
-      return QObject::tr("Directory \"%1\" is not readable.").arg(shortName);
+      if(!dir.isDir())
+      {
+        qWarning() << Q_FUNC_INFO << "File" << dir.absoluteFilePath() << "is not a directory";
+        return QObject::tr("File \"%1\" is not a directory.").arg(shortName);
+      }
+      else if(!dir.isReadable())
+      {
+        qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "is not readable";
+        return QObject::tr("Directory \"%1\" is not readable.").arg(shortName);
+      }
     }
   }
   return QString();
@@ -833,28 +841,36 @@ QString checkDirMsg(const QFileInfo& dir, int maxLength)
 
 QString checkFileMsg(const QFileInfo& file, int maxLength)
 {
-  QString shortName = elideTextShortLeft(file.absoluteFilePath(), maxLength);
-  if(!file.exists())
+  if(file.filePath().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "does not exist";
-    return QObject::tr("File \"%1\" does not exist.").arg(shortName);
+    qWarning() << Q_FUNC_INFO << "Filepath is empty";
+    return QObject::tr("Filepath is empty.");
   }
   else
   {
-    if(!file.isFile())
+    QString shortName = elideTextShortLeft(file.absoluteFilePath(), maxLength);
+    if(!file.exists())
     {
-      qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is a directory";
-      return QObject::tr("File \"%1\" is a directory.").arg(shortName);
+      qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "does not exist";
+      return QObject::tr("File \"%1\" does not exist.").arg(shortName);
     }
-    else if(!file.isReadable())
+    else
     {
-      qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is not readable";
-      return QObject::tr("File \"%1\" is not readable.").arg(shortName);
-    }
-    else if(file.size() == 0)
-    {
-      qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is empty";
-      return QObject::tr("File \"%1\" is empty.").arg(shortName);
+      if(!file.isFile())
+      {
+        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is a directory";
+        return QObject::tr("File \"%1\" is a directory.").arg(shortName);
+      }
+      else if(!file.isReadable())
+      {
+        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is not readable";
+        return QObject::tr("File \"%1\" is not readable.").arg(shortName);
+      }
+      else if(file.size() == 0)
+      {
+        qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "is empty";
+        return QObject::tr("File \"%1\" is empty.").arg(shortName);
+      }
     }
   }
   return QString();
@@ -862,7 +878,13 @@ QString checkFileMsg(const QFileInfo& file, int maxLength)
 
 bool checkDir(const QFileInfo& dir, bool warn)
 {
-  if(!dir.exists())
+  if(dir.filePath().isEmpty())
+  {
+    if(warn)
+      qWarning() << Q_FUNC_INFO << "Dir is empty";
+    return false;
+  }
+  else if(!dir.exists())
   {
     if(warn)
       qWarning() << Q_FUNC_INFO << "Directory" << dir.absoluteFilePath() << "does not exist";
@@ -888,7 +910,13 @@ bool checkDir(const QFileInfo& dir, bool warn)
 
 bool checkFile(const QFileInfo& file, bool warn)
 {
-  if(!file.exists())
+  if(file.filePath().isEmpty())
+  {
+    if(warn)
+      qWarning() << Q_FUNC_INFO << "Filepath is empty";
+    return false;
+  }
+  else if(!file.exists())
   {
     if(warn)
       qWarning() << Q_FUNC_INFO << "File" << file.absoluteFilePath() << "does not exist";
