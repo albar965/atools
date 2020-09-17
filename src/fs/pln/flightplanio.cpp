@@ -1780,7 +1780,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("Title", plan.getTitle());
   writer.writeTextElement("FPType", flightplanTypeToString(plan.flightplanType));
 
-  writer.writeTextElement("RouteType", routeTypeToString(DIRECT));
+  writer.writeTextElement("RouteType", routeTypeToString(plan.getRouteType()));
 
   writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
   writer.writeTextElement("DepartureID", plan.departureIdent);
