@@ -44,43 +44,43 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
 /* All supported simulators */
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
-  {
-    FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
-    FsPaths::XPLANE11, FsPaths::MSFS
-  });
+    {
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::XPLANE11, FsPaths::MSFS
+    });
 
 /* All supported MS simulators using SimConnect on Windows */
 static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
-  {
-    FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
-    FsPaths::MSFS
-  });
+    {
+      FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V2, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
+      FsPaths::MSFS
+    });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
-  {
-    {FsPaths::FSX, "FSX"},
-    {FsPaths::FSX_SE, "FSXSE"},
-    {FsPaths::P3D_V2, "P3DV2"},
-    {FsPaths::P3D_V3, "P3DV3"},
-    {FsPaths::P3D_V4, "P3DV4"},
-    {FsPaths::P3D_V5, "P3DV5"},
-    {FsPaths::XPLANE11, "XP11"},
-    {FsPaths::MSFS, "MSFS"},
-    {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
-  });
+    {
+      {FsPaths::FSX, "FSX"},
+      {FsPaths::FSX_SE, "FSXSE"},
+      {FsPaths::P3D_V2, "P3DV2"},
+      {FsPaths::P3D_V3, "P3DV3"},
+      {FsPaths::P3D_V4, "P3DV4"},
+      {FsPaths::P3D_V5, "P3DV5"},
+      {FsPaths::XPLANE11, "XP11"},
+      {FsPaths::MSFS, "MSFS"},
+      {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
+    });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(
-  {
-    {FsPaths::FSX, "Microsoft Flight Simulator X"},
-    {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
-    {FsPaths::P3D_V2, "Prepar3D v2"},
-    {FsPaths::P3D_V3, "Prepar3D v3"},
-    {FsPaths::P3D_V4, "Prepar3D v4"},
-    {FsPaths::P3D_V5, "Prepar3D v5"},
-    {FsPaths::XPLANE11, "X-Plane 11"},
-    {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
-    {FsPaths::NAVIGRAPH, "Navigraph"}
-  }
+    {
+      {FsPaths::FSX, "Microsoft Flight Simulator X"},
+      {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
+      {FsPaths::P3D_V2, "Prepar3D v2"},
+      {FsPaths::P3D_V3, "Prepar3D v3"},
+      {FsPaths::P3D_V4, "Prepar3D v4"},
+      {FsPaths::P3D_V5, "Prepar3D v5"},
+      {FsPaths::XPLANE11, "X-Plane 11"},
+      {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
+      {FsPaths::NAVIGRAPH, "Navigraph"}
+    }
   );
 
 static QString msfsOfficialPath, msfsCommunityPath, msfsSimPath;
@@ -304,15 +304,24 @@ QString FsPaths::initBasePath(SimulatorType type)
 
 #elif defined(DEBUG_FS_PATHS)
 
+    QString temp;
     QString nonWinPath = nonWindowsPathFull(type);
 
-    // /home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
-    fsPath = msfsBasePath(nonWinPath + SEP + "Packages" + SEP +
-                          "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP +
-                          "UserCfg.opt");
+    ///home/alex/Simulators/MSFS2020\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
+    temp = msfsBasePath(nonWinPath + SEP + "Packages" + SEP +
+                        "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP +
+                        "UserCfg.opt");
+    if(checkDir(temp))
+    {
+      fsPath = temp;
+      qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
 
-    if(fsPath.isEmpty())
-      fsPath = msfsBasePath(nonWinPath + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
+      // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe
+      msfsSimPath = nonWinPath + SEP + "Packages" + SEP +
+                    "Microsoft.FlightSimulator_8wekyb3d8bbwe";
+      qInfo() << Q_FUNC_INFO << "Found MSFS simulator path" << msfsSimPath;
+    }
+
 #endif
 
     if(!fsPath.isEmpty())
