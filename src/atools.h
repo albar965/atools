@@ -95,6 +95,11 @@ void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
 
+/* Unicode normalizes string and replaces special characters like ö->o.
+ * Removes all diacritics.
+ * Omits characters if they cannot be transformed to ASCII. */
+QString normalizeStr(const QString& str);
+
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
 

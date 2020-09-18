@@ -985,4 +985,30 @@ QString removeNonAlphaNum(const QString& str)
   return trimmed;
 }
 
+QString normalizeStr(const QString& str)
+{
+  // Decompose string into base characters and diacritics
+  QString retval, norm = str.normalized(QString::NormalizationForm_KD);
+  for(QChar c : norm)
+  {
+    // Remove diacritics
+    if(c.category() != QChar::Mark_NonSpacing)
+    {
+      if(c == '?')
+        // Native question mark - keep
+        retval.append(c);
+      else
+      {
+        // Convert ot latin
+        c = c.toLatin1();
+
+        // Add only if latin conversion did not produce garbage
+        if(c != '?' && c.isPrint() && c.unicode() < 126)
+          retval.append(c);
+      }
+    }
+  }
+  return retval;
+}
+
 } // namespace atools
