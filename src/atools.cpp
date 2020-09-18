@@ -722,11 +722,6 @@ QString strJoin(const QStringList& list, const QString& sep, const QString& last
   return retval;
 }
 
-QString buildPathNoCase(QString path)
-{
-  return buildPathNoCase(path.replace('\\', '/').split('/'));
-}
-
 QString buildPath(const QStringList& paths)
 {
   return paths.join(SEP);

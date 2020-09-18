@@ -125,9 +125,6 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0);
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);
 
-/* As above but splits at slash and backslash */
-QString buildPathNoCase(QString path);
-
 /* Simply concatenates all paths parts with the QDir::separator() */
 QString buildPath(const QStringList& paths);
 
