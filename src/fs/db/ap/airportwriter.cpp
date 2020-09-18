@@ -39,6 +39,7 @@
 #include "fs/bgl/ap/parking.h"
 #include "fs/scenery/languagejson.h"
 #include "atools.h"
+#include "exception.h"
 
 namespace atools {
 namespace fs {
@@ -74,6 +75,9 @@ void AirportWriter::writeObject(const Airport *type)
     qWarning() << "Skipping empty airport" << type->getIdent();
     return;
   }
+
+  if(type->getIdent().isEmpty())
+    throw atools::Exception("Found airport without ident");
 
   DataWriter& dw = getDataWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();

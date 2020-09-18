@@ -21,6 +21,8 @@
 #include "fs/db/datawriter.h"
 #include "fs/db/dbairportindex.h"
 
+#include <exception.h>
+
 namespace atools {
 namespace fs {
 namespace db {
@@ -31,6 +33,13 @@ void WaypointWriter::writeObject(const Waypoint *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing Waypoint " << type->getIdent();
+
+  if(type->getIdent().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found waypoint with empty ident in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
 
   bind(":waypoint_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());

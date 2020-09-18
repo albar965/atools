@@ -34,6 +34,13 @@ void NdbWriter::writeObject(const Ndb *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing NDB " << type->getIdent() << type->getName();
 
+  if(type->getIdent().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found NDB with empty ident in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
   using namespace atools::geo;
   using namespace atools;
 

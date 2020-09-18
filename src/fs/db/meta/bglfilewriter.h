@@ -34,16 +34,16 @@ public:
   {
   }
 
-  virtual ~BglFileWriter()
+  virtual ~BglFileWriter() override
   {
   }
 
-  QString getCurrentFilename() const
+  const QString& getCurrentFilename() const
   {
     return currentFilename;
   }
 
-  QString getCurrentFilepath() const
+  const QString& getCurrentFilepath() const
   {
     return currentFilepath;
   }

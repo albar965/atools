@@ -27,7 +27,7 @@ create table waypoint
   waypoint_id integer primary key,
   file_id integer not null,
   nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
-  ident varchar(5),                   -- ICAO ident
+  ident varchar(5) not null,          -- ICAO ident
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
   artificial integer,                 -- Created for VOR and NDB navaids to support airway generation.

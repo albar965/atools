@@ -38,6 +38,13 @@ void VorWriter::writeObject(const Vor *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing VOR " << type->getIdent() << type->getName();
 
+  if(type->getIdent().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found VOR with empty ident in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
   bind(":vor_id", getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
   bind(":ident", type->getIdent());

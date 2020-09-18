@@ -24,6 +24,7 @@
 #include "sql/sqlquery.h"
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/runwayindex.h"
+#include "fs/db/meta/bglfilewriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -41,6 +42,13 @@ void IlsWriter::writeObject(const Ils *type)
 {
   if(getOptions().isVerbose())
     qDebug() << "Writing ILS " << type->getIdent() << " name " << type->getName();
+
+  if(type->getIdent().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found ILS with empty ident in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
 
   bind(":ils_id", getNextId());
   bind(":ident", type->getIdent());

@@ -40,6 +40,13 @@ void TacanWriter::writeObject(const bgl::Tacan *type)
   if(getOptions().isVerbose())
     qDebug() << "Writing TACAN " << type->getIdent() << type->getName();
 
+  if(type->getIdent().isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Found TACAN with empty ident in file"
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
   // Use VOR id
   bind(":vor_id", getDataWriter().getVorWriter()->getNextId());
   bind(":file_id", getDataWriter().getBglFileWriter()->getCurrentId());
