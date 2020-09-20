@@ -26,7 +26,7 @@ namespace fs {
 namespace db {
 
 class SceneryAreaWriter :
-  public atools::fs::db::WriterBase<scenery::SceneryArea>
+  public atools::fs::db::WriterBase<atools::fs::scenery::SceneryArea>
 {
 public:
   SceneryAreaWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
@@ -43,10 +43,16 @@ public:
     return currentSceneryLocalPath;
   }
 
+  const scenery::SceneryArea& getCurrentArea() const
+  {
+    return currentArea;
+  }
+
 protected:
-  virtual void writeObject(const scenery::SceneryArea *type) override;
+  virtual void writeObject(const atools::fs::scenery::SceneryArea *type) override;
 
   QString currentSceneryLocalPath;
+  scenery::SceneryArea currentArea;
 };
 
 } // namespace writer

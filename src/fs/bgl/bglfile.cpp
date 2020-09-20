@@ -32,6 +32,7 @@
 #include "fs/bgl/nav/waypoint.h"
 #include "fs/bgl/boundary.h"
 #include "fs/bgl/recordtypes.h"
+#include "fs/scenery/sceneryarea.h"
 
 #include <QList>
 #include <QDebug>
@@ -55,7 +56,7 @@ BglFile::~BglFile()
   deleteAllObjects();
 }
 
-void BglFile::readFile(QString file)
+void BglFile::readFile(QString file, const atools::fs::scenery::SceneryArea& area)
 {
   deleteAllObjects();
   filename = file;
@@ -70,10 +71,6 @@ void BglFile::readFile(QString file)
 
   if(ifs.open(QIODevice::ReadOnly))
   {
-    // MSFS dummy to pull in COM and procedures
-    msfsNavdata = options->getSimulatorType() == atools::fs::FsPaths::MSFS &&
-                  QFileInfo(file).fileName().startsWith("NAX", Qt::CaseInsensitive);
-
     BinaryStream bs(&ifs);
 
     this->filename = file;
@@ -89,7 +86,7 @@ void BglFile::readFile(QString file)
     if(options->isIncludedNavDbObject(type::BOUNDARY))
       readBoundaryRecords(&bs);
 
-    readRecords(&bs);
+    readRecords(&bs, area);
     ifs.close();
   }
 }
@@ -249,7 +246,7 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
   return nullptr;
 }
 
-void BglFile::readRecords(BinaryStream *bs)
+void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryArea& area)
 {
   for(Subsection& subsection : subsections)
   {
@@ -281,7 +278,7 @@ void BglFile::readRecords(BinaryStream *bs)
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
             rec = createRecord<Airport>(bs, &airports,
-                                        msfsNavdata ? bgl::flags::AIRPORT_MSFS_DUMMY : bgl::flags::NONE);
+                                        area.isNavdata() ? bgl::flags::AIRPORT_MSFS_DUMMY : bgl::flags::NONE);
           break;
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";

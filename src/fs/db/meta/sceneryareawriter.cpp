@@ -30,6 +30,7 @@ using scenery::SceneryArea;
 
 void SceneryAreaWriter::writeObject(const SceneryArea *type)
 {
+  currentArea = *type;
   currentSceneryLocalPath = type->getLocalPath();
 
   if(getOptions().isVerbose())

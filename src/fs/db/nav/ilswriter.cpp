@@ -25,6 +25,7 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/db/runwayindex.h"
 #include "fs/db/meta/bglfilewriter.h"
+#include "fs/db/meta/sceneryareawriter.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -65,9 +66,22 @@ void IlsWriter::writeObject(const Ils *type)
 
   if(loc != nullptr)
   {
+    float ilsHeading = 0.f;
+    if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+    {
+      if(getDataWriter().getSceneryAreaWriter()->getCurrentArea().isNavdataThirdPartyUpdate())
+        // Navigraph update (beta) uses inverted magnetic course
+        ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() - type->getMagVar()));
+      else
+        // MSFS uses magnetic course
+        ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() + type->getMagVar()));
+    }
+    else
+      // FSX and P3D use true course
+      ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
+
     int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
     // Calculate the display of the ILS feather
-    float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
     Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2.f);
     Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2.f);
     float featherWidth = p1.distanceMeterTo(p2);

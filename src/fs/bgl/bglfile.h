@@ -35,6 +35,10 @@ class BinaryStream;
 }
 
 namespace fs {
+
+namespace scenery {
+class SceneryArea;
+}
 namespace bgl {
 class Ils;
 class Vor;
@@ -53,8 +57,7 @@ enum CreateFlags
   NONE = 0,
   AIRPORT_FS9_FORMAT = 1 << 0,
   AIRPORT_FSX_FORMAT = 1 << 1,
-  AIRPORT_MSFS_FORMAT = 1 << 2,
-  AIRPORT_MSFS_DUMMY = 1 << 3
+  AIRPORT_MSFS_DUMMY = 1 << 2
 };
 
 }
@@ -80,7 +83,7 @@ public:
    * airports and so on.
    * @param file BGL filename
    */
-  void readFile(QString file);
+  void readFile(QString file, const scenery::SceneryArea& area);
 
   QString getFilepath() const
   {
@@ -155,17 +158,12 @@ public:
    */
   bool isValid();
 
-  /* Creates dummy airports to pull in COM and procedures */
-  bool isMsfsNavdata() const
-  {
-    return msfsNavdata;
-  }
-
 private:
   void deleteAllObjects();
   void readHeader(atools::io::BinaryStream *bs);
   void readSections(atools::io::BinaryStream *bs);
-  void readRecords(atools::io::BinaryStream *bs);
+
+  void readRecords(atools::io::BinaryStream *bs, const atools::fs::scenery::SceneryArea& area);
   const Record *handleIlsVor(atools::io::BinaryStream *bs);
 
   /* Boundaries are a special mess since it is not well documented */
@@ -202,8 +200,6 @@ private:
 
   /* Only these sections will be scanned for records */
   QSet<atools::fs::bgl::section::SectionType> supportedSectionTypes;
-
-  bool msfsNavdata = false;
 };
 
 // -------------------------------------------------------------------

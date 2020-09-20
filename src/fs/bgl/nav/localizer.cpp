@@ -29,16 +29,12 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *bs, float magVar)
+Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   runwayNumber = bs->readUByte();
   runwayDesignator = bs->readUByte();
-
-  if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
-    heading = atools::geo::normalizeCourse(bs->readFloat() + magVar);
-  else
-    heading = bs->readFloat();
+  heading = bs->readFloat();
   width = bs->readFloat();
 }
 

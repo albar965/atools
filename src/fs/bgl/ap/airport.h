@@ -359,12 +359,6 @@ public:
   virtual bool isValid() const override;
   virtual QString getObjectName() const override;
 
-  /* An empty airport containing only procedures and COM records */
-  bool isMsfsDummyAirport() const
-  {
-    return msfsDummyAirport;
-  }
-
   void updateRunwaySummaryFields();
 
   /* Extract main frequencies for overview. All frequency in MHz * 1000. */
@@ -396,8 +390,7 @@ private:
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
   bool towerObj = false, airportClosed = false, military = false,
-       msfsStar = false /* Will result in five stars rating*/,
-       msfsDummyAirport = false /* From navdata update. Empty airport with COM and procedures */;
+       msfsStar = false /* Will result in five stars rating*/;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numLightRunway = 0,
       numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0, numParkingGate = 0,

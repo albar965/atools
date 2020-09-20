@@ -31,7 +31,7 @@ class Localizer :
   public atools::fs::bgl::Record
 {
 public:
-  Localizer(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, float magVar);
+  Localizer(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Localizer();
 
   /*

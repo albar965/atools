@@ -164,11 +164,35 @@ public:
     addOn = value;
   }
 
+  /* MSFS only. Indicates special handling for third-party navdata update scenery areas. */
+  bool isNavdataThirdPartyUpdate() const
+  {
+    return navdataThirdPartyUpdate;
+  }
+
+  void setNavdataThirdPartyUpdate(bool value)
+  {
+    navdataThirdPartyUpdate = value;
+  }
+
+  /* MSFS only. Indicates special handling for "fs-base-nav" navdata update scenery area
+   * which add procedures and COM. */
+  bool isNavdata() const
+  {
+    return navdata;
+  }
+
+  void setNavdata(bool value)
+  {
+    navdata = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false, highPriority = false, addOn = false;
+  bool active = false, required = false, highPriority = false, addOn = false,
+       navdataThirdPartyUpdate = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude;
 };
 

@@ -87,7 +87,7 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
       case rec::LOCALIZER:
         // This is actually not optional for an ILS
         r.seekToStart();
-        localizer = new Localizer(options, bs, magVar);
+        localizer = new Localizer(options, bs);
         break;
       case rec::GLIDESLOPE:
         r.seekToStart();
@@ -99,8 +99,7 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in ILS record 0x"
-                                       << hex << t << dec << " for ident "
-                                       << ident;
+                                       << hex << t << dec << " for ident " << ident;
     }
     r.seekToEnd();
   }

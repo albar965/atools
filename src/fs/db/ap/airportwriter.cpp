@@ -82,7 +82,7 @@ void AirportWriter::writeObject(const Airport *type)
   DataWriter& dw = getDataWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
 
-  if(type->isMsfsDummyAirport())
+  if(dw.getSceneryAreaWriter()->getCurrentArea().isNavdata())
   {
     // Do a shortcut for MSFS dummies which transport only procedures and COM
     // Instead of writing a new airport simply add COM and procedures
@@ -110,9 +110,15 @@ void AirportWriter::writeObject(const Airport *type)
   }
   else
   {
-    // Check if this is an addon airport
+    // Check if this is an addon airport - if yes start the delete processor
     bool isRealAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+
+    // This is the shown add-on status - can be changed by filter
     bool isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
+
+    // Third party navdata update - not an addon
+    if(dw.getSceneryAreaWriter()->getCurrentArea().isNavdataThirdPartyUpdate())
+      isAddon = false;
 
     if(isRealAddon && type->getDeleteAirports().isEmpty())
       qInfo() << "Addon airport without delete record" << type->getIdent();
@@ -164,11 +170,11 @@ void AirportWriter::writeObject(const Airport *type)
         if(!nl->getRegionIdent().isEmpty())
           bind(":region", nl->getRegionIdent());
       }
-      else if(!type->isMsfsDummyAirport())
-        qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
+      // else if(!type->isMsfsDummyAirport())
+      // qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
     }
-    else if(!type->isMsfsDummyAirport())
-      qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
+    // else if(!type->isMsfsDummyAirport())
+    // qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
 
     bind(":airport_id", nextAirportId);
     bind(":file_id", bglFileWriter->getCurrentId());

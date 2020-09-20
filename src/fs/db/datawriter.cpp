@@ -257,7 +257,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
       {
         // ================================================================================
         // Read all records into a internal object tree (atools::fs::bgl namespace)
-        bglFile.readFile(currentBglFilePath);
+        bglFile.readFile(currentBglFilePath, area);
 
         if(bglFile.hasContent() && bglFile.isValid())
         {
@@ -286,26 +286,34 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           airportFileWriter->write(bglFile.getAirports());
 
-          // Write all navaids to the database
-          waypointWriter->write(bglFile.getWaypoints());
-          vorWriter->write(bglFile.getVors());
-          tacanWriter->write(bglFile.getTacans());
-          ndbWriter->write(bglFile.getNdbs());
-          markerWriter->write(bglFile.getMarker());
+          if(!area.isNavdataThirdPartyUpdate())
+          {
+            // Write all navaids to the database
+            waypointWriter->write(bglFile.getWaypoints());
+            vorWriter->write(bglFile.getVors());
+            tacanWriter->write(bglFile.getTacans());
+            ndbWriter->write(bglFile.getNdbs());
+            markerWriter->write(bglFile.getMarker());
+          }
           ilsWriter->write(bglFile.getIls());
 
-          boundaryWriter->write(bglFile.getBoundaries());
+          if(!area.isNavdataThirdPartyUpdate())
+            boundaryWriter->write(bglFile.getBoundaries());
 
           for(const atools::fs::bgl::Airport *ap : bglFile.getAirports())
             airportIdents.insert(ap->getIdent());
 
           numNamelists += bglFile.getNamelists().size();
-          numVors += bglFile.getVors().size() + bglFile.getTacans().size();
+
+          if(!area.isNavdataThirdPartyUpdate())
+          {
+            numVors += bglFile.getVors().size() + bglFile.getTacans().size();
+            numNdbs += bglFile.getNdbs().size();
+            numMarker += bglFile.getMarker().size();
+            numWaypoints += bglFile.getWaypoints().size();
+            numBoundaries += bglFile.getBoundaries().size();
+          }
           numIls += bglFile.getIls().size();
-          numNdbs += bglFile.getNdbs().size();
-          numMarker += bglFile.getMarker().size();
-          numWaypoints += bglFile.getWaypoints().size();
-          numBoundaries += bglFile.getBoundaries().size();
           numFiles++;
         }
 

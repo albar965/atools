@@ -34,6 +34,7 @@
 #include "atools.h"
 #include "exception.h"
 #include "fs/scenery/layoutjson.h"
+#include "fs/scenery/manifestjson.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
 
@@ -1324,7 +1325,10 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   SceneryArea areaNav(1, 1, tr("Base Navigation"), "fs-base-nav");
   areaNav.setActive(true);
+  areaNav.setNavdata(true); // Set flag to allow dummy airport handling
   cfg.appendArea(areaNav);
+
+  // TODO read other add-on packages
 
   // Read community packages ===============================
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
@@ -1332,17 +1336,32 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
            QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
   int areaNum = nextAreaNum(cfg.getAreas());
+  scenery::LayoutJson layout;
+  scenery::ManifestJson manifest;
 
   for(const QFileInfo& fileinfo : dir.entryInfoList())
   {
     // Read BGL and material file locations from layout file
-    scenery::LayoutJson layout;
+    layout.clear();
     layout.read(buildPathNoCase({fileinfo.filePath(), "layout.json"}));
 
     if(!layout.getBglPaths().isEmpty())
     {
       SceneryArea area(areaNum, areaNum, tr("Community"), fileinfo.fileName());
       area.setAddOn(true);
+
+      // Detect Navigraph navdata update packages for special handling
+      manifest.clear();
+      manifest.read(buildPathNoCase({fileinfo.filePath(), "manifest.json"}));
+      // "content_type": "SCENERY",
+      // "title": "Navigraph Navdata Cycle 2010-revision.10",
+      // "creator": "Navigraph",
+      area.setNavdataThirdPartyUpdate(manifest.getContentType() == "SCENERY" &&
+                                      manifest.getCreator().contains("Navigraph") &&
+                                      manifest.getTitle().contains("Navigraph") &&
+                                      manifest.getTitle().contains("Navdata") &&
+                                      manifest.getTitle().contains("Cycle"));
+
       cfg.getAreas().append(area);
       areaNum++;
     }

@@ -172,6 +172,7 @@ HEADERS += \
   src/fs/scenery/contentxml.h \
   src/fs/scenery/languagejson.h \
   src/fs/scenery/layoutjson.h \
+  src/fs/scenery/manifestjson.h \
   src/fs/scenery/materiallib.h \
   src/fs/userdata/airspacereaderbase.h \
   src/fs/userdata/airspacereaderopenair.h \
@@ -296,6 +297,7 @@ SOURCES += \
   src/fs/scenery/contentxml.cpp \
   src/fs/scenery/languagejson.cpp \
   src/fs/scenery/layoutjson.cpp \
+  src/fs/scenery/manifestjson.cpp \
   src/fs/scenery/materiallib.cpp \
   src/fs/userdata/airspacereaderbase.cpp \
   src/fs/userdata/airspacereaderopenair.cpp \

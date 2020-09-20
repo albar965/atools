@@ -114,6 +114,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
               // Read MSFS layout file and add all BGL files ================
               layout.clear();
               layout.read(scenery.absoluteFilePath() + SEP + "layout.json");
+
               for(const QString& path : layout.getBglPaths())
                 bglFiles.append(sceneryArea.filePath() + SEP + path);
             }

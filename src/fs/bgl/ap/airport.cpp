@@ -406,11 +406,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   updateSummaryFields();
 
   if(flags & atools::fs::bgl::flags::AIRPORT_MSFS_DUMMY)
-  {
     // Add a delete record for an MSFS dummy airport which contains only approaches and COM
     deleteAirports.append(DeleteAirport(del::APPROACHES | del::COMS));
-    msfsDummyAirport = true;
-  }
 
   if(deleteAirports.size() > 1)
     qWarning() << "Found more than one delete record in" << getObjectName();
