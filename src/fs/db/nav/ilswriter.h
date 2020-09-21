@@ -38,7 +38,7 @@ public:
   {
   }
 
-  const int FEATHER_LEN_NM = 9;
+  const float FEATHER_LEN_NM = 9.f;
 
 protected:
   virtual void writeObject(const atools::fs::bgl::Ils *type) override;

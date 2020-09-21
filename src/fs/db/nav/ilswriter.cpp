@@ -63,23 +63,26 @@ void IlsWriter::writeObject(const Ils *type)
 
   const bgl::BglPosition& pos = type->getPosition();
   const Localizer *loc = type->getLocalizer();
+  float headingTrue = 0.f;
 
   if(loc != nullptr)
   {
-    float ilsHeading = 0.f;
+
     if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
-      // MSFS uses magnetic course
-      ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() + type->getMagVar()));
+      // MSFS uses magnetic course - turn to true
+      headingTrue = atools::geo::normalizeCourse(loc->getHeading() + type->getMagVar());
     else
       // FSX and P3D use true course
-      ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));
+      headingTrue = loc->getHeading();
 
-    int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
+    float locHeading = atools::geo::opposedCourseDeg(headingTrue);
+
+    float length = atools::geo::nmToMeter(FEATHER_LEN_NM);
     // Calculate the display of the ILS feather
-    Pos p1 = pos.getPos().endpoint(length, ilsHeading - loc->getWidth() / 2.f);
-    Pos p2 = pos.getPos().endpoint(length, ilsHeading + loc->getWidth() / 2.f);
+    Pos p1 = pos.getPos().endpoint(length, locHeading - loc->getWidth() / 2.f);
+    Pos p2 = pos.getPos().endpoint(length, locHeading + loc->getWidth() / 2.f);
     float featherWidth = p1.distanceMeterTo(p2);
-    Pos pmid = pos.getPos().endpoint(length - featherWidth / 2, ilsHeading);
+    Pos pmid = pos.getPos().endpoint(length - featherWidth / 2.f, locHeading);
 
     bind(":end1_lonx", p1.getLonX());
     bind(":end1_laty", p1.getLatY());
@@ -143,7 +146,7 @@ void IlsWriter::writeObject(const Ils *type)
   if(loc != nullptr)
   {
     bind(":loc_runway_name", loc->getRunwayName());
-    bind(":loc_heading", loc->getHeading());
+    bind(":loc_heading", headingTrue);
     bind(":loc_width", loc->getWidth());
   }
   else
