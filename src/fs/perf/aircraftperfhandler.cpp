@@ -76,7 +76,7 @@ void AircraftPerfHandler::stop()
 void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData)
 {
   *curSimAircraft = simulatorData.getUserAircraftConst();
-  if(!active || !curSimAircraft->isValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
+  if(!active || !curSimAircraft->isFullyValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
     return;
 
   aircraftClimb = isClimbing();
@@ -121,7 +121,7 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   // Determine current flight sement ================================================================
   FlightSegment flightSegment = currentFlightSegment;
-  if(curSimAircraft->isValid())
+  if(curSimAircraft->isFullyValid())
   {
     switch(currentFlightSegment)
     {
