@@ -35,6 +35,12 @@ SceneryArea::SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle,
   fixTitle();
 }
 
+SceneryArea::SceneryArea(int num, const QString& sceneryTitle, const QString& sceneryLocalPath)
+  : areaNumber(num), layer(num), active(true), title(sceneryTitle), localPath(sceneryLocalPath)
+{
+  fixTitle();
+}
+
 void SceneryArea::fixTitle()
 {
   if(title.isEmpty())

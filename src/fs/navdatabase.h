@@ -38,6 +38,7 @@ namespace scenery {
 class SceneryCfg;
 class AddOnComponent;
 class SceneryArea;
+class ManifestJson;
 }
 
 namespace db {
@@ -153,6 +154,9 @@ private:
   bool loadDfd(atools::fs::ProgressHandler *progress, atools::fs::ng::DfdCompiler *dfdCompiler,
                const atools::fs::scenery::SceneryArea& area);
 
+  bool loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
+                               const QList<atools::fs::scenery::SceneryArea>& areas);
+
   /* Reporting to log file and/or console */
   bool createDatabaseReport(ProgressHandler *progress);
   bool basicValidation(ProgressHandler *progress);
@@ -181,6 +185,9 @@ private:
   int countMsfsSteps(const scenery::SceneryCfg& cfg);
   int countMsSimSteps();
 
+  /* Detect Navigraph navdata update packages for special handling */
+  bool checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest);
+
   /* For metadata */
 
   atools::sql::SqlDatabase *db;
@@ -188,9 +195,6 @@ private:
   const atools::fs::NavDatabaseOptions *options = nullptr;
   bool aborted = false;
   QString gitRevision;
-
-  bool loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
-                               const QList<atools::fs::scenery::SceneryArea>& areas);
 
 };
 

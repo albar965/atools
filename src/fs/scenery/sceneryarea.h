@@ -33,6 +33,7 @@ public:
 
   /* Constructed from FSX and P3D add-on packages */
   SceneryArea(int areaNum, int layerNum, const QString& sceneryTitle, const QString& sceneryLocalPath);
+  SceneryArea(int num, const QString& sceneryTitle, const QString& sceneryLocalPath);
 
   /*
    * @return true to indicate that the scenery should be rendered by default.
@@ -102,12 +103,6 @@ public:
     return highPriority;
   }
 
-  /* true MSFS add-on */
-  bool isAddOn() const
-  {
-    return addOn;
-  }
-
   void setHighPriority(bool value = true)
   {
     highPriority = value;
@@ -128,12 +123,12 @@ public:
     layer = value;
   }
 
-  void setActive(bool value)
+  void setActive(bool value = true)
   {
     active = value;
   }
 
-  void setRequired(bool value)
+  void setRequired(bool value = true)
   {
     required = value;
   }
@@ -158,19 +153,13 @@ public:
     exclude = value;
   }
 
-  /* MSFS only. Indicates that add-on is stored in the path "Community". */
-  void setAddOn(bool value)
-  {
-    addOn = value;
-  }
-
   /* MSFS only. Indicates special handling for third-party navdata update scenery areas. */
   bool isNavdataThirdPartyUpdate() const
   {
     return navdataThirdPartyUpdate;
   }
 
-  void setNavdataThirdPartyUpdate(bool value)
+  void setNavdataThirdPartyUpdate(bool value = true)
   {
     navdataThirdPartyUpdate = value;
   }
@@ -182,16 +171,48 @@ public:
     return navdata;
   }
 
-  void setNavdata(bool value)
+  void setNavdata(bool value = true)
   {
     navdata = value;
+  }
+
+  /* MSFS only. Indicates that add-on is stored in the path "Community". */
+  bool isCommunity() const
+  {
+    return community;
+  }
+
+  void setCommunity(bool value = true)
+  {
+    community = value;
+  }
+
+  /* MSFS only. Indicates that add-on is stored in the path "Official" and "Steam" or "OneStore" .*/
+  bool isAddOn() const
+  {
+    return addOn;
+  }
+
+  void setAddOn(bool value = true)
+  {
+    addOn = value;
+  }
+
+  bool isAsoboAirport() const
+  {
+    return asoboAirport;
+  }
+
+  void setAsoboAirport(bool value = true)
+  {
+    asoboAirport = value;
   }
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false, highPriority = false, addOn = false,
+  bool active = false, required = false, highPriority = false, addOn = false, community = false, asoboAirport = false,
        navdataThirdPartyUpdate = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude;
 };

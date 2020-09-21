@@ -73,6 +73,7 @@ private:
 
   /* Update frequencies and other flags MSFS airports if encountering a dummy for COM and procedures */
   void updateMsfsAirport(const bgl::Airport *type, int predId);
+  void fetchAdmin(const bgl::Airport *type, QString& city, QString& state, QString& country, QString& region);
 
   typedef QHash<QString, const atools::fs::bgl::NamelistEntry *> NameListMapType;
   typedef NameListMapType::const_iterator NameListMapConstIterType;

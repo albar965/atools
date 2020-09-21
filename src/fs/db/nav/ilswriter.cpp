@@ -68,14 +68,8 @@ void IlsWriter::writeObject(const Ils *type)
   {
     float ilsHeading = 0.f;
     if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
-    {
-      if(getDataWriter().getSceneryAreaWriter()->getCurrentArea().isNavdataThirdPartyUpdate())
-        // Navigraph update (beta) uses inverted magnetic course
-        ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() - type->getMagVar()));
-      else
-        // MSFS uses magnetic course
-        ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() + type->getMagVar()));
-    }
+      // MSFS uses magnetic course
+      ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading() + type->getMagVar()));
     else
       // FSX and P3D use true course
       ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(loc->getHeading()));

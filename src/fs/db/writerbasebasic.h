@@ -84,6 +84,9 @@ protected:
   /* Binds a null if value == 0 */
   void bindIntOrNull(const QString& placeholder, const QVariant& val);
 
+  /* Binds a null if string val is empty */
+  void bindStrOrNull(const QString& placeholder, const QString& val);
+
   /* Bin a list of numbers in a byte array */
   template<typename TYPE>
   void bindNumberList(const QString& placeholder, const QList<TYPE>& list);

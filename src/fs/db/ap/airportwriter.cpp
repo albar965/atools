@@ -80,8 +80,9 @@ void AirportWriter::writeObject(const Airport *type)
     throw atools::Exception("Found airport without ident");
 
   DataWriter& dw = getDataWriter();
+  const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
-
+  const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
   if(dw.getSceneryAreaWriter()->getCurrentArea().isNavdata())
   {
     // Do a shortcut for MSFS dummies which transport only procedures and COM
@@ -110,14 +111,22 @@ void AirportWriter::writeObject(const Airport *type)
   }
   else
   {
-    // Check if this is an addon airport - if yes start the delete processor
-    bool isRealAddon = getOptions().isAddonLocalPath(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
+    bool isRealAddon = false, // Add-ons need deleteprocessor action
+         isAddon = false; // This flag indicates if the airport is hightlighted as an add-on
 
-    // This is the shown add-on status - can be changed by filter
-    bool isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
+    if(getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+      // MSFS add-on status is set in the scenery area
+      isRealAddon = currentArea.isCommunity() || currentArea.isAddOn();
+    else
+      // Check if this is an addon airport - if yes start the delete processor
+      // Airport is add-on if it is not in the default scenery and not excluded from add-on recognition
+      isRealAddon = getOptions().isAddonLocalPath(sceneryAreaWriter->getCurrentSceneryLocalPath());
 
-    // Third party navdata update - not an addon
-    if(dw.getSceneryAreaWriter()->getCurrentArea().isNavdataThirdPartyUpdate())
+    // This is the shown add-on status - can be changed by filter in GUI
+    isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
+
+    // Third party navdata update or MSFS stock airport in official - not an addon
+    if(currentArea.isNavdataThirdPartyUpdate() || currentArea.isAsoboAirport())
       isAddon = false;
 
     if(isRealAddon && type->getDeleteAirports().isEmpty())
@@ -129,7 +138,11 @@ void AirportWriter::writeObject(const Airport *type)
     if(!type->getDeleteAirports().isEmpty())
       delAp = &type->getDeleteAirports().first();
 
-    deleteProcessor.init(delAp, type, getCurrentId());
+    // Get country, state and city =====================
+    QString city, state, country, region;
+    fetchAdmin(type, city, state, country, region);
+
+    deleteProcessor.init(delAp, type, getCurrentId(), city, state, country, region);
 
     if(getOptions().isDeletes())
     {
@@ -147,34 +160,12 @@ void AirportWriter::writeObject(const Airport *type)
     sceneryLocalPaths.append(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
-    // Get and write country, state and city =====================
-    bindNullString(":country");
-    bindNullString(":state");
-    bindNullString(":city");
-
-    if(type->getRegion().isEmpty())
-      bindNullString(":region");
-    else
-      bind(":region", type->getRegion());
-
-    NameListMapConstIterType it = nameListIndex.find(type->getIdent());
-    if(it != nameListIndex.end())
-    {
-      const NamelistEntry *nl = it.value();
-      if(nl != nullptr)
-      {
-        bind(":country", getDataWriter().getLanguage(nl->getCountryName()));
-        bind(":state", getDataWriter().getLanguage(nl->getStateName()));
-        bind(":city", getDataWriter().getLanguage(nl->getCityName()));
-
-        if(!nl->getRegionIdent().isEmpty())
-          bind(":region", nl->getRegionIdent());
-      }
-      // else if(!type->isMsfsDummyAirport())
-      // qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " is null";
-    }
-    // else if(!type->isMsfsDummyAirport())
-    // qWarning().nospace().noquote() << "NameEntry for airport " << type->getIdent() << " not found";
+    // Write country, state and city =====================
+    bindStrOrNull(":name", getDataWriter().getLanguage(type->getName()));
+    bindStrOrNull(":city", city);
+    bindStrOrNull(":state", state);
+    bindStrOrNull(":country", country);
+    bindStrOrNull(":region", region);
 
     bind(":airport_id", nextAirportId);
     bind(":file_id", bglFileWriter->getCurrentId());
@@ -182,8 +173,6 @@ void AirportWriter::writeObject(const Airport *type)
     bindNullString(":icao");
     bindNullString(":iata");
     bindNullString(":xpident");
-
-    bind(":name", getDataWriter().getLanguage(type->getName()));
 
     bind(":fuel_flags", type->getFuelFlags());
 
@@ -360,7 +349,7 @@ int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident)
   return newId;
 }
 
-void atools::fs::db::AirportWriter::updateMsfsAirport(const Airport *type, int predId)
+void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
 {
   int towerFrequency = 0, unicomFrequency = 0, awosFrequency = 0, asosFrequency = 0, atisFrequency = 0;
   Airport::extractMainComFrequencies(type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency,
@@ -381,6 +370,22 @@ void atools::fs::db::AirportWriter::updateMsfsAirport(const Airport *type, int p
   query.bindValue(":num_approach", type->getApproaches().size());
   query.bindValue(":id", predId);
   query.exec();
+}
+
+void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& state, QString& country, QString& region)
+{
+  const NamelistEntry *nl = nameListIndex.value(type->getIdent(), nullptr);
+  if(nl != nullptr)
+  {
+    city = getDataWriter().getLanguage(nl->getCityName());
+    state = getDataWriter().getLanguage(nl->getStateName());
+    country = getDataWriter().getLanguage(nl->getCountryName());
+
+    if(!type->getRegion().isEmpty())
+      region = type->getRegion();
+    else if(!nl->getRegionIdent().isEmpty())
+      region = nl->getRegionIdent();
+  }
 }
 
 } // namespace writer

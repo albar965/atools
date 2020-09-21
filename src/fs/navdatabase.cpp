@@ -498,6 +498,7 @@ int NavDatabase::countMsfsSteps(const SceneryCfg& cfg)
   total++; // Load translations
 
   total += countMsSimSteps();
+  total--; // No TACAN merge
 
   return total;
 }
@@ -589,7 +590,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Create a single Navigraph scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("Navigraph"), QString());
+    atools::fs::scenery::SceneryArea area(1, tr("Navigraph"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -603,7 +604,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   else if(sim == atools::fs::FsPaths::XPLANE11)
   {
     // Create a single X-Plane scenery area
-    atools::fs::scenery::SceneryArea area(1, 1, tr("X-Plane"), QString());
+    atools::fs::scenery::SceneryArea area(1, tr("X-Plane"), QString());
 
     // Prepare error collection for single area
     if(errors != nullptr)
@@ -676,7 +677,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
       return;
   }
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
@@ -690,7 +691,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Remove all unreferenced dummy waypoints that were added for airway generation
-    if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Merging VOR and TACAN to VORTAC"))))
+    if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Cleaning up waypoints"))))
       return;
   }
 
@@ -1088,11 +1089,16 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
       NavDatabaseErrors::SceneryErrors err = NavDatabaseErrors::SceneryErrors();
       fsDataWriter->setSceneryErrors(errors != nullptr ? &err : nullptr);
 
-      if(options->getSimulatorType() == atools::fs::FsPaths::MSFS && area.isAddOn())
+      if(options->getSimulatorType() == atools::fs::FsPaths::MSFS && (area.isAddOn() || area.isCommunity()))
       {
         // Load package specific material library for MSFS
         materialLib.clear();
-        materialLib.readCommunity(buildPathNoCase({options->getBasepath(), "Community", area.getLocalPath()}));
+
+        if(area.isCommunity())
+          materialLib.readCommunity(options->getMsfsCommunityPath() + SEP + area.getLocalPath());
+        else if(area.isAddOn())
+          materialLib.readCommunity(options->getMsfsOfficialPath() + SEP + area.getLocalPath());
+
         fsDataWriter->setMaterialLibScenery(&materialLib);
       }
 
@@ -1319,53 +1325,96 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
-  SceneryArea area(0, 0, tr("Base Airports"), "fs-base");
-  area.setActive(true);
+  int areaNum = 0;
+  SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
+  area.setActive();
   cfg.appendArea(area);
 
-  SceneryArea areaNav(1, 1, tr("Base Navigation"), "fs-base-nav");
-  areaNav.setActive(true);
-  areaNav.setNavdata(true); // Set flag to allow dummy airport handling
+  SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
+  areaNav.setActive();
+  areaNav.setNavdata(); // Set flag to allow dummy airport handling
   cfg.appendArea(areaNav);
 
-  // TODO read other add-on packages
+  scenery::LayoutJson layout;
+  scenery::ManifestJson manifest;
+
+  // Read add-on packages in official ===============================
+  QDir dir(options->getMsfsOfficialPath(), QString(),
+           QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+  QString baseName = dir.dirName();
+  for(const QFileInfo& fileinfo : dir.entryInfoList())
+  {
+    QString name = fileinfo.fileName();
+
+    if(name == "fs-base-nav" || name == "fs-base")
+      // Already read before
+      continue;
+
+    // Read manifest to check type
+    manifest.clear();
+    manifest.read(fileinfo.filePath() + SEP + "manifest.json");
+
+    if(manifest.getContentType() == "SCENERY")
+    {
+      // Read BGL and material file locations from layout file
+      layout.clear();
+      layout.read(fileinfo.filePath() + SEP + "layout.json");
+
+      if(!layout.getBglPaths().isEmpty())
+      {
+        SceneryArea area(areaNum++, baseName, name);
+
+        if(name.startsWith("asobo-airport-"))
+          // These will not be indicated as add-on in the GUI
+          area.setAsoboAirport(true);
+
+        // Indicate add-on in official path
+        area.setAddOn(true);
+
+        // Detect Navigraph navdata update packages for special handling
+        area.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
+
+        cfg.getAreas().append(area);
+      }
+    }
+  }
 
   // Read community packages ===============================
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Community\ADDON
-  QDir dir(buildPathNoCase({options->getBasepath(), "Community"}), QString(),
-           QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
-
-  int areaNum = nextAreaNum(cfg.getAreas());
-  scenery::LayoutJson layout;
-  scenery::ManifestJson manifest;
+  dir = QDir(options->getMsfsCommunityPath(), QString(),
+             QDir::Name | QDir::IgnoreCase, QDir::Dirs | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
   for(const QFileInfo& fileinfo : dir.entryInfoList())
   {
     // Read BGL and material file locations from layout file
     layout.clear();
-    layout.read(buildPathNoCase({fileinfo.filePath(), "layout.json"}));
+    layout.read(fileinfo.filePath() + SEP + "layout.json");
 
     if(!layout.getBglPaths().isEmpty())
     {
-      SceneryArea area(areaNum, areaNum, tr("Community"), fileinfo.fileName());
-      area.setAddOn(true);
+      SceneryArea area(areaNum++, tr("Community"), fileinfo.fileName());
+      area.setCommunity(true);
 
       // Detect Navigraph navdata update packages for special handling
       manifest.clear();
-      manifest.read(buildPathNoCase({fileinfo.filePath(), "manifest.json"}));
-      // "content_type": "SCENERY",
-      // "title": "Navigraph Navdata Cycle 2010-revision.10",
-      // "creator": "Navigraph",
-      area.setNavdataThirdPartyUpdate(manifest.getContentType() == "SCENERY" &&
-                                      manifest.getCreator().contains("Navigraph") &&
-                                      manifest.getTitle().contains("Navigraph") &&
-                                      manifest.getTitle().contains("Navdata") &&
-                                      manifest.getTitle().contains("Cycle"));
+      manifest.read(fileinfo.filePath() + SEP + "manifest.json");
+      area.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
 
       cfg.getAreas().append(area);
-      areaNum++;
     }
   }
+}
+
+bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
+{
+  // "content_type": "SCENERY",
+  // "title": "Navigraph Navdata Cycle 2010-revision.10",
+  // "creator": "Navigraph",
+  return manifest.getContentType() == "SCENERY" &&
+         manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
+         manifest.getTitle().contains("Navigraph", Qt::CaseInsensitive) &&
+         manifest.getTitle().contains("Navdata", Qt::CaseInsensitive) &&
+         manifest.getTitle().contains("Cycle", Qt::CaseInsensitive);
 }
 
 void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)

@@ -82,6 +82,14 @@ void WriterBaseBasic::bindIntOrNull(const QString& placeholder, const QVariant& 
     return sqlQuery.bindValue(placeholder, val);
 }
 
+void WriterBaseBasic::bindStrOrNull(const QString& placeholder, const QString& val)
+{
+  if(val.isEmpty())
+    bindNullString(placeholder);
+  else
+    return sqlQuery.bindValue(placeholder, val);
+}
+
 void WriterBaseBasic::bindNullInt(const QString& placeholder)
 {
   return sqlQuery.bindValue(placeholder, QVariant(QVariant::Int));

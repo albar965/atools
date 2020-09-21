@@ -106,9 +106,9 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
 
   // Get facility counts and ID for previous airport to save some empty queries
   selectAirportStmt->prepare(
-    "select airport_id, num_apron, num_com, num_helipad, num_taxi_path, num_runways, "
-    "num_approach, num_starts, is_addon, rating, "
-    "bgl_filename, scenery_local_path, altitude, lonx, laty "
+    "select airport_id, name, city, state, country, region, "
+    "num_apron, num_com, num_helipad, num_taxi_path, num_runways, num_approach, num_starts, "
+    "is_addon, rating, bgl_filename, scenery_local_path, altitude, lonx, laty "
     "from airport where ident = :apIdent and airport_id <> :curApId order by airport_id desc limit 1");
 
   // Delete all facilities of the old airport
@@ -194,14 +194,20 @@ DeleteProcessor::~DeleteProcessor()
   delete fetchBoundingStmt;
 }
 
-void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport *airport,
-                           int airportId)
+void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport *airport, int airportId,
+                           const QString& city, const QString& state, const QString& country, const QString& region)
 {
   if(options.isVerbose())
     qInfo() << Q_FUNC_INFO << airport->getIdent() << "current id" << currentAirportId;
 
   newAirport = airport;
   currentAirportId = airportId;
+  curName = airport->getName();
+  curCity = city;
+  curState = state;
+  curCountry = country;
+  curRegion = region;
+
   ident = newAirport->getIdent();
   deleteAirport = deleteAirportRec;
   deleteFlags = bgl::del::NONE;
@@ -239,6 +245,18 @@ void DeleteProcessor::postProcessDelete()
   if(options.isVerbose())
     qInfo() << Q_FUNC_INFO << newAirport->getIdent() << "current id" << currentAirportId;
   QStringList copyAirportColumns;
+
+  // Copy all names over from the previous airport if this one has empty names =================
+  if(!prevName.isEmpty() && curName.isEmpty())
+    copyAirportColumns.append("name");
+  if(!prevCity.isEmpty() && curCity.isEmpty())
+    copyAirportColumns.append("city");
+  if(!prevState.isEmpty() && curState.isEmpty())
+    copyAirportColumns.append("state");
+  if(!prevCountry.isEmpty() && curCountry.isEmpty())
+    copyAirportColumns.append("country");
+  if(!prevRegion.isEmpty() && curRegion.isEmpty())
+    copyAirportColumns.append("region");
 
   if(prevHasApproach)
   {
@@ -584,35 +602,41 @@ void DeleteProcessor::extractPreviousAirportFeatures()
 
   if(selectAirportStmt->next())
   {
-    prevHasApproach |= selectAirportStmt->value("num_approach").toInt() > 0;
-    prevHasApron |= selectAirportStmt->value("num_apron").toInt() > 0;
-    prevHasCom |= selectAirportStmt->value("num_com").toInt() > 0;
-    prevHasHelipad |= selectAirportStmt->value("num_helipad").toInt() > 0;
-    prevHasTaxi |= selectAirportStmt->value("num_taxi_path").toInt() > 0;
-    prevHasRunways |= selectAirportStmt->value("num_runways").toInt() > 0;
-    prevHasStart |= selectAirportStmt->value("num_starts").toInt() > 0;
-    isAddon |= selectAirportStmt->value("is_addon").toBool();
-    previousRating = std::max(previousRating, selectAirportStmt->value("rating").toInt());
+    prevHasApproach |= selectAirportStmt->valueInt("num_approach") > 0;
+    prevHasApron |= selectAirportStmt->valueInt("num_apron") > 0;
+    prevHasCom |= selectAirportStmt->valueInt("num_com") > 0;
+    prevHasHelipad |= selectAirportStmt->valueInt("num_helipad") > 0;
+    prevHasTaxi |= selectAirportStmt->valueInt("num_taxi_path") > 0;
+    prevHasRunways |= selectAirportStmt->valueInt("num_runways") > 0;
+    prevHasStart |= selectAirportStmt->valueInt("num_starts") > 0;
+    isAddon |= selectAirportStmt->valueBool("is_addon");
+    previousRating = std::max(previousRating, selectAirportStmt->valueInt("rating"));
 
-    sceneryLocalPath = selectAirportStmt->value("scenery_local_path").toString();
-    bglFilename = selectAirportStmt->value("bgl_filename").toString();
+    sceneryLocalPath = selectAirportStmt->valueStr("scenery_local_path");
+    bglFilename = selectAirportStmt->valueStr("bgl_filename");
 
-    prevPos = atools::geo::Pos(selectAirportStmt->value("lonx").toFloat(),
-                               selectAirportStmt->value("laty").toFloat());
+    prevPos = atools::geo::Pos(selectAirportStmt->valueFloat("lonx"),
+                               selectAirportStmt->valueFloat("laty"));
 
-    prevAirportId = selectAirportStmt->value("airport_id").toInt();
+    prevAirportId = selectAirportStmt->valueInt("airport_id");
+
+    prevName = selectAirportStmt->valueStr("name");
+    prevCity = selectAirportStmt->valueStr("city");
+    prevState = selectAirportStmt->valueStr("state");
+    prevCountry = selectAirportStmt->valueStr("country");
+    prevRegion = selectAirportStmt->valueStr("region");
 
     hasPrevious = true;
 
-    if(selectAirportStmt->valueInt("altitude") !=
-       atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude())))
-      qInfo().nospace().noquote()
-        << "Add-on airport altitude for "
-        << newAirport->getIdent()
-        << " changed from " << selectAirportStmt->valueInt("altitude") << " ft"
-        << " (BGL " << sceneryLocalPath << "/" << bglFilename << ")"
-        << " to " << atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude()))
-        << " ft";
+    // if(selectAirportStmt->valueInt("altitude") !=
+    // atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude())))
+    // qInfo().nospace().noquote()
+    // << "Add-on airport altitude for "
+    // << newAirport->getIdent()
+    // << " changed from " << selectAirportStmt->valueInt("altitude") << " ft"
+    // << " (BGL " << sceneryLocalPath << "/" << bglFilename << ")"
+    // << " to " << atools::roundToInt(atools::geo::meterToFeet(newAirport->getPosition().getAltitude()))
+    // << " ft";
   }
   selectAirportStmt->finish();
 }
