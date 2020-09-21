@@ -220,9 +220,24 @@ QString FsPaths::getMsfsOfficialPath()
   return msfsOfficialPath;
 }
 
+QString FsPaths::getMsfsOfficialPath(const QString& basePath)
+{
+  if(checkDir(basePath + SEP + "Official" + SEP + "OneStore"))
+    return basePath + SEP + "Official" + SEP + "OneStore";
+  else if(checkDir(basePath + SEP + "Official" + SEP + "Steam"))
+    return basePath + SEP + "Official" + SEP + "Steam";
+  else
+    return QString();
+}
+
 QString FsPaths::getMsfsCommunityPath()
 {
   return msfsCommunityPath;
+}
+
+QString FsPaths::getMsfsCommunityPath(const QString& basePath)
+{
+  return basePath + SEP + "Community";
 }
 
 QString FsPaths::initBasePath(SimulatorType type)
@@ -445,8 +460,11 @@ QString FsPaths::initFilesPath(SimulatorType type)
 
     case atools::fs::FsPaths::MSFS:
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
-      // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\LocalState ?
       fsFilesDir = msfsSimPath + SEP + "LocalState";
+      if(!checkDir(fsFilesDir))
+        // Steam uses top level as path
+        // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
+        fsFilesDir = msfsSimPath;
       break;
 
     case atools::fs::FsPaths::FSX:

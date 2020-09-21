@@ -95,14 +95,23 @@ public:
    * etc. Returns the documents path if FS files cannot be found. */
   static QString getFilesPath(atools::fs::FsPaths::SimulatorType type);
 
-  /* Path to scenery.cfg for FSX/P3D or Content.xml for MSFS. Empty for X-Plane. */
+  /* Path to scenery.cfg for FSX/P3D. Empty for X-Plane and MSFS. */
   static QString getSceneryLibraryPath(atools::fs::FsPaths::SimulatorType type);
 
   /* Path to official MSFS scenery containing fs-base and fs-base-nav */
   static QString getMsfsOfficialPath();
 
-  /* Path to community folder */
+  /* Path to official folder for changed base where base is like
+   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
+   *  Checking for OneStore and Steam folders */
+  static QString getMsfsOfficialPath(const QString& basePath);
+
+  /* Path to community folder. Default. */
   static QString getMsfsCommunityPath();
+
+  /* Path to community folder for changed base where base is like
+   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/*/
+  static QString getMsfsCommunityPath(const QString& basePath);
 
   /* Short abbreviated names */
   static QString typeToShortName(atools::fs::FsPaths::SimulatorType type);
