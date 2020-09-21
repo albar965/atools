@@ -358,12 +358,12 @@ foreign key(file_id) references bgl_file(bgl_file_id),
 foreign key(airport_id) references airport(airport_id)
 );
 
-create index if not exists idx_nav_search_waypoint_id on nav_search(waypoint_id);
-create index if not exists idx_nav_search_vor_id on nav_search(vor_id);
-create index if not exists idx_nav_search_ndb_id on nav_search(ndb_id);
-create index if not exists idx_nav_search_file_id on nav_search(file_id);
-create index if not exists idx_nav_search_airport_id on nav_search(airport_id);
-
+-- Used in FK but not in search
+--create index if not exists idx_nav_search_waypoint_id on nav_search(waypoint_id);
+--create index if not exists idx_nav_search_vor_id on nav_search(vor_id);
+--create index if not exists idx_nav_search_ndb_id on nav_search(ndb_id);
+--create index if not exists idx_nav_search_file_id on nav_search(file_id);
+--create index if not exists idx_nav_search_airport_id on nav_search(airport_id);
 
 -- **************************************************
 

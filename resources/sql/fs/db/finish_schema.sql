@@ -106,9 +106,6 @@ create index if not exists idx_airport_medium_rating on airport_medium(rating);
 create index if not exists idx_airport_medium_is_addon on airport_medium(is_addon);
 create index if not exists idx_airport_medium_is_3d on airport_medium(is_3d);
 
--------------------------------------------------------------------------------------------
-
-create index if not exists idx_taxi_path_type on taxi_path(type);
 
 -- Collect table and index statistics
 -- Disabled for now since it can cause queries to freeze
