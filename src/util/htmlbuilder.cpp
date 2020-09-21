@@ -345,7 +345,8 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::
   flags |= row2AlignRightFlag ? html::ALIGN_RIGHT : html::NONE;
   htmlText += alt(flags & html::ALIGN_RIGHT ? tableRowAlignRight : tableRow).
               arg(asText(name, flags | html::BOLD, color)).
-              arg(asText(value, flags, color));
+              // Add space to avoid formatting issues with table
+              arg(value.isEmpty() ? "&nbsp;" : asText(value, flags, color));
   tableIndex++;
   numLines++;
   return *this;

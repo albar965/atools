@@ -76,6 +76,11 @@ void FileHistoryHandler::addFile(const QString& filename)
   }
 }
 
+QString FileHistoryHandler::getTopFile() const
+{
+  return filePaths.value(0);
+}
+
 void FileHistoryHandler::removeFile(const QString& filename)
 {
   filePaths.removeAll(QDir::toNativeSeparators(filename));

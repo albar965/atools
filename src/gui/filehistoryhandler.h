@@ -57,6 +57,9 @@ public:
   /* Add a file that will be prependend to the list of recent files */
   void addFile(const QString& filename);
 
+  /* Get the topmost file on the stack or empty string if no entries */
+  QString getTopFile() const;
+
   /* Remove a file from the list of recent files because it does not exist anymore. */
   void removeFile(const QString& filename);
 
@@ -73,6 +76,11 @@ public:
   /* Enable or disable all file menu entries - not the clear action */
   void enableAll();
   void disableAll();
+
+  bool isEmpty() const
+  {
+    return filePaths.isEmpty();
+  }
 
 signals:
   /* Emitted when the user selects a recent file action */
@@ -92,7 +100,7 @@ private:
   /* Name prefix for settings file */
   QString settings;
 
-  int maxEntries = 20;
+  int maxEntries = 30;
 };
 
 } // namespace gui
