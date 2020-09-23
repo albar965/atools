@@ -441,20 +441,20 @@ void DockWidgetHandler::setAutoRaiseMainWindow(bool value)
   dockEventFilter->autoRaiseMainWindow = value;
 }
 
-bool DockWidgetHandler::isStayOnTop() const
+void DockWidgetHandler::setStayOnTop(QWidget *window, bool value) const
 {
-  return mainWindow->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
-}
-
-void DockWidgetHandler::setStayOnTop(bool value)
-{
-  if(mainWindow->windowFlags().testFlag(Qt::WindowStaysOnTopHint) != value)
+  if(window->windowFlags().testFlag(Qt::WindowStaysOnTopHint) != value)
   {
-    mainWindow->setWindowFlag(Qt::WindowStaysOnTopHint, value);
+    window->setWindowFlag(Qt::WindowStaysOnTopHint, value);
 
     // Need to reopen window since changing window flags closes window
-    mainWindow->show();
+    window->show();
   }
+}
+
+bool DockWidgetHandler::isStayOnTop(QWidget *window) const
+{
+  return window->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
 }
 
 void DockWidgetHandler::setDockingAllowed(bool value)

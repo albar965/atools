@@ -38,6 +38,7 @@
 #include <QTableView>
 #include <QTreeView>
 #include <QTextEdit>
+#include <QActionGroup>
 #include <QTableWidget>
 #include <QTreeWidget>
 #include <QListWidget>
@@ -106,6 +107,17 @@ void WidgetState::save(const QObject *widget) const
     {
       if(a->isCheckable())
         saveWidget(s, a, a->isChecked());
+    }
+    else if(const QActionGroup *ag = dynamic_cast<const QActionGroup *>(widget))
+    {
+      QStringList actions;
+      for(const QAction *a : ag->actions())
+      {
+        if(a->isChecked())
+          actions.append(a->objectName());
+      }
+      actions.removeAll(QString());
+      saveWidget(s, ag, actions);
     }
     else if(const QHeaderView *hv = dynamic_cast<const QHeaderView *>(widget))
       saveWidget(s, hv, hv->saveState());
@@ -262,6 +274,19 @@ void WidgetState::restore(QObject *widget) const
         QVariant v = loadWidget(s, widget);
         if(v.isValid())
           a->setChecked(v.toBool());
+      }
+    }
+    else if(QActionGroup *ag = dynamic_cast<QActionGroup *>(widget))
+    {
+      QVariant v = loadWidget(s, ag);
+      if(v.isValid())
+      {
+        QStringList actions(v.toStringList());
+        for(QAction *a : ag->actions())
+        {
+          if(actions.contains(a->objectName()))
+            a->setChecked(true);
+        }
       }
     }
     else if(QHeaderView *hv = dynamic_cast<QHeaderView *>(widget))

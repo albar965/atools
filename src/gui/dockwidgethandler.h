@@ -113,9 +113,9 @@ public:
   bool isAutoRaiseMainWindow() const;
   void setAutoRaiseMainWindow(bool value);
 
-  /* Keep main window on top of others */
-  bool isStayOnTop() const;
-  void setStayOnTop(bool value);
+  /* Keep window on top of others */
+  bool isStayOnTop(QWidget *window) const;
+  void setStayOnTop(QWidget *window, bool value) const;
 
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool value);

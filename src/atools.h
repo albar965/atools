@@ -374,11 +374,22 @@ QString ratingString(int value, int maxValue);
 QTime timeFromHourMinStr(const QString& timeStr);
 
 template<typename TYPE>
-int sign(TYPE t)
+Q_DECL_CONSTEXPR int sign(TYPE t)
 {
   if(static_cast<double>(t) > 0.)
     return 1;
   else if(static_cast<double>(t) < 0.)
+    return -1;
+  else
+    return 0;
+}
+
+template<>
+Q_DECL_CONSTEXPR int sign<int>(int t)
+{
+  if(t > 0)
+    return 1;
+  else if(t < 0)
     return -1;
   else
     return 0;
