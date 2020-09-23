@@ -126,7 +126,14 @@ public:
     metarResults = value;
   }
 
-  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground, float vertSpeed, float tas, float fuelflow, float totalFuel, float ice);
+  /* Empty weather replies or metar replys. Aircraft is not valid. */
+  bool isEmptyReply() const
+  {
+    return packetId == 0;
+  }
+
+  static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground,
+                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice);
 
   bool isUserAircraftValid() const
   {

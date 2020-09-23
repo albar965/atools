@@ -274,10 +274,10 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
 
     handler->fetchWeatherData(data);
 
-    // Weather requests and reply always have packet it 0
+    // Weather requests and reply always have packet id 0
     data.setPacketId(0);
 
-    // Force an empty reply to the client - even no weather was fetched
+    // Force an empty reply to the client - even if no weather was fetched
     retval = true;
   }
   else
