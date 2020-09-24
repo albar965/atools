@@ -86,17 +86,17 @@
 <context>
     <name>DataWriter</name>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="386"/>
+        <location filename="src/fs/db/datawriter.cpp" line="394"/>
         <source>Cannot read file. Falling back to world magnetic model.</source>
         <translation>无法读取文件。已退回到世界磁模型。</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="399"/>
+        <location filename="src/fs/db/datawriter.cpp" line="407"/>
         <source>File not valid. Falling back to world magnetic model.</source>
         <translation>文件无效。已退回到世界磁模型。</translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="406"/>
+        <location filename="src/fs/db/datawriter.cpp" line="414"/>
         <source>File not found. Falling back to world magnetic model.</source>
         <translation>文件未找到。已退回到世界磁模型。</translation>
     </message>
@@ -145,12 +145,12 @@ File: &quot;%2&quot;
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="162"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="163"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>“%2” 不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="169"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="170"/>
         <source>&quot;%2&quot; does not exist.</source>
         <translation>“%2” 不存在。</translation>
     </message>
@@ -942,42 +942,42 @@ File: &quot;%2&quot;
 <context>
     <name>Navdatabase</name>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="117"/>
+        <location filename="src/fs/navdatabase.cpp" line="118"/>
         <source>Removing Views</source>
         <translation>移除视图</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="123"/>
+        <location filename="src/fs/navdatabase.cpp" line="124"/>
         <source>Removing Routing and Search</source>
         <translation>移除路径及搜索</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="129"/>
+        <location filename="src/fs/navdatabase.cpp" line="130"/>
         <source>Removing Navigation Aids</source>
         <translation>移除助航设备</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="135"/>
+        <location filename="src/fs/navdatabase.cpp" line="136"/>
         <source>Removing Airport Facilites</source>
         <translation>移除机场设施</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="141"/>
+        <location filename="src/fs/navdatabase.cpp" line="142"/>
         <source>Removing Approaches</source>
         <translation>移除进近</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="147"/>
+        <location filename="src/fs/navdatabase.cpp" line="148"/>
         <source>Removing Airports</source>
         <translation>移除机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="153"/>
+        <location filename="src/fs/navdatabase.cpp" line="154"/>
         <source>Removing Metadata</source>
         <translation>移除元数据</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="160"/>
+        <location filename="src/fs/navdatabase.cpp" line="161"/>
         <source>Creating Database Schema</source>
         <translation>正在创建数据库架构</translation>
     </message>
@@ -1014,12 +1014,12 @@ File: &quot;%2&quot;
         <translation type="vanished">目录不存在</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="591"/>
+        <location filename="src/fs/navdatabase.cpp" line="593"/>
         <source>Navigraph</source>
         <translation>导航图</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="605"/>
+        <location filename="src/fs/navdatabase.cpp" line="607"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
@@ -1028,188 +1028,192 @@ File: &quot;%2&quot;
         <translation type="vanished">创建航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="187"/>
+        <location filename="src/fs/navdatabase.cpp" line="188"/>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="197"/>
+        <location filename="src/fs/navdatabase.cpp" line="198"/>
         <source>Unknown exception while reading file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="681"/>
-        <location filename="src/fs/navdatabase.cpp" line="692"/>
+        <location filename="src/fs/navdatabase.cpp" line="683"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>合并 VOR 及 TACAN 到 VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="686"/>
+        <location filename="src/fs/navdatabase.cpp" line="688"/>
         <source>Updating waypoints</source>
         <translation>正在更新航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="697"/>
+        <location filename="src/fs/navdatabase.cpp" line="694"/>
+        <source>Cleaning up waypoints</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="699"/>
         <source>Updating approaches</source>
         <translation>正在更新进近</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="700"/>
+        <location filename="src/fs/navdatabase.cpp" line="702"/>
         <source>Updating Airports</source>
         <translation>正在更新机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="705"/>
-        <location filename="src/fs/navdatabase.cpp" line="712"/>
+        <location filename="src/fs/navdatabase.cpp" line="707"/>
+        <location filename="src/fs/navdatabase.cpp" line="714"/>
         <source>Updating ILS</source>
         <translation>正在更新盲降(ILS)</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="717"/>
+        <location filename="src/fs/navdatabase.cpp" line="719"/>
         <source>Updating ILS Count</source>
         <translation>正在更新盲降(ILS)的数量</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="721"/>
+        <location filename="src/fs/navdatabase.cpp" line="723"/>
         <source>Collecting navaids for search</source>
         <translation>正在收集助航设备以供搜索</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="727"/>
+        <location filename="src/fs/navdatabase.cpp" line="729"/>
         <source>Populating routing tables</source>
         <translation>填充路径表</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="730"/>
+        <location filename="src/fs/navdatabase.cpp" line="732"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>正在为甚高频全向信标（VOR）及全向信标（NDB）创建航路边缘</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="737"/>
+        <location filename="src/fs/navdatabase.cpp" line="739"/>
         <source>Creating route edges waypoints</source>
         <translation>正在创建航路边缘航路点</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="741"/>
+        <location filename="src/fs/navdatabase.cpp" line="743"/>
         <source>Creating indexes for airport</source>
         <translation>正在创建机场索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="746"/>
+        <location filename="src/fs/navdatabase.cpp" line="748"/>
         <source>Clean up runways</source>
         <translation>清理跑道</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="750"/>
+        <location filename="src/fs/navdatabase.cpp" line="752"/>
         <source>Creating indexes for search</source>
         <translation>正在创建索引以供搜索</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="755"/>
+        <location filename="src/fs/navdatabase.cpp" line="757"/>
         <source>Creating indexes for route</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="761"/>
+        <location filename="src/fs/navdatabase.cpp" line="763"/>
         <source>Loading translations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="810"/>
+        <location filename="src/fs/navdatabase.cpp" line="812"/>
         <source>Creating Database preparation Script</source>
         <translation>正在创建数据库准备脚本</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="815"/>
+        <location filename="src/fs/navdatabase.cpp" line="817"/>
         <source>Dropping All Indexes</source>
         <translation>正在丢弃所有索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="822"/>
+        <location filename="src/fs/navdatabase.cpp" line="824"/>
         <source>Vacuum Database</source>
         <translatorcomment>疑似空数据库</translatorcomment>
         <translation>真空数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="830"/>
+        <location filename="src/fs/navdatabase.cpp" line="832"/>
         <source>Analyze Database</source>
         <translation>分析数据库</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="876"/>
-        <location filename="src/fs/navdatabase.cpp" line="904"/>
-        <location filename="src/fs/navdatabase.cpp" line="994"/>
-        <location filename="src/fs/navdatabase.cpp" line="1120"/>
+        <location filename="src/fs/navdatabase.cpp" line="878"/>
+        <location filename="src/fs/navdatabase.cpp" line="906"/>
+        <location filename="src/fs/navdatabase.cpp" line="996"/>
+        <location filename="src/fs/navdatabase.cpp" line="1127"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="879"/>
-        <location filename="src/fs/navdatabase.cpp" line="907"/>
-        <location filename="src/fs/navdatabase.cpp" line="997"/>
-        <location filename="src/fs/navdatabase.cpp" line="1123"/>
+        <location filename="src/fs/navdatabase.cpp" line="881"/>
+        <location filename="src/fs/navdatabase.cpp" line="909"/>
+        <location filename="src/fs/navdatabase.cpp" line="999"/>
+        <location filename="src/fs/navdatabase.cpp" line="1130"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="885"/>
-        <location filename="src/fs/navdatabase.cpp" line="1010"/>
-        <location filename="src/fs/navdatabase.cpp" line="1129"/>
+        <location filename="src/fs/navdatabase.cpp" line="887"/>
+        <location filename="src/fs/navdatabase.cpp" line="1012"/>
+        <location filename="src/fs/navdatabase.cpp" line="1136"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="893"/>
+        <location filename="src/fs/navdatabase.cpp" line="895"/>
         <source>Creating waypoints for procedures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="913"/>
+        <location filename="src/fs/navdatabase.cpp" line="915"/>
         <source>Updating Navids in Waypoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1020"/>
+        <location filename="src/fs/navdatabase.cpp" line="1022"/>
         <source>Preparing Airways</source>
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1137"/>
+        <location filename="src/fs/navdatabase.cpp" line="1144"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1245"/>
+        <location filename="src/fs/navdatabase.cpp" line="1252"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1251"/>
+        <location filename="src/fs/navdatabase.cpp" line="1258"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1257"/>
+        <location filename="src/fs/navdatabase.cpp" line="1264"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1295"/>
+        <location filename="src/fs/navdatabase.cpp" line="1302"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1321"/>
+        <location filename="src/fs/navdatabase.cpp" line="1329"/>
         <source>Base Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1325"/>
+        <location filename="src/fs/navdatabase.cpp" line="1333"/>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1344"/>
+        <location filename="src/fs/navdatabase.cpp" line="1395"/>
         <source>Community</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1275,37 +1279,47 @@ File: &quot;%2&quot;
         <translation>无法打开文件 %1。原因是： %2。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="816"/>
+        <location filename="src/atools.cpp" line="810"/>
+        <source>Directory name is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="818"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="823"/>
+        <location filename="src/atools.cpp" line="825"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="828"/>
+        <location filename="src/atools.cpp" line="830"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="840"/>
+        <location filename="src/atools.cpp" line="842"/>
+        <source>Filepath is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="850"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="847"/>
+        <location filename="src/atools.cpp" line="857"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="852"/>
+        <location filename="src/atools.cpp" line="862"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="857"/>
+        <location filename="src/atools.cpp" line="867"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished"></translation>
     </message>

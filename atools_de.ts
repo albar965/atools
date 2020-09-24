@@ -1032,6 +1032,10 @@ Datei: &quot;%2&quot;
         <source>Unknown exception while reading file</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cleaning up waypoints</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1549,6 +1553,14 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>File &quot;%1&quot; is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directory name is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filepath is empty.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
