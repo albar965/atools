@@ -85,6 +85,10 @@ void MagDecTool::init(int year, int month)
   // Put coeffizients file into a temporary, so that the C code can read it
   atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
 
+  // Have to change locale to C since sscanf which is used in the geomagnetism library is locale dependent
+  char *oldlocale = setlocale(LC_NUMERIC, NULL);
+  setlocale(LC_NUMERIC, "C");
+
 #if defined(Q_OS_WIN32)
   // Windows fopen uses local charset for filename - convert UTF-8 to UTF-16 and use wfopen
   wchar_t *path = new wchar_t[static_cast<unsigned int>(temp.getFilePath().size()) + 1];
@@ -122,6 +126,9 @@ void MagDecTool::init(int year, int month)
   std::memcpy(magdecGrid, declinations.data(), static_cast<unsigned int>(declinations.size()) * sizeof(float));
 
   fclose(f);
+
+  // Reset locale to previous value
+  setlocale(LC_NUMERIC, oldlocale);
 
 #if defined(Q_OS_WIN32)
   delete[] path;
@@ -239,7 +246,7 @@ QVector<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magn
 
   double cord_step_size = 1.;
   if(fabs(cord_step_size) < 1.0e-10)
-    cord_step_size = 99999.0;  // checks to make sure that the step_size is not too small
+    cord_step_size = 99999.0; // checks to make sure that the step_size is not too small
 
   numTerms = ((magneticModel->nMax + 1) * (magneticModel->nMax + 2) / 2);
   timedMagneticModel = MAG_AllocateModelMemory(numTerms);
