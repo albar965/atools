@@ -25,6 +25,8 @@ extern "C" {
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include <locale.h>
+
 
 #include "wmm/GeomagnetismHeader.h"
 #ifdef WRITE_GEOID_BUFFER
@@ -86,7 +88,7 @@ void MagDecTool::init(int year, int month)
   atools::io::TempFile temp(QString(":/atools/resources/wmm/WMM.COF"), "_wmm.cof");
 
   // Have to change locale to C since sscanf which is used in the geomagnetism library is locale dependent
-  char *oldlocale = setlocale(LC_NUMERIC, NULL);
+  char *oldlocale = setlocale(LC_NUMERIC, nullptr);
   setlocale(LC_NUMERIC, "C");
 
 #if defined(Q_OS_WIN32)
@@ -221,13 +223,13 @@ QVector<float> MAG_GridInternal(int year, int month, MAGtype_MagneticModel *magn
   MAGtype_CoordGeodetic minimum;
   minimum.phi = -90.;
   minimum.lambda = -180.;
-  minimum.HeightAboveGeoid = minimum.HeightAboveEllipsoid = 0.f;
+  minimum.HeightAboveGeoid = minimum.HeightAboveEllipsoid = 0.;
   minimum.UseGeoid = 1;
 
   MAGtype_CoordGeodetic maximum;
   maximum.phi = 90.;
   maximum.lambda = 179.;
-  maximum.HeightAboveGeoid = maximum.HeightAboveEllipsoid = 0.f;
+  maximum.HeightAboveGeoid = maximum.HeightAboveEllipsoid = 0.;
   maximum.UseGeoid = 1;
 
   // Only one date - no range
