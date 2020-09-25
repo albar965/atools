@@ -411,8 +411,9 @@ MetarParser::MetarParser(const QString& metar) :
   if(metar.isEmpty())
     return;
 
-  _data = new char[metar.length() + 2]; // make room for " \0"
-  strcpy(_data, metar.toUtf8().data());
+  QByteArray utf8 = metar.toUtf8();
+  _data = new char[utf8.size() + 2]; // make room for " \0"
+  strcpy(_data, utf8.data());
   _url = _data;
 
   normalizeData();

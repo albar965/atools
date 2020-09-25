@@ -3,6 +3,40 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+Version 3.6.1.beta
+
+FSX, P3D and MSFS:
+
+* Fix for blinking aircraft when updating weather over SimConnect.
+
+MSFS:
+
+* Fixed issue with `NOT NULL constraint failed:tmp_waypoint.ident Unable to fetch...`.
+  Navids with empty names are now ignored and printed into the log with BGL file name.
+* Changed default MSFS Steam flight plan path to base folder `Microsoft Flight Simulator`.
+* Workaround for wrong 0/0 positions sent out by MSFS.
+* Localizer heading for MSFS now saved correctly in scenery database.
+* Also looking in `OneStore` and `Steam` folder for add-ons now.
+* Updating administrative names in airports now if missing in update. This also corrects missing
+  names for the Navigraph navdata update.
+* Adapted to Navigraph navdata update 12 for MSFS.
+  Updating only needed features which are airports, COM and ILS. Everything else is ignored and not
+  needed since it can be updated directly for Little Navmap.
+* Corrected ILS course for Navigraph update in simulator. Slight variations like for EDDM remain.
+
+Other:
+
+* Airports with empty names now raise an exception which will show an error dialog to the user.
+* Htmlbuilder now adds space for tables if value is empty to avoid layout issues.
+* Removed unneeded indexes from tables `nav_search` and `taxi_path` to shrink database.
+* Updated to world magnetic model 2020. This will be used to calculate X-Plane declination when
+  loading the scenery database.
+* Fixed issue where declination was not created correctly for locale which do not have a . as
+  decimal separator. This is due to functions in WMM code. As a result of the issue declination was
+  20 degrees off near VORDME STN in X-Plane, for example. #564
+
+===============================================================================
+
 Version 3.6.0.beta
 
 Flight plan export (class FlightplanIO):
