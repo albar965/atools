@@ -35,7 +35,6 @@
 #include "fs/db/dbairportindex.h"
 #include "fs/db/nav/waypointwriter.h"
 #include "fs/db/ap/comwriter.h"
-#include "fs/db/ap/deleteairportwriter.h"
 #include "fs/bgl/ap/parking.h"
 #include "fs/scenery/languagejson.h"
 #include "atools.h"
@@ -321,9 +320,6 @@ void AirportWriter::writeObject(const Airport *type)
     {
       if(delAp != nullptr)
       {
-        // Write metadata for delete record
-        dw.getDeleteAirportWriter()->writeOne(delAp);
-
         if(getOptions().isDeletes())
           // Now delete the stock/default airport
           deleteProcessor.postProcessDelete();

@@ -49,7 +49,6 @@
 #include "fs/db/ap/taxipathwriter.h"
 #include "fs/db/nav/boundarywriter.h"
 #include "fs/progresshandler.h"
-#include "fs/db/ap/deleteairportwriter.h"
 #include "fs/scenery/fileresolver.h"
 #include "fs/db/meta/sceneryareawriter.h"
 #include "atools.h"
@@ -96,7 +95,6 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   airportApronWriter = new ApronWriter(db, *this);
   airportComWriter = new ComWriter(db, *this);
   airportTaxiPathWriter = new TaxiPathWriter(db, *this);
-  deleteAirportWriter = new DeleteAirportWriter(db, *this);
   waypointWriter = new WaypointWriter(db, *this);
   airwaySegmentWriter = new AirwaySegmentWriter(db, *this);
   vorWriter = new VorWriter(db, *this);
@@ -152,8 +150,6 @@ void DataWriter::close()
   airportTaxiPathWriter = nullptr;
   delete airportComWriter;
   airportComWriter = nullptr;
-  delete deleteAirportWriter;
-  deleteAirportWriter = nullptr;
   delete waypointWriter;
   waypointWriter = nullptr;
   delete airwaySegmentWriter;

@@ -468,7 +468,6 @@ HEADERS += \
   src/fs/db/ap/approachwriter.h \
   src/fs/db/ap/apronwriter.h \
   src/fs/db/ap/comwriter.h \
-  src/fs/db/ap/deleteairportwriter.h \
   src/fs/db/ap/deleteprocessor.h \
   src/fs/db/ap/helipadwriter.h \
   src/fs/db/ap/legbasewriter.h \
@@ -607,7 +606,6 @@ SOURCES += \
   src/fs/db/ap/approachwriter.cpp \
   src/fs/db/ap/apronwriter.cpp \
   src/fs/db/ap/comwriter.cpp \
-  src/fs/db/ap/deleteairportwriter.cpp \
   src/fs/db/ap/deleteprocessor.cpp \
   src/fs/db/ap/helipadwriter.cpp \
   src/fs/db/ap/legbasewriter.cpp \

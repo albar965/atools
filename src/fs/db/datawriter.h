@@ -59,7 +59,6 @@ class TransitionWriter;
 class TransitionLegWriter;
 class ParkingWriter;
 class ComWriter;
-class DeleteAirportWriter;
 class WaypointWriter;
 class AirwaySegmentWriter;
 class VorWriter;
@@ -201,11 +200,6 @@ public:
     return airwaySegmentWriter;
   }
 
-  atools::fs::db::DeleteAirportWriter *getDeleteAirportWriter()
-  {
-    return deleteAirportWriter;
-  }
-
   atools::fs::db::HelipadWriter *getHelipadWriter() const
   {
     return airportHelipadWriter;
@@ -308,8 +302,6 @@ private:
   atools::fs::db::StartWriter *airportStartWriter = nullptr;
   atools::fs::db::ApronWriter *airportApronWriter = nullptr;
   atools::fs::db::TaxiPathWriter *airportTaxiPathWriter = nullptr;
-
-  atools::fs::db::DeleteAirportWriter *deleteAirportWriter = nullptr;
 
   atools::fs::db::WaypointWriter *waypointWriter = nullptr;
   atools::fs::db::AirwaySegmentWriter *airwaySegmentWriter = nullptr;

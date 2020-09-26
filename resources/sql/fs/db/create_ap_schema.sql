@@ -563,28 +563,3 @@ foreign key(airport_id) references airport(airport_id)
 
 create index if not exists idx_parking_airport_id on parking(airport_id);
 
--- **************************************************
-
-drop table if exists delete_airport;
-
--- List of delete airport records. If an add-on airport overrides a default airport and
--- the ProcessDelete option is set in the configuration options the already loaded airport
--- and all attached records (runways, approaches, etc.) will be deleted
-create table delete_airport
-(
-  delete_airport_id integer primary key,
-  airport_id integer not null,
-  num_del_runway integer not null, -- Unused size of faclility list to delete
-  num_del_start integer not null,  -- "
-  num_del_com integer not null,    -- "
-  approaches integer not null,     -- Boolean - if 1 delete the airport facility
-  aprons  integer not null,        -- "
-  frequencies  integer not null,   -- "
-  helipads  integer not null,      -- "
-  runways  integer not null,       -- "
-  starts  integer not null,        -- "
-  taxiways  integer not null,      -- "
-foreign key(airport_id) references airport(airport_id)
-);
-
-create index if not exists idx_delete_airport_airport_id on delete_airport(airport_id);

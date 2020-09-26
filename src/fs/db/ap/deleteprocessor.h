@@ -106,7 +106,6 @@ private:
   *updateRunwayStmt = nullptr,
   *deleteParkingStmt = nullptr,
   *updateParkingStmt = nullptr,
-  *deleteDeleteApStmt = nullptr,
   *fetchRunwayEndIdStmt = nullptr,
   *updateApprochRwIds = nullptr,
   *deleteRunwayEndStmt = nullptr,

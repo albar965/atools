@@ -47,7 +47,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateRunwayStmt = new SqlQuery(sqlDb);
   deleteParkingStmt = new SqlQuery(sqlDb);
   updateParkingStmt = new SqlQuery(sqlDb);
-  deleteDeleteApStmt = new SqlQuery(sqlDb);
 
   fetchRunwayEndIdStmt = new SqlQuery(sqlDb);
   deleteRunwayEndStmt = new SqlQuery(sqlDb);
@@ -119,7 +118,6 @@ DeleteProcessor::DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const NavDatab
   updateParkingStmt->prepare(updateAptFeatureStmt("parking"));
   deleteApronStmt->prepare(delAptFeatureStmt("apron"));
   deleteTaxiPathStmt->prepare(delAptFeatureStmt("taxi_path"));
-  deleteDeleteApStmt->prepare(delAptFeatureStmt("delete_airport"));
 
   // Update NDB and VOR airport ids - resulting duplicates will be deleted later
   updateWpStmt->prepare(updateAptFeatureStmt("waypoint"));
@@ -166,7 +164,6 @@ DeleteProcessor::~DeleteProcessor()
   delete updateRunwayStmt;
   delete deleteParkingStmt;
   delete updateParkingStmt;
-  delete deleteDeleteApStmt;
   delete fetchRunwayEndIdStmt;
   delete deleteRunwayEndStmt;
   delete updateApprochRwIds;
@@ -392,9 +389,6 @@ void DeleteProcessor::postProcessDelete()
 
   copyAirportValues(copyAirportColumns);
   updateBoundingRect();
-
-  // Delete old airport after copying values over
-  bindAndExecute(deleteDeleteApStmt, "delete airports deleted");
 
   removeAirport();
 }
