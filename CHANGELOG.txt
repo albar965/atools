@@ -34,6 +34,8 @@ Other:
 * Fixed issue where declination was not created correctly for locale which do not have a . as
   decimal separator. This is due to functions in WMM code. As a result of the issue declination was
   20 degrees off near VORDME STN in X-Plane, for example. #564
+* Removed unused delete_airport table to speed up loading and to keep database small.
+* Now capitalizing airport, city, state and country names when loading FSX, P3D or MSFS data.
 
 ===============================================================================
 

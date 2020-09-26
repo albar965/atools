@@ -291,6 +291,19 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
                                           toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER);
 }
 
+double Pos::distanceMeterToDouble(const Pos& otherPos) const
+{
+  if(!isValid() || !otherPos.isValid())
+    return INVALID_VALUE;
+  else if(*this == otherPos)
+    return 0.;
+  else
+    return distanceRad(toRadians(static_cast<double>(lonX)),
+                       toRadians(static_cast<double>(latY)),
+                       toRadians(static_cast<double>(otherPos.lonX)),
+                       toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER;
+}
+
 void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& result) const
 {
   result.distance = result.distanceFrom1 = result.distanceFrom2 = INVALID_VALUE;

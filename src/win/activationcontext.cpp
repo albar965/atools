@@ -96,7 +96,7 @@ bool ActivationContext::create(QString manifestPath)
   ACTCTX ctx;
   memset(&ctx, 0, sizeof(ctx));
 
-  wchar_t *manifestWPath = asWChar(manifestPath);
+  LPCWSTR manifestWPath = asWChar(manifestPath);
 
   ctx.cbSize = sizeof(ctx);
   ctx.lpSource = manifestWPath;
@@ -191,13 +191,14 @@ unsigned int ActivationContext::getErrorNumber() const
 bool ActivationContext::loadLibrary(QString libraryName)
 {
   libraryName = QDir::toNativeSeparators(libraryName);
-  QString libraryKey = QFileInfo(libraryName).fileName();
 
   qDebug() << Q_FUNC_INFO << libraryName;
 
 #if defined(Q_OS_WIN32)
-  wchar_t *libraryWPath = asWChar(libraryName);
-  HMODULE hLibrary = LoadLibrary(libraryWPath);
+  QString libraryKey = QFileInfo(libraryName).fileName();
+
+  LPCWSTR libraryWPath = asWChar(libraryName);
+  HMODULE hLibrary = LoadLibraryW(libraryWPath);
   p->lastError = GetLastError();
 
   if(hLibrary != NULL)

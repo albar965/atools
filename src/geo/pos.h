@@ -165,6 +165,7 @@ public:
 
   /* Distance to other point for great circle route */
   float distanceMeterTo(const atools::geo::Pos& otherPos) const;
+  double distanceMeterToDouble(const atools::geo::Pos& otherPos) const;
 
   /* Distance to line formed by pos1 and pos2. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */

@@ -370,12 +370,14 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
 
 void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& state, QString& country, QString& region)
 {
+  const static QSet<QString> TOLOWER({"of", "and"});
+
   const NamelistEntry *nl = nameListIndex.value(type->getIdent(), nullptr);
   if(nl != nullptr)
   {
-    city = getDataWriter().getLanguage(nl->getCityName());
-    state = getDataWriter().getLanguage(nl->getStateName());
-    country = getDataWriter().getLanguage(nl->getCountryName());
+    city = atools::capString(getDataWriter().getLanguage(nl->getCityName()), {}, TOLOWER);
+    state = atools::capString(getDataWriter().getLanguage(nl->getStateName()), {}, TOLOWER);
+    country = atools::capString(getDataWriter().getLanguage(nl->getCountryName()), {}, TOLOWER);
 
     if(!type->getRegion().isEmpty())
       region = type->getRegion();
