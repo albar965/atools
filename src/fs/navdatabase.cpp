@@ -1325,6 +1325,16 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
+  // QString contentXmlPath;
+  //// MS Online Installation
+  // if(atools::checkFile(options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml"))
+  // contentXmlPath = options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml";
+  //// Steam or boxed Installation
+  // else if(atools::checkFile(options->getBasepath() + SEP + "Content.xml"))
+  // contentXmlPath = options->getBasepath() + SEP + "Content.xml";
+  // scenery::ContentXml contentXml;
+  // contentXml.read(contentXmlPath);
+
   int areaNum = 0;
   SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
   area.setActive();
