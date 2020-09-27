@@ -86,17 +86,17 @@
 <context>
     <name>DataWriter</name>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="394"/>
+        <location filename="src/fs/db/datawriter.cpp" line="390"/>
         <source>Cannot read file. Falling back to world magnetic model.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="407"/>
+        <location filename="src/fs/db/datawriter.cpp" line="403"/>
         <source>File not valid. Falling back to world magnetic model.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/db/datawriter.cpp" line="414"/>
+        <location filename="src/fs/db/datawriter.cpp" line="410"/>
         <source>File not found. Falling back to world magnetic model.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -395,22 +395,22 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MagDecTool</name>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="102"/>
+        <location filename="src/wmm/magdectool.cpp" line="108"/>
         <source>Magnetic coeffizient file &quot;%1&quot; not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="107"/>
+        <location filename="src/wmm/magdectool.cpp" line="113"/>
         <source>Error in MAG_SetDefaults.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="116"/>
+        <location filename="src/wmm/magdectool.cpp" line="122"/>
         <source>Error in MAG_GridInternal.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/wmm/magdectool.cpp" line="205"/>
+        <location filename="src/wmm/magdectool.cpp" line="214"/>
         <source>Cannot open geoid buffer &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -418,27 +418,27 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MetarCloud</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1826"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1827"/>
         <source>Clear</source>
         <translation>Klaar</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1829"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1830"/>
         <source>Few</source>
         <translation>Weinig</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1832"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1833"/>
         <source>Scattered</source>
         <translation>Verspreid</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1835"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1836"/>
         <source>Broken</source>
         <translation>Gebroken</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1838"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1839"/>
         <source>Overcast</source>
         <translation>Overtrokken</translation>
     </message>
@@ -446,42 +446,42 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MetarParser</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="438"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="439"/>
         <source>metar data bogus</source>
         <translation>metar data bogus</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="482"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="483"/>
         <source>metar data incomplete </source>
         <translation>metar data niet compleet </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="604"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="605"/>
         <source>Auto</source>
         <translation>Auto</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="607"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="608"/>
         <source>Corrected</source>
         <translation>Gecorrigeerd</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="610"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="611"/>
         <source>Routine delayed observation</source>
         <translation>Uitgestelde routine waargenomen</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="641"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="642"/>
         <source>Light</source>
         <translation>Licht</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="644"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="645"/>
         <source>Moderate</source>
         <translation>Gemiddeld</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="647"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="648"/>
         <source>Heavy</source>
         <translation>Hevig</translation>
     </message>
@@ -651,22 +651,22 @@ Bestand:&quot;%2&quot;
         <translation>Onbekend</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1144"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1145"/>
         <source>Light </source>
         <translation>Licht </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1146"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1147"/>
         <source>Heavy </source>
         <translation>Hevig </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1148"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1149"/>
         <source>in the vicinity </source>
         <translation>in de omgeving </translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1150"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1151"/>
         <source>Moderate </source>
         <translation>Gemiddeld </translation>
     </message>
@@ -866,52 +866,52 @@ Bestand:&quot;%2&quot;
         <translation>wrijving: onbetrouwbare meting</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1445"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1446"/>
         <source>Low Instrument Flight Rules</source>
         <translation>LOw Instrument Vluchtregels</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1448"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1449"/>
         <source>Instrument Flight Rules</source>
         <translation>Intrument Vluchtregels</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1451"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1452"/>
         <source>Marginal Visual Flight Rules</source>
         <translation>Marginal Visual Vluchtregels</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1454"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1455"/>
         <source>Visual Flight Rules</source>
         <translation>Visual Vluchtregels</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1467"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1468"/>
         <source>LIFR</source>
         <translation>LIFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1470"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1471"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1473"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1474"/>
         <source>MVFR</source>
         <translation>MVFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1476"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1477"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1552"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1553"/>
         <source>cleared</source>
         <translation>opgelost</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1588"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1589"/>
         <source>runway not in use</source>
         <translation>start- of landingsbaan niet in gebruik</translation>
     </message>
@@ -949,17 +949,17 @@ Bestand:&quot;%2&quot;
 <context>
     <name>MetarVisibility</name>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1886"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1887"/>
         <source>Vertical visibility</source>
         <translation>Vertikale zichtbaarheid</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1892"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1893"/>
         <source>Less than</source>
         <translation>Minder dan</translation>
     </message>
     <message>
-        <location filename="src/fs/weather/metarparser.cpp" line="1895"/>
+        <location filename="src/fs/weather/metarparser.cpp" line="1896"/>
         <source>Greater than</source>
         <translation>Groter dan</translation>
     </message>
@@ -1227,17 +1227,17 @@ Bestand:&quot;%2&quot;
         <translation>Creëren rapport van duplicaten van coördinaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1329"/>
+        <location filename="src/fs/navdatabase.cpp" line="1339"/>
         <source>Base Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1333"/>
+        <location filename="src/fs/navdatabase.cpp" line="1343"/>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1395"/>
+        <location filename="src/fs/navdatabase.cpp" line="1405"/>
         <source>Community</source>
         <translation type="unfinished"></translation>
     </message>
