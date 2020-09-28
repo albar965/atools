@@ -112,16 +112,16 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
       mainWindow->resize(mainWindowSize);
     mainWindow->move(mainWindowPosition);
   }
-  mainWindow->statusBar()->setVisible(statusBarVisible);
-  mainWindow->menuWidget()->setVisible(menuVisible);
+  if(mainWindow->statusBar() != nullptr)
+    mainWindow->statusBar()->setVisible(statusBarVisible);
+
+  if(mainWindow->menuWidget() != nullptr)
+    mainWindow->menuWidget()->setVisible(true); // Do not hide
 
   // Restores the state of this mainwindow's toolbars and dockwidgets. Also restores the corner settings too.
   // Has to be called after setting size to avoid unwanted widget resizing
   if(!mainWindowState.isEmpty())
     mainWindow->restoreState(mainWindowState);
-
-  if(mainWindow->menuWidget() != nullptr)
-    mainWindow->menuWidget()->show();
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)
