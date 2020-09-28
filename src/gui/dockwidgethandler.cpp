@@ -119,6 +119,9 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
   // Has to be called after setting size to avoid unwanted widget resizing
   if(!mainWindowState.isEmpty())
     mainWindow->restoreState(mainWindowState);
+
+  if(mainWindow->menuWidget() != nullptr)
+    mainWindow->menuWidget()->show();
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)

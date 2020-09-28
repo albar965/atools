@@ -83,7 +83,7 @@ public:
   void currentStateToWindow();
 
   /* As above but assigns the normal state to the main window and sets the delayedFullscreen flag if
-   * fullscreen mode was enable. This allows to switch to fullscreen later to avoid a messed up layout.
+   * fullscreen mode was enabled. This allows to switch to fullscreen later to avoid a messed up layout.
    * Changes fullscreen to false.
    * Moves window to saved screen (position).*/
   void normalStateToWindow();
