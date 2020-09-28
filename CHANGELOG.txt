@@ -36,6 +36,7 @@ Other:
   20 degrees off near VORDME STN in X-Plane, for example. #564
 * Removed unused delete_airport table to speed up loading and to keep database small.
 * Now capitalizing airport, city, state and country names when loading FSX, P3D or MSFS data.
+* Fixed error `Bind name "flightplan" does not exist` when importing logfiles from CSV or X-Plane.
 
 ===============================================================================
 

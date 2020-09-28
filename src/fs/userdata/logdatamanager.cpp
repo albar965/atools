@@ -731,9 +731,9 @@ void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
   fixEmptyStrField(query, ":departure_ident");
   fixEmptyStrField(query, ":destination_ident");
 
-  fixEmptyBlobField(query, "flightplan");
-  fixEmptyBlobField(query, "aircraft_perf");
-  fixEmptyBlobField(query, "aircraft_trail");
+  fixEmptyBlobField(query, ":flightplan");
+  fixEmptyBlobField(query, ":aircraft_perf");
+  fixEmptyBlobField(query, ":aircraft_trail");
 }
 
 void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,

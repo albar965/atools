@@ -98,6 +98,7 @@ bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType
   SqlTransaction transaction(db);
   bool retval = SqlUtil(db).addColumnIf(tableName, colName, colType);
   transaction.commit();
+  qDebug() << Q_FUNC_INFO << colName << colType << "added" << retval;
   return retval;
 }
 

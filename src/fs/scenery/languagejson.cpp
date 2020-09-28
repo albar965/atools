@@ -150,8 +150,9 @@ void LanguageJson::adjustLanguage()
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
-QString LanguageJson::getName(const QString& key) const
+QString LanguageJson::getName(QString key) const
 {
+  key = key.trimmed();
   QString value;
   if(key.startsWith("TT:"))
   {
