@@ -44,6 +44,9 @@ NoaaWeatherDownloader::~NoaaWeatherDownloader()
 
 void NoaaWeatherDownloader::startTimer()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << updatePeriodSeconds;
+
   if(updatePeriodSeconds > 0)
   {
     updateTimer.setInterval(updatePeriodSeconds * 1000);
@@ -55,6 +58,9 @@ void NoaaWeatherDownloader::startTimer()
 
 void NoaaWeatherDownloader::stopTimer()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
   updateTimer.stop();
 }
 
@@ -77,7 +83,7 @@ bool NoaaWeatherDownloader::read(const QByteArray& data, const QString& url)
 void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url)
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << "downloadQueue" << downloadQueue;
+    qDebug() << Q_FUNC_INFO << "url" << url << "downloadQueue" << downloadQueue;
 
   if(read(data, url) && downloadQueue.isEmpty())
     // Notification only if no outstanding downloads
@@ -92,6 +98,9 @@ void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url
 
 void NoaaWeatherDownloader::downloadFailed(const QString& error, int errorCode, QString url)
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << error << url;
+
   emit weatherDownloadFailed(error, errorCode, url);
 
   downloadQueue.clear();
@@ -104,9 +113,15 @@ void NoaaWeatherDownloader::downloadFailed(const QString& error, int errorCode, 
 
 void NoaaWeatherDownloader::startDownload()
 {
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
+
   // Start only if not active and if download queue is empty
   if(!isDownloading())
   {
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << "Not downloading";
+
     // Current UTC time
     // Files are updated every hour
     QDateTime datetime = QDateTime::currentDateTimeUtc();
@@ -140,10 +155,18 @@ void NoaaWeatherDownloader::download()
   {
     if(!downloadQueue.isEmpty())
     {
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << "Starting" << downloadQueue.first();
+
       downloader->setUrl(downloadQueue.takeFirst());
       downloader->startDownload();
     }
   }
+}
+
+void NoaaWeatherDownloader::setUpdatePeriod(int seconds)
+{
+  updatePeriodSeconds = seconds;
 }
 
 } // namespace weather

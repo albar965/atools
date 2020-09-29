@@ -52,6 +52,10 @@ public:
   virtual void setRequestUrl(const QString& url) override;
   virtual bool isDownloading() const override;
 
+  /* Do not set update period in HttpDownloader. NOAA has to maintain its own timer since three
+   * files have to be downloaded */
+  virtual void setUpdatePeriod(int seconds) override;
+
 private:
   /* Append download jobs to the queue and start if not already downloading */
   virtual void startDownload() override;
