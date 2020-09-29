@@ -1957,12 +1957,12 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="128"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="129"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de sauvegarde %1. Raison: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="358"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="359"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1975,7 +1975,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="361"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="362"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1988,7 +1988,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="364"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="365"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -2001,7 +2001,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="367"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="368"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -2014,7 +2014,7 @@ Import stopped.</source>
 Importation arrêtée.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="370"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="371"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -2554,25 +2554,25 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="645"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="650"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="736"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="648"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="653"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="739"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="673"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="678"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="676"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="681"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="696"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="699"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="699"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="702"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished"></translation>
     </message>
