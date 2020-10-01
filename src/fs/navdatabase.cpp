@@ -1374,10 +1374,6 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       {
         SceneryArea area(areaNum++, baseName, name);
 
-        if(name.startsWith("asobo-airport-"))
-          // These will not be indicated as add-on in the GUI
-          area.setAsoboAirport(true);
-
         // Indicate add-on in official path
         area.setAddOn(true);
 

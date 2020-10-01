@@ -198,21 +198,11 @@ public:
     addOn = value;
   }
 
-  bool isAsoboAirport() const
-  {
-    return asoboAirport;
-  }
-
-  void setAsoboAirport(bool value = true)
-  {
-    asoboAirport = value;
-  }
-
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
-  bool active = false, required = false, highPriority = false, addOn = false, community = false, asoboAirport = false,
+  bool active = false, required = false, highPriority = false, addOn = false, community = false,
        navdataThirdPartyUpdate = false, navdata = false; /* Only MSFS */
   QString title, remotePath, localPath, exclude;
 };
