@@ -19,6 +19,7 @@
 #define ATOOLS_GUI_SIGNALBLOCKER_H
 
 #include <QList>
+#include <QObject>
 
 class QAction;
 

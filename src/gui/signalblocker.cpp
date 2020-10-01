@@ -18,6 +18,7 @@
 #include "gui/signalblocker.h"
 
 #include <QAction>
+#include <QObject>
 
 namespace atools {
 namespace gui {
