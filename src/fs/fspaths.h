@@ -102,7 +102,7 @@ public:
   static QString getMsfsOfficialPath();
 
   /* Path to official folder for changed base where base is like
-   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
+   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Official/[OneStore|Steam]
    *  Checking for OneStore and Steam folders */
   static QString getMsfsOfficialPath(const QString& basePath);
 
@@ -110,7 +110,7 @@ public:
   static QString getMsfsCommunityPath();
 
   /* Path to community folder for changed base where base is like
-   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/*/
+   * .../Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/Community */
   static QString getMsfsCommunityPath(const QString& basePath);
 
   /* Short abbreviated names */

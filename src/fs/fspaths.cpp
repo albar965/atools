@@ -830,6 +830,17 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
   else
     qWarning() << Q_FUNC_INFO << "Cannot open" << userCfgOptFile << "error" << fileCfgOpt.errorString();
 
+  // Community
+  if(!checkDir(getMsfsCommunityPath(dir)))
+    dir.clear();
+
+  // Official/Steam or Official/OneStore
+  if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base"))
+    dir.clear();
+
+  if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base-nav"))
+    dir.clear();
+
   return dir;
 }
 
