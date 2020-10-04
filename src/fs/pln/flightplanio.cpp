@@ -3604,12 +3604,12 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
 }
 
 void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                                 SaveOptions options)
+                                 bool saveAsUserWaypoints)
 {
   // Create a copy so we can easily change all waypoints to user defined is this is desired
   atools::fs::pln::FlightplanEntryListType planEntries = plan.entries;
 
-  if(options & SAVE_GNS_USER_WAYPOINTS)
+  if(saveAsUserWaypoints)
   {
     // Convert all waypoints to user defined waypoints keeping the names
     int i = 0;
