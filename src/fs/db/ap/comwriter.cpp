@@ -36,7 +36,11 @@ void ComWriter::writeObject(const Com *type)
   bind(":com_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
   bind(":type", bgl::util::enumToStr(bgl::Com::comTypeToStr, type->getType()));
-  bind(":frequency", type->getFrequency());
+
+  bool msfs = getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS;
+
+  // 126250 (MHz * 1000) -> 126250000
+  bind(":frequency", type->getFrequency() * (msfs ? 1000 : 1));
   bind(":name", type->getName());
 
   executeStatement();
