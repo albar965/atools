@@ -123,6 +123,37 @@ QString Flightplan::getFilenamePattern(QString pattern, const QString& type, con
   return clean ? atools::cleanFilename(name) : name;
 }
 
+void Flightplan::adjustDepartureAndDestination(bool force)
+{
+  if(!entries.isEmpty())
+  {
+    if(force || departureIdent.isEmpty())
+      departureIdent = entries.first().getIdent();
+    if(force || departureName.isEmpty())
+      departureName = entries.first().getName();
+    if(force || !departurePos.isValid())
+      departurePos = entries.first().getPosition();
+
+    if(force || destinationIdent.isEmpty())
+      destinationIdent = entries.last().getIdent();
+    if(force || destinationName.isEmpty())
+      destinationName = entries.last().getName();
+
+    if(force || !destinationPos.isValid())
+      destinationPos = entries.last().getPosition();
+    // These remain empty
+    // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
+  }
+
+}
+
+void Flightplan::assignAltitudeToAllEntries()
+{
+  for(FlightplanEntry& entry : entries)
+    entry.setPosition(Pos(entry.getPosition().getLonX(),
+                          entry.getPosition().getLatY(), cruisingAlt));
+}
+
 const atools::fs::pln::FlightplanEntry& Flightplan::destinationAirport() const
 {
   static const FlightplanEntry EMPTY;

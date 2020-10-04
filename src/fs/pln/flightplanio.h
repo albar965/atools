@@ -236,14 +236,8 @@ private:
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
                         const QString& elementName);
 
-  /* Set altitude in all positions */
-  void assignAltitudeToAllEntries(Flightplan& plan);
-
   /* Number of entries including start and destination but excluding procedure points */
   int numEntriesSave(const Flightplan& plan);
-
-  /* Copy departure and destination from first and last entry */
-  void adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan);
 
   QString coordStringFs9(const atools::geo::Pos& pos);
   void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);

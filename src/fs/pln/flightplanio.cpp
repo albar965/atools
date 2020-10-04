@@ -380,7 +380,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.flightplanType = IFR;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
 
-    adjustDepartureAndDestination(plan);
+    plan.adjustDepartureAndDestination();
     flpFile.close();
   }
   else
@@ -595,8 +595,8 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
     plan.flightplanType = IFR;
     plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
-    adjustDepartureAndDestination(plan);
-    assignAltitudeToAllEntries(plan);
+    plan.adjustDepartureAndDestination();
+    plan.assignAltitudeToAllEntries();
 
     fmsFile.close();
   }
@@ -690,7 +690,7 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
 
     plan.flightplanType = IFR;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
-    adjustDepartureAndDestination(plan);
+    plan.adjustDepartureAndDestination();
 
     plnFile.close();
   }
@@ -1145,7 +1145,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
   }
 
   plan.entries.append(waypoints);
-  adjustDepartureAndDestination(plan);
+  plan.adjustDepartureAndDestination();
 
   if(!plan.departurePos.isValid())
     plan.departurePos = waypoints.first().getPosition();
@@ -1487,8 +1487,8 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
     xmlFile.close();
 
     plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
-    adjustDepartureAndDestination(plan);
-    assignAltitudeToAllEntries(plan);
+    plan.adjustDepartureAndDestination();
+    plan.assignAltitudeToAllEntries();
   }
   else
     throw Exception(tr("Cannot open FlightGear file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
@@ -3933,8 +3933,8 @@ void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStre
 
   plan.flightplanType = IFR;
   plan.cruisingAlt = 0; // Use altitude as set in GUI
-  assignAltitudeToAllEntries(plan);
-  adjustDepartureAndDestination(plan);
+  plan.assignAltitudeToAllEntries();
+  plan.adjustDepartureAndDestination();
 }
 
 atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QString& typeStr) const
@@ -4044,29 +4044,6 @@ int FlightplanIO::routeTypeToStringFs9(atools::fs::pln::RouteType type)
   return 0;
 }
 
-void FlightplanIO::adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan)
-{
-  if(!plan.entries.isEmpty())
-  {
-    if(plan.departureIdent.isEmpty())
-      plan.departureIdent = plan.entries.first().getIdent();
-    if(plan.departureName.isEmpty())
-      plan.departureName = plan.entries.first().getName();
-    if(!plan.departurePos.isValid())
-      plan.departurePos = plan.entries.first().getPosition();
-
-    if(plan.destinationIdent.isEmpty())
-      plan.destinationIdent = plan.entries.last().getIdent();
-    if(plan.destinationName.isEmpty())
-      plan.destinationName = plan.entries.last().getName();
-
-    if(!plan.destinationPos.isValid())
-      plan.destinationPos = plan.entries.last().getPosition();
-    // These remain empty
-    // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
-  }
-}
-
 int FlightplanIO::numEntriesSave(const atools::fs::pln::Flightplan& plan)
 {
   int num = 0;
@@ -4077,14 +4054,6 @@ int FlightplanIO::numEntriesSave(const atools::fs::pln::Flightplan& plan)
       num++;
   }
   return num;
-}
-
-void FlightplanIO::assignAltitudeToAllEntries(atools::fs::pln::Flightplan& plan)
-{
-  int altitude = plan.cruisingAlt;
-  for(FlightplanEntry& entry : plan.entries)
-    entry.setPosition(Pos(entry.getPosition().getLonX(),
-                          entry.getPosition().getLatY(), altitude));
 }
 
 QString FlightplanIO::gnsType(const atools::fs::pln::FlightplanEntry& entry)
