@@ -561,8 +561,9 @@ float roundComFrequency(int frequency)
     // E.g. 120425000 for X-Plane new 8.33 kHz - can be used without rounding
     return frequency / 1000000.f;
   else
-    // 118775 for legacy - round to next 0.025r
-    return std::round(frequency / 1000.f / 0.025f) * 0.025f;
+    // 118775 for legacy - round to next 0.025r - This is obsolete now
+    // return std::round(frequency / 1000.f / 0.025f) * 0.025f;
+    return frequency / 1000.f;
 }
 
 } // namespace util
