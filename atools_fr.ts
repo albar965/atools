@@ -1239,7 +1239,7 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1405"/>
+        <location filename="src/fs/navdatabase.cpp" line="1401"/>
         <source>Community</source>
         <translation type="unfinished"></translation>
     </message>
