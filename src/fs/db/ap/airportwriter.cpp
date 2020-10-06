@@ -37,6 +37,7 @@
 #include "fs/db/ap/comwriter.h"
 #include "fs/bgl/ap/parking.h"
 #include "fs/scenery/languagejson.h"
+#include "fs/util/fsutil.h"
 #include "atools.h"
 #include "exception.h"
 
@@ -160,7 +161,8 @@ void AirportWriter::writeObject(const Airport *type)
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write country, state and city =====================
-    bindStrOrNull(":name", getDataWriter().getLanguage(type->getName()));
+    QString name = getDataWriter().getLanguage(type->getName());
+    bindStrOrNull(":name", name);
     bindStrOrNull(":city", city);
     bindStrOrNull(":state", state);
     bindStrOrNull(":country", country);
@@ -190,7 +192,8 @@ void AirportWriter::writeObject(const Airport *type)
     bindIntOrNull(":unicom_frequency", unicomFrequency);
 
     bindBool(":is_closed", type->isAirportClosed());
-    bindBool(":is_military", type->isMilitary());
+
+    bindBool(":is_military", atools::fs::util::isNameMilitary(name));
 
     bindBool(":is_addon", isAddon);
     bindBool(":is_3d", 0);

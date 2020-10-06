@@ -449,11 +449,6 @@ bool Airport::isCurrentRecordValid()
   return valid;
 }
 
-bool Airport::isNameMilitary(const QString& airportName)
-{
-  return atools::fs::util::isNameMilitary(airportName);
-}
-
 int Airport::calculateRating(bool isAddon) const
 {
   // Maximum rating is 5
@@ -617,8 +612,6 @@ void Airport::updateSummaryFields()
   }
 
   updateHelipads();
-
-  military = isNameMilitary(name);
 }
 
 void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,

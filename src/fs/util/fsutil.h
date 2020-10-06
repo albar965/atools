@@ -41,7 +41,7 @@ int calculateAirportRating(bool isAddon, bool hasTower, int numTaxiPaths, int nu
 int calculateAirportRatingXp(bool isAddon, bool is3D, bool hasTower, int numTaxiPaths, int numParkings, int numAprons);
 
 /* Check the airport name if it contains military designators */
-bool isNameMilitary(const QString& airportName);
+bool isNameMilitary(QString airportName);
 
 /* Check if the name contains a closed identifier */
 bool isNameClosed(const QString& airportName);

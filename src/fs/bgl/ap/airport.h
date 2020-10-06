@@ -323,14 +323,6 @@ public:
     return largestParkingGate;
   }
 
-  /*
-   * @return true if the airport is military. A military airport is recognized by name pattern
-   */
-  bool isMilitary() const
-  {
-    return military;
-  }
-
   int getNumParkingCargo() const
   {
     return numParkingCargo;
@@ -351,8 +343,6 @@ public:
    * @return true if there are no runways, no parking, etc.
    */
   bool isEmpty() const;
-
-  static bool isNameMilitary(const QString& airportName);
 
   int calculateRating(bool isAddon) const;
 
@@ -389,7 +379,7 @@ private:
   QString ident, name, region;
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
-  bool towerObj = false, airportClosed = false, military = false,
+  bool towerObj = false, airportClosed = false,
        msfsStar = false /* Will result in five stars rating*/;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numLightRunway = 0,

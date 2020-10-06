@@ -188,6 +188,15 @@ QString cleanFilename(const QString& filename, int maxLength)
          simplified().mid(0, maxLength);
 }
 
+bool strContains(const QString& name, const QStringList& list)
+{
+  for(const QString& val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
 bool strContains(const QString& name, const std::initializer_list<QString>& list)
 {
   for(const QString& val : list)
