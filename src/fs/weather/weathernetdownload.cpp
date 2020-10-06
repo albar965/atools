@@ -40,6 +40,9 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   if(verbose)
     qDebug() << Q_FUNC_INFO << "url" << url << "data size" << data.size();
 
+  // Reset error state which avoids triggering downloads
+  setErrorStateTimer(false);
+
   // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
   // AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
   // AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
@@ -56,6 +59,9 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
 void WeatherNetDownload::downloadFailed(const QString& error, int errorCode, QString url)
 {
   qWarning() << Q_FUNC_INFO << "Error downloading from" << url << ":" << error << errorCode;
+
+  // Set error state which avoids triggering downloads for a certain period
+  setErrorStateTimer();
 
   emit weatherDownloadFailed(error, errorCode, url);
 }

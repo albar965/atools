@@ -32,6 +32,9 @@ WeatherDownloadBase::WeatherDownloadBase(QObject *parent, MetarFormat format, bo
   downloader = new atools::util::HttpDownloader(parent, verboseLogging);
   connect(downloader, &atools::util::HttpDownloader::downloadSslErrors,
           this, &WeatherDownloadBase::weatherDownloadSslErrors);
+
+  errorStateTimer.setSingleShot(true);
+  errorStateTimer.setInterval(180 * 1000);
 }
 
 WeatherDownloadBase::~WeatherDownloadBase()
@@ -42,7 +45,8 @@ WeatherDownloadBase::~WeatherDownloadBase()
 
 MetarResult WeatherDownloadBase::getMetar(const QString& airportIcao, const geo::Pos& pos)
 {
-  if(metarIndex->isEmpty())
+  // Trigger download only if the error grace period is not active and the index is empty
+  if(!isErrorState() && metarIndex->isEmpty())
   {
     if(!isDownloading())
       startDownload();
@@ -87,6 +91,19 @@ void WeatherDownloadBase::startDownload()
 {
   if(!downloader->isDownloading())
     downloader->startDownload();
+}
+
+bool WeatherDownloadBase::isErrorState() const
+{
+  return errorStateTimer.isActive();
+}
+
+void WeatherDownloadBase::setErrorStateTimer(bool error)
+{
+  if(error)
+    errorStateTimer.start();
+  else
+    errorStateTimer.stop();
 }
 
 } // namespace weather
