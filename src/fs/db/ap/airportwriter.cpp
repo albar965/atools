@@ -161,7 +161,8 @@ void AirportWriter::writeObject(const Airport *type)
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write country, state and city =====================
-    QString name = getDataWriter().getLanguage(type->getName());
+    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName()));
+
     bindStrOrNull(":name", name);
     bindStrOrNull(":city", city);
     bindStrOrNull(":state", state);
