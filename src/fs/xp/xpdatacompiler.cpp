@@ -781,17 +781,24 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
   return retval;
 }
 
-int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
+int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDatabaseOptions& opts)
 {
   int reportCount = 0;
   // Default or custom scenery files - required
   // earth_fix.dat earth_awy.dat earth_nav.dat
   reportCount += 3 * NUM_REPORT_STEPS_SMALL;
 
+  bool aborted = false;
+  if((aborted = progress->reportOtherMsg(tr("Counting files for Resources ..."))))
+    return 0;
+
   // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat",
                                         "Earth nav data", "apt.dat"})))
     reportCount += NUM_REPORT_STEPS;
+
+  if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ..."))))
+    return 0;
 
   // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data",
@@ -801,7 +808,13 @@ int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
   // Default or custom CIFP/$ICAO.dat - required from either "Resources" or "Custom Data"
   reportCount += NUM_REPORT_STEPS_CIFP;
 
+  if((aborted = progress->reportOtherMsg(tr("Counting files for Airspaces ..."))))
+    return 0;
+
   reportCount += findAirspaceFiles(opts).count();
+
+  if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery ..."))))
+    return 0;
 
   // X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
   // X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat
@@ -811,6 +824,9 @@ int XpDataCompiler::calculateReportCount(const NavDatabaseOptions& opts)
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(),
                                         "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
     reportCount++;
+
+  if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Data ..."))))
+    return 0;
 
   // user_nav.dat user_fix.dat $X-Plane/Custom Data/
   if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_nav.dat"})))

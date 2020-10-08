@@ -193,7 +193,7 @@ public:
   }
 
   /* Calculate number of files to be read */
-  static int calculateReportCount(const atools::fs::NavDatabaseOptions& opts);
+  static int calculateReportCount(ProgressHandler* progress, const atools::fs::NavDatabaseOptions& opts);
 
   /* minmum accepted file version */
   void setMinVersion(int value)

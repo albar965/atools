@@ -278,12 +278,19 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
 // =P=== "5585 of 5604 (99 %) [10]" "Creating indexes for search"
 // =P=== "5595 of 5604 (99 %) [10]" "Vacuum Database"
 // =P=== "5604 of 5604 (100 %) [10]" "Analyze Database"
-int NavDatabase::countXplaneSteps()
+int NavDatabase::countXplaneSteps(ProgressHandler *progress)
 {
+  int fileCount = atools::fs::xp::XpDataCompiler::calculateReportCount(progress, *options); // All files;
+  if(fileCount == 0)
+  {
+    aborted = true;
+    return 0;
+  }
+
   // Create schema "Removing Views" ... "Creating Database Schema"
   int total = PROGRESS_NUM_SCHEMA_STEPS;
   total++; // Scenery "X-Plane"
-  total += atools::fs::xp::XpDataCompiler::calculateReportCount(*options); // All files
+  total += fileCount;
   total += PROGRESS_NUM_TASK_STEPS; // "Creating indexes"
   total += PROGRESS_NUM_TASK_STEPS; // "Creating boundary indexes"
   if(options->isDeduplicate())
@@ -470,11 +477,13 @@ int NavDatabase::countDfdSteps()
 // =P=== "3100 of 3101 (99 %) [10]" "Creating indexes for search"
 // =P=== "3101 of 3101 (100 %) [10]" "Vacuum Database"
 // =P=== "3101 of 3101 (100 %) [10]" "Analyze Database"
-int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
+int NavDatabase::countFsxP3dSteps(ProgressHandler *progress, const SceneryCfg& cfg)
 {
   // Count the files for exact progress reporting
   int numProgressReports = 0, numSceneryAreas = 0;
-  countFiles(cfg.getAreas(), numProgressReports, numSceneryAreas);
+  countFiles(progress, cfg.getAreas(), numProgressReports, numSceneryAreas);
+  if(aborted)
+    return 0;
 
   qDebug() << Q_FUNC_INFO << "=P=== FSX/P3D files" << numProgressReports << "scenery areas" << numSceneryAreas;
 
@@ -486,10 +495,12 @@ int NavDatabase::countFsxP3dSteps(const SceneryCfg& cfg)
   return total;
 }
 
-int NavDatabase::countMsfsSteps(const SceneryCfg& cfg)
+int NavDatabase::countMsfsSteps(ProgressHandler *progress, const SceneryCfg& cfg)
 {
   int numProgressReports = 0, numSceneryAreas = 0;
-  countFiles(cfg.getAreas(), numProgressReports, numSceneryAreas);
+  countFiles(progress, cfg.getAreas(), numProgressReports, numSceneryAreas);
+  if(aborted)
+    return 0;
 
   qDebug() << Q_FUNC_INFO << "=P=== MSFS files" << numProgressReports << "scenery areas" << numSceneryAreas;
 
@@ -541,6 +552,9 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   timer.start();
 
   FsPaths::SimulatorType sim = options->getSimulatorType();
+  ProgressHandler progress(options);
+
+  progress.setTotal(1000000000);
 
   if(options->isAutocommit())
     db->setAutocommit(true);
@@ -549,25 +563,28 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   // Calculate the total number of progress steps
   int total = 0;
   if(sim == atools::fs::FsPaths::XPLANE11)
-    total = countXplaneSteps();
+    total = countXplaneSteps(&progress);
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
     total = countDfdSteps();
   else if(sim == atools::fs::FsPaths::MSFS)
   {
     // Fill with default required entries but does not read a file
     readSceneryConfigMsfs(sceneryCfg);
-    total = countMsfsSteps(sceneryCfg);
+    total = countMsfsSteps(&progress, sceneryCfg);
   }
   else // FSX and P3D
   {
     // Read scenery.cfg
     readSceneryConfigFsxP3d(sceneryCfg);
-    total = countFsxP3dSteps(sceneryCfg);
+    total = countFsxP3dSteps(&progress, sceneryCfg);
   }
+
+  if(aborted)
+    return;
 
   qDebug() << "=P=== Total Progress" << total;
 
-  ProgressHandler progress(options);
+  progress.reset();
   progress.setTotal(total);
 
   createSchemaInternal(&progress);
@@ -1684,13 +1701,17 @@ int NavDatabase::nextAreaNum(const QList<atools::fs::scenery::SceneryArea>& area
   return areaNum;
 }
 
-void NavDatabase::countFiles(const QList<atools::fs::scenery::SceneryArea>& areas, int& numFiles, int& numSceneryAreas)
+void NavDatabase::countFiles(ProgressHandler *progress, const QList<atools::fs::scenery::SceneryArea>& areas,
+                             int& numFiles, int& numSceneryAreas)
 {
   qDebug() << Q_FUNC_INFO << "Entry";
   atools::fs::scenery::FileResolver resolver(*options, true);
 
   for(const atools::fs::scenery::SceneryArea& area : areas)
   {
+    if((aborted = progress->reportOtherMsg(tr("Counting files for %1 ...").arg(area.getTitle()))))
+      return;
+
     int num = resolver.getFiles(area);
 
     if(num > 0)
