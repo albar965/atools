@@ -1002,7 +1002,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
       while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
-           reader.name() == "ProgramVersion")
+           reader.name() == "ProgramVersion" || reader.name() == "Documentation")
         {
           // Skip these elements without warning
           xmlStream.skipCurrentElement();

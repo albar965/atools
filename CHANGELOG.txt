@@ -3,6 +3,24 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.2.beta
+
+## Changes
+
+* Fixed issue where program could appear frozen while counting files for loading scenery.
+* Fixed detection for military airports in MSFS and extended this with new phrases.
+* Now capitalizing all airport names for FSX, P3D and MSFS to fix wrong airbase designators
+  like  `Afb`.
+* Fixed issue with NOAA weather downloads where a missing internet connection flooded the log and
+  caused the program to crash. Now applying a grace period of three minutes after an error which
+  blocks new downloads for METAR requests.
+* Removed wrong rounding of COM frequencies.
+* Now checking for all paths `Community`, `fs-base` and `fs-base-nav` before recognizing a MSFS
+  installation as valid.
+* `asobo-airports-*` in `Official\Steam` or `Official\OneStore` are now flagged as add-on.
+
+===============================================================================
+
 Version 3.6.1.beta
 
 FSX, P3D and MSFS:
