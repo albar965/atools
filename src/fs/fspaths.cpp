@@ -512,6 +512,9 @@ QString FsPaths::initFilesPath(SimulatorType type)
         else
           qDebug() << "No handle from LoadLibrary";
       }
+#elif defined(DEBUG_FS_PATHS)
+      fsFilesDir = atools::documentsDir() + SEP + typeToShortName(type);
+
 #endif
       break;
 
@@ -524,7 +527,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
 
   // Use fallback on non Windows systems or if not found
   if(fsFilesDir.isEmpty())
-    fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    fsFilesDir = atools::documentsDir();
 
   return fsFilesDir;
 }
