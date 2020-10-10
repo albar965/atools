@@ -1039,12 +1039,12 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Folder bestaat niet</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="593"/>
+        <location filename="src/fs/navdatabase.cpp" line="610"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="607"/>
+        <location filename="src/fs/navdatabase.cpp" line="624"/>
         <source>X-Plane</source>
         <translation>X-Plane</translation>
     </message>
@@ -1063,182 +1063,187 @@ Bestand:&quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="683"/>
+        <location filename="src/fs/navdatabase.cpp" line="700"/>
         <source>Merging VOR and TACAN to VORTAC</source>
         <translation>Samenvoegen VOR en TACAN tot VORTAC</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="688"/>
+        <location filename="src/fs/navdatabase.cpp" line="705"/>
         <source>Updating waypoints</source>
         <translation>Updaten waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="694"/>
+        <location filename="src/fs/navdatabase.cpp" line="711"/>
         <source>Cleaning up waypoints</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="699"/>
+        <location filename="src/fs/navdatabase.cpp" line="716"/>
         <source>Updating approaches</source>
         <translation>Updaten aanvliegroutes (approaches)</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="702"/>
+        <location filename="src/fs/navdatabase.cpp" line="719"/>
         <source>Updating Airports</source>
         <translation>Luchthavens aan het Updaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="707"/>
-        <location filename="src/fs/navdatabase.cpp" line="714"/>
+        <location filename="src/fs/navdatabase.cpp" line="724"/>
+        <location filename="src/fs/navdatabase.cpp" line="731"/>
         <source>Updating ILS</source>
         <translation>Updaten ILS</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="719"/>
+        <location filename="src/fs/navdatabase.cpp" line="736"/>
         <source>Updating ILS Count</source>
         <translation>Updaten ILS telling</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="723"/>
+        <location filename="src/fs/navdatabase.cpp" line="740"/>
         <source>Collecting navaids for search</source>
         <translation>Verzamelen navaids voor zoekopdracht</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="729"/>
+        <location filename="src/fs/navdatabase.cpp" line="746"/>
         <source>Populating routing tables</source>
         <translation>Invullen routetabellen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="732"/>
+        <location filename="src/fs/navdatabase.cpp" line="749"/>
         <source>Creating route edges for VOR and NDB</source>
         <translation>Creëren grenzen voor VOR en NDB</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="739"/>
+        <location filename="src/fs/navdatabase.cpp" line="756"/>
         <source>Creating route edges waypoints</source>
         <translation>Creëren grenzen voor waypoints</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="743"/>
+        <location filename="src/fs/navdatabase.cpp" line="760"/>
         <source>Creating indexes for airport</source>
         <translation>Index voor luchthaven creêren</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="748"/>
+        <location filename="src/fs/navdatabase.cpp" line="765"/>
         <source>Clean up runways</source>
         <translation>Start- en landingsbanen opruimen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="752"/>
+        <location filename="src/fs/navdatabase.cpp" line="769"/>
         <source>Creating indexes for search</source>
         <translation>Creëren indexen voor zoekopdracht</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="757"/>
+        <location filename="src/fs/navdatabase.cpp" line="774"/>
         <source>Creating indexes for route</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="763"/>
+        <location filename="src/fs/navdatabase.cpp" line="780"/>
         <source>Loading translations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="812"/>
+        <location filename="src/fs/navdatabase.cpp" line="829"/>
         <source>Creating Database preparation Script</source>
         <translation>Creëren Script voorbereiding Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="817"/>
+        <location filename="src/fs/navdatabase.cpp" line="834"/>
         <source>Dropping All Indexes</source>
         <translation>Alle Indexen laten vallen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="824"/>
+        <location filename="src/fs/navdatabase.cpp" line="841"/>
         <source>Vacuum Database</source>
         <translation>Vacuum Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="832"/>
+        <location filename="src/fs/navdatabase.cpp" line="849"/>
         <source>Analyze Database</source>
         <translation>Analyseren Database</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="878"/>
-        <location filename="src/fs/navdatabase.cpp" line="906"/>
-        <location filename="src/fs/navdatabase.cpp" line="996"/>
-        <location filename="src/fs/navdatabase.cpp" line="1127"/>
+        <location filename="src/fs/navdatabase.cpp" line="895"/>
+        <location filename="src/fs/navdatabase.cpp" line="923"/>
+        <location filename="src/fs/navdatabase.cpp" line="1013"/>
+        <location filename="src/fs/navdatabase.cpp" line="1144"/>
         <source>Creating indexes</source>
         <translation>Creëren indexen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="881"/>
-        <location filename="src/fs/navdatabase.cpp" line="909"/>
-        <location filename="src/fs/navdatabase.cpp" line="999"/>
-        <location filename="src/fs/navdatabase.cpp" line="1130"/>
+        <location filename="src/fs/navdatabase.cpp" line="898"/>
+        <location filename="src/fs/navdatabase.cpp" line="926"/>
+        <location filename="src/fs/navdatabase.cpp" line="1016"/>
+        <location filename="src/fs/navdatabase.cpp" line="1147"/>
         <source>Creating boundary indexes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="887"/>
-        <location filename="src/fs/navdatabase.cpp" line="1012"/>
-        <location filename="src/fs/navdatabase.cpp" line="1136"/>
+        <location filename="src/fs/navdatabase.cpp" line="904"/>
+        <location filename="src/fs/navdatabase.cpp" line="1029"/>
+        <location filename="src/fs/navdatabase.cpp" line="1153"/>
         <source>Clean up</source>
         <translation>Opschonen</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="895"/>
+        <location filename="src/fs/navdatabase.cpp" line="912"/>
         <source>Creating waypoints for procedures</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="915"/>
+        <location filename="src/fs/navdatabase.cpp" line="932"/>
         <source>Updating Navids in Waypoint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1022"/>
+        <location filename="src/fs/navdatabase.cpp" line="1039"/>
         <source>Preparing Airways</source>
         <translation>Voorbereiden Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1144"/>
+        <location filename="src/fs/navdatabase.cpp" line="1161"/>
         <source>Basic Validation</source>
         <translation>Basis Goedkeuring</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1252"/>
+        <location filename="src/fs/navdatabase.cpp" line="1269"/>
         <source>Creating table statistics</source>
         <translation>Creëren tabel statistieken</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1258"/>
+        <location filename="src/fs/navdatabase.cpp" line="1275"/>
         <source>Creating report on values</source>
         <translation>Creëren rapport voor waarden</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1264"/>
+        <location filename="src/fs/navdatabase.cpp" line="1281"/>
         <source>Creating report on duplicates</source>
         <translation>Creëren rapport voor duplicaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1302"/>
+        <location filename="src/fs/navdatabase.cpp" line="1319"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Creëren rapport van duplicaten van coördinaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1339"/>
+        <location filename="src/fs/navdatabase.cpp" line="1356"/>
         <source>Base Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1343"/>
+        <location filename="src/fs/navdatabase.cpp" line="1360"/>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1401"/>
+        <location filename="src/fs/navdatabase.cpp" line="1418"/>
         <source>Community</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/navdatabase.cpp" line="1712"/>
+        <source>Counting files for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1313,40 +1318,40 @@ Bestand:&quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="260"/>
-        <location filename="src/atools.cpp" line="268"/>
-        <location filename="src/atools.cpp" line="276"/>
+        <location filename="src/atools.cpp" line="269"/>
+        <location filename="src/atools.cpp" line="277"/>
+        <location filename="src/atools.cpp" line="285"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="291"/>
-        <location filename="src/atools.cpp" line="294"/>
+        <location filename="src/atools.cpp" line="300"/>
+        <location filename="src/atools.cpp" line="303"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="292"/>
+        <location filename="src/atools.cpp" line="301"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="318"/>
+        <location filename="src/atools.cpp" line="327"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3) op %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="328"/>
+        <location filename="src/atools.cpp" line="337"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Gemaakt door %1 Versie %2 (revisie %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="353"/>
+        <location filename="src/atools.cpp" line="362"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="71"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="75"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="79"/>
@@ -1354,47 +1359,47 @@ Bestand:&quot;%2&quot;
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="810"/>
+        <location filename="src/atools.cpp" line="819"/>
         <source>Directory name is empty.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="818"/>
+        <location filename="src/atools.cpp" line="827"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="825"/>
+        <location filename="src/atools.cpp" line="834"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="830"/>
+        <location filename="src/atools.cpp" line="839"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="842"/>
+        <location filename="src/atools.cpp" line="851"/>
         <source>Filepath is empty.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="850"/>
+        <location filename="src/atools.cpp" line="859"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="857"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="862"/>
+        <location filename="src/atools.cpp" line="871"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="867"/>
+        <location filename="src/atools.cpp" line="876"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2060,22 +2065,47 @@ Importeren gestopt.</translation>
         <translation>Aan het lezen: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="875"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="792"/>
+        <source>Counting files for Resources ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="800"/>
+        <source>Counting files for Custom Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="811"/>
+        <source>Counting files for Airspaces ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="816"/>
+        <source>Counting files for Custom Scenery ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="828"/>
+        <source>Counting files for Custom Data ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="891"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>AIRAC cycle bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="883"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="899"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Meerdere AIRAC cycles in de navdatabestanden gevonden. %1 en %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="893"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="909"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>AIRAC cycle niet gevonden in bestand.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="929"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="945"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;

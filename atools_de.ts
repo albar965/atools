@@ -1036,6 +1036,10 @@ Datei: &quot;%2&quot;
         <source>Cleaning up waypoints</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Counting files for %1 ...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1732,6 +1736,26 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
 &quot;%2&quot;
 gültige X-Plane Navigationsdaten finden.
 Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem dieser Pfade gefunden werden kann.</translation>
+    </message>
+    <message>
+        <source>Counting files for Resources ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Airspaces ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Data ...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

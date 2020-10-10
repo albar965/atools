@@ -1002,6 +1002,10 @@ Atrapada excepción
         <source>Cleaning up waypoints</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Counting files for %1 ...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1688,6 +1692,26 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
 &quot;%2&quot;
 
 Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in one of these paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Resources ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Airspaces ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Data ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
