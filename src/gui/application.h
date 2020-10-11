@@ -43,6 +43,9 @@ public:
   Application(int& argc, char **argv, int = ApplicationFlags);
   virtual ~Application() override;
 
+  /* Instance of this or null if not applicable */
+  static atools::gui::Application *applicationInstance();
+
   /*
    * Shows an error dialog with the exception message and after that exits the application with code 1.
    *

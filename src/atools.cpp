@@ -287,18 +287,33 @@ QString elideTextShortMiddle(const QString& str, int maxLength)
   return str;
 }
 
-QString elideTextLinesShort(QString str, int maxLines, int maxLength)
+QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compressEmpty, bool ellipseLastLine)
 {
   QStringList lines;
   QTextStream stream(&str, QIODevice::ReadOnly);
 
   int i = 0;
-  while(!stream.atEnd() && ++i < maxLines)
-    lines.append(maxLength > 0 ? elideTextShort(stream.readLine(), maxLength) : stream.readLine());
+  while(!stream.atEnd())
+  {
+    QString line = stream.readLine();
+    if(compressEmpty)
+    {
+      line = line.simplified();
+      if(line.isEmpty())
+        continue;
+    }
 
-  if(i >= maxLines)
+    if(i++ >= maxLines)
+      break;
+
+    lines.append(maxLength > 0 ? elideTextShort(line, maxLength) : line);
+  }
+
+  if(i > maxLines)
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts")) +
-           QObject::tr("\n…", "Linefeed and dots used to shorten texts");
+           (ellipseLastLine ?
+            QObject::tr("\n…", "Linefeed and dots used to shorten texts") :
+            QObject::tr("…", "Linefeed and dots used to shorten texts"));
   else
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
 }

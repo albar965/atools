@@ -125,8 +125,11 @@ QString removeNonAlphaNum(const QString& str);
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator);
 
-/* Cut linefeed separated text. Return maxLength lines where \n... is included  */
-QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0);
+/* Cut linefeed separated text. Return maxLength lines where \n... is included
+ * @param compressEmpty Remove empty lines before applying elide
+ * @param ellipseLastLine Put ellipse on separate line */
+QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0, bool compressEmpty = false,
+                            bool ellipseLastLine = true);
 
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);

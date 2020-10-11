@@ -55,6 +55,11 @@ Application::~Application()
   }
 }
 
+Application *Application::applicationInstance()
+{
+  return dynamic_cast<Application *>(QCoreApplication::instance());
+}
+
 bool Application::notify(QObject *receiver, QEvent *event)
 {
   try
