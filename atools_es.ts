@@ -1374,10 +1374,6 @@ Atrapada excepción
         <translation type="unfinished">El archivo no existe</translation>
     </message>
     <message>
-        <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NAT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1530,6 +1526,11 @@ Atrapada excepción
     </message>
     <message>
         <source>Filepath is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2061,10 +2062,14 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>&lt;b&gt;Si el problema persiste u ocurre durante el inicio, borre todas las configuraciones de los archivos de bases de datos %4 y reintente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si desea reportar este error, adjunte los archivos de log y configuración a su reporte y agregue cualquier otra información valiosa, envíela a la dirección de contacto aquí debajo.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Si el problema persiste u ocurre durante el inicio, borre todas las configuraciones de los archivos de bases de datos %4 y reintente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si desea reportar este error, adjunte los archivos de log y configuración a su reporte y agregue cualquier otra información valiosa, envíela a la dirección de contacto aquí debajo.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

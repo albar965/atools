@@ -53,7 +53,7 @@ QString typeToString(TrackType type)
   switch(type)
   {
     case atools::track::UNKNOWN:
-      return QObject::tr("UNKNOWN");
+      return QObject::tr("Unknown");
 
     case atools::track::NAT:
       return QObject::tr("NAT");

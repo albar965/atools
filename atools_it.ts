@@ -1396,8 +1396,8 @@ File: &quot;%2&quot;
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="300"/>
-        <location filename="src/atools.cpp" line="303"/>
+        <location filename="src/atools.cpp" line="313"/>
+        <location filename="src/atools.cpp" line="318"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1406,7 +1406,7 @@ File: &quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="301"/>
+        <location filename="src/atools.cpp" line="315"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1415,17 +1415,23 @@ File: &quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="327"/>
+        <location filename="src/atools.cpp" line="316"/>
+        <source>…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
+        <translation type="unfinished">…</translation>
+    </message>
+    <message>
+        <location filename="src/atools.cpp" line="342"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Creato da %1 Versione %2 (revisione %3) il %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="337"/>
+        <location filename="src/atools.cpp" line="352"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Creato da %1 Versione %2 (revisione %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="362"/>
+        <location filename="src/atools.cpp" line="377"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="71"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="75"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="79"/>
@@ -1433,47 +1439,47 @@ File: &quot;%2&quot;
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="819"/>
+        <location filename="src/atools.cpp" line="834"/>
         <source>Directory name is empty.</source>
         <translation>Il nome della cartella è vuoto.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="827"/>
+        <location filename="src/atools.cpp" line="842"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>La cartella &quot;%1&quot; non esiste.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="834"/>
+        <location filename="src/atools.cpp" line="849"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>Il File &quot;%1&quot; non è una cartella.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="839"/>
+        <location filename="src/atools.cpp" line="854"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>La Cartella &quot;%1&quot; non è leggibile.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="851"/>
+        <location filename="src/atools.cpp" line="866"/>
         <source>Filepath is empty.</source>
         <translation>Il percorso file è vuoto.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="859"/>
+        <location filename="src/atools.cpp" line="874"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>Il File &quot;%1&quot; non esiste.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="866"/>
+        <location filename="src/atools.cpp" line="881"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>Il File &quot;%1&quot; è una cartella.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="871"/>
+        <location filename="src/atools.cpp" line="886"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>Il File &quot;%1&quot; non è leggibile.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="876"/>
+        <location filename="src/atools.cpp" line="891"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>Il File &quot;%1&quot; è vuoto.</translation>
     </message>
@@ -1743,6 +1749,7 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/online/onlinetypes.cpp" line="75"/>
+        <location filename="src/track/tracktypes.cpp" line="56"/>
         <source>Unknown</source>
         <translation>Sconosciuto</translation>
     </message>
@@ -1961,11 +1968,6 @@ File: &quot;%2&quot;
         <location filename="src/fs/weather/weathertypes.cpp" line="80"/>
         <source>File does not exist</source>
         <translation>Il File non esiste</translation>
-    </message>
-    <message>
-        <location filename="src/track/tracktypes.cpp" line="56"/>
-        <source>UNKNOWN</source>
-        <translation>SCONOSCIUTO</translation>
     </message>
     <message>
         <location filename="src/track/tracktypes.cpp" line="59"/>
@@ -2619,41 +2621,42 @@ Ore Notturne: %5</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="86"/>
-        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %4 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
+        <location filename="src/gui/application.cpp" line="91"/>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
+        <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
+        <translation type="unfinished">&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %4 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="vanished">&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="121"/>
+        <location filename="src/gui/application.cpp" line="126"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="143"/>
+        <location filename="src/gui/application.cpp" line="148"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Catturata eccezione sconosciuta nel file %1 linea %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Premi OK per uscire dall&apos;applicazione.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="164"/>
+        <location filename="src/gui/application.cpp" line="169"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contattare:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="189"/>
+        <location filename="src/gui/application.cpp" line="194"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="193"/>
+        <location filename="src/gui/application.cpp" line="198"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="196"/>
+        <location filename="src/gui/application.cpp" line="201"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>

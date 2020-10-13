@@ -24,15 +24,15 @@
     </message>
     <message>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Datei &quot;%1&quot; für Flugzeugleistung nicht zum Lesen öffnen. Ungültiges Format.</translation>
     </message>
     <message>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei %1 kann nicht geöffnet werden. Grund: %2</translation>
     </message>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
     </message>
 </context>
 <context>
@@ -58,15 +58,15 @@
     <name>ContentXml</name>
     <message>
         <source>Base Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis - Fluglätze</translation>
     </message>
     <message>
         <source>Base Navigation</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis - Navigation</translation>
     </message>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished">Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
+        <translation>Datei &quot;%1&quot; kann nicht geöffnet werden. Grund: %2</translation>
     </message>
 </context>
 <context>
@@ -138,42 +138,42 @@ Datei: &quot;%2&quot;
     <name>Flightplan</name>
     <message>
         <source>Empty Flightplan</source>
-        <translation type="unfinished"></translation>
+        <translation>Leerer Flugplan</translation>
     </message>
     <message>
         <source>IFR</source>
-        <translation type="unfinished">IFR</translation>
+        <translation>IFR</translation>
     </message>
     <message>
         <source>VFR</source>
-        <translation type="unfinished">VFR</translation>
+        <translation>VFR</translation>
     </message>
 </context>
 <context>
     <name>FlightplanEntry</name>
     <message>
         <source>Airport</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugplatz</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished">Unbekannt</translation>
+        <translation>Unbekannt</translation>
     </message>
     <message>
         <source>Waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Wegpunkt</translation>
     </message>
     <message>
         <source>VOR</source>
-        <translation type="unfinished"></translation>
+        <translation>VOR</translation>
     </message>
     <message>
         <source>NDB</source>
-        <translation type="unfinished"></translation>
+        <translation>NDB</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished">Nutzer</translation>
+        <translation>Nutzer</translation>
     </message>
 </context>
 <context>
@@ -265,19 +265,19 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid position in LNMPLN.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in LNMPLN.</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in LNMPLN. Bereichsverletzung der Ordinaten: %1</translation>
     </message>
     <message>
         <source>Invalid position in GPX.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in GPX.</translation>
     </message>
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
-        <translation type="unfinished"></translation>
+        <translation>Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI und FSC), X-Plane FMS, FLP und FlightGear FGFP werden unterstützt.</translation>
     </message>
 </context>
 <context>
@@ -937,7 +937,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Clean up runways</source>
-        <translation>Räume Runways auf</translation>
+        <translation>Bereinige Runways</translation>
     </message>
     <message>
         <source>Creating indexes for search</source>
@@ -965,7 +965,7 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Clean up</source>
-        <translation>Aufräumen</translation>
+        <translation>Bereinigen</translation>
     </message>
     <message>
         <source>Preparing Airways</source>
@@ -998,47 +998,47 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Creating indexes for route</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstelle Indizes für Routen</translation>
     </message>
     <message>
         <source>Creating waypoints for procedures</source>
-        <translation type="unfinished"></translation>
+        <translation>Erstelle Wegpunkte für Prozeduren</translation>
     </message>
     <message>
         <source>Updating Navids in Waypoint</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktualisiere Navigationshilfen für Wegpunkte</translation>
     </message>
     <message>
         <source>Loading translations</source>
-        <translation type="unfinished"></translation>
+        <translation>Lade Übersetzungen</translation>
     </message>
     <message>
         <source>Base Airports</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis - Fluglätze</translation>
     </message>
     <message>
         <source>Base Navigation</source>
-        <translation type="unfinished"></translation>
+        <translation>Basis - Navigation</translation>
     </message>
     <message>
         <source>Community</source>
-        <translation type="unfinished"></translation>
+        <translation>Community</translation>
     </message>
     <message>
         <source>&quot;%1&quot; does not contain any scenery areas</source>
-        <translation type="unfinished"></translation>
+        <translation>&quot;%1&quot; enthält kein Szenerieverzeichnis</translation>
     </message>
     <message>
         <source>Unknown exception while reading file</source>
-        <translation type="unfinished"></translation>
+        <translation>Unbekannter Ausnahmefehler beim Lesen der Datei</translation>
     </message>
     <message>
         <source>Cleaning up waypoints</source>
-        <translation type="unfinished"></translation>
+        <translation>Bereinige Wegpunkte</translation>
     </message>
     <message>
         <source>Counting files for %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für %1 ...</translation>
     </message>
 </context>
 <context>
@@ -1410,162 +1410,169 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Unbekannt</translation>
     </message>
     <message>
         <source>NAT</source>
-        <translation type="unfinished"></translation>
+        <translation>NAT</translation>
     </message>
     <message>
         <source>PACOTS</source>
-        <translation type="unfinished"></translation>
+        <translation>PACOTS</translation>
     </message>
     <message>
         <source>AUSOTS</source>
-        <translation type="unfinished"></translation>
+        <translation>AUSOTS</translation>
     </message>
     <message>
         <source>Error reading &quot;%1&quot;: %2</source>
-        <translation type="unfinished">Lesefehler von &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+        <translation>Fehler beim Lesen von &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <source>★</source>
         <comment>Star for rating</comment>
-        <translation type="unfinished"></translation>
+        <translation>★</translation>
     </message>
     <message>
         <source>−</source>
         <comment>For empty rating</comment>
-        <translation type="unfinished"></translation>
+        <translation>−</translation>
     </message>
     <message>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
-        <translation type="unfinished"></translation>
+        <translation>…</translation>
     </message>
     <message>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
-        <translation type="unfinished"></translation>
+        <translation>
+</translation>
     </message>
     <message>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
-        <translation type="unfinished"></translation>
+        <translation>
+…</translation>
     </message>
     <message>
         <source>%1 pt</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 pt</translation>
     </message>
     <message>
         <source>%1 px</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 px</translation>
     </message>
     <message>
         <source>thin</source>
-        <translation type="unfinished"></translation>
+        <translation>Dünn</translation>
     </message>
     <message>
         <source>extra light</source>
-        <translation type="unfinished"></translation>
+        <translation>Extraleicht</translation>
     </message>
     <message>
         <source>light</source>
-        <translation type="unfinished"></translation>
+        <translation>Leicht</translation>
     </message>
     <message>
         <source>normal</source>
-        <translation type="unfinished"></translation>
+        <translation>Normal</translation>
     </message>
     <message>
         <source>medium</source>
-        <translation type="unfinished"></translation>
+        <translation>Medium</translation>
     </message>
     <message>
         <source>demi bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Halbfett</translation>
     </message>
     <message>
         <source>bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Fett</translation>
     </message>
     <message>
         <source>extra bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Extra Fett</translation>
     </message>
     <message>
         <source>black</source>
-        <translation type="unfinished"></translation>
+        <translation>Schwarz</translation>
     </message>
     <message>
         <source>italic</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursiv</translation>
     </message>
     <message>
         <source>overline</source>
-        <translation type="unfinished"></translation>
+        <translation>Überlinie</translation>
     </message>
     <message>
         <source>underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterlinie</translation>
     </message>
     <message>
         <source>strike out</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchgestrichen</translation>
     </message>
     <message>
         <source>fixed pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>Feste Teilung</translation>
     </message>
     <message>
         <source>System font: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemschriftart: %1</translation>
     </message>
     <message>
         <source>User selected font: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählte Schriftart: %1</translation>
     </message>
     <message>
         <source>, </source>
-        <translation type="unfinished">, </translation>
+        <translation>, </translation>
     </message>
     <message>
         <source>Directory &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; existiert nicht.</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; is not a directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; ist kein Verzeichnis.</translation>
     </message>
     <message>
         <source>Directory &quot;%1&quot; is not readable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnis &quot;%1&quot; ist nicht lesbar</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; existiert nicht.</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; is a directory.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; ist ein Verzeichnis.</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; is not readable.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; ist nicht lesbar.</translation>
     </message>
     <message>
         <source>File &quot;%1&quot; is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei &quot;%1&quot; ist leer.</translation>
     </message>
     <message>
         <source>Directory name is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verzeichnisname ist leer.</translation>
     </message>
     <message>
         <source>Filepath is empty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Pfad ist leer.</translation>
+    </message>
+    <message>
+        <source>…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
+        <translation>…</translation>
     </message>
 </context>
 <context>
@@ -1594,15 +1601,15 @@ Datei: &quot;%2&quot;
     <name>TrackReader</name>
     <message>
         <source>Cannot open track file &quot;%1&quot;. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Track-Datei nicht öffnen &quot;%1&quot;. Grund: %2</translation>
     </message>
     <message>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Datei in Zeile %1. Startmarkierung innerhalb einer Sektion.</translation>
     </message>
     <message>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler in Datei in Zeile %1. Startmarkierung außerhalb einer Sektion.</translation>
     </message>
 </context>
 <context>
@@ -1680,11 +1687,11 @@ Importieren gestoppt.</translation>
     <name>XmlTools</name>
     <message>
         <source>Error reading &quot;%1&quot; on line %2 column %3: %4</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen von &quot;%1&quot; in Zeile %2, Spalte %3: %4</translation>
     </message>
     <message>
         <source>Cannot open file %1. Reason: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Datei %1 nicht öffnen. Grund: %2</translation>
     </message>
 </context>
 <context>
@@ -1739,23 +1746,23 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Counting files for Resources ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Pfad Resources ...</translation>
     </message>
     <message>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Pfad Custom Scenery/Global Airports ...</translation>
     </message>
     <message>
         <source>Counting files for Airspaces ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Lufträume ...</translation>
     </message>
     <message>
         <source>Counting files for Custom Scenery ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Pfad Custom Scenery ...</translation>
     </message>
     <message>
         <source>Counting files for Custom Data ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Zähle Dateien für Pfad Custom Data ...</translation>
     </message>
 </context>
 <context>
@@ -2006,19 +2013,19 @@ Stellen Sie sicher, dass earth_fix.dat, earth_awy.dat und earth_nav.dat in einem
     </message>
     <message>
         <source>Too many errors reading from simulator. Disconnected. Restart &lt;i&gt;%1&lt;/i&gt; to try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Fehler beim Lesen vom Simulator. Verbindung getrennt. &lt;i&gt;%1&lt;/i&gt; für weitere Versuche neu starten.</translation>
     </message>
     <message>
         <source>Error reading from simulator: %1. Disconnected. Restart &lt;i&gt;%2&lt;/i&gt; to try again.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zu viele Fehler beim Lesen vom Simulator: %1. Verbindung getrennt. &lt;i&gt;%2&lt;/i&gt; für weitere Versuche neu starten</translation>
     </message>
     <message>
         <source>Your installed version of &lt;i&gt;Little Xpconnect&lt;/i&gt; is not compatible with this version of &lt;i&gt;%2&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Die installierte Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; ist nicht kompatibel mit dieser Version von &lt;i&gt;%2&lt;/i&gt;.</translation>
     </message>
     <message>
         <source>Install the latest version of &lt;i&gt;Little Xpconnect&lt;/i&gt;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Bitte die neueste Version von &lt;i&gt;Little Xpconnect&lt;/i&gt; installieren.</translation>
     </message>
 </context>
 <context>
@@ -2088,7 +2095,7 @@ Nachtzeit: %5</translation>
     <name>atools::gui::Application</name>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von %4 und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von %4 und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
@@ -2118,24 +2125,28 @@ Nachtzeit: %5</translation>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Ausnahmefehler in der Datei &quot;%1&quot; Zeile %2 aufgetreten.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Klicken Sie OK, um die Anwendung zu beenden.&lt;/h3&gt;</translation>
     </message>
+    <message>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
+        <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von &lt;i&gt;%1&lt;/i&gt; und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
+    </message>
 </context>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
         <source>Error reading &quot;%1&quot;: %2</source>
-        <translation type="unfinished">Lesefehler von &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+        <translation>Fehler beim Lesen von &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <source>Error writing &quot;%1&quot;: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Lesen von &quot;%1&quot;: Ungültige magische Zahl. Keine Fensterlayout-Datei.</translation>
     </message>
     <message>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler beim Schreiben von &quot;%1&quot;: Ungültige Version. Inkompatible Fensterlayout-Datei.</translation>
     </message>
 </context>
 <context>
@@ -2237,7 +2248,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Close all tabs except the currently active tab</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließe alle Reiter außer dem aktiven</translation>
     </message>
 </context>
 <context>
