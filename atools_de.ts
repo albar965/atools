@@ -2177,7 +2177,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>URL is empty for &quot;%1&quot;.</source>
-        <translation>URL für &quot;%1&quot; ist leer.</translation>
+        <translation>Webadresse für &quot;%1&quot; ist leer.</translation>
     </message>
     <message>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
@@ -2193,7 +2193,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>Error opening help URL &quot;%1&quot;</source>
-        <translation>Fehler beim Öffnen der Hilfe-URL &quot;%1&quot;</translation>
+        <translation>Fehler beim Öffnen der Webadresse für Hilfe &quot;%1&quot;</translation>
     </message>
     <message>
         <source>Help file &quot;%1&quot; not found</source>

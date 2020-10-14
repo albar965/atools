@@ -1311,7 +1311,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="1712"/>
         <source>Counting files for %1 ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file per%1 ...</translation>
     </message>
 </context>
 <context>
@@ -1418,7 +1418,7 @@ File: &quot;%2&quot;
         <location filename="src/atools.cpp" line="316"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
-        <translation type="unfinished">…</translation>
+        <translation>…</translation>
     </message>
     <message>
         <location filename="src/atools.cpp" line="342"/>
@@ -2144,27 +2144,27 @@ Importazione interrotta.</translation>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="792"/>
         <source>Counting files for Resources ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file delle Risorse ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="800"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file di Scenari Personalizzati/Aeroporti Globali ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="811"/>
         <source>Counting files for Airspaces ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file degli Spazi aerei ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="816"/>
         <source>Counting files for Custom Scenery ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file degli Scenari Personalizzati ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="828"/>
         <source>Counting files for Custom Data ...</source>
-        <translation type="unfinished"></translation>
+        <translation>Conteggio dei file dei Dari Personalizzati ...</translation>
     </message>
     <message>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="891"/>
@@ -2624,7 +2624,7 @@ Ore Notturne: %5</translation>
         <location filename="src/gui/application.cpp" line="91"/>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <oldsource>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</oldsource>
-        <translation type="unfinished">&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di %4 e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation>&lt;b&gt;Se il problema persiste o capita durante l&apos;avvio, cancellare tutti i settaggi e il file database di &lt;i&gt;%1&lt;/i&gt; e provare di nuovo.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Se vuoi riportare questo errore, allega il log e i file di configurazione, aggiungi tutti le altre informazioni disponibili e invia a uno degli indirizzi sotto.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
