@@ -18,6 +18,7 @@
 #include "fs/bgl/ap/airport.h"
 #include "fs/bgl/recordtypes.h"
 #include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/navdatabaseoptions.h"
@@ -498,12 +499,23 @@ void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFreque
   }
 }
 
+void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& text)
+{
+  float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
+  if(dist > 10.f)
+    qWarning() << "Airport" << ident << "at" << position.getPos()
+               << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
+}
+
 void Airport::updateSummaryFields()
 {
-  boundingRect = atools::geo::Rect(getPosition().getPos());
+  boundingRect = atools::geo::Rect(position.getPos());
 
   if(!towerPosition.getPos().isNull() && towerPosition.getPos().isValidRange() && !towerPosition.getPos().isPole())
+  {
+    reportFarCoordinate(towerPosition.getPos(), "tower");
     boundingRect.extend(towerPosition.getPos());
+  }
 
   for(const Runway& rw : runways)
   {
@@ -512,8 +524,13 @@ void Airport::updateSummaryFields()
       numLightRunway++;
 
     // Extend bounding rectangle for runway dimensions
+    reportFarCoordinate(rw.getPosition().getPos(), "runway");
     boundingRect.extend(rw.getPosition().getPos());
+
+    reportFarCoordinate(rw.getSecondaryPosition(), "runway secondary");
     boundingRect.extend(rw.getSecondaryPosition());
+
+    reportFarCoordinate(rw.getSecondaryPosition(), "runway primary");
     boundingRect.extend(rw.getPrimaryPosition());
 
     // Remember the longest runway attributes
@@ -561,6 +578,7 @@ void Airport::updateSummaryFields()
 
   for(const Parking& p : parkings)
   {
+    reportFarCoordinate(p.getPosition().getPos(), "parking");
     boundingRect.extend(p.getPosition().getPos());
 
     if(p.hasJetway())
@@ -592,21 +610,34 @@ void Airport::updateSummaryFields()
   }
 
   for(const Apron& a : aprons)
+  {
+    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
       boundingRect.extend(p.getPos());
+  }
 
   for(const Apron2& a : aprons2)
+  {
+    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
       boundingRect.extend(p.getPos());
+  }
 
   for(const Start& s : starts)
+  {
+    reportFarCoordinate(s.getPosition().getPos(), "start");
     boundingRect.extend(s.getPosition().getPos());
+  }
 
   for(const Helipad& h : helipads)
+  {
+    reportFarCoordinate(h.getPosition().getPos(), "helipad");
     boundingRect.extend(h.getPosition().getPos());
+  }
 
   for(const TaxiPath& p : taxipaths)
   {
+    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     boundingRect.extend(p.getStartPoint().getPosition().getPos());
     boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
