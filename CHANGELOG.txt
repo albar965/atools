@@ -18,6 +18,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Now checking for all paths `Community`, `fs-base` and `fs-base-nav` before recognizing a MSFS
   installation as valid.
 * `asobo-airports-*` in `Official\Steam` or `Official\OneStore` are now flagged as add-on.
+* Added logging for airports that have features more than 10 NM apart.
 
 ===============================================================================
 
