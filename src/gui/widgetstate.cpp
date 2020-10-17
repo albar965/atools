@@ -362,10 +362,20 @@ void WidgetState::restore(QObject *widget) const
       if(v.isValid())
       {
         mw->restoreState(v.toByteArray());
+
         if(positionRestoreMainWindow)
-          mw->move(s.valueVar(keyPrefix + "_" + mw->objectName() + "_pos", mw->pos()).toPoint());
+        {
+          QString key = keyPrefix + "_" + mw->objectName() + "_pos";
+          if(s.contains(key))
+            mw->move(s.valueVar(key, mw->pos()).toPoint());
+        }
+
         if(sizeRestoreMainWindow)
-          mw->resize(s.valueVar(keyPrefix + "_" + mw->objectName() + "_size", mw->sizeHint()).toSize());
+        {
+          QString key = keyPrefix + "_" + mw->objectName() + "_size";
+          if(s.contains(key))
+            mw->resize(s.valueVar(key, mw->sizeHint()).toSize());
+        }
 
         if(stateRestoreMainWindow)
           if(s.valueVar(keyPrefix + "_" + mw->objectName() + "_maximized", false).toBool())
@@ -375,7 +385,9 @@ void WidgetState::restore(QObject *widget) const
     else if(QDialog *dlg = dynamic_cast<QDialog *>(widget))
     {
       // dlg->move(s.valueVar(keyPrefix + "_" + dlg->objectName() + "_pos", dlg->pos()).toPoint());
-      dlg->resize(s.valueVar(keyPrefix + "_" + dlg->objectName() + "_size", dlg->sizeHint()).toSize());
+      QString key = keyPrefix + "_" + dlg->objectName() + "_size";
+      if(s.contains(key))
+        dlg->resize(s.valueVar(key, dlg->sizeHint()).toSize());
     }
     else if(QSplitter *sp = dynamic_cast<QSplitter *>(widget))
     {

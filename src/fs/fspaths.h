@@ -87,6 +87,8 @@ public:
 
   Q_ENUM(SimulatorType)
 
+  typedef QVector<atools::fs::FsPaths::SimulatorType> SimulatorTypeVector;
+
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.
    * Returns package installation path for MSFS. */
   static QString getBasePath(atools::fs::FsPaths::SimulatorType type);
