@@ -67,16 +67,17 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
-  if(!getOptions().isIncludedAirportIdent(type->getIdent()))
+  QString ident = type->getIdent();
+  if(!getOptions().isIncludedAirportIdent(ident))
     return;
 
   if(type->isEmpty())
   {
-    qWarning() << "Skipping empty airport" << type->getIdent();
+    qWarning() << "Skipping empty airport" << ident;
     return;
   }
 
-  if(type->getIdent().isEmpty())
+  if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 
   DataWriter& dw = getDataWriter();
@@ -89,13 +90,13 @@ void AirportWriter::writeObject(const Airport *type)
     // Instead of writing a new airport simply add COM and procedures
 
     // Get the other airport id and remember the current one
-    int predId = airportIdByIdent(type->getIdent());
+    int predId = airportIdByIdent(ident);
     int currentId = dw.getAirportWriter()->setCurrentId(predId);
 
     // Update index
-    currentIdent = type->getIdent();
+    currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(type->getIdent(), predId);
+    getAirportIndex()->add(ident, predId);
 
     // Write features with other airport id
     ComWriter *comWriter = dw.getAirportComWriter();
@@ -130,7 +131,7 @@ void AirportWriter::writeObject(const Airport *type)
       isAddon = false;
 
     if(isRealAddon && type->getDeleteAirports().isEmpty())
-      qInfo() << "Addon airport without delete record" << type->getIdent();
+      qInfo() << "Addon airport without delete record" << ident;
 
     int nextAirportId = getNextId();
 
@@ -171,7 +172,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     bind(":airport_id", nextAirportId);
     bind(":file_id", bglFileWriter->getCurrentId());
-    bind(":ident", type->getIdent());
+    bind(":ident", ident);
     bindNullString(":icao");
     bindNullString(":iata");
     bindNullString(":xpident");
@@ -282,9 +283,9 @@ void AirportWriter::writeObject(const Airport *type)
     executeStatement();
 
     // Update index
-    currentIdent = type->getIdent();
+    currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(type->getIdent(), getCurrentId());
+    getAirportIndex()->add(ident, getCurrentId());
 
     // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
     RunwayWriter *rwWriter = dw.getRunwayWriter();
@@ -359,6 +360,9 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   query.prepare("update airport set tower_frequency = :tower_frequency, atis_frequency = :atis_frequency, "
                 "awos_frequency = :awos_frequency, asos_frequency = :asos_frequency, "
                 "unicom_frequency = :unicom_frequency, num_com = :num_com, num_approach = :num_approach "
+                // "lonx = :lonx, laty = :laty, "
+                // "left_lonx = :left_lonx, top_laty = :top_laty, "
+                // "right_lonx = :right_lonx, bottom_laty = :bottom_laty "
                 "where airport_id = :id");
 
   query.bindValue(":tower_frequency", towerFrequency);
@@ -368,6 +372,14 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   query.bindValue(":unicom_frequency", unicomFrequency);
   query.bindValue(":num_com", type->getComs().size());
   query.bindValue(":num_approach", type->getApproaches().size());
+
+  // query.bindValue(":lonx", type->getPosition().getLonX());
+  // query.bindValue(":laty", type->getPosition().getLatY());
+  // query.bindValue(":left_lonx", type->getBoundingRect().getWest());
+  // query.bindValue(":top_laty", type->getBoundingRect().getNorth());
+  // query.bindValue(":right_lonx", type->getBoundingRect().getEast());
+  // query.bindValue(":bottom_laty", type->getBoundingRect().getSouth());
+
   query.bindValue(":id", predId);
   query.exec();
 }

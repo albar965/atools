@@ -501,10 +501,13 @@ void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFreque
 
 void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& text)
 {
-  float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
-  if(dist > 10.f)
-    qWarning() << "Airport" << ident << "at" << position.getPos()
-               << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
+  if(opts->isAirportValidation())
+  {
+    float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
+    if(dist > 10.f)
+      qWarning() << "Airport" << ident << "at" << position.getPos()
+                 << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
+  }
 }
 
 void Airport::updateSummaryFields()
@@ -613,14 +616,20 @@ void Airport::updateSummaryFields()
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
+    {
+      reportFarCoordinate(p.getPos(), "apron");
       boundingRect.extend(p.getPos());
+    }
   }
 
   for(const Apron2& a : aprons2)
   {
     // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
+    {
+      reportFarCoordinate(p.getPos(), "apron2");
       boundingRect.extend(p.getPos());
+    }
   }
 
   for(const Start& s : starts)
@@ -637,8 +646,10 @@ void Airport::updateSummaryFields()
 
   for(const TaxiPath& p : taxipaths)
   {
-    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
+    reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
     boundingRect.extend(p.getStartPoint().getPosition().getPos());
+
+    reportFarCoordinate(p.getEndPoint().getPosition().getPos(), "taxipath end");
     boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
 

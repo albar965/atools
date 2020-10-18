@@ -134,7 +134,10 @@ enum OptionFlag
   ANALYZE_DATABASE = 1 << 13,
 
   /* Remove all indexes */
-  DROP_INDEXES = 1 << 14
+  DROP_INDEXES = 1 << 14,
+
+  /* Remove all indexes */
+  AIRPORT_VALIDATION = 1 << 15
 };
 
 Q_DECLARE_FLAGS(OptionFlags, OptionFlag);
@@ -322,17 +325,17 @@ public:
 
   bool isDeletes() const
   {
-    return flags & type::DELETES;
+    return flags.testFlag(type::DELETES);
   }
 
   bool isDeduplicate() const
   {
-    return flags & type::DEDUPLICATE;
+    return flags.testFlag(type::DEDUPLICATE);
   }
 
   bool isFilterRunways() const
   {
-    return flags & type::FILTER_RUNWAYS;
+    return flags.testFlag(type::FILTER_RUNWAYS);
   }
 
   const QString& getSceneryFile() const
@@ -342,62 +345,67 @@ public:
 
   bool isVerbose() const
   {
-    return flags & type::VERBOSE;
+    return flags.testFlag(type::VERBOSE);
   }
 
   bool isAutocommit() const
   {
-    return flags & type::AUTOCOMMIT;
+    return flags.testFlag(type::AUTOCOMMIT);
   }
 
   bool isIncomplete() const
   {
-    return flags & type::INCOMPLETE;
+    return flags.testFlag(type::INCOMPLETE);
   }
 
   bool isDatabaseReport() const
   {
-    return flags & type::DATABASE_REPORT;
+    return flags.testFlag(type::DATABASE_REPORT);
   }
 
   bool isVacuumDatabase() const
   {
-    return flags & type::VACUUM_DATABASE;
+    return flags.testFlag(type::VACUUM_DATABASE);
   }
 
   bool isAnalyzeDatabase() const
   {
-    return flags & type::ANALYZE_DATABASE;
+    return flags.testFlag(type::ANALYZE_DATABASE);
   }
 
   bool isDropIndexes() const
   {
-    return flags & type::DROP_INDEXES;
+    return flags.testFlag(type::DROP_INDEXES);
   }
 
   bool isBasicValidation() const
   {
-    return flags & type::BASIC_VALIDATION;
+    return flags.testFlag(type::BASIC_VALIDATION);
+  }
+
+  bool isAirportValidation() const
+  {
+    return flags.testFlag(type::AIRPORT_VALIDATION);
   }
 
   bool isResolveAirways() const
   {
-    return flags & type::RESOLVE_AIRWAYS;
+    return flags.testFlag(type::RESOLVE_AIRWAYS);
   }
 
   bool isCreateRouteTables() const
   {
-    return flags & type::CREATE_ROUTE_TABLES;
+    return flags.testFlag(type::CREATE_ROUTE_TABLES);
   }
 
   bool isReadInactive() const
   {
-    return flags & type::READ_INACTIVE;
+    return flags.testFlag(type::READ_INACTIVE);
   }
 
   bool isReadAddOnXml() const
   {
-    return flags & type::READ_ADDON_XML;
+    return flags.testFlag(type::READ_ADDON_XML);
   }
 
   /* Pure file name */
