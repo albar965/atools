@@ -71,8 +71,7 @@ struct MainWindowState
   QPoint mainWindowPosition;
   Qt::WindowStates mainWindowStates = Qt::WindowNoState;
 
-  bool statusBarVisible = true, menuVisible = true, // Not covered by saveState in main window
-       valid = false, verbose = false;
+  bool statusBarVisible = true, valid = false, verbose = false;
 };
 
 QDebug operator<<(QDebug out, const MainWindowState& obj)
@@ -84,7 +83,6 @@ QDebug operator<<(QDebug out, const MainWindowState& obj)
                           << ", window position " << obj.mainWindowPosition
                           << ", window states " << obj.mainWindowStates
                           << ", statusbar " << obj.statusBarVisible
-                          << ", menu " << obj.menuVisible
                           << ", valid " << obj.valid
                           << "]";
   return out;
@@ -115,13 +113,13 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
   if(mainWindow->statusBar() != nullptr)
     mainWindow->statusBar()->setVisible(statusBarVisible);
 
-  if(mainWindow->menuWidget() != nullptr)
-    mainWindow->menuWidget()->setVisible(true); // Do not hide
-
   // Restores the state of this mainwindow's toolbars and dockwidgets. Also restores the corner settings too.
   // Has to be called after setting size to avoid unwanted widget resizing
   if(!mainWindowState.isEmpty())
     mainWindow->restoreState(mainWindowState);
+
+  if(mainWindow->menuWidget() != nullptr)
+    mainWindow->menuWidget()->setVisible(true); // Do not hide
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)
@@ -132,7 +130,6 @@ void MainWindowState::fromWindow(const QMainWindow *mainWindow)
   mainWindowPosition = mainWindow->pos();
   mainWindowStates = mainWindow->windowState();
   statusBarVisible = mainWindow->statusBar()->isVisible();
-  menuVisible = mainWindow->menuWidget()->isVisible();
   valid = true;
 
   if(verbose)
@@ -145,7 +142,6 @@ void MainWindowState::initFullscreen(atools::gui::DockFlags flags)
 
   mainWindowStates = flags.testFlag(MAXIMIZE) ? Qt::WindowMaximized : Qt::WindowFullScreen;
   statusBarVisible = !flags.testFlag(HIDE_STATUSBAR);
-  menuVisible = !flags.testFlag(HIDE_MENUBAR);
   valid = true;
 
   if(verbose)
@@ -159,21 +155,22 @@ void MainWindowState::clear()
   mainWindowPosition = QPoint();
   mainWindowStates = Qt::WindowNoState;
   statusBarVisible = true,
-  menuVisible = true;
   valid = false;
 }
 
 QDataStream& operator<<(QDataStream& out, const atools::gui::MainWindowState& state)
 {
+  bool menuVisible = true;
   out << state.valid << state.mainWindowState << state.mainWindowSize << state.mainWindowPosition
-      << state.mainWindowStates << state.statusBarVisible << state.menuVisible;
+      << state.mainWindowStates << state.statusBarVisible << menuVisible;
   return out;
 }
 
 QDataStream& operator>>(QDataStream& in, atools::gui::MainWindowState& state)
 {
+  bool menuVisible;
   in >> state.valid >> state.mainWindowState >> state.mainWindowSize >> state.mainWindowPosition
-  >> state.mainWindowStates >> state.statusBarVisible >> state.menuVisible;
+  >> state.mainWindowStates >> state.statusBarVisible >> menuVisible;
   return in;
 }
 
@@ -643,6 +640,9 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
 
       normalState->fromWindow(mainWindow);
       fullscreenState->clear();
+
+      if(mainWindow->menuWidget() != nullptr)
+        mainWindow->menuWidget()->setVisible(true); // Do not hide
     }
     else
       throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));
