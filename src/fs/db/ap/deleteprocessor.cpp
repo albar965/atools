@@ -260,10 +260,12 @@ void DeleteProcessor::postProcessDelete()
   if(!prevRegion.isEmpty() && curRegion.isEmpty())
     copyAirportColumns.append("region");
 
-  if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+  if(options.getSimulatorType() == atools::fs::FsPaths::MSFS &&
+     prevPos.distanceMeterTo(newAirport->getPosition().getPos()) > atools::geo::nmToMeter(10))
   {
-    // Imitate the wrong behavior of MSFS where an update tries to change the ident of an airport
-    // which was used at another one before. Example: 54XS
+    // Copy old airport coordinates to new one if distance is more than 10 NM
+    // Imitating the wrong behavior of MSFS if an update tries to change the ident of an airport which was used at another one before.
+    // Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch Airport (54XS) at another location.
     copyAirportColumns.append("lonx");
     copyAirportColumns.append("laty");
   }
