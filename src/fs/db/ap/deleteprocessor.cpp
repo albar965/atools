@@ -245,7 +245,10 @@ void DeleteProcessor::postProcessDelete()
 
   // Copy all names over from the previous airport if this one has empty names =================
   if(!prevName.isEmpty() && curName.isEmpty())
+  {
     copyAirportColumns.append("name");
+    copyAirportColumns.append("is_military");
+  }
   if(!prevCity.isEmpty() && curCity.isEmpty())
     copyAirportColumns.append("city");
   if(!prevState.isEmpty() && curState.isEmpty())
