@@ -241,6 +241,8 @@ void DeleteProcessor::postProcessDelete()
 {
   if(options.isVerbose())
     qInfo() << Q_FUNC_INFO << newAirport->getIdent() << "current id" << currentAirportId;
+
+  // Collects all columns that will be copied from the former airport to this new one
   QStringList copyAirportColumns;
 
   // Copy all names over from the previous airport if this one has empty names =================
@@ -257,6 +259,14 @@ void DeleteProcessor::postProcessDelete()
     copyAirportColumns.append("country");
   if(!prevRegion.isEmpty() && curRegion.isEmpty())
     copyAirportColumns.append("region");
+
+  if(options.getSimulatorType() == atools::fs::FsPaths::MSFS)
+  {
+    // Imitate the wrong behavior of MSFS where an update tries to change the ident of an airport
+    // which was used at another one before. Example: 54XS
+    copyAirportColumns.append("lonx");
+    copyAirportColumns.append("laty");
+  }
 
   if(prevHasApproach)
   {
@@ -390,37 +400,36 @@ void DeleteProcessor::postProcessDelete()
       copyAirportColumns.append("is_addon");
   }
 
+  copyAirportColumns.removeDuplicates();
   copyAirportValues(copyAirportColumns);
-  updateBoundingRect();
+
+  // Airport has moved more than 500 meter - update bounding rectangle
+  if(hasPrevious && newAirport->getPosition().getPos().distanceMeterTo(prevPos) > 500.f)
+    updateBoundingRect();
 
   removeAirport();
 }
 
 void DeleteProcessor::updateBoundingRect()
 {
-  if(hasPrevious && newAirport->getPosition().getPos().distanceMeterTo(prevPos) > 500)
+  fetchBoundingStmt->bindValue(":apid", currentAirportId);
+  executeStatement(fetchBoundingStmt, "Fetch bounding");
+  if(fetchBoundingStmt->next())
   {
-    // Airport has moved more than 500 meter - update bounding rectangle
-
-    fetchBoundingStmt->bindValue(":apid", currentAirportId);
-    executeStatement(fetchBoundingStmt, "Fetch bounding");
-    if(fetchBoundingStmt->next())
+    if(!fetchBoundingStmt->isNull("left_lonx") &&
+       !fetchBoundingStmt->isNull("top_laty") &&
+       !fetchBoundingStmt->isNull("right_lonx") &&
+       !fetchBoundingStmt->isNull("bottom_laty"))
     {
-      if(!fetchBoundingStmt->isNull("left_lonx") &&
-         !fetchBoundingStmt->isNull("top_laty") &&
-         !fetchBoundingStmt->isNull("right_lonx") &&
-         !fetchBoundingStmt->isNull("bottom_laty"))
-      {
-        updateBoundingStmt->bindValue(":apid", currentAirportId);
-        updateBoundingStmt->bindValue(":leftlonx", fetchBoundingStmt->value("left_lonx").toFloat());
-        updateBoundingStmt->bindValue(":toplaty", fetchBoundingStmt->value("top_laty").toFloat());
-        updateBoundingStmt->bindValue(":rightlonx", fetchBoundingStmt->value("right_lonx").toFloat());
-        updateBoundingStmt->bindValue(":bottomlaty", fetchBoundingStmt->value("bottom_laty").toFloat());
-        executeStatement(updateBoundingStmt, "Update bounding");
-      }
+      updateBoundingStmt->bindValue(":apid", currentAirportId);
+      updateBoundingStmt->bindValue(":leftlonx", fetchBoundingStmt->value("left_lonx").toFloat());
+      updateBoundingStmt->bindValue(":toplaty", fetchBoundingStmt->value("top_laty").toFloat());
+      updateBoundingStmt->bindValue(":rightlonx", fetchBoundingStmt->value("right_lonx").toFloat());
+      updateBoundingStmt->bindValue(":bottomlaty", fetchBoundingStmt->value("bottom_laty").toFloat());
+      executeStatement(updateBoundingStmt, "Update bounding");
     }
-    fetchBoundingStmt->finish();
   }
+  fetchBoundingStmt->finish();
 }
 
 void DeleteProcessor::removeRunways()
@@ -642,6 +651,7 @@ void DeleteProcessor::copyAirportValues(const QStringList& copyAirportColumns)
 {
   if(!copyAirportColumns.isEmpty())
   {
+    // Select values from previous/old airport
     SqlQuery query(db), insert(db);
     query.prepare("select " + copyAirportColumns.join(",") + " from airport where airport_id = :prevApId");
     query.bindValue(":prevApId", prevAirportId);
@@ -653,6 +663,7 @@ void DeleteProcessor::copyAirportValues(const QStringList& copyAirportColumns)
 
     if(query.next())
     {
+      // Assign values to this current/new airport
       insert.prepare("update airport set " + bindCols.join(", ") + " where airport_id = :aptid");
       insert.bindValue(":aptid", currentAirportId);
       SqlUtil(db).copyRowValues(query, insert);
