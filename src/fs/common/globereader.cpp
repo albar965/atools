@@ -157,48 +157,52 @@ float GlobeReader::getElevation(const atools::geo::Pos& pos)
 
 void GlobeReader::getElevations(atools::geo::LineString& elevations, const atools::geo::LineString& linestring)
 {
-  QList<Pos> positions;
-
-  if(linestring.size() < 2)
+  if(linestring.isEmpty())
     return;
 
-  for(int i = 0; i < linestring.size() - 1; i++)
+  if(linestring.size() == 1)
+    elevations.append(linestring.first().alt(getElevation(linestring.first())));
+  else
   {
-    Line line = Line(linestring.at(i), linestring.at(i + 1));
-
-    float length = line.lengthMeter();
-
-    line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
-
-    Pos lastDropped;
-    for(const Pos& pos : positions)
+    QList<Pos> positions;
+    for(int i = 0; i < linestring.size() - 1; i++)
     {
-      float elevation = getElevation(pos);
+      Line line = Line(linestring.at(i), linestring.at(i + 1));
 
-      if(!elevations.isEmpty())
+      float length = line.lengthMeter();
+
+      line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
+
+      Pos lastDropped;
+      for(const Pos& pos : positions)
       {
-        if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
+        float elevation = getElevation(pos);
+
+        if(!elevations.isEmpty())
         {
-          // Drop points with similar altitude
-          lastDropped = pos;
-          lastDropped.setAltitude(elevation);
-          continue;
+          if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
+          {
+            // Drop points with similar altitude
+            lastDropped = pos;
+            lastDropped.setAltitude(elevation);
+            continue;
+          }
+          else if(lastDropped.isValid())
+          {
+            // Add last point of a stretch with similar altitude
+            elevations.append(lastDropped);
+            lastDropped = Pos();
+          }
         }
-        else if(lastDropped.isValid())
-        {
-          // Add last point of a stretch with similar altitude
-          elevations.append(lastDropped);
-          lastDropped = Pos();
-        }
+
+        elevations.append(pos.alt(elevation));
       }
-
-      elevations.append(pos.alt(elevation));
     }
-  }
 
-  elevations.append(linestring.last());
-  if(!elevations.isEmpty())
-    elevations.last().setAltitude(getElevation(elevations.last()));
+    elevations.append(linestring.last());
+    if(!elevations.isEmpty())
+      elevations.last().setAltitude(getElevation(elevations.last()));
+  }
 }
 
 qint64 GlobeReader::calcFileOffset(const atools::geo::Pos& pos, int& fileIndex)
