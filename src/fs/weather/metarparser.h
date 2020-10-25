@@ -23,16 +23,12 @@
 #ifndef ATOOLS_METAR_HXX
 #define ATOOLS_METAR_HXX
 
-#include "atools.h"
-#include "geo/calculations.h"
-
 #include <QCoreApplication>
 #include <vector>
 #include <map>
 #include <string>
 #include <QVector>
 
-// #include <simgear/constants.h>
 namespace atools {
 namespace fs {
 namespace weather {

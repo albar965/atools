@@ -19,7 +19,6 @@
 
 #include <cstdlib>
 #include <QDebug>
-#include <QMessageBox>
 #include <QUrl>
 #include <QThread>
 

@@ -1035,4 +1035,18 @@ QString normalizeStr(const QString& str)
   return retval;
 }
 
+QDateTime correctDate(int day, int hour, int minute)
+{
+  QDateTime dateTime = QDateTime::currentDateTimeUtc();
+  dateTime.setDate(QDate(dateTime.date().year(), dateTime.date().month(), day));
+  dateTime.setTime(QTime(hour, minute));
+
+  // Keep subtracting months until it is not in the future and the day matches
+  // but not more than one year to avoid endless loops
+  int months = 0;
+  while((dateTime > QDateTime::currentDateTimeUtc() || day != dateTime.date().day()) && months < 12)
+    dateTime = dateTime.addMonths(-(++months));
+  return dateTime;
+}
+
 } // namespace atools

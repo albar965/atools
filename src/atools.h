@@ -377,6 +377,10 @@ QString ratingString(int value, int maxValue);
 /* Convert 24 hour and minute time string to time (500, 2314, 12:30) */
 QTime timeFromHourMinStr(const QString& timeStr);
 
+/* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
+ * but not more than one year to avoid endless loops */
+QDateTime correctDate(int day, int hour, int minute);
+
 template<typename TYPE>
 Q_DECL_CONSTEXPR int sign(TYPE t)
 {

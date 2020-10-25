@@ -19,6 +19,7 @@
 
 #include "fs/weather/metarparser.h"
 #include "atools.h"
+#include "geo/calculations.h"
 
 #include <QStringList>
 #include <QDebug>

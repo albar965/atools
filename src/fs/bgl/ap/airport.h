@@ -371,7 +371,7 @@ private:
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
   static const int MIN_RUNWAY_LENGTH_METER = 10;
 
-  /* remove all runways that are far away from the airport center postition */
+  /* remove all runways that are far away from the airport center position */
   static const int MAX_RUNWAY_DISTANCE_METER = 50000;
 
   atools::fs::bgl::BglPosition position, towerPosition;

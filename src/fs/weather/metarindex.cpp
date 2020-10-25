@@ -19,6 +19,7 @@
 
 #include "geo/spatialindex.h"
 #include "fs/weather/weathertypes.h"
+#include "atools.h"
 
 #include <QTimeZone>
 #include <QRegularExpression>
@@ -212,12 +213,6 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
 // AYMH 100800Z 16015KT 9999 SHRA BKN090 18/16 Q1018 RMK
 int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool merge)
 {
-  // Recognize METAR airport
-  static const QRegularExpression IDENT_REGEXP("^[A-Z0-9]{2,5}$");
-
-  // Recognize date part
-  static const QRegularExpression DATE_REGEXP("^[\\d]{6}Z");
-
   if(!merge)
   {
     spatialIndex->clear();
@@ -229,36 +224,40 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
 
   int lineNum = 1;
   QString line;
-  QDateTime lastTimestamp, now = QDateTime::currentDateTimeUtc();
+  const QDateTime now = QDateTime::currentDateTimeUtc();
   int futureDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
     line = stream.readLine().simplified().toUpper();
 
-    if(line.isEmpty())
-    {
-      lineNum++;
-      continue;
-    }
-
     if(line.size() >= 4)
     {
       QString ident = line.section(' ', 0, 0).simplified().toUpper();
       QString dateStr = line.section(' ', 1, 1).simplified().toUpper();
 
-      if(DATE_REGEXP.match(dateStr).hasMatch())
+      if(ident.size() >= 3 && ident.size() <= 4 && dateStr.size() >= 5)
       {
-        int day = dateStr.left(2).toInt();
-        QDate date = QDate(QDate::currentDate().year(), QDate::currentDate().month(), day);
+        if(dateStr.endsWith('Z'))
+          dateStr.chop(1);
 
-        // Keep substracting months until it is not in the future and the day matches
-        // but not more than one year to avoid endless loops
-        int months = 0;
-        while((date > QDate::currentDate() || day != date.day()) && months < 12)
-          date = date.addMonths(-(++months));
+        if(dateStr.size() == 5)
+          dateStr.prepend('0');
 
-        if(lastTimestamp > now)
+        bool ok;
+        int day = dateStr.mid(0, 2).toInt(&ok);
+        if((!ok || day < 1 || day > 31) && verbose)
+          qWarning() << Q_FUNC_INFO << "Cannot read day in METAR" << line;
+        int hour = dateStr.mid(2, 2).toInt(&ok);
+        if((!ok || hour < 0 || hour > 23) && verbose)
+          qWarning() << Q_FUNC_INFO << "Cannot read hour in METAR" << line;
+        int minute = dateStr.mid(4, 2).toInt(&ok);
+        if((!ok || minute < 0 || minute > 60) && verbose)
+          qWarning() << Q_FUNC_INFO << "Cannot read minute in METAR" << line;
+
+        QDateTime metarDateTime = atools::correctDate(day, hour, minute);
+
+        if(metarDateTime > now)
         {
           // Ignore METARs with future UTC time
           futureDates++;
@@ -266,33 +265,26 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
           continue;
         }
 
-        if(IDENT_REGEXP.match(ident).hasMatch())
+        // Found METAR line
+        if(verbose)
         {
-          // Found METAR line
-          if(verbose)
+          if(!latest.isValid() || metarDateTime > latest)
           {
-            if(!latest.isValid() || lastTimestamp > latest)
-            {
-              latest = lastTimestamp;
-              latestIdent = ident;
-            }
-            if(!oldest.isValid() || lastTimestamp < oldest)
-            {
-              oldest = lastTimestamp;
-              oldestIdent = ident;
-            }
+            latest = metarDateTime;
+            latestIdent = ident;
           }
-
-          found++;
-          updateOrInsert(line, ident, lastTimestamp);
+          if(!oldest.isValid() || metarDateTime < oldest)
+          {
+            oldest = metarDateTime;
+            oldestIdent = ident;
+          }
         }
-        else
-          qWarning() << "Ident in METAR does not match in file/URL"
-                     << fileOrUrl << "line num" << lineNum << "line" << line;
+
+        found++;
+        updateOrInsert(line, ident, metarDateTime);
       }
-      else
-        qWarning() << "Date in METAR does not match in file/URL"
-                   << fileOrUrl << "line num" << lineNum << "line" << line;
+      else if(verbose)
+        qWarning() << "Invalid METAR in file/URL" << fileOrUrl << "line num" << lineNum << "line" << line;
     }
     lineNum++;
   }
