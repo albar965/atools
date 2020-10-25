@@ -441,14 +441,33 @@ void DockWidgetHandler::setAutoRaiseMainWindow(bool value)
   dockEventFilter->autoRaiseMainWindow = value;
 }
 
+void DockWidgetHandler::setStayOnTopMain(bool value) const
+{
+  setStayOnTop(mainWindow, value);
+
+  for(QDockWidget *dock : dockWidgets)
+  {
+    if(dock->isFloating())
+      setStayOnTop(dock, value);
+  }
+}
+
+bool DockWidgetHandler::isStayOnTopMain() const
+{
+  return isStayOnTop(mainWindow);
+}
+
 void DockWidgetHandler::setStayOnTop(QWidget *window, bool value) const
 {
   if(window->windowFlags().testFlag(Qt::WindowStaysOnTopHint) != value)
   {
+    bool visible = window->isVisible();
+
     window->setWindowFlag(Qt::WindowStaysOnTopHint, value);
 
-    // Need to reopen window since changing window flags closes window
-    window->show();
+    if(visible)
+      // Need to reopen window since changing window flags closes window
+      window->show();
   }
 }
 

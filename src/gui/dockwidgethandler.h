@@ -116,6 +116,9 @@ public:
   bool isStayOnTop(QWidget *window) const;
   void setStayOnTop(QWidget *window, bool value) const;
 
+  bool isStayOnTopMain() const;
+  void setStayOnTopMain(bool value) const;
+
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool value);
 
