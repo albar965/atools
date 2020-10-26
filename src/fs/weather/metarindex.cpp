@@ -128,7 +128,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
   {
     line = stream.readLine().trimmed();
 
-    if(line.isEmpty())
+    if(line.isEmpty() || line.size() > 256)
     {
       lineNum++;
       continue;
@@ -230,6 +230,12 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
   while(!stream.atEnd())
   {
     line = stream.readLine().simplified().toUpper();
+
+    if(line.isEmpty() || line.size() > 256)
+    {
+      lineNum++;
+      continue;
+    }
 
     if(line.size() >= 4)
     {
