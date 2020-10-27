@@ -3,6 +3,23 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.3.beta
+
+## Changes
+
+* Fixed parsing of the incomplete METAR date. This could result in reports having the wrong date.
+* Fixed issue where METAR reports might not be updated in index which could result in missing updates.
+* Added support for coordinate parsing from Wikipedia which uses special characters to minute and
+  second symbols. Coordinates like `40°41′21″N 74°2′40″W` can now be directly pasted into
+  _Little Navmap_ dialogs.
+* Floating dock windows now also set to stay on top to avoid main window hiding them.
+* Now imitating the behavior of MSFS if an scenery update tries to reuse the ident of an airport
+  for a new one. Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch Airport (54XS) in
+  real life at another location.
+* Fixed issue where military airports were not recognized in add-ons.
+
+===============================================================================
+
 # Version 3.6.2.beta
 
 ## Changes
