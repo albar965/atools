@@ -17,6 +17,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   for a new one. Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch Airport (54XS) in
   real life at another location.
 * Fixed issue where military airports were not recognized in add-ons.
+* Minimized state is now reverted to normal window state when restoring.
 * Updated Chinese translation from John Liu.
 
 ===============================================================================

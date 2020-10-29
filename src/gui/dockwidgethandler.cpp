@@ -36,7 +36,8 @@ namespace atools {
 namespace gui {
 
 /* Do not restore these states */
-const static Qt::WindowStates WINDOW_STATE_MASK = ~(Qt::WindowMinimized | Qt::WindowActive);
+const static Qt::WindowStates WINDOW_STATE_MASK =
+  ~(Qt::WindowStates(Qt::WindowMinimized) | Qt::WindowStates(Qt::WindowActive));
 
 /* Saves the main window states and states of all attached widgets like the status bars and the menu bar. */
 struct MainWindowState
