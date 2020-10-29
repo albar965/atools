@@ -35,6 +35,9 @@
 namespace atools {
 namespace gui {
 
+/* Do not restore these states */
+const static Qt::WindowStates WINDOW_STATE_MASK = ~(Qt::WindowMinimized | Qt::WindowActive);
+
 /* Saves the main window states and states of all attached widgets like the status bars and the menu bar. */
 struct MainWindowState
 {
@@ -101,7 +104,7 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
     mainWindow->move(position == nullptr ? mainWindowPosition : *position);
 
   // Set normal, maximized or fullscreen
-  mainWindow->setWindowState(mainWindowStates);
+  mainWindow->setWindowState(mainWindowStates & WINDOW_STATE_MASK);
 
   if(!mainWindowStates.testFlag(Qt::WindowMaximized) && !mainWindowStates.testFlag(Qt::WindowFullScreen))
   {
@@ -648,7 +651,7 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       fullscreen = false;
 
       // End maximized and fullscreen state
-      mainWindow->setWindowState(Qt::WindowActive);
+      mainWindow->setWindowState(Qt::WindowNoState);
 
       // Move to origin and apply size
       mainWindow->move(QGuiApplication::primaryScreen()->availableGeometry().topLeft());
