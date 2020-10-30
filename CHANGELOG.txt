@@ -19,6 +19,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed issue where military airports were not recognized in add-ons.
 * Minimized state is now reverted to normal window state when restoring.
 * Updated Chinese translation from John Liu.
+* Adjusted detection of MSFS Navigraph navdata update to avoid all airports being detected as add-on.
 
 ===============================================================================
 

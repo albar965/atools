@@ -1430,14 +1430,14 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
 bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
 {
-  // "content_type": "SCENERY",
-  // "title": "Navigraph Navdata Cycle 2010-revision.10",
+  // "title": "AIRAC Cycle 2011 rev.7",
+  // "manufacturer": "Jeppesen",
   // "creator": "Navigraph",
+
   return manifest.getContentType() == "SCENERY" &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
-         manifest.getTitle().contains("Navigraph", Qt::CaseInsensitive) &&
-         manifest.getTitle().contains("Navdata", Qt::CaseInsensitive) &&
-         manifest.getTitle().contains("Cycle", Qt::CaseInsensitive);
+         (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
+          manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
 }
 
 void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
