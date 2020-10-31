@@ -229,7 +229,7 @@ private:
   void insertPropertyIf(Flightplan& plan, const QString& key, const QString& value);
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
-  atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
+  atools::geo::Pos readPosLnm(util::XmlStream& xmlStream);
   void readPosGpx(geo::Pos& pos, QString& name, util::XmlStream& xmlStream);
 
   /* Read waypoint elements and attributes from stream */

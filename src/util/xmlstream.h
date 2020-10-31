@@ -42,26 +42,26 @@ public:
 
   }
 
-  explicit XmlStream(QIODevice *device)
-    : reader(device)
+  explicit XmlStream(QIODevice *device, const QString& filenameParam = QString())
+    : reader(device), filename(filenameParam)
   {
 
   }
 
-  explicit XmlStream(const QByteArray& data)
-    : reader(data)
+  explicit XmlStream(const QByteArray& data, const QString& filenameParam = QString())
+    : reader(data), filename(filenameParam)
   {
 
   }
 
-  explicit XmlStream(const QString& data)
-    : reader(data)
+  explicit XmlStream(const QString& data, const QString& filenameParam = QString())
+    : reader(data), filename(filenameParam)
   {
 
   }
 
-  explicit XmlStream(const char *data)
-    : reader(data)
+  explicit XmlStream(const char *data, const QString& filenameParam = QString())
+    : reader(data), filename(filenameParam)
   {
 
   }
@@ -84,9 +84,14 @@ public:
     return reader;
   }
 
+  const QString& getFilename() const
+  {
+    return filename;
+  }
+
 private:
   QXmlStreamReader reader;
-  QString errorMsg = tr("Cannot open file %1. Reason: %2");
+  QString errorMsg = tr("Cannot open file %1. Reason: %2"), filename;
 
 };
 

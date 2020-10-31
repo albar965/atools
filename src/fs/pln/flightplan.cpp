@@ -144,7 +144,6 @@ void Flightplan::adjustDepartureAndDestination(bool force)
     // These remain empty
     // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   }
-
 }
 
 void Flightplan::assignAltitudeToAllEntries()

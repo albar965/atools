@@ -20,6 +20,10 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Minimized state is now reverted to normal window state when restoring.
 * Updated Chinese translation from John Liu.
 * Adjusted detection of MSFS Navigraph navdata update to avoid all airports being detected as add-on.
+* PLN files now have altitude set for all waypoints.
+* Better error reporting for flight plans now including filename.
+* Fixed crash when loading LNMPLN flight plans with an empty waypoint list.
+
 
 ===============================================================================
 
