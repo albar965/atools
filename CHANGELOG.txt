@@ -23,7 +23,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * PLN files now have altitude set for all waypoints.
 * Better error reporting for flight plans now including filename.
 * Fixed crash when loading LNMPLN flight plans with an empty waypoint list.
-
+* Removed ICAO region code from MSFS export to improve loading in simulator.
 
 ===============================================================================
 

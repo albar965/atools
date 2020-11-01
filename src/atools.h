@@ -381,6 +381,10 @@ QTime timeFromHourMinStr(const QString& timeStr);
  * but not more than one year to avoid endless loops */
 QDateTime correctDate(int day, int hour, int minute);
 
+/* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
+ * Time can be converted to UTC which might also roll over the date. */
+QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc);
+
 template<typename TYPE>
 Q_DECL_CONSTEXPR int sign(TYPE t)
 {

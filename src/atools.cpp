@@ -1049,4 +1049,23 @@ QDateTime correctDate(int day, int hour, int minute)
   return dateTime;
 }
 
+QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc)
+{
+  QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYear);
+
+  int offsetSeconds = 0;
+  if(secondsOfDayLocal - secondsOfDayUtc <= -12 * 3600)
+    // UTC is one day back
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc + 24 * 3600;
+  else if(secondsOfDayLocal - secondsOfDayUtc >= 12 * 3600)
+    // UTC is one day forward
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc - 24 * 3600;
+  else
+    // UTC is same day as local
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
+
+  return QDateTime(localDate, QTime::fromMSecsSinceStartOfDay(secondsOfDayLocal * 1000),
+                   Qt::OffsetFromUTC, offsetSeconds);
+}
+
 } // namespace atools
