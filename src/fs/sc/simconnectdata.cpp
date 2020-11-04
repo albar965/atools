@@ -209,6 +209,9 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
 
   data.userAircraft.verticalSpeedFeetPerMin = vertSpeed;
 
+  data.userAircraft.windDirectionDegT = 45;
+  data.userAircraft.windSpeedKts = 19;
+
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
   data.userAircraft.indicatedAltitudeFt = pos.getAltitude();
