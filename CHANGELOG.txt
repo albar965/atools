@@ -3,6 +3,14 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.4.beta
+
+## Changes
+
+* Fixed MSFS flight plan export missing region codes.
+
+===============================================================================
+
 # Version 3.6.3.beta
 
 ## Changes
