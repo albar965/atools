@@ -1829,7 +1829,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     {
       writer.writeStartElement("ICAO");
 
-      if(!msfs && !entry.getRegion().isEmpty())
+      if(!entry.getRegion().isEmpty())
         writer.writeTextElement("ICAORegion", entry.getRegion());
       writer.writeTextElement("ICAOIdent", entry.getIdent());
 
