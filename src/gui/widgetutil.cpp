@@ -161,7 +161,7 @@ void changeStarIndication(QAction *action, bool changed)
 
 void changeWidgetColor(QWidget *widget, const QColor& color)
 {
-#if !defined(Q_OS_OSX)
+#if !defined(Q_OS_MACOS)
   widget->setStyleSheet("background-color: " + color.name() +
                         (color.value() < 180 ? "; color: white" : "; color: black"));
 #endif
