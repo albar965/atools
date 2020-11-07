@@ -241,7 +241,13 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":longest_runway_length", roundToInt(meterToFeet(type->getLongestRunwayLength())));
     bind(":longest_runway_width", roundToInt(meterToFeet(type->getLongestRunwayWidth())));
     bind(":longest_runway_heading", type->getLongestRunwayHeading());
-    bind(":longest_runway_surface", atools::fs::bgl::surface::surfaceToDbStr(type->getLongestRunwaySurface()));
+
+    using atools::fs::bgl::surface::surfaceToDbStr;
+    // Use MSFS material library is UUID is set
+    if(!type->getLongestRunwayMaterialUuid().isNull())
+      bind(":longest_runway_surface", surfaceToDbStr(getDataWriter().getSurface(type->getLongestRunwayMaterialUuid())));
+    else
+      bind(":longest_runway_surface", surfaceToDbStr(type->getLongestRunwaySurface()));
 
     bind(":num_runways", type->getRunways().size());
 

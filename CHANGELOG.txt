@@ -8,6 +8,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 ## Changes
 
 * Fixed MSFS flight plan export missing region codes.
+* Fixed issue with missing longest runway surface for airports with MSFS.
 
 ===============================================================================
 

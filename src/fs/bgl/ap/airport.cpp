@@ -510,6 +510,8 @@ void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& te
   }
 }
 
+
+
 void Airport::updateSummaryFields()
 {
   boundingRect = atools::geo::Rect(position.getPos());
@@ -543,6 +545,7 @@ void Airport::updateSummaryFields()
       longestRunwayWidth = rw.getWidth();
       longestRunwayHeading = rw.getHeading();
       longestRunwaySurface = rw.getSurface();
+      longestRunwayMaterialUuid = rw.getMaterialUuid();
     }
 
     const RunwayEnd& primary = rw.getPrimary();

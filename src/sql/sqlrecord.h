@@ -122,7 +122,7 @@ public:
     return value(name).toByteArray();
   }
 
-  /* Getters which return a default value if field does not exit in record instead of throwing an exception. */
+  /* Getters which return a default value if field does not exist in record instead of throwing an exception. */
   QVariant value(const QString& name, const QVariant& defaulValue) const
   {
     return contains(name) ? value(name) : defaulValue;
