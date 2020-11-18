@@ -256,30 +256,47 @@ Fichier: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="843"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="860"/>
-        <source>Invalid position in LNMPLN.</source>
-        <oldsource>Invalid position.</oldsource>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
+        <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation type="unfinished">Position invalide dans le LNMPLN.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="849"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="846"/>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="855"/>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
-        <translation type="unfinished">Position invalide dans le LNMPLN. Ordonnées hors limites: %1</translation>
+        <translation type="obsolete">Position invalide dans le LNMPLN. Ordonnées hors limites: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="890"/>
         <source>Invalid position in GPX.</source>
-        <translation type="unfinished">Position invalide dans le GPX.</translation>
+        <translation type="obsolete">Position invalide dans le GPX.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="981"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1310"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3809"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="972"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1304"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3797"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1494"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1145"/>
+        <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1488"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier FlightGear &quot;%1&quot;. Raison : %2</translation>
     </message>
@@ -292,12 +309,12 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FLP %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2874"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2862"/>
         <source> Flight Plan</source>
         <translation> Plan de vol</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2924"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2912"/>
         <source> Track</source>
         <translation> Trace</translation>
     </message>
@@ -306,7 +323,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier FMS %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3250"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3238"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Créé par %1 Version %2 (révision %3) sur %4 </translation>
     </message>
@@ -315,7 +332,7 @@ Fichier: &quot;%2&quot;
         <translation type="vanished">Impossible d&apos;ouvrir le fichier RTE %1. Motif: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3396"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3384"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erreur interne d&apos;écriture %1: Le fichier a une taille invalide %2 != %3 ne sera pas utilisable.</translation>
     </message>
@@ -2044,7 +2061,7 @@ Importation arrêtée.</translation>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot; sur la ligne %2 colonne %3: %4</translation>
     </message>
     <message>
-        <location filename="src/util/xmlstream.h" line="89"/>
+        <location filename="src/util/xmlstream.h" line="94"/>
         <source>Cannot open file %1. Reason: %2</source>
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier %1. Motif: %2</translation>
     </message>
@@ -2589,25 +2606,25 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="667"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="672"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="758"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="671"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="676"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="762"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="695"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="700"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="699"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="704"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur d&apos;écriture &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="718"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="722"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Nombre magique non valide. Pas un fichier de disposition de fenêtre.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="721"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="725"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Version non valable. Fichier de disposition des fenêtres incompatible.</translation>
     </message>

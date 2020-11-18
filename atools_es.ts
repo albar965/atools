@@ -247,19 +247,27 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position in LNMPLN.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid position in GPX.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

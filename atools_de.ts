@@ -265,19 +265,39 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid position in LNMPLN.</source>
-        <translation>Ungültige Position in LNMPLN.</translation>
+        <translation type="vanished">Ungültige Position in LNMPLN.</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
-        <translation>Ungültige Position in LNMPLN. Bereichsverletzung der Ordinaten: %1</translation>
+        <translation type="vanished">Ungültige Position in LNMPLN. Bereichsverletzung der Ordinaten: %1</translation>
     </message>
     <message>
         <source>Invalid position in GPX.</source>
-        <translation>Ungültige Position in GPX.</translation>
+        <translation type="vanished">Ungültige Position in GPX.</translation>
     </message>
     <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
         <translation>Flugplandatei &quot;%1&quot; kann nicht geöffnet werden. Nicht unterstütztes Format erkannt. Nur LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI und FSC), X-Plane FMS, FLP und FlightGear FGFP werden unterstützt.</translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
