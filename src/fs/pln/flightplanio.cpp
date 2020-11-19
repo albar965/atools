@@ -2889,8 +2889,8 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
     }
 
     writer.writeStartElement("rtept");
-    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
     writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
 
     if(i > 0 && i < plan.entries.size() - 1)
       writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
@@ -2919,8 +2919,8 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
       const Pos& pos = track.at(i);
       writer.writeStartElement("trkpt");
 
-      writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
+      writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
       if(!timestamps.isEmpty())
