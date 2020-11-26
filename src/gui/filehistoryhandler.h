@@ -91,6 +91,9 @@ private:
   void itemTriggered(QAction *action);
   void updateMenu();
 
+  /* To native path and removes duplicate separators */
+  QString correctPath(const QString& filename);
+
   QMenu *recentMenu;
   QAction *clearAction;
 
