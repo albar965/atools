@@ -258,22 +258,22 @@ Fichier: &quot;%2&quot;
         <location filename="src/fs/pln/flightplanio.cpp" line="843"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
-        <translation type="unfinished">Position invalide dans le LNMPLN.</translation>
+        <translation type="unfinished">Position invalide dans le LNMPLN.&quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="846"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Position invalide dans le fichier LNMPLN &quot;%1&quot;. Ordonnées hors limites : %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="855"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Position invalide dans le fichier LNMPLN &quot;%1&quot;. Les ordonnée(s) ne sont pas des nombres.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Position invalide dans le fichier GPX &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
@@ -293,7 +293,7 @@ Fichier: &quot;%2&quot;
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1145"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Fichier de plan de vol LNMPLN non valide &quot;%1&quot;. Aucun waypoint trouvé.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1488"/>
