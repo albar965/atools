@@ -3,6 +3,20 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.5.rc1
+
+## Changes
+
+* Now excluding wrong negative times from flight time calculation in logbook stations.
+  This can happen if a simulator reports wrong UTC time or a user changes sim time during flight.
+* Added total numbers to logdata query.
+* Limited localizer width to 20 degree to avoid excessive values from FSX and MSFS breaking ILS geometry.
+* Fixed issue with missing longest runway surface for airports with MSFS.
+* Changed ordinate order in GPX file export to fix Google maps import issues.
+* Updated translations.
+
+===============================================================================
+
 # Version 3.6.4.beta
 
 ## Changes

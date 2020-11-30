@@ -56,8 +56,8 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin, const Edge 
   Point3D originPoint = point3D(origin.index);
   float originToDestDist = originPoint.directDistanceMeter(destinationPoint);
 
-  // Check for track/non-track or non-track/track tansition if true
-  // Limits neighbours if origin is in the middle of a track and not an endpoint
+  // Check for track/non-track or non-track/track transition if true
+  // Limits neighbors if origin is in the middle of a track and not an endpoint
   bool originNotTrackEnd = source == SOURCE_AIRWAY && mode & MODE_TRACK &&
                            prevEdge != nullptr && !origin.isTrackStartEnd();
 
