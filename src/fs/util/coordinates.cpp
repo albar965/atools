@@ -480,8 +480,12 @@ geo::Pos fromAnyFormat(const QString& coords)
     coordStr.replace(',', ' ');
 #endif
 
+  // Replace variations for minute and degree signs like they are using in Wikipedia
   coordStr.replace("″", "\"");
   coordStr.replace("′", "'");
+  coordStr.replace("’", "'");
+  coordStr.replace("`", "'");
+  coordStr.replace("´", "'");
 
   coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
 
