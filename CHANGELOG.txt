@@ -3,6 +3,14 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.6
+
+* Replacing more obscure minute signs like apostrophes now in coordinate parser .
+* Excluding Navigraph manifest file now to avoid error messages with package "navigraph-maintenance"
+  when reading MSFS scenery data.
+
+===============================================================================
+
 # Version 3.6.5.rc1
 
 ## Changes
