@@ -1230,12 +1230,12 @@ File: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1418"/>
+        <location filename="src/fs/navdatabase.cpp" line="1423"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1712"/>
+        <location filename="src/fs/navdatabase.cpp" line="1735"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>

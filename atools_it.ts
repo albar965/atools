@@ -1321,12 +1321,12 @@ File: &quot;%2&quot;
         <translation>Navigazione di Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1418"/>
+        <location filename="src/fs/navdatabase.cpp" line="1423"/>
         <source>Community</source>
         <translation>Comunità</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1712"/>
+        <location filename="src/fs/navdatabase.cpp" line="1735"/>
         <source>Counting files for %1 ...</source>
         <translation>Conteggio dei file per%1 ...</translation>
     </message>

@@ -304,27 +304,27 @@ Ocorreu um erro no Sql
         <location filename="src/fs/pln/flightplanio.cpp" line="843"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
-        <translation type="unfinished">Posição inválida em LNMPLN.</translation>
+        <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="846"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. Ordenadas fora de alcance: %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="855"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. As ordenadas não são números.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1145"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="1488"/>
@@ -1034,12 +1034,12 @@ Ocorreu um erro no Sql
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1418"/>
+        <location filename="src/fs/navdatabase.cpp" line="1423"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1712"/>
+        <location filename="src/fs/navdatabase.cpp" line="1735"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
