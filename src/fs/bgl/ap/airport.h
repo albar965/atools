@@ -313,6 +313,11 @@ public:
     return longestRunwaySurface;
   }
 
+  const QUuid& getLongestRunwayMaterialUuid() const
+  {
+    return longestRunwayMaterialUuid;
+  }
+
   atools::fs::bgl::ap::ParkingType getLargestParkingGaRamp() const
   {
     return largestParkingGaRamp;
@@ -321,14 +326,6 @@ public:
   atools::fs::bgl::ap::ParkingType getLargestParkingGate() const
   {
     return largestParkingGate;
-  }
-
-  /*
-   * @return true if the airport is military. A military airport is recognized by name pattern
-   */
-  bool isMilitary() const
-  {
-    return military;
   }
 
   int getNumParkingCargo() const
@@ -352,8 +349,6 @@ public:
    */
   bool isEmpty() const;
 
-  static bool isNameMilitary(const QString& airportName);
-
   int calculateRating(bool isAddon) const;
 
   virtual bool isValid() const override;
@@ -376,11 +371,12 @@ private:
   void removeVehicleParking();
   void updateHelipads();
   bool isCurrentRecordValid();
+  void reportFarCoordinate(const atools::geo::Pos& pos, const QString& text);
 
   /* Minimum runway length - if smaller it is considered a dummy runway that was just added for ATC/traffic */
   static const int MIN_RUNWAY_LENGTH_METER = 10;
 
-  /* remove all runways that are far away from the airport center postition */
+  /* remove all runways that are far away from the airport center position */
   static const int MAX_RUNWAY_DISTANCE_METER = 50000;
 
   atools::fs::bgl::BglPosition position, towerPosition;
@@ -389,7 +385,7 @@ private:
   QString ident, name, region;
 
   atools::fs::bgl::ap::FuelFlags fuelFlags;
-  bool towerObj = false, airportClosed = false, military = false,
+  bool towerObj = false, airportClosed = false,
        msfsStar = false /* Will result in five stars rating*/;
 
   int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numLightRunway = 0,
@@ -399,6 +395,7 @@ private:
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 
   atools::fs::bgl::Surface longestRunwaySurface = atools::fs::bgl::UNKNOWN;
+  QUuid longestRunwayMaterialUuid;
   atools::fs::bgl::ap::ParkingType largestParkingGaRamp = atools::fs::bgl::ap::UNKNOWN,
                                    largestParkingGate = atools::fs::bgl::ap::UNKNOWN;
 

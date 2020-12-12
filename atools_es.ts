@@ -247,19 +247,27 @@ Atrapada excepción
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Invalid position in LNMPLN.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid position in GPX.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Cannot open flight plan file &quot;%1&quot;. No supported flight plan format detected. Supported formats are LNMPLN, PLN (FSX XML, MSFS XML, FS9 INI and FSC), X-Plane FMS, FLP and FlightGear FGFP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid position in GPX file &quot;%1&quot;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1002,6 +1010,10 @@ Atrapada excepción
         <source>Cleaning up waypoints</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Counting files for %1 ...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1370,10 +1382,6 @@ Atrapada excepción
         <translation type="unfinished">El archivo no existe</translation>
     </message>
     <message>
-        <source>UNKNOWN</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>NAT</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1526,6 +1534,11 @@ Atrapada excepción
     </message>
     <message>
         <source>Filepath is empty.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>…</source>
+        <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1688,6 +1701,26 @@ Asegúrese que pueden encontrarse las rutas de earth_fix.dat y earth_nav.dat.</t
 &quot;%2&quot;
 
 Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in one of these paths.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Resources ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery/Global Airports ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Airspaces ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Scenery ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Custom Data ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2037,10 +2070,14 @@ Night time: %5</source>
     </message>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of %4 and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
-        <translation>&lt;b&gt;Si el problema persiste u ocurre durante el inicio, borre todas las configuraciones de los archivos de bases de datos %4 y reintente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si desea reportar este error, adjunte los archivos de log y configuración a su reporte y agregue cualquier otra información valiosa, envíela a la dirección de contacto aquí debajo.&lt;/b&gt;&lt;br/&gt;</translation>
+        <translation type="vanished">&lt;b&gt;Si el problema persiste u ocurre durante el inicio, borre todas las configuraciones de los archivos de bases de datos %4 y reintente.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Si desea reportar este error, adjunte los archivos de log y configuración a su reporte y agregue cualquier otra información valiosa, envíela a la dirección de contacto aquí debajo.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -134,8 +134,7 @@ public:
                const QString& filename);
 
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
-  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename,
-                     atools::fs::pln::SaveOptions options);
+  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename, bool saveAsUserWaypoints);
   void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
   void loadGarminFplStr(atools::fs::pln::Flightplan& plan, const QString& string);
   void loadGarminFplGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes);
@@ -230,21 +229,15 @@ private:
   void insertPropertyIf(Flightplan& plan, const QString& key, const QString& value);
 
   /* Read "Pos" element and attributes from stream in LNM XML format */
-  atools::geo::Pos readPosLnm(QXmlStreamReader& reader);
+  atools::geo::Pos readPosLnm(util::XmlStream& xmlStream);
   void readPosGpx(geo::Pos& pos, QString& name, util::XmlStream& xmlStream);
 
   /* Read waypoint elements and attributes from stream */
   void readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<FlightplanEntry>& entries,
                         const QString& elementName);
 
-  /* Set altitude in all positions */
-  void assignAltitudeToAllEntries(Flightplan& plan);
-
   /* Number of entries including start and destination but excluding procedure points */
   int numEntriesSave(const Flightplan& plan);
-
-  /* Copy departure and destination from first and last entry */
-  void adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan);
 
   QString coordStringFs9(const atools::geo::Pos& pos);
   void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);

@@ -108,13 +108,20 @@ void arcFromPoints(const QLineF& line, const QPointF& center, bool left, QRectF 
 void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center, bool left,
                    float *distance, atools::geo::LineString *lines)
 {
+  if(distance != nullptr)
+    *distance = 0.f;
+
+  if(line.getPos1().almostEqual(line.getPos2()))
+  {
+    if(lines != nullptr)
+      lines->append(line.getPos1());
+    return;
+  }
+
   float dist = center.distanceMeterTo(line.getPos1());
   float start = center.angleDegTo(line.getPos1());
   float end = center.angleDegTo(line.getPos2());
   float spanningAngle;
-
-  if(distance != nullptr)
-    *distance = 0.f;
 
   if(left)
   {

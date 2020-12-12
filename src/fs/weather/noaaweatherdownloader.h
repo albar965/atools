@@ -69,7 +69,7 @@ private:
   /* Start download of next job in the queue */
   void download();
 
-  /* Append a job to the download queue. timeOffset will be substracted from current UTC hour. */
+  /* Append a job to the download queue. timeOffset will be subtracting from current UTC hour. */
   void appendJob(QDateTime datetime, int timeOffsetHour);
   void startTimer();
   void stopTimer();

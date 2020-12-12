@@ -512,6 +512,9 @@ QString FsPaths::initFilesPath(SimulatorType type)
         else
           qDebug() << "No handle from LoadLibrary";
       }
+#elif defined(DEBUG_FS_PATHS)
+      fsFilesDir = atools::documentsDir() + SEP + typeToShortName(type);
+
 #endif
       break;
 
@@ -524,7 +527,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
 
   // Use fallback on non Windows systems or if not found
   if(fsFilesDir.isEmpty())
-    fsFilesDir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+    fsFilesDir = atools::documentsDir();
 
   return fsFilesDir;
 }
@@ -826,6 +829,20 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
     }
 
     fileCfgOpt.close();
+
+    if(!dir.isEmpty())
+    {
+      // Community
+      if(!checkDir(getMsfsCommunityPath(dir)))
+        dir.clear();
+
+      // Official/Steam or Official/OneStore
+      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base"))
+        dir.clear();
+
+      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base-nav"))
+        dir.clear();
+    }
   }
   else
     qWarning() << Q_FUNC_INFO << "Cannot open" << userCfgOptFile << "error" << fileCfgOpt.errorString();

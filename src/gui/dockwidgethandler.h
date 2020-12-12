@@ -37,7 +37,6 @@ enum DockFlag
   HIDE_DOCKS = 1 << 0, /* Hide docks initially when fullscreen mode has no saved layout yet */
   HIDE_TOOLBARS = 1 << 1, /* As above for tool bars */
   HIDE_STATUSBAR = 1 << 2, /* As above for the status bar */
-  HIDE_MENUBAR = 1 << 3, /* As above for the main menu bar - Disabled in code for now */
   MAXIMIZE = 1 << 4 /* Maximize window when going into fullscreen instead of using full screen mode */
 };
 
@@ -116,6 +115,9 @@ public:
   /* Keep window on top of others */
   bool isStayOnTop(QWidget *window) const;
   void setStayOnTop(QWidget *window, bool value) const;
+
+  bool isStayOnTopMain() const;
+  void setStayOnTopMain(bool value) const;
 
   /* Forbid docking if value is false. */
   void setDockingAllowed(bool value);

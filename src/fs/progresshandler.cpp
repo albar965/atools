@@ -191,7 +191,7 @@ QString ProgressHandler::numbersAsString(const atools::fs::NavDatabaseProgress& 
   return QString("%1 of %2 (%3 %) [%4]").
          arg(std::min(inf.current, inf.total)).
          arg(inf.total).
-         arg(std::min(100 * inf.current / inf.total, 100)).
+         arg(inf.total > 0 ? std::min(100 * inf.current / inf.total, 100) : 0).
          arg(inf.current - inf.lastCurrent);
 }
 

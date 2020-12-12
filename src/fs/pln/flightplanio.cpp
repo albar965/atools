@@ -380,7 +380,7 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
     plan.flightplanType = IFR;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
 
-    adjustDepartureAndDestination(plan);
+    plan.adjustDepartureAndDestination();
     flpFile.close();
   }
   else
@@ -595,8 +595,8 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
 
     plan.flightplanType = IFR;
     plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
-    adjustDepartureAndDestination(plan);
-    assignAltitudeToAllEntries(plan);
+    plan.adjustDepartureAndDestination();
+    plan.assignAltitudeToAllEntries();
 
     fmsFile.close();
   }
@@ -690,7 +690,7 @@ void FlightplanIO::loadFsc(atools::fs::pln::Flightplan& plan, const QString& fil
 
     plan.flightplanType = IFR;
     plan.cruisingAlt = 0.f; // Use either GUI value or calculate from airways
-    adjustDepartureAndDestination(plan);
+    plan.adjustDepartureAndDestination();
 
     plnFile.close();
   }
@@ -824,9 +824,10 @@ void FlightplanIO::loadFs9(atools::fs::pln::Flightplan& plan, const QString& fil
     throw Exception(errorMsg.arg(filename).arg(plnFile.errorString()));
 }
 
-atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
+atools::geo::Pos FlightplanIO::readPosLnm(atools::util::XmlStream& xmlStream)
 {
   bool lonOk, latOk, altOk;
+  QXmlStreamReader& reader = xmlStream.getReader();
   float lon = reader.attributes().value("Lon").toFloat(&lonOk);
   float lat = reader.attributes().value("Lat").toFloat(&latOk);
   float alt = reader.attributes().value("Alt").toFloat(&altOk);
@@ -839,16 +840,11 @@ atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
     atools::geo::Pos pos(lon, lat);
 
     if(!pos.isValid())
-    {
-      reader.raiseError(tr("Invalid position in LNMPLN."));
-      return atools::geo::EMPTY_POS;
-    }
+      throw Exception(tr("Invalid position in LNMPLN file \"%1\".").arg(xmlStream.getFilename()));
 
     if(!pos.isValidRange())
-    {
-      reader.raiseError(tr("Invalid position in LNMPLN. Ordinates out of range: %1").arg(pos.toString()));
-      return atools::geo::EMPTY_POS;
-    }
+      throw Exception(tr("Invalid position in LNMPLN file \"%1\". Ordinates out of range: %1").
+                      arg(xmlStream.getFilename()).arg(pos.toString()));
 
     // Set altitude if given
     if(altOk)
@@ -856,10 +852,8 @@ atools::geo::Pos FlightplanIO::readPosLnm(QXmlStreamReader& reader)
     return pos;
   }
   else
-  {
-    reader.raiseError(tr("Invalid position in LNMPLN."));
-    return atools::geo::EMPTY_POS;
-  }
+    throw Exception(tr("Invalid position in LNMPLN file \"%1\". Ordinate(s) are not numbers.").
+                    arg(xmlStream.getFilename()));
 }
 
 void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, atools::util::XmlStream& xmlStream)
@@ -886,10 +880,7 @@ void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, atools::util
     }
   }
   else
-  {
-    reader.raiseError(tr("Invalid position in GPX."));
-    pos = atools::geo::EMPTY_POS;
-  }
+    throw Exception(tr("Invalid position in GPX file \"%1\".").arg(xmlStream.getFilename()));
 
   while(xmlStream.readNextStartElement())
   {
@@ -941,7 +932,7 @@ void FlightplanIO::readWaypointsLnm(atools::util::XmlStream& xmlStream, QList<Fl
         else if(reader.name() == "Comment")
           entry.setComment(reader.readElementText());
         else if(reader.name() == "Pos")
-          entry.setPosition(readPosLnm(reader));
+          entry.setPosition(readPosLnm(xmlStream));
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -973,7 +964,7 @@ void FlightplanIO::loadLnm(atools::fs::pln::Flightplan& plan, const QString& fil
   QFile xmlFile(filename);
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     loadLnmInternal(plan, xmlStream);
     xmlFile.close();
   }
@@ -1002,7 +993,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
       while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "CreationDate" || reader.name() == "FileVersion" || reader.name() == "ProgramName" ||
-           reader.name() == "ProgramVersion")
+           reader.name() == "ProgramVersion" || reader.name() == "Documentation")
         {
           // Skip these elements without warning
           xmlStream.skipCurrentElement();
@@ -1068,7 +1059,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
         if(reader.name() == "Start")
           plan.departureParkingName = reader.readElementText();
         else if(reader.name() == "Pos")
-          plan.departurePos = readPosLnm(reader);
+          plan.departurePos = readPosLnm(xmlStream);
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -1145,10 +1136,13 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
   }
 
   plan.entries.append(waypoints);
-  adjustDepartureAndDestination(plan);
+  plan.adjustDepartureAndDestination();
 
-  if(!plan.departurePos.isValid())
-    plan.departurePos = waypoints.first().getPosition();
+  if(!plan.departurePos.isValid() && !plan.entries.isEmpty())
+    plan.departurePos = plan.entries.first().getPosition();
+
+  if(plan.entries.isEmpty())
+    throw Exception(tr("Invalid LNMPLN flight plan file \"%1\". No waypoints found.").arg(xmlStream.getFilename()));
 }
 
 void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& filename)
@@ -1160,7 +1154,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     QXmlStreamReader& reader = xmlStream.getReader();
 
     // Skip all the useless entries until we hit the document
@@ -1340,7 +1334,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     QXmlStreamReader& reader = xmlStream.getReader();
 
     QString departureIcao, departureRunway, sid, sidTransition,
@@ -1487,8 +1481,8 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
     xmlFile.close();
 
     plan.cruisingAlt = atools::roundToInt(maxAlt > 0.f ? maxAlt : 0.f); // Use value from GUI
-    adjustDepartureAndDestination(plan);
-    assignAltitudeToAllEntries(plan);
+    plan.adjustDepartureAndDestination();
+    plan.assignAltitudeToAllEntries();
   }
   else
     throw Exception(tr("Cannot open FlightGear file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
@@ -1815,13 +1809,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(!entry.getPosition().isValid())
       throw atools::Exception("Invalid position in flightplan for id " + entry.getIdent());
 
-    Pos pos = entry.getPosition();
-
-    // Use null altitude for all except airports
-    if(entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
-      pos.setAltitude(0.f);
-
-    writer.writeTextElement("WorldPosition", pos.toLongString());
+    writer.writeTextElement("WorldPosition", entry.getPosition().toLongString());
 
     writeElementIf(writer, "ATCAirway", entry.getAirway());
 
@@ -2901,8 +2889,8 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
     }
 
     writer.writeStartElement("rtept");
-    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
     writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
 
     if(i > 0 && i < plan.entries.size() - 1)
       writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
@@ -2931,8 +2919,8 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
       const Pos& pos = track.at(i);
       writer.writeStartElement("trkpt");
 
-      writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeAttribute("lon", QString::number(pos.getLonX(), 'f', 6));
+      writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
       writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
       if(!timestamps.isEmpty())
@@ -3604,12 +3592,12 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
 }
 
 void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const QString& filename,
-                                 SaveOptions options)
+                                 bool saveAsUserWaypoints)
 {
   // Create a copy so we can easily change all waypoints to user defined is this is desired
   atools::fs::pln::FlightplanEntryListType planEntries = plan.entries;
 
-  if(options & SAVE_GNS_USER_WAYPOINTS)
+  if(saveAsUserWaypoints)
   {
     // Convert all waypoints to user defined waypoints keeping the names
     int i = 0;
@@ -3801,7 +3789,7 @@ void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
   if(xmlFile.open(QIODevice::ReadOnly))
   {
     plan.entries.clear();
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     loadGarminFplInternal(plan, xmlStream);
     xmlFile.close();
   }
@@ -3933,8 +3921,8 @@ void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStre
 
   plan.flightplanType = IFR;
   plan.cruisingAlt = 0; // Use altitude as set in GUI
-  assignAltitudeToAllEntries(plan);
-  adjustDepartureAndDestination(plan);
+  plan.assignAltitudeToAllEntries();
+  plan.adjustDepartureAndDestination();
 }
 
 atools::fs::pln::entry::WaypointType FlightplanIO::garminToWaypointType(const QString& typeStr) const
@@ -4044,29 +4032,6 @@ int FlightplanIO::routeTypeToStringFs9(atools::fs::pln::RouteType type)
   return 0;
 }
 
-void FlightplanIO::adjustDepartureAndDestination(atools::fs::pln::Flightplan& plan)
-{
-  if(!plan.entries.isEmpty())
-  {
-    if(plan.departureIdent.isEmpty())
-      plan.departureIdent = plan.entries.first().getIdent();
-    if(plan.departureName.isEmpty())
-      plan.departureName = plan.entries.first().getName();
-    if(!plan.departurePos.isValid())
-      plan.departurePos = plan.entries.first().getPosition();
-
-    if(plan.destinationIdent.isEmpty())
-      plan.destinationIdent = plan.entries.last().getIdent();
-    if(plan.destinationName.isEmpty())
-      plan.destinationName = plan.entries.last().getName();
-
-    if(!plan.destinationPos.isValid())
-      plan.destinationPos = plan.entries.last().getPosition();
-    // These remain empty
-    // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
-  }
-}
-
 int FlightplanIO::numEntriesSave(const atools::fs::pln::Flightplan& plan)
 {
   int num = 0;
@@ -4077,14 +4042,6 @@ int FlightplanIO::numEntriesSave(const atools::fs::pln::Flightplan& plan)
       num++;
   }
   return num;
-}
-
-void FlightplanIO::assignAltitudeToAllEntries(atools::fs::pln::Flightplan& plan)
-{
-  int altitude = plan.cruisingAlt;
-  for(FlightplanEntry& entry : plan.entries)
-    entry.setPosition(Pos(entry.getPosition().getLonX(),
-                          entry.getPosition().getLatY(), altitude));
 }
 
 QString FlightplanIO::gnsType(const atools::fs::pln::FlightplanEntry& entry)

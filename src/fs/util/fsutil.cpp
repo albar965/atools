@@ -35,6 +35,16 @@ const static QRegularExpression REGEXP_WHITESPACE("\\s");
 const static QRegularExpression REGEXP_SPDALT("^([NMK])(\\d{2,4})(([FSAM])(\\d{2,4}))?$");
 const static QRegularExpression REGEXP_SPDALT_ALL("^([NMK])(\\d{3,4})([FSAM])(\\d{3,4})$");
 
+// Look for longer military designators - taken from MSFS
+static const QStringList CONTAINS_MIL({
+        "MILITÄR", // de-DE.locPak:
+        "BASE AÉREA", // es-ES.locPak:
+        "BASE AÉRIENNE", // fr-FR.locPak:
+        "BASE AEREA", // it-IT.locPak:
+        "BAZA LOTNICZA", // pl-PL.locPak:
+        "BASE AÉREA BRACCIANO" // pt-BR.locPak:
+      });
+
 // Look for military designator words
 static const QVector<QRegularExpression> REGEXP_MIL({
         // "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
@@ -391,12 +401,17 @@ bool isNameClosed(const QString& airportName)
   return REGEXP_CLOSED.match(airportName.toUpper()).hasMatch();
 }
 
-bool isNameMilitary(const QString& airportName)
+bool isNameMilitary(QString airportName)
 {
+  airportName = airportName.toUpper();
   // Check if airport is military
+
+  if(strContains(airportName, CONTAINS_MIL))
+    return true;
+
   for(const QRegularExpression& s : REGEXP_MIL)
   {
-    if(s.match(airportName.toUpper()).hasMatch())
+    if(s.match(airportName).hasMatch())
       return true;
   }
   return false;
@@ -561,8 +576,9 @@ float roundComFrequency(int frequency)
     // E.g. 120425000 for X-Plane new 8.33 kHz - can be used without rounding
     return frequency / 1000000.f;
   else
-    // 118775 for legacy - round to next 0.025r
-    return std::round(frequency / 1000.f / 0.025f) * 0.025f;
+    // 118775 for legacy - round to next 0.025r - This is obsolete now
+    // return std::round(frequency / 1000.f / 0.025f) * 0.025f;
+    return frequency / 1000.f;
 }
 
 } // namespace util

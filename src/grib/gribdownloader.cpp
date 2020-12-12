@@ -85,7 +85,7 @@ void GribDownloader::startDownloadInternal()
   // gfs.2019042506
   // gfs.2019042500
 
-  // Collect surface parmeters ======================
+  // Collect surface parameters ======================
   QString levelStr;
   for(int surface : surfaces)
   {

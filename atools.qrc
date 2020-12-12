@@ -46,5 +46,7 @@
         <file>resources/sql/fs/track/create_track_schema.sql</file>
         <file>resources/sql/fs/db/dfd/update_airport_ils.sql</file>
         <file>resources/sql/fs/db/dfd/populate_navaids_proc.sql</file>
+        <file>resources/xsd/lnmpln.xsd</file>
+        <file>resources/xsd/lnmperf.xsd</file>
     </qresource>
 </RCC>

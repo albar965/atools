@@ -473,7 +473,21 @@ geo::Pos fromAnyFormat(const QString& coords)
 
   // Convert local dependent decimal point and comma to dot - i.e. allow comma. dot and
   // locale dependent separator in all languages
-  QString coordStr(coords.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", "."));
+  QString coordStr(coords);
+
+#ifdef DEBUG_INFORMATION
+  if(coordStr.count(',') == 1)
+    coordStr.replace(',', ' ');
+#endif
+
+  // Replace variations for minute and degree signs like they are using in Wikipedia
+  coordStr.replace("″", "\"");
+  coordStr.replace("′", "'");
+  coordStr.replace("’", "'");
+  coordStr.replace("`", "'");
+  coordStr.replace("´", "'");
+
+  coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
 
   // North/south and east/west designator
   const static QLatin1Literal NS("(?<NS>[NS])");
@@ -623,6 +637,12 @@ geo::Pos fromAnyFormat(const QString& coords)
   }
 
   return fromAnyWaypointFormat(coordStr);
+}
+
+void maybeSwapOrdinates(geo::Pos& pos, const QString& coords)
+{
+  if(!((coords.contains('N') || coords.contains('S')) && (coords.contains('E') || coords.contains('W'))))
+    pos.swapLonXLatY();
 }
 
 } // namespace util

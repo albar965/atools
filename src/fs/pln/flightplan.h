@@ -257,6 +257,12 @@ public:
     routeType = value;
   }
 
+  /* Copy departure and destination from first and last entry */
+  void adjustDepartureAndDestination(bool force = false);
+
+  /* Set altitude in all positions */
+  void assignAltitudeToAllEntries();
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 

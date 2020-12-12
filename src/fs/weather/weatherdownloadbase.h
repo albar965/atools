@@ -20,7 +20,7 @@
 
 #include "fs/weather/weathertypes.h"
 
-#include <QObject>
+#include <QTimer>
 
 namespace atools {
 namespace util {
@@ -71,6 +71,13 @@ public:
    * downloadSslErrors is emitted in case of SSL errors. */
   void setIgnoreSslErrors(bool value);
 
+  /* Returns true if the error state timer is currently active */
+  bool isErrorState() const;
+
+  /* Start a timer that is used to avoid flooding the log with errors.
+   * Requests on getMetar() will not trigger a download while this timer is running (three minutes). */
+  void setErrorStateTimer(bool error = true);
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
@@ -87,6 +94,9 @@ protected:
   atools::util::HttpDownloader *downloader = nullptr;
   bool verbose = false;
 
+  /* Timer that is used to avoid flooding the log with errors. */
+  QTimer errorStateTimer;
+  static const int ERROR_TIMER_INTERVAL_MS = 3 * 60 * 1000;
 };
 
 } // namespace weather

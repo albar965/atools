@@ -34,7 +34,7 @@ const static QChar SEP(QDir::separator());
 
 QString version()
 {
-  return "3.6.1.beta"; // VERSION_NUMBER - atools
+  return "3.6.6"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()
@@ -188,6 +188,15 @@ QString cleanFilename(const QString& filename, int maxLength)
          simplified().mid(0, maxLength);
 }
 
+bool strContains(const QString& name, const QStringList& list)
+{
+  for(const QString& val : list)
+    if(name.contains(val))
+      return true;
+
+  return false;
+}
+
 bool strContains(const QString& name, const std::initializer_list<QString>& list)
 {
   for(const QString& val : list)
@@ -278,18 +287,33 @@ QString elideTextShortMiddle(const QString& str, int maxLength)
   return str;
 }
 
-QString elideTextLinesShort(QString str, int maxLines, int maxLength)
+QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compressEmpty, bool ellipseLastLine)
 {
   QStringList lines;
   QTextStream stream(&str, QIODevice::ReadOnly);
 
   int i = 0;
-  while(!stream.atEnd() && ++i < maxLines)
-    lines.append(maxLength > 0 ? elideTextShort(stream.readLine(), maxLength) : stream.readLine());
+  while(!stream.atEnd())
+  {
+    QString line = stream.readLine();
+    if(compressEmpty)
+    {
+      line = line.simplified();
+      if(line.isEmpty())
+        continue;
+    }
 
-  if(i >= maxLines)
+    if(i++ >= maxLines)
+      break;
+
+    lines.append(maxLength > 0 ? elideTextShort(line, maxLength) : line);
+  }
+
+  if(i > maxLines)
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts")) +
-           QObject::tr("\n…", "Linefeed and dots used to shorten texts");
+           (ellipseLastLine ?
+            QObject::tr("\n…", "Linefeed and dots used to shorten texts") :
+            QObject::tr("…", "Linefeed and dots used to shorten texts"));
   else
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
 }
@@ -1009,6 +1033,39 @@ QString normalizeStr(const QString& str)
     }
   }
   return retval;
+}
+
+QDateTime correctDate(int day, int hour, int minute)
+{
+  QDateTime dateTime = QDateTime::currentDateTimeUtc();
+  dateTime.setDate(QDate(dateTime.date().year(), dateTime.date().month(), day));
+  dateTime.setTime(QTime(hour, minute));
+
+  // Keep subtracting months until it is not in the future and the day matches
+  // but not more than one year to avoid endless loops
+  int months = 0;
+  while((dateTime > QDateTime::currentDateTimeUtc() || day != dateTime.date().day()) && months < 12)
+    dateTime = dateTime.addMonths(-(++months));
+  return dateTime;
+}
+
+QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc)
+{
+  QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYear);
+
+  int offsetSeconds = 0;
+  if(secondsOfDayLocal - secondsOfDayUtc <= -12 * 3600)
+    // UTC is one day back
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc + 24 * 3600;
+  else if(secondsOfDayLocal - secondsOfDayUtc >= 12 * 3600)
+    // UTC is one day forward
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc - 24 * 3600;
+  else
+    // UTC is same day as local
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
+
+  return QDateTime(localDate, QTime::fromMSecsSinceStartOfDay(secondsOfDayLocal * 1000),
+                   Qt::OffsetFromUTC, offsetSeconds);
 }
 
 } // namespace atools

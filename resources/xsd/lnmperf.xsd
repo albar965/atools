@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
   <xs:annotation>
     <xs:documentation xml:lang="en">
-      Relaxed schema for validating Little Navmap aircraft perforamnce files.
+      Relaxed schema for validating Little Navmap aircraft performance files.
       See https://www.littlenavmap.org/lnmperf.html for more information.
     </xs:documentation>
   </xs:annotation>

@@ -349,7 +349,7 @@ void WindQuery::getWindForRect(WindPosVector& result, const Rect& rect, float al
           QPoint gPos = gridPos(cell);
 
           WindPos wp;
-          // Calcualte grid cell upper left position (position for value)
+          // Calculate grid cell upper left position (position for value)
           wp.pos = cell;
           wp.pos.setAltitude(altFeet);
 

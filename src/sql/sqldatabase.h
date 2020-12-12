@@ -18,6 +18,7 @@
 #ifndef ATOOLS_SQL_SQLDATABASE_H
 #define ATOOLS_SQL_SQLDATABASE_H
 
+#include <QDateTime>
 #include <QSqlDatabase>
 #include <QStringList>
 
@@ -70,6 +71,12 @@ public:
   SqlQuery exec(const QString& query = QString()) const;
   QSqlError lastError() const;
   bool isValid() const;
+
+  /* true if file was modifed since last call to recordFileMetadata() */
+  bool isFileModified() const;
+
+  /* Remember size and modification time to check if file was replaced by user */
+  void recordFileMetadata();
 
   /* Commit all changes. No need to call transaction before. This is done
    * automatically.
@@ -178,6 +185,9 @@ private:
   QSqlDatabase db;
   bool autocommit = false, readonly = false, automaticTransactions = true;
   QString name;
+
+  qint64 fileSize = 0L;
+  QDateTime fileModificationTime;
 };
 
 } // namespace sql

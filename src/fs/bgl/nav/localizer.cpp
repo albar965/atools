@@ -35,7 +35,7 @@ Localizer::Localizer(const NavDatabaseOptions *options, BinaryStream *bs)
   runwayNumber = bs->readUByte();
   runwayDesignator = bs->readUByte();
   heading = bs->readFloat();
-  width = bs->readFloat();
+  width = std::min(bs->readFloat(), 20.f);
 }
 
 Localizer::~Localizer()

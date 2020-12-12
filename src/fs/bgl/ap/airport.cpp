@@ -18,6 +18,7 @@
 #include "fs/bgl/ap/airport.h"
 #include "fs/bgl/recordtypes.h"
 #include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/navdatabaseoptions.h"
@@ -449,11 +450,6 @@ bool Airport::isCurrentRecordValid()
   return valid;
 }
 
-bool Airport::isNameMilitary(const QString& airportName)
-{
-  return atools::fs::util::isNameMilitary(airportName);
-}
-
 int Airport::calculateRating(bool isAddon) const
 {
   // Maximum rating is 5
@@ -503,12 +499,28 @@ void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFreque
   }
 }
 
+void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& text)
+{
+  if(opts->isAirportValidation())
+  {
+    float dist = atools::geo::meterToNm(position.getPos().distanceMeterTo(pos));
+    if(dist > 10.f)
+      qWarning() << "Airport" << ident << "at" << position.getPos()
+                 << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
+  }
+}
+
+
+
 void Airport::updateSummaryFields()
 {
-  boundingRect = atools::geo::Rect(getPosition().getPos());
+  boundingRect = atools::geo::Rect(position.getPos());
 
   if(!towerPosition.getPos().isNull() && towerPosition.getPos().isValidRange() && !towerPosition.getPos().isPole())
+  {
+    reportFarCoordinate(towerPosition.getPos(), "tower");
     boundingRect.extend(towerPosition.getPos());
+  }
 
   for(const Runway& rw : runways)
   {
@@ -517,8 +529,13 @@ void Airport::updateSummaryFields()
       numLightRunway++;
 
     // Extend bounding rectangle for runway dimensions
+    reportFarCoordinate(rw.getPosition().getPos(), "runway");
     boundingRect.extend(rw.getPosition().getPos());
+
+    reportFarCoordinate(rw.getSecondaryPosition(), "runway secondary");
     boundingRect.extend(rw.getSecondaryPosition());
+
+    reportFarCoordinate(rw.getSecondaryPosition(), "runway primary");
     boundingRect.extend(rw.getPrimaryPosition());
 
     // Remember the longest runway attributes
@@ -528,6 +545,7 @@ void Airport::updateSummaryFields()
       longestRunwayWidth = rw.getWidth();
       longestRunwayHeading = rw.getHeading();
       longestRunwaySurface = rw.getSurface();
+      longestRunwayMaterialUuid = rw.getMaterialUuid();
     }
 
     const RunwayEnd& primary = rw.getPrimary();
@@ -566,6 +584,7 @@ void Airport::updateSummaryFields()
 
   for(const Parking& p : parkings)
   {
+    reportFarCoordinate(p.getPosition().getPos(), "parking");
     boundingRect.extend(p.getPosition().getPos());
 
     if(p.hasJetway())
@@ -597,28 +616,47 @@ void Airport::updateSummaryFields()
   }
 
   for(const Apron& a : aprons)
+  {
+    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
+    {
+      reportFarCoordinate(p.getPos(), "apron");
       boundingRect.extend(p.getPos());
+    }
+  }
 
   for(const Apron2& a : aprons2)
+  {
+    // reportFarCoordinate(s.getPosition().getPos(), "start"); // Too CPU intense
     for(const BglPosition& p : a.getVertices())
+    {
+      reportFarCoordinate(p.getPos(), "apron2");
       boundingRect.extend(p.getPos());
+    }
+  }
 
   for(const Start& s : starts)
+  {
+    reportFarCoordinate(s.getPosition().getPos(), "start");
     boundingRect.extend(s.getPosition().getPos());
+  }
 
   for(const Helipad& h : helipads)
+  {
+    reportFarCoordinate(h.getPosition().getPos(), "helipad");
     boundingRect.extend(h.getPosition().getPos());
+  }
 
   for(const TaxiPath& p : taxipaths)
   {
+    reportFarCoordinate(p.getStartPoint().getPosition().getPos(), "taxipath start");
     boundingRect.extend(p.getStartPoint().getPosition().getPos());
+
+    reportFarCoordinate(p.getEndPoint().getPosition().getPos(), "taxipath end");
     boundingRect.extend(p.getEndPoint().getPosition().getPos());
   }
 
   updateHelipads();
-
-  military = isNameMilitary(name);
 }
 
 void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,

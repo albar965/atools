@@ -85,14 +85,18 @@ void NoaaWeatherDownloader::downloadFinished(const QByteArray& data, QString url
   if(verbose)
     qDebug() << Q_FUNC_INFO << "url" << url << "downloadQueue" << downloadQueue;
 
+  // Reset error state which avoids triggering downloads
+  setErrorStateTimer(false);
+
   if(read(data, url) && downloadQueue.isEmpty())
     // Notification only if no outstanding downloads
     emit weatherUpdated();
 
   if(downloadQueue.isEmpty())
+    // All files downloaded - wait for next timeout which will call startDownload()
     startTimer();
 
-  // Start later in the event queue to allow the download to finish
+  // Start later in the event queue to allow the download to finish the other files
   QTimer::singleShot(0, this, &NoaaWeatherDownloader::download);
 }
 
@@ -101,14 +105,15 @@ void NoaaWeatherDownloader::downloadFailed(const QString& error, int errorCode, 
   if(verbose)
     qDebug() << Q_FUNC_INFO << error << url;
 
+  // Set error state which avoids triggering downloads for a certain period
+  setErrorStateTimer();
+
   emit weatherDownloadFailed(error, errorCode, url);
 
   downloadQueue.clear();
 
+  // Download again after timeout (10 minutes) and call startDownload() later
   startTimer();
-
-  // Start later in the event queue to allow the download to finish
-  QTimer::singleShot(0, this, &NoaaWeatherDownloader::startDownload);
 }
 
 void NoaaWeatherDownloader::startDownload()

@@ -219,7 +219,7 @@ void AircraftPerf::loadXml(const QString& filename)
 
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     loadXmlInternal(xmlStream);
     xmlFile.close();
   }

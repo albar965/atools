@@ -111,6 +111,8 @@ void SqlDatabase::open(const QStringList& pragmas)
       qInfo() << pragma << "value is now: " << query.value(0).toString();
     query.finish();
   }
+
+  recordFileMetadata();
 }
 
 void SqlDatabase::open(const QString& user, const QString& password, const QStringList& pragmas)
@@ -128,6 +130,8 @@ void SqlDatabase::open(const QString& user, const QString& password, const QStri
 
   if(!readonly && automaticTransactions)
     transactionInternal();
+
+  recordFileMetadata();
 }
 
 void SqlDatabase::close()
@@ -136,6 +140,10 @@ void SqlDatabase::close()
   checkError(isOpen(), "Closing already closed database");
   if(!readonly && automaticTransactions)
     rollback();
+
+  if(readonly && isFileModified())
+    qWarning() << Q_FUNC_INFO << "Readonly database modified when closed" << databaseName();
+
   db.close();
 
   qInfo() << "Closed database" << databaseName();
@@ -146,6 +154,39 @@ void SqlDatabase::close()
   {
     if(QFile::remove(journalName))
       qDebug() << Q_FUNC_INFO << "Removed" << journalName;
+  }
+}
+
+bool SqlDatabase::isFileModified() const
+{
+  if(isOpen())
+  {
+    QFileInfo file(databaseName());
+    if(file.exists())
+    {
+      if(file.size() != fileSize)
+        return true;
+
+      if(fileModificationTime != file.lastModified())
+        return true;
+    }
+  }
+  return false;
+}
+
+void SqlDatabase::recordFileMetadata()
+{
+  fileSize = 0L;
+  fileModificationTime = QDateTime();
+
+  if(isOpen())
+  {
+    QFileInfo file(databaseName());
+    if(file.exists())
+    {
+      fileSize = file.size();
+      fileModificationTime = file.lastModified();
+    }
   }
 }
 

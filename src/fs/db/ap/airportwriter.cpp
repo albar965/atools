@@ -37,6 +37,7 @@
 #include "fs/db/ap/comwriter.h"
 #include "fs/bgl/ap/parking.h"
 #include "fs/scenery/languagejson.h"
+#include "fs/util/fsutil.h"
 #include "atools.h"
 #include "exception.h"
 
@@ -66,16 +67,17 @@ void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 
 void AirportWriter::writeObject(const Airport *type)
 {
-  if(!getOptions().isIncludedAirportIdent(type->getIdent()))
+  QString ident = type->getIdent();
+  if(!getOptions().isIncludedAirportIdent(ident))
     return;
 
   if(type->isEmpty())
   {
-    qWarning() << "Skipping empty airport" << type->getIdent();
+    qWarning() << "Skipping empty airport" << ident;
     return;
   }
 
-  if(type->getIdent().isEmpty())
+  if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 
   DataWriter& dw = getDataWriter();
@@ -88,13 +90,13 @@ void AirportWriter::writeObject(const Airport *type)
     // Instead of writing a new airport simply add COM and procedures
 
     // Get the other airport id and remember the current one
-    int predId = airportIdByIdent(type->getIdent());
+    int predId = airportIdByIdent(ident);
     int currentId = dw.getAirportWriter()->setCurrentId(predId);
 
     // Update index
-    currentIdent = type->getIdent();
+    currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(type->getIdent(), predId);
+    getAirportIndex()->add(ident, predId);
 
     // Write features with other airport id
     ComWriter *comWriter = dw.getAirportComWriter();
@@ -125,11 +127,11 @@ void AirportWriter::writeObject(const Airport *type)
     isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
-    if(currentArea.isNavdataThirdPartyUpdate() || currentArea.isAsoboAirport())
+    if(currentArea.isNavdataThirdPartyUpdate())
       isAddon = false;
 
     if(isRealAddon && type->getDeleteAirports().isEmpty())
-      qInfo() << "Addon airport without delete record" << type->getIdent();
+      qInfo() << "Addon airport without delete record" << ident;
 
     int nextAirportId = getNextId();
 
@@ -160,7 +162,9 @@ void AirportWriter::writeObject(const Airport *type)
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
     // Write country, state and city =====================
-    bindStrOrNull(":name", getDataWriter().getLanguage(type->getName()));
+    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName()));
+
+    bindStrOrNull(":name", name);
     bindStrOrNull(":city", city);
     bindStrOrNull(":state", state);
     bindStrOrNull(":country", country);
@@ -168,7 +172,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     bind(":airport_id", nextAirportId);
     bind(":file_id", bglFileWriter->getCurrentId());
-    bind(":ident", type->getIdent());
+    bind(":ident", ident);
     bindNullString(":icao");
     bindNullString(":iata");
     bindNullString(":xpident");
@@ -190,7 +194,8 @@ void AirportWriter::writeObject(const Airport *type)
     bindIntOrNull(":unicom_frequency", unicomFrequency);
 
     bindBool(":is_closed", type->isAirportClosed());
-    bindBool(":is_military", type->isMilitary());
+
+    bindBool(":is_military", atools::fs::util::isNameMilitary(name));
 
     bindBool(":is_addon", isAddon);
     bindBool(":is_3d", 0);
@@ -236,7 +241,13 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":longest_runway_length", roundToInt(meterToFeet(type->getLongestRunwayLength())));
     bind(":longest_runway_width", roundToInt(meterToFeet(type->getLongestRunwayWidth())));
     bind(":longest_runway_heading", type->getLongestRunwayHeading());
-    bind(":longest_runway_surface", atools::fs::bgl::surface::surfaceToDbStr(type->getLongestRunwaySurface()));
+
+    using atools::fs::bgl::surface::surfaceToDbStr;
+    // Use MSFS material library is UUID is set
+    if(!type->getLongestRunwayMaterialUuid().isNull())
+      bind(":longest_runway_surface", surfaceToDbStr(getDataWriter().getSurface(type->getLongestRunwayMaterialUuid())));
+    else
+      bind(":longest_runway_surface", surfaceToDbStr(type->getLongestRunwaySurface()));
 
     bind(":num_runways", type->getRunways().size());
 
@@ -278,9 +289,9 @@ void AirportWriter::writeObject(const Airport *type)
     executeStatement();
 
     // Update index
-    currentIdent = type->getIdent();
+    currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(type->getIdent(), getCurrentId());
+    getAirportIndex()->add(ident, getCurrentId());
 
     // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
     RunwayWriter *rwWriter = dw.getRunwayWriter();
@@ -355,6 +366,9 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   query.prepare("update airport set tower_frequency = :tower_frequency, atis_frequency = :atis_frequency, "
                 "awos_frequency = :awos_frequency, asos_frequency = :asos_frequency, "
                 "unicom_frequency = :unicom_frequency, num_com = :num_com, num_approach = :num_approach "
+                // "lonx = :lonx, laty = :laty, "
+                // "left_lonx = :left_lonx, top_laty = :top_laty, "
+                // "right_lonx = :right_lonx, bottom_laty = :bottom_laty "
                 "where airport_id = :id");
 
   query.bindValue(":tower_frequency", towerFrequency);
@@ -364,6 +378,14 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   query.bindValue(":unicom_frequency", unicomFrequency);
   query.bindValue(":num_com", type->getComs().size());
   query.bindValue(":num_approach", type->getApproaches().size());
+
+  // query.bindValue(":lonx", type->getPosition().getLonX());
+  // query.bindValue(":laty", type->getPosition().getLatY());
+  // query.bindValue(":left_lonx", type->getBoundingRect().getWest());
+  // query.bindValue(":top_laty", type->getBoundingRect().getNorth());
+  // query.bindValue(":right_lonx", type->getBoundingRect().getEast());
+  // query.bindValue(":bottom_laty", type->getBoundingRect().getSouth());
+
   query.bindValue(":id", predId);
   query.exec();
 }

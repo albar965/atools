@@ -3,6 +3,80 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.6
+
+* Replacing more obscure minute signs like apostrophes now in coordinate parser .
+* Excluding Navigraph manifest file now to avoid error messages with package "navigraph-maintenance"
+  when reading MSFS scenery data.
+
+===============================================================================
+
+# Version 3.6.5.rc1
+
+## Changes
+
+* Now excluding wrong negative times from flight time calculation in logbook stations.
+  This can happen if a simulator reports wrong UTC time or a user changes sim time during flight.
+* Added total numbers to logdata query.
+* Limited localizer width to 20 degree to avoid excessive values from FSX and MSFS breaking ILS geometry.
+* Fixed issue with missing longest runway surface for airports with MSFS.
+* Changed ordinate order in GPX file export to fix Google maps import issues.
+* Updated translations.
+
+===============================================================================
+
+# Version 3.6.4.beta
+
+## Changes
+
+* Fixed MSFS flight plan export missing region codes.
+* Fixed issue with missing longest runway surface for airports with MSFS.
+
+===============================================================================
+
+# Version 3.6.3.beta
+
+## Changes
+
+* Fixed parsing of the incomplete METAR date. This could result in reports having the wrong date.
+* Fixed issue where METAR reports might not be updated in index which could result in missing updates.
+* Added support for coordinate parsing from Wikipedia which uses special characters to minute and
+  second symbols. Coordinates like `40°41′21″N 74°2′40″W` can now be directly pasted into
+  _Little Navmap_ dialogs.
+* Floating dock windows now also set to stay on top to avoid main window hiding them.
+* Now imitating the behavior of MSFS if an scenery update tries to reuse the ident of an airport
+  for a new one. Example: Boyd Field (54XS) in MSFS which actually Bar C Ranch Airport (54XS) in
+  real life at another location.
+* Fixed issue where military airports were not recognized in add-ons.
+* Minimized state is now reverted to normal window state when restoring.
+* Updated Chinese translation from John Liu.
+* Adjusted detection of MSFS Navigraph navdata update to avoid all airports being detected as add-on.
+* PLN files now have altitude set for all waypoints.
+* Better error reporting for flight plans now including filename.
+* Fixed crash when loading LNMPLN flight plans with an empty waypoint list.
+* Removed ICAO region code from MSFS export to improve loading in simulator.
+
+===============================================================================
+
+# Version 3.6.2.beta
+
+## Changes
+
+* Fixed issue where program could appear frozen while counting files for loading scenery.
+* Fixed detection for military airports in MSFS and extended this with new phrases.
+* Now capitalizing all airport names for FSX, P3D and MSFS to fix wrong airbase designators
+  like  `Afb`.
+* Fixed issue with NOAA weather downloads where a missing internet connection flooded the log and
+  caused the program to crash. Now applying a grace period of three minutes after an error which
+  blocks new downloads for METAR requests.
+* Removed wrong rounding of COM frequencies.
+* Now checking for all paths `Community`, `fs-base` and `fs-base-nav` before recognizing a MSFS
+  installation as valid.
+* `asobo-airports-*` in `Official\Steam` or `Official\OneStore` are now flagged as add-on.
+* Added logging for airports that have features more than 10 NM apart.
+
+===============================================================================
+
 Version 3.6.1.beta
 
 FSX, P3D and MSFS:

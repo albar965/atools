@@ -79,17 +79,6 @@ enum FileFormat
   MSFS_PLN /* MSFS PLN  */
 };
 
-enum SaveOption
-{
-  SAVE_NO_OPTIONS = 0,
-
-  /* Save Garmin GNS format with user waypoints */
-  SAVE_GNS_USER_WAYPOINTS = 1 << 2
-};
-
-Q_DECLARE_FLAGS(SaveOptions, SaveOption);
-Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::pln::SaveOptions);
-
 enum FlightplanType
 {
   IFR,

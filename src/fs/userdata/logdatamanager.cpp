@@ -736,21 +736,34 @@ void LogdataManager::fixEmptyFields(sql::SqlQuery& query)
   fixEmptyBlobField(query, ":aircraft_trail");
 }
 
-void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeMaximumSim,
-                                            float& timeAverageSim)
+void LogdataManager::getFlightStatsTripTime(float& timeMaximum, float& timeAverage, float& timeTotal,
+                                            float& timeMaximumSim, float& timeAverageSim, float& timeTotalSim)
 {
-  SqlQuery query("select max(time_real), avg(time_real), max(time_sim), avg(time_sim) from (select "
-                 "strftime('%s', destination_time) - strftime('%s', departure_time) as time_real, "
-                 "strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) as time_sim "
-                 "from " + tableName + ")", db);
-  query.exec();
+  SqlQuery query(db);
+
+  query.exec("select max(time_real), avg(time_real), sum(time_real) "
+             "from (select strftime('%s', destination_time) - strftime('%s', departure_time) as time_real "
+             "from " + tableName + ") where time_real > 0");
   if(query.next())
   {
-    timeMaximum = query.valueFloat(0) / 3600.f;
-    timeAverage = query.valueFloat(1) / 3600.f;
-    timeMaximumSim = query.valueFloat(2) / 3600.f;
-    timeAverageSim = query.valueFloat(3) / 3600.f;
+    int idx = 0;
+    timeMaximum = query.valueFloat(idx++) / 3600.f;
+    timeAverage = query.valueFloat(idx++) / 3600.f;
+    timeTotal = query.valueFloat(idx++) / 3600.f;
   }
+  query.finish();
+
+  query.exec("select max(time_sim), avg(time_sim), sum(time_sim) "
+             "from (select strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) as time_sim "
+             "from " + tableName + ") where time_sim > 0");
+  if(query.next())
+  {
+    int idx = 0;
+    timeMaximumSim = query.valueFloat(idx++) / 3600.f;
+    timeAverageSim = query.valueFloat(idx++) / 3600.f;
+    timeTotalSim = query.valueFloat(idx++) / 3600.f;
+  }
+  query.finish();
 }
 
 } // namespace userdata

@@ -55,7 +55,7 @@ public:
   /* Overrides the organization path if not empty */
   static void setOverrideOrganisation(const QString& value)
   {
-   overrideOrganisation = value;
+    overrideOrganisation = value;
   }
 
   /*
@@ -67,8 +67,17 @@ public:
    */
   static QString getConfigFilename(const QString& extension, const QString& subdir = QString());
 
-  /* Get the organization specific settings directory. */
+  /* Get the organization specific settings directory.
+   * E.g. "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel" */
   static QString getPath();
+
+  /* Get the organization specific settings directory.
+   * E.g. "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\little_navmap.ini" */
+  static QString getFilename();
+
+  /* Get the organization specific settings directory only last path part.
+   * E.g. "ABarthel" for "C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel" */
+  static QString getDirName();
 
   /* Returns the filename of the given path if the file exists in the settings
    * directory or the given path if the file exists. Otherwise throws Exception.
@@ -103,8 +112,6 @@ public:
   {
     return instance().qSettings;
   }
-
-  static QString getFilename();
 
   bool contains(const QString& key) const;
   void remove(const QString& key);

@@ -536,11 +536,11 @@ QString Pos::toLongString() const
   if(!isValid())
     throw Exception("Invalid position. Cannot convert to string");
 
-  return LONG_FORMAT.arg(latY > 0 ? "N" : "S").
+  return LONG_FORMAT.arg(latY > 0.f ? "N" : "S").
          arg(absInt(getLatYDeg())).arg(absInt(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
-         arg(lonX > 0 ? "E" : "W").
+         arg(lonX > 0.f ? "E" : "W").
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2).
-         arg(altitude >= 0 ? "+" : "-").arg(std::abs(altitude), 9, 'f', 2, '0');
+         arg(altitude >= 0.f ? "+" : "-").arg(std::abs(altitude), 9, 'f', 2, '0');
 }
 
 QString Pos::toHumanReadableString() const
@@ -548,9 +548,9 @@ QString Pos::toHumanReadableString() const
   if(!isValid())
     throw Exception("Invalid position. Cannot convert to string");
 
-  return HUMAN_FORMAT.arg(latY > 0 ? "N" : "S").
+  return HUMAN_FORMAT.arg(latY > 0.f ? "N" : "S").
          arg(absInt(getLatYDeg())).arg(absInt(getLatYMin())).arg(std::abs(getLatYSec()), 0, 'f', 2).
-         arg(lonX > 0 ? "E" : "W").
+         arg(lonX > 0.f ? "E" : "W").
          arg(absInt(getLonXDeg())).arg(absInt(getLonXMin())).arg(std::abs(getLonXSec()), 0, 'f', 2);
 }
 

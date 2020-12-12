@@ -70,7 +70,7 @@ void MaterialLib::read(const QString& filename)
   QFile xmlFile(filename);
   if(xmlFile.open(QIODevice::ReadOnly))
   {
-    atools::util::XmlStream xmlStream(&xmlFile);
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
     QXmlStreamReader& reader = xmlStream.getReader();
 
     xmlStream.readUntilElement("Library");

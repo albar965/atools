@@ -64,6 +64,7 @@ bool contains(const TYPE& str, const std::initializer_list<TYPE>& list)
 bool strContains(const QString& name, const std::initializer_list<QString>& list);
 bool strContains(const QString& name, const std::initializer_list<const char *>& list);
 bool strContains(const QString& name, const std::initializer_list<char>& list);
+bool strContains(const QString& name, const QStringList& list);
 
 /* Concatenates all non empty strings in the list with the given separator */
 QString strJoin(const QStringList& list, const QString& sep);
@@ -124,8 +125,11 @@ QString removeNonAlphaNum(const QString& str);
 QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& itemSeparator,
                   const QString& lineSeparator);
 
-/* Cut linefeed separated text. Return maxLength lines where \n... is included  */
-QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0);
+/* Cut linefeed separated text. Return maxLength lines where \n... is included
+ * @param compressEmpty Remove empty lines before applying elide
+ * @param ellipseLastLine Put ellipse on separate line */
+QString elideTextLinesShort(QString str, int maxLines, int maxLength = 0, bool compressEmpty = false,
+                            bool ellipseLastLine = true);
 
 /* Concatenates all paths parts with the QDir::separator() and fetches names correcting the case */
 QString buildPathNoCase(const QStringList& paths);
@@ -372,6 +376,14 @@ QString ratingString(int value, int maxValue);
 
 /* Convert 24 hour and minute time string to time (500, 2314, 12:30) */
 QTime timeFromHourMinStr(const QString& timeStr);
+
+/* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
+ * but not more than one year to avoid endless loops */
+QDateTime correctDate(int day, int hour, int minute);
+
+/* Determines timezone offset by seconds of day and creates local time from incomplete values based on current year.
+ * Time can be converted to UTC which might also roll over the date. */
+QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDayUtc);
 
 template<typename TYPE>
 Q_DECL_CONSTEXPR int sign(TYPE t)

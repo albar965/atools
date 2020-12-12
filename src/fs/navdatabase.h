@@ -164,7 +164,8 @@ private:
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
   /* Count files in FSX/P3D scenery configuration */
-  void countFiles(const QList<scenery::SceneryArea>& areas, int& numFiles, int& numSceneryAreas);
+  void countFiles(ProgressHandler *progress, const QList<scenery::SceneryArea>& areas, int& numFiles,
+                  int& numSceneryAreas);
   int nextAreaNum(const QList<atools::fs::scenery::SceneryArea>& areas);
 
   /* Run and report SQL script */
@@ -180,13 +181,16 @@ private:
 
   /* Count the number of total steps for progress max value. This covers all files and other steps. */
   int countDfdSteps();
-  int countXplaneSteps();
-  int countFsxP3dSteps(const scenery::SceneryCfg& cfg);
-  int countMsfsSteps(const scenery::SceneryCfg& cfg);
+  int countXplaneSteps(ProgressHandler *progress);
+  int countFsxP3dSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
+  int countMsfsSteps(ProgressHandler *progress, const scenery::SceneryCfg& cfg);
   int countMsSimSteps();
 
   /* Detect Navigraph navdata update packages for special handling */
   bool checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest);
+
+  /* Detect Navigraph maintenance package for exclusion. true if should be excluded */
+  bool checkThirdPartyNavdataExclude(atools::fs::scenery::ManifestJson& manifest);
 
   /* For metadata */
 

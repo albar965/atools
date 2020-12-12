@@ -40,6 +40,9 @@ namespace util {
  */
 atools::geo::Pos fromAnyFormat(const QString& coords);
 
+/* Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given */
+void maybeSwapOrdinates(atools::geo::Pos& pos, const QString& coords);
+
 QString toGfpFormat(const atools::geo::Pos& pos);
 QString toDegMinFormat(const atools::geo::Pos& pos);
 QString toDegMinSecFormat(const atools::geo::Pos& pos);

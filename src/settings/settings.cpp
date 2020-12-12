@@ -281,6 +281,11 @@ QString Settings::getPath()
   return QFileInfo(instance().getQSettings()->fileName()).path();
 }
 
+QString Settings::getDirName()
+{
+  return QFileInfo(getPath()).fileName();
+}
+
 QString Settings::orgNameForDirs()
 {
   if(overrideOrganisation.isEmpty())
