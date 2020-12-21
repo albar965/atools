@@ -1381,7 +1381,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() + SEP + "manifest.json");
 
-    if(manifest.getContentType() == "SCENERY" && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1412,7 +1412,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() + SEP + "manifest.json");
 
-    if(manifest.getContentType() == "SCENERY" && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1442,7 +1442,7 @@ bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson
   // ..
   // }
 
-  return manifest.getContentType().compare("SCENERY", Qt::CaseInsensitive) == 0 &&
+  return manifest.isScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
@@ -1458,7 +1458,7 @@ bool NavDatabase::checkThirdPartyNavdataExclude(scenery::ManifestJson& manifest)
   // ...
   // }
 
-  return manifest.getContentType().compare("SCENERY", Qt::CaseInsensitive) == 0 &&
+  return manifest.isScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive);
 }

@@ -65,6 +65,12 @@ void ManifestJson::read(const QString& filename)
     qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
 }
 
+bool ManifestJson::isScenery() const
+{
+  return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0 ||
+         contentType.compare("CORE", Qt::CaseInsensitive) == 0;
+}
+
 } // namespace scenery
 } // namespace fs
 } // namespace atools
