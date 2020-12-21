@@ -45,9 +45,12 @@ public:
   explicit Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2);
   explicit Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2);
 
-  ~Line();
-
-  Line& operator=(const Line& other);
+  atools::geo::Line& operator=(const atools::geo::Line& other)
+  {
+    pos1 = other.pos1;
+    pos2 = other.pos2;
+    return *this;
+  }
 
   /* Does not compare altitude */
   bool operator==(const atools::geo::Line& other) const;

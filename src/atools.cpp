@@ -263,6 +263,14 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
   return txt;
 }
 
+QStringList elideTextShort(QStringList list, int maxLength)
+{
+  for(QString& str : list)
+    str = elideTextShort(str, maxLength);
+
+  return list;
+}
+
 QString elideTextShort(const QString& str, int maxLength)
 {
   if(str.size() > maxLength)

@@ -50,8 +50,16 @@ public:
   explicit LineString(const atools::geo::Pos& origin, const atools::geo::Pos& start,
                       const atools::geo::Pos& end, bool clockwise, int numSegments);
 
-  LineString(const LineString& other);
-  LineString& operator=(const LineString& other);
+  LineString(const atools::geo::LineString& other)
+    : QVector(other)
+  {
+  }
+
+  atools::geo::LineString& operator=(const atools::geo::LineString& other)
+  {
+    QVector::operator=(other);
+    return *this;
+  }
 
   void append(const atools::geo::Pos& pos)
   {

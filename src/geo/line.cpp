@@ -68,18 +68,6 @@ Line::Line(double longitudeX1, double latitudeY1, double longitudeX2, double lat
 
 }
 
-Line::~Line()
-{
-
-}
-
-Line& Line::operator=(const Line& other)
-{
-  pos1 = other.pos1;
-  pos2 = other.pos2;
-  return *this;
-}
-
 bool Line::operator==(const Line& other) const
 {
   return pos1 == other.pos1 && pos2 == other.pos2;

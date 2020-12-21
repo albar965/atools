@@ -72,6 +72,14 @@ public:
    * 54.765892 , -130.647858,+5000 */
   explicit Pos(const QString& str, bool errorOnInvalid = true);
 
+  atools::geo::Pos& operator=(const atools::geo::Pos& other)
+  {
+    lonX = other.lonX;
+    latY = other.latY;
+    altitude = other.altitude;
+    return *this;
+  }
+
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const;
 

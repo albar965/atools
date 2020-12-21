@@ -103,6 +103,7 @@ QString normalizeStr(const QString& str);
 
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
+QStringList elideTextShort(QStringList list, int maxLength);
 
 /* Cuts text at the left and uses combined ellipsis character */
 QString elideTextShortLeft(const QString& str, int maxLength);

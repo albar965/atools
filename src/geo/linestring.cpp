@@ -141,17 +141,7 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
   }
 }
 
-LineString::LineString(const LineString& other)
-  : QVector(other)
-{
-}
 
-LineString& LineString::operator=(const LineString& other)
-{
-  clear();
-  QVector::append(other);
-  return *this;
-}
 
 LineString LineString::reversed()
 {
