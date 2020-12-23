@@ -158,7 +158,7 @@ void MainWindowState::clear()
   mainWindowSize = QSize();
   mainWindowPosition = QPoint();
   mainWindowStates = Qt::WindowNoState;
-  statusBarVisible = true,
+  statusBarVisible = true;
   valid = false;
 }
 
@@ -661,11 +661,18 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       // Reload state now. This has to be done after resizing the window.
       mainWindow->restoreState(bytes);
 
-      normalState->fromWindow(mainWindow);
-      fullscreenState->clear();
-
       if(mainWindow->menuWidget() != nullptr)
         mainWindow->menuWidget()->setVisible(true); // Do not hide
+
+      if(mainWindow->statusBar() != nullptr)
+        mainWindow->statusBar()->setVisible(true);
+
+      normalState->fromWindow(mainWindow);
+
+      // Have to set status bar manually since window is not rendered yet an visible returns false
+      normalState->statusBarVisible = true;
+
+      fullscreenState->clear();
     }
     else
       throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));

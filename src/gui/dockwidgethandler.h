@@ -137,7 +137,7 @@ public:
   }
 
   /* Loads the main windows state from the given file, applies given size to the window and ends fullscreen mode.
-   * Places window on the primary screen. */
+   * Places window on the primary screen. Status bar always set visible. */
   void resetWindowState(const QSize& size, const QString& filename);
 
   /* Save normal and fullscreen window states to file.
