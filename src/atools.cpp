@@ -1076,4 +1076,20 @@ QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDa
                    Qt::OffsetFromUTC, offsetSeconds);
 }
 
+QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay)
+{
+  datetime = timeToLastHourInterval(datetime, intervalsPerDay);
+  datetime = datetime.addSecs(intervalsPerDay * 3600);
+  return datetime;
+}
+
+QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay)
+{
+  int hour = datetime.time().hour();
+  int down = hour - (hour / intervalsPerDay * intervalsPerDay);
+  datetime.setTime(QTime(hour, 0, 0));
+  datetime = datetime.addSecs(-down * 3600);
+  return datetime;
+}
+
 } // namespace atools

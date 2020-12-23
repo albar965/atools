@@ -378,6 +378,12 @@ QString ratingString(int value, int maxValue);
 /* Convert 24 hour and minute time string to time (500, 2314, 12:30) */
 QTime timeFromHourMinStr(const QString& timeStr);
 
+/* Rounds time down to last hour interval. E.g. 13:12 to 12:00 or 7:45 to 06:00  for a six hour interval */
+QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay);
+
+/* Same as above but next interval */
+QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay);
+
 /* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
  * but not more than one year to avoid endless loops */
 QDateTime correctDate(int day, int hour, int minute);
