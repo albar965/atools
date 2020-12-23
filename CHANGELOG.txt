@@ -3,6 +3,16 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.7
+
+* Corrected issue where status bar was hidden on first start after first installation in dock
+  handler.
+* Now also including MSFS scenery with content type "CORE".
+* Now skipping maintenance.bgl file in MSFS scenery library which causes error messages when
+  loading scenery library.
+
+===============================================================================
+
 # Version 3.6.6
 
 * Replacing more obscure minute signs like apostrophes now in coordinate parser .
