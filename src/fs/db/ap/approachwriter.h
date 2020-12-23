@@ -37,10 +37,6 @@ public:
   {
   }
 
-  virtual ~ApproachWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Approach *type) override;
 

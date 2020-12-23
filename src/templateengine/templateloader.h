@@ -51,9 +51,6 @@ public:
    */
   TemplateLoader(QHash<QString, QVariant> settings, QObject *parent = nullptr);
 
-  /** Destructor */
-  virtual ~TemplateLoader();
-
   /**
    *  Get a template for a given locale.
    *  This method is thread safe.

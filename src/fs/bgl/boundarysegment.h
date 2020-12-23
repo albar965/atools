@@ -60,7 +60,7 @@ public:
    * Reads the boundary line subrecord
    */
   BoundarySegment(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~BoundarySegment();
+  virtual ~BoundarySegment() override;
 
   atools::fs::bgl::boundaryline::PointType getType() const
   {

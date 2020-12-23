@@ -691,19 +691,20 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
   QString name = mid(line, sl::NAME, true /* ignore error */);
 
   bool hasFuel = false;
-  if(name.toLower().contains("avgas") || name.toLower().contains("mogas") || name.toLower().contains("gas-station"))
+  QString lowerName = name.toLower();
+  if(lowerName.contains("avgas") || lowerName.contains("mogas") || lowerName.contains("gas-station"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_avgas", 1);
   }
 
-  if(name.toLower().contains("jetfuel"))
+  if(lowerName.contains("jetfuel"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_jetfuel", 1);
   }
 
-  if(name.toLower().contains("fuel"))
+  if(lowerName.contains("fuel"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_jetfuel", 1);

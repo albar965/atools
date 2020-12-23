@@ -26,14 +26,14 @@ QDebug operator<<(QDebug out, const NavBase& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " NavBase[name " << record.name
-  << ", ident " << record.ident
-  << ", region " << record.region
-  << ", airport ID " << record.airportIdent
-  << ", frequency " << record.frequency
-  << ", " << record.position
-  << ", range " << record.range
-  << ", magVar " << record.magVar;
+                          << " NavBase[name " << record.name
+                          << ", ident " << record.ident
+                          << ", region " << record.region
+                          << ", airport ID " << record.airportIdent
+                          << ", frequency " << record.frequency
+                          << ", " << record.position
+                          << ", range " << record.range
+                          << ", magVar " << record.magVar;
   out << "]";
   return out;
 }

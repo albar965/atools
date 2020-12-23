@@ -95,7 +95,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
   cifpWriter = new XpCifpWriter(db, airportIndex, options, progress, errors);
   airspaceWriter = new XpAirspaceWriter(db, options, progress, errors);
   airwayWriter = new XpAirwayWriter(db, options, progress, errors);
-  airwayPostProcess = new AirwayPostProcess(db, options, progress);
+  airwayPostProcess = new AirwayPostProcess(db);
   metadataWriter = new MetadataWriter(db);
   magDecReader = new MagDecReader();
 
@@ -209,9 +209,9 @@ bool XpDataCompiler::fixDuplicateApt()
     int id1 = query.valueInt("airport_id1"), id2 = query.valueInt("airport_id2");
     bool closed1 = query.valueBool("is_closed1"), closed2 = query.valueBool("is_closed2");
 
-    const QString ident1 = query.valueStr("ident1"), icao1 = query.valueStr("icao1"), iata1 = query.valueStr("iata1"),
+    const QString ident1 = query.valueStr("ident1"), icao1 = query.valueStr("icao1"),
                   xpident1 = query.valueStr("xpident1"),
-                  ident2 = query.valueStr("ident2"), icao2 = query.valueStr("icao2"), iata2 = query.valueStr("iata2"),
+                  ident2 = query.valueStr("ident2"), icao2 = query.valueStr("icao2"),
                   xpident2 = query.valueStr("xpident2");
 
     QVariant ident, icao;

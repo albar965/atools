@@ -22,6 +22,7 @@
 #include <tuple>
 #include <cstring>
 
+
 namespace atools {
 namespace util {
 
@@ -89,16 +90,6 @@ private:
   char str[SIZE];
 };
 
-template<int SIZE>
-inline uint qHash(const Str<SIZE>& str)
-{
-  int retval = 0;
-  for(int i = 0; i < SIZE && str.getStr()[i] != '\0'; i++)
-    retval ^= str.getStr()[i] << ((i % 4) * 8);
-
-  return static_cast<uint>(retval);
-}
-
 /*
  * Same as above but for a pair of strings
  */
@@ -162,12 +153,6 @@ public:
 private:
   Str<SIZE> first, second;
 };
-
-template<int SIZE>
-inline uint qHash(const StrPair<SIZE>& str)
-{
-  return qHash(str.getFirst()) ^ qHash(str.getSecond());
-}
 
 /*
  * Same as above but for three strings
@@ -239,13 +224,30 @@ private:
   Str<SIZE> first, second, third;
 };
 
+
+} // namespace util
+} // namespace atools
+
 template<int SIZE>
-inline uint qHash(const StrTriple<SIZE>& str)
+inline uint qHash(const atools::util::Str<SIZE>& str)
+{
+  int retval = 0;
+  for(int i = 0; i < SIZE && str.getStr()[i] != '\0'; i++)
+    retval ^= str.getStr()[i] << ((i % 4) * 8);
+
+  return static_cast<uint>(retval);
+}
+
+template<int SIZE>
+inline uint qHash(const atools::util::StrTriple<SIZE>& str)
 {
   return qHash(str.getFirst()) ^ qHash(str.getSecond()) ^ qHash(str.getThird());
 }
 
-} // namespace util
-} // namespace atools
+template<int SIZE>
+inline uint qHash(const atools::util::StrPair<SIZE>& str)
+{
+  return qHash(str.getFirst()) ^ qHash(str.getSecond());
+}
 
 #endif // ATOOLS_STR_H

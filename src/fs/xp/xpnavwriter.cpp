@@ -217,7 +217,7 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
 
 void XpNavWriter::writeIls(const QStringList& line, int curFileId, const XpWriterContext& context)
 {
-  Q_UNUSED(curFileId);
+  Q_UNUSED(curFileId)
 
   const QString& airportIdent = at(line, AIRPORT);
   const QString& airportRegion = at(line, REGION);
@@ -399,7 +399,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 
 void XpNavWriter::finish(const XpWriterContext& context)
 {
-  Q_UNUSED(context);
+  Q_UNUSED(context)
 }
 
 void XpNavWriter::reset()

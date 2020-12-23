@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~ParkingWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Parking *type) override;
 

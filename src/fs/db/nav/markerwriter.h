@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~MarkerWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Marker *type) override;
 

@@ -142,7 +142,7 @@ bool Version::isBeta() const
 
 bool Version::isDevelop() const
 {
-  return name.toLower().startsWith("dev") || name.toLower() == "alpha";
+  return name.startsWith("dev", Qt::CaseInsensitive) || name.compare("alpha", Qt::CaseInsensitive) == 0;
 }
 
 bool Version::operator<(const Version& other) const

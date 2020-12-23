@@ -43,7 +43,7 @@ public:
    * @param dataCopyFunction callback function which will get the data
    */
   XpConnectHandler();
-  virtual ~XpConnectHandler();
+  virtual ~XpConnectHandler() override;
 
   /* Attach to shared memory if available */
   virtual bool connect() override;

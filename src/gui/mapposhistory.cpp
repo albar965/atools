@@ -43,11 +43,6 @@ MapPosHistoryEntry::MapPosHistoryEntry(atools::geo::Pos position, double mapDist
 
 }
 
-MapPosHistoryEntry::~MapPosHistoryEntry()
-{
-
-}
-
 bool MapPosHistoryEntry::operator==(const MapPosHistoryEntry& other) const
 {
   return std::abs(distance - other.distance) < 0.001 &&

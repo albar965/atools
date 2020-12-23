@@ -47,7 +47,7 @@ class AirwaySegment :
 public:
   AirwaySegment(const NavDatabaseOptions *options, atools::io::BinaryStream *bs,
                 const atools::fs::bgl::Waypoint& waypoint);
-  virtual ~AirwaySegment();
+  virtual ~AirwaySegment() override;
 
   bool hasNextWaypoint() const;
 

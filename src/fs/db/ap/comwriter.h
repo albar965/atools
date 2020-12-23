@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~ComWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Com *type) override;
 

@@ -76,7 +76,6 @@ class SimConnectAircraft :
 public:
   SimConnectAircraft();
   SimConnectAircraft(const SimConnectAircraft& other);
-  virtual ~SimConnectAircraft() override;
 
   virtual void read(QDataStream & in);
   virtual void write(QDataStream& out) const;

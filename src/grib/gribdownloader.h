@@ -48,7 +48,7 @@ class GribDownloader :
 
 public:
   GribDownloader(QObject *parent, bool logVerbose);
-  ~GribDownloader();
+  ~GribDownloader() override;
 
   /* Start initial download. This will also trigger a recurring download method that gets the file
    * every 30 minutes.

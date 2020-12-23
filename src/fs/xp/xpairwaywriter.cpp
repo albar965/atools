@@ -87,7 +87,7 @@ void XpAirwayWriter::write(const QStringList& line, const XpWriterContext& conte
 
 void XpAirwayWriter::finish(const XpWriterContext& context)
 {
-  Q_UNUSED(context);
+  Q_UNUSED(context)
 }
 
 void XpAirwayWriter::reset()

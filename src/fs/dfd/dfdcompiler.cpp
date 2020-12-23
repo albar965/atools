@@ -62,8 +62,8 @@ static const float ILS_FEATHER_LEN_NM = 9;
 static const float ILS_FEATHER_WIDTH = 4.f;
 
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
-                         ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
-  : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
+                         ProgressHandler *progressHandler)
+  : options(opts), db(sqlDb), progress(progressHandler)
 {
   metadataWriter = new atools::fs::common::MetadataWriter(db);
   magDecReader = new atools::fs::common::MagDecReader();
@@ -409,7 +409,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     QString rname = rwident.mid(2);
 
     // Get pure number: 11
-    int rnum = rname.mid(0, 2).toInt();
+    int rnum = rname.midRef(0, 2).toInt();
 
     // Get designator: R
     QString desig = rname.size() > 2 ? rname.at(2) : QString();

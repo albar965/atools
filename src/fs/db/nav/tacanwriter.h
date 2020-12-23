@@ -35,10 +35,6 @@ public:
   {
   }
 
-  virtual ~TacanWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Tacan *type) override;
 

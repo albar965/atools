@@ -39,7 +39,7 @@ class DeleteRunway :
 {
 public:
   DeleteRunway(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~DeleteRunway();
+  virtual ~DeleteRunway() override;
 
   atools::fs::bgl::Surface getSurface() const
   {

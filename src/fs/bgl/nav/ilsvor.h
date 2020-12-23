@@ -44,7 +44,7 @@ class IlsVor :
 {
 public:
   IlsVor(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~IlsVor();
+  virtual ~IlsVor() override;
 
   atools::fs::bgl::nav::IlsVorType getType() const
   {

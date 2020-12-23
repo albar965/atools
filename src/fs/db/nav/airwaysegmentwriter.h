@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~AirwaySegmentWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::AirwaySegment *type) override;
 

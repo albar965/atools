@@ -81,7 +81,7 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
 
 void XpFixWriter::finish(const XpWriterContext& context)
 {
-  Q_UNUSED(context);
+  Q_UNUSED(context)
 }
 
 void XpFixWriter::reset()

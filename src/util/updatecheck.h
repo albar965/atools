@@ -87,7 +87,7 @@ public:
    * @param forceDebug always report update for testing purposes
    */
   explicit UpdateCheck(const QString& programVersion, bool forceDebug);
-  virtual ~UpdateCheck();
+  virtual ~UpdateCheck() override;
 
   /*
    * Check for updates and send a message updateFound or updateFailed.
@@ -115,7 +115,7 @@ public:
 
 signals:
   /* Sent if updates were found */
-  void updateFound(UpdateList updates);
+  void updateFound(atools::util::UpdateList updates);
 
   /* Sent on error */
   void updateFailed(QString errorString);

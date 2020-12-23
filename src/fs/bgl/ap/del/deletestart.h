@@ -38,7 +38,7 @@ class DeleteStart :
 {
 public:
   DeleteStart(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~DeleteStart();
+  virtual ~DeleteStart() override;
 
   QString getRunwayName() const;
 

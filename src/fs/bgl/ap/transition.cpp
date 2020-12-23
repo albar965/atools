@@ -78,7 +78,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
   type = static_cast<ap::TransitionType>(bs->readUByte());
 
   int numLegs = bs->readUByte();
-  Q_UNUSED(numLegs);
+  Q_UNUSED(numLegs)
 
   unsigned int transFixFlags = bs->readUInt();
   transFixType = static_cast<ap::tfix::TransitionFixType>(transFixFlags & 0xf);

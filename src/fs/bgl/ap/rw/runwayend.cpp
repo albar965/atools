@@ -41,20 +41,16 @@ QDebug operator<<(QDebug out, const RunwayEnd& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " RunwayEnd[Name " << record.getName()
-  << ", left " << record.leftVasi
-  << ", right " << record.rightVasi
-  << ", " << record.approachLights
-  << "]";
+                          << ", left " << record.leftVasi
+                          << ", right " << record.rightVasi
+                          << ", " << record.approachLights
+                          << "]";
   return out;
 }
 
 RunwayEnd::RunwayEnd()
   : number(0), designator(0), offsetThreshold(0.0), blastPad(0.0), overrun(0.0), closedMarkings(false),
-    stolMarkings(false), takeoff(false), landing(false), pattern(atools::fs::bgl::rw::LEFT)
-{
-}
-
-RunwayEnd::~RunwayEnd()
+  stolMarkings(false), takeoff(false), landing(false), pattern(atools::fs::bgl::rw::LEFT)
 {
 }
 

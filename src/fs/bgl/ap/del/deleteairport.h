@@ -92,7 +92,7 @@ class DeleteAirport :
 public:
   DeleteAirport(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   DeleteAirport(atools::fs::bgl::del::DeleteAllFlags deleteAllFlags);
-  virtual ~DeleteAirport();
+  virtual ~DeleteAirport() override;
 
   /*
    * Not supported since it is apparently not used

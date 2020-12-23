@@ -37,10 +37,6 @@ public:
   {
   }
 
-  virtual ~TransitionWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Transition *type) override;
 

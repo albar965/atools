@@ -35,10 +35,6 @@ public:
   {
   }
 
-  virtual ~RunwayWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Runway *type) override;
 

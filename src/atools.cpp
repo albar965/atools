@@ -435,7 +435,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
   if(timeStr.contains(":"))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
-    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.rightRef(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
 }
@@ -453,27 +453,27 @@ QString strFromFile(const QString& filename)
 
 QString homeDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).first();
+  return QStandardPaths::standardLocations(QStandardPaths::HomeLocation).at(0);
 }
 
 QString desktopDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first();
+  return QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).at(0);
 }
 
 QString documentsDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).first();
+  return QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).at(0);
 }
 
 QString downloadDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).first();
+  return QStandardPaths::standardLocations(QStandardPaths::DownloadLocation).at(0);
 }
 
 QString tempDir()
 {
-  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).first();
+  return QStandardPaths::standardLocations(QStandardPaths::TempLocation).at(0);
 }
 
 QStringList intVectorToStrList(const QVector<int>& vector)

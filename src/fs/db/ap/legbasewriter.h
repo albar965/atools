@@ -36,8 +36,6 @@ public:
                 atools::fs::db::DataWriter& dataWriter,
                 const QString& table);
 
-  virtual ~LegBaseWriter();
-
 protected:
   virtual void writeObject(const atools::fs::bgl::ApproachLeg *type) override;
 

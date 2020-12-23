@@ -33,10 +33,6 @@ SceneryCfg::SceneryCfg(const QString& textCodec)
 {
 }
 
-SceneryCfg::~SceneryCfg()
-{
-}
-
 void SceneryCfg::appendArea(const SceneryArea& area)
 {
   areaEntries.append(area);
@@ -44,13 +40,13 @@ void SceneryCfg::appendArea(const SceneryArea& area)
 
 void SceneryCfg::onStartDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
   areaEntries.clear();
 }
 
 void SceneryCfg::onEndDocument(const QString& filename)
 {
-  Q_UNUSED(filename);
+  Q_UNUSED(filename)
 
   if(areaEntries.isEmpty())
     throwException(tr("No valid scenery areas found"));
@@ -90,7 +86,7 @@ void SceneryCfg::onStartSection(const QString& section, const QString& sectionSu
 
 void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuffix)
 {
-  Q_UNUSED(sectionSuffix);
+  Q_UNUSED(sectionSuffix)
   if(section == "area")
   {
     currentArea.fixTitle();
@@ -107,7 +103,7 @@ void SceneryCfg::onEndSection(const QString& section, const QString& sectionSuff
 void SceneryCfg::onKeyValue(const QString& section, const QString& sectionSuffix, const QString& key,
                             const QString& value)
 {
-  Q_UNUSED(sectionSuffix);
+  Q_UNUSED(sectionSuffix)
   if(section == "general")
   {
     if(key == "title")

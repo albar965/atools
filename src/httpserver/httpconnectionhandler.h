@@ -62,7 +62,7 @@ public:
                         const QSslConfiguration *sslConfiguration = nullptr);
 
   /** Destructor */
-  virtual ~HttpConnectionHandler();
+  virtual ~HttpConnectionHandler() override;
 
   /** Returns true, if this handler is in use. */
   bool isBusy();

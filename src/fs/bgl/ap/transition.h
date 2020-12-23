@@ -81,7 +81,7 @@ class Transition :
 {
 public:
   Transition(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Transition();
+  virtual ~Transition() override;
 
   /*
    * @return airport ICAO ident of initial approach fix

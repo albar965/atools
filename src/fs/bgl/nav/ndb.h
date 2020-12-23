@@ -44,7 +44,7 @@ class Ndb :
 {
 public:
   Ndb(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Ndb();
+  virtual ~Ndb() override;
 
   atools::fs::bgl::nav::NdbType getType() const
   {

@@ -46,11 +46,6 @@ AddOnComponent::AddOnComponent(QXmlStreamReader& xml)
   }
 }
 
-AddOnComponent::~AddOnComponent()
-{
-
-}
-
 } // namespace scenery
 } // namespace fs
 } // namespace atools

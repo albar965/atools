@@ -35,7 +35,6 @@ class AddOnComponent
 public:
   AddOnComponent();
   AddOnComponent(QXmlStreamReader& xml);
-  ~AddOnComponent();
 
   const QString& getCategory() const
   {

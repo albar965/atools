@@ -126,10 +126,6 @@ public:
   /* Enable display of tooltips again */
   static void setTooltipsEnabled();
 
-signals:
-  /* Application font has changed. */
-  void fontChanged();
-
 private:
   virtual bool notify(QObject *receiver, QEvent *event) override;
 

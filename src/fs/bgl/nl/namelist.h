@@ -45,7 +45,7 @@ class Namelist :
 public:
   /* read nameslist from BGL */
   Namelist(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Namelist();
+  virtual ~Namelist() override;
 
   const QList<atools::fs::bgl::NamelistEntry>& getNameList() const
   {

@@ -128,7 +128,7 @@ const QLatin1String P3D_V4_NO_WINDOWS_PATH("Prepar3D v4");
 const QLatin1String P3D_V5_NO_WINDOWS_PATH("Prepar3D v5");
 const QLatin1String MSFS_NO_WINDOWS_PATH("MSFS2020");
 
-QProcessEnvironment environment;
+static QProcessEnvironment environment;
 
 using atools::settings::Settings;
 

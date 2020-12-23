@@ -255,11 +255,6 @@ Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
     bs->skip(20);
 }
 
-Parking::~Parking()
-{
-
-}
-
 bool Parking::isGate() const
 {
   if(type == ap::GATE_SMALL)

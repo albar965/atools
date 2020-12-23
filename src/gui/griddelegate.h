@@ -30,7 +30,6 @@ class GridDelegate :
 {
 public:
   GridDelegate(QObject *parent);
-  virtual ~GridDelegate();
 
   void styleChanged();
 

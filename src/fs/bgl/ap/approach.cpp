@@ -69,9 +69,9 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, bool sid
     // TODO compare numbers with actual record occurence
     numTransitions = bs->readUByte();
     int numLegs = bs->readUByte();
-    Q_UNUSED(numLegs);
+    Q_UNUSED(numLegs)
     int numMissedLegs = bs->readUByte();
-    Q_UNUSED(numMissedLegs);
+    Q_UNUSED(numMissedLegs)
 
     unsigned int fixFlags = bs->readUInt();
     fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);

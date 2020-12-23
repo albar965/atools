@@ -73,7 +73,7 @@ public:
    */
   Record(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
 
-  virtual ~Record();
+  virtual ~Record() override;
 
   /*
    * Seek past the end of the record to a new record.

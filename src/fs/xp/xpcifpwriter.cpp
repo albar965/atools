@@ -125,7 +125,7 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME).trimmed();
   if(distTime.startsWith("T"))
     // time minutes/10
-    procInput.rteHoldTime = distTime.mid(1).toFloat() / 10.f;
+    procInput.rteHoldTime = distTime.midRef(1).toFloat() / 10.f;
   else
     // distance nm/10
     procInput.rteHoldDist = distTime.toFloat() / 10.f;

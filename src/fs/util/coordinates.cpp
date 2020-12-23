@@ -497,12 +497,12 @@ geo::Pos fromAnyFormat(const QString& coords)
   const static QLatin1Literal SP("\\s*");
 
   // Degree, minute and seconds signs or space
-  const static QLatin1Literal DEG("[ °\\*]");
+  const static QString DEG("[ °\\*]");
   const static QLatin1Literal MIN("[ ']");
   const static QLatin1Literal SEC("[ \"]");
 
   // Degree, minute and seconds signs
-  const static QLatin1Literal DEGEND("[°\\*]?");
+  const static QString DEGEND("[°\\*]?");
   const static QLatin1Literal MINEND("[']?");
   const static QLatin1Literal SECEND("[\"]?");
 

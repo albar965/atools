@@ -120,7 +120,6 @@ class Parking
 public:
   Parking();
   Parking(atools::io::BinaryStream *bs, atools::fs::bgl::StructureType structureType);
-  virtual ~Parking();
 
   /*
    * @return true if parking is a gate

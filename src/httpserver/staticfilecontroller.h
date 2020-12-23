@@ -62,7 +62,7 @@ public:
   StaticFileController(QHash<QString, QVariant> settings, QObject *parent = nullptr);
 
   /** Generates the response */
-  void service(HttpRequest& request, HttpResponse& response);
+  virtual void service(HttpRequest& request, HttpResponse& response) override;
 
 private:
   /** Encoding of text files */

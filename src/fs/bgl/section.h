@@ -42,7 +42,7 @@ public:
    * Read the section (not including the subsections)
    */
   Section(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Section();
+  virtual ~Section() override;
 
   /*
    * @return position in the file where the first subsection starts.

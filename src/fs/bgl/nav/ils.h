@@ -40,7 +40,7 @@ public:
    * Read ILS and all optional subrecords (DME, GS and Localizer)
    */
   Ils(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Ils();
+  virtual ~Ils() override;
 
   /*
    * @return DME if available - otherwise null

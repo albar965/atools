@@ -35,10 +35,6 @@ public:
   {
   }
 
-  virtual ~AirportFileWriter()
-  {
-  }
-
 private:
   virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 

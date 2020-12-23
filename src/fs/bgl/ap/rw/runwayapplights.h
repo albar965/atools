@@ -72,7 +72,7 @@ public:
 
   }
 
-  virtual ~RunwayApproachLights();
+  virtual ~RunwayApproachLights() override;
 
   RunwayApproachLights& operator=(const atools::fs::bgl::RunwayApproachLights& other)
   {

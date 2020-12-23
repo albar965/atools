@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~NdbWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Ndb *type) override;
 

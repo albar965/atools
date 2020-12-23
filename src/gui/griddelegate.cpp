@@ -29,10 +29,6 @@ GridDelegate::GridDelegate(QObject *parent) :
   styleChanged();
 }
 
-GridDelegate::~GridDelegate()
-{
-}
-
 void GridDelegate::styleChanged()
 {
   gridPen = QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), 1.5);

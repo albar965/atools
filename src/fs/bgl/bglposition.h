@@ -47,7 +47,6 @@ public:
    * @param altitudeDivisor Divide altitude by this value after readings
    */
   BglPosition(atools::io::BinaryStream *bs, bool hasAltitude = false, float altitudeDivisor = 1.f);
-  ~BglPosition();
 
   float getLonX() const
   {

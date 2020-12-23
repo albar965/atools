@@ -31,10 +31,6 @@ class Exception :
 public:
   Exception(const QString& messageStr);
 
-  Exception();
-
-  virtual ~Exception();
-
   virtual const char *what() const Q_DECL_NOEXCEPT override;
 
   QString getMessage() const

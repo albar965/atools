@@ -48,7 +48,7 @@ public:
    */
   Header(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
 
-  virtual ~Header();
+  virtual ~Header() override;
 
   Header(const atools::fs::bgl::Header& other)
     : atools::fs::bgl::BglBase(other)

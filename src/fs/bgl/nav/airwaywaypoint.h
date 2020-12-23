@@ -51,7 +51,7 @@ class AirwayWaypoint :
 public:
   AirwayWaypoint(const Waypoint& waypoint);
   AirwayWaypoint(const NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~AirwayWaypoint();
+  virtual ~AirwayWaypoint() override;
 
   AirwayWaypoint()
     : type(atools::fs::bgl::nav::AIRWAY_WP_NONE), minimumAltitude(0.f)

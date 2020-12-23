@@ -105,9 +105,8 @@ QString convertAirwayType(AirwayType type)
 
 // ==================================================================
 
-AirwayPostProcess::AirwayPostProcess(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
-                                     ProgressHandler *progress)
-  : options(opts), db(sqlDb), progressHandler(progress)
+AirwayPostProcess::AirwayPostProcess(sql::SqlDatabase& sqlDb)
+  : db(sqlDb)
 {
 }
 

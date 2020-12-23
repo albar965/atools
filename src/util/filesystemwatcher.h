@@ -39,7 +39,7 @@ class FileSystemWatcher
 
 public:
   explicit FileSystemWatcher(QObject *parent, bool verboseLogging);
-  virtual ~FileSystemWatcher();
+  virtual ~FileSystemWatcher() override;
 
   QString getFileName() const
   {

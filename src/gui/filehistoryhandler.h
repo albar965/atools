@@ -46,7 +46,6 @@ public:
    */
   FileHistoryHandler(QObject *parent, const QString& settingsNamePrefix, QMenu *recentMenuList,
                      QAction *clearMenuAction);
-  virtual ~FileHistoryHandler();
 
   /* Save state and all entries to settings */
   void saveState();

@@ -35,7 +35,7 @@ class Dme :
 {
 public:
   Dme(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Dme();
+  virtual ~Dme() override;
 
   /*
    * @return Position of the DME transmitter

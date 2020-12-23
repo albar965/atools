@@ -12,10 +12,6 @@ HttpRequestHandler::HttpRequestHandler(QObject *parent)
 {
 }
 
-HttpRequestHandler::~HttpRequestHandler()
-{
-}
-
 void HttpRequestHandler::service(HttpRequest& request, HttpResponse& response)
 {
   qCritical("HttpRequestHandler: you need to override the service() function");

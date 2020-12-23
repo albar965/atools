@@ -3473,7 +3473,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         stream << entry.getAirway() << ",2,";
 
-      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegTo(entry.getPosition()));
+      float heading = plan.entries.at(i - 1).getPosition().angleDegTo(entry.getPosition());
       if(entry.getMagvar() < std::numeric_limits<float>::max())
         heading -= entry.getMagvar();
 
@@ -3494,7 +3494,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       stream << identOrDegMinFormat(entry) << ",0, ";
 
       stream << latY << lonX;
-      stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
+      stream << ",0,0," << QString("%1").arg(atools::roundToInt(heading), 3, 10, QChar('0')) << ".00000";
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
@@ -4073,7 +4073,8 @@ void FlightplanIO::writeBinaryString(char *mem, QString str, int length)
   // Cut off if too long and leave space for trailing 0
   str.truncate(length - 1);
 
-  const char *data = str.toLatin1().data();
+  QByteArray bytes = str.toLatin1();
+  const char *data = bytes.data();
   memcpy(mem, data, strlen(data));
 
   // Fill rest with nulls

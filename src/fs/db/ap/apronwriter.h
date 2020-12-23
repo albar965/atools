@@ -38,10 +38,6 @@ public:
   {
   }
 
-  virtual ~ApronWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const std::pair<const bgl::Apron *, const bgl::Apron2 *> *type) override;
 

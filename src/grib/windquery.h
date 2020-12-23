@@ -154,7 +154,7 @@ class WindQuery
 
 public:
   WindQuery(QObject *parentObject, bool logVerbose);
-  ~WindQuery();
+  virtual ~WindQuery() override;
 
   /* Initialize download from https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl if baseUrl is empty
    *  Will download and update every 30 minutes and terminate any file watching. */

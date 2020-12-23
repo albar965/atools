@@ -36,10 +36,6 @@ public:
   {
   }
 
-  virtual ~BoundaryWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Boundary *type) override;
 

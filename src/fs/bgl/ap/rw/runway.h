@@ -103,7 +103,7 @@ class Runway :
 public:
   Runway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
          const QString& airportIdent, atools::fs::bgl::StructureType structureType);
-  virtual ~Runway();
+  virtual ~Runway() override;
 
   /*
    * @return Center light intensity/availability

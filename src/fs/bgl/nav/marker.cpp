@@ -60,7 +60,7 @@ Marker::Marker(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   // TODO wiki clarify structure
-  heading = ((float)bs->readUByte()) / 255.f * 360.f;
+  heading = static_cast<float>(bs->readUByte()) / 255.f * 360.f;
   type = static_cast<nav::MarkerType>(bs->readUByte());
 
   position = BglPosition(bs, true, 1000.f);
@@ -77,12 +77,12 @@ QDebug operator<<(QDebug out, const Marker& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-  << " Marker[type "
-  << Marker::markerTypeToStr(record.type)
-  << ", " << record.position
-  << ", ident " << record.ident
-  << ", region " << record.region
-  << "]";
+                          << " Marker[type "
+                          << Marker::markerTypeToStr(record.type)
+                          << ", " << record.position
+                          << ", ident " << record.ident
+                          << ", region " << record.region
+                          << "]";
   return out;
 }
 

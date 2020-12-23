@@ -45,7 +45,7 @@ public:
   XpAirwayWriter(atools::sql::SqlDatabase& sqlDb,
                  const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
                  atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirwayWriter();
+  virtual ~XpAirwayWriter() override;
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;

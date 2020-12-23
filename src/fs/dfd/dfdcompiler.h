@@ -55,7 +55,7 @@ class DfdCompiler
 {
 public:
   DfdCompiler(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-              atools::fs::ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors);
+              atools::fs::ProgressHandler *progressHandler);
   virtual ~DfdCompiler();
 
   void close();
@@ -188,7 +188,6 @@ private:
   const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
   atools::fs::ProgressHandler *progress = nullptr;
-  atools::fs::NavDatabaseErrors *errors = nullptr;
   atools::fs::common::MagDecReader *magDecReader = nullptr;
   atools::fs::common::AirportIndex *airportIndex = nullptr;
   atools::fs::common::ProcedureWriter *procWriter = nullptr;

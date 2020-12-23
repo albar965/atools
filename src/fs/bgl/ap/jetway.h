@@ -42,7 +42,7 @@ class Jetway :
 public:
   Jetway();
   Jetway(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Jetway();
+  virtual ~Jetway() override;
 
   /*
    * @return number of parking spot that this jetway is assigned to

@@ -198,7 +198,7 @@ public:
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
 {
-  Q_UNUSED(cbData);
+  Q_UNUSED(cbData)
 
   if(verbose)
     qDebug() << "DispatchProcedure entered";

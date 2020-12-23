@@ -38,7 +38,7 @@ class SimConnectHandler :
 {
 public:
   SimConnectHandler(bool verboseLogging = false);
-  virtual ~SimConnectHandler();
+  virtual ~SimConnectHandler() override;
 
   /* Activate context and load SimConnect DLL */
   bool loadSimConnect(const QString& manifestPath);

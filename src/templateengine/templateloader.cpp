@@ -35,10 +35,6 @@ TemplateLoader::TemplateLoader(QHash<QString, QVariant> settings, QObject *paren
   qDebug("TemplateLoader: path=%s, codec=%s", qPrintable(templatePath), textCodec->name().data());
 }
 
-TemplateLoader::~TemplateLoader()
-{
-}
-
 QString TemplateLoader::tryFile(QString localizedName)
 {
   QString fileName = templatePath + "/" + localizedName + fileNameSuffix;

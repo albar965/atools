@@ -122,7 +122,7 @@ bool SimConnectApi::bindFunctions(atools::win::ActivationContext& context)
   BINDSC(UnsubscribeToFacilities);
   BINDSC(RequestFacilitiesList);
 #else
-  Q_UNUSED(context);
+  Q_UNUSED(context)
 #endif
 
   qDebug() << Q_FUNC_INFO << "done";

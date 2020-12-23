@@ -25,14 +25,6 @@ Exception::Exception(const QString& messageStr)
   whatMessage = message.toUtf8();
 }
 
-Exception::Exception()
-{
-}
-
-Exception::~Exception()
-{
-}
-
 const char *Exception::what() const Q_DECL_NOEXCEPT
 {
   return whatMessage.data();

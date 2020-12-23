@@ -38,7 +38,7 @@ class DeleteCom :
 {
 public:
   DeleteCom(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~DeleteCom();
+  virtual ~DeleteCom() override;
 
   atools::fs::bgl::com::ComType getType() const
   {

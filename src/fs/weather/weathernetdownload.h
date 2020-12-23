@@ -41,7 +41,6 @@ class WeatherNetDownload :
 
 public:
   WeatherNetDownload(QObject *parent, atools::fs::weather::MetarFormat format, bool verbose);
-  virtual ~WeatherNetDownload();
 
 private:
   void downloadFinished(const QByteArray& data, QString url);

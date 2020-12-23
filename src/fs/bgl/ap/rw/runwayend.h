@@ -45,7 +45,6 @@ class RunwayEnd
 {
 public:
   RunwayEnd();
-  virtual ~RunwayEnd();
 
   /*
    * @return Full runway end name like "12C" or "24"

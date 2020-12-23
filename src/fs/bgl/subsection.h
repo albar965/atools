@@ -43,7 +43,7 @@ public:
    * Read the subsection
    */
   Subsection(const NavDatabaseOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
-  virtual ~Subsection();
+  virtual ~Subsection() override;
 
   /*
    * @return Size in bytes of this subsection's data (all records and subrecords)

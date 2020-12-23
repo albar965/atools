@@ -48,10 +48,6 @@ public:
   {
   }
 
-  virtual ~AirportWriter()
-  {
-  }
-
   /* Name list has to be set before so city, county and state can be saved. Called once per BGL file. */
   void setNameLists(const QList<const atools::fs::bgl::Namelist *>& namelists);
 

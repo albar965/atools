@@ -39,7 +39,6 @@ class SceneryCfg :
 
 public:
   SceneryCfg(const QString& textCodec);
-  virtual ~SceneryCfg();
 
   const QList<atools::fs::scenery::SceneryArea>& getAreas() const
   {
