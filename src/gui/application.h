@@ -89,8 +89,6 @@ public:
 
   static QString generalErrorMessage();
 
-  static void sendFontChanged();
-
   static bool isShowExceptionDialog()
   {
     return showExceptionDialog;
