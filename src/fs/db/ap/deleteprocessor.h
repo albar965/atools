@@ -54,7 +54,7 @@ public:
    * Initialize the process for one airport before it is stored in the database.
    */
   void init(const atools::fs::bgl::DeleteAirport *deleteAirportRec,
-            const atools::fs::bgl::Airport *airport, int airportId, const QString& city, const QString& state,
+            const atools::fs::bgl::Airport *airport, int airportId, const QString& name, const QString& city, const QString& state,
             const QString& country, const QString& region);
 
   /*

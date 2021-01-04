@@ -10,6 +10,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Now also including MSFS scenery with content type "CORE".
 * Now skipping maintenance.bgl file in MSFS scenery library which causes error messages when
   loading scenery library.
+* Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
 
 ===============================================================================
 
