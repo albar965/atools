@@ -147,13 +147,13 @@ Fichier: &quot;%2&quot;
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="163"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="168"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <oldsource>&lt;i&gt;%2&lt;/i&gt; is not a directory.</oldsource>
         <translation>&lt;i&gt;%2&lt;/i&gt; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="170"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="175"/>
         <source>&quot;%2&quot; does not exist.</source>
         <oldsource>&lt;i&gt;%2&lt;/i&gt; does not exist.</oldsource>
         <translation>&lt;i&gt;%2&lt;/i&gt; n&apos;existe pas.</translation>
@@ -1337,16 +1337,16 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">−</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="269"/>
         <location filename="src/atools.cpp" line="277"/>
         <location filename="src/atools.cpp" line="285"/>
+        <location filename="src/atools.cpp" line="293"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="313"/>
-        <location filename="src/atools.cpp" line="318"/>
+        <location filename="src/atools.cpp" line="321"/>
+        <location filename="src/atools.cpp" line="326"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
@@ -1354,7 +1354,7 @@ Fichier: &quot;%2&quot;
 </translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="315"/>
+        <location filename="src/atools.cpp" line="323"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
@@ -1362,23 +1362,23 @@ Fichier: &quot;%2&quot;
 …</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="316"/>
+        <location filename="src/atools.cpp" line="324"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished">…</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="342"/>
+        <location filename="src/atools.cpp" line="350"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>Créé par %1 Version %2 (révision %3) sur %4</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="352"/>
+        <location filename="src/atools.cpp" line="360"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>Créé par %1 Version %2 (révision %3)</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="377"/>
+        <location filename="src/atools.cpp" line="385"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="71"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="75"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="79"/>
@@ -1386,47 +1386,47 @@ Fichier: &quot;%2&quot;
         <translation>Impossible d&apos;ouvrir le fichier &quot;%1&quot;. Motif: %2.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="834"/>
+        <location filename="src/atools.cpp" line="842"/>
         <source>Directory name is empty.</source>
         <translation type="unfinished">Le nom du répertoire est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="842"/>
+        <location filename="src/atools.cpp" line="850"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="849"/>
+        <location filename="src/atools.cpp" line="857"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="854"/>
+        <location filename="src/atools.cpp" line="862"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le répertoire &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="866"/>
+        <location filename="src/atools.cpp" line="874"/>
         <source>Filepath is empty.</source>
         <translation type="unfinished">Le chemin d&apos;accès au fichier est vide.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="874"/>
+        <location filename="src/atools.cpp" line="882"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;existe pas.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est un répertoire.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="886"/>
+        <location filename="src/atools.cpp" line="894"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; n&apos;est pas lisible.</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="891"/>
+        <location filename="src/atools.cpp" line="899"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation type="unfinished">Le fichier &quot;%1&quot; est vide.</translation>
     </message>
@@ -1935,7 +1935,7 @@ Fichier: &quot;%2&quot;
 <context>
     <name>SceneryCfg</name>
     <message>
-        <location filename="src/fs/scenery/scenerycfg.cpp" line="56"/>
+        <location filename="src/fs/scenery/scenerycfg.cpp" line="52"/>
         <source>No valid scenery areas found</source>
         <translation>Aucune zone de scène valide trouvée</translation>
     </message>
@@ -2573,32 +2573,32 @@ Période nocturne : %5</translation>
         <translation type="vanished">&lt;b&gt;Exception retenue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="126"/>
+        <location filename="src/gui/application.cpp" line="116"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation type="unfinished">&lt;b&gt;Prendre une exception dans la ligne &quot;%1&quot; ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Cliquez OK pour quitter le programme.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="148"/>
+        <location filename="src/gui/application.cpp" line="138"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;Pris l&apos;exception inconnue dans le dossier %1 ligne %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Appuyez sur OK pour quitter l&apos;application.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="169"/>
+        <location filename="src/gui/application.cpp" line="159"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="194"/>
+        <location filename="src/gui/application.cpp" line="184"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="198"/>
+        <location filename="src/gui/application.cpp" line="188"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="201"/>
+        <location filename="src/gui/application.cpp" line="191"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
@@ -2606,25 +2606,25 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="671"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="676"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="762"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="678"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="683"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="769"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="699"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="704"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="706"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="711"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation type="unfinished">Erreur d&apos;écriture &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="722"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="729"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Nombre magique non valide. Pas un fichier de disposition de fenêtre.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="725"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="732"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation type="unfinished">Erreur de lecture &quot;%1&quot;: Version non valable. Fichier de disposition des fenêtres incompatible.</translation>
     </message>
@@ -2632,7 +2632,7 @@ Période nocturne : %5</translation>
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="64"/>
+        <location filename="src/gui/helphandler.cpp" line="59"/>
         <source>About %1</source>
         <translation>A propos de %1</translation>
     </message>
@@ -2641,34 +2641,34 @@ Période nocturne : %5</translation>
         <translation type="vanished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;&lt;hr/&gt;%7&lt;hr/&gt;%8&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="57"/>
+        <location filename="src/gui/helphandler.cpp" line="52"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;%1 (compilation et librairie)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="59"/>
+        <location filename="src/gui/helphandler.cpp" line="54"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
         <translation type="unfinished">&lt;p&gt;%1 (construction)&lt;br/&gt;%2 (bibliothèque)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="65"/>
+        <location filename="src/gui/helphandler.cpp" line="60"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation type="unfinished">&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (révision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (révision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="83"/>
+        <location filename="src/gui/helphandler.cpp" line="78"/>
         <source>About Qt</source>
         <translation>À propos de Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="96"/>
+        <location filename="src/gui/helphandler.cpp" line="91"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <oldsource>Error opening help URL &lt;i&gt;%1&lt;/i&gt;</oldsource>
         <translation type="unfinished">Erreur lors de l&apos;ouverture de l&apos;URL d&apos;aide &lt;i&gt;%1&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="122"/>
-        <location filename="src/gui/helphandler.cpp" line="143"/>
+        <location filename="src/gui/helphandler.cpp" line="117"/>
+        <location filename="src/gui/helphandler.cpp" line="138"/>
         <source>Help file &quot;%1&quot; not found</source>
         <oldsource>Help file &lt;i&gt;%1&lt;/i&gt; not found</oldsource>
         <translation type="unfinished">Fichier d&apos;aide &lt;i&gt;%1&lt;/i&gt; introuvable</translation>
@@ -2678,8 +2678,8 @@ Période nocturne : %5</translation>
         <translation type="vanished">L&apos;URL est vide pour &quot;%1&quot; et anchor &quot;%2&quot;.</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="202"/>
-        <location filename="src/gui/helphandler.cpp" line="218"/>
+        <location filename="src/gui/helphandler.cpp" line="197"/>
+        <location filename="src/gui/helphandler.cpp" line="213"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>L&apos;URL est vide pour &quot;%1&quot;.</translation>
     </message>

@@ -145,12 +145,12 @@ File: &quot;%2&quot;
 <context>
     <name>FileResolver</name>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="163"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="168"/>
         <source>&quot;%2&quot; is not a directory.</source>
         <translation>“%2” 不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/fileresolver.cpp" line="170"/>
+        <location filename="src/fs/scenery/fileresolver.cpp" line="175"/>
         <source>&quot;%2&quot; does not exist.</source>
         <translation>“%2” 不存在。</translation>
     </message>
@@ -1260,46 +1260,46 @@ File: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="269"/>
         <location filename="src/atools.cpp" line="277"/>
         <location filename="src/atools.cpp" line="285"/>
+        <location filename="src/atools.cpp" line="293"/>
         <source>…</source>
         <comment>Dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="313"/>
-        <location filename="src/atools.cpp" line="318"/>
+        <location filename="src/atools.cpp" line="321"/>
+        <location filename="src/atools.cpp" line="326"/>
         <source>
 </source>
         <comment>Linefeed used to shorten large texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="315"/>
+        <location filename="src/atools.cpp" line="323"/>
         <source>
 …</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="316"/>
+        <location filename="src/atools.cpp" line="324"/>
         <source>…</source>
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="342"/>
+        <location filename="src/atools.cpp" line="350"/>
         <source>Created by %1 Version %2 (revision %3) on %4</source>
         <translation>由 %1 版本 %2 (修订 %3) 在 %4 创建</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="352"/>
+        <location filename="src/atools.cpp" line="360"/>
         <source>Created by %1 Version %2 (revision %3)</source>
         <translation>由 %1 版本 %2 (修订 %3) 创建</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="377"/>
+        <location filename="src/atools.cpp" line="385"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="71"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="75"/>
         <location filename="src/fs/weather/weathertypes.cpp" line="79"/>
@@ -1307,47 +1307,47 @@ File: &quot;%2&quot;
         <translation>无法打开文件 %1。原因是： %2。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="834"/>
+        <location filename="src/atools.cpp" line="842"/>
         <source>Directory name is empty.</source>
         <translation>目录名是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="842"/>
+        <location filename="src/atools.cpp" line="850"/>
         <source>Directory &quot;%1&quot; does not exist.</source>
         <translation>目录 “%1” 不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="849"/>
+        <location filename="src/atools.cpp" line="857"/>
         <source>File &quot;%1&quot; is not a directory.</source>
         <translation>文件“%1” 不是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="854"/>
+        <location filename="src/atools.cpp" line="862"/>
         <source>Directory &quot;%1&quot; is not readable.</source>
         <translation>目录 &quot;%1&quot; 不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="866"/>
+        <location filename="src/atools.cpp" line="874"/>
         <source>Filepath is empty.</source>
         <translation>文件路径是空的。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="874"/>
+        <location filename="src/atools.cpp" line="882"/>
         <source>File &quot;%1&quot; does not exist.</source>
         <translation>文件 &quot;%1&quot; 不存在。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="881"/>
+        <location filename="src/atools.cpp" line="889"/>
         <source>File &quot;%1&quot; is a directory.</source>
         <translation>文件“%1”是一个目录。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="886"/>
+        <location filename="src/atools.cpp" line="894"/>
         <source>File &quot;%1&quot; is not readable.</source>
         <translation>文件&quot;%1&quot;不可读。</translation>
     </message>
     <message>
-        <location filename="src/atools.cpp" line="891"/>
+        <location filename="src/atools.cpp" line="899"/>
         <source>File &quot;%1&quot; is empty.</source>
         <translation>文件&quot;%1&quot;是空的。</translation>
     </message>
@@ -1892,7 +1892,7 @@ File: &quot;%2&quot;
 <context>
     <name>SceneryCfg</name>
     <message>
-        <location filename="src/fs/scenery/scenerycfg.cpp" line="56"/>
+        <location filename="src/fs/scenery/scenerycfg.cpp" line="52"/>
         <source>No valid scenery areas found</source>
         <translation>没找到有有效的地景其余</translation>
     </message>
@@ -2506,32 +2506,32 @@ Night time: %5</source>
         <translation>&lt;b&gt;如在启动时此问题持续或再次发生，删除 %4 里的所有设置和数据库再试一次。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;如您希望报告这个错误，附上日志及配置文件到您的报告，以及其他信息一起发生到一下任意一个联系地址。&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="126"/>
+        <location filename="src/gui/application.cpp" line="116"/>
         <source>&lt;b&gt;Caught exception in file &quot;%1&quot; line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个异常。&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;点击OK以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="148"/>
+        <location filename="src/gui/application.cpp" line="138"/>
         <source>&lt;b&gt;Caught unknown exception in file %1 line %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&gt;&lt;h3&gt;Press OK to exit application.&lt;/h3&gt;</source>
         <translation>&lt;b&gt;在文件“%1”第“%2”行捕获了一个未知异常。&lt;/b&gt;&lt;br/&gt;%2&lt;hr/&gt;%4&lt;hr/&gt;%5&lt;br/&lt;h3&gt;点击OK以退出此程序。&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="169"/>
+        <location filename="src/gui/application.cpp" line="159"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="194"/>
+        <location filename="src/gui/application.cpp" line="184"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="198"/>
+        <location filename="src/gui/application.cpp" line="188"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="201"/>
+        <location filename="src/gui/application.cpp" line="191"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
@@ -2539,25 +2539,25 @@ Night time: %5</source>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="671"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="676"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="762"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="678"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="683"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="769"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取 %1时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="699"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="704"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="706"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="711"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>写入 %1时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="722"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="729"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的幻数。不是一个有效的窗口布局文件。</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="725"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="732"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的版本。不兼容的窗口布局文件。</translation>
     </message>
@@ -2565,38 +2565,38 @@ Night time: %5</source>
 <context>
     <name>atools::gui::HelpHandler</name>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="57"/>
+        <location filename="src/gui/helphandler.cpp" line="52"/>
         <source>&lt;p&gt;%1 (build and library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (构建及库)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="59"/>
+        <location filename="src/gui/helphandler.cpp" line="54"/>
         <source>&lt;p&gt;%1 (build)&lt;br/&gt;%2 (library)&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1 (构建)&lt;br/&gt;%2 (库)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="64"/>
+        <location filename="src/gui/helphandler.cpp" line="59"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="65"/>
+        <location filename="src/gui/helphandler.cpp" line="60"/>
         <source>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;Version %3 (revision %4)&lt;/p&gt;&lt;p&gt;atools Version %5 (revision %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</source>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;%2&lt;p&gt;&lt;hr/&gt;版本 %3 (修订 %4)&lt;/p&gt;&lt;p&gt;atools 版本 %5 (修订 %6)&lt;/p&gt;%7&lt;hr/&gt;%8&lt;hr/&gt;%9&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="83"/>
+        <location filename="src/gui/helphandler.cpp" line="78"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="96"/>
+        <location filename="src/gui/helphandler.cpp" line="91"/>
         <source>Error opening help URL &quot;%1&quot;</source>
         <translation>打开帮助URL“%1”时出错</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="122"/>
-        <location filename="src/gui/helphandler.cpp" line="143"/>
+        <location filename="src/gui/helphandler.cpp" line="117"/>
+        <location filename="src/gui/helphandler.cpp" line="138"/>
         <source>Help file &quot;%1&quot; not found</source>
         <translation>帮助文件“%1”未找到</translation>
     </message>
@@ -2605,8 +2605,8 @@ Night time: %5</source>
         <translation type="vanished">“%1”及锚 “%2”的URL是空的。</translation>
     </message>
     <message>
-        <location filename="src/gui/helphandler.cpp" line="202"/>
-        <location filename="src/gui/helphandler.cpp" line="218"/>
+        <location filename="src/gui/helphandler.cpp" line="197"/>
+        <location filename="src/gui/helphandler.cpp" line="213"/>
         <source>URL is empty for &quot;%1&quot;.</source>
         <translation>“%1”的URL是空的。</translation>
     </message>
