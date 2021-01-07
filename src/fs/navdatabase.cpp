@@ -37,6 +37,7 @@
 #include "fs/scenery/manifestjson.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
+#include "fs/scenery/contentxml.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -1342,15 +1343,21 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
-  // QString contentXmlPath;
-  //// MS Online Installation
-  // if(atools::checkFile(options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml"))
-  // contentXmlPath = options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml";
-  //// Steam or boxed Installation
-  // else if(atools::checkFile(options->getBasepath() + SEP + "Content.xml"))
-  // contentXmlPath = options->getBasepath() + SEP + "Content.xml";
-  // scenery::ContentXml contentXml;
-  // contentXml.read(contentXmlPath);
+  // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
+  QString contentXmlPath = options->getBasepath() + SEP + "Content.xml";
+  if(!atools::checkFile(contentXmlPath))
+  {
+    // Not found - try MS installation
+    // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
+    contentXmlPath = QFileInfo(options->getBasepath() + SEP + ".." + SEP + "Content.xml").canonicalFilePath();
+    if(!atools::checkFile(contentXmlPath))
+      // Not found
+      contentXmlPath.clear();
+  }
+
+  scenery::ContentXml contentXml;
+  if(!contentXmlPath.isEmpty())
+    contentXml.read(contentXmlPath);
 
   int areaNum = 0;
   SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
@@ -1372,6 +1379,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   for(const QFileInfo& fileinfo : dir.entryInfoList())
   {
     QString name = fileinfo.fileName();
+
+    if(contentXml.isDisabled(name))
+    {
+      // Entry is present in Content.xml and has has active="false"
+      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+      continue;
+    }
 
     if(name == "fs-base-nav" || name == "fs-base")
       // Already read before
@@ -1409,6 +1423,15 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   for(const QFileInfo& fileinfo : dir.entryInfoList())
   {
+    QString name = fileinfo.fileName();
+
+    if(contentXml.isDisabled(name))
+    {
+      // Entry is present in Content.xml and has has active="false"
+      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+      continue;
+    }
+
     manifest.clear();
     manifest.read(fileinfo.filePath() + SEP + "manifest.json");
 
@@ -1420,7 +1443,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea area(areaNum++, tr("Community"), fileinfo.fileName());
+        SceneryArea area(areaNum++, tr("Community"), name);
         area.setCommunity(true);
 
         // Detect Navigraph navdata update packages for special handling

@@ -50,6 +50,7 @@ namespace scenery {
 void ContentXml::read(const QString& filename)
 {
   areaEntries.clear();
+  disabledAreas.clear();
   number = 5;
 
   QFile xmlFile(filename);
@@ -65,6 +66,8 @@ void ContentXml::read(const QString& filename)
       if(reader.name() == "Package")
       {
         QString name = reader.attributes().value("name").toString();
+        QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
+        bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
 
         int num;
         QString title;
@@ -81,13 +84,13 @@ void ContentXml::read(const QString& filename)
         else
           num = number++;
 
-        if(name == "fs-base" || name == "fs-base-nav")
-        {
-          SceneryArea area(num, num, title, name);
-          area.setActive(reader.attributes().value("active").toString().toLower() == "true");
-          areaEntries.append(area);
-          number++;
-        }
+        SceneryArea area(num, num, title, name);
+        area.setActive(active);
+        areaEntries.append(area);
+        number++;
+
+        if(!active)
+          disabledAreas.insert(name.toLower());
 
         // Read only attributes
         xmlStream.skipCurrentElement();
@@ -99,17 +102,6 @@ void ContentXml::read(const QString& filename)
   }
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
-}
-
-void ContentXml::fillDefault()
-{
-  SceneryArea area(0, 0, tr("Base Airports"), "fs-base");
-  area.setActive(true);
-  areaEntries.append(area);
-
-  SceneryArea areaNav(1, 1, tr("Base Navigation"), "fs-base-nav");
-  areaNav.setActive(true);
-  areaEntries.append(areaNav);
 }
 
 QDebug operator<<(QDebug out, const ContentXml& cfg)

@@ -19,6 +19,7 @@
 #define ATOOLS_CONTENTXML_H
 
 #include <QApplication>
+#include <QSet>
 #include <QVector>
 
 namespace atools {
@@ -39,9 +40,6 @@ public:
   /* Read the file and add fs-base and fs-base-nav packages */
   void read(const QString& filename);
 
-  /* Fill with default values without acessing the actual file */
-  void fillDefault();
-
   const QList<atools::fs::scenery::SceneryArea>& getAreas() const
   {
     return areaEntries;
@@ -52,10 +50,17 @@ public:
     return areaEntries;
   }
 
+  /* true if area is present and has active="false" */
+  bool isDisabled(const QString& areaPath) const
+  {
+    return disabledAreas.contains(areaPath.toLower());
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::ContentXml& cfg);
 
   QList<atools::fs::scenery::SceneryArea> areaEntries;
+  QSet<QString> disabledAreas;
   int number = 0;
 };
 
