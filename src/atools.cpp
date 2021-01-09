@@ -42,7 +42,7 @@ QString gitRevision()
   return GIT_REVISION_ATOOLS;
 }
 
-QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec)
+QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec)
 {
   QTextCodec *codec = nullptr;
   file.seek(0);

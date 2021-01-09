@@ -139,8 +139,9 @@ QString buildPathNoCase(const QStringList& paths);
 QString buildPath(const QStringList& paths);
 
 /* Read a part of the file and find out the text codec if it has a BOM.
- * File has to be open for reading */
-QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
+ * File has to be open for reading.
+ * Do not delete the returned pointer. */
+QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec = nullptr);
 
 /* Get the first four lines of a file converted to lowercase to check type.
  *  Returns a list with always four strings.

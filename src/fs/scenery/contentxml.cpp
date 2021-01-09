@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QDir>
 #include <QDebug>
+#include <QXmlStreamReader>
 
 namespace atools {
 namespace fs {

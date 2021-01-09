@@ -18,8 +18,10 @@
 #ifndef ATOOLS_XMLSTRAM_H
 #define ATOOLS_XMLSTRAM_H
 
-#include <QXmlStreamReader>
 #include <QApplication>
+
+class QXmlStreamReader;
+class QIODevice;
 
 namespace atools {
 namespace util {
@@ -37,34 +39,16 @@ class XmlStream
   Q_DECLARE_TR_FUNCTIONS(XmlTools)
 
 public:
-  XmlStream()
-  {
+  /* Detects encoding automatically independend on XML instruction and opens QXmlStreamReader.
+   * Data must be UTF-8 or contain a BOM. */
+  explicit XmlStream(QIODevice *device, const QString& filenameParam = QString());
 
-  }
+  /* Opens QXmlStreamReader based on given source. Data has to be UTF-8. */
+  explicit XmlStream(const QByteArray& data, const QString& filenameParam = QString());
+  explicit XmlStream(const QString& data, const QString& filenameParam = QString());
+  explicit XmlStream(const char *data, const QString& filenameParam = QString());
 
-  explicit XmlStream(QIODevice *device, const QString& filenameParam = QString())
-    : reader(device), filename(filenameParam)
-  {
-
-  }
-
-  explicit XmlStream(const QByteArray& data, const QString& filenameParam = QString())
-    : reader(data), filename(filenameParam)
-  {
-
-  }
-
-  explicit XmlStream(const QString& data, const QString& filenameParam = QString())
-    : reader(data), filename(filenameParam)
-  {
-
-  }
-
-  explicit XmlStream(const char *data, const QString& filenameParam = QString())
-    : reader(data), filename(filenameParam)
-  {
-
-  }
+  ~XmlStream();
 
   /* Read until element with given name. Throws exception in case of error */
   void readUntilElement(const QString& name);
@@ -75,13 +59,10 @@ public:
   /* Skip element and optionally print a warning about unexpected elements */
   void skipCurrentElement(bool warning = false);
 
-  /* Checks stream for error. Throws exception in case of error */
-  void checkError(QXmlStreamReader& reader);
-
   /* Get underlying constructed stream reader */
   QXmlStreamReader& getReader()
   {
-    return reader;
+    return *reader;
   }
 
   const QString& getFilename() const
@@ -90,7 +71,10 @@ public:
   }
 
 private:
-  QXmlStreamReader reader;
+  /* Checks stream for error. Throws exception in case of error */
+  void checkError();
+
+  QXmlStreamReader *reader = nullptr;
   QString errorMsg = tr("Cannot open file %1. Reason: %2"), filename;
 
 };

@@ -3797,6 +3797,11 @@ void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
 }
 
+void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
+{
+  loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
+}
+
 void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
@@ -3806,11 +3811,6 @@ void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
     atools::util::XmlStream xmlStream(string);
     loadGarminFplInternal(plan, xmlStream);
   }
-}
-
-void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
-{
-  loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
 }
 
 void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
