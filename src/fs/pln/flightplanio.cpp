@@ -2851,66 +2851,79 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
   writer.writeEndElement(); // link
   writer.writeEndElement(); // metadata
 
-  writer.writeStartElement("rte");
+  QString descr;
 
-  QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
-                  arg(plan.departNameOrIdent()).arg(plan.departureIdent).
-                  arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
-                  arg(plan.getCruisingAltitude()).
-                  arg(flightplanTypeToString(plan.flightplanType));
-
-  writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
-  writer.writeTextElement("desc", descr);
-
-  // Write route ========================================================
-  for(int i = 0; i < plan.entries.size(); i++)
+  if(!plan.isEmpty())
   {
-    const FlightplanEntry& entry = plan.entries.at(i);
-    // <rtept lat="52.0" lon="13.5">
-    // <ele>33.0</ele>
-    // <time>2011-12-13T23:59:59Z</time>
-    // <name>rtept 1</name>
-    // </rtept>
+    descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
+            arg(plan.departNameOrIdent()).arg(plan.departureIdent).
+            arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
+            arg(plan.getCruisingAltitude()).
+            arg(flightplanTypeToString(plan.flightplanType));
 
-    if(!entry.getPosition().isValidRange())
-    {
-      qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
-      continue;
-    }
+    writer.writeStartElement("rte");
+    writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
+    writer.writeTextElement("desc", descr);
 
-    if(i > 0)
+    // Write route ========================================================
+    for(int i = 0; i < plan.entries.size(); i++)
     {
-      // Remove duplicates with same name and almost same position
-      const FlightplanEntry& prev = plan.entries.at(i - 1);
-      if(entry.getIdent() == prev.getIdent() &&
-         entry.getRegion() == prev.getRegion() &&
-         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+      const FlightplanEntry& entry = plan.entries.at(i);
+      // <rtept lat="52.0" lon="13.5">
+      // <ele>33.0</ele>
+      // <time>2011-12-13T23:59:59Z</time>
+      // <name>rtept 1</name>
+      // </rtept>
+
+      if(!entry.getPosition().isValidRange())
+      {
+        qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
         continue;
+      }
+
+      if(i > 0)
+      {
+        // Remove duplicates with same name and almost same position
+        const FlightplanEntry& prev = plan.entries.at(i - 1);
+        if(entry.getIdent() == prev.getIdent() &&
+           entry.getRegion() == prev.getRegion() &&
+           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+          continue;
+      }
+
+      writer.writeStartElement("rtept");
+      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
+
+      if(i > 0 && i < plan.entries.size() - 1)
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
+      else
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
+
+      writer.writeTextElement("name", entry.getIdent());
+      writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
+
+      writer.writeEndElement(); // rtept
     }
 
-    writer.writeStartElement("rtept");
-    writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
-    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
-
-    if(i > 0 && i < plan.entries.size() - 1)
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
-    else
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
-
-    writer.writeTextElement("name", entry.getIdent());
-    writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
-
-    writer.writeEndElement(); // rtept
+    writer.writeEndElement(); // rte
   }
-
-  writer.writeEndElement(); // rte
 
   // Write track ========================================================
   if(!track.isEmpty())
   {
     writer.writeStartElement("trk");
-    writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
-    writer.writeTextElement("desc", descr);
+
+    if(!plan.isEmpty())
+    {
+      writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
+      writer.writeTextElement("desc", descr);
+    }
+    else
+    {
+      writer.writeTextElement("name", QApplication::applicationName() + tr(" Track"));
+      writer.writeTextElement("desc", QApplication::applicationName());
+    }
 
     writer.writeStartElement("trkseg");
 

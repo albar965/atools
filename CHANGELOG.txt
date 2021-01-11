@@ -13,6 +13,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
 * Now omitting scenery library entries which are marked with active=`false` in Content.xml.
 * Applied workaround for XML files with wrong encoding in header (processing instruction).
+* Fix for GPX export to allow saving of files without route.
 
 ===============================================================================
 
