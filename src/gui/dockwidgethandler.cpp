@@ -124,6 +124,31 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
 
   if(mainWindow->menuWidget() != nullptr)
     mainWindow->menuWidget()->setVisible(true); // Do not hide
+
+  // Check if window if off screen ==================
+  bool visible = false;
+  qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
+
+  // Has to be visible for 20 pixels at least on one screen
+  for(QScreen *screen : QGuiApplication::screens())
+  {
+    QRect geometry = screen->geometry();
+    QRect intersected = geometry.intersected(mainWindow->frameGeometry());
+    if(intersected.width() > 20 && intersected.height() > 20)
+    {
+      qDebug() << Q_FUNC_INFO << "Visible on" << screen->name() << geometry;
+      visible = true;
+      break;
+    }
+  }
+
+  if(!visible)
+  {
+    // Move back to primary top left plus offset
+    QRect geometry = QApplication::primaryScreen()->geometry();
+    mainWindow->move(geometry.topLeft() + QPoint(20, 20));
+    qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
+  }
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)
