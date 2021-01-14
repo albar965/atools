@@ -132,7 +132,7 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
   // Has to be visible for 20 pixels at least on one screen
   for(QScreen *screen : QGuiApplication::screens())
   {
-    QRect geometry = screen->geometry();
+    QRect geometry = screen->availableGeometry();
     QRect intersected = geometry.intersected(mainWindow->frameGeometry());
     if(intersected.width() > 20 && intersected.height() > 20)
     {
@@ -145,7 +145,7 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
   if(!visible)
   {
     // Move back to primary top left plus offset
-    QRect geometry = QApplication::primaryScreen()->geometry();
+    QRect geometry = QApplication::primaryScreen()->availableGeometry();
     mainWindow->move(geometry.topLeft() + QPoint(20, 20));
     qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
   }
