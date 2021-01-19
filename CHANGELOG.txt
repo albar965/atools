@@ -16,6 +16,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fix for GPX export to allow saving of files without route.
 * Added recovery if main window gets off screen after changing monitors.
 * Fixed issue with X-Plane FMS plans where long airport idents like `XRP0001` could not be loaded. Idents are now truncated.
+* Now marking waypoints being part of procedures when loading which allows to avoid them in flight plan calculation.
 
 ===============================================================================
 

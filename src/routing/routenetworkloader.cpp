@@ -162,7 +162,8 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     network->nodeIndex.reserve(nodeVector.size());
     for(Node& node : nodeVector)
     {
-      node.edges = nodeEdgeMap.values(node.id).toVector();
+      for(auto it = nodeEdgeMap.find(node.id); it != nodeEdgeMap.end() && it.key() == node.id; ++it)
+        node.edges.append(it.value());
 
       // Replace database ids in Edge::toIndex with array indexes
       for(Edge& edge : node.edges)
@@ -174,6 +175,25 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
 
   // Update spatial index
   network->nodeIndex.updateIndex();
+
+  // Fetch all waypoint ids which do not have airways attached and are part of a procedure =============
+  // These will be marked for route calculation
+  // Waypoints still have to be available for start and end of procedures
+  QSet<int> procWpIds;
+  SqlQuery procWpQuery(dbNav);
+  procWpQuery.exec("select waypoint_id from waypoint w join "
+                   " (select fix_ident, fix_region from approach_leg where fix_type in ('TW', 'W') union "
+                   "  select fix_ident, fix_region from transition_leg where fix_type in ('TW', 'W')) as sub "
+                   " on w.ident = sub.fix_ident and w.region = sub.fix_region "
+                   " where w.num_jet_airway = 0 and w.num_victor_airway = 0");
+  while(procWpQuery.next())
+    procWpIds.insert(procWpQuery.valueInt(0));
+
+  // Additionally get all waypoints which belong to an airport and have no airways
+  procWpQuery.exec("select waypoint_id from waypoint "
+                   "where airport_id is not null and num_jet_airway = 0 and num_victor_airway = 0");
+  while(procWpQuery.next())
+    procWpIds.insert(procWpQuery.valueInt(0));
 
   // Calculate distance for all edges of all nodes and set node connection flags ================
   for(Node& node : network->nodeIndex)
@@ -208,6 +228,11 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
       edge.lengthMeter = atools::roundToInt(network->nodeIndex.atPoint3D(node.index).
                                             gcDistanceMeter(network->nodeIndex.atPoint3D(edge.toIndex)));
     }
+
+    // Node is part of a procedure or aiport and has no airways - avoid usage in direct routing
+    if(procWpIds.contains(node.id))
+      connections |= CONNECTION_PROC;
+
     node.setConnections(connections);
   }
 
