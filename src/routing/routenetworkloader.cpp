@@ -68,6 +68,10 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
   bool hasTracks = dbTrack != nullptr && SqlUtil(dbTrack).hasTableAndRows("track");
   bool hasNav = dbNav != nullptr && SqlUtil(dbNav).hasTableAndRows("waypoint");
 
+  // All waypoint ids which do not have airways attached and are part of a procedure
+  // Only source airway
+  QSet<int> procWpIds;
+
   if(network->source == SOURCE_RADIO && dbNav != nullptr)
   {
     // Load VOR, VORDME and VORTAC. No DME and no TACAN. ==========================================
@@ -171,29 +175,34 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
 
       network->nodeIndex.append(node);
     }
+
+    // Fetch all waypoint ids which do not have airways attached and are part of a procedure =============
+    // These will be marked for route calculation
+    // Waypoints still have to be available for start and end of procedures
+    if(dbNav != nullptr)
+    {
+      SqlQuery procWpQuery(dbNav);
+      if(SqlUtil(dbNav).hasTable("approach_leg") && SqlUtil(dbNav).hasTable("transition_leg"))
+      {
+        procWpQuery.exec("select waypoint_id from waypoint w join "
+                         " (select fix_ident, fix_region from approach_leg where fix_type in ('TW', 'W') union "
+                         "  select fix_ident, fix_region from transition_leg where fix_type in ('TW', 'W')) as sub "
+                         " on w.ident = sub.fix_ident and w.region = sub.fix_region "
+                         " where w.num_jet_airway = 0 and w.num_victor_airway = 0");
+        while(procWpQuery.next())
+          procWpIds.insert(procWpQuery.valueInt(0));
+      }
+
+      // Additionally get all waypoints which belong to an airport and have no airways
+      procWpQuery.exec("select waypoint_id from waypoint "
+                       "where airport_id is not null and num_jet_airway = 0 and num_victor_airway = 0");
+      while(procWpQuery.next())
+        procWpIds.insert(procWpQuery.valueInt(0));
+    }
   } // else if(network->source == SOURCE_AIRWAY)
 
   // Update spatial index
   network->nodeIndex.updateIndex();
-
-  // Fetch all waypoint ids which do not have airways attached and are part of a procedure =============
-  // These will be marked for route calculation
-  // Waypoints still have to be available for start and end of procedures
-  QSet<int> procWpIds;
-  SqlQuery procWpQuery(dbNav);
-  procWpQuery.exec("select waypoint_id from waypoint w join "
-                   " (select fix_ident, fix_region from approach_leg where fix_type in ('TW', 'W') union "
-                   "  select fix_ident, fix_region from transition_leg where fix_type in ('TW', 'W')) as sub "
-                   " on w.ident = sub.fix_ident and w.region = sub.fix_region "
-                   " where w.num_jet_airway = 0 and w.num_victor_airway = 0");
-  while(procWpQuery.next())
-    procWpIds.insert(procWpQuery.valueInt(0));
-
-  // Additionally get all waypoints which belong to an airport and have no airways
-  procWpQuery.exec("select waypoint_id from waypoint "
-                   "where airport_id is not null and num_jet_airway = 0 and num_victor_airway = 0");
-  while(procWpQuery.next())
-    procWpIds.insert(procWpQuery.valueInt(0));
 
   // Calculate distance for all edges of all nodes and set node connection flags ================
   for(Node& node : network->nodeIndex)
