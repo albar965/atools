@@ -15,6 +15,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Applied workaround for XML files with wrong encoding in header (processing instruction).
 * Fix for GPX export to allow saving of files without route.
 * Added recovery if main window gets off screen after changing monitors.
+* Fixed issue with X-Plane FMS plans where long airport idents like `XRP0001` could not be loaded. Idents are now truncated.
 
 ===============================================================================
 

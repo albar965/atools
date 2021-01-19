@@ -3102,7 +3102,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       // Departure
       if(plan.entries.first().getWaypointType() == entry::AIRPORT)
-        stream << "ADEP " << plan.getDepartureIdent() << endl;
+        stream << "ADEP " << plan.getDepartureIdent().mid(0, 6) << endl;
       else
         stream << "DEP " << plan.getDepartureIdent() << endl;
 
@@ -3118,7 +3118,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       // Destination
       if(plan.entries.last().getWaypointType() == entry::AIRPORT)
-        stream << "ADES " << plan.getDestinationIdent() << endl;
+        stream << "ADES " << plan.getDestinationIdent().mid(0, 6) << endl;
       else
         stream << "DES " << plan.getDestinationIdent() << endl;
 
@@ -3187,15 +3187,13 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 ";
+          stream << "1 " << entry.getIdent().mid(0, 5) << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
-          stream << "11 ";
+          stream << "11 " << entry.getIdent() << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
-          stream << "3 ";
+          stream << "3 " << entry.getIdent() << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::NDB)
-          stream << "2 ";
-
-        stream << entry.getIdent() << " ";
+          stream << "2 " << entry.getIdent() << " ";
       }
 
       if(version11Format)
