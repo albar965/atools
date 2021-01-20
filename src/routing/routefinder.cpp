@@ -140,13 +140,6 @@ bool RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
       continue;
 
     const Node& successor = network->getNode(successorIndex);
-
-    // Check if the node is marked as a part of a procedure or airport and without airways
-    // Ignore it except for destination and departure
-    if(!(currentNode.isDeparture() || successor.isDestination()) &&
-       successor.getConnections().testFlag(atools::routing::CONNECTION_PROC))
-      continue;
-
     const Edge& edge = successors.edges.at(i);
 
     // Invoke user callback if set

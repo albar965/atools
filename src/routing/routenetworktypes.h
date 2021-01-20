@@ -87,7 +87,6 @@ enum NodeConnection : unsigned char
   CONNECTION_JET = 1 << 1, /* Airway waypoint */
   CONNECTION_TRACK = 1 << 2, /* Artificial waypoint in track only */
   CONNECTION_TRACK_START_END = 1 << 3, /* Start or end of one or more tracks */
-  CONNECTION_PROC = 1 << 4, /* Part of a procedure or has an airport ID - avoid in routing */
 
   CONNECTION_AIRWAY_BOTH = CONNECTION_JET | CONNECTION_VICTOR,
   CONNECTION_AIRWAY_TRACK = CONNECTION_AIRWAY_BOTH | CONNECTION_TRACK
