@@ -76,7 +76,7 @@ void HttpResponse::writeHeaders()
 bool HttpResponse::writeToSocket(QByteArray data)
 {
   int remaining = data.size();
-  char *ptr = data.data();
+  const char *ptr = data.constData();
   while(socket->isOpen() && remaining > 0)
   {
     // If the output buffer has become large, then wait until it has been sent.

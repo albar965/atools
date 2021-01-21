@@ -272,8 +272,8 @@ void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogConte
   QMessageLogContext ctx;
   ctx.version = context.version;
   ctx.line = context.line;
-  ctx.file = fileBytes.data();
-  ctx.function = functionBytes.data();
+  ctx.file = fileBytes.constData();
+  ctx.function = functionBytes.constData();
   ctx.category = context.category;
 
   if(logFunc != nullptr)

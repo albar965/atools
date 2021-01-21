@@ -113,7 +113,7 @@ void GribReader::readFile(const QString& filename)
 
   FILE *fptr = _wfopen(path, L"rb");
 #else
-  FILE *fptr = fopen(filename.toUtf8().data(), "rb");
+  FILE *fptr = fopen(filename.toUtf8().constData(), "rb");
 #endif
 
   if(fptr != nullptr)

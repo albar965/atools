@@ -39,7 +39,7 @@ class Str
 public:
   explicit Str(const QString& strParam)
   {
-    std::strncpy(str, strParam.toLatin1().data(), SIZE); // Limit to SIZE
+    std::strncpy(str, strParam.toLatin1().constData(), SIZE); // Limit to SIZE
     str[SIZE - 1] = '\0'; // Ensure null termination
   }
 

@@ -32,7 +32,7 @@ TemplateLoader::TemplateLoader(QHash<QString, QVariant> settings, QObject *paren
   {
     textCodec = QTextCodec::codecForName(encoding.toLocal8Bit());
   }
-  qDebug("TemplateLoader: path=%s, codec=%s", qPrintable(templatePath), textCodec->name().data());
+  qDebug("TemplateLoader: path=%s, codec=%s", qPrintable(templatePath), textCodec->name().constData());
 }
 
 QString TemplateLoader::tryFile(QString localizedName)

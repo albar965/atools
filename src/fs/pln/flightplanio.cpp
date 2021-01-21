@@ -3308,7 +3308,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
 #endif
 
     QByteArray utf8 = rteString.toUtf8();
-    rteFile.write(utf8.data(), utf8.size());
+    rteFile.write(utf8.constData(), utf8.size());
     rteFile.close();
   }
   else
@@ -3519,7 +3519,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
 #endif
 
     QByteArray utf8 = textString.toUtf8();
-    fltplanFile.write(utf8.data(), utf8.size());
+    fltplanFile.write(utf8.constData(), utf8.size());
     fltplanFile.close();
   }
   else
@@ -4085,7 +4085,7 @@ void FlightplanIO::writeBinaryString(char *mem, QString str, int length)
   str.truncate(length - 1);
 
   QByteArray bytes = str.toLatin1();
-  const char *data = bytes.data();
+  const char *data = bytes.constData();
   memcpy(mem, data, strlen(data));
 
   // Fill rest with nulls

@@ -27,7 +27,7 @@ Exception::Exception(const QString& messageStr)
 
 const char *Exception::what() const Q_DECL_NOEXCEPT
 {
-  return whatMessage.data();
+  return whatMessage.constData();
 }
 
 } // namespace atools
