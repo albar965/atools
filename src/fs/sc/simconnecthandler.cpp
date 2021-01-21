@@ -100,7 +100,7 @@ struct SimDataAircraft
   qint32 numEngines;
   qint32 engineType; // 0 = Piston 1 = Jet 2 = None 3 = Helo(Bell) turbine 4 = Unsupported 5 = Turboprop
 
-  // At end since not used for MSFS
+  // Not used for MSFS
   char aiFrom[32];
   char aiTo[32];
 };
@@ -437,7 +437,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
 
   if(!msfs)
   {
-    // Workaround for crash introduce with MSFS update end of 2020
+    // Workaround for crash introduced with MSFS update 1.12.13.0
     aircraft.fromIdent = simDataUserAircraft.aiFrom;
     aircraft.toIdent = simDataUserAircraft.aiTo;
   }
@@ -582,9 +582,15 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 
   api.AddToDataDefinition(definitionId, "Engine Type", "number", SIMCONNECT_DATATYPE_INT32);
 
-  if(!msfs)
+  if(msfs)
   {
-    // Workaround for crash introduce with MSFS update end of 2020
+    // Workaround for crash introduce with MSFS update 1.12.13.0
+    // Fetch a dummy value to keep structs and order of fields the same
+    api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING32);
+    api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING32);
+  }
+  else
+  {
     api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
     api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
   }
