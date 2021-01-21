@@ -69,6 +69,7 @@ public:
 private:
   // Used to all the windows and SimConnect stuff out of the header files
   SimConnectHandlerPrivate *p = nullptr;
+  QByteArray appName;
 
 };
 

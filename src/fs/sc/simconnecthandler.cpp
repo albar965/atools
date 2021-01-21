@@ -81,9 +81,6 @@ struct SimDataAircraft
   qint32 modelRadius;
   qint32 wingSpan;
 
-  char aiFrom[32];
-  char aiTo[32];
-
   float altitudeFt;
   float latitudeDeg;
   float longitudeDeg;
@@ -102,6 +99,10 @@ struct SimDataAircraft
 
   qint32 numEngines;
   qint32 engineType; // 0 = Piston 1 = Jet 2 = None 3 = Helo(Bell) turbine 4 = Unsupported 5 = Turboprop
+
+  // At end since not used for MSFS
+  char aiFrom[32];
+  char aiTo[32];
 };
 
 /* Struct that will be filled with raw data from the simconnect interface. */
@@ -193,7 +194,7 @@ public:
   SIMCONNECT_RECV_OPEN openData;
 
   bool simRunning = true, simPaused = false, verbose = false, simConnectLoaded = false,
-       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false;
+       userDataFetched = false, aiDataFetched = false, weatherDataFetched = false, msfs = false;
 };
 
 void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD cbData)
@@ -433,8 +434,13 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.airplaneType = simDataUserAircraft.aircraftAtcType;
   aircraft.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
   aircraft.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
-  aircraft.fromIdent = simDataUserAircraft.aiFrom;
-  aircraft.toIdent = simDataUserAircraft.aiTo;
+
+  if(!msfs)
+  {
+    // Workaround for crash introduce with MSFS update end of 2020
+    aircraft.fromIdent = simDataUserAircraft.aiFrom;
+    aircraft.toIdent = simDataUserAircraft.aiTo;
+  }
 
   QString cat = QString(simDataUserAircraft.category).toLower().trimmed();
   if(cat == "airplane")
@@ -554,9 +560,6 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 
   api.AddToDataDefinition(definitionId, "Wing Span", "feet", SIMCONNECT_DATATYPE_INT32);
 
-  api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
-  api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
-
   api.AddToDataDefinition(definitionId, "Plane Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(definitionId, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(definitionId, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
@@ -578,6 +581,13 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   api.AddToDataDefinition(definitionId, "Number of Engines", "number", SIMCONNECT_DATATYPE_INT32);
 
   api.AddToDataDefinition(definitionId, "Engine Type", "number", SIMCONNECT_DATATYPE_INT32);
+
+  if(!msfs)
+  {
+    // Workaround for crash introduce with MSFS update end of 2020
+    api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
+    api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
+  }
 }
 
 // ===============================================================================================
@@ -585,7 +595,7 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 // ===============================================================================================
 
 SimConnectHandler::SimConnectHandler(bool verboseLogging)
-  : p(new SimConnectHandlerPrivate(verboseLogging))
+  : p(new SimConnectHandlerPrivate(verboseLogging)), appName(QCoreApplication::applicationName().toLatin1())
 {
 
 }
@@ -650,12 +660,7 @@ bool SimConnectHandler::isSimPaused() const
 
 bool SimConnectHandler::canFetchWeather() const
 {
-  // Do not fetch weather in MSFS sice functions are deprecated.
-  // MSFS: SimConnect Version 11.0 Build 62651.3
-  // if(p->openData.dwSimConnectVersionMajor >= 11 && p->openData.dwSimConnectBuildMajor >= 62651)
-  // return false;
-  return !(QString(p->openData.szApplicationName) == "KittyHawk" ||
-           (p->openData.dwSimConnectVersionMajor == 11 && p->openData.dwSimConnectBuildMajor == 62651));
+  return !p->msfs;
 }
 
 bool SimConnectHandler::isLoaded() const
@@ -675,11 +680,25 @@ bool SimConnectHandler::connect()
   if(p->verbose)
     qDebug() << "Before open";
 
-  hr = p->api.Open("Little Navconnect", NULL, 0, 0, 0);
+  hr = p->api.Open(appName.constData(), nullptr, 0, nullptr, 0);
   if(hr == S_OK)
   {
     if(p->verbose)
       qDebug() << "Connected to Flight Simulator";
+
+    // Call dispatch function to get the SimConnect version information
+    bool fetched = false;
+    p->callDispatch(fetched, "OPEN");
+
+    if(!fetched)
+      qWarning() << Q_FUNC_INFO << "Initial fetch after open returned no data";
+
+    // Do not fetch weather in MSFS sice functions are deprecated.
+    // MSFS: SimConnect Version 11.0 Build 62651.3
+    p->msfs = strcmp(p->openData.szApplicationName, "KittyHawk") == 0 ||
+              (p->openData.dwSimConnectVersionMajor == 11 && p->openData.dwSimConnectBuildMajor == 62651);
+
+    qInfo() << Q_FUNC_INFO << "MSFS detechted" << p->msfs;
 
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_AIRCRAFT);
     p->fillDataDefinitionAicraft(DATA_DEFINITION_AI_HELICOPTER);
@@ -899,8 +918,8 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.ambientVisibilityMeter = p->simData.ambientVisibilityMeter;
 
     data.userAircraft.seaLevelPressureMbar = p->simData.seaLevelPressureMbar;
-    data.userAircraft.pitotIcePercent = p->simData.pitotIcePercent;
-    data.userAircraft.structuralIcePercent = p->simData.structuralIcePercent;
+    data.userAircraft.pitotIcePercent = static_cast<quint8>(p->simData.pitotIcePercent);
+    data.userAircraft.structuralIcePercent = static_cast<quint8>(p->simData.structuralIcePercent);
     data.userAircraft.airplaneTotalWeightLbs = p->simData.airplaneTotalWeightLbs;
     data.userAircraft.airplaneMaxGrossWeightLbs = p->simData.airplaneMaxGrossWeightLbs;
     data.userAircraft.airplaneEmptyWeightLbs = p->simData.airplaneEmptyWeightLbs;
@@ -963,7 +982,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
     {
       // == weather for station ========================================================
       hr = p->api.WeatherRequestObservationAtStation(
-        DATA_REQUEST_ID_WEATHER_STATION, result.requestIdent.toUtf8().data());
+        DATA_REQUEST_ID_WEATHER_STATION, result.requestIdent.toUtf8().constData());
       if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent))
         return false;
 
