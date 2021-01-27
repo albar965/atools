@@ -85,7 +85,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
 {
   basePath = buildBasePath(options);
 
-  qInfo() << "Using X-Plane data path" << basePath;
+  qInfo() << Q_FUNC_INFO << "Using X-Plane data path" << basePath;
 
   airportIndex = new AirportIndex();
 
@@ -445,11 +445,9 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 
   try
   {
-    // Open file and read header
+    // Open file and read header - throws exception on error
     if(openFile(stream, file, filepath, flags, lineNum, totalNumLines, fileVersion))
     {
-      // qInfo() << "=P==== Opened:" << filepath;
-
       XpWriterContext context;
       context.curFileId = curFileId;
       context.fileName = fileinfo.fileName();
@@ -614,12 +612,12 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       // Byte order identifier
       line = stream.readLine();
       lineNum++;
-      qInfo() << line;
+      qInfo() << Q_FUNC_INFO << line;
 
       // Metadata and copyright
       line = stream.readLine();
       lineNum++;
-      qInfo() << line;
+      qInfo() << Q_FUNC_INFO << line;
 
       QStringList fields = line.simplified().split(" ");
       if(!fields.isEmpty())
@@ -639,7 +637,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       if(flags & UPDATE_CYCLE)
         updateAiracCycleFromHeader(line, filename, lineNum);
 
-      qDebug() << "Counting lines for" << filename;
+      qInfo() << Q_FUNC_INFO << "Counting lines for" << filename;
       qint64 pos = stream.pos();
       int lines = 0;
       while(!stream.atEnd())
@@ -649,7 +647,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       }
       totalNumLines = lines;
       stream.seek(pos);
-      qDebug() << lines;
+      qInfo() << Q_FUNC_INFO << "Num lines" << lines;
     }
     else
     {
