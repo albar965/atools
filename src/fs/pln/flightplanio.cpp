@@ -3101,10 +3101,11 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << "CYCLE " << cycle << endl;
 
       // Departure
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT)
-        stream << "ADEP " << plan.getDepartureIdent().mid(0, 6) << endl;
+      QString departureIdent = plan.getDepartureIdent();
+      if(plan.entries.first().getWaypointType() == entry::AIRPORT && departureIdent.size() <= 4)
+        stream << "ADEP " << departureIdent << endl;
       else
-        stream << "DEP " << plan.getDepartureIdent() << endl;
+        stream << "DEP " << departureIdent << endl;
 
       // Departure - SID
       if(!plan.properties.value(SIDAPPRRW).isEmpty())
@@ -3117,10 +3118,11 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
       // Destination
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT)
-        stream << "ADES " << plan.getDestinationIdent().mid(0, 6) << endl;
+      QString destinationIdent = plan.getDestinationIdent();
+      if(plan.entries.last().getWaypointType() == entry::AIRPORT && destinationIdent.size() <= 4)
+        stream << "ADES " << destinationIdent << endl;
       else
-        stream << "DES " << plan.getDestinationIdent() << endl;
+        stream << "DES " << destinationIdent << endl;
 
       // Arrival runway
       if(!plan.properties.value(APPROACHRW).isEmpty())
@@ -3168,14 +3170,14 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // 3 - VOR
       // 11 - Fix
       // 28 - Lat/Lon Position
-
+      QString ident = entry.getIdent();
       if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
          entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
         stream << "28 ";
 
         // Replace spaces
-        QString name = entry.getIdent();
+        QString name = ident;
         name.replace(QRegularExpression("[\\s]"), "_");
 
         stream << name << " ";
@@ -3187,21 +3189,21 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 " << entry.getIdent().mid(0, 5) << " ";
+          stream << "1 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
-          stream << "11 " << entry.getIdent() << " ";
+          stream << "11 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
-          stream << "3 " << entry.getIdent() << " ";
+          stream << "3 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::NDB)
-          stream << "2 " << entry.getIdent() << " ";
+          stream << "2 " << ident << " ";
       }
 
       if(version11Format)
       {
         if(index == 0)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
+          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADEP " : "DEP ");
         else if(index == numEntries - 1)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
+          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADES " : "DES ");
         else
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
