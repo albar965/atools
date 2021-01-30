@@ -60,12 +60,13 @@ void Flightplan::clear()
   destinationName.clear();
   comment.clear();
 
-  departurePos = Pos();
-  destinationPos = Pos();
+  departurePos = departureParkingPos = destinationPos = atools::geo::EMPTY_POS;
 
   lnmFormat = true;
   flightplanType = VFR;
+  routeType = DIRECT;
   cruisingAlt = 10000;
+  properties.clear();
 }
 
 void Flightplan::setDeparturePosition(const geo::Pos& value)
@@ -77,6 +78,17 @@ void Flightplan::setDeparturePosition(const geo::Pos& value, float altitude)
 {
   departurePos = value;
   departurePos.setAltitude(altitude);
+}
+
+void Flightplan::setDepartureParkingPosition(const geo::Pos& value)
+{
+  departureParkingPos = value;
+}
+
+void Flightplan::setDepartureParkingPosition(const geo::Pos& value, float altitude)
+{
+  departureParkingPos = value;
+  departureParkingPos.setAltitude(altitude);
 }
 
 QString Flightplan::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const

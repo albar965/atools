@@ -1059,7 +1059,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
         if(reader.name() == "Start")
           plan.departureParkingName = reader.readElementText();
         else if(reader.name() == "Pos")
-          plan.departurePos = readPosLnm(xmlStream);
+          plan.departureParkingPos = readPosLnm(xmlStream);
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -1197,7 +1197,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       {
         QString txt = reader.readElementText();
         if(!txt.isEmpty())
-          plan.departurePos = geo::Pos(txt);
+          plan.departureParkingPos = geo::Pos(txt);
       }
       else if(name == "DestinationID")
         plan.destinationIdent = reader.readElementText();
@@ -1617,10 +1617,10 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   }
 
   // Departure name and position =======================================================
-  if(plan.departurePos.isValid() || !plan.departureParkingName.isEmpty())
+  if(!plan.departureParkingName.isEmpty())
   {
     writer.writeStartElement("Departure");
-    writeElementPosIf(writer, plan.departurePos);
+    writeElementPosIf(writer, plan.departureParkingPos);
     writeElementIf(writer, "Start", plan.departureParkingName);
     writer.writeEndElement(); // Departure
   }
@@ -1778,8 +1778,18 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
   writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
   writer.writeTextElement("DepartureID", plan.departureIdent);
-  writer.writeTextElement("DepartureLLA",
-                          plan.departurePos.isValid() ? plan.departurePos.toLongString() : QString());
+
+  if(!msfs)
+    // Use parking position
+    writer.writeTextElement("DepartureLLA",
+                            plan.getDepartureParkingPosition().isValid() ?
+                            plan.getDepartureParkingPosition().toLongString() : QString());
+  else
+    // Use airport position
+    writer.writeTextElement("DepartureLLA",
+                            plan.getDeparturePosition().isValid() ?
+                            plan.getDeparturePosition().toLongString() : QString());
+
   writer.writeTextElement("DestinationID", plan.destinationIdent);
   writer.writeTextElement("DestinationLLA",
                           plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
