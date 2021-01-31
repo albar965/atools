@@ -1610,7 +1610,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
      !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
   {
     writer.writeStartElement("AircraftPerformance");
-    writeElementIf(writer, "FilePath", plan.properties.value(AIRCRAFT_PERF_FILE));
+    writeElementIf(writer, "FilePath", QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
     writeElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
     writeElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
     writer.writeEndElement(); // AircraftPerformance
