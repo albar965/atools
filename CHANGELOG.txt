@@ -7,7 +7,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Added separate departure position field to flight plan for parking, helipad or runway/start.
   Fixed flight plan export to use correct departure position in PLN  DepartureLLA and LNMPLN Start
-  element. albar965/littlenavmap#608
+  element. albar965/littlenavmap#613
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
 * Added verbose logging for X-Plane compiler based on navdatareader.cfg. Added warnings if rows are
   not written to the database.
