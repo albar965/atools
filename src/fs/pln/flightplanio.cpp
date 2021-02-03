@@ -3514,7 +3514,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         lonX.prepend(" ");
 
-      stream << identOrDegMinFormat(entry) << ",0, ";
+      stream << identOrDegMinFormat(entry) << ",0,";
 
       stream << latY << lonX;
       stream << ",0,0," << QString("%1").arg(atools::roundToInt(heading), 3, 10, QChar('0')) << ".00000";

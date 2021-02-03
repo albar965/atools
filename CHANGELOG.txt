@@ -11,6 +11,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
 * Added verbose logging for X-Plane compiler based on navdatareader.cfg. Added warnings if rows are
   not written to the database.
+* Removed extra space in flight plan export for iFly (text format .FLTPLAN).
 
 ===============================================================================
 
