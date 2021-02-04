@@ -694,7 +694,13 @@ bool SimConnectHandler::connect()
 
     // Call dispatch function to get the SimConnect version information
     bool fetched = false;
-    p->callDispatch(fetched, "OPEN");
+    for(int i = 0; i < 10; i++)
+    {
+      QThread::msleep(20);
+      p->callDispatch(fetched, "OPEN");
+      if(fetched)
+        break;
+    }
 
     if(!fetched)
       qWarning() << Q_FUNC_INFO << "Initial fetch after open returned no data";
