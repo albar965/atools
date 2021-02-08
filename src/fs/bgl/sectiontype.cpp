@@ -26,6 +26,12 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
 {
   switch(type)
   {
+    case section::MSFS_DELETE_NAV:
+      return "MSFS_DELETE_NAV";
+
+    case section::MSFS_DELETE_AIRPORT_NAV:
+      return "MSFS_DELETE_AIRPORT_NAV";
+
     case section::NONE:
       return "NONE";
 
@@ -188,7 +194,7 @@ QString sectionTypeStr(atools::fs::bgl::section::SectionType type)
     case section::TERRAIN_PHOTO_NIGHT:
       return "TERRAIN_PHOTO_NIGHT";
 
-    case section::TACAN:
+    case section::P3D_TACAN:
       return "TACAN";
 
     case section::FAKE_TYPES:

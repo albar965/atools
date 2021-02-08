@@ -229,8 +229,8 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
         secondary.approachLights = RunwayApproachLights(options, bs);
         break;
 
-      case rec::UNKNOWN_MSFS_003E:
-      case rec::UNKNOWN_MSFS_00CB:
+      case rec::MSFS_RUNWAY_DEFORMATION:
+      case rec::MSFS_RUNWAY_FACILITY_MATERIAL:
         break;
 
       default:

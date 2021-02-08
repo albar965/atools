@@ -75,32 +75,34 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 {
   switch(type)
   {
-    // Unknown but common records from MSFS to silence warnings
-    case rec::UNKNOWN_MSFS_00CF:
-      return "UNKNOWN_MSFS_00CF";
+    case rec::DELETE_AIRPORT_NAVIGATION:
+      return "DELETE_AIRPORT_NAVIGATION";
 
-    case rec::UNKNOWN_MSFS_00DE:
-      return "UNKNOWN_MSFS_00DE";
+    case rec::MSFS_AIRPORT_PAINTED_LINE:
+      return "MSFS_AIRPORT_PAINTED_LINE";
 
-    case rec::UNKNOWN_MSFS_00D9:
-      return "UNKNOWN_MSFS_00D9";
+    case rec::MSFS_AIRPORT_PAINTED_HATCHED_AREA:
+      return "MSFS_AIRPORT_PAINTED_HATCHED_AREA";
 
-    case rec::UNKNOWN_MSFS_00DD:
-      return "UNKNOWN_MSFS_00DD";
+    case rec::MSFS_AIRPORT_TAXIWAY_SIGN:
+      return "MSFS_AIRPORT_TAXIWAY_SIGN";
 
-    case rec::UNKNOWN_MSFS_00D8:
-      return "UNKNOWN_MSFS_00D8";
+    case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
+      return "MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME";
 
-    case rec::UNKNOWN_MSFS_0057:
+    case rec::MSFS_AIRPORT_JETWAY:
+      return "MSFS_AIRPORT_JETWAY";
+
+    case rec::MSFS_AIRPORT_LIGHT_SUPPORT:
       return "UNKNOWN_MSFS_0057";
 
-    case rec::SID_MSFS:
+    case rec::MSFS_SID:
       return "SID_MSFS";
 
-    case rec::STAR_MSFS:
+    case rec::MSFS_STAR:
       return "STAR_MSFS";
 
-    case rec::UNKNOWN_MSFS_00CD:
+    case rec::MSFS_UNKNOWN_00CD:
       return "UNKNOWN_MSFS_00CD";
 
     case rec::NAME:
@@ -210,18 +212,20 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 {
   switch(type)
   {
+    case rec::DELETE_AIRPORT_NAVIGATION:
+    case rec::MSFS_AIRPORT_PAINTED_LINE:
+    case rec::MSFS_AIRPORT_PAINTED_HATCHED_AREA:
+    case rec::MSFS_AIRPORT_TAXIWAY_SIGN:
+    case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
+    case rec::MSFS_AIRPORT_JETWAY:
+
     // Unknown but common records from MSFS to silence warnings
-    case rec::UNKNOWN_MSFS_0057:
-    case rec::UNKNOWN_MSFS_00CD:
-    case rec::UNKNOWN_MSFS_00CF:
-    case rec::UNKNOWN_MSFS_00D8:
-    case rec::UNKNOWN_MSFS_00D9:
-    case rec::UNKNOWN_MSFS_00DD:
-    case rec::UNKNOWN_MSFS_00DE:
+    case rec::MSFS_AIRPORT_LIGHT_SUPPORT:
+    case rec::MSFS_UNKNOWN_00CD:
 
     // Known record but structure unknown
-    case rec::SID_MSFS:
-    case rec::STAR_MSFS:
+    case rec::MSFS_SID:
+    case rec::MSFS_STAR:
 
     case rec::AIRPORT_WAYPOINT:
     case rec::APPROACH:
@@ -268,11 +272,11 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
   switch(type)
   {
     // Unknown but common records from MSFS to silence warnings
-    case atools::fs::bgl::rec::UNKNOWN_MSFS_003E:
-      return "UNKNOWN_MSFS_003E";
+    case rec::MSFS_RUNWAY_DEFORMATION:
+      return "MSFS_RUNWAY_DEFORMATION";
 
-    case atools::fs::bgl::rec::UNKNOWN_MSFS_00CB:
-      return "UNKNOWN_MSFS_00CB";
+    case rec::MSFS_RUNWAY_FACILITY_MATERIAL:
+      return "MSFS_RUNWAY_FACILITY_MATERIAL";
 
     case rec::OFFSET_THRESHOLD_PRIM:
       return "OFFSET_THRESHOLD_PRIM";
