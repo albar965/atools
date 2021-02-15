@@ -164,7 +164,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
     elevations.append(linestring.first().alt(getElevation(linestring.first())));
   else
   {
-    QList<Pos> positions;
+    LineString positions;
     for(int i = 0; i < linestring.size() - 1; i++)
     {
       Line line = Line(linestring.at(i), linestring.at(i + 1));
@@ -197,11 +197,8 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
         elevations.append(pos.alt(elevation));
       }
+      positions.clear();
     }
-
-    elevations.append(linestring.last());
-    if(!elevations.isEmpty())
-      elevations.last().setAltitude(getElevation(elevations.last()));
   }
 }
 

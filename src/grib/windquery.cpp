@@ -466,7 +466,7 @@ WindData WindQuery::windAverageForLine(const Pos& pos1, const Pos& pos2) const
   float meterPerSample = meterPerDeg / samplesPerDegree;
   int numPoints = atools::roundToInt(distanceMeter / meterPerSample);
 
-  QList<atools::geo::Pos> positions;
+  LineString positions;
 
   if(numPoints > 1)
   {

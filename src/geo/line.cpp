@@ -113,9 +113,12 @@ Pos Line::interpolate(float fraction) const
   return pos1.interpolate(pos2, fraction);
 }
 
-void Line::interpolatePoints(float distanceMeter, int numPoints, QList<Pos>& positions) const
+void Line::interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
 {
-  return pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
+  pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
+
+  if(!positions.isEmpty() && !positions.last().almostEqual(pos2))
+    positions.append(pos2);
 }
 
 Pos Line::interpolateRhumb(float distanceMeter, float fraction) const

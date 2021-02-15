@@ -20,6 +20,7 @@
 #include "geo/point3d.h"
 #include "exception.h"
 #include "atools.h"
+#include "geo/linestring.h"
 
 #include <QDataStream>
 #include <QRegularExpression>
@@ -571,7 +572,7 @@ QString Pos::toString(int precision, bool alt) const
 }
 
 void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
-                            QList<Pos>& positions) const
+                            atools::geo::LineString& positions) const
 {
   if(!isValid() || !otherPos.isValid())
     return;
@@ -583,7 +584,8 @@ void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoi
     positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)).alt(altitude));
 }
 
-void Pos::interpolatePointsAlt(const Pos& otherPos, float distanceMeter, int numPoints, QList<Pos>& positions) const
+void Pos::interpolatePointsAlt(const Pos& otherPos, float distanceMeter, int numPoints,
+                               atools::geo::LineString& positions) const
 {
   interpolatePoints(otherPos, distanceMeter, numPoints, positions);
 
