@@ -171,6 +171,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
       float length = line.lengthMeter();
 
+      positions.clear();
       line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
 
       Pos lastDropped;
@@ -197,8 +198,11 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
         elevations.append(pos.alt(elevation));
       }
-      positions.clear();
     }
+
+    elevations.append(linestring.last());
+    if(!elevations.isEmpty())
+      elevations.last().setAltitude(getElevation(elevations.last()));
   }
 }
 

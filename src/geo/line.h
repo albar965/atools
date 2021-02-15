@@ -87,7 +87,7 @@ public:
   /* Find point between start and end on GC route if distance between points is not known. 0 < fraction <= 1.*/
   atools::geo::Pos interpolate(float fraction) const;
 
-  /* Returns a list of points which includes pos1 and pos2.*/
+  /* Returns a list of points which includes pos1 and not pos2. */
   void interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
 
   /* Find point between start and end on rhumb line */
