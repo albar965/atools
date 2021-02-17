@@ -447,13 +447,8 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.airplaneType = simDataUserAircraft.aircraftAtcType;
   aircraft.airplaneAirline = simDataUserAircraft.aircraftAtcAirline;
   aircraft.airplaneFlightnumber = simDataUserAircraft.aircraftAtcFlightNumber;
-
-  if(!msfs)
-  {
-    // Workaround for crash introduced with MSFS update 1.12.13.0
-    aircraft.fromIdent = simDataUserAircraft.aiFrom;
-    aircraft.toIdent = simDataUserAircraft.aiTo;
-  }
+  aircraft.fromIdent = simDataUserAircraft.aiFrom;
+  aircraft.toIdent = simDataUserAircraft.aiTo;
 
   QString cat = QString(simDataUserAircraft.category).toLower().trimmed();
   if(cat == "airplane")
@@ -718,18 +713,8 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 
   api.AddToDataDefinition(definitionId, "Engine Type", "number", SIMCONNECT_DATATYPE_INT32);
 
-  if(msfs)
-  {
-    // Workaround for crash introduce with MSFS update 1.12.13.0
-    // Fetch a dummy value to keep structs and order of fields the same
-    api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING32);
-    api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING32);
-  }
-  else
-  {
-    api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
-    api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
-  }
+  api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
 }
 
 // ===============================================================================================
