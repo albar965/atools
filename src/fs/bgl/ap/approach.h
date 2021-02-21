@@ -39,7 +39,7 @@ public:
    * Read approach and all subrecords
    */
   Approach(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, bool sid, bool star);
-  virtual ~Approach();
+  virtual ~Approach() override;
 
   /*
    * @return Runway end for the approach. This is optional - some approaches are not assigned to a runway

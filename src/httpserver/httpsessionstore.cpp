@@ -41,7 +41,7 @@ QByteArray HttpSessionStore::getSessionId(HttpRequest& request, HttpResponse& re
   {
     if(!sessions.contains(sessionId))
     {
-      qDebug("HttpSessionStore: received invalid session cookie with ID %s", sessionId.data());
+      qDebug("HttpSessionStore: received invalid session cookie with ID %s", sessionId.constData());
       sessionId.clear();
     }
   }
@@ -78,7 +78,7 @@ HttpSession HttpSessionStore::getSession(HttpRequest& request, HttpResponse& res
     QByteArray cookieComment = settings.value("cookieComment").toByteArray();
     QByteArray cookieDomain = settings.value("cookieDomain").toByteArray();
     HttpSession session(true);
-    qDebug("HttpSessionStore: create new session with ID %s", session.getId().data());
+    qDebug("HttpSessionStore: create new session with ID %s", session.getId().constData());
     sessions.insert(session.getId(), session);
     response.setCookie(HttpCookie(cookieName, session.getId(), expirationTime / 1000, cookiePath, cookieComment,
                                   cookieDomain));
@@ -112,7 +112,7 @@ void HttpSessionStore::sessionTimerEvent()
     qint64 lastAccess = session.getLastAccess();
     if(now - lastAccess > expirationTime)
     {
-      qDebug("HttpSessionStore: session %s expired", session.getId().data());
+      qDebug("HttpSessionStore: session %s expired", session.getId().constData());
       sessions.erase(prev);
     }
   }

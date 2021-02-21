@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~WaypointWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Waypoint *type) override;
 

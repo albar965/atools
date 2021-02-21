@@ -37,6 +37,7 @@
 #include "fs/scenery/manifestjson.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/scenery/materiallib.h"
+#include "fs/scenery/contentxml.h"
 
 #include <QDir>
 #include <QElapsedTimer>
@@ -614,7 +615,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
       errors->init(area);
 
     // Load Navigraph from source database ======================================================
-    dfdCompiler.reset(new atools::fs::ng::DfdCompiler(*db, *options, &progress, errors));
+    dfdCompiler.reset(new atools::fs::ng::DfdCompiler(*db, *options, &progress));
     loadDfd(&progress, dfdCompiler.data(), area);
     dfdCompiler->close();
   }
@@ -1342,15 +1343,21 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages\Official\OneStore
   // content.read(options->getSceneryFile());
 
-  // QString contentXmlPath;
-  //// MS Online Installation
-  // if(atools::checkFile(options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml"))
-  // contentXmlPath = options->getBasepath() + SEP + "LocalCache" + SEP + "Content.xml";
-  //// Steam or boxed Installation
-  // else if(atools::checkFile(options->getBasepath() + SEP + "Content.xml"))
-  // contentXmlPath = options->getBasepath() + SEP + "Content.xml";
-  // scenery::ContentXml contentXml;
-  // contentXml.read(contentXmlPath);
+  // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
+  QString contentXmlPath = options->getBasepath() + SEP + "Content.xml";
+  if(!atools::checkFile(contentXmlPath))
+  {
+    // Not found - try MS installation
+    // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
+    contentXmlPath = QFileInfo(options->getBasepath() + SEP + ".." + SEP + "Content.xml").canonicalFilePath();
+    if(!atools::checkFile(contentXmlPath))
+      // Not found
+      contentXmlPath.clear();
+  }
+
+  scenery::ContentXml contentXml;
+  if(!contentXmlPath.isEmpty())
+    contentXml.read(contentXmlPath);
 
   int areaNum = 0;
   SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
@@ -1373,6 +1380,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   {
     QString name = fileinfo.fileName();
 
+    if(contentXml.isDisabled(name))
+    {
+      // Entry is present in Content.xml and has has active="false"
+      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+      continue;
+    }
+
     if(name == "fs-base-nav" || name == "fs-base")
       // Already read before
       continue;
@@ -1381,7 +1395,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() + SEP + "manifest.json");
 
-    if(manifest.getContentType() == "SCENERY" && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1409,10 +1423,19 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   for(const QFileInfo& fileinfo : dir.entryInfoList())
   {
+    QString name = fileinfo.fileName();
+
+    if(contentXml.isDisabled(name))
+    {
+      // Entry is present in Content.xml and has has active="false"
+      qDebug() << Q_FUNC_INFO << "Skipping disabled" << name;
+      continue;
+    }
+
     manifest.clear();
     manifest.read(fileinfo.filePath() + SEP + "manifest.json");
 
-    if(manifest.getContentType() == "SCENERY" && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
@@ -1420,7 +1443,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea area(areaNum++, tr("Community"), fileinfo.fileName());
+        SceneryArea area(areaNum++, tr("Community"), name);
         area.setCommunity(true);
 
         // Detect Navigraph navdata update packages for special handling
@@ -1442,7 +1465,7 @@ bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson
   // ..
   // }
 
-  return manifest.getContentType().compare("SCENERY", Qt::CaseInsensitive) == 0 &&
+  return manifest.isScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
@@ -1458,7 +1481,7 @@ bool NavDatabase::checkThirdPartyNavdataExclude(scenery::ManifestJson& manifest)
   // ...
   // }
 
-  return manifest.getContentType().compare("SCENERY", Qt::CaseInsensitive) == 0 &&
+  return manifest.isScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive);
 }
@@ -1501,7 +1524,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsCfgFileLocal = QProcessEnvironment::systemEnvironment().value("LOCALAPPDATA");
 #else
       // Use $HOME/.config for testing
-      QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+      QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
       addonsCfgFileLocal += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
 #if !defined(Q_OS_WIN32)
@@ -1519,7 +1542,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsCfgFile = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
       // Use $HOME/.config for testing
-      QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+      QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
       addonsCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
                        SEP + "add-ons.cfg";
@@ -1534,7 +1557,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       QString addonsAllUsersCfgFile = QProcessEnvironment::systemEnvironment().value("PROGRAMDATA");
 #else
       // Use /tmp for testing
-      QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+      QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
       addonsAllUsersCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
 #if !defined(Q_OS_WIN32)

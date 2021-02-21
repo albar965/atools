@@ -40,10 +40,6 @@ HelipadWriter::HelipadWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
 {
 }
 
-HelipadWriter::~HelipadWriter()
-{
-}
-
 void HelipadWriter::writeObject(const Helipad *type)
 {
   if(getOptions().isVerbose())

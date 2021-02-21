@@ -174,7 +174,7 @@ bool RouteFinder::expandNode(const atools::routing::Node& currentNode, const ato
     at(nodeAltRangeMaxArr, successorIndex) = successorNodeAltRangeMax;
 
     // Costs from start to successor + estimate to destination = sort order in heap
-    int totalCost = successorNodeCosts + network->getGcDistanceMeter(successor, destNode);
+    int totalCost = successorNodeCosts + static_cast<int>(network->getGcDistanceMeter(successor, destNode));
 
     if(contains)
       // Update node and resort heap or add node if not exists
@@ -245,7 +245,7 @@ int RouteFinder::calculateEdgeCost(const atools::routing::Node& currentNode,
   if(currentEdgeAirwayHash != edge.airwayHash)
     costs *= COST_FACTOR_AIRWAY_CHANGE;
 
-  return costs;
+  return static_cast<int>(costs);
 }
 
 void RouteFinder::extractLegs(QVector<RouteLeg>& routeLegs, float& distanceMeter) const

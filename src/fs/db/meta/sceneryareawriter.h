@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~SceneryAreaWriter()
-  {
-  }
-
   QString getCurrentSceneryLocalPath() const
   {
     return currentSceneryLocalPath;

@@ -61,7 +61,7 @@ public:
   HttpConnectionHandlerPool(QHash<QString, QVariant> settings, HttpRequestHandler *requestHandler);
 
   /** Destructor */
-  virtual ~HttpConnectionHandlerPool();
+  virtual ~HttpConnectionHandlerPool() override;
 
   /** Get a free connection handler, or 0 if not available. */
   HttpConnectionHandler *getConnectionHandler();

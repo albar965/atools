@@ -24,6 +24,7 @@ namespace atools {
 namespace geo {
 
 class Point3D;
+class LineString;
 
 enum CrossTrackStatus
 {
@@ -71,6 +72,14 @@ public:
    * N54* 16.82', W008* 35.95', +000011.00
    * 54.765892 , -130.647858,+5000 */
   explicit Pos(const QString& str, bool errorOnInvalid = true);
+
+  atools::geo::Pos& operator=(const atools::geo::Pos& other)
+  {
+    lonX = other.lonX;
+    latY = other.latY;
+    altitude = other.altitude;
+    return *this;
+  }
 
   /* Does not compare altitude. Uses almostEqual for proper floating point comparison. */
   bool operator==(const atools::geo::Pos& other) const;
@@ -160,7 +169,8 @@ public:
   /* return endpoint at distance and angle */
   atools::geo::Pos endpoint(float distanceMeter, float angleDeg) const;
 
-  /* Distance to other point in simple units. Uses manhattan distance in degrees. */
+  /* Distance to other point in simple units. Uses manhattan distance in degrees.
+   * Only for short distances and does not consider anti-meridian. */
   float distanceSimpleTo(const atools::geo::Pos& otherPos) const;
 
   /* Distance to other point for great circle route */
@@ -227,13 +237,13 @@ public:
   /* Find point between start and end on GC route if distance between points is not known */
   atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
 
-  /* positions includes this but not pos2 if numPoints > 0 */
+  /* positions includes this if numPoints > 0 but not pos2  */
   void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
-                         QList<atools::geo::Pos>& positions) const;
+                         atools::geo::LineString& positions) const;
 
   /* interpolate altitude value in positins too */
   void interpolatePointsAlt(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
-                            QList<atools::geo::Pos>& positions) const;
+                            atools::geo::LineString& positions) const;
 
   /* Find point between start and end on rhumb line */
   atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter,

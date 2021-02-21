@@ -66,7 +66,7 @@ protected:
    *  @param localizedName Name of the template with locale to find
    *  @return The template document, or empty string if not found
    */
-  virtual QString tryFile(const QString localizedName);
+  virtual QString tryFile(const QString localizedName) override;
 
 private:
   struct CacheEntry

@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~RunwayEndWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::RunwayEnd *type) override;
 

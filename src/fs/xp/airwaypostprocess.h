@@ -88,8 +88,7 @@ struct AirwaySegment
 class AirwayPostProcess
 {
 public:
-  AirwayPostProcess(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts,
-                    atools::fs::ProgressHandler *progress);
+  AirwayPostProcess(atools::sql::SqlDatabase& sqlDb);
   virtual ~AirwayPostProcess();
 
   /* Reads all from/to and to/from segments of all airways and creates from/via/to segments. */
@@ -114,9 +113,7 @@ private:
   /* Used for sorting and binary search in the ordered segment lists. Sorts by previous/from */
   static bool prevOrderFunc(const AirwaySegment& s1, const AirwaySegment& s2);
 
-  const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
-  atools::fs::ProgressHandler *progressHandler = nullptr;
 };
 
 } // namespace xp

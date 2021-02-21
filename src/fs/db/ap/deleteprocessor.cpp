@@ -192,14 +192,15 @@ DeleteProcessor::~DeleteProcessor()
 }
 
 void DeleteProcessor::init(const DeleteAirport *deleteAirportRec, const Airport *airport, int airportId,
-                           const QString& city, const QString& state, const QString& country, const QString& region)
+                           const QString& name, const QString& city, const QString& state, const QString& country,
+                           const QString& region)
 {
   if(options.isVerbose())
     qInfo() << Q_FUNC_INFO << airport->getIdent() << "current id" << currentAirportId;
 
   newAirport = airport;
   currentAirportId = airportId;
-  curName = airport->getName();
+  curName = name;
   curCity = city;
   curState = state;
   curCountry = country;

@@ -53,8 +53,6 @@ QVariant AirportIndex::getAirportId(const QString& ident) const
 
 QVariant AirportIndex::getRunwayEndId(const QString& ident, const QString& runwayName) const
 {
-  QVariant var = NULL_INT;
-
   if(!ident.isEmpty())
   {
     int id = identRunwayNameToEndId.value(Name2(ident, runwayName), -1);

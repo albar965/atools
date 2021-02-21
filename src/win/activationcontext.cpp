@@ -219,10 +219,9 @@ bool ActivationContext::loadLibrary(QString libraryName)
 
 bool ActivationContext::freeLibrary(QString libraryName)
 {
+#if defined(Q_OS_WIN32)
   libraryName = QDir::toNativeSeparators(libraryName);
   QString libraryKey = QFileInfo(libraryName).fileName();
-
-#if defined(Q_OS_WIN32)
   bool retval = true;
   if(p->loadedLibraries.contains(libraryKey))
   {

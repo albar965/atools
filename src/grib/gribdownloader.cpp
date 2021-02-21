@@ -21,6 +21,7 @@
 
 #include "gribreader.h"
 #include "exception.h"
+#include "atools.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -58,10 +59,9 @@ void GribDownloader::startDownload(const QDateTime& timestamp, const QString& ba
   retries = 0;
 
   // Current UTC time
-  datetime = timestamp.isValid() ? timestamp : QDateTime::currentDateTimeUtc();
-
   // Files are updated every 6 hours
-  datetime.setTime(QTime(static_cast<int>(datetime.time().hour() / 6) * 6, 0, 0));
+  datetime = atools::timeToNextHourInterval(timestamp.isValid() ? timestamp : QDateTime::currentDateTimeUtc(), 6);
+
   downloader->setUpdatePeriod(UPDATE_PERIOD);
   startDownloadInternal();
 }

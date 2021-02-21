@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~VorWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Vor *type) override;
 

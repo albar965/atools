@@ -35,7 +35,7 @@ class Tacan :
 {
 public:
   Tacan(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Tacan();
+  virtual ~Tacan() override;
 
   QString getChannel() const
   {

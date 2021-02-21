@@ -164,13 +164,14 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
     elevations.append(linestring.first().alt(getElevation(linestring.first())));
   else
   {
-    QList<Pos> positions;
+    LineString positions;
     for(int i = 0; i < linestring.size() - 1; i++)
     {
       Line line = Line(linestring.at(i), linestring.at(i + 1));
 
       float length = line.lengthMeter();
 
+      positions.clear();
       line.interpolatePoints(length, static_cast<int>(length / INTERPOLATION_SEGMENT_LENGTH), positions);
 
       Pos lastDropped;

@@ -39,7 +39,7 @@ void HttpRequest::readRequest(QTcpSocket *socket)
   lineBuffer.clear();
   if(!newData.isEmpty())
   {
-    qDebug("HttpRequest: from %s: %s", qPrintable(socket->peerAddress().toString()), newData.data());
+    qDebug("HttpRequest: from %s: %s", qPrintable(socket->peerAddress().toString()), newData.constData());
     QList<QByteArray> list = newData.split(' ');
     if(list.count() != 3 || !list.at(2).contains("HTTP"))
     {
@@ -433,7 +433,7 @@ void HttpRequest::parseMultiPartFile()
         }
         else
         {
-          qDebug("HttpRequest: ignoring unsupported content part %s", line.data());
+          qDebug("HttpRequest: ignoring unsupported content part %s", line.constData());
         }
       }
       else if(line.isEmpty())
@@ -459,7 +459,7 @@ void HttpRequest::parseMultiPartFile()
           // last field was a form field
           fieldValue.remove(fieldValue.size() - 2, 2);
           parameters.insert(fieldName, fieldValue);
-          qDebug("HttpRequest: set parameter %s=%s", fieldName.data(), fieldValue.data());
+          qDebug("HttpRequest: set parameter %s=%s", fieldName.constData(), fieldValue.constData());
         }
         else if(!fileName.isEmpty() && !fieldName.isEmpty())
         {
@@ -473,7 +473,7 @@ void HttpRequest::parseMultiPartFile()
             uploadedFile->flush();
             uploadedFile->seek(0);
             parameters.insert(fieldName, fileName);
-            qDebug("HttpRequest: set parameter %s=%s", fieldName.data(), fileName.data());
+            qDebug("HttpRequest: set parameter %s=%s", fieldName.constData(), fileName.constData());
             uploadedFiles.insert(fieldName, uploadedFile);
             qDebug("HttpRequest: uploaded file size is %lli", uploadedFile->size());
           }

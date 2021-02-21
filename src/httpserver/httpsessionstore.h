@@ -52,7 +52,7 @@ public:
   HttpSessionStore(QHash<QString, QVariant> settings, QObject *parent = nullptr);
 
   /** Destructor */
-  virtual ~HttpSessionStore();
+  virtual ~HttpSessionStore() override;
 
   /**
    *  Get the ID of the current HTTP session, if it is valid.

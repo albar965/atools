@@ -103,6 +103,7 @@ QString normalizeStr(const QString& str);
 
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);
+QStringList elideTextShort(QStringList list, int maxLength);
 
 /* Cuts text at the left and uses combined ellipsis character */
 QString elideTextShortLeft(const QString& str, int maxLength);
@@ -138,8 +139,9 @@ QString buildPathNoCase(const QStringList& paths);
 QString buildPath(const QStringList& paths);
 
 /* Read a part of the file and find out the text codec if it has a BOM.
- * File has to be open for reading */
-QTextCodec *codecForFile(QFile& file, QTextCodec *defaultCodec = nullptr);
+ * File has to be open for reading.
+ * Do not delete the returned pointer. */
+QTextCodec *codecForFile(QIODevice& file, QTextCodec *defaultCodec = nullptr);
 
 /* Get the first four lines of a file converted to lowercase to check type.
  *  Returns a list with always four strings.
@@ -376,6 +378,12 @@ QString ratingString(int value, int maxValue);
 
 /* Convert 24 hour and minute time string to time (500, 2314, 12:30) */
 QTime timeFromHourMinStr(const QString& timeStr);
+
+/* Rounds time down to last hour interval. E.g. 13:12 to 12:00 or 7:45 to 06:00  for a six hour interval */
+QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay);
+
+/* Same as above but next interval */
+QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay);
 
 /* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
  * but not more than one year to avoid endless loops */

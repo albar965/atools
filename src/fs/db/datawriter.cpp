@@ -73,7 +73,7 @@ static const QSet<atools::fs::bgl::section::SectionType> SUPPORTED_SECTION_TYPES
 {
   bgl::section::AIRPORT, bgl::section::AIRPORT_ALT, bgl::section::ILS_VOR, bgl::section::NDB,
   bgl::section::MARKER, bgl::section::WAYPOINT, bgl::section::NAME_LIST, bgl::section::BOUNDARY,
-  bgl::section::TACAN
+  bgl::section::P3D_TACAN // , bgl::section::MSFS_DELETE_AIRPORT_NAV, bgl::section::MSFS_DELETE_NAV
 };
 
 DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atools::fs::ProgressHandler *progress)

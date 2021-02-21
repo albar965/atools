@@ -70,7 +70,7 @@ public:
 
   }
 
-  virtual ~RunwayVasi();
+  virtual ~RunwayVasi() override;
 
   RunwayVasi& operator=(const atools::fs::bgl::RunwayVasi& other)
   {

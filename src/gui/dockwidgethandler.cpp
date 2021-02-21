@@ -124,6 +124,31 @@ void MainWindowState::toWindow(QMainWindow *mainWindow, const QPoint *position) 
 
   if(mainWindow->menuWidget() != nullptr)
     mainWindow->menuWidget()->setVisible(true); // Do not hide
+
+  // Check if window if off screen ==================
+  bool visible = false;
+  qDebug() << Q_FUNC_INFO << "mainWindow->frameGeometry()" << mainWindow->frameGeometry();
+
+  // Has to be visible for 20 pixels at least on one screen
+  for(QScreen *screen : QGuiApplication::screens())
+  {
+    QRect geometry = screen->availableGeometry();
+    QRect intersected = geometry.intersected(mainWindow->frameGeometry());
+    if(intersected.width() > 20 && intersected.height() > 20)
+    {
+      qDebug() << Q_FUNC_INFO << "Visible on" << screen->name() << geometry;
+      visible = true;
+      break;
+    }
+  }
+
+  if(!visible)
+  {
+    // Move back to primary top left plus offset
+    QRect geometry = QApplication::primaryScreen()->availableGeometry();
+    mainWindow->move(geometry.topLeft() + QPoint(20, 20));
+    qDebug() << Q_FUNC_INFO << "Getting window back on screen" << QApplication::primaryScreen()->name() << geometry;
+  }
 }
 
 void MainWindowState::fromWindow(const QMainWindow *mainWindow)
@@ -158,7 +183,7 @@ void MainWindowState::clear()
   mainWindowSize = QSize();
   mainWindowPosition = QPoint();
   mainWindowStates = Qt::WindowNoState;
-  statusBarVisible = true,
+  statusBarVisible = true;
   valid = false;
 }
 
@@ -661,11 +686,18 @@ void DockWidgetHandler::resetWindowState(const QSize& size, const QString& filen
       // Reload state now. This has to be done after resizing the window.
       mainWindow->restoreState(bytes);
 
-      normalState->fromWindow(mainWindow);
-      fullscreenState->clear();
-
       if(mainWindow->menuWidget() != nullptr)
         mainWindow->menuWidget()->setVisible(true); // Do not hide
+
+      if(mainWindow->statusBar() != nullptr)
+        mainWindow->statusBar()->setVisible(true);
+
+      normalState->fromWindow(mainWindow);
+
+      // Have to set status bar manually since window is not rendered yet an visible returns false
+      normalState->statusBarVisible = true;
+
+      fullscreenState->clear();
     }
     else
       throw atools::Exception(tr("Error reading \"%1\": %2").arg(filename).arg(file.errorString()));

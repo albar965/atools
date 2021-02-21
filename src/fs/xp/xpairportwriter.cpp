@@ -691,19 +691,20 @@ void XpAirportWriter::writeStartupLocation(const QStringList& line, const atools
   QString name = mid(line, sl::NAME, true /* ignore error */);
 
   bool hasFuel = false;
-  if(name.toLower().contains("avgas") || name.toLower().contains("mogas") || name.toLower().contains("gas-station"))
+  QString lowerName = name.toLower();
+  if(lowerName.contains("avgas") || lowerName.contains("mogas") || lowerName.contains("gas-station"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_avgas", 1);
   }
 
-  if(name.toLower().contains("jetfuel"))
+  if(lowerName.contains("jetfuel"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_jetfuel", 1);
   }
 
-  if(name.toLower().contains("fuel"))
+  if(lowerName.contains("fuel"))
   {
     hasFuel = true;
     insertAirportQuery->bindValue(":has_jetfuel", 1);
@@ -1125,6 +1126,10 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   else
     qWarning() << context.messagePrefix() << "Invalid runway code" << rowCode;
 
+  if(options.isVerbose())
+    qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Writing curAirportId" << curAirportId
+             << "airportIdent" << airportIdent << "runway" << primaryName << secondaryName;
+
   // Calculate end ids
   int primRwEndId = ++curRunwayEndId;
   int secRwEndId = ++curRunwayEndId;
@@ -1334,6 +1339,9 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   runwayEndRecords.append(rec);
 
   insertRunwayQuery->exec();
+  if(insertRunwayQuery->numRowsAffected() != 1)
+    qWarning() << Q_FUNC_INFO << context.messagePrefix() << "Nothing written for runway. curAirportId" << curAirportId
+               << "airportIdent" << airportIdent;
   insertRunwayQuery->clearBoundValues();
 
   // Write start position for primary runway end
@@ -1363,6 +1371,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   insertStartQuery->bindValue(":altitude", airportAltitude);
   insertStartQuery->bindValue(":heading", secondaryHeading);
   insertStartQuery->exec();
+
 }
 
 void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCode, const XpWriterContext& context)
@@ -1372,21 +1381,31 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
   if(ignoringAirport)
     qWarning() << context.messagePrefix() << "Invalid ignoring airport state in bindAirport";
 
-  int airportId = ++curAirportId;
+  curAirportId++;
   airportIdent = line.value(ap::ICAO);
 
   writeAirportFile(airportIdent, context.curFileId);
 
   if(!airportIndex->addAirportIdent(airportIdent) || !options.isIncludedAirportIdent(airportIdent))
+  {
     // Airport was already read before - ignore it completely
     ignoringAirport = true;
+
+    if(options.isVerbose())
+      qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Ignoring curAirportId" << curAirportId
+               << "airportIdent" << airportIdent;
+  }
   else
   {
+    if(options.isVerbose())
+      qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Writing curAirportId" << curAirportId
+               << "airportIdent" << airportIdent;
+
     writingAirport = true;
 
     airportRowCode = rowCode;
 
-    insertAirportQuery->bindValue(":airport_id", airportId);
+    insertAirportQuery->bindValue(":airport_id", curAirportId);
     insertAirportQuery->bindValue(":file_id", context.curFileId);
 
     airportAltitude = line.value(ap::ELEVATION).toFloat();
@@ -1454,6 +1473,10 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 {
   if(writingAirport && !ignoringAirport)
   {
+    if(options.isVerbose())
+      qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Writing curAirportId" << curAirportId
+               << "airportIdent" << airportIdent;
+
     // Ident: Airport ICAO code. If no ICAO code exists, use X +
     // local identifier to create fictional code.
     // Maximum seven characters. Must be unique.
@@ -1575,12 +1598,19 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":mag_var", context.magDecReader->getMagVar(center));
 
     insertAirportQuery->exec();
+    if(insertAirportQuery->numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << context.messagePrefix() << "Nothing written for curAirportId" << curAirportId
+                 << "airportIdent" << airportIdent;
+
     insertAirportQuery->clearBoundValues();
 
     progress->incNumAirports();
 
     insertRunwayEndQuery->bindAndExecRecords(runwayEndRecords);
   }
+  else if(options.isVerbose())
+    qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Not Writing curAirportId" << curAirportId
+             << "airportIdent" << airportIdent;
 
   reset();
 }

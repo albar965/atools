@@ -99,13 +99,6 @@ Rect::Rect(const Pos& center, float radiusMeter)
   bottomRight = Pos(east, south);
 }
 
-Rect& Rect::operator=(const Rect& other)
-{
-  topLeft = other.topLeft;
-  bottomRight = other.bottomRight;
-  return *this;
-}
-
 bool Rect::operator==(const Rect& other) const
 {
   return topLeft == other.topLeft && bottomRight == other.bottomRight;

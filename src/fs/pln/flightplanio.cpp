@@ -1059,7 +1059,7 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
         if(reader.name() == "Start")
           plan.departureParkingName = reader.readElementText();
         else if(reader.name() == "Pos")
-          plan.departurePos = readPosLnm(xmlStream);
+          plan.departureParkingPos = readPosLnm(xmlStream);
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -1197,7 +1197,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       {
         QString txt = reader.readElementText();
         if(!txt.isEmpty())
-          plan.departurePos = geo::Pos(txt);
+          plan.departureParkingPos = geo::Pos(txt);
       }
       else if(name == "DestinationID")
         plan.destinationIdent = reader.readElementText();
@@ -1610,17 +1610,17 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
      !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
   {
     writer.writeStartElement("AircraftPerformance");
-    writeElementIf(writer, "FilePath", plan.properties.value(AIRCRAFT_PERF_FILE));
+    writeElementIf(writer, "FilePath", QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
     writeElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
     writeElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
     writer.writeEndElement(); // AircraftPerformance
   }
 
   // Departure name and position =======================================================
-  if(plan.departurePos.isValid() || !plan.departureParkingName.isEmpty())
+  if(!plan.departureParkingName.isEmpty())
   {
     writer.writeStartElement("Departure");
-    writeElementPosIf(writer, plan.departurePos);
+    writeElementPosIf(writer, plan.departureParkingPos);
     writeElementIf(writer, "Start", plan.departureParkingName);
     writer.writeEndElement(); // Departure
   }
@@ -1778,8 +1778,18 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
   writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
   writer.writeTextElement("DepartureID", plan.departureIdent);
-  writer.writeTextElement("DepartureLLA",
-                          plan.departurePos.isValid() ? plan.departurePos.toLongString() : QString());
+
+  if(!msfs)
+    // Use parking position
+    writer.writeTextElement("DepartureLLA",
+                            plan.getDepartureParkingPosition().isValid() ?
+                            plan.getDepartureParkingPosition().toLongString() : QString());
+  else
+    // Use airport position
+    writer.writeTextElement("DepartureLLA",
+                            plan.getDeparturePosition().isValid() ?
+                            plan.getDeparturePosition().toLongString() : QString());
+
   writer.writeTextElement("DestinationID", plan.destinationIdent);
   writer.writeTextElement("DestinationLLA",
                           plan.destinationPos.isValid() ? plan.destinationPos.toLongString() : QString());
@@ -2851,66 +2861,79 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
   writer.writeEndElement(); // link
   writer.writeEndElement(); // metadata
 
-  writer.writeStartElement("rte");
+  QString descr;
 
-  QString descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
-                  arg(plan.departNameOrIdent()).arg(plan.departureIdent).
-                  arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
-                  arg(plan.getCruisingAltitude()).
-                  arg(flightplanTypeToString(plan.flightplanType));
-
-  writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
-  writer.writeTextElement("desc", descr);
-
-  // Write route ========================================================
-  for(int i = 0; i < plan.entries.size(); i++)
+  if(!plan.isEmpty())
   {
-    const FlightplanEntry& entry = plan.entries.at(i);
-    // <rtept lat="52.0" lon="13.5">
-    // <ele>33.0</ele>
-    // <time>2011-12-13T23:59:59Z</time>
-    // <name>rtept 1</name>
-    // </rtept>
+    descr = QString("%1 (%2) to %3 (%4) at %5 ft, %6").
+            arg(plan.departNameOrIdent()).arg(plan.departureIdent).
+            arg(plan.destNameOrIdent()).arg(plan.destinationIdent).
+            arg(plan.getCruisingAltitude()).
+            arg(flightplanTypeToString(plan.flightplanType));
 
-    if(!entry.getPosition().isValidRange())
-    {
-      qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
-      continue;
-    }
+    writer.writeStartElement("rte");
+    writer.writeTextElement("name", plan.getTitle() + tr(" Flight Plan"));
+    writer.writeTextElement("desc", descr);
 
-    if(i > 0)
+    // Write route ========================================================
+    for(int i = 0; i < plan.entries.size(); i++)
     {
-      // Remove duplicates with same name and almost same position
-      const FlightplanEntry& prev = plan.entries.at(i - 1);
-      if(entry.getIdent() == prev.getIdent() &&
-         entry.getRegion() == prev.getRegion() &&
-         entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+      const FlightplanEntry& entry = plan.entries.at(i);
+      // <rtept lat="52.0" lon="13.5">
+      // <ele>33.0</ele>
+      // <time>2011-12-13T23:59:59Z</time>
+      // <name>rtept 1</name>
+      // </rtept>
+
+      if(!entry.getPosition().isValidRange())
+      {
+        qWarning() << Q_FUNC_INFO << "Invalid position" << entry.getPosition();
         continue;
+      }
+
+      if(i > 0)
+      {
+        // Remove duplicates with same name and almost same position
+        const FlightplanEntry& prev = plan.entries.at(i - 1);
+        if(entry.getIdent() == prev.getIdent() &&
+           entry.getRegion() == prev.getRegion() &&
+           entry.getPosition().almostEqual(prev.getPosition(), Pos::POS_EPSILON_100M))
+          continue;
+      }
+
+      writer.writeStartElement("rtept");
+      writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
+      writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
+
+      if(i > 0 && i < plan.entries.size() - 1)
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
+      else
+        writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
+
+      writer.writeTextElement("name", entry.getIdent());
+      writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
+
+      writer.writeEndElement(); // rtept
     }
 
-    writer.writeStartElement("rtept");
-    writer.writeAttribute("lon", QString::number(entry.getPosition().getLonX(), 'f', 6));
-    writer.writeAttribute("lat", QString::number(entry.getPosition().getLatY(), 'f', 6));
-
-    if(i > 0 && i < plan.entries.size() - 1)
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(cruiseAltFt)));
-    else
-      writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(entry.getPosition().getAltitude())));
-
-    writer.writeTextElement("name", entry.getIdent());
-    writer.writeTextElement("desc", entry.getWaypointTypeAsFsxString());
-
-    writer.writeEndElement(); // rtept
+    writer.writeEndElement(); // rte
   }
-
-  writer.writeEndElement(); // rte
 
   // Write track ========================================================
   if(!track.isEmpty())
   {
     writer.writeStartElement("trk");
-    writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
-    writer.writeTextElement("desc", descr);
+
+    if(!plan.isEmpty())
+    {
+      writer.writeTextElement("name", plan.getTitle() + tr(" Track"));
+      writer.writeTextElement("desc", descr);
+    }
+    else
+    {
+      writer.writeTextElement("name", QApplication::applicationName() + tr(" Track"));
+      writer.writeTextElement("desc", QApplication::applicationName());
+    }
 
     writer.writeStartElement("trkseg");
 
@@ -3088,10 +3111,11 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << "CYCLE " << cycle << endl;
 
       // Departure
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT)
-        stream << "ADEP " << plan.getDepartureIdent() << endl;
+      QString departureIdent = plan.getDepartureIdent();
+      if(plan.entries.first().getWaypointType() == entry::AIRPORT && departureIdent.size() <= 4)
+        stream << "ADEP " << departureIdent << endl;
       else
-        stream << "DEP " << plan.getDepartureIdent() << endl;
+        stream << "DEP " << departureIdent << endl;
 
       // Departure - SID
       if(!plan.properties.value(SIDAPPRRW).isEmpty())
@@ -3104,10 +3128,11 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
       // Destination
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT)
-        stream << "ADES " << plan.getDestinationIdent() << endl;
+      QString destinationIdent = plan.getDestinationIdent();
+      if(plan.entries.last().getWaypointType() == entry::AIRPORT && destinationIdent.size() <= 4)
+        stream << "ADES " << destinationIdent << endl;
       else
-        stream << "DES " << plan.getDestinationIdent() << endl;
+        stream << "DES " << destinationIdent << endl;
 
       // Arrival runway
       if(!plan.properties.value(APPROACHRW).isEmpty())
@@ -3155,14 +3180,14 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       // 3 - VOR
       // 11 - Fix
       // 28 - Lat/Lon Position
-
+      QString ident = entry.getIdent();
       if(entry.getWaypointType() == atools::fs::pln::entry::USER ||
          entry.getWaypointType() == atools::fs::pln::entry::UNKNOWN)
       {
         stream << "28 ";
 
         // Replace spaces
-        QString name = entry.getIdent();
+        QString name = ident;
         name.replace(QRegularExpression("[\\s]"), "_");
 
         stream << name << " ";
@@ -3174,23 +3199,21 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 ";
+          stream << "1 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
-          stream << "11 ";
+          stream << "11 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
-          stream << "3 ";
+          stream << "3 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::NDB)
-          stream << "2 ";
-
-        stream << entry.getIdent() << " ";
+          stream << "2 " << ident << " ";
       }
 
       if(version11Format)
       {
         if(index == 0)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
+          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADEP " : "DEP ");
         else if(index == numEntries - 1)
-          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
+          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADES " : "DES ");
         else
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
@@ -3297,7 +3320,7 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
 #endif
 
     QByteArray utf8 = rteString.toUtf8();
-    rteFile.write(utf8.data(), utf8.size());
+    rteFile.write(utf8.constData(), utf8.size());
     rteFile.close();
   }
   else
@@ -3473,7 +3496,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         stream << entry.getAirway() << ",2,";
 
-      int heading = atools::roundToInt(plan.entries.at(i - 1).getPosition().angleDegTo(entry.getPosition()));
+      float heading = plan.entries.at(i - 1).getPosition().angleDegTo(entry.getPosition());
       if(entry.getMagvar() < std::numeric_limits<float>::max())
         heading -= entry.getMagvar();
 
@@ -3491,10 +3514,10 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       else
         lonX.prepend(" ");
 
-      stream << identOrDegMinFormat(entry) << ",0, ";
+      stream << identOrDegMinFormat(entry) << ",0,";
 
       stream << latY << lonX;
-      stream << ",0,0," << QString("%1").arg(heading, 3, 10, QChar('0')) << ".00000";
+      stream << ",0,0," << QString("%1").arg(atools::roundToInt(heading), 3, 10, QChar('0')) << ".00000";
 
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
@@ -3508,7 +3531,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
 #endif
 
     QByteArray utf8 = textString.toUtf8();
-    fltplanFile.write(utf8.data(), utf8.size());
+    fltplanFile.write(utf8.constData(), utf8.size());
     fltplanFile.close();
   }
   else
@@ -3797,6 +3820,11 @@ void FlightplanIO::loadGarminFpl(Flightplan& plan, const QString& filename)
     throw Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
 }
 
+void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
+{
+  loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
+}
+
 void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
 {
   plan.entries.clear();
@@ -3806,11 +3834,6 @@ void FlightplanIO::loadGarminFplStr(Flightplan& plan, const QString& string)
     atools::util::XmlStream xmlStream(string);
     loadGarminFplInternal(plan, xmlStream);
   }
-}
-
-void FlightplanIO::loadGarminFplGz(Flightplan& plan, const QByteArray& bytes)
-{
-  loadGarminFplStr(plan, QString(atools::zip::gzipDecompress(bytes)));
 }
 
 void FlightplanIO::loadGarminFplInternal(Flightplan& plan, atools::util::XmlStream& xmlStream)
@@ -4073,7 +4096,8 @@ void FlightplanIO::writeBinaryString(char *mem, QString str, int length)
   // Cut off if too long and leave space for trailing 0
   str.truncate(length - 1);
 
-  const char *data = str.toLatin1().data();
+  QByteArray bytes = str.toLatin1();
+  const char *data = bytes.constData();
   memcpy(mem, data, strlen(data));
 
   // Fill rest with nulls

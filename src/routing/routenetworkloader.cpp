@@ -112,10 +112,9 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
                       "from waypoint w "
-                      "where (w.type = 'WN' or (w.type = 'WU' and w.airport_id is null)) and "
+                      "where w.type in ('WN', 'WU') and w.airport_id is null and "
                       "w.num_jet_airway = 0 and w.num_victor_airway = 0",
-                      false, false, true /* filterUnnamed */, false);
-    // "where w.type = 'WN' and "
+                      false, false, true /* filterUnnamed */, false, true /* filterProc */);
 
     // Airway waypoints ====================
     if(hasNav)
@@ -123,7 +122,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from waypoint w "
                       "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      false, false, false, false);
+                      false, false, false, false, false);
 
     // Track waypoints ====================
     if(hasTracks)
@@ -136,8 +135,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       nodeIdIndexMap,
                       "select w.trackpoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from trackpoint w " + where,
-                      false, false, false,
-                      true /* track */);
+                      false, false, false, true /* track */, false);
     }
 
     // Airway VOR waypoints ====================
@@ -147,7 +145,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       "v.range, v.type as radiotype, v.dme_altitude,  v.dme_only "
                       "from waypoint w join vor v on w.nav_id = v.vor_id "
                       "where w.type = 'V' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      true /* VOR */, false, false, false);
+                      true /* VOR */, false, false, false, false);
 
     // Airway NDB waypoints ====================
     if(hasNav)
@@ -156,13 +154,14 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       "n.range "
                       "from waypoint w join ndb n on w.nav_id = n.ndb_id "
                       "where w.type = 'N' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      false, true /* NDB */, false, false);
+                      false, true /* NDB */, false, false, false);
 
     // Insert outgoing edges to each node and copy node to the index ========================
     network->nodeIndex.reserve(nodeVector.size());
     for(Node& node : nodeVector)
     {
-      node.edges = nodeEdgeMap.values(node.id).toVector();
+      for(auto it = nodeEdgeMap.find(node.id); it != nodeEdgeMap.end() && it.key() == node.id; ++it)
+        node.edges.append(it.value());
 
       // Replace database ids in Edge::toIndex with array indexes
       for(Edge& edge : node.edges)
@@ -208,6 +207,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
       edge.lengthMeter = atools::roundToInt(network->nodeIndex.atPoint3D(node.index).
                                             gcDistanceMeter(network->nodeIndex.atPoint3D(edge.toIndex)));
     }
+
     node.setConnections(connections);
   }
 
@@ -215,7 +215,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
   if(hasTracks)
     readTrackStartEndPoints();
 
-  qDebug() << Q_FUNC_INFO << timer.restart() << "ms";
+  qDebug() << Q_FUNC_INFO << timer.restart() << "ms" << "nodes" << network->getNodes().size();
 }
 
 void RouteNetworkLoader::readTrackStartEndPoints() const
@@ -389,7 +389,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
 
 void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& nodeIdIndexMap,
                                          const QString& queryStr, bool vor, bool ndb,
-                                         bool filterUnnamed, bool track)
+                                         bool filterUnnamed, bool track, bool filterProc)
 {
   // Column indexes
   // -> Required                          <- ->       if airway             <-  -> Optional
@@ -413,10 +413,32 @@ void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& 
     DME_ONLY
   };
 
+  QSet<int> procNodeIds;
+  if(filterProc && dbNav != nullptr && !track)
+  {
+    // Ignore non airway waypoints which belong to an airport and/or are part of a procedure
+    // Collect ids here and filter out later to avoid costly join
+    SqlQuery procWpQuery(dbNav);
+    if(SqlUtil(dbNav).hasTable("approach_leg") && SqlUtil(dbNav).hasTable("transition_leg"))
+    {
+      procWpQuery.exec("select waypoint_id from waypoint w join "
+                       " (select fix_ident, fix_region from approach_leg where fix_type in ('TW', 'W') union "
+                       "  select fix_ident, fix_region from transition_leg where fix_type in ('TW', 'W')) as sub "
+                       " on w.ident = sub.fix_ident and w.region = sub.fix_region "
+                       " where w.num_jet_airway = 0 and w.num_victor_airway = 0 and w.airport_id is null");
+      while(procWpQuery.next())
+        procNodeIds.insert(procWpQuery.valueInt(0));
+    }
+  }
+
   SqlQuery query(queryStr, track ? dbTrack : dbNav);
   query.exec();
   while(query.next())
   {
+    int nodeId = query.valueInt(ID);
+    if(procNodeIds.contains(nodeId))
+      continue;
+
     QString type = query.valueStr(AIRWAY_TYPE);
     atools::geo::Pos pos(query.valueFloat(LONX), query.valueFloat(LATY));
 
@@ -448,7 +470,7 @@ void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& 
 
     Node node;
     node.index = nodes.size();
-    node.id = query.valueInt(ID);
+    node.id = nodeId;
     node.pos = pos;
     node.type = NODE_WAYPOINT;
 
@@ -479,7 +501,7 @@ void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& 
 
     nodes.append(node);
     nodeIdIndexMap.insert(node.id, node.index);
-  }
+  } // while(query.next())
 }
 
 void RouteNetworkLoader::readNodesRadio(const QString& queryStr, bool vor)

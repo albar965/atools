@@ -103,7 +103,7 @@ void UpdateCheck::httpError(QNetworkReply::NetworkError code)
 {
   qDebug() << Q_FUNC_INFO;
 
-  Q_UNUSED(code);
+  Q_UNUSED(code)
 
   if(reply != nullptr)
   {

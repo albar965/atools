@@ -51,7 +51,7 @@ class Start :
 {
 public:
   Start(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Start();
+  virtual ~Start() override;
 
   /*
    * @return full runway name like "12C" or 06R"

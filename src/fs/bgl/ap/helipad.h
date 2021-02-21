@@ -54,7 +54,7 @@ class Helipad :
 public:
   Helipad();
   Helipad(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Helipad();
+  virtual ~Helipad() override;
 
   static QString helipadTypeToStr(atools::fs::bgl::helipad::HelipadType type);
 

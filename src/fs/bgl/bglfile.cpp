@@ -189,7 +189,7 @@ void BglFile::readSections(BinaryStream *bs)
     Section s = Section(options, bs);
 
     // Add only supported sections to the list
-    if(supportedSectionTypes.contains(s.getType()))
+    if(supportedSectionTypes.isEmpty() || supportedSectionTypes.contains(s.getType()))
     {
       if(options->isVerbose())
         qDebug() << "Section" << s;
@@ -280,33 +280,44 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
             rec = createRecord<Airport>(bs, &airports,
                                         area.isNavdata() ? bgl::flags::AIRPORT_MSFS_DUMMY : bgl::flags::NONE);
           break;
+
         case section::AIRPORT_ALT:
           qWarning() << "Found alternate airport ID";
           if(options->isIncludedNavDbObject(type::AIRPORT))
             rec = createRecord<Airport>(bs, &airports, bgl::flags::NONE);
           break;
+
         case section::NAME_LIST:
           rec = createRecord<Namelist>(bs, &namelists);
           break;
-        case section::TACAN:
+
+        case section::P3D_TACAN:
           rec = createRecord<Tacan>(bs, &tacans);
           break;
+
         case section::ILS_VOR:
           rec = handleIlsVor(bs);
           break;
+
         case section::NDB:
           if(options->isIncludedNavDbObject(type::NDB))
             rec = createRecord<Ndb>(bs, &ndbs);
           break;
+
         case section::MARKER:
           if(options->isIncludedNavDbObject(type::MARKER))
             rec = createRecord<Marker>(bs, &marker);
           break;
+
         case section::WAYPOINT:
           if(options->isIncludedNavDbObject(type::WAYPOINT))
             // Read waypoints and airways
             rec = createRecord<Waypoint>(bs, &waypoints);
           break;
+
+        // MSFS sections not found yet
+        case section::MSFS_DELETE_AIRPORT_NAV:
+        case section::MSFS_DELETE_NAV:
 
         // Other sections that are not of interest here
         case section::BOUNDARY:
@@ -359,6 +370,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
         case section::FAKE_TYPES:
         case section::ICAO_RUNWAY:
           break;
+
         default:
           qWarning().nospace().noquote() << "Unknown section type at 0x" << hex << bs->tellg() << dec << ": " << type;
 

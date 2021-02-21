@@ -142,7 +142,7 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
       spanningAngle = ((360.f - start) + end);
   }
 
-  // Calculate number of steps for 20 degrees
+  // Calculate number of steps for 10 degrees
   int numSteps = std::max(static_cast<int>(spanningAngle / 10.f), 1);
 
   float step = spanningAngle / static_cast<float>(numSteps);

@@ -37,10 +37,6 @@ public:
   {
   }
 
-  virtual ~StartWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::Start *type) override;
 

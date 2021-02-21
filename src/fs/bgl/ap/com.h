@@ -80,7 +80,7 @@ class Com :
 public:
   Com();
   Com(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Com();
+  virtual ~Com() override;
 
   /*
    * @return Frequency in MHz * 1000

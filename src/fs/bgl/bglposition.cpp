@@ -48,11 +48,6 @@ BglPosition::BglPosition(BinaryStream *bs, bool hasAltitude, float altitudeDivis
   pos = atools::geo::Pos(lonX, latY, altitude);
 }
 
-BglPosition::~BglPosition()
-{
-
-}
-
 QDebug operator<<(QDebug out, const atools::fs::bgl::BglPosition& record)
 {
   out << record.pos;

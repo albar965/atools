@@ -36,10 +36,6 @@ SqlException::SqlException(const QString& message, const QString& message2)
   createSqlMessage();
 }
 
-SqlException::~SqlException()
-{
-}
-
 void SqlException::createSqlMessage()
 {
   QString msg;

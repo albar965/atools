@@ -68,18 +68,6 @@ Line::Line(double longitudeX1, double latitudeY1, double longitudeX2, double lat
 
 }
 
-Line::~Line()
-{
-
-}
-
-Line& Line::operator=(const Line& other)
-{
-  pos1 = other.pos1;
-  pos2 = other.pos2;
-  return *this;
-}
-
 bool Line::operator==(const Line& other) const
 {
   return pos1 == other.pos1 && pos2 == other.pos2;
@@ -125,9 +113,9 @@ Pos Line::interpolate(float fraction) const
   return pos1.interpolate(pos2, fraction);
 }
 
-void Line::interpolatePoints(float distanceMeter, int numPoints, QList<Pos>& positions) const
+void Line::interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
 {
-  return pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
+  pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
 }
 
 Pos Line::interpolateRhumb(float distanceMeter, float fraction) const

@@ -417,7 +417,10 @@ void DataReaderThread::setWeatherRequest(atools::fs::sc::WeatherRequest request)
     qDebug() << Q_FUNC_INFO;
 
   if(!canFetchWeather())
+  {
+    emit postSimConnectData(atools::fs::sc::SimConnectData());
     return;
+  }
 
   if(saveReplayFile != nullptr)
   {

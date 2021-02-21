@@ -188,7 +188,7 @@ bool Translator::loadAndInstall(const QString& name, const QString& dir, const Q
   QLocale locale;
   if(language.isEmpty())
     // Use only one language here since the translation API will try to load second and third languages
-    locale = QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().first();
+    locale = QLocale().uiLanguages().isEmpty() ? "en" : QLocale().uiLanguages().at(0);
   else
     // Override system language for translations only
     locale = language;

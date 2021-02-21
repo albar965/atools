@@ -78,8 +78,8 @@ void LoggingGuiAbortHandler::setGuiAbortFunction(QWidget *parent)
 
   LoggingHandler::setAbortFunction([](QtMsgType type, const QMessageLogContext& context, const QString& msg) -> void
       {
-        Q_UNUSED(type);
-        Q_UNUSED(context);
+        Q_UNUSED(type)
+        Q_UNUSED(context)
 
         // Call guiAbortFunc on main thread context
         emit LoggingHandler::instance->guiAbortSignal(msg);

@@ -2232,7 +2232,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&amp;Close All Except Current</source>
-        <translation>Alle außer aktiven &amp;schließen</translation>
+        <translation>Alle außer den Aktiven &amp;schließen</translation>
     </message>
     <message>
         <source>Close all tabs except the current tab</source>

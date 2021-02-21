@@ -26,6 +26,7 @@ namespace atools {
 namespace geo {
 
 class Rect;
+class LineString;
 
 /*
  * Geographic line class. Calculations based on
@@ -45,9 +46,12 @@ public:
   explicit Line(float longitudeX1, float latitudeY1, float longitudeX2, float latitudeY2);
   explicit Line(double longitudeX1, double latitudeY1, double longitudeX2, double latitudeY2);
 
-  ~Line();
-
-  Line& operator=(const Line& other);
+  atools::geo::Line& operator=(const atools::geo::Line& other)
+  {
+    pos1 = other.pos1;
+    pos2 = other.pos2;
+    return *this;
+  }
 
   /* Does not compare altitude */
   bool operator==(const atools::geo::Line& other) const;
@@ -58,7 +62,7 @@ public:
     return !(*this == other);
   }
 
-  /* Distance to other point in simple units */
+  /* Distance to other point in simple units. Uses manhattan distance in degrees. */
   float lengthSimple() const;
 
   /* Distance to other point for great circle route */
@@ -80,9 +84,11 @@ public:
    *  fraction is 0 <= fraction <= 1 where 0 equals this and 1 equal other pos */
   atools::geo::Pos interpolate(float lengthMeter, float fraction) const;
 
-  /* Find point between start and end on GC route if distance between points is not known. 0 < fraction <= 1 */
+  /* Find point between start and end on GC route if distance between points is not known. 0 < fraction <= 1.*/
   atools::geo::Pos interpolate(float fraction) const;
-  void interpolatePoints(float lengthMeter, int numPoints, QList<atools::geo::Pos>& positions) const;
+
+  /* Returns a list of points which includes pos1 and not pos2. */
+  void interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
 
   /* Find point between start and end on rhumb line */
   atools::geo::Pos interpolateRhumb(float lengthMeter, float fraction) const;
@@ -137,7 +143,7 @@ public:
   /*
    * @return true if line is a single point
    */
-  bool isPoint(float epsilonDegree = 0.f) const;
+  bool isPoint(float epsilonDegree = std::numeric_limits<float>::epsilon()) const;
 
   const atools::geo::Pos& getPos2() const
   {

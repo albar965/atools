@@ -36,11 +36,6 @@ SimConnectReply::SimConnectReply(const SimConnectReply& other)
 
 }
 
-SimConnectReply::~SimConnectReply()
-{
-
-}
-
 bool SimConnectReply::read(QIODevice *ioDevice)
 {
   QDataStream in(ioDevice);

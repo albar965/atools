@@ -34,11 +34,6 @@ FileHistoryHandler::FileHistoryHandler(QObject *parent, const QString& settingsN
   recentMenuList->setToolTipsVisible(true);
 }
 
-FileHistoryHandler::~FileHistoryHandler()
-{
-
-}
-
 void FileHistoryHandler::saveState()
 {
   atools::settings::Settings::instance().setValue(settings, filePaths);

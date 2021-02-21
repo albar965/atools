@@ -216,7 +216,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         if(options->isIncludedNavDbObject(type::APPROACH))
         {
           r.seekToStart();
-          approaches.append(Approach(options, bs, type == rec::SID_MSFS, type == rec::STAR_MSFS));
+          approaches.append(Approach(options, bs, type == rec::MSFS_SID, type == rec::MSFS_STAR));
         }
         break;
 
@@ -349,17 +349,17 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::FENCE_BLAST:
       case rec::APRON_EDGE_LIGHTS:
       case rec::UNKNOWN_003B:
-      case rec::UNKNOWN_MSFS_0057:
-      case rec::UNKNOWN_MSFS_00CD:
-      case rec::UNKNOWN_MSFS_00CF:
-      case rec::UNKNOWN_MSFS_00D8:
-      case rec::UNKNOWN_MSFS_00D9:
-      case rec::UNKNOWN_MSFS_00DD:
-      case rec::UNKNOWN_MSFS_00DE:
+      case rec::MSFS_AIRPORT_LIGHT_SUPPORT:
+      case rec::MSFS_UNKNOWN_00CD:
+      case rec::MSFS_AIRPORT_PAINTED_LINE:
+      case rec::MSFS_AIRPORT_PAINTED_HATCHED_AREA:
+      case rec::MSFS_AIRPORT_TAXIWAY_SIGN:
+      case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
+      case rec::MSFS_AIRPORT_JETWAY:
 
       // Disabled SID and STAR
-      case rec::SID_MSFS:
-      case rec::STAR_MSFS:
+      case rec::MSFS_SID:
+      case rec::MSFS_STAR:
 
         // qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
         // << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
@@ -509,8 +509,6 @@ void Airport::reportFarCoordinate(const atools::geo::Pos& pos, const QString& te
                  << "has far" << text << "coordinate" << pos << "at" << dist << "NM";
   }
 }
-
-
 
 void Airport::updateSummaryFields()
 {

@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~IlsWriter()
-  {
-  }
-
   const float FEATHER_LEN_NM = 9.f;
 
 protected:

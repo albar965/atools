@@ -126,7 +126,7 @@ private:
   friend class LoggingGuiAbortHandler;
 
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
-  ~LoggingHandler();
+  virtual ~LoggingHandler() override;
 
   void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat,
                         atools::logging::internal::ChannelVector& streamList,

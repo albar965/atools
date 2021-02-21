@@ -35,7 +35,7 @@ class Vor :
 {
 public:
   Vor(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Vor();
+  virtual ~Vor() override;
 
   /*
    * @return get the DME record for this VOR if available - otherwise null

@@ -17,36 +17,86 @@
 
 #include "util/xmlstream.h"
 #include "exception.h"
+#include "atools.h"
 
 #include <QFileDevice>
 #include <QDebug>
+#include <QTextCodec>
+#include <QXmlStreamReader>
 
 namespace atools {
 namespace util {
 
+XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
+  : filename(filenameParam)
+{
+  QTextCodec *codec = atools::codecForFile(*device);
+
+  if(codec != nullptr)
+  {
+    // Load the file into a text file to avoid BOM / xml encoding mismatches
+    qDebug() << "Encoding" << codec->name();
+    QTextStream stream(device);
+    stream.setCodec(codec);
+    QString str = stream.readAll();
+
+    // The reader ignores the XML encoding header when reading from a string
+    reader = new QXmlStreamReader(str);
+  }
+  else
+  {
+    // Let the stream reader detect the encoding in the PI
+    qDebug() << "No UTF Encoding found";
+    reader = new QXmlStreamReader(device);
+  }
+}
+
+XmlStream::XmlStream(const QByteArray& data, const QString& filenameParam)
+  : filename(filenameParam)
+{
+  reader = new QXmlStreamReader(data);
+}
+
+XmlStream::XmlStream(const QString& data, const QString& filenameParam)
+  : filename(filenameParam)
+{
+  reader = new QXmlStreamReader(data);
+}
+
+XmlStream::XmlStream(const char *data, const QString& filenameParam)
+  : filename(filenameParam)
+{
+  reader = new QXmlStreamReader(data);
+}
+
+XmlStream::~XmlStream()
+{
+  delete reader;
+}
+
 void XmlStream::readUntilElement(const QString& name)
 {
-  while(reader.name() != name)
+  while(reader->name() != name)
     readNextStartElement();
 }
 
 bool XmlStream::readNextStartElement()
 {
-  bool retval = reader.readNextStartElement();
-  checkError(reader);
+  bool retval = reader->readNextStartElement();
+  checkError();
   return retval;
 }
 
-void XmlStream::checkError(QXmlStreamReader& reader)
+void XmlStream::checkError()
 {
-  if(reader.hasError())
+  if(reader->hasError())
   {
     // Try to get filename for report
-    QFileDevice *df = dynamic_cast<QFileDevice *>(reader.device());
-    QString filename = df != nullptr ? df->fileName() : QString();
+    QFileDevice *df = dynamic_cast<QFileDevice *>(reader->device());
+    QString name = df != nullptr ? df->fileName() : QString();
 
     QString msg = tr("Error reading \"%1\" on line %2 column %3: %4").
-                  arg(filename).arg(reader.lineNumber()).arg(reader.columnNumber()).arg(reader.errorString());
+                  arg(name).arg(reader->lineNumber()).arg(reader->columnNumber()).arg(reader->errorString());
     qWarning() << Q_FUNC_INFO << msg;
     throw atools::Exception(msg);
   }
@@ -57,12 +107,12 @@ void XmlStream::skipCurrentElement(bool warning)
   if(warning)
   {
     // Try to get filename for warning
-    QFileDevice *df = dynamic_cast<QFileDevice *>(reader.device());
-    QString filename = df != nullptr ? df->fileName() : QString();
-    qWarning() << Q_FUNC_INFO << "Unexpected element" << reader.name()
-               << "in file" << filename << "in line" << reader.lineNumber();
+    QFileDevice *df = dynamic_cast<QFileDevice *>(reader->device());
+    QString name = df != nullptr ? df->fileName() : QString();
+    qWarning() << Q_FUNC_INFO << "Unexpected element" << reader->name()
+               << "in file" << name << "in line" << reader->lineNumber();
   }
-  reader.skipCurrentElement();
+  reader->skipCurrentElement();
 }
 
 } // namespace util

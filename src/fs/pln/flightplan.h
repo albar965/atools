@@ -178,7 +178,7 @@ public:
   }
 
   /*
-   * @return departure position/coordinates.
+   * @return airport departure position/coordinates.
    */
   const atools::geo::Pos& getDeparturePosition() const
   {
@@ -187,6 +187,17 @@ public:
 
   void setDeparturePosition(const atools::geo::Pos& value);
   void setDeparturePosition(const atools::geo::Pos& value, float altitude);
+
+  /*
+   * @return parking, runway or airport departure position/coordinates.
+   */
+  const atools::geo::Pos& getDepartureParkingPosition() const
+  {
+    return departureParkingPos.isValid() ? departureParkingPos : departurePos;
+  }
+
+  void setDepartureParkingPosition(const atools::geo::Pos& value);
+  void setDepartureParkingPosition(const atools::geo::Pos& value, float altitude);
 
   const QHash<QString, QString>& getProperties() const
   {
@@ -292,7 +303,9 @@ private:
   int cruisingAlt;
   QString departureIdent, destinationIdent,
           departureParkingName, departureName, destinationName, comment;
-  atools::geo::Pos departurePos /* Airport or Parking */, destinationPos;
+  atools::geo::Pos departurePos /* Airport */,
+                   departureParkingPos /* Parking, runway or airport */,
+                   destinationPos; /* Always airport */
 
   bool lnmFormat = true;
 

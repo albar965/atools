@@ -149,7 +149,7 @@ void NavServer::incomingConnection(qintptr socketDescriptor)
   worker->moveToThread(workerThread);
 
   connect(workerThread, &QThread::started, worker, &NavServerWorker::threadStarted);
-  connect(workerThread, &QThread::finished, [ = ]() -> void
+  connect(workerThread, &QThread::finished, this, [ = ]() -> void
         {
           threadFinished(worker);
         });

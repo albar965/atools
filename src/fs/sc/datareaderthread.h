@@ -42,7 +42,7 @@ class DataReaderThread :
 
 public:
   DataReaderThread(QObject *parent, bool verboseLog);
-  virtual ~DataReaderThread();
+  virtual ~DataReaderThread() override;
 
   void setHandler(atools::fs::sc::ConnectHandler *connectHandler);
 

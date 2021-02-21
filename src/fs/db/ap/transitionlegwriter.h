@@ -34,10 +34,6 @@ public:
   {
   }
 
-  virtual ~TransitionLegWriter()
-  {
-  }
-
 protected:
   virtual void writeObject(const atools::fs::bgl::ApproachLeg *type) override;
 

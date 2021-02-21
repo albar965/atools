@@ -32,7 +32,7 @@ class Localizer :
 {
 public:
   Localizer(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Localizer();
+  virtual ~Localizer() override;
 
   /*
    * @return Get full runway name including designator

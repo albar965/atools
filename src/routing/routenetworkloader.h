@@ -53,8 +53,7 @@ private:
 
   /* Read waypoints and airways into index */
   void readNodesAirway(QVector<Node>& nodes, QHash<int, int>& nodeIdIndexMap, const QString& queryStr,
-                       bool vor, bool ndb,
-                       bool filterUnnamed, bool track);
+                       bool vor, bool ndb, bool filterUnnamed, bool track, bool filterProc);
 
   /* Read edges from tables airway or track.
    * nodeEdgeMap receiives a list of node ids mapped to a list of edges. */

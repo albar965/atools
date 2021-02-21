@@ -48,7 +48,7 @@ class GribDownloader :
 
 public:
   GribDownloader(QObject *parent, bool logVerbose);
-  ~GribDownloader();
+  ~GribDownloader() override;
 
   /* Start initial download. This will also trigger a recurring download method that gets the file
    * every 30 minutes.
@@ -116,7 +116,7 @@ private:
   void startDownloadInternal();
 
   /* Maximum retries if the data for the current timestamp is not available. Tries current UTC time minus one hour */
-  static const int MAX_RETRIES = 3;
+  static const int MAX_RETRIES = 4;
   /* Redownload every UPDATE_PERIOD seconds */
   static const int UPDATE_PERIOD = 1800;
 

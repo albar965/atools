@@ -903,7 +903,7 @@ float ProcedureWriter::altitudeFromStr(const QString& altStr)
 {
   if(altStr.startsWith("FL"))
     // Simplify - turn flight levelt to feet
-    return altStr.mid(2).toFloat() * 100.f;
+    return altStr.midRef(2).toFloat() * 100.f;
   else
     return altStr.toFloat();
 }

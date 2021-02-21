@@ -42,11 +42,6 @@ HelpHandler::HelpHandler(QWidget *parent, const QString& aboutMessage, const QSt
 
 }
 
-HelpHandler::~HelpHandler()
-{
-
-}
-
 void HelpHandler::about()
 {
   QString sslTxt;

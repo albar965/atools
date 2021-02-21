@@ -133,7 +133,7 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::DirectoryOnly);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).first();
+  return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }
 
 QMessageBox::StandardButton Dialog::warning(QWidget *parentWidget, const QString& text,
@@ -163,7 +163,7 @@ QString Dialog::openFileDialog(const QString& title, const QString& filter, cons
   QFileDialog dlg(parent);
   dlg.setFileMode(QFileDialog::ExistingFile);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
-  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString(), false /* autonumber */).first();
+  return fileDialog(dlg, title, filter, settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }
 
 QStringList Dialog::openFileDialogMulti(const QString& title, const QString& filter, const QString& settingsPrefix,
@@ -190,7 +190,7 @@ QString Dialog::saveFileDialog(const QString& title,
   dlg.setOption(QFileDialog::DontConfirmOverwrite, dontComfirmOverwrite);
 
   return fileDialog(dlg, title, filter, settingsPrefix, defaultFileSuffix, path, filename, autoNumberFilename,
-                    filterIndex).first();
+                    filterIndex).at(0);
 }
 
 void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,

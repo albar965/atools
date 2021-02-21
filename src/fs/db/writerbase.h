@@ -57,8 +57,6 @@ public:
              const QString& tablename,
              const QString& sqlParam = QString());
 
-  virtual ~WriterBase();
-
   typedef QList<const TYPE *> TypePtrVector;
   typedef QList<TYPE> TypeVector;
 
@@ -115,11 +113,6 @@ WriterBase<TYPE>::WriterBase(sql::SqlDatabase& db,
                              const QString& tablename,
                              const QString& sqlParam)
   : WriterBaseBasic(db, dataWriter, tablename, sqlParam)
-{
-}
-
-template<typename TYPE>
-WriterBase<TYPE>::~WriterBase()
 {
 }
 

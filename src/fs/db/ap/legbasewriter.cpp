@@ -34,10 +34,6 @@ LegBaseWriter::LegBaseWriter(sql::SqlDatabase& db, DataWriter& dataWriter, const
 {
 }
 
-LegBaseWriter::~LegBaseWriter()
-{
-}
-
 void LegBaseWriter::writeObject(const ApproachLeg *type)
 {
   // id and leg_id have to be bound by the caller

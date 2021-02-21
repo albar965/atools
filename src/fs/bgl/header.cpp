@@ -86,14 +86,14 @@ QDebug operator<<(QDebug out, const Header& header)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(header)
-  << hex << " Header[magic number 1 0x" << header.magicNumber1 << dec
-  << ", size " << header.headerSize
-  << hex << ", low timestamp 0x" << header.lowDateTime
-  << ", high timestamp 0x" << header.highDateTime << dec
-  << ", timestamp " << header.getCreationTimestampString()
-  << hex << ", magic number 2 0x" << header.magicNumber2 << dec
-  << ", sections " << header.numSections
-  << "]";
+                          << hex << " Header[magic number 1 0x" << header.magicNumber1 << dec
+                          << ", size " << header.headerSize
+                          << hex << ", low timestamp 0x" << header.lowDateTime
+                          << ", high timestamp 0x" << header.highDateTime << dec
+                          << ", timestamp " << header.getCreationTimestampString()
+                          << hex << ", magic number 2 0x" << header.magicNumber2 << dec
+                          << ", sections " << header.numSections
+                          << "]";
   return out;
 }
 

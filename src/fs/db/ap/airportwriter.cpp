@@ -142,8 +142,9 @@ void AirportWriter::writeObject(const Airport *type)
     // Get country, state and city =====================
     QString city, state, country, region;
     fetchAdmin(type, city, state, country, region);
+    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName()));
 
-    deleteProcessor.init(delAp, type, getCurrentId(), city, state, country, region);
+    deleteProcessor.init(delAp, type, getCurrentId(), name, city, state, country, region);
 
     if(getOptions().isDeletes())
     {
@@ -161,9 +162,7 @@ void AirportWriter::writeObject(const Airport *type)
     sceneryLocalPaths.append(dw.getSceneryAreaWriter()->getCurrentSceneryLocalPath());
     bglFilenames.append(bglFileWriter->getCurrentFilename());
 
-    // Write country, state and city =====================
-    QString name = atools::fs::util::capAirportName(getDataWriter().getLanguage(type->getName()));
-
+    // Write admin names =====================
     bindStrOrNull(":name", name);
     bindStrOrNull(":city", city);
     bindStrOrNull(":state", state);

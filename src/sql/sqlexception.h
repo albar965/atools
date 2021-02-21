@@ -35,8 +35,6 @@ public:
   SqlException(const QSqlError& sqlErr, const QString& message = QString(), const QString& message2 = QString());
   SqlException(const QString& message = QString(), const QString& message2 = QString());
 
-  virtual ~SqlException();
-
   QString getMessage2() const
   {
     return msg2;

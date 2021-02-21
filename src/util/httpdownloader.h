@@ -40,7 +40,7 @@ class HttpDownloader :
 
 public:
   HttpDownloader(QObject *parent, bool verboseLogging = false);
-  virtual ~HttpDownloader();
+  virtual ~HttpDownloader() override;
 
   /* Download file and emit downloadFinished when done.
    * Will start update timer after download if period <> -1.

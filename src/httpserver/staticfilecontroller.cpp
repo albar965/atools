@@ -44,7 +44,7 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
     QByteArray document = entry->document;   // copy the cached document, because other threads may destroy the cached entry immediately after mutex unlock.
     QByteArray filename = entry->filename;
     mutex.unlock();
-    qDebug("StaticFileController: Cache hit for %s", path.data());
+    qDebug("StaticFileController: Cache hit for %s", path.constData());
     setContentType(filename, response);
     response.setHeader("Cache-Control", "max-age=" + QByteArray::number(maxAge / 1000));
     response.write(document);
@@ -53,11 +53,11 @@ void StaticFileController::service(HttpRequest& request, HttpResponse& response)
   {
     mutex.unlock();
     // The file is not in cache.
-    qDebug("StaticFileController: Cache miss for %s", path.data());
+    qDebug("StaticFileController: Cache miss for %s", path.constData());
     // Forbid access to files outside the docroot directory
     if(path.contains("/.."))
     {
-      qWarning("StaticFileController: detected forbidden characters in path %s", path.data());
+      qWarning("StaticFileController: detected forbidden characters in path %s", path.constData());
       response.setStatus(403, "forbidden");
       response.write("403 forbidden", true);
       return;

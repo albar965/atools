@@ -43,7 +43,7 @@ class NavServerWorker :
 
 public:
   NavServerWorker(qintptr socketDescriptor, NavServer *parent, atools::fs::ns::NavServerOptions optionFlags);
-  virtual ~NavServerWorker();
+  virtual ~NavServerWorker() override;
 
   /* Receives sim connect data from DataReader thread and writes to socket. */
   void postSimConnectData(atools::fs::sc::SimConnectData dataPacket);

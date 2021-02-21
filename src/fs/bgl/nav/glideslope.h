@@ -33,7 +33,7 @@ class Glideslope :
 {
 public:
   Glideslope(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
-  virtual ~Glideslope();
+  virtual ~Glideslope() override;
 
   /*
    * @return Glideslope pitch in degree

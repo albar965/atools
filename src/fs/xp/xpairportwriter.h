@@ -59,7 +59,7 @@ public:
   XpAirportWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
                   const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
                   atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirportWriter();
+  virtual ~XpAirportWriter() override;
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
@@ -133,19 +133,19 @@ private:
        writingStartLocation = false, airportClosed = false;
 
   /* Current feature ids */
-  int curAirportId = 0, curRunwayId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
+  int curAirportId = 0, curRunwayEndId = 0, curHelipadId = 0, curComId = 0, curStartId = 0,
       curParkingId = 0, curApronId = 0, curTaxiPathId = 0, curHelipadStartNumber = 0,
       curAirportFileId = 10000000 /* Needs to count down since reading order is reversed */;
 
   bool hasTower = false, is3d = false;
 
   /* Counters for redundant airport data */
-  int numRunwayEndAls = 0, numRunwayEndIls = 0, numHardRunway = 0, numApron = 0,
-      numRunwayEndClosed = 0, numSoftRunway = 0, numRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
+  int numRunwayEndAls = 0, numHardRunway = 0, numApron = 0,
+      numSoftRunway = 0, numRunway = 0, numWaterRunway = 0, numLightRunway = 0, numHelipad = 0,
       numCom = 0, numStart = 0, numParking = 0, numTaxiPath = 0,
-      numRunwayEndVasi = 0, numJetway = 0,
+      numRunwayEndVasi = 0,
       numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0,
-      numParkingMilitaryCombat = 0, numParkingMilCargo = 0, numParkingMilCombat = 0;
+      numParkingMilCargo = 0, numParkingMilCombat = 0;
 
   atools::sql::SqlRecordVector runwayEndRecords;
   /* pre-filled record */

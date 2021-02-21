@@ -703,7 +703,7 @@ void ZipReaderPrivate::scanFiles()
       break;
     }
 
-    ZDEBUG("found file '%s'", header.file_name.data());
+    ZDEBUG("found file '%s'", header.file_name.constData());
     fileHeaders.append(header);
   }
 }
@@ -717,7 +717,7 @@ void ZipWriterPrivate::addEntry(EntryType type, const QString& fileName, const Q
     "file     ",
     "symlink  "
   };
-  ZDEBUG() << "adding" << entryTypes[type] << ":" << fileName.toUtf8().data() <<
+  ZDEBUG() << "adding" << entryTypes[type] << ":" << fileName.toUtf8().constData() <<
   (type == 2 ? QByteArray(" -> " + contents).constData() : "");
 #endif
 

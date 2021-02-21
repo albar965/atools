@@ -50,7 +50,6 @@ class SimConnectReply
 public:
   SimConnectReply();
   SimConnectReply(const SimConnectReply& other);
-  virtual ~SimConnectReply();
 
   /*
    * Read from IO device.

@@ -3,6 +3,35 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.8
+
+* Added separate departure position field to flight plan for parking, helipad or runway/start.
+  Fixed flight plan export to use correct departure position in PLN  DepartureLLA and LNMPLN Start
+  element. albar965/littlenavmap#613
+* Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
+* Added verbose logging for X-Plane compiler based on navdatareader.cfg. Added warnings if rows are
+  not written to the database.
+* Removed extra space in flight plan export for iFly (text format .FLTPLAN).
+
+===============================================================================
+
+# Version 3.6.7
+
+* Corrected issue where status bar was hidden on first start after first installation in dock
+  handler.
+* Now also including MSFS scenery with content type "CORE".
+* Now skipping maintenance.bgl file in MSFS scenery library which causes error messages when
+  loading scenery library.
+* Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
+* Now omitting scenery library entries which are marked with active=`false` in Content.xml.
+* Applied workaround for XML files with wrong encoding in header (processing instruction).
+* Fix for GPX export to allow saving of files without route.
+* Added recovery if main window gets off screen after changing monitors.
+* Fixed issue with X-Plane FMS plans where long airport idents like `XRP0001` could not be loaded. Idents are now truncated.
+* Now marking waypoints being part of procedures when loading which allows to avoid them in flight plan calculation.
+
+===============================================================================
+
 # Version 3.6.6
 
 * Replacing more obscure minute signs like apostrophes now in coordinate parser .

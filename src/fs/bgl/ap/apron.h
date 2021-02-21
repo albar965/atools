@@ -35,7 +35,7 @@ class Apron :
 public:
   Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
         atools::fs::bgl::StructureType structureType);
-  virtual ~Apron();
+  virtual ~Apron() override;
 
   atools::fs::bgl::Surface getSurface() const
   {

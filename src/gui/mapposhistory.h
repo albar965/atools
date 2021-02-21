@@ -32,7 +32,10 @@ public:
   MapPosHistoryEntry();
   MapPosHistoryEntry(const MapPosHistoryEntry& other);
   MapPosHistoryEntry(atools::geo::Pos position, double mapDistance, qint64 mapTimestamp = 0L);
-  ~MapPosHistoryEntry();
+  ~MapPosHistoryEntry()
+  {
+
+  }
 
   /* Does not compare the timestamp */
   bool operator==(const MapPosHistoryEntry& other) const;

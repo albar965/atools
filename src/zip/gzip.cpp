@@ -57,7 +57,7 @@ bool gzipCompress(const QByteArray& input, QByteArray& output, int level)
     output.clear();
 
     // Extract pointer to input data
-    const char *input_data = input.data();
+    const char *input_data = input.constData();
     int input_data_left = input.length();
 
     // Compress data until available
@@ -145,7 +145,7 @@ bool gzipDecompress(const QByteArray& input, QByteArray& output)
       return false;
 
     // Extract pointer to input data
-    const char *input_data = input.data();
+    const char *input_data = input.constData();
     int input_data_left = input.length();
 
     // Decompress data until available

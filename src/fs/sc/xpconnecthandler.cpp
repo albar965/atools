@@ -66,8 +66,8 @@ bool XpConnectHandler::connect()
 
 bool XpConnectHandler::fetchData(fs::sc::SimConnectData& data, int radiusKm, fs::sc::Options options)
 {
-  Q_UNUSED(radiusKm);
-  Q_UNUSED(options);
+  Q_UNUSED(radiusKm)
+  Q_UNUSED(options)
 
   if(!sharedMemory.isAttached())
   {
@@ -121,13 +121,13 @@ bool XpConnectHandler::fetchData(fs::sc::SimConnectData& data, int radiusKm, fs:
 
 bool XpConnectHandler::fetchWeatherData(fs::sc::SimConnectData& data)
 {
-  Q_UNUSED(data);
+  Q_UNUSED(data)
   return false;
 }
 
 void XpConnectHandler::addWeatherRequest(const fs::sc::WeatherRequest& request)
 {
-  Q_UNUSED(request);
+  Q_UNUSED(request)
 }
 
 const atools::fs::sc::WeatherRequest& XpConnectHandler::getWeatherRequest() const

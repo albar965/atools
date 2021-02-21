@@ -31,10 +31,6 @@ WeatherNetDownload::WeatherNetDownload(QObject *parent, atools::fs::weather::Met
   connect(downloader, &atools::util::HttpDownloader::downloadFailed, this, &WeatherNetDownload::downloadFailed);
 }
 
-WeatherNetDownload::~WeatherNetDownload()
-{
-}
-
 void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
 {
   if(verbose)
