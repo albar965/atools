@@ -40,9 +40,18 @@ void TransitionWriter::writeObject(const Transition *type)
     qDebug() << "Writing Transition for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  QString transtype = Transition::transitionTypeToStr(type->getType());
+  if(transtype.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Skipping transition with invalid type"
+               << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
+    return;
+  }
+
   bind(":transition_id", getNextId());
   bind(":approach_id", getDataWriter().getApproachWriter()->getCurrentId());
-  bind(":type", Transition::transitionTypeToStr(type->getType()));
+
+  bind(":type", transtype);
   bind(":fix_type", Transition::transitionFixTypeToStr(type->getTransFixType()));
   bind(":fix_ident", type->getTransFixIdent());
   bind(":fix_region", type->getFixRegion());

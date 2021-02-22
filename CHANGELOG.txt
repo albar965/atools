@@ -7,6 +7,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Fixed error when downloading PACOTS tracks.
 * Improved error handling for unreadable track information. Program now logs an error message instead of crashing.
+* Fixed error when reading procedures with invalid or unknown approach types from FSX, P3D and MSFS.
+  Now logging error instead.
 
 ===============================================================================
 

@@ -43,10 +43,17 @@ void ApproachWriter::writeObject(const Approach *type)
     qDebug() << "Writing Approach for airport "
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
+  QString apptype = bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType());
+
+  if(apptype.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "Skipping approach with invalid type" << type->getFixIdent() << type->getFixRegion()
+               << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
+    return;
+  }
+
   bind(":approach_id", getNextId());
   bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
-
-  QString apptype = bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType());
   bind(":type", apptype);
 
   if(type->getSuffix() == '0' || type->getSuffix() == 0)

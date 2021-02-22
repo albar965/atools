@@ -73,7 +73,7 @@ void AirportWriter::writeObject(const Airport *type)
 
   if(type->isEmpty())
   {
-    qWarning() << "Skipping empty airport" << ident;
+    qWarning() << Q_FUNC_INFO << "Skipping empty airport" << ident;
     return;
   }
 

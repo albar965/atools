@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "gui/translator.h"
+#include "atools.h"
 
 #include <QDebug>
 #include <QFileInfo>
@@ -155,6 +156,8 @@ QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
   QVector<QLocale> retval;
   for(const QFileInfo& fi : dir.entryInfoList())
   {
+    atools::checkFile(fi, true /* warn */);
+
     // Use C locale as invalid
     QLocale locale(QLocale::C);
 
