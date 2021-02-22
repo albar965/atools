@@ -78,8 +78,13 @@ void TrackReader::readTracks(QTextStream& stream, TrackType type)
       {
         // Get all lines of <PRE> elements.
         QStringList sections = extractSections(lines, "<PRE>", "</PRE>");
+
         // Get tracks
-        extractPacotsTracks(extractSections(sections, "(TDM TRK", ")."));
+        // A0766/21 - (TDM TRK E 210222190001
+        // ...
+        // RMK/0). 22 FEB 19:00 2021 UNTIL 23 FEB 08:00 2021. CREATED: 22 FEB 00:45 2021
+        extractPacotsTracks(extractSections(sections, "(TDM TRK ", "). "));
+
         // Get flex tracks
         extractPacotsTracksFlex(sections);
       }
@@ -487,7 +492,8 @@ QStringList TrackReader::extractSections(const QStringList& lines, const QString
           sections.append(line);
       }
       else
-        throw new atools::Exception(tr("Error in file on line %1. Found begin marker inside of section."));
+        qWarning() << Q_FUNC_INFO << "Error reading track data. Found begin marker" << begin
+                   << "outside of section." << "line" << line;
     }
     else
     {
@@ -501,7 +507,8 @@ QStringList TrackReader::extractSections(const QStringList& lines, const QString
         }
       }
       else if(firstFound)
-        throw new atools::Exception(tr("Error in file on line %1. Found end marker outside of section."));
+        qWarning() << Q_FUNC_INFO << "Error reading track data. Found end marker" << end
+                   << "outside of section." << "line" << line;
     }
   }
   sections.removeAll("");
