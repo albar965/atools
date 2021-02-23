@@ -92,9 +92,9 @@ signals:
   void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
 private:
-  void natDownloadFinished(const QByteArray & data, QString);
-  void pacotsDownloadFinished(const QByteArray & data, QString);
-  void ausotsDownloadFinished(const QByteArray & data, QString);
+  void natDownloadFinished(const QByteArray& data, QString downloadUrl);
+  void pacotsDownloadFinished(const QByteArray& data, QString downloadUrl);
+  void ausotsDownloadFinished(const QByteArray& data, QString downloadUrl);
 
   void natDownloadFailed(const QString& error, int errorCode, QString downloadUrl);
   void pacotsDownloadFailed(const QString& error, int errorCode, QString downloadUrl);

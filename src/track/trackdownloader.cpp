@@ -19,6 +19,7 @@
 
 #include "track/trackreader.h"
 #include "util/httpdownloader.h"
+#include "exception.h"
 
 #include <QFile>
 
@@ -107,58 +108,82 @@ TrackDownloader::~TrackDownloader()
   qDeleteAll(downloaders);
 }
 
-void TrackDownloader::natDownloadFinished(const QByteArray& data, QString)
+void TrackDownloader::natDownloadFinished(const QByteArray& data, QString downloadUrl)
 {
-#ifdef DEBUG_TRACK_TEST_SAVE
-  QFile file("/tmp/NAT.txt");
-  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  try
   {
-    file.write(data);
-    file.close();
-  }
+#ifdef DEBUG_TRACK_TEST_SAVE
+    QFile file("/tmp/NAT.txt");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      file.write(data);
+      file.close();
+    }
 #endif
 
-  TrackReader reader;
-  reader.readTracks(data, NAT);
-  trackList[NAT] = reader.getTracks();
+    TrackReader reader;
+    reader.readTracks(data, NAT);
+    trackList[NAT] = reader.getTracks();
 
-  emit trackDownloadFinished(trackList.value(NAT), NAT);
+    emit trackDownloadFinished(trackList.value(NAT), NAT);
+  }
+  catch(atools::Exception& e)
+  {
+    qWarning() << Q_FUNC_INFO << e.what() << downloadUrl;
+    emit trackDownloadFailed(e.what(), 0, downloadUrl, NAT);
+  }
 }
 
-void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString)
+void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString downloadUrl)
 {
-#ifdef DEBUG_TRACK_TEST_SAVE
-  QFile file("/tmp/PACOTS.txt");
-  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  try
   {
-    file.write(data);
-    file.close();
-  }
+#ifdef DEBUG_TRACK_TEST_SAVE
+    QFile file("/tmp/PACOTS.txt");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      file.write(data);
+      file.close();
+    }
 #endif
 
-  TrackReader reader;
-  reader.readTracks(data, PACOTS);
-  trackList[PACOTS] = reader.getTracks();
+    TrackReader reader;
+    reader.readTracks(data, PACOTS);
+    trackList[PACOTS] = reader.getTracks();
 
-  emit trackDownloadFinished(trackList.value(PACOTS), PACOTS);
+    emit trackDownloadFinished(trackList.value(PACOTS), PACOTS);
+  }
+  catch(atools::Exception& e)
+  {
+    qWarning() << Q_FUNC_INFO << e.what() << downloadUrl;
+    emit trackDownloadFailed(e.what(), 0, downloadUrl, PACOTS);
+  }
 }
 
-void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString)
+void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString downloadUrl)
 {
-#ifdef DEBUG_TRACK_TEST_SAVE
-  QFile file("/tmp/AUSOTS.txt");
-  if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+  try
   {
-    file.write(data);
-    file.close();
-  }
+#ifdef DEBUG_TRACK_TEST_SAVE
+    QFile file("/tmp/AUSOTS.txt");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+      file.write(data);
+      file.close();
+    }
 #endif
 
-  TrackReader reader;
-  reader.readTracks(data, AUSOTS);
-  trackList[AUSOTS] = reader.getTracks();
+    TrackReader reader;
+    reader.readTracks(data, AUSOTS);
+    trackList[AUSOTS] = reader.getTracks();
 
-  emit trackDownloadFinished(trackList.value(AUSOTS), AUSOTS);
+    emit trackDownloadFinished(trackList.value(AUSOTS), AUSOTS);
+  }
+  catch(atools::Exception& e)
+  {
+    qWarning() << Q_FUNC_INFO << e.what() << downloadUrl;
+    emit trackDownloadFailed(e.what(), 0, downloadUrl, AUSOTS);
+  }
 }
 
 void TrackDownloader::natDownloadFailed(const QString& error, int errorCode, QString downloadUrl)
