@@ -444,14 +444,11 @@ QString capNavString(const QString& str)
 
 QString capAirportName(const QString& str)
 {
-  // Force military designators to upper
+  // Force acronyms to upper case
   const static QSet<QString> FORCE_UPPER({
-          "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
-          "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD", "AAC",
-
-          // Not military but an acronym
-          "USFS"
-        });
+          "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CGS", "DGAC", "FBO",
+          "GTS", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", "NOLF", "NRC", "NRC",
+          "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RNAS", "USFS"});
 
   return atools::capString(str, FORCE_UPPER);
 }
