@@ -1959,14 +1959,12 @@ Ocorreu um erro no Sql
         <translation>Não foi possível abrir o arquivo track &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="490"/>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation>Erro no arquivo na linha %1. Encontrado marcador de início dentro da seção.</translation>
+        <translation type="vanished">Erro no arquivo na linha %1. Encontrado marcador de início dentro da seção.</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="504"/>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation>Erro no arquivo na linha %1. Encontrado marcador final fora da seção.</translation>
+        <translation type="vanished">Erro no arquivo na linha %1. Encontrado marcador final fora da seção.</translation>
     </message>
 </context>
 <context>

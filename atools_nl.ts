@@ -1970,14 +1970,12 @@ Bestand:&quot;%2&quot;
         <translation>Kan tarck bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="490"/>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation>Fout in bestand op lijn %1. Begin marker gevonden binnen de sectie.</translation>
+        <translation type="vanished">Fout in bestand op lijn %1. Begin marker gevonden binnen de sectie.</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="504"/>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation>Fout in bestand op lijn %1. Eindmarker gevonden buiten de sectie.</translation>
+        <translation type="vanished">Fout in bestand op lijn %1. Eindmarker gevonden buiten de sectie.</translation>
     </message>
 </context>
 <context>

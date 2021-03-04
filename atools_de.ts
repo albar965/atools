@@ -1625,11 +1625,11 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation>Fehler in Datei in Zeile %1. Startmarkierung innerhalb einer Sektion.</translation>
+        <translation type="vanished">Fehler in Datei in Zeile %1. Startmarkierung innerhalb einer Sektion.</translation>
     </message>
     <message>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation>Fehler in Datei in Zeile %1. Startmarkierung außerhalb einer Sektion.</translation>
+        <translation type="vanished">Fehler in Datei in Zeile %1. Startmarkierung außerhalb einer Sektion.</translation>
     </message>
 </context>
 <context>
