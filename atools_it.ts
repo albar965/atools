@@ -2035,15 +2035,8 @@ File: &quot;%2&quot;
         <translation>Impossibile aprire il file rotta &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="490"/>
-        <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translatorcomment>Errore nel file on-line %1. Trovato marcatore iniziale all&apos;interno della sezione.</translatorcomment>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="src/track/trackreader.cpp" line="504"/>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation>Errore nel file on-line %1. Trovato marcatore finale fuori dalla sezione.</translation>
+        <translation type="vanished">Errore nel file on-line %1. Trovato marcatore finale fuori dalla sezione.</translation>
     </message>
 </context>
 <context>

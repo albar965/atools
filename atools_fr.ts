@@ -1965,14 +1965,12 @@ Fichier: &quot;%2&quot;
         <translation type="unfinished">Impossible d&apos;ouvrir le fichier de suivi &quot;%1&quot;. Raison: %2</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="490"/>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation type="unfinished">Erreur dans le fichier en ligne %1. Trouvé marqueur de début à l&apos;intérieur de la section.</translation>
+        <translation type="obsolete">Erreur dans le fichier en ligne %1. Trouvé marqueur de début à l&apos;intérieur de la section.</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="504"/>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation type="unfinished">Erreur dans le fichier en ligne %1. Marqueur de fin trouvé en dehors de la section.</translation>
+        <translation type="obsolete">Erreur dans le fichier en ligne %1. Marqueur de fin trouvé en dehors de la section.</translation>
     </message>
 </context>
 <context>

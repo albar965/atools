@@ -1922,14 +1922,12 @@ File: &quot;%2&quot;
         <translation>无法打开航迹文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="490"/>
         <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation>文件中的第 %1 行有错误。在选区内找到了开始符。</translation>
+        <translation type="vanished">文件中的第 %1 行有错误。在选区内找到了开始符。</translation>
     </message>
     <message>
-        <location filename="src/track/trackreader.cpp" line="504"/>
         <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation>文件中的第 %1 行有错误。在选区外找到了结束符。</translation>
+        <translation type="vanished">文件中的第 %1 行有错误。在选区外找到了结束符。</translation>
     </message>
 </context>
 <context>

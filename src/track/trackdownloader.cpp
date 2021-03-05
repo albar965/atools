@@ -220,7 +220,7 @@ void TrackDownloader::setUrl(TrackType type, const QString& url, const QStringLi
 
 void TrackDownloader::startAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders.values())
+  for(HttpDownloader *downloader : downloaders)
     downloader->startDownload();
 }
 
@@ -231,7 +231,7 @@ void TrackDownloader::startDownload(TrackType type)
 
 void TrackDownloader::cancelAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders.values())
+  for(HttpDownloader *downloader : downloaders)
     downloader->cancelDownload();
 }
 
@@ -249,7 +249,7 @@ void TrackDownloader::clearTracks()
 bool TrackDownloader::hasAnyTracks()
 {
   int num = 0;
-  for(const TrackVectorType& tracks : trackList.values())
+  for(const TrackVectorType& tracks : trackList)
     num += tracks.size();
   return num > 0;
 }
@@ -269,7 +269,7 @@ int TrackDownloader::removeInvalid()
 
 void TrackDownloader::setIgnoreSslErrors(bool value)
 {
-  for(HttpDownloader *downloader : downloaders.values())
+  for(HttpDownloader *downloader : downloaders)
     downloader->setIgnoreSslErrors(value);
 }
 

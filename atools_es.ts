@@ -1570,14 +1570,6 @@ Atrapada excepción
         <source>Cannot open track file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Error in file on line %1. Found begin marker inside of section.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error in file on line %1. Found end marker outside of section.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>UserdataManager</name>
