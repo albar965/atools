@@ -102,10 +102,8 @@ bool DataManagerBase::addColumnIf(const QString& colName, const QString& colType
   return retval;
 }
 
-void DataManagerBase::backup()
+QString DataManagerBase::newBackupFilename()
 {
-  qDebug() << Q_FUNC_INFO << tableName << backupFilename;
-
   if(hasData() && !backupFilename.isEmpty())
   {
     // Create a backup in the settings directory
@@ -115,6 +113,19 @@ void DataManagerBase::backup()
     atools::io::FileRoller roller(3);
     roller.rollFile(filePath);
 
+    return filePath;
+  }
+  return QString();
+}
+
+void DataManagerBase::backupTableToCsv()
+{
+  QString filePath = newBackupFilename();
+
+  qDebug() << Q_FUNC_INFO << tableName << backupFilename << filePath;
+
+  if(!filePath.isEmpty())
+  {
     QFile file(filePath);
     if(file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
@@ -239,8 +250,6 @@ void DataManagerBase::updateByRecord(sql::SqlRecord record, const QVector<int>& 
 
 void DataManagerBase::clearData()
 {
-  backup();
-
   SqlTransaction transaction(db);
   removeRows();
   transaction.commit();

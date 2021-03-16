@@ -62,7 +62,7 @@ public:
   /* Update schema if needed */
   void updateSchema();
 
-  /* Remove all data from table. */
+  /* Remove all data from table. Does not create a backup. */
   void clearData();
 
   /* Updates the coordinates of an user defined waypoint. Does not commit. */
@@ -120,7 +120,7 @@ public:
   }
 
   /* Create a CSV backup in the settings directory and roll the files over. */
-  void backup();
+  virtual void backupTableToCsv();
 
   /* Drops schema tables and indexes */
   void dropSchema();
@@ -171,6 +171,10 @@ private:
   /* Add column with given name and type to table if not already present.
    * Returns true if table was changed. */
   bool addColumnIf(const QString& colName, const QString& colType);
+
+  /* Rolls files for new backup and returns the new filename. Returns empty string if no
+   * filename is set or schema is empty. */
+  QString newBackupFilename();
 
   /* Prints a warning of colummn does not exist */
   QString at(const QStringList& line, int index, bool nowarn = false);

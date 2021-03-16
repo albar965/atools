@@ -637,6 +637,13 @@ int UserdataManager::exportBgl(const QString& filepath, const QVector<int>& ids)
   return numExported;
 }
 
+void UserdataManager::backupTableToCsv()
+{
+  QString filename = newBackupFilename();
+  if(!filename.isEmpty())
+    exportCsv(filename, QVector<int>(), CSV_HEADER);
+}
+
 } // namespace userdata
 } // namespace fs
 } // namespace atools

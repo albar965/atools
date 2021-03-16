@@ -88,8 +88,11 @@ public:
     magDec = reader;
   }
 
+  virtual void backupTableToCsv() override;
+
 private:
   atools::fs::common::MagDecReader *magDec;
+
 };
 
 } // namespace userdata
