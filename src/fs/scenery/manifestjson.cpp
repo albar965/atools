@@ -52,6 +52,9 @@ void ManifestJson::read(const QString& filename)
   {
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    if(error.error != QJsonParseError::NoError)
+      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
+
     QJsonObject obj = doc.object();
 
     contentType = obj.value("content_type").toString();
@@ -67,8 +70,11 @@ void ManifestJson::read(const QString& filename)
 
 bool ManifestJson::isScenery() const
 {
-  return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0 ||
-         contentType.compare("CORE", Qt::CaseInsensitive) == 0;
+  // return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0 ||
+  // contentType.compare("CORE", Qt::CaseInsensitive) == 0;
+
+  // Cannot discriminate by values since add-on developers use often wrong types
+  return true;
 }
 
 } // namespace scenery

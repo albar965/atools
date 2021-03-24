@@ -58,6 +58,8 @@ void LayoutJson::read(const QString& filename)
   {
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    if(error.error != QJsonParseError::NoError)
+      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
 
     QJsonArray arr = doc.object().value("content").toArray();
     for(int i = 0; i < arr.count(); i++)

@@ -62,6 +62,9 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
   {
     QJsonParseError error;
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+    if(error.error != QJsonParseError::NoError)
+      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
+
     QJsonObject package = doc.object().value("LocalisationPackage").toObject();
 
     language = package.value("Language").toString();
