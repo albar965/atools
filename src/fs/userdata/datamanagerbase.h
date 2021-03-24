@@ -83,6 +83,8 @@ public:
   /* Add all records from vector into database */
   void insertRecords(const atools::sql::SqlRecordVector& records);
   void insertRecords(const atools::sql::SqlRecordVector& records, const QString& table);
+  void insertRecords(const atools::sql::SqlRecordList& records);
+  void insertRecords(const atools::sql::SqlRecordList& records, const QString& table);
 
   /* Removes all data */
   void removeRows();

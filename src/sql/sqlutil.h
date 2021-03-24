@@ -45,7 +45,7 @@ public:
    * @param endline Print endline or not. Useful for streams that automatically
    * insert endlines like QDebug.
    */
-  void printTableStats(QDebug& out, const QStringList& tables = QStringList());
+  void printTableStats(QDebug& out, const QStringList& tables = QStringList(), bool brief = false);
 
   /* Create a list of columns for the given table excluding all in excludeColumns */
   QStringList buildColumnList(const QString& tablename, const QStringList& excludeColumns = QStringList());

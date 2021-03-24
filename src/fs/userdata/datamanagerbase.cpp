@@ -175,10 +175,20 @@ void DataManagerBase::insertByRecordId(const sql::SqlRecord& record)
 
 void DataManagerBase::insertRecords(const sql::SqlRecordVector& records)
 {
-  insertRecords(records, tableName);
+  insertRecords(records.toList(), tableName);
 }
 
 void DataManagerBase::insertRecords(const sql::SqlRecordVector& records, const QString& table)
+{
+  insertRecords(records.toList(), table);
+}
+
+void DataManagerBase::insertRecords(const sql::SqlRecordList& records)
+{
+  insertRecords(records, tableName);
+}
+
+void DataManagerBase::insertRecords(const sql::SqlRecordList& records, const QString& table)
 {
   SqlQuery query(db);
   QString insertStr = SqlUtil(db).buildInsertStatement(table, QString(), QStringList(), false);

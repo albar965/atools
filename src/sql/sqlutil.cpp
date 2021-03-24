@@ -254,15 +254,15 @@ void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, 
       insert.exec();
     }
   }
-
 }
 
-void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)
+void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief)
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
-  out << "Statistics for database (tables / rows):" << endl;
+  if(!brief)
+    out << "Statistics for database (tables / rows):" << endl;
 
   QStringList tableList = buildTableList(tables);
 
@@ -281,16 +281,30 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)
         {
           int cnt = query.value("cnt").toInt();
           totalCount += cnt;
-          out << name << ": " << cnt << " rows" << endl;
+
+          if(brief)
+            out << name << " " << cnt << " ";
+          else
+            out << name << ": " << cnt << " rows" << endl;
         }
       }
       else
-        out << name << " is empty" << endl;
+      {
+        out << name << " is empty";
+        if(!brief)
+          out << endl;
+      }
     }
     else
-      out << name << " does not exist" << endl;
+    {
+      out << name << " does not exist";
+      if(!brief)
+        out << endl;
+    }
   }
-  out << "Total" << ": " << totalCount << " rows" << endl;
+
+  if(!brief)
+    out << "Total" << ": " << totalCount << " rows" << endl;
 }
 
 void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)

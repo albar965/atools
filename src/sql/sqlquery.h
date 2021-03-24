@@ -31,6 +31,7 @@ class SqlDatabase;
 class SqlRecord;
 
 typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
+typedef QList<atools::sql::SqlRecord> SqlRecordList;
 
 /*
  * Wrapper around QSqlQuery that adds exceptions to avoid plenty of
