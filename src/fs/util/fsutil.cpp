@@ -45,51 +45,48 @@ static const QStringList CONTAINS_MIL({
         "BASE AÉREA BRACCIANO" // pt-BR.locPak:
       });
 
-// Look for military designator words
+// Look for military designator words - if an airport name matches
+// one of these patterns it will be designated as "military"
 static const QVector<QRegularExpression> REGEXP_MIL({
-        // "AAF", "AB", "AF", "AFB", "AFS", "AHP", "ANGB", "ARB", "GTS", "LRRS", "PMRF", "MCAF", "MCALF", "MCAS", "NAF",
-        // "NALF", "NAS", "NWS", "NAWS", "NOLF", "NS", "NSB", "NSY", "NSWC", "NSF", "RAF", "RNAS", "AFLD", "AAC",
-
         QRegularExpression(QLatin1Literal("(\\[M\\]|\\[MIL\\])")), // X-Plane special
+        QRegularExpression(QLatin1Literal("\\bAAC\\b")),
         QRegularExpression(QLatin1Literal("\\bAAF\\b")),
         QRegularExpression(QLatin1Literal("\\bAB\\b")),
-        QRegularExpression(QLatin1Literal("\\bAF\\b")),
         QRegularExpression(QLatin1Literal("\\bAFB\\b")),
+        QRegularExpression(QLatin1Literal("\\bAFLD\\b")),
         QRegularExpression(QLatin1Literal("\\bAFS\\b")),
+        QRegularExpression(QLatin1Literal("\\bAF\\b")),
         QRegularExpression(QLatin1Literal("\\bAHP\\b")),
         QRegularExpression(QLatin1Literal("\\bAIR BASE\\b")),
-        QRegularExpression(QLatin1Literal("\\bAIRBASE\\b")),
         QRegularExpression(QLatin1Literal("\\bAIR FORCE\\b")),
+        QRegularExpression(QLatin1Literal("\\bAIRBASE\\b")),
         QRegularExpression(QLatin1Literal("\\bANGB\\b")),
         QRegularExpression(QLatin1Literal("\\bARB\\b")),
         QRegularExpression(QLatin1Literal("\\bARMY\\b")),
-        // QRegularExpression(QLatin1Literal("\\bGTS\\b")), not an airbase
+        QRegularExpression(QLatin1Literal("\\bCFB\\b")),
         QRegularExpression(QLatin1Literal("\\bLRRS\\b")),
-        QRegularExpression(QLatin1Literal("\\bPMRF\\b")),
         QRegularExpression(QLatin1Literal("\\bMCAF\\b")),
         QRegularExpression(QLatin1Literal("\\bMCALF\\b")),
         QRegularExpression(QLatin1Literal("\\bMCAS\\b")),
-        QRegularExpression(QLatin1Literal("\\bMIL\\b")),
         QRegularExpression(QLatin1Literal("\\bMILITARY\\b")),
+        QRegularExpression(QLatin1Literal("\\bMIL\\b")),
         QRegularExpression(QLatin1Literal("\\bNAF\\b")),
         QRegularExpression(QLatin1Literal("\\bNALF\\b")),
         QRegularExpression(QLatin1Literal("\\bNAS\\b")),
-        QRegularExpression(QLatin1Literal("\\bNWS\\b")),
         QRegularExpression(QLatin1Literal("\\bNAVAL\\b")),
         QRegularExpression(QLatin1Literal("\\bNAVY\\b")),
         QRegularExpression(QLatin1Literal("\\bNAWS\\b")),
         QRegularExpression(QLatin1Literal("\\bNOLF\\b")),
-        QRegularExpression(QLatin1Literal("\\bNS\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSF\\b")),
         QRegularExpression(QLatin1Literal("\\bNSB\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSY\\b")),
-        QRegularExpression(QLatin1Literal("\\bRAF\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSF\\b")),
         QRegularExpression(QLatin1Literal("\\bNSWC\\b")),
+        QRegularExpression(QLatin1Literal("\\bNSY\\b")),
+        QRegularExpression(QLatin1Literal("\\bNS\\b")),
+        QRegularExpression(QLatin1Literal("\\bNWS\\b")),
+        QRegularExpression(QLatin1Literal("\\bPMRF\\b")),
+        QRegularExpression(QLatin1Literal("\\bRAF\\b")),
         QRegularExpression(QLatin1Literal("\\bRNAS\\b")),
         QRegularExpression(QLatin1Literal("\\bROYAL MARINES\\b")),
-        QRegularExpression(QLatin1Literal("\\bAFLD\\b")),
-        QRegularExpression(QLatin1Literal("\\bAAC\\b"))
-
       });
 
 static const QHash<QString, QString> NAME_CODE_MAP(
@@ -444,11 +441,11 @@ QString capNavString(const QString& str)
 
 QString capAirportName(const QString& str)
 {
-  // Force acronyms to upper case
+  // Force acronyms in airports to upper case
   const static QSet<QString> FORCE_UPPER({
-          "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CGS", "DGAC", "FBO",
-          "GTS", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", "NOLF", "NRC", "NRC",
-          "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RNAS", "USFS"});
+          "AAC", "AAF", "AB", "ABMS", "AF", "AFB", "AFLD", "AFS", "AHP", "ANGB", "APCM", "ARB", "CFB", "CGS", "DGAC",
+          "FBO", "GTS", "HSC", "LRRS", "MAF", "MCAF", "MCALF", "MCAS", "NAF", "NALF", "NAS", "NAWS", "NFK", "NOLF",
+          "NRC", "NRC", "NS", "NSB", "NSF", "NSWC", "NSY", "NWS", "PMRF", "RAF", "RBMU", "RNAS", "USFS"});
 
   return atools::capString(str, FORCE_UPPER);
 }
