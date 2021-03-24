@@ -296,6 +296,10 @@ public:
   Q_DECL_CONSTEXPR static float POS_EPSILON_500M = 1.f / 60.f / 1852.216f * 500.f; /* ca 500 m for lat and lon nearby equator */
   Q_DECL_CONSTEXPR static float POS_EPSILON_1000M = 1.f / 60.f / 1852.216f * 1000.f; /* ca 1 km for lat and lon nearby equator */
 
+  Q_DECL_CONSTEXPR static float POS_EPSILON_1NM = 1.f / 60.f; /* 1 minute = 1 NM lat and lon nearby equator */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_10NM = 1.f / 60.f * 10.f; /* 10 NM  */
+  Q_DECL_CONSTEXPR static float POS_EPSILON_100NM = 1.f / 60.f * 100.f; /* 100 NM */
+
   Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();
 
   Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER = 6371. * 1000.;

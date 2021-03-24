@@ -21,6 +21,7 @@
 
 #include <QByteArray>
 #include <QFile>
+#include <QDebug>
 
 #define GZIP_WINDOWS_BIT 15 + 16
 #define GZIP_CHUNK_SIZE 32 * 1024
@@ -248,6 +249,36 @@ QByteArray gzipDecompress(const QByteArray& input)
     return retval;
   else
     return QByteArray();
+}
+
+bool gzipDecompressIf(const QByteArray& input, QByteArray& output)
+{
+  if(isGzipCompressed(input))
+    return gzipDecompress(input, output);
+  else
+  {
+    output = input;
+    return true;
+  }
+}
+
+QByteArray gzipDecompressIf(const QByteArray& input, const QString& funcInfo)
+{
+  if(isGzipCompressed(input))
+  {
+    QByteArray retval;
+    if(!atools::zip::gzipDecompress(input, retval))
+    {
+      qWarning() << funcInfo << "Error unzipping data";
+      return QByteArray();
+    }
+    else
+      // Now uncompressed
+      return retval;
+  }
+  else
+    // Not compressed
+    return input;
 }
 
 } // namespace zip

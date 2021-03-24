@@ -22,6 +22,7 @@
 #include "gribreader.h"
 #include "exception.h"
 #include "atools.h"
+#include "zip/gzip.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -37,6 +38,7 @@ GribDownloader::GribDownloader(QObject *parent, bool logVerbose = false)
   : QObject(parent), verbose(logVerbose)
 {
   downloader = new HttpDownloader(parent, verbose);
+  downloader->setAcceptEncoding("gzip");
   connect(downloader, &HttpDownloader::downloadFinished, this, &GribDownloader::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &GribDownloader::downloadFailed);
   connect(downloader, &HttpDownloader::downloadSslErrors, this, &GribDownloader::gribDownloadSslErrors);
@@ -132,7 +134,7 @@ void GribDownloader::downloadFinished(const QByteArray& data, QString downloadUr
   {
     // Decode and copy the data
     GribReader reader(verbose);
-    reader.readData(data);
+    reader.readData(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
     datasets = reader.getDatasets();
   }
   catch(atools::Exception& e)

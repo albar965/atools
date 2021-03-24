@@ -43,7 +43,7 @@ HttpDownloader::~HttpDownloader()
 void HttpDownloader::startDownload()
 {
   if(verbose)
-    qDebug() << Q_FUNC_INFO << downloadUrl;
+    qDebug() << Q_FUNC_INFO << downloadUrl << userAgent << acceptEncoding;
 
   // Check if the URL points to a local file
   QString filename;
@@ -101,6 +101,10 @@ void HttpDownloader::startDownload()
 
         if(!userAgent.isEmpty())
           request.setHeader(QNetworkRequest::UserAgentHeader, userAgent);
+
+        // curl -H "Accept-Encoding: gzip" https://data.vatsim.net/v3/vatsim-data.json --output vatsim-data.json.gz
+        if(!acceptEncoding.isEmpty())
+          request.setRawHeader(QByteArray("Accept-Encoding"), acceptEncoding.toUtf8());
 
         if(!postParameters.isEmpty())
           // Post raw data ============================
@@ -267,7 +271,7 @@ void HttpDownloader::httpFinished()
   if(reply != nullptr)
   {
     if(verbose)
-      qDebug() << Q_FUNC_INFO << "URL" << curUrl() << "error" << reply->error();
+      qDebug() << Q_FUNC_INFO << "URL" << curUrl() << "error" << reply->error() << reply->rawHeaderPairs();
 
     data.append(reply->readAll());
 

@@ -54,6 +54,15 @@ QByteArray gzipCompress(const QByteArray& input, int level = -1);
 bool gzipDecompress(const QByteArray& input, QByteArray& output);
 QByteArray gzipDecompress(const QByteArray& input);
 
+/** Decompresses if gzip compressed
+ * @return @c true if the decompression was successfull, @c false otherwise
+ */
+bool gzipDecompressIf(const QByteArray& input, QByteArray& output);
+
+/** Decompresses if gzip compressed. Returns input if not compressed and empty byte array on error.
+ */
+QByteArray gzipDecompressIf(const QByteArray& input, const QString& funcInfo);
+
 } // namespace zip
 } // namespace atools
 

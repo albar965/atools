@@ -30,6 +30,8 @@ WeatherDownloadBase::WeatherDownloadBase(QObject *parent, MetarFormat format, bo
 {
   metarIndex = new MetarIndex(format, verboseLogging);
   downloader = new atools::util::HttpDownloader(parent, verboseLogging);
+  downloader->setAcceptEncoding("gzip");
+
   connect(downloader, &atools::util::HttpDownloader::downloadSslErrors,
           this, &WeatherDownloadBase::weatherDownloadSslErrors);
 

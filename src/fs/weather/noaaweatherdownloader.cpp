@@ -19,6 +19,7 @@
 
 #include "fs/weather/metarindex.h"
 #include "util/httpdownloader.h"
+#include "zip/gzip.h"
 
 namespace atools {
 namespace fs {
@@ -76,7 +77,7 @@ bool NoaaWeatherDownloader::isDownloading() const
 
 bool NoaaWeatherDownloader::read(const QByteArray& data, const QString& url)
 {
-  QTextStream stream(data);
+  QTextStream stream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
   return metarIndex->read(stream, url, true /* merge */) > 0;
 }
 

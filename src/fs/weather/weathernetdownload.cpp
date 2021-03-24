@@ -19,6 +19,7 @@
 
 #include "util/httpdownloader.h"
 #include "fs/weather/metarindex.h"
+#include "zip/gzip.h"
 
 namespace atools {
 namespace fs {
@@ -42,7 +43,7 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
   // AGGH 161200Z 14002KT 9999 FEW016 25/24 Q1010
   // AYNZ 160800Z 09005G10KT 9999 SCT030 BKN ABV050 27/24 Q1007 RMK
   // AYPY 160700Z 28010KT 9999 SCT025 OVC050 28/23 Q1008 RMK/ BUILD UPS TO S/W
-  QTextStream stream(data, QIODevice::ReadOnly | QIODevice::Text);
+  QTextStream stream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), QIODevice::ReadOnly | QIODevice::Text);
   metarIndex->read(stream, downloader->getUrl(), false /* merge */);
 
   if(verbose)

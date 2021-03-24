@@ -157,6 +157,17 @@ public:
     return ignoreSslErrors;
   }
 
+  const QString& getAcceptEncoding() const
+  {
+    return acceptEncoding;
+  }
+
+  /* String parameter to send as "Accept-Encoding" parameter. Set to "gzip" to enable compressed downloads. */
+  void setAcceptEncoding(const QString& value)
+  {
+    acceptEncoding = value;
+  }
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
@@ -186,7 +197,7 @@ private:
 
   QNetworkAccessManager networkManager;
   QTimer updateTimer;
-  QString downloadUrl, userAgent;
+  QString downloadUrl, userAgent, acceptEncoding;
 
   QByteArray postParameters;
   QHash<QString, QString> postParametersQuery;
