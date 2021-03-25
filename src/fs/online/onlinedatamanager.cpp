@@ -68,6 +68,11 @@ bool OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::o
   return retval;
 }
 
+void OnlinedataManager::readFromTransceivers(const QString& transceiverTxt)
+{
+  whazzup->readTransceivers(transceiverTxt);
+}
+
 bool OnlinedataManager::readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
@@ -84,9 +89,9 @@ void OnlinedataManager::readFromStatus(const QString& statusTxt)
   status->read(statusTxt);
 }
 
-QString OnlinedataManager::getWhazzupUrlFromStatus(bool& gzipped) const
+QString OnlinedataManager::getWhazzupUrlFromStatus(bool& gzipped, bool& json) const
 {
-  return status->getRandomUrl(gzipped);
+  return status->getRandomUrl(gzipped, json);
 }
 
 QString OnlinedataManager::getWhazzupVoiceUrlFromStatus() const
@@ -97,11 +102,6 @@ QString OnlinedataManager::getWhazzupVoiceUrlFromStatus() const
 const QString& OnlinedataManager::getMessageFromStatus()
 {
   return status->getMessage();
-}
-
-int OnlinedataManager::getAtisAllowMinutesFromWhazzup() const
-{
-  return whazzup->getAtisAllowMinutes();
 }
 
 QDateTime OnlinedataManager::getLastUpdateTimeFromWhazzup() const
@@ -227,7 +227,7 @@ void OnlinedataManager::setGeometryCallback(GeoCallbackType func)
 
 void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
 {
-  if(record.valueBool("prefile") || record.valueStr("client_type") != "PILOT")
+  if(record.valueStr("client_type") != "PILOT")
     return;
 
   using namespace atools::fs::sc;
@@ -305,8 +305,10 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   // record.valueStr("plane");
   // record.valueStr("qnh_mb");
 
-  ac.position = atools::geo::Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
-
+  if(!record.isNull("lonx") && !record.isNull("laty"))
+    ac.position = atools::geo::Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
+  else
+    ac.position = atools::geo::Pos();
 }
 
 void OnlinedataManager::initQueries()

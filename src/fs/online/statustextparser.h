@@ -46,7 +46,7 @@ public:
 
   /* Get one URL pointing to a whazzup.txt from the file. This is key "url0".
    *  A round robin strategy is used to select the URLs from the list. */
-  QString getRandomUrl(bool& gzipped);
+  QString getRandomUrl(bool& gzipped, bool& json);
 
   /* Get one URL pointing to a whazzup.txt from the file which contains server information. This is key "url1".
    *  A round robin strategy is used to select the URLs from the list. */
@@ -60,6 +60,7 @@ public:
 
 private:
   QStringList urlList, urlListGzip, urlListVoice;
+  QString urlJson3;
   int curUrlIndex = 0, curGzipUrlIndex = 0, curVoiceUrlIndex = 0;
   QString message;
 };

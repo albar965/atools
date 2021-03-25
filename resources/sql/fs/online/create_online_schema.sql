@@ -120,8 +120,8 @@ create table client
   plane varchar(200),
   qnh_mb integer,
   altitude integer,                          -- ft
-  lonx double not null,
-  laty double not null
+  lonx double,
+  laty double
 );
 
 drop table if exists atc;
@@ -150,13 +150,13 @@ create table atc
   atc_pilot_rating integer,
   simulator integer,
   qnh_mb integer,
-  lonx double not null,
-  laty double not null,
-  radius integer not null,        --Nm - painting radius for circle
-  max_lonx double not null,       -- Bounding rectangle
-  max_laty double not null,       -- "
-  min_lonx double not null,       -- Bounding rectangle
-  min_laty double not null,       -- "
+  lonx double,
+  laty double,
+  radius integer ,        --Nm - painting radius for circle
+  max_lonx double,       -- Bounding rectangle
+  max_laty double,       -- "
+  min_lonx double,       -- Bounding rectangle
+  min_laty double,       -- "
   geometry blob                   -- Pre calculated geometry (circle)
 );
 

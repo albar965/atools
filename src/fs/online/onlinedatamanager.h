@@ -64,24 +64,24 @@ public:
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */
   void readFromStatus(const QString& statusTxt);
 
-  /* Read all from whazzup.txt file with file content in string and writes all into the database.
+  /* Read all from whazzup.txt or VATSIM JSON 3 file with file content in string and writes all into the database.
    * Returns true if the file was read and is more recent than lastUpdate. */
   bool readFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
+
+  /* Read VATSIM transceivers-data.json and stores map in this object. Call before calling "readFromWhazzup" */
+  void readFromTransceivers(const QString& transceiverTxt);
 
   /* Read all servers and voice_servers from whazzup.txt file with file content in string and writes all into the database */
   bool readServersFromWhazzup(const QString& whazzupTxt, Format format, const QDateTime& lastUpdate);
 
   /* Get a randon URL from the status file which points to the redundant whazzup files */
-  QString getWhazzupUrlFromStatus(bool& gzipped) const;
+  QString getWhazzupUrlFromStatus(bool& gzipped, bool& json) const;
 
   /* Get a randon voice server URL from the status file which points to the redundant whazzup files */
   QString getWhazzupVoiceUrlFromStatus() const;
 
   /* Get message which has to be shown on application start */
   const QString& getMessageFromStatus();
-
-  /*  Time in minutes to wait before allowing manual Atis refresh by way of web page interface */
-  int getAtisAllowMinutesFromWhazzup() const;
 
   /* The last date and time this file has been updated. */
   QDateTime getLastUpdateTimeFromWhazzup() const;

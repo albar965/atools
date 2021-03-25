@@ -48,24 +48,19 @@ public:
   virtual ~WhazzupTextParser();
 
   /* Read file content given in string and store results in database. Commit is executed when done.
-   *  Returns true if the file was read and is more recent than lastUpdate. */
-  bool read(QString file, atools::fs::online::Format streamFormat, const QDateTime& lastUpdate);
+   * Reads either "whazzup.txt" format or VATSIM JSON format depending on "streamFormat".
+   * Returns true if the file was read and is more recent than lastUpdate. */
+  bool read(QString file, atools::fs::online::Format streamFormat,
+            const QDateTime& lastUpdate);
 
-  /* Read file content given in stream and store results in database. Commit is executed when done.
-   *  Returns true if the file was read and is more recent than lastUpdate. */
-  bool read(QTextStream& stream, atools::fs::online::Format streamFormat, const QDateTime& lastUpdate);
+  /* Read VATSIM transceivers-data.json and stores map in this object. Call before calling "read". */
+  void readTransceivers(const QString& file);
 
   /* Create all queries */
   void initQueries();
 
   /* Delete all queries */
   void deInitQueries();
-
-  /*  Time in minutes to wait before allowing manual Atis refresh by way of web page interface */
-  int getAtisAllowMinutes() const
-  {
-    return atisAllowMin;
-  }
 
   /* The last date and time this file has been updated. */
   QDateTime getLastUpdateTime() const
@@ -96,21 +91,42 @@ public:
   }
 
 private:
-  QDateTime parseGeneralSection(const QString& line);
-  void parseSection(const QStringList& line, bool isAtc, bool isPrefile);
-  void parseServersSection(const QString& line);
-  void parseVoiceSection(const QString& line);
-  void parseAirportSection(const QString& line);
+  /* Read time from general section */
+  QDateTime parseGeneralSection(const QStringList& line);
+
+  /* Read ATC or client section */
+  void parseSection(const QStringList& line, bool isAtc, bool isPrefile, bool isJson);
+
+  /* Servers */
+  void parseServersSection(const QStringList& line);
+
+  /* Voice servers */
+  void parseVoiceSection(const QStringList& line);
+
+  /* Airport ident and ATIS - ignored */
+  void parseAirportSection(const QStringList& line);
 
   /* Remove special characters from ATC text */
   QString convertAtisText(QString atis);
 
   /* Read datetime format */
-  QDateTime parseDateTime(const QStringList& line, int index);
+  QDateTime parseDateTime(const QStringList& line, int index, bool jsonFormat);
 
   /* Fix UTF-8 name embedded in ANSI encoding in file */
-  QString convertName(QString name);
+  QString convertName(QString name, bool utf8);
   int getSemiPermanentId(QHash<QString, int>& idMap, int& curId, const QString& key);
+
+  /* Read VATSIM JSON format. */
+  bool readInternalJson(const QString& file, const QDateTime& lastUpdate);
+  bool readInternalDelimited(QTextStream& stream, Format streamFormat, const QDateTime& lastUpdate);
+  void readPilotsJson(const QJsonObject& obj);
+  void readControllersJson(const QJsonObject& obj);
+  void readServersJson(const QJsonObject& obj);
+  void readPrefilesJson(const QJsonObject& obj);
+  void readAtisJson(const QJsonObject& obj);
+
+  /* Insert flight plan values into columns. Used for clients and prefile */
+  void assignFlightplan(QStringList& columns, const QJsonObject& flightplanObj);
 
   QString curSection;
   atools::fs::online::Format format = atools::fs::online::UNKNOWN;
@@ -124,15 +140,20 @@ private:
   /* The last date and time this file has been updated. */
   QDateTime updateTimestamp;
 
-  /*  Time in minutes to wait before allowing manual Atis refresh by way of web page interface */
-  int atisAllowMin = 0;
-
   atools::sql::SqlDatabase *db;
   atools::sql::SqlQuery *clientInsertQuery = nullptr, *atcInsertQuery = nullptr,
                         *serverInsertQuery = nullptr, *airportInsertQuery = nullptr;
 
   // Assign row ids manually
   int curClientId = 1, curAtcId = 1;
+
+  struct Transceiver
+  {
+    // In kHz
+    QSet<int> frequency;
+    atools::geo::Pos pos;
+  };
+  QMultiHash<QString, Transceiver> transceiverMap;
 
   // Keep a map of callsign to row id in the database to reuse the ids for the same centers and clients
   // This is to avoid id changes on every reload

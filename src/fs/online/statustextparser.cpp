@@ -98,6 +98,8 @@ void StatusTextParser::read(QTextStream& stream)
 
     if(key == "url0")
       urlList.append(line.section('=', 1).trimmed());
+    else if(key == "json3")
+      urlJson3 = line.section('=', 1).trimmed();
     if(key == "gzurl0")
       urlListGzip.append(line.section('=', 1).trimmed());
     else if(key == "url1")
@@ -110,15 +112,24 @@ void StatusTextParser::read(QTextStream& stream)
 void StatusTextParser::reset()
 {
   urlList.clear();
+  urlJson3.clear();
   urlListVoice.clear();
   urlListGzip.clear();
   message.clear();
   curUrlIndex = curGzipUrlIndex = curVoiceUrlIndex = 0;
 }
 
-QString StatusTextParser::getRandomUrl(bool& gzipped)
+QString StatusTextParser::getRandomUrl(bool& gzipped, bool& json)
 {
-  if(!urlListGzip.isEmpty())
+  gzipped = false;
+  json = false;
+
+  if(!urlJson3.isEmpty())
+  {
+    json = true;
+    return urlJson3;
+  }
+  else if(!urlListGzip.isEmpty())
   {
     gzipped = true;
     rollIndex(urlListGzip, curGzipUrlIndex);
@@ -126,7 +137,6 @@ QString StatusTextParser::getRandomUrl(bool& gzipped)
   }
   else if(!urlList.isEmpty())
   {
-    gzipped = false;
     rollIndex(urlList, curUrlIndex);
     return urlList.at(curUrlIndex);
   }

@@ -35,7 +35,8 @@ enum Format
 {
   UNKNOWN,
   VATSIM,
-  IVAO
+  IVAO,
+  VATSIM_JSON3
 };
 
 // enum ClientType
