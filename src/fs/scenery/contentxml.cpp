@@ -72,6 +72,7 @@ void ContentXml::read(const QString& filename)
 
         int num;
         QString title;
+        bool navdata = false;
         if(name == "fs-base")
         {
           num = 0;
@@ -80,6 +81,7 @@ void ContentXml::read(const QString& filename)
         else if(name == "fs-base-nav")
         {
           num = 1;
+          navdata = true;
           title = tr("Base Navigation");
         }
         else
@@ -87,6 +89,7 @@ void ContentXml::read(const QString& filename)
 
         SceneryArea area(num, num, title, name);
         area.setActive(active);
+        area.setNavdata(navdata);
         areaEntries.append(area);
         number++;
 

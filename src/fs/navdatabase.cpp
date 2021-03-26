@@ -1361,11 +1361,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   int areaNum = 0;
   SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
-  area.setActive();
+  // area.setActive(!contentXml.isDisabled("fs-base"));
+  area.setActive(true);
   cfg.appendArea(area);
 
   SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
-  areaNav.setActive();
+  // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
+  areaNav.setActive(true);
   areaNav.setNavdata(); // Set flag to allow dummy airport handling
   cfg.appendArea(areaNav);
 
