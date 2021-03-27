@@ -235,8 +235,10 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // <PropertyList>
     // <version type="int">1</version>
     return FLIGHTGEAR;
-  else if(lines.at(0).startsWith("<?xml version") &&
+  else if((lines.at(0).startsWith("<?xml version") &&
           (lines.at(1).startsWith("<flight-plan") &&
+           !lines.filter("<waypoint-table").isEmpty())) ||
+          (lines.at(0).startsWith("<flight-plan") &&
            !lines.filter("<waypoint-table").isEmpty()))
     // <?xml version="1.0" encoding="utf-8"?>
     // <flight-plan xmlns="http://www8.garmin.com/xmlschemas/FlightPlan/v1">
