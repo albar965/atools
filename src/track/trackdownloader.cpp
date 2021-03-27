@@ -19,6 +19,7 @@
 
 #include "track/trackreader.h"
 #include "util/httpdownloader.h"
+#include "zip/gzip.h"
 #include "exception.h"
 
 #include <QFile>
@@ -76,6 +77,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   HttpDownloader *natDownloader = new HttpDownloader(parent, verbose);
   natDownloader->setUrl(URL.value(NAT));
   natDownloader->setPostParameters(PARAM.value(NAT));
+  natDownloader->setAcceptEncoding("gzip");
   connect(natDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::natDownloadFinished);
   connect(natDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::natDownloadFailed);
   connect(natDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
@@ -86,6 +88,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   HttpDownloader *pacotsDownloader = new HttpDownloader(parent, verbose);
   pacotsDownloader->setUrl(URL.value(PACOTS));
   pacotsDownloader->setPostParameters(PARAM.value(PACOTS));
+  pacotsDownloader->setAcceptEncoding("gzip");
   connect(pacotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::pacotsDownloadFinished);
   connect(pacotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::pacotsDownloadFailed);
   connect(pacotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
@@ -96,6 +99,7 @@ TrackDownloader::TrackDownloader(QObject *parent, bool logVerbose)
   HttpDownloader *ausotsDownloader = new HttpDownloader(parent, verbose);
   ausotsDownloader->setUrl(URL.value(AUSOTS));
   ausotsDownloader->setPostParameters(PARAM.value(AUSOTS));
+  ausotsDownloader->setAcceptEncoding("gzip");
   connect(ausotsDownloader, &HttpDownloader::downloadFinished, this, &TrackDownloader::ausotsDownloadFinished);
   connect(ausotsDownloader, &HttpDownloader::downloadFailed, this, &TrackDownloader::ausotsDownloadFailed);
   connect(ausotsDownloader, &HttpDownloader::downloadSslErrors, this, &TrackDownloader::trackDownloadSslErrors);
@@ -122,7 +126,7 @@ void TrackDownloader::natDownloadFinished(const QByteArray& data, QString downlo
 #endif
 
     TrackReader reader;
-    reader.readTracks(data, NAT);
+    reader.readTracks(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), NAT);
     trackList[NAT] = reader.getTracks();
 
     emit trackDownloadFinished(trackList.value(NAT), NAT);
@@ -148,7 +152,7 @@ void TrackDownloader::pacotsDownloadFinished(const QByteArray& data, QString dow
 #endif
 
     TrackReader reader;
-    reader.readTracks(data, PACOTS);
+    reader.readTracks(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), PACOTS);
     trackList[PACOTS] = reader.getTracks();
 
     emit trackDownloadFinished(trackList.value(PACOTS), PACOTS);
@@ -174,7 +178,7 @@ void TrackDownloader::ausotsDownloadFinished(const QByteArray& data, QString dow
 #endif
 
     TrackReader reader;
-    reader.readTracks(data, AUSOTS);
+    reader.readTracks(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO), AUSOTS);
     trackList[AUSOTS] = reader.getTracks();
 
     emit trackDownloadFinished(trackList.value(AUSOTS), AUSOTS);
