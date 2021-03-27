@@ -358,17 +358,26 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
           else if(key == "sid")
             insertPropertyIf(plan, SIDAPPR, value);
           else if(key == "sid_trans")
-            insertPropertyIf(plan, SIDTRANS, value);
+          {
+            if(value != "VECTORS")
+              insertPropertyIf(plan, SIDTRANS, value);
+          }
           else if(key == STAR)
             insertPropertyIf(plan, STAR, value);
           else if(key == "star_trans")
-            insertPropertyIf(plan, STARTRANS, value);
+          {
+            if(value != "VECTORS")
+              insertPropertyIf(plan, STARTRANS, value);
+          }
           else if(key == "rwyarr")
             insertPropertyIf(plan, APPROACHRW, value.mid(plan.destinationIdent.size()));
           else if(key == "rwyarrfinal")
-            insertPropertyIf(plan, APPROACH, value);
+            insertPropertyIf(plan, APPROACH_ARINC, value);
           else if(key == "appr_trans")
-            insertPropertyIf(plan, TRANSITION, value);
+          {
+            if(value != "VECTORS")
+              insertPropertyIf(plan, TRANSITION, value);
+          }
         }
       }
     }
@@ -2222,8 +2231,8 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     else
       stream << "RwyArr=" << endl;
 
-    if(!plan.properties.value(APPROACH).isEmpty())
-      stream << "RwyArrFinal=" << plan.properties.value(APPROACH) << endl;
+    if(!plan.properties.value(APPROACH_ARINC).isEmpty())
+      stream << "RwyArrFinal=" << plan.properties.value(APPROACH_ARINC) << endl;
     else
       stream << "RwyArrFinal=" << endl;
 
