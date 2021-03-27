@@ -3,6 +3,34 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.11
+
+* Adapted URL for winds aloft download to NOAA changes and added `atmos` as directory. This fixes
+  the `Error downloading or reading wind data` issue. #623
+* Now disabling wind and other downloads with log warning message if URL is empty. #623
+* Corrected approach identifier in FLP flight plan export and loading for Aerosoft aircraft. Now
+  using ARINC identifier for approaches and ignoring transitions of type `VECTOR`.
+* Added patch by Slawek Mikula to support loading of Avia Maps flight plans. #616
+* Added support for new faster VATSIM JSON feed. Allowing centers without coordinates now. #606
+* Now ignoring invalid content types like `Unknown` in MSFS `manifest.json` file which are often
+  set wrongly by add-on developers. Added warnings for JSON parsing errors in files `layout.json` and
+  `manifest.json`.
+* New gzip decompression methods for HTTP downloads. Added accept encoding to HTTP downloader to
+  allow compressed downloads. All weather download classes now accept gzip encoding.
+* Fixed issue where userdata CSV backup files could not be imported and needed to be manually
+  corrected before import.
+* Updates for detection of military airports and name capitalization.
+
+===============================================================================
+
+# Version 3.6.10
+
+* Updated translations.
+* Updated for acronyms in name capitalizing function for airport names.
+* Fixed error when reading procedures with invalid or unknown approach types from FSX, P3D and MSFS.
+
+===============================================================================
+
 # Version 3.6.9
 
 * Fixed error when downloading PACOTS tracks.
@@ -16,7 +44,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Added separate departure position field to flight plan for parking, helipad or runway/start.
   Fixed flight plan export to use correct departure position in PLN  DepartureLLA and LNMPLN Start
-  element. albar965/littlenavmap#613
+  element. #613
 * Corrections to X-Plane FMS export. Using DEP and DES keywords now instead of truncating ident.
 * Added verbose logging for X-Plane compiler based on navdatareader.cfg. Added warnings if rows are
   not written to the database.
@@ -28,7 +56,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 * Corrected issue where status bar was hidden on first start after first installation in dock
   handler.
-* Now also including MSFS scenery with content type "CORE".
+* Now also including MSFS scenery with content type `CORE`.
 * Now skipping maintenance.bgl file in MSFS scenery library which causes error messages when
   loading scenery library.
 * Airport names now loaded from base scenery with Navigraph update in MSFS. Were missing previously.
@@ -44,7 +72,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 # Version 3.6.6
 
 * Replacing more obscure minute signs like apostrophes now in coordinate parser .
-* Excluding Navigraph manifest file now to avoid error messages with package "navigraph-maintenance"
+* Excluding Navigraph manifest file now to avoid error messages with package `navigraph-maintenance`
   when reading MSFS scenery data.
 
 ===============================================================================
