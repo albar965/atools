@@ -207,8 +207,11 @@ void WindQuery::initFromUrl(const QString& baseUrl)
 {
   deinit();
 
-  // Start download and conversion when done
-  downloader->startDownload(QDateTime(), baseUrl);
+  if(!baseUrl.isEmpty())
+    // Start download and conversion when done
+    downloader->startDownload(QDateTime(), baseUrl);
+  else
+    qWarning() << Q_FUNC_INFO << "URL is empty. Wind download suspended.";
 }
 
 void WindQuery::initFromFile(const QString& filename)

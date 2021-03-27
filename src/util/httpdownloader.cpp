@@ -45,6 +45,12 @@ void HttpDownloader::startDownload()
   if(verbose)
     qDebug() << Q_FUNC_INFO << downloadUrl << userAgent << acceptEncoding;
 
+  if(downloadUrl.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "URL is empty. Download suspended.";
+    return;
+  }
+
   // Check if the URL points to a local file
   QString filename;
   QFileInfo fileinfo(downloadUrl);
