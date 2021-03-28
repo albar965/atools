@@ -236,8 +236,8 @@ FileFormat FlightplanIO::detectFormat(const QString& file)
     // <version type="int">1</version>
     return FLIGHTGEAR;
   else if((lines.at(0).startsWith("<?xml version") &&
-          (lines.at(1).startsWith("<flight-plan") &&
-           !lines.filter("<waypoint-table").isEmpty())) ||
+           (lines.at(1).startsWith("<flight-plan") &&
+            !lines.filter("<waypoint-table").isEmpty())) ||
           (lines.at(0).startsWith("<flight-plan") &&
            !lines.filter("<waypoint-table").isEmpty()))
     // <?xml version="1.0" encoding="utf-8"?>
@@ -359,14 +359,14 @@ void FlightplanIO::loadFlp(atools::fs::pln::Flightplan& plan, const QString& fil
             insertPropertyIf(plan, SIDAPPRRW, value.mid(plan.departureIdent.size()));
           else if(key == "sid")
             insertPropertyIf(plan, SIDAPPR, value);
-          else if(key == "sid_trans")
+          else if(key == "sid_trans" || key == "sidenrtrans") // TODO Might result in loading errors for SID transitions
           {
             if(value != "VECTORS")
               insertPropertyIf(plan, SIDTRANS, value);
           }
           else if(key == STAR)
             insertPropertyIf(plan, STAR, value);
-          else if(key == "star_trans")
+          else if(key == "star_trans" || key == "enrstartrans") // TODO Might result in loading errors for STAR transitions
           {
             if(value != "VECTORS")
               insertPropertyIf(plan, STARTRANS, value);
@@ -2211,10 +2211,20 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     else
       stream << "SID=" << endl;
 
-    if(!plan.properties.value(SIDTRANS).isEmpty())
-      stream << "SID_Trans=" << plan.properties.value(SIDTRANS) << endl;
+    if(crj)
+    {
+      if(!plan.properties.value(SIDTRANS).isEmpty())
+        stream << "SIDEnrTrans=" << plan.properties.value(SIDTRANS) << endl;
+      else
+        stream << "SIDEnrTrans=" << endl;
+    }
     else
-      stream << "SID_Trans=" << endl;
+    {
+      if(!plan.properties.value(SIDTRANS).isEmpty())
+        stream << "SID_Trans=" << plan.properties.value(SIDTRANS) << endl;
+      else
+        stream << "SID_Trans=" << endl;
+    }
 
     // Arrival STAR
     if(!plan.properties.value(STAR).isEmpty())
@@ -2222,10 +2232,20 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     else
       stream << "STAR=" << endl;
 
-    if(!plan.properties.value(STARTRANS).isEmpty())
-      stream << "STAR_Trans=" << plan.properties.value(STARTRANS) << endl;
+    if(crj)
+    {
+      if(!plan.properties.value(STARTRANS).isEmpty())
+        stream << "EnrSTARTrans=" << plan.properties.value(STARTRANS) << endl;
+      else
+        stream << "EnrSTARTrans=" << endl;
+    }
     else
-      stream << "STAR_Trans=" << endl;
+    {
+      if(!plan.properties.value(STARTRANS).isEmpty())
+        stream << "STAR_Trans=" << plan.properties.value(STARTRANS) << endl;
+      else
+        stream << "STAR_Trans=" << endl;
+    }
 
     // Arrival approach and transition
     if(!plan.properties.value(APPROACHRW).isEmpty())
