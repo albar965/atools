@@ -2150,8 +2150,8 @@ Nachtzeit: %5</translation>
         <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von &lt;i&gt;%1&lt;/i&gt; und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <source>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Kontakt and Support&lt;/a&gt;</translation>
+        <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt and Support&lt;/a&gt;</translation>
     </message>
 </context>
 <context>

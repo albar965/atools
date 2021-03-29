@@ -2591,7 +2591,7 @@ Tempo Noturno: %5</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="161"/>
-        <source>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

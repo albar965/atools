@@ -158,7 +158,7 @@ QString Application::getContactHtml()
 {
   QString contactStr(tr("<b>Contact:</b><br/>"));
 
-  contactStr.append(tr("<a href=\"https://albar965.github.io/contact.html\">"
+  contactStr.append(tr("<a href=\"https://www.littlenavmap.org/contact.html\">"
                          "Little Navmap - Contact and Support</a>"));
   return contactStr;
 }
