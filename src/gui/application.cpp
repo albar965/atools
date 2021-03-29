@@ -123,7 +123,7 @@ void Application::handleException(const char *file, int line, const std::excepti
                           arg(file).arg(line).
                           arg(e.what()).
                           arg(generalErrorMessage()).
-                          arg(getEmailHtml()).
+                          arg(getContactHtml()).
                           arg(getReportPathHtml()));
 
   std::abort();
@@ -143,7 +143,7 @@ void Application::handleException(const char *file, int line)
                              ).
                           arg(file).arg(line).
                           arg(generalErrorMessage()).
-                          arg(getEmailHtml()).
+                          arg(getContactHtml()).
                           arg(getReportPathHtml()));
 
   std::abort();
@@ -152,6 +152,15 @@ void Application::handleException(const char *file, int line)
 void Application::addReportPath(const QString& header, const QStringList& paths)
 {
   reportFiles.insert(header, paths);
+}
+
+QString Application::getContactHtml()
+{
+  QString contactStr(tr("<b>Contact:</b><br/>"));
+
+  contactStr.append(tr("<a href=\"https://albar965.github.io/contact.html\">"
+                         "Little Navmap - Contact and Support</a>"));
+  return contactStr;
 }
 
 QString Application::getEmailHtml()

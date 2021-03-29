@@ -48,7 +48,7 @@ void LoggingGuiAbortHandler::guiAbortFunction(const QString& msg)
                                      ).
                          arg(msg).
                          arg(atools::gui::Application::generalErrorMessage()).
-                         arg(atools::gui::Application::getEmailHtml()).
+                         arg(atools::gui::Application::getContactHtml()).
                          arg(atools::gui::Application::getReportPathHtml())
                          );
 

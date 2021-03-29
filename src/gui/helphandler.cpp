@@ -69,7 +69,7 @@ void HelpHandler::about()
                      arg(atools::version()).
                      arg(atools::gitRevision()).
                      arg(sslTxt).
-                     arg(atools::gui::Application::getEmailHtml()).
+                     arg(atools::gui::Application::getContactHtml()).
                      arg(atools::gui::Application::getReportPathHtml()));
 }
 

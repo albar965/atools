@@ -66,17 +66,17 @@
 <context>
     <name>ContentXml</name>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="78"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="79"/>
         <source>Base Airports</source>
         <translation>Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="83"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="85"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="105"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="108"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -208,13 +208,13 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2875"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2906"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2929"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2934"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2960"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2965"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -252,9 +252,9 @@ Ocorreu um erro no Sql
         <translation type="vanished">Posição inválida em GPX.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="972"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1304"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3820"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="983"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1315"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3851"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -264,12 +264,12 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3407"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3438"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="441"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="452"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>FMS arquivo inválido. Não é possível ler o número da versão: %1</translation>
     </message>
@@ -285,53 +285,53 @@ Ocorreu um erro no Sql
         <translation>Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML,MSFS XML, FS9 INI e FSC), X-Plane FMS, FLP e FlightGear FGFP.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="456"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="467"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>FMS arquivo inválido. Versão invalida %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="582"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="593"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>FMS arquivo inválido . Numero de seções %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="813"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="824"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>Arquivo de plano de voo inválido &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="843"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="854"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="846"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="857"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. Ordenadas fora de alcance: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="855"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="866"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation>Posição inválida no arquivo LNMPLN &quot;%1&quot;. As ordenadas não são números.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="894"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1145"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1156"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1488"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1499"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3261"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3292"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1028,17 +1028,17 @@ Ocorreu um erro no Sql
         <translation>Aeroportos Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1367"/>
+        <location filename="src/fs/navdatabase.cpp" line="1368"/>
         <source>Base Navigation</source>
         <translation>Navegação Base</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1446"/>
+        <location filename="src/fs/navdatabase.cpp" line="1448"/>
         <source>Community</source>
         <translation>Comunidade</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1758"/>
+        <location filename="src/fs/navdatabase.cpp" line="1760"/>
         <source>Counting files for %1 ...</source>
         <translation>Contando arquivos para %1 ...</translation>
     </message>
@@ -1974,7 +1974,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="371"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="390"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -1987,7 +1987,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="365"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="384"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -2000,12 +2000,12 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="129"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="140"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation>Não é possível abrir o arquivo de backup %1. Razão: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="368"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="387"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -2018,7 +2018,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="362"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="381"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2031,7 +2031,7 @@ Import stopped.</source>
 Importação interrompida.</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="359"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="378"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -2538,7 +2538,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="145"/>
+        <location filename="src/grib/gribdownloader.cpp" line="152"/>
         <source>Unknown error.</source>
         <translation>Erro desconhecido.</translation>
     </message>
@@ -2546,7 +2546,7 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="604"/>
+        <location filename="src/grib/windquery.cpp" line="607"/>
         <source>Unknown error.</source>
         <translation>Erro desconhecido.</translation>
     </message>
@@ -2554,12 +2554,12 @@ Tempo Noturno: %5</translation>
 <context>
     <name>atools::gui::Application</name>
     <message>
-        <location filename="src/gui/application.cpp" line="188"/>
+        <location filename="src/gui/application.cpp" line="197"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="184"/>
+        <location filename="src/gui/application.cpp" line="193"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
@@ -2574,6 +2574,7 @@ Tempo Noturno: %5</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="159"/>
+        <location filename="src/gui/application.cpp" line="168"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Contato:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
@@ -2589,7 +2590,12 @@ Tempo Noturno: %5</translation>
         <translation>&lt;b&gt;Encontrado uma exceção de arquivo &quot;%1&quot; linha %2.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%3&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;%4&lt;hr/&gt;%5&lt;hr/&gt;%6&lt;br/&gt;&lt;h3&gt;Press OK para sair do aplicativo.&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="191"/>
+        <location filename="src/gui/application.cpp" line="161"/>
+        <source>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="200"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>

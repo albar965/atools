@@ -73,6 +73,7 @@ public:
   static QString getReportPathHtml();
 
   static QString getEmailHtml();
+  static QString getContactHtml();
 
   static QStringList getEmailAddresses()
   {

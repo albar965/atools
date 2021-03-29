@@ -66,17 +66,17 @@
 <context>
     <name>ContentXml</name>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="78"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="79"/>
         <source>Base Airports</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="83"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="85"/>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/scenery/contentxml.cpp" line="105"/>
+        <location filename="src/fs/scenery/contentxml.cpp" line="108"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
@@ -224,43 +224,43 @@ File: &quot;%2&quot;
         <translation>无法打开空飞行计划文件 “%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="441"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="452"/>
         <source>Invalid FMS file. Cannot read version number: %1</source>
         <translation>无效的FMS文件。无法读取版本号：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="456"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="467"/>
         <source>Invalid FMS file. Invalid version %2: %1</source>
         <translation>无效的FMS文件。无效版本 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="582"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="593"/>
         <source>Invalid FMS file. Number of sections is not %2: %1</source>
         <translation>无效的FMS文件。章节数量不是 %2: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="813"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="824"/>
         <source>Invalid flight plan file &quot;%1&quot;.</source>
         <translation>无效的飞行计划文件 “%1”。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="843"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="854"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
         <translation type="unfinished">LNMPLN中的位置无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="846"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="857"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="855"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="866"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="883"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="894"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -273,40 +273,40 @@ File: &quot;%2&quot;
         <translation type="vanished">GPX中的位置无效。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="972"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1304"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3820"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="983"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1315"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3851"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1145"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1156"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1488"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1499"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开FlightGear文件 %1。原因是： %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2875"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2906"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2929"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2934"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2960"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2965"/>
         <source> Track</source>
         <translation> 航向</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3261"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3292"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 版本 %2 (修订 %3) 在 %4 创建的PMDG RTE </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3407"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3438"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误: 文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1224,17 +1224,17 @@ File: &quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1367"/>
+        <location filename="src/fs/navdatabase.cpp" line="1368"/>
         <source>Base Navigation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1446"/>
+        <location filename="src/fs/navdatabase.cpp" line="1448"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1758"/>
+        <location filename="src/fs/navdatabase.cpp" line="1760"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -1933,12 +1933,12 @@ File: &quot;%2&quot;
 <context>
     <name>UserdataManager</name>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="129"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="140"/>
         <source>Cannot open backup file %1. Reason: %2 (%3)</source>
         <translation>无法打开备份文件 %1。原因是： %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="359"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="378"/>
         <source>Longitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1950,7 +1950,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="362"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="381"/>
         <source>Latitude is not a valid number in line
 
 &quot;%1&quot;
@@ -1962,7 +1962,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="365"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="384"/>
         <source>Coordinates are not valid in line
 
 &quot;%1&quot;
@@ -1974,7 +1974,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="368"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="387"/>
         <source>Coordinates are null in line
 
 &quot;%1&quot;
@@ -1986,7 +1986,7 @@ Import stopped.</source>
 导入已停止。</translation>
     </message>
     <message>
-        <location filename="src/fs/userdata/datamanagerbase.cpp" line="371"/>
+        <location filename="src/fs/userdata/datamanagerbase.cpp" line="390"/>
         <source>Coordinates are not in a valid range in line
 
 &quot;%1&quot;
@@ -2481,7 +2481,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="145"/>
+        <location filename="src/grib/gribdownloader.cpp" line="152"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -2489,7 +2489,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="604"/>
+        <location filename="src/grib/windquery.cpp" line="607"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -2514,21 +2514,27 @@ Night time: %5</source>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="159"/>
+        <location filename="src/gui/application.cpp" line="168"/>
         <source>&lt;b&gt;Contact:&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;联系:&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="184"/>
+        <location filename="src/gui/application.cpp" line="161"/>
+        <source>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/application.cpp" line="193"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="188"/>
+        <location filename="src/gui/application.cpp" line="197"/>
         <source>&lt;a href=&quot;%1&quot;&gt;%2&lt;/a&gt;&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/application.cpp" line="191"/>
+        <location filename="src/gui/application.cpp" line="200"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>

@@ -281,23 +281,23 @@ Datei: &quot;%2&quot;
     </message>
     <message>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in LNMPLN-Datei &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in LNMPLN-Datei &quot;%1&quot;. Bereichsverletzung der Ordinaten: %1</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in LNMPLN-Datei &quot;%1&quot;. Ordinaten sind keine Nummer.</translation>
     </message>
     <message>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Position in GPX-Datei &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige LNMPLN-Flugplandatei &quot;%1&quot;. Keine Wegpunkte gefunden.</translation>
     </message>
 </context>
 <context>
@@ -2148,6 +2148,10 @@ Nachtzeit: %5</translation>
     <message>
         <source>&lt;b&gt;If the problem persists or occurs during startup delete all settings and database files of &lt;i&gt;%1&lt;/i&gt; and try again.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Wenn der Fehler weiterhin besteht oder während des Programmstarts auftritt, löschen Sie alle Einstellungen und Datenbankdateien von &lt;i&gt;%1&lt;/i&gt; und versuchen Sie es erneut.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Wenn Sie diesen Fehler melden wollen, hängen Sie die Log- und Konfigurationsdateien an Ihren Bericht an, fügen alle anderen verfügbaren Informationen hinzu und senden alles an eine der unten genannten Kontaktadressen.&lt;/b&gt;&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
+        <translation>&lt;a href=&quot;https://albar965.github.io/contact.html&quot;&gt;Little Navmap - Kontakt and Support&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
