@@ -106,7 +106,12 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
     bs->skip(4); // unknown, traffic scalar, unknown (FSX only)
 
   if(options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
-    bs->skip(12);
+  {
+    /*int numDepartures = TODO compare with number of departure subrecords*/ bs->readUByte();
+    bs->skip(1);
+    /*int numArrivals = TODO compare with number of arrival subrecords*/ bs->readUByte();
+    bs->skip(9); /* skip applyFlatten, and 4 16-bit counts */
+  }
   else if(!isCurrentRecordValid())
   {
     // FSX/FS9 structure recognition workaround
@@ -356,13 +361,17 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_AIRPORT_TAXIWAY_SIGN:
       case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
       case rec::MSFS_AIRPORT_JETWAY:
-
-      // Disabled SID and STAR
-      case rec::MSFS_SID:
-      case rec::MSFS_STAR:
-
         // qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
         // << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+        break;
+
+      case rec::MSFS_SID:
+      case rec::MSFS_STAR:
+        if(options->isIncludedNavDbObject(type::APPROACH))
+        {
+          r.seekToStart();
+          sidsAndStars.append(SidStar(options, bs));
+        }
         break;
 
       default:
@@ -783,6 +792,7 @@ QDebug operator<<(QDebug out, const Airport& record)
   out << record.aprons;
   out << record.aprons2;
   out << record.approaches;
+  out << record.sidsAndStars;
   out << record.parkings;
   out << record.deleteAirports;
   out << record.helipads;

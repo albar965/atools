@@ -348,6 +348,21 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
 
     case rec::TRANSITION_LEGS:
       return "TRANS_LEGS";
+
+    case rec::RUNWAY_TRANSITIONS_MSFS:
+      return "RUNWAY_TRANSITIONS_MSFS";
+
+    case rec::ENROUTE_TRANSITIONS_MSFS:
+      return "ENROUTE_TRANSITIONS_MSFS";
+
+    case rec::RUNWAY_TRANSITION_LEGS_MSFS:
+      return "RUNWAY_TRANSITION_LEGS_MSFS";
+
+    case rec::COMMON_ROUTE_LEGS_MSFS:
+      return "COMMON_ROUTE_LEGS_MSFS";
+
+    case rec::ENROUTE_TRANSITION_LEGS_MSFS:
+      return "ENROUTE_TRANSITION_LEGS_MSFS";
   }
   qWarning().nospace().noquote() << "Invalid approach record type " << type;
   return "INVALID";

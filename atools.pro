@@ -421,6 +421,7 @@ HEADERS += \
   src/fs/bgl/ap/rw/runwayapplights.h \
   src/fs/bgl/ap/rw/runwayend.h \
   src/fs/bgl/ap/rw/runwayvasi.h \
+  src/fs/bgl/ap/sidstar.h \
   src/fs/bgl/ap/start.h \
   src/fs/bgl/ap/taxipath.h \
   src/fs/bgl/ap/taxipoint.h \
@@ -559,6 +560,7 @@ SOURCES += \
   src/fs/bgl/ap/rw/runwayapplights.cpp \
   src/fs/bgl/ap/rw/runwayend.cpp \
   src/fs/bgl/ap/rw/runwayvasi.cpp \
+  src/fs/bgl/ap/sidstar.cpp \
   src/fs/bgl/ap/start.cpp \
   src/fs/bgl/ap/taxipath.cpp \
   src/fs/bgl/ap/taxipoint.cpp \
