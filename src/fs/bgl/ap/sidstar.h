@@ -39,12 +39,12 @@ public:
   SidStar(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~SidStar();
 
-  const QHash<QString, QList<atools::fs::bgl::ApproachLeg>>& getEnrouteTransitions() const
+  const QHash<QString, QList<atools::fs::bgl::ApproachLeg> >& getEnrouteTransitions() const
   {
     return enrouteTransitions;
   }
 
-  const QHash<QString, QList<atools::fs::bgl::ApproachLeg>>& getRunwayTransitionLegs() const
+  const QHash<QString, QList<atools::fs::bgl::ApproachLeg> >& getRunwayTransitionLegs() const
   {
     return runwayTransitionLegs;
   }
@@ -68,8 +68,8 @@ private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::SidStar& record);
 
   QList<atools::fs::bgl::ApproachLeg> commonRouteLegs;
-  QHash<QString, QList<atools::fs::bgl::ApproachLeg>> enrouteTransitions;
-  QHash<QString, QList<atools::fs::bgl::ApproachLeg>> runwayTransitionLegs;
+  QHash<QString, QList<atools::fs::bgl::ApproachLeg> > enrouteTransitions;
+  QHash<QString, QList<atools::fs::bgl::ApproachLeg> > runwayTransitionLegs;
 
   QString ident;
   char suffix = 0;

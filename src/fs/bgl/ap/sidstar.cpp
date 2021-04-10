@@ -93,7 +93,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * This will tell us the runway number and designator, as well as legs
            * leading to, or from said runway.
            */
-          (void) bs->readUByte(); /* transitionCt */
+          (void)bs->readUByte(); /* transitionCt */
           int runwayNumber = bs->readUByte();
           int runwayDesignator = bs->readUByte() & 0x7;
           /* Convert to a key */
@@ -118,7 +118,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * class does quite understand these though...
            * Either we fix that, or modify the database writer... yuck.
            */
-          (void) bs->readUByte(); /* transitionCt */
+          (void)bs->readUByte(); /* transitionCt */
           bs->skip(1); /* unknown byte, usually zero */
           /* Create a container for the transition legs */
           QList<ApproachLeg> legs;
@@ -129,12 +129,12 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
             legs.append(ApproachLeg(bs, false, true));
 
           /* Now to figure out the "key" for this transition... */
-          if (rec::MSFS_SID == id)
+          if(rec::MSFS_SID == id)
           {
             /* For SID, the transition ident is the LAST leg's fix. */
             enrouteTransitions.insert(legs.last().getFixIdent(), legs);
           }
-          else if (rec::MSFS_STAR == id)
+          else if(rec::MSFS_STAR == id)
           {
             /* For STAR, the transition ident is the FIRST leg's fix */
             enrouteTransitions.insert(legs.first().getFixIdent(), legs);
@@ -145,7 +145,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
       default:
         /* Shouldn't ever occur, so print error and move on? */
         qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
-        << dec << " " << approachRecordTypeStr(t) << " " << bs->tellg();
+                   << dec << " " << approachRecordTypeStr(t) << " " << bs->tellg();
 
     }
     r.seekToEnd();
