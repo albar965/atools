@@ -468,7 +468,10 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
       {
         QString ident = QFileInfo(filepath).baseName().toUpper();
         if(!CIFP_MATCH.match(ident).hasMatch())
-          throw atools::Exception("CIFP file has no valid name which should match airport ident.");
+        {
+          qWarning() << Q_FUNC_INFO << "CIFP file" << filepath << "has no valid name which should match airport ident";
+          return aborted;
+        }
 
         // Add additional information for procedure files
         context.cifpAirportIdent = QFileInfo(filepath).baseName().toUpper();
@@ -977,13 +980,13 @@ bool XpDataCompiler::includeFile(const NavDatabaseOptions& opts, const QFileInfo
   // Excluded in the GUI
   if(fileinfo.isDir())
   {
-    if(!opts.isIncludedDirectory(fileinfo.absoluteFilePath()))
+    if(!opts.isIncludedDirectoryGui(fileinfo.absoluteFilePath()))
       return false;
   }
   else if(fileinfo.isFile())
   {
     // Check if file is included from config file and GUI options
-    if(!opts.isIncludedDirectory(fileinfo.absolutePath()) || !opts.isIncludedFilePath(fileinfo.absoluteFilePath()))
+    if(!opts.isIncludedDirectoryGui(fileinfo.absolutePath()) || !opts.isIncludedFilePathGui(fileinfo.absoluteFilePath()))
       return false;
   }
 
