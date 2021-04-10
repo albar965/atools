@@ -54,6 +54,16 @@ public:
     return commonRouteLegs;
   }
 
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
+  char getSuffix() const
+  {
+    return suffix;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::SidStar& record);
 
@@ -62,6 +72,7 @@ private:
   QHash<QString, QList<atools::fs::bgl::ApproachLeg>> runwayTransitionLegs;
 
   QString ident;
+  char suffix = 0;
 };
 
 } /* namespace bgl */

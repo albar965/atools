@@ -98,6 +98,11 @@ public:
     return approaches;
   }
 
+  const QList<atools::fs::bgl::SidStar>& getSidsAndStars() const
+  {
+    return sidsAndStars;
+  }
+
   /*
    * @return all communication frequencies for this airport
    */

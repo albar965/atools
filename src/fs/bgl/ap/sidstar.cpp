@@ -36,7 +36,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
   /* select the suffix based on if it's SID or STAR. */
-  char suffix = (rec::MSFS_SID == id) ? 'D' : 'A';
+  suffix = (rec::MSFS_SID == id) ? 'D' : 'A';
   int subRecordCount = 0;
   bs->skip(2); /* skip 2 unknown bytes */
   int runwayTransitionCt = bs->readUByte(); /* runwayTransitionCt */
@@ -90,9 +90,9 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
       case rec::RUNWAY_TRANSITIONS_MSFS:
         {
           /*
-          * This will tell us the runway number and designator, as well as legs
-          * leading to, or from said runway.
-          */
+           * This will tell us the runway number and designator, as well as legs
+           * leading to, or from said runway.
+           */
           (void) bs->readUByte(); /* transitionCt */
           int runwayNumber = bs->readUByte();
           int runwayDesignator = bs->readUByte() & 0x7;
