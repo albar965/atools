@@ -20,6 +20,7 @@
 #include "fs/db/meta/sceneryareawriter.h"
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db/ap/approachwriter.h"
+#include "fs/db/ap/sidstarwriter.h"
 #include "fs/db/ap/startwriter.h"
 #include "fs/db/ap/helipadwriter.h"
 #include "fs/db/ap/parkingwriter.h"
@@ -55,6 +56,7 @@ using atools::fs::bgl::Runway;
 using atools::fs::bgl::Apron;
 using atools::fs::bgl::Apron2;
 using atools::fs::bgl::DeleteAirport;
+using atools::fs::bgl::SidStar;
 using atools::geo::meterToFeet;
 
 void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
@@ -104,6 +106,9 @@ void AirportWriter::writeObject(const Airport *type)
 
     ApproachWriter *appWriter = dw.getApproachWriter();
     appWriter->write(type->getApproaches());
+
+    SidStarWriter *sidStarWriter = dw.getSidStarWriter();
+    sidStarWriter->write(type->getSidsAndStars());
 
     updateMsfsAirport(type, predId);
 
@@ -305,6 +310,9 @@ void AirportWriter::writeObject(const Airport *type)
     ApproachWriter *appWriter = dw.getApproachWriter();
     appWriter->write(type->getApproaches());
 
+    SidStarWriter *sidStarWriter = dw.getSidStarWriter();
+    sidStarWriter->write(type->getSidsAndStars());
+
     // Helipads will take the start index + the current start id as reference to starts
     HelipadWriter *heliWriter = dw.getHelipadWriter();
     heliWriter->write(type->getHelipads());
@@ -361,6 +369,18 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   Airport::extractMainComFrequencies(type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency,
                                      atisFrequency);
 
+  int sidAndStarApproachCount = 0;
+  for(const SidStar& sidStar : type->getSidsAndStars())
+  {
+    // Use the number of runway transitions as the "approach" count.
+    // If it's 0, the procedure applies to all runways, and counts as 1.
+    int rwtCnt = sidStar.getRunwayTransitionLegs().size();
+    if(rwtCnt == 0)
+      sidAndStarApproachCount += 1;
+    else
+      sidAndStarApproachCount += rwtCnt;
+  }
+
   atools::sql::SqlQuery query(getDataWriter().getDatabase());
   query.prepare("update airport set tower_frequency = :tower_frequency, atis_frequency = :atis_frequency, "
                 "awos_frequency = :awos_frequency, asos_frequency = :asos_frequency, "
@@ -376,7 +396,7 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   query.bindValue(":asos_frequency", asosFrequency);
   query.bindValue(":unicom_frequency", unicomFrequency);
   query.bindValue(":num_com", type->getComs().size());
-  query.bindValue(":num_approach", type->getApproaches().size());
+  query.bindValue(":num_approach", type->getApproaches().size() + sidAndStarApproachCount);
 
   // query.bindValue(":lonx", type->getPosition().getLonX());
   // query.bindValue(":laty", type->getPosition().getLatY());

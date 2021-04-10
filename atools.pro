@@ -475,6 +475,10 @@ HEADERS += \
   src/fs/db/ap/parkingwriter.h \
   src/fs/db/ap/rw/runwayendwriter.h \
   src/fs/db/ap/rw/runwaywriter.h \
+  src/fs/db/ap/sidstarapproachlegwriter.h \
+  src/fs/db/ap/sidstartransitionlegwriter.h \
+  src/fs/db/ap/sidstartransitionwriter.h \
+  src/fs/db/ap/sidstarwriter.h \
   src/fs/db/ap/startwriter.h \
   src/fs/db/ap/taxipathwriter.h \
   src/fs/db/ap/transitionlegwriter.h \
@@ -614,6 +618,10 @@ SOURCES += \
   src/fs/db/ap/parkingwriter.cpp \
   src/fs/db/ap/rw/runwayendwriter.cpp \
   src/fs/db/ap/rw/runwaywriter.cpp \
+  src/fs/db/ap/sidstarapproachlegwriter.cpp \
+  src/fs/db/ap/sidstartransitionlegwriter.cpp \
+  src/fs/db/ap/sidstartransitionwriter.cpp \
+  src/fs/db/ap/sidstarwriter.cpp \
   src/fs/db/ap/startwriter.cpp \
   src/fs/db/ap/taxipathwriter.cpp \
   src/fs/db/ap/transitionlegwriter.cpp \

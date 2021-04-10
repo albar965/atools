@@ -42,6 +42,10 @@
 #include "fs/db/ap/transitionlegwriter.h"
 #include "fs/db/ap/comwriter.h"
 #include "fs/db/ap/transitionwriter.h"
+#include "fs/db/ap/sidstarwriter.h"
+#include "fs/db/ap/sidstarapproachlegwriter.h"
+#include "fs/db/ap/sidstartransitionwriter.h"
+#include "fs/db/ap/sidstartransitionlegwriter.h"
 #include "fs/db/ap/parkingwriter.h"
 #include "fs/db/ap/startwriter.h"
 #include "fs/db/ap/helipadwriter.h"
@@ -89,6 +93,10 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   approachLegWriter = new ApproachLegWriter(db, *this);
   approachTransWriter = new TransitionWriter(db, *this);
   approachTransLegWriter = new TransitionLegWriter(db, *this);
+  sidStarWriter = new SidStarWriter(db, *this);
+  sidStarApproachLegWriter = new SidStarApproachLegWriter(db, *this);
+  sidStarTransWriter = new SidStarTransitionWriter(db, *this);
+  sidStarTransLegWriter = new SidStarTransitionLegWriter(db, *this);
   parkingWriter = new ParkingWriter(db, *this);
   airportHelipadWriter = new HelipadWriter(db, *this);
   airportStartWriter = new StartWriter(db, *this);
@@ -138,6 +146,14 @@ void DataWriter::close()
   approachTransWriter = nullptr;
   delete approachTransLegWriter;
   approachTransLegWriter = nullptr;
+  delete sidStarWriter;
+  sidStarWriter = nullptr;
+  delete sidStarApproachLegWriter;
+  sidStarApproachLegWriter = nullptr;
+  delete sidStarTransWriter;
+  sidStarTransWriter = nullptr;
+  delete sidStarTransLegWriter;
+  sidStarTransLegWriter = nullptr;
   delete parkingWriter;
   parkingWriter = nullptr;
   delete airportHelipadWriter;

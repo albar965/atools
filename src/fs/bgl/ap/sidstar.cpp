@@ -37,11 +37,10 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
 {
   /* select the suffix based on if it's SID or STAR. */
   suffix = (rec::MSFS_SID == id) ? 'D' : 'A';
-  int subRecordCount = 0;
   bs->skip(2); /* skip 2 unknown bytes */
-  int runwayTransitionCt = bs->readUByte(); /* runwayTransitionCt */
-  int commonRouteLegCt = bs->readUByte(); /* commonRouteLegCt */
-  int enrouteTransitionCt = bs->readUByte(); /* enrouteTransitionCt */
+  (void)bs->readUByte(); /* runwayTransitionCt */
+  (void)bs->readUByte(); /* commonRouteLegCt */
+  (void)bs->readUByte(); /* enrouteTransitionCt */
   bs->skip(1); /* skip one more unknown byte */
   ident = bs->readString(8, atools::io::Encoding::UTF8);
 
