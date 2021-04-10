@@ -93,7 +93,7 @@ public:
   void fullscreenStateToWindow();
 
   /* Show, activate and raise a dock widget */
-  static void activateWindow(QDockWidget *dockWidget);
+  void activateWindow(QDockWidget *dockWidget);
 
   /* true if enabled and state is saved */
   bool isHandleDockViews() const

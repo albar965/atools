@@ -438,7 +438,8 @@ void DockWidgetHandler::dockViewToggled()
 
 void DockWidgetHandler::activateWindow(QDockWidget *dockWidget)
 {
-  qDebug() << Q_FUNC_INFO;
+  if(verbose)
+    qDebug() << Q_FUNC_INFO;
   dockWidget->show();
   dockWidget->activateWindow();
   dockWidget->raise();
