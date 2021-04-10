@@ -2151,7 +2151,7 @@ Nachtzeit: %5</translation>
     </message>
     <message>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt and Support&lt;/a&gt;</translation>
+        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Kontakt und Support&lt;/a&gt;</translation>
     </message>
 </context>
 <context>
