@@ -35,7 +35,7 @@ const QLatin1String DESTNAME("DESTNAME"); // Destination airport name
 const QLatin1String CRUISEALT("CRUISEALT"); // Cruise altitude
 
 /* Default patterns */
-const QString SHORT(DEPARTIDENT + " " + DEPARTNAME);
+const QString SHORT(DEPARTIDENT + " " + DESTIDENT);
 const QString LONG(PLANTYPE + " " + DEPARTNAME + " (" + DEPARTIDENT + ") to " + DESTNAME + " (" + DESTIDENT + ")");
 }
 
