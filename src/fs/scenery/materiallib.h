@@ -23,6 +23,9 @@
 
 namespace atools {
 namespace fs {
+
+class NavDatabaseOptions;
+
 namespace scenery {
 
 /*
@@ -31,6 +34,8 @@ namespace scenery {
 class MaterialLib
 {
 public:
+  MaterialLib(const atools::fs::NavDatabaseOptions *opts);
+
   /* Read a material library from a community package by looking into the layout.json file
    *  @param basePath Path containing the layout file. */
   void readCommunity(const QString& basePath);
@@ -58,6 +63,7 @@ public:
 
 private:
   QHash<QUuid, QString> surfaceMap;
+  const atools::fs::NavDatabaseOptions *options = nullptr;
 };
 
 } // namespace scenery

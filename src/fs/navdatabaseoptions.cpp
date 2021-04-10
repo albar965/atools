@@ -49,12 +49,12 @@ void NavDatabaseOptions::setLanguage(const QString& value)
   language = language.section('-', 0, 0) + "-" + language.section('-', 1, 1).toUpper();
 }
 
-void NavDatabaseOptions::addToDirectoryExcludes(const QStringList& filter)
+void NavDatabaseOptions::addToDirectoryExcludesGui(const QStringList& filter)
 {
   addToFilter(createFilterList(filter), dirExcludesGui);
 }
 
-void NavDatabaseOptions::addToFilePathExcludes(const QStringList& filter)
+void NavDatabaseOptions::addToFilePathExcludesGui(const QStringList& filter)
 {
   addToFilter(fromNativeSeparators(filter), filePathExcludesGui);
 }
@@ -74,12 +74,12 @@ bool NavDatabaseOptions::isAddonLocalPath(const QString& filepath) const
   return includeObject(adaptPath(filepath), addonFiltersInc, addonFiltersExcl);
 }
 
-bool NavDatabaseOptions::isIncludedDirectory(const QString& dirpath) const
+bool NavDatabaseOptions::isIncludedDirectoryGui(const QString& dirpath) const
 {
   return includeObject(adaptPath(dirpath), QList<QRegExp>(), dirExcludesGui);
 }
 
-bool NavDatabaseOptions::isIncludedFilePath(const QString& filepath) const
+bool NavDatabaseOptions::isIncludedFilePathGui(const QString& filepath) const
 {
   return includeObject(fromNativeSeparator(filepath), QList<QRegExp>(), filePathExcludesGui);
 }

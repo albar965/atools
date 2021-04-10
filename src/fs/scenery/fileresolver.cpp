@@ -105,7 +105,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
         if(scenery.isDir())
         {
           // Check if directory is included
-          if(options.isIncludedDirectory(scenery.absoluteFilePath()))
+          if(options.isIncludedDirectoryGui(scenery.absoluteFilePath()))
           {
             QFileInfoList bglFiles;
 
@@ -136,7 +136,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
                 QString filepath = bglFile.filePath();
 
                 // Check if file is included from config file and GUI options
-                if(options.isIncludedFilename(filename) && options.isIncludedFilePath(filepath))
+                if(options.isIncludedFilename(filename) && options.isIncludedFilePathGui(filepath))
                 {
                   // Skip maintenance BGL from Navigraph udpate in MSFS
                   if(options.getSimulatorType() == atools::fs::FsPaths::MSFS &&

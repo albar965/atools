@@ -235,13 +235,16 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
         return createRecord<Vor>(bs, &vors);
 
       break;
+
     case nav::ILS:
       if(options->isIncludedNavDbObject(type::ILS))
         return createRecord<Ils>(bs, &ils);
 
       break;
+
     default:
-      qWarning() << "Unknown ILS/VOR type" << iv.getType();
+      if(options->getSimulatorType() != atools::fs::FsPaths::MSFS)
+        qWarning() << "Unknown ILS/VOR type" << iv.getType();
   }
   return nullptr;
 }

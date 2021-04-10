@@ -657,7 +657,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
     fsDataWriter->setLanguageIndex(languageIndex.data());
 
     // Load the two official material libraries ================================
-    materialLib.reset(new scenery::MaterialLib);
+    materialLib.reset(new scenery::MaterialLib(options));
     materialLib->readOfficial(packageBase);
     fsDataWriter->setMaterialLib(materialLib.data());
 
@@ -1096,7 +1096,7 @@ bool NavDatabase::loadMsfs(ProgressHandler *progress, db::DataWriter *fsDataWrit
 bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWriter *fsDataWriter,
                                           const QList<atools::fs::scenery::SceneryArea>& areas)
 {
-  scenery::MaterialLib materialLib;
+  scenery::MaterialLib materialLib(options);
   for(const atools::fs::scenery::SceneryArea& area : areas)
   {
     if((area.isActive() || options->isReadInactive()) && options->isIncludedLocalPath(area.getLocalPath()))

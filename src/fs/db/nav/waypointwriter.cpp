@@ -36,8 +36,9 @@ void WaypointWriter::writeObject(const Waypoint *type)
 
   if(type->getIdent().isEmpty())
   {
-    qWarning() << Q_FUNC_INFO << "Found waypoint with empty ident in file"
-               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    if(getOptions().getSimulatorType() != atools::fs::FsPaths::MSFS)
+      qWarning() << Q_FUNC_INFO << "Found waypoint with empty ident in file"
+                 << getDataWriter().getBglFileWriter()->getCurrentFilepath();
     return;
   }
 

@@ -19,6 +19,8 @@
 
 #include "util/xmlstream.h"
 #include "fs/scenery/layoutjson.h"
+#include "fs/navdatabaseoptions.h"
+#include "atools.h"
 
 #include <QDir>
 #include <QFile>
@@ -29,6 +31,12 @@
 namespace atools {
 namespace fs {
 namespace scenery {
+
+MaterialLib::MaterialLib(const NavDatabaseOptions *opts)
+  : options(opts)
+{
+
+}
 
 void MaterialLib::readCommunity(const QString& basePath)
 {
@@ -68,32 +76,47 @@ void MaterialLib::readOfficial(const QString& basePath)
  */
 void MaterialLib::read(const QString& filename)
 {
-  QFile xmlFile(filename);
-  if(xmlFile.open(QIODevice::ReadOnly))
+  if(filename.contains("aircraft_test"))
+    qDebug() << Q_FUNC_INFO;
+
+  if(options->isIncludedDirectoryGui(QFileInfo(filename).absolutePath()) &&
+     options->isIncludedFilePathGui(QFileInfo(filename).absoluteFilePath()))
   {
-    atools::util::XmlStream xmlStream(&xmlFile, filename);
-    QXmlStreamReader& reader = xmlStream.getReader();
+    QStringList probe = atools::probeFile(filename, 10);
 
-    xmlStream.readUntilElement("Library");
-
-    while(xmlStream.readNextStartElement())
+    if(!probe.filter("<Library", Qt::CaseInsensitive).isEmpty() &&
+       !probe.filter("<Material", Qt::CaseInsensitive).isEmpty())
     {
-      if(reader.name() == "Material")
+      QFile xmlFile(filename);
+      if(xmlFile.open(QIODevice::ReadOnly))
       {
-        QString surface = reader.attributes().value("SurfaceType").toString();
-        if(surface != "UNDEFINED")
-          surfaceMap.insert(reader.attributes().value("Guid").toString(), surface);
+        atools::util::XmlStream xmlStream(&xmlFile, filename);
+        QXmlStreamReader& reader = xmlStream.getReader();
 
-        // Read only attributes
-        xmlStream.skipCurrentElement();
+        xmlStream.readUntilElement("Library");
+
+        while(xmlStream.readNextStartElement())
+        {
+          if(reader.name() == "Material")
+          {
+            QString surface = reader.attributes().value("SurfaceType").toString();
+            if(surface != "UNDEFINED")
+              surfaceMap.insert(reader.attributes().value("Guid").toString(), surface);
+
+            // Read only attributes
+            xmlStream.skipCurrentElement();
+          }
+          else
+            xmlStream.skipCurrentElement(true /* warn */);
+        }
+        xmlFile.close();
       }
       else
-        xmlStream.skipCurrentElement(true /* warn */);
+        qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << xmlFile.errorString();
     }
-    xmlFile.close();
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << "Not a material library file";
   }
-  else
-    qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << xmlFile.errorString();
 }
 
 } // namespace scenery

@@ -70,11 +70,20 @@ void ManifestJson::read(const QString& filename)
 
 bool ManifestJson::isScenery() const
 {
-  // return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0 ||
-  // contentType.compare("CORE", Qt::CaseInsensitive) == 0;
+  // "content_type": "AIRCRAFT"
+  // "content_type": "CORE"
+  // "content_type": "INSTRUMENTS"
+  // "content_type": "LIVERY"
+  // "content_type": "MISC"
+  // "content_type": "MISSION"
+  // "content_type": "SCENERY"
 
   // Cannot discriminate by values since add-on developers use often wrong types
-  return true;
+  // Instead exclude obvious known types
+  return contentType.compare("AIRCRAFT", Qt::CaseInsensitive) != 0 &&
+         contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
+         contentType.compare("LIVERY", Qt::CaseInsensitive) != 0 &&
+         contentType.compare("MISSION", Qt::CaseInsensitive) != 0;
 }
 
 } // namespace scenery

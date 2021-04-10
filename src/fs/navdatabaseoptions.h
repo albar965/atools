@@ -288,8 +288,8 @@ public:
   void setProgressCallback(ProgressCallbackType func);
 
   /* Exclude absolute directories and file paths. Used by the GUI options dialog. */
-  void addToDirectoryExcludes(const QStringList& filter);
-  void addToFilePathExcludes(const QStringList& filter);
+  void addToDirectoryExcludesGui(const QStringList& filter);
+  void addToFilePathExcludesGui(const QStringList& filter);
 
   /* Exclude absolute directories from add-on recognition. Used by the GUI options dialog. */
   void addToAddonDirectoryExcludes(const QStringList& filter);
@@ -415,9 +415,9 @@ public:
   bool isIncludedLocalPath(const QString& filepath) const;
   bool isIncludedAirportIdent(const QString& icao) const;
 
-  /* Options that are not saved with the object */
-  bool isIncludedDirectory(const QString& dirpath) const;
-  bool isIncludedFilePath(const QString& filepath) const;
+  /* Options that are not saved with the object and are set via GUI */
+  bool isIncludedDirectoryGui(const QString& dirpath) const;
+  bool isIncludedFilePathGui(const QString& filepath) const;
 
   /* If true scenery will be added to end of list */
   bool isHighPriority(const QString& filepath) const;
