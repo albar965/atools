@@ -30,6 +30,7 @@
 #include "fs/bgl/ap/helipad.h"
 #include "fs/bgl/ap/start.h"
 #include "fs/bgl/ap/taxipath.h"
+#include "fs/bgl/ap/sidstar.h"
 #include "geo/rect.h"
 #include "fs/bgl/bglfile.h"
 
@@ -95,6 +96,11 @@ public:
   const QList<atools::fs::bgl::Approach>& getApproaches() const
   {
     return approaches;
+  }
+
+  const QList<atools::fs::bgl::SidStar>& getSidsAndStars() const
+  {
+    return sidsAndStars;
   }
 
   /*
@@ -405,6 +411,7 @@ private:
   QList<atools::fs::bgl::Helipad> helipads;
   QList<atools::fs::bgl::Start> starts;
   QList<atools::fs::bgl::Approach> approaches;
+  QList<atools::fs::bgl::SidStar> sidsAndStars;
   QList<atools::fs::bgl::Waypoint> waypoints;
   QList<atools::fs::bgl::DeleteAirport> deleteAirports;
   QList<atools::fs::bgl::Apron> aprons;

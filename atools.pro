@@ -421,6 +421,7 @@ HEADERS += \
   src/fs/bgl/ap/rw/runwayapplights.h \
   src/fs/bgl/ap/rw/runwayend.h \
   src/fs/bgl/ap/rw/runwayvasi.h \
+  src/fs/bgl/ap/sidstar.h \
   src/fs/bgl/ap/start.h \
   src/fs/bgl/ap/taxipath.h \
   src/fs/bgl/ap/taxipoint.h \
@@ -474,6 +475,10 @@ HEADERS += \
   src/fs/db/ap/parkingwriter.h \
   src/fs/db/ap/rw/runwayendwriter.h \
   src/fs/db/ap/rw/runwaywriter.h \
+  src/fs/db/ap/sidstarapproachlegwriter.h \
+  src/fs/db/ap/sidstartransitionlegwriter.h \
+  src/fs/db/ap/sidstartransitionwriter.h \
+  src/fs/db/ap/sidstarwriter.h \
   src/fs/db/ap/startwriter.h \
   src/fs/db/ap/taxipathwriter.h \
   src/fs/db/ap/transitionlegwriter.h \
@@ -559,6 +564,7 @@ SOURCES += \
   src/fs/bgl/ap/rw/runwayapplights.cpp \
   src/fs/bgl/ap/rw/runwayend.cpp \
   src/fs/bgl/ap/rw/runwayvasi.cpp \
+  src/fs/bgl/ap/sidstar.cpp \
   src/fs/bgl/ap/start.cpp \
   src/fs/bgl/ap/taxipath.cpp \
   src/fs/bgl/ap/taxipoint.cpp \
@@ -612,6 +618,10 @@ SOURCES += \
   src/fs/db/ap/parkingwriter.cpp \
   src/fs/db/ap/rw/runwayendwriter.cpp \
   src/fs/db/ap/rw/runwaywriter.cpp \
+  src/fs/db/ap/sidstarapproachlegwriter.cpp \
+  src/fs/db/ap/sidstartransitionlegwriter.cpp \
+  src/fs/db/ap/sidstartransitionwriter.cpp \
+  src/fs/db/ap/sidstarwriter.cpp \
   src/fs/db/ap/startwriter.cpp \
   src/fs/db/ap/taxipathwriter.cpp \
   src/fs/db/ap/transitionlegwriter.cpp \

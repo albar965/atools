@@ -57,6 +57,10 @@ class ApproachWriter;
 class ApproachLegWriter;
 class TransitionWriter;
 class TransitionLegWriter;
+class SidStarWriter;
+class SidStarApproachLegWriter;
+class SidStarTransitionWriter;
+class SidStarTransitionLegWriter;
 class ParkingWriter;
 class ComWriter;
 class WaypointWriter;
@@ -185,6 +189,26 @@ public:
     return approachWriter;
   }
 
+  atools::fs::db::SidStarTransitionLegWriter *getSidStarTransLegWriter()
+  {
+    return sidStarTransLegWriter;
+  }
+
+  atools::fs::db::SidStarTransitionWriter *getSidStarTransWriter()
+  {
+    return sidStarTransWriter;
+  }
+
+  atools::fs::db::SidStarApproachLegWriter *getSidStarApproachLegWriter()
+  {
+    return sidStarApproachLegWriter;
+  }
+
+  atools::fs::db::SidStarWriter *getSidStarWriter()
+  {
+    return sidStarWriter;
+  }
+
   atools::fs::db::ParkingWriter *getParkingWriter()
   {
     return parkingWriter;
@@ -295,6 +319,11 @@ private:
   atools::fs::db::ApproachLegWriter *approachLegWriter = nullptr;
   atools::fs::db::TransitionWriter *approachTransWriter = nullptr;
   atools::fs::db::TransitionLegWriter *approachTransLegWriter = nullptr;
+
+  atools::fs::db::SidStarWriter *sidStarWriter = nullptr;
+  atools::fs::db::SidStarApproachLegWriter *sidStarApproachLegWriter = nullptr;
+  atools::fs::db::SidStarTransitionWriter *sidStarTransWriter = nullptr;
+  atools::fs::db::SidStarTransitionLegWriter *sidStarTransLegWriter = nullptr;
 
   atools::fs::db::ParkingWriter *parkingWriter = nullptr;
   atools::fs::db::ComWriter *airportComWriter = nullptr;
