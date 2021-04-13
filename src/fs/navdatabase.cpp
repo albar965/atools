@@ -92,6 +92,8 @@ void NavDatabase::create(const QString& codec)
   if(aborted)
     // Remove all (partial) changes
     db->rollback();
+  else
+    createDatabaseReportShort();
 }
 
 void NavDatabase::createAirspaceSchema()
@@ -1260,6 +1262,13 @@ void NavDatabase::dropAllIndexes()
   for(const QString& stmt : stmts)
     db->exec(stmt);
   db->commit();
+}
+
+void NavDatabase::createDatabaseReportShort()
+{
+  atools::sql::SqlUtil util(db);
+  QDebug info(qInfo());
+  util.printTableStats(info, QStringList(), false /* brief */);
 }
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)

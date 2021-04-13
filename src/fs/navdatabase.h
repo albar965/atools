@@ -159,6 +159,10 @@ private:
 
   /* Reporting to log file and/or console */
   bool createDatabaseReport(ProgressHandler *progress);
+
+  /* Print row counts to log file */
+  void createDatabaseReportShort();
+
   bool basicValidation(ProgressHandler *progress);
   void basicValidateTable(const QString& table, int minCount);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
