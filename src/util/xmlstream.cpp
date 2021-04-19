@@ -35,7 +35,6 @@ XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
   if(codec != nullptr)
   {
     // Load the file into a text file to avoid BOM / xml encoding mismatches
-    qDebug() << "Encoding" << codec->name();
     QTextStream stream(device);
     stream.setCodec(codec);
     QString str = stream.readAll();
@@ -46,7 +45,6 @@ XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
   else
   {
     // Let the stream reader detect the encoding in the PI
-    qDebug() << "No UTF Encoding found";
     reader = new QXmlStreamReader(device);
   }
 }

@@ -274,6 +274,16 @@ public:
   /* Set altitude in all positions */
   void assignAltitudeToAllEntries();
 
+  /* Removes all redundant airway waypoints and returns a copy of this.
+   * Only to be used for export since the plan is not consistent afterwards.
+   * Converts wp1 -> AW1 -> wp2 -> AW1 -> wp3 -> AW1 -> wp4 to wp1 -> AW1 -> wp4 */
+  atools::fs::pln::Flightplan compressedAirways() const;
+
+  /* Creates a simple waypoint/airway string from the flight plan.
+   * Example: EDDF NOKDI [Y163] NATOR [N850] TITIX KEMMI DORAV IXITO [L50] ELB [M729] MEDAL [Q160] OST LIRF
+   * To be used for testing and logging */
+  QString toShortString() const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 

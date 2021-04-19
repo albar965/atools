@@ -106,6 +106,9 @@ public:
   /* Aerosoft CRJ FLP format */
   void saveCrjFlp(const atools::fs::pln::Flightplan& plan, const QString& filename);
 
+  /* Aerosoft CRJ for MSFS FLP format */
+  void saveMsfsCrjFlp(const atools::fs::pln::Flightplan& plan, const QString& filename);
+
   /* X-Plane FMS format.
    * @param version11Format Version 11 otherwise 3 */
   void saveFms3(const atools::fs::pln::Flightplan& plan, const QString& file);
@@ -179,7 +182,7 @@ private:
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer, const geo::LineString& track,
                        const QVector<quint32>& timestamps, int cruiseAltFt);
-  void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj);
+  void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, atools::geo::LineString *track,
                        util::XmlStream& xmlStream);
@@ -243,6 +246,8 @@ private:
   void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);
 
   QString msfsApproachType(const QString& type);
+  void saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::Flightplan& plan, const QString& prefix,
+                       const QString& key, const QString& property);
 
   QString errorMsg;
 

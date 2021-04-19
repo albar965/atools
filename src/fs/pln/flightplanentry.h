@@ -291,6 +291,12 @@ public:
     airport = value;
   }
 
+  /* true if entry is valid and not default constructed */
+  bool isValid() const
+  {
+    return position.isValid();
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 

@@ -549,6 +549,10 @@ QString checkFileMsg(const QFileInfo& file, int maxLength = 80);
 bool checkFile(const QFileInfo& file, bool warn = true);
 bool checkDir(const QFileInfo& dir, bool warn = true);
 
+/* Calculates a simple reproducible hash for all lines in the text file ignoring line endings.
+ * Uses always the same seed and ignores empty lines. To be used for testing. */
+uint textFileHash(const QString& filename, const QString& codec = "UTF-8");
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H

@@ -165,6 +165,43 @@ void Flightplan::assignAltitudeToAllEntries()
                           entry.getPosition().getLatY(), cruisingAlt));
 }
 
+atools::fs::pln::Flightplan Flightplan::compressedAirways() const
+{
+  atools::fs::pln::Flightplan plan(*this);
+
+  if(!isEmpty())
+  {
+    plan.getEntries().clear();
+
+    for(int i = 0; i < entries.size() - 1; i++)
+    {
+      const FlightplanEntry& entry = entries.at(i);
+
+      if(!entry.getAirway().isEmpty() && entry.getAirway() == entries.at(i + 1).getAirway())
+        // Skip if the next airway is the same
+        continue;
+
+      plan.getEntries().append(entry);
+    }
+
+    // Add destination
+    plan.getEntries().append(entries.last());
+  }
+  return plan;
+}
+
+QString Flightplan::toShortString() const
+{
+  QStringList str;
+  for(const FlightplanEntry& entry : entries)
+  {
+    if(!entry.getAirway().isEmpty())
+      str.append(QString("[%1]").arg(entry.getAirway()));
+    str.append(entry.getIdent());
+  }
+  return str.join(' ');
+}
+
 const atools::fs::pln::FlightplanEntry& Flightplan::destinationAirport() const
 {
   static const FlightplanEntry EMPTY;

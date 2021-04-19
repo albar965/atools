@@ -1092,4 +1092,29 @@ QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay)
   return datetime;
 }
 
+uint textFileHash(const QString& filename, const QString& codec)
+{
+  QFile file(filename);
+  QByteArray latin1 = codec.toLatin1();
+  uint hash = 0;
+
+  if(file.open(QIODevice::ReadOnly))
+  {
+    QTextStream stream(&file);
+    stream.setCodec(latin1.constData());
+    stream.setAutoDetectUnicode(true);
+
+    while(!stream.atEnd())
+    {
+      QString line = stream.readLine().trimmed();
+      if(!line.isEmpty())
+        hash ^= qHash(line, 97);
+    }
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Error reading" << filename << file.errorString();
+
+  return hash;
+}
+
 } // namespace atools

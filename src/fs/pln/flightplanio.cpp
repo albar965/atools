@@ -2087,12 +2087,17 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
 
 void FlightplanIO::saveCrjFlp(const atools::fs::pln::Flightplan& plan, const QString& filename)
 {
-  saveFlpInternal(plan, filename, true /* CRJ */);
+  saveFlpInternal(plan, filename, true /* CRJ */, false /* MSFS */);
+}
+
+void FlightplanIO::saveMsfsCrjFlp(const atools::fs::pln::Flightplan& plan, const QString& filename)
+{
+  saveFlpInternal(plan, filename, true /* CRJ */, true /* MSFS */);
 }
 
 void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QString& filename)
 {
-  saveFlpInternal(plan, filename, false /* CRJ */);
+  saveFlpInternal(plan, filename, false /* CRJ */, false /* MSFS */);
 }
 
 // =========================================================================
@@ -2186,91 +2191,69 @@ void FlightplanIO::saveFlp(const atools::fs::pln::Flightplan& plan, const QStrin
 // [VNAVData]
 // TransAlt=18000
 // TransLvl=18000
-void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj)
+
+void FlightplanIO::saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::Flightplan& plan, const QString& prefix,
+                                   const QString& key,
+                                   const QString& property)
+{
+  stream << key << "=";
+
+  if(!plan.properties.value(property).isEmpty())
+  {
+    if(!prefix.isEmpty())
+      stream << prefix;
+    stream << plan.properties.value(property);
+  }
+  stream << endl;
+}
+
+void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj,
+                                   bool msfs)
 {
   QFile flpFile(filename);
+  bool alternateFmt = crj | msfs;
 
   if(flpFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QTextStream stream(&flpFile);
     stream.setCodec("UTF-8");
 
+    Flightplan pln(plan);
+    pln = pln.compressedAirways();
+
     // CoRte ==============================================
     stream << "[CoRte]" << endl;
-    stream << "ArptDep=" << plan.departureIdent << endl;
-    stream << "ArptArr=" << plan.destinationIdent << endl;
+    stream << "ArptDep=" << pln.departureIdent << endl;
+    saveFlpKeyValue(stream, pln, pln.departureIdent, "RwyDep", SIDAPPRRW);
 
-    // Departure - SID
-    if(!plan.properties.value(SIDAPPRRW).isEmpty())
-      stream << "RwyDep=" << plan.departureIdent << plan.properties.value(SIDAPPRRW) << endl;
-    else
-      stream << "RwyDep=" << endl;
+    stream << "ArptArr=" << pln.destinationIdent << endl;
+    saveFlpKeyValue(stream, pln, pln.destinationIdent, "RwyArr", APPROACHRW);
 
-    if(!plan.properties.value(SIDAPPR).isEmpty())
-      stream << "SID=" << plan.properties.value(SIDAPPR) << endl;
-    else
-      stream << "SID=" << endl;
-
-    if(crj)
+    if(alternateFmt)
     {
-      if(!plan.properties.value(SIDTRANS).isEmpty())
-        stream << "SIDEnrTrans=" << plan.properties.value(SIDTRANS) << endl;
-      else
-        stream << "SIDEnrTrans=" << endl;
-    }
-    else
-    {
-      if(!plan.properties.value(SIDTRANS).isEmpty())
-        stream << "SID_Trans=" << plan.properties.value(SIDTRANS) << endl;
-      else
-        stream << "SID_Trans=" << endl;
+      stream << "ArptAltn=";
+
+      QString alternate = pln.properties.value(ALTERNATES).split('#').value(0);
+      if(!alternate.isEmpty())
+        stream << alternate;
+      stream << endl;
     }
 
-    // Arrival STAR
-    if(!plan.properties.value(STAR).isEmpty())
-      stream << "STAR=" << plan.properties.value(STAR) << endl;
-    else
-      stream << "STAR=" << endl;
+    // Departure - SID ============================================
+    saveFlpKeyValue(stream, pln, QString(), "SID", SIDAPPR);
+    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "SIDEnrTrans" : "SID_Trans", SIDTRANS);
 
-    if(crj)
-    {
-      if(!plan.properties.value(STARTRANS).isEmpty())
-        stream << "EnrSTARTrans=" << plan.properties.value(STARTRANS) << endl;
-      else
-        stream << "EnrSTARTrans=" << endl;
-    }
-    else
-    {
-      if(!plan.properties.value(STARTRANS).isEmpty())
-        stream << "STAR_Trans=" << plan.properties.value(STARTRANS) << endl;
-      else
-        stream << "STAR_Trans=" << endl;
-    }
+    // Arrival STAR ============================================
+    saveFlpKeyValue(stream, pln, QString(), "STAR", STAR);
+    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "EnrSTARTrans" : "STAR_Trans", STARTRANS);
+    if(alternateFmt)
+      stream << "STARApprTrans=" << endl;
 
-    // Arrival approach and transition
-    if(!plan.properties.value(APPROACHRW).isEmpty())
-      stream << "RwyArr=" << plan.destinationIdent << plan.properties.value(APPROACHRW) << endl;
-    else
-      stream << "RwyArr=" << endl;
+    // Arrival approach and transition ============================================
+    saveFlpKeyValue(stream, pln, QString(), alternateFmt ? "Appr_Trans" : "APPR_Trans", TRANSITION);
+    saveFlpKeyValue(stream, pln, QString(), "RwyArrFinal", APPROACH_ARINC);
 
-    if(!plan.properties.value(APPROACH_ARINC).isEmpty())
-      stream << "RwyArrFinal=" << plan.properties.value(APPROACH_ARINC) << endl;
-    else
-      stream << "RwyArrFinal=" << endl;
-
-    if(!plan.properties.value(TRANSITION).isEmpty())
-      stream << "APPR_Trans=" << plan.properties.value(TRANSITION) << endl;
-    else
-      stream << "APPR_Trans=" << endl;
-
-    // stream << "RwyDep=" << endl;
-    // stream << "RwyArr=" << endl;
-    // stream << "RwyArrFinal=" << endl;
-    // stream << "SID=" << endl;
-    // stream << "STAR=" << endl;
-    // stream << "APPR_Trans=" << endl;
-
-    if(crj)
+    if(alternateFmt)
     {
       stream << "CoRoute=" << endl;
       stream << "FltNo=" << endl;
@@ -2278,28 +2261,32 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
 
     QString lastAirwayTo;
     int index = 1;
-    for(int i = 1; i < plan.entries.size() - 1; i++)
+    for(int i = 1; i < pln.entries.size() - 1; i++)
     {
-      const FlightplanEntry& entry = plan.entries.at(i);
+      const FlightplanEntry& entry = pln.entries.at(i);
       if(entry.isNoSave())
         // Do not save entries like procedure points
         continue;
 
-      const FlightplanEntry& next = plan.entries.at(i + 1);
-      QString coords = QString("%1,%2").
-                       arg(entry.getPosition().getLatY(), 0, 'f', 6).
-                       arg(entry.getPosition().getLonX(), 0, 'f', 6);
+      const FlightplanEntry& nextEntry = pln.entries.at(i + 1);
+      QString airway = nextEntry.getAirway();
 
-      if(!next.getAirway().isEmpty())
+      // .      FROM     =         TO
+      // ... -> entry -> airway -> nextEntry -> ...
+      if(!airway.isEmpty())
       {
-        stream << "Airway" << index << "=" << next.getAirway() << endl;
+        stream << "Airway" << index << "=" << airway << endl;
         stream << "Airway" << index << "FROM=" << entry.getIdent() << endl;
-        stream << "Airway" << index << "TO=" << next.getIdent() << endl;
-        lastAirwayTo = next.getIdent();
+        stream << "Airway" << index << "TO=" << nextEntry.getIdent() << endl;
+        lastAirwayTo = nextEntry.getIdent();
         index++;
       }
       else if(entry.getIdent() != lastAirwayTo)
       {
+        QString coords = QString("%1,%2").
+                         arg(entry.getPosition().getLatY(), 0, 'f', 6).
+                         arg(entry.getPosition().getLonX(), 0, 'f', 6);
+
         stream << "DctWpt" << index << "=" << identOrDegMinFormat(entry) << endl;
         stream << "DctWpt" << index << "Coordinates=" << coords << endl;
         lastAirwayTo.clear();
@@ -2307,27 +2294,34 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
       }
     }
 
-    if(crj)
+    if(alternateFmt)
     {
       // PerfData ==============================================
+
+      // The PerfData section will only be used if “Load PERF INIT Data with Flightplan” is enabled on the
+      // Options page in CRJ Manager. Otherwise it will be ignored when the route is loaded.
+      // All values except the wind data default to -1 if not set. In this case, the FMS defaults will be loaded.
+
+      stream << endl;
       stream << "[PerfData]" << endl;
-      stream << "CrzAlt=" << plan.getCruisingAltitude() << endl;
-      stream << "CrzAltAltn=-1" << endl;
-      stream << "PaxCnt=-1" << endl;
-      stream << "PaxWeight=-1" << endl;
-      stream << "CargoWeight=-1" << endl;
-      stream << "FuelWeight=-1" << endl;
-      stream << "WindDirClb=0" << endl;
-      stream << "WindSpdClb=0" << endl;
-      stream << "WindDirCrz=0" << endl;
-      stream << "WindSpdCrz=0" << endl;
-      stream << "WindDirDes=0" << endl;
-      stream << "WindSpdDes=0" << endl;
-      stream << "ISADev=0" << endl;
-      stream << "ResFuel=-1" << endl;
-      stream << "TaxiFuel=-1" << endl;
+      stream << "CrzAlt=" << plan.getCruisingAltitude() << endl; // Cruise Altitude (in feet)
+      stream << "CrzAltAltn=-1" << endl; // Cruise Altitude to Alternate Airport (in feet)
+      stream << "PaxCnt=-1" << endl; // Passenger count
+      stream << "PaxWeight=-1" << endl; // Average Passenger weight (lbs)
+      stream << "CargoWeight=-1" << endl; // Cargo weight (lbs)
+      stream << "FuelWeight=-1" << endl; // Fuel weight (lbs)
+      stream << "WindDirClb=0" << endl; // Wind direction during climb (0-359 degrees)
+      stream << "WindSpdClb=0" << endl; // Wind speed during climb
+      stream << "WindDirCrz=0" << endl; // Wind direction during cruise (0-359 degrees)
+      stream << "WindSpdCrz=0" << endl; // Wind speed during cruise
+      stream << "WindDirDes=0" << endl; // Wind direction during descent (0-359 degrees)
+      stream << "WindSpdDes=0" << endl; // Wind speed during descent
+      stream << "ISADev=-1" << endl; // Deviation from ISA temperature (degrees Celsius)
+      stream << "ResFuel=-1" << endl; // Reserve fuel weight (lbs)
+      stream << "TaxiFuel=-1" << endl; // Taxi fuel weight (lbs)
 
       // VNAVData ==============================================
+      stream << endl;
       stream << "[VNAVData]" << endl;
       stream << "TransAlt=18000" << endl;
       stream << "TransLvl=18000" << endl;
