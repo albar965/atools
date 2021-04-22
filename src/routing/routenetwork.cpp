@@ -115,8 +115,11 @@ void RouteNetwork::getNeighbours(Result& result, const Node& origin, const Edge 
     // Additionally search for direct waypoint connections if result is limited
     if((mode & MODE_WAYPOINT && result.size() < 2) || origin.isDeparture())
     {
-      // Use nearest of underlying waypoint if calculating for selected route legs
-      float minDist = mode.testFlag(MODE_POINT_TO_POINT) && origin.isDeparture() ? 0.f : minNearestDistanceWpM;
+      // Use nearest of underlying waypoint if calculating for selected route legs or looking for
+      // nearest airway point
+      float minDist = origin.isDeparture() &&
+                      (mode.testFlag(MODE_POINT_TO_POINT) || mode & MODE_AIRWAY) ? 0.f : minNearestDistanceWpM;
+
       int found = searchNearest(result, origin, minDist, maxNearestDistanceWpM, &nodeIndexes);
 
       if(found < 6)
