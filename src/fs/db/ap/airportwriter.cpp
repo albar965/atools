@@ -79,6 +79,12 @@ void AirportWriter::writeObject(const Airport *type)
     return;
   }
 
+  if(type->isMsfsPoiDummy() && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+  {
+    qDebug() << Q_FUNC_INFO << "Skipping empty POI dummy" << ident;
+    return;
+  }
+
   if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 

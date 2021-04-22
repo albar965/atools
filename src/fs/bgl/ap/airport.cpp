@@ -107,7 +107,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
   if(options->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
   {
-    /*int numDepartures = TODO compare with number of departure subrecords*/ bs->readUByte();
+    /*int numDepartures = TODO compare with number of departure subrecords*/
+    bs->readUByte();
     bs->skip(1);
     /*int numArrivals = TODO compare with number of arrival subrecords*/ bs->readUByte();
     bs->skip(9); /* skip applyFlatten, and 4 16-bit counts */
@@ -431,6 +432,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
 Airport::~Airport()
 {
+}
+
+bool Airport::isMsfsPoiDummy() const
+{
+  return isAirportClosed() && runways.isEmpty() && helipads.isEmpty() && parkings.isEmpty() && starts.isEmpty();
 }
 
 bool Airport::isEmpty() const

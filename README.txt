@@ -2,6 +2,8 @@ atools is a static library extending Qt for exception handling,
 a log4j like logging framework, Flight Simulator related utilities like BGL reader
 and more.
 
+Issues can be submitted at https://github.com/albar965/littlenavmap/issues .
+
 -------------------------------------------------------------------------------
 Modules (by directory in "src"):
 

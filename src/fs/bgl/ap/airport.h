@@ -355,6 +355,9 @@ public:
    */
   bool isEmpty() const;
 
+  /* true if this is a MSFS dummy POI airport without runways */
+  bool isMsfsPoiDummy() const;
+
   int calculateRating(bool isAddon) const;
 
   virtual bool isValid() const override;
