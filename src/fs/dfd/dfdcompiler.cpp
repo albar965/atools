@@ -731,8 +731,8 @@ void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
 {
   QString type = query.valueStr("type");
   QString cls = query.valueStr("airspace_classification");
-  QString dbType;
-  // X // K // W // Y // Q
+  QString dbType, name = query.valueStr("name");
+
   if(!cls.isEmpty())
     dbType = "C" + cls;
   else if(type == "M")
@@ -741,15 +741,37 @@ void DfdCompiler::beginControlledAirspace(atools::sql::SqlQuery& query)
     dbType = "RD"; // Radar Zone or Radar Area (USA)
   else if(type == "A")
     dbType = "CC"; // Class C Airspace (USA)
-  else if(type == "C")
+  else if(type == "C" || type == "K")
     dbType = "C"; // Control Area, ICAO Designation (CTA)
   else if(type == "T")
     dbType = "CB"; // Class B Airspace (USA)
   else if(type == "Z")
     dbType = "CD"; // Class D Airspace, ICAO Designation (CTR)
+  else if(type == "Q")
+    dbType = "MCTR"; // Q  Military Control Zone (MCTR)
+  else if(type == "Y")
+    dbType = "TRSA"; // Y  Terminal Radar Service Area (TRSA)
+  else if(type == "W")
+  {
+    // Store as a general area with type attached to name
+    dbType = "GCA"; // W  Terminal Control Area (TCA)
+    name += " (TCA)";
+  }
+  else if(type == "X")
+  {
+    // Store as a general area with type attached to name
+    dbType = "GCA"; // X  Terminal Area (TMA)
+    name += " (TMA)";
+  }
+  else
+  {
+    // Store as a general area with the unknown type attached to the name
+    dbType = "GCA"; // General control area
+    name += " (" + type + ")";
+  }
 
   airspaceWriteQuery->bindValue(":type", dbType);
-  airspaceWriteQuery->bindValue(":name", query.valueStr("name"));
+  airspaceWriteQuery->bindValue(":name", name);
 }
 
 void DfdCompiler::beginFirUirAirspaceNew(atools::sql::SqlQuery& query)
@@ -899,7 +921,7 @@ int DfdCompiler::airspaceAlt(const QString& altStr)
   else
   {
     if(altStr.startsWith("FL"))
-      return altStr.mid(2).toInt() * 100;
+      return altStr.midRef(2).toInt() * 100;
     else
       return altStr.toInt();
   }
