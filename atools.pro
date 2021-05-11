@@ -178,6 +178,10 @@ HEADERS += \
   src/fs/userdata/airspacereaderopenair.h \
   src/fs/userdata/datamanagerbase.h \
   src/fs/userdata/logdatamanager.h \
+  src/fs/util/coordinates.h \
+  src/fs/util/fsutil.h \
+  src/fs/util/morsecode.h \
+  src/fs/util/tacanfrequencies.h \
   src/fs/weather/metar.h \
   src/fs/weather/metarindex.h \
   src/fs/weather/metarparser.h \
@@ -189,10 +193,10 @@ HEADERS += \
   src/geo/calculations.h \
   src/geo/line.h \
   src/geo/linestring.h \
+  src/geo/nanoflann.h \
   src/geo/point3d.h \
   src/geo/pos.h \
   src/geo/rect.h \
-  src/geo/nanoflann.h \
   src/geo/spatialindex.h \
   src/grib/windquery.h \
   src/gui/actionstatesaver.h \
@@ -304,6 +308,10 @@ SOURCES += \
   src/fs/userdata/airspacereaderopenair.cpp \
   src/fs/userdata/datamanagerbase.cpp \
   src/fs/userdata/logdatamanager.cpp \
+  src/fs/util/coordinates.cpp \
+  src/fs/util/fsutil.cpp \
+  src/fs/util/morsecode.cpp \
+  src/fs/util/tacanfrequencies.cpp \
   src/fs/weather/metar.cpp \
   src/fs/weather/metarindex.cpp \
   src/fs/weather/metarparser.cpp \
@@ -523,7 +531,6 @@ HEADERS += \
   src/fs/pln/flightplanentry.h \
   src/fs/pln/flightplanio.h \
   src/fs/progresshandler.h \
-  src/routing/routefinder.h \
   src/fs/scenery/addoncfg.h \
   src/fs/scenery/addoncomponent.h \
   src/fs/scenery/addonpackage.h \
@@ -531,10 +538,6 @@ HEADERS += \
   src/fs/scenery/sceneryarea.h \
   src/fs/scenery/scenerycfg.h \
   src/fs/userdata/userdatamanager.h \
-  src/fs/util/coordinates.h \
-  src/fs/util/fsutil.h \
-  src/fs/util/morsecode.h \
-  src/fs/util/tacanfrequencies.h \
   src/fs/xp/airwaypostprocess.h \
   src/fs/xp/scenerypacks.h \
   src/fs/xp/xpairportwriter.h \
@@ -545,7 +548,8 @@ HEADERS += \
   src/fs/xp/xpdatacompiler.h \
   src/fs/xp/xpfixwriter.h \
   src/fs/xp/xpnavwriter.h \
-  src/fs/xp/xpwriter.h
+  src/fs/xp/xpwriter.h \
+  src/routing/routefinder.h
 
 SOURCES += \
   src/fs/bgl/ap/airport.cpp \
@@ -665,7 +669,6 @@ SOURCES += \
   src/fs/pln/flightplanentry.cpp \
   src/fs/pln/flightplanio.cpp \
   src/fs/progresshandler.cpp \
-  src/routing/routefinder.cpp \
   src/fs/scenery/addoncfg.cpp \
   src/fs/scenery/addoncomponent.cpp \
   src/fs/scenery/addonpackage.cpp \
@@ -673,10 +676,6 @@ SOURCES += \
   src/fs/scenery/sceneryarea.cpp \
   src/fs/scenery/scenerycfg.cpp \
   src/fs/userdata/userdatamanager.cpp \
-  src/fs/util/coordinates.cpp \
-  src/fs/util/fsutil.cpp \
-  src/fs/util/morsecode.cpp \
-  src/fs/util/tacanfrequencies.cpp \
   src/fs/xp/airwaypostprocess.cpp \
   src/fs/xp/scenerypacks.cpp \
   src/fs/xp/xpairportwriter.cpp \
@@ -687,7 +686,9 @@ SOURCES += \
   src/fs/xp/xpdatacompiler.cpp \
   src/fs/xp/xpfixwriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
-  src/fs/xp/xpwriter.cpp
+  src/fs/xp/xpwriter.cpp \
+  src/routing/routefinder.cpp
+
 } # ATOOLS_NO_FS
 
 
