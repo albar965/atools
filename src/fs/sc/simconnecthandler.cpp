@@ -22,6 +22,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "geo/calculations.h"
 #include "win/activationcontext.h"
+#include "fs/util/fsutil.h"
 
 #include <QDate>
 #include <QTime>
@@ -488,7 +489,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.machSpeed = simDataUserAircraft.airspeedMach;
   aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
 
-  aircraft.transponderCode = static_cast<short>(simDataUserAircraft.transponderCode);
+  aircraft.transponderCode = atools::fs::util::decodeTransponderCode(simDataUserAircraft.transponderCode);
 
   if(simDataUserAircraft.isSimOnGround > 0)
     aircraft.flags |= atools::fs::sc::ON_GROUND;

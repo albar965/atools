@@ -24,6 +24,11 @@ namespace atools {
 namespace fs {
 namespace util {
 
+/* Converts decimals from transponder to integer.
+ * Returns decimal 4095/ octal 07777 / hex 0xFFF for number 7777
+ * -1 if number is not valid. */
+qint16 decodeTransponderCode(int code);
+
 /* Get the aircraft type name for the ICAO code */
 QString aircraftTypeForCode(const QString& code);
 
