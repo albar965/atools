@@ -244,6 +244,7 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
   ac.category = atools::fs::sc::AIRPLANE;
   ac.engineType = atools::fs::sc::UNSUPPORTED;
   ac.numberOfEngines = 0;
+  ac.transponderCode = -1;
 
   ac.objectId = static_cast<quint32>(record.valueInt("client_id"));
   ac.airplaneReg = record.valueStr("callsign");
@@ -270,10 +271,16 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
 
   ac.toIdent = record.valueStr("flightplan_destination_aerodrome");
 
+  // Convert octal string to decimal
+  bool ok;
+  ac.transponderCode = record.valueStr("transponder_code", "-1").toShort(&ok, 8);
+  if(!ok)
+    // Invalid
+    ac.transponderCode = -1;
+
   // record.valueStr("server");
   // record.valueStr("protocol");
   // record.valueStr("combined_rating");
-  // record.valueStr("transponder_code");
   // record.valueStr("facility_type");
   // record.valueStr("visual_range");
   // record.valueStr("flightplan_revision");

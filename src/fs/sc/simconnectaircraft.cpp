@@ -54,10 +54,9 @@ void SimConnectAircraft::read(QDataStream& in)
   float lonx, laty, altitude;
   quint8 categoryByte, engineTypeByte;
 
-  in >> lonx >> laty >> altitude >> headingTrueDeg >> headingMagDeg
-  >> groundSpeedKts >> indicatedSpeedKts >> verticalSpeedFeetPerMin
-  >> indicatedAltitudeFt >> trueAirspeedKts >> machSpeed
-  >> numberOfEngines >> wingSpanFt >> modelRadiusFt >> deckHeight >> categoryByte >> engineTypeByte;
+  in >> lonx >> laty >> altitude >> headingTrueDeg >> headingMagDeg >> groundSpeedKts >> indicatedSpeedKts
+  >> verticalSpeedFeetPerMin >> indicatedAltitudeFt >> trueAirspeedKts >> machSpeed >> numberOfEngines
+  >> wingSpanFt >> modelRadiusFt >> deckHeight >> categoryByte >> engineTypeByte >> transponderCode >> properties;
 
   position.setAltitude(altitude);
   position.setLonX(lonx);
@@ -115,7 +114,7 @@ void SimConnectAircraft::write(QDataStream& out) const
       << groundSpeedKts << indicatedSpeedKts << verticalSpeedFeetPerMin
       << indicatedAltitudeFt << trueAirspeedKts << machSpeed
       << numberOfEngines << wingSpanFt << modelRadiusFt << deckHeight
-      << static_cast<quint8>(category) << static_cast<quint8>(engineType);
+      << static_cast<quint8>(category) << static_cast<quint8>(engineType) << transponderCode << properties;
 }
 
 bool SimConnectAircraft::isSameAircraft(const SimConnectAircraft& other) const

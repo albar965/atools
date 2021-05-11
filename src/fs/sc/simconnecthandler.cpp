@@ -97,6 +97,8 @@ struct SimDataAircraft
   float airspeedMach;
   float verticalSpeedFps;
 
+  qint32 transponderCode;
+
   qint32 numEngines;
   qint32 engineType; // 0 = Piston 1 = Jet 2 = None 3 = Helo(Bell) turbine 4 = Unsupported 5 = Turboprop
 
@@ -486,6 +488,8 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   aircraft.machSpeed = simDataUserAircraft.airspeedMach;
   aircraft.verticalSpeedFeetPerMin = simDataUserAircraft.verticalSpeedFps * 60.f;
 
+  aircraft.transponderCode = static_cast<short>(simDataUserAircraft.transponderCode);
+
   if(simDataUserAircraft.isSimOnGround > 0)
     aircraft.flags |= atools::fs::sc::ON_GROUND;
   if(simDataUserAircraft.userSim > 0)
@@ -708,6 +712,8 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   api.AddToDataDefinition(definitionId, "Airspeed Indicated", "knots", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(definitionId, "Airspeed Mach", "mach", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(definitionId, "Vertical Speed", "feet per second", SIMCONNECT_DATATYPE_FLOAT32);
+
+  api.AddToDataDefinition(definitionId, "Transponder Code:1", "number", SIMCONNECT_DATATYPE_INT32);
 
   api.AddToDataDefinition(definitionId, "Number of Engines", "number", SIMCONNECT_DATATYPE_INT32);
 

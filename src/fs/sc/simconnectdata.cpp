@@ -188,7 +188,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(h + 10.f);
   data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 15.f);
 
-  data.userAircraft.structuralIcePercent = ice;
+  data.userAircraft.structuralIcePercent = static_cast<quint8>(ice);
   data.userAircraft.category = AIRPLANE;
   data.userAircraft.engineType = PISTON;
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
@@ -201,6 +201,7 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.airplaneAirline = "Airline";
   data.userAircraft.airplaneFlightnumber = "965";
   data.userAircraft.fromIdent = "EDDF";
+  data.userAircraft.transponderCode = 00123; // Octal code (4095)
 
   data.userAircraft.verticalSpeedFeetPerMin = vertSpeed;
 

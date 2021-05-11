@@ -144,7 +144,7 @@ private:
   friend class xpc::XpConnect;
 
   const static quint32 MAGIC_NUMBER_DATA = 0xF75E0AF3;
-  const static quint32 DATA_VERSION = 10;
+  const static quint32 DATA_VERSION = 11;
 
   quint32 packetId = 0, packetTs = 0;
   quint32 magicNumber = 0, packetSize = 0, version = 0;

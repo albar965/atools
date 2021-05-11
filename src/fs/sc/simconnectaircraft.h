@@ -20,6 +20,7 @@
 
 #include "geo/pos.h"
 #include "fs/sc/simconnectdatabase.h"
+  #include "util/props.h"
 
 #include <QString>
 
@@ -27,6 +28,7 @@ class QIODevice;
 
 namespace xpc {
 class XpConnect;
+class AircraftFileLoader;
 }
 
 namespace atools {
@@ -314,11 +316,42 @@ public:
   void updateAircraftNames(const QString& airplaneTypeParam, const QString& airplaneAirlineParam,
                            const QString& airplaneTitleParam, const QString& airplaneModelParam);
 
+  const atools::util::Props& getProperties() const
+  {
+    return properties;
+  }
+
+  void setProperties(const atools::util::Props& value)
+  {
+    properties = value;
+  }
+
+  /* 4095 = 07777 = 0xFFF = 0b111111111111,
+   * -1 = invalid / not available */
+  int getTransponderCode() const
+  {
+    return transponderCode;
+  }
+
+  bool isTransponderCodeValid() const
+  {
+    return transponderCode != -1;
+  }
+
+  /* Returns "7777" for 4095/07777/0xFFF/0b111111111111
+   *  Empty string if not available */
+  QString getTransponderCodeStr() const
+  {
+    // Get number as octal
+    return transponderCode != -1 ? QString("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
   friend class atools::fs::sc::SimConnectData;
   friend class xpc::XpConnect;
+  friend class xpc::AircraftFileLoader;
   friend class atools::fs::online::OnlinedataManager;
 
   QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
@@ -330,6 +363,10 @@ private:
         machSpeed = 0.f, verticalSpeedFeetPerMin = 0.f;
   quint16 modelRadiusFt = 0, wingSpanFt = 0, deckHeight = 0;
 
+  qint16 transponderCode = -1; // TCAS number - convert to octal system to get real number, 0o7777 = 4095
+  // -1 = not available
+
+  // modeS_id for X-Plane
   quint32 objectId = 0L;
 
   AircraftFlags flags = atools::fs::sc::NONE;
@@ -338,6 +375,8 @@ private:
   EngineType engineType = atools::fs::sc::UNSUPPORTED;
   quint8 numberOfEngines = 0;
   bool debug = false;
+
+  atools::util::Props properties;
 };
 
 } // namespace sc
