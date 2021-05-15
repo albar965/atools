@@ -40,8 +40,8 @@ SimConnectUserAircraft::SimConnectUserAircraft(const SimConnectUserAircraft& oth
 void SimConnectUserAircraft::read(QDataStream& in)
 {
   SimConnectAircraft::read(in);
-  in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt >> ambientTemperatureCelsius
-  >> totalAirTemperatureCelsius >> seaLevelPressureMbar
+  in >> windSpeedKts >> windDirectionDegT >> altitudeAboveGroundFt >> groundAltitudeFt >> altitudeAutopilotFt
+  >> ambientTemperatureCelsius >> totalAirTemperatureCelsius >> seaLevelPressureMbar
   >> pitotIcePercent >> structuralIcePercent
   >> aoaIcePercent >> inletIcePercent >> propIcePercent >> statIcePercent >> windowIcePercent >> carbIcePercent
   >> airplaneTotalWeightLbs >> airplaneMaxGrossWeightLbs >> airplaneEmptyWeightLbs >> fuelTotalQuantityGallons
@@ -52,8 +52,8 @@ void SimConnectUserAircraft::read(QDataStream& in)
 void SimConnectUserAircraft::write(QDataStream& out) const
 {
   SimConnectAircraft::write(out);
-  out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt << ambientTemperatureCelsius
-      << totalAirTemperatureCelsius << seaLevelPressureMbar
+  out << windSpeedKts << windDirectionDegT << altitudeAboveGroundFt << groundAltitudeFt << altitudeAutopilotFt
+      << ambientTemperatureCelsius << totalAirTemperatureCelsius << seaLevelPressureMbar
       << pitotIcePercent << structuralIcePercent
       << aoaIcePercent << inletIcePercent << propIcePercent << statIcePercent << windowIcePercent << carbIcePercent
       << airplaneTotalWeightLbs << airplaneMaxGrossWeightLbs << airplaneEmptyWeightLbs << fuelTotalQuantityGallons

@@ -51,8 +51,7 @@ enum Option
 Q_DECLARE_FLAGS(Options, Option);
 Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::sc::Options);
 
-// quint16
-enum AircraftFlag
+enum AircraftFlag : quint16
 {
   NONE = 0x0000,
   ON_GROUND = 0x0001,

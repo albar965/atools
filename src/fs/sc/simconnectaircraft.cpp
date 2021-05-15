@@ -38,18 +38,25 @@ void SimConnectAircraft::read(QDataStream& in)
 {
   in >> objectId;
 
-  quint16 intFlags;
-  in >> intFlags;
-  flags = AircraftFlags(intFlags);
+  quint8 byteFlags;
+  in >> byteFlags;
+  dataFlags = DataFlags(byteFlags);
 
-  readString(in, airplaneTitle);
-  readString(in, airplaneModel);
-  readString(in, airplaneReg);
-  readString(in, airplaneType);
-  readString(in, airplaneAirline);
-  readString(in, airplaneFlightnumber);
-  readString(in, fromIdent);
-  readString(in, toIdent);
+  quint16 shortFlags;
+  in >> shortFlags;
+  flags = AircraftFlags(shortFlags);
+
+  if(!(dataFlags & DATA_STRINGS_OMITTED))
+  {
+    readString(in, airplaneTitle);
+    readString(in, airplaneModel);
+    readString(in, airplaneReg);
+    readString(in, airplaneType);
+    readString(in, airplaneAirline);
+    readString(in, airplaneFlightnumber);
+    readString(in, fromIdent);
+    readString(in, toIdent);
+  }
 
   float lonx, laty, altitude;
   quint8 categoryByte, engineTypeByte;
@@ -99,16 +106,19 @@ int SimConnectAircraft::getModelRadiusCorrected() const
 
 void SimConnectAircraft::write(QDataStream& out) const
 {
-  out << objectId << static_cast<quint16>(flags);
+  out << objectId << static_cast<quint8>(dataFlags) << static_cast<quint16>(flags);
 
-  writeString(out, airplaneTitle);
-  writeString(out, airplaneModel);
-  writeString(out, airplaneReg);
-  writeString(out, airplaneType);
-  writeString(out, airplaneAirline);
-  writeString(out, airplaneFlightnumber);
-  writeString(out, fromIdent);
-  writeString(out, toIdent);
+  if(!(dataFlags & DATA_STRINGS_OMITTED))
+  {
+    writeString(out, airplaneTitle);
+    writeString(out, airplaneModel);
+    writeString(out, airplaneReg);
+    writeString(out, airplaneType);
+    writeString(out, airplaneAirline);
+    writeString(out, airplaneFlightnumber);
+    writeString(out, fromIdent);
+    writeString(out, toIdent);
+  }
 
   out << position.getLonX() << position.getLatY() << position.getAltitude() << headingTrueDeg << headingMagDeg
       << groundSpeedKts << indicatedSpeedKts << verticalSpeedFeetPerMin

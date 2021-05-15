@@ -120,6 +120,9 @@ struct SimData
   float planeAboveGroundFt;
   float groundAltitudeFt;
 
+  qint32 autopilotAvailable;
+  float altitudeAutopilotFt;
+
   float ambientTemperatureC;
   float totalAirTemperatureC;
   float ambientWindVelocityKts;
@@ -572,6 +575,11 @@ void SimConnectHandlerPrivate::fillDataDefinition()
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ground Altitude", "feet",
                           SIMCONNECT_DATATYPE_FLOAT32);
 
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Available", "bool",
+                          SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Altitude Lock Var", "feet",
+                          SIMCONNECT_DATATYPE_FLOAT32);
+
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Temperature",
                           "celsius",
                           SIMCONNECT_DATATYPE_FLOAT32);
@@ -913,6 +921,12 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.objectId = static_cast<unsigned int>(p->simDataObjectId);
 
     data.userAircraft.groundAltitudeFt = p->simData.groundAltitudeFt;
+
+    if(p->simData.autopilotAvailable > 0)
+      data.userAircraft.altitudeAutopilotFt = p->simData.altitudeAutopilotFt;
+    else
+      data.userAircraft.altitudeAutopilotFt = 0.f;
+
     data.userAircraft.altitudeAboveGroundFt = p->simData.planeAboveGroundFt;
 
     if(p->simData.ambientPrecipStateFlags & 4)

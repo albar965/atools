@@ -20,7 +20,7 @@
 
 #include "geo/pos.h"
 #include "fs/sc/simconnectdatabase.h"
-  #include "util/props.h"
+#include "util/props.h"
 
 #include <QString>
 
@@ -43,8 +43,7 @@ class SimConnectHandler;
 class SimConnectHandlerPrivate;
 class SimConnectData;
 
-// quint8
-enum Category
+enum Category : quint8
 {
   AIRPLANE,
   HELICOPTER,
@@ -58,8 +57,7 @@ enum Category
   UNKNOWN
 };
 
-// quint8
-enum EngineType
+enum EngineType : quint8
 {
   PISTON = 0,
   JET = 1,
@@ -67,6 +65,13 @@ enum EngineType
   HELO_TURBINE = 3,
   UNSUPPORTED = 4,
   TURBOPROP = 5
+};
+
+enum DataFlags : quint8
+{
+  NO_FLAGS = 0,
+  DATA_STRINGS_OMITTED = 1 << 0 // Strings are omitted for partial transfer
+                         // and are only transferred every tenth packets - currenty not used
 };
 
 /*
@@ -346,6 +351,16 @@ public:
     return transponderCode != -1 ? QString("%1").arg(transponderCode, 4, 8, QChar('0')) : QString();
   }
 
+  DataFlags getDataFlags() const
+  {
+    return dataFlags;
+  }
+
+  void setDataFlags(DataFlags value)
+  {
+    dataFlags = value;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
@@ -369,6 +384,7 @@ private:
   // modeS_id for X-Plane
   quint32 objectId = 0L;
 
+  DataFlags dataFlags = atools::fs::sc::NO_FLAGS;
   AircraftFlags flags = atools::fs::sc::NONE;
 
   Category category;

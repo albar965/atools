@@ -211,6 +211,12 @@ public:
     return fuelFlowGPH > 0.5f || fuelFlowPPH > 1.0f;
   }
 
+  /* Altitude as selected in autopilot */
+  float getAltitudeAutopilotFt() const
+  {
+    return altitudeAutopilotFt;
+  }
+
   /* Calculate the weight/volume ratio and determine if it is jet fuel
    *  weightVolRatio is 0 if quantity/weight is not sufficient */
   bool isJetfuel(float& weightVolRatio) const;
@@ -229,7 +235,8 @@ private:
   friend class xpc::XpConnect;
 
   float
-    altitudeAboveGroundFt = 0.f, groundAltitudeFt = 0.f, windSpeedKts = 0.f, windDirectionDegT = 0.f,
+    altitudeAboveGroundFt = 0.f, groundAltitudeFt = 0.f, altitudeAutopilotFt = 0.f,
+    windSpeedKts = 0.f, windDirectionDegT = 0.f,
     ambientTemperatureCelsius = 0.f, totalAirTemperatureCelsius = 0.f,
     seaLevelPressureMbar = 0.f,
     airplaneTotalWeightLbs = 0.f,
