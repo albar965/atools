@@ -107,6 +107,7 @@ public:
   /* Get records with content for ids */
   void getRecords(QVector<atools::sql::SqlRecord>& getRecords, const QVector<int> ids);
   atools::sql::SqlRecord getRecord(int id);
+  bool hasRecord(int id);
 
   /* Get values with content for ids and one column */
   void getValues(QVariantList& values, const QVector<int> ids, const QString& colName);

@@ -357,6 +357,11 @@ SqlRecord DataManagerBase::getRecord(int id)
   return recs.isEmpty() ? SqlRecord() : recs.first();
 }
 
+bool DataManagerBase::hasRecord(int id)
+{
+  return SqlUtil(db).hasRows(tableName, QString("%1 = %2").arg(idColumnName).arg(id));
+}
+
 void DataManagerBase::getEmptyRecord(SqlRecord& record)
 {
   record = db->record(tableName);

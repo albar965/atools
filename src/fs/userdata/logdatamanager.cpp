@@ -605,10 +605,13 @@ void LogdataManager::loadGpx(int id)
   if(!cache.contains(id))
   {
     LogEntryGeometry *entry = new LogEntryGeometry;
-    atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->track,
+    atools::fs::pln::FlightplanIO().loadGpxGz(&entry->route, &entry->names, &entry->tracks, &entry->timestamps,
                                               getValue(id, "aircraft_trail").toByteArray());
     entry->routeRect = entry->route.boundingRect();
-    entry->trackRect = entry->track.boundingRect();
+
+    entry->trackRect = atools::geo::Rect();
+    for(const atools::geo::LineString& line : entry->tracks)
+      entry->trackRect.extend(line);
     cache.insert(id, entry);
   }
 }

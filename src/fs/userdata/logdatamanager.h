@@ -37,7 +37,9 @@ namespace userdata {
 /* Flight plan geometry, waypoint names and track geometry for a logbook entry */
 struct LogEntryGeometry
 {
-  atools::geo::LineString route, track;
+  atools::geo::LineString route;
+  QVector<atools::geo::LineString> tracks;
+  QVector<QVector<quint32> > timestamps;
 
   /* Flight plan waypoint names. String list has the same size as route */
   QStringList names;
