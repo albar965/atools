@@ -385,6 +385,10 @@ QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay);
 /* Same as above but next interval */
 QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay);
 
+/* Converts datetime to ISO8601 with timezone offset and milliseconds.
+ * 2021-05-16T23:55:00.259+02:00 */
+QString convertToIsoWithOffset(const QDateTime& datetime);
+
 /* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
  * but not more than one year to avoid endless loops */
 QDateTime correctDate(int day, int hour, int minute);

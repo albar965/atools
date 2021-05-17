@@ -1117,4 +1117,14 @@ uint textFileHash(const QString& filename, const QString& codec)
   return hash;
 }
 
+QString convertToIsoWithOffset(const QDateTime& dateTime)
+{
+  int offset = dateTime.offsetFromUtc();
+  return dateTime.toString("yyyy-MM-ddTHH:mm:ss.zzz") +
+         QString("%1%2:%3").
+         arg(offset >= 0 ? '+' : '-').
+         arg(atools::absInt(offset / 3600), 2, 10, QChar('0')).
+         arg(atools::absInt((offset / 60) % 60), 2, 10, QChar('0'));
+}
+
 } // namespace atools

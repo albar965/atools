@@ -361,6 +361,17 @@ public:
     dataFlags = value;
   }
 
+  /* Returns true if user changed aircraft */
+  bool hasAircraftChanged(const SimConnectAircraft& other)
+  {
+    return getAirplaneTitle() != other.getAirplaneTitle() ||
+           getAirplaneType() != other.getAirplaneType() ||
+           getAirplaneModel() != other.getAirplaneModel() ||
+           getAirplaneRegistration() != other.getAirplaneRegistration() ||
+           getAirplaneAirline() != other.getAirplaneAirline() ||
+           getAirplaneFlightnumber() != other.getAirplaneFlightnumber();
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
