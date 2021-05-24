@@ -70,6 +70,16 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
   bind(":altitude1", roundToInt(atools::geo::meterToFeet(type->getAltitude1())));
   bind(":altitude2", roundToInt(atools::geo::meterToFeet(type->getAltitude2())));
 
+  if(type->getSpeedLimit() > 10.f)
+  {
+    bind(":speed_limit", roundToInt(type->getSpeedLimit()));
+    bind(":speed_limit_type", "-"); // Assume limit for maximum speed - type is not given in BGL
+  }
+  else
+  {
+    bindNullInt(":speed_limit");
+    bindNullString(":speed_limit_type");
+  }
   executeStatement();
 }
 

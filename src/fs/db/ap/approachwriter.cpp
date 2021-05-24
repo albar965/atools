@@ -44,16 +44,17 @@ void ApproachWriter::writeObject(const Approach *type)
              << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
 
   QString apptype = bgl::util::enumToStr(atools::fs::bgl::ap::approachTypeToStr, type->getType());
+  DataWriter& dataWriter = getDataWriter();
 
   if(apptype.isEmpty())
   {
     qWarning() << Q_FUNC_INFO << "Skipping approach with invalid type" << type->getFixIdent() << type->getFixRegion()
-               << getDataWriter().getAirportWriter()->getCurrentAirportIdent();
+               << dataWriter.getAirportWriter()->getCurrentAirportIdent();
     return;
   }
 
   bind(":approach_id", getNextId());
-  bind(":airport_id", getDataWriter().getAirportWriter()->getCurrentId());
+  bind(":airport_id", dataWriter.getAirportWriter()->getCurrentId());
   bind(":type", apptype);
 
   if(type->getSuffix() == '0' || type->getSuffix() == 0)
@@ -71,7 +72,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bind(":missed_altitude", roundToPrecision(meterToFeet(type->getMissedAltitude()), 1));
 
   bindNullInt(":runway_end_id");
-  bind(":airport_ident", getDataWriter().getAirportWriter()->getCurrentAirportIdent());
+  bind(":airport_ident", dataWriter.getAirportWriter()->getCurrentAirportIdent());
 
   if( /*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
   {
@@ -82,36 +83,44 @@ void ApproachWriter::writeObject(const Approach *type)
       if(leg.getFixType() == atools::fs::bgl::ap::fix::RUNWAY)
       {
         if(leg.getFixIdent().startsWith("RW"))
-        {
           runway = leg.getFixIdent().mid(2);
-          break;
-        }
+        else
+          runway = leg.getFixIdent();
+        break;
       }
     }
 
     if(runway.isEmpty())
+    {
       // Use invalid 36 as fallback if nothing found
       runway = type->getRunwayName();
 
-    int id = getDataWriter().getRunwayIndex()->getRunwayEndId(
-      getDataWriter().getAirportWriter()->getCurrentAirportIdent(), runway, "approach runway");
-    if(id != -1)
-      bind(":runway_name", runway);
+      // Look into the index
+      int id = dataWriter.getRunwayIndex()->getRunwayEndId(
+        dataWriter.getAirportWriter()->getCurrentAirportIdent(), runway, "approach runway");
+      if(id != -1)
+        bind(":runway_name", runway);
+      else
+        // Nothing found in index
+        bindNullString(":runway_name");
+    }
     else
-      bindNullString(":runway_name");
+      // Use runway name as found in legs
+      bind(":runway_name", runway);
   }
   else
+    // Use given runway name
     bind(":runway_name", type->getRunwayName());
 
   // Write approach
   executeStatement();
 
   // Write all legs
-  getDataWriter().getApproachLegWriter()->write(type->getLegs());
-  getDataWriter().getApproachLegWriter()->write(type->getMissedLegs());
+  dataWriter.getApproachLegWriter()->write(type->getLegs());
+  dataWriter.getApproachLegWriter()->write(type->getMissedLegs());
 
   // Write transitions for this approach
-  TransitionWriter *appWriter = getDataWriter().getApproachTransWriter();
+  TransitionWriter *appWriter = dataWriter.getApproachTransWriter();
   appWriter->write(type->getTransitions());
 }
 
