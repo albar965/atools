@@ -41,7 +41,7 @@ int RunwayIndex::getRunwayEndId(const QString& airportIdent,
 
   RunwayIndexKeyType key(airportIdent, runwayName);
 
-  RunwayIndexTypeConstIter it = runwayIndexMap.find(key);
+  auto it = runwayIndexMap.find(key);
   if(it != runwayIndexMap.end())
     return it.value();
   else

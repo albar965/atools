@@ -20,6 +20,7 @@
 #include <QFile>
 #include <QDebug>
 #include <QUuid>
+#include <QFileInfo>
 #include "exception.h"
 
 namespace atools {
@@ -99,8 +100,14 @@ QString BinaryStream::getFilename() const
   return file->fileName();
 }
 
+QString BinaryStream::getFilenameOnly() const
+{
+  return QFileInfo(file->fileName()).fileName();
+}
+
 float BinaryStream::readFloat()
 {
+  // Needs special convertion from BGL float
   union
   {
     int intValue;

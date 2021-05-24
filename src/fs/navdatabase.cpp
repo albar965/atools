@@ -1354,15 +1354,18 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
   QString contentXmlPath = options->getBasepath() + SEP + "Content.xml";
-  if(!atools::checkFile(contentXmlPath))
+  if(!atools::checkFile(contentXmlPath, false /* warn */))
   {
     // Not found - try MS installation
     // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
     contentXmlPath = QFileInfo(options->getBasepath() + SEP + ".." + SEP + "Content.xml").canonicalFilePath();
-    if(!atools::checkFile(contentXmlPath))
+    if(!atools::checkFile(contentXmlPath, false /* warn */))
       // Not found
       contentXmlPath.clear();
   }
+
+  // Print warnings, if any
+  atools::checkFile(contentXmlPath);
 
   scenery::ContentXml contentXml;
   if(!contentXmlPath.isEmpty())

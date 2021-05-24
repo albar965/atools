@@ -151,14 +151,14 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
                 }
               }
               else
-                qWarning().nospace().noquote() << scenery.filePath() << " is no file or not readable.";
+                qWarning().nospace().noquote() << bglFile << " is no file or not readable.";
             }
           }
           else
             qInfo().nospace().noquote() << scenery.filePath() << " is excluded.";
         }
         else
-          qWarning().nospace().noquote() << scenery.filePath() << " is no directory.";
+          qWarning().nospace().noquote() << scenery.filePath() << " is not a directory.";
       }
     }
     else

@@ -72,7 +72,12 @@ public:
   void seekg(qint64 pos);
 
   qint64 getFileSize() const;
+
+  /* Returns full file name and path */
   QString getFilename() const;
+
+  /* Returns file name without path */
+  QString getFilenameOnly() const;
 
 private:
   void checkStream(const QString& what) const;

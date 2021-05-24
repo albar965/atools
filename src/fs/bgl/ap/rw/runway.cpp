@@ -237,7 +237,7 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
         qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
                                        << " for ident " << airportIdent
                                        << " runway " << primary.getName() << "/" << secondary.getName()
-                                       << " " << bs->tellg();
+                                       << " offset " << bs->tellg();
     }
     r.seekToEnd();
   }
