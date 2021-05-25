@@ -62,7 +62,7 @@ enum TransitionFixType
   // <xs:enumeration value="RUNWAY" />
   // <xs:enumeration value="LOCALIZER" />
 
-  UNKNOWN_TYPE = 9, // TODO find out type for 9
+  RUNWAY = 9, // Found in MSFS
   MANUAL_TERMINATION = 11,
   COURSE_TO_ALT = 12,
   COURSE_TO_DIST = 13,
@@ -80,7 +80,7 @@ class Transition :
   public atools::fs::bgl::Record
 {
 public:
-  Transition(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
+  Transition(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, rec::ApprRecordType recType);
   virtual ~Transition() override;
 
   /*
@@ -178,6 +178,9 @@ public:
 
   static QString transitionTypeToStr(atools::fs::bgl::ap::TransitionType type);
   static QString transitionFixTypeToStr(atools::fs::bgl::ap::tfix::TransitionFixType type);
+
+  /* true if all legs have valid values (type, course, etc. ) */
+  virtual bool isValid() const override;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Transition& record);

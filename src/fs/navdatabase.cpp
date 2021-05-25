@@ -1367,24 +1367,41 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // Print warnings, if any
   atools::checkFile(contentXmlPath);
 
+  scenery::ManifestJson manifest;
+
   scenery::ContentXml contentXml;
   if(!contentXmlPath.isEmpty())
     contentXml.read(contentXmlPath);
 
+  // fs-base ======================================================
   int areaNum = 0;
   SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
   // area.setActive(!contentXml.isDisabled("fs-base"));
   area.setActive(true);
+
+  // Get version numbers from manifest - needed to determine record changes for SID and STAR
+  manifest.clear();
+  manifest.read(options->getMsfsOfficialPath() + SEP + "fs-base" + SEP + "manifest.json");
+  area.setMinGameVersion(manifest.getMinGameVersion());
+  area.setPackageVersion(manifest.getPackageVersion());
+
   cfg.appendArea(area);
 
+  // fs-base-nav ======================================================
   SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
   // areaNav.setActive(!contentXml.isDisabled("fs-base-nav"));
   areaNav.setActive(true);
+
+  // Get version numbers from manifest - needed to determine record changes for SID and STAR
+  manifest.clear();
+  manifest.read(options->getMsfsOfficialPath() + SEP + "fs-base-nav" + SEP + "manifest.json");
+  areaNav.setMinGameVersion(manifest.getMinGameVersion());
+  areaNav.setPackageVersion(manifest.getPackageVersion());
+
   areaNav.setNavdata(); // Set flag to allow dummy airport handling
   cfg.appendArea(areaNav);
 
   scenery::LayoutJson layout;
-  scenery::ManifestJson manifest;
 
   // Read add-on packages in official ===============================
   QDir dir(options->getMsfsOfficialPath(), QString(),

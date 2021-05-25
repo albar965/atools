@@ -38,7 +38,7 @@ public:
   /*
    * Read approach and all subrecords
    */
-  Approach(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, bool sid, bool star);
+  Approach(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Approach() override;
 
   /*
@@ -142,6 +142,9 @@ public:
   {
     return suffix;
   }
+
+  /* true if all legs, missed legs and transitions legs have valid values (type, course, etc. ) */
+  virtual bool isValid() const override;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::Approach& record);

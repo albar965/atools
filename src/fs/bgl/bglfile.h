@@ -52,13 +52,16 @@ class Record;
 class Boundary;
 
 namespace flags {
-enum CreateFlags
+enum CreateFlag
 {
   NONE = 0,
   AIRPORT_FS9_FORMAT = 1 << 0,
   AIRPORT_FSX_FORMAT = 1 << 1,
   AIRPORT_MSFS_DUMMY = 1 << 2
 };
+
+Q_DECLARE_FLAGS(CreateFlags, CreateFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::bgl::flags::CreateFlags);
 
 }
 /*

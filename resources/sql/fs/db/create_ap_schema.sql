@@ -477,7 +477,7 @@ create table approach_leg
   fix_airport_ident varchar(4),       -- "
   fix_lonx double,                    -- Optional coordinates to better find the correct navaid
   fix_laty double,                    -- "
-  recommended_fix_type varchar(25),   -- "
+  recommended_fix_type varchar(25),   -- " TODO needs seperate center navaid for RF legs
   recommended_fix_ident varchar(5),   -- "
   recommended_fix_region varchar(2),  -- "
   recommended_fix_lonx double,        -- "

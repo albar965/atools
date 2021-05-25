@@ -33,6 +33,7 @@
 #include "fs/bgl/boundary.h"
 #include "fs/bgl/recordtypes.h"
 #include "fs/scenery/sceneryarea.h"
+#include "util/version.h"
 
 #include <QList>
 #include <QDebug>
@@ -251,6 +252,12 @@ const Record *BglFile::handleIlsVor(BinaryStream *bs)
 
 void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryArea& area)
 {
+  bgl::flags::CreateFlags createFlags = bgl::flags::NONE;
+
+  // Set flag if MSFS scenery area is only navdata and dummy airports
+  if(area.isNavdata())
+    createFlags |= bgl::flags::AIRPORT_MSFS_DUMMY;
+
   for(Subsection& subsection : subsections)
   {
     section::SectionType type = subsection.getParent().getType();
@@ -280,8 +287,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           if(options->isIncludedNavDbObject(type::AIRPORT))
             // Will return null if ICAO is excluded in configuration
             // Read airport and all subrecords, like runways, com, approaches, waypoints and so on
-            rec = createRecord<Airport>(bs, &airports,
-                                        area.isNavdata() ? bgl::flags::AIRPORT_MSFS_DUMMY : bgl::flags::NONE);
+            rec = createRecord<Airport>(bs, &airports, createFlags);
           break;
 
         case section::AIRPORT_ALT:

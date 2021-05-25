@@ -83,6 +83,9 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
 {
   switch(type)
   {
+    case ap::fix::AIRPORT: // New in MSFS
+      return "A";
+
     case ap::fix::LOCALIZER:
       return "L";
 

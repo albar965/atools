@@ -144,7 +144,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
     if(checkSubRecord(r))
     {
       qWarning().noquote().nospace() << Q_FUNC_INFO << "Invalid record" << hex << " 0x" << r.getId()
-                                     << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+                                     << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
       return;
     }
 
@@ -218,11 +218,20 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
 
-      case rec::APPROACH: // SID and STAR for MSFS are currently disabled ========
+      case rec::APPROACH:
         if(options->isIncludedNavDbObject(type::APPROACH))
         {
           r.seekToStart();
-          approaches.append(Approach(options, bs, type == rec::MSFS_SID, type == rec::MSFS_STAR));
+          approaches.append(Approach(options, bs));
+        }
+        break;
+
+      case rec::MSFS_SID:
+      case rec::MSFS_STAR:
+        if(options->isIncludedNavDbObject(type::APPROACH))
+        {
+          r.seekToStart();
+          sidsAndStars.append(SidStar(options, bs));
         }
         break;
 
@@ -351,10 +360,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         }
         break;
 
+      // Expected records
       case rec::FENCE_BOUNDARY:
       case rec::FENCE_BLAST:
       case rec::APRON_EDGE_LIGHTS:
-      case rec::UNKNOWN_003B:
+      case rec::AIRPORT_UNKNOWN_003B:
       case rec::MSFS_AIRPORT_LIGHT_SUPPORT:
       case rec::MSFS_UNKNOWN_00CD:
       case rec::MSFS_AIRPORT_PAINTED_LINE:
@@ -362,23 +372,14 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_AIRPORT_TAXIWAY_SIGN:
       case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
       case rec::MSFS_AIRPORT_JETWAY:
-        // qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
-        // << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
-        break;
-
-      case rec::MSFS_SID:
-      case rec::MSFS_STAR:
-        if(options->isIncludedNavDbObject(type::APPROACH))
-        {
-          r.seekToStart();
-          sidsAndStars.append(SidStar(options, bs));
-        }
+      case rec::DELETE_AIRPORT_NAVIGATION:
+      case rec::MSFS_AIRPORT_UNKNOWN_00E8:
         break;
 
       default:
 
         qWarning().noquote().nospace() << "Unknown record" << hex << " 0x" << r.getId()
-                                       << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+                                       << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
 
         if(subrecordIndex == 0)
         {
@@ -422,6 +423,70 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
   if(deleteAirports.size() > 1)
     qWarning() << "Found more than one delete record in" << getObjectName();
+
+  // Print warnings for any invalid procedure legs =========================
+  for(const Approach& app : approaches)
+  {
+    for(const ApproachLeg& leg: app.getLegs())
+    {
+      if(!leg.isValid())
+        qWarning() << Q_FUNC_INFO << "Invalid approach leg" << ident << app;
+    }
+
+    for(const ApproachLeg& leg: app.getMissedLegs())
+    {
+      if(!leg.isValid())
+        qWarning() << Q_FUNC_INFO << "Invalid missed approach leg" << ident << app;
+    }
+
+    for(const Transition& trans : app.getTransitions())
+    {
+      for(const ApproachLeg& leg: trans.getLegs())
+      {
+        if(!leg.isValid())
+          qWarning() << Q_FUNC_INFO << "Invalid transition leg" << ident << app << trans;
+      }
+    }
+  }
+
+  for(const SidStar& sidStar : sidsAndStars)
+  {
+    for(const ApproachLeg& leg: sidStar.getCommonRouteLegs())
+    {
+      if(!leg.isValid())
+        qWarning() << Q_FUNC_INFO << "Invalid common route leg" << ident << leg;
+    }
+
+    for(const QList<atools::fs::bgl::ApproachLeg>& legs : sidStar.getEnrouteTransitions())
+    {
+      for(const ApproachLeg& leg: legs)
+      {
+        if(!leg.isValid())
+          qWarning() << Q_FUNC_INFO << "Invalid enroute transition leg" << ident << sidStar;
+      }
+    }
+
+    for(const QList<atools::fs::bgl::ApproachLeg>& legs : sidStar.getRunwayTransitionLegs())
+    {
+      for(const ApproachLeg& leg: legs)
+      {
+        if(!leg.isValid())
+          qWarning() << Q_FUNC_INFO << "Invalid runway transition leg" << ident << sidStar;
+      }
+    }
+  }
+
+  // =====================================================
+  // Now remove all procedures which are not valid in any way due to the idiotic undocumented BGL format
+  approaches.erase(std::remove_if(approaches.begin(), approaches.end(),
+                                  [ = ](const Approach& approach) -> bool {
+          return !approach.isValid();
+        }), approaches.end());
+
+  sidsAndStars.erase(std::remove_if(sidsAndStars.begin(), sidsAndStars.end(),
+                                    [ = ](const SidStar& sidStar) -> bool {
+          return !sidStar.isValid();
+        }), sidsAndStars.end());
 
   // TODO create warnings for this
   // Q_ASSERT(runways.size() == numRunways);

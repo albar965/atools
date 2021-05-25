@@ -61,7 +61,7 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
     case ap::tfix::COURSE_TO_ALT:
     case ap::tfix::COURSE_TO_DIST:
     case ap::tfix::HEADING_TO_ALT:
-    case ap::tfix::UNKNOWN_TYPE:
+    case ap::tfix::RUNWAY: // TODO use separate indicator
     case ap::tfix::WAYPOINT:
       return "W";
 
@@ -72,7 +72,16 @@ QString Transition::transitionFixTypeToStr(ap::tfix::TransitionFixType type)
   return "INVALID";
 }
 
-Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
+bool Transition::isValid() const
+{
+  bool valid = !legs.isEmpty();
+  valid &= transitionTypeToStr(type) != "INVALID";
+  for(const ApproachLeg& leg : legs)
+    valid &= leg.isValid();
+  return valid;
+}
+
+Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec::ApprRecordType recType)
   : Record(options, bs)
 {
   type = static_cast<ap::TransitionType>(bs->readUByte());
@@ -108,27 +117,31 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
     dmeDist = 0.f;
   }
 
+  if(recType == rec::TRANSITION_MSFS_NEW)
+    bs->skip(8);
+
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
-    rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
+    rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
     if(checkSubRecord(r))
       return;
 
-    switch(t)
+    switch(recType)
     {
       case rec::TRANSITION_LEGS:
       case rec::TRANSITION_LEGS_MSFS:
+      case rec::TRANSITION_LEGS_MSFS_NEW:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
           for(int i = 0; i < num; i++)
-            legs.append(ApproachLeg(bs, false, t == rec::TRANSITION_LEGS_MSFS));
+            legs.append(ApproachLeg(bs, recType));
         }
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << recType << dec
                                        << " for airport ident " << fixAirportIdent;
     }
     r.seekToEnd();

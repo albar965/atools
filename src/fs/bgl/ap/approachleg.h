@@ -19,6 +19,7 @@
 #define ATOOLS_BGL_AIRPORTAPPROACHLEG_H
 
 #include "fs/bgl/ap/approachtypes.h"
+#include "fs/bgl/recordtypes.h"
 
 #include <QString>
 
@@ -143,7 +144,7 @@ enum TurnDirection
 class ApproachLeg
 {
 public:
-  ApproachLeg(atools::io::BinaryStream *bs, bool ismissed, bool msfs);
+  ApproachLeg(atools::io::BinaryStream *bs, atools::fs::bgl::rec::ApprRecordType recType);
 
   atools::fs::bgl::leg::Type getType() const
   {
@@ -268,6 +269,14 @@ public:
   }
 
   /*
+   * Speed limit in knots. Assuming maximum speed.
+   */
+  float getSpeedLimit() const
+  {
+    return speedLimit;
+  }
+
+  /*
    * @return true if this is a missed approach leg
    */
   bool isMissed() const
@@ -275,7 +284,11 @@ public:
     return missed;
   }
 
+  /* true leg has valid values (type, course, etc. ) */
+  bool isValid() const;
+
   static QString legTypeToString(atools::fs::bgl::leg::Type type);
+  static QString legTypeToString(atools::fs::bgl::leg::Type type, const QString& src, bool warn);
   static QString altDescriptorToString(atools::fs::bgl::leg::AltDescriptor altDescr);
   static QString turnDirToString(atools::fs::bgl::leg::TurnDirection turnDir);
 
@@ -301,7 +314,7 @@ private:
   // "Fix Ident” field from the NAVAID
   // in the "Recommended NAVAID”
   // field
-  float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2;
+  float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2, speedLimit;
 };
 
 } // namespace bgl

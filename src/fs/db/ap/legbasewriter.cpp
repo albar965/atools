@@ -18,6 +18,7 @@
 #include "fs/db/ap/legbasewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
+#include "fs/db/meta/bglfilewriter.h"
 #include "fs/navdatabaseoptions.h"
 #include "geo/calculations.h"
 #include "atools.h"
@@ -38,7 +39,16 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
 {
   // id and leg_id have to be bound by the caller
 
-  bind(":type", bgl::util::enumToStr(bgl::ApproachLeg::legTypeToString, type->getType()));
+  QString typeStr = bgl::util::enumToStr(bgl::ApproachLeg::legTypeToString, type->getType());
+  if(typeStr.isEmpty())
+  {
+    // Should not happen since this is filtered out before
+    qWarning() << Q_FUNC_INFO << "Invalid approach leg type. Skipping."
+               << getDataWriter().getBglFileWriter()->getCurrentFilepath();
+    return;
+  }
+
+  bind(":type", typeStr);
   bind(":alt_descriptor",
        bgl::util::enumToStr(bgl::ApproachLeg::altDescriptorToString, type->getAltDescriptor()));
   bind(":turn_direction", bgl::util::enumToStr(bgl::ApproachLeg::turnDirToString, type->getTurnDirection()));

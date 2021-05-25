@@ -29,105 +29,80 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, bool sid, bool star)
+Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
   : Record(options, bs)
 {
-  if(sid || star)
+  suffix = bs->readByte();
+  runwayNumber = bs->readUByte();
+
+  int typeFlags = bs->readUByte();
+  type = static_cast<ap::ApproachType>(typeFlags & 0xf);
+  runwayDesignator = (typeFlags >> 4) & 0x7;
+  gpsOverlay = (typeFlags & 0x80) == 0x80;
+
+  // TODO compare numbers with actual record occurence
+  numTransitions = bs->readUByte();
+  int numLegs = bs->readUByte();
+  Q_UNUSED(numLegs)
+  int numMissedLegs = bs->readUByte();
+  Q_UNUSED(numMissedLegs)
+
+  unsigned int fixFlags = bs->readUInt();
+  fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
+  fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
+
+  unsigned int fixIdentFlags = bs->readUInt();
+  fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
+  fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
+
+  altitude = bs->readFloat();
+  heading = bs->readFloat(); // Heading is float degrees
+  missedAltitude = bs->readFloat();
+
+  // Read subrecords
+  while(bs->tellg() < startOffset + size)
   {
-    // Disabled attempt to decode SID/STAR - not reliable since structure size varies
-#if 0
-    type = ap::GPS;
-    gpsOverlay = true;
-    if(sid)
-      suffix = 'D';
-    else if(star)
-      suffix = 'A';
-    else
-      suffix = '\0';
+    Record r(options, bs);
+    rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
+    if(checkSubRecord(r))
+      return;
 
-    bs->skip(6);
-    fixIdent = bs->readString(8);
-    bs->skip(7);
-    runwayNumber = bs->readUByte();
-    runwayDesignator = bs->readUByte();
-    bs->skip(3 + 4 + 2);
-    int num = bs->readUShort();
-    for(int i = 0; i < num; i++)
-      legs.append(ApproachLeg(bs, false, sid || star));
-#endif
-  }
-  else
-  {
-    suffix = bs->readByte();
-    runwayNumber = bs->readUByte();
-
-    int typeFlags = bs->readUByte();
-    type = static_cast<ap::ApproachType>(typeFlags & 0xf);
-    runwayDesignator = (typeFlags >> 4) & 0x7;
-    gpsOverlay = (typeFlags & 0x80) == 0x80;
-
-    // TODO compare numbers with actual record occurence
-    numTransitions = bs->readUByte();
-    int numLegs = bs->readUByte();
-    Q_UNUSED(numLegs)
-    int numMissedLegs = bs->readUByte();
-    Q_UNUSED(numMissedLegs)
-
-    unsigned int fixFlags = bs->readUInt();
-    fixType = static_cast<ap::fix::ApproachFixType>(fixFlags & 0xf);
-    fixIdent = converter::intToIcao((fixFlags >> 5) & 0xfffffff, true);
-
-    unsigned int fixIdentFlags = bs->readUInt();
-    fixRegion = converter::intToIcao(fixIdentFlags & 0x7ff, true);
-    fixAirportIdent = converter::intToIcao((fixIdentFlags >> 11) & 0x1fffff, true);
-
-    altitude = bs->readFloat();
-    heading = bs->readFloat(); // Heading is float degrees
-    missedAltitude = bs->readFloat();
-
-    // Read subrecords
-    while(bs->tellg() < startOffset + size)
+    switch(recType)
     {
-      Record r(options, bs);
-      rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
-      if(checkSubRecord(r))
-        return;
+      case rec::LEGS:
+      case rec::LEGS_MSFS:
+      case rec::LEGS_MSFS_NEW:
+        if(options->isIncludedNavDbObject(type::APPROACHLEG))
+        {
+          int num = bs->readUShort();
+          for(int i = 0; i < num; i++)
+            legs.append(ApproachLeg(bs, recType));
+        }
+        break;
 
-      switch(t)
-      {
+      case rec::MISSED_LEGS:
+      case rec::MISSED_LEGS_MSFS:
+      case rec::MISSED_LEGS_MSFS_NEW:
+        if(options->isIncludedNavDbObject(type::APPROACHLEG))
+        {
+          int num = bs->readUShort();
+          for(int i = 0; i < num; i++)
+            missedLegs.append(ApproachLeg(bs, recType));
+        }
+        break;
 
-        case rec::LEGS:
-        case rec::LEGS_MSFS:
-          if(options->isIncludedNavDbObject(type::APPROACHLEG))
-          {
-            int num = bs->readUShort();
-            for(int i = 0; i < num; i++)
-              legs.append(ApproachLeg(bs, false, t == rec::LEGS_MSFS));
-          }
-          break;
+      case rec::TRANSITION:
+      case rec::TRANSITION_MSFS:
+      case rec::TRANSITION_MSFS_NEW:
+        r.seekToStart();
+        transitions.append(Transition(options, bs, recType));
+        break;
 
-        case rec::MISSED_LEGS:
-        case rec::MISSED_LEGS_MSFS:
-          if(options->isIncludedNavDbObject(type::APPROACHLEG))
-          {
-            int num = bs->readUShort();
-            for(int i = 0; i < num; i++)
-              missedLegs.append(ApproachLeg(bs, true, t == rec::MISSED_LEGS_MSFS));
-          }
-          break;
-
-        case rec::TRANSITION:
-        case rec::TRANSITION_MSFS:
-          r.seekToStart();
-          transitions.append(Transition(options, bs));
-          break;
-
-        default:
-          qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
-                                         << " for airport ident " << fixAirportIdent << bs->tellg();
-      }
-      r.seekToEnd();
+      default:
+        qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << recType << dec
+                                       << " for airport ident " << fixAirportIdent << " offset " << bs->tellg();
     }
+    r.seekToEnd();
   }
 }
 
@@ -160,6 +135,20 @@ Approach::~Approach()
 QString Approach::getRunwayName() const
 {
   return converter::runwayToStr(runwayNumber, runwayDesignator);
+}
+
+bool Approach::isValid() const
+{
+  bool valid = !legs.isEmpty();
+  valid &= ap::approachTypeToStr(type) != "UNKN";
+  for(const ApproachLeg& leg : legs)
+    valid &= leg.isValid();
+  for(const ApproachLeg& leg : missedLegs)
+    valid &= leg.isValid();
+  for(const Transition& trans: transitions)
+    valid &= trans.isValid();
+  return valid;
+
 }
 
 } // namespace bgl

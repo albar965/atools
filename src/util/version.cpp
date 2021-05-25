@@ -33,7 +33,8 @@ Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& v
   : majorVersion(verMajor), minorVersion(verMinor), patchlevelVersion(verPatchlevel), nameSubVersion(verNameSub),
   name(verName)
 {
-  versionString = QString("%1.%2.%3%4").
+  // "1.12.24.rc1"
+  versionString = QString("%1.%2.%3%4%5").
                   arg(majorVersion).
                   arg(minorVersion).
                   arg(patchlevelVersion).

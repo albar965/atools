@@ -19,6 +19,7 @@
 #include "io/binarystream.h"
 #include "fs/bgl/converter.h"
 #include "fs/bgl/ap/approach.h"
+#include "atools.h"
 
 #include <QDebug>
 
@@ -28,10 +29,12 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed, bool msfs)
+ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
 {
-  missed = ismissed;
+  missed = recType == rec::MISSED_LEGS || recType == rec::MISSED_LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS_NEW;
+
   type = static_cast<leg::Type>(bs->readUByte());
+
   altDescriptor = static_cast<leg::AltDescriptor>(bs->readUByte());
   int flags = bs->readUShort();
   turnDirection = static_cast<leg::TurnDirection>(flags & 0x3);
@@ -59,12 +62,63 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, bool ismissed, bool msfs)
   altitude1 = bs->readFloat();
   altitude2 = bs->readFloat();
 
+  // Determine type by using record id =============================
+  // MSFS SID STAR records before and after 1.16.1
+  bool msfsSidStar = recType == rec::RUNWAY_TRANSITIONS_MSFS || recType == rec::COMMON_ROUTE_LEGS_MSFS ||
+                     recType == rec::ENROUTE_TRANSITIONS_MSFS;
+
+  // New MSFS records since 1.16.1 ======
+  bool msfsNew = recType == rec::LEGS_MSFS_NEW || recType == rec::MISSED_LEGS_MSFS_NEW ||
+                 recType == rec::TRANSITION_LEGS_MSFS_NEW || recType == rec::SID_STAR_MSFS_ARRIVAL ||
+                 recType == rec::SID_STAR_MSFS_DEPARTURE || msfsSidStar;
+
+  // Common MSFS records
+  bool msfs = recType == rec::LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS || recType == rec::TRANSITION_LEGS_MSFS ||
+              msfsNew || msfsSidStar;
+
   if(msfs)
-    // Skip runway color and other stuff
-    bs->skip(16);
+  {
+    // Not type given - assuming max speed
+    speedLimit = bs->readFloat();
+    bs->readFloat(); // verticalAngle - ignored for now
+
+    if(msfsNew)
+    {
+      // New MSFS structure
+      // Check for constant radius turn legs - these need the center point in the recommended fix
+      if(type == leg::RF)
+      {
+        bs->skip(8);
+
+        if(!recommendedFixIdent.isEmpty())
+          qWarning() << Q_FUNC_INFO << "Recommended fix overlap in RF leg"
+                     << recommendedFixIdent << "/" << recommendedFixRegion;
+
+        // TODO create separate center columns in database
+        // The recommended fix is used as the arc center navaid in the LNM database due to historical reasons
+        // The original recommended fix has to be wiped out here which is not an
+        // issue since this overlaps only in a dozen or so cases
+        recFixFlags = bs->readUInt();
+        recommendedFixType = static_cast<ap::fix::ApproachFixType>(recFixFlags & 0xf);
+        recommendedFixIdent = converter::intToIcao((recFixFlags >> 5) & 0xfffffff, true);
+        recommendedFixRegion = converter::intToIcao(bs->readUInt() & 0x7ff, true);
+      }
+      else
+        // Skip center fix data
+        bs->skip(16);
+    }
+    else
+      // Old MSFS structure
+      bs->skip(8);
+  }
 }
 
 QString ApproachLeg::legTypeToString(leg::Type type)
+{
+  return legTypeToString(type, QString(), false);
+}
+
+QString ApproachLeg::legTypeToString(leg::Type type, const QString& src, bool warn)
 {
   switch(type)
   {
@@ -138,7 +192,8 @@ QString ApproachLeg::legTypeToString(leg::Type type)
       return "VR";
 
   }
-  qWarning().nospace().noquote() << "Invalid approach leg type " << type;
+  if(warn)
+    qWarning().nospace().noquote() << "Invalid approach leg type " << type << " Msg: " << src;
   return "INVALID";
 }
 
@@ -187,12 +242,23 @@ QString ApproachLeg::turnDirToString(leg::TurnDirection turnDir)
   return "INVALID";
 }
 
+bool ApproachLeg::isValid() const
+{
+  // Check validity by looking at the most important fields in the leg
+  return legTypeToString(type, QString(), false) != "INVALID" && altDescriptorToString(altDescriptor) != "INVALID" &&
+         turnDirToString(turnDirection) != "INVALID" && atools::inRange(0.f, 360.f, theta) &&
+         atools::inRange(0.f, 360.f, course) &&
+         rho >= 0.f &&
+         atools::inRange(0.f, 20000.f, altitude1) &&
+         atools::inRange(0.f, 20000.f, altitude2);
+}
+
 QDebug operator<<(QDebug out, const ApproachLeg& record)
 {
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << " ApproachLeg["
-                          << "type " << ApproachLeg::legTypeToString(record.type)
+                          << "type " << ApproachLeg::legTypeToString(record.type, QString(), false)
                           << ", alt descr " << ApproachLeg::altDescriptorToString(record.altDescriptor)
                           << ", turn " << ApproachLeg::turnDirToString(record.turnDirection)
                           << ", fix type " << ap::approachFixTypeToStr(record.fixType)

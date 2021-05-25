@@ -62,6 +62,7 @@ void ManifestJson::read(const QString& filename)
     manufacturer = obj.value("manufacturer").toString();
     creator = obj.value("creator").toString();
     packageVersion = obj.value("package_version").toString();
+    minGameVersion = obj.value("minimum_game_version").toString();
     file.close();
   }
   else

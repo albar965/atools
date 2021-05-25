@@ -94,7 +94,7 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
       return "MSFS_AIRPORT_JETWAY";
 
     case rec::MSFS_AIRPORT_LIGHT_SUPPORT:
-      return "UNKNOWN_MSFS_0057";
+      return "MSFS_AIRPORT_LIGHT_SUPPORT";
 
     case rec::MSFS_SID:
       return "SID_MSFS";
@@ -103,7 +103,7 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
       return "STAR_MSFS";
 
     case rec::MSFS_UNKNOWN_00CD:
-      return "UNKNOWN_MSFS_00CD";
+      return "MSFS_UNKNOWN_00CD";
 
     case rec::NAME:
       return "NAME";
@@ -198,8 +198,8 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case rec::FENCE_BOUNDARY:
       return "FENCE_BOUNDARY";
 
-    case rec::UNKNOWN_003B:
-      return "UNKNOWN_REC_003B";
+    case rec::AIRPORT_UNKNOWN_003B:
+      return "AIRPORT_UNKNOWN_003B";
 
     case rec::TAXI_PATH_MSFS:
       return "TAXI_PATH_MSFS";
@@ -261,7 +261,8 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
     case rec::TOWER_OBJ:
 
     // Unknown records to silence warnings
-    case rec::UNKNOWN_003B:
+    case rec::AIRPORT_UNKNOWN_003B:
+    case rec::MSFS_AIRPORT_UNKNOWN_00E8:
       return true;
   }
   return false;
@@ -328,11 +329,20 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
 {
   switch(type)
   {
+    case rec::SID_STAR_MSFS_DEPARTURE:
+      return "SID_STAR_MSFS_DEPARTURE";
+
+    case rec::SID_STAR_MSFS_ARRIVAL:
+      return "SID_STAR_MSFS_ARRIVAL";
+
     case rec::LEGS:
       return "LEGS";
 
     case rec::LEGS_MSFS:
       return "LEGS_MSFS";
+
+    case rec::LEGS_MSFS_NEW:
+      return "LEGS_MSFS_NEW";
 
     case rec::MISSED_LEGS:
       return "MISSED_LEGS";
@@ -340,14 +350,25 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::MISSED_LEGS_MSFS:
       return "MISSED_LEGS_MSFS";
 
+    case rec::MISSED_LEGS_MSFS_NEW:
+      return "MISSED_LEGS_MSFS_NEW";
+
     case rec::TRANSITION:
       return "TRANSITION";
 
+    // case rec::TRANSITION_LEGS_MSFS:
     case rec::TRANSITION_MSFS:
-      return "TRANSITION_MSFS";
+      // case rec::TRANSITION_LEGS_MSFS: Duplicate in MSFS record definition
+      return "TRANSITION_MSFS/TRANSITION_LEGS_MSFS";
+
+    case rec::TRANSITION_MSFS_NEW:
+      return "TRANSITION_MSFS_NEW";
 
     case rec::TRANSITION_LEGS:
-      return "TRANS_LEGS";
+      return "TRANSITION_LEGS";
+
+    case rec::TRANSITION_LEGS_MSFS_NEW:
+      return "TRANSITION_LEGS_MSFS_NEW";
 
     case rec::RUNWAY_TRANSITIONS_MSFS:
       return "RUNWAY_TRANSITIONS_MSFS";
@@ -433,10 +454,10 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
 {
   switch(type)
   {
-    case atools::fs::bgl::rec::BOUNDARY_COM:
+    case rec::BOUNDARY_COM:
       return "BOUNDARY_COM";
 
-    case atools::fs::bgl::rec::BOUNDARY_NAME:
+    case rec::BOUNDARY_NAME:
       return "BOUNDARY_NAME";
 
     case rec::BOUNDARY_LINES:

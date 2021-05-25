@@ -64,6 +64,9 @@ public:
     return suffix;
   }
 
+  /* true if all legs have valid values (type, course, etc. ) */
+  bool isValid() const override;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::SidStar& record);
 

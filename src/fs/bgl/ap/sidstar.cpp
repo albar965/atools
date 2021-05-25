@@ -67,11 +67,11 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
   while(bs->tellg() < startOffset + size)
   {
     Record r(options, bs);
-    rec::ApprRecordType t = r.getId<rec::ApprRecordType>();
+    rec::ApprRecordType recType = r.getId<rec::ApprRecordType>();
     if(checkSubRecord(r))
       return;
 
-    switch(t)
+    switch(recType)
     {
       case rec::COMMON_ROUTE_LEGS_MSFS:
         {
@@ -82,7 +82,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            */
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
-            commonRouteLegs.append(ApproachLeg(bs, false, true));
+            commonRouteLegs.append(ApproachLeg(bs, recType));
         }
         break;
 
@@ -104,7 +104,22 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, false, true));
+          {
+            qint64 pos = bs->tellg();
+            ApproachLeg leg(bs, recType);
+
+            // Have to apply a hack here and check if the leg is valid - move back 8 bytes and read again if not
+            // These legs have different sizes without any apparent indication
+            if(!leg.isValid())
+            {
+              // Go back and read again
+              bs->seekg(pos - 8);
+              leg = ApproachLeg(bs, recType);
+            }
+
+            // Approach will be filtered out later if invalid
+            legs.append(leg);
+          }
           /* And finally, we'll add it to our hash of runways. */
           runwayTransitionLegs.insert(runwayName, legs);
         }
@@ -125,7 +140,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, false, true));
+            legs.append(ApproachLeg(bs, recType));
 
           /* Now to figure out the "key" for this transition... */
           if(rec::MSFS_SID == id)
@@ -141,10 +156,39 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
         }
         break;
 
+      case rec::SID_STAR_MSFS_DEPARTURE:
+        // Currently disable since structure is unknown
+        // Reading the same fields and order as above records does not work
+#ifdef DEBUG_MSFS_SID_STAR_NEW
+        {
+          QList<atools::fs::bgl::ApproachLeg> legs;
+          int numLegs = bs->readUShort();
+          QString name = bs->readString(8, atools::io::UTF8);
+          bs->skip(8); // Unknown - runway not inside
+          for(int i = 0; i < numLegs; i++)
+            legs.append(ApproachLeg(bs, recType));
+        }
+#endif
+        break;
+
+      case rec::SID_STAR_MSFS_ARRIVAL:
+        // Currently disable since structure is unknown
+        // Reading the same fields and order as above records does not work
+#ifdef DEBUG_MSFS_SID_STAR_NEW
+        {
+          QList<atools::fs::bgl::ApproachLeg> legs;
+          int numLegs = bs->readUShort();
+          bs->skip(8);
+          for(int i = 0; i < numLegs; i++)
+            legs.append(ApproachLeg(bs, recType));
+        }
+#endif
+        break;
+
       default:
         /* Shouldn't ever occur, so print error and move on? */
-        qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
-                   << dec << " " << approachRecordTypeStr(t) << " " << bs->tellg();
+        qWarning().noquote().nospace() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
+                                       << dec << " " << approachRecordTypeStr(recType) << " offset " << bs->tellg();
 
     }
     r.seekToEnd();
@@ -168,6 +212,30 @@ QDebug operator<<(QDebug out, const SidStar& record)
 
 SidStar::~SidStar()
 {
+}
+
+bool SidStar::isValid() const
+{
+  // Need at least one leg
+  bool valid = commonRouteLegs.size() + runwayTransitionLegs.size() + enrouteTransitions.size() > 0;
+
+  for(const ApproachLeg& leg: commonRouteLegs)
+    valid &= leg.isValid();
+
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : enrouteTransitions)
+  {
+    for(const ApproachLeg& leg: legs)
+      valid &= leg.isValid();
+  }
+
+  for(const QList<atools::fs::bgl::ApproachLeg>& legs : runwayTransitionLegs)
+  {
+    for(const ApproachLeg& leg: legs)
+      valid &= leg.isValid();
+  }
+
+  return valid;
+
 }
 
 } // namespace bgl

@@ -76,6 +76,11 @@ public:
     return packageVersion;
   }
 
+  const QString& getMinGameVersion() const
+  {
+    return minGameVersion;
+  }
+
   void clear()
   {
     contentType.clear();
@@ -83,10 +88,11 @@ public:
     manufacturer.clear();
     creator.clear();
     packageVersion.clear();
+    minGameVersion.clear();
   }
 
 private:
-  QString contentType, title, manufacturer, creator, packageVersion;
+  QString contentType, title, manufacturer, creator, packageVersion, minGameVersion;
 
 };
 

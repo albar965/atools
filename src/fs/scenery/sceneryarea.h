@@ -198,13 +198,34 @@ public:
     addOn = value;
   }
 
+  const QString& getMinGameVersion() const
+  {
+    return minGameVersion;
+  }
+
+  void setMinGameVersion(const QString& value)
+  {
+    minGameVersion = value;
+  }
+
+  const QString& getPackageVersion() const
+  {
+    return packageVersion;
+  }
+
+  void setPackageVersion(const QString& value)
+  {
+    packageVersion = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::SceneryArea& area);
 
   int areaNumber = 0, textureId = 0, layer = 0;
   bool active = false, required = false, highPriority = false, addOn = false, community = false,
        navdataThirdPartyUpdate = false, navdata = false; /* Only MSFS */
-  QString title, remotePath, localPath, exclude;
+  QString title, remotePath, localPath, exclude,
+          minGameVersion, packageVersion; // Only MSFS
 };
 
 } // namespace scenery

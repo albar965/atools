@@ -83,7 +83,7 @@ enum AirportRecordType
   FENCE_BLAST = 0x0038,
   FENCE_BOUNDARY = 0x0039,
 
-  UNKNOWN_003B = 0x003b,
+  AIRPORT_UNKNOWN_003B = 0x003b,
 
   MSFS_SID = 0x0042,
   MSFS_STAR = 0x0048,
@@ -93,7 +93,9 @@ enum AirportRecordType
   MSFS_AIRPORT_PAINTED_HATCHED_AREA = 0x00d8,
   MSFS_AIRPORT_TAXIWAY_SIGN = 0x00d9,
   MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME = 0x00dd,
-  MSFS_AIRPORT_JETWAY = 0x00de
+  MSFS_AIRPORT_JETWAY = 0x00de,
+
+  MSFS_AIRPORT_UNKNOWN_00E8 = 0x00e8
 };
 
 QString airportRecordTypeStr(AirportRecordType type);
@@ -126,23 +128,38 @@ QString runwayRecordTypeStr(RunwayRecordType type);
 /* Sub record types for approaches and transitions */
 enum ApprRecordType
 {
+  /* Approach legs */
   LEGS = 0x002d,
   LEGS_MSFS = 0x00e1,
+  LEGS_MSFS_NEW = 0x00ec,
 
+  /* Missed approache legs */
   MISSED_LEGS = 0x002e,
   MISSED_LEGS_MSFS = 0x00e2,
+  MISSED_LEGS_MSFS_NEW = 0x00ed,
 
+  /* Approach transitions */
   TRANSITION = 0x002c,
   TRANSITION_MSFS = 0x00e3,
+  TRANSITION_MSFS_NEW = 0x0049,
 
+  /* Approach transition legs */
   TRANSITION_LEGS = 0x002f,
   TRANSITION_LEGS_MSFS = 0x00e3,
+  TRANSITION_LEGS_MSFS_NEW = 0x00ee,
 
+  /* MSFS SID and STAR */
   RUNWAY_TRANSITIONS_MSFS = 0x0046,
   ENROUTE_TRANSITIONS_MSFS = 0x0047,
+
   RUNWAY_TRANSITION_LEGS_MSFS = 0x00e4,
   COMMON_ROUTE_LEGS_MSFS = 0x00e5,
-  ENROUTE_TRANSITION_LEGS_MSFS = 0x00e6
+  ENROUTE_TRANSITION_LEGS_MSFS = 0x00e6,
+
+  /* New types for SID and STAR */
+  SID_STAR_MSFS_DEPARTURE = 0x004a,
+  SID_STAR_MSFS_ARRIVAL = 0x00f0
+
 };
 
 QString approachRecordTypeStr(ApprRecordType type);

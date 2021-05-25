@@ -49,6 +49,7 @@ namespace fix {
 enum ApproachFixType
 {
   NONE = 0,
+  AIRPORT = 1, /* New in MSFS - also used in X-Plane */
   VOR = 2,
   NDB = 3,
   TERMINAL_NDB = 4,
