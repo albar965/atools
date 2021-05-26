@@ -63,24 +63,29 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
   altitude2 = bs->readFloat();
 
   // Determine type by using record id =============================
-  // MSFS SID STAR records before and after 1.16.1
-  bool msfsSidStar = recType == rec::RUNWAY_TRANSITIONS_MSFS || recType == rec::COMMON_ROUTE_LEGS_MSFS ||
-                     recType == rec::ENROUTE_TRANSITIONS_MSFS;
-
   // New MSFS records since 1.16.1 ======
-  bool msfsNew = recType == rec::LEGS_MSFS_NEW || recType == rec::MISSED_LEGS_MSFS_NEW ||
-                 recType == rec::TRANSITION_LEGS_MSFS_NEW || recType == rec::COMMON_ROUTE_LEGS_MSFS_NEW ||
-                 recType == rec::ENROUTE_TRANSITIONS_MSFS_NEW || msfsSidStar;
+  bool msfsNew = recType == rec::LEGS_MSFS_NEW ||
+                 recType == rec::MISSED_LEGS_MSFS_NEW ||
+                 recType == rec::TRANSITION_LEGS_MSFS_NEW ||
+                 recType == rec::RUNWAY_TRANSITION_LEGS_MSFS_NEW ||
+                 recType == rec::COMMON_ROUTE_LEGS_MSFS_NEW ||
+                 recType == rec::ENROUTE_TRANSITION_LEGS_MSFS_NEW;
 
   // Common MSFS records
-  bool msfs = recType == rec::LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS || recType == rec::TRANSITION_LEGS_MSFS ||
-              msfsNew || msfsSidStar;
+  bool msfs = msfsNew ||
+              recType == rec::LEGS_MSFS ||
+              recType == rec::MISSED_LEGS_MSFS ||
+              recType == rec::TRANSITION_LEGS_MSFS ||
+              recType == rec::RUNWAY_TRANSITION_LEGS_MSFS ||
+              recType == rec::COMMON_ROUTE_LEGS_MSFS ||
+              recType == rec::ENROUTE_TRANSITION_LEGS_MSFS;
 
   if(msfs)
   {
     // Not type given - assuming max speed
     speedLimit = bs->readFloat();
     bs->readFloat(); // verticalAngle - ignored for now
+    bs->skip(8); // unknown
 
     if(msfsNew)
     {
@@ -88,8 +93,6 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
       // Check for constant radius turn legs - these need the center point in the recommended fix
       if(type == leg::RF)
       {
-        bs->skip(8);
-
         // if(!recommendedFixIdent.isEmpty())
         // qWarning() << Q_FUNC_INFO << "Recommended fix overlap in RF leg"
         // << recommendedFixIdent << "/" << recommendedFixRegion;
@@ -105,11 +108,8 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
       }
       else
         // Skip center fix data
-        bs->skip(16);
+        bs->skip(8);
     }
-    else
-      // Old MSFS structure
-      bs->skip(8);
   }
 }
 

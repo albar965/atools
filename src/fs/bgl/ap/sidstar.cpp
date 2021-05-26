@@ -80,6 +80,9 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
            * The common route legs are similar to the base of an approach, except
            * these will be combined with each runway transition leg set to produce
            * an individual STAR (or SID?)
+           *
+           * NOTE: Unlike enroute and runway transitions, these legs are direct
+           * children of the procedure!
            */
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
@@ -105,56 +108,54 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
-          {
-            qint64 pos = bs->tellg();
-            ApproachLeg leg(bs, recType);
+            legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
 
-            // Have to apply a hack here and check if the leg is valid - move back 8 bytes and read again if not
-            // These legs have different sizes without any apparent indication
-            if(i > 0 && !leg.isValid())
-            {
-              // Go back and read again
-              bs->seekg(pos - 8);
-              leg = ApproachLeg(bs, recType);
-            }
-
-            // Approach will be filtered out later if invalid
-            legs.append(leg);
-          }
           /* And finally, we'll add it to our hash of runways. */
           runwayTransitionLegs.insert(runwayName, legs);
         }
         break;
 
       case rec::ENROUTE_TRANSITIONS_MSFS:
+      case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
         {
           /*
            * These are effectively the transitions for a SID/STAR. The normal Transition
            * class does quite understand these though...
            * Either we fix that, or modify the database writer... yuck.
            */
+          QString name;
           (void)bs->readUByte(); /* transitionCt */
           bs->skip(1); /* unknown byte, usually zero */
+          if(rec::ENROUTE_TRANSITIONS_MSFS_NEW == recType)
+          {
+            name = bs->readString(8, atools::io::UTF8);
+          }
           /* Create a container for the transition legs */
           QList<ApproachLeg> legs;
           /* This will always be followed by 1 ENROUTE_TRANSITION_LEGS_MSFS record */
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, recType));
-          insertEnrouteTransition(legs);
-        }
-        break;
+            legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
 
-      case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
-        // Same as above
-        {
-          QList<atools::fs::bgl::ApproachLeg> legs;
-          int numLegs = bs->readUShort();
-          bs->skip(16); // Name (8) and unknown
-          for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, recType));
-          insertEnrouteTransition(legs);
+          if(rec::ENROUTE_TRANSITIONS_MSFS_NEW != recType)
+          {
+            /* Now to figure out the "key" for this transition... */
+            if(rec::MSFS_SID == id)
+            {
+              /* For SID, the transition ident is the LAST leg's fix. */
+              name = legs.last().getFixIdent();
+            }
+            else if(rec::MSFS_STAR == id)
+            {
+              /* For STAR, the transition ident is the FIRST leg's fix */
+              name = legs.first().getFixIdent();
+            }
+          }
+          if(!legs.isEmpty())
+            enrouteTransitions.insert(name, legs);
+          else
+            qWarning() << Q_FUNC_INFO << "No enroute transition found" << getDescription();
         }
         break;
 
@@ -170,27 +171,6 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
 
 SidStar::~SidStar()
 {
-}
-
-void SidStar::insertEnrouteTransition(const QList<ApproachLeg>& legs)
-{
-  if(!legs.isEmpty())
-  {
-    /* Now to figure out the "key" for this transition... */
-    if(rec::MSFS_SID == id)
-    {
-      /* For SID, the transition ident is the LAST leg's fix. */
-      enrouteTransitions.insert(legs.last().getFixIdent(), legs);
-    }
-    else if(rec::MSFS_STAR == id)
-    {
-      /* For STAR, the transition ident is the FIRST leg's fix */
-      enrouteTransitions.insert(legs.first().getFixIdent(), legs);
-    }
-  }
-  else
-    qWarning() << Q_FUNC_INFO << "No enroute transition found" << getDescription();
-
 }
 
 QDebug operator<<(QDebug out, const SidStar& record)

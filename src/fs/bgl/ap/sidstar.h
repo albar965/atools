@@ -74,7 +74,6 @@ public:
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::SidStar& record);
-  void insertEnrouteTransition(const QList<ApproachLeg>& legs);
 
   QList<atools::fs::bgl::ApproachLeg> commonRouteLegs;
   QHash<QString, QList<atools::fs::bgl::ApproachLeg> > enrouteTransitions;
