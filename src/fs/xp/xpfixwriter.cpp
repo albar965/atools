@@ -67,6 +67,8 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", at(line, IDENT));
   insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
+  insertWaypointQuery->bindValue(":airport_ident", at(line, AIRPORT));
+
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
   insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints
   insertWaypointQuery->bindValue(":num_victor_airway", 0); // filled  by sql/fs/db/xplane/prepare_airway.sql

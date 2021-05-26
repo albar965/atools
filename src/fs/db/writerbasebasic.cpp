@@ -59,11 +59,6 @@ RunwayIndex *WriterBaseBasic::getRunwayIndex()
   return dataWriter.getRunwayIndex();
 }
 
-DbAirportIndex *WriterBaseBasic::getAirportIndex()
-{
-  return dataWriter.getAirportIndex();
-}
-
 void WriterBaseBasic::bindBool(const QString& placeholder, bool val)
 {
   return sqlQuery.bindValue(placeholder, val ? 1 : 0);

@@ -32,7 +32,6 @@ namespace fs {
 class NavDatabaseOptions;
 namespace db {
 class RunwayIndex;
-class DbAirportIndex;
 class DataWriter;
 
 /*
@@ -64,7 +63,6 @@ protected:
 
   const atools::fs::NavDatabaseOptions& getOptions();
   atools::fs::db::RunwayIndex *getRunwayIndex();
-  atools::fs::db::DbAirportIndex *getAirportIndex();
 
   /*
    * Bind a value to the insert statement

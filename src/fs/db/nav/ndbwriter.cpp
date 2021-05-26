@@ -19,7 +19,6 @@
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/db/dbairportindex.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -50,24 +49,16 @@ void NdbWriter::writeObject(const Ndb *type)
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":type", bgl::Ndb::ndbTypeToStr(type->getType()));
+
+  bind(":airport_ident", type->getAirportIdent());
+  bindNullInt(":airport_id");
+
   bind(":frequency", type->getFrequency());
   bind(":range", roundToInt(meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());
   bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
-
-  bindNullInt(":airport_id");
-
-  QString apIdent = type->getAirportIdent();
-  if(!apIdent.isEmpty() && getOptions().isIncludedAirportIdent(apIdent))
-  {
-    QString msg("NDB ID " + QString::number(getCurrentId()) +
-                " ident " + type->getIdent() + " name " + type->getName());
-    int id = getAirportIndex()->getAirportId(apIdent, msg);
-    if(id != -1)
-      bind(":airport_id", id);
-  }
 
   executeStatement();
 }

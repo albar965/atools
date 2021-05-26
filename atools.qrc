@@ -48,5 +48,6 @@
         <file>resources/sql/fs/db/dfd/populate_navaids_proc.sql</file>
         <file>resources/xsd/lnmpln.xsd</file>
         <file>resources/xsd/lnmperf.xsd</file>
+        <file>resources/sql/fs/db/update_nav_ids.sql</file>
     </qresource>
 </RCC>

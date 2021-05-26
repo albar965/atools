@@ -530,6 +530,7 @@ int NavDatabase::countMsSimSteps()
   total += PROGRESS_NUM_TASK_STEPS; // "Updating waypoints"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating approaches"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating Airports"
+  total += PROGRESS_NUM_TASK_STEPS; // "Updating Navaids"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS"
   total += PROGRESS_NUM_TASK_STEPS; // "Updating ILS Count"
   total += PROGRESS_NUM_TASK_STEPS; // "Collecting navaids for search"
@@ -708,6 +709,13 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return;
 
+  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  {
+    // Assign airport ids based on stored idents for waypoint and ndb
+    if((aborted = runScript(&progress, "fs/db/update_nav_ids.sql", tr("Updating Navaids"))))
+      return;
+  }
+
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Remove all unreferenced dummy waypoints that were added for airway generation
@@ -719,6 +727,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
     return;
 
+  // Assign region to airports by best guess from nearby navaids
   if((aborted = runScript(&progress, "fs/db/update_airport.sql", tr("Updating Airports"))))
     return;
 

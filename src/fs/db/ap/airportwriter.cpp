@@ -33,7 +33,6 @@
 #include "geo/calculations.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/ap/del/deleteairport.h"
-#include "fs/db/dbairportindex.h"
 #include "fs/db/nav/waypointwriter.h"
 #include "fs/db/ap/comwriter.h"
 #include "fs/bgl/ap/parking.h"
@@ -104,7 +103,6 @@ void AirportWriter::writeObject(const Airport *type)
     // Update index
     currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(ident, predId);
 
     // Write features with other airport id
     ComWriter *comWriter = dw.getAirportComWriter();
@@ -301,7 +299,6 @@ void AirportWriter::writeObject(const Airport *type)
     // Update index
     currentIdent = ident;
     currentPos = type->getPosition().getPos();
-    getAirportIndex()->add(ident, getCurrentId());
 
     // Write all subrecords now since the airport id is not available - this keeps the foreign keys valid
     RunwayWriter *rwWriter = dw.getRunwayWriter();

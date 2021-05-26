@@ -20,7 +20,6 @@
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
 #include "fs/bgl/util.h"
-#include "fs/db/dbairportindex.h"
 #include "geo/calculations.h"
 #include "atools.h"
 
@@ -51,6 +50,10 @@ void VorWriter::writeObject(const Vor *type)
   bind(":name", type->getName());
   bind(":region", type->getRegion());
   bind(":type", bgl::IlsVor::ilsVorTypeToStr(type->getType()));
+
+  bind(":airport_ident", type->getAirportIdent());
+  bindNullInt(":airport_id");
+
   bind(":frequency", type->getFrequency());
   bind(":range", roundToInt(meterToNm(type->getRange())));
 
@@ -63,17 +66,6 @@ void VorWriter::writeObject(const Vor *type)
   bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
-
-  bindNullInt(":airport_id");
-  QString apIdent = type->getAirportIdent();
-  if(!apIdent.isEmpty() && getOptions().isIncludedAirportIdent(apIdent))
-  {
-    QString msg("VOR ID " + QString::number(getCurrentId()) +
-                " ident " + type->getIdent() + " name " + type->getName());
-    int id = getAirportIndex()->getAirportId(apIdent, msg);
-    if(id != -1)
-      bind(":airport_id", id);
-  }
 
   const Dme *dme = type->getDme();
   if(dme != nullptr)

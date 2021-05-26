@@ -30,6 +30,7 @@ create table waypoint
   ident varchar(5) not null,          -- ICAO ident
   region varchar(2),                  -- ICAO two letter region identifier
   airport_id integer,                 -- Reference to airport if applicable
+  airport_ident varchar(4),           -- Redundant to id - used for resolving id after compilation
   artificial integer,                 -- Created for VOR and NDB navaids to support airway generation.
                                       -- 1 = for airways and 2 = for procedures (2 is only needed for LNM <= 2.4.5)
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
@@ -60,6 +61,7 @@ create table vor
   name varchar(50),
   region varchar(2),            -- ICAO two letter region identifier
   airport_id integer,           -- Reference to airport if applicable
+  airport_ident varchar(4),     -- Redundant to id - used for resolving id after compilation
   type varchar(15),             -- See enum atools::fs::bgl::nav::IlsVorType
                                 --  H = high VOR, L = low VOR, T = terminal VOR,
                                 -- TC = TACAN, VTH = high VORTAC, VTL = low VORTAC, VTT = terminal VORTAC
@@ -95,6 +97,7 @@ create table ndb
   name varchar(50),
   region varchar(2),          -- ICAO two letter region identifier
   airport_id integer,         -- Reference to airport if applicable
+  airport_ident varchar(4),   -- Redundant to id - used for resolving id after compilation
   type varchar(15),           -- See enum atools::fs::bgl::nav::NdbType
                               -- CP MH H HH
   frequency integer not null, -- Frequency - kHz * 100

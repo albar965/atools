@@ -36,7 +36,6 @@
 #include "fs/db/ap/rw/runwaywriter.h"
 #include "fs/db/ap/rw/runwayendwriter.h"
 #include "fs/db/runwayindex.h"
-#include "fs/db/dbairportindex.h"
 #include "fs/db/ap/approachwriter.h"
 #include "fs/db/ap/approachlegwriter.h"
 #include "fs/db/ap/transitionlegwriter.h"
@@ -114,8 +113,6 @@ DataWriter::DataWriter(SqlDatabase& sqlDb, const NavDatabaseOptions& opts, atool
   boundaryWriter = new BoundaryWriter(db, *this);
 
   runwayIndex = new RunwayIndex();
-  airportIndex = new DbAirportIndex();
-
   magDecReader = new MagDecReader();
 }
 
@@ -184,8 +181,6 @@ void DataWriter::close()
   boundaryWriter = nullptr;
   delete runwayIndex;
   runwayIndex = nullptr;
-  delete airportIndex;
-  airportIndex = nullptr;
   delete magDecReader;
   magDecReader = nullptr;
 }
@@ -284,7 +279,6 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
           // Clear the indexes
           runwayIndex->clear();
-          airportIndex->clear();
 
           // Execution order is important due to dependencies between the writers
           // (i.e. ILS writer looks for runway end ids)

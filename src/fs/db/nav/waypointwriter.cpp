@@ -19,7 +19,6 @@
 #include "fs/db/nav/airwaysegmentwriter.h"
 #include "fs/db/meta/bglfilewriter.h"
 #include "fs/db/datawriter.h"
-#include "fs/db/dbairportindex.h"
 
 #include <exception.h>
 
@@ -49,22 +48,15 @@ void WaypointWriter::writeObject(const Waypoint *type)
   bind(":region", type->getRegion());
   bind(":type", bgl::Waypoint::waypointTypeToStr(type->getType()));
 
+  bindNullInt(":airport_id");
+  bind(":airport_ident", type->getAirportIdent());
+
   bind(":num_victor_airway", type->getNumVictorAirway());
   bind(":num_jet_airway", type->getNumJetAirway());
 
   bind(":mag_var", getDataWriter().getMagVar(type->getPosition().getPos(), type->getMagVar()));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
-
-  bindNullInt(":airport_id");
-  QString apIdent = type->getAirportIdent();
-  if(!apIdent.isEmpty() && getOptions().isIncludedAirportIdent(apIdent))
-  {
-    QString msg("Waypoint ID " + QString::number(getCurrentId()) + " ident " + type->getIdent());
-    int id = getAirportIndex()->getAirportId(apIdent, msg);
-    if(id != -1)
-      bind(":airport_id", id);
-  }
 
   executeStatement();
 

@@ -495,7 +495,6 @@ HEADERS += \
   src/fs/db/ap/transitionwriter.h \
   src/fs/db/databasemeta.h \
   src/fs/db/datawriter.h \
-  src/fs/db/dbairportindex.h \
   src/fs/db/meta/bglfilewriter.h \
   src/fs/db/meta/sceneryareawriter.h \
   src/fs/db/nav/airwaysegmentwriter.h \
@@ -634,7 +633,6 @@ SOURCES += \
   src/fs/db/ap/transitionwriter.cpp \
   src/fs/db/databasemeta.cpp \
   src/fs/db/datawriter.cpp \
-  src/fs/db/dbairportindex.cpp \
   src/fs/db/meta/bglfilewriter.cpp \
   src/fs/db/meta/sceneryareawriter.cpp \
   src/fs/db/nav/airwaysegmentwriter.cpp \
