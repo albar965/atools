@@ -190,18 +190,27 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
       case rec::OFFSET_THRESHOLD_SEC:
         secondary.offsetThreshold = readRunwayExtLength(msfs);
         break;
+
       case rec::BLAST_PAD_PRIM:
         primary.blastPad = readRunwayExtLength(msfs);
         break;
       case rec::BLAST_PAD_SEC:
         secondary.blastPad = readRunwayExtLength(msfs);
         break;
+
       case rec::OVERRUN_PRIM:
         primary.overrun = readRunwayExtLength(msfs);
+        break;
+      case rec::OVERRUN_PRIM_MSFS:
+        primary.overrun = readRunwayExtLength(false); // New types do not have a material definition
         break;
       case rec::OVERRUN_SEC:
         secondary.overrun = readRunwayExtLength(msfs);
         break;
+      case rec::OVERRUN_SEC_MSFS:
+        secondary.overrun = readRunwayExtLength(false); // New types do not have a material definition
+        break;
+
       case rec::VASI_PRIM_LEFT:
         r.seekToStart();
         primary.leftVasi = RunwayVasi(options, bs);

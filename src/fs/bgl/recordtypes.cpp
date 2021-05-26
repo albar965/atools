@@ -75,6 +75,12 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 {
   switch(type)
   {
+    case rec::MSFS_AIRPORT_PROJECTED_MESH:
+      return "MSFS_AIRPORT_PROJECTED_MESH";
+
+    case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
+      return "MSFS_AIRPORT_GROUND_MERGING_TRANSFER";
+
     case rec::DELETE_AIRPORT_NAVIGATION:
       return "DELETE_AIRPORT_NAVIGATION";
 
@@ -259,10 +265,11 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
     case rec::TAXI_POINT:
     case rec::TAXI_POINT_P3DV5:
     case rec::TOWER_OBJ:
+    case rec::MSFS_AIRPORT_PROJECTED_MESH:
+    case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
 
     // Unknown records to silence warnings
     case rec::AIRPORT_UNKNOWN_003B:
-    case rec::MSFS_AIRPORT_UNKNOWN_00E8:
       return true;
   }
   return false;
@@ -294,8 +301,14 @@ QString runwayRecordTypeStr(rec::RunwayRecordType type)
     case rec::OVERRUN_PRIM:
       return "OVERRUN_PRIM";
 
+    case rec::OVERRUN_PRIM_MSFS:
+      return "OVERRUN_PRIM_MSFS";
+
     case rec::OVERRUN_SEC:
       return "OVERRUN_SEC";
+
+    case rec::OVERRUN_SEC_MSFS:
+      return "OVERRUN_SEC_MSFS";
 
     case rec::VASI_PRIM_LEFT:
       return "VASI_PRIM_LEFT";

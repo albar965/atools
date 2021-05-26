@@ -373,7 +373,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_AIRPORT_TAXIWAY_PARKING_MFGR_NAME:
       case rec::MSFS_AIRPORT_JETWAY:
       case rec::DELETE_AIRPORT_NAVIGATION:
-      case rec::MSFS_AIRPORT_UNKNOWN_00E8:
+      case rec::MSFS_AIRPORT_PROJECTED_MESH:
+      case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
         break;
 
       default:
@@ -478,7 +479,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
   }
 
   // =====================================================
-  // Now remove all procedures which are not valid in any way due to the idiotic undocumented BGL format
+  // Now remove all procedures which are not valid in any way
   approaches.erase(std::remove_if(approaches.begin(), approaches.end(),
                                   [ = ](const Approach& approach) -> bool {
           return !approach.isValid();
@@ -488,12 +489,6 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
                                     [ = ](const SidStar& sidStar) -> bool {
           return !sidStar.isValid();
         }), sidsAndStars.end());
-
-  // TODO create warnings for this
-  // Q_ASSERT(runways.size() == numRunways);
-  // Q_ASSERT(approaches.size() == numApproaches);
-  // Q_ASSERT(deleteAirports.size() == numDeleteRecords);
-  // Q_ASSERT(coms.size() == numComs);
 }
 
 Airport::~Airport()
