@@ -67,6 +67,11 @@ public:
   /* true if all legs have valid values (type, course, etc. ) */
   bool isValid() const override;
 
+  /*
+   * Short description for logging purposes
+   */
+  QString getDescription() const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::bgl::SidStar& record);
 

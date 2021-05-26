@@ -81,6 +81,15 @@ bool Transition::isValid() const
   return valid;
 }
 
+QString Transition::getDescription() const
+{
+  return "Transition[type " + Transition::transitionTypeToStr(type)
+         + ", fix type " + Transition::transitionFixTypeToStr(transFixType)
+         + ", fix " + transFixIdent
+         + ", ap " + fixAirportIdent
+         + ", dme " + dmeIdent;
+}
+
 Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec::ApprRecordType recType)
   : Record(options, bs)
 {

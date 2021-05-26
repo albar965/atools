@@ -151,6 +151,15 @@ bool Approach::isValid() const
 
 }
 
+QString Approach::getDescription() const
+{
+  return QString("Approach[type ") + ap::approachTypeToStr(type) +
+         ", rwy " + getRunwayName() +
+         ", fix type " + ap::approachFixTypeToStr(fixType) +
+         ", fix " + fixIdent +
+         ", ap " + fixAirportIdent + "]";
+}
+
 } // namespace bgl
 } // namespace fs
 } // namespace atools

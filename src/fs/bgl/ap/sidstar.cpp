@@ -238,6 +238,12 @@ bool SidStar::isValid() const
 
 }
 
+QString SidStar::getDescription() const
+{
+  return QString((rec::MSFS_SID == id) ? "Departure" : "Arrival") +
+         "[ident " + ident + "]";
+}
+
 } // namespace bgl
 } // namespace fs
 } // namespace atools

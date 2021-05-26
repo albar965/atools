@@ -430,13 +430,13 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
     for(const ApproachLeg& leg: app.getLegs())
     {
       if(!leg.isValid())
-        qWarning() << Q_FUNC_INFO << "Invalid approach leg" << ident << app;
+        qWarning() << Q_FUNC_INFO << "Invalid approach leg in" << ident << app.getDescription();
     }
 
     for(const ApproachLeg& leg: app.getMissedLegs())
     {
       if(!leg.isValid())
-        qWarning() << Q_FUNC_INFO << "Invalid missed approach leg" << ident << app;
+        qWarning() << Q_FUNC_INFO << "Invalid missed approach leg in" << ident << app.getDescription();
     }
 
     for(const Transition& trans : app.getTransitions())
@@ -444,7 +444,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       for(const ApproachLeg& leg: trans.getLegs())
       {
         if(!leg.isValid())
-          qWarning() << Q_FUNC_INFO << "Invalid transition leg" << ident << app << trans;
+          qWarning() << Q_FUNC_INFO << "Invalid transition leg in" << ident << app.getDescription()
+                     << trans.getDescription();
       }
     }
   }
@@ -454,7 +455,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
     for(const ApproachLeg& leg: sidStar.getCommonRouteLegs())
     {
       if(!leg.isValid())
-        qWarning() << Q_FUNC_INFO << "Invalid common route leg" << ident << leg;
+        qWarning() << Q_FUNC_INFO << "Invalid common route leg in" << ident << sidStar.getDescription();
     }
 
     for(const QList<atools::fs::bgl::ApproachLeg>& legs : sidStar.getEnrouteTransitions())
@@ -462,7 +463,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       for(const ApproachLeg& leg: legs)
       {
         if(!leg.isValid())
-          qWarning() << Q_FUNC_INFO << "Invalid enroute transition leg" << ident << sidStar;
+          qWarning() << Q_FUNC_INFO << "Invalid enroute transition leg in" << ident << sidStar.getDescription();
       }
     }
 
@@ -471,7 +472,7 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       for(const ApproachLeg& leg: legs)
       {
         if(!leg.isValid())
-          qWarning() << Q_FUNC_INFO << "Invalid runway transition leg" << ident << sidStar;
+          qWarning() << Q_FUNC_INFO << "Invalid runway transition leg in" << ident << sidStar.getDescription();
       }
     }
   }
