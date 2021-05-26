@@ -72,9 +72,9 @@ void AirportWriter::writeObject(const Airport *type)
   if(!getOptions().isIncludedAirportIdent(ident))
     return;
 
-  if(type->isEmpty())
+  if(!type->isValid())
   {
-    qWarning() << Q_FUNC_INFO << "Skipping empty airport" << ident;
+    qWarning() << Q_FUNC_INFO << "Skipping invalid airport" << ident;
     return;
   }
 

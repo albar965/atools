@@ -542,7 +542,7 @@ int Airport::calculateRating(bool isAddon) const
 
 bool Airport::isValid() const
 {
-  return !isEmpty() && position.getPos().isValid() && !position.getPos().isNull();
+  return !ident.isEmpty() && position.getPos().isValid() && !position.getPos().isNull();
 }
 
 QString Airport::getObjectName() const
