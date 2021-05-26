@@ -74,6 +74,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(recType)
     {
       case rec::COMMON_ROUTE_LEGS_MSFS:
+      case rec::COMMON_ROUTE_LEGS_MSFS_NEW:
         {
           /*
            * The common route legs are similar to the base of an approach, except
@@ -110,7 +111,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
 
             // Have to apply a hack here and check if the leg is valid - move back 8 bytes and read again if not
             // These legs have different sizes without any apparent indication
-            if(!leg.isValid())
+            if(i > 0 && !leg.isValid())
             {
               // Go back and read again
               bs->seekg(pos - 8);
@@ -141,48 +142,20 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
             legs.append(ApproachLeg(bs, recType));
-
-          /* Now to figure out the "key" for this transition... */
-          if(rec::MSFS_SID == id)
-          {
-            /* For SID, the transition ident is the LAST leg's fix. */
-            enrouteTransitions.insert(legs.last().getFixIdent(), legs);
-          }
-          else if(rec::MSFS_STAR == id)
-          {
-            /* For STAR, the transition ident is the FIRST leg's fix */
-            enrouteTransitions.insert(legs.first().getFixIdent(), legs);
-          }
+          insertEnrouteTransition(legs);
         }
         break;
 
-      case rec::SID_STAR_MSFS_DEPARTURE:
-        // Currently disable since structure is unknown
-        // Reading the same fields and order as above records does not work
-#ifdef DEBUG_MSFS_SID_STAR_NEW
+      case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
+        // Same as above
         {
           QList<atools::fs::bgl::ApproachLeg> legs;
           int numLegs = bs->readUShort();
-          QString name = bs->readString(8, atools::io::UTF8);
-          bs->skip(8); // Unknown - runway not inside
+          bs->skip(16); // Name (8) and unknown
           for(int i = 0; i < numLegs; i++)
             legs.append(ApproachLeg(bs, recType));
+          insertEnrouteTransition(legs);
         }
-#endif
-        break;
-
-      case rec::SID_STAR_MSFS_ARRIVAL:
-        // Currently disable since structure is unknown
-        // Reading the same fields and order as above records does not work
-#ifdef DEBUG_MSFS_SID_STAR_NEW
-        {
-          QList<atools::fs::bgl::ApproachLeg> legs;
-          int numLegs = bs->readUShort();
-          bs->skip(8);
-          for(int i = 0; i < numLegs; i++)
-            legs.append(ApproachLeg(bs, recType));
-        }
-#endif
         break;
 
       default:
@@ -193,6 +166,31 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
     }
     r.seekToEnd();
   }
+}
+
+SidStar::~SidStar()
+{
+}
+
+void SidStar::insertEnrouteTransition(const QList<ApproachLeg>& legs)
+{
+  if(!legs.isEmpty())
+  {
+    /* Now to figure out the "key" for this transition... */
+    if(rec::MSFS_SID == id)
+    {
+      /* For SID, the transition ident is the LAST leg's fix. */
+      enrouteTransitions.insert(legs.last().getFixIdent(), legs);
+    }
+    else if(rec::MSFS_STAR == id)
+    {
+      /* For STAR, the transition ident is the FIRST leg's fix */
+      enrouteTransitions.insert(legs.first().getFixIdent(), legs);
+    }
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "No enroute transition found" << getDescription();
+
 }
 
 QDebug operator<<(QDebug out, const SidStar& record)
@@ -208,10 +206,6 @@ QDebug operator<<(QDebug out, const SidStar& record)
   out << "  enrouteTransitions " << record.enrouteTransitions;
   out << "]";
   return out;
-}
-
-SidStar::~SidStar()
-{
 }
 
 bool SidStar::isValid() const

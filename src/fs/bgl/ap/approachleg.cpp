@@ -69,8 +69,8 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
 
   // New MSFS records since 1.16.1 ======
   bool msfsNew = recType == rec::LEGS_MSFS_NEW || recType == rec::MISSED_LEGS_MSFS_NEW ||
-                 recType == rec::TRANSITION_LEGS_MSFS_NEW || recType == rec::SID_STAR_MSFS_ARRIVAL ||
-                 recType == rec::SID_STAR_MSFS_DEPARTURE || msfsSidStar;
+                 recType == rec::TRANSITION_LEGS_MSFS_NEW || recType == rec::COMMON_ROUTE_LEGS_MSFS_NEW ||
+                 recType == rec::ENROUTE_TRANSITIONS_MSFS_NEW || msfsSidStar;
 
   // Common MSFS records
   bool msfs = recType == rec::LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS || recType == rec::TRANSITION_LEGS_MSFS ||
@@ -90,9 +90,9 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
       {
         bs->skip(8);
 
-        if(!recommendedFixIdent.isEmpty())
-          qWarning() << Q_FUNC_INFO << "Recommended fix overlap in RF leg"
-                     << recommendedFixIdent << "/" << recommendedFixRegion;
+        // if(!recommendedFixIdent.isEmpty())
+        // qWarning() << Q_FUNC_INFO << "Recommended fix overlap in RF leg"
+        // << recommendedFixIdent << "/" << recommendedFixRegion;
 
         // TODO create separate center columns in database
         // The recommended fix is used as the arc center navaid in the LNM database due to historical reasons

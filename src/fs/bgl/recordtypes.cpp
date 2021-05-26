@@ -342,11 +342,11 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
 {
   switch(type)
   {
-    case rec::SID_STAR_MSFS_DEPARTURE:
-      return "SID_STAR_MSFS_DEPARTURE";
+    case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
+      return "ENROUTE_TRANSITIONS_MSFS_NEW";
 
-    case rec::SID_STAR_MSFS_ARRIVAL:
-      return "SID_STAR_MSFS_ARRIVAL";
+    case rec::COMMON_ROUTE_LEGS_MSFS_NEW:
+      return "COMMON_ROUTE_LEGS_MSFS_NEW";
 
     case rec::LEGS:
       return "LEGS";
