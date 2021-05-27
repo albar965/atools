@@ -284,6 +284,17 @@ public:
    * To be used for testing and logging */
   QString toShortString() const;
 
+  /* Type of parking position. This is set by the program after loading a plan and is needed for export. */
+  atools::fs::pln::FlightplanParkingType getDepartureParkingType() const
+  {
+    return departureParkingType;
+  }
+
+  void setDepartureParkingType(atools::fs::pln::FlightplanParkingType value)
+  {
+    departureParkingType = value;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
@@ -316,6 +327,8 @@ private:
   atools::geo::Pos departurePos /* Airport */,
                    departureParkingPos /* Parking, runway or airport */,
                    destinationPos; /* Always airport */
+
+  atools::fs::pln::FlightplanParkingType departureParkingType = NO_POS;
 
   bool lnmFormat = true;
 

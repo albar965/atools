@@ -85,6 +85,16 @@ enum FlightplanType
   VFR
 };
 
+/* Departure parking type. Describes content of FlightPlan::departureParkingName */
+enum FlightplanParkingType
+{
+  NO_POS,
+  AIRPORT,
+  RUNWAY, /* Zero prefixed runway number like "07C" */
+  PARKING, /* Free X-Plane parking name or FSX/P3D/MSFS naming scheme. */
+  HELIPAD /* Number describing the helipad */
+};
+
 /* Currently only used for saving FSX/P3D PLN files */
 enum RouteType
 {

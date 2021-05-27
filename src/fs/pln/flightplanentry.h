@@ -221,7 +221,7 @@ public:
     comment = value;
   }
 
-  /* All below are for MSFS =========================== */
+  /* All below are for MSFS and are set before export =========================== */
   const QString& getSid() const
   {
     return sid;

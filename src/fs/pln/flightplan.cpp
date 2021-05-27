@@ -56,6 +56,7 @@ void Flightplan::clear()
   departureIdent.clear();
   destinationIdent.clear();
   departureParkingName.clear();
+  departureParkingType = NO_POS;
   departureName.clear();
   destinationName.clear();
   comment.clear();
