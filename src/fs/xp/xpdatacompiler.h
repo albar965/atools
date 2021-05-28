@@ -106,6 +106,9 @@ public:
                  atools::fs::ProgressHandler *progressHandler, atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpDataCompiler();
 
+  XpDataCompiler(const XpDataCompiler& other) = delete;
+  XpDataCompiler& operator=(const XpDataCompiler& other) = delete;
+
   /*
    * Write a scenery entry dummy named X-Plane
    * @return true if the  process was aborted
@@ -193,7 +196,7 @@ public:
   }
 
   /* Calculate number of files to be read */
-  static int calculateReportCount(ProgressHandler* progress, const atools::fs::NavDatabaseOptions& opts);
+  static int calculateReportCount(ProgressHandler *progress, const atools::fs::NavDatabaseOptions& opts);
 
   /* minmum accepted file version */
   void setMinVersion(int value)

@@ -121,6 +121,10 @@ public:
   ProcedureWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam);
   virtual ~ProcedureWriter();
 
+
+  ProcedureWriter(const ProcedureWriter& other) = delete;
+  ProcedureWriter& operator=(const ProcedureWriter& other) = delete;
+
   /* Call this for each line or row */
   void write(const ProcedureInput& line);
 

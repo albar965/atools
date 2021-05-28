@@ -37,6 +37,9 @@ public:
   Tacan(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Tacan() override;
 
+  Tacan(const Tacan& other) = delete;
+  Tacan& operator=(const Tacan& other) = delete;
+
   QString getChannel() const
   {
     return QString::number(channel) + QChar(channelId);

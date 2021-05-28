@@ -47,6 +47,9 @@ public:
   WhazzupTextParser(atools::sql::SqlDatabase *sqlDb, bool verboseErrorReporting);
   virtual ~WhazzupTextParser();
 
+  WhazzupTextParser(const WhazzupTextParser& other) = delete;
+  WhazzupTextParser& operator=(const WhazzupTextParser& other) = delete;
+
   /* Read file content given in string and store results in database. Commit is executed when done.
    * Reads either "whazzup.txt" format or VATSIM JSON format depending on "streamFormat".
    * Returns true if the file was read and is more recent than lastUpdate. */

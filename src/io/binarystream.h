@@ -42,6 +42,9 @@ public:
   BinaryStream(QFile *binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
   virtual ~BinaryStream();
 
+  BinaryStream(const BinaryStream& other) = delete;
+  BinaryStream& operator=(const BinaryStream& other) = delete;
+
   qint8 readByte();
   qint16 readShort();
   qint32 readInt();

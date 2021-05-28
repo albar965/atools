@@ -89,6 +89,9 @@ public:
              atools::fs::ProgressHandler *progress);
   virtual ~DataWriter();
 
+  DataWriter(const DataWriter& other) = delete;
+  DataWriter& operator=(const DataWriter& other) = delete;
+
   /*
    * @param area all BGL file content of this scenery area will be written to the database
    */

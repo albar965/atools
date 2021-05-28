@@ -47,6 +47,9 @@ public:
                  atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpAirwayWriter() override;
 
+  XpAirwayWriter(const XpAirwayWriter& other) = delete;
+  XpAirwayWriter& operator=(const XpAirwayWriter& other) = delete;
+
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
   virtual void reset() override;

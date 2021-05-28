@@ -36,6 +36,9 @@ struct DataSource
   {
   }
 
+  DataSource(const DataSource& other) = delete;
+  DataSource& operator=(const DataSource& other) = delete;
+
   ~DataSource()
   {
     free();

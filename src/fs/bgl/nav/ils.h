@@ -42,6 +42,9 @@ public:
   Ils(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Ils() override;
 
+  Ils(const Ils& other) = delete;
+  Ils& operator=(const Ils& other) = delete;
+
   /*
    * @return DME if available - otherwise null
    */

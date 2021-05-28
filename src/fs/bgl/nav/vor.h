@@ -37,6 +37,9 @@ public:
   Vor(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
   virtual ~Vor() override;
 
+  Vor(const Vor& other) = delete;
+  Vor& operator=(const Vor& other) = delete;
+
   /*
    * @return get the DME record for this VOR if available - otherwise null
    */

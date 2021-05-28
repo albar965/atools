@@ -50,6 +50,9 @@ public:
   GribDownloader(QObject *parent, bool logVerbose);
   ~GribDownloader() override;
 
+  GribDownloader(const GribDownloader& other) = delete;
+  GribDownloader& operator=(const GribDownloader& other) = delete;
+
   /* Start initial download. This will also trigger a recurring download method that gets the file
    * every 30 minutes.
    * Uses the latest file date if timestamp is not set. */

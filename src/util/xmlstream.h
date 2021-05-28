@@ -32,10 +32,6 @@ namespace util {
  */
 class XmlStream
 {
-  /* Forbid copying */
-  XmlStream(const XmlStream&) = delete;
-  XmlStream& operator=(const XmlStream&) = delete;
-
   Q_DECLARE_TR_FUNCTIONS(XmlTools)
 
 public:
@@ -49,6 +45,9 @@ public:
   explicit XmlStream(const char *data, const QString& filenameParam = QString());
 
   ~XmlStream();
+
+  XmlStream(const XmlStream& other) = delete;
+  XmlStream& operator=(const XmlStream& other) = delete;
 
   /* Read until element with given name. Throws exception in case of error */
   void readUntilElement(const QString& name);

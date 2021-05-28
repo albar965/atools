@@ -62,6 +62,8 @@ void ApproachWriter::writeObject(const Approach *type)
   else
     bind(":suffix", QChar(type->getSuffix()));
 
+  bind(":arinc_name", type->getArincName());
+
   bind(":has_gps_overlay", type->hasGpsOverlay());
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());

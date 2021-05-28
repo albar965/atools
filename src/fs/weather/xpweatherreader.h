@@ -47,6 +47,9 @@ public:
   explicit XpWeatherReader(QObject *parent, bool verboseLogging);
   virtual ~XpWeatherReader() override;
 
+  XpWeatherReader(const XpWeatherReader& other) = delete;
+  XpWeatherReader& operator=(const XpWeatherReader& other) = delete;
+
   /* Get METAR for airport ICAO or empty string if file or airport is not available */
 
   /* Get station and/or nearest METAR */

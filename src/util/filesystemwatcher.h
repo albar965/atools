@@ -41,6 +41,9 @@ public:
   explicit FileSystemWatcher(QObject *parent, bool verboseLogging);
   virtual ~FileSystemWatcher() override;
 
+  FileSystemWatcher(const FileSystemWatcher& other) = delete;
+  FileSystemWatcher& operator=(const FileSystemWatcher& other) = delete;
+
   QString getFileName() const
   {
     return filename;

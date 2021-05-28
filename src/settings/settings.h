@@ -38,6 +38,9 @@ namespace settings {
 class Settings
 {
 public:
+  Settings(const Settings& other) = delete;
+  Settings& operator=(const Settings& other) = delete;
+
   /* Get the singleton instance. The operator-> allows direct access to the
    * QSettings object. */
   static Settings& instance();

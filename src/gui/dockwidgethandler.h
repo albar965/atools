@@ -63,6 +63,9 @@ public:
                              const QList<QToolBar *>& toolBarsParam, bool verboseLog);
   virtual ~DockWidgetHandler() override;
 
+  DockWidgetHandler(const DockWidgetHandler& other) = delete;
+  DockWidgetHandler& operator=(const DockWidgetHandler& other) = delete;
+
   /* Raise all dock windows having floating state */
   void raiseFloatingWindows();
   static void raiseFloatingWindow(QDockWidget *dockWidget);

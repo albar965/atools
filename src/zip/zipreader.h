@@ -53,6 +53,9 @@ public:
   explicit ZipReader(QIODevice *device);
   ~ZipReader();
 
+  ZipReader(const ZipReader& other) = delete;
+  ZipReader& operator=(const ZipReader& other) = delete;
+
   QIODevice *device() const;
 
   bool isReadable() const;
@@ -105,7 +108,6 @@ public:
 
 private:
   ZipReaderPrivate *d;
-  Q_DISABLE_COPY(ZipReader)
 };
 
 } // namespace zip

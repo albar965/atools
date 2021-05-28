@@ -89,6 +89,9 @@ public:
     delete p;
   }
 
+  SpatialIndex(const SpatialIndex& other) = delete;
+  SpatialIndex& operator=(const SpatialIndex& other) = delete;
+
   /* Get one nearest object from the vector. */
   const T& getNearest(const atools::geo::Pos& pos) const;
   void getNearest(T& obj, const atools::geo::Pos& pos) const;

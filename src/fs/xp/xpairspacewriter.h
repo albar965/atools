@@ -55,6 +55,9 @@ public:
                    atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpAirspaceWriter() override;
 
+  XpAirspaceWriter(const XpAirspaceWriter& other) = delete;
+  XpAirspaceWriter& operator=(const XpAirspaceWriter& other) = delete;
+
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
   virtual void reset() override;
@@ -62,6 +65,7 @@ public:
 private:
   atools::fs::userdata::AirspaceReaderOpenAir *airspaceWriter;
   void postWrite();
+
 };
 
 } // namespace xp

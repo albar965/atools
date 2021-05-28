@@ -44,6 +44,9 @@ public:
   MagDecReader();
   virtual ~MagDecReader();
 
+  MagDecReader(const MagDecReader& other) = delete;
+  MagDecReader& operator=(const MagDecReader& other) = delete;
+
   /* Calculate values from world magnetic model based on current year and month or current date if not given.
    * Values can be saved to database. Result is always valid.
    *  January = 1 */

@@ -60,6 +60,9 @@ public:
   MetarIndex(atools::fs::weather::MetarFormat formatParam, bool verboseLogging = false);
   ~MetarIndex();
 
+  MetarIndex(const MetarIndex& other) = delete;
+  MetarIndex& operator=(const MetarIndex& other) = delete;
+
   /* Read METARs from stream and add them to the index. Merges into current list or clears list before.
    * Older of duplicates are ignored/removed.
    * Returns number of METARs read. */

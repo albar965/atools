@@ -40,6 +40,9 @@ public:
   LoggingConfig(const QString& logConfig, const QString& logDirectory, const QString& logFilePrefix);
   ~LoggingConfig();
 
+  LoggingConfig(const LoggingConfig& other) = delete;
+  LoggingConfig& operator=(const LoggingConfig& other) = delete;
+
 private:
   friend class atools::logging::LoggingHandler;
 

@@ -47,6 +47,9 @@ public:
   explicit TrackDownloader(QObject *parent, bool logVerbose = false);
   virtual ~TrackDownloader() override;
 
+  TrackDownloader(const TrackDownloader& other) = delete;
+  TrackDownloader& operator=(const TrackDownloader& other) = delete;
+
   /* Set URL for GET request for given track type */
   void setUrl(atools::track::TrackType type, const QString& url);
 

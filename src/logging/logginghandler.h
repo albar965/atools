@@ -128,6 +128,9 @@ private:
   LoggingHandler(const QString& logConfiguration, const QString& logDirectory, const QString& logFilePrefix);
   virtual ~LoggingHandler() override;
 
+  LoggingHandler(const LoggingHandler& other) = delete;
+  LoggingHandler& operator=(const LoggingHandler& other) = delete;
+
   void logToCatChannels(atools::logging::internal::ChannelMap& streamListCat,
                         atools::logging::internal::ChannelVector& streamList,
                         const QString& message, const QString& category = QString());

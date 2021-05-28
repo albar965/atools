@@ -41,6 +41,9 @@ public:
   AirspaceReaderBase(sql::SqlDatabase *sqlDb);
   virtual ~AirspaceReaderBase();
 
+  AirspaceReaderBase(const AirspaceReaderBase& other) = delete;
+  AirspaceReaderBase& operator=(const AirspaceReaderBase& other) = delete;
+
   /* Read a whole file and write airspaces into table */
   virtual void readFile(int fileIdParam, const QString& filenameParam) = 0;
 

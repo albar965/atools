@@ -50,6 +50,9 @@ public:
   DeleteProcessor(atools::sql::SqlDatabase& sqlDb, const atools::fs::NavDatabaseOptions& opts);
   virtual ~DeleteProcessor();
 
+  DeleteProcessor(const DeleteProcessor& other) = delete;
+  DeleteProcessor& operator=(const DeleteProcessor& other) = delete;
+
   /*
    * Initialize the process for one airport before it is stored in the database.
    */

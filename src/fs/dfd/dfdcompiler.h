@@ -58,6 +58,9 @@ public:
               atools::fs::ProgressHandler *progressHandler);
   virtual ~DfdCompiler();
 
+  DfdCompiler(const DfdCompiler& other) = delete;
+  DfdCompiler& operator=(const DfdCompiler& other) = delete;
+
   void close();
 
   /* AIRAC cycle as read from the source database by readHeader() */

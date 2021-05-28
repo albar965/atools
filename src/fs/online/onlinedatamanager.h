@@ -61,6 +61,9 @@ public:
   OnlinedataManager(atools::sql::SqlDatabase *sqlDb, bool verboseErrorReporting);
   ~OnlinedataManager();
 
+  OnlinedataManager(const OnlinedataManager& other) = delete;
+  OnlinedataManager& operator=(const OnlinedataManager& other) = delete;
+
   /* Read status.txt and populate internal list of URLs and message. File content given in string. */
   void readFromStatus(const QString& statusTxt);
 

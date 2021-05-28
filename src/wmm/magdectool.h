@@ -43,6 +43,9 @@ public:
   MagDecTool();
   ~MagDecTool();
 
+  MagDecTool(const MagDecTool& other) = delete;
+  MagDecTool& operator=(const MagDecTool& other) = delete;
+
   /* Build the declination array for current year/month or given values. January = 1 */
   void init(int year = 0, int month = 1);
   void init(const QDate& dateTime);

@@ -44,6 +44,9 @@ public:
   explicit WeatherDownloadBase(QObject *parent, atools::fs::weather::MetarFormat format, bool verboseLogging);
   virtual ~WeatherDownloadBase() override;
 
+  WeatherDownloadBase(const WeatherDownloadBase& other) = delete;
+  WeatherDownloadBase& operator=(const WeatherDownloadBase& other) = delete;
+
   /*
    * @return metar from cache or empty if not entry was found in the cache. Once the request was
    * completed the signal weatherUpdated is emitted and calling this method again will return the metar.

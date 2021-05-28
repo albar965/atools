@@ -46,6 +46,9 @@ public:
   NavServer(QObject *parent, atools::fs::ns::NavServerOptions optionFlags, int inetPort);
   virtual ~NavServer() override;
 
+  NavServer(const NavServer& other) = delete;
+  NavServer& operator=(const NavServer& other) = delete;
+
   bool startServer(atools::fs::sc::DataReaderThread *dataReaderThread);
   void stopServer();
 

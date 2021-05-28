@@ -35,6 +35,9 @@ public:
   MetadataWriter(atools::sql::SqlDatabase& sqlDb);
   virtual ~MetadataWriter();
 
+  MetadataWriter(const MetadataWriter& other) = delete;
+  MetadataWriter& operator=(const MetadataWriter& other) = delete;
+
   /* write to metadata file table */
   void writeFile(const QString& filepath, const QString& comment, int curSceneryId, int curFileId);
   void writeSceneryArea(const QString& filepath, const QString& sceneryName, int curSceneryId);

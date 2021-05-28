@@ -156,6 +156,9 @@ public:
   WindQuery(QObject *parentObject, bool logVerbose);
   virtual ~WindQuery() override;
 
+  WindQuery(const WindQuery& other) = delete;
+  WindQuery& operator=(const WindQuery& other) = delete;
+
   /* Initialize download from https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl if baseUrl is empty
    *  Will download and update every 30 minutes and terminate any file watching. */
   void initFromUrl(const QString& baseUrl = QString());

@@ -51,6 +51,9 @@ public:
   explicit TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon, const QString& toolButtonTooltip);
   virtual ~TabWidgetHandler() override;
 
+  TabWidgetHandler(const TabWidgetHandler& other) = delete;
+  TabWidgetHandler& operator=(const TabWidgetHandler& other) = delete;
+
   /* Creates the menu entries for the tool button and the context menu. tabIdsParam contains the ids for
    * each tab and has to correspond to the actual tabs contained by the tab widget.
    * tabIdsParam.size() has to be equal to tabWidgetParam->count() set in the constructor */

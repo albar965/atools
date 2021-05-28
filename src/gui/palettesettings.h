@@ -33,6 +33,9 @@ public:
   PaletteSettings(const QString& settingsFile, const QString& groupName, const QString& keyPrefix = QString());
   virtual ~PaletteSettings();
 
+  PaletteSettings(const PaletteSettings& other) = delete;
+  PaletteSettings& operator=(const PaletteSettings& other) = delete;
+
   void savePalette(const QPalette& palette);
 
   void loadPalette(QPalette& palette);

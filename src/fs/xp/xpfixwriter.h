@@ -51,6 +51,9 @@ public:
               atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpFixWriter() override;
 
+  XpFixWriter(const XpFixWriter& other) = delete;
+  XpFixWriter& operator=(const XpFixWriter& other) = delete;
+
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
   virtual void reset() override;

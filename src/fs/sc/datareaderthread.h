@@ -44,6 +44,9 @@ public:
   DataReaderThread(QObject *parent, bool verboseLog);
   virtual ~DataReaderThread() override;
 
+  DataReaderThread(const DataReaderThread& other) = delete;
+  DataReaderThread& operator=(const DataReaderThread& other) = delete;
+
   void setHandler(atools::fs::sc::ConnectHandler *connectHandler);
 
   /* Terminate, wait for termination and reset flag afterwards */

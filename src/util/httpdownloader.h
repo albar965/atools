@@ -42,6 +42,9 @@ public:
   HttpDownloader(QObject *parent, bool verboseLogging = false);
   virtual ~HttpDownloader() override;
 
+  HttpDownloader(const HttpDownloader& other) = delete;
+  HttpDownloader& operator=(const HttpDownloader& other) = delete;
+
   /* Download file and emit downloadFinished when done.
    * Will start update timer after download if period <> -1.
    * Cancels all previous downloads if restartRequest = true. */

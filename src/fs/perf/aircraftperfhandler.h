@@ -54,6 +54,9 @@ public:
   explicit AircraftPerfHandler(QObject *parent);
   virtual ~AircraftPerfHandler() override;
 
+  AircraftPerfHandler(const AircraftPerfHandler& other) = delete;
+  AircraftPerfHandler& operator=(const AircraftPerfHandler& other) = delete;
+
   /* Cruise altitude must be set before sending sim data events to this class. Cruise altitude in ft.
    * Performance object that will be filled with data once started.
    * Fuel unit set in this object will determine collected units (weight/volume). */

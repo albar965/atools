@@ -53,12 +53,14 @@ public:
                atools::fs::NavDatabaseErrors *navdatabaseErrors);
   virtual ~XpCifpWriter() override;
 
+  XpCifpWriter(const XpCifpWriter& other) = delete;
+  XpCifpWriter& operator=(const XpCifpWriter& other) = delete;
+
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
   virtual void reset() override;
 
 private:
-
   atools::fs::common::ProcedureWriter *procWriter = nullptr;
 };
 
