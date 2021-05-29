@@ -461,6 +461,16 @@ QString adjustFsxUserWpName(QString name, int length)
   return name;
 }
 
+QString adjustMsfsUserWpName(QString name, int length)
+{
+  static const QRegularExpression NAME_REGEXP("[^A-Za-z0-9_ \\:\\;\\,\\.\\(\\)\\-\\/\\=\\+\\#\\*\\?]");
+  name.replace(NAME_REGEXP, "");
+  name = name.left(length);
+  if(name.isEmpty())
+    name = "User_WP";
+  return name;
+}
+
 QString adjustIdent(QString ident, int length, int id)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");

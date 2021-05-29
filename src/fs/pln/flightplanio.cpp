@@ -1855,7 +1855,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     writer.writeStartElement("ATCWaypoint");
 
     // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
-    writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getIdent()));
+    if(msfs)
+      writer.writeAttribute("id", atools::fs::util::adjustMsfsUserWpName(entry.getIdent()));
+    else
+      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getIdent()));
+
     writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
 
     if(!entry.getPosition().isValid())
