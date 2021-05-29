@@ -32,6 +32,7 @@ using atools::sql::SqlUtil;
 using atools::sql::SqlQuery;
 using atools::geo::nmToMeter;
 using atools::geo::Point3D;
+using atools::charAt;
 
 // Calculate hash for airway name for quick comparison in routing algorithm
 inline quint32 airwayHash(const QString& name)
@@ -107,24 +108,26 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
 
     // Read navaids into nodeIdIndexMap and into nodesTemp ====================
     // Named waypoints without airways
-    // Unnamed degree confluence waypoints
+    // Degree and half degree confluence waypoints
     if(hasNav)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
                       "from waypoint w "
                       "where w.type in ('WN', 'WU') and w.airport_id is null and "
                       "w.num_jet_airway = 0 and w.num_victor_airway = 0",
-                      false, false, true /* filterUnnamed */, false, true /* filterProc */);
+                      false, false, false, true /* filterProc */);
 
     // Airway waypoints ====================
+    // No filter - all waypoints are taken
     if(hasNav)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from waypoint w "
                       "where w.type like 'W%' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      false, false, false, false, false);
+                      false, false, false, false);
 
     // Track waypoints ====================
+    // No filter - all waypoints are taken
     if(hasTracks)
     {
       QString where = hasNav ?
@@ -135,7 +138,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       nodeIdIndexMap,
                       "select w.trackpoint_id, w.ident, w.type, w.lonx, w.laty, w.num_jet_airway, w.num_victor_airway "
                       "from trackpoint w " + where,
-                      false, false, false, true /* track */, false);
+                      false, false, true /* track */, false);
     }
 
     // Airway VOR waypoints ====================
@@ -145,7 +148,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       "v.range, v.type as radiotype, v.dme_altitude,  v.dme_only "
                       "from waypoint w join vor v on w.nav_id = v.vor_id "
                       "where w.type = 'V' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      true /* VOR */, false, false, false, false);
+                      true /* VOR */, false, false, false);
 
     // Airway NDB waypoints ====================
     if(hasNav)
@@ -154,7 +157,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
                       "n.range "
                       "from waypoint w join ndb n on w.nav_id = n.ndb_id "
                       "where w.type = 'N' and (w.num_jet_airway > 0 or w.num_victor_airway > 0)",
-                      false, true /* NDB */, false, false, false);
+                      false, true /* NDB */, false, false);
 
     // Insert outgoing edges to each node and copy node to the index ========================
     network->nodeIndex.reserve(nodeVector.size());
@@ -389,7 +392,7 @@ void RouteNetworkLoader::readEdgesAirway(QMultiHash<int, Edge>& nodeEdgeMap, boo
 
 void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& nodeIdIndexMap,
                                          const QString& queryStr, bool vor, bool ndb,
-                                         bool filterUnnamed, bool track, bool filterProc)
+                                         bool track, bool filterProc)
 {
   // Column indexes
   // -> Required                          <- ->       if airway             <-  -> Optional
@@ -437,36 +440,26 @@ void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& 
   {
     int nodeId = query.valueInt(ID);
     if(procNodeIds.contains(nodeId))
+      // Not part of an airway but part of a procedure or part of an airport (terminal waypoint) - ignore
       continue;
 
-    QString type = query.valueStr(AIRWAY_TYPE);
     atools::geo::Pos pos(query.valueFloat(LONX), query.valueFloat(LATY));
 
-    if(!track && filterUnnamed && type == "WU")
+    // No name and grid filter for NDB and VOR waypoints
+    if(!ndb && !vor)
     {
-      // Include all one degree grid confluence points
-      bool ok = pos.nearGrid(atools::geo::Pos::POS_EPSILON_10M);
+      // Include all one degree and half degree grid confluence points
+      bool ok = pos.nearGrid(0.5f, atools::geo::Pos::POS_EPSILON_10M);
 
+      // Check for visual reporting points like "VP123" as well as other obscure numbered points and ignore these
+      // if not confluence points
       if(!ok)
       {
-        // Include unnamed oceanic waypoints like 2230N 6900E 51N50 32W20 02E60
         QString ident = query.valueStr(IDENT);
-        // First two characters need to be digits
-        if(atools::charAt(ident, 0).isDigit() && atools::charAt(ident, 1).isDigit())
-        {
-          // Compass direction or digit followed by a digit
-          char at2 = atools::latin1CharAt(ident, 2);
-          if((std::isdigit(at2) || atools::contains(at2, {'N', 'S', 'E', 'W'})) && atools::charAt(ident, 3).isDigit())
-          {
-            char at4 = atools::latin1CharAt(ident, 4);
-            ok = std::isdigit(at4) || atools::contains(at4, {'N', 'S', 'E', 'W'});
-          }
-        }
+        if(charAt(ident, 2).isDigit() && charAt(ident, 3).isDigit() && charAt(ident, 4).isDigit())
+          continue;
       }
-
-      if(!ok)
-        continue;
-    }
+    } // if(!ndb && !vor)
 
     Node node;
     node.index = nodes.size();

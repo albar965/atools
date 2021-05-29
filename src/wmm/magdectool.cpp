@@ -27,7 +27,6 @@ extern "C" {
 #include <stdlib.h>
 #include <locale.h>
 
-
 #include "wmm/GeomagnetismHeader.h"
 #ifdef WRITE_GEOID_BUFFER
 #include "EGM9615.h"
@@ -166,7 +165,7 @@ QString MagDecTool::getVersion() const
 
 float MagDecTool::getMagVar(const geo::Pos& pos)
 {
-  if(pos.nearGrid(atools::geo::Pos::POS_EPSILON_500M))
+  if(pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
     // Get point value without interpolation if position is close to a grid point
     return getMagVar(atools::roundToInt(pos.getLonX()), atools::roundToInt(pos.getLatY()));
   else

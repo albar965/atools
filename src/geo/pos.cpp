@@ -182,9 +182,10 @@ bool Pos::almostEqual(const Pos& other, float epsilon) const
          atools::almostEqual(latY, other.latY, epsilon);
 }
 
-bool Pos::nearGrid(float epsilon) const
+bool Pos::nearGrid(float spacing, float epsilon) const
 {
-  return atools::almostEqual(lonX, std::round(lonX), epsilon) && atools::almostEqual(latY, std::round(latY), epsilon);
+  return atools::almostEqual(lonX, atools::roundToNearest(lonX, spacing), epsilon) &&
+         atools::almostEqual(latY, atools::roundToNearest(latY, spacing), epsilon);
 }
 
 Pos& Pos::snapToGrid()

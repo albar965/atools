@@ -144,8 +144,9 @@ public:
     return *this;
   }
 
-  /* true if the position is within approx 500 meters from a one degree grid point */
-  bool nearGrid(float epsilon = POS_EPSILON_500M) const;
+  /* true if the position is close to one degree grid point or other factor defined by "spacing".
+   *  Use 1 for spacing to detect one degree grid confluence points. */
+  bool nearGrid(float spacing, float epsilon) const;
 
   atools::geo::Pos& snapToGrid();
 

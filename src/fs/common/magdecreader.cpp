@@ -242,7 +242,7 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
   int minLonX1 = static_cast<int>(std::floor(lonX)), maxLonX2 = static_cast<int>(std::ceil(lonX)),
       minLatY1 = static_cast<int>(std::floor(latY)), maxLatY2 = static_cast<int>(std::ceil(latY));
 
-  if(pos.nearGrid(atools::geo::Pos::POS_EPSILON_500M))
+  if(pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
     // Exact or near degree - nothing to interpolate
     return magvar(offset(atools::roundToInt(pos.getLonX()), atools::roundToInt(pos.getLatY())));
   else

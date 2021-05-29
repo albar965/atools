@@ -276,7 +276,7 @@ Wind WindQuery::getWindForPos(const Pos& pos, bool interpolateValue) const
   WindAltLayer lower, upper;
   layersByAlt(lower, upper, pos.getAltitude());
 
-  if(!interpolateValue || pos.nearGrid())
+  if(!interpolateValue || pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_500M))
   {
     // No need to interpolate within grid - use position as is
     WindData lW = windForLayer(lower, gPos);
