@@ -44,6 +44,12 @@ enum ApproachType
 
 QString approachTypeToStr(atools::fs::bgl::ap::ApproachType type);
 
+/* Get character prefixing the ARINC type in chapter 5.7.
+ * Does not consider special flags like "DME needed" or others.
+ *  Gives codes for approaches, SID and STAR but not transitons. */
+QString arincNameApproach(atools::fs::bgl::ap::ApproachType type, const QString& runwayName, char suffix,
+                          bool gpsOverlay);
+
 namespace fix {
 
 enum ApproachFixType

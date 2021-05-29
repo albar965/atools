@@ -62,8 +62,6 @@ void ApproachWriter::writeObject(const Approach *type)
   else
     bind(":suffix", QChar(type->getSuffix()));
 
-  bind(":arinc_name", type->getArincName());
-
   bind(":has_gps_overlay", type->hasGpsOverlay());
   bind(":fix_type", bgl::util::enumToStr(atools::fs::bgl::ap::approachFixTypeToStr, type->getFixType()));
   bind(":fix_ident", type->getFixIdent());
@@ -76,6 +74,7 @@ void ApproachWriter::writeObject(const Approach *type)
   bindNullInt(":runway_end_id");
   bind(":airport_ident", dataWriter.getAirportWriter()->getCurrentAirportIdent());
 
+  QString runwayName;
   if( /*type->getRunwayName() == "36" ||*/ type->getRunwayName() == "00" || type->getRunwayName().isEmpty())
   {
     // No valid runway given - try to find one in the approach legs
@@ -101,18 +100,27 @@ void ApproachWriter::writeObject(const Approach *type)
       int id = dataWriter.getRunwayIndex()->getRunwayEndId(
         dataWriter.getAirportWriter()->getCurrentAirportIdent(), runway, "approach runway");
       if(id != -1)
-        bind(":runway_name", runway);
-      else
-        // Nothing found in index
-        bindNullString(":runway_name");
+        runwayName = runway;
+      // else
+      //// Nothing found in index
+      // bindNullString(":runway_name");
     }
     else
       // Use runway name as found in legs
-      bind(":runway_name", runway);
+      runwayName = runway;
   }
   else
     // Use given runway name
-    bind(":runway_name", type->getRunwayName());
+    runwayName = type->getRunwayName();
+
+  if(runwayName.isEmpty())
+    bindNullString(":runway_name");
+  else
+    bind(":runway_name", runwayName);
+
+  // Keep this disabled for now since side effects when resolving procedures are unknown
+  // bind(":arinc_name", bgl::ap::arincNameApproach(type->getType(), runwayName, type->getSuffix(), type->hasGpsOverlay()));
+  bindNullString(":arinc_name");
 
   // Write approach
   executeStatement();
