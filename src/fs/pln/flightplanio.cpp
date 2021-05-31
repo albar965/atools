@@ -1872,17 +1872,12 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     if(msfs)
     {
       // Write additional procedure information for MSFS
-      if(plan.departureParkingType == atools::fs::pln::RUNWAY || !entry.getSid().isEmpty())
-      {
-        // Write departure information if there is a SID or a runway as start position
-        writeElementIf(writer, "DepartureFP", entry.getSid());
-        writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
-        writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
-      }
-
+      writeElementIf(writer, "DepartureFP", entry.getSid());
       writeElementIf(writer, "ArrivalFP", entry.getStar());
       writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
       writeElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
+      writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
+      writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&

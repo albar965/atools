@@ -453,8 +453,10 @@ QString capAirportName(const QString& str)
 
 QString adjustFsxUserWpName(QString name, int length)
 {
-  static const QRegularExpression NAME_REGEXP("[^A-Za-z0-9_ ]");
-  name.replace(NAME_REGEXP, "");
+  static const QRegularExpression USER_WP_NAME_REGEXP_FSX("[^A-Za-z0-9_ ]");
+
+  name = atools::normalizeStr(name);
+  name.replace(USER_WP_NAME_REGEXP_FSX, "");
   name = name.left(length);
   if(name.isEmpty())
     name = "User_WP";
@@ -463,8 +465,10 @@ QString adjustFsxUserWpName(QString name, int length)
 
 QString adjustMsfsUserWpName(QString name, int length)
 {
-  static const QRegularExpression NAME_REGEXP("[^A-Za-z0-9_ \\:\\;\\,\\.\\(\\)\\-\\/\\=\\+\\#\\*\\?]");
-  name.replace(NAME_REGEXP, "");
+  static const QRegularExpression USER_WP_NAME_REGEXP_MSFS("[^A-Za-z0-9 /()=?;,:._-*]");
+
+  name = atools::normalizeStr(name);
+  name.replace(USER_WP_NAME_REGEXP_MSFS, "");
   name = name.left(length);
   if(name.isEmpty())
     name = "User_WP";
