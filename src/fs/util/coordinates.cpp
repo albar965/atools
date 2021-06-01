@@ -76,11 +76,6 @@ const static QRegularExpression LONG_FORMAT_REGEXP_PAIR_LON("^([EW])([0-9]{3})([
 atools::geo::Pos degMinSecFormatFromCapture(const QStringList& captured);
 atools::geo::Pos degMinFormatFromCapture(const QStringList& captured);
 
-// N48194W123096
-// Examples:
-// :F:N44124W122451 (User Waypoint: N44° 12.4' W122° 45.1'
-// :F:N14544W017479 (User Waypoint: N14° 54.4' W17° 47.9'
-// :F:S31240E136502 (User Waypoint: S31° 24.0' E136° 50.2'
 QString toGfpFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
@@ -95,7 +90,6 @@ QString toGfpFormat(const atools::geo::Pos& pos)
     return QString();
 }
 
-// 4510N06810W
 QString toDegMinFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
@@ -110,7 +104,6 @@ QString toDegMinFormat(const atools::geo::Pos& pos)
     return QString();
 }
 
-// Skyvector 481050N0113157E
 QString toDegMinSecFormat(const atools::geo::Pos& pos)
 {
   if(pos.isValid())
