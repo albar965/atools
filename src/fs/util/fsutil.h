@@ -57,11 +57,11 @@ QString capNavString(const QString& str);
 /* Capitalize airport name making special designators (AFB, ...) upper case */
 QString capAirportName(const QString& str);
 
-/* Limits ident to upper case characters and digits and trims length to five.
+/* Limits ident to upper case characters and digits and trims length to five for userpoints.
  * Returns N with following number if empty. */
 QString adjustIdent(QString ident, int length = 5, int id = -1);
 
-/* Limits region to upper case characters and trims length to 2. Returns "ZZ" if empty. */
+/* Limits region to upper case characters and trims length to 2. Returns "ZZ" if empty. For userpoints. */
 QString adjustRegion(QString region);
 
 /* Max 10 characters, digits, space and underscore */

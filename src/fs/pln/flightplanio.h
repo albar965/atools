@@ -91,6 +91,9 @@ public:
   /* Microsoft Flight Simulator 2020 */
   void savePlnMsfs(const atools::fs::pln::Flightplan& plan, const QString& file);
 
+  /* MSFS PLN for Integrated Simavionics / ISG */
+  void savePlnIsg(const atools::fs::pln::Flightplan& plan, const QString& file);
+
   /* FSX/P3D XML format with annotations as used by previous LNM versions (<= 2.4.5).*/
   void savePlnAnnotated(const atools::fs::pln::Flightplan& plan, const QString& file);
 
@@ -177,7 +180,7 @@ public:
   static const int LNMPLN_VERSION_MINOR = 0;
 
 private:
-  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs);
+  void savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs, int userWpLength);
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,

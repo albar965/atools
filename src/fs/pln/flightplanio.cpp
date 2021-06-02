@@ -1738,20 +1738,26 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
 void FlightplanIO::savePln(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, false /* msfs */);
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 10);
 }
 
 void FlightplanIO::savePlnMsfs(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, false /* annotated */, true /* msfs */);
+  savePlnInternal(plan, file, false /* annotated */, true /* msfs */, 10);
+}
+
+void FlightplanIO::savePlnIsg(const Flightplan& plan, const QString& file)
+{
+  savePlnInternal(plan, file, false /* annotated */, false /* msfs */, 12);
 }
 
 void FlightplanIO::savePlnAnnotated(const Flightplan& plan, const QString& file)
 {
-  savePlnInternal(plan, file, true /* annotated */, false /* msfs */);
+  savePlnInternal(plan, file, true /* annotated */, false /* msfs */, 10);
 }
 
-void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs)
+void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filename, bool annotated, bool msfs,
+                                   int userWpLength)
 {
   // Write XML to string first ===================
   QString xmlString;
@@ -1856,9 +1862,9 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
     // Trim to max allowed length for FSX/P3D and remove any special chars otherwise FSX/P3D will ignore the plan
     if(msfs)
-      writer.writeAttribute("id", atools::fs::util::adjustMsfsUserWpName(entry.getIdent()));
+      writer.writeAttribute("id", atools::fs::util::adjustMsfsUserWpName(entry.getIdent(), userWpLength));
     else
-      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getIdent()));
+      writer.writeAttribute("id", atools::fs::util::adjustFsxUserWpName(entry.getIdent(), userWpLength));
 
     writer.writeTextElement("ATCWaypointType", entry.getWaypointTypeAsFsxString());
 

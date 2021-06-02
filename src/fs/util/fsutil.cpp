@@ -457,7 +457,7 @@ QString adjustFsxUserWpName(QString name, int length)
 
   name = atools::normalizeStr(name);
   name.replace(USER_WP_NAME_REGEXP_FSX, "");
-  name = name.left(length);
+  name = name.left(length).trimmed();
   if(name.isEmpty())
     name = "User_WP";
   return name;
@@ -469,7 +469,7 @@ QString adjustMsfsUserWpName(QString name, int length)
 
   name = atools::normalizeStr(name);
   name.replace(USER_WP_NAME_REGEXP_MSFS, "");
-  name = name.left(length);
+  name = name.left(length).trimmed();
   if(name.isEmpty())
     name = "User_WP";
   return name;
@@ -479,8 +479,13 @@ QString adjustIdent(QString ident, int length, int id)
 {
   static const QRegularExpression IDENT_REGEXP("[^A-Z0-9]");
   ident = ident.toUpper().replace(IDENT_REGEXP, "").left(length);
-  if(ident.isEmpty() && id != -1)
-    ident = QString("N%1").arg(id, 4, 36, QChar('0')).left(length);
+  if(ident.isEmpty())
+  {
+    if(id != -1)
+      ident = QString("N%1").arg(id, 4, 36, QChar('0')).left(length);
+    else
+      ident = "UNKWN";
+  }
   return ident.toUpper();
 }
 
