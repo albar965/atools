@@ -1014,6 +1014,10 @@ Atrapada excepción
         <source>Counting files for %1 ...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Updating Navaids</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>

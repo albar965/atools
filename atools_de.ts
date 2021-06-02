@@ -1060,6 +1060,10 @@ Datei: &quot;%2&quot;
         <source>Counting files for %1 ...</source>
         <translation>Zähle Dateien für %1 ...</translation>
     </message>
+    <message>
+        <source>Updating Navaids</source>
+        <translation>Aktualisiere Navigationshilfen</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
