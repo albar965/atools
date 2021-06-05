@@ -151,7 +151,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
                 }
               }
               else
-                qWarning().nospace().noquote() << bglFile << " is no file or not readable.";
+                qWarning().nospace().noquote() << bglFile.absoluteFilePath() << " is no file or not readable.";
             }
           }
           else
