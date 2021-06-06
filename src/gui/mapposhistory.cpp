@@ -231,8 +231,8 @@ void MapPosHistory::clear()
 
 void MapPosHistory::registerMetaTypes()
 {
-  qRegisterMetaTypeStreamOperators<atools::gui::MapPosHistoryEntry>();
-  qRegisterMetaTypeStreamOperators<QList<atools::gui::MapPosHistoryEntry> >();
+  qRegisterMetaType<atools::gui::MapPosHistoryEntry>();
+  qRegisterMetaType<QList<atools::gui::MapPosHistoryEntry> >();
 }
 
 } // namespace gui

@@ -37,7 +37,6 @@ class LineString :
 public:
   LineString();
   explicit LineString(const std::initializer_list<atools::geo::Pos>& list);
-  explicit LineString(const QVector<atools::geo::Pos>& list);
   explicit LineString(const QList<atools::geo::Pos>& list);
   explicit LineString(const std::initializer_list<float>& coordinatePairs);
   explicit LineString(const atools::geo::Pos& pos);
@@ -51,34 +50,34 @@ public:
                       const atools::geo::Pos& end, bool clockwise, int numSegments);
 
   LineString(const atools::geo::LineString& other)
-    : QVector(other)
+    : QList(other)
   {
   }
 
   atools::geo::LineString& operator=(const atools::geo::LineString& other)
   {
-    QVector::operator=(other);
+    QList::operator=(other);
     return *this;
   }
 
   void append(const atools::geo::Pos& pos)
   {
-    QVector::append(pos);
+    QList::append(pos);
   }
 
   void append(const atools::geo::LineString& linestring)
   {
-    QVector::append(linestring);
+    QList::append(linestring);
   }
 
   void append(float longitudeX, float latitudeY, float alt = 0.f)
   {
-    QVector::append(Pos(longitudeX, latitudeY, alt));
+    QList::append(Pos(longitudeX, latitudeY, alt));
   }
 
   void append(double longitudeX, double latitudeY, double alt = 0.f)
   {
-    QVector::append(Pos(longitudeX, latitudeY, alt));
+    QList::append(Pos(longitudeX, latitudeY, alt));
   }
 
   LineString reversed();
@@ -129,19 +128,19 @@ public:
    * (or all remaining elements if there are less than length elements) are included.*/
   atools::geo::LineString mid(int pos, int len = -1) const
   {
-    return atools::geo::LineString(QVector::mid(pos, len));
+    return atools::geo::LineString(QList::mid(pos, len));
   }
 
   /* Returns a string with len number of coordinates from the beginning of the list */
   atools::geo::LineString left(int len) const
   {
-    return atools::geo::LineString(QVector::mid(0, len));
+    return atools::geo::LineString(QList::mid(0, len));
   }
 
   /* Returns a string with len number of coordinates from the end of the list */
   atools::geo::LineString right(int len) const
   {
-    return atools::geo::LineString(QVector::mid(size() - len));
+    return atools::geo::LineString(QList::mid(size() - len));
   }
 
   /* Calculate Length of the line string in meter */

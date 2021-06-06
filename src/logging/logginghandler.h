@@ -27,7 +27,6 @@
 
 class QTextStream;
 class QFile;
-class QStringList;
 class QSettings;
 
 namespace atools {

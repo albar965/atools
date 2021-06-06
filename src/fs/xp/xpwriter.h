@@ -23,8 +23,6 @@
 
 #include <QStringList>
 
-class QStringList;
-
 namespace atools {
 namespace sql {
 class SqlDatabase;

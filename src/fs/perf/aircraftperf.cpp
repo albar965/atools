@@ -34,7 +34,7 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-const QLatin1Literal AircraftPerf::FORMAT_VERSION("2.4.0");
+const QLatin1String AircraftPerf::FORMAT_VERSION("2.4.0");
 
 float AircraftPerf::getTimeToClimb(float departureAltFt, float cruiseAltFt) const
 {
@@ -138,7 +138,7 @@ void AircraftPerf::saveXml(const QString& filename) const
 
 void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
 {
-  writer.setCodec("UTF-8");
+  //writer.setEncoding(QStringConverter::Utf8);     // TODO: eval whether necessary
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
 
@@ -248,101 +248,101 @@ void AircraftPerf::loadXmlInternal(atools::util::XmlStream& xmlStream)
   while(xmlStream.readNextStartElement())
   {
     // Read data from header =========================================
-    if(reader.name() == "Header")
+    if(reader.name().toString() == "Header")
     {
       // Skip header without warning
       xmlStream.skipCurrentElement();
       continue;
     }
-    else if(reader.name() == "Options")
+    else if(reader.name().toString() == "Options")
     {
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Name")
+        if(reader.name().toString() == "Name")
           name = reader.readElementText();
-        else if(reader.name() == "AircraftType")
+        else if(reader.name().toString() == "AircraftType")
           type = reader.readElementText();
-        else if(reader.name() == "Description")
+        else if(reader.name().toString() == "Description")
           description = reader.readElementText();
-        else if(reader.name() == "FuelAsVolume")
+        else if(reader.name().toString() == "FuelAsVolume")
           volume = reader.readElementText().toInt();
-        else if(reader.name() == "JetFuel")
+        else if(reader.name().toString() == "JetFuel")
           jetFuel = reader.readElementText().toInt();
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
     }
-    else if(reader.name() == "Perf")
+    else if(reader.name().toString() == "Perf")
     {
       // Performance =======================================================
       while(xmlStream.readNextStartElement())
       {
-        if(reader.name() == "Alternate")
+        if(reader.name().toString() == "Alternate")
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name().toString() == "FuelFlowLbsGalPerHour")
               alternateFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name().toString() == "SpeedKtsTAS")
               alternateSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Climb")
+        else if(reader.name().toString() == "Climb")
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name().toString() == "FuelFlowLbsGalPerHour")
               climbFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name().toString() == "SpeedKtsTAS")
               climbSpeed = reader.readElementText().toFloat();
-            else if(reader.name() == "VertSpeedFtPerMin")
+            else if(reader.name().toString() == "VertSpeedFtPerMin")
               climbVertSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Cruise")
+        else if(reader.name().toString() == "Cruise")
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name().toString() == "FuelFlowLbsGalPerHour")
               cruiseFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name().toString() == "SpeedKtsTAS")
               cruiseSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
-        else if(reader.name() == "Descent")
+        else if(reader.name().toString() == "Descent")
         {
           while(xmlStream.readNextStartElement())
           {
-            if(reader.name() == "FuelFlowLbsGalPerHour")
+            if(reader.name().toString() == "FuelFlowLbsGalPerHour")
               descentFuelFlow = reader.readElementText().toFloat();
-            else if(reader.name() == "SpeedKtsTAS")
+            else if(reader.name().toString() == "SpeedKtsTAS")
               descentSpeed = reader.readElementText().toFloat();
-            else if(reader.name() == "VertSpeedFtPerMin")
+            else if(reader.name().toString() == "VertSpeedFtPerMin")
               descentVertSpeed = reader.readElementText().toFloat();
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
         }
         // Performance general ============================
-        else if(reader.name() == "ContingencyFuelPercent")
+        else if(reader.name().toString() == "ContingencyFuelPercent")
           contingencyFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "ExtraFuelLbsGal")
+        else if(reader.name().toString() == "ExtraFuelLbsGal")
           extraFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "MinRunwayLengthFt")
+        else if(reader.name().toString() == "MinRunwayLengthFt")
           minRunwayLength = reader.readElementText().toFloat();
-        else if(reader.name() == "ReserveFuelLbsGal")
+        else if(reader.name().toString() == "ReserveFuelLbsGal")
           reserveFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "RunwayType")
+        else if(reader.name().toString() == "RunwayType")
           runwayType = runwayTypeFromStr(reader.readElementText());
-        else if(reader.name() == "TaxiFuelLbsGal")
+        else if(reader.name().toString() == "TaxiFuelLbsGal")
           taxiFuel = reader.readElementText().toFloat();
-        else if(reader.name() == "UsableFuelLbsGal")
+        else if(reader.name().toString() == "UsableFuelLbsGal")
           usableFuel = reader.readElementText().toFloat();
         else
           xmlStream.skipCurrentElement(true /* warn */);
@@ -354,7 +354,7 @@ void AircraftPerf::loadXmlInternal(atools::util::XmlStream& xmlStream)
 void AircraftPerf::loadIniInternal(const QString& filename)
 {
   QSettings settings(filename, QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
+  //settings.setIniCodec("UTF-8");        // TODO: eval whether still needed
   readFromSettings(settings);
 
   if(settings.status() != QSettings::NoError)
@@ -367,7 +367,7 @@ void AircraftPerf::saveIni(const QString& filename)
     QFile::remove(filename);
 
   QSettings settings(filename, QSettings::IniFormat);
-  settings.setIniCodec("UTF-8");
+  //settings.setIniCodec("UTF-8");          // see above
   writeToSettings(settings);
   settings.sync();
 

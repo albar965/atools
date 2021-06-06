@@ -158,7 +158,7 @@ atools::fs::sc::State XpConnectHandler::getState() const
 
 QString XpConnectHandler::getName() const
 {
-  return QLatin1Literal("XpConnect");
+  return QLatin1String("XpConnect");
 }
 
 void XpConnectHandler::disconnect()

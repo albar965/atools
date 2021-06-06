@@ -164,7 +164,7 @@ public:
     return delayedFullscreen;
   }
 
-  /* Calls qRegisterMetaTypeStreamOperators for needed classes. */
+  /* Calls qRegisterMetaType for needed classes. */
   static void registerMetaTypes();
 
 private:
@@ -216,5 +216,8 @@ private:
 
 } // namespace gui
 } // namespace atools
+
+// Enable use in QVariant
+Q_DECLARE_METATYPE(atools::gui::MainWindowState);
 
 #endif // ATOOLS_DOCKWIDGETHANDLER_H

@@ -24,6 +24,7 @@
 #include <QCheckBox>
 #include <QStandardPaths>
 #include <QDebug>
+#include <QDir>
 
 namespace atools {
 namespace gui {
@@ -68,42 +69,32 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     defaultDir = path;
 
   // Get path from settings use path or documents as default
-  QFileInfo dir = settingsPrefix.isEmpty() ? defaultDir : s.valueStr(settingNameDir, defaultDir);
+  QDir dir(settingsPrefix.isEmpty() ? defaultDir : s.valueStr(settingNameDir, defaultDir));
 
-  if(dir.exists())
+  if(!dir.exists())
   {
-    if(dir.isDir())
-      dlg.setDirectory(dir.absoluteFilePath());
-    else if(dir.isFile())
-      dlg.setDirectory(dir.absolutePath());
+    qDebug() << dir.absolutePath() << "does not exist, going home.";
+    dir = QDir::home();     // QDir does not operate on not existing directories. Going up would require string adjustment.
   }
-  else
-  {
-    qDebug() << dir.absoluteFilePath() << "does not exist";
-    // Go up the directory level until a valid dir is found - avoid endless iterations
-    int i = 50;
-    while(!dir.exists() && !dir.isRoot() && i-- > 0)
-      dir = dir.dir().path();
 
-    dlg.setDirectory(dir.absoluteFilePath());
-    qDebug() << dir.absoluteFilePath() << "corrected path";
-  }
+  dlg.setDirectory(dir.absolutePath());
 
   QString name(filename);
-  if(autoNumberFilename && dir.isDir() && !name.isEmpty())
+  if(autoNumberFilename && !name.isEmpty())
   {
     // Choose separator depending on filename
     QString sep = name.contains(" ") ? " " : "_";
-    QFileInfo base(dir.filePath() + QDir::separator() + name);
+    QFileInfo base(dir.path() + QDir::separator() + name);
     QFileInfo fi(base);
 
     int i = 1;
     while(fi.exists() && i < 100)
-      fi = dir.filePath() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." +
-           base.completeSuffix();
+      fi.setFile(dir.path() + QDir::separator() + base.baseName() + QString("%1%2").arg(sep).arg(i++) + "." + base.completeSuffix());
 
     name = fi.fileName();
   }
+
+  // TODO: what if i == 100 ?
 
   if(!name.isEmpty())
     dlg.selectFile(name);
@@ -131,7 +122,7 @@ QString Dialog::openDirectoryDialog(const QString& title, const QString& setting
                                     const QString& path)
 {
   QFileDialog dlg(parent);
-  dlg.setFileMode(QFileDialog::DirectoryOnly);
+  dlg.setFileMode(QFileDialog::Directory);
   dlg.setAcceptMode(QFileDialog::AcceptOpen);
   return fileDialog(dlg, title, QString(), settingsPrefix, QString(), path, QString(), false /* autonumber */).at(0);
 }

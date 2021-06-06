@@ -25,6 +25,7 @@
 #include "fs/common/binarygeometry.h"
 
 #include <QTextCodec>
+#include <QIODevice>
 
 using atools::sql::SqlDatabase;
 using atools::sql::SqlQuery;
@@ -254,9 +255,9 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool i
     QString alt = at(line, index, error).trimmed();
     if(alt.startsWith("FL"))
       // Convert flight level to altitude
-      insertQuery->bindValue(":altitude", alt.midRef(2).toInt() * 100);
-    else if(alt.startsWith("F"))
-      insertQuery->bindValue(":altitude", alt.midRef(1).toInt() * 100);
+      insertQuery->bindValue(":altitude", alt.sliced(2).toInt() * 100);
+    else if(alt.startsWith('F'))
+      insertQuery->bindValue(":altitude", alt.sliced(1).toInt() * 100);
     else
       insertQuery->bindValue(":altitude", alt.toInt());
   }

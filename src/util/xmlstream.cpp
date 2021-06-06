@@ -30,25 +30,25 @@ namespace util {
 XmlStream::XmlStream(QIODevice *device, const QString& filenameParam)
   : filename(filenameParam)
 {
-  QTextCodec *codec = atools::codecForFile(*device);
+  /* QTextCodec *codec = atools::codecForFile(*device);     // TODO: evaluate; no new API found to connect Codec to Stream
 
   if(codec != nullptr)
   {
     // Load the file into a text file to avoid BOM / xml encoding mismatches
     qDebug() << "Encoding" << codec->name();
     QTextStream stream(device);
-    stream.setCodec(codec);
+    // stream.setCodec(codec);
     QString str = stream.readAll();
 
     // The reader ignores the XML encoding header when reading from a string
     reader = new QXmlStreamReader(str);
   }
   else
-  {
+  {*/
     // Let the stream reader detect the encoding in the PI
     qDebug() << "No UTF Encoding found";
     reader = new QXmlStreamReader(device);
-  }
+  /*}*/
 }
 
 XmlStream::XmlStream(const QByteArray& data, const QString& filenameParam)

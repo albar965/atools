@@ -28,7 +28,6 @@
 #include <QMap>
 
 class QSettings;
-class QStringList;
 
 namespace atools {
 namespace fs {

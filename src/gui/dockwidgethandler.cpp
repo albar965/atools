@@ -31,6 +31,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QScreen>
+#include <QFile>
 
 namespace atools {
 namespace gui {
@@ -821,11 +822,8 @@ bool DockWidgetHandler::isWindowLayoutFile(const QString& filename)
 
 void DockWidgetHandler::registerMetaTypes()
 {
-  qRegisterMetaTypeStreamOperators<atools::gui::MainWindowState>();
+  qRegisterMetaType<atools::gui::MainWindowState>();
 }
 
 } // namespace gui
 } // namespace atools
-
-// Enable use in QVariant
-Q_DECLARE_METATYPE(atools::gui::MainWindowState);

@@ -110,7 +110,7 @@ QDebug operator<<(QDebug out, const Namelist& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const Record&>(record)
-                          << "Namelist[numIcaoIdent " << record.entries.size() << endl;
+                          << "Namelist[numIcaoIdent " << record.entries.size() << Qt::endl;
   out << record.entries;
   out << "]";
 

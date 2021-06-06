@@ -26,11 +26,11 @@ namespace util {
 
 // Split the download links for used OS
 #if defined(Q_OS_WIN32)
-static const QLatin1Literal DOWNLOAD_KEY("downloadwin");
+static const QLatin1String DOWNLOAD_KEY("downloadwin");
 #elif defined(Q_OS_MACOS)
-static const QLatin1Literal DOWNLOAD_KEY("downloadmac");
+static const QLatin1String DOWNLOAD_KEY("downloadmac");
 #else
-static const QLatin1Literal DOWNLOAD_KEY("downloadlinux");
+static const QLatin1String DOWNLOAD_KEY("downloadlinux");
 #endif
 
 UpdateCheck::UpdateCheck(bool forceDebug)
@@ -69,8 +69,7 @@ void UpdateCheck::checkForUpdates(const QString& versionsAlreadChecked, bool not
   {
     // Connect signals for this request
     connect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-    connect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
-            this, &UpdateCheck::httpError);
+    connect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);        // TODO: verify deleted not allowed static cast to void* return type is fine
   }
 }
 
@@ -182,7 +181,7 @@ void UpdateCheck::readUpdateMessage(UpdateList& updates, QString update)
         }
         else if(key.startsWith("download"))
         {
-          if(key == DOWNLOAD_KEY || key == "download")
+          if(key == QString(DOWNLOAD_KEY) || key == "download")
             // OS specific or general download
             map[currentChannel].download = value;
           changelogContinuation = false;
@@ -229,8 +228,7 @@ void UpdateCheck::endRequest()
   if(reply != nullptr)
   {
     disconnect(reply, &QNetworkReply::finished, this, &UpdateCheck::httpFinished);
-    disconnect(reply, static_cast<void (QNetworkReply::*)(QNetworkReply::NetworkError)>(&QNetworkReply::error),
-               this, &UpdateCheck::httpError);
+    disconnect(reply, &QNetworkReply::errorOccurred, this, &UpdateCheck::httpError);          // TODO: see connect
     reply->abort();
     reply->deleteLater();
     reply = nullptr;

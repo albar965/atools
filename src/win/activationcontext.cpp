@@ -29,8 +29,13 @@ extern "C" {
 }
 #endif
 
+#if ! _MSC_VER || __INTEL_COMPILER                      // intel compiler defines _MSC_VER, didn't check whether it supports GCC
 #pragma GCC diagnostic ignored "-Wold-style-cast"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+#pragma warning(push)
+#pragma warning(disable:4100)
+#endif
 
 namespace atools {
 namespace win {
@@ -262,3 +267,8 @@ void *ActivationContext::getProcAddress(QString libraryName, const QString& proc
 
 } // namespace win
 } // namespace atools
+
+
+#if _MSC_VER && ! __INTEL_COMPILER
+#pragma warning(pop)
+#endif

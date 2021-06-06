@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QDebug>
 #include <cmath>
+#include <QDateTime>
 
 using atools::geo::Pos;
 
@@ -108,7 +109,7 @@ void MagDecReader::readFromBgl(const QString& filename)
     referenceDate.setDate(year, referenceMonth, referenceDay);
 
     qInfo() << Q_FUNC_INFO << "MagDec World Set" << worldSet
-            << "day" << referenceDay << "month" << referenceMonth << "year" << hex << referenceYear << dec;
+            << "day" << referenceDay << "month" << referenceMonth << "year" << Qt::hex << referenceYear << Qt::dec;
 
     if(numLongValues != 360)
     {
@@ -169,7 +170,7 @@ void MagDecReader::writeToTable(sql::SqlDatabase& db) const
   query.prepare("insert into magdecl (magdecl_id, reference_time, mag_var) values(:id, :time, :magvar)");
 
   query.bindValue(":id", 1);
-  query.bindValue(":time", QDateTime(getReferenceDate()).toTime_t());
+  query.bindValue(":time", QDateTime(getReferenceDate(), QTime()).toSecsSinceEpoch());
   query.bindValue(":magvar", writeToBytes());
   query.exec();
 }
@@ -183,12 +184,9 @@ bool MagDecReader::readFromTable(sql::SqlDatabase& db)
 
     if(query.next())
     {
-      QByteArray bytes = query.value("mag_var").toByteArray();
-      readFromBytes(bytes);
+      readFromBytes(query.value("mag_var").toByteArray());
 
-      QDateTime timestamp;
-      timestamp.setTime_t(query.value("reference_time").toUInt());
-      referenceDate = timestamp.date();
+      referenceDate = QDateTime::fromSecsSinceEpoch(query.value("reference_time").toUInt()).date();
 
       qInfo() << Q_FUNC_INFO << db.databaseName() << "Reference date" << referenceDate;
 

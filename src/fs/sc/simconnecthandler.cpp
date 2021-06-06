@@ -29,11 +29,13 @@
 #include <QThread>
 #include <QSet>
 #include <QCache>
-#include <QLatin1Literal>
+#include <QLatin1String>
 #include <QCoreApplication>
 #include <QDir>
 
+#if ! _MSC_VER || __INTEL_COMPILER                      // intel compiler defines _MSC_VER, didn't check whether it supports GCC
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
 
 using atools::fs::weather::MetarResult;
 
@@ -491,7 +493,7 @@ void SimConnectHandlerPrivate::copyToSimData(const SimDataAircraft& simDataUserA
   if(simDataUserAircraft.userSim > 0)
     aircraft.flags |= atools::fs::sc::IS_USER;
 
-  if(simPaused > 0)
+  if(simPaused)
     aircraft.flags |= atools::fs::sc::SIM_PAUSED;
 }
 
@@ -1079,7 +1081,7 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 
 QString atools::fs::sc::SimConnectHandler::getName() const
 {
-  return QLatin1Literal("SimConnect");
+  return QLatin1String("SimConnect");
 }
 
 } // namespace sc

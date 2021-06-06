@@ -38,7 +38,7 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
   headerSize = bs->readUInt();
   if(headerSize != HEADER_SIZE)
   {
-    qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
+    qWarning().nospace().noquote() << "Invalid header size: 0x" << Qt::hex << headerSize << Qt::dec;
     // Disabled for www.fsaerodata.com
     // validSize = false;
   }
@@ -51,11 +51,11 @@ Header::Header(const atools::fs::NavDatabaseOptions *options, BinaryStream *bs)
     validMagicNumber = false;
 
   if(!validMagicNumber)
-    qWarning().nospace().noquote() << "Invalid magic number: 0x" << hex << magicNumber1
-                                   << ", 0x" << magicNumber2 << dec;
+    qWarning().nospace().noquote() << "Invalid magic number: 0x" << Qt::hex << magicNumber1
+                                   << ", 0x" << magicNumber2 << Qt::dec;
 
   // if(!validSize)
-  // qWarning().nospace().noquote() << "Invalid header size: 0x" << hex << headerSize << dec;
+  // qWarning().nospace().noquote() << "Invalid header size: 0x" << Qt::hex << headerSize << Qt::dec;
 
   if(!validMagicNumber || !validSize)
     // Stop reading here if anything is wrong
@@ -76,9 +76,7 @@ Header::~Header()
 
 QString Header::getCreationTimestampString() const
 {
-  QDateTime dt;
-  dt.setTime_t(static_cast<uint>(creationTimestamp));
-  return dt.toString(Qt::ISODate);
+  return QDateTime::fromSecsSinceEpoch(creationTimestamp).toString(Qt::ISODate);
 }
 
 QDebug operator<<(QDebug out, const Header& header)
@@ -86,12 +84,12 @@ QDebug operator<<(QDebug out, const Header& header)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(header)
-                          << hex << " Header[magic number 1 0x" << header.magicNumber1 << dec
+                          << Qt::hex << " Header[magic number 1 0x" << header.magicNumber1 << Qt::dec
                           << ", size " << header.headerSize
-                          << hex << ", low timestamp 0x" << header.lowDateTime
-                          << ", high timestamp 0x" << header.highDateTime << dec
+                          << Qt::hex << ", low timestamp 0x" << header.lowDateTime
+                          << ", high timestamp 0x" << header.highDateTime << Qt::dec
                           << ", timestamp " << header.getCreationTimestampString()
-                          << hex << ", magic number 2 0x" << header.magicNumber2 << dec
+                          << Qt::hex << ", magic number 2 0x" << header.magicNumber2 << Qt::dec
                           << ", sections " << header.numSections
                           << "]";
   return out;

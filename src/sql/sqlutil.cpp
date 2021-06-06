@@ -156,34 +156,57 @@ bool SqlUtil::hasRows(const QString& tablename, const QString& criteria)
 
 void SqlUtil::copyRowValues(const SqlQuery& from, SqlQuery& to)
 {
-  copyRowValuesInternal(from, to, from.record(), to.boundValues());
+  prepareRowValuesInternal(from, to);
 }
 
-void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
-                                    const SqlRecord& fromRec, const QMap<QString, QVariant>& bound)
+void SqlUtil::prepareRowValuesInternal(const SqlQuery& from, SqlQuery& to)
 {
-  for(int i = 0; i < fromRec.count(); i++)
+  SqlRecord fromRecord = from.record();
+  SqlRecord toRecord = to.record();
+
+  int fromCount = fromRecord.count();
+  int toCount = toRecord.count();
+
+  if(fromCount < toCount)                               // only as much as is in the smaller record can be copied
   {
-    QString bind = ":" + fromRec.fieldName(i);
-    if(bound.contains(bind))
-      to.bindValue(bind, from.value(i));
+    for(int i = 0; i < fromCount; i++)
+    {
+      QString bind = fromRecord.fieldName(i);
+      if(toRecord.contains(bind))                       // NOTE: this only works if the placeholder == ":" + fieldname which "SQL" in general does not require afaik!
+        to.bindValue(":" + bind, from.value(i));        // note the difference to below, Qt doc states this is faster
+    }
+  }
+  else
+  {
+    for(int i = 0; i < toCount; i++)
+    {
+      QString bind = toRecord.fieldName(i);
+      if(fromRecord.contains(bind))                     // NOTE: this only works if the placeholder == ":" + fieldname which "SQL" in general does not require afaik!
+        to.bindValue(":" + bind, from.value(bind));
+    }
   }
 }
 
-int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery&)> func)
+bool SqlUtil::returnTrue(SqlQuery& from, SqlQuery& to) {
+  (void)from;   // circumvent compiler warning
+  (void)to;     // circumvent compiler warning
+  return true;
+}
+
+int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(SqlQuery&, SqlQuery&)> func = SqlUtil::returnTrue)
 {
   int copied = 0;
-  SqlRecord fromRec;
-  QMap<QString, QVariant> bound = to.boundValues();
 
-  while(from.next())
+  if(!from.first())
+    return copied;        // 0 !
+
+  from.setForwardOnly(true);
+
+  do
   {
-    if(fromRec.isEmpty())
-      fromRec = from.record();
+    prepareRowValuesInternal(from, to);
 
-    copyRowValuesInternal(from, to, fromRec, bound);
-
-    if(func(from, to))
+    if(func(from, to))    // this can be optimised by explicitly duplicating this method without default parameter and omitting this call
     {
       to.exec();
       if(to.numRowsAffected() != 1)
@@ -193,27 +216,8 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
       copied++;
     }
   }
-  return copied;
-}
+  while(from.next());
 
-int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
-{
-  int copied = 0;
-  SqlRecord fromRec;
-  QMap<QString, QVariant> bound = to.boundValues();
-  while(from.next())
-  {
-    if(fromRec.isEmpty())
-      fromRec = from.record();
-
-    copyRowValuesInternal(from, to, fromRec, bound);
-    to.exec();
-    if(to.numRowsAffected() != 1)
-      throw SqlException("Error executing statement in Utility::copyResultValues(). "
-                         "Number of inserted rows not 1. "
-                         "(SQL \"" + to.lastQuery() + "\")");
-    copied++;
-  }
   return copied;
 }
 
@@ -262,7 +266,7 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
-  out << "Statistics for database (tables / rows):" << endl;
+  out << "Statistics for database (tables / rows):" << Qt::endl;
 
   QStringList tableList = buildTableList(tables);
 
@@ -281,16 +285,16 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables)
         {
           int cnt = query.value("cnt").toInt();
           totalCount += cnt;
-          out << name << ": " << cnt << " rows" << endl;
+          out << name << ": " << cnt << " rows" << Qt::endl;
         }
       }
       else
-        out << name << " is empty" << endl;
+        out << name << " is empty" << Qt::endl;
     }
     else
-      out << name << " does not exist" << endl;
+      out << name << " does not exist" << Qt::endl;
   }
-  out << "Total" << ": " << totalCount << " rows" << endl;
+  out << "Total" << ": " << totalCount << " rows" << Qt::endl;
 }
 
 void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
@@ -298,7 +302,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
   QDebugStateSaver saver(out);
   out.noquote().nospace();
 
-  out << "Column value report for database:" << endl;
+  out << "Column value report for database:" << Qt::endl;
 
   QStringList tableList = buildTableList(tables);
 
@@ -324,7 +328,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
             {
               out << name << "." << col;
               if(cnt == 0)
-                out << " has no distinct values" << endl;
+                out << " has no distinct values" << Qt::endl;
               else if(cnt == 1)
               {
                 out << " has only 1 distinct value: ";
@@ -332,22 +336,22 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
                 while(queryGroup.next())
                 {
                   QVariant val = queryGroup.value(0);
-                  if(val.type() != QVariant::ByteArray && val.canConvert(QVariant::String))
+                  if(val.metaType().id() != QMetaType::QByteArray && QMetaType::canConvert(val.metaType(), QMetaType(QMetaType::QString)))
                     out << val.toString();
                   else
                     out << "[" << val.typeName() << "]";
                 }
-                out << endl;
+                out << Qt::endl;
               }
             }
           }
         }
       }
       else
-        out << name << " is empty" << endl;
+        out << name << " is empty" << Qt::endl;
     }
     else
-      out << name << " does not exist" << endl;
+      out << name << " does not exist" << Qt::endl;
   }
 }
 
@@ -379,23 +383,23 @@ void SqlUtil::reportRangeViolations(QDebug& out,
         if(!header)
         {
           out << "Table range violations for " << table << " (" << column
-              << " not between " << minValue.toString() << " and " << maxValue.toString() << "):" << endl;
-          out << reportCols.join(", ") << endl;
+              << " not between " << minValue.toString() << " and " << maxValue.toString() << "):" << Qt::endl;
+          out << reportCols.join(", ") << Qt::endl;
           header = true;
         }
-        out << buildResultList(q).join(", ") << endl;
+        out << buildResultList(q).join(", ") << Qt::endl;
       }
       if(!header)
         out << "Table range violations for " << table << " (" << column
             << " not between " << minValue.toString() << " and " << maxValue.toString()
-            << "): none found" << endl;
+            << "): none found" << Qt::endl;
 
     }
     else
-      out << table << " is empty" << endl;
+      out << table << " is empty" << Qt::endl;
   }
   else
-    out << table << " does not exist" << endl;
+    out << table << " does not exist" << Qt::endl;
 }
 
 void SqlUtil::reportDuplicates(QDebug& out,
@@ -428,14 +432,14 @@ void SqlUtil::reportDuplicates(QDebug& out,
     if(!header)
     {
       out << "Table duplicates for " << table <<
-        " (" << idColumn << "/" << identityColumns.join(",") << "):" << endl;
+        " (" << idColumn << "/" << identityColumns.join(",") << "):" << Qt::endl;
       header = true;
     }
-    out << buildResultList(q).join(", ") << endl;
+    out << buildResultList(q).join(", ") << Qt::endl;
   }
   if(!header)
     out << "Table duplicates for " << table <<
-      " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << endl;
+      " (" << idColumn << "/" << identityColumns.join(",") << "): none found." << Qt::endl;
 }
 
 int SqlUtil::bindAndExec(const QString& sql, const QString& bind, const QVariant& value)
@@ -462,7 +466,7 @@ QStringList SqlUtil::buildTableList(const QStringList& tables)
   else
     tableList = tables;
 
-  qSort(tableList);
+  //qsort(tableList);         // TODO: should it be sorted?
   return tableList;
 }
 

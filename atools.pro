@@ -49,7 +49,7 @@
 # End of configuration documentation
 # =============================================================================
 
-QT += sql xml svg core widgets network
+QT += sql xml svg core widgets network core5compat
 QT -= gui
 CONFIG += build_all c++14 staticlib
 CONFIG -= debug_and_release debug_and_release_target

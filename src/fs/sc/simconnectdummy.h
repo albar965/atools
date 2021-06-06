@@ -57,7 +57,7 @@ typedef LPCSTR LPCTSTR;
 
 #define CALLBACK
 
-HRESULT StringCbLengthA(const char *, size_t cbMax, size_t *pcb);
+HRESULT StringCbLengthA_atools(const char *, size_t cbMax, size_t *pcb);
 
 #else
 #include <float.h>

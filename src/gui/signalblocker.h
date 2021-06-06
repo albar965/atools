@@ -38,28 +38,12 @@ public:
   template<typename TYPE>
   void add(QList<TYPE *> objectList);
 
-  template<typename TYPE>
-  void add(QVector<TYPE *> objectList);
-
 private:
   QList<QObject *> objects;
 };
 
 template<typename TYPE>
 void SignalBlocker::add(QList<TYPE *> objectList)
-{
-  for(TYPE *object : objectList)
-  {
-    if(object != nullptr)
-    {
-      objects.append(object);
-      object->blockSignals(true);
-    }
-  }
-}
-
-template<typename TYPE>
-void SignalBlocker::add(QVector<TYPE *> objectList)
 {
   for(TYPE *object : objectList)
   {

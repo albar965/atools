@@ -22,6 +22,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QThread>
+#include <QLatin1String>
 
 namespace atools {
 namespace logging {
@@ -136,7 +137,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   {
     for(Channel *channel : streamList)
     {
-      (*channel->stream) << message << endl << flush;
+      (*channel->stream) << message << Qt::endl << Qt::flush;
       instance->logConfig->checkStreamSize(channel);
     }
   }
@@ -144,7 +145,7 @@ void LoggingHandler::logToCatChannels(internal::ChannelMap& streamListCat,
   {
     for(Channel *channel : streamListCat[category])
     {
-      (*channel->stream) << message << endl << flush;
+      (*channel->stream) << message << Qt::endl << Qt::flush;
       instance->logConfig->checkStreamSize(channel);
     }
   }
@@ -185,7 +186,7 @@ void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& co
 
 void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
-  static const QLatin1Literal DEFAULT("default");
+  static const QLatin1String DEFAULT("default");
 
   if(logFunc != nullptr)
     logFunc(type, context, msg);
@@ -204,12 +205,12 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
 
 void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
-  static const QLatin1Literal DOUBLE_COLON("::");
-  static const QLatin1Literal VOID("void ");
-  static const QLatin1Literal STATIC_VOID("static void ");
-  static const QLatin1Literal VIRTUAL_VOID("virtual void ");
-  static const QLatin1Literal VIRTUAL("virtual ");
-  static const QLatin1Literal DEFAULT("default");
+  static const QLatin1String DOUBLE_COLON("::");
+  static const QLatin1String VOID("void ");
+  static const QLatin1String STATIC_VOID("static void ");
+  static const QLatin1String VIRTUAL_VOID("virtual void ");
+  static const QLatin1String VIRTUAL("virtual ");
+  static const QLatin1String DEFAULT("default");
 
   QString message = msg;
   QString function(context.function);

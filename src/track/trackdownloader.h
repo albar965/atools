@@ -21,6 +21,8 @@
 #include "track/tracktypes.h"
 
 #include <QObject>
+#include <QHash>
+#include <QList>
 
 namespace atools {
 namespace util {

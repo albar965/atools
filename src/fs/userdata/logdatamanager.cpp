@@ -166,7 +166,7 @@ int LogdataManager::importCsv(const QString& filepath)
     atools::util::CsvReader reader;
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     int lineNum = 0;
     while(!stream.atEnd())
@@ -367,7 +367,7 @@ int LogdataManager::importXplane(const QString& filepath,
     QString filename = QFileInfo(filepath).fileName();
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     int lineNum = 0;
     while(!stream.atEnd())
@@ -508,12 +508,12 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
     QueryWrapper query(util.buildSelectStatement(tableName, columns), db, ids, idColumnName);
 
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setRealNumberNotation(QTextStream::FixedNotation);
 
     if(!endsWithEol && append)
       // Add needed linefeed for append
-      stream << endl;
+      stream << Qt::endl;
 
     SqlExport sqlExport;
     sqlExport.setEndline(false);
@@ -537,12 +537,12 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
       {
         // Write header
         first = false;
-        stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.q.record()) << Qt::endl;
       }
       SqlRecord record = query.q.record();
 
       // Write row
-      stream << sqlExport.getResultSetRow(record) << endl;
+      stream << sqlExport.getResultSetRow(record) << Qt::endl;
       numExported++;
     }
 

@@ -25,6 +25,8 @@
 #include "geo/linestring.h"
 #include "fs/common/binarygeometry.h"
 
+#include <QIODevice>
+
 namespace atools {
 namespace fs {
 namespace db {

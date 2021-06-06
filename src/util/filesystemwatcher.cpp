@@ -69,7 +69,7 @@ void FileSystemWatcher::pathOrFileChanged()
           qDebug() << Q_FUNC_INFO << "File" << filename
                    << "exists" << fileinfo.exists()
                    << "size" << fileinfo.size()
-                   << "last modified" << fileinfo.lastModified().toString(Qt::DefaultLocaleShortDate);
+                   << "last modified" << QLocale(fileinfo.lastModified().toString()).dateTimeFormat(QLocale::ShortFormat);
 
         // File exists - first call or older than two minutes or file differs
         if(!fileTimestampLastRead.isValid() ||

@@ -188,7 +188,7 @@ QDebug operator<<(QDebug out, const Flightplan& record)
 
   int i = 1;
   for(const FlightplanEntry& entry : record.getEntries())
-    out << endl << i++ << " " << entry;
+    out << Qt::endl << i++ << " " << entry;
   out << "]";
   return out;
 }

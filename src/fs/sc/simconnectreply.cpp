@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QDataStream>
+#include <QIODevice>
 
 namespace atools {
 namespace fs {

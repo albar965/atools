@@ -408,7 +408,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
 
     if(!endsWithEol && (flags & APPEND))
       // Add needed linefeed for append
-      stream << endl;
+      stream << Qt::endl;
 
     bool first = true;
 
@@ -419,7 +419,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
       {
         // Write header
         first = false;
-        stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.q.record()) << Qt::endl;
       }
       SqlRecord record = query.q.record();
 
@@ -432,7 +432,7 @@ int UserdataManager::exportCsv(const QString& filepath, const QVector<int>& ids,
       record.setValue("Magnetic Declination", static_cast<double>(magvar));
 
       // Write row
-      stream << sqlExport.getResultSetRow(record) << endl;
+      stream << sqlExport.getResultSetRow(record) << Qt::endl;
       numExported++;
     }
 
@@ -468,7 +468,7 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
           QString line = inStream.readLine();
           if(line.simplified() == "99")
             break;
-          tempOutStream << line << endl;
+          tempOutStream << line << Qt::endl;
         }
 
         inFile.close();
@@ -503,11 +503,11 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
     if(!(flags & APPEND))
     {
       // Add file header
-      stream << "I" << endl << "1100 Version - "
+      stream << "I" << Qt::endl << "1100 Version - "
              << "data cycle " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM") << ", "
              << "build " << QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyyyMMdd") << ", "
              << "metadata FixXP1100. "
-             << atools::programFileInfoNoDate() << "." << endl << endl;
+             << atools::programFileInfoNoDate() << "." << Qt::endl << Qt::endl;
     }
 
     QueryWrapper query(
@@ -526,11 +526,11 @@ int UserdataManager::exportXplane(const QString& filepath, const QVector<int>& i
              << " " << atools::fs::util::adjustIdent(query.q.valueStr("ident"), 5, query.q.valueInt(idColumnName))
              << " " << "ENRT" // Ignore airport here
              << " " << (region.isEmpty() ? "ZZ" : atools::fs::util::adjustRegion(region))
-             << endl;
+             << Qt::endl;
       numExported++;
     }
 
-    stream << "99" << endl;
+    stream << "99" << Qt::endl;
 
     file.close();
   }
@@ -554,7 +554,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
     stream.setCodec("UTF-8");
 
     if(!endsWithEol && (flags & APPEND))
-      stream << endl;
+      stream << Qt::endl;
 
     QueryWrapper query("select " + idColumnName + ", ident, name,  laty, lonx from " + tableName, db, ids,
                        idColumnName);
@@ -572,7 +572,7 @@ int UserdataManager::exportGarmin(const QString& filepath, const QVector<int>& i
              << QString::number(query.q.valueDouble("laty"), 'f', 8)
              << ","
              << QString::number(query.q.valueDouble("lonx"), 'f', 8)
-             << endl;
+             << Qt::endl;
       numExported++;
     }
 

@@ -126,12 +126,12 @@ public:
     return value(name).toDateTime();
   }
 
-  int valueBool(int i) const
+  bool valueBool(int i) const
   {
     return value(i).toBool();
   }
 
-  int valueBool(const QString& name) const
+  bool valueBool(const QString& name) const
   {
     return value(name).toBool();
   }
@@ -167,7 +167,7 @@ public:
     return hasField(name) ? valueDateTime(name) : defaultValue;
   }
 
-  int valueBool(const QString& name, bool defaultValue) const
+  bool valueBool(const QString& name, bool defaultValue) const
   {
     return hasField(name) ? valueBool(name) : defaultValue;
   }
@@ -184,6 +184,8 @@ public:
   void clear();
 
   /* Nullifies all bound values */
+  // assume intention is exactly that, eg in order to clear possible remnants
+  // TODO: is it relevant to call it After an exec?
   void clearBoundValues();
 
   void exec();
@@ -209,7 +211,6 @@ public:
   QVariant boundValue(const QString& placeholder, bool ignoreInvalid = false) const;
   QVariant boundValue(int pos, bool ignoreInvalid = false) const;
 
-  QMap<QString, QVariant> boundValues() const;
   QString executedQuery() const;
   QVariant lastInsertId() const;
   void finish();
@@ -223,7 +224,8 @@ public:
   }
 
   /* Get a full annotated query string with bound values replaced for debugging (only for named bindings) */
-  QString getFullQueryString() const;
+  // not in use anywhere (afais), implementation detail requirement not available in core and too exhausting to code now
+  //QString getFullQueryString() const;
 
   void bindValues(const QVector<std::pair<QString, QVariant> >& bindValues);
   void bindValues(const QVector<std::pair<int, QVariant> >& bindValues);
@@ -237,8 +239,8 @@ private:
 
   QSqlQuery query;
   QString queryString;
-  SqlDatabase *db = nullptr;
-  QString boundValuesAsString() const;
+  SqlDatabase* db = nullptr;
+  //QString boundValuesAsString() const;
 
 };
 

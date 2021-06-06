@@ -60,7 +60,7 @@ QDebug operator<<(QDebug out, const Apron& record)
 
   out.nospace().noquote() << static_cast<const Record&>(record)
                           << " Runway[surface " << surface::surfaceToDbStr(record.surface) << "/"
-                          << surface::surfaceToDbStr(record.surface) << endl;
+                          << surface::surfaceToDbStr(record.surface) << Qt::endl;
   out << record.vertices;
   out << "]";
   return out;

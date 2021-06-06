@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FLIGHTPLANCONSTANTS_H
 #define ATOOLS_FLIGHTPLANCONSTANTS_H
 
-#include <QLatin1Literal>
+#include <QLatin1String>
 
 namespace atools {
 namespace fs {
@@ -98,32 +98,32 @@ enum RouteType
 /* Common key that are used int flight plan properties that are not supported in PLN.
  * Will be save inside a XML comment in pln files. */
 /* Keys that describe procedures*/
-const QLatin1Literal SIDAPPR("sidappr");
-const QLatin1Literal SIDAPPRRW("sidapprrw");
-const QLatin1Literal SIDTRANS("sidtrans");
+const QLatin1String SIDAPPR("sidappr");
+const QLatin1String SIDAPPRRW("sidapprrw");
+const QLatin1String SIDTRANS("sidtrans");
 
-const QLatin1Literal STAR("star");
-const QLatin1Literal STARRW("starrw");
-const QLatin1Literal STARTRANS("startrans");
+const QLatin1String STAR("star");
+const QLatin1String STARRW("starrw");
+const QLatin1String STARTRANS("startrans");
 
-const QLatin1Literal TRANSITION("transition");
-const QLatin1Literal TRANSITIONTYPE("transitiontype");
+const QLatin1String TRANSITION("transition");
+const QLatin1String TRANSITIONTYPE("transitiontype");
 
-const QLatin1Literal APPROACH("approach");
-const QLatin1Literal APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
-const QLatin1Literal APPROACHTYPE("approachtype");
-const QLatin1Literal APPROACHRW("approachrw");
-const QLatin1Literal APPROACHSUFFIX("approachsuffix");
+const QLatin1String APPROACH("approach");
+const QLatin1String APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
+const QLatin1String APPROACHTYPE("approachtype");
+const QLatin1String APPROACHRW("approachrw");
+const QLatin1String APPROACHSUFFIX("approachsuffix");
 
 /* Name of airway which leads to IAF of a STAR or an approach (-transition) */
-const QLatin1Literal PROCAIRWAY("procairway");
+const QLatin1String PROCAIRWAY("procairway");
 
 /* Only for approachtype = CUSTOM */
-const QLatin1Literal APPROACH_CUSTOM_DISTANCE("approachcustomdistance");
-const QLatin1Literal APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude");
+const QLatin1String APPROACH_CUSTOM_DISTANCE("approachcustomdistance");
+const QLatin1String APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude");
 
 /* List of alternate airport(s) separated by "#" */
-const QLatin1Literal ALTERNATES("alternates");
+const QLatin1String ALTERNATES("alternates");
 
 /* Copies all related properties and deletes the ones in "to" that do not exist in "from". */
 void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
@@ -132,17 +132,17 @@ void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QStrin
 void copyAlternateProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from);
 
 /* Aircraft performance */
-const QLatin1Literal AIRCRAFT_PERF_NAME("aircraftperfname");
-const QLatin1Literal AIRCRAFT_PERF_TYPE("aircraftperftype");
-const QLatin1Literal AIRCRAFT_PERF_FILE("aircraftperffile");
+const QLatin1String AIRCRAFT_PERF_NAME("aircraftperfname");
+const QLatin1String AIRCRAFT_PERF_TYPE("aircraftperftype");
+const QLatin1String AIRCRAFT_PERF_FILE("aircraftperffile");
 
 /* Source database navigation data */
-const QLatin1Literal NAVDATA("navdata");
-const QLatin1Literal NAVDATACYCLE("navdatacycle");
+const QLatin1String NAVDATA("navdata");
+const QLatin1String NAVDATACYCLE("navdatacycle");
 
 /* Source database simulator */
-const QLatin1Literal SIMDATA("simdata");
-const QLatin1Literal SIMDATACYCLE("simdatacycle");
+const QLatin1String SIMDATA("simdata");
+const QLatin1String SIMDATACYCLE("simdatacycle");
 
 } // namespace pln
 } // namespace fs

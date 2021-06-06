@@ -81,7 +81,7 @@ Ndb::Ndb(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
       default:
         qWarning().nospace().noquote() << "Unexpected record type in NDB record 0x"
-                                       << hex << t << dec << " for ident " << ident;
+                                       << Qt::hex << t << Qt::dec << " for ident " << ident;
     }
     r.seekToEnd();
   }

@@ -47,7 +47,7 @@ QString DeleteAirport::deleteAllFlagsToStr(del::DeleteAllFlags flags)
 
   // TODO find out missing flags with bgl compiler also for MSFS
   // else if(flags != 0)
-  // qWarning().nospace().noquote() << "Found unknown delete all flags 0x" << hex << flags;
+  // qWarning().nospace().noquote() << "Found unknown delete all flags 0x" << Qt::hex << flags;
 
   if(retval.endsWith(","))
     retval.chop(1);

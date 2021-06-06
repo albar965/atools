@@ -27,7 +27,9 @@
 
 #include "sql/sqlutil.h"
 
+#if ! _MSC_VER || __INTEL_COMPILER                      // intel compiler defines _MSC_VER, didn't check whether it supports GCC
 #pragma GCC diagnostic ignored "-Wswitch-enum"
+#endif
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
@@ -647,7 +649,7 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
 
   if(waypointDescr.size() > 3)
   {
-    if(waypointDescr.at(3) == "F" && curRowCode == rc::APPROACH)
+    if(waypointDescr.at(3) == 'F' && curRowCode == rc::APPROACH)
     {
       NavIdInfo fafInfo = navaidTypeFix(line);
       // FAF - use this one to set the approach name
@@ -656,7 +658,7 @@ void ProcedureWriter::writeApproachLeg(const ProcedureInput& line)
       approaches.last().record.setValue(":fix_region", fafInfo.region);
     }
 
-    if(waypointDescr.at(3) != " " && curRowCode == rc::APPROACH)
+    if(waypointDescr.at(3) != ' ' && curRowCode == rc::APPROACH)
       rec.setValue(":approach_fix_type", waypointDescr.at(3));
   }
 
@@ -903,7 +905,7 @@ float ProcedureWriter::altitudeFromStr(const QString& altStr)
 {
   if(altStr.startsWith("FL"))
     // Simplify - turn flight levelt to feet
-    return altStr.midRef(2).toFloat() * 100.f;
+    return altStr.mid(2).toFloat() * 100.f;
   else
     return altStr.toFloat();
 }

@@ -62,12 +62,6 @@ void LoggingUtil::logSystemInformation()
           << "version" << QSysInfo::productVersion();
 
   qInfo() << "Qt version" << QT_VERSION_STR;
-
-  if(QSysInfo::windowsVersion() != QSysInfo::WV_None)
-    qInfo() << "Windows version" << QSysInfo::windowsVersion();
-
-  if(QSysInfo::macVersion() != QSysInfo::MV_None)
-    qInfo() << "Mac version" << QSysInfo::macVersion();
 }
 
 void LoggingUtil::logStandardPaths()
@@ -81,7 +75,6 @@ void LoggingUtil::logStandardPaths()
   qInfo() << "PicturesLocation" << QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
   qInfo() << "TempLocation" << QStandardPaths::standardLocations(QStandardPaths::TempLocation);
   qInfo() << "HomeLocation" << QStandardPaths::standardLocations(QStandardPaths::HomeLocation);
-  qInfo() << "DataLocation" << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
   qInfo() << "CacheLocation" << QStandardPaths::standardLocations(QStandardPaths::CacheLocation);
   qInfo() << "GenericDataLocation" << QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
   qInfo() << "RuntimeLocation" << QStandardPaths::standardLocations(QStandardPaths::RuntimeLocation);

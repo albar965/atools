@@ -47,6 +47,7 @@
 #include <iostream>
 #include <QDateTime>
 #include <QDebug>
+#include <QLatin1String>
 
 // #define QT_NO_CAST_FROM_BYTEARRAY
 // #define QT_NO_CAST_TO_ASCII
@@ -1577,7 +1578,7 @@ bool MetarParser::scanRunwayReport()
       return false;
 
     if(i == 0)
-      r.depth = 0.0005; // < 1 mm deep (let's say 0.5 :-)
+      r.depth = 0.0005f; // < 1 mm deep (let's say 0.5 :-)
     else if(i > 0 && i <= 90)
       r.depth = i / 1000.0; // i mm deep
     else if(i >= 92 && i <= 98)
@@ -1846,19 +1847,19 @@ QString MetarCloud::getCoverageString() const
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
 {
-  if(coverage == QLatin1Literal("clear"))
+  if(coverage == QLatin1String("clear"))
     return COVERAGE_CLEAR;
 
-  if(coverage == QLatin1Literal("few"))
+  if(coverage == QLatin1String("few"))
     return COVERAGE_FEW;
 
-  if(coverage == QLatin1Literal("scattered"))
+  if(coverage == QLatin1String("scattered"))
     return COVERAGE_SCATTERED;
 
-  if(coverage == QLatin1Literal("broken"))
+  if(coverage == QLatin1String("broken"))
     return COVERAGE_BROKEN;
 
-  if(coverage == QLatin1Literal("overcast"))
+  if(coverage == QLatin1String("overcast"))
     return COVERAGE_OVERCAST;
 
   return COVERAGE_NIL;

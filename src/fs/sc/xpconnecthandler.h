@@ -22,6 +22,7 @@
 
 #include <QSharedMemory>
 #include <functional>
+#include <QLatin1String>
 
 namespace atools {
 namespace fs {
@@ -29,7 +30,7 @@ namespace sc {
 
 /* Defaul size of the shared memory segment */
 static const int SHARED_MEMORY_SIZE = 8196;
-static const QLatin1Literal SHARED_MEMORY_KEY("LittleXpconnect");
+static const QLatin1String SHARED_MEMORY_KEY("LittleXpconnect");
 
 /*
  * Reads data from a callback function into SimConnectData.

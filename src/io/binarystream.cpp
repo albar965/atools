@@ -217,7 +217,7 @@ void BinaryStream::checkStream(const QString& what) const
   {
     QString msg = QString("%1 for file \"%2\" failed. Reason %3").arg(what).arg(getFilename()).arg(is->status());
 
-    qWarning() << msg << "Position" << hex << "0x" << is->device()->pos() << dec << is->device()->pos();
+    qWarning() << msg << "Position" << Qt::hex << "0x" << is->device()->pos() << Qt::dec << is->device()->pos();
     throw Exception(msg);
   }
 }

@@ -289,7 +289,7 @@ bool DataReaderThread::fetchData(atools::fs::sc::SimConnectData& data, int radiu
     data.setPacketId(nextPacketId++);
   }
 
-  data.setPacketTimestamp(QDateTime::currentDateTime().toTime_t());
+  data.setPacketTimestamp(QDateTime::currentDateTime().toSecsSinceEpoch());
 
   if(verbose)
     if(weatherRequested && !data.getMetars().isEmpty())

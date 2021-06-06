@@ -140,7 +140,7 @@ Boundary::Boundary(const NavDatabaseOptions *options, BinaryStream *bs)
 {
   if(id != rec::BOUNDARY)
   {
-    qWarning() << "Not a boundary record" << hex << "0x" << id << dec;
+    qWarning() << "Not a boundary record" << Qt::hex << "0x" << id << Qt::dec;
     excluded = true;
     return;
   }
@@ -227,7 +227,7 @@ QDebug operator<<(QDebug out, const Boundary& record)
                           << ", minAltType " << Boundary::altTypeToStr(record.minAltType)
                           << ", maxAltType " << Boundary::altTypeToStr(record.maxAltType)
                           << ", minPosition " << record.minPosition
-                          << ", maxPosition " << record.maxPosition << endl;
+                          << ", maxPosition " << record.maxPosition << Qt::endl;
   out << record.lines;
   out << "]";
 

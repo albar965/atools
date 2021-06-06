@@ -167,7 +167,7 @@ void NavServerWorker::postSimConnectData(atools::fs::sc::SimConnectData dataPack
     qWarning() << "NavServerWorker Reply to client not flushed";
 
   if(options & VERBOSE)
-    qDebug() << "NavServerWorker written" << written << "flush" << flush << "id" << dataPacket.getPacketId();
+    qDebug() << "NavServerWorker written" << written << "flush" << Qt::flush << "id" << dataPacket.getPacketId();
 
   inPost = false;
 }

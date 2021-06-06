@@ -18,6 +18,7 @@
 #include "fs/db/ap/deleteprocessor.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
+#include "sql/sqlrecord.h"
 #include "geo/calculations.h"
 #include "sql/sqlutil.h"
 #include "fs/db/datawriter.h"
@@ -530,13 +531,15 @@ int DeleteProcessor::bindAndExecute(const QString& sql, const QString& msg)
 
 int DeleteProcessor::bindAndExecute(SqlQuery *query, const QString& msg)
 {
-  if(query->boundValues().contains(":prevApId"))
+  atools::sql::SqlRecord record = query->record();
+
+  if(record.contains("prevApId"))
     query->bindValue(":prevApId", prevAirportId);
 
-  if(query->boundValues().contains(":curApId"))
+  if(record.contains("curApId"))
     query->bindValue(":curApId", currentAirportId);
 
-  if(query->boundValues().contains(":apIdent"))
+  if(record.contains("apIdent"))
     query->bindValue(":apIdent", ident);
 
   return executeStatement(query, msg);

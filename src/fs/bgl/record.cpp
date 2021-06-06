@@ -55,7 +55,7 @@ bool Record::checkSubRecord(const Record& r)
   if(r.getSize() == 0)
   {
     qWarning().nospace().noquote() << "Ignoring airport. Size of record is zero. 0x"
-                                   << hex << r.getId<int>() << dec << getObjectName();
+                                   << Qt::hex << r.getId<int>() << Qt::dec << getObjectName();
 
     // Stop reading when the first subrecord is already invalid
     seekToStart();
@@ -70,7 +70,7 @@ QDebug operator<<(QDebug out, const Record& record)
   QDebugStateSaver saver(out);
 
   out.nospace().noquote() << static_cast<const BglBase&>(record)
-                          << hex << " Record[id 0x" << record.id << dec
+                          << Qt::hex << " Record[id 0x" << record.id << Qt::dec
                           << ", size " << record.size << "]";
   return out;
 }

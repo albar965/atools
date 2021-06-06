@@ -85,7 +85,7 @@ bool XpWeatherReader::read()
   {
     qDebug() << Q_FUNC_INFO << weatherFile;
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     metarIndex->read(stream, weatherFile, false /* merge */);
     file.close();
   }

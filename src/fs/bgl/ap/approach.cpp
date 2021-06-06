@@ -123,7 +123,7 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, bool sid
           break;
 
         default:
-          qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << t << dec
+          qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << Qt::hex << t << Qt::dec
                                          << " for airport ident " << fixAirportIdent << bs->tellg();
       }
       r.seekToEnd();
@@ -145,7 +145,7 @@ QDebug operator<<(QDebug out, const Approach& record)
                           << ", fix region " << record.fixRegion
                           << ", ap icao " << record.fixAirportIdent
                           << ", alt " << record.altitude
-                          << ", hdg " << record.heading << endl;
+                          << ", hdg " << record.heading << Qt::endl;
   out << record.transitions;
   out << record.legs;
   out << record.missedLegs;

@@ -82,31 +82,31 @@ QString facilityTypeTextSettings(fac::FacilityType type)
   switch(type)
   {
     case atools::fs::online::fac::OBSERVER:
-      return QLatin1Literal("Observer");
+      return QLatin1String("Observer");
 
     case atools::fs::online::fac::FLIGHT_INFORMATION:
-      return QLatin1Literal("FIR");
+      return QLatin1String("FIR");
 
     case atools::fs::online::fac::DELIVERY:
-      return QLatin1Literal("Delivery");
+      return QLatin1String("Delivery");
 
     case atools::fs::online::fac::GROUND:
-      return QLatin1Literal("Ground");
+      return QLatin1String("Ground");
 
     case atools::fs::online::fac::TOWER:
-      return QLatin1Literal("Tower");
+      return QLatin1String("Tower");
 
     case atools::fs::online::fac::APPROACH:
-      return QLatin1Literal("Approach");
+      return QLatin1String("Approach");
 
     case atools::fs::online::fac::ACC:
-      return QLatin1Literal("ACC");
+      return QLatin1String("ACC");
 
     case atools::fs::online::fac::DEPARTURE:
-      return QLatin1Literal("Departure");
+      return QLatin1String("Departure");
 
     case atools::fs::online::fac::UNKNOWN:
-      return QLatin1Literal("Unknown");
+      return QLatin1String("Unknown");
   }
   return QString::number(type);
 }

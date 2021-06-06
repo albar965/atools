@@ -220,7 +220,7 @@ void TrackDownloader::setUrl(TrackType type, const QString& url, const QStringLi
 
 void TrackDownloader::startAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->startDownload();
 }
 
@@ -231,7 +231,7 @@ void TrackDownloader::startDownload(TrackType type)
 
 void TrackDownloader::cancelAllDownloads()
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->cancelDownload();
 }
 
@@ -242,14 +242,14 @@ const atools::track::TrackVectorType& TrackDownloader::getTracks(TrackType type)
 
 void TrackDownloader::clearTracks()
 {
-  for(atools::track::TrackType key : trackList.keys())
-    trackList[key].clear();
+  for(auto key : qAsConst(trackList))
+    key.clear();
 }
 
 bool TrackDownloader::hasAnyTracks()
 {
   int num = 0;
-  for(const TrackVectorType& tracks : trackList)
+  for(const TrackVectorType& tracks : qAsConst(trackList))
     num += tracks.size();
   return num > 0;
 }
@@ -262,14 +262,14 @@ bool TrackDownloader::hasTracks(TrackType type)
 int TrackDownloader::removeInvalid()
 {
   int num = 0;
-  for(atools::track::TrackType key : trackList.keys())
-    num += TrackReader::removeInvalid(trackList[key]);
+  for(auto key : qAsConst(trackList))
+    num += TrackReader::removeInvalid(key);
   return num;
 }
 
 void TrackDownloader::setIgnoreSslErrors(bool value)
 {
-  for(HttpDownloader *downloader : downloaders)
+  for(HttpDownloader *downloader : qAsConst(downloaders))
     downloader->setIgnoreSslErrors(value);
 }
 

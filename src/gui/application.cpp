@@ -97,7 +97,7 @@ QString Application::generalErrorMessage()
 
 void Application::setTooltipsDisabled(const QList<QObject *>& exceptions)
 {
-  tooltipExceptions = exceptions.toSet();
+  tooltipExceptions = QSet(exceptions.begin(), exceptions.end());
   tooltipsDisabled = true;
 }
 

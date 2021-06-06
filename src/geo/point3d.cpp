@@ -25,7 +25,7 @@ namespace geo {
 QDebug operator<<(QDebug out, const Point3D& pt)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << fixed << qSetRealNumberPrecision(1)
+  out.nospace().noquote() << Qt::fixed << qSetRealNumberPrecision(1)
                           << "Point3D(x " << pt.x << ", y " << pt.y << ", z " << pt.z
                           << ", valid " << pt.isValid() << ")";
   return out;
