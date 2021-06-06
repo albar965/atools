@@ -9,7 +9,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * More relaxed user waypoint naming conventions for MSFS. Adjusted allowed characters for MSFS user
   waypoint names. Now replacing special characters with related ASCII.
 * Now omitting visual reporting points (like `VP123`) and other obscure numbered waypoints from
-  route calculation. Simplified and optimized loading of routing network.
+  route calculation. Also ignoring half degree points like `H5711` now.
+  Simplified and optimized loading of routing network.
 * Added departure parking type to flight plan to allow export for MSFS departure parking position.
   Enabled parking position for MSFS flight plan export and import.
 * Corrected airport filter to avoid omitting airport updates when loading FSX/P3D/MSFS scenery.

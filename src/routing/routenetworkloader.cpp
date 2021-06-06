@@ -107,8 +107,7 @@ void RouteNetworkLoader::load(atools::routing::RouteNetwork *networkParam)
     // Column order is important in the queries
 
     // Read navaids into nodeIdIndexMap and into nodesTemp ====================
-    // Named waypoints without airways
-    // Degree and half degree confluence waypoints
+    // Named and unnamed waypoints without airways as well as degree confluence waypoints
     if(hasNav)
       readNodesAirway(nodeVector, nodeIdIndexMap,
                       "select w.waypoint_id, w.ident, w.type, w.lonx, w.laty "
@@ -446,10 +445,11 @@ void RouteNetworkLoader::readNodesAirway(QVector<Node>& nodes, QHash<int, int>& 
     atools::geo::Pos pos(query.valueFloat(LONX), query.valueFloat(LATY));
 
     // No name and grid filter for NDB and VOR waypoints
-    if(!ndb && !vor)
+    if(!ndb && !vor && filterProc)
     {
-      // Include all one degree and half degree grid confluence points
-      bool ok = pos.nearGrid(0.5f, atools::geo::Pos::POS_EPSILON_10M);
+      // Include all one degree grid confluence points
+      // Ignore half degee points
+      bool ok = pos.nearGrid(1.f, atools::geo::Pos::POS_EPSILON_10M);
 
       // Check for visual reporting points like "VP123" as well as other obscure numbered points and ignore these
       // if not confluence points
