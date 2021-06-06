@@ -745,10 +745,10 @@ bool crossesAntiMeridian(float lonx1, float lonx2)
 
 void registerMetaTypes()
 {
-  qRegisterMetaTypeStreamOperators<atools::geo::Pos>();
-  qRegisterMetaTypeStreamOperators<atools::geo::Rect>();
-  qRegisterMetaTypeStreamOperators<atools::geo::Line>();
-  qRegisterMetaTypeStreamOperators<atools::geo::LineString>();
+  qRegisterMetaType<atools::geo::Pos>();
+  qRegisterMetaType<atools::geo::Rect>();
+  qRegisterMetaType<atools::geo::Line>();
+  qRegisterMetaType<atools::geo::LineString>();
 }
 
 bool isWestCourse(float lonx1, float lonx2)

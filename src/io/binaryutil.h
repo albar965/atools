@@ -20,6 +20,7 @@
 
 #include <QDataStream>
 #include <QVector>
+#include <QIODevice>
 
 namespace atools {
 namespace io {
@@ -29,7 +30,7 @@ namespace io {
 template<typename TYPE, typename SIZETYPE>
 QVector<TYPE> readVector(QByteArray bytes)
 {
-  QDataStream out(&bytes, QIODevice::ReadOnly);
+  QDataStream out(&bytes, QIODeviceBase::ReadOnly);
   out.setVersion(QDataStream::Qt_5_5);
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 

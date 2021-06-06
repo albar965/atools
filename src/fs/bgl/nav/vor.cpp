@@ -92,7 +92,7 @@ Vor::Vor(const NavDatabaseOptions *options, BinaryStream *bs)
       case atools::fs::bgl::rec::GLIDESLOPE:
         break;
         // default:
-        // qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << hex << t << dec <<
+        // qWarning().nospace().noquote() << "Unexpected record type in VOR record 0x" << Qt::hex << t << Qt::dec <<
         // " for ident " << ident;
     }
     r.seekToEnd();

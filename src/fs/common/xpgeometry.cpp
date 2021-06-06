@@ -18,6 +18,7 @@
 #include "fs/common/xpgeometry.h"
 
 #include <QDataStream>
+#include <QIODevice>
 
 using atools::geo::Pos;
 

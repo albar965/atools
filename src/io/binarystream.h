@@ -19,6 +19,8 @@
 #define ATOOLS_IO_BINARYSTREAM_H
 
 #include <QDataStream>
+#include <QChar>
+#include <QUuid>
 
 class QFile;
 

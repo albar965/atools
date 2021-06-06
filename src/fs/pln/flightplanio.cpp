@@ -2185,64 +2185,64 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     stream.setCodec("UTF-8");
 
     // CoRte ==============================================
-    stream << "[CoRte]" << endl;
-    stream << "ArptDep=" << plan.departureIdent << endl;
-    stream << "ArptArr=" << plan.destinationIdent << endl;
+    stream << "[CoRte]" << Qt::endl;
+    stream << "ArptDep=" << plan.departureIdent << Qt::endl;
+    stream << "ArptArr=" << plan.destinationIdent << Qt::endl;
 
     // Departure - SID
     if(!plan.properties.value(SIDAPPRRW).isEmpty())
-      stream << "RwyDep=" << plan.departureIdent << plan.properties.value(SIDAPPRRW) << endl;
+      stream << "RwyDep=" << plan.departureIdent << plan.properties.value(SIDAPPRRW) << Qt::endl;
     else
-      stream << "RwyDep=" << endl;
+      stream << "RwyDep=" << Qt::endl;
 
     if(!plan.properties.value(SIDAPPR).isEmpty())
-      stream << "SID=" << plan.properties.value(SIDAPPR) << endl;
+      stream << "SID=" << plan.properties.value(SIDAPPR) << Qt::endl;
     else
-      stream << "SID=" << endl;
+      stream << "SID=" << Qt::endl;
 
     if(!plan.properties.value(SIDTRANS).isEmpty())
-      stream << "SID_Trans=" << plan.properties.value(SIDTRANS) << endl;
+      stream << "SID_Trans=" << plan.properties.value(SIDTRANS) << Qt::endl;
     else
-      stream << "SID_Trans=" << endl;
+      stream << "SID_Trans=" << Qt::endl;
 
     // Arrival STAR
     if(!plan.properties.value(STAR).isEmpty())
-      stream << "STAR=" << plan.properties.value(STAR) << endl;
+      stream << "STAR=" << plan.properties.value(STAR) << Qt::endl;
     else
-      stream << "STAR=" << endl;
+      stream << "STAR=" << Qt::endl;
 
     if(!plan.properties.value(STARTRANS).isEmpty())
-      stream << "STAR_Trans=" << plan.properties.value(STARTRANS) << endl;
+      stream << "STAR_Trans=" << plan.properties.value(STARTRANS) << Qt::endl;
     else
-      stream << "STAR_Trans=" << endl;
+      stream << "STAR_Trans=" << Qt::endl;
 
     // Arrival approach and transition
     if(!plan.properties.value(APPROACHRW).isEmpty())
-      stream << "RwyArr=" << plan.destinationIdent << plan.properties.value(APPROACHRW) << endl;
+      stream << "RwyArr=" << plan.destinationIdent << plan.properties.value(APPROACHRW) << Qt::endl;
     else
-      stream << "RwyArr=" << endl;
+      stream << "RwyArr=" << Qt::endl;
 
     if(!plan.properties.value(APPROACH).isEmpty())
-      stream << "RwyArrFinal=" << plan.properties.value(APPROACH) << endl;
+      stream << "RwyArrFinal=" << plan.properties.value(APPROACH) << Qt::endl;
     else
-      stream << "RwyArrFinal=" << endl;
+      stream << "RwyArrFinal=" << Qt::endl;
 
     if(!plan.properties.value(TRANSITION).isEmpty())
-      stream << "APPR_Trans=" << plan.properties.value(TRANSITION) << endl;
+      stream << "APPR_Trans=" << plan.properties.value(TRANSITION) << Qt::endl;
     else
-      stream << "APPR_Trans=" << endl;
+      stream << "APPR_Trans=" << Qt::endl;
 
-    // stream << "RwyDep=" << endl;
-    // stream << "RwyArr=" << endl;
-    // stream << "RwyArrFinal=" << endl;
-    // stream << "SID=" << endl;
-    // stream << "STAR=" << endl;
-    // stream << "APPR_Trans=" << endl;
+    // stream << "RwyDep=" << Qt::endl;
+    // stream << "RwyArr=" << Qt::endl;
+    // stream << "RwyArrFinal=" << Qt::endl;
+    // stream << "SID=" << Qt::endl;
+    // stream << "STAR=" << Qt::endl;
+    // stream << "APPR_Trans=" << Qt::endl;
 
     if(crj)
     {
-      stream << "CoRoute=" << endl;
-      stream << "FltNo=" << endl;
+      stream << "CoRoute=" << Qt::endl;
+      stream << "FltNo=" << Qt::endl;
     }
 
     QString lastAirwayTo;
@@ -2261,16 +2261,16 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
 
       if(!next.getAirway().isEmpty())
       {
-        stream << "Airway" << index << "=" << next.getAirway() << endl;
-        stream << "Airway" << index << "FROM=" << entry.getIdent() << endl;
-        stream << "Airway" << index << "TO=" << next.getIdent() << endl;
+        stream << "Airway" << index << "=" << next.getAirway() << Qt::endl;
+        stream << "Airway" << index << "FROM=" << entry.getIdent() << Qt::endl;
+        stream << "Airway" << index << "TO=" << next.getIdent() << Qt::endl;
         lastAirwayTo = next.getIdent();
         index++;
       }
       else if(entry.getIdent() != lastAirwayTo)
       {
-        stream << "DctWpt" << index << "=" << identOrDegMinFormat(entry) << endl;
-        stream << "DctWpt" << index << "Coordinates=" << coords << endl;
+        stream << "DctWpt" << index << "=" << identOrDegMinFormat(entry) << Qt::endl;
+        stream << "DctWpt" << index << "Coordinates=" << coords << Qt::endl;
         lastAirwayTo.clear();
         index++;
       }
@@ -2279,27 +2279,27 @@ void FlightplanIO::saveFlpInternal(const atools::fs::pln::Flightplan& plan, cons
     if(crj)
     {
       // PerfData ==============================================
-      stream << "[PerfData]" << endl;
-      stream << "CrzAlt=" << plan.getCruisingAltitude() << endl;
-      stream << "CrzAltAltn=-1" << endl;
-      stream << "PaxCnt=-1" << endl;
-      stream << "PaxWeight=-1" << endl;
-      stream << "CargoWeight=-1" << endl;
-      stream << "FuelWeight=-1" << endl;
-      stream << "WindDirClb=0" << endl;
-      stream << "WindSpdClb=0" << endl;
-      stream << "WindDirCrz=0" << endl;
-      stream << "WindSpdCrz=0" << endl;
-      stream << "WindDirDes=0" << endl;
-      stream << "WindSpdDes=0" << endl;
-      stream << "ISADev=0" << endl;
-      stream << "ResFuel=-1" << endl;
-      stream << "TaxiFuel=-1" << endl;
+      stream << "[PerfData]" << Qt::endl;
+      stream << "CrzAlt=" << plan.getCruisingAltitude() << Qt::endl;
+      stream << "CrzAltAltn=-1" << Qt::endl;
+      stream << "PaxCnt=-1" << Qt::endl;
+      stream << "PaxWeight=-1" << Qt::endl;
+      stream << "CargoWeight=-1" << Qt::endl;
+      stream << "FuelWeight=-1" << Qt::endl;
+      stream << "WindDirClb=0" << Qt::endl;
+      stream << "WindSpdClb=0" << Qt::endl;
+      stream << "WindDirCrz=0" << Qt::endl;
+      stream << "WindSpdCrz=0" << Qt::endl;
+      stream << "WindDirDes=0" << Qt::endl;
+      stream << "WindSpdDes=0" << Qt::endl;
+      stream << "ISADev=0" << Qt::endl;
+      stream << "ResFuel=-1" << Qt::endl;
+      stream << "TaxiFuel=-1" << Qt::endl;
 
       // VNAVData ==============================================
-      stream << "[VNAVData]" << endl;
-      stream << "TransAlt=18000" << endl;
-      stream << "TransLvl=18000" << endl;
+      stream << "[VNAVData]" << Qt::endl;
+      stream << "TransAlt=18000" << Qt::endl;
+      stream << "TransLvl=18000" << Qt::endl;
     }
 
     flpFile.close();
@@ -2359,22 +2359,22 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
     stream.setCodec("UTF-8");
     stream.setRealNumberPrecision(8);
 
-    stream << "; " << programFileInfo() << endl;
-    stream << "[Origin]" << endl;
-    stream << "ident=" << plan.departureIdent << endl;
-    stream << "type=1" << endl;
-    stream << "latitude=" << plan.entries.first().getPosition().getLatY() << endl;
-    stream << "longitude=" << plan.entries.first().getPosition().getLonX() << endl;
+    stream << "; " << programFileInfo() << Qt::endl;
+    stream << "[Origin]" << Qt::endl;
+    stream << "ident=" << plan.departureIdent << Qt::endl;
+    stream << "type=1" << Qt::endl;
+    stream << "latitude=" << plan.entries.first().getPosition().getLatY() << Qt::endl;
+    stream << "longitude=" << plan.entries.first().getPosition().getLonX() << Qt::endl;
 
-    stream << "[Destination]" << endl;
-    stream << "ident=" << plan.destinationIdent << endl;
-    stream << "type=1" << endl;
-    stream << "latitude=" << plan.entries.last().getPosition().getLatY() << endl;
-    stream << "longitude=" << plan.entries.last().getPosition().getLonX() << endl;
+    stream << "[Destination]" << Qt::endl;
+    stream << "ident=" << plan.destinationIdent << Qt::endl;
+    stream << "type=1" << Qt::endl;
+    stream << "latitude=" << plan.entries.last().getPosition().getLatY() << Qt::endl;
+    stream << "longitude=" << plan.entries.last().getPosition().getLonX() << Qt::endl;
 
-    stream << "[Route]" << endl;
-    stream << "gspd=" << groundSpeed << endl;
-    stream << "countOfPoints=" << (numEntriesSave(plan) - 1) << endl;
+    stream << "[Route]" << Qt::endl;
+    stream << "gspd=" << groundSpeed << Qt::endl;
+    stream << "countOfPoints=" << (numEntriesSave(plan) - 1) << Qt::endl;
 
     int index = 0;
     for(int i = 1; i < plan.entries.size(); i++)
@@ -2385,10 +2385,10 @@ void FlightplanIO::saveFeelthereFpl(const atools::fs::pln::Flightplan& plan, con
         continue;
 
       QString prefix = QString("Wpt.%1.").arg(index, 2, 10, QChar('0'));
-      stream << prefix << "ident=" << identOrDegMinFormat(entry) << endl;
-      stream << prefix << "type=" << (i == plan.entries.size() - 1 ? "1" : "4") << endl;
-      stream << prefix << "latitude=" << entry.getPosition().getLatY() << endl;
-      stream << prefix << "longitude=" << entry.getPosition().getLonX() << endl;
+      stream << prefix << "ident=" << identOrDegMinFormat(entry) << Qt::endl;
+      stream << prefix << "type=" << (i == plan.entries.size() - 1 ? "1" : "4") << Qt::endl;
+      stream << prefix << "latitude=" << entry.getPosition().getLatY() << Qt::endl;
+      stream << prefix << "longitude=" << entry.getPosition().getLonX() << Qt::endl;
 
       index++;
     }
@@ -2427,7 +2427,7 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
     stream.setCodec("UTF-8");
     stream.setRealNumberPrecision(8);
 
-    stream << "H," << plan.departureIdent << "," << plan.destinationIdent << ", ," << endl;
+    stream << "H," << plan.departureIdent << "," << plan.destinationIdent << ", ," << Qt::endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -2439,10 +2439,10 @@ void FlightplanIO::saveLeveldRte(const atools::fs::pln::Flightplan& plan, const 
       stream << "W," << identOrDegMinFormat(entry) << "," << entry.getAirway() << ",30,"
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << ","
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0'))
-             << ",0.000000,0.000000,0,0,0,0" << endl;
+             << ",0.000000,0.000000,0,0,0,0" << Qt::endl;
     }
 
-    stream << endl << endl << "End of FlightPlan";
+    stream << Qt::endl << Qt::endl << "End of FlightPlan";
 
     rteFile.close();
   }
@@ -2492,18 +2492,18 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
     stream.setCodec("UTF-8");
     stream.setRealNumberPrecision(8);
 
-    stream << "[AivlaSoft EFB Route - www.aivlasoft.com]" << endl;
-    stream << "//Saved " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd HH:mm:ss'z'") << endl;
-    stream << "//AIRAC cycle " << cycle << endl;
-    stream << "Format=1" << endl;
-    stream << "ATS=" << route << endl;
-    stream << "Generator=" << QApplication::applicationName() << endl;
-    stream << "Origin=" << plan.departureIdent << endl;
-    stream << "Destination=" << plan.destinationIdent << endl;
-    stream << "CruiseAltitude=" << plan.getCruisingAltitude() << endl;
-    stream << "DepartureProcedureInfo=" << departureRw << "|||" << endl;
-    stream << "ArrivalProcedureInfo=" << destinationRw << "||" << endl;
-    stream << "ApproachProcedureInfo=||" << endl;
+    stream << "[AivlaSoft EFB Route - www.aivlasoft.com]" << Qt::endl;
+    stream << "//Saved " << QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd HH:mm:ss'z'") << Qt::endl;
+    stream << "//AIRAC cycle " << cycle << Qt::endl;
+    stream << "Format=1" << Qt::endl;
+    stream << "ATS=" << route << Qt::endl;
+    stream << "Generator=" << QApplication::applicationName() << Qt::endl;
+    stream << "Origin=" << plan.departureIdent << Qt::endl;
+    stream << "Destination=" << plan.destinationIdent << Qt::endl;
+    stream << "CruiseAltitude=" << plan.getCruisingAltitude() << Qt::endl;
+    stream << "DepartureProcedureInfo=" << departureRw << "|||" << Qt::endl;
+    stream << "ArrivalProcedureInfo=" << destinationRw << "||" << Qt::endl;
+    stream << "ApproachProcedureInfo=||" << Qt::endl;
 
     int num = 0;
     for(int i = 0; i < plan.entries.size(); i++)
@@ -2543,7 +2543,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
       stream << "|" << frequency << "|" << entry.getRegion() << "|"
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "|"
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6,
-                           QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << endl;
+                           QChar('0')) << "|0|" << (entry.getAirway().isEmpty() ? "DCT" : entry.getAirway()) << Qt::endl;
 
       num++;
     }
@@ -2593,7 +2593,7 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& filename)
     stream.setCodec("UTF-8");
     stream.setRealNumberPrecision(8);
 
-    stream << "[FlightPlan]" << endl;
+    stream << "[FlightPlan]" << Qt::endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -2633,7 +2633,7 @@ void FlightplanIO::saveQwRte(const Flightplan& plan, const QString& filename)
       stream << QString("%1").arg(identOrDegMinFormat(entry), -17)
              << QString("%1").arg(entry.getPosition().getLatY(), 0, 'f', 6, QChar('0')) << "  "
              << QString("%1").arg(entry.getPosition().getLonX(), 0, 'f', 6, QChar('0')) << "  "
-             << type << " " << frequency << "    " << entry.getAirway() << endl;
+             << type << " " << frequency << "    " << entry.getAirway() << Qt::endl;
     }
 
     rteFile.close();
@@ -2660,8 +2660,8 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& filename)
     QTextStream stream(&mdrFile);
     stream.setCodec("UTF-8");
 
-    stream << plan.departureIdent << endl;
-    stream << plan.destinationIdent << endl;
+    stream << plan.departureIdent << Qt::endl;
+    stream << plan.destinationIdent << Qt::endl;
 
     QString lastAirway;
     for(int i = 1; i < plan.entries.size(); i++)
@@ -2681,7 +2681,7 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& filename)
         // Airway has changed - print the last waypoint
         stream << lastAirway << " " << prev.getIdent() << " " << QString("%1 %2").
           arg(prev.getPosition().getLatY(), 0, 'f', 6).
-          arg(prev.getPosition().getLonX(), 0, 'f', 6) << endl;
+          arg(prev.getPosition().getLonX(), 0, 'f', 6) << Qt::endl;
 
       if(entry.getAirway().isEmpty() && i != plan.entries.size() - 1)
       {
@@ -2690,7 +2690,7 @@ void FlightplanIO::saveMdr(const Flightplan& plan, const QString& filename)
                          arg(entry.getPosition().getLatY(), 0, 'f', 6).
                          arg(entry.getPosition().getLonX(), 0, 'f', 6);
 
-        stream << "DIRECT" << " " << identOrDegMinFormat(entry) << " " << coords << endl;
+        stream << "DIRECT" << " " << identOrDegMinFormat(entry) << " " << coords << Qt::endl;
       }
       lastAirway = entry.getAirway();
     }
@@ -3093,13 +3093,13 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
     stream.setCodec("UTF-8");
 
     // OS
-    stream << "I" << endl;
+    stream << "I" << Qt::endl;
 
     // File version
     if(version11Format)
     {
       // New X-Plane 11 format
-      stream << "1100 Version" << endl;
+      stream << "1100 Version" << Qt::endl;
 
       QString cycle = plan.properties.value(NAVDATACYCLE);
       if(cycle.isEmpty())
@@ -3108,63 +3108,63 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         // Fake a cycle by using current year and month
         cycle = QLocale(QLocale::C).toString(QDateTime::currentDateTime(), "yyMM");
 
-      stream << "CYCLE " << cycle << endl;
+      stream << "CYCLE " << cycle << Qt::endl;
 
       // Departure
       QString departureIdent = plan.getDepartureIdent();
       if(plan.entries.first().getWaypointType() == entry::AIRPORT && departureIdent.size() <= 4)
-        stream << "ADEP " << departureIdent << endl;
+        stream << "ADEP " << departureIdent << Qt::endl;
       else
-        stream << "DEP " << departureIdent << endl;
+        stream << "DEP " << departureIdent << Qt::endl;
 
       // Departure - SID
       if(!plan.properties.value(SIDAPPRRW).isEmpty())
-        stream << "DEPRWY RW" << plan.properties.value(SIDAPPRRW) << endl;
+        stream << "DEPRWY RW" << plan.properties.value(SIDAPPRRW) << Qt::endl;
 
       if(!plan.properties.value(SIDAPPR).isEmpty())
-        stream << "SID " << plan.properties.value(SIDAPPR) << endl;
+        stream << "SID " << plan.properties.value(SIDAPPR) << Qt::endl;
 
       if(!plan.properties.value(SIDTRANS).isEmpty())
-        stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
+        stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << Qt::endl;
 
       // Destination
       QString destinationIdent = plan.getDestinationIdent();
       if(plan.entries.last().getWaypointType() == entry::AIRPORT && destinationIdent.size() <= 4)
-        stream << "ADES " << destinationIdent << endl;
+        stream << "ADES " << destinationIdent << Qt::endl;
       else
-        stream << "DES " << destinationIdent << endl;
+        stream << "DES " << destinationIdent << Qt::endl;
 
       // Arrival runway
       if(!plan.properties.value(APPROACHRW).isEmpty())
         // Use approach runway if there is an approach
-        stream << "DESRWY RW" << plan.properties.value(APPROACHRW) << endl;
+        stream << "DESRWY RW" << plan.properties.value(APPROACHRW) << Qt::endl;
       else if(!plan.properties.value(STARRW).isEmpty())
         // Use STAR runway if no approach but STAR
-        stream << "DESRWY RW" << plan.properties.value(STARRW) << endl;
+        stream << "DESRWY RW" << plan.properties.value(STARRW) << Qt::endl;
 
       // Arrival approach and transition
       // Arrival STAR
       if(!plan.properties.value(STAR).isEmpty())
-        stream << "STAR " << plan.properties.value(STAR) << endl;
+        stream << "STAR " << plan.properties.value(STAR) << Qt::endl;
 
       if(!plan.properties.value(STARTRANS).isEmpty())
-        stream << "STARTRANS " << plan.properties.value(STARTRANS) << endl;
+        stream << "STARTRANS " << plan.properties.value(STARTRANS) << Qt::endl;
 
       // Approach
       if(!plan.properties.value(APPROACH_ARINC).isEmpty())
-        stream << "APP " << plan.properties.value(APPROACH_ARINC) << endl;
+        stream << "APP " << plan.properties.value(APPROACH_ARINC) << Qt::endl;
 
       if(!plan.properties.value(TRANSITION).isEmpty())
-        stream << "APPTRANS " << plan.properties.value(TRANSITION) << endl;
+        stream << "APPTRANS " << plan.properties.value(TRANSITION) << Qt::endl;
 
       // Number of waypoints
-      stream << "NUMENR " << numEntries << endl;
+      stream << "NUMENR " << numEntries << Qt::endl;
     }
     else
     {
-      stream << "3 version" << endl;
-      stream << "1" << endl;
-      stream << (numEntries - 1) << endl; // Number of waypoints
+      stream << "3 version" << Qt::endl;
+      stream << "1" << Qt::endl;
+      stream << (numEntries - 1) << Qt::endl; // Number of waypoints
     }
 
     int index = 0;
@@ -3222,7 +3222,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
              << QString::number(entry.getPosition().getLatY(), 'f', 6)
              << " "
              << QString::number(entry.getPosition().getLonX(), 'f', 6)
-             << endl;
+             << Qt::endl;
 
       index++;
     }
@@ -3263,20 +3263,20 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       arg(QApplication::applicationVersion()).
       arg(atools::gitRevision()).
       arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
-      replace("-", " ") << endl << endl;
+      replace("-", " ") << Qt::endl << Qt::endl;
 
-    stream << numEntriesSave(plan) << endl << endl;
+    stream << numEntriesSave(plan) << Qt::endl << Qt::endl;
 
-    stream << plan.departureIdent << endl << AIRPORT << endl << "DIRECT" << endl;
+    stream << plan.departureIdent << Qt::endl << AIRPORT << Qt::endl << "DIRECT" << Qt::endl;
     posToRte(stream, plan.entries.first().getPosition(), true);
-    stream << endl << NO_DATA_STR << endl
-           << 1 /* Departure*/ << endl << 0 /* Runway position */ << endl << endl;
+    stream << Qt::endl << NO_DATA_STR << Qt::endl
+           << 1 /* Departure*/ << Qt::endl << 0 /* Runway position */ << Qt::endl << Qt::endl;
 
-    stream << CLIMB << endl; // Restriction phase climb
+    stream << CLIMB << Qt::endl; // Restriction phase climb
     stream << atools::roundToInt(plan.entries.first().getPosition().getAltitude()); // Restriction altitude, if restricted
 
     // Restriction type, altitude and speed
-    stream << endl << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl << endl;
+    stream << Qt::endl << NO_DATA_STR << Qt::endl << NO_DATA_NUM << Qt::endl << NO_DATA_NUM << Qt::endl << Qt::endl;
 
     for(int i = 1; i < plan.entries.size() - 1; i++)
     {
@@ -3288,31 +3288,31 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
 
       if(entry.getWaypointType() == ple::USER)
       {
-        stream << "WPT" << userWaypointNum++ << endl;
-        stream << OTHER << endl;
+        stream << "WPT" << userWaypointNum++ << Qt::endl;
+        stream << OTHER << Qt::endl;
       }
       else
       {
-        stream << (entry.getIdent().isEmpty() ? NO_DATA_STR : entry.getIdent()) << endl;
-        stream << (entry.getWaypointType() == ple::AIRPORT ? AIRPORT : WAYPOINT) << endl;
+        stream << (entry.getIdent().isEmpty() ? NO_DATA_STR : entry.getIdent()) << Qt::endl;
+        stream << (entry.getWaypointType() == ple::AIRPORT ? AIRPORT : WAYPOINT) << Qt::endl;
       }
 
       QString nextAirway = plan.entries.at(i + 1).getAirway();
-      stream << (nextAirway.isEmpty() ? "DIRECT" : nextAirway) << endl;
+      stream << (nextAirway.isEmpty() ? "DIRECT" : nextAirway) << Qt::endl;
 
       posToRte(stream, entry.getPosition(), false);
-      stream << endl << 0 << endl << 0 << endl << 0 << endl << endl; // Restriction fields
+      stream << Qt::endl << 0 << Qt::endl << 0 << Qt::endl << 0 << Qt::endl << Qt::endl; // Restriction fields
     }
 
-    stream << plan.destinationIdent << endl << AIRPORT << endl << NO_DATA_STR << endl;
+    stream << plan.destinationIdent << Qt::endl << AIRPORT << Qt::endl << NO_DATA_STR << Qt::endl;
     posToRte(stream, plan.destinationPos, true);
-    stream << endl << NO_DATA_STR << endl
-           << 0 /* no departure*/ << endl << 0 /* Runway position */ << endl << endl;
+    stream << Qt::endl << NO_DATA_STR << Qt::endl
+           << 0 /* no departure*/ << Qt::endl << 0 /* Runway position */ << Qt::endl << Qt::endl;
 
-    stream << CLIMB << endl; // Restriction phase
-    stream << atools::roundToInt(plan.destinationPos.getAltitude()) << endl; // Restriction altitude, if restricted
+    stream << CLIMB << Qt::endl; // Restriction phase
+    stream << atools::roundToInt(plan.destinationPos.getAltitude()) << Qt::endl; // Restriction altitude, if restricted
     // Restriction type, altitude and speed
-    stream << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl;
+    stream << NO_DATA_STR << Qt::endl << NO_DATA_NUM << Qt::endl << NO_DATA_NUM << Qt::endl;
 
 #ifndef Q_OS_WIN32
     // Convert EOL always to Windows (0x0a -> 0x0d0a)
@@ -3455,13 +3455,13 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
 
     // YSSY,
     // YMML,
-    stream << plan.getDepartureIdent() << "," << endl << plan.getDestinationIdent() << "," << endl;
+    stream << plan.getDepartureIdent() << "," << Qt::endl << plan.getDestinationIdent() << "," << Qt::endl;
 
     // ,
-    stream << "," << endl;
+    stream << "," << Qt::endl;
 
     // 32000,
-    stream << plan.getCruisingAltitude() << "," << endl;
+    stream << plan.getCruisingAltitude() << "," << Qt::endl;
 
     // ,
     // ,
@@ -3469,7 +3469,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
     // ,
     // ,
     // ,
-    stream << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "," << endl;
+    stream << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl;
 
     // -1,
     // ,
@@ -3477,7 +3477,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
     // ,
     // ,
     // -1,
-    stream << "-1," << endl << "," << endl << "," << endl << "," << endl << "," << endl << "0," << endl;
+    stream << "-1," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "," << Qt::endl << "0," << Qt::endl;
 
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -3522,7 +3522,7 @@ void FlightplanIO::saveFltplan(const Flightplan& plan, const QString& filename)
       // Ignore rest of the fields
       stream << ",0,0,1,-1,0.000,0,-1000,-1000,-1,-1,-1,0,0,000.00000,0,0,,"
                 "-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1,-1,-1000,0,-1000,-1000,0,";
-      stream << endl;
+      stream << Qt::endl;
     }
 
 #ifndef Q_OS_WIN32
@@ -3568,24 +3568,24 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
     // description=EDDH, LIRF
     // type=IFR
     // routetype=3
-    stream << "[flightplan]" << endl;
-    stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << endl;
-    stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << endl;
-    stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << endl;
-    stream << "routetype=3" << endl;
+    stream << "[flightplan]" << Qt::endl;
+    stream << "title=" << plan.getDepartureIdent() << " to " << plan.getDestinationIdent() << Qt::endl;
+    stream << "description=" << plan.getDepartureIdent() << ", " << plan.getDestinationIdent() << Qt::endl;
+    stream << "type=" << flightplanTypeToString(plan.getFlightplanType()) << Qt::endl;
+    stream << "routetype=3" << Qt::endl;
 
     // cruising_altitude=29000
     // departure_id=EDDH, N53* 37.82', E009* 59.29', +000053.00
     // destination_id=LIRF, N41* 48.02', E012* 14.33', +000014.00
     // departure_name=HAMBURG
     // destination_name=FIUMICINO
-    stream << "cruising_altitude=" << plan.getCruisingAltitude() << endl;
+    stream << "cruising_altitude=" << plan.getCruisingAltitude() << Qt::endl;
     stream << "departure_id=" << plan.getDepartureIdent() << ", "
-           << coordStringFs9(plan.getDeparturePosition()) << endl;
+           << coordStringFs9(plan.getDeparturePosition()) << Qt::endl;
     stream << "destination_id=" << plan.getDestinationIdent() << ", "
-           << coordStringFs9(plan.getDestinationPosition()) << endl;
-    stream << "departure_name=" << plan.departNameOrIdent().toUpper() << endl;
-    stream << "destination_name=" << plan.destNameOrIdent().toUpper() << endl;
+           << coordStringFs9(plan.getDestinationPosition()) << Qt::endl;
+    stream << "departure_name=" << plan.departNameOrIdent().toUpper() << Qt::endl;
+    stream << "destination_name=" << plan.destNameOrIdent().toUpper() << Qt::endl;
 
     // waypoint.0=EDDH, A, N53* 37.82', E009* 59.29', +000053.00,
     // waypoint.1=AMLUH, I, N53* 25.74', E010* 19.35', +000000.00,
@@ -3604,7 +3604,7 @@ void FlightplanIO::saveBbsPln(const Flightplan& plan, const QString& filename)
       stream << coordStringFs9(entry.getPosition()) << ", ";
       stream << entry.getAirway();
 
-      stream << endl;
+      stream << Qt::endl;
       idx++;
     }
 

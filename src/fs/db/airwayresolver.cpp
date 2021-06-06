@@ -114,7 +114,7 @@ uint qHash(const AirwayResolver::AirwaySegment& segment)
          static_cast<unsigned int>(segment.toWaypointId) ^
          static_cast<unsigned int>(segment.minAlt) ^
          static_cast<unsigned int>(segment.maxAlt) ^
-         qHash(segment.type);
+         (uint)qHash(segment.type);
 }
 
 AirwayResolver::AirwayResolver(sql::SqlDatabase *sqlDb, atools::fs::ProgressHandler& progress)

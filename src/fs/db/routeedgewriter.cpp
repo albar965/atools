@@ -161,7 +161,7 @@ void RouteEdgeWriter::run()
 
     total += toNodeIdVars.size();
     average = (average + toNodeIdVars.size()) / 2;
-    maximum = std::max(maximum, toNodeIdVars.size());
+    maximum = std::max((qsizetype)maximum, toNodeIdVars.size());
 
     if(toNodeIdVars.size() == 0)
       numEmpty++;
@@ -281,8 +281,8 @@ bool RouteEdgeWriter::nearest(SqlQuery& nearestStmt, int fromNodeId, const Pos& 
   {
     const QVector<TempNodeTo>& sectorReachable = sectorsReachable.value(sectorNum);
     const QVector<TempNodeTo>& sectorOther = sectorsOther.value(sectorNum);
-    int numOtherEntries = std::min(sectorOther.size(), MAX_EDGES_PER_SECTOR);
-    int numReachableEntries = std::min(sectorReachable.size(), MAX_EDGES_PER_SECTOR);
+    int numOtherEntries = std::min(sectorOther.size(), (qsizetype)MAX_EDGES_PER_SECTOR);
+    int numReachableEntries = std::min(sectorReachable.size(), (qsizetype)MAX_EDGES_PER_SECTOR);
 
     // We need more nodes for this sector
     if(numOtherEntries + numReachableEntries < MIN_EDGES_PER_SECTOR)

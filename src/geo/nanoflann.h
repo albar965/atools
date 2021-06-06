@@ -1198,7 +1198,7 @@ public:
       return;
     computeBoundingBox(BaseClassRef::root_bbox);
     BaseClassRef::root_node =
-        this->divideTree(*this, 0, BaseClassRef::m_size,
+        this->divideTree(*this, 0, (IndexType)BaseClassRef::m_size,
                          BaseClassRef::root_bbox); // construct the tree
   }
 
@@ -1311,7 +1311,7 @@ public:
     if (BaseClassRef::vind.size() != BaseClassRef::m_size)
       BaseClassRef::vind.resize(BaseClassRef::m_size);
     for (size_t i = 0; i < BaseClassRef::m_size; i++)
-      BaseClassRef::vind[i] = i;
+      BaseClassRef::vind[i] = (IndexType)i;
   }
 
   void computeBoundingBox(BoundingBox &bbox) {

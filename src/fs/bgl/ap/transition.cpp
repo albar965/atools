@@ -128,7 +128,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << Qt::hex << t << Qt::dec
                                        << " for airport ident " << fixAirportIdent;
     }
     r.seekToEnd();
@@ -151,7 +151,7 @@ QDebug operator<<(QDebug out, const Transition& record)
                           << ", dmeRegion " << record.dmeRegion
                           << ", dmeAirportIdent " << record.dmeAirportIdent
                           << ", dmeRadial " << record.dmeRadial
-                          << ", dmeDist " << record.dmeDist << endl;
+                          << ", dmeDist " << record.dmeDist << Qt::endl;
   out << record.legs;
   out << "]";
   return out;

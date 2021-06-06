@@ -21,6 +21,7 @@
 #include <QSqlRecord>
 #include <QVariant>
 #include <QVector>
+#include <QSqlField>
 
 class QSqlRecord;
 
@@ -30,7 +31,7 @@ namespace sql {
 class SqlQuery;
 
 /*
- * Wrapper around SqlRecord that adds additional error checking and exceptions to
+ * Wrapper around QSqlRecord that adds additional error checking and exceptions to
  * avoid manual error checking. In case of error or invalid connections SqlException
  * is thrown.
  * Exception is also thrown if a value() receive an invalid
@@ -181,6 +182,11 @@ public:
   QSqlRecord& getSqlRecord()
   {
     return sqlRecord;
+  }
+
+  QSqlField field(int index) const
+  {
+    return sqlRecord.field(index);
   }
 
   void appendField(const QString& fieldName, QVariant::Type type);

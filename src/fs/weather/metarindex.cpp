@@ -251,13 +251,13 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
           dateStr.prepend('0');
 
         bool ok;
-        int day = dateStr.midRef(0, 2).toInt(&ok);
+        int day = dateStr.mid(0, 2).toInt(&ok);
         if((!ok || day < 1 || day > 31) && verbose)
           qWarning() << Q_FUNC_INFO << "Cannot read day in METAR" << line;
-        int hour = dateStr.midRef(2, 2).toInt(&ok);
+        int hour = dateStr.mid(2, 2).toInt(&ok);
         if((!ok || hour < 0 || hour > 23) && verbose)
           qWarning() << Q_FUNC_INFO << "Cannot read hour in METAR" << line;
-        int minute = dateStr.midRef(4, 2).toInt(&ok);
+        int minute = dateStr.mid(4, 2).toInt(&ok);
         if((!ok || minute < 0 || minute > 60) && verbose)
           qWarning() << Q_FUNC_INFO << "Cannot read minute in METAR" << line;
 

@@ -49,7 +49,7 @@ QDebug operator<<(QDebug out, const Section& section)
   << " Section[type " << sectionTypeStr(section.type)
   << ", size " << section.subsectionSize
   << ", subsections " << section.numSubsections
-  << hex << ", offset 0x" << section.firstSubsectionOffset << dec
+  << Qt::hex << ", offset 0x" << section.firstSubsectionOffset << Qt::dec
   << ", total size " << section.totalSubsectionSize << "]";
   return out;
 }

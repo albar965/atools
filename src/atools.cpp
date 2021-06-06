@@ -67,7 +67,7 @@ QStringList probeFile(const QString& file, int numLinesRead)
   if(testFile.open(QIODevice::ReadOnly))
   {
     QTextStream stream(&testFile);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
     stream.setAutoDetectUnicode(true);
 
     int numLines = 0, numLinesTotal = 0;
@@ -435,7 +435,7 @@ QTime timeFromHourMinStr(const QString& timeStr)
   if(timeStr.contains(":"))
     time = QTime(timeStr.section(':', 0, 0).toInt(&okHours), timeStr.section(':', 1, 1).toInt(&okMinutes));
   else if(timeStr.length() == 3 || timeStr.length() == 4)
-    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.rightRef(2).toInt(&okMinutes));
+    time = QTime(timeStr.left(timeStr.length() - 2).toInt(&okHours), timeStr.right(2).toInt(&okMinutes));
 
   return !okHours || !okMinutes ? QTime() : time;
 }

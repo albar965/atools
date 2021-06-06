@@ -22,7 +22,6 @@
 #include <QVector>
 
 class QString;
-class QStringList;
 
 namespace atools {
 namespace geo {

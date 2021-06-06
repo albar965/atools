@@ -346,7 +346,7 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements,
                        MAGtype_MagneticModel *MagneticModel,
                        MAGtype_Geoid *Geoid);
 
-int MAG_ValidateDMSstring(char *input, int min, int max, char *Error);
+int MAG_ValidateDMSstring(char *input, double min, double max, char *Error);
 
 int MAG_Warnings(int control, double value, MAGtype_MagneticModel *MagneticModel);
 

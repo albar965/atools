@@ -39,6 +39,8 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QFileInfo>
+#include <QStringList>
+#include <QMetaType>
 
 using atools::fs::common::MagDecReader;
 using atools::fs::common::MetadataWriter;
@@ -155,7 +157,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
     if(iata.isEmpty())
-      airportWriteQuery->bindValue(":iata", QVariant::String);
+      airportWriteQuery->bindNullStr(":iata");
     else
       airportWriteQuery->bindValue(":iata", iata);
 
@@ -409,7 +411,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     QString rname = rwident.mid(2);
 
     // Get pure number: 11
-    int rnum = rname.midRef(0, 2).toInt();
+    int rnum = rname.sliced(0, 2).toInt();
 
     // Get designator: R
     QString desig = rname.size() > 2 ? rname.at(2) : QString();
@@ -928,7 +930,7 @@ void DfdCompiler::finishAirspace()
         else
         {
           // Create an arc
-          bool clockwise = seg.via.isEmpty() ? true : seg.via.at(0) == "R";
+          bool clockwise = seg.via.isEmpty() ? true : seg.via.at(0) == 'R';
           curAirspaceLine.append(LineString(seg.center, seg.pos, nextPos, clockwise, 24));
         }
       }
@@ -1057,7 +1059,7 @@ void DfdCompiler::writeAirways()
 
     lastRec = airways.record();
     lastName = name;
-    lastEndOfRoute = code.size() > 1 && code.at(1) == "E";
+    lastEndOfRoute = code.size() > 1 && code.at(1) == 'E';
 
     if(nameChange)
     {

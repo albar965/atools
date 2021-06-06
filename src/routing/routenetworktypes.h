@@ -273,7 +273,7 @@ struct Node
   /* Set connections using QFlags wrapper */
   void setConnections(atools::routing::NodeConnections connections)
   {
-    con = static_cast<NodeConnection>(connections.operator unsigned int());
+    con = static_cast<NodeConnection>(connections.operator int());
   }
 
   /* Add flag to connections */

@@ -64,7 +64,7 @@ void ContentXml::read(const QString& filename)
 
     while(xmlStream.readNextStartElement())
     {
-      if(reader.name() == "Package")
+      if(reader.name().toString() == QString("Package"))
       {
         QString name = reader.attributes().value("name").toString();
         QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
@@ -109,12 +109,12 @@ QDebug operator<<(QDebug out, const ContentXml& cfg)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace() << "ContentXml[" << endl;
+  out.nospace() << "ContentXml[" << Qt::endl;
 
   for(const SceneryArea& area : cfg.areaEntries)
-    out.nospace().noquote() << area << endl;
+    out.nospace().noquote() << area << Qt::endl;
 
-  out.nospace().noquote() << endl << "]";
+  out.nospace().noquote() << Qt::endl << "]";
   return out;
 }
 

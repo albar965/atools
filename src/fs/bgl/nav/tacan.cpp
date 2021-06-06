@@ -70,7 +70,7 @@ Tacan::Tacan(const NavDatabaseOptions *options, BinaryStream *bs)
       case rec::GLIDESLOPE:
         break;
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in TACAN record 0x" << hex << t << dec <<
+        qWarning().nospace().noquote() << "Unexpected record type in TACAN record 0x" << Qt::hex << t << Qt::dec <<
           " for ident " << ident;
     }
     r.seekToEnd();

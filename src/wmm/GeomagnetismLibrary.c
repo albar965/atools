@@ -1,3 +1,5 @@
+#define _CRT_SECURE_NO_WARNINGS
+
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
@@ -1443,7 +1445,7 @@ void MAG_PrintUserData(MAGtype_GeoMagneticElements GeomagElements, MAGtype_Coord
 
 } /*MAG_PrintUserData*/
 
-int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
+int MAG_ValidateDMSstring(char *input, double min, double max, char *Error)
 {
   /* Validates a latitude DMS string, and returns 1 for a success and returns 0 for a failure.
    *  It copies an error message to the Error string in the event of a failure.
@@ -1491,7 +1493,7 @@ int MAG_ValidateDMSstring(char *input, int min, int max, char *Error)
   }
   if(degree > max || degree < min)
   {
-    sprintf(Error, "\nError: Degree input is outside legal range\n The legal range is from %d to %d\n", min, max);
+    sprintf(Error, "\nError: Degree input is outside legal range\n The legal range is from %f to %f\n", min, max);
     return FALSE;
   }
   if(degree == max || degree == min)
@@ -2129,7 +2131,8 @@ void MAG_PrintEMMFormat(char *filename, char *filenameSV, MAGtype_MagneticModel 
 
 void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)[], int epochs)
 {
-  int i, n, m, index, epochRange;
+  int i, n, m, index;
+  double epochRange;
   FILE *SHDF_file;
   SHDF_file = fopen(filename, "w");
   /*lines = (int)(UFM_DEGREE / 2.0 * (UFM_DEGREE + 3));*/
@@ -2146,7 +2149,7 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
     fprintf(SHDF_file, "%%ReleaseDate: Some Number\n");
     fprintf(SHDF_file, "%%DataCutOFF: Some Other Number\n");
     fprintf(SHDF_file, "%%ModelStartYear: %d\n", (int)(*MagneticModel)[i]->epoch);
-    fprintf(SHDF_file, "%%ModelEndYear: %d\n", (int)(*MagneticModel)[i]->epoch + epochRange);
+    fprintf(SHDF_file, "%%ModelEndYear: %f\n", (int)(*MagneticModel)[i]->epoch + epochRange);
     fprintf(SHDF_file, "%%Epoch: %.0f\n", (*MagneticModel)[i]->epoch);
     fprintf(SHDF_file, "%%IntStaticDeg: %d\n", (*MagneticModel)[i]->nMax);
     fprintf(SHDF_file, "%%IntSecVarDeg: %d\n", (*MagneticModel)[i]->nMaxSecVar);
@@ -2157,8 +2160,8 @@ void MAG_PrintSHDFFormat(char *filename, MAGtype_MagneticModel *(*MagneticModel)
     fprintf(SHDF_file, "# To synthesize the field for a given date:\n");
     fprintf(SHDF_file, "# Use the sub-model of the epoch corresponding to each date\n");
     fprintf(SHDF_file, "#\n#\n#\n#\n# I/E, n, m, Gnm, Hnm, SV-Gnm, SV-Hnm\n#\n");
-    n = 1;
-    m = 0;
+    //n = 1;
+    //m = 0;
     for(n = 1; n <= (*MagneticModel)[i]->nMax; n++)
     {
       for(m = 0; m <= n; m++)
@@ -3337,7 +3340,7 @@ int MAG_YearToDate(MAGtype_Date *CalendarDate)
   if((CalendarDate->Year % 4 == 0 && CalendarDate->Year % 100 != 0) || CalendarDate->Year % 400 == 0)
     ExtraDay = 1;
 
-  DayOfTheYear = floor((CalendarDate->DecimalYear - (double)CalendarDate->Year) * (365.0 + (double)ExtraDay) + 0.5) + 1;
+  DayOfTheYear = (int)floor((CalendarDate->DecimalYear - (double)CalendarDate->Year) * (365.0 + (double)ExtraDay) + 0.5) + 1;
   /*The above floor is used for rounding, this only works for positive integers*/
 
   MonthDays[0] = 0;

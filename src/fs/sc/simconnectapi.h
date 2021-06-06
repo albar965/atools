@@ -31,6 +31,12 @@ extern "C" {
 #include "fs/sc/simconnectdummy.h"
 #endif
 
+#ifdef WINBOOL                  // care for (possibly outdated) MingW WINBOOL
+#define BOOL2 WINBOOL
+#else
+#define BOOL2 BOOL              // WINBOOL is (/was) BOOL, however Qt might (have) define(d) it (some time ago) too: https://bugreports.qt.io/browse/QTBUG-46463
+#endif
+
 namespace atools {
 namespace win {
 class ActivationContext;
@@ -63,7 +69,7 @@ public:
                               SIMCONNECT_STATE dwState);
   HRESULT AddClientEventToNotificationGroup(SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                             SIMCONNECT_CLIENT_EVENT_ID EventID,
-                                            BOOL bMaskable = FALSE);
+                                            BOOL2 bMaskable = FALSE);
   HRESULT RemoveClientEvent(SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                             SIMCONNECT_CLIENT_EVENT_ID EventID);
   HRESULT SetNotificationGroupPriority(SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
@@ -96,7 +102,7 @@ public:
                                      SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue =
                                        0, SIMCONNECT_CLIENT_EVENT_ID UpEventID =
                                        (SIMCONNECT_CLIENT_EVENT_ID)SIMCONNECT_UNUSED,
-                                     DWORD UpValue = 0, BOOL bMaskable = FALSE);
+                                     DWORD UpValue = 0, BOOL2 bMaskable = FALSE);
   HRESULT SetInputGroupPriority(SIMCONNECT_INPUT_GROUP_ID GroupID,
                                 DWORD uPriority);
   HRESULT RemoveInputEvent(SIMCONNECT_INPUT_GROUP_ID GroupID,
@@ -147,7 +153,7 @@ public:
   HRESULT AICreateEnrouteATCAircraft(const char *szContainerTitle,
                                      const char *szTailNumber, int iFlightNumber,
                                      const char *szFlightPlanPath, double dFlightPlanPosition,
-                                     BOOL bTouchAndGo,
+                                     BOOL2 bTouchAndGo,
                                      SIMCONNECT_DATA_REQUEST_ID RequestID);
   HRESULT AICreateNonATCAircraft(const char *szContainerTitle,
                                  const char *szTailNumber,
@@ -232,7 +238,7 @@ private:
   HRESULT (_stdcall *SC_AddClientEventToNotificationGroup)(HANDLE hSimConnect,
                                                            SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                                            SIMCONNECT_CLIENT_EVENT_ID EventID,
-                                                           BOOL bMaskable) = nullptr;
+                                                           BOOL2 bMaskable) = nullptr;
   HRESULT (_stdcall *SC_RemoveClientEvent)(HANDLE hSimConnect, SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                            SIMCONNECT_CLIENT_EVENT_ID EventID) = nullptr;
   HRESULT (_stdcall *SC_SetNotificationGroupPriority)(HANDLE hSimConnect,
@@ -267,7 +273,7 @@ private:
                                                     const char *szInputDefinition,
                                                     SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue,
                                                     SIMCONNECT_CLIENT_EVENT_ID UpEventID,
-                                                    DWORD UpValue, BOOL bMaskable) = nullptr;
+                                                    DWORD UpValue, BOOL2 bMaskable) = nullptr;
   HRESULT (_stdcall *SC_SetInputGroupPriority)(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
                                                DWORD uPriority) = nullptr;
   HRESULT (_stdcall *SC_RemoveInputEvent)(HANDLE hSimConnect, SIMCONNECT_INPUT_GROUP_ID GroupID,
@@ -320,7 +326,7 @@ private:
   HRESULT (_stdcall *SC_AICreateEnrouteATCAircraft)(HANDLE hSimConnect, const char *szContainerTitle,
                                                     const char *szTailNumber, int iFlightNumber,
                                                     const char *szFlightPlanPath, double dFlightPlanPosition,
-                                                    BOOL bTouchAndGo,
+                                                    BOOL2 bTouchAndGo,
                                                     SIMCONNECT_DATA_REQUEST_ID RequestID) = nullptr;
   HRESULT (_stdcall *SC_AICreateNonATCAircraft)(HANDLE hSimConnect, const char *szContainerTitle,
                                                 const char *szTailNumber,

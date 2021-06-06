@@ -22,7 +22,6 @@
 
 #include <QApplication>
 
-class QStringList;
 class QTextStream;
 
 namespace atools {

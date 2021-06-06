@@ -129,8 +129,9 @@ private:
   QStringList buildTableList(const QStringList& tables);
   QStringList buildResultList(atools::sql::SqlQuery& query);
 
-  static void copyRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
-                                    const atools::sql::SqlRecord& fromRec, const QMap<QString, QVariant>& bound);
+  static void prepareRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to);
+
+  static bool returnTrue(SqlQuery& from, SqlQuery& to);
 
 };
 

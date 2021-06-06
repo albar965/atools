@@ -21,7 +21,9 @@
 
 #include <QDebug>
 
+#if ! _MSC_VER || __INTEL_COMPILER                      // intel compiler defines _MSC_VER, didn't check whether it supports GCC
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
 
 #define BINDSC(a) (error |= \
                      ((*(FARPROC *)&SC_ ## a = \
@@ -185,7 +187,7 @@ HRESULT SimConnectApi::SetSystemEventState(SIMCONNECT_CLIENT_EVENT_ID EventID, S
 
 HRESULT SimConnectApi::AddClientEventToNotificationGroup(SIMCONNECT_NOTIFICATION_GROUP_ID GroupID,
                                                          SIMCONNECT_CLIENT_EVENT_ID EventID,
-                                                         WINBOOL bMaskable)
+                                                         BOOL2 bMaskable)
 {
   if(hSimConnect == NULL || SC_AddClientEventToNotificationGroup == nullptr)
     return E_FAIL;
@@ -279,7 +281,7 @@ HRESULT SimConnectApi::SetDataOnSimObject(SIMCONNECT_DATA_DEFINITION_ID DefineID
 HRESULT SimConnectApi::MapInputEventToClientEvent(SIMCONNECT_INPUT_GROUP_ID GroupID, const char *szInputDefinition,
                                                   SIMCONNECT_CLIENT_EVENT_ID DownEventID, DWORD DownValue,
                                                   SIMCONNECT_CLIENT_EVENT_ID UpEventID, DWORD UpValue,
-                                                  WINBOOL bMaskable)
+                                                  BOOL2 bMaskable)
 {
   if(hSimConnect == NULL || SC_MapInputEventToClientEvent == nullptr)
     return E_FAIL;
@@ -485,7 +487,7 @@ HRESULT SimConnectApi::AICreateParkedATCAircraft(const char *szContainerTitle, c
 
 HRESULT SimConnectApi::AICreateEnrouteATCAircraft(const char *szContainerTitle, const char *szTailNumber,
                                                   int iFlightNumber, const char *szFlightPlanPath,
-                                                  double dFlightPlanPosition, WINBOOL bTouchAndGo,
+                                                  double dFlightPlanPosition, BOOL2 bTouchAndGo,
                                                   SIMCONNECT_DATA_REQUEST_ID RequestID)
 {
   if(hSimConnect == NULL || SC_AICreateEnrouteATCAircraft == nullptr)

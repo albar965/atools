@@ -174,7 +174,7 @@ void NavDatabase::createSchemaInternal(ProgressHandler *progress)
 
 bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& codec, QStringList& errors)
 {
-  errors.append(atools::checkFileMsg(filename));
+  errors.append(atools::checkFileMsg(QFileInfo(filename)));
   errors.removeAll(QString());
 
   if(errors.isEmpty())
@@ -207,17 +207,17 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
 bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type)
 {
   if(type == atools::fs::FsPaths::XPLANE11)
-    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Resources", "default data"})));
+    errors.append(atools::checkDirMsg(QFileInfo(buildPathNoCase({filepath, "Resources", "default data"}))));
   else if(type == atools::fs::FsPaths::MSFS)
   {
     // Base is C:\Users\alex\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
 
     // Check for both path variations in the official folder
-    QString baseMs = buildPathNoCase({filepath, "Official", "OneStore", "fs-base"});
-    QString baseNavMs = buildPathNoCase({filepath, "Official", "OneStore", "fs-base-nav"});
+    QFileInfo baseMs = QFileInfo(buildPathNoCase({filepath, "Official", "OneStore", "fs-base"}));
+    QFileInfo baseNavMs = QFileInfo(buildPathNoCase({filepath, "Official", "OneStore", "fs-base-nav"}));
 
-    QString baseSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base"});
-    QString baseNavSteam = buildPathNoCase({filepath, "Official", "Steam", "fs-base-nav"});
+    QFileInfo baseSteam = QFileInfo(buildPathNoCase({filepath, "Official", "Steam", "fs-base"}));
+    QFileInfo baseNavSteam = QFileInfo(buildPathNoCase({filepath, "Official", "Steam", "fs-base-nav"}));
 
     bool hasMs = checkDir(baseMs) && checkDir(baseNavMs);
     bool hasSteam = checkDir(baseSteam) && checkDir(baseNavSteam);
@@ -231,12 +231,12 @@ bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, 
       errors.append(atools::checkDirMsg(baseNavSteam));
     }
 
-    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Community"})));
+    errors.append(atools::checkDirMsg(QFileInfo(buildPathNoCase({filepath, "Community"}))));
   }
   else
     // FSX and P3D ======================================================
     // If path exists check for scenery directory
-    errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "scenery"})));
+    errors.append(atools::checkDirMsg(QFileInfo(buildPathNoCase({filepath, "scenery"}))));
 
   // Delete empty messages
   errors.removeAll(QString());
@@ -644,11 +644,11 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
     // Load the language index for lookup for airport names and more
     QString packageBase = options->getMsfsOfficialPath();
-    QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"});
+    QFileInfo langFile = QFileInfo(buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"}));
     if(!langFile.exists() || !langFile.isFile())
     {
       qWarning() << Q_FUNC_INFO << langFile.absoluteFilePath() << "not found. Falling back to en-US";
-      langFile = buildPathNoCase({packageBase, "fs-base", "en-US.locPak"});
+      langFile = QFileInfo(buildPathNoCase({packageBase, "fs-base", "en-US.locPak"}));
     }
 
     // Load translation file in current language for airport names ====================================
@@ -1270,52 +1270,52 @@ bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
   if((aborted = progress->reportOther(tr("Creating table statistics"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
   util.printTableStats(info);
 
   if((aborted = progress->reportOther(tr("Creating report on values"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
   util.createColumnReport(info);
 
   if((aborted = progress->reportOther(tr("Creating report on duplicates"))))
     return true;
 
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "airport", "airport_id", {"ident"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "vor", "vor_id", {"ident", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "ndb", "ndb_id", {"ident", "type", "frequency", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "waypoint", "waypoint_id", {"ident", "type", "region", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "ils", "ils_id", {"ident", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "marker", "marker_id", {"type", "heading", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "helipad", "helipad_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "parking", "parking_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "start", "start_id", {"lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "runway", "runway_id", {"heading", "lonx", "laty"});
-  info << endl;
+  info << Qt::endl;
 
   util.reportDuplicates(info, "bgl_file", "bgl_file_id", {"filename"});
-  info << endl;
+  info << Qt::endl;
 
   if((aborted = progress->reportOther(tr("Creating report on coordinate duplicates"))))
     return true;
@@ -1345,12 +1345,12 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
   QString contentXmlPath = options->getBasepath() + SEP + "Content.xml";
-  if(!atools::checkFile(contentXmlPath))
+  if(!atools::checkFile(QFileInfo(contentXmlPath)))
   {
     // Not found - try MS installation
     // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
     contentXmlPath = QFileInfo(options->getBasepath() + SEP + ".." + SEP + "Content.xml").canonicalFilePath();
-    if(!atools::checkFile(contentXmlPath))
+    if(!atools::checkFile(QFileInfo(contentXmlPath)))
       // Not found
       contentXmlPath.clear();
   }
@@ -1606,7 +1606,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
     addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Files").arg(simNum) +
-                                SEP + QLatin1Literal("add-ons"));
+                                SEP + QLatin1String("add-ons"));
 
     addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Add-ons").arg(simNum));
 
@@ -1666,7 +1666,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 
 QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1Literal("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1String("add-on.xml"));
 }
 
 void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
@@ -1732,7 +1732,7 @@ void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
 {
   for(QString table : tables)
   {
-    out << "==================================================================" << endl;
+    out << "==================================================================" << Qt::endl;
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
     util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
   }

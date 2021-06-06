@@ -21,6 +21,9 @@
 
 #include <QDebug>
 #include <QDataStream>
+#include <QIODevice>
+
+#include <algorithm>
 
 using atools::fs::weather::MetarResult;
 
@@ -137,13 +140,13 @@ int SimConnectData::write(QIODevice *ioDevice)
   if(userValid)
     userAircraft.write(out);
 
-  int numAi = std::min(65535, aiAircraft.size());
+  int numAi = std::min((qsizetype)65535, aiAircraft.size());
   out << static_cast<quint16>(numAi);
 
   for(int i = 0; i < numAi; i++)
     aiAircraft.at(i).write(out);
 
-  int numMetar = std::min(65535, metarResults.size());
+  int numMetar = std::min((qsizetype)65535, metarResults.size());
   out << static_cast<quint16>(numMetar);
 
   for(int i = 0; i < numMetar; i++)

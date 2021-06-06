@@ -119,7 +119,7 @@ void DataManagerBase::backup()
     if(file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
       QTextStream out(&file);
-      out.setCodec("UTF-8");
+      out.setEncoding(QStringConverter::Utf8);
       SqlQuery query("select * from " + tableName, db);
       SqlExport sqlExport;
       sqlExport.printResultSet(query, out);

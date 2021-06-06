@@ -141,7 +141,7 @@ QStringList LoggingConfig::getLogFiles()
   collectFileNames(filenames, criticalStreamsCat);
   collectFileNames(filenames, fatalStreamsCat);
   collectFileNames(filenames, emptyStreamsCat);
-  return filenames.toList();
+  return QList<QString>(filenames.begin(), filenames.end());
 }
 
 void LoggingConfig::collectFileNames(QSet<QString>& filenames, const ChannelMap& channelMap)
@@ -191,7 +191,7 @@ void LoggingConfig::checkStreamSize(Channel *channel)
       // Put log file into stream
       channel->file = file;
       channel->stream->setDevice(channel->file);
-      channel->stream->setCodec("UTF-8");
+      channel->stream->setEncoding(QStringConverter::Utf8);
       channel->stream->setLocale(QLocale::C);
     }
   }
@@ -339,14 +339,14 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
     {
       QTextStream *io = new QTextStream(stdout);
       // Most terminals can deal with utf-8
-      io->setCodec("UTF-8");
+      io->setEncoding(QStringConverter::Utf8);
       channelMap.insert(key, new Channel({io, nullptr}));
     }
     else if(channelName == "stderr")
     {
       QTextStream *err = new QTextStream(stderr);
       // Most terminals can deal with utf-8
-      err->setCodec("UTF-8");
+      err->setEncoding(QStringConverter::Utf8);
       channelMap.insert(key, new Channel({err, nullptr}));
     }
     else
@@ -379,7 +379,7 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
       if(file->open(mode))
       {
         QTextStream *stream = new QTextStream(file);
-        stream->setCodec("UTF-8");
+        stream->setEncoding(QStringConverter::Utf8);
         stream->setLocale(QLocale::C);
         channelMap.insert(key, new Channel({stream, file}));
       }
@@ -394,7 +394,7 @@ void LoggingConfig::readLevels(QSettings *settings, QHash<QString, Channel *>& c
   for(QString levelName : settings->allKeys())
   {
     // Split the "level.channel" string
-    QStringList levelList = levelName.split(".", QString::SkipEmptyParts);
+    QStringList levelList = levelName.split(".", Qt::SkipEmptyParts);
     QString level = levelList.at(0);
 
     // Use default if category is not given

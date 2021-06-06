@@ -36,7 +36,7 @@ Properties::Properties(const QHash<QString, QString>& other)
 void Properties::write(QTextStream& stream) const
 {
   for(const QString& name : keys())
-    stream << name << "=" << value(name) << endl;
+    stream << name << "=" << value(name) << Qt::endl;
 }
 
 void Properties::read(QTextStream& stream)

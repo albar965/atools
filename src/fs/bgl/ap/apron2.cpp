@@ -71,7 +71,7 @@ QDebug operator<<(QDebug out, const Apron2& record)
                           << " Apron2[surface " << surface::surfaceToDbStr(record.surface) << "/"
                           << surface::surfaceToDbStr(record.surface)
                           << ", drawSurface " << record.drawSurface
-                          << ", drawDetail " << record.drawDetail << endl;
+                          << ", drawDetail " << record.drawDetail << Qt::endl;
   out << record.vertices;
   out << record.triangles;
   out << "]";

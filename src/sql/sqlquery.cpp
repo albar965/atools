@@ -79,10 +79,12 @@ SqlQuery::SqlQuery(const QSqlQuery& otherQuery, QString queryStr)
 
 SqlQuery& SqlQuery::operator=(const SqlQuery& other)
 {
+  if(&other == this) return *this;
+
   this->query = other.query;
   this->queryString = other.queryString;
 
-  delete db;
+  delete this->db;
   this->db = new SqlDatabase(*other.db);
 
   return *this;
@@ -284,13 +286,15 @@ void SqlQuery::clear()
 
 void SqlQuery::clearBoundValues()
 {
-  QMap<QString, QVariant> values = boundValues();
+  SqlRecord record = query.record();
+  int queryFieldsCount = record.count();
 
-  for(const QString& key : values.keys())
+  for(int i = 0; i < queryFieldsCount; i++)
   {
-    const QVariant& value = values.value(key);
-    if(value.isValid() && !value.isNull())
-      bindValue(key, QVariant(value.type()));
+    QSqlField field = record.field(i);          // try to determine Query placeholder by (current) record's fieldnames as placeholder == ":" + fieldname
+    if(field.isValid())
+      query.bindValue(":" + record.fieldName(i), QVariant(field.metaType()));
+    // what if field is invalid ?
   }
 }
 
@@ -346,37 +350,37 @@ void SqlQuery::addBindValue(const QVariant& val, QSql::ParamType type)
 
 void SqlQuery::bindNullStr(const QString& placeholder)
 {
-  query.bindValue(placeholder, QVariant(QVariant::String));
+  query.bindValue(placeholder, QVariant(QMetaType(QMetaType::QString)));
   boundValue(placeholder);
 }
 
 void SqlQuery::bindNullStr(int pos)
 {
-  query.bindValue(pos, QVariant(QVariant::String));
+  query.bindValue(pos, QVariant(QMetaType(QMetaType::QString)));
   boundValue(pos);
 }
 
 void SqlQuery::bindNullInt(const QString& placeholder)
 {
-  query.bindValue(placeholder, QVariant(QVariant::Int));
+  query.bindValue(placeholder, QVariant(QMetaType(QMetaType::Int)));
   boundValue(placeholder);
 }
 
 void SqlQuery::bindNullInt(int pos)
 {
-  query.bindValue(pos, QVariant(QVariant::Int));
+  query.bindValue(pos, QVariant(QMetaType(QMetaType::Int)));
   boundValue(pos);
 }
 
 void SqlQuery::bindNullFloat(const QString& placeholder)
 {
-  query.bindValue(placeholder, QVariant(QVariant::Double));
+  query.bindValue(placeholder, QVariant(QMetaType(QMetaType::Double)));
   boundValue(placeholder);
 }
 
 void SqlQuery::bindNullFloat(int pos)
 {
-  query.bindValue(pos, QVariant(QVariant::Double));
+  query.bindValue(pos, QVariant(QMetaType(QMetaType::Double)));
   boundValue(pos);
 }
 
@@ -424,11 +428,6 @@ QVariant SqlQuery::boundValue(int pos, bool ignoreInvalid) const
   return v;
 }
 
-QMap<QString, QVariant> SqlQuery::boundValues() const
-{
-  return query.boundValues();
-}
-
 QString SqlQuery::executedQuery() const
 {
   return query.executedQuery();
@@ -449,16 +448,16 @@ bool SqlQuery::nextResult()
   return query.nextResult();
 }
 
-QString SqlQuery::boundValuesAsString() const
+/*QString SqlQuery::boundValuesAsString() const
 {
-  QMap<QString, QVariant> boundValues = query.boundValues();
+  QMap<QString, QVariant> boundValues = query.boundValues();        // query.boundValues() doesn't translate to Map from List. That only contains the bound values of the placeholders, not the placeholders themself (which is what other functionality using that I rewrote needed)
 
   QStringList values;
   for(QMap<QString, QVariant>::const_iterator i = boundValues.constBegin();
       i != boundValues.constEnd(); ++i)
     values.append("\"" + i.key() + "\"=\"" + i.value().toString() + "\"");
   return values.join(",");
-}
+}*/
 
 void SqlQuery::checkError(bool retval, const QString& msg) const
 {
@@ -471,9 +470,9 @@ void SqlQuery::checkError(bool retval, const QString& msg) const
     {
       QString msg2("Query is \"" + queryString + "\".");
 
-      QString boundValues = boundValuesAsString();
+      /*QString boundValues = boundValuesAsString();
       if(!boundValues.isEmpty())
-        msg2 += " Bound values are [" + boundValues + "]";
+        msg2 += " Bound values are [" + boundValues + "]";*/
 
       throw SqlException(query.lastError(), msg, msg2);
     }
@@ -485,20 +484,20 @@ const QSqlQuery& SqlQuery::getQSqlQuery() const
   return query;
 }
 
-QString SqlQuery::getFullQueryString() const
-{
-  QString retval = getQueryString();
+//QString SqlQuery::getFullQueryString() const
+//{
+//  QString retval = getQueryString();
 
-  for(const QString& name : boundValues().keys())
-  {
-    QVariant val = boundValue(name);
-    if(val.type() == QVariant::String)
-      retval.replace(name, "'" + val.toString() + "' /* " + name + " */");
-    else
-      retval.replace(name, val.toString() + " /* " + name + " */");
-  }
-  return retval;
-}
+//  for(const QString& name : placeholders())
+//  {
+//    QVariant val = boundValue(name);
+//    if(val.type() == QVariant::String)
+//      retval.replace(name, "'" + val.toString() + "' /* " + name + " */");
+//    else
+//      retval.replace(name, val.toString() + " /* " + name + " */");
+//  }
+//  return retval;
+//}
 
 } // namespace sql
 

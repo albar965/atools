@@ -196,7 +196,7 @@ void FsPaths::loadAllPaths()
 
 void FsPaths::intitialize()
 {
-  qRegisterMetaTypeStreamOperators<atools::fs::FsPaths::SimulatorType>();
+  qRegisterMetaType<atools::fs::FsPaths::SimulatorType>();
   environment = QProcessEnvironment::systemEnvironment();
 }
 
@@ -222,9 +222,9 @@ QString FsPaths::getMsfsOfficialPath()
 
 QString FsPaths::getMsfsOfficialPath(const QString& basePath)
 {
-  if(checkDir(basePath + SEP + "Official" + SEP + "OneStore"))
+  if(checkDir(QFileInfo(basePath + SEP + "Official" + SEP + "OneStore")))
     return basePath + SEP + "Official" + SEP + "OneStore";
-  else if(checkDir(basePath + SEP + "Official" + SEP + "Steam"))
+  else if(checkDir(QFileInfo(basePath + SEP + "Official" + SEP + "Steam")))
     return basePath + SEP + "Official" + SEP + "Steam";
   else
     return QString();
@@ -280,7 +280,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\UserCfg.opt
     temp = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "Packages" + SEP +
                         "Microsoft.FlightSimulator_8wekyb3d8bbwe" + SEP + "LocalCache" + SEP + "UserCfg.opt");
-    if(checkDir(temp))
+    if(checkDir(QFileInfo(temp)))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -294,7 +294,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // Steam installation ====================
     // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator\UserCfg.opt
     temp = msfsBasePath(environment.value("APPDATA") + SEP + "Microsoft Flight Simulator" + SEP + "UserCfg.opt");
-    if(checkDir(temp))
+    if(checkDir(QFileInfo(temp)))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -307,7 +307,7 @@ QString FsPaths::initBasePath(SimulatorType type)
     // MS Boxed installation ====================
     // C:\Users\USER\AppData\Local\MSFSPackages\UserCfg.opt
     temp = msfsBasePath(environment.value("LOCALAPPDATA") + SEP + "MSFSPackages" + SEP + "UserCfg.opt");
-    if(checkDir(temp))
+    if(checkDir(QFileInfo(temp)))
     {
       fsPath = temp;
       qInfo() << Q_FUNC_INFO << "Found MSFS path" << fsPath;
@@ -344,10 +344,10 @@ QString FsPaths::initBasePath(SimulatorType type)
       // fsPath = ...\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Packages
       msfsCommunityPath = fsPath + SEP + "Community";
 
-      if(checkDir(fsPath + SEP + "Official" + SEP + "Steam"))
+      if(checkDir(QFileInfo(fsPath + SEP + "Official" + SEP + "Steam")))
         msfsOfficialPath = fsPath + SEP + "Official" + SEP + "Steam";
       // Find one of the official path variations for MS and Steam
-      else if(checkDir(fsPath + SEP + "Official" + SEP + "OneStore"))
+      else if(checkDir(QFileInfo(fsPath + SEP + "Official" + SEP + "OneStore")))
         msfsOfficialPath = fsPath + SEP + "Official" + SEP + "OneStore";
     }
   }
@@ -389,7 +389,7 @@ QString FsPaths::initBasePath(SimulatorType type)
 
     if(!fsPath.isEmpty())
     {
-      if(!checkDir(fsPath))
+      if(!checkDir(QFileInfo(fsPath)))
         fsPath.clear();
     }
     else
@@ -461,7 +461,7 @@ QString FsPaths::initFilesPath(SimulatorType type)
     case atools::fs::FsPaths::MSFS:
       // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
       fsFilesDir = msfsSimPath + SEP + "LocalState";
-      if(!checkDir(fsFilesDir))
+      if(!checkDir(QFileInfo(fsFilesDir)))
         // Steam uses top level as path
         // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
         fsFilesDir = msfsSimPath;
@@ -802,7 +802,7 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
   if(fileCfgOpt.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&fileCfgOpt);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     while(!stream.atEnd())
     {
@@ -833,14 +833,14 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
     if(!dir.isEmpty())
     {
       // Community
-      if(!checkDir(getMsfsCommunityPath(dir)))
+      if(!checkDir(QFileInfo(getMsfsCommunityPath(dir))))
         dir.clear();
 
       // Official/Steam or Official/OneStore
-      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base"))
+      if(!checkDir(QFileInfo(getMsfsOfficialPath(dir) + SEP + "fs-base")))
         dir.clear();
 
-      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base-nav"))
+      if(!checkDir(QFileInfo(getMsfsOfficialPath(dir) + SEP + "fs-base-nav")))
         dir.clear();
     }
   }
@@ -857,7 +857,7 @@ QString FsPaths::xplaneBasePath(const QString& installationFile)
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     QTextStream stream(&file);
-    stream.setCodec("UTF-8");
+    stream.setEncoding(QStringConverter::Utf8);
 
     while(!stream.atEnd())
     {

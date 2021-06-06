@@ -166,7 +166,7 @@ void BglFile::handleBoundaries(BinaryStream *bs)
     else if(type != rec::GEOPOL)
       // Should only contain boundaries and geopol records
       qWarning().nospace() << "while reading boundaries: unexpected record "
-                           << hex << "0x" << type << " at " << hex << "0x" << bs->tellg();
+                           << Qt::hex << "0x" << type << " at " << Qt::hex << "0x" << bs->tellg();
 
     rec.seekToEnd();
   }
@@ -255,7 +255,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
     if(options->isVerbose())
     {
       qDebug() << "=======================";
-      qDebug().nospace().noquote() << "Records of 0x" << hex << subsection.getFirstDataRecordOffset() << dec
+      qDebug().nospace().noquote() << "Records of 0x" << Qt::hex << subsection.getFirstDataRecordOffset() << Qt::dec
                                    << " type " << sectionTypeStr(type);
     }
 
@@ -372,7 +372,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
           break;
 
         default:
-          qWarning().nospace().noquote() << "Unknown section type at 0x" << hex << bs->tellg() << dec << ": " << type;
+          qWarning().nospace().noquote() << "Unknown section type at 0x" << Qt::hex << bs->tellg() << Qt::dec << ": " << type;
 
       }
       if(rec == nullptr)
@@ -383,7 +383,7 @@ void BglFile::readRecords(BinaryStream *bs, const atools::fs::scenery::SceneryAr
         rec->seekToEnd();
       else
         qWarning().nospace().noquote() << "Invalid record size " << rec->getSize()
-                                       << " at 0x" << hex << bs->tellg()
+                                       << " at 0x" << Qt::hex << bs->tellg()
                                        << " type 0x" << rec->getId();
     }
   }

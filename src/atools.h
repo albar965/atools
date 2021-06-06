@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QLineF>
 #include <QPointF>
+#include <QTextCodec>
 
 class QFile;
 class QFileInfo;
@@ -167,12 +168,6 @@ Q_DECL_CONSTEXPR bool inRange(const QList<TYPE>& list, int index)
 }
 
 template<typename TYPE>
-Q_DECL_CONSTEXPR bool inRange(const QVector<TYPE>& list, int index)
-{
-  return index >= 0 && index < list.size();
-}
-
-template<typename TYPE>
 Q_DECL_CONSTEXPR bool inRange(TYPE minValue, TYPE maxValue, TYPE index)
 {
   return index >= minValue && index <= maxValue;
@@ -213,27 +208,7 @@ const TYPE& at(const QList<TYPE>& list, int index, const TYPE& defaultType = TYP
 }
 
 template<typename TYPE>
-const TYPE& at(const QVector<TYPE>& list, int index, const TYPE& defaultType = TYPE())
-{
-  if(inRange(list, index))
-    return list.at(index);
-  else
-    qWarning() << "index out of bounds:" << index << "list size" << list.size();
-  return defaultType;
-}
-
-template<typename TYPE>
 const TYPE& at(const QList<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
-{
-  if(inRange(list, index))
-    return list.at(index);
-  else
-    qWarning() << "index out of bounds:" << index << "list size" << list.size() << "message" << msg;
-  return defaultType;
-}
-
-template<typename TYPE>
-const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const TYPE& defaultType = TYPE())
 {
   if(inRange(list, index))
     return list.at(index);
@@ -257,18 +232,6 @@ TYPE *firstOrNull(QList<TYPE>& list)
 
 template<typename TYPE>
 const TYPE *firstOrNull(const QList<TYPE>& list)
-{
-  return list.isEmpty() ? nullptr : &list.first();
-}
-
-template<typename TYPE>
-TYPE *firstOrNull(QVector<TYPE>& list)
-{
-  return list.isEmpty() ? nullptr : &list.first();
-}
-
-template<typename TYPE>
-const TYPE *firstOrNull(const QVector<TYPE>& list)
 {
   return list.isEmpty() ? nullptr : &list.first();
 }

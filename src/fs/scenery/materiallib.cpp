@@ -78,11 +78,11 @@ void MaterialLib::read(const QString& filename)
 
     while(xmlStream.readNextStartElement())
     {
-      if(reader.name() == "Material")
+      if(reader.name().toString() == QString("Material"))
       {
         QString surface = reader.attributes().value("SurfaceType").toString();
         if(surface != "UNDEFINED")
-          surfaceMap.insert(reader.attributes().value("Guid").toString(), surface);
+          surfaceMap.insert(QUuid::fromString(reader.attributes().value("Guid").toString()), surface);
 
         // Read only attributes
         xmlStream.skipCurrentElement();

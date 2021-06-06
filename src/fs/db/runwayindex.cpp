@@ -23,7 +23,7 @@ namespace atools {
 namespace fs {
 namespace db {
 
-static QLatin1Literal NO_RWY("00");
+static QLatin1String NO_RWY("00");
 
 using std::make_pair;
 

@@ -36,13 +36,13 @@ using atools::geo::Point3D;
 // Calculate hash for airway name for quick comparison in routing algorithm
 inline quint32 airwayHash(const QString& name)
 {
-  return qHash(name) + 1; // Avoid null
+  return (quint32)qHash(name) + 1; // Avoid null
 }
 
 // Calculate hash for track name and type for quick comparison in routing algorithm
 inline quint32 trackHash(const QString& name, const QString& type)
 {
-  return (qHash(name) ^ (qHash(type) << 8) ^ 0x55555555) + 1; // Avoid null and add pattern to difference for airway
+  return (quint32)(qHash(name) ^ (qHash(type) << 8) ^ 0x55555555) + 1; // Avoid null and add pattern to difference for airway
 }
 
 namespace atools {

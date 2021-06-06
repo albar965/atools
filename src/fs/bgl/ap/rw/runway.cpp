@@ -234,7 +234,7 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << Qt::hex << t << Qt::dec
                                        << " for ident " << airportIdent
                                        << " runway " << primary.getName() << "/" << secondary.getName()
                                        << " " << bs->tellg();
@@ -284,9 +284,9 @@ QDebug operator<<(QDebug out, const Runway& record)
                           << " Runway[length " << record.length
                           << ", width " << record.width
                           << ", hdg " << record.heading
-                          << ", surface " << surface::surfaceToDbStr(record.surface) << endl
-                          << ", primary " << record.primary << endl
-                          << ", secondary " << record.secondary << endl
+                          << ", surface " << surface::surfaceToDbStr(record.surface) << Qt::endl
+                          << ", primary " << record.primary << Qt::endl
+                          << ", secondary " << record.secondary << Qt::endl
                           << "]";
   return out;
 }

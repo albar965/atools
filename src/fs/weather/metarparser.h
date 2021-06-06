@@ -454,7 +454,7 @@ public:
 
   inline QVector<MetarCloud> getClouds() const
   {
-    return QVector<MetarCloud>::fromStdVector(_clouds);
+    return QVector<MetarCloud>(_clouds.begin(), _clouds.end());
   }
 
   inline QHash<QString, MetarRunway> getRunways() const;
@@ -463,8 +463,7 @@ public:
 
   inline QVector<struct Weather> getWeather2() const
   {
-    return QVector<struct Weather>::fromStdVector(_weather2);
-
+    return QVector<struct Weather>(_weather2.begin(), _weather2.end());
   }
 
   bool isValid() const

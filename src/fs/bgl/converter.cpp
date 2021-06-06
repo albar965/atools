@@ -74,9 +74,9 @@ QString intToIcao(unsigned int icao, bool noBitShift)
     if(coded == 0)
       break;
     if(coded > 1 && coded < 12)
-      icaoStr.insert(0, '0' + (coded - 2));
+      icaoStr.insert(0, "0" + QString((QChar)(coded - 2)));
     else
-      icaoStr.insert(0, 'A' + (coded - 12));
+      icaoStr.insert(0, "A" + QString((QChar)(coded - 12)));
   }
   return icaoStr;
 }
@@ -100,7 +100,7 @@ QString runwayToStr(int runwayNumber, int designator)
   {
     // Normal one digit runway number with leading zero
     retval += "0";
-    retval += static_cast<char>(runwayNumber) + '0';
+    retval += QString((QChar)((int)'0' + runwayNumber));
   }
   else if(runwayNumber > 36)
   {
@@ -138,8 +138,8 @@ QString runwayToStr(int runwayNumber, int designator)
   else
   {
     // Normal two digit runway number without leading zero
-    retval += static_cast<char>(runwayNumber / 10) + '0';
-    retval += static_cast<char>(runwayNumber % 10) + '0';
+    retval += QString((QChar)((int)'0' + (runwayNumber / 10)));
+    retval += QString((QChar)((int)'0' + (runwayNumber % 10)));
   }
   // Add designator if there is one
   retval += designatorStr(designator);

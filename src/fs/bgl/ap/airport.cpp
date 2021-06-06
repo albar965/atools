@@ -137,13 +137,13 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
     rec::AirportRecordType type = r.getId<rec::AirportRecordType>();
     if(checkSubRecord(r))
     {
-      qWarning().noquote().nospace() << Q_FUNC_INFO << "Invalid record" << hex << " 0x" << r.getId()
-                                     << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+      qWarning().noquote().nospace() << Q_FUNC_INFO << "Invalid record" << Qt::hex << " 0x" << r.getId()
+                                     << Qt::dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
       return;
     }
 
-    // qDebug().nospace() << Q_FUNC_INFO << hex << " 0x" << r.getId()
-    // << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+    // qDebug().nospace() << Q_FUNC_INFO << Qt::hex << " 0x" << r.getId()
+    // << Qt::dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
 
     switch(type)
     {
@@ -361,19 +361,19 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_SID:
       case rec::MSFS_STAR:
 
-        // qWarning() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
-        // << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+        // qWarning() << Q_FUNC_INFO << "Unknown record" << Qt::hex << " 0x" << r.getId()
+        // << Qt::dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
         break;
 
       default:
 
-        qWarning().noquote().nospace() << "Unknown record" << hex << " 0x" << r.getId()
-                                       << dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
+        qWarning().noquote().nospace() << "Unknown record" << Qt::hex << " 0x" << r.getId()
+                                       << Qt::dec << " " << airportRecordTypeStr(type) << " " << bs->tellg();
 
         if(subrecordIndex == 0)
         {
           qWarning().nospace().noquote() << "Ignoring airport. Unexpected initial record type in Airport record 0x"
-                                         << hex << type << dec << getObjectName();
+                                         << Qt::hex << type << Qt::dec << getObjectName();
 
           // Stop reading when the first subrecord is already invalid
           seekToStart();
@@ -667,14 +667,14 @@ void Airport::updateParking(const QList<atools::fs::bgl::Jetway>& jetways,
     if(index != -1 && index < parkings.size())
     {
       if(parkings.at(index).jetway)
-        qWarning().nospace().noquote() << "Parking for jetway " << jw << " already set" << dec
+        qWarning().nospace().noquote() << "Parking for jetway " << jw << " already set" << Qt::dec
                                        << " for parking " << parkings.at(index)
                                        << " for ident " << ident;
       else
         parkings[index].jetway = true;
     }
     else
-      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << dec
+      qWarning().nospace().noquote() << "Parking for jetway " << jw << " not found" << Qt::dec
                                      << " for ident " << ident;
   }
 }
@@ -777,7 +777,7 @@ QDebug operator<<(QDebug out, const Airport& record)
                           << ", name " << record.name
                           << ", region " << record.region
                           << ", " << record.position.getPos()
-                          << ", magvar " << record.magVar << ", " << endl;
+                          << ", magvar " << record.magVar << ", " << Qt::endl;
   out << record.runways;
   out << record.coms;
   out << record.aprons;
