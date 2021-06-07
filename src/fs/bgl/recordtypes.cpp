@@ -389,6 +389,9 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::RUNWAY_TRANSITION_LEGS_MSFS:
       return "RUNWAY_TRANSITION_LEGS_MSFS";
 
+    case rec::RUNWAY_TRANSITION_LEGS_MSFS_NEW:
+      return "RUNWAY_TRANSITION_LEGS_MSFS_NEW";
+
     case rec::COMMON_ROUTE_LEGS_MSFS:
       return "COMMON_ROUTE_LEGS_MSFS";
 

@@ -1852,6 +1852,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("AppVersionBuild", msfs ? "282174" : "61472");
   writer.writeEndElement(); // AppVersion
 
+  int i = 0;
   for(const FlightplanEntry& entry : plan.entries)
   {
     if(entry.isNoSave())
@@ -1877,13 +1878,41 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
     if(msfs)
     {
-      // Write additional procedure information for MSFS
-      writeElementIf(writer, "DepartureFP", entry.getSid());
-      writeElementIf(writer, "ArrivalFP", entry.getStar());
-      writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
-      writeElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
-      writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
-      writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+      if(i == 0)
+      {
+        // Departure airport =======
+        if(plan.getDepartureParkingType() == atools::fs::pln::RUNWAY)
+        {
+          // Runway as departure position
+          if(!plan.properties.value(SIDAPPR).isEmpty())
+          {
+            // SID used - override with SID
+            writeElementIf(writer, "DepartureFP", entry.getSid());
+            writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
+            writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+          }
+          else
+          {
+            QString number, designator;
+            atools::fs::util::runwayNameSplit(plan.getDepartureParkingName(), &number, &designator);
+
+            // No SID - use from departure position
+            writeElementIf(writer, "RunwayNumberFP", number);
+            writeElementIf(writer, "RunwayDesignatorFP", atools::fs::util::runwayDesignatorLong(designator));
+          }
+        }
+        // else Omit runway in any case if a parking position is set
+      }
+      else
+      {
+        // Write additional procedure information for MSFS
+        writeElementIf(writer, "DepartureFP", entry.getSid());
+        writeElementIf(writer, "ArrivalFP", entry.getStar());
+        writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
+        writeElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
+        writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
+        writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+      }
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
@@ -1903,6 +1932,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     }
 
     writer.writeEndElement(); // ATCWaypoint
+    i++;
   } // for(const FlightplanEntry& entry : plan.entries)
 
   writer.writeEndElement(); // FlightPlan.FlightPlan
