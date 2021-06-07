@@ -62,28 +62,34 @@ Application *Application::applicationInstance()
 
 bool Application::notify(QObject *receiver, QEvent *event)
 {
+#ifndef DEBUG_NO_APPLICATION_EXCEPTION
   try
   {
-    if(tooltipsDisabled && (event->type() == QEvent::ToolTip || event->type() == QEvent::ToolTipChange) &&
-       !tooltipExceptions.contains(receiver))
-      return false;
-    else
-      return QApplication::notify(receiver, event);
-  }
-  catch(std::exception& e)
-  {
-    qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
-    qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+#endif
+  if(tooltipsDisabled && (event->type() == QEvent::ToolTip || event->type() == QEvent::ToolTipChange) &&
+     !tooltipExceptions.contains(receiver))
+    return false;
+  else
+    return QApplication::notify(receiver, event);
 
-    ATOOLS_HANDLE_EXCEPTION(e);
-  }
-  catch(...)
-  {
-    qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
-    qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+#ifndef DEBUG_NO_APPLICATION_EXCEPTION
+}
 
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
+catch(std::exception& e)
+{
+  qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
+  qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+
+  ATOOLS_HANDLE_EXCEPTION(e);
+}
+catch(...)
+{
+  qCritical() << "receiver" << (receiver == nullptr ? "null" : receiver->objectName());
+  qCritical() << "event" << (event == nullptr ? 0 : static_cast<int>(event->type()));
+
+  ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+}
+#endif
 }
 
 QString Application::generalErrorMessage()
