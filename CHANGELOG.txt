@@ -3,7 +3,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
-# Version 3.6.12.beta
+# Version 3.6.13
 
 * Adjusted PLN flight plan export to allow export for ISG gauges.
 * More relaxed user waypoint naming conventions for MSFS. Adjusted allowed characters for MSFS user
@@ -37,6 +37,12 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Corrected default flight plan pattern to use departure and destination ident if flight plan
   pattern is empty.
 * Changed exception for invalid files in X-Plane CIFP path to warning in log file.
+
+===============================================================================
+
+# Version 3.6.12.beta
+
+Unofficial beta release.
 
 ===============================================================================
 
