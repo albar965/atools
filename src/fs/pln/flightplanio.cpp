@@ -1801,16 +1801,10 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
   writer.writeTextElement("DepartureID", plan.departureIdent);
 
-  if(!msfs)
-    // Use parking position
-    writer.writeTextElement("DepartureLLA",
-                            plan.getDepartureParkingPosition().isValid() ?
-                            plan.getDepartureParkingPosition().toLongString() : QString());
-  else
-    // Use airport position
-    writer.writeTextElement("DepartureLLA",
-                            plan.getDeparturePosition().isValid() ?
-                            plan.getDeparturePosition().toLongString() : QString());
+  // Use parking position
+  writer.writeTextElement("DepartureLLA",
+                          plan.getDepartureParkingPosition().isValid() ?
+                          plan.getDepartureParkingPosition().toLongString() : QString());
 
   writer.writeTextElement("DestinationID", plan.destinationIdent);
   writer.writeTextElement("DestinationLLA",
@@ -1824,9 +1818,9 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     {
       case atools::fs::pln::AIRPORT:
       case atools::fs::pln::NO_POS:
-      case atools::fs::pln::HELIPAD:
         break;
 
+      case atools::fs::pln::HELIPAD:
       case atools::fs::pln::RUNWAY:
         parking = plan.departureParkingName;
         if(parking.startsWith('0'))
@@ -1834,7 +1828,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
         break;
 
       case atools::fs::pln::PARKING:
-        parking = plan.departureParkingName + " PARKING NONE";
+        parking = plan.departureParkingName;
         break;
     }
   }
