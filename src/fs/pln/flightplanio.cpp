@@ -2896,18 +2896,25 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
   writer.setCodec("UTF-8");
   writer.setAutoFormatting(true);
   writer.setAutoFormattingIndent(2);
+
+  // <?xml version="1.0" encoding="UTF-8"?>
   writer.writeStartDocument("1.0");
 
-  // <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Wikipedia"
+  // <gpx
+  // xmlns="http://www.topografix.com/GPX/1/1"
+  // version="1.1"
+  // creator="Program"
   // xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   // xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+
   writer.writeStartElement("gpx");
-  // writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
-  // writer.writeAttribute("version", "1.1");
+
+  writer.writeDefaultNamespace("http://www.topografix.com/GPX/1/1");
+  writer.writeAttribute("version", "1.1");
   writer.writeAttribute("creator", "Little Navmap");
-  // writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-  // writer.writeAttribute("xsi:schemaLocation",
-  // "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+  writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+  writer.writeAttribute("xsi:schemaLocation",
+                        "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 
   // writer.writeComment(programFileInfo());
 
