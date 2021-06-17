@@ -120,7 +120,7 @@ QString approachFixTypeToStr(ap::fix::ApproachFixType type)
   return "INVALID";
 }
 
-QString arincNameApproach(ApproachType type, const QString& runwayName, char suffix, bool gpsOverlay)
+QString arincNameAppr(ApproachType type, const QString& runwayName, char suffix, bool gpsOverlay)
 {
   // Not considered in BGL or not applicable
   // Approach Transition  A

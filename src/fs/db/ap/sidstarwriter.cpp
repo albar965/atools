@@ -87,7 +87,11 @@ void SidStarWriter::writeObject(const SidStar *type)
     while(runwayIter.hasNext())
     {
       runwayIter.next();
+
       bind(":runway_name", runwayIter.key());
+      bind(":arinc_name", bgl::ap::arincNameAppr(bgl::ap::GPS, runwayIter.key(),
+                                                 type->getSuffix(), true /* gpsOverlay */));
+
       if('A' == type->getSuffix())
         writeArrival(type, &runwayIter.value());
       else
@@ -97,6 +101,8 @@ void SidStarWriter::writeObject(const SidStar *type)
   else
   {
     bindNullString(":runway_name");
+    bindNullString(":arinc_name");
+
     if('A' == type->getSuffix())
       writeArrival(type, nullptr);
     else
