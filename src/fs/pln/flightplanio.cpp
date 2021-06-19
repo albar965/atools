@@ -1076,6 +1076,8 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
           plan.departureParkingName = reader.readElementText();
         else if(reader.name() == "Pos")
           plan.departureParkingPos = readPosLnm(xmlStream);
+        else if(reader.name() == "Type")
+          plan.setDepartureParkingType(reader.readElementText());
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -1638,6 +1640,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     writer.writeStartElement("Departure");
     writeElementPosIf(writer, plan.departureParkingPos);
     writeElementIf(writer, "Start", plan.departureParkingName);
+    writeElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
     writer.writeEndElement(); // Departure
   }
 
