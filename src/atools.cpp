@@ -834,6 +834,11 @@ QString buildPathNoCase(const QStringList& paths)
 #endif
 }
 
+QString checkDirMsg(const QString& dir, int maxLength)
+{
+  return checkDirMsg(QFileInfo(dir), maxLength);
+}
+
 QString checkDirMsg(const QFileInfo& dir, int maxLength)
 {
   if(dir.filePath().isEmpty())
@@ -864,6 +869,11 @@ QString checkDirMsg(const QFileInfo& dir, int maxLength)
     }
   }
   return QString();
+}
+
+QString checkFileMsg(const QString& file, int maxLength)
+{
+  return checkFileMsg(QFileInfo(file), maxLength);
 }
 
 QString checkFileMsg(const QFileInfo& file, int maxLength)
@@ -903,6 +913,11 @@ QString checkFileMsg(const QFileInfo& file, int maxLength)
   return QString();
 }
 
+bool checkDir(const QString& dir, bool warn)
+{
+  return checkDir(QFileInfo(dir), warn);
+}
+
 bool checkDir(const QFileInfo& dir, bool warn)
 {
   if(dir.filePath().isEmpty())
@@ -933,6 +948,11 @@ bool checkDir(const QFileInfo& dir, bool warn)
     }
   }
   return true;
+}
+
+bool checkFile(const QString& file, bool warn)
+{
+  return checkFile(QFileInfo(file), warn);
 }
 
 bool checkFile(const QFileInfo& file, bool warn)

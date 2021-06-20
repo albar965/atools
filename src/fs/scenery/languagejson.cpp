@@ -57,35 +57,38 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
 {
   clear();
 
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly))
+  if(atools::checkFile(filename))
   {
-    QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-    if(error.error != QJsonParseError::NoError)
-      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
-
-    QJsonObject package = doc.object().value("LocalisationPackage").toObject();
-
-    language = package.value("Language").toString();
-    adjustLanguage();
-    QJsonObject strings = package.value("Strings").toObject();
-
-    for(auto it = strings.begin(); it != strings.end(); ++it)
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
     {
-      QString key = it.key();
-      if(keyPrefixes.isEmpty() || atools::strStartsWith(keyPrefixes, key))
-      {
-        QString txt = it.value().toString();
+      QJsonParseError error;
+      QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+      if(error.error != QJsonParseError::NoError)
+        qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
 
-        if(!NO_NAMES.contains(txt))
-          names.insert(key, txt);
+      QJsonObject package = doc.object().value("LocalisationPackage").toObject();
+
+      language = package.value("Language").toString();
+      adjustLanguage();
+      QJsonObject strings = package.value("Strings").toObject();
+
+      for(auto it = strings.begin(); it != strings.end(); ++it)
+      {
+        QString key = it.key();
+        if(keyPrefixes.isEmpty() || atools::strStartsWith(keyPrefixes, key))
+        {
+          QString txt = it.value().toString();
+
+          if(!NO_NAMES.contains(txt))
+            names.insert(key, txt);
+        }
       }
+      file.close();
     }
-    file.close();
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
   }
-  else
-    qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
 }
 
 void LanguageJson::readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter,

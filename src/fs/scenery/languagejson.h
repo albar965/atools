@@ -39,12 +39,12 @@ namespace scenery {
 class LanguageJson
 {
 public:
-  /* Read translations for one language from JSON file. Does not clear index before loading. */
+  /* Read translations for one language from JSON file. Clears index before loading. */
   void readFromFile(const QString& filename, const QStringList& keyPrefixes = {});
 
   /* Read translations for all languages from directory using given file filter.
    * Stores translations for all languages to database.
-   * Clears current index. */
+   * Clears index after reading. */
   void readFromDirToDb(sql::SqlDatabase *db, const QString& dirname, const QString& fileFilter,
                        const QStringList& keyPrefixes = {});
 
