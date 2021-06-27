@@ -40,6 +40,8 @@ namespace online {
  * Schema has to be created before.
  *
  * Supported formats are the ones used by VATSIM and IVAO.
+ *
+ * Also reads new JSON formats.
  */
 class WhazzupTextParser
 {
@@ -98,16 +100,13 @@ private:
   QDateTime parseGeneralSection(const QStringList& line);
 
   /* Read ATC or client section */
-  void parseSection(const QStringList& line, bool isAtc, bool isPrefile, bool isJson);
+  void parseSection(const QStringList& line, bool isAtc, bool prefile, bool isJson);
 
   /* Servers */
   void parseServersSection(const QStringList& line);
 
   /* Voice servers */
   void parseVoiceSection(const QStringList& line);
-
-  /* Airport ident and ATIS - ignored */
-  void parseAirportSection(const QStringList& line);
 
   /* Remove special characters from ATC text */
   QString convertAtisText(QString atis);
@@ -117,15 +116,17 @@ private:
 
   /* Fix UTF-8 name embedded in ANSI encoding in file */
   QString convertName(QString name, bool utf8);
-  int getSemiPermanentId(QHash<QString, int>& idMap, int& curId, const QString& key);
+  int semiPermanentId(QHash<QString, int>& idMap, int& curId, const QString& key);
 
-  /* Read VATSIM JSON format. */
+  /* Read VATSIM JSON format and create a column list based on the whazzup.txt lists.
+   * This is read by the delimited methods. */
   bool readInternalJson(const QString& file, const QDateTime& lastUpdate);
-  bool readInternalDelimited(QTextStream& stream, Format streamFormat, const QDateTime& lastUpdate);
-  void readPilotsJson(const QJsonObject& obj);
-  void readControllersJson(const QJsonObject& obj);
-  void readServersJson(const QJsonObject& obj);
+  bool readInternalDelimited(QTextStream& stream, const QDateTime& lastUpdate);
+  void readPilotsJson(const QJsonArray& pilotsArr);
+  void readControllersJson(const QJsonArray& controllersArr, bool observer);
+  void readServersJson(const QJsonArray& serversArr, bool voice);
   void readPrefilesJson(const QJsonObject& obj);
+
   void readAtisJson(const QJsonObject& obj);
 
   /* Insert flight plan values into columns. Used for clients and prefile */
@@ -144,8 +145,7 @@ private:
   QDateTime updateTimestamp;
 
   atools::sql::SqlDatabase *db;
-  atools::sql::SqlQuery *clientInsertQuery = nullptr, *atcInsertQuery = nullptr,
-                        *serverInsertQuery = nullptr, *airportInsertQuery = nullptr;
+  atools::sql::SqlQuery *clientInsertQuery = nullptr, *atcInsertQuery = nullptr, *serverInsertQuery = nullptr;
 
   // Assign row ids manually
   int curClientId = 1, curAtcId = 1;
@@ -167,6 +167,7 @@ private:
   bool error = false;
 
   GeoCallbackType geometryCallback;
+  QStringList ivaoDefaultColumns, defaultColumns;
 };
 
 } // namespace online

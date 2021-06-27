@@ -34,9 +34,10 @@ namespace online {
 enum Format
 {
   UNKNOWN,
-  VATSIM,
-  IVAO,
-  VATSIM_JSON3
+  VATSIM, /* Old VATSIM whazzup.txt format */
+  IVAO, /* Old IVAO whazzup.txt format */
+  VATSIM_JSON3, /* New VATSIM JSON version 3 format */
+  IVAO_JSON2 /* New IVAO JSON version 2 format */
 };
 
 // enum ClientType
