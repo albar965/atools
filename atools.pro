@@ -236,6 +236,7 @@ HEADERS += \
   src/io/fileroller.h \
   src/io/inireader.h \
   src/io/tempfile.h \
+  src/json/nlohmann/json.hpp \
   src/logging/loggingconfig.h \
   src/logging/loggingguiabort.h \
   src/logging/logginghandler.h \
