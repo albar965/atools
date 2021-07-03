@@ -222,14 +222,22 @@ QString FsPaths::getMsfsOfficialPath()
 
 QString FsPaths::getMsfsOfficialPath(const QString& basePath)
 {
-  // Also check subfolders to avoid confusion if folders from other installations remain
+  // Also check subfolders and layout file to avoid confusion if folders from other installations remain
   // Look first for Steam since some might have remains from MS subscription around
-  if(checkDir(basePath + SEP + "Official" + SEP + "Steam" + SEP + "fs-base"))
+  QString msgSteam = checkFileMsg(basePath + SEP + "Official" + SEP + "Steam" + SEP +
+                                  "fs-base" + SEP + "layout.json");
+  QString msgOneStore = checkFileMsg(basePath + SEP + "Official" + SEP + "OneStore" + SEP +
+                                     "fs-base" + SEP + "layout.json");
+
+  if(msgSteam.isEmpty())
     return basePath + SEP + "Official" + SEP + "Steam";
-  else if(checkDir(basePath + SEP + "Official" + SEP + "OneStore" + SEP + "fs-base"))
+  else if(msgOneStore.isEmpty())
     return basePath + SEP + "Official" + SEP + "OneStore";
   else
+  {
+    qWarning() << Q_FUNC_INFO << msgSteam << msgOneStore;
     return QString();
+  }
 }
 
 QString FsPaths::getMsfsCommunityPath()
@@ -239,7 +247,15 @@ QString FsPaths::getMsfsCommunityPath()
 
 QString FsPaths::getMsfsCommunityPath(const QString& basePath)
 {
-  return basePath + SEP + "Community";
+  QString msg = checkDirMsg(basePath + SEP + "Community");
+
+  if(msg.isEmpty())
+    return basePath + SEP + "Community";
+  else
+  {
+    qWarning() << Q_FUNC_INFO << msg;
+    return QString();
+  }
 }
 
 QString FsPaths::initBasePath(SimulatorType type)
@@ -831,17 +847,17 @@ QString FsPaths::msfsBasePath(const QString& userCfgOptFile)
 
     fileCfgOpt.close();
 
+    // Official/Steam or Official/OneStore is required =================
     if(!dir.isEmpty())
     {
-      // Community
-      if(!checkDir(getMsfsCommunityPath(dir)))
+      if(getMsfsOfficialPath(dir).isEmpty())
         dir.clear();
+    }
 
-      // Official/Steam or Official/OneStore
-      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base"))
-        dir.clear();
-
-      if(!checkDir(getMsfsOfficialPath(dir) + SEP + "fs-base-nav"))
+    // Community is required too =================
+    if(!dir.isEmpty())
+    {
+      if(getMsfsCommunityPath(dir).isEmpty())
         dir.clear();
     }
   }
