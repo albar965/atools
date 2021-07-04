@@ -113,22 +113,23 @@ QString facilityTypeTextSettings(fac::FacilityType type)
 
 fac::FacilityType textToFacilityType(QString value)
 {
+  // IVAO: DEL; GND; TWR; APP; DEP; CTR; FSS
   value = value.toUpper();
-  if(value == "OBSERVER")
+  if(value.startsWith("OBS"))
     return atools::fs::online::fac::OBSERVER;
-  else if(value == "FIR")
+  else if(value == "FIR" || value == "FSS")
     return atools::fs::online::fac::FLIGHT_INFORMATION;
-  else if(value == "DELIVERY")
+  else if(value.startsWith("DEL"))
     return atools::fs::online::fac::DELIVERY;
-  else if(value == "GROUND")
+  else if(value == "GROUND" || value == "GND")
     return atools::fs::online::fac::GROUND;
-  else if(value == "TOWER")
+  else if(value == "TOWER" || value == "TWR")
     return atools::fs::online::fac::TOWER;
-  else if(value == "APPROACH")
+  else if(value.startsWith("APP"))
     return atools::fs::online::fac::APPROACH;
-  else if(value == "ACC")
+  else if(value == "ACC" || value == "CTR")
     return atools::fs::online::fac::ACC;
-  else if(value == "DEPARTURE")
+  else if(value.startsWith("DEP"))
     return atools::fs::online::fac::DEPARTURE;
 
   return atools::fs::online::fac::UNKNOWN;

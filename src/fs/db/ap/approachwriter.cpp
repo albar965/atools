@@ -118,9 +118,7 @@ void ApproachWriter::writeObject(const Approach *type)
   else
     bind(":runway_name", runwayName);
 
-  // Keep this disabled for now since side effects when resolving procedures are unknown
-  // bind(":arinc_name", bgl::ap::arincNameApproach(type->getType(), runwayName, type->getSuffix(), type->hasGpsOverlay()));
-  bindNullString(":arinc_name");
+  bind(":arinc_name", bgl::ap::arincNameAppr(type->getType(), runwayName, type->getSuffix(), type->hasGpsOverlay()));
 
   // Write approach
   executeStatement();

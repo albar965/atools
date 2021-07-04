@@ -290,10 +290,14 @@ public:
     return departureParkingType;
   }
 
+  QString getDepartureParkingTypeStr() const;
+
   void setDepartureParkingType(atools::fs::pln::FlightplanParkingType value)
   {
     departureParkingType = value;
   }
+
+  void setDepartureParkingType(QString type);
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);

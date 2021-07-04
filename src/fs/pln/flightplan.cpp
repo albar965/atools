@@ -49,6 +49,43 @@ float Flightplan::getDistanceNm() const
   return atools::geo::meterToNm(distanceMeter);
 }
 
+QString Flightplan::getDepartureParkingTypeStr() const
+{
+  switch(departureParkingType)
+  {
+    case atools::fs::pln::NO_POS:
+      return "None";
+
+    case atools::fs::pln::AIRPORT:
+      return "Airport";
+
+    case atools::fs::pln::RUNWAY:
+      return "Runway";
+
+    case atools::fs::pln::PARKING:
+      return "Parking";
+
+    case atools::fs::pln::HELIPAD:
+      return "Helipad";
+  }
+  return QString();
+}
+
+void Flightplan::setDepartureParkingType(QString type)
+{
+  type = type.toLower();
+  if(type == "airport")
+    departureParkingType = atools::fs::pln::AIRPORT;
+  else if(type == "runway")
+    departureParkingType = atools::fs::pln::RUNWAY;
+  else if(type == "parking")
+    departureParkingType = atools::fs::pln::PARKING;
+  else if(type == "helipad")
+    departureParkingType = atools::fs::pln::HELIPAD;
+  else
+    departureParkingType = atools::fs::pln::NO_POS;
+}
+
 void Flightplan::clear()
 {
   entries.clear();

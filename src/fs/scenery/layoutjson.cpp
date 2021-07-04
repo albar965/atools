@@ -18,6 +18,7 @@
 #include "fs/scenery/layoutjson.h"
 
 #include "exception.h"
+#include "atools.h"
 
 #include <QFile>
 #include <QDebug>
@@ -53,27 +54,30 @@ namespace scenery {
  */
 void LayoutJson::read(const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly))
+  if(atools::checkFile(filename))
   {
-    QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-    if(error.error != QJsonParseError::NoError)
-      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
-
-    QJsonArray arr = doc.object().value("content").toArray();
-    for(int i = 0; i < arr.count(); i++)
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
     {
-      QString path = arr.at(i).toObject().value("path").toString();
-      if(path.endsWith(".bgl", Qt::CaseInsensitive))
-        bglPaths.append(path);
-      else if(path.endsWith("Library.xml", Qt::CaseInsensitive))
-        materialPaths.append(path);
+      QJsonParseError error;
+      QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+      if(error.error != QJsonParseError::NoError)
+        qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
+
+      QJsonArray arr = doc.object().value("content").toArray();
+      for(int i = 0; i < arr.count(); i++)
+      {
+        QString path = arr.at(i).toObject().value("path").toString();
+        if(path.endsWith(".bgl", Qt::CaseInsensitive))
+          bglPaths.append(path);
+        else if(path.endsWith("Library.xml", Qt::CaseInsensitive))
+          materialPaths.append(path);
+      }
+      file.close();
     }
-    file.close();
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
   }
-  else
-    qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
 }
 
 } // namespace scenery

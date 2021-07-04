@@ -19,6 +19,7 @@
 
 #include "util/xmlstream.h"
 #include "exception.h"
+#include "atools.h"
 #include "fs/scenery/sceneryarea.h"
 
 #include <QFile>
@@ -54,58 +55,61 @@ void ContentXml::read(const QString& filename)
   disabledAreas.clear();
   number = 5;
 
-  QFile xmlFile(filename);
-  if(xmlFile.open(QIODevice::ReadOnly))
+  if(atools::checkFile(filename))
   {
-    atools::util::XmlStream xmlStream(&xmlFile, filename);
-    QXmlStreamReader& reader = xmlStream.getReader();
-
-    xmlStream.readUntilElement("Content");
-
-    while(xmlStream.readNextStartElement())
+    QFile xmlFile(filename);
+    if(xmlFile.open(QIODevice::ReadOnly))
     {
-      if(reader.name() == "Package")
-      {
-        QString name = reader.attributes().value("name").toString();
-        QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
-        bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
+      atools::util::XmlStream xmlStream(&xmlFile, filename);
+      QXmlStreamReader& reader = xmlStream.getReader();
 
-        int num;
-        QString title;
-        bool navdata = false;
-        if(name == "fs-base")
+      xmlStream.readUntilElement("Content");
+
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "Package")
         {
-          num = 0;
-          title = tr("Base Airports");
-        }
-        else if(name == "fs-base-nav")
-        {
-          num = 1;
-          navdata = true;
-          title = tr("Base Navigation");
+          QString name = reader.attributes().value("name").toString();
+          QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
+          bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
+
+          int num;
+          QString title;
+          bool navdata = false;
+          if(name == "fs-base")
+          {
+            num = 0;
+            title = tr("Base Airports");
+          }
+          else if(name == "fs-base-nav")
+          {
+            num = 1;
+            navdata = true;
+            title = tr("Base Navigation");
+          }
+          else
+            num = number++;
+
+          SceneryArea area(num, num, title, name);
+          area.setActive(active);
+          area.setNavdata(navdata);
+          areaEntries.append(area);
+          number++;
+
+          if(!active)
+            disabledAreas.insert(name.toLower());
+
+          // Read only attributes
+          xmlStream.skipCurrentElement();
         }
         else
-          num = number++;
-
-        SceneryArea area(num, num, title, name);
-        area.setActive(active);
-        area.setNavdata(navdata);
-        areaEntries.append(area);
-        number++;
-
-        if(!active)
-          disabledAreas.insert(name.toLower());
-
-        // Read only attributes
-        xmlStream.skipCurrentElement();
+          xmlStream.skipCurrentElement(true /* warn */);
       }
-      else
-        xmlStream.skipCurrentElement(true /* warn */);
+      xmlFile.close();
     }
-    xmlFile.close();
+    else
+      throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
   }
-  else
-    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
 }
 
 QDebug operator<<(QDebug out, const ContentXml& cfg)

@@ -76,46 +76,47 @@ void MaterialLib::readOfficial(const QString& basePath)
  */
 void MaterialLib::read(const QString& filename)
 {
-  if(filename.contains("aircraft_test"))
-    qDebug() << Q_FUNC_INFO;
-
   if(options->isIncludedDirectoryGui(QFileInfo(filename).absolutePath()) &&
      options->isIncludedFilePathGui(QFileInfo(filename).absoluteFilePath()))
   {
-    QStringList probe = atools::probeFile(filename, 10);
-
-    if(!probe.filter("<Library", Qt::CaseInsensitive).isEmpty() &&
-       !probe.filter("<Material", Qt::CaseInsensitive).isEmpty())
+    if(atools::checkFile(filename))
     {
-      QFile xmlFile(filename);
-      if(xmlFile.open(QIODevice::ReadOnly))
+      QStringList probe = atools::probeFile(filename, 10);
+
+      // Test if this is not another file type like aircraft checklist definitions
+      if(!probe.filter("<Library", Qt::CaseInsensitive).isEmpty() &&
+         !probe.filter("<Material", Qt::CaseInsensitive).isEmpty())
       {
-        atools::util::XmlStream xmlStream(&xmlFile, filename);
-        QXmlStreamReader& reader = xmlStream.getReader();
-
-        xmlStream.readUntilElement("Library");
-
-        while(xmlStream.readNextStartElement())
+        QFile xmlFile(filename);
+        if(xmlFile.open(QIODevice::ReadOnly))
         {
-          if(reader.name() == "Material")
-          {
-            QString surface = reader.attributes().value("SurfaceType").toString();
-            if(surface != "UNDEFINED")
-              surfaceMap.insert(reader.attributes().value("Guid").toString(), surface);
+          atools::util::XmlStream xmlStream(&xmlFile, filename);
+          QXmlStreamReader& reader = xmlStream.getReader();
 
-            // Read only attributes
-            xmlStream.skipCurrentElement();
+          xmlStream.readUntilElement("Library");
+
+          while(xmlStream.readNextStartElement())
+          {
+            if(reader.name() == "Material")
+            {
+              QString surface = reader.attributes().value("SurfaceType").toString();
+              if(surface != "UNDEFINED")
+                surfaceMap.insert(reader.attributes().value("Guid").toString(), surface);
+
+              // Read only attributes
+              xmlStream.skipCurrentElement();
+            }
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
           }
-          else
-            xmlStream.skipCurrentElement(true /* warn */);
+          xmlFile.close();
         }
-        xmlFile.close();
+        else
+          qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << xmlFile.errorString();
       }
       else
-        qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << xmlFile.errorString();
+        qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << "Not a material library file";
     }
-    else
-      qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << "Not a material library file";
   }
 }
 

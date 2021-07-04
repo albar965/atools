@@ -548,10 +548,14 @@ QString homeDir();
  * Returns empty string if all is ok. */
 QString checkDirMsg(const QFileInfo& dir, int maxLength = 80);
 QString checkFileMsg(const QFileInfo& file, int maxLength = 80);
+QString checkDirMsg(const QString& dir, int maxLength = 80);
+QString checkFileMsg(const QString& file, int maxLength = 80);
 
 /* Same as above but prints warnings into the log if flag is set and returns false if something is not ok */
 bool checkFile(const QFileInfo& file, bool warn = true);
 bool checkDir(const QFileInfo& dir, bool warn = true);
+bool checkFile(const QString& file, bool warn = true);
+bool checkDir(const QString& dir, bool warn = true);
 
 /* Calculates a simple reproducible hash for all lines in the text file ignoring line endings.
  * Uses always the same seed and ignores empty lines. To be used for testing. */

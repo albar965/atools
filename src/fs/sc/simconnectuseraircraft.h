@@ -203,7 +203,7 @@ public:
   /* Uses several parameters since on-ground is unreliable in the first X-Plane packets */
   bool isFlying() const
   {
-    return !isOnGround() && getGroundSpeedKts() > 20.f && getAltitudeAboveGroundFt() > 50.f;
+    return !isOnGround() && getGroundSpeedKts() > 10.f && getAltitudeAboveGroundFt() > 10.f;
   }
 
   bool hasFuelFlow() const

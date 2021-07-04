@@ -82,7 +82,6 @@ create table client
   callsign varchar(200),
   vid varchar(200),
   name varchar(200)  collate nocase,
-  prefile integer,
   client_type  varchar(200),
   groundspeed varchar(200),
   flightplan_aircraft varchar(200),
@@ -91,12 +90,7 @@ create table client
   flightplan_cruising_level varchar(200),
   flightplan_destination_aerodrome varchar(200),
   server varchar(200),
-  protocol varchar(200),
-  combined_rating varchar(200),
   transponder_code varchar(200),
-  facility_type integer,
-  visual_range integer,                                       --Nm
-  flightplan_revision varchar(200),
   flightplan_flight_rules varchar(200),
   flightplan_departure_time varchar(200),
   flightplan_actual_departure_time varchar(200),
@@ -107,18 +101,13 @@ create table client
   flightplan_other_info varchar(200),
   flightplan_route varchar(200),
   connection_time varchar(200),
-  software_name varchar(200),
-  software_version varchar(200),
-  administrative_rating integer,
-  atc_pilot_rating integer,
   flightplan_2nd_alternate_aerodrome varchar(200),
   flightplan_type_of_flight varchar(200),
   flightplan_persons_on_board integer,
   heading integer, -- degree
   on_ground integer,
+  state varchar(200), -- Ground, Departing, Climbing, En Route, Approach, Landed and Prefile
   simulator integer,
-  plane varchar(200),
-  qnh_mb integer,
   altitude integer,                          -- ft
   lonx double,
   laty double
@@ -137,19 +126,11 @@ create table atc
   client_type  varchar(200),
   frequency varchar(200),
   server varchar(200),
-  protocol varchar(200),
-  combined_rating varchar(200),
   facility_type integer,
   visual_range integer,           --Nm
   atis varchar(200),
   atis_time varchar(200),
   connection_time varchar(200),
-  software_name varchar(200),
-  software_version varchar(200),
-  administrative_rating integer,
-  atc_pilot_rating integer,
-  simulator integer,
-  qnh_mb integer,
   lonx double,
   laty double,
   radius integer ,        --Nm - painting radius for circle
@@ -182,20 +163,7 @@ create table server
   hostname varchar(200),
   location varchar(200),
   name varchar(200),
-  client_connections_allowed integer,
-  allowed_connections integer,
   voice_type varchar(200)
 );
 
-drop table if exists airport;
 
--- IVAO
--- Name 	Description 	Unit
--- ICAO 	The ICAO code of the airport. 	n/a
--- ATIS 	The ATIS of the airport. 	n/a
-create table airport
-(
-  airport_id integer primary key,
-  ident varchar(200),
-  atis varchar(200)
-);

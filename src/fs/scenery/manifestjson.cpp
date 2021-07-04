@@ -18,6 +18,7 @@
 #include "fs/scenery/manifestjson.h"
 
 #include "exception.h"
+#include "atools.h"
 
 #include <QFile>
 #include <QDebug>
@@ -47,26 +48,29 @@ namespace scenery {
  *  } */
 void ManifestJson::read(const QString& filename)
 {
-  QFile file(filename);
-  if(file.open(QIODevice::ReadOnly))
+  if(atools::checkFile(filename))
   {
-    QJsonParseError error;
-    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
-    if(error.error != QJsonParseError::NoError)
-      qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
+    QFile file(filename);
+    if(file.open(QIODevice::ReadOnly))
+    {
+      QJsonParseError error;
+      QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &error);
+      if(error.error != QJsonParseError::NoError)
+        qWarning() << Q_FUNC_INFO << "Error reading" << filename << error.errorString() << "at offset" << error.offset;
 
-    QJsonObject obj = doc.object();
+      QJsonObject obj = doc.object();
 
-    contentType = obj.value("content_type").toString();
-    title = obj.value("title").toString();
-    manufacturer = obj.value("manufacturer").toString();
-    creator = obj.value("creator").toString();
-    packageVersion = obj.value("package_version").toString();
-    minGameVersion = obj.value("minimum_game_version").toString();
-    file.close();
+      contentType = obj.value("content_type").toString();
+      title = obj.value("title").toString();
+      manufacturer = obj.value("manufacturer").toString();
+      creator = obj.value("creator").toString();
+      packageVersion = obj.value("package_version").toString();
+      minGameVersion = obj.value("minimum_game_version").toString();
+      file.close();
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
   }
-  else
-    qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
 }
 
 bool ManifestJson::isScenery() const
