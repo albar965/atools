@@ -227,7 +227,7 @@ private:
   void writePropertyFloat(QXmlStreamWriter& writer, const QString& name, float value);
 
   /* Writes element with name if value is not empty */
-  void writeElementIf(QXmlStreamWriter& writer, const QString& name, const QString& value);
+  void writeTextElementIf(QXmlStreamWriter& writer, const QString& name, const QString& value);
 
   /* Writes element "Pos" if pos is valid */
   void writeElementPosIf(QXmlStreamWriter& writer, const atools::geo::Pos& pos);
