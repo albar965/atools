@@ -1506,7 +1506,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
     throw Exception(tr("Cannot open FlightGear file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
 }
 
-void FlightplanIO::writeElementIf(QXmlStreamWriter& writer, const QString& name, const QString& value)
+void FlightplanIO::writeTextElementIf(QXmlStreamWriter& writer, const QString& name, const QString& value)
 {
   if(!value.isEmpty())
     writer.writeTextElement(name, value);
@@ -1533,17 +1533,17 @@ void FlightplanIO::writeElementPosIf(QXmlStreamWriter& writer, const atools::geo
 void FlightplanIO::writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName)
 {
   writer.writeStartElement(elementName);
-  writeElementIf(writer, "Name", entry.getName());
-  writeElementIf(writer, "Ident", entry.getIdent());
-  writeElementIf(writer, "Region", entry.getRegion());
+  writeTextElementIf(writer, "Name", entry.getName());
+  writeTextElementIf(writer, "Ident", entry.getIdent());
+  writeTextElementIf(writer, "Region", entry.getRegion());
 
   if(entry.isAirway())
-    writeElementIf(writer, "Airway", entry.getAirway());
+    writeTextElementIf(writer, "Airway", entry.getAirway());
   else if(entry.isTrack())
-    writeElementIf(writer, "Track", entry.getAirway());
+    writeTextElementIf(writer, "Track", entry.getAirway());
 
-  writeElementIf(writer, "Type", entry.getWaypointTypeAsLnmString());
-  writeElementIf(writer, "Comment", entry.getComment());
+  writeTextElementIf(writer, "Type", entry.getWaypointTypeAsLnmString());
+  writeTextElementIf(writer, "Comment", entry.getComment());
   writeElementPosIf(writer, entry.getPosition());
   writer.writeEndElement(); // elementName
 }
@@ -1591,14 +1591,14 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
-  writeElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
-  writeElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
-  writeElementIf(writer, "Comment", plan.comment);
-  writeElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
-  writeElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
-  writeElementIf(writer, "ProgramName", QCoreApplication::applicationName());
-  writeElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
-  writeElementIf(writer, "Documentation", "https://www.littlenavmap.org/lnmpln.html");
+  writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
+  writeTextElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
+  writeTextElementIf(writer, "Comment", plan.comment);
+  writeTextElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+  writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
+  writeTextElementIf(writer, "ProgramName", QCoreApplication::applicationName());
+  writeTextElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
+  writeTextElementIf(writer, "Documentation", "https://www.littlenavmap.org/lnmpln.html");
   writer.writeEndElement(); // Header
 
   // Nav and sim metadata =======================================================
@@ -1628,9 +1628,9 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
      !plan.properties.value(AIRCRAFT_PERF_NAME).isEmpty())
   {
     writer.writeStartElement("AircraftPerformance");
-    writeElementIf(writer, "FilePath", QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
-    writeElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
-    writeElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
+    writeTextElementIf(writer, "FilePath", QFileInfo(plan.properties.value(AIRCRAFT_PERF_FILE)).fileName());
+    writeTextElementIf(writer, "Type", plan.properties.value(AIRCRAFT_PERF_TYPE));
+    writeTextElementIf(writer, "Name", plan.properties.value(AIRCRAFT_PERF_NAME));
     writer.writeEndElement(); // AircraftPerformance
   }
 
@@ -1639,8 +1639,8 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   {
     writer.writeStartElement("Departure");
     writeElementPosIf(writer, plan.departureParkingPos);
-    writeElementIf(writer, "Start", plan.departureParkingName);
-    writeElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
+    writeTextElementIf(writer, "Start", plan.departureParkingName);
+    writeTextElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
     writer.writeEndElement(); // Departure
   }
 
@@ -1652,37 +1652,37 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     if(!plan.properties.value(SIDAPPR).isEmpty())
     {
       writer.writeStartElement("SID");
-      writeElementIf(writer, "Name", plan.properties.value(SIDAPPR));
-      writeElementIf(writer, "Runway", plan.properties.value(SIDAPPRRW));
-      writeElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
+      writeTextElementIf(writer, "Name", plan.properties.value(SIDAPPR));
+      writeTextElementIf(writer, "Runway", plan.properties.value(SIDAPPRRW));
+      writeTextElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
       writer.writeEndElement(); // SID
     }
 
     if(!plan.properties.value(STAR).isEmpty())
     {
       writer.writeStartElement("STAR");
-      writeElementIf(writer, "Name", plan.properties.value(STAR));
-      writeElementIf(writer, "Runway", plan.properties.value(STARRW));
-      writeElementIf(writer, "Transition", plan.properties.value(STARTRANS));
+      writeTextElementIf(writer, "Name", plan.properties.value(STAR));
+      writeTextElementIf(writer, "Runway", plan.properties.value(STARRW));
+      writeTextElementIf(writer, "Transition", plan.properties.value(STARTRANS));
       writer.writeEndElement(); // STAR
     }
 
     if(!plan.properties.value(APPROACH).isEmpty())
     {
       writer.writeStartElement("Approach");
-      writeElementIf(writer, "Name", plan.properties.value(APPROACH));
-      writeElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
-      writeElementIf(writer, "Runway", plan.properties.value(APPROACHRW));
-      writeElementIf(writer, "Type", plan.properties.value(APPROACHTYPE));
-      writeElementIf(writer, "Suffix", plan.properties.value(APPROACHSUFFIX));
+      writeTextElementIf(writer, "Name", plan.properties.value(APPROACH));
+      writeTextElementIf(writer, "ARINC", plan.properties.value(APPROACH_ARINC));
+      writeTextElementIf(writer, "Runway", plan.properties.value(APPROACHRW));
+      writeTextElementIf(writer, "Type", plan.properties.value(APPROACHTYPE));
+      writeTextElementIf(writer, "Suffix", plan.properties.value(APPROACHSUFFIX));
 
       // Transition =============================================
-      writeElementIf(writer, "Transition", plan.properties.value(TRANSITION));
-      writeElementIf(writer, "TransitionType", plan.properties.value(TRANSITIONTYPE));
+      writeTextElementIf(writer, "Transition", plan.properties.value(TRANSITION));
+      writeTextElementIf(writer, "TransitionType", plan.properties.value(TRANSITIONTYPE));
 
       // Custom approach data =============================================
-      writeElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
-      writeElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
+      writeTextElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
+      writeTextElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
       writer.writeEndElement(); // Approach
     }
     writer.writeEndElement(); // Procedures
@@ -1717,7 +1717,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
       {
         // Write alternates with ident only
         writer.writeStartElement("Alternate");
-        writeElementIf(writer, "Ident", ident);
+        writeTextElementIf(writer, "Ident", ident);
         writer.writeEndElement(); // Alternate
       }
     }
@@ -1871,17 +1871,17 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
     writer.writeTextElement("WorldPosition", entry.getPosition().toLongString());
 
-    writeElementIf(writer, "ATCAirway", entry.getAirway());
+    writeTextElementIf(writer, "ATCAirway", entry.getAirway());
 
     if(msfs && i > 0)
     {
       // Write additional procedure information for MSFS but not for departure airport
-      writeElementIf(writer, "DepartureFP", entry.getSid());
-      writeElementIf(writer, "ArrivalFP", entry.getStar());
-      writeElementIf(writer, "SuffixFP", entry.getApproachSuffix());
-      writeElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
-      writeElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
-      writeElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+      writeTextElementIf(writer, "DepartureFP", entry.getSid());
+      writeTextElementIf(writer, "ArrivalFP", entry.getStar());
+      writeTextElementIf(writer, "SuffixFP", entry.getApproachSuffix());
+      writeTextElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
+      writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
+      writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
@@ -1889,13 +1889,16 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     {
       writer.writeStartElement("ICAO");
 
-      if(!entry.getRegion().isEmpty())
-        writer.writeTextElement("ICAORegion", entry.getRegion());
-      writer.writeTextElement("ICAOIdent", entry.getIdent());
+      if(!msfs || entry.getWaypointType() != atools::fs::pln::entry::AIRPORT)
+        // Avoid region since it is not reliable for airports in MSFS and
+        // the sim garbles the flight plan when loading
+        writeTextElementIf(writer, "ICAORegion", entry.getRegion());
+
+      writeTextElementIf(writer, "ICAOIdent", entry.getIdent());
 
       if(msfs)
         // Write airport for waypoint if available
-        writeElementIf(writer, "ICAOAirport", entry.getAirport());
+        writeTextElementIf(writer, "ICAOAirport", entry.getAirport());
 
       writer.writeEndElement(); // ICAO
     }
