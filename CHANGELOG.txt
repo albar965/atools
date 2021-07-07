@@ -3,6 +3,24 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.14
+
+* Fixed issue where empty folders like `OneStore` in the wrong place confused detection of MSFS. Now
+  also checking for file `.../fs-base/layout.json` in required path.
+* Added support for IVAO JSON 2 format in whazzup parser. Removed unused airport table and unneeded
+  columns from online database schema. Code cleanup and reorganized. #722
+* Adjustments for detection of user aircraft flying to avoid creating log entries for low passes. #693
+* Now logging empty or inaccessible XML and JSON files found while scanning for MSFS or P3D scenery
+  instead of throwing an exception. #720
+* Saving and loading departure type (runway, parking, helipad, etc.) to LNMPLN now.
+* Now computing ARINC approach id (e.g. `I27C`) for all approaches from FSX, P3D and MSFS.
+* Fixed issue where Garmin Base Camp could not load GPX files. Added missing attributes and default
+  namespace.
+* Now avoiding ICAO region when exporting MSFS flight plans since it is not reliable for airports and
+  the sim garbles the flight plan when loading.
+
+===============================================================================
+
 # Version 3.6.13
 
 * Adjusted PLN flight plan export to allow export for ISG gauges.
