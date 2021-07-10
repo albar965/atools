@@ -684,19 +684,19 @@ void SimConnectHandlerPrivate::fillDataDefinition()
 void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId definitionId)
 {
   // Set up the data definition, but do not yet do anything with it
-  api.AddToDataDefinition(definitionId, "Title", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "Title", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Type", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "ATC Type", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Model", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "ATC Model", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Id", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "ATC Id", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Airline", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "ATC Airline", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "ATC Flight Number", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "ATC Flight Number", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
-  api.AddToDataDefinition(definitionId, "Category", NULL, SIMCONNECT_DATATYPE_STRING256);
+  api.AddToDataDefinition(definitionId, "Category", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
   api.AddToDataDefinition(definitionId, "Is User Sim", "bool", SIMCONNECT_DATATYPE_INT32);
 
@@ -728,8 +728,8 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 
   api.AddToDataDefinition(definitionId, "Engine Type", "number", SIMCONNECT_DATATYPE_INT32);
 
-  api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", NULL, SIMCONNECT_DATATYPE_STRING32);
-  api.AddToDataDefinition(definitionId, "AI Traffic Toairport", NULL, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "AI Traffic Fromairport", nullptr, SIMCONNECT_DATATYPE_STRING32);
+  api.AddToDataDefinition(definitionId, "AI Traffic Toairport", nullptr, SIMCONNECT_DATATYPE_STRING32);
 }
 
 // ===============================================================================================
