@@ -1160,7 +1160,12 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
     plan.departurePos = plan.entries.first().getPosition();
 
   if(plan.entries.isEmpty())
-    throw Exception(tr("Invalid LNMPLN flight plan file \"%1\". No waypoints found.").arg(xmlStream.getFilename()));
+  {
+    if(xmlStream.getFilename().isEmpty())
+      throw Exception(tr("Invalid LNMPLN flight plan. No waypoints found."));
+    else
+      throw Exception(tr("Invalid LNMPLN flight plan file \"%1\". No waypoints found.").arg(xmlStream.getFilename()));
+  }
 }
 
 void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& filename)

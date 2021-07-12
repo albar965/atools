@@ -299,6 +299,10 @@ Datei: &quot;%2&quot;
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Ungültige LNMPLN-Flugplandatei &quot;%1&quot;. Keine Wegpunkte gefunden.</translation>
     </message>
+    <message>
+        <source>Invalid LNMPLN flight plan. No waypoints found.</source>
+        <translation>Ungültiger LNMPLN-Flugplan. Keine Wegpunkte gefunden.</translation>
+    </message>
 </context>
 <context>
     <name>GribReader</name>
