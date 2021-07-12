@@ -270,6 +270,10 @@ Atrapada excepción
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Invalid LNMPLN flight plan. No waypoints found.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GribReader</name>
