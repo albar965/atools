@@ -31,7 +31,8 @@ using atools::io::BinaryStream;
 
 ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
 {
-  missed = recType == rec::MISSED_LEGS || recType == rec::MISSED_LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS_NEW;
+  missed = recType == rec::MISSED_LEGS || recType == rec::MISSED_LEGS_MSFS || recType == rec::MISSED_LEGS_MSFS_116 ||
+           recType == rec::MISSED_LEGS_MSFS_118;
 
   type = static_cast<leg::Type>(bs->readUByte());
 
@@ -63,22 +64,14 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
   altitude2 = bs->readFloat();
 
   // Determine type by using record id =============================
-  // New MSFS records since 1.16.1 ======
-  bool msfsNew = recType == rec::LEGS_MSFS_NEW ||
-                 recType == rec::MISSED_LEGS_MSFS_NEW ||
-                 recType == rec::TRANSITION_LEGS_MSFS_NEW ||
-                 recType == rec::RUNWAY_TRANSITION_LEGS_MSFS_NEW ||
-                 recType == rec::COMMON_ROUTE_LEGS_MSFS_NEW ||
-                 recType == rec::ENROUTE_TRANSITION_LEGS_MSFS_NEW;
-
   // Common MSFS records
-  bool msfs = msfsNew ||
-              recType == rec::LEGS_MSFS ||
-              recType == rec::MISSED_LEGS_MSFS ||
-              recType == rec::TRANSITION_LEGS_MSFS ||
-              recType == rec::RUNWAY_TRANSITION_LEGS_MSFS ||
-              recType == rec::COMMON_ROUTE_LEGS_MSFS ||
-              recType == rec::ENROUTE_TRANSITION_LEGS_MSFS;
+  bool msfs = rec::approachRecordTypeMsfs(recType);
+
+  // New MSFS records since 1.16.1 ======
+  bool msfs116 = rec::approachRecordTypeMsfs116(recType);
+
+  // New MSFS records since 1.18.9 ======
+  bool msfs118 = rec::approachRecordTypeMsfs118(recType);
 
   if(msfs)
   {
@@ -87,9 +80,9 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
     bs->readFloat(); // verticalAngle - ignored for now
     bs->skip(8); // unknown
 
-    if(msfsNew)
+    if(msfs116 || msfs118)
     {
-      // New MSFS structure
+      // New MSFS structures
       // Check for constant radius turn legs - these need the center point in the recommended fix
       if(type == leg::RF)
       {
@@ -111,6 +104,10 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
         bs->skip(8);
     }
   }
+
+  if(msfs118)
+    // Unknown data
+    bs->skip(4);
 }
 
 QString ApproachLeg::legTypeToString(leg::Type type)

@@ -243,7 +243,8 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in Runway record 0x" << hex << t << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type in Runway record 0x"
+                                       << hex << t << dec
                                        << " for ident " << airportIdent
                                        << " runway " << primary.getName() << "/" << secondary.getName()
                                        << " offset " << bs->tellg();

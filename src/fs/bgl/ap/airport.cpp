@@ -379,7 +379,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
       default:
 
-        qWarning().noquote().nospace() << "Unknown record" << hex << " 0x" << r.getId()
+        qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
+                                       << hex << " 0x" << r.getId()
                                        << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
 
         if(subrecordIndex == 0)

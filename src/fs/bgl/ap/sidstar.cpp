@@ -74,7 +74,8 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
     switch(recType)
     {
       case rec::COMMON_ROUTE_LEGS_MSFS:
-      case rec::COMMON_ROUTE_LEGS_MSFS_NEW:
+      case rec::COMMON_ROUTE_LEGS_MSFS_116:
+      case rec::COMMON_ROUTE_LEGS_MSFS_118:
         {
           /*
            * The common route legs are similar to the base of an approach, except
@@ -104,7 +105,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           bs->skip(3);
           /* Create a container for the runway. */
           QList<ApproachLeg> legs;
-          /* This will always be followed by 1 RUNWAY_TRANSITION_LEGS_MSFS record */
+          /* This will always be followed by 1 RUNWAY_TRANSITION_LEGS_MSFS(_116|_118) record */
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
@@ -116,7 +117,7 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
 
       case rec::ENROUTE_TRANSITIONS_MSFS:
-      case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
+      case rec::ENROUTE_TRANSITIONS_MSFS_116:
         {
           /*
            * These are effectively the transitions for a SID/STAR. The normal Transition
@@ -126,19 +127,19 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
           QString name;
           (void)bs->readUByte(); /* transitionCt */
           bs->skip(1); /* unknown byte, usually zero */
-          if(rec::ENROUTE_TRANSITIONS_MSFS_NEW == recType)
+          if(rec::ENROUTE_TRANSITIONS_MSFS_116 == recType)
           {
             name = bs->readString(8, atools::io::UTF8);
           }
           /* Create a container for the transition legs */
           QList<ApproachLeg> legs;
-          /* This will always be followed by 1 ENROUTE_TRANSITION_LEGS_MSFS record */
+          /* This will always be followed by 1 ENROUTE_TRANSITION_LEGS_MSFS(_116|_118) record */
           Record legRec(options, bs);
           int numLegs = bs->readUShort();
           for(int i = 0; i < numLegs; i++)
             legs.append(ApproachLeg(bs, legRec.getId<rec::ApprRecordType>()));
 
-          if(rec::ENROUTE_TRANSITIONS_MSFS_NEW != recType)
+          if(rec::ENROUTE_TRANSITIONS_MSFS_116 != recType)
           {
             /* Now to figure out the "key" for this transition... */
             if(rec::MSFS_SID == id)
@@ -161,7 +162,8 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
 
       default:
         /* Shouldn't ever occur, so print error and move on? */
-        qWarning().noquote().nospace() << Q_FUNC_INFO << "Unknown record" << hex << " 0x" << r.getId()
+        qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type " << ident
+                                       << hex << " 0x" << r.getId()
                                        << dec << " " << approachRecordTypeStr(recType) << " offset " << bs->tellg();
 
     }

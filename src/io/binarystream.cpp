@@ -81,7 +81,8 @@ qint64 BinaryStream::tellg() const
 void BinaryStream::skip(qint64 bytes)
 {
   checkStream("skip");
-  is->device()->seek(tellg() + bytes);
+  if(bytes != 0)
+    is->device()->seek(tellg() + bytes);
 }
 
 void BinaryStream::seekg(qint64 pos)

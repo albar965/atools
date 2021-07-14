@@ -133,40 +133,55 @@ enum ApprRecordType
   /* Approach legs */
   LEGS = 0x002d,
   LEGS_MSFS = 0x00e1,
-  LEGS_MSFS_NEW = 0x00ec,
+  LEGS_MSFS_116 = 0x00ec, // Since MSFS version 1.16.1
+  LEGS_MSFS_118 = 0x00f4, // Since MSFS version 1.18.9
 
   /* Missed approache legs */
   MISSED_LEGS = 0x002e,
   MISSED_LEGS_MSFS = 0x00e2,
-  MISSED_LEGS_MSFS_NEW = 0x00ed,
+  MISSED_LEGS_MSFS_116 = 0x00ed,
+  MISSED_LEGS_MSFS_118 = 0x00f5,
 
   /* Approach transitions */
   TRANSITION = 0x002c,
   TRANSITION_MSFS = 0x00e3,
-  TRANSITION_MSFS_NEW = 0x0049,
+  TRANSITION_MSFS_116 = 0x0049,
 
   /* Approach transition legs */
   TRANSITION_LEGS = 0x002f,
   TRANSITION_LEGS_MSFS = 0x00e3,
-  TRANSITION_LEGS_MSFS_NEW = 0x00ee,
+  TRANSITION_LEGS_MSFS_116 = 0x00ee,
+  TRANSITION_LEGS_MSFS_118 = 0x00f6,
 
   /* MSFS SID and STAR */
   RUNWAY_TRANSITIONS_MSFS = 0x0046,
+  COMMON_ROUTE_LEGS_MSFS_118 = 0xf8,
 
   ENROUTE_TRANSITIONS_MSFS = 0x0047,
-  ENROUTE_TRANSITIONS_MSFS_NEW = 0x004a,
+  ENROUTE_TRANSITIONS_MSFS_116 = 0x004a,
 
   RUNWAY_TRANSITION_LEGS_MSFS = 0x00e4,
-  RUNWAY_TRANSITION_LEGS_MSFS_NEW = 0x00ef,
+  RUNWAY_TRANSITION_LEGS_MSFS_116 = 0x00ef,
+  RUNWAY_TRANSITION_LEGS_MSFS_118 = 0x00f7,
 
   COMMON_ROUTE_LEGS_MSFS = 0x00e5,
-  COMMON_ROUTE_LEGS_MSFS_NEW = 0x00f0,
+  COMMON_ROUTE_LEGS_MSFS_116 = 0x00f0,
 
   ENROUTE_TRANSITION_LEGS_MSFS = 0x00e6,
-  ENROUTE_TRANSITION_LEGS_MSFS_NEW = 0x00f1
+  ENROUTE_TRANSITION_LEGS_MSFS_116 = 0x00f1,
+  ENROUTE_TRANSITION_LEGS_MSFS_118 = 0x00f9
 };
 
 QString approachRecordTypeStr(ApprRecordType type);
+
+/* Is type special for MSFS */
+bool approachRecordTypeMsfs(ApprRecordType type);
+
+/* Is type special for MSFS equal or above 1.16.1 */
+bool approachRecordTypeMsfs116(ApprRecordType type);
+
+/* Is type special for MSFS equal or above 1.18.9 */
+bool approachRecordTypeMsfs118(ApprRecordType type);
 
 /* Top level record types for ILS or VOR */
 enum IlsVorRecordType
