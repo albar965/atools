@@ -185,7 +185,7 @@ private:
                         *insertStartQuery = nullptr, *insertParkingQuery = nullptr, *insertAirportFileQuery = nullptr;
 
   QString largestParkingRamp, largestParkingGate;
-  QString airportIdent, airportIcao, airportIata;
+  QString airportIdent, airportIcao, airportIata, airportFaa, airportLocal;
 
   atools::geo::Rect airportRect;
   atools::geo::Pos airportPos, airportDatumPos;

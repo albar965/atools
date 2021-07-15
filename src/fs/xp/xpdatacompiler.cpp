@@ -193,11 +193,22 @@ bool XpDataCompiler::fixDuplicateApt()
   static const QVariant NULLSTR(QVariant::String);
 
   // Get all duplicate idents
-  SqlQuery query("select a1.airport_id as airport_id1, a1.ident as ident1, a1.icao as icao1, a1.iata as iata1, "
-                 "  a1.xpident as xpident1, a1.is_closed as is_closed1, "
-                 "  a2.airport_id as airport_id2, a2.ident as ident2, a2.icao as icao2, a2.iata as iata2, "
+  SqlQuery query("select a1.airport_id as airport_id1, "
+                 "  a1.ident as ident1, "
+                 "  a1.icao as icao1, "
+                 "  a1.iata as iata1, "
+                 "  a1.faa as faa1, a1.local as local1, "
+                 "  a1.xpident as xpident1, "
+                 "  a1.is_closed as is_closed1, "
+                 "  a2.airport_id as airport_id2, "
+                 "  a2.ident as ident2, "
+                 "  a2.icao as icao2, "
+                 "  a2.iata as iata2, "
+                 "  a2.faa as faa2, "
+                 "  a2.local as local2, "
                  "  a2.xpident as xpident2, a2.is_closed as is_closed2 "
-                 "from airport a1 join airport a2 on a1.ident = a2.ident and a1.airport_id < a2.airport_id", db);
+                 "from airport a1 join airport a2 on a1.ident = a2.ident and a1.airport_id < a2.airport_id",
+                 db);
 
   // Update ident and ICAO
   SqlQuery fixAirportQuery(db);
@@ -986,7 +997,8 @@ bool XpDataCompiler::includeFile(const NavDatabaseOptions& opts, const QFileInfo
   else if(fileinfo.isFile())
   {
     // Check if file is included from config file and GUI options
-    if(!opts.isIncludedDirectoryGui(fileinfo.absolutePath()) || !opts.isIncludedFilePathGui(fileinfo.absoluteFilePath()))
+    if(!opts.isIncludedDirectoryGui(fileinfo.absolutePath()) ||
+       !opts.isIncludedFilePathGui(fileinfo.absoluteFilePath()))
       return false;
   }
 

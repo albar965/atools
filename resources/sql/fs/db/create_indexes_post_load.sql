@@ -22,6 +22,8 @@
 
 create index if not exists idx_airport_icao on airport(icao);
 create index if not exists idx_airport_iata on airport(iata);
+create index if not exists idx_airport_local on airport(faa);
+create index if not exists idx_airport_local on airport(local);
 create index if not exists idx_airport_xpident on airport(xpident);
 
 create index if not exists idx_airport_file_ident on airport_file(ident);

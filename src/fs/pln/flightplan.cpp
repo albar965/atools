@@ -49,6 +49,16 @@ float Flightplan::getDistanceNm() const
   return atools::geo::meterToNm(distanceMeter);
 }
 
+QString Flightplan::getFlightplanTypeStr() const
+{
+  QString type;
+  if(getFlightplanType() == atools::fs::pln::IFR)
+    type = tr("IFR");
+  else if(getFlightplanType() == atools::fs::pln::VFR)
+    type = tr("VFR");
+  return type;
+}
+
 QString Flightplan::getDepartureParkingTypeStr() const
 {
   switch(departureParkingType)

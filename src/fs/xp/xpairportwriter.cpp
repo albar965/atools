@@ -1021,6 +1021,10 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     airportIcao = value;
   else if(key == "iata_code")
     airportIata = value;
+  else if(key == "local_code")
+    airportLocal = value;
+  else if(key == "faa_code")
+    airportFaa = value;
   else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
@@ -1456,6 +1460,8 @@ void XpAirportWriter::reset()
   airportRowCode = NO_ROWCODE;
   airportIdent.clear();
   airportIata.clear();
+  airportFaa.clear();
+  airportLocal.clear();
   airportIcao.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
@@ -1497,6 +1503,8 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
 
     insertAirportQuery->bindValue(":ident", apIdent);
     insertAirportQuery->bindValue(":iata", airportIata);
+    insertAirportQuery->bindValue(":faa", airportFaa);
+    insertAirportQuery->bindValue(":local", airportLocal);
 
     // Only used for duplicates
     insertAirportQuery->bindValue(":icao", QVariant(QVariant::String));
