@@ -105,25 +105,31 @@ enum RouteType
   UNKNOWN /* Has to be changed later when resolving the ident to database objects */
 };
 
-/* Common key that are used int flight plan properties that are not supported in PLN.
- * Will be save inside a XML comment in pln files. */
-/* Keys that describe procedures*/
+/*
+ * Common key that are used int flight plan properties that are not supported in PLN.
+ * Used to transport more optional details to the export methods.
+ * Keys that describe procedures */
+
+/* SID, runway and transiton */
 const QLatin1Literal SIDAPPR("sidappr");
 const QLatin1Literal SIDAPPRRW("sidapprrw");
 const QLatin1Literal SIDTRANS("sidtrans");
 
+/* STAR, runway and transiton */
 const QLatin1Literal STAR("star");
 const QLatin1Literal STARRW("starrw");
 const QLatin1Literal STARTRANS("startrans");
 
-const QLatin1Literal TRANSITION("transition");
-const QLatin1Literal TRANSITIONTYPE("transitiontype");
-
+/* Approach, runway and more */
 const QLatin1Literal APPROACH("approach");
 const QLatin1Literal APPROACH_ARINC("approacharinc"); /* ARINC short name for FMS files */
 const QLatin1Literal APPROACHTYPE("approachtype");
 const QLatin1Literal APPROACHRW("approachrw");
 const QLatin1Literal APPROACHSUFFIX("approachsuffix");
+
+/* Approach transiton */
+const QLatin1Literal TRANSITION("transition");
+const QLatin1Literal TRANSITIONTYPE("transitiontype");
 
 /* Name of airway which leads to IAF of a STAR or an approach (-transition) */
 const QLatin1Literal PROCAIRWAY("procairway");

@@ -1887,6 +1887,10 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
       writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
+
+      // For GNS530 and GTN750 mod
+      if(!entry.getApproach().isEmpty())
+        writeTextElementIf(writer, "ApproachTransitionFP", plan.getProperties().value(TRANSITION, QString()));
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
