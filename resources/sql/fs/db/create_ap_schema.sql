@@ -33,7 +33,6 @@ create table airport
   iata varchar(10),                           -- IATA ident if available
   faa varchar(10),                            -- FAA code if available
   local varchar(10),                          -- Local code if available
-  xpident varchar(10),                        -- X-Plane internal ident. Always filled for X-Plane databases.
   name varchar(50) collate nocase,
   city varchar(50) collate nocase,
   state varchar(50) collate nocase,

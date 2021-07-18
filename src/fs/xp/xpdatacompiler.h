@@ -183,9 +183,6 @@ public:
    */
   bool compileCustomApt();
 
-  /* Changes idents of airports which have duplicate ICAO codes */
-  bool fixDuplicateApt();
-
   /* Close all writers and queries */
   void close();
 
