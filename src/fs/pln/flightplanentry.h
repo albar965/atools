@@ -252,16 +252,11 @@ public:
     return approachSuffix;
   }
 
-  void setApproach(const QString& approachType, const QString& suffix)
+  void setApproach(const QString& approachType, const QString& suffix, const QString& transition)
   {
     approach = approachType;
     approachSuffix = suffix;
-  }
-
-  void setApproach(const QString& approachType)
-  {
-    approach = approachType.section('-', 0, 0);
-    approachSuffix = approachType.section('-', 1, 1);
+    approachTransition = transition;
   }
 
   const QString& getRunwayNumber() const
@@ -297,6 +292,31 @@ public:
     return position.isValid();
   }
 
+  const QString& getStarTransition() const
+  {
+    return starTransition;
+  }
+
+  void setStarTransition(const QString& value)
+  {
+    starTransition = value;
+  }
+
+  const QString& getSidTransition() const
+  {
+    return sidTransition;
+  }
+
+  void setSidTransition(const QString& value)
+  {
+    sidTransition = value;
+  }
+
+  const QString& getApproachTransition() const
+  {
+    return approachTransition;
+  }
+
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::FlightplanEntry& record);
 
@@ -310,8 +330,10 @@ private:
   atools::fs::pln::entry::WaypointType waypointType = entry::UNKNOWN;
   QString airway, region, ident, name, comment;
 
-  /* MSFS fields */
-  QString sid, star, approach, approachSuffix, runway, designator, airport;
+  /* MSFS fields - these are set as found in the ATCWaypoint element.
+   * Needed here since the waypoints have to be removed after loading. */
+  QString sid, sidTransition, star, starTransition,
+          approach, approachSuffix, approachTransition, runway, designator, airport;
 
   atools::geo::Pos position;
   atools::fs::pln::entry::Flags flags = atools::fs::pln::entry::NONE;

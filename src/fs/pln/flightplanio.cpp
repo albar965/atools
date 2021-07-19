@@ -1265,8 +1265,8 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       }
 
       // Collect MSFS procedure information from all legs ========================================
-      QString sid, sidRunway, sidRunwayDesignator, star, starRunway, starRunwayDesignator, approach, approachSuffix,
-              approachRunway, approachRunwayDesignator;
+      QString sid, sidRunway, sidRunwayDesignator, sidTransition, star, starRunway, starRunwayDesignator,
+              starTransition, approach, approachSuffix, approachRunway, approachRunwayDesignator, approachTransition;
       for(int i = 0; i < plan.entries.size(); i++)
       {
         FlightplanEntry& entry = plan.entries[i];
@@ -1274,6 +1274,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         {
           // Leg is part of a SID ==========
           sid = entry.getSid();
+          sidTransition = entry.getSidTransition();
           sidRunway = entry.getRunwayNumber();
           sidRunwayDesignator = entry.getRunwayDesignator();
         }
@@ -1281,6 +1282,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         {
           // Leg is part of a STAR ==========
           star = entry.getStar();
+          starTransition = entry.getStarTransition();
           starRunway = entry.getRunwayNumber();
           starRunwayDesignator = entry.getRunwayDesignator();
         }
@@ -1289,6 +1291,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
           // Leg is part of an approach ==========
           approach = entry.getApproach();
           approachSuffix = entry.getApproachSuffix();
+          approachTransition = entry.getApproachTransition();
           approachRunway = entry.getRunwayNumber();
           approachRunwayDesignator = entry.getRunwayDesignator();
         }
@@ -1296,7 +1299,7 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
         if(i == plan.entries.size() - 1)
         {
           // Clear procedure information in destination airport to prevent deletion further down
-          entry.setApproach(QString(), QString());
+          entry.setApproach(QString(), QString(), QString());
           entry.setRunway(QString(), QString());
         }
       }
@@ -1304,11 +1307,11 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // Add MSFS procedure information to properties ========================================
       insertPropertyIf(plan, SIDAPPR, sid);
       insertPropertyIf(plan, SIDAPPRRW, sidRunway + strAt(sidRunwayDesignator, 0));
-      // insertPropertyIf(plan, SIDTRANS, );
+      insertPropertyIf(plan, SIDTRANS, sidTransition);
       insertPropertyIf(plan, STAR, star);
       insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
-      // insertPropertyIf(plan, STARTRANS, );
-      // insertPropertyIf(plan, TRANSITION, );
+      insertPropertyIf(plan, STARTRANS, starTransition);
+      insertPropertyIf(plan, TRANSITION, approachTransition);
       // insertPropertyIf(plan, TRANSITIONTYPE, );
       // insertPropertyIf(plan, APPROACH, approach);
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
@@ -1888,7 +1891,11 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
 
-      // For GNS530 and GTN750 mod
+      // For GNS530 and GTN750 mod =====================
+      if(!entry.getSid().isEmpty())
+        writeTextElementIf(writer, "DepartureTransitionFP", plan.getProperties().value(SIDTRANS, QString()));
+      if(!entry.getStar().isEmpty())
+        writeTextElementIf(writer, "ArrivalTransitionFP", plan.getProperties().value(STARTRANS, QString()));
       if(!entry.getApproach().isEmpty())
         writeTextElementIf(writer, "ApproachTransitionFP", plan.getProperties().value(TRANSITION, QString()));
     }
@@ -4263,7 +4270,7 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
   QXmlStreamReader& reader = xmlStream.getReader();
 
   entry.setIdent(reader.attributes().value("id").toString());
-  QString runway, designator, approach, suffix;
+  QString runway, designator, approach, approachTransition, suffix;
 
   while(xmlStream.readNextStartElement())
   {
@@ -4275,18 +4282,28 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
     else if(name == "ATCAirway")
       entry.setAirway(reader.readElementText());
 
-    else if(name == "RunwayNumberFP") // MSFS
+    // MSFS
+    else if(name == "RunwayNumberFP")
       runway = reader.readElementText();
-    else if(name == "RunwayDesignatorFP") // MSFS
+    else if(name == "RunwayDesignatorFP")
       designator = reader.readElementText();
-    else if(name == "DepartureFP") // MSFS
+    else if(name == "DepartureFP")
       entry.setSid(reader.readElementText());
-    else if(name == "ArrivalFP") // MSFS
+    else if(name == "ArrivalFP")
       entry.setStar(reader.readElementText());
-    else if(name == "ApproachTypeFP") // MSFS
+    else if(name == "ApproachTypeFP")
       approach = reader.readElementText();
-    else if(name == "SuffixFP") // MSFS
+    else if(name == "SuffixFP")
       suffix = reader.readElementText();
+
+    // Transitions - MSFS GNS530 and GTN750 mod
+    else if(name == "DepartureTransitionFP")
+      entry.setSidTransition(reader.readElementText());
+    else if(name == "ArrivalTransitionFP")
+      entry.setStarTransition(reader.readElementText());
+    else if(name == "ApproachTransitionFP")
+      approachTransition = reader.readElementText();
+
     else if(name == "ICAO")
     {
       while(xmlStream.readNextStartElement())
@@ -4306,7 +4323,7 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
       reader.skipCurrentElement();
   }
   entry.setRunway(runway, designator);
-  entry.setApproach(approach, suffix);
+  entry.setApproach(approach, suffix, approachTransition);
 
   plan.entries.append(entry);
 }
