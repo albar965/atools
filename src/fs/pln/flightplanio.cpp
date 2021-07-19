@@ -1307,11 +1307,21 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // Add MSFS procedure information to properties ========================================
       insertPropertyIf(plan, SIDAPPR, sid);
       insertPropertyIf(plan, SIDAPPRRW, sidRunway + strAt(sidRunwayDesignator, 0));
+
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
       insertPropertyIf(plan, SIDTRANS, sidTransition);
+#endif
+
       insertPropertyIf(plan, STAR, star);
       insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
+
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
       insertPropertyIf(plan, STARTRANS, starTransition);
+#endif
+
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
       insertPropertyIf(plan, TRANSITION, approachTransition);
+#endif
       // insertPropertyIf(plan, TRANSITIONTYPE, );
       // insertPropertyIf(plan, APPROACH, approach);
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
@@ -1891,6 +1901,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
 
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
       // For GNS530 and GTN750 mod =====================
       if(!entry.getSid().isEmpty())
         writeTextElementIf(writer, "DepartureTransitionFP", plan.getProperties().value(SIDTRANS, QString()));
@@ -1898,6 +1909,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
         writeTextElementIf(writer, "ArrivalTransitionFP", plan.getProperties().value(STARTRANS, QString()));
       if(!entry.getApproach().isEmpty())
         writeTextElementIf(writer, "ApproachTransitionFP", plan.getProperties().value(TRANSITION, QString()));
+#endif
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
@@ -4296,6 +4308,7 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
     else if(name == "SuffixFP")
       suffix = reader.readElementText();
 
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
     // Transitions - MSFS GNS530 and GTN750 mod
     else if(name == "DepartureTransitionFP")
       entry.setSidTransition(reader.readElementText());
@@ -4303,6 +4316,7 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
       entry.setStarTransition(reader.readElementText());
     else if(name == "ApproachTransitionFP")
       approachTransition = reader.readElementText();
+#endif
 
     else if(name == "ICAO")
     {
