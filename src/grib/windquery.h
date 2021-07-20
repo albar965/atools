@@ -229,6 +229,8 @@ signals:
   /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
   void windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
+  void windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
+
 private:
   /* Wind for grid position */
   WindData windForLayer(const WindAltLayer& layer, const QPoint& point) const;

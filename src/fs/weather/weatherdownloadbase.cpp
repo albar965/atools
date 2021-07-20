@@ -34,6 +34,8 @@ WeatherDownloadBase::WeatherDownloadBase(QObject *parent, MetarFormat format, bo
 
   connect(downloader, &atools::util::HttpDownloader::downloadSslErrors,
           this, &WeatherDownloadBase::weatherDownloadSslErrors);
+  connect(downloader, &atools::util::HttpDownloader::downloadProgress,
+          this, &WeatherDownloadBase::weatherDownloadProgress);
 
   errorStateTimer.setSingleShot(true);
   errorStateTimer.setInterval(180 * 1000);

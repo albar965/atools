@@ -190,6 +190,7 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
   connect(downloader, &GribDownloader::gribDownloadFinished, this, &WindQuery::gribDownloadFinished);
   connect(downloader, &GribDownloader::gribDownloadFailed, this, &WindQuery::gribDownloadFailed);
   connect(downloader, &GribDownloader::gribDownloadSslErrors, this, &WindQuery::windDownloadSslErrors);
+  connect(downloader, &GribDownloader::gribDownloadProgress, this, &WindQuery::windDownloadProgress);
 
   // Set up file watcher for file based updates
   fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
