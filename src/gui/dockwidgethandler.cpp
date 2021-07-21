@@ -506,7 +506,40 @@ bool DockWidgetHandler::isStayOnTop(QWidget *window) const
   return window->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
 }
 
-void DockWidgetHandler::setDockingAllowed(bool value)
+void DockWidgetHandler::setMovingAllowed(bool allow)
+{
+  if(features.isEmpty())
+  {
+    // Create backup
+    for(QDockWidget *dock : dockWidgets)
+      features.append(dock->features());
+  }
+
+  if(allow)
+  {
+    // Restore backup
+    for(int i = 0; i < dockWidgets.size(); i++)
+    {
+      dockWidgets[i]->setFeatures(features.value(i, QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable |
+                                                 QDockWidget::DockWidgetFloatable));
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << dockWidgets[i]->objectName() << "after" << dockWidgets[i]->features();
+    }
+  }
+  else
+  {
+    // Forbid moving for all widgets
+    for(QDockWidget *dock : dockWidgets)
+    {
+      QDockWidget::DockWidgetFeatures f = dock->features();
+      dock->setFeatures(allow ? (f | QDockWidget::DockWidgetMovable) : (f & ~QDockWidget::DockWidgetMovable));
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << dock->objectName() << "before" << f << "after" << dock->features();
+    }
+  }
+}
+
+void DockWidgetHandler::setDockingAllowed(bool allow)
 {
   if(allowedAreas.isEmpty())
   {
@@ -515,18 +548,40 @@ void DockWidgetHandler::setDockingAllowed(bool value)
       allowedAreas.append(dock->allowedAreas());
   }
 
-  if(value)
+  if(allow)
   {
     // Restore backup
     for(int i = 0; i < dockWidgets.size(); i++)
+    {
       dockWidgets[i]->setAllowedAreas(allowedAreas.value(i, Qt::AllDockWidgetAreas));
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << dockWidgets[i]->objectName() << "after" << dockWidgets[i]->allowedAreas();
+    }
   }
   else
   {
     // Forbid docking for all widgets
     for(QDockWidget *dock : dockWidgets)
-      dock->setAllowedAreas(value ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
+    {
+      Qt::DockWidgetAreas a = dock->allowedAreas();
+      dock->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
+      if(verbose)
+        qDebug() << Q_FUNC_INFO << dock->allowedAreas() << "before" << a << "after" << dock->allowedAreas();
+    }
   }
+}
+
+void DockWidgetHandler::setMovingAllowed(QDockWidget *dockWidget, bool allow)
+{
+  if(allow)
+    dockWidget->setFeatures(dockWidget->features() | QDockWidget::DockWidgetMovable);
+  else
+    dockWidget->setFeatures(dockWidget->features() & ~QDockWidget::DockWidgetMovable);
+}
+
+void DockWidgetHandler::setDockingAllowed(QDockWidget *dockWidget, bool allow)
+{
+  dockWidget->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
 }
 
 void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
