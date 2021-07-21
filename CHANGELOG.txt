@@ -3,6 +3,18 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.15
+
+* Added FAA and local ident columns to airport table for X-Plane loader. Removed xpident column in
+  airport table and simplified handling of airport idents. Now always storing ICAO in table if given
+  in X-Plane airport metadata. #706
+* Adapted MSFS scenery library reader code for procedures to new BGL file structure in MSFS since
+  1.18.9. Needed to avoid missing procedures. #735
+* Added function in DockWidgetHandler to forbid window moving by title bar.
+* Database minor version updated to 20.
+
+===============================================================================
+
 # Version 3.6.14
 
 * Fixed issue where empty folders like `OneStore` in the wrong place confused detection of MSFS. Now
