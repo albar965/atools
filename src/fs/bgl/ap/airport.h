@@ -397,9 +397,9 @@ private:
   bool towerObj = false, airportClosed = false,
        msfsStar = false /* Will result in five stars rating*/;
 
-  int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numLightRunway = 0,
-      numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0, numParkingGate = 0,
-      numParkingCargo = 0, numParkingMilitaryCargo = 0, numParkingMilitaryCombat = 0;
+  int numRunwayEndApproachLight = 0, numRunwayEndIls = 0, numRunwayEndClosed = 0, numRunwayFullClosed = 0,
+      numRunwayFullOpen = 0, numLightRunway = 0, numRunwayEndVasi = 0, numJetway = 0, numParkingGaRamp = 0,
+      numParkingGate = 0, numParkingCargo = 0, numParkingMilitaryCargo = 0, numParkingMilitaryCombat = 0;
 
   float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
 

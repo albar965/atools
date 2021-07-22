@@ -11,6 +11,9 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Adapted MSFS scenery library reader code for procedures to new BGL file structure in MSFS since
   1.18.9. Needed to avoid missing procedures. #735
 * Added function in DockWidgetHandler to forbid window moving by title bar.
+* Now checking MSFS airports for open runways to work around inconsistencies between closed/not
+  closed runways and airport closed flag. Example KODX which has airport closed flag set but an
+  open runway.
 * Database minor version updated to 20.
 
 ===============================================================================
