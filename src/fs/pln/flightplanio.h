@@ -249,7 +249,9 @@ private:
   QString coordStringFs9(const atools::geo::Pos& pos);
   void writeWaypointLnm(QXmlStreamWriter& writer, const FlightplanEntry& entry, const QString& elementName);
 
-  QString msfsApproachType(const QString& type);
+  QString approachToMsfs(const QString& type);
+  QString msfsToApproachType(const QString& type);
+
   void saveFlpKeyValue(QTextStream& stream, const atools::fs::pln::Flightplan& plan, const QString& prefix,
                        const QString& key, const QString& property);
 

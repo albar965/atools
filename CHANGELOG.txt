@@ -14,6 +14,7 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Now checking MSFS airports for open runways to work around inconsistencies between closed/not
   closed runways and airport closed flag. Example KODX which has airport closed flag set but an
   open runway.
+* Fixed issue where localizer approaches were not recognized when loading MSFS PLN files.
 * Database minor version updated to 20.
 
 ===============================================================================

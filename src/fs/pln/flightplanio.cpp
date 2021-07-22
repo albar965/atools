@@ -1308,24 +1308,13 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       insertPropertyIf(plan, SIDAPPR, sid);
       insertPropertyIf(plan, SIDAPPRRW, sidRunway + strAt(sidRunwayDesignator, 0));
 
-#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
-      insertPropertyIf(plan, SIDTRANS, sidTransition);
-#endif
-
       insertPropertyIf(plan, STAR, star);
       insertPropertyIf(plan, STARRW, starRunway + strAt(starRunwayDesignator, 0));
 
-#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
-      insertPropertyIf(plan, STARTRANS, starTransition);
-#endif
-
-#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
-      insertPropertyIf(plan, TRANSITION, approachTransition);
-#endif
       // insertPropertyIf(plan, TRANSITIONTYPE, );
       // insertPropertyIf(plan, APPROACH, approach);
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
-      insertPropertyIf(plan, APPROACHTYPE, approach);
+      insertPropertyIf(plan, APPROACHTYPE, msfsToApproachType(approach));
       insertPropertyIf(plan, APPROACHSUFFIX, approachSuffix);
       insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
 
@@ -1897,19 +1886,9 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
       writeTextElementIf(writer, "DepartureFP", entry.getSid());
       writeTextElementIf(writer, "ArrivalFP", entry.getStar());
       writeTextElementIf(writer, "SuffixFP", entry.getApproachSuffix());
-      writeTextElementIf(writer, "ApproachTypeFP", msfsApproachType(entry.getApproach()));
+      writeTextElementIf(writer, "ApproachTypeFP", approachToMsfs(entry.getApproach()));
       writeTextElementIf(writer, "RunwayNumberFP", entry.getRunwayNumber());
       writeTextElementIf(writer, "RunwayDesignatorFP", entry.getRunwayDesignator());
-
-#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
-      // For GNS530 and GTN750 mod =====================
-      if(!entry.getSid().isEmpty())
-        writeTextElementIf(writer, "DepartureTransitionFP", plan.getProperties().value(SIDTRANS, QString()));
-      if(!entry.getStar().isEmpty())
-        writeTextElementIf(writer, "ArrivalTransitionFP", plan.getProperties().value(STARTRANS, QString()));
-      if(!entry.getApproach().isEmpty())
-        writeTextElementIf(writer, "ApproachTransitionFP", plan.getProperties().value(TRANSITION, QString()));
-#endif
     }
 
     if(entry.getWaypointType() != atools::fs::pln::entry::USER &&
@@ -1964,13 +1943,21 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
 }
 
-QString FlightplanIO::msfsApproachType(const QString& type)
+QString FlightplanIO::approachToMsfs(const QString& type)
 {
   if(type == "LOC")
     return "LOCALIZER";
   else
     // GPS (not saved by MSFS), VOR, VORDME, RNAV, NDBDME, NDB, ILS
     // TACAN not supported
+    return type;
+}
+
+QString FlightplanIO::msfsToApproachType(const QString& type)
+{
+  if(type == "LOCALIZER")
+    return "LOC";
+  else
     return type;
 }
 
@@ -4307,16 +4294,6 @@ void FlightplanIO::readWaypointPln(atools::fs::pln::Flightplan& plan, atools::ut
       approach = reader.readElementText();
     else if(name == "SuffixFP")
       suffix = reader.readElementText();
-
-#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
-    // Transitions - MSFS GNS530 and GTN750 mod
-    else if(name == "DepartureTransitionFP")
-      entry.setSidTransition(reader.readElementText());
-    else if(name == "ArrivalTransitionFP")
-      entry.setStarTransition(reader.readElementText());
-    else if(name == "ApproachTransitionFP")
-      approachTransition = reader.readElementText();
-#endif
 
     else if(name == "ICAO")
     {
