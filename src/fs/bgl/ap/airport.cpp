@@ -379,7 +379,8 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
       default:
 
-        qWarning().noquote().nospace() << "Unknown record" << hex << " 0x" << r.getId()
+        qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
+                                       << hex << " 0x" << r.getId()
                                        << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
 
         if(subrecordIndex == 0)
@@ -635,16 +636,29 @@ void Airport::updateSummaryFields()
     if(secondary.getLeftVasi().getType() != rw::NONE || secondary.getRightVasi().getType() != rw::NONE)
       numRunwayEndVasi++;
 
+    if(bgl::util::isFlagNotSet(rw.getMarkingFlags(), rw::PRIMARY_CLOSED) &&
+       bgl::util::isFlagNotSet(rw.getMarkingFlags(), rw::SECONDARY_CLOSED))
+      numRunwayFullOpen++;
+
+    if(bgl::util::isFlagSet(rw.getMarkingFlags(), rw::PRIMARY_CLOSED) &&
+       bgl::util::isFlagSet(rw.getMarkingFlags(), rw::SECONDARY_CLOSED))
+      numRunwayFullClosed++;
+
     if(bgl::util::isFlagSet(rw.getMarkingFlags(), rw::PRIMARY_CLOSED))
       numRunwayEndClosed++;
+
     if(bgl::util::isFlagSet(rw.getMarkingFlags(), rw::SECONDARY_CLOSED))
       numRunwayEndClosed++;
   }
 
   // If all runways are closed the airport is closed ...
-  // Closed flag might be set earlier by MSFS flag
+  // Closed flag might be set earlier by MSFS flag - correct this here
   if(!airportClosed)
-    airportClosed = !runways.isEmpty() && numRunwayEndClosed / 2 == runways.size();
+    // Not closed so far - Closed if we have runways and all ends are closed
+    airportClosed = !runways.isEmpty() && numRunwayFullClosed == runways.size();
+  else if(opts->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
+    // Closed so far (MSFS) - Open again if there is at least one fully open runway
+    airportClosed = !runways.isEmpty() && numRunwayFullOpen == 0;
 
   // ... except if there are open helipads
   for(const Helipad& pad : helipads)

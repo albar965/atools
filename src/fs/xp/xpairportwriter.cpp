@@ -1021,6 +1021,10 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     airportIcao = value;
   else if(key == "iata_code")
     airportIata = value;
+  else if(key == "local_code")
+    airportLocal = value;
+  else if(key == "faa_code")
+    airportFaa = value;
   else if(key == "city")
     insertAirportQuery->bindValue(":city", value);
   else if(key == "country")
@@ -1456,6 +1460,8 @@ void XpAirportWriter::reset()
   airportRowCode = NO_ROWCODE;
   airportIdent.clear();
   airportIata.clear();
+  airportFaa.clear();
+  airportLocal.clear();
   airportIcao.clear();
   runwayEndRecords.clear();
   runwayGeometry.clear();
@@ -1477,35 +1483,17 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
       qDebug() << Q_FUNC_INFO << context.messagePrefix() << "Writing curAirportId" << curAirportId
                << "airportIdent" << airportIdent;
 
-    // Ident: Airport ICAO code. If no ICAO code exists, use X +
-    // local identifier to create fictional code.
-    // Maximum seven characters. Must be unique.
-
-    // Determine best ident - preferrably ICAO
-
-    // Set always for disambiguation and add-on overloading
-    insertAirportQuery->bindValue(":xpident", airportIdent);
-
-    QString apIdent;
-
-    if(airportIdent == airportIcao || airportIcao.isEmpty())
-      // Ident is equal to ICAO or no ICAO - fill only ident which is considered ICAO
-      apIdent = airportIdent;
-    else
-      // Not equal and ICAO given - use ICAO as ident
-      apIdent = airportIcao;
-
-    insertAirportQuery->bindValue(":ident", apIdent);
+    insertAirportQuery->bindValue(":ident", airportIdent);
     insertAirportQuery->bindValue(":iata", airportIata);
+    insertAirportQuery->bindValue(":icao", airportIcao);
+    insertAirportQuery->bindValue(":faa", airportFaa);
+    insertAirportQuery->bindValue(":local", airportLocal);
 
-    // Only used for duplicates
-    insertAirportQuery->bindValue(":icao", QVariant(QVariant::String));
-
-    airportIndex->addAirportId(apIdent, curAirportId);
+    airportIndex->addAirportId(airportIdent, curAirportId);
     for(const Runway& rw : runways)
     {
-      airportIndex->addRunwayEnd(apIdent, rw.primaryName, rw.primaryEndId);
-      airportIndex->addRunwayEnd(apIdent, rw.secondaryName, rw.secondaryEndId);
+      airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId);
+      airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId);
     }
 
     // Update counts

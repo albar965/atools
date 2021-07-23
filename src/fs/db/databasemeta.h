@@ -143,9 +143,9 @@ public:
    * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
    *    New table translation for MSFS language files.
-   *
+   * 20 Added faa and local columns to database tables. Remove xpident column.
    */
-  static const int DB_VERSION_MINOR = 19;
+  static const int DB_VERSION_MINOR = 20;
 
   void init();
 

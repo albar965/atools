@@ -183,7 +183,8 @@ void AirportWriter::writeObject(const Airport *type)
     bind(":ident", ident);
     bindNullString(":icao");
     bindNullString(":iata");
-    bindNullString(":xpident");
+    bindNullString(":faa");
+    bindNullString(":local");
 
     bind(":fuel_flags", type->getFuelFlags());
 

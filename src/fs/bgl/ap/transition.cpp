@@ -126,7 +126,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec:
     dmeDist = 0.f;
   }
 
-  if(recType == rec::TRANSITION_MSFS_NEW)
+  if(recType == rec::TRANSITION_MSFS_116)
     bs->skip(8);
 
   while(bs->tellg() < startOffset + size)
@@ -140,7 +140,8 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec:
     {
       case rec::TRANSITION_LEGS:
       case rec::TRANSITION_LEGS_MSFS:
-      case rec::TRANSITION_LEGS_MSFS_NEW:
+      case rec::TRANSITION_LEGS_MSFS_116:
+      case rec::TRANSITION_LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
@@ -150,7 +151,7 @@ Transition::Transition(const NavDatabaseOptions *options, BinaryStream *bs, rec:
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in transition record 0x" << hex << recType << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << recType << dec
                                        << " for airport ident " << fixAirportIdent;
     }
     r.seekToEnd();

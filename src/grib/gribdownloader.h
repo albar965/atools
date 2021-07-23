@@ -113,6 +113,8 @@ signals:
   /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
   void gribDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
+  void gribDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
+
 private:
   void downloadFinished(const QByteArray& data, QString downloadUrl);
   void downloadFailed(const QString& error, int errorCode, QString downloadUrl);

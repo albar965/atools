@@ -348,8 +348,11 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::LEGS_MSFS:
       return "LEGS_MSFS";
 
-    case rec::LEGS_MSFS_NEW:
-      return "LEGS_MSFS_NEW";
+    case rec::LEGS_MSFS_116:
+      return "LEGS_MSFS_116";
+
+    case rec::LEGS_MSFS_118:
+      return "LEGS_MSFS_118";
 
     case rec::MISSED_LEGS:
       return "MISSED_LEGS";
@@ -357,8 +360,11 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::MISSED_LEGS_MSFS:
       return "MISSED_LEGS_MSFS";
 
-    case rec::MISSED_LEGS_MSFS_NEW:
-      return "MISSED_LEGS_MSFS_NEW";
+    case rec::MISSED_LEGS_MSFS_116:
+      return "MISSED_LEGS_MSFS_116";
+
+    case rec::MISSED_LEGS_MSFS_118:
+      return "MISSED_LEGS_MSFS_118";
 
     case rec::TRANSITION:
       return "TRANSITION";
@@ -368,14 +374,17 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
       // case rec::TRANSITION_LEGS_MSFS: Duplicate in MSFS record definition
       return "TRANSITION_MSFS/TRANSITION_LEGS_MSFS";
 
-    case rec::TRANSITION_MSFS_NEW:
-      return "TRANSITION_MSFS_NEW";
+    case rec::TRANSITION_LEGS_MSFS_118:
+      return "TRANSITION_LEGS_MSFS_118";
+
+    case rec::TRANSITION_MSFS_116:
+      return "TRANSITION_MSFS_116";
 
     case rec::TRANSITION_LEGS:
       return "TRANSITION_LEGS";
 
-    case rec::TRANSITION_LEGS_MSFS_NEW:
-      return "TRANSITION_LEGS_MSFS_NEW";
+    case rec::TRANSITION_LEGS_MSFS_116:
+      return "TRANSITION_LEGS_MSFS_116";
 
     case rec::RUNWAY_TRANSITIONS_MSFS:
       return "RUNWAY_TRANSITIONS_MSFS";
@@ -383,26 +392,26 @@ QString approachRecordTypeStr(rec::ApprRecordType type)
     case rec::ENROUTE_TRANSITIONS_MSFS:
       return "ENROUTE_TRANSITIONS_MSFS";
 
-    case rec::ENROUTE_TRANSITIONS_MSFS_NEW:
-      return "ENROUTE_TRANSITIONS_MSFS_NEW";
+    case rec::ENROUTE_TRANSITIONS_MSFS_116:
+      return "ENROUTE_TRANSITIONS_MSFS_116";
 
     case rec::RUNWAY_TRANSITION_LEGS_MSFS:
       return "RUNWAY_TRANSITION_LEGS_MSFS";
 
-    case rec::RUNWAY_TRANSITION_LEGS_MSFS_NEW:
-      return "RUNWAY_TRANSITION_LEGS_MSFS_NEW";
+    case rec::RUNWAY_TRANSITION_LEGS_MSFS_116:
+      return "RUNWAY_TRANSITION_LEGS_MSFS_116";
 
     case rec::COMMON_ROUTE_LEGS_MSFS:
       return "COMMON_ROUTE_LEGS_MSFS";
 
-    case rec::COMMON_ROUTE_LEGS_MSFS_NEW:
-      return "COMMON_ROUTE_LEGS_MSFS_NEW";
+    case rec::COMMON_ROUTE_LEGS_MSFS_116:
+      return "COMMON_ROUTE_LEGS_MSFS_116";
 
     case rec::ENROUTE_TRANSITION_LEGS_MSFS:
       return "ENROUTE_TRANSITION_LEGS_MSFS";
 
-    case rec::ENROUTE_TRANSITION_LEGS_MSFS_NEW:
-      return "ENROUTE_TRANSITION_LEGS_MSFS_NEW";
+    case rec::ENROUTE_TRANSITION_LEGS_MSFS_116:
+      return "ENROUTE_TRANSITION_LEGS_MSFS_116";
   }
   qWarning().nospace().noquote() << "Invalid approach record type " << type;
   return "INVALID";
@@ -484,6 +493,41 @@ QString boundaryRecordTypeStr(rec::BoundaryRecordType type)
   }
   qWarning().nospace().noquote() << "Invalid boundary record type " << type;
   return "INVALID";
+}
+
+bool approachRecordTypeMsfs(ApprRecordType type)
+{
+  // Common MSFS records
+  return approachRecordTypeMsfs116(type) ||
+         approachRecordTypeMsfs118(type) ||
+         type == rec::LEGS_MSFS ||
+         type == rec::MISSED_LEGS_MSFS ||
+         type == rec::TRANSITION_LEGS_MSFS ||
+         type == rec::RUNWAY_TRANSITION_LEGS_MSFS ||
+         type == rec::COMMON_ROUTE_LEGS_MSFS ||
+         type == rec::ENROUTE_TRANSITION_LEGS_MSFS;
+}
+
+bool approachRecordTypeMsfs116(ApprRecordType type)
+{
+  // New MSFS records since 1.16.1 ======
+  return type == rec::LEGS_MSFS_116 ||
+         type == rec::MISSED_LEGS_MSFS_116 ||
+         type == rec::TRANSITION_LEGS_MSFS_116 ||
+         type == rec::RUNWAY_TRANSITION_LEGS_MSFS_116 ||
+         type == rec::COMMON_ROUTE_LEGS_MSFS_116 ||
+         type == rec::ENROUTE_TRANSITION_LEGS_MSFS_116;
+}
+
+bool approachRecordTypeMsfs118(ApprRecordType type)
+{
+  // New MSFS records since 1.18.9 ======
+  return type == rec::LEGS_MSFS_118 ||
+         type == rec::MISSED_LEGS_MSFS_118 ||
+         type == rec::TRANSITION_LEGS_MSFS_118 ||
+         type == rec::COMMON_ROUTE_LEGS_MSFS_118 ||
+         type == rec::ENROUTE_TRANSITION_LEGS_MSFS_118 ||
+         type == rec::RUNWAY_TRANSITION_LEGS_MSFS_118;
 }
 
 } // namespace rec

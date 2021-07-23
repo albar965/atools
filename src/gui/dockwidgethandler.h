@@ -123,7 +123,16 @@ public:
   void setStayOnTopMain(bool value) const;
 
   /* Forbid docking if value is false. */
-  void setDockingAllowed(bool value);
+  void setDockingAllowed(bool allow);
+
+  /* For one single widget not managed by this handler. */
+  static void setDockingAllowed(QDockWidget *dockWidget, bool allow);
+
+  /* Forbid moving by click in title bar if value is false. */
+  void setMovingAllowed(bool allow);
+
+  /* For one single widget not managed by this handler. */
+  static void setMovingAllowed(QDockWidget *dockWidget, bool allow);
 
   /* Closes all docks, toolbars and menu bar depending on flags and sets the mainwindow to full screen.
    * Window will only be maximized depending on flags.
@@ -207,6 +216,9 @@ private:
 
   /* Backup of allowed areas used when calling setDockingAllowed() */
   QVector<Qt::DockWidgetAreas> allowedAreas;
+
+  /* Backup of features used when calling setMovingAllowed() */
+  QVector<QDockWidget::DockWidgetFeatures> features;
 
   /* Saved state of main window including dock widgets and toolbars */
   MainWindowState *normalState, *fullscreenState;

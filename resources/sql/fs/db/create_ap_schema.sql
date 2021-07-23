@@ -31,7 +31,8 @@ create table airport
   ident varchar(10) not null,                 -- ICAO ident or X-Plane internal airport ID for duplicate ICAO
   icao varchar(10),                           -- ICAO ident if available and different from ident
   iata varchar(10),                           -- IATA ident if available
-  xpident varchar(10),                        -- X-Plane internal ident. Always filled for X-Plane databases.
+  faa varchar(10),                            -- FAA code if available
+  local varchar(10),                          -- Local code if available
   name varchar(50) collate nocase,
   city varchar(50) collate nocase,
   state varchar(50) collate nocase,
@@ -139,6 +140,8 @@ create table airport_medium
   ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
   icao varchar(10),                           -- ICAO ident
   iata varchar(10),                           -- IATA ident if available
+  faa varchar(10),                            -- FAA code if available
+  local varchar(10),                          -- Local code if available
   name varchar(50) collate nocase,
   has_avgas integer not null,
   has_jetfuel integer not null,
@@ -174,6 +177,8 @@ create table airport_large
   ident varchar(10) not null,                 -- ICAO ident or X-Plane airport ID
   icao varchar(10),                           -- ICAO ident
   iata varchar(10),                           -- IATA ident if available
+  faa varchar(10),                            -- FAA code if available
+  local varchar(10),                          -- Local code if available
   name varchar(50) collate nocase,
   has_avgas integer not null,
   has_jetfuel integer not null,

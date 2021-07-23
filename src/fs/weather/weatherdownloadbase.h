@@ -89,6 +89,9 @@ signals:
   /* Emitted on SSL errors. Call setIgnoreSslErrors to ignore future errors and continue.  */
   void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
+  /* Emitted during download */
+  void weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
+
 protected:
   virtual void startDownload();
 

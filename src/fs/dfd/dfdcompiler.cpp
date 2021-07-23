@@ -155,9 +155,11 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
     if(iata.isEmpty())
-      airportWriteQuery->bindValue(":iata", QVariant::String);
+      airportWriteQuery->bindNullStr(":iata");
     else
       airportWriteQuery->bindValue(":iata", iata);
+    airportWriteQuery->bindNullStr(":faa");
+    airportWriteQuery->bindNullStr(":local");
 
     airportWriteQuery->bindValue(":name", utl::capAirportName(airportQuery->valueStr("airport_name")));
     airportWriteQuery->bindValue(":country", airportQuery->valueStr("area_code"));

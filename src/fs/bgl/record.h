@@ -59,14 +59,6 @@ public:
 
   }
 
-  Record& operator=(const atools::fs::bgl::Record& other)
-  {
-    id = other.id;
-    size = other.size;
-    excluded = other.excluded;
-    return *this;
-  }
-
   /*
    * Reads the first part of the record namely the record id and the record size.
    * The stream is advanced by 6 bytes for this.
@@ -74,6 +66,14 @@ public:
   Record(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs);
 
   virtual ~Record() override;
+
+  Record& operator=(const atools::fs::bgl::Record& other)
+  {
+    id = other.id;
+    size = other.size;
+    excluded = other.excluded;
+    return *this;
+  }
 
   /*
    * Seek past the end of the record to a new record.

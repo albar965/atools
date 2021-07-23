@@ -153,7 +153,7 @@ void TabWidgetHandler::tableContextMenu(const QPoint& pos)
   int index = tabWidget->tabBar()->tabAt(pos);
   if(index != -1 && tabWidget->count() > 1)
     // Enabled
-    closeAction->setText(tr("&Close tab %1").arg(tabWidget->tabText(index).remove('&')));
+    closeAction->setText(tr("&Close tab %1").arg(tabWidget->tabText(index).remove(QChar('&'))));
   else
   {
     // Not over tab
@@ -206,7 +206,7 @@ void TabWidgetHandler::init(const QVector<int>& tabIdsParam, const QString& sett
     QAction *action = new QAction(name, toolButtonCorner->menu());
     action->setCheckable(true);
     action->setChecked(true);
-    QString tooltip = tr("Open or close tab %1").arg(name).remove('&');
+    QString tooltip = tr("Open or close tab %1").arg(name).remove(QChar('&'));
     action->setToolTip(tooltip);
     action->setStatusTip(tooltip);
     action->setData(id);

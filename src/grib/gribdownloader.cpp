@@ -42,6 +42,7 @@ GribDownloader::GribDownloader(QObject *parent, bool logVerbose = false)
   connect(downloader, &HttpDownloader::downloadFinished, this, &GribDownloader::downloadFinished);
   connect(downloader, &HttpDownloader::downloadFailed, this, &GribDownloader::downloadFailed);
   connect(downloader, &HttpDownloader::downloadSslErrors, this, &GribDownloader::gribDownloadSslErrors);
+  connect(downloader, &HttpDownloader::downloadProgress, this, &GribDownloader::gribDownloadProgress);
 }
 
 GribDownloader::~GribDownloader()

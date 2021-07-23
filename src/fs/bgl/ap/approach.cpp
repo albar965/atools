@@ -71,7 +71,8 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
     {
       case rec::LEGS:
       case rec::LEGS_MSFS:
-      case rec::LEGS_MSFS_NEW:
+      case rec::LEGS_MSFS_116:
+      case rec::LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
@@ -82,7 +83,8 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
 
       case rec::MISSED_LEGS:
       case rec::MISSED_LEGS_MSFS:
-      case rec::MISSED_LEGS_MSFS_NEW:
+      case rec::MISSED_LEGS_MSFS_116:
+      case rec::MISSED_LEGS_MSFS_118:
         if(options->isIncludedNavDbObject(type::APPROACHLEG))
         {
           int num = bs->readUShort();
@@ -93,13 +95,13 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
 
       case rec::TRANSITION:
       case rec::TRANSITION_MSFS:
-      case rec::TRANSITION_MSFS_NEW:
+      case rec::TRANSITION_MSFS_116:
         r.seekToStart();
         transitions.append(Transition(options, bs, recType));
         break;
 
       default:
-        qWarning().nospace().noquote() << "Unexpected record type in approach record 0x" << hex << recType << dec
+        qWarning().nospace().noquote() << Q_FUNC_INFO << " Unexpected record type 0x" << hex << recType << dec
                                        << " for airport ident " << fixAirportIdent << " offset " << bs->tellg();
     }
     r.seekToEnd();

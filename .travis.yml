@@ -37,7 +37,7 @@ install:
 
 before_script:
     # Clone atoolstest VERSION_NUMBER - atoolstest
-    - git clone --branch=release/1.0 https://github.com/albar965/atoolstest.git ../atoolstest
+    - git clone --branch=master https://github.com/albar965/atoolstest.git ../atoolstest
 
     # Download and extract needed files for the tests
     - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'

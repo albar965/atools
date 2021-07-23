@@ -80,6 +80,9 @@ public:
     return flightplanType;
   }
 
+  /* IFR or VFR */
+  QString getFlightplanTypeStr() const;
+
   void setFlightplanType(atools::fs::pln::FlightplanType value)
   {
     flightplanType = value;

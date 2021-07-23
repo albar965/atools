@@ -49,7 +49,7 @@ create index if not exists idx_airway_name on airway(airway_name);
 delete from airport_large;
 
 insert into airport_large select
-  airport_id, ident, icao, iata, name,
+  airport_id, ident, icao, iata, faa, local, name,
   has_avgas, has_jetfuel, tower_frequency,
   is_closed, is_military, is_addon, is_3d,
   num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
@@ -80,7 +80,7 @@ create index if not exists idx_airport_large_is_3d on airport_large(is_3d);
 delete from airport_medium;
 
 insert into airport_medium select
-  airport_id, ident, icao, iata, name,
+  airport_id, ident, icao, iata, faa, local, name,
   has_avgas, has_jetfuel, tower_frequency,
   is_closed, is_military, is_addon, is_3d,
   num_runway_hard, num_runway_soft, num_runway_water, num_helipad,
