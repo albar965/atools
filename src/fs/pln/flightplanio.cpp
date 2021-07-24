@@ -1316,7 +1316,9 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
       insertPropertyIf(plan, APPROACHTYPE, msfsToApproachType(approach));
       insertPropertyIf(plan, APPROACHSUFFIX, approachSuffix);
-      insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
+
+      if(!approachRunway.isEmpty())
+        insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
 
       // Remove the procedure legs ============================
       plan.entries.erase(std::remove_if(plan.entries.begin(), plan.entries.end(),
@@ -1947,6 +1949,8 @@ QString FlightplanIO::approachToMsfs(const QString& type)
 {
   if(type == "LOC")
     return "LOCALIZER";
+  else if(type == "LOCB")
+    return "LOCALIZER_BACK_COURSE";
   else
     // GPS (not saved by MSFS), VOR, VORDME, RNAV, NDBDME, NDB, ILS
     // TACAN not supported
@@ -1957,6 +1961,8 @@ QString FlightplanIO::msfsToApproachType(const QString& type)
 {
   if(type == "LOCALIZER")
     return "LOC";
+  else if(type == "LOCALIZER_BACK_COURSE")
+    return "LOCB";
   else
     return type;
 }

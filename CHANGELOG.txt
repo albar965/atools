@@ -15,6 +15,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   closed runways and airport closed flag. Example KODX which has airport closed flag set but an
   open runway.
 * Fixed issue where localizer approaches were not recognized when loading MSFS PLN files.
+* Corrected export for circling approaches and localizer backcourse approaches in MSFS PLN which
+  can now be loaded.
 * Database minor version updated to 20.
 
 ===============================================================================
