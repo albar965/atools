@@ -93,6 +93,29 @@ void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
     dest.append(type);
 }
 
+/* Functions for safe insert that allow and index < 0 and > size + 1 */
+template<typename TYPE>
+void insertInto(QList<TYPE>& list, int index, const TYPE& type)
+{
+  if(index < 0)
+    list.prepend(type);
+  else if(index > list.size())
+    list.append(type);
+  else
+    list.insert(index, type);
+}
+
+template<typename TYPE>
+void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
+{
+  if(index < 0)
+    list.prepend(type);
+  else if(index > list.size())
+    list.append(type);
+  else
+    list.insert(index, type);
+}
+
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
 
