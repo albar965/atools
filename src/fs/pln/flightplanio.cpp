@@ -3197,6 +3197,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
+    bool hasDeparture = !plan.properties.value(SIDAPPR).isEmpty();
+    bool hasAnyArrival = !plan.properties.value(STAR).isEmpty() || !plan.properties.value(APPROACH_ARINC).isEmpty();
+
     int numEntries = numEntriesSave(plan);
     QTextStream stream(&fmsFile);
     stream.setCodec("UTF-8");
@@ -3219,11 +3222,13 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       stream << "CYCLE " << cycle << endl;
 
-      // Departure
+      // Departure ==============================
       QString departureIdent = plan.getDepartureIdent();
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT && departureIdent.size() <= 4)
+      if(plan.entries.first().getWaypointType() == entry::AIRPORT && hasDeparture)
+        // Departure is airport and we have a departure procedure
         stream << "ADEP " << departureIdent << endl;
       else
+        // Use any point
         stream << "DEP " << departureIdent << endl;
 
       // Departure - SID
@@ -3236,11 +3241,13 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(!plan.properties.value(SIDTRANS).isEmpty())
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
-      // Destination
+      // Destination =============================
       QString destinationIdent = plan.getDestinationIdent();
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT && destinationIdent.size() <= 4)
+      if(plan.entries.last().getWaypointType() == entry::AIRPORT && hasAnyArrival)
+        // Destination is airport and we have a STAR or an approach
         stream << "ADES " << destinationIdent << endl;
       else
+        // Use any point
         stream << "DES " << destinationIdent << endl;
 
       // Arrival runway
@@ -3276,6 +3283,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << (numEntries - 1) << endl; // Number of waypoints
     }
 
+    // Waypoints ======================================
     int index = 0;
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -3320,9 +3328,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(version11Format)
       {
         if(index == 0)
-          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADEP " : "DEP ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
         else if(index == numEntries - 1)
-          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADES " : "DES ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
         else
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }

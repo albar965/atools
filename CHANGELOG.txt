@@ -17,6 +17,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 * Fixed issue where localizer approaches were not recognized when loading MSFS PLN files.
 * Corrected export for circling approaches and localizer backcourse approaches in MSFS PLN which
   can now be loaded.
+* Fixed issues with X-Plane flight plan export where airports have an internal ident different from
+  official ICAO and FAA codes.
 * Database minor version updated to 20.
 
 ===============================================================================
