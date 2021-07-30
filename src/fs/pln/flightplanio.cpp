@@ -3208,9 +3208,6 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
     // File version
     if(version11Format)
     {
-      bool hasDeparture = !plan.properties.value(SIDAPPR).isEmpty();
-      bool hasAnyArrival = !plan.properties.value(STAR).isEmpty() || !plan.properties.value(APPROACH_ARINC).isEmpty();
-
       // New X-Plane 11 format
       stream << "1100 Version" << endl;
 
@@ -3225,8 +3222,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       // Departure ==============================
       QString departureIdent = plan.getDepartureIdent().left(6);
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT && (departureIdent.size() <= 4 || hasDeparture))
-        // Departure is normal airport id or there is a SID - does not work for all airports
+      if(plan.entries.first().getWaypointType() == entry::AIRPORT &&
+         !plan.properties.contains(AIRPORT_DEPARTURE_NO_AIRPORT))
+        // Departure is normal airport id or there is a SID
         stream << "ADEP " << departureIdent << endl;
       else
         // Use any point
@@ -3244,8 +3242,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       // Destination =============================
       QString destinationIdent = plan.getDestinationIdent().left(6);
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT && (destinationIdent.size() <= 4 || hasAnyArrival))
-        // Destination is normal airport id or there is a STAR or an approach - does not work for all airports
+      if(plan.entries.last().getWaypointType() == entry::AIRPORT &&
+         !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
+        // Destination is normal airport id or there is a STAR or an approach
         stream << "ADES " << destinationIdent << endl;
       else
         // Use any point
@@ -3317,7 +3316,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 " << ident << " ";
+          stream << "1 " << ident.left(6) << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
           stream << "11 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
