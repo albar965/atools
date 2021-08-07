@@ -3,6 +3,16 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.16
+
+* Fixed X-Plane FMS export to always use ADEP/ADES keywords for airports except for those with long
+  internal id or those with ICAO, FAA or local id not equal to internal id. This avoids loading
+  issues in X-Plane FMS and third party tools. #741
+* Now truncating all X-Plane airport idents to six characters. Also the ones used in intermediate
+  waypoints. #741
+
+===============================================================================
+
 # Version 3.6.15
 
 * Added FAA and local ident columns to airport table for X-Plane loader. Removed xpident column in

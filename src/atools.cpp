@@ -34,7 +34,7 @@ const static QChar SEP(QDir::separator());
 
 QString version()
 {
-  return "3.6.15"; // VERSION_NUMBER - atools
+  return "3.6.16"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()
