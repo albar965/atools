@@ -52,6 +52,12 @@ public:
   template<class OUT>
   int printResultSet(atools::sql::SqlQuery& query, OUT& out);
 
+  template<class OUT>
+  int printResultSet(SqlRecordList& records, OUT& out);
+
+  template<class OUT>
+  int printResultSet(SqlRecordVector& records, OUT& out);
+
   /* Write a header containing the column names from the result set or not */
   void setHeader(bool value)
   {
@@ -144,6 +150,34 @@ private:
   /* Maps column names to callback functions */
   QHash<QString, ConvertFuncType> conversionFuncs;
 };
+
+template<class OUT>
+int SqlExport::printResultSet(SqlRecordList& records, OUT& out)
+{
+  return printResultSet(records.toVector(), out);
+}
+
+template<class OUT>
+int SqlExport::printResultSet(SqlRecordVector& records, OUT& out)
+{
+  bool first = true;
+
+  int i = 0;
+  for(const SqlRecord& rec : records)
+  {
+    if(first && header)
+    {
+      first = false;
+      out << getResultSetHeader(rec);
+    }
+    if(i > maxValues && maxValues != -1)
+      break;
+
+    out << getResultSetRow(rec);
+    i++;
+  }
+  return i;
+}
 
 // -----------------------------------------------------------
 

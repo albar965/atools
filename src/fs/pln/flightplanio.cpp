@@ -1603,7 +1603,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
   writeTextElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
   writeTextElementIf(writer, "Comment", plan.comment);
-  writeTextElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+  writeTextElementIf(writer, "CreationDate", atools::convertToIsoWithOffset(QDateTime::currentDateTime()));
   writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
   writeTextElementIf(writer, "ProgramName", QCoreApplication::applicationName());
   writeTextElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
