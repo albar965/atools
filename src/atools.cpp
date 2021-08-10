@@ -1137,14 +1137,22 @@ uint textFileHash(const QString& filename, const QString& codec)
   return hash;
 }
 
-QString convertToIsoWithOffset(const QDateTime& dateTime)
+QString convertToIsoWithOffset(const QDateTime& dateTime, bool milliseconds)
 {
+  const static QLatin1String PATTERN_MS("yyyy-MM-ddTHH:mm:ss.zzz");
+  const static QLatin1String PATTERN("yyyy-MM-ddTHH:mm:ss");
+  const static QString STR("%1%2:%3");
+
   int offset = dateTime.offsetFromUtc();
-  return dateTime.toString("yyyy-MM-ddTHH:mm:ss.zzz") +
-         QString("%1%2:%3").
+  return dateTime.toString(milliseconds ? PATTERN_MS : PATTERN) + STR.
          arg(offset >= 0 ? '+' : '-').
          arg(atools::absInt(offset / 3600), 2, 10, QChar('0')).
          arg(atools::absInt((offset / 60) % 60), 2, 10, QChar('0'));
+}
+
+QString currentIsoWithOffset(bool milliseconds)
+{
+  return convertToIsoWithOffset(QDateTime::currentDateTime(), milliseconds);
 }
 
 } // namespace atools
