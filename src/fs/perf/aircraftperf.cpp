@@ -153,7 +153,7 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
 
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
-  writer.writeTextElement("CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+  writer.writeTextElement("CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
   writer.writeTextElement("FileVersion", QString("%1.%2").arg(LNMPERF_VERSION_MAJOR).arg(LNMPERF_VERSION_MINOR));
   writer.writeTextElement("ProgramName", QCoreApplication::applicationName());
   writer.writeTextElement("ProgramVersion", QCoreApplication::applicationVersion());

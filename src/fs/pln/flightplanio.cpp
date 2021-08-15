@@ -1316,7 +1316,9 @@ void FlightplanIO::loadPln(atools::fs::pln::Flightplan& plan, const QString& fil
       // insertPropertyIf(plan, APPROACH_ARINC, approach);
       insertPropertyIf(plan, APPROACHTYPE, msfsToApproachType(approach));
       insertPropertyIf(plan, APPROACHSUFFIX, approachSuffix);
-      insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
+
+      if(!approachRunway.isEmpty())
+        insertPropertyIf(plan, APPROACHRW, approachRunway + strAt(approachRunwayDesignator, 0));
 
       // Remove the procedure legs ============================
       plan.entries.erase(std::remove_if(plan.entries.begin(), plan.entries.end(),
@@ -1601,7 +1603,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
   writeTextElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
   writeTextElementIf(writer, "Comment", plan.comment);
-  writeTextElementIf(writer, "CreationDate", QDateTime::currentDateTime().toString(Qt::ISODate));
+  writeTextElementIf(writer, "CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
   writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
   writeTextElementIf(writer, "ProgramName", QCoreApplication::applicationName());
   writeTextElementIf(writer, "ProgramVersion", QCoreApplication::applicationVersion());
@@ -1947,6 +1949,8 @@ QString FlightplanIO::approachToMsfs(const QString& type)
 {
   if(type == "LOC")
     return "LOCALIZER";
+  else if(type == "LOCB")
+    return "LOCALIZER_BACK_COURSE";
   else
     // GPS (not saved by MSFS), VOR, VORDME, RNAV, NDBDME, NDB, ILS
     // TACAN not supported
@@ -1957,6 +1961,8 @@ QString FlightplanIO::msfsToApproachType(const QString& type)
 {
   if(type == "LOCALIZER")
     return "LOC";
+  else if(type == "LOCALIZER_BACK_COURSE")
+    return "LOCB";
   else
     return type;
 }
@@ -3191,6 +3197,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
   if(fmsFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
+
     int numEntries = numEntriesSave(plan);
     QTextStream stream(&fmsFile);
     stream.setCodec("UTF-8");
@@ -3213,11 +3220,14 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
 
       stream << "CYCLE " << cycle << endl;
 
-      // Departure
-      QString departureIdent = plan.getDepartureIdent();
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT && departureIdent.size() <= 4)
+      // Departure ==============================
+      QString departureIdent = plan.getDepartureIdent().left(6);
+      if(plan.entries.first().getWaypointType() == entry::AIRPORT &&
+         !plan.properties.contains(AIRPORT_DEPARTURE_NO_AIRPORT))
+        // Departure is normal airport id or there is a SID
         stream << "ADEP " << departureIdent << endl;
       else
+        // Use any point
         stream << "DEP " << departureIdent << endl;
 
       // Departure - SID
@@ -3230,11 +3240,14 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(!plan.properties.value(SIDTRANS).isEmpty())
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
-      // Destination
-      QString destinationIdent = plan.getDestinationIdent();
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT && destinationIdent.size() <= 4)
+      // Destination =============================
+      QString destinationIdent = plan.getDestinationIdent().left(6);
+      if(plan.entries.last().getWaypointType() == entry::AIRPORT &&
+         !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
+        // Destination is normal airport id or there is a STAR or an approach
         stream << "ADES " << destinationIdent << endl;
       else
+        // Use any point
         stream << "DES " << destinationIdent << endl;
 
       // Arrival runway
@@ -3270,6 +3283,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << (numEntries - 1) << endl; // Number of waypoints
     }
 
+    // Waypoints ======================================
     int index = 0;
     for(int i = 0; i < plan.entries.size(); i++)
     {
@@ -3302,7 +3316,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 " << ident << " ";
+          stream << "1 " << ident.left(6) << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
           stream << "11 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
@@ -3314,9 +3328,9 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       if(version11Format)
       {
         if(index == 0)
-          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADEP " : "DEP ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADEP " : "DEP ");
         else if(index == numEntries - 1)
-          stream << (entry.getWaypointType() == entry::AIRPORT && ident.length() <= 4 ? "ADES " : "DES ");
+          stream << (entry.getWaypointType() == entry::AIRPORT ? "ADES " : "DES ");
         else
           stream << (entry.getAirway().isEmpty() ? "DRCT " : entry.getAirway() + " ");
       }
@@ -3345,12 +3359,12 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
   const QString NO_DATA_STR("-");
   enum
   {
-    AIRPORT = 1, OTHER = 2, WAYPOINT = 5
+    RTE_AIRPORT = 1, RTE_OTHER = 2, RTE_WAYPOINT = 5
   };
 
   enum
   {
-    NO_PHASE = 0, CLIMB = 1, CRUISE = 2, DESCENT = 3
+    RTE_NO_PHASE = 0, RTE_CLIMB = 1, RTE_CRUISE = 2, RTE_DESCENT = 3
   };
 
   QFile rteFile(filename);
@@ -3370,12 +3384,12 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
 
     stream << numEntriesSave(plan) << endl << endl;
 
-    stream << plan.departureIdent << endl << AIRPORT << endl << "DIRECT" << endl;
+    stream << plan.departureIdent << endl << RTE_AIRPORT << endl << "DIRECT" << endl;
     posToRte(stream, plan.entries.first().getPosition(), true);
     stream << endl << NO_DATA_STR << endl
            << 1 /* Departure*/ << endl << 0 /* Runway position */ << endl << endl;
 
-    stream << CLIMB << endl; // Restriction phase climb
+    stream << RTE_CLIMB << endl; // Restriction phase climb
     stream << atools::roundToInt(plan.entries.first().getPosition().getAltitude()); // Restriction altitude, if restricted
 
     // Restriction type, altitude and speed
@@ -3392,12 +3406,12 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       if(entry.getWaypointType() == ple::USER)
       {
         stream << "WPT" << userWaypointNum++ << endl;
-        stream << OTHER << endl;
+        stream << RTE_OTHER << endl;
       }
       else
       {
         stream << (entry.getIdent().isEmpty() ? NO_DATA_STR : entry.getIdent()) << endl;
-        stream << (entry.getWaypointType() == ple::AIRPORT ? AIRPORT : WAYPOINT) << endl;
+        stream << (entry.getWaypointType() == ple::AIRPORT ? RTE_AIRPORT : RTE_WAYPOINT) << endl;
       }
 
       QString nextAirway = plan.entries.at(i + 1).getAirway();
@@ -3407,12 +3421,12 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
       stream << endl << 0 << endl << 0 << endl << 0 << endl << endl; // Restriction fields
     }
 
-    stream << plan.destinationIdent << endl << AIRPORT << endl << NO_DATA_STR << endl;
+    stream << plan.destinationIdent << endl << RTE_AIRPORT << endl << NO_DATA_STR << endl;
     posToRte(stream, plan.destinationPos, true);
     stream << endl << NO_DATA_STR << endl
            << 0 /* no departure*/ << endl << 0 /* Runway position */ << endl << endl;
 
-    stream << CLIMB << endl; // Restriction phase
+    stream << RTE_CLIMB << endl; // Restriction phase
     stream << atools::roundToInt(plan.destinationPos.getAltitude()) << endl; // Restriction altitude, if restricted
     // Restriction type, altitude and speed
     stream << NO_DATA_STR << endl << NO_DATA_NUM << endl << NO_DATA_NUM << endl;

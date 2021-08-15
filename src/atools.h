@@ -93,6 +93,29 @@ void convertVector(QVector<TYPE1>& dest, const QVector<TYPE2>& src)
     dest.append(type);
 }
 
+/* Functions for safe insert that allow and index < 0 and > size + 1 */
+template<typename TYPE>
+void insertInto(QList<TYPE>& list, int index, const TYPE& type)
+{
+  if(index < 0)
+    list.prepend(type);
+  else if(index > list.size())
+    list.append(type);
+  else
+    list.insert(index, type);
+}
+
+template<typename TYPE>
+void insertInto(QVector<TYPE>& list, int index, const TYPE& type)
+{
+  if(index < 0)
+    list.prepend(type);
+  else if(index > list.size())
+    list.append(type);
+  else
+    list.insert(index, type);
+}
+
 /* Read whole file into a string */
 QString strFromFile(const QString& filename);
 
@@ -385,9 +408,12 @@ QDateTime timeToLastHourInterval(QDateTime datetime, int intervalsPerDay);
 /* Same as above but next interval */
 QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay);
 
-/* Converts datetime to ISO8601 with timezone offset and milliseconds.
+/* Converts datetime to ISO8601 with timezone offset and milliseconds or not.
  * 2021-05-16T23:55:00.259+02:00 */
-QString convertToIsoWithOffset(const QDateTime& datetime);
+QString convertToIsoWithOffset(const QDateTime& datetime, bool milliseconds = true);
+
+/* Current local datetime in ISO format as above */
+QString currentIsoWithOffset(bool milliseconds = true);
 
 /* Keep subtracting months for incomplete date and time until it is not in the future and the day matches
  * but not more than one year to avoid endless loops */

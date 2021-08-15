@@ -160,6 +160,11 @@ const QLatin1Literal NAVDATACYCLE("navdatacycle");
 const QLatin1Literal SIMDATA("simdata");
 const QLatin1Literal SIMDATACYCLE("simdatacycle");
 
+/* Set if any of the airports to use DEP/DES instead of ADES/ADEP for loading in X-Plane FMS.
+ * Read by FlightplanIO::saveFmsInternal() */
+const QLatin1Literal AIRPORT_DEPARTURE_NO_AIRPORT("departnoapt");
+const QLatin1Literal AIRPORT_DESTINATION_NO_AIRPORT("destnoapt");
+
 } // namespace pln
 } // namespace fs
 } // namespace atools
