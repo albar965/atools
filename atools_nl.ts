@@ -158,17 +158,19 @@ Bestand:&quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="135"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="145"/>
         <source>Empty Flightplan</source>
         <translation>Vluchtplan Leeg</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="56"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="149"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="141"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="58"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="151"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
@@ -281,8 +283,8 @@ Bestand:&quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1327"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3914"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1331"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3938"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
@@ -297,7 +299,7 @@ Bestand:&quot;%2&quot;
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1511"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1515"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan Flightgear bestand %1 niet openen. Reden: %2</translation>
     </message>
@@ -310,12 +312,12 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FLP bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2956"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2972"/>
         <source> Flight Plan</source>
         <translation> Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3009"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3025"/>
         <source> Track</source>
         <translation> Track</translation>
     </message>
@@ -324,7 +326,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FMS bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3354"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3378"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Gemaakt door %1 Versie %2 (revisie %3) op %4 </translation>
     </message>
@@ -333,7 +335,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan RTE bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3500"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3524"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>
@@ -1192,23 +1194,23 @@ Bestand:&quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="907"/>
         <location filename="src/fs/navdatabase.cpp" line="935"/>
-        <location filename="src/fs/navdatabase.cpp" line="1025"/>
-        <location filename="src/fs/navdatabase.cpp" line="1156"/>
+        <location filename="src/fs/navdatabase.cpp" line="1022"/>
+        <location filename="src/fs/navdatabase.cpp" line="1153"/>
         <source>Creating indexes</source>
         <translation>Creëren indexen</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="910"/>
         <location filename="src/fs/navdatabase.cpp" line="938"/>
-        <location filename="src/fs/navdatabase.cpp" line="1028"/>
-        <location filename="src/fs/navdatabase.cpp" line="1159"/>
+        <location filename="src/fs/navdatabase.cpp" line="1025"/>
+        <location filename="src/fs/navdatabase.cpp" line="1156"/>
         <source>Creating boundary indexes</source>
         <translation>Creëren boundary indexen</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="916"/>
-        <location filename="src/fs/navdatabase.cpp" line="1041"/>
-        <location filename="src/fs/navdatabase.cpp" line="1165"/>
+        <location filename="src/fs/navdatabase.cpp" line="1038"/>
+        <location filename="src/fs/navdatabase.cpp" line="1162"/>
         <source>Clean up</source>
         <translation>Opschonen</translation>
     </message>
@@ -1223,52 +1225,52 @@ Bestand:&quot;%2&quot;
         <translation>Updaten Navaids in Waypoint</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1051"/>
+        <location filename="src/fs/navdatabase.cpp" line="1048"/>
         <source>Preparing Airways</source>
         <translation>Voorbereiden Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1173"/>
+        <location filename="src/fs/navdatabase.cpp" line="1170"/>
         <source>Basic Validation</source>
         <translation>Basis Goedkeuring</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1288"/>
+        <location filename="src/fs/navdatabase.cpp" line="1285"/>
         <source>Creating table statistics</source>
         <translation>Creëren tabel statistieken</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1294"/>
+        <location filename="src/fs/navdatabase.cpp" line="1291"/>
         <source>Creating report on values</source>
         <translation>Creëren rapport voor waarden</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1300"/>
+        <location filename="src/fs/navdatabase.cpp" line="1297"/>
         <source>Creating report on duplicates</source>
         <translation>Creëren rapport voor duplicaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1338"/>
+        <location filename="src/fs/navdatabase.cpp" line="1335"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>Creëren rapport van duplicaten van coördinaten</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1387"/>
+        <location filename="src/fs/navdatabase.cpp" line="1384"/>
         <source>Base Airports</source>
         <translation>BasisLuchthavens</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1400"/>
+        <location filename="src/fs/navdatabase.cpp" line="1397"/>
         <source>Base Navigation</source>
         <translation>BasisNavigatie</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1486"/>
+        <location filename="src/fs/navdatabase.cpp" line="1483"/>
         <source>Community</source>
         <translation>Community</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1798"/>
+        <location filename="src/fs/navdatabase.cpp" line="1795"/>
         <source>Counting files for %1 ...</source>
         <translation>Bestanden tellen voor %1 ...</translation>
     </message>
@@ -2083,7 +2085,7 @@ Importeren gestopt.</translation>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="130"/>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="147"/>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="173"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="313"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="225"/>
         <source>Default file &quot;%1&quot; not found</source>
         <translation>Standaard bestand &quot;%1&quot; niet gevonden</translation>
     </message>
@@ -2093,53 +2095,53 @@ Importeren gestopt.</translation>
         <translation>Naverwerken Airways</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="333"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="434"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="245"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="346"/>
         <source>Reading: %1</source>
         <translation>Aan het lezen: %1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="793"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="705"/>
         <source>Counting files for Resources ...</source>
         <translation>Bestanden tellen vanuit Resources ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="801"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="713"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>Bestanden tellen vanuit Custom.Scenery/Global Airports ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="812"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="724"/>
         <source>Counting files for Airspaces ...</source>
         <translation>Bestanden tellen vanuit Airspaces ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="817"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="729"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>Bestanden tellen vanuit Custom Scenery ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="829"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="741"/>
         <source>Counting files for Custom Data ...</source>
         <translation>Bestanden tellen vanuit Custom Data ...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="892"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="804"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>AIRAC cycle bestand is leeg.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="900"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="812"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>Meerdere AIRAC cycles in de navdatabestanden gevonden. %1 en %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="910"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="822"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>AIRAC cycle niet gevonden in bestand.</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="946"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="858"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2555,7 +2557,7 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="152"/>
+        <location filename="src/grib/gribdownloader.cpp" line="153"/>
         <source>Unknown error.</source>
         <translation>Onbekende fout.</translation>
     </message>
@@ -2563,7 +2565,7 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="607"/>
+        <location filename="src/grib/windquery.cpp" line="608"/>
         <source>Unknown error.</source>
         <translation>Onbekende fout.</translation>
     </message>
@@ -2620,25 +2622,25 @@ Nachttijd: %5</translation>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="704"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="709"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="795"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="759"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="764"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="850"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="732"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="737"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="787"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="792"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>Fout bij het schrijven van &quot;%1&quot;: %2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="755"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="810"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: Ongeldig magisch nummer. Geen venster layout bestand.</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="758"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="813"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>Fout bij het lezen van &quot;%1&quot;: Ongeldige versie. Niet-compatibel venster layout bestand.</translation>
     </message>

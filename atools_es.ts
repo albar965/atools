@@ -1403,7 +1403,7 @@ Atrapada excepción
     </message>
     <message>
         <source>Error reading &quot;%1&quot;: %2</source>
-        <translation type="unfinished">Error leyendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+        <translation type="unfinished">Error reading &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <source>★</source>
@@ -2089,7 +2089,7 @@ Night time: %5</source>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
         <source>Error reading &quot;%1&quot;: %2</source>
-        <translation type="unfinished">Error leyendo &quot;%1&quot;: %2. {1&quot;?} {2?}</translation>
+        <translation type="unfinished">Error reading &quot;%1&quot;: %2</translation>
     </message>
     <message>
         <source>Error writing &quot;%1&quot;: %2</source>

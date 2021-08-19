@@ -156,17 +156,19 @@ File: &quot;%2&quot;
 <context>
     <name>Flightplan</name>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="135"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="145"/>
         <source>Empty Flightplan</source>
         <translation>空飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="139"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="56"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="149"/>
         <source>IFR</source>
         <translation>IFR</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplan.cpp" line="141"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="58"/>
+        <location filename="src/fs/pln/flightplan.cpp" line="151"/>
         <source>VFR</source>
         <translation>VFR</translation>
     </message>
@@ -274,8 +276,8 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1327"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3914"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1331"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3938"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开文件“%1”。原因是：%2</translation>
     </message>
@@ -290,27 +292,27 @@ File: &quot;%2&quot;
         <translation>LNMPLN 中的位置“%1”无效。找不到航路点。</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1511"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1515"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>无法打开 FlightGear 文件“%1”。原因是：%2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2956"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2972"/>
         <source> Flight Plan</source>
         <translation> 飞行计划</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3009"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3025"/>
         <source> Track</source>
         <translation> 航迹</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3354"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3378"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>由 %1 在 %4 创建的 PMDG RTE ，版本 %2（修订版本 %3） </translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3500"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3524"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>写入 %1 时遇到了内部错误：文件大小无效 %2 != %3 这个文件将不可用。</translation>
     </message>
@@ -1166,23 +1168,23 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="907"/>
         <location filename="src/fs/navdatabase.cpp" line="935"/>
-        <location filename="src/fs/navdatabase.cpp" line="1025"/>
-        <location filename="src/fs/navdatabase.cpp" line="1156"/>
+        <location filename="src/fs/navdatabase.cpp" line="1022"/>
+        <location filename="src/fs/navdatabase.cpp" line="1153"/>
         <source>Creating indexes</source>
         <translation>正在创建索引</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="910"/>
         <location filename="src/fs/navdatabase.cpp" line="938"/>
-        <location filename="src/fs/navdatabase.cpp" line="1028"/>
-        <location filename="src/fs/navdatabase.cpp" line="1159"/>
+        <location filename="src/fs/navdatabase.cpp" line="1025"/>
+        <location filename="src/fs/navdatabase.cpp" line="1156"/>
         <source>Creating boundary indexes</source>
         <translation>正在创建边界索引</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="916"/>
-        <location filename="src/fs/navdatabase.cpp" line="1041"/>
-        <location filename="src/fs/navdatabase.cpp" line="1165"/>
+        <location filename="src/fs/navdatabase.cpp" line="1038"/>
+        <location filename="src/fs/navdatabase.cpp" line="1162"/>
         <source>Clean up</source>
         <translation>清理</translation>
     </message>
@@ -1197,52 +1199,52 @@ File: &quot;%2&quot;
         <translation>正在更新航路点中的助航设备</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1051"/>
+        <location filename="src/fs/navdatabase.cpp" line="1048"/>
         <source>Preparing Airways</source>
         <translation>正在准备航路</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1173"/>
+        <location filename="src/fs/navdatabase.cpp" line="1170"/>
         <source>Basic Validation</source>
         <translation>基础验证</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1288"/>
+        <location filename="src/fs/navdatabase.cpp" line="1285"/>
         <source>Creating table statistics</source>
         <translation>正在创建表格统计</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1294"/>
+        <location filename="src/fs/navdatabase.cpp" line="1291"/>
         <source>Creating report on values</source>
         <translation>正在创建数值的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1300"/>
+        <location filename="src/fs/navdatabase.cpp" line="1297"/>
         <source>Creating report on duplicates</source>
         <translation>正在创建重复项的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1338"/>
+        <location filename="src/fs/navdatabase.cpp" line="1335"/>
         <source>Creating report on coordinate duplicates</source>
         <translation>正在创建重复坐标的报告</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1387"/>
+        <location filename="src/fs/navdatabase.cpp" line="1384"/>
         <source>Base Airports</source>
         <translation>基地机场</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1400"/>
+        <location filename="src/fs/navdatabase.cpp" line="1397"/>
         <source>Base Navigation</source>
         <translation>基地导航</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1486"/>
+        <location filename="src/fs/navdatabase.cpp" line="1483"/>
         <source>Community</source>
         <translation>社区</translation>
     </message>
     <message>
-        <location filename="src/fs/navdatabase.cpp" line="1798"/>
+        <location filename="src/fs/navdatabase.cpp" line="1795"/>
         <source>Counting files for %1 ...</source>
         <translation>正在为 %1 计数文件...</translation>
     </message>
@@ -2027,7 +2029,7 @@ Import stopped.</source>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="130"/>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="147"/>
         <location filename="src/fs/xp/xpdatacompiler.cpp" line="173"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="313"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="225"/>
         <source>Default file &quot;%1&quot; not found</source>
         <translation>默认文件“%1”未找到</translation>
     </message>
@@ -2037,53 +2039,53 @@ Import stopped.</source>
         <translation>后期处理航路</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="333"/>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="434"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="245"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="346"/>
         <source>Reading: %1</source>
         <translation>读取：%1</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="793"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="705"/>
         <source>Counting files for Resources ...</source>
         <translation>正在资源文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="801"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="713"/>
         <source>Counting files for Custom Scenery/Global Airports ...</source>
         <translation>正在自定义地景/全球机场文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="812"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="724"/>
         <source>Counting files for Airspaces ...</source>
         <translation>正在空域文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="817"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="729"/>
         <source>Counting files for Custom Scenery ...</source>
         <translation>正在自定义地景文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="829"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="741"/>
         <source>Counting files for Custom Data ...</source>
         <translation>正在自定义数据文件夹里计算文件数...</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="892"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="804"/>
         <source>AIRAC cycle in file is empty.</source>
         <translation>文件里的 AIRAC 周期是空的。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="900"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="812"/>
         <source>Found different AIRAC cycles across navdata files. %1 and %2</source>
         <translation>导航数据文件里找到了不同的 AIRAC 周期。 %1 及 %2</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="910"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="822"/>
         <source>AIRAC cycle not found in file.</source>
         <translation>文件里没有找到 AIRAC 周期。</translation>
     </message>
     <message>
-        <location filename="src/fs/xp/xpdatacompiler.cpp" line="946"/>
+        <location filename="src/fs/xp/xpdatacompiler.cpp" line="858"/>
         <source>Cannot find valid files for X-Plane navdata in either
 &quot;%1&quot; or
 &quot;%2&quot;
@@ -2491,7 +2493,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::GribDownloader</name>
     <message>
-        <location filename="src/grib/gribdownloader.cpp" line="152"/>
+        <location filename="src/grib/gribdownloader.cpp" line="153"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -2499,7 +2501,7 @@ Night time: %5</source>
 <context>
     <name>atools::grib::WindQuery</name>
     <message>
-        <location filename="src/grib/windquery.cpp" line="607"/>
+        <location filename="src/grib/windquery.cpp" line="608"/>
         <source>Unknown error.</source>
         <translation>未知错误。</translation>
     </message>
@@ -2552,25 +2554,25 @@ Night time: %5</source>
 <context>
     <name>atools::gui::DockWidgetHandler</name>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="704"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="709"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="795"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="759"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="764"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="850"/>
         <source>Error reading &quot;%1&quot;: %2</source>
         <translation>读取“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="732"/>
-        <location filename="src/gui/dockwidgethandler.cpp" line="737"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="787"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="792"/>
         <source>Error writing &quot;%1&quot;: %2</source>
         <translation>写入“%1”时发生了错误：%2</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="755"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="810"/>
         <source>Error reading &quot;%1&quot;: Invalid magic number. Not a window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的幻数。不是一个有效的窗口布局文件。</translation>
     </message>
     <message>
-        <location filename="src/gui/dockwidgethandler.cpp" line="758"/>
+        <location filename="src/gui/dockwidgethandler.cpp" line="813"/>
         <source>Error reading &quot;%1&quot;: Invalid version. Incompatible window layout file.</source>
         <translation>读取“%1”时发生了错误：无效的版本。不兼容的窗口布局文件。</translation>
     </message>
