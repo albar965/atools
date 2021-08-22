@@ -187,8 +187,9 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
 
         // Include only if distance is smaller than distance between origin and destination
         // i.e. include points ahead but not behind the origin (search center)
-        // Allow 500 meters more for waypoints at or behind position
-        ok &= curToDestDist < originToDestDist + 100.f;
+        // Allow 100/4000 meters more for waypoints at or behind position
+        // For radionav allow navaids after departure airport
+        ok &= curToDestDist < originToDestDist + (radionav && originDeparture ? 4000.f : 100.f);
       }
 
       if(ok)
@@ -221,7 +222,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
     float originToDestDist = 0.f, radiusMin = 0.f, directDistFactor = 1.f;
     Point3D origin, dest;
     const Point3D *points;
-    bool radionav = false;
+    bool radionav = false, originDeparture = false;
     const QSet<int> *excludeIndexes = nullptr;
   };
 
@@ -231,6 +232,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
   callbackObj.points = nodeIndex.getPoints3D();
   callbackObj.excludeIndexes = (excludeIndexes == nullptr || excludeIndexes->isEmpty()) ? nullptr : excludeIndexes;
   callbackObj.radionav = isRadionavRouting();
+  callbackObj.originDeparture = origin.isDeparture();
 
   callbackObj.directDistFactor = isAirwayRouting() ? directDistanceFactorWp : directDistanceFactorRadio;
   callbackObj.originToDestDist = getDirectDistanceMeter(origin, destinationNode);
@@ -242,10 +244,8 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
       // Allow all points close to departure
       callbackObj.radiusMin = 0.f;
     else
-      // Do not use minimum near near destination or at departure
-      callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ?
-                              0.f :
-                              minDistanceMeter;
+      // Limit minimum distance by distance from current node to destination
+      callbackObj.radiusMin = minDistanceMeter;
   }
   else
   {
@@ -255,8 +255,7 @@ int RouteNetwork::searchNearest(Result& result, const Node& origin,
     else
       // Do not use minimum near near destination or at departure
       callbackObj.radiusMin = maxDistanceMeter > callbackObj.originToDestDist ?
-                              minDistanceMeter / 4.f :
-                              minDistanceMeter;
+                              minDistanceMeter / 4.f : minDistanceMeter;
   }
 
   // Limit search radius by distance to destination for airway and waypoint search
