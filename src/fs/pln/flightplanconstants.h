@@ -165,6 +165,11 @@ const QLatin1Literal SIMDATACYCLE("simdatacycle");
 const QLatin1Literal AIRPORT_DEPARTURE_NO_AIRPORT("departnoapt");
 const QLatin1Literal AIRPORT_DESTINATION_NO_AIRPORT("destnoapt");
 
+/* Invalid/not set heading for parking position */
+const float INVALID_HEADING = std::numeric_limits<float>::max();
+
+/* Invalid position altitude for parking and departure */
+const float INVALID_ALTITUDE = std::numeric_limits<float>::max();
 } // namespace pln
 } // namespace fs
 } // namespace atools

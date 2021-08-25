@@ -117,14 +117,6 @@ public:
     return destinationIdent;
   }
 
-  /*
-   * @return departure parking name like "PARKING 2"
-   */
-  const QString& getDepartureParkingName() const
-  {
-    return departureParkingName;
-  }
-
   const QString& getDepartureName() const
   {
     return departureName;
@@ -192,6 +184,14 @@ public:
   void setDeparturePosition(const atools::geo::Pos& value, float altitude);
 
   /*
+   * @return departure parking name like "PARKING 2"
+   */
+  const QString& getDepartureParkingName() const
+  {
+    return departureParkingName;
+  }
+
+  /*
    * @return parking, runway or airport departure position/coordinates.
    */
   const atools::geo::Pos& getDepartureParkingPosition() const
@@ -199,8 +199,29 @@ public:
     return departureParkingPos.isValid() ? departureParkingPos : departurePos;
   }
 
-  void setDepartureParkingPosition(const atools::geo::Pos& value);
-  void setDepartureParkingPosition(const atools::geo::Pos& value, float altitude);
+  /* Set altitude and heading separately if not INVALID_ALTITUDE and not INVALID_HEADING */
+  void setDepartureParkingPosition(const atools::geo::Pos& value, float altitudeFt, float headingTrue);
+
+  /* Type of parking position. This is set by the program after loading a plan and is needed for export. */
+  atools::fs::pln::FlightplanParkingType getDepartureParkingType() const
+  {
+    return departureParkingType;
+  }
+
+  /* True heading at parking spot if available or INVALID_HEADING */
+  float getDepartureParkingHeading() const
+  {
+    return departureParkingHeading;
+  }
+
+  QString getDepartureParkingTypeStr() const;
+
+  void setDepartureParkingType(atools::fs::pln::FlightplanParkingType value)
+  {
+    departureParkingType = value;
+  }
+
+  void setDepartureParkingType(QString type);
 
   const QHash<QString, QString>& getProperties() const
   {
@@ -287,21 +308,6 @@ public:
    * To be used for testing and logging */
   QString toShortString() const;
 
-  /* Type of parking position. This is set by the program after loading a plan and is needed for export. */
-  atools::fs::pln::FlightplanParkingType getDepartureParkingType() const
-  {
-    return departureParkingType;
-  }
-
-  QString getDepartureParkingTypeStr() const;
-
-  void setDepartureParkingType(atools::fs::pln::FlightplanParkingType value)
-  {
-    departureParkingType = value;
-  }
-
-  void setDepartureParkingType(QString type);
-
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::pln::Flightplan& record);
 
@@ -334,6 +340,8 @@ private:
   atools::geo::Pos departurePos /* Airport */,
                    departureParkingPos /* Parking, runway or airport */,
                    destinationPos; /* Always airport */
+
+  float departureParkingHeading = atools::fs::pln::INVALID_HEADING;
 
   atools::fs::pln::FlightplanParkingType departureParkingType = NO_POS;
 

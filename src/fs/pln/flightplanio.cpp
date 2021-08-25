@@ -1078,6 +1078,13 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
           plan.departureParkingPos = readPosLnm(xmlStream);
         else if(reader.name() == "Type")
           plan.setDepartureParkingType(reader.readElementText());
+        else if(reader.name() == "Heading")
+        {
+          bool ok;
+          plan.departureParkingHeading = reader.readElementText().toFloat(&ok);
+          if(!ok)
+            plan.departureParkingHeading = INVALID_HEADING;
+        }
         else
           xmlStream.skipCurrentElement(true /* warn */);
       }
@@ -1650,6 +1657,8 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     writeElementPosIf(writer, plan.departureParkingPos);
     writeTextElementIf(writer, "Start", plan.departureParkingName);
     writeTextElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
+    if(plan.departureParkingHeading < INVALID_HEADING)
+      writeTextElementIf(writer, "Heading", QString().number(plan.departureParkingHeading));
     writer.writeEndElement(); // Departure
   }
 
