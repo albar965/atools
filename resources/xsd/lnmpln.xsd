@@ -69,22 +69,31 @@
   <xs:element name="AircraftPerformance">
     <xs:complexType>
       <xs:sequence>
-        <xs:element minOccurs="0" maxOccurs="1" ref="FilePath"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="FilePath" type="xs:string"/>
         <xs:element minOccurs="0" maxOccurs="1" name="Type" type="xs:string"/>
         <xs:element minOccurs="0" maxOccurs="1" ref="Name"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="FilePath" type="xs:string"/>
   <xs:element name="Departure">
     <xs:complexType>
       <xs:sequence>
         <xs:element minOccurs="0" maxOccurs="1" ref="Pos"/>
-        <xs:element minOccurs="0" maxOccurs="1" ref="Start"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="Start" type="xs:string"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="Type" type="StartType"/>
+        <xs:element minOccurs="0" maxOccurs="1" name="Heading" type="xs:decimal"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-  <xs:element name="Start" type="xs:string"/>
+  <xs:simpleType name="StartType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None"/>
+      <xs:enumeration value="Airport"/>
+      <xs:enumeration value="Runway"/>
+      <xs:enumeration value="Parking"/>
+      <xs:enumeration value="Helipad"/>
+    </xs:restriction>
+  </xs:simpleType>
   <xs:element name="Procedures">
     <xs:complexType>
       <xs:sequence>
