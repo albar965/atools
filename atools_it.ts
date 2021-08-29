@@ -323,22 +323,22 @@ File: &quot;%2&quot;
         <location filename="src/fs/pln/flightplanio.cpp" line="854"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;.</source>
         <oldsource>Invalid position in LNMPLN.</oldsource>
-        <translation type="unfinished">Posizione non valida nel LNMPLN.</translation>
+        <translation>Posizione non valida nel file LNMPLN &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="857"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinates out of range: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione non valida nel file LNMPLN &quot;%1&quot;. Ordinate fuori range: %1</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="866"/>
         <source>Invalid position in LNMPLN file &quot;%1&quot;. Ordinate(s) are not numbers.</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione non valida nel file LNMPLN &quot;%1&quot;. Ordinata(e) non sono numeri.</translation>
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="895"/>
         <source>Invalid position in GPX file &quot;%1&quot;.</source>
-        <translation type="unfinished"></translation>
+        <translation>Posizione non valida nel file GPX &quot;%1&quot;.</translation>
     </message>
     <message>
         <source>Invalid position in LNMPLN. Ordinates out of range: %1</source>
@@ -350,23 +350,23 @@ File: &quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1331"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3938"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1338"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3947"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1165"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1172"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Piano di volo LNMPLN non valido. Nessun punto rotta trovato.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1167"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1174"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation>File del piano di volo LNMPLN &quot;%1&quot; non valido. Nessun punto rotta trovato.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1515"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1522"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Impossibile aprire il file di FlightGear &quot;%1&quot;. Causa: %2</translation>
     </message>
@@ -379,12 +379,12 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FLP &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2972"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
         <source> Flight Plan</source>
         <translation> Piano di volo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3025"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3034"/>
         <source> Track</source>
         <translation> Percorso</translation>
     </message>
@@ -393,7 +393,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file FMS &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3378"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3387"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Creato da %1 Versione %2 (revisione %3) il %4 </translation>
     </message>
@@ -402,7 +402,7 @@ File: &quot;%2&quot;
         <translation type="vanished">Impossibile aprire il file RTE &quot;%1&quot;. Causa: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3524"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3533"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Errore interno scrivendo %1: Il file ha dimensione non valida %2 != %3 e non sarà utilizzabile.</translation>
     </message>
@@ -1164,7 +1164,7 @@ File: &quot;%2&quot;
     <message>
         <location filename="src/fs/navdatabase.cpp" line="715"/>
         <source>Updating Navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>Aggiornamento Radioassistenze</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="722"/>
@@ -2669,7 +2669,7 @@ Ore Notturne: %5</translation>
     <message>
         <location filename="src/gui/application.cpp" line="167"/>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contatto e Supporto&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="199"/>

@@ -283,23 +283,23 @@ Bestand:&quot;%2&quot;
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1331"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3938"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1338"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3947"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1165"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1172"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1167"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1174"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1515"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1522"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Kan Flightgear bestand %1 niet openen. Reden: %2</translation>
     </message>
@@ -312,12 +312,12 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FLP bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2972"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
         <source> Flight Plan</source>
         <translation> Vluchtplan</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3025"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3034"/>
         <source> Track</source>
         <translation> Track</translation>
     </message>
@@ -326,7 +326,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan FMS bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3378"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3387"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Gemaakt door %1 Versie %2 (revisie %3) op %4 </translation>
     </message>
@@ -335,7 +335,7 @@ Bestand:&quot;%2&quot;
         <translation type="vanished">Kan RTE bestand &quot;%1&quot; niet openen. Reden: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3524"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3533"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Interne fout bij het schrijven %1: Grootte bestand is ongeldig.%2 != %3 zal niet bruikbaar zijn.</translation>
     </message>

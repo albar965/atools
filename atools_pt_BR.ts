@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<TS version="2.1" language="pt_BR" sourcelanguage="pt_BR">
 <context>
     <name>AddOnPackage</name>
     <message>
@@ -210,12 +210,12 @@ Ocorreu um erro no Sql
 <context>
     <name>FlightplanIO</name>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="2972"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="2981"/>
         <source> Flight Plan</source>
         <translation> Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3025"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3034"/>
         <source> Track</source>
         <translation> Rastrear</translation>
     </message>
@@ -254,8 +254,8 @@ Ocorreu um erro no Sql
     </message>
     <message>
         <location filename="src/fs/pln/flightplanio.cpp" line="988"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1331"/>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3938"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1338"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3947"/>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation>Não foi possível abrir o arquivo &quot;%1&quot;. Razão: %2</translation>
     </message>
@@ -265,7 +265,7 @@ Ocorreu um erro no Sql
         <translation type="vanished">Não é possível abrir o arquivo de plano de voo &quot;%1&quot;. Nenhum formato de plano de voo suportado detectado. somente PLN (FSX XML e FS9 INI), FMS e FLP são suportados.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3524"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3533"/>
         <source>Internal error writing %1: File has invalid size %2 != %3 will not be usable.</source>
         <translation>Erro de escrita interna %1: Tamanho do arquivo inválido %2 != %3 não poderá ser usado.</translation>
     </message>
@@ -322,22 +322,22 @@ Ocorreu um erro no Sql
         <translation>Posição inválida no arquivo GPX &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1165"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1172"/>
         <source>Invalid LNMPLN flight plan. No waypoints found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Plano de voo LNMPLN inválido. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1167"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1174"/>
         <source>Invalid LNMPLN flight plan file &quot;%1&quot;. No waypoints found.</source>
         <translation>Arquivo de plano de voo LNMPLN inválido &quot;%1&quot;. Nenhum waypoint encontrado.</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="1515"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="1522"/>
         <source>Cannot open FlightGear file &quot;%1&quot;. Reason: %2</source>
         <translation>Não é possível abrir o arquivo FlightGear &quot;%1&quot;. Razão: %2</translation>
     </message>
     <message>
-        <location filename="src/fs/pln/flightplanio.cpp" line="3378"/>
+        <location filename="src/fs/pln/flightplanio.cpp" line="3387"/>
         <source>PMDG RTE Created by %1 Version %2 (revision %3) on %4 </source>
         <translation>PMDG RTE Criado por %1 Versão %2 (revisão %3) em %4 </translation>
     </message>
@@ -1083,7 +1083,7 @@ Ocorreu um erro no Sql
     <message>
         <location filename="src/fs/navdatabase.cpp" line="715"/>
         <source>Updating Navaids</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizando Navaids</translation>
     </message>
     <message>
         <location filename="src/fs/navdatabase.cpp" line="722"/>
@@ -2603,7 +2603,7 @@ Tempo Noturno: %5</translation>
     <message>
         <location filename="src/gui/application.cpp" line="167"/>
         <source>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contact and Support&lt;/a&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;a href=&quot;https://www.littlenavmap.org/contact.html&quot;&gt;Little Navmap - Contato e Suporte&lt;/a&gt;</translation>
     </message>
     <message>
         <location filename="src/gui/application.cpp" line="206"/>
