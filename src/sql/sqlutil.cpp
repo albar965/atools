@@ -29,12 +29,12 @@ namespace atools {
 
 namespace sql {
 
-SqlUtil::SqlUtil(SqlDatabase *sqlDb)
+SqlUtil::SqlUtil(const SqlDatabase* sqlDb)
   : db(sqlDb)
 {
 }
 
-SqlUtil::SqlUtil(SqlDatabase& sqlDb)
+SqlUtil::SqlUtil(const SqlDatabase& sqlDb)
   : db(&sqlDb)
 {
 

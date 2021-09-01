@@ -35,8 +35,8 @@ public:
   /*
    * Create a util using the given database.
    */
-  explicit SqlUtil(atools::sql::SqlDatabase *sqlDb);
-  explicit SqlUtil(atools::sql::SqlDatabase& sqlDb);
+  explicit SqlUtil(const atools::sql::SqlDatabase *sqlDb);
+  explicit SqlUtil(const atools::sql::SqlDatabase& sqlDb);
 
   /*
    * Prints row counts for all tables in the database.
@@ -124,7 +124,7 @@ public:
   bool addColumnIf(const QString& table, const QString& column, const QString& type, const QString& suffix = QString());
 
 private:
-  SqlDatabase *db;
+  const SqlDatabase *db;
 
   QStringList buildTableList(const QStringList& tables);
   QStringList buildResultList(atools::sql::SqlQuery& query);
