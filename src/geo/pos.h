@@ -55,13 +55,23 @@ QDebug operator<<(QDebug out, const LineDistance& lineDist);
 class Pos
 {
 public:
-  Pos();
-  Pos(const Pos& other);
+  Pos() : lonX(INVALID_VALUE), latY(INVALID_VALUE), altitude(0.f)
+  {
+  }
+
+  Pos(const Pos& other)
+  {
+    this->operator=(other);
+  }
 
   explicit Pos(int lonXDeg, int lonXMin, float lonXSec, bool west,
                int latYDeg, int latYMin, float latYSec, bool south, float alt = 0.f);
 
-  explicit Pos(float longitudeX, float latitudeY, float alt = 0.f);
+  explicit Pos(float longitudeX, float latitudeY, float alt = 0.f)
+    : lonX(longitudeX), latY(latitudeY), altitude(alt)
+  {
+  }
+
   explicit Pos(double longitudeX, double latitudeY, double alt = 0.);
 
   /* Will be invalid if variants are null or not valid */
