@@ -35,6 +35,7 @@ create table waypoint
                                       -- 1 = for airways and 2 = for procedures (2 is only needed for LNM <= 2.4.5)
   type varchar(15),                   -- see enum atools::fs::bgl::nav::WaypointType
                                       -- N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
+  arinc_type varchar(4),              -- ARINC Waypoint type as defined by the 3 columns of ARINC 424.18 field definition 5.42
   num_victor_airway integer not null, -- Number of victor (low altitude) airways crossing this waypoint
   num_jet_airway integer not null,    -- Number of jet (high altitude) airways crossing this waypoint
   mag_var double not null,            -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -343,6 +344,8 @@ create table nav_search
                         -- nav_type in ('TC', 'TCD')                               Only TACAN
                         -- nav_type = 'N'                                          All NDB
                         -- nav_type = 'W'                                          All Waypoints
+
+  arinc_type varchar(4),              -- ARINC Waypoint type as defined by the 3 columns of ARINC 424.18 field definition 5.42
 
   frequency integer,                  -- VOR: MHz * 10000, NDB kHz * 100 to allow differentiation between NDB and VOR
   channel varchar(10),                 --  TACAN channel of TACAN or VORTAC

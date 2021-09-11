@@ -111,11 +111,11 @@ float BinaryStream::readFloat()
   // Needs special convertion from BGL float
   union
   {
-    int intValue;
+    quint32 intValue;
     float floatValue;
   } u;
 
-  u.intValue = readInt();
+  u.intValue = readUInt();
 
   checkStream("readFloat");
 

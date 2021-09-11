@@ -144,8 +144,9 @@ public:
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
    *    New table translation for MSFS language files.
    * 20 Added faa and local columns to database tables. Remove xpident column.
+   * 21 Added arinc_type to tables waypoint and nav_search.
    */
-  static const int DB_VERSION_MINOR = 20;
+  static const int DB_VERSION_MINOR = 21;
 
   void init();
 

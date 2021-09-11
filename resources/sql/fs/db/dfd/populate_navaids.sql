@@ -194,13 +194,14 @@ left outer join tbl_runways r on
 
 delete from waypoint;
 
-insert into waypoint (file_id, ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
+insert into waypoint (file_id, ident, region, type, arinc_type, num_victor_airway, num_jet_airway, mag_var, lonx, laty)
 select
   1 as file_id,
   waypoint_identifier as ident,
   icao_code as region,
   -- N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
   case when substr(waypoint_type, 1, 1) = 'I' then 'WU' else 'WN' end as type,
+  waypoint_type as arinc_type,
   0 as num_victor_airway, -- Calculated later
   0 as num_jet_airway, -- Calculated later
   0 as mag_var, -- Calculated later

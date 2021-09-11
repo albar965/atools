@@ -24,9 +24,9 @@ delete from nav_search;
 
 -- Insert waypoints into nav_search table
 insert into nav_search (waypoint_id, waypoint_nav_id, file_id, ident, region, airport_id, airport_ident,
-  type, nav_type, waypoint_num_victor_airway, waypoint_num_jet_airway, scenery_local_path, bgl_filename, mag_var, lonx, laty)
+  type, arinc_type, nav_type, waypoint_num_victor_airway, waypoint_num_jet_airway, scenery_local_path, bgl_filename, mag_var, lonx, laty)
 select w.waypoint_id, w.nav_id, w.file_id, w.ident, w.region, w.airport_id, a.ident as airport_ident,
-  w.type, 'W', w.num_victor_airway, w.num_jet_airway, s.local_path, f.filename, w.mag_var, w.lonx, w.laty
+  w.type, w.arinc_type, 'W', w.num_victor_airway, w.num_jet_airway, s.local_path, f.filename, w.mag_var, w.lonx, w.laty
 from waypoint w
 join bgl_file f on f.bgl_file_id = w.file_id
 join scenery_area s on f.scenery_area_id = s.scenery_area_id
