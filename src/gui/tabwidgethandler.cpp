@@ -58,14 +58,14 @@ TabWidgetHandler::TabWidgetHandler(QTabWidget *tabWidgetParam, const QIcon& icon
   buttonMenu->setToolTipsVisible(true);
 
   // Create and add select all action =====================================
-  actionOpenAll = new QAction(tr("&Open All"), buttonMenu);
+  actionOpenAll = new QAction(tr("&Open all Tabs"), buttonMenu);
   actionOpenAll->setToolTip(tr("Show all tabs"));
   actionOpenAll->setStatusTip(actionOpenAll->toolTip());
   buttonMenu->addAction(actionOpenAll);
   connect(actionOpenAll, &QAction::triggered, this, &TabWidgetHandler::toolbarActionTriggered);
 
   // Create and add select none action =====================================
-  actionCloseExcept = new QAction(tr("&Close All Except Current"), buttonMenu);
+  actionCloseExcept = new QAction(tr("&Close all Tabs except Current"), buttonMenu);
   actionCloseExcept->setToolTip(tr("Close all tabs except the currently active tab"));
   actionCloseExcept->setStatusTip(actionCloseExcept->toolTip());
   buttonMenu->addAction(actionCloseExcept);
