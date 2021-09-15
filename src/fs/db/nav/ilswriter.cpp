@@ -55,6 +55,7 @@ void IlsWriter::writeObject(const Ils *type)
   bind(":ident", type->getIdent());
   bind(":name", type->getName());
   bind(":region", type->getRegion());
+  bind(":type", type->getType());
   bind(":frequency", type->getFrequency());
   bind(":range", roundToInt(atools::geo::meterToNm(type->getRange())));
   bind(":mag_var", type->getMagVar());

@@ -151,7 +151,7 @@ void DfdCompiler::writeAirports()
     airportWriteQuery->bindValue(":airport_id", ++curAirportId);
 
     // Add ident to id mapping
-    airportIndex->addAirportId(ident, curAirportId);
+    airportIndex->addAirportId(ident, curAirportId, pos);
 
     airportWriteQuery->bindValue(":file_id", FILE_ID);
     airportWriteQuery->bindValue(":ident", ident);
@@ -247,6 +247,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     // Generate new end ids here
     int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
 
+    // All in feet
     int length = primaryRec.valueInt("runway_length");
     int width = primaryRec.valueInt("runway_width");
 
@@ -1260,6 +1261,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 
     procInput.airportIdent = airportIdent;
     procInput.airportId = airportIndex->getAirportId(airportIdent).toInt();
+    procInput.airportPos = atools::geo::DPos(airportIndex->getAirportPos(airportIdent));
 
     // Fill data for procedure writer
     fillProcedureInput(procInput, query);
@@ -1546,9 +1548,8 @@ void DfdCompiler::initQueries()
   runwayQuery->prepare("select * from src.tbl_runways order by icao_code, airport_identifier, runway_identifier");
 
   runwayWriteQuery = new SqlQuery(db);
-  runwayWriteQuery->prepare(
-    SqlUtil(db).buildInsertStatement("runway", QString(),
-                                     {"surface", "shoulder", "edge_light", "center_light"}));
+  runwayWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway", QString(),
+                                                             {"surface", "shoulder", "edge_light", "center_light"}));
 
   runwayEndWriteQuery = new SqlQuery(db);
   runwayEndWriteQuery->prepare(SqlUtil(db).buildInsertStatement("runway_end", QString(), {

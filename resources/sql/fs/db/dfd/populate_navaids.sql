@@ -121,7 +121,9 @@ from tbl_terminal_ndbnavaids);
 
 delete from ils;
 
-insert into ils ( ident, region, frequency, range, mag_var, has_backcourse,
+-- Plain ILS, SDF, LDA and localizers **********************************
+
+insert into ils ( ident, region, type, frequency, range, mag_var, has_backcourse,
   dme_range, dme_altitude, dme_lonx, dme_laty,
   gs_range, gs_pitch, gs_altitude, gs_lonx, gs_laty,
   loc_airport_ident, loc_runway_name, loc_heading, loc_width,
@@ -129,6 +131,7 @@ insert into ils ( ident, region, frequency, range, mag_var, has_backcourse,
 select
   l.llz_identifier as ident,
   l.icao_code as region,
+  ils_mls_gls_category as type,
   l.llz_frequency * 1000 as frequency,
   27 as range, -- default range used by FSX
   l.station_declination as mag_var,
@@ -158,6 +161,45 @@ select
 from tbl_localizers_glideslopes l left outer join tbl_vhfnavaids d on
   l.llz_identifier = d.vor_identifier and l.icao_code = d.icao_code;
 
+-- GLS approach stations **********************************
+
+insert into ils ( ident, region, type, frequency, range, mag_var, has_backcourse,
+  dme_range, dme_altitude, dme_lonx, dme_laty,
+  gs_range, gs_pitch, gs_altitude, gs_lonx, gs_laty,
+  loc_airport_ident, loc_runway_name, loc_heading, loc_width,
+  end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty)
+select
+  g.gls_ref_path_identifier as ident,
+  g.icao_code as region,
+  'G' as type,
+  g.gls_channel as frequency,
+  27 as range, -- default range used by FSX
+  g.magentic_variation as mag_var,
+  0 as has_backcourse, -- Not available
+  null as dme_range,
+  null as dme_altitude,
+  null as dme_lonx,
+  null as dme_laty,
+  27 as gs_range,
+  g.gls_approach_slope as gs_pitch,
+  g.station_elevation as gs_altitude,
+  g.station_longitude as gs_lonx,
+  g.station_latitude as gs_laty,
+  g.airport_identifier as loc_airport_ident,
+  substr(g.runway_identifier, 3) as loc_runway_name, -- Strip off "RW" prefix
+  g.gls_approach_bearing + g.magentic_variation as loc_heading, -- Magnetic to true
+  null as loc_width, -- Not available
+  0 as end1_lonx,  -- All geometry is calculated later
+  0 as end1_laty,
+  0 as end_mid_lonx,
+  0 as end_mid_laty,
+  0 as end2_lonx,
+  0 as end2_laty,
+  0 as altitude,
+  r.runway_longitude as lonx,
+  r.runway_latitude as laty
+from tbl_gls g left outer join tbl_runways r on
+  g.runway_identifier = r.runway_identifier and g.icao_code = r.icao_code  and g.airport_identifier = r.airport_identifier;
 
 -- *********************************************************************************************
 -- Fill Marker table

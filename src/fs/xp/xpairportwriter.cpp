@@ -1139,7 +1139,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   int secRwEndId = ++curRunwayEndId;
 
   // Add to index
-  runways.append({primaryName, secondaryName, primRwEndId, secRwEndId});
+  runways.append(Runway(primaryName, secondaryName, primRwEndId, secRwEndId, primaryPos, secondaryPos));
 
   // Calculate heading and positions
   float lengthMeter = primaryPos.distanceMeterTo(secondaryPos);
@@ -1489,13 +1489,6 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     insertAirportQuery->bindValue(":faa", airportFaa);
     insertAirportQuery->bindValue(":local", airportLocal);
 
-    airportIndex->addAirportId(airportIdent, curAirportId);
-    for(const Runway& rw : runways)
-    {
-      airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId);
-      airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId);
-    }
-
     // Update counts
     insertAirportQuery->bindValue(":longest_runway_length", longestRunwayLength);
     insertAirportQuery->bindValue(":longest_runway_width", longestRunwayWidth);
@@ -1573,13 +1566,21 @@ void XpAirportWriter::finishAirport(const XpWriterContext& context)
     if(airportRect.isPoint())
       airportRect.inflate(1.f / 60.f, 1.f / 60.f);
 
+    // Center position
+    Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
+
+    airportIndex->addAirportId(airportIdent, curAirportId, center);
+    for(const Runway& rw : runways)
+    {
+      airportIndex->addRunwayEnd(airportIdent, rw.primaryName, rw.primaryEndId, rw.primaryPos);
+      airportIndex->addRunwayEnd(airportIdent, rw.secondaryName, rw.secondaryEndId, rw.secondaryPos);
+    }
+
     insertAirportQuery->bindValue(":left_lonx", airportRect.getTopLeft().getLonX());
     insertAirportQuery->bindValue(":top_laty", airportRect.getTopLeft().getLatY());
     insertAirportQuery->bindValue(":right_lonx", airportRect.getBottomRight().getLonX());
     insertAirportQuery->bindValue(":bottom_laty", airportRect.getBottomRight().getLatY());
 
-    // Center position
-    Pos center = airportPos.isValid() ? airportPos : airportRect.getCenter();
     insertAirportQuery->bindValue(":lonx", center.getLonX());
     insertAirportQuery->bindValue(":laty", center.getLatY());
 

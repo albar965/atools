@@ -69,6 +69,8 @@ public:
     return backcourse;
   }
 
+  QString getType() const;
+
   /*
    * @return Localizer if available - otherwise null
    */

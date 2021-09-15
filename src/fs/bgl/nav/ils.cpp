@@ -105,6 +105,35 @@ Ils::Ils(const NavDatabaseOptions *options, BinaryStream *bs)
   }
 }
 
+QString Ils::getType() const
+{
+  // ILS Localizer only, no glideslope   0
+  // ILS Localizer/MLS/GLS Unknown cat   U
+  // ILS Localizer/MLS/GLS Cat I         1
+  // ILS Localizer/MLS/GLS Cat II        2
+  // ILS Localizer/MLS/GLS Cat III       3
+  // IGS Facility                        I
+  // LDA Facility with glideslope        L
+  // LDA Facility no glideslope          A
+  // SDF Facility with glideslope        S
+  // SDF Facility no glideslope          F
+
+  if(glideslope == nullptr)
+    return "0"; // Localizer
+  else
+  {
+    QString upName = name.toUpper();
+    if(upName.contains("CAT-III") || upName.contains("CAT III") || upName.contains("CATIII"))
+      return "3";
+    else if(upName.contains("CAT-II") || upName.contains("CAT II") || upName.contains("CATII"))
+      return "2";
+    else if(upName.contains("CAT-I") || upName.contains("CAT I") || upName.contains("CATI"))
+      return "1";
+    else
+      return "U"; // Unknown category
+  }
+}
+
 Ils::~Ils()
 {
   delete localizer;

@@ -145,7 +145,7 @@ public:
    *    New table translation for MSFS language files.
    * 20 Added faa and local columns to database tables. Remove xpident column.
    * 21 Added arinc_type to tables waypoint and nav_search.
-   *    Type and category and more for ils added.
+   *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
    */
   static const int DB_VERSION_MINOR = 21;
 

@@ -23,6 +23,9 @@
 
 namespace atools {
 
+namespace geo {
+class Pos;
+}
 namespace sql {
 class SqlQuery;
 }
@@ -66,18 +69,25 @@ private:
   void writeNdb(const QStringList& line, int curFileId, const XpWriterContext& context);
   void writeMarker(const QStringList& line, int curFileId, atools::fs::xp::NavRowCode rowCode);
 
-  void writeIls(const QStringList& line, int curFileId, const XpWriterContext& context);
+  void writeIlsSbasGbas(const QStringList& line, atools::fs::xp::NavRowCode rowCode, const XpWriterContext& context);
   void updateIlsGlideslope(const QStringList& line);
   void updateIlsDme(const QStringList& line);
+  void updateSbasGbasThreshold(const QStringList& line);
+  void assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading);
+
+  QChar ilsType(const QString& name, bool glideslope);
 
   const int FEATHER_LEN_NM = 9;
   const float FEATHER_WIDTH = 4.f;
 
   int curVorId = 0, curNdbId = 0, curMarkerId = 0, curIlsId = 0;
 
+  QString ilsName;
+
   atools::sql::SqlQuery *insertVorQuery = nullptr, *insertNdbQuery = nullptr,
                         *insertMarkerQuery = nullptr, *insertIlsQuery = nullptr,
-                        *updateIlsGsQuery = nullptr, *updateIlsDmeQuery = nullptr;
+                        *updateIlsGsTypeQuery = nullptr, *updateIlsDmeQuery = nullptr,
+                        *updateSbasGbasThresholdQuery = nullptr;
   atools::fs::common::AirportIndex *airportIndex;
 
 };

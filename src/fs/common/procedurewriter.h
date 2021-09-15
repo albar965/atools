@@ -61,6 +61,7 @@ struct ProcedureInput
   QString context;
   QString airportIdent;
   int airportId;
+  atools::geo::DPos airportPos;
 
   /* APPCH, SID, STAR, or RWY (ignored) */
   QString rowCode; // All: 4.1.9.1. Page 55 (70)
@@ -120,7 +121,6 @@ class ProcedureWriter
 public:
   ProcedureWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam);
   virtual ~ProcedureWriter();
-
 
   ProcedureWriter(const ProcedureWriter& other) = delete;
   ProcedureWriter& operator=(const ProcedureWriter& other) = delete;
@@ -202,7 +202,8 @@ private:
   /* Calculate a navaid type based on section and subsection code or waypoint description.
    *  If not valid query the database for navaids */
   NavIdInfo navaidType(const QString& context, const QString& descCode, const QString& sectionCode,
-                       const QString& subSectionCode, const QString& name, const QString& region, const geo::DPos& pos);
+                       const QString& subSectionCode, const QString& ident, const QString& region,
+                       const geo::DPos& pos, const atools::geo::DPos& airportPos);
   NavIdInfo navaidTypeFix(const ProcedureInput& line);
 
   /* Calculate a database procedure type based on route type */
@@ -222,6 +223,9 @@ private:
   /* Extract altitude probably containing a FL prefix*/
   float altitudeFromStr(const QString& altStr);
 
+  void findFix(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
+               const atools::geo::DPos& pos) const;
+
   /* Database ids */
   int curApproachId = 0, curTransitionId = 0, curApproachLegId = 0, curTransitionLegId = 0;
 
@@ -232,7 +236,8 @@ private:
   atools::sql::SqlQuery *insertApproachQuery = nullptr, *insertTransitionQuery = nullptr,
                         *insertApproachLegQuery = nullptr, *insertTransitionLegQuery = nullptr,
                         *updateAirportQuery = nullptr,
-                        *findWaypointExactQuery = nullptr, *findWaypointQuery = nullptr;
+                        *findWaypointExactQuery = nullptr, *findWaypointQuery = nullptr,
+                        *findIlsExactQuery = nullptr, *findIlsQuery = nullptr;
 
   /* Index to look up airport and runway ids */
   atools::fs::common::AirportIndex *airportIndex;

@@ -29,7 +29,7 @@ namespace atools {
 
 namespace sql {
 
-SqlUtil::SqlUtil(const SqlDatabase* sqlDb)
+SqlUtil::SqlUtil(const SqlDatabase *sqlDb)
   : db(sqlDb)
 {
 }
@@ -41,7 +41,7 @@ SqlUtil::SqlUtil(const SqlDatabase& sqlDb)
 }
 
 QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause,
-                                      const QStringList& excludeColumns, bool namedBindings)
+                                      const QStringList& excludeColumns, bool namedBindings) const
 {
   // TODO use QSqlDriver::sqlStatement()
 
@@ -76,13 +76,13 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
   return "insert " + otherClause + " into " + tablename + " (" + columnList + ") values(" + valueList + ")";
 }
 
-QString SqlUtil::buildSelectStatement(const QString& tablename)
+QString SqlUtil::buildSelectStatement(const QString& tablename) const
 {
   // TODO use QSqlDriver::sqlStatement()
   return "select " + buildColumnList(tablename).join(", ") + " from " + tablename;
 }
 
-QStringList SqlUtil::buildColumnList(const QString& tablename, const QStringList& excludeColumns)
+QStringList SqlUtil::buildColumnList(const QString& tablename, const QStringList& excludeColumns) const
 {
   // TODO use QSqlDriver::sqlStatement()
   QStringList columnList;
@@ -101,23 +101,36 @@ QStringList SqlUtil::buildColumnList(const QString& tablename, const QStringList
   return columnList;
 }
 
-QString SqlUtil::buildSelectStatement(const QString& tablename, const QStringList& columns)
+QStringList SqlUtil::buildColumnListIf(const QString& tablename, const QStringList& columns) const
+{
+  QStringList columList;
+  SqlRecord record = db->record(tablename);
+
+  for(const QString& column : columns)
+  {
+    if(record.contains(column))
+      columList.append(column);
+  }
+  return columList;
+}
+
+QString SqlUtil::buildSelectStatement(const QString& tablename, const QStringList& columns) const
 {
   // TODO use QSqlDriver::sqlStatement()
   return "select " + columns.join(",") + " from " + tablename;
 }
 
-bool SqlUtil::hasTable(const QString& tablename)
+bool SqlUtil::hasTable(const QString& tablename) const
 {
   return !db->record(tablename).isEmpty();
 }
 
-bool SqlUtil::hasTableAndColumn(const QString& tablename, const QString& columnname)
+bool SqlUtil::hasTableAndColumn(const QString& tablename, const QString& columnname) const
 {
   return db->record(tablename).contains(columnname);
 }
 
-bool SqlUtil::hasTableAndRows(const QString& tablename)
+bool SqlUtil::hasTableAndRows(const QString& tablename) const
 {
   if(!db->record(tablename).isEmpty())
     return hasRows(tablename);
@@ -125,7 +138,7 @@ bool SqlUtil::hasTableAndRows(const QString& tablename)
   return false;
 }
 
-int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname)
+int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const
 {
   if(hasTableAndColumn(tablename, columnname))
   {
@@ -137,7 +150,7 @@ int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QStri
   return -1;
 }
 
-int SqlUtil::rowCount(const QString& tablename, const QString& criteria)
+int SqlUtil::rowCount(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
   q.exec("select count(1) from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria));
@@ -147,7 +160,7 @@ int SqlUtil::rowCount(const QString& tablename, const QString& criteria)
   return 0;
 }
 
-bool SqlUtil::hasRows(const QString& tablename, const QString& criteria)
+bool SqlUtil::hasRows(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
   q.exec("select 1 from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria) + " limit 1");
@@ -256,7 +269,7 @@ void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, 
   }
 }
 
-void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief)
+void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief) const
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
@@ -307,7 +320,7 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief
     out << "Total" << ": " << totalCount << " rows" << endl;
 }
 
-void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables)
+void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
@@ -370,7 +383,7 @@ void SqlUtil::reportRangeViolations(QDebug& out,
                                     const QStringList& reportCols,
                                     const QString& column,
                                     const QVariant& minValue,
-                                    const QVariant& maxValue)
+                                    const QVariant& maxValue) const
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
@@ -415,7 +428,7 @@ void SqlUtil::reportRangeViolations(QDebug& out,
 void SqlUtil::reportDuplicates(QDebug& out,
                                const QString& table,
                                const QString& idColumn,
-                               const QStringList& identityColumns)
+                               const QStringList& identityColumns) const
 {
   QDebugStateSaver saver(out);
   out.noquote().nospace();
@@ -468,7 +481,7 @@ int SqlUtil::bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant
   return query.numRowsAffected();
 }
 
-QStringList SqlUtil::buildTableList(const QStringList& tables)
+QStringList SqlUtil::buildTableList(const QStringList& tables) const
 {
   QStringList tableList;
   if(tables.isEmpty())
@@ -480,7 +493,7 @@ QStringList SqlUtil::buildTableList(const QStringList& tables)
   return tableList;
 }
 
-QStringList SqlUtil::buildResultList(SqlQuery& query)
+QStringList SqlUtil::buildResultList(SqlQuery& query) const
 {
   QStringList retval;
 

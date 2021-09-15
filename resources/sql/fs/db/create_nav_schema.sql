@@ -139,15 +139,35 @@ create index if not exists idx_marker_file_id on marker(file_id);
 
 drop table if exists ils;
 
--- Instrument landing system
+-- Instrument landing system and SBAS/GBAS path points as well as stations
 create table ils
 (
   ils_id integer primary key,
   ident varchar(5),                -- ICAO ident
   name varchar(50),
   region varchar(2),               -- ICAO two letter region identifier (always null)
-  frequency integer not null,      -- MHz * 1000
-  range integer not null,          -- Range in NM (currently always 27)
+
+  type varchar(1),             -- null, unknown
+                                   -- ILS Localizer only, no glideslope   0
+                                   -- ILS Localizer/MLS/GLS Unknown cat   U
+                                   -- ILS Localizer/MLS/GLS Cat I         1
+                                   -- ILS Localizer/MLS/GLS Cat II        2
+                                   -- ILS Localizer/MLS/GLS Cat III       3
+                                   -- IGS Facility                        I
+                                   -- LDA Facility with glideslope        L
+                                   -- LDA Facility no glideslope          A
+                                   -- SDF Facility with glideslope        S
+                                   -- SDF Facility no glideslope          F
+                                   -- GLS ground station:                 G
+                                   -- GLS / GBAS threshold point:         T
+
+  perf_indicator varchar(10),      -- "LP", "LPV", "APV-II" and "GLS"
+  provider varchar(10),            -- Provider of the SBAS service can be "WAAS", "EGNOS", "MSAS".
+                                   -- If no provider is specified, or this belongs to a GLS approach, then "GP"
+
+
+  frequency integer,               -- MHz * 1000 or GLS channel
+  range integer,                   -- Range in NM (currently always 27)
   mag_var double  not null,        -- Magnetic variance in degree < 0 for West and > 0 for East
   has_backcourse integer not null, -- 1 if backcourse is available
   dme_range integer,               -- Range of DME if available
@@ -162,14 +182,14 @@ create table ils
   loc_runway_end_id integer,       -- Reference to runway end.
   loc_airport_ident varchar(4),
   loc_runway_name varchar(10),
-  loc_heading double not null,     -- Localizer heading in degree true
+  loc_heading double,              -- Localizer heading in degree true
   loc_width double,                -- Width of localizer in degree or null if not available
-  end1_lonx double not null,       -- Pre-calculated first endpoint for a 8 NM feather
-  end1_laty double not null,       -- "
-  end_mid_lonx double not null,    -- Pre-calculated endpoint in the center of the end
-  end_mid_laty double not null,    -- "
-  end2_lonx double not null,       -- Pre-calculated second endpoint for a 8 NM feather
-  end2_laty double not null,       -- "
+  end1_lonx double,                -- Pre-calculated first endpoint for a 8 NM feather
+  end1_laty double,                -- "
+  end_mid_lonx double,             -- Pre-calculated endpoint in the center of the end
+  end_mid_laty double,             -- "
+  end2_lonx double,                -- Pre-calculated second endpoint for a 8 NM feather
+  end2_laty double,                -- "
   altitude integer not null,       -- Feet
   lonx double not null,            -- Coordinates of the ILS origin
   laty double not null,            -- "

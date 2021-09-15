@@ -811,7 +811,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     {
       NavIdInfo centerNavInfo = navaidType(line.context + ". RF recommended",
                                            QString(), line.centerSecCode, line.centerSubCode,
-                                           line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos);
+                                           line.centerFixOrTaaPt, line.centerIcaoCode, line.centerPos, line.airportPos);
 
       // Constant radius arc
       rec.setValue(":recommended_fix_type", centerNavInfo.type);
@@ -838,7 +838,7 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   {
     NavIdInfo recdNavInfo = navaidType(line.context + ". recommended",
                                        QString(), line.recdSecCode, line.recdSubCode, line.recdNavaid, line.recdRegion,
-                                       line.recdWaypointPos);
+                                       line.recdWaypointPos, line.airportPos);
 
     rec.setValue(":recommended_fix_type", recdNavInfo.type);
     rec.setValue(":recommended_fix_ident", line.recdNavaid.trimmed());
@@ -1042,17 +1042,18 @@ QString ProcedureWriter::procedureType(const ProcedureInput& line)
 ProcedureWriter::NavIdInfo ProcedureWriter::navaidTypeFix(const ProcedureInput& line)
 {
   return navaidType(line.context + ". fix_type", line.descCode, line.secCode, line.subCode, line.fixIdent,
-                    line.region, line.waypointPos);
+                    line.region, line.waypointPos, line.airportPos);
 
 }
 
 ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, const QString& descCode,
                                                        const QString& sectionCode,
-                                                       const QString& subSectionCode, const QString& name,
+                                                       const QString& subSectionCode, const QString& ident,
                                                        const QString& region,
-                                                       const atools::geo::DPos& pos)
+                                                       const atools::geo::DPos& pos,
+                                                       const atools::geo::DPos& airportPos)
 {
-  if(name.isEmpty())
+  if(ident.isEmpty())
     return NavIdInfo();
 
   if(sectionCode.trimmed().isEmpty())
@@ -1088,17 +1089,16 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
       }
     }
 
-    if(pos.isValid() && !pos.isNull())
+    // Fall back to airport position
+    atools::geo::DPos searchPos = pos.isValid() && !pos.isNull() ? pos : airportPos;
+
+    if(searchPos.isValid() && !searchPos.isNull())
     {
+      NavIdInfo inf;
+
       // Try an exact and faster coordinate search first
       // For that we need double coordinate values
-      NavIdInfo inf;
-      findWaypointExactQuery->bindValue(":ident", name);
-      findWaypointExactQuery->bindValue(":region", region.isEmpty() ? "%" : region);
-      findWaypointExactQuery->bindValue(":lonx", pos.getLonX());
-      findWaypointExactQuery->bindValue(":laty", pos.getLatY());
-      findWaypointExactQuery->exec();
-
+      findFix(findWaypointExactQuery, ident, region, searchPos);
       if(findWaypointExactQuery->next())
       {
         inf.type = findWaypointExactQuery->valueStr("type");
@@ -1106,22 +1106,34 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
       }
       else
       {
-        // Nothing found at position - look in vicinity
-        findWaypointQuery->bindValue(":ident", name);
-        findWaypointQuery->bindValue(":region", region.isEmpty() ? "%" : region);
-        findWaypointQuery->bindValue(":lonx", pos.getLonX());
-        findWaypointQuery->bindValue(":laty", pos.getLatY());
-        findWaypointQuery->exec();
+        // Nothing found at position - look in vicinity for waypoints
+        findFix(findWaypointQuery, ident, region, searchPos);
         if(findWaypointQuery->next())
         {
           inf.type = findWaypointQuery->valueStr("type");
           inf.region = findWaypointQuery->valueStr("region");
         }
+        else
+        {
+          // Nothing found at position - look at position for ILS
+          findFix(findIlsExactQuery, ident, region, searchPos);
+          if(findIlsExactQuery->next())
+            // Do not set type for ILS
+            inf.region = findIlsExactQuery->valueStr("region");
+          else
+          {
+            // Nothing found at position - look in vicinity for ILS
+            findFix(findIlsQuery, ident, region, searchPos);
+            if(findIlsQuery->next())
+              // Do not set type for ILS
+              inf.region = findIlsQuery->valueStr("region");
+          }
+        }
       }
 
       if(!inf.type.isEmpty())
       {
-        // N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint
+        // N = NDB, OA = off airway, V = VOR, WN = named waypoint, WU = unnamed waypoint, G = GBAS approach station
         if(inf.type == "WN" || inf.type == "WU")
         {
           inf.type = "W";
@@ -1132,7 +1144,7 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
       }
     }
     else if(!pos.isNull())
-      qWarning() << context << "Cannot find navaid type for" << name << "/" << region << pos;
+      qWarning() << context << "Cannot find navaid type for" << ident << "/" << region << pos;
 
     return NavIdInfo();
   }
@@ -1232,6 +1244,16 @@ ProcedureWriter::NavIdInfo ProcedureWriter::navaidType(const QString& context, c
   return NavIdInfo();
 }
 
+void ProcedureWriter::findFix(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
+                              const atools::geo::DPos& pos) const
+{
+  query->bindValue(":ident", ident);
+  query->bindValue(":region", region.isEmpty() ? "%" : region);
+  query->bindValue(":lonx", pos.getLonX());
+  query->bindValue(":laty", pos.getLatY());
+  query->exec();
+}
+
 QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
 {
   QString ident = line.transIdent;
@@ -1323,15 +1345,23 @@ void ProcedureWriter::initQueries()
   updateAirportQuery = new SqlQuery(db);
   updateAirportQuery->prepare("update airport set num_approach = :num where airport_id = :id");
 
-  findWaypointQuery = new SqlQuery(db);
-  findWaypointQuery->prepare("select type, region from waypoint where ident = :ident and region like :region and "
-                             "(abs(lonx - :lonx) + abs(laty - :laty)) < 0.001 "
-                             "order by abs(lonx - :lonx) + abs(laty - :laty)");
-
   findWaypointExactQuery = new SqlQuery(db);
   findWaypointExactQuery->prepare("select type, region from waypoint where ident = :ident and region like :region and "
                                   "lonx = :lonx and laty = :laty");
 
+  findWaypointQuery = new SqlQuery(db);
+  findWaypointQuery->prepare("select type, region from waypoint where ident = :ident and region like :region and "
+                             "(abs(lonx - :lonx) + abs(laty - :laty)) < 0.1 "
+                             "order by abs(lonx - :lonx) + abs(laty - :laty)");
+
+  findIlsExactQuery = new SqlQuery(db);
+  findIlsExactQuery->prepare("select type, region from ils where ident = :ident and region like :region and "
+                             "lonx = :lonx and laty = :laty");
+
+  findIlsQuery = new SqlQuery(db);
+  findIlsQuery->prepare("select type, region from ils where ident = :ident and region like :region and "
+                        "(abs(lonx - :lonx) + abs(laty - :laty)) < 0.1 "
+                        "order by abs(lonx - :lonx) + abs(laty - :laty)");
 }
 
 void ProcedureWriter::deInitQueries()
@@ -1356,6 +1386,12 @@ void ProcedureWriter::deInitQueries()
 
   delete findWaypointExactQuery;
   findWaypointExactQuery = nullptr;
+
+  delete findIlsQuery;
+  findIlsQuery = nullptr;
+
+  delete findIlsExactQuery;
+  findIlsExactQuery = nullptr;
 }
 
 } // namespace common

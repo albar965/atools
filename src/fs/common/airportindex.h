@@ -25,6 +25,10 @@
 #include <QVariant>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
+
 namespace fs {
 namespace common {
 
@@ -39,30 +43,35 @@ public:
 
   /* Add airport to index. Returns true if it was added. ident should be ICAO for X-Plane.
    *  Uses a different set/hash than getAirportId and addAirportId */
-  bool addAirportIdent(const QString& ident);
+  bool addAirportIdent(const QString& airportIdent);
 
   /* Add airport id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
-  bool addAirportId(const QString& ident, int airportId);
+  bool addAirportId(const QString& airportIdent, int airportId, const atools::geo::Pos& pos);
 
   /* Get id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */
-  QVariant getAirportId(const QString& ident) const;
+  QVariant getAirportId(const QString& airportIdent) const;
+  atools::geo::Pos getAirportPos(const QString& airportIdent) const;
 
   /* Add runway end id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
-  void addRunwayEnd(const QString& ident, const QString& runwayName, int runwayEndId);
+  void addRunwayEnd(const QString& airportIdent, const QString& runwayName, int runwayEndId,
+                    const atools::geo::Pos& runwayEndPos);
 
   /* Get runway end id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */
-  QVariant getRunwayEndId(const QString& ident, const QString& runwayName) const;
+  QVariant getRunwayEndId(const QString& airportIdent, const QString& runwayName) const;
 
-  void addAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent, int ilsId);
-  int getAirportIlsId(const QString& ident, const QString& airportRegion, const QString& ilsIdent) const;
+  /* Get position of runway end. Invalid pos if not found */
+  atools::geo::Pos getRunwayEndPos(const QString& airportIdent, const QString& runwayName) const;
 
-  void addSkippedAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent);
-  bool hasSkippedAirportIls(const QString& ident, const QString& airportRegion, const QString& ilsIdent) const;
+  void addAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent, int ilsId);
+  int getAirportIlsId(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent) const;
+
+  void addSkippedAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent);
+  bool hasSkippedAirportIls(const QString& airportIdent, const QString& airportRegion, const QString& ilsIdent) const;
 
   /* Returns true if ICAO duplicates appear */
-  bool addIdentIcaoMapping(const QString& ident, const QString& icao);
+  bool addIdentIcaoMapping(const QString& airportIdent, const QString& icao);
 
   void clearSkippedIls()
   {
@@ -84,9 +93,12 @@ private:
 
   // Maps airport idents to ICAO
   QHash<Name, Name> identToIcaoMap;
+  QHash<Name, atools::geo::Pos> identToPosMap;
 
   // Airport ICAO and runway name to runway_end_id
   QHash<Name2, int> identRunwayNameToEndId;
+
+  QHash<Name2, atools::geo::Pos> identRunwayNameToEndPos;
 
   // Airport ICAO, airport region and ILS ident to ils_id
   QHash<Name3, int> airportIlsIdMap;

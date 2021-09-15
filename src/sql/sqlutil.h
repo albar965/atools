@@ -45,41 +45,46 @@ public:
    * @param endline Print endline or not. Useful for streams that automatically
    * insert endlines like QDebug.
    */
-  void printTableStats(QDebug& out, const QStringList& tables = QStringList(), bool brief = false);
+  void printTableStats(QDebug& out, const QStringList& tables = QStringList(), bool brief = false) const;
 
   /* Create a list of columns for the given table excluding all in excludeColumns */
-  QStringList buildColumnList(const QString& tablename, const QStringList& excludeColumns = QStringList());
+  QStringList buildColumnList(const QString& tablename, const QStringList& excludeColumns = QStringList()) const;
 
-  void createColumnReport(QDebug& out, const QStringList& tables = QStringList());
+  /* Returns the list of given columns with not existing removed */
+  QStringList buildColumnListIf(const QString& tablename, const QStringList& columns) const;
+
+  void createColumnReport(QDebug& out, const QStringList& tables = QStringList()) const;
   void reportDuplicates(QDebug& out, const QString& table, const QString& idColumn,
-                        const QStringList& identityColumns);
+                        const QStringList& identityColumns) const;
 
   int bindAndExec(const QString& sql, QVector<std::pair<QString, QVariant> > params);
   int bindAndExec(const QString& sql, const QString& bind, const QVariant& value);
 
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString(),
-                               const QStringList& excludeColumns = QStringList(), bool namedBindings = true);
+                               const QStringList& excludeColumns = QStringList(), bool namedBindings = true) const;
 
   /* Creates a select statement including all columns for the given table. */
-  QString buildSelectStatement(const QString& tablename);
-  QString buildSelectStatement(const QString& tablename, const QStringList& columns);
+  QString buildSelectStatement(const QString& tablename) const;
+  QString buildSelectStatement(const QString& tablename, const QStringList& columns) const;
 
   /* @return true if table exists */
-  bool hasTable(const QString& tablename);
-  bool hasTableAndColumn(const QString& tablename, const QString& columnname);
+  bool hasTable(const QString& tablename) const;
+  bool hasTableAndColumn(const QString& tablename, const QString& columnname) const;
 
   /* @return true if table exists and has rows */
-  bool hasTableAndRows(const QString& tablename);
+  bool hasTableAndRows(const QString& tablename) const;
 
   /* @return number of distinct rows if table and column exist. Otherwise -1. */
-  int getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname);
+  int getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const;
 
   /* Get number of rows in table. Throws exception if the table does not exist. */
-  int rowCount(const QString& tablename, const QString& criteria = QString());
+  int rowCount(const QString& tablename, const QString& criteria = QString()) const;
 
   /* Faster than rowCount */
-  bool hasRows(const QString& tablename, const QString& criteria = QString());
+  bool hasRows(const QString& tablename, const QString& criteria = QString()) const;
+
+  QStringList columnsIf() const;
 
   /* Copy all values from one query to another
    * @param from a valid query as data source
@@ -103,7 +108,7 @@ public:
 
   void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols,
                              const QString& column, const QVariant& minValue,
-                             const QVariant& maxValue);
+                             const QVariant& maxValue) const;
 
   typedef  std::function<bool (const atools::sql::SqlQuery&, atools::sql::SqlQuery&)> UpdateColFuncType;
   /* Calls func for earch row to allow complex calculations for each row in the table which could not
@@ -126,8 +131,8 @@ public:
 private:
   const SqlDatabase *db;
 
-  QStringList buildTableList(const QStringList& tables);
-  QStringList buildResultList(atools::sql::SqlQuery& query);
+  QStringList buildTableList(const QStringList& tables) const;
+  QStringList buildResultList(atools::sql::SqlQuery& query) const;
 
   static void copyRowValuesInternal(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to,
                                     const atools::sql::SqlRecord& fromRec, const QMap<QString, QVariant>& bound);

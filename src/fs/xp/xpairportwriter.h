@@ -161,14 +161,30 @@ private:
     float primaryHeading, secondaryHeading;
     atools::geo::Line runway;
   };
+
   QVector<RunwayGeo> runwayGeometry;
 
   /* Keep runways until ICAO code is determined */
   struct Runway
   {
+    Runway()
+    {
+    }
+
+    Runway(const QString& primaryNameParam, const QString& secondaryNameParam,
+           int primaryEndIdParam, int secondaryEndIdParam,
+           const atools::geo::Pos& primaryPosParam, const atools::geo::Pos& secondaryPosParam) :
+      primaryName(primaryNameParam), secondaryName(secondaryNameParam),
+      primaryEndId(primaryEndIdParam), secondaryEndId(secondaryEndIdParam),
+      primaryPos(primaryPosParam), secondaryPos(secondaryPosParam)
+    {
+    }
+
     QString primaryName, secondaryName;
     int primaryEndId, secondaryEndId;
+    atools::geo::Pos primaryPos, secondaryPos;
   };
+
   QVector<Runway> runways;
 
   float airportAltitude = 0.f;

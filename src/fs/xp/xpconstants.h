@@ -79,9 +79,9 @@ enum NavRowCode
   DME_ONLY = 13, /*  Stand-alone DME, orthe DME component of an NDB-DME Paired frequency will be displayed on X-Plane’s charts */
 
   /*  Unused below */
-  SBAS_GBAS_FINAL = 14, /*  14 Final approach path alignment point of an SBAS or GBAS approach path Will not appear in X-Plane’s charts */
-  GBAS = 15, /*  15 GBAS differential ground station of a GLS Will not appear in X-Plane’s charts */
-  SBAS_GBAS_TRESHOLD = 16 /*  16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach Will */
+  SBAS_GBAS_FINAL = 14, /*  14 Final approach path alignment point of an SBAS or GBAS approach path */
+  GBAS = 15, /*  15 GBAS differential ground station of a GLS */
+  SBAS_GBAS_THRESHOLD = 16 /*  16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach */
 };
 
 /* Row codes for apt.dat */

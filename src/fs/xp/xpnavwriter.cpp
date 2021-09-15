@@ -44,8 +44,8 @@ enum FieldIndex
   LATY = 1,
   LONX = 2,
   ALT = 3,
-  FREQ = 4,
-  RANGE = 5,
+  FREQ = 4, // Or SBAS/GBAS channel
+  RANGE = 5, // Or length Offset in meters, from stop end of runway to FPAP or path point threshold crossing height, feet
   HDG = 6,
   MAGVAR = HDG,
   IDENT = 7,
@@ -218,10 +218,93 @@ void XpNavWriter::writeMarker(const QStringList& line, int curFileId, NavRowCode
   progress->incNumMarker();
 }
 
-void XpNavWriter::writeIls(const QStringList& line, int curFileId, const XpWriterContext& context)
+QChar XpNavWriter::ilsType(const QString& name, bool glideslope)
 {
-  Q_UNUSED(curFileId)
+  // ILS Localizer only, no glideslope   0
+  // ILS Localizer/MLS/GLS Unknown cat   U
+  // ILS Localizer/MLS/GLS Cat I         1
+  // ILS Localizer/MLS/GLS Cat II        2
+  // ILS Localizer/MLS/GLS Cat III       3
+  // IGS Facility                        I
+  // LDA Facility with glideslope        L
+  // LDA Facility no glideslope          A
+  // SDF Facility with glideslope        S
+  // SDF Facility no glideslope          F
 
+  QChar type('\0');
+
+  // Read type from name
+  if(name == "LOC")
+    type = '0';
+  else if(name == "SDF")
+    type = glideslope ? 'S' : 'F';
+  else if(name == "LDA")
+    type = glideslope ? 'L' : 'A';
+  else if(name == "IGS")
+    type = 'I';
+  else
+  {
+    if(glideslope)
+    {
+      if(name.contains("CAT-III") || name.contains("CAT III") || name.contains("CATIII"))
+        type = '3';
+      else if(name.contains("CAT-II") || name.contains("CAT II") || name.contains("CATII"))
+        type = '2';
+      else if(name.contains("CAT-I") || name.contains("CAT I") || name.contains("CATI"))
+        type = '1';
+      else
+        type = 'U'; // ILS of unknown category
+    }
+    else
+      type = '0'; // Localizer
+  }
+
+  return type;
+}
+
+void XpNavWriter::updateSbasGbasThreshold(const QStringList& line)
+{
+  /*  SBAS_GBAS_THRESHOLD 16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach */
+  const QString& airportIdent = at(line, AIRPORT);
+  const QString& airportRegion = at(line, REGION);
+  const QString& ilsIdent = at(line, IDENT);
+
+  if(airportIndex->hasSkippedAirportIls(airportIdent, airportRegion, ilsIdent))
+    // Already skipped in this file
+    return;
+
+  int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
+
+  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
+
+  // pos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
+
+  float hdg = at(line, HDG).toFloat();
+  float heading = atools::geo::normalizeCourse(std::fmod(hdg, 1000.f));
+  float pitch = std::floor(hdg / 1000.f) / 100.f;
+
+  updateSbasGbasThresholdQuery->bindValue(":id", ilsId);
+  updateSbasGbasThresholdQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
+  updateSbasGbasThresholdQuery->bindValue(":gs_lonx", pos.getLonX());
+  updateSbasGbasThresholdQuery->bindValue(":gs_laty", pos.getLatY());
+  updateSbasGbasThresholdQuery->bindValue(":gs_pitch", pitch);
+  updateSbasGbasThresholdQuery->bindValue(":loc_heading", heading);
+  updateSbasGbasThresholdQuery->bindValue(":type", "T");
+  updateSbasGbasThresholdQuery->bindValue(":provider", at(line, NAME));
+  updateSbasGbasThresholdQuery->bindValue(":lonx", pos.getLonX());
+  updateSbasGbasThresholdQuery->bindValue(":laty", pos.getLatY());
+
+  assignIlsGeometry(updateSbasGbasThresholdQuery, pos, heading);
+
+  // updateSbasGbasThresholdQuery->bindValue(":gs_range", atools::geo::meterToFeet(at(line, RANGE).toInt()));
+  // updateSbasGbasThresholdQuery->bindValue(":range", at(line, RANGE).toInt());
+
+  updateSbasGbasThresholdQuery->exec();
+  updateSbasGbasThresholdQuery->clearBoundValues();
+}
+
+void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, const XpWriterContext& context)
+{
   const QString& airportIdent = at(line, AIRPORT);
   const QString& airportRegion = at(line, REGION);
   const QString& ilsIdent = at(line, IDENT);
@@ -239,41 +322,75 @@ void XpNavWriter::writeIls(const QStringList& line, int curFileId, const XpWrite
   atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertIlsQuery->bindValue(":ils_id", curIlsId);
-  insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt() * 10);
-  insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
-  insertIlsQuery->bindValue(":loc_heading", at(line, HDG).toFloat());
+
+  ilsName = line.mid(NAME).join(" ").simplified().toUpper();
+  float heading = at(line, HDG).toFloat();
+
+  if(rowCode == SBAS_GBAS_FINAL)
+  {
+    /*  14 Final approach path alignment point of an SBAS or GBAS approach path */
+    insertIlsQuery->bindValue(":perf_indicator", at(line, NAME));
+    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
+  }
+  else if(rowCode == GBAS)
+  {
+    /*  15 GBAS differential ground station of a GLS */
+    pos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
+    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
+    insertIlsQuery->bindValue(":type", "G");
+    insertIlsQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
+    heading = atools::geo::normalizeCourse(std::fmod(heading, 1000.f));
+  }
+  else
+  {
+    // Normal ILS, SDF, LOC, etc.
+    insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt() * 10);
+
+    // Is probably updated later in updateIlsGlideslope()
+    insertIlsQuery->bindValue(":type", ilsType(ilsName, false /* glideslope */));
+    insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
+    heading = atools::geo::normalizeCourse(heading);
+  }
+
+  insertIlsQuery->bindValue(":loc_heading", heading);
   insertIlsQuery->bindValue(":ident", ilsIdent);
   insertIlsQuery->bindValue(":loc_airport_ident", airportIdent);
   insertIlsQuery->bindValue(":region", at(line, REGION));
   insertIlsQuery->bindValue(":loc_runway_name", runwayName);
-  insertIlsQuery->bindValue(":name", line.mid(NAME).join(" ").toUpper());
+  insertIlsQuery->bindValue(":name", ilsName);
   insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndId(airportIdent, runwayName));
   insertIlsQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertIlsQuery->bindValue(":lonx", pos.getLonX());
   insertIlsQuery->bindValue(":laty", pos.getLatY());
 
   insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  insertIlsQuery->bindValue(":loc_width", QVariant(QVariant::Int)); // Not available
+  // insertIlsQuery->bindNullInt(":loc_width"); // Not available
   insertIlsQuery->bindValue(":has_backcourse", 0);
 
+  if(rowCode != SBAS_GBAS_FINAL)
+    assignIlsGeometry(insertIlsQuery, pos, heading);
+
+  insertIlsQuery->exec();
+  insertIlsQuery->clearBoundValues();
+  progress->incNumIls();
+}
+
+void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading)
+{
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
   // Calculate the display of the ILS feather
-  float ilsHeading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(at(line, HDG).toFloat()));
+  float ilsHeading = atools::geo::opposedCourseDeg(heading);
   atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f);
   atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f);
   float featherWidth = p1.distanceMeterTo(p2);
   atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
 
-  insertIlsQuery->bindValue(":end1_lonx", p1.getLonX());
-  insertIlsQuery->bindValue(":end1_laty", p1.getLatY());
-  insertIlsQuery->bindValue(":end_mid_lonx", pmid.getLonX());
-  insertIlsQuery->bindValue(":end_mid_laty", pmid.getLatY());
-  insertIlsQuery->bindValue(":end2_lonx", p2.getLonX());
-  insertIlsQuery->bindValue(":end2_laty", p2.getLatY());
-
-  insertIlsQuery->exec();
-  insertIlsQuery->clearBoundValues();
-  progress->incNumIls();
+  query->bindValue(":end1_lonx", p1.getLonX());
+  query->bindValue(":end1_laty", p1.getLatY());
+  query->bindValue(":end_mid_lonx", pmid.getLonX());
+  query->bindValue(":end_mid_laty", pmid.getLatY());
+  query->bindValue(":end2_lonx", p2.getLonX());
+  query->bindValue(":end2_laty", p2.getLatY());
 }
 
 void XpNavWriter::updateIlsGlideslope(const QStringList& line)
@@ -288,16 +405,15 @@ void XpNavWriter::updateIlsGlideslope(const QStringList& line)
 
   int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
 
-  float pitchHdg = at(line, HDG).toFloat();
-  float pitch = std::floor(pitchHdg / 1000.f) / 100.f;
-  updateIlsGsQuery->bindValue(":id", ilsId);
-  updateIlsGsQuery->bindValue(":gs_range", at(line, RANGE).toInt());
-  updateIlsGsQuery->bindValue(":gs_pitch", pitch);
-  updateIlsGsQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
-  updateIlsGsQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
-  updateIlsGsQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
-  updateIlsGsQuery->exec();
-  updateIlsGsQuery->clearBoundValues();
+  updateIlsGsTypeQuery->bindValue(":id", ilsId);
+  updateIlsGsTypeQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
+  updateIlsGsTypeQuery->bindValue(":gs_range", at(line, RANGE).toInt());
+  updateIlsGsTypeQuery->bindValue(":gs_altitude", at(line, ALT).toInt());
+  updateIlsGsTypeQuery->bindValue(":gs_lonx", at(line, LONX).toFloat());
+  updateIlsGsTypeQuery->bindValue(":gs_laty", at(line, LATY).toFloat());
+  updateIlsGsTypeQuery->bindValue(":type", ilsType(ilsName, true /* glideslope */)); // Update cat since gs is now available
+  updateIlsGsTypeQuery->exec();
+  updateIlsGsTypeQuery->clearBoundValues();
 }
 
 void XpNavWriter::updateIlsDme(const QStringList& line)
@@ -351,8 +467,15 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
 
     case LOC: // 4 Localizer component of an ILS (Instrument Landing System)
     case LOC_ONLY: // 5 Localizer component of a localizer-only approach Includes for LDAs and SDFs
+    case GBAS: // 15 GBAS differential ground station of a GLS
+    case SBAS_GBAS_FINAL: // 14 Final approach path alignment point of an SBAS or GBAS approach path
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
-        writeIls(line, context.curFileId, context);
+        writeIlsSbasGbas(line, rowCode, context);
+      break;
+
+    case SBAS_GBAS_THRESHOLD: // 16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach
+      // Always follows on 14
+      updateSbasGbasThreshold(line);
       break;
 
     // 6 Glideslope component of an ILS Frequency shown is paired frequency, notthe DME channel
@@ -389,14 +512,6 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
           writeVor(line, true, context.curFileId);
       }
       break;
-
-    case atools::fs::xp::SBAS_GBAS_FINAL:
-    case atools::fs::xp::GBAS:
-    case atools::fs::xp::SBAS_GBAS_TRESHOLD:
-      break;
-      // 14 Final approach path alignment point of an SBAS or GBAS approach path Will not appear in X-Plane’s charts
-      // 15 GBAS differential ground station of a GLS Will not appear in X-Plane’s charts
-      // 16 Landing threshold point or fictitious threshold point of an SBAS/GBAS approach Will not appear in X-Plane’s charts
   }
 }
 
@@ -432,9 +547,21 @@ void XpNavWriter::initQueries()
   updateIlsDmeQuery->prepare("update ils set dme_range = :dme_range, dme_altitude = :dme_altitude, "
                              "dme_lonx = :dme_lonx, dme_laty = :dme_laty where ils_id = :id");
 
-  updateIlsGsQuery = new SqlQuery(db);
-  updateIlsGsQuery->prepare("update ils set gs_range = :gs_range, gs_pitch = :gs_pitch, gs_altitude = :gs_altitude, "
-                            "gs_lonx = :gs_lonx, gs_laty = :gs_laty where ils_id = :id");
+  updateIlsGsTypeQuery = new SqlQuery(db);
+  updateIlsGsTypeQuery->prepare("update ils set type = :type, "
+                                "gs_range = :gs_range, gs_pitch = :gs_pitch, gs_altitude = :gs_altitude, "
+                                "gs_lonx = :gs_lonx, gs_laty = :gs_laty where ils_id = :id");
+
+  updateSbasGbasThresholdQuery = new SqlQuery(db);
+  updateSbasGbasThresholdQuery->prepare("update ils set "
+                                        "gs_altitude = :gs_altitude, gs_lonx = :gs_lonx, gs_laty = :gs_laty, "
+                                        "gs_pitch = :gs_pitch, "
+                                        "loc_heading = :loc_heading, type = :type, type = :type, "
+                                        "provider = :provider, lonx = :lonx, laty = :laty, "
+                                        "end1_lonx = :end1_lonx, end1_laty = :end1_laty, "
+                                        "end_mid_lonx = :end_mid_lonx, end_mid_laty = :end_mid_laty, "
+                                        "end2_lonx = :end2_lonx, end2_laty = :end2_laty "
+                                        "where ils_id = :id");
 }
 
 void XpNavWriter::deInitQueries()
@@ -454,8 +581,11 @@ void XpNavWriter::deInitQueries()
   delete updateIlsDmeQuery;
   updateIlsDmeQuery = nullptr;
 
-  delete updateIlsGsQuery;
-  updateIlsGsQuery = nullptr;
+  delete updateIlsGsTypeQuery;
+  updateIlsGsTypeQuery = nullptr;
+
+  delete updateSbasGbasThresholdQuery;
+  updateSbasGbasThresholdQuery = nullptr;
 }
 
 } // namespace xp
