@@ -91,7 +91,6 @@ void DfdCompiler::writeAirports()
   airportWriteQuery->bindValue(":has_tower_object", 0);
   airportWriteQuery->bindValue(":is_closed", 0);
   airportWriteQuery->bindValue(":is_addon", 0);
-  airportWriteQuery->bindValue(":num_parking_gate", 0);
   airportWriteQuery->bindValue(":num_parking_ga_ramp", 0);
   airportWriteQuery->bindValue(":num_parking_cargo", 0);
   airportWriteQuery->bindValue(":num_parking_mil_cargo", 0);
@@ -110,6 +109,8 @@ void DfdCompiler::writeAirports()
 
   airportWriteQuery->bindValue(":num_com", 0); // Filled later in populate_com.sql
   airportWriteQuery->bindValue(":num_approach", 0); // Filled later by procedure writer
+
+  airportWriteQuery->bindValue(":num_parking_gate", 0); // Filled later by populate_parking.sql
 
   // "tower_frequency", "atis_frequency", "awos_frequency", "asos_frequency", "unicom_frequency":
   // Filled later in populate_com.sql
@@ -473,6 +474,17 @@ void DfdCompiler::writeNavaids()
 
   // Write VOR and NDB
   script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_navaids.sql");
+  db.commit();
+}
+
+void DfdCompiler::writeParking()
+{
+  progress->reportOther("Writing parking");
+
+  SqlScript script(db, true /*options->isVerbose()*/);
+
+  // Write VOR and NDB
+  script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_parking.sql");
   db.commit();
 }
 

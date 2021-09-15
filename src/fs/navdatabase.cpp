@@ -886,8 +886,12 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
   {
     dfdCompiler->writeAirports();
+
     if(options->isIncludedNavDbObject(atools::fs::type::RUNWAY))
       dfdCompiler->writeRunways();
+
+    if(options->isIncludedNavDbObject(atools::fs::type::PARKING))
+      dfdCompiler->writeParking();
   }
   if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT) ||
      options->isIncludedNavDbObject(atools::fs::type::VOR) ||

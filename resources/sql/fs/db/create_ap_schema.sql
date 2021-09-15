@@ -558,8 +558,8 @@ create table parking
   name varchar(15),                -- see enum atools::fs::bgl::ap::ParkingName
   number integer not null,         -- parking number
   airline_codes text,              -- Comma separated list of two letter ICAO airline codes
-  radius double not null,          -- Radius in feet
-  heading double not null,         -- Heading in degree true
+  radius double,                   -- Radius in feet
+  heading double,                  -- Heading in degree true
   has_jetway integer not null,     -- 1 if the parking has a jetway attached
   lonx double not null,
   laty double not null,
