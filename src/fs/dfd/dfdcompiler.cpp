@@ -264,11 +264,16 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     float heading = primaryRec.valueFloat("runway_true_bearing");
     float opposedHeading = secondaryRec.valueFloat("runway_true_bearing");
 
-    // qDebug() << apt << primaryEndId << p.valueStr("runway_identifier")
-    // << secondaryEndId << s.valueStr("runway_identifier");
+    // Correct runway ends with equal positions by using center and length
+    if(primaryPos.almostEqual(secondaryPos, atools::geo::Pos::POS_EPSILON_5M))
+    {
+      // Calculate runway end positions for drawing
+      primaryPos = centerPos.endpoint(atools::geo::feetToMeter(length) / 2.f, atools::geo::opposedCourseDeg(heading));
+      secondaryPos = centerPos.endpoint(atools::geo::feetToMeter(length) / 2.f, heading);
+    }
 
     // Count ILS
-    if(primaryRec.valueStr("llz_identifier").isEmpty())
+    if(!primaryRec.valueStr("llz_identifier").isEmpty())
       numRunwayIls++;
 
     // Remember the longest data
