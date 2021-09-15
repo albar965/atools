@@ -345,6 +345,12 @@ uint qHash(const atools::geo::Pos& pos);
 class DPos
 {
 public:
+  explicit DPos(const atools::geo::Pos& other)
+  {
+    lonX = other.getLonX();
+    latY = other.getLatY();
+  }
+
   DPos(const atools::geo::DPos& other)
   {
     this->operator=(other);
