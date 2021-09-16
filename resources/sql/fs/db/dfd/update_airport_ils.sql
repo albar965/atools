@@ -24,15 +24,13 @@ update ils set loc_runway_end_id = (
   from runway_end e
   join runway r on e.runway_end_id = r.primary_end_id
   join airport a on r.airport_id = a.airport_id
-  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident and
-  (abs(e.lonx - ils.lonx) + abs(e.laty - ils.laty)) < 0.5
-);
+  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
+) where loc_runway_end_id is null;
 
 update ils set loc_runway_end_id = (
   select runway_end_id
   from runway_end e
   join runway r on e.runway_end_id = r.secondary_end_id
   join airport a on r.airport_id = a.airport_id
-  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident and
-  (abs(e.lonx - ils.lonx) + abs(e.laty - ils.laty)) < 0.5
-);
+  where e.name = ils.loc_runway_name and a.ident = ils.loc_airport_ident
+) where loc_runway_end_id is null;
