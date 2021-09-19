@@ -294,7 +294,7 @@ void XpNavWriter::updateSbasGbasThreshold(const QStringList& line)
   updateSbasGbasThresholdQuery->bindValue(":lonx", pos.getLonX());
   updateSbasGbasThresholdQuery->bindValue(":laty", pos.getLatY());
 
-  assignIlsGeometry(updateSbasGbasThresholdQuery, pos, heading);
+  assignIlsGeometry(updateSbasGbasThresholdQuery, pos, heading, ILS_FEATHER_WIDTH_DEG * 2.f);
 
   // updateSbasGbasThresholdQuery->bindValue(":gs_range", atools::geo::meterToFeet(at(line, RANGE).toInt()));
   // updateSbasGbasThresholdQuery->bindValue(":range", at(line, RANGE).toInt());
@@ -325,12 +325,14 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
 
   ilsName = line.mid(NAME).join(" ").simplified().toUpper();
   float heading = at(line, HDG).toFloat();
+  float width = 0.f;
 
   if(rowCode == SBAS_GBAS_FINAL)
   {
     /*  14 Final approach path alignment point of an SBAS or GBAS approach path */
     insertIlsQuery->bindValue(":perf_indicator", at(line, NAME));
     insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
+    width = ILS_FEATHER_WIDTH_DEG * 2.f;
   }
   else if(rowCode == GBAS)
   {
@@ -340,6 +342,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
     insertIlsQuery->bindValue(":type", "G");
     insertIlsQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
     heading = atools::geo::normalizeCourse(std::fmod(heading, 1000.f));
+    width = ILS_FEATHER_WIDTH_DEG * 2.f;
   }
   else
   {
@@ -350,6 +353,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
     insertIlsQuery->bindValue(":type", ilsType(ilsName, false /* glideslope */));
     insertIlsQuery->bindValue(":range", at(line, RANGE).toInt());
     heading = atools::geo::normalizeCourse(heading);
+    width = ILS_FEATHER_WIDTH_DEG;
   }
 
   insertIlsQuery->bindValue(":loc_heading", heading);
@@ -364,24 +368,25 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   insertIlsQuery->bindValue(":laty", pos.getLatY());
 
   insertIlsQuery->bindValue(":mag_var", context.magDecReader->getMagVar(pos));
-  // insertIlsQuery->bindNullInt(":loc_width"); // Not available
+  insertIlsQuery->bindValue(":loc_width", width);
   insertIlsQuery->bindValue(":has_backcourse", 0);
 
   if(rowCode != SBAS_GBAS_FINAL)
-    assignIlsGeometry(insertIlsQuery, pos, heading);
+    assignIlsGeometry(insertIlsQuery, pos, heading, width);
 
   insertIlsQuery->exec();
   insertIlsQuery->clearBoundValues();
   progress->incNumIls();
 }
 
-void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading)
+void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading,
+                                    float width)
 {
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
   // Calculate the display of the ILS feather
   float ilsHeading = atools::geo::opposedCourseDeg(heading);
-  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - FEATHER_WIDTH / 2.f);
-  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + FEATHER_WIDTH / 2.f);
+  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - width / 2.f);
+  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + width / 2.f);
   float featherWidth = p1.distanceMeterTo(p2);
   atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
 

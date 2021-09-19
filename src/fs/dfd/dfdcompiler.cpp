@@ -59,7 +59,7 @@ namespace ng {
 
 /* Length of the ILS feather */
 static const float ILS_FEATHER_LEN_NM = 9;
-static const float ILS_FEATHER_WIDTH = 4.f;
+static const float ILS_FEATHER_WIDTH_DEG = 4.f;
 
 DfdCompiler::DfdCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts,
                          ProgressHandler *progressHandler)
@@ -1445,10 +1445,12 @@ void DfdCompiler::updateIlsGeometry()
 
       float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
       float heading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(from.valueFloat("loc_heading")));
+      QString type = from.valueStr("type");
+      float width = type == "G" || type == "T" ? ILS_FEATHER_WIDTH_DEG * 2.f : ILS_FEATHER_WIDTH_DEG;
 
       // Corner endpoints
-      Pos p1 = pos.endpoint(length, heading - ILS_FEATHER_WIDTH / 2.f);
-      Pos p2 = pos.endpoint(length, heading + ILS_FEATHER_WIDTH / 2.f);
+      Pos p1 = pos.endpoint(length, heading - width / 2.f);
+      Pos p2 = pos.endpoint(length, heading + width / 2.f);
 
       // Calculated the center point between corners - move it a bit towareds the pointy end
       float featherWidth = p1.distanceMeterTo(p2);
@@ -1463,7 +1465,7 @@ void DfdCompiler::updateIlsGeometry()
       return true;
     };
 
-  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading"},
+  SqlUtil(db).updateColumnInTable("ils", "ils_id", {"lonx", "laty", "loc_heading", "type"},
                                   {"end1_lonx", "end1_laty", "end_mid_lonx", "end_mid_laty", "end2_lonx", "end2_laty"},
                                   func);
   db.commit();

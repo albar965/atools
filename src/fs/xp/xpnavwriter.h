@@ -73,12 +73,12 @@ private:
   void updateIlsGlideslope(const QStringList& line);
   void updateIlsDme(const QStringList& line);
   void updateSbasGbasThreshold(const QStringList& line);
-  void assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading);
+  void assignIlsGeometry(atools::sql::SqlQuery *query, const atools::geo::Pos& pos, float heading, float width);
 
   QChar ilsType(const QString& name, bool glideslope);
 
   const int FEATHER_LEN_NM = 9;
-  const float FEATHER_WIDTH = 4.f;
+  const float ILS_FEATHER_WIDTH_DEG = 4.f;
 
   int curVorId = 0, curNdbId = 0, curMarkerId = 0, curIlsId = 0;
 
