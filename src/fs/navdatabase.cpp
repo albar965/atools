@@ -989,6 +989,9 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     // Mandatory
     if((aborted = xpDataCompiler->compileDefaultApt()))
       return true;
+
+    if((aborted = xpDataCompiler->compileEarthMora()))
+      return true;
   }
 
   if(options->isIncludedNavDbObject(atools::fs::type::ILS))

@@ -547,6 +547,7 @@ HEADERS += \
   src/fs/xp/xpconstants.h \
   src/fs/xp/xpdatacompiler.h \
   src/fs/xp/xpfixwriter.h \
+  src/fs/xp/xpmorawriter.h \
   src/fs/xp/xpnavwriter.h \
   src/fs/xp/xpwriter.h \
   src/routing/routefinder.h
@@ -683,6 +684,7 @@ SOURCES += \
   src/fs/xp/xpcifpwriter.cpp \
   src/fs/xp/xpconstants.cpp \
   src/fs/xp/xpdatacompiler.cpp \
+  src/fs/xp/xpmorawriter.cpp \
   src/fs/xp/xpfixwriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
   src/fs/xp/xpwriter.cpp \

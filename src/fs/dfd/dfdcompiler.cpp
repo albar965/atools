@@ -1127,92 +1127,10 @@ void DfdCompiler::writeMora()
 {
   using atools::fs::common::MoraReader;
 
-  const static QString MORA_FIELD_NAME("mora%1");
-
   progress->reportOther("Writing MORA");
 
-  quint16 initialValue = MoraReader::OCEAN;
-  QVector<quint16> grid(360 * 180, initialValue);
-
-  // create table tbl_grid_mora (
-  // starting_latitude  integer (3),
-  // starting_longitude integer (4),
-  // mora01             text (3),
-  // ...
-  // mora30             text (3) );
-
-  int carryover = 0;
-  int lastpos = -1;
-  moraQuery->exec();
-  // The Grid MORA Table will contain records describing the MORA for each Latitude and Longitude block.
-  // Each record will contain thirty blocks and the “Starting Latitude” field defines the
-  // lower left corner for the first block of each record.
-  while(moraQuery->next())
-  {
-    int startLatY = moraQuery->valueInt("starting_latitude"); // 89 to -90
-    int startLonX = moraQuery->valueInt("starting_longitude"); // -180 to -150
-
-    // Change to top left corner
-    int pos = (-startLatY + 89) * 360 + startLonX + 180; // 0 - 64800-1
-
-    if(pos == lastpos)
-    {
-      // Still same data strip
-      carryover += 30;
-      pos += carryover;
-    }
-    else
-      // New data strip
-      carryover = 0;
-
-    for(int i = 0; i < 30; i++)
-    {
-      QString valueStr = moraQuery->valueStr(MORA_FIELD_NAME.arg(i + 1, 2, 10, QChar('0')));
-      quint16 value;
-
-      if(valueStr == "UNK")
-        // Not surveyed
-        value = MoraReader::UNKNOWN;
-      else
-      {
-        bool ok;
-        value = static_cast<quint16>(valueStr.toInt(&ok));
-        if(!ok)
-          value = MoraReader::ERROR;
-      }
-
-      grid[pos + i] = value;
-    }
-  }
-
-#ifdef DEBUG_MORA
-  for(int laty = 90; laty > -90; laty--)
-  {
-    QString line;
-    line += QString("%1 ").arg(laty, 2, 10, QChar('0'));
-    for(int lonx = -180; lonx < 180; lonx++)
-    {
-      int pos = (-laty + 90) * 360 + lonx + 180;
-      quint16 val = grid.at(pos);
-
-      if(val == MoraReader::ERROR)
-        line += "E";
-      else if(val == MoraReader::OCEAN)
-        line += "O";
-      else if(val == MoraReader::UNKNOWN)
-        line += "U";
-      else if(val > 10)
-        line += "X";
-      else
-        line += " ";
-    }
-
-    qDebug().noquote().nospace() << line;
-  }
-#endif
-
   MoraReader morareader(db);
-  morareader.writeToTable(grid, 360, 180);
+  morareader.fillDbFromQuery(moraQuery);
   db.commit();
 }
 

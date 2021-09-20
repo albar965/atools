@@ -31,6 +31,7 @@ namespace atools {
 namespace fs {
 namespace common {
 
+
 MoraReader::MoraReader(sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -115,6 +116,139 @@ bool MoraReader::readFromTable()
 
   dataAvailable = false;
   return false;
+}
+
+void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery)
+{
+  const static QString MORA_FIELD_NAME("mora%1");
+
+  // create table tbl_grid_mora (
+  // starting_latitude  integer (3),
+  // starting_longitude integer (4),
+  // mora01             text (3),
+  // ...
+  // mora30             text (3) );
+
+  QVector<QStringList> lines;
+  moraQuery->exec();
+
+  // The Grid MORA Table will contain records describing the MORA for each Latitude and Longitude block.
+  // Each record will contain thirty blocks and the “Starting Latitude” field defines the
+  // lower left corner for the first block of each record.
+  while(moraQuery->next())
+  {
+    QStringList line;
+    line.append(moraQuery->valueStr("starting_latitude")); // 89 to -90
+    line.append(moraQuery->valueStr("starting_longitude")); // -180 to -150
+
+    for(int i = 0; i < 30; i++)
+      line.append(moraQuery->valueStr(MORA_FIELD_NAME.arg(i + 1, 2, 10, QChar('0'))));
+    lines.append(line);
+  }
+
+  fillDbFromFile(lines);
+}
+
+void MoraReader::fillDbFromFile(const QVector<QStringList>& lines)
+{
+  quint16 initialValue = MoraReader::OCEAN;
+  QVector<quint16> grid(360 * 180, initialValue);
+
+  int carryover = 0;
+  int lastpos = -1;
+
+  // The Grid MORA Table will contain records describing the MORA for each Latitude and Longitude block.
+  // Each record will contain thirty blocks and the “Starting Latitude” field defines the
+  // lower left corner for the first block of each record.
+  for(const QStringList& line :lines)
+  {
+    bool ok;
+    int startLatY = line.at(0).toInt(&ok); // 89 to -90
+    if(!ok)
+      throw atools::Exception(QString("Invalid latitude value in MORA grid \"%1\"").arg(line.join(" ")));
+
+    int startLonX = line.at(1).toInt(&ok); // -180 to -150
+    if(!ok)
+      throw atools::Exception(QString("Invalid longitude value in MORA grid \"%1\"").arg(line.join(" ")));
+
+    // Change to top left corner
+    int pos = (-startLatY + 89) * 360 + startLonX + 180; // 0 - 64800-1
+
+    if(pos == lastpos)
+    {
+      // Still same data strip
+      carryover += 30;
+      pos += carryover;
+    }
+    else
+      // New data strip
+      carryover = 0;
+
+    for(int i = 0; i < 30; i++)
+    {
+      QString valueStr = line.at(i + 2);
+      quint16 value;
+
+      if(valueStr == "UNK" /* DSF */ || valueStr == "000" /* X-Plane */)
+        // Not surveyed
+        value = MoraReader::UNKNOWN;
+      else
+      {
+        value = static_cast<quint16>(valueStr.toInt(&ok));
+        if(!ok)
+          value = MoraReader::ERROR;
+      }
+
+      grid[pos + i] = value;
+    }
+  }
+
+#ifdef DEBUG_MORA
+  debugPrint(grid);
+#endif
+
+  writeToTable(grid, 360, 180);
+  db->commit();
+}
+
+void MoraReader::debugPrint(const QVector<quint16>& grid)
+{
+  QString text;
+  for(int laty = 90; laty > -90; laty--)
+  {
+    QString line;
+    line += QString("%1 ").arg(laty, 2, 10, QChar('0'));
+    for(int lonx = -180; lonx < 180; lonx++)
+    {
+      int pos = (-laty + 90) * 360 + lonx + 180;
+      quint16 val = grid.at(pos);
+
+      if(val == MoraReader::ERROR)
+        line += "E";
+      else if(val == MoraReader::OCEAN)
+        line += "O";
+      else if(val == MoraReader::UNKNOWN)
+        line += "U";
+      else if(val > 10)
+        line += "X";
+      else
+        line += " ";
+    }
+    text.append(line).append("\n");
+  }
+  qDebug() << Q_FUNC_INFO << "=================================================================================";
+  qDebug().noquote().nospace() << text;
+  qDebug() << Q_FUNC_INFO << "=================================================================================";
+}
+
+void MoraReader::preDatabaseLoad()
+{
+  clear();
+}
+
+void MoraReader::postDatabaseLoad()
+{
+  readFromTable();
 }
 
 void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows)

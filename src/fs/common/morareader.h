@@ -27,6 +27,7 @@ class Pos;
 }
 namespace sql {
 class SqlDatabase;
+class SqlQuery;
 }
 
 namespace fs {
@@ -69,6 +70,10 @@ public:
     return !datagrid.isEmpty();
   }
 
+  /* Fill table and commit */
+  void fillDbFromQuery(atools::sql::SqlQuery *moraQuery);
+  void fillDbFromFile(const QVector<QStringList>& lines);
+
   /* Returns minimum off route altitude at position in feet * 100, UNKNOWN, ERROR or OCEAN.
    * Throws exception if object is not valid.
    *
@@ -79,14 +84,23 @@ public:
   int getMoraFt(const atools::geo::Pos& pos) const;
   int getMoraFt(int lonx, int laty) const;
 
-  /* Not surveyed */
-  const static quint16 UNKNOWN = std::numeric_limits<quint16>::max();
+  /* Print world map to log */
+  void debugPrint(const QVector<quint16>& grid);
+
+  /* Close all queryies and clears data */
+  void preDatabaseLoad();
+
+  /* Reloads after changing database */
+  void postDatabaseLoad();
+
+  /* Unknown data, not surveyed */
+  static constexpr quint16 UNKNOWN = std::numeric_limits<quint16>::max();
 
   /* Error reading */
-  const static quint16 ERROR = std::numeric_limits<quint16>::max() - 1;
+  static constexpr quint16 ERROR = std::numeric_limits<quint16>::max() - 1;
 
   /* Ocean / not set */
-  const static quint16 OCEAN = 0;
+  static constexpr quint16 OCEAN = 0;
 
 private:
   atools::sql::SqlDatabase *db;
