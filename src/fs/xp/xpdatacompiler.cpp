@@ -405,7 +405,7 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
 
         // Add additional information for procedure files
         context.cifpAirportIdent = QFileInfo(filepath).baseName().toUpper();
-        context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent).toInt();
+        context.cifpAirportId = airportIndex->getAirportId(context.cifpAirportIdent);
       }
 
       QString line;
