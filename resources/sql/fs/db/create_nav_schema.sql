@@ -333,7 +333,7 @@ create table nav_search
   waypoint_nav_id integer,          -- Id of a related VOR or NDB for the waypoint
   vor_id integer,                   -- VOR ID if nav_type is VORDME, VOR or DME
   ndb_id integer,                   -- NDB ID if tynav_typepe is NDB
-  file_id integer not null,         -- BGL file of the navaid
+  file_id integer not null,         -- BGL or dat file of the feature
   airport_id integer,               -- Related airport if applicable
   airport_ident varchar(4),         -- "
   ident varchar(5),                 -- ICAO ident for waypoint, VOR or NDB
@@ -413,6 +413,7 @@ drop table if exists mora_grid;
 create table mora_grid
 (
   mora_grid_id integer primary key,
+  file_id integer not null,         -- BGL or dat file of the feature
   version integer not null,
   lonx_columns integer not null,
   laty_rows integer not null,

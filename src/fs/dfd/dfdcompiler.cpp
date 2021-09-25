@@ -295,7 +295,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
 
     // Write runway =======================================
     runwayWriteQuery->bindValue(":runway_id", ++curRunwayId);
-    runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportId(apt));
+    runwayWriteQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(apt));
     runwayWriteQuery->bindValue(":primary_end_id", primaryEndId);
     runwayWriteQuery->bindValue(":secondary_end_id", secondaryEndId);
     runwayWriteQuery->bindValue(":length", length);
@@ -383,7 +383,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
   }
 
   // Update airport information
-  airportUpdateQuery->bindValue(":aptid", airportIndex->getAirportId(apt));
+  airportUpdateQuery->bindValue(":aptid", airportIndex->getAirportIdVar(apt));
   airportUpdateQuery->bindValue(":num_runway_hard", numRunwayHard);
   airportUpdateQuery->bindValue(":num_runway_soft", numRunwaySoft);
   airportUpdateQuery->bindValue(":num_runway_water", numRunwayWater);
@@ -1130,7 +1130,7 @@ void DfdCompiler::writeMora()
   progress->reportOther("Writing MORA");
 
   MoraReader morareader(db);
-  morareader.fillDbFromQuery(moraQuery);
+  morareader.fillDbFromQuery(moraQuery, FILE_ID);
   db.commit();
 }
 
@@ -1178,7 +1178,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
                         arg(query.valueStr("transition_identifier"));
 
     procInput.airportIdent = airportIdent;
-    procInput.airportId = airportIndex->getAirportId(airportIdent).toInt();
+    procInput.airportId = airportIndex->getAirportId(airportIdent);
     procInput.airportPos = atools::geo::DPos(airportIndex->getAirportPos(airportIdent));
 
     // Fill data for procedure writer
@@ -1396,7 +1396,7 @@ void DfdCompiler::updateTreeLetterAirportCodes()
   SqlRecord rec = db.record("src.tbl_airports");
   if(!rec.contains("airport_identifier_3letter"))
   {
-    qWarning() << "tbl_airports.airport_identifier_3letter not found - skipping";
+    qWarning() << Q_FUNC_INFO << "tbl_airports.airport_identifier_3letter not found - skipping";
     return;
   }
 

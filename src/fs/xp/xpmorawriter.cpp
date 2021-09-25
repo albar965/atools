@@ -48,7 +48,7 @@ void XpMoraWriter::finish(const XpWriterContext& context)
 
   // Read from text lines and write to MORA database table
   atools::fs::common::MoraReader morareader(db);
-  morareader.fillDbFromFile(lines);
+  morareader.fillDbFromFile(lines, context.curFileId);
 }
 
 void XpMoraWriter::reset()

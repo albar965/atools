@@ -41,15 +41,20 @@ bool AirportIndex::addAirportIdent(const QString& airportIdent)
   return true;
 }
 
-QVariant AirportIndex::getAirportId(const QString& airportIdent) const
+QVariant AirportIndex::getAirportIdVar(const QString& airportIdent) const
 {
   if(!airportIdent.isEmpty() && airportIdent != EN_ROUTE)
   {
-    int id = identToIdMap.value(Name(airportIdent), -1);
+    int id = getAirportId(airportIdent);
     if(id != -1)
       return id;
   }
   return NULL_INT;
+}
+
+int AirportIndex::getAirportId(const QString& airportIdent) const
+{
+  return identToIdMap.value(Name(airportIdent), -1);
 }
 
 atools::geo::Pos AirportIndex::getAirportPos(const QString& airportIdent) const
@@ -60,15 +65,20 @@ atools::geo::Pos AirportIndex::getAirportPos(const QString& airportIdent) const
   return atools::geo::EMPTY_POS;
 }
 
-QVariant AirportIndex::getRunwayEndId(const QString& airportIdent, const QString& runwayName) const
+QVariant AirportIndex::getRunwayEndIdVar(const QString& airportIdent, const QString& runwayName) const
 {
   if(!airportIdent.isEmpty())
   {
-    int id = identRunwayNameToEndId.value(Name2(airportIdent, runwayName), -1);
+    int id = getRunwayEndId(airportIdent, runwayName);
     if(id != -1)
       return id;
   }
   return NULL_INT;
+}
+
+int AirportIndex::getRunwayEndId(const QString& airportIdent, const QString& runwayName) const
+{
+  return identRunwayNameToEndId.value(Name2(airportIdent, runwayName), -1);
 }
 
 atools::geo::Pos AirportIndex::getRunwayEndPos(const QString& airportIdent, const QString& runwayName) const

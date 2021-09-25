@@ -50,7 +50,12 @@ public:
 
   /* Get id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */
-  QVariant getAirportId(const QString& airportIdent) const;
+  QVariant getAirportIdVar(const QString& airportIdent) const;
+
+  /* As above but -1 for not found */
+  int getAirportId(const QString& airportIdent) const;
+
+  /* Airport position or invalid pos if not found */
   atools::geo::Pos getAirportPos(const QString& airportIdent) const;
 
   /* Add runway end id to index. Returns true if it was added. ident should be ICAO for X-Plane. */
@@ -59,7 +64,10 @@ public:
 
   /* Get runway end id packed in a variant or a null integer variant if not found.
    *  Returns null if airport id is ENRT */
-  QVariant getRunwayEndId(const QString& airportIdent, const QString& runwayName) const;
+  QVariant getRunwayEndIdVar(const QString& airportIdent, const QString& runwayName) const;
+
+  /* As above but -1 for not found */
+  int getRunwayEndId(const QString& airportIdent, const QString& runwayName) const;
 
   /* Get position of runway end. Invalid pos if not found */
   atools::geo::Pos getRunwayEndPos(const QString& airportIdent, const QString& runwayName) const;

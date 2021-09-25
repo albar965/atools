@@ -235,6 +235,9 @@ float MagDecReader::getMagVar(const geo::Pos& pos) const
   if(!isValid())
     throw Exception("MagDecReader is invalid");
 
+  if(!pos.isValid())
+    return 0.f;
+
   Pos posNorm(pos.normalized());
   float lonX = posNorm.getLonX();
   float latY = posNorm.getLatY();

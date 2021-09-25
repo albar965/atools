@@ -30,6 +30,7 @@
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
+using atools::geo::Pos;
 
 namespace atools {
 namespace fs {
@@ -116,7 +117,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":frequency", frequency * 10);
   insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
-  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
+  insertVorQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
   insertVorQuery->bindValue(":airport_ident", at(line, AIRPORT));
 
   if(suffix == "TACAN" || suffix == "VORTAC")
@@ -166,7 +167,7 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   else
     type = "HH";
 
-  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
+  Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertNdbQuery->bindValue(":ndb_id", ++curNdbId);
   insertNdbQuery->bindValue(":file_id", curFileId);
@@ -176,7 +177,7 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   insertNdbQuery->bindValue(":type", type);
   insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
-  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportId(at(line, AIRPORT)));
+  insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
   insertNdbQuery->bindValue(":airport_ident", at(line, AIRPORT));
 
   // NDBs never have an altitude
@@ -275,7 +276,7 @@ void XpNavWriter::updateSbasGbasThreshold(const QStringList& line)
 
   int ilsId = airportIndex->getAirportIlsId(airportIdent, airportRegion, ilsIdent);
 
-  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
+  Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   // pos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
 
@@ -319,7 +320,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   airportIndex->addAirportIls(airportIdent, airportRegion, ilsIdent, ++curIlsId);
 
   const QString& runwayName = at(line, RW);
-  atools::geo::Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
+  Pos pos(at(line, LONX).toFloat(), at(line, LATY).toFloat());
 
   insertIlsQuery->bindValue(":ils_id", curIlsId);
 
@@ -337,7 +338,11 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   else if(rowCode == GBAS)
   {
     /*  15 GBAS differential ground station of a GLS */
-    pos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
+    Pos rwpos = airportIndex->getRunwayEndPos(airportIdent, runwayName);
+    if(rwpos.isValid())
+      pos = rwpos;
+    // else Use station position as a fall back
+
     insertIlsQuery->bindValue(":frequency", at(line, FREQ).toInt());
     insertIlsQuery->bindValue(":type", "G");
     insertIlsQuery->bindValue(":gs_pitch", std::floor(at(line, HDG).toFloat() / 1000.f) / 100.f);
@@ -362,7 +367,7 @@ void XpNavWriter::writeIlsSbasGbas(const QStringList& line, NavRowCode rowCode, 
   insertIlsQuery->bindValue(":region", at(line, REGION));
   insertIlsQuery->bindValue(":loc_runway_name", runwayName);
   insertIlsQuery->bindValue(":name", ilsName);
-  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndId(airportIdent, runwayName));
+  insertIlsQuery->bindValue(":loc_runway_end_id", airportIndex->getRunwayEndIdVar(airportIdent, runwayName));
   insertIlsQuery->bindValue(":altitude", at(line, ALT).toInt());
   insertIlsQuery->bindValue(":lonx", pos.getLonX());
   insertIlsQuery->bindValue(":laty", pos.getLatY());
@@ -385,10 +390,10 @@ void XpNavWriter::assignIlsGeometry(atools::sql::SqlQuery *query, const atools::
   int length = atools::geo::nmToMeter(FEATHER_LEN_NM);
   // Calculate the display of the ILS feather
   float ilsHeading = atools::geo::opposedCourseDeg(heading);
-  atools::geo::Pos p1 = pos.endpoint(length, ilsHeading - width / 2.f);
-  atools::geo::Pos p2 = pos.endpoint(length, ilsHeading + width / 2.f);
+  Pos p1 = pos.endpoint(length, ilsHeading - width / 2.f);
+  Pos p2 = pos.endpoint(length, ilsHeading + width / 2.f);
   float featherWidth = p1.distanceMeterTo(p2);
-  atools::geo::Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
+  Pos pmid = pos.endpoint(length - featherWidth / 2, ilsHeading);
 
   query->bindValue(":end1_lonx", p1.getLonX());
   query->bindValue(":end1_laty", p1.getLatY());

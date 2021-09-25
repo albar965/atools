@@ -57,7 +57,7 @@ void BinaryGeometry::readFromByteArray(const QByteArray& bytes)
   }
 }
 
-QByteArray BinaryGeometry::writeToByteArray()
+QByteArray BinaryGeometry::writeToByteArray() const
 {
   QByteArray bytes;
   QDataStream out(&bytes, QIODevice::WriteOnly);

@@ -31,7 +31,6 @@ namespace atools {
 namespace fs {
 namespace common {
 
-
 MoraReader::MoraReader(sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -118,7 +117,7 @@ bool MoraReader::readFromTable()
   return false;
 }
 
-void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery)
+void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
 {
   const static QString MORA_FIELD_NAME("mora%1");
 
@@ -146,10 +145,10 @@ void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery)
     lines.append(line);
   }
 
-  fillDbFromFile(lines);
+  fillDbFromFile(lines, fileId);
 }
 
-void MoraReader::fillDbFromFile(const QVector<QStringList>& lines)
+void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
 {
   quint16 initialValue = MoraReader::OCEAN;
   QVector<quint16> grid(360 * 180, initialValue);
@@ -207,7 +206,7 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines)
   debugPrint(grid);
 #endif
 
-  writeToTable(grid, 360, 180);
+  writeToTable(grid, 360, 180, fileId);
   db->commit();
 }
 
@@ -251,7 +250,7 @@ void MoraReader::postDatabaseLoad()
   readFromTable();
 }
 
-void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows)
+void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows, int fileId)
 {
   clear();
 
@@ -280,6 +279,8 @@ void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int row
   // lonx_columns integer not null,
   // laty_rows integer not null,
   // geometry blob not null
+  if(SqlUtil(db).hasTableAndColumn("mora_grid", "file_id"))
+    moraWriteQuery.bindValue(":file_id", fileId);
   moraWriteQuery.bindValue(":version", DATA_VERSION);
   moraWriteQuery.bindValue(":lonx_columns", lonxColums);
   moraWriteQuery.bindValue(":laty_rows", latyRows);

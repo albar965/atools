@@ -44,7 +44,7 @@ public:
   BinaryGeometry(const QByteArray& bytes);
 
   void readFromByteArray(const QByteArray& bytes);
-  QByteArray writeToByteArray();
+  QByteArray writeToByteArray() const;
 
   const atools::geo::LineString& getGeometry() const
   {

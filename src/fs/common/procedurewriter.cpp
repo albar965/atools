@@ -614,7 +614,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
   else
   {
     rec.setValue(":runway_name", rwy);
-    rec.setValue(":runway_end_id", airportIndex->getRunwayEndId(line.airportIdent, rwy));
+    rec.setValue(":runway_end_id", airportIndex->getRunwayEndIdVar(line.airportIdent, rwy));
   }
 
   NavIdInfo navInfo = navaidTypeFix(line);

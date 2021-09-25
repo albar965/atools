@@ -56,7 +56,7 @@ public:
   bool readFromTable(sql::SqlDatabase& sqlDb);
 
   /* Writes values to table "mora_grid". Object has to be valid. Copies data to this instance. */
-  void writeToTable(const QVector<quint16>& datagrid, int columns, int rows);
+  void writeToTable(const QVector<quint16>& datagrid, int columns, int rows, int fileId);
 
   /* True if table is present in schema and has one row */
   bool isDataAvailable();
@@ -71,8 +71,8 @@ public:
   }
 
   /* Fill table and commit */
-  void fillDbFromQuery(atools::sql::SqlQuery *moraQuery);
-  void fillDbFromFile(const QVector<QStringList>& lines);
+  void fillDbFromQuery(atools::sql::SqlQuery *moraQuery, int fileId);
+  void fillDbFromFile(const QVector<QStringList>& lines, int fileId);
 
   /* Returns minimum off route altitude at position in feet * 100, UNKNOWN, ERROR or OCEAN.
    * Throws exception if object is not valid.
