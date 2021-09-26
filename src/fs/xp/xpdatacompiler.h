@@ -48,6 +48,7 @@ namespace xp {
 
 class XpFixWriter;
 class XpMoraWriter;
+class XpAirportMsaWriter;
 class XpNavWriter;
 class XpAirwayWriter;
 class XpAirportWriter;
@@ -127,6 +128,12 @@ public:
    * @return true if the  process was aborted
    */
   bool compileEarthMora();
+
+  /*
+   * Read earth_msa.dat from either default or custom scenery depending which one exists.
+   * @return true if the  process was aborted
+   */
+  bool compileEarthAirportMsa();
 
   /*
    * Read earth_awy.dat from either default or custom scenery depending which one exists.
@@ -263,6 +270,7 @@ private:
 
   atools::fs::xp::XpFixWriter *fixWriter = nullptr;
   atools::fs::xp::XpMoraWriter *moraWriter = nullptr;
+  atools::fs::xp::XpAirportMsaWriter *airportMsaWriter = nullptr;
   atools::fs::xp::XpAirwayWriter *airwayWriter = nullptr;
   atools::fs::xp::XpNavWriter *navWriter = nullptr;
   atools::fs::xp::XpAirportWriter *airportWriter = nullptr;

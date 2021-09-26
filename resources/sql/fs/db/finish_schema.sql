@@ -106,6 +106,14 @@ create index if not exists idx_airport_medium_rating on airport_medium(rating);
 create index if not exists idx_airport_medium_is_addon on airport_medium(is_addon);
 create index if not exists idx_airport_medium_is_3d on airport_medium(is_3d);
 
+-- Airport MSA indexes
+create index if not exists idx_airport_msa_airport_id on airport_msa(airport_id);
+create index if not exists idx_airport_msa_nav_id on airport_msa(nav_id);
+
+create index if not exists idx_airport_msa_left_lonx on airport_msa(left_lonx);
+create index if not exists idx_airport_msa_top_laty on airport_msa(top_laty);
+create index if not exists idx_airport_msa_right_lonx on airport_msa(right_lonx);
+create index if not exists idx_airport_msa_bottom_laty on airport_msa(bottom_laty);
 
 -- Collect table and index statistics
 -- Disabled for now since it can cause queries to freeze

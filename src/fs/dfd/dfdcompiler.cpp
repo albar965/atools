@@ -33,6 +33,7 @@
 #include "atools.h"
 #include "fs/common/airportindex.h"
 #include "fs/common/binarygeometry.h"
+#include "fs/common/binarymsageometry.h"
 #include "fs/common/morareader.h"
 
 #include <QApplication>
@@ -1348,6 +1349,125 @@ void DfdCompiler::updateTacanChannel()
         return false;
     };
   SqlUtil(db).updateColumnInTable("vor", "vor_id", {"frequency", "type"}, {"channel"}, func);
+  db.commit();
+}
+
+void DfdCompiler::writeAirportMsa()
+{
+  progress->reportOther("Writing airport MSA geometry");
+
+  SqlQuery query(db);
+
+  QStringList sectorCols;
+  QString sectorColsStr;
+  for(int i = 1; i <= 5; i++)
+    sectorCols.append(QString("m.sector_bearing_%1, m.sector_altitude_%1").arg(i));
+  sectorColsStr = sectorCols.join(", ") + ", m.magnetic_true_indicator ";
+  // area_code  icao_code  airport_identifier  msa_center  msa_center_latitude  msa_center_longitude
+  // magnetic_true_indicator  multiple_code  radius_limit
+  // sector_bearing_1  sector_altitude_1  sector_bearing_2  sector_altitude_2  sector_bearing_3  sector_altitude_3
+  // sector_bearing_4  sector_altitude_4  sector_bearing_5  sector_altitude_5
+
+  // Read MSA and join table with related navaids or airports ===================================
+  query.exec(
+    // MSA with airport as center point ========================================
+    "select a.airport_id, a.ident as airport_ident, a.airport_id as nav_id, a.ident as nav_ident, m.icao_code as region, "
+    "  m.multiple_code as multiple_code, 'A' as type, a.mag_var, "
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
+    + sectorColsStr +
+    "from tbl_airport_msa m join airport a on a.ident = m.airport_identifier "
+    "where m.airport_identifier = m.msa_center and m.radius_limit is not null "
+    "union "
+    // MSA with VOR as center point ========================================
+    "select a.airport_id, a.ident as airport_ident, v.vor_id as nav_id, v.ident as nav_ident, v.region as region, "
+    "  m.multiple_code as multiple_code, 'V' as type, v.mag_var, "
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
+    + sectorColsStr +
+    "from tbl_airport_msa m join vor v on v.ident = m.msa_center and v.region = m.icao_code and "
+    "  abs(v.laty - m.msa_center_latitude) < 0.00001 and abs(v.lonx - m.msa_center_longitude) < 0.00001 "
+    "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "
+    "union "
+    // MSA with NDB as center point ========================================
+    "select a.airport_id, a.ident as airport_ident, n.ndb_id as nav_id, n.ident as nav_ident, n.region as region, "
+    "  m.multiple_code as multiple_code, 'N' as type, n.mag_var, "
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
+    + sectorColsStr +
+    "from tbl_airport_msa m join ndb n on n.ident = m.msa_center and n.region = m.icao_code and "
+    "  abs(n.laty - m.msa_center_latitude) < 0.00001 and abs(n.lonx - m.msa_center_longitude) < 0.00001 "
+    "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "
+    "union "
+    // MSA with runway end as center point ========================================
+    "select a.airport_id, a.ident as airport_ident, r.runway_end_id as nav_id, r.name as nav_ident, a.region as region, "
+    "  m.multiple_code as multiple_code, 'R' as type, a.mag_var, "
+    "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
+    + sectorColsStr +
+    "from tbl_airport_msa m join runway_end r on r.name = substr(m.msa_center, 3) and a.region = m.icao_code and "
+    "  abs(r.laty - m.msa_center_latitude) < 0.00001 and abs(r.lonx - m.msa_center_longitude) < 0.00001 "
+    "join airport a on a.ident = m.airport_identifier and m.radius_limit is not null "
+    );
+
+  SqlQuery insertQuery(db);
+  insertQuery.prepare(SqlUtil(db).buildInsertStatement("airport_msa", QString(), {"airport_msa_id"}));
+
+  atools::fs::common::BinaryMsaGeometry geo;
+
+  while(query.next())
+  {
+    geo.clear();
+
+    // Collect all sector bearings until values are null
+    for(int i = 1; i <= 5; i++)
+    {
+      QString brg = QString("sector_bearing_%1").arg(i);
+      QString alt = QString("sector_altitude_%1").arg(i);
+      if(!query.isNull(brg) && !query.isNull(alt))
+        geo.addSector(query.valueFloat(brg), query.valueFloat(alt) * 100.f);
+      else
+        break;
+    }
+    atools::geo::Pos center(query.valueFloat("lonx"), query.valueFloat("laty"));
+
+    if(center.isValid())
+    {
+      float radius = query.valueFloat("radius");
+      float magvar = query.valueFloat("mag_var");
+      bool trueBearing = query.valueStr("magnetic_true_indicator") == "T";
+
+      // Calculate geometry for arcs, label points and bearing endpoints to speed up drawing
+      geo.calculate(center, radius, trueBearing ? 0.f : magvar);
+
+      if(geo.isValid())
+      {
+        insertQuery.bindValue(":file_id", FILE_ID);
+        insertQuery.bindValue(":airport_id", query.value("airport_id"));
+        insertQuery.bindValue(":airport_ident", query.value("airport_ident"));
+        insertQuery.bindValue(":nav_id", query.value("nav_id"));
+        insertQuery.bindValue(":nav_ident", query.value("nav_ident"));
+        insertQuery.bindValue(":region", query.value("region"));
+        insertQuery.bindValue(":multiple_code", query.value("multiple_code"));
+        insertQuery.bindValue(":type", query.value("type"));
+        insertQuery.bindValue(":mag_var", magvar);
+        insertQuery.bindValue(":radius", radius);
+
+        // Store bounding rect to simplify queries
+        const geo::Rect& bounding = geo.getBoundingRect();
+        insertQuery.bindValue(":left_lonx", bounding.getTopLeft().getLonX());
+        insertQuery.bindValue(":top_laty", bounding.getTopLeft().getLatY());
+        insertQuery.bindValue(":right_lonx", bounding.getBottomRight().getLonX());
+        insertQuery.bindValue(":bottom_laty", bounding.getBottomRight().getLatY());
+
+        insertQuery.bindValue(":lonx", center.getLonX());
+        insertQuery.bindValue(":laty", center.getLatY());
+
+        insertQuery.bindValue(":geometry", geo.writeToByteArray());
+        insertQuery.exec();
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "Invalid MSA geometry" << query.record();
+    }
+    else
+      qWarning() << Q_FUNC_INFO << "Invalid MSA center" << query.record();
+  }
   db.commit();
 }
 

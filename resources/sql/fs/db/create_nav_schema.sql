@@ -419,3 +419,33 @@ create table mora_grid
   laty_rows integer not null,
   geometry blob not null
 );
+
+-- **************************************************
+
+drop table if exists airport_msa;
+
+-- Airport minimum safe altitude
+create table airport_msa
+(
+  airport_msa_id integer primary key,
+  file_id integer not null,           -- BGL or dat file of the feature
+  airport_id integer,                 -- Reference to airport
+  airport_ident varchar(5) not null,  -- ICAO ident
+  nav_id integer,                     -- Refers to airport.airport_id, vor.vor_id, ndb.ndb_id depending on type
+  nav_ident varchar(5) not null,      -- ICAO ident
+  region varchar(2),                  -- ICAO two letter region identifier
+  multiple_code varchar(1),           -- ICAO ident
+  type varchar(15),                   -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
+  mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
+  left_lonx double,                   -- Bounding rectangle of the whole MSA sector
+  top_laty double ,                   -- "
+  right_lonx double,                  -- "
+  bottom_laty double,                 -- "
+  radius double not null,             -- Radius in NM
+  lonx double not null,               -- Center coordinates
+  laty double not null,
+  geometry blob,                      -- Pre-calculated geometry as saved and loaded by
+                                      -- atools::fs::common::BinaryMsaGeometry
+foreign key(airport_id) references airport(airport_id)
+);
+

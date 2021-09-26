@@ -119,6 +119,9 @@ public:
   /* Calculate the ILS endpoints for map display */
   void updateIlsGeometry();
 
+  /* Calculate the airport MSA geometry */
+  void writeAirportMsa();
+
   /* FIll table airway */
   void writeAirways();
 

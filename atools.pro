@@ -156,6 +156,7 @@ HEADERS += \
   src/atools.h \
   src/exception.h \
   src/fs/bgl/surface.h \
+  src/fs/common/binarymsageometry.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
   src/fs/sc/simconnectaircraft.h \
@@ -287,6 +288,7 @@ SOURCES += \
   src/atools.cpp \
   src/exception.cpp \
   src/fs/bgl/surface.cpp \
+  src/fs/common/binarymsageometry.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
   src/fs/sc/simconnectaircraft.cpp \
@@ -548,6 +550,7 @@ HEADERS += \
   src/fs/xp/xpdatacompiler.h \
   src/fs/xp/xpfixwriter.h \
   src/fs/xp/xpmorawriter.h \
+  src/fs/xp/xpairportmsawriter.h \
   src/fs/xp/xpnavwriter.h \
   src/fs/xp/xpwriter.h \
   src/routing/routefinder.h
@@ -685,6 +688,7 @@ SOURCES += \
   src/fs/xp/xpconstants.cpp \
   src/fs/xp/xpdatacompiler.cpp \
   src/fs/xp/xpmorawriter.cpp \
+  src/fs/xp/xpairportmsawriter.cpp \
   src/fs/xp/xpfixwriter.cpp \
   src/fs/xp/xpnavwriter.cpp \
   src/fs/xp/xpwriter.cpp \

@@ -384,6 +384,8 @@ int NavDatabase::countDfdSteps()
   total++; // Scenery "Navigraph"
   total++; // "Writing MORA"
   total++; // "Writing airports"
+  total++; // "Writing parking"
+  total++; // "Writing airport MSA"
   total++; // "Writing runways"
   total++; // "Writing navaids"
   total++; // "Writing Airspaces"
@@ -893,6 +895,7 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
     if(options->isIncludedNavDbObject(atools::fs::type::PARKING))
       dfdCompiler->writeParking();
   }
+
   if(options->isIncludedNavDbObject(atools::fs::type::WAYPOINT) ||
      options->isIncludedNavDbObject(atools::fs::type::VOR) ||
      options->isIncludedNavDbObject(atools::fs::type::NDB) ||
@@ -939,6 +942,8 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load.sql", tr("Creating indexes"))))
     return true;
 
+  db->commit();
+
   if((aborted = runScript(progress, "fs/db/create_indexes_post_load_boundary.sql", tr("Creating boundary indexes"))))
     return true;
 
@@ -949,6 +954,8 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
     return true;
 
   db->commit();
+
+  dfdCompiler->writeAirportMsa();
 
   dfdCompiler->updateTreeLetterAirportCodes();
 
@@ -1058,6 +1065,13 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     if((aborted = xpDataCompiler->postProcessEarthAirway()))
       return true;
   }
+
+  if(options->isIncludedNavDbObject(atools::fs::type::AIRPORT))
+  {
+    if((aborted = xpDataCompiler->compileEarthAirportMsa()))
+      return true;
+  }
+  db->commit();
 
   if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))
   {

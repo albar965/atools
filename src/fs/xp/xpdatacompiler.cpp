@@ -20,6 +20,7 @@
 #include "fs/navdatabaseoptions.h"
 #include "fs/xp/xpfixwriter.h"
 #include "fs/xp/xpmorawriter.h"
+#include "fs/xp/xpairportmsawriter.h"
 #include "fs/xp/xpnavwriter.h"
 #include "fs/xp/xpairwaywriter.h"
 #include "fs/xp/xpairportwriter.h"
@@ -92,6 +93,7 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
 
   airportWriter = new XpAirportWriter(db, airportIndex, options, progress, errors);
   moraWriter = new XpMoraWriter(db, options, progress, errors);
+  airportMsaWriter = new XpAirportMsaWriter(db, airportIndex, options, progress, errors);
   fixWriter = new XpFixWriter(db, airportIndex, options, progress, errors);
   navWriter = new XpNavWriter(db, airportIndex, options, progress, errors);
   cifpWriter = new XpCifpWriter(db, airportIndex, options, progress, errors);
@@ -139,6 +141,22 @@ bool XpDataCompiler::compileEarthMora()
   if(QFileInfo::exists(path))
   {
     bool aborted = readDataFile(path, 5, moraWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
+
+    if(!aborted)
+      db.commit();
+    return aborted;
+  }
+  else
+    throw Exception(tr("Default file \"%1\" not found").arg(path));
+}
+
+bool XpDataCompiler::compileEarthAirportMsa()
+{
+  QString path = buildPathNoCase({basePath, "earth_msa.dat"});
+
+  if(QFileInfo::exists(path))
+  {
+    bool aborted = readDataFile(path, 5, airportMsaWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
 
     if(!aborted)
       db.commit();
