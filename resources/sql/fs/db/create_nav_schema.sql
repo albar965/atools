@@ -449,3 +449,31 @@ create table airport_msa
 foreign key(airport_id) references airport(airport_id)
 );
 
+-- **************************************************
+
+drop table if exists holding;
+
+-- Enroute holdings
+create table holding
+(
+  holding_id integer primary key,
+  file_id integer not null,           -- BGL or dat file of the feature
+  airport_id integer,                 -- Reference to airport
+  airport_ident varchar(5),           -- ICAO ident
+  nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
+  nav_ident varchar(5),               -- ICAO ident
+  name varchar(50),
+  region varchar(2),                  -- ICAO two letter region identifier
+  type varchar(15),                   -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
+  mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
+  course double not null,             -- True inbound course
+  turn_direction varchar(1) not null, -- L or R
+  leg_length double,                  -- Leg distance in NM
+  leg_time double,                    -- Leg time in minutes
+  minimum_altitude double,            -- Feet or null if not applicable
+  maximum_altitude double,            -- Feet or null
+  speed integer,                      -- Speed limit in knots or null
+  lonx double not null,               -- Reference fix coordinates
+  laty double not null,
+foreign key(airport_id) references airport(airport_id)
+);

@@ -18,8 +18,6 @@
 #include "fs/xp/xpairportmsawriter.h"
 
 #include "fs/common/airportindex.h"
-#include "fs/xp/xpconstants.h"
-#include "fs/progresshandler.h"
 #include "fs/common/magdecreader.h"
 #include "fs/util/fsutil.h"
 #include "geo/pos.h"
@@ -51,9 +49,9 @@ enum FieldIndex
 };
 
 /* Point/navaid type for MSA center */
-enum MsaType
+enum HoldFixType
 {
-  MSA_FIX = 11,
+  MSA_WAYPOINT = 11,
   MSA_NDB = 2,
   MSA_VOR = 3,
   MSA_AIRPORT = 1,
@@ -121,7 +119,7 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
   Pos center;
 
   // Fetch the center fix by ident and region to get id and coordinates
-  MsaType type = static_cast<MsaType>(at(line, TYPE).toInt());
+  HoldFixType type = static_cast<HoldFixType>(at(line, TYPE).toInt());
   QString navType;
   switch(type)
   {
@@ -133,18 +131,18 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       navType = "A";
       break;
 
-    case MSA_FIX:
-      fetchNavaid(waypointQuery, navIdent, region, navId, magvar, center);
+    case MSA_WAYPOINT:
+      fetchWaypoint(navIdent, region, navId, magvar, center);
       navType = "W";
       break;
 
     case MSA_NDB:
-      fetchNavaid(ndbQuery, navIdent, region, navId, magvar, center);
+      fetchNdb(navIdent, region, navId, magvar, center);
       navType = "N";
       break;
 
     case MSA_VOR:
-      fetchNavaid(vorQuery, navIdent, region, navId, magvar, center);
+      fetchVor(navIdent, region, navId, magvar, center);
       navType = "V";
       break;
 
@@ -225,34 +223,13 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       insertQuery->bindValue(":geometry", geo.writeToByteArray());
 
       insertQuery->exec();
+      insertQuery->clearBoundValues();
     }
     else
       qWarning() << context.messagePrefix() << airportIdent << navIdent << "Invalid MSA geometry";
   }
   else
     qWarning() << context.messagePrefix() << airportIdent << navIdent << "Invalid MSA center coordinate";
-}
-
-void XpAirportMsaWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
-                                     int& id, float& magvar, atools::geo::Pos& pos)
-{
-  query->bindValue(":ident", ident);
-  query->bindValue(":region", region);
-  query->exec();
-  if(query->next())
-  {
-    id = query->valueInt("id");
-    magvar = query->valueFloat("mag_var");
-    pos = Pos(query->valueFloat("lonx"), query->valueFloat("laty"));
-  }
-  else
-  {
-    id = -1;
-    magvar = 0.f;
-    pos = atools::geo::EMPTY_POS;
-  }
-
-  query->finish();
 }
 
 void XpAirportMsaWriter::initQueries()
@@ -264,32 +241,15 @@ void XpAirportMsaWriter::initQueries()
   insertQuery = new SqlQuery(db);
   insertQuery->prepare(util.buildInsertStatement("airport_msa", QString(), {"multiple_code"}));
 
-  waypointQuery = new SqlQuery(db);
-  waypointQuery->prepare("select waypoint_id as id, mag_var, lonx, laty from waypoint "
-                         "where ident = :ident and region = :region limit 1");
-
-  ndbQuery = new SqlQuery(db);
-  ndbQuery->prepare("select ndb_id as id, mag_var, lonx, laty from ndb "
-                    "where ident = :ident and region = :region limit 1");
-
-  vorQuery = new SqlQuery(db);
-  vorQuery->prepare("select vor_id as id, mag_var, lonx, laty from vor "
-                    "where ident = :ident and region = :region limit 1");
+  initNavQueries();
 }
 
 void XpAirportMsaWriter::deInitQueries()
 {
+  deInitNavQueries();
+
   delete insertQuery;
   insertQuery = nullptr;
-
-  delete waypointQuery;
-  waypointQuery = nullptr;
-
-  delete ndbQuery;
-  ndbQuery = nullptr;
-
-  delete vorQuery;
-  vorQuery = nullptr;
 }
 
 void XpAirportMsaWriter::finish(const XpWriterContext& context)

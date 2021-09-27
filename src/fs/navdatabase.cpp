@@ -386,6 +386,7 @@ int NavDatabase::countDfdSteps()
   total++; // "Writing airports"
   total++; // "Writing parking"
   total++; // "Writing airport MSA"
+  total++; // "Writing holding"
   total++; // "Writing runways"
   total++; // "Writing navaids"
   total++; // "Writing Airspaces"
@@ -1071,6 +1072,11 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     if((aborted = xpDataCompiler->compileEarthAirportMsa()))
       return true;
   }
+  db->commit();
+
+  if((aborted = xpDataCompiler->compileEarthHolding()))
+    return true;
+
   db->commit();
 
   if(options->isIncludedNavDbObject(atools::fs::type::APPROACH))

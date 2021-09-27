@@ -17,6 +17,9 @@
 
 #include "fs/xp/xpwriter.h"
 #include "fs/navdatabaseerrors.h"
+#include "sql/sqlquery.h"
+#include "sql/sqlutil.h"
+#include "geo/pos.h"
 
 #include <QDebug>
 
@@ -34,6 +37,74 @@ XpWriter::XpWriter(sql::SqlDatabase& sqlDb, const NavDatabaseOptions& opts, Prog
 XpWriter::~XpWriter()
 {
 
+}
+
+void XpWriter::fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+{
+  fetchNavaid(waypointQuery, ident, region, id, magvar, pos);
+}
+
+void XpWriter::fetchNdb(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+{
+  fetchNavaid(ndbQuery, ident, region, id, magvar, pos);
+}
+
+void XpWriter::fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+{
+  fetchNavaid(vorQuery, ident, region, id, magvar, pos);
+}
+
+void XpWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
+                           int& id, float& magvar, atools::geo::Pos& pos)
+{
+  query->bindValue(":ident", ident);
+  query->bindValue(":region", region);
+  query->exec();
+  if(query->next())
+  {
+    id = query->valueInt("id");
+    magvar = query->valueFloat("mag_var");
+    pos = atools::geo::Pos(query->valueFloat("lonx"), query->valueFloat("laty"));
+  }
+  else
+  {
+    id = -1;
+    magvar = 0.f;
+    pos = atools::geo::EMPTY_POS;
+  }
+
+  query->finish();
+}
+
+void XpWriter::initNavQueries()
+{
+  deInitNavQueries();
+
+  atools::sql::SqlUtil util(&db);
+
+  waypointQuery = new atools::sql::SqlQuery(db);
+  waypointQuery->prepare("select waypoint_id as id, mag_var, lonx, laty from waypoint "
+                         "where ident = :ident and region = :region limit 1");
+
+  ndbQuery = new atools::sql::SqlQuery(db);
+  ndbQuery->prepare("select ndb_id as id, mag_var, lonx, laty from ndb "
+                    "where ident = :ident and region = :region limit 1");
+
+  vorQuery = new atools::sql::SqlQuery(db);
+  vorQuery->prepare("select vor_id as id, mag_var, lonx, laty from vor "
+                    "where ident = :ident and region = :region limit 1");
+}
+
+void XpWriter::deInitNavQueries()
+{
+  delete waypointQuery;
+  waypointQuery = nullptr;
+
+  delete ndbQuery;
+  ndbQuery = nullptr;
+
+  delete vorQuery;
+  vorQuery = nullptr;
 }
 
 void XpWriter::err(const QString& msg)

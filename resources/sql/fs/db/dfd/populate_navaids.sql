@@ -312,3 +312,69 @@ select w2.waypoint_id
 from waypoint w1 join waypoint w2 on w1.ident = w2.ident and w1.region = w2.region
 where (abs(w1.lonx - w2.lonx) + abs(w1.laty - w2.laty)) < 0.000001 and
 w1.type = 'N' and w2.type='V');
+
+-- =======================================================================
+-- Fill enroute holdings
+
+drop table if exists tmp_holding;
+
+create table tmp_holding
+(
+  airport_ident varchar(5),
+  region varchar(2),
+  nav_ident varchar(5),
+  name varchar(50),
+  course double not null,
+  turn_direction varchar(1) not null,
+  leg_length double,
+  leg_time double,
+  minimum_altitude double,
+  maximum_altitude double,
+  speed integer,
+  lonx double not null,
+  laty double not null
+);
+
+-- Remove duplicates having all the same values ================================================
+insert into tmp_holding (airport_ident, region, nav_ident, name, course,
+  turn_direction, leg_length, leg_time, minimum_altitude, maximum_altitude, speed, lonx, laty)
+select distinct
+  case when region_code = 'ENRT'  then null else region_code end as airport_ident,
+  icao_code as region, waypoint_identifier as nav_ident, holding_name as name,
+  inbound_holding_course as course, turn_direction,
+  leg_length, leg_time, minimum_altitude, maximum_altitude, holding_speed as speed,
+  waypoint_longitude as lonx, waypoint_latitude as laty
+from tbl_holdings;
+
+-- Insert holdings at waypoints =======================
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, type, mag_var, course, turn_direction, leg_length, leg_time,
+  minimum_altitude, maximum_altitude, speed, mag_var, lonx, laty)
+select 1 as file_id, h.airport_ident, h.name, w.waypoint_id as nav_id, w.ident as nav_ident, h.region, 'W' as type, w.mag_var, h.course,
+  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, w.mag_var, w.lonx, w.laty
+from tmp_holding h
+join waypoint w on h.nav_ident = w.ident and h.region = w.region and abs(w.lonx - h.lonx) < 0.00001 and abs(w.laty - h.laty) < 0.00001
+where w.type like 'W%';
+
+-- Insert holdings at VOR =======================
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, type, mag_var, course, turn_direction, leg_length, leg_time,
+  minimum_altitude, maximum_altitude, speed, mag_var, lonx, laty)
+select 1 as file_id, h.airport_ident, h.name, v.vor_id as nav_id, v.ident as nav_ident, h.region, 'V' as type, v.mag_var, h.course,
+  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, v.mag_var, v.lonx, v.laty
+from tmp_holding h
+join vor v on h.nav_ident = v.ident and abs(v.lonx - h.lonx) < 0.00001 and abs(v.laty - h.laty) < 0.00001;
+
+-- Insert holdings at NDB =======================
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, type, mag_var, course, turn_direction, leg_length, leg_time,
+  minimum_altitude, maximum_altitude, speed, mag_var, lonx, laty)
+select 1 as file_id, h.airport_ident, h.name, n.ndb_id as nav_id, n.ident as nav_ident, h.region, 'N' as type, n.mag_var, h.course,
+  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, n.mag_var, n.lonx, n.laty
+from tmp_holding h
+join ndb n on h.nav_ident = n.ident and abs(n.lonx - h.lonx) < 0.00001 and abs(n.laty - h.laty) < 0.00001;
+
+-- Set airport_id ==================
+update holding set airport_id = (
+  select a.airport_id
+  from airport a
+  where holding.airport_ident is not null and holding.airport_ident = a.ident
+) where airport_id is null;
+

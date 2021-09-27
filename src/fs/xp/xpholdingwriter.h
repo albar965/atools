@@ -15,10 +15,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef ATOOLS_FS_XP_AIRPORTMSAWRITER_H
-#define ATOOLS_FS_XP_AIRPORTMSAWRITER_H
+#ifndef ATOOLS_FS_XP_HOLDINGWRITER_H
+#define ATOOLS_FS_XP_HOLDINGWRITER_H
 
 #include "fs/xp/xpwriter.h"
+
+#include <QSet>
 
 namespace atools {
 
@@ -40,19 +42,19 @@ class AirportIndex;
 namespace xp {
 
 /*
- * Reads earth_msa.dat, creates MSA geometry and writes to airport_msa table.
+ * Reads earth_hold.dat and writes to holding table.
  */
-class XpAirportMsaWriter :
+class XpHoldingWriter :
   public atools::fs::xp::XpWriter
 {
 public:
-  XpAirportMsaWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
-                     const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
-                     atools::fs::NavDatabaseErrors *navdatabaseErrors);
-  virtual ~XpAirportMsaWriter() override;
+  XpHoldingWriter(atools::sql::SqlDatabase& sqlDb, atools::fs::common::AirportIndex *airportIndexParam,
+                  const atools::fs::NavDatabaseOptions& opts, atools::fs::ProgressHandler *progressHandler,
+                  atools::fs::NavDatabaseErrors *navdatabaseErrors);
+  virtual ~XpHoldingWriter() override;
 
-  XpAirportMsaWriter(const XpAirportMsaWriter& other) = delete;
-  XpAirportMsaWriter& operator=(const XpAirportMsaWriter& other) = delete;
+  XpHoldingWriter(const XpHoldingWriter& other) = delete;
+  XpHoldingWriter& operator=(const XpHoldingWriter& other) = delete;
 
   virtual void write(const QStringList& line, const XpWriterContext& context) override;
   virtual void finish(const XpWriterContext& context) override;
@@ -62,7 +64,8 @@ private:
   void initQueries();
   void deInitQueries();
 
-  int curMsaId = 0;
+  QSet<QString> holdingSet;
+  int curHoldId = 0;
   atools::sql::SqlQuery *insertQuery = nullptr;
   atools::fs::common::AirportIndex *airportIndex;
 };
@@ -71,4 +74,4 @@ private:
 } // namespace fs
 } // namespace atools
 
-#endif // ATOOLS_FS_XP_AIRPORTMSAWRITER_H
+#endif // ATOOLS_FS_XP_HOLDINGWRITER_H

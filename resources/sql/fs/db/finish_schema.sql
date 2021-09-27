@@ -27,6 +27,7 @@ drop table if exists tmp_waypoint_ap;
 drop table if exists tmp_waypoint_dfd;
 drop table if exists tmp_ndb_ap;
 drop table if exists tmp_vor_ap;
+drop table if exists tmp_holding;
 
 -- Create indexes ontmp_waypoint are potentially used in searches
 create index if not exists idx_ils_ident on ils(ident);
@@ -106,7 +107,7 @@ create index if not exists idx_airport_medium_rating on airport_medium(rating);
 create index if not exists idx_airport_medium_is_addon on airport_medium(is_addon);
 create index if not exists idx_airport_medium_is_3d on airport_medium(is_3d);
 
--- Airport MSA indexes
+-- Airport MSA indexes ========================================================
 create index if not exists idx_airport_msa_airport_id on airport_msa(airport_id);
 create index if not exists idx_airport_msa_nav_id on airport_msa(nav_id);
 
@@ -114,6 +115,15 @@ create index if not exists idx_airport_msa_left_lonx on airport_msa(left_lonx);
 create index if not exists idx_airport_msa_top_laty on airport_msa(top_laty);
 create index if not exists idx_airport_msa_right_lonx on airport_msa(right_lonx);
 create index if not exists idx_airport_msa_bottom_laty on airport_msa(bottom_laty);
+create index if not exists idx_airport_msa_lonx on airport_msa(lonx);
+create index if not exists idx_airport_msa_laty on airport_msa(laty);
+
+
+-- Enroute holding indexes ========================================================
+create index if not exists idx_holding_airport_id on holding(airport_id);
+create index if not exists idx_holding_nav_id on holding(nav_id);
+create index if not exists idx_holding_lonx on holding(lonx);
+create index if not exists idx_holding_laty on holding(laty);
 
 -- Collect table and index statistics
 -- Disabled for now since it can cause queries to freeze

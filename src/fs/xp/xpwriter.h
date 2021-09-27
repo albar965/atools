@@ -26,8 +26,12 @@
 class QStringList;
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace sql {
 class SqlDatabase;
+class SqlQuery;
 }
 
 namespace fs {
@@ -89,11 +93,25 @@ protected:
   /* Report error to log file without throwing an exception */
   void errWarn(const QString& msg);
 
+  void initNavQueries();
+  void deInitNavQueries();
+
   const atools::fs::xp::XpWriterContext *ctx = nullptr;
   atools::sql::SqlDatabase& db;
   const atools::fs::NavDatabaseOptions& options;
   atools::fs::ProgressHandler *progress;
   atools::fs::NavDatabaseErrors *errors = nullptr;
+
+  void fetchWaypoint(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos);
+  void fetchNdb(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos);
+  void fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos);
+
+private:
+  // Fetch id, magvar and coordinates for a navaid by ident and region
+  void fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region, int& id, float& magvar,
+                   atools::geo::Pos& pos);
+
+  atools::sql::SqlQuery *waypointQuery = nullptr, *ndbQuery = nullptr, *vorQuery = nullptr;
 };
 
 } // namespace xp
