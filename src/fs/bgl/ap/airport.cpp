@@ -498,7 +498,8 @@ Airport::~Airport()
 
 bool Airport::isMsfsPoiDummy() const
 {
-  return isAirportClosed() && runways.isEmpty() && helipads.isEmpty() && parkings.isEmpty() && starts.isEmpty();
+  return /*isAirportClosed() && not used since 1.19.8 and EU world updates */
+         runways.isEmpty() && helipads.isEmpty() && parkings.isEmpty() && starts.isEmpty();
 }
 
 bool Airport::isEmpty() const
