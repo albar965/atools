@@ -204,9 +204,9 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       insertQuery->bindValue(":airport_ident", airportIdent);
       insertQuery->bindValue(":nav_id", navId);
       insertQuery->bindValue(":nav_ident", navIdent);
+      insertQuery->bindValue(":nav_type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
       insertQuery->bindValue(":region", region);
 
-      insertQuery->bindValue(":type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
       insertQuery->bindValue(":mag_var", magvar);
       insertQuery->bindValue(":radius", radius);
 

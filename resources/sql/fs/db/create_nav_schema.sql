@@ -433,9 +433,9 @@ create table airport_msa
   airport_ident varchar(5) not null,  -- ICAO ident
   nav_id integer,                     -- Refers to airport.airport_id, vor.vor_id, ndb.ndb_id depending on type
   nav_ident varchar(5) not null,      -- ICAO ident
+  nav_type varchar(15),               -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
   region varchar(2),                  -- ICAO two letter region identifier
   multiple_code varchar(1),           -- ICAO ident
-  type varchar(15),                   -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
   mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
   left_lonx double,                   -- Bounding rectangle of the whole MSA sector
   top_laty double ,                   -- "

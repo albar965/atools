@@ -1372,7 +1372,7 @@ void DfdCompiler::writeAirportMsa()
   query.exec(
     // MSA with airport as center point ========================================
     "select a.airport_id, a.ident as airport_ident, a.airport_id as nav_id, a.ident as nav_ident, m.icao_code as region, "
-    "  m.multiple_code as multiple_code, 'A' as type, a.mag_var, "
+    "  m.multiple_code as multiple_code, 'A' as nav_type, a.mag_var, "
     "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
     + sectorColsStr +
     "from tbl_airport_msa m join airport a on a.ident = m.airport_identifier "
@@ -1380,7 +1380,7 @@ void DfdCompiler::writeAirportMsa()
     "union "
     // MSA with VOR as center point ========================================
     "select a.airport_id, a.ident as airport_ident, v.vor_id as nav_id, v.ident as nav_ident, v.region as region, "
-    "  m.multiple_code as multiple_code, 'V' as type, v.mag_var, "
+    "  m.multiple_code as multiple_code, 'V' as nav_type, v.mag_var, "
     "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
     + sectorColsStr +
     "from tbl_airport_msa m join vor v on v.ident = m.msa_center and v.region = m.icao_code and "
@@ -1389,7 +1389,7 @@ void DfdCompiler::writeAirportMsa()
     "union "
     // MSA with NDB as center point ========================================
     "select a.airport_id, a.ident as airport_ident, n.ndb_id as nav_id, n.ident as nav_ident, n.region as region, "
-    "  m.multiple_code as multiple_code, 'N' as type, n.mag_var, "
+    "  m.multiple_code as multiple_code, 'N' as nav_type, n.mag_var, "
     "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
     + sectorColsStr +
     "from tbl_airport_msa m join ndb n on n.ident = m.msa_center and n.region = m.icao_code and "
@@ -1398,7 +1398,7 @@ void DfdCompiler::writeAirportMsa()
     "union "
     // MSA with runway end as center point ========================================
     "select a.airport_id, a.ident as airport_ident, r.runway_end_id as nav_id, r.name as nav_ident, a.region as region, "
-    "  m.multiple_code as multiple_code, 'R' as type, a.mag_var, "
+    "  m.multiple_code as multiple_code, 'R' as nav_type, a.mag_var, "
     "  m.radius_limit as radius, m.msa_center_longitude as lonx, m.msa_center_latitude as laty, "
     + sectorColsStr +
     "from tbl_airport_msa m join runway_end r on r.name = substr(m.msa_center, 3) and a.region = m.icao_code and "
@@ -1445,7 +1445,7 @@ void DfdCompiler::writeAirportMsa()
         insertQuery.bindValue(":nav_ident", query.value("nav_ident"));
         insertQuery.bindValue(":region", query.value("region"));
         insertQuery.bindValue(":multiple_code", query.value("multiple_code"));
-        insertQuery.bindValue(":type", query.value("type"));
+        insertQuery.bindValue(":nav_type", query.value("nav_type"));
         insertQuery.bindValue(":mag_var", magvar);
         insertQuery.bindValue(":radius", radius);
 
