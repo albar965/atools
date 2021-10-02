@@ -462,9 +462,9 @@ create table holding
   airport_ident varchar(5),           -- ICAO ident
   nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
   nav_ident varchar(5),               -- ICAO ident
+  nav_type varchar(1),                -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME
   name varchar(50),
   region varchar(2),                  -- ICAO two letter region identifier
-  type varchar(15),                   -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
   mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
   course double not null,             -- True inbound course
   turn_direction varchar(1) not null, -- L or R
@@ -472,7 +472,7 @@ create table holding
   leg_time double,                    -- Leg time in minutes
   minimum_altitude double,            -- Feet or null if not applicable
   maximum_altitude double,            -- Feet or null
-  speed integer,                      -- Speed limit in knots or null
+  speed_limit integer,                -- Speed limit in knots or null
   lonx double not null,               -- Reference fix coordinates
   laty double not null,
 foreign key(airport_id) references airport(airport_id)

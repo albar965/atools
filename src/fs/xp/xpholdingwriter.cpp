@@ -158,8 +158,8 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
 
   insertQuery->bindValue(":nav_id", navId);
   insertQuery->bindValue(":nav_ident", navIdent);
+  insertQuery->bindValue(":nav_type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
   insertQuery->bindValue(":region", region);
-  insertQuery->bindValue(":type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
   insertQuery->bindValue(":mag_var", magvar);
   insertQuery->bindValue(":course", at(line, COURSE).toFloat());
   insertQuery->bindValue(":turn_direction", at(line, DIR));
@@ -167,7 +167,7 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
   insertQuery->bindValue(":leg_time", at(line, LEG_TIME).toFloat());
   insertQuery->bindValue(":minimum_altitude", at(line, MIN_ALT).toFloat());
   insertQuery->bindValue(":maximum_altitude", at(line, MAX_ALT).toFloat());
-  insertQuery->bindValue(":speed", at(line, SPEED).toInt());
+  insertQuery->bindValue(":speed_limit", at(line, SPEED).toInt());
   insertQuery->bindValue(":lonx", pos.getLonX());
   insertQuery->bindValue(":laty", pos.getLatY());
   insertQuery->exec();
