@@ -45,6 +45,7 @@ namespace common {
 class MoraReader
 {
 public:
+  MoraReader(atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbSim);
   MoraReader(atools::sql::SqlDatabase *sqlDb);
   MoraReader(atools::sql::SqlDatabase& sqlDb);
   virtual ~MoraReader();

@@ -31,6 +31,11 @@ namespace atools {
 namespace fs {
 namespace common {
 
+MoraReader::MoraReader(sql::SqlDatabase *sqlDbNav, sql::SqlDatabase *sqlDbSim)
+{
+  db = SqlUtil::getDbWithTableAndRows("mora_grid", {sqlDbNav, sqlDbSim});
+}
+
 MoraReader::MoraReader(sql::SqlDatabase *sqlDb)
   : db(sqlDb)
 {
@@ -57,6 +62,12 @@ bool MoraReader::readFromTable(atools::sql::SqlDatabase& sqlDb)
 bool MoraReader::readFromTable()
 {
   clear();
+
+  if(db == nullptr)
+  {
+    qWarning() << Q_FUNC_INFO << "No MORA database found";
+    return false;
+  }
 
   if(!SqlUtil(db).hasTableAndRows("mora_grid"))
   {
@@ -150,6 +161,12 @@ void MoraReader::fillDbFromQuery(sql::SqlQuery *moraQuery, int fileId)
 
 void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
 {
+  if(db == nullptr)
+  {
+    qWarning() << Q_FUNC_INFO << "No MORA database found";
+    return;
+  }
+
   quint16 initialValue = MoraReader::OCEAN;
   QVector<quint16> grid(360 * 180, initialValue);
 
@@ -253,6 +270,12 @@ void MoraReader::postDatabaseLoad()
 void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows, int fileId)
 {
   clear();
+
+  if(db == nullptr)
+  {
+    qWarning() << Q_FUNC_INFO << "No MORA database found";
+    return;
+  }
 
   datagrid = grid;
   lonxColums = columns;
