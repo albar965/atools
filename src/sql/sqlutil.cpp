@@ -138,6 +138,16 @@ bool SqlUtil::hasTableAndRows(const QString& tablename) const
   return false;
 }
 
+SqlDatabase *SqlUtil::getDbWithTableAndRows(const QString& tablename, QVector<SqlDatabase *> databases)
+{
+  for(SqlDatabase *database : databases)
+  {
+    if(SqlUtil(database).hasTableAndRows(tablename))
+      return database;
+  }
+  return nullptr;
+}
+
 int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const
 {
   if(hasTableAndColumn(tablename, columnname))

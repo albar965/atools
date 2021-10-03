@@ -49,13 +49,15 @@ void XpWriter::fetchNdb(const QString& ident, const QString& region, int& id, fl
   fetchNavaid(ndbQuery, ident, region, id, magvar, pos);
 }
 
-void XpWriter::fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos)
+void XpWriter::fetchVor(const QString& ident, const QString& region, int& id, float& magvar, atools::geo::Pos& pos,
+                        QString& vorType, bool& dmeOnly, bool& hasDme)
 {
-  fetchNavaid(vorQuery, ident, region, id, magvar, pos);
+  fetchNavaid(vorQuery, ident, region, id, magvar, pos, &vorType, &dmeOnly, &hasDme);
 }
 
 void XpWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, const QString& region,
-                           int& id, float& magvar, atools::geo::Pos& pos)
+                           int& id, float& magvar, atools::geo::Pos& pos, QString *vorType,
+                           bool *dmeOnly, bool *hasDme)
 {
   query->bindValue(":ident", ident);
   query->bindValue(":region", region);
@@ -65,6 +67,15 @@ void XpWriter::fetchNavaid(atools::sql::SqlQuery *query, const QString& ident, c
     id = query->valueInt("id");
     magvar = query->valueFloat("mag_var");
     pos = atools::geo::Pos(query->valueFloat("lonx"), query->valueFloat("laty"));
+
+    if(vorType != nullptr)
+      *vorType = query->valueStr("type");
+
+    if(dmeOnly != nullptr)
+      *dmeOnly = query->valueInt("dme_only");
+
+    if(hasDme != nullptr)
+      *hasDme = !query->isNull("dme_altitude");
   }
   else
   {
@@ -91,7 +102,7 @@ void XpWriter::initNavQueries()
                     "where ident = :ident and region = :region limit 1");
 
   vorQuery = new atools::sql::SqlQuery(db);
-  vorQuery->prepare("select vor_id as id, mag_var, lonx, laty from vor "
+  vorQuery->prepare("select vor_id as id, type, dme_only, dme_altitude, mag_var, lonx, laty from vor "
                     "where ident = :ident and region = :region limit 1");
 }
 

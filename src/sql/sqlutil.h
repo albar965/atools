@@ -75,6 +75,10 @@ public:
   /* @return true if table exists and has rows */
   bool hasTableAndRows(const QString& tablename) const;
 
+  /* Return first database in the list having table and rows. null if no one has. */
+  static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename,
+                                                         QVector<atools::sql::SqlDatabase *> databases);
+
   /* @return number of distinct rows if table and column exist. Otherwise -1. */
   int getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const;
 

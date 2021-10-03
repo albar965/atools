@@ -18,9 +18,9 @@
 -- *************************************************************
 -- Update number of ILS runway ends in aiport ------------------
 -- *************************************************************
-drop table if exists temp_ap_num_ils;
+drop table if exists tmp_ap_num_ils;
 
-create table temp_ap_num_ils as
+create table tmp_ap_num_ils as
 select cast(ap_id as integer) as ap_id, cast(count(1) as integer) as cnt from (
   select r.airport_id as ap_id, primary_end_id as end_id
   from runway r
@@ -32,13 +32,11 @@ select cast(ap_id as integer) as ap_id, cast(count(1) as integer) as cnt from (
   where i2.gs_range is not null and i2.type not in ('G', 'T') -- Only real ILS
 ) group by ap_id;
 
-create index if not exists idx_temp_ap_num_ils on temp_ap_num_ils(ap_id);
+create index if not exists idx_tmp_ap_num_ils on tmp_ap_num_ils(ap_id);
 
 update airport set num_runway_end_ils = (
 select r.cnt
-from temp_ap_num_ils r where r.ap_id = airport.airport_id);
-
-drop table if exists temp_ap_num_ils;
+from tmp_ap_num_ils r where r.ap_id = airport.airport_id);
 
 update airport set num_runway_end_ils = 0 where num_runway_end_ils is null;
 

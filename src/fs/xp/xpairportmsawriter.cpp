@@ -117,10 +117,11 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
   int navId = -1;
   float magvar = 0.f;
   Pos center;
+  bool vorDmeOnly = false, vorHasDme = false;
 
   // Fetch the center fix by ident and region to get id and coordinates
   HoldFixType type = static_cast<HoldFixType>(at(line, TYPE).toInt());
-  QString navType;
+  QString navType, vorType;
   switch(type)
   {
     case MSA_AIRPORT:
@@ -142,7 +143,7 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       break;
 
     case MSA_VOR:
-      fetchVor(navIdent, region, navId, magvar, center);
+      fetchVor(navIdent, region, navId, magvar, center, vorType, vorDmeOnly, vorHasDme);
       navType = "V";
       break;
 
@@ -205,8 +206,21 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       insertQuery->bindValue(":nav_id", navId);
       insertQuery->bindValue(":nav_ident", navIdent);
       insertQuery->bindValue(":nav_type", navType); // N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
-      insertQuery->bindValue(":region", region);
 
+      if(navType == "V")
+      {
+        insertQuery->bindValue(":vor_type", vorType);
+        insertQuery->bindValue(":vor_dme_only", vorDmeOnly);
+        insertQuery->bindValue(":vor_has_dme", vorHasDme);
+      }
+      else
+      {
+        insertQuery->bindNullInt(":vor_type");
+        insertQuery->bindNullInt(":vor_dme_only");
+        insertQuery->bindNullInt(":vor_has_dme");
+      }
+
+      insertQuery->bindValue(":region", region);
       insertQuery->bindValue(":mag_var", magvar);
       insertQuery->bindValue(":radius", radius);
 

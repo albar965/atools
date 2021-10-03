@@ -28,6 +28,8 @@ drop table if exists tmp_waypoint_dfd;
 drop table if exists tmp_ndb_ap;
 drop table if exists tmp_vor_ap;
 drop table if exists tmp_holding;
+drop table if exists tmp_ap_num_ils;
+
 
 -- Create indexes ontmp_waypoint are potentially used in searches
 create index if not exists idx_ils_ident on ils(ident);

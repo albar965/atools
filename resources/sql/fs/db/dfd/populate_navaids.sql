@@ -356,9 +356,12 @@ join waypoint w on h.nav_ident = w.ident and h.region = w.region and abs(w.lonx 
 where w.type like 'W%';
 
 -- Insert holdings at VOR =======================
-insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type, mag_var, course, turn_direction, leg_length, leg_time,
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type,
+  vor_type, vor_dme_only, vor_has_dme, mag_var, course, turn_direction, leg_length, leg_time,
   minimum_altitude, maximum_altitude, speed_limit, mag_var, lonx, laty)
-select 1 as file_id, h.airport_ident, h.name, v.vor_id as nav_id, v.ident as nav_ident, h.region, 'V' as nav_type, v.mag_var, h.course,
+select 1 as file_id, h.airport_ident, h.name, v.vor_id as nav_id, v.ident as nav_ident, h.region,
+  'V' as nav_type, v.type as vor_type, v.dme_only as vor_dme_only, case when v.dme_altitude is null then 0 else 1 end as vor_has_dme,
+  v.mag_var, h.course,
   h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, v.mag_var, v.lonx, v.laty
 from tmp_holding h
 join vor v on h.nav_ident = v.ident and abs(v.lonx - h.lonx) < 0.00001 and abs(v.laty - h.laty) < 0.00001;

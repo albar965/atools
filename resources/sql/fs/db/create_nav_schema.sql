@@ -430,10 +430,15 @@ create table airport_msa
   airport_msa_id integer primary key,
   file_id integer not null,           -- BGL or dat file of the feature
   airport_id integer,                 -- Reference to airport
-  airport_ident varchar(5) not null,  -- ICAO ident
+  airport_ident varchar(5),           -- ICAO ident
   nav_id integer,                     -- Refers to airport.airport_id, vor.vor_id, ndb.ndb_id depending on type
-  nav_ident varchar(5) not null,      -- ICAO ident
+  nav_ident varchar(5),               -- ICAO ident
   nav_type varchar(15),               -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME, A = airport, R = runway end
+  vor_type varchar(2),                -- H = high VOR, L = low VOR, T = terminal VOR,
+                                      -- TC = TACAN, VTH = high VORTAC, VTL = low VORTAC, VTT = terminal VORTAC
+                                      -- Otherwise null - used for simplified information display
+  vor_dme_only integer,
+  vor_has_dme integer,
   region varchar(2),                  -- ICAO two letter region identifier
   multiple_code varchar(1),           -- ICAO ident
   mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
@@ -462,7 +467,12 @@ create table holding
   airport_ident varchar(5),           -- ICAO ident
   nav_id integer,                     -- Refers to vor.vor_id or ndb.ndb_id depending on type
   nav_ident varchar(5),               -- ICAO ident
-  nav_type varchar(1),                -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME
+  nav_type varchar(2),                -- N = NDB, W = fix/waypoint, V = VOR/TACAN/DME
+  vor_type varchar(2),                -- H = high VOR, L = low VOR, T = terminal VOR,
+                                      -- TC = TACAN, VTH = high VORTAC, VTL = low VORTAC, VTT = terminal VORTAC
+                                      -- Otherwise null - used for simplified information display
+  vor_dme_only integer,
+  vor_has_dme integer,
   name varchar(50),
   region varchar(2),                  -- ICAO two letter region identifier
   mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
