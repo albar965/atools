@@ -30,7 +30,7 @@
 #include <QThread>
 #include <QSet>
 #include <QCache>
-#include <QLatin1Literal>
+#include <QLatin1String>
 #include <QCoreApplication>
 #include <QDir>
 
@@ -1100,7 +1100,7 @@ const WeatherRequest& SimConnectHandler::getWeatherRequest() const
 
 QString atools::fs::sc::SimConnectHandler::getName() const
 {
-  return QLatin1Literal("SimConnect");
+  return QLatin1String("SimConnect");
 }
 
 } // namespace sc

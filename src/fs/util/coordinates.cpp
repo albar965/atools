@@ -483,45 +483,45 @@ geo::Pos fromAnyFormat(const QString& coords)
   coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
 
   // North/south and east/west designator
-  const static QLatin1Literal NS("(?<NS>[NS])");
-  const static QLatin1Literal EW("(?<EW>[EW])");
+  const static QLatin1String NS("(?<NS>[NS])");
+  const static QLatin1String EW("(?<EW>[EW])");
 
   // Optional n-space
-  const static QLatin1Literal SP("\\s*");
+  const static QLatin1String SP("\\s*");
 
   // Degree, minute and seconds signs or space
   const static QString DEG("[ °\\*]");
-  const static QLatin1Literal MIN("[ ']");
-  const static QLatin1Literal SEC("[ \"]");
+  const static QLatin1String MIN("[ ']");
+  const static QLatin1String SEC("[ \"]");
 
   // Degree, minute and seconds signs
   const static QString DEGEND("[°\\*]?");
-  const static QLatin1Literal MINEND("[']?");
-  const static QLatin1Literal SECEND("[\"]?");
+  const static QLatin1String MINEND("[']?");
+  const static QLatin1String SECEND("[\"]?");
 
   // Integer degree with named capture
-  const static QLatin1Literal LONX_DEG("(?<LONX_DEG>[0-9]+)");
-  const static QLatin1Literal LATY_DEG("(?<LATY_DEG>[0-9]+)");
+  const static QLatin1String LONX_DEG("(?<LONX_DEG>[0-9]+)");
+  const static QLatin1String LATY_DEG("(?<LATY_DEG>[0-9]+)");
 
   // Decimal degree
-  const static QLatin1Literal LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
-  const static QLatin1Literal LATY_DEC_DEG("(?<LATY_DEC_DEG>[0-9\\.]+)");
+  const static QLatin1String LONX_DEC_DEG("(?<LONX_DEC_DEG>[0-9\\.]+)");
+  const static QLatin1String LATY_DEC_DEG("(?<LATY_DEC_DEG>[0-9\\.]+)");
 
   // Decimal degree with sign
-  const static QLatin1Literal LONX_DEC_DEG_SIGN("(?<LONX_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
-  const static QLatin1Literal LATY_DEC_DEG_SIGN("(?<LATY_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
+  const static QLatin1String LONX_DEC_DEG_SIGN("(?<LONX_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
+  const static QLatin1String LATY_DEC_DEG_SIGN("(?<LATY_DEC_DEG_SIGN>[+-]?[0-9\\.]+)");
 
   // Minutes
-  const static QLatin1Literal LONX_MIN("(?<LONX_MIN>[0-9]+)");
-  const static QLatin1Literal LATY_MIN("(?<LATY_MIN>[0-9]+)");
+  const static QLatin1String LONX_MIN("(?<LONX_MIN>[0-9]+)");
+  const static QLatin1String LATY_MIN("(?<LATY_MIN>[0-9]+)");
 
   // Decimal minutes
-  const static QLatin1Literal LONX_DEC_MIN("(?<LONX_DEC_MIN>[0-9\\.]+)");
-  const static QLatin1Literal LATY_DEC_MIN("(?<LATY_DEC_MIN>[0-9\\.]+)");
+  const static QLatin1String LONX_DEC_MIN("(?<LONX_DEC_MIN>[0-9\\.]+)");
+  const static QLatin1String LATY_DEC_MIN("(?<LATY_DEC_MIN>[0-9\\.]+)");
 
   // Decimal seconds
-  const static QLatin1Literal LONX_DEC_SEC("(?<LONX_DEC_SEC>[0-9\\.]+)");
-  const static QLatin1Literal LATY_DEC_SEC("(?<LATY_DEC_SEC>[0-9\\.]+)");
+  const static QLatin1String LONX_DEC_SEC("(?<LONX_DEC_SEC>[0-9\\.]+)");
+  const static QLatin1String LATY_DEC_SEC("(?<LATY_DEC_SEC>[0-9\\.]+)");
 
   // ================================================================================
   // Build regular expressions

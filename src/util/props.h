@@ -338,19 +338,19 @@ public:
 
   void addProp(const atools::util::Prop& prop)
   {
-    insertMulti(prop.getKey(), prop);
+    insert(prop.getKey(), prop);
   }
 
   void addProps(const QList<atools::util::Prop>& props)
   {
     for(const atools::util::Prop& prop:props)
-      insertMulti(prop.getKey(), prop);
+      insert(prop.getKey(), prop);
   }
 
   void addProps(const QVector<atools::util::Prop>& props)
   {
     for(const atools::util::Prop& prop:props)
-      insertMulti(prop.getKey(), prop);
+      insert(prop.getKey(), prop);
   }
 
 private:

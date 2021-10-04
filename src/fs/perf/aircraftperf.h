@@ -316,7 +316,7 @@ public:
   }
 
   /* Current format */
-  const static QLatin1Literal FORMAT_VERSION;
+  const static QLatin1String FORMAT_VERSION;
 
   bool isJetFuel() const
   {

@@ -1643,7 +1643,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
     addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Files").arg(simNum) +
-                                SEP + QLatin1Literal("add-ons"));
+                                SEP + QLatin1String("add-ons"));
 
     addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Add-ons").arg(simNum));
 
@@ -1703,7 +1703,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 
 QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1Literal("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1String("add-on.xml"));
 }
 
 void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,

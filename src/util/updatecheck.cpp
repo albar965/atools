@@ -26,11 +26,11 @@ namespace util {
 
 // Split the download links for used OS
 #if defined(Q_OS_WIN32)
-static const QLatin1Literal DOWNLOAD_KEY("downloadwin");
+static const QLatin1String DOWNLOAD_KEY("downloadwin");
 #elif defined(Q_OS_MACOS)
-static const QLatin1Literal DOWNLOAD_KEY("downloadmac");
+static const QLatin1String DOWNLOAD_KEY("downloadmac");
 #else
-static const QLatin1Literal DOWNLOAD_KEY("downloadlinux");
+static const QLatin1String DOWNLOAD_KEY("downloadlinux");
 #endif
 
 UpdateCheck::UpdateCheck(bool forceDebug)
