@@ -1846,19 +1846,19 @@ QString MetarCloud::getCoverageString() const
 
 MetarCloud::Coverage MetarCloud::getCoverage(const QString& coverage)
 {
-  if(coverage == QLatin1Literal("clear"))
+  if(coverage == QLatin1String("clear"))
     return COVERAGE_CLEAR;
 
-  if(coverage == QLatin1Literal("few"))
+  if(coverage == QLatin1String("few"))
     return COVERAGE_FEW;
 
-  if(coverage == QLatin1Literal("scattered"))
+  if(coverage == QLatin1String("scattered"))
     return COVERAGE_SCATTERED;
 
-  if(coverage == QLatin1Literal("broken"))
+  if(coverage == QLatin1String("broken"))
     return COVERAGE_BROKEN;
 
-  if(coverage == QLatin1Literal("overcast"))
+  if(coverage == QLatin1String("overcast"))
     return COVERAGE_OVERCAST;
 
   return COVERAGE_NIL;

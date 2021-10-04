@@ -185,7 +185,7 @@ void LoggingHandler::checkAbortType(QtMsgType type, const QMessageLogContext& co
 
 void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
-  static const QLatin1Literal DEFAULT("default");
+  static const QLatin1String DEFAULT("default");
 
   if(logFunc != nullptr)
     logFunc(type, context, msg);
@@ -204,12 +204,12 @@ void LoggingHandler::messageHandler(QtMsgType type, const QMessageLogContext& co
 
 void LoggingHandler::messageHandlerNarrow(QtMsgType type, const QMessageLogContext& context, const QString& msg)
 {
-  static const QLatin1Literal DOUBLE_COLON("::");
-  static const QLatin1Literal VOID("void ");
-  static const QLatin1Literal STATIC_VOID("static void ");
-  static const QLatin1Literal VIRTUAL_VOID("virtual void ");
-  static const QLatin1Literal VIRTUAL("virtual ");
-  static const QLatin1Literal DEFAULT("default");
+  static const QLatin1String DOUBLE_COLON("::");
+  static const QLatin1String VOID("void ");
+  static const QLatin1String STATIC_VOID("static void ");
+  static const QLatin1String VIRTUAL_VOID("virtual void ");
+  static const QLatin1String VIRTUAL("virtual ");
+  static const QLatin1String DEFAULT("default");
 
   QString message = msg;
   QString function(context.function);

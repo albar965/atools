@@ -27,7 +27,7 @@ namespace fs {
 namespace util {
 
 // Closed airport by name
-static const QRegularExpression REGEXP_CLOSED(QLatin1Literal("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
+static const QRegularExpression REGEXP_CLOSED(QLatin1String("(\\[X\\]|\\bCLSD\\b|\\bCLOSED\\b)"));
 const static QRegularExpression REGEXP_DIGIT("\\d");
 const static QRegularExpression REGEXP_WHITESPACE("\\s");
 
@@ -48,45 +48,45 @@ static const QStringList CONTAINS_MIL({
 // Look for military designator words - if an airport name matches
 // one of these patterns it will be designated as "military"
 static const QVector<QRegularExpression> REGEXP_MIL({
-        QRegularExpression(QLatin1Literal("(\\[M\\]|\\[MIL\\])")), // X-Plane special
-        QRegularExpression(QLatin1Literal("\\bAAC\\b")),
-        QRegularExpression(QLatin1Literal("\\bAAF\\b")),
-        QRegularExpression(QLatin1Literal("\\bAB\\b")),
-        QRegularExpression(QLatin1Literal("\\bAFB\\b")),
-        QRegularExpression(QLatin1Literal("\\bAFLD\\b")),
-        QRegularExpression(QLatin1Literal("\\bAFS\\b")),
-        QRegularExpression(QLatin1Literal("\\bAF\\b")),
-        QRegularExpression(QLatin1Literal("\\bAHP\\b")),
-        QRegularExpression(QLatin1Literal("\\bAIR BASE\\b")),
-        QRegularExpression(QLatin1Literal("\\bAIR FORCE\\b")),
-        QRegularExpression(QLatin1Literal("\\bAIRBASE\\b")),
-        QRegularExpression(QLatin1Literal("\\bANGB\\b")),
-        QRegularExpression(QLatin1Literal("\\bARB\\b")),
-        QRegularExpression(QLatin1Literal("\\bARMY\\b")),
-        QRegularExpression(QLatin1Literal("\\bCFB\\b")),
-        QRegularExpression(QLatin1Literal("\\bLRRS\\b")),
-        QRegularExpression(QLatin1Literal("\\bMCAF\\b")),
-        QRegularExpression(QLatin1Literal("\\bMCALF\\b")),
-        QRegularExpression(QLatin1Literal("\\bMCAS\\b")),
-        QRegularExpression(QLatin1Literal("\\bMILITARY\\b")),
-        QRegularExpression(QLatin1Literal("\\bMIL\\b")),
-        QRegularExpression(QLatin1Literal("\\bNAF\\b")),
-        QRegularExpression(QLatin1Literal("\\bNALF\\b")),
-        QRegularExpression(QLatin1Literal("\\bNAS\\b")),
-        QRegularExpression(QLatin1Literal("\\bNAVAL\\b")),
-        QRegularExpression(QLatin1Literal("\\bNAVY\\b")),
-        QRegularExpression(QLatin1Literal("\\bNAWS\\b")),
-        QRegularExpression(QLatin1Literal("\\bNOLF\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSB\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSF\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSWC\\b")),
-        QRegularExpression(QLatin1Literal("\\bNSY\\b")),
-        QRegularExpression(QLatin1Literal("\\bNS\\b")),
-        QRegularExpression(QLatin1Literal("\\bNWS\\b")),
-        QRegularExpression(QLatin1Literal("\\bPMRF\\b")),
-        QRegularExpression(QLatin1Literal("\\bRAF\\b")),
-        QRegularExpression(QLatin1Literal("\\bRNAS\\b")),
-        QRegularExpression(QLatin1Literal("\\bROYAL MARINES\\b")),
+        QRegularExpression(QLatin1String("(\\[M\\]|\\[MIL\\])")), // X-Plane special
+        QRegularExpression(QLatin1String("\\bAAC\\b")),
+        QRegularExpression(QLatin1String("\\bAAF\\b")),
+        QRegularExpression(QLatin1String("\\bAB\\b")),
+        QRegularExpression(QLatin1String("\\bAFB\\b")),
+        QRegularExpression(QLatin1String("\\bAFLD\\b")),
+        QRegularExpression(QLatin1String("\\bAFS\\b")),
+        QRegularExpression(QLatin1String("\\bAF\\b")),
+        QRegularExpression(QLatin1String("\\bAHP\\b")),
+        QRegularExpression(QLatin1String("\\bAIR BASE\\b")),
+        QRegularExpression(QLatin1String("\\bAIR FORCE\\b")),
+        QRegularExpression(QLatin1String("\\bAIRBASE\\b")),
+        QRegularExpression(QLatin1String("\\bANGB\\b")),
+        QRegularExpression(QLatin1String("\\bARB\\b")),
+        QRegularExpression(QLatin1String("\\bARMY\\b")),
+        QRegularExpression(QLatin1String("\\bCFB\\b")),
+        QRegularExpression(QLatin1String("\\bLRRS\\b")),
+        QRegularExpression(QLatin1String("\\bMCAF\\b")),
+        QRegularExpression(QLatin1String("\\bMCALF\\b")),
+        QRegularExpression(QLatin1String("\\bMCAS\\b")),
+        QRegularExpression(QLatin1String("\\bMILITARY\\b")),
+        QRegularExpression(QLatin1String("\\bMIL\\b")),
+        QRegularExpression(QLatin1String("\\bNAF\\b")),
+        QRegularExpression(QLatin1String("\\bNALF\\b")),
+        QRegularExpression(QLatin1String("\\bNAS\\b")),
+        QRegularExpression(QLatin1String("\\bNAVAL\\b")),
+        QRegularExpression(QLatin1String("\\bNAVY\\b")),
+        QRegularExpression(QLatin1String("\\bNAWS\\b")),
+        QRegularExpression(QLatin1String("\\bNOLF\\b")),
+        QRegularExpression(QLatin1String("\\bNSB\\b")),
+        QRegularExpression(QLatin1String("\\bNSF\\b")),
+        QRegularExpression(QLatin1String("\\bNSWC\\b")),
+        QRegularExpression(QLatin1String("\\bNSY\\b")),
+        QRegularExpression(QLatin1String("\\bNS\\b")),
+        QRegularExpression(QLatin1String("\\bNWS\\b")),
+        QRegularExpression(QLatin1String("\\bPMRF\\b")),
+        QRegularExpression(QLatin1String("\\bRAF\\b")),
+        QRegularExpression(QLatin1String("\\bRNAS\\b")),
+        QRegularExpression(QLatin1String("\\bROYAL MARINES\\b")),
       });
 
 static const QHash<QString, QString> NAME_CODE_MAP(

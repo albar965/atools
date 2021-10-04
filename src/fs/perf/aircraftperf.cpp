@@ -34,7 +34,7 @@ namespace atools {
 namespace fs {
 namespace perf {
 
-const QLatin1Literal AircraftPerf::FORMAT_VERSION("2.4.0");
+const QLatin1String AircraftPerf::FORMAT_VERSION("2.4.0");
 
 float AircraftPerf::getTimeToClimb(float departureAltFt, float cruiseAltFt) const
 {

@@ -425,22 +425,22 @@ void XpAirportWriter::bindTaxiEdge(const QStringList& line, const atools::fs::xp
 
   // Filter out the various garbage names
   QString nameCompare = name.toUpper();
-  if(nameCompare == QLatin1Literal("*") ||
-     nameCompare == QLatin1Literal("**") ||
-     nameCompare == QLatin1Literal("+") ||
-     nameCompare == QLatin1Literal("-") ||
-     nameCompare == QLatin1Literal("_") ||
-     nameCompare == QLatin1Literal(" ") ||
-     nameCompare == QLatin1Literal(".") ||
-     nameCompare == QLatin1Literal("TAXIWAY") ||
-     nameCompare == QLatin1Literal("TAXYWAY") ||
-     nameCompare == QLatin1Literal("TAXI_TO_RAMP") ||
-     nameCompare == QLatin1Literal("TAXI_RAMP") ||
-     nameCompare == QLatin1Literal("TAXY_RAMP") ||
-     nameCompare == QLatin1Literal("UNNAMED") ||
-     nameCompare == QLatin1Literal("TWY") ||
-     nameCompare == QLatin1Literal("TAXY") ||
-     nameCompare == QLatin1Literal("TAXI"))
+  if(nameCompare == QLatin1String("*") ||
+     nameCompare == QLatin1String("**") ||
+     nameCompare == QLatin1String("+") ||
+     nameCompare == QLatin1String("-") ||
+     nameCompare == QLatin1String("_") ||
+     nameCompare == QLatin1String(" ") ||
+     nameCompare == QLatin1String(".") ||
+     nameCompare == QLatin1String("TAXIWAY") ||
+     nameCompare == QLatin1String("TAXYWAY") ||
+     nameCompare == QLatin1String("TAXI_TO_RAMP") ||
+     nameCompare == QLatin1String("TAXI_RAMP") ||
+     nameCompare == QLatin1String("TAXY_RAMP") ||
+     nameCompare == QLatin1String("UNNAMED") ||
+     nameCompare == QLatin1String("TWY") ||
+     nameCompare == QLatin1String("TAXY") ||
+     nameCompare == QLatin1String("TAXI"))
     name.clear();
 
   numTaxiPath++;
