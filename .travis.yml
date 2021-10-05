@@ -1,7 +1,7 @@
 language: cpp
 os: linux
 compiler: gcc
-dist: xenial
+dist: focal
 
 addons:
   apt:
@@ -9,12 +9,12 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-7
-      - g++-7
+      - gcc-9
+      - g++-9
 
 before_install:
     # Add repository for Qt
-    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.12.2-xenial
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.15.2-focal
     - sudo apt-get -qq update
 
     # Decrypt auth token for deployment
@@ -22,18 +22,18 @@ before_install:
 
 install:
     # Install needed Qt modules and libraries for qt
-    - sudo apt-get --yes install libgl1-mesa-dev qt512base qt512svg qt512script
+    - sudo apt-get --yes install libgl1-mesa-dev qt515base qt515svg qt515script
 
     # Set Qt variables
-    - QTDIR="/opt/qt512"
+    - QTDIR="/opt/qt515"
     - PATH="$QTDIR/bin:$PATH"
-    - source /opt/qt512/bin/qt512-env.sh
+    - source /opt/qt515/bin/qt515-env.sh
 
     # Set used gcc version
-    - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
-    - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
-    - export CC=gcc-7
-    - export CXX=g++-7
+    - sudo ln -s /usr/bin/gcc-9 /usr/local/bin/gcc
+    - sudo ln -s /usr/bin/g++-9 /usr/local/bin/g++
+    - export CC=gcc-9
+    - export CXX=g++-9
 
 before_script:
     # Clone atoolstest VERSION_NUMBER - atoolstest
