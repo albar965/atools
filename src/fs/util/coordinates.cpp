@@ -480,6 +480,13 @@ geo::Pos fromAnyFormat(const QString& coords)
   coordStr.replace("`", "'");
   coordStr.replace("´", "'");
 
+  // Remove various separators
+  coordStr.replace('|', ' ');
+  coordStr.replace(';', ' ');
+  coordStr.replace('_', ' ');
+  coordStr.replace(':', ' ');
+  coordStr.replace('_', ' ');
+
   coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
 
   // North/south and east/west designator
