@@ -41,20 +41,20 @@ before_script:
 
     # Download and extract needed files for the tests
     - mkdir '../Global Land One-kilometer Base Elevation (GLOBE)'
-    - wget -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
+    - wget -q -P '../Global Land One-kilometer Base Elevation (GLOBE)/' "https://www.ngdc.noaa.gov/mgg/topo/DATATILES/elev/all10g.tgz"
     - tar -xvzf '../Global Land One-kilometer Base Elevation (GLOBE)/all10g.tgz' -C '../Global Land One-kilometer Base Elevation (GLOBE)/'
 
 script:
     # Build atools
     - mkdir ../build-atools-release
     - cd ../build-atools-release
-    - qmake ../atools/atools.pro CONFIG+=release
+    - qmake ../atools/atools.pro CONFIG+=release QMAKE_CXXFLAGS+=-Wno-deprecated-copy QMAKE_CXXFLAGS+=-Wno-deprecated-declarations
     - make -j2
 
     # Build atoolstest
     - mkdir ../build-atoolstest-release
     - cd ../build-atoolstest-release
-    - qmake ../atoolstest/atoolstest.pro CONFIG+=release
+    - qmake ../atoolstest/atoolstest.pro CONFIG+=release QMAKE_CXXFLAGS+=-Wno-deprecated-copy QMAKE_CXXFLAGS+=-Wno-deprecated-declarations
     - make -j2
 
     # Run tests
