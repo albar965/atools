@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QDir>
 #include <QSettings>
 
@@ -76,12 +76,12 @@ bool NavDatabaseOptions::isAddonLocalPath(const QString& filepath) const
 
 bool NavDatabaseOptions::isIncludedDirectoryGui(const QString& dirpath) const
 {
-  return includeObject(adaptPath(dirpath), QList<QRegExp>(), dirExcludesGui);
+  return includeObject(adaptPath(dirpath), QList<QRegularExpression>(), dirExcludesGui);
 }
 
 bool NavDatabaseOptions::isIncludedFilePathGui(const QString& filepath) const
 {
-  return includeObject(fromNativeSeparator(filepath), QList<QRegExp>(), filePathExcludesGui);
+  return includeObject(fromNativeSeparator(filepath), QList<QRegularExpression>(), filePathExcludesGui);
 }
 
 bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
@@ -89,12 +89,12 @@ bool NavDatabaseOptions::isHighPriority(const QString& filepath) const
   if(highPriorityFiltersInc.isEmpty())
     return false;
 
-  return includeObject(adaptPath(filepath), highPriorityFiltersInc, QList<QRegExp>());
+  return includeObject(adaptPath(filepath), highPriorityFiltersInc, QList<QRegularExpression>());
 }
 
 bool NavDatabaseOptions::isAddonDirectory(const QString& filepath) const
 {
-  return includeObject(adaptPath(filepath), QList<QRegExp>(), addonDirExcludes);
+  return includeObject(adaptPath(filepath), QList<QRegularExpression>(), addonDirExcludes);
 }
 
 bool NavDatabaseOptions::isIncludedFilename(const QString& filename) const
@@ -253,16 +253,16 @@ void NavDatabaseOptions::loadFromSettings(QSettings& settings)
   settings.endGroup();
 }
 
-bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegExp>& filterListInc,
-                                       const QList<QRegExp>& filterListExcl) const
+bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegularExpression>& filterListInc,
+                                       const QList<QRegularExpression>& filterListExcl) const
 {
   if(filterListInc.isEmpty() && filterListExcl.isEmpty())
     return true;
 
   bool excludeMatched = false;
-  for(const QRegExp& iter : filterListExcl)
+  for(const QRegularExpression& iter : filterListExcl)
   {
-    if(iter.exactMatch(string))
+    if(iter.match(string).hasMatch())
     {
       excludeMatched = true;
       break;
@@ -275,9 +275,9 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
   else
   {
     bool includeMatched = false;
-    for(const QRegExp& iter : filterListInc)
+    for(const QRegularExpression& iter : filterListInc)
     {
-      if(iter.exactMatch(string))
+      if(iter.match(string).hasMatch())
       {
         includeMatched = true;
         break;
@@ -292,13 +292,14 @@ bool NavDatabaseOptions::includeObject(const QString& string, const QList<QRegEx
   }
 }
 
-void NavDatabaseOptions::addToFilter(const QStringList& filters, QList<QRegExp>& filterList)
+void NavDatabaseOptions::addToFilter(const QStringList& filters, QList<QRegularExpression>& filterList)
 {
   for(QString f : filters)
   {
     QString newFilter = f.trimmed();
     if(!newFilter.isEmpty())
-      filterList.append(QRegExp(newFilter, Qt::CaseInsensitive, QRegExp::Wildcard));
+      filterList.append(QRegularExpression(QRegularExpression::wildcardToRegularExpression(newFilter),
+                                           QRegularExpression::CaseInsensitiveOption));
   }
 }
 
@@ -326,75 +327,42 @@ QStringList NavDatabaseOptions::fromNativeSeparators(const QStringList& paths) c
   return retval;
 }
 
+QString patternStr(const QList<QRegularExpression>& list)
+{
+  QStringList retval;
+  for(const QRegularExpression& regexp : list)
+    retval.append(regexp.pattern());
+  return retval.join(", ");
+}
+
 QDebug operator<<(QDebug out, const NavDatabaseOptions& opts)
 {
   QDebugStateSaver saver(out);
-  out.nospace().noquote() << "Options[flags " << opts.flags;
+  out.nospace().noquote() << "NavDatabaseOptions[flags " << opts.flags;
 
-  out << ", Include file filter [";
-  for(const QRegExp& f : opts.fileFiltersInc)
-    out << f.pattern() << ", ";
-  out << "]";
+  out << ", fileFiltersInc [" << patternStr(opts.fileFiltersInc) << "]";
+  out << ", fileFiltersExcl [" << patternStr(opts.fileFiltersExcl) << "]";
+  out << ", pathFiltersInc [" << patternStr(opts.pathFiltersInc) << "]";
+  out << ", pathFiltersExcl [" << patternStr(opts.pathFiltersExcl) << "]";
+  out << ", airportIcaoFiltersInc [" << patternStr(opts.airportIcaoFiltersInc) << "]";
+  out << ", airportIcaoFiltersExcl [" << patternStr(opts.airportIcaoFiltersExcl) << "]";
+  out << ", addonFiltersInc [" << patternStr(opts.addonFiltersInc) << "]";
+  out << ", addonFiltersExcl [" << patternStr(opts.addonFiltersExcl) << "]";
+  out << ", highPriorityFiltersInc [" << patternStr(opts.highPriorityFiltersInc) << "]";
+  out << ", dirExcludesGui [" << patternStr(opts.dirExcludesGui) << "]";
+  out << ", filePathExcludesGui [" << patternStr(opts.filePathExcludesGui) << "]";
+  out << ", addonDirExcludes [" << patternStr(opts.addonDirExcludes) << "]";
 
-  out << ", Exclude file filter [";
-  for(const QRegExp& f : opts.fileFiltersExcl)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Include path filter [";
-  for(const QRegExp& f : opts.pathFiltersInc)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Exclude path filter [";
-  for(const QRegExp& f : opts.pathFiltersExcl)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Include airport filter [";
-  for(const QRegExp& f : opts.airportIcaoFiltersInc)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Exclude airport filter [";
-  for(const QRegExp& f : opts.airportIcaoFiltersExcl)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Include addon filter [";
-  for(const QRegExp& f : opts.addonFiltersInc)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Exclude addon filter [";
-  for(const QRegExp& f : opts.addonFiltersExcl)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Include high priority filter [";
-  for(const QRegExp& f : opts.highPriorityFiltersInc)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Exclude directory filter [";
-  for(const QRegExp& f : opts.dirExcludesGui)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Exclude addon directory filter [";
-  for(const QRegExp& f : opts.addonDirExcludes)
-    out << f.pattern() << ", ";
-  out << "]";
-
-  out << ", Include type filter [";
+  out << ", navDbObjectTypeFiltersInc [";
   for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersInc)
     out << type::navDbObjectTypeToString(type) << ", ";
   out << "]";
-  out << ", Exclude type filter [";
+
+  out << ", navDbObjectTypeFiltersExcl [";
   for(type::NavDbObjectType type : opts.navDbObjectTypeFiltersExcl)
     out << type::navDbObjectTypeToString(type) << ", ";
-
   out << "]";
+
   out << "]";
   return out;
 }
