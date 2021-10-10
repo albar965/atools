@@ -19,6 +19,7 @@
 #define ATOOLS_AIRCRAFTPERFORMANCE_H
 
 #include <QObject>
+#include <limits>
 
 #include "fs/perf/aircraftperfconstants.h"
 

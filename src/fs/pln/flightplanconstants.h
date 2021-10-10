@@ -19,6 +19,7 @@
 #define ATOOLS_FLIGHTPLANCONSTANTS_H
 
 #include <QLatin1String>
+#include <limits>
 
 namespace atools {
 namespace fs {

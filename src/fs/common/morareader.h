@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QVector>
+#include <limits>
 
 namespace atools {
 namespace geo {
@@ -57,7 +58,7 @@ public:
   bool readFromTable(sql::SqlDatabase& sqlDb);
 
   /* Writes values to table "mora_grid". Object has to be valid. Copies data to this instance. */
-  void writeToTable(const QVector<quint16>& datagrid, int columns, int rows, int fileId);
+  void writeToTable(const QVector<qint16>& datagrid, int columns, int rows, int fileId);
 
   /* True if table is present in schema and has one row */
   bool isDataAvailable();
@@ -86,7 +87,7 @@ public:
   int getMoraFt(int lonx, int laty) const;
 
   /* Print world map to log */
-  void debugPrint(const QVector<quint16>& grid);
+  void debugPrint(const QVector<qint16>& grid);
 
   /* Close all queryies and clears data */
   void preDatabaseLoad();
@@ -95,22 +96,22 @@ public:
   void postDatabaseLoad();
 
   /* Unknown data, not surveyed */
-  static constexpr quint16 UNKNOWN = std::numeric_limits<quint16>::max();
+  static constexpr qint16 UNKNOWN = std::numeric_limits<qint16>::max();
 
   /* Error reading */
-  static constexpr quint16 ERROR = std::numeric_limits<quint16>::max() - 1;
+  static constexpr qint16 ERROR = std::numeric_limits<qint16>::max() - 1;
 
   /* Ocean / not set */
-  static constexpr quint16 OCEAN = 0;
+  static constexpr qint16 OCEAN = 0;
 
 private:
   atools::sql::SqlDatabase *db;
   bool dataAvailable = false;
-  QVector<quint16> datagrid;
+  QVector<qint16> datagrid;
   int lonxColums = 0, latyRows = 0;
 
-  const static quint32 MAGIC_NUMBER_DATA = 0xA5B44CDB;
-  const static quint32 DATA_VERSION = 1;
+  const static qint32 MAGIC_NUMBER_DATA = 0xA5B44CDB;
+  const static qint32 DATA_VERSION = 1;
 
 };
 

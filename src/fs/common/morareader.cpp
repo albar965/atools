@@ -95,7 +95,7 @@ bool MoraReader::readFromTable()
     in.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
     // Read and check header
-    quint32 magicNumber, dataVersion;
+    qint32 magicNumber, dataVersion;
     in >> magicNumber >> dataVersion;
 
     if(magicNumber != MAGIC_NUMBER_DATA)
@@ -104,7 +104,7 @@ bool MoraReader::readFromTable()
       throw Exception("Invalid data version in MORA data");
 
     // Read blob into vector
-    quint16 value;
+    qint16 value;
     while(!in.atEnd())
     {
       in >> value;
@@ -167,8 +167,8 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
     return;
   }
 
-  quint16 initialValue = MoraReader::OCEAN;
-  QVector<quint16> grid(360 * 180, initialValue);
+  qint16 initialValue = MoraReader::OCEAN;
+  QVector<qint16> grid(360 * 180, initialValue);
 
   int carryover = 0;
   int lastpos = -1;
@@ -203,14 +203,14 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
     for(int i = 0; i < 30; i++)
     {
       QString valueStr = line.at(i + 2);
-      quint16 value;
+      qint16 value;
 
       if(valueStr == "UNK" /* DSF */ || valueStr == "000" /* X-Plane */)
         // Not surveyed
         value = MoraReader::UNKNOWN;
       else
       {
-        value = static_cast<quint16>(valueStr.toInt(&ok));
+        value = static_cast<qint16>(valueStr.toInt(&ok));
         if(!ok)
           value = MoraReader::ERROR;
       }
@@ -227,7 +227,7 @@ void MoraReader::fillDbFromFile(const QVector<QStringList>& lines, int fileId)
   db->commit();
 }
 
-void MoraReader::debugPrint(const QVector<quint16>& grid)
+void MoraReader::debugPrint(const QVector<qint16>& grid)
 {
   QString text;
   for(int laty = 90; laty > -90; laty--)
@@ -237,7 +237,7 @@ void MoraReader::debugPrint(const QVector<quint16>& grid)
     for(int lonx = -180; lonx < 180; lonx++)
     {
       int pos = (-laty + 90) * 360 + lonx + 180;
-      quint16 val = grid.at(pos);
+      qint16 val = grid.at(pos);
 
       if(val == MoraReader::ERROR)
         line += "E";
@@ -267,7 +267,7 @@ void MoraReader::postDatabaseLoad()
   readFromTable();
 }
 
-void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int rows, int fileId)
+void MoraReader::writeToTable(const QVector<qint16>& grid, int columns, int rows, int fileId)
 {
   clear();
 
@@ -294,7 +294,7 @@ void MoraReader::writeToTable(const QVector<quint16>& grid, int columns, int row
   out << MAGIC_NUMBER_DATA << DATA_VERSION;
 
   // Write data as 16 bit values
-  for(quint16 value : datagrid)
+  for(qint16 value : datagrid)
     out << value;
 
   // mora_grid_id integer primary key,
