@@ -287,9 +287,9 @@ void AirspaceReaderOpenAir::bindClass(const QString& cls)
   else if(cls == "E") // Class E
     type = "CE";
   else if(cls == "F") // Class F
-    type = "CE";
+    type = "CF";
   else if(cls == "G") // Class G
-    type = "CE";
+    type = "CG";
   else if(cls == "GP") // glider prohibited
     type = "GP";
   else if(cls == "CTR") // CTR
