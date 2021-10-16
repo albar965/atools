@@ -572,10 +572,10 @@ QString homeDir();
 
 /* Collect error messages for files or folders if they are readable, not empty and more.
  * Returns empty string if all is ok. */
-QString checkDirMsg(const QFileInfo& dir, int maxLength = 80);
-QString checkFileMsg(const QFileInfo& file, int maxLength = 80);
-QString checkDirMsg(const QString& dir, int maxLength = 80);
-QString checkFileMsg(const QString& file, int maxLength = 80);
+QString checkDirMsg(const QFileInfo& dir, int maxLength = 80, bool warn = true);
+QString checkFileMsg(const QFileInfo& file, int maxLength = 80, bool warn = true);
+QString checkDirMsg(const QString& dir, int maxLength = 80, bool warn = true);
+QString checkFileMsg(const QString& file, int maxLength = 80, bool warn = true);
 
 /* Same as above but prints warnings into the log if flag is set and returns false if something is not ok */
 bool checkFile(const QFileInfo& file, bool warn = true);

@@ -54,7 +54,13 @@ namespace scenery {
  */
 void LayoutJson::read(const QString& filename)
 {
-  if(atools::checkFile(filename))
+#ifdef DEBUG_SILENCE_COMPILER_WARNINGS
+  bool warn = false;
+#else
+  bool warn = true;
+#endif
+
+  if(atools::checkFile(filename, warn))
   {
     QFile file(filename);
     if(file.open(QIODevice::ReadOnly))

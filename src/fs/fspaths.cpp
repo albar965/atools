@@ -224,10 +224,16 @@ QString FsPaths::getMsfsOfficialPath(const QString& basePath)
 {
   // Also check subfolders and layout file to avoid confusion if folders from other installations remain
   // Look first for Steam since some might have remains from MS subscription around
+#ifdef DEBUG_SILENCE_COMPILER_WARNINGS
+  bool warn = false;
+#else
+  bool warn = true;
+#endif
+
   QString msgSteam = checkFileMsg(basePath + SEP + "Official" + SEP + "Steam" + SEP +
-                                  "fs-base" + SEP + "layout.json");
+                                  "fs-base" + SEP + "layout.json", 80, warn);
   QString msgOneStore = checkFileMsg(basePath + SEP + "Official" + SEP + "OneStore" + SEP +
-                                     "fs-base" + SEP + "layout.json");
+                                     "fs-base" + SEP + "layout.json", 80, warn);
 
   if(msgSteam.isEmpty())
     return basePath + SEP + "Official" + SEP + "Steam";
@@ -247,7 +253,13 @@ QString FsPaths::getMsfsCommunityPath()
 
 QString FsPaths::getMsfsCommunityPath(const QString& basePath)
 {
-  QString msg = checkDirMsg(basePath + SEP + "Community");
+#ifdef DEBUG_SILENCE_COMPILER_WARNINGS
+  bool warn = false;
+#else
+  bool warn = true;
+#endif
+
+  QString msg = checkDirMsg(basePath + SEP + "Community", 80, warn);
 
   if(msg.isEmpty())
     return basePath + SEP + "Community";
