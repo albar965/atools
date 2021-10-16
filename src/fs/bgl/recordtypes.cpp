@@ -75,6 +75,18 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
 {
   switch(type)
   {
+    case atools::fs::bgl::rec::APRON_FIRST_MSFS_NEW:
+      return "APRON_FIRST_MSFS_NEW";
+
+    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_00FA:
+      return "MSFS_AIRPORT_UNKNOWN_00FA";
+
+    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_0058:
+      return "MSFS_AIRPORT_UNKNOWN_0058";
+
+    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_0059:
+      return "MSFS_AIRPORT_UNKNOWN_0059";
+
     case rec::MSFS_AIRPORT_PROJECTED_MESH:
       return "MSFS_AIRPORT_PROJECTED_MESH";
 
@@ -218,6 +230,11 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
 {
   switch(type)
   {
+    case rec::APRON_FIRST_MSFS_NEW:
+    case rec::MSFS_AIRPORT_UNKNOWN_00FA:
+    case rec::MSFS_AIRPORT_UNKNOWN_0058:
+    case rec::MSFS_AIRPORT_UNKNOWN_0059:
+
     case rec::DELETE_AIRPORT_NAVIGATION:
     case rec::MSFS_AIRPORT_PAINTED_LINE:
     case rec::MSFS_AIRPORT_PAINTED_HATCHED_AREA:

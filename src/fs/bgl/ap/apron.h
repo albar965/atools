@@ -21,6 +21,7 @@
 #include "fs/bgl/record.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/bgl/bglposition.h"
+#include "fs/bgl/recordtypes.h"
 
 namespace atools {
 namespace fs {
@@ -34,7 +35,7 @@ class Apron :
 {
 public:
   Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
-        atools::fs::bgl::StructureType structureType);
+        atools::fs::bgl::rec::AirportRecordType type);
   virtual ~Apron() override;
 
   atools::fs::bgl::Surface getSurface() const

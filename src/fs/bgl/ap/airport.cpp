@@ -256,10 +256,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::APRON_FIRST_MSFS:
       case rec::APRON_FIRST_P3D_V5:
       case rec::APRON_FIRST:
+      case rec::APRON_FIRST_MSFS_NEW:
         if(options->isIncludedNavDbObject(type::APRON))
         {
           r.seekToStart();
-          aprons.append(Apron(options, bs, type == rec::APRON_FIRST_P3D_V5 ? STRUCT_P3DV5 : STRUCT_FSX));
+          aprons.append(Apron(options, bs, type));
         }
         break;
 
@@ -375,13 +376,20 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::DELETE_AIRPORT_NAVIGATION:
       case rec::MSFS_AIRPORT_PROJECTED_MESH:
       case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
+
+      // case rec::MSFS_AIRPORT_UNKNOWN_00D0:
+      case rec::MSFS_AIRPORT_UNKNOWN_00FA:
+      case rec::MSFS_AIRPORT_UNKNOWN_0058:
+      case rec::MSFS_AIRPORT_UNKNOWN_0059:
         break;
 
       default:
 
-        qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
-                                       << hex << " 0x" << r.getId()
-                                       << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
+        // Log unknown types only for other simulators than MSFS since this one comes up with  surprises
+        if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+          qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
+                                         << hex << " 0x" << r.getId()
+                                         << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
 
         if(subrecordIndex == 0)
         {
