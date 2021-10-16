@@ -3,6 +3,24 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.17
+
+* Added new record type for airport apron appearing since MSFS SU6 beta. Reading apron structure
+  for new MSFS record. Disabled warning about unknown airport record types when compiling
+  MSFS data. #799
+* Fixed bug with wrong airspace assignment for class F and G when reading OpenAir files. #797
+* Better coordinate parsing. Removing various separators now.
+* Corrected MSFS dummy POI airport detection. Now ignoring airport closed flag which removes POI
+  wrongly detected as airports.
+* Corrected missing index in airport table slowing down searches by official airport ids.
+* Added departure parking position heading to LNMPLN.
+* Updated XSD flight plan schema.
+* Fixed issue when calculating flight plans using radio navaids where too close navaids where
+  selected enroute. Example: PAYA MDO ODK CDB ELF DUT PADK where CDB and ELF are too close resulting
+  in zig-zag routing.
+
+===============================================================================
+
 # Version 3.6.16
 
 * Fixed X-Plane FMS export to always use ADEP/ADES keywords for airports except for those with long
