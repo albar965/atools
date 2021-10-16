@@ -25,7 +25,8 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
-Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs, StructureType structureType)
+Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
+             atools::fs::bgl::rec::AirportRecordType type)
   : bgl::Record(options, bs)
 {
   surface = static_cast<Surface>(bs->readUByte() & SURFACE_MASK);
@@ -37,8 +38,11 @@ Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinarySt
     bs->skip(16);
   }
 
-  if(structureType == STRUCT_P3DV5)
+  if(type == rec::APRON_FIRST_P3D_V5)
     bs->skip(21);
+
+  if(type == rec::APRON_FIRST_MSFS_NEW)
+    bs->skip(4);
 
   int numVertices = bs->readShort();
   if(options->getSimulatorType() == atools::fs::FsPaths::MSFS)
