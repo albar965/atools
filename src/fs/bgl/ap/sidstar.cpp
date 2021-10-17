@@ -161,6 +161,10 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
         break;
 
       default:
+#ifndef DEBUG_INFORMATION
+        // Log unknown types only for other simulators than MSFS since this one comes up with  surprises
+        if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
+#endif
         /* Shouldn't ever occur, so print error and move on? */
         qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type " << ident
                                        << hex << " 0x" << r.getId()

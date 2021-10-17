@@ -377,7 +377,6 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_AIRPORT_PROJECTED_MESH:
       case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
 
-      // case rec::MSFS_AIRPORT_UNKNOWN_00D0:
       case rec::MSFS_AIRPORT_UNKNOWN_00FA:
       case rec::MSFS_AIRPORT_UNKNOWN_0058:
       case rec::MSFS_AIRPORT_UNKNOWN_0059:
@@ -385,11 +384,13 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
 
       default:
 
+#ifndef DEBUG_INFORMATION
         // Log unknown types only for other simulators than MSFS since this one comes up with  surprises
         if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
-          qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
-                                         << hex << " 0x" << r.getId()
-                                         << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
+#endif
+        qWarning().noquote().nospace() << Q_FUNC_INFO << " Unexpected record type in airport record for " << ident
+                                       << hex << " 0x" << r.getId()
+                                       << dec << " " << airportRecordTypeStr(type) << " offset " << bs->tellg();
 
         if(subrecordIndex == 0)
         {
