@@ -508,7 +508,9 @@ Airport::~Airport()
 bool Airport::isMsfsPoiDummy() const
 {
   return /*isAirportClosed() && not used since 1.19.8 and EU world updates */
-         runways.isEmpty() && helipads.isEmpty() && parkings.isEmpty() && starts.isEmpty();
+         runways.isEmpty() && helipads.isEmpty() && parkings.isEmpty() && starts.isEmpty() &&
+         // Allows empty airports in navdata updating procedures and COM
+         approaches.isEmpty() && sidsAndStars.isEmpty() && coms.isEmpty();
 }
 
 bool Airport::isEmpty() const
