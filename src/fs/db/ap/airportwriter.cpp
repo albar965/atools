@@ -78,18 +78,20 @@ void AirportWriter::writeObject(const Airport *type)
     return;
   }
 
-  if(type->isMsfsPoiDummy() && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+  DataWriter& dw = getDataWriter();
+  bool msfsNavdata = dw.getSceneryAreaWriter()->getCurrentArea().isNavdata();
+
+  if(!msfsNavdata && type->isMsfsPoiDummy() && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
     // Skip empty POI dummy airports in MSFS
     return;
 
   if(ident.isEmpty())
     throw atools::Exception("Found airport without ident");
 
-  DataWriter& dw = getDataWriter();
   const SceneryAreaWriter *sceneryAreaWriter = dw.getSceneryAreaWriter();
   BglFileWriter *bglFileWriter = dw.getBglFileWriter();
   const scenery::SceneryArea& currentArea = sceneryAreaWriter->getCurrentArea();
-  if(dw.getSceneryAreaWriter()->getCurrentArea().isNavdata())
+  if(msfsNavdata)
   {
     // Do a shortcut for MSFS dummies which transport only procedures and COM
     // Instead of writing a new airport simply add COM and procedures
