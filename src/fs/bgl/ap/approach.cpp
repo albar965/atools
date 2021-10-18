@@ -29,7 +29,7 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
-Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
+Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs, rec::AirportRecordType airportRecType)
   : Record(options, bs)
 {
   suffix = bs->readByte();
@@ -58,6 +58,9 @@ Approach::Approach(const NavDatabaseOptions *options, BinaryStream *bs)
   altitude = bs->readFloat();
   heading = bs->readFloat(); // Heading is float degrees
   missedAltitude = bs->readFloat();
+
+  if(airportRecType == rec::MSFS_APPROACH_NEW)
+    bs->skip(4);
 
   // Read subrecords
   while(bs->tellg() < startOffset + size)

@@ -78,8 +78,8 @@ QString airportRecordTypeStr(rec::AirportRecordType type)
     case atools::fs::bgl::rec::APRON_FIRST_MSFS_NEW:
       return "APRON_FIRST_MSFS_NEW";
 
-    case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_00FA:
-      return "MSFS_AIRPORT_UNKNOWN_00FA";
+    case atools::fs::bgl::rec::MSFS_APPROACH_NEW:
+      return "MSFS_APPROACH_NEW";
 
     case atools::fs::bgl::rec::MSFS_AIRPORT_UNKNOWN_0058:
       return "MSFS_AIRPORT_UNKNOWN_0058";
@@ -231,7 +231,7 @@ bool airportRecordTypeValid(rec::AirportRecordType type)
   switch(type)
   {
     case rec::APRON_FIRST_MSFS_NEW:
-    case rec::MSFS_AIRPORT_UNKNOWN_00FA:
+    case rec::MSFS_APPROACH_NEW:
     case rec::MSFS_AIRPORT_UNKNOWN_0058:
     case rec::MSFS_AIRPORT_UNKNOWN_0059:
 

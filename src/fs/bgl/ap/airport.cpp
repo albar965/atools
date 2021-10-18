@@ -219,10 +219,11 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         break;
 
       case rec::APPROACH:
+      case rec::MSFS_APPROACH_NEW:
         if(options->isIncludedNavDbObject(type::APPROACH))
         {
           r.seekToStart();
-          approaches.append(Approach(options, bs));
+          approaches.append(Approach(options, bs, type));
         }
         break;
 
@@ -377,7 +378,6 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
       case rec::MSFS_AIRPORT_PROJECTED_MESH:
       case rec::MSFS_AIRPORT_GROUND_MERGING_TRANSFER:
 
-      case rec::MSFS_AIRPORT_UNKNOWN_00FA:
       case rec::MSFS_AIRPORT_UNKNOWN_0058:
       case rec::MSFS_AIRPORT_UNKNOWN_0059:
         break;
