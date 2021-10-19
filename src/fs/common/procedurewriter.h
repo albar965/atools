@@ -100,6 +100,7 @@ struct ProcedureInput
   QString transAlt; // 95-99   5.53
   QString speedLimitDescr; // 118     5.261
   int speedLimit; // 100-102 5.72
+  QVariant verticalAngle; // degree with sign or null, 100 5.70
   QString centerFixOrTaaPt; // 107-111 5.144/5.271
   QString centerIcaoCode; // 113-114 5.14
   QString centerSecCode; // 115     5.4

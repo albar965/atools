@@ -90,6 +90,12 @@ void LegBaseWriter::writeObject(const ApproachLeg *type)
     bindNullInt(":speed_limit");
     bindNullString(":speed_limit_type");
   }
+
+  if(std::abs(type->getVerticalAngle()) > 0.f)
+    bind(":vertical_angle", -type->getVerticalAngle() / 100.f);
+  else
+    bindNullInt(":vertical_angle");
+
   executeStatement();
 }
 

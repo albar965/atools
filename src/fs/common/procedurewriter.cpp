@@ -879,11 +879,10 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     rec.setValue(":altitude2", altitudeFromStr(swapAlt ? line.altitude : line.altitude2));
   }
 
-  // Speed limit
-  int spdLimit = line.speedLimit;
-  if(spdLimit > 0)
+  // Speed limit ==========================
+  if(line.speedLimit > 0)
   {
-    rec.setValue(":speed_limit", spdLimit);
+    rec.setValue(":speed_limit", line.speedLimit);
 
     QString spdDescr = line.speedLimitDescr;
     if(spdDescr == "+" || spdDescr == "-")
@@ -893,6 +892,11 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
     if(!atools::contains(spdDescr, {QString(), " ", "+", "-"}))
       qWarning() << line.context << "Invalid speed limit" << spdDescr;
   }
+  // else null
+
+  // Vertical angle ==========================
+  if(!line.verticalAngle.isNull())
+    rec.setValue(":vertical_angle", line.verticalAngle);
   // else null
 
   // arinc_descr_code varchar(25), -- ARINC description code 5.17

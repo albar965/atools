@@ -1255,6 +1255,7 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   procInput.transAlt = query.valueStr("transition_altitude");
   procInput.speedLimitDescr = query.valueStr("speed_limit_description");
   procInput.speedLimit = query.valueInt("speed_limit");
+  procInput.verticalAngle = query.value("vertical_angle");
 
   procInput.centerFixOrTaaPt = query.valueStr("center_waypoint");
   // procInput.centerIcaoCode = query.valueStr(""); // Not available

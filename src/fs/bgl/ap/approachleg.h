@@ -276,6 +276,11 @@ public:
     return speedLimit;
   }
 
+  float getVerticalAngle() const
+  {
+    return verticalAngle;
+  }
+
   /*
    * @return true if this is a missed approach leg
    */
@@ -314,7 +319,7 @@ private:
   // "Fix Ident” field from the NAVAID
   // in the "Recommended NAVAID”
   // field
-  float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2, speedLimit;
+  float theta /* heading */, rho /* distance */, course, distOrTime, altitude1, altitude2, speedLimit, verticalAngle;
 };
 
 } // namespace bgl

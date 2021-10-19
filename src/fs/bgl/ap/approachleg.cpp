@@ -77,7 +77,7 @@ ApproachLeg::ApproachLeg(io::BinaryStream *bs, rec::ApprRecordType recType)
   {
     // Not type given - assuming max speed
     speedLimit = bs->readFloat();
-    bs->readFloat(); // verticalAngle - ignored for now
+    verticalAngle = bs->readFloat();
     bs->skip(8); // unknown
 
     if(msfs116 || msfs118)

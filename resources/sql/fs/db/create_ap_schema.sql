@@ -496,8 +496,9 @@ create table approach_leg
   rho double,                         -- Distance in NM
   altitude1 double,                   -- Altitude value 1 in feet. Meaning depends on alt_descriptor
   altitude2  double,                  -- Altitude value 2 in feet. Meaning depends on alt_descriptor
-  speed_limit_type varchar(2),  -- null: mandatory speed if limit is given, "+": minimum speed, "-": maximum speed
-  speed_limit integer,          -- null or speed limit in knots
+  speed_limit_type varchar(2),        -- null: mandatory speed if limit is given, "+": minimum speed, "-": maximum speed
+  speed_limit integer,                -- null or speed limit in knots
+  vertical_angle double,              -- Vertical angle in degree
 foreign key(approach_id) references approach(approach_id)
 );
 
@@ -539,6 +540,7 @@ create table transition_leg
   altitude2  double,
   speed_limit_type varchar(2),  -- null: mandatory speed if limit is given, "+": minimum speed, "-": maximum speed
   speed_limit integer,          -- null or speed limit in knots
+  vertical_angle double,        -- Vertical angle in degree
 foreign key(transition_id) references transition(transition_id)
 );
 

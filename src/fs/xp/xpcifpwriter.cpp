@@ -136,6 +136,8 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.transAlt = at(line, TRANS_ALT).trimmed();
   procInput.speedLimitDescr = at(line, SPD_LIMIT_DESCR).trimmed();
   procInput.speedLimit = at(line, SPEED_LIMIT).toInt();
+  procInput.verticalAngle =
+    at(line, VERT_ANGLE).simplified().isEmpty() ? QVariant(QVariant::Double) : at(line, VERT_ANGLE).toDouble() / 100.;
   procInput.centerFixOrTaaPt = at(line, CENTER_FIX_OR_TAA_PT).trimmed();
   procInput.centerIcaoCode = at(line, CENTER_ICAO_CODE).trimmed();
   procInput.centerSecCode = at(line, CENTER_SEC_CODE);
