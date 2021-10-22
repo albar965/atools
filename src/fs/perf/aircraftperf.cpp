@@ -58,12 +58,12 @@ float AircraftPerf::getDescentRateFtPerNm(float headWind) const
 
 float AircraftPerf::getClimbFlightPathAngle(float headWind) const
 {
-  return static_cast<float>(ageo::toDegree(std::atan(ageo::feetToNm(getClimbRateFtPerNm(headWind)))));
+  return static_cast<float>(ageo::atanDeg(ageo::feetToNm(getClimbRateFtPerNm(headWind))));
 }
 
 float AircraftPerf::getDescentFlightPathAngle(float headWind) const
 {
-  return static_cast<float>(ageo::toDegree(std::atan(ageo::feetToNm(getDescentRateFtPerNm(headWind)))));
+  return static_cast<float>(ageo::atanDeg(ageo::feetToNm(getDescentRateFtPerNm(headWind))));
 }
 
 bool AircraftPerf::isClimbValid() const

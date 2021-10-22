@@ -136,7 +136,7 @@ struct WindAltLayer;
  * Most query methods use the altitude from the Pos parameter.
  *
  * Downloaded/possible sets are:
- * Altitide | Act. pressure | Pressure param | Downloaded | Used by X-Plane
+ * Altitude | Act. pressure | Pressure param | Downloaded | Used by X-Plane
  * 10000 ft | 69.7 mb       | 700            | *          | XP
  * 15000 ft | 57.2 mb       | 550            |            |
  * 20000 ft | 46.6 mb       | 450            | *          |

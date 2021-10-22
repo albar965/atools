@@ -662,6 +662,13 @@ inline TYPE atan2Deg(TYPE y, TYPE x)
   return static_cast<TYPE>(atools::geo::toDegree(atan2(static_cast<double>(y), static_cast<double>(x))));
 }
 
+/* Get descent speed in feet/minute for groundspeed and vertical angle. Returns positive values. */
+template<typename TYPE>
+inline TYPE descentSpeedForPathAngle(TYPE groundspeedKts, TYPE vertAngleDeg)
+{
+  return atools::geo::tanDeg(std::abs(vertAngleDeg)) * (atools::geo::nmToFeet(groundspeedKts) / 60.f);
+}
+
 } /* namespace geo */
 } // namespace atools
 
