@@ -18,10 +18,12 @@
 #ifndef ATOOLS_UTIL_HTMLBUILDER_H
 #define ATOOLS_UTIL_HTMLBUILDER_H
 
+#include <QBitArray>
 #include <QColor>
 #include <QCoreApplication>
 #include <QLocale>
 #include <QSize>
+#include <QDebug>
 
 namespace atools {
 namespace util {
@@ -95,6 +97,15 @@ public:
 
   /* Returns a clean copy of this instance */
   HtmlBuilder cleared() const;
+
+  /* Sets a marked position in the stream. -1 is unset. */
+  HtmlBuilder& mark(int markParam = -1);
+
+  /* Deletes all back to the marked position */
+  HtmlBuilder& rewind();
+
+  /* Returns mark index in string or -1 if unset */
+  int getMark() const;
 
   /* Appends raw data without conversion */
   atools::util::HtmlBuilder& append(const atools::util::HtmlBuilder& other);
@@ -246,6 +257,21 @@ public:
   HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
   HtmlBuilder& tableEnd();
 
+  /* Number increased for each row in a table an reset if table is closed. Reset when creating a new table. */
+  int getTableRows() const
+  {
+    return tableRows;
+  }
+
+  /* true if table has no rows not including header */
+  bool isTableEmpty() const
+  {
+    return tableRows == 0;
+  }
+
+  /* Remove all content to the last set mark if table is has no rows */
+  HtmlBuilder& removeIfTableEmpty();
+
   /* all row2 methods add two rows to a table.
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
    * Text background may alternate depending on configuration */
@@ -369,12 +395,43 @@ public:
     return rowBackColorAlt;
   }
 
+  /* Set the current id flag for the stream. All row2 output is skipped if the id flag is not included in setIds() */
+  template<typename TYPE>
+  HtmlBuilder& id(TYPE idEnum)
+  {
+    int num = static_cast<int>(idEnum);
+    if(num <= MAX_ID)
+      currentId = num;
+    else
+      qWarning() << Q_FUNC_INFO << "id" << num << "too large";
+
+    return *this;
+  }
+
+  /* Clears the currently set id value */
+  HtmlBuilder& clearId()
+  {
+    currentId = -1;
+    return *this;
+  }
+
+  /* Sets a list of enums which decide if row2 table output is skipped after id() or not. Maximum enum value if MAX_ID. */
+  template<typename TYPE>
+  void setIds(const QVector<TYPE>& idEnums);
+
+  const static int MAX_ID = 512;
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
   static QString asText(QString str, html::Flags flags, QColor foreground, QColor background = QColor());
 
   void initColors(const QColor& rowColor, const QColor& rowColorAlt);
+
+  bool isId() const
+  {
+    return currentId == -1 || ids.testBit(currentId);
+  }
 
   QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;
   QColor rowBackColor, rowBackColorAlt;
@@ -386,7 +443,26 @@ private:
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
   bool hasBackColor = false, row2AlignRightFlag = false;
+  int markIndex = -1, tableRows = 0;
+
+  QBitArray ids;
+  int currentId = -1;
 };
+
+// =================================================
+template<typename TYPE>
+void HtmlBuilder::setIds(const QVector<TYPE>& idEnums)
+{
+  ids.fill(false);
+  for(TYPE id : idEnums)
+  {
+    int num = static_cast<int>(id);
+    if(num <= MAX_ID)
+      ids.setBit(num, true);
+    else
+      qWarning() << Q_FUNC_INFO << "id" << num << "too large";
+  }
+}
 
 } // namespace util
 } // namespace atools
