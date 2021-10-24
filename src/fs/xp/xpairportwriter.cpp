@@ -1037,6 +1037,8 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     airportDatumPos.setLatY(value.toFloat());
   else if(key == "datum_lon" && atools::almostNotEqual(value.toFloat(), 0.f))
     airportDatumPos.setLonX(value.toFloat());
+  else if(key == "transition_alt") // transition_level ignored
+    insertAirportQuery->bindValue(":transition_altitude", value.toFloat());
 
   // 1302 city Seattle
   // 1302 gui_label 3D
