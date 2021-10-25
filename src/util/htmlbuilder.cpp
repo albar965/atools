@@ -805,21 +805,30 @@ HtmlBuilder& HtmlBuilder::a(const QString& text, const QString& href, html::Flag
 
 HtmlBuilder& HtmlBuilder::img(const QIcon& icon, const QString& alt, const QString& style, QSize size)
 {
+  // Square size if one dimension is zero
+  QSize pixmapSize(size);
+  if(pixmapSize.width() == 0)
+    pixmapSize.setWidth(pixmapSize.height());
+  if(pixmapSize.height() == 0)
+    pixmapSize.setHeight(pixmapSize.width());
+
+  // Resulting pixmap might be smaller
   QByteArray data;
   QBuffer buffer(&data);
-  icon.pixmap(size).save(&buffer, "PNG", 100);
+  icon.pixmap(pixmapSize).save(&buffer, "PNG", 100);
 
-  img(QString("data:image/png;base64, %0").arg(QString(data.toBase64())), alt, style, size);
+  img(QString("data:image/png;base64, %1").arg(QString(data.toBase64())), alt, style, size);
   return *this;
 }
 
 HtmlBuilder& HtmlBuilder::img(const QString& src, const QString& alt, const QString& style, QSize size)
 {
-  htmlText.append("<img src='" % src % "'" % (style.isEmpty() ? QString() : " style=\"" % style % "\"") %
-                  (alt.isEmpty() ? QString() : " alt=\"" % alt % "\"") %
-                  (size.isValid() ?
-                   QString(" width=\"") % QString::number(size.width()) % "\"" %
-                   " height=\"" % QString::number(size.height()) % "\"" : QString()) % "/>");
+  QString widthAtt = size.width() > 0 ? QString(" width=\"") % QString::number(size.width()) % "\"" : QString();
+  QString heightAtt = size.height() > 0 ? QString(" height=\"") % QString::number(size.height()) % "\"" : QString();
+  QString altAtt = alt.isEmpty() ? QString() : " alt=\"" % alt % "\"";
+  QString styleAtt = style.isEmpty() ? QString() : " style=\"" % style % "\"";
+
+  htmlText.append("<img src='" % src % "'" % styleAtt % altAtt % widthAtt % heightAtt % "/>");
 
   return *this;
 }
@@ -1051,7 +1060,7 @@ QString HtmlBuilder::getEncodedImageHref(const QIcon& icon, QSize imageSize)
   QBuffer buffer(&data);
   icon.pixmap(imageSize).save(&buffer, "PNG", 100);
 
-  return QString("data:image/png;base64, %0").arg(QString(data.toBase64()));
+  return QString("data:image/png;base64, %1").arg(QString(data.toBase64()));
 }
 
 QString HtmlBuilder::toEntities(const QString& src)
