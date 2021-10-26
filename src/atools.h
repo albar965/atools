@@ -265,6 +265,19 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
   return defaultType;
 }
 
+/* Functions roll over to first position on overflow */
+template<typename TYPE>
+const TYPE& atRoll(const QVector<TYPE>& list, int index)
+{
+  return index < list.size() ? list.at(index) : list.first();
+}
+
+template<typename TYPE>
+const TYPE& atRoll(const QList<TYPE>& list, int index)
+{
+  return index < list.size() ? list.at(index) : list.first();
+}
+
 /* Writes a warning message includiing the string list */
 QString at(const QStringList& columns, int index, bool error);
 

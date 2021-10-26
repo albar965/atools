@@ -441,6 +441,7 @@ create table airport_msa
   vor_has_dme integer,
   region varchar(2),                  -- ICAO two letter region identifier
   multiple_code varchar(1),           -- ICAO ident
+  true_bearing integer,               -- 1 if bearing values in geometry are true (does not apply to cicrle)
   mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
   left_lonx double,                   -- Bounding rectangle of the whole MSA sector
   top_laty double ,                   -- "

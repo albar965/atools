@@ -51,7 +51,7 @@ public:
   void addSectors(const QVector<float>& bearingDegAltitudeFt);
 
   /* Calculate circle/arc geomentry, label points and bearing endpoints */
-  void calculate(const atools::geo::Pos& center, float radiusNm, float magvar);
+  void calculate(const atools::geo::Pos& center, float radiusNm, float magvar, bool trueBearing);
 
   /* Read from database BLOB */
   void readFromByteArray(const QByteArray& bytes);

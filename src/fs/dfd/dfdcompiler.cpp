@@ -1436,7 +1436,7 @@ void DfdCompiler::writeAirportMsa()
       bool trueBearing = query.valueStr("magnetic_true_indicator") == "T";
 
       // Calculate geometry for arcs, label points and bearing endpoints to speed up drawing
-      geo.calculate(center, radius, trueBearing ? 0.f : magvar);
+      geo.calculate(center, radius, magvar, trueBearing);
 
       if(geo.isValid())
       {
@@ -1463,6 +1463,7 @@ void DfdCompiler::writeAirportMsa()
           insertQuery.bindNullInt(":vor_has_dme");
         }
 
+        insertQuery.bindValue(":true_bearing", trueBearing);
         insertQuery.bindValue(":mag_var", magvar);
         insertQuery.bindValue(":radius", radius);
 

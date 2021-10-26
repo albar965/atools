@@ -33,7 +33,7 @@ BinaryMsaGeometry::BinaryMsaGeometry(const QByteArray& bytes)
   readFromByteArray(bytes);
 }
 
-void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm, float magvar)
+void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm, float magvar, bool trueBearing)
 {
   geometry.clear();
   labelPositions.clear();
@@ -41,17 +41,20 @@ void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm
 
   float radiusMeter = atools::geo::nmToMeter(radiusNm);
 
+  if(trueBearing)
+    magvar = 0.f;
+
   for(int i = 0; i < bearings.size(); i++)
   {
     float bearingFromTrue = bearings.at(i) + magvar;
     // Roll over to start if last
-    float bearingToTrue = i >= bearings.size() - 1 ? bearings.at(0) + magvar : bearings.at(i + 1) + magvar;
+    float bearingToTrue = atools::atRoll(bearings, i + 1) + magvar;
 
     float labelBrg = 0.f; // Default is north of center
     if(bearings.size() > 1)
       // Calculate a bearing for label in the middle of a sector
-      labelBrg = atools::geo::normalizeCourse(bearingFromTrue + atools::geo::angleAbsDiff(bearingFromTrue,
-                                                                                          bearingToTrue) / 2.f);
+      labelBrg = atools::geo::normalizeCourse(bearingFromTrue +
+                                              atools::geo::angleAbsDiff(bearingFromTrue, bearingToTrue) / 2.f);
     // Calculate label position
     Pos lbl = center.endpoint(radiusMeter / 2.f, labelBrg);
 

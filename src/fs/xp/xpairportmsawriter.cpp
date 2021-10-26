@@ -112,7 +112,6 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
   Pos airportPos = airportIndex->getAirportPos(airportIdent);
 
   QString region = at(line, REGION);
-  bool trueBearing = at(line, MAG_TRUE) == "T";
 
   int navId = -1;
   float magvar = 0.f;
@@ -195,7 +194,8 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
     }
 
     // Calculate geometry for arcs, label points and bearing endpoints to speed up drawing
-    geo.calculate(center, radius, trueBearing ? 0.f : magvar);
+    bool trueBearing = at(line, MAG_TRUE) == "T";
+    geo.calculate(center, radius, magvar, trueBearing);
 
     if(geo.isValid())
     {
@@ -221,6 +221,7 @@ void XpAirportMsaWriter::write(const QStringList& line, const XpWriterContext& c
       }
 
       insertQuery->bindValue(":region", region);
+      insertQuery->bindValue(":true_bearing", trueBearing);
       insertQuery->bindValue(":mag_var", magvar);
       insertQuery->bindValue(":radius", radius);
 
