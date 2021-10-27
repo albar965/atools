@@ -27,6 +27,7 @@ namespace common {
 
 using atools::geo::Pos;
 using atools::geo::LineString;
+using atools::geo::normalizeCourse;
 
 BinaryMsaGeometry::BinaryMsaGeometry(const QByteArray& bytes)
 {
@@ -46,15 +47,15 @@ void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm
 
   for(int i = 0; i < bearings.size(); i++)
   {
-    float bearingFromTrue = bearings.at(i) + magvar;
+    // +180 to convert bearing relative to navaid to heading
+    float bearingFromTrue = normalizeCourse(bearings.at(i) + 180.f + magvar);
     // Roll over to start if last
-    float bearingToTrue = atools::atRoll(bearings, i + 1) + magvar;
+    float bearingToTrue = normalizeCourse(atools::atRoll(bearings, i + 1) + 180.f + magvar);
 
     float labelBrg = 0.f; // Default is north of center
     if(bearings.size() > 1)
       // Calculate a bearing for label in the middle of a sector
-      labelBrg = atools::geo::normalizeCourse(bearingFromTrue +
-                                              atools::geo::angleAbsDiff(bearingFromTrue, bearingToTrue) / 2.f);
+      labelBrg = normalizeCourse(bearingFromTrue + atools::geo::angleAbsDiff(bearingFromTrue, bearingToTrue) / 2.f);
     // Calculate label position
     Pos lbl = center.endpoint(radiusMeter / 2.f, labelBrg);
 

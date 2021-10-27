@@ -107,7 +107,7 @@ public:
   }
 
 private:
-  int geometryPoints = 180;
+  int geometryPoints = 90;
   QVector<float> bearings, altitudes;
   atools::geo::LineString geometry, labelPositions, bearingEndPositions;
 };
