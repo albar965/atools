@@ -112,11 +112,11 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
   // . NIMIR DA DAUG 11    301.0      0.0      4.0 R     4270    10000      220
   QString navIdent = at(line, IDENT);
 
-  QString airportIdent = at(line, AIRPORT_IDENT);
+  QString airportIdent = atAirportIdent(line, AIRPORT_IDENT);
   int airportId = -1;
 
   // Check for enroute fixes without airport
-  if(airportIdent != "ENRT" && !airportIdent.isEmpty())
+  if(!airportIdent.isEmpty())
     airportId = airportIndex->getAirportId(airportIdent);
   else
     airportIdent.clear();

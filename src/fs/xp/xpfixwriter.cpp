@@ -71,7 +71,7 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":file_id", context.curFileId);
   insertWaypointQuery->bindValue(":ident", at(line, IDENT));
   insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
-  insertWaypointQuery->bindValue(":airport_ident", at(line, AIRPORT));
+  insertWaypointQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
 
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
 

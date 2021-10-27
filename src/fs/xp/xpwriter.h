@@ -76,6 +76,20 @@ protected:
                               QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
   }
 
+  /* Returns empty string for airport ident ENRT (enroute) */
+  QString atAirportIdent(const QStringList& line, int index)
+  {
+    if(index < line.size())
+    {
+      const QString& str = line.at(index).simplified();
+      return str == "ENRT" ? QString() : str;
+    }
+    else
+      // Have to stop reading the file since the rest can be corrupted
+      throw atools::Exception(ctx->messagePrefix() +
+                              QString(": Index out of bounds: Index: %1, size: %2").arg(index).arg(line.size()));
+  }
+
   QString mid(const QStringList& line, int index, bool ignoreError = false)
   {
     if(index < line.size())

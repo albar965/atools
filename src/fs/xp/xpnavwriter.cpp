@@ -118,7 +118,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
   insertVorQuery->bindValue(":mag_var", at(line, MAGVAR).toFloat());
   insertVorQuery->bindValue(":dme_only", dmeOnly);
   insertVorQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
-  insertVorQuery->bindValue(":airport_ident", at(line, AIRPORT));
+  insertVorQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
 
   if(suffix == "TACAN" || suffix == "VORTAC")
     insertVorQuery->bindValue(":channel", atools::fs::util::tacanChannelForFrequency(frequency));
@@ -178,7 +178,7 @@ void XpNavWriter::writeNdb(const QStringList& line, int curFileId, const XpWrite
   insertNdbQuery->bindValue(":frequency", at(line, FREQ).toInt() * 100);
   insertNdbQuery->bindValue(":range", range);
   insertNdbQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
-  insertNdbQuery->bindValue(":airport_ident", at(line, AIRPORT));
+  insertNdbQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
 
   // NDBs never have an altitude
   if(at(line, ALT).toInt() != 0)
