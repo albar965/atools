@@ -202,6 +202,7 @@ HEADERS += \
   src/grib/windquery.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
+  src/gui/actiontool.h \
   src/gui/application.h \
   src/gui/clicktooltiphandler.h \
   src/gui/consoleapplication.h \
@@ -333,6 +334,7 @@ SOURCES += \
   src/grib/windquery.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
+  src/gui/actiontool.cpp \
   src/gui/application.cpp \
   src/gui/clicktooltiphandler.cpp \
   src/gui/consoleapplication.cpp \

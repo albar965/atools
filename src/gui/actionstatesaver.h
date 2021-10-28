@@ -25,6 +25,8 @@ class QAction;
 namespace atools {
 namespace gui {
 
+class ActionTool;
+
 /* Use this for context menus. Will re-enable all actions in desctructor */
 class ActionStateSaver
 {
@@ -32,10 +34,12 @@ public:
   /*
    * Enables all actions when the destructor is called
    */
-  ActionStateSaver(QList<QAction *> actionList);
+  explicit ActionStateSaver(QList<QAction *> actionList);
   ~ActionStateSaver();
 
 private:
+  friend class atools::gui::ActionTool;
+
   QList<QAction *> actions;
 };
 

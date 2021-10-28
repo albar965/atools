@@ -25,6 +25,8 @@ class QAction;
 namespace atools {
 namespace gui {
 
+class ActionTool;
+
 /* Use this for context menus that have %1, etc. placeholders to save and
  * restore the action texts, tooltips and statustips.*/
 class ActionTextSaver
@@ -33,10 +35,12 @@ public:
   /*
    * Saves the text of the given actions and restores it when the destructor is called
    */
-  ActionTextSaver(QList<QAction *> actions);
+  explicit ActionTextSaver(QList<QAction *> actions);
   ~ActionTextSaver();
 
 private:
+  friend class atools::gui::ActionTool;
+
   QHash<QAction *, QString> texts, tooltips, statustips;
 };
 
