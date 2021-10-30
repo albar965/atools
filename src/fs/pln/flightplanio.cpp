@@ -1104,6 +1104,10 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
               insertPropertyIf(plan, SIDAPPRRW, reader.readElementText());
             else if(reader.name() == "Transition")
               insertPropertyIf(plan, SIDTRANS, reader.readElementText());
+            else if(reader.name() == "Type")
+              insertPropertyIf(plan, SIDTYPE, reader.readElementText());
+            else if(reader.name() == "CustomDistance")
+              insertPropertyIf(plan, DEPARTURE_CUSTOM_DISTANCE, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
@@ -1146,6 +1150,8 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
               insertPropertyIf(plan, APPROACH_CUSTOM_DISTANCE, reader.readElementText());
             else if(reader.name() == "CustomAltitude")
               insertPropertyIf(plan, APPROACH_CUSTOM_ALTITUDE, reader.readElementText());
+            else if(reader.name() == "CustomOffsetAngle")
+              insertPropertyIf(plan, APPROACH_CUSTOM_OFFSET, reader.readElementText());
             else
               xmlStream.skipCurrentElement(true /* warn */);
           }
@@ -1664,15 +1670,17 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
 
   // Procedures =======================================================
   if(!plan.properties.value(SIDAPPR).isEmpty() || !plan.properties.value(STAR).isEmpty() ||
-     !plan.properties.value(APPROACH).isEmpty())
+     !plan.properties.value(APPROACH).isEmpty() || !plan.properties.value(DEPARTURE_CUSTOM_DISTANCE).isEmpty())
   {
     writer.writeStartElement("Procedures");
-    if(!plan.properties.value(SIDAPPR).isEmpty())
+    if(!plan.properties.value(SIDAPPR).isEmpty() || !plan.properties.value(DEPARTURE_CUSTOM_DISTANCE).isEmpty())
     {
       writer.writeStartElement("SID");
       writeTextElementIf(writer, "Name", plan.properties.value(SIDAPPR));
       writeTextElementIf(writer, "Runway", plan.properties.value(SIDAPPRRW));
       writeTextElementIf(writer, "Transition", plan.properties.value(SIDTRANS));
+      writeTextElementIf(writer, "Type", plan.properties.value(SIDTYPE));
+      writeTextElementIf(writer, "CustomDistance", plan.properties.value(DEPARTURE_CUSTOM_DISTANCE));
       writer.writeEndElement(); // SID
     }
 
@@ -1701,6 +1709,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
       // Custom approach data =============================================
       writeTextElementIf(writer, "CustomDistance", plan.properties.value(APPROACH_CUSTOM_DISTANCE));
       writeTextElementIf(writer, "CustomAltitude", plan.properties.value(APPROACH_CUSTOM_ALTITUDE));
+      writeTextElementIf(writer, "CustomOffsetAngle", plan.properties.value(APPROACH_CUSTOM_OFFSET));
       writer.writeEndElement(); // Approach
     }
     writer.writeEndElement(); // Procedures

@@ -34,7 +34,9 @@ void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString
 {
   copyProperty(to, from, SIDAPPR);
   copyProperty(to, from, SIDAPPRRW);
+  copyProperty(to, from, SIDTYPE);
   copyProperty(to, from, SIDTRANS);
+  copyProperty(to, from, DEPARTURE_CUSTOM_DISTANCE);
 }
 
 void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
@@ -48,6 +50,7 @@ void copyArrivalProcedureProperties(QHash<QString, QString>& to, const QHash<QSt
   copyProperty(to, from, APPROACHSUFFIX);
   copyProperty(to, from, APPROACH_CUSTOM_DISTANCE);
   copyProperty(to, from, APPROACH_CUSTOM_ALTITUDE);
+  copyProperty(to, from, APPROACH_CUSTOM_OFFSET);
 }
 
 void copyStarProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)

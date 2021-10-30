@@ -114,6 +114,7 @@ enum RouteType
 const QLatin1String SIDAPPR("sidappr");
 const QLatin1String SIDAPPRRW("sidapprrw");
 const QLatin1String SIDTRANS("sidtrans");
+const QLatin1String SIDTYPE("sidtype");
 
 /* STAR, runway and transiton */
 const QLatin1String STAR("star");
@@ -137,6 +138,9 @@ const QLatin1String PROCAIRWAY("procairway");
 /* Only for approachtype = CUSTOM */
 const QLatin1String APPROACH_CUSTOM_DISTANCE("approachcustomdistance");
 const QLatin1String APPROACH_CUSTOM_ALTITUDE("approachcustomaltitude");
+const QLatin1String APPROACH_CUSTOM_OFFSET("approachcustomoffset");
+
+const QLatin1String DEPARTURE_CUSTOM_DISTANCE("departurecustomdistance");
 
 /* List of alternate airport(s) separated by "#" */
 const QLatin1String ALTERNATES("alternates");
