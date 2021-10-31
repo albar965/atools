@@ -26,6 +26,7 @@
 #include <QDebug>
 #include <QFontDatabase>
 #include <QLabel>
+#include <QItemSelectionModel>
 
 #ifdef Q_OS_WIN32
 #include <windows.h>
@@ -187,6 +188,34 @@ QString fontDescription(const QFont& font)
     prefix = QObject::tr("User selected font: %1");
 
   return prefix.arg(fontText.join(QObject::tr(", ")));
+}
+
+QList<int> selectedRows(QItemSelectionModel *model, bool reverse)
+{
+  QList<int> rows;
+
+  if(model != nullptr)
+  {
+    QItemSelection sm = model->selection();
+    for(const QItemSelectionRange& rng : sm)
+    {
+      for(int row = rng.top(); row <= rng.bottom(); row++)
+        rows.append(row);
+    }
+
+    if(!rows.isEmpty())
+    {
+      // Sort columns
+      std::sort(rows.begin(), rows.end());
+      if(reverse)
+        std::reverse(rows.begin(), rows.end());
+    }
+
+    // Remove duplicates
+    rows.erase(std::unique(rows.begin(), rows.end()), rows.end());
+  }
+
+  return rows;
 }
 
 } // namespace gui
