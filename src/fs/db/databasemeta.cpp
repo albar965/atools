@@ -22,6 +22,8 @@
 #include "sql/sqlutil.h"
 #include "sql/sqldatabase.h"
 
+#include <QDebug>
+
 namespace atools {
 namespace fs {
 namespace db {
@@ -39,6 +41,21 @@ DatabaseMeta::DatabaseMeta(sql::SqlDatabase& sqlDb)
   : db(&sqlDb)
 {
   init();
+}
+
+void DatabaseMeta::log() const
+{
+  qInfo() << Q_FUNC_INFO
+          << "Airac Cycle" << getAiracCycle()
+          << "Compiler Version" << getCompilerVersion()
+          << "Data Source" << getDataSource()
+          << "Last Load Time" << getLastLoadTime()
+          << "Major Version" << getMajorVersion()
+          << "Minor Version" << getMinorVersion()
+          << "Valid Through" << getValidThrough()
+          << "Valid" << isValid()
+          << "Schema" << hasSchema()
+          << "Data" << hasData();
 }
 
 void DatabaseMeta::init()

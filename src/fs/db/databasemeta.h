@@ -36,6 +36,8 @@ public:
   DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
   DatabaseMeta(atools::sql::SqlDatabase& sqlDb);
 
+  void log() const;
+
   /*
    * @return Major version that is stored in the database schema
    */
