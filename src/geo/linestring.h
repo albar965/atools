@@ -146,6 +146,7 @@ public:
 
   /* Calculate Length of the line string in meter */
   float lengthMeter() const;
+  double lengthMeterDouble() const;
 
   /* Calculate bounding rectangle of all positions considering date boundary. Expensive. */
   Rect boundingRect() const;

@@ -141,8 +141,6 @@ LineString::LineString(const Pos& origin, const Pos& start, const Pos& end, bool
   }
 }
 
-
-
 LineString LineString::reversed()
 {
   LineString linestring(*this);
@@ -294,9 +292,14 @@ atools::geo::Pos LineString::interpolate(float totalDistanceMeter, float fractio
 
 float LineString::lengthMeter() const
 {
-  float length = 0.f;
+  return static_cast<float>(lengthMeterDouble());
+}
+
+double LineString::lengthMeterDouble() const
+{
+  double length = 0.;
   for(int i = 0; i < size() - 1; i++)
-    length += at(i).distanceMeterTo(at(i + 1));
+    length += at(i).distanceMeterToDouble(at(i + 1));
   return length;
 }
 
