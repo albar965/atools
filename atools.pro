@@ -204,6 +204,7 @@ HEADERS += \
   src/gui/actiontextsaver.h \
   src/gui/actiontool.h \
   src/gui/application.h \
+  src/gui/choicedialog.h \
   src/gui/clicktooltiphandler.h \
   src/gui/consoleapplication.h \
   src/gui/dialog.h \
@@ -219,6 +220,7 @@ HEADERS += \
   src/gui/tabwidgethandler.h \
   src/gui/tools.h \
   src/gui/translator.h \
+  src/gui/treedialog.h \
   src/gui/widgetstate.h \
   src/gui/widgetutil.h \
   src/httpserver/httpconnectionhandler.h \
@@ -336,6 +338,7 @@ SOURCES += \
   src/gui/actiontextsaver.cpp \
   src/gui/actiontool.cpp \
   src/gui/application.cpp \
+  src/gui/choicedialog.cpp \
   src/gui/clicktooltiphandler.cpp \
   src/gui/consoleapplication.cpp \
   src/gui/dialog.cpp \
@@ -351,6 +354,7 @@ SOURCES += \
   src/gui/tabwidgethandler.cpp \
   src/gui/tools.cpp \
   src/gui/translator.cpp \
+  src/gui/treedialog.cpp \
   src/gui/widgetstate.cpp \
   src/gui/widgetutil.cpp \
   src/httpserver/httpconnectionhandler.cpp \
@@ -763,6 +767,10 @@ SOURCES += \
   src/grib/gribdownloader.cpp \
   src/grib/gribreader.cpp
 } # ATOOLS_NO_GRIB
+
+FORMS += \
+  src/gui/choicedialog.ui \
+  src/gui/treedialog.ui
 
 
 RESOURCES += \

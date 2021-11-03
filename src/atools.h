@@ -551,11 +551,64 @@ inline void freeArray(TYPE *& arr)
 /* Functions to convert integer and float lists and vectors to string lists and back.
  * Can be used to store configuration lists.
  * Uses the C locale for number conversion.
- * ok has the same meaning as in QString::toInt() */
-QStringList intVectorToStrList(const QVector<int>& vector);
-QVector<int> strListToIntVector(const QStringList& strings, bool *ok = nullptr);
-QStringList intSetToStrList(const QSet<int>& set);
-QSet<int> strListToIntSet(const QStringList& strings, bool *ok = nullptr);
+ * ok has the same meaning as in QString::toInt().
+ *
+ * TYPE is converted to int */
+template<typename TYPE>
+QStringList numVectorToStrList(const QVector<TYPE>& vector)
+{
+  QStringList retval;
+  for(int value : vector)
+    retval.append(QString::number(static_cast<int>(value)));
+  return retval;
+}
+
+template<typename TYPE>
+QVector<TYPE> strListToNumVector(const QStringList& strings, bool *ok = nullptr)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QVector<TYPE> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    int val = str.toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.append(static_cast<TYPE>(val));
+  }
+  return retval;
+}
+
+template<typename TYPE>
+QStringList numSetToStrList(const QSet<TYPE>& set)
+{
+  QStringList retval;
+  for(int value : set)
+    retval.append(QString::number(static_cast<int>(value)));
+  return retval;
+}
+
+template<typename TYPE>
+QSet<TYPE> strListToNumSet(const QStringList& strings, bool *ok = nullptr)
+{
+  if(ok != nullptr)
+    *ok = true;
+  QSet<TYPE> retval;
+  for(const QString& str : strings)
+  {
+    bool localOk;
+    int val = str.toInt(&localOk);
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(static_cast<TYPE>(val));
+  }
+  return retval;
+}
 
 QStringList floatVectorToStrList(const QVector<float>& vector);
 QVector<float> strListToFloatVector(const QStringList& strings, bool *ok = nullptr);
@@ -566,10 +619,75 @@ QSet<float> strListToFloatSet(const QStringList& strings, bool *ok = nullptr);
  * Can be used to store configuration lists.
  * ok has the same meaning as in QString::toInt().
  * string list contains consecutive key/value pairs. */
-QStringList intStrHashToStrList(const QHash<int, QString>& hash);
-QHash<int, QString> strListToIntStrHash(const QStringList& strings, bool *ok = nullptr);
-QStringList intStrMapToStrList(const QMap<int, QString>& map);
-QMap<int, QString> strListToIntStrMap(const QStringList& strings, bool *ok = nullptr);
+template<typename TYPE>
+QStringList numStrHashToStrList(const QHash<TYPE, QString>& hash)
+{
+  QStringList retval;
+
+  for(auto i = hash.begin(); i != hash.end(); ++i)
+  {
+    retval.append(QString::number(static_cast<int>(i.key())));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+template<typename TYPE>
+QHash<TYPE, QString> strListToNumStrHash(const QStringList& strings, bool *ok = nullptr)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QHash<TYPE, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    TYPE val = static_cast<TYPE>(strings.at(i).toInt(&localOk));
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
+}
+
+template<typename TYPE>
+QStringList numStrMapToStrList(const QMap<TYPE, QString>& map)
+{
+  QStringList retval;
+
+  for(auto i = map.begin(); i != map.end(); ++i)
+  {
+    retval.append(QString::number(static_cast<int>(i.key())));
+    retval.append(i.value());
+  }
+  return retval;
+}
+
+template<typename TYPE>
+QMap<int, QString> strListToNumStrMap(const QStringList& strings, bool *ok = nullptr)
+{
+  Q_ASSERT((strings.size() % 2) == 0);
+
+  if(ok != nullptr)
+    *ok = true;
+
+  QMap<TYPE, QString> retval;
+  for(int i = 0; i < strings.size() - 1; i += 2)
+  {
+    bool localOk;
+    TYPE val = static_cast<TYPE>(strings.at(i).toInt(&localOk));
+
+    if(!localOk && ok != nullptr)
+      *ok = false;
+
+    retval.insert(val, strings.at(i + 1));
+  }
+  return retval;
+}
 
 QStringList floatStrHashToStrList(const QHash<float, QString>& hash);
 QHash<float, QString> strListToFloatStrHash(const QStringList& strings, bool *ok = nullptr);

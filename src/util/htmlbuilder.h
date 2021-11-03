@@ -99,9 +99,15 @@ public:
   HtmlBuilder cleared() const;
 
   /* Sets a marked position in the stream. -1 is unset. */
-  HtmlBuilder& mark(int markParam = -1);
+  HtmlBuilder& mark(int markParam);
 
-  /* Deletes all back to the marked position */
+  /* Mark current position (i.e. end of HTML string for rewind() or tableEndIf(). */
+  HtmlBuilder& mark();
+
+  /* Reset mark */
+  HtmlBuilder& clearMark();
+
+  /* Deletes all back to the marked position. Does nothing if mark is not set. */
   HtmlBuilder& rewind();
 
   /* Returns mark index in string or -1 if unset */
@@ -209,6 +215,9 @@ public:
   /* Add text with color and attributes */
   HtmlBuilder& text(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
 
+  /* Builds a text string (not paragraph) using the given flags */
+  static QString textStr(const QString& str, html::Flags flags = html::NONE, QColor color = QColor());
+
   /* Add other`s HTML not escaping entities */
   HtmlBuilder& textHtml(const atools::util::HtmlBuilder& other);
 
@@ -254,23 +263,27 @@ public:
 
   /* Add table and table body */
   HtmlBuilder& table(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor());
+
+  /* Sets a stream mark and opens a table for use wit htableEndIf(). */
+  HtmlBuilder& tableIf(int border = 0, int padding = 2, int spacing = 0, int widthPercent = 0, QColor bgcolor = QColor());
   HtmlBuilder& tableAtts(const QHash<QString, QString>& attributes);
+
   HtmlBuilder& tableEnd();
+
+  /* Remove all content to the last set mark if table is has no rows. Mark can be set with tableIf() or mark() */
+  HtmlBuilder& tableEndIf();
 
   /* Number increased for each row in a table an reset if table is closed. Reset when creating a new table. */
   int getTableRows() const
   {
-    return tableRows;
+    return tableRowsCur;
   }
 
   /* true if table has no rows not including header */
   bool isTableEmpty() const
   {
-    return tableRows == 0;
+    return tableRowsCur == 0;
   }
-
-  /* Remove all content to the last set mark if table is has no rows */
-  HtmlBuilder& removeIfTableEmpty();
 
   /* all row2 methods add two rows to a table.
    * The first one contains bold text (like a heading) the second one contains text according to attributes.
@@ -395,7 +408,8 @@ public:
     return rowBackColorAlt;
   }
 
-  /* Set the current id flag for the stream. All row2 output is skipped if the id flag is not included in setIds() */
+  /* Set the current id flag for the stream. All row2 output is skipped if the id flag is not included in setIds().
+   * The enum does not need to use bit flags. */
   template<typename TYPE>
   HtmlBuilder& id(TYPE idEnum)
   {
@@ -406,6 +420,18 @@ public:
       qWarning() << Q_FUNC_INFO << "id" << num << "too large";
 
     return *this;
+  }
+
+  /* true if id is set for the given enum value */
+  template<typename TYPE>
+  bool isIdSet(TYPE idEnum)
+  {
+    int num = static_cast<int>(idEnum);
+    if(num <= MAX_ID)
+      return idBits.at(num);
+    else
+      qWarning() << Q_FUNC_INFO << "id" << num << "too large";
+    return false;
   }
 
   /* Clears the currently set id value */
@@ -421,6 +447,9 @@ public:
 
   const static int MAX_ID = 512;
 
+  /* Set bitfield directly without using setIds() */
+  void setIdBits(const QBitArray& value);
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
@@ -430,22 +459,23 @@ private:
 
   bool isId() const
   {
-    return currentId == -1 || ids.testBit(currentId);
+    return currentId == -1 || idBits.testBit(currentId);
   }
 
   QString rowBackColorStr, rowBackColorAltStr, tableRowHeader;
   QColor rowBackColor, rowBackColorAlt;
   QStringList tableRow, tableRowAlignRight, tableRowBegin;
 
-  int tableIndex = 0, defaultPrecision = 0, numLines = 0;
+  int defaultPrecision = 0, numLines = 0;
   QString htmlText;
 
   QLocale locale;
   QLocale::FormatType dateFormat = QLocale::ShortFormat;
   bool hasBackColor = false, row2AlignRightFlag = false;
-  int markIndex = -1, tableRows = 0;
+  int markIndex = -1, /* Last marked stream position */
+      tableRowsCur = 0; /* Number of rows in currently opened table */
 
-  QBitArray ids;
+  QBitArray idBits;
   int currentId = -1;
 };
 
@@ -453,12 +483,12 @@ private:
 template<typename TYPE>
 void HtmlBuilder::setIds(const QVector<TYPE>& idEnums)
 {
-  ids.fill(false);
+  idBits.fill(false);
   for(TYPE id : idEnums)
   {
     int num = static_cast<int>(id);
     if(num <= MAX_ID)
-      ids.setBit(num, true);
+      idBits.setBit(num, true);
     else
       qWarning() << Q_FUNC_INFO << "id" << num << "too large";
   }
