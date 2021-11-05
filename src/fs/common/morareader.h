@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FS_COMMON_MORAREADER_H
 #define ATOOLS_FS_COMMON_MORAREADER_H
 
+#include <limits>
+
 #include <QString>
 #include <QVector>
 

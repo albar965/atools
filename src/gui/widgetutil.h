@@ -37,7 +37,7 @@ namespace util {
 QVector<int> getSelectedIndexesInDeletionOrder(QItemSelectionModel *selectionModel);
 
 /* Changes the background color of the widget using stylesheets and adapts text color for readability */
-void changeWidgetColor(QWidget *widget, const QColor& color);
+void changeWidgetColor(QWidget *widget, QColor backgroundColor);
 
 /* @return true if no scrollbar is pressed in the text edit */
 bool canTextEditUpdate(const QTextEdit *textEdit);

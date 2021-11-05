@@ -159,11 +159,16 @@ void changeStarIndication(QAction *action, bool changed)
   }
 }
 
-void changeWidgetColor(QWidget *widget, const QColor& color)
+void changeWidgetColor(QWidget *widget, QColor backgroundColor)
 {
 #if !defined(Q_OS_MACOS)
-  widget->setStyleSheet("background-color: " + color.name() +
-                        (color.value() < 180 ? "; color: white" : "; color: black"));
+  if(widget->isEnabled())
+  {
+    QColor foregroundColor(backgroundColor.value() < 180 ? Qt::white : Qt::black);
+    widget->setStyleSheet("background-color: " + backgroundColor.name() + "; color: " + foregroundColor.name());
+  }
+  else
+    widget->setStyleSheet(QString());
 #endif
 }
 
