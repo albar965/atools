@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef FLAGS_H
-#define FLAGS_H
+#ifndef ATOOLS_FLAGS_H
+#define ATOOLS_FLAGS_H
 
 #include <QDataStream>
 #include <initializer_list>
@@ -27,7 +27,7 @@ namespace util {
 typedef quint64 FlagType;
 
 /*
- * Flags class wrapping a 64 bit class enum.
+ * Flags class wrapping an unsinged 64 bit class enum.
  */
 template<typename ENUM>
 class Flags
@@ -53,7 +53,7 @@ public:
 
   Flags(const Flags& other)
   {
-    this->operator=(other);
+    value = other.value;
   }
 
   Flags(std::initializer_list<ENUM> list)
@@ -77,18 +77,35 @@ public:
     return *this;
   }
 
+  Flags& operator=(Flags other)
+  {
+    value = other.value;
+    return *this;
+  }
+
   /* Comparison ======================================= */
   bool operator==(const ENUM& other) const
   {
     return value == Flags(other).value;
   }
 
+  bool operator==(const Flags& other) const
+  {
+    return value == Flags(other).value;
+  }
+
   bool operator!=(const ENUM& other) const
   {
-    return !operator==(other);
+    return value != Flags(other).value;
+  }
+
+  bool operator!=(const Flags& other) const
+  {
+    return value != Flags(other).value;
   }
 
   /* Bit operators ======================================= */
+#ifdef ATOOLS_FLAGS_NO_INT
   Flags& operator&=(int mask)
   {
     value &= mask;
@@ -100,6 +117,8 @@ public:
     value &= mask;
     return *this;
   }
+
+#endif
 
   Flags& operator&=(ENUM mask)
   {
@@ -152,6 +171,8 @@ public:
     return Flags(value ^ FlagType(other));
   }
 
+#ifdef ATOOLS_FLAGS_INT_OPERATOR
+
   Flags operator&(int mask) const
   {
     return Flags(value & mask);
@@ -160,6 +181,13 @@ public:
   Flags operator&(unsigned int mask) const
   {
     return Flags(value & mask);
+  }
+
+#endif
+
+  Flags operator&(Flags other) const
+  {
+    return Flags(value & other.value);
   }
 
   Flags operator&(ENUM other) const
@@ -180,11 +208,27 @@ public:
   }
 
   /* Casts ======================================= */
+  ENUM asEnum() const
+  {
+    return static_cast<ENUM>(value);
+  }
+
+  int asInt() const
+  {
+    return static_cast<int>(value);
+  }
+
+  FlagType asFlagType() const
+  {
+    return value;
+  }
+
   operator ENUM() const
   {
     return static_cast<ENUM>(value);
   }
 
+#ifdef ATOOLS_FLAGS_INT_CAST
   operator int() const
   {
     return static_cast<int>(value);
@@ -194,6 +238,9 @@ public:
   {
     return static_cast<unsigned int>(value);
   }
+#endif
+
+#ifdef ATOOLS_FLAGS_CAST
 
   operator long() const
   {
@@ -214,6 +261,7 @@ public:
   {
     return static_cast<unsigned long long>(value);
   }
+#endif
 
   /* Set/get methods ======================================= */
   bool testFlag(ENUM flag) const
@@ -233,8 +281,12 @@ public:
 private:
   template<typename E>
   friend QDataStream& operator>>(QDataStream&, Flags<E>&);
+
   template<typename E>
-  friend QDataStream& operator<<(QDataStream&, Flags<E> );
+  friend QDataStream& operator<<(QDataStream&, Flags<E>);
+
+  template<typename E>
+  friend inline uint qHash(const Flags<E>& flags);
 
   FlagType value;
 };
@@ -268,11 +320,17 @@ QDataStream& operator>>(QDataStream& stream, Flags<E>& flags)
 template<typename E>
 QDataStream& operator<<(QDataStream& stream, atools::util::Flags<E> flags)
 {
-  stream << static_cast<FlagType>(flags.value);
+  stream << flags.asFlagType();
   return stream;
+}
+
+template<typename E>
+inline uint qHash(const Flags<E>& flags)
+{
+  return static_cast<uint>(flags.value) | static_cast<uint>(flags.value >> 32);
 }
 
 } // namespace util
 } // namespace atools
 
-#endif // FLAGS_H
+#endif // ATOOLS_FLAGS_H
