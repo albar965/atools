@@ -189,6 +189,9 @@ public:
   SqlRecord& appendFieldAndValue(const QString& fieldName, QVariant value);
   SqlRecord& appendFieldAndNullValue(const QString& fieldName, QVariant::Type type);
 
+  /* Adds field if not exists and value too if value. Type is derived from value */
+  SqlRecord& appendFieldAndValueIf(const QString& fieldName, QVariant value);
+
   void setValue(int i, const QVariant& val);
   void setValue(const QString& name, const QVariant& val);
   void setNull(int i);

@@ -202,6 +202,13 @@ SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant
   return *this;
 }
 
+SqlRecord& SqlRecord::appendFieldAndValueIf(const QString& fieldName, QVariant value)
+{
+  if(!value.isNull() && value.isValid())
+    appendFieldAndValue(fieldName, value);
+  return *this;
+}
+
 void SqlRecord::remove(int pos)
 {
   sqlRecord.remove(pos);
