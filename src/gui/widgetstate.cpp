@@ -42,6 +42,8 @@
 #include <QTableWidget>
 #include <QTreeWidget>
 #include <QListWidget>
+#include <QButtonGroup>
+#include <QStringBuilder>
 
 namespace atools {
 namespace gui {
@@ -58,7 +60,7 @@ void WidgetState::save(const QObject *widget) const
 {
   if(widget != nullptr)
   {
-    Settings& s = Settings::instance();
+    Settings& settings = Settings::instance();
 
     if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
     {
@@ -67,64 +69,64 @@ void WidgetState::save(const QObject *widget) const
     }
     else if(const QLineEdit *le = dynamic_cast<const QLineEdit *>(widget))
     {
-      saveWidget(s, le, le->text());
-      saveWidgetVisible(s, le);
+      saveWidget(settings, le, le->text());
+      saveWidgetVisible(settings, le);
     }
     else if(const QTextEdit *te = dynamic_cast<const QTextEdit *>(widget))
     {
-      saveWidget(s, te, te->toHtml());
-      saveWidgetVisible(s, te);
+      saveWidget(settings, te, te->toHtml());
+      saveWidgetVisible(settings, te);
     }
     else if(const QSpinBox *sb = dynamic_cast<const QSpinBox *>(widget))
     {
-      saveWidget(s, sb, sb->value());
-      saveWidgetVisible(s, sb);
+      saveWidget(settings, sb, sb->value());
+      saveWidgetVisible(settings, sb);
     }
     else if(const QDoubleSpinBox *dsb = dynamic_cast<const QDoubleSpinBox *>(widget))
     {
-      saveWidget(s, dsb, dsb->value());
-      saveWidgetVisible(s, dsb);
+      saveWidget(settings, dsb, dsb->value());
+      saveWidgetVisible(settings, dsb);
     }
     else if(const QComboBox *cb = dynamic_cast<const QComboBox *>(widget))
     {
-      saveWidget(s, cb, cb->currentIndex());
+      saveWidget(settings, cb, cb->currentIndex());
       if(cb->isEditable())
-        saveWidget(s, cb->lineEdit(), cb->lineEdit()->text(), cb->objectName() + "_Edit");
-      saveWidgetVisible(s, cb);
+        saveWidget(settings, cb->lineEdit(), cb->lineEdit()->text(), cb->objectName() % "_Edit");
+      saveWidgetVisible(settings, cb);
     }
     else if(const QAbstractSlider *sl = dynamic_cast<const QAbstractSlider *>(widget))
     {
-      saveWidget(s, sl, sl->value());
-      saveWidget(s, sl, sl->minimum(), sl->objectName() + "_Min");
-      saveWidget(s, sl, sl->maximum(), sl->objectName() + "_Max");
-      saveWidgetVisible(s, sl);
+      saveWidget(settings, sl, sl->value());
+      saveWidget(settings, sl, sl->minimum(), sl->objectName() % "_Min");
+      saveWidget(settings, sl, sl->maximum(), sl->objectName() % "_Max");
+      saveWidgetVisible(settings, sl);
     }
     else if(const QTabWidget *tw = dynamic_cast<const QTabWidget *>(widget))
-      saveWidget(s, tw, tw->currentIndex());
+      saveWidget(settings, tw, tw->currentIndex());
     else if(const QTabBar *tb = dynamic_cast<const QTabBar *>(widget))
-      saveWidget(s, tb, tb->currentIndex());
+      saveWidget(settings, tb, tb->currentIndex());
     else if(const QAction *a = dynamic_cast<const QAction *>(widget))
     {
       if(a->isCheckable())
-        saveWidget(s, a, a->isChecked());
+        saveWidget(settings, a, a->isChecked());
     }
     else if(const QActionGroup *ag = dynamic_cast<const QActionGroup *>(widget))
     {
       QStringList actions;
-      for(const QAction *a : ag->actions())
+      for(const QAction *act : ag->actions())
       {
-        if(a->isChecked())
-          actions.append(a->objectName());
+        if(act->isChecked())
+          actions.append(act->objectName());
       }
       actions.removeAll(QString());
-      saveWidget(s, ag, actions);
+      saveWidget(settings, ag, actions);
     }
     else if(const QHeaderView *hv = dynamic_cast<const QHeaderView *>(widget))
-      saveWidget(s, hv, hv->saveState());
+      saveWidget(settings, hv, hv->saveState());
     else if(const QTableView *tv = dynamic_cast<const QTableView *>(widget))
-      saveWidget(s, tv, tv->horizontalHeader()->saveState());
+      saveWidget(settings, tv, tv->horizontalHeader()->saveState());
     else if(const QTableWidget *tblw = dynamic_cast<const QTableWidget *>(widget))
-      saveWidget(s, tblw, tblw->horizontalHeader()->saveState());
+      saveWidget(settings, tblw, tblw->horizontalHeader()->saveState());
     else if(const QListView *lv = dynamic_cast<const QListView *>(widget))
     {
       QItemSelectionModel *sm = lv->selectionModel();
@@ -139,46 +141,53 @@ void WidgetState::save(const QObject *widget) const
 
         for(const QModelIndex& index : sm->selectedIndexes())
           varList << index.row() << index.column();
-        saveWidget(s, lv, varList);
+        saveWidget(settings, lv, varList);
       }
     }
     else if(const QTreeView *trv = dynamic_cast<const QTreeView *>(widget))
-      saveWidget(s, trv, trv->header()->saveState());
+      saveWidget(settings, trv, trv->header()->saveState());
     else if(const QTreeWidget *trw = dynamic_cast<const QTreeWidget *>(widget))
-      saveWidget(s, trw, trw->header()->saveState());
+      saveWidget(settings, trw, trw->header()->saveState());
     else if(const QFileDialog *fd = dynamic_cast<const QFileDialog *>(widget))
-      saveWidget(s, fd, fd->saveState());
+      saveWidget(settings, fd, fd->saveState());
     else if(const QMainWindow *mw = dynamic_cast<const QMainWindow *>(widget))
     {
-      s.setValueVar(keyPrefix + "_" + mw->objectName() + "_pos", mw->pos());
-      s.setValueVar(keyPrefix + "_" + mw->objectName() + "_size", mw->size());
-      s.setValueVar(keyPrefix + "_" + mw->objectName() + "_maximized", mw->isMaximized());
-      saveWidget(s, mw, mw->saveState());
+      settings.setValueVar(keyPrefix % "_" % mw->objectName() % "_pos", mw->pos());
+      settings.setValueVar(keyPrefix % "_" % mw->objectName() % "_size", mw->size());
+      settings.setValueVar(keyPrefix % "_" % mw->objectName() % "_maximized", mw->isMaximized());
+      saveWidget(settings, mw, mw->saveState());
     }
     else if(const QDialog *dlg = dynamic_cast<const QDialog *>(widget))
     {
-      // s.setValueVar(keyPrefix + "_" + dlg->objectName() + "_pos", dlg->pos());
-      s.setValueVar(keyPrefix + "_" + dlg->objectName() + "_size", dlg->size());
+      // s.setValueVar(keyPrefix % "_" % dlg->objectName() % "_pos", dlg->pos());
+      settings.setValueVar(keyPrefix % "_" % dlg->objectName() % "_size", dlg->size());
     }
     else if(const QSplitter *sp = dynamic_cast<const QSplitter *>(widget))
-      saveWidget(s, sp, sp->saveState());
+      saveWidget(settings, sp, sp->saveState());
     else if(const QStatusBar *stb = dynamic_cast<const QStatusBar *>(widget))
-      saveWidget(s, stb, !stb->isHidden());
+      saveWidget(settings, stb, !stb->isHidden());
     else if(const QCheckBox *cbx = dynamic_cast<const QCheckBox *>(widget))
     {
-      saveWidget(s, cbx, cbx->checkState());
-      saveWidgetVisible(s, cbx);
+      saveWidget(settings, cbx, cbx->checkState());
+      saveWidgetVisible(settings, cbx);
     }
     else if(const QAbstractButton *b = dynamic_cast<const QAbstractButton *>(widget))
     {
       if(b->isCheckable())
-        saveWidget(s, b, b->isChecked());
-      saveWidgetVisible(s, b);
+        saveWidget(settings, b, b->isChecked());
+      saveWidgetVisible(settings, b);
     }
     else if(const QFrame *f = dynamic_cast<const QFrame *>(widget))
-      saveWidgetVisible(s, f);
+      saveWidgetVisible(settings, f);
+    else if(const QButtonGroup *g = dynamic_cast<const QButtonGroup *>(widget))
+    {
+      if(g->checkedButton() != nullptr)
+        settings.setValueVar(keyPrefix % "_" % g->objectName() % "_selected", g->checkedButton()->objectName());
+      else
+        settings.setValueVar(keyPrefix % "_" % g->objectName() % "_selected", QString());
+    }
     else
-      qWarning() << Q_FUNC_INFO << "Found unsupported widet type in save" << widget->metaObject()->className();
+      qWarning() << Q_FUNC_INFO << "Found unsupported widget type in save" << widget->metaObject()->className();
   }
 }
 
@@ -189,7 +198,7 @@ void WidgetState::restore(QObject *widget) const
     if(block)
       widget->blockSignals(true);
 
-    Settings& s = Settings::instance();
+    Settings& settings = Settings::instance();
 
     if(const QLayout *layout = dynamic_cast<const QLayout *>(widget))
     {
@@ -198,72 +207,72 @@ void WidgetState::restore(QObject *widget) const
     }
     else if(QLineEdit *le = dynamic_cast<QLineEdit *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         le->setText(v.toString());
-      loadWidgetVisible(s, le);
+      loadWidgetVisible(settings, le);
     }
     else if(QTextEdit *te = dynamic_cast<QTextEdit *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         te->setHtml(v.toString());
-      loadWidgetVisible(s, te);
+      loadWidgetVisible(settings, te);
     }
     else if(QSpinBox *sb = dynamic_cast<QSpinBox *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         sb->setValue(v.toInt());
-      loadWidgetVisible(s, sb);
+      loadWidgetVisible(settings, sb);
     }
     else if(QDoubleSpinBox *dsb = dynamic_cast<QDoubleSpinBox *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         dsb->setValue(v.toDouble());
-      loadWidgetVisible(s, dsb);
+      loadWidgetVisible(settings, dsb);
     }
     else if(QComboBox *cb = dynamic_cast<QComboBox *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         cb->setCurrentIndex(v.toInt());
 
       if(cb->isEditable())
       {
-        QVariant ev = loadWidget(s, cb->lineEdit(), cb->objectName() + "_Edit");
+        QVariant ev = loadWidget(settings, cb->lineEdit(), cb->objectName() % "_Edit");
         if(ev.isValid())
           cb->setEditText(ev.toString());
       }
 
-      loadWidgetVisible(s, cb);
+      loadWidgetVisible(settings, cb);
     }
     else if(QAbstractSlider *sl = dynamic_cast<QAbstractSlider *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         sl->setValue(v.toInt());
 
-      v = loadWidget(s, sl, sl->objectName() + "_Min");
+      v = loadWidget(settings, sl, sl->objectName() % "_Min");
       if(v.isValid())
         sl->setMinimum(v.toInt());
 
-      v = loadWidget(s, sl, sl->objectName() + "_Max");
+      v = loadWidget(settings, sl, sl->objectName() % "_Max");
       if(v.isValid())
         sl->setMaximum(v.toInt());
 
-      loadWidgetVisible(s, sl);
+      loadWidgetVisible(settings, sl);
     }
     else if(QTabWidget *tw = dynamic_cast<QTabWidget *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         tw->setCurrentIndex(v.toInt());
     }
     else if(QTabBar *tb = dynamic_cast<QTabBar *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         tb->setCurrentIndex(v.toInt());
     }
@@ -271,45 +280,45 @@ void WidgetState::restore(QObject *widget) const
     {
       if(a->isCheckable())
       {
-        QVariant v = loadWidget(s, widget);
+        QVariant v = loadWidget(settings, widget);
         if(v.isValid())
           a->setChecked(v.toBool());
       }
     }
     else if(QActionGroup *ag = dynamic_cast<QActionGroup *>(widget))
     {
-      QVariant v = loadWidget(s, ag);
+      QVariant v = loadWidget(settings, ag);
       if(v.isValid())
       {
         QStringList actions(v.toStringList());
-        for(QAction *a : ag->actions())
+        for(QAction *act : ag->actions())
         {
-          if(actions.contains(a->objectName()))
-            a->setChecked(true);
+          if(actions.contains(act->objectName()))
+            act->setChecked(true);
         }
       }
     }
     else if(QHeaderView *hv = dynamic_cast<QHeaderView *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         hv->restoreState(v.toByteArray());
     }
     else if(QTableView *tv = dynamic_cast<QTableView *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         tv->horizontalHeader()->restoreState(v.toByteArray());
     }
     else if(QTableWidget *taw = dynamic_cast<QTableWidget *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         taw->horizontalHeader()->restoreState(v.toByteArray());
     }
     else if(QListView *lv = dynamic_cast<QListView *>(widget))
     {
-      QVariant var = loadWidget(s, widget);
+      QVariant var = loadWidget(settings, widget);
       if(var.isValid())
       {
         QItemSelectionModel *sm = lv->selectionModel();
@@ -339,25 +348,25 @@ void WidgetState::restore(QObject *widget) const
     }
     else if(QTreeView *trv = dynamic_cast<QTreeView *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         trv->header()->restoreState(v.toByteArray());
     }
     else if(QTreeWidget *trw = dynamic_cast<QTreeWidget *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         trw->header()->restoreState(v.toByteArray());
     }
     else if(QFileDialog *fd = dynamic_cast<QFileDialog *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         fd->restoreState(v.toByteArray());
     }
     else if(QMainWindow *mw = dynamic_cast<QMainWindow *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
 
       if(v.isValid())
       {
@@ -365,63 +374,79 @@ void WidgetState::restore(QObject *widget) const
 
         if(positionRestoreMainWindow)
         {
-          QString key = keyPrefix + "_" + mw->objectName() + "_pos";
-          if(s.contains(key))
-            mw->move(s.valueVar(key, mw->pos()).toPoint());
+          QString key = keyPrefix % "_" % mw->objectName() % "_pos";
+          if(settings.contains(key))
+            mw->move(settings.valueVar(key, mw->pos()).toPoint());
         }
 
         if(sizeRestoreMainWindow)
         {
-          QString key = keyPrefix + "_" + mw->objectName() + "_size";
-          if(s.contains(key))
-            mw->resize(s.valueVar(key, mw->sizeHint()).toSize());
+          QString key = keyPrefix % "_" % mw->objectName() % "_size";
+          if(settings.contains(key))
+            mw->resize(settings.valueVar(key, mw->sizeHint()).toSize());
         }
 
         if(stateRestoreMainWindow)
-          if(s.valueVar(keyPrefix + "_" + mw->objectName() + "_maximized", false).toBool())
+          if(settings.valueVar(keyPrefix % "_" % mw->objectName() % "_maximized", false).toBool())
             mw->setWindowState(mw->windowState() | Qt::WindowMaximized);
       }
     }
     else if(QDialog *dlg = dynamic_cast<QDialog *>(widget))
     {
-      // dlg->move(s.valueVar(keyPrefix + "_" + dlg->objectName() + "_pos", dlg->pos()).toPoint());
-      QString key = keyPrefix + "_" + dlg->objectName() + "_size";
-      if(s.contains(key))
-        dlg->resize(s.valueVar(key, dlg->sizeHint()).toSize());
+      // dlg->move(s.valueVar(keyPrefix % "_" % dlg->objectName() % "_pos", dlg->pos()).toPoint());
+      QString key = keyPrefix % "_" % dlg->objectName() % "_size";
+      if(settings.contains(key))
+        dlg->resize(settings.valueVar(key, dlg->sizeHint()).toSize());
     }
     else if(QSplitter *sp = dynamic_cast<QSplitter *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         sp->restoreState(v.toByteArray());
     }
     else if(QStatusBar *stb = dynamic_cast<QStatusBar *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(v.isValid())
         stb->setHidden(!v.toBool());
     }
     else if(QCheckBox *cbx = dynamic_cast<QCheckBox *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
 
       if(v.isValid())
         cbx->setCheckState(static_cast<Qt::CheckState>(v.toInt()));
 
-      loadWidgetVisible(s, cbx);
+      loadWidgetVisible(settings, cbx);
     }
     else if(QAbstractButton *b = dynamic_cast<QAbstractButton *>(widget))
     {
-      QVariant v = loadWidget(s, widget);
+      QVariant v = loadWidget(settings, widget);
       if(b->isCheckable() && v.isValid())
         b->setChecked(v.toBool());
 
-      loadWidgetVisible(s, b);
+      loadWidgetVisible(settings, b);
     }
     else if(QFrame *f = dynamic_cast<QFrame *>(widget))
-      loadWidgetVisible(s, f);
+      loadWidgetVisible(settings, f);
+    else if(const QButtonGroup *g = dynamic_cast<const QButtonGroup *>(widget))
+    {
+      QString key = keyPrefix % "_" % g->objectName() % "_selected";
+      if(settings.contains(key))
+      {
+        QString value = settings.valueStr(key);
+        if(!value.isEmpty())
+        {
+          for(QAbstractButton *button : g->buttons())
+          {
+            if(button->objectName() == value)
+              button->setChecked(true);
+          }
+        }
+      }
+    }
     else
-      qWarning() << Q_FUNC_INFO << "Found unsupported widet type in load" << widget->metaObject()->className();
+      qWarning() << Q_FUNC_INFO << "Found unsupported widget type in load" << widget->metaObject()->className();
 
     if(block)
       widget->blockSignals(false);
@@ -435,7 +460,7 @@ bool WidgetState::contains(QObject *widget) const
 
 QString WidgetState::getSettingsKey(QObject *widget) const
 {
-  return keyPrefix + "_" + widget->objectName();
+  return keyPrefix % "_" % widget->objectName();
 }
 
 void WidgetState::syncSettings()
@@ -469,7 +494,7 @@ void WidgetState::saveWidgetVisible(Settings& settings, const QWidget *w) const
     if(!w->objectName().isEmpty())
     {
       if(!w->isVisible())
-        settings.setValue(keyPrefix + "_visible_" + w->objectName(), w->isVisible());
+        settings.setValue(keyPrefix % "_visible_" % w->objectName(), w->isVisible());
     }
     else
       qWarning() << Q_FUNC_INFO << "Found widget with empty name";
@@ -480,7 +505,7 @@ void WidgetState::saveWidget(Settings& settings, const QObject *w, const QVarian
 {
   QString name = objName.isEmpty() ? w->objectName() : objName;
   if(!name.isEmpty())
-    settings.setValueVar(keyPrefix + "_" + name, value);
+    settings.setValueVar(keyPrefix % "_" % name, value);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
 }
@@ -489,7 +514,7 @@ bool WidgetState::containsWidget(Settings& settings, QObject *w, const QString& 
 {
   QString name = objName.isEmpty() ? w->objectName() : objName;
   if(!name.isEmpty())
-    return settings.contains(keyPrefix + "_" + name);
+    return settings.contains(keyPrefix % "_" % name);
   else
     qWarning() << Q_FUNC_INFO << "Found widget with empty name";
   return false;
@@ -500,7 +525,7 @@ QVariant WidgetState::loadWidget(Settings& settings, QObject *w, const QString& 
   QString oname = objName.isEmpty() ? w->objectName() : objName;
   if(!oname.isEmpty())
   {
-    QString name = keyPrefix + "_" + oname;
+    QString name = keyPrefix % "_" % oname;
     if(settings.contains(name))
       return settings.valueVar(name);
   }
@@ -515,7 +540,7 @@ void WidgetState::loadWidgetVisible(Settings& settings, QWidget *w) const
   {
     if(!w->objectName().isEmpty())
     {
-      QString name = keyPrefix + "_" + "_visible_" + w->objectName();
+      QString name = keyPrefix % "_" % "_visible_" % w->objectName();
       if(settings.contains(name))
       {
         bool visible = settings.valueBool(name);
