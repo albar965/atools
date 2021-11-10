@@ -1319,10 +1319,8 @@ void DfdCompiler::updateMagvar()
 
   atools::fs::common::MagDecReader *magdec = magDecReader;
   SqlUtil::UpdateColFuncType func =
-    [magdec](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool
-    {
-      to.bindValue(":mag_var", magdec->getMagVar(Pos(from.valueFloat("lonx"),
-                                                     from.valueFloat("laty"))));
+    [magdec](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool {
+      to.bindValue(":mag_var", magdec->getMagVar(Pos(from.valueFloat("lonx"), from.valueFloat("laty"))));
       return true;
     };
 
@@ -1331,6 +1329,13 @@ void DfdCompiler::updateMagvar()
   util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
   util.updateColumnInTable("vor", "vor_id", {"lonx", "laty"}, {"mag_var"}, "mag_var is null", func);
   db.commit();
+
+  SqlUtil::UpdateColFuncType funcHolding =
+    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool {
+      to.bindValue(":course", atools::geo::normalizeCourse(from.valueFloat("course") + from.valueFloat("mag_var")));
+      return true;
+    };
+  util.updateColumnInTable("holding", "holding_id", {"course", "mag_var"}, {"course"}, funcHolding);
 }
 
 void DfdCompiler::updateTacanChannel()

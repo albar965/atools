@@ -19,6 +19,7 @@
 
 #include "fs/common/airportindex.h"
 #include "fs/xp/xpconstants.h"
+#include "geo/calculations.h"
 #include "fs/common/magdecreader.h"
 #include "fs/util/fsutil.h"
 #include "geo/pos.h"
@@ -41,7 +42,7 @@ enum FieldIndex
   REGION = 1,
   AIRPORT_IDENT = 2,
   TYPE = 3,
-  COURSE = 4,
+  COURSE_MAG = 4,
   LEG_TIME = 5,
   LEG_LENGTH = 6,
   DIR = 7,
@@ -176,7 +177,7 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
 
   insertQuery->bindValue(":region", region);
   insertQuery->bindValue(":mag_var", magvar);
-  insertQuery->bindValue(":course", at(line, COURSE).toFloat());
+  insertQuery->bindValue(":course", atools::geo::normalizeCourse(at(line, COURSE_MAG).toFloat() + magvar));
   insertQuery->bindValue(":turn_direction", at(line, DIR));
   insertQuery->bindValue(":leg_length", at(line, LEG_LENGTH).toFloat());
   insertQuery->bindValue(":leg_time", at(line, LEG_TIME).toFloat());

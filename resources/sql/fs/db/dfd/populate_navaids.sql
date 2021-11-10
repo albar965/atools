@@ -381,3 +381,4 @@ update holding set airport_id = (
   where holding.airport_ident is not null and holding.airport_ident = a.ident
 ) where airport_id is null;
 
+-- course is now magnetic and will be corrected later in DfdCompiler::updateMagvar()
