@@ -468,7 +468,7 @@ geo::Pos fromAnyFormat(const QString& coords)
   // locale dependent separator in all languages
   QString coordStr(coords);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_COORDS
   if(coordStr.count(',') == 1)
     coordStr.replace(',', ' ');
 #endif
@@ -485,7 +485,6 @@ geo::Pos fromAnyFormat(const QString& coords)
   coordStr.replace(';', ' ');
   coordStr.replace('_', ' ');
   coordStr.replace(':', ' ');
-  coordStr.replace('_', ' ');
 
   coordStr = coordStr.simplified().toUpper().replace(QLocale().decimalPoint(), ".").replace(",", ".");
 

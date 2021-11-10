@@ -327,7 +327,7 @@ QDataStream& operator<<(QDataStream& stream, atools::util::Flags<E> flags)
 template<typename E>
 inline uint qHash(const Flags<E>& flags)
 {
-  return static_cast<uint>(flags.value) | static_cast<uint>(flags.value >> 32);
+  return static_cast<uint>(flags.value) ^ static_cast<uint>(flags.value >> 32);
 }
 
 } // namespace util
