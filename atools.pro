@@ -265,6 +265,7 @@ HEADERS += \
   src/track/trackdownloader.h \
   src/track/trackreader.h \
   src/track/tracktypes.h \
+  src/util/average.h \
   src/util/csvreader.h \
   src/util/filesystemwatcher.h \
   src/util/flags.h \
@@ -396,6 +397,7 @@ SOURCES += \
   src/track/trackdownloader.cpp \
   src/track/trackreader.cpp \
   src/track/tracktypes.cpp \
+  src/util/average.cpp \
   src/util/csvreader.cpp \
   src/util/filesystemwatcher.cpp \
   src/util/flags.cpp \
