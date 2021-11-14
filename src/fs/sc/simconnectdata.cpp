@@ -188,7 +188,13 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(h + 10.f);
   data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 15.f);
 
-  data.userAircraft.structuralIcePercent = static_cast<quint8>(ice);
+  data.userAircraft.pitotIcePercent = static_cast<quint8>(ice);
+  data.userAircraft.structuralIcePercent = static_cast<quint8>(ice / 2);
+  data.userAircraft.carbIcePercent = static_cast<quint8>(ice / 3);
+  data.userAircraft.statIcePercent = static_cast<quint8>(ice / 4);
+  data.userAircraft.windowIcePercent = static_cast<quint8>(ice / 5);
+  data.userAircraft.aoaIcePercent = static_cast<quint8>(ice > 0.f ? 1 : 0);
+  data.userAircraft.inletIcePercent = static_cast<quint8>(ice > 0.f ? 100 : 0);
   data.userAircraft.category = AIRPLANE;
   data.userAircraft.engineType = PISTON;
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
