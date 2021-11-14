@@ -313,10 +313,8 @@ public:
 
   Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();
 
-  Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER = 6371. * 1000.;
-  Q_DECL_CONSTEXPR static float EARTH_RADIUS_METER_FLOAT = 6371.f * 1000.f;
-
 private:
+  Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER_DOUBLE = 6371. * 1000.;
   // Länge (x),Breite (y)
   float lonX, latY, altitude;
 

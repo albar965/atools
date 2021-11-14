@@ -274,7 +274,7 @@ float Pos::distanceMeterTo(const Pos& otherPos) const
     return static_cast<float>(distanceRad(toRadians(static_cast<double>(lonX)),
                                           toRadians(static_cast<double>(latY)),
                                           toRadians(static_cast<double>(otherPos.lonX)),
-                                          toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER);
+                                          toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER_DOUBLE);
 }
 
 double Pos::distanceMeterToDouble(const Pos& otherPos) const
@@ -287,7 +287,7 @@ double Pos::distanceMeterToDouble(const Pos& otherPos) const
     return distanceRad(toRadians(static_cast<double>(lonX)),
                        toRadians(static_cast<double>(latY)),
                        toRadians(static_cast<double>(otherPos.lonX)),
-                       toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER;
+                       toRadians(static_cast<double>(otherPos.latY))) * EARTH_RADIUS_METER_DOUBLE;
 }
 
 void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& result) const
@@ -320,7 +320,7 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
     result.status = ALONG_TRACK;
     result.distance = 0.f;
     result.distanceFrom1 = 0.f;
-    result.distanceFrom2 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER);
+    result.distanceFrom2 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER_DOUBLE);
     return;
   }
 
@@ -328,7 +328,7 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
   {
     result.status = ALONG_TRACK;
     result.distance = 0.f;
-    result.distanceFrom1 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER);
+    result.distanceFrom1 = static_cast<float>(dist1To2 * EARTH_RADIUS_METER_DOUBLE);
     result.distanceFrom2 = 0.f;
     return;
   }
@@ -349,16 +349,16 @@ void Pos::distanceMeterToLine(const Pos& pos1, const Pos& pos2, LineDistance& re
      !std::isnan(distAlongFrom2) && distAlongFrom2 <= dist1To2)
   {
     result.status = ALONG_TRACK;
-    result.distance = static_cast<float>(crossTrack * EARTH_RADIUS_METER);
-    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
-    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
+    result.distance = static_cast<float>(crossTrack * EARTH_RADIUS_METER_DOUBLE);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER_DOUBLE);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER_DOUBLE);
   }
   else if(!std::isnan(distAlongFrom1) && !std::isnan(distAlongFrom2))
   {
     result.status = distFrom1 < distFrom2 ? BEFORE_START : AFTER_END;
-    result.distance = static_cast<float>((distFrom1 < distFrom2 ? distFrom1 : distFrom2) * EARTH_RADIUS_METER);
-    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER);
-    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER);
+    result.distance = static_cast<float>((distFrom1 < distFrom2 ? distFrom1 : distFrom2) * EARTH_RADIUS_METER_DOUBLE);
+    result.distanceFrom1 = static_cast<float>(distAlongFrom1 * EARTH_RADIUS_METER_DOUBLE);
+    result.distanceFrom2 = static_cast<float>(distAlongFrom2 * EARTH_RADIUS_METER_DOUBLE);
   }
   // else invalid
 }
@@ -461,7 +461,7 @@ float Pos::distanceMeterToRhumb(const Pos& otherPos) const
   else
     distance = sqrt(q * q * dlonEast * dlonEast + (lat2 - lat1) * (lat2 - lat1));
 
-  return static_cast<float>(distance * EARTH_RADIUS_METER);
+  return static_cast<float>(distance * EARTH_RADIUS_METER_DOUBLE);
 }
 
 Pos Pos::interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const
@@ -737,9 +737,9 @@ void Pos::toCartesian(double& x, double& y, double& z) const
     double phi = static_cast<double>(lonX);
 
     double sinTheta = sinDeg(theta);
-    x = EARTH_RADIUS_METER * sinTheta * cosDeg(phi);
-    y = EARTH_RADIUS_METER * sinTheta * sinDeg(phi);
-    z = EARTH_RADIUS_METER * cosDeg(theta);
+    x = EARTH_RADIUS_METER_DOUBLE * sinTheta * cosDeg(phi);
+    y = EARTH_RADIUS_METER_DOUBLE * sinTheta * sinDeg(phi);
+    z = EARTH_RADIUS_METER_DOUBLE * cosDeg(theta);
   }
   else
     x = y = z = 0.;

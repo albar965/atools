@@ -29,6 +29,9 @@
 namespace atools {
 namespace geo {
 
+const float EARTH_RADIUS_METER = 6371.f * 1000.f;
+const float EARTH_CIRCUMFERENCE_METER = EARTH_RADIUS_METER * 2.f * 3.14159265358979323846f;
+
 /* Use maximum numbers to indicate invalid values */
 const float INVALID_FLOAT = std::numeric_limits<float>::max();
 const double INVALID_DOUBLE = std::numeric_limits<double>::max();

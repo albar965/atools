@@ -193,7 +193,7 @@ void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
     return;
   }
 
-  float lonX = positions.begin()->getLonX(), latY = positions.begin()->getLatY();
+  float lonX = positions.constBegin()->getLonX(), latY = positions.constBegin()->getLatY();
 
   float north = latY;
   float south = latY;
@@ -230,8 +230,8 @@ void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
   int currentSign = (lonX < 0) ? -1 : +1;
   int previousSign = currentSign;
 
-  QVector<Pos>::ConstIterator it(positions.begin());
-  QVector<Pos>::ConstIterator itEnd(positions.end());
+  QVector<Pos>::ConstIterator it(positions.constBegin());
+  QVector<Pos>::ConstIterator itEnd(positions.constEnd());
 
   bool processingLastNode = false;
 
@@ -309,7 +309,7 @@ void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
 
     if(positions.first() == positions.last() /* is closed */ && it == itEnd)
     {
-      it = positions.begin();
+      it = positions.constBegin();
       processingLastNode = true;
     }
   }
