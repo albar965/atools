@@ -28,9 +28,13 @@
 namespace atools {
 namespace util {
 
+const QColor HtmlBuilder::COLOR_FOREGROUND_ERROR("#ffffff");
+const QColor HtmlBuilder::COLOR_BACKGROUND_ERROR("#ff0000");
+const QColor HtmlBuilder::COLOR_FOREGROUND_WARNING("#ff2000");
+const QColor HtmlBuilder::COLOR_BACKGROUND_WARNING(Qt::transparent);
+
 // Matches "http://blah" and "https://www.example.com/blah" links
-static const QRegularExpression LINK_REGEXP(
-  "\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
+static const QRegularExpression LINK_REGEXP("\\b((http[s]?|ftp|file)://[a-zA-Z0-9\\./:_\\?\\&=\\-\\$\\+\\!\\*'\\(\\),;%#\\[\\]@]+)\\b");
 
 HtmlBuilder::HtmlBuilder(const QColor& rowColor, const QColor& rowColorAlt)
   : hasBackColor(true)
@@ -196,7 +200,7 @@ QString HtmlBuilder::errorMessage(const QStringList& stringList, const QString& 
 QString HtmlBuilder::errorMessage(const QString& str)
 {
   if(!str.isEmpty())
-    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#ffffff"), QColor("#ff0000"));
+    return textMessage(str, html::BOLD | html::NO_ENTITIES, COLOR_FOREGROUND_ERROR, COLOR_BACKGROUND_ERROR);
 
   return str;
 }
@@ -210,7 +214,7 @@ HtmlBuilder& HtmlBuilder::warning(const QString& str)
 QString HtmlBuilder::warningMessage(const QString& str)
 {
   if(!str.isEmpty())
-    return textMessage(str, html::BOLD | html::NO_ENTITIES, QColor("#ff5000"));
+    return textMessage(str, html::BOLD | html::NO_ENTITIES, COLOR_FOREGROUND_WARNING, COLOR_BACKGROUND_WARNING);
 
   return str;
 }
@@ -944,14 +948,14 @@ QString HtmlBuilder::asText(QString str, html::Flags flags, QColor foreground, Q
     suffix.prepend("</nobr>");
   }
 
-  if(foreground.isValid() || background.isValid())
+  if(foreground.isValid() || (background.isValid() && background != Qt::transparent))
   {
     prefix.append("<span style=\"");
 
     if(foreground.isValid())
       prefix.append("color:" % foreground.name(QColor::HexRgb));
 
-    if(background.isValid())
+    if(background.isValid() && background != Qt::transparent)
     {
       if(foreground.isValid())
         prefix.append("; ");

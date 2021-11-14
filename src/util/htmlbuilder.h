@@ -450,6 +450,12 @@ public:
   /* Set bitfield directly without using setIds() */
   void setIdBits(const QBitArray& value);
 
+  /* Colors for error and warning messages */
+  const static QColor COLOR_FOREGROUND_ERROR;
+  const static QColor COLOR_BACKGROUND_ERROR;
+  const static QColor COLOR_FOREGROUND_WARNING;
+  const static QColor COLOR_BACKGROUND_WARNING;
+
 private:
   /* Select alternating entries based on the index from the string list */
   const QString& alt(const QStringList& list) const;
