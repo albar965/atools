@@ -68,7 +68,7 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
 TreeDialog::~TreeDialog()
 {
   // Always save header, expand state and size
-  saveStateDialog();
+  saveStateDialog(true /* saveExpand State */);
   delete ui;
 }
 
@@ -168,7 +168,7 @@ void TreeDialog::buttonBoxClicked(QAbstractButton *button)
   }
 }
 
-void TreeDialog::restoreState(bool restoreCheckState)
+void TreeDialog::restoreState(bool restoreCheckState, bool restoreExpandState)
 {
   atools::gui::WidgetState widgetState(settingsPrefix, false);
 
@@ -188,17 +188,20 @@ void TreeDialog::restoreState(bool restoreCheckState)
     }
   }
 
-  QVector<int> expandedIndexes = atools::strListToNumVector<int>(
-    atools::settings::Settings::instance().valueStrList(settingsPrefix + "TreeWidgetExpandedStates"));
-
-  QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();
-  for(int i : expandedIndexes)
+  if(restoreExpandState)
   {
-    // Expand widgets from list of saved indexes
-    QTreeWidgetItem *child = root->child(i);
+    QVector<int> expandedIndexes = atools::strListToNumVector<int>(
+      atools::settings::Settings::instance().valueStrList(settingsPrefix + "TreeWidgetExpandedStates"));
 
-    if(child != nullptr && child->childCount() > 0)
-      child->setExpanded(true);
+    QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();
+    for(int i : expandedIndexes)
+    {
+      // Expand widgets from list of saved indexes
+      QTreeWidgetItem *child = root->child(i);
+
+      if(child != nullptr && child->childCount() > 0)
+        child->setExpanded(true);
+    }
   }
 
   if(reset)
@@ -206,27 +209,30 @@ void TreeDialog::restoreState(bool restoreCheckState)
     resizeToContents();
 }
 
-void TreeDialog::saveStateDialog()
+void TreeDialog::saveStateDialog(bool saveExpandState)
 {
   atools::gui::WidgetState widgetState(settingsPrefix, false);
   widgetState.save({this, ui->treeWidget});
 
-  // Save indexes of expanded widgets
-  QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();
-  QStringList expandedIndexes;
-  for(int i = root->childCount() - 1; i >= 0; i--)
+  if(saveExpandState)
   {
-    QTreeWidgetItem *child = root->child(i);
+    // Save indexes of expanded widgets
+    QTreeWidgetItem *root = ui->treeWidget->invisibleRootItem();
+    QStringList expandedIndexes;
+    for(int i = root->childCount() - 1; i >= 0; i--)
+    {
+      QTreeWidgetItem *child = root->child(i);
 
-    if(child != nullptr && child->isExpanded())
-      expandedIndexes.append(QString::number(i));
+      if(child != nullptr && child->isExpanded())
+        expandedIndexes.append(QString::number(i));
+    }
+    atools::settings::Settings::instance().setValue(settingsPrefix + "TreeWidgetExpandedStates", expandedIndexes);
   }
-  atools::settings::Settings::instance().setValue(settingsPrefix + "TreeWidgetExpandedStates", expandedIndexes);
 }
 
-void TreeDialog::saveState(bool saveCheckState)
+void TreeDialog::saveState(bool saveCheckState, bool saveExpandState)
 {
-  saveStateDialog();
+  saveStateDialog(saveExpandState);
 
   if(saveCheckState)
   {

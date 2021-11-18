@@ -116,10 +116,10 @@ public:
   void setAllChecked(bool checked = true);
 
   /* Call after adding all buttons to restore header, expand state, size and optionally check states */
-  void restoreState(bool restoreCheckState);
+  void restoreState(bool restoreCheckState, bool restoreExpandState);
 
-  /* Save header, expand state, size and optionally check states */
-  void saveState(bool saveCheckState);
+  /* Save header, expand state, sizem optionally check states and expand state of branches.  */
+  void saveState(bool saveCheckState, bool saveExpandState);
 
   /* For atools::gui::HelpHandler::openHelpUrlWeb() */
   void setHelpOnlineUrl(const QString& value)
@@ -142,7 +142,7 @@ private:
   void setCheckedInt(int id, bool checked);
 
   /* Save header, expand state and size */
-  void saveStateDialog();
+  void saveStateDialog(bool saveExpandState);
 
   QTreeWidgetItem *getItemInt(int id);
   void checkAll();
