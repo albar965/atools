@@ -92,6 +92,28 @@ HtmlBuilder& HtmlBuilder::operator=(const atools::util::HtmlBuilder& other)
   return *this;
 }
 
+QString HtmlBuilder::joinBr(std::initializer_list<HtmlBuilder> builders)
+{
+  QStringList texts;
+  for(const HtmlBuilder& builder : builders)
+    texts.append(builder.getHtml());
+  texts.removeAll(QString());
+  return texts.join("<br/>");
+}
+
+QString HtmlBuilder::joinP(std::initializer_list<HtmlBuilder> builders)
+{
+  QStringList texts;
+  for(const HtmlBuilder& builder : builders)
+    texts.append(builder.getHtml());
+  texts.removeAll(QString());
+
+  if(!texts.isEmpty())
+    return "<p>" % texts.join("<p/><p>") % "</p>";
+
+  return QString();
+}
+
 void HtmlBuilder::initColors(const QColor& rowColor, const QColor& rowColorAlt)
 {
   // Create darker colors dynamically from default palette
@@ -377,14 +399,14 @@ HtmlBuilder& HtmlBuilder::row2(const QString& name, const HtmlBuilder& value, ht
   return row2(name, value.getHtml(), flags | html::NO_ENTITIES, color);
 }
 
-HtmlBuilder& HtmlBuilder::row2Warning(const QString& name, const QString& value)
+HtmlBuilder& HtmlBuilder::row2Warning(const QString& name, const QString& value, html::Flags flags)
 {
-  return row2(name, warningMessage(value), html::NO_ENTITIES);
+  return row2(name, warningMessage(value), flags | html::NO_ENTITIES);
 }
 
-HtmlBuilder& HtmlBuilder::row2Error(const QString& name, const QString& value)
+HtmlBuilder& HtmlBuilder::row2Error(const QString& name, const QString& value, html::Flags flags)
 {
-  return row2(name, errorMessage(value), html::NO_ENTITIES);
+  return row2(name, errorMessage(value), flags | html::NO_ENTITIES);
 }
 
 HtmlBuilder& HtmlBuilder::row2(const QString& name, const QString& value, html::Flags flags, QColor color)

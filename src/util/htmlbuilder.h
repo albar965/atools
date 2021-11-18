@@ -92,6 +92,10 @@ public:
 
   HtmlBuilder& operator=(const atools::util::HtmlBuilder& other);
 
+  /* Joins the list of builders using <br> or <p> */
+  static QString joinBr(std::initializer_list<atools::util::HtmlBuilder> builders);
+  static QString joinP(std::initializer_list<atools::util::HtmlBuilder> builders);
+
   /* Clears this instance except settings */
   HtmlBuilder& clear();
 
@@ -316,8 +320,8 @@ public:
                          QColor color = QColor());
 
   /* Display two column row with value as warning or error */
-  HtmlBuilder& row2Warning(const QString& name, const QString& value);
-  HtmlBuilder& row2Error(const QString& name, const QString& value);
+  HtmlBuilder& row2Warning(const QString& name, const QString& value, html::Flags flags = html::NONE);
+  HtmlBuilder& row2Error(const QString& name, const QString& value, html::Flags flags = html::NONE);
 
   /* Add/end table row Text background may alternate depending on configuration */
   HtmlBuilder& tr(QColor backgroundColor);
