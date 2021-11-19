@@ -340,8 +340,8 @@ create table runway
                                         -- which are used for data not originating from flight simulator
   smoothness double,                    -- 0.00 (smooth) to 1.00 (very rough). Default is 0.25. X-Plane only.
   shoulder varchar(15),                 -- Optional column for X-Plane - shoulder surface or null if none
-  length integer not null,              -- Feet
-  width integer not null,               -- Feet
+  length double not null,              -- Feet
+  width double not null,               -- Feet
   heading double not null,              -- Heading in degrees true
   pattern_altitude integer not null,    -- Feet
   marking_flags integer not null,       -- see enum atools::fs::bgl::rw::RunwayMarkings
@@ -374,9 +374,9 @@ create table runway_end
   runway_end_id integer primary key,
   name varchar(10) not null,              -- Full name like "12", "24C" or "N"
   end_type varchar(1) not null,           -- Primary or secondary
-  offset_threshold integer not null,      -- Feet - this is part of the runway length and will reduce landing distance
-  blast_pad integer not null,             -- Feet - not part of the runway length
-  overrun integer not null,               -- Feet - not part of the runway length
+  offset_threshold double not null,      -- Feet - this is part of the runway length and will reduce landing distance
+  blast_pad double not null,             -- Feet - not part of the runway length
+  overrun double not null,               -- Feet - not part of the runway length
   left_vasi_type varchar(15),             -- see enum atools::fs::bgl::rw::VasiType
   left_vasi_pitch double,                 -- Degrees
   right_vasi_type varchar(15),            -- see enum atools::fs::bgl::rw::VasiType
