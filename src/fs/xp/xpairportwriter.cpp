@@ -1443,6 +1443,8 @@ void XpAirportWriter::bindAirport(const QStringList& line, AirportRowCode rowCod
 
     insertAirportQuery->bindValue(":has_jetfuel", 0); // filled later
     insertAirportQuery->bindValue(":has_avgas", 0); // filled later
+
+    insertAirportQuery->bindValue(":type", rowCode);
   }
 }
 

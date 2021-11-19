@@ -39,6 +39,7 @@ create table airport
   country varchar(50) collate nocase,         -- Country name or area code in case of DFD
   region varchar(4) collate nocase,           -- ICAO region like DE, LF, K6 - not used for search
   flatten integer,                            -- 1302 flatten 1. 0, 1 or null. X-Plane only.
+  type integer,                               -- 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only.
   fuel_flags integer not null,                -- see enum atools::fs::bgl::ap::FuelFlags
   has_avgas integer not null,                 -- boolean
   has_jetfuel integer not null,               -- "
@@ -134,6 +135,9 @@ foreign key(file_id) references bgl_file(bgl_file_id)
 drop table if exists airport_medium;
 
 -- Copy of airport table above for the map display overview layer with runways > 4000 ft
+--
+-- Table is unsed as of 2.8 and only kept for compatibility
+--
 create table airport_medium
 (
   airport_id integer primary key,
@@ -171,6 +175,9 @@ create table airport_medium
 drop table if exists airport_large;
 
 -- Copy of airport table above for the map display overview layer with runways > 8000 ft
+--
+-- Table is unsed as of 2.8 and only kept for compatibility
+--
 create table airport_large
 (
   airport_id integer primary key,
