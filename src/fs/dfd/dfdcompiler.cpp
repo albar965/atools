@@ -53,6 +53,7 @@ using atools::geo::LineString;
 using atools::geo::DPos;
 using atools::geo::Rect;
 namespace utl = atools::fs::util;
+namespace ageo = atools::geo;
 
 namespace atools {
 namespace fs {
@@ -235,8 +236,8 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
   // Find matching opposing ends in the list
   pairRunways(runwaypairs, runways);
 
-  int numRunways = 0, numRunwayIls = 0, longestRunwayLength = 0, longestRunwayWidth = 0;
-  float longestRunwayHeading = 0.f;
+  int numRunways = 0, numRunwayIls = 0;
+  float longestRunwayLength = 0.f, longestRunwayWidth = 0.f, longestRunwayHeading = 0.f;
   Rect airportRect = airportRectMap.value(apt);
 
   // Iterate over all runways / end pairs
@@ -249,22 +250,31 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     int primaryEndId = ++curRunwayEndId, secondaryEndId = ++curRunwayEndId;
 
     // All in feet
-    int length = primaryRec.valueInt("runway_length");
-    int width = primaryRec.valueInt("runway_width");
+    float length = primaryRec.valueFloat("runway_length");
+    float width = primaryRec.valueFloat("runway_width");
 
     // Use average threshold elevation for runway elevation
-    int alt = (primaryRec.valueInt("landing_threshold_elevation") +
-               secondaryRec.valueInt("landing_threshold_elevation")) / 2;
+    int alt = (primaryRec.valueInt("landing_threshold_elevation") + secondaryRec.valueInt("landing_threshold_elevation")) / 2;
+
+    // Heading
+    float heading = primaryRec.valueFloat("runway_true_bearing");
+    float opposedHeading = secondaryRec.valueFloat("runway_true_bearing");
+    float primaryThreshold = primaryRec.valueFloat("displaced_threshold_distance");
+    float secondaryThreshold = secondaryRec.valueFloat("displaced_threshold_distance");
 
     // Get primary and secondary end coordinates
     Pos primaryPos(primaryRec.valueFloat("runway_longitude"), primaryRec.valueFloat("runway_latitude"));
+
+    if(primaryThreshold > 0.f)
+      primaryPos = primaryPos.endpoint(ageo::feetToMeter(primaryThreshold), opposedHeading);
+
     Pos secondaryPos(secondaryRec.valueFloat("runway_longitude"), secondaryRec.valueFloat("runway_latitude"));
+
+    if(secondaryThreshold > 0.f)
+      secondaryPos = secondaryPos.endpoint(ageo::feetToMeter(secondaryThreshold), heading);
 
     // Calculate center point
     Pos centerPos = primaryPos.interpolate(secondaryPos, 0.5f);
-
-    float heading = primaryRec.valueFloat("runway_true_bearing");
-    float opposedHeading = secondaryRec.valueFloat("runway_true_bearing");
 
     // Correct runway ends with equal positions by using center and length
     if(primaryPos.almostEqual(secondaryPos, atools::geo::Pos::POS_EPSILON_5M))
@@ -317,9 +327,9 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":runway_end_id", primaryEndId);
     runwayEndWriteQuery->bindValue(":name", primaryRec.valueStr("runway_identifier").mid(2));
     runwayEndWriteQuery->bindValue(":end_type", "P");
-    runwayEndWriteQuery->bindValue(":offset_threshold", primaryRec.valueInt("displaced_threshold_distance"));
-    runwayEndWriteQuery->bindValue(":blast_pad", 0);
-    runwayEndWriteQuery->bindValue(":overrun", 0);
+    runwayEndWriteQuery->bindValue(":offset_threshold", primaryThreshold);
+    runwayEndWriteQuery->bindValue(":blast_pad", 0.f);
+    runwayEndWriteQuery->bindValue(":overrun", 0.f);
     runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
     runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
     runwayEndWriteQuery->bindValue(":is_takeoff", !pClosed);
@@ -340,9 +350,9 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
     runwayEndWriteQuery->bindValue(":runway_end_id", secondaryEndId);
     runwayEndWriteQuery->bindValue(":name", secondaryRec.valueStr("runway_identifier").mid(2));
     runwayEndWriteQuery->bindValue(":end_type", "S");
-    runwayEndWriteQuery->bindValue(":offset_threshold", secondaryRec.valueInt("displaced_threshold_distance"));
-    runwayEndWriteQuery->bindValue(":blast_pad", 0);
-    runwayEndWriteQuery->bindValue(":overrun", 0);
+    runwayEndWriteQuery->bindValue(":offset_threshold", secondaryThreshold);
+    runwayEndWriteQuery->bindValue(":blast_pad", 0.f);
+    runwayEndWriteQuery->bindValue(":overrun", 0.f);
     runwayEndWriteQuery->bindValue(":has_closed_markings", 0);
     runwayEndWriteQuery->bindValue(":has_stol_markings", 0);
     runwayEndWriteQuery->bindValue(":is_takeoff", !sClosed);
@@ -400,16 +410,15 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
   airportUpdateQuery->exec();
 }
 
-void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs,
-                              const SqlRecordVector& runways)
+void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs, const SqlRecordVector& runways)
 {
   // Go through the list of runways and find matching runway ends like 9R / 27L
   QSet<QString> found;
-  for(const SqlRecord& rw : runways)
+  for(const SqlRecord& rec : runways)
   {
-    float heading = rw.valueFloat("runway_true_bearing");
-    float opposedHeading = atools::geo::opposedCourseDeg(heading);
-    QString rwident = rw.valueStr("runway_identifier");
+    float heading = rec.valueFloat("runway_true_bearing");
+    float opposedHeading = ageo::opposedCourseDeg(heading);
+    QString rwident = rec.valueStr("runway_identifier");
 
     if(found.contains(rwident))
       // Already worked on that runway end
@@ -449,7 +458,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
         found.insert(rwident);
 
         // Add to result
-        runwaypairs.append(std::make_pair(rw, opposed));
+        runwaypairs.append(std::make_pair(rec, opposed));
         foundEnd = true;
         break;
       }
@@ -458,7 +467,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
     if(!foundEnd)
     {
       // Nothing found - assume other end is closed if not found
-      SqlRecord opposedRec(rw);
+      SqlRecord opposedRec(rec);
       opposedRec.setValue("runway_identifier", opposedRname);
       opposedRec.setValue("displaced_threshold_distance", 0);
       opposedRec.setValue("llz_identifier", QVariant(QVariant::String));
@@ -468,7 +477,7 @@ void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwayp
       opposedRec.appendField("is_closed", QVariant::Bool);
       opposedRec.setValue("is_closed", true);
 
-      runwaypairs.append(std::make_pair(rw, opposedRec));
+      runwaypairs.append(std::make_pair(rec, opposedRec));
     }
   }
 }
@@ -963,7 +972,7 @@ void DfdCompiler::finishAirspace()
 
       if(seg.pos.isNull() && !seg.center.isNull())
         // Create a circular polygon with 24 segments
-        curAirspaceLine.append(LineString(seg.center, atools::geo::nmToMeter(seg.distance), 24));
+        curAirspaceLine.append(LineString(seg.center, ageo::nmToMeter(seg.distance), 24));
       else
       {
         if(seg.center.isNull())
@@ -1180,7 +1189,7 @@ void DfdCompiler::writeProcedure(const QString& table, const QString& rowCode)
 
     procInput.airportIdent = airportIdent;
     procInput.airportId = airportIndex->getAirportId(airportIdent);
-    procInput.airportPos = atools::geo::DPos(airportIndex->getAirportPos(airportIdent));
+    procInput.airportPos = ageo::DPos(airportIndex->getAirportPos(airportIdent));
 
     // Fill data for procedure writer
     fillProcedureInput(procInput, query);
@@ -1332,7 +1341,7 @@ void DfdCompiler::updateMagvar()
 
   SqlUtil::UpdateColFuncType funcHolding =
     [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool {
-      to.bindValue(":course", atools::geo::normalizeCourse(from.valueFloat("course") + from.valueFloat("mag_var")));
+      to.bindValue(":course", ageo::normalizeCourse(from.valueFloat("course") + from.valueFloat("mag_var")));
       return true;
     };
   util.updateColumnInTable("holding", "holding_id", {"course", "mag_var"}, {"course"}, funcHolding);
@@ -1432,7 +1441,7 @@ void DfdCompiler::writeAirportMsa()
       else
         break;
     }
-    atools::geo::Pos center(query.valueFloat("lonx"), query.valueFloat("laty"));
+    ageo::Pos center(query.valueFloat("lonx"), query.valueFloat("laty"));
 
     if(center.isValid())
     {
@@ -1504,8 +1513,8 @@ void DfdCompiler::updateIlsGeometry()
       // Position of the pointy end
       Pos pos(from.valueFloat("lonx"), from.valueFloat("laty"));
 
-      float length = atools::geo::nmToMeter(ILS_FEATHER_LEN_NM);
-      float heading = atools::geo::normalizeCourse(atools::geo::opposedCourseDeg(from.valueFloat("loc_heading")));
+      float length = ageo::nmToMeter(ILS_FEATHER_LEN_NM);
+      float heading = ageo::normalizeCourse(ageo::opposedCourseDeg(from.valueFloat("loc_heading")));
       QString type = from.valueStr("type");
       float width = type == "G" || type == "T" ? ILS_FEATHER_WIDTH_DEG * 2.f : ILS_FEATHER_WIDTH_DEG;
 
