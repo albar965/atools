@@ -403,7 +403,10 @@ Pos Rect::getCenter() const
 
 bool Rect::crossesAntiMeridian() const
 {
-  return atools::geo::crossesAntiMeridian(getWest(), getEast());
+// This calculation requires correct east and west values
+  return getEast() < getWest() ||
+         (atools::almostEqual(getWest(), 180.f) && atools::almostEqual(getEast(), -180.f)) ||
+         (atools::almostEqual(getEast(), 180.f) && atools::almostEqual(getWest(), -180.f));
 }
 
 QList<Rect> Rect::splitAtAntiMeridian() const

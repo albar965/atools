@@ -82,7 +82,7 @@ void calcArcLength(const atools::geo::Line& line, const atools::geo::Pos& center
 void boundingRect(atools::geo::Rect& rect, QVector<Pos> positions);
 atools::geo::Rect boundingRect(const QVector<Pos>& positions);
 
-/* true if longitude values cross the anti-meridian independent of direction */
+/* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
 bool crossesAntiMeridian(float lonx1, float lonx2);
 
 bool isWestCourse(float lonx1, float lonx2);
