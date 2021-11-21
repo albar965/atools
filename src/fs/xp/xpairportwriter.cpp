@@ -590,8 +590,7 @@ void XpAirportWriter::bindVasi(const QStringList& line, const atools::fs::xp::Xp
       {
         // VASI is at side of runway
         QString primaryName, secondaryName;
-        if(atools::geo::angleAbsDiff(orientation, rg.primaryHeading) <
-           atools::geo::angleAbsDiff(orientation, rg.secondaryHeading))
+        if(atools::geo::angleAbsDiff(orientation, rg.primaryHeading) < atools::geo::angleAbsDiff(orientation, rg.secondaryHeading))
         {
           // Primary is better than secondary - check heading difference
           if(atools::geo::angleAbsDiff(orientation, rg.primaryHeading) < 20.f)

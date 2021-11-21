@@ -534,12 +534,24 @@ bool angleInRange(TYPE angle, TYPE min, TYPE max)
 template<typename TYPE>
 TYPE angleAbsDiff(TYPE angle1, TYPE angle2)
 {
-  if(angle2 > angle1)
-    // 100 to 260 : 10 to 350
-    return angle2 - angle1 <= 180. ? angle2 - angle1 : angle1 + 360. - angle2;
+  return angle2 > angle1 ?
+         // 100 to 260 : 10 to 350
+         (angle2 - angle1 <= 180. ? angle2 - angle1 : angle1 + 360. - angle2) :
+         // 260 to 100 : 350 to 10
+         (angle1 - angle2 <= 180. ? angle1 - angle2 : angle2 + 360. - angle1);
+}
+
+/* Calculates difference between courses (0-360 Deg) which are given clockwise from angle1 to angle2.
+ * Result can be 0 <= res <= 360 */
+template<typename TYPE>
+TYPE angleAbsDiff2(TYPE angle1, TYPE angle2)
+{
+  if(atools::almostEqual(angle1, angle2))
+    return 0.f;
+  else if(angle2 > angle1)
+    return angle2 - angle1;
   else
-    // 260 to 100 : 350 to 10
-    return angle1 - angle2 <= 180. ? angle1 - angle2 : angle2 + 360. - angle1;
+    return (angle2 + 360.) - angle1;
 }
 
 /* Normalize lonx to -180 < lonx < 180 */

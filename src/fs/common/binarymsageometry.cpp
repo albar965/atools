@@ -55,7 +55,7 @@ void BinaryMsaGeometry::calculate(const atools::geo::Pos& center, float radiusNm
     float labelBrg = 0.f; // Default is north of center
     if(bearings.size() > 1)
       // Calculate a bearing for label in the middle of a sector
-      labelBrg = normalizeCourse(bearingFromTrue + atools::geo::angleAbsDiff(bearingFromTrue, bearingToTrue) / 2.f);
+      labelBrg = normalizeCourse(bearingFromTrue + atools::geo::angleAbsDiff2(bearingFromTrue, bearingToTrue) / 2.f);
     // Calculate label position
     Pos lbl = center.endpoint(radiusMeter / 2.f, labelBrg);
 
