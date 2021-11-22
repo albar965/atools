@@ -58,6 +58,16 @@ public:
   /* Skip element and optionally print a warning about unexpected elements */
   void skipCurrentElement(bool warning = false);
 
+  /* Reads values from element text and prints a warning if the numbers are not correct. */
+  bool readElementTextBool();
+  int readElementTextInt();
+  float readElementTextFloat();
+
+  /* As above for attributes */
+  bool readAttributeBool(const QString& name, bool defaultValue = false);
+  int readAttributeInt(const QString& name, int defaultValue = 0);
+  float readAttributeFloat(const QString& name, float defaultValue = 0.f);
+
   /* Get underlying constructed stream reader */
   QXmlStreamReader& getReader()
   {

@@ -113,5 +113,99 @@ void XmlStream::skipCurrentElement(bool warning)
   reader->skipCurrentElement();
 }
 
+bool XmlStream::readElementTextBool()
+{
+  QString str = reader->readElementText().simplified().toLower();
+  if(str == "yes" || str == "true" || str == "y" || str == "t" || str == "1")
+    return true;
+  else if(str == "no" || str == "false" || str == "n" || str == "f" || str == "0")
+    return false;
+
+  qWarning() << Q_FUNC_INFO << "Reading of bool value failed. File"
+             << filename << "element" << reader->name() << "line" << reader->lineNumber();
+  return false;
+}
+
+int XmlStream::readElementTextInt()
+{
+  bool ok;
+  int retval = reader->readElementText().toInt(&ok);
+
+  if(!ok)
+    qWarning() << Q_FUNC_INFO << "Reading of int value failed. File"
+               << filename << "element" << reader->name() << "line" << reader->lineNumber();
+  return retval;
+
+}
+
+float XmlStream::readElementTextFloat()
+{
+  bool ok;
+  float retval = reader->readElementText().toFloat(&ok);
+
+  if(!ok)
+    qWarning() << Q_FUNC_INFO << "Reading of float value failed. File"
+               << filename << "element" << reader->name() << "line" << reader->lineNumber();
+  return retval;
+}
+
+bool XmlStream::readAttributeBool(const QString& name, bool defaultValue)
+{
+  if(reader->attributes().hasAttribute(name))
+  {
+    QString str = reader->attributes().value(name).toString();
+    if(str == "yes" || str == "true" || str == "y" || str == "t" || str == "1")
+      return true;
+    else if(str == "no" || str == "false" || str == "n" || str == "f" || str == "0")
+      return false;
+
+    qWarning() << Q_FUNC_INFO << "Reading of bool value failed. File"
+               << filename << "element" << reader->name() << "attribute" << name << "line" << reader->lineNumber();
+    return defaultValue;
+  }
+  else
+    return defaultValue;
+}
+
+int XmlStream::readAttributeInt(const QString& name, int defaultValue)
+{
+  if(reader->attributes().hasAttribute(name))
+  {
+    bool ok;
+    int value = reader->attributes().value(name).toInt(&ok);
+
+    if(!ok)
+    {
+      qWarning() << Q_FUNC_INFO << "Reading of int value failed. File"
+                 << filename << "element" << reader->name() << "attribute" << name << "line" << reader->lineNumber();
+
+      return defaultValue;
+    }
+    return value;
+  }
+  else
+    return defaultValue;
+}
+
+float XmlStream::readAttributeFloat(const QString& name, float defaultValue)
+{
+  if(reader->attributes().hasAttribute(name))
+  {
+    bool ok;
+    float value = reader->attributes().value(name).toFloat(&ok);
+
+    if(!ok)
+    {
+      qWarning() << Q_FUNC_INFO << "Reading of float value failed. File"
+                 << filename << "element" << reader->name() << "attribute" << name << "line" << reader->lineNumber();
+
+      return defaultValue;
+    }
+    return value;
+  }
+  else
+    return defaultValue;
+}
+
 } // namespace util
 } // namespace atools
