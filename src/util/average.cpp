@@ -88,7 +88,7 @@ void atools::util::MovingAverageTime::addSamples(float value1, float value2, qin
   qint64 duration = timestampMs - (samples.isEmpty() ? beforeFirstTimestampMs : samples.last().timestamp);
   total1 += value1 * duration;
   total2 += value2 * duration;
-  samples.append({value1, value2, timestampMs});
+  samples.append(Sample(value1, value2, timestampMs));
 }
 
 void MovingAverageTime::addSample(float value1, qint64 timestampMs)

@@ -80,6 +80,15 @@ public:
 
   struct Sample
   {
+    Sample()
+    {
+    }
+
+    Sample(float value1Param, float value2Param, qint64 timestampParam)
+      : value1(value1Param), value2(value2Param), timestamp(timestampParam)
+    {
+    }
+
     float value1, value2;
     qint64 timestamp;
   };

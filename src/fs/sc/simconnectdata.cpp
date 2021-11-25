@@ -166,8 +166,7 @@ int SimConnectData::write(QIODevice *ioDevice)
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
-                                                     float vertSpeed, float tas, float fuelflow, float totalFuel,
-                                                     float ice)
+                                                     float vertSpeed, float tas, float fuelflow, float totalFuel, float ice)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -200,10 +199,10 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.zuluDateTime = QDateTime::currentDateTimeUtc();
   data.userAircraft.localDateTime = QDateTime::currentDateTime();
 
-  data.userAircraft.airplaneTitle = "Airplane Title";
-  data.userAircraft.airplaneType = "Airplane Type";
-  data.userAircraft.airplaneModel = "MODEL";
-  data.userAircraft.airplaneReg = "Airplane Registration";
+  data.userAircraft.airplaneTitle = "Beech Baron 58 Paint 1";
+  data.userAircraft.airplaneType = "Beechcraft";
+  data.userAircraft.airplaneModel = "BE58";
+  data.userAircraft.airplaneReg = "N12345";
   data.userAircraft.airplaneAirline = "Airline";
   data.userAircraft.airplaneFlightnumber = "965";
   data.userAircraft.fromIdent = "EDDF";
