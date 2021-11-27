@@ -25,14 +25,14 @@
 #include <QFont>
 #include <QTableView>
 #include <QHeaderView>
+#include <QTreeWidget>
 
 namespace atools {
 namespace gui {
 
 using atools::settings::Settings;
 
-ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction,
-                                         QAction *zoomOutAction, QAction *zoomDefaultAction,
+ItemViewZoomHandler::ItemViewZoomHandler(QAbstractItemView *view, QAction *zoomInAction, QAction *zoomOutAction, QAction *zoomDefaultAction,
                                          QString settingsKeyStr, double marginParm)
 {
   init(view, zoomInAction, zoomOutAction, zoomDefaultAction, settingsKeyStr, marginParm);
@@ -103,10 +103,8 @@ void ItemViewZoomHandler::setTableViewFontSize(double pointSize)
   if(tableView != nullptr)
   {
     // Adjust the cell height - default is too big
-    tableView->verticalHeader()->setMinimumSectionSize(
-      atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
-    tableView->verticalHeader()->setDefaultSectionSize(
-      atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
+    tableView->verticalHeader()->setMinimumSectionSize(atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
+    tableView->verticalHeader()->setDefaultSectionSize(atools::roundToInt(newFontHeight + sectionToFontSize + margin * 2.));
   }
 }
 
@@ -180,8 +178,7 @@ void ItemViewZoomHandler::zoomTableView(int value)
 void ItemViewZoomHandler::enableDisableZoomActions()
 {
   if(actionZoomDefault != nullptr)
-    actionZoomDefault->setEnabled(atools::almostNotEqual(itemView->font().pointSizeF(),
-                                                         defaultTableViewFontPointSize));
+    actionZoomDefault->setEnabled(atools::almostNotEqual(itemView->font().pointSizeF(), defaultTableViewFontPointSize));
   if(actionZoomIn != nullptr)
     actionZoomIn->setEnabled(itemView->font().pointSizeF() < maxFontSize);
   if(actionZoomOut != nullptr)

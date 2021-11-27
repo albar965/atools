@@ -16,11 +16,14 @@
 *****************************************************************************/
 
 #include "gui/treedialog.h"
-#include "ui_treedialog.h"
+
+#include "atools.h"
+#include "gui/griddelegate.h"
 #include "gui/helphandler.h"
+#include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
-#include  "settings/settings.h"
-#include  "atools.h"
+#include "settings/settings.h"
+#include "ui_treedialog.h"
 
 #include <QMimeData>
 #include <QPushButton>
@@ -40,6 +43,10 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
   setWindowTitle(title);
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
+
+  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidget);
+  gridDelegate = new atools::gui::GridDelegate(ui->treeWidget);
+  ui->treeWidget->setItemDelegate(gridDelegate);
 
   // Hide label if text is empty
   ui->labelTreeDescription->setVisible(!description.isEmpty());
@@ -63,12 +70,17 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
   connect(ui->pushButtonTreeSelectNone, &QPushButton::clicked, this, &TreeDialog::unCheckAll);
   connect(ui->pushButtonTreeExpandAll, &QPushButton::clicked, ui->treeWidget, &QTreeWidget::expandAll);
   connect(ui->pushButtonTreeCollapseAll, &QPushButton::clicked, ui->treeWidget, &QTreeWidget::collapseAll);
+
+  zoomHandler->zoomPercent(100);
 }
 
 TreeDialog::~TreeDialog()
 {
   // Always save header, expand state and size
   saveStateDialog(true /* saveExpand State */);
+  ui->treeWidget->setItemDelegate(nullptr);
+  delete gridDelegate;
+  delete zoomHandler;
   delete ui;
 }
 
@@ -109,7 +121,16 @@ QTreeWidgetItem *TreeDialog::addTopItem(const QStringList& text, const QString& 
 
   // Set tooltip on all colums
   for(int col = 0; col < ui->treeWidget->columnCount(); col++)
+  {
     item->setToolTip(col, tooltip);
+
+    if(col == 0)
+    {
+      QFont font = item->font(col);
+      font.setBold(true);
+      item->setFont(col, font);
+    }
+  }
 
   // Check state depends on children
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);

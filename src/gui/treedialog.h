@@ -31,6 +31,9 @@ class QAbstractButton;
 namespace atools {
 namespace gui {
 
+class ItemViewZoomHandler;
+class GridDelegate;
+
 /*
  * A configurable dialog that shows the user a tree widget with checkboxes.
  * Uses one of two colums.
@@ -153,6 +156,9 @@ private:
 
   /* Maps user given id to item. Not top level items. */
   QHash<int, QTreeWidgetItem *> index;
+
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::GridDelegate *gridDelegate = nullptr;
 
 };
 

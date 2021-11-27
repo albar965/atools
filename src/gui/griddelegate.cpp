@@ -16,6 +16,7 @@
 *****************************************************************************/
 
 #include "gui/griddelegate.h"
+#include "atools.h"
 
 #include <QApplication>
 #include <QPainter>
@@ -31,14 +32,19 @@ GridDelegate::GridDelegate(QObject *parent) :
 
 void GridDelegate::styleChanged()
 {
-  gridPen = QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), 1.5);
+  gridPen = QPen(QApplication::palette().color(QPalette::Active, QPalette::Window), borderPenWidth);
 }
 
-void GridDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
-                         const QModelIndex& index) const
+QSize GridDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+  QSize sz = QStyledItemDelegate::sizeHint(option, index);
+  sz.setHeight(sz.height() + heightIncrease);
+  return sz;
+}
+
+void GridDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QStyledItemDelegate::paint(painter, option, index);
-
   painter->save();
   painter->setPen(gridPen);
   painter->drawRect(option.rect);

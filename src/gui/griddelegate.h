@@ -24,7 +24,9 @@
 namespace atools {
 namespace gui {
 
-/* Delegate that is used to draw a grid around cells in e.g. a QTreeWidget */
+/*
+ * Delegate that is used to draw a grid around cells in e.g. a QTreeWidget
+ */
 class GridDelegate :
   public QStyledItemDelegate
 {
@@ -33,10 +35,24 @@ public:
 
   void styleChanged();
 
+  /* Width of border pen */
+  void setBorderPenWidth(double value)
+  {
+    borderPenWidth = value;
+  }
+
+  void setHeightIncrease(int value)
+  {
+    heightIncrease = value;
+  }
+
 private:
+  QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
   void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
   QPen gridPen;
+  double borderPenWidth = 1.5;
+  int heightIncrease = 3;
 };
 
 } // namespace gui
