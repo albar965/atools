@@ -53,8 +53,22 @@ QStringList arincNameNameVariants(const QString& name);
 /* Compare runway numbers fuzzy by ignoring a deviation of one */
 bool runwayAlmostEqual(const QString& name1, const QString& name2);
 
-/* Compare runway numbers by ignoring leading zero */
+/* Compare runway numbers by ignoring leading zero and prefix "RW" */
 bool runwayEqual(QString name1, QString name2);
+bool runwayContains(const QStringList& runways, QString name);
+
+/* True if e.g. "RW10B" for a SID or STAR which means that 10L, 10C and 10R can be used. */
+bool hasSidStarParallelRunways(QString approachArincName);
+
+/* True if "ALL" for a SID or STAR. Means SID/STAR can be used for all runways of an airport. */
+bool hasSidStarAllRunways(const QString& approachArincName);
+
+/* Get a list of runways for SID and STAR which are applicable for all or several parallel runways
+ * @param runwayNames List of all runway names of an airport prefixed with "RW"
+ * @param arincName Name like "RW07B" or "ALL"
+ */
+void sidStarMultiRunways(const QStringList& runwayNames, QString arincName, const QString& allName, QStringList *sidStarRunways,
+                         QStringList *sidStarDispNames = nullptr);
 
 /* Converts decimals from transponder to integer.
  * Returns decimal 4095/ octal 07777 / hex 0xFFF for number 7777

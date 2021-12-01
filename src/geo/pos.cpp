@@ -773,6 +773,7 @@ QDataStream& operator>>(QDataStream& in, Pos& obj)
 
 QDebug operator<<(QDebug out, const LineDistance& lineDist)
 {
+  QDebugStateSaver saver(out);
   out << "LineDistance[distance" << atools::geo::meterToNm(lineDist.distance)
       << ", distanceFrom1" << atools::geo::meterToNm(lineDist.distanceFrom1)
       << ", distanceFrom2" << atools::geo::meterToNm(lineDist.distanceFrom2);

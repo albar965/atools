@@ -21,6 +21,7 @@
 
 #include <QRegularExpression>
 #include <QSet>
+#include <QStringBuilder>
 
 namespace atools {
 namespace fs {
@@ -636,6 +637,16 @@ bool runwayEqual(QString name1, QString name2)
   return name1.compare(name2, Qt::CaseInsensitive) == 0;
 }
 
+bool runwayContains(const QStringList& runways, QString name)
+{
+  for(const QString& rw : runways)
+  {
+    if(runwayEqual(rw, name))
+      return true;
+  }
+  return false;
+}
+
 QString runwayNameJoin(int number, const QString& designator)
 {
   return QString("%1%2").arg(number, 2, 10, QChar('0')).arg(designator);
@@ -657,10 +668,10 @@ QStringList runwayNameVariants(QString name)
   runwayNameSplit(name, &number, &designator);
 
   // Try next higher runway number
-  retval.append(prefix + runwayNameJoin(number < 36 ? number + 1 : 1, designator));
+  retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator));
 
   // Try next lower runway number
-  retval.append(prefix + runwayNameJoin(number > 1 ? number - 1 : 36, designator));
+  retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator));
 
   return retval;
 }
@@ -672,7 +683,7 @@ QStringList runwayNameZeroPrefixVariants(QString name)
   if(name.startsWith('0'))
     retval.append(name.mid(1));
   else if(name.startsWith("RW0"))
-    retval.append("RW" + name.mid(3));
+    retval.append("RW" % name.mid(3));
 
   return retval;
 }
@@ -681,7 +692,7 @@ QString runwayNamePrefixZero(const QString& name)
 {
   QString number, designator;
   if(runwayNameSplit(name, &number, &designator))
-    return number + designator;
+    return number % designator;
   else
     return name;
 }
@@ -703,10 +714,10 @@ QStringList arincNameNameVariants(const QString& name)
     runwayNameSplit(rw, &number, &designator);
 
     // Try next higher runway number
-    retval.append(prefix + runwayNameJoin(number < 36 ? number + 1 : 1, designator) + suffix);
+    retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator) + suffix);
 
     // Try next lower runway number
-    retval.append(prefix + runwayNameJoin(number > 1 ? number - 1 : 36, designator) + suffix);
+    retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator) + suffix);
   }
   return retval;
 }
@@ -740,7 +751,7 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
   for(const QString& runway : names)
   {
     if(variants.contains(runway))
-      return prefix + runway;
+      return prefix % runway;
   }
 
   if(rwname.startsWith('0'))
@@ -749,7 +760,7 @@ QString runwayBestFit(const QString& procRunwayName, const QStringList& airportR
     for(const QString& runway : names)
     {
       if(variants.contains(runway))
-        return prefix + runway;
+        return prefix % runway;
     }
   }
   return QString();
@@ -799,6 +810,64 @@ bool runwayNameSplit(const QString& name, QString *number, QString *designator)
     // If it is a number with designator make sure to add a 0 prefix
     *number = QString("%1").arg(num, 2, 10, QChar('0'));
   return retval;
+}
+
+bool hasSidStarAllRunways(const QString& approachArincName)
+{
+  return approachArincName == "ALL";
+}
+
+bool hasSidStarParallelRunways(QString approachArincName)
+{
+  const static QRegularExpression PARALLEL_REGEXP("^RW[0-9]{2}B$");
+
+  if(hasSidStarAllRunways(approachArincName))
+    return false;
+  else
+  {
+    if(!approachArincName.startsWith("RW"))
+      approachArincName = "RW" % approachArincName;
+
+    return approachArincName.contains(PARALLEL_REGEXP);
+  }
+}
+
+void sidStarMultiRunways(const QStringList& runwayNames, QString arincName, const QString& allName, QStringList *sidStarRunways,
+                         QStringList *sidStarDispNames)
+{
+  if(hasSidStarAllRunways(arincName))
+  {
+    if(sidStarDispNames != nullptr)
+      sidStarDispNames->append(allName);
+    if(sidStarRunways != nullptr)
+      sidStarRunways->append(runwayNames);
+  }
+  else if(hasSidStarParallelRunways(arincName))
+  {
+    // Check which runways are assigned from values like "RW12B"
+    arincName = arincName.mid(2, 2);
+    if(runwayContains(runwayNames, arincName % "L"))
+    {
+      if(sidStarDispNames != nullptr)
+        sidStarDispNames->append(arincName % "L");
+      if(sidStarRunways != nullptr)
+        sidStarRunways->append(arincName % "L");
+    }
+    if(runwayContains(runwayNames, arincName % "R"))
+    {
+      if(sidStarDispNames != nullptr)
+        sidStarDispNames->append(arincName % "R");
+      if(sidStarRunways != nullptr)
+        sidStarRunways->append(arincName % "R");
+    }
+    if(runwayContains(runwayNames, arincName % "C"))
+    {
+      if(sidStarDispNames != nullptr)
+        sidStarDispNames->append(arincName % "C");
+      if(sidStarRunways != nullptr)
+        sidStarRunways->append(arincName % "C");
+    }
+  }
 }
 
 } // namespace util
