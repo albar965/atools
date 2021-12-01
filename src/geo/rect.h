@@ -104,9 +104,12 @@ public:
   float getHeightDegree() const;
 
   /* Get width and height of the rectangle in meter at the center coordinates.
-   * This is a rought approximation at best. */
+   * This is a rough approximation at best. */
   float getWidthMeter() const;
   float getHeightMeter() const;
+
+  /* Distance from top left to bottom right. Rough approximation. */
+  float getDiameterMeter() const;
 
   float getNorth() const
   {

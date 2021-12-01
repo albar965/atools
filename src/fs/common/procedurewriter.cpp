@@ -599,8 +599,7 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
     // GPS overlay flag
     QString gpsIndicator = line.gnssFmsIndicator.trimmed();
-    rec.setValue(":has_gps_overlay", type != "GPS" &&
-                 !gpsIndicator.isEmpty() && gpsIndicator != "0" && gpsIndicator != "U");
+    rec.setValue(":has_gps_overlay", type != "GPS" && !gpsIndicator.isEmpty() && gpsIndicator != "0" && gpsIndicator != "U");
     rec.setValue(":suffix", suffix);
     rec.setValue(":type", type);
   }

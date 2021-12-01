@@ -315,6 +315,11 @@ float Rect::getHeightMeter() const
   return Pos(centerX, topLeft.getLatY()).distanceMeterTo(Pos(centerX, bottomRight.getLatY()));
 }
 
+float Rect::getDiameterMeter() const
+{
+  return (getTopLeft().distanceMeterTo(getBottomRight()) + getTopRight().distanceMeterTo(getBottomLeft())) / 2.f;
+}
+
 Rect& Rect::extend(const Pos& pos)
 {
   if(!pos.isValid())
@@ -403,7 +408,7 @@ Pos Rect::getCenter() const
 
 bool Rect::crossesAntiMeridian() const
 {
-// This calculation requires correct east and west values
+  // This calculation requires correct east and west values
   return getEast() < getWest() ||
          (atools::almostEqual(getWest(), 180.f) && atools::almostEqual(getEast(), -180.f)) ||
          (atools::almostEqual(getEast(), 180.f) && atools::almostEqual(getWest(), -180.f));
