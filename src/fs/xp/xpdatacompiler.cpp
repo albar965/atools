@@ -578,14 +578,21 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
     if(!(flags & READ_CIFP) && !(flags & READ_AIRSPACE))
     {
       // Read file header =============================
-      // Byte order identifier
-      line = stream.readLine();
-      lineNum++;
+      // Skip empty lines which can appear in some malformed add-on airport files
+      // Byte order identifier ===========
+      do
+      {
+        line = stream.readLine().simplified();
+        lineNum++;
+      } while(line.isEmpty());
       qInfo() << Q_FUNC_INFO << line;
 
-      // Metadata and copyright
-      line = stream.readLine();
-      lineNum++;
+      // Metadata and copyright ===========
+      do
+      {
+        line = stream.readLine().simplified();
+        lineNum++;
+      } while(line.isEmpty());
       qInfo() << Q_FUNC_INFO << line;
 
       QStringList fields = line.simplified().split(" ");
