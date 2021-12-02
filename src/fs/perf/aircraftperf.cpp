@@ -25,6 +25,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QRegularExpression>
 #include <QSettings>
 #include <QXmlStreamReader>
 
@@ -542,6 +543,12 @@ float AircraftPerf::getAlternateFuelFlowLbs() const
 float AircraftPerf::getAlternateFuelFlowGal() const
 {
   return volume ? alternateFuelFlow : ageo::fromLbsToGal(jetFuel, alternateFuelFlow);
+}
+
+bool AircraftPerf::isAircraftTypeValid() const
+{
+  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z][A-Z0-9]{1,4}$");
+  return AIRCRAFT_TYPE.match(getAircraftType()).hasMatch();
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)

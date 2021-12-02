@@ -293,7 +293,7 @@ public:
     name = value;
   }
 
-  /* Aircraft typee for this profile like "B732" or "BE9" */
+  /* Aircraft typee for this profile like "B732" or "BE9L" */
   QString getAircraftType() const
   {
     return type;
@@ -408,6 +408,8 @@ public:
   {
     runwayType = value;
   }
+
+  bool isAircraftTypeValid() const;
 
   /* Version number to save into LNMPERF XML files */
   static const int LNMPERF_VERSION_MAJOR = 1;
