@@ -55,8 +55,6 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
   bind(":has_touchdown_lights", type->getApproachLights().hasTouchdown());
   bind(":num_strobes", type->getApproachLights().getNumStrobes());
 
-  bindNullString(":altitude");
-
   if(type->getIlsIdent().isEmpty())
     bindNullString(":ils_ident");
   else
@@ -64,6 +62,7 @@ void RunwayEndWriter::writeObject(const RunwayEnd *type)
 
   bind(":end_type", type->isPrimaryEnd() ? QLatin1String("P") : QLatin1String("S"));
 
+  bind(":altitude", roundToInt(meterToFeet(type->getPosition().getAltitude())));
   bind(":lonx", type->getPosition().getLonX());
   bind(":laty", type->getPosition().getLatY());
   bind(":heading", type->getHeading());

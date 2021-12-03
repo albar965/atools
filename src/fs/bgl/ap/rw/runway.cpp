@@ -93,8 +93,7 @@ QString Runway::lightToStr(rw::Light type)
   return "INVALID";
 }
 
-Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent,
-               StructureType structureType)
+Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QString& airportIdent, StructureType structureType)
   : Record(options, bs)
 {
   surface = static_cast<Surface>(bs->readShort() & SURFACE_MASK);
@@ -116,9 +115,10 @@ Runway::Runway(const NavDatabaseOptions *options, BinaryStream *bs, const QStrin
   secondary.heading = atools::geo::opposedCourseDeg(heading);
 
   // Calculate runway end positions for drawing
-  primary.pos = primaryPos = position.getPos().endpoint(length / 2.f,
-                                                        atools::geo::opposedCourseDeg(heading));
+  primary.pos = primaryPos = position.getPos().endpoint(length / 2.f, atools::geo::opposedCourseDeg(heading));
+  primary.pos.setAltitude(position.getAltitude());
   secondary.pos = secondaryPos = position.getPos().endpoint(length / 2.f, heading);
+  secondary.pos.setAltitude(position.getAltitude());
 
   patternAltitude = bs->readFloat();
 

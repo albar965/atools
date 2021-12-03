@@ -1287,7 +1287,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":is_pattern", "N"); // not available
 
   rec.setValue(":heading", primaryHeading);
-  rec.setNull(":altitude");
+  rec.setValue(":altitude", airportAltitude);
   rec.setValue(":lonx", primaryPos.getLonX());
   rec.setValue(":laty", primaryPos.getLatY());
 
@@ -1337,7 +1337,7 @@ void XpAirportWriter::bindRunway(const QStringList& line, AirportRowCode rowCode
   rec.setValue(":is_pattern", "N"); // NONE
 
   rec.setValue(":heading", secondaryHeading);
-  rec.setNull(":altitude");
+  rec.setValue(":altitude", airportAltitude);
   rec.setValue(":lonx", secondaryPos.getLonX());
   rec.setValue(":laty", secondaryPos.getLatY());
 
