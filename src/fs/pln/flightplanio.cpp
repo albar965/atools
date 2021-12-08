@@ -1805,13 +1805,14 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   if(annotated)
   {
     QStringList comment;
-    for(const QString& key : plan.properties.keys())
+    for(auto it = plan.properties.begin(); it != plan.properties.end(); ++it)
     {
+      const QString& key = it.key();
       if(key == "_lnm")
         continue;
 
       if(!key.isEmpty())
-        comment.append("\n         " + key + "=" + plan.properties.value(key));
+        comment.append("\n         " + key + "=" + it.value());
     }
 
     std::sort(comment.begin(), comment.end());

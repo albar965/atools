@@ -467,7 +467,7 @@ QString adjustFsxUserWpName(QString name, int length)
 
 QString adjustMsfsUserWpName(QString name, int length)
 {
-  static const QRegularExpression USER_WP_NAME_REGEXP_MSFS("[^A-Za-z0-9 /()=?;,:._-*]");
+  static const QRegularExpression USER_WP_NAME_REGEXP_MSFS("[^A-Za-z0-9\\ \\/\\(\\)\\=\\?\\;\\,\\:\\.\\_\\-\\*]");
 
   name = atools::normalizeStr(name);
   name.replace(USER_WP_NAME_REGEXP_MSFS, "");

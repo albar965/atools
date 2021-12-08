@@ -276,10 +276,15 @@ public:
    * See variable definitions in namespace atools::fs::pln::pattern.
    */
   QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
-  static QString getFilenamePattern(QString pattern, const QString& type,
-                                    const QString& departureName, const QString& departureIdent,
-                                    const QString& destName, const QString& destIdent,
-                                    const QString& suffix, int altitude, bool clean = true);
+
+  static QString getFilenamePattern(QString pattern, const QString& type, const QString& departureName, const QString& departureIdent,
+                                    const QString& destName, const QString& destIdent, const QString& suffix, int altitude,
+                                    bool clean = true);
+
+  /* Return an example flight plan name for the given pattern plus optional error message in case of invalid characters.
+   * Message can be formatted for HTML output. */
+  static QString getFilenamePatternExample(const QString& pattern, const QString& suffix, bool html,
+                                           QString *errorMessage = nullptr);
 
   /* Direct, LowAlt, etc. only used for MS simulators */
   atools::fs::pln::RouteType getRouteType() const

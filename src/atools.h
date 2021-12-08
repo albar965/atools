@@ -309,9 +309,14 @@ const TYPE *firstOrNull(const QVector<TYPE>& list)
   return list.isEmpty() ? nullptr : &list.first();
 }
 
-/* Remove all special characters from the filename that can disturb any filesystem */
 static const int MAX_FILENAME_CHARS = 150;
-QString cleanFilename(const QString& filename, int maxLength = MAX_FILENAME_CHARS);
+
+/* Get a list of all invalid filename characters optionally escaped for HTML */
+QString invalidFilenameCharacters(bool html);
+
+/* Remove all special characters from the filename that can disturb any
+ * filesystem and truncated the name in the middle */
+QString cleanFilename(QString filename, int maxLength = MAX_FILENAME_CHARS);
 
 Q_DECL_CONSTEXPR int absInt(int value)
 {

@@ -180,11 +180,34 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
   return retval;
 }
 
-QString cleanFilename(const QString& filename, int maxLength)
+// \\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $  |
+static const QString INVALID_FILENAME_CHARACTERS("\\/:\'\"*<>?$|");
+
+QString invalidFilenameCharacters(bool html)
 {
-  return QString(filename).replace('\\', ' ').replace('/', ' ').replace(':', ' ').replace('\'', ' ').replace('\"', ' ').
-         replace('*', ' ').replace('<', ' ').replace('>', ' ').replace('?', ' ').replace('$', ' ').replace('|', ' ').
-         simplified().mid(0, maxLength);
+  QStringList retval;
+
+  for(QChar c : INVALID_FILENAME_CHARACTERS)
+  {
+    QString str(c);
+    if(html)
+      retval.append(str.toHtmlEscaped());
+    else
+      retval.append(str);
+  }
+
+  if(html)
+    return retval.join("&nbsp;&nbsp;");
+  else
+    return retval.join("  ");
+}
+
+QString cleanFilename(QString filename, int maxLength)
+{
+  for(QChar c : INVALID_FILENAME_CHARACTERS)
+    filename.replace(c, ' ');
+
+  return filename.simplified().mid(0, maxLength);
 }
 
 bool strContains(const QString& name, const QStringList& list)

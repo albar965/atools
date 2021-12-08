@@ -96,6 +96,34 @@ void Flightplan::setDepartureParkingType(QString type)
     departureParkingType = atools::fs::pln::NO_POS;
 }
 
+QString Flightplan::getFilenamePatternExample(const QString& pattern, const QString& suffix, bool html, QString *errorMessage)
+{
+  if(!pattern.isEmpty())
+  {
+    // Build an example filename
+    QString example = atools::fs::pln::Flightplan::getFilenamePattern(pattern, "IFR", "Frankfurt am Main", "EDDF",
+                                                                      "Fiumicino", "LIRF", suffix, 30000, false /* clean */);
+
+    // Clean name from invalid characters
+    QString cleanExample = atools::cleanFilename(example, atools::MAX_FILENAME_CHARS);
+
+    // Check if the cleaned filename differs from user input
+    if(example != cleanExample && errorMessage != nullptr)
+      *errorMessage = tr("Pattern contains invalid characters, double spaces or is longer than %1 characters.%2"
+                         "Not allowed are: %3").
+                      arg(atools::MAX_FILENAME_CHARS).
+                      arg(html ? "<br/>" : "\n").
+                      arg(atools::invalidFilenameCharacters(html));
+    return cleanExample;
+  }
+  else
+  {
+    if(errorMessage != nullptr)
+      *errorMessage = tr("Pattern is empty.");
+    return QString();
+  }
+}
+
 void Flightplan::clear()
 {
   entries.clear();
@@ -169,9 +197,6 @@ QString Flightplan::getFilenamePattern(QString pattern, const QString& type, con
                                        const QString& departureIdent, const QString& destName, const QString& destIdent,
                                        const QString& suffix, int altitude, bool clean)
 {
-  if(pattern.isEmpty())
-    pattern = pattern::SHORT;
-
   QString name = pattern.
                  replace(pattern::PLANTYPE, type.trimmed()).
                  replace(pattern::DEPARTNAME, departureName.simplified()).
