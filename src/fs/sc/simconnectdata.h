@@ -132,7 +132,7 @@ public:
   }
 
   static SimConnectData buildDebugForPosition(const atools::geo::Pos& pos, const atools::geo::Pos& lastPos, bool ground,
-                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice);
+                                              float vertSpeed, float tas, float fuelflow, float totalFuel, float ice, float flightplanAlt);
 
   bool isUserAircraftValid() const
   {

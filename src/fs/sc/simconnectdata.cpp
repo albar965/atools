@@ -166,7 +166,8 @@ int SimConnectData::write(QIODevice *ioDevice)
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
-                                                     float vertSpeed, float tas, float fuelflow, float totalFuel, float ice)
+                                                     float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
+                                                     float flightplanAlt)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -216,6 +217,14 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.toIdent = "LIRF";
   data.userAircraft.altitudeAboveGroundFt = pos.getAltitude();
   data.userAircraft.indicatedAltitudeFt = pos.getAltitude();
+
+  if(vertSpeed < 50.f)
+    data.userAircraft.altitudeAutopilotFt = flightplanAlt * 0.5f;
+  else if(vertSpeed > 50.f)
+    data.userAircraft.altitudeAutopilotFt = flightplanAlt * 0.75f;
+  else
+    data.userAircraft.altitudeAutopilotFt = flightplanAlt;
+
   data.userAircraft.airplaneEmptyWeightLbs = 1500.f;
   data.userAircraft.airplaneTotalWeightLbs = 3000.f;
   data.userAircraft.airplaneMaxGrossWeightLbs = 4000.f;
