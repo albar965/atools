@@ -73,7 +73,7 @@ void AircraftPerfHandler::stop()
   active = false;
 }
 
-void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData)
+void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData, const QString& simulator)
 {
   *curSimAircraft = simulatorData.getUserAircraftConst();
   if(!active || !curSimAircraft->isFullyValid() || curSimAircraft->isSimPaused() || curSimAircraft->isSimReplay())
@@ -92,6 +92,9 @@ void AircraftPerfHandler::simDataChanged(const sc::SimConnectData& simulatorData
 
   if(perf->getName().isEmpty())
     perf->setName(curSimAircraft->getAirplaneTitle());
+
+  if(perf->getSimulator().isEmpty())
+    perf->setSimulator(simulator);
 
   // Determine fuel type ========================================================
   if(atools::almostEqual(weightVolRatio, 0.f))

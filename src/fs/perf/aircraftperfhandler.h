@@ -94,7 +94,7 @@ public:
   }
 
   /* Simulator event that trigger data collection */
-  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData);
+  void simDataChanged(const atools::fs::sc::SimConnectData& simulatorData, const QString& simulator);
 
   /* Done after landing or engine shutdown */
   bool isFinished() const;

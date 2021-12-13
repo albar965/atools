@@ -79,7 +79,7 @@ public:
   void setNull();
 
   /* Reset all back to default values */
-  void resetToDefault();
+  void resetToDefault(const QString& simulatorParam);
 
   /* Change all fuel values in this object */
   void fromGalToLbs();
@@ -293,7 +293,7 @@ public:
     name = value;
   }
 
-  /* Aircraft typee for this profile like "B732" or "BE9L" */
+  /* Aircraft type for this profile like "B732" or "BE9L" */
   QString getAircraftType() const
   {
     return type;
@@ -313,6 +313,16 @@ public:
   void setDescription(const QString& value)
   {
     description = value;
+  }
+
+  const QString& getSimulator() const
+  {
+    return simulator;
+  }
+
+  void setSimulator(const QString& value)
+  {
+    simulator = value;
   }
 
   /* Current format */
@@ -409,6 +419,7 @@ public:
     runwayType = value;
   }
 
+  static bool isAircraftTypeValid(const QString& type);
   bool isAircraftTypeValid() const;
 
   /* Version number to save into LNMPERF XML files */
@@ -425,7 +436,7 @@ private:
 
   bool volume = false, jetFuel = false;
 
-  QString name, type, description;
+  QString name, type, simulator, description;
 
   /* Default values give no fuel consumption, no reserve and about 3 NM per 1000 ft climb and descent */
   float taxiFuel = 0.f;

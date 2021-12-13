@@ -165,6 +165,7 @@ void AircraftPerf::saveXmlInternal(QXmlStreamWriter& writer) const
   writer.writeStartElement("Options");
   writer.writeTextElement("Name", name);
   writer.writeTextElement("AircraftType", type);
+  writer.writeTextElement("Simulator", simulator);
   writer.writeTextElement("Description", description);
   writer.writeTextElement("FuelAsVolume", QString::number(volume));
   writer.writeTextElement("JetFuel", QString::number(jetFuel));
@@ -263,6 +264,8 @@ void AircraftPerf::loadXmlInternal(atools::util::XmlStream& xmlStream)
           name = reader.readElementText();
         else if(reader.name() == "AircraftType")
           type = reader.readElementText();
+        else if(reader.name() == "Simulator")
+          simulator = reader.readElementText();
         else if(reader.name() == "Description")
           description = reader.readElementText();
         else if(reader.name() == "FuelAsVolume")
@@ -390,14 +393,15 @@ FileFormat AircraftPerf::detectFormat(const QString& filename)
     return FORMAT_NONE;
 }
 
-void AircraftPerf::resetToDefault()
+void AircraftPerf::resetToDefault(const QString& simulatorParam)
 {
   *this = AircraftPerf();
+  simulator = simulatorParam;
 }
 
 void AircraftPerf::setNull()
 {
-  resetToDefault();
+  resetToDefault(QString());
   taxiFuel = reserveFuel = extraFuel =
     contingencyFuel =
       climbVertSpeed = climbSpeed = climbFuelFlow =
@@ -446,6 +450,7 @@ bool AircraftPerf::operator==(const AircraftPerf& other) const
          name == other.name &&
          type == other.type &&
          description == other.description &&
+         simulator == other.simulator &&
          atools::almostEqual(taxiFuel, other.taxiFuel) &&
          atools::almostEqual(reserveFuel, other.reserveFuel) &&
          atools::almostEqual(extraFuel, other.extraFuel) &&
@@ -545,10 +550,15 @@ float AircraftPerf::getAlternateFuelFlowGal() const
   return volume ? alternateFuelFlow : ageo::fromLbsToGal(jetFuel, alternateFuelFlow);
 }
 
-bool AircraftPerf::isAircraftTypeValid() const
+bool AircraftPerf::isAircraftTypeValid(const QString& type)
 {
   const static QRegularExpression AIRCRAFT_TYPE("^[A-Z][A-Z0-9]{1,4}$");
-  return AIRCRAFT_TYPE.match(getAircraftType()).hasMatch();
+  return AIRCRAFT_TYPE.match(type).hasMatch();
+}
+
+bool AircraftPerf::isAircraftTypeValid() const
+{
+  return isAircraftTypeValid(getAircraftType());
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)
@@ -556,6 +566,7 @@ void AircraftPerf::readFromSettings(const QSettings& settings)
   name = settings.value("Options/Name").toString();
   type = settings.value("Options/AircraftType").toString();
   description = settings.value("Options/Description").toString();
+  simulator = settings.value("Options/Simulator").toString();
 
   volume = settings.value("Options/FuelAsVolume").toBool();
   jetFuel = settings.value("Options/JetFuel").toBool();
@@ -609,6 +620,7 @@ void AircraftPerf::writeToSettings(QSettings& settings)
   settings.setValue("Options/Name", name);
   settings.setValue("Options/AircraftType", type);
   settings.setValue("Options/Description", description);
+  settings.setValue("Options/Simulator", simulator);
 
   settings.setValue("Options/FuelAsVolume", volume);
   settings.setValue("Options/JetFuel", jetFuel);
