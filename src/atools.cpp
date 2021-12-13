@@ -632,6 +632,14 @@ QString strJoin(const QStringList& list, const QString& sep)
   return retval;
 }
 
+QString strJoin(const QString& prefix, const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix)
+{
+  QString retval = strJoin(list, sep, lastSep, suffix);
+  if(!retval.isEmpty())
+    retval.prepend(prefix);
+  return retval;
+}
+
 QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix)
 {
   QString retval;

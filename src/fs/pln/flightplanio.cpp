@@ -487,7 +487,8 @@ void FlightplanIO::loadFms(atools::fs::pln::Flightplan& plan, const QString& fil
           QString value = list.value(1);
           if(key == "CYCLE")
           {
-            qInfo() << "Flight plan cycle" << value;
+            insertPropertyIf(plan, SIMDATA, "XP11");
+            insertPropertyIf(plan, SIMDATACYCLE, value);
             continue;
           }
           else if(key == "DEPRWY")
@@ -1029,13 +1030,13 @@ void FlightplanIO::loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xm
     // Simulator and navdata type and cycle =========================================
     else if(reader.name() == "SimData")
     {
-      insertPropertyIf(plan, SIMDATA, reader.readElementText());
       insertPropertyIf(plan, SIMDATACYCLE, reader.attributes().value("Cycle").toString());
+      insertPropertyIf(plan, SIMDATA, reader.readElementText());
     }
     else if(reader.name() == "NavData")
     {
-      insertPropertyIf(plan, NAVDATA, reader.readElementText());
       insertPropertyIf(plan, NAVDATACYCLE, reader.attributes().value("Cycle").toString());
+      insertPropertyIf(plan, NAVDATA, reader.readElementText());
     }
     // Used aircraft performance =========================================
     else if(reader.name() == "AircraftPerformance")

@@ -72,6 +72,8 @@ QString strJoin(const QStringList& list, const QString& sep);
 /* Concatenates all non empty strings in the list with the given separator and uses lastSep for separation.
  *  Example: strJoin({"A", "B", "C"}, ", ", " and ") => "A, B and C" */
 QString strJoin(const QStringList& list, const QString& sep, const QString& lastSep, const QString& suffix = QString());
+QString strJoin(const QString& prefix, const QStringList& list, const QString& sep, const QString& lastSep,
+                const QString& suffix = QString());
 
 /* true if str starts with any of the strings in the list  */
 bool strStartsWith(const QStringList& list, const QString& str);

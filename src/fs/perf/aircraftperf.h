@@ -283,7 +283,7 @@ public:
   }
 
   /* Name for this profile  */
-  QString getName() const
+  const QString& getName() const
   {
     return name;
   }
@@ -294,7 +294,7 @@ public:
   }
 
   /* Aircraft type for this profile like "B732" or "BE9L" */
-  QString getAircraftType() const
+  const QString& getAircraftType() const
   {
     return type;
   }
