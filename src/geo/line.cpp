@@ -274,6 +274,38 @@ bool Line::crossesAntiMeridian() const
   return atools::geo::crossesAntiMeridian(pos1.getLonX(), pos2.getLonX());
 }
 
+QList<Line> Line::splitAtAntiMeridian(bool *crossed) const
+{
+  if(crossed != nullptr)
+    *crossed = false;
+
+  if(isValid())
+  {
+    if(crossesAntiMeridian())
+    {
+      if(crossed != nullptr)
+        *crossed = true;
+
+      // Check for intersection with anti-meridian
+      // Radial (endless from pos1) is sufficient here since crossing is already confirmed
+      Pos p = Pos::intersectingRadials(pos1, angleDeg(), Pos(180.f, 90.f), 180.f);
+
+      // Avoid 170 -> -180 and -170 -> 180 situation
+      float boundary = pos1.getLonX() > 0.f && pos2.getLonX() < 0.f ? 180.f : -180.f;
+
+      // Return split line
+      return QList<Line>({Line(pos1.getLonX(), pos1.getLatY(), boundary, p.getLatY()),
+                          Line(-boundary, p.getLatY(), pos2.getLonX(), pos2.getLatY())});
+    }
+    else
+      // Return a copy of this
+      return QList<Line>({*this});
+  }
+  else
+    // Invalid - return empty
+    return QList<Line>();
+}
+
 bool Line::isWestCourse() const
 {
   return atools::geo::isWestCourse(pos1.getLonX(), pos2.getLonX());

@@ -155,8 +155,11 @@ public:
     pos2 = value;
   }
 
-  /* Needs pos 1 as the wester part and pos 2 as the eastern part */
+  /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
   bool crossesAntiMeridian() const;
+
+  /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
+  QList<Line> splitAtAntiMeridian(bool *crossed = nullptr) const;
 
   /* true if heading of "from" to "to" is towards west or east. */
   bool isWestCourse() const;

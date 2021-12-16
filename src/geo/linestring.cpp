@@ -177,10 +177,7 @@ void LineString::removeInvalid()
 
 void LineString::removeDuplicates(float epsilon)
 {
-  resize(static_cast<int>(std::distance(begin(),
-                                        std::unique(begin(), end(),
-                                                    [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool
-      {
+  resize(static_cast<int>(std::distance(begin(), std::unique(begin(), end(), [ = ](atools::geo::Pos& p1, atools::geo::Pos& p2) -> bool {
         return p1.almostEqual(p2, epsilon);
       }))));
 }
@@ -329,6 +326,54 @@ bool LineString::hasAllValidPoints() const
       return false;
   }
   return true;
+}
+
+bool LineString::crossesAntiMeridian() const
+{
+  for(int i = 1; i < size(); i++)
+  {
+    // True if any segment crosses
+    if(atools::geo::crossesAntiMeridian(at(i - 1).getLonX(), at(i).getLonX()))
+      return true;
+  }
+  return false;
+}
+
+LineString LineString::splitAtAntiMeridian(bool *crossed) const
+{
+  if(crossed != nullptr)
+    *crossed = false;
+
+  LineString split;
+
+  if(size() > 1)
+  {
+    for(int i = 0; i < size() - 1; i++)
+    {
+      Line line(at(i), at(i + 1));
+
+      QList<Line> splitLines = line.splitAtAntiMeridian();
+      if(splitLines.size() == 2)
+      {
+        // Crossing confirmed
+        if(crossed != nullptr)
+          *crossed = true;
+
+        // Add split line segments
+        split.append(splitLines.at(0).getPos1());
+        split.append(splitLines.at(0).getPos2());
+        split.append(splitLines.at(1).getPos1());
+      }
+      else if(!splitLines.isEmpty())
+        split.append(splitLines.first().getPos1());
+    }
+
+    split.append(last());
+  }
+  else if(size() == 1)
+    split.append(first());
+
+  return split;
 }
 
 QDataStream& operator<<(QDataStream& out, const LineString& obj)

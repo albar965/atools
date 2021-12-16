@@ -168,6 +168,12 @@ public:
     return isValid() && first() == last();
   }
 
+  /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */
+  bool crossesAntiMeridian() const;
+
+  /* Returns two lines if it crosses. Otherwise a copy of this or empty list if invalid. */
+  LineString splitAtAntiMeridian(bool *crossed = nullptr) const;
+
 private:
   friend QDebug operator<<(QDebug out, const atools::geo::LineString& record);
   friend QDataStream& operator<<(QDataStream& out, const atools::geo::LineString& obj);
