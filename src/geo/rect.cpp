@@ -399,8 +399,7 @@ Pos Rect::getCenter() const
       return Pos(bottomRight.getLonX() + 360.f - (bottomRight.getLonX() + 360.f - topLeft.getLonX()) / 2.f,
                  (topLeft.getLatY() + bottomRight.getLatY()) / 2.f).normalize();
     else
-      return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f,
-                 (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
+      return Pos((topLeft.getLonX() + bottomRight.getLonX()) / 2.f, (topLeft.getLatY() + bottomRight.getLatY()) / 2.f);
   }
   else
     return EMPTY_POS;
@@ -419,8 +418,7 @@ QList<Rect> Rect::splitAtAntiMeridian() const
   if(isValid())
   {
     if(crossesAntiMeridian())
-      return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()),
-                          Rect(-180.f, getNorth(), getEast(), getSouth())});
+      return QList<Rect>({Rect(getWest(), getNorth(), 180.f, getSouth()), Rect(-180.f, getNorth(), getEast(), getSouth())});
     else
       return QList<Rect>({*this});
   }

@@ -737,6 +737,12 @@ bool isJetFuel(float fuelWeightLbs, float fuelQuantityGal, float& weightVolRatio
 
 bool crossesAntiMeridian(float lonx1, float lonx2)
 {
+  // No crossing if any point is on the anti-meridian
+  if(atools::almostEqual(lonx1, 180.f) || atools::almostEqual(lonx1, -180.f) ||
+     atools::almostEqual(lonx2, 180.f) || atools::almostEqual(lonx2, -180.f))
+    return false;
+
+  // if the absolute value of the difference of longitudes is 180 or greater, there is a crossing.
   // east / west
   return std::abs((lonx1 + 360.f) - (lonx2 + 360.f)) > 180.f ||
          (atools::almostEqual(lonx1, 180.f) && atools::almostEqual(lonx2, -180.f)) ||

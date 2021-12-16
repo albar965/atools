@@ -161,7 +161,7 @@ public:
 
   atools::geo::Pos getCenter() const;
 
-  /* Returns two rectangles if this crosses the anti meridian otherwise *this.
+  /* Returns two rectangles if this crosses the anti meridian otherwise *this or empty list if invalid.
    * Correct east/west order is required for this to be reliable. */
   QList<atools::geo::Rect> splitAtAntiMeridian() const;
 
