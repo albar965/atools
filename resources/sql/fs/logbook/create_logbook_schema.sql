@@ -73,7 +73,7 @@ create table logbook
   flightplan blob,                                   -- LNMPLN Gzipped XML file recorded on touchdown
   aircraft_perf blob,                                -- LNMPERF Gzipped XML file recorded on touchdown
   aircraft_trail blob                                -- Gzipped GPX aircraft trail file recorded on touchdown
-  );
+);
 
 create index if not exists idx_logbook_aircraft_name on logbook(aircraft_name);
 create index if not exists idx_logbook_aircraft_type on logbook(aircraft_type);

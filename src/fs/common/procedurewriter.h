@@ -22,6 +22,7 @@
 
 #include "sql/sqlrecord.h"
 #include "geo/pos.h"
+#include "sql/sqltypes.h"
 
 namespace atools {
 
@@ -156,7 +157,7 @@ private:
     QStringList runways;
     rc::RowCode rowCode = rc::NONE;
     atools::sql::SqlRecord record;
-    atools::sql::SqlRecordVector legRecords;
+    atools::sql::SqlRecordList legRecords;
     bool isCommonRoute = false;
     QString sidStarName;
   };
@@ -212,7 +213,7 @@ private:
 
   /* Assigns new ids to the currently stored approaches */
   void assignApproachIds(ProcedureWriter::Procedure& proc);
-  void assignApproachLegIds(atools::sql::SqlRecordVector& records);
+  void assignApproachLegIds(atools::sql::SqlRecordList& records);
 
   /* Assigns new ids to the currently stored transitions */
   void assignTransitionIds(ProcedureWriter::Procedure& proc);

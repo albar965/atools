@@ -55,9 +55,6 @@ public:
   template<class OUT>
   int printResultSet(SqlRecordList& records, OUT& out);
 
-  template<class OUT>
-  int printResultSet(SqlRecordVector& records, OUT& out);
-
   /* Write a header containing the column names from the result set or not */
   void setHeader(bool value)
   {
@@ -153,12 +150,6 @@ private:
 
 template<class OUT>
 int SqlExport::printResultSet(SqlRecordList& records, OUT& out)
-{
-  return printResultSet(records.toVector(), out);
-}
-
-template<class OUT>
-int SqlExport::printResultSet(SqlRecordVector& records, OUT& out)
 {
   bool first = true;
 

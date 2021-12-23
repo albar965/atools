@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_USERDATAMANAGER_H
 #define ATOOLS_FS_USERDATAMANAGER_H
 
-#include "fs/userdata/datamanagerbase.h"
+#include "sql/datamanagerbase.h"
 
 namespace atools {
 
@@ -50,7 +50,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::userdata::Flags);
  * Uses SqlRecord as a base structure to exchange data.
  */
 class UserdataManager :
-  public DataManagerBase
+  public atools::sql::DataManagerBase
 {
 public:
   UserdataManager(atools::sql::SqlDatabase *sqlDb);
@@ -64,7 +64,7 @@ public:
                 QChar separator = ',', QChar escape = '"');
   int exportCsv(const QString& filepath, const QVector<int>& ids = QVector<int>(),
                 atools::fs::userdata::Flags flags = atools::fs::userdata::NONE,
-                QChar separator = ',', QChar escape = '"');
+                QChar separator = ',', QChar escape = '"') const;
 
   /* Import and export user_fix.dat file from X-Plane */
   int importXplane(const QString& filepath);
@@ -80,15 +80,13 @@ public:
   int exportBgl(const QString& filepath, const QVector<int>& ids);
 
   /* Do any schema updates if needed */
-  void updateSchema();
+  virtual void updateSchema() override;
 
   /* Set later to avoid circular dependeny in database */
   void setMagDecReader(atools::fs::common::MagDecReader *reader)
   {
     magDec = reader;
   }
-
-  virtual void backupTableToCsv() override;
 
 private:
   atools::fs::common::MagDecReader *magDec;

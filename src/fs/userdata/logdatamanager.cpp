@@ -140,8 +140,8 @@ const static QHash<int, std::pair<QString,QString>> COL_MAP =
 LogdataManager::LogdataManager(sql::SqlDatabase *sqlDb)
   : DataManagerBase(sqlDb, "logbook", "logbook_id",
                     ":/atools/resources/sql/fs/logbook/create_logbook_schema.sql",
-                    ":/atools/resources/sql/fs/logbook/drop_logbook_schema.sql",
-                    "little_navmap_logbook_backup.csv"), cache(MAX_CACHE_ENTRIES)
+                    ":/atools/resources/sql/fs/logbook/create_logbook_schema_undo.sql",
+                    ":/atools/resources/sql/fs/logbook/drop_logbook_schema.sql"), cache(MAX_CACHE_ENTRIES)
 {
 
 }
@@ -154,6 +154,8 @@ LogdataManager::~LogdataManager()
 int LogdataManager::importCsv(const QString& filepath)
 {
   SqlTransaction transaction(db);
+
+  preUndoBulkInsert();
 
   // Autogenerate id - exclude logbook_id from insert
   SqlQuery insertQuery(db);
@@ -299,6 +301,7 @@ int LogdataManager::importCsv(const QString& filepath)
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
+  postUndoBulkInsert();
   transaction.commit();
   return numImported;
 }
@@ -355,6 +358,7 @@ int LogdataManager::importXplane(const QString& filepath,
   };
 
   SqlTransaction transaction(db);
+  preUndoBulkInsert();
 
   // Autogenerate id
   SqlQuery insertQuery(db);
@@ -480,6 +484,7 @@ int LogdataManager::importXplane(const QString& filepath,
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2.").arg(filepath).arg(file.errorString()));
 
+  postUndoBulkInsert();
   transaction.commit();
   return numImported;
 
@@ -537,9 +542,9 @@ int LogdataManager::exportCsv(const QString& filepath, const QVector<int>& ids, 
       {
         // Write header
         first = false;
-        stream << sqlExport.getResultSetHeader(query.q.record()) << endl;
+        stream << sqlExport.getResultSetHeader(query.query.record()) << endl;
       }
-      SqlRecord record = query.q.record();
+      SqlRecord record = query.query.record();
 
       // Write row
       stream << sqlExport.getResultSetRow(record) << endl;
@@ -572,6 +577,8 @@ void LogdataManager::updateSchema()
   addColumnIf("flightplan", "blob");
   addColumnIf("aircraft_perf", "blob");
   addColumnIf("aircraft_trail", "blob");
+
+  DataManagerBase::updateUndoSchema();
 }
 
 void LogdataManager::clearGeometryCache()

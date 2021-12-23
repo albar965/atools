@@ -25,6 +25,7 @@
 #include "fs/xp/xpconstants.h"
 #include "fs/common/xpgeometry.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqltypes.h"
 
 #include <QApplication>
 
@@ -150,7 +151,7 @@ private:
       numParkingGaRamp = 0, numParkingGate = 0, numParkingCargo = 0,
       numParkingMilCargo = 0, numParkingMilCombat = 0;
 
-  atools::sql::SqlRecordVector runwayEndRecords;
+  atools::sql::SqlRecordList runwayEndRecords;
   /* pre-filled record */
   const atools::sql::SqlRecord runwayEndRecord;
 

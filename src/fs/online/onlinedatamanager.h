@@ -19,6 +19,7 @@
 #define ATOOLS_ONLINEDATAMANAGER_H
 
 #include "fs/online/onlinetypes.h"
+#include "sql/sqltypes.h"
 
 #include <QString>
 
@@ -33,7 +34,6 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
-typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 
 namespace fs {
@@ -134,7 +134,7 @@ public:
   atools::sql::SqlRecord getClientRecordById(int clientId);
 
   /* Get all rows for clients that match the callsign. Normally only one. */
-  atools::sql::SqlRecordVector getClientRecordsByCallsign(const QString& callsign);
+  atools::sql::SqlRecordList getClientRecordsByCallsign(const QString& callsign);
 
   /* Fill the map with callsign as key and position as value. Used for online/simulator deduplication. */
   void getClientCallsignAndPosMap(QHash<QString, geo::Pos>& clientMap);

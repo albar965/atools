@@ -189,13 +189,13 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
   return rec;
 }
 
-sql::SqlRecordVector OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
+sql::SqlRecordList  OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
 {
   SqlQuery query(db);
   query.prepare("select * from client where callsign = :callsign");
   query.bindValue(":callsign", callsign);
   query.exec();
-  sql::SqlRecordVector recs;
+  sql::SqlRecordList recs;
   while(query.next())
     recs.append(query.record());
   return recs;

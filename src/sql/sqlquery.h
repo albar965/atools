@@ -18,6 +18,8 @@
 #ifndef ATOOLS_SQL_SQLQUERY_H
 #define ATOOLS_SQL_SQLQUERY_H
 
+#include "sql/sqltypes.h"
+
 #include <QDateTime>
 #include <QSqlQuery>
 #include <QVariant>
@@ -29,9 +31,6 @@ namespace sql {
 
 class SqlDatabase;
 class SqlRecord;
-
-typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
-typedef QList<atools::sql::SqlRecord> SqlRecordList;
 
 /*
  * Wrapper around QSqlQuery that adds exceptions to avoid plenty of
@@ -202,10 +201,10 @@ public:
   void bindNullFloat(const QString& placeholder);
   void bindNullFloat(int pos);
 
-  void bindRecord(const atools::sql::SqlRecord& record);
+  void bindRecord(const atools::sql::SqlRecord& record, const QString& bindPrefix = QString());
 
-  void bindAndExecRecords(const atools::sql::SqlRecordVector& records);
-  void bindAndExecRecord(const SqlRecord& record);
+  void bindAndExecRecords(const atools::sql::SqlRecordList& records, const QString& bindPrefix = QString());
+  void bindAndExecRecord(const SqlRecord& record, const QString& bindPrefix = QString());
 
   QVariant boundValue(const QString& placeholder, bool ignoreInvalid = false) const;
   QVariant boundValue(int pos, bool ignoreInvalid = false) const;

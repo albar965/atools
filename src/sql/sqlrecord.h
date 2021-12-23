@@ -39,14 +39,35 @@ class SqlQuery;
 class SqlRecord
 {
 public:
-  SqlRecord();
-  SqlRecord(const QSqlRecord& other, const QString& query = QString());
-  SqlRecord(const SqlRecord& other);
-  SqlRecord& operator=(const SqlRecord& other);
+  SqlRecord()
+  {
 
-  ~SqlRecord();
+  }
 
-  bool operator==(const SqlRecord& other) const;
+  SqlRecord(const QSqlRecord& other, const QString& query = QString())
+  {
+    sqlRecord = other;
+    queryString = query;
+  }
+
+  SqlRecord(const SqlRecord& other)
+  {
+    sqlRecord = other.sqlRecord;
+    queryString = other.queryString;
+
+  }
+
+  SqlRecord& operator=(const SqlRecord& other)
+  {
+    sqlRecord = other.sqlRecord;
+    queryString = other.queryString;
+    return *this;
+  }
+
+  bool operator==(const SqlRecord& other) const
+  {
+    return sqlRecord == other.sqlRecord;
+  }
 
   inline bool operator!=(const SqlRecord& other) const
   {
@@ -184,13 +205,17 @@ public:
   }
 
   void appendField(const QString& fieldName, QVariant::Type type);
+  void insertField(int pos, const QString& fieldName, QVariant::Type type);
 
   /* Adds field if not exists and value too. Type is derived from value */
   SqlRecord& appendFieldAndValue(const QString& fieldName, QVariant value);
   SqlRecord& appendFieldAndNullValue(const QString& fieldName, QVariant::Type type);
+  SqlRecord& insertFieldAndValue(int pos, const QString& fieldName, QVariant value);
+  SqlRecord& insertFieldAndNullValue(int pos, const QString& fieldName, QVariant::Type type);
 
   /* Adds field if not exists and value too if value. Type is derived from value */
   SqlRecord& appendFieldAndValueIf(const QString& fieldName, QVariant value);
+  SqlRecord& insertFieldAndValueIf(int pos, const QString& fieldName, QVariant value);
 
   void setValue(int i, const QVariant& val);
   void setValue(const QString& name, const QVariant& val);
@@ -206,6 +231,8 @@ public:
   void remove(int pos);
   void remove(const QString& name);
 
+  void remove(const QStringList& names);
+
   QStringList fieldNames() const;
   QVariantList values() const;
 
@@ -216,8 +243,6 @@ private:
   QString queryString;
 
 };
-
-typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 
 QDebug operator<<(QDebug out, const atools::sql::SqlRecord& record);
 

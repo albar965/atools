@@ -26,41 +26,6 @@
 namespace atools {
 namespace sql {
 
-SqlRecord::SqlRecord()
-{
-
-}
-
-SqlRecord::SqlRecord(const QSqlRecord& other, const QString& query)
-{
-  sqlRecord = other;
-  queryString = query;
-}
-
-SqlRecord::SqlRecord(const SqlRecord& other)
-{
-  sqlRecord = other.sqlRecord;
-  queryString = other.queryString;
-
-}
-
-SqlRecord& SqlRecord::operator=(const SqlRecord& other)
-{
-  sqlRecord = other.sqlRecord;
-  queryString = other.queryString;
-  return *this;
-}
-
-SqlRecord::~SqlRecord()
-{
-
-}
-
-bool SqlRecord::operator==(const SqlRecord& other) const
-{
-  return sqlRecord == other.sqlRecord;
-}
-
 QVariant SqlRecord::value(int i) const
 {
   QVariant retval = sqlRecord.value(i);
@@ -186,6 +151,11 @@ void SqlRecord::appendField(const QString& fieldName, QVariant::Type type)
   sqlRecord.append(QSqlField(fieldName, type));
 }
 
+void SqlRecord::insertField(int pos, const QString& fieldName, QVariant::Type type)
+{
+  sqlRecord.insert(pos, QSqlField(fieldName, type));
+}
+
 SqlRecord& SqlRecord::appendFieldAndValue(const QString& fieldName, QVariant value)
 {
   if(!contains(fieldName))
@@ -202,10 +172,33 @@ SqlRecord& SqlRecord::appendFieldAndNullValue(const QString& fieldName, QVariant
   return *this;
 }
 
+SqlRecord& SqlRecord::insertFieldAndValue(int pos, const QString& fieldName, QVariant value)
+{
+  if(!contains(fieldName))
+    insertField(pos, fieldName, value.type());
+  setValue(fieldName, value);
+  return *this;
+}
+
+SqlRecord& SqlRecord::insertFieldAndNullValue(int pos, const QString& fieldName, QVariant::Type type)
+{
+  if(!contains(fieldName))
+    insertField(pos, fieldName, type);
+  setNull(fieldName);
+  return *this;
+}
+
 SqlRecord& SqlRecord::appendFieldAndValueIf(const QString& fieldName, QVariant value)
 {
   if(!value.isNull() && value.isValid())
     appendFieldAndValue(fieldName, value);
+  return *this;
+}
+
+SqlRecord& SqlRecord::insertFieldAndValueIf(int pos, const QString& fieldName, QVariant value)
+{
+  if(!value.isNull() && value.isValid())
+    insertFieldAndValue(pos, fieldName, value);
   return *this;
 }
 
@@ -217,6 +210,12 @@ void SqlRecord::remove(int pos)
 void SqlRecord::remove(const QString& name)
 {
   sqlRecord.remove(indexOf(name));
+}
+
+void SqlRecord::remove(const QStringList& names)
+{
+  for(const QString& name : names)
+    remove(name);
 }
 
 QStringList SqlRecord::fieldNames() const

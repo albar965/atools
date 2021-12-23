@@ -29,3 +29,10 @@ drop index if exists idx_userdata_last_edit_timestamp;
 drop index if exists idx_userdata_import_file_path;
 drop index if exists idx_userdata_lonx;
 drop index if exists idx_userdata_laty;
+
+drop table if exists undo_current;
+drop table if exists undo_data;
+
+drop index if exists idx_undo_data_id;
+drop index if exists idx_undo_group_id;
+drop index if exists idx_undo_userdata_id;

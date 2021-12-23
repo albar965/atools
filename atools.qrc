@@ -50,5 +50,7 @@
         <file>resources/xsd/lnmperf.xsd</file>
         <file>resources/sql/fs/db/update_nav_ids.sql</file>
         <file>resources/sql/fs/db/dfd/populate_parking.sql</file>
+        <file>resources/sql/fs/userdata/create_user_schema_undo.sql</file>
+        <file>resources/sql/fs/logbook/create_logbook_schema_undo.sql</file>
     </qresource>
 </RCC>

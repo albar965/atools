@@ -20,6 +20,7 @@
 
 #include "geo/rect.h"
 #include "geo/linestring.h"
+#include "sql/sqltypes.h"
 
 #include <QString>
 
@@ -28,7 +29,6 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
-typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 namespace fs {
 
@@ -139,11 +139,11 @@ public:
 
 private:
   /* Write all collected runways for an airport */
-  void writeRunwaysForAirport(sql::SqlRecordVector& runways, const QString& apt);
+  void writeRunwaysForAirport(atools::sql::SqlRecordList& runways, const QString& apt);
 
   /* Match opposing runway ends */
   void pairRunways(QVector<std::pair<atools::sql::SqlRecord, atools::sql::SqlRecord> >& runwaypairs,
-                   const sql::SqlRecordVector& runways);
+                   const sql::SqlRecordList& runways);
 
   /* Fill input structure for ProcedureWriter */
   void fillProcedureInput(atools::fs::common::ProcedureInput& procInput, const atools::sql::SqlQuery& query);

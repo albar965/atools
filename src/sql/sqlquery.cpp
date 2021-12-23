@@ -22,6 +22,7 @@
 #include "sql/sqlrecord.h"
 
 #include <QSqlError>
+#include <QDebug>
 
 namespace atools {
 
@@ -286,16 +287,21 @@ void SqlQuery::clearBoundValues()
 {
   QMap<QString, QVariant> values = boundValues();
 
-  for(const QString& key : values.keys())
+  for(auto it = values.begin(); it != values.end(); ++it)
   {
-    const QVariant& value = values.value(key);
+    const QVariant& value = it.value();
     if(value.isValid() && !value.isNull())
-      bindValue(key, QVariant(value.type()));
+      bindValue(it.key(), QVariant(value.type()));
   }
 }
 
 void SqlQuery::exec()
 {
+#ifdef DEBUG_SQL_INFORMATION
+  qDebug() << Q_FUNC_INFO << queryString;
+  qDebug() << Q_FUNC_INFO << boundValuesAsString();
+#endif
+
   checkError(query.exec(), "SqlQuery::exec(): Error executing query");
   if(db->isAutocommit())
     db->commit();
@@ -380,26 +386,32 @@ void SqlQuery::bindNullFloat(int pos)
   boundValue(pos);
 }
 
-void SqlQuery::bindRecord(const SqlRecord& record)
+void SqlQuery::bindRecord(const SqlRecord& record, const QString& bindPrefix)
 {
   for(int i = 0; i < record.count(); i++)
-    bindValue(record.fieldName(i), record.value(i));
+    bindValue(bindPrefix + record.fieldName(i), record.value(i));
 }
 
-void SqlQuery::bindAndExecRecords(const SqlRecordVector& records)
+void SqlQuery::bindAndExecRecords(const SqlRecordList& records, const QString& bindPrefix)
 {
   for(const SqlRecord& record:records)
   {
-    bindRecord(record);
+    bindRecord(record, bindPrefix);
     exec();
+    if(numRowsAffected() != 1)
+      qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1. Record " << record;
+
     clearBoundValues();
   }
 }
 
-void SqlQuery::bindAndExecRecord(const SqlRecord& record)
+void SqlQuery::bindAndExecRecord(const SqlRecord& record, const QString& bindPrefix)
 {
-  bindRecord(record);
+  bindRecord(record, bindPrefix);
   exec();
+  if(numRowsAffected() != 1)
+    qWarning() << Q_FUNC_INFO << "query.numRowsAffected() != 1. Record " << record;
+
   clearBoundValues();
 }
 
@@ -408,10 +420,7 @@ QVariant SqlQuery::boundValue(const QString& placeholder, bool ignoreInvalid) co
   QVariant v = query.boundValue(placeholder);
 
   if(!ignoreInvalid && !v.isValid())
-    throw SqlException(
-            "SqlQuery::boundValue(): Bind name \"" + placeholder + "\" does not exist in query \"" +
-            queryString +
-            "\"");
+    throw SqlException("SqlQuery::boundValue(): Bind name \"" + placeholder + "\" does not exist in query \"" + queryString + "\"");
   return v;
 }
 
@@ -489,9 +498,11 @@ QString SqlQuery::getFullQueryString() const
 {
   QString retval = getQueryString();
 
-  for(const QString& name : boundValues().keys())
+  QMap<QString, QVariant> values = boundValues();
+  for(auto it = values.begin(); it != values.end(); ++it)
   {
-    QVariant val = boundValue(name);
+    const QString& name = it.key();
+    const QVariant& val = it.value();
     if(val.type() == QVariant::String)
       retval.replace(name, "'" + val.toString() + "' /* " + name + " */");
     else

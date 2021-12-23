@@ -32,7 +32,7 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::sql::SqlRecord;
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 
 namespace atools {
 namespace fs {
@@ -376,7 +376,7 @@ void ProcedureWriter::assignApproachIds(ProcedureWriter::Procedure& proc)
   proc.record.setValue(":approach_id", ++curApproachId);
 }
 
-void ProcedureWriter::assignApproachLegIds(atools::sql::SqlRecordVector& records)
+void ProcedureWriter::assignApproachLegIds(sql::SqlRecordList& records)
 {
   for(SqlRecord& rec : records)
   {

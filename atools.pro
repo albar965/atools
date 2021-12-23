@@ -177,7 +177,6 @@ HEADERS += \
   src/fs/scenery/materiallib.h \
   src/fs/userdata/airspacereaderbase.h \
   src/fs/userdata/airspacereaderopenair.h \
-  src/fs/userdata/datamanagerbase.h \
   src/fs/userdata/logdatamanager.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
@@ -250,6 +249,7 @@ HEADERS += \
   src/routing/routenetworkloader.h \
   src/routing/routenetworktypes.h \
   src/settings/settings.h \
+  src/sql/datamanagerbase.h \
   src/sql/sqldatabase.h \
   src/sql/sqlexception.h \
   src/sql/sqlexport.h \
@@ -257,6 +257,7 @@ HEADERS += \
   src/sql/sqlrecord.h \
   src/sql/sqlscript.h \
   src/sql/sqltransaction.h \
+  src/sql/sqltypes.h \
   src/sql/sqlutil.h \
   src/templateengine/template.h \
   src/templateengine/templatecache.h \
@@ -313,7 +314,6 @@ SOURCES += \
   src/fs/scenery/materiallib.cpp \
   src/fs/userdata/airspacereaderbase.cpp \
   src/fs/userdata/airspacereaderopenair.cpp \
-  src/fs/userdata/datamanagerbase.cpp \
   src/fs/userdata/logdatamanager.cpp \
   src/fs/util/coordinates.cpp \
   src/fs/util/fsutil.cpp \
@@ -383,6 +383,7 @@ SOURCES += \
   src/routing/routenetworkloader.cpp \
   src/routing/routenetworktypes.cpp \
   src/settings/settings.cpp \
+  src/sql/datamanagerbase.cpp \
   src/sql/sqldatabase.cpp \
   src/sql/sqlexception.cpp \
   src/sql/sqlexport.cpp \

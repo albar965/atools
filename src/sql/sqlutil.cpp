@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QString>
 #include <QSqlDatabase>
+#include <QStringBuilder>
 
 namespace atools {
 
@@ -43,14 +44,7 @@ SqlUtil::SqlUtil(const SqlDatabase& sqlDb)
 QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& otherClause,
                                       const QStringList& excludeColumns, bool namedBindings) const
 {
-  // TODO use QSqlDriver::sqlStatement()
-
-  // QSqlDriver::WhereStatement	0	An SQL WHERE statement (e.g., WHERE f = 5).
-  // QSqlDriver::SelectStatement	1	An SQL SELECT statement (e.g., SELECT f FROM t).
-  // QSqlDriver::UpdateStatement	2	An SQL UPDATE statement (e.g., UPDATE TABLE t set f = 1).
-  // QSqlDriver::InsertStatement	3	An SQL INSERT statement (e.g., INSERT INTO t (f) values (1)).
-  // QSqlDriver::DeleteStatement	4	An SQL DELETE statement (e.g., DELETE FROM t).
-  QString columnList, valueList;
+  QStringList columnList, valueList;
 
   SqlRecord record = db->record(tablename);
 
@@ -61,30 +55,38 @@ QString SqlUtil::buildInsertStatement(const QString& tablename, const QString& o
     if(excludeColumns.contains(name))
       continue;
 
-    if(!columnList.isEmpty())
-      columnList += ", ";
-    columnList += name;
-
-    if(!valueList.isEmpty())
-      valueList += ", ";
-
-    if(namedBindings)
-      valueList += ":" + name;
-    else
-      valueList += "?";
+    columnList.append(name);
+    valueList.append(namedBindings ? QString(":" % name) : "?");
   }
-  return "insert " + otherClause + " into " + tablename + " (" + columnList + ") values(" + valueList + ")";
+  return "insert " % otherClause % " into " % tablename % " (" % columnList.join(", ") % ") values(" % valueList.join(", ") % ")";
+}
+
+QString SqlUtil::buildUpdateStatement(const QString& tablename, const QString& whereClause,
+                                      const QStringList& excludeColumns, bool namedBindings) const
+{
+  QStringList columnList;
+
+  SqlRecord record = db->record(tablename);
+
+  for(int i = 0; i < record.count(); i++)
+  {
+    QString name = record.fieldName(i);
+
+    if(excludeColumns.contains(name))
+      continue;
+
+    columnList.append(name % " = " % (namedBindings ? QString(":" % name) : "?"));
+  }
+  return "update " % tablename % " set " % columnList.join(", ") % (whereClause.isEmpty() ? QString() : " where " % whereClause);
 }
 
 QString SqlUtil::buildSelectStatement(const QString& tablename) const
 {
-  // TODO use QSqlDriver::sqlStatement()
-  return "select " + buildColumnList(tablename).join(", ") + " from " + tablename;
+  return "select " % buildColumnList(tablename).join(", ") % " from " % tablename;
 }
 
 QStringList SqlUtil::buildColumnList(const QString& tablename, const QStringList& excludeColumns) const
 {
-  // TODO use QSqlDriver::sqlStatement()
   QStringList columnList;
 
   SqlRecord record = db->record(tablename);
@@ -116,8 +118,7 @@ QStringList SqlUtil::buildColumnListIf(const QString& tablename, const QStringLi
 
 QString SqlUtil::buildSelectStatement(const QString& tablename, const QStringList& columns) const
 {
-  // TODO use QSqlDriver::sqlStatement()
-  return "select " + columns.join(",") + " from " + tablename;
+  return "select " % columns.join(", ") % " from " % tablename;
 }
 
 bool SqlUtil::hasTable(const QString& tablename) const
@@ -153,7 +154,7 @@ int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QStri
   if(hasTableAndColumn(tablename, columnname))
   {
     SqlQuery q(db);
-    q.exec("select count(distinct " + columnname + ") from " + tablename);
+    q.exec("select count(distinct " % columnname % ") from " % tablename);
     if(q.next())
       return q.value(0).toInt();
   }
@@ -163,7 +164,7 @@ int SqlUtil::getTableColumnAndDistinctRows(const QString& tablename, const QStri
 int SqlUtil::rowCount(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
-  q.exec("select count(1) from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria));
+  q.exec("select count(1) from " % tablename % (criteria.isEmpty() ? QString() : " where " % criteria));
   if(q.next())
     return q.value(0).toInt();
 
@@ -173,7 +174,7 @@ int SqlUtil::rowCount(const QString& tablename, const QString& criteria) const
 bool SqlUtil::hasRows(const QString& tablename, const QString& criteria) const
 {
   SqlQuery q(db);
-  q.exec("select 1 from " + tablename + (criteria.isEmpty() ? QString() : " where " + criteria) + " limit 1");
+  q.exec("select 1 from " % tablename % (criteria.isEmpty() ? QString() : " where " % criteria) % " limit 1");
   return q.next();
 }
 
@@ -187,7 +188,7 @@ void SqlUtil::copyRowValuesInternal(const SqlQuery& from, SqlQuery& to,
 {
   for(int i = 0; i < fromRec.count(); i++)
   {
-    QString bind = ":" + fromRec.fieldName(i);
+    QString bind = ":" % fromRec.fieldName(i);
     if(bound.contains(bind))
       to.bindValue(bind, from.value(i));
   }
@@ -212,7 +213,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to, std::function<bool(S
       if(to.numRowsAffected() != 1)
         throw SqlException("Error executing statement in Utility::copyResultValues(). "
                            "Number of inserted rows not 1. "
-                           "(SQL \"" + to.lastQuery() + "\")");
+                           "(SQL \"" % to.lastQuery() % "\")");
       copied++;
     }
   }
@@ -234,7 +235,7 @@ int SqlUtil::copyResultValues(SqlQuery& from, SqlQuery& to)
     if(to.numRowsAffected() != 1)
       throw SqlException("Error executing statement in Utility::copyResultValues(). "
                          "Number of inserted rows not 1. "
-                         "(SQL \"" + to.lastQuery() + "\")");
+                         "(SQL \"" % to.lastQuery() % "\")");
     copied++;
   }
   return copied;
@@ -257,13 +258,13 @@ void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, 
 
   QStringList insertSet;
   for(const QString& ic : insertcolumns)
-    insertSet.append(ic + " = :" + ic);
+    insertSet.append(ic % " = :" % ic);
 
   SqlQuery insert(db);
-  QString queryStr = "update " + table + " set " + insertSet.join(", ") + " where " + idColum + " = :" + idColum;
+  QString queryStr = "update " % table % " set " % insertSet.join(", ") % " where " % idColum % " = :" % idColum;
 
   if(!whereClause.isEmpty())
-    queryStr += " and (" + whereClause + ")";
+    queryStr += " and (" % whereClause % ")";
 
   insert.prepare(queryStr);
 
@@ -273,7 +274,7 @@ void SqlUtil::updateColumnInTable(const QString& table, const QString& idColum, 
   {
     if(func(select, insert))
     {
-      insert.bindValue(":" + idColum, select.value(idColum));
+      insert.bindValue(":" % idColum, select.value(idColum));
       insert.exec();
     }
   }
@@ -299,7 +300,7 @@ void SqlUtil::printTableStats(QDebug& out, const QStringList& tables, bool brief
     {
       if(hasTableAndRows(name))
       {
-        query.exec("select count(1) as cnt from " + name);
+        query.exec("select count(1) as cnt from " % name);
         if(query.next())
         {
           int cnt = query.value("cnt").toInt();
@@ -353,7 +354,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
         for(int i = 0; i < record.count(); i++)
         {
           QString col = record.fieldName(i);
-          querySelCount.exec("select count(distinct " + col + ") as cnt from " + name);
+          querySelCount.exec("select count(distinct " % col % ") as cnt from " % name);
           if(querySelCount.next())
           {
             int cnt = querySelCount.value("cnt").toInt();
@@ -365,7 +366,7 @@ void SqlUtil::createColumnReport(QDebug& out, const QStringList& tables) const
               else if(cnt == 1)
               {
                 out << " has only 1 distinct value: ";
-                queryGroup.exec("select " + col + " from " + name + " group by " + col);
+                queryGroup.exec("select " % col % " from " % name % " group by " % col);
                 while(queryGroup.next())
                 {
                   QVariant val = queryGroup.value(0);
@@ -403,8 +404,8 @@ void SqlUtil::reportRangeViolations(QDebug& out,
     if(hasTableAndRows(table))
     {
       SqlQuery q(db);
-      q.prepare("select " + reportCols.join(", ") + ", " + column + " from " + table +
-                " where " + column + " not between :min and :max");
+      q.prepare("select " % reportCols.join(", ") % ", " % column % " from " % table %
+                " where " % column % " not between :min and :max");
 
       q.bindValue(":min", minValue);
       q.bindValue(":max", maxValue);
@@ -445,19 +446,19 @@ void SqlUtil::reportDuplicates(QDebug& out,
 
   QStringList where;
   QStringList colList;
-  for(QString ic : identityColumns)
+  for(QString icol : identityColumns)
   {
-    where.append("t1." + ic + " = t2." + ic);
-    colList.append("t1." + ic);
+    where.append("t1." % icol % " = t2." % icol);
+    colList.append("t1." % icol);
   }
 
   SqlQuery q(db);
   q.exec(
-    "select distinct t1." + idColumn + ", " + colList.join(", ") +
-    " from " + table + " t1 " +
-    "join " + table + " t2 on " + where.join(" and ") +
-    " where t1." + idColumn + " <> t2." + idColumn +
-    " order by " + colList.join(", "));
+    "select distinct t1." % idColumn % ", " % colList.join(", ") %
+    " from " % table % " t1 " %
+    "join " % table % " t2 on " % where.join(" and ") %
+    " where t1." % idColumn % " <> t2." % idColumn %
+    " order by " % colList.join(", "));
 
   bool header = false;
   while(q.next())
@@ -499,7 +500,7 @@ QStringList SqlUtil::buildTableList(const QStringList& tables) const
   else
     tableList = tables;
 
-  qSort(tableList);
+  tableList.sort();
   return tableList;
 }
 
@@ -518,10 +519,51 @@ bool SqlUtil::addColumnIf(const QString& table, const QString& column, const QSt
   if(!db->record(table).contains(column))
   {
     // Add missing column
-    db->exec("alter table " + table + " add column " + column + " " + type + " " + suffix);
+    db->exec("alter table " % table % " add column " % column % " " % type % " " % suffix);
     return true;
   }
   return false;
+}
+
+int SqlUtil::getMaxId(const QString& table, const QString& idColumn)
+{
+  int id = 0;
+  SqlQuery query("select max(" % (idColumn.isEmpty() ? "rowid" : idColumn) % ") from " % table, db);
+  query.exec();
+  if(query.next())
+    id = query.valueInt(0);
+  else
+    qWarning() << Q_FUNC_INFO << "Nothing found in" << table << idColumn;
+  query.finish();
+  return id;
+}
+
+int SqlUtil::getValueInt(const QString& queryStr, int defaultValue)
+{
+  return getValueVar(queryStr, defaultValue).toInt();
+}
+
+float SqlUtil::getValueFloat(const QString& queryStr, float defaultValue)
+{
+  return getValueVar(queryStr, defaultValue).toFloat();
+}
+
+QString SqlUtil::getValueStr(const QString& queryStr, const QString& defaultValue)
+{
+  return getValueVar(queryStr, defaultValue).toString();
+}
+
+QVariant SqlUtil::getValueVar(const QString& queryStr, const QVariant& defaultValue)
+{
+  QVariant var;
+  SqlQuery query(queryStr, db);
+  query.exec(queryStr);
+  if(query.next())
+    var = query.value(0);
+  else
+    var = defaultValue;
+  query.finish();
+  return var;
 }
 
 } // namespace sql

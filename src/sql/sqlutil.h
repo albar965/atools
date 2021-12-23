@@ -63,6 +63,8 @@ public:
   /* Creates an insert statement including all columns for the given table. */
   QString buildInsertStatement(const QString& tablename, const QString& otherClause = QString(),
                                const QStringList& excludeColumns = QStringList(), bool namedBindings = true) const;
+  QString buildUpdateStatement(const QString& tablename, const QString& whereClause, const QStringList& excludeColumns = QStringList(),
+                               bool namedBindings = true) const;
 
   /* Creates a select statement including all columns for the given table. */
   QString buildSelectStatement(const QString& tablename) const;
@@ -76,8 +78,7 @@ public:
   bool hasTableAndRows(const QString& tablename) const;
 
   /* Return first database in the list having table and rows. null if no one has. */
-  static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename,
-                                                         QVector<atools::sql::SqlDatabase *> databases);
+  static atools::sql::SqlDatabase *getDbWithTableAndRows(const QString& tablename, QVector<atools::sql::SqlDatabase *> databases);
 
   /* @return number of distinct rows if table and column exist. Otherwise -1. */
   int getTableColumnAndDistinctRows(const QString& tablename, const QString& columnname) const;
@@ -87,8 +88,6 @@ public:
 
   /* Faster than rowCount */
   bool hasRows(const QString& tablename, const QString& criteria = QString()) const;
-
-  QStringList columnsIf() const;
 
   /* Copy all values from one query to another
    * @param from a valid query as data source
@@ -110,11 +109,11 @@ public:
    */
   static void copyRowValues(const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to);
 
-  void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols,
-                             const QString& column, const QVariant& minValue,
-                             const QVariant& maxValue) const;
+  void reportRangeViolations(QDebug& out, const QString& table, const QStringList& reportCols, const QString& column,
+                             const QVariant& minValue, const QVariant& maxValue) const;
 
   typedef  std::function<bool (const atools::sql::SqlQuery&, atools::sql::SqlQuery&)> UpdateColFuncType;
+
   /* Calls func for earch row to allow complex calculations for each row in the table which could not
    * be done in the database
    * @param table Table to be modified
@@ -131,6 +130,15 @@ public:
   /* Add column with given name and type if it does not exist yet. suffix can be "not null" or similar constraints.
    * Returns true if a new column was added. */
   bool addColumnIf(const QString& table, const QString& column, const QString& type, const QString& suffix = QString());
+
+  /* Get maximum integer from either rowid or given primary key column */
+  int getMaxId(const QString& table, const QString& idColumn = QString());
+
+  /* Get singe row/column values from query. Returns default if result set is empty */
+  int getValueInt(const QString& queryStr, int defaultValue = 0);
+  float getValueFloat(const QString& queryStr, float defaultValue = 0.f);
+  QString getValueStr(const QString& queryStr, const QString& defaultValue = QString());
+  QVariant getValueVar(const QString& queryStr, const QVariant& defaultValue = QVariant());
 
 private:
   const SqlDatabase *db;

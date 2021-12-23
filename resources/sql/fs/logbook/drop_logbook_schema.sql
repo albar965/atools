@@ -38,3 +38,10 @@ drop index if exists idx_logbook_destination_laty logbook;
 drop index if exists idx_logbook_destination_time logbook;
 drop index if exists idx_logbook_destination_time_sim logbook;
 drop index if exists idx_logbook_simulator on logbook(simulator);
+
+drop table if exists undo_current;
+drop table if exists undo_data;
+
+drop index if exists idx_undo_data_id;
+drop index if exists idx_undo_group_id;
+drop index if exists idx_undo_userdata_id;

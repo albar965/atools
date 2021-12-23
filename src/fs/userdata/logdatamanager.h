@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FS_LOGDATAMANAGER_H
 #define ATOOLS_FS_LOGDATAMANAGER_H
 
-#include "fs/userdata/datamanagerbase.h"
+#include "sql/datamanagerbase.h"
 #include "geo/linestring.h"
 
 #include <QCache>
@@ -50,7 +50,7 @@ struct LogEntryGeometry
  * Contains special functionality around the logbook database.
  */
 class LogdataManager :
-  public DataManagerBase
+  public atools::sql::DataManagerBase
 {
 public:
   LogdataManager(atools::sql::SqlDatabase *sqlDb);

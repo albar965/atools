@@ -46,7 +46,7 @@ using atools::fs::common::MetadataWriter;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::sql::SqlScript;
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 using atools::sql::SqlRecord;
 using atools::geo::Pos;
 using atools::geo::LineString;
@@ -194,7 +194,7 @@ void DfdCompiler::writeRunways()
 
   runwayQuery->exec();
 
-  SqlRecordVector runways;
+  SqlRecordList runways;
   QString lastApt;
   while(runwayQuery->next())
   {
@@ -212,7 +212,7 @@ void DfdCompiler::writeRunways()
   db.commit();
 }
 
-void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString& apt)
+void DfdCompiler::writeRunwaysForAirport(SqlRecordList& runways, const QString& apt)
 {
   QVector<std::pair<SqlRecord, SqlRecord> > runwaypairs;
 
@@ -410,7 +410,7 @@ void DfdCompiler::writeRunwaysForAirport(SqlRecordVector& runways, const QString
   airportUpdateQuery->exec();
 }
 
-void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs, const SqlRecordVector& runways)
+void DfdCompiler::pairRunways(QVector<std::pair<SqlRecord, SqlRecord> >& runwaypairs, const SqlRecordList& runways)
 {
   // Go through the list of runways and find matching runway ends like 9R / 27L
   QSet<QString> found;
