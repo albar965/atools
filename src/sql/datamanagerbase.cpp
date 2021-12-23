@@ -112,6 +112,7 @@ void DataManagerBase::updateUndoSchema()
     script.executeScript(createUndoScript);
     transaction.commit();
     initQueries();
+    undoActive = hasUndoSchema();
   }
 
   updateUndoRedoActions();
@@ -852,7 +853,9 @@ void DataManagerBase::initQueries()
 {
   deInitQueries();
 
-  if(hasUndoSchema())
+  undoActive = hasUndoSchema();
+
+  if(undoActive)
   {
     queryUndoCurrent = new SqlQuery(db);
     queryUndoCurrent->prepare("update undo_current set undo_group_id = ?");
