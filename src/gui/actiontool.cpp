@@ -41,13 +41,16 @@ ActionTool::~ActionTool()
 
 void ActionTool::setText(QAction *action, const QString& arg, const QString& suffix)
 {
-  action->setText(action->text().arg(action->isEnabled() ? arg : QString()) % (action->isEnabled() ? QString() : suffix));
+  if(action->text().contains("%1"))
+    action->setText(action->text().arg(action->isEnabled() ? arg : QString()) % (action->isEnabled() ? QString() : suffix));
 }
 
 void ActionTool::setText(QAction *action, bool enabled, const QString& arg, const QString& suffix)
 {
   action->setEnabled(enabled);
-  action->setText(action->text().arg(enabled ? arg : QString()) % (enabled ? QString() : suffix));
+
+  if(action->text().contains("%1"))
+    action->setText(action->text().arg(enabled ? arg : QString()) % (enabled ? QString() : suffix));
 }
 
 void ActionTool::finishTexts(const QString& objectText)

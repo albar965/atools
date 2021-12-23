@@ -167,7 +167,7 @@ int SimConnectData::write(QIODevice *ioDevice)
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
                                                      float vertSpeed, float tas, float fuelflow, float totalFuel, float ice,
-                                                     float flightplanAlt)
+                                                     float flightplanAlt, float magVar)
 {
   static QVector<float> lastHdgs;
   lastHdgs.fill(0.f, 10);
@@ -176,17 +176,18 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.position = pos;
   // data.userAircraft.position.setAltitude(1000);
 
-  float h = 0.f;
+  float headingTrue = 0.f;
   if(lastPos.isValid())
   {
-    h = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
+    headingTrue = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
     data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = tas;
   }
 
-  data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(h + 20.f);
-  data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(h + 25.f);
-  data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(h + 10.f);
-  data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(h + 15.f);
+  data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
+  data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(headingTrue);
+  data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
+  data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(headingTrue);
+  data.userAircraft.magVarDeg= magVar;
 
   data.userAircraft.pitotIcePercent = static_cast<quint8>(ice);
   data.userAircraft.structuralIcePercent = static_cast<quint8>(ice / 2);
