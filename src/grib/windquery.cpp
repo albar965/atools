@@ -194,7 +194,8 @@ WindQuery::WindQuery(QObject *parentObject, bool logVerbose)
 
   // Set up file watcher for file based updates
   fileWatcher = new atools::util::FileSystemWatcher(parentObject, logVerbose);
-  fileWatcher->setMinFileSize(180000);
+  fileWatcher->setMinFileSize(180000); // Do not accept smaller files
+  fileWatcher->setDelayMs(10000); // Delay notification for 10 seconds to avoid incomplete files
   connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &WindQuery::gribFileUpdated);
 }
 
@@ -626,8 +627,8 @@ void WindQuery::gribFileUpdated(const QString& filename)
 // longitudeOfLastGridPointInDegrees = 359;
 // iDirectionIncrementInDegrees = 1;
 // jDirectionIncrementInDegrees = 1;
-// Ni — number of points along a parallel - 360
-// Nj — number of points along a meridian - 181
+// Ni - number of points along a parallel - 360
+// Nj - number of points along a meridian - 181
 // multiplying Ni (octets 31-34) by Nj (octets 35-38) yields the total number of points
 // i direction - west to east along a parallel or left to right along an x-axis.
 // j direction - south to north along a meridian, or bottom to top along a y-axis.
