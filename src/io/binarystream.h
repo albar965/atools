@@ -19,6 +19,7 @@
 #define ATOOLS_IO_BINARYSTREAM_H
 
 #include <QDataStream>
+#include <QApplication>
 
 class QFile;
 
@@ -38,6 +39,8 @@ enum Encoding
  */
 class BinaryStream
 {
+  Q_DECLARE_TR_FUNCTIONS(BinaryStream)
+
 public:
   BinaryStream(QFile *binaryFile, QDataStream::ByteOrder order = QDataStream::LittleEndian);
   virtual ~BinaryStream();
@@ -65,6 +68,7 @@ public:
   QChar readChar();
 
   int readBytes(char bytes[], int size);
+  int readUBytes(unsigned char bytes[], int size);
 
   /* Reads 16 bytes like 38EA37B0-F8ED-E54A-B41B-2CA423ADA3EF into UUID
    *  {B037EA38-EDF8-4AE5-B41B-2CA423ADA3EF} */

@@ -26,6 +26,9 @@
 namespace atools {
 namespace io {
 
+using Qt::hex;
+using Qt::dec;
+
 /* Default intel / little
  * Big endian 1A2B3C4D = 1A 2B 3C 4D in mem
  * Little endian 1A2B3C4D =  4D 3C 2B 1A in mem
@@ -60,6 +63,13 @@ int BinaryStream::readBytes(char bytes[], int size)
   return numRead;
 }
 
+int BinaryStream::readUBytes(unsigned char bytes[], int size)
+{
+  int numRead = is->readRawData(reinterpret_cast<char *>(bytes), size);
+  checkStream("readBytes");
+  return numRead;
+}
+
 QUuid BinaryStream::readUuid()
 {
   uint l = readUInt();
@@ -67,8 +77,8 @@ QUuid BinaryStream::readUuid()
   w1 = readUShort();
   w2 = readUShort();
 
-  char bytes[8];
-  readBytes(bytes, 8);
+  unsigned char bytes[8];
+  readUBytes(bytes, 8);
   return QUuid(l, w1, w2, bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
 }
 
@@ -199,7 +209,7 @@ QString BinaryStream::readString(Encoding encoding)
 
 QString BinaryStream::readString(int length, Encoding encoding)
 {
-  char *buf = new char[length];
+  char *buf = new char[static_cast<size_t>(length)];
   readBytes(buf, length);
 
   QByteArray retval;
@@ -223,7 +233,24 @@ void BinaryStream::checkStream(const QString& what) const
 {
   if(is->status() != QDataStream::Ok)
   {
-    QString msg = QString("%1 for file \"%2\" failed. Reason %3").arg(what).arg(getFilename()).arg(is->status());
+    QString statusText(tr("Unknown"));
+    switch(is->status())
+    {
+      case QDataStream::Ok:
+        statusText = tr("No error");
+        break;
+      case QDataStream::ReadPastEnd:
+        statusText = tr("Read past file end");
+        break;
+      case QDataStream::ReadCorruptData:
+        statusText = tr("Read corrupted data");
+        break;
+      case QDataStream::WriteFailed:
+        statusText = tr("Write failed");
+        break;
+    }
+
+    QString msg = QString("%1 for file \"%2\" failed. Reason: %3 (%4).").arg(what).arg(getFilename()).arg(statusText).arg(is->status());
 
     qWarning() << msg << "Position" << hex << "0x" << is->device()->pos() << dec << is->device()->pos();
     throw Exception(msg);
