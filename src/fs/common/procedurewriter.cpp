@@ -696,18 +696,26 @@ void ProcedureWriter::writeTransitionLeg(const ProcedureInput& line)
   if(line.pathTerm == "AF")
   {
     // Set transition type to DME arc if an AF leg is found
+    SqlRecord& lastRec = transitions.last().record;
 
     // Arc to fix
-    transitions.last().record.setValue(":type", "D");
+    lastRec.setValue(":type", "D");
 
     // not used: dme_airport_ident
-    transitions.last().record.setValue(":dme_radial", line.theta);
-    transitions.last().record.setValue(":dme_distance", line.rho);
+    if(line.theta < atools::fs::common::INVALID_FLOAT)
+      lastRec.setValue(":dme_radial", line.theta);
+    else
+      lastRec.setNull(":dme_radial");
+
+    if(line.rho < atools::fs::common::INVALID_FLOAT)
+      lastRec.setValue(":dme_distance", line.rho);
+    else
+      lastRec.setNull(":dme_distance");
 
     if(!line.recdNavaid.trimmed().isEmpty())
     {
-      transitions.last().record.setValue(":dme_ident", line.recdNavaid.trimmed());
-      transitions.last().record.setValue(":dme_region", line.recdRegion.trimmed());
+      lastRec.setValue(":dme_ident", line.recdNavaid.trimmed());
+      lastRec.setValue(":dme_region", line.recdRegion.trimmed());
     }
     else
       qWarning() << line.context << "No recommended navaid for AF leg";
@@ -869,8 +877,15 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   // distance nm
   rec.setValue(":distance", line.rteHoldDist);
 
-  rec.setValue(":theta", line.theta);
-  rec.setValue(":rho", line.rho);
+  if(line.theta < atools::fs::common::INVALID_FLOAT)
+    rec.setValue(":theta", line.theta);
+  else
+    rec.setNull(":theta");
+
+  if(line.rho < atools::fs::common::INVALID_FLOAT)
+    rec.setValue(":rho", line.rho);
+  else
+    rec.setNull(":rho");
 
   if(altDescrValid)
   {

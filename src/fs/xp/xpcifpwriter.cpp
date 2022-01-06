@@ -117,8 +117,8 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.recdSecCode = at(line, RECD_SEC_CODE);
   procInput.recdSubCode = at(line, RECD_SUB_CODE);
 
-  procInput.theta = at(line, THETA).toFloat() / 10.f;
-  procInput.rho = at(line, RHO).toFloat() / 10.f;
+  procInput.theta = at(line, THETA).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, THETA).toFloat() / 10.f;
+  procInput.rho = at(line, RHO).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, RHO).toFloat() / 10.f;
   procInput.magCourse = at(line, MAG_CRS).toFloat() / 10.f;
 
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;

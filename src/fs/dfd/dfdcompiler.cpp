@@ -1233,8 +1233,16 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   else
     procInput.recdWaypointPos = DPos();
 
-  procInput.theta = query.valueFloat("theta");
-  procInput.rho = query.valueFloat("rho");
+  if(query.isNull("theta"))
+    procInput.theta = atools::fs::common::INVALID_FLOAT;
+  else
+    procInput.theta = query.valueFloat("theta");
+
+  if(query.isNull("rho"))
+    procInput.rho = atools::fs::common::INVALID_FLOAT;
+  else
+    procInput.rho = query.valueFloat("rho");
+
   procInput.magCourse = query.valueFloat("magnetic_course");
 
   float distTime = query.valueFloat("route_distance_holding_distance_time");

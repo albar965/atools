@@ -111,6 +111,8 @@ struct ProcedureInput
   QString gnssFmsIndicator; // 117     5.222
 };
 
+const float INVALID_FLOAT = std::numeric_limits<float>::max();
+
 /*
  * Write SIDs, STARs, approaches and transitions to the database tables approach, approach_leg,
  * transition and transition_leg.
