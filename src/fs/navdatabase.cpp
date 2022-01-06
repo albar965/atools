@@ -828,6 +828,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   // ================================================================================================
   // Done here - now only some options statistics and reports are left
 
+  if(options->isDropIndexes())
+  {
+    if((aborted = progress.reportOther(tr("Creating Database preparation Script"))))
+      return;
+
+    createPreparationScript();
+  }
+
   if(options->isBasicValidation())
     basicValidation(&progress);
 
@@ -841,11 +849,6 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
 
   if(options->isDropIndexes())
   {
-    if((aborted = progress.reportOther(tr("Creating Database preparation Script"))))
-      return;
-
-    createPreparationScript();
-
     if((aborted = progress.reportOther(tr("Dropping All Indexes"))))
       return;
 
