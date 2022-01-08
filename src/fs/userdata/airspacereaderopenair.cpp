@@ -299,7 +299,7 @@ void AirspaceReaderOpenAir::bindClass(const QString& cls)
   else if(cls == "RMZ") // Radio Mandatory Zone
     type = "CG"; // Class G
   else if(cls == "TMZ") // Transponder Mandatory Zone
-    type = "MC"; // Mode C
+    type = "MD"; // Mode C
   else
     qWarning() << filename << ":" << lineNumber << "Unknown airspace class" << cls;
   insertAirspaceQuery->bindValue(":type", type);
