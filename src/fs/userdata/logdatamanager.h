@@ -70,7 +70,7 @@ public:
                                             const QString& ident)>& fetchAirport);
 
   /* Update schema to latest. Checks for new columns and tables. */
-  void updateSchema();
+  virtual void updateSchema() override;
 
   /* Get flight plan and track and route points from GPX attachment or database BLOB. Request is cached.
    *  Also includes route waypoint names. */

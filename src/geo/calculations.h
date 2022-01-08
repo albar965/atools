@@ -517,18 +517,6 @@ Q_DECL_CONSTEXPR TYPE opposedCourseDeg(TYPE courseDegree)
          static_cast<TYPE>(atools::geo::normalizeCourse(static_cast<double>(courseDegree) + 180.));
 }
 
-/* Checks if course (0-360°) is within min/max */
-template<typename TYPE>
-bool angleInRange(TYPE angle, TYPE min, TYPE max)
-{
-  if(max - min < 180.)
-    // min 100 max 260
-    return angle > min && angle < max;
-  else
-    // min 260 max 100
-    return (angle > max && angle <= 360.) || (angle < min && angle >= 0.);
-}
-
 /* Calculates difference between courses (0-360 Deg).
  * Result is always positive and never > 180 Deg */
 template<typename TYPE>
