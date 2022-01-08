@@ -148,8 +148,9 @@ public:
    * 20 Added faa and local columns to database tables. Remove xpident column.
    * 21 Added arinc_type to tables waypoint and nav_search.
    *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
+   * 22 Rho and theta in approach and transition legs can now be null
    */
-  static const int DB_VERSION_MINOR = 21;
+  static const int DB_VERSION_MINOR = 22;
 
   void init();
 
