@@ -1200,8 +1200,9 @@ bool NavDatabase::basicValidation(ProgressHandler *progress)
   if((aborted = progress->reportOther(tr("Basic Validation"))))
     return true;
 
-  for(const QString& table : options->getBasicValidationTables().keys())
-    basicValidateTable(table, options->getBasicValidationTables().value(table));
+  const QMap<QString, int>& basicValidationTables = options->getBasicValidationTables();
+  for(auto it = basicValidationTables.begin(); it != basicValidationTables.end(); ++it)
+    basicValidateTable(it.key(), it.value());
 
   return false;
 }
@@ -1309,6 +1310,8 @@ void NavDatabase::createDatabaseReportShort()
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
 {
+  using Qt::endl;
+
   QDebug info(qInfo());
   atools::sql::SqlUtil util(db);
 
@@ -1470,15 +1473,15 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea area(areaNum++, baseName, name);
+        SceneryArea addonArea(areaNum++, baseName, name);
 
         // Indicate add-on in official path
-        area.setAddOn(true);
+        addonArea.setAddOn(true);
 
         // Detect Navigraph navdata update packages for special handling
-        area.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
+        addonArea.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
 
-        cfg.getAreas().append(area);
+        cfg.getAreas().append(addonArea);
       }
     }
   }
@@ -1510,13 +1513,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea area(areaNum++, tr("Community"), name);
-        area.setCommunity(true);
+        SceneryArea addonArea(areaNum++, tr("Community"), name);
+        addonArea.setCommunity(true);
 
         // Detect Navigraph navdata update packages for special handling
-        area.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
+        addonArea.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
 
-        cfg.getAreas().append(area);
+        cfg.getAreas().append(addonArea);
       }
     }
   }
@@ -1550,7 +1553,8 @@ bool NavDatabase::checkThirdPartyNavdataExclude(scenery::ManifestJson& manifest)
 
   return manifest.isScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
-         manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive);
+         (manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive) ||
+          manifest.getTitle().contains("AIRAC Cycle Base", Qt::CaseInsensitive));
 }
 
 void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
