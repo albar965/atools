@@ -27,6 +27,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QStandardPaths>
+#include <QFontMetrics>
 
 namespace atools {
 
@@ -346,6 +347,26 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
             QObject::tr("…", "Linefeed and dots used to shorten texts"));
   else
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
+}
+
+QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width)
+{
+  if(metrics.horizontalAdvance(text) >= width)
+  {
+    text = metrics.elidedText(text, mode, width);
+    if(text.length() < 3)
+    {
+      QString dots(QObject::tr("…", "Dots used to shorten texts"));
+      QString dot(QObject::tr(".", "Dot used to shorten texts"));
+
+      if(metrics.horizontalAdvance(dots) < width)
+        return dots;
+      else if(metrics.horizontalAdvance(dot) < width)
+        return dot;
+    }
+  }
+
+  return text;
 }
 
 float calculateSteps(float range, float numSteps)
