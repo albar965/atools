@@ -58,12 +58,26 @@ using atools::fs::bgl::DeleteAirport;
 using atools::fs::bgl::SidStar;
 using atools::geo::meterToFeet;
 
+AirportWriter::AirportWriter(sql::SqlDatabase& db, DataWriter& dataWriter)
+  : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter.getOptions())
+{
+  query = new atools::sql::SqlQuery(getDataWriter().getDatabase());
+  query->prepare("select airport_id from airport where ident = ?");
+}
+
+AirportWriter::~AirportWriter()
+{
+  delete query;
+}
+
 void AirportWriter::setNameLists(const QList<const Namelist *>& namelists)
 {
   nameListIndex.clear();
   for(const Namelist *iter : namelists)
+  {
     for(const NamelistEntry& i : iter->getNameList())
       nameListIndex[i.getAirportIdent()] = &i;
+  }
 }
 
 void AirportWriter::writeObject(const Airport *type)
@@ -81,8 +95,10 @@ void AirportWriter::writeObject(const Airport *type)
   DataWriter& dw = getDataWriter();
   bool msfsNavdata = dw.getSceneryAreaWriter()->getCurrentArea().isNavdata();
 
-  if(!msfsNavdata && type->isMsfsPoiDummy() && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
-    // Skip empty POI dummy airports in MSFS
+  int predId = airportIdByIdent(ident, msfsNavdata /* warn */);
+
+  if(!msfsNavdata && (type->isMsfsPoiDummy() && predId == -1) && getOptions().getSimulatorType() == atools::fs::FsPaths::MSFS)
+    // Skip empty POI dummy airports in MSFS but not if there is a stock airport with the same name
     return;
 
   if(ident.isEmpty())
@@ -97,7 +113,6 @@ void AirportWriter::writeObject(const Airport *type)
     // Instead of writing a new airport simply add COM and procedures
 
     // Get the other airport id and remember the current one
-    int predId = airportIdByIdent(ident);
     int currentId = dw.getAirportWriter()->setCurrentId(predId);
 
     // Update index
@@ -352,17 +367,15 @@ void AirportWriter::writeObject(const Airport *type)
   }
 }
 
-int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident)
+int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident, bool warn)
 {
-  atools::sql::SqlQuery query(getDataWriter().getDatabase());
-  query.prepare("select airport_id from airport where ident = :ident");
-  query.bindValue(":ident", ident);
-  query.exec();
+  query->bindValue(0, ident);
+  query->exec();
   int newId = -1;
-  if(query.next())
-    newId = query.valueInt(0);
+  if(query->next())
+    newId = query->valueInt(0);
 
-  if(newId == -1)
+  if(newId == -1 && warn)
     qWarning() << Q_FUNC_INFO << "Other airport with ident" << ident << "not found";
   return newId;
 }
