@@ -43,10 +43,8 @@ class AirportWriter :
   public atools::fs::db::WriterBase<atools::fs::bgl::Airport>
 {
 public:
-  AirportWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter)
-    : WriterBase(db, dataWriter, "airport"), deleteProcessor(db, dataWriter.getOptions())
-  {
-  }
+  AirportWriter(atools::sql::SqlDatabase& db, atools::fs::db::DataWriter& dataWriter);
+  virtual ~AirportWriter() override;
 
   /* Name list has to be set before so city, county and state can be saved. Called once per BGL file. */
   void setNameLists(const QList<const atools::fs::bgl::Namelist *>& namelists);
@@ -65,7 +63,7 @@ private:
   virtual void writeObject(const atools::fs::bgl::Airport *type) override;
 
   /* Get airport id for given ident */
-  int airportIdByIdent(const QString& ident);
+  int airportIdByIdent(const QString& ident, bool warn);
 
   /* Update frequencies and other flags MSFS airports if encountering a dummy for COM and procedures */
   void updateMsfsAirport(const bgl::Airport *type, int predId);
@@ -79,7 +77,7 @@ private:
   QString currentIdent;
   atools::geo::Pos currentPos;
   atools::fs::db::DeleteProcessor deleteProcessor;
-
+  atools::sql::SqlQuery *query;
 };
 
 } // namespace writer
