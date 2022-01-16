@@ -3,6 +3,106 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.8.0
+
+* Fixed issue in scenery library loader where airports were wrongly recognized as MSFS POI dummies.
+* Fixed detection of MSFS Navigraph update due to name change.
+* Now passing unknown airspace types through when reading OpenAir format to allow using LNM internal
+  types.
+* Updated database minor version to 22.
+* Fixed issue where Mode C airspaces were imported with the wrong type when reading from OpenAir files.
+* Changed execution order to allow checking of table "scripts" in database compiler.
+* Fixed issue where theta and rho in procedures were written as 0 instead of null values in DFD and
+  X-Plane compiler. This did not allow to recognize the difference between bearing 0 and bearing not
+  given.
+* Better error message when failing to read BGL files.
+* Added delay when watching GRIB files to avoid reading of incomplete files.
+* Added undo/redo functionality to logbook and userpoint data manager classes.
+* Fixed issues with anti-meridian detection when point is on meridian. Added anti-meridian split to
+  line and line string classes.
+* Fixed issue where flight plan metadata was not read correctly when loading LNMPLN or FMS.
+* Added simulator field to aircraft performance files.
+* Added autopilot altitude option to aircraft simulation. albar965/littlenavmap#247
+* Added more functions to clean up invalid characters in file names. Fixed issues with wrong regexp
+  in adjustMsfsUserWpName. Added flight plan file pattern example and validation to flight plan.
+  albar965/littlenavmap#751
+* Fixed issue where runway end table had altitude not set for X-Plane and MSFS.
+* Now skipping empty lines in X-Plane apt.dat file header.
+* Added validation method for aircraft type designators.
+* Added functions for all and parallel runway assignment extraction.
+* Improved style for tree view widgets. Added margins and grid for better readability.
+* Fixed issue in Rect::crossesAntiMeridian() where date line crossing was not always detected.
+* Added X-Plane airport type to airport table.
+* Changed runway dimension fields in database to floating point.
+* Fixed issue in DFD compiler where runways with offset threshold were not depicted properly.
+* Join methods in HtmlBuilder. Added flags for row2Error and row2Warning in HtmlBuilder.
+* Save expand state now optionally in tree dialog.
+* Updated French translation from Patrick.
+* Fixed calculation of enroute holding course for DFD and X-Plane compiler.
+  albar965/littlenavmap#363
+* changeWidgetColor now correctly considers disabled state of button.
+* Added TreeDialog for settings. Copied ChoiceDialog from littlenavmap project.
+* Added logging function to database metadata.
+* LineString::lengthMeterDouble for more precision.
+* selectedRows for GUI tools
+* Added saving and loading of custom departures to LNMPLN flight plan. Custom approach can now be
+  saved with an offset course. albar965/littlenavmap#696
+* Added ActionTool to help building context menus.
+* Fixed X-Plane scenery compiler wrongly writing ENRT as airport ident for VOR, NDB, waypoints and
+  holdings.
+* Added true bearing indicator for airport MSA. Fixed bearings for MSA sectors in X-Plane and DFD
+  compilers. albar965/littlenavmap#498
+* Fixed issues with HTML images having an aspect ratio different than 1:1.
+* Reading transition altitude from X-Plane airports now.
+* Optimizations to HTML HtmlBuilder. Now using QStringBuilder. Added mark and id methods to
+  HtmlBuilder. Now counting table rows and providing methods for detecting empty tables.
+  albar965/littlenavmap#768
+* Added descentSpeedForPathAngle albar965/littlenavmap#803
+* Added vertical angle to approach and transition legs now read from DFD, X-Plane and MSFS.
+  albar965/littlenavmap#803
+* Enabled new approach type record for MSFS.
+* Reduced warnings for unknown BGL records in MSFS to avoid flooding the log with messages when
+  reading scenery.
+* Added new record type for airport apron appearing since MSFS SU6 beta. Reading apron structure for
+  new MSFS record. Disabled warning about unknown airport record types when compiling MSFS data.
+  albar965/littlenavmap#799
+* Added define option to silence scenery library compiler warnings.
+* Fixed bug with wrong airspace assignment for class F and G when reading OpenAir files.
+  albar965/littlenavmap#797
+* Cleanup in NavdatabaseOptions for better logging.
+* Adjusted Travis build configuration.
+* Better coordinate parsing. Removing separators now.
+* Updated Travis-CI build to Ubuntu Focal and Qt 5.15.2
+* Fixes for deprecation warnings.
+* Changed MoraReader to allow automatic selection of valid database.
+* Corrected MSFS dummy POI airport detection. Now ignoring airport closed flag.
+* Added compiling of en-route holdings to DFD and X-Plane compiler.
+* Added writing of airport MSA sectors and pre-calculated geometry to DFD and X-Plane compiler.
+  albar965/littlenavmap#498
+* Changes to airport index in compiler. Added file id to MORA table. Avoiding invalid positions in
+  MagDecReader::getMagVar now. Preparation for albar965/littlenavmap#363 and
+  albar965/littlenavmap#498
+* Added writing of MORA grid from X-Plane database in data compiler.
+* Corrected assignment of runway end ids to ILS in DFD compiler.
+* Added SBAS/GBAS paths points and stations to X-Plane and DFD databases. Fixed issues when
+  resolving recommended procedure fixes in DFD compiler. Now also searching for ILS and other
+  approach facilities. Added ils type to FSX/P3D/MSFS compiler. albar965/littlenavmap#640
+* Fixing equal runway end positions for DFD compiler now which resulted in zero-length runways when
+  drawing. Corrected wrong number of ILS for airport in DFD compiler.
+* Added gate positions to DFD compiler.
+* Better text labels for tab handler.
+* Added arinc_type for detailed waypoint information to tables waypoint and nav_search. Populating
+  arinc_type for X-Plane and DFD database compilers.
+* Corrected missing index in airport table slowing down searches by official airport ids.
+* Added departure parking position heading to LNMPLN.
+* Updated XSD flight plan schema.
+* Fixed issue when calculating flight plans using radio navaids where too close navaids where
+  selected enroute. Example: PAYA MDO ODK CDB ELF DUT PADK where CDB and ELF are too close resulting
+  in zig-zag routing.
+* Removed question marks in translation files added by QtLinguist.
+
+===============================================================================
+
 # Version 3.6.17
 
 * Added new record type for airport apron appearing since MSFS SU6 beta. Reading apron structure
