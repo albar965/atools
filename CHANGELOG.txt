@@ -100,6 +100,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   selected enroute. Example: PAYA MDO ODK CDB ELF DUT PADK where CDB and ELF are too close resulting
   in zig-zag routing.
 * Removed question marks in translation files added by QtLinguist.
+* Now dropping all artificial waypoints created only for procedure or airway resolution from
+  nav_search table.
 
 ===============================================================================
 
