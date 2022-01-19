@@ -30,7 +30,8 @@ select w.waypoint_id, w.nav_id, w.file_id, w.ident, w.region, w.airport_id, a.id
 from waypoint w
 join bgl_file f on f.bgl_file_id = w.file_id
 join scenery_area s on f.scenery_area_id = s.scenery_area_id
-left outer join airport a on w.airport_id = a.airport_id;
+left outer join airport a on w.airport_id = a.airport_id
+where w.artificial is null;
 
 -- Insert NDBs into nav_search table
 insert into nav_search (ndb_id, file_id, airport_id, airport_ident, ident, name, region, range, type, nav_type, frequency,
