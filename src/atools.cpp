@@ -274,7 +274,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
 
   for(const QString& str : texts)
   {
-    if(blocks.last().size() >= maxItemsPerLine)
+    if(blocks.constLast().size() >= maxItemsPerLine)
       blocks.append(QStringList());
     blocks.last().append(str);
   }
@@ -739,16 +739,16 @@ QString buildPathNoCase(const QStringList& paths)
 
       if(!entries.isEmpty())
       {
-        if(QFileInfo(dir.path() + SEP + entries.first()).isDir())
+        if(QFileInfo(dir.path() + SEP + entries.constFirst()).isDir())
         {
           // Directory exists - change into it
-          if(!dir.cd(entries.first()))
+          if(!dir.cd(entries.constFirst()))
             break;
         }
         else
         {
           // Is a file - add by name simply
-          file = entries.first();
+          file = entries.constFirst();
           break;
         }
       }

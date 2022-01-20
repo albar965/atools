@@ -241,7 +241,7 @@ void LineString::distanceMeterToLineString(const Pos& pos, LineDistance& result,
 
 atools::geo::Line LineString::toLine() const
 {
-  return isEmpty() ? Line() : Line(first(), last());
+  return isEmpty() ? Line() : Line(constFirst(), constLast());
 }
 
 Pos LineString::interpolate(float fraction) const
@@ -254,9 +254,9 @@ atools::geo::Pos LineString::interpolate(float totalDistanceMeter, float fractio
   if(isEmpty() || fraction < 0.f || fraction > 1.0f)
     return atools::geo::EMPTY_POS;
   else if(fraction == 0.f)
-    return first();
+    return constFirst();
   else if(fraction == 1.f)
-    return last();
+    return constLast();
 
   float distFromStartMeter = fraction * totalDistanceMeter;
 
@@ -368,13 +368,13 @@ LineString LineString::splitAtAntiMeridian(bool *crossed) const
         split.append(splitLines.at(1).getPos1());
       }
       else if(!splitLines.isEmpty())
-        split.append(splitLines.first().getPos1());
+        split.append(splitLines.constFirst().getPos1());
     }
 
-    split.append(last());
+    split.append(constLast());
   }
   else if(size() == 1)
-    split.append(first());
+    split.append(constFirst());
 
   return split;
 }

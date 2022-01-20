@@ -459,7 +459,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
 
       Procedure sidCommon, starCommon;
       if(curRowCode == rc::SID &&
-         approaches.last().isCommonRoute && !approaches.first().isCommonRoute)
+         approaches.constLast().isCommonRoute && !approaches.constFirst().isCommonRoute)
       {
         // Example: EDDT SID
         // 4 RNAV_SID_RUNWAY_TRANSITION
@@ -469,11 +469,11 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
         sidCommon = approaches.takeLast();
 
         // Remove the IF of the common route
-        if(sidCommon.legRecords.first().value(":type") == "IF")
+        if(sidCommon.legRecords.constFirst().value(":type") == "IF")
           sidCommon.legRecords.removeFirst();
       }
 
-      if(curRowCode == rc::STAR && !approaches.last().isCommonRoute)
+      if(curRowCode == rc::STAR && !approaches.constLast().isCommonRoute)
       {
         // Example: KBOI STAR
         // 4 RNAV_STAR_ENROUTE_TRANSITION
@@ -506,7 +506,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
           insertApproachLegQuery->bindAndExecRecords(starCommon.legRecords);
 
           // Remove the IF of the STAR which will be replaced by the TF of the common route
-          if(appr.legRecords.first().value(":type") == "IF")
+          if(appr.legRecords.constFirst().value(":type") == "IF")
             appr.legRecords.removeFirst();
         }
 

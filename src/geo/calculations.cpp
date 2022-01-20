@@ -307,7 +307,7 @@ void boundingRect(Rect& rect, QVector<atools::geo::Pos> positions)
 
     ++it;
 
-    if(positions.first() == positions.last() /* is closed */ && it == itEnd)
+    if(positions.constFirst() == positions.constLast() /* is closed */ && it == itEnd)
     {
       it = positions.constBegin();
       processingLastNode = true;

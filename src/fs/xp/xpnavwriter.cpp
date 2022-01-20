@@ -97,7 +97,7 @@ void XpNavWriter::writeVor(const QStringList& line, int curFileId, bool dmeOnly)
     insertVorQuery->bindValue(":range", range);
   }
 
-  QString suffix = line.last().toUpper();
+  QString suffix = line.constLast().toUpper();
   if(suffix == "VOR" || suffix == "DME" || suffix == "VOR-DME" || suffix == "VOR/DME")
     type = rangeType;
   else if(suffix == "VORTAC")
@@ -507,7 +507,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case DME:
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
-        if(line.last() == "DME-ILS")
+        if(line.constLast() == "DME-ILS")
           updateIlsDme(line);
       }
       break;
@@ -516,7 +516,7 @@ void XpNavWriter::write(const QStringList& line, const XpWriterContext& context)
     case DME_ONLY:
       if(options.isIncludedNavDbObject(atools::fs::type::ILS))
       {
-        if(line.last() == "DME-ILS")
+        if(line.constLast() == "DME-ILS")
           updateIlsDme(line);
         else
           writeVor(line, true, context.curFileId);

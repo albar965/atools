@@ -145,12 +145,12 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
             if(rec::MSFS_SID == id)
             {
               /* For SID, the transition ident is the LAST leg's fix. */
-              name = legs.last().getFixIdent();
+              name = legs.constLast().getFixIdent();
             }
             else if(rec::MSFS_STAR == id)
             {
               /* For STAR, the transition ident is the FIRST leg's fix */
-              name = legs.first().getFixIdent();
+              name = legs.constFirst().getFixIdent();
             }
           }
           if(!legs.isEmpty())

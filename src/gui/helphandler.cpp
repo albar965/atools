@@ -168,7 +168,7 @@ QString HelpHandler::getHelpFile(const QString& filepath, const QString& languag
     QFileInfoList list = dir.entryInfoList({filter});
 
     if(!list.isEmpty())
-      return list.first().filePath();
+      return list.constFirst().filePath();
 
     // Fall back to plain English
     urlStr = atools::replaceVar(filepath, "LANG", "en");
