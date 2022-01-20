@@ -213,49 +213,49 @@ void AirwayPostProcess::writeSegments(QList<AirwaySegment>& segments, SqlQuery& 
     QVector<AirwaySegment> sortedSegments;
 
     // Insert start segment
-    sortedSegments.append(segments.first());
+    sortedSegments.append(segments.constFirst());
 
     // Start segment is finished here - add from/to and to/from to simplify search
-    done.insert(segments.first());
-    done.insert(segments.first().reversed());
+    done.insert(segments.constFirst());
+    done.insert(segments.constFirst().reversed());
     segments.removeFirst();
 
     bool foundPrev = true, foundNext = true;
     while(foundNext || foundPrev)
     {
       // Find next for last segment
-      const AirwaySegment& last = sortedSegments.last();
+      const AirwaySegment& last = sortedSegments.constLast();
       if(findSegment(found, done, segsByPrev, last.next, last.prev, true))
       {
         // Found segment is in correct order
-        segments.removeOne(found.first());
-        sortedSegments.append(found.first());
+        segments.removeOne(found.constFirst());
+        sortedSegments.append(found.constFirst());
         foundNext = true;
       }
       else if(findSegment(found, done, segsByNext, last.next, last.prev, false))
       {
         // Found segment is in reversed order
-        segments.removeOne(found.first());
-        sortedSegments.append(found.first().reversed());
+        segments.removeOne(found.constFirst());
+        sortedSegments.append(found.constFirst().reversed());
         foundNext = true;
       }
       else
         foundNext = false;
 
       // Find previous for first segment
-      const AirwaySegment& first = sortedSegments.first();
+      const AirwaySegment& first = sortedSegments.constFirst();
       if(findSegment(found, done, segsByNext, first.prev, first.next, false))
       {
         // Found segment is in correct order
-        segments.removeOne(found.first());
-        sortedSegments.prepend(found.first());
+        segments.removeOne(found.constFirst());
+        sortedSegments.prepend(found.constFirst());
         foundPrev = true;
       }
       else if(findSegment(found, done, segsByPrev, first.prev, first.next, true))
       {
         // Found segment is in reversed order
-        segments.removeOne(found.first());
-        sortedSegments.prepend(found.first().reversed());
+        segments.removeOne(found.constFirst());
+        sortedSegments.prepend(found.constFirst().reversed());
         foundPrev = true;
       }
       else

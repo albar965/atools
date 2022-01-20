@@ -275,13 +275,13 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
 template<typename TYPE>
 const TYPE& atRoll(const QVector<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.first();
+  return index < list.size() ? list.at(index) : list.constFirst();
 }
 
 template<typename TYPE>
 const TYPE& atRoll(const QList<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.first();
+  return index < list.size() ? list.at(index) : list.constFirst();
 }
 
 /* Writes a warning message includiing the string list */
@@ -298,9 +298,9 @@ TYPE *firstOrNull(QList<TYPE>& list)
 }
 
 template<typename TYPE>
-const TYPE *firstOrNull(const QList<TYPE>& list)
+const TYPE *constFirstOrNull(const QList<TYPE>& list)
 {
-  return list.isEmpty() ? nullptr : &list.first();
+  return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 template<typename TYPE>
@@ -310,9 +310,9 @@ TYPE *firstOrNull(QVector<TYPE>& list)
 }
 
 template<typename TYPE>
-const TYPE *firstOrNull(const QVector<TYPE>& list)
+const TYPE *constFirstOrNull(const QVector<TYPE>& list)
 {
-  return list.isEmpty() ? nullptr : &list.first();
+  return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 static const int MAX_FILENAME_CHARS = 150;

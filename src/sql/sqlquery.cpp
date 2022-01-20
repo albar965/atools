@@ -266,15 +266,15 @@ bool SqlQuery::previous()
 
 bool SqlQuery::first()
 {
-  checkError(isSelect(), "SqlQuery::first() on query which is not a select");
-  checkError(isActive(), "SqlQuery::first() on inactive query");
+  checkError(isSelect(), "SqlQuery::constFirst() on query which is not a select");
+  checkError(isActive(), "SqlQuery::constFirst() on inactive query");
   return query.first();
 }
 
 bool SqlQuery::last()
 {
-  checkError(isSelect(), "SqlQuery::last() on query which is not a select");
-  checkError(isActive(), "SqlQuery::last() on inactive query");
+  checkError(isSelect(), "SqlQuery::constLast() on query which is not a select");
+  checkError(isActive(), "SqlQuery::constLast() on inactive query");
   return query.last();
 }
 

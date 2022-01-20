@@ -197,7 +197,7 @@ QStringList Settings::valueStrList(const QString& key, const QStringList& defaul
 
   QStringList list = qSettings->value(key, defaultValue).toStringList();
 
-  if(list.isEmpty() || (list.size() == 1 && list.first().isEmpty()))
+  if(list.isEmpty() || (list.size() == 1 && list.constFirst().isEmpty()))
     return QStringList();
   else
     return list;

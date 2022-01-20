@@ -54,7 +54,7 @@ void SidStarTransitionWriter::writeObject(const QList<atools::fs::bgl::ApproachL
   bindNullInt(":dme_distance");
 
   bool isArrival = 'A' == getDataWriter().getSidStarWriter()->getCurrentSidStar()->getSuffix();
-  const ApproachLeg& fixLeg = isArrival ? type->first() : type->last();
+  const ApproachLeg& fixLeg = isArrival ? type->constFirst() : type->constLast();
   // Fill in the fix information.
   bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, fixLeg.getFixType()));
   bind(":fix_ident", fixLeg.getFixIdent());

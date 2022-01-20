@@ -162,7 +162,7 @@ void NoaaWeatherDownloader::download()
     if(!downloadQueue.isEmpty())
     {
       if(verbose)
-        qDebug() << Q_FUNC_INFO << "Starting" << downloadQueue.first();
+        qDebug() << Q_FUNC_INFO << "Starting" << downloadQueue.constFirst();
 
       downloader->setUrl(downloadQueue.takeFirst());
       downloader->startDownload();

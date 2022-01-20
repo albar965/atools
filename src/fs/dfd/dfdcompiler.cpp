@@ -968,7 +968,7 @@ void DfdCompiler::finishAirspace()
     for(int i = 0; i < airspaceSegments.size(); i++)
     {
       const AirspaceSeg& seg = airspaceSegments.at(i);
-      Pos nextPos = i < airspaceSegments.size() - 1 ? airspaceSegments.at(i + 1).pos : airspaceSegments.first().pos;
+      Pos nextPos = i < airspaceSegments.size() - 1 ? airspaceSegments.at(i + 1).pos : airspaceSegments.constFirst().pos;
 
       if(seg.pos.isNull() && !seg.center.isNull())
         // Create a circular polygon with 24 segments

@@ -403,9 +403,9 @@ QString FsPaths::initBasePath(SimulatorType type)
       }
     }
 
-    if(found && !keys.isEmpty() && settings.contains(keys.last()))
+    if(found && !keys.isEmpty() && settings.contains(keys.constLast()))
     {
-      fsPath = settings.value(keys.last()).toString();
+      fsPath = settings.value(keys.constLast()).toString();
 
       if(fsPath.endsWith('\\'))
         fsPath.chop(1);
