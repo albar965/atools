@@ -126,7 +126,7 @@ private:
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
 
   /* Internal creation of the full database */
-  void createInternal(const QString& sceneryConfigCodec);
+  void createInternal(const QString& sceneryConfigCodec, bool& foundError);
 
   /* Read FSX/P3D scenery configuration */
   void readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg);
@@ -163,8 +163,8 @@ private:
   /* Print row counts to log file */
   void createDatabaseReportShort();
 
-  bool basicValidation(ProgressHandler *progress);
-  void basicValidateTable(const QString& table, int minCount);
+  bool basicValidation(ProgressHandler *progress, bool& foundError);
+  void basicValidateTable(const QString& table, int minCount, bool& foundError);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
   /* Count files in FSX/P3D scenery configuration */

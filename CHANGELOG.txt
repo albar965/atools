@@ -3,6 +3,15 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.8.1
+
+* Removed exception in table validation. Now only printing a warning if table count does not match.
+  This ensures a complete database even if validation finds issues.
+* Now keeping indexes when finishing DFD database. This avoids the `preparing database` message in
+  Little Navmap when loading the database the first time.
+
+===============================================================================
+
 # Version 3.8.0
 
 * Fixed issue in scenery library loader where airports were wrongly recognized as MSFS POI dummies.

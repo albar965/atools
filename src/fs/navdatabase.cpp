@@ -88,12 +88,22 @@ void NavDatabase::create(const QString& codec)
   if(options != nullptr)
     qDebug() << Q_FUNC_INFO << *options;
 
-  createInternal(codec);
+  bool foundError = false;
+  createInternal(codec, foundError);
   if(aborted)
     // Remove all (partial) changes
     db->rollback();
   else
     createDatabaseReportShort();
+
+  if(foundError)
+  {
+    qWarning() << Qt::endl;
+    qWarning() << "*****************************************************************************";
+    qWarning() << "*** Found warnings during basic validation. See log for more information. ***";
+    qWarning() << "*****************************************************************************";
+    qWarning() << Qt::endl;
+  }
 }
 
 void NavDatabase::createAirspaceSchema()
@@ -551,7 +561,7 @@ int NavDatabase::countMsSimSteps()
   return total;
 }
 
-void NavDatabase::createInternal(const QString& sceneryConfigCodec)
+void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundError)
 {
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
@@ -837,7 +847,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   }
 
   if(options->isBasicValidation())
-    basicValidation(&progress);
+    basicValidation(&progress, foundError);
 
   if(options->isDatabaseReport())
   {
@@ -1195,19 +1205,19 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
   return false;
 }
 
-bool NavDatabase::basicValidation(ProgressHandler *progress)
+bool NavDatabase::basicValidation(ProgressHandler *progress, bool& foundError)
 {
   if((aborted = progress->reportOther(tr("Basic Validation"))))
     return true;
 
   const QMap<QString, int>& basicValidationTables = options->getBasicValidationTables();
   for(auto it = basicValidationTables.begin(); it != basicValidationTables.end(); ++it)
-    basicValidateTable(it.key(), it.value());
+    basicValidateTable(it.key(), it.value(), foundError);
 
   return false;
 }
 
-void NavDatabase::basicValidateTable(const QString& table, int minCount)
+void NavDatabase::basicValidateTable(const QString& table, int minCount, bool& foundError)
 {
   SqlUtil util(db);
   if(!util.hasTable(table))
@@ -1215,9 +1225,12 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
 
   int count = 0;
   if((count = util.rowCount(table)) < minCount)
-    throw Exception(QString("Table \"%1\" has only %2 rows. Minimum required is %3").arg(table).arg(count).arg(minCount));
-
-  qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
+  {
+    qWarning() << "*** Table" << table << "has only" << count << "rows. Minimum required is" << minCount << "***";
+    foundError = true;
+  }
+  else
+    qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
 }
 
 void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
