@@ -277,6 +277,7 @@ HEADERS += \
   src/util/properties.h \
   src/util/props.h \
   src/util/roundedpolygon.h \
+  src/util/simplecrypt.h \
   src/util/str.h \
   src/util/timedcache.h \
   src/util/updatecheck.h \
@@ -409,6 +410,7 @@ SOURCES += \
   src/util/properties.cpp \
   src/util/props.cpp \
   src/util/roundedpolygon.cpp \
+  src/util/simplecrypt.cpp \
   src/util/str.cpp \
   src/util/timedcache.cpp \
   src/util/updatecheck.cpp \
