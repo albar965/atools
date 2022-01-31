@@ -1809,7 +1809,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
   if(annotated)
   {
     QStringList comment;
-    for(auto it = plan.properties.begin(); it != plan.properties.end(); ++it)
+    for(auto it = plan.properties.constBegin(); it != plan.properties.constEnd(); ++it)
     {
       const QString& key = it.key();
       if(key == "_lnm")
@@ -3874,7 +3874,7 @@ void FlightplanIO::saveGarminFpl(const atools::fs::pln::Flightplan& plan, const 
     // <country-code>LF</country-code>
     // <lat>50.514722</lat>
     // <lon>1.627500</lon>
-    for(auto it = waypointList.begin(); it != waypointList.end(); ++it)
+    for(auto it = waypointList.constBegin(); it != waypointList.constEnd(); ++it)
     {
       QStringList key = it.key();
       writer.writeStartElement("waypoint");

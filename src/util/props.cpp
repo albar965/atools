@@ -67,7 +67,7 @@ uint qHash(const atools::util::Prop& prop)
 uint qHash(const atools::util::Props& props)
 {
   uint retval = 43;
-  for(auto it = props.begin(); it != props.end(); ++it)
+  for(auto it = props.constBegin(); it != props.constEnd(); ++it)
     retval ^= qHash(it.value());
 
   return static_cast<uint>(retval);
@@ -229,7 +229,7 @@ QDataStream& operator<<(QDataStream& out, const Props& props)
 
   int write = 0;
   int idx = 0;
-  for(auto it = props.begin(); it != props.end(); ++it)
+  for(auto it = props.constBegin(); it != props.constEnd(); ++it)
   {
     if(++idx > size)
       break;
@@ -241,7 +241,7 @@ QDataStream& operator<<(QDataStream& out, const Props& props)
   out << static_cast<Props::propsSizeType>(write);
 
   idx = 0;
-  for(auto it = props.begin(); it != props.end(); ++it)
+  for(auto it = props.constBegin(); it != props.constEnd(); ++it)
   {
     if(++idx > size)
       break;

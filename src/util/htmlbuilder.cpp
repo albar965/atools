@@ -456,7 +456,7 @@ HtmlBuilder& HtmlBuilder::tdF(html::Flags flags)
 HtmlBuilder& HtmlBuilder::tdAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
-  for(auto it = attributes.begin(); it != attributes.end(); ++it)
+  for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
     atts.append(QString(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
   htmlText.append("<td " % atts % ">");
@@ -538,7 +538,7 @@ HtmlBuilder& HtmlBuilder::tableIf(int border, int padding, int spacing, int widt
 HtmlBuilder& HtmlBuilder::tableAtts(const QHash<QString, QString>& attributes)
 {
   QString atts;
-  for(auto it = attributes.begin(); it != attributes.end(); ++it)
+  for(auto it = attributes.constBegin(); it != attributes.constEnd(); ++it)
     atts.append(QString(" %1=\"%2\" ").arg(it.key()).arg(it.value()));
 
   htmlText.append("<table " % atts % ">\n<tbody>\n");

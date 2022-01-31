@@ -259,7 +259,7 @@ void TreeDialog::saveState(bool saveCheckState, bool saveExpandState)
   {
     // Save checkboxes in a list of id 1, checked 1, id 2, checked 2, ...
     QStringList ids;
-    for(auto it = index.begin(); it != index.end(); ++it)
+    for(auto it = index.constBegin(); it != index.constEnd(); ++it)
       ids << QString::number(it.key()) << QString::number(it.value()->checkState(0));
     atools::settings::Settings::instance().setValue(settingsPrefix + "TreeWidgetStates", ids);
   }

@@ -369,9 +369,9 @@ bool AirwayPostProcess::findSegment(QVector<AirwaySegment>& found, QSet<AirwaySe
     segment.next = airwayPoint;
 
   QVector<AirwaySegment>::const_iterator lower =
-    std::lower_bound(segments.begin(), segments.end(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
+    std::lower_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
   QVector<AirwaySegment>::const_iterator upper =
-    std::upper_bound(segments.begin(), segments.end(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
+    std::upper_bound(segments.constBegin(), segments.constEnd(), segment, searchPrevious ? prevOrderFunc : nextOrderFunc);
 
   // qDebug() << "SEARCH" << idx.ident << idx.region << idx.type << prev;
 

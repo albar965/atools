@@ -1211,7 +1211,7 @@ bool NavDatabase::basicValidation(ProgressHandler *progress, bool& foundError)
     return true;
 
   const QMap<QString, int>& basicValidationTables = options->getBasicValidationTables();
-  for(auto it = basicValidationTables.begin(); it != basicValidationTables.end(); ++it)
+  for(auto it = basicValidationTables.constBegin(); it != basicValidationTables.constEnd(); ++it)
     basicValidateTable(it.key(), it.value(), foundError);
 
   return false;

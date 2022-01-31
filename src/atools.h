@@ -635,7 +635,7 @@ QStringList numStrHashToStrList(const QHash<TYPE, QString>& hash)
 {
   QStringList retval;
 
-  for(auto i = hash.begin(); i != hash.end(); ++i)
+  for(auto i = hash.constBegin(); i != hash.constEnd(); ++i)
   {
     retval.append(QString::number(static_cast<int>(i.key())));
     retval.append(i.value());
@@ -670,7 +670,7 @@ QStringList numStrMapToStrList(const QMap<TYPE, QString>& map)
 {
   QStringList retval;
 
-  for(auto i = map.begin(); i != map.end(); ++i)
+  for(auto i = map.constBegin(); i != map.constEnd(); ++i)
   {
     retval.append(QString::number(static_cast<int>(i.key())));
     retval.append(i.value());
