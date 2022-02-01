@@ -175,6 +175,9 @@ public:
   /* TFDi Design 717 XML */
   void saveTfdi(const Flightplan& plan, const QString& filename, const QBitArray& jetAirways);
 
+  /*  iFly Jets Advanced Series */
+  void saveIfly(const Flightplan& plan, const QString& filename);
+
   /* Version number to save into LNMPLN files */
   static const int LNMPLN_VERSION_MAJOR = 1;
   static const int LNMPLN_VERSION_MINOR = 1;

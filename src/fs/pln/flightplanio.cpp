@@ -2906,6 +2906,89 @@ void FlightplanIO::saveTfdi(const Flightplan& plan, const QString& filename, con
     throw Exception(errorMsg.arg(filename).arg(xmlFile.errorString()));
 }
 
+// [RTE]
+// ORIGIN_AIRPORT=KMFR
+// DEST_AIRPORT=KORD
+
+// [RTE.0]
+// RouteName=
+// Name=BRUTE
+// Latitude=42.407528
+// Longitude=-122.722533
+// CrossThisPoint=0
+// Heading=0
+// Speed=0
+// Altitude=0
+// Frequency=
+// FrequencyID=
+
+// [RTE.1]
+// RouteName=V122
+// Name=LANKS
+// Latitude=42.365658
+// Longitude=-122.612475
+// CrossThisPoint=0
+// Heading=0
+// Speed=0
+// Altitude=0
+// Frequency=
+// FrequencyID=
+void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
+{
+  QFile routeFile(filename);
+  if(routeFile.open(QIODevice::WriteOnly | QIODevice::Text))
+  {
+    QTextStream stream(&routeFile);
+    stream.setCodec("UTF-8");
+    stream.setRealNumberPrecision(8);
+
+    stream << "[RTE]" << endl;
+    stream << "ORIGIN_AIRPORT=" << plan.getDepartureIdent() << endl;
+    stream << "DEST_AIRPORT=" << plan.getDestinationIdent() << endl;
+    stream << endl;
+
+    int index = 0;
+    for(const atools::fs::pln::FlightplanEntry& entry : plan.getEntries())
+    {
+      if(entry.isNoSave())
+        // Do not save procedure points
+        continue;
+
+      stream << "[RTE." << index << "]" << endl;
+      stream << "RouteName=" << entry.getAirway() << endl;
+      stream << "Name=" << entry.getIdent() << endl;
+      stream << "Latitude=" << entry.getPosition().getLatY() << endl;
+      stream << "Longitude=" << entry.getPosition().getLonX() << endl;
+      stream << "CrossThisPoint=0" << endl;
+      stream << "Heading=0" << endl;
+      stream << "SpeedConstraint=0" << endl;
+      stream << "Speed=0" << endl;
+      stream << "AltitudeConstraint=0" << endl;
+      stream << "Altitude=0" << endl;
+
+      QString freqStr;
+      if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
+        freqStr = QString::number(entry.getFrequency() / 1000.f);
+      else if(entry.getWaypointType() == atools::fs::pln::entry::NDB)
+        freqStr = QString::number(entry.getFrequency() / 100.f);
+      stream << "Frequency=" << freqStr << endl;
+
+      stream << "FrequencyID=" << endl;
+      stream << endl;
+      index++;
+    }
+
+    stream << "[CDU]" << endl;
+    stream << "CRZ_ALT=" << endl;
+    stream << "COST_INDEX=" << endl;
+    stream << endl;
+
+    routeFile.close();
+  }
+  else
+    throw Exception(errorMsg.arg(filename).arg(routeFile.errorString()));
+}
+
 QString FlightplanIO::saveGpxStr(const Flightplan& plan, const QVector<geo::LineString>& tracks,
                                  const QVector<QVector<quint32> >& timestamps,
                                  int cruiseAltFt)
