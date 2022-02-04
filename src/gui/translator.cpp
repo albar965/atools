@@ -24,7 +24,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QDir>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QRegularExpression>
 
 namespace atools {
@@ -143,13 +143,13 @@ QVector<QLocale> Translator::findTranslationFiles()
 
 QVector<QLocale> Translator::findTranslationFilesInternal(const QString& path)
 {
-  static const QString APP_NAME = QFileInfo(QApplication::applicationFilePath()).baseName();
+  static const QString APP_NAME = QFileInfo(QCoreApplication::applicationFilePath()).baseName();
   static const QString FILTER = QString("%1_*.qm").arg(APP_NAME);
   static const QRegularExpression QM_FILE_LANG(APP_NAME + "_(.+).qm");
   static const QRegularExpression QM_FILE_LANG_REGION(APP_NAME + "_(.+)_(.+).qm");
 
   // Setup directory for file detection =====================================
-  QDir dir(QApplication::applicationDirPath() + QDir::separator() + path);
+  QDir dir(QCoreApplication::applicationDirPath() + QDir::separator() + path);
   dir.setFilter(QDir::Files | QDir::Hidden);
   dir.setNameFilters({FILTER});
 

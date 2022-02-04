@@ -21,7 +21,7 @@
 #include "fs/pln/flightplanentry.h"
 #include "fs/pln/flightplanconstants.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QXmlStreamReader;
 

@@ -824,8 +824,8 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundE
   databaseMetadata.setCompilerVersion(QString("atools %1 (revision %2) %3 %4 (%5)").
                                       arg(atools::version()).
                                       arg(atools::gitRevision()).
-                                      arg(QApplication::applicationName()).
-                                      arg(QApplication::applicationVersion()).
+                                      arg(QCoreApplication::applicationName()).
+                                      arg(QCoreApplication::applicationVersion()).
                                       arg(gitRevision));
 
   databaseMetadata.updateAll();

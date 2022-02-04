@@ -18,7 +18,7 @@
 #ifndef ATOOLS_UTIL_VERSION_H
 #define ATOOLS_UTIL_VERSION_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace util {

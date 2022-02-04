@@ -38,7 +38,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
     *filterIndex = -1;
 
   dlg.setNameFilter(filter);
-  dlg.setWindowTitle(QApplication::applicationName() + " - " + title);
+  dlg.setWindowTitle(QCoreApplication::applicationName() + " - " + title);
   dlg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
 
   if(!defaultFileSuffix.isEmpty())
@@ -141,20 +141,20 @@ QMessageBox::StandardButton Dialog::warning(QWidget *parentWidget, const QString
                                             QMessageBox::StandardButton defaultButton)
 {
   qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, buttons, defaultButton);
+  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, buttons, defaultButton);
 }
 
 int Dialog::warning(QWidget *parentWidget, const QString& text, int button0, int button1, int button2)
 {
   qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, button0, button1, button2);
+  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, button0, button1, button2);
 }
 
 int Dialog::warning(QWidget *parentWidget, const QString& text,
                     QMessageBox::StandardButton button0, QMessageBox::StandardButton button1)
 {
   qWarning() << Q_FUNC_INFO << text;
-  return QMessageBox::warning(parentWidget, QApplication::applicationName(), text, button0, button1);
+  return QMessageBox::warning(parentWidget, QCoreApplication::applicationName(), text, button0, button1);
 }
 
 QString Dialog::openFileDialog(const QString& title, const QString& filter, const QString& settingsPrefix,
@@ -201,7 +201,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
   // show only if the key is true
   if(s.valueBool(settingsKey, true))
   {
-    QMessageBox msg(QMessageBox::Information, QApplication::applicationName(), message, QMessageBox::Ok, parent);
+    QMessageBox msg(QMessageBox::Information, QCoreApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
@@ -219,7 +219,7 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
   // show only if the key is true
   if(s.valueBool(settingsKey, true))
   {
-    QMessageBox msg(QMessageBox::Warning, QApplication::applicationName(), message, QMessageBox::Ok, parent);
+    QMessageBox msg(QMessageBox::Warning, QCoreApplication::applicationName(), message, QMessageBox::Ok, parent);
     msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
     msg.setWindowModality(Qt::ApplicationModal);
@@ -246,7 +246,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     for(const DialogButton& db : buttonList)
       buttons |= db.button;
 
-    QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
+    QMessageBox msg(QMessageBox::Question, QCoreApplication::applicationName(), message, buttons, parent);
     if(!checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
@@ -280,7 +280,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
   // show only if the key is true or empty
   if(settingsKey.isEmpty() || s.valueBool(settingsKey, true))
   {
-    QMessageBox msg(QMessageBox::Question, QApplication::applicationName(), message, buttons, parent);
+    QMessageBox msg(QMessageBox::Question, QCoreApplication::applicationName(), message, buttons, parent);
     if(!checkBoxMessage.isEmpty())
       msg.setCheckBox(new QCheckBox(checkBoxMessage, &msg));
     msg.setDefaultButton(dialogDefaultButton);
@@ -306,12 +306,12 @@ QMessageBox *Dialog::showSimpleProgressDialog(QWidget *parentWidget, const QStri
 {
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QApplication::applicationName(), message,
+  QMessageBox *progressBox = new QMessageBox(QMessageBox::NoIcon, QCoreApplication::applicationName(), message,
                                              QMessageBox::NoButton, parentWidget);
   progressBox->setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::CustomizeWindowHint);
   progressBox->setStandardButtons(QMessageBox::NoButton);
   progressBox->show();
-  QApplication::processEvents();
+  QCoreApplication::processEvents();
   return progressBox;
 }
 

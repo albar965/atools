@@ -20,7 +20,7 @@
 
 #include "atools.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDate>
 
 namespace atools {

@@ -19,7 +19,7 @@
 #include "util/version.h"
 
 #include <QNetworkReply>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace util {
@@ -34,7 +34,7 @@ static const QLatin1String DOWNLOAD_KEY("downloadlinux");
 #endif
 
 UpdateCheck::UpdateCheck(bool forceDebug)
-  : curProgramVersion(QApplication::applicationVersion()), debug(forceDebug)
+  : curProgramVersion(QCoreApplication::applicationVersion()), debug(forceDebug)
 {
 
 }

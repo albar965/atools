@@ -36,7 +36,7 @@
 #include "fs/common/binarymsageometry.h"
 #include "fs/common/morareader.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDataStream>
 #include <QDebug>
 #include <QFileInfo>

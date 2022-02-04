@@ -20,7 +20,7 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QThread>
 
 namespace atools {
@@ -71,8 +71,8 @@ void LoggingHandler::initialize(const QString& logConfiguration)
 {
   if(instance == nullptr)
     instance = new LoggingHandler(logConfiguration, QDir::currentPath(),
-                                  QApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QApplication::applicationName().replace(" ", "_").toLower());
+                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
   else
     qWarning() << "LoggingHandler::initialize called more than once";
 }
@@ -81,8 +81,8 @@ void LoggingHandler::initializeForTemp(const QString& logConfiguration)
 {
   if(instance == nullptr)
     instance = new LoggingHandler(logConfiguration, QDir::tempPath(),
-                                  QApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QApplication::applicationName().replace(" ", "_").toLower());
+                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
   else
     qWarning() << "LoggingHandler::initializeForTemp called more than once";
 }

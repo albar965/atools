@@ -20,7 +20,7 @@
 
 #include <QDebug>
 #include <QSettings>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QDir>
 #include <QDateTime>
@@ -289,14 +289,14 @@ QString Settings::getDirName()
 QString Settings::orgNameForDirs()
 {
   if(overrideOrganisation.isEmpty())
-    return QApplication::organizationName().replace(' ', '_');
+    return QCoreApplication::organizationName().replace(' ', '_');
   else
     return overrideOrganisation.replace(' ', '_');
 }
 
 QString Settings::appNameForFiles()
 {
-  return QApplication::applicationName().replace(' ', '_').toLower();
+  return QCoreApplication::applicationName().replace(' ', '_').toLower();
 }
 
 } // namespace atools

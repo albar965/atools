@@ -19,7 +19,7 @@
 
 #include <QDebug>
 #include <QRegularExpression>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace util {
@@ -54,7 +54,7 @@ Version::Version(const QString& str)
 
 Version::Version()
 {
-  initFromString(QApplication::applicationVersion());
+  initFromString(QCoreApplication::applicationVersion());
 }
 
 Version::~Version()

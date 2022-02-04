@@ -2609,7 +2609,7 @@ void FlightplanIO::saveEfbr(const Flightplan& plan, const QString& filename, con
     stream << "//AIRAC cycle " << cycle << endl;
     stream << "Format=1" << endl;
     stream << "ATS=" << route << endl;
-    stream << "Generator=" << QApplication::applicationName() << endl;
+    stream << "Generator=" << QCoreApplication::applicationName() << endl;
     stream << "Origin=" << plan.departureIdent << endl;
     stream << "Destination=" << plan.destinationIdent << endl;
     stream << "CruiseAltitude=" << plan.getCruisingAltitude() << endl;
@@ -3128,7 +3128,7 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
     writer.writeStartElement("trk");
 
     if(!plan.isEmpty())
-      writer.writeTextElement("name", QApplication::applicationName() + tr(" Track"));
+      writer.writeTextElement("name", QCoreApplication::applicationName() + tr(" Track"));
 
     for(int segIdx = 0; segIdx < tracks.size(); ++segIdx)
     {
@@ -3482,8 +3482,8 @@ void FlightplanIO::saveRte(const atools::fs::pln::Flightplan& plan, const QStrin
     stream.setCodec("UTF-8");
 
     stream << tr("PMDG RTE Created by %1 Version %2 (revision %3) on %4 ").
-      arg(QApplication::applicationName()).
-      arg(QApplication::applicationVersion()).
+      arg(QCoreApplication::applicationName()).
+      arg(QCoreApplication::applicationVersion()).
       arg(atools::gitRevision()).
       arg(QDateTime::currentDateTime().toString(Qt::ISODate)).
       replace("-", " ") << endl << endl;

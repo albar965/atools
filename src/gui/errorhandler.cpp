@@ -19,7 +19,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QSqlError>
 #include <QFileDevice>
 
@@ -31,7 +31,7 @@ void ErrorHandler::handleException(const std::exception& e, const QString& messa
 {
   qCritical() << "Caught exception:" << e.what();
 
-  QMessageBox::critical(parent, QApplication::applicationName(),
+  QMessageBox::critical(parent, QCoreApplication::applicationName(),
                         tr("%1\nCaught exception\n\n%2").arg(message).arg(e.what()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }
@@ -40,7 +40,7 @@ void ErrorHandler::handleUnknownException(const QString& message)
 {
   qCritical() << "Caught unknown exception";
 
-  QMessageBox::critical(parent, QApplication::applicationName(),
+  QMessageBox::critical(parent, QCoreApplication::applicationName(),
                         tr("%1\nCaught unknown exception").arg(message),
                         QMessageBox::Close, QMessageBox::NoButton);
 
@@ -50,7 +50,7 @@ void ErrorHandler::handleSqlError(const QSqlError& error, const QString& message
 {
   qCritical() << "Sql error occured:" << error.text();
 
-  QMessageBox::critical(parent, QApplication::applicationName(),
+  QMessageBox::critical(parent, QCoreApplication::applicationName(),
                         tr("%1\nSql error occured\n\"%2\"").arg(message).arg(error.text()),
                         QMessageBox::Close, QMessageBox::NoButton);
 }
@@ -60,7 +60,7 @@ void ErrorHandler::handleIOError(const QFileDevice& device, const QString& messa
   qCritical().nospace() << "IO error occured: " << device.errorString() << " (" << device.error() << ") "
                         << " file: " << device.fileName();
 
-  QMessageBox::critical(parent, QApplication::applicationName(),
+  QMessageBox::critical(parent, QCoreApplication::applicationName(),
                         tr("%1\nIO error occured\nFile: \"%2\"\n\"%3\" (%4)").arg(message).
                         arg(device.fileName()).arg(device.errorString()).arg(device.error()),
                         QMessageBox::Close, QMessageBox::NoButton);

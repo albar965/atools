@@ -22,7 +22,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QSettings>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDateTime>
 
 namespace atools {
@@ -357,8 +357,8 @@ void LoggingConfig::readChannels(QSettings *settings, QHash<QString, Channel *>&
       {
         // No filename
         if(logPrefix.isEmpty())
-          filename = QApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                     QApplication::applicationName().replace(" ", "_").toLower();
+          filename = QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                     QCoreApplication::applicationName().replace(" ", "_").toLower();
         else
           filename = logPrefix;
       }

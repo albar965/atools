@@ -18,7 +18,7 @@
 #ifndef ATOOLS_CONTENTXML_H
 #define ATOOLS_CONTENTXML_H
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QSet>
 #include <QVector>
 

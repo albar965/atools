@@ -23,7 +23,7 @@
 #include <QList>
 #include <QSet>
 #include <QString>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace sql {

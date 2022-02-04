@@ -22,7 +22,7 @@
 
 #include <QString>
 #include <QVector>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {

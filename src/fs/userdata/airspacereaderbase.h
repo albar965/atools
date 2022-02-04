@@ -18,7 +18,7 @@
 #ifndef ATOOLS_AIRSPACEREADER_BASE_H
 #define ATOOLS_AIRSPACEREADER_BASE_H
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QVector>
 
 namespace atools {

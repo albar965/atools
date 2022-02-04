@@ -21,7 +21,7 @@
 #include "grib/gribcommon.h"
 
 #include <QVector>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace grib {

@@ -20,7 +20,7 @@
 
 #include "sql/sqlquery.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QVector>
 
 class QAction;

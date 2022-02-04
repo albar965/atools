@@ -20,10 +20,11 @@
 
 #include "fs/pln/flightplanconstants.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
+class QTextStream;
 
 namespace atools {
 namespace util {
