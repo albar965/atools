@@ -349,6 +349,14 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
 }
 
+QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width)
+{
+  QStringList retval(texts);
+  for(QString& str : retval)
+    str = elidedText(metrics, str, mode, width);
+  return retval;
+}
+
 QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width)
 {
   if(metrics.horizontalAdvance(text) >= width)

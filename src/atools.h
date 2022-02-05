@@ -139,6 +139,7 @@ QString elideTextShortMiddle(const QString& str, int maxLength);
 
 /* Elide text for pixel size. Returns single "..." for less than three characters, a single "." if it fits and empty text if not. */
 QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width);
+QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width);
 
 /* Remove any non printable characters from string */
 QString removeNonPrintable(const QString& str);
