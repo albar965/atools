@@ -42,6 +42,10 @@ using atools::geo::windDirectionFromUV;
 namespace atools {
 namespace grib {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 /* Allowed altitude inaccuracy when comparing layer altitudes. */
 Q_CONSTEXPR static int ALTITUDE_EPSILON = 50.f;
 
@@ -407,13 +411,13 @@ QString WindQuery::getDebug(const geo::Pos& pos) const
   out.setRealNumberPrecision(2);
   out.setRealNumberNotation(QTextStream::FixedNotation);
   out << "=================" << endl;
-  for(int altitude : windLayers.keys())
+  for(auto it = windLayers.begin(); it != windLayers.end(); ++it)
   {
-    WindAltLayer layer = windLayers.value(altitude);
+    WindAltLayer layer = it.value();
     QPoint grid = gridPos(pos);
     WindData wind = windForLayer(layer, grid);
 
-    out << "altitude " << altitude << " surface " << layer.surface
+    out << "altitude " << it.key() << " surface " << layer.surface
         << " grid x " << grid.x() << " y " << grid.y() << endl;
     out << "wind u " << wind.u << " v " << wind.v << " kts "
         << " dir " << windDirectionFromUV(wind.u, wind.v) << " deg T"

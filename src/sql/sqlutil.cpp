@@ -27,8 +27,11 @@
 #include <QStringBuilder>
 
 namespace atools {
-
 namespace sql {
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
 
 SqlUtil::SqlUtil(const SqlDatabase *sqlDb)
   : db(sqlDb)

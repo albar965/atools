@@ -22,6 +22,10 @@
 namespace atools {
 namespace util {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 Properties::Properties()
 {
 
@@ -35,8 +39,8 @@ Properties::Properties(const QHash<QString, QString>& other)
 
 void Properties::write(QTextStream& stream) const
 {
-  for(const QString& name : keys())
-    stream << name << "=" << value(name) << endl;
+  for(auto it = begin(); it != end(); ++it)
+    stream << it.key() << "=" << it.value() << endl;
 }
 
 void Properties::read(QTextStream& stream)

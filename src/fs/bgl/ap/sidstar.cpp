@@ -33,6 +33,7 @@ namespace bgl {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
+using Qt::endl;
 #endif
 
 using atools::io::BinaryStream;

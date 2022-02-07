@@ -29,6 +29,11 @@ namespace logging {
 using internal::LoggingConfig;
 using internal::Channel;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+using Qt::flush;
+#endif
+
 LoggingHandler *LoggingHandler::instance = nullptr;
 LoggingHandler::LogFunctionType LoggingHandler::logFunc = nullptr;
 LoggingHandler::AbortFunctionType LoggingHandler::abortFunc = nullptr;

@@ -27,6 +27,11 @@ namespace bgl {
 
 using atools::io::BinaryStream;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+#endif
+
 QString Ndb::ndbTypeToStr(nav::NdbType type)
 {
   switch(type)
