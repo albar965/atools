@@ -26,8 +26,10 @@
 namespace atools {
 namespace io {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::hex;
 using Qt::dec;
+#endif
 
 /* Default intel / little
  * Big endian 1A2B3C4D = 1A 2B 3C 4D in mem

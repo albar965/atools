@@ -43,7 +43,9 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
+#endif
 
 static const QRegularExpression FLP_DCT_WPT("DctWpt(\\d+)(Coordinates)?", QRegularExpression::CaseInsensitiveOption);
 static const QRegularExpression FLP_DCT_AWY("Airway(\\d+)(FROM|TO)?", QRegularExpression::CaseInsensitiveOption);

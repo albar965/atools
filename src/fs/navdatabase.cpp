@@ -47,6 +47,10 @@
 namespace atools {
 namespace fs {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 // Number of progress steps besides scenery areas
 // Database report steps
 
@@ -98,11 +102,11 @@ void NavDatabase::create(const QString& codec)
 
   if(foundError)
   {
-    qWarning() << Qt::endl;
+    qWarning() << endl;
     qWarning() << "*****************************************************************************";
     qWarning() << "*** Found warnings during basic validation. See log for more information. ***";
     qWarning() << "*****************************************************************************";
-    qWarning() << Qt::endl;
+    qWarning() << endl;
   }
 }
 
@@ -1323,8 +1327,6 @@ void NavDatabase::createDatabaseReportShort()
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
 {
-  using Qt::endl;
-
   QDebug info(qInfo());
   atools::sql::SqlUtil util(db);
 
