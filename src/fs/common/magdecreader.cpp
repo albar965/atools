@@ -35,6 +35,11 @@ namespace atools {
 namespace fs {
 namespace common {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+#endif
+
 MagDecReader::MagDecReader()
 {
 }

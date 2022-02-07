@@ -30,6 +30,11 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+#endif
+
 using atools::io::BinaryStream;
 
 SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
