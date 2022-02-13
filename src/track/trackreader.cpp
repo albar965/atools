@@ -215,7 +215,7 @@ void TrackReader::extractPacotsTracksFlex(const QStringList& lines)
     {
       if(line.startsWith("FLEX ROUTE :"))
         // Start of flex path =======================================
-        temp.last().route.append(line.split(" ").mid(3));
+        temp.last().route.append(line.split(' ').mid(3));
       else
       {
         if(atools::strContains(line, INVALID_CHARS))
@@ -223,7 +223,7 @@ void TrackReader::extractPacotsTracksFlex(const QStringList& lines)
           inRecord = false;
         else
           // Append more of the path
-          temp.last().route.append(line.split(" "));
+          temp.last().route.append(line.split(' '));
       }
     }
     else if(line.startsWith("RMK :"))
@@ -317,7 +317,7 @@ void TrackReader::extractTracks(const QStringList& lines, const QRegularExpressi
           inRecord = false;
         else
           // Add route elements
-          temp.last().route.append(line.split(" "));
+          temp.last().route.append(line.split(' '));
       }
     }
     numAfterStart++;
@@ -371,10 +371,17 @@ void TrackReader::extractNatTracks(const QStringList& lines)
   {
     // Get name and list of waypoints ============================================
     // C ETARI 5630/20 5730/30 5730/40 5630/50 IRLOK
-    if(atools::charAt(line, 0).isUpper() && atools::latin1CharAt(line, 1) == ' ')
+    // Skip lines like
+    // 3.PBCS OTS LEVELS 350-390. PBCS TRACKS AS FOLLOWS
+    // V W X
+    // END OF PBCS OTS.
+    QStringList split = line.split(' ');
+
+    if(split.size() >= 3 && // At least name and two waypoints
+       split.at(0).size() == 1 && atools::charAt(split.at(0), 0).isUpper() && // Single name upper case character
+       split.at(1).size() > 2 && split.at(2).size() > 2) // Two waypoint names
     {
       Track track;
-      QStringList split = line.split(" ");
       track.name = split.takeFirst();
 
       // Convert coordinates to NAT waypoints
@@ -389,19 +396,19 @@ void TrackReader::extractNatTracks(const QStringList& lines)
     else if(line.startsWith("EAST LVLS"))
     {
       // EAST LVLS NIL
-      for(const QString& level : line.split(" ").mid(2))
+      for(const QString& level : line.split(' ').mid(2))
       {
         if(level != "NIL")
-          temp.last().eastLevels.append(level.toShort());
+          temp.last().eastLevels.append(level.toUShort());
       }
     }
     else if(line.startsWith("WEST LVLS"))
     {
       // WEST LVLS 310 320 330 340 350 360 370 380 390
-      for(const QString& level : line.split(" ").mid(2))
+      for(const QString& level : line.split(' ').mid(2))
       {
         if(level != "NIL")
-          temp.last().westLevels.append(level.toShort());
+          temp.last().westLevels.append(level.toUShort());
       }
     }
     // Read validity ============================================
