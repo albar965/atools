@@ -189,8 +189,9 @@ private:
    * 21 Added arinc_type to tables waypoint and nav_search.
    *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
    * 22 Rho and theta in approach and transition legs can now be null
+   * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
    */
-  static const int DB_VERSION_MINOR = 22;
+  static const int DB_VERSION_MINOR = 23;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
