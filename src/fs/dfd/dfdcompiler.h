@@ -98,6 +98,9 @@ public:
    * Also creates NDB and VOR waypoints from airway and procedure references */
   void writeNavaids();
 
+
+  void writePathpoints();
+
   /* Fill parking from tbl_gates */
   void writeParking();
 

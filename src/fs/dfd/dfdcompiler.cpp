@@ -493,13 +493,109 @@ void DfdCompiler::writeNavaids()
   db.commit();
 }
 
+void DfdCompiler::writePathpoints()
+{
+  using atools::geo::toRadians;
+  using atools::geo::toDegree;
+
+  if(!SqlUtil(db).hasTable("tbl_pathpoints"))
+    return;
+
+  progress->reportOther("Writing path points");
+
+  SqlQuery select(
+    " select "
+    "   p.approach_procedure_ident, "
+    "   p.icao_code, "
+    "   p.approach_type_identifier, "
+    "   p.sbas_service_provider_identifier,  " // 1 = EGNOS, 0 = WAAS, 2 = MSAS
+    "   p.gnss_channel_number, "
+    "   p.glidepath_angle, "
+    "   p.ltp_ellipsoid_height, "
+    "   p.landing_threshold_longitude, p.landing_threshold_latitude, "
+    "   p.flightpath_alignment_longitude, p.flightpath_alignment_latitude, "
+    "   p.airport_identifier, "
+    "   p.runway_identifier, "
+    "   r.runway_longitude, r.runway_latitude"
+    " from tbl_pathpoints p left outer join tbl_runways r on "
+    "   p.runway_identifier = r.runway_identifier and p.icao_code = r.icao_code  and p.airport_identifier = r.airport_identifier ", db);
+
+  SqlQuery insert(db);
+  insert.prepare(SqlUtil(db).buildInsertStatement("ils", QString(),
+                                                  // Exclude unused columns
+                                                  {"range", "dme_range", "dme_altitude", "dme_lonx", "dme_laty", "gs_range", "loc_width"}));
+
+  select.exec();
+  while(select.next())
+  {
+    // Get path and threshold coordinates
+    double thresholdLonX = select.valueDouble("landing_threshold_longitude");
+    double thresholdLatY = select.valueDouble("landing_threshold_latitude");
+    double pathLonX = select.valueDouble("flightpath_alignment_longitude");
+    double pathLatY = select.valueDouble("flightpath_alignment_latitude");
+    float altFt = atools::geo::meterToFeet(select.valueFloat("ltp_ellipsoid_height"));
+
+    // Calculate path angle - use double for maximal accuracy since points are close
+    double angleDegTrue = atools::geo::normalizeCourse(toDegree(Pos::courseRad(toRadians(thresholdLonX), toRadians(thresholdLatY),
+                                                                               toRadians(pathLonX), toRadians(pathLatY))));
+
+    insert.bindValue(":ident", select.valueStr("approach_procedure_ident"));
+    insert.bindValue(":region", select.valueStr("icao_code"));
+    insert.bindValue(":name", select.valueStr("approach_type_identifier"));
+    insert.bindValue(":type", "T");
+    insert.bindValue(":perf_indicator", select.valueStr("approach_type_identifier"));
+
+    // Detect service provider
+    QString provider = select.valueStr("sbas_service_provider_identifier").simplified();
+    if(provider == "0")
+      insert.bindValue(":provider", "WAAS");
+    else if(provider == "1")
+      insert.bindValue(":provider", "EGNOS");
+    else if(provider == "2")
+      insert.bindValue(":provider", "MSAS");
+    else
+      insert.bindNullStr(":provider");
+
+    insert.bindValue(":frequency", select.valueStr("gnss_channel_number"));
+    insert.bindValue(":has_backcourse", 0); // Not used
+    insert.bindValue(":gs_pitch", select.valueFloat("glidepath_angle"));
+    insert.bindValue(":gs_altitude", altFt);
+    insert.bindValue(":altitude", altFt);
+
+    insert.bindValue(":gs_pitch", select.valueFloat("glidepath_angle"));
+
+    insert.bindValue(":mag_var", magDecReader->getMagVar(Pos(thresholdLonX, thresholdLatY)));
+    insert.bindValue(":gs_lonx", thresholdLonX);
+    insert.bindValue(":gs_laty", thresholdLatY);
+
+    insert.bindValue(":loc_airport_ident", select.valueStr("airport_identifier"));
+    insert.bindValue(":loc_runway_name", select.valueStr("runway_identifier").mid(2)); // Strip off "RW" prefix
+    insert.bindValue(":loc_heading", angleDegTrue);
+
+    // Set not nullable values to 0 - will be filled later in updateIlsGeometry()
+    insert.bindValue(":end1_lonx", 0);
+    insert.bindValue(":end1_laty", 0);
+    insert.bindValue(":end_mid_lonx", 0);
+    insert.bindValue(":end_mid_laty", 0);
+    insert.bindValue(":end2_lonx", 0);
+    insert.bindValue(":end2_laty", 0);
+
+    insert.bindValue(":lonx", thresholdLonX);
+    insert.bindValue(":laty", thresholdLatY);
+
+    insert.exec();
+  }
+
+  db.commit();
+}
+
 void DfdCompiler::writeParking()
 {
   progress->reportOther("Writing parking");
 
   SqlScript script(db, true /*options->isVerbose()*/);
 
-  // Write VOR and NDB
+  // Write parking/gates
   script.executeScript(":/atools/resources/sql/fs/db/dfd/populate_parking.sql");
   db.commit();
 }

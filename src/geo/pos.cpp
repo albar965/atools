@@ -370,10 +370,8 @@ float Pos::angleDegTo(const Pos& otherPos) const
   else if(*this == otherPos)
     return INVALID_VALUE;
 
-  double angleDeg =
-    toDegree(courseRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
-                       toRadians(static_cast<double>(otherPos.lonX)),
-                       toRadians(static_cast<double>(otherPos.latY))));
+  double angleDeg = toDegree(courseRad(toRadians(static_cast<double>(lonX)), toRadians(static_cast<double>(latY)),
+                                       toRadians(static_cast<double>(otherPos.lonX)), toRadians(static_cast<double>(otherPos.latY))));
   return static_cast<float>(normalizeCourse(angleDeg));
 }
 
@@ -638,17 +636,16 @@ float Pos::sec(float value) const
     return seconds;
 }
 
-double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2) const
+double Pos::courseRad(double lonX1, double latY1, double lonX2, double latY2)
 {
   double val = atan2(sin((lonX2 - lonX1)) * cos((latY2)),
-                     cos((latY1)) * sin((latY2)) -
-                     sin((latY1)) * cos((latY2)) *
+                     cos((latY1)) * sin((latY2)) - sin((latY1)) * cos((latY2)) *
                      cos((lonX2 - lonX1)));
 
   return std::fmod(val + M_PI * 2., M_PI * 2.);
 }
 
-double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2) const
+double Pos::distanceRad(double lonX1, double latY1, double lonX2, double latY2)
 {
   double l1 = (sin(((latY1 - latY2)) / 2.));
   double l2 = (sin(((lonX1 - lonX2)) / 2.));

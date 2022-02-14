@@ -919,7 +919,10 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
      options->isIncludedNavDbObject(atools::fs::type::NDB) ||
      options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
      options->isIncludedNavDbObject(atools::fs::type::ILS))
+  {
     dfdCompiler->writeNavaids();
+    dfdCompiler->writePathpoints();
+  }
 
   if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
   {
