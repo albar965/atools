@@ -34,6 +34,8 @@ QDebug operator<<(QDebug out, const Track& record)
   out.nospace().noquote() << "Track["
                           << record.name
                           << ", " << typeToString(record.type)
+                          << ", fully valid " << record.isFullyValid()
+                          << ", valid " << record.isValid()
                           << ", " << record.route;
 
   if(!record.eastLevels.isEmpty())
