@@ -110,6 +110,7 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.secCode = at(line, SEC_CODE);
   procInput.subCode = at(line, SUB_CODE);
   procInput.descCode = at(line, DESC_CODE);
+  // procInput.aircraftCategory
   procInput.turnDir = at(line, TURN_DIR).trimmed();
   procInput.pathTerm = at(line, PATH_TERM).trimmed();
   procInput.recdNavaid = at(line, RECD_NAVAID).trimmed();

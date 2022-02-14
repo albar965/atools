@@ -627,6 +627,8 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
   rec.setValue(":fix_region", navInfo.region);
 
+  rec.setValue(":aircraft_category", line.aircraftCategory);
+
   approaches.append(Procedure(curRowCode, rec, commonRoute, line.sidStarAppIdent.trimmed()));
 
   writeApproachLeg(line);
@@ -679,6 +681,7 @@ void ProcedureWriter::writeTransition(const ProcedureInput& line)
   rec.setValue(":fix_type", navInfo.type);
   rec.setValue(":fix_ident", line.transIdent.trimmed());
   rec.setValue(":fix_region", navInfo.region);
+  rec.setValue(":aircraft_category", line.aircraftCategory);
 
   transitions.append(Procedure(curRowCode, rec, false /* common route */, line.sidStarAppIdent.trimmed()));
 

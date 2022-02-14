@@ -1310,6 +1310,7 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
   // procInput.secCode = query.valueStr(""); // Not available
   // procInput.subCode = query.valueStr(""); // Not available
   procInput.descCode = query.valueStr("waypoint_description_code");
+  procInput.aircraftCategory = query.valueStr("aircraft_category", QString());
 
   if(!query.isNull("waypoint_longitude") && !query.isNull("waypoint_latitude"))
     procInput.waypointPos = DPos(query.valueDouble("waypoint_longitude"), query.valueDouble("waypoint_latitude"));

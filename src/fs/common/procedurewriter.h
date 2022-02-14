@@ -110,6 +110,7 @@ struct ProcedureInput
   atools::geo::DPos centerPos;
 
   QString gnssFmsIndicator; // 117     5.222
+  QString aircraftCategory; // 5.221
 };
 
 const float INVALID_FLOAT = std::numeric_limits<float>::max();

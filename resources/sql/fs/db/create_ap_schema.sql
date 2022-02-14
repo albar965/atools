@@ -431,6 +431,23 @@ create table approach
   fix_ident varchar(5),             -- ICAO ident of the fix
   fix_region varchar(2),            -- ICAO two letter region code for fix
   fix_airport_ident varchar(4),     -- Airport ICAO ident if available
+
+  aircraft_category varchar(4),     -- Aircraft category
+                                    -- A All Aircraft, Cruise speed 250 kts or less
+                                    -- C Non-Jet and Turbo Prop
+                                    -- D Multi-Engine Props Only
+                                    -- E Jets and Turbo Props/Special, Cruise Speed 190 kts
+                                    -- F or greater
+                                    -- H Helicopter Only
+                                    -- J Jet Power
+                                    -- M Turbo-Prop/Special, Cruise Speed 190 kts or greater
+                                    -- N Non-Jet, Non-Turbo Prop
+                                    -- P Non-Jet, Cruise speed 190 kts or greater
+                                    -- Q Non-Jet, Cruise speed 189 kts or less
+                                    -- R Aircraft as defined in a Notes Continuation Record
+                                    -- S Single Engine
+                                    -- T Twin Engine
+
   altitude integer,                 -- Crossing altitude for the fix in feet
   heading double,                   -- Heading in degrees true
   missed_altitude integer,          -- Missed approach altitude in feet
@@ -457,6 +474,23 @@ create table transition
   fix_ident varchar(5),         -- "
   fix_region varchar(2),        -- "
   fix_airport_ident varchar(4), -- "
+
+  aircraft_category varchar(4), -- Aircraft category
+                                -- A All Aircraft, Cruise speed 250 kts or less
+                                -- C Non-Jet and Turbo Prop
+                                -- D Multi-Engine Props Only
+                                -- E Jets and Turbo Props/Special, Cruise Speed 190 kts
+                                -- F or greater
+                                -- H Helicopter Only
+                                -- J Jet Power
+                                -- M Turbo-Prop/Special, Cruise Speed 190 kts or greater
+                                -- N Non-Jet, Non-Turbo Prop
+                                -- P Non-Jet, Cruise speed 190 kts or greater
+                                -- Q Non-Jet, Cruise speed 189 kts or less
+                                -- R Aircraft as defined in a Notes Continuation Record
+                                -- S Single Engine
+                                -- T Twin Engine
+
   altitude integer,             -- Overfly altitude in feet for the transition fix
   dme_ident varchar(5),         -- Contains the DME ICAO ident if transition type is DME
   dme_region varchar(2),        -- ICAO two letter region code for DME if transition type is DME
