@@ -31,8 +31,9 @@ drop table if exists tmp_holding;
 drop table if exists tmp_ap_num_ils;
 
 
--- Create indexes ontmp_waypoint are potentially used in searches
+-- Create indexes which are used in searches
 create index if not exists idx_ils_ident on ils(ident);
+create index if not exists idx_ils_type on ils(type);
 
 create index if not exists idx_airway_left_lonx on airway(left_lonx);
 create index if not exists idx_airway_top_laty on airway(top_laty);
