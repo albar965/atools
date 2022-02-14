@@ -120,6 +120,7 @@ void XpCifpWriter::write(const QStringList& line, const XpWriterContext& context
   procInput.theta = at(line, THETA).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, THETA).toFloat() / 10.f;
   procInput.rho = at(line, RHO).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, RHO).toFloat() / 10.f;
   procInput.magCourse = at(line, MAG_CRS).toFloat() / 10.f;
+  procInput.rnp = at(line, RNP).simplified().isEmpty() ? atools::fs::common::INVALID_FLOAT : at(line, RNP).toFloat();
 
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   QString distTime = at(line, RTE_DIST_HOLD_DIST_TIME).trimmed();

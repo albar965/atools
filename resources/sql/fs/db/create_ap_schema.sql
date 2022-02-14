@@ -483,6 +483,8 @@ create table approach_leg
   alt_descriptor varchar(10),         -- see enum atools::fs::bgl::leg::AltDescriptor
                                       -- "A": at, "+": at or above, "-": at or below, "B": between altitude2 and altitude1
   turn_direction varchar(10),         -- see enum atools::fs::bgl::leg::TurnDirection
+  rnp double,                         -- Required Navigation Performance - ARINC 5.211 - Examples:
+                                      -- 990 (equal to 99.0NM), -- 120 (equal to 12.0NM), 013 --(equal to 0.001NM)
   fix_type varchar(25),               -- same as in approach
   fix_ident varchar(5),               -- "
   fix_region varchar(2),              -- "
@@ -525,6 +527,7 @@ create table transition_leg
   approach_fix_type varchar(1),
   alt_descriptor varchar(10),
   turn_direction varchar(10),
+  rnp double,                         -- Required Navigation Performance - ARINC 5.211
   fix_type varchar(25),
   fix_ident varchar(5),
   fix_region varchar(2),

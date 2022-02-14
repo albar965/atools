@@ -871,6 +871,11 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   rec.setValue(":is_true_course", 0); // Not used
   rec.setValue(":course", line.magCourse);
 
+  if(line.rnp < atools::fs::common::INVALID_FLOAT)
+    rec.setValue(":rnp", line.rnp);
+  else
+    rec.setNull(":rnp");
+
   // time minutes
   rec.setValue(":time", line.rteHoldTime);
 

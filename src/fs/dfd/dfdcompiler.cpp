@@ -1341,6 +1341,11 @@ void DfdCompiler::fillProcedureInput(atools::fs::common::ProcedureInput& procInp
 
   procInput.magCourse = query.valueFloat("magnetic_course");
 
+  if(!query.hasField("rnp") || query.isNull("rnp"))
+    procInput.rnp = atools::fs::common::INVALID_FLOAT;
+  else
+    procInput.rnp = query.valueFloat("rnp");
+
   float distTime = query.valueFloat("route_distance_holding_distance_time");
   procInput.rteHoldTime = procInput.rteHoldDist = 0.f;
   if(procInput.pathTerm.startsWith("H"))
