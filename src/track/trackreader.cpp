@@ -398,7 +398,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       // EAST LVLS NIL
       for(const QString& level : line.split(' ').mid(2))
       {
-        if(level != "NIL")
+        if(level != "NIL" && !temp.isEmpty())
           temp.last().eastLevels.append(level.toUShort());
       }
     }
@@ -407,7 +407,7 @@ void TrackReader::extractNatTracks(const QStringList& lines)
       // WEST LVLS 310 320 330 340 350 360 370 380 390
       for(const QString& level : line.split(' ').mid(2))
       {
-        if(level != "NIL")
+        if(level != "NIL" && !temp.isEmpty())
           temp.last().westLevels.append(level.toUShort());
       }
     }
