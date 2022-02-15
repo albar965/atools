@@ -95,7 +95,7 @@ void TempFile::init(const QByteArray& bytes, const QString& suffix)
 QString TempFile::buildFilename(const QString& suffix)
 {
   return QDir::tempPath() + QString("/%1_%2%3").
-         arg(QApplication::applicationName().replace(" ", "_").toLower()).
+         arg(QCoreApplication::applicationName().replace(" ", "_").toLower()).
          arg(QUuid::createUuid().toString().replace("{", "").replace("}", "")).
          arg(suffix.isEmpty() ? ".temp" : suffix);
 }

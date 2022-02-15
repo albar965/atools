@@ -139,6 +139,7 @@ QString elideTextShortMiddle(const QString& str, int maxLength);
 
 /* Elide text for pixel size. Returns single "..." for less than three characters, a single "." if it fits and empty text if not. */
 QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width);
+QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width);
 
 /* Remove any non printable characters from string */
 QString removeNonPrintable(const QString& str);
@@ -275,13 +276,13 @@ const TYPE& at(const QVector<TYPE>& list, int index, const QString& msg, const T
 template<typename TYPE>
 const TYPE& atRoll(const QVector<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.first();
+  return index < list.size() ? list.at(index) : list.constFirst();
 }
 
 template<typename TYPE>
 const TYPE& atRoll(const QList<TYPE>& list, int index)
 {
-  return index < list.size() ? list.at(index) : list.first();
+  return index < list.size() ? list.at(index) : list.constFirst();
 }
 
 /* Writes a warning message includiing the string list */
@@ -298,9 +299,9 @@ TYPE *firstOrNull(QList<TYPE>& list)
 }
 
 template<typename TYPE>
-const TYPE *firstOrNull(const QList<TYPE>& list)
+const TYPE *constFirstOrNull(const QList<TYPE>& list)
 {
-  return list.isEmpty() ? nullptr : &list.first();
+  return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 template<typename TYPE>
@@ -310,9 +311,9 @@ TYPE *firstOrNull(QVector<TYPE>& list)
 }
 
 template<typename TYPE>
-const TYPE *firstOrNull(const QVector<TYPE>& list)
+const TYPE *constFirstOrNull(const QVector<TYPE>& list)
 {
-  return list.isEmpty() ? nullptr : &list.first();
+  return list.isEmpty() ? nullptr : &list.constFirst();
 }
 
 static const int MAX_FILENAME_CHARS = 150;
@@ -635,7 +636,7 @@ QStringList numStrHashToStrList(const QHash<TYPE, QString>& hash)
 {
   QStringList retval;
 
-  for(auto i = hash.begin(); i != hash.end(); ++i)
+  for(auto i = hash.constBegin(); i != hash.constEnd(); ++i)
   {
     retval.append(QString::number(static_cast<int>(i.key())));
     retval.append(i.value());
@@ -670,7 +671,7 @@ QStringList numStrMapToStrList(const QMap<TYPE, QString>& map)
 {
   QStringList retval;
 
-  for(auto i = map.begin(); i != map.end(); ++i)
+  for(auto i = map.constBegin(); i != map.constEnd(); ++i)
   {
     retval.append(QString::number(static_cast<int>(i.key())));
     retval.append(i.value());

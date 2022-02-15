@@ -257,8 +257,7 @@ public:
                             atools::geo::LineString& positions) const;
 
   /* Find point between start and end on rhumb line */
-  atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter,
-                                    float fraction) const;
+  atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float distanceMeter, float fraction) const;
   atools::geo::Pos interpolateRhumb(const atools::geo::Pos& otherPos, float fraction) const;
 
   /* Returns the point of intersection of two paths defined by point and bearing */
@@ -313,6 +312,10 @@ public:
 
   Q_DECL_CONSTEXPR static float INVALID_VALUE = std::numeric_limits<float>::max();
 
+  /* Basic funtions if more accuracy than float is needed */
+  static double distanceRad(double lonX1, double latY1, double lonX2, double latY2);
+  static double courseRad(double lonX1, double latY1, double lonX2, double latY2);
+
 private:
   Q_DECL_CONSTEXPR static double EARTH_RADIUS_METER_DOUBLE = 6371. * 1000.;
   // Länge (x),Breite (y)
@@ -328,9 +331,6 @@ private:
   int min(float value) const;
   int deg(float value) const;
   inline bool doesOverflow60(float value) const;
-
-  double distanceRad(double lonX1, double latY1, double lonX2, double latY2) const;
-  double courseRad(double lonX1, double latY1, double lonX2, double latY2) const;
 
 };
 

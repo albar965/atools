@@ -20,10 +20,11 @@
 
 #include "fs/pln/flightplanconstants.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QXmlStreamReader;
 class QXmlStreamWriter;
+class QTextStream;
 
 namespace atools {
 namespace util {
@@ -174,6 +175,9 @@ public:
 
   /* TFDi Design 717 XML */
   void saveTfdi(const Flightplan& plan, const QString& filename, const QBitArray& jetAirways);
+
+  /*  iFly Jets Advanced Series */
+  void saveIfly(const Flightplan& plan, const QString& filename);
 
   /* Version number to save into LNMPLN files */
   static const int LNMPLN_VERSION_MAJOR = 1;

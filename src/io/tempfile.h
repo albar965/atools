@@ -18,7 +18,7 @@
 #ifndef ATOOLS_TEMPFILE_H
 #define ATOOLS_TEMPFILE_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace io {

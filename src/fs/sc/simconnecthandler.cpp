@@ -1024,7 +1024,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
                    << result.requestIdent << ":" << p->fetchedMetars.size();
 
       if(!p->fetchedMetars.isEmpty())
-        result.metarForStation = p->fetchedMetars.first();
+        result.metarForStation = p->fetchedMetars.constFirst();
     }
 
     if(p->fetchedMetars.isEmpty())
@@ -1049,7 +1049,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
                      << result.requestPos.toString() << ":" << p->fetchedMetars.size();
 
         if(!p->fetchedMetars.isEmpty())
-          result.metarForNearest = p->fetchedMetars.first();
+          result.metarForNearest = p->fetchedMetars.constFirst();
       }
 
       // == interpolated weather ========================================================
@@ -1069,7 +1069,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
                      << result.requestPos.toString() << ":" << p->fetchedMetars.size();
 
         if(!p->fetchedMetars.isEmpty())
-          result.metarForInterpolated = p->fetchedMetars.first();
+          result.metarForInterpolated = p->fetchedMetars.constFirst();
       }
     }
     data.metarResults.append(result);

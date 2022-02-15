@@ -379,7 +379,7 @@ QVariant DataManagerBase::getValue(int id, const QString& colName) const
   getValues(values, {id}, colName);
 
   // Nothing found
-  return values.isEmpty() ? QVariant() : values.first();
+  return values.isEmpty() ? QVariant() : values.constFirst();
 }
 
 void DataManagerBase::getRecords(QVector<SqlRecord>& records, const QVector<int> ids) const
@@ -401,7 +401,7 @@ SqlRecord DataManagerBase::getRecord(int id) const
   getRecords(recs, {id});
 
   // Nothing found
-  return recs.isEmpty() ? SqlRecord() : recs.first();
+  return recs.isEmpty() ? SqlRecord() : recs.constFirst();
 }
 
 bool DataManagerBase::hasRecord(int id) const

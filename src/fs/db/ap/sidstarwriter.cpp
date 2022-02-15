@@ -66,7 +66,7 @@ void SidStarWriter::writeObject(const SidStar *type)
   // enroute transition (for SIDs), runway transition (for STARs).
   if(!type->getCommonRouteLegs().isEmpty())
   {
-    const ApproachLeg leg = type->getCommonRouteLegs().first();
+    const ApproachLeg leg = type->getCommonRouteLegs().constFirst();
     bind(":fix_type", bgl::util::enumToStr(bgl::ap::approachFixTypeToStr, leg.getFixType()));
     bind(":fix_region", leg.getFixIdent());
     bind(":fix_airport_ident", leg.getFixAirportIdent());

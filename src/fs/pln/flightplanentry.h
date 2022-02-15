@@ -18,7 +18,7 @@
 #ifndef ATOOLS_FLIGHTPLANENTRY_H
 #define ATOOLS_FLIGHTPLANENTRY_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 #include "fs/pln/flightplanconstants.h"
 #include "geo/pos.h"

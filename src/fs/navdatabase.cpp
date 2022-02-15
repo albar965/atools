@@ -47,6 +47,10 @@
 namespace atools {
 namespace fs {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 // Number of progress steps besides scenery areas
 // Database report steps
 
@@ -83,17 +87,26 @@ NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDataba
 
 }
 
-void NavDatabase::create(const QString& codec)
+void NavDatabase::create(const QString& codec, bool& foundBasicValidationError)
 {
   if(options != nullptr)
     qDebug() << Q_FUNC_INFO << *options;
 
-  createInternal(codec);
+  createInternal(codec, foundBasicValidationError);
   if(aborted)
     // Remove all (partial) changes
     db->rollback();
   else
     createDatabaseReportShort();
+
+  if(foundBasicValidationError)
+  {
+    qWarning() << endl;
+    qWarning() << "*****************************************************************************";
+    qWarning() << "*** Found warnings during basic validation. See log for more information. ***";
+    qWarning() << "*****************************************************************************";
+    qWarning() << endl;
+  }
 }
 
 void NavDatabase::createAirspaceSchema()
@@ -551,7 +564,7 @@ int NavDatabase::countMsSimSteps()
   return total;
 }
 
-void NavDatabase::createInternal(const QString& sceneryConfigCodec)
+void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundBasicValidationError)
 {
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
@@ -814,8 +827,8 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   databaseMetadata.setCompilerVersion(QString("atools %1 (revision %2) %3 %4 (%5)").
                                       arg(atools::version()).
                                       arg(atools::gitRevision()).
-                                      arg(QApplication::applicationName()).
-                                      arg(QApplication::applicationVersion()).
+                                      arg(QCoreApplication::applicationName()).
+                                      arg(QCoreApplication::applicationVersion()).
                                       arg(gitRevision));
 
   databaseMetadata.updateAll();
@@ -837,7 +850,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec)
   }
 
   if(options->isBasicValidation())
-    basicValidation(&progress);
+    basicValidation(&progress, foundBasicValidationError);
 
   if(options->isDatabaseReport())
   {
@@ -905,7 +918,10 @@ bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompile
      options->isIncludedNavDbObject(atools::fs::type::NDB) ||
      options->isIncludedNavDbObject(atools::fs::type::MARKER) ||
      options->isIncludedNavDbObject(atools::fs::type::ILS))
+  {
     dfdCompiler->writeNavaids();
+    dfdCompiler->writePathpoints();
+  }
 
   if(options->isIncludedNavDbObject(atools::fs::type::BOUNDARY))
   {
@@ -1195,19 +1211,19 @@ bool NavDatabase::loadFsxP3dMsfsPost(ProgressHandler *progress)
   return false;
 }
 
-bool NavDatabase::basicValidation(ProgressHandler *progress)
+bool NavDatabase::basicValidation(ProgressHandler *progress, bool& foundBasicValidationError)
 {
   if((aborted = progress->reportOther(tr("Basic Validation"))))
     return true;
 
   const QMap<QString, int>& basicValidationTables = options->getBasicValidationTables();
-  for(auto it = basicValidationTables.begin(); it != basicValidationTables.end(); ++it)
-    basicValidateTable(it.key(), it.value());
+  for(auto it = basicValidationTables.constBegin(); it != basicValidationTables.constEnd(); ++it)
+    basicValidateTable(it.key(), it.value(), foundBasicValidationError);
 
   return false;
 }
 
-void NavDatabase::basicValidateTable(const QString& table, int minCount)
+void NavDatabase::basicValidateTable(const QString& table, int minCount, bool& foundBasicValidationError)
 {
   SqlUtil util(db);
   if(!util.hasTable(table))
@@ -1215,9 +1231,12 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount)
 
   int count = 0;
   if((count = util.rowCount(table)) < minCount)
-    throw Exception(QString("Table \"%1\" has only %2 rows. Minimum required is %3").arg(table).arg(count).arg(minCount));
-
-  qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
+  {
+    qWarning() << "*** Table" << table << "has only" << count << "rows. Minimum required is" << minCount << "***";
+    foundBasicValidationError = true;
+  }
+  else
+    qInfo() << "Table" << table << "is OK. Has" << count << "rows. Minimum required is" << minCount;
 }
 
 void NavDatabase::runPreparationPost245(atools::sql::SqlDatabase& db)
@@ -1310,8 +1329,6 @@ void NavDatabase::createDatabaseReportShort()
 
 bool NavDatabase::createDatabaseReport(ProgressHandler *progress)
 {
-  using Qt::endl;
-
   QDebug info(qInfo());
   atools::sql::SqlUtil util(db);
 

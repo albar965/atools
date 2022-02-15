@@ -19,11 +19,15 @@
 
 #include <QDebug>
 #include <QRegularExpression>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace util {
 
+// 1.2
+static const QRegularExpression VERSION_REGEXP_SIMPLE("^(\\d+)\\.(\\d+)$");
+
+// 1.2.33.beta1
 static const QRegularExpression VERSION_REGEXP("^(\\d+)\\.(\\d+)\\.(\\d+)"
                                                "[-\\.]?"
                                                "([a-zA-Z_]*)"
@@ -34,12 +38,12 @@ Version::Version(int verMajor, int verMinor, int verPatchlevel, const QString& v
   name(verName)
 {
   // "1.12.24.rc1"
-  versionString = QString("%1.%2.%3%4%5").
+  versionString = tr("%1.%2%3%4%5", "Used to build a version string like 1.2.33.beta1").
                   arg(majorVersion).
                   arg(minorVersion).
-                  arg(patchlevelVersion).
-                  arg(name.isEmpty() ? QString() : "." + name).
-                  arg(nameSubVersion >= 0 ? QString() : QString::number(nameSubVersion));
+                  arg(patchlevelVersion >= 0 ? tr(".%1", "Patchlevel in version string").arg(patchlevelVersion) : QString()).
+                  arg(name.isEmpty() ? QString() : tr(".%1", "Name like \"beta\" in version string").arg(name)).
+                  arg(nameSubVersion >= 0 ? QString::number(nameSubVersion) : QString());
 }
 
 Version::Version(const QString& str)
@@ -50,7 +54,7 @@ Version::Version(const QString& str)
 
 Version::Version()
 {
-  initFromString(QApplication::applicationVersion());
+  initFromString(QCoreApplication::applicationVersion());
 }
 
 Version::~Version()
@@ -60,16 +64,21 @@ Version::~Version()
 
 void Version::initFromString(const QString& str)
 {
-  versionString = str;
+  versionString = str.simplified();
   if(!str.isEmpty())
   {
+    QRegularExpressionMatch matchSimple = VERSION_REGEXP_SIMPLE.match(str);
     QRegularExpressionMatch match = VERSION_REGEXP.match(str);
     bool ok;
 
-    QStringList captured = match.capturedTexts();
-    if(captured.size() < 3)
-      qWarning() << "Error reading version information: size is < 3" << str;
-    else
+    QStringList captured;
+    if(matchSimple.hasMatch())
+      captured = matchSimple.capturedTexts();
+    else if(match.hasMatch())
+      captured = match.capturedTexts();
+
+    // First capture at 0 is whole string
+    if(captured.size() > 2)
     {
       majorVersion = captured.at(1).toInt(&ok);
       if(!ok)
@@ -84,15 +93,18 @@ void Version::initFromString(const QString& str)
         qWarning() << "Error reading version information: cannot read minor" << str;
         minorVersion = -1;
       }
+    }
+    else
+      qWarning() << "Error reading version information: size is < 2" << str;
 
+    if(captured.size() > 3)
+    {
       patchlevelVersion = captured.at(3).toInt(&ok);
       if(!ok)
-      {
-        qWarning() << "Error reading version information: cannot read patchlevel" << str;
         patchlevelVersion = -1;
-      }
     }
-    if(captured.size() >= 4)
+
+    if(captured.size() > 4)
     {
       name = captured.at(4);
       if(namePriority() == -1)
@@ -133,17 +145,17 @@ bool Version::isStable() const
 
 bool Version::isReleaseCandidate() const
 {
-  return name.toLower() == "rc";
+  return name.startsWith("r", Qt::CaseInsensitive);
 }
 
 bool Version::isBeta() const
 {
-  return name.toLower() == "beta";
+  return name.startsWith("b", Qt::CaseInsensitive);
 }
 
 bool Version::isDevelop() const
 {
-  return name.startsWith("dev", Qt::CaseInsensitive) || name.compare("alpha", Qt::CaseInsensitive) == 0;
+  return name.startsWith("dev", Qt::CaseInsensitive) || name.startsWith("a", Qt::CaseInsensitive);
 }
 
 bool Version::operator<(const Version& other) const
@@ -165,7 +177,7 @@ bool Version::operator<(const Version& other) const
 
 bool Version::isValid() const
 {
-  return majorVersion >= 0 && minorVersion >= 0 && patchlevelVersion >= 0 && namePriority() >= 0;
+  return majorVersion >= 0 && minorVersion >= 0 && namePriority() >= 0;
 }
 
 QDebug operator<<(QDebug out, const atools::util::Version& version)

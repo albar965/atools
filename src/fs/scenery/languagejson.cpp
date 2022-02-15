@@ -73,7 +73,7 @@ void LanguageJson::readFromFile(const QString& filename, const QStringList& keyP
       adjustLanguage();
       QJsonObject strings = package.value("Strings").toObject();
 
-      for(auto it = strings.begin(); it != strings.end(); ++it)
+      for(auto it = strings.constBegin(); it != strings.constEnd(); ++it)
       {
         QString key = it.key();
         if(keyPrefixes.isEmpty() || atools::strStartsWith(keyPrefixes, key))
@@ -137,7 +137,7 @@ void LanguageJson::writeToDb(sql::SqlDatabase *db) const
 {
   atools::sql::SqlQuery query(db);
   query.prepare("insert into translation (language, key, text) values(?, ?, ?)");
-  for(auto it = names.begin(); it != names.end(); ++it)
+  for(auto it = names.constBegin(); it != names.constEnd(); ++it)
   {
     query.bindValue(0, language);
     query.bindValue(1, it.key());

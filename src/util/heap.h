@@ -63,7 +63,7 @@ public:
     std::push_heap(heap.begin(), heap.end());
   }
 
-  bool contains(const TYPE& data)
+  bool contains(const TYPE& data) const
   {
     return std::find(heap.begin(), heap.end(), HeapNode(data)) != heap.end();
   }
@@ -154,7 +154,7 @@ void Heap<TYPE, COST>::change(const TYPE& data, COST cost)
 template<typename TYPE, typename COST>
 void Heap<TYPE, COST>::changeOrPush(const TYPE& data, COST cost)
 {
-  typename std::vector<HeapNode>::iterator it = std::find(heap.begin(), heap.end(), HeapNode(data));
+  auto it = std::find(heap.begin(), heap.end(), HeapNode(data));
 
   if(it != heap.end())
   {

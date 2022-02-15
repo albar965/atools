@@ -25,6 +25,12 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+using Qt::endl;
+#endif
+
 Apron::Apron(const atools::fs::NavDatabaseOptions *options, atools::io::BinaryStream *bs,
              atools::fs::bgl::rec::AirportRecordType type)
   : bgl::Record(options, bs)

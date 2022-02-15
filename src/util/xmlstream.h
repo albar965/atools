@@ -18,7 +18,7 @@
 #ifndef ATOOLS_XMLSTRAM_H
 #define ATOOLS_XMLSTRAM_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QXmlStreamReader;
 class QIODevice;

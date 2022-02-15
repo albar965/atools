@@ -161,7 +161,7 @@ void AirportWriter::writeObject(const Airport *type)
 
     const DeleteAirport *delAp = nullptr;
     if(!type->getDeleteAirports().isEmpty())
-      delAp = &type->getDeleteAirports().first();
+      delAp = &type->getDeleteAirports().constFirst();
 
     // Get country, state and city =====================
     QString city, state, country, region;

@@ -25,7 +25,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QDataStream>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {
@@ -192,7 +192,7 @@ void DataReaderThread::run()
           numErrors = 0;
           emit postLogMessage(tr("Too many errors reading from simulator. Disconnected. "
                                  "Restart <i>%1</i> to try again.").
-                              arg(QApplication::applicationName()), false, true);
+                              arg(QCoreApplication::applicationName()), false, true);
           break;
         }
 
@@ -212,13 +212,13 @@ void DataReaderThread::run()
         emit postLogMessage(tr("Error reading from simulator: %1. Disconnected. "
                                "Restart <i>%2</i> to try again.").
                             arg(data.getStatusText()).
-                            arg(QApplication::applicationName()), false, true);
+                            arg(QCoreApplication::applicationName()), false, true);
 
         if(data.getStatus() == INVALID_MAGIC_NUMBER || data.getStatus() == VERSION_MISMATCH)
         {
           emit postLogMessage(tr("Your installed version of <i>Little Xpconnect</i> "
                                  "is not compatible with this version of <i>%2</i>.").
-                              arg(QApplication::applicationName()), false, true);
+                              arg(QCoreApplication::applicationName()), false, true);
           emit postLogMessage(tr("Install the latest version of <i>Little Xpconnect</i>."), false, true);
         }
 

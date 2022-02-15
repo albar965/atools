@@ -115,12 +115,12 @@ public:
 
   const atools::geo::Pos& getPos1() const
   {
-    return isEmpty() ? EMPTY_POS : first();
+    return isEmpty() ? EMPTY_POS : constFirst();
   }
 
   const atools::geo::Pos& getPos2() const
   {
-    return isEmpty() ? EMPTY_POS : last();
+    return isEmpty() ? EMPTY_POS : constLast();
   }
 
   /* Typed version of mid.
@@ -161,12 +161,12 @@ public:
 
   bool isPoint() const
   {
-    return size() == 1 || (size() == 2 && first() == last());
+    return size() == 1 || (size() == 2 && constFirst() == constLast());
   }
 
   bool isClosed() const
   {
-    return isValid() && first() == last();
+    return isValid() && constFirst() == constLast();
   }
 
   /* true if longitude values cross the anti-meridian independent of direction but unreliable for large rectangles. */

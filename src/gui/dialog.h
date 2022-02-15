@@ -58,10 +58,8 @@ public:
   static QMessageBox::StandardButton warning(QWidget *parentWidget, const QString& text,
                                              QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                                              QMessageBox::StandardButton defaultButton = QMessageBox::NoButton);
-  static int warning(QWidget *parentWidget, const QString& text,
-                     int button0, int button1, int button2 = 0);
-  static int warning(QWidget *parentWidget, const QString& text,
-                     QMessageBox::StandardButton button0, QMessageBox::StandardButton button1);
+  static int warning(QWidget *parentWidget, const QString& text, int button0, int button1, int button2 = 0);
+  static int warning(QWidget *parentWidget, const QString& text, QMessageBox::StandardButton button0, QMessageBox::StandardButton button1);
 
   /*
    * Creates an open file dialog and returns the selected file otherwise an
@@ -116,8 +114,7 @@ public:
    * @see atools::settings::Settings
    */
   QString saveFileDialog(const QString& title, const QString& filter, const QString& defaultFileSuffix,
-                         const QString& settingsPrefix = QString(),
-                         const QString& path = QString(),
+                         const QString& settingsPrefix = QString(), const QString& path = QString(),
                          const QString& filename = QString(), bool dontComfirmOverwrite = false,
                          bool autoNumberFilename = false, int *filterIndex = nullptr);
 

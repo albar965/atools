@@ -161,7 +161,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
     return;
 
   if(linestring.size() == 1)
-    elevations.append(linestring.first().alt(getElevation(linestring.first())));
+    elevations.append(linestring.constFirst().alt(getElevation(linestring.constFirst())));
   else
   {
     LineString positions;
@@ -181,7 +181,7 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
 
         if(!elevations.isEmpty())
         {
-          if(atools::almostEqual(elevations.last().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
+          if(atools::almostEqual(elevations.constLast().getAltitude(), elevation, SAME_ELEVATION_EPSILON))
           {
             // Drop points with similar altitude
             lastDropped = pos;
@@ -200,9 +200,9 @@ void GlobeReader::getElevations(atools::geo::LineString& elevations, const atool
       }
     }
 
-    elevations.append(linestring.last());
+    elevations.append(linestring.constLast());
     if(!elevations.isEmpty())
-      elevations.last().setAltitude(getElevation(elevations.last()));
+      elevations.last().setAltitude(getElevation(elevations.constLast()));
   }
 }
 

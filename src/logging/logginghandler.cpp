@@ -20,7 +20,7 @@
 
 #include <QDebug>
 #include <QDir>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QThread>
 
 namespace atools {
@@ -28,6 +28,11 @@ namespace logging {
 
 using internal::LoggingConfig;
 using internal::Channel;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+using Qt::flush;
+#endif
 
 LoggingHandler *LoggingHandler::instance = nullptr;
 LoggingHandler::LogFunctionType LoggingHandler::logFunc = nullptr;
@@ -71,8 +76,8 @@ void LoggingHandler::initialize(const QString& logConfiguration)
 {
   if(instance == nullptr)
     instance = new LoggingHandler(logConfiguration, QDir::currentPath(),
-                                  QApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QApplication::applicationName().replace(" ", "_").toLower());
+                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
   else
     qWarning() << "LoggingHandler::initialize called more than once";
 }
@@ -81,8 +86,8 @@ void LoggingHandler::initializeForTemp(const QString& logConfiguration)
 {
   if(instance == nullptr)
     instance = new LoggingHandler(logConfiguration, QDir::tempPath(),
-                                  QApplication::organizationName().replace(" ", "_").toLower() + "-" +
-                                  QApplication::applicationName().replace(" ", "_").toLower());
+                                  QCoreApplication::organizationName().replace(" ", "_").toLower() + "-" +
+                                  QCoreApplication::applicationName().replace(" ", "_").toLower());
   else
     qWarning() << "LoggingHandler::initializeForTemp called more than once";
 }

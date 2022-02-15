@@ -23,6 +23,10 @@ namespace atools {
 namespace fs {
 namespace pln {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 using atools::geo::Pos;
 
 // =============================================================================================
@@ -182,9 +186,9 @@ QString Flightplan::getFilenamePattern(const QString& pattern, const QString& su
           destName = getDestinationName(), destIdent = getDestinationIdent();
 
   if(departName.isEmpty())
-    departName = entries.first().getName();
+    departName = entries.constFirst().getName();
   if(departIdent.isEmpty())
-    departIdent = entries.first().getIdent();
+    departIdent = entries.constFirst().getIdent();
   if(destName.isEmpty())
     destName = destinationAirport().getName();
   if(destIdent.isEmpty())
@@ -213,19 +217,19 @@ void Flightplan::adjustDepartureAndDestination(bool force)
   if(!entries.isEmpty())
   {
     if(force || departureIdent.isEmpty())
-      departureIdent = entries.first().getIdent();
+      departureIdent = entries.constFirst().getIdent();
     if(force || departureName.isEmpty())
-      departureName = entries.first().getName();
+      departureName = entries.constFirst().getName();
     if(force || !departurePos.isValid())
-      departurePos = entries.first().getPosition();
+      departurePos = entries.constFirst().getPosition();
 
     if(force || destinationIdent.isEmpty())
-      destinationIdent = entries.last().getIdent();
+      destinationIdent = entries.constLast().getIdent();
     if(force || destinationName.isEmpty())
-      destinationName = entries.last().getName();
+      destinationName = entries.constLast().getName();
 
     if(force || !destinationPos.isValid())
-      destinationPos = entries.last().getPosition();
+      destinationPos = entries.constLast().getPosition();
     // These remain empty
     // departureParkingName, departureAiportName, destinationAiportName, appVersionMajor, appVersionBuild;
   }
@@ -258,7 +262,7 @@ atools::fs::pln::Flightplan Flightplan::compressedAirways() const
     }
 
     // Add destination
-    plan.getEntries().append(entries.last());
+    plan.getEntries().append(entries.constLast());
   }
   return plan;
 }

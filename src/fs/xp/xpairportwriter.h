@@ -27,7 +27,7 @@
 #include "sql/sqlrecord.h"
 #include "sql/sqltypes.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 

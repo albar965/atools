@@ -19,7 +19,7 @@
 #define ATOOLS_GUI_ERRORHANDLER_H
 
 #include <QString>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace std {
 class exception;

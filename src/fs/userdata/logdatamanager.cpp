@@ -36,6 +36,10 @@ namespace atools {
 namespace fs {
 namespace userdata {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 using atools::geo::Pos;
 using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;

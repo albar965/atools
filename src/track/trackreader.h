@@ -20,7 +20,7 @@
 
 #include "track/tracktypes.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QStringList;
 class QTextStream;

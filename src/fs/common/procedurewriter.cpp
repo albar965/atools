@@ -459,7 +459,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
 
       Procedure sidCommon, starCommon;
       if(curRowCode == rc::SID &&
-         approaches.last().isCommonRoute && !approaches.first().isCommonRoute)
+         approaches.constLast().isCommonRoute && !approaches.constFirst().isCommonRoute)
       {
         // Example: EDDT SID
         // 4 RNAV_SID_RUNWAY_TRANSITION
@@ -469,11 +469,11 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
         sidCommon = approaches.takeLast();
 
         // Remove the IF of the common route
-        if(sidCommon.legRecords.first().value(":type") == "IF")
+        if(sidCommon.legRecords.constFirst().value(":type") == "IF")
           sidCommon.legRecords.removeFirst();
       }
 
-      if(curRowCode == rc::STAR && !approaches.last().isCommonRoute)
+      if(curRowCode == rc::STAR && !approaches.constLast().isCommonRoute)
       {
         // Example: KBOI STAR
         // 4 RNAV_STAR_ENROUTE_TRANSITION
@@ -506,7 +506,7 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
           insertApproachLegQuery->bindAndExecRecords(starCommon.legRecords);
 
           // Remove the IF of the STAR which will be replaced by the TF of the common route
-          if(appr.legRecords.first().value(":type") == "IF")
+          if(appr.legRecords.constFirst().value(":type") == "IF")
             appr.legRecords.removeFirst();
         }
 
@@ -627,6 +627,8 @@ void ProcedureWriter::writeApproach(const ProcedureInput& line)
 
   rec.setValue(":fix_region", navInfo.region);
 
+  rec.setValue(":aircraft_category", line.aircraftCategory);
+
   approaches.append(Procedure(curRowCode, rec, commonRoute, line.sidStarAppIdent.trimmed()));
 
   writeApproachLeg(line);
@@ -679,6 +681,7 @@ void ProcedureWriter::writeTransition(const ProcedureInput& line)
   rec.setValue(":fix_type", navInfo.type);
   rec.setValue(":fix_ident", line.transIdent.trimmed());
   rec.setValue(":fix_region", navInfo.region);
+  rec.setValue(":aircraft_category", line.aircraftCategory);
 
   transitions.append(Procedure(curRowCode, rec, false /* common route */, line.sidStarAppIdent.trimmed()));
 
@@ -870,6 +873,11 @@ void ProcedureWriter::bindLeg(const ProcedureInput& line, atools::sql::SqlRecord
   rec.setValue(":is_flyover", overfly);
   rec.setValue(":is_true_course", 0); // Not used
   rec.setValue(":course", line.magCourse);
+
+  if(line.rnp < atools::fs::common::INVALID_FLOAT)
+    rec.setValue(":rnp", line.rnp);
+  else
+    rec.setNull(":rnp");
 
   // time minutes
   rec.setValue(":time", line.rteHoldTime);

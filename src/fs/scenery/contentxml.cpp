@@ -31,6 +31,10 @@ namespace atools {
 namespace fs {
 namespace scenery {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 /*
  *  <Content>
  *  <Package name="fs-base" active="true"/>

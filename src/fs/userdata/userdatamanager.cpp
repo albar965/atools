@@ -43,7 +43,10 @@ using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 using atools::sql::SqlRecord;
 using atools::sql::SqlTransaction;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
 using Qt::endl;
+#endif
 
 /* Default visibility. Waypoint is shown on the map at a view distance below this value  */
 const static int VISIBLE_FROM_DEFAULT_NM = 250;

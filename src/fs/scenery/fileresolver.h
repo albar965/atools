@@ -20,7 +20,7 @@
 
 #include <QList>
 #include <QStringList>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {

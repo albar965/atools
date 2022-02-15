@@ -18,9 +18,10 @@
 #include "fs/db/databasemeta.h"
 #include "sql/sqlrecord.h"
 
+#include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "sql/sqldatabase.h"
+#include "util/version.h"
 
 #include <QDebug>
 
@@ -43,19 +44,29 @@ DatabaseMeta::DatabaseMeta(sql::SqlDatabase& sqlDb)
   init();
 }
 
-void DatabaseMeta::log() const
+void DatabaseMeta::logInfo() const
 {
   qInfo() << Q_FUNC_INFO
           << "Airac Cycle" << getAiracCycle()
           << "Compiler Version" << getCompilerVersion()
           << "Data Source" << getDataSource()
           << "Last Load Time" << getLastLoadTime()
-          << "Major Version" << getMajorVersion()
-          << "Minor Version" << getMinorVersion()
+          << "Database Version" << getDatabaseVersion()
+          << "Application Version" << getApplicationVersion()
           << "Valid Through" << getValidThrough()
           << "Valid" << isValid()
           << "Schema" << hasSchema()
           << "Data" << hasData();
+}
+
+util::Version DatabaseMeta::getDatabaseVersion() const
+{
+  return util::Version(majorVersion, minorVersion);
+}
+
+util::Version DatabaseMeta::getApplicationVersion()
+{
+  return util::Version(DB_VERSION_MAJOR, DB_VERSION_MINOR);
 }
 
 void DatabaseMeta::init()
@@ -214,7 +225,7 @@ bool DatabaseMeta::isDatabaseCompatible() const
 bool DatabaseMeta::isDatabaseCompatible(int major) const
 {
   if(isValid())
-    return major == getMajorVersion();
+    return major == majorVersion;
 
   return false;
 }

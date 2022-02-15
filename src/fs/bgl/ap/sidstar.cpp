@@ -30,6 +30,12 @@ namespace atools {
 namespace fs {
 namespace bgl {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::hex;
+using Qt::dec;
+using Qt::endl;
+#endif
+
 using atools::io::BinaryStream;
 
 SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
@@ -145,12 +151,12 @@ SidStar::SidStar(const NavDatabaseOptions *options, BinaryStream *bs)
             if(rec::MSFS_SID == id)
             {
               /* For SID, the transition ident is the LAST leg's fix. */
-              name = legs.last().getFixIdent();
+              name = legs.constLast().getFixIdent();
             }
             else if(rec::MSFS_STAR == id)
             {
               /* For STAR, the transition ident is the FIRST leg's fix */
-              name = legs.first().getFixIdent();
+              name = legs.constFirst().getFixIdent();
             }
           }
           if(!legs.isEmpty())

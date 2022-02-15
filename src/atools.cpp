@@ -35,7 +35,7 @@ const static QChar SEP(QDir::separator());
 
 QString version()
 {
-  return "3.8.0"; // VERSION_NUMBER - atools
+  return "3.8.1"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()
@@ -175,7 +175,7 @@ QString replaceVar(QString str, const QHash<QString, QVariant>& variableValues)
 {
   QString retval(str);
 
-  for(auto it = variableValues.begin(); it != variableValues.end(); ++it)
+  for(auto it = variableValues.constBegin(); it != variableValues.constEnd(); ++it)
     retval.replace(QRegularExpression("\\$\\{" + it.key() + "\\}"), it.value().toString());
 
   return retval;
@@ -274,7 +274,7 @@ QString blockText(const QStringList& texts, int maxItemsPerLine, const QString& 
 
   for(const QString& str : texts)
   {
-    if(blocks.last().size() >= maxItemsPerLine)
+    if(blocks.constLast().size() >= maxItemsPerLine)
       blocks.append(QStringList());
     blocks.last().append(str);
   }
@@ -347,6 +347,14 @@ QString elideTextLinesShort(QString str, int maxLines, int maxLength, bool compr
             QObject::tr("…", "Linefeed and dots used to shorten texts"));
   else
     return lines.join(QObject::tr("\n", "Linefeed used to shorten large texts"));
+}
+
+QStringList elidedTexts(const QFontMetrics& metrics, const QStringList& texts, Qt::TextElideMode mode, int width)
+{
+  QStringList retval(texts);
+  for(QString& str : retval)
+    str = elidedText(metrics, str, mode, width);
+  return retval;
 }
 
 QString elidedText(const QFontMetrics& metrics, QString text, Qt::TextElideMode mode, int width)
@@ -575,7 +583,7 @@ QStringList floatStrHashToStrList(const QHash<float, QString>& hash)
 {
   QStringList retval;
 
-  for(auto i = hash.begin(); i != hash.end(); ++i)
+  for(auto i = hash.constBegin(); i != hash.constEnd(); ++i)
   {
     retval.append(QString::number(i.key()));
     retval.append(i.value());
@@ -608,7 +616,7 @@ QStringList floatStrMapToStrList(const QMap<float, QString>& map)
 {
   QStringList retval;
 
-  for(auto i = map.begin(); i != map.end(); ++i)
+  for(auto i = map.constBegin(); i != map.constEnd(); ++i)
   {
     retval.append(QString::number(i.key()));
     retval.append(i.value());
@@ -739,16 +747,16 @@ QString buildPathNoCase(const QStringList& paths)
 
       if(!entries.isEmpty())
       {
-        if(QFileInfo(dir.path() + SEP + entries.first()).isDir())
+        if(QFileInfo(dir.path() + SEP + entries.constFirst()).isDir())
         {
           // Directory exists - change into it
-          if(!dir.cd(entries.first()))
+          if(!dir.cd(entries.constFirst()))
             break;
         }
         else
         {
           // Is a file - add by name simply
-          file = entries.first();
+          file = entries.constFirst();
           break;
         }
       }

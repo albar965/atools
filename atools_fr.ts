@@ -20,12 +20,12 @@
         <location filename="src/fs/perf/aircraftperf.cpp" line="95"/>
         <location filename="src/fs/perf/aircraftperf.cpp" line="361"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;aéronef &quot;%1&quot; pour la lecture.</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;avion &quot;%1&quot; pour la lecture.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="108"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for reading. Invalid format.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performances des aéronefs &quot;%1&quot; pour le lire. Format non valide.</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performances des avions &quot;%1&quot; pour le lire. Format non valide.</translation>
     </message>
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="136"/>
@@ -40,7 +40,7 @@
     <message>
         <location filename="src/fs/perf/aircraftperf.cpp" line="375"/>
         <source>Cannot open aircraft performance file &quot;%1&quot; for writing.</source>
-        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;aéronef &quot;%1&quot; pour l&apos;écriture.</translation>
+        <translation type="unfinished">Impossible d&apos;ouvrir le fichier de performance de l&apos;avion &quot;%1&quot; pour l&apos;écriture.</translation>
     </message>
 </context>
 <context>

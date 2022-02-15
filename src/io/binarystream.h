@@ -19,7 +19,7 @@
 #define ATOOLS_IO_BINARYSTREAM_H
 
 #include <QDataStream>
-#include <QApplication>
+#include <QCoreApplication>
 
 class QFile;
 

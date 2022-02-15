@@ -72,7 +72,7 @@ void atools::util::MovingAverageTime::addSamples(float value1, float value2, qin
     beforeFirstTimestampMs = timestampMs;
 
   // Check for oldest entries and remove if needed
-  while(!samples.isEmpty() && beforeFirstTimestampMs < samples.last().timestamp - timeRangeMs)
+  while(!samples.isEmpty() && beforeFirstTimestampMs < samples.constLast().timestamp - timeRangeMs)
   {
     Sample first = samples.takeFirst();
 
@@ -85,7 +85,7 @@ void atools::util::MovingAverageTime::addSamples(float value1, float value2, qin
   }
 
   // Add new value and update totals with weighted value
-  qint64 duration = timestampMs - (samples.isEmpty() ? beforeFirstTimestampMs : samples.last().timestamp);
+  qint64 duration = timestampMs - (samples.isEmpty() ? beforeFirstTimestampMs : samples.constLast().timestamp);
   total1 += value1 * duration;
   total2 += value2 * duration;
   samples.append(Sample(value1, value2, timestampMs));
@@ -103,7 +103,7 @@ void atools::util::MovingAverageTime::getAverages(float& average1, float& averag
   if(samples.isEmpty())
     return;
 
-  qint64 totalDuration = samples.last().timestamp - beforeFirstTimestampMs;
+  qint64 totalDuration = samples.constLast().timestamp - beforeFirstTimestampMs;
 
   if(totalDuration > 0)
   {
@@ -122,7 +122,7 @@ float MovingAverageTime::getAverage() const
   if(samples.isEmpty())
     return 0.f;
 
-  qint64 totalDuration = samples.last().timestamp - beforeFirstTimestampMs;
+  qint64 totalDuration = samples.constLast().timestamp - beforeFirstTimestampMs;
 
   if(totalDuration > 0)
     return total1 / totalDuration;

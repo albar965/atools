@@ -19,7 +19,7 @@
 #define ATOOLS_FS_COMMON_MAGDECREADER_H
 
 #include <QDate>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace geo {

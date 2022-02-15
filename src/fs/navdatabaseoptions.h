@@ -24,7 +24,7 @@
 
 #include <QSet>
 #include <QFlags>
-#include <QRegularExpression>
+#include <QRegExp>
 #include <QMap>
 
 class QSettings;
@@ -482,9 +482,8 @@ private:
 
   void addToHighPriorityFiltersInc(const QStringList& filters);
 
-  void addToFilter(const QStringList& filters, QList<QRegularExpression>& filterList);
-  bool includeObject(const QString& string, const QList<QRegularExpression>& filterListInc,
-                     const QList<QRegularExpression>& filterListExcl) const;
+  void addToFilter(const QStringList& filters, QList<QRegExp>& filterList);
+  bool includeObject(const QString& string, const QList<QRegExp>& filterListInc, const QList<QRegExp>& filterListExcl) const;
 
   void addToBglObjectFilter(const QStringList& filters, QSet<atools::fs::type::NavDbObjectType>& filterList);
   QString adaptPath(const QString& filepath) const;
@@ -497,12 +496,12 @@ private:
   atools::fs::type::OptionFlags flags;
 
   QMap<QString, int> basicValidationTables;
-  QList<QRegularExpression> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
-                            fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
-                            highPriorityFiltersInc,
-                            dirExcludesGui /* Not loaded from config file */,
-                            filePathExcludesGui /* Not loaded from config file */,
-                            addonDirExcludes /* Not loaded from config file */;
+  QList<QRegExp> fileFiltersInc, pathFiltersInc, addonFiltersInc, airportIcaoFiltersInc,
+                 fileFiltersExcl, pathFiltersExcl, addonFiltersExcl, airportIcaoFiltersExcl,
+                 highPriorityFiltersInc,
+                 dirExcludesGui /* Not loaded from config file */,
+                 filePathExcludesGui /* Not loaded from config file */,
+                 addonDirExcludes /* Not loaded from config file */;
   QSet<atools::fs::type::NavDbObjectType> navDbObjectTypeFiltersInc, navDbObjectTypeFiltersExcl;
   ProgressCallbackType progressCallback = nullptr;
 

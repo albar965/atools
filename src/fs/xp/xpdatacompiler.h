@@ -20,7 +20,7 @@
 
 #include "fs/xp/xpconstants.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QTextStream;
 class QFile;

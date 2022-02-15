@@ -91,6 +91,7 @@ struct ProcedureInput
   float theta; // 63-66   5.24
   float rho; // 67-70   5.25
   float magCourse; // 71-74   5.26
+  float rnp; // Required Navigation Performance - 5.211
 
   float rteHoldDist; // 75-78   5.27
   float rteHoldTime; // 75-78   5.27
@@ -109,6 +110,7 @@ struct ProcedureInput
   atools::geo::DPos centerPos;
 
   QString gnssFmsIndicator; // 117     5.222
+  QString aircraftCategory; // 5.221
 };
 
 const float INVALID_FLOAT = std::numeric_limits<float>::max();

@@ -597,14 +597,14 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
       QStringList fields = line.simplified().split(" ");
       if(!fields.isEmpty())
-        fileVersion = fields.first().toInt();
+        fileVersion = fields.constFirst().toInt();
 
       if(!fields.isEmpty() && fileVersion < minFileVersion)
       {
-        qWarning() << "Version of" << filename << "is" << fields.first() << "but expected a minimum of" <<
+        qWarning() << "Version of" << filename << "is" << fields.constFirst() << "but expected a minimum of" <<
           minFileVersion;
         throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").
-                                arg(fields.first()).arg(minFileVersion));
+                                arg(fields.constFirst()).arg(minFileVersion));
       }
 
       metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);

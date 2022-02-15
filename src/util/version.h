@@ -18,46 +18,58 @@
 #ifndef ATOOLS_UTIL_VERSION_H
 #define ATOOLS_UTIL_VERSION_H
 
-#include <QString>
+#include <QCoreApplication>
 
 namespace atools {
 namespace util {
 
 /*
- * Parses version numbers like "0.9.5", "1.12.24-rc1" (major.minor.patchlevel[.name][namesubver]) into their parts.
+ * Parses version numbers like "0.9.5", "1.12.24-rc9" (major.minor.patchlevel[.name][namesubver]) into their parts.
  */
 class Version
 {
+  Q_DECLARE_TR_FUNCTIONS(Version)
+
 public:
   /* Initialize from given parameters */
-  explicit Version(int verMajor, int verMinor, int verPatchlevel,
-                   const QString& verName = QString(), int verNameSub = -1);
+  explicit Version(int verMajor, int verMinor, int verPatchlevel = -1, const QString& verName = QString(), int verNameSub = -1);
   explicit Version(const QString& str);
 
   /* Initialize from application version */
   Version();
   ~Version();
 
+  /* 1 from "1.12.24-rc9" */
   int getMajor() const
   {
     return majorVersion;
   }
 
+  /* 12 from "1.12.24-rc9" */
   int getMinor() const
   {
     return minorVersion;
   }
 
+  /* 24 from "1.12.24-rc9" */
   int getPatchlevel() const
   {
     return patchlevelVersion;
   }
 
+  /* rc from "1.12.24-rc9" */
   const QString& getName() const
   {
     return name;
   }
 
+  /* 9 from "1.12.24-rc9" */
+  int getNameSubVersion() const
+  {
+    return nameSubVersion;
+  }
+
+  /* All like "1.12.24-rc9" */
   const QString& getVersionString() const
   {
     return versionString;

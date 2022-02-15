@@ -75,7 +75,7 @@ public:
 
   /* Read all BGL or X-Plane files and load data into database. atools::Exception is thrown in case of error.
    * @param codec Scenery.cfg codec only applies to FSX/P3D */
-  void create(const QString& codec);
+  void create(const QString& codec, bool& foundBasicValidationError);
 
   /* Does not load anything and only creates the empty database schema.
    * Configuration is not used and can be null. atools::Exception is thrown in case of error.
@@ -126,7 +126,7 @@ private:
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
 
   /* Internal creation of the full database */
-  void createInternal(const QString& sceneryConfigCodec);
+  void createInternal(const QString& sceneryConfigCodec, bool& foundBasicValidationError);
 
   /* Read FSX/P3D scenery configuration */
   void readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg);
@@ -163,8 +163,8 @@ private:
   /* Print row counts to log file */
   void createDatabaseReportShort();
 
-  bool basicValidation(ProgressHandler *progress);
-  void basicValidateTable(const QString& table, int minCount);
+  bool basicValidation(ProgressHandler *progress, bool& foundBasicValidationError);
+  void basicValidateTable(const QString& table, int minCount, bool& foundBasicValidationError);
   void reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& util, const QStringList& tables);
 
   /* Count files in FSX/P3D scenery configuration */

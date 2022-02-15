@@ -202,7 +202,7 @@ QString Application::getReportPathHtml()
     for(const QString& path : paths)
       fileStr += tr("<a href=\"%1\">%2</a><br/>").arg(QUrl::fromLocalFile(path).toString()).arg(path);
 
-    if(header != keys.last())
+    if(header != keys.constLast())
       fileStr.append(tr("<br/>"));
   }
 

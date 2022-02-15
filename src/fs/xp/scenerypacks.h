@@ -18,7 +18,8 @@
 #ifndef ATOOLS_XP_XPSCENERYPACKS_H
 #define ATOOLS_XP_XPSCENERYPACKS_H
 
-#include <QApplication>
+#include <QCoreApplication>
+#include <QHash>
 #include <QVector>
 
 namespace atools {
