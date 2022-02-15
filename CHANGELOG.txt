@@ -4,6 +4,20 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+Version 3.7.8.develop
+
+* Updated French translation from Patrick.
+* Navdatareader now exits with failure if basic validation fails.
+* Incremented database version to 23.
+* Added aircraft category to approach table filled by DFD compiler.
+* Added Required Navigation Performance (RNP) field to approach_legs and transition_legs to DFD and
+  X-Plane compiler.
+* Added compilation of path points to DFD compiler.
+* Fixed issue when downloading NAT tracks containing PBCS TRACKS AS FOLLOWS/V W X/END OF PBCS OTS
+* Fixed crash when reading tracks.
+
+===============================================================================
+
 Version 3.7.7.develop
 
 * Added flight plan export for iFly Jets Advanced Series. albar965/littlenavmap#817
