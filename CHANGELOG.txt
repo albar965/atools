@@ -4,7 +4,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 3.8.1
+# Version 3.8.2
 
 * Updated French translation from Patrick.
 * Navdatareader now exits with failure if basic validation fails.
