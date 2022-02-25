@@ -72,25 +72,27 @@ void XpFixWriter::write(const QStringList& line, const XpWriterContext& context)
   insertWaypointQuery->bindValue(":ident", at(line, IDENT));
   insertWaypointQuery->bindValue(":airport_id", airportIndex->getAirportIdVar(at(line, AIRPORT)));
   insertWaypointQuery->bindValue(":airport_ident", atAirportIdent(line, AIRPORT));
-
   insertWaypointQuery->bindValue(":region", at(line, REGION)); // ZZ for no region
-
   insertWaypointQuery->bindValue(":type", "WN"); // All named waypoints
 
-  // 32bit representation of the 3-byte field defined by ARINC
-  // 424.18 field type definition 5.42, with the 4th byte set to 0 in
-  // Little Endian byte order. This field can be empty ONLY for user
-  // waypoints in user_fix.dat
-  union
+  if(!line.value(ARINC_TYPE).isEmpty())
   {
-    quint32 intValue;
-    unsigned char byteValue[4];
-  } u;
-  u.intValue = at(line, ARINC_TYPE).toUInt();
-  QString arincTypeStr;
-  arincTypeStr.append(QChar(u.byteValue[0])).append(QChar(u.byteValue[1])).
-  append(QChar(u.byteValue[2])).append(QChar(u.byteValue[3]));
-  insertWaypointQuery->bindValue(":arinc_type", arincTypeStr);
+    // 32bit representation of the 3-byte field defined by ARINC
+    // 424.18 field type definition 5.42, with the 4th byte set to 0 in
+    // Little Endian byte order. This field can be empty ONLY for user
+    // waypoints in user_fix.dat
+    union
+    {
+      quint32 intValue;
+      unsigned char byteValue[4];
+    } u;
+    u.intValue = at(line, ARINC_TYPE).toUInt(); // Always little endian
+    QString arincTypeStr;
+    arincTypeStr.append(QChar(u.byteValue[0])).append(QChar(u.byteValue[1])).append(QChar(u.byteValue[2])).append(QChar(u.byteValue[3]));
+    insertWaypointQuery->bindValue(":arinc_type", arincTypeStr);
+  }
+  else
+    insertWaypointQuery->bindNullStr(":arinc_type");
 
   insertWaypointQuery->bindValue(":num_victor_airway", 0); // filled  by sql/fs/db/xplane/prepare_airway.sql
   insertWaypointQuery->bindValue(":num_jet_airway", 0); // as above
