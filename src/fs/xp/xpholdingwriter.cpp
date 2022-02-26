@@ -177,7 +177,7 @@ void XpHoldingWriter::write(const QStringList& line, const XpWriterContext& cont
 
   insertQuery->bindValue(":region", region);
   insertQuery->bindValue(":mag_var", magvar);
-  insertQuery->bindValue(":course", atools::geo::normalizeCourse(at(line, COURSE_MAG).toFloat() + magvar));
+  insertQuery->bindValue(":course", at(line, COURSE_MAG).toFloat());
   insertQuery->bindValue(":turn_direction", at(line, DIR));
   insertQuery->bindValue(":leg_length", at(line, LEG_LENGTH).toFloat());
   insertQuery->bindValue(":leg_time", at(line, LEG_TIME).toFloat());

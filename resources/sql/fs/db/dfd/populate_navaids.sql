@@ -347,10 +347,10 @@ select distinct
 from tbl_holdings;
 
 -- Insert holdings at waypoints =======================
-insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type, mag_var, course, turn_direction, leg_length, leg_time,
-  minimum_altitude, maximum_altitude, speed_limit, mag_var, lonx, laty)
-select 1 as file_id, h.airport_ident, h.name, w.waypoint_id as nav_id, w.ident as nav_ident, h.region, 'W' as nav_type, w.mag_var, h.course,
-  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, w.mag_var, w.lonx, w.laty
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type, course, turn_direction, leg_length, leg_time,
+  minimum_altitude, maximum_altitude, speed_limit, lonx, laty)
+select 1 as file_id, h.airport_ident, h.name, w.waypoint_id as nav_id, w.ident as nav_ident, h.region, 'W' as nav_type, h.course,
+  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, w.lonx, w.laty
 from tmp_holding h
 join waypoint w on h.nav_ident = w.ident and h.region = w.region and abs(w.lonx - h.lonx) < 0.00001 and abs(w.laty - h.laty) < 0.00001
 where w.type like 'W%';
@@ -367,10 +367,10 @@ from tmp_holding h
 join vor v on h.nav_ident = v.ident and abs(v.lonx - h.lonx) < 0.00001 and abs(v.laty - h.laty) < 0.00001;
 
 -- Insert holdings at NDB =======================
-insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type, mag_var, course, turn_direction, leg_length, leg_time,
-  minimum_altitude, maximum_altitude, speed_limit, mag_var, lonx, laty)
-select 1 as file_id, h.airport_ident, h.name, n.ndb_id as nav_id, n.ident as nav_ident, h.region, 'N' as nav_type, n.mag_var, h.course,
-  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, n.mag_var, n.lonx, n.laty
+insert into holding (file_id, airport_ident, name, nav_id, nav_ident, region, nav_type, course, turn_direction, leg_length, leg_time,
+  minimum_altitude, maximum_altitude, speed_limit, lonx, laty)
+select 1 as file_id, h.airport_ident, h.name, n.ndb_id as nav_id, n.ident as nav_ident, h.region, 'N' as nav_type, h.course,
+  h.turn_direction, h.leg_length, h.leg_time, h.minimum_altitude, h.maximum_altitude, h.speed, n.lonx, n.laty
 from tmp_holding h
 join ndb n on h.nav_ident = n.ident and abs(n.lonx - h.lonx) < 0.00001 and abs(n.laty - h.laty) < 0.00001;
 
