@@ -86,7 +86,8 @@ XpDataCompiler::XpDataCompiler(sql::SqlDatabase& sqlDb, const NavDatabaseOptions
                                ProgressHandler *progressHandler, NavDatabaseErrors *navdatabaseErrors)
   : options(opts), db(sqlDb), progress(progressHandler), errors(navdatabaseErrors)
 {
-  basePath = buildBasePath(options);
+  // Build base for earth_fix.dat earth_awy.dat and earth_nav.dat - these files have to match and exist in the same folder
+  basePath = buildBasePath(options, QString());
 
   qInfo() << Q_FUNC_INFO << "Using X-Plane data path" << basePath;
 
@@ -124,7 +125,7 @@ bool XpDataCompiler::compileEarthFix()
 {
   QString path = buildPathNoCase({basePath, "earth_fix.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     bool aborted = readDataFile(path, 5, fixWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
 
@@ -138,58 +139,63 @@ bool XpDataCompiler::compileEarthFix()
 
 bool XpDataCompiler::compileEarthMora()
 {
-  QString path = buildPathNoCase({basePath, "earth_mora.dat"});
+  // Check Resources and Custom Data for file
+  QString filepath = buildBasePath(options, "earth_mora.dat");
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(filepath))
   {
-    bool aborted = readDataFile(path, 5, moraWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
+    // NO_FLAG - ignore AIRAC discrepancies
+    bool aborted = readDataFile(filepath, 5, moraWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
 
     if(!aborted)
       db.commit();
     return aborted;
   }
-  else
-    throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  return false;
 }
 
 bool XpDataCompiler::compileEarthAirportMsa()
 {
-  QString path = buildPathNoCase({basePath, "earth_msa.dat"});
+  // Check Resources and Custom Data for file
+  QString filepath = buildBasePath(options, "earth_msa.dat");
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(filepath))
   {
-    bool aborted = readDataFile(path, 5, airportMsaWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
+    // NO_FLAG - ignore AIRAC discrepancies
+    bool aborted = readDataFile(filepath, 5, airportMsaWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
 
     if(!aborted)
       db.commit();
     return aborted;
   }
-  else
-    throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  return false;
 }
 
 bool XpDataCompiler::compileEarthHolding()
 {
-  QString path = buildPathNoCase({basePath, "earth_hold.dat"});
+  // Check Resources and Custom Data for file
+  QString filepath = buildBasePath(options, "earth_hold.dat");
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(filepath))
   {
-    bool aborted = readDataFile(path, 5, holdingWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
+    // NO_FLAG - ignore AIRAC discrepancies
+    bool aborted = readDataFile(filepath, 5, holdingWriter, NO_FLAG, NUM_REPORT_STEPS_SMALL);
 
     if(!aborted)
       db.commit();
     return aborted;
   }
-  else
-    throw Exception(tr("Default file \"%1\" not found").arg(path));
+
+  return false;
 }
 
 bool XpDataCompiler::compileEarthAirway()
 {
-
   QString path = buildPathNoCase({basePath, "earth_awy.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
 
     bool aborted = readDataFile(path, 11, airwayWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
@@ -216,7 +222,7 @@ bool XpDataCompiler::postProcessEarthAirway()
 bool XpDataCompiler::compileEarthNav()
 {
   QString path = buildPathNoCase({basePath, "earth_nav.dat"});
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     bool aborted = readDataFile(path, 11, navWriter, UPDATE_CYCLE, NUM_REPORT_STEPS_SMALL);
     if(!aborted)
@@ -248,15 +254,13 @@ bool XpDataCompiler::compileCustomGlobalApt()
   QString path = buildPathNoCase({options.getBasepath(),
                                   "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     bool aborted = readDataFile(path, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
     if(!aborted)
       db.commit();
     return aborted;
   }
-  else
-    qWarning() << path << "not found";
 
   return false;
 }
@@ -268,7 +272,7 @@ bool XpDataCompiler::compileDefaultApt()
                                            "Resources", "default scenery", "default apt dat",
                                            "Earth nav data", "apt.dat"});
 
-  if(QFileInfo::exists(defaultAptDat))
+  if(atools::checkFile(defaultAptDat))
   {
     bool aborted = readDataFile(defaultAptDat, 1, airportWriter, xp::NO_FLAG, NUM_REPORT_STEPS);
     if(!aborted)
@@ -334,7 +338,7 @@ bool XpDataCompiler::compileLocalizers()
   QString path = buildPathNoCase({options.getBasepath(), "Custom Scenery", "Global Airports",
                                   "Earth nav data", "earth_nav.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     // Only one progress report per file
     bool aborted = readDataFile(path, 11, navWriter, READ_LOCALIZERS | READ_SHORT_REPORT, 1);
@@ -342,9 +346,6 @@ bool XpDataCompiler::compileLocalizers()
       db.commit();
     return aborted;
   }
-  else
-    // TODO report missing file
-    qWarning() << path << "not found";
 
   return false;
 }
@@ -353,7 +354,7 @@ bool XpDataCompiler::compileUserNav()
 {
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_nav.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     // One progress report per file
     bool aborted = readDataFile(path, 11, navWriter, READ_USER | READ_SHORT_REPORT, 1);
@@ -361,15 +362,15 @@ bool XpDataCompiler::compileUserNav()
       db.commit();
     return aborted;
   }
-  else
-    return false;
+
+  return false;
 }
 
 bool XpDataCompiler::compileUserFix()
 {
   QString path = buildPathNoCase({options.getBasepath(), "Custom Data", "user_fix.dat"});
 
-  if(QFileInfo::exists(path))
+  if(atools::checkFile(path))
   {
     // One progress report per file
     bool aborted = readDataFile(path, 5, fixWriter, READ_USER | READ_SHORT_REPORT, 1);
@@ -377,8 +378,8 @@ bool XpDataCompiler::compileUserFix()
       db.commit();
     return aborted;
   }
-  else
-    return false;
+
+  return false;
 }
 
 bool XpDataCompiler::compileMagDeclBgl()
@@ -747,7 +748,7 @@ QStringList XpDataCompiler::findFiles(const NavDatabaseOptions& opts, const QStr
   }
 
   QStringList retval;
-  for(const QFileInfo& fileInfo : entryMap.values())
+  for(const QFileInfo& fileInfo : entryMap)
     retval.append(fileInfo.filePath());
 
   // qDebug() << "== Files ==============================================================================";
@@ -769,16 +770,15 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
     return 0;
 
   // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Resources", "default scenery", "default apt dat",
-                                        "Earth nav data", "apt.dat"})))
+  if(atools::checkFile(buildPathNoCase({opts.getBasepath(),
+                                        "Resources", "default scenery", "default apt dat", "Earth nav data", "apt.dat"})))
     reportCount += NUM_REPORT_STEPS;
 
   if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Scenery/Global Airports ..."))))
     return 0;
 
   // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data",
-                                        "apt.dat"})))
+  if(atools::checkFile(buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "apt.dat"})))
     reportCount += NUM_REPORT_STEPS;
 
   // Default or custom CIFP/$ICAO.dat - required from either "Resources" or "Custom Data"
@@ -797,17 +797,16 @@ int XpDataCompiler::calculateReportCount(ProgressHandler *progress, const NavDat
   reportCount += findCustomAptDatFiles(opts, nullptr, nullptr).count();
 
   // earth_nav.dat localizers $X-Plane/Custom Scenery/Global Airports/Earth nav data/
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(),
-                                        "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
+  if(atools::checkFile(buildPathNoCase({opts.getBasepath(), "Custom Scenery", "Global Airports", "Earth nav data", "earth_nav.dat"})))
     reportCount++;
 
   if((aborted = progress->reportOtherMsg(tr("Counting files for Custom Data ..."))))
     return 0;
 
   // user_nav.dat user_fix.dat $X-Plane/Custom Data/
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_nav.dat"})))
+  if(atools::checkFile(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_nav.dat"})))
     reportCount++;
-  if(QFileInfo::exists(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_fix.dat"})))
+  if(atools::checkFile(buildPathNoCase({opts.getBasepath(), "Custom Data", "user_fix.dat"})))
     reportCount++;
 
   qDebug() << Q_FUNC_INFO << "=P=== X-Plane files" << reportCount;
@@ -899,7 +898,7 @@ void XpDataCompiler::deInitQueries()
     metadataWriter->deInitQueries();
 }
 
-QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts)
+QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts, const QString& filename)
 {
   QString basePath;
   QString customPath(buildPathNoCase({opts.getBasepath(), "Custom Data"}));
@@ -908,21 +907,32 @@ QString XpDataCompiler::buildBasePath(const NavDatabaseOptions& opts)
   qDebug() << Q_FUNC_INFO << "customPath" << customPath;
   qDebug() << Q_FUNC_INFO << "defaultPath" << defaultPath;
 
-  if(includeFile(opts, customPath) &&
-     QFileInfo::exists(buildPathNoCase({customPath, "earth_fix.dat"})) &&
-     QFileInfo::exists(buildPathNoCase({customPath, "earth_awy.dat"})) &&
-     QFileInfo::exists(buildPathNoCase({customPath, "earth_nav.dat"})))
-    basePath = customPath;
-  else if(QFileInfo::exists(buildPathNoCase({defaultPath, "earth_fix.dat"})) &&
-          QFileInfo::exists(buildPathNoCase({defaultPath, "earth_awy.dat"})) &&
-          QFileInfo::exists(buildPathNoCase({defaultPath, "earth_nav.dat"})))
-    basePath = defaultPath;
+  if(filename.isEmpty())
+  {
+    // No filename given - determine default path
+    if(includeFile(opts, customPath) &&
+       atools::checkFile(buildPathNoCase({customPath, "earth_fix.dat"})) &&
+       atools::checkFile(buildPathNoCase({customPath, "earth_awy.dat"})) &&
+       atools::checkFile(buildPathNoCase({customPath, "earth_nav.dat"})))
+      basePath = customPath;
+    else if(atools::checkFile(buildPathNoCase({defaultPath, "earth_fix.dat"})) &&
+            atools::checkFile(buildPathNoCase({defaultPath, "earth_awy.dat"})) &&
+            atools::checkFile(buildPathNoCase({defaultPath, "earth_nav.dat"})))
+      basePath = defaultPath;
+    else
+      throw atools::Exception(tr("Cannot find valid files for X-Plane navdata in either\n\"%1\" or\n\"%2\"\n\n"
+                                 "Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat "
+                                 "can be found in one of these paths.").
+                              arg(customPath).arg(defaultPath));
+  }
   else
-    throw atools::Exception(tr("Cannot find valid files for X-Plane navdata in either\n\"%1\" or\n\"%2\"\n\n"
-                               "Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat "
-                               "can be found in one of these paths.").
-                            arg(customPath).arg(defaultPath));
-
+  {
+    // Determine path for given file - return full filepath
+    if(includeFile(opts, customPath) && atools::checkFile(buildPathNoCase({customPath, filename})))
+      basePath = customPath + QDir::separator() + filename;
+    else if(atools::checkFile(buildPathNoCase({defaultPath, filename})))
+      basePath = defaultPath + QDir::separator() + filename;
+  }
   qDebug() << Q_FUNC_INFO << "basePath" << basePath;
 
   return basePath;
