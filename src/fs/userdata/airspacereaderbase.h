@@ -114,7 +114,7 @@ public:
     UNKNOWN,
     OPEN_AIR, /* OpenAir format */
     IVAO_JSON, /* IVAO special JSON format */
-    GEO_JSON /* GeoJSON format as used by various sources for VATSIM */
+    VATSIM_GEO_JSON /* GeoJSON format as used by various sources for VATSIM */
   };
 
   /* Try to detect the file format. This might not work 100 percent for JSON in which case a

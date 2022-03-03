@@ -95,7 +95,7 @@ AirspaceReaderBase::Format AirspaceReaderBase::detectFileFormat(const QString& f
 
   // Check if file is a GeoJSON which starts with an object at top level
   if(probe.value(0).startsWith('{'))
-    return GEO_JSON;
+    return VATSIM_GEO_JSON;
 
   // OpenAir starts with a comment "*" or an upper case letter
   if(probe.value(0).startsWith('*') || atools::charAt(probe.value(0), 0).isUpper())
