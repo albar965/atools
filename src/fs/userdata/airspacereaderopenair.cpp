@@ -165,7 +165,6 @@ void AirspaceReaderOpenAir::writeBoundary()
       insertAirspaceQuery->bindNullStr(":restrictive_designation");
       insertAirspaceQuery->bindNullStr(":restrictive_type");
       insertAirspaceQuery->bindNullStr(":multiple_code");
-      insertAirspaceQuery->bindNullStr(":ident");
       insertAirspaceQuery->bindValue(":time_code", "U");
 
       insertAirspaceQuery->exec();
