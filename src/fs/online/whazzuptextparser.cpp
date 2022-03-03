@@ -531,8 +531,7 @@ void WhazzupTextParser::readControllersJson(const QJsonArray& controllersArr, bo
       if(observer)
         columns[c::FACILITYTYPE] = QString::number(fac::OBSERVER);
       else
-        columns[c::FACILITYTYPE] =
-          QString::number(textToFacilityType(atcSession.value("position").toVariant().toString()));
+        columns[c::FACILITYTYPE] = QString::number(textToFacilityType(atcSession.value("position").toVariant().toString()));
 
       QJsonObject lastTrack = atcObj.value("lastTrack").toObject();
       columns[c::VISUALRANGE] = lastTrack.value("distance").toVariant().toString();

@@ -176,7 +176,9 @@ HEADERS += \
   src/fs/scenery/manifestjson.h \
   src/fs/scenery/materiallib.h \
   src/fs/userdata/airspacereaderbase.h \
+  src/fs/userdata/airspacereaderivao.h \
   src/fs/userdata/airspacereaderopenair.h \
+  src/fs/userdata/airspacereadervatsim.h \
   src/fs/userdata/logdatamanager.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
@@ -314,7 +316,9 @@ SOURCES += \
   src/fs/scenery/manifestjson.cpp \
   src/fs/scenery/materiallib.cpp \
   src/fs/userdata/airspacereaderbase.cpp \
+  src/fs/userdata/airspacereaderivao.cpp \
   src/fs/userdata/airspacereaderopenair.cpp \
+  src/fs/userdata/airspacereadervatsim.cpp \
   src/fs/userdata/logdatamanager.cpp \
   src/fs/util/coordinates.cpp \
   src/fs/util/fsutil.cpp \

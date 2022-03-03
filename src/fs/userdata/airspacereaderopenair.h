@@ -44,11 +44,10 @@ public:
   virtual ~AirspaceReaderOpenAir() override;
 
   /* Read a whole file and write airspaces into table */
-  virtual void readFile(int fileIdParam, const QString& filenameParam) override;
+  virtual bool readFile(const QString& filenameParam) override;
 
   /* Read a line from a file and write to file if end of airspace detected */
-  virtual void readLine(const QStringList& line, int fileIdParam, const QString& filenameParam,
-                        int lineNumberParam) override;
+  virtual void readLine(const QStringList& line, int fileIdParam, const QString& filenameParam, int lineNumberParam) override;
 
   /* Writes last airspace to table */
   virtual void finish() override;

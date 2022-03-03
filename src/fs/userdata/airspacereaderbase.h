@@ -22,11 +22,16 @@
 #include <QVector>
 
 namespace atools {
+namespace geo {
+class LineString;
+class Pos;
+}
 
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
 }
+
 namespace fs {
 namespace userdata {
 
@@ -44,15 +49,14 @@ public:
   AirspaceReaderBase(const AirspaceReaderBase& other) = delete;
   AirspaceReaderBase& operator=(const AirspaceReaderBase& other) = delete;
 
-  /* Read a whole file and write airspaces into table */
-  virtual void readFile(int fileIdParam, const QString& filenameParam) = 0;
+  /* Read a whole file and write airspaces into table. Returns false if the file is not in the supported format. */
+  virtual bool readFile(const QString& filenameParam) = 0;
 
   /* Read a line from a file and write to file if end of airspace detected */
-  virtual void readLine(const QStringList& line, int fileIdParam, const QString& filenameParam,
-                        int lineNumberParam) = 0;
+  virtual void readLine(const QStringList& line, int fileIdParam, const QString& filenameParam, int lineNumberParam);
 
   /* Writes last airspace to table */
-  virtual void finish() = 0;
+  virtual void finish();
 
   /* reset internal values back */
   virtual void reset();
@@ -70,9 +74,22 @@ public:
     int line;
   };
 
+  /* Number of airspaces read */
   int getNumAirspacesRead() const
   {
     return numAirspacesRead;
+  }
+
+  /* Set to a function that returns the coordinates for an airport ident. */
+  void setFetchAirportCoords(const std::function<atools::geo::Pos(const QString&)>& value)
+  {
+    fetchAirportCoords = value;
+  }
+
+  /* For column "file_id" in database */
+  void setFileId(int value)
+  {
+    fileId = value;
   }
 
   /* Get errors after reading file or line */
@@ -80,6 +97,29 @@ public:
   {
     return errors;
   }
+
+  /* Set first boundary_id to be used */
+  void setAirspaceId(int value)
+  {
+    airspaceId = value;
+  }
+
+  int getNextAirspaceId() const
+  {
+    return airspaceId;
+  }
+
+  enum Format
+  {
+    UNKNOWN,
+    OPEN_AIR, /* OpenAir format */
+    IVAO_JSON, /* IVAO special JSON format */
+    GEO_JSON /* GeoJSON format as used by various sources for VATSIM */
+  };
+
+  /* Try to detect the file format. This might not work 100 percent for JSON in which case a
+   * reader returns nothing for a not matching JSON schema */
+  static Format detectFileFormat(const QString& file);
 
 protected:
   void initQueries();
@@ -92,11 +132,14 @@ protected:
   atools::sql::SqlDatabase *db;
 
   QString filename;
-  int curAirspaceId = 0;
+  int airspaceId = 1;
   int lineNumber = 0;
   int numAirspacesRead = 0;
   int fileId = 0;
   QVector<AirspaceErr> errors;
+
+  /* Callback to get airport coodinates by ICAO ident */
+  std::function<atools::geo::Pos(const QString&)> fetchAirportCoords;
 };
 
 } // namespace userdata

@@ -27,7 +27,8 @@ create table boundary
   boundary_id integer primary key,
   file_id integer not null,
   type varchar(15),                     -- see enum atools::fs::bgl::boundary::BoundaryType
-  name varchar(250),
+  name varchar(250),                    -- Full name in some cases including NOTAM or times
+  description varchar(250),             -- Additional field used for online center names
   restrictive_designation varchar(20),  -- Number or name to display together with type on the map only for restricted airspaces
   restrictive_type varchar(20),         -- Single character for restricted type only
   multiple_code varchar(5),             -- Airspace having the same designator but subdivided or differently divided by lateral and/or vertical detail

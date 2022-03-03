@@ -48,14 +48,13 @@ AirspaceReaderOpenAir::~AirspaceReaderOpenAir()
 {
 }
 
-void AirspaceReaderOpenAir::readFile(int fileIdParam, const QString& filenameParam)
+bool AirspaceReaderOpenAir::readFile(const QString& filenameParam)
 {
   reset();
   resetErrors();
   resetNumRead();
 
   filename = filenameParam;
-  fileId = fileIdParam;
 
   QFile file(filename);
   if(file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -84,10 +83,12 @@ void AirspaceReaderOpenAir::readFile(int fileIdParam, const QString& filenamePar
   else
     throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2 (%3)").
                             arg(filename).arg(file.errorString()).arg(file.error()));
+
+  // Always success
+  return true;
 }
 
-void AirspaceReaderOpenAir::readLine(const QStringList& line, int fileIdParam, const QString& filenameParam,
-                                     int lineNumberParam)
+void AirspaceReaderOpenAir::readLine(const QStringList& line, int fileIdParam, const QString& filenameParam, int lineNumberParam)
 {
   filename = filenameParam;
   lineNumber = lineNumberParam;
@@ -129,11 +130,11 @@ void AirspaceReaderOpenAir::writeBoundary()
   // insertAirspaceQuery->bindValue(":com_name", );
   // insertAirspaceQuery->bindValue(":comment", );
 
-  insertAirspaceQuery->bindValue(":boundary_id", ++curAirspaceId);
+  insertAirspaceQuery->bindValue(":boundary_id", airspaceId++);
   insertAirspaceQuery->bindValue(":file_id", fileId);
 
   // Remove all remaining invalid points
-  LineString::iterator it = std::remove_if(curLine.begin(), curLine.end(), [](const Pos& p) -> bool
+  auto it = std::remove_if(curLine.begin(), curLine.end(), [](const Pos& p) -> bool
         {
           return !p.isValidRange();
         });
@@ -161,9 +162,10 @@ void AirspaceReaderOpenAir::writeBoundary()
       insertAirspaceQuery->bindValue(":geometry", geo.writeToByteArray());
 
       // Fields not used by X-Plane
-      insertAirspaceQuery->bindValue(":restrictive_designation", QVariant(QVariant::String));
-      insertAirspaceQuery->bindValue(":restrictive_type", QVariant(QVariant::String));
-      insertAirspaceQuery->bindValue(":multiple_code", QVariant(QVariant::String));
+      insertAirspaceQuery->bindNullStr(":restrictive_designation");
+      insertAirspaceQuery->bindNullStr(":restrictive_type");
+      insertAirspaceQuery->bindNullStr(":multiple_code");
+      insertAirspaceQuery->bindNullStr(":ident");
       insertAirspaceQuery->bindValue(":time_code", "U");
 
       insertAirspaceQuery->exec();
