@@ -66,6 +66,11 @@ void WeatherDownloadBase::setRequestUrl(const QString& url)
   downloader->setUrl(url);
 }
 
+const QString& WeatherDownloadBase::getRequestUrl() const
+{
+  return downloader->getUrl();
+}
+
 bool WeatherDownloadBase::isDownloading() const
 {
   return downloader->isDownloading();

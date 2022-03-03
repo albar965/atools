@@ -57,6 +57,7 @@ public:
 
   /* Set download request URL */
   virtual void setRequestUrl(const QString& url);
+  virtual const QString& getRequestUrl() const;
 
   /* Download in progress or file downloads outstanding */
   virtual bool isDownloading() const;
