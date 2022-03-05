@@ -191,6 +191,7 @@ private:
    * 22 Rho and theta in approach and transition legs can now be null
    * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
    * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
+   *    Added transition level. Converted airport.transition_altitude to double.
    */
   static const int DB_VERSION_MINOR = 24;
 

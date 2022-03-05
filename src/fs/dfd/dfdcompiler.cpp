@@ -177,6 +177,7 @@ void DfdCompiler::writeAirports()
 
     airportWriteQuery->bindValue(":mag_var", magDecReader->getMagVar(pos));
     airportWriteQuery->bindValue(":transition_altitude", airportQuery->value("transition_altitude"));
+    airportWriteQuery->bindValue(":transition_level", airportQuery->value("transition_level"));
     airportWriteQuery->bindValue(":altitude", pos.getAltitude());
     airportWriteQuery->bindValue(":lonx", pos.getLonX());
     airportWriteQuery->bindValue(":laty", pos.getLatY());

@@ -106,7 +106,12 @@ create table airport
   tower_altitude integer,                       -- Feet
   tower_lonx double,
   tower_laty double,
-  transition_altitude integer,                  -- Feet
+
+  transition_altitude double,                   -- Feet. Transition Altitude is the altitude when flying where you are required to change from a
+                                                -- local QNH to the standard of 1013 hectopascals or 29.92 inches of mercury
+  transition_level double,                      -- Feet. Transition Level is the altitude when flying where you are required to change
+                                                -- from standard of 1013 back to the local QNH. This is above the Transition Altitude.
+
   altitude integer not null,                    -- Feet
   lonx double not null,                         -- Coordinates of the airport center
   laty double not null,                         -- Coordinates of the airport center

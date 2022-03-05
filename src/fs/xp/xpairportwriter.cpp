@@ -1036,8 +1036,22 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
     airportDatumPos.setLatY(value.toFloat());
   else if(key == "datum_lon" && atools::almostNotEqual(value.toFloat(), 0.f))
     airportDatumPos.setLonX(value.toFloat());
-  else if(key == "transition_alt") // transition_level ignored
-    insertAirportQuery->bindValue(":transition_altitude", value.toFloat());
+  else if(key == "transition_alt")
+  {
+    float trans = transitionAltOrLevel(value);
+    if(trans > 0.f)
+      insertAirportQuery->bindValue(":transition_altitude", trans);
+    else
+      insertAirportQuery->bindNullFloat(":transition_altitude");
+  }
+  else if(key == "transition_level")
+  {
+    float trans = transitionAltOrLevel(value);
+    if(trans > 0.f)
+      insertAirportQuery->bindValue(":transition_level", trans);
+    else
+      insertAirportQuery->bindNullFloat(":transition_level");
+  }
 
   // 1302 city Seattle
   // 1302 gui_label 3D
@@ -1048,6 +1062,44 @@ void XpAirportWriter::bindMetadata(const QStringList& line, const atools::fs::xp
   // 1302 iata_code SEA
   // 1302 icao_code KSEA
   // 1302 local_code EKTH
+}
+
+float XpAirportWriter::transitionAltOrLevel(const QString& str)
+{
+  // Decode all the level variations added by users ============
+  float level = 0.f;
+
+  // Remove all garbage character added wrongly by users and not being checked by WED
+  QString levelStr = str.simplified().remove(' ').remove('.').remove(',').remove('`');
+
+  if(levelStr.startsWith("FL", Qt::CaseInsensitive))
+    // FL118 or FL 060
+    level = levelStr.midRef(2).toFloat() * 100.f;
+  else if(levelStr.endsWith("m", Qt::CaseInsensitive) || levelStr.endsWith("meter", Qt::CaseInsensitive))
+  {
+    if(levelStr.endsWith("m", Qt::CaseInsensitive))
+      levelStr.chop(1);
+    if(levelStr.endsWith("meter", Qt::CaseInsensitive))
+      levelStr.chop(5);
+
+    // 6300 m
+    level = atools::geo::meterToFeet(levelStr.toFloat());
+  }
+  else
+  {
+    if(levelStr.endsWith("ft", Qt::CaseInsensitive))
+      levelStr.chop(2);
+    if(levelStr.endsWith("feet", Qt::CaseInsensitive))
+      levelStr.chop(4);
+
+    if(levelStr.size() > 3)
+      // 18000 ir 4000
+      level = levelStr.toFloat();
+    else
+      // 60 or 080
+      level = levelStr.toFloat() * 100.f;
+  }
+  return level;
 }
 
 void XpAirportWriter::writeHelipad(const QStringList& line, const atools::fs::xp::XpWriterContext& context)
