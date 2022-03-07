@@ -118,6 +118,11 @@ void Line::interpolatePoints(float distanceMeter, int numPoints, atools::geo::Li
   pos1.interpolatePoints(pos2, distanceMeter, numPoints, positions);
 }
 
+void Line::interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const
+{
+  pos1.interpolatePointsRhumb(pos2, distanceMeter, numPoints, positions);
+}
+
 Pos Line::interpolateRhumb(float distanceMeter, float fraction) const
 {
   return pos1.interpolateRhumb(pos2, distanceMeter, fraction);

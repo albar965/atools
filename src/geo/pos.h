@@ -249,8 +249,9 @@ public:
   atools::geo::Pos interpolate(const atools::geo::Pos& otherPos, float fraction) const;
 
   /* positions includes this if numPoints > 0 but not pos2  */
-  void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
-                         atools::geo::LineString& positions) const;
+  void interpolatePoints(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
+  void interpolatePointsRhumb(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,
+                              atools::geo::LineString& positions) const;
 
   /* interpolate altitude value in positins too */
   void interpolatePointsAlt(const atools::geo::Pos& otherPos, float distanceMeter, int numPoints,

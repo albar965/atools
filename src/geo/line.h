@@ -89,6 +89,7 @@ public:
 
   /* Returns a list of points which includes pos1 and not pos2. */
   void interpolatePoints(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
+  void interpolatePointsRhumb(float distanceMeter, int numPoints, atools::geo::LineString& positions) const;
 
   /* Find point between start and end on rhumb line */
   atools::geo::Pos interpolateRhumb(float lengthMeter, float fraction) const;
