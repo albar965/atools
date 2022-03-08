@@ -208,7 +208,8 @@ class DockEventFilter :
   public QObject
 {
 public:
-  DockEventFilter()
+  DockEventFilter(QMainWindow *mainWindowParam)
+    : mainWindow(mainWindowParam)
   {
 
   }
@@ -218,33 +219,38 @@ public:
 private:
   virtual bool eventFilter(QObject *object, QEvent *event) override;
 
+  QMainWindow *mainWindow;
+
 };
 
 bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
 {
   if(event->type() == QEvent::Enter)
   {
-    if(autoRaiseDockWindow)
+    if(!mainWindow->isMinimized() && mainWindow->isVisible())
     {
-      QDockWidget *widget = dynamic_cast<QDockWidget *>(object);
-      if(widget != nullptr)
+      if(autoRaiseDockWindow)
       {
-        qDebug() << Q_FUNC_INFO << event->type() << widget->objectName();
-        if(widget->isFloating())
+        QDockWidget *widget = dynamic_cast<QDockWidget *>(object);
+        if(widget != nullptr)
         {
-          widget->activateWindow();
-          widget->raise();
+          qDebug() << Q_FUNC_INFO << event->type() << widget->objectName();
+          if(widget->isFloating())
+          {
+            widget->activateWindow();
+            widget->raise();
+          }
         }
       }
-    }
 
-    if(autoRaiseMainWindow)
-    {
-      QMainWindow *mainWindow = dynamic_cast<QMainWindow *>(object);
-      if(mainWindow != nullptr)
+      if(autoRaiseMainWindow)
       {
-        mainWindow->activateWindow();
-        mainWindow->raise();
+        QMainWindow *win = dynamic_cast<QMainWindow *>(object);
+        if(win != nullptr)
+        {
+          win->activateWindow();
+          win->raise();
+        }
       }
     }
   }
@@ -258,7 +264,7 @@ DockWidgetHandler::DockWidgetHandler(QMainWindow *parentMainWindow, const QList<
   : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam),
   verbose(verboseLog)
 {
-  dockEventFilter = new DockEventFilter();
+  dockEventFilter = new DockEventFilter(mainWindow);
   normalState = new MainWindowState;
   normalState->verbose = verbose;
   fullscreenState = new MainWindowState;
