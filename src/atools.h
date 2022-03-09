@@ -587,6 +587,10 @@ bool checkDir(const QString& dir, bool warn = true);
  * Uses always the same seed and ignores empty lines. To be used for testing. */
 uint textFileHash(const QString& filename, const QString& codec = "UTF-8");
 
+/* Read a simple symmetrically encrypted string from the given file.
+ * Can be used to obfuscate keys. Prints a warning and returns an empty string if the file does not exist. */
+QString strFromCryptFile(const QString& filename, quint64 key);
+
 } // namespace atools
 
 #endif // ATOOLS_ATOOLS_H

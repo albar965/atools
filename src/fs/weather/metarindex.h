@@ -94,8 +94,11 @@ private:
   /* Read NOAA or XPLANE format */
   int readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bool merge);
 
-  /* Read flat file format like IVAO or VATSIM */
+  /* Read flat file format like VATSIM */
   int readFlat(QTextStream& stream, const QString& fileOrUrl, bool merge);
+
+  /* Read JSON file format from IVAO */
+  int readJson(QTextStream& stream, const QString& fileOrUrl, bool merge);
 
   /* Copy airports from the complete list to the index with coordinates.
    * Copies only airports that exist in the current simulator database, i.e. where fetchAirportCoords returns
