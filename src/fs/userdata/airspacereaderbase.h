@@ -18,6 +18,8 @@
 #ifndef ATOOLS_AIRSPACEREADER_BASE_H
 #define ATOOLS_AIRSPACEREADER_BASE_H
 
+#include <functional>
+
 #include <QCoreApplication>
 #include <QVector>
 

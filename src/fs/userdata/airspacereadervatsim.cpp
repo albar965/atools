@@ -29,6 +29,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStringBuilder>
+#include <QRegularExpression>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
