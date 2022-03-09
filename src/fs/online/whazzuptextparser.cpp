@@ -1268,7 +1268,7 @@ void WhazzupTextParser::parseSection(const QStringList& line, bool isAtc, bool p
       if(geometryCallback)
       {
         // Try to get from callback (i.e. user airspace database)
-        LineString *ptr = geometryCallback(callsign, facilityType);
+        const LineString *ptr = geometryCallback(callsign, facilityType);
         if(ptr != nullptr)
           // Copy cache object
           lineString = *ptr;

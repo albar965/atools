@@ -77,6 +77,40 @@ QString facilityTypeText(fac::FacilityType type)
   return QString::number(type);
 }
 
+QString facilityTypeToDb(fac::FacilityType type)
+{
+  switch(type)
+  {
+    case atools::fs::online::fac::OBSERVER:
+      return QString();
+
+    case atools::fs::online::fac::FLIGHT_INFORMATION:
+      return "FIR";
+
+    case atools::fs::online::fac::DELIVERY:
+      return "CL";
+
+    case atools::fs::online::fac::GROUND:
+      return "G";
+
+    case atools::fs::online::fac::TOWER:
+      return "T";
+
+    case atools::fs::online::fac::APPROACH:
+      return "A";
+
+    case atools::fs::online::fac::ACC:
+      return "C";
+
+    case atools::fs::online::fac::DEPARTURE:
+      return "D";
+
+    case atools::fs::online::fac::UNKNOWN:
+      return QString();
+  }
+  return QString::number(type);
+}
+
 QString facilityTypeTextSettings(fac::FacilityType type)
 {
   switch(type)

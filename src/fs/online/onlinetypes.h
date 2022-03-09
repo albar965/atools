@@ -139,10 +139,15 @@ enum Simulator
 
 /* Callback which tries to fetch geometry from the user airspace database.
  * Default circle will be used if this returns an empty byte array. */
-typedef std::function<atools::geo::LineString *(const QString& callsign, atools::fs::online::fac::FacilityType type)> GeoCallbackType;
+typedef std::function<const atools::geo::LineString *(const QString& callsign, atools::fs::online::fac::FacilityType type)> GeoCallbackType;
 
 QString facilityTypeText(int type);
+
+/* Display text like "Observer", "Ground", "Tower", etc. */
 QString facilityTypeText(atools::fs::online::fac::FacilityType type);
+
+/* Database types like "C", "A", "FIR", etc. */
+QString facilityTypeToDb(fac::FacilityType type);
 
 /* Convert untranslated values to enum */
 atools::fs::online::fac::FacilityType textToFacilityType(QString value);
