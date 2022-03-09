@@ -112,6 +112,10 @@ void HttpDownloader::startDownload()
         if(!acceptEncoding.isEmpty())
           request.setRawHeader(QByteArray("Accept-Encoding"), acceptEncoding.toUtf8());
 
+        // Add arbitrary headers ===================
+        for(auto it = headerParameters.begin(); it != headerParameters.end(); ++it)
+          request.setRawHeader(it.key().toUtf8(), it.value().toUtf8());
+
         if(!postParameters.isEmpty())
           // Post raw data ============================
           reply = networkManager.post(request, postParameters);
@@ -121,8 +125,8 @@ void HttpDownloader::startDownload()
           request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 
           QUrlQuery params;
-          for(const QString& key : postParametersQuery.keys())
-            params.addQueryItem(key, postParametersQuery.value(key));
+          for(auto it = postParametersQuery.begin(); it != postParametersQuery.end(); ++it)
+            params.addQueryItem(it.key(), it.value());
 
           reply = networkManager.post(request, params.query().toUtf8());
         }

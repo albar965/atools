@@ -171,6 +171,17 @@ public:
     acceptEncoding = value;
   }
 
+  /* HTTP header parameters */
+  const QHash<QString, QString>& getHeaderParameters() const
+  {
+    return headerParameters;
+  }
+
+  void setHeaderParameters(const QHash<QString, QString>& value)
+  {
+    headerParameters = value;
+  }
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void downloadFinished(const QByteArray& data, QString downloadUrl);
@@ -203,7 +214,7 @@ private:
   QString downloadUrl, userAgent, acceptEncoding;
 
   QByteArray postParameters;
-  QHash<QString, QString> postParametersQuery;
+  QHash<QString, QString> postParametersQuery, headerParameters;
 
   int updatePeriodSeconds = -1;
   QNetworkReply *reply = nullptr;

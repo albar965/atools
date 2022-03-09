@@ -31,7 +31,8 @@ enum MetarFormat
   UNKNOWN,
   NOAA, /* Date time and METAR line separated format */
   XPLANE, /* as NOAA but with X-Plane special keywords */
-  FLAT /* Simple text of "ICAO METAR" strings */
+  FLAT, /* Simple text of "ICAO METAR" strings */
+  JSON /* IVAO JSON */
 };
 
 /*
@@ -85,7 +86,8 @@ QDebug operator<<(QDebug out, const atools::fs::weather::MetarResult& record);
  * @param result metar if successfull - otherwise error message
  * @return true if successfull
  */
-bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result, int readLines = 6);
+bool testUrl(QStringList& result, const QString& urlStr, const QString& airportIcao,
+             const QHash<QString, QString>& headerParameters = QHash<QString, QString>(), int readLines = 6);
 
 } // namespace weather
 } // namespace fs

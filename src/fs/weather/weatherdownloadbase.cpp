@@ -32,10 +32,8 @@ WeatherDownloadBase::WeatherDownloadBase(QObject *parent, MetarFormat format, bo
   downloader = new atools::util::HttpDownloader(parent, verboseLogging);
   downloader->setAcceptEncoding("gzip");
 
-  connect(downloader, &atools::util::HttpDownloader::downloadSslErrors,
-          this, &WeatherDownloadBase::weatherDownloadSslErrors);
-  connect(downloader, &atools::util::HttpDownloader::downloadProgress,
-          this, &WeatherDownloadBase::weatherDownloadProgress);
+  connect(downloader, &atools::util::HttpDownloader::downloadSslErrors, this, &WeatherDownloadBase::weatherDownloadSslErrors);
+  connect(downloader, &atools::util::HttpDownloader::downloadProgress, this, &WeatherDownloadBase::weatherDownloadProgress);
 
   errorStateTimer.setSingleShot(true);
   errorStateTimer.setInterval(180 * 1000);
@@ -113,6 +111,16 @@ void WeatherDownloadBase::setErrorStateTimer(bool error)
     errorStateTimer.start();
   else
     errorStateTimer.stop();
+}
+
+const QHash<QString, QString>& WeatherDownloadBase::getHeaderParameters() const
+{
+  return downloader->getHeaderParameters();
+}
+
+void WeatherDownloadBase::setHeaderParameters(const QHash<QString, QString>& value)
+{
+  downloader->setHeaderParameters(value);
 }
 
 } // namespace weather

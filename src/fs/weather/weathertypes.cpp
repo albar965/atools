@@ -25,12 +25,17 @@ namespace atools {
 namespace fs {
 namespace weather {
 
-bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& result, int readLines)
+bool testUrl(QStringList& result, const QString& urlStr, const QString& airportIcao, const QHash<QString, QString>& headerParameters,
+             int readLines)
 {
   if(urlStr.startsWith("http://", Qt::CaseInsensitive) || urlStr.startsWith("https://", Qt::CaseInsensitive))
   {
     QNetworkAccessManager network;
-    QNetworkRequest request(QUrl(urlStr.arg(airportIcao)));
+    QNetworkRequest request(QUrl(!airportIcao.isEmpty() && urlStr.contains("%1") ? urlStr.arg(airportIcao) : urlStr));
+
+    for(auto it = headerParameters.begin(); it != headerParameters.end(); ++it)
+      request.setRawHeader(it.key().toUtf8(), it.value().toUtf8());
+
     QNetworkReply *reply = network.get(request);
 
     QEventLoop eventLoop;
@@ -40,7 +45,7 @@ bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& res
     if(reply->error() == QNetworkReply::NoError)
     {
       for(int i = 0; i <= readLines && !reply->atEnd(); i++)
-        result.append(reply->readLine());
+        result.append(reply->readLine().mid(0, 80));
       reply->deleteLater();
       return true;
     }
@@ -63,7 +68,7 @@ bool testUrl(const QString& urlStr, const QString& airportIcao, QStringList& res
         {
           QTextStream stream(&file);
           for(int i = 0; i <= readLines && !stream.atEnd(); i++)
-            result.append(stream.readLine());
+            result.append(stream.readLine().mid(0, 80));
           file.close();
           return true;
         }

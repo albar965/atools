@@ -82,6 +82,10 @@ public:
    * Requests on getMetar() will not trigger a download while this timer is running (three minutes). */
   void setErrorStateTimer(bool error = true);
 
+  /* HTTP header parameters */
+  const QHash<QString, QString>& getHeaderParameters() const;
+  void setHeaderParameters(const QHash<QString, QString>& value);
+
 signals:
   /* Emitted when file was downloaded and udpated */
   void weatherUpdated();
