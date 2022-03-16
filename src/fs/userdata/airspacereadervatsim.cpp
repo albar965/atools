@@ -223,7 +223,7 @@ bool AirspaceReaderVatsim::readFile(const QString& filenameParam)
               if(propertiesObj.contains("oceanic"))
               {
                 // Center - only firboundaries.json
-                ident.append(id.replace('-', '_') % "_CTR");
+                ident.append(id.replace('-', '_').replace("__", "_") % "_CTR");
                 ident.removeAll(QString());
                 insertAirspaceQuery->bindValue(":type", "C");
                 insertAirspaceQuery->bindValue(":name", ident.join('_'));
