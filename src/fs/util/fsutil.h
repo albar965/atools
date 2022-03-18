@@ -25,15 +25,19 @@ namespace fs {
 namespace util {
 
 /* Split runway name into parts and return true if name matches a runway number */
-bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
+bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
 
 /* Split runway name into parts and return true if name matches a runway number. Number is zero prefixed. */
-bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
+bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr, bool *trueHeading = nullptr);
 
 QString runwayDesignatorLong(const QString& name);
 
-/* Get the closes matching runway name from the list of airport runways or empty if none */
-QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
+/* Get the closes matching runway name from the list of airport runways or empty if none.
+ * Returns the runway as formatted in runwayName */
+QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwayNames);
+
+/* As above but returns runways formatted like the one found in the airport list */
+QString runwayBestFitFromList(const QString& runwayName, const QStringList& airportRunwayNames);
 
 /* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list.
  *  Can deal with prefix "RW" and keeps it. */
@@ -41,7 +45,7 @@ QStringList runwayNameVariants(QString name);
 
 /* Returns all variants of zero prefixed runways 09 vs 9. E.g. for "09C" returns "9C".
  *  Can deal with prefix "RW" and keeps it. */
-QStringList runwayNameZeroPrefixVariants(QString name);
+QStringList runwayNameZeroPrefixVariants(const QString& name);
 
 /* Prefixes any runway number with zeros if needed. "9C" to "09C", for example. Returns "name" if not a runway. */
 QString runwayNamePrefixZero(const QString& name);
