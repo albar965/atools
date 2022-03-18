@@ -192,6 +192,8 @@ private:
    * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
    * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
    *    Added transition level. Converted airport.transition_altitude to double.
+   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler.
+   *    Approaches were missing runway assignments.
    */
   static const int DB_VERSION_MINOR = 24;
 
