@@ -200,6 +200,11 @@ public:
   bool compileCustomGlobalApt();
 
   /*
+   * Read airports from X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+   */
+  bool compileGlobalApt12();
+
+  /*
    * Read custom airports like X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
    */
   bool compileCustomApt();

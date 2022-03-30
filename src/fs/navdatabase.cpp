@@ -221,7 +221,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
 
 bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type)
 {
-  if(type == atools::fs::FsPaths::XPLANE11)
+  if(atools::fs::FsPaths::isAnyXplane(type))
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Resources", "default data"})));
   else if(type == atools::fs::FsPaths::MSFS)
   {
@@ -582,7 +582,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   // ==============================================================================
   // Calculate the total number of progress steps
   int total = 0;
-  if(sim == atools::fs::FsPaths::XPLANE11)
+  if(atools::fs::FsPaths::isAnyXplane(sim))
     total = countXplaneSteps(&progress);
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
     total = countDfdSteps();
@@ -638,7 +638,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     loadDfd(&progress, dfdCompiler.data(), area);
     dfdCompiler->close();
   }
-  else if(sim == atools::fs::FsPaths::XPLANE11)
+  else if(atools::fs::FsPaths::isAnyXplane(sim))
   {
     // Create a single X-Plane scenery area
     atools::fs::scenery::SceneryArea area(1, tr("X-Plane"), QString());
@@ -704,7 +704,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     // Read tmp_airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
-    if(sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::XPLANE11)
+    if(sim != atools::fs::FsPaths::NAVIGRAPH && !atools::fs::FsPaths::isAnyXplane(sim))
       // Drop large segments only for the borked data of FSX/P3D/MSFS - default is 8000 nm
       resolver.setMaxAirwaySegmentLengthNm(800);
 
@@ -714,7 +714,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
       return;
   }
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
@@ -725,7 +725,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
     return;
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     // Assign airport ids based on stored idents for waypoint and ndb
     if((aborted = runScript(&progress, "fs/db/update_nav_ids.sql", tr("Updating Navaids"))))
@@ -752,7 +752,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
       return;
   }
-  else if(sim != atools::fs::FsPaths::XPLANE11)
+  else if(!atools::fs::FsPaths::isAnyXplane(sim))
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS
@@ -788,7 +788,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
     return;
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = runScript(&progress, "fs/db/update_sea_base.sql", tr("Clean up runways"))))
       return;
@@ -1008,16 +1008,26 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
       return true;
 
-    // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-    if((aborted = xpDataCompiler->compileCustomGlobalApt()))
-      return true;
+    if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_11)
+    {
+      // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+      if((aborted = xpDataCompiler->compileCustomGlobalApt()))
+        return true;
 
-    // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
-    // Mandatory
-    if((aborted = xpDataCompiler->compileDefaultApt()))
-      return true;
+      // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+      // Mandatory
+      if((aborted = xpDataCompiler->compileDefaultApt()))
+        return true;
+    }
 
     if((aborted = xpDataCompiler->compileEarthMora()))
+      return true;
+  }
+
+  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_12)
+  {
+    // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+    if((aborted = xpDataCompiler->compileGlobalApt12()))
       return true;
   }
 

@@ -22,6 +22,7 @@
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
 #include "util/version.h"
+#include "exception.h"
 
 #include <QDebug>
 
@@ -31,6 +32,11 @@ namespace db {
 
 using atools::sql::SqlUtil;
 using atools::sql::SqlQuery;
+
+DatabaseMeta::DatabaseMeta()
+{
+
+}
 
 DatabaseMeta::DatabaseMeta(atools::sql::SqlDatabase *sqlDb)
   : db(sqlDb)
@@ -71,35 +77,51 @@ util::Version DatabaseMeta::getApplicationVersion()
 
 void DatabaseMeta::init()
 {
-  SqlUtil util(db);
-  if(util.hasTable("metadata"))
+  if(db != nullptr)
   {
-    SqlQuery query(db);
-
-    // Use star instead of column names to allow adding new ones
-    query.exec("select * from metadata limit 1");
-
-    if(query.next())
+    SqlUtil util(db);
+    if(util.hasTable("metadata"))
     {
-      sql::SqlRecord rec = query.record();
-      majorVersion = rec.valueInt("db_version_major");
-      minorVersion = rec.valueInt("db_version_minor");
-      lastLoadTime = rec.value("last_load_timestamp").toDateTime();
-      sidStar = rec.valueBool("has_sid_star", false);
-      airacCycle = rec.valueStr("airac_cycle", QString());
-      validThrough = rec.valueStr("valid_through", QString());
-      dataSource = rec.valueStr("data_source", QString());
-      compilerVersion = rec.valueStr("compiler_version", QString());
-      valid = true;
-    }
-    query.finish();
-  }
+      SqlQuery query(db);
 
-  routeType = util.getTableColumnAndDistinctRows("airway", "route_type") > 0;
+      // Use star instead of column names to allow adding new ones
+      query.exec("select * from metadata limit 1");
+
+      if(query.next())
+      {
+        sql::SqlRecord rec = query.record();
+        majorVersion = rec.valueInt("db_version_major");
+        minorVersion = rec.valueInt("db_version_minor");
+        lastLoadTime = rec.value("last_load_timestamp").toDateTime();
+        sidStar = rec.valueBool("has_sid_star", false);
+        airacCycle = rec.valueStr("airac_cycle", QString());
+        validThrough = rec.valueStr("valid_through", QString());
+        dataSource = rec.valueStr("data_source", QString());
+        compilerVersion = rec.valueStr("compiler_version", QString());
+        valid = true;
+      }
+      query.finish();
+    }
+
+    schema = util.hasTable("airport");
+    data = util.hasTableAndRows("airport");
+    script = util.hasTableAndRows("script");
+    boundary = util.hasTableAndRows("boundary");
+
+    routeType = util.getTableColumnAndDistinctRows("airway", "route_type") > 0;
+  }
+}
+
+void DatabaseMeta::deInit()
+{
+  db = nullptr;
 }
 
 void DatabaseMeta::updateVersion(int majorVer, int minorVer)
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   majorVersion = majorVer;
   minorVersion = minorVer;
 
@@ -120,6 +142,9 @@ void DatabaseMeta::updateVersion()
 
 void DatabaseMeta::updateAiracCycle(const QString& cycle, const QString& fromTo)
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   airacCycle = cycle;
   SqlQuery query(db);
   query.prepare("update metadata set airac_cycle = :cycle, valid_through = :valid");
@@ -136,6 +161,9 @@ void DatabaseMeta::updateAiracCycle()
 
 void DatabaseMeta::updateDataSource(const QString& src)
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   dataSource = src;
   SqlQuery query(db);
   query.prepare("update metadata set data_source = :src");
@@ -151,6 +179,9 @@ void DatabaseMeta::updateDataSource()
 
 void DatabaseMeta::updateCompilerVersion(const QString& versionStr)
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   compilerVersion = versionStr;
   SqlQuery query(db);
   query.prepare("update metadata set compiler_version = :vers");
@@ -166,6 +197,9 @@ void DatabaseMeta::updateCompilerVersion()
 
 void DatabaseMeta::updateTimestamp()
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   lastLoadTime = QDateTime::currentDateTime();
 
   SqlQuery query(db);
@@ -177,6 +211,9 @@ void DatabaseMeta::updateTimestamp()
 
 void DatabaseMeta::updateFlags()
 {
+  if(db == nullptr)
+    throw atools::Exception("Database is null");
+
   bool hasSidStar = false;
   SqlQuery select(db);
   select.exec("select approach_id from approach "
@@ -200,21 +237,6 @@ void DatabaseMeta::updateAll()
   updateAiracCycle();
   updateDataSource();
   updateCompilerVersion();
-}
-
-bool DatabaseMeta::hasSchema() const
-{
-  return SqlUtil(db).hasTable("airport");
-}
-
-bool DatabaseMeta::hasData() const
-{
-  return SqlUtil(db).hasTableAndRows("airport");
-}
-
-bool DatabaseMeta::hasAirspaces() const
-{
-  return SqlUtil(db).hasTableAndRows("boundary");
 }
 
 bool DatabaseMeta::isDatabaseCompatible() const
