@@ -140,7 +140,7 @@ int FileResolver::getFiles(const SceneryArea& area, QStringList *filepaths, QStr
                 {
                   // Skip maintenance BGL from Navigraph udpate in MSFS
                   if(options.getSimulatorType() == atools::fs::FsPaths::MSFS &&
-                     area.isNavdataThirdPartyUpdate() && filename.compare("maintenance.bgl", Qt::CaseInsensitive) == 0)
+                     area.isNavigraphNavdataUpdate() && filename.compare("maintenance.bgl", Qt::CaseInsensitive) == 0)
                     continue;
 
                   numFiles++;

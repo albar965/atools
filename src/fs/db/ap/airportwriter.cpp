@@ -151,7 +151,7 @@ void AirportWriter::writeObject(const Airport *type)
     isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
-    if(currentArea.isNavdataThirdPartyUpdate())
+    if(currentArea.isNavigraphNavdataUpdate())
       isAddon = false;
 
     if(isRealAddon && type->getDeleteAirports().isEmpty())

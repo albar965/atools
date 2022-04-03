@@ -157,6 +157,7 @@ HEADERS += \
   src/exception.h \
   src/fs/bgl/surface.h \
   src/fs/common/binarymsageometry.h \
+  src/fs/navdatabaseflags.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
   src/fs/sc/simconnectaircraft.h \
@@ -297,6 +298,7 @@ SOURCES += \
   src/exception.cpp \
   src/fs/bgl/surface.cpp \
   src/fs/common/binarymsageometry.cpp \
+  src/fs/navdatabaseflags.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
   src/fs/sc/simconnectaircraft.cpp \
