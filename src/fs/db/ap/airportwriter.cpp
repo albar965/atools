@@ -139,8 +139,10 @@ void AirportWriter::writeObject(const Airport *type)
     if(currentArea.isNavdataThirdPartyUpdate())
       isAddon = false;
 
+#ifdef DEBUG_INFORMATION
     if(isRealAddon && type->getDeleteAirports().isEmpty())
       qInfo() << "Addon airport without delete record" << ident;
+#endif
 
     int nextAirportId = getNextId();
 
@@ -362,8 +364,10 @@ int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident)
   if(query.next())
     newId = query.valueInt(0);
 
+#ifdef DEBUG_INFORMATION
   if(newId == -1)
     qWarning() << Q_FUNC_INFO << "Other airport with ident" << ident << "not found";
+#endif
   return newId;
 }
 
