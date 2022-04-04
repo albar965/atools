@@ -668,9 +668,11 @@ void Airport::updateSummaryFields()
   if(!airportClosed)
     // Not closed so far - Closed if we have runways and all ends are closed
     airportClosed = !runways.isEmpty() && numRunwayFullClosed == runways.size();
-  else if(opts->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
-    // Closed so far (MSFS) - Open again if there is at least one fully open runway
-    airportClosed = !runways.isEmpty() && numRunwayFullOpen == 0;
+
+  // Disabled to avoid wrongly enabled airports LANO and KODX
+  // else if(opts->getSimulatorType() == atools::fs::FsPaths::SimulatorType::MSFS)
+  //// Closed so far (MSFS) - Open again if there is at least one fgbully open runway
+  // airportClosed = !runways.isEmpty() && numRunwayFullOpen == 0;
 
   // ... except if there are open helipads
   for(const Helipad& pad : helipads)
