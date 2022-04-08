@@ -1482,10 +1482,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
   manifest.clear();
   manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-genericairports" % SEP % "manifest.json");
-  areaGeneric.setMinGameVersion(manifest.getMinGameVersion());
-  areaGeneric.setPackageVersion(manifest.getPackageVersion());
 
-  cfg.appendArea(areaGeneric);
+  if(manifest.isValid())
+  {
+    areaGeneric.setMinGameVersion(manifest.getMinGameVersion());
+    areaGeneric.setPackageVersion(manifest.getPackageVersion());
+    cfg.appendArea(areaGeneric);
+  }
 
   // fs-base-nav ======================================================
   SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
