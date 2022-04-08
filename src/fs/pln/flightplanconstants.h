@@ -18,6 +18,8 @@
 #ifndef ATOOLS_FLIGHTPLANCONSTANTS_H
 #define ATOOLS_FLIGHTPLANCONSTANTS_H
 
+#include <limits>
+
 #include <QLatin1String>
 
 namespace atools {

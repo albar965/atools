@@ -18,6 +18,7 @@
 #ifndef AIRCRAFTPERFCONSTANTS_H
 #define AIRCRAFTPERFCONSTANTS_H
 
+#include <limits>
 #include <QString>
 
 namespace atools {

@@ -3,6 +3,25 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.18
+
+* Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
+  can result in closed airports having open runways and open airports having all runways open. #876
+* Fixed issue where all airports were recognized as add-on with MSFS update 9.
+* Fixed issues for updating airports by disabling a corner case from FSX and P3D which apparently
+  does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
+  features like aprons or taxiways. Example LICC add-on.
+* Fix for window icon notification prevents hiding toolbar on windows with `raise windows` enabled.
+* Fixed issue when downloading NAT tracks containing PBCS TRACKS AS FOLLOWS/V W X/END OF PBCS OTS
+* Now dropping all artificial waypoints created only for procedure or airway resolution from
+  nav_search table.
+* Fixed detection of MSFS Navigraph update due to name change.
+* Fixed issues with anti-meridian detection when point is on meridian. Added anti-meridian split to
+  line and line string classes.
+* Fixed issue in Rect::crossesAntiMeridian() where date line crossing was not always detected.
+
+===============================================================================
+
 # Version 3.6.17
 
 * Added new record type for airport apron appearing since MSFS SU6 beta. Reading apron structure
