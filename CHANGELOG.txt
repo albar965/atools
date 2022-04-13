@@ -4,6 +4,38 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+Version 3.7.9.develop
+
+* Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
+  can result in closed airports having open runways and open airports having all runways open. #876
+* Fixed issue where all airports were recognized as add-on with MSFS update 9.
+* Fixed issues for updating airports by disabling a corner case from FSX and P3D which apparently
+  does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
+  features like aprons or taxiways. Example LICC add-on.
+* Corrected issues with true course runways in runway mangling and de-mangling functions. Simplified
+  functions for runway comparison. albar965/littlenavmap#870
+* Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches
+  were missing runway assignments and could not be resolved. albar965/littlenavmap#870
+* Reworked weather URL test functions to allow API keys. Added METAR format reader for IVAO JSON.
+  Added header parameters to HttpDownloader for API keys. albar965/littlenavmap#864
+* Fix for window icon notification prevents hiding toolbar on windows with `raise windows` enabled.
+* Added airport transition level for X-Plane and DFD compiler. Improved transition level and
+  altitude reading for X-Plane since users add various wrong variants.
+* Fixed crash with OpenAir airspace reader. albar965/littlenavmap#490
+* Added reader for IVAO and VATSIM JSON boundaries.
+* Fixed exception while loading X-Plane scenery library if earth_hold.dat, earth_mora.dat or
+  earth_msa.dat cannot be found in Custom Data despite existing fix, nav and awy files.
+* Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler. Holding
+  course is now written as magnetic course to avoid unneeded calculations. Databases minor version
+  updated to 24.
+* Fixed issue `Index out of bounds: Index: 5, size: 5` when reading X-Plane user_fix.dat with
+  optional column missing.
+* Prepared data compilation for X-Plane 12 based on limited information. Added X-Plane 12 detection
+  to FsPaths. Now allowing the `no simulator` state instead of using always active X-Plane.
+  albar965/littlenavmap#867
+
+===============================================================================
+
 Version 3.7.8.develop
 
 * Updated French translation from Patrick.
