@@ -33,6 +33,7 @@ Version 3.7.9.develop
 * Prepared data compilation for X-Plane 12 based on limited information. Added X-Plane 12 detection
   to FsPaths. Now allowing the `no simulator` state instead of using always active X-Plane.
   albar965/littlenavmap#867
+* Added "has_vertical_angle" and "has_rnp" to table "approach".
 
 ===============================================================================
 
