@@ -441,11 +441,11 @@ create table approach
   fix_airport_ident varchar(4),     -- Airport ICAO ident if available
 
   aircraft_category varchar(4),     -- Aircraft category
-                                    -- A All Aircraft, Cruise speed 250 kts or less
-                                    -- C Non-Jet and Turbo Prop
-                                    -- D Multi-Engine Props Only
-                                    -- E Jets and Turbo Props/Special, Cruise Speed 190 kts
-                                    -- F or greater
+                                    -- A All Aircraft
+                                    -- C All Aircraft, Cruise speed 250 kts or less
+                                    -- D Non-Jet and Turbo Prop
+                                    -- E Multi-Engine Props Only
+                                    -- F Jets and Turbo Props/Special, Cruise Speed 190 kts or greater
                                     -- H Helicopter Only
                                     -- J Jet Power
                                     -- M Turbo-Prop/Special, Cruise Speed 190 kts or greater
