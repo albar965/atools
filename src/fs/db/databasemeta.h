@@ -224,6 +224,7 @@ private:
    *    Added transition level. Converted airport.transition_altitude to double.
    *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler.
    *    Approaches were missing runway assignments.
+   *    Added "has_vertical_angle" and "has_rnp" to table "approach".
    */
   static const int DB_VERSION_MINOR = 24;
 

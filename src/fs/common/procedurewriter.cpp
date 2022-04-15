@@ -411,6 +411,16 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
     {
       // Write approach
       Procedure& appr = approaches.first();
+
+      // Collect flags from legs
+      for(const SqlRecord& legRec : appr.legRecords)
+      {
+        if(legRec.valueFloat(":vertical_angle", 0.f) < 0.1f)
+          appr.record.setValue(":has_vertical_angle", 1);
+        if(legRec.valueFloat(":rnp", 0.f) > 0.f)
+          appr.record.setValue(":has_rnp", 1);
+      }
+
       assignApproachIds(appr);
       assignApproachLegIds(appr.legRecords);
       insertApproachQuery->bindAndExecRecord(appr.record);

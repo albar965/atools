@@ -432,6 +432,9 @@ create table approach
                                     -- Both SIDS and STARS use the type = "GPS" for the Approach elements.
                                     -- STARS use the suffix="A" while SIDS use the suffix="D".
   has_gps_overlay integer not null, -- Boolean - 1 if the approach has a GPS overlay
+  has_vertical_angle integer,       -- Boolean - 1 if the approach has a vertical path on any leg, 0 or null otherwise
+  has_rnp integer,                  -- Boolean - 1 if the approach has a RNP value on any leg, 0 or null otherwise
+
   fix_type varchar(25),             -- see enum atools::fs::bgl::ap::ApproachFixType and corresponding string conversion
   fix_ident varchar(5),             -- ICAO ident of the fix
   fix_region varchar(2),            -- ICAO two letter region code for fix
