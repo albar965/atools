@@ -43,6 +43,7 @@
 #include <QElapsedTimer>
 #include <QProcessEnvironment>
 #include <QStandardPaths>
+#include <QStringBuilder>
 
 namespace atools {
 namespace fs {
@@ -87,19 +88,22 @@ NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDataba
 
 }
 
-void NavDatabase::create(const QString& codec, bool& foundBasicValidationError)
+atools::fs::ResultFlags NavDatabase::create(const QString& codec)
 {
   if(options != nullptr)
     qDebug() << Q_FUNC_INFO << *options;
 
-  createInternal(codec, foundBasicValidationError);
+  atools::fs::ResultFlags result = createInternal(codec);
   if(aborted)
+  {
     // Remove all (partial) changes
+    result |= COMPILE_ABORTED;
     db->rollback();
+  }
   else
     createDatabaseReportShort();
 
-  if(foundBasicValidationError)
+  if(result.testFlag(atools::fs::COMPILE_BASIC_VALIDATION_ERROR))
   {
     qWarning() << endl;
     qWarning() << "*****************************************************************************";
@@ -107,6 +111,7 @@ void NavDatabase::create(const QString& codec, bool& foundBasicValidationError)
     qWarning() << "*****************************************************************************";
     qWarning() << endl;
   }
+  return result;
 }
 
 void NavDatabase::createAirspaceSchema()
@@ -221,7 +226,7 @@ bool NavDatabase::isSceneryConfigValid(const QString& filename, const QString& c
 
 bool NavDatabase::isBasePathValid(const QString& filepath, QStringList& errors, atools::fs::FsPaths::SimulatorType type)
 {
-  if(type == atools::fs::FsPaths::XPLANE11)
+  if(atools::fs::FsPaths::isAnyXplane(type))
     errors.append(atools::checkDirMsg(buildPathNoCase({filepath, "Resources", "default data"})));
   else if(type == atools::fs::FsPaths::MSFS)
   {
@@ -564,8 +569,9 @@ int NavDatabase::countMsSimSteps()
   return total;
 }
 
-void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundBasicValidationError)
+atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
+  atools::fs::ResultFlags result = atools::fs::NONE;
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
@@ -582,7 +588,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   // ==============================================================================
   // Calculate the total number of progress steps
   int total = 0;
-  if(sim == atools::fs::FsPaths::XPLANE11)
+  if(atools::fs::FsPaths::isAnyXplane(sim))
     total = countXplaneSteps(&progress);
   else if(sim == atools::fs::FsPaths::NAVIGRAPH)
     total = countDfdSteps();
@@ -591,6 +597,16 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     // Fill with default required entries but does not read a file
     readSceneryConfigMsfs(sceneryCfg);
     total = countMsfsSteps(&progress, sceneryCfg);
+
+    // Check for Navigraph packages to report back to caller
+    for(const SceneryArea& area:sceneryCfg.getAreas())
+    {
+      if(area.isNavigraphNavdataUpdate())
+      {
+        result |= atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND;
+        break;
+      }
+    }
   }
   else // FSX and P3D
   {
@@ -600,7 +616,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   }
 
   if(aborted)
-    return;
+    return result;
 
   qDebug() << "=P=== Total Progress" << total;
 
@@ -609,7 +625,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
 
   createSchemaInternal(&progress);
   if(aborted)
-    return;
+    return result;
 
   // -----------------------------------------------------------------------
   // Create empty data writer pointers which will read all files and fill the database
@@ -638,7 +654,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     loadDfd(&progress, dfdCompiler.data(), area);
     dfdCompiler->close();
   }
-  else if(sim == atools::fs::FsPaths::XPLANE11)
+  else if(atools::fs::FsPaths::isAnyXplane(sim))
   {
     // Create a single X-Plane scenery area
     atools::fs::scenery::SceneryArea area(1, tr("X-Plane"), QString());
@@ -663,7 +679,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
 
     // Load the language index for lookup for airport names and more
     QString packageBase = options->getMsfsOfficialPath();
-    QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() + ".locPak"});
+    QFileInfo langFile = buildPathNoCase({packageBase, "fs-base", options->getLanguage() % ".locPak"});
     if(!langFile.exists() || !langFile.isFile())
     {
       qWarning() << Q_FUNC_INFO << langFile.absoluteFilePath() << "not found. Falling back to en-US";
@@ -693,7 +709,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   }
 
   if(aborted)
-    return;
+    return result;
 
   // ===========================================================================
   // Loading is done here - now continue with the post process steps
@@ -704,109 +720,109 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
     // Read tmp_airway_point table, connect all waypoints and write the ordered result into the airway table
     atools::fs::db::AirwayResolver resolver(db, progress);
 
-    if(sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::XPLANE11)
+    if(sim != atools::fs::FsPaths::NAVIGRAPH && !atools::fs::FsPaths::isAnyXplane(sim))
       // Drop large segments only for the borked data of FSX/P3D/MSFS - default is 8000 nm
       resolver.setMaxAirwaySegmentLengthNm(800);
 
     resolver.assignWaypointIds();
 
     if((aborted = resolver.run(PROGRESS_NUM_RESOLVE_AIRWAY_STEPS)))
-      return;
+      return result;
   }
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH && sim != atools::fs::FsPaths::MSFS)
   {
     // Create VORTACs
     if((aborted = runScript(&progress, "fs/db/update_vor.sql", tr("Merging VOR and TACAN to VORTAC"))))
-      return;
+      return result;
   }
 
   // Set the nav_ids (VOR, NDB) in the waypoint table and update the airway counts
   if((aborted = runScript(&progress, "fs/db/update_wp_ids.sql", tr("Updating waypoints"))))
-    return;
+    return result;
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     // Assign airport ids based on stored idents for waypoint and ndb
     if((aborted = runScript(&progress, "fs/db/update_nav_ids.sql", tr("Updating Navaids"))))
-      return;
+      return result;
   }
 
   if(sim == atools::fs::FsPaths::NAVIGRAPH)
   {
     // Remove all unreferenced dummy waypoints that were added for airway generation
     if((aborted = runScript(&progress, "fs/db/dfd/clean_waypoints.sql", tr("Cleaning up waypoints"))))
-      return;
+      return result;
   }
 
   // Set the runway_end_ids in the approach table
   if((aborted = runScript(&progress, "fs/db/update_approaches.sql", tr("Updating approaches"))))
-    return;
+    return result;
 
   // Assign region to airports by best guess from nearby navaids
   if((aborted = runScript(&progress, "fs/db/update_airport.sql", tr("Updating Airports"))))
-    return;
+    return result;
 
   if(sim == atools::fs::FsPaths::DFD)
   {
     if((aborted = runScript(&progress, "fs/db/dfd/update_airport_ils.sql", tr("Updating ILS"))))
-      return;
+      return result;
   }
-  else if(sim != atools::fs::FsPaths::XPLANE11)
+  else if(!atools::fs::FsPaths::isAnyXplane(sim))
   {
     // The ids are already updated when reading the X-Plane data
     // Set runway end ids into the ILS
     if((aborted = runScript(&progress, "fs/db/update_airport_ils.sql", tr("Updating ILS"))))
-      return;
+      return result;
   }
 
   // update the ILS count in the airport table
   if((aborted = runScript(&progress, "fs/db/update_num_ils.sql", tr("Updating ILS Count"))))
-    return;
+    return result;
 
   // Prepare the search table
   if((aborted = runScript(&progress, "fs/db/populate_nav_search.sql", tr("Collecting navaids for search"))))
-    return;
+    return result;
 
   if(options->isCreateRouteTables())
   {
     // Fill tables for automatic flight plan calculation
     if((aborted = runScript(&progress, "fs/db/populate_route_node.sql", tr("Populating routing tables"))))
-      return;
+      return result;
 
     if((aborted = progress.reportOther(tr("Creating route edges for VOR and NDB"))))
-      return;
+      return result;
 
     // Create a network of VOR and NDB stations that allow radio navaid routing
     atools::fs::db::RouteEdgeWriter edgeWriter(db);
     edgeWriter.run();
 
     if((aborted = runScript(&progress, "fs/db/populate_route_edge.sql", tr("Creating route edges waypoints"))))
-      return;
+      return result;
   }
 
   if((aborted = runScript(&progress, "fs/db/finish_airport_schema.sql", tr("Creating indexes for airport"))))
-    return;
+    return result;
 
-  if(sim != atools::fs::FsPaths::XPLANE11 && sim != atools::fs::FsPaths::NAVIGRAPH)
+  if(!atools::fs::FsPaths::isAnyXplane(sim) && sim != atools::fs::FsPaths::NAVIGRAPH)
   {
     if((aborted = runScript(&progress, "fs/db/update_sea_base.sql", tr("Clean up runways"))))
-      return;
+      return result;
   }
 
   if((aborted = runScript(&progress, "fs/db/finish_schema.sql", tr("Creating indexes for search"))))
-    return;
+    return result;
 
   if(options->isCreateRouteTables())
   {
     if((aborted = runScript(&progress, "fs/db/finish_schema_route.sql", tr("Creating indexes for route"))))
-      return;
+      return result;
   }
 
   if(sim == atools::fs::FsPaths::MSFS)
   {
     if((aborted = progress.reportOther(tr("Loading translations"))))
-      return;
+      return result;
 
     // Load translation files with all languages into the database to allow translating the aircraft names
     scenery::LanguageJson language;
@@ -844,13 +860,18 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   if(options->isDropIndexes())
   {
     if((aborted = progress.reportOther(tr("Creating Database preparation Script"))))
-      return;
+      return result;
 
     createPreparationScript();
   }
 
   if(options->isBasicValidation())
+  {
+    bool foundBasicValidationError = false;
     basicValidation(&progress, foundBasicValidationError);
+    if(foundBasicValidationError)
+      result |= atools::fs::COMPILE_BASIC_VALIDATION_ERROR;
+  }
 
   if(options->isDatabaseReport())
   {
@@ -863,14 +884,14 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   if(options->isDropIndexes())
   {
     if((aborted = progress.reportOther(tr("Dropping All Indexes"))))
-      return;
+      return result;
 
     dropAllIndexes();
   }
   if(options->isVacuumDatabase())
   {
     if((aborted = progress.reportOtherInc(tr("Vacuum Database"), PROGRESS_NUM_TASK_STEPS)))
-      return;
+      return result;
 
     db->vacuum();
   }
@@ -878,7 +899,7 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   if(options->isAnalyzeDatabase())
   {
     if((aborted = progress.reportOtherInc(tr("Analyze Database"), PROGRESS_NUM_TASK_STEPS)))
-      return;
+      return result;
 
     db->analyze();
   }
@@ -887,6 +908,8 @@ void NavDatabase::createInternal(const QString& sceneryConfigCodec, bool& foundB
   progress.reportFinish();
 
   qDebug() << "Time" << timer.elapsed() / 1000 << "seconds";
+
+  return result;
 }
 
 bool NavDatabase::loadDfd(ProgressHandler *progress, ng::DfdCompiler *dfdCompiler, const scenery::SceneryArea& area)
@@ -1008,16 +1031,26 @@ bool NavDatabase::loadXplane(ProgressHandler *progress, atools::fs::xp::XpDataCo
     if((aborted = xpDataCompiler->compileCustomApt())) // Add-on
       return true;
 
-    // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
-    if((aborted = xpDataCompiler->compileCustomGlobalApt()))
-      return true;
+    if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_11)
+    {
+      // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+      if((aborted = xpDataCompiler->compileCustomGlobalApt()))
+        return true;
 
-    // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
-    // Mandatory
-    if((aborted = xpDataCompiler->compileDefaultApt()))
-      return true;
+      // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+      // Mandatory
+      if((aborted = xpDataCompiler->compileDefaultApt()))
+        return true;
+    }
 
     if((aborted = xpDataCompiler->compileEarthMora()))
+      return true;
+  }
+
+  if(options->getSimulatorType() == atools::fs::FsPaths::XPLANE_12)
+  {
+    // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+    if((aborted = xpDataCompiler->compileGlobalApt12()))
       return true;
   }
 
@@ -1167,9 +1200,9 @@ bool NavDatabase::loadFsxP3dMsfsSimulator(ProgressHandler *progress, db::DataWri
         materialLib.clear();
 
         if(area.isCommunity())
-          materialLib.readCommunity(options->getMsfsCommunityPath() + SEP + area.getLocalPath());
+          materialLib.readCommunity(options->getMsfsCommunityPath() % SEP % area.getLocalPath());
         else if(area.isAddOn())
-          materialLib.readCommunity(options->getMsfsOfficialPath() + SEP + area.getLocalPath());
+          materialLib.readCommunity(options->getMsfsOfficialPath() % SEP % area.getLocalPath());
 
         fsDataWriter->setMaterialLibScenery(&materialLib);
       }
@@ -1227,7 +1260,7 @@ void NavDatabase::basicValidateTable(const QString& table, int minCount, bool& f
 {
   SqlUtil util(db);
   if(!util.hasTable(table))
-    throw Exception("Table \"" + table + "\" not found.");
+    throw Exception("Table \"" % table % "\" not found.");
 
   int count = 0;
   if((count = util.rowCount(table)) < minCount)
@@ -1312,7 +1345,7 @@ void NavDatabase::dropAllIndexes()
     SqlQuery indexQuery("select name from sqlite_master where type = 'index' and sql is not null", db);
     indexQuery.exec();
     while(indexQuery.next())
-      stmts.append("drop index if exists " + indexQuery.valueStr("name"));
+      stmts.append("drop index if exists " % indexQuery.valueStr("name"));
   }
 
   for(const QString& stmt : stmts)
@@ -1398,7 +1431,7 @@ bool NavDatabase::runScript(ProgressHandler *progress, const QString& scriptFile
     if((aborted = progress->reportOtherInc(message, PROGRESS_NUM_SCRIPT_STEPS)))
       return true;
 
-  script.executeScript(":/atools/resources/sql/" + scriptFile);
+  script.executeScript(":/atools/resources/sql/" % scriptFile);
   db->commit();
   return false;
 }
@@ -1409,12 +1442,12 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   // content.read(options->getSceneryFile());
 
   // Steam: %APPDATA%\Microsoft Flight Simulator\Content.xml"
-  QString contentXmlPath = options->getBasepath() + SEP + "Content.xml";
+  QString contentXmlPath = options->getBasepath() % SEP % "Content.xml";
   if(!atools::checkFile(contentXmlPath, false /* warn */))
   {
     // Not found - try MS installation
     // Marketplace: %LOCALAPPDATA%\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalCache\Content.xml"
-    contentXmlPath = QFileInfo(options->getBasepath() + SEP + ".." + SEP + "Content.xml").canonicalFilePath();
+    contentXmlPath = QFileInfo(options->getBasepath() % SEP % ".." % SEP % "Content.xml").canonicalFilePath();
     if(!atools::checkFile(contentXmlPath, false /* warn */))
       // Not found
       contentXmlPath.clear();
@@ -1431,17 +1464,31 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // fs-base ======================================================
   int areaNum = 0;
-  SceneryArea area(areaNum++, tr("Base Airports"), "fs-base");
-  // area.setActive(!contentXml.isDisabled("fs-base"));
-  area.setActive(true);
+  SceneryArea areaBase(areaNum++, tr("Base Airports"), "fs-base");
+  areaBase.setActive(true);
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
   manifest.clear();
-  manifest.read(options->getMsfsOfficialPath() + SEP + "fs-base" + SEP + "manifest.json");
-  area.setMinGameVersion(manifest.getMinGameVersion());
-  area.setPackageVersion(manifest.getPackageVersion());
+  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base" % SEP % "manifest.json");
+  areaBase.setMinGameVersion(manifest.getMinGameVersion());
+  areaBase.setPackageVersion(manifest.getPackageVersion());
 
-  cfg.appendArea(area);
+  cfg.appendArea(areaBase);
+
+  // fs-base-genericairports ======================================================
+  SceneryArea areaGeneric(areaNum++, tr("Generic Airports"), "fs-base-genericairports");
+  areaGeneric.setActive(true);
+
+  // Get version numbers from manifest - needed to determine record changes for SID and STAR
+  manifest.clear();
+  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-genericairports" % SEP % "manifest.json");
+
+  if(manifest.isValid())
+  {
+    areaGeneric.setMinGameVersion(manifest.getMinGameVersion());
+    areaGeneric.setPackageVersion(manifest.getPackageVersion());
+    cfg.appendArea(areaGeneric);
+  }
 
   // fs-base-nav ======================================================
   SceneryArea areaNav(areaNum++, tr("Base Navigation"), "fs-base-nav");
@@ -1450,7 +1497,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
 
   // Get version numbers from manifest - needed to determine record changes for SID and STAR
   manifest.clear();
-  manifest.read(options->getMsfsOfficialPath() + SEP + "fs-base-nav" + SEP + "manifest.json");
+  manifest.read(options->getMsfsOfficialPath() % SEP % "fs-base-nav" % SEP % "manifest.json");
   areaNav.setMinGameVersion(manifest.getMinGameVersion());
   areaNav.setPackageVersion(manifest.getPackageVersion());
 
@@ -1474,19 +1521,19 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
       continue;
     }
 
-    if(name == "fs-base-nav" || name == "fs-base")
+    if(name == "fs-base-nav" || name == "fs-base" || name == "fs-base-genericairports")
       // Already read before
       continue;
 
     // Read manifest to check type
     manifest.clear();
-    manifest.read(fileinfo.filePath() + SEP + "manifest.json");
+    manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
-      layout.read(fileinfo.filePath() + SEP + "layout.json");
+      layout.read(fileinfo.filePath() % SEP % "layout.json");
 
       if(!layout.getBglPaths().isEmpty())
       {
@@ -1496,7 +1543,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
         addonArea.setAddOn(true);
 
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
+        addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
 
         cfg.getAreas().append(addonArea);
       }
@@ -1520,13 +1567,13 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     }
 
     manifest.clear();
-    manifest.read(fileinfo.filePath() + SEP + "manifest.json");
+    manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkThirdPartyNavdataExclude(manifest))
+    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
-      layout.read(fileinfo.filePath() + SEP + "layout.json");
+      layout.read(fileinfo.filePath() % SEP % "layout.json");
 
       if(!layout.getBglPaths().isEmpty())
       {
@@ -1534,7 +1581,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
         addonArea.setCommunity(true);
 
         // Detect Navigraph navdata update packages for special handling
-        addonArea.setNavdataThirdPartyUpdate(checkThirdPartyNavdataUpdate(manifest));
+        addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
 
         cfg.getAreas().append(addonArea);
       }
@@ -1542,7 +1589,7 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
   }
 }
 
-bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
+bool NavDatabase::checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson& manifest)
 {
   // {
   // "content_type": "SCENERY",
@@ -1558,7 +1605,7 @@ bool NavDatabase::checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson
           manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
 }
 
-bool NavDatabase::checkThirdPartyNavdataExclude(scenery::ManifestJson& manifest)
+bool NavDatabase::checkNavigraphNavdataExclude(scenery::ManifestJson& manifest)
 {
   // {
   // "content_type": "SCENERY",
@@ -1614,11 +1661,11 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFileLocal = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
-      addonsCfgFileLocal += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
+      addonsCfgFileLocal += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)
-                            " LocalData" +
+                            " LocalData" %
 #endif
-                            SEP + "add-ons.cfg";
+                            SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFileLocal);
     }
 
@@ -1632,8 +1679,8 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use $HOME/.config for testing
       QString addonsCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
-      addonsCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
-                       SEP + "add-ons.cfg";
+      addonsCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
+                       SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsCfgFile);
     }
 
@@ -1647,11 +1694,11 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
       // Use /tmp for testing
       QString addonsAllUsersCfgFile = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).at(0);
 #endif
-      addonsAllUsersCfgFile += SEP + QString("Lockheed Martin") + SEP + QString("Prepar3D v%1").arg(simNum) +
+      addonsAllUsersCfgFile += SEP % QString("Lockheed Martin") % SEP % QString("Prepar3D v%1").arg(simNum) %
 #if !defined(Q_OS_WIN32)
-                               " ProgramData" +
+                               " ProgramData" %
 #endif
-                               SEP + "add-ons.cfg";
+                               SEP % "add-ons.cfg";
       addonsCfgFiles.append(addonsAllUsersCfgFile);
     }
 
@@ -1693,10 +1740,10 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
     // Add both path alternatives since documentation is not clear
     // Mentioned in the SDK on "Add-on Packages" -> "Distributing an Add-on Package"
     // Mentioned in the SDK on "Add-on Instructions for Developers" -> "Add-on Directory Structure"
-    addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Files").arg(simNum) +
-                                SEP + QLatin1String("add-ons"));
+    addonDiscoveryPaths.prepend(documents % SEP % QString("Prepar3D v%1 Files").arg(simNum) %
+                                SEP % QLatin1String("add-ons"));
 
-    addonDiscoveryPaths.prepend(documents + SEP + QString("Prepar3D v%1 Add-ons").arg(simNum));
+    addonDiscoveryPaths.prepend(documents % SEP % QString("Prepar3D v%1 Add-ons").arg(simNum));
 
     qInfo() << Q_FUNC_INFO << "Discovery paths" << addonDiscoveryPaths;
 
@@ -1754,7 +1801,7 @@ void NavDatabase::readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg)
 
 QFileInfo NavDatabase::buildAddonFile(const QFileInfo& addonEntry)
 {
-  return QFileInfo(addonEntry.canonicalFilePath() + SEP + QLatin1String("add-on.xml"));
+  return QFileInfo(addonEntry.canonicalFilePath() % SEP % QLatin1String("add-on.xml"));
 }
 
 void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::SceneryCfg& cfg,
@@ -1787,7 +1834,7 @@ void NavDatabase::readAddOnComponents(int& areaNum, atools::fs::scenery::Scenery
 
       if(compPath.isRelative())
         // Convert relative path to absolute based on add-on file directory
-        compPath = package.getBaseDirectory() + SEP + compPath.path();
+        compPath.setPath(package.getBaseDirectory() % SEP % compPath.path());
 
       if(compPath.dirName().toLower() == "scenery")
         // Remove if it points to scenery directory
@@ -1821,8 +1868,8 @@ void NavDatabase::reportCoordinateViolations(QDebug& out, atools::sql::SqlUtil& 
   for(QString table : tables)
   {
     out << "==================================================================" << endl;
-    util.reportRangeViolations(out, table, {table + "_id", "ident"}, "lonx", -180.f, 180.f);
-    util.reportRangeViolations(out, table, {table + "_id", "ident"}, "laty", -90.f, 90.f);
+    util.reportRangeViolations(out, table, {table % "_id", "ident"}, "lonx", -180.f, 180.f);
+    util.reportRangeViolations(out, table, {table % "_id", "ident"}, "laty", -90.f, 90.f);
   }
 }
 

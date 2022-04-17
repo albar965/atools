@@ -157,6 +157,7 @@ HEADERS += \
   src/exception.h \
   src/fs/bgl/surface.h \
   src/fs/common/binarymsageometry.h \
+  src/fs/navdatabaseflags.h \
   src/fs/sc/connecthandler.h \
   src/fs/sc/datareaderthread.h \
   src/fs/sc/simconnectaircraft.h \
@@ -176,7 +177,9 @@ HEADERS += \
   src/fs/scenery/manifestjson.h \
   src/fs/scenery/materiallib.h \
   src/fs/userdata/airspacereaderbase.h \
+  src/fs/userdata/airspacereaderivao.h \
   src/fs/userdata/airspacereaderopenair.h \
+  src/fs/userdata/airspacereadervatsim.h \
   src/fs/userdata/logdatamanager.h \
   src/fs/util/coordinates.h \
   src/fs/util/fsutil.h \
@@ -295,6 +298,7 @@ SOURCES += \
   src/exception.cpp \
   src/fs/bgl/surface.cpp \
   src/fs/common/binarymsageometry.cpp \
+  src/fs/navdatabaseflags.cpp \
   src/fs/sc/connecthandler.cpp \
   src/fs/sc/datareaderthread.cpp \
   src/fs/sc/simconnectaircraft.cpp \
@@ -314,7 +318,9 @@ SOURCES += \
   src/fs/scenery/manifestjson.cpp \
   src/fs/scenery/materiallib.cpp \
   src/fs/userdata/airspacereaderbase.cpp \
+  src/fs/userdata/airspacereaderivao.cpp \
   src/fs/userdata/airspacereaderopenair.cpp \
+  src/fs/userdata/airspacereadervatsim.cpp \
   src/fs/userdata/logdatamanager.cpp \
   src/fs/util/coordinates.cpp \
   src/fs/util/fsutil.cpp \

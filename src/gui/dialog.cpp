@@ -193,8 +193,7 @@ QString Dialog::saveFileDialog(const QString& title,
                     filterIndex).at(0);
 }
 
-void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message,
-                            const QString& checkBoxMessage)
+void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, const QString& checkBoxMessage)
 {
   Settings& s = Settings::instance();
 

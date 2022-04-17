@@ -17,6 +17,7 @@
 
 #include "atools.h"
 #include "exception.h"
+#include "util/simplecrypt.h"
 
 #include <QDebug>
 #include <QLocale>
@@ -35,7 +36,7 @@ const static QChar SEP(QDir::separator());
 
 QString version()
 {
-  return "3.8.2"; // VERSION_NUMBER - atools
+  return "3.8.3"; // VERSION_NUMBER - atools
 }
 
 QString gitRevision()
@@ -1102,6 +1103,21 @@ QString convertToIsoWithOffset(const QDateTime& dateTime, bool milliseconds)
 QString currentIsoWithOffset(bool milliseconds)
 {
   return convertToIsoWithOffset(QDateTime::currentDateTime(), milliseconds);
+}
+
+QString strFromCryptFile(const QString& filename, quint64 key)
+{
+  QString decrypted;
+  QFile file(filename);
+  if(file.open(QIODevice::ReadOnly))
+  {
+    decrypted = atools::util::SimpleCrypt(key).decryptToString(file.readAll());
+    file.close();
+  }
+  else
+    qWarning() << Q_FUNC_INFO << "Cannot open file" << file.fileName() << "Reason" << file.errorString();
+
+  return decrypted;
 }
 
 } // namespace atools

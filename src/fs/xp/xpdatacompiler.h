@@ -200,6 +200,11 @@ public:
   bool compileCustomGlobalApt();
 
   /*
+   * Read airports from X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+   */
+  bool compileGlobalApt12();
+
+  /*
    * Read custom airports like X-Plane 11/Custom Scenery/KSEA Demo Area/Earth nav data/apt.dat
    */
   bool compileCustomApt();
@@ -242,7 +247,7 @@ private:
   /* Read file line by line and call writer for each one */
   bool readDataFile(const QString& filepath, int minColumns, atools::fs::xp::XpWriter *writer,
                     atools::fs::xp::ContextFlags flags, int numReportSteps);
-  static QString buildBasePath(const NavDatabaseOptions& opts);
+  static QString buildBasePath(const NavDatabaseOptions& opts, const QString& filename);
 
   /* FInd custom apt.dat like X-Plane 11/Custom Scenery/LFPG Paris - Charles de Gaulle/Earth Nav data/apt.dat */
   static QStringList findCustomAptDatFiles(const atools::fs::NavDatabaseOptions& opts,
@@ -270,7 +275,7 @@ private:
                                                    atools::fs::NavDatabaseErrors *navdatabaseErrors);
 
   int curFileId = 0, curSceneryId = 0;
-  QString basePath;
+  QString basePath; /* base for earth_fix.dat earth_awy.dat and earth_nav.dat */
   const atools::fs::NavDatabaseOptions& options;
   atools::sql::SqlDatabase& db;
   atools::fs::ProgressHandler *progress = nullptr;

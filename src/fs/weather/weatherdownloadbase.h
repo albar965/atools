@@ -57,6 +57,7 @@ public:
 
   /* Set download request URL */
   virtual void setRequestUrl(const QString& url);
+  virtual const QString& getRequestUrl() const;
 
   /* Download in progress or file downloads outstanding */
   virtual bool isDownloading() const;
@@ -80,6 +81,10 @@ public:
   /* Start a timer that is used to avoid flooding the log with errors.
    * Requests on getMetar() will not trigger a download while this timer is running (three minutes). */
   void setErrorStateTimer(bool error = true);
+
+  /* HTTP header parameters */
+  const QHash<QString, QString>& getHeaderParameters() const;
+  void setHeaderParameters(const QHash<QString, QString>& value);
 
 signals:
   /* Emitted when file was downloaded and udpated */

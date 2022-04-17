@@ -23,6 +23,9 @@
 
 #include <QTimeZone>
 #include <QRegularExpression>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 namespace atools {
 namespace fs {
@@ -84,12 +87,11 @@ int MetarIndex::read(QTextStream& stream, const QString& fileOrUrl, bool merge)
     case atools::fs::weather::XPLANE:
       return readNoaaXplane(stream, fileOrUrl, merge);
 
-      break;
-
     case atools::fs::weather::FLAT:
       return readFlat(stream, fileOrUrl, merge);
 
-      break;
+    case atools::fs::weather::JSON:
+      return readJson(stream, fileOrUrl, merge);
   }
   return 0;
 }
@@ -122,7 +124,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
   int lineNum = 1;
   QString line;
   QDateTime lastTimestamp, now = QDateTime::currentDateTimeUtc();
-  int futureDates = 0, found = 0;
+  int futureDates = 0, invalidDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
@@ -149,6 +151,14 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
         // Found line containing date like "2017/10/29 11:45"
         lastTimestamp = QDateTime::fromString(line, "yyyy/MM/dd hh:mm");
         lastTimestamp.setTimeZone(QTimeZone::utc());
+        lineNum++;
+        continue;
+      }
+
+      if(!lastTimestamp.isValid())
+      {
+        // Ignore invalid dates
+        invalidDates++;
         lineNum++;
         continue;
       }
@@ -195,7 +205,7 @@ int MetarIndex::readNoaaXplane(QTextStream& stream, const QString& fileOrUrl, bo
   {
     qDebug() << "index->size()" << spatialIndex->size();
     qDebug() << "metarMap.size()" << identIndexMap.size();
-    qDebug() << "found " << found << "futureDates " << futureDates;
+    qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
   }
@@ -225,7 +235,7 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
   int lineNum = 1;
   QString line;
   const QDateTime now = QDateTime::currentDateTimeUtc();
-  int futureDates = 0, found = 0;
+  int futureDates = 0, invalidDates = 0, found = 0;
 
   while(!stream.atEnd())
   {
@@ -262,6 +272,14 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
           qWarning() << Q_FUNC_INFO << "Cannot read minute in METAR" << line;
 
         QDateTime metarDateTime = atools::correctDate(day, hour, minute);
+
+        if(!metarDateTime.isValid())
+        {
+          // Ignore invalid dates
+          invalidDates++;
+          lineNum++;
+          continue;
+        }
 
         if(metarDateTime > now)
         {
@@ -301,7 +319,93 @@ int MetarIndex::readFlat(QTextStream& stream, const QString& fileOrUrl, bool mer
   {
     qDebug() << "index->size()" << spatialIndex->size();
     qDebug() << "metarMap.size()" << identIndexMap.size();
-    qDebug() << "found " << found << "futureDates " << futureDates;
+    qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
+    qDebug() << "Latest" << latestIdent << latest;
+    qDebug() << "Oldest" << oldestIdent << oldest;
+  }
+
+  qDebug() << Q_FUNC_INFO << fileOrUrl << spatialIndex->size();
+  return found;
+}
+
+// .[
+// .  {
+// .    "airportIcao": "AGGH",
+// .    "metar": "AGGH 091200Z 00000KT 9999 FEW016 SCT300 25/25 Q1010",
+// .    "updatedAt": "2022-03-09T12:00:00.000Z"
+// .  },
+// .  {
+// .    "airportIcao": "ANYN",
+// .    "metar": "ANYN 091200Z 08006KT 9999 FEW020 28/25 Q1010",
+// .    "updatedAt": "2022-03-09T12:00:00.000Z"
+// .  },
+// .  {
+// .    "airportIcao": "AYMH",
+// .    "metar": "AYMH 090800Z VRB04KT 9999 -SHRA SCT008 BKN030 -/- Q1019",
+// .    "updatedAt": "2022-03-09T08:00:00.000Z"
+// .  },
+int MetarIndex::readJson(QTextStream& stream, const QString& fileOrUrl, bool merge)
+{
+  if(!merge)
+  {
+    spatialIndex->clear();
+    identIndexMap.clear();
+  }
+
+  QDateTime latest, oldest;
+  QString latestIdent, oldestIdent;
+
+  const QDateTime now = QDateTime::currentDateTimeUtc();
+  int futureDates = 0, invalidDates = 0, found = 0;
+
+  QJsonDocument doc = QJsonDocument::fromJson(stream.readAll().toUtf8());
+  for(QJsonValue airportValue : doc.array())
+  {
+    QJsonObject airportObj = airportValue.toObject();
+    QString ident = airportObj.value("airportIcao").toString();
+    QString metar = airportObj.value("metar").toString();
+    QDateTime metarDateTime = QDateTime::fromString(airportObj.value("updatedAt").toString(), Qt::ISODateWithMs);
+
+    if(!metarDateTime.isValid())
+    {
+      // Ignore invalid dates
+      invalidDates++;
+      continue;
+    }
+
+    if(metarDateTime > now)
+    {
+      // Ignore METARs with future UTC time
+      futureDates++;
+      continue;
+    }
+
+    // Found METAR line
+    if(verbose)
+    {
+      if(!latest.isValid() || metarDateTime > latest)
+      {
+        latest = metarDateTime;
+        latestIdent = ident;
+      }
+      if(!oldest.isValid() || metarDateTime < oldest)
+      {
+        oldest = metarDateTime;
+        oldestIdent = ident;
+      }
+    }
+
+    found++;
+    updateOrInsert(metar, ident, metarDateTime);
+  }
+
+  updateIndex();
+
+  if(verbose)
+  {
+    qDebug() << "index->size()" << spatialIndex->size();
+    qDebug() << "metarMap.size()" << identIndexMap.size();
+    qDebug() << "found " << found << "futureDates " << futureDates << "invalidDates" << invalidDates;
     qDebug() << "Latest" << latestIdent << latest;
     qDebug() << "Oldest" << oldestIdent << oldest;
   }

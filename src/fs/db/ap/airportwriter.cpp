@@ -151,11 +151,13 @@ void AirportWriter::writeObject(const Airport *type)
     isAddon = getOptions().isAddonDirectory(bglFileWriter->getCurrentFilepath()) && isRealAddon;
 
     // Third party navdata update or MSFS stock airport in official - not an addon
-    if(currentArea.isNavdataThirdPartyUpdate())
+    if(currentArea.isNavigraphNavdataUpdate())
       isAddon = false;
 
+#ifdef DEBUG_INFORMATION
     if(isRealAddon && type->getDeleteAirports().isEmpty())
       qInfo() << "Addon airport without delete record" << ident;
+#endif
 
     int nextAirportId = getNextId();
 
@@ -375,8 +377,10 @@ int atools::fs::db::AirportWriter::airportIdByIdent(const QString& ident, bool w
   if(query->next())
     newId = query->valueInt(0);
 
+#ifdef DEBUG_INFORMATION
   if(newId == -1 && warn)
     qWarning() << Q_FUNC_INFO << "Other airport with ident" << ident << "not found";
+#endif
   return newId;
 }
 

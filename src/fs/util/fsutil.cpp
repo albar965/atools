@@ -365,6 +365,42 @@ static const QHash<QString, QString> NAME_CODE_MAP(
         {"YS11", "NAMC YS-11"}
       });
 
+// ====================================================================================================
+
+// Get runway name attributes
+QString runwayFlags(QString runway, bool& prefixRw, bool& noPrefixNull, bool& suffixTrue)
+{
+  prefixRw = runway.startsWith("RW");
+  if(prefixRw)
+    runway = runway.mid(2);
+
+  suffixTrue = runway.endsWith('T');
+  if(suffixTrue)
+    runway.chop(1);
+
+  // true for "1", "1C" and "1T"
+  noPrefixNull = runway.size() == 1 || (runway.size() == 2 && !runway.at(1).isDigit());
+
+  if(noPrefixNull)
+    runway.prepend('0');
+
+  return runway.toUpper();
+}
+
+// Turn runway names to common form. "1" to "01", "01T" to "01", "RW01" to "01"
+QString normalizeRunway(QString runway)
+{
+  bool dummy;
+  return runwayFlags(runway, dummy, dummy, dummy);
+}
+
+QStringList normalizeRunways(QStringList names)
+{
+  for(QString& name : names)
+    name = normalizeRunway(name);
+  return names;
+}
+
 QString aircraftTypeForCode(const QString& code)
 {
   return NAME_CODE_MAP.value(code);
@@ -625,16 +661,7 @@ bool runwayAlmostEqual(const QString& name1, const QString& name2)
 
 bool runwayEqual(QString name1, QString name2)
 {
-  if(name1.startsWith('0'))
-    name1 = name1.mid(1);
-  else if(name1.startsWith("RW0"))
-    name1 = name1.mid(3);
-
-  if(name2.startsWith('0'))
-    name2 = name2.mid(1);
-  else if(name2.startsWith("RW0"))
-    name2 = name2.mid(3);
-  return name1.compare(name2, Qt::CaseInsensitive) == 0;
+  return normalizeRunway(name1) == normalizeRunway(name2);
 }
 
 bool runwayContains(const QStringList& runways, QString name)
@@ -662,21 +689,28 @@ QStringList runwayNameVariants(QString name)
     name = name.mid(2);
   }
 
+  QString suffix;
+  if(name.endsWith('T'))
+  {
+    suffix = "T";
+    name.chop(1);
+  }
+
   QStringList retval({name});
   QString designator;
   int number;
   runwayNameSplit(name, &number, &designator);
 
   // Try next higher runway number
-  retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator));
+  retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator) % suffix);
 
   // Try next lower runway number
-  retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator));
+  retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator) % suffix);
 
   return retval;
 }
 
-QStringList runwayNameZeroPrefixVariants(QString name)
+QStringList runwayNameZeroPrefixVariants(const QString& name)
 {
   QStringList retval({name});
 
@@ -714,55 +748,76 @@ QStringList arincNameNameVariants(const QString& name)
     runwayNameSplit(rw, &number, &designator);
 
     // Try next higher runway number
-    retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator) + suffix);
+    retval.append(prefix % runwayNameJoin(number < 36 ? number + 1 : 1, designator) % suffix);
 
     // Try next lower runway number
-    retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator) + suffix);
+    retval.append(prefix % runwayNameJoin(number > 1 ? number - 1 : 36, designator) % suffix);
   }
   return retval;
 }
 
-QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
+QString runwayBestFitFromList(const QString& runwayName, const QStringList& airportRunwayNames)
 {
-  // Get an extended list that also contains all variants like 09C vs 9C
-  QStringList names;
-  for(const QString& r : airportRunwayNames)
-    names.append(runwayNameZeroPrefixVariants(r));
+  // normalize runways (RW1 to 01)
+  QStringList apRwsNorm = normalizeRunways(airportRunwayNames);
 
-  QString prefix;
-  QString rwname(procRunwayName);
-  if(rwname.startsWith("RW"))
+  // Get normalized variants (04 -> {04, 03, 05})
+  for(QString rwNormVariant : runwayNameVariants(normalizeRunway(runwayName)))
   {
-    prefix = "RW";
-    rwname = rwname.mid(2);
-  }
-
-  if(rwname.isEmpty())
-    return QString();
-
-  // First check for exact match
-  if(names.contains(rwname))
-    return procRunwayName;
-
-  if(rwname.startsWith('0') && names.contains(rwname.mid(1)))
-    return procRunwayName;
-
-  QStringList variants = runwayNameVariants(rwname);
-  for(const QString& runway : names)
-  {
-    if(variants.contains(runway))
-      return prefix % runway;
-  }
-
-  if(rwname.startsWith('0'))
-  {
-    variants = runwayNameVariants(rwname.mid(1));
-    for(const QString& runway : names)
+    // Does variant exist in airport runways?
+    int idx = apRwsNorm.indexOf(rwNormVariant);
+    if(idx != -1)
     {
-      if(variants.contains(runway))
-        return prefix % runway;
+      // Get flags for original not normalized name
+      QString apRw = airportRunwayNames.value(idx);
+      bool prefixRw, noPrefixNull, suffixTrue;
+      runwayFlags(apRw, prefixRw, noPrefixNull, suffixTrue);
+
+      // Now adjust name according to the original runway name
+      if(noPrefixNull && rwNormVariant.startsWith('0'))
+        rwNormVariant = rwNormVariant.mid(1);
+
+      if(prefixRw)
+        rwNormVariant.prepend("RW");
+
+      if(suffixTrue)
+        rwNormVariant.append('T');
+
+      return rwNormVariant;
     }
   }
+
+  return QString();
+}
+
+QString runwayBestFit(const QString& runwayName, const QStringList& airportRunwayNames)
+{
+  // normalize runways (RW1 to 01)
+  QStringList apRwsNorm = normalizeRunways(airportRunwayNames);
+
+  // Get normalized variants (04 -> {04, 03, 05})
+  for(QString procRwNormVariant : runwayNameVariants(normalizeRunway(runwayName)))
+  {
+    if(apRwsNorm.contains(procRwNormVariant))
+    {
+      // Get flags for given runway name
+      bool prefixRw, noPrefixNull, suffixTrue;
+      runwayFlags(runwayName, prefixRw, noPrefixNull, suffixTrue);
+
+      // Adjust name according to the original runway name
+      if(noPrefixNull && procRwNormVariant.startsWith('0'))
+        procRwNormVariant = procRwNormVariant.mid(1);
+
+      if(prefixRw)
+        procRwNormVariant.prepend("RW");
+
+      if(suffixTrue)
+        procRwNormVariant.append('T');
+
+      return procRwNormVariant;
+    }
+  }
+
   return QString();
 }
 
@@ -780,10 +835,10 @@ QString runwayDesignatorLong(const QString& name)
   return name;
 }
 
-bool runwayNameSplit(const QString& name, int *number, QString *designator)
+bool runwayNameSplit(const QString& name, int *number, QString *designator, bool *trueHeading)
 {
   // Extract runway number and designator
-  static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)$");
+  static QRegularExpression NUM_DESIGNATOR("^([0-9]{1,2})([LRCWAB]?)(T?)$");
 
   QString rwname(name);
   if(rwname.startsWith("RW"))
@@ -796,15 +851,17 @@ bool runwayNameSplit(const QString& name, int *number, QString *designator)
       *number = match.captured(1).toInt();
     if(designator != nullptr)
       *designator = match.captured(2);
+    if(trueHeading != nullptr)
+      *trueHeading = match.captured(3) == "T";
     return true;
   }
   return false;
 }
 
-bool runwayNameSplit(const QString& name, QString *number, QString *designator)
+bool runwayNameSplit(const QString& name, QString *number, QString *designator, bool *trueHeading)
 {
   int num = 0;
-  bool retval = runwayNameSplit(name, &num, designator);
+  bool retval = runwayNameSplit(name, &num, designator, trueHeading);
 
   if(retval && number != nullptr)
     // If it is a number with designator make sure to add a 0 prefix

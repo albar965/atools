@@ -73,6 +73,7 @@ void ManifestJson::read(const QString& filename)
       packageVersion = obj.value("package_version").toString();
       minGameVersion = obj.value("minimum_game_version").toString();
       file.close();
+      valid = true;
     }
     else
       qWarning() << Q_FUNC_INFO << "Cannot open file" << filename << file.errorString();
@@ -95,6 +96,17 @@ bool ManifestJson::isScenery() const
          contentType.compare("INSTRUMENTS", Qt::CaseInsensitive) != 0 &&
          contentType.compare("LIVERY", Qt::CaseInsensitive) != 0 &&
          contentType.compare("MISSION", Qt::CaseInsensitive) != 0;
+}
+
+void ManifestJson::clear()
+{
+  contentType.clear();
+  title.clear();
+  manufacturer.clear();
+  creator.clear();
+  packageVersion.clear();
+  minGameVersion.clear();
+  valid = false;
 }
 
 } // namespace scenery

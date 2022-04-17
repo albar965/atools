@@ -36,6 +36,7 @@ namespace db {
 class DatabaseMeta
 {
 public:
+  DatabaseMeta();
   DatabaseMeta(atools::sql::SqlDatabase *sqlDb);
   DatabaseMeta(atools::sql::SqlDatabase& sqlDb);
 
@@ -67,15 +68,8 @@ public:
     return valid;
   }
 
-  /*
-   * @return true if a schema was found (checked by looking for the most important airport table)
-   */
-  bool hasSchema() const;
-
-  /*
-   * @return true if a schema was found and contains data (checked by looking for the most important airport table)
-   */
-  bool hasData() const;
+  /* true if script table is populated and database is missing indexes */
+  bool needsPreparation() const;
 
   bool hasAirspaces() const;
 
@@ -108,7 +102,11 @@ public:
   /* Set database version to application version and timestamp to current time */
   void updateAll();
 
+  /* Load all values from database */
   void init();
+
+  /* Remove database connection. Use only const methods to access saved values. */
+  void deInit();
 
   /* Navdata cycle year and month - Not for FSX/P3D only */
   const QString& getAiracCycle() const
@@ -148,6 +146,38 @@ public:
   void setCompilerVersion(const QString& value)
   {
     compilerVersion = value;
+  }
+
+  /*
+   * @return true if a schema was found and contains data (checked by looking for the most important airport table)
+   */
+  bool hasData() const
+  {
+    return data;
+  }
+
+  /*
+   * @return true if a schema was found (checked by looking for the most important airport table)
+   */
+  bool hasSchema() const
+  {
+    return schema;
+  }
+
+  /*
+   * @return true if script table is populated for preparation
+   */
+  bool hasScript() const
+  {
+    return script;
+  }
+
+  /*
+   * @return true airspaces are present
+   */
+  bool hasBoundary() const
+  {
+    return boundary;
   }
 
 private:
@@ -190,18 +220,23 @@ private:
    *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
    * 22 Rho and theta in approach and transition legs can now be null
    * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
+   * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
+   *    Added transition level. Converted airport.transition_altitude to double.
+   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler.
+   *    Approaches were missing runway assignments.
+   *    Added "has_vertical_angle" and "has_rnp" to table "approach".
    */
-  static const int DB_VERSION_MINOR = 23;
+  static const int DB_VERSION_MINOR = 24;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
   void updateFlags();
 
-  atools::sql::SqlDatabase *db;
+  atools::sql::SqlDatabase *db = nullptr;
 
   int majorVersion = 0, minorVersion = 0;
   QDateTime lastLoadTime;
-  bool valid = false, sidStar = false, routeType = false;
+  bool valid = false, sidStar = false, routeType = false, data = false, schema = false, script = false, boundary = false;
   QString airacCycle, validThrough, dataSource, compilerVersion;
 };
 

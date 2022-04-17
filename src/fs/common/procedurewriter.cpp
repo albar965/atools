@@ -411,6 +411,16 @@ void ProcedureWriter::finishProcedure(const ProcedureInput& line)
     {
       // Write approach
       Procedure& appr = approaches.first();
+
+      // Collect flags from legs
+      for(const SqlRecord& legRec : appr.legRecords)
+      {
+        if(legRec.valueFloat(":vertical_angle", 0.f) < 0.1f)
+          appr.record.setValue(":has_vertical_angle", 1);
+        if(legRec.valueFloat(":rnp", 0.f) > 0.f)
+          appr.record.setValue(":has_rnp", 1);
+      }
+
       assignApproachIds(appr);
       assignApproachLegIds(appr.legRecords);
       insertApproachQuery->bindAndExecRecord(appr.record);
@@ -1288,13 +1298,12 @@ QString ProcedureWriter::sidStarRunwayNameAndSuffix(const ProcedureInput& line)
     // Get designator if there is one
     QString desig = ident.size() > 4 ? ident.at(4) : QString();
 
-    if(ident.at(2).isDigit() && ident.at(3).isDigit() &&
-       !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
+    if(ident.at(2).isDigit() && ident.at(3).isDigit() && !atools::contains(desig, {QString(), "L", "R", "C", "-", "B", "T"}))
       qWarning() << line.context << "Invalid designator" << desig;
 
     if(desig != "B") // B = multiple runways with same number but different designator
     {
-      if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C")
+      if(!desig.isEmpty() && desig != "L" && desig != "R" && desig != "C" && desig != "T")
         desig.clear();
 
       // Get runway number only if valid to ignore all CVOR, NDEA, etc. approaches
@@ -1327,7 +1336,7 @@ void ProcedureWriter::apprRunwayNameAndSuffix(const ProcedureInput& line, QStrin
     // TODO consider true designator
     // D26 D26-1 D26-2 D26-Y D26-Z D26LZ
     // I26L, B08R, R29, V01L, N35 L16RA, L16RB, V08-A, V08-B I18L1, I18L2, N08T R35-Y, R35-Z
-    if(desig == "L" || desig == "R" || desig == "C")
+    if(desig == "L" || desig == "R" || desig == "C" || desig == "T")
       // Add only real designators and not "B"
       runway = rw + desig;
     else

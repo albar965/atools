@@ -19,6 +19,7 @@
 #define ATOOLS_FS_NAVDATABASE_H
 
 #include "fs/fspaths.h"
+#include "fs/navdatabaseflags.h"
 
 #include <QDebug>
 #include <QCoreApplication>
@@ -75,7 +76,7 @@ public:
 
   /* Read all BGL or X-Plane files and load data into database. atools::Exception is thrown in case of error.
    * @param codec Scenery.cfg codec only applies to FSX/P3D */
-  void create(const QString& codec, bool& foundBasicValidationError);
+  atools::fs::ResultFlags create(const QString& codec);
 
   /* Does not load anything and only creates the empty database schema.
    * Configuration is not used and can be null. atools::Exception is thrown in case of error.
@@ -85,15 +86,6 @@ public:
   /* Creates only metadata and boundary tables for user airspaces. Does not use progress and does not open a
    * transaction. */
   void createAirspaceSchema();
-
-  /*
-   *
-   * @return true if loading was aborted by the progress callback
-   */
-  bool isAborted()
-  {
-    return aborted;
-  }
 
   /*
    * Checks if scenery.cfg file exists and is valid (contains areas).
@@ -126,7 +118,7 @@ private:
   void createSchemaInternal(atools::fs::ProgressHandler *progress = nullptr);
 
   /* Internal creation of the full database */
-  void createInternal(const QString& sceneryConfigCodec, bool& foundBasicValidationError);
+  atools::fs::ResultFlags createInternal(const QString& sceneryConfigCodec);
 
   /* Read FSX/P3D scenery configuration */
   void readSceneryConfigFsxP3d(atools::fs::scenery::SceneryCfg& cfg);
@@ -191,10 +183,10 @@ private:
   int countMsSimSteps();
 
   /* Detect Navigraph navdata update packages for special handling */
-  bool checkThirdPartyNavdataUpdate(atools::fs::scenery::ManifestJson& manifest);
+  bool checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson& manifest);
 
   /* Detect Navigraph maintenance package for exclusion. true if should be excluded */
-  bool checkThirdPartyNavdataExclude(atools::fs::scenery::ManifestJson& manifest);
+  bool checkNavigraphNavdataExclude(atools::fs::scenery::ManifestJson& manifest);
 
   /* For metadata */
 

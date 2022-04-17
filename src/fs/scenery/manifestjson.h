@@ -81,18 +81,17 @@ public:
     return minGameVersion;
   }
 
-  void clear()
+  void clear();
+
+  /* True if file exists and was read */
+  bool isValid() const
   {
-    contentType.clear();
-    title.clear();
-    manufacturer.clear();
-    creator.clear();
-    packageVersion.clear();
-    minGameVersion.clear();
+    return valid;
   }
 
 private:
   QString contentType, title, manufacturer, creator, packageVersion, minGameVersion;
+  bool valid = false;
 
 };
 

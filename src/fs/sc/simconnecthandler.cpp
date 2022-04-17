@@ -560,118 +560,65 @@ void SimConnectHandlerPrivate::fillDataDefinition()
   fillDataDefinitionAicraft(DATA_DEFINITION_AI_BOAT);
   fillDataDefinitionAicraft(DATA_DEFINITION_USER_AIRCRAFT);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Magvar",
-                          "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Magvar", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground Magnetic Track",
-                          "degrees", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground True Track",
-                          "degrees",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground Magnetic Track", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "GPS Ground True Track", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Plane Alt Above Ground",
-                          "feet",
-                          SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ground Altitude", "feet",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Plane Alt Above Ground", "feet", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ground Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Available", "bool",
-                          SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Altitude Lock Var", "feet",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Available", "bool", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Autopilot Altitude Lock Var", "feet", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Temperature",
-                          "celsius",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Temperature", "celsius", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Total Air Temperature",
-                          "celsius",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Total Air Temperature", "celsius", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Velocity",
-                          "knots",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Velocity", "knots", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Direction",
-                          "degrees",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Wind Direction", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Precip State",
-                          "mask",
-                          SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient In Cloud", "bool",
-                          SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Precip State", "mask", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient In Cloud", "bool", SIMCONNECT_DATATYPE_INT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Visibility",
-                          "meters",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Ambient Visibility", "meters", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Sea Level Pressure",
-                          "millibars",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Sea Level Pressure", "millibars", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Pitot Ice Pct", "percent",
-                          SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Structural Ice Pct",
-                          "percent",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Pitot Ice Pct", "percent", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Structural Ice Pct", "percent", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Total Weight", "pounds",
-                          SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Max Gross Weight",
-                          "pounds",
-                          SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Empty Weight", "pounds",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Total Weight", "pounds", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Max Gross Weight", "pounds", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Empty Weight", "pounds", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Fuel Total Quantity",
-                          "gallons",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Fuel Total Quantity", "gallons", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT,
-                          "Fuel Total Quantity Weight",
-                          "pounds",
-                          SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Fuel Total Quantity Weight", "pounds", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:1",
-                          "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:2",
-                          "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:3",
-                          "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:4",
-                          "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:1", "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:2", "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:3", "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow PPH:4", "Pounds per hour", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:1",
-                          "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:2",
-                          "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:3",
-                          "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:4",
-                          "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:1", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:2", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:3", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:4", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time",
-                          "seconds", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Year",
-                          "number", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year",
-                          "number", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month",
-                          "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time", "seconds", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Year", "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year", "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month", "number", SIMCONNECT_DATATYPE_INT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time",
-                          "seconds", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year",
-                          "number", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year",
-                          "number", SIMCONNECT_DATATYPE_INT32);
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month",
-                          "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time", "seconds", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year", "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year", "number", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month", "number", SIMCONNECT_DATATYPE_INT32);
 
   // Measured in seconds, positive west of GMT.
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Time Zone Offset",
-                          "seconds", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Time Zone Offset", "seconds", SIMCONNECT_DATATYPE_INT32);
 
   // Request an event when the simulation starts or pauses
   api.SubscribeToSystemEvent(EVENT_SIM_STATE, "Sim");
@@ -685,23 +632,15 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
 {
   // Set up the data definition, but do not yet do anything with it
   api.AddToDataDefinition(definitionId, "Title", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "ATC Type", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "ATC Model", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "ATC Id", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "ATC Airline", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "ATC Flight Number", nullptr, SIMCONNECT_DATATYPE_STRING256);
-
   api.AddToDataDefinition(definitionId, "Category", nullptr, SIMCONNECT_DATATYPE_STRING256);
 
   api.AddToDataDefinition(definitionId, "Is User Sim", "bool", SIMCONNECT_DATATYPE_INT32);
-
   api.AddToDataDefinition(definitionId, "Visual Model Radius", "feet", SIMCONNECT_DATATYPE_INT32);
-
   api.AddToDataDefinition(definitionId, "Wing Span", "feet", SIMCONNECT_DATATYPE_INT32);
 
   api.AddToDataDefinition(definitionId, "Plane Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);
@@ -712,7 +651,6 @@ void SimConnectHandlerPrivate::fillDataDefinitionAicraft(DataDefinitionId defini
   api.AddToDataDefinition(definitionId, "Indicated Altitude", "feet", SIMCONNECT_DATATYPE_FLOAT32);
 
   api.AddToDataDefinition(definitionId, "Plane Heading Degrees Magnetic", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
-
   api.AddToDataDefinition(definitionId, "Plane Heading Degrees True", "degrees", SIMCONNECT_DATATYPE_FLOAT32);
 
   api.AddToDataDefinition(definitionId, "Sim On Ground", "bool", SIMCONNECT_DATATYPE_INT32);
@@ -862,30 +800,26 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
   if(options & FETCH_AI_AIRCRAFT)
   {
-    hr = p->api.RequestDataOnSimObjectType(
-      DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
-      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
+    hr = p->api.RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_AIRCRAFT, DATA_DEFINITION_AI_AIRCRAFT,
+                                           static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_AIRCRAFT);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_AIRCRAFT"))
       return false;
 
-    hr = p->api.RequestDataOnSimObjectType(
-      DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
-      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
+    hr = p->api.RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_HELICOPTER, DATA_DEFINITION_AI_HELICOPTER,
+                                           static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_HELICOPTER);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_HELICOPTER"))
       return false;
   }
 
   if(options & FETCH_AI_BOAT)
   {
-    hr = p->api.RequestDataOnSimObjectType(
-      DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
-      static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
+    hr = p->api.RequestDataOnSimObjectType(DATA_REQUEST_ID_AI_BOAT, DATA_DEFINITION_AI_BOAT,
+                                           static_cast<DWORD>(radiusKm) * 1000, SIMCONNECT_SIMOBJECT_TYPE_BOAT);
     if(!p->checkCall(hr, "DATA_REQUEST_ID_AI_BOAT"))
       return false;
   }
 
-  p->callDispatch(p->aiDataFetched,
-                  "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");
+  p->callDispatch(p->aiDataFetched, "DATA_REQUEST_ID_AI_HELICOPTER, DATA_REQUEST_ID_AI_BOAT and DATA_REQUEST_ID_AI_AIRCRAFT");
 
   // === Get user aircraft =======================================================
   hr = p->api.RequestDataOnSimObjectType(
@@ -955,11 +889,9 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
     data.userAircraft.trackTrueDeg = p->simData.planeTrackTrueDeg;
 
     // Summarize fuel flow for all engines
-    data.userAircraft.fuelFlowPPH =
-      p->simData.fuelFlowPph1 + p->simData.fuelFlowPph2 + p->simData.fuelFlowPph3 + p->simData.fuelFlowPph4;
+    data.userAircraft.fuelFlowPPH = p->simData.fuelFlowPph1 + p->simData.fuelFlowPph2 + p->simData.fuelFlowPph3 + p->simData.fuelFlowPph4;
 
-    data.userAircraft.fuelFlowGPH =
-      p->simData.fuelFlowGph1 + p->simData.fuelFlowGph2 + p->simData.fuelFlowGph3 + p->simData.fuelFlowGph4;
+    data.userAircraft.fuelFlowGPH = p->simData.fuelFlowGph1 + p->simData.fuelFlowGph2 + p->simData.fuelFlowGph3 + p->simData.fuelFlowGph4;
 
     data.userAircraft.windDirectionDegT = p->simData.ambientWindDirectionDegT;
     data.userAircraft.windSpeedKts = p->simData.ambientWindVelocityKts;
@@ -1020,8 +952,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
       p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_STATION" + result.requestIdent);
 
       if(p->fetchedMetars.size() > 1)
-        qWarning() << "Got more than one metar for station"
-                   << result.requestIdent << ":" << p->fetchedMetars.size();
+        qWarning() << "Got more than one metar for station" << result.requestIdent << ":" << p->fetchedMetars.size();
 
       if(!p->fetchedMetars.isEmpty())
         result.metarForStation = p->fetchedMetars.constFirst();
@@ -1041,12 +972,10 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
           return false;
 
         p->fetchedMetars.clear();
-        p->callDispatch(p->weatherDataFetched,
-                        "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
+        p->callDispatch(p->weatherDataFetched, "DATA_REQUEST_ID_WEATHER_NEAREST_STATION" + result.requestPos.toString());
 
         if(p->fetchedMetars.size() > 1)
-          qWarning() << "Got more than one nearest metar for position"
-                     << result.requestPos.toString() << ":" << p->fetchedMetars.size();
+          qWarning() << "Got more than one nearest metar for position" << result.requestPos.toString() << ":" << p->fetchedMetars.size();
 
         if(!p->fetchedMetars.isEmpty())
           result.metarForNearest = p->fetchedMetars.constFirst();
@@ -1056,8 +985,7 @@ bool SimConnectHandler::fetchWeatherData(atools::fs::sc::SimConnectData& data)
       if(result.requestPos.isValid())
       {
         hr = p->api.WeatherRequestInterpolatedObservation(
-          DATA_REQUEST_ID_WEATHER_INTERPOLATED,
-          result.requestPos.getLatY(), result.requestPos.getLonX(), result.requestPos.getAltitude());
+          DATA_REQUEST_ID_WEATHER_INTERPOLATED, result.requestPos.getLatY(), result.requestPos.getLonX(), result.requestPos.getAltitude());
         if(!p->checkCall(hr, "DATA_REQUEST_ID_WEATHER_INTERPOLATED"))
           return false;
 

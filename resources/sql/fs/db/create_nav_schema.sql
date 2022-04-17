@@ -476,8 +476,8 @@ create table holding
   vor_has_dme integer,
   name varchar(50),
   region varchar(2),                  -- ICAO two letter region identifier
-  mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East
-  course double not null,             -- True inbound course
+  mag_var double,                     -- Magnetic variance in degree < 0 for West and > 0 for East - may be null for waypoints or NDB
+  course double not null,             -- Magnetic inbound course
   turn_direction varchar(1) not null, -- L or R
   leg_length double,                  -- Leg distance in NM
   leg_time double,                    -- Leg time in minutes

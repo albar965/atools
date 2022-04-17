@@ -177,6 +177,7 @@ void DfdCompiler::writeAirports()
 
     airportWriteQuery->bindValue(":mag_var", magDecReader->getMagVar(pos));
     airportWriteQuery->bindValue(":transition_altitude", airportQuery->value("transition_altitude"));
+    airportWriteQuery->bindValue(":transition_level", airportQuery->value("transition_level"));
     airportWriteQuery->bindValue(":altitude", pos.getAltitude());
     airportWriteQuery->bindValue(":lonx", pos.getLonX());
     airportWriteQuery->bindValue(":laty", pos.getLatY());
@@ -1447,14 +1448,8 @@ void DfdCompiler::updateMagvar()
   util.updateColumnInTable("waypoint", "waypoint_id", {"lonx", "laty"}, {"mag_var"}, func);
   util.updateColumnInTable("ndb", "ndb_id", {"lonx", "laty"}, {"mag_var"}, func);
   util.updateColumnInTable("vor", "vor_id", {"lonx", "laty"}, {"mag_var"}, "mag_var is null", func);
+  util.updateColumnInTable("holding", "holding_id", {"lonx", "laty"}, {"mag_var"}, "mag_var is null", func);
   db.commit();
-
-  SqlUtil::UpdateColFuncType funcHolding =
-    [](const atools::sql::SqlQuery& from, atools::sql::SqlQuery& to) -> bool {
-      to.bindValue(":course", ageo::normalizeCourse(from.valueFloat("course") + from.valueFloat("mag_var")));
-      return true;
-    };
-  util.updateColumnInTable("holding", "holding_id", {"course", "mag_var"}, {"course"}, funcHolding);
 }
 
 void DfdCompiler::updateTacanChannel()

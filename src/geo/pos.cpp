@@ -554,8 +554,7 @@ QString Pos::toString(int precision, bool alt) const
     return SHORT_FORMAT.arg(lonX, 0, 'f', precision).arg(latY, 0, 'f', precision);
 }
 
-void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints,
-                            atools::geo::LineString& positions) const
+void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoints, atools::geo::LineString& positions) const
 {
   if(!isValid() || !otherPos.isValid())
     return;
@@ -565,6 +564,18 @@ void Pos::interpolatePoints(const Pos& otherPos, float distanceMeter, int numPoi
   float step = 1.f / numPoints;
   for(int j = 0; j < numPoints; j++)
     positions.append(interpolate(otherPos, distanceMeter, step * static_cast<float>(j)).alt(altitude));
+}
+
+void Pos::interpolatePointsRhumb(const Pos& otherPos, float distanceMeter, int numPoints, atools::geo::LineString& positions) const
+{
+  if(!isValid() || !otherPos.isValid())
+    return;
+  else if(*this == otherPos)
+    return;
+
+  float step = 1.f / numPoints;
+  for(int j = 0; j < numPoints; j++)
+    positions.append(interpolateRhumb(otherPos, distanceMeter, step * static_cast<float>(j)).alt(altitude));
 }
 
 void Pos::interpolatePointsAlt(const Pos& otherPos, float distanceMeter, int numPoints,

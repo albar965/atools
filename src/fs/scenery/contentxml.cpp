@@ -85,9 +85,14 @@ void ContentXml::read(const QString& filename)
             num = 0;
             title = tr("Base Airports");
           }
-          else if(name == "fs-base-nav")
+          else if(name == "fs-base-genericairports")
           {
             num = 1;
+            title = tr("Generic Airports");
+          }
+          else if(name == "fs-base-nav")
+          {
+            num = 2;
             navdata = true;
             title = tr("Base Navigation");
           }

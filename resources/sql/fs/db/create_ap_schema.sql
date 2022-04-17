@@ -106,7 +106,12 @@ create table airport
   tower_altitude integer,                       -- Feet
   tower_lonx double,
   tower_laty double,
-  transition_altitude integer,                  -- Feet
+
+  transition_altitude double,                   -- Feet. Transition Altitude is the altitude when flying where you are required to change from a
+                                                -- local QNH to the standard of 1013 hectopascals or 29.92 inches of mercury
+  transition_level double,                      -- Feet. Transition Level is the altitude when flying where you are required to change
+                                                -- from standard of 1013 back to the local QNH. This is above the Transition Altitude.
+
   altitude integer not null,                    -- Feet
   lonx double not null,                         -- Coordinates of the airport center
   laty double not null,                         -- Coordinates of the airport center
@@ -427,17 +432,20 @@ create table approach
                                     -- Both SIDS and STARS use the type = "GPS" for the Approach elements.
                                     -- STARS use the suffix="A" while SIDS use the suffix="D".
   has_gps_overlay integer not null, -- Boolean - 1 if the approach has a GPS overlay
+  has_vertical_angle integer,       -- Boolean - 1 if the approach has a vertical path on any leg, 0 or null otherwise
+  has_rnp integer,                  -- Boolean - 1 if the approach has a RNP value on any leg, 0 or null otherwise
+
   fix_type varchar(25),             -- see enum atools::fs::bgl::ap::ApproachFixType and corresponding string conversion
   fix_ident varchar(5),             -- ICAO ident of the fix
   fix_region varchar(2),            -- ICAO two letter region code for fix
   fix_airport_ident varchar(4),     -- Airport ICAO ident if available
 
   aircraft_category varchar(4),     -- Aircraft category
-                                    -- A All Aircraft, Cruise speed 250 kts or less
-                                    -- C Non-Jet and Turbo Prop
-                                    -- D Multi-Engine Props Only
-                                    -- E Jets and Turbo Props/Special, Cruise Speed 190 kts
-                                    -- F or greater
+                                    -- A All Aircraft
+                                    -- C All Aircraft, Cruise speed 250 kts or less
+                                    -- D Non-Jet and Turbo Prop
+                                    -- E Multi-Engine Props Only
+                                    -- F Jets and Turbo Props/Special, Cruise Speed 190 kts or greater
                                     -- H Helicopter Only
                                     -- J Jet Power
                                     -- M Turbo-Prop/Special, Cruise Speed 190 kts or greater

@@ -54,9 +54,6 @@ public:
     /* Platform: FSX Steam Edition */
     FSX_SE = 1,
 
-    /* Platform: Prepar3d Version 2 - mostly used for test purposes */
-    P3D_V2 = 2,
-
     /* Platform: Prepar3d Version 3 - mostly used for test purposes */
     P3D_V3 = 3,
 
@@ -67,7 +64,10 @@ public:
     P3D_V5 = 9,
 
     /* X-Plane 11 */
-    XPLANE11 = 7,
+    XPLANE_11 = 7,
+
+    /* X-Plane 12 */
+    XPLANE_12 = 11,
 
     /* Not a simulator but a database */
     NAVIGRAPH = 8,
@@ -81,7 +81,8 @@ public:
     /* Special value to pass to certain queries */
     ALL_SIMULATORS = -1,
 
-    UNKNOWN = -2
+    /* No simulator found */
+    NONE = -2
 
   };
 
@@ -125,7 +126,15 @@ public:
 
   /* true if FSX, P3D or MSFS were found */
   static bool hasAnyMsSimulator();
-  static bool hasXplaneSimulator();
+
+  static bool hasAnyXplaneSimulator();
+  static bool hasXplane11Simulator();
+  static bool hasXplane12Simulator();
+
+  static bool isAnyXplane(atools::fs::FsPaths::SimulatorType type)
+  {
+    return type == XPLANE_11 || type == XPLANE_12;
+  }
 
   /* Long names */
   static QString typeToName(atools::fs::FsPaths::SimulatorType type);

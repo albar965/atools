@@ -131,6 +131,8 @@ private:
   /* Calculate center of parking spot for position of tick mark */
   void calculateParkingPos(geo::Pos& position, float heading, float radiusFeet);
 
+  float transitionAltOrLevel(const QString& str);
+
   /* State information */
   bool writingAirport = false, ignoringAirport = false,
        writingPavementBoundary = false, writingPavementHoles = false, writingPavementNewHole = false,

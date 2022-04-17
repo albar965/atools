@@ -50,6 +50,21 @@ AirspaceReaderBase::AirspaceReaderBase(atools::sql::SqlDatabase *sqlDb)
   initQueries();
 }
 
+void AirspaceReaderBase::readLine(const QStringList& line, int fileIdParam, const QString& filenameParam, int lineNumberParam)
+{
+  Q_UNUSED(line)
+  Q_UNUSED(fileIdParam)
+  Q_UNUSED(filenameParam)
+  Q_UNUSED(lineNumberParam)
+
+  // No op per default
+}
+
+void AirspaceReaderBase::finish()
+{
+  // No op per default
+}
+
 AirspaceReaderBase::~AirspaceReaderBase()
 {
   deInitQueries();
@@ -68,6 +83,25 @@ void AirspaceReaderBase::resetErrors()
 void AirspaceReaderBase::resetNumRead()
 {
   numAirspacesRead = 0;
+}
+
+AirspaceReaderBase::Format AirspaceReaderBase::detectFileFormat(const QString& file)
+{
+  const QStringList& probe = atools::probeFile(file);
+
+  // Check if file is IVAO JSON which starts with an array at top level
+  if(probe.value(0).startsWith('['))
+    return IVAO_JSON;
+
+  // Check if file is a GeoJSON which starts with an object at top level
+  if(probe.value(0).startsWith('{'))
+    return VATSIM_GEO_JSON;
+
+  // OpenAir starts with a comment "*" or an upper case letter
+  if(probe.value(0).startsWith('*') || atools::charAt(probe.value(0), 0).isUpper())
+    return OPEN_AIR;
+
+  return UNKNOWN;
 }
 
 void AirspaceReaderBase::initQueries()
