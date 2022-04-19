@@ -54,6 +54,36 @@
     </message>
 </context>
 <context>
+    <name>BinaryStream</name>
+    <message>
+        <source>Unknown</source>
+        <translation type="unfinished">Desconocido</translation>
+    </message>
+    <message>
+        <source>No error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read past file end</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read corrupted data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Write failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ChoiceDialog</name>
+    <message>
+        <source>Little Navmap - </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ContentXml</name>
     <message>
         <source>Base Airports</source>
@@ -66,6 +96,10 @@
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2</source>
         <translation type="unfinished">No puedo abrir archivir &quot;%1&quot;. Motivo: %2</translation>
+    </message>
+    <message>
+        <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -142,6 +176,14 @@ Atrapada excepción
     </message>
     <message>
         <source>VFR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pattern contains invalid characters, double spaces or is longer than %1 characters.%2Not allowed are: %3</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pattern is empty.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1022,6 +1064,10 @@ Atrapada excepción
         <source>Updating Navaids</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Generic Airports</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -1549,6 +1595,11 @@ Atrapada excepción
         <comment>Linefeed and dots used to shorten texts</comment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>.</source>
+        <comment>Dot used to shorten texts</comment>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SceneryCfg</name>
@@ -1580,6 +1631,33 @@ Atrapada excepción
     </message>
 </context>
 <context>
+    <name>TreeDialog</name>
+    <message>
+        <source>Little Navmap - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Text Display Options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select &amp;None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Expand All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Collapse All</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UserdataManager</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2.</source>
@@ -1591,7 +1669,7 @@ Atrapada excepción
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation>Longitud no es un número válido en línea
+        <translation type="vanished">Longitud no es un número válido en línea
 
 &quot;%1&quot;
 Detenida importación.</translation>
@@ -1602,7 +1680,7 @@ Detenida importación.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation>Latitud no es un número valido en línea
+        <translation type="vanished">Latitud no es un número valido en línea
 
 &quot;%1&quot;
 Importación detenida.</translation>
@@ -1613,7 +1691,7 @@ Importación detenida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation>Coordenadas no son válidas en línea
+        <translation type="vanished">Coordenadas no son válidas en línea
 
 &quot;%1&quot;
 
@@ -1625,7 +1703,7 @@ Importación detenida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation>Coordenadas son nulas en línea
+        <translation type="vanished">Coordenadas son nulas en línea
 
 &quot;%1&quot;
 Importación detenida.</translation>
@@ -1636,14 +1714,28 @@ Importación detenida.</translation>
 &quot;%1&quot;
 
 Import stopped.</source>
-        <translation>Coordenadas sin rango válido en línea
+        <translation type="vanished">Coordenadas sin rango válido en línea
 
 &quot;%1&quot;
 
 Importación detenida.</translation>
     </message>
+</context>
+<context>
+    <name>Version</name>
     <message>
-        <source>Cannot open backup file %1. Reason: %2 (%3)</source>
+        <source>%1.%2%3%4%5</source>
+        <comment>Used to build a version string like 1.2.33.beta1</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>.%1</source>
+        <comment>Patchlevel in version string</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>.%1</source>
+        <comment>Name like &quot;beta&quot; in version string</comment>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1721,6 +1813,10 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
     <message>
         <source>Counting files for Custom Data ...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Counting files for Global Scenery/Global Airports ...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1999,7 +2095,21 @@ Make sure that earth_fix.dat, earth_awy.dat and earth_nav.dat can be found in on
     </message>
 </context>
 <context>
+    <name>atools::fs::userdata::AirspaceReaderIvao</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>atools::fs::userdata::AirspaceReaderOpenAir</name>
+    <message>
+        <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::fs::userdata::AirspaceReaderVatsim</name>
     <message>
         <source>Cannot open file &quot;%1&quot;. Reason: %2 (%3)</source>
         <translation type="unfinished"></translation>
@@ -2158,15 +2268,7 @@ Night time: %5</source>
 <context>
     <name>atools::gui::TabWidgetHandler</name>
     <message>
-        <source>&amp;Open All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show all tabs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&amp;Close All Except Current</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2199,6 +2301,134 @@ Night time: %5</source>
     </message>
     <message>
         <source>Close all tabs except the currently active tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open all Tabs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close all Tabs except Current</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>atools::sql::DataManagerBase</name>
+    <message>
+        <source>Longitude is not a valid number in line
+
+&quot;%1&quot;
+
+Import stopped.</source>
+        <translation type="unfinished">Longitud no es un número válido en línea
+
+&quot;%1&quot;
+Detenida importación.</translation>
+    </message>
+    <message>
+        <source>Latitude is not a valid number in line
+
+&quot;%1&quot;
+
+Import stopped.</source>
+        <translation type="unfinished">Latitud no es un número valido en línea
+
+&quot;%1&quot;
+Importación detenida.</translation>
+    </message>
+    <message>
+        <source>Coordinates are not valid in line
+
+&quot;%1&quot;
+
+Import stopped.</source>
+        <translation type="unfinished">Coordenadas no son válidas en línea
+
+&quot;%1&quot;
+
+Importación detenida.</translation>
+    </message>
+    <message>
+        <source>Coordinates are null in line
+
+&quot;%1&quot;
+
+Import stopped.</source>
+        <translation type="unfinished">Coordenadas son nulas en línea
+
+&quot;%1&quot;
+Importación detenida.</translation>
+    </message>
+    <message>
+        <source>Coordinates are not in a valid range in line
+
+&quot;%1&quot;
+
+Import stopped.</source>
+        <translation type="unfinished">Coordenadas sin rango válido en línea
+
+&quot;%1&quot;
+
+Importación detenida.</translation>
+    </message>
+    <message>
+        <source>preUndoBulkInsert() not called</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attempt to modify table &quot;%1&quot; bypassing active undo function.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Undo%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Redo%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>no %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>one %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>two %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Redo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 adding of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 editing of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 deleting of %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Table undo_current is empty.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
