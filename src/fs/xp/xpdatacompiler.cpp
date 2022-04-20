@@ -567,10 +567,11 @@ bool XpDataCompiler::readDataFile(const QString& filepath, int minColumns, XpWri
   return aborted;
 }
 
-bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QString& filename,
-                              atools::fs::xp::ContextFlags flags,
+bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QString& filename, atools::fs::xp::ContextFlags flags,
                               int& lineNum, int& totalNumLines, int& fileVersion)
 {
+  bool retval = false;
+
   filepath.setFileName(filename);
   lineNum = 1;
 
@@ -589,18 +590,17 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
     }
     stream.setAutoDetectUnicode(true);
 
-    QString line;
-
     if(!(flags & READ_CIFP) && !(flags & READ_AIRSPACE))
     {
       // Read file header =============================
       // Skip empty lines which can appear in some malformed add-on airport files
       // Byte order identifier ===========
+      QString line;
       do
       {
         line = stream.readLine().simplified();
         lineNum++;
-      } while(line.isEmpty());
+      } while(line.isEmpty() && !stream.atEnd() && line != "99");
       qInfo() << Q_FUNC_INFO << line;
 
       // Metadata and copyright ===========
@@ -608,7 +608,7 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       {
         line = stream.readLine().simplified();
         lineNum++;
-      } while(line.isEmpty());
+      } while(line.isEmpty() && !stream.atEnd() && line != "99");
       qInfo() << Q_FUNC_INFO << line;
 
       QStringList fields = line.simplified().split(" ");
@@ -617,14 +617,13 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
 
       if(!fields.isEmpty() && fileVersion < minFileVersion)
       {
-        qWarning() << "Version of" << filename << "is" << fields.constFirst() << "but expected a minimum of" <<
-          minFileVersion;
-        throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").
-                                arg(fields.constFirst()).arg(minFileVersion));
+        qWarning() << "Version of" << filename << "is" << fields.constFirst() << "but expected a minimum of" << minFileVersion;
+        throw atools::Exception(QString("Found file version %1. Minimum supported is %2.").arg(fields.constFirst()).arg(minFileVersion));
       }
 
       metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
       progress->incNumFiles();
+      retval = true;
 
       if(flags & UPDATE_CYCLE)
         updateAiracCycleFromHeader(line, filename, lineNum);
@@ -634,9 +633,18 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
       int lines = 0;
       while(!stream.atEnd())
       {
-        stream.readLine();
+        line = stream.readLine();
+        if(line == "99")
+          break;
         lines++;
       }
+
+      if(lines == 0)
+      {
+        qWarning() << Q_FUNC_INFO << "Empty file" << filepath;
+        retval = false;
+      }
+
       totalNumLines = lines;
       stream.seek(pos);
       qInfo() << Q_FUNC_INFO << "Num lines" << lines;
@@ -645,11 +653,13 @@ bool XpDataCompiler::openFile(QTextStream& stream, QFile& filepath, const QStrin
     {
       metadataWriter->writeFile(filename, QString(), curSceneryId, ++curFileId);
       progress->incNumFiles();
+      retval = true;
     }
   }
   else
     throw atools::Exception("Cannot open file. Reason: " + filepath.errorString() + ".");
-  return true;
+
+  return retval;
 }
 
 void XpDataCompiler::close()
