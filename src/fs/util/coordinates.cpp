@@ -60,9 +60,13 @@ static QRegularExpression MATCH_COORD_OPENAIR_MIN_SEC("^([\\d]+):([\\d]+):([\\d\
 static QRegularExpression MATCH_COORD_OPENAIR_MIN("^([\\d]+):([\\d\\.]+)\\s*([NS])\\s*"
                                                   "([\\d]+):([\\d\\.]+)\\s*([EW])");
 
-// 5020N
-const static QRegularExpression LONG_FORMAT_REGEXP_NAT("^([0-9]{2})"
-                                                       "([0-9]{2})N$");
+// ARINC full degreee waypoints
+// 57N30 5730N 5730E 57E30
+// 57W30 5730W 5730S 57S30
+const static QRegularExpression LONG_FORMAT_REGEXP_ARINC("^([0-9]{2})"
+                                                         "([0-9]{2})([NWES])$");
+const static QRegularExpression LONG_FORMAT_REGEXP_ARINC2("^([0-9]{2})([NWES])"
+                                                          "([0-9]{2})$");
 
 // N6400 W07000 or N6400/W07000
 const static QString COORDS_FLIGHTPLAN_FORMAT_PAIR("%1%2/%3%4");
@@ -272,28 +276,75 @@ atools::geo::Pos fromDegMinPairFormat(const QString& str)
     return atools::geo::EMPTY_POS;
 }
 
-// NAT type 5020N
-// first two figures are the latitude north and the second two figures are the longitude west
-atools::geo::Pos fromNatFormat(const QString& str)
+// 57N30 5730N 5730E 57E30 57W30 5730W 5730S 57S30
+atools::geo::Pos fromArincFormat(const QString& str)
 {
-  QRegularExpressionMatch match = LONG_FORMAT_REGEXP_NAT.match(str.simplified().toUpper());
+  // 5730N 5730E 5730W 5730S
+  QRegularExpressionMatch match = LONG_FORMAT_REGEXP_ARINC.match(str.simplified().toUpper());
 
   if(match.hasMatch())
   {
     QStringList captured = match.capturedTexts();
 
-    if(captured.size() == 3)
+    if(captured.size() == 4)
     {
       bool latOk, lonOk;
       int latYDeg = captured.at(1).toInt(&latOk);
       int lonXDeg = captured.at(2).toInt(&lonOk);
 
-      if(latOk && lonOk &&
-         0 <= latYDeg && latYDeg <= 90 &&
-         0 <= lonXDeg && lonXDeg <= 180)
-        return atools::geo::Pos(lonXDeg, 0, 0.f, true, latYDeg, 0, 0.f, false);
+      if(latOk && lonOk)
+      {
+        QChar designator = atools::charAt(captured.at(3), 0);
+        if(designator == 'N')
+          lonXDeg = -lonXDeg;
+        else if(designator == 'W')
+        {
+          lonXDeg = -lonXDeg;
+          latYDeg = -latYDeg;
+        }
+        else if(designator == 'S')
+          latYDeg = -latYDeg;
+
+        Pos pos(static_cast<float>(lonXDeg), static_cast<float>(latYDeg));
+        if(pos.isValidRange())
+          return pos;
+      }
     }
   }
+
+  // 57N30 57E30 57W30 57S30 longitude + 100
+  match = LONG_FORMAT_REGEXP_ARINC2.match(str.simplified().toUpper());
+
+  if(match.hasMatch())
+  {
+    QStringList captured = match.capturedTexts();
+
+    if(captured.size() == 4)
+    {
+      bool latOk, lonOk;
+      int latYDeg = captured.at(1).toInt(&latOk);
+      int lonXDeg = captured.at(3).toInt(&lonOk) + 100;
+
+      if(latOk && lonOk)
+      {
+        QChar designator = atools::charAt(captured.at(2), 0);
+        if(designator == 'N')
+          lonXDeg = -lonXDeg;
+        else if(designator == 'W')
+        {
+          lonXDeg = -lonXDeg;
+          latYDeg = -latYDeg;
+        }
+        else if(designator == 'S')
+          latYDeg = -latYDeg;
+
+        Pos pos(static_cast<float>(lonXDeg), static_cast<float>(latYDeg));
+        if(pos.isValidRange())
+          return pos;
+      }
+    }
+  }
+
   return atools::geo::EMPTY_POS;
 }
 
@@ -315,8 +366,8 @@ atools::geo::Pos fromAnyWaypointFormat(const QString& str)
     // Degrees only 46N078W or 34N150E
     return fromDegFormat(str);
   else if(str.size() == 5)
-    // NAT type 5020N
-    return fromNatFormat(str);
+    // NAT type 5020N, 4122S 4424S or 73S00 72S15
+    return fromArincFormat(str);
 
   return atools::geo::EMPTY_POS;
 }
@@ -395,8 +446,8 @@ QString safeCaptured(const QRegularExpressionMatch& match, const QString& str)
 {
   QString retval = match.captured(str);
   if(retval.isNull())
-    throw  atools::Exception("Match not found: " + str + " in " + match.regularExpression().pattern() +
-                             ". Match groups: " + match.regularExpression().namedCaptureGroups().join(", "));
+    throw atools::Exception("Match not found: " + str + " in " + match.regularExpression().pattern() +
+                            ". Match groups: " + match.regularExpression().namedCaptureGroups().join(", "));
   return retval;
 }
 
