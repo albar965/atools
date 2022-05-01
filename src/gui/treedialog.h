@@ -89,9 +89,9 @@ public:
   }
 
   template<typename TYPE>
-  QTreeWidgetItem *addItem1(QTreeWidgetItem *parent, TYPE type, const QString& text1, const QString& tooltip, bool checked = true)
+  QTreeWidgetItem *addItem(QTreeWidgetItem *parent, TYPE type, const QStringList& text, bool checked = true)
   {
-    return addItemInt(parent, static_cast<int>(type), {text1}, tooltip, checked);
+    return addItemInt(parent, static_cast<int>(type), text, QString(), checked);
   }
 
   template<typename TYPE>
@@ -99,6 +99,12 @@ public:
                             bool checked = true)
   {
     return addItemInt(parent, static_cast<int>(type), {text1, text2}, tooltip, checked);
+  }
+
+  template<typename TYPE>
+  QTreeWidgetItem *addItem2(QTreeWidgetItem *parent, TYPE type, const QString& text1, const QString& text2, bool checked = true)
+  {
+    return addItemInt(parent, static_cast<int>(type), {text1, text2}, QString(), checked);
   }
 
   /* True if the item with the given type exists and has check state checked */
