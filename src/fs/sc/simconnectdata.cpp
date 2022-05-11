@@ -180,14 +180,16 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   if(lastPos.isValid())
   {
     headingTrue = !lastPos.almostEqual(pos, atools::geo::Pos::POS_EPSILON_10M) ? lastPos.angleDegTo(pos) : 0.f;
-    data.userAircraft.groundSpeedKts = data.userAircraft.indicatedSpeedKts = data.userAircraft.trueAirspeedKts = tas;
+    data.userAircraft.indicatedSpeedKts = tas;
+    data.userAircraft.trueAirspeedKts = tas + 10;
+    data.userAircraft.groundSpeedKts = tas + 20;
   }
 
   data.userAircraft.trackMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
   data.userAircraft.trackTrueDeg = atools::geo::normalizeCourse(headingTrue);
   data.userAircraft.headingMagDeg = atools::geo::normalizeCourse(headingTrue - magVar);
   data.userAircraft.headingTrueDeg = atools::geo::normalizeCourse(headingTrue);
-  data.userAircraft.magVarDeg= magVar;
+  data.userAircraft.magVarDeg = magVar;
 
   data.userAircraft.pitotIcePercent = static_cast<quint8>(ice);
   data.userAircraft.structuralIcePercent = static_cast<quint8>(ice / 2);

@@ -167,9 +167,16 @@ public:
     return verticalSpeedFeetPerMin;
   }
 
+  /* Altitude as shown in the aircraft instruments. Depends on baro setting. */
   float getIndicatedAltitudeFt() const
   {
     return indicatedAltitudeFt;
+  }
+
+  /* Real altitude independent of baro setting */
+  float getActualAltitudeFt() const
+  {
+    return position.getAltitude();
   }
 
   float getTrueAirspeedKts() const
