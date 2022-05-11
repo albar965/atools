@@ -24,6 +24,7 @@
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "ui_treedialog.h"
+#include "exception.h"
 
 #include <QMimeData>
 #include <QPushButton>
@@ -63,6 +64,10 @@ TreeDialog::TreeDialog(QWidget *parent, const QString& title, const QString& des
   // Ok button is default
   ui->buttonBoxTree->button(QDialogButtonBox::Ok)->setDefault(true);
 
+  // Catch checkbox changes
+  connect(ui->treeWidget->model(), &QAbstractItemModel::dataChanged, this, &TreeDialog::dataChanged);
+
+  // Button box
   connect(ui->buttonBoxTree, &QDialogButtonBox::clicked, this, &TreeDialog::buttonBoxClicked);
 
   // Connect push buttons
@@ -82,6 +87,32 @@ TreeDialog::~TreeDialog()
   delete gridDelegate;
   delete zoomHandler;
   delete ui;
+}
+
+void TreeDialog::dataChanged(const QModelIndex& topLeft, const QModelIndex&, const QVector<int>& roles)
+{
+  // Only check state changes
+  if(roles.contains(Qt::CheckStateRole) && topLeft.isValid())
+  {
+    // Get id from user data. Only top left index since widget is single select anyway
+    bool ok;
+    int id = ui->treeWidget->model()->data(topLeft, Qt::UserRole).toInt(&ok);
+
+    if(ok)
+    {
+      // Item from index
+      const QTreeWidgetItem *item = index.value(id, nullptr);
+      if(item != nullptr)
+      {
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << id << item->text(0) << item->checkState(0);
+#endif
+
+        // Notify receivers
+        emit itemToggled(this, id, item->checkState(0) == Qt::Checked);
+      }
+    }
+  }
 }
 
 void TreeDialog::checkAll()
@@ -143,9 +174,12 @@ void TreeDialog::setAllChecked(bool checked)
     it.value()->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
 }
 
-QTreeWidgetItem *TreeDialog::addItemInt(QTreeWidgetItem *parent, int type, const QStringList& text, const QString& tooltip, bool checked)
+QTreeWidgetItem *TreeDialog::addItemInt(QTreeWidgetItem *parent, int id, const QStringList& text, const QString& tooltip, bool checked)
 {
-  QTreeWidgetItem *item = new QTreeWidgetItem(parent, text, type);
+  if(index.contains(id))
+    throw atools::Exception(tr("Duplicate id %1 found while adding item in TreeDialog").arg(id));
+
+  QTreeWidgetItem *item = new QTreeWidgetItem(parent, text, id);
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
 
   // Set tooltip on all colums
@@ -153,9 +187,12 @@ QTreeWidgetItem *TreeDialog::addItemInt(QTreeWidgetItem *parent, int type, const
     item->setToolTip(col, tooltip);
 
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+  item->setData(0, Qt::UserRole, id);
+  item->setData(1, Qt::UserRole, id);
 
   // Add to index for saving and loading
-  index.insert(type, item);
+  index.insert(id, item);
+
   return item;
 }
 
@@ -171,6 +208,20 @@ void TreeDialog::setCheckedInt(int id, bool checked)
 {
   if(index.contains(id))
     index.value(id)->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
+}
+
+bool TreeDialog::isDisabledInt(int id) const
+{
+  if(index.contains(id))
+    return index.value(id)->isDisabled();
+
+  return false;
+}
+
+void TreeDialog::setDisabledInt(int id, bool disabled)
+{
+  if(index.contains(id))
+    index.value(id)->setDisabled(disabled);
 }
 
 void TreeDialog::buttonBoxClicked(QAbstractButton *button)
