@@ -221,12 +221,13 @@ private:
    * 22 Rho and theta in approach and transition legs can now be null
    * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
    * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
-   *    Added transition level. Converted airport.transition_altitude to double.
-   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler.
-   *    Approaches were missing runway assignments.
+   *    Added transition level to airport.
+   *    Converted airport.transition_altitude to double.
+   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches were missing runway assignments.
    *    Added "has_vertical_angle" and "has_rnp" to table "approach".
+   * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
    */
-  static const int DB_VERSION_MINOR = 24;
+  static const int DB_VERSION_MINOR = 25;
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();

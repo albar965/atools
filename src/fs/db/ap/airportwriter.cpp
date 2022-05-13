@@ -211,8 +211,7 @@ void AirportWriter::writeObject(const Airport *type)
     bindBool(":has_tower_object", type->hasTowerObj());
 
     int towerFrequency = 0, unicomFrequency = 0, awosFrequency = 0, asosFrequency = 0, atisFrequency = 0;
-    Airport::extractMainComFrequencies(
-      type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency);
+    Airport::extractMainComFrequencies(type->getComs(), towerFrequency, unicomFrequency, awosFrequency, asosFrequency, atisFrequency);
     bindIntOrNull(":tower_frequency", towerFrequency);
     bindIntOrNull(":atis_frequency", atisFrequency);
     bindIntOrNull(":awos_frequency", awosFrequency);
@@ -402,22 +401,42 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
       sidAndStarApproachCount += rwtCnt;
   }
 
-  atools::sql::SqlQuery query(getDataWriter().getDatabase());
-  query.prepare("update airport set tower_frequency = :tower_frequency, atis_frequency = :atis_frequency, "
-                "awos_frequency = :awos_frequency, asos_frequency = :asos_frequency, "
-                "unicom_frequency = :unicom_frequency, num_com = :num_com, num_approach = :num_approach "
-                // "lonx = :lonx, laty = :laty, "
-                // "left_lonx = :left_lonx, top_laty = :top_laty, "
-                // "right_lonx = :right_lonx, bottom_laty = :bottom_laty "
-                "where airport_id = :id");
+  atools::sql::SqlQuery updateQuery(getDataWriter().getDatabase());
+  updateQuery.prepare("update airport set tower_frequency = :tower_frequency, atis_frequency = :atis_frequency, "
+                      "awos_frequency = :awos_frequency, asos_frequency = :asos_frequency, "
+                      "unicom_frequency = :unicom_frequency, num_com = :num_com, num_approach = :num_approach "
+                      // "lonx = :lonx, laty = :laty, "
+                      // "left_lonx = :left_lonx, top_laty = :top_laty, "
+                      // "right_lonx = :right_lonx, bottom_laty = :bottom_laty "
+                      "where airport_id = :id");
 
-  query.bindValue(":tower_frequency", towerFrequency);
-  query.bindValue(":atis_frequency", atisFrequency);
-  query.bindValue(":awos_frequency", awosFrequency);
-  query.bindValue(":asos_frequency", asosFrequency);
-  query.bindValue(":unicom_frequency", unicomFrequency);
-  query.bindValue(":num_com", type->getComs().size());
-  query.bindValue(":num_approach", type->getApproaches().size() + sidAndStarApproachCount);
+  if(towerFrequency == 0)
+    updateQuery.bindNullInt(":tower_frequency");
+  else
+    updateQuery.bindValue(":tower_frequency", towerFrequency);
+
+  if(atisFrequency == 0)
+    updateQuery.bindNullInt(":atis_frequency");
+  else
+    updateQuery.bindValue(":atis_frequency", atisFrequency);
+
+  if(awosFrequency == 0)
+    updateQuery.bindNullInt(":awos_frequency");
+  else
+    updateQuery.bindValue(":awos_frequency", awosFrequency);
+
+  if(asosFrequency == 0)
+    updateQuery.bindNullInt(":asos_frequency");
+  else
+    updateQuery.bindValue(":asos_frequency", asosFrequency);
+
+  if(unicomFrequency == 0)
+    updateQuery.bindNullInt(":unicom_frequency");
+  else
+    updateQuery.bindValue(":unicom_frequency", unicomFrequency);
+
+  updateQuery.bindValue(":num_com", type->getComs().size());
+  updateQuery.bindValue(":num_approach", type->getApproaches().size() + sidAndStarApproachCount);
 
   // query.bindValue(":lonx", type->getPosition().getLonX());
   // query.bindValue(":laty", type->getPosition().getLatY());
@@ -426,8 +445,8 @@ void AirportWriter::updateMsfsAirport(const Airport *type, int predId)
   // query.bindValue(":right_lonx", type->getBoundingRect().getEast());
   // query.bindValue(":bottom_laty", type->getBoundingRect().getSouth());
 
-  query.bindValue(":id", predId);
-  query.exec();
+  updateQuery.bindValue(":id", predId);
+  updateQuery.exec();
 }
 
 void AirportWriter::fetchAdmin(const Airport *type, QString& city, QString& state, QString& country, QString& region)
