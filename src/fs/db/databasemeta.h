@@ -109,44 +109,6 @@ public:
   /* Set database version to application version and timestamp to current time */
   void updateAll();
 
-  /* This defines the database schema version of the application and should be updated for every incompatible
-   * schema or content change
-   */
-  static const int DB_VERSION_MAJOR = 14;
-
-  /* Minor database version of the application. Minor version differences are compatible.
-   * Since version 10: Fixes in boundary coordinates and indexes added.
-   *
-   * 1 magnetic variation fix
-   * 2 cycle metadata
-   * 3 nullable altitude types in boundary
-   * 4 nullable path in scenery
-   * 5 metadata changes for DFD database
-   * 6
-   * 7 Fixes for procedure legs
-   * 8 airport.is_3d and airport.region added
-   * 9 approach_fix_type and runway end altitude added. Fixes for common route in SID/STAR and runway heading.
-   * 10 is_3d in airport_medium and airport_large
-   * 11 transition_altitude in airport
-   * 12 Several changes towards 3.2.
-   * 13 Fix for VASI assignment in X-Plane
-   * 14 Usage of X-Plane 3D attribute
-   * 15 Fix for X-Plane ICAO names
-   * 16 "route_type" added to table "airway".
-   * 17 Coordinates to procedure legs added.
-   *    Fixed issue with duplicate waypoints in airways for DFD, X-Plane and FSX/P3D.
-   *    X-Plane navaid range calculation fixed.
-   *    Added runway smoothness and airport flatten flags from X-Plane to database schema.
-   *    Coordinates for fix and recommended fix in procedure tables added.
-   *    Added flag "artificial" for created NDB and VOR waypoints.
-   * 18 New FIR and UIR regions deprecating centers
-   * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
-   *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
-   *    New table translation for MSFS language files.
-   * 20 Added faa and local columns to database tables. Remove xpident column.
-   */
-  static const int DB_VERSION_MINOR = 20;
-
   void init();
 
   /* Navdata cycle year and month - Not for FSX/P3D only */
@@ -190,6 +152,54 @@ public:
   }
 
 private:
+  /* This defines the database schema version of the application and should be updated for every incompatible
+   * schema or content change
+   */
+  static const int DB_VERSION_MAJOR = 14;
+
+  /* Minor database version of the application. Minor version differences are compatible.
+   * Since version 10: Fixes in boundary coordinates and indexes added.
+   *
+   * 1 magnetic variation fix
+   * 2 cycle metadata
+   * 3 nullable altitude types in boundary
+   * 4 nullable path in scenery
+   * 5 metadata changes for DFD database
+   * 6
+   * 7 Fixes for procedure legs
+   * 8 airport.is_3d and airport.region added
+   * 9 approach_fix_type and runway end altitude added. Fixes for common route in SID/STAR and runway heading.
+   * 10 is_3d in airport_medium and airport_large
+   * 11 transition_altitude in airport
+   * 12 Several changes towards 3.2.
+   * 13 Fix for VASI assignment in X-Plane
+   * 14 Usage of X-Plane 3D attribute
+   * 15 Fix for X-Plane ICAO names
+   * 16 "route_type" added to table "airway".
+   * 17 Coordinates to procedure legs added.
+   *    Fixed issue with duplicate waypoints in airways for DFD, X-Plane and FSX/P3D.
+   *    X-Plane navaid range calculation fixed.
+   *    Added runway smoothness and airport flatten flags from X-Plane to database schema.
+   *    Coordinates for fix and recommended fix in procedure tables added.
+   *    Added flag "artificial" for created NDB and VOR waypoints.
+   * 18 New FIR and UIR regions deprecating centers
+   * 19 Complete MSFS support. New waypoint types and new ramp and gate extra types.
+   *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
+   *    New table translation for MSFS language files.
+   * 20 Added faa and local columns to database tables. Remove xpident column.
+   * 21 Added arinc_type to tables waypoint and nav_search.
+   *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
+   * 22 Rho and theta in approach and transition legs can now be null
+   * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
+   * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
+   *    Added transition level to airport.
+   *    Converted airport.transition_altitude to double.
+   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches were missing runway assignments.
+   *    Added "has_vertical_angle" and "has_rnp" to table "approach".
+   * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
+   */
+  static const int DB_VERSION_MINOR = 25;
+
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
   void updateFlags();

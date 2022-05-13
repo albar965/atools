@@ -187,7 +187,10 @@ Airport::Airport(const NavDatabaseOptions *options, BinaryStream *bs,
         if(options->isIncludedNavDbObject(type::COM))
         {
           r.seekToStart();
-          coms.append(Com(options, bs));
+          Com com(options, bs);
+
+          if(com.getFrequency() > 0) // MSFS has zero frequency COM values
+            coms.append(com);
         }
         break;
 
@@ -570,20 +573,16 @@ void Airport::extractMainComFrequencies(const QList<Com>& coms, int& towerFreque
   for(const Com& c : coms)
   {
     // Use lowest frequency for default to have it deterministic
-    if((c.getType() == com::TOWER || c.getType() == com::TOWER_P3D_V5) &&
-       (towerFrequency == 0 || c.getFrequency() < towerFrequency))
+    if((c.getType() == com::TOWER || c.getType() == com::TOWER_P3D_V5) && (towerFrequency == 0 || c.getFrequency() < towerFrequency))
       towerFrequency = c.getFrequency();
     else if((c.getType() == com::UNICOM || c.getType() == com::UNICOM_P3D_V5) &&
             (unicomFrequency == 0 || c.getFrequency() < unicomFrequency))
       unicomFrequency = c.getFrequency();
-    else if((c.getType() == com::AWOS || c.getType() == com::AWOS_P3D_V5) &&
-            (awosFrequency == 0 || c.getFrequency() < awosFrequency))
+    else if((c.getType() == com::AWOS || c.getType() == com::AWOS_P3D_V5) && (awosFrequency == 0 || c.getFrequency() < awosFrequency))
       awosFrequency = c.getFrequency();
-    else if((c.getType() == com::ASOS || c.getType() == com::ASOS_P3D_V5) &&
-            (asosFrequency == 0 || c.getFrequency() < asosFrequency))
+    else if((c.getType() == com::ASOS || c.getType() == com::ASOS_P3D_V5) && (asosFrequency == 0 || c.getFrequency() < asosFrequency))
       asosFrequency = c.getFrequency();
-    else if((c.getType() == com::ATIS || c.getType() == com::ATIS_P3D_V5) &&
-            (atisFrequency == 0 || c.getFrequency() < atisFrequency))
+    else if((c.getType() == com::ATIS || c.getType() == com::ATIS_P3D_V5) && (atisFrequency == 0 || c.getFrequency() < atisFrequency))
       atisFrequency = c.getFrequency();
   }
 }
