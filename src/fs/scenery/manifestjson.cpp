@@ -82,6 +82,12 @@ void ManifestJson::read(const QString& filename)
 
 bool ManifestJson::isScenery() const
 {
+  // "content_type": "SCENERY"
+  return contentType.compare("SCENERY", Qt::CaseInsensitive) == 0;
+}
+
+bool ManifestJson::isAnyScenery() const
+{
   // "content_type": "AIRCRAFT"
   // "content_type": "CORE"
   // "content_type": "INSTRUMENTS"

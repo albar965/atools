@@ -37,6 +37,7 @@ public:
   {
     bglPaths.clear();
     materialPaths.clear();
+    fsArchiveFound = false;
   }
 
   /* Relative paths for all BGL files */
@@ -51,8 +52,15 @@ public:
     return materialPaths;
   }
 
+  /* true if any encrypted file was found. */
+  bool hasFsArchive() const
+  {
+    return fsArchiveFound;
+  }
+
 private:
   QStringList bglPaths, materialPaths;
+  bool fsArchiveFound = false;
 };
 
 } // namespace scenery

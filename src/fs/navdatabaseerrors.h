@@ -47,6 +47,13 @@ public:
 
   struct SceneryErrors
   {
+    SceneryErrors()
+    {
+    }
+
+    SceneryErrors(const scenery::SceneryArea& area, const QStringList& messages,
+                  const QList<NavDatabaseErrors::SceneryFileError>& errors = QList<NavDatabaseErrors::SceneryFileError>());
+
     atools::fs::scenery::SceneryArea scenery;
     QStringList sceneryErrorsMessages;
     QList<atools::fs::NavDatabaseErrors::SceneryFileError> fileErrors;

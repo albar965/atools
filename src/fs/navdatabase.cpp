@@ -1529,15 +1529,20 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
+      SceneryArea addonArea(areaNum++, baseName, name);
+      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+        errors->sceneryErrors.append(NavDatabaseErrors::SceneryErrors(addonArea, {
+              tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name)
+            }));
+
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea addonArea(areaNum++, baseName, name);
 
         // Indicate add-on in official path
         addonArea.setAddOn(true);
@@ -1569,16 +1574,21 @@ void NavDatabase::readSceneryConfigMsfs(atools::fs::scenery::SceneryCfg& cfg)
     manifest.clear();
     manifest.read(fileinfo.filePath() % SEP % "manifest.json");
 
-    if(manifest.isScenery() && !checkNavigraphNavdataExclude(manifest))
+    if(manifest.isAnyScenery() && !checkNavigraphNavdataExclude(manifest))
     {
       // Read BGL and material file locations from layout file
       layout.clear();
       layout.read(fileinfo.filePath() % SEP % "layout.json");
 
+      SceneryArea addonArea(areaNum++, tr("Community"), name);
+      addonArea.setCommunity(true);
+      if(manifest.isScenery() && layout.hasFsArchive() && errors != nullptr)
+        errors->sceneryErrors.append(NavDatabaseErrors::SceneryErrors(addonArea, {
+              tr("Encrypted add-on \"%1\" found. Add-on might not show up correctly.").arg(name)
+            }));
+
       if(!layout.getBglPaths().isEmpty())
       {
-        SceneryArea addonArea(areaNum++, tr("Community"), name);
-        addonArea.setCommunity(true);
 
         // Detect Navigraph navdata update packages for special handling
         addonArea.setNavigraphNavdataUpdate(checkNavigraphNavdataUpdate(manifest));
@@ -1599,7 +1609,7 @@ bool NavDatabase::checkNavigraphNavdataUpdate(atools::fs::scenery::ManifestJson&
   // ..
   // }
 
-  return manifest.isScenery() &&
+  return manifest.isAnyScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("AIRAC", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("Cycle", Qt::CaseInsensitive));
@@ -1615,7 +1625,7 @@ bool NavDatabase::checkNavigraphNavdataExclude(scenery::ManifestJson& manifest)
   // ...
   // }
 
-  return manifest.isScenery() &&
+  return manifest.isAnyScenery() &&
          manifest.getCreator().contains("Navigraph", Qt::CaseInsensitive) &&
          (manifest.getTitle().contains("Maintenance", Qt::CaseInsensitive) ||
           manifest.getTitle().contains("AIRAC Cycle Base", Qt::CaseInsensitive));

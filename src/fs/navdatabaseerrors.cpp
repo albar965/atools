@@ -40,5 +40,11 @@ void NavDatabaseErrors::init(const atools::fs::scenery::SceneryArea& area)
   sceneryErrors.append(err);
 }
 
+NavDatabaseErrors::SceneryErrors::SceneryErrors(const scenery::SceneryArea& area, const QStringList& messages,
+                                                const QList<NavDatabaseErrors::SceneryFileError>& errors)
+  : scenery(area), sceneryErrorsMessages(messages), fileErrors(errors)
+{
+}
+
 } // namespace fs
 } // namespace atools
