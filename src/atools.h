@@ -122,7 +122,7 @@ QString strFromFile(const QString& filename);
 /* Unicode normalizes string and replaces special characters like ö->o.
  * Removes all diacritics.
  * Omits characters if they cannot be transformed to ASCII. */
-QString normalizeStr(const QString& str);
+QString normalizeStr(QString str);
 
 /* Cuts text at the right and uses combined ellipsis character */
 QString elideTextShort(const QString& str, int maxLength);

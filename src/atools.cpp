@@ -1037,10 +1037,15 @@ QString removeNonAlphaNum(const QString& str)
   return trimmed;
 }
 
-QString normalizeStr(const QString& str)
+QString normalizeStr(QString str)
 {
   // Decompose string into base characters and diacritics
+
+  // Check some special charaters which are omitted by above
+  str = str.replace("ø", "o").replace("Ø", "O").replace("æ", "ae").replace("Æ", "Ae").replace("×", "x");
+
   QString retval, norm = str.normalized(QString::NormalizationForm_KD);
+
   for(QChar c : norm)
   {
     // Remove diacritics
@@ -1060,6 +1065,7 @@ QString normalizeStr(const QString& str)
       }
     }
   }
+
   return retval;
 }
 
