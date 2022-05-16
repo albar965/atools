@@ -26,6 +26,7 @@ class QUrl;
 class QFont;
 class QLabel;
 class QItemSelectionModel;
+class QAction;
 
 namespace atools {
 namespace gui {
@@ -45,6 +46,9 @@ void fontDescription(const QFont& font, QLabel *label);
 
 /* Get a list of all selected rows in given order ignoring any selection ranges */
 QList<int> selectedRows(QItemSelectionModel *model, bool reverse);
+
+/* true if action is enabled AND checked */
+bool checked(const QAction *action);
 
 } // namespace gui
 } // namespace atools
