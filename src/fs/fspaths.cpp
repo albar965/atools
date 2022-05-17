@@ -69,7 +69,7 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TY
       {FsPaths::NAVIGRAPH, "NAVIGRAPH"}
     });
 
-static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NAMES(
+static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_DISPLAY_NAMES(
     {
       {FsPaths::FSX, "Microsoft Flight Simulator X"},
       {FsPaths::FSX_SE, "Microsoft Flight Simulator - Steam Edition"},
@@ -79,6 +79,20 @@ static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_NA
       {FsPaths::XPLANE_11, "X-Plane 11"},
       {FsPaths::XPLANE_12, "X-Plane 12"},
       {FsPaths::MSFS, "Microsoft Flight Simulator 2020"},
+      {FsPaths::NAVIGRAPH, "Navigraph"}
+    }
+  );
+
+static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_SHORT_DISPLAY_NAMES(
+    {
+      {FsPaths::FSX, "FSX"},
+      {FsPaths::FSX_SE, "FSX SE"},
+      {FsPaths::P3D_V3, "P3D v3"},
+      {FsPaths::P3D_V4, "P3D v4"},
+      {FsPaths::P3D_V5, "P3D v5"},
+      {FsPaths::XPLANE_11, "X-Plane 11"},
+      {FsPaths::XPLANE_12, "X-Plane 12"},
+      {FsPaths::MSFS, "MSFS"},
       {FsPaths::NAVIGRAPH, "Navigraph"}
     }
   );
@@ -149,7 +163,7 @@ void FsPaths::logAllPaths()
     QString filesPath = filesPathMap.value(type);
     QString sceneryFilepath = sceneryFilepathMap.value(type);
 
-    qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_NAMES[type];
+    qInfo().nospace().noquote() << ALL_SIMULATOR_TYPE_NAMES[type] << " - " << ALL_SIMULATOR_DISPLAY_NAMES[type];
     if(basePath.isEmpty())
       qInfo() << "  Base is empty";
     else
@@ -664,9 +678,14 @@ QString FsPaths::typeToShortName(SimulatorType type)
   return ALL_SIMULATOR_TYPE_NAMES.value(type);
 }
 
-QString FsPaths::typeToName(SimulatorType type)
+QString FsPaths::typeToDisplayName(SimulatorType type)
 {
-  return ALL_SIMULATOR_NAMES.value(type);
+  return ALL_SIMULATOR_DISPLAY_NAMES.value(type);
+}
+
+QString FsPaths::typeToShortDisplayName(SimulatorType type)
+{
+  return ALL_SIMULATOR_SHORT_DISPLAY_NAMES.value(type);
 }
 
 FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)

@@ -136,8 +136,12 @@ public:
     return type == XPLANE_11 || type == XPLANE_12;
   }
 
-  /* Long names */
-  static QString typeToName(atools::fs::FsPaths::SimulatorType type);
+  /* Long names like Microsoft Flight Simulator X */
+  static QString typeToDisplayName(atools::fs::FsPaths::SimulatorType type);
+
+  /* Short like X-Plane 11 or MSFS */
+  static QString typeToShortDisplayName(atools::fs::FsPaths::SimulatorType type);
+
   static atools::fs::FsPaths::SimulatorType stringToType(const QString& typeStr);
 
   /* Array of all four valid types */
