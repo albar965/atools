@@ -4,6 +4,31 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+Version 3.7.10.develop
+
+* Added push request #16 of @flpduarte. Fixed bug in which Little Navmap would only read and
+  display a single transition from addon (Community) SIDs and STARs, despite these procedures
+  actually having more than one transition. This happens when using the latest MSFS SDK (SU9 or later).
+* Moved version number to variable in file `atools.pro` instead of coding into sources.
+* Now writing files `version.txt` and `revision.txt` files into deployment folder allowing
+  deployment scripts to automatically name archives.
+* Added warning messages for encrypted MSFS add-ons when reading scenery library.
+* Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
+  wrong search results.
+* Updated database minor version to 25. Reloading is advised.
+* Allowing to set flags for HTML warning, error and note messages now. albar965/littlenavmap#656
+* Extended tree dialog to allow disabling of items. Added signal handler for checkbox changes.
+  albar965/littlenavmap#656
+* Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint
+  formats.
+* Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
+  allow handling in flight plans.
+* Now skipping empty X-Plane `apt.dat` files to avoid program freezing in an empty loop for
+  malformed files.
+* Fixed issue where OpenAir airspace files were not recognized as OpenAir format in some cases.
+
+===============================================================================
+
 Version 3.7.9.develop
 
 * Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
