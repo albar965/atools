@@ -151,7 +151,6 @@ public:
     compilerVersion = value;
   }
 
-private:
   /* This defines the database schema version of the application and should be updated for every incompatible
    * schema or content change
    */
@@ -199,6 +198,8 @@ private:
    * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
    */
   static const int DB_VERSION_MINOR = 25;
+
+private:
 
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
