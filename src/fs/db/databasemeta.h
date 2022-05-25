@@ -186,18 +186,8 @@ public:
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
    *    New table translation for MSFS language files.
    * 20 Added faa and local columns to database tables. Remove xpident column.
-   * 21 Added arinc_type to tables waypoint and nav_search.
-   *    Type and more for ils added. Also added GBAS stations, LPV approaches and more.
-   * 22 Rho and theta in approach and transition legs can now be null
-   * 23 Table approach_leg.rnp, approach.aircraft_category and path points in DFD compiler.
-   * 24 Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler.
-   *    Added transition level to airport.
-   *    Converted airport.transition_altitude to double.
-   *    Corrected issues with true course runways like in BGTL for X-Plane and DFD compiler. Approaches were missing runway assignments.
-   *    Added "has_vertical_angle" and "has_rnp" to table "approach".
-   * 25 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in wrong search results.
    */
-  static const int DB_VERSION_MINOR = 25;
+  static const int DB_VERSION_MINOR = 20;
 
 private:
 
