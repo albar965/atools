@@ -420,7 +420,11 @@ public:
   }
 
   static bool isAircraftTypeValid(const QString& type);
-  bool isAircraftTypeValid() const;
+
+  bool isAircraftTypeValid() const
+  {
+    return isAircraftTypeValid(getAircraftType());
+  }
 
   /* Version number to save into LNMPERF XML files */
   static const int LNMPERF_VERSION_MAJOR = 1;

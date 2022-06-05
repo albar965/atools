@@ -552,13 +552,8 @@ float AircraftPerf::getAlternateFuelFlowGal() const
 
 bool AircraftPerf::isAircraftTypeValid(const QString& type)
 {
-  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z][A-Z0-9]{1,4}$");
+  const static QRegularExpression AIRCRAFT_TYPE("^[A-Z0-9]{2,4}$");
   return AIRCRAFT_TYPE.match(type).hasMatch();
-}
-
-bool AircraftPerf::isAircraftTypeValid() const
-{
-  return isAircraftTypeValid(getAircraftType());
 }
 
 void AircraftPerf::readFromSettings(const QSettings& settings)
