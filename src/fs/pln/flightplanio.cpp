@@ -2151,7 +2151,12 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
       }
 
       if(!hasProcedure)
-        writePropertyStr(writer, "type", "navaid");
+      {
+        if (entry.getWaypointType() == entry::USER)
+          writePropertyStr(writer, "type", "basic");
+        else
+          writePropertyStr(writer, "type", "navaid");
+      }
 
       if(i > 0 && i < plan.entries.size() - 1)
       {
