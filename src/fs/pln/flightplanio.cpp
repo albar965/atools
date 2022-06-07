@@ -1479,6 +1479,17 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
               entry.setIdent(wpident);
               plan.getEntries().append(entry);
             }
+            else if(wptype == "basic")
+            {
+              // Basic waypoint: only lat/lon tags are meaningfull
+              // (might be a custom waypoint, or navaid missing from database)
+              if(position.isValid())
+              {
+                entry.setIdent(wpident);
+                entry.setWaypointType(entry::USER);
+                plan.getEntries().append(entry);
+              }
+            }
           }
           else
             reader.skipCurrentElement();
