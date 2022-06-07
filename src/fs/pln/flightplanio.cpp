@@ -1462,7 +1462,9 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
             maxAlt = std::max(maxAlt, altitude);
 
-            entry.setPosition(Pos(wplon.toFloat(), wplat.toFloat(), altitude));
+            Pos position(wplon, wplat, altitude);
+            if (position.isValid())
+              entry.setPosition(position);
 
             if(wptype == "runway")
             {
