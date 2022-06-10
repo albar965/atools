@@ -1474,7 +1474,9 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
 
             maxAlt = std::max(maxAlt, altitude);
 
-            entry.setPosition(Pos(wplon.toFloat(), wplat.toFloat(), altitude));
+            Pos position(wplon, wplat, altitude);
+            if (position.isValid())
+              entry.setPosition(position);
 
             if(wptype == "runway")
             {
@@ -1488,6 +1490,17 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
               // Normal navaid =================================
               entry.setIdent(wpident);
               plan.getEntries().append(entry);
+            }
+            else if(wptype == "basic")
+            {
+              // Basic waypoint: only lat/lon tags are meaningfull
+              // (might be a custom waypoint, or navaid missing from database)
+              if(position.isValid())
+              {
+                entry.setIdent(wpident);
+                entry.setWaypointType(entry::USER);
+                plan.getEntries().append(entry);
+              }
             }
           }
           else
@@ -2138,7 +2151,12 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
       }
 
       if(!hasProcedure)
-        writePropertyStr(writer, "type", "navaid");
+      {
+        if (entry.getWaypointType() == entry::USER)
+          writePropertyStr(writer, "type", "basic");
+        else
+          writePropertyStr(writer, "type", "navaid");
+      }
 
       if(i > 0 && i < plan.entries.size() - 1)
       {
