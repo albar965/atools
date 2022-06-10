@@ -3,6 +3,27 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 ===============================================================================
 
+# Version 3.6.19
+
+* Corrections to function `normalizeStr` to replace some missing characters.
+* Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint
+  formats.
+* Added push request #16 of @flpduarte. Fixed bug in which Little Navmap would only read and
+  display a single transition from addon (Community) SIDs and STARs, despite these procedures
+  actually having more than one transition. This happens when using the latest MSFS SDK (SU9 or later).
+* Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
+  allow handling in flight plans.
+* Now skipping empty X-Plane `apt.dat` files to avoid program freezing in an empty loop for
+  malformed files.
+* Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
+  wrong search results.
+* Database minor version updated to 21.
+* Moved version number to variable in file `atools.pro` instead of coding into sources.
+* Now writing files `version.txt` and `revision.txt` files into deployment folder allowing
+  deployment scripts to automatically name archives.
+
+===============================================================================
+
 # Version 3.6.18
 
 * Reworked weather URL test functions to allow API keys. Added METAR format reader for IVAO JSON.

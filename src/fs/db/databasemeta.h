@@ -186,11 +186,14 @@ public:
    *    Removed fence and apron light tables. Delete edge and center line light columns from taxipath.
    *    New table translation for MSFS language files.
    * 20 Added faa and local columns to database tables. Remove xpident column.
+   * 21 Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
+   *    wrong search results.
+   *    Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
+   *    allow handling in flight plans.
    */
-  static const int DB_VERSION_MINOR = 20;
+  static const int DB_VERSION_MINOR = 21;
 
 private:
-
   /* Update the last loaded timestamp in the database and set it to now */
   void updateTimestamp();
   void updateFlags();
