@@ -117,7 +117,7 @@ public:
   }
 
   /* What type of handler is set now */
-  bool isFsxHandler();
+  bool isSimConnectHandler();
   bool isXplaneHandler();
 
   atools::fs::sc::ConnectHandler *getHandler() const
