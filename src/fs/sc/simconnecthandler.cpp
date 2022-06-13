@@ -819,7 +819,8 @@ bool SimConnectHandler::connect()
 {
   HRESULT hr;
 
-  qDebug() << Q_FUNC_INFO << "Before Open";
+  if(p->verbose)
+    qDebug() << Q_FUNC_INFO << "Before Open";
 
   hr = p->api.Open(appName.constData(), nullptr, 0, nullptr, 0);
   if(hr == S_OK)
