@@ -23,6 +23,9 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
   deployment scripts to automatically name archives.
 * Improvements to Flightgear XML flightplan files import and export. Thanks to @colingeniet at
   Github for the fixes.
+* Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
+  internal SimConnect handles. After 30 minutes, an attempt is made to connect every 30 seconds, and
+  after one hour, every minute. Workaround for #891 which is most likely a SimConnect issue.
 
 ===============================================================================
 

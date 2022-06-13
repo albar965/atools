@@ -56,8 +56,6 @@ void DataReaderThread::setHandler(ConnectHandler *connectHandler)
 
 void DataReaderThread::connectToSimulator()
 {
-  int counter = 0;
-
   if(!handler->isLoaded())
   {
     QString msg = tr("No flight simulator installation found. SimConnect not loaded.");
@@ -70,24 +68,53 @@ void DataReaderThread::connectToSimulator()
     emit postStatus(atools::fs::sc::OK, msg);
     emit postLogMessage(msg, false, false);
 
+    int rateSec = reconnectRateSec;
+    int counterSec = 0;
+
     reconnecting = true;
     while(!terminate)
     {
-      if((counter % reconnectRateSec) == 0)
+      if((counterSec % rateSec) == 0)
       {
         if(handler->connect())
         {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "Connected" << "counterSec" << counterSec << "rateSec" << rateSec;
+#endif
+
           connected = true;
           emit connectedToSimulator();
-          QString msg = tr("Connected to simulator.");
-          emit postStatus(atools::fs::sc::OK, msg);
-          emit postLogMessage(msg, false, false);
+          QString connectMsg = tr("Connected to simulator.");
+          emit postStatus(atools::fs::sc::OK, connectMsg);
+          emit postLogMessage(connectMsg, false, false);
           break;
         }
 
-        counter = 0;
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "Not connected" << "counterSec" << counterSec << "rateSec" << rateSec;
+#endif
+
       }
-      counter++;
+      counterSec++;
+
+      // Decrease connection rate for long running sessions to avoid loss of internal SimConnect handles
+      // Workaround for #891
+      if(isSimConnectHandler())
+      {
+        if(counterSec == 1800)
+        {
+          rateSec *= 2;
+          qDebug() << Q_FUNC_INFO << "Increasing connection rate after 30 minutes to" << rateSec << "seconds";
+        }
+
+        if(counterSec == 3600)
+        {
+          rateSec *= 2;
+          qDebug() << Q_FUNC_INFO << "Increasing connection rate after 1 hour to" << rateSec << "seconds";
+        }
+      }
+
+      // Sleep a second
       QThread::sleep(1);
     }
   }
@@ -401,7 +428,7 @@ bool DataReaderThread::canFetchWeather() const
   return handler->canFetchWeather();
 }
 
-bool DataReaderThread::isFsxHandler()
+bool DataReaderThread::isSimConnectHandler()
 {
   return dynamic_cast<atools::fs::sc::SimConnectHandler *>(handler) != nullptr;
 }
