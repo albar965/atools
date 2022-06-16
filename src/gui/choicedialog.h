@@ -92,6 +92,9 @@ public:
   /* Add a vertical spacer */
   void addSpacer();
 
+  /* Add label text */
+  void addLabel(const QString& text);
+
   /* Call after adding all buttons to restore button state */
   void restoreState();
 

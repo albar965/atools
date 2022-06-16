@@ -99,6 +99,11 @@ void ChoiceDialog::addLine()
   ui->verticalLayout_4->insertWidget(-1, line);
 }
 
+void ChoiceDialog::addLabel(const QString& text)
+{
+  ui->verticalLayout_4->insertWidget(-1, new QLabel(text, this));
+}
+
 void ChoiceDialog::addSpacer()
 {
   ui->verticalLayout_4->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
