@@ -925,10 +925,11 @@ bool WhazzupTextParser::readInternalDelimited(QTextStream& stream, const QDateTi
 
         if(update.isValid())
         {
+#ifndef DEBUG_IGNORE_WHAZZUP_NOT_RECENT
           if(update <= lastUpdate)
             // This is older than the last update - bail out
             return false;
-
+#endif
           updateTimestamp = update;
         }
       }

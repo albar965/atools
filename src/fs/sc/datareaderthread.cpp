@@ -154,33 +154,45 @@ void DataReaderThread::run()
       if(data.getStatus() == OK)
       {
         if(loadReplayFile->atEnd())
+
+#ifdef DEBUG_END_REPLAY
+        {
+          emit postStatus(data.getStatus(), data.getStatusText());
+          emit postLogMessage(tr("Finished reading \"%1\".").arg(loadReplayFilepath), false, false);
+          closeReplay();
+        }
+        else
+#else
           loadReplayFile->seek(REPLAY_FILE_DATA_START_OFFSET);
+#endif
 
-        // Remove boat and ship traffic depending on settings for testing purposes
-        QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
-        if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
         {
-          QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
-                {
-                  return !aircraft.isUser() && !aircraft.isAnyBoat();
-                });
-          if(it != aiAircraft.end())
-            aiAircraft.erase(it, aiAircraft.end());
-        }
+          // Remove boat and ship traffic depending on settings for testing purposes
+          QVector<SimConnectAircraft>& aiAircraft = data.getAiAircraft();
+          if(!(opts & atools::fs::sc::FETCH_AI_AIRCRAFT))
+          {
+            QVector<SimConnectAircraft>::iterator it =
+              std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
+                  {
+                    return !aircraft.isUser() && !aircraft.isAnyBoat();
+                  });
+            if(it != aiAircraft.end())
+              aiAircraft.erase(it, aiAircraft.end());
+          }
 
-        if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
-        {
-          QVector<SimConnectAircraft>::iterator it =
-            std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
-                {
-                  return !aircraft.isUser() && aircraft.isAnyBoat();
-                });
-          if(it != aiAircraft.end())
-            aiAircraft.erase(it, aiAircraft.end());
-        }
+          if(!(opts & atools::fs::sc::FETCH_AI_BOAT))
+          {
+            QVector<SimConnectAircraft>::iterator it =
+              std::remove_if(aiAircraft.begin(), aiAircraft.end(), [](const SimConnectAircraft& aircraft) -> bool
+                  {
+                    return !aircraft.isUser() && aircraft.isAnyBoat();
+                  });
+            if(it != aiAircraft.end())
+              aiAircraft.erase(it, aiAircraft.end());
+          }
 
-        emit postSimConnectData(data);
+          emit postSimConnectData(data);
+        }
       }
       else
       {

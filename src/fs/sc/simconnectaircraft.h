@@ -384,6 +384,12 @@ public:
            getAirplaneFlightnumber() != other.getAirplaneFlightnumber();
   }
 
+  /* For debugging purposes */
+  void setAirplaneRegistration(const QString& value)
+  {
+    airplaneReg = value;
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
