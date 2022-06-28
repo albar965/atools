@@ -530,6 +530,21 @@ Q_DECL_CONSTEXPR bool almostNotEqual<long long>(long long f1, long long f2, long
   return !almostEqual<long long>(f1, f2, epsilon);
 }
 
+template<typename TYPE>
+Q_DECL_CONSTEXPR bool isValid(TYPE value)
+{
+  // max float (3.4028235 * 10^38) is used for all floating point numerical invalid values.
+  // Divide by four to catch conversions of invalid value
+  return value < std::numeric_limits<float>::max() / 4;
+}
+
+template<>
+Q_DECL_CONSTEXPR bool isValid<int>(int value)
+{
+  // 2 147 483 647
+  return value < std::numeric_limits<int>::max() / 4;
+}
+
 /* Allocates array and fills with 0 */
 template<typename TYPE>
 inline TYPE *allocArray(int size)
