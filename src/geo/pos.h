@@ -185,8 +185,22 @@ public:
   float distanceSimpleTo(const atools::geo::Pos& otherPos) const;
 
   /* Distance to other point for great circle route */
-  float distanceMeterTo(const atools::geo::Pos& otherPos) const;
+  float distanceMeterTo(const atools::geo::Pos& otherPos) const
+  {
+    return static_cast<float>(distanceMeterToDouble(otherPos));
+  }
+
   double distanceMeterToDouble(const atools::geo::Pos& otherPos) const;
+
+  /* Also uses distance in altitude which has to be given in feet.
+   * Vertical distance is added to GC distance using Pythagoras and hence only accurate for short distances.
+   * altitudeWeight can be used to lower or raise altitude priority. */
+  float distanceMeterTo3d(const atools::geo::Pos& otherPos, float altitudeWeight = 1.f) const
+  {
+    return static_cast<float>(distanceMeterTo3dDouble(otherPos, altitudeWeight));
+  }
+
+  double distanceMeterTo3dDouble(const atools::geo::Pos& otherPos, double altitudeWeight = 1.f) const;
 
   /* Distance to line formed by pos1 and pos2. Positive means right of course,
    * negative means left of course. valid if perpendicular point can be found on route. */
