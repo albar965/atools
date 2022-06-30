@@ -50,7 +50,10 @@ void WeatherNetDownload::downloadFinished(const QByteArray& data, QString url)
     qDebug() << Q_FUNC_INFO << "Loaded" << data.size() << "bytes and" << metarIndex->size()
              << "metars from" << downloader->getUrl();
 
-  emit weatherUpdated();
+  if(metarIndex->isEmpty())
+    emit weatherDownloadFailed(tr("No METARs found in download."), 0, url);
+  else
+    emit weatherUpdated();
 }
 
 void WeatherNetDownload::downloadFailed(const QString& error, int errorCode, QString url)
