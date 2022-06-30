@@ -97,6 +97,18 @@ public:
     replaySpeed = std::max(1, value);
   }
 
+  /* Save and update whazzup file during replay only. */
+  void setReplayWhazzupFile(const QString& filename)
+  {
+    replayWhazzupFile = filename;
+  }
+
+  /* Save whazzup file every seconds */
+  void setWhazzupUpdateSeconds(int seconds)
+  {
+    whazzupUpdateSeconds = seconds;
+  }
+
   void closeReplay();
 
   bool isSimconnectAvailable() const;
@@ -145,7 +157,10 @@ private:
   void connectToSimulator();
   virtual void run() override;
   void setupReplay();
-  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options options);
+  bool fetchData(atools::fs::sc::SimConnectData& data, int radiusKm, atools::fs::sc::Options fetchOptions);
+
+  /* Updates whazzup.txt file in given folder during replay */
+  void debugWriteWhazzup(const atools::fs::sc::SimConnectData& dataPacket);
 
   atools::fs::sc::ConnectHandler *handler = nullptr;
 
@@ -165,8 +180,8 @@ private:
   const int REPLAY_FILE_DATA_START_OFFSET = sizeof(REPLAY_FILE_MAGIC_NUMBER) + sizeof(REPLAY_FILE_VERSION) +
                                             sizeof(quint32);
 
-  QString saveReplayFilepath, loadReplayFilepath;
-  int replaySpeed = 1;
+  QString saveReplayFilepath, loadReplayFilepath, replayWhazzupFile;
+  int replaySpeed = 1, whazzupUpdateSeconds = 15;
   QFile *saveReplayFile = nullptr, *loadReplayFile = nullptr;
   quint32 replayUpdateRateMs = 500;
 

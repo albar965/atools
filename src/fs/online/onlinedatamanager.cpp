@@ -56,10 +56,10 @@ OnlinedataManager::~OnlinedataManager()
   delete whazzupServers;
 }
 
-bool OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format,
-                                        const QDateTime& lastUpdate)
+bool OnlinedataManager::readFromWhazzup(const QString& whazzupTxt, atools::fs::online::Format format, const QDateTime& lastUpdate)
 {
   SqlTransaction transaction(db);
+
   bool retval = whazzup->read(whazzupTxt, format, lastUpdate);
   if(retval)
     transaction.commit();
@@ -169,11 +169,23 @@ void OnlinedataManager::resetForNewOptions()
   whazzupServers->resetForNewOptions();
 }
 
-void OnlinedataManager::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int clientId)
+atools::fs::sc::SimConnectAircraft OnlinedataManager::getClientAircraftById(int clientId)
 {
+  const static atools::fs::sc::SimConnectAircraft EMPTY;
+  atools::fs::sc::SimConnectAircraft aircraft;
   sql::SqlRecord rec = getClientRecordById(clientId);
   if(!rec.isEmpty())
-    fillFromClient(aircraft, rec);
+    fillFromClient(aircraft, rec, EMPTY);
+  return aircraft;
+}
+
+atools::fs::sc::SimConnectAircraft OnlinedataManager::getClientAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft)
+{
+  atools::fs::sc::SimConnectAircraft aircraft;
+  sql::SqlRecord rec = getClientRecordById(simAircraft.getId());
+  if(!rec.isEmpty())
+    fillFromClient(aircraft, rec, simAircraft);
+  return aircraft;
 }
 
 sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
@@ -189,7 +201,7 @@ sql::SqlRecord OnlinedataManager::getClientRecordById(int clientId)
   return rec;
 }
 
-sql::SqlRecordList  OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
+sql::SqlRecordList OnlinedataManager::getClientRecordsByCallsign(const QString& callsign)
 {
   SqlQuery query(db);
   query.prepare("select * from client where callsign = :callsign");
@@ -201,13 +213,17 @@ sql::SqlRecordList  OnlinedataManager::getClientRecordsByCallsign(const QString&
   return recs;
 }
 
-void OnlinedataManager::getClientCallsignAndPosMap(QHash<QString, geo::Pos>& clientMap)
+QVector<OnlineAircraft> OnlinedataManager::getClientCallsignAndPosMap()
 {
-  clientMap.clear();
-  SqlQuery query("select callsign, lonx, laty from client", db);
+  QVector<OnlineAircraft> clientMap;
+  SqlQuery query("select client_id, vid, callsign, groundspeed, heading, altitude, lonx, laty from client", db);
   query.exec();
   while(query.next())
-    clientMap.insert(query.valueStr("callsign"), atools::geo::Pos(query.valueFloat("lonx"), query.valueFloat("laty")));
+    clientMap.append(OnlineAircraft(query.valueInt("client_id"), query.valueStr("vid"), query.valueStr("callsign"),
+                                    atools::fs::sc::SimConnectAircraft::airplaneRegistrationToKey(query.valueStr("callsign")),
+                                    query.valueFloat("groundspeed"), query.valueFloat("heading"),
+                                    atools::geo::Pos(query.valueFloat("lonx"), query.valueFloat("laty"), query.valueFloat("altitude"))));
+  return clientMap;
 }
 
 int OnlinedataManager::getNumClients() const
@@ -225,7 +241,8 @@ void OnlinedataManager::setGeometryCallback(GeoCallbackType func)
   whazzup->setGeometryCallback(func);
 }
 
-void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record)
+void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::SqlRecord& record,
+                                       const sc::SimConnectAircraft& simShadowAircraft)
 {
   if(record.valueStr("client_type") != "PILOT")
     return;
@@ -239,12 +256,22 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
           ac.machSpeed =
             ac.verticalSpeedFeetPerMin = atools::fs::sc::SC_INVALID_FLOAT;
 
-  ac.modelRadiusFt = ac.wingSpanFt = ac.deckHeight = 0;
-
-  ac.category = atools::fs::sc::AIRPLANE;
-  ac.engineType = atools::fs::sc::UNSUPPORTED;
-  ac.numberOfEngines = 0;
-  ac.transponderCode = -1;
+  if(simShadowAircraft.isValid())
+  {
+    ac.category = simShadowAircraft.category;
+    ac.engineType = simShadowAircraft.engineType;
+    ac.numberOfEngines = simShadowAircraft.numberOfEngines;
+    ac.modelRadiusFt = simShadowAircraft.modelRadiusFt;
+    ac.wingSpanFt = simShadowAircraft.wingSpanFt;
+    ac.deckHeight = simShadowAircraft.deckHeight;
+  }
+  else
+  {
+    ac.category = atools::fs::sc::AIRPLANE;
+    ac.engineType = atools::fs::sc::UNSUPPORTED;
+    ac.numberOfEngines = 0;
+    ac.modelRadiusFt = ac.wingSpanFt = ac.deckHeight = 0;
+  }
 
   ac.objectId = static_cast<quint32>(record.valueInt("client_id"));
   ac.airplaneReg = record.valueStr("callsign");
@@ -316,6 +343,8 @@ void OnlinedataManager::fillFromClient(sc::SimConnectAircraft& ac, const sql::Sq
     ac.position = atools::geo::Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
   else
     ac.position = atools::geo::Pos();
+
+  ac.updateAirplaneRegistrationKey();
 }
 
 void OnlinedataManager::initQueries()

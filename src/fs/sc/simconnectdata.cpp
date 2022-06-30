@@ -28,6 +28,9 @@ namespace atools {
 namespace fs {
 namespace sc {
 
+const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
+const static atools::fs::sc::SimConnectAircraft EMPTY_SIMCONNECT_AIRCRAFT;
+
 SimConnectData::SimConnectData()
 {
 
@@ -79,7 +82,11 @@ bool SimConnectData::read(QIODevice *ioDevice)
     status = VERSION_MISMATCH;
     return false;
   }
-  in >> packetId >> packetTs;
+  in >> packetId;
+
+  quint32 ts;
+  in >> ts;
+  packetTs = QDateTime::fromSecsSinceEpoch(ts, Qt::UTC);
 
   quint8 hasUser = 0;
   in >> hasUser;
@@ -130,7 +137,7 @@ int SimConnectData::write(QIODevice *ioDevice)
   out.setVersion(QDataStream::Qt_5_5);
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-  out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << packetTs;
+  out << MAGIC_NUMBER_DATA << packetSize << DATA_VERSION << packetId << static_cast<quint32>(packetTs.toSecsSinceEpoch());
 
   bool userValid = userAircraft.getPosition().isValid();
   out << static_cast<quint8>(userValid);
@@ -163,6 +170,22 @@ int SimConnectData::write(QIODevice *ioDevice)
   out << static_cast<quint32>(size);
 
   return SimConnectDataBase::writeBlock(ioDevice, block, status);
+}
+
+SimConnectAircraft *SimConnectData::getAiAircraftById(int id)
+{
+  if(aiAircraftIndex.contains(id))
+    return &aiAircraft[aiAircraftIndex.value(id)];
+  else
+    return nullptr;
+}
+
+const SimConnectAircraft *SimConnectData::getAiAircraftConstById(int id) const
+{
+  if(aiAircraftIndex.contains(id))
+    return &aiAircraft.at(aiAircraftIndex.value(id));
+  else
+    return nullptr;
 }
 
 SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const geo::Pos& lastPos, bool ground,
@@ -240,6 +263,21 @@ SimConnectData SimConnectData::buildDebugForPosition(const geo::Pos& pos, const 
   data.userAircraft.debug = true;
 
   return data;
+}
+
+void SimConnectData::updateIndexesAndKeys()
+{
+  userAircraft.updateAirplaneRegistrationKey();
+
+  aiAircraftIndex.clear();
+  for(int i = 0; i < aiAircraft.size(); i++)
+  {
+    atools::fs::sc::SimConnectAircraft& aircraft = aiAircraft[i];
+
+    aircraft.updateAirplaneRegistrationKey();
+    aiAircraftIndex.insert(aircraft.getId(), i);
+  }
+
 }
 
 } // namespace sc

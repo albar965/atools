@@ -41,7 +41,7 @@ bool SimConnectReply::read(QIODevice *ioDevice)
   QDataStream in(ioDevice);
   in.setVersion(QDataStream::Qt_5_5);
   in.setFloatingPointPrecision(QDataStream::SinglePrecision);
-  status = OK;
+  replyStatus = OK;
 
   if(magicNumber == 0)
   {
@@ -52,7 +52,7 @@ bool SimConnectReply::read(QIODevice *ioDevice)
     if(magicNumber != MAGIC_NUMBER_REPLY)
     {
       qWarning() << "SimConnectReply::read: invalid magic number" << magicNumber;
-      status = INVALID_MAGIC_NUMBER;
+      replyStatus = INVALID_MAGIC_NUMBER;
       return false;
     }
   }
@@ -73,11 +73,17 @@ bool SimConnectReply::read(QIODevice *ioDevice)
   if(version != REPLY_VERSION)
   {
     qWarning() << "SimConnectReply::read: version mismatch" << version << "!=" << REPLY_VERSION;
-    status = VERSION_MISMATCH;
+    replyStatus = VERSION_MISMATCH;
     return false;
   }
   quint16 cmd;
-  in >> packetId >> packetTs >> cmd;
+  in >> packetId;
+
+  quint32 ts;
+  in >> ts;
+  packetTs = QDateTime::fromMSecsSinceEpoch(ts, Qt::UTC);
+
+  in >> cmd;
   command = Command(cmd);
 
   weatherRequest.read(in);
@@ -87,14 +93,14 @@ bool SimConnectReply::read(QIODevice *ioDevice)
 
 int SimConnectReply::write(QIODevice *ioDevice)
 {
-  status = OK;
+  replyStatus = OK;
 
   QByteArray block;
   QDataStream out(&block, QIODevice::WriteOnly);
   out.setVersion(QDataStream::Qt_5_5);
   out.setFloatingPointPrecision(QDataStream::SinglePrecision);
 
-  out << MAGIC_NUMBER_REPLY << packetSize << REPLY_VERSION << packetId << packetTs
+  out << MAGIC_NUMBER_REPLY << packetSize << REPLY_VERSION << packetId << static_cast<quint32>(packetTs.toSecsSinceEpoch())
       << static_cast<quint16>(command);
 
   weatherRequest.write(out);
@@ -104,7 +110,7 @@ int SimConnectReply::write(QIODevice *ioDevice)
   int size = block.size() - static_cast<int>(sizeof(packetSize)) - static_cast<int>(sizeof(MAGIC_NUMBER_REPLY));
   out << static_cast<quint32>(size);
 
-  return SimConnectDataBase::writeBlock(ioDevice, block, status);
+  return SimConnectDataBase::writeBlock(ioDevice, block, replyStatus);
 }
 
 } // namespace sc

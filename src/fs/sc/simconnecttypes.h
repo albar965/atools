@@ -74,7 +74,8 @@ enum AircraftFlag : quint16
   SIM_ONLINE = 0x0200,
 
   /* A simulator aircraft also recognized as online network aircraft.
-   * This simulator aircraft is a shadow of an online network aircraft (by matching callsign to reg or position/altitude) */
+   * This simulator aircraft is a shadow of an online network aircraft (by matching callsign to reg or position/altitude).
+   * Set in OnlinedataController::updateAircraftShadowState() */
   SIM_ONLINE_SHADOW = 0x0400
 };
 

@@ -123,6 +123,12 @@ public:
     return airplaneReg;
   }
 
+  /* "dedfs" for "D-EDFS" */
+  const QString& getAirplaneRegistrationKey() const
+  {
+    return airplaneRegKey;
+  }
+
   /* Includes actual altitude in feet */
   atools::geo::Pos& getPosition()
   {
@@ -199,6 +205,14 @@ public:
     flags = value;
   }
 
+  void setFlag(AircraftFlags value, bool on = true)
+  {
+    if(on)
+      flags |= value;
+    else
+      flags &= ~value;
+  }
+
   Category getCategory() const
   {
     return category;
@@ -219,15 +233,16 @@ public:
     return numberOfEngines;
   }
 
+  /* modeS_id for X-Plane: integer 24bit (0-16777215 or 0 - 0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B "hexcode".
+   * dwObjectID for SimConnect
+   * Table and column "client.client_id" for online aircraft. Calculated as semi-permanent id. */
   unsigned int getObjectId() const
   {
     return objectId;
   }
 
-  int getId() const
-  {
-    return static_cast<int>(objectId);
-  }
+  /* ID used for database objects */
+  int getId() const;
 
   int getModelRadius() const
   {
@@ -390,6 +405,19 @@ public:
     airplaneReg = value;
   }
 
+  /* "dedfs" for "D-EDFS" not transferred in stream. Needs to be updated after loading in client.
+   *  Used to match aircraft from sim/online. */
+  void updateAirplaneRegistrationKey()
+  {
+    airplaneRegKey = airplaneRegistrationToKey(airplaneReg);
+  }
+
+  /* Converts "D-EDFS" to "dedfs" */
+  static QString airplaneRegistrationToKey(QString registration)
+  {
+    return registration.remove(QChar('_')).remove(QChar('-')).remove(QChar(' ')).toLower();
+  }
+
 private:
   friend class atools::fs::sc::SimConnectHandler;
   friend class atools::fs::sc::SimConnectHandlerPrivate;
@@ -398,7 +426,7 @@ private:
   friend class xpc::AircraftFileLoader;
   friend class atools::fs::online::OnlinedataManager;
 
-  QString airplaneTitle, airplaneType, airplaneModel, airplaneReg,
+  QString airplaneTitle, airplaneType, airplaneModel, airplaneReg, airplaneRegKey,
           airplaneAirline, airplaneFlightnumber, fromIdent, toIdent;
 
   atools::geo::Pos position;
@@ -410,7 +438,6 @@ private:
   qint16 transponderCode = -1; // TCAS number - convert to octal system to get real number, 0o7777 = 4095
   // -1 = not available
 
-  // modeS_id for X-Plane
   quint32 objectId = 0L;
 
   DataFlags dataFlags = atools::fs::sc::NO_FLAGS;

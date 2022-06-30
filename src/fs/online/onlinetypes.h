@@ -18,6 +18,8 @@
 #ifndef ATOOLS_ONLINETYPES_H
 #define ATOOLS_ONLINETYPES_H
 
+#include "geo/pos.h"
+
 #include <functional>
 #include <QVector>
 
@@ -31,6 +33,42 @@ class LineString;
 namespace fs {
 namespace online {
 
+/*
+ * Struct combining most important online aircraft data without the overhead of SimConnectAircraft.
+ */
+struct OnlineAircraft
+{
+  OnlineAircraft(int databaseId, const QString& vidParam, const QString& registrationParam, const QString& registrationKeyParam,
+                 float groundSpeedParam, float headingParam, const atools::geo::Pos& posParam)
+    : id(databaseId), vid(vidParam), registration(registrationParam), registrationKey(registrationKeyParam),
+    groundSpeedKts(groundSpeedParam), headingTrue(headingParam), pos(posParam)
+  {
+  }
+
+  OnlineAircraft()
+    : id(-1), groundSpeedKts(0.f), headingTrue(0.f)
+  {
+  }
+
+  int id; // Database ID client.client_id
+  QString vid, registration, registrationKey;
+  float groundSpeedKts, headingTrue;
+  atools::geo::Pos pos; // Includes altitude in ft
+
+  const atools::geo::Pos& getPosition() const
+  {
+    return pos;
+  }
+
+  /* false if default constructed */
+  bool isValid() const
+  {
+    return pos.isValid();
+  }
+
+};
+
+/* Online data format which is to be downloaded. */
 enum Format
 {
   UNKNOWN,
