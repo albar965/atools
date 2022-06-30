@@ -173,6 +173,9 @@ private:
   QVector<atools::fs::weather::MetarResult> metarResults;
 };
 
+const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
+const static atools::fs::sc::SimConnectAircraft EMPTY_SIMCONNECT_AIRCRAFT;
+
 } // namespace sc
 } // namespace fs
 } // namespace atools

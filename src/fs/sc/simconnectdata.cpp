@@ -28,9 +28,6 @@ namespace atools {
 namespace fs {
 namespace sc {
 
-const static atools::fs::sc::SimConnectData EMPTY_SIMCONNECT_DATA;
-const static atools::fs::sc::SimConnectAircraft EMPTY_SIMCONNECT_AIRCRAFT;
-
 SimConnectData::SimConnectData()
 {
 
