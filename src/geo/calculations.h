@@ -529,6 +529,19 @@ TYPE angleAbsDiff(TYPE angle1, TYPE angle2)
          (angle1 - angle2 <= 180. ? angle1 - angle2 : angle2 + 360. - angle1);
 }
 
+/* Calculates difference between courses (0-360 Deg).
+ * Result is positive if angle1 < angle2 and negative if angle1 > angle2 and never > 180 Deg.
+ * Clockwise is positive and counter-clockwise is negative */
+template<typename TYPE>
+TYPE angleAbsDiffSign(TYPE angle1, TYPE angle2)
+{
+  return angle2 > angle1 ?
+         // 100 to 260 : 10 to 350
+         (angle2 - angle1 <= 180. ? angle2 - angle1 : -(angle1 + 360. - angle2)) :
+         // 260 to 100 : 350 to 10
+         (angle1 - angle2 <= 180. ? -(angle1 - angle2) : angle2 + 360. - angle1);
+}
+
 /* Calculates difference between courses (0-360 Deg) which are given clockwise from angle1 to angle2.
  * Result can be 0 <= res <= 360 */
 template<typename TYPE>
