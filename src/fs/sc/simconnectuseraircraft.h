@@ -180,11 +180,13 @@ public:
     return ambientVisibilityMeter;
   }
 
+  /* Accuracy one second max limited by simulators */
   const QDateTime& getLocalTime() const
   {
     return localDateTime;
   }
 
+  /* Accuracy one second max limited by simulators */
   const QDateTime& getZuluTime() const
   {
     return zuluDateTime;

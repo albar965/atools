@@ -151,7 +151,7 @@ int SimConnectData::write(QIODevice *ioDevice)
     const MetarResult& result = metarResults.at(i);
     writeString(out, result.requestIdent);
     out << result.requestPos.getLonX() << result.requestPos.getLatY() << result.requestPos.getAltitude()
-        << static_cast<quint32>(result.timestamp.currentMSecsSinceEpoch() / 1000);
+        << static_cast<quint32>(result.timestamp.toSecsSinceEpoch());
     writeLongString(out, result.metarForStation);
     writeLongString(out, result.metarForNearest);
     writeLongString(out, result.metarForInterpolated);
