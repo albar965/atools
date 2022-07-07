@@ -465,7 +465,7 @@ QString WidgetState::getSettingsKey(QObject *widget) const
 
 void WidgetState::syncSettings()
 {
-  Settings::instance().syncSettings();
+  Settings::syncSettings();
 }
 
 void WidgetState::setMainWindowsRestoreOptions(bool position, bool size, bool state)

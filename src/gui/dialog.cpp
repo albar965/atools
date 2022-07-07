@@ -115,7 +115,7 @@ QStringList Dialog::fileDialog(QFileDialog& dlg, const QString& title, const QSt
       // if ok/select/save was pressed save state
       s.setValueVar(settingName, dlg.saveState());
       s.setValue(settingNameDir, dlg.directory().absolutePath());
-      s.syncSettings();
+      Settings::syncSettings();
     }
 
     if(filterIndex != nullptr)
@@ -207,7 +207,7 @@ void Dialog::showInfoMsgBox(const QString& settingsKey, const QString& message, 
 
     msg.exec();
     s.setValue(settingsKey, !msg.checkBox()->isChecked());
-    s.syncSettings();
+    Settings::syncSettings();
   }
 }
 
@@ -225,7 +225,7 @@ void Dialog::showWarnMsgBox(const QString& settingsKey, const QString& message, 
 
     msg.exec();
     s.setValue(settingsKey, !msg.checkBox()->isChecked());
-    s.syncSettings();
+    Settings::syncSettings();
   }
 }
 
@@ -262,7 +262,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if((retval != QMessageBox::Cancel && retval != QMessageBox::Help) && !settingsKey.isEmpty())
     {
       s.setValue(settingsKey, !msg.checkBox()->isChecked());
-      s.syncSettings();
+      Settings::syncSettings();
     }
   }
   return retval;
@@ -290,7 +290,7 @@ int Dialog::showQuestionMsgBox(const QString& settingsKey, const QString& messag
     if(retval != QMessageBox::Cancel && !settingsKey.isEmpty())
     {
       s.setValue(settingsKey, !msg.checkBox()->isChecked());
-      s.syncSettings();
+      Settings::syncSettings();
     }
   }
   return retval;
