@@ -1621,7 +1621,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
   // Save header and metadata =======================================================
   writer.writeStartElement("Header");
   writeTextElementIf(writer, "FlightplanType", flightplanTypeToString(plan.flightplanType));
-  writeTextElementIf(writer, "CruisingAlt", QString().number(plan.cruisingAlt));
+  writeTextElementIf(writer, "CruisingAlt", QString::number(plan.cruisingAlt));
   writeTextElementIf(writer, "Comment", plan.comment);
   writeTextElementIf(writer, "CreationDate", atools::currentIsoWithOffset(false /* milliseconds */));
   writeTextElementIf(writer, "FileVersion", QString("%1.%2").arg(LNMPLN_VERSION_MAJOR).arg(LNMPLN_VERSION_MINOR));
@@ -1671,7 +1671,7 @@ void FlightplanIO::saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& p
     writeTextElementIf(writer, "Start", plan.departureParkingName);
     writeTextElementIf(writer, "Type", plan.getDepartureParkingTypeStr());
     if(plan.departureParkingHeading < INVALID_HEADING)
-      writeTextElementIf(writer, "Heading", QString().number(plan.departureParkingHeading));
+      writeTextElementIf(writer, "Heading", QString::number(plan.departureParkingHeading));
     writer.writeEndElement(); // Departure
   }
 
@@ -1832,7 +1832,7 @@ void FlightplanIO::savePlnInternal(const Flightplan& plan, const QString& filena
 
   writer.writeTextElement("RouteType", routeTypeToString(plan.getRouteType()));
 
-  writer.writeTextElement("CruisingAlt", QString().number(plan.cruisingAlt));
+  writer.writeTextElement("CruisingAlt", QString::number(plan.cruisingAlt));
   writer.writeTextElement("DepartureID", plan.departureIdent);
 
   // Use parking position
@@ -3248,9 +3248,8 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       stream << "CYCLE " << cycle << endl;
 
       // Departure ==============================
-      QString departureIdent = plan.getDepartureIdent().left(6);
-      if(plan.entries.first().getWaypointType() == entry::AIRPORT &&
-         !plan.properties.contains(AIRPORT_DEPARTURE_NO_AIRPORT))
+      QString departureIdent = plan.getDepartureIdent().left(8);
+      if(plan.entries.constFirst().getWaypointType() == entry::AIRPORT && !plan.properties.contains(AIRPORT_DEPARTURE_NO_AIRPORT))
         // Departure is normal airport id or there is a SID
         stream << "ADEP " << departureIdent << endl;
       else
@@ -3268,9 +3267,8 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
         stream << "SIDTRANS " << plan.properties.value(SIDTRANS) << endl;
 
       // Destination =============================
-      QString destinationIdent = plan.getDestinationIdent().left(6);
-      if(plan.entries.last().getWaypointType() == entry::AIRPORT &&
-         !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
+      QString destinationIdent = plan.getDestinationIdent().left(8);
+      if(plan.entries.constLast().getWaypointType() == entry::AIRPORT && !plan.properties.contains(AIRPORT_DESTINATION_NO_AIRPORT))
         // Destination is normal airport id or there is a STAR or an approach
         stream << "ADES " << destinationIdent << endl;
       else
@@ -3343,7 +3341,7 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       else
       {
         if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-          stream << "1 " << ident.left(6) << " ";
+          stream << "1 " << ident.left(8) << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::WAYPOINT)
           stream << "11 " << ident << " ";
         else if(entry.getWaypointType() == atools::fs::pln::entry::VOR)
