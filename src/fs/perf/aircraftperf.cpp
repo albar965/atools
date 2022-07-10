@@ -556,6 +556,18 @@ bool AircraftPerf::isAircraftTypeValid(const QString& type)
   return AIRCRAFT_TYPE.match(type).hasMatch();
 }
 
+float AircraftPerf::toFuelLbs(float fuelGalLbs) const
+{
+  // Convert to lbs if this perf is volume based
+  return volume ? ageo::fromGalToLbs(jetFuel, fuelGalLbs) : fuelGalLbs;
+}
+
+float AircraftPerf::toFuelGal(float fuelGalLbs) const
+{
+  // Convert to gal if this perf is weight based
+  return volume ? fuelGalLbs : ageo::fromLbsToGal(jetFuel, fuelGalLbs);
+}
+
 void AircraftPerf::readFromSettings(const QSettings& settings)
 {
   name = settings.value("Options/Name").toString();
