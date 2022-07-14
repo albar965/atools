@@ -257,9 +257,24 @@ private:
   /* Get average wind for a line between two points. Uses only U and V components */
   WindData windAverageForLine(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2) const;
 
-  /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar */
-  const QVector<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700};
-  /* Parameters to download from NOAA - U/V wind component */
+  /* Surfaces to download from NOAA. Negative value denotes AGL in ft and positive is millibar level.
+   *
+   *  . surface  80, type 103, param type 2, alt round   260, alt calc   262.467
+   *  . surface 950, type 100, param type 2, alt round  2000, alt calc  1773.05
+   *  . surface 925, type 100, param type 2, alt round  2000, alt calc  2500.3
+   *  . surface 900, type 100, param type 2, alt round  4000, alt calc  3243.65
+   *  . surface 850, type 100, param type 2, alt round  4000, alt calc  4781.95
+   *  . surface 700, type 100, param type 2, alt round 10000, alt calc  9884.08
+   *  . surface 450, type 100, param type 2, alt round 20000, alt calc 20815.6
+   *  . surface 300, type 100, param type 2, alt round 30000, alt calc 30069.9
+   *  . surface 250, type 100, param type 2, alt round 34000, alt calc 34004.1
+   *  . surface 200, type 100, param type 2, alt round 38000, alt calc 38637.1
+   *  . surface 150, type 100, param type 2, alt round 44000, alt calc 44326.9
+   */
+  const QVector<int> SURFACES = {-80, 150, 200, 250, 300, 450, 700, 850, 925};
+
+  /* Parameters to download from NOAA - U/V wind component.
+   *  Add "TMP" for temperature */
   const QStringList PARAMETERS = {"UGRD", "VGRD"};
 
   /* Do roughly four samples per degree when interpolating winds for lines */
