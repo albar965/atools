@@ -17,9 +17,10 @@
 
 #include "fs/scenery/languagejson.h"
 
+#include "atools.h"
+#include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlutil.h"
-#include "atools.h"
 
 #include <QFile>
 #include <QDebug>
@@ -28,7 +29,6 @@
 #include <QJsonObject>
 #include <QDir>
 
-#include <sql/sqldatabase.h>
 
 namespace atools {
 namespace fs {
