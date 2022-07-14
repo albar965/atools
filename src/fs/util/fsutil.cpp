@@ -434,7 +434,7 @@ QString capNavString(const QString& str)
           "MATZ", "MOA", "RMZ", "TIZ", "TMA", "TMZ", "TRA", "TRSA", "TWEB", "ARSA",
           "AAS", "CARS", "FIS", "AFIS", "ATF", "VDF", "PCL", "RCO", "RCAG",
           "NOTAM", "CERAP", "ARTCC",
-          "TCA", "MCTR"
+          "TCA", "MCTR", "VFR", "IFR"
         });
 
   return atools::capString(str, FORCE_UPPER);
