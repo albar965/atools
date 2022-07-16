@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -214,7 +214,7 @@ public:
 
   }
 
-  bool autoRaiseDockWindow = false, autoRaiseMainWindow = false;
+  bool autoRaiseWindow = false, autoRaiseMainWindow = false;
 
 private:
   virtual bool eventFilter(QObject *object, QEvent *event) override;
@@ -229,16 +229,29 @@ bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
   {
     if(!mainWindow->isMinimized() && mainWindow->isVisible())
     {
-      if(autoRaiseDockWindow)
+      if(autoRaiseWindow)
       {
+        // Raise normal dock widget ==============
         QDockWidget *widget = dynamic_cast<QDockWidget *>(object);
         if(widget != nullptr)
         {
-          qDebug() << Q_FUNC_INFO << event->type() << widget->objectName();
           if(widget->isFloating())
           {
             widget->activateWindow();
             widget->raise();
+          }
+        }
+        else
+        {
+          // Raise non-modal dialog widget ==============
+          QDialog *dialog = dynamic_cast<QDialog *>(object);
+          if(dialog != nullptr)
+          {
+            if(!dialog->isModal())
+            {
+              dialog->activateWindow();
+              dialog->raise();
+            }
           }
         }
       }
@@ -261,8 +274,7 @@ bool DockEventFilter::eventFilter(QObject *object, QEvent *event)
 // ===================================================================================
 DockWidgetHandler::DockWidgetHandler(QMainWindow *parentMainWindow, const QList<QDockWidget *>& dockWidgetsParam,
                                      const QList<QToolBar *>& toolBarsParam, bool verboseLog)
-  : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam),
-  verbose(verboseLog)
+  : QObject(parentMainWindow), mainWindow(parentMainWindow), dockWidgets(dockWidgetsParam), toolBars(toolBarsParam), verbose(verboseLog)
 {
   dockEventFilter = new DockEventFilter(mainWindow);
   normalState = new MainWindowState;
@@ -325,7 +337,7 @@ void DockWidgetHandler::dockLocationChanged(Qt::DockWidgetArea area)
   updateDockTabStatus();
 }
 
-void DockWidgetHandler::connectDockWindow(QDockWidget *dockWidget)
+void DockWidgetHandler::connectDockWidget(QDockWidget *dockWidget)
 {
   updateDockTabStatus();
   connect(dockWidget->toggleViewAction(), &QAction::toggled, this, &DockWidgetHandler::dockViewToggled);
@@ -457,14 +469,14 @@ void DockWidgetHandler::setHandleDockViews(bool value)
   updateDockTabStatus();
 }
 
-bool DockWidgetHandler::isAutoRaiseDockWindows() const
+bool DockWidgetHandler::isAutoRaiseWindows() const
 {
-  return dockEventFilter->autoRaiseDockWindow;
+  return dockEventFilter->autoRaiseWindow;
 }
 
-void DockWidgetHandler::setAutoRaiseDockWindows(bool value)
+void DockWidgetHandler::setAutoRaiseWindows(bool value)
 {
-  dockEventFilter->autoRaiseDockWindow = value;
+  dockEventFilter->autoRaiseWindow = value;
 }
 
 bool DockWidgetHandler::isAutoRaiseMainWindow() const
@@ -590,9 +602,8 @@ void DockWidgetHandler::setDockingAllowed(QDockWidget *dockWidget, bool allow)
   dockWidget->setAllowedAreas(allow ? Qt::AllDockWidgetAreas : Qt::NoDockWidgetArea);
 }
 
-void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
+void DockWidgetHandler::raiseFloatingDockWidget(QDockWidget *dockWidget)
 {
-  qDebug() << Q_FUNC_INFO;
   if(dockWidget->isVisible() && dockWidget->isFloating())
     dockWidget->raise();
 }
@@ -600,14 +611,20 @@ void DockWidgetHandler::raiseFloatingWindow(QDockWidget *dockWidget)
 void DockWidgetHandler::connectDockWindows()
 {
   for(QDockWidget *dock : dockWidgets)
-    connectDockWindow(dock);
+    connectDockWidget(dock);
   mainWindow->installEventFilter(dockEventFilter);
 }
 
-void DockWidgetHandler::raiseFloatingWindows()
+void DockWidgetHandler::raiseWindows()
 {
   for(QDockWidget *dock : dockWidgets)
-    raiseFloatingWindow(dock);
+    raiseFloatingDockWidget(dock);
+
+  for(QDialog *dialog : dialogWidgets)
+  {
+    if(dialog->isVisible())
+      dialog->raise();
+  }
 }
 
 // ==========================================================================
@@ -879,6 +896,29 @@ bool DockWidgetHandler::isWindowLayoutFile(const QString& filename)
     return ok;
   }
   return false;
+}
+
+void DockWidgetHandler::addDialogWidget(QDialog *dialogWidget)
+{
+  dialogWidget->installEventFilter(dockEventFilter);
+  dialogWidgets.append(dialogWidget);
+}
+
+void DockWidgetHandler::removeDialogWidget(QDialog *dialogWidget)
+{
+  dialogWidgets.removeAll(dialogWidget);
+  dialogWidget->removeEventFilter(dockEventFilter);
+}
+
+void DockWidgetHandler::closeAllDialogWidgets()
+{
+  for(QDialog *dialog : dialogWidgets)
+  {
+    qDebug() << Q_FUNC_INFO << "Dialog" << dialog->objectName();
+    dialog->close();
+  }
+
+  dialogWidgets.clear();
 }
 
 void DockWidgetHandler::registerMetaTypes()
