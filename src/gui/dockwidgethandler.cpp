@@ -900,14 +900,20 @@ bool DockWidgetHandler::isWindowLayoutFile(const QString& filename)
 
 void DockWidgetHandler::addDialogWidget(QDialog *dialogWidget)
 {
-  dialogWidget->installEventFilter(dockEventFilter);
-  dialogWidgets.append(dialogWidget);
+  if(dialogWidget != nullptr)
+  {
+    dialogWidget->installEventFilter(dockEventFilter);
+    dialogWidgets.append(dialogWidget);
+  }
 }
 
 void DockWidgetHandler::removeDialogWidget(QDialog *dialogWidget)
 {
-  dialogWidgets.removeAll(dialogWidget);
-  dialogWidget->removeEventFilter(dockEventFilter);
+  if(dialogWidget != nullptr)
+  {
+    dialogWidgets.removeAll(dialogWidget);
+    dialogWidget->removeEventFilter(dockEventFilter);
+  }
 }
 
 void DockWidgetHandler::closeAllDialogWidgets()

@@ -45,6 +45,10 @@ public:
     return sqlErr;
   }
 
+  virtual void raise() const override;
+
+  virtual SqlException *clone() const override;
+
 private:
   void createSqlMessage();
 

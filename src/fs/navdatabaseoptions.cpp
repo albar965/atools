@@ -27,10 +27,6 @@
 namespace atools {
 namespace fs {
 
-NavDatabaseOptions::NavDatabaseOptions()
-{
-}
-
 void NavDatabaseOptions::setProgressCallback(ProgressCallbackType func)
 {
   progressCallback = func;

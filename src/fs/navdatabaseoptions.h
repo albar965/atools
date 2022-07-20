@@ -151,8 +151,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(atools::fs::type::OptionFlags);
 class NavDatabaseOptions
 {
 public:
-  NavDatabaseOptions();
-
   /*
    * Fill this configuration object from a settings file.
    * See project "navdatareader" directory "resources/config/navdatareader.cfg" for an example.
