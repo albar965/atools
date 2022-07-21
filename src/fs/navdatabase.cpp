@@ -81,23 +81,29 @@ using atools::fs::scenery::AddOnComponent;
 using atools::fs::scenery::AddOnPackage;
 using atools::buildPathNoCase;
 
-NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb,
-                         NavDatabaseErrors *databaseErrors, const QString& revision)
+NavDatabase::NavDatabase(const NavDatabaseOptions *readerOptions, sql::SqlDatabase *sqlDb, NavDatabaseErrors *databaseErrors,
+                         const QString& revision)
   : db(sqlDb), errors(databaseErrors), options(readerOptions), gitRevision(revision)
 {
 
 }
 
-atools::fs::ResultFlags NavDatabase::create(const QString& codec)
+atools::fs::ResultFlags NavDatabase::compileDatabase()
 {
   if(options != nullptr)
     qDebug() << Q_FUNC_INFO << *options;
 
-  atools::fs::ResultFlags result = createInternal(codec);
+  QString sceneryCfgCodec;
+
+  if(options != nullptr)
+    sceneryCfgCodec = (options->getSimulatorType() == atools::fs::FsPaths::P3D_V4 ||
+                       options->getSimulatorType() == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
+
+  atools::fs::ResultFlags result = createInternal(sceneryCfgCodec);
   if(aborted)
   {
     // Remove all (partial) changes
-    result |= COMPILE_ABORTED;
+    result |= COMPILE_CANCELED;
     db->rollback();
   }
   else
@@ -571,7 +577,7 @@ int NavDatabase::countMsSimSteps()
 
 atools::fs::ResultFlags NavDatabase::createInternal(const QString& sceneryConfigCodec)
 {
-  atools::fs::ResultFlags result = atools::fs::NONE;
+  atools::fs::ResultFlags result = atools::fs::COMPILE_NONE;
   SceneryCfg sceneryCfg(sceneryConfigCodec);
 
   QElapsedTimer timer;
