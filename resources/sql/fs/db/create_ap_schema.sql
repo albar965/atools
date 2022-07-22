@@ -557,6 +557,7 @@ create table parking
   pushback varchar(5),             -- see enum atools::fs::bgl::ap::PushBack
   name varchar(15),                -- see enum atools::fs::bgl::ap::ParkingName
   number integer not null,         -- parking number
+  suffix varchar(5),               -- see enum atools::fs::bgl::ap::ParkingNameSuffix - only MSFS
   airline_codes text,              -- Comma separated list of two letter ICAO airline codes
   radius double not null,          -- Radius in feet
   heading double not null,         -- Heading in degree true

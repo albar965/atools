@@ -202,20 +202,110 @@ QString Parking::parkingNameToStr(ap::ParkingName type)
   return "INVALID";
 }
 
+QString Parking::parkingSuffixToStr(ap::ParkingNameSuffix type)
+{
+  switch(type)
+  {
+    case ap::SUFFIX_NONE:
+      return "NONE";
+
+    case ap::SUFFIX_A:
+      return "A";
+
+    case ap::SUFFIX_B:
+      return "B";
+
+    case ap::SUFFIX_C:
+      return "C";
+
+    case ap::SUFFIX_D:
+      return "D";
+
+    case ap::SUFFIX_E:
+      return "E";
+
+    case ap::SUFFIX_F:
+      return "F";
+
+    case ap::SUFFIX_G:
+      return "G";
+
+    case ap::SUFFIX_H:
+      return "H";
+
+    case ap::SUFFIX_I:
+      return "I";
+
+    case ap::SUFFIX_J:
+      return "J";
+
+    case ap::SUFFIX_K:
+      return "K";
+
+    case ap::SUFFIX_L:
+      return "L";
+
+    case ap::SUFFIX_M:
+      return "M";
+
+    case ap::SUFFIX_N:
+      return "N";
+
+    case ap::SUFFIX_O:
+      return "O";
+
+    case ap::SUFFIX_P:
+      return "P";
+
+    case ap::SUFFIX_Q:
+      return "Q";
+
+    case ap::SUFFIX_R:
+      return "R";
+
+    case ap::SUFFIX_S:
+      return "S";
+
+    case ap::SUFFIX_T:
+      return "T";
+
+    case ap::SUFFIX_U:
+      return "U";
+
+    case ap::SUFFIX_V:
+      return "V";
+
+    case ap::SUFFIX_W:
+      return "W";
+
+    case ap::SUFFIX_X:
+      return "X";
+
+    case ap::SUFFIX_Y:
+      return "Y";
+
+    case ap::SUFFIX_Z:
+      return "Z";
+
+  }
+  qWarning().nospace().noquote() << "Invalid suffix name " << type;
+  return "INVALID";
+}
+
 QString Parking::pushBackToStr(ap::PushBack type)
 {
   switch(type)
   {
-    case atools::fs::bgl::ap::NONE:
+    case ap::NONE:
       return "NONE";
 
-    case atools::fs::bgl::ap::LEFT:
+    case ap::LEFT:
       return "L";
 
-    case atools::fs::bgl::ap::RIGHT:
+    case ap::RIGHT:
       return "R";
 
-    case atools::fs::bgl::ap::BOTH:
+    case ap::BOTH:
       return "B";
   }
   qWarning().nospace().noquote() << "Invalid parking name " << type;
@@ -239,8 +329,7 @@ Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
   radius = bs->readFloat();
   heading = bs->readFloat(); // TODO wiki heading is float degrees
 
-  if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5 ||
-     structureType == STRUCT_MSFS)
+  if(structureType == STRUCT_FSX || structureType == STRUCT_P3DV4 || structureType == STRUCT_P3DV5 || structureType == STRUCT_MSFS)
     bs->skip(16); // teeOffset 1-4 not FS9
 
   position = BglPosition(bs);
@@ -252,7 +341,11 @@ Parking::Parking(BinaryStream *bs, atools::fs::bgl::StructureType structureType)
   if(structureType == STRUCT_P3DV5)
     bs->skip(4);
   else if(structureType == STRUCT_MSFS)
-    bs->skip(20);
+  {
+    bs->skip(1);
+    suffix = static_cast<ap::ParkingNameSuffix>(bs->readByte());
+    bs->skip(18);
+  }
 }
 
 bool Parking::isGate() const
