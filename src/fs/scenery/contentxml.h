@@ -51,17 +51,20 @@ public:
   }
 
   /* true if area is present and has active="false" */
-  bool isDisabled(const QString& areaPath) const
-  {
-    return disabledAreas.contains(areaPath.toLower());
-  }
+  bool isDisabled(const QString& areaPath) const;
+
+  /* Priority. lower numbers are read first. Synonym with SceneryArea::layer and SceneryArea::areaNumber */
+  int getPriority(const QString& areaPath) const;
 
 private:
   friend QDebug operator<<(QDebug out, const atools::fs::scenery::ContentXml& cfg);
 
+  void priorityTitleNavdata(const QString& name, int& priority, QString& title, bool& navdata);
+
   QList<atools::fs::scenery::SceneryArea> areaEntries;
-  QSet<QString> disabledAreas;
-  int number = 0;
+  QHash<QString, int> areaIndex;
+  int curPriority = 10; // base and others are fixed 0, 1 and 2
+
 };
 
 } // namespace scenery

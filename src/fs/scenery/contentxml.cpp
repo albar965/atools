@@ -32,6 +32,9 @@ namespace fs {
 namespace scenery {
 
 /*
+ * Pre SU10:
+ *
+ *  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
  *  <Content>
  *  <Package name="fs-base" active="true"/>
  *  <Package name="asobo-airport-kord-chicago-ohare" active="true"/>
@@ -49,11 +52,25 @@ namespace scenery {
  *  <Package name="fs-base-ai-traffic" active="true"/>
  *  </Content>
  */
+
+/*
+ * Post SU10:
+ *
+ * <Priorities>
+ * <Package name="fs-base" priority="-3"/>
+ * <Package name="fs-base-genericairports" priority="-3"/>
+ * <Package name="fs-base-ai-traffic" priority="-3"/>
+ * <Package name="fs-base-nav" priority="-3"/>
+ * <Package name="navigraph-navdata-base" priority="-2"/>
+ * <Package name="asobo-airport-lowi-innsbruck" priority="-1"/>
+ * <Package name="navigraph-navdata" priority="3"/>
+ * </Priorities>
+ */
 void ContentXml::read(const QString& filename)
 {
   areaEntries.clear();
-  disabledAreas.clear();
-  number = 5;
+  areaIndex.clear();
+  curPriority = 5;
 
   if(atools::checkFile(filename))
   {
@@ -63,58 +80,124 @@ void ContentXml::read(const QString& filename)
       atools::util::XmlStream xmlStream(&xmlFile, filename);
       QXmlStreamReader& reader = xmlStream.getReader();
 
-      xmlStream.readUntilElement("Content");
-
-      while(xmlStream.readNextStartElement())
+      while(xmlStream.getReader().readNextStartElement())
       {
-        if(reader.name() == "Package")
+        if(reader.name() == "Content")
         {
-          QString name = reader.attributes().value("name").toString();
-          QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
-          bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
-
-          int num;
-          QString title;
-          bool navdata = false;
-          if(name == "fs-base")
+          while(xmlStream.readNextStartElement())
           {
-            num = 0;
-            title = tr("Base Airports");
-          }
-          else if(name == "fs-base-genericairports")
+            if(reader.name() == "Package")
+            {
+              QString name = reader.attributes().value("name").toString();
+              QString activeStr = reader.attributes().value("active").toString().simplified().toLower();
+              bool active = activeStr.startsWith('y') || activeStr.startsWith('t');
+
+              int num;
+              QString title;
+              bool navdata = false;
+              priorityTitleNavdata(name, num, title, navdata);
+
+              SceneryArea area(num, num, title, name);
+              area.setActive(active);
+              area.setNavdata(navdata);
+
+              areaIndex.insert(name.toLower(), areaEntries.size());
+              areaEntries.append(area);
+
+              // Read only attributes
+              xmlStream.skipCurrentElement();
+            }
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
+          } // while(xmlStream.readNextStartElement())
+
+          break;
+        }
+        else if(reader.name() == "Priorities")
+        {
+          while(xmlStream.readNextStartElement())
           {
-            num = 1;
-            title = tr("Generic Airports");
-          }
-          else if(name == "fs-base-nav")
-          {
-            num = 2;
-            navdata = true;
-            title = tr("Base Navigation");
-          }
-          else
-            num = number++;
+            if(reader.name() == "Package")
+            {
+              QString name = reader.attributes().value("name").toString();
 
-          SceneryArea area(num, num, title, name);
-          area.setActive(active);
-          area.setNavdata(navdata);
-          areaEntries.append(area);
-          number++;
+              bool ok;
+              int priority = reader.attributes().value("priority").toInt(&ok);
 
-          if(!active)
-            disabledAreas.insert(name.toLower());
+              int num;
+              QString title;
+              bool navdata = false;
+              priorityTitleNavdata(name, num, title, navdata);
 
-          // Read only attributes
-          xmlStream.skipCurrentElement();
+              if(ok)
+                num = priority;
+
+              SceneryArea area(num, num, title, name);
+              area.setActive(true);
+              area.setNavdata(navdata);
+
+              areaIndex.insert(name.toLower(), areaEntries.size());
+              areaEntries.append(area);
+
+              // Read only attributes
+              xmlStream.skipCurrentElement();
+              curPriority++;
+            }
+            else
+              xmlStream.skipCurrentElement(true /* warn */);
+          } // while
         }
         else
           xmlStream.skipCurrentElement(true /* warn */);
-      }
+
+        break;
+      } // while
       xmlFile.close();
     }
     else
       throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
   }
+}
+
+bool ContentXml::isDisabled(const QString& areaPath) const
+{
+  if(areaIndex.contains(areaPath.toLower()))
+    return !areaEntries.at(areaIndex.value(areaPath.toLower())).isActive();
+
+  return false;
+}
+
+int ContentXml::getPriority(const QString& areaPath) const
+{
+  if(areaIndex.contains(areaPath.toLower()))
+    return areaEntries.at(areaIndex.value(areaPath.toLower())).getAreaNumber();
+
+  return 0;
+}
+
+void ContentXml::priorityTitleNavdata(const QString& name, int& priority, QString& title, bool& navdata)
+{
+  if(name == "fs-base")
+  {
+    // magdec.bgl and POI
+    priority = 0;
+    title = tr("Base");
+  }
+  else if(name == "fs-base-genericairports")
+  {
+    // Since SU9 - aiports
+    priority = 1;
+    title = tr("Generic Airports");
+  }
+  else if(name == "fs-base-nav")
+  {
+    // Airport procedures
+    priority = 2;
+    navdata = true;
+    title = tr("Base Navigation");
+  }
+  else
+    priority = curPriority++;
 }
 
 QDebug operator<<(QDebug out, const ContentXml& cfg)
