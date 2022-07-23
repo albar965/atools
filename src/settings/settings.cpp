@@ -100,7 +100,7 @@ void Settings::logSettingsInformation()
 
 QString Settings::getFilename()
 {
-  return instance().getQSettings()->fileName();
+  return getQSettings()->fileName();
 }
 
 QString Settings::getConfigFilename(const QString& extension, const QString& subdir)

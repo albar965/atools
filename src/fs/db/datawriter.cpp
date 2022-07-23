@@ -361,7 +361,7 @@ void DataWriter::writeSceneryArea(const SceneryArea& area)
 
 void DataWriter::readMagDeclBgl(const QString& fileScenery)
 {
-  QString fileSettings = atools::buildPath({atools::settings::Settings::instance().getPath(), "magdec.bgl"});
+  QString fileSettings = atools::buildPath({atools::settings::Settings::getPath(), "magdec.bgl"});
   QString fileApp = atools::buildPath({QCoreApplication::applicationDirPath(), "magdec", "magdec.bgl"});
 
   QString file;
