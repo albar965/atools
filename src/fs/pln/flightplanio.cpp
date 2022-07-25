@@ -1463,7 +1463,7 @@ void FlightplanIO::loadFlightGear(atools::fs::pln::Flightplan& plan, const QStri
             maxAlt = std::max(maxAlt, altitude);
 
             Pos position(wplon, wplat, altitude);
-            if (position.isValid())
+            if(position.isValid())
               entry.setPosition(position);
 
             if(wptype == "runway")
@@ -2136,7 +2136,7 @@ void FlightplanIO::saveFlightGear(const Flightplan& plan, const QString& filenam
 
       if(!hasProcedure)
       {
-        if (entry.getWaypointType() == entry::USER)
+        if(entry.getWaypointType() == entry::USER)
           writePropertyStr(writer, "type", "basic");
         else
           writePropertyStr(writer, "type", "navaid");
@@ -3328,11 +3328,12 @@ void FlightplanIO::saveFmsInternal(const atools::fs::pln::Flightplan& plan, cons
       {
         stream << "28 ";
 
-        // Replace spaces
-        QString name = ident;
-        name.replace(QRegularExpression("[\\s]"), "_");
-
-        stream << name << " ";
+        if(ident.isEmpty())
+          // No ident - can appear if using export options
+          stream << atools::fs::util::toDegMinFormat(entry.getPosition()) << " ";
+        else
+          // Replace spaces
+          stream << ident.replace(QRegularExpression("[\\s]"), "_") << " ";
 
         // Disabled user waypoints as coordinates
         // +12.345_+009.459 Correct for a waypoint at 12.345°/0.459°.
