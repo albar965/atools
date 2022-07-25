@@ -31,7 +31,7 @@ class GridDelegate :
   public QStyledItemDelegate
 {
 public:
-  GridDelegate(QObject *parent);
+  explicit GridDelegate(QObject *parent);
 
   void styleChanged();
 

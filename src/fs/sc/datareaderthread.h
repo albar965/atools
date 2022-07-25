@@ -41,7 +41,7 @@ class DataReaderThread :
   Q_OBJECT
 
 public:
-  DataReaderThread(QObject *parent, bool verboseLog);
+  explicit DataReaderThread(QObject *parent, bool verboseLog);
   virtual ~DataReaderThread() override;
 
   DataReaderThread(const DataReaderThread& other) = delete;

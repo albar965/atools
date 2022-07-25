@@ -153,7 +153,7 @@ class WindQuery
   Q_OBJECT
 
 public:
-  WindQuery(QObject *parentObject, bool logVerbose);
+  explicit WindQuery(QObject *parentObject, bool logVerbose);
   virtual ~WindQuery() override;
 
   WindQuery(const WindQuery& other) = delete;

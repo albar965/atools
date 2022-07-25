@@ -42,7 +42,7 @@ public:
   /*
    * Read the subsection
    */
-  Subsection(const NavDatabaseOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
+  explicit Subsection(const NavDatabaseOptions *options, atools::io::BinaryStream *bs, const Section& parentSect);
   virtual ~Subsection() override;
 
   /*

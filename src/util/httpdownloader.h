@@ -39,7 +39,7 @@ class HttpDownloader :
   Q_OBJECT
 
 public:
-  HttpDownloader(QObject *parent, bool verboseLogging = false);
+  explicit HttpDownloader(QObject *parent, bool verboseLogging = false);
   virtual ~HttpDownloader() override;
 
   HttpDownloader(const HttpDownloader& other) = delete;

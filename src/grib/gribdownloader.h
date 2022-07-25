@@ -47,7 +47,7 @@ class GribDownloader :
   Q_OBJECT
 
 public:
-  GribDownloader(QObject *parent, bool logVerbose);
+  explicit GribDownloader(QObject *parent, bool logVerbose);
   ~GribDownloader() override;
 
   GribDownloader(const GribDownloader& other) = delete;
