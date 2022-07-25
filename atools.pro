@@ -210,6 +210,7 @@ HEADERS += \
   src/geo/rect.h \
   src/geo/spatialindex.h \
   src/grib/windquery.h \
+  src/gui/actionbuttonhandler.h \
   src/gui/actionstatesaver.h \
   src/gui/actiontextsaver.h \
   src/gui/actiontool.h \
@@ -350,6 +351,7 @@ SOURCES += \
   src/geo/rect.cpp \
   src/geo/spatialindex.cpp \
   src/grib/windquery.cpp \
+  src/gui/actionbuttonhandler.cpp \
   src/gui/actionstatesaver.cpp \
   src/gui/actiontextsaver.cpp \
   src/gui/actiontool.cpp \
