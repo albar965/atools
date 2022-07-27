@@ -298,7 +298,8 @@ QDebug operator<<(QDebug out, const Flightplan& record)
   out.noquote().nospace() << "Flightplan[ "
                           << ", " << record.getDepartureIdent()
                           << " -> " << record.getDestinationIdent()
-                          << ", lnm format " << record.lnmFormat;
+                          << ", lnm format " << record.lnmFormat
+                          << ", properties " << record.properties;
 
   int i = 1;
   for(const FlightplanEntry& entry : record.getEntries())

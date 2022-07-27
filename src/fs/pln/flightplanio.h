@@ -141,8 +141,12 @@ public:
                QVector<QVector<quint32> > *timestamps, const QString& filename);
 
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
-  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename, bool saveAsUserWaypoints);
   void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
+  void saveGarminFpl(const atools::fs::pln::Flightplan& flightplan, const QString& filename, bool saveAsUserWaypoints);
+
+  /* Garmin GFP - One line text format prefixed with "FPN/RI:..." */
+  void loadGarminGfp(atools::fs::pln::Flightplan& plan, const QString& filename);
+
   void loadGarminFplStr(atools::fs::pln::Flightplan& plan, const QString& string);
   void loadGarminFplGz(atools::fs::pln::Flightplan& plan, const QByteArray& bytes);
 

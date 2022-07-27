@@ -32,8 +32,8 @@ void copyProperty(QHash<QString, QString>& to, const QHash<QString, QString>& fr
 
 void copySidProcedureProperties(QHash<QString, QString>& to, const QHash<QString, QString>& from)
 {
-  copyProperty(to, from, SIDAPPR);
-  copyProperty(to, from, SIDAPPRRW);
+  copyProperty(to, from, SID);
+  copyProperty(to, from, SIDRW);
   copyProperty(to, from, SIDTYPE);
   copyProperty(to, from, SIDTRANS);
   copyProperty(to, from, DEPARTURE_CUSTOM_DISTANCE);
