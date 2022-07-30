@@ -18,7 +18,6 @@
 #ifndef ATOOLS_FS_FSPATHS_H
 #define ATOOLS_FS_FSPATHS_H
 
-#include <QHash>
 #include <QObject>
 
 namespace atools {
@@ -131,10 +130,11 @@ public:
   static bool hasXplane11Simulator();
   static bool hasXplane12Simulator();
 
-  static bool isAnyXplane(atools::fs::FsPaths::SimulatorType type)
-  {
-    return type == XPLANE_11 || type == XPLANE_12;
-  }
+  /* X-Plane simulators */
+  static bool isAnyXplane(atools::fs::FsPaths::SimulatorType type);
+
+  /* Any Microsoft / SimConnect simulators */
+  static bool isAnyMs(atools::fs::FsPaths::SimulatorType type);
 
   /* Long names like Microsoft Flight Simulator X */
   static QString typeToDisplayName(atools::fs::FsPaths::SimulatorType type);
@@ -145,7 +145,7 @@ public:
   static atools::fs::FsPaths::SimulatorType stringToType(const QString& typeStr);
 
   /* Array of all four valid types */
-  static const QVector<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
+  static const QSet<atools::fs::FsPaths::SimulatorType>& getAllSimulatorTypes();
 
 private:
   /* Get installation path to fsx.exe, etc. Empty string if simulator is not installed.

@@ -15,18 +15,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "fspaths.h"
+#include "fs/fspaths.h"
 
-#include "settings/settings.h"
 #include "atools.h"
+#include "settings/settings.h"
 
-#include <QDebug>
-#include <QHash>
 #include <QDir>
-#include <QStandardPaths>
 #include <QDataStream>
 #include <QSettings>
-#include <QtGlobal>
 #include <QProcess>
 #include <QStringBuilder>
 
@@ -44,16 +40,22 @@ static QHash<atools::fs::FsPaths::SimulatorType, QString> filesPathMap;
 static QHash<atools::fs::FsPaths::SimulatorType, QString> sceneryFilepathMap;
 
 /* All supported simulators */
-static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES(
     {
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5,
       FsPaths::XPLANE_11, FsPaths::XPLANE_12, FsPaths::MSFS
     });
 
 /* All supported MS simulators using SimConnect on Windows */
-static const QVector<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_MS(
     {
       FsPaths::FSX, FsPaths::FSX_SE, FsPaths::P3D_V3, FsPaths::P3D_V4, FsPaths::P3D_V5, FsPaths::MSFS
+    });
+
+/* All supported X-Plane simulators using Xpconnect */
+static const QSet<atools::fs::FsPaths::SimulatorType> ALL_SIMULATOR_TYPES_XP(
+    {
+      FsPaths::XPLANE_11, FsPaths::XPLANE_12
     });
 
 static const QHash<atools::fs::FsPaths::SimulatorType, QString> ALL_SIMULATOR_TYPE_NAMES(
@@ -509,6 +511,16 @@ bool FsPaths::hasXplane12Simulator()
   return !basePathMap.value(XPLANE_12).isEmpty();
 }
 
+bool FsPaths::isAnyMs(SimulatorType type)
+{
+  return ALL_SIMULATOR_TYPES_MS.contains(type);
+}
+
+bool FsPaths::isAnyXplane(SimulatorType type)
+{
+  return ALL_SIMULATOR_TYPES_XP.contains(type);
+}
+
 QString FsPaths::initFilesPath(SimulatorType type)
 {
   QString fsFilesDir;
@@ -713,7 +725,7 @@ FsPaths::SimulatorType FsPaths::stringToType(const QString& typeStr)
     return NONE;
 }
 
-const QVector<FsPaths::SimulatorType>& FsPaths::getAllSimulatorTypes()
+const QSet<FsPaths::SimulatorType>& FsPaths::getAllSimulatorTypes()
 {
   return ALL_SIMULATOR_TYPES;
 }
