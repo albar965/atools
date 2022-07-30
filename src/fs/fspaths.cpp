@@ -28,6 +28,7 @@
 
 #if defined(Q_OS_WIN32)
 #include <windows.h>
+#include <QStandardPaths>
 #endif
 
 namespace atools {
