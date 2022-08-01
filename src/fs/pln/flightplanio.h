@@ -120,25 +120,25 @@ public:
 
   /* GPX format including track and time stamps if not empty. Number has to match flight plan entry number. */
   void saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename, const QVector<geo::LineString>& tracks,
-               const QVector<QVector<quint32> >& timestamps, int cruiseAltFt);
+               const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
 
   /* Same as above but returns the file in a string */
   QString saveGpxStr(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                     const QVector<QVector<quint32> >& timestamps, int cruiseAltFt);
+                     const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
 
   /* Same as above but returns the file in a Gzip compressed byte array */
   QByteArray saveGpxGz(const atools::fs::pln::Flightplan& plan, const QVector<geo::LineString>& tracks,
-                       const QVector<QVector<quint32> >& timestamps, int cruiseAltFt);
+                       const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt);
 
   /* Loads GPX route coordinates and track points into LineStrings.
    * Reading is limited to files exported by this class.
    * track, route and routenames can be null and will be ignored then */
   void loadGpxStr(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                  QVector<QVector<quint32> > *timestamps, const QString& string);
+                  QVector<QVector<qint64> > *timestampsMs, const QString& string);
   void loadGpxGz(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                 QVector<QVector<quint32> > *timestamps, const QByteArray& bytes);
+                 QVector<QVector<qint64> > *timestampsMs, const QByteArray& bytes);
   void loadGpx(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-               QVector<QVector<quint32> > *timestamps, const QString& filename);
+               QVector<QVector<qint64> > *timestampsMs, const QString& filename);
 
   /* Garmin FPL (XML) format for Reality XP GNS XML. */
   void loadGarminFpl(atools::fs::pln::Flightplan& plan, const QString& filename);
@@ -192,12 +192,12 @@ private:
   void saveFmsInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool version11Format);
   void saveLnmInternal(QXmlStreamWriter& writer, const Flightplan& plan);
   void saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                       const QVector<geo::LineString>& tracks, const QVector<QVector<quint32> >& timestamps,
+                       const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs,
                        int cruiseAltFt);
   void saveFlpInternal(const atools::fs::pln::Flightplan& plan, const QString& filename, bool crj, bool msfs);
   void loadLnmInternal(Flightplan& plan, atools::util::XmlStream& xmlStream);
   void loadGpxInternal(atools::geo::LineString *route, QStringList *routenames, QVector<geo::LineString> *tracks,
-                       QVector<QVector<quint32> > *timestamps, util::XmlStream& xmlStream);
+                       QVector<QVector<qint64> > *timestampsMs, util::XmlStream& xmlStream);
   void loadGarminFplInternal(Flightplan& plan, util::XmlStream& xmlStream);
   atools::fs::pln::entry::WaypointType garminToWaypointType(const QString& typeStr) const;
 

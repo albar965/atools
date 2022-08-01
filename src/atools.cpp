@@ -1052,6 +1052,25 @@ QDateTime correctDateLocal(int dayOfYear, int secondsOfDayLocal, int secondsOfDa
                    Qt::OffsetFromUTC, offsetSeconds);
 }
 
+QDateTime correctDateLocalF(int dayOfYear, float secondsOfDayLocal, float secondsOfDayUtc)
+{
+  QDate localDate = QDate(QDate::currentDate().year(), 1, 1).addDays(dayOfYear);
+
+  float offsetSeconds = 0.f;
+  if(secondsOfDayLocal - secondsOfDayUtc <= -12.f * 3600.f)
+    // UTC is one day back
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc + 24.f * 3600.f;
+  else if(secondsOfDayLocal - secondsOfDayUtc >= 12.f * 3600.f)
+    // UTC is one day forward
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc - 24.f * 3600.f;
+  else
+    // UTC is same day as local
+    offsetSeconds = secondsOfDayLocal - secondsOfDayUtc;
+
+  return QDateTime(localDate, QTime::fromMSecsSinceStartOfDay(atools::roundToInt(secondsOfDayLocal * 1000.f)),
+                   Qt::OffsetFromUTC, atools::roundToInt(offsetSeconds));
+}
+
 QDateTime timeToNextHourInterval(QDateTime datetime, int intervalsPerDay)
 {
   datetime = timeToLastHourInterval(datetime, intervalsPerDay);

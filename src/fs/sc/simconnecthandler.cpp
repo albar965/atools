@@ -150,11 +150,12 @@ struct SimData
   float fuelFlowGph2;
   float fuelFlowGph3;
   float fuelFlowGph4;
-  qint32 localTime;
+
+  float localTimeSeconds;
   qint32 localYear;
   qint32 localMonth;
   qint32 localDay;
-  qint32 zuluTimeSeconds;
+  float zuluTimeSeconds;
   qint32 zuluYear;
   qint32 zuluMonth;
   qint32 zuluDay;
@@ -331,7 +332,7 @@ void SimConnectHandlerPrivate::dispatchProcedure(SIMCONNECT_RECV *pData, DWORD c
                      << "wind" << simDataPtr->ambientWindDirectionDegT
                      << "/" << simDataPtr->ambientWindVelocityKts
                      << "magvar" << simDataPtr->magVarDeg
-                     << "local time" << simDataPtr->localTime
+                     << "local time" << simDataPtr->localTimeSeconds
                      << "local year" << simDataPtr->localYear
                      << "local month" << simDataPtr->localMonth
                      << "local day" << simDataPtr->localDay
@@ -607,12 +608,12 @@ void SimConnectHandlerPrivate::fillDataDefinition()
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:3", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Eng Fuel Flow GPH:4", "Gallons per hour", SIMCONNECT_DATATYPE_FLOAT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time", "seconds", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Time", "seconds", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Year", "number", SIMCONNECT_DATATYPE_INT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Month of Year", "number", SIMCONNECT_DATATYPE_INT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Local Day of Month", "number", SIMCONNECT_DATATYPE_INT32);
 
-  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time", "seconds", SIMCONNECT_DATATYPE_INT32);
+  api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Time", "seconds", SIMCONNECT_DATATYPE_FLOAT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Year", "number", SIMCONNECT_DATATYPE_INT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Month of Year", "number", SIMCONNECT_DATATYPE_INT32);
   api.AddToDataDefinition(DATA_DEFINITION_USER_AIRCRAFT, "Zulu Day of Month", "number", SIMCONNECT_DATATYPE_INT32);
@@ -899,14 +900,14 @@ bool SimConnectHandler::fetchData(atools::fs::sc::SimConnectData& data, int radi
 
     // Build local time and use timezone offset from simulator
     QDate localDate(p->simData.localYear, p->simData.localMonth, p->simData.localDay);
-    QTime localTime = QTime::fromMSecsSinceStartOfDay(p->simData.localTime * 1000);
+    QTime localTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.localTimeSeconds * 1000.f));
 
     // Offset from FS: Measured in seconds, positive west of GMT.
     QDateTime localDateTime(localDate, localTime, Qt::OffsetFromUTC, -p->simData.timeZoneOffsetSeconds);
     data.userAircraft.localDateTime = localDateTime;
 
     QDate zuluDate(p->simData.zuluYear, p->simData.zuluMonth, p->simData.zuluDay);
-    QTime zuluTime = QTime::fromMSecsSinceStartOfDay(p->simData.zuluTimeSeconds * 1000);
+    QTime zuluTime = QTime::fromMSecsSinceStartOfDay(atools::roundToInt(p->simData.zuluTimeSeconds * 1000.f));
     QDateTime zuluDateTime(zuluDate, zuluTime, Qt::UTC);
     data.userAircraft.zuluDateTime = zuluDateTime;
   }

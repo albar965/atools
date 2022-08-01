@@ -31,6 +31,7 @@
 #include <QBitArray>
 #include <QDataStream>
 #include <QDateTime>
+#include <QTimeZone>
 #include <QFile>
 #include <QFileInfo>
 #include <QRandomGenerator>
@@ -883,8 +884,7 @@ atools::geo::Pos FlightplanIO::readPosLnm(atools::util::XmlStream& xmlStream)
                     arg(xmlStream.getFilename()));
 }
 
-void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, QDateTime& timestamp,
-                              atools::util::XmlStream& xmlStream)
+void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, QDateTime& timestamp, atools::util::XmlStream& xmlStream)
 {
   bool lonOk, latOk;
   QXmlStreamReader& reader = xmlStream.getReader();
@@ -915,7 +915,8 @@ void FlightplanIO::readPosGpx(atools::geo::Pos& pos, QString& name, QDateTime& t
     if(reader.name() == "name")
       name = reader.readElementText();
     else if(reader.name() == "time")
-      timestamp = QDateTime::fromString(reader.readElementText(), "yyyy-MM-ddTHH:mm:ssZ");
+      // Reads with or without milliseconds and returns UTC without changed hour number
+      timestamp = QDateTime::fromString(reader.readElementText(), Qt::ISODate);
     else if(reader.name() == "ele")
       pos.setAltitude(atools::geo::meterToFeet(reader.readElementText().toFloat()));
     else
@@ -3020,32 +3021,32 @@ void FlightplanIO::saveIfly(const Flightplan& plan, const QString& filename)
 }
 
 QString FlightplanIO::saveGpxStr(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                 const QVector<QVector<quint32> >& timestamps,
+                                 const QVector<QVector<qint64> >& timestampsMs,
                                  int cruiseAltFt)
 {
   QString gpxString;
   QXmlStreamWriter writer(&gpxString);
-  saveGpxInternal(plan, writer, tracks, timestamps, cruiseAltFt);
+  saveGpxInternal(plan, writer, tracks, timestampsMs, cruiseAltFt);
   return gpxString;
 }
 
 QByteArray FlightplanIO::saveGpxGz(const Flightplan& plan, const QVector<geo::LineString>& tracks,
-                                   const QVector<QVector<quint32> >& timestamps, int cruiseAltFt)
+                                   const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
 {
   QByteArray retval;
-  atools::zip::gzipCompress(saveGpxStr(plan, tracks, timestamps, cruiseAltFt).toUtf8(), retval);
+  atools::zip::gzipCompress(saveGpxStr(plan, tracks, timestampsMs, cruiseAltFt).toUtf8(), retval);
   return retval;
 }
 
 void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QString& filename,
                            const QVector<geo::LineString>& tracks,
-                           const QVector<QVector<quint32> >& timestamps, int cruiseAltFt)
+                           const QVector<QVector<qint64> >& timestampsMs, int cruiseAltFt)
 {
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::WriteOnly | QIODevice::Text))
   {
     QXmlStreamWriter writer(&gpxFile);
-    saveGpxInternal(plan, writer, tracks, timestamps, cruiseAltFt);
+    saveGpxInternal(plan, writer, tracks, timestampsMs, cruiseAltFt);
     gpxFile.close();
   }
   else
@@ -3053,7 +3054,7 @@ void FlightplanIO::saveGpx(const atools::fs::pln::Flightplan& plan, const QStrin
 }
 
 void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXmlStreamWriter& writer,
-                                   const QVector<geo::LineString>& tracks, const QVector<QVector<quint32> >& timestamps,
+                                   const QVector<geo::LineString>& tracks, const QVector<QVector<qint64> >& timestampsMs,
                                    int cruiseAltFt)
 {
   writer.setCodec("UTF-8");
@@ -3076,8 +3077,7 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
   writer.writeAttribute("version", "1.1");
   writer.writeAttribute("creator", "Little Navmap");
   writer.writeNamespace("http://www.w3.org/2001/XMLSchema-instance", "xsi");
-  writer.writeAttribute("xsi:schemaLocation",
-                        "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
+  writer.writeAttribute("xsi:schemaLocation", "http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd");
 
   // writer.writeComment(programFileInfo());
 
@@ -3177,12 +3177,13 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
         writer.writeAttribute("lat", QString::number(pos.getLatY(), 'f', 6));
         writer.writeTextElement("ele", QString::number(atools::geo::feetToMeter(pos.getAltitude())));
 
-        if(!timestamps.isEmpty())
+        if(!timestampsMs.isEmpty())
         {
-          // (UTC/Zulu) in ISO 8601 format: yyyy-mm-ddThh:mm:ssZ
+          // (UTC/Zulu) in ISO 8601 format: "yyyy-mm-ddThh:mm:ssZ" or "yyyy-MM-ddTHH:mm:ss.zzzZ"
           // <time>2011-01-16T23:59:01Z</time>
-          writer.writeTextElement("time", QDateTime::fromTime_t(timestamps.at(segIdx).at(ptIdx), Qt::UTC).
-                                  toString("yyyy-MM-ddTHH:mm:ssZ"));
+          // Changes time number to local if Qt::UTC is omitted
+          qint64 timestampMs = timestampsMs.at(segIdx).at(ptIdx);
+          writer.writeTextElement("time", QDateTime::fromMSecsSinceEpoch(timestampMs, Qt::UTC).toString(Qt::ISODateWithMs));
         }
         writer.writeEndElement(); // trkpt
       }
@@ -3196,33 +3197,33 @@ void FlightplanIO::saveGpxInternal(const atools::fs::pln::Flightplan& plan, QXml
 }
 
 void FlightplanIO::loadGpxStr(atools::geo::LineString *route, QStringList *routenames,
-                              QVector<atools::geo::LineString> *tracks, QVector<QVector<quint32> > *timestamps,
+                              QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
                               const QString& string)
 {
   if(!string.isEmpty())
   {
     atools::util::XmlStream xmlStream(string);
-    loadGpxInternal(route, routenames, tracks, timestamps, xmlStream);
+    loadGpxInternal(route, routenames, tracks, timestampsMs, xmlStream);
   }
 }
 
 void FlightplanIO::loadGpxGz(atools::geo::LineString *route, QStringList *routenames,
-                             QVector<atools::geo::LineString> *tracks, QVector<QVector<quint32> > *timestamps,
+                             QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
                              const QByteArray& bytes)
 {
   if(!bytes.isEmpty())
-    loadGpxStr(route, routenames, tracks, timestamps, atools::zip::gzipDecompress(bytes));
+    loadGpxStr(route, routenames, tracks, timestampsMs, atools::zip::gzipDecompress(bytes));
 }
 
 void FlightplanIO::loadGpx(atools::geo::LineString *route, QStringList *routenames,
-                           QVector<atools::geo::LineString> *tracks, QVector<QVector<quint32> > *timestamps,
+                           QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
                            const QString& filename)
 {
   QFile gpxFile(filename);
   if(gpxFile.open(QIODevice::ReadOnly | QIODevice::Text))
   {
     atools::util::XmlStream xmlStream(&gpxFile);
-    loadGpxInternal(route, routenames, tracks, timestamps, xmlStream);
+    loadGpxInternal(route, routenames, tracks, timestampsMs, xmlStream);
     gpxFile.close();
   }
   else
@@ -3230,7 +3231,7 @@ void FlightplanIO::loadGpx(atools::geo::LineString *route, QStringList *routenam
 }
 
 void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *routenames,
-                                   QVector<atools::geo::LineString> *tracks, QVector<QVector<quint32> > *timestamps,
+                                   QVector<atools::geo::LineString> *tracks, QVector<QVector<qint64> > *timestampsMs,
                                    atools::util::XmlStream& xmlStream)
 {
   QXmlStreamReader& reader = xmlStream.getReader();
@@ -3261,14 +3262,16 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *
       }
     }
     // Read track elements if needed ======================================================
-    else if(reader.name() == "trk" && (tracks != nullptr || timestamps != nullptr))
+    else if(reader.name() == "trk" && (tracks != nullptr || timestampsMs != nullptr))
     {
+      atools::geo::LineString line;
+      QVector<qint64> times;
       while(xmlStream.readNextStartElement())
       {
         if(reader.name() == "trkseg")
         {
-          atools::geo::LineString line;
-          QVector<quint32> times;
+          line.clear();
+          times.clear();
           while(xmlStream.readNextStartElement())
           {
             if(reader.name() == "trkpt")
@@ -3277,17 +3280,22 @@ void FlightplanIO::loadGpxInternal(atools::geo::LineString *route, QStringList *
               readPosGpx(pos, name, datetetime, xmlStream);
               if(pos.isValidRange())
               {
-                line.append(pos);
-                times.append(datetetime.toTime_t());
+                if(tracks != nullptr)
+                  line.append(pos);
+
+                if(timestampsMs != nullptr)
+                  times.append(datetetime.toMSecsSinceEpoch());
               }
             }
             else
               xmlStream.skipCurrentElement(false /* warn */);
           }
+
           if(tracks != nullptr)
             tracks->append(line);
-          if(timestamps != nullptr)
-            timestamps->append(times);
+
+          if(timestampsMs != nullptr)
+            timestampsMs->append(times);
         }
         else
           xmlStream.skipCurrentElement(false /* warn */);
