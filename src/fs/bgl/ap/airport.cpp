@@ -826,10 +826,11 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
           taxiPath.start = taxipoints.at(taxiPath.startPoint);
           taxiPath.end = taxipoints.at(taxiPath.endPoint);
         }
-        else
+        else if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
           qWarning() << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break; // avoid fallthrough warning
+
       case atools::fs::bgl::taxipath::RUNWAY:
         if(inRange(taxipoints, taxiPath.startPoint) && inRange(taxipoints, taxiPath.endPoint))
         {
@@ -848,7 +849,7 @@ void Airport::updateTaxiPaths(const QList<TaxiPoint>& taxipoints, const QStringL
           taxiPath.start = taxipoints.at(taxiPath.startPoint);
           taxiPath.end = TaxiPoint(parkings.at(taxiPath.endPoint));
         }
-        else
+        else if(opts->getSimulatorType() != atools::fs::FsPaths::SimulatorType::MSFS)
           qWarning() << "One or more taxiway indexes out of bounds in" << ident
                      << "path type" << atools::fs::bgl::TaxiPath::pathTypeToString(taxiPath.type);
         break;
